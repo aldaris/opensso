@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneFAM8Impl.java,v 1.4 2008-07-25 06:06:21 kanduls Exp $
+ * $Id: TuneFAM8Impl.java,v 1.5 2008-07-29 05:00:13 kanduls Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -131,7 +131,7 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
         String ATTR4 = MAX_SESSIONS + "=" + configInfo.getNumSessions();
         String ATTR5 = HTTP_SESSION_ENABLED + "=false";
         String ATTR6 = SESSION_PURGE_DELAY + "=0";
-        String ATTR7 = INVALID_SESSION_MAX_TIME + "=2";
+        String ATTR7 = INVALID_SESSION_MAX_TIME + "=3";
         String curVal = null;
         mWriter.writeln(LINE_SEP);
         mWriter.writelnLocaleMsg("pt-fam-rec-parm-tune-msg");
@@ -239,7 +239,7 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
         mWriter.writeLocaleMsg("pt-cur-val");
         if (curCfgMap.get(INVALID_SESSION_MAX_TIME) != null) {
             curVal = curCfgMap.get(INVALID_SESSION_MAX_TIME).toString();
-            if (Integer.parseInt(curVal) != 2) {
+            if (Integer.parseInt(curVal) != 3) {
                 newAttrList.add(ATTR7);
             }
         } else {
