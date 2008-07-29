@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerPropertyValidator.java,v 1.3 2008-06-25 05:42:28 qcheng Exp $
+ * $Id: ServerPropertyValidator.java,v 1.4 2008-07-29 17:58:48 babysunil Exp $
  *
  */
 
@@ -137,7 +137,7 @@ public class ServerPropertyValidator implements ServiceAttributeValidator{
             String key = (String)i.next();
             String value = (String)properties.get(key);
             
-            if (value.indexOf("%") == -1) {
+            if ((value.length() > 0) && (value.indexOf("%") == -1)) {
                 try {
                     boolean valid = validateMap(key, value) ||
                         validateNumber(key, value) || validate(key, value);
