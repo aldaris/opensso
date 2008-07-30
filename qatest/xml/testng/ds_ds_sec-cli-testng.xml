@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ds_ds_sec-cli-testng.xml,v 1.10 2008-05-19 21:03:50 cmwesley Exp $
+ $Id: ds_ds_sec-cli-testng.xml,v 1.11 2008-07-30 22:19:00 srivenigan Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -4147,4 +4147,37 @@
             <class name="com.sun.identity.qatest.cli.ListAuthInstancesTest"/>
         </classes>
     </test>      
+    <test name="CLI_get-revision-number01">
+        <parameter name="testName" value="revisionnumber-test1"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RevisionNumberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_get-revision-number02">
+        <parameter name="testName" value="revisionnumber-test2"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RevisionNumberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_get-revision-number03">
+        <parameter name="testName" value="revisionnumber-test3"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RevisionNumberTest"/>
+        </classes>
+    </test>    
 </suite>
