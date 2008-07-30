@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManagerCLI.java,v 1.13 2008-02-07 20:52:05 cmwesley Exp $
+ * $Id: FederationManagerCLI.java,v 1.14 2008-07-30 22:28:18 srivenigan Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -432,6 +432,21 @@ public class FederationManagerCLI extends CLIUtility
     }
     
     /**
+     * Add the  --revisionnumber and revision number arguments to the 
+     * argument list.
+     */
+   private void addRevisionNumberArgument(String revisionNumber) {
+       String revArg;
+       if(useLongOptions) {
+           revArg = PREFIX_ARGUMENT_LONG + REVISION_NO_ARGUMENT;
+       } else {
+           revArg = PREFIX_ARGUMENT_SHORT + SHORT_REVISION_NO_ARGUMENT;
+       }
+       addArgument(revArg);
+       addArgument(revisionNumber);
+   }
+    
+    /**
      * Create a new realm.
      * 
      * @param realmToCreate - the name of the realm to be created
@@ -441,6 +456,33 @@ public class FederationManagerCLI extends CLIUtility
     throws Exception {
         setSubcommand(CREATE_REALM_SUBCOMMAND);
         addRealmArguments(realmToCreate);
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));
+    }
+    
+    /**
+     * Get revision number.
+     * 
+     * @param serviceName - the name of the service.
+     */
+    public int getRevisionNumber(String serviceName)
+    throws Exception {
+        setSubcommand(GET_REVISION_NUMBER_SUBCOMMAND);
+        addServiceNameArguments(serviceName);
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));
+    }
+    
+    /**
+     * Set revision number.
+     * 
+     * @param serviceName - the name of the service.
+     */
+    public int setRevisionNumber(String serviceName, String revisionNumber)
+    throws Exception {
+        setSubcommand(SET_REVISION_NUMBER_SUBCOMMAND);
+        addServiceNameArguments(serviceName);
+        addRevisionNumberArgument(revisionNumber);
         addGlobalOptions();
         return (executeCommand(commandTimeout));
     }
