@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2AutoFederationTests.java,v 1.8 2008-06-26 20:24:17 rmisra Exp $
+ * $Id: SAMLv2AutoFederationTests.java,v 1.9 2008-07-30 22:16:36 sridharev Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -87,9 +87,7 @@ public class SAMLv2AutoFederationTests extends TestCommon {
             + "        </Attribute>";
     
     private String ATTRIB_MAP_DEFAULT = "<Attribute name=\""
-            + "attributeMap\">\n"
-            + "            <Value/>\n"
-            + "        </Attribute>";
+            + "attributeMap\"/>\n";
     private String ATTRIB_MAP_VALUE = "<Attribute name=\""
             + "attributeMap\">\n"
             + "            <Value>mail=mail</Value>\n"

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2AttributeQueryTests.java,v 1.2 2008-06-26 20:24:17 rmisra Exp $
+ * $Id: SAMLv2AttributeQueryTests.java,v 1.3 2008-07-30 22:14:40 sridharev Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -77,9 +77,7 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
     private String testAttribute;
     private String metaAliasname;
     private String ATTRIB_MAP_DEFAULT = "<Attribute name=\""
-            + "attributeMap\">\n"
-            + "            <Value/>\n"
-            + "        </Attribute>";
+            + "attributeMap\"/>\n";
     private String ATTRIB_MAP_VALUE = "<Attribute name=\""
             + "attributeMap\">\n"
             + "            <Value>mail=mail</Value>\n"
