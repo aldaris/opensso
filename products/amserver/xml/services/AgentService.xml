@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.57 2008-07-30 05:12:57 mallas Exp $
+   $Id: AgentService.xml,v 1.58 2008-07-30 20:35:54 mallas Exp $
 
 -->
 
@@ -2690,8 +2690,8 @@
                         syntax="string"
                         i18nKey="a359">
                          <ChoiceValues>
-                             <ChoiceValue>DESede</ChoiceValue>
-                             <ChoiceValue>AES</ChoiceValue>
+                             <ChoiceValue i18nKey="a25">DESede</ChoiceValue>
+                             <ChoiceValue i18nKey="a26">AES</ChoiceValue>
                          </ChoiceValues>
                          <DefaultValues>
                              <Value>AES</Value>
@@ -3046,8 +3046,8 @@
                         syntax="string"
                         i18nKey="a359">
                          <ChoiceValues>
-                             <ChoiceValue>DESede</ChoiceValue>
-                             <ChoiceValue>AES</ChoiceValue>
+                             <ChoiceValue i18nKey="a25">DESede</ChoiceValue>
+                             <ChoiceValue i18nKey="a26">AES</ChoiceValue>
                          </ChoiceValues>
                          <DefaultValues>
                              <Value>AES</Value>
@@ -3332,8 +3332,8 @@
                         syntax="string"
                         i18nKey="a359">
                          <ChoiceValues>
-                             <ChoiceValue>DESede</ChoiceValue>
-                             <ChoiceValue>AES</ChoiceValue>
+                             <ChoiceValue i18nKey="a25">DESede</ChoiceValue>
+                             <ChoiceValue i18nKey="a26">AES</ChoiceValue>
                          </ChoiceValues>
                          <DefaultValues>
                              <Value>AES</Value>
