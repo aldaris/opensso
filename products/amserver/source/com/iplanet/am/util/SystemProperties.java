@@ -22,22 +22,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SystemProperties.java,v 1.13 2008-07-23 17:21:56 veiming Exp $
+ * $Id: SystemProperties.java,v 1.14 2008-07-30 00:50:16 arviranga Exp $
  *
  */
 
 package com.iplanet.am.util;
 
-import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.common.configuration.ServerConfiguration;
 import com.sun.identity.security.AdminTokenAction;
-import com.sun.identity.setup.AMSetupServlet;
 import com.sun.identity.common.AttributeStruct;
 import com.sun.identity.common.PropertiesFinder;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.sm.SMSEntry;
-import com.sun.identity.sm.SMSException;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -133,9 +130,6 @@ public class SystemProperties {
     private static Map mapTagswap = new HashMap();
     private static Map tagswapValues;
 
-    private static Map cacheServerDefaults;
-    private static Map cacheSiteDefaults;
-    
     /**
      * Initialization to load the properties file for config information before
      * anything else starts.

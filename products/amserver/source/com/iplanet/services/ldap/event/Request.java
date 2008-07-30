@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Request.java,v 1.2 2008-06-25 05:41:38 qcheng Exp $
+ * $Id: Request.java,v 1.3 2008-07-30 00:50:15 arviranga Exp $
  *
  */
 
@@ -178,4 +178,22 @@ class Request {
         return str;
     }
 
+    public int hashCode() {
+        int hash = 3;
+        hash = 83 * hash + (this._listener != null ?
+            this._listener.getClass().getName().hashCode() : 0);
+        return hash;
+    }
+    
+    public boolean equals(Object obj) {
+        if (obj instanceof Request) {
+            // Check the class nane
+            Request r = (Request) obj;
+            if (_listener.getClass().getName().equals(
+                r._listener.getClass().getName())) {
+                return (true);
+            }
+        }
+        return (false);
+    }
 }

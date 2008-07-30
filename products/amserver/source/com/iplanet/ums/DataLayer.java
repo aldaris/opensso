@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataLayer.java,v 1.12 2008-06-25 05:41:44 qcheng Exp $
+ * $Id: DataLayer.java,v 1.13 2008-07-30 00:50:14 arviranga Exp $
  *
  */
 
@@ -1471,7 +1471,10 @@ public class DataLayer implements java.io.Serializable {
             debug.message("InitEventServiceThread:initializeEventService() - "
                 + "EventService thread getting  initialized ");
             try {
-                EventService.getEventService();
+                EventService es = EventService.getEventService();
+                if (!EventService.isThreadStarted()) {
+                    es.resetAllSearches(false);
+                }
             } catch (Exception e) {
                 // An Error occurred while intializing EventService
                 debug.error("InitEventServiceThread:run() Unable to "

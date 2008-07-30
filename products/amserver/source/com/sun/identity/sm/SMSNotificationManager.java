@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSNotificationManager.java,v 1.5 2008-07-19 12:56:16 arviranga Exp $
+ * $Id: SMSNotificationManager.java,v 1.6 2008-07-30 00:50:14 arviranga Exp $
  *
  */
 package com.sun.identity.sm;
@@ -76,7 +76,12 @@ public class SMSNotificationManager implements SMSObjectListener {
     static boolean isClient;
     
     private SMSNotificationManager() {
-        // Should be initialied only once
+        initializeProperties();
+    }
+    
+    protected void initializeProperties() {
+        // Check if notifications are obtained from the datastore
+        boolean previousDataStoreNotification = enableDataStoreNotification;
         enableDataStoreNotification = Boolean.parseBoolean(
             SystemProperties.get(Constants.SMS_ENABLE_DB_NOTIFICATION));
         // If not config time and in legacy mode, enable dataStoreNotification
@@ -105,7 +110,10 @@ public class SMSNotificationManager implements SMSObjectListener {
         // Register for callbacks if in client or if server should be
         // based on enableDataStoreNotification. In the case of legacy mode
         // registration for notification is handled by AMSDK code in DataLayer
-        if (cachedEnabled && (enableDataStoreNotification || isClient)) {
+        // Since configuration change observer is registered, check if status
+        // of datastore notification has changed
+        if (cachedEnabled && (enableDataStoreNotification || isClient) &&
+            (previousDataStoreNotification != enableDataStoreNotification)) {
             try {
                 object.registerCallbackHandler(this);
                 if (debug.messageEnabled()) {
@@ -117,8 +125,16 @@ public class SMSNotificationManager implements SMSObjectListener {
                 debug.error("SMSNotificationManager.init Error during " +
                     "notification registration", ex);
             }
+        } else if (previousDataStoreNotification !=
+            enableDataStoreNotification) {
+            // Deregister the callback handler from SMSObject
+            object.deregisterCallbackHandler(null);
+            if (debug.messageEnabled()) {
+                debug.message("SMSNotificationManager.init " +
+                    "deregistering for notification with: " +
+                    object.getClass().getName());
+            }
         }
-        
     }
     
     public static synchronized SMSNotificationManager getInstance() {

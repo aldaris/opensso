@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPEventManager.java,v 1.5 2008-07-18 06:58:19 arviranga Exp $
+ * $Id: LDAPEventManager.java,v 1.6 2008-07-30 00:50:14 arviranga Exp $
  *
  */
 
@@ -66,6 +66,10 @@ public class LDAPEventManager implements IDSEventListener {
     private Map listeners;
 
     static void addObjectChangeListener(SMSObjectListener cl) {
+        if (cl == null) {
+            debug.error("LDAPEventManager.addObjectChangeListener " +
+                "NULL object for change listener");
+        }
         changeListener = cl;
         if (debug.messageEnabled()) {
             debug.message("LDAPEventManager.addObjectChangeListener " +
@@ -81,17 +85,38 @@ public class LDAPEventManager implements IDSEventListener {
                     "property: " + Constants.EVENT_LISTENER_DISABLE_LIST);
             }
             // Initialize Event Service for persistent search
-            EventService.getEventService();
+            EventService.getEventService().resetAllSearches(false);
         } catch (EventException ex) {
             debug.error("LDAPEventManager.addObjectChangeListener " +
-                "Unable to set persistent searchs", ex);
+                "Unable to set persistent search", ex);
         } catch (LDAPException ex) {
             debug.error("LDAPEventManager.addObjectChangeListener " +
-                "Unable to set persistent searchs", ex);
+                "Unable to set persistent search", ex);
+        }
+    }
+    
+    static void removeObjectChangeListener() {
+        changeListener = null;
+        // Need to call EventService to disable SMS notifications
+        try {
+            EventService.getEventService().resetAllSearches(false);
+        } catch (EventException ex) {
+            debug.error("LDAPEventManager.removeObjectChangeListener " +
+                "Unable to remove persistent search", ex);
+        } catch (LDAPException ex) {
+            debug.error("LDAPEventManager.removeObjectChangeListener " +
+                "Unable to remove persistent search", ex);
         }
     }
 
     public synchronized void entryChanged(DSEvent dsEvent) {
+        if (changeListener == null) {
+            if (debug.warningEnabled()) {
+                debug.warning("LDAPEventManager.entryChanged " +
+                    "No listner objects registred");
+            }
+            return;
+        }
         // Process entry changed events
         int event = dsEvent.getEventType();
         String dn = dsEvent.getID();
@@ -124,6 +149,13 @@ public class LDAPEventManager implements IDSEventListener {
      * @see com.iplanet.services.ldap.event.IDSEventListener#allEntriesChanged()
      */
     public void allEntriesChanged() {
+        if (changeListener == null) {
+            if (debug.warningEnabled()) {
+                debug.warning("LDAPEventManager.entryChanged " +
+                    "No listner objects registred");
+            }
+            return;
+        }
         if (debug.warningEnabled()) {
             debug.warning("LDAPEventManager: received all entries "
                 + "changed event from EventService");

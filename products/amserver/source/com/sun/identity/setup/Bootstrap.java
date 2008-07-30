@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Bootstrap.java,v 1.12 2008-06-25 05:44:02 qcheng Exp $
+ * $Id: Bootstrap.java,v 1.13 2008-07-30 00:50:15 arviranga Exp $
  *
  */
 
@@ -47,6 +47,7 @@ import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSException;
+import com.sun.identity.sm.SMSPropertiesObserver;
 import com.sun.identity.sm.ServiceConfigManager;
 import java.io.BufferedReader;
 import java.io.File;
@@ -216,13 +217,18 @@ public class Bootstrap {
                 SystemProperties.initializeProperties(
                     properties, true, true);
                 DebugPropertiesObserver.getInstance().notifyChanges();
+                SMSPropertiesObserver.getInstance().notifyChanges();
                 SystemProperties.setServerInstanceName(instanceName);
 
-                ServiceConfigManager scm = new ServiceConfigManager(
-                    Constants.SVC_NAME_PLATFORM, (SSOToken)
-                        AccessController.doPrivileged(
-                        AdminTokenAction.getInstance()));
-                scm.addListener(ConfigurationObserver.getInstance());
+                // ConfigurationObserver is already added when 
+                // DebugPropertiesObserver.getInstance().notifyChanges();
+                // is called. Adding again causes 2 notification events
+                // to be sent.
+                // ServiceConfigManager scm = new ServiceConfigManager(
+                //    Constants.SVC_NAME_PLATFORM, (SSOToken)
+                //        AccessController.doPrivileged(
+                //        AdminTokenAction.getInstance()));
+                // scm.addListener(ConfigurationObserver.getInstance());
             }
         } catch (SMSException e) {
             //ignore. product is not configured yet.

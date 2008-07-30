@@ -22,24 +22,18 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FallBackManager.java,v 1.3 2008-06-25 05:42:25 qcheng Exp $
+ * $Id: FallBackManager.java,v 1.4 2008-07-30 00:50:16 arviranga Exp $
  *
  */
 
 package com.sun.identity.common;
 
 import java.util.*;
-import java.io.*;
-import com.sun.identity.common.LDAPConnPoolUtils;
-import com.sun.identity.common.LDAPConnectionPool;
-import com.sun.identity.common.GeneralTaskRunnable;
-import com.sun.identity.common.TaskRunnable;
 import com.sun.identity.shared.Constants;
 import com.iplanet.am.util.Debug;
 import netscape.ldap.LDAPConnection;
 import netscape.ldap.LDAPException;
 import com.iplanet.am.util.SystemProperties;
-import com.iplanet.services.ldap.event.EventException;
 import com.iplanet.services.ldap.event.EventService;
 
 
@@ -69,7 +63,7 @@ public class FallBackManager extends GeneralTaskRunnable {
             debug.message("FallBackManager:constructor().sleepTime in minutes."
                 + sleepTimeStr);
         }
-        if(sleepTimeStr != null && sleepTimeStr.length() > 0) {
+        if (sleepTimeStr != null && sleepTimeStr.length() > 0) {
             try {
                 sleepTime = Long.parseLong(sleepTimeStr);
             } catch(NumberFormatException nex) {

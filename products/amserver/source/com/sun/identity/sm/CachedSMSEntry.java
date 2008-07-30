@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CachedSMSEntry.java,v 1.10 2008-07-11 01:46:20 arviranga Exp $
+ * $Id: CachedSMSEntry.java,v 1.11 2008-07-30 00:50:14 arviranga Exp $
  *
  */
 
@@ -41,7 +41,6 @@ import netscape.ldap.util.DN;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.sun.corba.se.impl.orbutil.closure.Constant;
 import com.sun.identity.shared.Constants;
 import java.util.Collections;
 import java.util.HashMap;
@@ -359,12 +358,15 @@ public class CachedSMSEntry {
         String cacheEntry = (new DN(dn)).toRFCString().toLowerCase();
         CachedSMSEntry answer = (CachedSMSEntry) smsEntries.get(cacheEntry);
         if ((answer == null) || !answer.isValid()) {
+            // Construct the SMS entry. Should be outside the synchronized
+            // block since SMSEntry call delegation which in turn calls
+            // policy, idrepo, special repo and SMS again
+            CachedSMSEntry tmp = new CachedSMSEntry(new SMSEntry(t, dn));
             synchronized (smsEntries) {
                 if (((answer = (CachedSMSEntry) smsEntries.get(cacheEntry))
                     == null) || !answer.isValid()) {
-                    // Construct the SMS entry
-                    answer = new CachedSMSEntry(new SMSEntry(t, dn));
                     // Add it to cache
+                    answer = tmp;
                     smsEntries.put(cacheEntry, answer);
                 }
             }
@@ -385,6 +387,24 @@ public class CachedSMSEntry {
             sEntry.dn = dn;
         }
         return (answer);
+    }
+    
+    static void initializeProperties() {
+        // Initialize the TTL
+        String ttlEnabledString = SystemProperties.get(
+            Constants.SMS_CACHE_TTL_ENABLE, "false");
+        ttlEnabled = Boolean.parseBoolean(ttlEnabledString);
+        if (ttlEnabled) {
+            String cacheTime = SystemProperties.get(Constants.SMS_CACHE_TTL);
+            if (cacheTime != null) {
+                try {
+                    ttl = Long.parseLong(cacheTime);
+                } catch (NumberFormatException nfe) {
+                    SMSEntry.debug.error("CachedSMSEntry:init Invalid time " +
+                        "for SMS Cache TTL: " + cacheTime);
+                }
+            }
+        }
     }
 
     // Clears the cache
@@ -449,21 +469,6 @@ public class CachedSMSEntry {
                 UPDATE_METHOD, (Class[]) null);
         } catch (Exception e) {
             // Should not happen, ignore
-        }
-        // Initialize the TTL
-        String ttlEnabledString = SystemProperties.get(
-            Constants.SMS_CACHE_TTL_ENABLE, "false");
-        ttlEnabled = Boolean.parseBoolean(ttlEnabledString);
-        if (ttlEnabled) {
-            String cacheTime = SystemProperties.get(Constants.SMS_CACHE_TTL);
-            if (cacheTime != null) {
-                try {
-                    ttl = Long.parseLong(cacheTime);
-                } catch (NumberFormatException nfe) {
-                    SMSEntry.debug.error("CachedSMSEntry:init Invalid time " +
-                        "for SMS Cache TTL: " + cacheTime);
-                }
-            }
         }
     }
 }

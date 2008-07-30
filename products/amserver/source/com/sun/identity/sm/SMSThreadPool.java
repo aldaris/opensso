@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSThreadPool.java,v 1.1 2008-07-18 00:40:22 kenwho Exp $
+ * $Id: SMSThreadPool.java,v 1.2 2008-07-30 00:50:15 arviranga Exp $
  *
  */
 
@@ -32,8 +32,6 @@ import com.sun.identity.common.Constants;
 import com.sun.identity.common.ShutdownListener;
 import com.sun.identity.common.ShutdownManager;
 import com.sun.identity.shared.debug.Debug;
-import java.util.Iterator;
-import java.util.Set;
 
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.am.util.ThreadPool;
@@ -48,6 +46,9 @@ import com.iplanet.am.util.ThreadPoolException;
 public class SMSThreadPool {
     
     private static ThreadPool thrdPool;
+    private static ShutdownListener shutdownListener, newShutdownListener;
+    private static ThreadPool newThrdPool, oldThrdPool;
+    private static int poolSize;
     
     private static Debug debug = Debug.getInstance("amSMS");
 
@@ -57,34 +58,57 @@ public class SMSThreadPool {
 
     private static boolean initialized;
 
-    static void initialize() {
-        int poolSize;
+    static void initialize(boolean reinit) {
         // Check if already initialized
-        if (initialized)
+        if (initialized && !reinit) {
             return;
+        }
+        int newPoolSize = DEFAULT_POOL_SIZE;
         try {
-            poolSize = Integer.parseInt(SystemProperties.get(
+            newPoolSize = Integer.parseInt(SystemProperties.get(
                 Constants.SM_THREADPOOL_SIZE));
         } catch (Exception e) {
-            poolSize = DEFAULT_POOL_SIZE;
+            newPoolSize = DEFAULT_POOL_SIZE;
+        }
+        if (newPoolSize == poolSize) {
+            // No change in the pool size, return
+            return;
+        } else {
+            poolSize = newPoolSize;
         }
         if (debug.messageEnabled()) {
             debug.message("SMSThreadPool: poolSize=" + poolSize);
         }
-        thrdPool = new ThreadPool("smIdmThreadPool", poolSize,
-               DEFAULT_TRESHOLD, false, debug);
-        ShutdownManager.getInstance().addShutdownListener(
-               new ShutdownListener() {
-                   public void shutdown() {
-                       thrdPool.shutdown();
-                   }
-               }
-           );
-        initialized = true;
+        
+        // Create a new thread pool
+        newThrdPool = new ThreadPool("smIdmThreadPool",
+            poolSize, DEFAULT_TRESHOLD, false, debug);
+        // Create the shutdown hook
+        newShutdownListener = new ShutdownListener() {
+            public void shutdown() {
+                newThrdPool.shutdown();
+            }
+        };
+        // Register the shutdown hook
+        ShutdownManager.getInstance().addShutdownListener(newShutdownListener);
 
+        // Cleanup old thread pool if present
+        if (thrdPool != null) {
+            oldThrdPool = thrdPool;
+            thrdPool = newThrdPool;
+            if (shutdownListener != null) {
+                ShutdownManager.getInstance().removeShutdownListener(
+                    shutdownListener);
+            }
+            shutdownListener = newShutdownListener;
+            oldThrdPool.shutdown();
+        } else {
+            thrdPool = newThrdPool;
+            shutdownListener = newShutdownListener;
+        }
+        initialized = true;
     }
 
-    
     /**
      * Schdule a task for 
      * <code>SMSThreadPool</code> to run.
@@ -97,7 +121,7 @@ public class SMSThreadPool {
     public static boolean scheduleTask(Runnable task) {
         boolean success = true;
         if (!initialized) {
-            initialize(); 
+            initialize(false); 
         }
         try {
             thrdPool.run(task);

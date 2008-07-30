@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EventManager.java,v 1.5 2008-06-25 05:41:25 qcheng Exp $
+ * $Id: EventManager.java,v 1.6 2008-07-30 00:50:16 arviranga Exp $
  *
  */
 
@@ -105,6 +105,9 @@ class EventManager {
                         + " instance");
             }
             eventService = EventService.getEventService();
+            if (!EventService.isThreadStarted()) {
+                eventService.resetAllSearches(false);
+            }
         } catch (Exception e) {
             debug.error("EventManager.start() Unable to get EventService ", e);
             throw new AMEventManagerException(AMSDKBundle.getString("501"),

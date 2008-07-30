@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.40 2008-07-18 06:58:19 arviranga Exp $
+ * $Id: SMSEntry.java,v 1.41 2008-07-30 00:50:15 arviranga Exp $
  *
  */
 
@@ -207,29 +207,14 @@ public class SMSEntry implements Cloneable {
     }
     
     public static void initializeClass() {
-        // Check if backend has permission check enabled
-        String proxy = SystemProperties.get(DB_PROXY_ENABLE);
-        backendProxyEnabled = (proxy != null) && proxy.equalsIgnoreCase("true");
-
-        // Check if SMSEntries can be cached
-        String cacheEnabled = System.getProperty(
-            Constants.SDK_GLOBAL_CACHE_PROPERTY, SystemProperties.get(
-            Constants.SDK_GLOBAL_CACHE_PROPERTY, "true"));
-        if (cacheEnabled.equalsIgnoreCase("true")) {
-            cacheSMSEntries = true;
-        } else { // Global Property - set to false. Check component property
-            cacheEnabled = SystemProperties.get(Constants.SMS_CACHE_PROPERTY);
-            cacheSMSEntries = (cacheEnabled != null) &&
-                cacheEnabled.equalsIgnoreCase("true");
-        }
-        if (debug.messageEnabled()) {
-            debug.message("SMSEntry: cache enabled: " + cacheSMSEntries);
-        }
-
+        // Initialize the system properties
+        initializeProperties();
+        
         // Get an instance of SMSObject(can be SMSLDAP or SMSJAXRPC)
         // after the properties for cache/resourcebundle/internal users
         // are retrieved/initialized.
         initSMSObject();
+        
         // Cache internal users
         String adminUser = SystemProperties.get(AUTH_SUPER_USER, "");
         if (adminUser != null && adminUser.length() != 0) {
@@ -260,10 +245,34 @@ public class SMSEntry implements Cloneable {
         }
     }
     
+    protected static void initializeProperties() {
+        // Check if backend has permission check enabled
+        String proxy = SystemProperties.get(DB_PROXY_ENABLE);
+        backendProxyEnabled = (proxy != null) && proxy.equalsIgnoreCase("true");
+        if (debug.messageEnabled()) {
+            debug.message("SMSEntry: backend proxy enabled: " +
+                backendProxyEnabled);
+        }
+
+        // Check if SMSEntries can be cached
+        String cacheEnabled = SystemProperties.get(
+            Constants.SDK_GLOBAL_CACHE_PROPERTY, "true");
+        if (cacheEnabled.equalsIgnoreCase("true")) {
+            cacheSMSEntries = true;
+        } else { // Global Property - set to false. Check component property
+            cacheEnabled = SystemProperties.get(Constants.SMS_CACHE_PROPERTY);
+            cacheSMSEntries = (cacheEnabled != null) &&
+                cacheEnabled.equalsIgnoreCase("true");
+        }
+        if (debug.messageEnabled()) {
+            debug.message("SMSEntry: cache enabled: " + cacheSMSEntries);
+        }
+    }
+    
     private static void initSMSObject() {
         String smsClassName = SystemProperties.get(SMS_OBJECT_PROPERTY,
                 DEFAULT_SMS_CLASS_NAME);
-        Object[] args = { smsClassName };
+        // Object[] args = { smsClassName };
         try {
             tm = SSOTokenManager.getInstance();
             Class smsEntryClass = Class.forName(smsClassName);

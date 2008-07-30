@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EventService.java,v 1.13 2008-07-18 22:41:40 kenwho Exp $
+ * $Id: EventService.java,v 1.14 2008-07-30 00:50:15 arviranga Exp $
  *
  */
 
@@ -72,6 +72,7 @@ import com.iplanet.ums.IUMSConstants;
 import com.sun.identity.authentication.internal.AuthContext;
 import com.sun.identity.authentication.internal.AuthPrincipal;
 import com.sun.identity.idm.IdConstants;
+import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.security.ServerInstanceAction;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.sm.ServiceSchema;
@@ -154,39 +155,22 @@ public class EventService implements Runnable {
     protected static int _idleTimeOut = 0; // Idle timeout in minutes.
 
     protected static long _idleTimeOutMills;
+    
+    // List of know listeners. The order of the listeners is important
+    // since it is used to enable & disable the listeners
+    private static final String[] ALL_LISTENERS = {
+        "com.iplanet.am.sdk.ldap.ACIEventListener",
+        "com.iplanet.am.sdk.ldap.EntryEventListener",
+        "com.sun.identity.sm.ldap.LDAPEventManager"
+    };
 
-    protected static final String[] listeners = {
-            "com.sun.identity.sm.ldap.LDAPEventManager",
-            "com.iplanet.am.sdk.ldap.ACIEventListener",
-            "com.iplanet.am.sdk.ldap.EntryEventListener" };
+    protected static String[] listeners;
 
     protected static Hashtable _ideListenersMap = new Hashtable();   
     
     protected static volatile boolean _isThreadStarted = false;
     
     protected static volatile boolean _shutdownCalled = false;
-
-    static {
-        // Determine the Number of retries for Event Service Connections
-        _numRetries = getPropertyIntValue(EVENT_CONNECTION_NUM_RETRIES,
-                _numRetries);
-
-        // Determine the Event Service retry error codes
-        _retryInterval = getPropertyIntValue(EVENT_CONNECTION_RETRY_INTERVAL,
-                _retryInterval);
-
-        // Determine the Event Service retry error codes
-        _retryErrorCodes = getPropertyRetryErrorCodes(
-                EVENT_CONNECTION_ERROR_CODES);
-
-        // Determine the Idle time out value for Event Service (LB/Firewall)
-        // scenarios. Value == 0 imples no idle timeout.
-        _idleTimeOut = getPropertyIntValue(EVENT_IDLE_TIMEOUT_INTERVAL,
-                _idleTimeOut);
-        _idleTimeOutMills = _idleTimeOut * 60000;
-        
-        getListenerList();
-    }
 
     private static HashSet getPropertyRetryErrorCodes(String key) {
         HashSet codes = new HashSet();
@@ -225,47 +209,120 @@ public class EventService implements Runnable {
     }
     
     /**
-     * Determine the listener list based on the hidden property
+     * Determine the listener list based on the diable list property
+     * and SMS DataStore notification property in Realm mode
      */
     private static void getListenerList() {
         String list = SystemProperties.get(EVENT_LISTENER_DISABLE_LIST, "");
         if (debugger.messageEnabled()) {
             debugger.message("EventService.getListenerList(): " +
-                    EVENT_LISTENER_DISABLE_LIST + " = " + list);
+                    EVENT_LISTENER_DISABLE_LIST + ": " + list);
         }
-
-        // nothing will be disabled
-        if (list.length() == 0) {
-            return;
+        
+        boolean enableDataStoreNotification = Boolean.parseBoolean(
+            SystemProperties.get(Constants.SMS_ENABLE_DB_NOTIFICATION));
+        if (debugger.messageEnabled()) {
+            debugger.message("EventService.getListenerList(): " +
+                "com.sun.identity.sm.enableDataStoreNotification: " +
+                enableDataStoreNotification);
         }
-
-        StringTokenizer st = new StringTokenizer(list, ",");
+        
+        boolean configTime = Boolean.parseBoolean(SystemProperties.get(
+            Constants.SYS_PROPERTY_INSTALL_TIME));
+        if (debugger.messageEnabled()) {
+            debugger.message("EventService.getListenerList(): " +
+                Constants.SYS_PROPERTY_INSTALL_TIME + ": " + configTime);
+        }
+        
+        // Copy the default listeners
+        String[] tmpListeners = new String[ALL_LISTENERS.length];
+        for (int i = 0; i < ALL_LISTENERS.length; i++) {
+            tmpListeners[i] = ALL_LISTENERS[i];
+        }
+        
+        // Process the configured disabled list first
         boolean disableACI = false, disableUM = false, disableSM = false;
-        String listener = "";
-        while(st.hasMoreTokens()) {
-            listener = st.nextToken().trim();
-            if (listener.equalsIgnoreCase("aci")) {
-                listeners[0] = null;
-                disableACI = true;
-            } else if (listener.equalsIgnoreCase("um")) {
-                listeners[1] = null;
-                disableUM = true;
-            } else if (listener.equalsIgnoreCase("sm")) {
-                listeners[2] = null;
+        if (list.length() != 0) {
+            StringTokenizer st = new StringTokenizer(list, ",");
+            String listener = "";
+            while (st.hasMoreTokens()) {
+                listener = st.nextToken().trim();
+                if (listener.equalsIgnoreCase("aci")) {
+                    disableACI = true;
+                } else if (listener.equalsIgnoreCase("um")) {
+                    disableUM = true;
+                } else if (listener.equalsIgnoreCase("sm")) {
                     disableSM = true;
-            } else {
-                debugger.error("EventService.getListenerList() - " +
-                    "Invalid listener name: "+listener);
+                } else {
+                    debugger.error("EventService.getListenerList() - " +
+                        "Invalid listener name: " + listener);
+                }
             }
         }
+        
+        if (!disableUM || !disableACI) {
+            // Check if AMSDK is configured
+            boolean disableAMSDK = true;
+            if (!configTime) {
+                try {
+                    ServiceSchemaManager scm = new ServiceSchemaManager(
+                        getSSOToken(), IdConstants.REPO_SERVICE, "1.0");
+                    ServiceSchema idRepoSubSchema = scm.getOrganizationSchema();
+                    Set idRepoPlugins = idRepoSubSchema.getSubSchemaNames();
+                    if (idRepoPlugins.contains("amSDK")) {
+                        disableAMSDK = false;
+                    }
+                } catch (SMSException ex) {
+                    if (debugger.warningEnabled()) {
+                        debugger.warning("EventService.getListenerList() - " +
+                            "Unable to obtain idrepo service", ex);
+                    }
+                } catch (SSOException ex) {
+                    // Should not happen, ignore the exception
+                }
+            }
+            if (disableAMSDK) {
+                disableUM = true;
+                disableACI = true;
+                if (debugger.messageEnabled()) {
+                    debugger.message("EventService.getListener" +
+                        "List(): AMSDK is not configured or config time. " +
+                        "Disabling UM and ACI event listeners");
+                }
+            }
+        }
+        
+        // Verify if SMSnotification should be enabled
+        if (configTime || ServiceManager.isRealmEnabled()) {
+            disableSM = !enableDataStoreNotification;
+            if (debugger.messageEnabled()) {
+                debugger.message("EventService.getListenerList(): In realm " +
+                    "mode or config time, SMS listener is set to datastore " +
+                    "notification flag: " + enableDataStoreNotification);
+            }
+        }
+        
+        // Disable the selected listeners
+        if (disableACI) {
+            tmpListeners[0] = null;
+        }
+        if (disableUM) {
+            tmpListeners[1] = null;
+        }
+        if (disableSM) {
+            tmpListeners[2] = null;
+        }
+        listeners = tmpListeners;
 
-        // all disabled, signal to not start the thread
+        // if all disabled, signal to not start the thread
         if (disableACI && disableUM && disableSM) {
             if (debugger.messageEnabled()) {
                 debugger.message("EventService.getListenerList() - " +
                         "all listeners are disabled, EventService won't start");
                 }
             _allDisabled = true;
+        } else {
+            _allDisabled = false;
         }
     }
 
@@ -286,12 +343,17 @@ public class EventService implements Runnable {
     public synchronized static EventService getEventService()
             throws EventException, LDAPException {
         
-        if (_allDisabled || _shutdownCalled) {
+        if (_shutdownCalled) {
             return null;
         }
         
         // Make sure only one instance of this class is created.
         if (_instance == null) {
+            // Determine the Idle time out value for Event Service (LB/Firewall)
+            // scenarios. Value == 0 imples no idle timeout.
+            _idleTimeOut = getPropertyIntValue(EVENT_IDLE_TIMEOUT_INTERVAL,
+                _idleTimeOut);
+            _idleTimeOutMills = _idleTimeOut * 60000;
             if (_idleTimeOut == 0) {
                 _instance = new EventService();
             } else {
@@ -305,7 +367,6 @@ public class EventService implements Runnable {
                     }
                 }
             });
-            initListeners();
         }
         return _instance;
     }
@@ -342,7 +403,7 @@ public class EventService implements Runnable {
      * Adds a listener to the directory.
      * @supported.api
      */
-    public synchronized String addListener(SSOToken token,
+    protected synchronized String addListener(SSOToken token,
             IDSEventListener listener, String base, int scope, String filter,
             int operations) throws LDAPException, EventException {
 
@@ -353,46 +414,15 @@ public class EventService implements Runnable {
         
         LDAPConnection lc = null;
         try {
-            // This amSDK plugin check is to avoid getting
-            // connection and initiate these two listeners if amSDK plugin
-            // is not loaded.
-            // "com.iplanet.am.sdk.ldap.ACIEventListener" and
-            // "com.iplanet.am.sdk.ldap.EntryEventListener"
-
             // Check for SMS listener and use "sms" group if present
             if ((listener.getClass().getName().equals(
                 "com.sun.identity.sm.ldap.LDAPEventManager")) &&
                 (cm.getServerGroup("sms") != null)) {
-                    lc = cm.getNewConnection("sms", LDAPUser.Type.AUTH_ADMIN);
+                lc = cm.getNewConnection("sms", LDAPUser.Type.AUTH_ADMIN);
 
             } else {
-                // Determine if called during configuration time.
-                // By default AMSDK i.e., UMS is not configured and hence
-                // should not initialize listeners
-                if (!Boolean.parseBoolean(SystemProperties
-                    .get(Constants.SYS_PROPERTY_INSTALL_TIME))) {
-                    ServiceSchemaManager scm = new ServiceSchemaManager(token,
-                        IdConstants.REPO_SERVICE, "1.0");
-                    ServiceSchema idRepoSubSchema = scm.getOrganizationSchema();
-                    Set idRepoPlugins = idRepoSubSchema.getSubSchemaNames();
-                    if (idRepoPlugins.contains("amSDK") ||
-                        ServiceManager.isRealmEnabled()) {
-                        // if amSDK plugin exists, use admin connection from
-                        // 'default' servergroup for all um,aci,sm listeners.
-                        lc = cm.getNewAdminConnection();
-                    } else {
-                        return "0";
-                    }
-                } else {
-                    return "0";
-                }
+                lc = cm.getNewAdminConnection();
             }
-        } catch (SSOException ssoe) {
-            throw new EventException(i18n
-                    .getString(IUMSConstants.DSCFG_CONNECTFAIL), ssoe);
-        } catch (SMSException smse) {
-            throw new EventException(i18n
-                    .getString(IUMSConstants.DSCFG_CONNECTFAIL), smse);
         } catch (LDAPServiceException le) {
             throw new EventException(i18n
                     .getString(IUMSConstants.DSCFG_CONNECTFAIL), le);
@@ -479,56 +509,6 @@ public class EventService implements Runnable {
         return _isThreadStarted;
     }
       
-    protected static void initListeners() {
-        int size = listeners.length;
-        for (int i = 0; i < size; i++){
-            String l1 = listeners[i];
-            
-            if (l1 == null ) {
-                continue;
-            }
-            
-            try {
-                if (l1.equals("com.sun.identity.sm.ldap.LDAPEventManager")) {
-                    boolean enableDataStoreNotification =
-                        Boolean.parseBoolean(SystemProperties.get(
-                        Constants.SMS_ENABLE_DB_NOTIFICATION));
-                    if (debugger.messageEnabled()) {
-                        debugger.message("EventService.initListeners()-" +
-                            "com.sun.identity.sm.enableDataStoreNotification:"
-                            + enableDataStoreNotification);
-                    }
-                    
-                    // During configuration SMS will not be initialized
-                    // and should not call ServiceManager
-                    // datastore may not be correctly setup
-                    boolean configTime = Boolean.parseBoolean(SystemProperties
-                        .get(Constants.SYS_PROPERTY_INSTALL_TIME));
-                    if (!enableDataStoreNotification && (configTime || 
-                        ServiceManager.isRealmEnabled())) {
-                        debugger.message("EventService.initListeners() - " +
-                            "Skipping SMS's ldap.LDAPEventManager");
-                        continue;
-                    }
-                }
-                Class thisClass = Class.forName(l1);
-                IDSEventListener listener = (IDSEventListener)
-                    thisClass.newInstance();
-                _ideListenersMap.put(l1, listener);
-                _instance.addListener(getSSOToken(), listener, 
-                    listener.getBase(), listener.getScope(), 
-                    listener.getFilter(), listener.getOperations());
-                if (debugger.messageEnabled()) {
-                    debugger.message("EventService.initListeners() - " +
-                            "successfully initialized listener: " + l1);
-                }
-            } catch (Exception e) {
-                debugger.error("EventService.initListeners() Unable to start " 
-                        + "listener " + l1, e);
-            }
-        }
-    }
-
     /**
      * Main monitor thread loop. Wait for persistent search change notifications
      *
@@ -576,6 +556,8 @@ public class EventService implements Runnable {
                             debugger.warning("EventService.run() LDAPException "
                                 + "received:", ex);
                         }
+                        _retryErrorCodes = getPropertyRetryErrorCodes(
+                            EVENT_CONNECTION_ERROR_CODES);
                         if (_retryErrorCodes.contains("" + resultCode)) {
                             resetErrorSearches(true);
                         } else { // Some other network error
@@ -625,7 +607,7 @@ public class EventService implements Runnable {
     } // end of thread
     
     private static synchronized void startMonitorThread() {
-        if (_monitorThread == null || (!_monitorThread.isAlive()) &&
+        if (((_monitorThread == null) || !_monitorThread.isAlive()) &&
             !_shutdownCalled) {
             // Even if the monitor thread is not alive, we should use the
             // same instance of Event Service object (as it maintains all
@@ -735,7 +717,8 @@ public class EventService implements Runnable {
      */    
     protected void resetErrorSearches(boolean clearCaches) {
         
-        Hashtable tmpReqList = new Hashtable(_requestList);
+        Hashtable tmpReqList = new Hashtable();
+        tmpReqList.putAll(_requestList);
        
         int[] ids = _msgQueue.getMessageIDs();
         for (int i = 0; i < ids.length; i++) {
@@ -750,6 +733,10 @@ public class EventService implements Runnable {
                 req.getListener().allEntriesChanged();
             }
         }
+        _numRetries = getPropertyIntValue(EVENT_CONNECTION_NUM_RETRIES,
+            _numRetries);
+        _retryInterval = getPropertyIntValue(EVENT_CONNECTION_RETRY_INTERVAL,
+            _retryInterval);
         RetryTask task = new RetryTask(tmpReqList, _numRetries);
         SystemTimer.getTimer().schedule(task, new Date(((
             System.currentTimeMillis() + _retryInterval) / 1000) * 1000));
@@ -762,28 +749,98 @@ public class EventService implements Runnable {
      * @return
      */    
     public synchronized boolean resetAllSearches(boolean clearCaches) {
-
         if (_shutdownCalled) {
             return false;
         }
-        Hashtable tmpReqList = new Hashtable(_requestList);
+        
+        // Make a copy of the existing psearches
+        Hashtable tmpReqList = new Hashtable();
+        tmpReqList.putAll(_requestList);
         _requestList.clear(); // Will be updated in addListener method
         Collection reqList = tmpReqList.values();
-
-        int retry = 1;
-        boolean doItAgain = ((_numRetries == -1) || ((_numRetries != 0)
-                && (retry <= _numRetries))) ? true
-                : false;
-
-        if (clearCaches) {
+        
+        // Clear the cache, if parameter is set
+        if (clearCaches && !reqList.isEmpty()) {
             for (Iterator iter = reqList.iterator(); iter.hasNext();) {
                 Request req = (Request) iter.next();
                 IDSEventListener el = req.getListener();
                 el.allEntriesChanged();
             }
         }
-        while (doItAgain) { // Re-try starts from 0.
-            sleepRetryInterval();
+        
+        // Get the list of psearches to be enabled
+        getListenerList();
+        if (_allDisabled) {
+            // All psearches are disabled, remove listeners if any and return
+            if (debugger.messageEnabled()) {
+                debugger.message("EventService.resetAllSearches(): " +
+                    "All psearches have been disabled");
+            }
+            if (!reqList.isEmpty()) {
+                for (Iterator iter = reqList.iterator(); iter.hasNext();) {
+                    Request req = (Request) iter.next();
+                    removeListener(req);
+                    if (debugger.messageEnabled()) {
+                        debugger.message("EventService.resetAllSearches(): " +
+                            "Psearch disabled: " +
+                            req.getListener().getClass().getName());
+                    }
+                }
+            }
+            return true;
+        }
+        
+        // Psearches are enabled, verify and reinitilize
+        // Maintain the listeners to reinitialized in tmpListenerList
+        Set tmpListenerList = new HashSet();
+        Set newListenerList = new HashSet();
+        for (int i = 0; i < listeners.length; i++) {
+            if (listeners[i] != null) {
+                // Check if the listener is present in reqList
+                boolean present = false;
+                for (Iterator iter = reqList.iterator(); iter.hasNext();) {
+                    Request req = (Request) iter.next();
+                    IDSEventListener el = req.getListener();
+                    String listenerClass = el.getClass().getName();
+                    if (listenerClass.equals(listeners[i])) {
+                        present = true;
+                        iter.remove();
+                        tmpListenerList.add(req);
+                    }
+                }
+                if (!present) {
+                    // Add the listner object
+                    if (debugger.messageEnabled()) {
+                        debugger.message("EventService.resetAllSearches(): " +
+                            "Psearch being added: " + listeners[i]);
+                    }
+                    newListenerList.add(listeners[i]);
+                }
+            }
+        }
+        // Remove the listeners not configured
+        if (!reqList.isEmpty()) {
+            for (Iterator iter = reqList.iterator(); iter.hasNext();) {
+                Request req = (Request) iter.next();
+                removeListener(req);
+                if (debugger.messageEnabled()) {
+                    debugger.message("EventService.resetAllSearches(): " +
+                        "Psearch disabled due to configuration changes: " +
+                        req.getListener().getClass().getName());
+                }
+            }
+        }
+        // Reset the requested list
+        reqList = tmpListenerList;
+        
+        // Determine the number of retry attempts in case of failure
+        // If retry property is set to -1, retries will be done infinitely
+        _numRetries = getPropertyIntValue(EVENT_CONNECTION_NUM_RETRIES,
+            _numRetries);
+        int retry = 1;
+        boolean doItAgain = ((_numRetries == -1) || ((_numRetries != 0) &&
+            (retry <= _numRetries))) ? true : false;
+        while (doItAgain) {
             if (debugger.messageEnabled()) {
                 String str = (_numRetries == -1) ? "indefinitely" : Integer
                     .toString(retry);
@@ -794,10 +851,6 @@ public class EventService implements Runnable {
             // Note: Avoid setting the messageQueue to null and just
             // try to disconnect the connections. That way we can be sure
             // that we have not lost any responses.
-
-            // we want to do the addListener in a seperate loop from the
-            // above removeListener because we want to remove all the
-            // listener first then do the add.
             for (Iterator iter = reqList.iterator(); iter.hasNext();) {
                 try {
                     Request request = (Request) iter.next();
@@ -826,25 +879,65 @@ public class EventService implements Runnable {
                     }
                 }       
             }
-            if (reqList.isEmpty()) {
+            
+            // Check if new listeners need to be added
+            for (Iterator iter = newListenerList.iterator(); iter.hasNext();) {
+                String listnerClass = (String) iter.next();
+                try {
+                    Class thisClass = Class.forName(listnerClass);
+                    IDSEventListener listener = (IDSEventListener)
+                        thisClass.newInstance();
+                    _ideListenersMap.put(listnerClass, listener);
+                    _instance.addListener(getSSOToken(), listener,
+                        listener.getBase(), listener.getScope(),
+                        listener.getFilter(), listener.getOperations());
+                    if (debugger.messageEnabled()) {
+                        debugger.message("EventService.resetAllSearches() - " +
+                            "successfully initialized: " + listnerClass);
+                    }
+                    iter.remove();
+                } catch (Exception e) {
+                    debugger.error("EventService.resetAllSearches() " +
+                        "Unable to start listener " + listnerClass, e);
+                }
+            }
+            
+            if (reqList.isEmpty() && newListenerList.isEmpty()) {
                 return true;
             } else {
                 if (_numRetries != -1) {
                    doItAgain = (++retry <= _numRetries) ? true : false;
                    if (!doItAgain) {
-                       // remove the requests fail to be resetted eventually.
+                       // remove the requests fail to be resetted
+                       // would try to reinitialized the next time
                        for (Iterator iter = reqList.iterator();
                            iter.hasNext();) {
-                           removeListener((Request) iter.next());
+                           Request req = (Request) iter.next();
+                           removeListener(req);
+                           debugger.error("EventService.resetAll" +
+                               "Searches(): unable to restart: " +
+                               req.getListener().getClass().getName());
+                       }
+                       for (Iterator iter = newListenerList.iterator();
+                           iter.hasNext();) {
+                           String req = (String) iter.next();
+                           debugger.error("EventService.resetAll" +
+                               "Searches(): unable add listener: " + req);
                        }
                    }
                 }
+            }
+            if (doItAgain) {
+                // Sleep before retry
+                sleepRetryInterval();
             }
         } // end while loop
         return false;
     }
        
     protected void sleepRetryInterval() {
+        _retryInterval = getPropertyIntValue(EVENT_CONNECTION_RETRY_INTERVAL,
+            _retryInterval);
         try {
             Thread.sleep(_retryInterval);
         } catch (InterruptedException ie) {
@@ -887,7 +980,8 @@ public class EventService implements Runnable {
      * on all events.
      */    
     protected void processNetworkError(Exception ex) {
-        Hashtable tmpRequestList = new Hashtable(_requestList);
+        Hashtable tmpRequestList = new Hashtable();
+        tmpRequestList.putAll(_requestList);
         int[] ids = _msgQueue.getMessageIDs();
         for (int i = 0; i < ids.length; i++) {
             tmpRequestList.remove(Integer.toString(ids[i]));
@@ -906,6 +1000,8 @@ public class EventService implements Runnable {
      */    
     protected boolean processResponseMessage(LDAPResponse rsp,
         Request request) {
+        _retryErrorCodes = getPropertyRetryErrorCodes(
+            EVENT_CONNECTION_ERROR_CODES);
         if (_retryErrorCodes.contains("" + rsp.getResultCode())) {
             if (debugger.messageEnabled()) {
                 debugger.message("EventService.processResponseMessage() - "
@@ -991,19 +1087,8 @@ public class EventService implements Runnable {
     }
     
     protected static SSOToken getSSOToken() throws SSOException {
-        try {
-            DSConfigMgr cfgMgr = DSConfigMgr.getDSConfigMgr();
-            ServerInstance serInstance = cfgMgr
-                    .getServerInstance(LDAPUser.Type.AUTH_ADMIN);
-            AuthPrincipal user = new AuthPrincipal(serInstance.getAuthID());
-            String adminPW = (String) AccessController
-                    .doPrivileged(new ServerInstanceAction(serInstance));
-            AuthContext authCtx = new AuthContext(user, adminPW.toCharArray());
-            return (authCtx.getSSOToken());
-        } catch (Exception e) {
-            throw new SSOException(SSOProviderBundle.rbName, "invalidadmin",
-                    null);
-        }
+        return ((SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance()));
     }
 
     /**
@@ -1051,7 +1136,9 @@ public class EventService implements Runnable {
         private int retry;
         
         public RetryTask(Map requests, int numOfRetries) {
-            this.runPeriod = (long) EventService._retryInterval;
+            
+            this.runPeriod = getPropertyIntValue(
+                EVENT_CONNECTION_RETRY_INTERVAL, EventService._retryInterval);
             this.requests = requests;
             this.numOfRetries = numOfRetries;
             this.retry = 1;
@@ -1064,10 +1151,13 @@ public class EventService implements Runnable {
                 try {
                     // First add a new listener and then remove the old one
                     // that we do don't loose any responses to the message
-                    // Queue.
-                    addListener(req.getRequester(), req.getListener(),
-                        req.getBaseDn(), req.getScope(), 
-                        req.getFilter(), req.getOperations());
+                    // Queue. However before adding check if request list
+                    // already has this listener initialized
+                    if (!_requestList.containsValue(req)) {
+                        addListener(req.getRequester(), req.getListener(),
+                            req.getBaseDn(), req.getScope(),
+                            req.getFilter(), req.getOperations());
+                    }
                     removeListener(req);
                     iter.remove();
                 } catch (Exception e) {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSLdapObject.java,v 1.17 2008-07-18 06:58:19 arviranga Exp $
+ * $Id: SMSLdapObject.java,v 1.18 2008-07-30 00:50:13 arviranga Exp $
  *
  */
 
@@ -873,6 +873,10 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
         throws SMSException {
         LDAPEventManager.addObjectChangeListener(changeListener);
     }
+    
+     public void deregisterCallbackHandler(String id) {
+         LDAPEventManager.removeObjectChangeListener();
+     }
 
    // Method to convert Map to LDAPAttributeSet
     private static LDAPAttributeSet copyMapToAttrSet(Map attrs) {

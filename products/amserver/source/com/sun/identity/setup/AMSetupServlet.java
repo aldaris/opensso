@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.82 2008-07-29 20:13:20 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.83 2008-07-30 00:50:15 arviranga Exp $
  *
  */
 
@@ -72,6 +72,7 @@ import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.CachedSMSEntry;
 import com.sun.identity.setup.HttpServletRequestWrapper;
 
+import com.sun.identity.sm.SMSPropertiesObserver;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
@@ -628,12 +629,16 @@ public class AMSetupServlet extends HttpServlet {
                 SystemProperties.CONFIG_FILE_NAME);
             Properties propAMConfig = ServerConfiguration.getProperties(
                 strAMConfigProperties);
-            String serverInstanceName = serverURL + deployuri;
             // Set the install property since reInitConfigProperties
             // initializes SMS which inturn initializes EventService
-            System.setProperty(Constants.SYS_PROPERTY_INSTALL_TIME, "true");
+            propAMConfig.put(Constants.SYS_PROPERTY_INSTALL_TIME, "true");
+            String serverInstanceName = serverURL + deployuri;
             reInitConfigProperties(serverInstanceName,
                 propAMConfig, strServerConfigXML);
+            // SystemProperties gets reinitialized and installTime property
+            // has to set again
+            SystemProperties.initializeProperties(
+                Constants.SYS_PROPERTY_INSTALL_TIME, "true");
             SetupProgress.reportEnd("emb.done", null);
             
             SSOToken adminSSOToken = getAdminSSOToken();
@@ -649,8 +654,8 @@ public class AMSetupServlet extends HttpServlet {
             // SMS in cases where not needed, and to denote that service  
             // registration got completed during configuration phase and it 
             // has passed installtime.
-            System.setProperty(Constants.SYS_PROPERTY_INSTALL_TIME, "false");
-            
+            SystemProperties.initializeProperties(
+                Constants.SYS_PROPERTY_INSTALL_TIME, "false");
             configureServerInstance(adminSSOToken, serverInstanceName,
                 strAMConfigProperties, isDITLoaded, basedir, strServerConfigXML,
                 propAMConfig, map);
@@ -866,6 +871,7 @@ public class AMSetupServlet extends HttpServlet {
         SMSAuthModule.initialize();
         SystemProperties.initializeProperties(prop, true, true);
         DebugPropertiesObserver.getInstance().notifyChanges();
+        SMSPropertiesObserver.getInstance().notifyChanges();
         
         List plugins = getConfigPluginClasses();
         Map map = ServicesDefaultValues.getDefaultValues();
