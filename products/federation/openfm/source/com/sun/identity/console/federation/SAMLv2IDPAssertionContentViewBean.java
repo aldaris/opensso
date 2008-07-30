@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2IDPAssertionContentViewBean.java,v 1.3 2008-06-25 05:49:37 qcheng Exp $
+ * $Id: SAMLv2IDPAssertionContentViewBean.java,v 1.4 2008-07-30 21:43:56 babysunil Exp $
  *
  */
 package com.sun.identity.console.federation;
@@ -260,9 +260,11 @@ public class SAMLv2IDPAssertionContentViewBean extends SAMLv2Base {
                     realm, entityName), false, model);
             
             //retrieve the extended metadata values from the property sheet
-            Map idpExtValues = ps.getAttributeValues(
+            Map idpExtValues = getExtendedValues();
+            Map new_idpExtValues = ps.getAttributeValues(
                 model.getIDPEXACDataMap(), false, model);
-            
+            idpExtValues.putAll(new_idpExtValues);
+ 
             //save the standard metadata values for the Idp
               model.setIDPStdAttributeValues(realm, 
                   entityName, idpStdValues, idpExtValues, location);

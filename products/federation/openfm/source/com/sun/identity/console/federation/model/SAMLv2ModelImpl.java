@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ModelImpl.java,v 1.30 2008-07-28 16:58:37 babysunil Exp $
+ * $Id: SAMLv2ModelImpl.java,v 1.31 2008-07-30 21:43:18 babysunil Exp $
  *
  */
 
@@ -87,14 +87,14 @@ import java.math.BigInteger;
 
 public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
     private SAML2MetaManager metaManager;
-    private static Map extendedMetaIdpMap = new HashMap(46);
+    private static Map extendedMetaIdpMap = new HashMap(48);
     private static Map extendedACMetaIdpMap = new HashMap(34);
-    private static Map extendedAPMetaIdpMap = new HashMap(12);
+    private static Map extendedAPMetaIdpMap = new HashMap(14);
     private static Map extendedSMetaIdpMap = new HashMap(2);
     private static Map extendedAdMetaIdpMap = new HashMap(6);
-    private static Map extendedMetaSpMap = new HashMap(56);
+    private static Map extendedMetaSpMap = new HashMap(58);
     private static Map extendedACMetaSpMap = new HashMap(34);
-    private static Map extendedAPMetaSpMap = new HashMap(26);
+    private static Map extendedAPMetaSpMap = new HashMap(28);
     private static Map extendedSMetaSpMap = new HashMap(2);
     private static Map extendedAdMetaSpMap = new HashMap(20);
     private static Map xacmlPDPExtendedMeta = new HashMap(18);
@@ -131,6 +131,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         extendedMetaIdpMap.put(BOOT_STRAP_ENABLED, Collections.EMPTY_SET);
         extendedMetaIdpMap.put(ARTIF_RESOLVE_SIGN, Collections.EMPTY_SET);
         extendedMetaIdpMap.put(AUTH_URL, Collections.EMPTY_SET);
+        extendedMetaIdpMap.put(APP_LOGOUT_URL, Collections.EMPTY_SET);
         extendedMetaIdpMap.put(ASSERTION_CACHE_ENABLED,
                 Collections.EMPTY_SET);
         
@@ -172,6 +173,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                 Collections.EMPTY_SET);
         extendedMetaSpMap.put(SAML2_AUTH_MODULE, Collections.EMPTY_SET);
         extendedMetaSpMap.put(LOCAL_AUTH_URL, Collections.EMPTY_SET);
+        extendedMetaSpMap.put(APP_LOGOUT_URL, Collections.EMPTY_SET);
         extendedMetaSpMap.put(INTERMEDIATE_URL, Collections.EMPTY_SET);
         extendedMetaSpMap.put(DEFAULT_RELAY_STATE, Collections.EMPTY_SET);
         extendedMetaSpMap.put(ASSERT_TIME_SKEW, Collections.EMPTY_SET);
@@ -241,6 +243,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         extendedAPMetaIdpMap.put(IDP_AUTO_FED_ATTR, Collections.EMPTY_SET);
         extendedAPMetaIdpMap.put(IDP_ACCT_MAPPER, Collections.EMPTY_SET);
         extendedAPMetaIdpMap.put(AUTH_URL, Collections.EMPTY_SET);
+        extendedAPMetaIdpMap.put(APP_LOGOUT_URL, Collections.EMPTY_SET);
     }
     
     //extended Services metadata attributes for idp only    
@@ -293,6 +296,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
        extendedAPMetaSpMap.put(SP_ACCT_MAPPER, Collections.EMPTY_SET);
        extendedAPMetaSpMap.put(TRANSIENT_USER, Collections.EMPTY_SET);
        extendedAPMetaSpMap.put(LOCAL_AUTH_URL, Collections.EMPTY_SET);
+       extendedAPMetaSpMap.put(APP_LOGOUT_URL, Collections.EMPTY_SET);
        extendedAPMetaSpMap.put(INTERMEDIATE_URL, Collections.EMPTY_SET);
        extendedAPMetaSpMap.put(DEFAULT_RELAY_STATE, Collections.EMPTY_SET);
        extendedAPMetaSpMap.put(SAML2_AUTH_MODULE, Collections.EMPTY_SET);
@@ -1614,33 +1618,28 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
             Map values,
             String role
             ) throws JAXBException, AMConsoleException {
-            List attrList = baseConfig.getAttribute();
-            
-            //to handle cases from common tasks page
-            if ((attrList.size() == 1) && 
-                    (role.equals(EntityModel.IDENTITY_PROVIDER))) 
-            {
-                baseConfig = addAttributeType(extendedMetaIdpMap, baseConfig);
-                attrList = baseConfig.getAttribute();
-            } else if ((attrList.size() == 1) && 
-                    (role.equals(EntityModel.SERVICE_PROVIDER))) 
-            {
-                baseConfig = addAttributeType(extendedMetaSpMap, baseConfig);
-                attrList = baseConfig.getAttribute();
-            }
-            if (attrList.size() > 1) {
-                for (Iterator it = attrList.iterator(); it.hasNext(); ) {
-                    AttributeElement avpnew = (AttributeElement)it.next();
-                    String name = avpnew.getName();                    
-                    if (values.keySet().contains(name)) {
-                        Set set = (Set)values.get(name);                        
-                        if (set != null) {
-                            avpnew.getValue().clear();
-                            avpnew.getValue().addAll(set);
-                        }
-                    }
+        List attrList = baseConfig.getAttribute();
+        
+        if (role.equals(EntityModel.IDENTITY_PROVIDER)) {
+            attrList.clear();
+            baseConfig = addAttributeType(extendedMetaIdpMap, baseConfig);
+            attrList = baseConfig.getAttribute();
+        } else if (role.equals(EntityModel.SERVICE_PROVIDER)) {
+            attrList.clear();
+            baseConfig = addAttributeType(extendedMetaSpMap, baseConfig);
+            attrList = baseConfig.getAttribute();
+        }
+        for (Iterator it = attrList.iterator(); it.hasNext(); ) {
+            AttributeElement avpnew = (AttributeElement)it.next();
+            String name = avpnew.getName();
+            if (values.keySet().contains(name)) {
+                Set set = (Set)values.get(name);
+                if (set != null) {
+                    avpnew.getValue().clear();
+                    avpnew.getValue().addAll(set);
                 }
             }
+        }
     }
     
     
@@ -1669,7 +1668,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         }
         
     }
-    
+
     /**
      * Saves the NameIdFormat.
      *

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Model.java,v 1.23 2008-07-28 16:58:26 babysunil Exp $
+ * $Id: SAMLv2Model.java,v 1.24 2008-07-30 21:43:08 babysunil Exp $
  *
  */
 
@@ -180,6 +180,7 @@ public interface SAMLv2Model
         "wantArtifactResolveSigned";
     public static final String AUTH_URL =
         "AuthUrl";
+    public static final String APP_LOGOUT_URL = "appLogoutUrl";
     public static final String ASSERTION_CACHE_ENABLED =
         "assertionCacheEnabled";
     public static final String IDP_META_ALIAS =

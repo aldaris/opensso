@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySAMLv2SPAssertionProcessingHosted.xml,v 1.4 2008-07-24 17:53:18 babysunil Exp $
+   $Id: propertySAMLv2SPAssertionProcessingHosted.xml,v 1.5 2008-07-30 21:46:53 babysunil Exp $
 
 -->
 
@@ -124,38 +124,47 @@
                 <fieldhelp name="helpSPTransientUser" defaultValue="samlv2sp.attribute.help.SPTransientUser" />
             </property>
         </section>
-<section name="url" defaultValue="samlv2sp.provider.section.title.spurl" >        
-        <property>
-            <ccgroup> 
-                <property>
-                    <label name="lblSPlocalAuthURL"
-                           defaultValue=
-                           "samlv2sp.attribute.label.splocalauthurl" 
-                           labelFor="localAuthURL" />
-                    <cc name="localAuthURL" 
-                        tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                        <attribute name="size" value="75" />
-                        <attribute name="autoSubmit" value="false" />
-                        <attribute name="localizeDisplayFieldValue" value="false" />
-                    </cc>
-                    <fieldhelp name="helpSPlocalAuthURL" defaultValue="samlv2sp.attribute.help.SPlocalAuthURL" />
-                </property>
-                <property>
-                    <label name="lblSPintermediateUrl"
-                           defaultValue=
-                           "samlv2sp.attribute.label.spintermediateurl" 
-                           labelFor="intermediateUrl" />
-                    <cc name="intermediateUrl" 
-                        tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                        <attribute name="size" value="75" />
-                        <attribute name="autoSubmit" value="false" />
-                        <attribute name="localizeDisplayFieldValue" value="false" />
-                    </cc>
-                    <fieldhelp name="helpSPintermediateUrl" defaultValue="samlv2sp.attribute.help.SPintermediateUrl" />
-                </property>
-            </ccgroup>   
-        </property>
-    </section>           
+        <section name="url" defaultValue="samlv2sp.provider.section.title.spurl" >        
+            <property>
+                <ccgroup> 
+                    <property>
+                        <label name="lblSPlocalAuthURL"
+                               defaultValue=
+                               "samlv2sp.attribute.label.splocalauthurl" 
+                               labelFor="localAuthURL" />
+                        <cc name="localAuthURL" 
+                            tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                            <attribute name="size" value="75" />
+                            <attribute name="autoSubmit" value="false" />
+                            <attribute name="localizeDisplayFieldValue" value="false" />
+                        </cc>
+                        <fieldhelp name="helpSPlocalAuthURL" defaultValue="samlv2sp.attribute.help.SPlocalAuthURL" />
+                    </property>
+                    <property>
+                        <label name="lblSPintermediateUrl"
+                               defaultValue=
+                               "samlv2sp.attribute.label.spintermediateurl" 
+                               labelFor="intermediateUrl" />
+                        <cc name="intermediateUrl" 
+                            tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                            <attribute name="size" value="75" />
+                            <attribute name="autoSubmit" value="false" />
+                            <attribute name="localizeDisplayFieldValue" value="false" />
+                        </cc>
+                        <fieldhelp name="helpSPintermediateUrl" defaultValue="samlv2sp.attribute.help.SPintermediateUrl" />
+                    </property>
+                    <property>
+                        <label name="lblappLogoutUrl" defaultValue="samlv2idp.attribute.label.appLogoutUrl" labelFor="appLogoutUrl" />
+                        <cc name="appLogoutUrl" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+                            <attribute name="size" value="105" />
+                            <attribute name="autoSubmit" value="false" />
+                            <attribute name="localizeDisplayFieldValue" value="false" />
+                        </cc>
+                        <fieldhelp name="helpIdpappLogoutUrl" defaultValue="samlv2idp.attribute.help.idpappLogoutUrl" />
+                    </property>
+                </ccgroup>   
+            </property>
+        </section>           
     <section name="SPdefaultRelayState" defaultValue="samlv2sp.attribute.label.spdefaultrelaystate" >
         <property>
             <cc name="defaultRelayState" 

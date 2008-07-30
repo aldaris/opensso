@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySAMLv2IDPAssertionProcessingHosted.xml,v 1.4 2008-06-25 05:51:06 qcheng Exp $
+   $Id: propertySAMLv2IDPAssertionProcessingHosted.xml,v 1.5 2008-07-30 21:46:27 babysunil Exp $
 
 -->
 
@@ -89,11 +89,20 @@
         <property>
             <label name="lblAuthUrl" defaultValue="samlv2idp.attribute.label.authUrl" labelFor="AuthUrl" />
             <cc name="AuthUrl" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
-                <attribute name="size" value="75" />
+                <attribute name="size" value="105" />
                 <attribute name="autoSubmit" value="false" />
                 <attribute name="localizeDisplayFieldValue" value="false" />
             </cc>
             <fieldhelp name="helpIdpAuthUrl" defaultValue="samlv2idp.attribute.help.idpAuthUrl" />
+        </property>
+        <property>
+            <label name="lblappLogoutUrl" defaultValue="samlv2idp.attribute.label.appLogoutUrl" labelFor="appLogoutUrl" />
+            <cc name="appLogoutUrl" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+                <attribute name="size" value="105" />
+                <attribute name="autoSubmit" value="false" />
+                <attribute name="localizeDisplayFieldValue" value="false" />
+            </cc>
+            <fieldhelp name="helpIdpappLogoutUrl" defaultValue="samlv2idp.attribute.help.idpappLogoutUrl" />
         </property>                
     </section>
    
