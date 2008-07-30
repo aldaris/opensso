@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionRequestHandler.java,v 1.4 2008-07-23 17:21:56 veiming Exp $
+ * $Id: SessionRequestHandler.java,v 1.5 2008-07-30 23:23:21 manish_rustagi Exp $
  *
  */
 
@@ -148,7 +148,6 @@ public class SessionRequestHandler implements RequestHandler {
              */
 
             case SessionRequest.GetValidSessions:
-            case SessionRequest.DestroySession:
             case SessionRequest.AddSessionListenerOnAllSessions:
             case SessionRequest.GetSessionCount:
                 /*
@@ -178,6 +177,26 @@ public class SessionRequestHandler implements RequestHandler {
             case SessionRequest.Logout:
             case SessionRequest.AddSessionListener:
             case SessionRequest.SetProperty:
+            case SessionRequest.DestroySession:
+                  
+                if(req.getMethodID() == SessionRequest.DestroySession) {
+                    /*
+                     * note that the purpose of the following is just to check
+                     * the authentication of the caller (which can also be used
+                     * as a filter for the operation scope!)
+                     */                  
+                    requesterSession = Session.getSession(sid);            
+                    /*
+                     * also check that sid is not a restricted token
+                     */
+                    if (requesterSession.getProperty(
+                        Session.TOKEN_RESTRICTION_PROP)!= null) { 
+                        res.setException(
+                           sid + " " + SessionBundle.getString("noPrivilege"));
+                        return res;
+                    }
+                    sid = new SessionID(req.getDestroySessionID());
+                }            
 
                 if (!sessionService.isSessionFailoverEnabled()) {
                     // TODO check how this behaves in non-session failover case
