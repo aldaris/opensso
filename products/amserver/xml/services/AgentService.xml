@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.56 2008-07-28 23:43:37 veiming Exp $
+   $Id: AgentService.xml,v 1.57 2008-07-30 05:12:57 mallas Exp $
 
 -->
 
@@ -2669,6 +2669,54 @@
                             <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
+                    <AttributeSchema
+                        name="SigningRefType"
+                        type="single_choice"
+                        syntax="string"
+                        i18nKey="a355">
+                        <ChoiceValues>
+                             <ChoiceValue i18nKey="a356">DirectReference</ChoiceValue>
+                             <ChoiceValue i18nKey="a357">KeyIdentifierRef</ChoiceValue>
+                             <ChoiceValue i18nKey="a358">X509IssuerSerialRef</ChoiceValue>
+                         </ChoiceValues>
+                         <DefaultValues>
+                             <Value>DirectReference</Value>
+                         </DefaultValues>
+                    </AttributeSchema>
+
+                    <AttributeSchema
+                        name="EncryptionAlgorithm"
+                        type="single_choice"
+                        syntax="string"
+                        i18nKey="a359">
+                         <ChoiceValues>
+                             <ChoiceValue>DESede</ChoiceValue>
+                             <ChoiceValue>AES</ChoiceValue>
+                         </ChoiceValues>
+                         <DefaultValues>
+                             <Value>AES</Value>
+                         </DefaultValues>
+                    </AttributeSchema>
+
+                    <AttributeSchema
+                        name="EncryptionStrength"
+                        type="single_choice"
+                        syntax="number"
+                        i18nKey="a360">
+                         <ChoiceValues>
+                             <ChoiceValue>0</ChoiceValue>
+                             <ChoiceValue>112</ChoiceValue>
+                             <ChoiceValue>128</ChoiceValue>
+                             <ChoiceValue>168</ChoiceValue>
+                             <ChoiceValue>192</ChoiceValue>
+                             <ChoiceValue>256</ChoiceValue>
+                         </ChoiceValues>
+                         <DefaultValues>
+                             <Value>256</Value>
+                         </DefaultValues>
+                    </AttributeSchema>
+
+
 
                 </SubSchema>
                 
@@ -2977,6 +3025,53 @@
                             <Value>urn:sun:wss:ssotoken</Value>
                         </DefaultValues>
                     </AttributeSchema>
+                    <AttributeSchema
+                        name="SigningRefType"
+                        type="single_choice"
+                        syntax="string"
+                        i18nKey="a355">
+                        <ChoiceValues>
+                             <ChoiceValue i18nKey="a356">DirectReference</ChoiceValue>
+                             <ChoiceValue i18nKey="a357">KeyIdentifierRef</ChoiceValue>
+                             <ChoiceValue i18nKey="a358">X509IssuerSerialRef</ChoiceValue>
+                         </ChoiceValues>
+                         <DefaultValues>
+                             <Value>DirectReference</Value>
+                         </DefaultValues>
+                    </AttributeSchema>
+
+                    <AttributeSchema
+                        name="EncryptionAlgorithm"
+                        type="single_choice"
+                        syntax="string"
+                        i18nKey="a359">
+                         <ChoiceValues>
+                             <ChoiceValue>DESede</ChoiceValue>
+                             <ChoiceValue>AES</ChoiceValue>
+                         </ChoiceValues>
+                         <DefaultValues>
+                             <Value>AES</Value>
+                         </DefaultValues>
+                    </AttributeSchema>
+
+                    <AttributeSchema
+                        name="EncryptionStrength"
+                        type="single_choice"
+                        syntax="number"
+                        i18nKey="a360">
+                         <ChoiceValues>
+                             <ChoiceValue>0</ChoiceValue>
+                             <ChoiceValue>112</ChoiceValue>
+                             <ChoiceValue>128</ChoiceValue>
+                             <ChoiceValue>168</ChoiceValue>
+                             <ChoiceValue>192</ChoiceValue>
+                             <ChoiceValue>256</ChoiceValue>
+                         </ChoiceValues>
+                         <DefaultValues>
+                             <Value>256</Value>
+                         </DefaultValues>
+                    </AttributeSchema>
+
 
                 </SubSchema>
                 
@@ -3215,6 +3310,54 @@
                         syntax="string"
                         i18nKey="a353">
                     </AttributeSchema>
+
+                    <AttributeSchema
+                        name="SigningRefType"
+                        type="single_choice"
+                        syntax="string"
+                        i18nKey="a355">
+                        <ChoiceValues>
+                             <ChoiceValue i18nKey="a356">DirectReference</ChoiceValue>
+                             <ChoiceValue i18nKey="a357">KeyIdentifierRef</ChoiceValue>
+                             <ChoiceValue i18nKey="a358">X509IssuerSerialRef</ChoiceValue>
+                         </ChoiceValues>
+                         <DefaultValues>
+                             <Value>DirectReference</Value>
+                         </DefaultValues>
+                    </AttributeSchema>
+
+                    <AttributeSchema
+                        name="EncryptionAlgorithm"
+                        type="single_choice"
+                        syntax="string"
+                        i18nKey="a359">
+                         <ChoiceValues>
+                             <ChoiceValue>DESede</ChoiceValue>
+                             <ChoiceValue>AES</ChoiceValue>
+                         </ChoiceValues>
+                         <DefaultValues>
+                             <Value>AES</Value>
+                         </DefaultValues>
+                    </AttributeSchema>
+
+                    <AttributeSchema
+                        name="EncryptionStrength"
+                        type="single_choice"
+                        syntax="number"
+                        i18nKey="a360">
+                         <ChoiceValues>
+                             <ChoiceValue>0</ChoiceValue>
+                             <ChoiceValue>112</ChoiceValue>
+                             <ChoiceValue>128</ChoiceValue>
+                             <ChoiceValue>168</ChoiceValue>
+                             <ChoiceValue>192</ChoiceValue>
+                             <ChoiceValue>256</ChoiceValue>
+                         </ChoiceValues>
+                         <DefaultValues>
+                             <Value>256</Value>
+                         </DefaultValues>
+                    </AttributeSchema>
+
                 </SubSchema>
                 
                 <SubSchema name="DiscoveryAgent" inheritance="multiple">
