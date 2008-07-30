@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.13 2008-07-02 21:50:45 cmwesley Exp $
+ * $Id: FederationManager.java,v 1.14 2008-07-30 22:17:17 inthanga Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,11 +46,11 @@ public class FederationManager extends TestCommon {
         super("FederationManager");
         amUrl = url;
         if (!distAuthEnabled) {
-            amadmUrl = url + "/famadm.jsp?cmd=";
+            amadmUrl = url + "/ssoadm.jsp?cmd=";
         } else {
             amadmUrl = url + "/UI/Login?goto=" + serverProtocol + "://" + 
                     serverHost + ":" + serverPort + serverUri + 
-                    "/famadm.jsp?cmd=";
+                    "/ssoadm.jsp?cmd=";
         }
     }
 
