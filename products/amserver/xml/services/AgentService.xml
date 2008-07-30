@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.58 2008-07-30 20:35:54 mallas Exp $
+   $Id: AgentService.xml,v 1.59 2008-07-30 20:45:38 huacui Exp $
 
 -->
 
@@ -2304,9 +2304,13 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.policy.client.cacheMode"
-                        type="single"
+                        type="single_choice"
                         syntax="string"
                         i18nKey="a238">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a27">subtree</ChoiceValue>
+                            <ChoiceValue i18nKey="a28">self</ChoiceValue>
+                        </ChoiceValues>
                         <DefaultValues>
                             <Value>subtree</Value>
                         </DefaultValues>
