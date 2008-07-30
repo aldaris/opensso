@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.20 2008-07-29 20:01:54 mrudul_uchil Exp $
+ * $Id: SOAPRequestHandler.java,v 1.21 2008-07-30 05:00:45 mallas Exp $
  *
  */
 
@@ -147,7 +147,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
      */
     public void init(Map config) throws SecurityException {
         if(debug.messageEnabled()) {
-            debug.message("SOAPRequestHandler.Init map:" + config);
+            debug.message("SOAPRequestHandler.Init map:");
         }
         providerName = (String)config.get(PROVIDER_NAME);
     }
@@ -224,8 +224,9 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
 
         if ( ((config != null) && ((config.isRequestEncryptEnabled()) ||
                 (config.isRequestHeaderEncryptEnabled()))) ) {
-            secureMsg.decrypt((config.isRequestEncryptEnabled()),
-                    (config.isRequestHeaderEncryptEnabled()));            
+            secureMsg.decrypt(config.getKeyAlias(),
+                    (config.isRequestEncryptEnabled()),
+                    (config.isRequestHeaderEncryptEnabled()));                    
             soapRequest = secureMsg.getSOAPMessage();
             secureMsg = new SecureSOAPMessage(soapRequest, false);
         }
@@ -241,7 +242,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             // delay the signature verification after authentication
             // for kerberos token.
             if(!uri.equals(SecurityMechanism.WSS_NULL_KERBEROS_TOKEN_URI)) {               
-               if (!secureMsg.verifySignature()) {
+               if (!secureMsg.verifySignature(config.getPublicKeyAlias())) {
                    debug.error("SOAPRequestHandler.validateRequest:: Signature"
                            + "verification failed.");                
                    throw new SecurityException(
@@ -398,11 +399,13 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
 
         String keyAlias = SystemConfigurationUtil.getProperty(
                 Constants.SAML_XMLSIG_CERT_ALIAS);
-        
-        if (config != null && !config.useDefaultKeyStore()) {
+        String publicKeyAlias = null;
+        if (config != null) {
             keyAlias = config.getKeyAlias();
+            publicKeyAlias =config.getPublicKeyAlias();
         } else if (stsConfig != null) {
             keyAlias = stsConfig.getPrivateKeyAlias();
+            publicKeyAlias = stsConfig.getPublicKeyAlias();
         }
         
         String[] certAlias = {keyAlias};
@@ -421,11 +424,13 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 SecurityMechanism.WSS_NULL_X509_TOKEN);
 
         if ( (config != null && config.isResponseSignEnabled()) ){            
-            secureMessage.sign(keyAlias);
+            secureMessage.sign(keyAlias, config.getSigningRefType());
         }
 
         if ( (config != null && config.isResponseEncryptEnabled()) ) {            
-            secureMessage.encrypt(keyAlias,true,false);
+            secureMessage.encrypt(publicKeyAlias, 
+                    config.getEncryptionAlgorithm(),
+                    config.getEncryptionStrength(),true,false);
         }
 
         soapMessage = secureMessage.getSOAPMessage();
@@ -537,27 +542,34 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 securityToken = getSecurityToken(
                         securityMechanism, config, subject);
             }
-        
+            
             secureMessage = 
                 new SecureSOAPMessage(soapMessage, true);
-            secureMessage.setSecurityToken(securityToken);
+            String refType = config.getSigningRefType();
+            if(!(securityMechanism.getURI().equals(
+                    SecurityMechanism.WSS_NULL_X509_TOKEN_URI)) ||
+                    (refType == null) ||
+                    WSSConstants.DIRECT_REFERENCE.equals(refType)) {
+               secureMessage.setSecurityToken(securityToken);
+            }
         }
 
         secureMessage.setSecurityMechanism(securityMechanism);
-        
-        String keyAlias = SystemConfigurationUtil.getProperty(
+        String keyAlias = config.getKeyAlias();
+        if (keyAlias == null) {
+            keyAlias = SystemConfigurationUtil.getProperty(
                 Constants.SAML_XMLSIG_CERT_ALIAS);
-        if(!config.useDefaultKeyStore()) {
-            keyAlias = config.getKeyAlias();
         }
 
         if(config.isRequestSignEnabled()) {            
-            secureMessage.sign(keyAlias);
+           secureMessage.sign(keyAlias, config.getSigningRefType());
         }
 
         if((config.isRequestEncryptEnabled()) || 
                 (config.isRequestHeaderEncryptEnabled())) {
-            secureMessage.encrypt(keyAlias,
+            secureMessage.encrypt(config.getPublicKeyAlias(),
+                    config.getEncryptionAlgorithm(),
+                    config.getEncryptionStrength(),
                     (config.isRequestEncryptEnabled()),
                     (config.isRequestHeaderEncryptEnabled()));
         }
@@ -629,7 +641,8 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 new SecureSOAPMessage(soapMessage, false);
 
             if(config.isResponseEncryptEnabled()) {
-                secureMessage.decrypt((config.isResponseEncryptEnabled()), false);
+                secureMessage.decrypt(config.getKeyAlias(),
+                        config.isResponseEncryptEnabled(), false);
                 soapMessage = secureMessage.getSOAPMessage();
             }
 
@@ -637,7 +650,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 (Node)(secureMessage.getSecurityHeaderElement()));
 
             if(config.isResponseSignEnabled()) {           
-                if(!secureMessage.verifySignature()) {
+                if(!secureMessage.verifySignature(config.getPublicKeyAlias())) {
                 debug.error("SOAPRequestHandler.validateResponse:: Signature" +
                         " Verification failed");
                 throw new SecurityException(
@@ -859,7 +872,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                return securityToken;
             }
             NameIdentifier ni = null;
-               try {
+            try {
                 SubjectSecurity subjectSecurity = getSubjectSecurity(subject);
                 SSOToken userToken = subjectSecurity.ssoToken;
                if(userToken != null) {
@@ -1290,6 +1303,9 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 pc.setKerberosServicePrincipal(pc.getKerberosServicePrincipal());
                 pc.setKerberosTicketCacheDir(
                         stsConfig.getKerberosTicketCacheDir());
+                pc.setEncryptionAlgorithm(stsConfig.getEncryptionAlgorithm());
+                pc.setEncryptionStrength(stsConfig.getEncryptionStrength());
+                pc.setSigningRefType(stsConfig.getSigningRefType());
 
                 return pc;
             }
@@ -1394,6 +1410,11 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
              pc.setResponseEncryptEnabled(stsConfig.isResponseEncryptEnabled());
              pc.setResponseSignEnabled(stsConfig.isResponseSignEnabled());
              pc.setPreserveSecurityHeader(false);
+             pc.setPublicKeyAlias(stsConfig.getPublicKeyAlias());
+             pc.setKeyAlias(stsConfig.getPrivateKeyAlias());
+             pc.setEncryptionAlgorithm(stsConfig.getEncryptionAlgorithm());
+             pc.setEncryptionStrength(stsConfig.getEncryptionStrength());
+             pc.setSigningRefType(stsConfig.getSigningRefType());
              return pc;
              
         } catch (ProviderException pe) {

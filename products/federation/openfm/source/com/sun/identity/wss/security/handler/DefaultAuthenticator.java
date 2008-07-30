@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultAuthenticator.java,v 1.11 2008-07-29 20:01:53 mrudul_uchil Exp $
+ * $Id: DefaultAuthenticator.java,v 1.12 2008-07-30 05:00:45 mallas Exp $
  *
  */
 
@@ -108,6 +108,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
 import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.wss.sts.STSConstants;
+import com.iplanet.security.x509.CertUtils;
 import com.sun.identity.wss.logging.LogUtil;
 
 /**
@@ -159,7 +160,7 @@ public class DefaultAuthenticator implements MessageAuthenticator {
         if(isLiberty) {
            return authenticateLibertyMessage(secureMessage, subject);
         }
-        if(securityMechanism == null || securityToken == null) {
+        if(securityMechanism == null) {
            throw new SecurityException(
                  bundle.getString("nullInputParameter"));
         }
@@ -235,7 +236,7 @@ public class DefaultAuthenticator implements MessageAuthenticator {
                 }
             }
             
-            String subjectDN = cert.getSubjectDN().getName();
+            String subjectDN = CertUtils.getSubjectName(cert);
             subject = addPrincipal(subjectDN, subject);
             subject.getPublicCredentials().add(cert);
             WSSUtils.setRoles(subject, subjectDN);
@@ -314,7 +315,10 @@ public class DefaultAuthenticator implements MessageAuthenticator {
                      bundle.getString("authenticationFailed"));
         }
         //add security token to the subject for the application consumption.
-        subject.getPublicCredentials().add(securityToken.toDocumentElement());
+        if(securityToken != null) {
+           subject.getPublicCredentials().add(
+                   securityToken.toDocumentElement());
+        }
         return subject;
     }
 

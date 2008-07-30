@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderConfig.java,v 1.21 2008-07-18 06:45:16 mallas Exp $
+ * $Id: ProviderConfig.java,v 1.22 2008-07-30 05:00:43 mallas Exp $
  *
  */
 package com.sun.identity.wss.provider; 
@@ -116,6 +116,9 @@ public abstract class ProviderConfig {
      protected boolean verifyKrbSignature = false;
      protected boolean usePassThroughToken = false;
      protected String tokenConversionType = null;
+     protected String encryptionAlgorithm = "DESede";
+     protected int encryptionStrength = 0;
+     protected String signingRefType = "DirectReference";
 
      private static Class adapterClass;
 
@@ -782,6 +785,54 @@ public abstract class ProviderConfig {
      */
     public void setTokenConversionType(String tokenType) {
         this.tokenConversionType = tokenType;
+    }
+    
+    /**
+     * Returns signing reference type.
+     * @return the signing reference type.     
+     */
+    public String getSigningRefType() {
+        return signingRefType;
+    }
+    
+    /**
+     * Sets the signing reference type.
+     * @param refType the signing reference type.
+     */
+    public void setSigningRefType(String refType) {
+        this.signingRefType = refType;
+    }
+    
+    /**
+     * Returns the encryption algorithm
+     * @return the encryption algorithm
+     */
+    public String getEncryptionAlgorithm() {
+        return encryptionAlgorithm;
+    }
+    
+    /**
+     * Sets the encryption algorithm.
+     * @param encAlg the encryption algorithm.
+     */
+    public void setEncryptionAlgorithm(String encAlg) {
+        this.encryptionAlgorithm = encAlg;
+    }
+    
+    /**
+     * Returns the encryption data strength.
+     * @return the encryption data strength.
+     */
+    public int getEncryptionStrength() {
+        return encryptionStrength;
+    }
+    
+    /**
+     * Sets the encryption data strength.     * 
+     * @param keyStrength the encryption data strength.
+     */
+    public void setEncryptionStrength(int keyStrength) {
+        this.encryptionStrength = keyStrength;
     }
     
     /**

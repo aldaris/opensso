@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSConfiguration.java,v 1.7 2008-07-22 16:33:05 mrudul_uchil Exp $
+ * $Id: FAMSTSConfiguration.java,v 1.8 2008-07-30 05:00:46 mallas Exp $
  *
  */
 
@@ -84,6 +84,9 @@ public class FAMSTSConfiguration implements
     private static String nameIDMapper = null;
     private static String attributeNS = null; 
     private static List usercredentials = null;
+    private static String encryptionAlgorithm = null;
+    private static int encryptionStrength = 0;
+    private static String signingRefType = null;
     
     private CallbackHandler callbackHandler;
     
@@ -128,6 +131,9 @@ public class FAMSTSConfiguration implements
     static final String INCLUDE_MEMBERSHIPS = "includeMemberships";
     static final String SAML_ATTRIBUTE_NS = "AttributeNamespace";
     static final String NAMEID_MAPPER = "NameIDMapper";
+    static final String ENCRYPTION_ALGORITHM = "EncryptionAlgorithm";
+    static final String ENCRYPTION_STRENGTH = "EncryptionStrength";
+    static final String SIGNING_REF_TYPE = "SigningRefType";
 
     private static Debug debug = STSUtils.debug;
     static ConfigurationInstance ci = null;
@@ -375,6 +381,22 @@ public class FAMSTSConfiguration implements
             includeMemberships = 
                 Boolean.valueOf((String)values.iterator().next())
                 .booleanValue();
+        }
+        
+        values = (Set)attrMap.get(ENCRYPTION_ALGORITHM);
+        if (values != null && !values.isEmpty()) {
+            encryptionAlgorithm = (String)values.iterator().next();
+        }
+        
+        values = (Set)attrMap.get(ENCRYPTION_STRENGTH);
+        if (values != null && !values.isEmpty()) {
+            String tmp  = (String)values.iterator().next();
+            encryptionStrength = Integer.parseInt(tmp);
+        }
+        
+        values = (Set)attrMap.get(SIGNING_REF_TYPE);
+        if (values != null && !values.isEmpty()) {
+            signingRefType = (String)values.iterator().next();
         }
     }
     
@@ -794,5 +816,51 @@ public class FAMSTSConfiguration implements
     public List getUsers() {
         return usercredentials;
     }
-       
+    
+    /**
+     * Returns encryption algorithm
+     * @return the encryption algorithm
+     */
+    public String getEncryptionAlgorithm() {
+        return encryptionAlgorithm;
+    }
+    /**
+     * Sets the encryption algorithm
+     * @param algorithm the encryption algorithm
+     */
+    public void setEncryptionAlgorithm(String algorithm) {
+        this.encryptionAlgorithm = algorithm;
+    }
+    
+    /**
+     * Returns the encryption strength;
+     * @return the encryption strength;
+     */
+    public int getEncryptionStrength() {
+        return encryptionStrength;    
+    }
+    
+    /**
+     * Sets the encryption data strength.
+     * @param encryptionStrength the encryption data strength.
+     */
+    public void setEncryptionStrength(int encryptionStrength) {
+        this.encryptionStrength = encryptionStrength;
+    }
+    
+    /**
+     * Returns signing reference type.
+     * @return the signing reference type.
+     */
+    public String getSigningRefType() {
+        return signingRefType;
+    }
+    
+    /**
+     * Set signing reference type.
+     * @param refType the signing reference type.
+     */
+    public void setSigningRefType(String refType) {
+        this.signingRefType = refType;
+    }
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProvider.java,v 1.26 2008-07-18 06:45:16 mallas Exp $
+ * $Id: AgentProvider.java,v 1.27 2008-07-30 05:00:44 mallas Exp $
  *
  */
 
@@ -116,6 +116,9 @@ public class AgentProvider extends ProviderConfig {
      private static final String USE_PASSTHROUGH_TOKEN = 
                                   "isPassThroughSecurityToken";
      private static final String TOKEN_CONVERSION_TYPE = "TokenConversionType";
+     private static final String ENCRYPTION_ALG = "EncryptionAlgorithm";
+     private static final String ENCRYPTION_STRENGTH = "EncryptionStrength";
+     private static final String SIGNING_REF_TYPE = "SigningRefType";
 
      private AMIdentityRepository idRepo;
      private static Set agentConfigAttribute;
@@ -160,6 +163,9 @@ public class AgentProvider extends ProviderConfig {
          attrNames.add(VERIFY_KRB_SIGNATURE);
          attrNames.add(USE_PASSTHROUGH_TOKEN);
          attrNames.add(TOKEN_CONVERSION_TYPE);
+         attrNames.add(ENCRYPTION_ALG);
+         attrNames.add(ENCRYPTION_STRENGTH);
+         attrNames.add(SIGNING_REF_TYPE);
      }
 
      public void init (String providerName, 
@@ -434,7 +440,19 @@ public class AgentProvider extends ProviderConfig {
             }
         } else if(attr.equals(TOKEN_CONVERSION_TYPE)) {
             this.tokenConversionType = value;
-        }  else {
+        } else if(attr.equals(SIGNING_REF_TYPE)) {
+            if(value != null && value.length() != 0) {
+               this.signingRefType = value;
+            }
+        } else if (attr.equals(ENCRYPTION_ALG)) {
+            if(value != null && value.length() != 0) {
+               this.encryptionAlgorithm = value;               
+            }
+        } else if (attr.equals(ENCRYPTION_STRENGTH)) {
+            if(value != null && value.length() != 0) {
+               this.encryptionStrength = Integer.parseInt(value);
+            }
+        } else {
            if(ProviderUtils.debug.messageEnabled()) {
               ProviderUtils.debug.message("AgentProvider.setConfig: Invalid " +
               "Attribute configured." + attr);
@@ -604,7 +622,18 @@ public class AgentProvider extends ProviderConfig {
         
         if(tokenConversionType != null) {
            config.put(TOKEN_CONVERSION_TYPE, tokenConversionType); 
-        }        
+        }
+        
+        if(signingRefType != null) {
+           config.put(SIGNING_REF_TYPE, signingRefType); 
+        }
+        
+        if(encryptionAlgorithm != null) {
+           config.put(ENCRYPTION_ALG, encryptionAlgorithm);
+        }
+        
+        config.put(ENCRYPTION_STRENGTH, 
+                new Integer(encryptionStrength).toString());
         // Save the entry in Agent's profile
         try {
             Map attributes = new HashMap();

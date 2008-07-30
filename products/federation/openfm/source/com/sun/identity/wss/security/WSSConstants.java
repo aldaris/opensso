@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSConstants.java,v 1.7 2008-06-25 05:50:10 qcheng Exp $
+ * $Id: WSSConstants.java,v 1.8 2008-07-30 05:00:45 mallas Exp $
  *
  */
 
@@ -155,6 +155,23 @@ public class WSSConstants {
      public static final String KERBEROS_VALUE_TYPE = 
          "http://docs.oasis-open.org/wss/oasis-wss-kerberos-token-profile-1.1"
          + "#Kerberosv5_AP_REQ";
+     
+    public static final String KEYIDENTIFIER_REFERENCE = "KeyIdentifierRef";
+
+    public static final String DIRECT_REFERENCE = "DirectReference";
+
+    public static final String X509DATA_REFERENCE = "X509IssuerSerialRef";
+    
+    public static final String KEY_IDENTIFIER_VALUE_TYPE = 
+                 WSSE_X509_NS + "#X509SubjectKeyIdentifier";
+    
+    public static final String TAG_ENCODING_TYPE = "EncodingType";
+    
+    public static final String TAG_X509_ISSUERSERIAL = "X509IssuerSerial";
+    
+    public static final String TAG_X509_SERIALNUMBER = "X509SerialNumber";
+    
+    public static final String TAG_X509_ISSUERNAME = "X509IssuerName";
 
 }
 

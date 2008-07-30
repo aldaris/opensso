@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSUtils.java,v 1.12 2008-07-22 16:33:03 mrudul_uchil Exp $
+ * $Id: WSSUtils.java,v 1.13 2008-07-30 05:00:45 mallas Exp $
  *
  */
 
@@ -99,6 +99,7 @@ import com.sun.identity.wss.xmlenc.WSSEncryptionProvider;
 import com.sun.identity.idm.IdSearchControl;
 import com.sun.identity.idm.IdSearchOpModifier;
 import com.sun.identity.idm.IdSearchResults;
+import com.sun.org.apache.xml.internal.security.keys.content.X509Data;
 
 /**
  * This class provides util methods for the web services security. 
@@ -641,5 +642,43 @@ public class WSSUtils {
         }
         return adminToken;
     }
-
+    
+    /**
+     * Returns the message certificate from the security token reference
+     * especially for KeyIdentifier and X509IssuerSerial case.
+     * @param sigElement the signature element where the security token
+     *        ref is present
+     * @return the X509Certificate
+     */
+    public static X509Certificate getMessageCertificate(Element sigElement) {
+        if(sigElement == null) {
+           return null;
+        }
+        NodeList nl = sigElement.getElementsByTagNameNS(WSSConstants.WSSE_NS, 
+                WSSConstants.TAG_SECURITYTOKEN_REFERENCE);
+        if(nl.getLength() == 0) {
+           return null;
+        }        
+        try  {
+             SecurityTokenReference secTokenRef = 
+                     new SecurityTokenReference((Element)nl.item(0));
+             String refType = secTokenRef.getReferenceType();
+             if(WSSConstants.DIRECT_REFERENCE.equals(refType)) {
+                // This should not come here since the certificate is in
+                // message and should have been already resolved.                
+                return null; 
+             } else if(WSSConstants.KEYIDENTIFIER_REFERENCE.equals(refType)) {
+                KeyIdentifier keyIdentifier = secTokenRef.getKeyIdentifier(); 
+                if(keyIdentifier != null) {
+                   return keyIdentifier.getX509Certificate(); 
+                }
+             } else if(WSSConstants.X509DATA_REFERENCE.equals(refType)) {                 
+                X509Data x509Data = secTokenRef.getX509IssuerSerial();
+                return AMTokenProvider.getX509Certificate(x509Data);                
+             }
+        } catch (SecurityException se) {
+             debug.error("WSSUtils.getMessageCertificate: exception", se);   
+        }
+        return null;
+    }
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HTTPRequestHandler.java,v 1.7 2008-07-22 16:33:04 mrudul_uchil Exp $
+ * $Id: HTTPRequestHandler.java,v 1.8 2008-07-30 05:00:45 mallas Exp $
  *
  */
 
@@ -80,10 +80,7 @@ public class HTTPRequestHandler implements HTTPRequestHandlerInterface {
      * Initialize the HTTP Request handler with a configuration map.
      * @param config the configuration map.
      */
-    public void init(Map config) {
-        if(debug.messageEnabled()) {
-           debug.message("HTTPRequestHandler.Init map:" + config);
-        }
+    public void init(Map config) {        
         providername = (String)config.get(PROVIDER_NAME);
     }
 

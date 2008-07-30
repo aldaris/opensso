@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTokenProvider.java,v 1.6 2008-06-25 05:50:06 qcheng Exp $
+ * $Id: AMTokenProvider.java,v 1.7 2008-07-30 05:00:44 mallas Exp $
  *
  */
 package com.sun.identity.wss.security;
@@ -56,6 +56,8 @@ import com.sun.org.apache.xml.internal.security.keys.content.X509Data;
 import com.sun.org.apache.xml.internal.security.keys.content.x509.
            XMLX509IssuerSerial;
 import com.sun.org.apache.xml.internal.security.exceptions.XMLSecurityException;
+import com.iplanet.security.x509.CertUtils;
+import com.sun.identity.shared.encode.Base64;
 
 /**
  * This class implements the <code>TokenProvider</code> interface to
@@ -238,7 +240,7 @@ public class AMTokenProvider implements TokenProvider {
         Certificate cert = null;
 
         try {
-            JKSKeyProvider jksProvider = (JKSKeyProvider)keyProvider;
+            JKSKeyProvider jksProvider = (JKSKeyProvider)getKeyProvider();
             KeyStore keystore = jksProvider.getKeyStore();
             for (Enumeration e = keystore.aliases(); e.hasMoreElements();) {
                 String alias = (String) e.nextElement();
@@ -256,10 +258,58 @@ public class AMTokenProvider implements TokenProvider {
                 }
                 x509cert = (X509Certificate) cert;
                 if (x509cert.getSerialNumber().compareTo(serialNumber) == 0) {
-                    String certDN = x509cert.getIssuerDN().getName();
+                    String certDN = CertUtils.getIssuerName(x509cert);
                     if (certDN.equals(issuerName)) {
                         return x509cert;
                     }
+                }
+            }
+        } catch (KeyStoreException e) {
+            throw new SecurityException(
+                bundle.getString("keystoreException"));
+        }
+        return null;
+        
+    }
+    
+    /**
+     * Returns the <code>X509Certificate</code> for the given key identifier 
+     * octet string    
+     * @param skiOctet key identifier octet string
+     * @return X509Certificate x.50 certificate for the given ski octet.
+     * @exception SecurityException if there is an error. 
+     */
+    static X509Certificate getX509CertForKeyIdentifier(String skiOctet) 
+             throws SecurityException {
+
+        X509Certificate x509cert = null;
+        Certificate cert = null;
+
+        try {
+            JKSKeyProvider jksProvider = (JKSKeyProvider)getKeyProvider();
+            KeyStore keystore = jksProvider.getKeyStore();
+            for (Enumeration e = keystore.aliases(); e.hasMoreElements();) {
+                String alias = (String) e.nextElement();
+                Certificate[] certs = keystore.getCertificateChain(alias);
+                if (certs == null || certs.length == 0) {
+                    cert = keystore.getCertificate(alias);
+                    if (cert == null) {
+                        continue;
+                    }
+                } else {
+                    cert = certs[0];
+                }
+                if (!(cert instanceof X509Certificate)) {
+                    continue;
+                }
+                x509cert = (X509Certificate) cert;
+                byte[] data = x509cert.getExtensionValue("2.5.29.14");
+                if(data == null) {
+                   return null;
+                }
+                
+                if(Base64.encode(data).equals(skiOctet)) {
+                   return x509cert; 
                 }
             }
         } catch (KeyStoreException e) {

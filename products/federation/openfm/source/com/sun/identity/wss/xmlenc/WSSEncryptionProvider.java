@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSEncryptionProvider.java,v 1.4 2008-07-23 05:13:31 mallas Exp $
+ * $Id: WSSEncryptionProvider.java,v 1.5 2008-07-30 05:00:46 mallas Exp $
  *
  */
 
@@ -149,6 +149,10 @@ public class WSSEncryptionProvider extends AMEncryptionProvider {
         if(providerID != null) {
            if(keyMap.containsKey(providerID)) {
               secretKeyEncData = (SecretKey)keyMap.get(providerID);
+              if(!secretKeyEncData.getAlgorithm().equals(encDataEncAlg)) {
+                 secretKeyEncData = 
+                       generateSecretKey(encDataEncAlg, encDataEncAlgStrength); 
+              }
            } else {
               secretKeyEncData = 
                   generateSecretKey(encDataEncAlg, encDataEncAlgStrength);

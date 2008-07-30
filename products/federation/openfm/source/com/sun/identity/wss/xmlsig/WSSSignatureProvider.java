@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSSignatureProvider.java,v 1.6 2008-07-29 20:01:55 mrudul_uchil Exp $
+ * $Id: WSSSignatureProvider.java,v 1.7 2008-07-30 05:00:47 mallas Exp $
  *
  */
 
@@ -55,6 +55,9 @@ import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.wss.security.WSSConstants;
 import com.sun.identity.wss.security.WSSUtils;
 import com.sun.identity.wss.security.STRTransform;
+import com.sun.identity.shared.encode.Base64;
+import com.sun.identity.wss.security.BinarySecurityToken;
+import com.iplanet.security.x509.CertUtils;
 
 /**
  * <code>WSSSignatureProvider</code> is a class for signing and 
@@ -232,8 +235,6 @@ public class WSSSignatureProvider extends AMSignatureProvider {
                         Constants.ALGO_ID_DIGEST_SHA1);
             }
 
-
-//          Until we verify the fix from XWSS to support STRTransform
             Transforms strtransform = new Transforms(doc);
             strtransform.addTransform(STRTransform.STR_TRANSFORM_URI,
                        transformParams);
@@ -291,7 +292,7 @@ public class WSSSignatureProvider extends AMSignatureProvider {
                                    java.util.List ids)
         throws XMLSignatureException {
         return signWithBinarySecurityToken(doc, cert, algorithm, ids,
-                                           WSSConstants.TAG_USERNAME_TOKEN);
+                                          WSSConstants.TAG_USERNAME_TOKEN, null);
     }
 
     /**
@@ -308,10 +309,10 @@ public class WSSSignatureProvider extends AMSignatureProvider {
                                    org.w3c.dom.Document doc,
                                    java.security.cert.Certificate cert,
                                    java.lang.String algorithm,
-                                   java.util.List ids)
+                                   java.util.List ids, String referenceType)
         throws XMLSignatureException {
         return signWithBinarySecurityToken(doc, cert, algorithm, ids,
-                                           SAMLConstants.BINARYSECURITYTOKEN);
+                              SAMLConstants.BINARYSECURITYTOKEN, referenceType);
     }
 
     /**
@@ -330,7 +331,8 @@ public class WSSSignatureProvider extends AMSignatureProvider {
                                    java.security.cert.Certificate cert,
                                    java.lang.String algorithm,
                                    java.util.List ids,
-                                   String tokenType)
+                                   String tokenType,
+                                   String referenceType)
         throws XMLSignatureException {
 
         if (doc == null) {
@@ -444,28 +446,41 @@ public class WSSSignatureProvider extends AMSignatureProvider {
             signature.addDocument("#"+secRefId, strtransforms,
                         Constants.ALGO_ID_DIGEST_SHA1);
 
-
-            Element reference = doc.createElementNS(WSSConstants.WSSE_NS,
+            if(referenceType == null || referenceType.equals(
+                    WSSConstants.DIRECT_REFERENCE)) {
+               Element reference = doc.createElementNS(WSSConstants.WSSE_NS,
                         SAMLConstants.TAG_REFERENCE);
-            securityTokenRef.appendChild(reference);                
-            
-            Element bsf = (Element)root.getElementsByTagNameNS(
-                WSSConstants.WSSE_NS,tokenType).item(0);
-            if (bsf != null) {        
-                String certId = bsf.getAttributeNS(WSSConstants.WSU_NS,
-                    SAMLConstants.TAG_ID);                
-                reference.setAttributeNS(null, SAMLConstants.TAG_URI,"#"
+               securityTokenRef.appendChild(reference);                            
+               Element bsf = (Element)root.getElementsByTagNameNS(
+                      WSSConstants.WSSE_NS,tokenType).item(0);
+               if (bsf != null) {        
+                   String certId = bsf.getAttributeNS(WSSConstants.WSU_NS,
+                                   SAMLConstants.TAG_ID);                
+                   reference.setAttributeNS(null, SAMLConstants.TAG_URI,"#"
                                          +certId);                                     
+               }
+               if (SAMLConstants.BINARYSECURITYTOKEN.equals(tokenType)) {
+                   reference.setAttributeNS(null, WSSConstants.TAG_VALUETYPE, 
+                               WSSConstants.WSSE_X509_NS + "#X509v3");
+               } else if (WSSConstants.TAG_USERNAME_TOKEN.equals(tokenType)) {
+                   reference.setAttributeNS(null, WSSConstants.TAG_VALUETYPE, 
+                             WSSConstants.TAG_USERNAME_VALUE_TYPE);
+                   signature.addKeyInfo((X509Certificate)cert);
+               }
+            } else if(
+                  WSSConstants.KEYIDENTIFIER_REFERENCE.equals(referenceType)) {
+               Element keyIdentifier = createKeyIdentifierReference(doc, cert);
+               if(keyIdentifier == null) {
+                  throw new XMLSignatureException(
+                          WSSUtils.bundle.getString("noSubjectKeyIdentifier"));
+               }
+               securityTokenRef.appendChild(
+                       createKeyIdentifierReference(doc, cert));
+               
+            } else if (WSSConstants.X509DATA_REFERENCE.equals(referenceType)) {
+               securityTokenRef.appendChild(
+                       createX509DataReference(doc, cert));
             }
-            if (SAMLConstants.BINARYSECURITYTOKEN.equals(tokenType)) {
-                reference.setAttributeNS(null, WSSConstants.TAG_VALUETYPE, 
-                    WSSConstants.WSSE_X509_NS + "#X509v3");
-            } else if (WSSConstants.TAG_USERNAME_TOKEN.equals(tokenType)) {
-                reference.setAttributeNS(null, WSSConstants.TAG_VALUETYPE, 
-                    WSSConstants.TAG_USERNAME_VALUE_TYPE);
-                signature.addKeyInfo((X509Certificate)cert);
-            }
-
             signature.sign(privateKey);
 
         } catch (Exception e) {
@@ -908,7 +923,64 @@ public class WSSSignatureProvider extends AMSignatureProvider {
             throw new XMLSignatureException (ex.getMessage ());
         }        
     }
+    
+    /**
+     * Creates the key identifier reference using certificate.
+     * @param doc
+     * @param cert
+     * @return
+     */
+    private Element createKeyIdentifierReference(Document doc, 
+            java.security.cert.Certificate cert) {
+        
+        Element keyIdentifier = doc.createElementNS(
+                                WSSConstants.WSSE_NS,
+                               WSSConstants.TAG_KEYIDENTIFIER);
+        keyIdentifier.setPrefix(WSSConstants.WSSE_TAG);
+        keyIdentifier.setAttribute(WSSConstants.WSU_ID,
+                        SAMLUtils.generateID());
+        X509Certificate x509Cert = (X509Certificate)cert;
+        byte[] data = x509Cert.getExtensionValue("2.5.29.14");
+        if(data == null) {
+           return null;
+        }
+        String certValue = Base64.encode(data);
+        Text value = doc.createTextNode(certValue);
+        keyIdentifier.appendChild(value);
+        keyIdentifier.setAttributeNS(null, WSSConstants.TAG_VALUETYPE,
+                      WSSConstants.KEY_IDENTIFIER_VALUE_TYPE);
+        keyIdentifier.setAttributeNS(null, 
+                      WSSConstants.TAG_ENCODING_TYPE,
+                      BinarySecurityToken.BASE64BINARY);
+        return keyIdentifier;
+    }
+
+    private Element createX509DataReference(Document doc, 
+            java.security.cert.Certificate cert) {
+        
+        X509Certificate x509Cert = (X509Certificate)cert;
+        Element x509Data = doc.createElementNS(
+                                WSSConstants.XMLSIG_NAMESPACE_URI,
+                               WSSConstants.TAG_X509DATA);
+        x509Data.setPrefix("ds");
+        Element issuerSerial = doc.createElementNS(
+                                WSSConstants.XMLSIG_NAMESPACE_URI,
+                               WSSConstants.TAG_X509_ISSUERSERIAL);
+        Element issuerName = doc.createElementNS(
+                             WSSConstants.XMLSIG_NAMESPACE_URI,
+                             WSSConstants.TAG_X509_ISSUERNAME);
+        Text value = doc.createTextNode(CertUtils.getIssuerName(x509Cert));
+        issuerName.appendChild(value);
+        Element serialNumber = doc.createElementNS(
+                             WSSConstants.XMLSIG_NAMESPACE_URI,
+                             WSSConstants.TAG_X509_SERIALNUMBER);
+        value = doc.createTextNode(x509Cert.getSerialNumber().toString());
+        serialNumber.appendChild(value);
+        issuerSerial.appendChild(issuerName);
+        issuerSerial.appendChild(serialNumber);
+        x509Data.appendChild(issuerSerial);
+        return x509Data;
+    }
+    
 }
-
-
 

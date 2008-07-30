@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureSOAPMessage.java,v 1.18 2008-07-29 20:01:54 mrudul_uchil Exp $
+ * $Id: SecureSOAPMessage.java,v 1.19 2008-07-30 05:00:46 mallas Exp $
  *
  */
 
@@ -233,6 +233,7 @@ public class SecureSOAPMessage {
       * @exception SecurityException if there is any error occured.
       */
      public void parseSecurityHeader(Node node) throws SecurityException {
+         securityMechanism = SecurityMechanism.WSS_NULL_ANONYMOUS;
          if (node != null) {
              NodeList securityHeaders = node.getChildNodes();
              for(int i=0; i < securityHeaders.getLength(); i++) {
@@ -341,13 +342,23 @@ public class SecureSOAPMessage {
                          }
                      }
 
-                 } else if(securityToken == null) {
+                 } else if((SAMLConstants.XMLSIG_ELEMENT_NAME.equals(localName))
+                     && (SAMLConstants.XMLSIG_NAMESPACE_URI.equals(nameSpace))){
+                     if(securityToken != null) {
+                        continue; 
+                     }
+                     messageCertificate = 
+                             WSSUtils.getMessageCertificate((Element)node);
+                     if(messageCertificate != null) {
+                        securityMechanism = 
+                                SecurityMechanism.WSS_NULL_X509_TOKEN; 
+                     }
+                     
+                 } else {
                      if(debug.messageEnabled()) {
                          debug.message("SecureSOAPMessage.parseSecurityHeader: "
-                             + "security token is null, " + 
-                             "hence Security Mechanism is set to ANONYMOUS");
-                     }
-                     securityMechanism = SecurityMechanism.WSS_NULL_ANONYMOUS;
+                             + "ignore header element, " + localName);                              
+                     }                     
                  }
              }
          }
@@ -512,23 +523,31 @@ public class SecureSOAPMessage {
      * Signs the <code>SOAPMessage</code>  for the given security profile.
      *
      * @param certAlias the certificate alias
-     *
+     * @param signingRefType signing refence type.
      * @exception SecurityException if there is any failure in signing.
      */
-     public void sign(String certAlias) throws SecurityException {
+     public void sign(String certAlias, String refType) 
+             throws SecurityException {
 
          Document doc = toDocument();
          String tokenType = null;
          // securityToken=null if the secmech is Anonymous
          if (securityToken!=null) {
              tokenType = securityToken.getTokenType();
+         } else {
+            if((securityMechanism != null) && 
+                   (securityMechanism.getURI().equals(
+                              SecurityMechanism.WSS_NULL_X509_TOKEN_URI))) {
+                tokenType = SecurityToken.WSS_X509_TOKEN;
+            }
+                    
          }
 
          if(SecurityToken.WSS_SAML_TOKEN.equals(tokenType) ||
                  SecurityToken.WSS_SAML2_TOKEN.equals(tokenType)) {
             signWithAssertion(doc, certAlias);
          } else if(SecurityToken.WSS_X509_TOKEN.equals(tokenType)) {
-            signWithBinaryToken(doc, certAlias);
+            signWithBinaryToken(doc, certAlias, refType);
             // treat Anonymous secmech (securityToken=null) same as UserName
             // Token
          } else if ((SecurityToken.WSS_USERNAME_TOKEN.equals(tokenType)) ||
@@ -644,8 +663,8 @@ public class SecureSOAPMessage {
      /**
       * Signs the document with binary security token.
       */
-     private void signWithBinaryToken(Document doc, String certAlias) 
-           throws SecurityException {
+     private void signWithBinaryToken(Document doc, String certAlias,
+             String refType) throws SecurityException {
 
          Certificate cert = null;
          Element sigElement = null;
@@ -654,7 +673,7 @@ public class SecureSOAPMessage {
          try {
              cert =  keyProvider.getX509Certificate(certAlias);
              sigElement = sigManager.signWithBinarySecurityToken(
-                doc, cert, "", getSigningIds());
+                doc, cert, "", getSigningIds(), refType);
          } catch (XMLSignatureException se) {
             debug.error("SecureSOAPMessage.signWithBinaryToken:: Signature " +
             "Exception.", se);
@@ -792,7 +811,7 @@ public class SecureSOAPMessage {
       * @return true if the signature verification is successful.
       * @exception SecurityException if there is any failure in validation. 
       */
-     public boolean verifySignature() throws SecurityException {
+     public boolean verifySignature(String alias) throws SecurityException {
 
         try {
             Document doc = toDocument();
@@ -801,6 +820,8 @@ public class SecureSOAPMessage {
             if(messageCertificate != null) {
                certAlias = sigManager.getKeyProvider().
                            getCertificateAlias(messageCertificate);
+            } else {
+               certAlias = alias; 
             }
             return sigManager.verifyWSSSignature(doc, certAlias);            
         } catch (SAMLException se) {
@@ -872,9 +893,11 @@ public class SecureSOAPMessage {
      *
      * @exception SecurityException if there is any failure in encryption.
      */
-     public void encrypt(String certAlias, boolean encryptBody, 
-                         boolean encryptHeader) 
-         throws SecurityException {
+     public void encrypt(String certAlias,
+                  String encryptionAlgorithm,
+                  int encryptionKeyStrength,
+                  boolean encryptBody, 
+                  boolean encryptHeader) throws SecurityException {
 
          Document doc = toDocument();
          String tokenType = null;
@@ -940,8 +963,8 @@ public class SecureSOAPMessage {
              encryptedDoc = encManager.encryptAndReplaceWSSElements(
                  doc, 
                  elmMap,
-                 EncryptionConstants.TRIPLEDES,
-                 0,
+                 encryptionAlgorithm,
+                 encryptionKeyStrength,
                  certAlias,
                  0,
                  tokenType,
@@ -1051,13 +1074,14 @@ public class SecureSOAPMessage {
      
     /**
      * Decrypts the <code>SOAPMessage</code> for the given security profile.
-     *
+     * @param keyAlias private key alias that is used to decrypt.
      * @param decryptBody boolean flag to decrypt Body
-     * @param decryptHeader boolean flag to decrypt Security header
-     *
+     * @param decryptHeader boolean flag to decrypt Security header     
      * @exception SecurityException if there is any failure in decryption.
      */
-     public void decrypt(boolean decryptBody, boolean decryptHeader) 
+     public void decrypt(String keyAlias, 
+             boolean decryptBody,
+             boolean decryptHeader)             
          throws SecurityException {
 
          Document decryptedDoc = null; 
@@ -1081,6 +1105,8 @@ public class SecureSOAPMessage {
              if(messageCertificate != null) {
                  certAlias = sigManager.getKeyProvider().
                              getCertificateAlias(messageCertificate);
+             } else {
+                 certAlias = keyAlias;
              }
              decryptedDoc = encManager.decryptAndReplace(doc,certAlias);
          } catch (EncryptionException ee) {

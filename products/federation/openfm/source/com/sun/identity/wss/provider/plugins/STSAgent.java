@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSAgent.java,v 1.9 2008-07-02 16:57:22 mallas Exp $
+ * $Id: STSAgent.java,v 1.10 2008-07-30 05:00:44 mallas Exp $
  *
  */
 
@@ -81,6 +81,9 @@ public class STSAgent extends STSConfig {
              "KerberosServicePrincipal";
     private static final String KRB_TICKET_CACHE_DIR = 
              "KerberosTicketCacheDir";
+    private static final String ENCRYPTION_ALG = "EncryptionAlgorithm";
+    private static final String ENCRYPTION_STRENGTH = "EncryptionStrength";
+    private static final String SIGNING_REF_TYPE = "SigningRefType";
      
     private static Debug debug = ProviderUtils.debug;
     
@@ -105,6 +108,9 @@ public class STSAgent extends STSConfig {
         attrNames.add(KDC_DOMAIN);
         attrNames.add(KRB_SERVICE_PRINCIPAL);
         attrNames.add(KRB_TICKET_CACHE_DIR);
+        attrNames.add(ENCRYPTION_ALG);
+        attrNames.add(ENCRYPTION_STRENGTH);
+        attrNames.add(SIGNING_REF_TYPE);
     }
 
     /** Creates a new instance of STSAgent */
@@ -261,8 +267,20 @@ public class STSAgent extends STSConfig {
         } else if(attr.equals(KRB_TICKET_CACHE_DIR)) {
             this.ticketCacheDir = value;
         } else if(attr.equals(KDC_SERVER)) {
-            this.kdcServer = value;
-        }                
+            this.kdcServer = value;        
+        } else if(attr.equals(SIGNING_REF_TYPE)) {
+            if(value != null && value.length() !=0) {
+               this.signingRefType = value;
+            }
+        } else if (attr.equals(ENCRYPTION_ALG)) {
+            if(value != null && value.length() !=0) {
+               this.encryptionAlgorithm = value;
+            }
+        } else if (attr.equals(ENCRYPTION_STRENGTH)) {
+            if(value != null && value.length() != 0) {
+               this.encryptionStrength = Integer.parseInt(value);
+            }
+        }
     }
         
     public void delete() throws ProviderException {
@@ -367,6 +385,16 @@ public class STSAgent extends STSConfig {
            sb = sb.deleteCharAt(sb.length() - 1);
            config.put(USER_CREDENTIAL, sb.toString());
         }
+        if(signingRefType != null) {
+           config.put(SIGNING_REF_TYPE, signingRefType); 
+        }
+        
+        if(encryptionAlgorithm != null) {
+           config.put(ENCRYPTION_ALG, encryptionAlgorithm);
+        }
+        
+        config.put(ENCRYPTION_STRENGTH, 
+                new Integer(encryptionStrength).toString());
         
         // Save the entry in Agent's profile
         try {

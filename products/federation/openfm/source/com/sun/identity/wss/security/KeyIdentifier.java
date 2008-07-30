@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: KeyIdentifier.java,v 1.3 2008-06-25 05:50:07 qcheng Exp $
+ * $Id: KeyIdentifier.java,v 1.4 2008-07-30 05:00:44 mallas Exp $
  *
  */
 
@@ -111,10 +111,8 @@ public class KeyIdentifier {
     public X509Certificate getX509Certificate() throws SecurityException {
         if(cert != null) {
            return cert;
-        }
-        byte[] data = Base64.decode(value);
-        ByteArrayInputStream in = new ByteArrayInputStream(data);
-        cert = AMTokenProvider.loadCertificate(in);
+        }        
+        cert = AMTokenProvider.getX509CertForKeyIdentifier(value);
         return cert;
     }
 
