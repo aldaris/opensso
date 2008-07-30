@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManagerCLIConstants.java,v 1.7 2008-01-08 17:59:41 cmwesley Exp $
+ * $Id: FederationManagerCLIConstants.java,v 1.8 2008-07-30 22:25:54 srivenigan Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -214,5 +214,15 @@ public interface FederationManagerCLIConstants {
      * Short append argument/option
      */
     String SHORT_APPEND_ARGUMENT = "p";
-         
+    
+    /**
+     * Revision number argument/option
+     */
+    String REVISION_NO_ARGUMENT = "revisionnumber";
+
+    /**
+     * Revision number argument/option
+     */
+    String SHORT_REVISION_NO_ARGUMENT = "r";
+    
 }
