@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SignatureProvider.java,v 1.7 2008-06-25 05:47:39 qcheng Exp $
+ * $Id: SignatureProvider.java,v 1.8 2008-07-30 05:06:51 mallas Exp $
  *
  */
 
@@ -335,6 +335,7 @@ public interface SignatureProvider {
      * @param cert Signer's certificate
      * @param algorithm XML signature algorithm
      * @param ids list of id attribute values of nodes to be signed
+     * @param refenceType signed element reference type
      * @return X509 Security Token  signature
      * @exception XMLSignatureException if the document could not be signed
      */
@@ -342,9 +343,20 @@ public interface SignatureProvider {
                  org.w3c.dom.Document doc,
                  java.security.cert.Certificate cert,
                  java.lang.String algorithm,
-                 java.util.List ids)
+                 java.util.List ids,
+                 java.lang.String refenceType)
         throws XMLSignatureException; 
     
+    /**
+     * Sign part of the XML document wth kerberos security token using
+     * referred by the supplied a list of id attributes of nodes.
+     * @param doc the XML <code>DOM</code> document.
+     * @param cert Signer's certificate
+     * @param algorithm XML signature algorithm
+     * @param ids list of id attribute values of nodes to be signed
+     * @return Kerberos Security Token  signature
+     * @exception XMLSignatureException if the document could not be signed
+     */
     public org.w3c.dom.Element signWithKerberosToken(
             org.w3c.dom.Document doc,
             java.security.Key key,

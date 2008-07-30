@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XMLSignatureManager.java,v 1.6 2008-06-25 05:47:39 qcheng Exp $
+ * $Id: XMLSignatureManager.java,v 1.7 2008-07-30 05:06:51 mallas Exp $
  *
  */
 
@@ -437,6 +437,7 @@ public class XMLSignatureManager {
      * @param cert Signer's certificate
      * @param algorithm XML signature algorithm
      * @param ids list of id attribute values of nodes to be signed
+     * @param refenceType signed element reference type
      * @return X509 Security Token  signature
      * @exception XMLSignatureException if the document could not be signed
      */
@@ -444,9 +445,11 @@ public class XMLSignatureManager {
                  org.w3c.dom.Document doc,
                  java.security.cert.Certificate cert,
                  java.lang.String algorithm,
-                 java.util.List ids)
+                 java.util.List ids,
+                 java.lang.String refenceType)
         throws XMLSignatureException {
-           return sp.signWithBinarySecurityToken(doc, cert, algorithm, ids);
+           return sp.signWithBinarySecurityToken(doc, cert, algorithm, 
+                   ids, refenceType);
     }
 
     /**

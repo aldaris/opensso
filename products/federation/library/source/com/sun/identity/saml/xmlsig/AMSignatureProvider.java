@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSignatureProvider.java,v 1.6 2008-06-25 05:47:38 qcheng Exp $
+ * $Id: AMSignatureProvider.java,v 1.7 2008-07-30 05:06:51 mallas Exp $
  *
  */
 
@@ -1893,6 +1893,7 @@ public class AMSignatureProvider implements SignatureProvider {
      * @param cert Signer's certificate
      * @param algorithm XML signature algorithm
      * @param ids list of id attribute values of nodes to be signed
+     * @param refenceType signed element reference type
      * @return X509 Security Token  signature
      * @throws XMLSignatureException if the document could not be signed
      */
@@ -1900,7 +1901,8 @@ public class AMSignatureProvider implements SignatureProvider {
                                    org.w3c.dom.Document doc,
                                    java.security.cert.Certificate cert,
                                    java.lang.String algorithm,
-                                   java.util.List ids)
+                                   java.util.List ids,
+                                   java.lang.String referenceType)
         throws XMLSignatureException {
         return null;
     }
