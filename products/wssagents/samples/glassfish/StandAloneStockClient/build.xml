@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.3 2008-06-25 05:54:43 qcheng Exp $
+   $Id: build.xml,v 1.4 2008-07-30 23:18:08 mallas Exp $
 
 -->
 
@@ -41,10 +41,12 @@
             classpath="xyz.jar"
             debug="on">
             <classpath>
-                <pathelement location="${glassfish.home}/addons/fam/j2ee.jar"/>
+                <pathelement location="${glassfish.home}/addons/fam/openssowssproviders.jar"/>
                 <pathelement location="${glassfish.home}/addons/fam/webservices-rt.jar"/>
                 <pathelement location="${glassfish.home}/addons/fam/openssoclientsdk.jar"/>
                 <pathelement location="${glassfish.home}/addons/fam/xalan.jar"/>
+                <pathelement location="${glassfish.home}/addons/fam/xercesImpl.jar"/>
+                <pathelement location="${glassfish.home}/addons/fam/j2ee.jar"/>
                 <pathelement location="${glassfish.home}/addons/fam"/>
                 <pathelement path="build/classes"/>
             </classpath>
@@ -55,11 +57,13 @@
             <echo>java.home=${java.home}</echo>
         <java classname="com.samples.SecuringWS" fork="true">
             <classpath>
-                <pathelement location="${glassfish.home}/addons/fam/j2ee.jar"/>
+                <pathelement location="${glassfish.home}/addons/fam/openssowssproviders.jar"/>
                 <pathelement location="${glassfish.home}/addons/fam/ldapjdk.jar"/>
                 <pathelement location="${glassfish.home}/addons/fam/webservices-rt.jar"/>
                 <pathelement location="${glassfish.home}/addons/fam/openssoclientsdk.jar"/>
                 <pathelement location="${glassfish.home}/addons/fam/xalan.jar"/>
+                <pathelement location="${glassfish.home}/addons/fam/xercesImpl.jar"/>
+                <pathelement location="${glassfish.home}/addons/fam/j2ee.jar"/>
                 <pathelement location="${glassfish.home}/addons/fam"/>
                 <pathelement path="build/classes"/>
             </classpath>

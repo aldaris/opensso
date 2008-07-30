@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecuringWS.java,v 1.4 2008-07-23 17:58:19 veiming Exp $
+ * $Id: SecuringWS.java,v 1.5 2008-07-30 23:18:08 mallas Exp $
  *
  */
 
@@ -158,11 +158,26 @@ public class SecuringWS {
         .append("xmlns:enc=\"http://schemas.xmlsoap.org/soap/encoding/\" ")
         .append("xmlns:ns0=\"http://sun.com/stockquote.xsd\" ")
         .append("env:encodingStyle=\"http://schemas.xmlsoap.org")
-        .append("/soap/encoding/\"><env:Header></env:Header>")
+        .append("/soap/encoding/\"><env:Header>")
+        .append(getAddressingHeader())
+        .append("</env:Header>")
         .append("<env:Body><ns0:QuoteRequest><Symbol>")
         .append(symbol)
         .append("</Symbol></ns0:QuoteRequest>")      
         .append("</env:Body></env:Envelope>");
         return sb;
+    }
+
+    private static String getAddressingHeader() {
+        StringBuffer sb = new StringBuffer(1024);
+        sb.append("<To xmlns=\"http://www.w3.org/2005/08/addressing\"")
+          .append(">http://localhost:8080/StockService/StockService</To>")
+          .append("<Action xmlns=\"http://www.w3.org/2005/08/addressing\"")
+          .append(">http://sun.com/GetStockQuote</Action>")
+          .append("<ReplyTo xmlns=\"http://www.w3.org/2005/08/addressing\">")
+          .append("<Address>http://www.w3.org/2005/08/addressing/anonymous</Address>")
+          .append("</ReplyTo><MessageID xmlns=\"http://www.w3.org/2005/08/addressing\">")
+          .append("123456789</MessageID>");
+        return sb.toString();
     }
 }
