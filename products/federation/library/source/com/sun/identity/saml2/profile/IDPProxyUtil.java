@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPProxyUtil.java,v 1.11 2008-07-23 18:18:04 exu Exp $
+ * $Id: IDPProxyUtil.java,v 1.12 2008-07-30 19:55:32 weisun2 Exp $
  *
  */
 
@@ -184,10 +184,6 @@ public class IDPProxyUtil {
          // save the original AuthnRequest 
          IDPCache.proxySPAuthnReqCache.put(requestID,
              authnRequest);
-         
-         // save the preferred IDP id
-         IDPCache.idDestnCache.put( requestID,
-             preferredIDP);
          
          String targetURL = null;
          SPSSODescriptorElement localDescriptor = null;
@@ -757,6 +753,7 @@ public class IDPProxyUtil {
                 getRealm(SAML2MetaUtils.getRealmByMetaAlias(metaAlias));
             String party = partner.getPartner();
             idpSession.removeSessionPartner(party);
+            IDPCache.idpSessionsBySessionID.remove(tokenID);
             initiateSPLogoutRequest(request,response, party, metaAlias, realm,
                 logoutReq, null, idpSession, binding, relayState);
         } catch (SessionException se) {
@@ -993,7 +990,8 @@ public class IDPProxyUtil {
            String tokenID = sessionProvider.getSessionID(tmpsession);
            String pid = null; 
            if (tokenID != null && !tokenID.equals("")) {    
-               pid=(String)IDPCache.spSessionPartnerBySessionID.get(tokenID); 
+               pid=(String)IDPCache.spSessionPartnerBySessionID.get(tokenID);
+               IDPCache.spSessionPartnerBySessionID.remove(tokenID);  
            } 
            List partners= null; 
            if (pid != null && !pid.equals("")) {

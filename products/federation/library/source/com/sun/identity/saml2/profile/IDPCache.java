@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPCache.java,v 1.14 2008-07-07 05:14:47 qcheng Exp $
+ * $Id: IDPCache.java,v 1.15 2008-07-30 19:55:32 weisun2 Exp $
  *
  */
 
@@ -179,21 +179,18 @@ public class IDPCache {
       * key   : requestID (String)
       * value : SP descriptor 
       */
-    public static Hashtable proxySPDescCache = new Hashtable(); 
+    public static PeriodicCleanUpMap proxySPDescCache =
+         new PeriodicCleanUpMap(
+         SPCache.interval * 1000, SPCache.interval * 1000); 
 
     /**
       * Cache saves the original AuthnRequest coming from SP to IDP proxy
       * key   : requestID (String) 
       * value : AuthnRequest 
       */ 
-    public static Hashtable proxySPAuthnReqCache = new Hashtable();      
-  
-    /**
-      * Cache saves the preferred IDP id
-      * key   : requestID (String)
-      * value : preferred IDP id
-      */
-    public static Hashtable idDestnCache = new Hashtable();
+    public static PeriodicCleanUpMap proxySPAuthnReqCache =
+         new PeriodicCleanUpMap(
+         SPCache.interval * 1000, SPCache.interval * 1000); 
 
     /** 
       * Cache saves the SAML2SessionPartner  
@@ -207,29 +204,18 @@ public class IDPCache {
       * key   : requestID (String) 
       * value : LogoutRequest
       */
-    public static Hashtable proxySPLogoutReqCache = new Hashtable(); 
+    public static PeriodicCleanUpMap proxySPLogoutReqCache =
+        new PeriodicCleanUpMap(
+        SPCache.interval * 1000, SPCache.interval * 1000); 
     
-    /** 
-      * Cache saves the original HttpServletRequest coming from SP to IDP proxy
-      * key   : requestID (String) 
-      * value : HttpServletRequest
-      */
-    public static Hashtable proxySPHttpRequest = new Hashtable(); 
-    
-    /** 
-      * Cache saves the original HttpServletResponse coming from SP to IDP proxy
-      * key   : requestID (String) 
-      * value : HttpServletResponse
-      */
-    public static Hashtable proxySPHttpResponse = new Hashtable(); 
-
     /** 
       * Cache saves the SOAPMessage created by proxy IDP to the original SP
       * key   : requestID (String) 
       * value : SOAPMessage
       */
-    public static Hashtable SOAPMessageByLogoutRequestID = new Hashtable(); 
-    
+    public static PeriodicCleanUpMap SOAPMessageByLogoutRequestID =
+         new PeriodicCleanUpMap(
+         SPCache.interval * 1000, SPCache.interval * 1000); 
     
     /**
       * Cache saves the SAML2 Session Partner's providerID 
@@ -245,8 +231,9 @@ public class IDPCache {
       * value : Map keeping LogoutResponse, sending location, 
       *         spEntityID and idpEntityID. 
       */
-    public static Hashtable logoutResponseCache = new Hashtable();  
-
+     public static PeriodicCleanUpMap logoutResponseCache =
+          new PeriodicCleanUpMap(
+          SPCache.interval * 1000, SPCache.interval * 1000); 
     /**
      * Hashtable saves AuthnContextClassRef to auth schems mapping
      * key  : hostEntityID + "|" + realmName

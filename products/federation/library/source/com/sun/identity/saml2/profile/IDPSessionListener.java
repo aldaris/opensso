@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSessionListener.java,v 1.3 2008-06-25 05:47:54 qcheng Exp $
+ * $Id: IDPSessionListener.java,v 1.4 2008-07-30 19:55:32 weisun2 Exp $
  *
  */
 
@@ -94,6 +94,14 @@ public class IDPSessionListener
            }
            IDPCache.idpSessionsByIndices.remove(sessionIndex);
            IDPCache.authnContextCache.remove(sessionIndex);
+           String  sessID = sessionProvider.getSessionID(session); 
+           if (IDPCache.idpSessionsBySessionID.get(sessID) != null) {
+               IDPCache.idpSessionsBySessionID.remove(sessID);
+           }
+           
+           if (IDPCache.spSessionPartnerBySessionID.get(sessID) != null) {
+               IDPCache.spSessionPartnerBySessionID.remove(sessID);
+           }    
            if (SAML2Utils.debug.messageEnabled()) {
                SAML2Utils.debug.message(
                    classMethod +
