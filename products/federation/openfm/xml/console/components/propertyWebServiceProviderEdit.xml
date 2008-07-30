@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyWebServiceProviderEdit.xml,v 1.13 2008-07-21 17:00:11 veiming Exp $
+   $Id: propertyWebServiceProviderEdit.xml,v 1.14 2008-07-30 22:10:31 veiming Exp $
 
 -->
 
@@ -232,6 +232,44 @@
             tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
             <attribute name="label" value="label.Yes" />
         </cc>
+    </property>
+    <property>
+        <label name="lblsigningreftype"
+            defaultValue="a355"
+            labelFor="signingreftype" />
+        <cc name="signingreftype"
+            tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag">
+            <option label="a356" value="DirectReference" />
+            <option label="a357" value="KeyIdentifierRef" />
+            <option label="a358" value="X509IssuerSerialRef" />
+        </cc>
+        <fieldhelp name="helpsigningreftype" defaultValue="a355.help" />
+    </property>
+    <property>
+        <label name="lblencryptionalgorithm"
+            defaultValue="a359"
+            labelFor="encryptionalgorithm" />
+        <cc name="encryptionalgorithm"
+            tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag">
+            <option label="a26" value="AES" />
+            <option label="a25" value="DESede" />
+        </cc>
+    </property>
+    <property>
+        <label name="lblencryptionstrength"
+            defaultValue="a359"
+            labelFor="encryptionstrength" />
+        <cc name="encryptionstrength"
+            tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag">
+            <attribute name="defaultValue" value="256" />
+            <option label="0" value="0" />
+            <option label="112" value="112" />
+            <option label="128" value="128" />
+            <option label="168" value="168" />
+            <option label="192" value="192" />
+            <option label="256" value="256" />
+        </cc>
+        <fieldhelp name="helpencryptionstrength" defaultValue="a360.help" />
     </property>
 </section>
 
