@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.83 2008-07-30 00:50:15 arviranga Exp $
+ * $Id: AMSetupServlet.java,v 1.84 2008-07-30 05:15:10 mallas Exp $
  *
  */
 
@@ -1894,6 +1894,9 @@ public class AMSetupServlet extends HttpServlet {
         config.put("isRequestSign","true");
         config.put("keepSecurityHeaders","true");
         config.put("WSPEndpoint","default");
+        config.put("EncryptionAlgorithm","AES");
+        config.put("EncryptionStrength","256");
+        config.put("SigningRefType","DirectReference");
         config.put("AgentType","WSCAgent");
         createAgent(token, idrepo, "wsc", "WSC", "", config);
 
