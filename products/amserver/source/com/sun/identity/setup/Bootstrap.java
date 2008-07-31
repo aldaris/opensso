@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Bootstrap.java,v 1.13 2008-07-30 00:50:15 arviranga Exp $
+ * $Id: Bootstrap.java,v 1.14 2008-07-31 18:25:58 veiming Exp $
  *
  */
 
@@ -41,14 +41,10 @@ import com.sun.identity.authentication.internal.AuthPrincipal;
 import com.sun.identity.authentication.internal.InvalidAuthContextException;
 import com.sun.identity.authentication.internal.server.SMSAuthModule;
 import com.sun.identity.common.DebugPropertiesObserver;
-import com.sun.identity.common.configuration.ConfigurationObserver;
 import com.sun.identity.common.configuration.ServerConfiguration;
-import com.sun.identity.security.AdminTokenAction;
-import com.sun.identity.shared.Constants;
 import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SMSPropertiesObserver;
-import com.sun.identity.sm.ServiceConfigManager;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -56,10 +52,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
-import java.security.AccessController;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 import javax.security.auth.login.LoginException;
 import netscape.ldap.LDAPConnection;
@@ -90,7 +86,8 @@ public class Bootstrap {
             String basedir = System.getProperty(JVM_OPT_BOOTSTRAP);
             if (load(basedir, false) == null) {
                 throw new ConfiguratorException(
-                    "configurator.cannot.bootstrap");
+                    "configurator.cannot.bootstrap", null,
+                    Locale.getDefault());
             }
             SystemProperties.initializeProperties("com.iplanet.am.naming.url",
                 SystemProperties.getServerInstanceName() + "/namingservice");
