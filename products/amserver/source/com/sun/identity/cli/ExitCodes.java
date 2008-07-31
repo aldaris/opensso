@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ExitCodes.java,v 1.3 2008-06-25 05:42:08 qcheng Exp $
+ * $Id: ExitCodes.java,v 1.4 2008-07-31 21:54:55 veiming Exp $
  *
  */
 
@@ -168,6 +168,11 @@ public interface ExitCodes {
      */
     int INCORRECT_DATA_FORMAT = 26;
 
+    /**
+     * Session has expired.
+     */
+    int SESSION_EXPIRED = 27;
+    
     /**
      * Request cannot be processed.
      */

@@ -22,14 +22,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticatedCommand.java,v 1.5 2008-06-25 05:42:07 qcheng Exp $
+ * $Id: AuthenticatedCommand.java,v 1.6 2008-07-31 21:54:55 veiming Exp $
  *
  */
 
 package com.sun.identity.cli;
 
 
+import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.iplanet.sso.SSOTokenManager;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -155,6 +157,13 @@ public abstract class AuthenticatedCommand extends CLICommandBase {
             }
             ssoToken = auth.ldapLogin(getCommandManager(), bindUser,
                 getAdminPassword());
+        } else {
+            try {
+                SSOTokenManager mgr = SSOTokenManager.getInstance();
+                mgr.validateToken(ssoToken);
+            } catch (SSOException e) {
+                throw new CLIException(e, ExitCodes.SESSION_EXPIRED);
+            }
         }
     }
 
