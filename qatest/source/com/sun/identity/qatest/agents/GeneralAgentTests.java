@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GeneralAgentTests.java,v 1.7 2008-07-21 17:32:48 nithyas Exp $
+ * $Id: GeneralAgentTests.java,v 1.8 2008-07-31 20:19:19 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -113,7 +113,8 @@ public class GeneralAgentTests extends TestCommon {
         strAgentType = rbg.getString(strGblRB + ".agentType");
         log(Level.FINEST, "setup", "Agent type - " + strAgentType );        
         strScriptURL = rbg.getString(strGblRB + ".headerEvalScriptName");
-        if (strAgentType.contains("J2EE")) {
+        if (strAgentType.contains("J2EE") || 
+            strAgentType.contains("WEBLOGIC")) {
             String strHeaderFetchMode = rbg.getString(strGblRB + 
                                 ".headerFetchMode");
             strScriptURL = strScriptURL.substring(0, strScriptURL.length() - 1);
@@ -204,7 +205,8 @@ public class GeneralAgentTests extends TestCommon {
     public void evaluateAnonymous()
     throws Exception {
         entering("evaluateAnonymous", null);
-        if (!(strAgentType.contains("J2EE"))) {
+        if (!(strAgentType.contains("J2EE")) && 
+                !(strAgentType.contains("WEBLOGIC"))) {
             webClient = new WebClient();
             try {
                 URL urlLoc = new URL(resourceNotProtected);
@@ -230,7 +232,7 @@ public class GeneralAgentTests extends TestCommon {
     /**
      * Validates a not enforced resources.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    //@Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void evaluateNotEnforced()
     throws Exception {
         entering("evaluateNotEnforced", null);
