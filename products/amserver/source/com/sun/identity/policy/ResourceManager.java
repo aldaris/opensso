@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceManager.java,v 1.3 2008-06-25 05:43:45 qcheng Exp $
+ * $Id: ResourceManager.java,v 1.4 2008-07-31 18:17:05 dillidorai Exp $
  *
  */
 
@@ -36,13 +36,13 @@ import org.w3c.dom.*;
 
 import com.sun.identity.policy.interfaces.Referral;
 import com.sun.identity.policy.plugins.OrgReferral;
+import com.sun.identity.shared.debug.Debug;
 import netscape.ldap.util.DN;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
 import com.sun.identity.sm.*;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.iplanet.am.util.Cache;
-import com.iplanet.services.ldap.*;
 
 
 /**
@@ -65,6 +65,9 @@ public class ResourceManager {
     private static final String RESOURCES_XML = "xmlresources";
     private static final String RESOURCE_PREFIXES = "resourceprefixes";
     static final String EMPTY_RESOURCE_NAME = "---EMPTY---";
+
+    static Debug debug = Debug.getInstance("amPolicy");
+
 
     //Constants to build XML representation
     static final String LTS = "<";
@@ -97,7 +100,6 @@ public class ResourceManager {
         DN orgDN = new DN(org);
         DN baseDN = new DN(ServiceManager.getBaseDN());
         stm = ServiceTypeManager.getServiceTypeManager();
-        String serviceName = scm.getName();
         canCreateNewRes = orgDN.equals(baseDN);
     }
 
@@ -482,8 +484,26 @@ public class ResourceManager {
             } catch (SMSException e) {
                 throw new PolicyException(e);
             } catch (SSOException e) {
-            throw (new PolicyException(ResBundleUtils.rbName,
-            "invalid_sso_token", null, null));
+                throw (new PolicyException(ResBundleUtils.rbName,
+                "invalid_sso_token", null, null));
+            }
+        }
+        if (!rConfig.isValid()) {
+            if (debug.messageEnabled()) {
+                debug.message("ResourceManager.getResourcesServiceConfig():"
+                        + "rConfig is not valid");
+            }
+            try {
+                scm = new ServiceConfigManager(
+                    PolicyManager.POLICY_SERVICE_NAME, token);
+                ServiceConfig oConfig = scm.getOrganizationConfig(org, null);
+                rConfig = (oConfig == null) ? null :
+                oConfig.getSubConfig(PolicyManager.RESOURCES_POLICY);
+            } catch (SMSException e) {
+                throw new PolicyException(e);
+            } catch (SSOException e) {
+                throw (new PolicyException(ResBundleUtils.rbName,
+                "invalid_sso_token", null, null));
             }
         }
         return rConfig;
@@ -719,8 +739,8 @@ public class ResourceManager {
                 
             if (matchResult.equals(ResourceMatch.EXACT_MATCH)) {
                 hasMatch = true;
-                Set policyNames = getPolicyNames(referenceNode);
-                if (policyNames.contains(policyName)) {
+                Set pNames = getPolicyNames(referenceNode);
+                if (pNames.contains(policyName)) {
                     modified = false;
                     break;
                 }
