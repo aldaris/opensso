@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureUnconfigure.java,v 1.10 2008-06-26 19:41:29 rmisra Exp $
+ * $Id: ConfigureUnconfigure.java,v 1.11 2008-07-31 21:31:48 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -103,7 +103,8 @@ public class ConfigureUnconfigure extends TestCommon {
                     set.add("2.2_Agent");
                     map.put("AgentType",set);
                 } else {
-                    if (agentType.contains("3.0J2EE")) {
+                    if (agentType.contains("3.0J2EE") || 
+                            agentType.contains("3.0WEBLOGIC")) {
                         set.add("J2EEAgent");
                         map.put("AgentType",set);
                     } else if (agentType.contains("3.0WEB")) {

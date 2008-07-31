@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentTests2_2.java,v 1.2 2008-06-26 19:41:29 rmisra Exp $
+ * $Id: AgentTests2_2.java,v 1.3 2008-07-31 21:32:56 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -120,7 +120,8 @@ public class AgentTests2_2 extends TestCommon {
                 }
                 strScriptURL = rbg.getString(strGblRB 
                         + ".headerEvalScriptName");
-                if (strAgentBeingTested.contains("J2EE")) {
+                if (strAgentBeingTested.contains("J2EE") ||
+                        strAgentBeingTested.contains("WEBLOGIC")) {
                     strScriptURL = strScriptURL.substring(0,
                             strScriptURL.length() - 1);
                     strScriptURL = strScriptURL + "?fetch_mode=" + 

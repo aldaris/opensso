@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HeaderAttributeTests.java,v 1.10 2008-06-26 21:26:00 rmisra Exp $
+ * $Id: HeaderAttributeTests.java,v 1.11 2008-07-31 21:34:08 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -132,7 +132,8 @@ public class HeaderAttributeTests extends TestCommon {
             if (strHeaderFetchMode  == null){
                 strHeaderFetchMode = rbg.getString(strGblRB + ".headerFetchMode");
             }
-            if (strAgentType.contains("J2EE")) {
+            if (strAgentType.contains("J2EE") || 
+                    strAgentType.contains("WEBLOGIC")) {
                 strScriptURL = rbg.getString(strGblRB + 
                         ".headerEvalScriptName");
                 strScriptURL = strScriptURL.substring(0,

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateAgentProfile.java,v 1.4 2008-06-26 19:41:29 rmisra Exp $
+ * $Id: CreateAgentProfile.java,v 1.5 2008-07-31 21:30:56 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -147,8 +147,8 @@ public class CreateAgentProfile extends TestCommon {
             map.put("com.sun.identity.agents.config.response.attribute." + 
                     "fetch.mode", set);            
             
-            // Setting J2EE agent specific properties
-            if (agentType.contains("J2EE")) {
+            // Setting J2EE/WEBLOGIC agent specific properties
+            if (agentType.contains("J2EE") || agentType.contains("WEBLOGIC")) {
                 set = new HashSet();
                 set.add(agentProtocol + "://" + agentHost + ":" + agentPort 
                         + "/agentapp/notification");
@@ -209,11 +209,7 @@ public class CreateAgentProfile extends TestCommon {
                 set.add("[7] = /agentsample/resources/notenf.html");                                
                 map.put("com.sun.identity.agents.config.notenforced.uri", set);                        
 
-                set = new HashSet();
-                set.add("false");
-                map.put("com.sun.identity.agents.config.sso.decode", set);                        
-
-                // Setting default properties
+               // Setting default properties
                 set = new HashSet();
                 set.add("/agentapp/sunwCDSSORedirectURI");
                 map.put("com.sun.identity.agents.config.cdsso.redirect.uri", 
@@ -355,10 +351,6 @@ public class CreateAgentProfile extends TestCommon {
                 set = new HashSet();
                 set.add("en");
                 map.put("com.sun.identity.agents.config.locale.language", set);            
-
-                set = new HashSet();
-                set.add("[0]=");
-                map.put("com.sun.identity.agents.config.login.error.uri", set);            
 
                 set = new HashSet();
                 set.add("[0]=");
@@ -671,16 +663,32 @@ public class CreateAgentProfile extends TestCommon {
                 map.put("com.sun.identity.sm.notification.enabled", set);            
 
                 set = new HashSet();
-                set.add("[]=");
-                map.put("com.sun.identity.agents.config.privileged." + 
-                        "attribute.mapping", set);            
-
-                set = new HashSet();
                 set.add("[0]=");
                 map.put("com.sun.identity.agents.config.cookie.reset.name",
                         set);         
-                
-            // Setting WEB agent specific properties
+
+                if (agentType.contains("3.0WEBLOGIC")) {
+                    set = new HashSet();
+                    set.add("[id=manager,ou=group,dc=opensso,dc=java,dc=net]" +
+                            "=am_manager_role");
+                    set.add("[id=employee,ou=group,dc=opensso,dc=java,dc=net]" +
+                            "=am_employee_role");
+                    set.add("[id=manager,ou=role,dc=opensso,dc=java,dc=net]" +
+                            "=am_manager_role");
+                    set.add("[id=employee,ou=role,dc=opensso,dc=java,dc=net]" +
+                            "=am_employee_role");
+                    map.put("com.sun.identity.agents.config.privileged." + 
+                            "attribute.mapping", set);            
+                } else {
+                    set = new HashSet();
+                    set.add("[]=");
+                    map.put("com.sun.identity.agents.config.privileged." + 
+                            "attribute.mapping", set);            
+                    set = new HashSet();
+                    set.add("[0]=");
+                    map.put("com.sun.identity.agents.config.login.error.uri",
+                            set);                                
+                }
             } else if (agentType.contains("WEB")) {
                 set = new HashSet();
                 set.add(agentProtocol + "://" + agentHost + ":" + agentPort + 
@@ -713,6 +721,7 @@ public class CreateAgentProfile extends TestCommon {
                 set.add("[statSingle]=RESPONSE_STATSINGLE");
                 set.add("[statMultiple]=RESPONSE_STATMULTIPLE");
                 set.add("[cn]=RESPONSE_CN");
+                set.add("[mail]=RESPONSE_MAIL");
                 map.put("com.sun.identity.agents.config.response." + 
                         "attribute.mapping", set);                        
 
@@ -787,6 +796,11 @@ public class CreateAgentProfile extends TestCommon {
                 set.add("true");
                 map.put("com.sun.identity.agents.config.change.notification." +
                         "enable", set);            
+
+                set = new HashSet();
+                set.add("true");
+                map.put("com.sun.identity.agents.config.notification.enable" , 
+                        set);            
 
                 set = new HashSet();
                 set.add("true");
@@ -898,10 +912,6 @@ public class CreateAgentProfile extends TestCommon {
                         set);            
 
                 set = new HashSet();
-                set.add("Error");
-                map.put("com.sun.identity.agents.config.log.level", set);            
-
-                set = new HashSet();
                 set.add("3");
                 map.put("com.sun.identity.agents.config.sso.cache.polling." + 
                         "interval", set);            
@@ -925,11 +935,6 @@ public class CreateAgentProfile extends TestCommon {
                 set.add("HIGH");
                 map.put("com.sun.identity.agents.config.iis.filter.priority"
                         , set);            
-
-                set = new HashSet();
-                set.add("true");
-                map.put("com.sun.identity.agents.config.deny.access.log." + 
-                        "failure", set);            
 
                 set = new HashSet();
                 set.add("10");
