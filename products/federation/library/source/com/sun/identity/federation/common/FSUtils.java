@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSUtils.java,v 1.3 2008-06-25 05:46:40 qcheng Exp $
+ * $Id: FSUtils.java,v 1.4 2008-07-31 00:56:31 exu Exp $
  *
  */
 
@@ -347,7 +347,9 @@ public class FSUtils {
         StringTokenizer st = new StringTokenizer(succinctID, " ");
         while(st.hasMoreTokens()){
             preferredSuccinctId = st.nextToken();
-            if (preferredSuccinctId.length() < 28) {
+            if ((preferredSuccinctId.length() < 28) &&
+                 st.hasMoreTokens())
+            {
                 preferredSuccinctId = 
                     preferredSuccinctId + "+" + st.nextToken();
             }
