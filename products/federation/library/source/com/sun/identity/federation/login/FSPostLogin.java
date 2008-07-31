@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSPostLogin.java,v 1.5 2008-06-25 05:46:42 qcheng Exp $
+ * $Id: FSPostLogin.java,v 1.6 2008-07-31 00:55:33 exu Exp $
  *
  */
 
@@ -314,22 +314,22 @@ public class FSPostLogin {
         if (metaManager != null) {
             BaseConfigType hostedConfig = null;
             try {
-                String hostedProviderRole = 
+                providerRole = 
                     metaManager.getProviderRoleByMetaAlias(metaAlias);
-                String hostedEntityId = metaManager.getEntityIDByMetaAlias(
+                entityID = metaManager.getEntityIDByMetaAlias(
                     metaAlias);
                 realm = IDFFMetaUtils.getRealmByMetaAlias(metaAlias);
-                if (hostedProviderRole != null &&
-                    hostedProviderRole.equals(IFSConstants.IDP))
+                if (providerRole != null &&
+                    providerRole.equals(IFSConstants.IDP))
                 {
                     isIDP = true;
                     hostedConfig = metaManager.getIDPDescriptorConfig(
-                        realm, hostedEntityId);
-                } else if (hostedProviderRole != null &&
-                    hostedProviderRole.equalsIgnoreCase(IFSConstants.SP))
+                        realm, entityID);
+                } else if (providerRole != null &&
+                    providerRole.equalsIgnoreCase(IFSConstants.SP))
                 {
                     hostedConfig = metaManager.getSPDescriptorConfig(
-                        realm, hostedEntityId);
+                        realm, entityID);
                 }
             } catch (IDFFMetaException ie) {
                 FSUtils.debug.error("FSPostLogin::setMetaInfo: exception:",ie);
@@ -362,12 +362,15 @@ public class FSPostLogin {
         String cotSelected )
         throws FSPostLoginException 
     {
-        String entityID = null;
-        String realm = IDFFMetaUtils.getRealmByMetaAlias(metaAlias);
         String tldURL = null;
         try {
-            if (metaManager != null) {
-                entityID = metaManager.getEntityIDByMetaAlias(metaAlias);
+            if (entityID == null) {
+                if (metaManager != null) {
+                    entityID = metaManager.getEntityIDByMetaAlias(metaAlias);
+                }
+            }
+            if (realm == null) {
+                realm = IDFFMetaUtils.getRealmByMetaAlias(metaAlias);
             }
             CircleOfTrustManager cotManager = new CircleOfTrustManager();
             CircleOfTrustDescriptor cotDesc = cotManager.getCircleOfTrust(
