@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CookieWriterServlet.java,v 1.3 2008-06-25 05:47:47 qcheng Exp $
+ * $Id: CookieWriterServlet.java,v 1.4 2008-07-31 00:54:29 exu Exp $
  *
  */
 
@@ -30,6 +30,7 @@ package com.sun.identity.saml2.idpdiscovery;
 
 import com.sun.identity.shared.encode.Base64;
 import java.io.IOException;
+import java.security.MessageDigest;
 import java.util.StringTokenizer;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -218,6 +219,7 @@ public class CookieWriterServlet extends HttpServlet {
                     request,
                     preferred_cookie_name
                 );
+            boolean bIsSAML2 = CookieUtils.isSAML2(request);
             if (cookieValue == null ||
                 cookieValue.trim().length() <= 0) {
                 // Preferred IDP Cookie does not exist.
@@ -231,12 +233,12 @@ public class CookieWriterServlet extends HttpServlet {
                 );           
                 }                                               
                 cookieValue = Base64.encode(
-                    generateSuccintID(providerId)
+                    generateSuccinctID(providerId, bIsSAML2)
                 );
             } else {
                 cookieValue =
                     resetPreferredIDPCookie(
-                        cookieValue, providerId
+                        cookieValue, providerId, bIsSAML2
                     );
             }
             if (CookieUtils.debug.messageEnabled()) {
@@ -315,7 +317,8 @@ public class CookieWriterServlet extends HttpServlet {
      */
     private String resetPreferredIDPCookie(
         String existingCookieValue,
-        String toAddCookieValue) {
+        String toAddCookieValue,
+        boolean bIsSAML2) {
         // Steps
         // 1. Check if existingCookieValue has toAddCookieValue
         // 2. If yes remove that value from existingCookieValue
@@ -323,7 +326,7 @@ public class CookieWriterServlet extends HttpServlet {
         StringBuffer returnCookie = new StringBuffer();        
         String encodedCookieToAdd = 
             Base64.encode(
-                generateSuccintID(toAddCookieValue)
+                generateSuccinctID(toAddCookieValue, bIsSAML2)
             );
         StringTokenizer st =
             new StringTokenizer(
@@ -342,19 +345,38 @@ public class CookieWriterServlet extends HttpServlet {
         return returnCookie.toString();
     }
 
-    public byte[] generateSuccintID(String providerURL) {
+    public byte[] generateSuccinctID(String providerURL, boolean bIsSAML2) {
         if (providerURL == null ||
             providerURL.length() == 0) {
             return null;
         }
-        byte[] returnBytes = null;
-        try {
-            returnBytes = providerURL.getBytes("UTF-8");
-        } catch (Exception e) {
-            CookieUtils.debug.error("CookieWriterServlet.generateSuccintID: ",
-                                   e);
-            returnBytes = null;
+        if (bIsSAML2) {
+            byte[] returnBytes = null;
+            try {
+                returnBytes = providerURL.getBytes("UTF-8");
+            } catch (Exception e) {
+                CookieUtils.debug.error(
+                    "CookieWriterServlet.generateSuccinctID: ", e);
+                returnBytes = null;
+            }
+            return returnBytes;
+        } else {
+            MessageDigest md = null;
+            try {
+                md = MessageDigest.getInstance("SHA");
+            } catch (Exception e) {
+                CookieUtils.debug.error(
+                    "CookieWriterServlet.generateSuccinctID: ", e);
+                return null;
+            }
+            char chars[] = providerURL.toCharArray();
+            byte bytes[] = new byte[chars.length];
+            for (int i = 0; i < chars.length; i++) {
+                bytes[i] = (byte) chars[i];
+            }
+
+            md.update(bytes);
+            return md.digest();
         }
-        return returnBytes;
     }
 }

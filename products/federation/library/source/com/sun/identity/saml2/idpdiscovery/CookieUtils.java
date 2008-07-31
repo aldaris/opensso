@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CookieUtils.java,v 1.4 2008-06-25 05:47:47 qcheng Exp $
+ * $Id: CookieUtils.java,v 1.5 2008-07-31 00:54:29 exu Exp $
  *
  */
 
@@ -63,6 +63,17 @@ public class CookieUtils {
         return secureCookie;
     }
 
+    public static boolean isSAML2(HttpServletRequest req) {
+        // check this is for idff or saml2
+        String reqURI = req.getRequestURI(); 
+        boolean bIsSAML2 = true; 
+        if (reqURI.endsWith(IDPDiscoveryConstants.IDFF_READER_URI) ||
+            reqURI.endsWith(IDPDiscoveryConstants.IDFF_WRITER_URI)) { 
+            bIsSAML2 = false; 
+        }
+        return bIsSAML2;
+    }
+
     /**
      * Gets value of cookie that has mached name in servlet request
      *
@@ -98,12 +109,7 @@ public class CookieUtils {
         }
         
         // check this is for idff or saml2
-        String reqURI = req.getRequestURI(); 
-        boolean isSAML2 = true; 
-        if (reqURI.endsWith(IDPDiscoveryConstants.IDFF_READER_URI) ||
-            reqURI.endsWith(IDPDiscoveryConstants.IDFF_WRITER_URI)) { 
-            isSAML2 = false; 
-        }
+        boolean bIsSAML2 = isSAML2(req);
 
         // take care of the case where there is a '+' in preferred idp
         // When '+' is decoded, it became ' ' which is also the seperator
@@ -115,7 +121,7 @@ public class CookieUtils {
             StringTokenizer st = new StringTokenizer(cookieValue, " ");
             while (st.hasMoreTokens()) {
                 String curIdpString = (String)st.nextToken();
-                while (!isSAML2 && curIdpString.length() < 28 && 
+                while (!bIsSAML2 && curIdpString.length() < 28 && 
                     st.hasMoreTokens()) {
                     curIdpString = curIdpString + "+" + (String) st.nextToken();
                 }
