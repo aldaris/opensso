@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateFedletZip.java,v 1.4 2008-07-23 17:44:59 veiming Exp $
+ * $Id: CreateFedletZip.java,v 1.5 2008-07-31 20:20:45 qcheng Exp $
  *
  */
 
@@ -297,7 +297,9 @@ public class CreateFedletZip {
         String content =
             "cot-name=fedletcot\n" +
             "sun-fm-cot-status=Active\n" +
-            "sun-fm-trusted-providers=IDP_ENTITY_ID, FEDLET_ENTITY_ID";
+            "sun-fm-trusted-providers=IDP_ENTITY_ID, FEDLET_ENTITY_ID\n" +
+            "sun-fm-saml2-readerservice-url=\n" + 
+            "sun-fm-saml2-writerservice-url=\n";
         writeToFile(confDir + File.separator + "fedlet.cot-template", content);
     }
     

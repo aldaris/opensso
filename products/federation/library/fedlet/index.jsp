@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.jsp,v 1.5 2008-06-25 05:46:15 qcheng Exp $
+   $Id: index.jsp,v 1.6 2008-07-31 20:20:27 qcheng Exp $
 
 --%>
 
@@ -38,6 +38,7 @@
 <%@ page import="java.io.File" %>
 <%@ page import="java.io.InputStream" %>
 <%@ page import="java.io.FileOutputStream" %>
+<%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.Iterator" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
@@ -197,11 +198,49 @@
                     spMetaAlias = (String) spMetaAliases.get(0);
                 }
 
-                List idpEntities = 
-                    manager.getAllRemoteIdentityProviderEntities("/");
-                if ((idpEntities != null) && !idpEntities.isEmpty()) {
-                    // get first one
-                    idpEntityID = (String) idpEntities.get(0);
+                List trustedIDPs = new ArrayList();
+                idpEntityID = request.getParameter("idpEntityID");
+                if ((idpEntityID == null) || (idpEntityID.length() == 0)) {
+                    // find out all trusted IDPs
+                    List idpEntities = 
+                        manager.getAllRemoteIdentityProviderEntities("/");
+                    if ((idpEntities != null) && !idpEntities.isEmpty()) {
+                        int numOfIDP = idpEntities.size();
+                        for (int j = 0; j < numOfIDP; j ++) {
+                            String idpID = (String) idpEntities.get(j); 
+                            if (manager.isTrustedProvider("/", 
+                                spEntityID, idpID)) {
+                                trustedIDPs.add(idpID);
+                            }
+                        }
+                    }
+                }
+                if (trustedIDPs.size() > 1) {
+                    // multiple trusted IDPs
+                    int numOfIDP = trustedIDPs.size();
+                    out.println("<p><br><b>Multiple Identity Providers are configured with this Fedlet.</b><br>");
+                    out.println("<br><b>Please select the Identity Provider to validate the Fedlet setup :</b><br>");
+                    String thisURI = request.getRequestURI();
+                    if (thisURI.indexOf("?") != -1) {
+                        thisURI = thisURI + "&";
+                    } else {
+                        thisURI = thisURI + "?";
+                    }
+                    for (int j = 0; j < numOfIDP; j ++) {
+                        idpEntityID = (String) trustedIDPs.get(j); 
+                        out.println("<br><a href=\"" + thisURI + "idpEntityID=" 
+                            + idpEntityID + "\">" + idpEntityID + "</a>");
+                    }
+                    out.println("<br><br><b>or </b><br>");
+                    out.println("<a href=\"" + deployuri + 
+                        "/saml2/jsp/fedletSSOInit.jsp?metaAlias=" + spMetaAlias
+                        + "\">use IDP discovery service to find out preferred IDP</a>");
+                    out.println("</body>");
+                    out.println("</html>");
+                    return;
+                } else if (!trustedIDPs.isEmpty()) {  
+                    // get the single IDP entity ID 
+                    idpEntityID = (String) trustedIDPs.get(0);
                 }
                 if ((spEntityID == null) || (idpEntityID == null)) {
                     out.println("<p><br><b>Fedlet or remote Identity Provider metadata is not configured.</b>");

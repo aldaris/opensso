@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateFedlet.java,v 1.5 2008-06-25 05:50:01 qcheng Exp $
+ * $Id: CreateFedlet.java,v 1.6 2008-07-31 20:20:46 qcheng Exp $
  *
  */
 
@@ -296,7 +296,9 @@ public class CreateFedlet
             "cot-name=" + cot + "\n" +
             "sun-fm-cot-status=Active\n" +
             "sun-fm-trusted-providers=" + encodeVal(idp) + "," +
-            encodeVal(sp);
+            encodeVal(sp) + "\n" +
+            "sun-fm-saml2-readerservice-url=\n" +
+            "sun-fm-saml2-writerservice-url=\n";
         writeToFile(workDir + "/fedlet.cot", content);
     }
     

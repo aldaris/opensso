@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: fedletSSOInit.jsp,v 1.2 2008-06-25 05:48:36 qcheng Exp $
+   $Id: fedletSSOInit.jsp,v 1.3 2008-07-31 20:20:28 qcheng Exp $
 
 --%>
 
@@ -220,10 +220,15 @@
     if ((idpEntityID == null) || (idpEntityID.length() == 0)) {
         SAML2MetaManager manager = new SAML2MetaManager();
         List idpEntities = manager.getAllRemoteIdentityProviderEntities("/"); 
-        if ((idpEntities != null) && !idpEntities.isEmpty()) {
+        if ((idpEntities == null) || idpEntities.isEmpty()) {
+            response.sendError(response.SC_BAD_REQUEST,
+               SAML2Utils.bundle.getString("idpNotFound"));
+            return;
+        } else if (idpEntities.size() == 1) {
+            // only one IDP, just use it
             idpEntityID = (String) idpEntities.get(0);
-        }
-        if ((idpEntityID == null) || (idpEntityID.length() == 0)) {
+        } else { 
+            // multiple IDP configured in fedlet
             response.sendError(response.SC_BAD_REQUEST,
                SAML2Utils.bundle.getString("nullIDPEntityID"));
             return;

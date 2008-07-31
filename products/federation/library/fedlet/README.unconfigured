@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README.unconfigured,v 1.5 2008-07-23 17:36:32 veiming Exp $
+$Id: README.unconfigured,v 1.6 2008-07-31 20:20:27 qcheng Exp $
 
 
 
@@ -33,6 +33,8 @@ $Id: README.unconfigured,v 1.5 2008-07-23 17:36:32 veiming Exp $
     %% 2. How to configure and test Fedlet 
     %% 3. How to embed Fedlet into existing application
     %% 4. How to integrate with existing application after Single Sign-on 
+    %% 5. How to enable Fedlet to support multiple Identity Providers
+    %% 6. How to enable Identity Provider Discovery service in Fedlet
 
 
 %% 1. Contents of this directory 
@@ -183,3 +185,86 @@ try {
         After obtaining the returned "map" object, you could follow the sample
         code to retrieve data needed for your business logics.
 
+
+%% 5. How to enable Fedlet to support multiple Identity Providers  
+    To configure second Identity Provider with this Fedlet:
+    a) Get the standard metadata XML file for the new Identity Provider, name 
+       the XML file as "idp2.xml" and copy it to the Fedlet home directory.
+    b) Decide on the circle-of-trust (COT) the new Identity Provider would 
+       belong. This IDP could be added to an existing COT (e.g. "saml2cot") or
+       a brand new COT. 
+       ** To add the Identity Provider to an existing COT, edit the 
+          corresponding COT file (e.g. "fedlet.cot") under your Fedlet home 
+          directory, and append the new IDP entity ID (pointed by the 
+          "entityID" attribute in the "idp2.xml" metadata file) to the 
+          value of "sun-fm-trusted-providers" attribute using "," as separator.
+       ** To add to a new circle-of-trust:
+          -- create a new file named "fedlet2.cot" and put it under the Fedlet 
+             home directory. Use the existing fedlet.cot as a template, but
+             change the value of attribute "cot-name" to the actual name of 
+             the new COT (e.g. "cot2"), and include both the new IDP entity ID 
+             and the Fedlet entity ID as value for "sun-fm-trusted-providers"
+             attribute (two entity IDs separated by ",").
+          -- edit the sp-extended.xml file, add the new COT name to the value
+             of "cotlist" attribute, e.g.
+             <Attribute name="cotlist">
+                 <Value>saml2cot</Value>
+                 <Value>cot2</Value>
+             </Attribute>
+    c) Create a new "idp2-extended.xml" file as the extended metadata for the
+       new Identity Provider. Use the existing idp-extended.xml as a template
+       but change the "entityID" to the new IDP entity ID, change the value for
+       "cotlist" attribute to the COT name if a new COT is created for the IDP.
+    d) Send the Fedlet metadata XML file (i.e. "sp.xml" under your Fedlet home)
+       to the second IDP, import the metadata in the remote IDP and add it to 
+       the same circle-of-trust as the IDP. 
+    Repeat the same steps for the third, fourth, ... and [x]th IDP, use 
+    idpx.xml/idpx-extended.xml/fedletx.cot as standard meta/extended meta/COT
+    name for the new IDP. Restart your Fedlet web container to make the change
+    effective.
+    Now accessing the index.jsp again, it will prompt you with a list of IDPs
+    the Fedlet trusted. You could choose any of the IDP and perform Single
+    sign-on.
+
+%% 6. How to enable Identity Provider Discovery service in Fedlet
+    When Fedlet is set up with multiple Identity Providers in a COT, it could be
+    configured to use IDP Discovery service to find out the preferred IDP.
+
+    You need to have the Identity Provider Discovery service set up before
+    performing following steps. If you installed the OpenSSO WAR, the 
+    IDP discovery service is bundled in the products already. Or you could
+    follow the document to create a separate WAR for the IDP discovery 
+    service  using the OpenSSO WAR. Please refer to the Sun OpenSSO
+    Enterprise document set on how to setup and use the Identity Provider
+    Discovery service. After set up the IDP discovery service, have the
+    reader service URL (URL to find out preferred IDP) and writer service
+    URL (URL to write the preferred IDP) ready, they are needed in step
+    a) and c) below. If you are using OpenSSO Enterprise server instance
+    or the IDP discovery only WAR instance, the reader service URL is:
+    <protocol>://<host>:<port>/<deploy_uri>/saml2reader  
+    (e.g :  http://discovery.common.com/opensso/saml2reader)
+    the writer service URL is :
+    <protocol>://<host>:<port>/<deploy_uri>/saml2writer
+    (e.g :  http://discovery.common.com/opensso/saml2writer)
+
+    To setup IDP discovery in Fedlet:
+    a) edit the COT file (e.g. "fedlet.cot"), and set the value for attribute 
+       "sun-fm-saml2-readerservice-url" to the SAML2 reader service URL 
+       (e.g. http://discovery.common.com/opensso/saml2reader), set the value 
+       for attribute "sun-fm-saml2-writerservice-url" to the SAML2 writer 
+       service URL (e.g. http://discovery.common.com/opensso/saml2writer).
+    b) Restart your Fedlet web container to make the change to be effective. 
+    c) Setup IDP discovery on each of your remote IDPs. If the IDP is an OpenSSO
+       Enterprise server instance, you need go to the administration console, 
+       find the COT for the IDP and Fedlet, and specify the SAML2 reader 
+       service URL and SAML2 writer service URL, and Save.
+    d) Access the Fedlet index.jsp page, you will be presented with IDP 
+       selection page. Don't click the "use IDP discovery service ..."
+       link yet, as your preferred IDP has not been set yet. Choose one
+       of the IDPs, and complete the Single Sign-on process. The preferred IDP
+       is set right now by the IDP discovery service.
+    c) Access the Fedlet index.jsp page again, and choose the
+       "use IDP discovery service to find out preferred IDP" link.
+       You will be redirected to the IDP discovery service to find out
+       the preferred IDP and send back to Fedlet side with the chosen
+       IDP to start the Fedlet initiated single sign-on.
