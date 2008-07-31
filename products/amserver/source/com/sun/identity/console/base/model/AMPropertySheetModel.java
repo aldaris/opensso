@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMPropertySheetModel.java,v 1.4 2008-07-28 23:43:35 veiming Exp $
+ * $Id: AMPropertySheetModel.java,v 1.5 2008-07-31 16:48:29 veiming Exp $
  *
  */
 
@@ -37,6 +37,7 @@ import com.sun.identity.console.property.PropertyTemplate;
 import com.sun.identity.console.ui.model.CCMapListModel;
 import com.sun.identity.console.ui.model.CCOrderedListModel;
 import com.sun.identity.console.ui.model.CCUnOrderedListModel;
+import com.sun.identity.console.ui.view.CCGlobalMapList;
 import com.sun.identity.console.ui.view.CCMapList;
 import com.sun.identity.console.ui.view.CCOrderedList;
 import com.sun.identity.console.ui.view.CCUnOrderedList;
@@ -154,6 +155,8 @@ public class AMPropertySheetModel
                     view.registerChild(name, CCUnOrderedList.class);
                 } else if (tagName.equals(MAP_LIST)) {
                     view.registerChild(name, CCMapList.class);
+                } else if (tagName.equals(GLOBAL_MAP_LIST)) {
+                    view.registerChild(name, CCGlobalMapList.class);
                 }
             }
         }
