@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HotSwapProperties.java,v 1.3 2008-06-26 19:41:29 rmisra Exp $
+ * $Id: HotSwapProperties.java,v 1.4 2008-07-31 21:43:19 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -218,7 +218,8 @@ public class HotSwapProperties extends TestCommon {
                     ".responseFetch");
                 restoreDefaults(strPropName);
                 
-                if (strAgentType.equals("3.0J2EE")) {
+                if (strAgentType.equals("3.0J2EE") ||
+                        strAgentType.equals("3.0WEBLOGIC")) {
                     strPropName = rbp.getString(strLocRB + tIdx +
                         ".accessDeniedURI");
                     restoreDefaults(strPropName);

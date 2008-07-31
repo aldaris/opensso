@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: J2EEAgentTests.java,v 1.5 2008-06-26 19:41:29 rmisra Exp $
+ * $Id: J2EEAgentTests.java,v 1.6 2008-07-31 21:47:55 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -96,7 +96,8 @@ public class J2EEAgentTests extends TestCommon {
     throws Exception {
         Object[] params = {policyIdx, evaluationIdx, setup, cleanup};
         entering("setup", params);
-        if (!strAgentType.contains("J2EE")) {
+        if (!strAgentType.contains("J2EE") && 
+                !strAgentType.contains("WEBLOGIC")) {
         Reporter.log ("Agent being tested is of type " + 
                 strAgentType + ".<br>These tests are for J2EE Agents " + 
                 "only. Skipping TCs");
@@ -213,7 +214,8 @@ public class J2EEAgentTests extends TestCommon {
         entering("cleanup", null);
         log(Level.SEVERE, "cleanup", "executeAgainstOpenSSO && strAgentType" + 
                 executeAgainstOpenSSO + "," + strAgentType);                            
-        if (executeAgainstOpenSSO && strAgentType.contains("J2EE")) {
+        if (executeAgainstOpenSSO && (strAgentType.contains("J2EE")
+                || strAgentType.contains("WEBLOGIC"))) {
             try {
                 if (strCleanup.equals("true")) {
                     log(Level.SEVERE, "cleanup", "strCleanup=" + strCleanup);                    

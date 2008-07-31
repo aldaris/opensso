@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionAttributeTests.java,v 1.2 2008-06-26 19:41:29 rmisra Exp $
+ * $Id: SessionAttributeTests.java,v 1.3 2008-07-31 21:49:04 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -163,6 +163,13 @@ public class SessionAttributeTests extends TestCommon {
         try {
             HtmlPage page = consoleLogin(webClient, resource, "sauser",
                     "sauser");
+            Reporter.log("Resource: " + url);   
+            Reporter.log("Username: " + "sauser");   
+            Reporter.log("Password: " + "sauser");   
+            Reporter.log("Expected Result: " + 
+                     "HTTP_SESSION_MYPROPERTY:val1"); 
+            Reporter.log("Expected Result (after updation): " + 
+                     "HTTP_SESSION_MYPROPERTY:val2"); 
             page = (HtmlPage)webClient.getPage(url);
             webClient.setCookiesEnabled(true);
             String strCookie = rbg.getString(strGblRB + ".serverCookieName");
@@ -246,29 +253,15 @@ public class SessionAttributeTests extends TestCommon {
             assert (strProperty.equals("val2"));
             isFound = false;
             time = System.currentTimeMillis();
-            while (System.currentTimeMillis() - time < pollingTime &&
-                !isFound) {
-                page = (HtmlPage)webClient.getPage(url);
-                iIdx = -1;
-                iIdx = getHtmlPageStringIndex(page,
-                        "HTTP_SESSION_MYPROPERTY:val2", false);
-                if (iIdx != -1) {
-                    isFound = true;
-                }
-            }
+            log(Level.FINEST, "evaluateUpdatedSessionAttribute",
+                    "Start-------System.currentTimeMillis(): " + System.currentTimeMillis());
+            Thread.sleep(pollingTime);
             log(Level.FINEST, "evaluateUpdatedSessionAttribute",
                     "waited for : " + (System.currentTimeMillis() - time) );
             page = (HtmlPage)webClient.getPage(url);
             iIdx = -1;
             iIdx = getHtmlPageStringIndex(page,
                     "HTTP_SESSION_MYPROPERTY:val2");
-            Reporter.log("Resource: " + url);   
-            Reporter.log("Username: " + "sauser");   
-            Reporter.log("Password: " + "sauser");   
-            Reporter.log("Expected Result: " + 
-                     "HTTP_SESSION_MYPROPERTY:val1"); 
-            Reporter.log("Expected Result (after updation): " + 
-                     "HTTP_SESSION_MYPROPERTY:val2"); 
             assert (iIdx != -1);
         } catch (Exception e) {
             log(Level.SEVERE, "evaluateUpdatedSessionAttribute",
