@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportEntityViewBean.java,v 1.5 2008-06-25 05:49:36 qcheng Exp $
+ * $Id: ImportEntityViewBean.java,v 1.6 2008-07-31 17:28:34 asyhuang Exp $
  *
  */
 
@@ -137,9 +137,11 @@ public class ImportEntityViewBean
                  optList.add(getPath(name), name);
              }
              menu.setOptions(optList);
-         } catch (AMConsoleException e) {
+         } catch (AMConsoleException e) {             
+             debug.warning("ImportEntityViewBean.populateRealmData ",  
+                 e);
              setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
-                 e.getMessage());
+                 "import.entity.populaterealmdata.error");
          }
      }
      
@@ -260,10 +262,9 @@ public class ImportEntityViewBean
                 vb.forwardTo(getRequestContext()); 
                     
             } catch (AMConsoleException ame) {
-                debug.warning("ImportEntityViewBean.handleButton1req ", ame);
+                debug.warning("ImportEntityViewBean.handleButton1req ", ame);             
                 setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
-                    ame.getMessage());
-                
+                 "import.entity.error");
                 forwardTo();
             }
         }
