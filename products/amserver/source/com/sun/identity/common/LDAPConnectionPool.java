@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPConnectionPool.java,v 1.12 2008-06-25 05:42:26 qcheng Exp $
+ * $Id: LDAPConnectionPool.java,v 1.13 2008-08-01 22:37:10 ww203982 Exp $
  *
  */
 
@@ -288,7 +288,7 @@ public class LDAPConnectionPool {
         this.idleTime = idleTimeInSecs * 1000;
         this.defunct = false;
         this.reinitInProgress = false;
-
+        this.localConn = new ThreadLocalConnection();
         createPool();
         if (debug.messageEnabled()) {
             debug.message("LDAPConnection pool: " + name +
@@ -366,8 +366,9 @@ public class LDAPConnectionPool {
      */
     public LDAPConnection getConnection(int timeout) {
         LDAPConnection con = null;
-        synchronized (this) {
-            try {
+        if ((con = localConn.getLocalConnection()) == null) {
+            synchronized (this) {
+                try {
                 /*
                  * using if and add condition (waitCount > 0) to prevent 
                  * starving.  (waitCount > 0) is not needed only if while loop
@@ -379,19 +380,21 @@ public class LDAPConnectionPool {
                  * waiting gain a higher priority since any newly incoming 
                  * thread must wait if there is someone waiting.
                  */
-                if ((busyConnectionCount == maxSize) || (waitCount > 0)) {
-                    waitCount++;
-                    if (timeout > 0) {
-                        this.wait(timeout);
-                    } else {
-                        this.wait();
+                    if ((busyConnectionCount == maxSize) || (waitCount > 0)) {
+                        waitCount++;
+                        if (timeout > 0) {
+                            this.wait(timeout);
+                        } else {
+                            this.wait();
+                        }
+                        waitCount--;
                     }
-                    waitCount--;
+                    if (!defunct) {
+                        con = getConnFromPool();
+                        localConn.setLocalConnection(con);
+                    }
+                } catch (InterruptedException e) {
                 }
-                if (!defunct) {
-                    con = getConnFromPool();
-                }
-            } catch (InterruptedException e) {
             }
         }
         return con;
@@ -446,53 +449,60 @@ public class LDAPConnectionPool {
      * @param ld a connection to return to the pool
      */
     public void close(LDAPConnection ld) {
-        synchronized(this) {
-            if (defunct) {
-                // disconnect the returning connection if destroy() is called.
-                if (ld != null) {
-                    if (backupPool.remove(ld) || deprecatedPool.remove(ld)) {
-                        if (ld.isConnected()) {
-                            try {
-                                ld.disconnect();
-                            } catch(LDAPException ex) {
-                                debug.error("LDAPConnection pool:" + name +
-                                    ":Error during disconnect.", ex);
+        if (localConn.shouldReturnsLocalConnection()) {
+            synchronized(this) {
+                if (defunct) {
+                    // disconnect the returning connection if destroy() is
+                    // called.
+                    if (ld != null) {
+                        if (backupPool.remove(ld) || deprecatedPool.remove(
+                            ld)) {
+                            if (ld.isConnected()) {
+                                try {
+                                    localConn.returnsLocalConnection();
+                                    ld.disconnect();
+                                } catch(LDAPException ex) {
+                                    debug.error("LDAPConnection pool:" + name +
+                                        ":Error during disconnect.", ex);
+                                }
                             }
                         }
                     }
-                }
-            } else {
-                if (ld != null) {
-                    if (reinitInProgress) {
+                } else {
+                    if (ld != null) {
+                        if (reinitInProgress) {
                         // try to see if the connection is from the destroying
                         // pool if reinitialization is in progress.
-                        if (deprecatedPool.remove(ld)) {
-                            try{
-                                ld.disconnect();
-                            } catch(LDAPException ex) {
-                                debug.error("LDAPConnection pool:" + name +
-                                    ":Error during disconnect.", ex);
+                            if (deprecatedPool.remove(ld)) {
+                                try{
+                                    localConn.returnsLocalConnection();
+                                    ld.disconnect();
+                                } catch(LDAPException ex) {
+                                    debug.error("LDAPConnection pool:" + name +
+                                        ":Error during disconnect.", ex);
+                                }
+                                if (deprecatedPool.isEmpty()) {
+                                    reinitInProgress = false;
+                                }
+                                return;
                             }
-                            if (deprecatedPool.isEmpty()) {
-                                reinitInProgress = false;
+                        }
+                        if (backupPool.contains(ld) && currentPool.add(ld)) {
+                            localConn.returnsLocalConnection();
+                            busyConnectionCount--;
+                            // return connections from the end of array                    
+                            pool[currentConnectionCount - busyConnectionCount -
+                                1] = ld;
+                            if ((cleaner != null) &&
+                                ((currentConnectionCount - busyConnectionCount) > 
+                                minSize)) {
+                                cleaner.addElement(null);
                             }
-                            return;
-                        }
-                    }
-                    if (backupPool.contains(ld) && currentPool.add(ld)) {
-                        busyConnectionCount--;
-                        // return connections from the end of array                    
-                        pool[currentConnectionCount - busyConnectionCount - 1] =
-                            ld;
-                        if ((cleaner != null) &&
-                            ((currentConnectionCount - busyConnectionCount) > 
-                            minSize)) {
-                            cleaner.addElement(null);
-                        }
-                        // notify the thread if there is someone waiting for
-                        // available connection.
-                        if (waitCount > 0) {
-                            this.notify();
+                            // notify the thread if there is someone waiting for
+                            // available connection.
+                            if (waitCount > 0) {
+                                this.notify();
+                            }
                         }
                     }
                 }
@@ -1179,6 +1189,52 @@ public class LDAPConnectionPool {
     private HashSet deprecatedPool;
     private HashSet backupPool;
     private HashSet currentPool;
+    private ThreadLocalConnection localConn;
     static FallBackManager fMgr;
+
+    class ThreadLocalConnection {
+
+        private ThreadLocal localConnection = new ThreadLocal() {
+            protected Object initialValue() {
+                return null;
+            }
+        };
+
+        private ThreadLocal localCounter = new ThreadLocal() {
+            protected Object initialValue() {
+                return new Integer(0);
+            }
+        };
+
+        public LDAPConnection getLocalConnection() {
+            int count = ((Integer)localCounter.get()).intValue();
+            if (count > 0) {
+                localCounter.set(new Integer(count++));
+                return (LDAPConnection) localConnection.get();
+            } else {
+                return null;
+            }
+        }
+
+        public void setLocalConnection(LDAPConnection conn) {
+            localConnection.set(conn);
+            localCounter.set(new Integer(1));
+        }
+
+        public boolean shouldReturnsLocalConnection() {
+            int count = ((Integer)localCounter.get()).intValue();
+            if (count > 1) {
+                localCounter.set(new Integer(count--));
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        public void returnsLocalConnection() {
+            localCounter.set(new Integer(0));
+            localConnection.set(null);
+        }
+    }
 }
 
