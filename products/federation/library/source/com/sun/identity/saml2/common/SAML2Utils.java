@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.37 2008-08-01 20:53:09 bina Exp $
+ * $Id: SAML2Utils.java,v 1.38 2008-08-01 22:14:30 hengming Exp $
  *
  */
 
@@ -30,6 +30,7 @@
 package com.sun.identity.saml2.common;
 
 import com.sun.identity.common.HttpURLConnectionManager;
+import com.sun.identity.common.SystemConfigurationException;
 import com.sun.identity.common.SystemConfigurationUtil;
 import com.sun.identity.common.SystemTimerPool;
 import com.sun.identity.common.TimerPool;
@@ -88,6 +89,7 @@ import com.sun.identity.shared.Constants;
 import com.sun.identity.security.cert.CRLValidator;
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import com.sun.identity.shared.encode.Base64;
+import com.sun.identity.shared.encode.CookieUtils;
 import com.sun.identity.shared.encode.URLEncDec;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement;
@@ -4109,5 +4111,136 @@ public class SAML2Utils extends SAML2SDKUtils {
                 SAML2Constants.WANT_POST_RESPONSE_SIGNED);
 
         return "true".equalsIgnoreCase(wantSigned);
+    }
+
+    public static boolean needSetLBCookieAndRedirect(
+        HttpServletRequest request, HttpServletResponse response,
+        boolean isIDP) {
+
+        List remoteServiceURLs = SAML2Utils.getRemoteServiceURLs(request);
+        if ((remoteServiceURLs == null) || (remoteServiceURLs.isEmpty())) {
+            return false;
+        }
+
+        Cookie lbCookie = CookieUtils.getCookieFromReq(request,
+            getlbCookieName());
+        if (lbCookie != null) {
+            return false;
+        }
+
+
+        if (debug.messageEnabled()) {
+            debug.message("SAML2Utils.needSetLBCookieAndRedirect:" +
+                " lbCookie not set.");
+        }
+
+        String redirected = request.getParameter("redirected");
+        if (redirected != null) {
+            if (debug.messageEnabled()) {
+                debug.message("SAML2Utils.needSetLBCookieAndRedirect: " +
+                " redirected already and lbCookie not set correctly.");
+            }
+            return false;
+        }
+
+        SAML2Utils.setlbCookie(response);
+
+        String queryString = request.getQueryString();
+        StringBuffer reqURLSB = new StringBuffer();
+        reqURLSB.append(request.getRequestURL().toString())
+            .append("?redirected=1");
+        if (queryString != null) {
+            reqURLSB.append("&").append(queryString);
+        }
+
+        try {
+            String reqMethod = request.getMethod();
+            if (reqMethod.equals("POST")) {
+                String samlMessageName = null;
+                String samlMessage = null;
+                if (isIDP) {
+                    samlMessageName = SAML2Constants.SAML_REQUEST;
+                    samlMessage = request.getParameter(samlMessageName);
+                } else {
+                    samlMessageName = SAML2Constants.SAML_RESPONSE;
+                    samlMessage = request.getParameter(samlMessageName);
+                    if (samlMessage == null) {
+                        samlMessageName = SAML2Constants.SAML_ART;
+                        samlMessage = request.getParameter(samlMessageName);
+                    }
+                }
+                if (samlMessage == null) {
+                    return false;
+                }
+                String relayState = request.getParameter(
+                    SAML2Constants.RELAY_STATE);
+                SAML2Utils.postToTarget(response, samlMessageName,
+                    samlMessage, SAML2Constants.RELAY_STATE, relayState,
+                    reqURLSB.toString());
+            } else if (reqMethod.equals("GET")) {
+                response.sendRedirect(reqURLSB.toString());
+            } else {
+                return false;
+            }
+            return true;
+        } catch (IOException ioe) {
+            debug.error("SAML2Utils.needSetLBCookieAndRedirect: ", ioe);
+        }
+        return false;
+    }
+
+    /**
+     * Sets load balancer cookie.
+     * @param response HttpServletResponse object
+     */   
+    public static void setlbCookie(HttpServletResponse response) {
+        String cookieName = getlbCookieName();
+        String cookieValue = getlbCookieValue();
+        Cookie cookie = null; 
+        if ((cookieName != null) && (cookieName.length() != 0)) {
+            List domains = null;
+            try {
+                domains = SystemConfigurationUtil.getCookieDomains();
+            } catch (SystemConfigurationException scex) {
+                if (debug.warningEnabled()) {
+                    debug.warning("SAML2Utils.setlbCookie:", scex);
+                }
+            }
+            if ((domains!= null) && (!domains.isEmpty())) {
+                for (Iterator it = domains.iterator(); it.hasNext(); ) {
+                    String domain = (String)it.next();
+                    cookie = CookieUtils.newCookie(cookieName, cookieValue,
+                        "/", domain);
+                    response.addCookie(cookie);
+                }
+            } else {
+                cookie = CookieUtils.newCookie(cookieName, cookieValue, "/", 
+                    null);
+                response.addCookie(cookie);
+            }
+        }
+    }
+    
+    public static String getlbCookieName() {
+        return SystemPropertiesManager.get(Constants.AM_LB_COOKIE_NAME,
+            "amlbcookie");
+    }
+
+    public static String getlbCookieValue() {
+        String loadBalanceCookieValue =
+            SystemPropertiesManager.get(Constants.AM_LB_COOKIE_VALUE);
+        if ((loadBalanceCookieValue == null) || 
+            (loadBalanceCookieValue.length() == 0)) { 
+            if (SystemConfigurationUtil.isServerMode()) {
+               try {
+                   return SystemConfigurationUtil.getServerID(server_protocol,
+                       server_host, int_server_port, server_uri);
+               } catch (SystemConfigurationException scex) {
+                   debug.error("SAML2Utils.getlbCookieValue:", scex);
+                   return null;
+               }
+            }
+        }    
+        return loadBalanceCookieValue;
     }
 }

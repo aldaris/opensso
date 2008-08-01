@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JMQSAML2Repository.java,v 1.2 2008-06-25 05:47:51 qcheng Exp $
+ * $Id: JMQSAML2Repository.java,v 1.3 2008-08-01 22:15:00 hengming Exp $
  *
  */
 
 package com.sun.identity.saml2.plugins;
 
+import java.util.List;
 
 /**
  * This class is used in SAML2 failover mode to store/recover serialized
@@ -41,6 +42,15 @@ public interface JMQSAML2Repository {
     * @return SAML2 object, if failed, return null. 
     */
    public Object retrieve(String samlKey);
+
+   /**
+    * Retrives a list of existing SAML2 object from persistent datastore with
+    * secodaryKey
+    *
+    * @param secKey Secondary Key 
+    * @return SAML2 object, if failed, return null. 
+    */
+   public List retrieveWithSecondaryKey(String secKey);
 
    /**
     * Deletes the SAML2 object by given primary key from the repository
@@ -59,6 +69,8 @@ public interface JMQSAML2Repository {
     * @param samlKey primary key 
     * @param samlObj saml object such as Response, IDPSession
     * @param expirationTime expiration time 
+    * @param secKey Secondary Key 
     */
-    public void save(String samlKey, Object samlObj, long expirationTime);
+    public void save(String samlKey, Object samlObj, long expirationTime,
+        String secKey);
 }
