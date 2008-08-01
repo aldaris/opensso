@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOFederate.java,v 1.14 2008-06-25 05:47:53 qcheng Exp $
+ * $Id: IDPSSOFederate.java,v 1.15 2008-08-01 22:22:10 hengming Exp $
  *
  */
 
@@ -116,6 +116,11 @@ public class IDPSSOFederate {
         HttpServletResponse response, boolean isFromECP) {
 
         String classMethod = "IDPSSOFederate.doSSOFederate: ";
+
+        if (SAML2Utils.needSetLBCookieAndRedirect(request, response, true)) {
+            return;
+        }
+
         Object session = null;
         SPSSODescriptorElement spSSODescriptor = null;
         try { 
@@ -773,6 +778,7 @@ public class IDPSSOFederate {
 
         String classMethod = "IDPSSOFederate.redirectAuthentication: ";
         // get the authentication service url 
+
         StringBuffer newURL = new StringBuffer(
                                 IDPSSOUtil.getAuthenticationServiceURL(
                                 realm, idpEntityID, request));

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMRecord.java,v 1.2 2008-06-25 05:43:27 qcheng Exp $
+ * $Id: FAMRecord.java,v 1.3 2008-08-01 22:24:45 hengming Exp $
  *
  */
 
@@ -51,6 +51,9 @@ public class FAMRecord
 
     /** Represents the record count such as data record count*/
     static public final String GET_RECORD_COUNT = "GET_RECORD_COUNT";
+
+    /** Represents JMS message read Operation with secondary key */
+    static public final String READ_WITH_SEC_KEY = "READ_WITH_SEC_KEY";
 
     String service = null;
     String operation = null; 

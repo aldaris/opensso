@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthnQueryUtil.java,v 1.5 2008-06-27 00:45:55 hengming Exp $
+ * $Id: AuthnQueryUtil.java,v 1.6 2008-08-01 22:22:10 hengming Exp $
  *
  */
 
@@ -59,6 +59,7 @@ import com.sun.identity.saml2.assertion.NameID;
 import com.sun.identity.saml2.assertion.Subject;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
+import com.sun.identity.saml2.common.SAML2Repository;
 import com.sun.identity.saml2.common.SAML2Utils;
 import com.sun.identity.saml2.jaxb.entityconfig.AuthnAuthorityConfigElement;
 import com.sun.identity.saml2.jaxb.metadata.AuthnAuthorityDescriptorElement;
@@ -229,7 +230,26 @@ public class AuthnQueryUtil {
         RequestedAuthnContext requestedAC =
             authnQuery.getRequestedAuthnContext();
 
-        List assertions = (List)IDPCache.assertionCache.get(userID);
+        List assertions = null;
+        AssertionFactory assertionFactory = AssertionFactory.getInstance();
+        if (SAML2Utils.isSAML2FailOverEnabled()) {
+            if (SAML2Utils.debug.messageEnabled()) {
+                SAML2Utils.debug.message("AuthnQueryUtil.processAuthnQuery: " +
+                    "getting user assertions from DB. user = " + userID);
+            }
+            List list = SAML2Repository.getInstance().retrieveWithSecondaryKey(
+                userID);
+            if ((list != null) && (!list.isEmpty())) {
+                assertions = new ArrayList();
+                for(Iterator iter = list.iterator(); iter.hasNext(); ) {
+                    String assertionStr = (String)iter.next();
+                    assertions.add(assertionFactory.createAssertion(
+                        assertionStr));
+                }
+            }
+        } else {
+            assertions = (List)IDPCache.assertionCache.get(userID);
+        }
 
         if ((assertions != null) && (!assertions.isEmpty())) {
 
@@ -237,7 +257,7 @@ public class AuthnQueryUtil {
                 for(Iterator aIter = assertions.iterator(); aIter.hasNext();) {
                     Assertion assertion = (Assertion)aIter.next();
 
-                    if (assertionExpired(assertion)) {
+                    if (!assertion.isTimeValid()) {
                         if (SAML2Utils.debug.messageEnabled()) {
                             SAML2Utils.debug.message(
                                 "AuthnQueryUtil.processAuthnQuery: "  +
@@ -311,7 +331,7 @@ public class AuthnQueryUtil {
         status.setStatusCode(statusCode);
         samlResp.setStatus(status);
 
-        Issuer respIssuer = AssertionFactory.getInstance().createIssuer();
+        Issuer respIssuer = assertionFactory.createIssuer();
         respIssuer.setValue(authnAuthorityEntityID);
         samlResp.setIssuer(respIssuer);
 
@@ -574,19 +594,5 @@ public class AuthnQueryUtil {
         }
 
         return nameID;
-    }
-
-    private static boolean assertionExpired(Assertion assertion) {
-        Conditions conditions = assertion.getConditions();
-        if (conditions == null) {
-            return true;
-        }
-
-        Date notOnOrAfter = conditions.getNotOnOrAfter();
-        if (notOnOrAfter == null) {
-            return true;
-        }
-
-        return notOnOrAfter.before(new Date());
     }
 }

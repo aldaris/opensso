@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPCache.java,v 1.15 2008-07-30 19:55:32 weisun2 Exp $
+ * $Id: IDPCache.java,v 1.16 2008-08-01 22:22:10 hengming Exp $
  *
  */
 
@@ -65,8 +65,7 @@ public class IDPCache {
      * Key : user ID String
      * Value : list of assertion objects
      */
-    public static PeriodicCleanUpMap assertionCache = new PeriodicCleanUpMap(
-        SPCache.interval * 1000, SPCache.interval * 1000); 
+    public static Hashtable assertionCache = new Hashtable();
 
     /**
      * Cache saves the assertion objects.

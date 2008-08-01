@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CacheCleanUpScheduler.java,v 1.5 2008-07-30 22:19:38 weisun2 Exp $
+ * $Id: CacheCleanUpScheduler.java,v 1.6 2008-08-01 22:22:10 hengming Exp $
  *
  */
 
@@ -47,7 +47,6 @@ public class CacheCleanUpScheduler {
         pool.schedule(SPCache.logoutRequestIDHash, nextRun);
         pool.schedule(SPCache.reqParamHash, nextRun);
         pool.schedule(IDPCache.authnRequestCache, nextRun);
-        pool.schedule(IDPCache.assertionCache, nextRun);
         pool.schedule(IDPCache.assertionByIDCache, nextRun);
         pool.schedule(IDPCache.relayStateCache, nextRun);
         pool.schedule(IDPCache.responsesByArtifacts, nextRun);
@@ -58,6 +57,8 @@ public class CacheCleanUpScheduler {
         pool.schedule(IDPCache.proxySPLogoutReqCache, nextRun);
         pool.schedule(IDPCache.SOAPMessageByLogoutRequestID, nextRun);
         pool.schedule(IDPCache.logoutResponseCache, nextRun);
+        pool.schedule(new CacheCleanUpRunnable(SPCache.interval * 1000),
+            nextRun);
     }
     
 }

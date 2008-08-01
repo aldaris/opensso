@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spMNIRequestInit.jsp,v 1.6 2008-06-25 05:48:37 qcheng Exp $
+   $Id: spMNIRequestInit.jsp,v 1.7 2008-08-01 22:23:08 hengming Exp $
 
 --%>
 
@@ -67,6 +67,11 @@
     // requestType - the request type of ManageNameIDRequest (Terminate / NewID)
     // affiliationID - affiliation entity ID
     // Query parameters supported will be documented.
+
+    if (SAML2Utils.needSetLBCookieAndRedirect(request, response, false)) {
+        return;
+    }
+
     try {
         String metaAlias = request.getParameter("metaAlias");
         if ((metaAlias ==  null) || (metaAlias.length() == 0)) {

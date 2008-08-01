@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSSOFederate.java,v 1.21 2008-07-23 18:18:04 exu Exp $
+ * $Id: SPSSOFederate.java,v 1.22 2008-08-01 22:22:10 hengming Exp $
  *
  */
 
@@ -177,6 +177,10 @@ public class SPSSOFederate {
                                  String realmName,
                                  Map paramsMap) 
                                  throws SAML2Exception {
+
+        if (SAML2Utils.needSetLBCookieAndRedirect(request, response, false)) {
+            return;
+        }
 
         if (spEntityID == null) {
             SAML2Utils.debug.error("SPSSOFederate:Service Provider ID  "

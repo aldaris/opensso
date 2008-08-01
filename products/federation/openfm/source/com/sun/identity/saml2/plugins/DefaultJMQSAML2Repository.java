@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultJMQSAML2Repository.java,v 1.4 2008-07-22 18:09:47 weisun2 Exp $
+ * $Id: DefaultJMQSAML2Repository.java,v 1.5 2008-08-01 22:23:47 hengming Exp $
  *
  */
 
@@ -43,9 +43,12 @@ import com.iplanet.services.naming.WebtopNaming;
 import com.sun.identity.session.util.SessionUtils;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import javax.jms.IllegalStateException;
 import com.sun.identity.ha.FAMRecord;
 import com.sun.identity.ha.FAMRecordPersister;
@@ -254,6 +257,52 @@ public class DefaultJMQSAML2Repository extends GeneralTaskRunnable
     }
 
    /**
+    * Retrives a list of existing SAML2 object from persistent datastore with
+    * secodaryKey
+    *
+    * @param secKey Secondary Key 
+    * @return SAML2 object, if failed, return null. 
+    */
+   public List retrieveWithSecondaryKey(String secKey) {
+        if (!isDatabaseUp) {
+            return null;
+        }
+        try {
+            FAMRecord famRec = new FAMRecord(SAML2,
+                FAMRecord.READ_WITH_SEC_KEY, null, 0, secKey, 0, null, null);
+           
+            FAMRecord retRec = pSession.send(famRec);
+            Map map = retRec.getExtraStringAttributes();
+            if ((map != null) && (!map.isEmpty())) {
+                Vector blobs = (Vector)map.values().iterator().next();
+
+                if ((blobs != null) && (!blobs.isEmpty())) {
+                    List list = new ArrayList();
+                    for(int i=0; i<blobs.size(); i++) {
+                        byte[] blob = (byte[])blobs.get(i);
+                        Object obj = SessionUtils.decode(blob);
+                        list.add(obj);
+                    }
+                    return list;
+                }
+            }
+            return null;
+        } catch (IllegalStateException e) {
+            isDatabaseUp = false;
+            logDBStatus();
+            debug.error(BRIEF_DB_ERROR_MSG, e);
+            if (debug.messageEnabled()) {
+                debug.message(DB_ERROR_MSG, e);
+            }
+            return null;
+        } catch (Exception e) {
+            debug.message("JMQSAML2Repository.retrieve(): failed retrieving "
+                    + "SAML2 object", e);
+            return null;
+        }
+    }
+
+   /**
     * Deletes the SAML2 object by given primary key from the repository
     * @param samlKey primary key 
     */
@@ -310,8 +359,11 @@ public class DefaultJMQSAML2Repository extends GeneralTaskRunnable
     * @param samlKey primary key 
     * @param samlObj saml object such as Response, IDPSession
     * @param expirationTime expiration time 
+    * @param secKey Secondary Key 
     */
-   public void save(String samlKey, Object samlObj, long expirationTime) {
+    public void save(String samlKey, Object samlObj, long expirationTime,
+        String secKey) {
+
         if (!isDatabaseUp) {
             return;
         }
@@ -319,7 +371,7 @@ public class DefaultJMQSAML2Repository extends GeneralTaskRunnable
         try {
             byte[] blob = SessionUtils.encode(samlObj);
             FAMRecord famRec = new FAMRecord (
-                SAML2, FAMRecord.WRITE, samlKey, expirationTime, null,
+                SAML2, FAMRecord.WRITE, samlKey, expirationTime, secKey,
                 0, null, blob);
             FAMRecord retRec = pSession.send(famRec); 
         } catch (IllegalStateException e) {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMHaDB.java,v 1.4 2008-06-25 05:43:28 qcheng Exp $
+ * $Id: FAMHaDB.java,v 1.5 2008-08-01 22:24:46 hengming Exp $
  *
  */
  
@@ -78,6 +78,8 @@ public class FAMHaDB implements Runnable {
     static public final String SHUTDOWN = "SHUTDOWN";
     static public final String GET_RECORD_COUNT =
         "GET_RECORD_COUNT"; 
+    static public final String READ_WITH_SEC_KEY = "READ_WITH_SEC_KEY";
+
     static public final String NOT_FOUND = "notfound";
     static public final String OP_STATUS = "opstatus";
     
@@ -343,7 +345,7 @@ public class FAMHaDB implements Runnable {
         }
         //showAllSessionRecords();
         PrimaryIndex recordByPrimaryKey = da.getPrimaryIndex(svc);
-        if (op.indexOf(READ) >= 0) {
+        if (op.equals(READ)) {
             if(verbose) {
                 System.out.println(bundle.getString("readmsgrecv"));
             }
@@ -391,7 +393,7 @@ public class FAMHaDB implements Runnable {
                 resmsg.writeLong(random);
                 resPub.publish(resmsg);
             }
-        } else if (op.indexOf(WRITE) >= 0) {
+        } else if (op.equals(WRITE)) {
             
             if(verbose) {
                System.out.println(bundle.getString("writemsgrecv"));
@@ -424,7 +426,7 @@ public class FAMHaDB implements Runnable {
 
             recordByPrimaryKey.put(record);
             
-        } else if (op.indexOf(DELETEBYDATE) >= 0) {
+        } else if (op.equals(DELETEBYDATE)) {
             if(verbose) {
                 System.out.println(bundle.getString("datemsgrecv"));
             }    
@@ -433,7 +435,7 @@ public class FAMHaDB implements Runnable {
                 System.out.println(">>>>>>>>>>>>>> Delete by Date : " + expDate);
             }
             deleteByDate(expDate, numCleanSessions, svc); 
-        } else if (op.indexOf(DELETE) >= 0) {
+        } else if (op.equals(DELETE)) {
             if(verbose) {
                 System.out.println(bundle.getString("deletemsgrecv"));
             }
@@ -455,10 +457,10 @@ public class FAMHaDB implements Runnable {
                 System.out.println("Aborted txn: " + e.toString());
                 e.printStackTrace();
             }             
-        } else if (op.indexOf(SHUTDOWN) >= 0) {
+        } else if (op.equals(SHUTDOWN)) {
             Shutdown();
             return(1);
-        } else if (op.indexOf(GET_RECORD_COUNT) >= 0) {
+        } else if (op.equals(GET_RECORD_COUNT)) {
   
             if(verbose) {
                 System.out.println(bundle.getString("getsessioncount"));
@@ -468,6 +470,15 @@ public class FAMHaDB implements Runnable {
                 scReadCount++;
             }
             getRecordsBySecondaryKey(message, id, svc);
+        } else if (op.equals(READ_WITH_SEC_KEY)) {
+            if(verbose) {
+                System.out.println(bundle.getString("readwithseckey"));
+            }    
+	    
+            if(statsEnabled) {
+                scReadCount++;
+            }
+            readWithSecondaryKey(message, id, svc);
         } 
         return 0;
     }
@@ -539,6 +550,54 @@ public class FAMHaDB implements Runnable {
         resPub.publish(resmsg);                    
     }
      
+    public void readWithSecondaryKey(BytesMessage message, String id,
+        String service) throws Exception {
+        
+        if (!isMasterNode) {
+            if (verbose) {
+                System.out.println(bundle.getString("notmasterdbnode"));
+            }
+            return;
+        }
+
+        String secondKey = getLenString(message);
+        if(verbose) {
+            System.out.println("SEC"+ secondKey);
+        }
+        long random = message.readLong();
+        Vector rows = new Vector();
+        EntityCursor<? extends BaseRecord> records = null;
+        
+        try {
+            // Use the BaseRecord secondary key to retrieve
+            // these objects.
+            SecondaryIndex recordBySecondaryIndx =
+                da.getSecondaryIndex2(service);  
+            records = recordBySecondaryIndx.subIndex(secondKey).entities();
+            for (BaseRecord record : records) {
+                rows.add(record.getBlob());
+            }
+        } catch (Exception e) {
+            if (verbose) {
+                e.printStackTrace();
+            }
+        } finally {
+            records.close();
+        }
+
+        BytesMessage resmsg = (BytesMessage) tSession.createBytesMessage();
+        resmsg.setStringProperty(ID, id);
+        resmsg.writeLong(random);
+        int nrows = rows.size();
+        resmsg.writeInt(nrows);
+        for (int i=0; i<nrows; i++) {
+            byte[] blob = (byte[])rows.get(i);
+            resmsg.writeInt(blob.length);
+            resmsg.writeBytes(blob);
+        }
+        resPub.publish(resmsg);                    
+    }
+
     private class RecordExpTimeInfo {
         int auxDataLen;
         byte[] auxyData;

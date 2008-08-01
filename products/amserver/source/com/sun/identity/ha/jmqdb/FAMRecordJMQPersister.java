@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMRecordJMQPersister.java,v 1.4 2008-07-22 18:12:04 weisun2 Exp $
+ * $Id: FAMRecordJMQPersister.java,v 1.5 2008-08-01 22:24:46 hengming Exp $
  *
  */
 
@@ -31,6 +31,7 @@ package com.sun.identity.ha.jmqdb;
 import java.util.Hashtable;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.Vector;
 import javax.jms.BytesMessage;
 import javax.jms.DeliveryMode;
 import javax.jms.Message;
@@ -367,6 +368,41 @@ public class FAMRecordJMQPersister implements FAMRecordPersister,
             ret.setStringAttrs(aMap);
             return ret; 
            
+       } else if (op.equals(FAMRecord.READ_WITH_SEC_KEY)){
+           // Allocate a random string for onMessage to find us
+           Long random = new Long(rdmGen.nextLong());
+           processedMsgs.put(random, random);
+           msg.writeLong(random.longValue());
+           // onMessage thread will wake us up when data is ready
+           synchronized (random) {
+               reqPub.publish(msg);
+               random.wait(readTimeOutForConstraint);
+           }
+           Object retMsg = processedMsgs.remove(random);
+           BytesMessage message1; 
+           if (retMsg instanceof Long) {
+               // timeout
+               return null;
+           } else {
+                message1 = (BytesMessage) retMsg;
+           }
+           //Fill in the return value in FAMRecord 
+          Vector blobs = new Vector();
+           if (message1 != null) {
+               int retCount = message1.readInt();
+               for (int i = 0; i < retCount; i++) {
+                   int len = message1.readInt();
+                   byte[] bytes = new byte[len];
+                   message1.readBytes(bytes);
+                   blobs.add(bytes);
+               }
+            }
+            HashMap aMap = new HashMap(); 
+            aMap.put("blobs", blobs);
+            FAMRecord ret = new FAMRecord(service,
+                op, pKey, 0, null, 0, null, null);
+            ret.setStringAttrs(aMap);
+            return ret; 
        }  
        return null;   
    }

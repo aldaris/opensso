@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.29 2008-08-01 20:53:10 bina Exp $
+ * $Id: SPACSUtils.java,v 1.30 2008-08-01 22:22:10 hengming Exp $
  *
  */
 
@@ -1332,7 +1332,8 @@ public class SPACSUtils {
                 if (SAML2Utils.isSAML2FailOverEnabled()) {
                     SAML2Repository.getInstance().save(assertionID,
                     SAML2Constants.ONETIME, 
-                    ((Long) smap.get(SAML2Constants.NOTONORAFTER)).longValue());
+                    ((Long) smap.get(SAML2Constants.NOTONORAFTER)).longValue(),
+                    null);
                 }
             } catch (SAML2Exception e) {
                 SAML2Utils.debug.error(classMethod + "DB error!", e); 

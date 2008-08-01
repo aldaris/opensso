@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spAssertionConsumer.jsp,v 1.9 2008-06-25 05:48:37 qcheng Exp $
+   $Id: spAssertionConsumer.jsp,v 1.10 2008-08-01 22:23:07 hengming Exp $
 
 --%>
 
@@ -99,6 +99,10 @@ com.sun.identity.plugin.session.SessionException
         SAMLUtils.checkHTTPContentLength(request);
     } catch (ServletException se) {
         response.sendError(response.SC_BAD_REQUEST, se.getMessage());
+        return;
+    }
+
+    if (SAML2Utils.needSetLBCookieAndRedirect(request, response, false)) {
         return;
     }
 

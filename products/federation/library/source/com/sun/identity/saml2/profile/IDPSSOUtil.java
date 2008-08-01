@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.37 2008-08-01 20:53:10 bina Exp $
+ * $Id: IDPSSOUtil.java,v 1.38 2008-08-01 22:22:10 hengming Exp $
  *
  */
 
@@ -718,7 +718,8 @@ public class IDPSSOUtil {
     
         String classMethod = "IDPSSOUtil.getAssertion: ";
         Assertion assertion = AssertionFactory.getInstance().createAssertion();
-        assertion.setID(SAML2Utils.generateID());    
+        String assertionID = SAML2Utils.generateID();
+        assertion.setID(assertionID);
         assertion.setVersion(SAML2Constants.VERSION_2_0);
         assertion.setIssueInstant(new Date());
         Issuer issuer = AssertionFactory.getInstance().createIssuer();
@@ -883,7 +884,17 @@ public class IDPSSOUtil {
                 assertions.add(assertion);
             }
 
-            IDPCache.assertionByIDCache.put(assertion.getID(), assertion);
+            IDPCache.assertionByIDCache.put(assertionID, assertion);
+            if (SAML2Utils.isSAML2FailOverEnabled()) {
+                SAML2Repository.getInstance().save(assertionID,
+                    assertion.toXMLString(true, true),
+                    conditions.getNotOnOrAfter().getTime(), userName);
+
+                if (SAML2Utils.debug.messageEnabled()) {
+                    SAML2Utils.debug.message(classMethod +
+                        "saving assertion to DB. ID = " + assertionID);
+                }
+            }
         }
         //  Save to persistent datastore 
         try {
@@ -893,7 +904,7 @@ public class IDPSSOUtil {
                 SAML2Repository.getInstance().save(sessionIndex,
                     new IDPSessionCopy((IDPSession) 
                     IDPCache.idpSessionsByIndices.get(
-                    sessionIndex)), sessionExpireTime);
+                    sessionIndex)), sessionExpireTime, null);
             }
             if (SAML2Utils.debug.messageEnabled()) {
                 SAML2Utils.debug.message("SAVE IDPSession!");
@@ -1849,7 +1860,7 @@ public class IDPSSOUtil {
                 long expireTime = getValidTimeofResponse(
                     realm, idpEntityID,res);
                 SAML2Repository.getInstance().save(
-                    artStr,res.toXMLString(true,true),expireTime);
+                    artStr,res.toXMLString(true,true),expireTime, null);
                 if (SAML2Utils.debug.messageEnabled()) {
                     SAML2Utils.debug.message(classMethod +
                         "Save Response to DB!");

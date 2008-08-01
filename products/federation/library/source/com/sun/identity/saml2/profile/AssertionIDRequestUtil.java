@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionIDRequestUtil.java,v 1.3 2008-06-27 00:45:55 hengming Exp $
+ * $Id: AssertionIDRequestUtil.java,v 1.4 2008-08-01 22:22:10 hengming Exp $
  *
  */
 
@@ -64,6 +64,7 @@ import com.sun.identity.saml2.assertion.Issuer;
 import com.sun.identity.saml2.assertion.NameID;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
+import com.sun.identity.saml2.common.SAML2Repository;
 import com.sun.identity.saml2.common.SAML2Utils;
 import com.sun.identity.saml2.jaxb.entityconfig.BaseConfigType;
 import com.sun.identity.saml2.jaxb.metadata.AttributeAuthorityDescriptorElement;
@@ -294,7 +295,7 @@ public class AssertionIDRequestUtil {
         Assertion assertion = (Assertion)IDPCache.assertionByIDCache.get(
             assertionID);
 
-        if (assertion == null) {
+        if ((assertion == null) || (!assertion.isTimeValid())) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND,
                 SAML2Utils.bundle.getString("invalidAssertionID"));
             return;
@@ -414,9 +415,24 @@ public class AssertionIDRequestUtil {
         for(Iterator iter = assertionIDRefs.iterator(); iter.hasNext();) {
             AssertionIDRef assertionIDRef = (AssertionIDRef)iter.next();
             String assertionID = assertionIDRef.getValue();
+
             Assertion assertion = (Assertion)IDPCache.assertionByIDCache.get(
                 assertionID);
-            if (assertion != null) {
+            if ((assertion == null) && (SAML2Utils.isSAML2FailOverEnabled())) {
+                if (SAML2Utils.debug.messageEnabled()) {
+                    SAML2Utils.debug.message("AssertionIDRequestUtil." +
+                        "processAssertionIDRequest: " +
+                        "reading assertion from DB. ID = " + assertionID);
+                }
+                String assertionStr =
+                    (String)SAML2Repository.getInstance().retrieve(assertionID);
+                if (assertionStr != null) {
+                    assertion = AssertionFactory.getInstance().createAssertion(
+                        assertionStr);
+                }
+            }
+
+            if ((assertion != null) && (assertion.isTimeValid())) {
                 if (returnAssertions == null) {
                     returnAssertions = new ArrayList();
                 }
