@@ -25,7 +25,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: protectedservletresult.jsp,v 1.7 2008-06-25 05:52:07 qcheng Exp $
+   $Id: protectedservletresult.jsp,v 1.8 2008-08-01 01:50:58 sean_brydon Exp $
 
 -->
 
@@ -73,7 +73,7 @@ a:hover{text-decoration:underline}
     <tr>
       <td style="vertical-align: top;"><a href="http://www.sun.com/" id="homelink">sun.com</a> </td> 
       <td style="vertical-align: top; text-align: right;">
-      <a href="http://wwws.sun.com/software/products/access_mgr/index.html" id="homelink">Sun Federated Access Manager<br></a></td>
+      <a href="http://wwws.sun.com/software/products/access_mgr/index.html" id="homelink">Sun OpenSSO Enterprise<br></a></td>
       <td style="vertical-align: top;">&nbsp;<br>
       </td>
     </tr>

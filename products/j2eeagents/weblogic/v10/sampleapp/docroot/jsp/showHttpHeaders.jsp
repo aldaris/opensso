@@ -27,7 +27,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: showHttpHeaders.jsp,v 1.7 2008-07-21 22:15:23 huacui Exp $
+   $Id: showHttpHeaders.jsp,v 1.8 2008-08-01 01:51:01 sean_brydon Exp $
 
 -->        
         
@@ -67,7 +67,7 @@ a:hover{text-decoration:underline}
                 <tr>
                     <td style="vertical-align: top;"><a href="http://www.sun.com/" id="homelink">sun.com</a> </td>
                     <td style="vertical-align: top; text-align: right;">
-                        <a href="http://www.sun.com/software/products/access_mgr/index.html" id="homelink">Sun Federated Access Manager<br>
+                        <a href="http://www.sun.com/software/products/access_mgr/index.html" id="homelink">Sun OpenSSO Enterprise<br>
                     </a></td>
                     <td style="vertical-align: top;">&nbsp;<br>
                     </td>
@@ -158,9 +158,10 @@ a:hover{text-decoration:underline}
                                                 "<b>Request Server Port: </b>" +
                                                 request.getServerPort() + "<br><br>\n" +
                                                 
-                                                "<table border=1 align=\"center\">\n" +
+                                                "<table border=\"1\" align=\"center\" + width=\"400\">\n" +
                                                 "<tr>\n" +
-                                                "<th>Header Name<th>Header Value");
+                                                "<th>Header Name</th><th>Header Value</th>" +
+                                                "</tr>\n");
                                         Enumeration headerNames = request.getHeaderNames();
                                         while(headerNames.hasMoreElements()) {
                                             String headerName = (String)headerNames.nextElement();
@@ -175,8 +176,37 @@ a:hover{text-decoration:underline}
                                                     sb.append(value);
                                                 }
                                             }
-                                            out.println("<tr><td>" + headerName);
-                                            out.println("    <td>" + sb.toString());
+                                            out.println("<tr><td >" + headerName + "</td>");
+                                            out.println("<td>" + sb.toString() + "</td>" + "</tr>");
+                                            
+                                        }
+                                                                            
+                                        
+                                        /** Shows all the request attributes 
+                                         *  sent on the current request inside
+                                         *  the table.
+                                         */
+                                        out.println("<tr>\n" +
+                                                "<th>Request Attribute Name</th><th>Atribute Value</th>" +
+                                                "</tr>\n");
+                                        Enumeration attrNames = request.getAttributeNames();
+                                        while(attrNames.hasMoreElements()) {
+                                            String name = (String)attrNames.nextElement();                                          
+                                            Set attributeSet;
+                                            StringBuffer sb = new StringBuffer();
+                                            if (request.getAttribute(name) instanceof Set){
+                                                attributeSet=(Set)request.getAttribute(name);
+                                                Iterator it = attributeSet.iterator();
+                                                while(it.hasNext()) {
+                                                    String value = (String)it.next();
+                                                    sb.append("|");
+                                                    sb.append(value);
+                                                }                                              
+                                            } else {
+                                                sb.append(request.getAttribute(name));
+                                            }                                          
+                                            out.println("<tr><td width=\"40%\">" + name + "</td>");
+                                            out.println("<td>" + sb.toString() + "</td>" + "</tr>");                                         
                                         }
                                         
                                         out.println("</table>\n");

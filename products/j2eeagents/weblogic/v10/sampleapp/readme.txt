@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: readme.txt,v 1.14 2008-07-23 00:02:17 sean_brydon Exp $
+   $Id: readme.txt,v 1.15 2008-08-01 01:50:59 sean_brydon Exp $
 
 -->
 
@@ -165,7 +165,7 @@ Configure the agent properties
 
 
    If the agent configuration is local, then edit the local agent configuration
-   file FAMAgentConfiguration.properties located at the directory 
+   file OpenSSOAgentConfiguration.properties located at the directory 
    <agent_install_root>/Agent_<instance_number>/config with following changes: 
 
     * Not enforced List:
@@ -190,6 +190,17 @@ Configure the agent properties
 
 
 
+   Optionally, you can try out the fetch mode features that allow the agent to
+   fetch some values and make them available to your application. For example, 
+   you can fetch user profile values(like email or full name) from the user data
+   store of your opensso setup and make them available to your application code
+   (through cookies, headers, or request attributes) for application 
+   customization. See the Policy Agent 3.0 for details about the fetching 
+   attributes for details on using this feature. If you change the agent's 
+   configuartion for the attribute fetching, the showHttpHeaders.jsp page of the
+   sample application will show all the attributes being fetched. You can choose
+   to try this later after you have already installed and deployed the agent and
+   sample application in order to learn about this feature.
 
 Deploying the Sample Application
 --------------------------------
