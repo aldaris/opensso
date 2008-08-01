@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSvcsREST.java,v 1.6 2008-07-16 00:44:22 vimal_67 Exp $
+ * $Id: IdSvcsREST.java,v 1.7 2008-08-01 18:53:55 vimal_67 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -632,7 +632,7 @@ public class IdSvcsREST extends TestCommon {
             page = (TextPage) webClient.getPage(serverURI +
                     "/identity/isTokenValid?tokenid=" +
                     URLEncoder.encode(s1, "UTF-8"));
-            log(Level.SEVERE, "testAdminUserisTokenValidtokenidREST",
+            log(Level.FINEST, "testAdminUserisTokenValidtokenidREST",
                     "Page: " + page.getContent());
             String str = "boolean=true" + "\n";
             if (!page.getContent().equals(str)) 
@@ -682,7 +682,7 @@ public class IdSvcsREST extends TestCommon {
                     "/identity/isTokenValid?tokenid=" +
                     URLEncoder.encode(normalUsertokenidToken, "UTF-8"));
             String str = "boolean=true" + "\n";
-            log(Level.SEVERE, "testNormalUserisTokenValidtokenidREST",
+            log(Level.FINEST, "testNormalUserisTokenValidtokenidREST",
                     "Page: " + page.getContent());
             if (!page.getContent().equals(str)) 
                 assert false;
@@ -717,7 +717,7 @@ public class IdSvcsREST extends TestCommon {
                     "/identity/isTokenValid?iPlanetDirectoryPro=" +
                     URLEncoder.encode(s1, "UTF-8"));
             String str = "boolean=true" + "\n";
-            log(Level.SEVERE, "testsuperAdminUserisTokenValid" +
+            log(Level.FINEST, "testsuperAdminUserisTokenValid" +
                     "iPlanetDirectoryProREST", "Page: " +
                     page.getContent());
             if (!page.getContent().equals(str)) 
@@ -768,7 +768,7 @@ public class IdSvcsREST extends TestCommon {
                     "/identity/isTokenValid?iPlanetDirectoryPro=" +
                     URLEncoder.encode(normalUseriPDProToken, "UTF-8"));
             String str = "boolean=true" + "\n";
-            log(Level.SEVERE, "testNormalUserisTokenValid" +
+            log(Level.FINEST, "testNormalUserisTokenValid" +
                     "iPlanetDirectoryProREST", "Page: " +
                     page.getContent());
             if (!page.getContent().equals(str)) 
@@ -823,7 +823,7 @@ public class IdSvcsREST extends TestCommon {
                         identity_attribute_values_SERVERURL +
                         "&admin=" + URLEncoder.encode(s1, "UTF-8"));
             }
-            log(Level.SEVERE, "testSearchAgentsREST", "Page: " +
+            log(Level.FINEST, "testSearchAgentsREST", "Page: " +
                     page.getContent());
             
             // Searching agents
@@ -890,7 +890,7 @@ public class IdSvcsREST extends TestCommon {
                         identity_type_user + "&admin=" +
                         URLEncoder.encode(s1, "UTF-8"));
             }
-            log(Level.SEVERE, "testSearchUsersREST", "Page: " +
+            log(Level.FINEST, "testSearchUsersREST", "Page: " +
                     page.getContent());
             
             // Searching users 
@@ -955,7 +955,7 @@ public class IdSvcsREST extends TestCommon {
                         identity_type_group + "&admin=" +
                         URLEncoder.encode(s1, "UTF-8"));
             }
-            log(Level.SEVERE, "testSearchGroupREST", "Page: " +
+            log(Level.FINEST, "testSearchGroupREST", "Page: " +
                     page.getContent());
             
             // Searching groups 
@@ -1025,7 +1025,7 @@ public class IdSvcsREST extends TestCommon {
                     "&admin=" + URLEncoder.encode(s1, "UTF-8"));
             String str = page.getContent();
             agent = agent + "\n";
-            log(Level.SEVERE, "testCreateAgentREST", "Page: " +
+            log(Level.FINEST, "testCreateAgentREST", "Page: " +
                     page.getContent());
             if (!str.contains(agent)) {
                 log(Level.FINEST, "testCreateAgentREST", 
@@ -1080,7 +1080,7 @@ public class IdSvcsREST extends TestCommon {
                     "&admin=" + URLEncoder.encode(s1, "UTF-8"));
             String str = page.getContent();
             agent = agent + "\n";
-            log(Level.SEVERE, "testAgentDeleteIdentityREST", "Page: " +
+            log(Level.FINEST, "testAgentDeleteIdentityREST", "Page: " +
                     page.getContent());
             if (str.contains(agent)) {
                 log(Level.FINEST, "testAgentDeleteIdentityREST", 
@@ -1134,7 +1134,7 @@ public class IdSvcsREST extends TestCommon {
             URLEncoder.encode(s1, "UTF-8"));
             String str = page.getContent();
             user = user + "\n";
-            log(Level.SEVERE, "testCreateUserREST", "Page: " +
+            log(Level.FINEST, "testCreateUserREST", "Page: " +
                     page.getContent());
             if(!str.contains(user)){
                 log(Level.FINEST, "testCreateUserREST", 
@@ -1181,7 +1181,7 @@ public class IdSvcsREST extends TestCommon {
                      "/identity/read?name=" + identity_user + 
                      "&attributes_names=" + attrs[i] + "&admin=" +
                      URLEncoder.encode(s1, "UTF-8"));
-                 log(Level.SEVERE, "testUserIdentityAttributesREST", "Page: " +
+                 log(Level.FINEST, "testUserIdentityAttributesREST", "Page: " +
                      page.getContent());
                  if (!page.getContent().contains(attrsval[i]))
                      assert false;
@@ -1232,7 +1232,7 @@ public class IdSvcsREST extends TestCommon {
                     "&admin=" + URLEncoder.encode(s1, "UTF-8"));
             String str = page.getContent();
             user = user + "\n";
-            log(Level.SEVERE, "testUserDeleteIdentityREST", "Page: " +
+            log(Level.FINEST, "testUserDeleteIdentityREST", "Page: " +
                     page.getContent());
             if (str.contains(user)) {
                 log(Level.FINEST, "testUserDeleteIdentityREST", 
@@ -1286,7 +1286,7 @@ public class IdSvcsREST extends TestCommon {
                     "&admin=" + URLEncoder.encode(s1, "UTF-8"));
             String str = page.getContent();
             group = group + "\n";
-            log(Level.SEVERE, "testCreateGroupREST", "Page: " +
+            log(Level.FINEST, "testCreateGroupREST", "Page: " +
                     page.getContent());
             if (!str.contains(group)) {
                 log(Level.FINEST, "testCreateGroupREST", 
@@ -1339,7 +1339,7 @@ public class IdSvcsREST extends TestCommon {
                     "&admin=" + URLEncoder.encode(s1, "UTF-8"));
             String str = page.getContent();
             group = group + "\n";
-            log(Level.SEVERE, "testGroupDeleteIdentityREST", "Page: " +
+            log(Level.FINEST, "testGroupDeleteIdentityREST", "Page: " +
                     page.getContent());
             if (str.contains(group)) {
                 log(Level.FINEST, "testGroupDeleteIdentityREST", 
@@ -1604,7 +1604,7 @@ public class IdSvcsREST extends TestCommon {
                         "&attributes_names=objecttype" +
                         "&attributes_values_objecttype=" + objecttype + 
                         "&admin=" + URLEncoder.encode(admintoken, "UTF-8"));
-                log(Level.SEVERE, "commonSearchREST", "Page: " +
+                log(Level.FINEST, "commonSearchREST", "Page: " +
                         page.getContent());
                 String str = page.getContent();
                 for (int i = 0; i < identities.length; i++) {
@@ -1644,7 +1644,7 @@ public class IdSvcsREST extends TestCommon {
                             "&attributes_names=objecttype" +
                             "&attributes_values_objecttype=" + objecttype + 
                             "&admin=" + URLEncoder.encode(admintoken, "UTF-8"));
-                    log(Level.SEVERE, "commonSearchREST", "Page: " +
+                    log(Level.FINEST, "commonSearchREST", "Page: " +
                             page.getContent());
                     identities[i] = identities[i] + "\n";
                     String str = page.getContent();
