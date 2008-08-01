@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.84 2008-07-30 05:15:10 mallas Exp $
+ * $Id: AMSetupServlet.java,v 1.85 2008-08-01 00:32:15 veiming Exp $
  *
  */
 
@@ -684,6 +684,7 @@ public class AMSetupServlet extends HttpServlet {
             } 
             SystemProperties.setServerInstanceName(serverInstanceName);
             LDIFTemplates.copy(basedir + "/template/ldif", servletCtx);
+            createDotVersionFile(basedir);
             handlePostPlugins(adminSSOToken);
             postInitialize(adminSSOToken);
            
@@ -2231,5 +2232,11 @@ public class AMSetupServlet extends HttpServlet {
             }
         }
         SetupProgress.setLocale(configLocale);
+    }
+    
+    private static void createDotVersionFile(String basedir)
+        throws IOException {
+        String version = SystemProperties.get(Constants.AM_VERSION);
+        writeToFile(basedir + "/.version", version);
     }
 }

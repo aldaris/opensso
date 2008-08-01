@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommandManager.java,v 1.26 2008-07-16 21:59:27 veiming Exp $
+ * $Id: CommandManager.java,v 1.27 2008-08-01 00:32:15 veiming Exp $
  *
  */
 
@@ -88,6 +88,7 @@ public class CommandManager {
      * Entry point to the engine.
      */
     public static void main(String[] argv) {
+        boolean bBootstrapped = true;
         if ((argv.length > 0) && argv[0].equals(IMPORT_SVC_CMD)) {
             try {
                 initSys = new InitializeSystem();
@@ -106,22 +107,33 @@ public class CommandManager {
             try {
                 Bootstrap.load();
             } catch (ConfiguratorException ex) {
-                System.err.println(ex.getL10NMessage(Locale.getDefault()));
-                System.exit(1);
+                bBootstrapped = false;
+                if ((argv.length > 0) &&
+                    !argv[0].equals(CLIConstants.PREFIX_ARGUMENT_LONG +
+                    CLIConstants.ARGUMENT_VERSION) && 
+                    !argv[0].equals(CLIConstants.PREFIX_ARGUMENT_SHORT +
+                    CLIConstants.SHORT_ARGUMENT_VERSION)
+                ) {
+                    System.err.println(ex.getL10NMessage(Locale.getDefault()));
+                    System.exit(1);
+                }
             } catch (Exception e) {
                 System.err.println("Cannot bootstrap the system" +
                     e.getMessage());
                 System.exit(1);
             }
 
-            if (VersionCheck.isVersionValid() == 1) {
-                System.exit(1);
+            if (bBootstrapped) {
+                if (VersionCheck.isVersionValid() == 1) {
+                    System.exit(1);
+                }
             }
         }
-        
-        debugger = Debug.getInstance("amCLI");
-        getIsInstallTime();
-        Crypt.checkCaller();
+        if (bBootstrapped) {
+            debugger = Debug.getInstance("amCLI");
+            getIsInstallTime();
+            Crypt.checkCaller();
+        }
         new CommandManager(argv);
     }
 

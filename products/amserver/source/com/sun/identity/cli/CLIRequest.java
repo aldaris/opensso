@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIRequest.java,v 1.13 2008-06-25 05:42:08 qcheng Exp $
+ * $Id: CLIRequest.java,v 1.14 2008-08-01 00:32:15 veiming Exp $
  *
  */
 
@@ -30,6 +30,7 @@ package com.sun.identity.cli;
 
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.setup.Bootstrap;
 import com.sun.identity.shared.Constants;
 import java.text.MessageFormat;
 import java.util.Iterator;
@@ -229,11 +230,13 @@ public class CLIRequest {
             arg.equals(CLIConstants.PREFIX_ARGUMENT_SHORT + shortOption);
     }
 
-    private void processVersion(CommandManager mgr) {
+    private void processVersion(CommandManager mgr)
+        throws CLIException {
         IOutput outputWriter = mgr.getOutputWriter();
+        String basedir = System.getProperty(Bootstrap.JVM_OPT_BOOTSTRAP);
+        String version = CLIUtil.getFileContent(basedir + "/.version");
         outputWriter.printlnMessage("");
-        outputWriter.printlnMessage(mgr.getProductName() + " " +
-            SystemProperties.get(Constants.AM_VERSION));
+        outputWriter.printlnMessage(mgr.getProductName() + " " + version);
         outputWriter.printlnMessage("");
     }
     
