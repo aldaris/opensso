@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: SAML2LogMessageIDs.xml,v 1.5 2008-07-23 17:45:03 veiming Exp $
+   $Id: SAML2LogMessageIDs.xml,v 1.6 2008-08-01 20:53:11 bina Exp $
 
 -->
 
@@ -2151,5 +2151,19 @@
             <item>Unable to terminate federation.</item>
         </triggers>
         <actions/>
+    </logmessage>
+    <logmessage name="POST_RESPONSE_INVALID_SIGNATURE" id="164"
+        loglevel="LL_INFO"
+        description="Unable to verify signature in Single Sign-On Response using POST binding.">
+        <datainfo>
+            <item>Identity Provider Entity ID</item>
+        </datainfo>
+        <triggers>
+            <item>Error while trying to verify signature in Response.</item>
+        </triggers>
+        <actions>
+            <item>Check Identity Provider metadata</item>
+            <item>Check debug file for detailed info</item>
+        </actions>
     </logmessage>
 </logmessages>

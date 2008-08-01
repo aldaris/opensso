@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogUtil.java,v 1.7 2008-06-25 05:47:48 qcheng Exp $
+ * $Id: LogUtil.java,v 1.8 2008-08-01 20:53:09 bina Exp $
  *
  */
 
@@ -287,7 +287,7 @@ public class LogUtil {
                                 "INVALID_REALM_GET_ALL_ENTITIES";
     public static final String CONFIG_ERROR_GET_ALL_ENTITIES =
                                 "CONFIG_ERROR_GET_ALL_ENTITIES";
-    public static final String GOT_ALL_ENTITIES = "GOT_ALL_ENTITIES";                                
+    public static final String GOT_ALL_ENTITIES = "GOT_ALL_ENTITIES";
     public static final String NAME_ID = "NameID";
 
     // Log constants (message id) for SAE
@@ -358,6 +358,8 @@ public class LogUtil {
     public static final String SUCCESS_NEW_NAMEID = "SUCCESS_NEW_NAMEID";
     public static final String UNKNOWN_PRINCIPAL = "UNKNOWN_PRINCIPAL";
     public static final String UNABLE_TO_TERMINATE = "UNABLE_TO_TERMINATE";
+    public static final String POST_RESPONSE_INVALID_SIGNATURE =
+                                "POST_RESPONSE_INVALID_SIGNATURE";
                                           
     private static final String SAML2_LOG = "SAML2";
     private static Logger logger = null;

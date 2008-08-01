@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.28 2008-07-22 18:08:21 weisun2 Exp $
+ * $Id: SPACSUtils.java,v 1.29 2008-08-01 20:53:10 bina Exp $
  *
  */
 
@@ -799,6 +799,7 @@ public class SPACSUtils {
         HttpServletResponse response, String orgName, String hostEntityId,
         SAML2MetaManager metaManager) throws SAML2Exception,IOException
     {
+        String classMethod = "SPACSUtils:getResponseFromPost";
         SAML2Utils.debug.message("SPACSUtils:getResponseFromPost");
 
         String samlArt = request.getParameter(SAML2Constants.SAML_ART);
@@ -871,6 +872,39 @@ public class SPACSUtils {
             }
         }
         
+        // verify signature in Response
+        boolean needPOSTResponseSigned = 
+            SAML2Utils.wantPOSTResponseSigned(
+                orgName,hostEntityId,SAML2Constants.SP_ROLE);
+        String idpEntityID = resp.getIssuer().getValue();
+        IDPSSODescriptorElement idp = null;
+        try {
+            idp = metaManager.getIDPSSODescriptor(orgName,idpEntityID);
+        } catch (SAML2MetaException se) {
+            String[] data = {orgName,hostEntityId,idpEntityID};
+            LogUtil.error(Level.INFO,
+                        LogUtil.IDP_META_NOT_FOUND,
+                        data,
+                        null);
+            response.sendError(response.SC_INTERNAL_SERVER_ERROR,
+                    se.getMessage());
+            throw se;
+       }
+       if (needPOSTResponseSigned) {
+            X509Certificate cert = KeyUtil.getVerificationCert(
+                idp, idpEntityID, SAML2Constants.IDP_ROLE);
+            if (!resp.isSigned() || !resp.isSignatureValid(cert)) {
+                SAML2Utils.debug.error(classMethod + 
+                         " Signature in Response is invalid "); 
+                String[] data = { orgName , hostEntityId , idpEntityID };
+                LogUtil.error(Level.INFO,
+                    LogUtil.POST_RESPONSE_INVALID_SIGNATURE,data,null);
+                response.sendError(response.SC_INTERNAL_SERVER_ERROR,
+                    SAML2Utils.bundle.getString("invalidSignature"));
+                throw new SAML2Exception(
+                       SAML2Utils.bundle.getString("invalidSignInResponse"));
+           }
+        }
         String[] data = {""};
         if (LogUtil.isAccessLoggable(Level.FINE)) {
             data[0] = resp.toXMLString();
@@ -1293,12 +1327,12 @@ public class SPACSUtils {
      
         String assertionID=authnAssertion.getID();
         if (respInfo.getProfileBinding().equals(SAML2Constants.HTTP_POST)) {
-            SPCache.assertionByIDCache.put(assertionID, SAML2Constants.ONETIME); 
+            SPCache.assertionByIDCache.put(assertionID, SAML2Constants.ONETIME);
             try {
                 if (SAML2Utils.isSAML2FailOverEnabled()) {
                     SAML2Repository.getInstance().save(assertionID,
                     SAML2Constants.ONETIME, 
-                    ((Long) smap.get(SAML2Constants.NOTONORAFTER)).longValue()); 
+                    ((Long) smap.get(SAML2Constants.NOTONORAFTER)).longValue());
                 }
             } catch (SAML2Exception e) {
                 SAML2Utils.debug.error(classMethod + "DB error!", e); 

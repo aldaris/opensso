@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.36 2008-07-24 17:46:34 exu Exp $
+ * $Id: IDPSSOUtil.java,v 1.37 2008-08-01 20:53:10 bina Exp $
  *
  */
 
@@ -547,10 +547,25 @@ public class IDPSSOUtil {
 
         // send the response back through HTTP POST or Artifact 
         if (acsBinding.equals(SAML2Constants.HTTP_POST)) {
-            // signing assertion is a must for POST profile.
+            // check if response needs to be signed.
+            // if response is signed then assertion
+            // will not be signed for POST Profile
+            boolean signAssertion = true;
+            boolean signResponse = 
+                SAML2Utils.wantPOSTResponseSigned(realm,
+                    spEntityID,SAML2Constants.SP_ROLE) ;
+            if (signResponse) {
+                signAssertion = false;
+            }
+            // signing assertion is a must for POST profile if
+            // response signing is not enabled.
             // encryption is optional based on SP config settings.
             signAndEncryptResponseComponents(
-                    realm, spEntityID, idpEntityID, res, true);
+                    realm, spEntityID, idpEntityID, res, signAssertion);
+
+            if (signResponse) {
+                 signResponse(realm,idpEntityID,res);
+            }
 
             String resMsg = res.toXMLString(true, true);
             if (SAML2Utils.debug.messageEnabled()) {
@@ -1833,8 +1848,8 @@ public class IDPSSOUtil {
             if (SAML2Utils.isSAML2FailOverEnabled()) {
                 long expireTime = getValidTimeofResponse(
                     realm, idpEntityID,res);
-                SAML2Repository.getInstance().save(artStr, res.toXMLString(true,true),
-                    expireTime);
+                SAML2Repository.getInstance().save(
+                    artStr,res.toXMLString(true,true),expireTime);
                 if (SAML2Utils.debug.messageEnabled()) {
                     SAML2Utils.debug.message(classMethod +
                         "Save Response to DB!");
@@ -2205,9 +2220,8 @@ public class IDPSSOUtil {
                                           String spEntityID,
                                           String idpEntityID,
                                           Response res,
-                                          boolean signAssertion) 
+                                          boolean signAssertion)
         throws SAML2Exception {
-
         String classMethod = "IDPSSOUtil.signAndEncryptResponseComponents: ";
         boolean toEncryptAssertion = false;
         boolean toEncryptNameID = false;
@@ -2604,4 +2618,37 @@ public class IDPSSOUtil {
          }
          return ret;
       }
+
+    /**
+     * Signs SAMLv2 Response. 
+     *
+     * @param realm the realm name.
+     * @param idpEntityID the identity provider entity identifier
+     * @param response the SAMLv2 <code>Response</code>
+     * @exception <code>SAML2Exception</code> if there is an 
+     *            error signing the response.
+     */
+    private static void signResponse(String realm, String idpEntityID, 
+        Response response) throws SAML2Exception {
+        String classMethod = "IDPSSOUtil:signResponse";
+        KeyProvider kp = KeyUtil.getKeyProviderInstance();
+        if (kp == null) {
+            SAML2Utils.debug.error(classMethod 
+                + "Unable to get a key provider instance.");
+                throw new SAML2Exception(
+                SAML2Utils.bundle.getString("nullKeyProvider"));
+
+            }
+            String idpSignCertAlias = SAML2Utils.getSigningCertAlias(
+                        realm, idpEntityID, SAML2Constants.IDP_ROLE);
+            if (idpSignCertAlias == null) {
+                SAML2Utils.debug.error(classMethod +
+                    "Unable to get the hosted IDP signing certificate alias.");
+                throw new SAML2Exception(
+                SAML2Utils.bundle.getString("missingSigningCertAlias"));
+
+            }
+            response.sign(kp.getPrivateKey(idpSignCertAlias),
+                           kp.getX509Certificate(idpSignCertAlias));
+        }
 }

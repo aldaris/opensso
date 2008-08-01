@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.35 2008-07-28 16:50:36 qcheng Exp $
+ * $Id: SAML2Constants.java,v 1.36 2008-08-01 20:53:09 bina Exp $
  *
  */
 
@@ -973,6 +973,7 @@ public interface SAML2Constants {
     public String WANT_MNI_REQUEST_SIGNED = "wantMNIRequestSigned";
     public String WANT_MNI_RESPONSE_SIGNED 
                                    = "wantMNIResponseSigned";
+    public String WANT_POST_RESPONSE_SIGNED = "wantPOSTResponseSigned";
     
     /**
      * SP Entity Config attribute name. Used to specify IDPList child element

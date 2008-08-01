@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.36 2008-07-28 16:56:38 qcheng Exp $
+ * $Id: SAML2Utils.java,v 1.37 2008-08-01 20:53:09 bina Exp $
  *
  */
 
@@ -402,11 +402,28 @@ public class SAML2Utils extends SAML2SDKUtils {
             needAssertionEncrypted = true;
         }
         
-        // decide if assertion needs to be signed/verified
+        // for SSO Post Profile check if assertion needs 
+        // to be signed/verified
         boolean needAssertionSigned = (profileBinding != null) &&
             (profileBinding.equals(SAML2Constants.HTTP_POST));
+
         if (!needAssertionSigned) {
             needAssertionSigned = spDesc.isWantAssertionsSigned();
+        }
+
+        // POST Profile - if Response signing is true then
+        // assertion signing will not be done at the IDP
+        boolean wantPostResponseSigned = 
+            SAML2Utils.wantPOSTResponseSigned(
+                orgName,hostEntityId,SAML2Constants.SP_ROLE);
+        if (profileBinding.equals(SAML2Constants.HTTP_POST) 
+                && wantPostResponseSigned) {
+            if (debug.messageEnabled()) {
+                debug.message(method + "binding is :" + profileBinding);
+                debug.message(method + "signResponse  :" + 
+                    wantPostResponseSigned);
+            }
+            needAssertionSigned = false;
         }
         
         List assertions = response.getAssertion();
@@ -523,7 +540,8 @@ public class SAML2Utils extends SAML2SDKUtils {
                         spConfig,
                         assertionID); 
                         
-                if (!(((Boolean) bearerMap.get(SAML2Constants.IS_BEARER)).booleanValue())) {
+                if (!(((Boolean) bearerMap.get(
+                        SAML2Constants.IS_BEARER)).booleanValue())) {
                     continue;
                 }
                 
@@ -3834,7 +3852,8 @@ public class SAML2Utils extends SAML2SDKUtils {
         Integer levelInt = (Integer)acClassRefLevelMap.get(acClassRef);
         if (levelInt == null) {
             if (SAML2Utils.debug.messageEnabled()) {
-                SAML2Utils.debug.message("SAML2Utils.isAuthnContextMatching: " +                   "AuthnContextClassRef " + acClassRef +" is not supported.");
+                SAML2Utils.debug.message("SAML2Utils.isAuthnContextMatching: " +
+                   "AuthnContextClassRef " + acClassRef +" is not supported.");
             }      
             return false;
         }
@@ -4064,5 +4083,31 @@ public class SAML2Utils extends SAML2SDKUtils {
             strCookies = cookieStr.toString();
         }
         return (strCookies);
+    }
+
+    /**
+     * Returns value of attribute <code>wantPOSTResponseSigned</code>
+     * as a boolean value true to false.
+     *
+     * @param realm realm of hosted entity.
+     * @param hostEntityId name of hosted entity.
+     * @param entityRole role of hosted entity.
+     * @return true if wantPOSTResponseSigned has <code>String</code> true,
+     *         otherwise false.
+     */
+    public static boolean wantPOSTResponseSigned(String realm,
+            String hostEntityId,
+            String entityRole) {
+        if (debug.messageEnabled()) {
+            String method = "SAML2Utils:getWantPOSTResponseSigned : ";
+            debug.message(method + "realm - " + realm);
+            debug.message(method + "hostEntityId - " + hostEntityId);
+            debug.message(method + "entityRole - " + entityRole);
+        }
+        String wantSigned =
+                getAttributeValueFromSSOConfig(realm, hostEntityId, entityRole,
+                SAML2Constants.WANT_POST_RESPONSE_SIGNED);
+
+        return "true".equalsIgnoreCase(wantSigned);
     }
 }
