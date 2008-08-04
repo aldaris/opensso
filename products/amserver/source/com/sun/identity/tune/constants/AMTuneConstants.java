@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneConstants.java,v 1.3 2008-07-25 05:51:56 kanduls Exp $
+ * $Id: AMTuneConstants.java,v 1.4 2008-08-04 17:20:24 kanduls Exp $
  */
 
 package com.sun.identity.tune.constants;
@@ -38,6 +38,8 @@ public interface AMTuneConstants {
     static String RB_NAME = "amtune";
     static String WINDOWS_2003 = "Windows 2003";
     static String WINDOWS_VISTA = "Windows Vista";
+    static String WINDOWS_2008 = "Windows Server 2008";
+    static String AIX_OS = "AIX";
     static String LINUX ="Linux";
     static String SUN_OS = "SUNOS";
     static String HOST_NAME_LINE = "Host Name:";

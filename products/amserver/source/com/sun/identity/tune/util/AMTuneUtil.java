@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneUtil.java,v 1.4 2008-07-25 05:41:21 kanduls Exp $
+ * $Id: AMTuneUtil.java,v 1.5 2008-08-04 17:20:24 kanduls Exp $
  */
 
 package com.sun.identity.tune.util;
@@ -41,10 +41,8 @@ import com.sun.identity.tune.constants.WebContainerConstants;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -70,8 +68,10 @@ import java.util.zip.ZipOutputStream;
     private static MessageWriter mWriter;
     private static boolean isWindows2003;
     private static boolean isWinVista;
+    private static boolean isWindows2008;
     private static boolean isSunOs;
     private static boolean isLinux;
+    private static boolean isAix;
     private static String tempFile;
     private static Map sysInfoMap;
     private static boolean utilInit = true;
@@ -109,6 +109,9 @@ import java.util.zip.ZipOutputStream;
             } else if (isLinux()) {
                 checkRootUser();
                 getLinuxSystemInfo();
+            } else if (isAix) {
+                checkRootUser();
+                getAIXSystemInfo();
             } else {
                 utilInit = false;
                 throw new AMTuneException("Unsupported OS.");
@@ -153,62 +156,65 @@ import java.util.zip.ZipOutputStream;
             isWindows2003 = true;
         } else if (osName.equalsIgnoreCase(WINDOWS_VISTA)) {
             isWinVista = true;
+        } else if (osName.equalsIgnoreCase(WINDOWS_2008)) {
+            isWindows2008 = true;
         } else if (osName.equalsIgnoreCase(LINUX)) {
             isLinux = true;
-            StringBuffer rBuf = new StringBuffer();
-            String rVersionCmd = "/usr/bin/lsb_release -a";
-            int extVal = executeCommand(rVersionCmd, rBuf);
-            String tempF = "/tmp/lnx-version.txt";
-            if (extVal == -1) {
-                mWriter.writeLocaleMsg("pt-unable-find-lnx-ver");
-                mWriter.writelnLocaleMsg("pt-cannot-proceed");
-                throw new AMTuneException("Error finding Linux version.");
-            } else {
-                AMTuneUtil.writeResultBufferToTempFile(rBuf, tempF);
-            }
-            try {
-                FileHandler fh = new FileHandler(tempF);
-                String reqLine = fh.getLine("Red Hat");
-                if (reqLine == null || 
-                        (reqLine != null && reqLine.trim().length() == 0)) {
-                    mWriter.writelnLocaleMsg("pt-unsupported-lnx");
-                    String curVersion = fh.getLine("Description:");
-                    if (curVersion != null) {
-                        pLogger.log(Level.SEVERE, "checkSystemEnv", 
-                             "Unsupported Linux : " + curVersion );
-                    }
-                    throw new AMTuneException("Unsupported Linux ");
-                }
-                
-                String ver = fh.getLine("Release:").replace("Release:", "");
-                ver = ver.trim();
-                pLogger.log(Level.INFO, "checkSystemEnv", "Red Hat version " +
-                        ver);
-                int version = Integer.parseInt(ver.trim()); 
-                if (version < 4) {
-                    mWriter.writelnLocaleMsg("pt-unsupported-lnx");
-                    throw new AMTuneException("Unsupported Red Hat Linux " +
-                            version);
-                }
-            } catch (FileNotFoundException fe) {
-                pLogger.log(Level.SEVERE, "checkSystemEnv", 
-                        "Exception finding System information " + 
-                        fe.getMessage());
-                throw new AMTuneException("File not found " + tempFile);
-            } catch (IOException ioe) {
-                throw new AMTuneException("Error reading file " + 
-                        ioe.getMessage());
-            } finally {
-                File delFile = new File(tempF);
-                if (delFile.isFile()) {
-                    delFile.delete();
-                }
-            } 
+        } else if (osName.equalsIgnoreCase(AIX_OS)) {
+            isAix = true;
         } else {
             mWriter.writelnLocaleMsg("pt-unsupported-os");
             throw new AMTuneException("Unsupported Operating system.");
         }
     }
+    
+    /**
+     * Executed /usr/sbin/prtconf command and finds AIX system information.
+     */
+    private static void getAIXSystemInfo()
+    throws AMTuneException {
+        getCommonNXSystemInfo();
+        String nCmd = "/usr/sbin/prtconf";
+        String memSizeStr = "Memory Size: ";
+        String noProcessorStr = "Number Of Processors:";
+        StringBuffer rBuf = new StringBuffer();
+        int extVal = executeCommand(nCmd, rBuf);
+        if (extVal == -1) {
+            mWriter.writeLocaleMsg("pt-unable-avmem");
+            mWriter.writelnLocaleMsg("pt-cannot-proceed");
+            throw new AMTuneException("prtconf command error.");
+        } else {
+            try {
+                StringTokenizer st = new StringTokenizer(rBuf.toString(),
+                        "\n");
+                while (st.hasMoreTokens()) {
+                    String reqLine = st.nextToken();
+                    if (reqLine.indexOf(memSizeStr) == 0) {
+                        String size = reqLine.replace(memSizeStr, "").
+                                replace(" MB", "");
+                        pLogger.log(Level.FINEST, "getAIXSystemInfo",
+                                "RAM size is " + size);
+                        sysInfoMap.put(MEMORY_LINE, size);
+                    } else if (reqLine.indexOf(noProcessorStr) != -1) {
+                        String noProcessors = reqLine.replace(noProcessorStr,
+                                "");
+                        if (noProcessors != null &&
+                                noProcessors.trim().length() > 0) {
+                            pLogger.log(Level.FINEST, "getAIXSystemInfo",
+                                    "Number of Processors " + noProcessors);
+                            sysInfoMap.put(PROCESSERS_LINE,
+                                    noProcessors.trim());
+                        }
+                    }
+                }
+            } catch (Exception ex) {
+                pLogger.log(Level.SEVERE, "getAIXSystemInfo",
+                        "Error finding AIX system info : ");
+                throw new AMTuneException(ex.getMessage());
+            }
+        }
+    }
+    
     /**
      * This method finds host name, domain, cpus and memory size by executing
      * native commands.
@@ -714,7 +720,7 @@ import java.util.zip.ZipOutputStream;
      * @return <code>true</code> if OS is Windows 2003.
      */
     public static boolean isWindows() {
-        if (isWinVista || isWindows2003) {
+        if (isWinVista || isWindows2003 || isWindows2008) {
             return true;
         } else {
             return false;
@@ -739,6 +745,14 @@ import java.util.zip.ZipOutputStream;
         return isLinux;
     }
     
+    /**
+     * Return <code>true</code> if AIX.
+     * 
+     * @return <code>true</code> if AIX.
+     */
+    public static boolean isAIX() {
+        return isAix;
+    }
     /**
      * Return true if under laying hardware is Niagara box.
      * 
@@ -1031,7 +1045,7 @@ import java.util.zip.ZipOutputStream;
      * Set temp Directory based on the platform
      */
     private static void setTmpDir() {
-        if (isSunOs() || isLinux()) {
+        if (isSunOs() || isLinux() || isAIX()) {
             TMP_DIR = "/tmp" + FILE_SEP;
         } else {
             TMP_DIR = System.getProperty("java.io.tmpdir");

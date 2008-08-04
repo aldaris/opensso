@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneConfigInfo.java,v 1.4 2008-07-25 05:21:34 kanduls Exp $
+ * $Id: AMTuneConfigInfo.java,v 1.5 2008-08-04 17:20:23 kanduls Exp $
  */
 
 package com.sun.identity.tune.config;
@@ -794,7 +794,8 @@ FAMConstants, WebContainerConstants {
     
     private void setFAMTuneMaxMemoryToUseInMB() 
     throws Exception {
-        if (AMTuneUtil.isLinux() || AMTuneUtil.isSunOs()) {
+        if (AMTuneUtil.isLinux() || AMTuneUtil.isSunOs() || 
+                AMTuneUtil.isAIX()) {
             if (getWebContainer().equals(WS7_CONTAINER)) {
                 if (AMTuneUtil.isLinux()) {
                     setFAMTuneMaxMemoryToUseInMB(
