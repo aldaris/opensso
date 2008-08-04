@@ -22,13 +22,13 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.3 2008-06-25 05:51:15 qcheng Exp $
+   $Id: build.xml,v 1.4 2008-08-04 19:29:25 huacui Exp $
 
 -->
 
 <project name="OpenSSO-Install-Tools" default="all">
 
-    <description>Open Web Single Sign-On Install Tools Library</description>
+    <description>OpenSSO Install Tools Library</description>
 
     <import file="../products.xml" />
     <import file="installtools.xml" />

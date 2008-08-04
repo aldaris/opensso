@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigurePropertiesTask.java,v 1.7 2008-06-25 05:51:17 qcheng Exp $
+ * $Id: ConfigurePropertiesTask.java,v 1.8 2008-08-04 19:29:27 huacui Exp $
  *
  */
 
@@ -63,7 +63,7 @@ public class ConfigurePropertiesTask implements ITask, InstallConstants {
             // Copy the Config File location to the state
             stateAccess.put(STR_CONFIG_FILE_PATH_TAG, instanceConfigFile);
 
-            // Generate the FAMAgentConfiguration.properties file 
+            // Generate the OpenSSOAgentConfiguration.properties file 
             String agentConfigTemplate = (String) properties.get(
                         STR_PRODUCT_CONFIG_FILENAME_AGENT_CONFIG_TEMPLATE_KEY);
             String agentConfigTemplateFile = ConfigUtil.getConfigDirPath()

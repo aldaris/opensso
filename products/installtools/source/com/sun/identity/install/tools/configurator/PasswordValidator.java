@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PasswordValidator.java,v 1.5 2008-06-25 05:51:23 qcheng Exp $
+ * $Id: PasswordValidator.java,v 1.6 2008-08-04 19:29:27 huacui Exp $
  *
  */
 
@@ -209,7 +209,7 @@ public class PasswordValidator extends ValidatorBase {
                         
                     } else {
                         Debug.log("PasswordValidator.isAgentLoginValid() - " +
-                            "Error from FAM:" + response.toString());
+                            "Error from OpenSSO:" + response.toString());
                         returnMessage = LocalizedMessage.get(
                                 LOC_VA_WRN_IN_VAL_OTHER_AGENT_AUTH_FAILURE,
                                 new Object[] {responseCode});
@@ -218,7 +218,7 @@ public class PasswordValidator extends ValidatorBase {
                     
                 } else {
                     Debug.log("PasswordValidator.isAgentLoginValid() - " +
-                            "Error from FAM:" + response.toString());
+                            "Error from OpenSSO:" + response.toString());
                     returnMessage = LocalizedMessage.get(
                             LOC_VA_WRN_IN_VAL_AGENT_GENERIC_FAILURE,
                             new Object[] {responseCode,});
@@ -326,7 +326,7 @@ public class PasswordValidator extends ValidatorBase {
                     
                 } else {
                     Debug.log("PasswordValidator.isAgentAdminLoginValid() - " +
-                            "Error from FAM:" + response.toString());
+                            "Error from OpenSSO:" + response.toString());
                     returnMessage = LocalizedMessage.get(
                             LOC_VA_ERR_IN_VAL_OTHER_AGENT_AUTH_FAILURE,
                             new Object[] {responseCode});
@@ -334,7 +334,7 @@ public class PasswordValidator extends ValidatorBase {
                 
             } else {
                 Debug.log("PasswordValidator.isAgentAdminLoginValid() - " +
-                        "Error from FAM:" + response.toString());
+                        "Error from OpenSSO:" + response.toString());
                 returnMessage = LocalizedMessage.get(
                         LOC_VA_ERR_IN_VAL_AGENT_GENERIC_FAILURE,
                         new Object[] {responseCode,});

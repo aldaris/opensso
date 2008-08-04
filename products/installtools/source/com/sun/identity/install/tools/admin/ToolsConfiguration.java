@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ToolsConfiguration.java,v 1.4 2008-06-25 05:51:17 qcheng Exp $
+ * $Id: ToolsConfiguration.java,v 1.5 2008-08-04 19:29:26 huacui Exp $
  *
  */
 
@@ -192,7 +192,7 @@ public class ToolsConfiguration {
     private static IAdminTool adminTool = null;
 
     private static final String TOOLSCONFIG_FILE_NAME = 
-        "FAMInstallerConfig.properties";
+        "OpenSSOInstallerConfig.properties";
 
     private static final String STR_CONFIG_TOOLS_RESOLVER_KEY = 
         "com.sun.identity.install.tools.resolver";

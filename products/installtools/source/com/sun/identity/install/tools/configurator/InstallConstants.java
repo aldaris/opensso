@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InstallConstants.java,v 1.11 2008-06-25 05:51:20 qcheng Exp $
+ * $Id: InstallConstants.java,v 1.12 2008-08-04 19:29:27 huacui Exp $
  *
  */
 
@@ -59,7 +59,7 @@ public interface InstallConstants extends ICommonToolsConstants {
     
     /** Field STR_LOG_CONFIG_FILENAME **/
     public static final String STR_LOG_CONFIG_FILENAME =
-                    "FAMAgentLogConfig.properties";
+                    "OpenSSOAgentLogConfig.properties";
     
     /** Field STR_VERSION_FILE_NAME **/
     public static final String STR_VERSION_FILE_NAME = "/.version";

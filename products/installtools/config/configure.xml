@@ -333,9 +333,9 @@ modified/added/deleted:
             <task name="CONFIGURE_AGENT_PROPS">
             	<class name="ConfigurePropertiesTask" type="system"/>    
             	<property name="CONFIG_FILENAME_TEMPLATE"
-        				  value="FAMAgentBootstrap.template"/>
+        				  value="OpenSSOAgentBootstrap.template"/>
                 <property name="CONFIG_FILENAME"
-                          value="FAMAgentBootstrap.properties"/>            	                          
+                          value="OpenSSOAgentBootstrap.properties"/>            	                          
             </task>
             <task name="BACKUP_FILE">
            	 	<class name="BackupFileTask" type="system"/>
