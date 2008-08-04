@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.43 2008-07-06 05:48:33 arviranga Exp $
+ * $Id: IdServicesImpl.java,v 1.44 2008-08-04 22:12:36 veiming Exp $
  *
  */
 
@@ -70,6 +70,7 @@ import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.idm.RepoSearchResults;
 import com.sun.identity.idm.plugins.internal.SpecialRepo;
+import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.DNMapper;
@@ -79,6 +80,7 @@ import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
+import java.security.AccessController;
 
 public class IdServicesImpl implements IdServices {
 
@@ -800,7 +802,7 @@ public class IdServicesImpl implements IdServices {
         IdType type, 
         String name,
         IdType membershipType,
-        String amOrgName, 
+        String amOrgName,
         String amsdkDN
     ) throws IdRepoException, SSOException {
         IdRepoException origEx = null;
@@ -1094,6 +1096,21 @@ public class IdServicesImpl implements IdServices {
         }
 
     }
+    
+    private void validateMembers(
+        SSOToken token,
+        Set members,
+        IdType type,
+        String amOrgName
+    ) throws IdRepoException, SSOException {
+        for (Iterator i = members.iterator(); i.hasNext(); ) {
+            String name = (String)i.next();
+            if (!isExists(token, type, name, amOrgName)) {
+                Object[] args = {name, type.getName() };
+                throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "223",args);
+            }
+        }
+    }
 
     /*
      * (non-Javadoc)
@@ -1114,6 +1131,13 @@ public class IdServicesImpl implements IdServices {
         ) {
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "301", null);
         }
+
+        //check if the identity exist
+        if (!isExists(token, type, name, amOrgName)) {
+            Object[] args = {name, type.getName()};
+            throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "223", args);
+        }
+        validateMembers(token, members, membersType, amOrgName);
 
         Iterator it = configuredPluginClasses.iterator();
         int noOfSuccess = configuredPluginClasses.size();
