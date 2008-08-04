@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfigNotificationHandler.java,v 1.2 2008-06-25 05:51:35 qcheng Exp $
+ * $Id: AgentConfigNotificationHandler.java,v 1.3 2008-08-04 20:03:33 huacui Exp $
  *
  */
 
@@ -38,7 +38,7 @@ import java.util.Vector;
  * <code>com.iplanet.services.comm.client.NotificationHandler</code> and
  * processes the notifications for agent property configurations.
  * The result is that that the agent hot swap properties will
- * take on the new values at centralized configuration fam server.
+ * take on the new values at centralized configuration OpenSSO server.
  */
 public class AgentConfigNotificationHandler implements NotificationHandler {
     
@@ -53,10 +53,10 @@ public class AgentConfigNotificationHandler implements NotificationHandler {
 
    /**
     * Process the notification.
-    * This notification is actually just a ping from the fam server to let the
-    * agent know that the agent's configuration has been updated on fam server.
+    * This notification is actually just a ping from the OpenSSO server to let the
+    * agent know that the agent's configuration has been updated on OpenSSO server.
     * There is no message content that is used. Upon receiving the notification
-    * it will make a call to fam server to get the latest set of agent
+    * it will make a call to OpenSSO server to get the latest set of agent
     * configuration properties and subsequently update the agent configuration
     * to reflect the new property values.
     * No debug or logging is done in this class. If logging was to be done, it 

@@ -141,13 +141,13 @@
             <task name="CONFIGURE_AGENT_PROPS">
             	<class name="ConfigurePropertiesTask" type="system"/>    
                 <property name="CONFIG_FILENAME_AGENT_BOOTSTRAP_TEMPLATE"
-                                      value="FAMAgentBootstrap.template"/>
+                                      value="OpenSSOAgentBootstrap.template"/>
                 <property name="CONFIG_FILENAME_AGENT_BOOTSTRAP"
-                                      value="FAMAgentBootstrap.properties"/>
+                                      value="OpenSSOAgentBootstrap.properties"/>
                 <property name="CONFIG_FILENAME_AGENT_CONFIG_TEMPLATE"
-                                      value="FAMAgentConfiguration.template"/>
+                                      value="OpenSSOAgentConfiguration.template"/>
                 <property name="CONFIG_FILENAME_AGENT_CONFIG"
-                                      value="FAMAgentConfiguration.properties"/>
+                                      value="OpenSSOAgentConfiguration.properties"/>
             </task>
             <task name="CONFIGURE_STARTUP_SCRIPT">
                 <class name="ConfigureStartupScriptTask" type="custom"/>
@@ -378,13 +378,13 @@
             <task name="CONFIGURE_AGENT_PROPS">
             	<class name="ConfigurePropertiesTask" type="system"/>    
                 <property name="CONFIG_FILENAME_AGENT_BOOTSTRAP_TEMPLATE"
-                                      value="FAMAgentBootstrap.template"/>
+                                      value="OpenSSOAgentBootstrap.template"/>
                 <property name="CONFIG_FILENAME_AGENT_BOOTSTRAP"
-                                      value="FAMAgentBootstrap.properties"/>
+                                      value="OpenSSOAgentBootstrap.properties"/>
                 <property name="CONFIG_FILENAME_AGENT_CONFIG_TEMPLATE"
-                                      value="FAMAgentConfiguration.template"/>
+                                      value="OpenSSOAgentConfiguration.template"/>
                 <property name="CONFIG_FILENAME_AGENT_CONFIG"
-                                      value="FAMAgentConfiguration.properties"/>
+                                      value="OpenSSOAgentConfiguration.properties"/>
             </task>
             <task name="CONFIGURE_STARTUP_SCRIPT">
                 <class name="ConfigureStartupScriptTask" type="custom"/>
@@ -451,13 +451,13 @@
             <task name="CONFIGURE_AGENT_PROPS">
             	<class name="MigrateConfigurePropertiesTask" type="system"/>    
                 <property name="CONFIG_FILENAME_AGENT_BOOTSTRAP_TEMPLATE"
-                                      value="FAMAgentBootstrap.template"/>
+                                      value="OpenSSOAgentBootstrap.template"/>
                 <property name="CONFIG_FILENAME_AGENT_BOOTSTRAP"
-                                      value="FAMAgentBootstrap.properties"/>
+                                      value="OpenSSOAgentBootstrap.properties"/>
                 <property name="CONFIG_FILENAME_AGENT_CONFIG_TEMPLATE"
-                                      value="FAMAgentConfiguration.template"/>
+                                      value="OpenSSOAgentConfiguration.template"/>
                 <property name="CONFIG_FILENAME_AGENT_CONFIG"
-                                      value="FAMAgentConfiguration.properties"/>
+                                      value="OpenSSOAgentConfiguration.properties"/>
             </task>
             <task name="CONFIGURE_STARTUP_SCRIPT">
                 <class name="ConfigureStartupScriptTask" type="custom"/>

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentRemoteConfigUtils.java,v 1.4 2008-06-25 05:51:59 qcheng Exp $
+ * $Id: AgentRemoteConfigUtils.java,v 1.5 2008-08-04 20:03:34 huacui Exp $
  *
  */
 
@@ -143,10 +143,10 @@ public class AgentRemoteConfigUtils {
     }
     
     /**
-     * get FAM server's version by calling servlet SMSServlet?method=version.
+     * get OpenSSO server version by calling servlet SMSServlet?method=version.
      *
-     * @param urls Vector of FAM URLs.
-     * @return the version of FAM Server
+     * @param urls Vector of OpenSSO server URLs.
+     * @return the version of OpenSSO Server
      */
     public static String getServerVersion(Vector urls, Debug debug) {
         String version = null;
@@ -182,10 +182,10 @@ public class AgentRemoteConfigUtils {
     }
     
     /*
-     * call FAM service URL and return its content.
+     * call OpenSSO service URL and return its content.
      *
-     * @param urlSring FAM URL to be called
-     * @return String of content returned by FAM URL.
+     * @param urlSring OpenSSO URL to be called
+     * @return String of content returned by OpenSSO URL.
      */
     private static String callServerService(String urlString, Debug debug) {
         StringBuffer stringBuffer = new StringBuffer();

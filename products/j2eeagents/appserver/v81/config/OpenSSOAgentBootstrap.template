@@ -22,17 +22,16 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: FAMAgentBootstrap.template,v 1.6 2008-06-25 05:52:14 qcheng Exp $
 #
 #
-
 #------------------------------------------------------------------------------
 # J2EE Agents Bootstrap File
 #
-# Sun Federated Access Manager Policy Agent for:
-# BEA WebLogic 10.0 Server/Portal
+# Sun OpenSSO Enterprise Policy Agent for:
+# Sun Java System Application Server 8.1/8.2/9.0/9.1
 #
 # Version: 3.0
+
 #------------------------------------------------------------------------------
 #
 # THIS FILE PROVIDES THE CONFIGURATION SETTINGS NECESSARY FOR THE AGENT
@@ -67,7 +66,7 @@ com.iplanet.am.naming.url=@AM_SERVICES_PROTO@://@AM_SERVICES_HOST@:@AM_SERVICES_
 #   Specifies the service resolver used by this Agent.
 # Hot-Swap Enabled: No
 #
-com.sun.identity.agents.config.service.resolver = com.sun.identity.agents.weblogic.v10.AmWLAgentServiceResolver
+com.sun.identity.agents.config.service.resolver = com.sun.identity.agents.appserver.v81.AmASAgentServiceResolver
 
 #
 # AGENT USERNAME AND PASSWORD PROPERTIES
@@ -119,4 +118,3 @@ com.sun.identity.agents.config.organization.name = /
 # Hot-Swap Enabled: No
 #
 com.sun.identity.agents.config.lock.enable = false
-

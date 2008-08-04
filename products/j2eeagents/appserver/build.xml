@@ -22,13 +22,13 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.5 2008-06-25 05:52:01 qcheng Exp $
+   $Id: build.xml,v 1.6 2008-08-04 20:02:29 huacui Exp $
 
 -->
 
 <project name="open-source-j2ee-agents-appserver" default="build">
                 
-    <description>Open Web Single Sign-On J2EE Agent For Sun Appserver</description>
+    <description>OpenSSO Enterprise Agent For Sun Appserver</description>
 
     <!-- enforce invocation via top level build only -->
     <fail message="*** J2EE Agent may be built from top level only ***">

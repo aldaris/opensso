@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.29 2008-06-25 05:51:35 qcheng Exp $
+ * $Id: AgentConfiguration.java,v 1.30 2008-08-04 20:03:33 huacui Exp $
  *
  */
 
@@ -60,19 +60,19 @@ import com.sun.identity.shared.debug.Debug;
  * Provides access to the configuration as set in the system.
  * </p><p>
  * It uses the agent bootstrap configuration file called
- * FAMAgent.properties to get the agent startup configuration that 
- * include the Federated Access Manager(FAM) server information and the
+ * OpenSSOAgentBootstrap.properties to get the agent startup configuration that 
+ * includes the Sun OpenSSO Enterprise (OpenSSO) server information and the
  * agent user credential. It uses these information to authenticate to 
- * the FAM server. The FAM Authentication service completes the agent 
+ * the OpenSSO server. The OpenSSO Authentication service completes the agent 
  * authentication and sends a SSO token back to the agent. Using the SSO
- * token, the agent calls the FAM Attribute service to fetch its 
- * configuration. The FAM Attribute service sends the agent configuration
+ * token, the agent calls the OpenSSO Attribute service to fetch its 
+ * configuration. The OpenSSO Attribute service sends the agent configuration
  * back to the agent. The agent configuration returned contains the agent
  * configuration repository location. If the location is "centralized",
  * then agent will use the agent configuration just returned. If the 
  * location is "local" or not present, then the agent knows that its 
  * configuration is at the local. It reads the rest of its configuration
- * from the local configuration file FAMAgentConfiguration.properties.
+ * from the local configuration file OpenSSOAgentConfiguration.properties.
  * </p><p>
  * Most of the agent configuration properties are hot swappable. The
  * changes to these properties are effective without having to restart
@@ -82,9 +82,9 @@ import com.sun.identity.shared.debug.Debug;
  * </p><p>
  * The agent configuration change notification is available in the case
  * of the agent configuration is centralized. Anytime one or more agent 
- * properties are changed in the FAM, a notification is sent to the agent.
+ * properties are changed in the OpenSSO, a notification is sent to the agent.
  * Upon receiving the notification, the affected agent will refetch its
- * from the FAM server and updates its configuration using the new values. 
+ * from the OpenSSO server and updates its configuration using the new values. 
  * </p><p>
  * Configuration polling updates are available if the configuration setting 
  * <code>com.sun.identity.agents.j2ee.config.load.interval</code> has been set
@@ -199,7 +199,7 @@ public class AgentConfiguration implements
     }
     
    /**
-    * Returns the name of the Federated Access Manager Session property that is used by
+    * Returns the name of the OpenSSO Session property that is used by
     * the Agent runtime to identify the user-id of the current user.
     * 
     * @return the Session property name that identifies the user-id of the 
@@ -329,7 +329,7 @@ public class AgentConfiguration implements
    /**
     * Would be called by agent configuration notification handler when the 
     * agent housekeeping app receives configuration update notifications from
-    * the fam server
+    * the OpenSSO server
     */
     public static void updatePropertiesUponNotification() {       
         if(isAgentConfigurationRemote()) {
@@ -456,7 +456,7 @@ public class AgentConfiguration implements
     }
     
     /**
-     * Load from FAMAgentBootstrap.properties for start up properties.
+     * Load from OpenSSOAgentBootstrap.properties for start up properties.
      * This method should only be called once at start up time
      * since bootstrap properties are not hot swappable by editting the
      * properties file without a restart.
@@ -582,9 +582,9 @@ public class AgentConfiguration implements
     }
     /**
      * Collect all configuration info. Store all config properties, including 
-     * FAMAgentBootstrap.properties bootstrap small set of props and also agent
-     *  config props (from fam server or if local config file 
-     * FAMAgentConfiguration.properties) and store ALL the properties in a 
+     * OpenSSOAgentBootstrap.properties bootstrap small set of props and also 
+     * agent config props (from OpenSSO server or if local config file 
+     * OpenSSOAgentConfiguration.properties) and store ALL the properties in a 
      * class field for later use, plus set a few fields on this class for some
      * props that are used throughout agent code and accessed from this class.
      * Also, for any clientsdk properties, push them into the JVM system 
@@ -605,12 +605,12 @@ public class AgentConfiguration implements
                 properties.clear();
                 properties.putAll(getPropertiesFromConfigFile());
                
-                //debug level can optionally be set in FAMAgentBootstrap.properties
+                //debug level can optionally be set in OpenSSOAgentBootstrap.properties
                 //but by default is not set, so we provide default if no value
-                //This debug level(either default or prop in FAMAgentBootstrap.properties)
+                //This debug level(either default or prop in OpenSSOAgentBootstrap.properties)
                 //file is only used for bootup time logging.
                 //Real runtime debug level value is later retrieved with rest of 
-                //agent config from fam server
+                //agent config from OpenSSO server
                 String initialDebugLevel = properties.getProperty(
                     Constants.SERVICES_DEBUG_LEVEL);
                 if ((initialDebugLevel == null) || 
@@ -649,14 +649,14 @@ public class AgentConfiguration implements
                 debugObserver = DebugPropertiesObserver.getInstance();
 
                 Vector attrServiceURLs = getAttributeServiceURLs();
-                //if fam 8.0 server
+                //if OpenSSO server 8.0
                 if (attrServiceURLs != null) {
-                    Properties propsFromFAMserver = 
+                    Properties propsFromOpenSSOserver = 
                             getPropertiesFromRemote(attrServiceURLs);
                     String agentConfigLocation = 
-                     propsFromFAMserver.getProperty(CONFIG_REPOSITORY_LOCATION);
+                     propsFromOpenSSOserver.getProperty(CONFIG_REPOSITORY_LOCATION);
                     
-                    //if agent profile on fam server is 2.2 style(null or 
+                    //if agent profile on OpenSSO server is 2.2 style(null or 
                     //blank value)-maybe to help agent upgrade use case)
                     //OR agent profile is 3.0 style(common case) with local
                     //config flag set
@@ -668,7 +668,7 @@ public class AgentConfiguration implements
                     } else if (agentConfigLocation.equalsIgnoreCase(
                             AGENT_CONFIG_CENTRALIZED)) {
                         markAgentConfigurationRemote();
-                        properties.putAll(propsFromFAMserver);
+                        properties.putAll(propsFromOpenSSOserver);
                     } else {
                         throw new AgentException("Invalid agent config"
                              + "location: does not specify local or centralized");
@@ -737,7 +737,7 @@ public class AgentConfiguration implements
    /**
     * Registers the agent config notification handler with PLLClient. The 
     * handler is registered once and exists for continuous hot swaps if an 
-    * agent is configured to enable agent configuration updates from the fam
+    * agent is configured to enable agent configuration updates from the OpenSSO 
     * server. The handler is used by notification filter task handler when 
     * the filter receives agent configuration XML notifications. This method
     * only needs to be called once when the agent boots up and initializes.
@@ -1079,7 +1079,7 @@ public class AgentConfiguration implements
     }
     
     /**
-     * Logs the version of FAM Server.
+     * Logs the version of OpenSSO Server.
      */
     private static void logServerVersion() {
         String version = null;
@@ -1097,7 +1097,7 @@ public class AgentConfiguration implements
         if (isLogMessageEnabled()) {
             logMessage("AgentConfiguration.logServerVersion() - \n\n" +
                     "------------------------------------------------\n" +
-                    "FAM Server Version:" + version + "\n" +
+                    "OpenSSO Server Version:" + version + "\n" +
                     "------------------------------------------------\n");
         }
     }

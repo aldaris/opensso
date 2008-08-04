@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IConfigKeys.java,v 1.8 2008-06-25 05:52:21 qcheng Exp $
+ * $Id: IConfigKeys.java,v 1.9 2008-08-04 20:01:25 huacui Exp $
  *
  */
 
@@ -133,8 +133,8 @@ public interface IConfigKeys {
     public static final String STR_J2EE_WL_PORTAL_VER_HANDLER
         = "com.sun.identity.agents.weblogic.v10.AmWLPortalVerificationHandler";
     
-    /** Field FAMAgentBootstrap file name **/
-    public static final String STR_AMAGENT_FILE = "FAMAgentBootstrap.properties";
+    /** Field OpenSSOAgentBootstrap file name **/
+    public static final String STR_AMAGENT_FILE = "OpenSSOAgentBootstrap.properties";
     
     /** Field auth handler **/
     public static final String STR_AUTH_HANDLER =

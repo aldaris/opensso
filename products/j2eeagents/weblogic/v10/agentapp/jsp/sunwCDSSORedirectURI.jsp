@@ -22,14 +22,14 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: sunwCDSSORedirectURI.jsp,v 1.5 2008-06-25 05:52:14 qcheng Exp $
+   $Id: sunwCDSSORedirectURI.jsp,v 1.6 2008-08-04 20:01:22 huacui Exp $
 
 -->
 <html>
 <head>
-  <title>Sun Federated Access Manager Policy Agent </title>
+  <title>Sun OpenSSO Enterprise Policy Agent </title>
 </head>
   <body>
-      Sun Federated Access Manager Policy Agent.
+      Sun OpenSSO Enterprise Policy Agent.
 </body>
 </html>

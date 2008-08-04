@@ -23,13 +23,13 @@
 \@rem your own identifying information:
 \@rem "Portions Copyrighted [year] [name of copyright owner]"
 \@rem 
-\@rem $Id: setAgentEnv.cmd.template,v 1.4 2008-06-25 05:52:15 qcheng Exp $
+\@rem $Id: setAgentEnv.cmd.template,v 1.5 2008-08-04 20:01:24 huacui Exp $
 \@rem
 \@rem
 
 \@rem *************************************************************************
-\@rem This script is used to set up your environment for Sun Federated Access
-\@rem Manager Policy Agent 3.0 for WebLogic 10.0.
+\@rem This script is used to set up your environment for Sun OpenSSO Enterprise 
+\@rem Policy Agent 3.0 for WebLogic 10.0.
 \@rem Copy the server startup script to a server specific script. 
 \@rem e.g startWeblogic.sh
 \@rem Include this file in the server startup script after the 

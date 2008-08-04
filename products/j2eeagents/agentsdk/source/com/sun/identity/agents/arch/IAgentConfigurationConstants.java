@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IAgentConfigurationConstants.java,v 1.4 2008-06-25 05:51:35 qcheng Exp $
+ * $Id: IAgentConfigurationConstants.java,v 1.5 2008-08-04 20:03:33 huacui Exp $
  *
  */
 
@@ -36,8 +36,8 @@ public interface IAgentConfigurationConstants {
    /**
     * The configuration file name to be used by the Agent.
     */
-    public static final String CONFIG_FILE_NAME = "FAMAgentBootstrap.properties";
+    public static final String CONFIG_FILE_NAME = "OpenSSOAgentBootstrap.properties";
     public static final String LOCAL_CONFIG_FILE_NAME = 
-                                       "FAMAgentConfiguration.properties";
+                                       "OpenSSOAgentConfiguration.properties";
     
 }

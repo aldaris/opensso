@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EncryptionHandler.java,v 1.3 2008-06-25 05:51:52 qcheng Exp $
+ * $Id: EncryptionHandler.java,v 1.4 2008-08-04 20:03:34 huacui Exp $
  *
  */
 
@@ -279,6 +279,6 @@ public class EncryptionHandler implements IToolsOptionHandler, ICommonToolsConst
     
     public static final String STR_ENCRYPT_LOCAL_FUNCTION = "encryptLocal";
     public static final String STR_ENCRYPT_FUNCTION = "encrypt";
-    public static final String AGENT_CONFIG_FILE_NAME = "FAMAgentBootstrap.properties";
+    public static final String AGENT_CONFIG_FILE_NAME = "OpenSSOAgentBootstrap.properties";
 
 }

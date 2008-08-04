@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationLogoutHandler.java,v 1.8 2008-07-24 23:07:08 huacui Exp $
+ * $Id: ApplicationLogoutHandler.java,v 1.9 2008-08-04 20:03:34 huacui Exp $
  *
  */
 
@@ -439,12 +439,12 @@ implements IApplicationLogoutHandler {
         String result = null;
         String logoutURL = ctx.getLogoutURL(getApplicationEntryURL(ctx));
         if (logoutURL != null) {
-            // use the available FAM Logout URL
+            // use the available OpenSSO server logout URL
             return logoutURL;
         }
 
-        // FAM Logout URL is not available, try to construct it based on its 
-        // Login URL
+        // OpenSSO server logout URL is not available, try to construct it 
+        // based on its login URL
         String loginURL = ctx.getAuthRedirectURL(getApplicationEntryURL(ctx));
         StringBuffer buff = null;
         String loginStr = "Login";

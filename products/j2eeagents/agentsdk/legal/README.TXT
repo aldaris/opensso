@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 Sun Microsystems, Inc.
-Sun Federated Access Manager Policy Agent 3.0
+Sun OpenSSO Enterprise Policy Agent 3.0
 -----------------------------------------------------------------------------
 
 The product manual and release notes for this product are published

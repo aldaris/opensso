@@ -22,13 +22,13 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.17 2008-06-25 05:52:03 qcheng Exp $
+   $Id: build.xml,v 1.18 2008-08-04 20:02:30 huacui Exp $
 
 -->
 
 <project name="open-source-j2ee-agents-appserver-v81" default="build">
                 
-    <description>Open Web Single Sign-On AppServer 8.1 J2EE Agent</description>
+    <description>OpenSSO Enterprise Policy Agent for Sun Appserver 8.1</description>
     <!-- enforce invocation via top level build only -->
     <fail message="*** J2EE Agent may be built from top level only ***">
         <condition>
@@ -63,10 +63,10 @@
 
         <copy todir="${container.j2ee_agent.config.dir}">
             <fileset dir="${j2eeagents.basedir}/${containername}/${containerversion}/config">
-                <include name="FAMAgentBootstrap.template"/>
-                <include name="FAMAgentConfiguration.template"/>
-                <include name="FAMInstallerConfig.properties"/>
-                <include name="FAMAgentLogConfig.properties"/>
+                <include name="OpenSSOAgentBootstrap.template"/>
+                <include name="OpenSSOAgentConfiguration.template"/>
+                <include name="OpenSSOInstallerConfig.properties"/>
+                <include name="OpenSSOAgentLogConfig.properties"/>
             </fileset>
             <fileset dir="${j2eeagents.basedir}/${containername}/${containerversion}/xml">
                 <include name="configure.xml"/>

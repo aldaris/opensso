@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmFilterRequestContext.java,v 1.6 2008-06-25 05:51:43 qcheng Exp $
+ * $Id: AmFilterRequestContext.java,v 1.7 2008-08-04 20:03:34 huacui Exp $
  *
  */
 package com.sun.identity.agents.filter;
@@ -329,10 +329,10 @@ public class AmFilterRequestContext implements IUtilConstants {
 
     /**
      * Returns a URL that can be used to logout the user from the
-     * Federated Access Manager and redirect the user to a specific URL. 
+     * OpenSSO server and redirect the user to a specific URL. 
      * @param gotoURL the redirect URL after logging out 
      * @return a String representation of a URL that can be used to 
-     * logout the user from the Federated Access Manager and redirect 
+     * logout the user from the OpenSSO server and redirect 
      * the user to the gotoURL. 
      */
     public String getLogoutURL(String gotoURL) {
