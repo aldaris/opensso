@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AS9ContainerConfigInfo.java,v 1.2 2008-07-25 05:53:45 kanduls Exp $
+ * $Id: AS9ContainerConfigInfo.java,v 1.3 2008-08-04 17:16:32 kanduls Exp $
  */
 
 package com.sun.identity.tune.config;
@@ -262,19 +262,19 @@ public class AS9ContainerConfigInfo extends WebContainerConfigInfoBase {
                         MAX_NEW_SIZE_FLAG, false));
                 cfgMap.put(DISABLE_EXPLICIT_GC_FLAG, 
                         AMTuneUtil.getASJVMOption(curJVMOptList, 
-                        DISABLE_EXPLICIT_GC_FLAG, true));
+                        DISABLE_EXPLICIT_GC_FLAG.replace("-XX:+", ""), true));
                 cfgMap.put(PARALLEL_GC_FLAG, 
                         AMTuneUtil.getASJVMOption(curJVMOptList, 
-                        PARALLEL_GC_FLAG, true));
+                        PARALLEL_GC_FLAG.replace("-XX:+", ""), true));
                 cfgMap.put(HISTOGRAM_FLAG,
                         AMTuneUtil.getASJVMOption(curJVMOptList, 
-                        HISTOGRAM_FLAG, true));
+                        HISTOGRAM_FLAG.replace("-XX:+", ""), true));
                 cfgMap.put(GC_TIME_STAMP_FLAG, 
                         AMTuneUtil.getASJVMOption(curJVMOptList, 
-                        GC_TIME_STAMP_FLAG, true));
+                        GC_TIME_STAMP_FLAG.replace("-XX:+", ""), true));
                 cfgMap.put(MARK_SWEEP_GC_FLAG, 
                         AMTuneUtil.getASJVMOption(curJVMOptList, 
-                        MARK_SWEEP_GC_FLAG, true));
+                        MARK_SWEEP_GC_FLAG.replace("-XX:+", ""), true));
                 if (isTuneWebContainerJavaPolicy()) {
                     cfgMap.put(JAVA_SECURITY_POLICY, 
                             AMTuneUtil.getASJVMOption(curJVMOptList, 
@@ -623,6 +623,10 @@ public class AS9ContainerConfigInfo extends WebContainerConfigInfoBase {
         if (resultBuffer.indexOf("Unable to connect to admin-server") != -1) {
             mWriter.writelnLocaleMsg("pt-web-not-running-msg");
             throw new AMTuneException("Unable to connect to appserver.");
+        }
+        if (resultBuffer.indexOf("Unknown host") != -1) {
+            mWriter.writelnLocaleMsg("pt-web-not-running-msg");
+            throw new AMTuneException("Unknow host.");
         }
         if (retVal == 0) {
             if (resultBuffer.toString().indexOf("sun.arch.data.model = 64") == 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneAS9Container.java,v 1.4 2008-07-25 05:55:09 kanduls Exp $
+ * $Id: TuneAS9Container.java,v 1.5 2008-08-04 17:16:33 kanduls Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -191,11 +191,9 @@ public class TuneAS9Container extends TuneAppServer implements
             mWriter.writelnLocaleMsg("pt-as-server-mode-msg");
             mWriter.writeLocaleMsg("pt-cur-val");
             String modeFlag = (String)curCfgMap.get(CLIENT_FLAG);
-            String modeFlagToDel = null; 
-            if (modeFlag != null && modeFlag.trim().length() > 0) {
-                mWriter.writeln((String)curCfgMap.get(CLIENT_FLAG));
-                modeFlagToDel = "server.java-config.jvm-options = " + 
-                        CLIENT_FLAG;
+            if (modeFlag != null && modeFlag.trim().length() > 0 &&
+                    modeFlag.indexOf(CLIENT_FLAG) != -1) {
+                mWriter.writeln(modeFlag);
             } else {
                 mWriter.writeln((String)curCfgMap.get(SERVER_FLAG));
             }
@@ -310,58 +308,87 @@ public class TuneAS9Container extends TuneAppServer implements
             AMTuneUtil.backupConfigFile(tuneFile);
             setASParams();
             List delOptList = new ArrayList();
-            delOptList.add(curCfgMap.get(MIN_HEAP_FLAG));
-            delOptList.add(curCfgMap.get(MAX_HEAP_FLAG));
-            delOptList.add(curCfgMap.get(GC_LOG_FLAG));
-            delOptList.add(curCfgMap.get(CLIENT_FLAG));
-            delOptList.add(curCfgMap.get(STACK_SIZE_FLAG));
-            delOptList.add(curCfgMap.get(NEW_SIZE_FLAG));
-            delOptList.add(curCfgMap.get(MAX_NEW_SIZE_FLAG));
-            delOptList.add(curCfgMap.get(DISABLE_EXPLICIT_GC_FLAG));
-            delOptList.add(curCfgMap.get(PARALLEL_GC_FLAG));
-            delOptList.add(curCfgMap.get(MARK_SWEEP_GC_FLAG));
-            delOptList.add(curCfgMap.get(HISTOGRAM_FLAG));
-            delOptList.add(curCfgMap.get(GC_TIME_STAMP_FLAG));
-            if (modeFlagToDel != null && modeFlagToDel.trim().length() > 0) {
-                delOptList.add(modeFlagToDel);
+            List newOptList = new ArrayList();
+            if (!curCfgMap.get(MIN_HEAP_FLAG).toString().equals(
+                    asAdminNewMinHeap)) {
+                delOptList.add(curCfgMap.get(MIN_HEAP_FLAG));
+                newOptList.add(asAdminNewMinHeap);
+            }
+            if (!curCfgMap.get(MAX_HEAP_FLAG).toString().equals(
+                    asAdminNewMaxHeap)) {
+                delOptList.add(curCfgMap.get(MAX_HEAP_FLAG));
+                newOptList.add(asAdminNewMaxHeap);
+            }
+            if (!curCfgMap.get(GC_LOG_FLAG).toString().equals(
+                    asAdminNewLoggcOutput)) {
+                delOptList.add(curCfgMap.get(GC_LOG_FLAG));
+                newOptList.add(asAdminNewLoggcOutput);
+            }
+            //delOptList.add(curCfgMap.get(CLIENT_FLAG));
+            if (!curCfgMap.get(STACK_SIZE_FLAG).toString().equals(
+                    asAdminNewStackSize)) {
+                delOptList.add(curCfgMap.get(STACK_SIZE_FLAG));
+                newOptList.add(asAdminNewStackSize);
+            }
+            if (!curCfgMap.get(NEW_SIZE_FLAG).toString().equals(
+                    asAdminNewNewSize)) {
+                delOptList.add(curCfgMap.get(NEW_SIZE_FLAG));
+                newOptList.add(asAdminNewNewSize);
+            }
+            if (!curCfgMap.get(MAX_NEW_SIZE_FLAG).toString().equals(
+                    asAdminNewMaxNewSize)) {
+                delOptList.add(curCfgMap.get(MAX_NEW_SIZE_FLAG));
+                newOptList.add(asAdminNewMaxNewSize);
+            }
+            if (!curCfgMap.get(DISABLE_EXPLICIT_GC_FLAG).toString().equals(
+                    asAdminNewDisableExplicitGc)) {
+                delOptList.add(curCfgMap.get(DISABLE_EXPLICIT_GC_FLAG));
+                newOptList.add(asAdminNewDisableExplicitGc);
+            }
+            if (!curCfgMap.get(PARALLEL_GC_FLAG).toString().equals(
+                    asAdminNewUseParallelGc)) {
+                delOptList.add(curCfgMap.get(PARALLEL_GC_FLAG));
+                newOptList.add(asAdminNewUseParallelGc);
+            }
+            if (!curCfgMap.get(MARK_SWEEP_GC_FLAG).toString().equals(
+                    asAdminNewUseConMarkSweepGc)) {
+                delOptList.add(curCfgMap.get(MARK_SWEEP_GC_FLAG));
+                newOptList.add(asAdminNewUseConMarkSweepGc);
+            }
+            if (!curCfgMap.get(HISTOGRAM_FLAG).toString().equals(
+                    asAdminNewPrintClassHistogram)) {
+                delOptList.add(curCfgMap.get(HISTOGRAM_FLAG));
+                newOptList.add(asAdminNewPrintClassHistogram);
+            }
+            if (!curCfgMap.get(GC_TIME_STAMP_FLAG).toString().equals(
+                    asAdminNewPrintGcTimeStamps)) {
+                delOptList.add(curCfgMap.get(GC_TIME_STAMP_FLAG));
+                newOptList.add(asAdminNewPrintGcTimeStamps);
+            }
+            if (modeFlag != null && modeFlag.trim().length() > 0
+                    && modeFlag.indexOf(CLIENT_FLAG) != -1) {
+                delOptList.add(modeFlag);
+                newOptList.add(asAdminNewServerMode);
             }
             if (asConfigInfo.isTuneWebContainerJavaPolicy()) {
                 delOptList.add(JAVA_SECURITY_POLICY + "=" + 
                         curCfgMap.get(JAVA_SECURITY_POLICY));
             }
             if (AMTuneUtil.isNiagara()) {
-                if (curCfgMap.get(PARALLEL_GC_THREADS) != null &&
-                        curCfgMap.get(PARALLEL_GC_THREADS) != 
-                        NO_VAL_SET) {
-                    delOptList.add(PARALLEL_GC_THREADS + "=" +
-                            curCfgMap.get(PARALLEL_GC_THREADS));
+                String curGCThreadOpt = PARALLEL_GC_THREADS + "=" +
+                            curCfgMap.get(PARALLEL_GC_THREADS);
+                if (!asadminNewParallelGCThreads.equals(curGCThreadOpt)) {
+                    if (curGCThreadOpt.indexOf(NO_VAL_SET) != -1) {
+                        delOptList.add(curGCThreadOpt);
+                    }
+                    newOptList.add(asadminNewParallelGCThreads);
                 }
             }
-            deleteCurJVMOptions(delOptList);
-            
-            List newOptList = new ArrayList();
-            newOptList.add(asAdminNewMinHeap);
-            newOptList.add(asAdminNewMaxHeap);
-            newOptList.add(asAdminNewLoggcOutput);
-            if (modeFlag != null && modeFlag.trim().length() > 0) {
-                newOptList.add(asAdminNewServerMode);
-            }
-            newOptList.add(asAdminNewStackSize);
-            newOptList.add(asAdminNewNewSize);
-            newOptList.add(asAdminNewMaxNewSize);
-            newOptList.add(asAdminNewDisableExplicitGc);
-            newOptList.add(asAdminNewUseParallelGc);
-            newOptList.add(asAdminNewUseConMarkSweepGc);
-            newOptList.add(asAdminNewPrintClassHistogram);
-            newOptList.add(asAdminNewPrintGcTimeStamps);
             if (asConfigInfo.isTuneWebContainerJavaPolicy()) {
                 newOptList.add(JAVA_SECURITY_POLICY + "=" + 
                         asAdminNewServerpolicy);
             }
-            if (AMTuneUtil.isNiagara() &&
-                    asadminNewParallelGCThreads != null) {
-                newOptList.add(asadminNewParallelGCThreads);
-            }
+            deleteCurJVMOptions(delOptList);
             insertNewJVMOptions(newOptList);
         } catch (Exception ex) {
             pLogger.log(Level.SEVERE, "tuneDomainXML", 
@@ -376,18 +403,41 @@ public class TuneAS9Container extends TuneAppServer implements
     private void setASParams() {
         try {
             StringBuffer asAdminSetParams = new StringBuffer();
-            asAdminSetParams.append(asConfigInfo.getAcceptorThreadString());
-            asAdminSetParams.append("=");
-            asAdminSetParams.append(configInfo.getAcceptorThreads());
-            asAdminSetParams.append(" ");
-            asAdminSetParams.append(COUNT_THREAD_PARAM);
-            asAdminSetParams.append("=");
-            asAdminSetParams.append(AMTUNE_NUM_TCP_CONN_SIZE);
-            asAdminSetParams.append(" ");
-            asAdminSetParams.append(QUEUE_SIZE_PARAM);
-            asAdminSetParams.append("=");
-            asAdminSetParams.append(AMTUNE_NUM_TCP_CONN_SIZE);
-
+            if (curCfgMap.get(ACCEPTOR_THREAD_PARAM) != null) {
+                int curAccVal = Integer.parseInt(
+                        curCfgMap.get(ACCEPTOR_THREAD_PARAM).toString());
+                if (curAccVal < configInfo.getAcceptorThreads()) {
+                    asAdminSetParams.append(
+                            asConfigInfo.getAcceptorThreadString());
+                    asAdminSetParams.append("=");
+                    asAdminSetParams.append(configInfo.getAcceptorThreads());
+                    asAdminSetParams.append(" ");
+                }
+            }
+            if (curCfgMap.get(COUNT_THREAD_PARAM) != null) {
+                int curVal = Integer.parseInt(
+                        curCfgMap.get(COUNT_THREAD_PARAM).toString());
+                if (curVal < AMTUNE_NUM_TCP_CONN_SIZE ) {
+                    asAdminSetParams.append(COUNT_THREAD_PARAM);
+                    asAdminSetParams.append("=");
+                    asAdminSetParams.append(AMTUNE_NUM_TCP_CONN_SIZE);
+                    asAdminSetParams.append(" ");
+                }
+            }
+            if (curCfgMap.get(QUEUE_SIZE_PARAM) != null) {
+                int curVal = Integer.parseInt(
+                        curCfgMap.get(QUEUE_SIZE_PARAM).toString());
+                if (curVal < AMTUNE_NUM_TCP_CONN_SIZE) {
+                    asAdminSetParams.append(QUEUE_SIZE_PARAM);
+                    asAdminSetParams.append("=");
+                    asAdminSetParams.append(AMTUNE_NUM_TCP_CONN_SIZE);
+                }
+            }
+            if (asAdminSetParams.length() == 0) {
+                pLogger.log(Level.INFO, "asAdminSetParams",
+                        "All params are same as recommended values.");
+                return;
+            }
             StringBuffer resultBuffer = new StringBuffer();
             StringBuffer setCmd =
                     new StringBuffer(asConfigInfo.getASAdminCmd());
@@ -404,6 +454,8 @@ public class TuneAS9Container extends TuneAppServer implements
                         "asadmin.");
             }
         } catch (Exception ex) {
+            mWriter.writelnLocaleMsg("pt-set-param-error-msg");
+            mWriter.writelnLocaleMsg("pt-check-dbg-logs-msg");
             pLogger.log(Level.SEVERE, "setASParams",
                     "Application Server Parameters couldn't be set. " +
                     ex.getMessage());
