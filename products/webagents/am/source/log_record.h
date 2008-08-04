@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: log_record.h,v 1.3 2008-06-25 08:14:33 qcheng Exp $
+ * $Id: log_record.h,v 1.4 2008-08-04 19:22:12 huacui Exp $
  *
  */ 
 #ifndef LOG_RECORD_H
@@ -50,7 +50,7 @@ public:
         L_FINER = 400,
         L_FINEST = 300,
 
-	/* Log Levels defined by Access Manager 
+	/* Log Levels defined by OpenSSO
 	 * keeping names consistent with IS LogLevel names */
 	LL_SECURITY = 950,
 	LL_CATASTROPHE = 850,

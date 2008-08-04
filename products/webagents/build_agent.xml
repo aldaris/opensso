@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build_agent.xml,v 1.13 2008-06-25 05:54:12 qcheng Exp $
+   $Id: build_agent.xml,v 1.14 2008-08-04 19:22:10 huacui Exp $
 
 -->
 
@@ -117,24 +117,24 @@
             </fileset>
         </copy>
 
-        <!-- Copy FAMAgentBootstrap.template file -->
+        <!-- Copy OpenSSOAgentBootstrap.template file -->
         <copy todir="${container.web_agent.config.dir}">
             <fileset dir="${webagents.basedir}/conf">
-                <include name="FAMAgentBootstrap.template"/>
+                <include name="OpenSSOAgentBootstrap.template"/>
             </fileset>
         </copy>
 
-        <!-- Copy FAMAgentConfiguration.template file -->
+        <!-- Copy OpenSSOAgentConfiguration.template file -->
         <copy todir="${container.web_agent.config.dir}">
             <fileset dir="${webagents.basedir}/conf">
-                <include name="FAMAgentConfiguration.template"/>
+                <include name="OpenSSOAgentConfiguration.template"/>
             </fileset>
         </copy>
 
-        <!-- Copy FAMAgentMigration.template file -->
+        <!-- Copy OpenSSOAgentMigration.template file -->
         <copy todir="${container.web_agent.config.dir}">
             <fileset dir="${webagents.basedir}/conf">
-                <include name="FAMAgentMigration.properties"/>
+                <include name="OpenSSOAgentMigration.properties"/>
             </fileset>
         </copy>
 

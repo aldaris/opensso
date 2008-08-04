@@ -22,11 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_policy.h,v 1.9 2008-06-25 08:14:28 qcheng Exp $
+ * $Id: am_policy.h,v 1.10 2008-08-04 19:22:12 huacui Exp $
  *
  * Abstract:
  *
- * Types and functions for using Sun Federated Access Manager Access 
+ * Types and functions for using Sun OpenSSO Enterprise Access 
  * Management SDK policy objects.
  *
  */

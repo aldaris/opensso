@@ -41,7 +41,7 @@ BIN_DIR=${PKGDIR}/bin
 BIN_FILES="crypt_util"
 
 CONFIG_DIR=${PKGDIR}/config
-CONFIG_FILE=FAMAgentBootstrap.properties
+CONFIG_FILE=OpenSSOAgentBootstrap.properties
 CONFIG_FILE_ORIG=${CONFIG_FILE}.orig
 
 LIB_DIR=${PKGDIR}/lib

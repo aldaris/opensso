@@ -22,14 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_log.h,v 1.6 2008-07-15 20:12:38 subbae Exp $
+ * $Id: am_log.h,v 1.7 2008-08-04 19:22:11 huacui Exp $
  *
  */
 
 /*
  * Abstract:
  *
- * Types and functions for using Sun Federated Access Manager Access 
+ * Types and functions for using Sun OpenSSO Enterprise Access 
  * Management SDK log objects.
  *
  */
@@ -67,7 +67,7 @@ typedef enum am_log_record_log_level {
     AM_LOG_LEVEL_FINER = 400,
     AM_LOG_LEVEL_FINEST = 300,
 
-    /* Log Levels defined by Access Manager */
+    /* Log Levels defined by OpenSSO */
 
     AM_LOG_LEVEL_SECURITY = 950,
     AM_LOG_LEVEL_CATASTROPHE = 850,

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: agent_profile_service.cpp,v 1.15 2008-07-15 20:12:38 subbae Exp $
+ * $Id: agent_profile_service.cpp,v 1.16 2008-08-04 19:22:11 huacui Exp $
  *
  */
 
@@ -279,7 +279,7 @@ load_bootinfo_to_properties(Utils::boot_info_t *boot_ptr, am_properties_t proper
 
 /*
  * This function fetches the agent configuration data from either the flat file
- * or FAM REST server and updates the AgentConfigCache with the latest object of
+ * or OpenSSO REST server and updates the AgentConfigCache with the latest object of
  * AgentConfiguration object. This function is invoked once by the constructor
  * of this class and periodically by the polling and notification thread.
  */
@@ -709,7 +709,7 @@ AgentProfileService::setRestSvcInfo(std::string restURL)
 
 /**
  * This function performs Agent authentication to retrieve the agent
- * agent configuration data from the FAM server
+ * agent configuration data from the OpenSSO server
  */
 am_status_t AgentProfileService::agentLogin()
 {
@@ -795,14 +795,14 @@ am_status_t AgentProfileService::agentLogin()
                 default:
                     status =  AM_AUTH_FAILURE;
                     Log::log(logModule, Log::LOG_ERROR,
-                     "Agent failed to login to FAM, auth status %d.",
+                     "Agent failed to login to OpenSSO server, auth status %d.",
                      auth_sts);
                     break;
             }
         }
         else {
             Log::log(logModule, Log::LOG_ERROR,
-                 "%s: Agent cannot login to FAM: Expected auth callbacks "
+                 "%s: Agent cannot login to OpenSSO server: Expected auth callbacks "
                  "for agent login not found.", thisfunc);
             status =  AM_AUTH_FAILURE;
         }
@@ -831,7 +831,7 @@ am_status_t AgentProfileService::agentLogin()
 /**
  * This fnunction checks whether the incoming naming response has the 
  * REST service url in it. If it has then the agent determines that it is
- * interacting with the FAM server. If not present then the agent is interacting 
+ * interacting with the OpenSSO server. If not present then the agent is interacting 
  * with the old AM server
  */
 am_status_t AgentProfileService::isRESTServiceAvailable()

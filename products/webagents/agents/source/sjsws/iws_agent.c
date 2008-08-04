@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: iws_agent.c,v 1.15 2008-06-25 05:54:15 qcheng Exp $
+ * $Id: iws_agent.c,v 1.16 2008-08-04 19:22:11 huacui Exp $
  *
  *
  */
@@ -56,8 +56,8 @@
 #define snprintf        _snprintf
 #endif
 
-#define AGENT_BOOTSTRAP_FILE "/FAMAgentBootstrap.properties"
-#define AGENT_CONFIG_FILE "/FAMAgentConfiguration.properties"
+#define AGENT_BOOTSTRAP_FILE "/OpenSSOAgentBootstrap.properties"
+#define AGENT_CONFIG_FILE "/OpenSSOAgentConfiguration.properties"
 #define DSAME_CONF_DIR "dsameconfdir"
 
 #define	MAGIC_STR		"sunpostpreserve"
@@ -407,7 +407,7 @@ static int handle_notification(Session *sn,
 /**
   * Function Name: process_notification
   *
-  * Processes both session and policy notifications coming from Access Manager.
+  * Processes both session and policy notifications coming from OpenSSO server.
   * Implemented as a NSAPI SAF. Works together with Service directive.
   *
   * Input:  As defined by a SAF
@@ -789,7 +789,7 @@ int getISCookie(const char *cookie, char **dpro_cookie,
 	    }
 
 	} else {
-	    am_web_log_warning("Access Manager Cookie not found.");
+	    am_web_log_warning("OpenSSO Server Cookie not found.");
 	}
     }
 

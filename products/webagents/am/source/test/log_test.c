@@ -70,7 +70,7 @@ void Usage(char **argv) {
 int
 main(int argc, char *argv[])
 {
-    const char* prop_file = "../../config/FAMAgentBootstrap.properties";
+    const char* prop_file = "../../config/OpenSSOAgentBootstrap.properties";
     am_status_t status = AM_FAILURE;
     am_properties_t prop = AM_PROPERTIES_NULL;
     am_log_module_id_t module_id;

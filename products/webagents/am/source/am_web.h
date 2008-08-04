@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.h,v 1.18 2008-07-15 20:12:39 subbae Exp $
+ * $Id: am_web.h,v 1.19 2008-08-04 19:22:12 huacui Exp $
  *
  */
 
@@ -216,7 +216,7 @@ AM_BEGIN_EXTERN_C
 #define AM_WEB_COOKIE_ERROR            -1
 
 /*
- * Auth-Type identifier for Access Manager authentication.
+ * Auth-Type identifier for OpenSSO authentication.
  */
 #define	AM_WEB_AUTH_TYPE_VALUE		"DSAME"
 
@@ -272,7 +272,7 @@ typedef enum {
 #define POSTHASHTBL_INITIAL_SIZE 31
 
 /*
- * How long to wait in attempting to connect to an Access Manager AUTH server.
+ * How long to wait in attempting to connect to an OpenSSO AUTH server.
  */
 
 #define CONNECT_TIMEOUT	2
@@ -510,7 +510,7 @@ AM_WEB_EXPORT am_status_t am_web_init(const char *agent_bootstrap_file,
 /**
  * Initializes agent during first request. Creates the agent profile object 
  * and performs agent authentication to receive the initial agent configuration
- * data either from the FAM server or from the local configuration file
+ * data either from the OpenSSO server or from the local configuration file
  */
 AM_WEB_EXPORT am_status_t am_agent_init(boolean_t *pAgentAuthenticated);
 
@@ -528,7 +528,7 @@ AM_WEB_EXPORT am_status_t am_web_cleanup();
  * action.
  *
  * Parameters:
- *   sso_token	The sso_token from the Access Manager cookie.  This
+ *   sso_token	The sso_token from the OpenSSO server cookie.  This
  *		parameter may be NULL if there is no cookie present.
  *
  *   url	The URL whose accessibility is being determined.
@@ -588,7 +588,7 @@ am_web_is_access_allowed(const char *sso_token, const char *url,
 			 am_policy_result_t *result, void* agent_config);
 
 /*
- * Determines whether the request contains is an Access Manager
+ * Determines whether the request contains is an OpenSSO server 
  * notification message intended for the policy SDK.
  */
 AM_WEB_EXPORT boolean_t am_web_is_notification(const char *request_url, void* agent_config);
@@ -628,7 +628,7 @@ AM_WEB_EXPORT void am_web_handle_notification(const char *data,
  * the access denied URL.  If the redirection is to the login URL then the
  * URL will include any exsisting information specified in the URL from the
  * configuration file, like org value etc., followed by the specified goto
- * parameter value, which will be used by Access Manager after the user has
+ * parameter value, which will be used by OpenSSO server after the user has
  * successfully authenticated.
  *
  * The function am_web_get_redirect_url(), has been deprecated and
@@ -774,7 +774,7 @@ am_web_do_cookie_domain_set(am_status_t (*setFunc)(const char *, void **),
 
 /*
  * This function is used to get the cookie sent in the SAML assertion
- * from the Access Manager
+ * from the OpenSSO server 
  */
 
 AM_WEB_EXPORT am_status_t
@@ -817,13 +817,13 @@ AM_WEB_EXPORT am_status_t am_web_check_cookie_in_query(
 AM_WEB_EXPORT void am_web_free_memory(void *memory);
 
 /*
- * Method to retrieve the name of the Access Manager cookie.
+ * Method to retrieve the name of the OpenSSO server cookie.
  */
 
 AM_WEB_EXPORT const char *am_web_get_cookie_name(void* agent_config);
 
 /*
- * Method to retrieve the name of the Access Manager notification Url.
+ * Method to retrieve the name of the OpenSSO server notification Url.
  */
 AM_WEB_EXPORT const char *am_web_get_notification_url(void* agent_config);
 

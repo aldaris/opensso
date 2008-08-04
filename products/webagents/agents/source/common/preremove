@@ -26,5 +26,5 @@
  */ 
 
 PATH=/bin:/usr/bin:/sbin:/usr/sbin
-rm -fr ${BASEDIR}/${PRODUCT_DIR}/config/FAMAgentBootstrap.properties
+rm -fr ${BASEDIR}/${PRODUCT_DIR}/config/OpenSSOAgentBootstrap.properties
 exit 0

@@ -22,11 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_types.h,v 1.6 2008-06-25 08:14:29 qcheng Exp $
+ * $Id: am_types.h,v 1.7 2008-08-04 19:22:12 huacui Exp $
  *
  * Abstract:
  *
- * Common types and macros provided by the Sun Federated Access Manager 
+ * Common types and macros provided by the Sun OpenSSO Enterprise 
  * Access Management SDK.
  *
  */

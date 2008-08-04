@@ -17,6 +17,6 @@ BASE_PRODUCT_NAME Access Manager Agent for Sun Java System Web Server
 /opt/agents/es6/bin/unconfig_es6_linux
 /opt/agents/es6/lib/libxml2.so.2
 /opt/agents/es6/bin/comlib_linux
-/opt/agents/config/FAMAgentBootstrap.properties.orig
+/opt/agents/config/OpenSSOAgentBootstrap.properties.orig
 /opt/agents/bin/crypt_util
 

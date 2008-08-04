@@ -22,11 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_properties.h,v 1.6 2008-06-25 08:14:28 qcheng Exp $
+ * $Id: am_properties.h,v 1.7 2008-08-04 19:22:12 huacui Exp $
  *
  * Abstract:
  *
- * Properties map for use by clients of the Sun Federated Access Manager
+ * Properties map for use by clients of the Sun OpenSSO Enterprise 
  * Remote Client SDK.
  *
  */

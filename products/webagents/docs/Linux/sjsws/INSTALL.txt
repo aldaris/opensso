@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: INSTALL.txt,v 1.4 2008-06-25 05:54:28 qcheng Exp $
+# $Id: INSTALL.txt,v 1.5 2008-08-04 19:22:13 huacui Exp $
 #
 #
 #
@@ -42,7 +42,7 @@ make sure that the SJS Web Server Agent is compiled with steps indicated in READ
 Installation does the following:
 
     - Creates the SJS Web Server Agent Instance Directory
-    - Tag Swapping in FAMAgentBootstrap.properties file
+    - Tag Swapping in OpenSSOAgentBootstrap.properties file
     - Updating SJS Web Server's obj.conf, magnus.conf files
 
 %% 1.1 Steps
@@ -54,10 +54,10 @@ Installation does the following:
 1.1.5 Follow the installation interactions and provide these details:
 
     - SJS Web Server Config Directory
-    - Access Manager Services Hos
-    - Access Manager Services port
-    - Access Manager Services Protocol
-    - Access Manager Services Deployment URI
+    - OpenSSO Services Hos
+    - OpenSSO Services port
+    - OpenSSO Services Protocol
+    - OpenSSO Services Deployment URI
     - Agent Host name
     - Agent Host port
     - Agent Host protocol
@@ -81,7 +81,7 @@ x web_agents/sjsws_agent/bin/agentadmin.bat
 x web_agents/sjsws_agent/etc
 x web_agents/sjsws_agent/etc/dsame.template
 x web_agents/sjsws_agent/config
-x web_agents/sjsws_agent/config/FAMAgentBootstrap.template
+x web_agents/sjsws_agent/config/OpenSSOAgentBootstrap.template
 x web_agents/sjsws_agent/config/AMToolsConfig.properties
 x web_agents/sjsws_agent/config/configure.xml
 x web_agents/sjsws_agent/lib
@@ -116,26 +116,25 @@ SJS Web Server instance that is secured by this Agent.
 Enter the SJS Web Server Config Directory Path []: /var/opt/sun/webserver7/https-agent_hostname/config
 
 
-Enter the fully qualified host name of the server where Access Manager
+Enter the fully qualified host name of the server where OpenSSO
 Services are installed.
 [ ? : Help, < : Back, ! : Exit ]
-Access Manager Services Host: am.host.com
+OpenSSO Services Host: am.host.com
 
 
-Enter the port number of the Server that runs Access Manager Services.
+Enter the port number of the Server that runs OpenSSO Services.
 [ ? : Help, < : Back, ! : Exit ]
-Access Manager Services port [80]: 8080
+OpenSSO Services port [80]: 8080
 
 
-Enter http/https to specify the protocol used by the Server that runs Access
-Manager services.
+Enter http/https to specify the protocol used by the Server that runs OpenSSO services.
 [ ? : Help, < : Back, ! : Exit ]
-Access Manager Services Protocol [http]:
+OpenSSO Services Protocol [http]:
 
 
-Enter the Deployment URI for Access Manager Services.
+Enter the Deployment URI for OpenSSO Services.
 [ ? : Help, < : Back, ! : Exit ]
-Access Manager Services Deployment URI [/amserver]:
+OpenSSO Services Deployment URI [/amserver]:
 
 
 Enter the fully qualified host name on which the Web Server protected by the
@@ -151,14 +150,13 @@ Enter the port number for Web Server instance [80]: 7000
 
 
 Select http or https to specify the protocol used by the Web server instance
-that will be protected by Access Manager Policy Agent.
+that will be protected by OpenSSO Enterprise Policy Agent.
 [ ? : Help, < : Back, ! : Exit ]
 Enter the Preferred Protocol for Web Server instance [http]:
 
 
 Enter a valid Agent profile name. Before proceeding with the agent
-installation, please ensure that a valid Agent profile exists in Access
-Manager.
+installation, please ensure that a valid Agent profile exists in OpenSSO server. 
 [ ? : Help, < : Back, ! : Exit ]
 Enter the Agent Profile name [UrlAccessAgent]:
 
@@ -173,10 +171,10 @@ Enter the path to the password file: /opt/password
 SUMMARY OF YOUR RESPONSES
 -----------------------------------------------
 SJS Web Server Config Directory : /var/opt/sun/webserver7/https-agent_hostname/config
-Access Manager Services Host : am.host.com
-Access Manager Services Port : 8080
-Access Manager Services Protocol : http
-Access Manager Services Deployment URI : /amserver
+OpenSSO Services Host : am.host.com
+OpenSSO Services Port : 8080
+OpenSSO Services Protocol : http
+OpenSSO Services Deployment URI : /amserver
 Agent Host name : agent.host.com
 Web Server Instance Port number : 7000
 Protocol for Web Server instance : http
@@ -197,7 +195,7 @@ Reading data from file /opt/password and encrypting it ...DONE.
 
 Generating audit log file name ...DONE.
 
-Creating tag swapped FAMAgentBootstrap.properties file for instance Agent_001 ...DONE.
+Creating tag swapped OpenSSOAgentBootstrap.properties file for instance Agent_001 ...DONE.
 
 Creating a backup for file /var/opt/sun/webserver7/https-agent_hostname/config/obj.conf ...DONE.
 
@@ -212,7 +210,7 @@ SUMMARY OF AGENT INSTALLATION
 -----------------------------
 Agent instance name: Agent_001
 Agent Configuration file location:
-/opt/web_agents/sjsws_agent/Agent_001/config/FAMAgentBootstrap.properties
+/opt/web_agents/sjsws_agent/Agent_001/config/OpenSSOAgentBootstrap.properties
 Agent Audit directory location:
 /opt/web_agents/sjsws_agent/Agent_001/logs/audit
 Agent Debug directory location:
@@ -222,7 +220,7 @@ Agent Debug directory location:
 Install log file location:
 /opt/web_agents/sjsws_agent/logs/audit/install.log
 
-Thank you for using Access Manager Policy Agent
+Thank you for using OpenSSO Policy Agent
 
 
 %% 2. Agent Uninstallation
@@ -245,9 +243,9 @@ Here is the sample:
 
 
 ************************************************************************
-Welcome to the Access Manager Policy Agent for SJS Web Server If the Policy
-Agent is used with Federation Manager services, User needs to enter
-information relevant to Federation Manager.
+Welcome to the OpenSSO Policy Agent for SJS Web Server If the Policy
+Agent is used with OpenSSO services, User needs to enter
+information relevant to OpenSSO server.
 
 ************************************************************************
 
@@ -281,4 +279,4 @@ Removing Agent parameters from /var/opt/sun/webserver7/https-agent_hostname/conf
 Uninstall log file location:
 /opt/web_agents/sjsws_agent/logs/audit/uninstall.log
 
-Thank you for using Access Manager Policy Agent
+Thank you for using OpenSSO Enterprise Policy Agent

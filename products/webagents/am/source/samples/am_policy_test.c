@@ -77,7 +77,7 @@ int main(int argc, char **argv)
      * load the properties file.  This file is the properties file that is
      * used during agent initialization.  If you have installed Identity
      * server or one of its agents, you can pass the path to
-     * FAMAgentBootstrap.properties of that installation. Make sure that 
+     * OpenSSOAgentBootstrap.properties of that installation. Make sure that 
      * your test program has permissions to write to the log directory specified
      * in the properties file.
      */

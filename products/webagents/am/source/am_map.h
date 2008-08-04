@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_map.h,v 1.5 2008-06-25 08:14:27 qcheng Exp $
+ * $Id: am_map.h,v 1.6 2008-08-04 19:22:12 huacui Exp $
  *
  */
 
@@ -30,7 +30,7 @@
  * Abstract:
  *
  * Types and functions for creating, destroying, and manipulating the
- * map objects used by the Sun Federated Access Manager Access Management 
+ * map objects used by the Sun OpenSSO Enterprise Access Management 
  * SDK.
  *
  */

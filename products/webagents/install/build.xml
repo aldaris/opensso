@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.9 2008-06-25 05:54:31 qcheng Exp $
+   $Id: build.xml,v 1.10 2008-08-04 19:22:14 huacui Exp $
 
 -->
 
@@ -60,7 +60,7 @@
 
         <copy todir="${container.web_agent.config.dir}">
             <fileset dir="${webagents.install.dir}/resources">
-                <include name="FAMInstallerConfig.properties"/>
+                <include name="OpenSSOInstallerConfig.properties"/>
             </fileset>
         </copy>
 

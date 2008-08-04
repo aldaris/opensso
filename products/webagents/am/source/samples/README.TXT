@@ -1,7 +1,7 @@
 README.TXT
 
 --------------------------------------------------------------------
-Sun Federated Access Manager Policy Agent 3.0
+Sun OpenSSO Enterprise Policy Agent 3.0
 --------------------------------------------------------------------
 
 DISCLAIMER
@@ -37,13 +37,13 @@ What is provided
    that can be used to evaluate policy for specified resources.
    
    The file am_auth_test.c demonstrates the basic usage of Authentication SDK 
-   APIs that can be used to login to an Access Manager.
+   APIs that can be used to login to an OpenSSO server.
 
    The file am_sso_test.c demonstrates the basic usage of SSO SDK APIs 
    that can be used to perform session operations.
 
    The file am_log_test.c demonstrates the basic usage of Logging SDK APIs 
-   that can be used to log a message to the Access Manager logs.
+   that can be used to log a message to the OpenSSO server logs.
 
    The file apache_agent.c demonstrates how the Policy SDK APIs can be used
    to build a Web Agent for the Apache Web Server. Please note that this
@@ -102,8 +102,8 @@ Note on Red Hat Linux Advanced Server release 2.1AS/i686 platform:
    ftp://rpmfind.net/linux/redhat/updates/enterprise/2.1AS/en/os/SRPMS/gcc-2.96-124.7.2.src.rpm
    ftp://rpmfind.net/linux/redhat/updates/enterprise/2.1AS/en/os/SRPMS/glibc-2.2.4-32.11.src.rpm
 
-   7. Rename ../config/FAMAgentBootstrap.template.orig as ../config/FAMAgentBootstrap.properties and update the tags appropriately.
-   8. Rename ../config/FAMAgentConfiguration.template.orig as ../config/FAMAgentConfiguration.properties and update the tags appropriately.
+   7. Rename ../config/OpenSSOAgentBootstrap.template.orig as ../config/OpenSSOAgentBootstrap.properties and update the tags appropriately.
+   8. Rename ../config/OpenSSOAgentConfiguration.template.orig as ../config/OpenSSOAgentConfiguration.properties and update the tags appropriately.
 
 
 Building Sample Program on Windows
@@ -132,7 +132,7 @@ Executing the Sample Program
 am_policy_test
 
    Note: You must have a policy defined for the specified resource in 
-   an Access Manager before running this program. Also the shared secret 
+   an OpenSSO server before running this program. Also the shared secret 
    (value of com.sun.am.policy.am.password ) should be in clear text and 
    not in encrypted form.
 
@@ -143,21 +143,21 @@ am_policy_test
       am_policy_test <bootstrap_property file> <config_properties_file> <ssoToken> <resource name> <action>
 
    <bootstrap_property_file> 
-       is the path to the FAMAgentBootstrap.properties bootstrap file. 
+       is the path to the OpenSSOAgentBootstrap.properties bootstrap file. 
        For example:
-       ../config/FAMAgentBootstrap.properties
+       ../config/OpenSSOAgentBootstrap.properties
 
    <config_property_file> 
-       is the path to the FAMAgentConfiguration.properties file. Even if the
+       is the path to the OpenSSOAgentConfiguration.properties file. Even if the
        repository type is "centralized", the user still needs to provide
        a value for this property (just a file name is enough). If the 
        repository type is "local", user needs to provide a location of the
-       FAMAgentConfiguration.properties.
-       For example: ../config/FAMAgentConfiguration.properties
+       OpenSSOAgentConfiguration.properties.
+       For example: ../config/OpenSSOAgentConfiguration.properties
 
    <ssoToken> 
-       is a valid SSO Token issued by Access Manager. You can get this
-       value out of your browser after logging into Access Manager. Please
+       is a valid SSO Token issued by OpenSSO server. You can get this
+       value out of your browser after logging into OpenSSO server. Please
        refer to the documentation for your browser on how to find out the
        cookie values. Once you have that information, you can use the value
        of the cookie iPlanetDirectoryPro as the value for this argument.
@@ -178,7 +178,7 @@ am_policy_test
 
 am_auth_test
 
-   Note: You must have an Access Manager with a user profile set up with the 
+   Note: You must have an OpenSSO server with a user profile set up with the 
    corresponding authentication module before running this program.
 
    Description: am_auth_test authenticates to the specified org (if any) using 
@@ -199,7 +199,7 @@ am_auth_test
    line to override the value specified in the properties files. Other values
    affecting certificate based login are taken from the properties file.
 
-   The default properties file is ../../config/FAMAgentBootstrap.properties. 
+   The default properties file is ../../config/OpenSSOAgentBootstrap.properties. 
    Check to make sure the appropriate properties and values are set in the 
    properties file before calling this program. The following properties are 
    specific to authentication:
@@ -208,13 +208,13 @@ am_auth_test
 
 am_sso_test
 
-   Note: You must have an Access Manager with a user profile set up with the 
+   Note: You must have an OpenSSO server with a user profile set up with the 
    LDAP authentication module before running this program.
 
-   Description: am_sso_test logs into an Access Manager using the given user 
+   Description: am_sso_test logs into an OpenSSO server using the given user 
    and password using the LDAP authentication module, and performs sso token 
    operations on the session. Also please note that the internal ldap password
-   should not be encrypted in FAMAgentBootstrap.properties.
+   should not be encrypted in OpenSSOAgentBootstrap.properties.
    
 
    Usage: 
@@ -224,19 +224,19 @@ am_sso_test
 
    <user> 
    <password> 
-       user and password to login to Access Manager using the LDAP 
+       user and password to login to OpenSSO server using the LDAP 
        authentication module.
 
    <bootstrap_properties_file> 
        the path to the bootstrap_properties file. If not set, the default 
-       properties file ../../config/FAMAgentBootstrap.properties is used. 
+       properties file ../../config/OpenSSOAgentBootstrap.properties is used. 
        Check to make sure appropriate values are set in the properties file 
        before calling this program. See the Agents documentation for more 
        information on the properties file.
 
    <config_properties_file> 
        the path to the config_properties file. If not set, the default 
-       properties file ../../config/FAMAgentConfiguration.properties is used. 
+       properties file ../../config/OpenSSOAgentConfiguration.properties is used. 
        Check to make sure appropriate values are set in the properties file 
        before calling this program. See the Agents documentation for more 
        information on the properties file.
@@ -255,17 +255,17 @@ am_sso_test
 am_log_test
 
    Description: am_log_test logs a message to the given log file on the 
-   Access Manager using the given sso token.  
+   OpenSSO server using the given sso token.  
 
    Usage: 
       am_log_test -n log_name -u logged_by_token_id -u user_token_id -m message 
 		    [-d log_module] [-f bootstrap_properties_file]
 
    <log_name> 
-      Name of Log file on Access Manager.
+      Name of Log file on OpenSSO server.
 
    <logged_by_token_id> 
-      SSO token ID with access the Logging Service on Access Manager.
+      SSO token ID with access the Logging Service on OpenSSO server.
 
    <user_token_id> 
       SSO token ID of a user for the log. Can be the logged_by_token_id 
@@ -279,7 +279,7 @@ am_log_test
 
    <bootstrap_properties_file>
       path to the bootstrap properties file. If not set, the default properties 
-      file ../../config/FAMAgentBootstrap.properties is used. Check to make 
+      file ../../config/OpenSSOAgentBootstrap.properties is used. Check to make 
       sure appropriate values are set in the properties file before calling 
       this program. See the Agents documentation for more information on the 
       properties file.

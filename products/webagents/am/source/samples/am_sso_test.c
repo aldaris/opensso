@@ -403,8 +403,8 @@ test_listeners(am_sso_token_handle_t sso_handle,
 int
 main(int argc, char *argv[])
 {
-    const char* prop_file = "../../config/FAMAgentBootstrap.properties";
-    const char* config_file = "../../config/FAMAgentConfiguration.properties";
+    const char* prop_file = "../../config/OpenSSOAgentBootstrap.properties";
+    const char* config_file = "../../config/OpenSSOAgentConfiguration.properties";
     am_status_t status = AM_FAILURE;
     am_properties_t prop = AM_PROPERTIES_NULL;
     am_auth_context_t auth_ctx = NULL;

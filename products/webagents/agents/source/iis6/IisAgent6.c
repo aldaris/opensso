@@ -1701,7 +1701,7 @@ BOOL iisaPropertiesFilePathGet(CHAR** propertiesFileFullPath,char *instanceId)
 {
     // Max WINAPI path
     const DWORD dwPropertiesFileFullPathSize = MAX_PATH + 1;
-    const CHAR  szPropertiesFileName[]       = "FAMAgentBootstrap.properties";
+    const CHAR  szPropertiesFileName[]       = "OpenSSOAgentBootstrap.properties";
     CHAR agentApplicationSubKey[1000] = "";
     const CHAR agentDirectoryKeyName[]       = "Path";
     DWORD dwPropertiesFileFullPathLen        = dwPropertiesFileFullPathSize;

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_main.cpp,v 1.7 2008-06-25 08:14:27 qcheng Exp $
+ * $Id: am_main.cpp,v 1.8 2008-08-04 19:22:11 huacui Exp $
  *
  */
 
@@ -221,19 +221,19 @@ void get_status_info(am_status_t status, const char ** name, const char ** msg)
 	    break;
         case AM_AUTH_FAILURE:
             if (name) *name = "AM_AUTH_FAILURE";
-	    if (msg) *msg = "Access Manager authentication service failure";
+	    if (msg) *msg = "OpenSSO authentication service failure";
 	    break;
         case AM_NAMING_FAILURE:
             if (name) *name = "AM_NAMING_FAILURE";
-	    if (msg) *msg = "Access Manager naming service failure";
+	    if (msg) *msg = "OpenSSO naming service failure";
 	    break;
         case AM_SESSION_FAILURE:
             if (name) *name = "AM_SESSION_FAILURE";
-	    if (msg) *msg = "Access Manager session service failure";
+	    if (msg) *msg = "OpenSSO session service failure";
 	    break;
         case AM_POLICY_FAILURE:
             if (name) *name = "AM_POLICY_FAILURE";
-	    if (msg) *msg = "Access Manager policy service failure";
+	    if (msg) *msg = "OpenSSO policy service failure";
 	    break;
         case AM_NO_POLICY:
             if (name) *name = "AM_NO_POLICY";

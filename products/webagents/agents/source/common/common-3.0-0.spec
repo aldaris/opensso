@@ -1,4 +1,4 @@
-Summary: BASE_PRODUCT_NAME Access Manager C Development Kit
+Summary: BASE_PRODUCT_NAME OpenSSO Enterprise C Development Kit
 Name: common
 Version: 3.0
 Release: 0
@@ -8,7 +8,7 @@ Prefix: /opt
 AutoReqProv: no 
 
 %description
-BASE_PRODUCT_NAME Access Manager C Development Kit
+BASE_PRODUCT_NAME OpenSSO Enterprise C Development Kit
 
 %files
 /opt/agents/THIRD_PARTY_LICENSE.TXT
@@ -21,8 +21,8 @@ BASE_PRODUCT_NAME Access Manager C Development Kit
 /opt/agents/lib/libssl3.so
 /opt/agents/bin/crypt_util
 /opt/agents/lib/comlib_linux
-/opt/agents/config/FAMAgentBootstrap.template.orig
-/opt/agents/config/FAMAgentConfiguration.template.orig
+/opt/agents/config/OpenSSOAgentBootstrap.template.orig
+/opt/agents/config/OpenSSOAgentConfiguration.template.orig
 /opt/agents/include/am.h
 /opt/agents/include/am_auth.h
 /opt/agents/include/am_log.h

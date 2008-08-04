@@ -25,7 +25,7 @@
  *
  */ 
 #
-#pragma ident  "$Id: depend,v 1.2 2008-06-25 05:54:13 qcheng Exp $ Sun Microsystems"
+#pragma ident  "$Id: depend,v 1.3 2008-08-04 19:22:10 huacui Exp $ Sun Microsystems"
 #
 #  "depend" file for package: SUNWam_web
 #
@@ -45,4 +45,4 @@
 # <type> <pkg.abbr> <name>
 # ...
 
-P SUNWamcom	 Sun Java(tm) System Access Manager C Development Kit
+P SUNWamcom	 Sun OpenSSO Enterprise C Development Kit
