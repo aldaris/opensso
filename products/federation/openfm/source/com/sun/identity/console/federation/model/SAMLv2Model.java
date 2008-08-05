@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Model.java,v 1.25 2008-08-05 22:23:16 babysunil Exp $
+ * $Id: SAMLv2Model.java,v 1.26 2008-08-05 23:29:16 babysunil Exp $
  *
  */
 
@@ -94,6 +94,7 @@ public interface SAMLv2Model
         "singleChoiceSingleLogOutProfile";
     public static final String SINGLE_MANAGE_NAMEID_DEFAULT =
         "singleChoiceMangeNameIDProfile";
+    public static final String COT_LIST = "cotlist";
     
     //SAMLv2 SP Standard attributes
     public static final String IS_AUTHN_REQ_SIGNED = "AuthnRequestsSigned";

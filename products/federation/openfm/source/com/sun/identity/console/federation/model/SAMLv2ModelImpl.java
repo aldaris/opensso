@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ModelImpl.java,v 1.32 2008-08-05 22:23:08 babysunil Exp $
+ * $Id: SAMLv2ModelImpl.java,v 1.33 2008-08-05 23:29:28 babysunil Exp $
  *
  */
 
@@ -87,12 +87,12 @@ import java.math.BigInteger;
 
 public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
     private SAML2MetaManager metaManager;
-    private static Map extendedMetaIdpMap = new HashMap(48);
+    private static Map extendedMetaIdpMap = new HashMap(50);
     private static Map extendedACMetaIdpMap = new HashMap(34);
     private static Map extendedAPMetaIdpMap = new HashMap(14);
     private static Map extendedSMetaIdpMap = new HashMap(2);
     private static Map extendedAdMetaIdpMap = new HashMap(6);
-    private static Map extendedMetaSpMap = new HashMap(60);
+    private static Map extendedMetaSpMap = new HashMap(62);
     private static Map extendedACMetaSpMap = new HashMap(36);
     private static Map extendedAPMetaSpMap = new HashMap(28);
     private static Map extendedSMetaSpMap = new HashMap(2);
@@ -134,6 +134,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         extendedMetaIdpMap.put(APP_LOGOUT_URL, Collections.EMPTY_SET);
         extendedMetaIdpMap.put(ASSERTION_CACHE_ENABLED,
                 Collections.EMPTY_SET);
+        extendedMetaIdpMap.put(COT_LIST, Collections.EMPTY_SET);
         
         // ECP
         extendedMetaIdpMap.put(ATTR_IDP_ECP_SESSION_MAPPER,
@@ -183,7 +184,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         extendedMetaSpMap.put(WANT_ARTIF_RESP_SIGN, Collections.EMPTY_SET);
         extendedMetaSpMap.put(WANT_POST_RESP_SIGN, Collections.EMPTY_SET);
         extendedMetaSpMap.put(ARTI_MSG_ENCODE, Collections.EMPTY_SET);
-        
+        extendedMetaSpMap.put(COT_LIST, Collections.EMPTY_SET);        
                
         //IDP PROXY
         extendedMetaSpMap.put(ENABLE_IDP_PROXY, Collections.EMPTY_SET);
