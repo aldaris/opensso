@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSClientUserToken.java,v 1.10 2008-07-23 17:45:01 veiming Exp $
+ * $Id: STSClientUserToken.java,v 1.11 2008-08-05 04:11:01 mallas Exp $
  *
  */
 
@@ -87,6 +87,10 @@ public class STSClientUserToken implements ClientUserToken {
     }
     
     public STSClientUserToken(Element element) throws FAMSTSException {
+        parse(element);
+    }
+    
+    public void parse(Element element) throws FAMSTSException {
         if(element == null) {
            throw new FAMSTSException(STSUtils.bundle.getString("nullinput"));
         }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityClientImpl.java,v 1.6 2008-07-21 17:18:33 mallas Exp $
+ * $Id: TrustAuthorityClientImpl.java,v 1.7 2008-08-05 04:11:01 mallas Exp $
  *
  */
 
@@ -60,11 +60,16 @@ public class TrustAuthorityClientImpl {
                                       String stsMexAddress,
                                       Object credential,
                                       String keyType,
-                                      String tokenType) 
+                                      String tokenType,
+                                      String version) 
                                       throws FAMSTSException {
 
+        String protocolNS = STSConstants.WST13_NAMESPACE;
+        if(STSConstants.WST_VERSION_10.equals(version)) {
+           protocolNS = STSConstants.WST10_NAMESPACE;
+        }
         STSClientConfiguration config =
-            new STSClientConfiguration(stsEndpoint, stsMexAddress);        
+            new STSClientConfiguration(protocolNS, stsEndpoint, stsMexAddress);        
         config.setKeyType(keyType);
         if(tokenType != null) {
            config.setTokenType(tokenType); 

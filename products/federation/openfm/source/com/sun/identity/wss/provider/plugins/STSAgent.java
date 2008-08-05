@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSAgent.java,v 1.10 2008-07-30 05:00:44 mallas Exp $
+ * $Id: STSAgent.java,v 1.11 2008-08-05 04:11:00 mallas Exp $
  *
  */
 
@@ -84,6 +84,7 @@ public class STSAgent extends STSConfig {
     private static final String ENCRYPTION_ALG = "EncryptionAlgorithm";
     private static final String ENCRYPTION_STRENGTH = "EncryptionStrength";
     private static final String SIGNING_REF_TYPE = "SigningRefType";
+    private static final String PROTOCOL_VERSION = "WSTrustVersion";
      
     private static Debug debug = ProviderUtils.debug;
     
@@ -111,6 +112,7 @@ public class STSAgent extends STSConfig {
         attrNames.add(ENCRYPTION_ALG);
         attrNames.add(ENCRYPTION_STRENGTH);
         attrNames.add(SIGNING_REF_TYPE);
+        attrNames.add(PROTOCOL_VERSION);
     }
 
     /** Creates a new instance of STSAgent */
@@ -121,6 +123,9 @@ public class STSAgent extends STSConfig {
         try {
             this.name = amIdentity.getName();
             this.type = amIdentity.getType().getName();
+            if(debug.messageEnabled()) {
+               debug.message("STSAgent: name = " + name + "type = " + type);
+            }
             Map attributes = (Map) amIdentity.getAttributes(attrNames);
             parseAgentKeyValues(attributes);
         } catch (IdRepoException ire) {
@@ -138,6 +143,9 @@ public class STSAgent extends STSConfig {
         this.name = name;
         this.type = type;                
         this.token = token;
+        if(debug.messageEnabled()) {
+           debug.message("STSAgent: name = " + name + "type = " + type); 
+        }
 
         // Obtain the provider from Agent profile
         try {
@@ -189,11 +197,7 @@ public class STSAgent extends STSConfig {
     }
 
     private void setConfig(String attr, String value) {
-
-        if (debug.messageEnabled()) {
-            debug.message("Attribute name: " + attr + " Value: "+ value);
-        }
-        
+                
         if(attr.equals(ENDPOINT)) {
             this.endpoint = value;
         } else if(attr.equals(MEX_ENDPOINT)) {
@@ -279,6 +283,10 @@ public class STSAgent extends STSConfig {
         } else if (attr.equals(ENCRYPTION_STRENGTH)) {
             if(value != null && value.length() != 0) {
                this.encryptionStrength = Integer.parseInt(value);
+            }
+        } else if (attr.equals(PROTOCOL_VERSION)) {
+            if(value != null && value.length() != 0) {
+               this.protocolVersion = value;
             }
         }
     }
@@ -395,6 +403,10 @@ public class STSAgent extends STSConfig {
         
         config.put(ENCRYPTION_STRENGTH, 
                 new Integer(encryptionStrength).toString());
+        
+        if(protocolVersion != null) {
+           config.put(PROTOCOL_VERSION, protocolVersion); 
+        }
         
         // Save the entry in Agent's profile
         try {

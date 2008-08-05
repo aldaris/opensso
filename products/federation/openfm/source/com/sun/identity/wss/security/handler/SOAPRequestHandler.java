@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.21 2008-07-30 05:00:45 mallas Exp $
+ * $Id: SOAPRequestHandler.java,v 1.22 2008-08-05 04:11:00 mallas Exp $
  *
  */
 
@@ -529,8 +529,14 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                         if(taName != null) {
                             ThreadLocalService.setServiceName(taName);
                         }
-                        securityToken = client.getSecurityToken(config,
-                                        ssoToken);                                
+                        Object customToken = getCustomCredential(subject);
+                        if(customToken == null) {
+                           securityToken = client.getSecurityToken(config,
+                                        ssoToken);
+                        } else {
+                           securityToken = client.getSecurityToken(config,
+                                        customToken); 
+                        }
                     } catch (FAMSTSException stsEx) {
                         debug.error("SOAPRequestHandler.secureRequest: exception" +
                                 "in obtaining STS Token", stsEx);
@@ -1473,4 +1479,32 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         }
         return null;
     }
-}
+    
+    /**
+     * Retrieves the custom credential from the Subject.
+     * The custom subject is used as on behalf of token element to the STS.    
+     * @param subject the authenticated JAAS subject where the custom token
+     *                is set.
+     * @return the custom token object.
+     */
+    private Object getCustomCredential(Subject subject) {
+        Set creds = subject.getPublicCredentials();
+        if(creds == null || creds.isEmpty()) {
+           return null; 
+        }
+        
+        Iterator iter = creds.iterator();
+        while (iter.hasNext()) {
+            Object obj = iter.next();
+            if(!(obj instanceof Map)) {
+               continue;
+            }
+            Map map = (Map)obj;
+            if(map.containsKey(WSSConstants.CUSTOM_TOKEN)) {
+               return map.get(WSSConstants.CUSTOM_TOKEN); 
+            }
+        }
+        return null;
+    }
+        
+    }

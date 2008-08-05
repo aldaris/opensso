@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSUtils.java,v 1.6 2008-07-22 16:33:05 mrudul_uchil Exp $
+ * $Id: STSUtils.java,v 1.7 2008-08-05 04:11:01 mallas Exp $
  *
  */
 
@@ -53,7 +53,7 @@ public class STSUtils {
     
     private static final String AGENT_TYPE_ATTR = "AgentType"; 
     private static final String WSP_ENDPOINT = "WSPEndpoint"; 
-    public static Debug debug = Debug.getInstance("famSTS");
+    public static Debug debug = Debug.getInstance("WebServicesSecurity");
     public static ResourceBundle bundle = ResourceBundle.getBundle("famSTS");
 
     /**

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSClientConfiguration.java,v 1.8 2008-07-02 16:57:23 mallas Exp $
+ * $Id: STSClientConfiguration.java,v 1.9 2008-08-05 04:11:01 mallas Exp $
  *
  */
 
@@ -63,15 +63,28 @@ public class STSClientConfiguration extends STSIssuedTokenConfiguration {
     private String signWith = null;
     
     private String encryptWith = null;
-    
+            
     public STSClientConfiguration(String stsEndpoint, String stsMEXAddress){
         super(stsEndpoint, stsMEXAddress);
         // We need public key value in the STS issued assertion for signing
         // purposes
         // TODO - we will have to see for Symmetric key
-        this.keyType = STSConstants.PUBLIC_KEY;
+        this.keyType = STSConstants.WST10_PUBLIC_KEY;
     }
     
+    public STSClientConfiguration(String protocol, 
+            String stsEndpoint, String stsMEXAddress) {            
+        super(protocol, stsEndpoint, stsMEXAddress);
+        // We need public key value in the STS issued assertion for signing
+        // purposes
+        // TODO - we will have to see for Symmetric key
+        if(protocol.equals(PROTOCOL_13)) {
+           this.keyType = STSConstants.WST13_PUBLIC_KEY;
+        } else {
+           this.keyType = STSConstants.WST10_PUBLIC_KEY;
+        }
+    }
+            
     public STSClientConfiguration(String stsEndpoint,
           String stsWSDLLocation, 
           String stsServiceName,
@@ -80,7 +93,7 @@ public class STSClientConfiguration extends STSIssuedTokenConfiguration {
         super(stsEndpoint, stsWSDLLocation, stsServiceName, stsPortName,
               stsNamespace);
 
-        this.keyType = STSConstants.PUBLIC_KEY;
+        this.keyType = STSConstants.WST10_PUBLIC_KEY;;
         
     }
     
@@ -98,6 +111,14 @@ public class STSClientConfiguration extends STSIssuedTokenConfiguration {
     
     public String getKeyType() {
         return keyType;
+    }
+    
+    public String getProtocol() {
+        return protocol;
+    }
+    
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
     }
     
     public void setKeyType(String keyType) {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProvider.java,v 1.27 2008-07-30 05:00:44 mallas Exp $
+ * $Id: AgentProvider.java,v 1.28 2008-08-05 04:10:59 mallas Exp $
  *
  */
 
@@ -175,6 +175,10 @@ public class AgentProvider extends ProviderConfig {
         this.providerName = providerName;
         this.providerType = providerType;
         this.token = token;
+        if(debug.messageEnabled()) {
+           debug.message("AgentProvider: name = " + providerName + 
+                   "type = " + providerType);
+        }
 
         if ((providerType.equals(ProviderConfig.WSP)) && (isEndPoint)) {
             // Obtain the WSP Agent profile given its end point
@@ -243,7 +247,7 @@ public class AgentProvider extends ProviderConfig {
                 //Map attributes = (Map) attrs.get(provider);
                 Map attributes = (Map) provider.getAttributes(attrNames);
                 if (debug.messageEnabled()) {
-                    debug.message("Attributes from provider name : " 
+                    debug.message("Attributes from provider : " 
                         + attributes);
                 }
                 parseAgentKeyValues(attributes);
@@ -279,11 +283,7 @@ public class AgentProvider extends ProviderConfig {
     }
 
     private void setConfig(String attr, String value) {
- 
-        if (debug.messageEnabled()) {
-            debug.message("Attribute name: " + attr + " Value: "+ value);
-        }
-
+         
         if (attr.equals(SEC_MECH)) {
            if (secMech == null) {
                secMech = new ArrayList();

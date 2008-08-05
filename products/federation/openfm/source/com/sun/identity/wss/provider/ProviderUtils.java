@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderUtils.java,v 1.8 2008-06-25 05:50:04 qcheng Exp $
+ * $Id: ProviderUtils.java,v 1.9 2008-08-05 04:10:59 mallas Exp $
  *
  */
 
@@ -59,7 +59,7 @@ public class ProviderUtils {
      static ResourceBundle bundle = null;
      private static final String AGENT_CONFIG_ATTR = 
              "AgentType";
-     public static Debug debug = Debug.getInstance("fmWSSProvider");
+     public static Debug debug = Debug.getInstance("WebServicesSecurity");
      
      static {
             bundle = Locale.getInstallResourceBundle("fmWSSProvider");

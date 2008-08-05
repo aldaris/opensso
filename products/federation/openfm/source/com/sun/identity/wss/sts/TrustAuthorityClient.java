@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityClient.java,v 1.16 2008-07-29 20:01:54 mrudul_uchil Exp $
+ * $Id: TrustAuthorityClient.java,v 1.17 2008-08-05 04:11:01 mallas Exp $
  *
  */
 
@@ -164,7 +164,8 @@ public class TrustAuthorityClient {
             String securityMech,
             String tokenType,
             ServletContext context) throws FAMSTSException {
-        String keyType = STSConstants.PUBLIC_KEY;
+        String keyType = STSConstants.WST13_PUBLIC_KEY;
+        String wstVersion = STSConstants.WST_VERSION_13;                
         if (pc != null) {
             List securityMechanisms = pc.getSecurityMechanisms();
             if(securityMechanisms == null || securityMechanisms.isEmpty()) {
@@ -186,7 +187,11 @@ public class TrustAuthorityClient {
             }
 
             stsEndPoint = stsConfig.getEndpoint();        
-            stsMexEndPoint = stsConfig.getMexEndpoint();
+            stsMexEndPoint = stsConfig.getMexEndpoint();                                
+            wstVersion = stsConfig.getProtocolVersion();
+            if(STSConstants.WST_VERSION_10.equals(wstVersion)) {
+               keyType = STSConstants.WST10_PUBLIC_KEY;  
+            }
             String stsSecMech = (String)stsConfig.getSecurityMech().get(0);
             if(stsSecMech.equals(
                     SecurityMechanism.WSS_NULL_KERBEROS_TOKEN_URI) ||
@@ -195,15 +200,24 @@ public class TrustAuthorityClient {
                 stsSecMech.equals(
                     SecurityMechanism.WSS_NULL_USERNAME_TOKEN_URI) ||
                 stsSecMech.equals(SecurityMechanism.STS_SECURITY_URI)) {               
-                keyType = STSConstants.BEARER_KEY;
-            } else {
-                keyType = STSConstants.PUBLIC_KEY;
-            }
+                if(STSConstants.WST_VERSION_10.equals(wstVersion)) {
+                   keyType = STSConstants.WST10_BEARER_KEY;
+                } else {
+                   keyType = STSConstants.WST13_BEARER_KEY;
+                }
+            } 
             wspEndPoint = pc.getWSPEndpoint();
         } else {
-            Map attrMap = 
-                 STSUtils.getAgentAttributes(stsEndPoint, "STSEndpoint", null, 
-                     TrustAuthorityConfig.STS_TRUST_AUTHORITY);
+            Map attrMap = STSUtils.getAgentAttributes(stsEndPoint, 
+                "STSEndpoint", null, TrustAuthorityConfig.STS_TRUST_AUTHORITY);
+            Set versionSet = (Set)attrMap.get(STSConstants.WST_VERSION_ATTR);
+            wstVersion = (String)versionSet.iterator().next();
+            if((wstVersion == null) || wstVersion.length() == 0)  {
+                wstVersion = STSConstants.WST_VERSION_13;
+            }
+            if(STSConstants.WST_VERSION_10.equals(wstVersion)) {
+               keyType = STSConstants.WST10_PUBLIC_KEY;  
+            }
             Set values = (Set)attrMap.get("SecurityMech");
             if (values != null && !values.isEmpty()) {
                 String stsSecMechTemp = (String)values.iterator().next();
@@ -213,17 +227,19 @@ public class TrustAuthorityClient {
                     SecurityMechanism.WSS_NULL_USERNAME_TOKEN_PLAIN_URI) ||
                     stsSecMechTemp.equals(
                     SecurityMechanism.WSS_NULL_USERNAME_TOKEN_URI) ||
-                    stsSecMechTemp.equals(SecurityMechanism.STS_SECURITY_URI)) {               
-                    keyType = STSConstants.BEARER_KEY;
-                } else {
-                    keyType = STSConstants.PUBLIC_KEY;
+                    stsSecMechTemp.equals(SecurityMechanism.STS_SECURITY_URI)) {
+                    if(wstVersion.equals(STSConstants.WST_VERSION_10)) {
+                       keyType = STSConstants.WST10_BEARER_KEY;
+                    } else {
+                       keyType = STSConstants.WST13_BEARER_KEY;
+                    }
                 }
             }
         }
         
         if(securityMech.equals(SecurityMechanism.STS_SECURITY_URI)) {
            return getSTSToken(wspEndPoint,stsEndPoint,stsMexEndPoint,
-                   credential,keyType, tokenType,context); 
+                   credential,keyType, tokenType, wstVersion,context); 
         } else if (securityMech.equals(
                 SecurityMechanism.LIBERTY_DS_SECURITY_URI)) {
            return getLibertyToken(pc, credential);
@@ -280,6 +296,7 @@ public class TrustAuthorityClient {
                                       Object credential,
                                       String keyType,
                                       String tokenType,
+                                      String wstVersion,
                                       ServletContext context) 
                                       throws FAMSTSException {
         
@@ -308,25 +325,27 @@ public class TrustAuthorityClient {
 
             Object stsClient = taClientCon.newInstance();
 
-            Class clsa[] = new Class[6];
+            Class clsa[] = new Class[7];
             clsa[0] = Class.forName("java.lang.String");
             clsa[1] = Class.forName("java.lang.String");
             clsa[2] = Class.forName("java.lang.String");
             clsa[3] = Class.forName("java.lang.Object");
             clsa[4] = Class.forName("java.lang.String");
             clsa[5] = Class.forName("java.lang.String");
+            clsa[6] = Class.forName("java.lang.String");
 
             Method getSTSTokenElement = 
                       stsClient.getClass().getDeclaredMethod(
                       "getSTSTokenElement", clsa);
 
-            Object args[] = new Object[6];
+            Object args[] = new Object[7];
             args[0] = wspEndPoint;
             args[1] = stsEndpoint;
             args[2] = stsMexAddress;
             args[3] = credential;
             args[4] = keyType;
             args[5] = tokenType;
+            args[6] = wstVersion;
             Element element = (Element)getSTSTokenElement.invoke(stsClient, args);
             String type = getTokenType(element);
             

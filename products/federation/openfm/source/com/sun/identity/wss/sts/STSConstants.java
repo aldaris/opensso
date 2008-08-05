@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSConstants.java,v 1.11 2008-07-23 17:45:01 veiming Exp $
+ * $Id: STSConstants.java,v 1.12 2008-08-05 04:11:01 mallas Exp $
  *
  */
 
@@ -35,16 +35,27 @@ package com.sun.identity.wss.sts;
 public class STSConstants {
 
     /** WS-Trust namespace URI */
-    public static final String WST_NAMESPACE = 
-        "http://schemas.xmlsoap.org/ws/2005/02/trust/";
+    public static final String WST10_NAMESPACE = 
+        "http://schemas.xmlsoap.org/ws/2005/02/trust";
+    public static final String WST13_NAMESPACE =
+            "http://docs.oasis-open.org/ws-sx/ws-trust/200512";
+    public static final String WST_VERSION_13= "1.3";
+    public static final String WST_VERSION_10 = "1.0";
    
     /**
      * URI for KeyType
      */
-    public static final String PUBLIC_KEY = WST_NAMESPACE+ "PublicKey";
-    public static final String SYMMETRIC_KEY = WST_NAMESPACE + "SymmetricKey";
-    public static final String BEARER_KEY = 
+    public static final String WST10_PUBLIC_KEY = WST10_NAMESPACE+ "/PublicKey";
+    public static final String WST10_SYMMETRIC_KEY =
+                               WST10_NAMESPACE + "/SymmetricKey";
+    public static final String WST10_BEARER_KEY = 
             "http://schemas.xmlsoap.org/ws/2005/05/identity/NoProofKey";
+    
+    public static final String WST13_PUBLIC_KEY = WST13_NAMESPACE+ "/PublicKey";
+    public static final String WST13_SYMMETRIC_KEY = 
+                               WST13_NAMESPACE + "/SymmetricKey";
+    public static final String WST13_BEARER_KEY = WST13_NAMESPACE + "/Bearer";
+            
 
     /**
      * URI for TokenType
@@ -96,6 +107,8 @@ public class STSConstants {
     
     public static final String WSIT_VERSION_CLASS = 
             "com.sun.xml.ws.security.trust.impl.ic.ICContractImpl";
+    
+    public static final String WST_VERSION_ATTR = "WSTrustVersion";
     
 
 }

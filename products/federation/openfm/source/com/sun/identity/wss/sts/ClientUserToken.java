@@ -22,13 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientUserToken.java,v 1.3 2008-06-25 05:50:12 qcheng Exp $
+ * $Id: ClientUserToken.java,v 1.4 2008-08-05 04:11:01 mallas Exp $
  *
  */
 
 package com.sun.identity.wss.sts;
 
 import com.sun.xml.ws.security.Token;
+import org.w3c.dom.Element;
 
 /**
  *
@@ -45,6 +46,14 @@ public interface ClientUserToken extends Token {
      * @throws com.sun.identity.wss.sts.FAMSTSException
      */
     public void init(Object obj) throws FAMSTSException;
+    
+    /**
+     * Parse the custom token element. This method is used at the 
+     * receiving end.
+     * @param element
+     * @throws com.sun.identity.wss.sts.FAMSTSException
+     */
+    public void parse(Element element) throws FAMSTSException;
 
     /**
      * Returns the principal name that the client user token carries

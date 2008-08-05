@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSAttributeProvider.java,v 1.15 2008-07-29 20:01:54 mrudul_uchil Exp $
+ * $Id: FAMSTSAttributeProvider.java,v 1.16 2008-08-05 04:11:01 mallas Exp $
  *
  */
 
@@ -444,10 +444,15 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
                              loadClass(customToken);  
                          ClientUserToken userToken = (ClientUserToken)
                                       customTokenClass.newInstance();
+                         userToken.parse(credential);
                          return userToken.getPrincipalName();
                      } catch (Exception ex) {
-                         STSUtils.debug.error("FAMSTSAttributeProvider.check" +
-                             "ForCustomTokens: Exception", ex);
+                         //The element could be anything not necessarily
+                         // OBOToken. 
+                         if(STSUtils.debug.messageEnabled()) {
+                            STSUtils.debug.message("FAMSTSAttributeProvider." +
+                             "CheckForCustomTokens: " + ex.getMessage());
+                         }
                      }
                   }
                }

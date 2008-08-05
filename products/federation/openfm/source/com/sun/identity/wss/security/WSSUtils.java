@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSUtils.java,v 1.13 2008-07-30 05:00:45 mallas Exp $
+ * $Id: WSSUtils.java,v 1.14 2008-08-05 04:11:00 mallas Exp $
  *
  */
 
@@ -107,7 +107,7 @@ import com.sun.org.apache.xml.internal.security.keys.content.X509Data;
 public class WSSUtils {
 
      public static ResourceBundle bundle = null;
-     public static Debug debug = Debug.getInstance("fmWebServicesSecurity");
+     public static Debug debug = Debug.getInstance("WebServicesSecurity");
      private static XMLSignatureManager xmlSigManager = null;
      private static XMLEncryptionManager xmlEncManager = null;
      private static final String AGENT_TYPE_ATTR = "AgentType"; 

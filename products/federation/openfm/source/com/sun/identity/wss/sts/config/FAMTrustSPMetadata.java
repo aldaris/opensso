@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMTrustSPMetadata.java,v 1.8 2008-06-30 18:11:09 mrudul_uchil Exp $
+ * $Id: FAMTrustSPMetadata.java,v 1.9 2008-08-05 04:11:01 mallas Exp $
  *
  */
 
@@ -243,9 +243,9 @@ public class FAMTrustSPMetadata implements TrustSPMetadata {
             this.certAlias = value;
         } else if(attr.equals(KEY_TYPE)) {
             if ( value == null || value.length() == 0 ) {
-                this.keyType = STSConstants.PUBLIC_KEY;
+                this.keyType = STSConstants.WST13_PUBLIC_KEY;
             } else {
-                this.keyType = STSConstants.WST_NAMESPACE + value;
+                this.keyType = STSConstants.WST13_NAMESPACE + "/" + value;
             }
         }
     }

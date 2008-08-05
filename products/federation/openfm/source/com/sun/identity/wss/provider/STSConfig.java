@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSConfig.java,v 1.4 2008-07-02 16:57:22 mallas Exp $
+ * $Id: STSConfig.java,v 1.5 2008-08-05 04:10:59 mallas Exp $
  *
  */
 package com.sun.identity.wss.provider;
@@ -46,6 +46,7 @@ public abstract class STSConfig extends TrustAuthorityConfig {
     protected String kdcServer = null;
     protected String ticketCacheDir = null;
     protected String servicePrincipal = null;
+    protected String protocolVersion = "1.0";
     
     /** Creates a new instance of STSConfig */
     public STSConfig() {
@@ -149,5 +150,20 @@ public abstract class STSConfig extends TrustAuthorityConfig {
      */
     public void setKerberosServicePrincipal(String principal) {
         this.servicePrincipal = principal;
+    }
+    
+    /**
+     * Returns the protocol version
+     * @return the protocol version
+     */
+    public String getProtocolVersion() {
+        return protocolVersion;
+    }
+    /**
+     * Sets the protocol version.
+     * @param version the protocol version.
+     */
+    public void setProtocolVersion(String version) {
+        this.protocolVersion = version;
     }
 }
