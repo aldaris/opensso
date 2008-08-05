@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.59 2008-07-30 20:45:38 huacui Exp $
+   $Id: AgentService.xml,v 1.60 2008-08-05 04:12:26 mallas Exp $
 
 -->
 
@@ -3359,6 +3359,20 @@
                          </ChoiceValues>
                          <DefaultValues>
                              <Value>256</Value>
+                         </DefaultValues>
+                    </AttributeSchema>
+
+                    <AttributeSchema
+                        name="WSTrustVersion"
+                        type="single_choice"
+                        syntax="string"
+                        i18nKey="a361">
+                         <ChoiceValues>
+                             <ChoiceValue i18nKey="a29">1.3</ChoiceValue>
+                             <ChoiceValue i18nKey="a30">1.0</ChoiceValue>
+                         </ChoiceValues>
+                         <DefaultValues>
+                             <Value>1.3</Value>
                          </DefaultValues>
                     </AttributeSchema>
 
