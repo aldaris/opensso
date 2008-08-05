@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMServerAuthModule.java,v 1.5 2008-07-23 17:58:20 veiming Exp $
+ * $Id: FAMServerAuthModule.java,v 1.6 2008-08-05 04:14:59 mallas Exp $
  *
  */
 
@@ -71,6 +71,8 @@ public class FAMServerAuthModule implements ServerAuthModule {
     // Instance of SOAPRequestHandler
     private Object serverAuthModule;
     private static ClassLoader cls;
+    private static final String  WS_TRUST_13_ACTION =
+            "http://docs.oasis-open.org/ws-sx/ws-trust/200512/RST/Issue";
     
     /**
      * Initializes the module using the configuration defined through
@@ -185,15 +187,20 @@ public class FAMServerAuthModule implements ServerAuthModule {
             String action = 
                 hl.getAction(AddressingVersion.W3C, SOAPVersion.SOAP_12);
             if ((WSTrustConstants.REQUEST_SECURITY_TOKEN_ISSUE_ACTION).equals(
-                action)) {
+                action) || (WS_TRUST_13_ACTION.equals(action))) {
                 isTrustMsg = true;
                 //set the IS_TRUST_MSG into MessageInfo
                 messageInfo.getMap().put("IS_TRUST_MSG", 
                     Boolean.valueOf(isTrustMsg));
                 hl.getTo(AddressingVersion.W3C, SOAPVersion.SOAP_12);
                 
-                packet.invocationProperties.put(WSTrustConstants.WST_VERSION, 
+                if(!WS_TRUST_13_ACTION.equals(action)) {
+                   packet.invocationProperties.put(WSTrustConstants.WST_VERSION, 
                     WSTrustVersion.WS_TRUST_10);
+                } else {
+                   packet.invocationProperties.put(WSTrustConstants.WST_VERSION, 
+                    WSTrustVersion.WS_TRUST_13); 
+                }
                 ProcessingContextImpl ctx = 
                     new ProcessingContextImpl(packet.invocationProperties);
                 ctx.isTrustMessage(true);
