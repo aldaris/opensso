@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ModelImpl.java,v 1.31 2008-07-30 21:43:18 babysunil Exp $
+ * $Id: SAMLv2ModelImpl.java,v 1.32 2008-08-05 22:23:08 babysunil Exp $
  *
  */
 
@@ -92,8 +92,8 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
     private static Map extendedAPMetaIdpMap = new HashMap(14);
     private static Map extendedSMetaIdpMap = new HashMap(2);
     private static Map extendedAdMetaIdpMap = new HashMap(6);
-    private static Map extendedMetaSpMap = new HashMap(58);
-    private static Map extendedACMetaSpMap = new HashMap(34);
+    private static Map extendedMetaSpMap = new HashMap(60);
+    private static Map extendedACMetaSpMap = new HashMap(36);
     private static Map extendedAPMetaSpMap = new HashMap(28);
     private static Map extendedSMetaSpMap = new HashMap(2);
     private static Map extendedAdMetaSpMap = new HashMap(20);
@@ -181,6 +181,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         extendedMetaSpMap.put(WANT_ASSERTION_ENCRYPTED,
                 Collections.EMPTY_SET);
         extendedMetaSpMap.put(WANT_ARTIF_RESP_SIGN, Collections.EMPTY_SET);
+        extendedMetaSpMap.put(WANT_POST_RESP_SIGN, Collections.EMPTY_SET);
         extendedMetaSpMap.put(ARTI_MSG_ENCODE, Collections.EMPTY_SET);
         
                
@@ -274,6 +275,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         extendedACMetaSpMap.put(SP_MNI_REQ_SIGN, Collections.EMPTY_SET);
         extendedACMetaSpMap.put(SP_MNI_RESP_SIGN, Collections.EMPTY_SET);        
         extendedACMetaSpMap.put(WANT_ARTIF_RESP_SIGN, Collections.EMPTY_SET);
+        extendedACMetaSpMap.put(WANT_POST_RESP_SIGN, Collections.EMPTY_SET);
         extendedACMetaSpMap.put(SP_AUTHN_CONTEXT_MAPPER,
                 Collections.EMPTY_SET);        
         extendedACMetaSpMap.put(SP_AUTHN_CONTEXT_CLASS_REF_MAPPING,

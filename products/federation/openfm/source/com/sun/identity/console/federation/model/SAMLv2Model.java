@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Model.java,v 1.24 2008-07-30 21:43:08 babysunil Exp $
+ * $Id: SAMLv2Model.java,v 1.25 2008-08-05 22:23:16 babysunil Exp $
  *
  */
 
@@ -222,8 +222,10 @@ public interface SAMLv2Model
         "wantAttributeEncrypted";
     public static final String WANT_ASSERTION_ENCRYPTED =
         "wantAssertionEncrypted";
-    public static final String WANT_ARTIF_RESP_SIGN =
+    public static final String WANT_ARTIF_RESP_SIGN = 
         "wantArtifactResponseSigned";
+    public static final String WANT_POST_RESP_SIGN =
+        "wantPOSTResponseSigned";
     public static final String SP_META_ALIAS =
         "metaAlias";
     public static final String ARTI_MSG_ENCODE = 

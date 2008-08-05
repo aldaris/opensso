@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySAMLv2SPAssertionContentRemote.xml,v 1.5 2008-06-25 05:51:07 qcheng Exp $
+   $Id: propertySAMLv2SPAssertionContentRemote.xml,v 1.6 2008-08-05 22:24:13 babysunil Exp $
 
 -->
 
@@ -46,6 +46,13 @@
                            defaultValue="samlv2sp.attribute.label.spwantassertionssigned"
                            labelFor="WantAssertionsSigned" />
                     <cc name="WantAssertionsSigned" 
+                        tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag" />
+                </property>
+                <property>
+                    <label name="lblspwantPOSTResponseSigned"
+                           defaultValue="samlv2sp.attribute.label.spwantpOSTresponseSigned"
+                           labelFor="wantPOSTResponseSigned" />
+                    <cc name="wantPOSTResponseSigned"
                         tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag" />
                 </property>
                 <property>
