@@ -1,5 +1,5 @@
 function CCEditableList(jsQualifier, listbox, formName, separator,
-    defaultOptionValue, defaultOptionLabel, bempty) {
+    defaultOptionValue, defaultOptionLabel, bempty, bglobal) {
 
     var frm = document.forms[formName];
     this.listbox = listbox;
@@ -14,6 +14,7 @@ function CCEditableList(jsQualifier, listbox, formName, separator,
     this.defaultOptionValue = defaultOptionValue;
     this.defaultOptionLabel = defaultOptionLabel;
     this.allowempty = (bempty) && (bempty == '1');
+    this.bglobalmap = (bglobal) && (bglobal == '1');
 
     // attach editableList object methods
     this.disableButton = editableListDisableButton;
@@ -87,7 +88,12 @@ function editableListAdd() {
                 return;
             }
             if ((len == 0) && (len2 > 0)) {
-                str = str2;
+                if (this.bglobalmap) {
+                    str = str2;
+                } else {
+                    alert(msgMapListInvalidNoKey);
+                    return;
+                }
             } else {
                 str = '[' + str + ']=' + str2;
             }
