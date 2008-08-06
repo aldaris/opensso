@@ -389,6 +389,7 @@ com/sun/identity/saml/xmlsig/PasswordDecoder.class
 com/sun/identity/saml/xmlsig/SignatureProvider.class
 com/sun/identity/saml/xmlsig/XMLSignatureException.class
 com/sun/identity/saml/xmlsig/XMLSignatureManager.class
+com/sun/identity/saml/xmlsig/KeyStoreRefresher.class
 com/sun/identity/saml2/assertion/Action.class
 com/sun/identity/saml2/assertion/Advice.class
 com/sun/identity/saml2/assertion/Assertion.class
