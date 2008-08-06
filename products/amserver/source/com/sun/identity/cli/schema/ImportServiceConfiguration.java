@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportServiceConfiguration.java,v 1.5 2008-07-06 05:48:32 arviranga Exp $
+ * $Id: ImportServiceConfiguration.java,v 1.6 2008-08-06 21:19:39 veiming Exp $
  *
  */
 
@@ -43,6 +43,7 @@ import com.sun.identity.authentication.internal.InvalidAuthContextException;
 import com.sun.identity.common.LDAPUtils;
 import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
+import com.sun.identity.cli.CLIUtil;
 import com.sun.identity.cli.CommandManager;
 import com.sun.identity.cli.ExitCodes;
 import com.sun.identity.cli.IArgument;
@@ -52,6 +53,7 @@ import com.sun.identity.cli.RequestContext;
 import com.sun.identity.common.configuration.ServerConfiguration;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.encode.Hash;
 import com.sun.identity.sm.CachedSubEntries;
 import com.sun.identity.sm.DirectoryServerVendor;
 import com.sun.identity.sm.SMSEntry;
@@ -88,7 +90,8 @@ public class ImportServiceConfiguration extends AuthenticatedCommand {
 
         String xmlFile = getStringOptionValue(IArgument.XML_FILE);
         String encryptSecret = getStringOptionValue(IArgument.ENCRYPT_SECRET);
-
+        validateEncryptSecret(xmlFile, encryptSecret);
+        
         // disable notification
         SystemProperties.initializeProperties(
             Constants.SMS_ENABLE_DB_NOTIFICATION, "true");
@@ -336,7 +339,6 @@ public class ImportServiceConfiguration extends AuthenticatedCommand {
         }
     }
 
-
     private void loadLDIF(
         DirectoryServerVendor.Vendor vendor, 
         LDAPConnection ld
@@ -354,10 +356,10 @@ public class ImportServiceConfiguration extends AuthenticatedCommand {
         } catch (LDAPException e) {
             e.printStackTrace();
             throw new CLIException(e.getMessage(),
-                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED, null);
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED, null);
         } catch (IOException e) {
             throw new CLIException(e.getMessage(),
-                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED, null);
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED, null);
         } finally {
             if (d != null) {
                 try {
@@ -366,6 +368,29 @@ public class ImportServiceConfiguration extends AuthenticatedCommand {
                     //ignore
                 }
             }
+        }
+    }
+
+    private void validateEncryptSecret(String xmlFile, String encryptSecret)
+        throws CLIException {
+        String xml = CLIUtil.getFileContent(xmlFile);
+        int start = xml.lastIndexOf("<!-- ");
+        if (start == -1) {
+            throw new CLIException(
+                "import-service-configuration-unable-to-locate-hash-secret",
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED, null);
+        }
+        int end = xml.indexOf(" -->", start);
+        if (end == -1) {
+            throw new CLIException(
+                "import-service-configuration-unable-to-locate-hash-secret",
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED, null);
+        }
+        String hashed = xml.substring(start+5, end);
+        if (!Hash.hash(encryptSecret).equals(hashed)) {
+            throw new CLIException(
+                "import-service-configuration-secret-key",
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED, null);
         }
     }
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ExportServiceConfiguration.java,v 1.3 2008-06-25 05:42:17 qcheng Exp $
+ * $Id: ExportServiceConfiguration.java,v 1.4 2008-08-06 21:19:39 veiming Exp $
  *
  */
 
@@ -42,6 +42,7 @@ import com.sun.identity.cli.RequestContext;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.log.Level;
+import com.sun.identity.shared.encode.Hash;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -79,10 +80,12 @@ public class ExportServiceConfiguration extends AuthenticatedCommand {
             AMEncryption encryptObj = new JCEEncryption();
             ((ConfigurableKey)encryptObj).setPassword(encryptSecret);
  
+            String resultXML = sm.toXML(encryptObj);
+            resultXML += "<!-- " + Hash.hash(encryptSecret) + " -->";
             if (fout != null) {
-                fout.write(sm.toXML(encryptObj).getBytes("ISO-8859-1"));
+                fout.write(resultXML.getBytes("ISO-8859-1"));
             } else {
-                System.out.write(sm.toXML(encryptObj).getBytes("ISO-8859-1"));
+                System.out.write(resultXML.getBytes("ISO-8859-1"));
             }
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "SUCCEEDED_IMPORT_SM_CONFIG_DATA", param);

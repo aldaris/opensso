@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommandManager.java,v 1.27 2008-08-01 00:32:15 veiming Exp $
+ * $Id: CommandManager.java,v 1.28 2008-08-06 21:19:39 veiming Exp $
  *
  */
 
@@ -79,6 +79,7 @@ public class CommandManager {
     private boolean bContinue;
     public static InitializeSystem initSys;
     private Set ssoTokens = new HashSet();
+    private static boolean importSvcCmd;
 
     static {
         resourceBundle = ResourceBundle.getBundle(RESOURCE_BUNDLE_NAME);
@@ -89,7 +90,8 @@ public class CommandManager {
      */
     public static void main(String[] argv) {
         boolean bBootstrapped = true;
-        if ((argv.length > 0) && argv[0].equals(IMPORT_SVC_CMD)) {
+        importSvcCmd =(argv.length > 0) && argv[0].equals(IMPORT_SVC_CMD);
+        if (importSvcCmd) {
             try {
                 initSys = new InitializeSystem();
             } catch (FileNotFoundException ex) {
@@ -159,7 +161,11 @@ public class CommandManager {
             requestQueue.add(new CLIRequest(null, argv));
             serviceRequestQueue();
         } catch (CLIException e) {
-            Debugger.error(this, "CommandManager.<init>", e);
+            // cannot print debugger for import service configuration 
+            // sub command before CLI is not bootstrapped.
+            if (!importSvcCmd) {
+                Debugger.error(this, "CommandManager.<init>", e);
+            }
             String remainReq = null;
             if (!requestQueue.isEmpty()) {
                 String[] arg = {Integer.toString(requestQueue.size())};
