@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityTokenManager.java,v 1.3 2008-06-25 05:47:21 qcheng Exp $
+ * $Id: SecurityTokenManager.java,v 1.4 2008-08-06 17:28:11 exu Exp $
  *
  */
 
@@ -60,7 +60,7 @@ public final class SecurityTokenManager {
     private static String providerClass = SystemPropertiesManager.get(TOKEN_PROVIDER);
     static ResourceBundle bundle = Locale.getInstallResourceBundle(
             "libLibertySecurity");
-    static Debug debug = Debug.getInstance("libLibertySecurity");
+    static Debug debug = Debug.getInstance("libIDWSF");
     private SecurityTokenProvider provider = null;
     
     /**

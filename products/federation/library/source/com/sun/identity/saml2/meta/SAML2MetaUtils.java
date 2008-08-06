@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2MetaUtils.java,v 1.6 2008-06-25 05:47:49 qcheng Exp $
+ * $Id: SAML2MetaUtils.java,v 1.7 2008-08-06 17:28:17 exu Exp $
  *
  */
 
@@ -72,7 +72,7 @@ public final class SAML2MetaUtils {
     protected static final String RESOURCE_BUNDLE_NAME = "libSAML2Meta";
     protected static ResourceBundle resourceBundle =
                          Locale.getInstallResourceBundle(RESOURCE_BUNDLE_NAME);
-    public static Debug debug = Debug.getInstance("libSAML2Meta");
+    public static Debug debug = Debug.getInstance("libSAML2");
     private static final String JAXB_PACKAGES =
         "com.sun.identity.saml2.jaxb.xmlenc:" +
         "com.sun.identity.saml2.jaxb.xmlsig:" +

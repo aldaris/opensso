@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationConstants.java,v 1.8 2008-07-23 17:36:36 veiming Exp $
+ * $Id: WSFederationConstants.java,v 1.9 2008-08-06 17:28:19 exu Exp $
  *
  */
 
@@ -205,7 +205,7 @@ public final class WSFederationConstants {
     /**
      * Debug log name.
      */
-    public static String AM_WSFEDERATION = "amWSFederation";
+    public static String AM_WSFEDERATION = "libWSFederation";
     /**
      * Resource bundle name.
      */

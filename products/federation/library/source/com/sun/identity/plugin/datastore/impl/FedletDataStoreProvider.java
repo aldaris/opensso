@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedletDataStoreProvider.java,v 1.2 2008-06-25 05:47:27 qcheng Exp $
+ * $Id: FedletDataStoreProvider.java,v 1.3 2008-08-06 17:28:14 exu Exp $
  *
  */
 
@@ -47,7 +47,7 @@ import java.util.Set;
  */
 public class FedletDataStoreProvider implements DataStoreProvider {
     
-    private static Debug debug = Debug.getInstance("fedletDataStoreProvider");
+    private static Debug debug = Debug.getInstance("libPlugins");
 
     /**
      * Default Constructor.

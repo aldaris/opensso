@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceAuthenticatorImpl.java,v 1.3 2008-06-25 05:49:57 qcheng Exp $
+ * $Id: WebServiceAuthenticatorImpl.java,v 1.4 2008-08-06 17:29:25 exu Exp $
  *
  */
 
@@ -84,7 +84,7 @@ class WebServiceAuthenticatorImpl implements WebServiceAuthenticator {
     private static ServiceSchema sessionSchema = null;
     private static String rootSuffix =
             SystemPropertiesManager.get("com.iplanet.am.rootsuffix");
-    private static Debug debug = Debug.getInstance("fmSOAPBinding");
+    private static Debug debug = Debug.getInstance("libIDWSF");
     
     static {
         try {

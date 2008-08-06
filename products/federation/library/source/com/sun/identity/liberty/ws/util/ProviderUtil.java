@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderUtil.java,v 1.3 2008-06-25 05:47:24 qcheng Exp $
+ * $Id: ProviderUtil.java,v 1.4 2008-08-06 17:28:12 exu Exp $
  *
  */
 
@@ -38,7 +38,7 @@ public class ProviderUtil {
     private static ProviderManager providerManager;
     private static final String PROVIDER_MANAGER_CLASS_PROP =
         "com.sun.identity.liberty.ws.util.providerManagerClass";
-    static Debug debug = Debug.getInstance("libProviderUtil");
+    static Debug debug = Debug.getInstance("libIDWSF");
 
     static {
         try {

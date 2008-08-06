@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPPAuthorizer.java,v 1.4 2008-07-23 17:44:59 veiming Exp $
+ * $Id: IDPPAuthorizer.java,v 1.5 2008-08-06 17:29:24 exu Exp $
  *
  */
 
@@ -57,7 +57,7 @@ public class IDPPAuthorizer implements Authorizer {
 
     private static ResourceBundle bundle = 
         Locale.getInstallResourceBundle("fmPersonalProfile");
-    private static Debug debug = Debug.getInstance("fmPersonalProfile");
+    private static Debug debug = Debug.getInstance("libIDWSF");
     private static PolicyEvaluator evaluator = null;
     static {
       try {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CramMD5MechanismHandler.java,v 1.6 2008-06-25 05:49:55 qcheng Exp $
+ * $Id: CramMD5MechanismHandler.java,v 1.7 2008-08-06 17:29:24 exu Exp $
  *
  */
 
@@ -79,7 +79,7 @@ import com.sun.identity.sm.SMSEntry;
  * mechanism.
  */
 public class CramMD5MechanismHandler implements MechanismHandler {
-    private static Debug debug = Debug.getInstance("fmAuthnSvc");
+    private static Debug debug = Debug.getInstance("libIDWSF");
 
     private static final String PROP_SERVER_HOST = "com.iplanet.am.server.host"; 
     private static final String serverHost = SystemPropertiesManager.get(

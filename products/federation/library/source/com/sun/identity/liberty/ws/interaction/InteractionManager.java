@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InteractionManager.java,v 1.4 2008-06-25 05:47:17 qcheng Exp $
+ * $Id: InteractionManager.java,v 1.5 2008-08-06 17:28:10 exu Exp $
  *
  */
 
@@ -196,7 +196,7 @@ public class InteractionManager {
     static final String TRANS_ID = "TransID";
 
     private static InteractionManager interactionManager = null;
-    private static Debug debug = Debug.getInstance("libInteraction");
+    private static Debug debug = Debug.getInstance("libIDWSF");
 
     private static final String REDIRECT_URL = "redirectURL";
 

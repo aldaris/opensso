@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultHexResourceIDMapper.java,v 1.2 2008-06-25 05:47:12 qcheng Exp $
+ * $Id: DefaultHexResourceIDMapper.java,v 1.3 2008-08-06 17:28:09 exu Exp $
  *
  */
 
@@ -47,7 +47,7 @@ import com.sun.identity.liberty.ws.security.SecurityAssertion;
  */
 public class DefaultHexResourceIDMapper implements ResourceIDMapper {
 
-    private static Debug debug = Debug.getInstance("libDisco");
+    private static Debug debug = Debug.getInstance("libIDWSF");
 
     /**
      * Default Constructor.

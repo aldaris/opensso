@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoDataStoreProvider.java,v 1.5 2008-06-25 05:49:57 qcheng Exp $
+ * $Id: IdRepoDataStoreProvider.java,v 1.6 2008-08-06 17:29:26 exu Exp $
  *
  */
 
@@ -66,7 +66,7 @@ public class IdRepoDataStoreProvider implements DataStoreProvider {
     
     private static ResourceBundle bundle = 
         Locale.getInstallResourceBundle("fmDataStoreProvider");
-    private static Debug debug = Debug.getInstance("fmDataStoreProvider");
+    private static Debug debug = Debug.getInstance("libPlugins");
     // Identity repository instance map
     private static Map idRepoMap = new HashMap();
 

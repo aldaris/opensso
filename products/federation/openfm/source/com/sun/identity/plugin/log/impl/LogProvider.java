@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogProvider.java,v 1.4 2008-06-25 05:49:58 qcheng Exp $
+ * $Id: LogProvider.java,v 1.5 2008-08-06 17:29:26 exu Exp $
  *
  */
 
@@ -65,7 +65,7 @@ public class LogProvider implements com.sun.identity.plugin.log.Logger {
 
     private LogMessageProvider msgProvider;
 
-    private static Debug debug = Debug.getInstance("amLogProvider");
+    private static Debug debug = Debug.getInstance("libPlugins");
     private static boolean logStatus = false;
 
     static {

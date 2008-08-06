@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogUtil.java,v 1.8 2008-08-01 20:53:09 bina Exp $
+ * $Id: LogUtil.java,v 1.9 2008-08-06 17:28:17 exu Exp $
  *
  */
 
@@ -31,7 +31,6 @@ package com.sun.identity.saml2.logging;
 
 import java.util.Map;
 import java.util.logging.Level;
-import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.plugin.log.LogException;
 import com.sun.identity.plugin.log.Logger;
 import com.sun.identity.plugin.log.LogManager;

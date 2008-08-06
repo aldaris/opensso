@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PAOSUtils.java,v 1.2 2008-06-25 05:47:20 qcheng Exp $
+ * $Id: PAOSUtils.java,v 1.3 2008-08-06 17:28:10 exu Exp $
  *
  */
 package com.sun.identity.liberty.ws.paos;
@@ -36,7 +36,7 @@ import com.sun.identity.shared.locale.Locale;
  * implementation.
  */
 public class PAOSUtils {
-    public static Debug debug = Debug.getInstance("libPAOS");
+    public static Debug debug = Debug.getInstance("libIDWSF");
 
     public static final String BUNDLE_NAME = "libPAOS";
 

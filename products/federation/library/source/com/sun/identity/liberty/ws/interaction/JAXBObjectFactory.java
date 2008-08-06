@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JAXBObjectFactory.java,v 1.2 2008-06-25 05:47:18 qcheng Exp $
+ * $Id: JAXBObjectFactory.java,v 1.3 2008-08-06 17:28:10 exu Exp $
  *
  */
 
@@ -40,7 +40,7 @@ import com.sun.identity.liberty.ws.interaction.jaxb.ObjectFactory;
 public class JAXBObjectFactory {
 
     private static ObjectFactory objectFactory = new ObjectFactory();
-    private static Debug debug = Debug.getInstance("libInteraction");
+    private static Debug debug = Debug.getInstance("libIDWSF");
 
     /** Gets singleton instance of 
      * <code>com.sun.identity.liberty.ws.interaction.jaxb.ObjectFactory</code>.

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionManager.java,v 1.2 2008-06-25 05:47:28 qcheng Exp $
+ * $Id: SessionManager.java,v 1.3 2008-08-06 17:28:15 exu Exp $
  *
  */
 
@@ -44,7 +44,7 @@ public final class SessionManager {
     private static final String PROP_SESSION_IMPL_CLASS =
         "com.sun.identity.plugin.session.class";
     private static SessionProvider sp = null;
-    private static Debug debug = Debug.getInstance("libSessionProvider");
+    private static Debug debug = Debug.getInstance("libPlugins");
     private static ResourceBundle bundle =
         Locale.getInstallResourceBundle("libSessionProvider");
     static {

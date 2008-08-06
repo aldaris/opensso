@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: QueryHandlerServlet.java,v 1.5 2008-06-27 00:47:26 hengming Exp $
+ * $Id: QueryHandlerServlet.java,v 1.6 2008-08-06 17:28:19 exu Exp $
  *
  */
 
@@ -78,7 +78,7 @@ public class QueryHandlerServlet extends HttpServlet {
     static final String  XSI_TYPE_ATTR = "xsi:type";
     static final String XACML_AUTHZ_QUERY = "XACMLAuthzDecisionQuery";
     static final String METAALIAS_KEY = "/metaAlias" ;
-    static Debug debug = Debug.getInstance("libSAML2SOAP");
+    static Debug debug = Debug.getInstance("libSAML2");
     static KeyProvider keyProvider = KeyUtil.getKeyProviderInstance();
 
     

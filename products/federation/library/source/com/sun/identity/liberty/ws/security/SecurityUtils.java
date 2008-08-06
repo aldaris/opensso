@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityUtils.java,v 1.3 2008-06-25 05:47:21 qcheng Exp $
+ * $Id: SecurityUtils.java,v 1.4 2008-08-06 17:28:12 exu Exp $
  *
  */
 
@@ -107,7 +107,7 @@ public class SecurityUtils {
     private static KeyProvider keystore = null;
     
     static {
-        debug = Debug.getInstance("libWSSecurity");
+        debug = Debug.getInstance("libIDWSF");
         String tmpStr = SystemPropertiesManager.get(
             PROP_TRUSTED_CA_CERT_ALIASES);
         if (debug.messageEnabled()) {

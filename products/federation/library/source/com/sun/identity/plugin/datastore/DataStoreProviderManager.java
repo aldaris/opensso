@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStoreProviderManager.java,v 1.3 2008-06-25 05:47:27 qcheng Exp $
+ * $Id: DataStoreProviderManager.java,v 1.4 2008-08-06 17:28:13 exu Exp $
  *
  */
 
@@ -63,7 +63,7 @@ public final class DataStoreProviderManager {
     private DataStoreProvider defaultProvider = null;
     private static DataStoreProviderManager instance =
         new DataStoreProviderManager();
-    private Debug debug = Debug.getInstance("libDataStoreProvider");
+    private Debug debug = Debug.getInstance("libPlugins");
     private ResourceBundle bundle = Locale.getInstallResourceBundle(
         "libDataStoreProvider");
 

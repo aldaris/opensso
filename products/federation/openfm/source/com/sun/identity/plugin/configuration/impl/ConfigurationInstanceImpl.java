@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigurationInstanceImpl.java,v 1.10 2008-06-25 05:49:57 qcheng Exp $
+ * $Id: ConfigurationInstanceImpl.java,v 1.11 2008-08-06 17:29:25 exu Exp $
  *
  */
 
@@ -65,7 +65,7 @@ public class ConfigurationInstanceImpl implements ConfigurationInstance {
     private boolean hasOrgSchema = false;
     private static final int SUBCONFIG_PRIORITY = 0;
     private static final String RESOURCE_BUNDLE = "fmConfigurationService";
-    static Debug debug = Debug.getInstance("fmConfiguration");;
+    static Debug debug = Debug.getInstance("libPlugins");;
 
     static {
         serviceNameMap = new HashMap();

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FMSessionProvider.java,v 1.14 2008-07-23 17:44:59 veiming Exp $
+ * $Id: FMSessionProvider.java,v 1.15 2008-08-06 17:29:26 exu Exp $
  *
  */
 
@@ -88,7 +88,7 @@ public class FMSessionProvider implements SessionProvider {
     private static final String PROPERTY_VALUES_SEPARATOR = ":::";
     private static ResourceBundle bundle =
         Locale.getInstallResourceBundle("fmSessionProvider");
-    private static Debug debug = Debug.getInstance("fmSessionProvider");;
+    private static Debug debug = Debug.getInstance("libPlugins");;
     private static String cookieName = SystemPropertiesManager.
         get(Constants.AM_COOKIE_NAME);
 /**

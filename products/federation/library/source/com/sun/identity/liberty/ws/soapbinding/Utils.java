@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Utils.java,v 1.7 2008-06-25 05:47:24 qcheng Exp $
+ * $Id: Utils.java,v 1.8 2008-08-06 17:28:12 exu Exp $
  *
  */
 
@@ -144,7 +144,7 @@ public class Utils {
     static {
         bundle = Locale.getInstallResourceBundle("libSOAPBinding");
         faultStringServerError = bundle.getString("ServerError");
-        debug = Debug.getInstance("libSOAPBinding");
+        debug = Debug.getInstance("libIDWSF");
 
         try {
             messageFactory = MessageFactory.newInstance();

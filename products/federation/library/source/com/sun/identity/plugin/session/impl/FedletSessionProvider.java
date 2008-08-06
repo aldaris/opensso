@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedletSessionProvider.java,v 1.3 2008-06-25 05:47:29 qcheng Exp $
+ * $Id: FedletSessionProvider.java,v 1.4 2008-08-06 17:28:17 exu Exp $
  *
  */
 
@@ -43,7 +43,7 @@ import java.util.Map;
  * The implementation performs no operation on the methods.
  */
 public class FedletSessionProvider implements SessionProvider {
-    private static Debug debug = Debug.getInstance("fedletSessionProvider");
+    private static Debug debug = Debug.getInstance("libPlugins");
 
     /**
      * Default Constructor

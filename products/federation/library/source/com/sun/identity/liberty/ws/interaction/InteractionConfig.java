@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InteractionConfig.java,v 1.4 2008-06-25 05:47:17 qcheng Exp $
+ * $Id: InteractionConfig.java,v 1.5 2008-08-06 17:28:10 exu Exp $
  *
  */
 
@@ -120,7 +120,7 @@ class InteractionConfig {
     static final String YES = "yes";
 
     private static InteractionConfig interactionConfig = null;
-    private static Debug debug = Debug.getInstance("libInteraction");
+    private static Debug debug = Debug.getInstance("libIDWSF");
 
     private QName wscSpecifiedInteractionChoice 
             = InteractionManager.QNAME_INTERACT_IF_NEEDED;

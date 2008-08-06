@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogManager.java,v 1.3 2008-06-25 05:47:28 qcheng Exp $
+ * $Id: LogManager.java,v 1.4 2008-08-06 17:28:14 exu Exp $
  *
  */
 
@@ -42,7 +42,7 @@ public final class LogManager {
     
     public static final String LOG_PROVIDER_NAME = 
             "com.sun.identity.plugin.log.class";
-    public static final Debug debug = Debug.getInstance("fmLogManager");
+    public static final Debug debug = Debug.getInstance("libPlugins");
 
     /**
      * Returns an instance of the <code>Logger</code> object.

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogUtil.java,v 1.3 2008-06-25 05:47:09 qcheng Exp $
+ * $Id: LogUtil.java,v 1.4 2008-08-06 17:28:07 exu Exp $
  *
  */
 
@@ -168,7 +168,7 @@ public class LogUtil {
             = "IS_Returning_Response_Element";
 
     private static final String LIBERTY_LOG = "Liberty";
-    private static Debug debug = Debug.getInstance("libLibertyLogUtil");
+    private static Debug debug = Debug.getInstance("libIDWSF");
     private static Logger logger = null;
     private static boolean logStatus = false;
 

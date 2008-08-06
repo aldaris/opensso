@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BinarySecurityToken.java,v 1.4 2008-06-25 05:47:09 qcheng Exp $
+ * $Id: BinarySecurityToken.java,v 1.5 2008-08-06 17:28:07 exu Exp $
  *
  */
 
@@ -88,7 +88,7 @@ public class BinarySecurityToken {
     private String xmlString = null;
     private static ResourceBundle bundle = Locale.getInstallResourceBundle(
                                             "libBinarySecurityToken");
-    private static Debug debug = Debug.getInstance("libBinarySecurityToken");
+    private static Debug debug = Debug.getInstance("libIDWSF");
 
     private static final String WSSE = "wsse";
     private static final String WSU = "wsu";

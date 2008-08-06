@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultIDPAccountMapper.java,v 1.7 2008-06-25 05:47:50 qcheng Exp $
+ * $Id: DefaultIDPAccountMapper.java,v 1.8 2008-08-06 17:28:18 exu Exp $
  *
  */
 
@@ -37,7 +37,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.plugin.datastore.DataStoreProviderException;
 import com.sun.identity.plugin.datastore.DataStoreProvider;
 import com.sun.identity.plugin.session.SessionManager;

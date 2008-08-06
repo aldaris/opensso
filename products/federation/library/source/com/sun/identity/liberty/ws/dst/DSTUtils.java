@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DSTUtils.java,v 1.2 2008-06-25 05:47:13 qcheng Exp $
+ * $Id: DSTUtils.java,v 1.3 2008-08-06 17:28:09 exu Exp $
  *
  */
 
@@ -46,7 +46,7 @@ import com.sun.identity.liberty.ws.common.Status;
 
 public class DSTUtils {
 
-    public static Debug debug = Debug.getInstance("libDSTService");
+    public static Debug debug = Debug.getInstance("libIDWSF");
     public static ResourceBundle bundle =
             Locale.getInstallResourceBundle("libDSTService");
     public DSTUtils() {}

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DiscoServiceManager.java,v 1.6 2008-06-25 05:47:12 qcheng Exp $
+ * $Id: DiscoServiceManager.java,v 1.7 2008-08-06 17:28:08 exu Exp $
  *
  */
 
@@ -107,7 +107,7 @@ public class DiscoServiceManager implements ConfigurationListener {
         "sunIdentityServerDiscoNameIdentifierMapper";
 
 
-    private static Debug debug = Debug.getInstance("libDisco");
+    private static Debug debug = Debug.getInstance("libIDWSF");
     private static ConfigurationInstance ci = null;
     private static JAXBContext jc = null;
     private static String selfProviderID = null;

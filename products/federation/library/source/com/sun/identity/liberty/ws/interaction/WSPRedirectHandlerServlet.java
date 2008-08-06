@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSPRedirectHandlerServlet.java,v 1.5 2008-06-25 05:47:18 qcheng Exp $
+ * $Id: WSPRedirectHandlerServlet.java,v 1.6 2008-08-06 17:28:10 exu Exp $
  *
  */
 
@@ -79,7 +79,7 @@ import org.w3c.dom.Element;
  */
 public class WSPRedirectHandlerServlet extends HttpServlet {
 
-    private static Debug debug = Debug.getInstance("libInteraction");
+    private static Debug debug = Debug.getInstance("libIDWSF");
     private static ResourceBundle i18n = 
         ResourceBundle.getBundle("libInteraction");
     private static String PARAMETER_PREFIX = "isparam_";

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SiteAwareInteractionConfig.java,v 1.5 2008-06-25 05:49:57 qcheng Exp $
+ * $Id: SiteAwareInteractionConfig.java,v 1.6 2008-08-06 17:29:25 exu Exp $
  *
  */
 
@@ -41,7 +41,7 @@ import java.util.Set;
 
 public class SiteAwareInteractionConfig extends InteractionConfig {
 
-    private static Debug debug = Debug.getInstance("libInteraction");
+    private static Debug debug = Debug.getInstance("libIDWSF");
 
     public SiteAwareInteractionConfig() {
         if (debug.messageEnabled()) {

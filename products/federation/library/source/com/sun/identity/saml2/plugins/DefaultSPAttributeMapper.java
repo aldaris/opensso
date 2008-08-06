@@ -22,14 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultSPAttributeMapper.java,v 1.5 2008-06-25 05:47:50 qcheng Exp $
+ * $Id: DefaultSPAttributeMapper.java,v 1.6 2008-08-06 17:28:18 exu Exp $
  *
  */
 
 
 package com.sun.identity.saml2.plugins;
 
-import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.saml2.assertion.Attribute;
 import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.common.SAML2Utils;

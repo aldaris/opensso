@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPBindingService.java,v 1.3 2008-06-25 05:48:03 qcheng Exp $
+ * $Id: SOAPBindingService.java,v 1.4 2008-08-06 17:28:19 exu Exp $
  *
  */
 
@@ -54,7 +54,7 @@ public class SOAPBindingService implements ConfigurationListener {
     static final String CONFIG_NAME = "SAML2_SOAP_BINDING";
     static final String SERVICE_NAME = "sunfmSAML2SOAPBindingService";
     static final String REQUEST_HANDLER_LIST_ATTR="sunSAML2RequestHandlerList";
-    static Debug debug = Debug.getInstance("libSAML2SOAPBinding");
+    static Debug debug = Debug.getInstance("libSAML2");
     static ConfigurationInstance ci = null;
 
     static HashMap handlers = new HashMap();

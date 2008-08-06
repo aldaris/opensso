@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LibSecurityTokenProvider.java,v 1.2 2008-06-25 05:47:20 qcheng Exp $
+ * $Id: LibSecurityTokenProvider.java,v 1.3 2008-08-06 17:28:11 exu Exp $
  *
  */
 
@@ -103,7 +103,7 @@ public class LibSecurityTokenProvider implements SecurityTokenProvider {
     private static final String AUTH_INSTANT = "authInstant";
     private static String keyInfoType = 
         SystemPropertiesManager.get(KEYINFO_TYPE);
-    private static Debug debug = Debug.getInstance("fmLibertySecurity");
+    private static Debug debug = Debug.getInstance("libIDWSF");
     private static ResourceBundle bundle = Locale.getInstallResourceBundle(
         "fmLibertySecurity");
     protected String authTime = "";

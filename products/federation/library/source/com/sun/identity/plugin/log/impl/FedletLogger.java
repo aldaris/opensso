@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedletLogger.java,v 1.2 2008-06-25 05:47:28 qcheng Exp $
+ * $Id: FedletLogger.java,v 1.3 2008-08-06 17:28:14 exu Exp $
  *
  */
 
@@ -52,7 +52,7 @@ public class FedletLogger implements com.sun.identity.plugin.log.Logger {
     protected Logger accessLogger;
     protected Logger errorLogger;
 
-    private static Debug debug = Debug.getInstance("fedletLogger");
+    private static Debug debug = Debug.getInstance("libPlugins");
     private static boolean logStatus = false;
 
     static {

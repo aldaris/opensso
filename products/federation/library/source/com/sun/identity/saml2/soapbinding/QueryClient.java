@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: QueryClient.java,v 1.5 2008-06-25 05:48:02 qcheng Exp $
+ * $Id: QueryClient.java,v 1.6 2008-08-06 17:28:19 exu Exp $
  *
  */
 
@@ -78,7 +78,7 @@ import org.w3c.dom.NodeList;
  */
 
 public class QueryClient {
-    public static Debug debug = Debug.getInstance("querySAML2");
+    public static Debug debug = Debug.getInstance("libSAML2");
     private static SAML2MetaManager saml2MetaManager = null;
     static {
         try {

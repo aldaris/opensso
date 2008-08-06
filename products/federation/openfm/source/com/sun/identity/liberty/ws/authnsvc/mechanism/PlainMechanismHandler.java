@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PlainMechanismHandler.java,v 1.5 2008-06-25 05:49:56 qcheng Exp $
+ * $Id: PlainMechanismHandler.java,v 1.6 2008-08-06 17:29:24 exu Exp $
  *
  */
 
@@ -53,7 +53,7 @@ import com.sun.identity.sm.SMSEntry;
  * mechanism.
  */
 public class PlainMechanismHandler implements MechanismHandler {
-    public static Debug debug = Debug.getInstance("fmAuthnSvc");
+    public static Debug debug = Debug.getInstance("libIDWSF");
 
 
     /**

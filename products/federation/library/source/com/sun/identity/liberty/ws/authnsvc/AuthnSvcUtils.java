@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthnSvcUtils.java,v 1.2 2008-06-25 05:47:06 qcheng Exp $
+ * $Id: AuthnSvcUtils.java,v 1.3 2008-08-06 17:28:07 exu Exp $
  *
  */
 
@@ -71,7 +71,7 @@ public class AuthnSvcUtils {
     /**
      * <code>Debug</code> object for this service.
      */
-    public static Debug debug = Debug.getInstance("libAuthnSvc");
+    public static Debug debug = Debug.getInstance("libIDWSF");
 
     /**
      * Gets localized string from resource bundle.

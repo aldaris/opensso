@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedletConfigurationImpl.java,v 1.3 2008-06-25 05:47:26 qcheng Exp $
+ * $Id: FedletConfigurationImpl.java,v 1.4 2008-08-06 17:28:13 exu Exp $
  *
  */
 
@@ -72,7 +72,7 @@ public class FedletConfigurationImpl implements ConfigurationInstance {
         "com.sun.identity.fedlet.home"; 
     private String componentName = null;
     private static final String RESOURCE_BUNDLE = "fmConfigurationService";
-    static Debug debug = Debug.getInstance("fedletConfiguration");;
+    static Debug debug = Debug.getInstance("libPlugins");;
     // Map to store COT information
     private static Map cotMap = new HashMap();
     // Map to store metadata information

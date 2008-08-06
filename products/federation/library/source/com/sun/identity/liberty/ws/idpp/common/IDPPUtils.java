@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPPUtils.java,v 1.2 2008-06-25 05:47:15 qcheng Exp $
+ * $Id: IDPPUtils.java,v 1.3 2008-08-06 17:28:09 exu Exp $
  *
  */
 
@@ -69,7 +69,7 @@ import javax.xml.bind.JAXBContext;
 public class IDPPUtils {
 
     private static final String IDPP = "idpp";
-    public static Debug debug = Debug.getInstance("libPersonalProfile");
+    public static Debug debug = Debug.getInstance("libIDWSF");
     public static ResourceBundle bundle = 
         Locale.getInstallResourceBundle("libPersonalProfile");
     private static ObjectFactory idppFactory = new ObjectFactory();
