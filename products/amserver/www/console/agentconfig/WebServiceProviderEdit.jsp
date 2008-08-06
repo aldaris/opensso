@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: WebServiceProviderEdit.jsp,v 1.6 2008-07-21 17:00:10 veiming Exp $
+   $Id: WebServiceProviderEdit.jsp,v 1.7 2008-08-06 20:30:57 veiming Exp $
 
 --%>
 
@@ -58,14 +58,19 @@
     function showSAMLConfig() {
         var frm = document.forms['WebServiceProviderEdit'];
         var visible = 'none';
+        var kerberos = false;
         for (var i = 0; i <frm.elements.length && (visible == 'none'); i++) {
             var elt = frm.elements[i];
             if (elt.name && elt.name.indexOf('WebServiceProviderEdit.securitymech') == 0) {
-                if (((elt.name.indexOf('SAMLToken-') != -1) ||
-                    (elt.name.indexOf('SAML2Token-') != -1)) &&
-                    (elt.name.indexOf('jato_boolean') == -1)) {
-                    if (elt.checked) {
-                        visible = '';
+                if (elt.name.indexOf('jato_boolean') == -1) {
+                    if ((elt.name.indexOf('SAMLToken-') != -1) ||
+                        (elt.name.indexOf('SAML2Token-') != -1)
+                    ) {
+                        if (elt.checked) {
+                            visible = '';
+                        }
+                    } else if (elt.name.indexOf('KerberosToken') != -1) {
+                        kerberos = (elt.checked);
                     }
                 }
             }
@@ -77,6 +82,11 @@
         } else {
             frm.elements['WebServiceProviderEdit.tokenconversiontype'].disabled = true;
         }
+        frm.elements['WebServiceProviderEdit.kerberosdomainserver'].disabled = !kerberos;
+        frm.elements['WebServiceProviderEdit.kerberosdomain'].disabled = !kerberos;
+        frm.elements['WebServiceProviderEdit.kerberosserviceprincipal'].disabled = !kerberos;
+        frm.elements['WebServiceProviderEdit.kerberoskeytabfile'].disabled = !kerberos;
+        frm.elements['WebServiceProviderEdit.isverifykrbsignature'].disabled = !kerberos;
         return true;
     }
 </script>
