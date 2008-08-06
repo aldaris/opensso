@@ -22,19 +22,22 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateServiceConfig.java,v 1.11 2008-07-11 01:46:21 arviranga Exp $
+ * $Id: CreateServiceConfig.java,v 1.12 2008-08-06 16:43:24 veiming Exp $
  *
  */
 
 package com.sun.identity.sm;
 
+import com.iplanet.services.util.AMEncryption;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.ums.IUMSConstants;
-import com.sun.identity.common.DNUtils;
+import com.sun.identity.security.DecodeAction;
 import com.sun.identity.shared.xml.XMLUtils;
+import java.security.AccessController;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -59,9 +62,10 @@ public class CreateServiceConfig {
         ServiceManager sm,
         String sName,
         String version,
-        Node configNode
+        Node configNode,
+        AMEncryption decryptObj
     ) throws SMSException, SSOException {
-        createService(sm, sName, version, configNode, false);
+        createService(sm, sName, version, configNode, false, decryptObj);
     }
 
     static void createService(
@@ -69,7 +73,8 @@ public class CreateServiceConfig {
         String sName,
         String version,
         Node configNode,
-        boolean createRealms
+        boolean createRealms,
+        AMEncryption decryptObj
     ) throws SMSException, SSOException {
         // Make sure schema exists for the given service & version
         SSOToken token = sm.getSSOToken();
@@ -85,7 +90,6 @@ public class CreateServiceConfig {
                 SMSUtils.INSTANCE).iterator();
         while (insNodes.hasNext()) {
             Node insNode = (Node) insNodes.next();
-            Map insAttrs = null;
             String insName = XMLUtils.getNodeAttributeValue(insNode,
                     SMSUtils.NAME);
             if (insName == null) {
@@ -99,7 +103,7 @@ public class CreateServiceConfig {
             String insUri = XMLUtils.getNodeAttributeValue(insNode,
                     SMSUtils.URI);
             // Get Attribute Value Pairs, if any
-            insAttrs = getAttributeValuePairs(insNode);
+            Map insAttrs = getAttributeValuePairs(insNode);
 
             StringBuffer sb = new StringBuffer(100);
             sb.append("ou=").append(insName).append(",").append(INSTANCES_NODE)
@@ -123,7 +127,7 @@ public class CreateServiceConfig {
                 }
                 if (insAttrs != null) {
                     SMSUtils.setAttributeValuePairs(insEntry, insAttrs,
-                            Collections.EMPTY_SET);
+                        Collections.EMPTY_SET);
                 }
                 insEntry.save(token);
                 cEntry.refresh(insEntry);
@@ -150,7 +154,8 @@ public class CreateServiceConfig {
             StringBuffer sb = new StringBuffer(100);
             sb.append("ou=").append(globalGroup).append(",").append(
                     GLOBAL_CONFIG_NODE).append(baseDN);
-            createSubConfig(token, sb.toString(), globalNode, ss, baseDN);
+            createSubConfig(token, sb.toString(), globalNode, ss, baseDN, 
+                decryptObj);
         }
 
         // Process organization configuration
@@ -183,7 +188,8 @@ public class CreateServiceConfig {
             sb.append("ou=").append(orgGroup).append(",").append(
                     ORG_CONFIG_NODE).append("ou=").append(version).append(
                     ",ou=").append(sName).append(",ou=services,").append(orgDN);
-            createSubConfig(token, sb.toString(), orgNode, ss, orgDN);
+            createSubConfig(token, sb.toString(), orgNode, ss, orgDN, 
+                decryptObj);
 
             // Process OrganizationAttributeValuePairs
             Node orgAttrValuePairNode = XMLUtils.getChildNode(orgNode,
@@ -229,20 +235,48 @@ public class CreateServiceConfig {
             checkAndCreateServiceNode(token, sb.toString());
             // Create plugin config node
             sb.insert(0, ",").insert(0, pName).insert(0, "ou=");
-            createSubConfig(token, sb.toString(), pNode, psi, orgName);
+            createSubConfig(token, sb.toString(), pNode, psi, orgName, 
+                decryptObj);
         }
     }
 
-    static void createSubConfig(SSOToken token, String dn, Node node,
-            ServiceSchemaImpl ss, String orgdn) throws SMSException,
-            SSOException {
+    static void createSubConfig(
+        SSOToken token, 
+        String dn, 
+        Node node,
+        ServiceSchemaImpl ss,
+        String orgdn,
+        AMEncryption decryptObj
+    ) throws SMSException, SSOException {
         // Get service id and priority
         String id = XMLUtils.getNodeAttributeValue(node, SMSUtils.SERVICE_ID);
         String priority = XMLUtils.getNodeAttributeValue(node,
                 SMSUtils.PRIORITY);
-
+        
         // Get the attributes
         Map attrs = getAttributeValuePairs(node);
+        if ((decryptObj != null) && (attrs != null) && !attrs.isEmpty()) {
+            for (Iterator i = attrs.keySet().iterator(); i.hasNext(); ) {
+                String attrName = (String)i.next();
+                AttributeSchemaImpl as = ss.getAttributeSchema(attrName);
+                AttributeSchema.Syntax syntax = as.getSyntax();
+                
+                if (syntax.equals(AttributeSchema.Syntax.ENCRYPTED_PASSWORD) ||
+                    syntax.equals(AttributeSchema.Syntax.PASSWORD)
+                ) {
+                    Set values = (Set) attrs.get(attrName);
+                    if ((values != null) && !values.isEmpty()) {
+                        Set decoded = new HashSet(values.size() * 2);
+                        for (Iterator j = values.iterator(); j.hasNext();) {
+                            decoded.add(AccessController.doPrivileged(
+                                new DecodeAction((String) j.next(), 
+                                decryptObj)));
+                        }
+                        attrs.put(attrName, decoded);
+                    }
+                }
+            }
+        }
 
         // Create the LDAP entry
         createSubConfigEntry(token, dn, ss, id, priority, attrs, orgdn);
@@ -260,7 +294,7 @@ public class CreateServiceConfig {
                 subConfigID = subConfigName;
             }
             createSubConfig(token, ("ou=" + subConfigName + "," + dn),
-                    subConfigNode, ss.getSubSchema(subConfigID), orgdn);
+                subConfigNode, ss.getSubSchema(subConfigID), orgdn, decryptObj);
         }
     }
 

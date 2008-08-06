@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPEventManager.java,v 1.6 2008-07-30 00:50:14 arviranga Exp $
+ * $Id: LDAPEventManager.java,v 1.7 2008-08-06 16:43:25 veiming Exp $
  *
  */
 
@@ -80,9 +80,13 @@ public class LDAPEventManager implements IDSEventListener {
             String disabledList = SystemProperties.get(
                 Constants.EVENT_LISTENER_DISABLE_LIST, "");
             if (disabledList.indexOf("sm") != -1) {
-                debug.error("LDAPEventManager.addObjectChangeListener " +
-                    "Persistent search for SMS has been disabled by the " +
-                    "property: " + Constants.EVENT_LISTENER_DISABLE_LIST);
+                String installTime = SystemProperties.get(
+                    Constants.SYS_PROPERTY_INSTALL_TIME, "false");
+                if (installTime.equals("false")) {
+                    debug.error("LDAPEventManager.addObjectChangeListener " +
+                        "Persistent search for SMS has been disabled by the " +
+                        "property: " + Constants.EVENT_LISTENER_DISABLE_LIST);
+                }
             }
             // Initialize Event Service for persistent search
             EventService.getEventService().resetAllSearches(false);

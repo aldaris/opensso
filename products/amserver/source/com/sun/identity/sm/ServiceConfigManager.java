@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfigManager.java,v 1.8 2008-07-11 01:46:21 arviranga Exp $
+ * $Id: ServiceConfigManager.java,v 1.9 2008-08-06 16:43:24 veiming Exp $
  *
  */
 
 package com.sun.identity.sm;
 
+import com.iplanet.services.util.AMEncryption;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
@@ -400,7 +401,7 @@ public class ServiceConfigManager {
                     && ((configNode = XMLUtils.getChildNode(serviceNode,
                             SMSUtils.CONFIGURATION)) != null)) {
                 CreateServiceConfig.createService(sm, sName, sVersion,
-                        configNode);
+                        configNode, null);
             }
         }
     }
@@ -704,7 +705,7 @@ public class ServiceConfigManager {
         return (sb.toString());
     }
     
-    public String toXML() 
+    public String toXML(AMEncryption encryptObj) 
         throws SMSException, SSOException {
         StringBuffer buff = new StringBuffer();
         buff.append("<" + SMSUtils.CONFIGURATION + ">");
@@ -728,7 +729,7 @@ public class ServiceConfigManager {
             try {
                 ServiceConfig sc = getGlobalConfig(instanceName);
                 if (sc != null) {
-                    buff.append(sc.toXML(SMSUtils.GLOBAL_CONFIG));
+                    buff.append(sc.toXML(SMSUtils.GLOBAL_CONFIG, encryptObj));
                 }
             } catch (SMSException e) {
                 //ignored
@@ -764,7 +765,8 @@ public class ServiceConfigManager {
                     ServiceConfig sc = getOrganizationConfig(
                         orgName, instanceName);
                     if (sc != null) {
-                        buff.append(sc.toXML(SMSUtils.ORG_CONFIG, orgName));
+                        buff.append(sc.toXML(
+                            SMSUtils.ORG_CONFIG, encryptObj, orgName));
                     }
                 } catch (SMSException e) {
                     //ignored

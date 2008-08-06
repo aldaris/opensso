@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebtopNaming.java,v 1.21 2008-07-23 17:21:58 veiming Exp $
+ * $Id: WebtopNaming.java,v 1.22 2008-08-06 16:43:24 veiming Exp $
  *
  */
 
@@ -455,12 +455,16 @@ public class WebtopNaming {
         String uri,
         boolean updatetbl
     ) throws ServerEntryNotFoundException {
+        String installTime = SystemProperties.get(
+            Constants.SYS_PROPERTY_INSTALL_TIME, "false");
         try {
             // check before the first naming table update to avoid deadlock
             if (protocol == null || host == null || port == null ||
                 protocol.length() == 0 || host.length() == 0 ||
                 port.length() == 0) {
-                debug.error("WebtopNaming.getServerId():noServerId");
+                if (installTime.equals("false")) {
+                    debug.error("WebtopNaming.getServerId():noServerId");
+                }
                 throw new Exception(NamingBundle.getString("noServerID"));
             }
 
@@ -494,14 +498,18 @@ public class WebtopNaming {
             }
 
             if (serverID == null) {
-                debug.error("WebtopNaming.getServerId():serverId null " +
-                    "for server: " + server);
+                if (installTime.equals("false")) {
+                    debug.error("WebtopNaming.getServerId():serverId null " +
+                        "for server: " + server);
+                }
                 throw new ServerEntryNotFoundException(
                     NamingBundle.getString("noServerID"));
             }
             return serverID;
         } catch (Exception e) {
-            debug.error("WebtopNaming.getServerId()", e);
+            if (installTime.equals("false")) {
+                debug.error("WebtopNaming.getServerId()", e);
+            }
             throw new ServerEntryNotFoundException(e);
         }
     }

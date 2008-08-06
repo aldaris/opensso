@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeValidator.java,v 1.6 2008-06-25 05:44:03 qcheng Exp $
+ * $Id: AttributeValidator.java,v 1.7 2008-08-06 16:43:24 veiming Exp $
  *
  */
 
 package com.sun.identity.sm;
 
+import com.iplanet.services.util.AMEncryption;
 import com.iplanet.ums.IUMSConstants;
 import com.iplanet.ums.validation.BooleanValidator;
 import com.iplanet.ums.validation.DNValidator;
@@ -262,8 +263,9 @@ class AttributeValidator {
                 array = as.getChoiceValues(env);
                 Iterator it = values.iterator();
                 String val = (it.hasNext()) ? (String) it.next() : null;
-                if (val == null)
+                if (val == null) {
                     return (true);
+                }
                 for (int i = 0; i < array.length; i++) {
                     if (array[i].equalsIgnoreCase(val)) {
                         return (true);
@@ -443,6 +445,39 @@ class AttributeValidator {
                             tString)));
                 } catch (Throwable e) {
                     debug.error("AttributeValidator: Unable to decode", e);
+                    vals.add(tString);
+                }
+            }
+            attrs.put(as.getName(), vals);
+        }
+        return (attrs);
+    }
+
+    /**
+     * Encodes attribute value if it is of syntax password or encoded_password.
+     * 
+     * @param attrs Map of the attributes and their values
+     * @param encryptObj Encryptor
+     * @return A map which is has replaced values with encrypted ones.
+     */
+    Map encodedAttrs(Map attrs, AMEncryption encryptObj) {
+        Set values = (Set) attrs.get(as.getName());
+        if (values == null) {
+            return attrs;
+        }
+        if (as.getSyntax().equals(AttributeSchema.Syntax.PASSWORD)
+                || as.getSyntax().equals(
+                        AttributeSchema.Syntax.ENCRYPTED_PASSWORD)) {
+            // Encrypt the password
+            Set vals = new HashSet();
+            for (Iterator items = values.iterator(); items.hasNext();) {
+                String tString = (String) items.next();
+                try {
+                    vals.add(AccessController.doPrivileged(new EncodeAction(
+                        tString, encryptObj)));
+                } catch (Throwable e) {
+                    debug.error(
+                        "AttributeValidator.encodedAttrs: Unable to encode", e);
                     vals.add(tString);
                 }
             }

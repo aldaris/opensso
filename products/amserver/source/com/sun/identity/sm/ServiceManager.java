@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceManager.java,v 1.19 2008-07-11 01:46:21 arviranga Exp $
+ * $Id: ServiceManager.java,v 1.20 2008-08-06 16:43:24 veiming Exp $
  *
  */
 
@@ -473,7 +473,7 @@ public class ServiceManager {
              * the service configuration already exists
              */
             CreateServiceConfig.createService(this, name, version,
-                configNode, true);
+                configNode, true, decryptObj);
         }
         return sNames;
     }
@@ -1074,7 +1074,7 @@ public class ServiceManager {
                 ServiceConfigManager scm = new ServiceConfigManager(
                     serviceName, token);
                 int idx = xml.lastIndexOf("</" + SMSUtils.SERVICE + ">");
-                xml = xml.substring(0, idx) + scm.toXML() + "</" + 
+                xml = xml.substring(0, idx) + scm.toXML(encryptObj) + "</" + 
                     SMSUtils.SERVICE + ">";
                 buff.append(xml).append("\n");
             }

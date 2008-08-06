@@ -22,20 +22,23 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PossibleLocales.java,v 1.4 2008-06-25 05:42:27 qcheng Exp $
+ * $Id: PossibleLocales.java,v 1.5 2008-08-06 16:43:24 veiming Exp $
  *
  */
 
 package com.sun.identity.common.admin;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.ChoiceValues;
@@ -60,7 +63,23 @@ public class PossibleLocales extends ChoiceValues {
 
     private static final String LOCALE_ATTR = "locale";
 
+    private static Set DEFAULT_LOCALES;
+
     private static Debug debug = Debug.getInstance("PossibleLocales");
+
+    static {
+        DEFAULT_LOCALES = new HashSet();
+        DEFAULT_LOCALES.add("locale=en|charset=UTF-8;ISO-8859-1");
+        DEFAULT_LOCALES.add("locale=ja|charset=UTF-8;Shift_JIS;EUC-JP");
+        DEFAULT_LOCALES.add("locale=fr|charset=UTF-8;ISO-8859-15");
+        DEFAULT_LOCALES.add("locale=de|charset=UTF-8;ISO-8859-15");
+        DEFAULT_LOCALES.add("locale=es|charset=UTF-8;ISO-8859-15");
+        DEFAULT_LOCALES.add("locale=ko|charset=UTF-8;EUC-KR");
+        DEFAULT_LOCALES.add("locale=zh|charset=UTF-8;GB2312");
+        DEFAULT_LOCALES.add("locale=ar|charset=UTF-8;ISO-8859-6");
+        DEFAULT_LOCALES.add("locale=th|charset=UTF-8;TIS-620");
+        DEFAULT_LOCALES.add("locale=zh_TW|charset=UTF-8;BIG5");
+    }
 
     /**
      * Returns a map of locales to its localized name.
@@ -77,23 +96,22 @@ public class PossibleLocales extends ChoiceValues {
         map.put("", "-");
 
         ServiceSchemaManager mgr = getG11NServiceSchemaManager();
+        Set values = DEFAULT_LOCALES;
 
         if (mgr != null) {
             AttributeSchema attributeSchema =
                 getLocaleCharsetMappingAttributeSchema(mgr);
 
             if (attributeSchema != null) {
-                Set values = attributeSchema.getDefaultValues();
+                values = attributeSchema.getDefaultValues();
+            }
+        }
 
-                if ((values != null) && !values.isEmpty()) {
-                    for (Iterator iter = values.iterator(); iter.hasNext();) {
-                        String locale = parseLocaleCharsetValue((String) iter
-                                .next());
-
-                        if ((locale != null) && (locale.length() > 0)) {
-                            map.put(locale, locale);
-                        }
-                    }
+        if ((values != null) && !values.isEmpty()) {
+            for (Iterator iter = values.iterator(); iter.hasNext();) {
+                String locale = parseLocaleCharsetValue((String)iter.next());
+                if ((locale != null) && (locale.length() > 0)) {
+                    map.put(locale, locale);
                 }
             }
         }
@@ -158,8 +176,12 @@ public class PossibleLocales extends ChoiceValues {
                 debug.error("PossibleLocales.getG11NServiceSchemaManager",
                      ssoe);
             } catch (SMSException smse) {
-                debug.error("PossibleLocales.getG11NServiceSchemaManager",
-                     smse);
+                String installTime = SystemProperties.get(
+                    Constants.SYS_PROPERTY_INSTALL_TIME, "false");
+                if (installTime.equals("false")) {
+                    debug.error("PossibleLocales.getG11NServiceSchemaManager",
+                        smse);
+                }
             }
         }
 

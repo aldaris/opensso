@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfigImpl.java,v 1.11 2008-07-15 21:04:17 arviranga Exp $
+ * $Id: ServiceConfigImpl.java,v 1.12 2008-08-06 16:43:24 veiming Exp $
  *
  */
 
 package com.sun.identity.sm;
 
+import com.iplanet.services.util.AMEncryption;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.shared.debug.Debug;
@@ -671,14 +672,20 @@ class ServiceConfigImpl implements ServiceListener {
         }
     }
     
-    public String toXML(SSOToken token, String nodeName)
-        throws SMSException, SSOException {
-        return toXML(token, nodeName, null);
+    public String toXML(
+        SSOToken token, 
+        String nodeName, 
+        AMEncryption encryptObj
+    ) throws SMSException, SSOException {
+        return toXML(token, nodeName, encryptObj, null);
     }
     
-    public String toXML(SSOToken token, String nodeName,
-        String organizationName)
-        throws SMSException, SSOException {
+    public String toXML(
+        SSOToken token, 
+        String nodeName,
+        AMEncryption encryptObj,
+        String organizationName
+    ) throws SMSException, SSOException {
         Set serviceConfigNames = getSubConfigNames(token);
         Map orgAttributes = null;
 
@@ -742,13 +749,19 @@ class ServiceConfigImpl implements ServiceListener {
         
         buff.append(">");
         
-        buff.append(SMSUtils.toAttributeValuePairXML(
-            attributesWithoutDefaults));
+        Map deepCopied = SMSUtils.copyAttributes(attributesWithoutDefaults);
+        Set asNames = ss.getAttributeSchemaNames();
+        for (Iterator i = asNames.iterator(); i.hasNext(); ) {
+             AttributeValidator av = ss.getAttributeValidator((String)i.next());
+             av.encodedAttrs(deepCopied, encryptObj);
+        }
+        
+        buff.append(SMSUtils.toAttributeValuePairXML(deepCopied));
         
         for (Iterator i = serviceConfigNames.iterator(); i.hasNext(); ) {
             String scName = (String)i.next();
             ServiceConfigImpl sci = this.getSubConfig(token, scName);
-            buff.append(sci.toXML(token, SMSUtils.SUB_CONFIG));
+            buff.append(sci.toXML(token, SMSUtils.SUB_CONFIG, encryptObj));
         }
         
         if ((orgAttributes != null) && !orgAttributes.isEmpty()) {

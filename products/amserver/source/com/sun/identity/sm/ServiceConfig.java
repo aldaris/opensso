@@ -22,23 +22,22 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfig.java,v 1.15 2008-07-11 01:46:21 arviranga Exp $
+ * $Id: ServiceConfig.java,v 1.16 2008-08-06 16:43:24 veiming Exp $
  *
  */
 
 package com.sun.identity.sm;
 
+import com.iplanet.services.util.AMEncryption;
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
+import com.iplanet.ums.IUMSConstants;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
 import netscape.ldap.util.DN;
-
-import com.iplanet.sso.SSOException;
-import com.iplanet.sso.SSOToken;
-import com.iplanet.ums.IUMSConstants;
 
 /**
  * The class <code>ServiceConfig</code> provides interfaces to manage the
@@ -920,15 +919,15 @@ public class ServiceConfig {
         return (sc.isValid());
     }
     
-    public String toXML(String NodeTag)
+    public String toXML(String NodeTag, AMEncryption encryptObj)
         throws SMSException, SSOException {
         validateServiceConfigImpl();
-        return sc.toXML(token, NodeTag);
+        return sc.toXML(token, NodeTag, encryptObj);
     }
 
-    public String toXML(String NodeTag, String orgName)
+    public String toXML(String NodeTag, AMEncryption encryptObj, String orgName)
         throws SMSException, SSOException {
         validateServiceConfigImpl();
-        return sc.toXML(token, NodeTag, orgName);
+        return sc.toXML(token, NodeTag, encryptObj, orgName);
     }
 }
