@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentConfigInherit.jsp,v 1.5 2008-07-02 23:41:58 asyhuang Exp $
+   $Id: AgentConfigInherit.jsp,v 1.6 2008-08-06 14:16:43 veiming Exp $
 
 --%>
 
@@ -85,7 +85,7 @@
     showLowerActions="false"
     showPaginationControls="false"
     showPaginationIcon="false"
-    showSelectionIcons="false"
+    showSelectionIcons="true"
     selectionJavascript=""
     showSelectionSortIcon="false"
     showSortingRow="false" />
