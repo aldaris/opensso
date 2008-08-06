@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: COTUtils.java,v 1.4 2008-06-25 05:46:38 qcheng Exp $
+ * $Id: COTUtils.java,v 1.5 2008-08-06 17:26:14 exu Exp $
  *
  */
 
@@ -43,7 +43,7 @@ import java.util.logging.Level;
 public class COTUtils {
     
     public static final String RESOURCE_BUNDLE_NAME = "libCOT";
-    public static Debug debug = Debug.getInstance("fmCOT");
+    public static Debug debug = Debug.getInstance("libCOT");
     static String WSFED_DELIM = COTConstants.DELIMITER + COTConstants.WS_FED;
     static String SAML2_DELIM = COTConstants.DELIMITER + COTConstants.SAML2;
     static String IDFF_DELIM = COTConstants.DELIMITER + COTConstants.IDFF;

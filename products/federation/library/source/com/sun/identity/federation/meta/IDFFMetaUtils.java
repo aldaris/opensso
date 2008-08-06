@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFMetaUtils.java,v 1.3 2008-06-25 05:46:49 qcheng Exp $
+ * $Id: IDFFMetaUtils.java,v 1.4 2008-08-06 17:26:13 exu Exp $
  *
  */
 
@@ -75,7 +75,7 @@ public class IDFFMetaUtils {
     /**
      * IDFF Meta Debug
      */
-    public static Debug debug = Debug.getInstance("libIDFFMeta");
+    public static Debug debug = Debug.getInstance("libIDFF");
     
     /**
      * Bundle Name

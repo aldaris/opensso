@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SystemConfigurationUtil.java,v 1.6 2008-06-25 05:46:37 qcheng Exp $
+ * $Id: SystemConfigurationUtil.java,v 1.7 2008-08-06 17:26:14 exu Exp $
  *
  */
 
@@ -78,7 +78,7 @@ public final class SystemConfigurationUtil implements ConfigurationListener {
     }
 
     private static Debug getDebug() {
-        return Debug.getInstance("libSystemConfiguration");        
+        return Debug.getInstance("libPlugins");        
     }
 
     /**
