@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README,v 1.2 2008-07-23 17:58:20 veiming Exp $
+   $Id: README,v 1.3 2008-08-06 03:10:27 mallas Exp $
 
 -->
 
@@ -169,6 +169,7 @@ Configuring OpenSSO Enterprise for passthrough (use case A):
       Click on above saved profile to edit -> Select all Security Mechanisms.
       Select Web Service End Point as default and 
       "Is Request Signature Verified" as true (checked).
+      "Preserve Security Headers in Message" as false (unchecked) 
       Save changes. 
 
       Note: One wsp can be used for both LoanRequestor and LoanProcessor
