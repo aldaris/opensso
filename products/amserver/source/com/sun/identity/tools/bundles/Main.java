@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Main.java,v 1.6 2008-06-25 05:44:12 qcheng Exp $
+ * $Id: Main.java,v 1.7 2008-08-06 00:04:50 ww203982 Exp $
  *
  */
 
@@ -101,6 +101,7 @@ public class Main implements SetupConstants{
             System.out.println(bundle.getString("message.error.copy"));
             System.exit(1);
         }
+        System.exit(0);
     }
 }
 
