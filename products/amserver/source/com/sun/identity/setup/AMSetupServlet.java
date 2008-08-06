@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.85 2008-08-01 00:32:15 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.86 2008-08-06 03:08:09 mallas Exp $
  *
  */
 
@@ -1920,6 +1920,7 @@ public class AMSetupServlet extends HttpServlet {
         config.put("SecurityMech","urn:sun:wss:security:null:X509Token");
         config.put("STSEndpoint",serverURL + deployuri + "/sts");
         config.put("STSMexEndpoint",serverURL + deployuri + "/sts/mex");
+        config.put("WSTrustVersion", "1.0");
         //createAgent(idrepo, "defaultSTS", "STS", "", config);
         createAgent(token, idrepo, "SecurityTokenService", "STS", "", config);
 
