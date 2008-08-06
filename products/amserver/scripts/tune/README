@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.6 2008-07-25 05:33:06 kanduls Exp $
+$Id: README,v 1.7 2008-08-06 11:35:19 kanduls Exp $
 
 ------------------------------------------------------------------------------
 
@@ -55,13 +55,13 @@ Step 2: Go to the directory which has the ssoAdminTools.zip unzipped.
         for Unix and Windows respectively.
         Then enter the configuration directory when prompted.
         "Path to config files of OpenSSO Enterprise
-        (example: /fam_config/opensso):"
+        (example: /opensso_config/opensso):"
 
 Step 3: After step 2 is performed, the CLIs can be run under the following
         directory:
-        <TOOLS_DIR>/<FAM_INSTANCE_NAME>/bin
+        <TOOLS_DIR>/<OPENSSO_INSTANCE_NAME>/bin
         where <TOOLS_DIR> is the directory which has ssoAdminTools.zip unzipped
-        (ie: current directory), and <FAM_INSTANCE_NAME> is the deployment
+        (ie: current directory), and <OPENSSO_INSTANCE_NAME> is the deployment
         URI of OpenSSO Enterprise.
 
 %% 2. Running tunning scripts
@@ -78,9 +78,9 @@ parameter in the amtune-env.properties file.
 	changes that will be applied to your deployment.
 
 In either mode, the scripts return a list of tuning recommendations to the 
-<TOOLS_DIR>\<FAM_INSTANCE_NAME>\logs\amtune-config.<randomstring> log file and the 
+<TOOLS_DIR>\<OPENSSO_INSTANCE_NAME>\logs\amtune-config.<timestamp> log file and the 
 terminal window,  debug logs will be present in the file 
-<TOOLS_DIR>\<FAM_INSTANCE_NAME>\logs\amtune-debug-logs.
+<TOOLS_DIR>\<OPENSSO_INSTANCE_NAME>\logs\amtune-debug-logs.
 
 
 2.2 Running scripts
@@ -91,10 +91,10 @@ To run a tuning script,
 
 	* Log in as or become superuser.
 	* If you have not run the scripts in REVIEW mode, ensure that AMTUNE_MODE is set to REVIEW 
-	  (default value) in the <TOOLS_DIR>\<FAM_INSTANCE_NAME>\bin\amtune\amtune-env.properties file. 
+	  (default value) in the <TOOLS_DIR>\<OPENSSO_INSTANCE_NAME>\bin\amtune\amtune-env.properties file. 
 	* Edit other parameters in the amtune-env.properties file, depending on the components you want to tune
-	* Execute <TOOLS_DIR>\<FAM_INSTANCE_NAME>\bin\amtune\amtune on Unix/Linux and 
-          <TOOLS_DIR>\<FAM_INSTANCE_NAME>\bin\amtune\amtune.bat on Windows
+	* Execute <TOOLS_DIR>\<OPENSSO_INSTANCE_NAME>\bin\amtune\amtune on Unix/Linux and 
+          <TOOLS_DIR>\<OPENSSO_INSTANCE_NAME>\bin\amtune\amtune.bat on Windows
 	* In REVIEW mode, run either the amtune script or one of the component scripts.  Review the tuning 
 	  recommendations in the debug log file. If needed, make changes to the amtune-env.properties file based on 
 	  this run.
