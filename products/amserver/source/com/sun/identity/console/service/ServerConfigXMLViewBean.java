@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerConfigXMLViewBean.java,v 1.5 2008-06-25 05:43:17 qcheng Exp $
+ * $Id: ServerConfigXMLViewBean.java,v 1.6 2008-08-07 17:22:03 arviranga Exp $
  *
  */
 
@@ -36,6 +36,7 @@ import com.iplanet.jato.view.event.RequestInvocationEvent;
 import com.iplanet.services.ldap.DSConfigMgr;
 import com.iplanet.services.util.Crypt;
 import com.sun.identity.common.configuration.ServerConfigXML;
+import com.sun.identity.common.configuration.ServerConfigXML.DirUserObject;
 import com.sun.identity.console.base.AMPropertySheet;
 import com.sun.identity.console.base.AMPrimaryMastHeadViewBean;
 import com.sun.identity.console.base.AMViewBeanBase;
@@ -114,6 +115,9 @@ public class ServerConfigXMLViewBean
         "tblServerConfigXMLUserDataType";
     private static final String TF_SERVER_BIND_DN = "tfbinddn";
     private static final String TF_SERVER_BIND_PWD = "tfbindpwd";
+    private static final String TF_USER_ROOTSUFFIX = "tfamsdkrootsuffix";
+    private static final String TF_USER_PROXY_PWD = "tfproxypwd";
+    private static final String TF_USER_ADMIN_PWD = "tfadminpwd";
 
     private static final String PROPERTY_ATTRIBUTE = "propertyAttributes";
 
@@ -278,6 +282,22 @@ public class ServerConfigXMLViewBean
                 propertySheetModel.setValue(TF_SERVER_BIND_PWD, 
                     Crypt.decrypt(bind.password));
             }
+            
+            if (bAMSDKEnabled) {
+                propertySheetModel.setValue(TF_USER_ROOTSUFFIX,
+                    defaultServerGroup.dsBaseDN);
+                for (Iterator i = defaultServerGroup.dsUsers.iterator(); 
+                    i.hasNext(); ) {
+                    DirUserObject o = (DirUserObject)i.next();
+                    if (o.type.equals("proxy")) {
+                        propertySheetModel.setValue(TF_USER_PROXY_PWD,
+                            Crypt.decrypt(o.password));
+                    } else if (o.type.equals("admin")) {
+                        propertySheetModel.setValue(TF_USER_ADMIN_PWD,
+                            Crypt.decrypt(o.password));
+                    }
+                }
+            }
         
             populateUserTableModel(defaultServerGroup.hosts);
             populateServerTableModel(smsServerGroup.hosts);
@@ -392,6 +412,25 @@ public class ServerConfigXMLViewBean
 
                 defaultServerGroup.minPool = Integer.parseInt(userMinPool);
                 defaultServerGroup.maxPool = Integer.parseInt(userMaxPool);
+                
+                defaultServerGroup.dsBaseDN = ((String)getDisplayFieldValue(
+                    TF_USER_ROOTSUFFIX)).trim();
+               
+                for (Iterator i = defaultServerGroup.dsUsers.iterator(); 
+                    i.hasNext(); ) {
+                    DirUserObject o = (DirUserObject)i.next();
+                    if (o.type.equals("proxy")) {
+                        o.dn = "cn=puser,ou=DSAME Users," +
+                            defaultServerGroup.dsBaseDN;
+                        o.password = Crypt.encode((String)getDisplayFieldValue(
+                            TF_USER_PROXY_PWD));
+                    } else if (o.type.equals("admin")) {
+                        o.dn = "cn=dsameuser,ou=DSAME Users," +
+                            defaultServerGroup.dsBaseDN;
+                        o.password = Crypt.encode((String)getDisplayFieldValue(
+                            TF_USER_ADMIN_PWD));
+                    }
+                }
             }
 
             smsServerGroup.minPool = Integer.parseInt(svrMinPool);

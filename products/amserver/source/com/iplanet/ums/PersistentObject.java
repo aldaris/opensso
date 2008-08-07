@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PersistentObject.java,v 1.5 2008-06-25 05:41:46 qcheng Exp $
+ * $Id: PersistentObject.java,v 1.6 2008-08-07 17:22:04 arviranga Exp $
  *
  */
 
@@ -37,6 +37,8 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Locale;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import netscape.ldap.LDAPAttribute;
 import netscape.ldap.LDAPModification;
 import netscape.ldap.util.DN;
@@ -197,7 +199,14 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
         Attr attr = getAttributeFromCache(attrName);
         if ((attr == null) && isAttributeNotRead(attrName)
                 && (getGuid() != null) && (getPrincipal() != null)) {
-            attr = readAttributeFromDataStore(attrName);
+            try {
+                attr = readAttributeFromDataStore(attrName);
+            } catch (UMSException ex) {
+                if (debug.warningEnabled()) {
+                    debug.warning("PersistentObject.getAttribute: for DN: " +
+                        getGuid() + " attribute: " + attrName, ex);
+                }
+            }
         }
         return attr;
     }
@@ -1644,7 +1653,7 @@ public class PersistentObject implements ISearch, Serializable, IUMSConstants {
      *            names of attributes to get
      * @return Attr read from datastore
      */
-    private Attr readAttributeFromDataStore(String attrName) {
+    private Attr readAttributeFromDataStore(String attrName) throws UMSException {
         Attr attr = DataLayer.getInstance().getAttribute(getPrincipal(),
                 getGuid(), attrName);
         if (m_attrSet == null) {

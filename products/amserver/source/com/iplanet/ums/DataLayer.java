@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataLayer.java,v 1.13 2008-07-30 00:50:14 arviranga Exp $
+ * $Id: DataLayer.java,v 1.14 2008-08-07 17:22:04 arviranga Exp $
  *
  */
 
@@ -130,7 +130,7 @@ public class DataLayer implements java.io.Serializable {
     private static int connRetryInterval = 1000;
 
     private static HashSet retryErrorCodes = new HashSet();
-
+    
     static {
         debug = Debug.getInstance(IUMSConstants.UMS_DEBUG);
         String numRetryStr = SystemProperties.get(LDAP_CONNECTION_NUM_RETRIES);
@@ -192,7 +192,8 @@ public class DataLayer implements java.io.Serializable {
      * @param pwd
      *            Password for the user
      */
-    private DataLayer(String id, String pwd, String host, int port) {
+    private DataLayer(String id, String pwd, String host, int port)
+        throws UMSException {
         m_proxyUser = id;
         m_proxyPassword = pwd;
         m_host = host;
@@ -207,10 +208,10 @@ public class DataLayer implements java.io.Serializable {
      *
      * @supported.api
      */
-    public synchronized static DataLayer getInstance(ServerInstance serverCfg) {
+    public synchronized static DataLayer getInstance(ServerInstance serverCfg)
+        throws UMSException {
         // Make sure only one instance of this class is created.
         if (m_instance == null) {
-
             String host = "localhost";
             int port = 389;
             String pUser = "";
@@ -237,7 +238,7 @@ public class DataLayer implements java.io.Serializable {
      *
      * @supported.api
      */
-    public static DataLayer getInstance() {
+    public static DataLayer getInstance() throws UMSException {
         // Make sure only one instance of this class is created.
         if (m_instance == null) {
             try {
@@ -1329,7 +1330,7 @@ public class DataLayer implements java.io.Serializable {
      * @param port
      *            ldapport to init the pool from
      */
-    private synchronized void initLdapPool() {
+    private synchronized void initLdapPool() throws UMSException {
         // Don't do anything if pool is already initialized
         if (_ldapPool != null)
             return;
@@ -1349,12 +1350,19 @@ public class DataLayer implements java.io.Serializable {
             _trialConn = dsCfg.getNewProxyConnection();
 
             svrCfg = dsCfg.getServerInstance(LDAPUser.Type.AUTH_PROXY);
-            if (svrCfg == null) {
-                debug.error("Error getting server config.");
-            }
         } catch (LDAPServiceException ex) {
             debug.error("Error initializing connection pool "
                         + ex.getMessage());
+        }
+        
+        // Check if svrCfg was successfully obtained
+        if ((svrCfg == null) || (_trialConn == null)) {
+            debug.error("Error getting server config.");
+            // throw exception
+            String args[] = new String[1];
+            args[0] = (hostName == null) ? "default" : hostName;
+            throw new UMSException(i18n.getString(
+                IUMSConstants.NEW_INSTANCE_FAILED, args));
         }
 
         int poolMin = svrCfg.getMinConnections();

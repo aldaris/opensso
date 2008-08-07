@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SearchFilterManager.java,v 1.4 2008-06-25 05:41:26 qcheng Exp $
+ * $Id: SearchFilterManager.java,v 1.5 2008-08-07 17:22:03 arviranga Exp $
  *
  */
 
@@ -161,8 +161,15 @@ public class SearchFilterManager {
             // Check to see if the filter starts with "(" and ends with ")"
             // In which case there is no need to add opening and closing braces.
             // otherwise add the opening and closing braces.
-            filter = searchTemp.getSearchFilter();
         } catch (UMSException ue) {
+            if (debug.messageEnabled()) {
+                debug.message("SearchFilterManager." + "getSearchFilterFrom" +
+                    "Template() Got Exception", ue);
+            }
+        }
+        if (searchTemp != null) {
+            filter = searchTemp.getSearchFilter();
+        } else {
             // FIXME: Why do we need to make it objectclass=*, can't we send the
             // default filter here?
             filter = "(objectclass=*)";
@@ -175,12 +182,17 @@ public class SearchFilterManager {
         // filter = modifyFilter(filter, objectType);
 
         if (debug.messageEnabled()) {
-            debug.message("SearchFilterManager."
-                    + "getSearchFilterFromTemplate() SearchTemplate Name = "
-                    + searchTemp.getName() + ", objectType = " + objectType
-                    + ", orgDN = " + orgDN + ", Obtained Filter = "
-                    + searchTemp.getSearchFilter() + ", Modified Filter = "
-                    + filter);
+            if (searchTemp != null) {
+                debug.message("SearchFilterManager." + "getSearchFilterFrom" +
+                    "Template() SearchTemplate Name = " +
+                    searchTemp.getName() + ", objectType = " + objectType +
+                    ", orgDN = " + orgDN + ", Obtained Filter = " +
+                    searchTemp.getSearchFilter() + ", Modified Filter = " +
+                    filter);
+            } else {
+                debug.message("SearchFilterManager." + "getSearchFilterFrom" +
+                    "Template() Filter = " + filter);
+            }
         }
 
         return filter;

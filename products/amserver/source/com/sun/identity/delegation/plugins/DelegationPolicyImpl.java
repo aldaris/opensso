@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationPolicyImpl.java,v 1.7 2008-07-23 17:24:58 veiming Exp $
+ * $Id: DelegationPolicyImpl.java,v 1.8 2008-08-07 17:22:05 arviranga Exp $
  *
  */
 package com.sun.identity.delegation.plugins;
@@ -45,6 +45,7 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.am.util.Cache;
 import com.iplanet.am.util.SystemProperties;
 
+import com.sun.identity.delegation.DelegationEvaluator;
 import com.sun.identity.security.AdminTokenAction;
 
 import com.sun.identity.idm.AMIdentityRepository;
@@ -1169,6 +1170,8 @@ public class DelegationPolicyImpl implements DelegationInterface,
         DelegationPermission de = new DelegationPermission(orgName,
             "sunAMRealmService", "1.0", "organizationconfig", null,
              action, Collections.EMPTY_MAP);
-        return (isAllowed(token, de, Collections.EMPTY_MAP));
+        // Call DelegationEvaluator to handle super and internal users
+        DelegationEvaluator evaluator = new DelegationEvaluator();
+        return (evaluator.isAllowed(token, de, Collections.EMPTY_MAP));
     }
 }

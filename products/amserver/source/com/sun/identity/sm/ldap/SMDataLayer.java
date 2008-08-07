@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMDataLayer.java,v 1.12 2008-06-25 05:44:11 qcheng Exp $
+ * $Id: SMDataLayer.java,v 1.13 2008-08-07 17:22:04 arviranga Exp $
  *
  */
 
@@ -82,7 +82,6 @@ class SMDataLayer {
 
     private LDAPConnectionPool _ldapPool = null;
     private LDAPConnection _trialConn = null;
-    private boolean m_releaseConnectionBeforeSearchCompletes;
     private LDAPSearchConstraints _defaultSearchConstraints = null;
     
     /**
@@ -92,10 +91,6 @@ class SMDataLayer {
         initLdapPool();
     }
 
-    public static void reset() {
-        m_instance = null;
-    }
-    
     /**
      * create the singleton SMDataLayer object if it doesn't exist already.
      */
@@ -195,6 +190,17 @@ class SMDataLayer {
                     + "Released Connection : " + conn);
         }
     }
+    
+    /**
+     * Closes all the open ldap connections 
+     */
+    protected synchronized void shutdown() {
+        if (_ldapPool != null) {
+            _ldapPool.destroy();
+        }
+        _ldapPool = null;
+        m_instance = null;
+    }
 
     /**
      * Initialize the pool shared by all SMDataLayer object(s).
@@ -240,8 +246,6 @@ class SMDataLayer {
             String connDN = svrCfg.getAuthID();
             String connPWD = svrCfg.getPasswd();
             int maxBackLog = svrCfg.getIntValue(LDAP_MAXBACKLOG, MAX_BACKLOG);
-            m_releaseConnectionBeforeSearchCompletes = svrCfg.getBooleanValue(
-                LDAP_RELEASECONNBEFORESEARCH, false);
             boolean referrals = svrCfg.getBooleanValue(LDAP_REFERRAL, true);
 
             if (debug.messageEnabled()) {

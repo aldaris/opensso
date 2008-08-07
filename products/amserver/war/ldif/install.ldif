@@ -411,48 +411,6 @@ cn: amldapuser
 sn: amldapuser
 userPassword: @AMLDAPUSERPASSWD@
 
-dn: @USER_NAMING_ATTR@=amAdmin,ou=People,@NORMALIZED_RS@
-objectclass: inetuser
-objectclass: inetorgperson
-objectclass: organizationalperson
-objectclass: person
-objectclass: top
-objectClass: iplanet-am-managed-person
-objectClass: iplanet-am-session-service
-objectClass: iplanet-am-user-service
-objectClass: iPlanetPreferences
-objectclass: inetAdmin
-objectclass: sunAMAuthAccountLockout
-inetuserstatus: Active
-cn: amAdmin
-sn: amAdmin
-userPassword: @ADMIN_PWD@
-nsRoleDN: cn=Top-level Admin Role,@NORMALIZED_RS@
-
-dn: @USER_NAMING_ATTR@=anonymous,ou=People,@NORMALIZED_RS@
-objectclass: inetuser
-objectclass: inetorgperson
-objectclass: organizationalperson
-objectclass: person
-objectclass: top
-objectClass: iplanet-am-managed-person
-objectClass: iplanet-am-session-service
-objectClass: iplanet-am-user-service
-objectClass: iPlanetPreferences
-objectclass: inetAdmin
-inetuserstatus: Active
-cn: anonymous
-sn: anonymous
-nsRoleDN: cn=Deny Write Access,@NORMALIZED_RS@
-
-dn: cn=amService-UrlAccessAgent,ou=DSAME Users,@NORMALIZED_RS@
-objectclass: inetuser
-objectclass: organizationalperson
-objectclass: person
-objectclass: top
-cn: amService-UrlAccessAgent
-sn: amService-UrlAccessAgent
-
 dn: cn=ContainerDefaultTemplateRole,@NORMALIZED_RS@
 objectClass: top
 objectClass: nscomplexroledefinition

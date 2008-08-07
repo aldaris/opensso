@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BootstrapCreator.java,v 1.9 2008-07-23 06:03:31 veiming Exp $
+ * $Id: BootstrapCreator.java,v 1.10 2008-08-07 17:22:06 arviranga Exp $
  *
  */
 
@@ -43,7 +43,6 @@ import com.iplanet.sso.SSOException;
 import com.sun.identity.common.configuration.ConfigurationException;
 import com.sun.identity.sm.SMSException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.Iterator;
@@ -59,7 +58,7 @@ public class BootstrapCreator {
     
     static final String template =
         "@DS_PROTO@://@DS_HOST@/@INSTANCE_NAME@" +
-        "?pwd=@DSAMEUSER_PWD@" +
+        "?user=@DSAMEUSER_NAME@&pwd=@DSAMEUSER_PWD@" +
         "&dsbasedn=@BASE_DN@" +
         "&dsmgr=@BIND_DN@" +
         "&dspwd=@BIND_PWD@" +
@@ -94,35 +93,6 @@ public class BootstrapCreator {
         } catch (LDAPServiceException e) {
             throw new ConfigurationException(e.getMessage());
         }
-    }
-
-    public static String generate(
-        boolean bSSL,
-        String dsHost,
-        String dsPort,
-        String dsameUserPassword,
-        String dsAdmin,
-        String basedn,
-        String dsPassword
-    ) throws UnsupportedEncodingException {
-        String protocol = (bSSL) ? "ldaps" : "ldap";
-        String dsameUserPwd = Crypt.encode(dsameUserPassword,
-            Crypt.getHardcodedKeyEncryptor());
-        String dsPwd = Crypt.encode(dsPassword,
-            Crypt.getHardcodedKeyEncryptor());
-        String dsHostPort = dsHost + ":" + dsPort;
-
-        String url = template.replaceAll("@DS_PROTO@", protocol);
-        url = url.replaceAll("@DS_HOST@", dsHostPort);
-        url = url.replaceAll("@INSTANCE_NAME@", URLEncoder.encode(
-            SystemProperties.getServerInstanceName(), "UTF-8"));
-        url = url.replaceAll("@DSAMEUSER_PWD@", URLEncoder.encode(
-            dsameUserPwd, "UTF-8"));
-        url = url.replaceAll("@BASE_DN@", URLEncoder.encode(basedn, "UTF-8"));
-        url = url.replaceAll("@BIND_DN@", URLEncoder.encode(dsAdmin, "UTF-8"));
-        url = url.replaceAll("@BIND_PWD@", URLEncoder.encode(
-            dsPwd, "UTF-8"));
-        return url;
     }
 
     private void update(IDSConfigMgr dsCfg)
@@ -168,6 +138,7 @@ public class BootstrapCreator {
 
             ServerInstance userInstance = defaultGroup.getServerInstance(
                 LDAPUser.Type.AUTH_ADMIN);
+            String dsameUserName = userInstance.getAuthID();
             String dsameUserPwd = Crypt.encode(userInstance.getPasswd(),
                 Crypt.getHardcodedKeyEncryptor());
 
@@ -192,6 +163,8 @@ public class BootstrapCreator {
                 url = url.replaceAll("@INSTANCE_NAME@",
                     URLEncoder.encode(SystemProperties.getServerInstanceName(),
                     "UTF-8"));
+                url = url.replaceAll("@DSAMEUSER_NAME@",
+                    URLEncoder.encode(dsameUserName, "UTF-8"));
                 url = url.replaceAll("@DSAMEUSER_PWD@",
                     URLEncoder.encode(dsameUserPwd, "UTF-8"));
                 url = url.replaceAll("@BASE_DN@",

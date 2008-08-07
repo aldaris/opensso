@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.44 2008-08-04 22:12:36 veiming Exp $
+ * $Id: IdServicesImpl.java,v 1.45 2008-08-07 17:22:00 arviranga Exp $
  *
  */
 
@@ -32,10 +32,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 
 import javax.security.auth.callback.Callback;
 
@@ -70,7 +68,6 @@ import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.idm.RepoSearchResults;
 import com.sun.identity.idm.plugins.internal.SpecialRepo;
-import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.DNMapper;
@@ -80,7 +77,6 @@ import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
-import java.security.AccessController;
 
 public class IdServicesImpl implements IdServices {
 
@@ -89,6 +85,7 @@ public class IdServicesImpl implements IdServices {
     protected static Debug debug = Debug.getInstance("amIdm");
 
     // Cache to hold special identities stored in SpecialRepo
+    protected Set specialIdentityNames;
     protected IdSearchResults specialIdentities;
     protected IdSearchResults emptyUserIdentities =
         new IdSearchResults(IdType.USER, "");
@@ -163,18 +160,37 @@ public class IdServicesImpl implements IdServices {
                 "called for type: " + type + " name: " + name +
                 " org: " + orgName);
         }
-
-        CaseInsensitiveHashSet answer = new CaseInsensitiveHashSet();
-        IdRepoException firstException = null;
         
-        // Get the list of plugins and check if they support authN
-        // Use AdminToken, since user token may not have permission
+        // Get IdRepo plugins
         Set repos = idrepoCache.getIdRepoPlugins(
             orgName, IdOperation.READ, type);
+        
+        // Verify if it is an internal/special identity
+        // to avoid calling other plugins for special users
+        CaseInsensitiveHashSet answer = new CaseInsensitiveHashSet();
+        if (isSpecialIdentity(token, name, type, orgName)) {
+            for (Iterator items = repos.iterator();
+                items.hasNext();) {
+                IdRepo idRepo = (IdRepo) items.next();
+                if (idRepo.getClass().getName().equals(
+                    IdConstants.SPECIAL_PLUGIN)) {
+                    answer.add(idRepo.getFullyQualifiedName(token, type, name));
+                }
+            }
+            return (answer);
+        }
+
+        
+        // Get the fully qualified names from IdRepo plugins
+        IdRepoException firstException = null;
         if ((repos != null) && !repos.isEmpty()) {
             for (Iterator items = repos.iterator(); items.hasNext();) {
                 IdRepo idRepo = (IdRepo) items.next();
                 // Skip users in Special Repo
+                if (idRepo.getClass().getName().equals(
+                    IdConstants.SPECIAL_PLUGIN)) {
+                    continue;
+                }
                 try {
                     String fqn = idRepo.getFullyQualifiedName(token,
                         type, name);
@@ -221,8 +237,6 @@ public class IdServicesImpl implements IdServices {
         
         // Get the list of plugins and check if they support authN
         Set cPlugins = null;
-        Vector orderedPlugins = new Vector();
-        IdRepo savedAgentRepo = null;
         try {
             cPlugins = idrepoCache.getIdRepoPlugins(orgName);
         } catch (SSOException ex) {
@@ -235,19 +249,6 @@ public class IdServicesImpl implements IdServices {
             return (false);
         }
         for (Iterator items = cPlugins.iterator(); items.hasNext();) {
-              IdRepo idRepo = (IdRepo) items.next();
-              if (idRepo instanceof com.sun.identity.idm.plugins.internal.AgentsRepo) {
-                  savedAgentRepo = idRepo;
-              } else {
-                  orderedPlugins.add(idRepo);
-              }
-        }
-        if (savedAgentRepo != null){
-             orderedPlugins.add(savedAgentRepo);
-        }
-
-        for (ListIterator items = orderedPlugins.listIterator();
-            items.hasNext();) {
             IdRepo idRepo = (IdRepo) items.next();
             if (idRepo.supportsAuthentication()) {
                 if (getDebug().messageEnabled()) {
@@ -291,7 +292,6 @@ public class IdServicesImpl implements IdServices {
         }
         return (false);
     }
-    
     
     private AMIdentity getRealmIdentity(SSOToken token, String orgDN)
             throws IdRepoException {
@@ -338,8 +338,7 @@ public class IdServicesImpl implements IdServices {
     }
 
     public AMIdentity create(SSOToken token, IdType type, String name,
-            Map attrMap, String amOrgName) throws IdRepoException, SSOException 
-            {
+        Map attrMap, String amOrgName) throws IdRepoException, SSOException {
         
         if (type.equals(IdType.REALM)) {                        
             return createRealmIdentity(token, type, name, attrMap, amOrgName);
@@ -354,8 +353,8 @@ public class IdServicesImpl implements IdServices {
         String amsdkdn = null;
         Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(amOrgName,
             IdOperation.CREATE, type);
-        if (configuredPluginClasses == null
-                || configuredPluginClasses.isEmpty()) {
+        if ((configuredPluginClasses == null) ||
+            configuredPluginClasses.isEmpty()) {
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "301", null);
         }
 
@@ -385,7 +384,7 @@ public class IdServicesImpl implements IdServices {
                         + ide.getMessage());
                 }
                 noOfSuccess--;
-                origEx = ide;
+                origEx = (origEx == null) ? ide : origEx;
             } catch (IdRepoFatalException idf) {
                 // fatal ..throw it all the way up
                 getDebug().error(
@@ -402,7 +401,7 @@ public class IdServicesImpl implements IdServices {
                         + ide.getMessage());
                 }
                 noOfSuccess--;
-                origEx = ide;
+                origEx = (origEx == null) ? ide : origEx;
             }
         }
         AMIdentity id = new AMIdentity(token, name, type, amOrgName, amsdkdn);
@@ -449,16 +448,15 @@ public class IdServicesImpl implements IdServices {
         }    
         
         IdRepoException origEx = null;
-        // First get the list of plugins that support the create operation.
-
         // Check permission first. If allowed then proceed, else the
         // checkPermission method throws an "402" exception.
         checkPermission(token, orgName, name, null, IdOperation.DELETE, type);
+        
+        // Get the list of plugins that support the delete operation.
         Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(orgName,
             IdOperation.DELETE, type);
         if ((configuredPluginClasses == null) || 
-            configuredPluginClasses.isEmpty()
-        ) {
+            configuredPluginClasses.isEmpty()) {
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "301", null);
         }
 
@@ -469,8 +467,7 @@ public class IdServicesImpl implements IdServices {
             idRepo = (IdRepo) it.next();
             try {
                 if (idRepo.getClass().getName()
-                        .equals(IdConstants.AMSDK_PLUGIN)
-                        && amsdkDN != null) {
+                    .equals(IdConstants.AMSDK_PLUGIN) && amsdkDN != null) {
                     idRepo.delete(token, type, amsdkDN);
                 } else {
                     idRepo.delete(token, type, name);
@@ -484,7 +481,7 @@ public class IdServicesImpl implements IdServices {
                         + ide.getMessage());
                 }
                 noOfSuccess--;
-                origEx = ide;
+                origEx = (origEx == null) ? ide : origEx;
             } catch (IdRepoFatalException idf) {
                 // fatal ..throw it all the way up
                 getDebug().error(
@@ -524,23 +521,41 @@ public class IdServicesImpl implements IdServices {
             throws IdRepoException, SSOException {
         IdRepoException origEx = null;
 
-        // First get the list of plugins that support the create operation.
         // Check permission first. If allowed then proceed, else the
         // checkPermission method throws an "402" exception.
         checkPermission(token, amOrgName, name, attrNames, IdOperation.READ,
                 type);
+        // Get the list of plugins that support the read operation
         Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(amOrgName,
             IdOperation.READ, type);
         if ((configuredPluginClasses == null) || 
-            configuredPluginClasses.isEmpty()
-        ) {
+            configuredPluginClasses.isEmpty()) {
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "301", null);
         }
 
+        // Verify if it is an internal/special identity
+        // to avoid calling other plugins for special users
+        Set attrMapsSet = new HashSet();
+        if (isSpecialIdentity(token, name, type, amOrgName)) {
+            try {
+                for (Iterator items = configuredPluginClasses.iterator();
+                    items.hasNext();) {
+                    IdRepo idRepo = (IdRepo) items.next();
+                    if (idRepo.getClass().getName().equals(
+                        IdConstants.SPECIAL_PLUGIN)) {
+                        attrMapsSet.add(idRepo.getAttributes(token, type, name,
+                            attrNames));
+                        return (combineAttrMaps(attrMapsSet, true));
+                    }
+                }
+            } catch (Exception e) {
+                // Ignore and continue
+            }
+        }
+        
         Iterator it = configuredPluginClasses.iterator();
         int noOfSuccess = configuredPluginClasses.size();
         IdRepo idRepo;
-        Set attrMapsSet = new HashSet();
         while (it.hasNext()) {
             idRepo = (IdRepo) it.next();
             try {
@@ -549,8 +564,7 @@ public class IdServicesImpl implements IdServices {
                 attrNames = mapAttributeNames(attrNames, cMap);
                 Map aMap = null;
                 if (idRepo.getClass().getName()
-                        .equals(IdConstants.AMSDK_PLUGIN)
-                        && amsdkDN != null) {
+                    .equals(IdConstants.AMSDK_PLUGIN) && amsdkDN != null) {
                     if (isString) {
                         aMap = idRepo.getAttributes(token, type, amsdkDN,
                                 attrNames);
@@ -578,7 +592,7 @@ public class IdServicesImpl implements IdServices {
                         + ide.getMessage());
                 }
                 noOfSuccess--;
-                origEx = ide;
+                origEx = (origEx == null) ? ide : origEx;;
             } catch (IdRepoFatalException idf) {
                 // fatal ..throw it all the way up
                 getDebug().error("GetAttributes: Fatal Exception ", idf);
@@ -592,7 +606,7 @@ public class IdServicesImpl implements IdServices {
                         + ide.getMessage());
                 }
                 noOfSuccess--;
-                origEx = ide;
+                origEx = (origEx == null) ? ide : origEx;
             }
         }
         
@@ -623,27 +637,44 @@ public class IdServicesImpl implements IdServices {
         // Check permission first. If allowed then proceed, else the
         // checkPermission method throws an "402" exception.
         checkPermission(token, amOrgName, name, null, IdOperation.READ, type);
-        // First get the list of plugins that support the create operation.
+        // Get the list of plugins that support the read operation.
         Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(amOrgName,
             IdOperation.READ, type);
         if ((configuredPluginClasses == null) || 
-            configuredPluginClasses.isEmpty()
-        ) {
+            configuredPluginClasses.isEmpty()) {
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "301", null);
+        }
+        
+        // Verify if it is an internal/special identity
+        // to avoid calling other plugins for special users
+        Set attrMapsSet = new HashSet();
+        if (isSpecialIdentity(token, name, type, amOrgName)) {
+            try {
+                for (Iterator items = configuredPluginClasses.iterator();
+                    items.hasNext();) {
+                    IdRepo idRepo = (IdRepo) items.next();
+                    if (idRepo.getClass().getName().equals(
+                        IdConstants.SPECIAL_PLUGIN)) {
+                        attrMapsSet.add(idRepo.getAttributes(
+                            token, type, name));
+                        return (combineAttrMaps(attrMapsSet, true));
+                    }
+                }
+            } catch (Exception e) {
+                // Ignore and continue
+            }
         }
 
         Iterator it = configuredPluginClasses.iterator();
         int noOfSuccess = configuredPluginClasses.size();
-        Set attrMapsSet = new HashSet();
         
         while (it.hasNext()) {
             IdRepo idRepo = (IdRepo) it.next();
             try {
                 Map cMap = idRepo.getConfiguration();
                 Map aMap = null;
-                if (idRepo.getClass().getName().equals(IdConstants.AMSDK_PLUGIN)
-                    && (amsdkDN != null)
-                ) {
+                if (idRepo.getClass().getName()
+                    .equals(IdConstants.AMSDK_PLUGIN) && (amsdkDN != null)) {
                     aMap = idRepo.getAttributes(token, type, amsdkDN);
                 } else {
                     aMap = idRepo.getAttributes(token, type, name);
@@ -668,29 +699,26 @@ public class IdServicesImpl implements IdServices {
                         + ide.getMessage());
                 }
                 noOfSuccess--;
-                origEx = ide;
+                origEx = (origEx == null) ? ide : origEx;
             } catch (IdRepoFatalException idf) {
                 // fatal ..throw it all the way up
-                getDebug().error(
-                        "IdServicesImpl.getAttributes: "
+                getDebug().error("IdServicesImpl.getAttributes: "
                         + "Fatal Exception ", idf);
                 throw idf;
             } catch (IdRepoException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
-                    getDebug().warning(
-                        "IdServicesImpl.getAttributes: "
+                    getDebug().warning("IdServicesImpl.getAttributes: "
                         + "Unable to read identity in the following "
                         + "repository " + idRepo.getClass().getName() + " :: "
                         + ide.getMessage());
                 }
                 noOfSuccess--;
-                origEx = ide;
+                origEx = (origEx == null) ? ide : origEx;
             }
         }
         if (noOfSuccess == 0) {
             if (getDebug().warningEnabled()) {
-                getDebug().warning(
-                    "IdServicesImpl.getAttributes: "
+                getDebug().warning("IdServicesImpl.getAttributes: "
                     + "Unable to get attributes for identity "
                     + type.getName() +
                     "::" + name + " in any configured data store", origEx);
@@ -700,7 +728,6 @@ public class IdServicesImpl implements IdServices {
             Map returnMap = combineAttrMaps(attrMapsSet, true);
             getDebug().warning("IdServicesImpl.getAttributes exit: " +
                 "returnMap=" + returnMap);
-
             return returnMap;
         }
     }
@@ -716,12 +743,12 @@ public class IdServicesImpl implements IdServices {
         // Check permission first. If allowed then proceed, else the
         // checkPermission method throws an "402" exception.
         checkPermission(token, amOrgName, name, null, IdOperation.READ, type);
-        // First get the list of plugins that support the create operation.
+        
+        // Get the list of plugins that support the read operation.
         Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(amOrgName,
             IdOperation.READ, type);
         if ((configuredPluginClasses == null) ||
-            configuredPluginClasses.isEmpty()
-        ) {
+            configuredPluginClasses.isEmpty()) {
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "301", null);
         }
 
@@ -733,13 +760,14 @@ public class IdServicesImpl implements IdServices {
         
         while (it.hasNext()) {
             IdRepo idRepo = (IdRepo) it.next();
-            if (!idRepo.getSupportedTypes().contains(membersType)) {
+            if (!idRepo.getSupportedTypes().contains(membersType) ||
+                idRepo.getClass().getName().equals(IdConstants.SPECIAL_PLUGIN)) {
                 // IdRepo plugin does not support the idType for
                 // memberships
+                noOfSuccess--;
                 continue;
             }
             try {
-                // Map cMap = idRepo.getConfiguration();
                 boolean isAMSDK = idRepo.getClass().getName().equals(
                         IdConstants.AMSDK_PLUGIN);
                 Set members = (isAMSDK && (amsdkDN != null)) ? 
@@ -760,7 +788,7 @@ public class IdServicesImpl implements IdServices {
                         + ide.getMessage());
                 }
                 noOfSuccess--;
-                origEx = ide;
+                origEx = (origEx == null) ? ide : origEx;
             } catch (IdRepoFatalException idf) {
                 // fatal ..throw it all the way up
                 getDebug().error(
@@ -776,7 +804,7 @@ public class IdServicesImpl implements IdServices {
                         + ide.getMessage());
                 }
                 noOfSuccess--;
-                origEx = ide;
+                origEx = (origEx == null) ? ide : origEx;
             }
         }
         if (noOfSuccess == 0) {
@@ -786,7 +814,13 @@ public class IdServicesImpl implements IdServices {
                     + "Unable to get members for identity " + type.getName()
                     + "::" + name + " in any configured data store", origEx);
             }
-            throw origEx;
+            if (origEx != null) {
+                throw origEx;
+            } else {
+                Object args[] = { "getMembers", IdOperation.READ.getName()};
+                throw new IdRepoUnsupportedOpException(
+                    IdRepoBundle.BUNDLE_NAME, "305", args);
+            }
         } else {
             Set results = combineMembers(token, membersSet, membersType,
                     amOrgName, amsdkIncluded, amsdkMembers);
@@ -806,17 +840,23 @@ public class IdServicesImpl implements IdServices {
         String amsdkDN
     ) throws IdRepoException, SSOException {
         IdRepoException origEx = null;
+        
+        // If Special Identity, throw exception
+        if (isSpecialIdentity(token, name, type, amOrgName)) {
+            Object args[] = {"getMemberships", IdOperation.READ.getName()};
+            throw new IdRepoUnsupportedOpException(
+                IdRepoBundle.BUNDLE_NAME, "305", args);
+        }
 
         // Check permission first. If allowed then proceed, else the
         // checkPermission method throws an "402" exception.
         checkPermission(token, amOrgName, name, null, IdOperation.READ, type);
-        // First get the list of plugins that support the create operation.
+        
+        // Get the list of plugins that support the read operation.
         Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(amOrgName,
             IdOperation.READ, type);
-        
         if ((configuredPluginClasses == null) || 
-            configuredPluginClasses.isEmpty()
-        ) {
+            configuredPluginClasses.isEmpty()) {
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "301", null);
         }
 
@@ -828,18 +868,14 @@ public class IdServicesImpl implements IdServices {
         
         while (it.hasNext()) {
             IdRepo idRepo = (IdRepo)it.next();
-            // Skip SpecialRepo if the user does not belong to it.
-            if (!isSpecialRepoUser(token, type, name, amOrgName, idRepo)) {
-                continue;
-            }
-
-            if (!idRepo.getSupportedTypes().contains(membershipType)) {
+            if (!idRepo.getSupportedTypes().contains(membershipType) ||
+                idRepo.getClass().getName().equals(IdConstants.SPECIAL_PLUGIN)) {
                 // IdRepo plugin does not support the idType for
                 // memberships
+                noOfSuccess--;
                 continue;
             }
             try {
-                // Map cMap = idRepo.getConfiguration();
                 boolean isAMSDK = idRepo.getClass().getName().equals(
                         IdConstants.AMSDK_PLUGIN);
                 Set members = (isAMSDK && (amsdkDN != null)) ? 
@@ -860,7 +896,7 @@ public class IdServicesImpl implements IdServices {
                         + ide.getMessage());
                 }
                 noOfSuccess--;
-                origEx = ide;
+                origEx = (origEx == null) ? ide : origEx;
             } catch (IdRepoFatalException idf) {
                 // fatal ..throw it all the way up
                 getDebug().error(
@@ -875,7 +911,7 @@ public class IdServicesImpl implements IdServices {
                         + "repository " + idRepo.getClass().getName(), ide);
                 }
                 noOfSuccess--;
-                origEx = ide;
+                origEx = (origEx == null) ? ide : origEx;
             }
         }
         if (noOfSuccess == 0) {
@@ -885,7 +921,13 @@ public class IdServicesImpl implements IdServices {
                     + "Unable to get members for identity " + type.getName()
                     + "::" + name + " in any configured data store", origEx);
             }
-            throw origEx;
+            if (origEx != null) {
+                throw origEx;
+            } else {
+                Object args[] = { "getMemberships", IdOperation.READ.getName()};
+                throw new IdRepoUnsupportedOpException(
+                    IdRepoBundle.BUNDLE_NAME, "305", args);
+            }
         } else {
             Set results = combineMembers(token, membershipsSet, membershipType,
                     amOrgName, amsdkIncluded, amsdkMemberShips);
@@ -893,67 +935,48 @@ public class IdServicesImpl implements IdServices {
         }
     }
 
-    private boolean isSpecialRepoUser(SSOToken token, IdType type, String name,
-            String amOrgName, IdRepo idRepo) throws IdRepoException,
-            SSOException {
-        // This is to avoid checking the hidden Special Repo plugin
-        // for non special users while getting memberships.
-        boolean isSpecialUser = false;
-        if (idRepo.getClass().getName().equals(IdConstants.SPECIAL_PLUGIN)) {
-            if (type.equals(IdType.USER)) {
-                /*
-                 * Iterating through to get out the special identities and
-                 * compare with the name sent to get memberships. If name is not
-                 * in the list of special identities go back. This is for the
-                 * scenerio, when no datastore is configured, but need the
-                 * special identity for authentication.
-                 */
-                IdSearchResults results = getSpecialIdentities(token, type,
-                        amOrgName);
-
-                Set identities = results.getSearchResults();
-                // iterating through to get the special identity names.
-                if ((identities != null) && (!identities.isEmpty())) {
-                    for (Iterator i = identities.iterator(); !isSpecialUser
-                            && i.hasNext();) {
-                        String idName = ((AMIdentity) i.next()).getName();
-                        if (name.equalsIgnoreCase(idName)) {
-                            isSpecialUser = true;
-                        }
-                    }
-                }
-            }
-        } else {
-            isSpecialUser = true;
-        }
-        return isSpecialUser;
-    }
-
     /*
      * (non-Javadoc)
      */
     public boolean isExists(SSOToken token, IdType type, String name,
             String amOrgName) throws SSOException, IdRepoException {
-
-        // First get the list of plugins that support the create operation.
+        // Check permission first. If allowed then proceed, else the
+        // checkPermission method throws an "402" exception.
+        checkPermission(token, amOrgName, name, null, IdOperation.READ, type);
+        
+        // Get the list of plugins that support the read operation.
         Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(amOrgName,
             IdOperation.READ, type);
         if ((configuredPluginClasses == null) ||
-            configuredPluginClasses.isEmpty()
-        ) {
+            configuredPluginClasses.isEmpty()) {
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "301", null);
         }
-
+        
+        // Verify if it is an internal/special identity
+        // To avoid loading other plugins
+        if (isSpecialIdentity(token, name, type, amOrgName)) {
+            try {
+                for (Iterator items = configuredPluginClasses.iterator();
+                    items.hasNext();) {
+                    IdRepo idRepo = (IdRepo) items.next();
+                    if (idRepo.getClass().getName().equals(
+                        IdConstants.SPECIAL_PLUGIN)) {
+                        return (idRepo.isExists(token, type, name));
+                    }
+                }
+            } catch (Exception idm) {
+                // Ignore the exception
+            }
+        }
+        
+        // Iterate through other plugins
         Iterator it = configuredPluginClasses.iterator();
         boolean exists = false;
         while (it.hasNext()) {
             IdRepo idRepo = (IdRepo) it.next();
-            if (!idRepo.getClass().getName().equals(IdConstants.SPECIAL_PLUGIN))
-            {
-                exists = idRepo.isExists(token, type, name);
-                if (exists) {
-                    break;
-                }
+            exists = idRepo.isExists(token, type, name);
+            if (exists) {
+                break;
             }
         }
         return exists;
@@ -963,31 +986,50 @@ public class IdServicesImpl implements IdServices {
             String amOrgName, String amsdkDN) throws SSOException,
             IdRepoException {
         IdRepoException origEx = null;
-
         // Check permission first. If allowed then proceed, else the
         // checkPermission method throws an "402" exception.
         checkPermission(token, amOrgName, name, null, IdOperation.READ, type);
+        
         // First get the list of plugins that support the create operation.
-
         Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(amOrgName,
             IdOperation.READ, type);
         if ((configuredPluginClasses == null) ||
-            configuredPluginClasses.isEmpty()
-        ) {
+            configuredPluginClasses.isEmpty()) {
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "301", null);
         }
+        
+        // Verify if it is an internal/special identity
+        // To avoid loading other plugins
+        if (isSpecialIdentity(token, name, type, amOrgName)) {
+            try {
+                for (Iterator items = configuredPluginClasses.iterator();
+                    items.hasNext();) {
+                    IdRepo idRepo = (IdRepo) items.next();
+                    if (idRepo.getClass().getName().equals(
+                        IdConstants.SPECIAL_PLUGIN)) {
+                        return (idRepo.isActive(token, type, name));
+                    }
+                }
+            } catch (Exception idm) {
+                // Ignore exception
+            }
+        }
 
+        // Iterator through the plugins
         Iterator it = configuredPluginClasses.iterator();
         int noOfSuccess = configuredPluginClasses.size();
         boolean active = false;
-        
         while (it.hasNext()) {
             IdRepo idRepo = (IdRepo) it.next();
             try {
-                if (idRepo.getClass().getName().equals(IdConstants.AMSDK_PLUGIN)
-                    && (amsdkDN != null)
-                ) {
+                if (idRepo.getClass().getName().equals(
+                    IdConstants.AMSDK_PLUGIN) && (amsdkDN != null)) {
                     active = idRepo.isActive(token, type, amsdkDN);
+                } else if (idRepo.getClass().getName().equals(
+                    IdConstants.SPECIAL_PLUGIN)) {
+                    // Already checked above
+                    noOfSuccess--;
+                    continue;
                 } else {
                     active = idRepo.isActive(token, type, name);
                 }
@@ -996,20 +1038,18 @@ public class IdServicesImpl implements IdServices {
                 }
             } catch (IdRepoFatalException idf) {
                 // fatal ..throw it all the way up
-                getDebug().error(
-                    "IdServicesImpl.isActive: Fatal Exception ", idf);
+                debug.error("IdServicesImpl.isActive: Fatal Exception ", idf);
                 throw idf;
             } catch (IdRepoException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
-                    getDebug().warning(
-                        "IdServicesImpl.isActive: "
+                    debug.warning("IdServicesImpl.isActive: "
                         + "Unable to check isActive identity in the "
                         + "following repository "
                         + idRepo.getClass().getName() + " :: "
                         + ide.getMessage());
                 }
                 noOfSuccess--;
-                origEx = ide;
+                origEx = (origEx == null) ? ide : origEx;
             }
         }
 
@@ -1020,7 +1060,13 @@ public class IdServicesImpl implements IdServices {
                     + "Unable to check if identity is active " + type.getName()
                     + "::" + name + " in any configured data store", origEx);
             }
-            throw origEx;
+            if (origEx != null) {
+                throw origEx;
+            } else {
+                Object args[] = { "isActive", IdOperation.READ.getName()};
+                throw new IdRepoUnsupportedOpException(
+                    IdRepoBundle.BUNDLE_NAME, "305", args);
+            }
         }
 
         return active;
@@ -1030,19 +1076,20 @@ public class IdServicesImpl implements IdServices {
      * (non-Javadoc)
      */
     public void setActiveStatus(SSOToken token, IdType type, String name,
-        String amOrgName, String amsdkDN, boolean active) throws SSOException,
-        IdRepoException {
+        String amOrgName, String amsdkDN, boolean active)
+        throws SSOException, IdRepoException {
+        
         IdRepoException origEx = null;
 
         // Check permission first. If allowed then proceed, else the
         // checkPermission method throws an "402" exception.
         checkPermission(token, amOrgName, name, null, IdOperation.EDIT, type);
-        // First get the list of plugins that support the create operation.
+        
+        // First get the list of plugins that support the edit operation.
         Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(amOrgName,
             IdOperation.EDIT, type);
         if ((configuredPluginClasses == null) ||
-            configuredPluginClasses.isEmpty()
-        ) {
+            configuredPluginClasses.isEmpty()) {
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "301", null);
         }
 
@@ -1051,9 +1098,8 @@ public class IdServicesImpl implements IdServices {
         while (it.hasNext()) {
             IdRepo idRepo = (IdRepo) it.next();
             try {
-                if (idRepo.getClass().getName()
-                    .equals(IdConstants.AMSDK_PLUGIN)
-                    && amsdkDN != null) {
+                if (idRepo.getClass().getName().equals(
+                    IdConstants.AMSDK_PLUGIN) && amsdkDN != null) {
                     idRepo.setActiveStatus(token, type, amsdkDN, active);
                 } else {
                     idRepo.setActiveStatus(token, type, name, active);
@@ -1066,7 +1112,7 @@ public class IdServicesImpl implements IdServices {
                             + " :: " + ide.getMessage());
                 }
                 noOfSuccess--;
-                origEx = ide;
+                origEx = (origEx == null) ? ide : origEx;
             } catch (IdRepoFatalException idf) {
                 // fatal ..throw it all the way up
                 getDebug().error("IsActive: Fatal Exception ", idf);
@@ -1094,7 +1140,6 @@ public class IdServicesImpl implements IdServices {
                     + "datastore", origEx);
             throw origEx;
         }
-
     }
     
     private void validateMembers(
@@ -1123,12 +1168,12 @@ public class IdServicesImpl implements IdServices {
         // Check permission first. If allowed then proceed, else the
         // checkPermission method throws an "402" exception.
         checkPermission(token, amOrgName, name, null, IdOperation.EDIT, type);
+        
         // First get the list of plugins that support the create operation.
         Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(amOrgName,
             IdOperation.EDIT, type);
         if ((configuredPluginClasses == null) || 
-            configuredPluginClasses.isEmpty()
-        ) {
+            configuredPluginClasses.isEmpty()) {
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "301", null);
         }
 
@@ -1141,12 +1186,13 @@ public class IdServicesImpl implements IdServices {
 
         Iterator it = configuredPluginClasses.iterator();
         int noOfSuccess = configuredPluginClasses.size();
-
         while (it.hasNext()) {
             IdRepo idRepo = (IdRepo) it.next();
-            if (!idRepo.getSupportedTypes().contains(membersType)) {
+            if (!idRepo.getSupportedTypes().contains(membersType) ||
+                idRepo.getClass().getName().equals(IdConstants.SPECIAL_PLUGIN)) {
                 // IdRepo plugin does not support the idType for
                 // memberships
+                noOfSuccess--;
                 continue;
             }
             try {
@@ -1154,40 +1200,43 @@ public class IdServicesImpl implements IdServices {
                         membersType, operation);
             } catch (IdRepoUnsupportedOpException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
-                    getDebug().warning(
-                        "IdServicesImpl.modifyMembership: "
+                    getDebug().warning("IdServicesImpl.modifyMembership: "
                         + "Unable to modify memberships  in the following"
                         + " repository " + idRepo.getClass().getName() + " :: "
                         + ide.getMessage());
                 }
                 noOfSuccess--;
-                origEx = ide;
+                origEx = (origEx ==null) ? ide :origEx;
             } catch (IdRepoFatalException idf) {
                 // fatal ..throw it all the way up
-                getDebug().error(
-                    "IdServicesImpl.modifyMembership: "
+                getDebug().error("IdServicesImpl.modifyMembership: "
                     + "Fatal Exception ", idf);
                 throw idf;
             } catch (IdRepoException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
-                    getDebug().error(
-                        "IdServicesImpl.modifyMembership: "
+                    getDebug().error("IdServicesImpl.modifyMembership: "
                         + "Unable to modify memberships in the following"
                         + " repository " + idRepo.getClass().getName() + " :: "
                         + ide.getMessage());
                 }
                 noOfSuccess--;
-                origEx = ide;
+                origEx = (origEx ==null) ? ide :origEx;
             }
         }
         if (noOfSuccess == 0) {
             if (getDebug().warningEnabled()) {
-                getDebug().warning(
-                    "IdServicesImpl.modifyMemberShip: "
+                getDebug().warning("IdServicesImpl.modifyMemberShip: "
                     + "Unable to modify members for identity " + type.getName()
                     + "::" + name + " in any configured data store", origEx);
             }
-            throw origEx;
+            if (origEx != null) {
+                throw origEx;
+            } else {
+                Object args[] = { "modifyMemberShip",
+                    IdOperation.EDIT.getName()};
+                throw new IdRepoUnsupportedOpException(
+                    IdRepoBundle.BUNDLE_NAME, "305", args);
+            }
         }
     }
 
@@ -1203,27 +1252,25 @@ public class IdServicesImpl implements IdServices {
         // checkPermission method throws an "402" exception.
         checkPermission(token, amOrgName, name, attrNames, IdOperation.EDIT,
                 type);
+        
         // First get the list of plugins that support the create operation.
         Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(amOrgName,
             IdOperation.EDIT, type);
         if ((configuredPluginClasses == null) || 
-            configuredPluginClasses.isEmpty()
-        ) {
+            configuredPluginClasses.isEmpty()) {
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "301", null);
         }
 
         Iterator it = configuredPluginClasses.iterator();
         int noOfSuccess = configuredPluginClasses.size();
- 
         while (it.hasNext()) {
             IdRepo idRepo = (IdRepo) it.next();
             try {
                 Map cMap = idRepo.getConfiguration();
                 // do stuff to map attr names.
                 attrNames = mapAttributeNames(attrNames, cMap);
-                if (idRepo.getClass().getName().equals(IdConstants.AMSDK_PLUGIN)
-                    && (amsdkDN != null)
-                ) {
+                if (idRepo.getClass().getName().equals(
+                    IdConstants.AMSDK_PLUGIN) && (amsdkDN != null)) {
                     idRepo.removeAttributes(token, type, amsdkDN, attrNames);
                 } else {
                     idRepo.removeAttributes(token, type, name, attrNames);
@@ -1237,16 +1284,15 @@ public class IdServicesImpl implements IdServices {
                         + ide.getMessage());
                 }
                 noOfSuccess--;
-                origEx = ide;
+                origEx = (origEx == null) ? ide :origEx;
             } catch (IdRepoFatalException idf) {
                 // fatal ..throw it all the way up
-                getDebug().error(
-                    "IdServicesImpl.removeAttributes: Fatal Exception ", idf);
+                debug.error("IdServicesImpl.removeAttributes: " +
+                    "Fatal Exception ", idf);
                 throw idf;
             } catch (IdRepoException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
-                    getDebug().warning(
-                        "IdServicesImpl.removeAttributes: "
+                    getDebug().warning("IdServicesImpl.removeAttributes: "
                         + "Unable to remove attributes in the following "
                         + "repository " + idRepo.getClass().getName() + " :: "
                         + ide.getMessage());
@@ -1281,12 +1327,12 @@ public class IdServicesImpl implements IdServices {
         // Check permission first. If allowed then proceed, else the
         // checkPermission method throws an "402" exception.
         checkPermission(token, amOrgName, null, null, IdOperation.READ, type);
+        
         // First get the list of plugins that support the create operation.
         Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(amOrgName,
             IdOperation.READ, type);
         if ((configuredPluginClasses == null) || 
-            configuredPluginClasses.isEmpty()
-        ) {
+            configuredPluginClasses.isEmpty()) {
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "301", null);
         }
 
@@ -1336,7 +1382,7 @@ public class IdServicesImpl implements IdServices {
                         + ide.getMessage());
                 }
                 noOfSuccess--;
-                origEx = ide;
+                origEx = (origEx == null) ? ide :origEx;
             } catch (IdRepoFatalException idf) {
                 // fatal ..throw it all the way up
                 getDebug().error(
@@ -1351,7 +1397,7 @@ public class IdServicesImpl implements IdServices {
                         + ide.getMessage());
                 }
                 noOfSuccess--;
-                origEx = ide;
+                origEx = (origEx == null) ? ide :origEx;
             }
         }
         if (noOfSuccess == 0) {
@@ -1382,22 +1428,17 @@ public class IdServicesImpl implements IdServices {
                 return (specialIdentities);
             }
 
-            // add the "SpecialUser plugin
-            IdRepo specialRepo = null;
+            // get the "SpecialUser plugin
             Set repos = idrepoCache.getIdRepoPlugins(orgName);
             for (Iterator items = repos.iterator(); items.hasNext();) {
                 IdRepo repo = (IdRepo) items.next();
                 if (repo instanceof SpecialRepo) {
-                    specialRepo = repo;
+                    pluginClasses.add(repo);
                 }
             }
-            
-            Set opSet = specialRepo.getSupportedOperations(type);
-            if (opSet != null && opSet.contains(IdOperation.READ)) {
-                pluginClasses.add(specialRepo);
-            }                
         }
         
+        // If no plugins found, return empty results
         if (pluginClasses.isEmpty()) {
             return (emptyUserIdentities);
         } else {
@@ -1414,6 +1455,40 @@ public class IdServicesImpl implements IdServices {
         return (specialIdentities);
     }
     
+    protected boolean isSpecialIdentity(SSOToken token, String name,
+        IdType type, String orgName) throws IdRepoException, SSOException {
+        if (ServiceManager.isConfigMigratedTo70() &&
+            ServiceManager.getBaseDN().equalsIgnoreCase(orgName) &&
+            type.equals(IdType.USER)) {
+            // Check the cache
+            if (specialIdentityNames == null) {
+                // get the "SpecialUser plugin
+                Set spIds = new CaseInsensitiveHashSet();
+                Set repos = idrepoCache.getIdRepoPlugins(orgName);
+                for (Iterator items = repos.iterator(); items.hasNext();) {
+                    IdRepo repo = (IdRepo) items.next();
+                    if (repo instanceof SpecialRepo) {
+                        RepoSearchResults res = repo.search(token, type, "*",
+                            0, 0, Collections.EMPTY_SET, false,
+                            0, Collections.EMPTY_MAP, false);
+                        Set identities = res.getSearchResults();
+                        for (Iterator ids = identities.iterator();
+                            ids.hasNext();) {
+                            spIds.add(ids.next());
+                        }
+                    }
+                }
+                specialIdentityNames = spIds;
+            }
+            
+            if ((specialIdentityNames != null) &&
+                !specialIdentityNames.isEmpty()) {
+                return (specialIdentityNames.contains(name));
+            }
+        }
+        return (false);
+    }
+    
     public void setAttributes(SSOToken token, IdType type, String name,
             Map attributes, boolean isAdd, String amOrgName, String amsdkDN,
             boolean isString) throws IdRepoException, SSOException {
@@ -1423,14 +1498,12 @@ public class IdServicesImpl implements IdServices {
         // checkPermission method throws an "402" exception.
         checkPermission(token, amOrgName, name, attributes.keySet(),
                 IdOperation.EDIT, type);
-        // First get the list of plugins that support the create operation.
+        // Get the list of plugins that service/edit the create operation.
         Set configuredPluginClasses = (attributes.containsKey("objectclass")) ?
             idrepoCache.getIdRepoPlugins(amOrgName, IdOperation.SERVICE, type):
             idrepoCache.getIdRepoPlugins(amOrgName, IdOperation.EDIT, type);
-
         if ((configuredPluginClasses == null) || 
-            configuredPluginClasses.isEmpty()
-        ) {
+            configuredPluginClasses.isEmpty()) {
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "301", null);
         }
 
@@ -1444,8 +1517,7 @@ public class IdServicesImpl implements IdServices {
                 // do stuff to map attr names.
                 attributes = mapAttributeNames(attributes, cMap);
                 if (idRepo.getClass().getName()
-                        .equals(IdConstants.AMSDK_PLUGIN)
-                        && amsdkDN != null) {
+                    .equals(IdConstants.AMSDK_PLUGIN) && amsdkDN != null) {
                     if (isString) {
                         idRepo.setAttributes(token, type, amsdkDN, attributes,
                                 isAdd);
@@ -1463,15 +1535,15 @@ public class IdServicesImpl implements IdServices {
                     }
                 }
             } catch (IdRepoUnsupportedOpException ide) {
-                if (idRepo != null && getDebug().warningEnabled()) {
-                    getDebug().warning("IdServicesImpl.setAttributes: "
+                if (idRepo != null && getDebug().messageEnabled()) {
+                    getDebug().message("IdServicesImpl.setAttributes: "
                             + "Unable to set attributes in the following "
                             + "repository "
                             + idRepo.getClass().getName()
                             + " :: " + ide.getMessage());
                 }
                 noOfSuccess--;
-                origEx = ide;
+                origEx = (origEx == null) ? ide :origEx;
             } catch (IdRepoFatalException idf) {
                 // fatal ..throw it all the way up
                 getDebug().error(
@@ -1513,15 +1585,14 @@ public class IdServicesImpl implements IdServices {
             throws IdRepoException, SSOException {
         IdRepoException origEx = null;
 
-        // First get the list of plugins that support the create operation.
         // Check permission first. If allowed then proceed, else the
         // checkPermission method throws an "402" exception.
         checkPermission(token, amOrgName, name, null, IdOperation.READ, type);
+        // Get the list of plugins that support the service operation.
         Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(amOrgName, 
             IdOperation.SERVICE, type);
         if ((configuredPluginClasses == null) || 
-            configuredPluginClasses.isEmpty()
-        ) {
+            configuredPluginClasses.isEmpty()) {
             if (ServiceManager.getBaseDN().equalsIgnoreCase(amOrgName)
                     && (type.equals(IdType.REALM))) {
                 return (configuredPluginClasses);
@@ -1551,38 +1622,35 @@ public class IdServicesImpl implements IdServices {
                     resultsSet.addAll(services);
                 }
             } catch (IdRepoUnsupportedOpException ide) {
-                if (idRepo != null && getDebug().warningEnabled()) {
-                    getDebug().error(
+                if (idRepo != null && getDebug().messageEnabled()) {
+                    getDebug().message(
                         "IdServicesImpl.getAssignedServices: "
                         + "Services not supported for repository "
                         + repo.getClass().getName() + " :: "
                         + ide.getMessage());
                 }
                 noOfSuccess--;
-                origEx = ide;
+                origEx = (origEx == null) ? ide :origEx;
             } catch (IdRepoFatalException idf) {
                 // fatal ..throw it all the way up
-                getDebug().error(
-                    "IdServicesImpl.getAssignedServices: Fatal Exception ",
-                    idf);
+                getDebug().error("IdServicesImpl.getAssignedServices: " +
+                    "Fatal Exception ", idf);
                 throw idf;
             } catch (IdRepoException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
-                    getDebug().warning(
-                        "IdServicesImpl.getAssignedServices: "
+                    getDebug().warning("IdServicesImpl.getAssignedServices: "
                         + "Unable to get services for identity "
                         + "in the following repository "
                         + idRepo.getClass().getName() + " :: "
                         + ide.getMessage());
                 }
                 noOfSuccess--;
-                origEx = ide;
+                origEx = (origEx == null) ? ide :origEx;
             }
         }
         if (noOfSuccess == 0) {
             if (getDebug().warningEnabled()) {
-                getDebug().warning(
-                    "IdServicesImpl.getAssignedServices: "
+                getDebug().warning("IdServicesImpl.getAssignedServices: "
                     + "Unable to get assigned services for identity "
                     + type.getName() + "::" + name
                     + " in any configured data store", origEx);
@@ -1604,7 +1672,7 @@ public class IdServicesImpl implements IdServices {
         // checkPermission method throws an "402" exception.
         checkPermission(token, amOrgName, name, null,
             IdOperation.SERVICE, type);
-        // First get the list of plugins that support the create operation.
+        // Get the list of plugins that support the service operation.
         Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(amOrgName,
                 IdOperation.SERVICE, type);
         if (configuredPluginClasses == null
@@ -1629,14 +1697,14 @@ public class IdServicesImpl implements IdServices {
                             attrMap);
                 }
             } catch (IdRepoUnsupportedOpException ide) {
-                if (idRepo != null && getDebug().warningEnabled()) {
-                    getDebug().error("IdServicesImpl.assignService: "
+                if (idRepo != null && getDebug().messageEnabled()) {
+                    getDebug().message("IdServicesImpl.assignService: "
                             + "Assign Services not supported for repository "
                             + repo.getClass().getName()
                             + " :: " + ide.getMessage());
                 }
                 noOfSuccess--;
-                origEx = ide;
+                origEx = (origEx == null) ? ide :origEx;
             } catch (IdRepoFatalException idf) {
                 // fatal ..throw it all the way up
                 getDebug().error(
@@ -1644,7 +1712,7 @@ public class IdServicesImpl implements IdServices {
                 throw idf;
             } catch (IdRepoException ide) {
                 if (idRepo != null && getDebug().warningEnabled()) {
-                    getDebug().error(
+                    getDebug().warning(
                         "IdServicesImpl.assignService: "
                         + "Unable to assign Service identity in "
                         + "the following repository "
@@ -1652,7 +1720,7 @@ public class IdServicesImpl implements IdServices {
                         + ide.getMessage());
                 }   
                 noOfSuccess--;
-                origEx = ide;
+                origEx = (origEx == null) ? ide :origEx;
             }
         }
         if (noOfSuccess == 0) {
@@ -1676,7 +1744,7 @@ public class IdServicesImpl implements IdServices {
         // checkPermission method throws an "402" exception.
         checkPermission(token, amOrgName, name, null, IdOperation.SERVICE,
                 type);
-        // First get the list of plugins that support the create operation.
+        // Get the list of plugins that support the service operation.
         Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(amOrgName, 
             IdOperation.SERVICE, type);
         if ((configuredPluginClasses == null) ||
@@ -1702,15 +1770,15 @@ public class IdServicesImpl implements IdServices {
                             attrMap);
                 }
             } catch (IdRepoUnsupportedOpException ide) {
-                if (idRepo != null && getDebug().warningEnabled()) {
-                    getDebug().error(
+                if (idRepo != null && getDebug().messageEnabled()) {
+                    getDebug().message(
                         "IdServicesImpl.unassignService: "
                         + "Unassign Service not supported for repository "
                         + repo.getClass().getName()
                         + " :: " + ide.getMessage());
                 }
                 noOfSuccess--;
-                origEx = ide;
+                origEx = (origEx == null) ? ide :origEx;
             } catch (IdRepoFatalException idf) {
                 // fatal ..throw it all the way up
                 getDebug().error(
@@ -1726,7 +1794,7 @@ public class IdServicesImpl implements IdServices {
                         + ide.getMessage());
                 }
                 noOfSuccess--;
-                origEx = ide;
+                origEx = (origEx == null) ? ide :origEx;
             }
         }
         if (noOfSuccess == 0) {
@@ -1970,15 +2038,15 @@ public class IdServicesImpl implements IdServices {
                 attrs = reverseMapAttributeNames(attrs, cMap);
                 resultsSet.add(attrs);
             } catch (IdRepoUnsupportedOpException ide) {
-                if (idRepo != null && getDebug().warningEnabled()) {
-                    getDebug().warning(
+                if (idRepo != null && getDebug().messageEnabled()) {
+                    getDebug().message(
                         "IdServicesImpl.getServiceAttributes: "
                         + "Services not supported for repository "
                         + repo.getClass().getName()
                         + " :: " + ide.getMessage());
                 }
                 noOfSuccess--;
-                origEx = ide;
+                origEx = (origEx == null) ? ide :origEx;
             } catch (IdRepoFatalException idf) {
                 // fatal ..throw it all the way up
                 getDebug().error(
@@ -1995,7 +2063,7 @@ public class IdServicesImpl implements IdServices {
                         + " :: " + ide.getMessage());
                 }
                 noOfSuccess--;
-                origEx = ide;
+                origEx = (origEx == null) ? ide :origEx;
             }
         }
         if (noOfSuccess == 0) {
@@ -2023,7 +2091,7 @@ public class IdServicesImpl implements IdServices {
         // checkPermission method throws an "402" exception.
         checkPermission(token, amOrgName, name, attrMap.keySet(),
                 IdOperation.SERVICE, type);
-        // First get the list of plugins that support the create operation.
+        // Get the list of plugins that support the service operation.
         Set configuredPluginClasses = idrepoCache.getIdRepoPlugins(amOrgName,
             IdOperation.SERVICE, type);
         if ((configuredPluginClasses == null) ||
@@ -2048,8 +2116,8 @@ public class IdServicesImpl implements IdServices {
                             attrMap);
                 }
             } catch (IdRepoUnsupportedOpException ide) {
-                if (idRepo != null && getDebug().warningEnabled()) {
-                    getDebug().warning("IdServicesImpl.modifyService: "
+                if (idRepo != null && getDebug().messageEnabled()) {
+                    getDebug().message("IdServicesImpl.modifyService: "
                             + "Modify Services not supported for repository "
                             + repo.getClass().getName()
                             + " :: " + ide.getMessage());
@@ -2181,7 +2249,7 @@ public class IdServicesImpl implements IdServices {
         }
         return resultMap;
     }
-
+    
     private Map mapAttributeNames(Map attrMap, Map configMap) {
         if (attrMap == null || attrMap.isEmpty()) {
             return attrMap;
@@ -2425,10 +2493,15 @@ public class IdServicesImpl implements IdServices {
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "402", args);
         }
     }
+    
+    protected void clearSpecialIdentityCache() {
+        specialIdentityNames = null;
+        specialIdentities = null;
+    }
 
     public void clearIdRepoPlugins() {
         idrepoCache.clearIdRepoPluginsCache();
-    }
+}
 
     public void clearIdRepoPlugins(String orgName, String serviceComponent,
         int type) {

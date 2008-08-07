@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SystemProperties.java,v 1.14 2008-07-30 00:50:16 arviranga Exp $
+ * $Id: SystemProperties.java,v 1.15 2008-08-07 17:22:01 arviranga Exp $
  *
  */
 
@@ -273,7 +273,7 @@ public class SystemProperties {
 
                 if (answer.indexOf("%ROOT_SUFFIX%") != -1) {
                     answer = answer.replaceAll("%ROOT_SUFFIX%",
-                        SMSEntry.getRootSuffix());
+                        SMSEntry.getAMSdkBaseDN());
                 }
             }
         }

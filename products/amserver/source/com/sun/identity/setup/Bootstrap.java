@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Bootstrap.java,v 1.14 2008-07-31 18:25:58 veiming Exp $
+ * $Id: Bootstrap.java,v 1.15 2008-08-07 17:22:06 arviranga Exp $
  *
  */
 
@@ -190,7 +190,7 @@ public class Bootstrap {
             return null;
         }
         
-        String dsbasedn = bootstrapData.getBaseDN();
+        String dsbasedn = bootstrapData.getUserBaseDN();
         String pwd = bootstrapData.getDsameUserPassword();
         String dsameUser = "cn=dsameuser,ou=DSAME Users," + dsbasedn;
         String instanceName = bootstrapData.getInstanceName();
@@ -209,10 +209,10 @@ public class Bootstrap {
                 Crypt.reinitialize();
                 BootstrapData.loadServerConfigXML(serverConfigXML);
                 SMSEntry.initializeClass();
-                AdminUtils.initialize();
-                SMSAuthModule.initialize();
                 SystemProperties.initializeProperties(
                     properties, true, true);
+                AdminUtils.initialize();
+                SMSAuthModule.initialize();
                 DebugPropertiesObserver.getInstance().notifyChanges();
                 SMSPropertiesObserver.getInstance().notifyChanges();
                 SystemProperties.setServerInstanceName(instanceName);

@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoService.xml,v 1.26 2008-07-23 17:55:50 kenwho Exp $
+   $Id: idRepoService.xml,v 1.27 2008-08-07 17:22:02 arviranga Exp $
   
 -->
 
@@ -135,18 +135,7 @@
                             i18nKey="telephoneNumber" />
                         <AttributeSchema name="roles" i18nKey="roles" />
                     </SubSchema>
-                </SubSchema>
-                <SubSchema name="roles" i18nKey="roles">
-                    <SubSchema name="role" inheritance="multiple"
-                        i18nKey="role">
-                        <AttributeSchema name="dn"
-                            type="single"
-                            isSearchable="yes"
-                            i18nKey="dn" />
-                        <AttributeSchema name="members"
-                            i18nKey="members" />
-                    </SubSchema>
-                </SubSchema>                    
+                </SubSchema>        
             </Global>
             <Organization>
                 <AttributeSchema name="sunIdRepoAttributeCombiner"
@@ -175,148 +164,6 @@
                         <Value>sunDNSAliases=associatedDomain</Value>
                     </DefaultValues>
                 </AttributeSchema>
-
-                <!-- Schema for linking SMS's organization to
-                     AMSDK's organization. This will not be loaded for 
-                     Embedded DS/OpenDS configuration. -->
-<!--
-                <SubSchema name= "amSDK"
-                    inheritance = "multiple"
-                    i18nKey = "@AMSDK_I18N_KEY@">
--->
-                    <!-- The two attributes below, if defined, allow the IdRepo 
-                        SDK to map attribute names and to determine entities 
-                        supported and operations supported by this plugin. If 
-                        no mapping is provided,the assumption is that the 
-                        attribute names are the same (no mapping needed. If the 
-                        list of entities supported is not provided then the 
-                        assumption is that no entities are supported -->
-<!--
-                    <AttributeSchema name="sunIdRepoClass"
-                        type = "single"
-                        syntax = "string"
-                        any="required"
-                        validator="RequiredValueValidator"
-                        i18nKey = "a102">
-                        <DefaultValues>
-                            <Value>com.iplanet.am.sdk.AMSDKRepo</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-                    <AttributeSchema name="RequiredValueValidator"
-                        type="validator"
-                        syntax="string">
-                        <DefaultValues>
-                            <Value>com.sun.identity.sm.RequiredValueValidator</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-                    <AttributeSchema name="sunIdRepoNamingAttribute"
-                        type="list"
-                        syntax="string"
-                        i18nKey="">
-                        <DefaultValues>
-                            <Value>user=uid</Value>
-                            <Value>group=cn</Value>
-                            <Value>role=cn</Value>
-                            <Value>agent=uid</Value>
-                            <Value>filteredrole=cn</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-                    <AttributeSchema name="sunIdRepoAttributeMapping"
-                        type="list"
-                        syntax="string"
-                        i18nKey="">
-                    </AttributeSchema>
-                    <AttributeSchema name="sunIdRepoSupportedOperations"
-                        type="list"
-                        syntax="string"
-                        validator="validatatorClass for verifying this list against supported list"
-                        i18nKey="">
-                        <DefaultValues>
--->
-                            <!-- IdRepos can provide the object types
-                               it can manage and the operations that can
-                               be performed on these objects, as a key-value
-                               pair. Object types could be User, Group, Role,
-                               etc., and the operations are limited to create,
-                               read, edit and modify. The values are case
-                               insenstive. -->
-<!--
-                               <Value>user=read,create,edit,delete,service</Value>
-                               <Value>agent=read,edit</Value>
-                               <Value>role=read,edit,service</Value>
-                               <Value>filteredrole=read,edit,service</Value>
-                               <Value>group=read</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
--->
-                    <!-- From here on the list of plugin specific attributes 
-                        for determining things like organization relating to 
-                        this realm, authentication source,
-                        user containers, group containers etc etc. -->
-<!--
-                    <AttributeSchema name="amSDKOrgName"
-                        type = "single"
-                            syntax = "string"
-                            i18nKey = "a106">
-                            <DefaultValues>
-                                <Value>@NORMALIZED_ORGBASE@</Value>
-                            </DefaultValues>
-                    </AttributeSchema>
-                    <AttributeSchema name="sun-idrepo-amSDK-config-people-container-name"
-                        type="single"
-                        syntax="string"
-                        i18nKey="a2053">
-                        <DefaultValues>
-                            <Value>ou</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-
-                    <AttributeSchema name="sun-idrepo-amSDK-config-people-container-value"
-                        type="single"
-                        syntax="string"
-                        i18nKey="a2054">
-                        <DefaultValues>
-                            <Value>people</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-
-                    <AttributeSchema name="sun-idrepo-amSDK-config-agent-container-name"
-                        type="single"
-                        syntax="string"
-                        i18nKey="a2055">
-                        <DefaultValues>
-                            <Value>ou</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-
-                    <AttributeSchema name="sun-idrepo-amSDK-config-agent-container-value"
-                        type="single"
-                        syntax="string"
-                        i18nKey="a2056">
-                        <DefaultValues>
-                            <Value>agents</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-
-                    <AttributeSchema name="sun-idrepo-amSDK-config-recursive-enabled"
-                        type="single"
-                        syntax="boolean"
-                        i18nKey="a2057">
-                        <DefaultValues>
-                            <Value>false</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-
-                    <AttributeSchema name="sun-idrepo-amSDK-config-copyconfig-enabled"
-                        type="single"
-                        syntax="boolean"
-                        i18nKey="a2058">
-                        <DefaultValues>
-                            <Value>false</Value>
-                        </DefaultValues>
-                    </AttributeSchema>
-                </SubSchema>
--->
 
                 <!-- LDAPv3 plugin original 70 (generic ds)  -->
                 <SubSchema name= "LDAPv3"
@@ -2479,7 +2326,7 @@
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="dn" />
-                            <Value>@USER_NAMING_ATTR@=amAdmin,ou=people,@NORMALIZED_ORGBASE@</Value>
+                            <Value>@USER_NAMING_ATTR@=amAdmin,ou=people,</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="sn" />
@@ -2542,7 +2389,7 @@
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="dn" />
-                            <Value>cn=dsameuser,ou=DSAME Users,@NORMALIZED_ORGBASE@</Value>
+                            <Value>cn=dsameuser,ou=DSAME Users,</Value>
                         </AttributeValuePair>
                     </SubConfiguration>
                     <SubConfiguration name="anonymous"
@@ -2553,7 +2400,7 @@
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="dn" />
-                            <Value>@USER_NAMING_ATTR@=anonymous,ou=people,@NORMALIZED_ORGBASE@</Value>
+                            <Value>@USER_NAMING_ATTR@=anonymous,ou=people,</Value>
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="sn" />
@@ -2608,7 +2455,7 @@
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="dn" />
-                            <Value>cn=amldapuser,ou=DSAME Users,@NORMALIZED_ORGBASE@</Value>
+                            <Value>cn=amldapuser,ou=DSAME Users,</Value>
                         </AttributeValuePair>
                     </SubConfiguration>
                     <SubConfiguration name="amService-URLAccessAgent"
@@ -2619,23 +2466,12 @@
                         </AttributeValuePair>
                         <AttributeValuePair>
                             <Attribute name="dn" />
-                            <Value>cn=amService-URLAccessAgent,ou=DSAME Users,@NORMALIZED_ORGBASE@</Value>
-                        </AttributeValuePair>
-                    </SubConfiguration>
-                </SubConfiguration>
-                <SubConfiguration name="roles" >
-                    <SubConfiguration name="Top-level Admin Role" id="role">
-                        <AttributeValuePair>
-                            <Attribute name="dn" />
-                            <Value>cn=Top-level Admin Role,dc=iplanet,dc=com</Value>
-                        </AttributeValuePair>
-                        <AttributeValuePair>
-                            <Attribute name="members" />
-                            <Value>amAdmin</Value>
+                            <Value>cn=amService-URLAccessAgent,ou=DSAME Users,</Value>
                         </AttributeValuePair>
                     </SubConfiguration>
                 </SubConfiguration>
             </GlobalConfiguration>
+
         </Configuration>
     </Service>
 </ServicesConfiguration>

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AdminTokenAction.java,v 1.10 2008-07-23 17:30:44 veiming Exp $
+ * $Id: AdminTokenAction.java,v 1.11 2008-08-07 17:22:04 arviranga Exp $
  *
  */
 
@@ -166,7 +166,7 @@ public class AdminTokenAction implements PrivilegedAction {
         }
 
 	// Try getting the token from serverconfig.xml
-	SSOToken answer = this.getSSOToken(); 
+	SSOToken answer = getSSOToken();
 	if (answer != null) {
 	    if (!SystemProperties.isServerMode() || authInitialized) {
 		appSSOToken = answer;

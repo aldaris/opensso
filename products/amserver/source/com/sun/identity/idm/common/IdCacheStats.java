@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdCacheStats.java,v 1.1 2008-07-16 19:17:04 kenwho Exp $
+ * $Id: IdCacheStats.java,v 1.2 2008-08-07 17:22:06 arviranga Exp $
  *
  */
 
@@ -58,8 +58,9 @@ public class IdCacheStats implements StatsListener {
 
 
     /**
-     * Creates a new SessionMaxStats
-     * @param table session table
+     * Creates a new IdRepo Stats
+     *
+     * @param name Name of Cache
      */
     public IdCacheStats(String name) {
         nameOfCache = name;

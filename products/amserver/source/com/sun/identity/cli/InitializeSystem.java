@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InitializeSystem.java,v 1.2 2008-06-25 05:42:09 qcheng Exp $
+ * $Id: InitializeSystem.java,v 1.3 2008-08-07 17:22:01 arviranga Exp $
  *
  */
 
@@ -107,10 +107,11 @@ public class InitializeSystem {
     public SSOToken getSSOToken(String bindPwd) 
         throws LoginException, InvalidAuthContextException {
         SSOToken ssoToken = null;
+        String userRootSuffix = bData.getUserBaseDN();
         AuthPrincipal principal = new AuthPrincipal(
-            "cn=dsameuser,ou=DSAME Users," + rootsuffix);
+            "cn=dsameuser,ou=DSAME Users," + userRootSuffix);
         AuthContext ac = new AuthContext(
-            rootsuffix, principal, bindPwd.toCharArray());
+            userRootSuffix, principal, bindPwd.toCharArray());
         if (ac.getLoginStatus() == AuthContext.AUTH_SUCCESS) {
             ssoToken = ac.getSSOToken();
         }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSNotificationManager.java,v 1.6 2008-07-30 00:50:14 arviranga Exp $
+ * $Id: SMSNotificationManager.java,v 1.7 2008-08-07 17:22:07 arviranga Exp $
  *
  */
 package com.sun.identity.sm;
@@ -134,6 +134,13 @@ public class SMSNotificationManager implements SMSObjectListener {
                     "deregistering for notification with: " +
                     object.getClass().getName());
             }
+        }
+    }
+    
+    protected synchronized void deregisterListener(SMSObject object) {
+        if (enableDataStoreNotification) {
+            object.deregisterCallbackHandler(null);
+            enableDataStoreNotification = false;
         }
     }
     

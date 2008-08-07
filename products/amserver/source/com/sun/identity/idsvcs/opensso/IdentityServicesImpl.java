@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdentityServicesImpl.java,v 1.12 2008-06-27 20:56:24 arviranga Exp $
+ * $Id: IdentityServicesImpl.java,v 1.13 2008-08-07 17:22:08 arviranga Exp $
  *
  */
 
@@ -377,10 +377,17 @@ public class IdentityServicesImpl
             List roles = new ArrayList();
             for (Iterator items = membersTypes.iterator(); items.hasNext();) {
                 IdType type = (IdType) items.next();
-                Set mems = userIdentity.getMemberships(type);
-                for (Iterator rs = mems.iterator(); rs.hasNext();) {
-                    AMIdentity mem = (AMIdentity) rs.next();
-                    roles.add(mem.getUniversalId());
+                try {
+                    Set mems = userIdentity.getMemberships(type);
+                    for (Iterator rs = mems.iterator(); rs.hasNext();) {
+                        AMIdentity mem = (AMIdentity) rs.next();
+                        roles.add(mem.getUniversalId());
+                    }
+                } catch (IdRepoException ire) {
+                    if (debug.messageEnabled()) {
+                        debug.message("IdentityServicesImpl:attributes", ire);
+                    }
+                    // Ignore and continue
                 }
             }
             String[] r = new String[roles.size()];
@@ -420,10 +427,10 @@ public class IdentityServicesImpl
                 details.setAttributes((Attribute[]) attributes.toArray(a));
             }
         } catch (IdRepoException e) {
-            debug.error("IdentityServicesImpl:authorize", e);
+            debug.error("IdentityServicesImpl:attributes", e);
             throw new GeneralFailure(e.getMessage());
         } catch (SSOException e) {
-            debug.error("IdentityServicesImpl:authorize", e);
+            debug.error("IdentityServicesImpl:attributes", e);
             throw new GeneralFailure(e.getMessage());
         }
 
@@ -1001,10 +1008,10 @@ public class IdentityServicesImpl
                 }
             }
         } catch (IdRepoException ex) {
-            debug.error("IdentityServicesImpl:create", ex);
+            debug.error("IdentityServicesImpl:update", ex);
             throw new GeneralFailure(ex.getMessage());
         } catch (SSOException ex) {
-            debug.error("IdentityServicesImpl:create", ex);
+            debug.error("IdentityServicesImpl:update", ex);
             throw new GeneralFailure(ex.getMessage());
         }
 

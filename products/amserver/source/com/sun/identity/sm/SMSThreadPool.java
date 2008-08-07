@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSThreadPool.java,v 1.2 2008-07-30 00:50:15 arviranga Exp $
+ * $Id: SMSThreadPool.java,v 1.3 2008-08-07 17:22:07 arviranga Exp $
  *
  */
 
@@ -131,5 +131,4 @@ public class SMSThreadPool {
         }
         return success;
     }
-    
 }

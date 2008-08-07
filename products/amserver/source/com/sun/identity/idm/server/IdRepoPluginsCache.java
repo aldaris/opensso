@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: IdRepoPluginsCache.java,v 1.4 2008-07-18 00:40:23 kenwho Exp $
+* $Id: IdRepoPluginsCache.java,v 1.5 2008-08-07 17:22:00 arviranga Exp $
 */
 
 package com.sun.identity.idm.server;
@@ -502,7 +502,14 @@ public class IdRepoPluginsCache implements ServiceListener {
             Class thisClass = Thread.currentThread().
                 getContextClassLoader().loadClass(IdConstants.SPECIAL_PLUGIN);
             pluginClass = (IdRepo) thisClass.newInstance();
-            pluginClass.initialize(new HashMap());
+            HashMap config = new HashMap(2);
+            HashSet realmName = new HashSet();
+            realmName.add(ServiceManager.getBaseDN());
+            config.put("realm", config);
+            pluginClass.initialize(config);
+            IdRepoListener lter = new IdRepoListener();
+            lter.setConfigMap(config);
+            pluginClass.addListener(getAdminToken(), lter);
         } catch (Exception e) {
             debug.error("IdRepoPluginsCache.getSpecialRepoPlugin: " +
                 "Unable to init plugin: " + IdConstants.SPECIAL_PLUGIN, e);
@@ -594,6 +601,10 @@ public class IdRepoPluginsCache implements ServiceListener {
             if (type != 1) {
                 clearIdRepoPluginsCache();
             }
+        } else {
+            // Special identities have changed, clear the cache
+            ((IdServicesImpl) IdServicesImpl.getInstance())
+                .clearSpecialIdentityCache();
         }
     }
 

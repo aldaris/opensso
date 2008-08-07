@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdUtils.java,v 1.24 2008-07-12 00:08:27 arviranga Exp $
+ * $Id: IdUtils.java,v 1.25 2008-08-07 17:22:08 arviranga Exp $
  *
  */
 
@@ -91,6 +91,8 @@ public final class IdUtils {
 
     // Static map to cache "orgIdentifier" and organization DN
     private static Map orgIdentifierToOrgName = Collections.synchronizedMap(
+        new CaseInsensitiveHashMap());
+    private static Map orgStatusCache = Collections.synchronizedMap(
         new CaseInsensitiveHashMap());
 
     // ServiceConfigManager for sunidentityrepository service
@@ -605,6 +607,7 @@ public final class IdUtils {
      */
     protected static void clearOrganizationNamesCache() {
         orgIdentifierToOrgName.clear();
+        orgStatusCache.clear();
         if (debug.messageEnabled()) {
             debug.message("IdUtils.clearOrganizationNamesCache called");
         }
@@ -628,6 +631,10 @@ public final class IdUtils {
      */
     public static boolean isOrganizationActive(SSOToken token, String org)
             throws IdRepoException, SSOException {
+        // Check the cache
+        if (orgStatusCache.containsKey(org)) {
+            return (((Boolean) orgStatusCache.get(org)).booleanValue());
+        }
         boolean isActive = true;
         // Need to initialize ServiceManager by creating the constructor
         if (!ServiceManager.isCoexistenceMode()) {
@@ -664,6 +671,8 @@ public final class IdUtils {
                 throw convertAMException(ame);
             }
         }
+        // Add to cache
+        orgStatusCache.put(org, new Boolean(isActive));
         return isActive;
     }
 
@@ -699,7 +708,7 @@ public final class IdUtils {
         // Populate special users
         if (specialUsers.isEmpty()) {
             String susers = SystemProperties.get(
-                "com.sun.identity.authentication.special.users", "");
+                Constants.AUTHENTICATION_SPECIAL_USERS, "");
             StringTokenizer st = new StringTokenizer(
                 susers, "|");
             while (st.hasMoreTokens()) {

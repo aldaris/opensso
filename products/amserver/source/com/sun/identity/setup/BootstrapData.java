@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BootstrapData.java,v 1.11 2008-06-25 05:44:02 qcheng Exp $
+ * $Id: BootstrapData.java,v 1.12 2008-08-07 17:22:06 arviranga Exp $
  *
  */
 
@@ -50,6 +50,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import netscape.ldap.util.DN;
 
 public class BootstrapData {
     private List data = new ArrayList();
@@ -74,6 +75,7 @@ public class BootstrapData {
 
     static final String DS_PROTO_TYPE = "dsprototype";
 
+    static final String USER = "user";
     static final String PWD = "pwd";
     static final String PROT_FILE = "file";
     static final String PROT_LDAP = "ldap";
@@ -87,6 +89,8 @@ public class BootstrapData {
     private static final String BOOTSTRAPCONFIG = "bootstrapConfig.properties";
     
     private String basedir;
+    private String dsameUser;
+    private String dsuserbasedn;
     private String dsbasedn;
     private String dsameUserPwd;
     private String instanceName;
@@ -121,6 +125,10 @@ public class BootstrapData {
         return instanceName;
     }
 
+    public String getUserBaseDN() {
+        return dsuserbasedn;
+    }
+
     public String getBaseDN() {
         return dsbasedn;
     }
@@ -128,7 +136,7 @@ public class BootstrapData {
     public String getDsameUserPassword() {
         return dsameUserPwd;
     }
-   
+    
     /**
       * Gets attributes in a given row as a <code>Map</code>.
       * @param idx row (starting with 0)
@@ -182,6 +190,8 @@ public class BootstrapData {
                 String name = (String)e.nextElement();
                 String property = prop.getProperty(name);
                 property = property.replaceAll("@DS_BASE_DN@", dsbasedn);
+                // Replace DSAMEUSER
+                property = property.replaceAll("@DSAMEUSER@", dsameUser);
                 prop.setProperty(name, property);
             }
         } catch (IOException e) {
@@ -282,6 +292,7 @@ public class BootstrapData {
         String dspwd = (String)mapQuery.get(DS_PWD);
         String pwd = (String)mapQuery.get(PWD);
 
+        dsameUser = (String)mapQuery.get(USER);
         dsbasedn = (String)mapQuery.get(DS_BASE_DN);
         instanceName = URLDecoder.decode(url.getPath(), "UTF-8");
         dsameUserPwd = (String)mapQuery.get(BootstrapData.PWD);
@@ -292,6 +303,17 @@ public class BootstrapData {
             
             dspwd = Crypt.decode(dspwd, Crypt.getHardcodedKeyEncryptor());
             dspwd = Crypt.encode(dspwd);
+        }
+        
+        // Check if dsameuser is set
+        if ((dsameUser == null) || (dsameUser.length() == 0)) {
+            dsameUser = "cn=dsameuser,ou=DSAME Users," + dsbasedn;
+            dsuserbasedn = dsbasedn;
+        } else {
+            // Obtain user base dn from dsamaeUser
+            DN dsameUserDn = new DN(dsameUser);
+            DN userBaseDN = dsameUserDn.getParent().getParent();
+            dsuserbasedn = userBaseDN.toRFCString();
         }
         
         if (instanceName.startsWith("/")) {
@@ -311,10 +333,10 @@ public class BootstrapData {
         template = template.replaceAll("@" + DS_HOST + "@", dshost);
         template = template.replaceAll("@" + DS_PORT + "@", dsport);
         template = template.replaceAll("@" + DS_MGR + "@", dsmgr);
-        template = template.replaceAll(
-            "@" + DS_BASE_DN + "@", dsbasedn);
+        template = template.replaceAll("@" + USER + "@", dsameUser);
         template = template.replaceAll("@" + DS_PWD + "@", dspwd);
         template = template.replaceAll("@" + PWD + "@", pwd);
+        template = template.replaceAll("@" + DS_BASE_DN + "@", dsuserbasedn);
         return template;    
     }
     
@@ -365,8 +387,7 @@ public class BootstrapData {
         template = template.replaceAll("@" + DS_HOST + "@", dshost);
         template = template.replaceAll("@" + DS_PORT + "@", dsport);
         template = template.replaceAll("@" + DS_MGR + "@", dsmgr);
-        template = template.replaceAll(
-            "@" + DS_BASE_DN + "@", dsbasedn);
+        template = template.replaceAll("@" + DS_BASE_DN + "@", dsbasedn);
         template = template.replaceAll("@" + DS_PWD + "@", dspwd);
         template = template.replaceAll("@" + PWD + "@", pwd);
         return template;    
@@ -477,7 +498,7 @@ public class BootstrapData {
         "<Server name=\"Server1\" host=\"@" + DS_HOST + "@\" " +
         "port=\"@" + DS_PORT + "@\" type=\"@" + DS_PROTO_TYPE + "@\" />" +
         "<User name=\"User1\" type=\"admin\">" +
-        "<DirDN>cn=dsameuser,ou=DSAME Users,@" + DS_BASE_DN + "@</DirDN>" +
+        "<DirDN>@" + USER + "@</DirDN>" +
         "<DirPassword>@" + PWD + "@</DirPassword>" +
         "</User>" +
         "<BaseDN>@" + DS_BASE_DN + "@</BaseDN>" +

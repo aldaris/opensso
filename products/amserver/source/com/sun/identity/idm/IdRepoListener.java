@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoListener.java,v 1.11 2008-07-23 17:24:58 veiming Exp $
+ * $Id: IdRepoListener.java,v 1.12 2008-08-07 17:22:08 arviranga Exp $
  *
  */
 
@@ -36,6 +36,7 @@ import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfigManager;
+import com.sun.identity.sm.ServiceManager;
 import java.security.AccessController;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -284,7 +285,8 @@ public final class IdRepoListener {
         // If configMap is null, then this is a "remote" cache update
         if ((cMap == null) || cMap.isEmpty()) {
             String ct[] = new String[1];
-            ct[0] = name;
+            ct[0] = "id=" + name + ",ou=" + type.getName() + "," +
+                ServiceManager.getBaseDN();
             return ct;
         }
         String changedTypes[] = null;

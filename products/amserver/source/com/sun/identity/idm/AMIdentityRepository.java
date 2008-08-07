@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentityRepository.java,v 1.17 2008-07-06 05:48:30 arviranga Exp $
+ * $Id: AMIdentityRepository.java,v 1.18 2008-08-07 17:22:08 arviranga Exp $
  *
  */
 
@@ -182,7 +182,7 @@ public final class AMIdentityRepository {
                             && !remUser.equalsIgnoreCase(
                                     IdConstants.ANONYMOUS_USER)) 
                     {
-                        newResults.addResult(amid, amid.getAttributes());
+                        newResults.addResult(amid, Collections.EMPTY_MAP);
                     }
                 }
                 results = newResults;

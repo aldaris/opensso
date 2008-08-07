@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.80 2008-08-04 22:12:35 veiming Exp $
+ * $Id: AccessManager.java,v 1.81 2008-08-07 17:22:02 arviranga Exp $
  *
  */
 
@@ -1573,6 +1573,25 @@ public class AccessManager {
         }
     )
     private String list_datastores;
+
+@SubCommandInfo(
+        implClassName="com.sun.identity.cli.datastore.AddAMSDKIdRepoPlugin",
+        description="Create AMSDK IdRepo Plug-in",
+        webSupport="true",
+        mandatoryOptions={
+            "directory-servers|s|m|directory servers <protocol>://<hostname>:<port>. Can have multiple entries.",
+            "basedn|b|s|Directory Server base distinguished name.",
+            "dsame-password-file|x|s|File that contains password of the dsameuser",
+            "puser-password-file|p|s|File that contains password of the puser"},
+        optionAliases={ },
+        macro="authentication",
+        optionalOptions={},
+        resourceStrings={
+            "datastore-add-amsdk-idrepo-plugin-succeeded=Plug-in was created."
+        }
+    )
+    private String add_amsdk_idrepo_plugin;
+
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.datastore.CreateDataStore",

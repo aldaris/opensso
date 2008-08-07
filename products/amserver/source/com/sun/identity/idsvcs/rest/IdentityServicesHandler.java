@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdentityServicesHandler.java,v 1.5 2008-06-25 05:43:34 qcheng Exp $
+ * $Id: IdentityServicesHandler.java,v 1.6 2008-08-07 17:22:05 arviranga Exp $
  *
  */
 
@@ -492,7 +492,7 @@ public class IdentityServicesHandler extends HttpServlet {
         public static final SecurityMethod CREATE =   new SecurityMethod(
                 "CREATE", Void.class, new SecurityParameter[]
                 {SecurityParameter.IDENTITY, SecurityParameter.ADMIN});
-        public static final SecurityMethod READ =	new SecurityMethod(
+        public static final SecurityMethod READ = new SecurityMethod(
             "READ", IdentityDetails.class, new SecurityParameter[]
             {SecurityParameter.NAME, SecurityParameter.ATTRIBUTES,
              SecurityParameter.ADMIN});

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSAuthModule.java,v 1.5 2008-06-25 05:41:54 qcheng Exp $
+ * $Id: SMSAuthModule.java,v 1.6 2008-08-07 17:22:09 arviranga Exp $
  *
  */
 
@@ -41,9 +41,11 @@ import com.sun.identity.security.AdminPasswordAction;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.encode.Hash;
+import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfigManager;
 import com.sun.identity.sm.ServiceListener;
+import com.sun.identity.sm.ServiceSchemaManager;
 import java.io.IOException;
 import java.security.AccessController;
 import java.util.Collections;
@@ -319,6 +321,8 @@ public class SMSAuthModule implements LoginModule {
                     .doPrivileged(AdminTokenAction.getInstance());
             ServiceConfigManager scm = new ServiceConfigManager(IDREPO_SERVICE,
                     ssoToken);
+            ServiceSchemaManager ssm = new ServiceSchemaManager(IDREPO_SERVICE,
+                    ssoToken);
             ServiceConfig sc = scm.getGlobalConfig(null);
             sc = sc.getSubConfig(USERS);
             for (Iterator items = sc.getSubConfigNames().iterator(); items
@@ -330,6 +334,23 @@ public class SMSAuthModule implements LoginModule {
                 Set set = (Set) attrs.get(DN);
                 if (set != null && !set.isEmpty()) {
                     name = (String) set.iterator().next();
+                    // Add root suffix, if revision is greater than 30
+                    if (ssm.getRevisionNumber() >= 30) {
+                        // In the case of upgrade the DN will have the suffix
+                        // Hence check if it ends with SMS root suffix
+                        if (name.toLowerCase().endsWith(
+                            SMSEntry.getRootSuffix().toLowerCase())) {
+                            // Replace only if the they are different
+                            if (!SMSEntry.getRootSuffix().equals(
+                                SMSEntry.getAMSdkBaseDN())) {
+                                name = name.substring(0, name.length() -
+                                    SMSEntry.getRootSuffix().length());
+                                name = name + SMSEntry.getAMSdkBaseDN();
+                            }
+                        } else {
+                            name = name + SMSEntry.getAMSdkBaseDN();
+                        }
+                    }
                 }
                 String hash = null;
                 set = (Set) attrs.get(PASSWORD);

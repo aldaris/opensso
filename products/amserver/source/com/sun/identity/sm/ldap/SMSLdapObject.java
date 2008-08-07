@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSLdapObject.java,v 1.18 2008-07-30 00:50:13 arviranga Exp $
+ * $Id: SMSLdapObject.java,v 1.19 2008-08-07 17:22:04 arviranga Exp $
  *
  */
 
@@ -150,7 +150,6 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
         if (initialized) {
             return;
         }
-        SMDataLayer.reset();
         // Obtain the I18N resource bundle & Debug
         debug = Debug.getInstance("amSMSLdap");
         AMResourceBundleCache amCache = AMResourceBundleCache.getInstance();
@@ -1143,6 +1142,15 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
         Set answer = getOrgNames(token, dn, sfilter, numOfEntries, sortResults,
                 ascendingOrder);
         return (answer);
+    }
+    
+    public void shutdown() {
+        if (!enableProxy && (smdlayer != null)) {
+            smdlayer.shutdown();
+        }
+        // dlayer (from AMSDK) has dependecy on AMSDK
+        // and cannot be shutdown by SMS.
+        // Should be initialized by AMSDK
     }
 
     private Set getOrgNames(SSOToken token, String dn, String filter,

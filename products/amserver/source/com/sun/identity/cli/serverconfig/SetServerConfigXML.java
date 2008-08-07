@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetServerConfigXML.java,v 1.3 2008-06-25 05:42:21 qcheng Exp $
+ * $Id: SetServerConfigXML.java,v 1.4 2008-08-07 17:22:07 arviranga Exp $
  *
  */
 
@@ -34,7 +34,6 @@ import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.CLIUtil;
 import com.sun.identity.cli.ExitCodes;
-import com.sun.identity.cli.FormatUtils;
 import com.sun.identity.cli.IArgument;
 import com.sun.identity.cli.IOutput;
 import com.sun.identity.cli.LogWriter;
@@ -43,7 +42,6 @@ import com.sun.identity.common.configuration.ServerConfiguration;
 import com.sun.identity.common.configuration.ConfigurationException;
 import com.sun.identity.sm.SMSException;
 import java.text.MessageFormat;
-import java.util.Properties;
 import java.util.logging.Level;
 
 /**
@@ -75,8 +73,11 @@ public class SetServerConfigXML extends AuthenticatedCommand {
             String[] params = {serverName};
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "ATTEMPT_SET_SERVER_CONFIG_XML", params);
-
-            String xml = CLIUtil.getFileContent(xmlFile);
+            String xml = xmlFile;
+            boolean isWebEnabled = getCommandManager().webEnabled();
+            if (!isWebEnabled) {
+                xml = CLIUtil.getFileContent(xmlFile);
+            }
             ServerConfiguration.setServerConfigXML(
                 adminSSOToken, serverName, xml);
             outputWriter.printlnMessage(MessageFormat.format(

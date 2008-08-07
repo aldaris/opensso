@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSObject.java,v 1.5 2008-07-06 05:48:30 arviranga Exp $
+ * $Id: SMSObject.java,v 1.6 2008-08-07 17:22:07 arviranga Exp $
  *
  */
 
@@ -205,5 +205,10 @@ public abstract class SMSObject {
 
     public boolean cacheResults() {
         return (SMSEntry.cacheSMSEntries);
+    }
+    
+    // Method to close the resources held by the plugins
+    public void shutdown() {
+        // Default empty implementation
     }
 }
