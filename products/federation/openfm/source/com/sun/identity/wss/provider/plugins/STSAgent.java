@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSAgent.java,v 1.11 2008-08-05 04:11:00 mallas Exp $
+ * $Id: STSAgent.java,v 1.12 2008-08-07 23:30:06 mallas Exp $
  *
  */
 
@@ -176,6 +176,9 @@ public class STSAgent extends STSConfig {
     private void parseAgentKeyValues(Map attributes) throws ProviderException {
         if(attributes == null || attributes.isEmpty()) {
            return;
+        }
+        if(debug.messageEnabled()) {
+           debug.message("STSAgent.parseAgentKeyValues::" + attributes);
         }
 
         for (Iterator i = attributes.keySet().iterator(); i.hasNext(); ) {
