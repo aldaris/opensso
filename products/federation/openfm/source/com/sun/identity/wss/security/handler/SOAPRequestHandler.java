@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.22 2008-08-05 04:11:00 mallas Exp $
+ * $Id: SOAPRequestHandler.java,v 1.23 2008-08-07 23:17:01 mallas Exp $
  *
  */
 
@@ -1421,6 +1421,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
              pc.setEncryptionAlgorithm(stsConfig.getEncryptionAlgorithm());
              pc.setEncryptionStrength(stsConfig.getEncryptionStrength());
              pc.setSigningRefType(stsConfig.getSigningRefType());
+             pc.setAuthenticationChain(stsConfig.getAuthenticationChain());
              return pc;
              
         } catch (ProviderException pe) {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultAuthenticator.java,v 1.12 2008-07-30 05:00:45 mallas Exp $
+ * $Id: DefaultAuthenticator.java,v 1.13 2008-08-07 23:17:00 mallas Exp $
  *
  */
 
@@ -318,6 +318,10 @@ public class DefaultAuthenticator implements MessageAuthenticator {
         if(securityToken != null) {
            subject.getPublicCredentials().add(
                    securityToken.toDocumentElement());
+        }
+        
+        if(securityMechanism != null) {
+           subject.getPublicCredentials().add(securityMechanism);                   
         }
         return subject;
     }
