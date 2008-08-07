@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultLibraryIDPAttributeMapper.java,v 1.1 2008-07-08 22:56:28 hengming Exp $
+ * $Id: DefaultLibraryIDPAttributeMapper.java,v 1.2 2008-08-07 20:01:44 qcheng Exp $
  */
 
 package com.sun.identity.saml2.plugins;
@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.HashSet;
 
 import com.sun.identity.shared.xml.XMLUtils;
@@ -140,6 +141,14 @@ public class DefaultLibraryIDPAttributeMapper extends DefaultAttributeMapper
             while(iter.hasNext()) {
                 String samlAttribute = (String)iter.next();
                 String localAttribute = (String)configMap.get(samlAttribute);
+                String nameFormat = null;
+                // if samlAttribute has format nameFormat|samlAttribute
+                StringTokenizer tokenizer = 
+                    new StringTokenizer(samlAttribute, "|");
+                if (tokenizer.countTokens() > 1) {
+                    nameFormat = tokenizer.nextToken();
+                    samlAttribute = tokenizer.nextToken();
+                }
                 String[] localAttributeValues = null;
                 if ((valueMap != null) && (!valueMap.isEmpty())) {
                     Set values = (Set)valueMap.get(localAttribute); 
@@ -171,7 +180,7 @@ public class DefaultLibraryIDPAttributeMapper extends DefaultAttributeMapper
                     continue;
                 }
 
-                attributes.add(getSAMLAttribute(samlAttribute,
+                attributes.add(getSAMLAttribute(samlAttribute, nameFormat,
                     localAttributeValues));
             }
             return attributes;      
@@ -187,11 +196,12 @@ public class DefaultLibraryIDPAttributeMapper extends DefaultAttributeMapper
      * Returns the SAML <code>Attribute</code> object.
      *
      * @param name attribute name.
+     * @param nameFormat Name format of the attribute
      * @param values attribute values.
      * @exception SAML2Exception if any failure.
      */
-    protected Attribute getSAMLAttribute(String name, String[] values)
-        throws SAML2Exception {
+    protected Attribute getSAMLAttribute(String name, String nameFormat,
+         String[] values) throws SAML2Exception {
 
         if (name == null) {
             throw new SAML2Exception(bundle.getString("nullInput"));
@@ -201,6 +211,9 @@ public class DefaultLibraryIDPAttributeMapper extends DefaultAttributeMapper
         Attribute attribute =  factory.createAttribute();
 
         attribute.setName(name);
+        if (nameFormat != null) {
+            attribute.setNameFormat(nameFormat);
+        }
         if (values != null) {
             List list = new ArrayList();
             for (int i=0; i<values.length; i++) {
