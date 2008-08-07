@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: INotenforcedURIHelper.java,v 1.2 2008-06-25 05:51:40 qcheng Exp $
+ * $Id: INotenforcedURIHelper.java,v 1.3 2008-08-07 18:04:46 huacui Exp $
  *
  */
 
@@ -34,11 +34,11 @@ import com.sun.identity.agents.arch.AgentException;
  * The interface for NotenforcedURIHelper
  */
 public interface INotenforcedURIHelper {
-    public abstract void initialize(String accessDeniedURI, boolean isInverted,
+    public abstract void initialize(boolean isInverted,
             boolean cacheEnabled, int maxSize, String[] notenforcedURIEntries)
             throws AgentException;
 
     public abstract boolean isActive();
 
-    public abstract boolean isNotEnforced(String requestURI);
+    public abstract boolean isNotEnforced(String requestURI, String accessDeniedURL);
 }

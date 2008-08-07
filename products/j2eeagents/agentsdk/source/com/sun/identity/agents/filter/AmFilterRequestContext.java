@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmFilterRequestContext.java,v 1.7 2008-08-04 20:03:34 huacui Exp $
+ * $Id: AmFilterRequestContext.java,v 1.8 2008-08-07 18:04:46 huacui Exp $
  *
  */
 package com.sun.identity.agents.filter;
@@ -860,7 +860,7 @@ public class AmFilterRequestContext implements IUtilConstants {
         _filterMode = filterMode;
     }
 
-    private String getAccessDeniedURI() {
+    String getAccessDeniedURI() {
         return _accessDeniedURI;
     }
 

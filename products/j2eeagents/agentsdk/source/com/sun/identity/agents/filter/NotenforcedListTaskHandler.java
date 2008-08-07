@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotenforcedListTaskHandler.java,v 1.3 2008-06-25 05:51:48 qcheng Exp $
+ * $Id: NotenforcedListTaskHandler.java,v 1.4 2008-08-07 18:04:46 huacui Exp $
  *
  */
 
@@ -64,8 +64,6 @@ implements INotenforcedListTaskHandler {
     public void initialize(ISSOContext context, AmFilterMode mode) 
     throws AgentException {
         super.initialize(context, mode);
-        String accessDeniedURI = getConfigurationString(
-                CONFIG_ACCESS_DENIED_URI);
         boolean cacheEnabled = getConfigurationBoolean(
                 CONFIG_NOTENFORCED_LIST_CACHE_FLAG, 
                 DEFAULT_NOTENFORCED_LIST_CACHE_FLAG);
@@ -83,8 +81,7 @@ implements INotenforcedListTaskHandler {
         
         CommonFactory cf = new CommonFactory(getModule());
         setNotEnforcedListURIHelper(cf.newNotenforcedURIHelper(
-                accessDeniedURI, isInverted, cacheEnabled, 
-                cacheSize, notenforcedURIs));
+                isInverted, cacheEnabled, cacheSize, notenforcedURIs));
     }
 
     /**
@@ -107,7 +104,8 @@ implements INotenforcedListTaskHandler {
         HttpServletRequest request = ctx.getHttpServletRequest();
         //requestURI includes complete URL requested
         String requestURI = ctx.getPolicyDestinationURL();
-        if(isNotEnforcedURI(requestURI)) {
+        String accessDeniedURI = ctx.getAccessDeniedURI();
+        if(isNotEnforcedURI(requestURI, accessDeniedURI)) {
             if(isLogMessageEnabled()) {
                 logMessage("NotenforcedListTaskHandler: The request URI "
                            + requestURI + " was found in Not Enforced List");
@@ -137,8 +135,8 @@ implements INotenforcedListTaskHandler {
         return AM_FILTER_NOT_ENFORCED_LIST_TASK_HANDLER_NAME;
     }
 
-    private boolean isNotEnforcedURI(String uri) {
-        return getNotEnforcedListURIHelper().isNotEnforced(uri);
+    private boolean isNotEnforcedURI(String uri, String accessDeniedURI) {
+        return getNotEnforcedListURIHelper().isNotEnforced(uri, accessDeniedURI);
     }
 
     private void setNotEnforcedListURIHelper(INotenforcedURIHelper helper) {

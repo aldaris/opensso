@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.61 2008-08-06 03:06:09 mallas Exp $
+   $Id: AgentService.xml,v 1.62 2008-08-07 18:09:22 huacui Exp $
 
 -->
 
@@ -1317,11 +1317,13 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.access.denied.uri"
-                        type="single"
+                        type="list"
                         syntax="string"
+                        uitype="globalmaplist"
+                        validator="GlobalMapValueValidator"
                         i18nKey="a137">
                         <DefaultValues>
-                            <Value></Value>
+                            <Value>[]=</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema

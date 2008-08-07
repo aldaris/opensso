@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotenforcedURIHelper.java,v 1.3 2008-06-25 05:51:40 qcheng Exp $
+ * $Id: NotenforcedURIHelper.java,v 1.4 2008-08-07 18:04:46 huacui Exp $
  *
  */
 
@@ -47,11 +47,9 @@ public class NotenforcedURIHelper extends SurrogateBase
         super(module);
     }
     
-    public void initialize(String accessDeniedURI, boolean isInverted, 
-            boolean cacheEnabled, int maxSize,
-            String[] notenforcedURIEntries) throws AgentException
+    public void initialize(boolean isInverted, boolean cacheEnabled, 
+       int maxSize, String[] notenforcedURIEntries) throws AgentException
     {
-        setAccessDeniedURI(accessDeniedURI);
         setCacheEnabledFlag(cacheEnabled);
         setInvertState(isInverted);
 
@@ -66,8 +64,7 @@ public class NotenforcedURIHelper extends SurrogateBase
         CommonFactory cf = new CommonFactory(getModule());
         setMatcher(cf.newPatternMatcher(notenforcedURIEntries));
 
-        if (notenforcedURIEntries.length == 0 && accessDeniedURI == null &&
-                !isInverted())
+        if (notenforcedURIEntries.length == 0 && !isInverted())
         {
             setActiveState(false);
         } else {
@@ -75,8 +72,6 @@ public class NotenforcedURIHelper extends SurrogateBase
         }
         
         if (isLogMessageEnabled()) {
-            logMessage("NotenforcedURIHelper: accessDeniedURI: " 
-                    + accessDeniedURI);
             logMessage("NotenforcedURIHelper: isInverted: " + isInverted());
             logMessage("NotenforcedURIHelper: cacheEnabled: " + cacheEnabled);
             logMessage("NotenforcedURIHelper: cache-size: " + maxSize);
@@ -119,7 +114,7 @@ public class NotenforcedURIHelper extends SurrogateBase
         return result;
     }
 
-    public boolean isNotEnforced (String requestURI) {
+    public boolean isNotEnforced (String requestURI, String accessDeniedURI) {
         boolean result = false;
         String  enforcedCacheEntry  = getEnforcedCacheEntry(requestURI);
         String  notEnforcedCacheEntry = getNotEnforcedCacheEntry(requestURI);
@@ -137,7 +132,6 @@ public class NotenforcedURIHelper extends SurrogateBase
                            + ") found in not-enforced cache");
             }
         } else {    //there is no match in cache
-            String accessDeniedURI = getAccessDeniedURI();
             if ((accessDeniedURI != null) 
                && isAccessDeniedRequest(requestURI, accessDeniedURI))
             {
@@ -210,13 +204,6 @@ public class NotenforcedURIHelper extends SurrogateBase
         return result;
     }
 
-    private void setAccessDeniedURI(String accessDeniedURI) {
-        _accessDeniedURI = accessDeniedURI;
-    }
-
-    private String getAccessDeniedURI() {
-        return _accessDeniedURI;
-    }
 
     private void setNotenforcedURICache(AgentCache cache) {
         _notenforcedURICache = cache;
@@ -266,7 +253,6 @@ public class NotenforcedURIHelper extends SurrogateBase
     private boolean _cacheEnabled;
     private int _maxCacheSize;
     private boolean _isActive;
-    private String _accessDeniedURI;
     private AgentCache _notenforcedURICache;
     private AgentCache _enforcedURICache;
     private IPatternMatcher _matcher;

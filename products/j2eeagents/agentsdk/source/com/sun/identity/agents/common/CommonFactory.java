@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommonFactory.java,v 1.4 2008-07-02 18:27:10 leiming Exp $
+ * $Id: CommonFactory.java,v 1.5 2008-08-07 18:04:46 huacui Exp $
  *
  */
 
@@ -173,13 +173,13 @@ public class CommonFactory {
     }
     
     public INotenforcedURIHelper newNotenforcedURIHelper(
-            String accessDeniedURI, boolean isInverted, boolean cacheEnabled,
+            boolean isInverted, boolean cacheEnabled,
             int maxSize, String[] notenforcedURIEntries) throws AgentException {
         INotenforcedURIHelper result = null;
         String className = getResolver().getNotenforcedURIHelperImpl();
         try {
             result = (INotenforcedURIHelper) getObject(className);
-            result.initialize(accessDeniedURI, isInverted, cacheEnabled,
+            result.initialize(isInverted, cacheEnabled,
                     maxSize, notenforcedURIEntries);
         } catch (Exception ex) {
             throw new AgentException(

@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: OpenSSOAgentConfiguration.template,v 1.1 2008-08-04 20:02:31 huacui Exp $
+# $Id: OpenSSOAgentConfiguration.template,v 1.2 2008-08-07 18:04:47 huacui Exp $
 #
 #
 
@@ -291,11 +291,15 @@ com.sun.identity.agents.config.webservice.autherror.content  = WSAuthErrorConten
 
 #
 # ACCESS DENIED URI
-#   Specifies the URI used by the Agent to block unauthorized access 
-#   requests. May be left unspecified if not available.
+#   An application specific (MAP) property that specifies the URI used by 
+#   the Agent to block unauthorized access requests. May be left unspecified 
+#   if not available. A global value can also be specified.
+# Example:
+#   com.sun.identity.agents.config.access.denied.uri[BankApp] = /BankApp/accessdenied.html 
+#   com.sun.identity.agents.config.access.denied.uri = /accessdenied.html 
 # Hot-Swap Enabled: Yes
 #
-com.sun.identity.agents.config.access.denied.uri = 
+com.sun.identity.agents.config.access.denied.uri[] = 
 
 #
 # FORM LOGIN PROCESSING PROPERTIES

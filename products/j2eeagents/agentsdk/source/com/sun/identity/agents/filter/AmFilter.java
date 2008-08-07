@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmFilter.java,v 1.5 2008-06-25 05:51:43 qcheng Exp $
+ * $Id: AmFilter.java,v 1.6 2008-08-07 18:04:46 huacui Exp $
  *
  */
 
@@ -36,6 +36,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.sun.identity.agents.arch.AgentBase;
+import com.sun.identity.agents.arch.AgentConfiguration;
 import com.sun.identity.agents.arch.AgentException;
 import com.sun.identity.agents.arch.AgentServerErrorException;
 import com.sun.identity.agents.arch.AgentSSOException;
@@ -70,7 +71,6 @@ public class AmFilter extends AgentBase
     
     public void initialize(AmFilterMode filterMode) throws AgentException {
         initFilterMode(filterMode);
-        setAccessDeniedURI(getConfigurationString(CONFIG_ACCESS_DENIED_URI));
         initFormLoginList();
         initAgentServerDetails();
         setRedirectParameterName(getConfigurationString(
@@ -124,10 +124,20 @@ public class AmFilter extends AgentBase
                        + RequestDebugUtils.getDebugString(request));
         }
 
+        String appName = null;
+        String contextPath = request.getContextPath();
+
+        if (contextPath.trim().length() == 0 ||
+            contextPath.trim().equals("/")) {
+            appName = AgentConfiguration.DEFAULT_WEB_APPLICATION_NAME;
+        } else {
+            appName = contextPath.substring(1);
+        }
+
         AmFilterRequestContext ctx = new AmFilterRequestContext(request,
             response, getRedirectParameterName(), getLoginURLFailoverHelper(),
             getLogoutURLFailoverHelper(),
-            isFormLoginRequest(request), getAccessDeniedURI(), this,
+            isFormLoginRequest(request), getAccessDeniedURI(appName), this,
             getFilterMode(), getAgentHost(request), getAgentPort(request), 
             getAgentProtocol(request));
 
@@ -545,20 +555,11 @@ public class AmFilter extends AgentBase
         }
     }
     
-    private String getAccessDeniedURI() {
-        return _accessDeniedURI;
+    private String getAccessDeniedURI(String applicationName) {
+        return getManager().getApplicationConfigurationString(
+                CONFIG_ACCESS_DENIED_URI, applicationName); 
     }
-    
-    private void setAccessDeniedURI(String accessDeniedURI) {
-        if (accessDeniedURI != null && accessDeniedURI.trim().length() > 0) {
-            _accessDeniedURI = accessDeniedURI;
-        }
-        if (isLogMessageEnabled()) {
-            logMessage("AmFilter: Access denied URI is set to: " 
-                    + _accessDeniedURI);
-        }
-    }
-    
+
     private void initFilterMode(AmFilterMode mode) throws AgentException {
         if (mode == null) {
             String strMode = getConfigurationString(CONFIG_FILTER_MODE, 
@@ -668,7 +669,6 @@ public class AmFilter extends AgentBase
     private boolean _defaultRefererInitialized;
     private boolean _cdssoEnabledFlag;
     private AmFilterMode _filterMode = AmFilterMode.MODE_ALL;
-    private String _accessDeniedURI;
     private HashSet _formLoginList;
     private String _redirectParameterName;
     private IURLFailoverHelper _loginURLFailoverHelper;
