@@ -24,7 +24,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amLogging.xml,v 1.9 2008-07-15 23:56:08 bigfatrat Exp $
+    $Id: amLogging.xml,v 1.10 2008-08-07 01:21:29 bigfatrat Exp $
 
 -->
 
@@ -68,7 +68,7 @@
                     syntax="string"
                     i18nKey="a104">
                     <DefaultValues>
-                        <Value>CONFIG_DIR_SERVER_URI/@LOG_DIR@/</Value>
+                        <Value>%BASE_DIR%/%SERVER_URI%/@LOG_DIR@/</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="logstatus"
@@ -120,7 +120,7 @@
                     syntax="string"
                     i18nKey="a1162">
                     <DefaultValues>
-                        <Value>CONFIG_DIR_SERVER_URI/Logger.jks</Value>
+                        <Value>%BASE_DIR%/%SERVER_URI%/Logger.jks</Value>
                     </DefaultValues>
                 </AttributeSchema>                 
                 <AttributeSchema name="iplanet-am-logging-db-user"
