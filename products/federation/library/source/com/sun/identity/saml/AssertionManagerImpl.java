@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionManagerImpl.java,v 1.2 2008-06-25 05:47:30 qcheng Exp $
+ * $Id: AssertionManagerImpl.java,v 1.3 2008-08-07 21:41:35 hengming Exp $
  *
  */
 
@@ -92,7 +92,7 @@ public class AssertionManagerImpl implements AssertionManagerIF {
         return (a.toString(true, true));
     }
 
-    public String createAssertion(String ssoToken, List attributes)
+    public String createAssertion2(String ssoToken, List attributes)
         throws SAMLException
     {
         checkInitialization();
@@ -146,7 +146,7 @@ public class AssertionManagerImpl implements AssertionManagerIF {
         return (a.toString(true, true));
     }
 
-    public String getAssertion(String artifact, String destID)
+    public String getAssertion2(String artifact, String destID)
         throws SAMLException
     {
         checkInitialization();
@@ -170,7 +170,7 @@ public class AssertionManagerImpl implements AssertionManagerIF {
         return (a.toString(true, true));
     }
 
-    public String getAssertionByIdRef(String idref, String destID)
+    public String getAssertionByIdRef2(String idref, String destID)
          throws SAMLException
     {
         checkInitialization();

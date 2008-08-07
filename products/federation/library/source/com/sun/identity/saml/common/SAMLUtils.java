@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLUtils.java,v 1.8 2008-06-25 05:47:35 qcheng Exp $
+ * $Id: SAMLUtils.java,v 1.9 2008-08-07 21:41:35 hengming Exp $
  *
  */
 
@@ -1453,8 +1453,10 @@ public class SAMLUtils  extends SAMLUtilsCommon {
                 }    
             } 
             key = result.toString();
-        }           
-        String reqUrl = SAMLServiceManager.getServerURL();
+        }
+
+        String reqUrl = req.getScheme() + "://" + req.getServerName() + ":" +
+            req.getServerPort() + req.getContextPath();
         String redirectUrl = null;
         if (key == null || key.equals("")) {
             redirectUrl = reqUrl +"/UI/Login?goto=" +  

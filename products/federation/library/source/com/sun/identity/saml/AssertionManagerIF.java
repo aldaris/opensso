@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionManagerIF.java,v 1.2 2008-06-25 05:47:30 qcheng Exp $
+ * $Id: AssertionManagerIF.java,v 1.3 2008-08-07 21:41:35 hengming Exp $
  *
  */
 
@@ -45,7 +45,7 @@ public interface AssertionManagerIF extends Remote {
     public String createAssertion(String ssoToken)
         throws SAMLException, RemoteException;
 
-    public String createAssertion(String ssoToken, List attributes)
+    public String createAssertion2(String ssoToken, List attributes)
         throws SAMLException, RemoteException;
 
     public String createAssertionArtifact(String assertion, String target)
@@ -54,7 +54,7 @@ public interface AssertionManagerIF extends Remote {
     public String getAssertionByIdRef(String idRef, Set destID)
         throws SAMLException, RemoteException;
    
-    public String getAssertionByIdRef(String idRef, String destID)
+    public String getAssertionByIdRef2(String idRef, String destID)
         throws SAMLException, RemoteException;
 
     public String getAssertionByIdRefToken(String idRef, String ssoToken)
@@ -63,7 +63,7 @@ public interface AssertionManagerIF extends Remote {
     public String getAssertion(String artifact, Set destID)
         throws SAMLException, RemoteException;
     
-    public String getAssertion(String artifact, String destID)
+    public String getAssertion2(String artifact, String destID)
         throws SAMLException, RemoteException;
 
     public Set getAssertionArtifacts(String ssoToken)

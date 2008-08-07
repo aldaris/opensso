@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionManagerClient.java,v 1.6 2008-07-23 17:36:34 veiming Exp $
+ * $Id: AssertionManagerClient.java,v 1.7 2008-08-07 21:41:34 hengming Exp $
  *
  */
 
@@ -269,8 +269,9 @@ public final class AssertionManagerClient {
         String assertion = null;
         try {
             SessionProvider sessionProvider = SessionManager.getProvider();
-            assertion = (String) stub.send("createAssertion",
-                sessionProvider.getSessionID(token), null);
+            Object[] args = { sessionProvider.getSessionID(token) };
+            assertion = (String) stub.send("createAssertion", args, null,
+                null);
             return (new Assertion(XMLUtils.toDOMDocument(assertion,
                     SAMLUtils.debug).getDocumentElement()));
         } catch (Exception re) {
@@ -312,7 +313,8 @@ public final class AssertionManagerClient {
             }
             SessionProvider sessionProvider = SessionManager.getProvider();
             Object[] args = { sessionProvider.getSessionID(token), attrs };
-            assertion = (String) stub.send("createAssertion", args, null, null);
+            assertion = (String) stub.send("createAssertion2", args, null,
+                null);
             return (new Assertion(XMLUtils.toDOMDocument(assertion,
                     SAMLUtils.debug).getDocumentElement()));
         } catch (Exception re) {
@@ -441,7 +443,7 @@ public final class AssertionManagerClient {
             }
             Object[] args = { idRef.getAssertionIDReference(),
                 Base64.encode(SAMLUtils.stringToByteArray(destID)) };
-            assertion = (String) stub.send("getAssertionByIdRef", args, null,
+            assertion = (String) stub.send("getAssertionByIdRef2", args, null,
             		null);
             return (new Assertion(XMLUtils.toDOMDocument(assertion,
                     SAMLUtils.debug).getDocumentElement()));
@@ -519,7 +521,7 @@ public final class AssertionManagerClient {
         try {
             Object[] args = { artifact.getAssertionArtifact(),
                 Base64.encode(SAMLUtils.stringToByteArray(destID)) };
-            assertion = (String) stub.send("getAssertion", args, null,
+            assertion = (String) stub.send("getAssertion2", args, null,
             		null);
             return (new Assertion(XMLUtils.toDOMDocument(assertion,
                     SAMLUtils.debug).getDocumentElement()));
