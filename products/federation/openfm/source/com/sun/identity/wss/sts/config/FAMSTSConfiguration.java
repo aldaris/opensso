@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSConfiguration.java,v 1.8 2008-07-30 05:00:46 mallas Exp $
+ * $Id: FAMSTSConfiguration.java,v 1.9 2008-08-07 23:21:05 mallas Exp $
  *
  */
 
@@ -87,6 +87,7 @@ public class FAMSTSConfiguration implements
     private static String encryptionAlgorithm = null;
     private static int encryptionStrength = 0;
     private static String signingRefType = null;
+    private static String authChain = null;
     
     private CallbackHandler callbackHandler;
     
@@ -134,6 +135,7 @@ public class FAMSTSConfiguration implements
     static final String ENCRYPTION_ALGORITHM = "EncryptionAlgorithm";
     static final String ENCRYPTION_STRENGTH = "EncryptionStrength";
     static final String SIGNING_REF_TYPE = "SigningRefType";
+    static final String AUTHENTICATION_CHAIN = "AuthenticationChain";
 
     private static Debug debug = STSUtils.debug;
     static ConfigurationInstance ci = null;
@@ -397,6 +399,14 @@ public class FAMSTSConfiguration implements
         values = (Set)attrMap.get(SIGNING_REF_TYPE);
         if (values != null && !values.isEmpty()) {
             signingRefType = (String)values.iterator().next();
+        }
+        
+        values = (Set)attrMap.get(AUTHENTICATION_CHAIN);
+        if (values != null && !values.isEmpty()) {
+            String tmp = (String)values.iterator().next();
+            if(!tmp.equals("[Empty]")) {
+               authChain = (String)values.iterator().next();
+            }
         }
     }
     
@@ -862,5 +872,21 @@ public class FAMSTSConfiguration implements
      */
     public void setSigningRefType(String refType) {
         this.signingRefType = refType;
+    }
+    
+    /**
+     * Returns authentication chain used for authenticating sts clients.
+     * @return the authentication chain name.
+     */
+    public String getAuthenticationChain() {
+        return authChain;
+    }
+    
+    /**
+     * Sets the authentication chain name.
+     * @param authChain the authentication chain name.
+     */
+    public void setAuthenticationChain(String authChain) {
+        this.authChain = authChain;
     }
 }

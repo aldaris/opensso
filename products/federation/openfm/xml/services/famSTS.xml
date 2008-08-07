@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: famSTS.xml,v 1.11 2008-07-30 05:09:51 mallas Exp $
+   $Id: famSTS.xml,v 1.12 2008-08-07 23:17:37 mallas Exp $
                                                                                 
 -->
 
@@ -360,6 +360,19 @@
                      </BooleanValues>
                      <DefaultValues>
                          <Value>false</Value>
+                     </DefaultValues>
+               </AttributeSchema>
+
+               <AttributeSchema
+                     name="AuthenticationChain"
+                     type="single_choice"
+                     syntax="string"
+                     i18nKey="a133">
+                     <ChoiceValues>
+                         <ChoiceValuesClassName className="com.sun.identity.authentication.service.ConfiguredAuthServices" />
+                     </ChoiceValues>
+                     <DefaultValues>
+                         <Value>[Empty]</Value>
                      </DefaultValues>
                </AttributeSchema>
 
