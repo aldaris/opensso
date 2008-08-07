@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoSampleUtils.java,v 1.4 2008-06-25 05:41:14 qcheng Exp $
+ * $Id: IdRepoSampleUtils.java,v 1.5 2008-08-07 22:08:20 goodearth Exp $
  *
  */
 
@@ -167,6 +167,9 @@ public class IdRepoSampleUtils {
         try {
             while ((c = System.in.read()) != -1) {
                 char ch = (char)c;
+                if (ch == '\r') {
+                  continue;
+                } 
                 if (ch == '\n') {
                     break;
                 }
