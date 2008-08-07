@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSvcsTestIdentityREST.java,v 1.1 2008-07-29 23:10:04 vimal_67 Exp $
+ * $Id: IdSvcsTestIdentityREST.java,v 1.2 2008-08-07 20:52:43 vimal_67 Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -110,6 +110,14 @@ public class IdSvcsTestIdentityREST extends TestCommon {
             admToken = idsvcsc.authenticateREST(adminUser, adminPassword); 
                 operations = new Integer(rbid.getString(idsProp + index + 
                         "." + "operations")).intValue();
+                String description = rbid.getString(idsProp + index + "." +
+                        "description");
+                String expResult = rbid.getString(idsProp + index + "." +
+                        "expectedresult");
+                Reporter.log("TestCase ID: " + idsProp + index);
+                Reporter.log("Test description: " + description);
+                Reporter.log("Expected Result: " + expResult);
+                
                 while (i < operations) {
                     String operationName = rbid.getString(idsProp + index +
                             "." + "operation" + i + "." + "name"); 
@@ -162,7 +170,7 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                             String identity_type = rbid.getString(idsProp + 
                                     index + "." + "operation" + i + 
                                     "." + "identity_type");
-                            String[] iden = getIdentities(identities);
+                            String[] iden = getArrayOfString(identities);
                             if (exist.equals("yes")) {
                                 idsvcsc.commonSearchREST(identity_type, 
                                         admToken, page, filter, 
@@ -319,13 +327,6 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                     }
                     i++;
                 }
-                String description = rbid.getString(idsProp + index + "." +
-                        "description");
-                String expResult = rbid.getString(idsProp + index + "." +
-                        "expectedresult");
-                Reporter.log("TestCase ID: " + idsProp + index);
-                Reporter.log("Test description: " + description);
-                Reporter.log("Expected Result: " + expResult);
                 
         } catch (Exception e) {
             log(Level.SEVERE, "testIdSvcsREST", e.getMessage());
@@ -403,19 +404,5 @@ public class IdSvcsTestIdentityREST extends TestCommon {
         }
         return mp;
     }
-    
-    /**
-     * Get Identities
-     */
-    private String[] getIdentities(String identities) 
-            throws Exception {
-        int i = 0;
-        StringTokenizer strTokenComma = new StringTokenizer(identities, ",");
-        String[] iden = new String[strTokenComma.countTokens()];
-        while (strTokenComma.hasMoreTokens()){
-            iden[i] = strTokenComma.nextToken();
-            i++;
-        }
-        return iden;
-    }
+        
 }
