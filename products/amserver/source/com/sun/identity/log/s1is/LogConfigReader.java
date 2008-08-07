@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogConfigReader.java,v 1.15 2008-07-16 00:31:19 bigfatrat Exp $
+ * $Id: LogConfigReader.java,v 1.16 2008-08-07 01:20:38 bigfatrat Exp $
  *
  */
 
@@ -157,24 +157,8 @@ public class LogConfigReader implements ServiceListener{
         Iterator it;
         String tempBuffer;
         boolean fileBackend = false;
-        String basedir = null;
         // processing logging attributes.
         try {
-            // generate <configdir>/<uri>/ for CONFIG_DIR_SERVER_URI attrs
-            String famuri = SystemProperties.get(
-                Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
-            String configdir = SystemProperties.get(
-                SystemProperties.CONFIG_PATH);
-            famuri = famuri.replace('\\','/');
-            configdir = configdir.replace('\\','/');
-            if (!configdir.endsWith("/") && !famuri.startsWith("/")) {
-                configdir += "/";
-            }
-            basedir = configdir + famuri;
-            if (!basedir.endsWith("/")) {
-                basedir += "/";
-            }
-
             logAttributes = smsLogSchema.getAttributeDefaults();
             // File/jdbc
             key = LogConstants.BACKEND;
@@ -435,20 +419,6 @@ public class LogConfigReader implements ServiceListener{
                 debug.warning("LogConfigReader: LogLocation string is null");
             } else {
                 value = value.replace('\\','/');
-                if (value.startsWith(LogConstants.DEF_FF_LOG_LOC_BASE)) {
-                    String famuri = SystemProperties.get(
-                        Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
-                    String configdir = SystemProperties.get(
-                        SystemProperties.CONFIG_PATH);
-                    famuri = famuri.replace('\\','/');
-                    configdir = configdir.replace('\\','/');
-                    if (!configdir.endsWith("/") && !famuri.startsWith("/")) {
-                        configdir += "/";
-                    }
-                    String xbasedir = configdir + famuri;
-                    value = value.replace(LogConstants.DEF_FF_LOG_LOC_BASE,
-                        xbasedir);
-                }
                 if (fileBackend && !value.endsWith("/")) {
                     value += "/";
                 }
@@ -514,10 +484,6 @@ public class LogConfigReader implements ServiceListener{
                     "certificate store is null");
             } else {
                 value = value.replace('\\','/');
-                if (value.startsWith(LogConstants.DEF_FF_LOG_LOC_BASE)) {
-                    value = value.replace(LogConstants.DEF_FF_LOG_LOC_BASE,
-                        basedir);
-                }
                 sbuffer.append(key).append("=")
                        .append(value).append(LogConstants.CRLF);
             }
