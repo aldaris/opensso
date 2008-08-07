@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.51 2008-07-02 21:50:45 cmwesley Exp $
+ * $Id: TestCommon.java,v 1.52 2008-08-07 20:56:28 vimal_67 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1579,6 +1579,21 @@ public class TestCommon implements TestConstants {
     }
 
     /**
+     * Get an Array of String from a String
+     */
+    protected String[] getArrayOfString(String str) 
+            throws Exception {
+        int i = 0;
+        StringTokenizer strTokenComma = new StringTokenizer(str, ",");
+        String[] iden = new String[strTokenComma.countTokens()];
+        while (strTokenComma.hasMoreTokens()){
+            iden[i] = strTokenComma.nextToken();
+            i++;
+        }
+        return iden;
+    }
+    
+    /**
      * Sorts the keys in the map
      * returns sorted object []
      */
@@ -1598,7 +1613,28 @@ public class TestCommon implements TestConstants {
         exiting("setValuesHasString");
         return objArray;
     }
-
+    
+    /**
+     * Get Attributes as Array of String
+     */
+    protected String[] getAttributesStr(String attString){
+        int i = 0;
+        String[] token = null;
+        StringTokenizer strTokenComma = new StringTokenizer(attString, ",");
+        token = new String[strTokenComma.countTokens()];
+        while (strTokenComma.hasMoreTokens()){
+            String temp = strTokenComma.nextToken();
+            StringTokenizer strTokenEqual = 
+                    new StringTokenizer(temp, "=");
+            while (strTokenEqual.hasMoreTokens()){
+                token[i] = strTokenEqual.nextToken();
+                strTokenEqual.nextToken();
+                i++;
+            }
+        }
+        return token;
+    }    
+    
     /**
      * Get the property value of a property in showServerConfig.jsp
      * @webClient - the WebClient object that will used to emulate the client

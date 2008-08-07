@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSvcsCommon.java,v 1.1 2008-07-29 23:10:53 vimal_67 Exp $
+ * $Id: IdSvcsCommon.java,v 1.2 2008-08-07 20:55:29 vimal_67 Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,7 +29,6 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Level;
 
