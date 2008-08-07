@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ds_ds_sec-idsvcs-testng.xml,v 1.3 2008-07-29 22:59:47 vimal_67 Exp $
+ $Id: ds_ds_sec-idsvcs-testng.xml,v 1.4 2008-08-07 20:44:50 vimal_67 Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -48,6 +48,7 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentityREST"/>
+            <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentitySOAP"/>
         </classes>
     </test>
     <test name="IdSvcs_search_user_1">
@@ -61,6 +62,7 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentityREST"/>
+            <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentitySOAP"/>
         </classes>
     </test>
     <test name="IdSvcs_read_user_2">
@@ -74,6 +76,7 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentityREST"/>
+            <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentitySOAP"/>
         </classes>
     </test>
     <test name="IdSvcs_update_user_3">
@@ -87,6 +90,7 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentityREST"/>
+            <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentitySOAP"/>
         </classes>
     </test>
     <test name="IdSvcs_delete_user_4">
@@ -100,6 +104,7 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentityREST"/>
+            <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentitySOAP"/>
         </classes>
     </test>
     <test name="IdSvcs_create_group_5">
@@ -113,6 +118,7 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentityREST"/>
+            <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentitySOAP"/>
         </classes>
     </test>
     
@@ -127,6 +133,7 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentityREST"/>
+            <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentitySOAP"/>
         </classes>
     </test>
     <test name="IdSvcs_read_group_7">
@@ -140,6 +147,7 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentityREST"/>
+            <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentitySOAP"/>
         </classes>
     </test>
     <test name="IdSvcs_update_group_8">
@@ -153,6 +161,7 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentityREST"/>
+            <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentitySOAP"/> 
         </classes>
     </test>
     <test name="IdSvcs_delete_group_9">
@@ -166,6 +175,7 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentityREST"/>
+            <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentitySOAP"/>
         </classes>
     </test>
     <test name="IdSvcs_create_role_10">
@@ -179,6 +189,7 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentityREST"/>
+            <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentitySOAP"/>
         </classes>
     </test>
     <test name="IdSvcs_search_role_11">
@@ -192,6 +203,7 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentityREST"/>
+            <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentitySOAP"/>
         </classes>
     </test>
     <test name="IdSvcs_read_role_12">
@@ -205,6 +217,7 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentityREST"/>
+            <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentitySOAP"/>
         </classes>
     </test>
     <test name="IdSvcs_update_role_13">
@@ -218,6 +231,7 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentityREST"/>
+            <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentitySOAP"/> 
         </classes>
     </test>
     <test name="IdSvcs_delete_role_14">
@@ -231,6 +245,7 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentityREST"/>
+            <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentitySOAP"/>
         </classes>
     </test>
     <test name="IdSvcs_create_filteredrole_15">
@@ -244,6 +259,7 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentityREST"/>
+            <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentitySOAP"/>
         </classes>
     </test>
     <test name="IdSvcs_search_filteredrole_16">
@@ -257,6 +273,7 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentityREST"/>
+            <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentitySOAP"/>
         </classes>
     </test>
     <test name="IdSvcs_read_filteredrole_17">
@@ -270,6 +287,7 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentityREST"/>
+            <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentitySOAP"/>
         </classes>
     </test>
     <test name="IdSvcs_update_filteredrole_18">
@@ -283,6 +301,7 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentityREST"/>
+            <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentitySOAP"/>
         </classes>
     </test>
     <test name="IdSvcs_delete_filteredrole_19">
@@ -296,6 +315,7 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentityREST"/>
+            <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentitySOAP"/>
         </classes>
     </test>
     <test name="IdSvcs_create_J2EEAgent_20">
@@ -309,6 +329,7 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentityREST"/>
+            <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentitySOAP"/>
         </classes>
     </test>
     <test name="IdSvcs_delete_J2EEAgent_21">
@@ -322,6 +343,7 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentityREST"/>
+            <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentitySOAP"/>
         </classes>
     </test>
     <test name="IdSvcs_isTokenValid_tokenid_normaluser_22">
@@ -335,6 +357,7 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentityREST"/>
+            <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentitySOAP"/>
         </classes>
     </test>
     <test name="IdSvcs_isTokenValid_iPlanetDirectoryPro_normaluser_23">
@@ -348,6 +371,7 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentityREST"/>
+            <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentitySOAP"/>
         </classes>
     </test>
     <test name="IdSvcs_isTokenValid_tokenid_adminuser_24">
@@ -361,6 +385,7 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentityREST"/>
+            <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentitySOAP"/>
         </classes>
     </test>
     <test name="IdSvcs_isTokenValid_iPlanetDirectoryPro_adminuser_25">
@@ -374,6 +399,7 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentityREST"/>
+            <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentitySOAP"/>
         </classes>
     </test>
     <test name="IdSvcs_multiple_crsede_user_26">
@@ -387,6 +413,7 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentityREST"/>
+            <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentitySOAP"/>
         </classes>
     </test>
     <test name="IdSvcs_multiple_crreupde_user_27">
@@ -400,6 +427,7 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentityREST"/>
+            <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentitySOAP"/>
         </classes>
     </test>
     <test name="IdSvcs_multiple_crsede_j2eeagent_28">
@@ -413,6 +441,7 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentityREST"/>
+            <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentitySOAP"/>
         </classes>
     </test>
     <test name="IdSvcs_multiple_crsereupdeisau_user_29">
@@ -426,6 +455,7 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentityREST"/>
+            <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentitySOAP"/>
         </classes>
     </test>
     <test name="IdSvcs_attributes_user_30">
@@ -439,6 +469,7 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentityREST"/>
+            <class name="com.sun.identity.qatest.idsvcs.IdSvcsTestIdentitySOAP"/>
         </classes>
     </test>
 </suite>
