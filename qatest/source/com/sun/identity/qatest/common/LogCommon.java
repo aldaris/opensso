@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogCommon.java,v 1.3 2008-05-30 05:00:37 kanduls Exp $
+ * $Id: LogCommon.java,v 1.4 2008-08-07 04:54:43 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -130,7 +130,7 @@ public class LogCommon extends TestCommon {
             Level loggerLevel, Level recordLevel)
     throws Exception {
         try {
-            Thread.sleep(1000);
+            Thread.sleep(4000);
             LogRecord logRecord = 
                 new LogRecord(recordLevel, message, userToken);
             logRecord.addLogInfo("ModuleName", moduleName);
