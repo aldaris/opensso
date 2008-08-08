@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfigInheritViewBean.java,v 1.7 2008-07-02 23:40:46 asyhuang Exp $
+ * $Id: AgentConfigInheritViewBean.java,v 1.8 2008-08-08 17:34:45 veiming Exp $
  *
  */
 
@@ -191,7 +191,7 @@ public class AgentConfigInheritViewBean
                 curRealm, universalId);
             Map nameToSchemas = model.getAttributeSchemas(agentType,
                 propertyNames);
-            removeNonInheritable(nameToSchemas);
+            removeNonInheritable(nameToSchemas, propertyNames);
             try {
                 ResourceBundle rb = AgentConfiguration.getServiceResourceBundle(
                     model.getUserLocale());
@@ -334,7 +334,11 @@ public class AgentConfigInheritViewBean
         return getBackButtonLabel("page.title.agent.config");
     }
 
-    private void removeNonInheritable(Map nameToSchema) {
+    private void removeNonInheritable(
+        Map nameToSchema,
+        Collection propertyNames
+    ) {
+        propertyNames.remove(AMAdminConstants.ATTR_USER_PASSWORD);
         for (Iterator i = nameToSchema.keySet().iterator(); i.hasNext(); ) {
             String name = (String)i.next();
             if (name.equalsIgnoreCase(AMAdminConstants.ATTR_USER_PASSWORD)) {
