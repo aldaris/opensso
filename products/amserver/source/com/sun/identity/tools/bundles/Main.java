@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Main.java,v 1.7 2008-08-06 00:04:50 ww203982 Exp $
+ * $Id: Main.java,v 1.8 2008-08-08 00:28:33 ww203982 Exp $
  *
  */
 
@@ -30,6 +30,7 @@ package com.sun.identity.tools.bundles;
 
 import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.setup.Bootstrap;
+import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -63,6 +64,12 @@ public class Main implements SetupConstants{
                 if ((configPath == null) || (configPath.length() == 0)) {
                     configPath = SetupUtils.getUserInput(bundle.getString(
                         currentOS + QUESTION));
+                }
+
+                if (!(new File(configPath).isAbsolute())) {
+                    System.out.println(bundle.getString(
+                        "message.error.dir.absolute"));
+                    System.exit(1);
                 }
                 
                 configProp = Bootstrap.load(configPath, false);
