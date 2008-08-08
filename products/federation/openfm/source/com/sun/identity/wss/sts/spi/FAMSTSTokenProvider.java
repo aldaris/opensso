@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSTokenProvider.java,v 1.8 2008-07-29 20:01:55 mrudul_uchil Exp $
+ * $Id: FAMSTSTokenProvider.java,v 1.9 2008-08-08 21:29:40 mrudul_uchil Exp $
  *
  */
 
@@ -553,7 +553,7 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
                 final EncryptedKey encKey = 
                     WSTrustUtil.encryptKey(doc, key, 
                     (X509Certificate)ctx.getOtherProperties().get(
-                    IssuedTokenContext.TARGET_SERVICE_CERTIFICATE));
+                    IssuedTokenContext.TARGET_SERVICE_CERTIFICATE),null);
                  keyInfo.add(encKey);
             } catch (Exception ex) {
                  STSUtils.debug.error("FAMSTSTokenProvider.createKeyInfo : " + 

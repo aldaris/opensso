@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.glassfish,v 1.11 2008-07-23 17:58:18 veiming Exp $
+   $Id: README.glassfish,v 1.12 2008-08-08 21:29:40 mrudul_uchil Exp $
 
 -->
 
@@ -162,35 +162,31 @@ IV. Copy files
    /ApplicationServer-install/lib
 3. Copy <unizip_dir_of_openssowssproviders.zip>/lib/webservices-api.jar to
    /ApplicationServer-install/lib/endorsed
-4. Create /ApplicationServer-install/addons/fam directory if not already present.
+4. Create /ApplicationServer-install/addons/opensso directory if not already present.
 5. Copy <unizip_dir_of_openssowssproviders.zip>/resources/AMConfig.properties to 
-   /ApplicationServer-install/addons/fam
+   /ApplicationServer-install/addons/opensso
 6. Copy all jar files from <unizip_dir_of_openssowssproviders.zip>/lib/ directory 
-   to /ApplicationServer-install/addons/fam
-7. Add the /ApplicationServer-install/addons/fam/openssowssproviders.jar path in 
+   to /ApplicationServer-install/addons/opensso
+7. Add the /ApplicationServer-install/addons/opensso/openssowssproviders.jar path in 
    classpath suffix (global JVM settings) for Application server.
     You can do this step (9) via Application Server's Admin Console -
     For GF V2 : Application Server -> JVM Settings tab -> Path Settings tab
     For AS 9.1 : Configurations -> server-config -> JVM Settings -> Path Settings tab
 
 V. This step is required only if you are using end user authentication or Liberty security.
-   For end user authentication and liberty , JSR 196 HTTP provider is used and must need to
+   For end user authentication and liberty, JSR 196 HTTP provider is used and must need to
    be configured in Glassfish.
 
-   1. Login into Application Server's Administration Console
-   
+   1. Login into Application Server's Administration Console   
    2. For GF V2 : Expand Configuration -> Security -> Click on Message Security -> New
-      For AS 9.1 : Expand Configurations -> server-config -> Security -> Click on Message Security -> New
- 
+      For AS 9.1 : Expand Configurations -> server-config -> Security -> Click on Message Security -> New 
    3. Choose Authentication layer as "HttpServlet", enter Provider Type as "Server"
       ProviderID as "FAMHttpProvider", Class Name as
       "com.sun.identity.wssagents.common.provider.FAMHttpAuthModule"
    4. Save the configuration.
-
    5. The stock quote client sample already has the required configuration
      (sun-web.xml, web.xml) Essentially the client requires a J2EE constraint 
      and the FAMHttpProvider id.      
-
 
 VI. Restart the SUN Application Server (Glassfish).
 

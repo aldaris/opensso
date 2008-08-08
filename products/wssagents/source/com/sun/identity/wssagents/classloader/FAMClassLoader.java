@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMClassLoader.java,v 1.5 2008-07-23 17:58:20 veiming Exp $
+ * $Id: FAMClassLoader.java,v 1.6 2008-08-08 21:29:40 mrudul_uchil Exp $
  *
  */
 
@@ -100,7 +100,7 @@ public class FAMClassLoader {
         String FILE_SEPARATOR = "/";
         String installRoot = System.getProperty("com.sun.aas.installRoot");
         String defaultJarsPath = installRoot + FILE_SEPARATOR + "addons" 
-            + FILE_SEPARATOR + "fam";
+            + FILE_SEPARATOR + "opensso";
         String jarsPath = FILE_BEGIN + defaultJarsPath + FILE_SEPARATOR;
         try {
             for (int i=0; i < reqJars.length; i++) {
