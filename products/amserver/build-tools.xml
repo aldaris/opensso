@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-tools.xml,v 1.17 2008-07-23 17:14:26 veiming Exp $
+   $Id: build-tools.xml,v 1.18 2008-08-08 22:36:50 kevinserwin Exp $
 
 -->
 
@@ -68,6 +68,11 @@
     <property name="amadm.tools.scripts.dir"
         value="${amserver.script.dir}/tools"/>
     <property name="amtune.package.dir" value="${amtune.classes.dir}/${amtune.package.path}"/>
+    <property name="manifest.built.dir" value="${amserver.built.dir}/manifest"/>
+    <property name="manifest.classes.dir" value="${manifest.built.dir}/classes"/>
+    <property name="manifest.package.dir"
+        value="${manifest.classes.dir}/${manifest.package.path}"/>    
+    
     <target name="prepareBuild">
         <mkdir dir="${amadm.res.dir}"/>
         <mkdir dir="${amadm.lib.dir}"/>
@@ -80,6 +85,8 @@
         <mkdir dir="${amadm.unix.bin.tune.dir}"/>
         <mkdir dir="${amadm.classes.dir}"/>
         <mkdir dir="${amadm.package.dir}"/>
+        <mkdir dir="${manifest.classes.dir}"/>
+        <mkdir dir="${manifest.package.dir}"/>        
     </target>
     <target name="makeJar" depends="prepareBuild">
         <copy todir="${amadm.package.dir}"
@@ -111,7 +118,21 @@
                 </manifest>
             </jar>
     </target>
-    <target name="copyNeededFiles" depends="makeJar, makeTuneJar">
+    <target name="makeManifestJar" depends="prepareBuild">
+            <copy todir="${manifest.package.dir}"
+                overwrite="yes" encoding="UTF-8">
+                <fileset dir="${amserver.built.dir}/classes/${manifest.package.path}"
+                    includes="**/*"/>
+            </copy>
+            <jar destfile="${amadm.lib.dir}/ssomanifest.jar"
+                basedir="${manifest.classes.dir}">
+                <manifest>
+                    <attribute name="Main-Class"
+                        value="com.sun.identity.tools.manifest.Main"/>
+                </manifest>
+            </jar>
+    </target>        
+    <target name="copyNeededFiles" depends="makeJar, makeTuneJar, makeManifestJar">
         <copy todir="${amadm.lib.dir}"
             overwrite="yes" flatten="yes" encoding="UTF-8">
             <fileset dir="${extlib.dir}"

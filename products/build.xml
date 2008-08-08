@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.33 2008-07-23 17:14:25 veiming Exp $
+   $Id: build.xml,v 1.34 2008-08-08 22:37:37 kevinserwin Exp $
 
 -->
 
@@ -50,6 +50,8 @@
         <antcall target="openfm-nightly" />
         <antcall target="upgrade-nightly" />
         <antcall target="remove-amserver-bits" />
+        <antcall target="create-manifest" />
+        <antcall target="create-checksum" />
     </target>
 
     <target name="server-tools">
@@ -139,7 +141,9 @@
             todir="${openfm.extlib.dir}"  />
         <copy file="${amserver.dist.dir}/amSessionTools.zip"
             todir="${openfm.extlib.dir}"  />            
-        <copy file="${amserver.dist.dir}/amserver.jar"
+        <copy file="${amserver.tools.dir}/ssomanifest.jar"
+            todir="${prd.nightly.dist.dir}/openfm"  />
+        <copy file="${amserver.tools.dir}/amserver.jar"
             todir="${openfm.extlib.dir}"  />
         <copy file="${amserver.dist.dir}/opensso-register.jar"
             todir="${openfm.extlib.dir}"  />
@@ -172,8 +176,50 @@
         <ant antfile="${upgrade.basedir}/build.xml" inheritRefs="true" target="nightly" />
         <copy file="${upgrade.dist.dir}/opensso.zip"
 	    todir="${prd.nightly.dist.dir}/openfm" />
+    </target>        
+    
+    <target name="create-checksum">      
         <checksum file="${prd.nightly.dist.dir}/openfm/opensso.zip"
             algorithm="SHA" fileext=".sha" />
+    </target>
+
+    <target name="create-manifest" depends="create-version"> 
+        <unzip src="${prd.nightly.dist.dir}/openfm/opensso.zip"
+            dest="${prd.nightly.dist.dir}/opensso" />
+
+        <java jar="${prd.nightly.dist.dir}/openfm/ssomanifest.jar"
+            fork="true">            
+            <classpath>
+                 <pathelement path="amserver/built/classes" />
+            </classpath>
+            <jvmarg value="-jar" />
+            <jvmarg value="-Dfile.header.path=${prd.nightly.dist.dir}/version" />
+            <jvmarg value="-Dfile.src.path=${prd.nightly.dist.dir}/opensso/opensso/deployable-war/opensso.war" />
+            <jvmarg value="-Dfile.dest.path=${prd.nightly.dist.dir}/manifest/META-INF/OpenSSO.manifest" />
+            <jvmarg value="-Ddigest.handlejar=true" />
+            <jvmarg value="-Ddigest.handlewar=true" />
+        </java>        
+        
+        <jar destfile="${prd.nightly.dist.dir}/opensso/opensso/deployable-war/opensso.war" update="true">
+            <zipfileset dir="${prd.nightly.dist.dir}/manifest" />
+        </jar>        
+        
+       <zip destfile="${prd.nightly.dist.dir}/openfm/opensso.zip"
+            whenempty="create">
+            <zipfileset dir="${prd.nightly.dist.dir}/opensso">
+            </zipfileset>
+	</zip>        
+        
+    </target>
+
+    <target name="create-version"> 
+        <tstamp>
+            <format property="war.time.stamp" pattern="yyyyMMddhhmm"/>
+        </tstamp>
+        <filter token="DATESTAMP" value="${war.time.stamp}" />
+        <copy file="${amserver.base.dir}/version.template"
+            tofile="${prd.nightly.dist.dir}/version"
+            filtering="true"/>      
     </target>
 
     <target name="clean">
