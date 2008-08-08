@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSServiceUtils.java,v 1.7 2008-07-23 17:36:34 veiming Exp $
+ * $Id: FSServiceUtils.java,v 1.8 2008-08-08 21:33:08 exu Exp $
  *
  */
 
@@ -797,8 +797,9 @@ public class FSServiceUtils {
         if (tempUrl == null || tempUrl.length() == 0) {
             tempUrl = getDefaultPageURL(
                 request, IFSConstants.ERROR_PAGE_NAME);
+            tempUrl = addMetaAlias(tempUrl, metaAlias);
         }
-        return addMetaAlias(tempUrl, metaAlias);
+        return tempUrl;
     }
 
     /**
@@ -816,8 +817,9 @@ public class FSServiceUtils {
         if (tempUrl == null || tempUrl.length() == 0) {
             tempUrl = getDefaultPageURL(
                 request, IFSConstants.TERMINATION_DONE_PAGE_NAME);
+            tempUrl = addMetaAlias(tempUrl, metaAlias);
         }
-        return addMetaAlias(tempUrl, metaAlias);
+        return tempUrl;
     }
 
     /**
@@ -835,8 +837,9 @@ public class FSServiceUtils {
         if (tempUrl == null || tempUrl.length() == 0) {
             tempUrl = getDefaultPageURL(
                 request, IFSConstants.NAME_REGISTRATION_DONE_PAGE_NAME);
+            tempUrl = addMetaAlias(tempUrl, metaAlias);
         }
-        return addMetaAlias(tempUrl, metaAlias);
+        return tempUrl;
     }
 
     /**
@@ -854,8 +857,9 @@ public class FSServiceUtils {
         if (tempUrl == null || tempUrl.length() == 0) {
             tempUrl = getDefaultPageURL(
                 request, IFSConstants.LOGOUTDONE_PAGE_NAME);
+            tempUrl = addMetaAlias(tempUrl, metaAlias);
         }
-        return addMetaAlias(tempUrl, metaAlias);
+        return tempUrl;
     }
 
     /**
@@ -873,8 +877,9 @@ public class FSServiceUtils {
         if (tempUrl == null || tempUrl.length() == 0) {
             tempUrl = getDefaultPageURL(
                 request, IFSConstants.FEDERATIONDONE_PAGE_NAME);
+            tempUrl = addMetaAlias(tempUrl, metaAlias);
         }
-        return addMetaAlias(tempUrl, metaAlias);
+        return tempUrl;
     }
 
     /**
