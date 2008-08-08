@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSSchema.java,v 1.8 2008-07-04 02:35:44 veiming Exp $
+ * $Id: SMSSchema.java,v 1.9 2008-08-08 17:34:46 bina Exp $
  *
  */
 
@@ -58,6 +58,8 @@ public class SMSSchema {
 
     static final String XML_ENC = 
         "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n";
+
+    static final String XML_ENC_UTF8 = "encoding=\"utf-8\"";
 
     private static final String SCHEMA_PREFIX_1 = XML_ENC +
         "\n<ServicesConfiguration><Service name=\"";
@@ -447,10 +449,14 @@ public class SMSSchema {
             throw new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
                     IUMSConstants.SMSSCHEMA_SERVICE_NOTFOUND, null);
         }
-
         InputStream in;
+        String xmlEncoding = "ISO-8859-1";
+        if ((xmlSchema !=null) && 
+                (xmlSchema.toLowerCase().indexOf(XML_ENC_UTF8) != -1) ) {
+            xmlEncoding = "UTF-8";
+        }
         try {
-            in = new ByteArrayInputStream(xmlSchema.getBytes("ISO-8859-1"));
+            in = new ByteArrayInputStream(xmlSchema.getBytes(xmlEncoding));
         } catch (Exception ex) {
             SMSEntry.debug.error("SMSSchema: Unsupported encoding ", ex);
             in = new ByteArrayInputStream(xmlSchema.getBytes());
