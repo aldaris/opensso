@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.setup,v 1.11 2008-07-25 05:34:18 kanduls Exp $
+   $Id: README.setup,v 1.12 2008-08-08 00:25:16 ww203982 Exp $
 
 -->
                                                                                
@@ -45,6 +45,9 @@ J2SE 1.5 or higher.
 2. Installing ssoAdminTools.zip
 ------------------------------ 
 
+Before setting up ssoAdminTools.zip, JAVA_HOME environment variable needs to be
+initialized to a path of a compatible Java Runtime.
+
 Steps involved in installing ssoAdminTools.zip are:
 
 Step 1: Unzip ssoAdminTools.zip to the desired directory.
@@ -55,7 +58,7 @@ Step 2: Go to the directory which has the ssoAdminTools.zip unzipped.
         for Unix and Windows respectively.
         Then enter the configuration directory when prompted.
         "Path to config files of OpenSSO Enterprise
-        (example: /opensso_config/opensso):"
+        (example: /opensso):"
 
 Step 3: After step 2 is performed, the CLIs can be run under the following
         directory:

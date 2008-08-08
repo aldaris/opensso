@@ -22,32 +22,35 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: README.txt,v 1.4 2008-07-23 17:14:32 veiming Exp $
+# $Id: README.txt,v 1.5 2008-08-08 00:25:16 ww203982 Exp $
 #
-amSessionTools.zip 
+ssoSessionTools.zip 
 ======================================================
 
-This file contains information on installing and using amSessionTools.zip.
+This file contains information on installing and using ssoSessionTools.zip.
 It is assumed that OpenSSO Enterprise Server is available.
 
 Table of contents:
 -----------------
 1. Supported JDK versions
-2. Installing amSessionTools.zip
+2. Installing ssoSessionTools.zip
 3. What does this package contain
 
 1. Supported JDK versions
 -------------------------
 Supported JDK versions are Java SE 5 or higher.
 
-2. Installing amSessionTools.zip
--------------------------------- 
+2. Installing ssoSessionTools.zip
+--------------------------------- 
 
-Steps involved in installing amSessionTools.zip are:
+Before setting up ssoSessionTools.zip, JAVA_HOME environment variable needs to
+be initialized to a path of a compatible Java runtime.
 
-Step 1: Unzip amSessionTools.zip to the desired directory.
+Steps involved in installing ssoSessionTools.zip are:
 
-Step 2: Go to the directory which has the amSessionTools.zip unzipped.
+Step 1: Unzip ssoSessionTools.zip to the desired directory.
+
+Step 2: Go to the directory which has the ssoSessionTools.zip unzipped.
         Run the setup command as follows:
         "setup -p | --path <DIRECTORY_OF_THE_SCRIPTS_TO_BE_PLACED>"
         where <DIRECTORY_OF_THE_SCRIPTS_TO_BE_PLACED> is the one level relative
@@ -63,7 +66,7 @@ Step 2: Go to the directory which has the amSessionTools.zip unzipped.
 Step 3: After step 2 is performed, the CLI's can be run under the following
         directory:
         <SESSION_TOOLS_DIR>/<DIRECTORY_OF_THE_SCRIPTS_TO_BE_PLACED>/bin
-        where <SESSION_TOOLS_DIR> is the directory which has amSessionTools.zip
+        where <SESSION_TOOLS_DIR> is the directory which has ssoSessionTools.zip
         unzipped, and <DIRECTORY_OF_THE_SCRIPTS_TO_BE_PLACED> is the name of
         the directory user input.
         
