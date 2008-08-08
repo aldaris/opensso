@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSingleLogout.java,v 1.18 2008-07-28 16:50:37 qcheng Exp $
+ * $Id: SPSingleLogout.java,v 1.19 2008-08-08 22:30:53 qcheng Exp $
  *
  */
 
@@ -68,6 +68,8 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.HashMap; 
 import java.util.StringTokenizer;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -226,12 +228,6 @@ public class SPSingleLogout {
                     SAML2Utils.bundle.getString("errorInfoKeyString"));
             }
             
-            if (infoKeyString == null) {
-                debug.error("Unable to get infoKeyString from " +
-                    "session.");
-                throw new SAML2Exception(
-                    SAML2Utils.bundle.getString("errorInfoKeyString"));
-            }
             if (debug.messageEnabled()) {
                 debug.message("tokenID : " + tokenID);
                 debug.message("infoKeyString : " + infoKeyString);
@@ -259,6 +255,33 @@ public class SPSingleLogout {
                     SAML2Constants.DEFAULT_RELAY_STATE);
             }    
 
+            if (infoKeyString == null) {
+                // termination case, do local logout only and send to
+                // relay state if any
+                debug.warning("SPSingleLogout.initiateLogoutRequest : Unable to get infoKeyString from session.");
+                sessionProvider.invalidateSession(session, request, response);
+                if ((relayState != null) && !relayState.equals("")) {
+                    try {
+                        response.sendRedirect(relayState);
+                    } catch (IOException e) {
+                        debug.error("SPSingleLogout.initiateLogoutRequest: "
+                            + "Error in send redirect to " + relayState, e);
+                    }
+                } else {
+                    RequestDispatcher dispatcher = request.getRequestDispatcher(
+                        "saml2/jsp/default.jsp?message=spSloSuccess");
+                    try {
+                        dispatcher.forward(request, response);
+                    } catch (IOException e) {
+                        debug.error("SPSingleLogout.initiateLogoutRequest: "
+                            + "Error in forwarding to default.jsp", e);
+                    } catch (ServletException e) {
+                        debug.error("SPSingleLogout.initiateLogoutRequest: "
+                            + "Error in forwarding to default.jsp", e);
+                    }
+                }
+                return;
+            }
             StringTokenizer st =
                 new StringTokenizer(infoKeyString,SAML2Constants.SECOND_DELIM);
             String requestID = null; 
