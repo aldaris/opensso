@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.12 2008-07-23 17:45:02 veiming Exp $
+   $Id: build.xml,v 1.13 2008-08-08 22:37:52 qcheng Exp $
 
 -->
 
@@ -71,7 +71,7 @@
         </copy>
 
         <copy todir="${test.package.dir}/lib">
-            <fileset dir="${extlib.dir}" includes="jaxrpc-api.jar, jaxrpc-impl.jar, jaxrpc-spi.jar, j2ee.jar, ldapjdk.jar, mail.jar, relaxngDatatype.jar, webservices-api.jar, webservices-rt.jar, webservices-tools.jar, webservices-extra-api.jar, webservices-extra.jar, testng-5.1-jdk15.jar, xmlsec.jar, xsdlib.jar"/>
+            <fileset dir="${extlib.dir}" includes="jaxrpc-api.jar, jaxrpc-impl.jar, jaxrpc-spi.jar, j2ee.jar, ldapjdk.jar, mail.jar, relaxngDatatype.jar, webservices-api.jar, webservices-rt.jar, webservices-tools.jar, webservices-extra-api.jar, webservices-extra.jar, testng-5.1-jdk15.jar, xsdlib.jar"/>
             <fileset dir="${library.extlib.dir}" />
             <fileset dir="${openfm.extlib.dir}" />
         </copy>

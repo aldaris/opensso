@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.7 2008-07-31 20:20:27 qcheng Exp $
+$Id: README,v 1.8 2008-08-08 22:36:30 qcheng Exp $
 
 
 
@@ -169,6 +169,8 @@ try {
        new Identity Provider. Use the existing idp-extended.xml as a template
        but change the "entityID" to the new IDP entity ID, change the value for
        "cotlist" attribute to the COT name if a new COT is created for the IDP.
+       Note : make sure the second IDP is a remote IDP by setting the "hosted" 
+       attribute in the EntityConfig element to "false".
     d) Send the Fedlet metadata XML file (i.e. "sp.xml" under your Fedlet home)
        to the second IDP, import the metadata in the remote IDP and add it to 
        the same circle-of-trust as the IDP. 

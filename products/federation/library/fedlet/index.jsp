@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.jsp,v 1.6 2008-07-31 20:20:27 qcheng Exp $
+   $Id: index.jsp,v 1.7 2008-08-08 22:36:30 qcheng Exp $
 
 --%>
 
@@ -177,7 +177,7 @@
             } else if (!file.exists()) {
                 out.println("<p><br><b>FederationConfig.properties could not be found.</b>");
                 if (confExist) {
-                    out.println("<br><br>Click <a href=\"index.jsp\">here</a> to create Fedlet configuration automatically.");
+                    out.println("<br><br>Click <a href=\"index.jsp?CreateConfig=true\">here</a> to create Fedlet configuration automatically.");
                     out.println("<br>Or manually extract your fedlet.war and copy all files under \"conf\" directory to \"" + fedletHomeDir + "\" directory, then restart your web container.");
                 } else {
                     out.println("<br>Please follow the README bundled inside your Fedlet-unconfigured.zip file to setup Fedlet configuration, then restart your web container.");
@@ -245,7 +245,7 @@
                 if ((spEntityID == null) || (idpEntityID == null)) {
                     out.println("<p><br><b>Fedlet or remote Identity Provider metadata is not configured.</b>");
                     if (confExist) {
-                        out.println("<p><br>Click <a href=\"index.jsp\">here</a> to create Fedlet configuration automatically.");
+                        out.println("<p><br>Click <a href=\"index.jsp?CreateConfig=true\">here</a> to create Fedlet configuration automatically.");
                         out.println("<br>Or manually extract your fedlet.war and copy all files under \"conf\" directory to \"" + fedletHomeDir + "\" directory, then restart your web container.");
                     } else {
                         out.println("<br>Please follow the README bundled inside your Fedlet-unconfigured.zip file to setup Fedlet configuration, then restart your web container.");

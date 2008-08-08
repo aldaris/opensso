@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: check-library-jars.xml,v 1.4 2008-06-25 05:46:14 qcheng Exp $
+   $Id: check-library-jars.xml,v 1.5 2008-08-08 22:36:30 qcheng Exp $
 
 -->
 
@@ -70,8 +70,6 @@
         property="saaj.impl.jar.present"/>
     <available file="${extlib.dir}/testng-5.1-jdk15.jar" type="file" 
         property="testng.jar.present"/>
-    <available file="${extlib.dir}/xmlsec.jar" type="file" 
-        property="xmlsec.jar.present"/>
     <available file="${extlib.dir}/xsdlib.jar" type="file" 
         property="xsdlib.jar.present"/>
 
@@ -111,7 +109,6 @@
             <isset property="saaj.api.jar.present" />
             <isset property="saaj.impl.jar.present" />
             <isset property="testng.jar.present" />
-            <isset property="xmlsec.jar.present" />
             <isset property="xsdlib.jar.present" />
             </and>
         </condition>
@@ -184,11 +181,6 @@
         <fail message="*** missing  ${extlib.dir}/testng-5.1-jdk15.jar ***">
             <condition>
                 <not><isset property="testng.jar.present" /></not>
-            </condition>
-        </fail>
-        <fail message="*** missing  ${extlib.dir}/xmlsec.jar ***">
-            <condition>
-                <not><isset property="xmlsec.jar.present" /></not>
             </condition>
         </fail>
         <fail message="*** missing  ${extlib.dir}/xsdlib.jar ***">

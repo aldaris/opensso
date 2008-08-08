@@ -1140,7 +1140,6 @@
 ./WEB-INF/lib/webservices-tools.jar
 ./WEB-INF/lib/xalan.jar
 ./WEB-INF/lib/xercesImpl.jar
-./WEB-INF/lib/xmlsec.jar
 ./WEB-INF/lib/xsdlib.jar
 ./WEB-INF/logDTD.xml
 ./WEB-INF/policy.dtd
