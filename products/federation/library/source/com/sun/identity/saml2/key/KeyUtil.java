@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: KeyUtil.java,v 1.6 2008-07-18 01:27:48 exu Exp $
+ * $Id: KeyUtil.java,v 1.7 2008-08-08 18:00:08 qcheng Exp $
  *
  */
 
@@ -361,11 +361,34 @@ public class KeyUtil {
             
             return null;
         }
-        X509DataElement data = (X509DataElement) ki.getContent().get(0);
-        byte[] bt = 
-            ((com.sun.identity.saml2.jaxb.xmlsig.X509DataType.X509Certificate)
-             data.getX509IssuerSerialOrX509SKIOrX509SubjectName().get(0)).
-            getValue();
+        //iterate and search the X509DataElement node
+        Iterator it = ki.getContent().iterator();
+        X509DataElement data = null;
+        while ((data == null) && it.hasNext()) {
+            Object content = it.next();
+            if (content instanceof X509DataElement) {
+                data = (X509DataElement) content;
+            }
+        }
+        if (data == null) {
+            SAML2SDKUtils.debug.error(classMethod + "No X509DataElement.");
+            return null;
+        }
+        //iterate and search the X509Certificate node
+        it = data.getX509IssuerSerialOrX509SKIOrX509SubjectName().iterator();
+        com.sun.identity.saml2.jaxb.xmlsig.X509DataType.X509Certificate cert = null;
+        while ((cert == null) && it.hasNext()) {
+            Object content = it.next();
+            if (content instanceof 
+                com.sun.identity.saml2.jaxb.xmlsig.X509DataType.X509Certificate) {
+                cert = (com.sun.identity.saml2.jaxb.xmlsig.X509DataType.X509Certificate) content;
+            }
+        }
+        if (cert == null) {
+            SAML2SDKUtils.debug.error(classMethod + "No X509Certificate.");
+            return null;
+        }
+        byte[] bt = cert.getValue();
         CertificateFactory cf = null;
         try {
             cf = CertificateFactory.getInstance("X.509");
