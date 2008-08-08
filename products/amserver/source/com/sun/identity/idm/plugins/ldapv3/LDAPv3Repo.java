@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.50 2008-07-23 17:57:48 kenwho Exp $
+ * $Id: LDAPv3Repo.java,v 1.51 2008-08-08 00:40:56 ww203982 Exp $
  *
  */
 
@@ -712,20 +712,28 @@ public class LDAPv3Repo extends IdRepo {
             connOptions.put("referrals", new Boolean(referrals));
 
             // Construct the pool by cloning the successful connection
-            connPool = new LDAPConnectionPool("LDAPv3Repo", minPoolSize, 
-                maxPoolSize, ldapServerName, ldapPort, 
-                ldc.getAuthenticationDN(), ldc.getAuthenticationPassword(), 
-                ldc, connOptions);
-            ShutdownManager.getInstance().addShutdownListener(
-                new ShutdownListener() {
-                    public void shutdown() {
-                        hasShutdown = true;
-                        if (connPool != null) {
-                            connPool.destroy();
+            ShutdownManager shutdownMan = ShutdownManager.getInstance();
+            if (shutdownMan.acquireValidLock()) {
+                try {
+                    connPool = new LDAPConnectionPool("LDAPv3Repo", minPoolSize,
+                        maxPoolSize, ldapServerName, ldapPort,
+                        ldc.getAuthenticationDN(), 
+                            ldc.getAuthenticationPassword(),
+                            ldc, connOptions);
+                    shutdownMan.addShutdownListener(
+                        new ShutdownListener() {
+                            public void shutdown() {
+                                hasShutdown = true;
+                                if (connPool != null) {
+                                    connPool.destroy();
+                                }
+                            }
                         }
-                    }
+                    );
+                } finally {
+                    shutdownMan.releaseLockAndNotify();
                 }
-            );
+            }
 
         } catch (LDAPException lde) {
             int resultCode = lde.getLDAPResultCode();

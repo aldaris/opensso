@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionService.java,v 1.23 2008-07-23 17:21:57 veiming Exp $
+ * $Id: SessionService.java,v 1.24 2008-08-08 00:40:54 ww203982 Exp $
  *
  */
 
@@ -291,15 +291,22 @@ public class SessionService {
             }
         }
 
-        threadPool = new ThreadPool("amSession", poolSize, threshold, true,
-                sessionDebug);
-        ShutdownManager.getInstance().addShutdownListener(
-            new ShutdownListener() {
-                public void shutdown() {
-                    threadPool.shutdown();
-                }
+        ShutdownManager shutdownMan = ShutdownManager.getInstance();
+        if (shutdownMan.acquireValidLock()) {
+            try {
+                threadPool = new ThreadPool("amSession", poolSize, threshold, true,
+                    sessionDebug);
+                shutdownMan.addShutdownListener(
+                    new ShutdownListener() {
+                        public void shutdown() {
+                            threadPool.shutdown();
+                        }
+                    }
+                );
+            } finally {
+                shutdownMan.releaseLockAndNotify();
             }
-        );
+        }
         if (threadPool != null) {
             try {
                 maxSessions = Integer.parseInt(SystemProperties

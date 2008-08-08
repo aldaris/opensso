@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommandManager.java,v 1.28 2008-08-06 21:19:39 veiming Exp $
+ * $Id: CommandManager.java,v 1.29 2008-08-08 00:40:56 ww203982 Exp $
  *
  */
 
@@ -192,7 +192,14 @@ public class CommandManager {
             exitCode = e.getExitCode();
         } finally {
             destroySSOTokens();
-            ShutdownManager.getInstance().shutdown();
+            ShutdownManager shutdownMan = ShutdownManager.getInstance();
+            if (shutdownMan.acquireValidLock()) {
+                try {
+                    shutdownMan.shutdown();
+                } finally {
+                    shutdownMan.releaseLockAndNotify();
+                }
+            }
         }
         System.exit(exitCode);
     }

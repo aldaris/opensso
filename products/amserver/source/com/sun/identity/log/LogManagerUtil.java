@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogManagerUtil.java,v 1.6 2008-07-17 05:06:21 bigfatrat Exp $
+ * $Id: LogManagerUtil.java,v 1.7 2008-08-08 00:40:57 ww203982 Exp $
  *
  */
 
@@ -65,13 +65,20 @@ public class LogManagerUtil {
         * the start and stop records
         */
        if (SystemProperties.isServerMode()) {
-           ShutdownManager.getInstance().addShutdownListener(new
-               ShutdownListener() {
-            
-               public void shutdown() {
-                   logEndRecords();
+           ShutdownManager shutdownMan = ShutdownManager.getInstance();
+           if (shutdownMan.acquireValidLock()) {
+               try {
+                   shutdownMan.addShutdownListener(new
+                       ShutdownListener() {
+
+                           public void shutdown() {
+                               logEndRecords();
+                           }
+                       }, ShutdownPriority.HIGHEST);
+               } finally {
+                   shutdownMan.releaseLockAndNotify();
                }
-           }, ShutdownPriority.HIGHEST);
+           }
         }
     }
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Main.java,v 1.7 2008-06-25 05:52:29 qcheng Exp $
+ * $Id: Main.java,v 1.8 2008-08-08 00:40:58 ww203982 Exp $
  *
  */
 
@@ -1125,7 +1125,14 @@ public class Main
                 eex.getLocalizedMessage());
             System.exit(1);
         } finally {
-            ShutdownManager.getInstance().shutdown();
+            ShutdownManager shutdownMan = ShutdownManager.getInstance();
+            if (shutdownMan.acquireValidLock()) {
+                try {
+                    shutdownMan.shutdown();
+                } finally {
+                    shutdownMan.releaseLockAndNotify();
+                }
+            }
         }
 
     }

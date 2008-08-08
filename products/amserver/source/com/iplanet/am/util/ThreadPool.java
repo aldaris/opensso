@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ThreadPool.java,v 1.8 2008-07-24 19:16:23 ww203982 Exp $
+ * $Id: ThreadPool.java,v 1.9 2008-08-08 00:40:54 ww203982 Exp $
  *
  */
 
@@ -166,6 +166,10 @@ public class ThreadPool {
         if (!taskList.isEmpty()) {
             WorkerThread t = getAvailableThread();
             t.runTask((Runnable)taskList.remove(0));
+        } else {
+            if (shutdownThePool && (busyThreadCount == 0)) {
+                notify();
+            }
         }
     }
     
@@ -189,7 +193,6 @@ public class ThreadPool {
                 // true, it is nice to call it because the thread pool has
                 // better knownledge than the web container to stop the threads
                 // in the pool.
-                t.setNeedReturn(false);
                 busyThreadCount--;
                 if(busyThreadCount == 0){
                     notify();
@@ -323,13 +326,8 @@ public class ThreadPool {
         // it is better to have a way to terminate the thread pool
         public synchronized void terminate() {
             shouldTerminate = true;
+            needReturn = false;
             this.notify();
-        }
-        
-        public synchronized void setNeedReturn(boolean value){
-            // this will be set by ThreadPool.returnThread when shutdown is
-            // called.
-            needReturn = value;
         }
     }
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JSSProxy.java,v 1.3 2008-06-25 05:41:34 qcheng Exp $
+ * $Id: JSSProxy.java,v 1.4 2008-08-08 00:40:55 ww203982 Exp $
  *
  */
 package com.iplanet.services.comm.https;
@@ -77,22 +77,35 @@ public class JSSProxy implements Runnable {
         if (sconnection != null) {
             serverPort = sconnection.getLocalPort();
             try {
-                final JSSProxy instance = new JSSProxy();
-                thread = new Thread(instance);
-                ShutdownManager.getInstance().addShutdownListener(new
-                    ShutdownListener() {
-                    
-                    public void shutdown() {
-                        if (instance != null) {
-                            instance.shutdown();
-                        }
-                        if (threadPool != null) {
-                            threadPool.shutdown();
-                        }
+                JSSProxy tempInstance = null;
+                thread = null;
+                ShutdownManager shutdownMan = ShutdownManager.getInstance();
+                if (shutdownMan.acquireValidLock()) {
+                    try {
+                        tempInstance = new JSSProxy();
+                        thread = new Thread(tempInstance);
+                        final JSSProxy finalInstance = tempInstance;
+                        shutdownMan.addShutdownListener(new
+                            ShutdownListener() {
+
+                            public void shutdown() {
+                                if (finalInstance != null) {
+                                    finalInstance.shutdown();
+                                }
+                                if (threadPool != null) {
+                                    threadPool.shutdown();
+                                }
+                            }
+
+                        });
+                    } finally {
+                        shutdownMan.releaseLockAndNotify();
                     }
-                    
-                });
-                thread.start();
+                }
+                final JSSProxy instance = tempInstance;
+                if (thread != null) {
+                    thread.start();
+                }
             }
             catch (Exception e) {
                 debug.error("JSSProxy: Unable to run JSSProxy", e);

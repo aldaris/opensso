@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSThreadPool.java,v 1.3 2008-08-07 17:22:07 arviranga Exp $
+ * $Id: SMSThreadPool.java,v 1.4 2008-08-08 00:40:58 ww203982 Exp $
  *
  */
 
@@ -47,7 +47,6 @@ public class SMSThreadPool {
     
     private static ThreadPool thrdPool;
     private static ShutdownListener shutdownListener, newShutdownListener;
-    private static ThreadPool newThrdPool, oldThrdPool;
     private static int poolSize;
     
     private static Debug debug = Debug.getInstance("amSMS");
@@ -56,11 +55,14 @@ public class SMSThreadPool {
 
     private static final int DEFAULT_TRESHOLD= 0;
 
-    private static boolean initialized;
+    private static volatile boolean initialized = false;
 
-    static void initialize(boolean reinit) {
+    static synchronized void initialize(boolean reinit) {
         // Check if already initialized
-        if (initialized && !reinit) {
+        if (reinit) {
+            initialized = false;
+        }
+        if (initialized) {
             return;
         }
         int newPoolSize = DEFAULT_POOL_SIZE;
@@ -79,32 +81,45 @@ public class SMSThreadPool {
         if (debug.messageEnabled()) {
             debug.message("SMSThreadPool: poolSize=" + poolSize);
         }
-        
-        // Create a new thread pool
-        newThrdPool = new ThreadPool("smIdmThreadPool",
-            poolSize, DEFAULT_TRESHOLD, false, debug);
-        // Create the shutdown hook
-        newShutdownListener = new ShutdownListener() {
-            public void shutdown() {
-                newThrdPool.shutdown();
-            }
-        };
-        // Register the shutdown hook
-        ShutdownManager.getInstance().addShutdownListener(newShutdownListener);
-
-        // Cleanup old thread pool if present
+        ShutdownManager shutdownMan = ShutdownManager.getInstance(); 
         if (thrdPool != null) {
-            oldThrdPool = thrdPool;
-            thrdPool = newThrdPool;
-            if (shutdownListener != null) {
-                ShutdownManager.getInstance().removeShutdownListener(
-                    shutdownListener);
+            if (shutdownMan.acquireValidLock()) {
+                try {
+                    shutdownMan.removeShutdownListener(shutdownListener);
+                    thrdPool.shutdown();
+                    // Create a new thread pool
+                    thrdPool = new ThreadPool("smIdmThreadPool",
+                        poolSize, DEFAULT_TRESHOLD, false, debug);
+                    // Create the shutdown hook
+                    shutdownListener = new ShutdownListener() {
+                        public void shutdown() {
+                            thrdPool.shutdown();
+                        }
+                    };
+                    // Register to shutdown hook
+                    shutdownMan.addShutdownListener(shutdownListener);
+                } finally {
+                    shutdownMan.releaseLockAndNotify();
+                }
             }
-            shutdownListener = newShutdownListener;
-            oldThrdPool.shutdown();
         } else {
-            thrdPool = newThrdPool;
-            shutdownListener = newShutdownListener;
+            if (shutdownMan.acquireValidLock()) {
+                try {
+                    // Create a new thread pool
+                    thrdPool = new ThreadPool("smIdmThreadPool",
+                        poolSize, DEFAULT_TRESHOLD, false, debug);
+                    // Create the shutdown hook
+                    shutdownListener = new ShutdownListener() {
+                        public void shutdown() {
+                            thrdPool.shutdown();
+                        }
+                    };
+                    // Register to shutdown hook
+                    shutdownMan.addShutdownListener(shutdownListener);
+                } finally {
+                    shutdownMan.releaseLockAndNotify();
+                }
+            }
         }
         initialized = true;
     }

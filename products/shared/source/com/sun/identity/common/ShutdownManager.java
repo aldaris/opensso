@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ShutdownManager.java,v 1.5 2008-06-25 05:52:52 qcheng Exp $
+ * $Id: ShutdownManager.java,v 1.6 2008-08-08 00:40:58 ww203982 Exp $
  *
  */
 
@@ -43,12 +43,24 @@ public class ShutdownManager {
     protected static ShutdownManager instance;
     
     protected Set[] listeners;
-    
+
+    protected boolean shutdownCalled;
+
+    protected Object currentOwner;
+
+    protected int acquireCount;
+
+    protected int waitCount;
+
     /**
      * Constructor of ShutdownManager.
      */
     
     protected ShutdownManager() {
+        shutdownCalled = false;
+        currentOwner = null;
+        acquireCount = 0;
+        waitCount = 0;
         int size = ShutdownPriority.HIGHEST.getIntValue();
         listeners = new HashSet[size];
         for (int i = 0; i < size; i++) {
@@ -58,9 +70,79 @@ public class ShutdownManager {
         Runtime.getRuntime().addShutdownHook(new Thread(
             new Runnable() {
                 public void run() {
-                    shutdown();
+                    ShutdownManager shutdownMan =
+                        ShutdownManager.getInstance();
+                    if (shutdownMan.acquireValidLock()) {
+                        try {
+                            shutdown();
+                        } finally {
+                            shutdownMan.releaseLockAndNotify();
+                        }
+                    }
                 }
             }, "ShutdownThread"));
+    }
+
+    /**
+     * Acquire the lock of this ShutdownManager. The function will block if
+     * other thread is holding the lock or return false if shutdown is called.
+     *
+     * @return a boolean to indicate whether it success.
+     */
+    public synchronized boolean acquireValidLock() {
+        if (shutdownCalled) {
+            return false;
+        } else {
+            if (currentOwner == null) {
+                currentOwner = Thread.currentThread();
+                acquireCount = 1;
+            } else {
+                if (currentOwner == Thread.currentThread()) {
+                    acquireCount++;
+                } else {
+                    try {
+                        waitCount++;
+                        this.wait();
+                        waitCount--;
+                    } catch (InterruptedException ex) {
+                        //ignored
+                    }
+                    if (shutdownCalled) {
+                        return false;
+                    } else {
+                        currentOwner = Thread.currentThread();
+                        acquireCount = 1;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Release the lock of this ShutdownManager. IllegalMonitorStateException
+     * will be thrown if the current thread is not holding the lock.
+     */
+    public synchronized void releaseLockAndNotify() throws
+        IllegalMonitorStateException {
+        if (currentOwner == Thread.currentThread()) {
+            if (acquireCount > 1) {
+                acquireCount--;
+            } else {
+                currentOwner = null;
+                acquireCount = 0;
+                if (waitCount > 0) {
+                    if (shutdownCalled) {
+                        this.notifyAll();
+                    } else {
+                        this.notify();
+                    }
+                }
+            }
+        } else {
+            throw new IllegalMonitorStateException(
+                "The calling thread is not the owner of the lock!");
+        }
     }
     
     /**
@@ -82,7 +164,8 @@ public class ShutdownManager {
      * @param listener The listener to be added
      */
     
-    public void addShutdownListener(ShutdownListener listener) {
+    public void addShutdownListener(ShutdownListener listener) throws
+        IllegalMonitorStateException {
         addShutdownListener(listener, ShutdownPriority.DEFAULT);
     }
     
@@ -94,10 +177,13 @@ public class ShutdownManager {
      */
     
     public void addShutdownListener(ShutdownListener listener,
-        ShutdownPriority priority) {
-        synchronized (listeners) {
+        ShutdownPriority priority) throws IllegalMonitorStateException {
+        if (currentOwner == Thread.currentThread()) {
             removeShutdownListener(listener);
             listeners[priority.getIntValue() - 1].add(listener);
+        } else {
+            throw new IllegalMonitorStateException(
+                "The calling thread is not the owner of the lock!");
         }
     }
     
@@ -107,8 +193,9 @@ public class ShutdownManager {
      * @param listener The listener to be removed
      */
     
-    public void removeShutdownListener(ShutdownListener listener) {
-        synchronized (listeners) {
+    public void removeShutdownListener(ShutdownListener listener) throws 
+        IllegalMonitorStateException {
+        if (currentOwner == Thread.currentThread()) {
             List priorities = ShutdownPriority.getPriorities();
             for (Iterator i = priorities.iterator(); i.hasNext();) {
                 int index = ((ShutdownPriority) i.next()).getIntValue();
@@ -116,6 +203,9 @@ public class ShutdownManager {
                     break;
                 }
             }
+        } else {
+            throw new IllegalMonitorStateException(
+                "The calling thread is not the owner of the lock!");
         }
     }
 
@@ -123,8 +213,9 @@ public class ShutdownManager {
      * Shuts down all the listeners in this ShutdownManager.
      */
     
-    public void shutdown() {
-        synchronized (listeners) {
+    public void shutdown() throws IllegalMonitorStateException {
+        if (currentOwner == Thread.currentThread()) {
+            shutdownCalled = true;
             List priorities = ShutdownPriority.getPriorities();
             for (Iterator i = priorities.iterator(); i.hasNext();) {
                 int index = ((ShutdownPriority) i.next()).getIntValue();
@@ -137,6 +228,9 @@ public class ShutdownManager {
                     j.remove();
                 }
             }
+        } else {
+            throw new IllegalMonitorStateException(
+                "The calling thread is not the owner of the lock!");
         }
     }
 } 

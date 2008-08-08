@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SystemTimerPool.java,v 1.3 2008-06-25 05:52:52 qcheng Exp $
+ * $Id: SystemTimerPool.java,v 1.4 2008-08-08 00:40:59 ww203982 Exp $
  *
  */
 
@@ -47,14 +47,20 @@ public class SystemTimerPool {
     public static synchronized TimerPool getTimerPool() {
         if (instance == null) {
             debug = Debug.getInstance("SystemTimerPool");
-            instance = new TimerPool("SystemTimerPool", DEFAULT_POOL_SIZE,
-                false, debug);
             ShutdownManager shutdownMan = ShutdownManager.getInstance();
-            shutdownMan.addShutdownListener(new ShutdownListener() {
-                public void shutdown() {
-                    instance.shutdown();
+            if (shutdownMan.acquireValidLock()) {
+                try {
+                    instance = new TimerPool("SystemTimerPool", 
+                        DEFAULT_POOL_SIZE, false, debug);
+                    shutdownMan.addShutdownListener(new ShutdownListener() {
+                        public void shutdown() {
+                            instance.shutdown();
+                        }
+                    });
+                } finally {
+                    shutdownMan.releaseLockAndNotify();
                 }
-            });
+            }
         }
         return instance;
     }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Session.java,v 1.16 2008-06-25 05:41:29 qcheng Exp $
+ * $Id: Session.java,v 1.17 2008-08-08 00:40:54 ww203982 Exp $
  *
  */
 
@@ -338,15 +338,22 @@ public class Session extends GeneralTaskRunnable {
            } catch (Exception e) {
                threshold = DEFAULT_THRESHOLD;
            }
-           threadPool = new ThreadPool("amSessionPoller", poolSize, 
-               threshold, true, sessionDebug);
-           ShutdownManager.getInstance().addShutdownListener(
-               new ShutdownListener() {
-                   public void shutdown() {
-                       threadPool.shutdown();
-                   }
+           ShutdownManager shutdownMan = ShutdownManager.getInstance();
+           if (shutdownMan.acquireValidLock()) {
+               try {
+                   threadPool = new ThreadPool("amSessionPoller", poolSize,
+                       threshold, true, sessionDebug);
+                   shutdownMan.addShutdownListener(
+                       new ShutdownListener() {
+                           public void shutdown() {
+                               threadPool.shutdown();
+                           }
+                       }
+                   );
+               } finally {
+                   shutdownMan.releaseLockAndNotify();
                }
-           );
+           }
         } else {
             sessionDebug.message("Session Cache cleanup is set to "
                 + sessionCleanupEnabled); 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPConnectionPools.java,v 1.5 2008-06-25 05:43:51 qcheng Exp $
+ * $Id: LDAPConnectionPools.java,v 1.6 2008-08-08 00:40:57 ww203982 Exp $
  *
  */
 
@@ -122,24 +122,31 @@ public class LDAPConnectionPools {
                             "minPoolSize=" + minPoolSize +
                             ", maxPoolSize=" + maxPoolSize);
                     }
-                    cPool = new LDAPConnectionPool (host + "-Policy",
-                        minPoolSize, maxPoolSize, ldc);
-                    if (debug.messageEnabled()) {
-                        debug.message(
-                            "LDAPConnectionPools.initConnectionPool(): host: " +
-                            host);
-                    }                    
-                    final LDAPConnectionPool finalPool = cPool;
-                    ShutdownManager.getInstance().addShutdownListener(new
-                        ShutdownListener() {
-                        
-                        public void shutdown() {
-                            if (finalPool != null) {
-                                finalPool.destroy();
+                    ShutdownManager shutdownMan = ShutdownManager.getInstance();
+                    if (shutdownMan.acquireValidLock()) {
+                        try {
+                            cPool = new LDAPConnectionPool (host + "-Policy",
+                                minPoolSize, maxPoolSize, ldc);
+                            if (debug.messageEnabled()) {
+                                debug.message(
+                                "LDAPConnectionPools.initConnectionPool(): " +
+                                    " host: " + host);
                             }
+                            final LDAPConnectionPool finalPool = cPool;
+                            shutdownMan.addShutdownListener(new
+                                ShutdownListener() {
+
+                                    public void shutdown() {
+                                        if (finalPool != null) {
+                                            finalPool.destroy();
+                                        }
+                                    }
+
+                                });
+                        } finally {
+                            shutdownMan.releaseLockAndNotify();
                         }
-                        
-                    });
+                    }
                     connectionPools.put(host, cPool);
                 }
             }

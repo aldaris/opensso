@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerConfigMgr.java,v 1.11 2008-06-25 05:41:36 qcheng Exp $
+ * $Id: ServerConfigMgr.java,v 1.12 2008-08-08 00:40:55 ww203982 Exp $
  *
  */
 
@@ -471,7 +471,14 @@ public class ServerConfigMgr {
             System.err.println(ex.getMessage());
             System.exit(1);
         } finally {
-            ShutdownManager.getInstance().shutdown();
+            ShutdownManager shutdownMan = ShutdownManager.getInstance();
+            if (shutdownMan.acquireValidLock()) {
+                try {
+                    shutdownMan.shutdown();
+                } finally {
+                    shutdownMan.releaseLockAndNotify();
+                }
+            }
         }
     }
     

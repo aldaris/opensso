@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupDSConfig.java,v 1.16 2008-07-23 17:30:45 veiming Exp $
+ * $Id: AMSetupDSConfig.java,v 1.17 2008-08-08 00:40:57 ww203982 Exp $
  *
  */
 
@@ -322,19 +322,27 @@ public class AMSetupDSConfig {
     private synchronized LDAPConnection getLDAPConnection(boolean ssl) {
         if (ld == null) {
             try {
-                ld = (ssl) ? new LDAPConnection(
-                    SSLSocketFactoryManager.getSSLSocketFactory()) :
-                    new LDAPConnection();
-                ld.setConnectTimeout(300);
-                ld.connect(3, dsHostName, getPort(), dsManager, dsAdminPwd);
-                ShutdownManager.getInstance().addShutdownListener(new
-                    ShutdownListener() {
-                    
-                    public void shutdown() {
-                        disconnectDServer();
+                ShutdownManager shutdownMan = ShutdownManager.getInstance();
+                if (shutdownMan.acquireValidLock()) {
+                    try {
+                        ld = (ssl) ? new LDAPConnection(
+                            SSLSocketFactoryManager.getSSLSocketFactory()) :
+                            new LDAPConnection();
+                        ld.setConnectTimeout(300);
+                        ld.connect(3, dsHostName, getPort(), dsManager,
+                            dsAdminPwd);
+                        shutdownMan.addShutdownListener(new
+                            ShutdownListener() {
+
+                            public void shutdown() {
+                                disconnectDServer();
+                            }
+
+                        });
+                    } finally {
+                        shutdownMan.releaseLockAndNotify();
                     }
-                    
-                });
+                }
             } catch (LDAPException e) {
                 disconnectDServer();
                 dsConfigInstance = null;

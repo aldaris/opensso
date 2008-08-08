@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EventService.java,v 1.14 2008-07-30 00:50:15 arviranga Exp $
+ * $Id: EventService.java,v 1.15 2008-08-08 00:40:55 ww203982 Exp $
  *
  */
 
@@ -354,19 +354,26 @@ public class EventService implements Runnable {
             _idleTimeOut = getPropertyIntValue(EVENT_IDLE_TIMEOUT_INTERVAL,
                 _idleTimeOut);
             _idleTimeOutMills = _idleTimeOut * 60000;
-            if (_idleTimeOut == 0) {
-                _instance = new EventService();
-            } else {
-                _instance = new EventServicePolling();
-            }
-            ShutdownManager.getInstance().addShutdownListener(new
-                ShutdownListener() {
-                public void shutdown() {
-                    if (_instance != null) {
-                        _instance.finalize();
+            ShutdownManager shutdownMan = ShutdownManager.getInstance();
+            if (shutdownMan.acquireValidLock()) {
+                try {
+                    if (_idleTimeOut == 0) {
+                        _instance = new EventService();
+                    } else {
+                        _instance = new EventServicePolling();
                     }
+                    shutdownMan.addShutdownListener(new
+                        ShutdownListener() {
+                            public void shutdown() {
+                                if (_instance != null) {
+                                    _instance.finalize();
+                                }
+                            }
+                        });
+                } finally {
+                    shutdownMan.releaseLockAndNotify();
                 }
-            });
+            }
         }
         return _instance;
     }

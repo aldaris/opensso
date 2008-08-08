@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.45 2008-08-07 17:22:00 arviranga Exp $
+ * $Id: IdServicesImpl.java,v 1.46 2008-08-08 00:40:57 ww203982 Exp $
  *
  */
 
@@ -92,7 +92,7 @@ public class IdServicesImpl implements IdServices {
     
     private IdRepoPluginsCache idrepoCache;
     
-    private static boolean shutdownCalled;
+    private static volatile boolean shutdownCalled;
 
     private static HashSet READ_ACTION = new HashSet(2);
 
@@ -109,16 +109,23 @@ public class IdServicesImpl implements IdServices {
         if (_instance == null) {
             getDebug().message("IdServicesImpl.getInstance(): "
                     + "Creating new Instance of IdServicesImpl()");
-            _instance = new IdServicesImpl();
-            ShutdownManager.getInstance().addShutdownListener(
-                new ShutdownListener() {
-                public void shutdown() {
-                    synchronized (_instance) {
-                        shutdownCalled = true;
-                    }
-                    _instance.clearIdRepoPlugins();
+            ShutdownManager shutdownMan = ShutdownManager.getInstance();
+            if (shutdownMan.acquireValidLock()) {
+                try {
+                    _instance = new IdServicesImpl();
+                    shutdownMan.addShutdownListener(
+                        new ShutdownListener() {
+                            public void shutdown() {
+                                synchronized (_instance) {
+                                    shutdownCalled = true;
+                                }
+                                _instance.clearIdRepoPlugins();
+                            }
+                    });
+                } finally {
+                    shutdownMan.releaseLockAndNotify();
                 }
-            });
+            }
         }
         return _instance;
     }

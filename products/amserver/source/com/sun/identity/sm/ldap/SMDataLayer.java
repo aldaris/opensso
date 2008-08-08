@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMDataLayer.java,v 1.13 2008-08-07 17:22:04 arviranga Exp $
+ * $Id: SMDataLayer.java,v 1.14 2008-08-08 00:40:58 ww203982 Exp $
  *
  */
 
@@ -294,17 +294,25 @@ class SMDataLayer {
             connOptions.put("referrals", new Boolean(referrals));
             connOptions.put("searchconstraints", _defaultSearchConstraints);
 
-            _ldapPool = new LDAPConnectionPool("SMS", poolMin, poolMax,
-                hostName, 389, connDN, connPWD, _trialConn, connOptions);
-            ShutdownManager.getInstance().addShutdownListener(
-                new ShutdownListener() {
-                    public void shutdown() {
-                        if (_ldapPool != null) {
-                            _ldapPool.destroy();
+            ShutdownManager shutdownMan = ShutdownManager.getInstance();
+            if (shutdownMan.acquireValidLock()) {
+                try {
+                    _ldapPool = new LDAPConnectionPool("SMS", poolMin, poolMax,
+                        hostName, 389, connDN, connPWD, _trialConn, 
+                        connOptions);
+                    shutdownMan.addShutdownListener(
+                        new ShutdownListener() {
+                            public void shutdown() {
+                                if (_ldapPool != null) {
+                                    _ldapPool.destroy();
+                                }
+                            }
                         }
-                    }
+                    );
+                } finally {
+                    shutdownMan.releaseLockAndNotify();
                 }
-            );
+            }
 
         } catch (LDAPServiceException ex) {
             debug.error("SMDataLayer:initLdapPool()-"

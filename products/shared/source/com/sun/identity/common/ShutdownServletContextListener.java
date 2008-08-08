@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ShutdownServletContextListener.java,v 1.2 2008-06-25 05:52:52 qcheng Exp $
+ * $Id: ShutdownServletContextListener.java,v 1.3 2008-08-08 00:40:59 ww203982 Exp $
  *
  */
 
@@ -43,6 +43,13 @@ public class ShutdownServletContextListener implements ServletContextListener
     }
 
     public void contextDestroyed(ServletContextEvent sce) {
-        ShutdownManager.getInstance().shutdown();
+        ShutdownManager shutdownMan = ShutdownManager.getInstance();
+        if (shutdownMan.acquireValidLock()) {
+            try {
+                shutdownMan.shutdown();
+            } finally {
+                shutdownMan.releaseLockAndNotify();
+            }
+        }
     }
 }

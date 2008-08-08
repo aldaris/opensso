@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EmbeddedOpenDS.java,v 1.15 2008-07-17 17:01:12 rajeevangal Exp $
+ * $Id: EmbeddedOpenDS.java,v 1.16 2008-08-08 00:40:57 ww203982 Exp $
  *
  */
 
@@ -267,16 +267,24 @@ public class EmbeddedOpenDS {
         serverStarted = true;
       
         ShutdownManager shutdownMan = ShutdownManager.getInstance();
-        shutdownMan.addShutdownListener(new ShutdownListener() {
-            public void shutdown() {
-                try {
-                    shutdownServer("Graceful Shutdown");
-                } catch (Exception ex) {
-                    Debug debug = Debug.getInstance(SetupConstants.DEBUG_NAME);
-                    debug.error("EmbeddedOpenDS:shutdown hook failed", ex);
-                }
+        if (shutdownMan.acquireValidLock()) {
+            try {
+                shutdownMan.addShutdownListener(new ShutdownListener() {
+                    public void shutdown() {
+                        try {
+                            shutdownServer("Graceful Shutdown");
+                        } catch (Exception ex) {
+                            Debug debug = Debug.getInstance(
+                                SetupConstants.DEBUG_NAME);
+                            debug.error("EmbeddedOpenDS:shutdown hook failed",
+                                ex);
+                        }
+                    }
+                }, ShutdownPriority.LOWEST);
+            } finally {
+                shutdownMan.releaseLockAndNotify();
             }
-        }, ShutdownPriority.LOWEST);
+        }
     }
     
 

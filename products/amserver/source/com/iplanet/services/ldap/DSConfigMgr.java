@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DSConfigMgr.java,v 1.14 2008-06-25 05:41:36 qcheng Exp $
+ * $Id: DSConfigMgr.java,v 1.15 2008-08-08 00:40:55 ww203982 Exp $
  *
  */
 
@@ -317,19 +317,27 @@ public class DSConfigMgr implements IDSConfigMgr {
         try {
             ServerInstance si = getServerInstance(DEFAULT,
                     LDAPUser.Type.AUTH_ANONYMOUS);
-            LDAPConnectionPool pool = new LDAPConnectionPool(
-                    "DSConfigMgr", si.getMinConnections(),
-                    si.getMaxConnections(), anonymousConnection);
-            final LDAPConnectionPool finalPool = pool;
-            ShutdownManager.getInstance().addShutdownListener(
-                new ShutdownListener() {
-                    public void shutdown() {
-                        if (finalPool != null) {
-                            finalPool.destroy();
+            LDAPConnectionPool pool = null;
+            ShutdownManager shutdownMan = ShutdownManager.getInstance();
+            if (shutdownMan.acquireValidLock()) {
+                try {
+                    pool = new LDAPConnectionPool(
+                        "DSConfigMgr", si.getMinConnections(),
+                        si.getMaxConnections(), anonymousConnection);
+                    final LDAPConnectionPool finalPool = pool;
+                    shutdownMan.addShutdownListener(
+                        new ShutdownListener() {
+                            public void shutdown() {
+                                if (finalPool != null) {
+                                    finalPool.destroy();
+                                }
+                            }
                         }
-                    }
+                    );
+                } finally {
+                    shutdownMan.releaseLockAndNotify();
                 }
-            );
+            }
             return pool;
         } catch (LDAPException le) {
             if (debugger.messageEnabled()) {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Stats.java,v 1.4 2008-06-25 05:53:05 qcheng Exp $
+ * $Id: Stats.java,v 1.5 2008-08-08 00:40:59 ww203982 Exp $
  *
  */
 
@@ -257,7 +257,14 @@ public class Stats implements ShutdownListener {
             // explicitly ignore any duplicate instances.
             statsMap.put(statsName, this);
         }
-        ShutdownManager.getInstance().addShutdownListener(this);
+        ShutdownManager shutdownMan = ShutdownManager.getInstance();
+        if (shutdownMan.acquireValidLock()) {
+            try {
+                shutdownMan.addShutdownListener(this);
+            } finally {
+                shutdownMan.releaseLockAndNotify();
+            }
+        }
     }
 
     /**

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPAuthUtils.java,v 1.13 2008-06-25 05:41:58 qcheng Exp $
+ * $Id: LDAPAuthUtils.java,v 1.14 2008-08-08 00:40:56 ww203982 Exp $
  *
  */
 
@@ -302,16 +302,24 @@ public class LDAPAuthUtils {
                         
                         ldc.connect(hostName, portNumber);
                         ldc.authenticate(verNum, bindingUser, bindingPwd);
-                        conPool = new LDAPConnectionPool(key + "-AuthLDAP",
-                            min, max, ldc);
-                        final LDAPConnectionPool tempConPool = conPool;
-                        ShutdownManager.getInstance().addShutdownListener(
-                            new ShutdownListener() {
-                                public void shutdown() {
-                                    tempConPool.destroy();
-                                }
+                        ShutdownManager shutdownMan = 
+                            ShutdownManager.getInstance();
+                        if (shutdownMan.acquireValidLock()) {
+                            try {
+                                conPool = new LDAPConnectionPool(key + 
+                                    "-AuthLDAP", min, max, ldc);
+                                final LDAPConnectionPool tempConPool = conPool;
+                                shutdownMan.addShutdownListener(
+                                    new ShutdownListener() {
+                                        public void shutdown() {
+                                            tempConPool.destroy();
+                                        }
+                                    }
+                                );
+                            } finally {
+                                shutdownMan.releaseLockAndNotify();
                             }
-                        );
+                        }
                         connectionPools.put(key, conPool);
                         if (aConnectionPoolsStatus != null) {
                             aConnectionPoolsStatus.put(key, STATUS_UP);
