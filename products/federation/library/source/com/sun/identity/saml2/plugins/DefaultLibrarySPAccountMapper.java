@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultLibrarySPAccountMapper.java,v 1.8 2008-08-06 17:28:18 exu Exp $
+ * $Id: DefaultLibrarySPAccountMapper.java,v 1.9 2008-08-09 00:38:15 qcheng Exp $
  *
  */
 
@@ -272,7 +272,8 @@ public class DefaultLibrarySPAccountMapper extends DefaultAccountMapper
               debug.message("DefaultLibrarySPAccountMapper.getAutoFedUser: " +
               "Auto federation attribute map is not specified in config.");
            }
-           return null;
+           // assume it is the same as the auto fed attribute name 
+           autoFedMapAttribute = autoFedAttribute;
         }
 
         try {
