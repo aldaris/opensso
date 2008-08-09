@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogConfigReader.java,v 1.16 2008-08-07 01:20:38 bigfatrat Exp $
+ * $Id: LogConfigReader.java,v 1.17 2008-08-09 04:49:50 bigfatrat Exp $
  *
  */
 
@@ -157,8 +157,29 @@ public class LogConfigReader implements ServiceListener{
         Iterator it;
         String tempBuffer;
         boolean fileBackend = false;
+        String basedir = null;
+        String famuri = null;
         // processing logging attributes.
         try {
+            /*
+	     * generate %BASE_DIR% and %SERVER_URI% values, in case
+	     * they're not set up yet (e.g., during configuration
+	     */
+	    famuri = SystemProperties.get(
+		Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
+	    famuri = famuri.replace('\\','/');
+	    basedir = SystemProperties.get(
+		SystemProperties.CONFIG_PATH);
+	    basedir = basedir.replace('\\','/');
+	    if (famuri.startsWith("/")) {
+		byte[] btmp = famuri.getBytes();
+		famuri = new String(btmp, 1, (btmp.length - 1));
+	    }
+	    if (basedir.endsWith("/")) {
+		byte[] btmp = basedir.getBytes();
+		basedir = new String(btmp, 0, (btmp.length - 1));
+	    }
+
             logAttributes = smsLogSchema.getAttributeDefaults();
             // File/jdbc
             key = LogConstants.BACKEND;
@@ -419,6 +440,12 @@ public class LogConfigReader implements ServiceListener{
                 debug.warning("LogConfigReader: LogLocation string is null");
             } else {
                 value = value.replace('\\','/');
+		if (value.contains("%BASE_DIR%") ||
+		    value.contains("%SERVER_URI%"))
+		{
+		    value = value.replaceAll("%BASE_DIR%", basedir);
+		    value = value.replaceAll("%SERVER_URI%", famuri);
+		}
                 if (fileBackend && !value.endsWith("/")) {
                     value += "/";
                 }
@@ -484,6 +511,12 @@ public class LogConfigReader implements ServiceListener{
                     "certificate store is null");
             } else {
                 value = value.replace('\\','/');
+		if (value.contains("%BASE_DIR%") ||
+		    value.contains("%SERVER_URI%"))
+		{
+		    value = value.replaceAll("%BASE_DIR%", basedir);
+		    value = value.replaceAll("%SERVER_URI%", famuri);
+		}
                 sbuffer.append(key).append("=")
                        .append(value).append(LogConstants.CRLF);
             }
