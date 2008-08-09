@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.42 2008-08-07 17:22:07 arviranga Exp $
+ * $Id: SMSEntry.java,v 1.43 2008-08-09 00:52:04 veiming Exp $
  *
  */
 
@@ -246,28 +246,23 @@ public class SMSEntry implements Cloneable {
             // Ignore the exception, should not happen
         }
 
-        // Cache internal users
-        String adminUser = SystemProperties.get(AUTH_SUPER_USER, "");
-        if (adminUser != null && adminUser.length() != 0) {
-            specialUserSet.add(new DN(adminUser).toRFCString().toLowerCase());
-        }
-
-        if (SystemProperties.isServerMode()) {
-            // Add adminDN to the specialUserSet
-            adminUser = com.iplanet.am.util.AdminUtils.getAdminDN();
+        // Cache internal users, only after SMSObject is initialized
+        String adminUser = null;
+        if (smsObject != null) {
+            adminUser = SystemProperties.get(AUTH_SUPER_USER, "");
             if (adminUser != null && adminUser.length() != 0) {
                 specialUserSet.add(new DN(adminUser).toRFCString()
                     .toLowerCase());
             }
-        } else {
-            try {
-                SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-                AdminTokenAction.getInstance());
-                String name = (new DN(adminToken.getPrincipal().getName())).
-                    toRFCString();
-                specialUserSet.add(name.toLowerCase());
-            } catch (SSOException e) {
-                debug.error("SMSEntry.initializeClass", e);
+        }
+
+        if (SystemProperties.isServerMode()) {
+            // Add adminDN from serverconfig.xml (available only on the server)
+            // to the specialUserSet
+            adminUser = com.iplanet.am.util.AdminUtils.getAdminDN();
+            if (adminUser != null && adminUser.length() != 0) {
+                specialUserSet.add(new DN(adminUser).toRFCString()
+                    .toLowerCase());
             }
         }
         
@@ -434,6 +429,24 @@ public class SMSEntry implements Cloneable {
             // Problem in getting amsdk base DN
             initializationException = new SMSException(bundle.getString(
                 "sms-invalid-dn"), "sms-invalid-dn");
+        }
+        
+        // If not client, add AdminToken DN to specialUser's set
+        if (!SMSJAXRPCObjectFlg) {
+            try {
+                SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+                    AdminTokenAction.getInstance());
+                String name = (new DN(adminToken.getPrincipal().getName())).toRFCString();
+                specialUserSet.add(name.toLowerCase());
+            } catch (SSOException e) {
+                debug.error("SMSEntry.initializeClass", e);
+            }
+            // Initialize super user also
+            String adminUser = SystemProperties.get(AUTH_SUPER_USER, "");
+            if (adminUser != null && adminUser.length() != 0) {
+                specialUserSet.add(new DN(adminUser).toRFCString()
+                    .toLowerCase());
+            }
         }
     }
 
