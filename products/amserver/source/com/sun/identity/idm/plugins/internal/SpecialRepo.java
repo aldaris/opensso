@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SpecialRepo.java,v 1.15 2008-08-07 17:22:05 arviranga Exp $
+ * $Id: SpecialRepo.java,v 1.16 2008-08-09 01:08:57 arviranga Exp $
  *
  */
 package com.sun.identity.idm.plugins.internal;
@@ -360,6 +360,9 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
      */
     public Set getMemberships(SSOToken token, IdType type, String name,
         IdType membershipType) throws IdRepoException, SSOException {
+        if (isSpecialUser(type, name)) {
+            return (Collections.EMPTY_SET);
+        }
         Object args[] = {NAME, IdOperation.READ.getName()};
         throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME, "305",
             args);

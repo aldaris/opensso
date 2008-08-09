@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.46 2008-08-08 00:40:57 ww203982 Exp $
+ * $Id: IdServicesImpl.java,v 1.47 2008-08-09 01:08:57 arviranga Exp $
  *
  */
 
@@ -848,13 +848,6 @@ public class IdServicesImpl implements IdServices {
     ) throws IdRepoException, SSOException {
         IdRepoException origEx = null;
         
-        // If Special Identity, throw exception
-        if (isSpecialIdentity(token, name, type, amOrgName)) {
-            Object args[] = {"getMemberships", IdOperation.READ.getName()};
-            throw new IdRepoUnsupportedOpException(
-                IdRepoBundle.BUNDLE_NAME, "305", args);
-        }
-
         // Check permission first. If allowed then proceed, else the
         // checkPermission method throws an "402" exception.
         checkPermission(token, amOrgName, name, null, IdOperation.READ, type);
@@ -865,6 +858,23 @@ public class IdServicesImpl implements IdServices {
         if ((configuredPluginClasses == null) || 
             configuredPluginClasses.isEmpty()) {
             throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "301", null);
+        }
+        
+        // If Special Identity, call SpecialRepo
+        if (isSpecialIdentity(token, name, type, amOrgName)) {
+            try {
+                for (Iterator items = configuredPluginClasses.iterator();
+                    items.hasNext();) {
+                    IdRepo idRepo = (IdRepo) items.next();
+                    if (idRepo.getClass().getName().equals(
+                        IdConstants.SPECIAL_PLUGIN)) {
+                        return (idRepo.getMemberships(token, type,
+                            name, membershipType));
+                    }
+                }
+            } catch (Exception e) {
+                // Ignore and continue
+            }
         }
 
         Iterator it = configuredPluginClasses.iterator();

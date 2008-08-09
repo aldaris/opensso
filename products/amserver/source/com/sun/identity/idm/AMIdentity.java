@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentity.java,v 1.27 2008-06-25 05:43:28 qcheng Exp $
+ * $Id: AMIdentity.java,v 1.28 2008-08-09 01:08:58 arviranga Exp $
  *
  */
 
@@ -214,13 +214,11 @@ public final class AMIdentity {
         StringBuffer sb = new StringBuffer(100);
         if ((name != null) && (name.indexOf(',') != -1) &&
             DN.isDN(name)) {
-            sb.append("id=").append(LDAPDN.explodeDN(name, true)[0])
-                    .append(",ou=").append(type.getName()).append(",").append(
-                            this.orgName);
-        } else {
-            sb.append("id=").append(name).append(",ou=").append(type.getName())
-                    .append(",").append(this.orgName);
+            name = LDAPDN.explodeDN(name, true)[0];
         }
+        sb.append("id=").append(name).append(",ou=").append(type.getName())
+            .append(",").append(this.orgName);
+        
         univIdWithoutDN = sb.toString();
     }
 
@@ -917,6 +915,7 @@ public final class AMIdentity {
 
 
     /**
+
      * Removes attributes value related to a specific service by
      * setting it to empty.
      * The assumption is that the service is already assigned to
