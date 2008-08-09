@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.51 2008-08-08 00:40:56 ww203982 Exp $
+ * $Id: LDAPv3Repo.java,v 1.52 2008-08-09 00:49:58 goodearth Exp $
  *
  */
 
@@ -73,6 +73,7 @@ import netscape.ldap.util.DN;
 
 import com.iplanet.am.sdk.AMCommonUtils;
 import com.iplanet.am.sdk.AMHashMap;
+import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.util.Base64;
 import com.iplanet.services.naming.ServerEntryNotFoundException;
 import com.iplanet.services.naming.WebtopNaming;
@@ -1394,6 +1395,10 @@ public class LDAPv3Repo extends IdRepo {
     public int addListener(SSOToken token, IdRepoListener listener)
             throws IdRepoException, SSOException {
 
+        // If CLI, do not have persistent search for notifications.
+        if (!SystemProperties.isServerMode()) {
+            return 0;
+        }
         if (debug.messageEnabled()) {
             debug.message("LDAPv3Repo: addListener called"
                     + "  LDAPv3Config_LDAP_SERVER="
