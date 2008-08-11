@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionUpgrade.java,v 1.7 2008-06-26 19:58:32 rmisra Exp $
+ * $Id: SessionUpgrade.java,v 1.8 2008-08-11 20:56:46 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -102,8 +102,8 @@ public class SessionUpgrade extends TestCommon {
         url = getLoginURL("/");
         logoutURL = protocol + ":" + "//" + host + ":" + port + uri 
                 + "/UI/Logout";
-        String famadmURL = protocol + ":" + "//" + host + ":" + port + uri;
-        fm = new FederationManager(famadmURL);
+        String ssoadmURL = protocol + ":" + "//" + host + ":" + port + uri;
+        fm = new FederationManager(ssoadmURL);
         testResources = ResourceBundle.getBundle("authentication" +
                 fileseparator + "SessionUpgrade");
         moduleConfig = new AuthTestConfigUtil(configrbName);
@@ -387,7 +387,7 @@ public class SessionUpgrade extends TestCommon {
             if (FederationManager.getExitCode(fm.deleteAuthInstances(
                     webClient, testRealm, listModInstance)) != 0) {
                 log(Level.SEVERE, "cleanup", 
-                        "deleteAuthInstances famadm command failed");
+                        "deleteAuthInstances ssoadm command failed");
             }
 
             if ((testUserList != null) && !testUserList.isEmpty()) { 
@@ -396,7 +396,7 @@ public class SessionUpgrade extends TestCommon {
                 if (FederationManager.getExitCode(fm.deleteIdentities(webClient, 
                         testRealm, testUserList, "User")) != 0) {
                     log(Level.SEVERE, "cleanup", 
-                            "deleteIdentities famadm command failed");
+                            "deleteIdentities ssoadm command failed");
                 }
             }
             absoluteRealm = testRealm;
@@ -409,7 +409,7 @@ public class SessionUpgrade extends TestCommon {
                 if (FederationManager.getExitCode(fm.deleteRealm(webClient, 
                         absoluteRealm, true)) != 0) {
                     log(Level.SEVERE, "cleanup", 
-                            "deleteRealm famadm command failed");
+                            "deleteRealm ssoadm command failed");
                 }
             }
         } catch(Exception e) {

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthTest.java,v 1.15 2008-06-26 21:34:38 rmisra Exp $
+ * $Id: AuthTest.java,v 1.16 2008-08-11 20:56:46 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -179,7 +179,7 @@ public class AuthTest extends TestCommon {
                         module_servicename, module_subconfigname, list, realm, 
                         module_subconfigid, "0")) != 0) {
                     log(Level.SEVERE, "setup", 
-                            "createSubCfg (module) famadm command failed");
+                            "createSubCfg (module) ssoadm command failed");
                     assert false;
                 }
 
@@ -195,7 +195,7 @@ public class AuthTest extends TestCommon {
                         service_servicename, service_subconfigname, list, realm,
                         service_subconfigid, "0")) != 0) {
                     log(Level.SEVERE, "setup", 
-                            "createSubCfg (service) famadm command failed");
+                            "createSubCfg (service) ssoadm command failed");
                     assert false;
                 }
 
@@ -214,7 +214,7 @@ public class AuthTest extends TestCommon {
                 if (FederationManager.getExitCode(am.createIdentity(webClient, 
                         realm, user, "User", list)) != 0) {
                     log(Level.SEVERE, "setup", 
-                            "createIdentity (User) famadm command failed");
+                            "createIdentity (User) ssoadm command failed");
                     assert false;
                 }
 
@@ -225,7 +225,7 @@ public class AuthTest extends TestCommon {
                     if (FederationManager.getExitCode(am.createIdentity(
                             webClient, realm, rolename, "Role", null)) != 0) {
                         log(Level.SEVERE, "setup", 
-                                "createIdentity (Role) famadm command failed");
+                                "createIdentity (Role) ssoadm command failed");
                         assert false;
                     }
                     log(Level.FINE, "setup", "Assigning the user " + user + 
@@ -233,7 +233,7 @@ public class AuthTest extends TestCommon {
                     if (FederationManager.getExitCode(am.addMember(webClient, 
                             realm, user, "User", rolename, "Role")) != 0) {
                         log(Level.SEVERE, "setup", 
-                                "addMember famadm (User) call failed");
+                                "addMember ssoadm (User) call failed");
                         assert false;
                     }
                     list.clear();
@@ -245,7 +245,7 @@ public class AuthTest extends TestCommon {
                             webClient, realm, rolename, "Role", 
                             service_servicename, list)) != 0) {
                         log(Level.SEVERE, "setup", 
-                                "addSvcIdentity famadm command failed");
+                                "addSvcIdentity ssoadm command failed");
                         assert false;
                     }                
                 } else {
@@ -260,7 +260,7 @@ public class AuthTest extends TestCommon {
             }
         } catch(AssertionError ae) {
             log(Level.SEVERE, "setup", 
-                    "Calling cleanup due to failed famadm exit code ...");
+                    "Calling cleanup due to failed ssoadm exit code ...");
             cleanup(testModule);
             throw ae;
         } catch(Exception e) {
@@ -412,7 +412,7 @@ public class AuthTest extends TestCommon {
                 if (FederationManager.getExitCode(am.deleteIdentities(webClient, 
                         realm, list, "User")) != 0) {
                     log(Level.SEVERE, "cleanup", 
-                            "deleteIdentities (User) famadm command failed");
+                            "deleteIdentities (User) ssoadm command failed");
                 }
                 list.clear();
                 list.add(rolename);
@@ -425,7 +425,7 @@ public class AuthTest extends TestCommon {
                             am.deleteIdentities(webClient, realm, list, 
                             "Role")) !=0) {
                         log(Level.SEVERE, "cleanup", 
-                                "deleteIdentities(Role) famadm command failed");
+                                "deleteIdentities(Role) ssoadm command failed");
                     }
                 }
 
@@ -436,7 +436,7 @@ public class AuthTest extends TestCommon {
                         service_servicename, service_subconfigname, realm)) 
                         != 0 ) {
                     log(Level.SEVERE, "cleanup", 
-                            "deleteSubCfg (Service) famadm command failed");
+                            "deleteSubCfg (Service) ssoadm command failed");
                 }
                 list.clear();
                 list.add(module_subconfigname);
@@ -446,7 +446,7 @@ public class AuthTest extends TestCommon {
                 if (FederationManager.getExitCode(
                         am.deleteAuthInstances(webClient, realm, list)) != 0) {
                     log(Level.SEVERE, "cleanup", 
-                            "deleteAuthInstances famadm command failed");
+                            "deleteAuthInstances ssoadm command failed");
                 }
             } catch (Exception e) {
                 log(Level.SEVERE, "cleanup", e.getMessage());

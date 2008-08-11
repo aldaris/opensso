@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserAuthAttributeTest.java,v 1.3 2008-06-26 19:58:32 rmisra Exp $
+ * $Id: UserAuthAttributeTest.java,v 1.4 2008-08-11 20:56:46 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -89,8 +89,8 @@ public class UserAuthAttributeTest extends TestCommon {
         url = getLoginURL("/");
         logoutURL = protocol + ":" + "//" + host + ":" + port + uri 
                 + "/UI/Logout";
-        String famadmURL  = protocol + ":" + "//" + host + ":" + port + uri ;
-        fm = new FederationManager(famadmURL);
+        String ssoadmURL  = protocol + ":" + "//" + host + ":" + port + uri ;
+        fm = new FederationManager(ssoadmURL);
     }
 
     /**
@@ -222,7 +222,7 @@ public class UserAuthAttributeTest extends TestCommon {
             if (FederationManager.getExitCode(fm.deleteAuthInstances(webClient,
                     realm, listModInstance)) != 0) {
                 log(Level.SEVERE, "cleanup",
-                        "deleteAuthInstances famadm command failed");
+                        "deleteAuthInstances ssoadm command failed");
             }
             adminToken = getToken(adminUser, adminPassword, realm);
             idmc.deleteIdentity(adminToken, realm, IdType.USER, testUserName);

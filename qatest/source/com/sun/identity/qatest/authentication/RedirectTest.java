@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RedirectTest.java,v 1.9 2008-07-02 20:58:26 cmwesley Exp $
+ * $Id: RedirectTest.java,v 1.10 2008-08-11 20:56:46 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -178,7 +178,7 @@ public class RedirectTest extends TestCommon {
             }
         } catch (AssertionError ae) {
             log(Level.SEVERE, "setup", 
-                    "Calling cleanup due to failed famadm exit code ...");
+                    "Calling cleanup due to failed ssoadm exit code ...");
             cleanup(testModule, testRealm); 
             throw ae;
         }
@@ -326,11 +326,11 @@ public class RedirectTest extends TestCommon {
                     Reporter.log("TestRealm: " + testRealm);
                     Reporter.log("TestModule: " + testModule);                
                     String url = getLoginURL("/"); 
-                    String famadmURL  = protocol + ":" + "//" + host + ":"
+                    String ssoadmURL  = protocol + ":" + "//" + host + ":"
                                     + port + uri ;
                     log(Level.FINE, "cleanup", "Login URL: " + url);
-                    log(Level.FINE, "cleanup", "famadm.jsp URL" + famadmURL);
-                    FederationManager am = new FederationManager(famadmURL);
+                    log(Level.FINE, "cleanup", "ssoadm.jsp URL" + ssoadmURL);
+                    FederationManager am = new FederationManager(ssoadmURL);
                     WebClient webClient = new WebClient();
                     deleteModule(testRealm, testModule);                
                     consoleLogin(webClient, url, adminUser, adminPassword);
@@ -345,7 +345,7 @@ public class RedirectTest extends TestCommon {
                         if (FederationManager.getExitCode(am.deleteIdentities(
                                 webClient, delRealm, testUserList, "User")) != 0) {
                             log(Level.SEVERE, "cleanup", 
-                                    "deleteIdentities famadm command failed");
+                                    "deleteIdentities ssoadm command failed");
                         }
                     }
 
@@ -355,7 +355,7 @@ public class RedirectTest extends TestCommon {
                         if (FederationManager.getExitCode(am.deleteRealm(
                                 webClient, delRealm, true)) != 0) {
                             log(Level.SEVERE, "cleanup", 
-                                    "deleteRealm famadm command failed");
+                                    "deleteRealm ssoadm command failed");
                         }
                     }
 

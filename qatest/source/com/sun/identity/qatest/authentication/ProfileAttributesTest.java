@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProfileAttributesTest.java,v 1.8 2008-06-26 19:58:32 rmisra Exp $
+ * $Id: ProfileAttributesTest.java,v 1.9 2008-08-11 20:56:46 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -73,7 +73,7 @@ public class ProfileAttributesTest extends TestCommon {
     private String moduleSubConfigId;
     private String testModName;
     private String url;
-    private String famadmURL;
+    private String ssoadmURL;
     private String logoutURL;
     private String configrbName = "authenticationConfigData";
     private List<String> testUserList = new ArrayList<String>();
@@ -86,8 +86,8 @@ public class ProfileAttributesTest extends TestCommon {
         url = getLoginURL("/");
         logoutURL = protocol + ":" + "//" + host + ":" + port + 
                 uri + "/UI/Logout";
-        famadmURL  = protocol + ":" + "//" + host + ":" + port + uri ;
-        fm = new FederationManager(famadmURL);
+        ssoadmURL  = protocol + ":" + "//" + host + ":" + port + uri ;
+        fm = new FederationManager(ssoadmURL);
     }
     
     /**
@@ -147,7 +147,7 @@ public class ProfileAttributesTest extends TestCommon {
                     locTestProfile + " in the " + servicename + " service.");
             if (FederationManager.getExitCode(fm.setSvcAttrs(webClient, realm, 
                     servicename, attributevalues)) != 0) {
-                log(Level.SEVERE, "setup", "setSvcAttrs famadm command failed");
+                log(Level.SEVERE, "setup", "setSvcAttrs ssoadm command failed");
                 assert false;
             }
             
@@ -157,7 +157,7 @@ public class ProfileAttributesTest extends TestCommon {
             }
         } catch (AssertionError ae) {
             log(Level.SEVERE, "setup", 
-                    "Calling cleanup due to failed famadm exit code ...");
+                    "Calling cleanup due to failed ssoadm exit code ...");
             cleanup();
             throw ae;            
         } catch(Exception e) {
@@ -211,7 +211,7 @@ public class ProfileAttributesTest extends TestCommon {
                     attributeVal + " in service " + servicename + ".");
             if (FederationManager.getExitCode(fm.setSvcAttrs(webClient, realm, 
                     servicename, attributevalues)) != 0) {
-                log(Level.SEVERE, "setup", "setSvcAttrs famadm command failed");
+                log(Level.SEVERE, "setup", "setSvcAttrs ssoadm command failed");
             }
             
             log(Level.FINE, "cleanup", "Deleting authentication module(s) " +
@@ -219,7 +219,7 @@ public class ProfileAttributesTest extends TestCommon {
             if (FederationManager.getExitCode(fm.deleteAuthInstances(webClient,
                     realm, listModInstance)) != 0) {
                 log(Level.SEVERE, "cleanup", 
-                        "deleteAuthInstances famadm command failed");
+                        "deleteAuthInstances ssoadm command failed");
             }
             
             if (testUserList != null && !testUserList.isEmpty()) {
@@ -228,7 +228,7 @@ public class ProfileAttributesTest extends TestCommon {
                 if (FederationManager.getExitCode(fm.deleteIdentities(webClient, 
                         realm, testUserList, "User")) != 0) {
                     log(Level.SEVERE, "cleanup", 
-                            "deleteIdentities famadm command failed");
+                            "deleteIdentities ssoadm command failed");
                 }
             }
         } catch(Exception e) {
@@ -280,7 +280,7 @@ public class ProfileAttributesTest extends TestCommon {
             if (FederationManager.getExitCode(fm.createIdentity(webClient, 
                     realm, newUser, "User", userList)) != 0) {
                 log(Level.SEVERE, "createUser", 
-                        "createIdentity famadm command failed");
+                        "createIdentity ssoadm command failed");
                 assert false;
             }
         } catch(Exception e) {

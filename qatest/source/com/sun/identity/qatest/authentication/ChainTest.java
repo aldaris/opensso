@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ChainTest.java,v 1.8 2008-06-26 19:58:32 rmisra Exp $
+ * $Id: ChainTest.java,v 1.9 2008-08-11 20:56:46 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -166,7 +166,7 @@ public class ChainTest extends TestCommon {
             createUsers(users, testChainName);
         } catch (Exception e) {
             log(Level.SEVERE, "setup", 
-                    "Calling cleanup due to failed famadm exit code ...");
+                    "Calling cleanup due to failed ssoadm exit code ...");
             cleanup(testChainName); 
             throw e;            
         }
@@ -283,8 +283,8 @@ public class ChainTest extends TestCommon {
                 String[] instanceData = moduleInstances.nextToken().split(",");
                 instanceNames.add(instanceData[0]);
             }
-            String famadmURL = protocol + ":" + "//" + host + ":" + port + uri ;
-            FederationManager am = new FederationManager(famadmURL);
+            String ssoadmURL = protocol + ":" + "//" + host + ":" + port + uri ;
+            FederationManager am = new FederationManager(ssoadmURL);
             WebClient webClient = new WebClient();
             consoleLogin(webClient, url, adminUser, adminPassword);
             log(Level.FINE, "cleanup", "Deleting auth configurations " + 
@@ -292,7 +292,7 @@ public class ChainTest extends TestCommon {
             if (FederationManager.getExitCode(am.deleteAuthCfgs(webClient, 
                     realm, chainList)) != 0) {
                 log(Level.SEVERE, "cleanup", 
-                        "deleteAuthCfgs famadm command failed");
+                        "deleteAuthCfgs ssoadm command failed");
             }
             
             log(Level.FINE, "cleanup", "Deleting auth instances " + 
@@ -300,7 +300,7 @@ public class ChainTest extends TestCommon {
             if (FederationManager.getExitCode(am.deleteAuthInstances(webClient, 
                     realm, instanceNames)) != 0) {
                 log(Level.SEVERE, "cleanup", 
-                        "deleteAuthInstances famadm command failed");
+                        "deleteAuthInstances ssoadm command failed");
             }
             
             log(Level.FINE, "cleanup", "Deleting user(s) " + testUserList + 
@@ -308,7 +308,7 @@ public class ChainTest extends TestCommon {
             if (FederationManager.getExitCode(am.deleteIdentities(webClient, 
                     realm, testUserList, "User")) != 0) {
                 log(Level.SEVERE, "cleanup", 
-                        "deleteIdentities (User) famadm command failed");
+                        "deleteIdentities (User) ssoadm command failed");
             }            
             String logoutURL = protocol + ":" + "//" + host + ":" + port + uri 
                     +  "/UI/Logout";
