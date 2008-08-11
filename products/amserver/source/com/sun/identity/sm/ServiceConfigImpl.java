@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfigImpl.java,v 1.12 2008-08-06 16:43:24 veiming Exp $
+ * $Id: ServiceConfigImpl.java,v 1.13 2008-08-11 20:28:34 manish_rustagi Exp $
  *
  */
 
@@ -498,6 +498,16 @@ class ServiceConfigImpl implements ServiceListener {
         CachedSMSEntry entry = checkAndUpdatePermission(cacheName, dn, token);
         if (!entry.isValid()) {
             entry = checkAndUpdatePermission(cacheName, dn, token);
+        }
+        
+        // Check if the entry exists
+        if (entry.isNewEntry()) {
+            // Entry does not exist, return null
+            if (debug.messageEnabled()) {
+                debug.message("ServiceConfigImpl::getInstance: entry " +
+                    "does not exist. Returning null: " + dn);
+                return (null);
+            }
         }
         
         // Since entry not in cache, check if service schema exists
