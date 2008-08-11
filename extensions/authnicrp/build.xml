@@ -5,6 +5,7 @@
 <project name="Authnicrp" default="default" basedir=".">
     <description>Builds, tests, and runs the project Authnicrp.</description>
     <import file="nbproject/build-impl.xml"/>
+     
     <!--
 
     There exist several targets which are by default empty and which can be 
@@ -66,4 +67,29 @@
     nbproject/build-impl.xml file. 
 
     -->
+    
+    <!-- Check project properties correctness before invoking the install target -->
+    <target name="install" depends="jar">
+        <property file="nbproject/project.properties"/>
+        <property file="nbproject/private/private.properties"/>
+        
+        <!-- define opensso-root.dir property in this file or in private.properties
+              if you build the module using Netbeans -->
+        <property name="opensso-root.dir" value="TBD" />
+        <property name="opensso-lib.dir" value="${opensso-root.dir}/WEB-INF/lib" />
+        <property name="opensso-config.dir" value="${opensso-root.dir}/config/auth/default" />
+        <property name="opensso-images.dir" value="${opensso-root.dir}/images" />
+        <property name="src.dir" value="${basedir}/source" />
+        <property name="img.dir" value="${basedir}/images" />
+        <copy file="${dist.jar}" todir="${opensso-lib.dir}" />
+        <copy file="${file.reference.opensso-sharedlib.jar}" todir="${opensso-lib.dir}" />
+        <copy file="${file.reference.opensso.jar}" todir="${opensso-lib.dir}" />
+        <copy file="${file.reference.servlet.jar}" todir="${opensso-lib.dir}" />
+        <copy file="${file.reference.xmldap.jar}" todir="${opensso-lib.dir}" />
+        <copy file="${src.dir}/Infocard.jsp" todir="${opensso-config.dir}" />
+        <copy file="${src.dir}/infocardInvalidToken.jsp" todir="${opensso-config.dir}" />
+        <copy file="${src.dir}/infocardInvalidCert.jsp" todir="${opensso-config.dir}" />
+        <copy file="${src.dir}/Infocard.properties" todir="${opensso-config.dir}" />
+        <copy file="${img.dir}/infocard_71x50.png" todir="${opensso-images.dir}" />
+    </target>
 </project>

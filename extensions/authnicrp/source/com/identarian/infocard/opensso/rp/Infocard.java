@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Infocard.java,v 1.5 2008-04-30 00:43:48 superpat7 Exp $
+ * $Id: Infocard.java,v 1.6 2008-08-11 18:22:03 ppetitsm Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  * Portions Copyrighted 2008 Patrick Petit Consulting
@@ -70,27 +70,26 @@ public class Infocard extends AMLoginModule {
     public static final String amAuthInfocard = "amInfocard";
     private static final String PPID_CLAIM = "privatepersonalidentifier";
     private static final int BEGIN_STATE = ISAuthConstants.LOGIN_START;
-    private static final String MANDATORY_REQUIRED_CLAIMS = 
+    private static final String MANDATORY_CLAIMS =
         "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/privatepersonalidentifier";
-    private static final String DEFAULT_REQUIRED_CLAIMS = 
-        "";
+    private static final String DEFAULT_REQUIRED_CLAIMS = "";
     /*
-        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname\n" +
-        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname";
+    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname\n" +
+    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname";
      */
     private static final String DEFAULT_OPTIONAL_CLAIMS = "";
     /*
-        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/streetaddress\n" +
-        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/locality\n" +
-        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/stateorprovince\n" +
-        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/postalcode\n" +
-        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/country\n" +
-        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/homephone\n" +
-        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/otherphone\n" +
-        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/mobilephone\n" +
-        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/dateofbirth\n" +
-        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/gender\n" +
-        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress";
+    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/streetaddress\n" +
+    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/locality\n" +
+    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/stateorprovince\n" +
+    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/postalcode\n" +
+    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/country\n" +
+    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/homephone\n" +
+    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/otherphone\n" +
+    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/mobilephone\n" +
+    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/dateofbirth\n" +
+    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/gender\n" +
+    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress";
      */
     private static final String DEFAULT_TOKEN_TYPE = "urn:oasis:names:tc:SAML:1.0:assertion";
     private static final int BINDING_STATE = 2;
@@ -107,13 +106,13 @@ public class Infocard extends AMLoginModule {
     private static final int CARDSPACE_TOKEN_ERROR = 13;
     private static final int CARDSPACE_CERT_ERROR = 14;
     private static final int NOCONFIG_ERROR = 15;
-    private static PrivateKey privateKey = null;
-    private static Debug debug = null;
+    private static PrivateKey privateKey;
+    private static Debug debug;
     private static String keyStorePath;
     private static String keyStorePasswd;
     private static String keyAlias;
     private static int minPasswordLength;
-    private static boolean initialized = false;
+    private static PropertiesManager modProperties = null;
     private String validatedUserID = null;
     private java.security.Principal userPrincipal = null;
     private Map sharedState;
@@ -128,6 +127,35 @@ public class Infocard extends AMLoginModule {
     private String regEx = "";
     private Map<String, Set> attributes = new HashMap<String, Set>();
     private Set defaultRoles = null;
+    /*
+     * Static initialization section
+     */
+    
+
+    static {
+
+        debug = com.sun.identity.shared.debug.Debug.getInstance(amAuthInfocard);
+
+        try {
+            modProperties = new PropertiesManager("/WEB-INF/classes/Infocard.properties");
+        } catch (Exception e) {
+            debug.error("Configuration error: can't load Infocard module properties", e);
+        }
+
+        keyStorePath = SystemProperties.get("javax.net.ssl.keyStore");
+        keyStorePasswd = modProperties.getProperty(
+            "com.identarian.infocard.opensso.keyStorePassword");
+        keyAlias = modProperties.getProperty(
+            "com.identarian.infocard.opensso.keyAlias");
+        minPasswordLength = Integer.getInteger(
+            modProperties.getProperty("userPasswordLength"), 8);
+
+        try {
+            privateKey = getPrivateKey();
+        } catch (InfocardException e) {
+            debug.error("Configuration error: can't get server's private key", e);
+        }
+    }
 
     /**
      * Creates an instance of this class.
@@ -135,7 +163,6 @@ public class Infocard extends AMLoginModule {
      * @throws LoginException if class cannot be instantiated.
      */
     public Infocard() throws LoginException {
-
     }
 
     /**
@@ -147,101 +174,58 @@ public class Infocard extends AMLoginModule {
      */
     public void init(Subject subject, Map sharedState, Map options) {
 
-
         this.options = options;
         this.sharedState = sharedState;
         debugPrintMap(">>> sharedState", sharedState);
         debugPrintMap(">>> options", options);
 
-        if (initialized) {
-            return;
-        }
-
-        if (debug == null) {
-            debug = com.sun.identity.shared.debug.Debug.getInstance(amAuthInfocard);
-            debug.message("Infocard Authentication Module initializing");
-        }
-
-        /*java.util.Locale locale = getLoginLocale();
-        //bundle = amCache.getResBundle(amAuthInfocard, locale);
-        if (debug.messageEnabled()) {
-        debug.message("Infocard getting resource bundle for locale: " +
-        locale);
-        } */
-
-        //Properties allProperties = SystemProperties.getAll();
-        //allProperties.list(System.out);
-        PropertiesManager modProperties = null;
-        try {
-            modProperties = new PropertiesManager(
-                    "/WEB-INF/classes/Infocard.properties");
-        } catch (Exception e) {
-            // Shouldn't we be able to throw an exception in init?
-            debug.error("Configuration error: can't get Infocard properties", e);
-            return;
-        }
-
-        keyStorePath = SystemProperties.get("javax.net.ssl.keyStore");
-        keyStorePasswd = modProperties.getProperty(
-                "com.identarian.infocard.opensso.keyStorePassword");
-        keyAlias = modProperties.getProperty(
-                "com.identarian.infocard.opensso.keyAlias");
-        minPasswordLength = Integer.getInteger(
-                modProperties.getProperty("userPasswordLength"), 8);
-
-        // We accept semicolon-separated lists of claims in the HTTP parameter
-        // but we need them to be newline-separated in the page
+        /*
+         * Define the information card parameters as request parameters.
+         * Accept semicolon-separated lists of claims in the HTTP parameter
+         * but we need them to be newline-separated in the page.
+         * The PPID is always a mandatory claim
+         */
         HttpServletRequest request = getHttpServletRequest();
-        String requiredClaims = request.getParameter("requiredClaims");
-        if ( requiredClaims != null && requiredClaims.length() > 0 )
-        {
-            requiredClaims = requiredClaims.replace(';', '\n');
+
+        StringBuffer requiredClaims = new StringBuffer(MANDATORY_CLAIMS + '\n');
+        String otherRequiredClaims = request.getParameter("requiredClaims");
+        if (otherRequiredClaims != null && otherRequiredClaims.length() > 0) {
+            otherRequiredClaims = otherRequiredClaims.replace(';', '\n');
+        } else {
+            otherRequiredClaims = DEFAULT_REQUIRED_CLAIMS;
         }
-        else
-        {
-            requiredClaims = DEFAULT_REQUIRED_CLAIMS;
+
+        if (otherRequiredClaims != null && otherRequiredClaims.length() > 0) {
+            requiredClaims.append(otherRequiredClaims);
         }
-        
-        if ( requiredClaims.length() > 0 )
-        {
-            requiredClaims = MANDATORY_REQUIRED_CLAIMS + "\n" + requiredClaims;
-        }
-        else
-        {
-            requiredClaims = MANDATORY_REQUIRED_CLAIMS;
-        }
-        request.setAttribute("requiredClaims", requiredClaims);
-        
+        request.setAttribute("requiredClaims", requiredClaims.toString() + '\n');
+
         String optionalClaims = request.getParameter("optionalClaims");
-        if ( optionalClaims != null && optionalClaims.length() > 0 )
-        {
+        if (optionalClaims != null && optionalClaims.length() > 0) {
             optionalClaims = optionalClaims.replace(';', '\n');
-        }
-        else
-        {
+        } else {
             optionalClaims = DEFAULT_OPTIONAL_CLAIMS;
         }
-        request.setAttribute("optionalClaims", optionalClaims);    
+
+        if (optionalClaims != null && optionalClaims.length() > 0)
+            request.setAttribute("optionalClaims", optionalClaims + '\n');
 
         String tokenType = request.getParameter("tokenType");
-        request.setAttribute("tokenType", tokenType);    
+        if (tokenType != null && tokenType.length() > 0) {
+            tokenType = tokenType.replace(';', '\n');
+        } else {
+            tokenType = DEFAULT_TOKEN_TYPE;
+        }
+        request.setAttribute("tokenType", tokenType + '\n');
 
         String privacyUrl = modProperties.getProperty("privacyUrl");
-        if ( privacyUrl != null && privacyUrl.length() > 0 ) {
-            request.setAttribute("privacyUrl", privacyUrl);
+        if (privacyUrl != null && privacyUrl.length() > 0) {
+            request.setAttribute("privacyUrl", privacyUrl + '\n');
         }
         String privacyVersion = modProperties.getProperty("privacyVersion");
-        if ( privacyVersion != null && privacyVersion.length() > 0 ) {
-            request.setAttribute("privacyVersion", privacyVersion);
+        if (privacyVersion != null && privacyVersion.length() > 0) {
+            request.setAttribute("privacyVersion", privacyVersion + '\n');
         }
-
-        try {
-            privateKey = getPrivateKey();
-        } catch (InfocardException e) {
-            debug.error("Configuration error: can't get server's private key", e);
-            return;
-        }
-        initialized = true;
     }
 
     /**
@@ -253,9 +237,9 @@ public class Infocard extends AMLoginModule {
      * @throws AuthLoginException if there are errors in processing the request.
      */
     public int process(Callback[] callbacks, int state)
-            throws AuthLoginException {
+        throws AuthLoginException {
 
-        if (!initialized) {
+        if (modProperties == null) {
             return NOCONFIG_ERROR;
         }
 
@@ -316,7 +300,7 @@ public class Infocard extends AMLoginModule {
             default: // Error states
                 return previousScreen;
         }
-        
+
         if (retval == ISAuthConstants.LOGIN_SUCCEED) {
             addInfocardClaimsToSession();
         }
@@ -330,7 +314,7 @@ public class Infocard extends AMLoginModule {
     //    System.out.println(">>> LOGIN page button key: " + action);
     //}
     private int processInfocard(Callback[] callbacks)
-            throws AuthLoginException {
+        throws AuthLoginException {
 
         //System.out.println(">>> InfocardLoginModule: Entering processInfoCard");
         int retval = ISAuthConstants.LOGIN_SUCCEED;
@@ -352,7 +336,7 @@ public class Infocard extends AMLoginModule {
                 }
 
                 System.out.println("PPID = " + ppid + " digest = " + digest);
-                
+
                 creds = null;
                 creds = getStoredCred(ppid);
 
@@ -384,7 +368,7 @@ public class Infocard extends AMLoginModule {
                     idCallbacks[1] = passwordCallback;
 
                     AMIdentityRepository idrepo = getAMIdentityRepository(
-                            getRequestOrg());
+                        getRequestOrg());
 
                     boolean success = idrepo.authenticate(idCallbacks);
 
@@ -402,7 +386,7 @@ public class Infocard extends AMLoginModule {
                 } catch (AuthLoginException e1) {
                     setFailureID(userID);
                     throw new AuthLoginException("Internal Authentication Error" +
-                            e1.getMessage());
+                        e1.getMessage());
                 } catch (IdRepoException e2) {
                     setFailureID(userID);
                     throw new AuthLoginException("Internal iDRepo Authentication Error" + e2.getMessage());
@@ -430,7 +414,7 @@ public class Infocard extends AMLoginModule {
     }
 
     private int bindCredentials(Callback[] callbacks)
-            throws AuthLoginException {
+        throws AuthLoginException {
 
         boolean success;
 
@@ -511,7 +495,7 @@ public class Infocard extends AMLoginModule {
 
         if (debug.messageEnabled()) {
             debug.message("registration is completed, created user: " +
-                    validatedUserID);
+                validatedUserID);
         }
 
         return ISAuthConstants.LOGIN_SUCCEED;
@@ -530,7 +514,7 @@ public class Infocard extends AMLoginModule {
     }
 
     private String getXmlToken()
-            throws AuthLoginException {
+        throws AuthLoginException {
 
         String encXmlToken = null;
 
@@ -541,11 +525,11 @@ public class Infocard extends AMLoginModule {
         }
 
         encXmlToken =
-                request.getParameter("xmlToken");
+            request.getParameter("xmlToken");
 
 
         if (encXmlToken == null ||
-                (encXmlToken != null && encXmlToken.equals(""))) {
+            (encXmlToken != null && encXmlToken.equals(""))) {
             throw new AuthLoginException("Encrypter XML Token is null or undefined");
         }
 
@@ -554,15 +538,15 @@ public class Infocard extends AMLoginModule {
     }
 
     private String getPPID(String encXmlToken)
-            throws BrokenTokenException, InvalidCertException,
-            InvalidTokenException, InfocardException {
+        throws BrokenTokenException, InvalidCertException,
+        InvalidTokenException, InfocardException {
 
         return getClaim(encXmlToken, PPID_CLAIM);
     }
 
     private String getClaim(String encXmlToken, String cname)
-            throws BrokenTokenException, InvalidCertException,
-            InvalidTokenException, InfocardException {
+        throws BrokenTokenException, InvalidCertException,
+        InvalidTokenException, InfocardException {
 
         Map var = getClaims(encXmlToken);
         Set keys = var.keySet();
@@ -577,8 +561,8 @@ public class Infocard extends AMLoginModule {
     }
 
     private Map getClaims(String encXmlToken)
-            throws BrokenTokenException, InvalidCertException,
-            InvalidTokenException, InfocardException {
+        throws BrokenTokenException, InvalidCertException,
+        InvalidTokenException, InfocardException {
 
         if (this.claims == null) {
             try {
@@ -603,8 +587,8 @@ public class Infocard extends AMLoginModule {
 
     // Get token's public key
     private String getDigest(String encXmlToken)
-            throws BrokenTokenException, InvalidCertException,
-            InvalidTokenException, InfocardException {
+        throws BrokenTokenException, InvalidCertException,
+        InvalidTokenException, InfocardException {
 
         String digest = null;
         try {
@@ -634,14 +618,14 @@ public class Infocard extends AMLoginModule {
      * Get the private. Must correspond to the server's SSL cert private key
      */
     private static synchronized PrivateKey getPrivateKey()
-            throws InfocardException {
+        throws InfocardException {
 
         PrivateKey key = null;
         try {
 
             if (privateKey == null) {
                 KeystoreUtil keystore = new KeystoreUtil(keyStorePath,
-                        keyStorePasswd);
+                    keyStorePasswd);
                 key = keystore.getPrivateKey(keyAlias, keyStorePasswd);
             } else {
                 return privateKey;
@@ -654,7 +638,7 @@ public class Infocard extends AMLoginModule {
     }
 
     private Token getToken(String encXmlToken)
-            throws InfocardException {
+        throws InfocardException {
 
         try {
             token = new Token(encXmlToken, this.privateKey);
@@ -674,7 +658,7 @@ public class Infocard extends AMLoginModule {
     }
 
     private StoredCredentials getStoredCred(String ppid)
-            throws InfocardException, InvalidTokenException {
+        throws InfocardException, InvalidTokenException {
 
         StoredCredentials creds = null;
         InfocardStorage storage = new InfocardStorageImpl();
@@ -684,16 +668,16 @@ public class Infocard extends AMLoginModule {
         if (creds != null && !digest.equals(creds.getSignature())) {
             // Forgery ?
             debug.message(
-                    "Token's signature and stored signature do not match for ppid =" + ppid);
+                "Token's signature and stored signature do not match for ppid =" + ppid);
             throw new InvalidTokenException(
-                    "Token's signature and stored signature do not match for ppid =" + ppid);
+                "Token's signature and stored signature do not match for ppid =" + ppid);
         }
         return creds;
     }
 
     private void persistCredentials(String ppid, String signature, String uid,
-            String passwd)
-            throws InfocardException {
+        String passwd)
+        throws InfocardException {
 
         InfocardStorage storage = new InfocardStorageImpl();
         StoredCredentials creds = new StoredCredentials(ppid, signature, uid, passwd);
@@ -702,7 +686,7 @@ public class Infocard extends AMLoginModule {
     }
 
     private void deleteCredentials(StoredCredentials creds)
-            throws InfocardException {
+        throws InfocardException {
 
         InfocardStorage storage = new InfocardStorageImpl();
 
@@ -710,7 +694,7 @@ public class Infocard extends AMLoginModule {
     }
 
     private int getAndCheckRegistrationFields(Callback[] callbacks)
-            throws AuthLoginException {
+        throws AuthLoginException {
 
         // callback[0] is for user name
         // callback[1] is for new password
@@ -737,7 +721,7 @@ public class Infocard extends AMLoginModule {
 
         if (debug.messageEnabled()) {
             debug.message("state returned from checkPassword(): " +
-                    status);
+                status);
         }
 
         // Return if any error
@@ -754,14 +738,14 @@ public class Infocard extends AMLoginModule {
             String attrName = getAttribute(REGISTRATION_STATE, i);
 
             if (attrName != null &&
-                    attrName.length() != 0) {
+                attrName.length() != 0) {
 
                 Set values = getCallbackFieldValues(callbacks[i]);
                 if (isRequired(REGISTRATION_STATE, i)) {
                     if (values.isEmpty()) {
                         if (debug.messageEnabled()) {
                             debug.message("Empty value for required field :" +
-                                    attrName);
+                                attrName);
                         }
                         return MISSING_REQ_FIELD_ERROR;
                     }
@@ -780,7 +764,7 @@ public class Infocard extends AMLoginModule {
      * Returns null if there is no value for the Callback.
      */
     private String getCallbackFieldValue(
-            Callback callback) {
+        Callback callback) {
 
         Set values = getCallbackFieldValues(callback);
         Iterator it = values.iterator();
@@ -809,9 +793,9 @@ public class Infocard extends AMLoginModule {
         } else if (callback instanceof ChoiceCallback) {
             String[] vals = ((ChoiceCallback) callback).getChoices();
             int[] selectedIndexes =
-                    ((ChoiceCallback) callback).getSelectedIndexes();
+                ((ChoiceCallback) callback).getSelectedIndexes();
             for (int i = 0; i <
-                    selectedIndexes.length; i++) {
+                selectedIndexes.length; i++) {
                 values.add(vals[selectedIndexes[i]]);
             }
 
@@ -873,9 +857,9 @@ public class Infocard extends AMLoginModule {
     }
 
     private boolean userExists(String userID)
-            throws IdRepoException, SSOException {
+        throws IdRepoException, SSOException {
         AMIdentityRepository amIdRepo = getAMIdentityRepository(
-                getRequestOrg());
+            getRequestOrg());
 
         IdSearchControl idsc = new IdSearchControl();
         idsc.setRecursive(true);
@@ -886,7 +870,7 @@ public class Infocard extends AMLoginModule {
         try {
             idsc.setMaxResults(0);
             IdSearchResults searchResults =
-                    amIdRepo.searchIdentities(IdType.USER, userID, idsc);
+                amIdRepo.searchIdentities(IdType.USER, userID, idsc);
             if (searchResults != null) {
                 results = searchResults.getSearchResults();
             }

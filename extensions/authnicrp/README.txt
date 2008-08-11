@@ -2,7 +2,7 @@ OpenSSO Authentication Module for Information Cards (RP).
 
 --------------------------------------------------------------------------------
 In order to run the build.xml to compile the jar file, create a directory named
-lib under the authnicrp root containing the following JAR files
+extlib under the authnicrp root containing the following JAR files
 --------------------------------------------------------------------------------
 
 xmldap-1.0.jar:
@@ -13,8 +13,7 @@ xmldap-1.0.jar:
         openinfocard-read-only
         cd openinfocard-read-only/ant
         ant build_core
-    Copy xmldap-1.0.jar from openinfocard-read-only/build/xmldap-1.0/ to 
-    lib
+    Copy xmldap-1.0.jar from openinfocard-read-only/build/xmldap-1.0/ to extlib
 
 opensso.jar:
 opensso-sharelib.jar
@@ -28,62 +27,56 @@ servlet.jar:
     Otherwise, look into downloading Tomcat, or look for J2EE 1.4 SDK and for an
     implementation from Sun Microsystems.
 
+To build the authnicrp authentication module, you will need to compile with
+JDK 1.6, and setup the JAVA_HOME environment variable accordingly. All you need
+to do is to invoke the default ant target of the build.xml file.
+
+# ant
+
 --------------------------------------------------------------------------------
-To install the module in opensso we need to follow the instructions outlined 
+To install the module in opensso you need to follow the instructions outlined 
 below
 --------------------------------------------------------------------------------
 
 1 - Install OpenSSO (Download from 
     https://opensso.dev.java.net/public/use/index.html). 
-    The module has been tested against OpenSSO v1 Builds 2, 3 and 4.
+    The module has been tested against OpenSSO v1 Builds 2, 3, 4 and 5
 
 2 - Using the OpenSSO Admin console, navigate to Configuration>Core>Auth Module 
     and type com.identarian.infocard.opensso.rp.Infocard in the 'New Value' 
     field under 'Pluggable Authentication Module Classes', click 'Add', then 
     'Save'.
 
-3 - Copy dist/Authnicrp.jar into <OPENSSO_INSTALL_DIR>/WEB-INF/lib
-    <OPENSSO_INSTALL_DIR> on Glassfish will be something like 
-    <GLASSFISH_DIR>/domains/domain1/applications/j2ee-modules/opensso/
-
-4 - Copy lib/xmldap-1.0.jar <OPENSSO_INSTALL_DIR>/WEB-INF/lib
-
-5 - Copy source/Infocard.xml into <OPENSSO_INSTALL_DIR>/config/auth/default
-
-6 - Copy source/Infocard.jsp into <OPENSSO_INSTALL_DIR>/config/auth/default
-
-7 - Copy source/infocardInvalidToken.jsp <OPENSSO_INSTALL_DIR>/config/auth/default
-
-8 - Copy source/infocardInvalidCert.jsp <OPENSSO_INSTALL_DIR>/config/auth/default
-
-9 - Copy source/Infocard.properties <OPENSSO_INSTALL_DIR>/WEB-INF/classes
-
-10 - Copy images/infocard_71x50.png into <OPENSSO_INSTALL_DIR>/images
-
-11 - Edit the <OPENSSO_INSTALL_DIR>/WEB-INF/classes/Infocard.properties file to 
-    define the application server's key store password and alias. On Glassfish 
-    V2 which the module has been tested, the default alias is 's1as' and the 
-    default password is the application's server admin password (i.e. 
+3 - Edit the source/Infocard.properties file to define the application server's
+    key store password and alias.
+    On Glassfish V2, which the module has been tested, the default alias is 's1as'
+    and the default password is the application's server admin password (i.e. 
     'adminadmin').
     If you have installed Glassfish via NetBeans 6.0, then the key store 
     password is 'changeit'.
     On Glassfish you can verify the password and alias with keytool -list \
     -storepass changeit -keystore \
     <GLASSFISH_DIR>/domains/domain1/config/keystore.jks
-    - Edit the <OPENSSO_INSTALL_DIR>/WEB-INF/classes/Infocard.properties file to
-      define the database connection URL parameters if different from defaults
+    - Edit the source/Infocard.properties file to define the database connection
+    URL parameters if different from defaults
 
-12 - Start a JavaDB (Derby) server on localhost and default port '1527'.
+4 - Install the module in OpenSSO. An 'install' ant target has been provided to
+    copy all the necessary files in the deployed OpenSSO root directory.
+    Prior to invoking the 'install' ant target, you will need to edit
+    build.xml in order the define the location of this directory in the
+    opensso-root.dir property. 
+
+5 - Start a JavaDB (Derby) server on localhost and default port '1527'.
     The module creates the database and tables at startup. The database is used
     to store relations between Information Cards presented by users and the
     OpenSSO user accounts.
 
-13 - Restart the server
+6 - Restart the server
 
-14 - Point your browser at 
+7 - Point your browser at 
     http(s)://my.domain.name:port/opensso/UI/Login?module=Infocard
 
-15 - In order to play with the module, you'll have to install an Information 
+8 - In order to play with the module, you'll have to install an Information 
     Card Identity Selector application. The initial login page provides links 
     for where you can download an Identity Selector as a Firefox extension for 
     Linux, Windows and Mac OS X.
