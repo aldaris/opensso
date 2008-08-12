@@ -61,10 +61,9 @@ below
     URL parameters if different from defaults
 
 4 - Install the module in OpenSSO. An 'install' ant target has been provided to
-    copy all the necessary files in the deployed OpenSSO root directory.
-    Prior to invoking the 'install' ant target, you will need to edit
-    build.xml in order the define the location of this directory in the
-    opensso-root.dir property. 
+    copy all the necessary files in the deployed OpenSSO instance root directory.
+    Prior to invoking the 'install' ant target, you will need to modify the
+    opensso-root.dir property in build.xml in order to define its location.
 
 5 - Start a JavaDB (Derby) server on localhost and default port '1527'.
     The module creates the database and tables at startup. The database is used
