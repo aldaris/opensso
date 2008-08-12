@@ -17,22 +17,25 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- *$Id: AccountLockoutTest.java,v 1.6 2008-06-26 19:58:31 rmisra Exp $*
+ *$Id: AccountLockoutTest.java,v 1.7 2008-08-12 20:29:19 cmwesley Exp $*
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 package com.sun.identity.qatest.authentication;
 
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebResponse;
+import com.iplanet.sso.SSOToken;
 import com.sun.identity.qatest.common.FederationManager;
+import com.sun.identity.qatest.common.SMSCommon;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.authentication.AuthTestConfigUtil;
 import com.sun.identity.qatest.common.authentication.AuthTestsValidator;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.logging.Level;
 import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
@@ -70,11 +73,10 @@ public class AccountLockoutTest extends TestCommon {
     private String lockStatusAttrValue;
     private String nslockAttrName;
     private String nslockAttrValue;
-    private String lockoutattempts;
-    private String warnattempts;
+    private String lockoutAttempts;
+    private String warningAttempts;
     private String testURL;
-    private String servicename = "iPlanetAMAuthService";
-    private List<String> attributevalues = new ArrayList<String>();
+    private String serviceName = "iPlanetAMAuthService";
     private String lockoutPassmsg;
     private String warnPassmsg;
     private String failpage;
@@ -84,13 +86,13 @@ public class AccountLockoutTest extends TestCommon {
     private String moduleServiceName;
     private String moduleSubConfig;
     private String moduleSubConfigId;
-    private String testModName;
     private String url;
-    private String famadmURL;
+    private String ssoadmURL;
     private String logoutURL;
     private String configrbName = "authenticationConfigData";
     private List<String> testUserList = new ArrayList<String>();
     private List<String> userAttrList;
+    private Map authServiceAttrs;
 
     /**
      * Default Constructor
@@ -100,8 +102,8 @@ public class AccountLockoutTest extends TestCommon {
         url = getLoginURL("/");
         logoutURL = protocol + ":" + "//" + host + ":" + port + uri + 
                 "/UI/Logout";
-        famadmURL = protocol + ":" + "//" + host + ":" + port + uri ;
-        fm = new FederationManager(famadmURL);
+        ssoadmURL = protocol + ":" + "//" + host + ":" + port + uri ;
+        fm = new FederationManager(ssoadmURL);
     }
 
     /**
@@ -115,6 +117,8 @@ public class AccountLockoutTest extends TestCommon {
     @BeforeClass(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void setup() 
     throws Exception {
+        SSOToken serviceToken = null;  
+        Map authAttrMap = new HashMap();
         entering("setup", null);
         webClient = new WebClient();
         try {
@@ -139,30 +143,42 @@ public class AccountLockoutTest extends TestCommon {
             warnUserpass = testResources.getString("am-auth-lockout-test-" +
                     testModule + "-warnuserpassword");
             warnUserpass.trim();
-            lockoutattempts = testResources.getString(
+            warningAttempts = testResources.getString(
                     "am-auth-lockout-test-warning-attempts");
-            warnattempts = testResources.getString(
+            lockoutAttempts = testResources.getString(
                     "am-auth-lockout-test-lockout-attempts");
             warnPassmsg = testResources.getString("am-auth-lockout-test-" +
                     testModule + "-warn-passmsg");
             failpage = testResources.getString("am-auth-lockout-test-" +
                     testModule + "-fail-page");
             testURL = url + "?module=" + testModule;
-            attributevalues.
-                    add("iplanet-am-auth-login-failure-lockout-mode=true");
-            attributevalues.add("iplanet-am-auth-lockout-warn-user=" 
-                    + warnattempts);
-            attributevalues.add("iplanet-am-auth-login-failure-count=" +
-                    lockoutattempts);
+ 
+            Set valSet = new HashSet();
+            valSet.add("true");
+            authAttrMap.put("iplanet-am-auth-login-failure-lockout-mode", 
+                    valSet);
+            valSet = new HashSet();
+            valSet.add(warningAttempts);
+            authAttrMap.put("iplanet-am-auth-lockout-warn-user", valSet);
+            valSet = new HashSet();
+            valSet.add(lockoutAttempts);
+            authAttrMap.put("iplanet-am-auth-login-failure-count", valSet);            
+
+            log(Level.FINE, "setup", "Retrieving attribute values in " + 
+                    serviceName + " ...");
+            serviceToken = getToken(adminUser, adminPassword, realm);
+            SMSCommon smsc = new SMSCommon(serviceToken);
+            authServiceAttrs = smsc.getAttributes(serviceName, realm, 
+                    "Organization");
+           
             consoleLogin(webClient, url, adminUser, adminPassword);
-            log(Level.FINE, "setup", "Setting the attributes " +
-                    attributevalues + " in the " + servicename +
-                    " service ...");
-            if (FederationManager.getExitCode(fm.setSvcAttrs(webClient, realm,
-                    servicename, attributevalues)) != 0) {
-                log(Level.SEVERE, "setup", "setSvcAttrs famadm command failed");
-                assert false;
-            }
+            log(Level.FINE, "setup", "Setting the " +
+                    "iplanet-am-auth-login-failure-lockout-mode, " +
+                    "iplanet-am-auth-lockout-warn-user, and " +
+                    "iplanet-am-auth-login-failure-count attributes in the" +
+                    serviceName + " service ...");
+            smsc.updateServiceAttrsRealm(serviceName, realm, authAttrMap);
+
             if (!userExists) {
                 userAttrList = new ArrayList<String>();
                 createUser(lockUser, lockUserpass, userAttrList);
@@ -209,7 +225,7 @@ public class AccountLockoutTest extends TestCommon {
             createUser(lockAttrUser, lockAttrUserpass, userAttrList);
         } catch (AssertionError ae) {
             log(Level.SEVERE, "setup",
-                    "Calling cleanup due to failed famadm exit code ...");
+                    "Calling cleanup due to failed ssoadm exit code ...");
             cleanup();
             throw ae;
         } catch (Exception e) {
@@ -218,6 +234,9 @@ public class AccountLockoutTest extends TestCommon {
             throw e;
         } finally {
             consoleLogout(webClient, logoutURL);
+            if (serviceToken != null) {
+                destroyToken(serviceToken);
+            }
         }
         exiting("setup");
     }
@@ -233,7 +252,7 @@ public class AccountLockoutTest extends TestCommon {
         try {
             executeMap.put("Loginuser", lockUser);
             executeMap.put("Loginpassword", lockUserpass);
-            executeMap.put("Loginattempts", lockoutattempts);
+            executeMap.put("Loginattempts", lockoutAttempts);
             executeMap.put("Passmsg", lockoutPassmsg);
             executeMap.put("loginurl", testURL);
             executeMap.put("failpage", failpage);
@@ -265,7 +284,7 @@ public class AccountLockoutTest extends TestCommon {
         try {
             executeMap.put("Loginuser", warnUser);
             executeMap.put("Loginpassword", warnUserpass);
-            executeMap.put("Loginattempts", warnattempts);
+            executeMap.put("Loginattempts", warningAttempts);
             executeMap.put("Passmsg", warnPassmsg);
             executeMap.put("loginurl", testURL);
             executeMap.put("failpage", failpage);
@@ -297,7 +316,7 @@ public class AccountLockoutTest extends TestCommon {
         try {
             executeMap.put("Loginuser", lockStatusUser);
             executeMap.put("Loginpassword", lockStatusUserpass);
-            executeMap.put("Loginattempts", lockoutattempts);
+            executeMap.put("Loginattempts", lockoutAttempts);
             executeMap.put("Passmsg", lockoutPassmsg);
             executeMap.put("loginurl", testURL);
             executeMap.put("failpage", failpage);
@@ -334,8 +353,8 @@ public class AccountLockoutTest extends TestCommon {
                 lockAttrValue);
         consoleLogin(webClient, url, adminUser, adminPassword);
         if (FederationManager.getExitCode(fm.setSvcAttrs(webClient, realm,
-                servicename, modifyAttrs)) != 0) {
-            log(Level.SEVERE, "cleanup", "fm.setSvcAttrs famadm command" +
+                serviceName, modifyAttrs)) != 0) {
+            log(Level.SEVERE, "cleanup", "fm.setSvcAttrs ssoadm command" +
                     "failed");
             assert false;
         }
@@ -343,7 +362,7 @@ public class AccountLockoutTest extends TestCommon {
         try {
             executeMap.put("Loginuser", lockAttrUser);
             executeMap.put("Loginpassword", lockAttrUserpass);
-            executeMap.put("Loginattempts", lockoutattempts);
+            executeMap.put("Loginattempts", lockoutAttempts);
             executeMap.put("Passmsg", lockoutPassmsg);
             executeMap.put("loginurl", testURL);
             executeMap.put("failpage", failpage);
@@ -378,7 +397,7 @@ public class AccountLockoutTest extends TestCommon {
         try {
             executeMap.put("Loginuser", nslockUser);
             executeMap.put("Loginpassword", nslockUserpass);
-            executeMap.put("Loginattempts", lockoutattempts);
+            executeMap.put("Loginattempts", lockoutAttempts);
             executeMap.put("Passmsg", lockoutPassmsg);
             executeMap.put("loginurl", testURL);
             executeMap.put("failpage", failpage);
@@ -406,6 +425,7 @@ public class AccountLockoutTest extends TestCommon {
     @AfterClass(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void cleanup() 
     throws Exception {
+        SSOToken serviceToken = null;
         entering("cleanup", null);
         webClient = new WebClient();
         try {
@@ -419,7 +439,7 @@ public class AccountLockoutTest extends TestCommon {
             if (FederationManager.getExitCode(fm.deleteAuthInstances(webClient,
                     realm, listModInstance)) != 0) {
                 log(Level.SEVERE, "cleanup",
-                        "deleteAuthInstances famadm command failed");
+                        "deleteAuthInstances ssoadm command failed");
             }
             if (!testUserList.isEmpty()) {
                 log(Level.FINEST, "cleanup", "Deleting user(s) " + 
@@ -427,15 +447,24 @@ public class AccountLockoutTest extends TestCommon {
                 if (FederationManager.getExitCode(fm.deleteIdentities(webClient,
                         realm, testUserList, "User")) != 0) {
                     log(Level.SEVERE, "cleanup",
-                            "deleteIdentities famadm command failed");
+                            "deleteIdentities ssoadm command failed");
                 }
             }
+            
+            serviceToken = getToken(adminUser, adminPassword, realm); 
+            SMSCommon smsc = new SMSCommon(serviceToken);
+            log(Level.FINE, "setup", "Restoring attribute values in " + 
+                    serviceName + " to " + authServiceAttrs);
+            smsc.updateServiceAttrsRealm(serviceName, realm, authServiceAttrs);                
         } catch (Exception e) {
             log(Level.SEVERE, "cleanup", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
             consoleLogout(webClient, logoutURL);
+            if (serviceToken != null) {
+                destroyToken(serviceToken);
+            }
         }
         exiting("cleanup");
     }
@@ -493,7 +522,7 @@ public class AccountLockoutTest extends TestCommon {
             if (FederationManager.getExitCode(fm.createIdentity(webClient,
                     realm, newUser, "User", attrList)) != 0) {
                 log(Level.SEVERE, "createUser",
-                        "createIdentity famadm command failed");
+                        "createIdentity ssoadm command failed");
                 assert false;
             }
         } catch (Exception e) {
