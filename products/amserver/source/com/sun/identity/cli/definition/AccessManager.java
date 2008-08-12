@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.81 2008-08-07 17:22:02 arviranga Exp $
+ * $Id: AccessManager.java,v 1.82 2008-08-12 05:13:32 veiming Exp $
  *
  */
 
@@ -1327,6 +1327,7 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
+            "idrepo-add-privileges-do-not-exist=Identity {0} of type {1} did not exist.",
             "idrepo-add-privileges-succeed=Privileges were add to identity, {2} of type, {1} in realm, {0}.",
             "delegation-already-has-privilege={0} already had privilege, {1}"})
     private String add_privileges;

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddPrivileges.java,v 1.6 2008-06-25 05:42:14 qcheng Exp $
+ * $Id: AddPrivileges.java,v 1.7 2008-08-12 05:13:33 veiming Exp $
  *
  */
 
@@ -41,7 +41,6 @@ import com.sun.identity.delegation.DelegationException;
 import com.sun.identity.delegation.DelegationManager;
 import com.sun.identity.delegation.DelegationPrivilege;
 import com.sun.identity.idm.AMIdentity;
-import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
 import java.text.MessageFormat;
@@ -82,10 +81,14 @@ public class AddPrivileges extends IdentityCommand {
                 adminSSOToken, realm);
             Set privilegeObjects = mgr.getPrivileges();
 
-            AMIdentityRepository amir = new AMIdentityRepository(
-                adminSSOToken, realm);
             AMIdentity amid = new AMIdentity(
                 adminSSOToken, idName, idType, realm, null); 
+            if (!amid.isExists())  {
+                Object[] p = {idName, type};
+                throw new CLIException(MessageFormat.format(
+                    getResourceString("idrepo-add-privileges-do-not-exist"),
+                    p), ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+            }
             String uid = amid.getUniversalId();
 
             DelegationPrivilege newDp = null;
