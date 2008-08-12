@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneConstants.java,v 1.4 2008-08-04 17:20:24 kanduls Exp $
+ * $Id: AMTuneConstants.java,v 1.5 2008-08-12 05:18:18 kanduls Exp $
  */
 
 package com.sun.identity.tune.constants;
@@ -152,7 +152,7 @@ public interface AMTuneConstants {
     static String AMTUNE_LINUX_IPV4_TCP_FIN_TIMEOUT = "30";
     static String AMTUNE_LINUX_STACK_SIZE_LIMITS = "256";
     //All password contants
-    static String FAMADM_PASSWORD = "FAMADM_PASSWORD";
+    static String OPENSSOADMIN_PASSWORD = "OPENSSOADMIN_PASSWORD";
     static String WSADMIN_PASSWORD = "WSADMIN_PASSWORD";
     static String ASADMIN_PASSWORD = "ASADMIN_PASSWORD";
     static String DIRMGR_PASSWORD = "DIRMGR_PASSWORD";
