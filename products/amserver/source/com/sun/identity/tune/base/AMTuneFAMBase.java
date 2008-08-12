@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneFAMBase.java,v 1.4 2008-07-25 05:59:29 kanduls Exp $
+ * $Id: AMTuneFAMBase.java,v 1.5 2008-08-12 05:34:42 kanduls Exp $
  */
 
 package com.sun.identity.tune.base;
@@ -69,7 +69,7 @@ public abstract class AMTuneFAMBase extends TuneFAM {
     public void initialize(AMTuneConfigInfo configInfo)
     throws AMTuneException {
         this.configInfo = configInfo;
-        famPassFilePath = AMTuneUtil.TMP_DIR + "fampassfile";
+        famPassFilePath = AMTuneUtil.TMP_DIR + "ssoadmpassfile";
         pLogger = AMTuneLogger.getLoggerInst();
         mWriter = MessageWriter.getInstance();
         setFAMAdmCmd();
@@ -97,7 +97,7 @@ public abstract class AMTuneFAMBase extends TuneFAM {
             mWriter.writelnLocaleMsg("pt-fam-tool-not-found");
             mWriter.writelnLocaleMsg("pt-cannot-proceed");
             mWriter.writeLocaleMsg("pt-conf-parm-cust-msg");
-            mWriter.writeln(FAMADM_LOCATION);
+            mWriter.writeln(SSOADM_LOCATION);
         }
     }
     
@@ -152,7 +152,7 @@ public abstract class AMTuneFAMBase extends TuneFAM {
             updateCmd.append(UPDATE_SERVER_SUB_CMD);
             updateCmd.append(famadmCommonParamsNoServer);
             updateCmd.append(" ");
-            updateCmd.append(FAMADM_SERVER);
+            updateCmd.append(SERVER_NAME_OPT);
             updateCmd.append(" ");
             updateCmd.append(configInfo.getFAMServerUrl());
             updateCmd.append(" ");
@@ -229,7 +229,7 @@ public abstract class AMTuneFAMBase extends TuneFAM {
                 while (str.hasMoreTokens()) {
                     String dsName = str.nextToken();
                     if (dsName != null && dsName.trim().length() > 0) {
-                        dataStoreList.add(dsName);
+                        dataStoreList.add(dsName.trim());
                     }
                 }
             }
@@ -252,7 +252,7 @@ public abstract class AMTuneFAMBase extends TuneFAM {
         StringBuffer listSerCfgCmd = new StringBuffer(famCmdPath);
         listSerCfgCmd.append(LIST_SERVER_CFG_SUB_CMD);
         listSerCfgCmd.append(" ");
-        listSerCfgCmd.append(FAMADM_SERVER);
+        listSerCfgCmd.append(SERVER_NAME_OPT);
         listSerCfgCmd.append(" ");
         listSerCfgCmd.append(configInfo.getFAMServerUrl());
         listSerCfgCmd.append(famadmCommonParamsNoServer);
@@ -266,7 +266,8 @@ public abstract class AMTuneFAMBase extends TuneFAM {
             while (str.hasMoreTokens()) {
                 String line = str.nextToken();
                 if (line != null && line.length() > 0) {
-                    StringTokenizer lStr = new StringTokenizer(line, "=");
+                    StringTokenizer lStr = new StringTokenizer(line, 
+                            PARAM_VAL_DELIM);
                     lStr.hasMoreTokens();
                     String key = lStr.nextToken();
                     if (lStr.hasMoreTokens()) {
@@ -285,6 +286,100 @@ public abstract class AMTuneFAMBase extends TuneFAM {
             "Returning OpenSSO Enterprise configuration Map " +
             famCfgInfo.toString());
         return famCfgInfo;
+    }
+    
+    protected List getRealmServices(String realmName) {
+        List realmServices = new ArrayList();
+        try {
+            pLogger.log(Level.FINEST, "getRealmServices", "Finding svc for " +
+                realmName);
+            StringBuffer getRealmSvcCmd = new StringBuffer(famCmdPath);
+            getRealmSvcCmd.append(SHOW_REALM_SVC_SUB_CMD);
+            getRealmSvcCmd.append(" ");
+            getRealmSvcCmd.append(REALM_OPT);
+            getRealmSvcCmd.append(" ");
+            getRealmSvcCmd.append(realmName);
+            getRealmSvcCmd.append(famadmCommonParamsNoServer);
+            StringBuffer rBuff = new StringBuffer();
+            int extVal = AMTuneUtil.executeCommand(getRealmSvcCmd.toString(),
+                    rBuff);
+            if (extVal != -1) {
+                StringTokenizer str =
+                        new StringTokenizer(rBuff.toString(), "\n");
+                while (str.hasMoreTokens()) {
+                    String line = str.nextToken();
+                    if (line != null && line.trim().length() > 0 && 
+                            line.indexOf("Services were returned.") == -1) {
+                        realmServices.add(line.trim());
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            pLogger.log(Level.WARNING, "getRealmServices",
+                    "Error getting realm services: " + ex.getMessage());
+        } 
+        pLogger.log(Level.FINEST, "getRealmServices", "Returning realm svc " +
+                realmServices.toString());
+        return realmServices;
+    }
+    
+    protected Map getSessionServiceAttrVals(String realmName) 
+    throws AMTuneException {
+        Map sessionAttrVals = new HashMap();
+        try {
+            pLogger.log(Level.FINEST, "getSessionServiceAttrVals",
+                    "Getting session service values for realm: " + realmName);
+            //check if the session service is available or not.
+            List serviceList = getRealmServices(realmName);
+            if (serviceList != null && 
+                    serviceList.indexOf(SESSION_SERVICE) != -1) {
+                StringBuffer attrValCmd = new StringBuffer(famCmdPath);
+                attrValCmd.append(GET_REALM_SVC_ATTRS_SUB_CMD);
+                attrValCmd.append(" ");
+                attrValCmd.append(REALM_OPT);
+                attrValCmd.append(" ");
+                attrValCmd.append(realmName);
+                attrValCmd.append(" ");
+                attrValCmd.append(SERVICE_NAME_OPT);
+                attrValCmd.append(" ");
+                attrValCmd.append(SESSION_SERVICE);
+                attrValCmd.append(famadmCommonParamsNoServer);
+                StringBuffer rBuff = new StringBuffer();
+                int extVal = AMTuneUtil.executeCommand(attrValCmd.toString(),
+                        rBuff);
+                if (extVal != -1) {
+                    StringTokenizer str =
+                            new StringTokenizer(rBuff.toString(), "\n");
+                    while (str.hasMoreTokens()) {
+                        String line = str.nextToken();
+                        if (line != null && line.trim().length() > 0) {
+                            StringTokenizer lStr = new StringTokenizer(line, 
+                                    PARAM_VAL_DELIM);
+                            lStr.hasMoreTokens();
+                            String key = lStr.nextToken();
+                            if (lStr.hasMoreTokens()) {
+                                String val = lStr.nextToken();
+                                sessionAttrVals.put(key, val);
+                            } else {
+                                sessionAttrVals.put(key, "");
+                            }
+                        }
+                    }
+                }
+            } else {
+                mWriter.writelnLocaleMsg("pt-no-session-svc");
+                pLogger.log(Level.INFO, "getSessionServiceAttrVals", 
+                        "Session service is not available for the realm.");
+            }
+        } catch (Exception ex) {
+            pLogger.log(Level.SEVERE, "getSessionServiceAttrVals",
+                    "Error getting session service values: ");
+            throw new AMTuneException(ex.getMessage());
+        }
+        pLogger.log(Level.FINEST, "getSessionServiceAttrVals", 
+                "Returning session service values " + 
+                sessionAttrVals.toString());
+        return sessionAttrVals;
     }
 
     protected boolean isFAMServerUp() {
