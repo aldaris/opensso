@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneConfigInfo.java,v 1.5 2008-08-04 17:20:23 kanduls Exp $
+ * $Id: AMTuneConfigInfo.java,v 1.6 2008-08-12 05:14:37 kanduls Exp $
  */
 
 package com.sun.identity.tune.config;
@@ -81,7 +81,6 @@ FAMConstants, WebContainerConstants {
     private String famTuneMemMaxHeapSizeRatioExp;
     private String famAdminPassword;
     private List realms;
-    private String perlBinDir;
     private int gcThreads;
     private int acceptorThreads;
     private int numNotificationQueue;
@@ -157,12 +156,13 @@ FAMConstants, WebContainerConstants {
             setTuneDS(confBundle.getString(AMTUNE_TUNE_DS));
             setTuneFAM(confBundle.getString(AMTUNE_TUNE_IDENTITY));
             if (isTuneFAM()) {
-                setFamAdminPassword(confBundle.getString(FAMADM_PASSWORD));
-                setFAMServerUrl(confBundle.getString(FAMSERVER_URL));
-                setFAMAdmUser(confBundle.getString(FAMADM_USER));
+                setFamAdminPassword(
+                        confBundle.getString(OPENSSOADMIN_PASSWORD));
+                setFAMServerUrl(confBundle.getString(OPENSSOSERVER_URL));
+                setFAMAdmUser(confBundle.getString(OPENSSOADMIN_USER));
                 setRealms(confBundle.getString(REALM_NAME));
-                setFAMAdmLocation(confBundle.getString(FAMADM_LOCATION));
-                setFAMConfigDir(confBundle.getString(FAM_CONFIG_DIR));
+                setFAMAdmLocation(confBundle.getString(SSOADM_LOCATION));
+                setFAMConfigDir(confBundle.getString(OPENSSO_CONFIG_DIR));
             }
             setFAMTuneMinMemoryToUseInMB(
                     confBundle.getString(AMTUNE_MIN_MEMORY_TO_USE_IN_MB));
@@ -202,8 +202,9 @@ FAMConstants, WebContainerConstants {
                 //famconfig dir is required if DS is remote for creating
                 //amtune.zip file.
                 if (dsConfigInfo.isRemoteDS() || 
-                        (smConfigInfo != null && smConfigInfo.isRemoteDS())) {
-                    setFAMConfigDir(confBundle.getString(FAM_CONFIG_DIR));
+                        (smConfigInfo != null && smConfigInfo.isRemoteDS() &&
+                        !isUMOnlyTune())) {
+                    setFAMConfigDir(confBundle.getString(OPENSSO_CONFIG_DIR));
                 }
             } 
             calculateTuneParams();
@@ -387,8 +388,8 @@ FAMConstants, WebContainerConstants {
     }
     
     /**
-     * Set Federated AccessManager admin tools location.
-     * @param famAdmLocation Directory were ssodm tool is present.
+     * Set OpenSSO admin tools location.
+     * @param famAdmLocation Directory were ssoadm tool is present.
      * @throws com.sun.identity.tune.common.AMTuneException
      */
     private void setFAMAdmLocation(String famAdmLocation) 
@@ -402,19 +403,20 @@ FAMConstants, WebContainerConstants {
                 mWriter.write(famAdmLocation + " ");
                 mWriter.writeLocaleMsg("pt-not-valid-dir");
                 pLogger.log(Level.SEVERE, "setFAMAdmLocation",
-                        "FAM Admin tools location is not valid Directory. " +
-                        "Please check the value for the property " +
-                        FAMADM_LOCATION);
-                throw new AMTuneException("Invalid FAM admin tools location");
+                        "OpenSSO Admin tools location is not valid Directory." +
+                        " Please check the value for the property " +
+                        SSOADM_LOCATION);
+                throw new AMTuneException("Invalid OpenSSO admin tools " +
+                        "location");
             }
         } else {
             mWriter.writelnLocaleMsg("pt-inval-config");
-            AMTuneUtil.printErrorMsg(FAMADM_LOCATION);
+            AMTuneUtil.printErrorMsg(SSOADM_LOCATION);
             pLogger.log(Level.SEVERE, "setFAMAdmLocation",
-                    "Error setting FAM Admin Location. " +
+                    "Error setting OpenSSO Admin Location. " +
                     "Please check the value for the property " +
-                    FAMADM_LOCATION);
-            throw new AMTuneException("Invalid value for " + FAMADM_LOCATION);
+                    SSOADM_LOCATION);
+            throw new AMTuneException("Invalid value for " + SSOADM_LOCATION);
         }
     }
     
@@ -423,8 +425,8 @@ FAMConstants, WebContainerConstants {
     }
     
     /**
-     * Sets FAM configuration directory location.
-     * @param famConfigDir FAM configuration directory location.
+     * Sets OpenSSO configuration directory location.
+     * @param famConfigDir OpenSSO configuration directory location.
      * @throws com.sun.identity.tune.common.AMTuneException
      */
     private void setFAMConfigDir(String famConfigDir) 
@@ -438,23 +440,24 @@ FAMConstants, WebContainerConstants {
                 mWriter.write(famConfigDir + " ");
                 mWriter.writeLocaleMsg("pt-not-valid-dir");
                 pLogger.log(Level.SEVERE, "setFAMAdmLocation",
-                        "FAM config is not valid Directory. " +
+                        "OpenSSO config is not valid Directory. " +
                         "Please check the value for the property " +
-                        FAM_CONFIG_DIR);
-                throw new AMTuneException("Invalid FAM install location");
+                        OPENSSO_CONFIG_DIR);
+                throw new AMTuneException("Invalid OpenSSO install location");
             }
         } else {
             mWriter.writelnLocaleMsg("pt-inval-config");
-            AMTuneUtil.printErrorMsg(FAM_CONFIG_DIR);
+            AMTuneUtil.printErrorMsg(OPENSSO_CONFIG_DIR);
             pLogger.log(Level.SEVERE, "setFAMAdmLocation",
-                    "Error setting FAM config Location. " +
+                    "Error setting OpenSSO config Location. " +
                     "Please check the value for the property " +
-                    FAM_CONFIG_DIR);
+                    OPENSSO_CONFIG_DIR);
             if (dsConfigInfo != null && dsConfigInfo.isRemoteDS() ||
                         smConfigInfo != null && smConfigInfo.isRemoteDS()) {
                     mWriter.writelnLocaleMsg("pt-fam-config-dir-req");
             }
-            throw new AMTuneException("Invalid value for " + FAM_CONFIG_DIR);
+            throw new AMTuneException("Invalid value for " + 
+                    OPENSSO_CONFIG_DIR);
         }
     }
     
@@ -473,12 +476,12 @@ FAMConstants, WebContainerConstants {
             this.famServerUrl = famServerUrl;
         } else {
             mWriter.writelnLocaleMsg("pt-fam-server-url-not-found");
-            AMTuneUtil.printErrorMsg(FAMSERVER_URL);
+            AMTuneUtil.printErrorMsg(OPENSSOSERVER_URL);
             pLogger.log(Level.SEVERE, "setFAMServerUrl", 
-                    "Error setting FAM Server URL. " +
+                    "Error setting OpenSSO Server URL. " +
                     "Please check the value for the property " + 
-                    FAMSERVER_URL);
-            throw new AMTuneException("Invalid value for " + FAMSERVER_URL);
+                    OPENSSOSERVER_URL);
+            throw new AMTuneException("Invalid value for " + OPENSSOSERVER_URL);
         }
     }
     
@@ -497,12 +500,12 @@ FAMConstants, WebContainerConstants {
             this.famAdmUser = famAdmUser;
         } else {
             mWriter.writelnLocaleMsg("pt-fam-admin-user-not-found");
-            AMTuneUtil.printErrorMsg(FAMADM_USER);
+            AMTuneUtil.printErrorMsg(OPENSSOADMIN_USER);
             pLogger.log(Level.SEVERE, "setFAMServerUrl", 
-                    "Error setting FAM Admin User. " +
+                    "Error setting OpenSSO Admin User. " +
                     "Please check the value for the property " + 
-                    FAMADM_USER);
-            throw new AMTuneException("Invalid value for " + FAMADM_USER);
+                   OPENSSOADMIN_USER);
+            throw new AMTuneException("Invalid value for " + OPENSSOADMIN_USER);
         }
     }
     
@@ -886,34 +889,20 @@ FAMConstants, WebContainerConstants {
             this.famAdminPassword = famAdminPassword.trim();
         } else {
             mWriter.writeLocaleMsg("pt-inval-val-msg");
-            AMTuneUtil.printErrorMsg(FAMADM_PASSWORD);
+            AMTuneUtil.printErrorMsg(OPENSSOADMIN_PASSWORD);
             pLogger.log(Level.SEVERE, "setFamAdminPassword",
                     "Error setting FAM Administrator Password. " +
                     "Please check the value for the property " +
-                    FAMADM_PASSWORD);
-            throw new AMTuneException("Invalid value for " + FAMADM_PASSWORD);
+                    OPENSSOADMIN_PASSWORD);
+            throw new AMTuneException("Invalid value for " + 
+                    OPENSSOADMIN_PASSWORD);
         }
     }
     
     public String getFamAdminPassword() {
         return famAdminPassword;
     }
-    
-    
-    
-    /**
-     * Set Perl bin Directory.
-     * @param perlBinDir
-     */
-    private void setPerlBinDir(String perlBinDir) {
-        this.perlBinDir = perlBinDir;
-    }
-    
-    public String getPerlBinDir() {
-        return perlBinDir;
-    }
-    
-    
+        
     /**
      * This method calculates required tuning parameters based on the 
      * system memory available.
