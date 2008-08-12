@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ds_ds_sec-cli-testng.xml,v 1.11 2008-07-30 22:19:00 srivenigan Exp $
+ $Id: ds_ds_sec-cli-testng.xml,v 1.12 2008-08-12 22:09:21 nithyas Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -4180,4 +4180,170 @@
             <class name="com.sun.identity.qatest.cli.RevisionNumberTest"/>
         </classes>
     </test>    
+    <test name="CLI_show-agent-types01">
+        <parameter name="testName" value="showagenttypes"/>
+        <parameter name="propFile" value="GenericCLITest_ShowAgentTypes"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.GenericCLITest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-agent01">
+        <parameter name="testName" value="createagent-test1"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAgentTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-agent02">
+        <parameter name="testName" value="createagent-test2"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAgentTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-agent03">
+        <parameter name="testName" value="createagent-test3"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAgentTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-agent04a">
+        <parameter name="testName" value="createagent-test4a"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAgentTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-agent04b">
+        <parameter name="testName" value="createagent-test4b"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAgentTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-agent04c">
+        <parameter name="testName" value="createagent-test4c"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAgentTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-agent05">
+        <parameter name="testName" value="createagent-test5"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAgentTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-agent06">
+        <parameter name="testName" value="createagent-test6"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAgentTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-agent07">
+        <parameter name="testName" value="createagent-test7"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAgentTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-agent08">
+        <parameter name="testName" value="createagent-test8"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAgentTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-agent09">
+        <parameter name="testName" value="createagent-test9"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAgentTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-agent01a">
+        <parameter name="testName" value="createagent-test1a"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAgentTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-agent02a">
+        <parameter name="testName" value="createagent-test2a"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAgentTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-agent03a">
+        <parameter name="testName" value="createagent-test3a"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateAgentTest"/>
+        </classes>
+    </test>
 </suite>
