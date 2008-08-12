@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneUtil.java,v 1.5 2008-08-04 17:20:24 kanduls Exp $
+ * $Id: AMTuneUtil.java,v 1.6 2008-08-12 05:27:01 kanduls Exp $
  */
 
 package com.sun.identity.tune.util;
@@ -602,7 +602,7 @@ import java.util.zip.ZipOutputStream;
                         new BufferedWriter(new FileWriter(tempSh));
                 br.write(command);
                 br.close();
-                extVal = executeCommand("chmod 777 " + tempF,
+                extVal = executeCommand("chmod 700 " + tempF,
                         resultBuffer);
                 extVal = executeCommand(tempF, resultBuffer);
                 tempSh.delete();
@@ -1019,7 +1019,7 @@ import java.util.zip.ZipOutputStream;
     public static boolean isSupportedSMDSVersion(String dsVersion) {
         if ((dsVersion.indexOf(DSConstants.DS63_VERSION) != -1 ||
                 dsVersion.indexOf(DSConstants.DS5_VERSION)!= -1 ||
-                dsVersion.indexOf(DSConstants.OPEN_DS) != -1) && 
+                dsVersion.equalsIgnoreCase(DSConstants.OPEN_DS)) && 
                 !dsVersion.equalsIgnoreCase(DSConstants.DS62_VERSION)) {
             return true;
         } else {
@@ -1168,12 +1168,12 @@ import java.util.zip.ZipOutputStream;
      * @param configInfo
      */
     public static void createRemoteDSTuningZipFile(AMTuneConfigInfo configInfo){
+        String baseDir = "remotedstune" + FILE_SEP;
         try {
             pLogger.log(Level.INFO, "createRemoteDSTuningZipFile", 
                     "Creating amtune.zip file.");
             mWriter.writelnLocaleMsg("pt-ds-create-tar");
             String curDir = AMTuneUtil.getCurDir();
-            String baseDir = "amtune" + FILE_SEP;
             String zBinDir = baseDir + "bin";
             String zLibDir =  baseDir + "lib";
             String zLocaleDir = baseDir + "resources";
@@ -1211,8 +1211,16 @@ import java.util.zip.ZipOutputStream;
                          zLdifDir + FILE_SEP + "fam_sds_index.ldif"},
             } ;
             for (int i = 0; i < filesToCopy.length; i++) {
-                AMTuneUtil.CopyFile(new File(filesToCopy[i][0]), 
-                        new File(filesToCopy[i][1]));
+                File source = new File(filesToCopy[i][0]);
+                File dest = new File(filesToCopy[i][1]);
+                //If datastore is "generic ldapv3" then index.ldif and
+                //fam_sds_index.ldif files will not be present.
+                if (source.exists()) {
+                    AMTuneUtil.CopyFile(source, dest);
+                } else {
+                    pLogger.log(Level.INFO, "createRemoteDSTuningZipFile",
+                            "File " + source + " not found.");
+                }
             }
             
             File localeFiles = new File (curDir + "../../../resources");
@@ -1223,7 +1231,9 @@ import java.util.zip.ZipOutputStream;
                 AMTuneUtil.CopyFile(lFiles[i], new File(zLocaleDir + FILE_SEP +
                         fileName));
             }
-            String zipPath = AMTuneUtil.createZipFile("amtune", "amtune");
+            changeFilePerm(zBinUnxDir + FILE_SEP + "amtune-env.properties", 
+                    "600");
+            String zipPath = AMTuneUtil.createZipFile(baseDir, "amtune");
             mWriter.writeLocaleMsg("pt-ds-tar-file-location");
             mWriter.writeln(" " + zipPath);
             mWriter.writelnLocaleMsg("pt-ds-steps");
@@ -1234,11 +1244,24 @@ import java.util.zip.ZipOutputStream;
             mWriter.writelnLocaleMsg("pt-ds-execute-review-mode");
             mWriter.writelnLocaleMsg("pt-ds-review");
             mWriter.writelnLocaleMsg("pt-ds-change-mode");
-            //Delete any temp directory
-            deleteDirectory(baseDir);
         } catch (Exception ex) {
             pLogger.log(Level.SEVERE, "createRemoteDSTuningZipFile",
                     "Error creating amtune.zip file." + ex.getMessage());
+        } finally {
+            deleteDirectory(baseDir);
         }
+    }
+    
+    /**
+     * Changes the file permission 
+     * @param fileName Absolute path of the file
+     * @param perm permissions
+     */
+    public static void changeFilePerm(String fileName, String perm) {
+        if (!isWindows()) {
+            StringBuffer rBuff = new StringBuffer();
+            int extVal = executeCommand("chmod " + perm + " " + fileName,
+                    rBuff);
+        } 
     }
 }
