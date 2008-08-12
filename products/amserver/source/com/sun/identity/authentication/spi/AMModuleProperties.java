@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMModuleProperties.java,v 1.5 2008-06-25 05:42:06 qcheng Exp $
+ * $Id: AMModuleProperties.java,v 1.6 2008-08-12 18:23:30 pawand Exp $
  *
  */
 
@@ -270,7 +270,6 @@ class AMModuleProperties {
                                 prompt = sub.getFirstChild().getNodeValue();
                             } else if (sub.getNodeName().equals("ChoiceValues")
                             ) {
-                                NodeList s = (NodeList) sub;
                                 int len = 0;
                                 Node ss = sub.getFirstChild().getNextSibling();
                                 for (Node count=ss; count!=null;
@@ -322,7 +321,6 @@ class AMModuleProperties {
                             sub=sub.getNextSibling()
                         ) {
                             if (sub.getNodeName().equals("OptionValues")) {
-                                NodeList s = (NodeList) sub;
                                 int len = 0;
                                 Node ss = sub.getFirstChild().getNextSibling();
                                 for (Node count=ss; count!=null;
