@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DSConfigInfo.java,v 1.3 2008-07-25 05:43:17 kanduls Exp $
+ * $Id: DSConfigInfo.java,v 1.4 2008-08-12 05:16:34 kanduls Exp $
  */
 
 package com.sun.identity.tune.config;
@@ -90,7 +90,9 @@ public class DSConfigInfo implements DSConstants {
                 getDsHost());
         pLogger.log(Level.FINEST, "checkIsDSHostRemote", "Local host is " +
                 AMTuneUtil.getHostName());
-        if (AMTuneUtil.getHostName().equalsIgnoreCase(getDsHost())) {
+        if (AMTuneUtil.getHostName().toLowerCase().indexOf(
+                getDsHost().substring(0, getDsHost().indexOf('.')).
+                toLowerCase()) != -1) {
             isRemoteDS = false;
         } else {
             isRemoteDS = true;
@@ -276,7 +278,7 @@ public class DSConfigInfo implements DSConstants {
         if (dsVersion != null && dsVersion.trim().length() > 0) {
             this.dsVersion = dsVersion.trim();
             if (!AMTuneUtil.isSupportedSMDSVersion(dsVersion)) {
-                throw new AMTuneException("Unsupported SM DS Version" + 
+                throw new AMTuneException("Unsupported SM DS Version " + 
                         SM_DS_VERSION);
             }
         } else {
