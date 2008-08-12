@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Model.java,v 1.26 2008-08-05 23:29:16 babysunil Exp $
+ * $Id: SAMLv2Model.java,v 1.27 2008-08-12 17:16:38 babysunil Exp $
  *
  */
 
@@ -31,6 +31,7 @@ package com.sun.identity.console.federation.model;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.federation.SAMLv2AuthContexts;
 import java.util.Map;
+import java.util.Set;
 
 public interface SAMLv2Model
     extends EntityModel {
@@ -290,6 +291,8 @@ public interface SAMLv2Model
              "assertionIDRequestMapper";
      public static final String AFFILIATE_MEMBER = 
              "memberlist";
+     public static final String AFFILIATE_OWNER = 
+             "affiliationOwnerID";
 
     // XACML PDP/PEP
     public static final String ATTR_TXT_PROTOCOL_SUPPORT_ENUM =
@@ -923,12 +926,25 @@ public interface SAMLv2Model
      *
      * @param realm to which the entity belongs.
      * @param entityName is the entity id.
-     * @param affilaitionValues Map which contains standard affiliation values.
+     * @param affiliationValues Map which contains standard affiliation values.
+     * @param members Set which contains all members.
      * @throws AMConsoleException if saving of attribute value fails.
      */
     public void setStdAffilationValues(
         String realm,
         String entityName,
-        Map affilaitionValues
+        Map affiliationValues,
+        Set members
         ) throws AMConsoleException;
+    
+    /**
+     * Returns a set with all Service Providers under the realm.
+     *
+     * @param realm to which the entity belongs.
+     * @return Set with all service providers under the realm passed.
+     * @throws AMConsoleException if unable to retrieve service providers.
+     *
+     */
+    public Set getallSPEntities(String realm) throws AMConsoleException;
+
 }

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySAMLv2Affiliation.xml,v 1.2 2008-06-25 05:51:05 qcheng Exp $
+   $Id: propertySAMLv2Affiliation.xml,v 1.3 2008-08-12 17:13:08 babysunil Exp $
 
 -->
 
@@ -38,22 +38,20 @@
                 tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />
    </property>
    </section>
-    <section name="Affiliation" defaultValue="samlv2idp.provider.section.title.members" >      
+    <section name="Owner" defaultValue="samlv2.provider.section.title.owner" >
+         <property>       
+            <cc name="affiliationOwnerID" 
+                tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                <attribute name="size" value="75" />
+                <attribute name="autoSubmit" value="false" />
+                <attribute name="localizeDisplayFieldValue" value="false" />
+            </cc>
+        </property>  
+    </section>
+    <section name="Affiliation" defaultValue="samlv2idp.provider.section.title.members" >  
         <property>
-            <ccgroup>
-                <property>
-                    <cc name="memberlist" 
-                        tagclass=
-                        "com.sun.web.ui.taglib.editablelist.CCEditableListTag" >
-                        <attribute name="name" value="list" />
-                        <attribute name="listboxLabel" 
-                                   value="label.current.value" />
-                        <attribute name="textboxLabel"
-                                   value="label.new.value" />
-                    </cc>
-                </property>
-            </ccgroup>
-        </property>
+	<cc name="memberlist" tagclass="com.sun.web.ui.taglib.addremove.CCAddRemoveTag" />
+    </property>        
     </section>
     <section name="signnencrypt" defaultValue="samlv2idp.provider.section.title.certalias" >
         <property>

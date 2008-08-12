@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ModelImpl.java,v 1.33 2008-08-05 23:29:28 babysunil Exp $
+ * $Id: SAMLv2ModelImpl.java,v 1.34 2008-08-12 17:17:03 babysunil Exp $
  *
  */
 
@@ -3305,7 +3305,9 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                 if (!membList.isEmpty()) {
                     map.put(AFFILIATE_MEMBER, returnEmptySetIfValueIsNull(
                             convertListToSet(membList)));
-                }                
+                }
+                String ownerID = affiliationDescriptor.getAffiliationOwnerID();
+                map.put(AFFILIATE_OWNER, returnEmptySetIfValueIsNull(ownerID)); 
             }
             logEvent("SUCCEED_GET_AFFILIATION_ATTR_VALUES", params);
         } catch (SAML2MetaException e) {
@@ -3375,13 +3377,15 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
      *
      * @param realm to which the entity belongs.
      * @param entityName is the entity id.
-     * @param affilaitionValues Map which contains standard affiliation values.
+     * @param affiliationValues Map which contains standard affiliation values.
+     * @param members Set which contains all members.
      * @throws AMConsoleException if saving of attribute value fails.
      */
     public void setStdAffilationValues(
         String realm,
         String entityName,
-        Map affilaitionValues
+        Map affiliationValues,
+        Set members
         ) throws AMConsoleException {
         
         String[] params = {realm, entityName,"SAMLv2", "Affiliation-Std"};
@@ -3400,8 +3404,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                 List memberList = 
                    affiliationDescriptor.getAffiliateMember();
                 if (!memberList.isEmpty()) {                    
-                    List listtoSave = convertSetToList(
-                            (Set)affilaitionValues.get(AFFILIATE_MEMBER));
+                    List listtoSave = convertSetToList(members);
                     affiliationDescriptor.getAffiliateMember().clear();
                     Iterator itt = listtoSave.listIterator();
                     while (itt.hasNext()) {
@@ -3409,6 +3412,10 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                         affiliationDescriptor.getAffiliateMember().add(name);
                     }
                 }
+                String owner = getResult(affiliationValues, AFFILIATE_OWNER);
+                if (owner != null && owner.length() > 0) {
+                    affiliationDescriptor.setAffiliationOwnerID(owner);
+                } 
                 samlManager.setEntityDescriptor(realm, entityDescriptor);
             }
             
@@ -3423,6 +3430,30 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                     paramsEx);
             throw new AMConsoleException(strError);
         }
+    }
+    
+    /**
+     * Returns a set with all the Service Providers under the realm.
+     *
+     * @param realm to which the entity belongs.
+     * @return Set with all service providers under the realm passed.
+     * @throws AMConsoleException if unable to retrieve service providers.
+     *
+     */
+    public Set getallSPEntities(String realm) throws AMConsoleException {
+        Set allSPEntities = Collections.EMPTY_SET;
+        try {
+            SAML2MetaManager samlManager = new SAML2MetaManager();
+            allSPEntities = convertListToSet(
+                    samlManager.getAllHostedServiceProviderEntities(realm));
+            Set remoteSPEntities = convertListToSet(
+                    samlManager.getAllRemoteServiceProviderEntities(realm));
+            allSPEntities.addAll(remoteSPEntities);
+        } catch (SAML2MetaException e) {
+            debug.warning("SAMLv2ModelImpl.getallSPEntities:", e);
+            throw new AMConsoleException(getErrorString(e));
+        }
+        return allSPEntities;
     }
     
     /**

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyCreateSAML2Entity.xml,v 1.2 2008-06-25 05:51:04 qcheng Exp $
+   $Id: propertyCreateSAML2Entity.xml,v 1.3 2008-08-12 17:12:15 babysunil Exp $
 
 -->
 
@@ -317,6 +317,16 @@
                 defaultValue="samlv2.create.provider.affiecertalias"
                 labelFor="tfaffiecertalias" />
             <cc name="tfaffiecertalias"
+                tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
+                <attribute name="autoSubmit" value="false" />
+                <attribute name="localizeDisplayFieldValue" value="false" />
+            </cc>
+        </property>
+        <property>
+            <label name="lblaffilownerid"
+                defaultValue="samlv2.create.provider.affilownerid"
+                labelFor="affiOwnerID" />
+            <cc name="affiOwnerID"
                 tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
                 <attribute name="autoSubmit" value="false" />
                 <attribute name="localizeDisplayFieldValue" value="false" />

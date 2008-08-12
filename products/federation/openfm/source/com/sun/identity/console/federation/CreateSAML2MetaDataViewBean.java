@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateSAML2MetaDataViewBean.java,v 1.2 2008-06-25 05:49:34 qcheng Exp $
+ * $Id: CreateSAML2MetaDataViewBean.java,v 1.3 2008-08-12 17:14:23 babysunil Exp $
  *
  */
 
@@ -296,6 +296,15 @@ public class CreateSAML2MetaDataViewBean
                 "tfaffiscertalias");
             addStringToMap(map, MetaTemplateParameters.P_AFFI_E_CERT,
                 "tfaffiecertalias");
+            String owner = this.getDisplayFieldStringValue(MetaTemplateParameters.P_AFFI_OWNERID);
+            if (owner != null && owner.length() > 0) {
+                addStringToMap(map, MetaTemplateParameters.P_AFFI_OWNERID,
+                        "affiOwnerID");
+            } else if (bAffiliation) {
+                throw new AMConsoleException(
+                        model.getLocalizedString(
+                        "samlv2.create.provider.missing.affiliation.owner"));
+            } 
 
 
             CCEditableList eList = (CCEditableList) getChild(AFFI_MEMBERS);
