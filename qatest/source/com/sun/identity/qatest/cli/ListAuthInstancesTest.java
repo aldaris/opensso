@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListAuthInstancesTest.java,v 1.4 2008-06-26 20:01:41 rmisra Exp $
+ * $Id: ListAuthInstancesTest.java,v 1.5 2008-08-12 00:12:52 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,8 +38,8 @@ import org.testng.Reporter;
 
 /**
  * <code>ListAuthInstancesTest</code> is used to execute tests involving the 
- * list-auth-instances sub-command of famadm.  This class allows the user to 
- * execute "famadm list-auth-instances" with a variety or arguments 
+ * list-auth-instances sub-command of ssoadm.  This class allows the user to 
+ * execute "ssoadm list-auth-instances" with a variety or arguments 
  * (e.g with short or long options, with a password file or password argument, 
  * with a locale argument and a variety of input values.  The properties file 
  * <code>ListAuthInstancesTest.properties</code> contains the input values 
@@ -99,7 +99,8 @@ public class ListAuthInstancesTest extends TestCommon implements CLIExitCodes {
         entering("setup", params);
         try {
             locTestName = testName;
-            rb = ResourceBundle.getBundle("cli" + fileseparator + "ListAuthInstancesTest");
+            rb = ResourceBundle.getBundle("cli" + fileseparator + 
+                    "ListAuthInstancesTest");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
             setupAuthInstances = (String)rb.getString(locTestName + 
@@ -164,7 +165,7 @@ public class ListAuthInstancesTest extends TestCommon implements CLIExitCodes {
     
     /**
      * This method is used to execute tests involving 
-     * "famadm list-auth-instances" using input data from the 
+     * "ssoadm list-auth-instances" using input data from the 
      * ListAuthInstancesTest.properties file.
      */
     @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
@@ -247,7 +248,7 @@ public class ListAuthInstancesTest extends TestCommon implements CLIExitCodes {
                     new Integer(INVALID_OPTION_STATUS).toString())) {
                 expectedMessage = (String) rb.getString("usage");                
                 String argString = cli.getAllArgs().replaceFirst(
-                        cli.getCliPath(), "famadm ");
+                        cli.getCliPath(), "ssoadm ");
                 Object[] params = {argString};
                 String errorMessage = 
                         (String) rb.getString("invalid-usage-message");
@@ -283,8 +284,8 @@ public class ListAuthInstancesTest extends TestCommon implements CLIExitCodes {
     
     /**
      * This method remove any authentication instances and realms that were 
-     * created during the setup method using "famadm delete-auth-instances" and 
-     * "famadm delete-realm".
+     * created during the setup method using "ssoadm delete-auth-instances" and 
+     * "ssoadm delete-realm".
      */
     @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void cleanup() 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListRealmsTest.java,v 1.8 2008-06-26 20:01:41 rmisra Exp $
+ * $Id: ListRealmsTest.java,v 1.9 2008-08-12 00:12:52 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -49,8 +49,8 @@ import org.testng.Reporter;
 
 /**
  * <code>ListRealmsTest</code> is used to execute tests involving the
- * list-realms sub-command of famadm.  This class allows the user to execute
- * "famadm list-realms" with a variety or arguments (e.g with short or long
+ * list-realms sub-command of ssoadm.  This class allows the user to execute
+ * "ssoadm list-realms" with a variety or arguments (e.g with short or long
  * options, with a locale argument, with the recursive option, with the
  * filter option, etc.) and a variety of input values.  The properties file
  * <code>ListRealmsTest.properties</code> contains the input values which are
@@ -95,7 +95,8 @@ public class ListRealmsTest extends TestCommon implements CLIExitCodes {
         entering("setup", params);
         try {
             locTestName = testName;
-            rb = ResourceBundle.getBundle("cli" + fileseparator + "ListRealmsTest");
+            rb = ResourceBundle.getBundle("cli" + fileseparator + 
+                    "ListRealmsTest");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
             useVerboseOption = ((String)rb.getString(locTestName + 
@@ -141,7 +142,7 @@ public class ListRealmsTest extends TestCommon implements CLIExitCodes {
     }
     
     /**
-     * This method is used to execute tests involving "famadm list-realms"
+     * This method is used to execute tests involving "ssoadm list-realms"
      * using input data from the ListRealmsTest.properties file.
      */
     @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
@@ -279,7 +280,7 @@ public class ListRealmsTest extends TestCommon implements CLIExitCodes {
                         cli.findStringsInError(expectedMessage, ";");
                 } else {
                     String argString = cli.getAllArgs().replaceFirst(
-                            cli.getCliPath(), "famadm ");
+                            cli.getCliPath(), "ssoadm ");
                     Object[] params = {argString};
                     String usageError = MessageFormat.format(expectedMessage,
                             params);
@@ -302,7 +303,7 @@ public class ListRealmsTest extends TestCommon implements CLIExitCodes {
     
     /**
      * This method remove any realms that were created during the setup and
-     * testRealmSearch methods using "famadm delete-realm".
+     * testRealmSearch methods using "ssoadm delete-realm".
      */
     @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void cleanup() 
@@ -320,8 +321,8 @@ public class ListRealmsTest extends TestCommon implements CLIExitCodes {
             if (!setupRealms.equals("")) {
                 String[] realms = setupRealms.split(";");
                 FederationManagerCLI cleanupCli = 
-                        new FederationManagerCLI(useDebugOption, useVerboseOption,
-                                useLongOptions);
+                        new FederationManagerCLI(useDebugOption, 
+                        useVerboseOption, useLongOptions);
                 for (int i=realms.length-1; i >= 0; i--) {
                     log(Level.FINEST, "cleanup", "setupRealmToDelete: " + 
                         realms[i]);

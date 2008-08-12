@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GenericCLITest.java,v 1.4 2008-06-26 20:01:41 rmisra Exp $
+ * $Id: GenericCLITest.java,v 1.5 2008-08-12 00:12:52 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,8 +43,8 @@ import org.testng.Reporter;
 
 /**
  * <code>GenericCLITest</code> is used to execute tests involving the 
- * delete-identities sub-command of famadm.  This class allows the user to 
- * execute an famadm command by specifying a subcommand and a list of 
+ * delete-identities sub-command of ssoadm.  This class allows the user to 
+ * execute an ssoadm command by specifying a subcommand and a list of 
  * arguments. Properties files named GenericCLITest_*.properties contain the 
  * input values which are read by this class.
  *

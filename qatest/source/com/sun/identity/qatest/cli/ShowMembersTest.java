@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ShowMembersTest.java,v 1.6 2008-06-26 20:01:41 rmisra Exp $
+ * $Id: ShowMembersTest.java,v 1.7 2008-08-12 00:12:53 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,8 +38,8 @@ import org.testng.Reporter;
 
 /**
  * <code>ShowMembersTest</code> is used to execute tests involving the 
- * delete-identities sub-command of famadm.  This class allows the user to 
- * execute "famadm delete-identities" with a variety or arguments (e.g with 
+ * delete-identities sub-command of ssoadm.  This class allows the user to 
+ * execute "ssoadm delete-identities" with a variety or arguments (e.g with 
  * short or long options, with a locale argument, with a list of attributes 
  * or a datafile containing attributes, etc.) and a variety of input values.  
  * The properties file <code>ShowMembersTest.properties</code> contains 
@@ -96,7 +96,8 @@ public class ShowMembersTest extends TestCommon implements CLIExitCodes {
         entering("setup", params);
         try {
             locTestName = testName;
-            rb = ResourceBundle.getBundle("cli" + fileseparator + "ShowMembersTest");
+            rb = ResourceBundle.getBundle("cli" + fileseparator + 
+                    "ShowMembersTest");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
             setupIdentities = (String)rb.getString(locTestName + 
@@ -173,14 +174,14 @@ public class ShowMembersTest extends TestCommon implements CLIExitCodes {
                             if (exitStatus != SUCCESS_STATUS) {
                                 assert false;
                                 log(Level.SEVERE, "setup", "The creation of " + 
-                                        setupName + " failed with exit status " +
-                                        exitStatus + ".");
+                                        setupName + " failed with exit status " 
+                                        + exitStatus + ".");
                             }
                         } else {
                             assert false;
                             log(Level.SEVERE, "setup", "The setup identity " + 
-                                    setupIdentities + " must have a realm, an " +
-                                    "identity name, and an identity type");
+                                    setupIdentities + " must have a realm, an " 
+                                    + "identity name, and an identity type");
                         }
                     }
                 }
@@ -223,9 +224,9 @@ public class ShowMembersTest extends TestCommon implements CLIExitCodes {
                                 cli.logCommand("setup");
                                 cli.resetArgList();
                                 if (exitStatus != SUCCESS_STATUS) {
-                                    log(Level.SEVERE, "setup", "The addition of " + 
-                                            setupMemberName + " as a member in " + 
-                                            setupIdName + 
+                                    log(Level.SEVERE, "setup", 
+                                            "The addition of " + setupMemberName
+                                            + " as a member in " + setupIdName + 
                                             " failed with exit status " + 
                                             exitStatus + ".");   
                                     assert false;
@@ -251,7 +252,7 @@ public class ShowMembersTest extends TestCommon implements CLIExitCodes {
     }
     
     /**
-     * This method is used to execute tests involving "famadm show-members"
+     * This method is used to execute tests involving "ssoadm show-members"
      * using input data from the ShowMembersTest.properties file.
      */
     @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
@@ -349,7 +350,7 @@ public class ShowMembersTest extends TestCommon implements CLIExitCodes {
             } else if (expectedExitCode.equals(
                     new Integer(INVALID_OPTION_STATUS).toString())) {
                 String argString = cli.getAllArgs().replaceFirst(
-                        cli.getCliPath(), "famadm ");
+                        cli.getCliPath(), "ssoadm ");
                 Object[] params = {argString};
                 String errorMessage = 
                         (String) rb.getString("invalid-usage-message");
@@ -410,8 +411,8 @@ public class ShowMembersTest extends TestCommon implements CLIExitCodes {
     /**
      * This method remove any realms and identities that were created during 
      * the setup and testMemberSearch methods using 
-     * "famadm show-members", "famadm delete-identities", and 
-     * "famadm delete-realm".
+     * "ssoadm show-members", "ssoadm delete-identities", and 
+     * "ssoadm delete-realm".
      */
     @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void cleanup() 
@@ -421,7 +422,8 @@ public class ShowMembersTest extends TestCommon implements CLIExitCodes {
         entering("cleanup", null);
         try {            
             log(Level.FINEST, "cleanup", "useDebugOption: " + useDebugOption);
-            log(Level.FINEST, "cleanup", "useVerboseOption: " + useVerboseOption);
+            log(Level.FINEST, "cleanup", "useVerboseOption: " + 
+                    useVerboseOption);
             log(Level.FINEST, "cleanup", "useLongOptions: " + useLongOptions);
             
             Reporter.log("UseDebugOption: " + useDebugOption);

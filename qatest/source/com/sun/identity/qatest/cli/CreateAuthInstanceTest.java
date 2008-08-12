@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateAuthInstanceTest.java,v 1.4 2008-06-26 20:01:41 rmisra Exp $
+ * $Id: CreateAuthInstanceTest.java,v 1.5 2008-08-12 00:12:51 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,8 +38,8 @@ import org.testng.Reporter;
 
 /**
  * <code>CreateAuthInstanceTest</code> is used to execute tests involving the 
- * create-auth-instance sub-command of famadm.  This class allows the user to 
- * execute "famadm create-auth-instance" with a variety or arguments 
+ * create-auth-instance sub-command of ssoadm.  This class allows the user to 
+ * execute "ssoadm create-auth-instance" with a variety or arguments 
  * (e.g with short or long options, with a password file or password argument, 
  * with a locale argument and a variety of input values.  The properties file 
  * <code>CreateAuthInstanceTest.properties</code> contains the input values 
@@ -97,7 +97,8 @@ public class CreateAuthInstanceTest extends TestCommon implements CLIExitCodes {
         entering("setup", params);
         try {
             locTestName = testName;
-            rb = ResourceBundle.getBundle("cli" + fileseparator + "CreateAuthInstanceTest");
+            rb = ResourceBundle.getBundle("cli" + fileseparator + 
+                    "CreateAuthInstanceTest");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
             useVerboseOption = ((String)rb.getString(locTestName + 
@@ -139,7 +140,7 @@ public class CreateAuthInstanceTest extends TestCommon implements CLIExitCodes {
     
     /**
      * This method is used to execute tests involving 
-     * "famadm create-auth-instance" using input data from the 
+     * "ssoadm create-auth-instance" using input data from the 
      * CreateAuthInstanceTest.properties file.
      */
     @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
@@ -227,7 +228,7 @@ public class CreateAuthInstanceTest extends TestCommon implements CLIExitCodes {
                     new Integer(INVALID_OPTION_STATUS).toString())) {
                 expectedMessage = (String) rb.getString("usage");                
                 String argString = cli.getAllArgs().replaceFirst(
-                        cli.getCliPath(), "famadm ");
+                        cli.getCliPath(), "ssoadm ");
                 Object[] params = {argString};
                 String errorMessage = 
                         (String) rb.getString("invalid-usage-message");
@@ -266,7 +267,7 @@ public class CreateAuthInstanceTest extends TestCommon implements CLIExitCodes {
     /**
      * This method remove realms and authentication instances that were created 
      * during the setup and testAuthInstanceCreation methods using 
-     * "famadm delete-auth-insatances" and "famadm delete-realm".
+     * "ssoadm delete-auth-insatances" and "ssoadm delete-realm".
      */
     @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void cleanup() 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetIdentityTest.java,v 1.4 2008-06-26 20:01:41 rmisra Exp $
+ * $Id: GetIdentityTest.java,v 1.5 2008-08-12 00:12:52 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,9 +38,9 @@ import org.testng.Reporter;
 
 /**
  * <code>GetIdentityTest</code> is used to execute tests involving the 
- * get-identity sub-command of famadm.  This class allows the user to execute 
- * "famadm get-identity" with short or long options and a variety of input values.  
- * The properties file <code>GetIdentityTest.properties</code> contains 
+ * get-identity sub-command of ssoadm.  This class allows the user to execute 
+ * "ssoadm get-identity" with short or long options and a variety of input 
+ * values.  The properties file <code>GetIdentityTest.properties</code> contains 
  * the input values which are read by this class.
  *
  * This class automates the following test cases:
@@ -90,7 +90,8 @@ public class GetIdentityTest extends TestCommon implements CLIExitCodes {
         entering("setup", params);
         try {
             locTestName = testName;
-            rb = ResourceBundle.getBundle("cli" + fileseparator + "GetIdentityTest");
+            rb = ResourceBundle.getBundle("cli" + fileseparator + 
+                    "GetIdentityTest");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
             useVerboseOption = ((String)rb.getString(locTestName + 
@@ -148,7 +149,7 @@ public class GetIdentityTest extends TestCommon implements CLIExitCodes {
     
     /**
      * This method is used to execute tests involving 
-     * "famadm get-identity" using input data from the 
+     * "ssoadm get-identity" using input data from the 
      * GetIdentityTest.properties file.
      */
     @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
@@ -279,7 +280,7 @@ public class GetIdentityTest extends TestCommon implements CLIExitCodes {
             } else if (expectedExitCode.equals(
                     new Integer(INVALID_OPTION_STATUS).toString())) {
                 String argString = cli.getAllArgs().replaceFirst(
-                        cli.getCliPath() + fileseparator + "famadm", "famadm ");
+                        cli.getCliPath() + fileseparator + "ssoadm", "ssoadm ");
                 Object[] params = {argString};
                 String errorMessage = 
                         (String) rb.getString("invalid-usage-message");
@@ -343,7 +344,7 @@ public class GetIdentityTest extends TestCommon implements CLIExitCodes {
     /**
      * This method remove any realms and identities that were created during 
      * the setup and testGetIdentityAttributes methods using 
-     * "famadm delete-identities" and "famadm delete-realm".
+     * "ssoadm delete-identities" and "ssoadm delete-realm".
      */
     @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void cleanup() 
@@ -353,7 +354,8 @@ public class GetIdentityTest extends TestCommon implements CLIExitCodes {
         entering("cleanup", null);
         try {            
             log(Level.FINEST, "cleanup", "useDebugOption: " + useDebugOption);
-            log(Level.FINEST, "cleanup", "useVerboseOption: " + useVerboseOption);
+            log(Level.FINEST, "cleanup", "useVerboseOption: " + 
+                    useVerboseOption);
             log(Level.FINEST, "cleanup", "useLongOptions: " + useLongOptions);
             
             Reporter.log("UseDebugOption: " + useDebugOption);
@@ -381,7 +383,8 @@ public class GetIdentityTest extends TestCommon implements CLIExitCodes {
                             
                             Reporter.log("IdRealm: " + cleanupRealm);
                             Reporter.log("IdNameToRemove: " + cleanupName);
-                            Reporter.log("IdentityTypeToRemove: " + cleanupType);
+                            Reporter.log("IdentityTypeToRemove: " + 
+                                    cleanupType);
                             
                             exitStatus = 
                                     cli.deleteIdentities(cleanupRealm, 

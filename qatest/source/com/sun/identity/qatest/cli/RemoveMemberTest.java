@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoveMemberTest.java,v 1.5 2008-06-26 20:01:41 rmisra Exp $
+ * $Id: RemoveMemberTest.java,v 1.6 2008-08-12 00:12:53 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,8 +43,8 @@ import org.testng.Reporter;
 
 /**
  * <code>RemoveMemberTest</code> is used to execute tests involving the 
- * delete-identities sub-command of famadm.  This class allows the user to 
- * execute "famadm delete-identities" with a variety or arguments (e.g with 
+ * delete-identities sub-command of ssoadm.  This class allows the user to 
+ * execute "ssoadm delete-identities" with a variety or arguments (e.g with 
  * short or long options, with a locale argument, with a list of attributes 
  * or a datafile containing attributes, etc.) and a variety of input values.  
  * The properties file <code>RemoveMemberTest.properties</code> contains 
@@ -100,7 +100,8 @@ public class RemoveMemberTest extends TestCommon implements CLIExitCodes {
         entering("setup", params);
         try {
             locTestName = testName;
-            rb = ResourceBundle.getBundle("cli" + fileseparator + "RemoveMemberTest");
+            rb = ResourceBundle.getBundle("cli" + fileseparator + 
+                    "RemoveMemberTest");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
             setupIdentities = (String)rb.getString(locTestName + 
@@ -183,8 +184,8 @@ public class RemoveMemberTest extends TestCommon implements CLIExitCodes {
                         } else {
                             assert false;
                             log(Level.SEVERE, "setup", "The setup identity " + 
-                                    setupIdentities + " must have a realm, an " +
-                                    "identity name, and an identity type");
+                                    setupIdentities + " must have a realm, an " 
+                                    + "identity name, and an identity type");
                         }
                     }
                 }
@@ -258,7 +259,7 @@ public class RemoveMemberTest extends TestCommon implements CLIExitCodes {
     }
     
     /**
-     * This method is used to execute tests involving "famadm remove-member"
+     * This method is used to execute tests involving "ssoadm remove-member"
      * using input data from the RemoveMemberTest.properties file.
      */
     @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
@@ -362,7 +363,7 @@ public class RemoveMemberTest extends TestCommon implements CLIExitCodes {
             } else if (expectedExitCode.equals(
                     new Integer(INVALID_OPTION_STATUS).toString())) {
                 String argString = cli.getAllArgs().replaceFirst(
-                        cli.getCliPath(), "famadm ");
+                        cli.getCliPath(), "ssoadm ");
                 Object[] params = {argString};
                 String errorMessage = 
                         (String) rb.getString("invalid-usage-message");
@@ -429,8 +430,8 @@ public class RemoveMemberTest extends TestCommon implements CLIExitCodes {
                         }
                     } else {
                             log(Level.SEVERE, "testMemberRemoval", 
-                                    "The member " + remainingMember +                                    memberArgs + 
-                                    " must have a realm, a member name, " +
+                                    "The member " + remainingMember + memberArgs
+                                    + " must have a realm, a member name, " +
                                     " a member type, an identity name, and " +
                                     " an identity type");
                             assert false;                          
@@ -485,8 +486,8 @@ public class RemoveMemberTest extends TestCommon implements CLIExitCodes {
     /**
      * This method remove any realms and identities that were created during 
      * the setup and testMemberRemoval methods using 
-     * "famadm remove-member", "famadm delete-identities", and 
-     * "famadm delete-realm".
+     * "ssoadm remove-member", "ssoadm delete-identities", and 
+     * "ssoadm delete-realm".
      */
     @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void cleanup() 
@@ -496,7 +497,8 @@ public class RemoveMemberTest extends TestCommon implements CLIExitCodes {
         entering("cleanup", null);
         try {            
             log(Level.FINEST, "cleanup", "useDebugOption: " + useDebugOption);
-            log(Level.FINEST, "cleanup", "useVerboseOption: " + useVerboseOption);
+            log(Level.FINEST, "cleanup", "useVerboseOption: " + 
+                    useVerboseOption);
             log(Level.FINEST, "cleanup", "useLongOptions: " + useLongOptions);
             
             Reporter.log("UseDebugOption: " + useDebugOption);
@@ -567,26 +569,28 @@ public class RemoveMemberTest extends TestCommon implements CLIExitCodes {
                                 cleanupIds[i]);
                         String [] idArgs = cleanupIds[i].split("\\,");
                         if (idArgs.length >= 3) {
-                            String idRealm = idArgs[0];
-                            String idName = idArgs[1];
-                            String idType = idArgs[2];
+                            String removeRealm = idArgs[0];
+                            String removeName = idArgs[1];
+                            String removeType = idArgs[2];
                             
                             log(Level.FINEST, "cleanup", "idRealm: " + 
-                                idRealm);
-                            log(Level.FINEST, "cleanup", "idName: " + idName);
-                            log(Level.FINEST, "cleanup", "idType: " + idType);
+                                removeRealm);
+                            log(Level.FINEST, "cleanup", "idName: " + 
+                                    removeName);
+                            log(Level.FINEST, "cleanup", "idType: " + 
+                                    removeType);
                             
-                            Reporter.log("IdRealm: " + idRealm);
-                            Reporter.log("IdNameToRemove: " + idName);
-                            Reporter.log("IdentityTypeToRemove: " + idType);
+                            Reporter.log("IdRealm: " + removeRealm);
+                            Reporter.log("IdNameToRemove: " + removeName);
+                            Reporter.log("IdentityTypeToRemove: " + removeType);
                             
                             exitStatus = 
-                                    cli.deleteIdentities(idRealm, idName, 
-                                    idType);
+                                    cli.deleteIdentities(removeRealm, 
+                                    removeName, removeType);
                             cli.resetArgList();
                             if (exitStatus != SUCCESS_STATUS) {
                                 log(Level.SEVERE, "cleanup", 
-                                        "Removal of identity " + idName + 
+                                        "Removal of identity " + removeName + 
                                         "failed with exit status " + 
                                         exitStatus);
                                 assert false;

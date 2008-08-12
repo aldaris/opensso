@@ -17,28 +17,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteAuthInstancesTest.java,v 1.2 2008-06-26 20:01:41 rmisra Exp $
+ * $Id: DeleteAuthInstancesTest.java,v 1.3 2008-08-12 00:12:52 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.cli;
 
-import com.sun.identity.authentication.AuthContext;
-import com.sun.identity.authentication.AuthContext.IndexType;
-import com.sun.identity.authentication.AuthContext.Status;
-import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.qatest.common.cli.CLIExitCodes;
 import com.sun.identity.qatest.common.cli.FederationManagerCLI;
 import com.sun.identity.qatest.common.TestCommon;
 import java.text.MessageFormat;
-import java.util.List;
 import java.util.ResourceBundle;
-import java.util.StringTokenizer;
 import java.util.logging.Level;
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.NameCallback;
-import javax.security.auth.callback.PasswordCallback;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
@@ -47,8 +38,8 @@ import org.testng.Reporter;
 
 /**
  * <code>DeleteAuthInstancesTest</code> is used to execute tests involving the 
- * delete-auth-instances sub-command of famadm.  This class allows the user to 
- * execute "famadm delete-auth-instances" with a variety or arguments 
+ * delete-auth-instances sub-command of ssoadm.  This class allows the user to 
+ * execute "ssoadm delete-auth-instances" with a variety or arguments 
  * (e.g with short or long options, with a password file or password argument, 
  * with a locale argument and a variety of input values.  The properties file 
  * <code>DeleteAuthInstancesTest.properties</code> contains the input values 
@@ -108,7 +99,8 @@ implements CLIExitCodes {
         entering("setup", params);
         try {
             locTestName = testName;
-            rb = ResourceBundle.getBundle("cli" + fileseparator + "DeleteAuthInstancesTest");
+            rb = ResourceBundle.getBundle("cli" + fileseparator + 
+                    "DeleteAuthInstancesTest");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
             setupAuthInstances = (String)rb.getString(locTestName + 
@@ -160,7 +152,7 @@ implements CLIExitCodes {
     
     /**
      * This method is used to execute tests involving 
-     * "famadm delete-auth-instances" using input data from the 
+     * "ssoadm delete-auth-instances" using input data from the 
      * DeleteAuthInstancesTest.properties file.
      */
     @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
@@ -256,7 +248,7 @@ implements CLIExitCodes {
                     new Integer(INVALID_OPTION_STATUS).toString())) {
                 expectedMessage = (String) rb.getString("usage");                
                 String argString = cli.getAllArgs().replaceFirst(
-                        cli.getCliPath(), "famadm ");
+                        cli.getCliPath(), "ssoadm ");
                 Object[] params = {argString};
                 String errorMessage = 
                         (String) rb.getString("invalid-usage-message");
@@ -294,7 +286,7 @@ implements CLIExitCodes {
     
     /**
      * This method remove any instances and realms that were created during the 
-     * setup and testDeleteAuthInstances methods using "famadm delete-realm".
+     * setup and testDeleteAuthInstances methods using "ssoadm delete-realm".
      */
     @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void cleanup() 

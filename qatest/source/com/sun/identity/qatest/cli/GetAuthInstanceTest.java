@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetAuthInstanceTest.java,v 1.3 2008-06-26 20:01:41 rmisra Exp $
+ * $Id: GetAuthInstanceTest.java,v 1.4 2008-08-12 00:12:52 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,8 +38,8 @@ import org.testng.Reporter;
 
 /**
  * <code>GetAuthInstanceTest</code> is used to execute tests involving the 
- * get-auth-instance sub-command of famadm.  This class allows the user to 
- * execute "famadm get-auth-instance" with a variety or arguments 
+ * get-auth-instance sub-command of ssoadm.  This class allows the user to 
+ * execute "ssoadm get-auth-instance" with a variety or arguments 
  * (e.g with short or long options, with a password file or password argument, 
  * with a locale argument and a variety of input values.  The properties file 
  * <code>GetAuthInstanceTest.properties</code> contains the input values 
@@ -95,7 +95,8 @@ public class GetAuthInstanceTest extends TestCommon implements CLIExitCodes {
         entering("setup", params);
         try {
             locTestName = testName;
-            rb = ResourceBundle.getBundle("cli" + fileseparator + "GetAuthInstanceTest");
+            rb = ResourceBundle.getBundle("cli" + fileseparator + 
+                    "GetAuthInstanceTest");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
             setupAuthInstances = (String)rb.getString(locTestName + 
@@ -164,7 +165,7 @@ public class GetAuthInstanceTest extends TestCommon implements CLIExitCodes {
     
     /**
      * This method is used to execute tests involving 
-     * "famadm get-auth-instance" using input data from the 
+     * "ssoadm get-auth-instance" using input data from the 
      * GetAuthInstanceTest.properties file.
      */
     @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
@@ -258,7 +259,7 @@ public class GetAuthInstanceTest extends TestCommon implements CLIExitCodes {
                     new Integer(INVALID_OPTION_STATUS).toString())) {
                 expectedMessage = (String) rb.getString("usage");                
                 String argString = cli.getAllArgs().replaceFirst(
-                        cli.getCliPath(), "famadm ");
+                        cli.getCliPath(), "ssoadm ");
                 Object[] params = {argString};
                 String errorMessage = 
                         (String) rb.getString("invalid-usage-message");
@@ -297,7 +298,7 @@ public class GetAuthInstanceTest extends TestCommon implements CLIExitCodes {
     /**
      * This method remove any members, identities, and realms that were created 
      * during the setup and testGetAuthInstance methods using 
-     * "famadm delete-auth-instances" and "famadm delete-realm".
+     * "ssoadm delete-auth-instances" and "ssoadm delete-realm".
      */
     @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void cleanup() 
@@ -321,8 +322,8 @@ public class GetAuthInstanceTest extends TestCommon implements CLIExitCodes {
                     new Integer(SUCCESS_STATUS).toString())) {
                 log(Level.FINE, "cleanup", "Deleting auth instance " + name);
                 FederationManagerCLI cleanupCli = 
-                        new FederationManagerCLI(useDebugOption, useVerboseOption, 
-                        useLongOptions);
+                        new FederationManagerCLI(useDebugOption, 
+                        useVerboseOption, useLongOptions);
                 cleanupExitStatus = cleanupCli.deleteAuthInstances(authRealm, 
                         name);
                 cleanupCli.logCommand("cleanup");

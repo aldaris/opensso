@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ShowMembershipsTest.java,v 1.5 2008-06-26 20:01:41 rmisra Exp $
+ * $Id: ShowMembershipsTest.java,v 1.6 2008-08-12 00:12:53 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -38,8 +38,8 @@ import org.testng.Reporter;
 
 /**
  * <code>ShowMembershipsTest</code> is used to execute tests involving the 
- * delete-identities sub-command of famadm.  This class allows the user to 
- * execute "famadm delete-identities" with a variety or arguments (e.g with 
+ * delete-identities sub-command of ssoadm.  This class allows the user to 
+ * execute "ssoadm delete-identities" with a variety or arguments (e.g with 
  * short or long options, with a locale argument, with a list of attributes 
  * or a datafile containing attributes, etc.) and a variety of input values.  
  * The properties file <code>ShowMembershipsTest.properties</code> contains 
@@ -93,7 +93,8 @@ public class ShowMembershipsTest extends TestCommon implements CLIExitCodes {
         entering("setup", params);
         try {
             locTestName = testName;
-            rb = ResourceBundle.getBundle("cli" + fileseparator + "ShowMembershipsTest");
+            rb = ResourceBundle.getBundle("cli" + fileseparator + 
+                    "ShowMembershipsTest");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
             setupIdentities = (String)rb.getString(locTestName + 
@@ -147,37 +148,37 @@ public class ShowMembershipsTest extends TestCommon implements CLIExitCodes {
                         log(Level.FINE, "setup", "Creating id " + ids[i]);
                         String [] idArgs = ids[i].split("\\,");
                         if (idArgs.length >= 3) {
-                            String idRealm = idArgs[0];
-                            String idName = idArgs[1];
-                            String idType = idArgs[2];
+                            String removeRealm = idArgs[0];
+                            String removeName = idArgs[1];
+                            String removeType = idArgs[2];
                             log(Level.FINEST, "setup", "Realm for setup id: " + 
-                                    idRealm);
+                                    removeRealm);
                             log(Level.FINEST, "setup", "Name for setup id: " + 
-                                    idName);
+                                    removeName);
                             log(Level.FINEST, "setup", "Type for setup id: " + 
-                                    idType);                            
+                                    removeType);                            
                             String idAttributes = null;
                             if (idArgs.length > 3) {
                                 idAttributes = idArgs[3];
-                                exitStatus = cli.createIdentity(idRealm, idName,
-                                        idType, idAttributes);
+                                exitStatus = cli.createIdentity(removeRealm, 
+                                        removeName, removeType, idAttributes);
                             } else {                                
-                                exitStatus = cli.createIdentity(idRealm, idName,
-                                        idType);
+                                exitStatus = cli.createIdentity(removeRealm, 
+                                        removeName, removeType);
                             }
                             cli.logCommand("setup");
                             cli.resetArgList();
                             if (exitStatus != SUCCESS_STATUS) {
                                 assert false;
                                 log(Level.SEVERE, "setup", "The creation of " + 
-                                        idName + " failed with exit status " +
-                                        exitStatus + ".");
+                                        removeName + " failed with exit status "
+                                        + exitStatus + ".");
                             }
                         } else {
                             assert false;
                             log(Level.SEVERE, "setup", "The setup identity " + 
-                                    setupIdentities + " must have a realm, an " +
-                                    "identity name, and an identity type");
+                                    setupIdentities + " must have a realm, an " 
+                                    + "identity name, and an identity type");
                         }
                     }
                 }
@@ -220,9 +221,9 @@ public class ShowMembershipsTest extends TestCommon implements CLIExitCodes {
                                 cli.logCommand("setup");
                                 cli.resetArgList();
                                 if (exitStatus != SUCCESS_STATUS) {
-                                    log(Level.SEVERE, "setup", "The addition of " + 
-                                            setupMemberName + " as a member in " + 
-                                            setupIdName + 
+                                    log(Level.SEVERE, "setup", 
+                                            "The addition of " + setupMemberName
+                                            + " as a member in " + setupIdName + 
                                             " failed with exit status " + 
                                             exitStatus + ".");   
                                     assert false;
@@ -248,7 +249,7 @@ public class ShowMembershipsTest extends TestCommon implements CLIExitCodes {
     }
     
     /**
-     * This method is used to execute tests involving "famadm show-memberships"
+     * This method is used to execute tests involving "ssoadm show-memberships"
      * using input data from the ShowMembershipsTest.properties file.
      */
     @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
@@ -356,7 +357,7 @@ public class ShowMembershipsTest extends TestCommon implements CLIExitCodes {
             } else if (expectedExitCode.equals(
                     new Integer(INVALID_OPTION_STATUS).toString())) {
                 String argString = cli.getAllArgs().replaceFirst(
-                        cli.getCliPath(), "famadm ");
+                        cli.getCliPath(), "ssoadm ");
                 Object[] params = {argString};
                 String errorMessage = 
                         (String) rb.getString("invalid-usage-message");
@@ -417,8 +418,8 @@ public class ShowMembershipsTest extends TestCommon implements CLIExitCodes {
     /**
      * This method remove any realms and identities that were created during 
      * the setup and testMembershipSearch methods using 
-     * "famadm remove-members", "famadm delete-identities", and 
-     * "famadm delete-realm".
+     * "ssoadm remove-members", "ssoadm delete-identities", and 
+     * "ssoadm delete-realm".
      */
     @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void cleanup() 

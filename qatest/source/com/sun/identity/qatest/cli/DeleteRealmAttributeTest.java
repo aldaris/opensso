@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteRealmAttributeTest.java,v 1.2 2008-06-26 20:01:41 rmisra Exp $
+ * $Id: DeleteRealmAttributeTest.java,v 1.3 2008-08-12 00:12:52 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,8 +43,8 @@ import org.testng.Reporter;
 
 /**
  * <code>DeleteRealmAttributeTest</code> is used to execute tests involving the 
- * delete-realm-attribute sub-command of famadm.  This class allows the user to 
- * execute "famadm delete-realm-attribute" with a variety or arguments (e.g with 
+ * delete-realm-attribute sub-command of ssoadm.  This class allows the user to 
+ * execute "ssoadm delete-realm-attribute" with a variety or arguments (e.g with 
  * short or long options, with a locale argument, with a list of attributes 
  * or a datafile containing attributes, etc.) and a variety of input values.  
  * The properties file <code>DeleteRealmAttributeTest.properties</code> contains 
@@ -96,7 +96,8 @@ implements CLIExitCodes {
         entering("setup", params);
         try {
             locTestName = testName;
-            rb = ResourceBundle.getBundle("cli" + fileseparator + "DeleteRealmAttributeTest");
+            rb = ResourceBundle.getBundle("cli" + fileseparator + 
+                    "DeleteRealmAttributeTest");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
             useVerboseOption = ((String)rb.getString(locTestName + 
@@ -174,7 +175,7 @@ implements CLIExitCodes {
     
     /**
      * This method is used to execute tests involving 
-     * "famadm delete-realm-attribute" using input data from the 
+     * "ssoadm delete-realm-attribute" using input data from the 
      * DeleteRealmAttributeTest.properties file.
      */
     @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
@@ -275,7 +276,7 @@ implements CLIExitCodes {
                     new Integer(INVALID_OPTION_STATUS).toString())) {
                 expectedMessage = (String) rb.getString("usage");
                 String argString = cli.getAllArgs().replaceFirst(
-                        cli.getCliPath() + fileseparator + "famadm", "famadm ");
+                        cli.getCliPath() + fileseparator + "ssoadm", "ssoadm ");
                 Object[] params = {argString};
                 String errorMessage = 
                         (String) rb.getString("invalid-usage-message");
@@ -325,7 +326,7 @@ implements CLIExitCodes {
     
     /**
      * This method remove any realms that were created during the setup and 
-     * testRealmAttributeDeletion methods using "famadm delete-realm".
+     * testRealmAttributeDeletion methods using "ssoadm delete-realm".
      */
     @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void cleanup() 

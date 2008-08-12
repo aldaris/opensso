@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteRealmTest.java,v 1.11 2008-06-26 20:01:41 rmisra Exp $
+ * $Id: DeleteRealmTest.java,v 1.12 2008-08-12 00:12:52 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,8 +46,8 @@ import org.testng.Reporter;
 
 /**
  * <code>DeleteRealmTest</code> is used to execute tests involving the 
- * delete-realm sub-command of famadm.  This class allows the user to execute
- * "famadm delete-realm" with a variety or arguments (e.g with short or long 
+ * delete-realm sub-command of ssoadm.  This class allows the user to execute
+ * "ssoadm delete-realm" with a variety or arguments (e.g with short or long 
  * options, with a locale argument, etc.) and a variety of input values.  The 
  * properties file <code>DeleteRealmTest.properties</code> contains the input 
  * values which are read by this class.
@@ -89,7 +89,8 @@ public class DeleteRealmTest extends TestCommon implements CLIExitCodes {
         entering("setup", params);
         try {
             locTestName = testName;
-            rb = ResourceBundle.getBundle("cli" + fileseparator + "DeleteRealmTest");
+            rb = ResourceBundle.getBundle("cli" + fileseparator + 
+                    "DeleteRealmTest");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
             useVerboseOption = ((String)rb.getString(locTestName + 
@@ -129,7 +130,7 @@ public class DeleteRealmTest extends TestCommon implements CLIExitCodes {
     }
     
     /**
-     * This method is used to execute tests involving "famadm delete-realm"
+     * This method is used to execute tests involving "ssoadm delete-realm"
      * using input data from the DeleteRealmTest.properties file.
      */
     @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
@@ -197,7 +198,7 @@ public class DeleteRealmTest extends TestCommon implements CLIExitCodes {
                 if (expectedExitCode.equals(
                         new Integer(INVALID_OPTION_STATUS).toString())) {
                     String argString = cli.getAllArgs().replaceFirst(
-                        cli.getCliPath(), "famadm ");
+                        cli.getCliPath(), "ssoadm ");
                     Object[] params = {argString};
                     String usageError = 
                             MessageFormat.format(expectedMessage, params);
@@ -246,7 +247,7 @@ public class DeleteRealmTest extends TestCommon implements CLIExitCodes {
     
     /**
      * This method remove any realms that were created during the setup and
-     * testRealmDeletion methods using "famadm delete-realm".
+     * testRealmDeletion methods using "ssoadm delete-realm".
      */
     @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void cleanup() 
@@ -267,14 +268,15 @@ public class DeleteRealmTest extends TestCommon implements CLIExitCodes {
             if (!realmsExisting.equals("")) {
                 String[] realms = realmsExisting.split(";");
                 FederationManagerCLI cleanupCli = 
-                        new FederationManagerCLI(useDebugOption, useVerboseOption,
-                                useLongOptions);
+                        new FederationManagerCLI(useDebugOption, 
+                        useVerboseOption, useLongOptions);
                 for (int i=realms.length-1; i >= 0; i--) {             
                     log(Level.FINEST, "cleanup", "setupRealmToDelete: " + 
                             realms[i]);
                     Reporter.log("SetupRealmToDelete: " + realms[i]);
                     if (!realms[i].equals(realmToDelete)) {
-                        int exitStatus = cleanupCli.deleteRealm(realms[i], true); 
+                        int exitStatus = cleanupCli.deleteRealm(realms[i], 
+                                true); 
                         cleanupCli.logCommand("cleanup");
                         cleanupCli.resetArgList();
                         if (exitStatus != SUCCESS_STATUS) {

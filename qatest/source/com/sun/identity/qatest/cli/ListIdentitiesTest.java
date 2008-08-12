@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListIdentitiesTest.java,v 1.5 2008-06-26 20:01:41 rmisra Exp $
+ * $Id: ListIdentitiesTest.java,v 1.6 2008-08-12 00:12:52 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -42,8 +42,8 @@ import org.testng.Reporter;
 
 /**
  * <code>ListIdentitiesTest</code> is used to execute tests involving the 
- * list-identities sub-command of famadm.  This class allows the user to execute
- * "famadm list-identities" with a variety or arguments (e.g with short or long 
+ * list-identities sub-command of ssoadm.  This class allows the user to execute
+ * "ssoadm list-identities" with a variety or arguments (e.g with short or long 
  * options, with a locale argument, with a list of attributes or a datafile 
  * containing attributes, etc.) and a variety of input values.  The properties 
  * file <code>ListIdentitiesTest.properties</code> contains the input values 
@@ -102,7 +102,8 @@ public class ListIdentitiesTest extends TestCommon implements CLIExitCodes {
         entering("setup", params);
         try {
             locTestName = testName;
-            rb = ResourceBundle.getBundle("cli" + fileseparator + "ListIdentitiesTest");
+            rb = ResourceBundle.getBundle("cli" + fileseparator + 
+                    "ListIdentitiesTest");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
             setupIdentities = (String)rb.getString(locTestName + 
@@ -177,8 +178,8 @@ public class ListIdentitiesTest extends TestCommon implements CLIExitCodes {
                         } else {
                             assert false;
                             log(Level.SEVERE, "setup", "The setup identity " + 
-                                    setupIdentities + " must have a realm, an " +
-                                    "identity name, and an identity type");
+                                    setupIdentities + " must have a realm, an " 
+                                    + "identity name, and an identity type");
                         }
                     }
                 }
@@ -192,7 +193,7 @@ public class ListIdentitiesTest extends TestCommon implements CLIExitCodes {
     }
     
     /**
-     * This method is used to execute tests involving "famadm list-identities"
+     * This method is used to execute tests involving "ssoadm list-identities"
      * using input data from the ListIdentitiesTest.properties file.
      */
     @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
@@ -292,7 +293,7 @@ public class ListIdentitiesTest extends TestCommon implements CLIExitCodes {
                     new Integer(INVALID_OPTION_STATUS).toString())) {
                 expectedMessage = (String) rb.getString("usage");                
                 String argString = cli.getAllArgs().replaceFirst(
-                        cli.getCliPath(), "famadm ");
+                        cli.getCliPath(), "ssoadm ");
                 Object[] params = {argString};
                 String errorMessage = 
                         (String) rb.getString("invalid-usage-message");
@@ -342,7 +343,7 @@ public class ListIdentitiesTest extends TestCommon implements CLIExitCodes {
     
     /**
      * This method remove any realms that were created during the setup and
-     * testIdentitySearch methods using "famadm list-identities".
+     * testIdentitySearch methods using "ssoadm list-identities".
      */
     @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void cleanup() 

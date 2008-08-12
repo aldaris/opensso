@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetRealmAttributesTest.java,v 1.2 2008-06-26 20:01:41 rmisra Exp $
+ * $Id: SetRealmAttributesTest.java,v 1.3 2008-08-12 00:12:53 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,8 +43,8 @@ import org.testng.Reporter;
 
 /**
  * <code>SetRealmAttributesTest</code> is used to execute tests involving the 
- * set-realm-attributes sub-command of famadm.  This class allows the user to 
- * execute "famadm set-realm-attributes" with a variety or arguments (e.g with 
+ * set-realm-attributes sub-command of ssoadm.  This class allows the user to 
+ * execute "ssoadm set-realm-attributes" with a variety or arguments (e.g with 
  * short or long options, with a locale argument, with a list of attributes 
  * or a datafile containing attributes, etc.) and a variety of input values.  
  * The properties file <code>SetRealmAttributesTest.properties</code> contains 
@@ -84,7 +84,8 @@ public class SetRealmAttributesTest extends TestCommon implements CLIExitCodes {
      * This method is intended to provide initial setup.
      * Creates any realms specified in the setup-realms property, creates
      * any identities specified in the setup-identities property, and adds any 
-     * members in the setup-members in the SetRealmAttributesTest.properties file.
+     * members in the setup-members in the SetRealmAttributesTest.properties 
+     * file.
      */
     @Parameters({"testName"})
     @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
@@ -94,7 +95,8 @@ public class SetRealmAttributesTest extends TestCommon implements CLIExitCodes {
         entering("setup", params);
         try {
             locTestName = testName;
-            rb = ResourceBundle.getBundle("cli" + fileseparator + "SetRealmAttributesTest");
+            rb = ResourceBundle.getBundle("cli" + fileseparator + 
+                    "SetRealmAttributesTest");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
             useVerboseOption = ((String)rb.getString(locTestName + 
@@ -137,7 +139,7 @@ public class SetRealmAttributesTest extends TestCommon implements CLIExitCodes {
     
     /**
      * This method is used to execute tests involving 
-     * "famadm set-realm-attributes" using input data from the 
+     * "ssoadm set-realm-attributes" using input data from the 
      * SetRealmAttributesTest.properties file.
      */
     @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
@@ -238,7 +240,7 @@ public class SetRealmAttributesTest extends TestCommon implements CLIExitCodes {
                     new Integer(INVALID_OPTION_STATUS).toString())) {
                 expectedMessage = (String) rb.getString("usage");
                 String argString = cli.getAllArgs().replaceFirst(
-                        cli.getCliPath() + fileseparator + "famadm", "famadm ");
+                        cli.getCliPath() + fileseparator + "ssoadm", "ssoadm ");
                 Object[] params = {argString};
                 String errorMessage = 
                         (String) rb.getString("invalid-usage-message");
@@ -289,7 +291,7 @@ public class SetRealmAttributesTest extends TestCommon implements CLIExitCodes {
     
     /**
      * This method remove any realms that were created during the setup and 
-     * testRealmSetAttributeValues methods using "famadm delete-realm".
+     * testRealmSetAttributeValues methods using "ssoadm delete-realm".
      */
     @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void cleanup() 
@@ -299,7 +301,8 @@ public class SetRealmAttributesTest extends TestCommon implements CLIExitCodes {
         entering("cleanup", null);
         try {            
             log(Level.FINEST, "cleanup", "useDebugOption: " + useDebugOption);
-            log(Level.FINEST, "cleanup", "useVerboseOption: " + useVerboseOption);
+            log(Level.FINEST, "cleanup", "useVerboseOption: " + 
+                    useVerboseOption);
             log(Level.FINEST, "cleanup", "useLongOptions: " + useLongOptions);
             
             Reporter.log("UseDebugOption: " + useDebugOption);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateIdentityTest.java,v 1.9 2008-06-26 20:01:41 rmisra Exp $
+ * $Id: CreateIdentityTest.java,v 1.10 2008-08-12 00:12:51 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -57,8 +57,8 @@ import org.testng.Reporter;
 
 /**
  * <code>CreateIdentityTest</code> is used to execute tests involving the 
- * create-identity sub-command of famadm.  This class allows the user to execute
- * "famadm create-identity" with a variety or arguments (e.g with short or long 
+ * create-identity sub-command of ssoadm.  This class allows the user to execute
+ * "ssoadm create-identity" with a variety or arguments (e.g with short or long 
  * options, with a password file or password argument, with a locale argument,
  * with a list of attributes or a datafile containing attributes, etc.) 
  * and a variety of input values.  The properties file 
@@ -106,7 +106,8 @@ public class CreateIdentityTest extends TestCommon implements CLIExitCodes {
         entering("setup", params);
         try {
             locTestName = testName;
-            rb = ResourceBundle.getBundle("cli" + fileseparator + "CreateIdentityTest");
+            rb = ResourceBundle.getBundle("cli" + fileseparator + 
+                    "CreateIdentityTest");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
             setupIdentities = (String)rb.getString(locTestName + 
@@ -182,7 +183,7 @@ public class CreateIdentityTest extends TestCommon implements CLIExitCodes {
     }
     
     /**
-     * This method is used to execute tests involving "famadm create-identities"
+     * This method is used to execute tests involving "ssoadm create-identities"
      * using input data from the CreateIdentityTest.properties file.
      */
     @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
@@ -266,7 +267,7 @@ public class CreateIdentityTest extends TestCommon implements CLIExitCodes {
                         cli.findStringsInError(expectedMessage, ";");
                 } else {
                     String argString = cli.getAllArgs().replaceFirst(
-                            cli.getCliPath(), "famadm ");
+                            cli.getCliPath(), "ssoadm ");
                     Object[] params = {argString};
                     String usageError = MessageFormat.format(expectedMessage,
                             params);
@@ -311,8 +312,8 @@ public class CreateIdentityTest extends TestCommon implements CLIExitCodes {
     
     /**
      * This method remove any realms and identities that were created during 
-     * the setup and testIdentityCreation methods using "famadm delete-realm" 
-     * and "famadm delete-identities".
+     * the setup and testIdentityCreation methods using "ssoadm delete-realm" 
+     * and "ssoadm delete-identities".
      */
     @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void cleanup() 

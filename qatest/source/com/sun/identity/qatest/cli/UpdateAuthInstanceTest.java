@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpdateAuthInstanceTest.java,v 1.3 2008-06-26 20:01:41 rmisra Exp $
+ * $Id: UpdateAuthInstanceTest.java,v 1.4 2008-08-12 00:12:53 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,8 +43,8 @@ import org.testng.Reporter;
 
 /**
  * <code>UpdateAuthInstanceTest</code> is used to execute tests involving the 
- * update-auth-instance sub-command of famadm.  This class allows the user to 
- * execute "famadm update-auth-instance" with a variety or arguments 
+ * update-auth-instance sub-command of ssoadm.  This class allows the user to 
+ * execute "ssoadm update-auth-instance" with a variety or arguments 
  * (e.g with short or long options, with a password file or password argument, 
  * with a locale argument and a variety of input values.  The properties file 
  * <code>UpdateAuthInstanceTest.properties</code> contains the input values 
@@ -123,7 +123,8 @@ public class UpdateAuthInstanceTest extends TestCommon implements CLIExitCodes {
         entering("setup", params);
         try {
             locTestName = testName;
-            rb = ResourceBundle.getBundle("cli" + fileseparator + "UpdateAuthInstanceTest");
+            rb = ResourceBundle.getBundle("cli" + fileseparator + 
+                    "UpdateAuthInstanceTest");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
             setupAuthInstances = (String)rb.getString(locTestName + 
@@ -180,7 +181,7 @@ public class UpdateAuthInstanceTest extends TestCommon implements CLIExitCodes {
     
     /**
      * This method is used to execute tests involving 
-     * "famadm update-auth-instance" using input data from the 
+     * "ssoadm update-auth-instance" using input data from the 
      * UpdateAuthInstanceTest.properties file.
      */
     @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
@@ -290,7 +291,7 @@ public class UpdateAuthInstanceTest extends TestCommon implements CLIExitCodes {
                     new Integer(INVALID_OPTION_STATUS).toString())) {
                 expectedMessage = (String) rb.getString("usage");                
                 String argString = cli.getAllArgs().replaceFirst(
-                        cli.getCliPath(), "famadm ");
+                        cli.getCliPath(), "ssoadm ");
                 Object[] params = {argString};
                 String errorMessage = 
                         (String) rb.getString("invalid-usage-message");
@@ -444,8 +445,8 @@ public class UpdateAuthInstanceTest extends TestCommon implements CLIExitCodes {
     
     /**
      * This method remove any authentication instances and realms that were 
-     * created during the setup method using "famadm delete-auth-instances" and 
-     * "famadm delete-realm".
+     * created during the setup method using "ssoadm delete-auth-instances" and 
+     * "ssoadm delete-realm".
      */
     @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void cleanup() 

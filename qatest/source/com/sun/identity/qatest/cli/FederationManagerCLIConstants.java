@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManagerCLIConstants.java,v 1.8 2008-07-30 22:25:54 srivenigan Exp $
+ * $Id: FederationManagerCLIConstants.java,v 1.9 2008-08-12 00:12:52 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,8 +25,8 @@
 package com.sun.identity.qatest.cli;
 
 /**
- * <code>FederationManagerCLIConstants</code> contains strings for the required and 
- * optional arguments used in the famadm CLI.
+ * <code>FederationManagerCLIConstants</code> contains strings for the required 
+ * and optional arguments used in the ssoadm CLI.
  */
 public interface FederationManagerCLIConstants {
     

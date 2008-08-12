@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddMemberTest.java,v 1.6 2008-06-26 20:01:40 rmisra Exp $
+ * $Id: AddMemberTest.java,v 1.7 2008-08-12 00:12:51 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,8 +40,8 @@ import org.testng.Reporter;
 
 /**
  * <code>AddMemberTest</code> is used to execute tests involving the 
- * add-member sub-command of famadm.  This class allows the user to execute
- * "famadm add-member" with a variety or arguments (e.g with short or long 
+ * add-member sub-command of ssoadm.  This class allows the user to execute
+ * "ssoadm add-member" with a variety or arguments (e.g with short or long 
  * options, with a password file or password argument, with a locale argument,
  * with a list of attributes or a datafile containing attributes, etc.) 
  * and a variety of input values.  The properties file 
@@ -95,7 +95,8 @@ public class AddMemberTest extends TestCommon implements CLIExitCodes {
         entering("setup", params);
         try {
             locTestName = testName;
-            rb = ResourceBundle.getBundle("cli" + fileseparator + "AddMemberTest");
+            rb = ResourceBundle.getBundle("cli" + fileseparator + 
+                    "AddMemberTest");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
             setupIdentities = (String)rb.getString(locTestName + 
@@ -178,8 +179,8 @@ public class AddMemberTest extends TestCommon implements CLIExitCodes {
                         } else {
                             assert false;
                             log(Level.SEVERE, "setup", "The setup identity " + 
-                                    setupIdentities + " must have a realm, an " +
-                                    "identity name, and an identity type");
+                                    setupIdentities + " must have a realm, an " 
+                                    + "identity name, and an identity type");
                         }
                     }
                 }
@@ -240,7 +241,7 @@ public class AddMemberTest extends TestCommon implements CLIExitCodes {
     }
     
     /**
-     * This method is used to execute tests involving "famadm create-identities"
+     * This method is used to execute tests involving "ssoadm create-identities"
      * using input data from the AddMemberTest.properties file.
      */
     @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
@@ -347,7 +348,7 @@ public class AddMemberTest extends TestCommon implements CLIExitCodes {
                     new Integer(INVALID_OPTION_STATUS).toString())) {
                 expectedMessage = (String) rb.getString("usage");                
                 String argString = cli.getAllArgs().replaceFirst(
-                        cli.getCliPath(), "famadm ");
+                        cli.getCliPath(), "ssoadm ");
                 Object[] params = {argString};
                 String errorMessage = 
                         (String) rb.getString("invalid-usage-message");
@@ -386,8 +387,8 @@ public class AddMemberTest extends TestCommon implements CLIExitCodes {
     /**
      * This method remove any members, identities, and realms that were created 
      * during the setup and testMemberAddition methods using 
-     * "famadm remove-member", "famadm delete-realm" and 
-     * "famadm delete-identities".
+     * "ssoadm remove-member", "ssoadm delete-realm" and 
+     * "ssoadm delete-identities".
      */
     @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void cleanup() 
@@ -397,7 +398,8 @@ public class AddMemberTest extends TestCommon implements CLIExitCodes {
         entering("cleanup", null);
         try {            
             log(Level.FINEST, "cleanup", "useDebugOption: " + useDebugOption);
-            log(Level.FINEST, "cleanup", "useVerboseOption: " + useVerboseOption);
+            log(Level.FINEST, "cleanup", "useVerboseOption: " + 
+                    useVerboseOption);
             log(Level.FINEST, "cleanup", "useLongOptions: " + useLongOptions);
             
             Reporter.log("UseDebugOption: " + useDebugOption);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateRealmTest.java,v 1.9 2008-06-26 20:01:41 rmisra Exp $
+ * $Id: CreateRealmTest.java,v 1.10 2008-08-12 00:12:51 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,8 +48,8 @@ import org.testng.Reporter;
 
 /**
  * <code>CreateRealmTest</code> is used to execute tests involving the 
- * create-realm sub-command of famadm.  This class allows the user to execute
- * "famadm create-realm" with a variety or arguments (e.g with short or long 
+ * create-realm sub-command of ssoadm.  This class allows the user to execute
+ * "ssoadm create-realm" with a variety or arguments (e.g with short or long 
  * options, with a password file or password argument, with a locale argument,
  * etc.) and a variety of input values.  The properties file 
  * <code>CreateRealmTest.properties</code> contains the input values which are 
@@ -89,7 +89,8 @@ public class CreateRealmTest extends TestCommon implements CLIExitCodes {
         entering("setup", params);
         try {
             locTestName = testName;
-            rb = ResourceBundle.getBundle("cli" + fileseparator + "CreateRealmTest");
+            rb = ResourceBundle.getBundle("cli" + fileseparator + 
+                    "CreateRealmTest");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
             useVerboseOption = ((String)rb.getString(locTestName + 
@@ -129,7 +130,7 @@ public class CreateRealmTest extends TestCommon implements CLIExitCodes {
     }
     
     /**
-     * This method is used to execute tests involving "famadm create-realm"
+     * This method is used to execute tests involving "ssoadm create-realm"
      * using input data from the CreateRealmTest.properties file.
      */
     @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
@@ -199,7 +200,7 @@ public class CreateRealmTest extends TestCommon implements CLIExitCodes {
                         cli.findStringsInError(expectedMessage, ";");
                 } else {
                     String argString = cli.getAllArgs().replaceFirst(
-                            cli.getCliPath(), "famadm ");
+                            cli.getCliPath(), "ssoadm ");
                     Object[] params = {argString};
                     String usageError = MessageFormat.format(expectedMessage, 
                             params);
@@ -222,7 +223,7 @@ public class CreateRealmTest extends TestCommon implements CLIExitCodes {
     
     /**
      * This method remove any realms that were created during the setup and
-     * testRealmCreation methods using "famadm delete-realm".
+     * testRealmCreation methods using "ssoadm delete-realm".
      */
     @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void cleanup() 

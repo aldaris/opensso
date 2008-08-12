@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddRealmAttributesTest.java,v 1.2 2008-06-26 20:01:40 rmisra Exp $
+ * $Id: AddRealmAttributesTest.java,v 1.3 2008-08-12 00:12:51 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,8 +43,8 @@ import org.testng.Reporter;
 
 /**
  * <code>AddRealmAttributesTest</code> is used to execute tests involving the 
- * add-realm-attributes sub-command of famadm.  This class allows the user to 
- * execute "famadm add-realm-attributes" with a variety or arguments (e.g with 
+ * add-realm-attributes sub-command of ssoadm.  This class allows the user to 
+ * execute "ssoadm add-realm-attributes" with a variety or arguments (e.g with 
  * short or long options, with a locale argument, with a list of attributes 
  * or a datafile containing attributes, etc.) and a variety of input values.  
  * The properties file <code>AddRealmAttributesTest.properties</code> contains 
@@ -93,7 +93,8 @@ public class AddRealmAttributesTest extends TestCommon implements CLIExitCodes {
         entering("setup", params);
         try {
             locTestName = testName;
-            rb = ResourceBundle.getBundle("cli" + fileseparator + "AddRealmAttributesTest");
+            rb = ResourceBundle.getBundle("cli" + fileseparator + 
+                    "AddRealmAttributesTest");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
             useVerboseOption = ((String)rb.getString(locTestName + 
@@ -136,7 +137,7 @@ public class AddRealmAttributesTest extends TestCommon implements CLIExitCodes {
     
     /**
      * This method is used to execute tests involving 
-     * "famadm add-realm-attributes" using input data from the 
+     * "ssoadm add-realm-attributes" using input data from the 
      * AddRealmAttributesTest.properties file.
      */
     @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
@@ -245,7 +246,7 @@ public class AddRealmAttributesTest extends TestCommon implements CLIExitCodes {
             } else if (expectedExitCode.equals(
                     new Integer(INVALID_OPTION_STATUS).toString())) {
                 String argString = cli.getAllArgs().replaceFirst(
-                        cli.getCliPath() + fileseparator + "famadm", "famadm ");
+                        cli.getCliPath() + fileseparator + "ssoadm", "ssoadm ");
                 Object[] params = {argString};
                 String errorMessage = 
                         (String) rb.getString("invalid-usage-message");
@@ -296,7 +297,7 @@ public class AddRealmAttributesTest extends TestCommon implements CLIExitCodes {
     /**
      * This method remove any realms and identities that were created during 
      * the setup and testRealmAddAttributeValues methods using 
-     * "famadm delete-realm".
+     * "ssoadm delete-realm".
      */
     @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void cleanup() 
@@ -306,7 +307,8 @@ public class AddRealmAttributesTest extends TestCommon implements CLIExitCodes {
         entering("cleanup", null);
         try {            
             log(Level.FINEST, "cleanup", "useDebugOption: " + useDebugOption);
-            log(Level.FINEST, "cleanup", "useVerboseOption: " + useVerboseOption);
+            log(Level.FINEST, "cleanup", "useVerboseOption: " + 
+                    useVerboseOption);
             log(Level.FINEST, "cleanup", "useLongOptions: " + useLongOptions);
             
             Reporter.log("UseDebugOption: " + useDebugOption);

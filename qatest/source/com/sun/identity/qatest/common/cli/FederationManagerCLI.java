@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManagerCLI.java,v 1.14 2008-07-30 22:28:18 srivenigan Exp $
+ * $Id: FederationManagerCLI.java,v 1.15 2008-08-12 00:16:40 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,13 +41,12 @@ import java.util.Map;
 import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
-import java.util.Vector;
 import java.util.logging.Level;
 
 /**
  * <code>AccessMangerCLI</code> is a utility class which allows the user
- * to invoke the famadm CLI to perform operations which correspond to supported
- * sub-commands of famadm (e.g. create-realm, delete-realm, list-realms,
+ * to invoke the ssoadm CLI to perform operations which correspond to supported
+ * sub-commands of ssoadm (e.g. create-realm, delete-realm, list-realms,
  * create-identity, delete-identity, list-identities, etc.).
  */
 public class FederationManagerCLI extends CLIUtility 
@@ -77,7 +76,7 @@ public class FederationManagerCLI extends CLIUtility
         super(new StringBuffer(cliPath).
                 append(System.getProperty("file.separator")).append(uri).
                 append(System.getProperty("file.separator")).append("bin").
-                append(System.getProperty("file.separator")).append("famadm").
+                append(System.getProperty("file.separator")).append("ssoadm").
                 toString());    
         useLongOptions = useLongOpts;
         try {
@@ -93,15 +92,15 @@ public class FederationManagerCLI extends CLIUtility
     }
     
     /**
-     * Get the absolute path to the famadm CLI.
+     * Get the absolute path to the ssoadm CLI.
      *
-     * @return - the absolute path to famadm.
+     * @return - the absolute path to ssoadm.
      */
     public String getCliPath() {
         return(new StringBuffer(cliPath).
                 append(System.getProperty("file.separator")).append(uri).
                 append(System.getProperty("file.separator")).append("bin").
-                append(System.getProperty("file.separator")).append("famadm").
+                append(System.getProperty("file.separator")).append("ssoadm").
                 toString());
     }
      
@@ -337,7 +336,8 @@ public class FederationManagerCLI extends CLIUtility
         if (useLongOptions) {
             attrNameArg = PREFIX_ARGUMENT_LONG + ATTRIBUTE_NAME_ARGUMENT;
         } else {
-            attrNameArg = PREFIX_ARGUMENT_SHORT + SHORT_ATTRIBUTE_NAMES_ARGUMENT;
+            attrNameArg = PREFIX_ARGUMENT_SHORT + 
+                    SHORT_ATTRIBUTE_NAMES_ARGUMENT;
         }
         addArgument(attrNameArg);
         addArgument(name);
@@ -372,7 +372,8 @@ public class FederationManagerCLI extends CLIUtility
         if (useLongOptions) {
             attrNameArg = PREFIX_ARGUMENT_LONG + ATTRIBUTE_NAMES_ARGUMENT;
         } else {
-            attrNameArg = PREFIX_ARGUMENT_SHORT + SHORT_ATTRIBUTE_NAMES_ARGUMENT;
+            attrNameArg = PREFIX_ARGUMENT_SHORT + 
+                    SHORT_ATTRIBUTE_NAMES_ARGUMENT;
         }
         addArgument(attrNameArg);
         String[] nameList = names.split(";");
@@ -1070,13 +1071,13 @@ public class FederationManagerCLI extends CLIUtility
                 for (String instance: instances) {
                     String[] instanceInfo = instance.split(",");
                     if (instanceInfo.length == 3) {
-                        String realm = instanceInfo[0];
+                        String authRealm = instanceInfo[0];
                         String instanceName = instanceInfo[1];
                         String authType = instanceInfo[2];
                         log(Level.FINE, "createAuthInstances", "Creating auth " + 
                                 "instance " + instance);
-                        int exitStatus = createAuthInstance(realm, instanceName,
-                                authType);
+                        int exitStatus = createAuthInstance(authRealm, 
+                                instanceName, authType);
                         logCommand("createAuthInstances");
                         resetArgList();
                         if (exitStatus != SUCCESS_STATUS) {
@@ -1207,13 +1208,13 @@ public class FederationManagerCLI extends CLIUtility
                 for (String instance: instances) {
                     String[] instanceInfo = instance.split(",", 3);
                     if (instanceInfo.length == 3) {
-                        String realm = instanceInfo[0];
+                        String authRealm = instanceInfo[0];
                         String instanceName = instanceInfo[1];
                         String attributeValues = instanceInfo[2];
-                        log(Level.FINE, "updateAuthInstances", "Creating auth " + 
-                                "instance " + instance);
-                        int exitStatus = updateAuthInstance(realm, instanceName,
-                                attributeValues, false);
+                        log(Level.FINE, "updateAuthInstances", "Creating auth " 
+                                + "instance " + instance);
+                        int exitStatus = updateAuthInstance(authRealm, 
+                                instanceName, attributeValues, false);
                         logCommand("updateAuthInstances");
                         resetArgList();
                         if (exitStatus != SUCCESS_STATUS) {
@@ -1454,9 +1455,9 @@ public class FederationManagerCLI extends CLIUtility
     }
     
     /**
-     * Check to see if a realm exists using the "famadm list-realms" command
+     * Check to see if a realm exists using the "ssoadm list-realms" command
      * @param realmsToFind - the realm or realms to find in the output of 
-     * "famadm list-realms".  Multiple realms should be separated by semi-colons
+     * "ssoadm list-realms".  Multiple realms should be separated by semi-colons
      * (';').
      * @return a boolean value of true if the realm(s) is(are) found and false 
      * if one or more realms is not found.
@@ -1497,7 +1498,7 @@ public class FederationManagerCLI extends CLIUtility
                 }
             } else {
                 log(Level.SEVERE, "findRealms", 
-                        "famadm list-realms command failed");
+                        "ssoadm list-realms command failed");
                 realmsFound = false;
             }
             logCommand("findRealms");
@@ -1509,9 +1510,9 @@ public class FederationManagerCLI extends CLIUtility
     }
     
     /**
-     * Check to see if a realm exists using the "famadm list-realms" command
+     * Check to see if a realm exists using the "ssoadm list-realms" command
      * @param realmsToFind - the realm or realms to find in the output of 
-     * "famadm list-realms".  Multiple realms should be separated by semi-colons
+     * "ssoadm list-realms".  Multiple realms should be separated by semi-colons
      * (';').
      * @return a boolean value of true if the realm(s) is(are) found and false 
      * if one or more realms is not found.
@@ -1522,14 +1523,14 @@ public class FederationManagerCLI extends CLIUtility
     }  
     
     /**
-     * Check to see if an identity exists using the "famadm list-identities" 
+     * Check to see if an identity exists using the "ssoadm list-identities" 
      * command.
      * @param startRealm - the realm in which to find identities
      * @param filter - the filter that will be applied in the search
      * @param type - the type of identities (User, Group, Role) for which the 
      * search will be performed
      * @param idsToFind - the identity or identities to find in the output of 
-     * "famadm list-identities".  Multiple identities should be separated by 
+     * "ssoadm list-identities".  Multiple identities should be separated by 
      * a space (' ').
      * @return a boolean value of true if the identity(ies) is(are) found and 
      * false if one or more identities is not found.
@@ -1584,7 +1585,7 @@ public class FederationManagerCLI extends CLIUtility
                 }
             } else {
                 log(Level.SEVERE, "findIdentities", 
-                        "famadm list-identities command failed");
+                        "ssoadm list-identities command failed");
                 idsFound = false;
             }
             logCommand("findIdentities");
@@ -1596,14 +1597,14 @@ public class FederationManagerCLI extends CLIUtility
     }
 
    /**
-     * Check to see if an identity exists using the "famadm show-members" 
+     * Check to see if an identity exists using the "ssoadm show-members" 
      * command.
      * @param startRealm - the realm in which to find identities
      * @param filter - the filter that will be applied in the search
      * @param type - the type of identities (User, Group, Role) for which the 
      * search will be performed
      * @param membersToFind - the member identity or identities to find in the 
-     * output of "famadm show-members".  Multiple identities should be separated 
+     * output of "ssoadm show-members".  Multiple identities should be separated 
      * by a semicolon (';').
      * @return a boolean value of true if the member(s) is(are) found and 
      * false if one or more members is not found.
@@ -1664,7 +1665,7 @@ public class FederationManagerCLI extends CLIUtility
                 }
             } else {
                 log(Level.SEVERE, "findMembers", 
-                        "famadm show-members command failed");
+                        "ssoadm show-members command failed");
                 membersFound = false;
             }
             logCommand("findMembers");
@@ -1676,14 +1677,14 @@ public class FederationManagerCLI extends CLIUtility
     }    
 
     /**
-     * Check to see if a member exists using the "famadm show-memberships" 
+     * Check to see if a member exists using the "ssoadm show-memberships" 
      * command.
      * @param startRealm - the realm in which to find identities
      * @param filter - the filter that will be applied in the search
      * @param type - the type of identities (User, Group, Role) for which the 
      * search will be performed
      * @param membersToFind - the member identity or identities to find in the 
-     * output of "famadm show-memberships".  Multiple memberships should be 
+     * output of "ssoadm show-memberships".  Multiple memberships should be 
      * separated by a semicolon (';').
      * @return a boolean value of true if the membership(s) is(are) found and 
      * false if one or more memberships is not found.
@@ -1744,7 +1745,7 @@ public class FederationManagerCLI extends CLIUtility
                 }
             } else {
                 log(Level.SEVERE, "findMemberships", 
-                        "famadm show-memberships command failed");
+                        "ssoadm show-memberships command failed");
                 membershipsFound = false;
             }
             logCommand("findMemberships");
@@ -1766,7 +1767,7 @@ public class FederationManagerCLI extends CLIUtility
      * @param attributeValues - a semi-colon delimited list of attribute 
      * name/value pairs.
      * @return a boolean flag indicating whether all of the attribute name/value
-     * pairs are found in the output of the "famadm get-realm" command.
+     * pairs are found in the output of the "ssoadm get-realm" command.
      */
     public boolean findRealmAttributes(String realm, String serviceName, 
             String attributeValues)
@@ -1783,7 +1784,7 @@ public class FederationManagerCLI extends CLIUtility
                                 ";");
                     } else {
                         log(Level.SEVERE, "findRealmAttributes", 
-                                "The famadm get-realm command returned " + 
+                                "The ssoadm get-realm command returned " + 
                                 commandStatus + " as an exit status");
                         attributesFound = false;
                     }
@@ -1819,7 +1820,7 @@ public class FederationManagerCLI extends CLIUtility
      * @param attributeValues - the attribute name/value pair or pairs which 
      * should be found.
      * @return a boolean flag indicating whether all of the attribute name/value
-     * pairs are found in the output of the "famadm get-identity" command.
+     * pairs are found in the output of the "ssoadm get-identity" command.
      */
     public boolean findIdentityAttributes(String realm, String idName, 
             String idType, String attributeNames, String attributeValues)
@@ -1837,7 +1838,7 @@ public class FederationManagerCLI extends CLIUtility
                                 ";");
                     } else {
                         log(Level.SEVERE, "findIdentityAttributes", 
-                                "The famadm get-identity command returned " + 
+                                "The ssoadm get-identity command returned " + 
                                 commandStatus + " as an exit status");
                         attributesFound = false;
                     }
@@ -1869,7 +1870,7 @@ public class FederationManagerCLI extends CLIUtility
      * <auth-instance-name1>,<auth-instance-type1>|<auth-instance-name2>,
      * <auth-instance-type2>
      * @return a boolean flag indicating whether all of the auth instances were
-     * found in the output of the "famadm list-auth-instances command.
+     * found in the output of the "ssoadm list-auth-instances command.
      */
     public boolean findAuthInstances(String realm, String instanceNames)
     throws Exception {
@@ -1907,7 +1908,7 @@ public class FederationManagerCLI extends CLIUtility
                 }
             } else {
                 log(Level.SEVERE, "findAuthInstances", 
-                        "The famadm list-auth-instances command returned " + 
+                        "The ssoadm list-auth-instances command returned " + 
                         commandStatus + " as an exit status");
                 instancesFound = false;
             }
@@ -1929,7 +1930,7 @@ public class FederationManagerCLI extends CLIUtility
      * @param attributeValues - the attribute name/value pair or pairs which 
      * should be found.
      * @return a boolean flag indicating whether all of the attribute name/value
-     * pairs are found in the output of the "famadm get-auth-instance" command.
+     * pairs are found in the output of the "ssoadm get-auth-instance" command.
      */
     public boolean findAuthInstanceAttributes(String realm, 
             String instanceName, String attributeValues)
@@ -1946,7 +1947,7 @@ public class FederationManagerCLI extends CLIUtility
                                 ";");
                     } else {
                         log(Level.SEVERE, "findAuthInstanceAttributes", 
-                                "The famadm get-auth-instance command returned "
+                                "The ssoadm get-auth-instance command returned "
                                 + commandStatus + " as an exit status");
                         attributesFound = false;
                     }
@@ -1954,7 +1955,7 @@ public class FederationManagerCLI extends CLIUtility
                     log(Level.SEVERE, "findAuthInstanceAttributes", 
                             "The attribute value list is not valid");
                     attributesFound = false;
-                }
+                }                        
             } else {
                 log(Level.SEVERE, "findAuthInstanceAttributes", 
                         "The instance name is not valid");

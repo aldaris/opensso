@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteIdentitiesTest.java,v 1.6 2008-06-26 20:01:41 rmisra Exp $
+ * $Id: DeleteIdentitiesTest.java,v 1.7 2008-08-12 00:12:52 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -46,7 +46,6 @@ import com.sun.identity.qatest.common.cli.CLIExitCodes;
 import com.sun.identity.qatest.common.cli.FederationManagerCLI;
 import com.sun.identity.qatest.common.TestCommon;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -61,8 +60,8 @@ import org.testng.Reporter;
 
 /**
  * <code>DeleteIdentitiesTest</code> is used to execute tests involving the 
- * delete-identities sub-command of famadm.  This class allows the user to 
- * execute "famadm delete-identities" with a variety or arguments (e.g with 
+ * delete-identities sub-command of ssoadm.  This class allows the user to 
+ * execute "ssoadm delete-identities" with a variety or arguments (e.g with 
  * short or long options, with a locale argument, with a list of attributes 
  * or a datafile containing attributes, etc.) and a variety of input values.  
  * The properties file <code>DeleteIdentitiesTest.properties</code> contains 
@@ -107,7 +106,8 @@ public class DeleteIdentitiesTest extends TestCommon implements CLIExitCodes {
         entering("setup", params);
         try {
             locTestName = testName;
-            rb = ResourceBundle.getBundle("cli" + fileseparator + "DeleteIdentitiesTest");
+            rb = ResourceBundle.getBundle("cli" + fileseparator + 
+                    "DeleteIdentitiesTest");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
             setupIdentities = (String)rb.getString(locTestName + 
@@ -197,7 +197,7 @@ public class DeleteIdentitiesTest extends TestCommon implements CLIExitCodes {
     }
     
     /**
-     * This method is used to execute tests involving "famadm delete-identities"
+     * This method is used to execute tests involving "ssoadm delete-identities"
      * using input data from the DeleteIdentitiesTest.properties file.
      */
     @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
@@ -261,7 +261,7 @@ public class DeleteIdentitiesTest extends TestCommon implements CLIExitCodes {
             } else if (expectedExitCode.equals(
                     new Integer(INVALID_OPTION_STATUS).toString())) {
                 String argString = cli.getAllArgs().replaceFirst(
-                        cli.getCliPath(), "famadm ");
+                        cli.getCliPath(), "ssoadm ");
                 Object[] params = {argString};
                 String usageError = MessageFormat.format(expectedMessage, 
                         params);
@@ -360,7 +360,7 @@ public class DeleteIdentitiesTest extends TestCommon implements CLIExitCodes {
     /**
      * This method remove any realms and identities that were created during 
      * the setup and testIdentityDeletion methods using 
-     * "famadm delete-realm" and "famadm delete-identities".
+     * "ssoadm delete-realm" and "ssoadm delete-identities".
      */
     @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void cleanup() 

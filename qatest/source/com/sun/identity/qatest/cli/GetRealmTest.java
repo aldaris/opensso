@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetRealmTest.java,v 1.3 2008-06-26 20:01:41 rmisra Exp $
+ * $Id: GetRealmTest.java,v 1.4 2008-08-12 00:12:52 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -43,8 +43,8 @@ import org.testng.Reporter;
 
 /**
  * <code>GetRealmTest</code> is used to execute tests involving the 
- * get-realm sub-command of famadm.  This class allows the user to execute 
- * "famadm get-realm" with short or long options and a variety of input values.  
+ * get-realm sub-command of ssoadm.  This class allows the user to execute 
+ * "ssoadm get-realm" with short or long options and a variety of input values.  
  * The properties file <code>GetRealmTest.properties</code> contains 
  * the input values which are read by this class.
  *
@@ -90,7 +90,8 @@ public class GetRealmTest extends TestCommon implements CLIExitCodes {
         entering("setup", params);
         try {
             locTestName = testName;
-            rb = ResourceBundle.getBundle("cli" + fileseparator + "GetRealmTest");
+            rb = ResourceBundle.getBundle("cli" + fileseparator + 
+                    "GetRealmTest");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
             useVerboseOption = ((String)rb.getString(locTestName + 
@@ -167,7 +168,7 @@ public class GetRealmTest extends TestCommon implements CLIExitCodes {
     
     /**
      * This method is used to execute tests involving 
-     * "famadm get-realm" using input data from the 
+     * "ssoadm get-realm" using input data from the 
      * GetRealmTest.properties file.
      */
     @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
@@ -262,7 +263,7 @@ public class GetRealmTest extends TestCommon implements CLIExitCodes {
             } else if (expectedExitCode.equals(
                     new Integer(INVALID_OPTION_STATUS).toString())) {
                 String argString = cli.getAllArgs().replaceFirst(
-                        cli.getCliPath() + fileseparator + "famadm", "famadm ");
+                        cli.getCliPath() + fileseparator + "ssoadm", "ssoadm ");
                 Object[] params = {argString};
                 String errorMessage = 
                         (String) rb.getString("invalid-usage-message");
@@ -324,7 +325,7 @@ public class GetRealmTest extends TestCommon implements CLIExitCodes {
     /**
      * This method remove any realms and identities that were created during 
      * the setup and testRealmGetAttributeValues methods using 
-     * famadm delete-realm".
+     * ssoadm delete-realm".
      */
     @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void cleanup() 
@@ -334,7 +335,8 @@ public class GetRealmTest extends TestCommon implements CLIExitCodes {
         entering("cleanup", null);
         try {            
             log(Level.FINEST, "cleanup", "useDebugOption: " + useDebugOption);
-            log(Level.FINEST, "cleanup", "useVerboseOption: " + useVerboseOption);
+            log(Level.FINEST, "cleanup", "useVerboseOption: " + 
+                    useVerboseOption);
             log(Level.FINEST, "cleanup", "useLongOptions: " + useLongOptions);
             
             Reporter.log("UseDebugOption: " + useDebugOption);
