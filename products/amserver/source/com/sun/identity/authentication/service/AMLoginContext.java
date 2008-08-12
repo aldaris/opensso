@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginContext.java,v 1.13 2008-06-25 05:42:04 qcheng Exp $
+ * $Id: AMLoginContext.java,v 1.14 2008-08-12 22:13:10 manish_rustagi Exp $
  *
  */
 
@@ -332,7 +332,19 @@ public class AMLoginContext {
             if (debug.messageEnabled()) {
                 debug.message("AuthLoginException", ae);
             }
-            loginState.setErrorCode(ae.getErrorCode());
+            /* The user based authentication errors should not be different
+             * for users who exist and who don't, which can lead to 
+             * possiblity of enumerating existing users.
+             * The AMAuthErrorCode.AUTH_LOGIN_FAILED error code is used for
+             * all user based authentication errors.
+             * Refer issue3278 
+             */
+            if(indexType == AuthContext.IndexType.USER &&
+            AMAuthErrorCode.AUTH_CONFIG_NOT_FOUND.equals(ae.getErrorCode())){
+                loginState.setErrorCode(AMAuthErrorCode.AUTH_LOGIN_FAILED);
+            }else{
+                loginState.setErrorCode(ae.getErrorCode());
+            }
             setErrorMsgAndTemplate();
             loginState.logFailed(bundle.getString("loginContextCreateFailed"));
             internalAuthError=true;
@@ -1673,7 +1685,14 @@ public class AMLoginContext {
                 debug.message("User is not active");
                 loginState.logFailed(
                     bundle.getString("userInactive"),"USERINACTIVE");
-                loginState.setErrorCode(AMAuthErrorCode.AUTH_USER_INACTIVE) ;
+                /* The user based authentication errors should not be different
+                 * for users who exist and who don't, which can lead to 
+                 * possiblity of enumerating existing users.
+                 * The AMAuthErrorCode.AUTH_LOGIN_FAILED error code is used for
+                 * all user based authentication errors.
+                 * Refer issue3278 
+                 */                
+                loginState.setErrorCode(AMAuthErrorCode.AUTH_LOGIN_FAILED) ;
                 setErrorMsgAndTemplate();
                 //destroySession();
                 st.setStatus(LoginStatus.AUTH_FAILED);
