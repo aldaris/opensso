@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneDS5Impl.java,v 1.3 2008-07-25 05:48:57 kanduls Exp $
+ * $Id: TuneDS5Impl.java,v 1.4 2008-08-12 05:23:17 kanduls Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -256,12 +256,20 @@ public class TuneDS5Impl extends AMTuneDSBase {
             LDAPAttributeSet attrSet = new LDAPAttributeSet(attrs);
             LDAPEntry newIdxEntry = new LDAPEntry(newDn, attrSet);
             addLDAPEntry(newIdxEntry);
-            String perlExePath = configInfo.getPerlBinDir() + FILE_SEP +
-                    "perl.exe ";
+            String perlExePath = dsConfInfo.getPerlBinDir() + FILE_SEP;
+            if (AMTuneUtil.isWindows()) {
+                    perlExePath += "perl.exe ";
+                } else {
+                    perlExePath += "perl ";
+                }
             File pexe = new File (perlExePath);
             if (!pexe.isFile()) {
                 //Assuming perl is in system path
-                perlExePath = "perl.exe ";
+                if (AMTuneUtil.isWindows()) {
+                    perlExePath = "perl.exe ";
+                } else {
+                    perlExePath = "perl ";
+                }
             }
             String idxCmd = perlExePath + db2IndexPath + "-D \"" +
                     dsConfInfo.getDirMgrUid() + "\" -j " + dsPassFilePath +
