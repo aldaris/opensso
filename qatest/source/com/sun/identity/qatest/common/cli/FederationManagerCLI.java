@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManagerCLI.java,v 1.15 2008-08-12 00:16:40 cmwesley Exp $
+ * $Id: FederationManagerCLI.java,v 1.16 2008-08-12 21:45:40 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -446,6 +446,56 @@ public class FederationManagerCLI extends CLIUtility
        addArgument(revArg);
        addArgument(revisionNumber);
    }
+   
+    /** 
+     * Adds the "--type" argument and type value to the argument list
+     * @param agentType - the agent type value to add to the argument list
+     */
+    private void addAgentTypeArguments(String agentType) {
+        String agentTypeArg;
+
+        if (useLongOptions) {
+            agentTypeArg = PREFIX_ARGUMENT_LONG + AGENTTYPE_ARGUMENT;
+        } else {
+            agentTypeArg = PREFIX_ARGUMENT_SHORT + SHORT_AGENTTYPE_ARGUMENT;
+        }
+        addArgument(agentTypeArg);
+        addArgument(agentType);
+    }
+
+    /**
+     * Adds the "--agentname" or (-b) and agent name arguments to the argument 
+     * list.
+     * @param name - the name of the agent to add to the argument list
+     */
+    private void addAgentNameArguments(String name) {
+        String agentnameArg;
+        if (useLongOptions) {
+            agentnameArg = PREFIX_ARGUMENT_LONG + AGENTNAME_ARGUMENT;
+        } else {
+            agentnameArg = PREFIX_ARGUMENT_SHORT + SHORT_AGENTNAME_ARGUMENT;
+        }
+        addArgument(agentnameArg);
+        addArgument(name);
+    }
+    
+    /**
+     * Add the "--agentnames" argument and value to the argument list
+     * @param name - the names of the agent to add to the argument list
+     */
+    private void addAgentNamesArguments(String names) {
+        String agentNamesArg;
+        if (useLongOptions) {
+            agentNamesArg = PREFIX_ARGUMENT_LONG + AGENTNAMES_ARGUMENT;
+        } else {
+            agentNamesArg = PREFIX_ARGUMENT_SHORT + SHORT_AGENTNAMES_ARGUMENT;
+        }
+        addArgument(agentNamesArg);
+        StringTokenizer tokenizer = new StringTokenizer(names);
+        while (tokenizer.hasMoreTokens()) {
+            addArgument(tokenizer.nextToken());
+        }
+    }
     
     /**
      * Create a new realm.
@@ -1968,4 +2018,176 @@ public class FederationManagerCLI extends CLIUtility
         }
         return attributesFound;
     }    
+
+    /**
+     * Create an agent in a realm
+     * @param realm - the realm in which to create the agent
+     * @param name - the name of the agent to be created
+     * @param type - the type of agent to be created (e.g. "J2EEAgent", 
+     * "WebAgent", "2.2_Agent")
+     * @param attributeValues - a string containing the attribute values for the 
+     * agent to be created
+     * @param useAttributeValues - a boolean flag indicating whether the 
+     * "--attributevalues" option should be used 
+     * @param useDatafile - a boolean flag indicating whether the attribute 
+     * values should be written to a file and passed to the CLI using the 
+     * "--datafile <file-path>" arguments
+     * @return the exit status of the "create-agent" command
+     */
+    public int createAgent(String realm, String name, String type, 
+            String attributeValues, boolean useAttributeValues, 
+            boolean useDatafile) 
+    throws Exception {
+        setSubcommand(CREATE_AGENT_SUBCOMMAND);
+        addRealmArguments(realm);
+        addAgentTypeArguments(type);
+        addAgentNameArguments(name);
+        
+        if (attributeValues != null) {
+            if (useAttributeValues) {
+                addAttributevaluesArguments(attributeValues);
+            } 
+            if (useDatafile) {
+                addDatafileArguments(attributeValues, "agentAttrValues", 
+                        ".txt");
+            }
+        }
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));
+    }
+
+    /**
+     * Create an agent in a realm
+     * @param realm - the realm in which to create the agent
+     * @param name - the name of the agent to be created
+     * @param type - the type of agent to be created (e.g. "J2EEAgent", 
+     * "WebAgent", "2.2_Agent")
+     * @param attributeValues - a string containing the attribute values for the 
+     * agent to be created
+     */
+    public int createAgent(String realm, String name, String type, 
+            String attributeValues) 
+    throws Exception {
+        return createAgent(realm, name, type, attributeValues, true, false);
+    }
+ 
+    /**
+     * List the agents in a particular realm
+     * @param realm - the realm in which to start the search for agents
+     * @param filter - the filter to apply in the search for agents
+     * @param agentType - the type of agents (e.g. "J2EEAgent", "WebAgent", 
+     * "2.2_Agent") for which the search sould be performed
+     * @return the exit status of the "list-agents" command
+     */
+    public int listAgents(String realm, String agentType, String filter)
+    throws Exception {
+        setSubcommand(LIST_AGENT_SUBCOMMAND);
+        addRealmArguments(realm);
+        if (filter != null) {
+            addFilterArguments(filter);
+        }
+        if (agentType != null) {
+            addAgentTypeArguments(agentType);            
+        }
+
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));
+    }
+    
+    /**
+     * Delete one or more agents in a realm
+     * @param realm - the realm from which the agents should be deleted
+     * @param names - one or more agents names to be deleted
+     * @param type - the type of the agent(s) to be deleted
+     * @return the exit status of the "delete-agents" command
+     */
+    public int deleteAgents(String realm, String names, String type)
+    throws Exception {
+        setSubcommand(DELETE_AGENTS_SUBCOMMAND);
+        addRealmArguments(realm);
+        addAgentNamesArguments(names);
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));
+    }
+
+    /**
+     * Check to see if an agent exists using the "ssoadm list-agents" 
+     * command.
+     * @param startRealm - the realm in which to find agents
+     * @param filter - the filter that will be applied in the search
+     * @param type - the type of agents (e.g. "J2EEAgent", "WebAgent", 
+     * "2.2_Agent") for which the search will be performed
+     * @param agentsToFind - the agent or agents to find in the output of 
+     * "ssoadm list-agents".  Multiple agents should be separated by 
+     * a space (' ').
+     * @return a boolean value of true if the agent(s) is(are) found and 
+     * false if one or more agents is not found.
+     * Eg: agent in root realm
+     * test1 (id=test1,ou=agentonly,dc=red,dc=iplanet,dc=com)
+     * Eg: agent in secondary realm
+     * test1 (id=test1,ou=agentonly,o=showmembersrealm1,ou=services,
+     * dc=red,dc=iplanet,dc=com)
+     */
+    public boolean findAgents(String startRealm, String filter, String type,
+            String agentsToFind)
+    throws Exception {
+        boolean agentsFound = true;
+        
+        if ((agentsToFind != null) && (agentsToFind.length() > 0)) {
+            if (listAgents(startRealm, type, filter) == SUCCESS_STATUS) {
+                String [] ids = agentsToFind.split(";");
+                for (int i=0; i < ids.length; i++) {
+                    String token = ids[i];
+                    String rootDN = "";
+                    if (token != null) {
+                        if (startRealm.equals(TestCommon.realm)) {
+                            rootDN = TestCommon.basedn; 
+                        } else {
+                            String [] realms = startRealm.split("/");
+                            StringBuffer buffer = new StringBuffer();
+                            for (int j = realms.length-1; j >= 0; j--) {
+                                if (realms[j].length() > 0) {
+                                    buffer.append("o=" + realms[j] + ",");
+                                }
+                            }
+                            buffer.append("ou=services,").
+                                    append(TestCommon.basedn);
+                            rootDN = buffer.toString();
+                        }
+                        if (token.length() > 0) {
+                            String idString = token + " (id=" + token + ",ou=" + 
+                                    "agentonly" + "," + rootDN + ")";
+                            log(Level.SEVERE, "findAgents", "idString=" + 
+                                    idString);
+                            if (!findStringInOutput(idString)) {
+                                log(Level.SEVERE, "findAgents", "String \'" + 
+                                        idString + "\' was not found.");
+                                agentsFound = false;
+                            } else {
+                                log(Level.FINE, "findAgents", type + 
+                                        " agents " + token + " was found.");
+                            }
+                        } else {
+                            log(Level.SEVERE, "findAgents", 
+                                    "The agents to find is empty.");
+                            agentsFound = false;
+                        }
+                    } else {
+                        log(Level.SEVERE, "findAgents", 
+                                "Agent in agentsToFind is null.");
+                        agentsFound = false;
+                    }
+                }
+            } else {
+                log(Level.SEVERE, "findAgents", 
+                        "ssoadm list-agents command failed");
+                agentsFound = false;
+            }
+            logCommand("findAgents");            
+        } else {
+            log(Level.SEVERE, "findAgents", "agentsToFind is null or empty");
+            agentsFound = false;
+        }
+        return agentsFound;
+ }
 }

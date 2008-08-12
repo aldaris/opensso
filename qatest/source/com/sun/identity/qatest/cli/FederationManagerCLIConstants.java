@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManagerCLIConstants.java,v 1.9 2008-08-12 00:12:52 cmwesley Exp $
+ * $Id: FederationManagerCLIConstants.java,v 1.10 2008-08-12 21:44:37 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -225,4 +225,34 @@ public interface FederationManagerCLIConstants {
      */
     String SHORT_REVISION_NO_ARGUMENT = "r";
     
+    /**
+     * agenttype argument/option
+     */
+    String AGENTTYPE_ARGUMENT = "agenttype";
+    
+    /**
+     * Short agenttype argument/option
+     */
+    String SHORT_AGENTTYPE_ARGUMENT = "t";
+
+    /**
+     * agenttype argument/option
+     */
+    String AGENTNAME_ARGUMENT = "agentname";
+    
+    /**
+     * Short agenttype argument/option
+     */
+    String SHORT_AGENTNAME_ARGUMENT = "b";
+    
+    /**
+     * agenttype argument/option
+     */
+    String AGENTNAMES_ARGUMENT = "agentnames";
+    
+    /**
+     * Short agenttype argument/option
+     */
+    String SHORT_AGENTNAMES_ARGUMENT = "s";
+
 }

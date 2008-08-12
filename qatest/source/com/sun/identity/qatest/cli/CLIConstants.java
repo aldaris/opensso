@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIConstants.java,v 1.7 2008-08-12 00:12:51 cmwesley Exp $
+ * $Id: CLIConstants.java,v 1.8 2008-08-12 21:45:08 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -272,7 +272,7 @@ public interface CLIConstants {
      */
     public static final String SET_SERVICE_ATTRIBUTES_SUBCOMMAND = 
             "set-svc-attrs";
-    
+
     /**
      * String for the "get-revision-number"
      */
@@ -284,4 +284,22 @@ public interface CLIConstants {
      */
     public static final String SET_REVISION_NUMBER_SUBCOMMAND = 
             "set-revision-number";
+
+    /**
+     * String for the "create-agent"
+     */
+    public static final String CREATE_AGENT_SUBCOMMAND = 
+            "create-agent";
+
+    /**
+     * String for the "list-agent"
+     */
+    public static final String LIST_AGENT_SUBCOMMAND = 
+            "list-agents";
+
+    /**
+     * String for the "delete-identities" sub-command
+     */
+    public static final String DELETE_AGENTS_SUBCOMMAND = 
+            "delete-agents";
 }
