@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneFAM8Impl.java,v 1.5 2008-07-29 05:00:13 kanduls Exp $
+ * $Id: TuneFAM8Impl.java,v 1.6 2008-08-12 05:24:41 kanduls Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -32,8 +32,12 @@ import com.sun.identity.tune.common.FileHandler;
 import com.sun.identity.tune.common.AMTuneException;
 import com.sun.identity.tune.config.AMTuneConfigInfo;
 import com.sun.identity.tune.util.AMTuneUtil;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +72,7 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
     public void startTuning() 
     throws AMTuneException {
         try {
+            int noDataStores = 0;
             pLogger.log(Level.FINE, "startTuning",
                 "Start tuning OpenSSO Enterprise.");
             mWriter.writeln(CHAPTER_SEP);
@@ -92,14 +97,29 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
             }
             List realmList = configInfo.getRealms();
             Iterator realmItr = realmList.iterator();
+            Map dataStoreMap = new HashMap();
             while (realmItr.hasNext()) {
                 String curRealm = realmItr.next().toString();
                 if (curRealm != null & curRealm.trim().length() > 0) {
                     List dataStoreList = getDataStoreList(curRealm);
-                    Iterator dtItr = dataStoreList.iterator();
-                    while (dtItr.hasNext()) {
-                        tuneRealmDataStoreConfig(dtItr.next().toString(), 
+                    noDataStores += dataStoreList.size();
+                    dataStoreMap.put(curRealm, dataStoreList);
+                }
+            }
+            int sCacheSize = configInfo.getSessionCacheSize() * 1024 * 1024;
+            if (noDataStores > 0 && !dataStoreMap.isEmpty()) {
+                int maxCacheSizeForEachDataStore = sCacheSize / noDataStores;
+                realmItr = realmList.iterator();
+                while (realmItr.hasNext()) {
+                    String curRealm = realmItr.next().toString();
+                    if (curRealm != null & curRealm.trim().length() > 0) {
+                        List dataStoreList = (ArrayList) dataStoreMap.get(
                                 curRealm);
+                        Iterator dtItr = dataStoreList.iterator();
+                        while (dtItr.hasNext()) {
+                            tuneRealmDataStoreConfig(dtItr.next().toString(),
+                                    curRealm, maxCacheSizeForEachDataStore);
+                        }
                     }
                 }
             }
@@ -276,7 +296,7 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
             getCmd.append(GET_SVRCFG_XML_SUB_CMD);
             getCmd.append(famadmCommonParamsNoServer);
             getCmd.append(" ");
-            getCmd.append(FAMADM_SERVER);
+            getCmd.append(SERVER_NAME_OPT);
             getCmd.append(" ");
             getCmd.append(configInfo.getFAMServerUrl());
             getCmd.append(" ");
@@ -331,7 +351,7 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
                     curMaxConnPool.equals(newMaxPool))) {
                 return;
             }
-            AMTuneUtil.backupConfigFile(tuneFile, "conf-fam-backup");
+            AMTuneUtil.backupConfigFile(tuneFile, OPENSSO_SERVER_BACKUP_DIR);
             int lineNo = fh.getLineNum(SMS_ELEMENT);
             reqLine = fh.getLine(SMS_ELEMENT);
             reqLine = reqLine.replace(MIN_CONN_POOL + "=\"" + curMinConnPool + 
@@ -369,7 +389,7 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
             setCmd.append(SET_SVRCFG_XML_SUB_CMD);
             setCmd.append(famadmCommonParamsNoServer);
             setCmd.append(" ");
-            setCmd.append(FAMADM_SERVER);
+            setCmd.append(SERVER_NAME_OPT);
             setCmd.append(" ");
             setCmd.append(configInfo.getFAMServerUrl());
             setCmd.append(" ");
@@ -497,26 +517,99 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
      * iPlanetAMAuthLDAPService for Default Org
      * 
      */
-    protected void tuneLDAPSearchCriteriaForDefaultOrg() {
+    protected void tuneLDAPSearchCriteriaForDefaultOrg() 
+    throws AMTuneException {
+        try {
+            String recLdapScope = "OBJECT";
+            mWriter.writeln(LINE_SEP);
+            mWriter.writelnLocaleMsg("pt-fam-tuning-ldap-search-criteria");
+            mWriter.writeln(" ");
 
-        mWriter.writeln(LINE_SEP);
-        mWriter.writelnLocaleMsg("pt-fam-tuning-ldap-search-criteria");
-        mWriter.writeln(" ");
-
-        mWriter.writeln("Service              : iPlanetAMAuthLDAPService for " +
-                "Org");
-        mWriter.writeln("SchemaType           : organization");
-        mWriter.writelnLocaleMsg("pt-param-tuning");
-        mWriter.writeln(" ");
-        mWriter.writelnLocaleMsg("pt-fam-rec-tuning-msg");
-        mWriter.writelnLocaleMsg("pt-fam-tuning-ldap-search-change-step");
-        mWriter.writeln(" ");
-        mWriter.writeln("1.   " + LDAP_SEARCH_SCOPE);
-        mWriter.writeLocaleMsg("pt-rec-val");
-        mWriter.writeln(LDAP_SEARCH_SCOPE + "=OBJECT");
-        mWriter.writeln(" ");
-        mWriter.writeln(" ");
-
+            mWriter.writeln("Service              : " +  AUTH_LDAP_SVC + 
+                    " for Org");
+            mWriter.writeln("SchemaType           : organization");
+            mWriter.writelnLocaleMsg("pt-param-tuning");
+            mWriter.writeln(" ");
+            StringBuffer getAttrDefs = new StringBuffer(famCmdPath);
+            getAttrDefs.append(GET_ATTR_DEFS_SUB_CMD);
+            getAttrDefs.append(" ");
+            getAttrDefs.append(SERVICE_NAME_OPT);
+            getAttrDefs.append(" ");
+            getAttrDefs.append(AUTH_LDAP_SVC);
+            getAttrDefs.append(" ");
+            getAttrDefs.append(SCHEMA_TYPE_OPT);
+            getAttrDefs.append(" ");
+            getAttrDefs.append(ORG_SCHEMA);
+            getAttrDefs.append(" ");
+            getAttrDefs.append(ATTR_NAMES_OPT);
+            getAttrDefs.append(" ");
+            getAttrDefs.append(LDAP_SEARCH_SCOPE);
+            getAttrDefs.append(famadmCommonParamsNoServer);
+            StringBuffer rBuff = new StringBuffer();
+            int extVal = AMTuneUtil.executeCommand(getAttrDefs.toString(),
+                    rBuff);
+            if (extVal == -1) {
+                pLogger.log(Level.SEVERE, "tuneLDAPSearchCriteriaForDefaultOrg",
+                        "Error getting ldap search scope.");
+                throw new AMTuneException("Error executing ssoadm cmd " +
+                        GET_ATTR_DEFS_SUB_CMD);
+            }
+            StringTokenizer str = new StringTokenizer(rBuff.toString(), "\n");
+            String curLdapScopeVal = "";
+            while (str.hasMoreTokens()) {
+                String reqLine = str.nextToken();
+                if (reqLine.indexOf(LDAP_SEARCH_SCOPE) != -1) {
+                    curLdapScopeVal = AMTuneUtil.getLastToken(reqLine,
+                            PARAM_VAL_DELIM);
+                }
+            }
+            mWriter.writeln("1.   " + LDAP_SEARCH_SCOPE);
+            mWriter.writeLocaleMsg("pt-cur-val");
+            mWriter.writeln(LDAP_SEARCH_SCOPE + "=" + curLdapScopeVal);
+            mWriter.writeLocaleMsg("pt-rec-val");
+            mWriter.writeln(LDAP_SEARCH_SCOPE + "=" + recLdapScope);
+            mWriter.writeln(" ");
+            mWriter.writeln(" ");
+            if (configInfo.isReviewMode() || 
+                    curLdapScopeVal.equals(recLdapScope)) {
+                return;
+            }
+            StringBuffer setCmd = new StringBuffer(famCmdPath);
+            setCmd.append(SET_ATTR_DEFS_SUB_CMD);
+            setCmd.append(famadmCommonParamsNoServer);
+            setCmd.append(" ");
+            setCmd.append(SERVICE_NAME_OPT);
+            setCmd.append(" ");
+            setCmd.append(AUTH_LDAP_SVC);
+            setCmd.append(" ");
+            setCmd.append(SCHEMA_TYPE_OPT);
+            setCmd.append(" ");
+            setCmd.append(ORG_SCHEMA);
+            setCmd.append(" ");
+            setCmd.append(ATTR_VALUES_OPT);
+            if (!AMTuneUtil.isWindows()) {
+                setCmd.append(" ");
+                setCmd.append(LDAP_SEARCH_SCOPE);
+                setCmd.append("=");
+                setCmd.append(recLdapScope);
+            } else {
+                setCmd.append(" \"");
+                setCmd.append(LDAP_SEARCH_SCOPE);
+                setCmd.append("=");
+                setCmd.append(recLdapScope);
+                setCmd.append("\"");
+            }
+            rBuff.setLength(0);
+            extVal = AMTuneUtil.executeCommand(setCmd.toString(), rBuff);
+            if (extVal == -1) {
+                pLogger.log(Level.SEVERE, "tuneLDAPSearchCriteriaForDefaultOrg",
+                        "Error setting ldap search scope.");
+                throw new AMTuneException("Error executing ssoadm cmd " +
+                        SET_ATTR_DEFS_SUB_CMD);
+            }
+        } catch (Exception ex) {
+            throw new AMTuneException(ex.getMessage());
+        }
     }
     
     /**
@@ -524,36 +617,124 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
      * iPlanetAMSessionService...
      */
     protected void tuneSessionTimeouts() {
+        List realmList = configInfo.getRealms();
+        Iterator realmItr = realmList.iterator();
+        int rVl = 0;
+        int cVl = 0;
+        File sessionDtFile = null;
+        BufferedWriter bw = null;
+        boolean valDiffer = false;
         mWriter.writeln(LINE_SEP);
         mWriter.writelnLocaleMsg("pt-fam-tuning-session-svc");
         mWriter.writeln(" ");
-        mWriter.writeln("Service              : iPlanetAMSessionService");
-        mWriter.writeln("SchemaType           : Dynamic");
         mWriter.writelnLocaleMsg("pt-param-tuning");
         mWriter.writeln(" ");
-        mWriter.writelnLocaleMsg("pt-fam-rec-tuning-msg");
-        mWriter.writelnLocaleMsg("pt-fam-tuning-session-change-step");
-
-        mWriter.writeln("1.   " + MAX_SESSION_TIME);
-        mWriter.writeLocaleMsg("pt-rec-val");
-        mWriter.writeln(MAX_SESSION_TIME + "=" +
-                configInfo.getFAMTuneSessionMaxSessionTimeInMts());
-        mWriter.writeln(" ");
-        mWriter.writeln("2.   " + MAX_IDLE_TIME);
-        mWriter.writeLocaleMsg("pt-rec-val");
-        mWriter.writeln(MAX_IDLE_TIME + "=" +
-                configInfo.getFAMTuneSessionMaxIdleTimeInMts());
-        mWriter.writeln(" ");
-        mWriter.writeln("3.   " + MAX_CACHING_TIME);
-        mWriter.writeLocaleMsg("pt-rec-val");
-        mWriter.writeln(MAX_CACHING_TIME + "=" +
-                configInfo.getFAMTuneSessionMaxCachingTimeInMts());
-        mWriter.writeln(" ");
-        mWriter.writeln(" ");
+        try {
+            while (realmItr.hasNext()) {
+                String curRealm = realmItr.next().toString();
+                if (curRealm != null & curRealm.trim().length() > 0) {
+                    mWriter.writeln("Realm Name " + curRealm + ":");
+                    sessionDtFile = new File(AMTuneUtil.TMP_DIR + "sSVals.txt");
+                    Map curSessionValues = getSessionServiceAttrVals(curRealm);
+                    bw = new BufferedWriter(new FileWriter(sessionDtFile));
+                    if (curSessionValues != null && 
+                            !curSessionValues.isEmpty()) {
+                        mWriter.writeln("1.   " + MAX_SESSION_TIME);
+                        mWriter.writeLocaleMsg("pt-cur-val");
+                        cVl = Integer.parseInt(
+                                curSessionValues.get(MAX_SESSION_TIME).
+                                toString());
+                        mWriter.writeln(MAX_SESSION_TIME + "=" + cVl);
+                        mWriter.writeLocaleMsg("pt-rec-val");
+                        rVl = configInfo.getFAMTuneSessionMaxSessionTimeInMts();
+                        mWriter.writeln(MAX_SESSION_TIME + "=" + rVl);
+                        if (cVl != rVl) {
+                            bw.write(MAX_SESSION_TIME + "=" + rVl + "\n");
+                            valDiffer = true;
+                        } 
+                        mWriter.writeln(" ");
+                        mWriter.writeln("2.   " + MAX_IDLE_TIME);
+                        mWriter.writeLocaleMsg("pt-cur-val");
+                        cVl = Integer.parseInt(
+                                curSessionValues.get(MAX_IDLE_TIME).toString());
+                        mWriter.writeln(MAX_IDLE_TIME + "=" + cVl);
+                        mWriter.writeLocaleMsg("pt-rec-val");
+                        rVl = configInfo.getFAMTuneSessionMaxIdleTimeInMts();
+                        mWriter.writeln(MAX_IDLE_TIME + "=" + rVl);
+                        if (cVl != rVl) {
+                            bw.write(MAX_IDLE_TIME + "=" + rVl + "\n");
+                            valDiffer = true;
+                        }
+                        mWriter.writeln(" ");
+                        mWriter.writeln("3.   " + MAX_CACHING_TIME);
+                        mWriter.writeLocaleMsg("pt-cur-val");
+                        cVl = Integer.parseInt(
+                                curSessionValues.get(MAX_CACHING_TIME).
+                                toString());
+                        mWriter.writeln(MAX_CACHING_TIME + "=" + cVl);
+                        mWriter.writeLocaleMsg("pt-rec-val");
+                        rVl = configInfo.getFAMTuneSessionMaxCachingTimeInMts();
+                        mWriter.writeln(MAX_CACHING_TIME + "=" + rVl);
+                        if (cVl != rVl) {
+                            bw.write(MAX_CACHING_TIME + "=" + rVl + "\n");
+                            valDiffer = true;
+                        }
+                        bw.close();
+                        mWriter.writeln(" ");
+                        mWriter.writeln(" ");
+                        if (!configInfo.isReviewMode() && valDiffer) {
+                            StringBuffer setSessionVals = 
+                                    new StringBuffer(famCmdPath);
+                            setSessionVals.append(SET_REALM_SVC_ATTRS_SUB_CMD);
+                            setSessionVals.append(" ");
+                            setSessionVals.append(REALM_OPT);
+                            setSessionVals.append(" ");
+                            setSessionVals.append(curRealm);
+                            setSessionVals.append(" ");
+                            setSessionVals.append(SERVICE_NAME_OPT);
+                            setSessionVals.append(" ");
+                            setSessionVals.append(SESSION_SERVICE);
+                            setSessionVals.append(famadmCommonParamsNoServer);
+                            setSessionVals.append(" ");
+                            setSessionVals.append(DATAFILE_OPT);
+                            setSessionVals.append(" ");
+                            setSessionVals.append(sessionDtFile);
+                            StringBuffer rBuff = new StringBuffer();
+                            int extVal = AMTuneUtil.executeCommand(
+                                    setSessionVals.toString(), rBuff);
+                            if (extVal == -1) {
+                                pLogger.log(Level.WARNING, 
+                                        "tuneSessionTimeouts", 
+                                        "Session values not updated");
+                            }
+                        }
+                        sessionDtFile.delete();
+                    }
+                }
+            }
+        } catch (AMTuneException amtex) {
+            pLogger.log(Level.WARNING, "tuneSessionTimeouts",
+                    "Error setting session timeouts: " + amtex.getMessage());
+        } catch (IOException ioe) {
+            pLogger.log(Level.WARNING, "tuneSessionTimeouts",
+                    "Error setting session timeouts: " + ioe.getMessage());
+        } finally {
+            try {
+                if (bw != null) {
+                    bw.close();
+                }
+                if (sessionDtFile != null) {
+                    sessionDtFile.delete();
+                }
+            } catch (IOException ioe) {
+                //ignore
+            }
+        }
 
     }
     
-    protected void tuneRealmDataStoreConfig(String dataStoreType, String realm)
+    protected void tuneRealmDataStoreConfig(String dataStoreType, String realm,
+            int newCacheSize)
     throws AMTuneException {
         String dataFile = AMTuneUtil.TMP_DIR + "attrvals.txt";
         try {
@@ -562,7 +743,9 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
             mWriter.writeln(LINE_SEP);
             StringBuffer dataStoreInfoCmd = new StringBuffer(famCmdPath);
             dataStoreInfoCmd.append(SHOW_DATASTORE_SUB_CMD);
-            dataStoreInfoCmd.append(" -e ");
+            dataStoreInfoCmd.append(" ");
+            dataStoreInfoCmd.append(REALM_OPT);
+            dataStoreInfoCmd.append(" ");
             dataStoreInfoCmd.append("REALM_NAME");
             dataStoreInfoCmd.append(" -m \"");
             dataStoreInfoCmd.append(dataStoreType);
@@ -571,23 +754,14 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
             
             StringBuffer dataStoreUpdateCmd = new StringBuffer(famCmdPath);
             dataStoreUpdateCmd.append(UPDATE_DATASTORE_SUB_CMD);
-            dataStoreUpdateCmd.append(" -e ");
+            dataStoreUpdateCmd.append(" ");
+            dataStoreUpdateCmd.append(REALM_OPT);
+            dataStoreUpdateCmd.append(" ");
             dataStoreUpdateCmd.append("REALM_NAME");
             dataStoreUpdateCmd.append(" -m \"");
             dataStoreUpdateCmd.append(dataStoreType);
             dataStoreUpdateCmd.append("\"");
             dataStoreUpdateCmd.append(famadmCommonParamsNoServer);
-
-            StringBuffer attrVals = new StringBuffer(LDAP_CONN_POOL_MIN);
-            attrVals.append("=");
-            attrVals.append(poolMin);
-            attrVals.append("\n");
-            attrVals.append(LDAP_CONN_POOL_MAX);
-            attrVals.append("=");
-            attrVals.append(poolMax);
-            AMTuneUtil.writeResultBufferToTempFile(attrVals, dataFile);
-            dataStoreUpdateCmd.append(" -D ");
-            dataStoreUpdateCmd.append(dataFile);
             mWriter.writeLocaleMsg("pt-tuning");
             mWriter.write("DataStore \"" + dataStoreType + "\" ");
             mWriter.writelnLocaleMsg("pt-fam-realm-ldapconn-tuning");
@@ -620,22 +794,58 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
             AMTuneUtil.writeResultBufferToTempFile(rBuf, dsFile);
             FileHandler fh = new FileHandler(dsFile);
             String curMax = AMTuneUtil.getLastToken(
-                    fh.getLine(LDAP_CONN_POOL_MAX), "=");
+                    fh.getLine(LDAP_CONN_POOL_MAX), PARAM_VAL_DELIM);
             String curMin = AMTuneUtil.getLastToken(
-                    fh.getLine(LDAP_CONN_POOL_MIN), "=");
-            
+                    fh.getLine(LDAP_CONN_POOL_MIN), PARAM_VAL_DELIM);
+            int curCacheSize = Integer.parseInt(AMTuneUtil.getLastToken(
+                    fh.getLine(LDAP_CONFIG_CACHE_SIZE), PARAM_VAL_DELIM));
             mWriter.writeln(LDAP_CONN_POOL_MIN + "=" + curMin);
             mWriter.writeln(LDAP_CONN_POOL_MAX + "=" + curMax);
-            mWriter.writeln(" ");
-            rBuf.setLength(0);
             mWriter.writelnLocaleMsg("pt-rec-val");
             mWriter.writeln(LDAP_CONN_POOL_MIN + "=" + poolMin);
             mWriter.writeln(LDAP_CONN_POOL_MAX + "=" + poolMax);
-            if (configInfo.isReviewMode() || (curMin.equals(poolMin) &&
-                    curMax.equals(poolMax))) {
+            mWriter.writeln(" ");
+            mWriter.writelnLocaleMsg("pt-max-cache-size-msg");
+            mWriter.writeLocaleMsg("pt-cur-val");
+            mWriter.writeln(LDAP_CONFIG_CACHE_SIZE + "=" + curCacheSize);
+            if (curCacheSize > newCacheSize) {
+                newCacheSize = curCacheSize;
+            }
+            mWriter.writeLocaleMsg("pt-rec-val");
+            mWriter.writeln(LDAP_CONFIG_CACHE_SIZE + "=" + newCacheSize);
+            if (configInfo.isReviewMode()) {
                 return;
             }
-            AMTuneUtil.backupConfigFile(dsFile, "conf-fam-backup");
+            StringBuffer attrVals = new StringBuffer();
+            if (!curMin.equals(poolMin)) {
+                attrVals.append(LDAP_CONN_POOL_MIN);
+                attrVals.append(PARAM_VAL_DELIM);
+                attrVals.append(poolMin);
+                attrVals.append("\n");
+            }
+            if (!curMax.equals(poolMax)) {
+                attrVals.append(LDAP_CONN_POOL_MAX);
+                attrVals.append(PARAM_VAL_DELIM);
+                attrVals.append(poolMax);
+                attrVals.append("\n");
+            }
+            if (newCacheSize > curCacheSize) {
+                attrVals.append(LDAP_CONFIG_CACHE_SIZE);
+                attrVals.append(PARAM_VAL_DELIM);
+                attrVals.append(newCacheSize);
+            }
+            if (attrVals.toString().length() == 0) {
+                pLogger.log(Level.INFO, "tuneRealmDataStoreConfig",
+                        "Session parameters are same as recommended values.");
+                return;
+            }
+            AMTuneUtil.writeResultBufferToTempFile(attrVals, dataFile);
+            dataStoreUpdateCmd.append(" ");
+            dataStoreUpdateCmd.append(DATAFILE_OPT);
+            dataStoreUpdateCmd.append(" ");
+            dataStoreUpdateCmd.append(dataFile);
+            AMTuneUtil.backupConfigFile(dsFile, OPENSSO_SERVER_BACKUP_DIR);
+            rBuf.setLength(0);
             if (!AMTuneUtil.isWindows()) {
                 extVal = AMTuneUtil.executeScriptCmd(
                         dataStoreUpdateCmd.toString().replace(
@@ -664,4 +874,4 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
             }
         }
     }
- }
+}
