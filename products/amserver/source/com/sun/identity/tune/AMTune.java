@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTune.java,v 1.4 2008-07-25 05:15:57 kanduls Exp $
+ * $Id: AMTune.java,v 1.5 2008-08-12 05:10:55 kanduls Exp $
  */
 
 package com.sun.identity.tune;
@@ -103,9 +103,7 @@ public class AMTune {
                         "Check logs for root cause.");
             }
         } finally {
-            if(confInfo != null) {
-                replacePasswords(confInfo);
-            }
+            replacePasswords();
         }
     }
 
@@ -185,15 +183,16 @@ public class AMTune {
         return tunerList;
     }
     
-    private static void replacePasswords(AMTuneConfigInfo confInfo) {
+    private static void replacePasswords() {
         try {
             String propFile = AMTuneUtil.getCurDir() + 
                     AMTuneConstants.FILE_SEP +
                     AMTuneConstants.ENV_FILE_NAME + ".properties";
             FileHandler fh = new FileHandler(propFile);
             int reqLine =
-                    fh.getLineNum(AMTuneConstants.FAMADM_PASSWORD + "=");
-            fh.replaceLine(reqLine, AMTuneConstants.FAMADM_PASSWORD + "=");
+                    fh.getLineNum(AMTuneConstants.OPENSSOADMIN_PASSWORD + "=");
+            fh.replaceLine(reqLine, AMTuneConstants.OPENSSOADMIN_PASSWORD + 
+                    "=");
             reqLine = fh.getLineNum(AMTuneConstants.SM_DIRMGR_PASSWORD + "=");
             fh.replaceLine(reqLine, AMTuneConstants.SM_DIRMGR_PASSWORD + "=");
             reqLine =
