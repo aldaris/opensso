@@ -79,17 +79,16 @@
         <property name="opensso-lib.dir" value="${opensso-root.dir}/WEB-INF/lib" />
         <property name="opensso-config.dir" value="${opensso-root.dir}/config/auth/default" />
         <property name="opensso-images.dir" value="${opensso-root.dir}/images" />
-        <property name="src.dir" value="${basedir}/source" />
-        <property name="img.dir" value="${basedir}/images" />
+       
         <copy file="${dist.jar}" todir="${opensso-lib.dir}" />
-        <copy file="${file.reference.opensso-sharedlib.jar}" todir="${opensso-lib.dir}" />
-        <copy file="${file.reference.opensso.jar}" todir="${opensso-lib.dir}" />
-        <copy file="${file.reference.servlet.jar}" todir="${opensso-lib.dir}" />
-        <copy file="${file.reference.xmldap.jar}" todir="${opensso-lib.dir}" />
-        <copy file="${src.dir}/Infocard.jsp" todir="${opensso-config.dir}" />
-        <copy file="${src.dir}/infocardInvalidToken.jsp" todir="${opensso-config.dir}" />
-        <copy file="${src.dir}/infocardInvalidCert.jsp" todir="${opensso-config.dir}" />
-        <copy file="${src.dir}/Infocard.properties" todir="${opensso-config.dir}" />
-        <copy file="${img.dir}/infocard_71x50.png" todir="${opensso-images.dir}" />
+        <copy file="extlib/opensso-sharedlib.jar" todir="${opensso-lib.dir}" />
+        <copy file="extlib/opensso.jar" todir="${opensso-lib.dir}" />
+        <copy file="extlib/servlet.jar" todir="${opensso-lib.dir}" />
+        <copy file="extlib/xmldap-1.0.jar" todir="${opensso-lib.dir}" />
+        <copy file="source/Infocard.jsp" todir="${opensso-config.dir}" />
+        <copy file="source/infocardInvalidToken.jsp" todir="${opensso-config.dir}" />
+        <copy file="source/infocardInvalidCert.jsp" todir="${opensso-config.dir}" />
+        <copy file="source/Infocard.properties" todir="${opensso-config.dir}" />
+        <copy file="images/infocard_71x50.png" todir="${opensso-images.dir}" />
     </target>
 </project>
