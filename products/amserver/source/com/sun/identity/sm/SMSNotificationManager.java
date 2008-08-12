@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSNotificationManager.java,v 1.7 2008-08-07 17:22:07 arviranga Exp $
+ * $Id: SMSNotificationManager.java,v 1.8 2008-08-12 21:55:45 arviranga Exp $
  *
  */
 package com.sun.identity.sm;
@@ -176,7 +176,6 @@ public class SMSNotificationManager implements SMSObjectListener {
         changeListeners.remove(id);
     }
 
-
     // Methods called by SMSEntry for local notification
     void localObjectChanged(String name, int type) {
         // If SMSEventListererManager is provided send notifications first.
@@ -201,7 +200,7 @@ public class SMSNotificationManager implements SMSObjectListener {
             // Since directly called by SMSEntry, this should be
             // executed within a TimerTask
             LocalChangeNotifcationTask changes = new
-                LocalChangeNotifcationTask(name, type);
+                LocalChangeNotifcationTask(name, type, false);
             SMSThreadPool.scheduleTask(changes);
         }
     }
@@ -219,18 +218,12 @@ public class SMSNotificationManager implements SMSObjectListener {
         // Execute within a TimerTask, since the duration of external
         // calls cannot be predicted
         LocalChangeNotifcationTask changes = new
-            LocalChangeNotifcationTask(name, type);
+            LocalChangeNotifcationTask(name, type, true);
         SMSThreadPool.scheduleTask(changes);
     }
     
-    
-    
-    // Method Executed asynchronously by the ThreadPool
-    void sendNotifications(String name, int type) {
-        sendNotifications(name, type, false);
-    }
-    
-    // Method called directly by SMSEventListenerManager to send sub-tree
+    // Method Executed asynchronously by the ThreadPool and
+    // called directly by SMSEventListenerManager to send sub-tree
     // delete notifications when datastore notification is not enabled
     void sendNotifications(String name, int type, boolean localOnly) {
         // Since agentgroup placeholder node is added after install time,
@@ -240,10 +233,10 @@ public class SMSNotificationManager implements SMSObjectListener {
             return;
         }
         
-        // If Server schedule sending notifications to other servers if
-        // enableDataStoreNotification is disabled.
-        // Also schedule this task only if
-        // there are more than 1 server instances and while running as server
+        // If running as Server and changes are local and DB notification is
+        // disabled, schedule sending notifications to other servers.
+        // Also schedule this task only if there are more than 1
+        // server instances and while running as server
         String installTime = SystemProperties.get(
             Constants.SYS_PROPERTY_INSTALL_TIME, "false");
         if (!localOnly && !enableDataStoreNotification && !isClient &&
@@ -319,14 +312,17 @@ public class SMSNotificationManager implements SMSObjectListener {
     private class LocalChangeNotifcationTask implements Runnable {
         String name;
         int type;
+        boolean localOnly;
         
-        private LocalChangeNotifcationTask(String name, int type) {
+        private LocalChangeNotifcationTask(String name, int type,
+            boolean localOnly) {
             this.name = name;
             this.type = type;
+            this.localOnly = localOnly;
         }
 
         public void run() {
-            instance.sendNotifications(name, type);
+            instance.sendNotifications(name, type, localOnly);
         }
     }
     
