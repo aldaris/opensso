@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginModule.java,v 1.11 2008-07-23 17:24:54 veiming Exp $
+ * $Id: AMLoginModule.java,v 1.12 2008-08-13 15:58:22 pawand Exp $
  *
  */
 
@@ -71,6 +71,7 @@ import com.sun.identity.authentication.service.AuthException;
 import com.sun.identity.authentication.service.LoginStateCallback;
 import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.authentication.util.ISValidation;
+import com.sun.identity.common.AdministrationServiceListener;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdSearchControl;
@@ -1941,6 +1942,11 @@ public abstract class AMLoginModule implements LoginModule {
      */
     private String getOrgPluginClassName(String orgDN) {
         try {
+            String cachedValue = AdministrationServiceListener.
+                getOrgPluginNameFromCache(orgDN);
+            if (cachedValue != null) {
+                return cachedValue;
+            }
             Map config =
             getOrgServiceTemplate(orgDN,ISAuthConstants.ADMINISTRATION_SERVICE);
             String className =
@@ -1949,6 +1955,8 @@ public abstract class AMLoginModule implements LoginModule {
             if (debug.messageEnabled()) {
                 debug.message("Org Plugin Class:  " + className);
             }
+            AdministrationServiceListener.setOrgPluginNameInCache(
+                orgDN, className);
             return className;
         } catch (Exception ee) {
             debug.message("Error while getting UserPasswordValidationClass " ,ee );
@@ -1960,6 +1968,11 @@ public abstract class AMLoginModule implements LoginModule {
      * this method gets plugin classname from adminstration service
      */
     private String getPluginClassName() throws AuthLoginException {
+        String cachedValue = AdministrationServiceListener.
+           getGlobalPluginNameFromCache();
+        if (cachedValue != null) {
+               return cachedValue;
+        }
         Map config = getServiceConfig(ISAuthConstants.ADMINISTRATION_SERVICE);
         String className =
         CollectionHelper.getServerMapAttr(
@@ -1967,6 +1980,8 @@ public abstract class AMLoginModule implements LoginModule {
         if (debug.messageEnabled()) {
             debug.message("Plugin Class:  " + className);
         }
+        AdministrationServiceListener.setGlobalPluginNameInCache(
+            className);
         return className;
     }
     

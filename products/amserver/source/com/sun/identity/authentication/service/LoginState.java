@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.30 2008-07-29 20:37:37 bigfatrat Exp $
+ * $Id: LoginState.java,v 1.31 2008-08-13 15:57:37 pawand Exp $
  *
  */
 
@@ -3635,10 +3635,18 @@ public class LoginState {
     Map getServiceAttributes(String indexName) throws Exception {
         
         try {
-            Map attributeDataMap =
-            AMAuthConfigUtils.getNamedConfig(indexName, getOrgDN(), 
+            String orgDN = getOrgDN();
+            Map attributeDataMap = null;
+            attributeDataMap = AuthServiceListener.getServiceAttributeCache(
+                orgDN, indexName);
+            if (attributeDataMap != null) {
+                return attributeDataMap;
+            }
+            attributeDataMap =
+            AMAuthConfigUtils.getNamedConfig(indexName, orgDN, 
                 ad.getSSOAuthSession());
-            
+            AuthServiceListener.setServiceAttributeCache( orgDN, indexName, 
+                attributeDataMap);
             return attributeDataMap;
         } catch (Exception e) {
             if (messageEnabled) {
