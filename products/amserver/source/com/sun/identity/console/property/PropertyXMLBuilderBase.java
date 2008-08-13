@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PropertyXMLBuilderBase.java,v 1.10 2008-07-28 23:43:36 veiming Exp $
+ * $Id: PropertyXMLBuilderBase.java,v 1.11 2008-08-13 18:01:10 veiming Exp $
  *
  */
 
@@ -427,17 +427,24 @@ public abstract class PropertyXMLBuilderBase
         ResourceBundle serviceBundle
     ) {
         String tagClassName = getTagClassName(as);
-        boolean editableList = false;
 
         if (tagClassName != null) {
             String name = getAttributeNameForPropertyXML(as);
 
-            if (tagClassName.equals(TAGNAME_EDITABLE_LIST)) {
+            boolean editableList = tagClassName.equals(TAGNAME_EDITABLE_LIST);
+            boolean orderedList = tagClassName.equals(TAGNAME_ORDERED_LIST);
+            boolean unorderedList = tagClassName.equals(TAGNAME_UNORDERED_LIST);
+            boolean mapList = tagClassName.equals(TAGNAME_MAP_LIST);
+            boolean globalMapList = tagClassName.equals(
+                TAGNAME_GLOBAL_MAP_LIST);
+            boolean listTyped = editableList || orderedList || unorderedList ||
+                mapList || globalMapList;
+            
+            if (listTyped) {
                 /*
                 * create a subsection without a title to hold the 
                 * editable list component.
                 */
-                editableList = true;
                 xml.append(SUBSECTION_DUMMY_START_TAG);
             }
 
@@ -470,7 +477,7 @@ public abstract class PropertyXMLBuilderBase
                     model.getLocalizedString("label.Enable")};
                 xml.append(MessageFormat.format( 
                     COMPONENT_BOOLEAN_START_TAG, param));
-            } else if (editableList) {
+            } else if (listTyped) {
                 /* 
                 * putting the editable list component wihin a group tag
                 * to help isolate the list box and text box together on the
@@ -482,10 +489,24 @@ public abstract class PropertyXMLBuilderBase
                     model.getLocalizedString("label.current.value"),
                     model.getLocalizedString("label.new.value")
                 };
-                xml.append(GROUP_START_TAG)
-                    .append(PROPERTY_START_TAG)
-                    .append(MessageFormat.format(
+                
+                xml.append(GROUP_START_TAG).append(PROPERTY_START_TAG);
+                
+                if (editableList) {
+                    xml.append(MessageFormat.format(
                         COMPONENT_EDITABLE_LIST_START_TAG, param));
+                } else if (orderedList) {
+                    xml.append(COMPONENT_ORDERED_LIST_START_TAG);
+                } else if (unorderedList) {
+                    xml.append(MessageFormat.format(
+                        COMPONENT_UNORDERED_LIST_START_TAG, param));
+                } else if (mapList) {
+                    xml.append(MessageFormat.format(
+                        COMPONENT_MAP_LIST_START_TAG, param));
+                } else if (globalMapList) {
+                    xml.append(MessageFormat.format(
+                        COMPONENT_GLOBAL_MAP_LIST_START_TAG, param));
+                }
             } else {
                 Object[] param = {name, tagClassName};
                 xml.append(MessageFormat.format(COMPONENT_START_TAG, param));
@@ -521,7 +542,7 @@ public abstract class PropertyXMLBuilderBase
             xml.append(PROPERTY_END_TAG);
 
             // close off the group and subsection tags for the editable list
-            if (editableList) {
+            if (listTyped) {
                 xml.append(GROUP_END_TAG)
                     .append("&lt;p>")
                     .append(PROPERTY_END_TAG)

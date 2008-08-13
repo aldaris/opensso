@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PropertyTemplate.java,v 1.2 2008-06-25 05:43:09 qcheng Exp $
+ * $Id: PropertyTemplate.java,v 1.3 2008-08-13 18:01:10 veiming Exp $
  *
  */
 
@@ -50,6 +50,14 @@ public interface PropertyTemplate {
         "com.sun.web.ui.taglib.html.CCPasswordTag";
     String TAGNAME_EDITABLE_LIST =
         "com.sun.web.ui.taglib.editablelist.CCEditableListTag";
+    String TAGNAME_ORDERED_LIST =
+        "com.sun.identity.console.ui.taglib.CCOrderedListTag";
+    String TAGNAME_UNORDERED_LIST =
+        "com.sun.identity.console.ui.taglib.CCUnOrderedListTag";
+    String TAGNAME_MAP_LIST =
+        "com.sun.identity.console.ui.taglib.CCMapListTag";
+    String TAGNAME_GLOBAL_MAP_LIST =
+        "com.sun.identity.console.ui.taglib.CCGlobalMapListTag";
     String TAGNAME_DROPDOWN_MENU = 
         "com.sun.web.ui.taglib.html.CCDropDownMenuTag";
     String TAGNAME_MULTIPLE_CHOICE =
@@ -98,6 +106,10 @@ public interface PropertyTemplate {
     String COMPONENT_END_TAG = "</cc>\n";
     
     String COMPONENT_EDITABLE_LIST_START_TAG = "<cc name=\"{0}\" tagclass=\"com.sun.web.ui.taglib.editablelist.CCEditableListTag\"> <attribute name=\"listboxLabel\" value=\"{1}\" /><attribute name=\"textboxLabel\" value=\"{2}\" />";
+    String COMPONENT_ORDERED_LIST_START_TAG = "<cc name=\"{0}\" tagclass=\"com.sun.identity.console.ui.taglib.CCOrderedListTag\">";
+    String COMPONENT_UNORDERED_LIST_START_TAG = "<cc name=\"{0}\" tagclass=\"com.sun.identity.console.ui.taglib.CCUnOrderedListTag\"> <attribute name=\"listboxLabel\" value=\"{1}\" /><attribute name=\"textboxLabel\" value=\"{2}\" />";
+    String COMPONENT_MAP_LIST_START_TAG = "<cc name=\"{0}\" tagclass=\"com.sun.identity.console.ui.taglib.CCMapListTag\"> <attribute name=\"listboxLabel\" value=\"{1}\" /><attribute name=\"textboxLabel\" value=\"{2}\" />";
+    String COMPONENT_GLOBAL_MAP_LIST_START_TAG = "<cc name=\"{0}\" tagclass=\"com.sun.identity.console.ui.taglib.CCGlobalMapListTag\"> <attribute name=\"listboxLabel\" value=\"{1}\" /><attribute name=\"textboxLabel\" value=\"{2}\" />";
 
     String PASSWORD_VALUE_TAG = "__AM_PASSWORD_TAG__";
 
