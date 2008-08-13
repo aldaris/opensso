@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrganizationConfigManager.java,v 1.22 2008-07-23 17:30:46 veiming Exp $
+ * $Id: OrganizationConfigManager.java,v 1.23 2008-08-13 16:17:34 arviranga Exp $
  *
  */
 
@@ -1311,9 +1311,9 @@ public class OrganizationConfigManager {
             assignedServices = orgConfigImpl.getAssignedServices(token);
         }
         if (!includeMandatory) {
-            // Remove mandatory services
-            // %%% TODO. Need to have SMS Service with this
-            // information
+            // Get services assigned by default
+            Set ds = ServiceManager.requiredServices();
+            assignedServices.removeAll(ds);
         }
         return (assignedServices);
     }

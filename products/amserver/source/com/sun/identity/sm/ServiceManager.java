@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceManager.java,v 1.20 2008-08-06 16:43:24 veiming Exp $
+ * $Id: ServiceManager.java,v 1.21 2008-08-13 16:17:34 arviranga Exp $
  *
  */
 
@@ -103,6 +103,8 @@ public class ServiceManager {
     private static boolean coexistenceCache = true;
 
     private static boolean ditUpgradedCache;
+    
+    protected static Set requiredServices;
 
     protected static Set defaultServicesToLoad;
 
@@ -966,6 +968,14 @@ public class ServiceManager {
         }
         return (defaultServicesToLoad);
     }
+    
+    /**
+     * Returns service names configured via IdRepo service to be
+     * added as required services
+     */
+    static Set requiredServices() {
+        return (requiredServices);
+    }
 
     static void initialize(SSOToken token) throws SMSException, SSOException {
         // Validate SSOToken
@@ -1025,8 +1035,10 @@ public class ServiceManager {
                     realmCache = true;
                 }
                 // Get the default services to be loaded
-                defaultServicesToLoad = (Set) map
+                requiredServices = (Set) map
                         .get(DEFAULT_SERVICES_FOR_REALMS);
+                defaultServicesToLoad = new HashSet();
+                defaultServicesToLoad.addAll(requiredServices);
 
                 // Make this flag false, for always the union of 
                 // auto assignment services from idRepoService.xml and
