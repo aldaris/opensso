@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMUserPasswordValidationPlugin.java,v 1.3 2008-06-25 05:42:24 qcheng Exp $
+ * $Id: AMUserPasswordValidationPlugin.java,v 1.4 2008-08-13 15:55:36 pawand Exp $
  *
  */
 
@@ -114,14 +114,22 @@ public class AMUserPasswordValidationPlugin extends AMUserPasswordValidation
 
     private String getOrgUserInvalidChars(String orgDN, SSOToken token) {
         try {
+            String cachedValue = AdministrationServiceListener.
+                getOrgInvalidCharsFromCache(orgDN);
+            if (cachedValue != null) {
+	        return cachedValue;
+            }
             // Get the org config
             ServiceConfig sc = AMServiceUtils.getOrgConfig(token, orgDN,
                     ADMINISTRATION_SERVICE);
             if (sc != null) {
                 Map attributes = sc.getAttributes();
                 Set value = (Set) attributes.get(INVALID_USERID_CHARACTERS);
-                return ((value == null || value.isEmpty()) ? null
-                        : (String) value.iterator().next());
+                String invalidChars =  ((value == null || value.isEmpty()) ? 
+                    null : (String) value.iterator().next());
+                AdministrationServiceListener.setOrgInvalidCharsInCache(orgDN,
+                    invalidChars);
+                return invalidChars;
             } else {
                 return getGlobalUserInvalidChars(token);
             }
@@ -132,6 +140,11 @@ public class AMUserPasswordValidationPlugin extends AMUserPasswordValidation
 
     private String getGlobalUserInvalidChars(SSOToken token) {
         // Org Config may not exist. Get default values
+        String cachedValue = AdministrationServiceListener.
+            getGlobalInvalidCharsFromCache();
+        if (cachedValue != null) {
+	    return cachedValue;
+        }
         if (debug.messageEnabled()) {
             debug.message("AMUserPasswordValidationPlugin."
                     + "getGlobalUserInvalidChars(): Organization config for "
@@ -144,8 +157,12 @@ public class AMUserPasswordValidationPlugin extends AMUserPasswordValidation
                     ADMINISTRATION_SERVICE, SchemaType.ORGANIZATION);
             if (defaultValues != null) {
                 Set value = (Set) defaultValues.get(INVALID_USERID_CHARACTERS);
-                return ((value == null || value.isEmpty()) ? null
-                        : (String) value.iterator().next());
+                String invalidChars = ((value == null || value.isEmpty()) ? 
+                    null : (String) value.iterator().next());
+                
+                AdministrationServiceListener.setGlobalInvalidCharsInCache(
+                    invalidChars);
+                return invalidChars;
             }
         } catch (Exception e) {
             if (debug.warningEnabled()) {
