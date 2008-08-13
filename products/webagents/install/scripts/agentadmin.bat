@@ -1,7 +1,6 @@
 @echo off
 
-REM
-   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+REM DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
   
 REM Copyright (c) 2006 Sun Microsystems Inc. All Rights Reserved
   
@@ -24,7 +23,7 @@ REM with the fields enclosed by brackets [] replaced by
 REM your own identifying information:
 REM "Portions Copyrighted [year] [name of copyright owner]"
 REM
-REM $Id: agentadmin.bat,v 1.2 2008-06-25 05:54:39 qcheng Exp $
+REM $Id: agentadmin.bat,v 1.3 2008-08-13 20:59:41 huacui Exp $
 REM
 REM
 
