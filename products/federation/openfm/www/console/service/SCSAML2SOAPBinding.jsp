@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: SCSAML2SOAPBinding.jsp,v 1.2 2008-06-25 05:50:26 qcheng Exp $
+   $Id: SCSAML2SOAPBinding.jsp,v 1.3 2008-08-13 22:46:16 asyhuang Exp $
 
 --%>
 
@@ -50,7 +50,6 @@
 </script>
 <cc:primarymasthead name="mhCommon" bundleID="amConsole"  logoutOnClick="return confirmLogout();" 
     locale="<%=((com.sun.identity.console.base.AMViewBeanBase)viewBean).getUserLocale()%>"/>
-<cc:tabs name="tabCommon" bundleID="amConsole" />
 
 <table border="0" cellpadding="10" cellspacing="0" width="100%">
     <tr>
