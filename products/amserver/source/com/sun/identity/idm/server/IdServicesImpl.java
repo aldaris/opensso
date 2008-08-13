@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.47 2008-08-09 01:08:57 arviranga Exp $
+ * $Id: IdServicesImpl.java,v 1.48 2008-08-13 17:05:14 veiming Exp $
  *
  */
 
@@ -51,7 +51,9 @@ import com.sun.identity.common.ShutdownManager;
 import com.sun.identity.common.DNUtils;
 import com.sun.identity.delegation.DelegationEvaluator;
 import com.sun.identity.delegation.DelegationException;
+import com.sun.identity.delegation.DelegationManager;
 import com.sun.identity.delegation.DelegationPermission;
+import com.sun.identity.delegation.DelegationPrivilege;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdConstants;
 import com.sun.identity.idm.IdOperation;
@@ -68,6 +70,7 @@ import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.idm.RepoSearchResults;
 import com.sun.identity.idm.plugins.internal.SpecialRepo;
+import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.DNMapper;
@@ -77,6 +80,7 @@ import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
+import java.security.AccessController;
 
 public class IdServicesImpl implements IdServices {
 
@@ -518,8 +522,41 @@ public class IdServicesImpl implements IdServices {
             }
             throw origEx;
         }
+        removeIdentityFromPrivileges(name, type, amsdkDN, orgName);
     }
 
+    private void removeIdentityFromPrivileges(
+        String name, 
+        IdType type,
+        String amsdkDN,
+        String orgName
+    ) {
+        SSOToken superAdminToken = (SSOToken)
+            AccessController.doPrivileged(AdminTokenAction.getInstance());
+        AMIdentity id = new AMIdentity(superAdminToken, name, type, 
+            orgName, amsdkDN);
+        String uid = id.getUniversalId();
+
+        try {
+            DelegationManager mgr = new DelegationManager(
+                superAdminToken, orgName);
+            Set privilegeObjects = mgr.getPrivileges();
+            
+            for (Iterator i = privilegeObjects.iterator(); i.hasNext();) {
+                DelegationPrivilege p = (DelegationPrivilege) i.next();
+                Set subjects = p.getSubjects();
+                if (subjects.contains(uid)) {
+                    subjects.remove(uid);
+                    mgr.addPrivilege(p);
+                }
+            }
+        } catch (SSOException ex) {
+            debug.warning("IdServicesImpl.removeIdentityFromPrivileges", ex);
+        } catch (DelegationException ex) {
+            debug.warning("IdServicesImpl.removeIdentityFromPrivileges", ex);
+        }
+    }
+    
     /*
      * (non-Javadoc)
      */
