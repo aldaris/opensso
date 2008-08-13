@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SiteConfiguration.java,v 1.6 2008-07-11 01:46:22 arviranga Exp $
+ * $Id: SiteConfiguration.java,v 1.7 2008-08-13 17:37:11 veiming Exp $
  *
  */
 
@@ -31,6 +31,7 @@ package com.sun.identity.common.configuration;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.NormalizedURL;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceSchema;
@@ -97,8 +98,8 @@ public class SiteConfiguration extends ConfigurationBase {
         Map map = accessPoint.getAttributes();
         Set setId = (Set)map.get(ATTR_PRIMARY_SITE_ID);
         Set setURL = (Set)map.get(ATTR_PRIMARY_SITE_URL);
-        info.add((String)setURL.iterator().next() + "|" +
-            (String)setId.iterator().next());
+        info.add(NormalizedURL.normalize((String)setURL.iterator().next()) + 
+            "|" + (String)setId.iterator().next());
                 
         Set secURLs = accessPoint.getSubConfigNames("*");
         if ((secURLs != null) && !secURLs.isEmpty()) {
@@ -107,7 +108,8 @@ public class SiteConfiguration extends ConfigurationBase {
                 ServiceConfig s = accessPoint.getSubConfig(secName);
                 Map mapValues = s.getAttributes();
                 setId = (Set)mapValues.get(ATTR_SEC_ID);
-                info.add(secName + "|" + (String)setId.iterator().next()); 
+                info.add(NormalizedURL.normalize(secName) + "|" + 
+                    (String)setId.iterator().next()); 
             }
         }
         return info;
@@ -365,11 +367,13 @@ public class SiteConfiguration extends ConfigurationBase {
         ServiceConfig accessPoint = sc.getSubConfig(SUBCONFIG_ACCESS_URL);
         Map map = accessPoint.getAttributes();
         Set set = (Set)map.get(ATTR_PRIMARY_SITE_URL);
-        urls.add(set.iterator().next());
+        urls.add(NormalizedURL.normalize((String)set.iterator().next()));
 
         Set secondary = accessPoint.getSubConfigNames("*");
         if ((secondary != null) && !secondary.isEmpty()) {
-            urls.addAll(secondary);
+            for (Iterator i = secondary.iterator(); i.hasNext(); ) {
+                urls.add(NormalizedURL.normalize((String)i.next()));
+            }
         }
         return urls;
     }
