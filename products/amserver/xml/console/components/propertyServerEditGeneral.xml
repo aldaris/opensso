@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyServerEditGeneral.xml,v 1.3 2008-06-25 05:45:15 qcheng Exp $
+   $Id: propertyServerEditGeneral.xml,v 1.4 2008-08-13 16:00:56 rajeevangal Exp $
 
 -->
 
@@ -100,6 +100,19 @@
                 value="message" />;
         </cc>
         <fieldhelp name="helpcsccom-iplanet-services-debug-level" defaultValue="amconfig.help.com.iplanet.services.debug.level" />
+    </property>
+    <property>
+	<label name="lblcsccom-sun-services-debug-mergeall"
+            defaultValue="amconfig.com.sun.services.debug.mergeall"
+            labelFor="csccom-sun-services-debug-mergeall" />
+	<cc name="csccom-sun-services-debug-mergeall"
+            tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag">
+            <option label="amconfig.choice.com.sun.services.debug.mergeall.on"
+                value="on" />;
+            <option label="amconfig.choice.com.sun.services.debug.mergeall.off"
+                value="off" />;
+        </cc>
+        <fieldhelp name="helpcsccom-sun-services-debug-mergeall" defaultValue="amconfig.help.com.sun.services.debug.mergeall" />
     </property>
     <property>
 	<label name="lblcsccom-iplanet-services-debug-directory"

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DebugImpl.java,v 1.2 2008-06-25 05:53:01 qcheng Exp $
+ * $Id: DebugImpl.java,v 1.3 2008-08-13 16:00:57 rajeevangal Exp $
  *
  */
 
@@ -34,11 +34,14 @@ import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.locale.Locale;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.InputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 /**
@@ -46,10 +49,21 @@ import java.util.ResourceBundle;
  */
 public class DebugImpl implements IDebug {
 
+
     private static final String CONFIG_DEBUG_DIRECTORY =
         "com.iplanet.services.debug.directory";
     private static final String CONFIG_DEBUG_LEVEL =
         "com.iplanet.services.debug.level";
+    private static final String CONFIG_DEBUG_MERGEALL =
+        "com.sun.services.debug.mergeall";
+    private static final String CONFIG_DEBUG_MERGEALL_FILE =
+        "debug.out";
+    private static final String CONFIG_DEBUG_FILEMAP =
+        "/debugfiles.properties";
+
+    private static HashMap mergedWriters  = new HashMap();
+
+    private static Properties debugFileNames = null;
 
     private String debugName;
 
@@ -64,6 +78,8 @@ public class DebugImpl implements IDebug {
 
     private String debugFilePath;
 
+    static private boolean mergeAllMode = false;
+
     /**
      * Creates an instance of <code>DebugImpl</code>.
      *
@@ -73,6 +89,9 @@ public class DebugImpl implements IDebug {
         setName(debugName);
         setDebug(SystemPropertiesManager.get(
             CONFIG_DEBUG_LEVEL));
+        String mf = SystemPropertiesManager.get(CONFIG_DEBUG_MERGEALL);
+
+        mergeAllMode = (mf != null && mf.equals("on"));
     }
 
     private synchronized void initialize() {
@@ -101,18 +120,28 @@ public class DebugImpl implements IDebug {
                 return;
             }
 
-            this.debugFilePath = debugDirectory + File.separator + debugName;
+            // Determine debug file name
+            resolveDebugFile(debugDirectory);
 
-            String prefix = this.dateFormat.format(new Date())
+            String prefix = debugName+":"+this.dateFormat.format(new Date())
                 + ": " + Thread.currentThread().toString();
 
-
+            this.debugWriter = (PrintWriter) 
+                               mergedWriters.get(this.debugFilePath);
             try {
-                this.debugWriter = new PrintWriter(
-                    new FileWriter(this.debugFilePath, true), true);
+                if (this.debugWriter == null) {
+                    synchronized(mergedWriters) {
+                        if (this.debugWriter == null) {
+                            this.debugWriter = new PrintWriter(
+                                new FileWriter(this.debugFilePath, true), true);
+                            mergedWriters.put(this.debugFilePath, 
+                                              this.debugWriter);
+                        }
+                    }
+                }
                 writeIt(prefix,
                     "**********************************************", null);
-            } catch (IOException ioex) {
+             } catch (IOException ioex) {
                 // turn debugging to STDOUT since debug file is not available
                 setDebug(Debug.ON);
                 ResourceBundle bundle =
@@ -167,6 +196,19 @@ public class DebugImpl implements IDebug {
                 // ignore invalid level values
                 break;
          }
+    }
+
+    /**
+     * Reset this instance - ths will trigger this instance to reinitialize
+     * itself.
+     * @param mf  merge flag : true: merge debugs into a single file.`
+     */
+    public void resetDebug(String mf) {
+        mergeAllMode = (mf != null && mf.equals("on"));
+
+        // Note : we dont need to close the writer we will keep it
+        // in the Writer cache in case merge mode chnages again.
+        debugWriter = null;
     }
 
     /**
@@ -254,7 +296,7 @@ public class DebugImpl implements IDebug {
     }
 
     private void record(String msg, Throwable th) {
-        String prefix = this.dateFormat.format(new Date())
+        String prefix = debugName+":"+this.dateFormat.format(new Date())
                         + ": " + Thread.currentThread().toString();
         writeIt(prefix, msg, th);
     }
@@ -314,4 +356,37 @@ public class DebugImpl implements IDebug {
             }
         }
     }
+    private void resolveDebugFile(String debugDirectory) {
+        if (mergeAllMode) {
+            this.debugFilePath = debugDirectory + 
+                                 File.separator + CONFIG_DEBUG_MERGEALL_FILE;
+        } else {
+            // Find the bucket this debug belongs to
+            if (debugFileNames == null) {
+                synchronized(mergedWriters) {
+                    if (debugFileNames == null) {
+                        debugFileNames = new Properties();
+                        // Load properties : debugmap.properties
+                        try {
+                            InputStream is = 
+                                this.getClass().getResourceAsStream(
+                                                    CONFIG_DEBUG_FILEMAP);
+                            debugFileNames.load(is);
+                        } catch(Exception ex) {
+                        }
+                    }
+                }
+            }
+            String nm = (String) debugFileNames.getProperty(debugName);
+            if (nm != null ) {
+                this.debugFilePath = debugDirectory + 
+                                 File.separator + nm;
+            } else {
+                // Default to debugName if no mapping is found
+                this.debugFilePath = debugDirectory + 
+                                 File.separator + debugName;
+            }
+        }
+    }
+
 }

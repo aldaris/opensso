@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.32 2008-07-23 17:58:16 veiming Exp $
+ * $Id: Constants.java,v 1.33 2008-08-13 16:00:56 rajeevangal Exp $
  *
  */
 
@@ -38,6 +38,11 @@ public interface Constants {
      * Property string for debug level.
      */
     String SERVICES_DEBUG_LEVEL = "com.iplanet.services.debug.level";
+
+    /**
+     * Property string for debug file merge.
+     */
+    String SERVICES_DEBUG_MERGEALL = "com.sun.services.debug.mergeall";
 
     /**
      * property string for debug directory

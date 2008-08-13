@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: Debug.jsp,v 1.8 2008-07-23 17:36:30 veiming Exp $
+   $Id: Debug.jsp,v 1.9 2008-08-13 16:00:56 rajeevangal Exp $
   
 -->
 
@@ -84,6 +84,7 @@
         booleanValue();
 
     ResourceBundle resourceBundle = ResourceBundle.getBundle("debug");
+    ResourceBundle rbFiles = ResourceBundle.getBundle("debugfiles");
     Map categories = new HashMap();
 
     try {
@@ -100,21 +101,18 @@
             return;
         }
 
-        for (Enumeration e = resourceBundle.getKeys();
+        for (Enumeration e = rbFiles.getKeys();
             e.hasMoreElements();
         ) {
             String key = (String)e.nextElement();
-            if (key.startsWith("@module@")) {
-                String values = resourceBundle.getString(key);
-                key = key.substring(8);
-                List list = new ArrayList();
-                categories.put(key, list);
-                StringTokenizer st = new StringTokenizer(values, ",");
-                while (st.hasMoreTokens()) {
-                    list.add(st.nextToken());
-                }
-            }
-        }
+            String val = rbFiles.getString(key);
+            List lst = (List) categories.get(val);
+            if (lst == null) {
+                lst = new ArrayList();
+             }
+             lst.add(key);
+             categories.put(val, lst);
+          }
     } catch (SSOException e) {
         response.sendRedirect("UI/Login?goto=../Debug.jsp");
         return;
@@ -218,9 +216,16 @@ if ((category == null) || (level == null) ||
         out.println("<tr><td valign=top><b>" + key + "</b></td>");
         List values = (List)categories.get(key);
         out.println("<td>");
+        String msg = "message-category-"+key; 
+        try {
+            msg = resourceBundle.getString("message-category-"+key); 
+        } catch (Exception ex) {}
+        out.println("<b>"+msg+"</b><br>");
+        out.print("<span class=\"HlpFldTxt\">");   
         for (Iterator j = values.iterator(); j.hasNext(); ) {
             out.println((String)j.next() + " " );
         }
+        out.print("</span>");
         out.println("</td></tr>");
     }
 %>

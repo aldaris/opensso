@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDebug.java,v 1.2 2008-06-25 05:53:01 qcheng Exp $
+ * $Id: IDebug.java,v 1.3 2008-08-13 16:00:57 rajeevangal Exp $
  *
  */
 
@@ -80,6 +80,13 @@ public interface IDebug {
      *        instance.
      */
     public void setDebug(int level);
+
+    /**
+     * Allows runtime modification of the backend used by this instance. 
+     * by resetting the debug instance to reinitialize itself.
+     * @param mf merge flag, on to create a single debug file
+     */
+    public void resetDebug(String mf);
 
     /**
      * Allows runtime modification of the debug level used by this instance. The

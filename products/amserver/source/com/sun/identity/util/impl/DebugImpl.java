@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DebugImpl.java,v 1.5 2008-06-25 05:44:14 qcheng Exp $
+ * $Id: DebugImpl.java,v 1.6 2008-08-13 16:00:55 rajeevangal Exp $
  *
  */
 
@@ -193,6 +193,13 @@ public class DebugImpl implements IDebug {
         setDebug(debugLevel);
     }
 
+    /**
+     *
+     */
+     public void resetDebug(String mf)
+     {
+         // noop
+     }
     /**
      * Returns <code>true</code> if debug is enabled.
      *

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DebugPropertiesObserver.java,v 1.3 2008-06-25 05:42:25 qcheng Exp $
+ * $Id: DebugPropertiesObserver.java,v 1.4 2008-08-13 16:00:54 rajeevangal Exp $
  *
  */
 
@@ -42,11 +42,16 @@ import java.util.Iterator;
 public class DebugPropertiesObserver implements ConfigurationListener {
     private static DebugPropertiesObserver instance;
     private static String currentState;
+    private static String currentMergeFlag = "off";
     
     static {
         instance = new DebugPropertiesObserver();
         ConfigurationObserver.getInstance().addListener(instance);
         currentState = SystemProperties.get(Constants.SERVICES_DEBUG_LEVEL);
+        currentMergeFlag = SystemProperties.get(Constants.SERVICES_DEBUG_MERGEALL);
+        if (currentMergeFlag == null) {
+            currentMergeFlag = "off";
+        }
     }
     
     private DebugPropertiesObserver() {
@@ -73,6 +78,15 @@ public class DebugPropertiesObserver implements ConfigurationListener {
                 d.setDebug(state);
             }
             currentState = state;
+        }
+        String mergeflag = SystemProperties.get(Constants.SERVICES_DEBUG_MERGEALL);
+        if (!currentMergeFlag.equals(mergeflag)) {
+            currentMergeFlag = mergeflag;
+            Collection debugInstances = Debug.getInstances();
+            for (Iterator i = debugInstances.iterator(); i.hasNext(); ) {
+                Debug d = (Debug)i.next();
+                d.resetDebug(mergeflag);
+            }
         }
     }
     

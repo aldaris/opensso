@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Debug.java,v 1.3 2008-06-25 05:53:01 qcheng Exp $
+ * $Id: Debug.java,v 1.4 2008-08-13 16:00:57 rajeevangal Exp $
  *
  */
 
@@ -591,6 +591,14 @@ public class Debug {
         getDebugServiceInstance().setDebug(debugType);
     }
 
+    /**
+     * Allows runtime modification of the backend used by this instance. 
+     * by resetting the debug instance to reinitialize itself.
+     * @param mf merge flag - on for creating a single debug file.
+     */
+    public void resetDebug(String mf) {
+        getDebugServiceInstance().resetDebug(mf);
+    }
     /**
      * Sets the debug capabilities based on the values of the
      * <code>debugType</code> argument.
