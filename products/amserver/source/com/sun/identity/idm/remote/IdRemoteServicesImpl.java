@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRemoteServicesImpl.java,v 1.18 2008-06-27 20:56:24 arviranga Exp $
+ * $Id: IdRemoteServicesImpl.java,v 1.19 2008-08-13 19:26:05 goodearth Exp $
  *
  */
 
@@ -738,22 +738,24 @@ public class IdRemoteServicesImpl implements IdServices {
     private IdSearchResults mapToIdSearchResults(SSOToken token, IdType type,
             String orgName, Map m) throws IdRepoException {
         IdSearchResults results = new IdSearchResults(type, orgName);
-        Set idSet = (Set) m.get(AMSR_RESULTS);
-        Map attrMaps = (Map) m.get(AMSR_ATTRS);
-        Integer err = (Integer) m.get(AMSR_CODE);
+        if (m != null) {
+            Set idSet = (Set) m.get(AMSR_RESULTS);
+            Map attrMaps = (Map) m.get(AMSR_ATTRS);
+            Integer err = (Integer) m.get(AMSR_CODE);
 
-        if (idSet != null) {
-            Iterator it = idSet.iterator();
-            while (it.hasNext()) {
-                String idStr = (String) it.next();
-                AMIdentity id = IdUtils.getIdentity(token, idStr);
-                CaseInsensitiveHashMap attrMap =
-                    new CaseInsensitiveHashMap((Map) attrMaps.get(idStr));
-                results.addResult(id, attrMap);
+            if (idSet != null) {
+                Iterator it = idSet.iterator();
+                while (it.hasNext()) {
+                    String idStr = (String) it.next();
+                    AMIdentity id = IdUtils.getIdentity(token, idStr);
+                    CaseInsensitiveHashMap attrMap =
+                        new CaseInsensitiveHashMap((Map) attrMaps.get(idStr));
+                    results.addResult(id, attrMap);
+                }
             }
-        }
-        if (err != null) {
-            results.setErrorCode(err.intValue());
+            if (err != null) {
+                results.setErrorCode(err.intValue());
+            }
         }
         return results;
     }
