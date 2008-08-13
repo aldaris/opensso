@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.52 2008-08-09 00:49:58 goodearth Exp $
+ * $Id: LDAPv3Repo.java,v 1.53 2008-08-13 19:24:30 goodearth Exp $
  *
  */
 
@@ -2507,7 +2507,9 @@ public class LDAPv3Repo extends IdRepo {
                         debug.message(
                             "    inside while. roleFilter=" + roleFilter);
                     }
-                    LDAPSearchResults res = ld.search(orgDN, roleSearchScope,
+                    // Use search scope as SCOPE_SUB to get members from
+                    // filtered role.
+                    LDAPSearchResults res = ld.search(orgDN, LDAPv2.SCOPE_SUB,
                             roleFilter, null, false, constraints);
                     while (res.hasMoreElements()) {
                         try {
