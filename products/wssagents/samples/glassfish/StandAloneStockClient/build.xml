@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.4 2008-07-30 23:18:08 mallas Exp $
+   $Id: build.xml,v 1.5 2008-08-13 18:56:42 mrudul_uchil Exp $
 
 -->
 
@@ -41,13 +41,13 @@
             classpath="xyz.jar"
             debug="on">
             <classpath>
-                <pathelement location="${glassfish.home}/addons/fam/openssowssproviders.jar"/>
-                <pathelement location="${glassfish.home}/addons/fam/webservices-rt.jar"/>
-                <pathelement location="${glassfish.home}/addons/fam/openssoclientsdk.jar"/>
-                <pathelement location="${glassfish.home}/addons/fam/xalan.jar"/>
-                <pathelement location="${glassfish.home}/addons/fam/xercesImpl.jar"/>
-                <pathelement location="${glassfish.home}/addons/fam/j2ee.jar"/>
-                <pathelement location="${glassfish.home}/addons/fam"/>
+                <pathelement location="${glassfish.home}/addons/opensso/openssowssproviders.jar"/>
+                <pathelement location="${glassfish.home}/addons/opensso/webservices-rt.jar"/>
+                <pathelement location="${glassfish.home}/addons/opensso/openssoclientsdk.jar"/>
+                <pathelement location="${glassfish.home}/addons/opensso/xalan.jar"/>
+                <pathelement location="${glassfish.home}/addons/opensso/xercesImpl.jar"/>
+                <pathelement location="${glassfish.home}/addons/opensso/j2ee.jar"/>
+                <pathelement location="${glassfish.home}/addons/opensso"/>
                 <pathelement path="build/classes"/>
             </classpath>
          </javac>
@@ -57,14 +57,14 @@
             <echo>java.home=${java.home}</echo>
         <java classname="com.samples.SecuringWS" fork="true">
             <classpath>
-                <pathelement location="${glassfish.home}/addons/fam/openssowssproviders.jar"/>
-                <pathelement location="${glassfish.home}/addons/fam/ldapjdk.jar"/>
-                <pathelement location="${glassfish.home}/addons/fam/webservices-rt.jar"/>
-                <pathelement location="${glassfish.home}/addons/fam/openssoclientsdk.jar"/>
-                <pathelement location="${glassfish.home}/addons/fam/xalan.jar"/>
-                <pathelement location="${glassfish.home}/addons/fam/xercesImpl.jar"/>
-                <pathelement location="${glassfish.home}/addons/fam/j2ee.jar"/>
-                <pathelement location="${glassfish.home}/addons/fam"/>
+                <pathelement location="${glassfish.home}/addons/opensso/openssowssproviders.jar"/>
+                <pathelement location="${glassfish.home}/addons/opensso/ldapjdk.jar"/>
+                <pathelement location="${glassfish.home}/addons/opensso/webservices-rt.jar"/>
+                <pathelement location="${glassfish.home}/addons/opensso/openssoclientsdk.jar"/>
+                <pathelement location="${glassfish.home}/addons/opensso/xalan.jar"/>
+                <pathelement location="${glassfish.home}/addons/opensso/xercesImpl.jar"/>
+                <pathelement location="${glassfish.home}/addons/opensso/j2ee.jar"/>
+                <pathelement location="${glassfish.home}/addons/opensso"/>
                 <pathelement path="build/classes"/>
             </classpath>
         </java>

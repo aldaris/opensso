@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureSOAPMessage.java,v 1.19 2008-07-30 05:00:46 mallas Exp $
+ * $Id: SecureSOAPMessage.java,v 1.20 2008-08-13 18:56:41 mrudul_uchil Exp $
  *
  */
 
@@ -523,7 +523,7 @@ public class SecureSOAPMessage {
      * Signs the <code>SOAPMessage</code>  for the given security profile.
      *
      * @param certAlias the certificate alias
-     * @param signingRefType signing refence type.
+     * @param refType signing refence type.
      * @exception SecurityException if there is any failure in signing.
      */
      public void sign(String certAlias, String refType) 

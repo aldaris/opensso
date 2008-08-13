@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogUtil.java,v 1.1 2008-07-29 20:03:47 mrudul_uchil Exp $
+ * $Id: LogUtil.java,v 1.2 2008-08-13 18:56:41 mrudul_uchil Exp $
  *
  */
 
@@ -136,7 +136,6 @@ public class LogUtil {
      *          </ul>
      * @param msgid the message or a message identifier.
      * @param data string array of dynamic data to be replaced in the message.
-     * @param session the User's session object
      */
     public static void access(Level level, String msgid, String data[]) {
         access(level, msgid, data, null, null);
@@ -214,9 +213,8 @@ public class LogUtil {
      *          <li>FINER <br>
      *          <li>FINEST (lowest value) <br>
      *          </ul>
-     * @param messageId the message or a message identifier.
+     * @param msgid the message or a message identifier.
      * @param data string array of dynamic data to be replaced in the message.
-     * @param session the User's Session object.
      */
      public static void error(Level level, String msgid, String data[]) {
          error(level,msgid,data,null, null);
@@ -237,7 +235,7 @@ public class LogUtil {
      *          <li>FINER <br>
      *          <li>FINEST (lowest value) <br>
      *          </ul>
-     * @param messageId the message or a message identifier.
+     * @param msgid the message or a message identifier.
      * @param data string array of dynamic data to be replaced in the message.
      * @param session the User's Session object.
       */
@@ -261,7 +259,7 @@ public class LogUtil {
      *          <li>FINER <br>
      *          <li>FINEST (lowest value) <br>
      *          </ul>
-     * @param messageId the message or a message identifier.
+     * @param msgid the message or a message identifier.
      * @param data string array of dynamic data to be replaced in the message.
      * @param session the User's Session object.
      * @param props extra log fields

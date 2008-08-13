@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSUtils.java,v 1.7 2008-08-05 04:11:01 mallas Exp $
+ * $Id: STSUtils.java,v 1.8 2008-08-13 18:56:42 mrudul_uchil Exp $
  *
  */
 
@@ -60,10 +60,12 @@ public class STSUtils {
      * Returns the WSP agent attributes for a given end point.
      * @param endpoint the end point that is used in finding the
      *        Agent configuration. 
+     * @param endPointAtrrName the attribute name for the service End Point
+     *        attribute.
      * @param attrNames the attribute names set that is used to retrieve
      *        their values. If the attribute set is null, then it will 
      *        find all the attribute values.
-     * @param type the type of the agent for e.g. ProviderConfig.WSC or
+     * @param agentType the type of the agent for e.g. ProviderConfig.WSC or
      *             ProviderConfig.WSP
      * @return Map the attribute values for a given attribute set and 
      *             with a given search pattern.

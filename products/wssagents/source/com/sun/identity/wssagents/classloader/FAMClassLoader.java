@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMClassLoader.java,v 1.6 2008-08-08 21:29:40 mrudul_uchil Exp $
+ * $Id: FAMClassLoader.java,v 1.7 2008-08-13 18:56:42 mrudul_uchil Exp $
  *
  */
 
@@ -105,12 +105,8 @@ public class FAMClassLoader {
         try {
             for (int i=0; i < reqJars.length; i++) {
                 urls[i] = new URL(jarsPath + reqJars[i]);
-                System.out.println("FAMClassLoader WSS urls[" + i + "] : " + 
-                                   (urls[i]).toString());
             }
             urls[reqJars.length] = new URL(jarsPath);
-            System.out.println("FAMClassLoader WSS urls[" + reqJars.length + "] : " + 
-                                   (urls[reqJars.length]).toString());
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserNameToken.java,v 1.5 2008-06-25 05:50:09 qcheng Exp $
+ * $Id: UserNameToken.java,v 1.6 2008-08-13 18:56:41 mrudul_uchil Exp $
  *
  */
 
@@ -147,7 +147,9 @@ public class UserNameToken implements SecurityToken {
             } else if(PASSWORD.equals(child.getLocalName()) &&
                  WSSConstants.WSSE_NS.equals(child.getNamespaceURI()) ) {
                password = child.getFirstChild().getNodeValue();
-               passwordType = childElem.getAttribute("Type");
+               passwordType = 
+                   (childElem.getAttributeNodeNS(WSSConstants.WSSE_NS, "Type")).
+                   getNodeValue();
 
             } else if(NONCE.equals(child.getLocalName()) &&
                   WSSConstants.WSSE_NS.equals(child.getNamespaceURI()) ) {

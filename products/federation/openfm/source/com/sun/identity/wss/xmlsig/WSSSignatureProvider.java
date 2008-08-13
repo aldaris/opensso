@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSSignatureProvider.java,v 1.7 2008-07-30 05:00:47 mallas Exp $
+ * $Id: WSSSignatureProvider.java,v 1.8 2008-08-13 18:56:42 mrudul_uchil Exp $
  *
  */
 
@@ -88,7 +88,7 @@ public class WSSSignatureProvider extends AMSignatureProvider {
      * @param assertionID assertion ID
      * @param algorithm XML signature algorithm
      * @param ids list of id attribute values of nodes to be signed
-     * @return SAML Security Token  signature
+     * @return SAML Security Token signature
      * @throws XMLSignatureException if the document could not be signed
      */
     public org.w3c.dom.Element signWithSAMLToken(
@@ -282,7 +282,7 @@ public class WSSSignatureProvider extends AMSignatureProvider {
      * @param cert Signer's certificate
      * @param algorithm XML signature algorithm
      * @param ids list of id attribute values of nodes to be signed
-     * @return X509 Security Token  signature
+     * @return X509 Security Token signature
      * @throws XMLSignatureException if the document could not be signed
      */
     public org.w3c.dom.Element signWithUserNameToken(
@@ -302,7 +302,7 @@ public class WSSSignatureProvider extends AMSignatureProvider {
      * @param cert Signer's certificate
      * @param algorithm XML signature algorithm
      * @param ids list of id attribute values of nodes to be signed
-     * @return X509 Security Token  signature
+     * @return X509 Security Token signature
      * @throws XMLSignatureException if the document could not be signed
      */
     public org.w3c.dom.Element signWithBinarySecurityToken(
@@ -323,7 +323,7 @@ public class WSSSignatureProvider extends AMSignatureProvider {
      * @param algorithm XML signature algorithm
      * @param ids list of id attribute values of nodes to be signed
      * @param tokenType Token type
-     * @return X509 Security Token  signature
+     * @return X509 Security Token signature
      * @throws XMLSignatureException if the document could not be signed
      */
     private org.w3c.dom.Element signWithBinarySecurityToken(
@@ -733,7 +733,7 @@ public class WSSSignatureProvider extends AMSignatureProvider {
      * @param key
      * @param algorithm
      * @param ids
-     * @return
+     * @return Kerberos Security Token signature
      * @throws com.sun.identity.saml.xmlsig.XMLSignatureException
      */
     public org.w3c.dom.Element signWithKerberosToken(
@@ -857,7 +857,7 @@ public class WSSSignatureProvider extends AMSignatureProvider {
     
     /**
      * Verify web services message signature using specified key
-     * @param document the document to be validated
+     * @param doc the document to be validated
      * @param key the secret key to be used for validating signature
      * @return true if verification is successful.
      * @throws com.sun.identity.saml.xmlsig.XMLSignatureException
