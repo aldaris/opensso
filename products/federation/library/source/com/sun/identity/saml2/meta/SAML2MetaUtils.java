@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2MetaUtils.java,v 1.7 2008-08-06 17:28:17 exu Exp $
+ * $Id: SAML2MetaUtils.java,v 1.8 2008-08-13 20:48:25 weisun2 Exp $
  *
  */
 
@@ -64,7 +64,7 @@ import com.sun.identity.saml2.jaxb.metadata.SPSSODescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.XACMLPDPDescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.XACMLAuthzDecisionQueryDescriptorElement;
 import com.sun.identity.saml2.jaxb.metadataextquery.AttributeQueryDescriptorElement;
-
+import com.sun.identity.shared.configuration.SystemPropertiesManager;
 /**
  * The <code>SAML2MetaUtils</code> provides metadata related util methods.
  */
@@ -80,7 +80,8 @@ public final class SAML2MetaUtils {
         "com.sun.identity.saml2.jaxb.metadata:" +
         "com.sun.identity.saml2.jaxb.entityconfig:" +
         "com.sun.identity.saml2.jaxb.schema";
-
+    private static final String JAXB_PACKAGE_LIST_PROP =
+        "com.sun.identity.liberty.ws.jaxb.packageList";
     private static JAXBContext jaxbContext = null;
     private static final String PROP_JAXB_FORMATTED_OUTPUT =
                                         "jaxb.formatted.output";
@@ -89,10 +90,22 @@ public final class SAML2MetaUtils {
 
     private static NamespacePrefixMapperImpl nsPrefixMapper =
                                             new NamespacePrefixMapperImpl();
+    static String jaxbPackages = null;
 
     static {
         try {
-            jaxbContext = JAXBContext.newInstance(JAXB_PACKAGES);
+            String tmpJaxbPkgs = SystemPropertiesManager.get(
+                JAXB_PACKAGE_LIST_PROP);
+            if (tmpJaxbPkgs != null && tmpJaxbPkgs.length() > 0) {
+                jaxbPackages = JAXB_PACKAGES + ":" + tmpJaxbPkgs;
+            } else {
+                jaxbPackages = JAXB_PACKAGES;
+            }
+            if (debug.messageEnabled()) {
+                debug.message("SAML2MetaUtils.static: " + 
+                    "jaxbPackages = " + jaxbPackages);
+            }
+            jaxbContext = JAXBContext.newInstance(jaxbPackages);
         } catch (JAXBException jaxbe) {
             debug.error("SAML2MetaUtils.static:", jaxbe);
         }
