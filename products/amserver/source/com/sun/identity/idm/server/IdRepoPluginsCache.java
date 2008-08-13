@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: IdRepoPluginsCache.java,v 1.5 2008-08-07 17:22:00 arviranga Exp $
+* $Id: IdRepoPluginsCache.java,v 1.6 2008-08-13 20:43:02 arviranga Exp $
 */
 
 package com.sun.identity.idm.server;
@@ -240,16 +240,15 @@ public class IdRepoPluginsCache implements ServiceListener {
                         // Provide a delay of 500ms for existing operations
                         // to complete. the delay is in the forked thread.
                         SMSThreadPool.scheduleTask(shutdownrepo);
-                        
-                        if (reinitialize) {
-                            // Adding plugin back provides the atomic operation
-                            // for the caller. Else, client will get No-plugins
-                            // configured exception.
-                            // Add the plugin back to the cache
-                            addIdRepo(orgName, name);
-                        }
                         break;
                     }
+                }
+                if (reinitialize) {
+                    // Adding plugin back provides the atomic operation
+                    // for the caller. Else, client will get No-plugins
+                    // configured exception.
+                    // Add the plugin back to the cache
+                    addIdRepo(orgName, name);
                 }
             }
         }
