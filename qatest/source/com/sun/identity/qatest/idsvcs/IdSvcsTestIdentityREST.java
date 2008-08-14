@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSvcsTestIdentityREST.java,v 1.2 2008-08-07 20:52:43 vimal_67 Exp $
+ * $Id: IdSvcsTestIdentityREST.java,v 1.3 2008-08-14 17:10:55 vimal_67 Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -145,7 +145,6 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                                 page.getContent());
                         Reporter.log("Create Identity: " + identity_name); 
                         Reporter.log("Type: " + identity_type);
-                                                           
                     } else if (operationName.equals("search")) {
                         Map anmap = new HashMap();    
                         Map pmap = new HashMap();     
@@ -206,11 +205,16 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                         String identity_name = rbid.getString(idsProp + 
                                 index + "." + "operation" + i + 
                                 "." + "identity_name");
+                        String objecttype = rbid.getString(idsProp + 
+                                index + "." + "operation" + i +
+                                "." + "objecttype");
                         String attributes = rbid.getString(idsProp + 
                                 index + "." + "operation" + i +
                                 "." + "attributes");
                         anmap = getAttributes(attributes);
                         pmap.put("name", identity_name);
+                        pmap.put("attributes_names", "objecttype");
+                        pmap.put("attributes_values_objecttype", objecttype);
                         page = idsvcsc.commonURLREST(operationName, pmap, 
                                 anmap, admToken);
                         log(Level.FINEST, "testIdSvcsREST - Read", "Page: " +
@@ -223,17 +227,22 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                         String identity_name = rbid.getString(idsProp + 
                                 index + "." + "operation" + i +
                                 "." + "identity_name");
+                        String identity_type = rbid.getString(idsProp + 
+                                index + "." + "operation" + i + 
+                                "." + "identity_type");
                         String attributes = rbid.getString(idsProp + 
                                 index + "." + "operation" + i + 
                                 "." + "attributes");
                         anmap = getAttributes(attributes);
                         pmap.put("identity_name", identity_name);
+                        pmap.put("identity_type", identity_type);
+                        pmap.put("attributes_names", "objecttype");
+                        pmap.put("attributes_values_objecttype", identity_type);
                         page = idsvcsc.commonURLREST(operationName, pmap, 
                                 anmap, admToken);
                         log(Level.FINEST, "testIdSvcsREST - Update", "Page: " +
                                 page.getContent());
                         Reporter.log("Update Attributes: " + identity_name);
-                    
                     } else if (operationName.equals("delete") &&
                             strCleanup.equals("false")) {
                         Map anmap = new HashMap(); 
@@ -256,7 +265,6 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                                 page.getContent());
                         Reporter.log("Delete Identity: " + identity_name); 
                         Reporter.log("Type: " + identity_type);
-                    
                     } else if (operationName.equals("isTokenValid")) {
                         Map anmap = new HashMap();
                         Map pmap = new HashMap(); 
@@ -281,7 +289,7 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                             // Releasing user token
                             idsvcsc.commonLogOutREST(userToken);
                         } else {
-                            if (paramName.equals("tokenid")){ 
+                            if (paramName.equals("tokenid")) { 
                                 pmap.put("tokenid", 
                                         URLEncoder.encode(admToken, "UTF-8"));
                             } else {
@@ -300,7 +308,6 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                             page.getContent());
                         if (!page.getContent().equals(str)) 
                             assert false;
-                                         
                     } else if (operationName.equals("authenticate")) {
                         String username = rbid.getString(idsProp + index + 
                                 "." + "operation" + i + "." + "username");
@@ -322,12 +329,14 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                         log(Level.FINEST, "testIdSvcsREST - Attributes", 
                                 "Page: " + page.getContent());
                     } else {
-                        log(Level.FINEST, "testIdSvcsREST", 
-                                "Not a Valid REST Operation");
+                        if (strCleanup.equals("false")) {
+                            log(Level.FINEST, "testIdSvcsREST", 
+                                    "Not a Valid REST Operation" + 
+                                    operationName);
+                        }
                     }
                     i++;
                 }
-                
         } catch (Exception e) {
             log(Level.SEVERE, "testIdSvcsREST", e.getMessage());
             e.printStackTrace();
@@ -391,11 +400,11 @@ public class IdSvcsTestIdentityREST extends TestCommon {
     /**
      * Get Attributes
      */
-    private Map getAttributes(String atts){
+    private Map getAttributes(String atts) {
         String token = "";
         Map mp = new HashMap();
         StringTokenizer strTokenComma = new StringTokenizer(atts, ",");
-        while (strTokenComma.hasMoreTokens()){
+        while (strTokenComma.hasMoreTokens()) {
             token = strTokenComma.nextToken();
             String akey = token.substring(0, token.indexOf("="));
             String avalue = token.substring(token.indexOf("=") + 1, 
