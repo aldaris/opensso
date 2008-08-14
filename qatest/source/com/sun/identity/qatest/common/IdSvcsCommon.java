@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSvcsCommon.java,v 1.2 2008-08-07 20:55:29 vimal_67 Exp $
+ * $Id: IdSvcsCommon.java,v 1.3 2008-08-14 17:13:11 vimal_67 Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -110,50 +110,70 @@ public class IdSvcsCommon extends TestCommon {
         entering("commonURLREST", null);
         TextPage URL = null;
         String parameters = "";
+        String readParameters = "";
         String att_names = "";
+        Boolean readFlag = false;
         Object identity_value = null;
         try {
+            
             // parameters Map    
             Set set_par = par_map.keySet();
             Iterator iter_par = set_par.iterator();
-            while (iter_par.hasNext()){
+            while (iter_par.hasNext()) {
                 Object key = iter_par.next();       
                 Object value = par_map.get(key);    
-                if (key.equals("identity_name")){
+                if (key.equals("identity_name")) {
                     identity_value = par_map.get(key);
                 }
-                parameters = parameters + "&" + key + "=" + value;
+                if (key.toString().contains("attributes")) {
+                    readParameters = readParameters + "&" + key.toString() +
+                            "=" + value.toString();
+                } else {
+                    parameters = parameters + "&" + key + "=" + value;
+                }
+                if (key.toString().equals("attributes_values_objecttype") && 
+                        (value.toString().equals("role") || 
+                        value.toString().equals("filteredrole"))) {
+                    readFlag = true;
+                }
             }
             log(Level.FINEST, "commonURLREST", "Parameters URL: " + parameters);
             
             // attributes names Map            
             Set set_att = att_map.keySet();
             Iterator iter_att = set_att.iterator();
-            while (iter_att.hasNext()){
+            while (iter_att.hasNext()) {
                 Object key = iter_att.next();       
                 Object value = att_map.get(key);    
                 
                 // Calling REST Operation read
                 // Checking attributes one by one after calling read
                 if (operation.equals("read")) {
-                    String rdattrs = "identitydetails.attribute.name=" +
-                    key + "\n" + "identitydetails.attribute.value=" + value;
+                    String rdattrs = "";
+                    if (readFlag) {
+                        rdattrs = "identitydetails.attribute.name=" + key;
+                    } else {
+                        rdattrs = "identitydetails.attribute.name=" + key +
+                        "\n" + "identitydetails.attribute.value=" + value;
+                    }
+                                                         
                     //Reading the attributes 
                     URL  = (TextPage)webClient.getPage(serverURI +
-                            "/identity/read?&attributes_names=" + key +
-                            parameters + "&admin=" + 
+                            "/identity/read?&attributes_names=" + key + 
+                            parameters + readParameters + "&admin=" + 
                             URLEncoder.encode(token, "UTF-8"));
                     log(Level.FINEST, "commonURLREST", 
                             "Page: " + URL.getContent());
                     if (!URL.getContent().contains(rdattrs))
                         assert false;
-                } else if (operation.equals("update")){
+                } else if (operation.equals("update")) {
+                    
                     //Reading the attributes with old values
                     URL  = (TextPage)webClient.getPage(serverURI +
                             "/identity/read?&attributes_names=" + key + 
-                            "&name=" + identity_value + "&admin=" + 
-                            URLEncoder.encode(token, "UTF-8"));
-                    log(Level.FINEST, "commonURLREST", 
+                            "&name=" + identity_value + readParameters + 
+                            "&admin=" + URLEncoder.encode(token, "UTF-8"));
+                    log(Level.FINEST, "commonURLREST Operation: Update",
                             "Page: " + URL.getContent());
                     att_names = "&identity_attribute_names=" + key +
                     "&identity_attribute_values_" + key + "=" + value +
@@ -171,6 +191,7 @@ public class IdSvcsCommon extends TestCommon {
             }
             log(Level.FINEST, "commonURLREST", 
                     "Attributes Names URL: " + att_names);
+            log(Level.FINEST, "commonURLREST ", "Operation: " + operation);
             
             //Calling REST Operations
             if (operation.equals("search")) {

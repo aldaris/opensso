@@ -17,16 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSvcsTestIdentitySOAP.java,v 1.1 2008-08-07 20:54:30 vimal_67 Exp $
+ * $Id: IdSvcsTestIdentitySOAP.java,v 1.2 2008-08-14 17:11:57 vimal_67 Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.idsvcs;
 
-import com.gargoylesoftware.htmlunit.TextPage;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.sun.identity.qatest.common.IdSvcsCommon;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.idsvcs.Attribute;
 import com.sun.identity.qatest.idsvcs.IdentityDetails;
@@ -62,9 +59,7 @@ public class IdSvcsTestIdentitySOAP extends TestCommon {
     private String strCleanup;
     private String strSetup;
     private String strTestRealm;
-    private TextPage page;
     private Token userTokenSOAP = null;
-    private WebClient webClient;
     private int index;
       
     /**
@@ -121,7 +116,6 @@ public class IdSvcsTestIdentitySOAP extends TestCommon {
         try {
             int i = 0;
             int operations = 0;
-            webClient = new WebClient();
                 operations = new Integer(rbid.getString(idsProp + index + 
                         "." + "operations")).intValue();
                 String description = rbid.getString(idsProp + index + "." +
@@ -157,7 +151,6 @@ public class IdSvcsTestIdentitySOAP extends TestCommon {
                         identity.setAttributes(attrArray);      
                         isimpl.create(identity, token);
                         log(Level.FINEST, "testIdSvcsSOAP", operationName);
-                                                                               
                     } else if (operationName.equals("search")) {
                         IdentityDetails identity = new IdentityDetails();
                         Attribute[] attrArray = null; 
@@ -220,7 +213,6 @@ public class IdSvcsTestIdentitySOAP extends TestCommon {
                                         assert false;   
                             }
                         } 
-                                                                     
                     } else if (operationName.equals("read")) {
                         Attribute[] attrArray = null;
                         String identity_name = rbid.getString(idsProp + 
@@ -249,7 +241,7 @@ public class IdSvcsTestIdentitySOAP extends TestCommon {
                             for (int n = 0; n < vals.length; n++) {
                                 log(Level.FINEST, "testIdSvcsSOAP",
                                 "Attribute value: " + vals[n]);
-                                if (n == vals.length - 1){
+                                if (n == vals.length - 1) {
                                     attrValues = attrValues + vals[n];
                                 } else {
                                     attrValues = attrValues + vals[n] + "&";
@@ -261,7 +253,6 @@ public class IdSvcsTestIdentitySOAP extends TestCommon {
                             if (!attributes.contains(attrResult)) 
                                 assert false;
                         }
-                                            
                     } else if (operationName.equals("update")) {
                         IdentityDetails identity = new IdentityDetails();
                         Attribute[] attrArray = null; 
@@ -282,7 +273,6 @@ public class IdSvcsTestIdentitySOAP extends TestCommon {
                         identity.setAttributes(attrArray);      
                         isimpl.update(identity, token);
                         log(Level.FINEST, "testIdSvcsSOAP", operationName);
-                                            
                     } else if (operationName.equals("delete") &&
                             strCleanup.equals("false")) {
                         IdentityDetails identity = new IdentityDetails();
@@ -298,7 +288,6 @@ public class IdSvcsTestIdentitySOAP extends TestCommon {
                         identity.setType(identity_type);
                         isimpl.delete(identity, token);
                         log(Level.FINEST, "testIdSvcsSOAP", operationName);
-                                            
                     } else if (operationName.equals("isTokenValid")) {
                         Boolean bool = false;
                         String paramName = rbid.getString(idsProp + index +
@@ -319,8 +308,7 @@ public class IdSvcsTestIdentitySOAP extends TestCommon {
                                 operationName, bool);
                         if (!bool) 
                             assert false;
-                                         
-                    } else if (operationName.equals("authenticate")) {
+                     } else if (operationName.equals("authenticate")) {
                         String username = rbid.getString(idsProp + index + 
                                 "." + "operation" + i + "." + "username");
                         String password = rbid.getString(idsProp + index +
@@ -334,7 +322,6 @@ public class IdSvcsTestIdentitySOAP extends TestCommon {
                         String tokenString = userTokenSOAP.getId();
                         log(Level.FINEST, "testIdSvcsSOAP", "Token ID: " +
                                 tokenString);
-                                                
                     } else if (operationName.equals("attributes")) {
                         String identity_name = rbid.getString(idsProp + index + 
                                 "." + "operation" + i + "." + "identity_name");
@@ -374,14 +361,15 @@ public class IdSvcsTestIdentitySOAP extends TestCommon {
                         
                         // releasing attribute user token
                         isimpl.logout(attrUserToken);
-                        
                     } else {
-                        log(Level.FINEST, "testIdSvcsSOAP", 
-                                "Not a Valid SOAP Operation");
+                        if (strCleanup.equals("false")) {
+                            log(Level.FINEST, "testIdSvcsSOAP", 
+                                    "Not a Valid SOAP Operation" + 
+                                    operationName);
+                        }
                     }
                     i++;
                 }
-                
         } catch (Exception e) {
             log(Level.SEVERE, "testIdSvcsSOAP", e.getMessage());
             e.printStackTrace();
@@ -444,12 +432,12 @@ public class IdSvcsTestIdentitySOAP extends TestCommon {
     /**
      * Get Attributes as Array of Attribute
      */
-    private Attribute[] getAttributes(String attString){
+    private Attribute[] getAttributes(String attString) {
         String token = "";
         Attribute[] ret = null;
         List attributeList = null;
         StringTokenizer strTokenComma = new StringTokenizer(attString, ",");
-        while (strTokenComma.hasMoreTokens()){
+        while (strTokenComma.hasMoreTokens()) {
             token = strTokenComma.nextToken();
             String akey = token.substring(0, token.indexOf("="));
             String avalue = token.substring(token.indexOf("=") + 1, 

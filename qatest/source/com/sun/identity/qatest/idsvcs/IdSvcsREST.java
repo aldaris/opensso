@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSvcsREST.java,v 1.7 2008-08-01 18:53:55 vimal_67 Exp $
+ * $Id: IdSvcsREST.java,v 1.8 2008-08-14 17:09:38 vimal_67 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -57,13 +57,6 @@ public class IdSvcsREST extends TestCommon {
     private String serverURI;
     private String polName = "idsvcsRESTPolicyTest";
     private String userName = "idsvcsresttest";
-    private String idsvcsNormalUsrtokenid = "idsvcsNormalUsrtokenid";
-    private String idsvcsNormalUsrtokenidpass = "secret12";
-    private String idsvcsNormalUsriPDPro = "idsvcsNormalUsriPDPro";
-    private String idsvcsNormalUsriPDPropass = "secret12";
-    private String adminUserTokenREST;
-    private String normalUsertokenidToken;
-    private String normalUseriPDProToken;
     private String identity_user = "idsvcsuser";
     private String identity_agent = "idsvcsJ2EEAgent";
     private String identity_group = "idsvcsGroup";
@@ -77,7 +70,6 @@ public class IdSvcsREST extends TestCommon {
     private String identity_type_user = "user";
     private String identity_type_agent = "AgentOnly";
     private String identity_type_group = "group";
-    private String identity_attribute_values_mail = "restUser@rest.org";
     private String identity_attribute_values_AGENTURL = "http://agenturl." +
             "red.iplanet.com:28080/fam";
     private String identity_attribute_values_SERVERURL = "http://serverurl." +
@@ -169,8 +161,7 @@ public class IdSvcsREST extends TestCommon {
             usertoken = stMgr.createSSOToken(s1);
             if (!validateToken(usertoken))
                 assert false;
-            adminUserTokenREST = authenticateREST(adminUser, adminPassword);
-            
+                       
         } catch (Exception e) {
             log(Level.SEVERE, "testSuperAdminAuthenticateREST", e.getMessage());
             e.printStackTrace();
@@ -617,179 +608,6 @@ public class IdSvcsREST extends TestCommon {
     }
 
     /**
-     * This function test the isTokenValid interface with token id attribute
-     * for the super Admin user
-     */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
-    public void testAdminUserisTokenValidtokenidREST()
-            throws Exception {
-        entering("testAdminUserisTokenValidtokenidREST", null);
-        String s1 = null;
-        try {
-            webClient = new WebClient();
-            s1 = authenticateREST(adminUser, adminPassword);
-            
-            page = (TextPage) webClient.getPage(serverURI +
-                    "/identity/isTokenValid?tokenid=" +
-                    URLEncoder.encode(s1, "UTF-8"));
-            log(Level.FINEST, "testAdminUserisTokenValidtokenidREST",
-                    "Page: " + page.getContent());
-            String str = "boolean=true" + "\n";
-            if (!page.getContent().equals(str)) 
-                assert false;
-            
-        } catch (Exception e) {
-            log(Level.SEVERE, "testAdminUserisTokenValidtokenidREST", 
-                    e.getMessage());
-            e.printStackTrace();
-            throw e;
-        } finally {
-            Reporter.log("This test validates the isTokenValid REST" +
-                    " interface with attribute tokenid for a Admin user. ");
-            commonLogOutREST(s1);
-        }
-        exiting("testAdminUserisTokenValidtokenidREST");
-    }
-
-    /**
-     * This function tests the isTokenValid interface with token id attribute
-     * for the Normal User
-     */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
-    public void testNormalUserisTokenValidtokenidREST()
-            throws Exception {
-        entering("testNormalUserisTokenValidtokenidREST", null);
-        try {
-            webClient = new WebClient();
-            page = (TextPage) webClient.getPage(serverURI +
-                        "/identity/create?identity_name=" + 
-                        idsvcsNormalUsrtokenid + "&identity_attribute_names=" +
-                        "userpassword" + "&identity_attribute_values" +
-                        "_userpassword=" + idsvcsNormalUsrtokenidpass + 
-                        "&identity_attribute_names=sn" + 
-                        "&identity_attribute_values_sn=" + 
-                        identity_attribute_values_sn +
-                        "&identity_attribute_names=cn" +
-                        "&identity_attribute_values_cn=" +
-                        identity_attribute_values_cn + "&identity_realm=" + 
-                        identity_realm + "&identity_type=" + 
-                        identity_type_user + "&admin=" +
-                        URLEncoder.encode(adminUserTokenREST, "UTF-8"));
-            
-            normalUsertokenidToken = authenticateREST(idsvcsNormalUsrtokenid, 
-                    idsvcsNormalUsrtokenidpass);
-            page = (TextPage) webClient.getPage(serverURI +
-                    "/identity/isTokenValid?tokenid=" +
-                    URLEncoder.encode(normalUsertokenidToken, "UTF-8"));
-            String str = "boolean=true" + "\n";
-            log(Level.FINEST, "testNormalUserisTokenValidtokenidREST",
-                    "Page: " + page.getContent());
-            if (!page.getContent().equals(str)) 
-                assert false;
-            
-        } catch (Exception e) {
-            log(Level.SEVERE, "testNormalUserisTokenValidtokenidREST",
-                    e.getMessage());
-            e.printStackTrace();
-            throw e;
-        } finally {
-            Reporter.log("This test validates the isTokenValid REST" +
-                    " interface with attribute tokenid for a Normal user");
-            commonLogOutREST(normalUsertokenidToken);
-        }
-        exiting("testNormalUserisTokenValidtokenidREST");
-    }
-
-    /**
-     * This function tests the isTokenValid interace with iPlanetDirectoryPro 
-     * attribute for the super Admin user
-     */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
-    public void testAdminUserisTokenValidiPlanetDirectoryProREST()
-            throws Exception {
-        entering("testAdminUserisTokenValidiPlanetDirectoryProREST", null);
-        String s1 = null;
-        try {
-            webClient = new WebClient();
-            s1 = authenticateREST(adminUser, adminPassword);
-            
-            page = (TextPage) webClient.getPage(serverURI +
-                    "/identity/isTokenValid?iPlanetDirectoryPro=" +
-                    URLEncoder.encode(s1, "UTF-8"));
-            String str = "boolean=true" + "\n";
-            log(Level.FINEST, "testsuperAdminUserisTokenValid" +
-                    "iPlanetDirectoryProREST", "Page: " +
-                    page.getContent());
-            if (!page.getContent().equals(str)) 
-                assert false;
-            
-        } catch (Exception e) {
-            log(Level.SEVERE, "testsuperAdminUserisTokenValid" +
-                    "iPlanetDirectoryProREST", e.getMessage());
-            e.printStackTrace();
-            throw e;
-        } finally {
-            Reporter.log("This test validates the isTokenValid REST" +
-                    " interface with attribute iPlanetDirectoryPro" +
-                    " for a Admin user");
-            commonLogOutREST(s1);
-        }
-        exiting("testAdminUserisTokenValidiPlanetDirectoryProREST");
-    }
-
-    /**
-     * This function tests the isTokenValid interface with iPlanetDirecotyrPro
-     * attribute for the Normal User
-     */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
-    public void testNormalUserisTokenValidiPlanetDirectoryProREST()
-            throws Exception {
-        entering("testNormalUserisTokenValidiPlanetDirectoryProREST", null);
-        
-        try {
-            webClient = new WebClient();
-            page = (TextPage) webClient.getPage(serverURI +
-                        "/identity/create?identity_name=" + 
-                        idsvcsNormalUsriPDPro + "&identity_attribute_names=" +
-                        "userpassword" + "&identity_attribute_values_" +
-                        "userpassword=" + idsvcsNormalUsriPDPropass + 
-                        "&identity_attribute_names=sn" + 
-                        "&identity_attribute_values_sn=" + 
-                        identity_attribute_values_sn +
-                        "&identity_attribute_names=cn" +
-                        "&identity_attribute_values_cn=" +
-                        identity_attribute_values_cn + "&identity_realm=" + 
-                        identity_realm + "&identity_type=" + 
-                        identity_type_user + "&admin=" +
-                        URLEncoder.encode(adminUserTokenREST, "UTF-8"));
-            normalUseriPDProToken = authenticateREST(idsvcsNormalUsriPDPro, 
-                    idsvcsNormalUsriPDPropass);
-            page = (TextPage) webClient.getPage(serverURI +
-                    "/identity/isTokenValid?iPlanetDirectoryPro=" +
-                    URLEncoder.encode(normalUseriPDProToken, "UTF-8"));
-            String str = "boolean=true" + "\n";
-            log(Level.FINEST, "testNormalUserisTokenValid" +
-                    "iPlanetDirectoryProREST", "Page: " +
-                    page.getContent());
-            if (!page.getContent().equals(str)) 
-                assert false;
-            
-        } catch (Exception e) {
-            log(Level.SEVERE, "testNormalUserisTokenValid" +
-                    "iPlanetDirectoryProREST", e.getMessage());
-            e.printStackTrace();
-            throw e;
-        } finally {
-            Reporter.log("This test validates the isTokenValid REST" +
-                    " interface with attribute iPlanetDirectoryPro" +
-                    " for a Normal user");
-            commonLogOutREST(normalUseriPDProToken);
-        }
-        exiting("testNormalUserisTokenValidiPlanetDirectoryProREST");
-    }
-
-    
-    /**
      * This function tests the search interface for the J2EE agents
      */
     @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
@@ -1155,56 +973,10 @@ public class IdSvcsREST extends TestCommon {
     }
 
     /**
-     * Read particular user Identity Attributes
-     */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
-    dependsOnMethods = {"testCreateUserREST"})
-    public void testUserIdentityAttributesREST()
-            throws Exception {
-        entering("testUserIdentityAttributesREST", null);
-        String s1 = null;
-        try {
-            webClient = new WebClient();
-            String attrs[] = {"uid", "cn", "sn"};
-            String[] attrsval = new String[3];
-            attrsval[0] = "identitydetails.attribute.name=uid" + "\n" +
-                    "identitydetails.attribute.value=" + identity_user;
-            attrsval[1] = "identitydetails.attribute.name=cn" + "\n" +
-                    "identitydetails.attribute.value=" + 
-                    identity_attribute_values_cn;
-            attrsval[2] = "identitydetails.attribute.name=sn" + "\n" +
-                    "identitydetails.attribute.value=" + 
-                    identity_attribute_values_sn;
-            s1 = authenticateREST(adminUser, adminPassword);
-            for (int i = 0; i < attrsval.length; i++){
-                 page = (TextPage) webClient.getPage(serverURI +
-                     "/identity/read?name=" + identity_user + 
-                     "&attributes_names=" + attrs[i] + "&admin=" +
-                     URLEncoder.encode(s1, "UTF-8"));
-                 log(Level.FINEST, "testUserIdentityAttributesREST", "Page: " +
-                     page.getContent());
-                 if (!page.getContent().contains(attrsval[i]))
-                     assert false;
-            }
-                        
-        } catch (Exception e) {
-            log(Level.SEVERE, "testUserIdentityAttributesREST", e.getMessage());
-            e.printStackTrace();
-            throw e;
-        } finally {
-            Reporter.log("This test validates the uid, cn and sn " +
-                    " attributes of the particular user identity" +
-                    " using read REST interface");
-            commonLogOutREST(s1);
-        }
-        exiting("testUserIdentityAttributesREST");
-    }
-    
-    /**
      * Delete the user Identity
      */
     @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
-    dependsOnMethods = {"testUserIdentityAttributesREST"})
+    dependsOnMethods = {"testCreateUserREST"})
     public void testUserDeleteIdentityREST()
             throws Exception {
         entering("testUserDeleteIdentityREST", null);
@@ -1379,19 +1151,7 @@ public class IdSvcsREST extends TestCommon {
 
             if (validateToken(admintoken)) 
                 destroyToken(admintoken);
-            
-            log(Level.FINEST, "cleanup", "Deleting User: " + 
-                    idsvcsNormalUsrtokenid);
-            Reporter.log("Deleting User :" + idsvcsNormalUsrtokenid);
-            commonDeleteREST(idsvcsNormalUsrtokenid, "user", 
-                    adminUserTokenREST);
-            log(Level.FINEST, "cleanup", "Deleting User: " + 
-                    idsvcsNormalUsriPDPro);
-            Reporter.log("Deleting User :" + idsvcsNormalUsriPDPro);
-            commonDeleteREST(idsvcsNormalUsriPDPro, "user", 
-                    adminUserTokenREST);
-            commonLogOutREST(adminUserTokenREST);
-                        
+                                                
         } catch (Exception e) {
             log(Level.SEVERE, "cleanup", e.getMessage());
             e.printStackTrace();
