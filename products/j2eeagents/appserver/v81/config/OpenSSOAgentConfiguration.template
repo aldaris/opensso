@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: OpenSSOAgentConfiguration.template,v 1.2 2008-08-07 18:04:47 huacui Exp $
+# $Id: OpenSSOAgentConfiguration.template,v 1.3 2008-08-14 03:13:03 huacui Exp $
 #
 #
 
@@ -779,7 +779,7 @@ com.iplanet.security.encryptor=com.iplanet.services.util.JCEEncryption
 #
 # USER DATA CACHE PROPERTIES
 #   - com.sun.identity.idm.remote.notification.enabled: A flag that is used to
-#     enable/disable the notifications for am.sdk and IdRepo Caches. If set to
+#     enable/disable the notifications for amsdk and IdRepo Caches. If set to
 #     true notifications are enabled and disabled if set to false.
 #   - com.iplanet.am.sdk.remote.pollingTime: Cache update time in minutes for
 #     user management data. If set to '0' no updates happen. This property
