@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogManager.java,v 1.8 2008-07-16 00:30:44 bigfatrat Exp $
+ * $Id: LogManager.java,v 1.9 2008-08-14 16:41:31 bigfatrat Exp $
  *
  */
 
@@ -82,11 +82,12 @@ public class LogManager extends java.util.logging.LogManager {
      * Indicator for whether the first readConfiguration has happened
      */
     private static boolean didFirstReadConfig;
-    private static String oldLocation = "DEFAULT";
-    private static String oldLevel = "DEFAULT";
-    private static String oldSecurityStatus = "DEFAULT";
-    private static String oldBackend = "DEFAULT";
-    private static String oldStatus = "DEFAULT";
+    private static final String strDEFAULT = "DEFAULT";
+    private static String oldLocation = strDEFAULT;
+    private static String oldLevel = strDEFAULT;
+    private static String oldSecurityStatus = strDEFAULT;
+    private static String oldBackend = strDEFAULT;
+    private static String oldStatus = strDEFAULT;
     private static String newLocation; 
     private static String newLevel;
     private static String newSecurityStatus;
@@ -459,7 +460,7 @@ public class LogManager extends java.util.logging.LogManager {
         } finally {
             Logger.rwLock.writeDone();
         }
-        if (SystemProperties.isServerMode()) {
+        if (SystemProperties.isServerMode() && isLocal) {
             checkStartLogs(xlogData);
         }
     } /* end of readConfiguration() */
@@ -494,8 +495,14 @@ public class LogManager extends java.util.logging.LogManager {
         boolean loggingIsActive = false;
         boolean levelIsOff = true;
 
+        // if the values array or any of its elements is null, just return
         if (vals == null) {
             return;
+        }
+        for (int i = 0; i <= NEWLEVEL; i++) {
+            if ((vals[i] == null) || (vals[i].length() == 0)) {
+                return;
+            }
         }
 
         if (vals[NEWSTATUS] != null) {
