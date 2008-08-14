@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdServicesImpl.java,v 1.48 2008-08-13 17:05:14 veiming Exp $
+ * $Id: IdServicesImpl.java,v 1.49 2008-08-14 07:53:51 sean_brydon Exp $
  *
  */
 
@@ -861,9 +861,7 @@ public class IdServicesImpl implements IdServices {
             if (origEx != null) {
                 throw origEx;
             } else {
-                Object args[] = { "getMembers", IdOperation.READ.getName()};
-                throw new IdRepoUnsupportedOpException(
-                    IdRepoBundle.BUNDLE_NAME, "305", args);
+                return (Collections.EMPTY_SET);
             }
         } else {
             Set results = combineMembers(token, membersSet, membersType,
@@ -978,9 +976,7 @@ public class IdServicesImpl implements IdServices {
             if (origEx != null) {
                 throw origEx;
             } else {
-                Object args[] = { "getMemberships", IdOperation.READ.getName()};
-                throw new IdRepoUnsupportedOpException(
-                    IdRepoBundle.BUNDLE_NAME, "305", args);
+                return (Collections.EMPTY_SET);
             }
         } else {
             Set results = combineMembers(token, membershipsSet, membershipType,
