@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ff_ds_sec-authentication-testng.xml,v 1.9 2008-06-19 22:48:14 mrudulahg Exp $
+ $Id: ff_ds_sec-authentication-testng.xml,v 1.10 2008-08-14 19:23:11 cmwesley Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -332,7 +332,7 @@
         <parameter name="testMode" value="user"/>
         <groups>
             <run>
-                <include name="ds_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -344,7 +344,7 @@
         <parameter name="testMode" value="module"/>
         <groups>
             <run>
-                <include name="ds_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -356,7 +356,7 @@
         <parameter name="testMode" value="service"/>
         <groups>
             <run>
-                <include name="ds_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -368,7 +368,7 @@
         <parameter name="testMode" value="role"/>
         <groups>
             <run>
-                <include name="ds_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
@@ -380,13 +380,73 @@
         <parameter name="testMode" value="authlevel"/>
         <groups>
             <run>
-                <include name="ds_ds"/>
+                <include name="ff_ds_sec"/>
             </run>
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.authentication.AuthTest"/>
         </classes>
-    </test>        
+    </test>
+    <test name="AuthTestDataStoreUser">
+        <parameter name="testModule" value="datastore"/>
+        <parameter name="testMode" value="user"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
+        </classes>
+    </test>
+    <test name="AuthTestDataStoreModule">
+        <parameter name="testModule" value="datastore"/>
+        <parameter name="testMode" value="module"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
+        </classes>
+    </test>
+    <test name="AuthTestDataStoreService">
+        <parameter name="testModule" value="datastore"/>
+        <parameter name="testMode" value="service"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
+        </classes>
+    </test>
+    <test name="AuthTestDataStoreRole">
+        <parameter name="testModule" value="datastore"/>
+        <parameter name="testMode" value="role"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
+        </classes>
+    </test>
+    <test name="AuthTestDataStoreAuthLevel">
+        <parameter name="testModule" value="datastore"/>
+        <parameter name="testMode" value="authlevel"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
+        </classes>
+    </test>            
     <test name="ChainTestRequired">
         <parameter name="testChainName" value="chain1"/>
         <groups>
