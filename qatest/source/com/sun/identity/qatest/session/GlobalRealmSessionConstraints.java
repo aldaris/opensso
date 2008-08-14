@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GlobalRealmSessionConstraints.java,v 1.6 2008-06-09 23:23:11 srivenigan Exp $
+ * $Id: GlobalRealmSessionConstraints.java,v 1.7 2008-08-14 21:11:01 srivenigan Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,7 @@
 package com.sun.identity.qatest.session;
 
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.qatest.common.IDMCommon;
 import com.sun.identity.qatest.common.SMSCommon;
@@ -32,6 +33,7 @@ import com.sun.identity.qatest.common.TestCommon;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
@@ -46,7 +48,7 @@ import org.testng.annotations.Test;
  * This class is used to test 'Active Sessions' dynamic attribute for 
  * both admin and the user at the Global and Realm levels. All the 
  * tests depend on two constraints :
- *  a)Exempt top-level admins (can be YES/NO) 
+ *  a)Exempt Top-level admins (can be YES/NO) 
  *  b)Resulting behavior if session quota exhausted 
  *            (can be DENY_ACESS/DESTROY_OLD_SESSION)
  */
@@ -63,6 +65,7 @@ public class GlobalRealmSessionConstraints extends TestCommon {
     private boolean consTurnedOn = false;
     private boolean dynSrvcRealmAssigned = false;
     private boolean cleanedUp = false;
+    private String adminRole = "Top-level Admin Role";
     
     /**
     * SessionConstraints Constructor
@@ -92,13 +95,15 @@ public class GlobalRealmSessionConstraints extends TestCommon {
     throws Exception {
         entering("setup", null);
         try {
+            log(Level.FINEST, "setup", "Tests run at" 
+                    + inheritancelevel + " level");
+            Reporter.log("InheritanceLevel: " + inheritancelevel);
             Set set = smsc.getAttributeValueFromSchema(
                     SessionConstants.SESSION_SRVC,
                     SessionConstants.ENABLE_SESSION_CONST, 
                     SessionConstants.GLOBAL_SRVC_TYPE);
             Iterator itr = set.iterator();
             String quotaConst = (String) itr.next();
-            
             if (quotaConst.equals("OFF")) {
                 Map attrMap = new HashMap();
                 set.clear();
@@ -113,7 +118,7 @@ public class GlobalRealmSessionConstraints extends TestCommon {
                     SessionConstants.GLOBAL_SRVC_TYPE);
             itr = set.iterator();
             btladmin = (String) itr.next();
-            log(Level.FINE, "setup", "Exempt top-level admin from constraint " +
+            log(Level.FINE, "setup", "Exempt Top-level admin from constraint " +
                     "checking is set to: " + btladmin);
             set = smsc.getAttributeValueFromSchema(SessionConstants.SESSION_SRVC,
                     SessionConstants.RESULTING_BEHAVIOR, 
@@ -123,8 +128,22 @@ public class GlobalRealmSessionConstraints extends TestCommon {
             log(Level.FINE, "setup", "Resulting behavior if session quota " +
                     "exhausted is set to: " + resultBehavior);
             idmc.createDummyUser(admintoken, realm, "", testAdminUser);
+            Map nullmap = new HashMap();
+            idmc.createIdentity(admintoken, realm, IdType.ROLE, 
+                    adminRole, nullmap);
             idmc.addUserMember(admintoken, testAdminUser,
-                    "Top-level Admin Role" , IdType.ROLE);
+                    adminRole , IdType.ROLE);
+            set = idmc.getMembers(admintoken, adminRole, IdType.ROLE, 
+                    IdType.USER, realm);
+            Iterator it = set.iterator();
+            while (it.hasNext()) {
+                AMIdentity identity = (AMIdentity)it.next();
+                if (!identity.getName().equals(testAdminUser)) {
+                    log(Level.SEVERE, "setup", "Test admin user not assigned " +
+                            "to top-level admin role");
+                    assert false;                    
+                }
+            }
             log(Level.FINE, "setup", "Created user " + testAdminUser +
                     " identity and added Top-level Admin role to this user");
 
@@ -214,7 +233,7 @@ public class GlobalRealmSessionConstraints extends TestCommon {
     /**
      *  Tests the following case:
      * (a) Max session quota set to "1" in global/realm session service
-     * (b) Set Exempt top-level admins from constraint checking to Yes
+     * (b) Set Exempt Top-level admins from constraint checking to Yes
      * (c) Set Resulting behavior if session quota exhausted to
      *     DENY_ACCESS
      * (d) User is amadmin
@@ -229,11 +248,17 @@ public class GlobalRealmSessionConstraints extends TestCommon {
         Vector<SSOToken> tokenVector = new Vector<SSOToken>();
         log(Level.FINE, "testMaxSessionQuotaGlobalRealmYDAAmAdmin", 
                 "This testcase validates session quota for amadmin when exempt " +
-                "top-level admin is Yes and resulting behavior is " +
+                "Top-level admin is Yes and resulting behavior is " +
                 "DENY_ACCESS");
         Reporter.log("Test Description: This testcase validates session quota " +
-                "for amadmin when exempt top-level admin is Yes and resulting " +
+                "for amadmin when exempt Top-level admin is Yes and resulting " +
                 "behavior is DENY_ACCESS");
+        log(Level.FINEST, "testMaxSessionQuotaGlobalRealmYDAAmAdmin", 
+                "Top-level Admin Checked: " + btladmin);
+        Reporter.log("Top-level Admin Checked: " + btladmin);
+        log(Level.FINEST, "testMaxSessionQuotaGlobalRealmYDAAmAdmin", 
+                "Resulting Behavior Atribute: " + resultBehavior);
+        Reporter.log("Resulting Behavior Atribute: " + resultBehavior);
         try {
             if (btladmin.equals("YES")&& 
                     resultBehavior.equals("DENY_ACCESS")) {
@@ -245,9 +270,9 @@ public class GlobalRealmSessionConstraints extends TestCommon {
                         "Successfully created ten tokens for amadmin ");
             } else {
                 log(Level.FINE, "testMaxSessionQuotaGlobalRealmYDAAmAdmin",
-                        "Resulting behaviour and top level " +
+                        "Resulting behaviour and Top-level " +
                         "exempt attributes do not apply for this testcase");
-                Reporter.log("Note: Resulting behaviour and top level " +
+                Reporter.log("Note: Resulting behaviour and Top-level " +
                         "exempt attributes do not apply for this testcase");
             }
         } catch (Exception e) {
@@ -269,7 +294,7 @@ public class GlobalRealmSessionConstraints extends TestCommon {
     /**
      *  Tests the following case:
      * (a) Max session quota set to "1" in global/realm session service
-     * (b) Set Exempt top-level admins from constraint checking to Yes
+     * (b) Set Exempt Top-level admins from constraint checking to Yes
      * (c) Set Resulting behavior if session quota exhausted to
      *     DESTROY_OLD_SESSION OR DENY_ACCESS
      * (d) User is super admin
@@ -286,11 +311,17 @@ public class GlobalRealmSessionConstraints extends TestCommon {
         SSOToken ssotokenNew = null;
         log(Level.FINE, "testMaxSessionQuotaGlobalRealmYDADOSAdmin", 
                 "This testcase validates session quota for admin when exempt " +
-                "top-level admin is Yes and resulting behavior is " +
+                "Top-level admin is Yes and resulting behavior is " +
                 "DENY_ACCESS or DESTROY_OLD_SESSION");
         Reporter.log("Test Description: This testcase validates session quota " +
-                "for admin when exempt top-level admin is Yes and resulting " +
+                "for admin when exempt Top-level admin is Yes and resulting " +
                 "behavior is DENY_ACCESS or DESTROY_OLD_SESSION");
+        log(Level.FINEST, "testMaxSessionQuotaGlobalRealmYDADOSAdmin", 
+                "Top-level Admin Checked: " + btladmin);
+        Reporter.log("Top-level Admin Checked: " + btladmin);
+        log(Level.FINEST, "testMaxSessionQuotaGlobalRealmYDADOSAdmin", 
+                "Resulting Behavior Atribute: " + resultBehavior);
+        Reporter.log("Resulting Behavior Atribute: " + resultBehavior);
         try {
             if (btladmin.equals("YES")) {
                 ssotokenOrig = getToken(testAdminUser, 
@@ -304,9 +335,9 @@ public class GlobalRealmSessionConstraints extends TestCommon {
                 assert validateToken(ssotokenNew);
             } else {
                 log(Level.FINE, "testMaxSessionQuotaGlobalRealmYDADOSAdmin",
-                        "Resulting behaviour and top level " +
+                        "Resulting behaviour and Top-level " +
                         "exempt attributes do not apply for this testcase");
-                Reporter.log("Note: Resulting behaviour and top level " +
+                Reporter.log("Note: Resulting behaviour and Top-level " +
                         "exempt attributes do not apply for this testcase");
             }
         } catch (Exception e) {
@@ -327,7 +358,7 @@ public class GlobalRealmSessionConstraints extends TestCommon {
     /**
      * Tests the following case:
      * (a) Max session quota set to 1 in global/realm session service
-     * (b) Set Exempt top-level admins from constraint checking to No
+     * (b) Set Exempt Top-level admins from constraint checking to No
      * (c) Set Resulting behavior if session quota exhausted to
      *     DESTROY_OLD_SESSION
      * (d) User is super admin
@@ -345,11 +376,17 @@ public class GlobalRealmSessionConstraints extends TestCommon {
         SSOToken ssotokenNew = null;
         log(Level.FINE, "testMaxSessionQuotaGlobalRealmNDOSAdmin", 
                 "This testcase validates session quota for admin when exempt " +
-                "top-level admin is No and resulting behavior is " +
+                "Top-level admin is No and resulting behavior is " +
                 "DESTROY_OLD_SESSION");
         Reporter.log("Test Description: This testcase validates session quota " +
-                "for admin when exempt top-level admin is No and " +
-                "resulting behavior is DESTROY_OLD_SESSION");        
+                "for admin when exempt Top-level admin is No and " +
+                "resulting behavior is DESTROY_OLD_SESSION");      
+        log(Level.FINEST, "testMaxSessionQuotaGlobalRealmNDOSAdmin", 
+                "Top-level Admin Checked: " + btladmin);
+        Reporter.log("Top-level Admin Checked: " + btladmin);
+        log(Level.FINEST, "testMaxSessionQuotaGlobalRealmNDOSAdmin", 
+                "Resulting Behavior Atribute: " + resultBehavior);
+        Reporter.log("Resulting Behavior Atribute: " + resultBehavior);        
         try {
             if (btladmin.equals("NO") && 
                     resultBehavior.equals("DESTROY_OLD_SESSION")) {
@@ -364,12 +401,12 @@ public class GlobalRealmSessionConstraints extends TestCommon {
                              "Original token is invalid and new " +
                              "token is valid here");
                     assert validateToken(ssotokenNew);
-                }
+                    }
             } else {
                 log(Level.FINE, "testMaxSessionQuotaGlobalRealmNDOSAdmin",
-                          "Resulting behaviour and top level "
+                          "Resulting behaviour and Top-level "
                           + "exempt attributes do not apply for this testcase");
-                Reporter.log("Note: Resulting behaviour and top level "
+                Reporter.log("Note: Resulting behaviour and Top-level "
                           + "exempt attributes do not apply for this testcase");
             }
         } catch(Exception e) {
@@ -389,7 +426,7 @@ public class GlobalRealmSessionConstraints extends TestCommon {
     /**
      * Tests the following case: 
      * (a) Max session quota set to 1 in global/realm session service 
-     * (b) Set Exempt top-level admins from constraint checking to No 
+     * (b) Set Exempt Top-level admins from constraint checking to No 
      * (c) Set Resulting behavior if session quota exhausted to DENY_ACCESS
      * (d) User is super admin
      * (e) Validates that only one session
@@ -406,11 +443,17 @@ public class GlobalRealmSessionConstraints extends TestCommon {
         SSOToken ssotokenNew = null;
         log(Level.FINE, "testMaxSessionQuotaGlobalRealmNDAAdmin", 
                 "This testcase validates session quota for admin when exempt " +
-                "top-level admin is No and resulting behavior is " +
+                "Top-level admin is No and resulting behavior is " +
                 "DENY_ACCESS");
         Reporter.log("Test Description: This testcase validates session quota " +
-                "for admin when exempt top-level admin is No and " +
-                "resulting behavior is DENY_ACCESS");                
+                "for admin when exempt Top-level admin is No and " +
+                "resulting behavior is DENY_ACCESS");          
+        log(Level.FINEST, "testMaxSessionQuotaGlobalRealmNDAAdmin", 
+                "Top-level Admin Checked: " + btladmin);
+        Reporter.log("Top-level Admin Checked: " + btladmin);
+        log(Level.FINEST, "testMaxSessionQuotaGlobalRealmNDAAdmin", 
+                "Resulting Behavior Atribute: " + resultBehavior);
+        Reporter.log("Resulting Behavior Atribute: " + resultBehavior);        
         try {
             if (btladmin.equals("NO") && 
                     resultBehavior.equals("DENY_ACCESS")) {
@@ -439,9 +482,9 @@ public class GlobalRealmSessionConstraints extends TestCommon {
                 }
             } else {
                 log(Level.FINE, "testMaxSessionQuotaGlobalRealmNDAAdmin",
-                        "Resulting behaviour and top level " +
+                        "Resulting behaviour and Top-level " +
                         "exempt attributes do not apply for this testcase");
-                Reporter.log("Note: Resulting behaviour and top level " +
+                Reporter.log("Note: Resulting behaviour and Top-level " +
                         "exempt attributes do not apply for this testcase");
             }
         } catch(Exception e) {
@@ -463,7 +506,7 @@ public class GlobalRealmSessionConstraints extends TestCommon {
     /**
      * Tests the following case:
      * (a) Max session quota set to 1 in global/realm session service
-     * (b) Set Exempt top-level admins from constraint checking to Yes
+     * (b) Set Exempt Top-level admins from constraint checking to Yes
      * (c) Set Resulting behavior if session quota exhausted to
      *     DESTROY_OLD_SESSION
      * (d) User is not a super admin
@@ -479,11 +522,17 @@ public class GlobalRealmSessionConstraints extends TestCommon {
         SSOToken ssotokenNew = null;
         log(Level.FINE, "testMaxSessionQuotaGlobalRealmYDOSUser", 
                 "This testcase validates session quota for user when exempt " +
-                "top-level admin is Yes and resulting behavior is " +
+                "Top-level admin is Yes and resulting behavior is " +
                 "DESTROY_OLD_SESSION");
         Reporter.log("Test Description: This testcase validates session quota " +
-                "for user when exempt top-level admin is Yes and " +
-                "resulting behavior is DESTROY_OLD_SESSION");                
+                "for user when exempt Top-level admin is Yes and " +
+                "resulting behavior is DESTROY_OLD_SESSION");    
+        log(Level.FINEST, "testMaxSessionQuotaGlobalRealmYDOSUser", 
+                "Top-level Admin Checked: " + btladmin);
+        Reporter.log("Top-level Admin Checked: " + btladmin);
+        log(Level.FINEST, "testMaxSessionQuotaGlobalRealmYDOSUser", 
+                "Resulting Behavior Atribute: " + resultBehavior);
+        Reporter.log("Resulting Behavior Atribute: " + resultBehavior);        
         try {
             if (btladmin.equals("YES") && 
                     resultBehavior.equals("DESTROY_OLD_SESSION")) {
@@ -499,12 +548,12 @@ public class GlobalRealmSessionConstraints extends TestCommon {
                             "Original token is invalid and new " +
                             "token is valid here");
                     assert validateToken(ssotokenNew);
-                }
+                    }
             } else {
                 log(Level.FINE, "testMaxSessionQuotaGlobalRealmYDOSUser",
-                        "Resulting behaviour and top level " +
+                        "Resulting behaviour and Top-level " +
                         "exempt attributes do not apply for this testcase");
-                Reporter.log("Note: Resulting behaviour and top level " +
+                Reporter.log("Note: Resulting behaviour and Top-level " +
                         "exempt attributes do not apply for this testcase");
             }
         } catch(Exception e) {
@@ -525,7 +574,7 @@ public class GlobalRealmSessionConstraints extends TestCommon {
     /**
      * Tests the following case:
      * (a) Max session quota set to 1 in global/realm session service
-     * (b) Set Exempt top-level admins from constraint checking to No
+     * (b) Set Exempt Top-level admins from constraint checking to No
      * (c) Set Resulting behavior if session quota exhausted to
      *     DESTROY_OLD_SESSION
      * (d) User is not a super admin
@@ -543,11 +592,17 @@ public class GlobalRealmSessionConstraints extends TestCommon {
         SSOToken ssotokenNew = null;
         log(Level.FINE, "testMaxSessionQuotaGlobalRealmNDOSUser", 
                 "This testcase validates session quota for user when exempt " +
-                "top-level admin is No and resulting behavior is " +
+                "Top-level admin is No and resulting behavior is " +
                 "DESTROY_OLD_SESSION");
         Reporter.log("Test Description: This testcase validates session quota " +
-                "for user when exempt top-level admin is No and " +
-                "resulting behavior is DESTROY_OLD_SESSION");                
+                "for user when exempt Top-level admin is No and " +
+                "resulting behavior is DESTROY_OLD_SESSION");        
+        log(Level.FINEST, "testMaxSessionQuotaGlobalRealmNDOSUser", 
+                "Top-level Admin Checked: " + btladmin);
+        Reporter.log("Top-level Admin Checked: " + btladmin);
+        log(Level.FINEST, "testMaxSessionQuotaGlobalRealmNDOSUser", 
+                "Resulting Behavior Atribute: " + resultBehavior);
+        Reporter.log("Resulting Behavior Atribute: " + resultBehavior);        
         try {
             if (btladmin.equals("NO") && 
                     resultBehavior.equals("DESTROY_OLD_SESSION")) {
@@ -563,12 +618,12 @@ public class GlobalRealmSessionConstraints extends TestCommon {
                             "Original token is invalid and new " +
                             "token is valid here");
                     assert validateToken(ssotokenNew);
-                }
+                    }
             } else {
                 log(Level.FINE, "testMaxSessionQuotaGlobalRealmNDOSUser",
-                        "Resulting behaviour and top level " +
+                        "Resulting behaviour and Top-level " +
                         "exempt attributes do not apply for this testcase");
-                Reporter.log("Note: Resulting behaviour and top level " +
+                Reporter.log("Note: Resulting behaviour and Top-level " +
                         "exempt attributes do not apply for this testcase");
             }
         } catch(Exception e) {
@@ -588,7 +643,7 @@ public class GlobalRealmSessionConstraints extends TestCommon {
     /**
      * Tests the following case:
      * (a) Max session quota set to 1 in global/realm session service
-     * (b) Set Exempt top-level admins from constraint checking to No
+     * (b) Set Exempt Top-level admins from constraint checking to No
      * (c) Set Resulting behavior if session quota exhausted to
      *     DENY_ACCESS
      * (d) User is not a super admin
@@ -606,11 +661,17 @@ public class GlobalRealmSessionConstraints extends TestCommon {
         SSOToken ssotokenNew = null;
         log(Level.FINE, "testMaxSessionQuotaGlobalRealmNDAUser", 
                 "This testcase validates session quota for user when exempt " +
-                "top-level admin is No and resulting behavior is " +
+                "Top-level admin is No and resulting behavior is " +
                 "DENY_ACCESS");
         Reporter.log("Test Description: This testcase validates session quota " +
-                "for user when exempt top-level admin is No and " +
-                "resulting behavior is DENY_ACCESS");                
+                "for user when exempt Top-level admin is No and " +
+                "resulting behavior is DENY_ACCESS");       
+        log(Level.FINEST, "testMaxSessionQuotaGlobalRealmNDAUser", 
+                "Top-level Admin Checked: " + btladmin);
+        Reporter.log("Top-level Admin Checked: " + btladmin);
+        log(Level.FINEST, "testMaxSessionQuotaGlobalRealmNDAUser", 
+                "Resulting Behavior Atribute: " + resultBehavior);
+        Reporter.log("Resulting Behavior Atribute: " + resultBehavior);        
         try {
             if (btladmin.equals("NO") && 
                     resultBehavior.equals("DENY_ACCESS")) {
@@ -639,9 +700,9 @@ public class GlobalRealmSessionConstraints extends TestCommon {
                 }
             } else {
                 log(Level.FINE, "testMaxSessionQuotaGlobalRealmNDAUser",
-                        "Resulting behaviour and top level " +
+                        "Resulting behaviour and Top-level " +
                         "exempt attributes do not apply for this testcase");
-                Reporter.log("Note: Resulting behaviour and top level " +
+                Reporter.log("Note: Resulting behaviour and Top-level " +
                         "exempt attributes do not apply for this testcase");
             }
         } catch(Exception e) {
@@ -663,7 +724,7 @@ public class GlobalRealmSessionConstraints extends TestCommon {
     /**
      * Tests the following case:
      * (a) Max session quota set to 1 in global/realm session service
-     * (b) Set Exempt top-level admins from constraint checking to Yes
+     * (b) Set Exempt Top-level admins from constraint checking to Yes
      * (c) Set Resulting behavior if session quota exhausted to
      *     DENY_ACCESS
      * (d) User is not a super admin
@@ -681,11 +742,17 @@ public class GlobalRealmSessionConstraints extends TestCommon {
         SSOToken ssotokenNew = null;
         log(Level.FINE, "testMaxSessionQuotaGlobalRealmYDAUser", 
                 "This testcase validates session quota for user when exempt " +
-                "top-level admin is Yes and resulting behavior is " +
+                "Top-level admin is Yes and resulting behavior is " +
                 "DENY_ACCESS");
         Reporter.log("Test Description: This testcase validates session quota " +
-                "for user when exempt top-level admin is Yes and " +
-                "resulting behavior is DENY_ACCESS");                
+                "for user when exempt Top-level admin is Yes and " +
+                "resulting behavior is DENY_ACCESS");      
+        log(Level.FINEST, "testMaxSessionQuotaGlobalRealmYDAUser", 
+                "Top-level Admin Checked: " + btladmin);
+        Reporter.log("Top-level Admin Checked: " + btladmin);
+        log(Level.FINEST, "testMaxSessionQuotaGlobalRealmYDAUser", 
+                "Resulting Behavior Atribute: " + resultBehavior);
+        Reporter.log("Resulting Behavior Atribute: " + resultBehavior);
         try {
             if (btladmin.equals("YES") && 
                     resultBehavior.equals("DENY_ACCESS")) {
@@ -714,9 +781,9 @@ public class GlobalRealmSessionConstraints extends TestCommon {
                 }
             } else {
                 log(Level.FINE, "testMaxSessionQuotaGlobalRealmYDAUser",
-                        "Resulting behaviour and top level " +
+                        "Resulting behaviour and Top-level " +
                         "exempt attributes do not apply for this testcase");
-                Reporter.log("Note: Resulting behaviour and top level " +
+                Reporter.log("Note: Resulting behaviour and Top-level " +
                         "exempt attributes do not apply for this testcase");
             }
         } catch(Exception e) {
@@ -761,6 +828,7 @@ public class GlobalRealmSessionConstraints extends TestCommon {
                     + testAdminUser);
             idmc.removeUserMember(admintoken, testAdminUser,
                     "Top-level Admin Role" , IdType.ROLE, realm);
+            idmc.deleteIdentity(admintoken, realm, IdType.ROLE, adminRole);
             idmc.deleteIdentity(admintoken, realm, IdType.USER, testAdminUser);
             log(Level.FINEST, "cleanup", "Cleaning User: " + testUser);
             idmc.deleteIdentity(admintoken, realm, IdType.USER,
