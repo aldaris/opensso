@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: service.cpp,v 1.23 2008-07-15 20:12:39 subbae Exp $
+ * $Id: service.cpp,v 1.24 2008-08-14 20:25:20 subbae Exp $
  *
  */
 
@@ -590,6 +590,7 @@ Service::sso_notify(const std::string &ssoToken) {
 	return;
     }
     policyTable.remove(ssoToken);
+    mSSOTokenSvc.removeSSOTokenTableEntry(ssoToken);
     return;
 }
 

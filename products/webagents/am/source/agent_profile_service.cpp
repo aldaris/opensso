@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: agent_profile_service.cpp,v 1.16 2008-08-04 19:22:11 huacui Exp $
+ * $Id: agent_profile_service.cpp,v 1.17 2008-08-14 20:25:20 subbae Exp $
  *
  */
 
@@ -394,13 +394,13 @@ void AgentProfileService::fetchAndUpdateAgentConfigCache()
     }
     //Insert the AMAgentConfiguration object in the hast table with the current
     //time stamp as its key.
-    AgentConfigurationRefCntPtr agentConfig;
-    agentConfig = new AgentConfiguration(properties);
     if (status == AM_SUCCESS ) {
+        AgentConfigurationRefCntPtr agentConfig;
+        agentConfig = new AgentConfiguration(properties);
         status = load_bootinfo_to_properties(&boot_info, 
                 agentConfig->getProperties());
+        agentConfigCache.populateAgentConfigCacheTable(agentConfig);
     }  
-    agentConfigCache.populateAgentConfigCacheTable(agentConfig);
 }
 
 /*

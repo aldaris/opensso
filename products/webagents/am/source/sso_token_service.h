@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: sso_token_service.h,v 1.5 2008-06-25 08:14:38 qcheng Exp $
+ * $Id: sso_token_service.h,v 1.6 2008-08-14 20:25:20 subbae Exp $
  *
  */
 #ifndef __SSO_TOKEN_SERVICE_H__
@@ -218,6 +218,10 @@ public:
 
     am_status_t removeSSOListener(
 			const am_sso_token_listener_func_t listener);
+    inline void removeSSOTokenTableEntry(string ssoToken)
+    {
+        mSSOTokenTable.remove(ssoToken);
+    }
 
 };
 
