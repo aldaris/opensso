@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebtopNaming.java,v 1.22 2008-08-06 16:43:24 veiming Exp $
+ * $Id: WebtopNaming.java,v 1.23 2008-08-14 19:34:10 alanchu Exp $
  *
  */
 
@@ -71,9 +71,15 @@ import com.sun.identity.shared.debug.Debug;
  */
 
 public class WebtopNaming {
-
+     
+    /**
+     * The unique identifier for the Naming Service. 
+     */
     public static final String NAMING_SERVICE = "com.iplanet.am.naming";
 
+    /**
+     * The delimiter used to separate server IDs in the service attribute.
+     */
     public static final String NODE_SEPARATOR = "|";
 
     private static final String AM_NAMING_PREFIX = "iplanet-am-naming-";
@@ -99,6 +105,9 @@ public class WebtopNaming {
 
     private static Vector platformServerIDs = new Vector();
 
+    /**
+     * The debug instance.
+     */    
     protected static Debug debug;
 
     private static boolean serverMode;
@@ -125,10 +134,31 @@ public class WebtopNaming {
         }
     }
 
+    /**
+     * Determines whether WebtopNaming code runs in the core server mode
+     * or in the client SDK run-time mode.
+     *
+     * @return <code>true</code> running in the core server mode,
+     *     <code>false</code> otherwise 
+     */
     public static boolean isServerMode() {
         return serverMode;
     }
 
+    /**
+     * Determines whether Site is enabled for the given server instance.
+     *
+     * @param protocol protocol of the server instance
+     * @param host host of the server instance
+     * @param port port of the server instance
+     * @param uri uri of the server instance
+     * 
+     * @return <code>true</code> if Site is enabled, 
+     *     <code>false</code> otherwise  
+     *
+     * @throws Exception if server entry is not found or there is any
+     *     other run-time error
+     */
     public static boolean isSiteEnabled(
         String protocol,
         String host,
@@ -139,11 +169,28 @@ public class WebtopNaming {
         return isSiteEnabled(serverid);
     }
 
+    /**
+     * Determines whether Site is enabled for the given server ID.
+     * @param serverid server ID
+     *
+     * @return <code>true</code> if Site is enabled, 
+     *     <code>false</code> otherwise
+     *
+     * @throws Exception if the given server ID is null
+     */
     public static boolean isSiteEnabled(String serverid) throws Exception {
         String siteid = (String) siteIdTable.get(serverid);
         return (!serverid.equals(siteid));
     }
 
+    /**
+     * Returns the server ID.  
+     *
+     * @return Server ID 
+     *
+     * @throws ServerEntryNotFoundException if the Naming Service
+     * can not find that server entry
+     */
     public static String getAMServerID() throws ServerEntryNotFoundException {
         return getServerID(amServerProtocol, amServer, amServerPort, 
             amServerURI);
@@ -170,34 +217,37 @@ public class WebtopNaming {
     }
 
     /**
-     * This method returns the URL of the specified service on the specified
+     * Returns the URL of the specified service on the specified
      * host.
      * 
-     * @param service
-     *            The name of the service.
-     * @param protocol
-     *            The service protocol
-     * @param host
-     *            The service host name
-     * @param port
-     *            The service listening port
-     * @return The URL of the specified service on the specified host.
+     * @param service  the name of the service.
+     * @param protocol the service protocol
+     * @param host the service host name
+     * @param port the service listening port
+     * @param uri the deployment uri
+     *
+     * @return the URL of the specified service on the specified host.
+     *
+     * @throws URLNotFoundException if the Naming Service can not
+     *     find a URL for a specified service
      */
     public static URL getServiceURL(String service, String protocol,
             String host, String port, String uri) throws URLNotFoundException {
         return (getServiceURL(service, protocol, host, port, uri, serverMode));
     }
 
-        /**
+    /**
      * Returns the URL of the specified service on the specified host.
      * 
-     * @param service Name of the service.
-     * @param protocol Service protocol.
-     * @param host Service host name.
-     * @param port Service listening port.
-     * @param uri Deployment URI.
-     * @param validate Validate the protocol, host and port of AM server
-     * @return The URL of the specified service on the specified host.
+     * @param service the name of the service.
+     * @param url the deployment URI.
+     * @param validate a boolean value indicate whether or not to 
+     *    validate the protocol, host and port of the server
+     *
+     * @return the URL of the specified service on the specified host.
+     *
+     * @throws URLNotFoundException if the Naming Service can not
+     *     find a URL for a specified service
      */
     public static URL getServiceURL(String service, URL url, boolean validate)
         throws URLNotFoundException {
@@ -209,12 +259,17 @@ public class WebtopNaming {
     /**
      * Returns the URL of the specified service on the specified host.
      * 
-     * @param service Name of the service.
-     * @param protocol Service protocol.
-     * @param host Service host name.
-     * @param port Service listening port.
-     * @param validate Validate the protocol, host and port of AM server
-     * @return The URL of the specified service on the specified host.
+     * @param service the name of the service.
+     * @param protocol the service protocol.
+     * @param host the service host name.
+     * @param port the ervice listening port.
+     * @param validate a boolean value indicate whether or not to 
+     *    validate the protocol, host and port of the server
+     *
+     * @return the URL of the specified service on the specified host.
+     *
+     * @throws URLNotFoundException if the Naming Service can not
+     *     find a URL for a specified service
      */
     public static URL getServiceURL(
         String service, 
@@ -236,13 +291,18 @@ public class WebtopNaming {
     /**
      * Returns the URL of the specified service on the specified host.
      * 
-     * @param service Name of the service.
-     * @param protocol Service protocol.
-     * @param host Service host name.
-     * @param port Service listening port.
-     * @param uri Deployment URI.
-     * @param validate Validate the protocol, host and port of AM server
-     * @return The URL of the specified service on the specified host.
+     * @param service name of the service.
+     * @param protocol service protocol.
+     * @param host service host name.
+     * @param port service listening port.
+     * @param uri the deployment uri.
+     * @param validate a boolean value indicate whether or not to 
+     *    validate the protocol, host and port of the server.
+     *
+     * @return the URL of the specified service on the specified host.
+     *
+     * @throws URLNotFoundException if the Naming Service can not
+     *     find a URL for a specified service
      */
     public static URL getServiceURL(
         String service, 
@@ -332,12 +392,15 @@ public class WebtopNaming {
     }
 
     /**
-     * This method returns all the URLs of the specified service based on the
+     * Returns all the URLs of the specified service based on the
      * servers in platform server list.
      * 
-     * @param service
-     *            The name of the service.
-     * @return The URL of the specified service on the specified host.
+     * @param service the name of the service.
+     *
+     * @return the URL of the specified service on the specified host.
+     *
+     * @throws URLNotFoundException if the Naming Service can not
+     *     find a URL for a specified service
      */
     public static Vector getServiceAllURLs(String service)
             throws URLNotFoundException {
@@ -385,24 +448,38 @@ public class WebtopNaming {
     }
 
     /**
-     * This method returns all the platform servers note: This method should be
-     * used only for the remote sdk, calling this method may cause performance
-     * abuse, as it involves xml request over the wire.An alternative to this
-     * method is use SMS getNamingProfile(true) is called over here if there's
-     * any change in server list dynamically at the server side.
+     * Returns the platform server list. Note: Calling this method would
+     * cause performance impact, as it involves xml request over the wire.
+     *
+     * @return platform server list
+     *      
+     * @throws Exception if an error occurs when updating the
+     *     nameing table
      */
     public static Vector getPlatformServerList() throws Exception {
          return getPlatformServerList(true);
     }
 
-     public static Vector getPlatformServerList(boolean update)
+    /**
+     * Returns the platform server list.
+     *
+     * @param update a boolean flag indicating whether a refresh of the
+     * naming profile is needed.
+     *
+     * @return platform server list
+     *
+     * @throws Exception if an error occurs when updating the
+     *     nameing table
+     */
+
+    public static Vector getPlatformServerList(boolean update)
              throws Exception {
          getNamingProfile(update);
          return platformServers;
-     }
+    }
 
     /**
-     * This method returns key value from a hashtable, ignoring the case of the
+     * Returns key value from a hashtable, ignoring the case of the
      * key.
      */
     private static String getValueFromTable(Hashtable table, String key) {
@@ -419,7 +496,8 @@ public class WebtopNaming {
     }
 
     /**
-     * This method returns local server name from naming table. 
+     * Returns local server name from naming table. 
+     *
      * @return server name opensso is deployed. 
      */
     public static String getLocalServer() {
@@ -435,9 +513,18 @@ public class WebtopNaming {
     }
 
     /**
-     * This function gets the server id that is there in the platform server
-     * list for a corresponding server. One use of this function is to keep this
-     * server id in our session id.
+     * Returns the server ID that is there in the platform server
+     * list for a corresponding server. 
+     *
+     * @param protocol procotol of the server instance
+     * @param host host of the server instance
+     * @param port port of the server instance
+     * @param uri uri of the server instance
+     *
+     * @return Server ID
+     *
+     * @throws ServerEntryNotFoundException if the Naming Service
+     *     can not find that server entry     
      */
     public static String getServerID(
         String protocol,
@@ -448,6 +535,22 @@ public class WebtopNaming {
         return getServerID(protocol, host, port, uri, true);
     }
 
+    /**
+     * Returns the server ID that is there in the platform server
+     * list for a corresponding server. 
+     *
+     * @param protocol procotol of the server instance
+     * @param host host of the server instance
+     * @param port port of the server instance
+     * @param uri uri of the server instance
+     * @param updatetbl a boolean flag indicating whether a refresh of the
+     *     naming profile is needed.
+     *
+     * @return Server ID
+     *
+     * @throws ServerEntryNotFoundException if the Naming Service
+     *     can not find that server entry
+     */
     public static String getServerID(
         String protocol, 
         String host, 
@@ -515,7 +618,14 @@ public class WebtopNaming {
     }
 
     /**
-     * This function returns server from the id.
+     * Returns the server URL based on the server ID.
+     *
+     * @param serverID Server ID
+     *
+     * @return server URL 
+     *
+     * @throws ServerEntryNotFoundException if the Naming Service
+     *     can not find that server entry
      */
 
     public static String getServerFromID(String serverID)
@@ -543,6 +653,14 @@ public class WebtopNaming {
         return server;
     }
 
+    /**
+     * Returns all server IDs.
+     *
+     * @return all server IDs.
+     * 
+     * @throws Exception if an error occurs when updating the
+     *     nameing table
+     */
     public static Vector getAllServerIDs() throws Exception  {
         if (namingTable == null) {
             getNamingProfile(false);
@@ -583,11 +701,11 @@ public class WebtopNaming {
     }
 
     /**
-     * Returns the lbCookieValue corresponding to serverid
+     * Returns the lbCookieValue corresponding to the server ID.
      * 
-     * @param serverid
-     *            The server id
-     * @return The lbCookieValue corresponding to serverid
+     * @param serverid the server id
+     *
+     * @return the LB cookie value corresponding to server ID
      */     
     public static String getLBCookieValue(String serverid) {
         String lbCookieValue = null;
@@ -626,9 +744,18 @@ public class WebtopNaming {
     }
 
     /**
-     * This function gets the server id that is there in the platform server
-     * list for a corresponding server. One use of this function is to keep this
-     * server id in our session id.
+     * Returns the unique identifier of the site which the given 
+     * server instance belongs to. 
+     *
+     * @param protocol procotol of the server instance
+     * @param host host of the server instance
+     * @param port port of the server instance
+     * @param uri uri of the server instance
+     * 
+     * @return Site ID
+     *
+     * @throws ServerEntryNotFoundException if the Naming Service
+     *     can not find that server entry
      */
     public static String getSiteID(
         String protocol,
@@ -641,8 +768,12 @@ public class WebtopNaming {
     }
 
     /**
-     * Extended ServerID syntax : localserverID | lbID-1 | lbID-2 | lbID-3 | ...
-     * It returns lbID-1
+     * Returns the unique identifier of the site which the given
+     * server instance belongs to.
+     *
+     * @param serverid server ID
+     *
+     * @return Site ID
      */
     public static String getSiteID(String serverid) {
         String primary_site = null;
@@ -667,8 +798,12 @@ public class WebtopNaming {
     }
 
     /**
-     * Extended ServerID syntax : localserverID | lbID-1 | lbID-2 | lbID-3 | ...
-     * It returns lbID-2 | lbID-3 | ...
+     * Returns the String representation of the separator delimited 
+     * secondary site list.
+     *
+     * @param serverid server ID
+     * 
+     * @return the secondary site list
      */
     public static String getSecondarySites(String serverid) {
         String sitelist = null;
@@ -697,11 +832,15 @@ public class WebtopNaming {
     }
 
     /**
-     * This method returns all the node id for the site
+     * Returns all the node ID for the site.
      * 
-     * @param one
-     *            of node id, it can be serverid or lb's serverid
+     * @param serverid one of server IDs within the site, it can also
+     *     be the loab balancer's ID 
+     *
      * @return HashSet has all the node is for the site.
+     *
+     * @throws Exception if an error occurs when updating the
+     *     nameing table     
      */
     public static Set getSiteNodes(String serverid) throws Exception {
         HashSet nodeset = new HashSet();
@@ -728,11 +867,14 @@ public class WebtopNaming {
     }
 
     /**
-     * This method returns the class of the specified service.
+     * Returns the class of the specified service.
      * 
-     * @param service
-     *            The name of the service.
+     * @param service the name of the service.
+     *
      * @return The class name of the specified service.
+     *
+     * @throws ClassNotFoundException if no definition for the class 
+     *    with the specified name could be found.
      */
     public static String getServiceClass(String service)
             throws ClassNotFoundException {
@@ -759,8 +901,13 @@ public class WebtopNaming {
     }
 
     /**
-     * This method returns the URL of the notification service on the local
+     * Returns the URL of the notification service on the local
      * host.
+     *
+     * @return the notification URL
+     *
+     * @throws URLNotFoundException if the Naming Service can not
+     *     find a URL for a specified service
      */
     public synchronized static URL getNotificationURL()
             throws URLNotFoundException {
@@ -910,11 +1057,12 @@ public class WebtopNaming {
     }
 
     /*
-     * this method is to update the servers and their ids in a seprate hash and
-     * will get updated each time when the naming table gets updated note: this
-     * table will have all the entries in naming table but in a reverse order
-     * except the platform server list We can just as well keep only server id
-     * mappings, but we need to exclude each other entry which is there in.
+     * This method is to update the servers and their IDs in a seprate 
+     * hash. It will get updated each time when the naming table gets
+     * updated. Note: this table will have all the entries in the
+     * naming table but in a reverse order except the platform server
+     * list. We can just keep only server ID mappings but we need to 
+     * exclude each other entry which is there in.
      */
     private static void updateServerIdMappings() {
         Hashtable serverIdTbl = new Hashtable();
@@ -1020,11 +1168,12 @@ public class WebtopNaming {
     }
 
     /**
-     * This method returns the list URL of the naming service url
+     * Returns a list of the naming service urls.
      * 
-     * @return Array of naming service url.
-     * @throws Exception -
-     *             if there is no configured urls or any problem in getting urls
+     * @return a String array of naming service urls.
+     *
+     * @throws Exception if there is no configured url or there is an
+     *     error when trying to get the urls
      */
     public synchronized static String[] getNamingServiceURL() throws Exception {
         if (!serverMode && (namingServiceURL == null)) {
@@ -1086,6 +1235,12 @@ public class WebtopNaming {
         }
     }
 
+    /**
+     * Removes a server from the available site list. 
+     *
+     * @param server the <code>String</code> to parse as a URL of 
+     *     the server to be removed from the site list         
+     */
     static public void removeFailedSite(String server) {
         if (monitorThread != null) {
             try {
@@ -1099,6 +1254,12 @@ public class WebtopNaming {
         return;
     }
 
+
+    /**
+     * Removes a server from the available site list.
+     *
+     * @param url url of the server to be removed from the site list 
+     */
     static public void removeFailedSite(URL url) {
         if (monitorThread != null) {
             try {
@@ -1117,8 +1278,9 @@ public class WebtopNaming {
     /**
      * Returns the uri of the specified URL.
      * 
-     * @param URL that includes uri.
-     * @return uri of the specified <code>URL</code>.
+     * @param url the URL that includes uri.
+     *
+     * @return a uri of the specified <code>URL</code>.
      */
     public static String getURI(URL url) {
         String uri = url.getPath();
@@ -1131,12 +1293,20 @@ public class WebtopNaming {
         return uri;
     }
     
+    /**
+     * The <code>SiteMonitor</code> class is used to monitor the
+     * health status of all the sites.
+     */
 static public class SiteMonitor extends GeneralTaskRunnable {
     static long sleepInterval;
     static Vector availableSiteList = new Vector();
     static String currentSiteID = null;
     static SiteStatusCheck siteChecker = null;
     static String[] siteUrlList = null;
+
+    /**
+     * A boolean flag indicating whether site monitoring is enabled.
+     */    
     static public boolean keepMonitoring = false;
 
     static {
@@ -1160,6 +1330,12 @@ static public class SiteMonitor extends GeneralTaskRunnable {
         }
     }
 
+    /**
+     * Constructs a WebtopNaming$SiteMonitor object with the provided
+     * site urls.
+     *
+     * @param urlList  a String containing the urls of the sites
+     */
     public SiteMonitor(String[] urlList) {
         siteUrlList = urlList;
     }
@@ -1194,7 +1370,14 @@ static public class SiteMonitor extends GeneralTaskRunnable {
         updateSiteList(siteList);
         updateCurrentSite(siteList);
     }
-
+    
+    /**
+     * Checks if the site is up.
+     *
+     * @param siteurl a site url
+     *
+     * @return <code>true</code> if the site is up
+     */
     public static boolean checkSiteStatus(URL siteurl) {
         return siteChecker.doCheckSiteStatus(siteurl);
     }
@@ -1228,6 +1411,15 @@ static public class SiteMonitor extends GeneralTaskRunnable {
         return siteList;
     }
 
+    /**
+     * Checks if the site of the url is up.
+     *
+     * @param url a site url
+     *
+     * @return <code>true</code> if the site is up
+     *
+     * @throws Exception if failing to get the naming service url.
+     */
     public static boolean isAvailable(URL url) throws Exception {
         if ((namingTable == null) || (keepMonitoring == false)) {
             return true;
@@ -1267,6 +1459,15 @@ static public class SiteMonitor extends GeneralTaskRunnable {
         return available;
     }
     
+    /**
+     * Checks if the url is one of configured sites.
+     *
+     * @param url a site url
+     *
+     * @return <code>true</code> if the url is one of configured sites. 
+     *
+     * @throws Exception if failing to get the naming service url.    
+     */
     public static boolean isCurrentSite(URL url) throws Exception {
         if ((namingTable == null) || !keepMonitoring) {
             return true;
@@ -1372,6 +1573,12 @@ static public class SiteMonitor extends GeneralTaskRunnable {
  * Each implementation class has to implement doCheckSiteStatus method.
  */
 public interface SiteStatusCheck {
+    /**
+     * Check if the site is alive.
+     * @param siteurl the url which needs to be checked alive
+     *
+     * @return <code>true</code> if the site is up.
+     */
     public boolean doCheckSiteStatus(URL siteurl);
 }
 }
