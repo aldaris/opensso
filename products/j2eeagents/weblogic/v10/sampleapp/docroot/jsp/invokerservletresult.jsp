@@ -25,7 +25,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: invokerservletresult.jsp,v 1.9 2008-08-15 01:05:40 veiming Exp $
+   $Id: invokerservletresult.jsp,v 1.10 2008-08-15 21:30:32 veiming Exp $
 
 -->
 <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type" /> 
@@ -90,7 +90,7 @@ a:hover{text-decoration:underline}
     </tr>
     <tr>
       <td style="background-color: rgb(89, 79, 191); vertical-align: top; width: 150px; text-align: left;">
-      <img alt="Sun Microsystems, Inc." src="/agentsample/images/sun_logo.gif" style="width: 107px; height: 54px;"><br>
+      <img alt="Sun Microsystems, Inc." src="/agentsample/images/sun_logo.gif" style="width: 107px; height: 54px;" /><br>
       <br>
       </td>
       <td style="text-align: left; background-color: rgb(251, 226, 73); vertical-align: middle; font-family: andale sans;">

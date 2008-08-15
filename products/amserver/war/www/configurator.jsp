@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configurator.jsp,v 1.25 2008-08-15 01:05:27 veiming Exp $
+   $Id: configurator.jsp,v 1.26 2008-08-15 21:30:31 veiming Exp $
 
 --%>
 
@@ -323,7 +323,7 @@
             </tr>
         </table>
         <div class="LblRqdDiv" style="margin: 5px 10px 5px 0px;" align="right">
-            <img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7">&nbsp;<config:message i18nKey="configurator.indicaterequiredfield"/> 
+            <img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7" />&nbsp;<config:message i18nKey="configurator.indicaterequiredfield"/> 
         </div>
    
         </div>
@@ -368,7 +368,7 @@
         <tr> 
             <td valign="top">
                 <div class="ConEmbTblCl1Div">
-                    <div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.name"/></span></div>
+                    <div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7" /><span class="LblLev2Txt"><config:message i18nKey="configurator.name"/></span></div>
                 </div>
             </td>
             <td valign="top">
@@ -380,7 +380,7 @@
         <tr>
             <td valign="top">                        
                 <div class="ConEmbTblCl1Div">
-                    <div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.password"/></span></div>
+                    <div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7" /><span class="LblLev2Txt"><config:message i18nKey="configurator.password"/></span></div>
                 </div>
             </td>
             <td valign="top">
@@ -392,7 +392,7 @@
         <tr>
             <td valign="top">
                 <div class="ConEmbTblCl1Div">
-                    <div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.confirmadminpasswd"/></span></div>
+                    <div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7" /><span class="LblLev2Txt"><config:message i18nKey="configurator.confirmadminpasswd"/></span></div>
                 </div>
             </td>
             <td valign="top">
@@ -404,7 +404,7 @@
         <tr>
             <td valign="top">
                 <div class="ConEmbTblCl1Div">
-                    <div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.urlaccessagent.password"/></span></div>
+                    <div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7" /><span class="LblLev2Txt"><config:message i18nKey="configurator.urlaccessagent.password"/></span></div>
                 </div>
             </td>
             <td valign="top">
@@ -416,7 +416,7 @@
         <tr>
             <td valign="top">
                 <div class="ConEmbTblCl1Div">
-                    <div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.urlaccessagent.confirmpassword"/></span></div>
+                    <div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7" /><span class="LblLev2Txt"><config:message i18nKey="configurator.urlaccessagent.confirmpassword"/></span></div>
                 </div>
             </td>
             <td valign="top">
@@ -444,7 +444,7 @@
             <td valign="top">
                 <div class="ConEmbTblCl1Div">
                     <div class="ConTblCl1Div">
-                        <img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.serverurl"/></span>
+                        <img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7" /><span class="LblLev2Txt"><config:message i18nKey="configurator.serverurl"/></span>
                     </div>
                 </div>
             </td>
@@ -459,7 +459,7 @@
         <tr>
             <td valign="top">
                 <div class="ConEmbTblCl1Div">
-                    <div class="ConTblCl1Div"><alt="<config:message i18nKey="configurator.optionalfield"/>" title="<config:message i18nKey="configurator.optionalfield"/>" height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.cookiedomain"/></span></div>
+                    <div class="ConTblCl1Div"><alt="<config:message i18nKey="configurator.optionalfield"/>" title="<config:message i18nKey="configurator.optionalfield"/>" height="14" width="7" /><span class="LblLev2Txt"><config:message i18nKey="configurator.cookiedomain"/></span></div>
                 </div>
             </td>
             <td valign="top">
@@ -472,7 +472,7 @@
             <td valign="top">
                 <div class="ConEmbTblCl1Div">
                     <div class="ConTblCl1Div">
-                        <img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.platformlocale"/></span>
+                        <img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7" /><span class="LblLev2Txt"><config:message i18nKey="configurator.platformlocale"/></span>
                     </div>
                 </div>
             </td>
@@ -485,7 +485,7 @@
         <tr> 
             <td valign="top">
                 <div class="ConEmbTblCl1Div">
-                    <div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.encryptionkey"/></span></div>
+                    <div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7" /><span class="LblLev2Txt"><config:message i18nKey="configurator.encryptionkey"/></span></div>
                 </div>
             </td>
             <td valign="top">
@@ -511,7 +511,7 @@
         <tr>
             <td valign="top">
                 <div class="ConEmbTblCl1Div">
-                <div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.configdirectory"/></span></div></div>
+                <div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7" /><span class="LblLev2Txt"><config:message i18nKey="configurator.configdirectory"/></span></div></div>
             </td>
             <td valign="top"> 
                 <div class="ConTblCl2Div">
@@ -592,7 +592,7 @@
             <tr id="smrootsuffix">
                 <td valign="top">
                     <div class="ConEmbTblCl1Div">
-                        <div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.configdatasuffix"/></span></div>
+                        <div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7" /><span class="LblLev2Txt"><config:message i18nKey="configurator.configdatasuffix"/></span></div>
                     </div>
                 </td>
                 <td valign="top">
@@ -613,7 +613,7 @@
             <tr id="smdsservername">
                 <td valign="top">
                     <div class="ConEmbTblCl1Div">
-                        <div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.name"/></span></div>
+                        <div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7" /><span class="LblLev2Txt"><config:message i18nKey="configurator.name"/></span></div>
                     </div>
                 </td>
                 <td valign="top">
@@ -623,7 +623,7 @@
             <!-- Server Port -->
             <tr id="smdsserverport">
                 <td valign="top">
-                    <div class="ConEmbTblCl1Div"><div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.port"/></span></div>
+                    <div class="ConEmbTblCl1Div"><div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7" /><span class="LblLev2Txt"><config:message i18nKey="configurator.port"/></span></div>
                     </div>
                 </td>
                 <td valign="top">
@@ -637,7 +637,7 @@
             <tr id="smdsadmindn">
                 <td valign="top">
                     <div class="ConEmbTblCl1Div">
-                        <div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.dirsvradmindn"/></span></div>
+                        <div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7" /><span class="LblLev2Txt"><config:message i18nKey="configurator.dirsvradmindn"/></span></div>
                     </div>
                 </td>
                 <td valign="top">
@@ -648,7 +648,7 @@
             <!-- Directory Server Admin Password Text Box -->
             <tr id="smdsadminpwd">
                 <td valign="top">
-                    <div class="ConEmbTblCl1Div"><div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.dirsvrpasswd"/></span></div>
+                    <div class="ConEmbTblCl1Div"><div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7" /><span class="LblLev2Txt"><config:message i18nKey="configurator.dirsvrpasswd"/></span></div>
                     </div>
                 </td>
                 <td valign="top">
@@ -664,7 +664,7 @@
             <tr  id="smdsloaduserschema" >
                 <td valign="top">
                     <div class="ConEmbTblCl1Div">
-                        <div class="ConTblCl1Div"><height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.loaduserschema"/></span></div>
+                        <div class="ConTblCl1Div"><span class="LblLev2Txt"><config:message i18nKey="configurator.loaduserschema"/></span></div>
                     </div>
                 </td>
                 <td valign="top">
@@ -687,7 +687,7 @@
             <tr  id="smdsembreplchoose" >
                 <td valign="top">
                     <div class="ConEmbTblCl1Div">
-                        <div class="ConTblCl1Div"><height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.embreplchoose"/></span></div>
+                        <div class="ConTblCl1Div"><span class="LblLev2Txt"><config:message i18nKey="configurator.embreplchoose"/></span></div>
                     </div>
                 </td>
                 <td valign="top">
@@ -707,7 +707,7 @@
             <tr>
                 <td valign="top">
                     <div class="ConEmbTblCl1Div">
-                        <div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.embreplhost2"/></span></div>
+                        <div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7" /><span class="LblLev2Txt"><config:message i18nKey="configurator.embreplhost2"/></span></div>
                     </div>
                 </td>
                 <td valign="top">
@@ -718,7 +718,7 @@
             <!-- Repl Server Port -->
             <tr>
                 <td valign="top">
-                    <div class="ConEmbTblCl1Div"><div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.embreplport2"/></span></div>
+                    <div class="ConEmbTblCl1Div"><div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7" /><span class="LblLev2Txt"><config:message i18nKey="configurator.embreplport2"/></span></div>
                     </div>
                 </td>
                 <td valign="top">
@@ -728,7 +728,7 @@
             <!-- Repl Port2 -->
             <tr>
                 <td valign="top">
-                    <div class="ConEmbTblCl1Div"><div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.embreplreplport2"/></span></div>
+                    <div class="ConEmbTblCl1Div"><div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7" /><span class="LblLev2Txt"><config:message i18nKey="configurator.embreplreplport2"/></span></div>
                     </div>
                 </td>
                 <td valign="top">
@@ -738,7 +738,7 @@
             <!-- Repl Port1 -->
             <tr>
                 <td valign="top">
-                    <div class="ConEmbTblCl1Div"><div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7"><span class="LblLev2Txt"><config:message i18nKey="configurator.embreplreplport1"/></span></div>
+                    <div class="ConEmbTblCl1Div"><div class="ConTblCl1Div"><img src="com_sun_web_ui/images/other/required.gif" alt="<config:message i18nKey="configurator.requiredfield"/>" title="<config:message i18nKey="configurator.requiredfield"/>" height="14" width="7" /><span class="LblLev2Txt"><config:message i18nKey="configurator.embreplreplport1"/></span></div>
                     </div>
                 </td>
                 <td valign="top">
