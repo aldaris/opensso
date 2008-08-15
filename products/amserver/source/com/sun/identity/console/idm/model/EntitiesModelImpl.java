@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitiesModelImpl.java,v 1.10 2008-07-10 23:27:23 veiming Exp $
+ * $Id: EntitiesModelImpl.java,v 1.11 2008-08-15 01:07:17 veiming Exp $
  *
  */
 
@@ -1358,7 +1358,21 @@ public class EntitiesModelImpl
                     xmlBuilder.setAllAttributeReadOnly(true);
                 }
             }
-            return xmlBuilder.getXML();
+            String xml = xmlBuilder.getXML();
+            if (idType.equals(IdType.ROLE)) {
+                String cosPriority = AMAdminUtils.getStringFromInputStream(
+                    getClass().getClassLoader().getResourceAsStream(
+                    "com/sun/identity/console/propertyEntitiesCOSPriority.xml")
+                    );
+                if (xml != null) {
+                    xml = PropertyXMLBuilder.appendXMLProperty(xml, 
+                        cosPriority);
+                } else {
+                    xml = PropertyXMLBuilder.formPropertySheetXML(
+                        cosPriority, true);
+                }
+            }
+            return xml;
         } catch (SMSException e) {
             throw new AMConsoleException(getErrorString(e));
         } catch (SSOException e) {

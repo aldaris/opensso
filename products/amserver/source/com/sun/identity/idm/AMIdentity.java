@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentity.java,v 1.28 2008-08-09 01:08:58 arviranga Exp $
+ * $Id: AMIdentity.java,v 1.29 2008-08-15 01:07:17 veiming Exp $
  *
  */
 
@@ -1423,5 +1423,5 @@ public final class AMIdentity {
 
     private static Debug debug = Debug.getInstance("amIdm");
     
-    private static String COS_PRIORITY = "cospriority";
+    public static String COS_PRIORITY = "cospriority";
 }

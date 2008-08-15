@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityEditViewBean.java,v 1.6 2008-06-25 05:42:59 qcheng Exp $
+ * $Id: EntityEditViewBean.java,v 1.7 2008-08-15 01:07:17 veiming Exp $
  *
  */ 
         
@@ -73,8 +73,6 @@ public class EntityEditViewBean
     private static final String PGTITLE_TWO_BTNS = "pgtitleTwoBtns";
     public static final int TAB_PROFILE = 0;
     public static final int TAB_SERVICES= 1;
-    private static final int TAB_ID_TYPE_MEMBER_OF_SUFFIX = 1;
-    private static final int TAB_ID_TYPE_BE_MEMBER_OF_SUFFIX = 2;
 
     protected String identityDisplayName;
 
@@ -133,7 +131,7 @@ public class EntityEditViewBean
         // identityDisplayName also used be EndUserViewBean
         identityDisplayName = 
            AMFormatUtils.getIdentityDisplayName(model, universalId);
-        String[] param = { i18nName, identityDisplayName };
+        Object[] param = { i18nName, identityDisplayName };
         ptModel.setPageTitleText(MessageFormat.format(title, param));
         
         checkForAttributesToDisplay(type);
