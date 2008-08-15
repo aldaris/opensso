@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogCommon.java,v 1.4 2008-08-07 04:54:43 mrudulahg Exp $
+ * $Id: LogCommon.java,v 1.5 2008-08-15 04:58:28 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -217,6 +217,7 @@ public class LogCommon extends TestCommon {
     throws Exception {
         StringBuffer lastRec = null;
         try {
+            Thread.sleep(4000);
             Statement selectSt = con.createStatement();
             ResultSet results = selectSt.executeQuery("SELECT * FROM " + 
                     logName + " ORDER BY TIME DESC LIMIT 1");
