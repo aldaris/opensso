@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: Debug.jsp,v 1.9 2008-08-13 16:00:56 rajeevangal Exp $
+   $Id: Debug.jsp,v 1.10 2008-08-15 01:05:32 veiming Exp $
   
 -->
 
@@ -126,8 +126,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Sun OpenSSO Enterprise</title>
-    <link rel="stylesheet" type="text/css" href="com_sun_web_ui/css/css_ns6up.css">
-    <link rel="shortcut icon" href="com_sun_web_ui/images/favicon/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="com_sun_web_ui/css/css_ns6up.css" />
+    <link rel="shortcut icon" href="com_sun_web_ui/images/favicon/favicon.ico" type="image/x-icon" />
 </head>
 <body class="DefBdy">
     <div class="SkpMedGry1"><a href="#SkipAnchor3860"><img src="com_sun_web_ui/images/other/dot.gif" alt="Jump to End of Masthead" border="0" height="1" width="1"></a></div><div class="MstDiv">

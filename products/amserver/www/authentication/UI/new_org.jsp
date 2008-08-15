@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: new_org.jsp,v 1.5 2008-06-25 05:44:31 qcheng Exp $
+   $Id: new_org.jsp,v 1.6 2008-08-15 01:05:29 veiming Exp $
                                                                                 
 --%>
 
@@ -63,7 +63,7 @@ if (((orgValue != null) && (orgValue.length() != 0)) ||
 }
 %>
 
-<link rel="stylesheet" href="<%= ServiceURI %>/css/styles.css" type="text/css">
+<link rel="stylesheet" href="<%= ServiceURI %>/css/styles.css" type="text/css" />
 <script language="JavaScript" src="<%= ServiceURI %>/js/browserVersion.js"></script>
 <script language="JavaScript" src="<%= ServiceURI %>/js/auth.js"></script>
 

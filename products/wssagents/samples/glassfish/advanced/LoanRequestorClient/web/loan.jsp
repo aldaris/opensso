@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: loan.jsp,v 1.1 2008-07-12 18:33:44 mallas Exp $
+   $Id: loan.jsp,v 1.2 2008-08-15 01:05:42 veiming Exp $
 --%>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
@@ -32,7 +32,7 @@
 
 <html>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>Loan Requestor Client</title>       
 <style type="text/css">
 .label { width: 30em;

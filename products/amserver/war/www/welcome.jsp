@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: welcome.jsp,v 1.4 2008-07-23 17:36:29 veiming Exp $
+   $Id: welcome.jsp,v 1.5 2008-08-15 01:05:27 veiming Exp $
 
 --%>
 
@@ -39,10 +39,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Sun OpenSSO Enterprise</title>
-    <link rel="stylesheet" type="text/css" href="com_sun_web_ui/css/css_ns6up.css">
-    <meta name="Copyright"
-         content="All Rights Reserved. Use is subject to license terms.">
-    <link rel="shortcut icon" href="com_sun_web_ui/images/favicon/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="com_sun_web_ui/css/css_ns6up.css" />
+    <link rel="shortcut icon" href="com_sun_web_ui/images/favicon/favicon.ico" type="image/x-icon" />
 
     <script language="Javascript">
         function gotoLoginPage() {

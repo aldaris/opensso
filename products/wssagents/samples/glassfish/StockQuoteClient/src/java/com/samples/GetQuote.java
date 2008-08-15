@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetQuote.java,v 1.2 2008-06-25 05:54:44 qcheng Exp $
+ * $Id: GetQuote.java,v 1.3 2008-08-15 01:05:41 veiming Exp $
  *
  */
 package com.samples;
@@ -75,7 +75,7 @@ public class GetQuote extends HttpServlet {
             out.write("\"http://www.w3.org/TR/html4/loose.dtd\">\n");
             out.write("<html>\n");
             out.write("<head>\n");
-            out.write("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n");
+            out.write("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n");
             out.write("<title>Display Quote</title>\n");
             addJavaScript(out);
             out.write("</head>\n");

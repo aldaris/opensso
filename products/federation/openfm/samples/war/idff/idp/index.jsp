@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.jsp,v 1.3 2008-06-25 05:49:24 qcheng Exp $
+   $Id: index.jsp,v 1.4 2008-08-15 01:05:35 veiming Exp $
 
 --%>
 
@@ -43,7 +43,7 @@ import="com.sun.identity.common.SystemConfigurationUtil"
 <html>
 <head>
 <title>Identity Provider</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <link rel="stylesheet" type="text/css" href="<%= deployuri %>/com_sun_web_ui/css/css_ns6up.css" />
 <%
     String metaAlias = "/idp";

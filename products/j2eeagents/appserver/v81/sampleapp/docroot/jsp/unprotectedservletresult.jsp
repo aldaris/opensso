@@ -25,10 +25,10 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: unprotectedservletresult.jsp,v 1.8 2008-08-01 01:50:58 sean_brydon Exp $
+   $Id: unprotectedservletresult.jsp,v 1.9 2008-08-15 01:05:39 veiming Exp $
 
 -->
-<meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+<meta content="text/html; charset=ISO-8859-1" http-equiv="content-type" />
 <title>Sample Application</title>
 <%
     String result = (String) request.getAttribute("RESULT");

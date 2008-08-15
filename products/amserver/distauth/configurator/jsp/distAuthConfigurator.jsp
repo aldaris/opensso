@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: distAuthConfigurator.jsp,v 1.7 2008-07-23 17:14:26 veiming Exp $
+   $Id: distAuthConfigurator.jsp,v 1.8 2008-08-15 01:05:24 veiming Exp $
 
 --%>
 
@@ -30,7 +30,7 @@
 <html>
 <head>
 <title>Configure DistAuth</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <link rel="stylesheet" type="text/css" href="css/css_ns6up.css" />
 
 

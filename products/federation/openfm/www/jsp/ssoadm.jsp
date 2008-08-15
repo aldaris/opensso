@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: ssoadm.jsp,v 1.1 2008-07-23 17:45:02 veiming Exp $
+   $Id: ssoadm.jsp,v 1.2 2008-08-15 01:05:37 veiming Exp $
   
 --%>
 
@@ -35,8 +35,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>OpenSSO Enterprise</title>
-    <link rel="stylesheet" type="text/css" href="com_sun_web_ui/css/css_ns6up.css">
-    <link rel="shortcut icon" href="com_sun_web_ui/images/favicon/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="com_sun_web_ui/css/css_ns6up.css" />
+    <link rel="shortcut icon" href="com_sun_web_ui/images/favicon/favicon.ico" type="image/x-icon" />
     <script language="Javascript" src="js/admincli.js"></script>
 </head>
 <body class="DefBdy">

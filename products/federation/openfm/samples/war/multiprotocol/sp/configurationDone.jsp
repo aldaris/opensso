@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configurationDone.jsp,v 1.5 2008-06-25 05:49:26 qcheng Exp $
+   $Id: configurationDone.jsp,v 1.6 2008-08-15 01:05:36 veiming Exp $
 
 --%>
 
@@ -40,7 +40,7 @@
 <html>
 <head>
 <title>Service Provider</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <link rel="stylesheet" type="text/css" href="<%= deployuri %>/com_sun_web_ui/css/css_ns6up.css" />
 </head>
 <body class="DefBdy">

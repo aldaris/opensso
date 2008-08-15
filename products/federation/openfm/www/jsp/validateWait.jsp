@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: validateWait.jsp,v 1.2 2008-06-25 05:51:00 qcheng Exp $
+   $Id: validateWait.jsp,v 1.3 2008-08-15 01:05:37 veiming Exp $
 
 --%>
 
@@ -37,9 +37,8 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link rel="stylesheet" type="text/css" href="<%= deployuri %>/com_sun_web_ui/css/css_ns6up.css" />
-<meta name="Copyright" content="Copyright &copy; 2008 Sun Microsystems, Inc. All Rights Reserved. Use is subject to license terms." /><link rel="shortcut icon" href="<%= deployuri %>/com_sun_web_ui/images/favicon/favicon.ico" type="image/x-icon"></link>
+<link rel="shortcut icon" href="<%= deployuri %>/com_sun_web_ui/images/favicon/favicon.ico" type="image/x-icon"></link>
 <link rel="stylesheet" type="text/css" href="<%= deployuri %>/console/css/opensso.css" />
-
 
 <script language="JavaScript">
 </script>

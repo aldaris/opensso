@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: dumpcookies.jsp,v 1.2 2008-06-25 05:49:27 qcheng Exp $
+   $Id: dumpcookies.jsp,v 1.3 2008-08-15 01:05:36 veiming Exp $
 
 --%>
 
@@ -48,7 +48,7 @@ public void jspInit()
 <html>
 <head>
 <title>Secure Attributes Exchange IDP APP SAMPLE</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <link rel="stylesheet" type="text/css" href="<%= deployuri %>/com_sun_web_ui/css/css_ns6up.css" />
 </head>
 <body>

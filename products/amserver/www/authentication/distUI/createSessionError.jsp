@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: createSessionError.jsp,v 1.4 2008-07-23 17:36:30 veiming Exp $
+   $Id: createSessionError.jsp,v 1.5 2008-08-15 01:05:30 veiming Exp $
                                                                                 
 --%>
 
@@ -45,7 +45,7 @@
 String ServiceURI = (String) viewBean.getDisplayFieldValue(viewBean.SERVICE_URI);
 %>
 
-<link rel="stylesheet" href="<%= ServiceURI %>/css/styles.css" type="text/css">
+<link rel="stylesheet" href="<%= ServiceURI %>/css/styles.css" type="text/css" />
 <script language="JavaScript" src="<%= ServiceURI %>/js/browserVersion.js"></script>
 <script language="JavaScript" src="<%= ServiceURI %>/js/auth.js"></script>
 

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.jsp,v 1.2 2008-06-25 05:54:45 qcheng Exp $
+   $Id: index.jsp,v 1.3 2008-08-15 01:05:41 veiming Exp $
 
 -->
 <%@page contentType="text/html"%>
@@ -41,7 +41,7 @@ on Libraries node in Projects view can be used to add the JSTL 1.1 library.
 
 <html>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>JSP Page</title>
     </head>
     <body>

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: saeSPApp.jsp,v 1.3 2008-07-16 22:46:50 rajeevangal Exp $
+   $Id: saeSPApp.jsp,v 1.4 2008-08-15 01:05:37 veiming Exp $
 
 --%>
 
@@ -46,7 +46,7 @@ public void jspInit()
 <html>
 <head>
 <title>Secure Attributes Exchange IDP APP SAMPLE</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <link rel="stylesheet" type="text/css" href="<%= deployuri %>/com_sun_web_ui/css/css_ns6up.css" />
 </head>
 <body>

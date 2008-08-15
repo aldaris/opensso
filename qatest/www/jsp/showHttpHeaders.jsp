@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
     <head>
-        <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+        <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type" />
         <title>Sample Application</title>
 <!--
    The contents of this file are subject to the terms
@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: showHttpHeaders.jsp,v 1.2 2008-05-21 17:14:46 nithyas Exp $
+   $Id: showHttpHeaders.jsp,v 1.3 2008-08-15 01:05:42 veiming Exp $
 
    Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->        

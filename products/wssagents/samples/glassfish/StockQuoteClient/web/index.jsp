@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: index.jsp,v 1.6 2008-07-25 16:59:27 veiming Exp $
+   $Id: index.jsp,v 1.7 2008-08-15 01:05:41 veiming Exp $
 --%>
 <%--
 The taglib directive below imports the JSTL library. If you uncomment it,
@@ -40,7 +40,7 @@ on Libraries node in Projects view can be used to add the JSTL 1.1 library.
 
 <html>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>Stock Quote Client Sample</title>
     </head>
     <body>

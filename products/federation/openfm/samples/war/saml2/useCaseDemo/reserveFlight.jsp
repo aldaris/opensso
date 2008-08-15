@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: reserveFlight.jsp,v 1.3 2008-06-25 05:49:28 qcheng Exp $
+   $Id: reserveFlight.jsp,v 1.4 2008-08-15 01:05:37 veiming Exp $
 
 -->
 
@@ -39,7 +39,7 @@
 <html>
 <head>
 <title>Reserve Flight</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <link rel="stylesheet" type="text/css" href="<%= deployuri %>/com_sun_web_ui/css/css_ns6up.css" />
 </head>
 

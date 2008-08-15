@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SampleConstants.java,v 1.3 2008-07-23 17:14:29 veiming Exp $
+ * $Id: SampleConstants.java,v 1.4 2008-08-15 01:05:24 veiming Exp $
  *
  */
 
@@ -33,7 +33,7 @@ public interface SampleConstants {
         "<!DOCTYPE html PUBLIC \"-//w3c//dtd html 4.0 transitional//en\">" +
         "<html><head>" +
         "<title>OpenSSO Enterprise - Samples - Service Configuration</title>" +
-        "<link rel=\"stylesheet\" href=\"sample.css\">" +
+        "<link rel=\"stylesheet\" href=\"sample.css\" />" +
         "</head>" +
         "<body style=\"background-color: rgb(255, 255, 255);\"" +
         "link=\"#0000ff\" vlink=\"#800080\">" +

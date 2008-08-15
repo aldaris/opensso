@@ -25,10 +25,10 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: invokerservletresult.jsp,v 1.8 2008-08-01 01:50:58 sean_brydon Exp $
+   $Id: invokerservletresult.jsp,v 1.9 2008-08-15 01:05:38 veiming Exp $
 
 -->
-<meta content="text/html; charset=ISO-8859-1" http-equiv="content-type"> 
+<meta content="text/html; charset=ISO-8859-1" http-equiv="content-type" /> 
 <title>Sample Application</title>
 
 <%

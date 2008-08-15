@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: PWResetQuestion.jsp,v 1.3 2008-06-25 05:44:27 qcheng Exp $
+   $Id: PWResetQuestion.jsp,v 1.4 2008-08-15 01:05:26 veiming Exp $
 
 --%>
 
@@ -35,7 +35,7 @@
 
 <head>
 <title><jato:text name="titleHtmlPage" /></title>
-<link rel="stylesheet" href="<%= passwordUrl %>/css/adminstyle.css">
+<link rel="stylesheet" href="<%= passwordUrl %>/css/adminstyle.css" />
 <script language="JavaScript" src="<%= passwordUrl %>/js/browserVersion.js"></script>
 <script language="JavaScript" src="<%= passwordUrl %>/js/password.js"></script>
 <script language="javascript">

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.jsp,v 1.7 2008-08-08 22:36:30 qcheng Exp $
+   $Id: index.jsp,v 1.8 2008-08-15 01:05:32 veiming Exp $
 
 --%>
 
@@ -66,7 +66,7 @@
 
 <head>
     <title>Validate Fedlet Setup</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
     <link rel="stylesheet" type="text/css" href="<%= deployuri %>/com_sun_web_ui/css/css_ns6up.css" />
 </head>
 

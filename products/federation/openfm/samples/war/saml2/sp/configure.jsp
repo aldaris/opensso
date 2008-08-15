@@ -22,14 +22,14 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configure.jsp,v 1.6 2008-06-25 05:49:28 qcheng Exp $
+   $Id: configure.jsp,v 1.7 2008-08-15 01:05:37 veiming Exp $
 
 --%>
 
 <html>
 <head>
 <title>Configure Service Provider</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <link rel="stylesheet" type="text/css" href="../../../com_sun_web_ui/css/css_ns6up.css"/>
 
 <%

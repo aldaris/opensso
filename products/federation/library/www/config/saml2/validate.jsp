@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: validate.jsp,v 1.5 2008-07-23 17:36:37 veiming Exp $
+   $Id: validate.jsp,v 1.6 2008-08-15 01:05:33 veiming Exp $
 
 --%>
 
@@ -49,7 +49,7 @@ TOFIX: localize all the messages.
 <html>
 <head>
 <title>SAMLv2 Setup Validation</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 
 <%-- functions --%>
 <%!

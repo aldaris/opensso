@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: logout.jsp,v 1.5 2008-07-23 17:40:33 veiming Exp $
+   $Id: logout.jsp,v 1.6 2008-08-15 01:05:33 veiming Exp $
 
 --%>
 
@@ -71,8 +71,8 @@
     }
   %>
         </script>
-        <link rel="stylesheet" type="text/css" href="<%= contextPath %>/com_sun_web_ui/css/css_ns6up.css">
-        <link rel="shortcut icon" href="<%= contextPath %>/com_sun_web_ui/images/favicon/favicon.ico" type="image/x-icon">
+        <link rel="stylesheet" type="text/css" href="<%= contextPath %>/com_sun_web_ui/css/css_ns6up.css" />
+        <link rel="shortcut icon" href="<%= contextPath %>/com_sun_web_ui/images/favicon/favicon.ico" type="image/x-icon" />
     </head>
     <body class="DefBdy" onload="startTimer();">
         <div class="SkpMedGry1"><a href="#SkipAnchor3860"><img src="<%= contextPath %>/com_sun_web_ui/images/other/dot.gif" alt="Jump to End of Masthead" border="0" height="1" width="1"></a></div><div class="MstDiv">
