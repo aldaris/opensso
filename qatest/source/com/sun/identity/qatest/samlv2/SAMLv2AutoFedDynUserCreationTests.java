@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2AutoFedDynUserCreationTests.java,v 1.9 2008-07-30 22:15:32 sridharev Exp $
+ * $Id: SAMLv2AutoFedDynUserCreationTests.java,v 1.10 2008-08-15 21:09:32 sridharev Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -77,6 +77,7 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
             + "        </Attribute>";
     private Map<String, String> configMap;
     private Map<String, String> usersMap;
+    private Map<String, String> spusersMap;
     private FederationManager fmIDP;
     private FederationManager fmSP;
     private String baseDir;
@@ -524,7 +525,7 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
         entering("cleanup", null);
          try {
             getWebClient();
-            
+            ArrayList list;
             consoleLogin(webClient, spurl + "/UI/Login", configMap.get(
                     TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
@@ -555,15 +556,33 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
                         " failed");
                 assert(false);
             }
-            
+            spusersMap = new HashMap<String, String>();
+            spusersMap = getMapFromResourceBundle("samlv2" + fileseparator + 
+                    "samlv2AutoFedDynUserCreationTests");
+            log(Level.FINEST, "cleanup", "Users map is " + spusersMap);
+            Integer totalUsers = new Integer(
+                    (String)spusersMap.get("totalUsers"));
+            list = new ArrayList();
+            for (int i = 1; i < totalUsers + 1; i++) {
+                list.clear();
+                list.add(spusersMap.get(TestConstants.KEY_IDP_USER + i));
+                if (FederationManager.getExitCode(fmSP.deleteIdentities(webClient,
+                        configMap.get(TestConstants.KEY_SP_EXECUTION_REALM),
+                        list , "User")) != 0) {
+                log(Level.SEVERE, "setup", "deleteIdentity famadm command" +
+                        " failed");
+                assert false;
+                }
+            }
             if (FederationManager.getExitCode(fmSP.importEntity(webClient,
-                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), "", spmetadata, 
-                    "", "saml2")) != 0) {
+                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), "", 
+                    spmetadata, "", "saml2")) != 0) {
                 log(Level.SEVERE, "cleanup", "Failed to import extended " +
                         "metadata");
                 log(Level.SEVERE, "cleanup", "importEntity famadm command" +
                         " failed");
             }
+            
             consoleLogin(webClient, idpurl + "/UI/Login", configMap.get(
                     TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
