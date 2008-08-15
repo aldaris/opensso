@@ -18,7 +18,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
  
-  $Id: attrQuerytest.jsp,v 1.1 2008-06-04 20:58:47 sridharev Exp $
+  $Id: attrQuerytest.jsp,v 1.2 2008-08-15 21:08:33 sridharev Exp $
  
   Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  
@@ -166,28 +166,23 @@ SAML Response = <%= SAMLUtils.displayXML(samlResp.toXMLString(true, true)) %>
 }
        if (requestType != null & requestType.equalsIgnoreCase("attrNamed")) {
         AttributeQuery attrQuery = protocolFactory.createAttributeQuery();
-
         issuer = assertionFactory.createIssuer();
         issuer.setValue(spEntityID);
-
         attrQuery.setIssuer(issuer);
         attrQuery.setID(SAML2Utils.generateID());
         attrQuery.setVersion(SAML2Constants.VERSION_2_0);
         attrQuery.setIssueInstant(new Date());
 
-
         subject = assertionFactory.createSubject();
 	%>
 	NameID is <%= nameID %>
        <%
-
         subject.setNameID(nameID);
         attrQuery.setSubject(subject);
-
         attrs = new ArrayList();
         attr = assertionFactory.createAttribute();
         attr.setName(requestAttrName);
-        attr.setNameFormat(SAML2Constants.BASIC_ATTRIBUTE_PROFILE);
+        attr.setNameFormat(SAML2Constants.BASIC_NAME_FORMAT);
         attrs.add(attr);
         attrQuery.setAttributes(attrs);
 %>

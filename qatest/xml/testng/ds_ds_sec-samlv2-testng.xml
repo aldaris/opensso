@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ds_ds_sec-samlv2-testng.xml,v 1.5 2008-06-19 22:47:19 mrudulahg Exp $
+ $Id: ds_ds_sec-samlv2-testng.xml,v 1.6 2008-08-15 21:07:28 sridharev Exp $
 
  Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -944,6 +944,396 @@
         <parameter name="ptestName" value="attrqValMSI"/>
         <parameter name="ptestType" value="attrVal"/>
         <parameter name="pAttribute" value="msi"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2AttributeQueryTests"/>
+        </classes>
+    </test>
+ <test name="AttributeQueryTestValAttrSN">
+        <parameter name="ptestName" value="attrqValSNUser"/>
+        <parameter name="ptestType" value="attrVal"/>
+        <parameter name="pAttribute" value="sn"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2AttributeQueryTests"/>
+        </classes>
+    </test>
+    <test name="AttributeQueryTestValAttrCN">
+        <parameter name="ptestName" value="attrqValCNUser"/>
+        <parameter name="ptestType" value="attrVal"/>
+        <parameter name="pAttribute" value="cn"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2AttributeQueryTests"/>
+        </classes>
+    </test>
+     <test name="AttributeQueryTestValAttrGN">
+        <parameter name="ptestName" value="attrqValGN"/>
+        <parameter name="ptestType" value="attrVal"/>
+        <parameter name="pAttribute" value="givenname"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2AttributeQueryTests"/>
+        </classes>
+    </test>
+     <test name="AttributeQueryTestValAttrMail">
+        <parameter name="ptestName" value="attrqValMail"/>
+        <parameter name="ptestType" value="attrVal"/>
+        <parameter name="pAttribute" value="mail"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2AttributeQueryTests"/>
+        </classes>
+    </test>
+     <test name="AttributeQueryTestValAttrEMP">
+        <parameter name="ptestName" value="attrqValEmp"/>
+        <parameter name="ptestType" value="attrVal"/>
+        <parameter name="pAttribute" value="employee"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2AttributeQueryTests"/>
+        </classes>
+    </test>
+     <test name="AttributeQueryTestValAttrPostal">
+        <parameter name="ptestName" value="attrqValPostal"/>
+        <parameter name="ptestType" value="attrVal"/>
+        <parameter name="pAttribute" value="postal"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2AttributeQueryTests"/>
+        </classes>
+    </test>
+     <test name="AttributeQueryTestValAttrTele">
+        <parameter name="ptestName" value="attrqValTel"/>
+        <parameter name="ptestType" value="attrVal"/>
+        <parameter name="pAttribute" value="tele"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2AttributeQueryTests"/>
+        </classes>
+    </test>
+     <test name="AttributeQueryTestValAttrHomePhone">
+        <parameter name="ptestName" value="attrqValhomephone"/>
+        <parameter name="ptestType" value="attrVal"/>
+        <parameter name="pAttribute" value="homephone"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2AttributeQueryTests"/>
+        </classes>
+    </test>
+     <test name="AttributeQueryTestValAttrHomePostal">
+        <parameter name="ptestName" value="attrqValHomepost"/>
+        <parameter name="ptestType" value="attrVal"/>
+        <parameter name="pAttribute" value="homepostal"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2AttributeQueryTests"/>
+        </classes>
+    </test>
+     <test name="AttributeQueryTestValAttrMobile">
+        <parameter name="ptestName" value="attrqValMobile"/>
+        <parameter name="ptestType" value="attrVal"/>
+        <parameter name="pAttribute" value="mobile"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2AttributeQueryTests"/>
+        </classes>
+    </test>
+     <test name="AttributeQueryTestValAttrTelephone">
+        <parameter name="ptestName" value="attrqValtelephone"/>
+        <parameter name="ptestType" value="attrVal"/>
+        <parameter name="pAttribute" value="telephone"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2AttributeQueryTests"/>
+        </classes>
+    </test>
+     <test name="AttributeQueryTestValAttrPager">
+        <parameter name="ptestName" value="attrqValpage"/>
+        <parameter name="ptestType" value="attrVal"/>
+        <parameter name="pAttribute" value="pager"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2AttributeQueryTests"/>
+        </classes>
+    </test>
+     <test name="AttributeQueryTestValAttrSecretary">
+        <parameter name="ptestName" value="attrqValSectry"/>
+        <parameter name="ptestType" value="attrVal"/>
+        <parameter name="pAttribute" value="secretary"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2AttributeQueryTests"/>
+        </classes>
+    </test>
+     <test name="AttributeQueryTestValAttrMSI">
+        <parameter name="ptestName" value="attrqValMSI"/>
+        <parameter name="ptestType" value="attrVal"/>
+        <parameter name="pAttribute" value="msi"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2AttributeQueryTests"/>
+        </classes>
+    </test>
+     <test name="AttributeQueryTestValAttrStreet">
+        <parameter name="ptestName" value="attrqValSt"/>
+        <parameter name="ptestType" value="attrVal"/>
+        <parameter name="pAttribute" value="street"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2AttributeQueryTests"/>
+        </classes>
+    </test>
+    <test name="AttributeQueryTestNamedAttrSN">
+        <parameter name="ptestName" value="attrqNMDSN"/>
+        <parameter name="ptestType" value="attrNamed"/>
+        <parameter name="pAttribute" value="sn"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2AttributeQueryTests"/>
+        </classes>
+    </test>
+        <test name="AttributeQueryTestNamedAttrCN">
+        <parameter name="ptestName" value="attrqNMDCN"/>
+        <parameter name="ptestType" value="attrNamed"/>
+        <parameter name="pAttribute" value="cn"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2AttributeQueryTests"/>
+        </classes>
+    </test>
+     <test name="AttributeQueryTestNamedAttrGN">
+        <parameter name="ptestName" value="attrqNMDGN"/>
+        <parameter name="ptestType" value="attrNamed"/>
+        <parameter name="pAttribute" value="givenname"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2AttributeQueryTests"/>
+        </classes>
+    </test>
+     <test name="AttributeQueryTestNamedAttrMail">
+        <parameter name="ptestName" value="attrqNMDMail"/>
+        <parameter name="ptestType" value="attrNamed"/>
+        <parameter name="pAttribute" value="mail"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2AttributeQueryTests"/>
+        </classes>
+    </test>
+     <test name="AttributeQueryTestNamedAttrEMP">
+        <parameter name="ptestName" value="attrqNMDEmp"/>
+        <parameter name="ptestType" value="attrNamed"/>
+        <parameter name="pAttribute" value="employeenumber"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2AttributeQueryTests"/>
+        </classes>
+    </test>
+     <test name="AttributeQueryTestNamedAttrPostal">
+        <parameter name="ptestName" value="attrqNMDPostal"/>
+        <parameter name="ptestType" value="attrNamed"/>
+        <parameter name="pAttribute" value="postaladdress"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2AttributeQueryTests"/>
+        </classes>
+    </test>
+     <test name="AttributeQueryTestNamedAttrTele">
+        <parameter name="ptestName" value="attrqNMDTel"/>
+        <parameter name="ptestType" value="attrNamed"/>
+        <parameter name="pAttribute" value="facsimileTelephoneNumber"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2AttributeQueryTests"/>
+        </classes>
+    </test>
+     <test name="AttributeQueryTestNamedAttrHomePhone">
+        <parameter name="ptestName" value="attrqNMDhomephone"/>
+        <parameter name="ptestType" value="attrNamed"/>
+        <parameter name="pAttribute" value="homePhone"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2AttributeQueryTests"/>
+        </classes>
+    </test>
+     <test name="AttributeQueryTestNamedAttrHomePostal">
+        <parameter name="ptestName" value="attrqNMDHomepost"/>
+        <parameter name="ptestType" value="attrNamed"/>
+        <parameter name="pAttribute" value="homePostalAddress"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2AttributeQueryTests"/>
+        </classes>
+    </test>
+     <test name="AttributeQueryTestNamedAttrMobile">
+        <parameter name="ptestName" value="attrqNMDMobile"/>
+        <parameter name="ptestType" value="attrNamed"/>
+        <parameter name="pAttribute" value="mobile"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2AttributeQueryTests"/>
+        </classes>
+    </test>
+     <test name="AttributeQueryTestNamedAttrTelephone">
+        <parameter name="ptestName" value="attrqNMDtelephone"/>
+        <parameter name="ptestType" value="attrNamed"/>
+        <parameter name="pAttribute" value="telephonenumber"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2AttributeQueryTests"/>
+        </classes>
+    </test>
+     <test name="AttributeQueryTestNamedAttrPager">
+        <parameter name="ptestName" value="attrqNMDpage"/>
+        <parameter name="ptestType" value="attrNamed"/>
+        <parameter name="pAttribute" value="pager"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2AttributeQueryTests"/>
+        </classes>
+    </test>
+     <test name="AttributeQueryTestNamedAttrSecretary">
+        <parameter name="ptestName" value="attrqNMDSectry"/>
+        <parameter name="ptestType" value="attrNamed"/>
+        <parameter name="pAttribute" value="secretary"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2AttributeQueryTests"/>
+        </classes>
+    </test>
+     <test name="AttributeQueryTestNamedAttrMSI">
+        <parameter name="ptestName" value="attrqNMDMSI"/>
+        <parameter name="ptestType" value="attrNamed"/>
+        <parameter name="pAttribute" value="sunIdentityMSISDNNumber"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2AttributeQueryTests"/>
+        </classes>
+    </test>
+     <test name="AttributeQueryTestNamedAttrStreet">
+        <parameter name="ptestName" value="attrqNMDSt"/>
+        <parameter name="ptestType" value="attrNamed"/>
+        <parameter name="pAttribute" value="street"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>

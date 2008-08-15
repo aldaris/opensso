@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2AttributeQueryTests.java,v 1.3 2008-07-30 22:14:40 sridharev Exp $
+ * $Id: SAMLv2AttributeQueryTests.java,v 1.4 2008-08-15 21:08:33 sridharev Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -88,6 +88,7 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
             +"</Value>\n"
             + "            <Value>telephonenumber=telephonenumber</Value>\n"
             + "            <Value>cn=cn</Value>\n"
+            + "            <Value>sn=sn</Value>\n"
             + "            <Value>facsimileTelephoneNumber=facsimileTelephoneNumber" 
             +"</Value>\n"
             + "            <Value>homePhone=homePhone</Value>\n"
@@ -112,6 +113,7 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
             +"</Value>\n"
             + "            <Value>telephonenumber=telephonenumber</Value>\n"
             + "            <Value>cn=cn</Value>\n"
+            + "            <Value>sn=sn</Value>\n"
             + "            <Value>facsimileTelephoneNumber=facsimileTelephoneNumber" 
             +"</Value>\n"
             + "            <Value>homePhone=homePhone</Value>\n"
@@ -152,16 +154,17 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
                     + SAMLv2Common.fileseparator + "classes"
                     + SAMLv2Common.fileseparator;
             configMap = new HashMap<String, String>();
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator + "samlv2TestData",
-                    configMap);
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator + "samlv2TestConfigData",
-                    configMap);
-            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator + "SAMLv2AttributeQueryTests",
-                    configMap);
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator 
+                    + "samlv2TestData", configMap);
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator 
+                    + "samlv2TestConfigData", configMap);
+            SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator 
+                    + "SAMLv2AttributeQueryTests", configMap);
             configMap.put(TestConstants.KEY_SP_USER, "sp" + testName);
             configMap.put(TestConstants.KEY_SP_USER_PASSWORD, "sp" + testName);
             configMap.put(TestConstants.KEY_IDP_USER, "idp" + testName);
-            configMap.put(TestConstants.KEY_IDP_USER_PASSWORD, "idp" + testName);
+            configMap.put(TestConstants.KEY_IDP_USER_PASSWORD, "idp" + 
+                    testName);
             spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL) +
                     "://" + configMap.get(TestConstants.KEY_SP_HOST) + ":" +
                     configMap.get(TestConstants.KEY_SP_PORT) +
@@ -259,8 +262,10 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
         try {
             configMap = new HashMap<String, String>();
             getWebClient();
-            configMap = getMapFromResourceBundle("samlv2" + fileseparator + "samlv2TestConfigData");
-            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator + "samlv2TestData"));
+            configMap = getMapFromResourceBundle("samlv2" + fileseparator 
+                    + "samlv2TestConfigData");
+            configMap.putAll(getMapFromResourceBundle("samlv2" + fileseparator 
+                    + "samlv2TestData"));
             log(Level.FINEST, "attributeQueryMapSetup", "Map:" + configMap);        
             spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL) +
                     "://" + configMap.get(TestConstants.KEY_SP_HOST) + ":" +
@@ -288,7 +293,8 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
                     configMap.get(TestConstants.KEY_SP_EXECUTION_REALM),
                     false, false, true, "saml2");
             if (FederationManager.getExitCode(spmetaPage) != 0) {
-                log(Level.SEVERE, "setup", "exportEntity famadm command failed");
+                log(Level.SEVERE, "setup", "exportEntity famadm " +
+                        "command failed");
                 assert false;
             }
             spmetadata = MultiProtocolCommon.getExtMetadataFromPage(spmetaPage);
@@ -296,7 +302,7 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
                     ATTRIB_MAP_VALUE);
             spmetadataMod = spmetadataMod.replaceAll(ATTRIB_X509_DEFAULT,
                     ATTRIB_X509_VALUE);
-            log(Level.FINEST, "assertionCacheSetup", "Modified" +
+            log(Level.FINEST, "attributeQueryMapSetup", "Modified" +
                     " metadata:" + spmetadataMod);
             if (FederationManager.getExitCode(spfm.deleteEntity(webClient,
                     configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
@@ -327,7 +333,8 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
                     false, false,
                     true, "saml2");
             if (FederationManager.getExitCode(idpmetaPage) != 0) {
-                log(Level.SEVERE, "setup", "exportEntity famadm command failed");
+                log(Level.SEVERE, "setup", "exportEntity famadm " +
+                        "command failed");
                 assert false;
             }
             idpmetadata =
@@ -433,18 +440,24 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
                         metaAliasname + "&idpEntityID=" +
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME) +
                         "&requestType=noAttr&attrName=na&attrValue=na";
+                log(Level.FINEST, "attributeQueryTest", "NoAttr case :" 
+                        + attrQueryURL);
             } else if (testType.equalsIgnoreCase("attrNamed")) {
                 attrQueryURL = spurl + "/attrQuerytest.jsp?metaAlias=" + 
                         metaAliasname + "&idpEntityID=" +
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME)
                         + "&requestType=attrNamed&attrName=" + testAttribute
                         + "&attrValue=na";
+                log(Level.FINEST, "attributeQueryTest", "attrNamed case :" 
+                        + attrQueryURL);
             } else if (testType.equalsIgnoreCase("attrVal")) {
                 String value = getExpectedResult(testAttribute);
                 attrQueryURL = spurl + "/attrQuerytest.jsp?metaAlias=" + 
                         metaAliasname + "&idpEntityID=" +
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME) +
                         "&requestType=attrVal&attrName=na&attrValue=" + value;
+                 log(Level.FINEST, "attributeQueryTest", "attrVal case :" 
+                        + attrQueryURL);
             }
             log(Level.FINEST, "attributeQueryTest", "AttributeQueryURL" + 
                     attrQueryURL);
@@ -452,8 +465,10 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
             resultPage = (HtmlPage)webClient.getPage(aqurl);
             result = resultPage.getWebResponse().getContentAsString();
             expresult = getExpectedResult(testAttribute);
-            log(Level.FINEST, "attributeQueryTest", "Expected Result" + expresult);
-            if(!resultPage.getWebResponse().getContentAsString().contains(expresult)) {
+            log(Level.FINEST, "attributeQueryTest", "Expected Result" + 
+                    expresult);
+            if(!resultPage.getWebResponse().getContentAsString().
+                    contains(expresult)) {
                 log(Level.SEVERE, "attributeQueryTest", "Couldn't " +
                         "Get results");
                 assert false;
