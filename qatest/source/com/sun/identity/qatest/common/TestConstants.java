@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestConstants.java,v 1.24 2008-06-26 20:10:39 rmisra Exp $
+ * $Id: TestConstants.java,v 1.25 2008-08-15 22:06:37 mrudulahg Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -969,6 +969,12 @@ public interface TestConstants {
      * MultiProtocol Property key for <code>wsfed_sp_userpw</code>
      */
     String KEY_WSFed_SP_USER_PASSWORD = "wsfed_sp_userpw";
+    
+    /**
+     * list-cot-members message for no entites present in the COT
+     */
+    String KEY_LIST_COT_NO_ENTITIES = "There are no trusted entites in the " +
+            "circle of trust";
     
     /**
      * Authentication Property key for <code>dist_auth_enabled</code>

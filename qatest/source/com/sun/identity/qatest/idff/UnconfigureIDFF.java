@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnconfigureIDFF.java,v 1.11 2008-06-26 20:13:07 rmisra Exp $
+ * $Id: UnconfigureIDFF.java,v 1.12 2008-08-15 22:08:38 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.sun.identity.qatest.common.FederationManager;
 import com.sun.identity.qatest.common.IDMCommon;
+import com.sun.identity.qatest.common.MultiProtocolCommon;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.TestConstants;
 import java.util.ArrayList;
@@ -115,7 +116,8 @@ public class UnconfigureIDFF extends TestCommon {
             FederationManager idpfm = new FederationManager(idpurl);
             
             HtmlPage idpEntityPage = idpfm.listEntities(webClient,
-                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), "idff");
+                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), 
+                    "idff");
             if (FederationManager.getExitCode(idpEntityPage) != 0) {
                log(Level.SEVERE, "UnconfigureIDFF", "listEntities famadm" +
                        " command failed");
@@ -128,8 +130,8 @@ public class UnconfigureIDFF extends TestCommon {
                         " IDP.");
                 if (FederationManager.getExitCode(idpfm.deleteEntity(webClient,
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
-                        configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), false,
-                        "idff")) == 0) {
+                        configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), 
+                        false, "idff")) == 0) {
                     log(Level.FINEST, "UnconfigureIDFF", "Delete IDP entity" +
                             " on IDP side");
                 } else {
@@ -146,10 +148,10 @@ public class UnconfigureIDFF extends TestCommon {
                         " IDP.");
                 if (FederationManager.getExitCode(idpfm.deleteEntity(webClient,
                         configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
-                        configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), false,
-                        "idff")) == 0) {
-                    log(Level.FINEST, "UnconfigureIDFF", "Deleted SP entity on " +
-                            "IDP side");
+                        configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), 
+                        false, "idff")) == 0) {
+                    log(Level.FINEST, "UnconfigureIDFF", "Deleted SP entity " +
+                            "on IDP side");
                 } else {
                     log(Level.SEVERE, "UnconfigureIDFF", "Couldnt delete SP " +
                             "entity on IDP side");
@@ -168,21 +170,30 @@ public class UnconfigureIDFF extends TestCommon {
             if (idpcotPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_IDP_COT))) {
                 log(Level.FINEST, "UnconfigureIDFF", "COT exists at IDP side");
-                if (FederationManager.getExitCode(idpfm.deleteCot(webClient,
-                        configMap.get(TestConstants.KEY_IDP_COT),
-                        configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM))) == 0) {
-                    log(Level.FINEST, "UnconfigureIDFF", "Couldn't delete " +
-                            "COT at IDP side");
+                if(MultiProtocolCommon.COTcontainsEntities(idpfm, webClient, 
+                        configMap.get(TestConstants.KEY_IDP_COT), configMap.get(
+                        TestConstants.KEY_IDP_EXECUTION_REALM))) {
+                    log(Level.FINEST, "UnconfigureSAMLv2", "COT has enttiies" +
+                            "at IDP side. COT wont be deleted");
                 } else {
-                    log(Level.SEVERE, "UnconfigureIDFF", "Deleted COT " +
-                            "at IDP side");                    
-                    log(Level.SEVERE, "UnconfigureIDFF", "deleteCot famadm" +
-                            " command failed");
+                    if (FederationManager.getExitCode(idpfm.deleteCot(webClient,
+                            configMap.get(TestConstants.KEY_IDP_COT),
+                            configMap.get(TestConstants.
+                            KEY_IDP_EXECUTION_REALM))) == 0) {
+                        log(Level.FINEST, "UnconfigureIDFF", "Couldn't " +
+                                "delete COT at IDP side");
+                    } else {
+                        log(Level.SEVERE, "UnconfigureIDFF", "Deleted COT " +
+                                "at IDP side");                    
+                        log(Level.SEVERE, "UnconfigureIDFF", "deleteCot " +
+                                "famadm command failed");
+                    }
                 }
             }
             
             HtmlPage spEntityPage = spfm.listEntities(webClient,
-                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), "idff");
+                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), 
+                    "idff");
             if (FederationManager.getExitCode(spEntityPage) != 0) {
                log(Level.SEVERE, "UnconfigureIDFF", "listEntities famadm" +
                        " command failed");
@@ -194,8 +205,8 @@ public class UnconfigureIDFF extends TestCommon {
                         " SP.");
                 if (FederationManager.getExitCode(spfm.deleteEntity(webClient,
                         configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
-                        configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), false,
-                        "idff")) == 0) {
+                        configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), 
+                        false, "idff")) == 0) {
                     log(Level.FINEST, "UnconfigureIDFF", "Deleted SP entity" +
                             " on SP side");
                 } else {
@@ -213,8 +224,8 @@ public class UnconfigureIDFF extends TestCommon {
                         " SP.");
                 if (FederationManager.getExitCode(spfm.deleteEntity(webClient,
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
-                        configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), false,
-                        "idff")) == 0) {
+                        configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), 
+                        false, "idff")) == 0) {
                     log(Level.FINEST, "UnconfigureIDFF", "Deleted IDP entity" +
                             " on SP side");
                 } else {
@@ -234,21 +245,29 @@ public class UnconfigureIDFF extends TestCommon {
             }
             if (spcotPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_SP_COT))) {
-                if (FederationManager.getExitCode(spfm.deleteCot(webClient,
-                        configMap.get(TestConstants.KEY_SP_COT),
-                        configMap.get(TestConstants.KEY_SP_EXECUTION_REALM))) != 0) {
-                    log(Level.SEVERE, "UnconfigureIDFF", "Couldn't delete " +
-                            "COT at SP side");
-                    log(Level.SEVERE, "UnconfigureIDFF", "deleteCot famadm" +
-                            " command failed");
+                if(MultiProtocolCommon.COTcontainsEntities(spfm, webClient, 
+                        configMap.get(TestConstants.KEY_SP_COT), configMap.get(
+                        TestConstants.KEY_SP_EXECUTION_REALM))) {
+                    log(Level.FINEST, "UnconfigureSAMLv2", "COT has enttiies" +
+                            "at SP side. COT wont be deleted");
                 } else {
-                    log(Level.FINEST, "UnconfigureIDFF", "Deleted COT " +
-                            "at SP side");                    
+                    if (FederationManager.getExitCode(spfm.deleteCot(webClient,
+                            configMap.get(TestConstants.KEY_SP_COT),
+                            configMap.get(TestConstants.
+                            KEY_SP_EXECUTION_REALM))) != 0) {
+                        log(Level.SEVERE, "UnconfigureIDFF", "Couldn't " +
+                                "delete COT at SP side");
+                        log(Level.SEVERE, "UnconfigureIDFF", "deleteCot " +
+                                "famadm command failed");
+                    } else {
+                        log(Level.FINEST, "UnconfigureIDFF", "Deleted COT " +
+                                "at SP side");                    
+                    }
                 }
             }
             
             if (strGroupName.contains("sec")) {
-                    log(Level.FINEST, "UnconfigureIDFF", "Disable XML signing.");
+                    log(Level.FINEST, "UnconfigureIDFF", "Disable XML signing");
                     List<String> arrList = new ArrayList();
                     arrList.add("XMLSigningOn=false");
                     if (FederationManager.getExitCode(idpfm.setAttrDefs(

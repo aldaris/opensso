@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MultiProtocolCommon.java,v 1.14 2008-06-19 22:44:28 mrudulahg Exp $
+ * $Id: MultiProtocolCommon.java,v 1.15 2008-08-15 22:10:27 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -30,6 +30,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * This class contains common helper methods for samlv2, IDFF tests
@@ -664,5 +665,42 @@ public class MultiProtocolCommon extends TestCommon {
         }
         return arrMetadata;
         
+    }
+    
+    /**
+     * This method checks if COT contains any entities in it. 
+     * @param FederationManager 
+     * @param WebClient with authenticated session
+     * @param COTName COT name string
+     * @param realm execution realm
+     */
+    public static boolean COTcontainsEntities(FederationManager fm, WebClient 
+            webClient, String COTName, String realm)
+    throws Exception {
+        boolean result = true;
+        HtmlPage samlv2page = fm.listCotMembers(webClient, COTName, realm, 
+                "saml2");
+        HtmlPage idffpage = fm.listCotMembers(webClient, COTName, realm, 
+                "idff");
+        HtmlPage wsfedpage = fm.listCotMembers(webClient, COTName, realm, 
+                "wsfed");
+        if ((FederationManager.getExitCode(samlv2page) != 0) || 
+                (FederationManager.getExitCode(idffpage) != 0) ||
+                (FederationManager.getExitCode(wsfedpage) != 0)) {
+            log(Level.SEVERE, "listCOTmembers", "Couldn't get COT " +
+                    "members");
+        } else {
+            if ((samlv2page.getWebResponse().getContentAsString().contains(
+                    TestConstants.KEY_LIST_COT_NO_ENTITIES)) & 
+            (idffpage.getWebResponse().getContentAsString().contains(
+                    TestConstants.KEY_LIST_COT_NO_ENTITIES)) & 
+            (wsfedpage.getWebResponse().getContentAsString().contains(
+                    TestConstants.KEY_LIST_COT_NO_ENTITIES))) {
+                log(Level.FINEST, "listCOTmembers", "COT doesn't contain any " +
+                        "entities");
+                result = false;
+            }
+        }
+        return result;
     }
 }

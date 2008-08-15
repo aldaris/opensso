@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnconfigureWSFed.java,v 1.7 2008-06-26 20:27:37 rmisra Exp $
+ * $Id: UnconfigureWSFed.java,v 1.8 2008-08-15 22:09:02 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.sun.identity.qatest.common.FederationManager;
 import com.sun.identity.qatest.common.IDMCommon;
+import com.sun.identity.qatest.common.MultiProtocolCommon;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.TestConstants;
 import java.util.HashMap;
@@ -169,16 +170,23 @@ public class UnconfigureWSFed extends TestCommon {
             if (idpcotPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_IDP_COT))) {
                 log(Level.FINEST, "UnconfigureWSFed", "COT exists at IDP side");
-                if (FederationManager.getExitCode(idpfm.deleteCot(webClient,
-                        configMap.get(TestConstants.KEY_IDP_COT),
-                        configMap.get(TestConstants.KEY_IDP_REALM))) != 0) {
-                    log(Level.SEVERE, "UnconfigureWSFed", "Couldn't delete " +
-                            "COT at IDP side");
-                    log(Level.SEVERE, "UnconfigureWSFed", "deleteCot famadm" +
-                            " command failed");
+                if(MultiProtocolCommon.COTcontainsEntities(idpfm, webClient, 
+                        configMap.get(TestConstants.KEY_IDP_COT), configMap.get(
+                        TestConstants.KEY_IDP_EXECUTION_REALM))) {
+                    log(Level.FINEST, "UnconfigureSAMLv2", "COT has enttiies" +
+                            "at IDP side. COT wont be deleted");
                 } else {
-                    log(Level.FINEST, "UnconfigureWSFed", "Deleted COT " +
-                            "at IDP side");                    
+                    if (FederationManager.getExitCode(idpfm.deleteCot(webClient,
+                            configMap.get(TestConstants.KEY_IDP_COT),
+                            configMap.get(TestConstants.KEY_IDP_REALM))) != 0) {
+                        log(Level.SEVERE, "UnconfigureWSFed", "Couldn't " +
+                                "delete COT at IDP side");
+                        log(Level.SEVERE, "UnconfigureWSFed", "deleteCot " +
+                                "famadm command failed");
+                    } else {
+                        log(Level.FINEST, "UnconfigureWSFed", "Deleted COT " +
+                                "at IDP side");                    
+                    }
                 }
             }
             
@@ -201,8 +209,8 @@ public class UnconfigureWSFed extends TestCommon {
                     log(Level.FINEST, "UnconfigureWSFed", "Deleted SP entity" +
                             " on SP side");
                 } else {
-                    log(Level.SEVERE, "UnconfigureWSFed", "Couldnt delete SP " +
-                            "entity on SP side");
+                    log(Level.SEVERE, "UnconfigureWSFed", "Couldnt delete SP" +
+                            " entity on SP side");
                     log(Level.SEVERE, "UnconfigureWSFed", "deleteEntity" +
                             " famadm command failed");
                     assert false;
@@ -239,16 +247,23 @@ public class UnconfigureWSFed extends TestCommon {
             }
             if (spcotPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_SP_COT))) {
-                if (FederationManager.getExitCode(spfm.deleteCot(webClient,
-                        configMap.get(TestConstants.KEY_SP_COT),
-                        configMap.get(TestConstants.KEY_SP_REALM))) != 0) {
-                    log(Level.SEVERE, "UnconfigureWSFed", "Couldn't delete " +
-                            "COT at SP side");
-                    log(Level.SEVERE, "UnconfigureWSFed", "deleteCot famadm" +
-                            " command failed");
+                if(MultiProtocolCommon.COTcontainsEntities(spfm, webClient, 
+                        configMap.get(TestConstants.KEY_SP_COT), configMap.get(
+                        TestConstants.KEY_SP_EXECUTION_REALM))) {
+                    log(Level.FINEST, "UnconfigureSAMLv2", "COT has enttiies" +
+                            "at SP side. COT wont be deleted");
                 } else {
-                    log(Level.FINEST, "UnconfigureWSFed", "Deleted COT " +
-                            "at SP side");                    
+                    if (FederationManager.getExitCode(spfm.deleteCot(webClient,
+                            configMap.get(TestConstants.KEY_SP_COT),
+                            configMap.get(TestConstants.KEY_SP_REALM))) != 0) {
+                        log(Level.SEVERE, "UnconfigureWSFed", "Couldn't " +
+                                "delete COT at SP side");
+                        log(Level.SEVERE, "UnconfigureWSFed", "deleteCot " +
+                                "famadm command failed");
+                    } else {
+                        log(Level.FINEST, "UnconfigureWSFed", "Deleted COT " +
+                                "at SP side");                    
+                    }
                 }
             }
 

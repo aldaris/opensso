@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnconfigureSAMLv2.java,v 1.12 2008-06-26 21:21:16 rmisra Exp $
+ * $Id: UnconfigureSAMLv2.java,v 1.13 2008-08-15 22:07:40 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,14 +29,13 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.sun.identity.qatest.common.FederationManager;
 import com.sun.identity.qatest.common.IDMCommon;
+import com.sun.identity.qatest.common.MultiProtocolCommon;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.TestConstants;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.logging.Level;
 import org.testng.annotations.AfterSuite;
-import org.testng.annotations.AfterTest;
 
 /**
  * This class removes the configuration on SP & IDP
@@ -75,8 +74,6 @@ public class UnconfigureSAMLv2 extends TestCommon {
     public void UnconfigureSAMLv2()
     throws Exception {
         entering("UnconfigureSAMLv2", null);
-        String spurl;
-        String idpurl;
         try {
             //Upload global properties file in configMap
             configMap = new HashMap<String, String>();
@@ -122,7 +119,8 @@ public class UnconfigureSAMLv2 extends TestCommon {
             }
             //Delete IDP & SP entities on IDP
             if (idpEntityPage.getWebResponse().getContentAsString().
-                    contains(configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
+                    contains(configMap.get(TestConstants.
+                    KEY_IDP_ENTITY_NAME))) {
                 log(Level.FINEST, "UnconfigureSAMLv2", "idp entity exists at" +
                         " sp.");
                 if (FederationManager.getExitCode(idpfm.deleteEntity(webClient,
@@ -169,17 +167,24 @@ public class UnconfigureSAMLv2 extends TestCommon {
                     contains(configMap.get(TestConstants.KEY_IDP_COT))) {
                 log(Level.FINEST, "UnconfigureSAMLv2", "COT exists at IDP" +
                         " side");
-                if (FederationManager.getExitCode(idpfm.deleteCot(webClient,
-                        configMap.get(TestConstants.KEY_IDP_COT),
-                        configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM)))
-                        != 0) {
-                    log(Level.SEVERE, "UnconfigureSAMLv2", "Couldn't delete " +
-                            "COT at IDP side");
-                    log(Level.SEVERE, "UnconfigureSAMLv2", "deleteCot famadm" +
-                            " command failed");
+                if(MultiProtocolCommon.COTcontainsEntities(idpfm, webClient, 
+                        configMap.get(TestConstants.KEY_IDP_COT), configMap.get(
+                        TestConstants.KEY_IDP_EXECUTION_REALM))) {
+                    log(Level.FINEST, "UnconfigureSAMLv2", "COT has entities" +
+                            "at IDP side. COT won't be deleted");
                 } else {
-                    log(Level.FINEST, "UnconfigureSAMLv2", "Deleted COT " +
-                            "at IDP side");
+                    if (FederationManager.getExitCode(idpfm.deleteCot(webClient,
+                            configMap.get(TestConstants.KEY_IDP_COT),
+                            configMap.get(TestConstants.
+                            KEY_IDP_EXECUTION_REALM))) != 0) {
+                        log(Level.SEVERE, "UnconfigureSAMLv2", "Couldn't " +
+                                "delete COT at IDP side");
+                        log(Level.SEVERE, "UnconfigureSAMLv2", "deleteCot " +
+                                "famadm command failed");
+                    } else {
+                        log(Level.FINEST, "UnconfigureSAMLv2", "Deleted COT " +
+                                "at IDP side");
+                    }
                 }
             }
             
@@ -209,7 +214,8 @@ public class UnconfigureSAMLv2 extends TestCommon {
                 }
             }
             if (spEntityPage.getWebResponse().getContentAsString().
-                    contains(configMap.get(TestConstants.KEY_IDP_ENTITY_NAME))) {
+                    contains(configMap.get(TestConstants.
+                    KEY_IDP_ENTITY_NAME))) {
                 log(Level.FINEST, "UnconfigureSAMLv2", "idp entity exists at" +
                         " sp.");
                 if (FederationManager.getExitCode(spfm.deleteEntity(webClient,
@@ -235,18 +241,25 @@ public class UnconfigureSAMLv2 extends TestCommon {
             }
             if (spcotPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_SP_COT))) {
-                if (FederationManager.getExitCode(spfm.deleteCot(webClient,
-                        configMap.get(TestConstants.KEY_SP_COT),
-                        configMap.get(TestConstants.KEY_SP_EXECUTION_REALM)))
-                        != 0) {
-                    log(Level.SEVERE, "UnconfigureSAMLv2", "Couldn't delete " +
-                            "COT at SP side");
-                    log(Level.SEVERE, "UnconfigureSAMLv2", "deleteCot famadm" +
-                            " command failed");
+                if(MultiProtocolCommon.COTcontainsEntities(spfm, webClient, 
+                        configMap.get(TestConstants.KEY_SP_COT), configMap.get(
+                        TestConstants.KEY_SP_EXECUTION_REALM))) {
+                    log(Level.FINEST, "UnconfigureSAMLv2", "COT has entities" +
+                            "at SP side. COT wont be deleted");
                 } else {
-                    log(Level.FINEST, "UnconfigureSAMLv2", "Deleted COT " +
-                            "at SP side");
-                }
+                    if (FederationManager.getExitCode(spfm.deleteCot(webClient,
+                            configMap.get(TestConstants.KEY_SP_COT),
+                            configMap.get(TestConstants.KEY_SP_EXECUTION_REALM)
+                            )) != 0) {
+                        log(Level.SEVERE, "UnconfigureSAMLv2", "Couldn't " +
+                                "delete COT at SP side");
+                        log(Level.SEVERE, "UnconfigureSAMLv2", "deleteCot " +
+                                "famadm command failed");
+                    } else {
+                        log(Level.FINEST, "UnconfigureSAMLv2", "Deleted COT " +
+                                "at SP side");
+                    }
+                } 
             }
             
             IDMCommon idmC = new IDMCommon();

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnconfigureSAMLv2IDPProxy.java,v 1.2 2008-06-26 20:26:22 rmisra Exp $
+ * $Id: UnconfigureSAMLv2IDPProxy.java,v 1.3 2008-08-15 22:09:27 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -29,6 +29,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.sun.identity.qatest.common.FederationManager;
 import com.sun.identity.qatest.common.IDMCommon;
+import com.sun.identity.qatest.common.MultiProtocolCommon;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.TestConstants;
 import java.util.HashMap;
@@ -171,25 +172,33 @@ public class UnconfigureSAMLv2IDPProxy extends TestCommon {
             HtmlPage idpcotPage = idpfm.listCots(webClient,
                     configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM));
             if (FederationManager.getExitCode(idpcotPage) != 0) {
-               log(Level.SEVERE, "UnconfigureSAMLv2IDPProxy", "listCots famadm" +
-                       " command failed");
+               log(Level.SEVERE, "UnconfigureSAMLv2IDPProxy", "listCots " +
+                       "famadm command failed");
                assert false;
             }
             if (idpcotPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_IDP_COT))) {
                 log(Level.FINEST, "UnconfigureSAMLv2IDPProxy", "COT exists " +
                         "at IDP side");
-                if (FederationManager.getExitCode(idpfm.deleteCot(webClient,
-                        configMap.get(TestConstants.KEY_IDP_COT),
-                        configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM))) 
-                        != 0) {
-                    log(Level.SEVERE, "UnconfigureSAMLv2IDPProxy", 
-                            "Couldn't delete COT at IDP side");
-                    log(Level.SEVERE, "UnconfigureSAMLv2IDPProxy", 
-                            "deleteCot famadm  command failed");
+                if(MultiProtocolCommon.COTcontainsEntities(idpfm, webClient, 
+                        configMap.get(TestConstants.KEY_IDP_COT), configMap.get(
+                        TestConstants.KEY_IDP_EXECUTION_REALM))) {
+                    log(Level.FINEST, "UnconfigureSAMLv2IDPProxy", "COT has " +
+                            "entities at IDP side. COT won't be deleted");
                 } else {
-                    log(Level.FINEST, "UnconfigureSAMLv2IDPProxy", 
-                            "Deleted COT at IDP side");                    
+                    if (FederationManager.getExitCode(idpfm.deleteCot(webClient,
+                            configMap.get(TestConstants.KEY_IDP_COT),
+                            configMap.get(TestConstants.
+                            KEY_IDP_EXECUTION_REALM))) 
+                            != 0) {
+                        log(Level.SEVERE, "UnconfigureSAMLv2IDPProxy", 
+                                "Couldn't delete COT at IDP side");
+                        log(Level.SEVERE, "UnconfigureSAMLv2IDPProxy", 
+                                "deleteCot famadm  command failed");
+                    } else {
+                        log(Level.FINEST, "UnconfigureSAMLv2IDPProxy", 
+                                "Deleted COT at IDP side");                    
+                    }
                 }
             }
             
@@ -273,17 +282,25 @@ public class UnconfigureSAMLv2IDPProxy extends TestCommon {
                     contains(configMap.get(TestConstants.KEY_IDP_PROXY_COT))) {
                 log(Level.FINEST, "UnconfigureSAMLv2IDPProxy", "COT exists " +
                         "at IDP Proxy side");
-                if (FederationManager.getExitCode(idpproxyfm.deleteCot(webClient,
-                        configMap.get(TestConstants.KEY_IDP_PROXY_COT),
-                        configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM))) 
-                        != 0) {
-                    log(Level.SEVERE, "UnconfigureSAMLv2IDPProxy", "Couldn't " +
-                            "delete COT at IDP Proxy side");
-                    log(Level.SEVERE, "UnconfigureSAMLv2IDPProxy", "deleteCot" +
-                            " famadm command failed");
+                if(MultiProtocolCommon.COTcontainsEntities(idpproxyfm, 
+                        webClient, configMap.get(TestConstants.
+                        KEY_IDP_PROXY_COT), configMap.get(TestConstants.
+                        KEY_IDP_PROXY_EXECUTION_REALM))) {
+                    log(Level.FINEST, "UnconfigureSAMLv2IDPProxy", "COT has " +
+                            "entities at IDP Proxy side. COT won't be deleted");
                 } else {
-                    log(Level.FINEST, "UnconfigureSAMLv2IDPProxy", "Deleted " +
-                            "COT at IDP Proxy side");                    
+                    if (FederationManager.getExitCode(idpproxyfm.deleteCot(
+                            webClient, configMap.get(TestConstants.
+                            KEY_IDP_PROXY_COT), configMap.get(TestConstants.
+                            KEY_IDP_EXECUTION_REALM))) != 0) {
+                        log(Level.SEVERE, "UnconfigureSAMLv2IDPProxy", 
+                                "Couldn't delete COT at IDP Proxy side");
+                        log(Level.SEVERE, "UnconfigureSAMLv2IDPProxy", 
+                                "deleteCot famadm command failed");
+                    } else {
+                        log(Level.FINEST, "UnconfigureSAMLv2IDPProxy", 
+                                "Deleted COT at IDP Proxy side");                    
+                    }
                 }
             }
             
@@ -337,22 +354,29 @@ public class UnconfigureSAMLv2IDPProxy extends TestCommon {
             HtmlPage spcotPage = spfm.listCots(webClient,
                     configMap.get(TestConstants.KEY_SP_EXECUTION_REALM));
             if (FederationManager.getExitCode(spcotPage) != 0) {
-               log(Level.SEVERE, "UnconfigureSAMLv2IDPProxy", "listCots famadm" +
-                       " command failed");
+               log(Level.SEVERE, "UnconfigureSAMLv2IDPProxy", "listCots " +
+                       "famadm command failed");
             }
             if (spcotPage.getWebResponse().getContentAsString().
                     contains(configMap.get(TestConstants.KEY_SP_COT))) {
-                if (FederationManager.getExitCode(spfm.deleteCot(webClient,
-                        configMap.get(TestConstants.KEY_SP_COT),
-                        configMap.get(TestConstants.KEY_SP_EXECUTION_REALM))) 
-                        != 0) {
-                    log(Level.SEVERE, "UnconfigureSAMLv2IDPProxy", 
-                            "Couldn't delete COT at SP side");
-                    log(Level.SEVERE, "UnconfigureSAMLv2IDPProxy", 
-                            "deleteCot famadm command failed");
+                if(MultiProtocolCommon.COTcontainsEntities(spfm, webClient, 
+                        configMap.get(TestConstants.KEY_SP_COT), configMap.get(
+                        TestConstants.KEY_SP_EXECUTION_REALM))) {
+                    log(Level.FINEST, "UnconfigureSAMLv2IDPProxy", "COT has " +
+                            "entities at SP side. COT wont be deleted");
                 } else {
-                    log(Level.FINEST, "UnconfigureSAMLv2IDPProxy", 
-                            "Deleted COT at SP side");                    
+                    if (FederationManager.getExitCode(spfm.deleteCot(webClient,
+                            configMap.get(TestConstants.KEY_SP_COT),
+                            configMap.get(TestConstants.
+                            KEY_SP_EXECUTION_REALM))) != 0) {
+                        log(Level.SEVERE, "UnconfigureSAMLv2IDPProxy", 
+                                "Couldn't delete COT at SP side");
+                        log(Level.SEVERE, "UnconfigureSAMLv2IDPProxy", 
+                                "deleteCot famadm command failed");
+                    } else {
+                        log(Level.FINEST, "UnconfigureSAMLv2IDPProxy", 
+                                "Deleted COT at SP side");                    
+                    }
                 }
             }
 

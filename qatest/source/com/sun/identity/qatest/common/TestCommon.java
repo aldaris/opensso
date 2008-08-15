@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.52 2008-08-07 20:56:28 vimal_67 Exp $
+ * $Id: TestCommon.java,v 1.53 2008-08-15 22:07:13 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1208,7 +1208,8 @@ public class TestCommon implements TestConstants {
      * server.
      */
     protected void stopNotificationServer(Map notificationIDMap)
-    throws Exception {
+     {
+       try {
        log(Level.FINE, "stopNotificationServer", "Stopping the notification" +
                 " (jetty) server");
         String strNotURL = rb_amconfig.getString(
@@ -1219,17 +1220,21 @@ public class TestCommon implements TestConstants {
         int i = 0;
         while((jettypage.getWebResponse().getContentAsString().contains("jetty"))
                 && (i < 60)){
-            log(Level.FINE, "startNotificationServer", "Jetty server is up. " +
+            log(Level.FINE, "stopNotificationServer", "Jetty server is up. " +
                     "Waiting for the jetty process to die");
             Thread.sleep(5000);
             jettypage = (HtmlPage)wc.getPage(strNotURL);
             i++;
         }
         if (jettypage.getWebResponse().getContentAsString().contains("jetty")) {
-             log(Level.SEVERE, "startNotificationServer", "Jetty server is " +
+             log(Level.SEVERE, "stopNotificationServer", "Jetty server is " +
                      "Still up. Couldn't shut down the server");
         }
         deregisterNotificationServerURL(notificationIDMap);
+        } catch (Exception e) {
+            log(Level.SEVERE, "stopNotificationServer", e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     /**
