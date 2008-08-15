@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServicesModelImpl.java,v 1.2 2008-06-25 05:43:12 qcheng Exp $
+ * $Id: ServicesModelImpl.java,v 1.3 2008-08-15 19:41:31 veiming Exp $
  *
  */
 
@@ -93,11 +93,7 @@ public class ServicesModelImpl
         try {
             OrganizationConfigManager orgCfgMgr = new OrganizationConfigManager(
                 getUserSSOToken(), realmName);
-            /*
-             * getAssignedServices(false) : false here will return non-mandatory
-             * service names.
-             */
-            Set names = orgCfgMgr.getAssignedServices(false);
+            Set names = orgCfgMgr.getAssignedServices();
             if ((names == null) || names.isEmpty()) {
                 names = new HashSet();
             }
