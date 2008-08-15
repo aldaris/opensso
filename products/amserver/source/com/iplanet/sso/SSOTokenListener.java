@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOTokenListener.java,v 1.2 2008-06-25 05:41:42 qcheng Exp $
+ * $Id: SSOTokenListener.java,v 1.3 2008-08-15 01:05:20 veiming Exp $
  *
  */
 
@@ -34,16 +34,13 @@ package com.iplanet.sso;
  * <code>ssoTokenChanged()</code> is invoked when an SSO token event arrives.
  * 
  * @see com.iplanet.sso.SSOTokenEvent
+ * @supported.all.api
  */
-
 public interface SSOTokenListener {
-
     /**
-     * This method will be called when there is a change in the single sign on
-     * token status.
+     * Handles single sign on token status changed event.
      * 
-     * @param evt
-     *            single sign on token status changed event.
+     * @param evt Single sign on token status changed event.
      */
-    public void ssoTokenChanged(com.iplanet.sso.SSOTokenEvent evt);
+    void ssoTokenChanged(SSOTokenEvent evt);
 }

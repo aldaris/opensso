@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOTokenID.java,v 1.2 2008-06-25 05:41:42 qcheng Exp $
+ * $Id: SSOTokenID.java,v 1.3 2008-08-15 01:05:20 veiming Exp $
  *
  */
 
@@ -34,32 +34,36 @@ package com.iplanet.sso;
  * The random string in the <code>SSOTokenID</code> is unique on a given server.
  * 
  * @see com.iplanet.sso.SSOToken
+ * @supported.all.api
  */
-
 public interface SSOTokenID {
+    /**
+     * Returns the encrypted Single Sign On token string.
+     * 
+     * @return An encrypted Single Sign On token string
+     */
+    String toString();
 
     /**
-     * This method returns the encrypted SSO token string.
+     * Returns <code>true</code> if current object is equals to
+     * <code>object</code>. This are the conditions
+     * <ul>
+     * <li><code>object</code> is not null</li>
+     * <li>this instance and <code>object</code> have the same random string.
+     * <li>this instance and <code>object</code> have the same server name.
+     * </ul>
      * 
-     * @return An encrypted SSO token string
+     * @param object Object for comparison.
+     * @return <code>true</code> if current object is equals to
+     *         <code>object</code>.
      */
-    public String toString();
-
-    /**
-     * Compares this <code>SSOTokenID</code> to the specified object. The
-     * result is true if and only if the argument is not null and the random
-     * string and server name are the same in both objects.
-     * 
-     * @param object to compare against this <code>SSOTokenID</code>.
-     * @return true if the <code>SSOTokenID</code> are equal.
-     */
-    public boolean equals(Object object);
+    boolean equals(Object object);
 
     /**
      * Returns a hash code for this object.
      * 
      * @return a hash code value for this object.
      */
-    public int hashCode();
+    int hashCode();
 
 }

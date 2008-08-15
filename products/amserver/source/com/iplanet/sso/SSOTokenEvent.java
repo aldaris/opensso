@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOTokenEvent.java,v 1.3 2008-06-25 05:41:42 qcheng Exp $
+ * $Id: SSOTokenEvent.java,v 1.4 2008-08-15 01:05:20 veiming Exp $
  *
  */
 
@@ -40,47 +40,56 @@ package com.iplanet.sso;
  * <li><code>SSO_TOKEN_DESTROY</code>
  * <li><code>SSO_TOKEN_PROPERTY_CHANGED</code>
  * </ul>
+ *
+ * @supported.all.api
  */
-
 public interface SSOTokenEvent {
-    /** SSO Token idle timeout event */
-    public static int SSO_TOKEN_IDLE_TIMEOUT = 1;
-
-    /** SSO Token maximum time out event */
-    public static final int SSO_TOKEN_MAX_TIMEOUT = 2;
-
-    /** SSO Token destroy event */
-    public static final int SSO_TOKEN_DESTROY = 3;
-
-    /** SSO Token property_changed event */
-    public static final int SSO_TOKEN_PROPERTY_CHANGED = 4;
+    /**
+     * SSO Token idle timeout event.
+     */
+    int SSO_TOKEN_IDLE_TIMEOUT = 1;
 
     /**
-     * Returns the <code>SSOToken</code> associated with the SSO Event.
+     * SSO Token maximum time out event.
+     */
+    int SSO_TOKEN_MAX_TIMEOUT = 2;
+
+    /**
+     * SSO Token destroy event.
+     */
+    int SSO_TOKEN_DESTROY = 3;
+
+    /**
+     * SSO Token property changed event.
+     */
+    int SSO_TOKEN_PROPERTY_CHANGED = 4;
+
+    /**
+     * Returns the <code>SSOToken</code> associated with the SSO Token event.
      * 
      * @return <code>SSOToken</code>
      */
-    public SSOToken getToken();
+    SSOToken getToken();
 
     /**
-     * Gets the time of this event.
+     * Returns the time of this event.
      * 
      * @return The event time as <code>UTC</code> milliseconds from the epoch.
      */
-    public long getTime();
+    long getTime();
 
     /**
-     * Gets the type of this event.
+     * Returns the type of this event.
      * 
      * @return The type of this event. Possible types are :
      *         <ul>
-     *         <li><code>SSO_TOKEN_IDLE_TIMEOUT</code>,
-     *         <li><code>SSO_TOKEN_MAX_TIMEOUT</code>,
-     *         <li><code>SSO_TOKEN_DESTROY</code> and
-     *         <li><code>SSO_TOKEN_PROPERTY_CHANGED</code>
+     *         <li><code>SSO_TOKEN_IDLE_TIMEOUT</code></li>
+     *         <li><code>SSO_TOKEN_MAX_TIMEOUT</code></li>
+     *         <li><code>SSO_TOKEN_DESTROY</code></li> and
+     *         <li><code>SSO_TOKEN_PROPERTY_CHANGED</code></li>
      *         </ul>
      * @throws SSOException if the <code>SSOTokenEvent</code> type is
      *         not one of the above.
      */
-    public int getType() throws SSOException;
+    int getType() throws SSOException;
 }
