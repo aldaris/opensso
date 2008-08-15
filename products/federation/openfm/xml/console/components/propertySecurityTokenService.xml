@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySecurityTokenService.xml,v 1.1 2008-08-13 22:36:19 asyhuang Exp $
+   $Id: propertySecurityTokenService.xml,v 1.2 2008-08-15 23:09:37 asyhuang Exp $
 
 -->
 
@@ -190,7 +190,15 @@
                 tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
                 <attribute name="label" value="X509Token" />
             </cc>
-        </property >                
+        </property >   
+        <property>
+            <label name="lblAuthenticationChain" 
+                   defaultValue="web.services.security.token.authenticationchain" 
+                   labelFor="AuthenticationChain"/>
+            <cc name="AuthenticationChain" 
+                tagclass="com.sun.web.ui.taglib.html.CCSelectableListTag">            
+            </cc>
+        </property>  
         <property>
             <label name="lblUserCredential" 
                    defaultValue="web.services.security.token.user.credential.table.title" 
@@ -377,8 +385,8 @@
     <section name="STSSAMLConfiguration" defaultValue="web.services.security.token.SAMLConfiguration.section.title">   
         <property span="true">
             <label name="STSSAMLConfigurationHelpMessage"
-                defaultValue="web.services.security.token.SAMLConfiguration.section.title.inline.help"
-                labelFor="STSSAMLConfiguration" />
+                   defaultValue="web.services.security.token.SAMLConfiguration.section.title.inline.help"
+                   labelFor="STSSAMLConfiguration" />
         </property>
         <property>
             <label name="lblSAMLAttributeMapping" 

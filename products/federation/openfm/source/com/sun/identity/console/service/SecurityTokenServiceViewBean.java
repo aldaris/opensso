@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityTokenServiceViewBean.java,v 1.1 2008-08-13 22:34:06 asyhuang Exp $
+ * $Id: SecurityTokenServiceViewBean.java,v 1.2 2008-08-15 23:10:52 asyhuang Exp $
  *
  */
 package com.sun.identity.console.service;
@@ -32,6 +32,7 @@ import com.iplanet.jato.RequestManager;
 import com.iplanet.jato.view.View;
 import com.iplanet.jato.view.event.DisplayEvent;
 import com.iplanet.jato.view.event.RequestInvocationEvent;
+import com.iplanet.jato.view.html.OptionList;
 import com.sun.identity.console.base.AMPropertySheet;
 import com.sun.identity.console.base.AMServiceProfileViewBeanBase;
 import com.sun.identity.console.base.model.AMAdminUtils;
@@ -39,8 +40,13 @@ import com.sun.identity.console.base.model.AMAdminConstants;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
+import com.sun.identity.console.service.model.SecurityTokenServiceModel;
 import com.sun.identity.console.service.model.SecurityTokenServiceModelImpl;
 import com.sun.web.ui.view.alert.CCAlert;
+import com.sun.web.ui.view.html.CCSelectableList;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 public class SecurityTokenServiceViewBean
@@ -50,8 +56,9 @@ public class SecurityTokenServiceViewBean
             "/console/service/SecurityTokenService.jsp";
     protected static final String PROPERTIES =
             "propertyAttributes";
-    
     public static final String PAGE_MODIFIED = "pageModified";
+    private static final String AUTHENTICATION_CHAIN =
+            "AuthenticationChain";
 
     /**
      * Creates a authentication domains view bean.
@@ -78,17 +85,54 @@ public class SecurityTokenServiceViewBean
 
     public void beginDisplay(DisplayEvent event)
             throws ModelControlException {
-        super.beginDisplay(event);       
-        AMPropertySheet ps = (AMPropertySheet) getChild(PROPERTIES);
-        ps.init();
-    
-        if (!isInlineAlertMessageSet()) {
-            String flag = (String) getPageSessionAttribute(PAGE_MODIFIED);
-            if ((flag != null) && flag.equals("1")) {
-                setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
-                        "message.profile.modified");
+        try {
+            super.beginDisplay(event);
+
+            Map values = getAttributeValues();
+            String authChains = getValueFromMap(values, AUTHENTICATION_CHAIN);
+            if (authChains == null) {
+                authChains = "";
+            }
+            CCSelectableList cb = (CCSelectableList) getChild(
+                    AUTHENTICATION_CHAIN);
+            cb.setOptions(getAuthChainOptionList());
+
+
+            propertySheetModel.setValue(AUTHENTICATION_CHAIN, authChains);
+            //AMPropertySheet ps = (AMPropertySheet) getChild(PROPERTIES);
+            //ps.init();
+            
+
+            if (!isInlineAlertMessageSet()) {
+                String flag = (String) getPageSessionAttribute(PAGE_MODIFIED);
+                if ((flag != null) && flag.equals("1")) {
+                    setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
+                            "message.profile.modified");
+                }
+            }
+        } catch (AMConsoleException ex) {
+           // Logger.getLogger(SecurityTokenServiceViewBean.class.getName()).log(Level.SEVERE, null, ex);
+            setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
+                    ex.getMessage());
+        }
+    }
+
+    private OptionList getAuthChainOptionList()
+            throws AMConsoleException {
+        Set config = ((SecurityTokenServiceModel) getModel()).getAuthenticationChains();
+        OptionList optList = new OptionList();
+        if ((config != null) && !config.isEmpty()) {
+            for (Iterator iter = config.iterator(); iter.hasNext();) {
+                String c = (String) iter.next();
+                optList.add(c, c);
             }
         }
+        return optList;
+    }
+
+    private String getValueFromMap(Map attrValues, String name) {
+        Set set = (Set) attrValues.get(name);
+        return ((set != null) && !set.isEmpty()) ? (String) set.iterator().next() : "";
     }
 
     protected void createPageTitleModel() {
@@ -114,7 +158,7 @@ public class SecurityTokenServiceViewBean
                 getClass().getClassLoader().getResourceAsStream(xmlFileName));
 
         propertySheetModel = new AMPropertySheetModel(xml);
-        propertySheetModel.clear();       
+        propertySheetModel.clear();
     }
 
     /**

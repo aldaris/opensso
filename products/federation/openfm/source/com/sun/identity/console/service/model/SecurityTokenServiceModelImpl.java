@@ -22,14 +22,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityTokenServiceModelImpl.java,v 1.1 2008-08-13 22:35:29 asyhuang Exp $
+ * $Id: SecurityTokenServiceModelImpl.java,v 1.2 2008-08-15 23:11:17 asyhuang Exp $
  *
  */
 package com.sun.identity.console.service.model;
 
+import com.sun.identity.authentication.service.ConfiguredAuthServices;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMServiceProfileModelImpl;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import javax.servlet.http.HttpServletRequest;
 
 public class SecurityTokenServiceModelImpl
@@ -63,5 +66,17 @@ public class SecurityTokenServiceModelImpl
             String serviceName,
             Map map) throws AMConsoleException {
         super(req, serviceName, map);
+    }
+
+    /**
+     * Returns all the authentication chains 
+     *
+     * @return a set with all authentication chains      
+     */
+    public Set getAuthenticationChains() {      
+        Set chains = new TreeSet();
+        ConfiguredAuthServices cfg = new ConfiguredAuthServices();
+        chains.addAll(cfg.getChoiceValues().keySet());
+        return chains;
     }
 }

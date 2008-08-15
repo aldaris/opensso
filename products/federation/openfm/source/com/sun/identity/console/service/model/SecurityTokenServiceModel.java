@@ -22,14 +22,21 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityTokenServiceModel.java,v 1.1 2008-08-13 22:35:26 asyhuang Exp $
+ * $Id: SecurityTokenServiceModel.java,v 1.2 2008-08-15 23:11:14 asyhuang Exp $
  *
  */
 package com.sun.identity.console.service.model;
 
 import com.sun.identity.console.base.model.AMServiceProfileModel;
+import java.util.Set;
 
 public interface SecurityTokenServiceModel
         extends AMServiceProfileModel {
 
+    /**
+     * Returns all the authentication chains 
+     *
+     * @return a set with all authentication chains      
+     */
+    public Set getAuthenticationChains();
 }
