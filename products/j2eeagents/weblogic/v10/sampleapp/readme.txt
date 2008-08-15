@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: readme.txt,v 1.15 2008-08-01 01:50:59 sean_brydon Exp $
+   $Id: readme.txt,v 1.16 2008-08-15 00:20:50 huacui Exp $
 
 -->
 
@@ -35,7 +35,7 @@ with the Weblogic 10 Application Server and the J2EE Agent. Please note that
 the agent needs to be installed first before deploying this sample application.
 
     * Overview
-    * Configure the Sun OpenSSO Enterprise server
+    * Configure the Sun OpenSSO server
     * Configure the agent properties
     * Deploying the Sample Application
     * Running the Sample Application
@@ -60,19 +60,19 @@ The application is already built and ready to be deployed. It is available at
 sampleapp/dist/agentsample.ear.
 
 Note, the instructions here assume that you have installed the agent 
-successfully and have followed the steps outlined in the Sun OpenSSO Enterprise 
+successfully and have followed the steps outlined in the Sun OpenSSO 
 Policy Agent 3.0 Guide for BEA WebLogic Server/Portal 10.0, including the 
 post-installation steps.
 
 
 
 
-Configure the OpenSSO Enterprise server
+Configure the OpenSSO server
 ----------------------------------------------
-This agent sample application requires that the OpenSSO Enterprise server
-is configured with the subjects and policies required by the sample application.
+This agent sample application requires that the OpenSSO server is configured 
+with the subjects and policies required by the sample application.
 
-On OpenSSO Enterprise admin console, do the following configuration.
+On OpenSSO admin console, do the following configuration.
 1.  Create the following users:
     Here is the following list of users with username/password :
 
@@ -127,8 +127,10 @@ Configure the agent properties
    2). navigate to Access Control/realm/Agents/J2EE, and click on the agent 
        instance link (assume the agent instance is already created, otherwise 
        refer to the agent doc to create the agent instance).
-   3). in tab "Global", section "General", property "Resource Access Denied URI"
-       enter /agentsample/authentication/accessdenied.html, and SAVE the change.
+   3). in tab "Application", section "Access Denied URI Processing", property 
+       "Resource Access Denied URI", enter agentsample in the Map Key field, 
+       /agentsample/authentication/accessdenied.html in the Map Value field, and
+       SAVE the change.
    4). in tab "Application", section "Login Processing", property "Login Form URI",
        add /agentsample/authentication/login.html, and SAVE the change.
    5). in tab "Application", section "Not Enforced URI Processing", property 
@@ -176,7 +178,7 @@ Configure the agent properties
       com.sun.identity.agents.config.notenforced.uri[4] = /agentsample
 
     * Access Denied URI:
-      com.sun.identity.agents.config.access.denied.uri = /agentsample/authentication/accessdenied.html
+      com.sun.identity.agents.config.access.denied.uri[agentsample] = /agentsample/authentication/accessdenied.html
     * Form List:
       com.sun.identity.agents.config.login.form[0] = /agentsample/authentication/login.html
 
@@ -206,8 +208,8 @@ Deploying the Sample Application
 --------------------------------
 Note, before deploying the sample application, please be sure that you have
 deployed the Agent Application, which should have been done after installing 
-the agent. This is explained in the Sun OpenSSO Enterprise Policy Agent 
-3.0 Guide for BEA WebLogic Server/Portal 10.0 in the chapter which 
+the agent. This is explained in the Sun OpenSSO Policy Agent 3.0 Guide for 
+BEA WebLogic Server/Portal 10.0 in the chapter which 
 outlined the post-installation tasks.
 
 To deploy the application, do the following:
@@ -234,8 +236,8 @@ If you encounter problems when running the application, review the log files to
 learn what exactly went wrong. J2EE Agent logs can be found at 
 <agent_install_root>/Agent_<instance_number>/logs/debug directory.
 
-Also, see the Sun OpenSSO Enterprise Policy Agent 3.0 Guide for BEA 
-WebLogic Server/Portal 10.0.
+Also, see the Sun OpenSSO Policy Agent 3.0 Guide for BEA WebLogic 
+Server/Portal 10.0.
 
 
 

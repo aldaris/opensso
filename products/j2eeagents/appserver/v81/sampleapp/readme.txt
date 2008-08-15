@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: readme.txt,v 1.14 2008-08-01 01:50:57 sean_brydon Exp $
+   $Id: readme.txt,v 1.15 2008-08-15 00:22:18 huacui Exp $
 
 -->
 
@@ -35,7 +35,7 @@ with the Sun Application Server and the J2EE Agent. Please note that the agent
 needs to be installed first before deploying this sample application.
 
     * Overview
-    * Configure the Sun OpenSSO Enterprise server
+    * Configure the Sun OpenSSO server
     * Configure the agent properties
     * Compiling and Assembling the Application
     * Deploying the Sample Application
@@ -59,18 +59,18 @@ The application is already built and ready to be deployed. It is available at
 sampleapp/dist/agentsample.ear.
 
 Note, the instructions here assume that you have installed the agent
-successfully and have followed the steps outlined in the Sun OpenSSO Enterprise
+successfully and have followed the steps outlined in the Sun OpenSSO 
 Policy Agent 3.0 Guide for Sun Java System Application Server 9, including 
 the post-installation steps.
 
 
 
-Configure the OpenSSO Enterprise server
+Configure the OpenSSO server
 ---------------------------------------------
-This agent sample application requires that the OpenSSO Enterprise server
-is configured with the subjects and policies required by the sample application.
+This agent sample application requires that the OpenSSO server is configured 
+with the subjects and policies required by the sample application.
 
-On OpenSSO Enterprise admin console, do the following configuration.
+On OpenSSO admin console, do the following configuration.
 1.  Create the following users:
     Here is the following list of users with username/password :
 
@@ -125,8 +125,10 @@ Configure the agent properties
    2). navigate to Access Control/realm/Agents/J2EE, and click on the agent 
        instance link (assume the agent instance is already created, otherwise 
        refer to the agent doc to create the agent instance).
-   3). in tab "Global", section "General", property "Resource Access Denied URI"
-       enter /agentsample/authentication/accessdenied.html, and SAVE the change.
+   3). in tab "Application", section "Access Denied URI Processing", property 
+       "Resource Access Denied URI", enter agentsample in the Map Key field,
+       /agentsample/authentication/accessdenied.html in the Map Value field, and
+       SAVE the change.
    4). in tab "Application", section "Login Processing", property "Login Form URI",
        add /agentsample/authentication/login.html, and SAVE the change.
    5). in tab "Application", section "Not Enforced URI Processing", property
@@ -152,7 +154,7 @@ Configure the agent properties
       com.sun.identity.agents.config.notenforced.uri[5] = /agentsample
 
     * Access Denied URI:
-      com.sun.identity.agents.config.access.denied.uri = /agentsample/authentication/accessdenied.html
+      com.sun.identity.agents.config.access.denied.uri[agentsample] = /agentsample/authentication/accessdenied.html
     * Form List:
       com.sun.identity.agents.config.login.form[0] = /agentsample/authentication/login.html
 
@@ -182,21 +184,25 @@ To build the entire application from scratch, follow these steps:
       is located. For example: replace APPSERV_LIB_DIR with 
       /opt/SUNWappserver/appserver/lib where /opt/SUNWappserver/appserver is 
       your <appserver_install_root>. 
-   3. Compile and assemble the application. 
+   3  Change the Universal User Id (UUID) 
+      By default, the Application server specific deployment descriptors assume 
+      that the OpenSSO Server product was installed under default Org/Realm 
+      "dc=opensso,dc=java,dc=net". If the Org/Realm for the deployment scenario
+      is different from the default root suffix, the UUID for the role/principal
+      mappings should be changed accordingly. The UUID can be obtained from the
+      OpenSSO server console the group/role pages.
+      e.g. the root suffix of the OpenSSO server deployment is "dc=xyz,dc=com".
+      then replace all the occurrences of "dc=opensso,dc=java,dc=net" with 
+      "dc=xyz,dc=com" in etc/sun-web.xml and etc/sun-application.xml. 
+   4. Compile and assemble the application. 
       execute the command <appserver_install_root>/bin/asant 
       under <agent_install_root>/sampleapp/ to execute the default target build
       and rebuild the EAR file. 
       The build target creates a built and dist directory with the EAR file. 
-      By default, the Application server specific deployment descriptors assume 
-      that the OpenSSO Server product was installed under default Org/Realm 
-      "dc=opensso,dc=java,dc=net". If the Org/Realm for the deployment scenario
-      is different from the default root suffix, the Universal Id(uuid) for the
-      role/principal mappings should be changed accordingly. The Universal Id 
-      can be obtained from the OpenSSO server console the group/role pages.
-   4. Deploy the application. After you have re-created the sample application 
+   5. Deploy the application. After you have re-created the sample application 
       from scratch, you may proceed directly to Deploying the Sample Application
       or optionally perform step 5.
-   5. Optionally you can run 'ant rebuild' to clean the application project 
+   6. Optionally you can run 'ant rebuild' to clean the application project 
       area and run a new build.
 
 Now you are ready to use the dist/agentsample.ear file for deployment.
