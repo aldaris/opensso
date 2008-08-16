@@ -88,7 +88,7 @@
         <copy file="source/Infocard.jsp" todir="${opensso-config.dir}" />
         <copy file="source/infocardInvalidToken.jsp" todir="${opensso-config.dir}" />
         <copy file="source/infocardInvalidCert.jsp" todir="${opensso-config.dir}" />
-        <copy file="source/Infocard.properties" todir="${opensso-config.dir}" />
+        <copy file="source/Infocard.properties" todir="${opensso-root.dir}/WEB-INF/classes" />
         <copy file="images/infocard_71x50.png" todir="${opensso-images.dir}" />
     </target>
 </project>
