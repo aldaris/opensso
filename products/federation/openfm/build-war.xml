@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.45 2008-08-08 22:36:30 qcheng Exp $
+   $Id: build-war.xml,v 1.46 2008-08-16 00:00:08 vimarsh Exp $
 
 -->
 
@@ -56,7 +56,42 @@
         <mkdir dir="${war.package.dir}/WEB-INF/classes/META-INF"/>
         <mkdir dir="${war.package.dir}/WEB-INF/classes/META-INF/services"/>
         <mkdir dir="${war.package.dir}/WEB-INF/fedlet"/>
-        
+        <mkdir dir="${war.package.dir}/WEB-INF/fedlet/AG"/>
+	<mkdir dir="${war.package.dir}/WEB-INF/fedlet/AG/conf"/>
+
+	<copy file="${library.dir}/fedlet/AG/index.jsp"
+            tofile="${war.package.dir}/WEB-INF/fedlet/AG/index.jsp" />
+
+	<copy file="${library.dir}/fedlet/AG/conf/.keypass"
+            tofile="${war.package.dir}/WEB-INF/fedlet/AG/conf/.keypass" />
+
+	<copy file="${library.dir}/fedlet/AG/conf/.storepass"
+           tofile="${war.package.dir}/WEB-INF/fedlet/AG/conf/.storepass" />
+
+	<copy file="${library.dir}/fedlet/AG/conf/idp-extended.xml"
+     tofile="${war.package.dir}/WEB-INF/fedlet/AG/conf/idp-extended.xml" />
+
+	<copy file="${library.dir}/fedlet/AG/conf/idp.xml"
+            tofile="${war.package.dir}/WEB-INF/fedlet/AG/conf/idp.xml" />
+
+	<copy file="${library.dir}/fedlet/AG/conf/keystore.jks"
+            tofile="${war.package.dir}/WEB-INF/fedlet/AG/conf/keystore.jks" />
+	
+	<copy file="${products.basedir}/extlib/xmlsec.jar"
+            tofile="${war.package.dir}/WEB-INF/lib/xmlsec.jar" />
+
+	<copy file="${library.dir}/built/classes/com/sun/identity/fedlet/ag/AssertionGen.class"
+            tofile="${war.package.dir}/WEB-INF/fedlet/AG/com/sun/identity/fedlet/ag/AssertionGen.class" />
+
+	<copy file="${library.dir}/built/classes/com/sun/identity/fedlet/ag/UserData.class"
+            tofile="${war.package.dir}/WEB-INF/fedlet/AG/com/sun/identity/fedlet/ag/UserData.class" />
+
+	<copy file="${library.dir}/built/classes/com/sun/identity/fedlet/ag/MetaDataParser.class"
+            tofile="${war.package.dir}/WEB-INF/fedlet/AG/com/sun/identity/fedlet/ag/MetaDataParser.class" />
+
+	<copy file="${library.dir}/fedlet/AG/web.xml"
+            tofile="${war.package.dir}/WEB-INF/fedlet/AG/web.xml" />
+
         <copy file="${library.dir}/fedlet/README"
             tofile="${war.package.dir}/WEB-INF/fedlet/README" />
 
