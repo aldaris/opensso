@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Cert.java,v 1.10 2008-06-25 05:41:55 qcheng Exp $
+ * $Id: Cert.java,v 1.11 2008-08-18 23:06:19 beomsuk Exp $
  *
  */
 
@@ -516,6 +516,10 @@ public class Cert extends AMLoginModule {
                        amAuthCert_startSearchLoc,
                        amAuthCert_uriParamsCRL,
                        amAuthCert_useSSL.equalsIgnoreCase("true"));
+            if (ldapParam.isSecure()) {
+                ldapParam.setSecureSocketFactory
+                    (SSLSocketFactoryManager.getSSLSocketFactory());
+            }
         } catch (Exception e) {
             debug.error("validate.SSLSocketFactory", e);
             setFailureID(userTokenId);
