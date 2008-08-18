@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthClientUtils.java,v 1.18 2008-07-24 22:13:24 dillidorai Exp $
+ * $Id: AuthClientUtils.java,v 1.19 2008-08-18 23:11:59 dillidorai Exp $
  *
  */
 
@@ -2092,6 +2092,19 @@ public class AuthClientUtils {
                         }
                         String tmpName = nameValue.substring(0, index).trim();
                         String value = nameValue.substring(index + 1);
+
+                        /* decode the cookie if it is already URLEncoded,
+                         * we have to pass non URLEncoded cookie to 
+                         * createCookie method
+                         */
+                        if (isURLEncoded(value)) {
+                            try {
+                                value = URLDecoder.decode(value, "UTF-8");
+                            } catch (java.io.UnsupportedEncodingException e) {
+                                // this would not happen for UTF-8
+                            }
+                        }
+
                         Set domains = getCookieDomains();
                         if (!domains.isEmpty()) {
                             for (Iterator itcd = 
@@ -2368,4 +2381,23 @@ public class AuthClientUtils {
     public static String getServiceURI(){
     	return serviceURI;
     }
+
+    /**
+     * Checks if the provided <code>String</code> is URLEncoded. Our logic
+     * is simple. If the string has % or + character we treat as URL encoded
+     *
+     * @param s the <code>String</code> we want to check
+     * @return <code>true</code> if the provided string is URLEncoded, 
+     *         <code>false</code> otherwise.
+     */
+    private static boolean isURLEncoded(String s) {
+        boolean urlEncoded = false;
+        if (s != null) {
+            if ((s.indexOf("%") != -1) || (s.indexOf("+") != -1)) {
+                urlEncoded = true;
+            }
+        }
+        return urlEncoded;
+    }
+
 }
