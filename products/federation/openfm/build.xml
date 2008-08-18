@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.43 2008-08-16 00:00:08 vimarsh Exp $
+   $Id: build.xml,v 1.44 2008-08-18 22:54:55 qcheng Exp $
 
 -->
 
@@ -142,7 +142,7 @@
         <copy file="${openfm.docs.dir}/nightly.html" tofile="${fm.dist.dir}/index.html" filtering="true" />
     </target>
 
-    <target name="zip" depends="war,fedlet,AG,clientsamples,tools,publicdoc">
+    <target name="zip" depends="war,fedlet,clientsamples,tools,publicdoc">
         <ant antfile="${openfm.dir}/build-zip.xml" inheritRefs="true"/>
     </target>
     
