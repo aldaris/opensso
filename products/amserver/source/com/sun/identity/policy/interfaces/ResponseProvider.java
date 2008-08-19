@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResponseProvider.java,v 1.4 2008-07-23 17:25:00 veiming Exp $
+ * $Id: ResponseProvider.java,v 1.5 2008-08-19 19:09:16 veiming Exp $
  *
  */
 
@@ -42,7 +42,7 @@ import java.util.Set;
 
 /**
  * The class <code>ResponseProvider</code> defines an interface to allow 
- * pluggable response providers into the OpenSSO Enterprise framework. These 
+ * pluggable response providers into the OpenSSO framework. These 
  * are used to provide policy response attributes. Policy response attributes 
  * are different from <code>ActionDecision</code>. Policy response attributes 
  * typically provide attribute values of user profile. User profile could 
@@ -57,9 +57,9 @@ import java.util.Set;
  * <code>setProperties()</code> method.
  * <p>
  * Response attribute names are not checked against schema of the service
- * registered with OpenSSO Enterprise. (<code>ActionDecision</code> attributes
+ * registered with OpenSSO. (<code>ActionDecision</code> attributes
  * are checked against the schema of the service registered with
- * OpenSSO Enterprise).
+ * OpenSSO).
  *
  * A Response Provider computes a <code>Map</code> of response attributes
  * and their values based on the <code>SSOToken</code>, resource name and  

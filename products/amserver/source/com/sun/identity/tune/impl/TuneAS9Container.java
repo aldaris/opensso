@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneAS9Container.java,v 1.5 2008-08-04 17:16:33 kanduls Exp $
+ * $Id: TuneAS9Container.java,v 1.6 2008-08-19 19:09:29 veiming Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -595,8 +595,8 @@ public class TuneAS9Container extends TuneAppServer implements
                 return;
             }
             String[] delLines = new String[2];
-            delLines[0] = "Start: AS9.1 OpenSSO Enterprise Tuning :";
-            delLines[1] = "End: AS9.1 OpenSSO Enterprise Tuning :";
+            delLines[0] = "Start: AS9.1 OpenSSO Tuning :";
+            delLines[1] = "End: AS9.1 OpenSSO Tuning :";
             if (curStackSizeStr != null && curStackSizeStr.trim().length() >0) {
                 delLines[2] = curStackSizeStr;
             }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AdminTokenAction.java,v 1.11 2008-08-07 17:22:04 arviranga Exp $
+ * $Id: AdminTokenAction.java,v 1.12 2008-08-19 19:09:21 veiming Exp $
  *
  */
 
@@ -60,7 +60,7 @@ import com.sun.identity.authentication.internal.AuthPrincipal;
  * <code>AMConfig.properties</code>. If so, we will generate single sign on
  * token based on the user name and secret.
  * 
- * Note: Java security permissions check for OpenSSO Enterprise can be enabled
+ * Note: Java security permissions check for OpenSSO can be enabled
  * by setting the property <code>com.sun.identity.security.checkcaller</code> to
  * true in <code>AMConfig.properties</code> file.
  * 

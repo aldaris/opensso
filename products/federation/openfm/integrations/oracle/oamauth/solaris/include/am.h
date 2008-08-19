@@ -23,13 +23,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am.h,v 1.3 2008-07-23 17:40:39 veiming Exp $
+ * $Id: am.h,v 1.4 2008-08-19 19:11:35 veiming Exp $
  */
 
 /*
  * Abstract:
  *
- * General utility routines provided by the Sun OpenSSO Enterprise 
+ * General utility routines provided by the OpenSSO 
  * Access Management library.
  *
  */

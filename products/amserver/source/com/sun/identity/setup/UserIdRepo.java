@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserIdRepo.java,v 1.9 2008-07-23 17:30:45 veiming Exp $
+ * $Id: UserIdRepo.java,v 1.10 2008-08-19 19:09:24 veiming Exp $
  *
  */
 
@@ -66,7 +66,7 @@ import netscape.ldap.LDAPSearchResults;
 
 /**
  * This class does Directory Server related tasks for 
- * OpenSSO Enterprise deployed as single web-application. 
+ * OpenSSO deployed as single web-application. 
  */
 class UserIdRepo {
     private static final String umSunDSForAM;

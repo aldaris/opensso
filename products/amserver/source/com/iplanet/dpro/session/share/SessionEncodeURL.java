@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionEncodeURL.java,v 1.6 2008-07-23 17:21:57 veiming Exp $
+ * $Id: SessionEncodeURL.java,v 1.7 2008-08-19 19:08:41 veiming Exp $
  *
  */
 
@@ -73,7 +73,7 @@ import javax.servlet.http.HttpServletRequest;
  * protocol://server:port/path?queryString&&lt;cookieName>=&lt;cookieValue>
  * </pre>
  * <p>
- * This is the default and OpenSSO Enterprise always encodes in this format
+ * This is the default and OpenSSO always encodes in this format
  * unless otherwise specified. If the URL passed in has query parameter then
  * entity escaping of ampersand will be done before appending the cookie
  * if the escape is true.Only the ampersand before appending cookie parameter

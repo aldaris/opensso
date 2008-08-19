@@ -22,11 +22,11 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README,v 1.4 2008-07-23 17:40:34 veiming Exp $
+   $Id: README,v 1.5 2008-08-19 19:11:21 veiming Exp $
 
 -->
 
-OpenSSO Enterprise - Client Samples
+OpenSSO - Client Samples
 
 There are two sub-directories under the client samples:
  - sdk : Contains CLI based client samples. 

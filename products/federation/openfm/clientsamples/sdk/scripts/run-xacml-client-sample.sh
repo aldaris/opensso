@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 #------------------------------------------------------------------------------
-#README file for OpenSSO Enterprise stand alone client sdk samples
+#README file for OpenSSO stand alone client sdk samples
 #------------------------------------------------------------------------------
 # DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
 #
@@ -26,7 +26,7 @@
 #your own identifying information:
 #"Portions Copyrighted [year] [name of copyright owner]"
 #
-#$Id: run-xacml-client-sample.sh,v 1.8 2008-07-23 17:40:36 veiming Exp $
+#$Id: run-xacml-client-sample.sh,v 1.9 2008-08-19 19:11:25 veiming Exp $
 #------------------------------------------------------------------------------
 #
 #Runs the xacml client sample program
@@ -50,33 +50,33 @@
 #see ../resources/xacmlClientSample.properties for more information
 #
 #Requires ../resources/AMConfig.properties 
-#Must run "setup.sh" once to configure the client to find the OpenSSO Enterprise server, this
+#Must run "setup.sh" once to configure the client to find the OpenSSO server, this
 #is referred as PEP host below. Modify AMConfig.properties, set value of
 #"com.sun.identity.agents.app.username" property to "amadmin", set value of 
 #"com.iplanet.am.service.password" property to the amadmin password if it is 
 #different from the password entered when running setup.sh command. 
 #
-#Setting up PDP OpenSSO Enterprise and PEP OpenSSO Enterprise
+#Setting up PDP OpenSSO and PEP OpenSSO
 #
-# At PDP host, that is the host that would run the OpenSSO Enterprise acting as PDP.
-# We would call this PDP OpenSSO Enterprise. At PDP host, do the following:
+# At PDP host, that is the host that would run the OpenSSO acting as PDP.
+# We would call this PDP OpenSSO. At PDP host, do the following:
 #
 # deploy opensso.war  and configure it on a supported java ee container
-# using OpenSSO Enterprise console, Configuration > SAMLv2 SOAP Binding,set soap handler, 
+# using OpenSSO console, Configuration > SAMLv2 SOAP Binding,set soap handler, 
 # key=/xacmlPdp|class=com.sun.identity.xacml.plugins.XACMLAuthzDecisionQueryHandler
 #
-# unzip ssoAdminTools.zip and setup OpenSSO Enterprise admin tools
+# unzip ssoAdminTools.zip and setup OpenSSO admin tools
 # opensso/bin/ssoadm create-cot -t xacml-pdp-cot -u amadmin -f <password_file>
 # opensso/bin/ssoadm create-metadata-templ -y xacmlPdpEntity -p /xacmlPdp -m xacmlPdp.xml -x xacmlPdp-x.xml -u amadmin -f <password_file>
 # opensso/bin/ssoadm import-entity -t xacml-pdp-cot -m xacmlPdp.xml -x xacmlPdp-x.xml -u amadmin -f <password_file>
 #
 #
-# At PEP host, that is the host that would run the OpenSSO Enterprise acting as PEP metadata
+# At PEP host, that is the host that would run the OpenSSO acting as PEP metadata
 # repository, do
 #
 # deploy opensso.war  and configure it on a supported java ee container
 #
-# unzip ssoAdminTools.zip and setup OpenSSO Enterprise admin tools 
+# unzip ssoAdminTools.zip and setup OpenSSO admin tools 
 # opensso/bin/ssoadm create-cot -t xacml-pep-cot -u amadmin -f <password_file>
 # opensso/bin/ssoadm create-metadata-templ -y xacmlPepEntity -e /xacmlPep -m xacmlPep.xml -x xacmlPep-x.xml -u amadmin -f <password_file>
 # opensso/bin/ssoadm import-entity -t xacml-pep-cot -m xacmlPep.xml -x xacmlPep-x.xml -u amadmin -f <password_file>

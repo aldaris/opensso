@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: isAlive.jsp,v 1.6 2008-07-23 17:36:30 veiming Exp $
+   $Id: isAlive.jsp,v 1.7 2008-08-19 19:10:48 veiming Exp $
   
 -->
 
@@ -37,7 +37,7 @@
 <html>
 
 <head>
-    <title>Sun OpenSSO Enterprise</title>
+    <title>OpenSSO</title>
 </head>
 
 <body>

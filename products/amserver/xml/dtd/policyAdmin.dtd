@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: policyAdmin.dtd,v 1.4 2008-07-23 17:36:31 veiming Exp $
+   $Id: policyAdmin.dtd,v 1.5 2008-08-19 19:10:50 veiming Exp $
   
 -->
 
@@ -30,7 +30,7 @@
      policies via commandline interface tools.
 
      Unique Declaration name for DOCTYPE tag:
-     "Sun OpenSSO Enterprise Policy Administration DTD"
+     "OpenSSO Policy Administration DTD"
 -->
 
 <!-- Policies is a collection of Policy element -->

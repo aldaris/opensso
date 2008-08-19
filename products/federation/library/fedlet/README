@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.8 2008-08-08 22:36:30 qcheng Exp $
+$Id: README,v 1.9 2008-08-19 19:11:00 veiming Exp $
 
 
 
@@ -190,12 +190,12 @@ try {
     performing following steps. If you installed the OpenSSO WAR, the 
     IDP discovery service is bundled in the products already. Or you could
     follow the document to create a separate WAR for the IDP discovery 
-    service  using the OpenSSO WAR. Please refer to the Sun OpenSSO
-    Enterprise document set on how to setup and use the Identity Provider
+    service  using the OpenSSO WAR. Please refer to the OpenSSO
+    document set on how to setup and use the Identity Provider
     Discovery service. After set up the IDP discovery service, have the
     reader service URL (URL to find out preferred IDP) and writer service
     URL (URL to write the preferred IDP) ready, they are needed in step
-    a) and c) below. If you are using OpenSSO Enterprise server instance
+    a) and c) below. If you are using OpenSSO server instance
     or the IDP discovery only WAR instance, the reader service URL is:
     <protocol>://<host>:<port>/<deploy_uri>/saml2reader  
     (e.g :  http://discovery.common.com/opensso/saml2reader)
@@ -211,7 +211,7 @@ try {
        service URL (e.g. http://discovery.common.com/opensso/saml2writer).
     b) Restart your Fedlet web container to make the change to be effective. 
     c) Setup IDP discovery on each of your IDPs. If your IDP is an OpenSSO
-       Enterprise server instance, need to goto console, find the COT for
+       server instance, need to goto console, find the COT for
        the IDP and Fedlet, and specify the SAML2 reader service URL and
        SAML2 writer service URL. 
     d) Access the Fedlet index.jsp page, you will be presented with IDP 

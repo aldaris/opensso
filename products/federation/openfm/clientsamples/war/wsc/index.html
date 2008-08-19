@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.html,v 1.5 2008-08-15 01:05:33 veiming Exp $
+   $Id: index.html,v 1.6 2008-08-19 19:11:29 veiming Exp $
 
 -->
 <html>
@@ -89,16 +89,16 @@
        user attributes.
 </p>
 <h3>Setup</h3>
-1. Deploy OpenSSO Enterprise server WAR (opensso.war) on machine A,
+1. Deploy OpenSSO server WAR (opensso.war) on machine A,
    and configure the IDFF sample to run as IDP. This instance will also act as
    DS and ID-SIS-PP role in the sample scenario.
 <br>
-2. Deploy OpenSSO Enterprise server WAR (opensso.war) on machine B,
+2. Deploy OpenSSO server WAR (opensso.war) on machine B,
    and configure the IDFF sample to run as SP. 
 <br>
 3. Create a user on IDP and a user on SP. Federate and signle sign on the users.
 <br>
-4. Deploy OpenSSO Enterprise client sample WAR (opensso-client-jdk14.war
+4. Deploy OpenSSO client sample WAR (opensso-client-jdk14.war
    for web container running JDK 1.4.x or opensso-client-jdk15.war for
    web container running JDK 1.5.x) on
    machine B. If you want to deploy the war on different machine C, you need to
@@ -153,7 +153,7 @@ Create policy for IDPP query and modify:<br>
 <h3 name="enc">Enable name id encryption in session context of discovery bootstrap</h3>
 Set up keystore:<br>
 1.  On IDP, SP and WSC machines(if different from SP machine), run <br>
-   &lt;JDK Home&gt;/bin/keytool -genkey -keyalg rsa -alias test -dname "cn=sun-unix,ou=SUN Java System OpenSSO Enterprise,o=Sun, c=US" -keypass 11111111 -keystore &lt;configuration dir&gt;/keystore.jks -storepass 11111111
+   &lt;JDK Home&gt;/bin/keytool -genkey -keyalg rsa -alias test -dname "cn=sun-unix,ou=SUN Java System OpenSSO,o=Sun, c=US" -keypass 11111111 -keystore &lt;configuration dir&gt;/keystore.jks -storepass 11111111
 <br>
 2. On IDP machine, go to &lt;IDP protocol&gt;://&lt;IDP hostname&gt;:&lt;IDP port&gt;&lt;IDP depoly uri&gt;/encode.jsp and type '11111111' and click 'Encode'.
    Save encoded value to &lt;configuration dir&gt;/.storepass and

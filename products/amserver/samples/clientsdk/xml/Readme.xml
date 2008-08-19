@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Readme.xml,v 1.3 2008-07-23 17:14:30 veiming Exp $
+   $Id: Readme.xml,v 1.4 2008-08-19 19:08:23 veiming Exp $
 
 -->
 
@@ -36,21 +36,21 @@
 
     <paragraph>
     <b>Service Configuration Sample Servlet</b>
-    The sample files are provided to help using OpenSSO Enterprise's Service Configuration component within a web application.
+    The sample files are provided to help using OpenSSO's Service Configuration component within a web application.
     <br />
     [<a href="sm/input.html">Click</a>]
     </paragraph>
 
     <paragraph>
     <b>User Profile (Attributes) Sample Servlet</b>
-    The sample files are provided to help using OpenSSO Enterprise's User Management component within a web application.
+    The sample files are provided to help using OpenSSO's User Management component within a web application.
     <br />
     [<a href="um/input.html">Click</a>]
     </paragraph>
 
     <paragraph>
     <b>Policy Evaluator Client Sample Servlet</b>
-    The sample files are provided to help using OpenSSO Enterprise's Policy Client component within a web application.
+    The sample files are provided to help using OpenSSO's Policy Client component within a web application.
     <br />
     [<a href="policy/input.html">Click</a>]
     </paragraph>

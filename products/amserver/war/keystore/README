@@ -24,11 +24,11 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.4 2008-07-23 17:30:52 veiming Exp $
+$Id: README,v 1.5 2008-08-19 19:09:37 veiming Exp $
 
 ------------------------------------------------------------------------------
 
 This directory contains a sample JKS keystore file. The file will be used as 
-default keystore after configuring the Sun OpenSSO Enterprise WAR.
+default keystore after configuring the OpenSSO WAR.
 The keystore contains one key entry with alias name "test". Keystore 
 password and key password for the entry are "changeit".

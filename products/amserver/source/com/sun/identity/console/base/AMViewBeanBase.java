@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMViewBeanBase.java,v 1.7 2008-07-23 17:24:56 veiming Exp $
+ * $Id: AMViewBeanBase.java,v 1.8 2008-08-19 19:09:04 veiming Exp $
  *
  */
 
@@ -321,7 +321,7 @@ public abstract class AMViewBeanBase
 
     /**
      * Overwriting this map so that we correct the set value for
-     * OpenSSO Enterprise's proprietory taglib component,
+     * OpenSSO's proprietory taglib component,
      * <code>SerializedField</code>.  Without doing this, string value
      * will be set to the value of this component, this is incorrect
      * because the string value of this component is actually

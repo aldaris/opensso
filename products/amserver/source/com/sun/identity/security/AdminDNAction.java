@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AdminDNAction.java,v 1.4 2008-07-23 17:30:44 veiming Exp $
+ * $Id: AdminDNAction.java,v 1.5 2008-08-19 19:09:20 veiming Exp $
  *
  */
 
@@ -51,7 +51,7 @@ import com.iplanet.am.util.AdminUtils;
  * this is not done and Java security permissions check is enabled, then the
  * operation will fail and return a null everytime.
  * 
- * Note: Java security permissions check for OpenSSO Enterprise can be enabled
+ * Note: Java security permissions check for OpenSSO can be enabled
  * by setting the property <code>com.sun.identity.security.checkcaller</code> to
  * true in AMConfig properties file.
  * 

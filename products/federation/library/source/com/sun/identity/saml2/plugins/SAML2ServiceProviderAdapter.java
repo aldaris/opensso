@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2ServiceProviderAdapter.java,v 1.4 2008-07-23 17:36:35 veiming Exp $
+ * $Id: SAML2ServiceProviderAdapter.java,v 1.5 2008-08-19 19:11:15 veiming Exp $
  *
  */
 
@@ -134,7 +134,7 @@ public abstract class SAML2ServiceProviderAdapter {
     public abstract void initialize(Map initParams);
  
     /**
-     * Invokes before OpenSSO Enterprise sends the 
+     * Invokes before OpenSSO sends the 
      * Single-Sing-On request to IDP. 
      * @param hostedEntityID entity ID for the hosted SP
      * @param idpEntityID entity id for the IDP to which the request will 

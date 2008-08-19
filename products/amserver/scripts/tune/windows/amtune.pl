@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amtune.pl,v 1.3 2008-07-23 17:21:55 veiming Exp $
+# $Id: amtune.pl,v 1.4 2008-08-19 19:08:36 veiming Exp $
 #
 #
 #############################################################################
@@ -51,7 +51,7 @@ if(-f "$SCRIPT_LOCATION\amtune-env.pl")
 	}
 }
 
-print "OpenSSO Enterprise Tuning Script\n";
+print "OpenSSO Tuning Script\n";
 print "$LINE_SEP"."\n";;
 
 
@@ -96,7 +96,7 @@ if($#amtune_tune_ds>-1)
 }
 
 
-#Tune OpenSSO Enterprise
+#Tune OpenSSO
 @amtune_tune_identity=grep(m/$AMTUNE_TUNE_IDENTITY=true/,@filecontent);
 if($#amtune_tune_identity>-1)
 {

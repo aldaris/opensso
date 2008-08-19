@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amtune-prepareDSTuner.pl,v 1.3 2008-07-23 17:21:55 veiming Exp $
+# $Id: amtune-prepareDSTuner.pl,v 1.4 2008-08-19 19:08:36 veiming Exp $
 #
 #
 ###########################################################################
@@ -108,7 +108,7 @@ sub prepareDirectoryTuner
 	@list_default_am_indexes=&getListDefaultAMIndexes;
 	if($#list_default_am_indexes  == -1)
 	{
-		&echo_msg( "WARNING: Cann't find OpenSSO Enterprise Index file  $IS_CONFIG_DIR/ldif/index.ldif.  Use default list.\n");
+		&echo_msg( "WARNING: Cann't find OpenSSO Index file  $IS_CONFIG_DIR/ldif/index.ldif.  Use default list.\n");
 		@list_default_am_indexes=("nsRoleDN","memberof","iplanet-am-static-group-dn","iplanet-am-modifiable-by","iplanet-am-user-federation-info-key","sunxmlkeyvalue","o","ou","sunPreferredDomain","associatedDomain","sunOrganizationAlias");
 	}
 	
@@ -176,7 +176,7 @@ if( -f "$SCRIPT_LOCATION/amtune-env.pl")
 	}
 }
 
-&echo_msg( "OpenSSO Enterprise - Directory Server Tuner Preparation Script \n"); 
+&echo_msg( "OpenSSO - Directory Server Tuner Preparation Script \n"); 
 
 $DS_TAR_DIR=$SCRIPT_LOCATION;
 

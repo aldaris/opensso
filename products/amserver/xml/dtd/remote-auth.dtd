@@ -22,7 +22,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: remote-auth.dtd,v 1.6 2008-07-23 17:36:31 veiming Exp $
+    $Id: remote-auth.dtd,v 1.7 2008-08-19 19:10:51 veiming Exp $
 
 -->
 
@@ -131,7 +131,7 @@ either moduleInstanceName -->
 
 <!-- NewAuthContext element is used to create a new AuthContext 
 for a request and a session id associated with the AuthContext
-created. The orgName is the Sun OpenSSO Enterprise organization 
+created. The orgName is the OpenSSO organization 
 name which client belongs to and will authenticate against.
 -->
 

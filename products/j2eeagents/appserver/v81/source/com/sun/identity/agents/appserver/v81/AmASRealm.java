@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmASRealm.java,v 1.5 2008-08-04 20:02:32 huacui Exp $
+ * $Id: AmASRealm.java,v 1.6 2008-08-19 19:14:14 veiming Exp $
  *
  */
 
@@ -137,7 +137,7 @@ public class AmASRealm extends IASRealm {
 
     
     public static final String AUTH_TYPE = 
-        "Sun OpenSSO Enterprise Policy Agent Realm";        
+        "OpenSSO Policy Agent Realm";        
     public static final String ANYONE_ROLE = "ANYONE";
 
     private Properties _realmProperties = null;

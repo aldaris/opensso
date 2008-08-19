@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationServlet.java,v 1.5 2008-07-23 17:36:36 veiming Exp $
+ * $Id: WSFederationServlet.java,v 1.6 2008-08-19 19:11:17 veiming Exp $
  *
  */
 
@@ -118,7 +118,7 @@ public class WSFederationServlet extends HttpServlet {
      * @return a short description of the servlet
      */
     public String getServletInfo() {
-        return "Sun OpenSSO Enterprise WS-Federation Servlet";
+        return "OpenSSO WS-Federation Servlet";
     }
     // </editor-fold>
 }

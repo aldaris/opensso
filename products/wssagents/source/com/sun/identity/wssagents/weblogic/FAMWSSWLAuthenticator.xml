@@ -19,7 +19,7 @@
   Name          = "Description"
   Type          = "java.lang.String"
   Writeable     = "false"
-  Default       = "&quot;OpenSSO Enterprise WSS Authentication Provider&quot;"
+  Default       = "&quot;OpenSSO WSS Authentication Provider&quot;"
 />
 
 <MBeanAttribute

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSecurityToken.java,v 1.4 2008-07-23 17:45:00 veiming Exp $
+ * $Id: FAMSecurityToken.java,v 1.5 2008-08-19 19:12:25 veiming Exp $
  *
  */
 package com.sun.identity.wss.security;
@@ -41,7 +41,7 @@ import com.sun.identity.shared.debug.Debug;
 
 /**
  * The class <code>FAMSecurityToken</code> represents Federation
- * OpenSSO Enterprise Security Token using OpenSSO Enterprise Single Sign-on
+ * OpenSSO Security Token using OpenSSO Single Sign-on
  * Token.
  */
 public class FAMSecurityToken implements SecurityToken {

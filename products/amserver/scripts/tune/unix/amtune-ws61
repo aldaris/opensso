@@ -23,7 +23,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amtune-ws61,v 1.4 2008-07-23 17:21:55 veiming Exp $
+# $Id: amtune-ws61,v 1.5 2008-08-19 19:08:33 veiming Exp $
 #
 #
 
@@ -83,10 +83,10 @@ tuneMagnus() {
     if [ "$JVM64bitAvailable" = "true" ]; then
        delete_line $tune_file "StackSize"
     fi
-    delete_line $tune_file "# Start: OpenSSO Enterprise Tuning"
-    delete_line $tune_file "# End: OpenSSO Enterprise Tuning"
+    delete_line $tune_file "# Start: OpenSSO Tuning"
+    delete_line $tune_file "# End: OpenSSO Tuning"
 
-    add_to_end $tune_file "# Start: OpenSSO Enterprise Tuning : `date`"
+    add_to_end $tune_file "# Start: OpenSSO Tuning : `date`"
     add_to_end $tune_file "RqThrottle $numRQThrottle"
     add_to_end $tune_file "RqThrottleMin $AMTUNE_NUM_WS_RQTHROTTLE_MIN"
     add_to_end $tune_file "ThreadIncrement $AMTUNE_NUM_WS_THREAD_INCREMENT"
@@ -95,7 +95,7 @@ tuneMagnus() {
     if [ "$JVM64bitAvailable" = "true" ]; then
        add_to_end $tune_file "StackSize $AMTUNE_NATIVE_STACK_SIZE_64_BIT"
     fi
-    add_to_end $tune_file "# End: OpenSSO Enterprise Tuning"
+    add_to_end $tune_file "# End: OpenSSO Tuning"
 
     echo "Done."
 }
@@ -232,7 +232,7 @@ tuneServerXML() {
         substitute_token_in_line $tune_file "nativelibrarypathprefix" "nativelibrarypathprefix" "/usr/lib/lwp" 2 ":"
     fi
 
-    delete_line $tune_file "Start: Performance Related JVM Options for OpenSSO Enterprise"
+    delete_line $tune_file "Start: Performance Related JVM Options for OpenSSO"
     delete_line $tune_file "<JVMOPTIONS>-Xms"
     delete_line $tune_file "<JVMOPTIONS>-Xmx"
     delete_line $tune_file "<JVMOPTIONS>-Xloggc"
@@ -256,9 +256,9 @@ tuneServerXML() {
     delete_line $tune_file "<JVMOPTIONS>-XX:+PrintGCTimeStamps"
     delete_line $tune_file "<JVMOPTIONS>-XX:+OverrideDefaultLibthread"
     delete_line $tune_file "<JVMOPTIONS>-XX:ParallelGCThreads"
-    delete_line $tune_file "End: Performance Related JVM Options for OpenSSO Enterprise"
+    delete_line $tune_file "End: Performance Related JVM Options for OpenSSO"
 
-    insert_line $tune_file "java.util.logging.manager" "<!-- Start: Performance Related JVM Options for OpenSSO Enterprise -->"
+    insert_line $tune_file "java.util.logging.manager" "<!-- Start: Performance Related JVM Options for OpenSSO -->"
     insert_line $tune_file "java.util.logging.manager" "    <JVMOPTIONS>-Xms${maxHeapSize}M -Xmx${maxHeapSize}M</JVMOPTIONS>"
     insert_line $tune_file "java.util.logging.manager" "    <JVMOPTIONS>-Xloggc:$CONTAINER_INSTANCE_DIR/logs/gc.log</JVMOPTIONS>"
     insert_line $tune_file "java.util.logging.manager" "    <JVMOPTIONS>-server</JVMOPTIONS>"
@@ -299,7 +299,7 @@ tuneServerXML() {
         insert_line $tune_file "java.util.logging.manager" "    <JVMOPTIONS>-XX:ParallelGCThreads=$gcThreads</JVMOPTIONS>"
     fi
 
-    insert_line $tune_file "java.util.logging.manager" "<!-- End: Performance Related JVM Options for OpenSSO Enterprise -->"
+    insert_line $tune_file "java.util.logging.manager" "<!-- End: Performance Related JVM Options for OpenSSO -->"
 
     echo "Done."
 }
@@ -322,7 +322,7 @@ if [ -f $SCRIPT_LOCATION/amtune-env ]; then
     fi
 fi
 
-ECHO_MSG "`$gettext 'OpenSSO Enterprise - Web Server Tuning Script'`"
+ECHO_MSG "`$gettext 'OpenSSO - Web Server Tuning Script'`"
 
 tuneMagnus      | eval $OUTPUT_TYPE 
 tuneServerXML   | eval $OUTPUT_TYPE

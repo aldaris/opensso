@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.33 2008-08-13 16:00:56 rajeevangal Exp $
+ * $Id: Constants.java,v 1.34 2008-08-19 19:14:56 veiming Exp $
  *
  */
 
@@ -458,7 +458,7 @@ public interface Constants {
 
     /**
      * Property string to determine if validation is required when parsing XML
-     * documents using OpenSSO Enterprise XMLUtils class.
+     * documents using OpenSSO XMLUtils class.
      */
     String XML_VALIDATING = "com.iplanet.am.util.xml.validating";
 
@@ -557,7 +557,7 @@ public interface Constants {
 
     /**
      * HTTP Form Parameter name used by PEP for posting policy advices to
-     * OpenSSO Enterprise.
+     * OpenSSO.
      */
     String COMPOSITE_ADVICE = "sunamcompositeadvice";
 

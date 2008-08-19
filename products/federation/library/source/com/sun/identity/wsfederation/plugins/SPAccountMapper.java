@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPAccountMapper.java,v 1.4 2008-07-23 17:36:36 veiming Exp $
+ * $Id: SPAccountMapper.java,v 1.5 2008-08-19 19:11:16 veiming Exp $
  *
  */
 
@@ -35,7 +35,7 @@ import com.sun.identity.wsfederation.profile.RequestSecurityTokenResponse;
 /**
  * The class <code>PartnerAccountMapper</code> is an interface
  * that is implemented to map partner account to user account
- * in Sun OpenSSO Enterprise.  
+ * in OpenSSO.  
  * <p>
  * Different partner would need to have a different implementation
  * of the interface. The mappings between the partner source ID and 

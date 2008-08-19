@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amtune-identity.pl,v 1.3 2008-07-23 17:21:55 veiming Exp $
+# $Id: amtune-identity.pl,v 1.4 2008-08-19 19:08:35 veiming Exp $
 #
 #
 ##################################################################################
@@ -157,8 +157,8 @@ sub tune_ServerConfig
 	&echo_msg("File                 : $tune_file\n");
 	&echo_msg("Recomended tuning parameters only. These paramters will not be tuned by the script.\n");
 	&echo_msg("You need to modify them manually in $tune_file. \n");
-	&echo_msg("The number should depend on number of OpenSSO Enterprise instances and the memory of \n");
-	&echo_msg("Directory Server.  Please refer to OpenSSO Enterprise Performance Tuning Guide.\n");
+	&echo_msg("The number should depend on number of OpenSSO instances and the memory of \n");
+	&echo_msg("Directory Server.  Please refer to OpenSSO Performance Tuning Guide.\n");
     &echo_msg("\n");
 	&echo_msg("1.   minConnPool\n");
 	my $minConnPool_variable=get_token_in_file($tune_file,"minConnPool");
@@ -237,8 +237,8 @@ sub tune_LDAPConnPool
 	&echo_msg("SchemaType           : global\n");
 	&echo_msg("Recomended tuning parameters only. These paramters will not be tuned by the script.\n");
 	&echo_msg("If you want to tune these parameters, review data file $FILE\n");
-	&echo_msg("and run it with amadmin command.  The number should depend on number of OpenSSO Enterprise\n"); 
-	&echo_msg("instances and the memory of Directory Server.  Please refer to OpenSSO Enterprise\n");
+	&echo_msg("and run it with amadmin command.  The number should depend on number of OpenSSO\n"); 
+	&echo_msg("instances and the memory of Directory Server.  Please refer to OpenSSO\n");
     &echo_msg("Performance Tuning Guide.\n");
 	
 	&echo_msg("1.   iplanet-am-auth-ldap-connection-pool-default-size\n");
@@ -444,7 +444,7 @@ if(-f "$SCRIPT_LOCATION/amtune-env.pl")
 	}
 }
 
-&echo_msg("OpenSSO Enterprise - OpenSSO Enterprise Server Tuning Script\n");
+&echo_msg("OpenSSO - OpenSSO Server Tuning Script\n");
 
 tune_AMConfig;
 tune_ServerConfig;

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupDSConfig.java,v 1.17 2008-08-08 00:40:57 ww203982 Exp $
+ * $Id: AMSetupDSConfig.java,v 1.18 2008-08-19 19:09:23 veiming Exp $
  *
  */
 
@@ -48,7 +48,7 @@ import netscape.ldap.util.RDN;
 
 /**
  * This class does Directory Server related tasks for 
- * OpenSSO Enterprise deployed as single web-application. 
+ * OpenSSO deployed as single web-application. 
  */
 public class AMSetupDSConfig {
     private String dsManager;
@@ -224,7 +224,7 @@ public class AMSetupDSConfig {
     }
 
     /**
-     * Check if DS is loaded with OpenSSO Enterprise entries
+     * Check if DS is loaded with OpenSSO entries
      *
      * @param ssl <code>true</code> of directory server is running on LDAPS.
      * @return <code>true</code> if Service Schema is loaded into

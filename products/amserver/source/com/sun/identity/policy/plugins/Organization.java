@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Organization.java,v 1.6 2008-07-23 17:30:43 veiming Exp $
+ * $Id: Organization.java,v 1.7 2008-08-19 19:09:18 veiming Exp $
  *
  */
 
@@ -53,7 +53,7 @@ import com.sun.identity.policy.InvalidNameException;
 import com.sun.identity.policy.interfaces.Subject;
 
 /**
- * This class respresents a group of OpenSSO Enterprise organizations.
+ * This class respresents a group of OpenSSO organizations.
  */
 public class Organization implements Subject {
 

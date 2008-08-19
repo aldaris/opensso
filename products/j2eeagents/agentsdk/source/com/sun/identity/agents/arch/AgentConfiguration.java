@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.30 2008-08-04 20:03:33 huacui Exp $
+ * $Id: AgentConfiguration.java,v 1.31 2008-08-19 19:13:36 veiming Exp $
  *
  */
 
@@ -61,7 +61,7 @@ import com.sun.identity.shared.debug.Debug;
  * </p><p>
  * It uses the agent bootstrap configuration file called
  * OpenSSOAgentBootstrap.properties to get the agent startup configuration that 
- * includes the Sun OpenSSO Enterprise (OpenSSO) server information and the
+ * includes the OpenSSO (OpenSSO) server information and the
  * agent user credential. It uses these information to authenticate to 
  * the OpenSSO server. The OpenSSO Authentication service completes the agent 
  * authentication and sends a SSO token back to the agent. Using the SSO

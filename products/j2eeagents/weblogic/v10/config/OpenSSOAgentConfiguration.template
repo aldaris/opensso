@@ -22,14 +22,14 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: OpenSSOAgentConfiguration.template,v 1.3 2008-08-14 03:12:20 huacui Exp $
+# $Id: OpenSSOAgentConfiguration.template,v 1.4 2008-08-19 19:14:48 veiming Exp $
 #
 #
 
 #------------------------------------------------------------------------------
 # Configuration Property File
 #
-# Sun OpenSSO Enterprise Policy Agent for:
+# OpenSSO Policy Agent for:
 # BEA WebLogic 10.0 Server/Portal
 #
 # Version: 3.0

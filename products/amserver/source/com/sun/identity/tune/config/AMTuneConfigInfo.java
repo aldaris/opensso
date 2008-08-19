@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneConfigInfo.java,v 1.6 2008-08-12 05:14:37 kanduls Exp $
+ * $Id: AMTuneConfigInfo.java,v 1.7 2008-08-19 19:09:28 veiming Exp $
  */
 
 package com.sun.identity.tune.config;
@@ -466,8 +466,8 @@ FAMConstants, WebContainerConstants {
     }
     
     /**
-     * Set OpenSSO Enterprise server URL
-     * @param famServerUrl OpenSSO Enterprise server url.
+     * Set OpenSSO server URL
+     * @param famServerUrl OpenSSO server url.
      * @throws com.sun.identity.tune.common.AMTuneException
      */
     private void setFAMServerUrl(String famServerUrl) 
@@ -490,7 +490,7 @@ FAMConstants, WebContainerConstants {
     }
     
     /**
-     * Set OpenSSO Enterprise Administrator User.
+     * Set OpenSSO Administrator User.
      * @param famAdmUser Administrator user name.
      * @throws com.sun.identity.tune.common.AMTuneException
      */
@@ -879,7 +879,7 @@ FAMConstants, WebContainerConstants {
     }
     
     /**
-     * Set OpenSSO Enterprise admin Password.
+     * Set OpenSSO admin Password.
      * @param famAdminPassword
      * @throws com.sun.identity.tune.common.AMTuneException
      */
@@ -912,7 +912,7 @@ FAMConstants, WebContainerConstants {
     throws AMTuneException {
         try {
             mWriter.writeln(LINE_SEP);
-            mWriter.write("OpenSSO Enterprise tune ");
+            mWriter.write("OpenSSO tune ");
             mWriter.writelnLocaleMsg("pt-conf-info");
             mWriter.writeln(LINE_SEP);
             if (isReviewMode) {

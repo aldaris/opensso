@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyUtils.java,v 1.11 2008-07-23 17:24:59 veiming Exp $
+ * $Id: PolicyUtils.java,v 1.12 2008-08-19 19:09:14 veiming Exp $
  *
  */
 
@@ -672,12 +672,12 @@ public class PolicyUtils {
 
     /**
      * Checks if the <code>hostName</code> is the same as
-     * the one used by OpenSSO Enterprise SDK.
+     * the one used by OpenSSO SDK.
      *
      * @param hostName host name to compared against AM SDK config store host
      *
      * @return true if <code>hostName</code> is the same as the one used by
-     *         OpenSSO Enterprise SDK, false otherwise
+     *         OpenSSO SDK, false otherwise
      * @throws PolicyException if host names comparision did not succeed
      */
     public static boolean isLocalDS(String hostName) throws PolicyException {

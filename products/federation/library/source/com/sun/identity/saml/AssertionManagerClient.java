@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionManagerClient.java,v 1.7 2008-08-07 21:41:34 hengming Exp $
+ * $Id: AssertionManagerClient.java,v 1.8 2008-08-19 19:11:11 veiming Exp $
  *
  */
 
@@ -52,9 +52,9 @@ import com.sun.identity.common.SystemConfigurationUtil;
  * <p>
  * The class provides mechanisms to manage the <code>Assertion</code>s either
  * locally (i.e., within the same JVM process) or remotely on another instance
- * of OpenSSO Enterprise. The default constructor will manage the <code>
+ * of OpenSSO. The default constructor will manage the <code>
  * Assertion</code>s locally if it detects SAML web services running locally,
- * else will use on of the configured OpenSSO Enterprise. The constructor which
+ * else will use on of the configured OpenSSO. The constructor which
  * accepts an <code>URL</code> will always use the URL to manage the assertions.
  * <p>
  * Having obtained an instance of <code>AssertionManagerClient</code>, its
@@ -116,7 +116,7 @@ public final class AssertionManagerClient {
                 checkedForLocal = true;
             /*
              * The following code is commented out since we are not ready
-             * to do a fall back funtion yet, as rest of the OpenSSO Enterprise
+             * to do a fall back funtion yet, as rest of the OpenSSO
              * donot support this. The server specified in AMConfig.properties
              * will only be used to determine the remote server.
               */
@@ -572,7 +572,7 @@ public final class AssertionManagerClient {
         
     /**
      * Returns all valid <code>AssertionArtifacts</code> managed by
-     * this instance (or the identified remote instance) of OpenSSO Enterprise.
+     * this instance (or the identified remote instance) of OpenSSO.
      * @param token User session which is allowed to get all
      *        <code>AssertionArtifacts</code>
      * @return A Set of valid <code>AssertionArtifacts</code>. Each element
@@ -600,7 +600,7 @@ public final class AssertionManagerClient {
 
     /**
      * Returns all valid <code>Assertion</code>s managed by this instance
-     * (or the identified remote instance) of OpenSSO Enterprise.
+     * (or the identified remote instance) of OpenSSO.
      *
      * @param token User session which is allowed to get all Assertions.
      * @return A Set of valid Assertion IDs. Each element in the Set is a

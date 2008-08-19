@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserModelImpl.java,v 1.4 2008-07-23 17:24:57 veiming Exp $
+ * $Id: UserModelImpl.java,v 1.5 2008-08-19 19:09:07 veiming Exp $
  *
  */
 
@@ -1444,7 +1444,7 @@ public class UserModelImpl
     /**
      * Validates a set of people containers. The valid people containers will
      * be returned. Invalid people containers will be removed from the set.
-     * Validation done as OpenSSO Enterprise's user since the group
+     * Validation done as OpenSSO's user since the group
      * administrator does not have read and search access to people containers.
      */
     private void validatePCList(Set pcDNs) {

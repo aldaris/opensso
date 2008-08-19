@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupClientSDKSamples.java,v 1.4 2008-07-25 23:32:56 veiming Exp $
+ * $Id: SetupClientSDKSamples.java,v 1.5 2008-08-19 19:12:25 veiming Exp $
  *
  */
 
@@ -46,7 +46,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
- * This setup the OpenSSO Enterprise client SDK samples.
+ * This setup the OpenSSO client SDK samples.
  */
 public class SetupClientSDKSamples {
     private Map properties = new HashMap();

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AdminInterfaceUtils.java,v 1.4 2008-07-23 17:24:56 veiming Exp $
+ * $Id: AdminInterfaceUtils.java,v 1.5 2008-08-19 19:09:01 veiming Exp $
  *
  */
 
@@ -208,13 +208,13 @@ public class AdminInterfaceUtils implements ServiceListener {
 
     /**
      * Returns the default people container name created when an organization is
-     * created in OpenSSO Enterprise. This may not be the one which the user
-     * sees as his/her default container through OpenSSO Enterprise console.
+     * created in OpenSSO. This may not be the one which the user
+     * sees as his/her default container through OpenSSO console.
      * 
      * @return Returns the default people container name created when an
-     *         organization is created in OpenSSO Enterprise. This may not be
+     *         organization is created in OpenSSO. This may not be
      *         the one which the user sees as his/her default container through
-     *         OpenSSO Enterprise console.
+     *         OpenSSO console.
      */
     public static String defaultPCCreateDuringOrgConfig() {
         initialize();
@@ -223,13 +223,13 @@ public class AdminInterfaceUtils implements ServiceListener {
 
     /**
      * Returns the default group container name created when an organization is
-     * created in OpenSSO Enterprise. This may not be the one which the user
-     * sees as his/her default container through OpenSSO Enterprise console.
+     * created in OpenSSO. This may not be the one which the user
+     * sees as his/her default container through OpenSSO console.
      * 
      * @return Returns the default group container name created when an
-     *         organization is created in OpenSSO Enterprise. This may not be
+     *         organization is created in OpenSSO. This may not be
      *         the one which the user sees as his/her default container through
-     *         OpenSSO Enterprise console.
+     *         OpenSSO console.
      */
     public static String defaultGCCreateDuringOrgConfig() {
         initialize();
@@ -238,10 +238,10 @@ public class AdminInterfaceUtils implements ServiceListener {
 
     /**
      * Returns the default org admin role name created when an organization is
-     * created in OpenSSO Enterprise.
+     * created in OpenSSO.
      * 
      * @return Returns the default org admin role name created when an
-     *         organization is created in OpenSSO Enterprise.
+     *         organization is created in OpenSSO.
      */
     public static String defaultOrgAdminRoleCreateDuringOrgConfig() {
         initialize();
@@ -250,10 +250,10 @@ public class AdminInterfaceUtils implements ServiceListener {
 
     /**
      * Returns the default help desk admin role name created when an
-     * organization is created in OpenSSO Enterprise.
+     * organization is created in OpenSSO.
      * 
      * @return Returns the default help desk admin role name created when an
-     *         organization is created in OpenSSO Enterprise.
+     *         organization is created in OpenSSO.
      */
     public static String defaultHelpDeskAdminRoleCreateDuringOrgConfig() {
         initialize();
@@ -262,10 +262,10 @@ public class AdminInterfaceUtils implements ServiceListener {
 
     /**
      * Returns the default policy admin role name created when an organization
-     * is created in OpenSSO Enterprise.
+     * is created in OpenSSO.
      * 
      * @return Returns the default policy admin role name created when an
-     *         organization is created in OpenSSO Enterprise.
+     *         organization is created in OpenSSO.
      */
     public static String defaultPolicyAdminRoleCreateDuringOrgConfig() {
         initialize();

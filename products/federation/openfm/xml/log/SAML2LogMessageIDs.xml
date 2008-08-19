@@ -22,13 +22,13 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: SAML2LogMessageIDs.xml,v 1.6 2008-08-01 20:53:11 bina Exp $
+   $Id: SAML2LogMessageIDs.xml,v 1.7 2008-08-19 19:13:01 veiming Exp $
 
 -->
 
 
 <!DOCTYPE logmessages
-    PUBLIC "Sun OpenSSO Enterprise Log Message DTD/EN"
+    PUBLIC "OpenSSO Log Message DTD/EN"
     "jar://com/sun/identity/log/messageid/amLogMessage.dtd"
 >
 

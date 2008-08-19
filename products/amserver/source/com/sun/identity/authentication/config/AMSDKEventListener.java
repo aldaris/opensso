@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSDKEventListener.java,v 1.5 2008-07-23 17:22:00 veiming Exp $
+ * $Id: AMSDKEventListener.java,v 1.6 2008-08-19 19:08:51 veiming Exp $
  *
  */
 
@@ -36,7 +36,7 @@ import com.sun.identity.shared.debug.Debug;
 import javax.security.auth.login.Configuration;
 
 /**
- * Implements <code>AMEvenetListener</code> from OpenSSO Enterprise SDK. This
+ * Implements <code>AMEvenetListener</code> from OpenSSO SDK. This
  * listens to authentication configuration changes for users and roles
  */ 
 public class AMSDKEventListener implements AMEventListener {

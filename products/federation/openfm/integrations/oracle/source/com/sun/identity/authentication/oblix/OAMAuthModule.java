@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OAMAuthModule.java,v 1.4 2008-07-25 16:59:26 veiming Exp $
+ * $Id: OAMAuthModule.java,v 1.5 2008-08-19 19:11:38 veiming Exp $
  *
  */
 
@@ -46,7 +46,7 @@ import com.oblix.access.*;
 
 /**
  * Custom authentication module for validating siteminder user session
- * to enable SSO integration between OpenSSO Enterprise and
+ * to enable SSO integration between OpenSSO and
  * Siteminder access server.
  */
 public class OAMAuthModule extends AMLoginModule {

@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: index.jsp,v 1.7 2008-08-15 01:05:41 veiming Exp $
+   $Id: index.jsp,v 1.8 2008-08-19 19:15:10 veiming Exp $
 --%>
 <%--
 The taglib directive below imports the JSTL library. If you uncomment it,
@@ -54,7 +54,7 @@ on Libraries node in Projects view can be used to add the JSTL 1.1 library.
 <!--
     <p><hr>
     <form name="FAMConsole" action="/opensso/console" method="GET">
-        Click <a href="/opensso/console">here</a> to view OpenSSO Enterprise Console
+        Click <a href="/opensso/console">here</a> to view OpenSSO Console
         <p><input type="submit" value="FAMConsole"/>
     </form>
 -->

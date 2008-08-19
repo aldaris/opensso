@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OAMAdapter.java,v 1.3 2008-07-23 17:40:40 veiming Exp $
+ * $Id: OAMAdapter.java,v 1.4 2008-08-19 19:11:39 veiming Exp $
  *
  */
 
@@ -166,7 +166,7 @@ public class OAMAdapter extends SAML2ServiceProviderAdapter {
     }
  
     /**
-     * Invokes before OpenSSO Enterprise sends the 
+     * Invokes before OpenSSO sends the 
      * Single-Sign-On request to IDP. 
      * @param hostedEntityID entity ID for the hosted SP
      * @param idpEntityID entity id for the IDP to which the request will 
@@ -190,7 +190,7 @@ public class OAMAdapter extends SAML2ServiceProviderAdapter {
 
 
     /**
-     * Invokes when the OpenSSO Enterprise Server received the Single-Sign-On
+     * Invokes when the OpenSSO Server received the Single-Sign-On
      * response from the IDP, this is called before any processing started on
      * SP side.
      * @param hostedEntityID entity ID for the hosted SP
@@ -253,7 +253,7 @@ public class OAMAdapter extends SAML2ServiceProviderAdapter {
             SSOToken ssoToken = (SSOToken)session;
             String famSession = ssoToken.getTokenID().toString();
             if(famSession == null) {
-               throw new SAML2Exception("No OpenSSO Enterprise Session found"); 
+               throw new SAML2Exception("No OpenSSO Session found"); 
             }
 
             ObResourceRequest orq = new ObResourceRequest(

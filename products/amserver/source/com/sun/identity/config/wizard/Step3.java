@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step3.java,v 1.25 2008-07-23 23:58:41 veiming Exp $
+ * $Id: Step3.java,v 1.26 2008-08-19 19:09:03 veiming Exp $
  *
  */
 package com.sun.identity.config.wizard;
@@ -192,8 +192,8 @@ public class Step3 extends LDAPStoreWizardPage {
         
         
     /*
-     * a call is made to the OpenSSO Enterprise url entered in the browser. If
-     * the OpenSSO Enterprise server
+     * a call is made to the OpenSSO url entered in the browser. If
+     * the OpenSSO server
      * exists a <code>Map</code> of data will be returned which contains the
      * information about the existing servers data store, including any 
      * replication ports if its embedded.
@@ -214,7 +214,7 @@ public class Step3 extends LDAPStoreWizardPage {
             addObject(sb, "message",
                 getLocalizedString("missing.required.field"));
         } else {
-            // try to retrieve the remote OpenSSO Enterprise information
+            // try to retrieve the remote OpenSSO information
             String admin = "amadmin";
             String password = (String)getContext().getSessionAttribute(
                 SetupConstants.CONFIG_VAR_ADMIN_PWD);
@@ -224,7 +224,7 @@ public class Step3 extends LDAPStoreWizardPage {
                 Map data = AMSetupServlet.getRemoteServerInfo(
                     hostName, admin, password);
                 
-                // data returned from existing OpenSSO Enterprise server
+                // data returned from existing OpenSSO server
                 if (data != null && !data.isEmpty()) {                    
                     addObject(sb, "code", "100");
                     addObject(sb, "message", getLocalizedString("ok.string"));
@@ -346,10 +346,10 @@ public class Step3 extends LDAPStoreWizardPage {
     }
     
     /*
-     * the following value have been pulled from an existing OpenSSO Enterprise
+     * the following value have been pulled from an existing OpenSSO
      * server which was configured to use an external DS. We need to set the DS 
      * values in the request so they can be used to configure the exisiting
-     * OpenSSO Enterprise server.
+     * OpenSSO server.
      */
     private void setupDSParams(Map data) {             
         String tmp = (String)data.get(BootstrapData.DS_BASE_DN);

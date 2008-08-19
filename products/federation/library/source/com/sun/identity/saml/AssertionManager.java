@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionManager.java,v 1.8 2008-07-23 17:36:34 veiming Exp $
+ * $Id: AssertionManager.java,v 1.9 2008-08-19 19:11:10 veiming Exp $
  *
  */
 
@@ -74,7 +74,7 @@ import javax.servlet.http.HttpServletResponse;
  * <code>AssertionArtifact</code>, and to obtain decision from an 
  * <code>Query</code>.
  * <p>
- * This class could only be used in the same JVM as the OpenSSO Enterprise.
+ * This class could only be used in the same JVM as the OpenSSO.
  * @supported.api
  */
 public final class AssertionManager {

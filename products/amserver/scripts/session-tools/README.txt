@@ -22,13 +22,13 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: README.txt,v 1.5 2008-08-08 00:25:16 ww203982 Exp $
+# $Id: README.txt,v 1.6 2008-08-19 19:08:28 veiming Exp $
 #
 ssoSessionTools.zip 
 ======================================================
 
 This file contains information on installing and using ssoSessionTools.zip.
-It is assumed that OpenSSO Enterprise Server is available.
+It is assumed that OpenSSO Server is available.
 
 Table of contents:
 -----------------

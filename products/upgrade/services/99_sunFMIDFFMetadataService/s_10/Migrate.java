@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.4 2008-07-23 17:58:18 veiming Exp $
+ * $Id: Migrate.java,v 1.5 2008-08-19 19:14:59 veiming Exp $
  *
  */
 
@@ -254,7 +254,7 @@ public class Migrate implements MigrateTasks {
     final static String DEFAULT_KEY_SIZE = "128";
     final static String INVALID_KEY_SIZE = "-1";
     final static String META_ALIAS = "metaAlias";
-    // OpenSSO Enterprise IDFF META Attribute Constants.
+    // OpenSSO IDFF META Attribute Constants.
     final static String ROOT_REALM = "/";
     final static String DEFAULT_PROVIDER_TYPE = "hosted";
     final static String DEFAULT_PROXY_COUNT = "-1";

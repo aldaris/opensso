@@ -22,12 +22,12 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: PWResetBase.jsp,v 1.5 2008-07-23 17:30:52 veiming Exp $
+   $Id: PWResetBase.jsp,v 1.6 2008-08-19 19:09:38 veiming Exp $
 
 --%>
 
 <% 
     String passwordUrl = "../password";
     String passwordImages = passwordUrl + "/images"; 
-    String productName = "Sun OpenSSO Enterprise";
+    String productName = "OpenSSO";
 %>

@@ -31,7 +31,7 @@
 # This is a convenient script for federating SAMLv2 users in a bulk manner.
 #
 # The script assumes that the backend user database is LDAP compliant
-# and the Sun OpenSSO Enterprise  or the Sun Java System Federation
+# and the OpenSSO  or the Sun Java System Federation
 # Manager as the federation SAML version 2 software provider. 
 #
 # This script expects userdn mappins file as the primary input for creating
@@ -50,9 +50,9 @@
 #
 # The remoteuserdata.ldif will also be kept locally for 
 # convenient loading using ldapmodify command if the remote provider is 
-# also an OpenSSO Enterprise instance.
+# also an OpenSSO instance.
 #
-# If the remote provider is not an OpenSSO Enterprise instance, the generated
+# If the remote provider is not an OpenSSO instance, the generated
 # files
 # localnameidentifies.txt/remotenameidentifies.txt can be exchanged to the 
 # remote party so that it can generate federation/user specific data based on
@@ -306,7 +306,7 @@ if [ -f userdata.ldif ]; then
 fi
 
 # This is for the remote party consumption. Just generate LDIF incase if the
-# remote party is an OpenSSO Enterprise server can leverage this
+# remote party is an OpenSSO server can leverage this
 # generated ldif file.
 
 if [ "$role" = "SP" ]

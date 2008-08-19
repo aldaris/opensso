@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMPostAuthProcessInterface.java,v 1.3 2008-07-23 17:24:54 veiming Exp $
+ * $Id: AMPostAuthProcessInterface.java,v 1.4 2008-08-19 19:08:55 veiming Exp $
  *
  */
 
@@ -41,7 +41,7 @@ import com.iplanet.sso.SSOToken;
  * be implemented by services and applications to do post 
  * authentication processing. 
  * <p>
- * This interface is invoked by OpenSSO Enterprise Authentication
+ * This interface is invoked by OpenSSO Authentication
  * service on a successful authentication , failed authentication 
  * or during logout.
  * <p>

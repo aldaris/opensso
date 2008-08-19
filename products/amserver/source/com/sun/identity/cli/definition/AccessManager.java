@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.82 2008-08-12 05:13:32 veiming Exp $
+ * $Id: AccessManager.java,v 1.83 2008-08-19 19:08:58 veiming Exp $
  *
  */
 
@@ -36,7 +36,7 @@ import com.sun.identity.cli.annotation.ResourceStrings;
 
 public class AccessManager {
     @DefinitionClassInfo(
-        productName="Sun OpenSSO Enterprise",
+        productName="OpenSSO",
         logName="amadm",
         resourceBundle="AccessManagerCLI")
     private String product;

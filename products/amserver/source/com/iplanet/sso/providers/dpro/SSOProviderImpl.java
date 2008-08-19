@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOProviderImpl.java,v 1.7 2008-07-23 17:21:59 veiming Exp $
+ * $Id: SSOProviderImpl.java,v 1.8 2008-08-19 19:08:46 veiming Exp $
  *
  */
 
@@ -120,7 +120,7 @@ public final class SSOProviderImpl implements SSOProvider {
      * regular LDAP authentication mechanism instead. More information 
      * on how to use the authentication programming interfaces as well as the
      *             code samples can be obtained from the "Authentication
-     *             Service" chapter of the OpenSSO Enterprise Developer's Guide.
+     *             Service" chapter of the OpenSSO Developer's Guide.
      */
     public SSOToken createSSOToken(java.security.Principal user,
             String password) throws SSOException, UnsupportedOperationException 

@@ -26,7 +26,7 @@
 # $Id
 #
 
-# The bulk account federation for SAML v2 in Sun OpenSSO Enterprise or
+# The bulk account federation for SAML v2 in OpenSSO or
 # Sun Java System Federation Manager is achieved through the following perl
 # scripts.
 # 1. saml2GenerateNI.pl - This script will generate random name identifiers for
@@ -46,7 +46,7 @@
 #  uid=spuser2,ou=People,dc=sp,dc=com	| wkh34ldd88n8l54gzs4rftb34bs4837u
 #  uid=spuser3,ou=People,dc=sp,dc=com	| l514znc34u34n34gf65hdg6truqh7f2x2424
 #
-# 2. saml2GenerateLDIF.pl - This script is useful if the service provider or the# identity provider is an OpenSSO Enterprise. It helps in generating LDAP Vx
+# 2. saml2GenerateLDIF.pl - This script is useful if the service provider or the# identity provider is an OpenSSO. It helps in generating LDAP Vx
 # based LDIF files so that they could easily uploaded to the user entries.
 # In this case, it assumes that the entries are userDNs.
 #

@@ -23,13 +23,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_types.h,v 1.3 2008-07-23 17:40:39 veiming Exp $
+ * $Id: am_types.h,v 1.4 2008-08-19 19:11:38 veiming Exp $
  */
 
 /*
  * Abstract:
  *
- * Common types and macros provided by the Sun OpenSSO Enterprise 
+ * Common types and macros provided by the OpenSSO 
  * Access Management SDK.
  *
  */

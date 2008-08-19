@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSTokenProvider.java,v 1.9 2008-08-08 21:29:40 mrudul_uchil Exp $
+ * $Id: FAMSTSTokenProvider.java,v 1.10 2008-08-19 19:12:28 veiming Exp $
  *
  */
 
@@ -579,7 +579,7 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
     }
     
     /**
-     * Generates OpenSSO Enterprise SSOToken by consuming SAML Assertion.
+     * Generates OpenSSO SSOToken by consuming SAML Assertion.
      * @param ctx Issued Token Context from WS-Trust Request
      * @throws com.sun.xml.ws.api.security.trust.WSTrustException
      */

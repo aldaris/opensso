@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PLLRequestServlet.java,v 1.7 2008-07-23 17:21:58 veiming Exp $
+ * $Id: PLLRequestServlet.java,v 1.8 2008-08-19 19:08:44 veiming Exp $
  *
  */
 
@@ -155,7 +155,7 @@ public class PLLRequestServlet extends HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, java.io.IOException {
         ServletOutputStream out = res.getOutputStream();
-        out.print("Sun OpenSSO Enterprise");
+        out.print("OpenSSO");
         out.flush();
     }
 

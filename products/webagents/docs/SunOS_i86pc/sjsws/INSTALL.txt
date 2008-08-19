@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: INSTALL.txt,v 1.5 2008-08-04 19:22:14 huacui Exp $
+# $Id: INSTALL.txt,v 1.6 2008-08-19 19:15:07 veiming Exp $
 #
 #
 #
@@ -150,7 +150,7 @@ Enter the port number for Web Server instance [80]: 7000
 
 
 Select http or https to specify the protocol used by the Web server instance
-that will be protected by OpenSSO Enterprise Policy Agent.
+that will be protected by OpenSSO Policy Agent.
 [ ? : Help, < : Back, ! : Exit ]
 Enter the Preferred Protocol for Web Server instance [http]:
 
@@ -279,4 +279,4 @@ Removing Agent parameters from /var/opt/sun/SUNWwbsvr7/https-agent_hostname/conf
 Uninstall log file location:
 /opt/web_agents/sjsws_agent/logs/audit/uninstall.log
 
-Thank you for using OpenSSO Enterprise Policy Agent
+Thank you for using OpenSSO Policy Agent

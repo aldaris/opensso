@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLConstants.java,v 1.10 2008-07-23 17:36:35 veiming Exp $
+ * $Id: SAMLConstants.java,v 1.11 2008-08-19 19:11:12 veiming Exp $
  *
  */
 
@@ -364,7 +364,7 @@ public final class SAMLConstants
                 "urn:oasis:names:tc:SAML:1.0:cm:artifact-01";
 
     /**
-     * OpenSSO Enterprise confirmation method identifier URI.
+     * OpenSSO confirmation method identifier URI.
      *
      * @supported.api
      */
@@ -748,7 +748,7 @@ public final class SAMLConstants
 
     /**
      * A SAML service attribute parameter that defines the creator of an
-     * assertion generated within OpenSSO Enterprise. The syntax is
+     * assertion generated within OpenSSO. The syntax is
      * hostname:port.
      *
      * @supported.api

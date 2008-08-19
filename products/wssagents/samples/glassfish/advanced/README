@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README,v 1.3 2008-08-06 03:10:27 mallas Exp $
+   $Id: README,v 1.4 2008-08-19 19:15:10 veiming Exp $
 
 -->
 
@@ -122,18 +122,18 @@ B. Web services proxy case where the intermediary obtains a new token using
    the token that is authenticated by the LoanRequestorClient.
 
 
-Configuring OpenSSO Enterprise for passthrough (use case A):
+Configuring OpenSSO for passthrough (use case A):
 =============================================
 
 
-1.  Login into the OpenSSO Enterprise Console with user
+1.  Login into the OpenSSO Console with user
     amadmin and <amadmin password>
 
     openssoserver_protocol://openssoserver_host:openssoserver_port/openssoserver_deploy_uri
 
     Note: If you have logged in as any other user, click Logout on the console
     page and Login again and make sure that you access the Federated
-    OpenSSO Enterprise Console.
+    OpenSSO Console.
 
 2. Create agent profiles for "LoanRequestorService" WSC :
       Create "WSC" profile for "LoanRequestorService"
@@ -177,9 +177,9 @@ Configuring OpenSSO Enterprise for passthrough (use case A):
       two new profiles as "proxywsp" and "wsp" and in "proxywsp" create the
       end point as the LoanReqestorService web service endpoint.
 
-5.  Logout of OpenSSO Enterprise Administration console.
+5.  Logout of OpenSSO Administration console.
 
-Configuring OpenSSO Enterprise for proxying with a new token (use case B):
+Configuring OpenSSO for proxying with a new token (use case B):
 ==========================================================
 TODO-Later
 

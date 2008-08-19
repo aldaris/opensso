@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README.unconfigured,v 1.7 2008-08-08 22:36:30 qcheng Exp $
+$Id: README.unconfigured,v 1.8 2008-08-19 19:11:00 veiming Exp $
 
 
 
@@ -103,7 +103,7 @@ $Id: README.unconfigured,v 1.7 2008-08-08 22:36:30 qcheng Exp $
         Also copy FederationConfig.properties under "conf" to the fedlet 
         home directory.
      e) Get your IDP standard metadata XML file and copy to the fedlet home 
-        directory. For example, if the remote IDP is a OpenSSO Enterprise
+        directory. For example, if the remote IDP is a OpenSSO
         instance, you could use "ssoadm" CLI to export the IDP metadata to a
         XML file. The XML file for IDP standard metadata must be named as
         "idp.xml" when copied to the fedlet home directory.
@@ -236,12 +236,12 @@ try {
     performing following steps. If you installed the OpenSSO WAR, the 
     IDP discovery service is bundled in the products already. Or you could
     follow the document to create a separate WAR for the IDP discovery 
-    service  using the OpenSSO WAR. Please refer to the Sun OpenSSO
-    Enterprise document set on how to setup and use the Identity Provider
+    service  using the OpenSSO WAR. Please refer to the OpenSSO
+    document set on how to setup and use the Identity Provider
     Discovery service. After set up the IDP discovery service, have the
     reader service URL (URL to find out preferred IDP) and writer service
     URL (URL to write the preferred IDP) ready, they are needed in step
-    a) and c) below. If you are using OpenSSO Enterprise server instance
+    a) and c) below. If you are using OpenSSO server instance
     or the IDP discovery only WAR instance, the reader service URL is:
     <protocol>://<host>:<port>/<deploy_uri>/saml2reader  
     (e.g :  http://discovery.common.com/opensso/saml2reader)
@@ -257,7 +257,7 @@ try {
        service URL (e.g. http://discovery.common.com/opensso/saml2writer).
     b) Restart your Fedlet web container to make the change to be effective. 
     c) Setup IDP discovery on each of your remote IDPs. If the IDP is an OpenSSO
-       Enterprise server instance, you need go to the administration console, 
+       server instance, you need go to the administration console, 
        find the COT for the IDP and Fedlet, and specify the SAML2 reader 
        service URL and SAML2 writer service URL, and Save.
     d) Access the Fedlet index.jsp page, you will be presented with IDP 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FQDNUtils.java,v 1.5 2008-07-23 17:24:55 veiming Exp $
+ * $Id: FQDNUtils.java,v 1.6 2008-08-19 19:08:59 veiming Exp $
  *
  */
 
@@ -121,7 +121,7 @@ public class FQDNUtils {
     /**
      * Returns true if a host name is valid. <code>hostname</code> is valid if
      * it is contained in the list of fully qualified host names. Or, it is the
-     * default host name where OpenSSO Enterprise is installed.
+     * default host name where OpenSSO is installed.
      * 
      * @param hostname
      *            host name

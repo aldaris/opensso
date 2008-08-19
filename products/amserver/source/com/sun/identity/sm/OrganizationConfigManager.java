@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrganizationConfigManager.java,v 1.23 2008-08-13 16:17:34 arviranga Exp $
+ * $Id: OrganizationConfigManager.java,v 1.24 2008-08-19 19:09:25 veiming Exp $
  *
  */
 
@@ -349,7 +349,7 @@ public class OrganizationConfigManager {
 
         // If in realm mode and copy org enabled, default services needs
         // to be registered for the newly created org/suborg and the
-        // amSDKOrgName/OpenSSO Enterprise Organization is updated with the
+        // amSDKOrgName/OpenSSO Organization is updated with the
         // new suborg dn.
         if (realmEnabled && isCopyOrgEnabled()) {
             registerSvcsForOrg(subOrgName, subOrgDN);

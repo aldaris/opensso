@@ -22,15 +22,15 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: notification.jsp,v 1.1 2008-08-12 19:11:28 leiming Exp $
+   $Id: notification.jsp,v 1.2 2008-08-19 19:13:38 veiming Exp $
 
 -->
 
 <html>
     <head>
-        <title>Sun OpenSSO Policy Agent </title>
+        <title>OpenSSO Policy Agent </title>
     </head>
     <body>
-        Sun OpenSSO Policy Agent. 
+        OpenSSO Policy Agent. 
     </body>
 </html>

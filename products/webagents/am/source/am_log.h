@@ -22,14 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_log.h,v 1.7 2008-08-04 19:22:11 huacui Exp $
+ * $Id: am_log.h,v 1.8 2008-08-19 19:15:04 veiming Exp $
  *
  */
 
 /*
  * Abstract:
  *
- * Types and functions for using Sun OpenSSO Enterprise Access 
+ * Types and functions for using OpenSSO Access 
  * Management SDK log objects.
  *
  */

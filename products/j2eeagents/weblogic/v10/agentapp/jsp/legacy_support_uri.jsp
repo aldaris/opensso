@@ -22,14 +22,14 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: legacy_support_uri.jsp,v 1.6 2008-08-04 20:01:22 huacui Exp $
+   $Id: legacy_support_uri.jsp,v 1.7 2008-08-19 19:14:47 veiming Exp $
 
 -->
 <html>
 <head>
-  <title>Sun OpenSSO Enterprise Policy Agent </title>
+  <title>OpenSSO Policy Agent </title>
 </head>
   <body>
-      Sun OpenSSO Enterprise Policy Policy Agent.
+      OpenSSO Policy Policy Agent.
 </body>
 </html>

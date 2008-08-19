@@ -22,13 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: package-info.java,v 1.3 2008-07-23 17:30:43 veiming Exp $
+ * $Id: package-info.java,v 1.4 2008-08-19 19:09:18 veiming Exp $
  *
  */
 
 
 /**
- * Provides classes for performing policy evaluation against OpenSSO Enterprise
+ * Provides classes for performing policy evaluation against OpenSSO
  * using JAAS (Java Authentication and Authorization) framework.
  *
  * @supported.api

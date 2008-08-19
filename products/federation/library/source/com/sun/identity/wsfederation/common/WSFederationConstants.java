@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationConstants.java,v 1.9 2008-08-06 17:28:19 exu Exp $
+ * $Id: WSFederationConstants.java,v 1.10 2008-08-19 19:11:16 veiming Exp $
  *
  */
 
@@ -248,7 +248,7 @@ public final class WSFederationConstants {
      */
     public static final String WCTX = "wctx";
     /**
-     * HTTP request parameter for OpenSSO Enterprise realm 
+     * HTTP request parameter for OpenSSO realm 
      */
     public static final String REALM_PARAM = "famrealm";
     /**

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: realmSelection.jsp,v 1.7 2008-08-15 01:05:33 veiming Exp $
+   $Id: realmSelection.jsp,v 1.8 2008-08-19 19:11:19 veiming Exp $
 
 --%>
 
@@ -87,7 +87,7 @@
 %>
 <html>
 <head>
-<title>Sun OpenSSO Enterprise (Realm Selection)</title>
+<title>OpenSSO (Realm Selection)</title>
 <link rel="stylesheet" href="<%= contextPath %>/css/styles.css" type="text/css" />
 <script language="JavaScript" src="<%= contextPath %>/js/browserVersion.js"></script>
 <script language="JavaScript" src="<%= contextPath %>/js/auth.js"></script>
@@ -149,7 +149,7 @@
           <tr>
             <td width="260"><img src="<%= contextPath %>/images/dot.gif" width="260" height="245" alt="" /></td>
             <td width="415" bgcolor="#ffffff" valign="top"><img name="Login.productLogo" 
-            src="<%= contextPath %>/images/PrimaryProductName.png" alt="Sun OpenSSO Enterprise" 
+            src="<%= contextPath %>/images/PrimaryProductName.png" alt="OpenSSO" 
             border="0" height="40" width="300" />
 
         <form name="realm_form" action="<%=request.getRequestURI()%>">

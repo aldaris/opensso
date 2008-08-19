@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityToken.java,v 1.6 2008-07-23 17:45:01 veiming Exp $
+ * $Id: SecurityToken.java,v 1.7 2008-08-19 19:12:26 veiming Exp $
  *
  */
 
@@ -72,8 +72,8 @@ public interface SecurityToken {
      public static final String WSS_KERBEROS_TOKEN = "urn:sun:wss:kerberostoken";
      
      /**
-      * The <code>URI</code> is to identify the OpenSSO Enterprise security
-      * token. The OpenSSO Enterprise security token contains SSOToken.
+      * The <code>URI</code> is to identify the OpenSSO security
+      * token. The OpenSSO security token contains SSOToken.
       */
      public static final String WSS_FAM_SSO_TOKEN = "urn:sun:wss:ssotoken";
 

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: distAuthConfigurator.jsp,v 1.8 2008-08-15 01:05:24 veiming Exp $
+   $Id: distAuthConfigurator.jsp,v 1.9 2008-08-19 19:08:18 veiming Exp $
 
 --%>
 
@@ -202,7 +202,7 @@ java.util.Properties"
 <h3>Configuring DistAuth Application</h3>
 
 <form action="distAuthConfigurator.jsp" method="POST">
-    Please provide the OpenSSO Enterprise Server Information.
+    Please provide the OpenSSO Server Information.
     <p>&nbsp;</p>    
 
     <table border=0 cellpadding=5 cellspacing=0>

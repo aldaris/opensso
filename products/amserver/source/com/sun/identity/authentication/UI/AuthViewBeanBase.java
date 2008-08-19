@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthViewBeanBase.java,v 1.9 2008-07-23 17:21:59 veiming Exp $
+ * $Id: AuthViewBeanBase.java,v 1.10 2008-08-19 19:08:48 veiming Exp $
  *
  */
 
@@ -109,7 +109,7 @@ public abstract class AuthViewBeanBase extends ViewBeanBase {
         setDisplayFieldValue(PAGE_ENCODING, jCharset);
     }
     
-    // Method to set OpenSSO Enterprise cookie (HostUrl) in
+    // Method to set OpenSSO cookie (HostUrl) in
     // Session / Cookie hijacking mode.
     protected void setHostUrlCookie(HttpServletResponse response) {
         if (isSessionHijackingEnabled) {
@@ -142,7 +142,7 @@ public abstract class AuthViewBeanBase extends ViewBeanBase {
         }
     }
     
-    // Method to clear OpenSSO Enterprise cookie (HostUrl) in
+    // Method to clear OpenSSO cookie (HostUrl) in
     // Session / Cookie hijacking mode.
     protected void clearHostUrlCookie(HttpServletResponse response) {
         if (isSessionHijackingEnabled) {

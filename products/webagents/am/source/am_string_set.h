@@ -22,11 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_string_set.h,v 1.5 2008-08-04 19:22:12 huacui Exp $
+ * $Id: am_string_set.h,v 1.6 2008-08-19 19:15:04 veiming Exp $
  *
  * Abstract:
  *
- * Common types and macros provided by the Sun OpenSSO Enterprise 
+ * Common types and macros provided by the OpenSSO 
  * Access Management SDK.
  *
  */

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneFAM8Impl.java,v 1.6 2008-08-12 05:24:41 kanduls Exp $
+ * $Id: TuneFAM8Impl.java,v 1.7 2008-08-19 19:09:30 veiming Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -45,7 +45,7 @@ import java.util.StringTokenizer;
 import java.util.logging.Level;
 
 /**
- * <code>TuneFAM8Impl<\code> Tunes OpenSSO Enterprise Server.
+ * <code>TuneFAM8Impl<\code> Tunes OpenSSO Server.
  * 
  */
 public class TuneFAM8Impl extends AMTuneFAMBase {
@@ -54,7 +54,7 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
      * Initializes the configuration information.
      * 
      * @param confInfo Configuration information used for computing the tuning 
-     *   parameters for OpenSSO Enterprise.
+     *   parameters for OpenSSO.
      * 
      * @throws com.sun.identity.tune.common.AMTuneException
      */
@@ -65,7 +65,7 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
     
     /**
      * This method performs the sequence of operations for tuning 
-     * OpenSSO Enterprise server.
+     * OpenSSO server.
      * 
      * @throws com.sun.identity.tune.common.AMTuneException
      */
@@ -74,7 +74,7 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
         try {
             int noDataStores = 0;
             pLogger.log(Level.FINE, "startTuning",
-                "Start tuning OpenSSO Enterprise.");
+                "Start tuning OpenSSO.");
             mWriter.writeln(CHAPTER_SEP);
             mWriter.writelnLocaleMsg("pt-fam-tuning-msg");
             mWriter.writeln(CHAPTER_SEP);
@@ -136,7 +136,7 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
     
     /**
      * This method provides the recommendation for tuning 
-     * OpenSSO Enterprise server and apply those recommendations if run in
+     * OpenSSO server and apply those recommendations if run in
      * "CHANGE" mode.
      * 
      */

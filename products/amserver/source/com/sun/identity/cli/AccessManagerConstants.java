@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManagerConstants.java,v 1.5 2008-07-23 17:24:55 veiming Exp $
+ * $Id: AccessManagerConstants.java,v 1.6 2008-08-19 19:08:56 veiming Exp $
  *
  */
 
@@ -30,7 +30,7 @@ package com.sun.identity.cli;
 
 
 /**
- * This interface defines constants used by OpenSSO Enterprise CLI.
+ * This interface defines constants used by OpenSSO CLI.
  */
 public interface AccessManagerConstants {
     /**

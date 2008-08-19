@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: INSTALL.txt,v 1.5 2008-08-04 19:22:14 huacui Exp $
+# $Id: INSTALL.txt,v 1.6 2008-08-19 19:15:07 veiming Exp $
 #
 #
 #
@@ -161,7 +161,7 @@ Enter the port number for Web Server instance [80]: 7000
 
 
 Select http or https to specify the protocol used by the Web server instance
-that will be protected by OpenSSO Enterprise Policy Agent.
+that will be protected by OpenSSO Policy Agent.
 [ ? : Help, < : Back, ! : Exit ]
 Enter the Preferred Protocol for Web Server instance [http]:
 
@@ -231,7 +231,7 @@ C:\web_agents\sjsws_agent\Agent_001\logs\debug
 Install log file location:
 C:\web_agents\sjsws_agent\logs\audit\install.log
 
-Thank you for using OpenSSO Enterprise Policy Agent
+Thank you for using OpenSSO Policy Agent
 
 NOTE:
 Please add C:\web_agents\sjsws_agent\lib to the PATH before starting Web Server.
@@ -256,7 +256,7 @@ Here is the sample:
 
 
 ************************************************************************
-Welcome to the OpenSSO Enterprise Policy Agent for SJS Web Server If the Policy
+Welcome to the OpenSSO Policy Agent for SJS Web Server If the Policy
 Agent is used with Federation Manager services, User needs to enter
 information relevant to Federation Manager.
 
@@ -292,4 +292,4 @@ Removing Agent parameters from C:\sun\SUNWwbsvr7\https-agent_hostname\config\mag
 Uninstall log file location:
 C:\web_agents\sjsws_agent\logs\audit\uninstall.log
 
-Thank you for using OpenSSO Enterprise Policy Agent
+Thank you for using OpenSSO Policy Agent

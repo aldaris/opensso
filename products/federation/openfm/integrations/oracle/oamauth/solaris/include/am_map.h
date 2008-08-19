@@ -23,14 +23,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_map.h,v 1.3 2008-07-23 17:40:39 veiming Exp $
+ * $Id: am_map.h,v 1.4 2008-08-19 19:11:36 veiming Exp $
  */
 
 /*
  * Abstract:
  *
  * Types and functions for creating, destroying, and manipulating the
- * map objects used by the Sun OpenSSO Enterprise Access Management SDK.
+ * map objects used by the OpenSSO Access Management SDK.
  *
  */
 

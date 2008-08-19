@@ -23,7 +23,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amtune-os,v 1.4 2008-07-23 17:21:54 veiming Exp $
+# $Id: amtune-os,v 1.5 2008-08-19 19:08:32 veiming Exp $
 #
 #
 
@@ -113,7 +113,7 @@ tuneSysctl() {
         return
     fi
 
-    delete_line $tune_file "Start: OpenSSO Enterprise Tuning"
+    delete_line $tune_file "Start: OpenSSO Tuning"
     delete_line $tune_file "fs.file-max"
     delete_line $tune_file "vm.bdflush"
     delete_line $tune_file "net.ipv4.ip_local_port_range"
@@ -127,9 +127,9 @@ tuneSysctl() {
     delete_line $tune_file "net.ipv4.tcp_keepalive_time"
     delete_line $tune_file "net.ipv4.tcp_keepalive_intvl"
     delete_line $tune_file "net.ipv4.tcp_fin_timeout"
-    delete_line $tune_file "End: OpenSSO Enterprise Tuning"
+    delete_line $tune_file "End: OpenSSO Tuning"
 
-    add_to_end $tune_file "# Start: OpenSSO Enterprise Tuning : `date`"
+    add_to_end $tune_file "# Start: OpenSSO Tuning : `date`"
     add_to_end $tune_file "fs.file-max = $AMTUNE_NUM_FILE_DESCRIPTORS"
     add_to_end $tune_file "vm.bdflush = $AMTUNE_LINUX_VM_BDFLUSH"
     add_to_end $tune_file "net.ipv4.ip_local_port_range = $AMTUNE_LINUX_IPV4_LOCAL_PORT_RANGE"
@@ -143,7 +143,7 @@ tuneSysctl() {
     add_to_end $tune_file "net.ipv4.tcp_keepalive_time = $AMTUNE_LINUX_IPV4_TCP_KEEPALIVE_TIME"
     add_to_end $tune_file "net.ipv4.tcp_keepalive_intvl = $AMTUNE_LINUX_IPV4_TCP_KEEPALIVE_INTVL"
     add_to_end $tune_file "net.ipv4.tcp_fin_timeout = $AMTUNE_LINUX_IPV4_TCP_FIN_TIMEOUT"
-    add_to_end $tune_file "# End: OpenSSO Enterprise Tuning : `date`"
+    add_to_end $tune_file "# End: OpenSSO Tuning : `date`"
 
 
     # Loading new values from sysctl.conf
@@ -200,23 +200,23 @@ tuneRcLocal() {
         return
     fi
 
-    delete_line $tune_file "Start: OpenSSO Enterprise Tuning"
+    delete_line $tune_file "Start: OpenSSO Tuning"
     delete_line $tune_file "`$ECHO $AMTUNE_TCP_FIN_TIMEOUT_NAME  | $SED -e 's/\//\\\\\//g'`"
     delete_line $tune_file "`$ECHO $AMTUNE_TCP_KEEPALIVE_TIME_NAME | $SED -e 's/\//\\\\\//g'`"
     delete_line $tune_file "`$ECHO $AMTUNE_TCP_KEEPALIVE_INTVL_NAME | $SED -e 's/\//\\\\\//g'`"
     delete_line $tune_file "`$ECHO $AMTUNE_TCP_WINDOW_SCALING_NAME  | $SED -e 's/\//\\\\\//g'`"
     delete_line $tune_file "`$ECHO $AMTUNE_VM_BDFLUSH_NAME | $SED -e 's/\//\\\\\//g'`"
     delete_line $tune_file $AMTUNE_LOAD_SYSCTL_CMD
-    delete_line $tune_file "End: OpenSSO Enterprise Tuning"
+    delete_line $tune_file "End: OpenSSO Tuning"
 
-    add_to_end $tune_file "# Start: OpenSSO Enterprise Tuning : `date`"
+    add_to_end $tune_file "# Start: OpenSSO Tuning : `date`"
     add_to_end $tune_file "echo $AMTUNE_LINUX_IPV4_TCP_FIN_TIMEOUT > $AMTUNE_TCP_FIN_TIMEOUT_NAME"
     add_to_end $tune_file "echo $AMTUNE_LINUX_IPV4_TCP_KEEPALIVE_TIME > $AMTUNE_TCP_KEEPALIVE_TIME_NAME"
     add_to_end $tune_file "echo $AMTUNE_LINUX_IPV4_TCP_KEEPALIVE_INTVL > $AMTUNE_TCP_KEEPALIVE_INTVL_NAME"
     add_to_end $tune_file "echo $AMTUNE_LINUX_IPV4_TCP_WIN_SCALE > $AMTUNE_TCP_WINDOW_SCALING_NAME"
     add_to_end $tune_file "echo $AMTUNE_LINUX_VM_BDFLUSH > $AMTUNE_VM_BDFLUSH_NAME"
     add_to_end $tune_file "$AMTUNE_LOAD_SYSCTL_CMD"
-    add_to_end $tune_file "# End: OpenSSO Enterprise Tuning : `date`"
+    add_to_end $tune_file "# End: OpenSSO Tuning : `date`"
 }
 
 tuneSecurityLimits() {
@@ -261,7 +261,7 @@ tuneSecurityLimits() {
         return
     fi
 
-    delete_line $tune_file "Start: OpenSSO Enterprise Tuning"
+    delete_line $tune_file "Start: OpenSSO Tuning"
     if [ "$curNoFileSoftString" != "" ]; then
        delete_line $tune_file "$curNoFileSoftString"
     fi
@@ -269,12 +269,12 @@ tuneSecurityLimits() {
     if [ "$curNoFileHardString" != "" ]; then
        delete_line $tune_file "$curNoFileHardString"
     fi
-    delete_line $tune_file "End: OpenSSO Enterprise Tuning"
+    delete_line $tune_file "End: OpenSSO Tuning"
 
-    add_to_end $tune_file "# Start: OpenSSO Enterprise Tuning : `date`"
+    add_to_end $tune_file "# Start: OpenSSO Tuning : `date`"
     add_to_end $tune_file "$newNoFileSoftString"
     add_to_end $tune_file "$newNoFileHardString"
-    add_to_end $tune_file "# End: OpenSSO Enterprise Tuning : `date`"
+    add_to_end $tune_file "# End: OpenSSO Tuning : `date`"
 
 }
 
@@ -335,7 +335,7 @@ tuneHPSystem() {
         return
     fi
 
-    add_to_end $tune_file "# Start: OpenSSO Enterprise Tuning : `date`"
+    add_to_end $tune_file "# Start: OpenSSO Tuning : `date`"
     add_to_end $tune_file "ndd -set /dev/tcp tcp_keepalive_interval 90000"
     add_to_end $tune_file "ndd -set /dev/tcp tcp_smallest_anon_port 1024"
     add_to_end $tune_file "ndd -set /dev/tcp tcp_ip_abort_cinterval 10000"
@@ -343,7 +343,7 @@ tuneHPSystem() {
     add_to_end $tune_file "ndd -set /dev/tcp tcp_cwnd_initial 2"
     add_to_end $tune_file "ndd -set /dev/tcp tcp_conn_request_max $AMTUNE_NUM_TCP_CONN_SIZE"
     add_to_end $tune_file "ndd -set /dev/tcp tcp_recv_hiwat_lfp $AMTUNE_NUM_FILE_DESCRIPTORS"
-    add_to_end $tune_file "# End: OpenSSO Enterprise Tuning"
+    add_to_end $tune_file "# End: OpenSSO Tuning"
 
     #source the tcp tune file so that the settings are visible immediately
     . $tune_file
@@ -430,14 +430,14 @@ fi
         return
     fi
 
-    delete_line $tune_file "* Start: OpenSSO Enterprise Tuning"
+    delete_line $tune_file "* Start: OpenSSO Tuning"
     delete_line $tune_file "rlim_fd_max"
     delete_line $tune_file "rlim_fd_cur"
     delete_line $tune_file "sq_max_size"
     delete_line $tune_file "tcp:tcp_conn_hash_size"
-    delete_line $tune_file "* End: OpenSSO Enterprise Tuning"
+    delete_line $tune_file "* End: OpenSSO Tuning"
 
-    add_to_end $tune_file "* Start: OpenSSO Enterprise Tuning : `date`"
+    add_to_end $tune_file "* Start: OpenSSO Tuning : `date`"
     add_to_end $tune_file "set rlim_fd_max=$AMTUNE_NUM_FILE_DESCRIPTORS"
     add_to_end $tune_file "set rlim_fd_cur=$AMTUNE_NUM_FILE_DESCRIPTORS"
     
@@ -446,7 +446,7 @@ if [ "$OSVERSION" = "5.9" ] || [ "$OSVERSION" = "5.8" ]; then
     add_to_end $tune_file "set tcp:tcp_conn_hash_size=$AMTUNE_NUM_TCP_CONN_SIZE"
 fi
 
-    add_to_end $tune_file "* End: OpenSSO Enterprise Tuning"
+    add_to_end $tune_file "* End: OpenSSO Tuning"
 
 }
 
@@ -528,7 +528,7 @@ tuneTCP() {
         return
     fi
 
-    delete_line $tune_file "# Start: OpenSSO Enterprise Tuning"
+    delete_line $tune_file "# Start: OpenSSO Tuning"
     delete_line $tune_file "tcp_time_wait_interval"
     delete_line $tune_file "tcp_fin_wait_2_flush_interval"
     delete_line $tune_file "tcp_conn_req_max_q"
@@ -546,10 +546,10 @@ tuneTCP() {
     delete_line $tune_file "tcp_ip_abort_interval"
     delete_line $tune_file "tcp_deferred_ack_interval"
     delete_line $tune_file "tcp_strong_iss"
-    delete_line $tune_file "# End: OpenSSO Enterprise Tuning"
+    delete_line $tune_file "# End: OpenSSO Tuning"
 
 
-    add_to_end $tune_file "# Start: OpenSSO Enterprise Tuning : `date`"
+    add_to_end $tune_file "# Start: OpenSSO Tuning : `date`"
     add_to_end $tune_file "ndd -set /dev/tcp tcp_fin_wait_2_flush_interval 67500"
     add_to_end $tune_file "ndd -set /dev/tcp tcp_conn_req_max_q $AMTUNE_NUM_TCP_CONN_SIZE"
     add_to_end $tune_file "ndd -set /dev/tcp tcp_conn_req_max_q0 $AMTUNE_NUM_TCP_CONN_SIZE"
@@ -561,7 +561,7 @@ tuneTCP() {
     add_to_end $tune_file "ndd -set /dev/tcp tcp_ip_abort_cinterval 10000"
     add_to_end $tune_file "ndd -set /dev/tcp tcp_deferred_ack_interval 5"
     add_to_end $tune_file "ndd -set /dev/tcp tcp_strong_iss 2"
-    add_to_end $tune_file "# End: OpenSSO Enterprise Tuning"
+    add_to_end $tune_file "# End: OpenSSO Tuning"
 
     $RM $tune_file-orig-$$
     

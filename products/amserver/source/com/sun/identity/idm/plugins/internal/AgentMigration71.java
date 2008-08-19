@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentMigration71.java,v 1.4 2008-07-23 17:24:58 veiming Exp $
+ * $Id: AgentMigration71.java,v 1.5 2008-08-19 19:09:10 veiming Exp $
  *
  */
 
@@ -47,7 +47,7 @@ public class AgentMigration71 {
 
     public static void migrate22AgentsToFAM80() {
         try {
-            // Assuming upgrade scripts imported the OpenSSO Enterprise
+            // Assuming upgrade scripts imported the OpenSSO
             // AgentService.xml,
             // migrate agents from existing DIT (AM 6.x/AM 7.x to OpenSSO
             // Enterprise 8.0.
@@ -94,7 +94,7 @@ public class AgentMigration71 {
                     attrs.remove("sunidentityserverdeviceversion");
                     attrs.remove("uid");
                     if (attrs.containsKey("sunidentityserverdevicestatus")) {
-                        // To match the schema in OpenSSO Enterprise's
+                        // To match the schema in OpenSSO's
                         // AgentService.xml
                         Set dSet = 
                             (Set)attrs.get("sunidentityserverdevicestatus");

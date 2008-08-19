@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSPreLogin.java,v 1.5 2008-07-23 17:36:33 veiming Exp $
+ * $Id: FSPreLogin.java,v 1.6 2008-08-19 19:11:04 veiming Exp $
  *
  */
 
@@ -381,7 +381,7 @@ public class FSPreLogin {
     }
 
     /**
-     * Validates the OpenSSO Enterprise Session Token String.
+     * Validates the OpenSSO Session Token String.
      *
      * @param token the Session Token String.
      * @return a boolean value true if valid otherwise false.
@@ -524,7 +524,7 @@ public class FSPreLogin {
      * Redirects request to URL based on whether a Single Sign-On needs to
      * be done or local Authentication. The decision is based on AuthFlag
      * which is set in LocalConfiguration of the provider, presence/absense
-     * of Federation Cookie and the presence/absence of OpenSSO Enterprise
+     * of Federation Cookie and the presence/absence of OpenSSO
      * Session Cookie or/and its validity.
      *
      * @param request the <code>HttpServletRequest</code> object.
@@ -575,7 +575,7 @@ public class FSPreLogin {
             if (cookieMap.containsKey(request)) {
                 isTokenValid = true;
                 FSUtils.debug.message(
-                    "FSPreLogin::doPreLogin. OpenSSO Enterprise Token is valid");
+                    "FSPreLogin::doPreLogin. OpenSSO Token is valid");
             }
             boolean isFedCookiePresent = false;
             if (cookieMap.containsKey(fedCookieName)) {

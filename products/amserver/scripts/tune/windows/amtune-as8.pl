@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amtune-as8.pl,v 1.3 2008-07-23 17:21:55 veiming Exp $
+# $Id: amtune-as8.pl,v 1.4 2008-08-19 19:08:33 veiming Exp $
 #
 #
 #############################################################################
@@ -420,7 +420,7 @@ if(-f "$SCRIPT_LOCATION/amtune-env.pl")
 
 }
 
-&echo_msg("OpenSSO Enterprise - Application Server Tuning Script\n");
+&echo_msg("OpenSSO - Application Server Tuning Script\n");
 
 open(FP,">$ASADMIN_PASSFILE");
 print FP "$ASADMIN_PASSWORD_SYNTAX$ASADMIN_PASSWORD";

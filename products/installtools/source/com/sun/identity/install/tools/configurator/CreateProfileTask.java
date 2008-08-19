@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateProfileTask.java,v 1.4 2008-07-23 17:45:03 veiming Exp $
+ * $Id: CreateProfileTask.java,v 1.5 2008-08-19 19:13:02 veiming Exp $
  *
  */
 
@@ -40,7 +40,7 @@ import com.sun.identity.install.tools.util.RESTUtils;
 
 /**
  * This class provides the feature of creating Agent Profile during installation
- * when the profile does not exist in OpenSSO Enterprise.
+ * when the profile does not exist in OpenSSO.
  */
 public class CreateProfileTask implements ITask, InstallConstants {
     

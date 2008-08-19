@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPDiscoveryWARConfigurator.java,v 1.3 2008-07-23 17:36:35 veiming Exp $
+ * $Id: IDPDiscoveryWARConfigurator.java,v 1.4 2008-08-19 19:11:14 veiming Exp $
  *
  */
 
@@ -44,7 +44,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
 /**
- * This class is used to setup the OpenSSO Enterprise IDP Discovery WAR.
+ * This class is used to setup the OpenSSO IDP Discovery WAR.
  */
 public class IDPDiscoveryWARConfigurator {
 

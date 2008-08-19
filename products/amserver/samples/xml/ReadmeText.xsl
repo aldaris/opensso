@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: ReadmeText.xsl,v 1.3 2008-07-23 17:14:31 veiming Exp $
+   $Id: ReadmeText.xsl,v 1.4 2008-08-19 19:08:26 veiming Exp $
                                                                                 
 -->
 
@@ -35,7 +35,7 @@
     <xsl:apply-templates select="/sample"/>
 </xsl:template>
 
-<xsl:template match="/sample">Sun OpenSSO Enterprise
+<xsl:template match="/sample">OpenSSO
 <xsl:text>&#10;</xsl:text>
 <xsl:value-of select="@title"/>
 

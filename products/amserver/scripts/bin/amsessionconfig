@@ -24,7 +24,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amsessionconfig,v 1.3 2008-07-23 17:14:31 veiming Exp $
+# $Id: amsessionconfig,v 1.4 2008-08-19 19:08:27 veiming Exp $
 #
 #
 
@@ -112,12 +112,12 @@ CheckConfigFiles()
     # Check if the AMConfig.properties file exists and readable
     if [ ! -f "${AMCONFIGPROPFILE}" ]
     then
-        ${ECHO} "`${GETTEXT} 'OpenSSO Enterprise configuration file does not exist. Please make sure it is present.'`"
+        ${ECHO} "`${GETTEXT} 'OpenSSO configuration file does not exist. Please make sure it is present.'`"
 	exit ${AM_CONFIGPROPFILE_NOTFOUND}
     fi
     if [ ! -r "${AMCONFIGPROPFILE}" ]
     then
-        ${ECHO} "`${GETTEXT} 'OpenSSO Enterprise configuration file is not readable. Please rerun with read permissions.'`"
+        ${ECHO} "`${GETTEXT} 'OpenSSO configuration file is not readable. Please rerun with read permissions.'`"
 	exit ${AM_CONFIGPROPFILE_CANNOTREAD}
     fi
 }

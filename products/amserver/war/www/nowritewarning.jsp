@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: nowritewarning.jsp,v 1.5 2008-08-15 01:05:27 veiming Exp $
+   $Id: nowritewarning.jsp,v 1.6 2008-08-19 19:09:39 veiming Exp $
 
 --%>
 
@@ -38,7 +38,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Sun OpenSSO Enterprise</title>
+    <title>OpenSSO</title>
     <link rel="stylesheet" type="text/css" href="com_sun_web_ui/css/css_ns6up.css" />
     <link rel="shortcut icon" href="com_sun_web_ui/images/favicon/favicon.ico" type="image/x-icon" />
 

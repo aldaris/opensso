@@ -22,18 +22,18 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.tools,v 1.5 2008-07-23 17:40:38 veiming Exp $
+   $Id: README.tools,v 1.6 2008-08-19 19:11:32 veiming Exp $
 
 -->
 
-OpenSSO Enterprise - Tools
+OpenSSO - Tools
 
-Unzipping the OpenSSO Enterprise Tools zip File
+Unzipping the OpenSSO Tools zip File
 -----------------------------------------------------------
 
 For Solaris/Linux
 
-The OpenSSO Enterprise Tools are contained in the
+The OpenSSO Tools are contained in the
 opensso.zip file.  Unzip opensso.zip in a directory owned by root.
 
 
@@ -41,7 +41,7 @@ Using The Unix Authentication "helper" Process
 ----------------------------------------------
 
 Unix authentication is only supported on Solaris/SPARC, Solaris/x86 and Linux
-platforms.  In order to use Unix authentication in OpenSSO Enterprise, the
+platforms.  In order to use Unix authentication in OpenSSO, the
 amunixd "helper" process must be started as root.
 
 Find the amunixd executable in the unzipped opensso.zip at
@@ -49,7 +49,7 @@ opensso/tools/helpers/{sparc,x86,linux}.  A script to start the helper version
 for the system can be found as opensso/tools/helpers/bin/amunixd.
 
 Note that if the Unix Configuration Port attribute setting is changed
-from the default (58946) through the OpenSSO Enterprise Admin Console
+from the default (58946) through the OpenSSO Admin Console
 (Configuration > Authentication > Unix), then the bin/amunixd script must
 specify it with the "-c" argument.
 

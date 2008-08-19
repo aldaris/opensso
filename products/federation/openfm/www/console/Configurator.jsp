@@ -22,14 +22,14 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Configurator.jsp,v 1.6 2008-07-23 17:45:02 veiming Exp $
+   $Id: Configurator.jsp,v 1.7 2008-08-19 19:12:29 veiming Exp $
 
 --%>
 
 
 <html>
 <head>
-<title>Configure OpenSSO Enterprise Administration Console WAR</title>
+<title>Configure OpenSSO Administration Console WAR</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link rel="stylesheet" type="text/css" href="com_sun_web_ui/css/css_ns6up.css" />
 
@@ -207,11 +207,11 @@ java.util.Properties"
     if (!configured) {
 %>
 
-<h3>Configuring OpenSSO Enterprise Administration Console WAR</h3>
+<h3>Configuring OpenSSO Administration Console WAR</h3>
 
 <form action="Configurator.jsp" method="POST" 
     name="consoleconfigurator">
-    Please provide the OpenSSO Enterprise Server Information. This is the server instance this remote administration console will be managing. 
+    Please provide the OpenSSO Server Information. This is the server instance this remote administration console will be managing. 
     <p>&nbsp;</p>    
 
     <table border=0 cellpadding=5 cellspacing=0>

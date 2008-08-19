@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSServiceUtils.java,v 1.8 2008-08-08 21:33:08 exu Exp $
+ * $Id: FSServiceUtils.java,v 1.9 2008-08-19 19:11:08 veiming Exp $
  *
  */
 
@@ -341,7 +341,7 @@ public class FSServiceUtils {
     }
    
     /**
-     * Returns base URL for OpenSSO Enterprise services deployment.
+     * Returns base URL for OpenSSO services deployment.
      * @param request HttpServletRequest
      * @return service base url
      */

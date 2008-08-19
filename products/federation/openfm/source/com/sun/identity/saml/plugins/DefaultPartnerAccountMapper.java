@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultPartnerAccountMapper.java,v 1.4 2008-07-23 17:45:00 veiming Exp $
+ * $Id: DefaultPartnerAccountMapper.java,v 1.5 2008-08-19 19:12:24 veiming Exp $
  *
  */
 
@@ -71,7 +71,7 @@ public class DefaultPartnerAccountMapper implements PartnerAccountMapper {
     public DefaultPartnerAccountMapper() {}
 
     /**
-     * Returns user account in Sun OpenSSO Enterprise to which the
+     * Returns user account in OpenSSO to which the
      * subject in the assertion is mapped. This method will be called in POST
      * profile, ARTIFACT profile, AttributeQuery and AuthorizationDecisionQuery.
      *
@@ -88,7 +88,7 @@ public class DefaultPartnerAccountMapper implements PartnerAccountMapper {
      *             NAME key is the user DN, value of the ORG is the user
      *             organization  DN, value of the ATTRIBUTE is a Map
      *             containing key/value pairs which will be set as properties
-     *             on the OpenSSO Enterprise SSO token, the key is the SSO
+     *             on the OpenSSO SSO token, the key is the SSO
      *             property name, the value is a String value of the property.
      *             Returns empty map if the mapped user could not be obtained
      *             from the subject.
@@ -148,7 +148,7 @@ public class DefaultPartnerAccountMapper implements PartnerAccountMapper {
     }
 
     /**
-     * Returns user account in Sun OpenSSO Enterprise to which the
+     * Returns user account in OpenSSO to which the
      * subject in the query is mapped. This method will be called in
      * AttributeQuery.The returned Map is subject to changes per SAML
      * specification.

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NameIdentifierMapper.java,v 1.3 2008-07-23 17:36:35 veiming Exp $
+ * $Id: NameIdentifierMapper.java,v 1.4 2008-08-19 19:11:14 veiming Exp $
  *
  */
 
@@ -36,7 +36,7 @@ import com.sun.identity.saml.common.SAMLException;
 /**
  * The class <code>NameIdentifierMapper</code> is an interface
  * that is implemented to map user account to name identifier in
- * assertion subject in Sun OpenSSO Enterprise.  
+ * assertion subject in OpenSSO.  
  *
  * @supported.all.api
  */

@@ -22,14 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: package-info.java,v 1.4 2008-07-23 17:21:59 veiming Exp $
+ * $Id: package-info.java,v 1.5 2008-08-19 19:08:48 veiming Exp $
  */
 
 /**
  * Provides interfaces and classes for writing a Remote Java client application
- * to authenticate into Sun OpenSSO Enterprise. Using these remotable
+ * to authenticate into OpenSSO. Using these remotable
  * interfaces and classes provided, a custom application may be authenticated
- * to Sun OpenSSO Enterprise's list of supported authentication
+ * to OpenSSO's list of supported authentication
  * modules/types or pure JAAS modules.
  *
  * @supported.api

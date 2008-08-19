@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.5 2008-07-23 17:25:00 veiming Exp $
+ * $Id: PolicyEvaluator.java,v 1.6 2008-08-19 19:09:15 veiming Exp $
  *
  */
 
@@ -511,16 +511,16 @@ public class PolicyEvaluator {
     }
 
     /**
-     * Gets names of policy advices that could be handled by OpenSSO Enterprise
-     * if PEP redirects user agent to OpenSSO Enterprise. If the server reports
+     * Gets names of policy advices that could be handled by OpenSSO
+     * if PEP redirects user agent to OpenSSO. If the server reports
      * an error indicating the app sso token provided was invalid,
      * new app sso token is obtained from app 
      * sso token  provider and another attempt is made to get policy advices
      * 
      * @param refetchFromServer indicates whether to get the values fresh 
-     *      from OpenSSO Enterprise or return the values from local cache
+     *      from OpenSSO or return the values from local cache
      * @return names of policy advices that could be handled by OpenSSO
-     *         Enterprise if PEP redirects user agent to OpenSSO Enterprise.
+     *         Enterprise if PEP redirects user agent to OpenSSO.
      * @throws InvalidAppSSOTokenException if the server reported that the
      *         app sso token provided was invalid 
      * @throws PolicyEvaluationException if the server reported any other error

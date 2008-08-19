@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.12 2008-07-23 17:14:26 veiming Exp $
+$Id: README,v 1.13 2008-08-19 19:08:17 veiming Exp $
 
 ------------------------------------------------------------------------------
 
@@ -103,7 +103,7 @@ server. Please follow the following steps to create this policy.
     %% Check the GET and POST checkboxes and have their values as allow;
     %% Click on Finish button to create the rule;
     %% Click on the New ... button under the Subjects action table to access
-       the subject creation page; (Choose "OpenSSO Enterprise Identity Subject"
+       the subject creation page; (Choose "OpenSSO Identity Subject"
        in the "Select Subject Type" page; and click on the Next button)
     %% Enter DemoSubject as subject name;
     %% Select User in the Filter dropdown list and click on Search button;

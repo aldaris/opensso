@@ -22,11 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_properties.h,v 1.7 2008-08-04 19:22:12 huacui Exp $
+ * $Id: am_properties.h,v 1.8 2008-08-19 19:15:04 veiming Exp $
  *
  * Abstract:
  *
- * Properties map for use by clients of the Sun OpenSSO Enterprise 
+ * Properties map for use by clients of the OpenSSO 
  * Remote Client SDK.
  *
  */

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetHttpSession.java,v 1.4 2008-07-23 17:21:56 veiming Exp $
+ * $Id: GetHttpSession.java,v 1.5 2008-08-19 19:08:38 veiming Exp $
  *
  */
 
@@ -53,7 +53,7 @@ import com.sun.identity.security.DecodeAction;
  * <ol>
  * <li>Creating a new Http session
  * <li>Recovering an existing Http session in case of server failover
- * <li>Releasing an existing OpenSSO Enterprise session if it is being
+ * <li>Releasing an existing OpenSSO session if it is being
  * relocated to a different "owner" server
  * 
  * Name GetHttpSession is largely a misnomer, but it was kept to minimize
@@ -204,7 +204,7 @@ public final class GetHttpSession extends HttpServlet {
                         SessionService.sessionDebug.message(
                                 "Exception:invalidateSession: the web " +
                                 "containers session timeout could be " +
-                                "shorter than the OpenSSO Enterprise session " +
+                                "shorter than the OpenSSO session " +
                                 "timeout", ise);
                     }
                 }

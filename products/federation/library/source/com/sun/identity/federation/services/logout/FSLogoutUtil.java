@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSLogoutUtil.java,v 1.9 2008-07-23 17:36:33 veiming Exp $
+ * $Id: FSLogoutUtil.java,v 1.10 2008-08-19 19:11:07 veiming Exp $
  *
  */
 
@@ -349,7 +349,7 @@ public class FSLogoutUtil {
     
     /**
      * Retrieves the session token from the Http Request, and
-     * validates the token with OpenSSO Enterprise session manager.
+     * validates the token with OpenSSO session manager.
      * @param request <code>HTTPServletRequest</code> object containing the 
      *  session cookie information
      * @return session token if request contained valid

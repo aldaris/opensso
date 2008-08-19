@@ -22,13 +22,13 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.21 2008-08-08 22:36:59 qcheng Exp $
+   $Id: build.xml,v 1.22 2008-08-19 19:11:21 veiming Exp $
 
 -->
 
 <project name="openfed-client-sample" default="all">
                 
-    <description>OpenSSO Enterprise: Client Samples</description>
+    <description>OpenSSO: Client Samples</description>
 
     <!-- enforce invocation via top level build only -->
     <fail message="*** client samples may be built from top level only ***">

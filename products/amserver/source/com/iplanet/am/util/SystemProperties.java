@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SystemProperties.java,v 1.15 2008-08-07 17:22:01 arviranga Exp $
+ * $Id: SystemProperties.java,v 1.16 2008-08-19 19:08:37 veiming Exp $
  *
  */
 
@@ -396,13 +396,13 @@ public class SystemProperties {
     }
     
     /**
-     * Initializes the properties to be used by OpenSSO Enterprise. Ideally this
+     * Initializes the properties to be used by OpenSSO. Ideally this
      * must be called first before any other method is called within OpenSSO
      * Enterprise. This method provides a programmatic way to set the
      * properties, and will override similar properties if loaded for a
      * properties file.
      * 
-     * @param properties properties for OpenSSO Enterprise
+     * @param properties properties for OpenSSO
      * @param reset <code>true</code> to reset existing properties.
      */
     public static synchronized void initializeProperties(
@@ -413,13 +413,13 @@ public class SystemProperties {
     }
     
     /**
-     * Initializes the properties to be used by OpenSSO Enterprise. Ideally this
+     * Initializes the properties to be used by OpenSSO. Ideally this
      * must be called first before any other method is called within OpenSSO
      * Enterprise. This method provides a programmatic way to set the
      * properties, and will override similar properties if loaded for a
      * properties file.
      * 
-     * @param properties properties for OpenSSO Enterprise.
+     * @param properties properties for OpenSSO.
      * @param reset <code>true</code> to reset existing properties.
      * @param withDefaults <code>true</code> to include default properties.
      */
@@ -450,7 +450,7 @@ public class SystemProperties {
     }
 
     /**
-     * Initializes the property to be used by OpenSSO Enterprise. Ideally this
+     * Initializes the property to be used by OpenSSO. Ideally this
      * must be called first before any other method is called within OpenSSO
      * Enterprise.
      * This method provides a programmatic way to set a specific property, and
@@ -473,7 +473,7 @@ public class SystemProperties {
      * Returns a counter for last modification. The counter is incremented if
      * the properties are changed by calling the following method
      * <code>initializeProperties</code>. This is a convenience methods for
-     * applications to track changes to OpenSSO Enterprise properties.
+     * applications to track changes to OpenSSO properties.
      * 
      * @return counter of the last modification
      */

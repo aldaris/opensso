@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.13 2008-07-23 17:40:37 veiming Exp $
+   $Id: build.xml,v 1.14 2008-08-19 19:11:29 veiming Exp $
 
 -->
 
@@ -102,7 +102,7 @@
                <attribute name="Created-On" value="${pstamp}" />
                 <section name="com.sun.identity">
                     <attribute name="Specification-Title"
-                        value="OpenSSO Enterprise Client SDK"/>
+                        value="OpenSSO Client SDK"/>
                     <attribute name="Specification-Version"
                         value="${clientsdk.version}"/>
                     <attribute name="Specification-Vendor"

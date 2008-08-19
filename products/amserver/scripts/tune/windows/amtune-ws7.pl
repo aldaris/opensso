@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amtune-ws7.pl,v 1.3 2008-07-23 17:21:55 veiming Exp $
+# $Id: amtune-ws7.pl,v 1.4 2008-08-19 19:08:36 veiming Exp $
 #
 #
 #############################################################################
@@ -367,7 +367,7 @@ sub tuneServerXML
 	
 	
 	&backupConfigFile($tune_file,"$ENV{TEMP}/config-ws7-backup");
-	#Start: Performance Related Thread Pool parameters for OpenSSO Enterprise
+	#Start: Performance Related Thread Pool parameters for OpenSSO
 	if( $JVM64bitAvailable eq true)
 	{
 		$WSADMIN_OPTION="set-thread-pool-prop";
@@ -388,18 +388,18 @@ sub tuneServerXML
 		system(@args)==0 or die "\n Error executing command @args\n";
 	}
 	
-	#End : Performance Related Thread Pool parameters for OpenSSO Enterprise
-	#Start : Performance Related Http Listener parameters for OpenSSO Enterprise
+	#End : Performance Related Thread Pool parameters for OpenSSO
+	#Start : Performance Related Http Listener parameters for OpenSSO
 	$WSADMIN_OPTION_HTTP_LISTENERS="set-http-listener-prop";
 	$WSADMIN_HTTP_LISTENER_VARIABLE="--http-listener=$WSADMIN_HTTPLISTENER";
 	$WSADMIN_OPTION_ACCEPTORTHREADS="acceptor-threads=$acceptorThreads";
 	@args=($WSADMIN,$WSADMIN_OPTION_HTTP_LISTENERS,@WSADMIN_COMMON_PARAMS,$WSADMIN_HTTP_LISTENER_VARIABLE,$WSADMIN_OPTION_ACCEPTORTHREADS);
 	system(@args)==0 or die "\n Error executing command @args\n";
 	
-	#End : Performance Related Http Listener parameters for OpenSSO Enterprise
+	#End : Performance Related Http Listener parameters for OpenSSO
 	
 	
-	#Start : Performance Related JVM Options for OpenSSO Enterprise
+	#Start : Performance Related JVM Options for OpenSSO
 	$curJvmOptionHeapString="";
 	$curJvmOptionHeapString=&createParamString($curJvmOptionHeapString,"$wsadmin_min_heap");
 	$curJvmOptionHeapString=&createParamString($curJvmOptionHeapString,"$wsadmin_max_heap");
@@ -429,9 +429,9 @@ sub tuneServerXML
 		#Delete other JVM Options
 		deleteJVMOptionUsingWSAdmin($curJvmOptionstring)
 	}
-	#End : Performance Related JVM Options for OpenSSO Enterprise
+	#End : Performance Related JVM Options for OpenSSO
 	
-	#Start : Performance Related JVM Options for OpenSSO Enterprise
+	#Start : Performance Related JVM Options for OpenSSO
 	#Insert Min Heap and Max Heap JVM Option : -Xms -Xmx 
 	
 	$jvm_insert_result1=&insertJVMOptionUsingWSAdmin("$wsadmin_new_min_heap $wsadmin_new_max_heap","combined"); 
@@ -467,7 +467,7 @@ sub tuneServerXML
 	}
 	
     	
-    ##End : Performance Related JVM Options for OpenSSO Enterprise
+    ##End : Performance Related JVM Options for OpenSSO
     	
     #If one of the insert operation is successful, execute deploy-config operation 
     	
@@ -505,7 +505,7 @@ open(FP,">$WSADMIN_PASSFILE");
 print FP "$WSADMIN_PASSWORD_SYNTAX$WSADMIN_PASSWORD";
 close(FP);
 
-&echo_msg("\nOpenSSO Enterprise - Web Server Tuning Script\n");
+&echo_msg("\nOpenSSO - Web Server Tuning Script\n");
 
 tuneServerXML;
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneFAMBase.java,v 1.5 2008-08-12 05:34:42 kanduls Exp $
+ * $Id: AMTuneFAMBase.java,v 1.6 2008-08-19 19:09:27 veiming Exp $
  */
 
 package com.sun.identity.tune.base;
@@ -49,7 +49,7 @@ import java.util.logging.Level;
 import javax.net.ssl.HttpsURLConnection;
 
 /**
- * Base class for tuning OpenSSO Enterprise.
+ * Base class for tuning OpenSSO.
  *
  */
 public abstract class AMTuneFAMBase extends TuneFAM {
@@ -183,15 +183,15 @@ public abstract class AMTuneFAMBase extends TuneFAM {
                 }
                 if (retVal == -1) {
                     pLogger.log(Level.SEVERE, "updateFAMServiceCfg", 
-                            "Error updating OpenSSO Enterprise service " +
+                            "Error updating OpenSSO service " +
                             "config values.");
                     throw new AMTuneException("Error updating " + 
-                            "OpenSSO Enterprise service configuration");
+                            "OpenSSO service configuration");
                 }
             }
         } catch (Exception ex) {
             pLogger.log(Level.SEVERE, "updateFAMServiceCfg", "Error updating " +
-                "OpenSSO Enterprise Server configuration. " + ex.getMessage());
+                "OpenSSO Server configuration. " + ex.getMessage());
         }
     }
     
@@ -244,7 +244,7 @@ public abstract class AMTuneFAMBase extends TuneFAM {
     }
     
     /**
-     * This method queries the OpenSSO Enterprise server and returns the
+     * This method queries the OpenSSO server and returns the
      * server configuration in the form of Map.
      */
     protected Map getFAMServerConfig() {
@@ -283,7 +283,7 @@ public abstract class AMTuneFAMBase extends TuneFAM {
                     "Error while getting server configuration.");
         }
         pLogger.log(Level.FINEST, "getFAMServerConfig",
-            "Returning OpenSSO Enterprise configuration Map " +
+            "Returning OpenSSO configuration Map " +
             famCfgInfo.toString());
         return famCfgInfo;
     }

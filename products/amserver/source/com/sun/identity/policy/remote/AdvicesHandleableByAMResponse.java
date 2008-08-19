@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AdvicesHandleableByAMResponse.java,v 1.3 2008-07-23 17:30:43 veiming Exp $
+ * $Id: AdvicesHandleableByAMResponse.java,v 1.4 2008-08-19 19:09:19 veiming Exp $
  *
  */
 
@@ -43,8 +43,8 @@ import org.w3c.dom.Node;
  * <pre>
  *    <!-- AdvicesHandleableByAMResponse element is the response from server
  *         that contains the names of policy advices that could be
- *         handled by OpenSSO Enterprise
- *         if PEP redirects the user agent to OpenSSO Enterprise
+ *         handled by OpenSSO
+ *         if PEP redirects the user agent to OpenSSO
  *    -->
  *
  *    <!ELEMENT    AdvicesHandleableByAMResponse    (AttributeValuePair?) >
@@ -80,7 +80,7 @@ public class AdvicesHandleableByAMResponse {
     }
 
     /**
-     * Sets the advices to be handled by OpenSSO Enterprise.
+     * Sets the advices to be handled by OpenSSO.
      *
      * @param advicesHandleableByAM Set of advices to be handled by OpenSSO
      *        Enterprise.
@@ -90,7 +90,7 @@ public class AdvicesHandleableByAMResponse {
     }
 
     /**
-     * Returns the advices to be handled by OpenSSO Enterprise.
+     * Returns the advices to be handled by OpenSSO.
      *
      * @return advicesHandleableByAM Set of advices to be handled by OpenSSO
      *         Enterprise.

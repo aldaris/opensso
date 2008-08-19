@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSClientUserToken.java,v 1.11 2008-08-05 04:11:01 mallas Exp $
+ * $Id: STSClientUserToken.java,v 1.12 2008-08-19 19:12:26 veiming Exp $
  *
  */
 
@@ -44,7 +44,7 @@ import com.sun.identity.wss.security.SecurityToken;
 
 /**
  * This class implements ClientUserToken for on behalf of token that will be 
- * used to pass end user OpenSSO Enterprise SSO Token to the STS service.
+ * used to pass end user OpenSSO SSO Token to the STS service.
  */
 public class STSClientUserToken implements ClientUserToken {
      

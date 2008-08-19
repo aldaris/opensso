@@ -22,17 +22,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: package-info.java,v 1.4 2008-07-23 17:21:57 veiming Exp $
+ * $Id: package-info.java,v 1.5 2008-08-19 19:08:42 veiming Exp $
  *
  */
 
 /**
  * Provides the classes for implementing services and applications
- * serving multiple clients to Sun OpenSSO Enterprise.
+ * serving multiple clients to OpenSSO.
  * <p>
  * Using the interfaces and classes provided, services and applications
- * serving multiple clients may provide access to OpenSSO Enterprise's services.
- * Through the implementation, OpenSSO Enterprise determines the client from
+ * serving multiple clients may provide access to OpenSSO's services.
+ * Through the implementation, OpenSSO determines the client from
  * which the request has originated.
  * @supported.api
  */

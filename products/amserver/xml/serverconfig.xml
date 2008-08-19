@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: serverconfig.xml,v 1.13 2008-07-23 17:36:31 veiming Exp $
+   $Id: serverconfig.xml,v 1.14 2008-08-19 19:10:50 veiming Exp $
 
 -->
 
@@ -55,7 +55,7 @@
 
     <!--
     Datastore for storing configuration and policy data in different Directory.
-    For SMS to use this configuration, OpenSSO Enterprise must be installed in
+    For SMS to use this configuration, OpenSSO must be installed in
     REALM mode and the property "com.sun.identity.sm.ldap.enableProxy" must be
     set to "false".
     -->

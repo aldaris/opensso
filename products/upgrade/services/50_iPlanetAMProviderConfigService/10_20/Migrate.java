@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.3 2008-07-23 17:58:17 veiming Exp $
+ * $Id: Migrate.java,v 1.4 2008-08-19 19:14:58 veiming Exp $
  *
  */
 
@@ -33,10 +33,10 @@ import com.sun.identity.upgrade.UpgradeUtils;
 /**
  * Updates <code>iPlanetAMProviderConfigService</code> service schema.
  * This class is invoked during migration from older versions
- * of OpenSSO Enterprise to the latest version.
- * NOTE: This service is no longer used in OpenSSO Enterprise 8.0 , however
+ * of OpenSSO to the latest version.
+ * NOTE: This service is no longer used in OpenSSO 8.0 , however
  * need to migrate the data to bring it to AM 7.1 level and
- * then migrate it to OpenSSO Enterprise 8.0 into the new IDFF service.
+ * then migrate it to OpenSSO 8.0 into the new IDFF service.
  */
 public class Migrate implements MigrateTasks {
 

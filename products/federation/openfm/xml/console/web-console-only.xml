@@ -22,11 +22,11 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: web-console-only.xml,v 1.4 2008-07-23 17:45:02 veiming Exp $
+   $Id: web-console-only.xml,v 1.5 2008-08-19 19:12:30 veiming Exp $
 
 -->
 
-<!-- For OpenSSO Enterprise Console Only WAR -->
+<!-- For OpenSSO Console Only WAR -->
 
     <filter>
         <filter-name>clientConfiguratorFilter</filter-name>

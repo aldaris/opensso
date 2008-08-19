@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestInstaller.java,v 1.4 2008-07-23 17:30:50 veiming Exp $
+ * $Id: TestInstaller.java,v 1.5 2008-08-19 19:09:34 veiming Exp $
  *
  */
 
@@ -61,9 +61,9 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * This class is the first class to get loaded by the Servlet container. 
- * It has helper methods to determine the status of OpenSSO Enterprise
+ * It has helper methods to determine the status of OpenSSO
  * configuration when deployed as a single web-application. If 
- * OpenSSO Enterprise server is not deployed as single web-application then the 
+ * OpenSSO server is not deployed as single web-application then the 
  * configured status returned is always true.   
  */
 public class TestInstaller {

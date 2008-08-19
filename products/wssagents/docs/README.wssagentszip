@@ -22,11 +22,11 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.wssagentszip,v 1.8 2008-07-23 17:58:19 veiming Exp $
+   $Id: README.wssagentszip,v 1.9 2008-08-19 19:15:09 veiming Exp $
 
 -->
 
-OpenSSO Enterprise Web Services Security Agents / Providers - Zip file
+OpenSSO Web Services Security Agents / Providers - Zip file
 
 openssowssproviders.zip
              |____ lib/openssoclientsdk.jar (complete OpenSSO clientsdk jar)

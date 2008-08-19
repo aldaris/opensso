@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_map.h,v 1.6 2008-08-04 19:22:12 huacui Exp $
+ * $Id: am_map.h,v 1.7 2008-08-19 19:15:04 veiming Exp $
  *
  */
 
@@ -30,7 +30,7 @@
  * Abstract:
  *
  * Types and functions for creating, destroying, and manipulating the
- * map objects used by the Sun OpenSSO Enterprise Access Management 
+ * map objects used by the OpenSSO Access Management 
  * SDK.
  *
  */

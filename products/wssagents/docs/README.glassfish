@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.glassfish,v 1.12 2008-08-08 21:29:40 mrudul_uchil Exp $
+   $Id: README.glassfish,v 1.13 2008-08-19 19:15:08 veiming Exp $
 
 -->
 
@@ -31,7 +31,7 @@ README.glassfish
 =================
 
 This README contains instructions on how to secure web services using 
-OpenSSO Enterprise WSS providers on SUN Application Server 9.1 (Glassfish V2).
+OpenSSO WSS providers on SUN Application Server 9.1 (Glassfish V2).
 
 This document assumes that users have already done the following:
 
@@ -39,14 +39,14 @@ This document assumes that users have already done the following:
    and web services provider (WSP). 
 2. Required Web services client and Web services provider applications are 
    implemented.
-3. Installed and configured the OpenSSO Enterprise server. 
+3. Installed and configured the OpenSSO server. 
 
-Follow the steps below to secure the web services using OpenSSO Enterprise WSS
+Follow the steps below to secure the web services using OpenSSO WSS
 providers.
 
 I. Add Java security permissions 
 
-On the Application Server that hosts OpenSSO Enterprise server (OpenSSO server),
+On the Application Server that hosts OpenSSO server (OpenSSO server),
 Web Service Client application and Web Service Provider application :
 
 If the Security Manager is "on", add the following as Java security permissions 
@@ -56,7 +56,7 @@ Each Application Server domain has its own standard J2SE policy file named serve
 It is located in the /ApplicationServer-install/domains/<domain-name>/config directory. 
 More information can be found in The server.policy File in Sun Java System Application Server 9 .1 Developer's Guide.
 
-// ADDITIONS FOR OpenSSO Enterprise
+// ADDITIONS FOR OpenSSO
 grant {
 
 permission java.net.SocketPermission "*", "listen,connect,accept,resolve";
@@ -110,7 +110,7 @@ permission java.security.SecurityPermission "putProviderProperty.WSS_TRANSFORM";
 permission java.security.SecurityPermission "insertProvider.WSS_TRANSFORM";
 
 };
-// END OF ADDITIONS FOR OpenSSO Enterprise
+// END OF ADDITIONS FOR OpenSSO
    
 
 II. Unzip openssowssproviders.zip to a desired directory, 
@@ -118,7 +118,7 @@ say <unizip_dir_of_openssowssproviders.zip>
 
 III. Modify <unizip_dir_of_openssowssproviders.zip>/resources/AMConfig.properties as follows:
 
-# OpenSSO Enterprise Server Information
+# OpenSSO Server Information
 # Protocol can be either http or https
 com.iplanet.am.server.protocol=openssoserver_protocol
 com.iplanet.am.server.host=openssoserver_host
@@ -152,7 +152,7 @@ com.sun.identity.loginurl=openssoserver_protocol://openssoserver_host:openssoser
 com.sun.identity.liberty.authnsvc.url=openssoserver://openssoserver_host:openssoserver_port/openssoserver_deploy_uri/Liberty/authnsvc
 
 NOTE : The directory specified as a value for DEBUG_DIR in AMConfig.properties should be different 
-than the one specified as the value for BASE_DIR (or CONFIG_DIR) in Installing OpenSSO Enterprise.
+than the one specified as the value for BASE_DIR (or CONFIG_DIR) in Installing OpenSSO.
 
 IV. Copy files
 
@@ -192,11 +192,11 @@ VI. Restart the SUN Application Server (Glassfish).
 
 VII. Configure the web services client and the web services provider for Web services security.
 
-1.  Login into the OpenSSO Enterprise Console with user amadmin and <amadmin password>
+1.  Login into the OpenSSO Console with user amadmin and <amadmin password>
 
     openssoserver_protocol://openssoserver_host:openssoserver_port/openssoserver_deploy_uri
 
-    Note: If you have logged in as any other user, click Logout on the console page and Login again and make sure that you access the OpenSSO Enterprise Console.
+    Note: If you have logged in as any other user, click Logout on the console page and Login again and make sure that you access the OpenSSO Console.
 
     Create agent profiles for WSC and WSP (if not created out of box) :
 
@@ -215,4 +215,4 @@ VII. Configure the web services client and the web services provider for Web ser
         Select Web Service End Point as “default” and "Is Request Signature Verified" as true (checked).
         Save changes.
 
-2.  Logout of OpenSSO Enterprise Administration console.
+2.  Logout of OpenSSO Administration console.

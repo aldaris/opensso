@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: createSessionError.jsp,v 1.5 2008-08-15 01:05:30 veiming Exp $
+   $Id: createSessionError.jsp,v 1.6 2008-08-19 19:10:45 veiming Exp $
                                                                                 
 --%>
 
@@ -69,7 +69,7 @@ String ServiceURI = (String) viewBean.getDisplayFieldValue(viewBean.SERVICE_URI)
     <td><img src="<%= ServiceURI %>/login_images/spacer.gif" width="9" height="1" 
         alt=""></td>
     <td valign="bottom" bgcolor="#ACACAC" width="100%"><img
-        src="<%= ServiceURI %>/login_images/Identity_LogIn.gif" alt="Sun OpenSSO Enterprise"></td>
+        src="<%= ServiceURI %>/login_images/Identity_LogIn.gif" alt="OpenSSO"></td>
     </tr>
     <tr>
     <td colspan="3"><img src="<%= ServiceURI %>/login_images/spacer.gif" width="1"

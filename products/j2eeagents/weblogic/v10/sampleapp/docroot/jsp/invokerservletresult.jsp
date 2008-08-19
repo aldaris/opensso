@@ -25,7 +25,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: invokerservletresult.jsp,v 1.10 2008-08-15 21:30:32 veiming Exp $
+   $Id: invokerservletresult.jsp,v 1.11 2008-08-19 19:14:52 veiming Exp $
 
 -->
 <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type" /> 
@@ -84,7 +84,7 @@ a:hover{text-decoration:underline}
     <tr>
       <td style="vertical-align: top;"><a href="http://www.sun.com/" id="homelink">sun.com</a> </td>
       <td style="vertical-align: top; text-align: right;">
-      <a href="http://www.sun.com/software/products/access_mgr/index.html" id="homelink">Sun OpenSSO Enterprise<br></a></td>
+      <a href="http://www.sun.com/software/products/access_mgr/index.html" id="homelink">OpenSSO<br></a></td>
       <td style="vertical-align: top;">&nbsp;<br>
       </td>
     </tr>

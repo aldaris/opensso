@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPPAuthorizer.java,v 1.5 2008-08-06 17:29:24 exu Exp $
+ * $Id: IDPPAuthorizer.java,v 1.6 2008-08-19 19:12:22 veiming Exp $
  *
  */
 
@@ -50,7 +50,7 @@ import com.sun.identity.shared.locale.Locale;
  * IDPP Authorization and implements <code>Authorizer</code>. It 
  * provides an allow ,deny, interact for consent, interact for value action 
  * based on the resource that a WSC is requesting for.
- * This makes use of existing OpenSSO Enterprise policy frame work by defining
+ * This makes use of existing OpenSSO policy frame work by defining
  * policy as action values in the personal profile service.
  */
 public class IDPPAuthorizer implements Authorizer {

@@ -24,12 +24,12 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
  
-   $Id: createpolicy.xml,v 1.3 2008-07-23 17:30:50 veiming Exp $
+   $Id: createpolicy.xml,v 1.4 2008-08-19 19:09:33 veiming Exp $
  
 -->
  
 <!DOCTYPE Policies
-    PUBLIC "-//Sun OpenSSO Enterprise 7.1 2006Q3 Admin CLI DTD//EN"
+    PUBLIC "-//OpenSSO 7.1 2006Q3 Admin CLI DTD//EN"
     "jar://com/sun/identity/policy/policyAdmin.dtd"
 >
 

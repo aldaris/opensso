@@ -23,7 +23,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amtune-as8,v 1.4 2008-07-23 17:21:54 veiming Exp $
+# $Id: amtune-as8,v 1.5 2008-08-19 19:08:30 veiming Exp $
 #
 #
 
@@ -356,15 +356,15 @@ tuneSecurityLimits() {
         return
     fi
 
-    delete_line $tune_file "Start: AS8.x OpenSSO Enterprise Tuning"
+    delete_line $tune_file "Start: AS8.x OpenSSO Tuning"
     if [ "$curStackSizeString" != "" ]; then
        delete_line $tune_file "$curStackSizeString"
     fi
-    delete_line $tune_file "End: AS8.x OpenSSO Enterprise Tuning"
+    delete_line $tune_file "End: AS8.x OpenSSO Tuning"
 
-    add_to_end $tune_file "# Start: AS8.x OpenSSO Enterprise Tuning : `date`"
+    add_to_end $tune_file "# Start: AS8.x OpenSSO Tuning : `date`"
     add_to_end $tune_file "$newStackSizeString"
-    add_to_end $tune_file "# End: AS8.x OpenSSO Enterprise Tuning : `date`"
+    add_to_end $tune_file "# End: AS8.x OpenSSO Tuning : `date`"
 
 }
 
@@ -386,7 +386,7 @@ if [ -f $SCRIPT_LOCATION/amtune-env ]; then
     fi
 fi
 
-ECHO_MSG "`$gettext 'OpenSSO Enterprise - Application Server Tuning Script'`"
+ECHO_MSG "`$gettext 'OpenSSO - Application Server Tuning Script'`"
 
 $ECHO "$ASADMIN_PASSWORD_SYNTAX$ASADMIN_PASSWORD" > $ASADMIN_PASSFILE
 

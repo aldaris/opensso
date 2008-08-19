@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Locale.java,v 1.4 2008-07-23 17:58:16 veiming Exp $
+ * $Id: Locale.java,v 1.5 2008-08-19 19:14:56 veiming Exp $
  *
  */
 
@@ -287,7 +287,7 @@ public class Locale {
 
     /**
      * Returns the Date object from the date string in <code>ISO-8601</code>
-     * format. OpenSSO Enterprise stores date in <code>ISO-8601</code> format
+     * format. OpenSSO stores date in <code>ISO-8601</code> format
      * <code>yyyy/MM/yy hh:mm</code>
      * 
      * @param dateString
@@ -645,7 +645,7 @@ public class Locale {
      * Function URL encoder function converts input string into
      * <code>URLEncoded</code> byte stream after converting Unicode string
      * into bytes using native encoding. The <code>URLEncoder</code> does not
-     * work for Sun OpenSSO Enterprise if default encoding is not
+     * work for OpenSSO if default encoding is not
      * <code>UTF-8</code>, hence this method was written.
      * 
      * @param input
@@ -691,7 +691,7 @@ public class Locale {
      * URL encoder function converts input string into <code>URLencoded</code>
      * byte stream after converting Unicode string into bytes using native
      * encoding. The <code>URLEncoder</code> does not work for Sun Java System
-     * OpenSSO Enterprise if default encoding is not <code>UTF-8</code>, hence this
+     * OpenSSO if default encoding is not <code>UTF-8</code>, hence this
      * method was written.
      * 
      * @param input the input string

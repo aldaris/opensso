@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.3 2008-07-23 17:58:18 veiming Exp $
+ * $Id: Migrate.java,v 1.4 2008-08-19 19:14:58 veiming Exp $
  *
  */
 
@@ -114,7 +114,7 @@ public class Migrate implements MigrateTasks {
 
     /**
      * Migrates the IDFF Authentication Domain Service Configuration
-     * to OpenSSO Enterprise COT Service
+     * to OpenSSO COT Service
      */
     private void migrateIDFFCOTConfig(Map idffCOTAttrs) {
         Set subConfigNames = idffCOTAttrs.keySet();
@@ -138,7 +138,7 @@ public class Migrate implements MigrateTasks {
     }
 
     /**
-     * Migrates the SAMLv2 COT Service Configuration to OpenSSO Enterprise COT
+     * Migrates the SAMLv2 COT Service Configuration to OpenSSO COT
      * Service
      */
     private void migrateSAML2COTConfig(Map saml2COTAttrs) {

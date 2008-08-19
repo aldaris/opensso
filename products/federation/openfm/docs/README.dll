@@ -26,14 +26,14 @@
 
 -->
 
-OpenSSO Enterprise - Secure Attribute Exchange : Client API
+OpenSSO - Secure Attribute Exchange : Client API
 
 This opensso.zip file contains Java and .Net interfaces to enable :
 (i) an application (IDP-App) to generate SAE data to be sent across to a local 
-    OpenSSO Enterprise in IDP role (OpenSSO Enterprise-IDP) acting as gateway
+    OpenSSO in IDP role (OpenSSO-IDP) acting as gateway
     to a SAMLv2 based COT.
 (ii) an application (SP_App) to consume SAE data sent to it by a local OpenSSO
-     Enterprise in SP role (OpenSSO Enterprise-SP)
+     in SP role (OpenSSO-SP)
 
 The SAE protocol used to tranferring SAE data between the entities identified 
 above is based on simple HTTP-GET and HTTP-redirect.
@@ -44,31 +44,31 @@ Java API  is provided in fmsae.jar
 
 Two ways of securing SAE data are provided : Symmetric crypto and Asymmetric
 digital signing. Symmetric method needs a shared secret between the application
-and OpenSSO Enterprise, while Asymmetric method uses X509 certificates.
+and OpenSSO, while Asymmetric method uses X509 certificates.
 
-Please refer to OpenSSO Enterprise 8.0 product documentation, Javadocs and the
+Please refer to OpenSSO 8.0 product documentation, Javadocs and the
 SAE sample 
 Rest of this file proves a brief introduction.
 
 
-IDP-App --- sae ---> OpenSSO Enterprise-IDP ---| --->OpenSSO Enterprise-SP --- sae ---> SP-App
+IDP-App --- sae ---> OpenSSO-IDP ---| --->OpenSSO-SP --- sae ---> SP-App
 
 Typical use on IDP-App end : also termed as the Asserting party.
 
 0)  One time : 
  
    Register ApplicationName, SAE security type (Asymmetric or Symmetric)
-   and the corresponding shared secret/Public key alias with local OpenSSO Enterprise-IDP.
+   and the corresponding shared secret/Public key alias with local OpenSSO-IDP.
    Store shared secret in a safe place  preferably encrypted.
    The private key must be stored in a protected keystore and not revealed
-   to OpenSSO Enterprise. OpenSSO Enterprise only needs to know the public key,
-   which must be added to OpenSSO Enterprise's local keystore.
+   to OpenSSO. OpenSSO only needs to know the public key,
+   which must be added to OpenSSO's local keystore.
 
 1) Initialize SecureAttrs class if Asymmetric method is used.
 
    Java : SecureAttrs class needs enough information to open a
      java.security.KeyStore instance that contains the keys needed to 
-     secure attributes to be sent to OpenSSO Enterprise-IDP.
+     secure attributes to be sent to OpenSSO-IDP.
      Please refer to Javadocs for details on parameters.
 
    .Net : SecureAttrs class needs access to an appropriate 
@@ -98,10 +98,10 @@ Typical use on IDP-App end : also termed as the Asserting party.
    <type> is 
       SecureAttrs.SAE_CRYPTO_ASYMMETRIC or SecureAttrs.SAE_CRYPTO_ASYMMETRIC
 
-6) The app may choose to send the SAE data to a local OpenSSO Enterprise instance immediately 
+6) The app may choose to send the SAE data to a local OpenSSO instance immediately 
    or may choose to construct a link that the user can click later.
 
-   Example URL : <OpenSSO Enterprise instance base url>/saml2/jsp/SA+IDP.jsp?sun.data=<SAE data>
+   Example URL : <OpenSSO instance base url>/saml2/jsp/SA+IDP.jsp?sun.data=<SAE data>
 
 
 SP-App typical usage : also called the Relying Party.
@@ -109,13 +109,13 @@ SP-App typical usage : also called the Relying Party.
 0)  One time : Register ApplicationName, SAE Security type (SYM or ASYM)
      and corresponding Shared secret. 
      Store shared secret in a safe place  preferably encrypted.
-     Retrieve OpenSSO Enterprise public key and store it in a local keystore.
+     Retrieve OpenSSO public key and store it in a local keystore.
 
 1) Initialize SecureAttrs class if Asymmetric method is used.
 
    Java : SecureAttrs class needs enough information to open a
      java.security.KeyStore instance that contains the keys needed to 
-     verify attributes from local OpenSSO Enterprise-SP.
+     verify attributes from local OpenSSO-SP.
      Please refer to Javadocs for details on parameters.
 
    .Net : SecureAttrs class needs access to an appropriate 
@@ -126,7 +126,7 @@ SP-App typical usage : also called the Relying Party.
     sun.data parameter contains Base64 encoded SAE data.
 
 3) Retrieve shared secret is symmetric method is used.
-   For asymmetric method be prepared to with the key alias of OpenSSO Enterprise's public key.
+   For asymmetric method be prepared to with the key alias of OpenSSO's public key.
 
 4) Execute SecureAttrs.getInstance(<type>).verifyEncodedString(<type>) [ Java] or
    SecureAttrs.verifyEncodedString() [.Net] to verify SAE data.
@@ -138,11 +138,11 @@ SP-App typical usage : also called the Relying Party.
 Single Logout (SLO) : IDP-App initiated global logout 
 
 0) SP and IDP app registration as in previous usecases.
-   SP-App additionally configures "saeSPLogoutURL" on local OpenSSO Enterprise.
+   SP-App additionally configures "saeSPLogoutURL" on local OpenSSO.
 1) IDP-App initiates SLO by securely sending the "sun.cmd=logout" to local
-   OpenSSO Enterprise-IDP instance.
-2) OpenSSO Enterprise-IDP executes SAMLv2 SLO protocol to OpenSSO Enterprise-SP.
-3) OpenSSO Enterprise-SP  picks up "saeSPLogoutURL" config and redirects to it.
+   OpenSSO-IDP instance.
+2) OpenSSO-IDP executes SAMLv2 SLO protocol to OpenSSO-SP.
+3) OpenSSO-SP  picks up "saeSPLogoutURL" config and redirects to it.
 4) saeSPLogoutURL logic can verify sun.data parameter sent to it;
    it contains two SAE params : sun.cmd=logout and sun.returnurl.
    After executing local processing (eg invalidating local app session/cleanup

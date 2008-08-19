@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdType.java,v 1.8 2008-07-23 17:24:58 veiming Exp $
+ * $Id: IdType.java,v 1.9 2008-08-19 19:09:10 veiming Exp $
  *
  */
 
@@ -64,7 +64,7 @@ public class IdType implements java.io.Serializable {
 
     /**
      * Identity type of AGENT
-     * Also from OpenSSO Enterprise 8.0 onwards, this is the Identity type of
+     * Also from OpenSSO 8.0 onwards, this is the Identity type of
      * the union of agents and those under the agent groups.
      */
     public static final IdType AGENT = new IdType("agent");
@@ -77,12 +77,12 @@ public class IdType implements java.io.Serializable {
     public static final IdType REALM = new IdType("realm");
 
     /**
-     * Identity type of OpenSSO Enterprise agent only.
+     * Identity type of OpenSSO agent only.
      */
     public static final IdType AGENTONLY = new IdType("agentonly");
 
     /**
-     * Identity type of OpenSSO Enterprise agents under the OpenSSO Enterprise
+     * Identity type of OpenSSO agents under the OpenSSO
      * agent groups.
      */
     public static final IdType AGENTGROUP = new IdType("agentgroup");

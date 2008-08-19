@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMServerAuthModule.java,v 1.6 2008-08-05 04:14:59 mallas Exp $
+ * $Id: FAMServerAuthModule.java,v 1.7 2008-08-19 19:15:11 veiming Exp $
  *
  */
 
@@ -99,7 +99,7 @@ public class FAMServerAuthModule implements ServerAuthModule {
             if (_handler == null) {
                 try {
                     oldcc.loadClass("com.sun.identity.classloader.FAMClassLoader");
-                    // Get the OpenSSO Enterprise Classloader
+                    // Get the OpenSSO Classloader
                     cls = 
                         com.sun.identity.classloader.FAMClassLoader.
                             getFAMClassLoader(null,jars);

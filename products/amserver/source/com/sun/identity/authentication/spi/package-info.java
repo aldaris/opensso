@@ -22,15 +22,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: package-info.java,v 1.4 2008-07-23 17:24:54 veiming Exp $
+ * $Id: package-info.java,v 1.5 2008-08-19 19:08:56 veiming Exp $
  *
  */
 
 /**
  * Provides interfaces and classes for writing a supplemental authentication
- * module to plug into Sun OpenSSO Enterprise. Using the interfaces
+ * module to plug into OpenSSO. Using the interfaces
  * and classes provided, a custom authentication module may be added to Sun
- * OpenSSO Enterprise's list of supported authentication modules/types.
+ * OpenSSO's list of supported authentication modules/types.
  * <p>
  * Provides an interface for post authentication processing on successful,
  * failed authentication or on a logout.

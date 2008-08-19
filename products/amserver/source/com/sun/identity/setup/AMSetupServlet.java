@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.87 2008-08-08 21:29:39 mrudul_uchil Exp $
+ * $Id: AMSetupServlet.java,v 1.88 2008-08-19 19:09:24 veiming Exp $
  *
  */
 
@@ -1145,7 +1145,7 @@ public class AMSetupServlet extends HttpServlet {
     
             /*
              * if the file's not there, just skip it
-             * usually will be about a file included with OpenSSO Enterprise,
+             * usually will be about a file included with OpenSSO,
              * so it's informational, rather than a "real" error.
              */
             try {
@@ -1372,13 +1372,13 @@ public class AMSetupServlet extends HttpServlet {
     }
 
     /**
-      * Obtains misc config data from a remote OpenSSO Enterprise server :
+      * Obtains misc config data from a remote OpenSSO server :
       *     opends port
       *     config basedn
       *     flag to indicate replication is already on or not
       *     opends replication port or opends sugested port
       *
-      * @param server URL string representing the remote OpenSSO Enterprise
+      * @param server URL string representing the remote OpenSSO
       *        server
       * @param userid - admin userid on remote server (only amdmin)
       * @param password - admin password
@@ -1620,7 +1620,7 @@ public class AMSetupServlet extends HttpServlet {
         String basedir, 
         String deployuri 
     ) throws IOException {
-        // Get OpenSSO Enterprise web application base location.
+        // Get OpenSSO web application base location.
         URL url = servletCtx.getResource("/WEB-INF/lib/opensso.jar");
         String webAppLocation = (url.toString()).substring(5);
         int index = webAppLocation.indexOf("WEB-INF");
@@ -2117,7 +2117,7 @@ public class AMSetupServlet extends HttpServlet {
          * written to <configdir>/<uri>/auth/ace/data earlier.
          *
          * if file isn't copied, it's probably because this is
-         * an OpenSSO deployment, rather than OpenSSO Enterprise, so it would
+         * an OpenSSO deployment, rather than OpenSSO, so it would
          * just be informational, but at the debug error level.
          * additionally, before some point, the debug stuff can't
          * be invoked.

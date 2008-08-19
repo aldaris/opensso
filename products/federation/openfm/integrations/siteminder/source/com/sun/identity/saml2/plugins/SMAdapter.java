@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMAdapter.java,v 1.3 2008-07-23 17:44:54 veiming Exp $
+ * $Id: SMAdapter.java,v 1.4 2008-08-19 19:11:41 veiming Exp $
  *
  */
 
@@ -236,7 +236,7 @@ public class SMAdapter extends SAML2ServiceProviderAdapter {
     }
  
     /**
-     * Invokes before OpenSSO Enterprise sends the 
+     * Invokes before OpenSSO sends the 
      * Single-Sign-On request to IDP. 
      * @param hostedEntityID entity ID for the hosted SP
      * @param idpEntityID entity id for the IDP to which the request will 
@@ -260,7 +260,7 @@ public class SMAdapter extends SAML2ServiceProviderAdapter {
 
 
     /**
-     * Invokes when the OpenSSO Enterprise received the Single-Sign-On response
+     * Invokes when the OpenSSO received the Single-Sign-On response
      * from the IDP, this is called before any processing started on SP side.
      * @param hostedEntityID entity ID for the hosted SP
      * @param realm Realm of the hosted SP.
@@ -331,7 +331,7 @@ public class SMAdapter extends SAML2ServiceProviderAdapter {
             }
 */
             if(famSession == null) {
-               throw new SAML2Exception("No OpenSSO Enterprise Session found"); 
+               throw new SAML2Exception("No OpenSSO Session found"); 
             }
 
             UserCredentials uc = new UserCredentials(

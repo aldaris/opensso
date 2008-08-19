@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionRequestHandler.java,v 1.5 2008-07-30 23:23:21 manish_rustagi Exp $
+ * $Id: SessionRequestHandler.java,v 1.6 2008-08-19 19:08:40 veiming Exp $
  *
  */
 
@@ -249,7 +249,7 @@ public class SessionRequestHandler implements RequestHandler {
                         // use LB-dependent routing
 
                         // if session is not found at this instance
-                        // we check that both OpenSSO Enterprise session and
+                        // we check that both OpenSSO session and
                         // HTTP session cookies were enclosed in the request
                         // If they were then LB must have routed to the proper
                         // server

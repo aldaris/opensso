@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionConfigListener.java,v 1.6 2008-07-23 17:21:56 veiming Exp $
+ * $Id: SessionConfigListener.java,v 1.7 2008-08-19 19:08:39 veiming Exp $
  *
  */
 
@@ -41,7 +41,7 @@ import java.util.Set;
  * This class implements the interface <code>ServiceListener</code> in order
  * to receive session service data change notifications. The method
  * schemaChanged() is invoked when a session service schema data under
- * followings has been changed. Console/Service Configuration/OpenSSO Enterprise
+ * followings has been changed. Console/Service Configuration/OpenSSO
  * Configuration/Session - Upper limit for session search result set size -
  * Search timeout
  * @see com.sun.identity.sm.ServiceSchemaManager

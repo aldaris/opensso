@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTune.java,v 1.5 2008-08-12 05:10:55 kanduls Exp $
+ * $Id: AMTune.java,v 1.6 2008-08-19 19:09:26 veiming Exp $
  */
 
 package com.sun.identity.tune;
@@ -52,7 +52,7 @@ import java.util.logging.Level;
 
 /**
  *
- * This is a main class which invokes DS, OpenSSO Enterprise and Web container 
+ * This is a main class which invokes DS, OpenSSO and Web container 
  * tuners based on the options set in the amtune-env.properties.
  */
 public class AMTune {

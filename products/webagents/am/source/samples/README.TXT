@@ -1,7 +1,7 @@
 README.TXT
 
 --------------------------------------------------------------------
-Sun OpenSSO Enterprise Policy Agent 3.0
+OpenSSO Policy Agent 3.0
 --------------------------------------------------------------------
 
 DISCLAIMER

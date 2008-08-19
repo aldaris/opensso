@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: ReadmeHTML.xsl,v 1.4 2008-07-23 17:14:31 veiming Exp $
+   $Id: ReadmeHTML.xsl,v 1.5 2008-08-19 19:08:26 veiming Exp $
                                                                                 
 -->
 
@@ -44,7 +44,7 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-    <title>Sun OpenSSO Enterprise - Samples</title>
+    <title>OpenSSO - Samples</title>
     <link rel="stylesheet" href="{@relativePath}/sample.css" />
 </head>
 
@@ -52,7 +52,7 @@
 <table cellspacing="8" cellpadding="4" border="0" width="100%" >
 <tr nowrap="yes">
 <td class="bannerContentLeft" width="20%" align="center"><a href="http://www.sun.com"><img border="0" src="{@relativePath}/sunLogo.gif" /></a></td>
-<td class="bannerContentCenter" width="60%" valign="bottom" nowrap="yes">Sun OpenSSO Enterprise<br />Sample</td>
+<td class="bannerContentCenter" width="60%" valign="bottom" nowrap="yes">OpenSSO<br />Sample</td>
 <td class="bannerContentRight" width="20%" valign="bottom" nowrap="yes">&#160;</td>
 </tr>
 </table>

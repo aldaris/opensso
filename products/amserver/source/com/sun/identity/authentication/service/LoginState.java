@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.31 2008-08-13 15:57:37 pawand Exp $
+ * $Id: LoginState.java,v 1.32 2008-08-19 19:08:54 veiming Exp $
  *
  */
 
@@ -5562,7 +5562,7 @@ public class LoginState {
     /**
      * Returns <code>true</code> if the logged in user is 'Agent'.
      *
-     * @param amIdentityUser OpenSSO Enterprise Identity user.
+     * @param amIdentityUser OpenSSO Identity user.
      * @return <code>true</code> if the logged in user is 'Agent'.
      */
     public boolean isAgent(AMIdentity amIdentityUser) {

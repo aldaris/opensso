@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: readme.txt,v 1.16 2008-08-15 00:20:50 huacui Exp $
+   $Id: readme.txt,v 1.17 2008-08-19 19:14:50 veiming Exp $
 
 -->
 
@@ -35,7 +35,7 @@ with the Weblogic 10 Application Server and the J2EE Agent. Please note that
 the agent needs to be installed first before deploying this sample application.
 
     * Overview
-    * Configure the Sun OpenSSO server
+    * Configure the OpenSSO server
     * Configure the agent properties
     * Deploying the Sample Application
     * Running the Sample Application
@@ -60,7 +60,7 @@ The application is already built and ready to be deployed. It is available at
 sampleapp/dist/agentsample.ear.
 
 Note, the instructions here assume that you have installed the agent 
-successfully and have followed the steps outlined in the Sun OpenSSO 
+successfully and have followed the steps outlined in the OpenSSO 
 Policy Agent 3.0 Guide for BEA WebLogic Server/Portal 10.0, including the 
 post-installation steps.
 
@@ -208,7 +208,7 @@ Deploying the Sample Application
 --------------------------------
 Note, before deploying the sample application, please be sure that you have
 deployed the Agent Application, which should have been done after installing 
-the agent. This is explained in the Sun OpenSSO Policy Agent 3.0 Guide for 
+the agent. This is explained in the OpenSSO Policy Agent 3.0 Guide for 
 BEA WebLogic Server/Portal 10.0 in the chapter which 
 outlined the post-installation tasks.
 
@@ -236,7 +236,7 @@ If you encounter problems when running the application, review the log files to
 learn what exactly went wrong. J2EE Agent logs can be found at 
 <agent_install_root>/Agent_<instance_number>/logs/debug directory.
 
-Also, see the Sun OpenSSO Policy Agent 3.0 Guide for BEA WebLogic 
+Also, see the OpenSSO Policy Agent 3.0 Guide for BEA WebLogic 
 Server/Portal 10.0.
 
 

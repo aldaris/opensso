@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupClientWARSamples.java,v 1.8 2008-07-23 17:45:00 veiming Exp $
+ * $Id: SetupClientWARSamples.java,v 1.9 2008-08-19 19:12:25 veiming Exp $
  *
  */
 
@@ -48,7 +48,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
 /**
- * This setup the OpenSSO Enterprise client WAR samples.
+ * This setup the OpenSSO client WAR samples.
  */
 public class SetupClientWARSamples {
 

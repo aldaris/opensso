@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMUpgrade.java,v 1.7 2008-07-23 17:58:18 veiming Exp $
+ * $Id: FAMUpgrade.java,v 1.8 2008-08-19 19:15:00 veiming Exp $
  *
  */
 package com.sun.identity.upgrade;
@@ -91,7 +91,7 @@ public class FAMUpgrade {
      */
     public static void main(String args[]) {
         try {
-            System.out.println("Welcome to OpenSSO Enterprise 8.0 upgrade");
+            System.out.println("Welcome to OpenSSO 8.0 upgrade");
             FAMUpgrade famUpgrade = new FAMUpgrade();
             famUpgrade.bootStrapNow();
             famUpgrade.initVariables();
@@ -219,11 +219,11 @@ public class FAMUpgrade {
     }
 
     /**
-     * Gets the default OpenSSO Enterprise configuration directory.
+     * Gets the default OpenSSO configuration directory.
      */
     void getConfigDir() {
         do {
-            System.out.print("Enter the OpenSSO Enterprise config directory : ");
+            System.out.print("Enter the OpenSSO config directory : ");
             String temp = readInput();
             if (temp != null && temp.length() > 0) {
                 configDir = temp;
@@ -268,7 +268,7 @@ public class FAMUpgrade {
                 .append(File.separator).append("lib")
                 .append(File.separator).append("amserver.jar").toString();
         do {
-            System.out.print("Enter the OpenSSO Enterprise staging directory : ");
+            System.out.print("Enter the OpenSSO staging directory : ");
             String temp = readInput();
             if (temp != null && temp.length() > 0) {
                 stagingDir = temp;
@@ -337,7 +337,7 @@ public class FAMUpgrade {
         String classMethod = "FAMUpgrade:getAMAdminInfo :";
         amAdminUser = SystemProperties.get(AMADMIN_USER_PROPERTY);
         do {
-            System.out.print("Enter OpenSSO Enterprise Admin User DN [");
+            System.out.print("Enter OpenSSO Admin User DN [");
             System.out.print(amAdminUser);
             System.out.print("] :");
             String temp = readInput();
@@ -346,7 +346,7 @@ public class FAMUpgrade {
             }
             try {
                 char[] amAdminPassChar =getPassword(System.in,
-                        "Enter OpenSSO Enterprise Admin User Password : ");
+                        "Enter OpenSSO Admin User Password : ");
                 amAdminPass = String.valueOf(amAdminPassChar);
             } catch (IOException ioe) {
                 debug.error(classMethod + "Error : ", ioe);

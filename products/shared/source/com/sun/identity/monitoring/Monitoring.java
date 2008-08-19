@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Monitoring.java,v 1.3 2008-07-23 17:58:16 veiming Exp $
+ * $Id: Monitoring.java,v 1.4 2008-08-19 19:14:55 veiming Exp $
  *
  */
 
@@ -185,7 +185,7 @@ public class Monitoring {
         //  context properties
 
         /*
-         *  The PRODUCT_PREFIX_CTX_KEY should be OpenSSO Enterprise
+         *  The PRODUCT_PREFIX_CTX_KEY should be OpenSSO
          *  instance-specific.  the amServerID passed from
          *  WebtopNaming should suffice.
          */  

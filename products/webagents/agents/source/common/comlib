@@ -66,7 +66,7 @@ init_common_pkg_variables() {
     AGENT_DEPLOY_URI=/amagent
     AGENT_CERT_PREFIX=
 
-    #Sun OpenSSO Enterprise Server info
+    #OpenSSO Server info
     PRIMARY_SERVER_PROTOCOL=http
     PRIMARY_SERVER_HOST=$localhost
     PRIMARY_SERVER_PORT=$def_id_server_port

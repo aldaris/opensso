@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionService.java,v 1.25 2008-08-19 06:48:50 manish_rustagi Exp $
+ * $Id: SessionService.java,v 1.26 2008-08-19 19:08:40 veiming Exp $
  *
  */
 
@@ -2001,7 +2001,7 @@ public class SessionService {
                 amSessionService, getAdminToken());
             ServiceConfig serviceConfig = scm.getGlobalConfig(null);
             
-            /* in OpenSSO Enterprise 8.0, we have switched to create sub
+            /* in OpenSSO 8.0, we have switched to create sub
              * configuration with
              * site name. hence we need to lookup the site name based on the URL
              */
@@ -2497,7 +2497,7 @@ public class SessionService {
     /**
      * Removes InternalSession from the session table so that another server
      * instance can be an owner This is used to help work around persistent
-     * association of OpenSSO Enterprise session id and Http session id which
+     * association of OpenSSO session id and Http session id which
      * some loadbalancers (like Weblogic) use to make routing decisions. This
      * helps to deal with the case a session is migrated while the current owner
      * is still alive to avoid having redundant copies of the session. This is

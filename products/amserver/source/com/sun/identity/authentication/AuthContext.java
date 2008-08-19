@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContext.java,v 1.15 2008-07-23 17:21:59 veiming Exp $
+ * $Id: AuthContext.java,v 1.16 2008-08-19 19:08:47 veiming Exp $
  *
  */
 
@@ -185,11 +185,11 @@ public class AuthContext extends Object implements java.io.Serializable {
     
     /**
      * Constructs an instance of <code>AuthContext</code> for a given
-     * organization name, or sub organization name and the OpenSSO Enterprise
+     * organization name, or sub organization name and the OpenSSO
      * URL.
      * This organization or sub-organization name must be either "/" separated
      * ( where it starts with "/" ) , DN , Domain name or DNS Alias Name.
-     * And the <code>url</code> should specify the OpenSSO Enterprise protocol,
+     * And the <code>url</code> should specify the OpenSSO protocol,
      * host name, port to talk to.
      * for example : <code>http://daye.red.iplanet.com:58080</code>
      *
@@ -201,7 +201,7 @@ public class AuthContext extends Object implements java.io.Serializable {
      * authentication status.
      *
      * @param orgName name of the user's organization
-     * @param url URL of the OpenSSO Enterprise to talk to
+     * @param url URL of the OpenSSO to talk to
      * @throws AuthLoginException if <code>AuthContext</code> creation fails.
      *         This exception is kept for backward compatibility only.
      *
@@ -249,10 +249,10 @@ public class AuthContext extends Object implements java.io.Serializable {
      * Constructs an instance of <code>AuthContext</code> for a given
      * organization name, or sub organization name, a nick name
      * for the certificate to be used in SSL handshake if client authentication
-     * is turn on in the server side and the OpenSSO Enterprise URL.
+     * is turn on in the server side and the OpenSSO URL.
      * This organization or sub-organization name must be either "/" separated
      * ( where it starts with "/" ) ,  DN , Domain name or a DNS Alias Name.
-     * And the <code>url</code> should specify the OpenSSO Enterprise protocol,
+     * And the <code>url</code> should specify the OpenSSO protocol,
      * host name, port to talk to.
      * for example : <code>http://daye.red.iplanet.com:58080</code>
      * This constructor would be mainly used for the Certificate based
@@ -269,7 +269,7 @@ public class AuthContext extends Object implements java.io.Serializable {
      *
      * @param orgName name of the user's organization
      * @param nickName nick name for the certificate to be used
-     * @param url URL of the OpenSSO Enterprise to talk to
+     * @param url URL of the OpenSSO to talk to
      * @throws AuthLoginException if <code>AuthContext</code> creation fails.
      *         This exception is kept for backward compatibility only.
      *

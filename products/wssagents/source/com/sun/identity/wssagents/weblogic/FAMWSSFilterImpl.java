@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMWSSFilterImpl.java,v 1.3 2008-07-23 17:58:20 veiming Exp $
+ * $Id: FAMWSSFilterImpl.java,v 1.4 2008-08-19 19:15:12 veiming Exp $
  *
  */
 
@@ -96,7 +96,7 @@ public class FAMWSSFilterImpl implements Filter {
                 SOAPMessage reqMessage = msgFactory.createMessage(mimeHeader,
                     new ByteArrayInputStream(reqContent.getBytes()));
                 
-                // Construct OpenSSO Enterprise's SOAPRquestHandler to
+                // Construct OpenSSO's SOAPRquestHandler to
                 // secure the SOAP message
                 SOAPRequestHandler handler = new SOAPRequestHandler();
                 HashMap params = new HashMap();

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerInstanceAction.java,v 1.5 2008-07-23 17:30:44 veiming Exp $
+ * $Id: ServerInstanceAction.java,v 1.6 2008-08-19 19:09:22 veiming Exp $
  *
  */
 
@@ -54,7 +54,7 @@ import com.iplanet.services.ldap.ServerInstance;
  * permissions check is enabled, then the operation will fail and return a null
  * everytime.
  * 
- * Note: Java security permissions check for OpenSSO Enterprise can be enabled
+ * Note: Java security permissions check for OpenSSO can be enabled
  * by setting the property <code>com.sun.identity.security.checkcaller</code> to
  * true in AMConfig properties file.
  * 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAP.java,v 1.10 2008-07-23 17:22:00 veiming Exp $
+ * $Id: LDAP.java,v 1.11 2008-08-19 19:08:52 veiming Exp $
  *
  */
 
@@ -457,7 +457,7 @@ public class LDAP extends AMLoginModule {
                             if (debug.messageEnabled()) {
                                 debug.message("Password does not satisfy " +
                                               "password policy rules specified"
-                                              + " in OpenSSO Enterprise");
+                                              + " in OpenSSO");
                             }
                             isReset = true;
                             String invalidMsg = bundle.getString(

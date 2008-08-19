@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOTokenManager.java,v 1.5 2008-07-23 17:21:58 veiming Exp $
+ * $Id: SSOTokenManager.java,v 1.6 2008-08-19 19:08:46 veiming Exp $
  *
  */
 
@@ -48,7 +48,7 @@ import java.util.Set;
  * SSOTokenManager is a singleton class; there can be, at most, only one
  * instance of SSOTokenManager in any given JVM. <p> SSOTokenManager currently
  * supports only two kinds of provider, one for Grappa and another for Sun
- * OpenSSO Enterprise. In the future, this will be extended to support 
+ * OpenSSO. In the future, this will be extended to support 
  * <p> It is assumed that the provider classes or the JAR file is in the 
  * CLASSPATH so that they can be found automatically. Providers can be 
  * configured using <code>providerimplclass</code> property. 
@@ -274,7 +274,7 @@ public final class SSOTokenManager {
      *             authentication mechanism instead. More information on how to
      *             use the authentication programming interfaces as well as the
      *             code samples can be obtained from the "Authentication
-     *             Service" chapter of the OpenSSO Enterprise Developer's Guide.
+     *             Service" chapter of the OpenSSO Developer's Guide.
      */
     public SSOToken createSSOToken(Principal user, String password)
             throws UnsupportedOperationException, SSOException {

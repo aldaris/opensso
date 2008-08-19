@@ -22,13 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: package-info.java,v 1.4 2008-07-23 17:21:56 veiming Exp $
+ * $Id: package-info.java,v 1.5 2008-08-19 19:08:38 veiming Exp $
  *
  */
 
 /**
- * Provides utility classes for use by other OpenSSO Enterprise SDK and custom
- * applications accessing OpenSSO Enterprise SDK.
+ * Provides utility classes for use by other OpenSSO SDK and custom
+ * applications accessing OpenSSO SDK.
  * @supported.api
  */
 

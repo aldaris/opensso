@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthClientUtils.java,v 1.19 2008-08-18 23:11:59 dillidorai Exp $
+ * $Id: AuthClientUtils.java,v 1.20 2008-08-19 19:08:50 veiming Exp $
  *
  */
 
@@ -2179,7 +2179,7 @@ public class AuthClientUtils {
     } 
 
     /**
-     * Sets the redirectBackUrlCookie to be set as OpenSSO Enterprise 
+     * Sets the redirectBackUrlCookie to be set as OpenSSO 
      * server URL when redirecting to external web site during authentication
      * process.
      * @param cookieName auth context associated with lb cookie
@@ -2287,7 +2287,7 @@ public class AuthClientUtils {
     }
 
     /**
-     * Checks whether OpenSSO Enterprise session cookie has to be made
+     * Checks whether OpenSSO session cookie has to be made
      * persistent.
      * Only if value of <code>true</code> is providued for HTTP query
      * parameter <code>Constants.PERSIST_AM_COOKIE</code>, AM session

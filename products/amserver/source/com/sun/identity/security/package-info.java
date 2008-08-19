@@ -22,13 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: package-info.java,v 1.4 2008-07-23 17:30:44 veiming Exp $
+ * $Id: package-info.java,v 1.5 2008-08-19 19:09:22 veiming Exp $
  *
  */
 
 /**
  * Provides the classes to be used for performing privileged operations (like
- * getting the OpenSSO Enterprise administrator's DN and password).
+ * getting the OpenSSO administrator's DN and password).
  * @supported.api
  */
 

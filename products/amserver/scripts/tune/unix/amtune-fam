@@ -23,7 +23,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amtune-fam,v 1.4 2008-07-23 17:21:54 veiming Exp $
+# $Id: amtune-fam,v 1.5 2008-08-19 19:08:32 veiming Exp $
 #
 #
 
@@ -186,7 +186,7 @@ if [ -f $SCRIPT_LOCATION/amtune-env ]; then
     fi
 fi
 
-ECHO_MSG "`$gettext 'OpenSSO Enterprise Tuning Script'`"
+ECHO_MSG "`$gettext 'OpenSSO Tuning Script'`"
 
 $ECHO $FAMADM_PASSWORD > $FAMADM_PASSFILE
 

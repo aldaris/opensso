@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebtopNaming.java,v 1.23 2008-08-14 19:34:10 alanchu Exp $
+ * $Id: WebtopNaming.java,v 1.24 2008-08-19 19:08:45 veiming Exp $
  *
  */
 
@@ -314,7 +314,7 @@ public class WebtopNaming {
     ) throws URLNotFoundException {
         try {
             // check before the first naming table update to avoid deadlock
-            // uri can be empty string for pre-OpenSSO Enterprise 8.0 releases
+            // uri can be empty string for pre-OpenSSO 8.0 releases
             if ((protocol == null) || (host == null) || (port == null) ||
                 (uri == null) || (protocol.length() == 0) ||
                 (host.length() == 0) || (port.length() == 0)

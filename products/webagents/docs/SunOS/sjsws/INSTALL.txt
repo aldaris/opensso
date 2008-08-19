@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: INSTALL.txt,v 1.5 2008-08-04 19:22:13 huacui Exp $
+# $Id: INSTALL.txt,v 1.6 2008-08-19 19:15:07 veiming Exp $
 #
 #
 #
@@ -220,7 +220,7 @@ Agent Debug directory location:
 Install log file location:
 /opt/web_agents/sjsws_agent/logs/audit/install.log
 
-Thank you for using OpenSSO Enterprise Policy Agent
+Thank you for using OpenSSO Policy Agent
 
 
 %% 2. Agent Uninstallation
@@ -243,7 +243,7 @@ Here is the sample:
 
 
 ************************************************************************
-Welcome to the OpenSSO Enterprise Policy Agent for SJS Web Server If the Policy
+Welcome to the OpenSSO Policy Agent for SJS Web Server If the Policy
 Agent is used with Federation Manager services, User needs to enter
 information relevant to Federation Manager.
 
@@ -279,4 +279,4 @@ Removing Agent parameters from /var/opt/sun/SUNWwbsvr7/https-agent_hostname/conf
 Uninstall log file location:
 /opt/web_agents/sjsws_agent/logs/audit/uninstall.log
 
-Thank you for using OpenSSO Enterprise Policy Agent
+Thank you for using OpenSSO Policy Agent

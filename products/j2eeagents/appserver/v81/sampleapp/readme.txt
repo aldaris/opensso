@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: readme.txt,v 1.15 2008-08-15 00:22:18 huacui Exp $
+   $Id: readme.txt,v 1.16 2008-08-19 19:13:40 veiming Exp $
 
 -->
 
@@ -35,7 +35,7 @@ with the Sun Application Server and the J2EE Agent. Please note that the agent
 needs to be installed first before deploying this sample application.
 
     * Overview
-    * Configure the Sun OpenSSO server
+    * Configure the OpenSSO server
     * Configure the agent properties
     * Compiling and Assembling the Application
     * Deploying the Sample Application
@@ -59,7 +59,7 @@ The application is already built and ready to be deployed. It is available at
 sampleapp/dist/agentsample.ear.
 
 Note, the instructions here assume that you have installed the agent
-successfully and have followed the steps outlined in the Sun OpenSSO 
+successfully and have followed the steps outlined in the OpenSSO 
 Policy Agent 3.0 Guide for Sun Java System Application Server 9, including 
 the post-installation steps.
 

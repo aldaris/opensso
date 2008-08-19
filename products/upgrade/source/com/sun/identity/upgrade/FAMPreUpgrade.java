@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMPreUpgrade.java,v 1.3 2008-07-23 17:58:18 veiming Exp $
+ * $Id: FAMPreUpgrade.java,v 1.4 2008-08-19 19:15:00 veiming Exp $
  *
  */
 package com.sun.identity.upgrade;
@@ -91,7 +91,7 @@ public class FAMPreUpgrade {
     Properties amConfigProperties = null;
 
     /**
-     * Start of OpenSSO Enterprise 8.0 preupgrade 
+     * Start of OpenSSO 8.0 preupgrade 
      */
     public static void main(String args[]) {
         try {
@@ -100,15 +100,15 @@ public class FAMPreUpgrade {
             famPreUpgrade.getBaseDir();
             String logLoc = basedir + File.separator + LOG_FILE;
             writer = new BufferedWriter(new FileWriter(logLoc));
-            log("OpenSSO Enterprise 8.0 Pre-Upgrade");
+            log("OpenSSO 8.0 Pre-Upgrade");
             log("Upgrade Base Directory: " + basedir);
             famPreUpgrade.initVariables();
             famPreUpgrade.copyConfigFiles();
             famPreUpgrade.backupLogs();
             famPreUpgrade.backupDebugs();
-            log("OpenSSO Enterprise Pre-Upgrade Log File: " + logLoc, true);
-            log("The system is ready for OpenSSO Enterprise 8.0", true);
-            log("Please follow the OpenSSO Enterprise 8.0 Upgrade " +
+            log("OpenSSO Pre-Upgrade Log File: " + logLoc, true);
+            log("The system is ready for OpenSSO 8.0", true);
+            log("Please follow the OpenSSO 8.0 Upgrade " +
                     "Guide to continue upgrade", true);
             writer.close();
         } catch (Exception e) {
@@ -149,7 +149,7 @@ public class FAMPreUpgrade {
      */
     public void initVariables() {
         inbr = new BufferedReader(new InputStreamReader(System.in));
-        // get pre OpenSSO Enterprise install dir
+        // get pre OpenSSO install dir
         isAM = isAMInstance();
         if (isAM) {
             getInstallDir();
@@ -243,7 +243,7 @@ public class FAMPreUpgrade {
     }
 
     /**
-     * Copies existing pre OpenSSO Enterprise version of AMConfig.properties and 
+     * Copies existing pre OpenSSO version of AMConfig.properties and 
      * serverconfig.xml to the upgrade config directory.
      */
     void copyConfigFiles() {
@@ -280,17 +280,17 @@ public class FAMPreUpgrade {
     }
 
     /**
-     * Gets the default OpenSSO Enterprise configuration directory.
+     * Gets the default OpenSSO configuration directory.
      */
     void getConfigDir() {
         configDir = System.getProperty("configDir");
     }
 
     /**
-     * Gets the location of the OpenSSO Enterprise install directory.
+     * Gets the location of the OpenSSO install directory.
      */
     void getInstallDir() {
-        System.out.print("Enter the OpenSSO Enterprise Install Directory: ");
+        System.out.print("Enter the OpenSSO Install Directory: ");
         String temp = readInput();
         if (temp != null && temp.length() > 0) {
             installDir = temp;
@@ -338,7 +338,7 @@ public class FAMPreUpgrade {
     }
 
     /**
-     * Gets the location of the OpenSSO Enterprise Staging directory.
+     * Gets the location of the OpenSSO Staging directory.
      */
     void getStagingDir() {
         String classMethod = "FAMPreUpgrade:getStagingDir: ";
@@ -493,7 +493,7 @@ public class FAMPreUpgrade {
     private void getAMAdminInfo() {
         String classMethod = "FAMUpgrade:getAMAdminInfo :";
         amAdminUser = (String) amConfigProperties.get(AMADMIN_USER_PROPERTY);
-        System.out.print("Enter OpenSSO Enterprise Admin User DN [");
+        System.out.print("Enter OpenSSO Admin User DN [");
         System.out.print(amAdminUser);
         System.out.print("] :");
         String temp = readInput();
@@ -502,7 +502,7 @@ public class FAMPreUpgrade {
         }
         try {
             char[] amAdminPassChar =
-                    getPassword(System.in, "Enter OpenSSO Enterprise Admin User Password : ");
+                    getPassword(System.in, "Enter OpenSSO Admin User Password : ");
             amAdminPass = String.valueOf(amAdminPassChar);
         } catch (IOException ioe) {
             log(classMethod + "Error : " + ioe.getMessage());

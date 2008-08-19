@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.h,v 1.3 2008-07-23 17:40:39 veiming Exp $
+ * $Id: am_web.h,v 1.4 2008-08-19 19:11:38 veiming Exp $
  */
 
 #ifndef AM_WEB_H
@@ -224,7 +224,7 @@ AM_BEGIN_EXTERN_C
 #define AM_WEB_COOKIE_ERROR            -1
 
 /*
- * Auth-Type identifier for OpenSSO Enterprise authentication.
+ * Auth-Type identifier for OpenSSO authentication.
  */
 #define	AM_WEB_AUTH_TYPE_VALUE		"DSAME"
 
@@ -450,7 +450,7 @@ AM_WEB_EXPORT am_status_t am_web_cleanup();
  * action.
  *
  * Parameters:
- *   sso_token	The sso_token from the OpenSSO Enterprise cookie.  This
+ *   sso_token	The sso_token from the OpenSSO cookie.  This
  *		parameter may be NULL if there is no cookie present.
  *
  *   url	The URL whose accessibility is being determined.
@@ -505,7 +505,7 @@ am_web_is_access_allowed(const char *sso_token, const char *url,
 			 am_policy_result_t *result);
 
 /*
- * Determines whether the request contains is an OpenSSO Enterprise
+ * Determines whether the request contains is an OpenSSO
  * notification message intended for the policy SDK.
  */
 AM_WEB_EXPORT boolean_t am_web_is_notification(const char *request_url);
@@ -544,7 +544,7 @@ AM_WEB_EXPORT void am_web_handle_notification(const char *data,
  * the access denied URL.  If the redirection is to the login URL then the
  * URL will include any exsisting information specified in the URL from the
  * configuration file, like org value etc., followed by the specified goto
- * parameter value, which will be used by OpenSSO Enterprise after the user has
+ * parameter value, which will be used by OpenSSO after the user has
  * successfully authenticated.
  *
  * The function am_web_get_redirect_url(), has been deprecated and
@@ -689,7 +689,7 @@ am_web_do_cookie_domain_set(am_status_t (*setFunc)(const char *, void **),
 
 /*
  * This function is used to get the cookie sent in the SAML assertion
- * from the OpenSSO Enterprise
+ * from the OpenSSO
  */
 
 AM_WEB_EXPORT am_status_t
@@ -730,13 +730,13 @@ AM_WEB_EXPORT am_status_t am_web_check_cookie_in_query(
 AM_WEB_EXPORT void am_web_free_memory(void *memory);
 
 /*
- * Method to retrieve the name of the OpenSSO Enterprise cookie.
+ * Method to retrieve the name of the OpenSSO cookie.
  */
 
 AM_WEB_EXPORT const char *am_web_get_cookie_name();
 
 /*
- * Method to retrieve the name of the OpenSSO Enterprise notification Url.
+ * Method to retrieve the name of the OpenSSO notification Url.
  */
 AM_WEB_EXPORT const char *am_web_get_notification_url();
 

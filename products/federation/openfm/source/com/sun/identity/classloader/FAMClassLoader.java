@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMClassLoader.java,v 1.12 2008-08-08 21:29:39 mrudul_uchil Exp $
+ * $Id: FAMClassLoader.java,v 1.13 2008-08-19 19:12:20 veiming Exp $
  *
  */
 
@@ -37,14 +37,14 @@ import java.util.Arrays;
 import com.sun.identity.common.SystemConfigurationUtil;
 
 /**
- * OpenSSO Enterprise class loader to overcome the class loading
- * issues of jars that are not compatible for OpenSSO Enterprise.
+ * OpenSSO class loader to overcome the class loading
+ * issues of jars that are not compatible for OpenSSO.
  */
 public class FAMClassLoader {
     
     public static ClassLoader cl;
     
-    // Jar files path at OpenSSO Enterprise client, for OpenSSO Enterprise
+    // Jar files path at OpenSSO client, for OpenSSO
     // classloader to load those jar files. 
     public static final String FAM_CLASSLOADER_DIR_PATH = 
         "com.sun.identity.classloader.client.jarsPath";

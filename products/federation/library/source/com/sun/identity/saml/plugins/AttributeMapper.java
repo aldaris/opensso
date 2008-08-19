@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeMapper.java,v 1.3 2008-07-23 17:36:35 veiming Exp $
+ * $Id: AttributeMapper.java,v 1.4 2008-08-19 19:11:13 veiming Exp $
  *
  */
 
@@ -38,7 +38,7 @@ import java.util.List;
 /**
  * The class <code>AttributeMapper</code> is an interface that is 
  * implemented to get SSO information and map partner attributes to
- * OpenSSO Enterprise attributes.
+ * OpenSSO attributes.
  * <p>
  * A different implementation of the interface may be developed for different
  * partner. The mapping between the partner source ID and the implementation
@@ -50,7 +50,7 @@ import java.util.List;
 public interface AttributeMapper {
 
     /**
-     * Returns the single sign on token id to OpenSSO Enterprise from the query.
+     * Returns the single sign on token id to OpenSSO from the query.
      * @param query The received <code>AttributeQuery</code>.
      * @return String which is the single sign on token ID.
      */

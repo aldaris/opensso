@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InternalSession.java,v 1.16 2008-07-23 17:21:56 veiming Exp $
+ * $Id: InternalSession.java,v 1.17 2008-08-19 19:08:39 veiming Exp $
  *
  */
 
@@ -1344,7 +1344,7 @@ public class InternalSession implements TaskRunnable, Serializable {
      * protocol://server:port/path?queryString&&lt;cookieName>=&lt;cookieValue>
      * </pre>
      * <p>
-     * This is the default and OpenSSO Enterprise always encodes in this format
+     * This is the default and OpenSSO always encodes in this format
      * unless otherwise specified. If the URL passed in has query parameter then
      * entity escaping of ampersand will be done before appending the cookie if
      * the escape is true. Only the ampersand before appending cookie parameter
@@ -1403,7 +1403,7 @@ public class InternalSession implements TaskRunnable, Serializable {
      * protocol://server:port/path?queryString&&lt;cookieName>=&lt;cookieValue>
      * </pre>
      * <p>
-     * This is the default and OpenSSO Enterprise always encodes in this format 
+     * This is the default and OpenSSO always encodes in this format 
      * unless otherwise specified. If the URL passed in has query parameter then
      * entity escaping of ampersand will be done before appending the cookie
      * if the escape is true.  Only the ampersand before appending 

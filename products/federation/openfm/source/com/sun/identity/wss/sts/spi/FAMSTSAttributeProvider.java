@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSAttributeProvider.java,v 1.16 2008-08-05 04:11:01 mallas Exp $
+ * $Id: FAMSTSAttributeProvider.java,v 1.17 2008-08-19 19:12:28 veiming Exp $
  *
  */
 
@@ -83,7 +83,7 @@ import com.sun.identity.wss.logging.LogUtil;
  * <code>OnBehalfOf</code> element in the WS-Trust request and generates
  * SAML Attributes from the user profile. This is the case usually if the STS
  * and web services client is deployed locally on the same or trusted Federal
- * OpenSSO Enterprise instances. If not, it tries to retrieve the web services 
+ * OpenSSO instances. If not, it tries to retrieve the web services 
  * client profile attributes if it exists.
  */ 
 public class FAMSTSAttributeProvider implements STSAttributeProvider {
@@ -366,7 +366,7 @@ public class FAMSTSAttributeProvider implements STSAttributeProvider {
     }
     
     /**
-     * Returns end user's principal if OpenSSO Enterprise Token is present or
+     * Returns end user's principal if OpenSSO Token is present or
      * any other custom token, otherwise returns null.
      */
     private String getSubjectNameFromCustomToken(Subject subject) {

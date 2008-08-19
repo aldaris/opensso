@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMClientCapData.java,v 1.5 2008-07-23 17:21:57 veiming Exp $
+ * $Id: AMClientCapData.java,v 1.6 2008-08-19 19:08:43 veiming Exp $
  *
  */
 
@@ -218,7 +218,7 @@ public class AMClientCapData implements IDSEventListener {
     private static Map schemaMap = null;
 
     //
-    // Needed since OpenSSO Enterprise retrieves all LDAP attrs in lowercase &
+    // Needed since OpenSSO retrieves all LDAP attrs in lowercase &
     // also since we prefix client attrs with "sunamclient"
     //
     private static Map schemaToLDAP = new HashMap();
@@ -922,7 +922,7 @@ public class AMClientCapData implements IDSEventListener {
      * internal/external instance (since they share the same schema).
      * 
      * @param propName Name of the property
-     * @return com.sun.identity.sm.AttributeSchema Look at OpenSSO Enterprise
+     * @return com.sun.identity.sm.AttributeSchema Look at OpenSSO
      *         API
      * 
      * @see com.sun.identity.sm.AttributeSchema

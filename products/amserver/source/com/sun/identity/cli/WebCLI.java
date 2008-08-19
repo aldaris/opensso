@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebCLI.java,v 1.4 2008-07-23 17:24:55 veiming Exp $
+ * $Id: WebCLI.java,v 1.5 2008-08-19 19:08:57 veiming Exp $
  *
  */
 
@@ -41,7 +41,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * This servlet responses to OpenSSO Enterprise commandline request via HTTP or 
+ * This servlet responses to OpenSSO commandline request via HTTP or 
  * HTTPS request.
  */
 public class WebCLI extends HttpServlet {
@@ -130,6 +130,6 @@ public class WebCLI extends HttpServlet {
     /** Returns a short description of the servlet.
      */
     public String getServletInfo() {
-        return "OpenSSO Enterprise Web Base CLI";
+        return "OpenSSO Web Base CLI";
     }
 }

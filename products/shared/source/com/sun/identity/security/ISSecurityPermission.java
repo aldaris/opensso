@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISSecurityPermission.java,v 1.3 2008-07-23 17:58:16 veiming Exp $
+ * $Id: ISSecurityPermission.java,v 1.4 2008-08-19 19:14:56 veiming Exp $
  *
  */
 
@@ -38,9 +38,9 @@ import java.util.StringTokenizer;
 /**
  * This class <code>ISSecurityPermission</code> is used to protect the Access
  * Manager resources which should be accessed only by trusted application. The
- * resources this Permission is used to protect are: OpenSSO Enterprise
+ * resources this Permission is used to protect are: OpenSSO
  * administrator DN and password, and access to the encryption and decryption
- * methods used to encrypt all passwords in OpenSSO Enterprise services. The
+ * methods used to encrypt all passwords in OpenSSO services. The
  * supported permissions is <code>"access"</code> and supported actions are
  * <code>"adminpassword"</code> and <code>"crypt"</code>. So in the Java
  * security policy file which will define the security options to grant this

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneUtil.java,v 1.6 2008-08-12 05:27:01 kanduls Exp $
+ * $Id: AMTuneUtil.java,v 1.7 2008-08-19 19:09:31 veiming Exp $
  */
 
 package com.sun.identity.tune.util;
@@ -1013,7 +1013,7 @@ import java.util.zip.ZipOutputStream;
     }
     
     /**
-     * Return true if the DS version is supported for storing OpenSSO Enterprise
+     * Return true if the DS version is supported for storing OpenSSO
      * Service data.
      */
     public static boolean isSupportedSMDSVersion(String dsVersion) {

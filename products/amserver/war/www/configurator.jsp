@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configurator.jsp,v 1.26 2008-08-15 21:30:31 veiming Exp $
+   $Id: configurator.jsp,v 1.27 2008-08-19 19:09:39 veiming Exp $
 
 --%>
 
@@ -41,7 +41,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Sun OpenSSO Enterprise</title>
+    <title>OpenSSO</title>
     <link rel="stylesheet" type="text/css" href="com_sun_web_ui/css/css_ns6up.css" />
     <link rel="shortcut icon" href="com_sun_web_ui/images/favicon/favicon.ico" type="image/x-icon" />
 
@@ -138,7 +138,7 @@
         Welcome to the 
     </div>
     <div style="color: #f88017; font-size:24px">
-        Sun OpenSSO Enterprise<br>
+        OpenSSO<br>
         Configurator 
     </div>
 

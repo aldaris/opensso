@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMWSSWLAuthProvider.java,v 1.3 2008-07-23 17:58:21 veiming Exp $
+ * $Id: FAMWSSWLAuthProvider.java,v 1.4 2008-08-19 19:15:12 veiming Exp $
  *
  */
 
@@ -42,7 +42,7 @@ import weblogic.security.spi.SecurityServices;
 
 /**
  * This class serves as a customized authentication provider for WebLogic.
- * It is used by OpenSSO Enterprise webservices security plugins to set the
+ * It is used by OpenSSO webservices security plugins to set the
  * user principals to the weblogic server.
  */
 public class FAMWSSWLAuthProvider implements AuthenticationProviderV2 {

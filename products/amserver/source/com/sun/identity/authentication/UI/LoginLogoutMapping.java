@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginLogoutMapping.java,v 1.8 2008-07-23 17:21:59 veiming Exp $
+ * $Id: LoginLogoutMapping.java,v 1.9 2008-08-19 19:08:49 veiming Exp $
  *
  */
 
@@ -82,7 +82,7 @@ public class LoginLogoutMapping extends HttpServlet {
     }
 
     /**
-     * Initializes OpenSSO Enterprise.
+     * Initializes OpenSSO.
      **
      * @param servletCtx Servlet Context.
      */

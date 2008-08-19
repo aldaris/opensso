@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdConstants.java,v 1.8 2008-07-23 17:24:58 veiming Exp $
+ * $Id: IdConstants.java,v 1.9 2008-08-19 19:09:09 veiming Exp $
  *
  */
 
@@ -91,7 +91,7 @@ public interface IdConstants {
      */
     public static final String ANONYMOUS_USER = "anonymous";
 
-    // The properties below are OpenSSO Enterprise Agent service config
+    // The properties below are OpenSSO Agent service config
     // attributes to be
     // read by the SDK when it needs to determine which configs to call.
     public static final String AGENT_SERVICE = "AgentService";

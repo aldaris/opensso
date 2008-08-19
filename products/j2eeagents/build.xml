@@ -22,13 +22,13 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.21 2008-08-04 20:04:37 huacui Exp $
+   $Id: build.xml,v 1.22 2008-08-19 19:13:04 veiming Exp $
 
 -->
 
 <project name="open-source-j2ee-agents" default="usage">
                 
-    <description>OpenSSO Enterprise Policy Agents for J2EE Servers</description>
+    <description>OpenSSO Policy Agents for J2EE Servers</description>
 
     <import file="../products.xml" />
     <import file="j2eeagents.xml" />

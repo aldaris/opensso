@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
                                                                                 
 <!DOCTYPE Policies
-    PUBLIC "-//iPlanet//Sun OpenSSO Enterprise 2005Q4 Admin CLI DTD//EN"    "jar://com/sun/identity/policy/policyAdmin.dtd">
+    PUBLIC "-//iPlanet//OpenSSO 2005Q4 Admin CLI DTD//EN"    "jar://com/sun/identity/policy/policyAdmin.dtd">
                                                                                 
 <Policies>
 <!-- Delegation policy for all authenticated users to use DAI,admin console,IdRepo Service -->

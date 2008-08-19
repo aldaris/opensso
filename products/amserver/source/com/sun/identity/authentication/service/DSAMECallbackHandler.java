@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DSAMECallbackHandler.java,v 1.6 2008-07-23 17:24:53 veiming Exp $
+ * $Id: DSAMECallbackHandler.java,v 1.7 2008-08-19 19:08:54 veiming Exp $
  *
  */
 
@@ -39,7 +39,7 @@ import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.authentication.spi.PagePropertiesCallback;
 
 /**
- * This class is OpenSSO Enterprise implementation for Java 
+ * This class is OpenSSO implementation for Java 
  * <code>CallbackHandler</code> and it can be passed to underlying 
  * auth services so that it may interact with other components to retrieve 
  * specific authentication data, such as usernames and passwords, or to display 

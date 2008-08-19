@@ -23,7 +23,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amtune-directory-template,v 1.4 2008-07-23 17:21:54 veiming Exp $ 
+# $Id: amtune-directory-template,v 1.5 2008-08-19 19:08:31 veiming Exp $ 
 #
 #
 
@@ -416,7 +416,7 @@ tuneDSIndex() {
     $ECHO
     verify_index "$list_am_search_attributes"
     $ECHO
-    $ECHO `$gettext "2. Verify OpenSSO Enterprise indexes"`
+    $ECHO `$gettext "2. Verify OpenSSO indexes"`
     $ECHO
     verify_index "$list_am_default_index"
     $ECHO
@@ -850,7 +850,7 @@ if [ ! -f  "$DSADMIN_PASSFILE" ]; then
 fi
 
 ECHO_MSG $PARA_SEP
-ECHO_MSG "`$gettext 'OpenSSO Enterprise - Directory Server Tuning Script'`"
+ECHO_MSG "`$gettext 'OpenSSO - Directory Server Tuning Script'`"
 
 #determine physical memory limitations
 #determine application size (32-bits, 64-bits)

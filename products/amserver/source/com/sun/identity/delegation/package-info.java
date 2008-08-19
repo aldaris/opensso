@@ -22,14 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: package-info.java,v 1.3 2008-07-23 17:24:57 veiming Exp $
+ * $Id: package-info.java,v 1.4 2008-08-19 19:09:08 veiming Exp $
  *
  */
 
 
 /**
  * Provides classes for delegation service. Delegation service provides
- * plugins which provide the access control to OpenSSO Enterprise, making
+ * plugins which provide the access control to OpenSSO, making
  * sure that only users with expected  privileges perform a privileged
  * operation.
  */

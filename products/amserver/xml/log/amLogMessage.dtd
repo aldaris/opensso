@@ -22,14 +22,14 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amLogMessage.dtd,v 1.3 2008-07-23 17:36:31 veiming Exp $
+    $Id: amLogMessage.dtd,v 1.4 2008-08-19 19:10:56 veiming Exp $
 
 -->
 
 
 <!-- This DTD defines the document structure for log messages.
 
-Unique Declaration name for DOCTYPE tag: "Sun OpenSSO Enterprise Log
+Unique Declaration name for DOCTYPE tag: "OpenSSO Log
 Message DTD"
 -->
 
