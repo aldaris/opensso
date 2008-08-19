@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSNotificationManager.java,v 1.8 2008-08-12 21:55:45 arviranga Exp $
+ * $Id: SMSNotificationManager.java,v 1.9 2008-08-19 21:55:05 goodearth Exp $
  *
  */
 package com.sun.identity.sm;
@@ -407,10 +407,12 @@ public class SMSNotificationManager implements SMSObjectListener {
                         url, false);
                     String surl = weburl.toString();
                     // Check if local server
-                    if (surl.toLowerCase().startsWith(serverURL)) {
+                    if ((serverURL.length() > 0) &&
+                        (surl.toLowerCase().startsWith(serverURL))) {
                         if (debug.messageEnabled()) {
                             debug.message("ServerNotificationTask.run NOT " +
-                                "sending notification to local server:" + surl);
+                                "sending notification to local server:" + 
+                                    surl);
                         }
                         continue;
                     }
