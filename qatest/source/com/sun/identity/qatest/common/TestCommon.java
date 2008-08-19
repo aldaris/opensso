@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.53 2008-08-15 22:07:13 mrudulahg Exp $
+ * $Id: TestCommon.java,v 1.54 2008-08-19 21:34:12 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -852,8 +852,10 @@ public class TestCommon implements TestConstants {
      * Reads data from a ResourceBundle object and creates a Map containing all
      * the attribute keys and values. One can further specify to search for a
      * key containig a specific string (str)
-     * @param resourcebundle name
+     * @param rbName name
      * @param str string to match contained in the key
+     * @return Map containing key-value pairs
+     * @throws java.lang.Exception
      */
     protected Map getMapFromResourceBundle(String rbName, String str)
     throws Exception {
@@ -862,18 +864,31 @@ public class TestCommon implements TestConstants {
     
     /**
      * Returns a map of String to Set of String from a formatted string.
-     * The format is
-     * <pre>
-     * &lt;key1&gt;=&lt;value11&gt;,&lt;value12&gt;...,&lt;value13&gt;;
-     * &lt;key2&gt;=&lt;value21&gt;,&lt;value22&gt;...,&lt;value23&gt;; ...
-     * &lt;keyn&gt;=&lt;valuen1&gt;,&lt;valuen2&gt;...,&lt;valuen3&gt;
-     * </pre>
+     * @param str. The format of the string is key1=val1,val2,val3;..;key2=val1,
+     * val2,val3,;..
+     * @return Map containing key-value pairs
+     * @throws java.lang.Exception
      */
     protected Map<String, Set<String>> parseStringToMap(String str)
     throws Exception {
+        return (parseStringToMap(str, ";", ","));
+    }
+    
+    /**
+     * Returns a map of String to Set of String from a formatted string.
+     * @param str. The format of the string is key1=val1 sTok val2 sTok val3
+     * mTok and so on
+     * @param mTok. Seperator for single key-value pair
+     * @param sTok. Seperator for values withing values string
+     * @return Map containing key-value pairs
+     * @throws java.lang.Exception
+     */
+    protected Map<String, Set<String>> parseStringToMap(String str, String mTok,
+            String sTok)
+    throws Exception {
         entering("parseStringToMap", null);
         Map<String, Set<String>> map = new HashMap<String, Set<String>>();
-        StringTokenizer st = new StringTokenizer(str, ";");
+        StringTokenizer st = new StringTokenizer(str, mTok);
         while (st.hasMoreTokens()) {
             String token = st.nextToken();
             int idx = token.indexOf("=");
@@ -881,7 +896,7 @@ public class TestCommon implements TestConstants {
                 Set<String> set = new HashSet<String>();
                 map.put(token.substring(0, idx).trim(), set);
                 StringTokenizer st1 = new StringTokenizer(
-                        token.substring(idx+1), ",");
+                        token.substring(idx+1), sTok);
                 while (st1.hasMoreTokens()) {
                     set.add(st1.nextToken().trim());
                 }

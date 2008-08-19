@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSCommon.java,v 1.17 2008-06-26 20:10:39 rmisra Exp $
+ * $Id: SMSCommon.java,v 1.18 2008-08-19 21:34:12 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -547,6 +547,43 @@ public class SMSCommon extends TestCommon {
         }
         exiting("createDataStoreImpl");
     }
+
+    /**
+     * This method updates a datastore with datastore attribute list
+     * @param udsRealm is the realm name where the datastore belongs to
+     * @param serviceName the name of service to query for
+     * @param subConfigName the sub config name to query for
+     * @param attributeName the attribute name to query for
+     */
+    public Set getAttributeValueServiceConfig(String udsRealm,
+            String serviceName, String subConfigName, String attributeName)
+    throws Exception {
+        entering("getAttributeValueServiceConfig", null);
+        Set valSet = null;
+        try {
+            ServiceConfig cfg = getServiceConfig(admintoken, udsRealm,
+                    serviceName);
+            if (cfg != null) {
+                ServiceConfig sc = cfg.getSubConfig(subConfigName);
+                if (sc != null) {
+                    Map map = sc.getAttributes();
+                    if (map.containsKey(attributeName)) {
+                        valSet = (Set)map.get(attributeName);
+                    } else {
+                        log(Level.SEVERE, "getAttributeValueServiceConfig",
+                                "Cannot find " + attributeName + " in service" +
+                                serviceName + " under realm " +  udsRealm);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log(Level.SEVERE, "getAttributeValueServiceConfig", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        exiting("getAttributeValueServiceConfig");
+        return (valSet);
+    }
     
     /**
      * This method updates a datastore with datastore attribute list
@@ -554,7 +591,8 @@ public class SMSCommon extends TestCommon {
      * @param udsName datastore name to be updated
      * @param updatedAttrMap a list of attributes to be updated
      */
-    public void updateDataStore(String udsRealm, String udsName, Map updAttrMap)
+    public void updateDataStore(String udsRealm, String udsName, Map updAttrMap,
+            boolean concat)
     throws Exception {
         entering("updateDataStore", null);
         try {
@@ -574,8 +612,11 @@ public class SMSCommon extends TestCommon {
                         key = (String)keyIter.next();
                         curValSet = (Set)currentAttr.get(key);
                         newValSet = (Set)updAttrMap.get(key);
-                        if (!curValSet.contains(null))
-                            concatSet(newValSet, curValSet);
+                        if (!curValSet.contains(null)) {
+                            if (concat) {
+                                concatSet(newValSet, curValSet);
+                            }
+                        }
                         updAttrMap.put(key, newValSet);
                     }
                     sc.setAttributes(updAttrMap);
@@ -588,15 +629,15 @@ public class SMSCommon extends TestCommon {
                                 udsName + " is updated successfully");
                     else {
                         log(Level.SEVERE, "updateDataStore",
-                                "Failed to update datastore");
+                                "Failed to update datastore: " + udsName);
                         assert false;
                     }
                 } else {
-                    log(Level.SEVERE, "updateDataStore", "Datastore not found");
+                    log(Level.SEVERE, "updateDataStore", "Datastore not found: " + udsName);
                     assert false;
                 }
             } else {
-                log(Level.SEVERE, "UpdateDataStore", "Datastore not found");
+                log(Level.SEVERE, "UpdateDataStore", "Datastore not found: " + udsName);
                 assert false;
             }
         } catch (Exception e) {
@@ -1288,8 +1329,20 @@ public class SMSCommon extends TestCommon {
      */
     public List getCreatedDatastoreNames(int idx)
     throws Exception {
+        return (getCreatedDatastoreNames(idx, "config"));
+    }
+
+    /**
+     * Gets the names of all datastores created by qatest for the sepcified
+     * server index
+     * @param idx
+     * @return List list of datastore names
+     * @throws java.lang.Exception
+     */
+    public List getCreatedDatastoreNames(int idx, String module)
+    throws Exception {
         String dName;
-        Map map = getMapFromResourceBundle("config" + fileseparator +
+        Map map = getMapFromResourceBundle(module + fileseparator +
                 SMSConstants.UM_DATASTORE_PARAMS_PREFIX + "-Generated");
         List list = new ArrayList();
         int dCount = new Integer(map.get(
@@ -1306,14 +1359,24 @@ public class SMSCommon extends TestCommon {
     }
 
     /**
-     * This method get a Service Configuration object from Service
-     * Management methods
+     * This method checks whether a given type of datastore plugin is
+     * configured at the selected realm using the existing admin
+     * <code>SSOToken</code>.
+     * The supported type of pluings are :
+     *  - amSDK
+     *  - LDAVPv3forAMDS
+     *  - LDAPv3ForAD
+     *  - LDAPv3
+     *  - files
+     * @param pluginName Plugin name
+     * @param subRealmName subRealm name
+     * @return true if Plugin type to be checked is supported to the given realm
      */
-    private ServiceConfig getServiceConfig(SSOToken admToken, String gscRealm)
+    public boolean isPluginConfigured(String pluginName, String subRealmName)
     throws Exception {
-        return (getServiceConfig(admToken, gscRealm, false));
-    }    
-    
+        return isPluginConfigured(admintoken, pluginName, subRealmName);
+    }
+
     /**
      * This method checks whether a given type of datastore plugin is 
      * configured at the selected realm
@@ -1336,10 +1399,8 @@ public class SMSCommon extends TestCommon {
         ServiceConfig subConfig;
         OrganizationConfigManager orgMgr =
                 new OrganizationConfigManager(ssoToken, subRealmName);
-        OrganizationConfigManager subrealm =
-                orgMgr.getSubOrgConfigManager(subRealmName);
         ServiceConfig sc =
-                subrealm.getServiceConfig(SMSConstants.REALM_SERVICE);
+                orgMgr.getServiceConfig(SMSConstants.REALM_SERVICE);        
         boolean isPluginConfigured = false;
         if (sc != null) {
             try {
@@ -1381,25 +1442,6 @@ public class SMSCommon extends TestCommon {
         return result;
     }    
   
-    /**
-     * This method checks whether a given type of datastore plugin is 
-     * configured at the selected realm using the existing admin 
-     * <code>SSOToken</code>.
-     * The supported type of pluings are :
-     *  - amSDK
-     *  - LDAVPv3forAMDS
-     *  - LDAPv3ForAD
-     *  - LDAPv3
-     *  - files
-     * @param pluginName Plugin name
-     * @param subRealmName subRealm name
-     * @return true if Plugin type to be checked is supported to the given realm
-     */    
-    public boolean isPluginConfigured(String pluginName, String subRealmName) 
-    throws Exception {
-        return isPluginConfigured(admintoken, pluginName, subRealmName);
-    }    
-    
     /**
      * This method applies only when configuring datatsores for a module.
      * Current qatest framework allowes a module to create a datastore only at a
@@ -1451,11 +1493,43 @@ public class SMSCommon extends TestCommon {
     }
     
     /**
+     * This method get a Service Configuration object from Service
+     * Management methods
+     */
+    private ServiceConfig getServiceConfig(SSOToken admToken, String gscRealm)
+    throws Exception {
+        return (getServiceConfig(admToken, gscRealm, false,
+                IdConstants.REPO_SERVICE));
+    }
+
+    /**
+     * This method get a Service Configuration object from Service
+     * Management methods
+     */
+    private ServiceConfig getServiceConfig(SSOToken admToken, String gscRealm,
+            boolean createIfNull)
+    throws Exception {
+        return (getServiceConfig(admToken, gscRealm, createIfNull,
+                IdConstants.REPO_SERVICE));
+    }
+
+    /**
+     * This method get a Service Configuration object from Service
+     * Management methods
+     */
+    private ServiceConfig getServiceConfig(SSOToken admToken,
+            String gscRealm, String serviceName)
+            throws Exception {
+        return (getServiceConfig(admToken, gscRealm, false,
+                IdConstants.REPO_SERVICE));
+    }
+
+    /**
      * This method get a Service Configuration object from Service Management
      * methods
      */
     private ServiceConfig getServiceConfig(SSOToken admToken,
-            String gscRealm, boolean createIfNull)
+            String gscRealm, boolean createIfNull, String serviceName)
             throws Exception {
         ServiceConfig svcfg = null;
         IDMCommon idmObj = new IDMCommon();
@@ -1475,14 +1549,13 @@ public class SMSCommon extends TestCommon {
                         gscRealm);
         }
         ServiceConfigManager scm = new ServiceConfigManager(
-                IdConstants.REPO_SERVICE, admToken);
+                serviceName, admToken);
         svcfg = scm.getOrganizationConfig(gscRealm, null);
         if (createIfNull && svcfg == null) {
             OrganizationConfigManager orgCfgMgr = new
                     OrganizationConfigManager(admToken, gscRealm);
             Map attrValues = getDefaultAttributeValues(admToken);
-            svcfg = orgCfgMgr.addServiceConfig(IdConstants.REPO_SERVICE,
-                    attrValues);
+            svcfg = orgCfgMgr.addServiceConfig(serviceName, attrValues);
         }
         return svcfg;
     }

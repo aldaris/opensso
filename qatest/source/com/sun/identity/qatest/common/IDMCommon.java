@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDMCommon.java,v 1.12 2008-05-21 06:09:21 kanduls Exp $
+ * $Id: IDMCommon.java,v 1.13 2008-08-19 21:34:12 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -486,22 +486,58 @@ public class IDMCommon extends TestCommon {
      * @return true if match
      */
     public boolean checkIDMExpectedErrorMessageCode(IdRepoException e,
+            String eMessage)
+            throws Exception {
+        return (checkIDMExpectedErrorMessageCode(e, eMessage, null));
+    }
+
+    /**
+     * This method checks and compare IDM exception error message and error
+     * code with expected error message and code.
+     * @param IdRepoException idm exception
+     * @param eMessage expected error message
+     * @param eCode expected error code
+     * @return true if match
+     */
+    public boolean checkIDMExpectedErrorMessageCode(IdRepoException e,
             String eMessage, String eCode)
             throws Exception {
         entering("checkIDMExpectedErrorMessageCode", null);
         boolean isMatch = false;
         String errorCode = e.getErrorCode();
         String errorMessage = e.getMessage();
-        log(Level.FINEST, "checkExpectedMessageErrorCode", "Error message: " +
-                e.getMessage() + " error code: " + e.getErrorCode());
-        log(Level.FINEST, "checkExpectedMessageErrorCode",
-                "Expected message: " + eMessage + " expected error code: " +
-                eCode);
-        if (errorCode.equals(eCode) && errorMessage.indexOf(eMessage) >= 0) {
-            log(Level.FINE, "checkExpectedMessageErrorCode",
-                    "Error code and message match");
-            isMatch = true;
-        }
+        
+        log(Level.FINEST, "checkExpectedMessageErrorCode", "Actual error" +
+                " message: " + errorMessage);
+        log(Level.FINEST, "checkExpectedMessageErrorCode", "Expected error" +
+                " message: " + eMessage);
+        
+        if (eCode != null) {
+            log(Level.FINEST, "checkExpectedMessageErrorCode", "Actual error" +
+                    " code: " +  e.getErrorCode());
+            log(Level.FINEST, "checkExpectedMessageErrorCode", "Expected" +
+                    " error code: " + eCode);
+            
+            if (errorCode.equals(eCode) && errorMessage.indexOf(eMessage) >= 0)
+            {
+                log(Level.FINE, "checkExpectedMessageErrorCode", "Error code" +
+                        " and message match");
+                isMatch = true;
+            } else {
+                log(Level.SEVERE, "checkExpectedMessageErrorCode", "Error" +
+                        " code and message are not a match");
+            }
+        } else {
+            if (errorMessage.indexOf(eMessage) >= 0)
+            {
+                log(Level.FINE, "checkExpectedMessageErrorCode", "Error" +
+                        " messages match");
+                isMatch = true;
+            } else {
+                log(Level.SEVERE, "checkExpectedMessageErrorCode", "Error" +
+                        " messages are not a match");
+            }
+        }        
         exiting("checkIDMExpectedErrorMessageCode");
         return isMatch;
     }
