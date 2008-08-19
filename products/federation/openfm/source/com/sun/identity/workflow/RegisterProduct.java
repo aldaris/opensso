@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RegisterProduct.java,v 1.3 2008-06-25 05:50:03 qcheng Exp $
+ * $Id: RegisterProduct.java,v 1.4 2008-08-19 21:17:57 bigfatrat Exp $
  *
  */
 
@@ -148,8 +148,8 @@ public class RegisterProduct extends Task {
                     throw new WorkflowException("reg-no-service-waccount");
                 }
                 regWrapper.setInventoryEnvironmentTarget(
-                    InventoryEnvironmentTarget.valueOf("DEVALPHA22"));
-		    // change to "BETA" for EA
+                    InventoryEnvironmentTarget.valueOf("PROD"));
+		    // 8.0: "DEVALPHA22" for dev, "BETA" for EA, "PROD" for RR
                 AuthenticationCredential ac =
                     regService.getAuthCredential(account);
                 domains = regWrapper.getDomains(ac);
