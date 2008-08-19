@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: ServicesEdit.jsp,v 1.3 2008-06-25 05:44:41 qcheng Exp $
+   $Id: ServicesEdit.jsp,v 1.4 2008-08-19 19:32:00 veiming Exp $
 
 --%>
 
@@ -75,7 +75,7 @@
     showPageButtonsTop="true" 
     showPageButtonsBottom="true" >
 
-    <cc:propertysheet name="propertyAttributes" showJumpLinks="true" />
+    <cc:propertysheet name="propertyAttributes" showJumpLinks="true" bundleID="amConsole" />
 </cc:pagetitle>
 
 </cc:form>
