@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionService.java,v 1.24 2008-08-08 00:40:54 ww203982 Exp $
+ * $Id: SessionService.java,v 1.25 2008-08-19 06:48:50 manish_rustagi Exp $
  *
  */
 
@@ -2011,7 +2011,7 @@ public class SessionService {
                     sessionServiceID.toString());
             ServiceConfig subConfig = serviceConfig.getSubConfig(subCfgName);
 
-            if (subConfig != null) {
+            if  ((subConfig != null) && subConfig.exists()) {
                 
                 Map sessionAttrs = subConfig.getAttributes();
                 boolean sfoEnabled = Boolean.valueOf(
