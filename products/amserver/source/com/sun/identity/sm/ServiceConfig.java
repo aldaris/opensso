@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfig.java,v 1.16 2008-08-06 16:43:24 veiming Exp $
+ * $Id: ServiceConfig.java,v 1.17 2008-08-19 06:47:07 manish_rustagi Exp $
  *
  */
 
@@ -917,6 +917,13 @@ public class ServiceConfig {
      */
     public boolean isValid() {
         return (sc.isValid());
+    }
+    
+    /**
+     * Returns <code>true</code> if the entry exist
+     */
+    public boolean exists() {
+    	return (!sc.isNewEntry());
     }
     
     public String toXML(String NodeTag, AMEncryption encryptObj)
