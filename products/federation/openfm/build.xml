@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.45 2008-08-19 19:11:20 veiming Exp $
+   $Id: build.xml,v 1.46 2008-08-20 21:39:14 qcheng Exp $
 
 -->
 
@@ -142,7 +142,7 @@
         <copy file="${openfm.docs.dir}/nightly.html" tofile="${fm.dist.dir}/index.html" filtering="true" />
     </target>
 
-    <target name="zip" depends="war,fedlet,clientsamples,tools,publicdoc">
+    <target name="zip" depends="war,fedlet,AG,clientsamples,tools,publicdoc">
         <ant antfile="${openfm.dir}/build-zip.xml" inheritRefs="true"/>
     </target>
     
@@ -179,7 +179,6 @@
             <arg value="${openfm.dir}/built/war/package"/>
             <arg value="${openfm.dir}/built/dist/AssertionGenerator.zip"/>
             <arg value="${library.dir}/fedlet/AG/README"/>
-	    <arg value="${openfm.dir}/built/classes/Fedlet-unconfigured.zip"/>
         </java>
     </target>
 

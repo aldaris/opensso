@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateAGZip.java,v 1.1 2008-08-16 00:01:17 vimarsh Exp $
+ * $Id: CreateAGZip.java,v 1.2 2008-08-20 21:39:26 qcheng Exp $
  *
  */
 
@@ -104,8 +104,8 @@ public class CreateAGZip {
         fedConfigTagSwapOrder.add("/@SERVER_URI@");
     }
 
-    public void createFedletZip(String bitsFile, String jarExtractFile,
-        String warDir, String fedletZipFile, String readmeFile, String Classesdir) 
+    public void createAGZip(String bitsFile, String jarExtractFile,
+        String warDir, String fedletZipFile, String readmeFile) 
         throws IOException, FileNotFoundException {
        
        
@@ -124,7 +124,7 @@ public class CreateAGZip {
         dir.mkdir();
 
         // create fedlet.war
-        copyBits(warDir, readmeFile, fedletWarDir, Classesdir);
+        copyBits(warDir, readmeFile, fedletWarDir);
         
         createWar(workDir);
 
@@ -148,7 +148,7 @@ public class CreateAGZip {
 
     }
     
-    private void copyBits(String warDir, String readmeFile, String workDir, String Classesdir)
+    private void copyBits(String warDir, String readmeFile, String workDir)
         throws IOException {
 
         for (Iterator i = fedletBits.keySet().iterator(); i.hasNext(); ) {
@@ -478,12 +478,12 @@ public class CreateAGZip {
     }
     
     /**
-     * Main program to create Fedlet ZIP
+     * Main program to create Assertion Generator ZIP
      * The program takes following parameters in order:
      * 1. a file containing the list of filenames to be extract from opensso.war
      * 2. a file containing the list of jars to be extracted
      * 3. file point to the opensso.war
-     * 4. name with full path to write Fedlet ZIP
+     * 4. name with full path to write Assertion Generator ZIP
      * 5. README file
      */
     public static void main(String[] args) {
@@ -491,12 +491,12 @@ public class CreateAGZip {
             System.err.println("Invalid parameters.");
             System.err.println("Expected parameters (in this order) : " +
                 "<bits_filename> <jar_extract_filename> <war_directory> " +
-                "<fedlet_zip_filename> <readme_filename>");
+                "<assertion_generation_zip_filename> <readme_filename>");
         }
         try {
             CreateAGZip instance = new CreateAGZip();
-            instance.createFedletZip(args[0], args[1], args[2], args[3],
-                args[4], args[5]);
+            instance.createAGZip(args[0], args[1], args[2], args[3],
+                args[4]);
         } catch (Exception e) {
             e.printStackTrace();
         }

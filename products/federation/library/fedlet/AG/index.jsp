@@ -81,88 +81,88 @@ height="55" width="31" /></td></tr></tbody></table>
     String IDPid = "null";
     String SPid = "null";
     String SPurl = "null";
-    if(request.getParameter("hidden") == null){
-         File file = new File(fedletHomeDir + File.separator + "idp.xml");
-            if (!file.exists()){
-                   %> 
+    if (request.getParameter("hidden") == null){
+        File file = new File(fedletHomeDir + File.separator + "idp.xml");
+        if (!file.exists()){
+%> 
 
 <script language="JavaScript" type="text/javascript">
 <!--
 
-    var result = window.confirm("IDP.xml dose not exist do want to import the IDP metadata");
+    var result = window.confirm("idp.xml dose not exist, do you want to import the test IDP metadata?");
     if(result == true){
         document.form.hidden.value = "true";
          document.form.submit();
     }
 //-->
 </script>
-                    <% }else{
+<%      } else {
              
-                MetaDataParser lparser = new MetaDataParser();
-                IDPid = lparser.getIDPEntityID();
-                SPid = lparser.getSPEntityID();
-                SPurl = lparser.getSPbaseUrl();
-            }
-           
-             files = new String[] {                
-                    ".keypass",
-                    ".storepass",
-                    "keystore.jks"};
-             
-           }else{
-            
-                files = new String[] {
-                    "idp.xml",
-                    "idp-extended.xml",
-                    };
-                flag = 1;
-            
-          }
-                
-            File dir = new File(fedletHomeDir);
-            
-            ServletContext servletCtx = getServletContext();
-            for (int i = 0; i < files.length; i++) {
-                String source = "/conf/" + files[i];
-                String dest =  dir.getPath() + File.separator + files[i];
-                FileOutputStream fos = null;
-                InputStream src = null;
-                try {
-                    src = servletCtx.getResourceAsStream(source);
-                    if (src != null) {
-                        fos = new FileOutputStream(dest);
-                        int length = 0;
-                        byte[] bytes = new byte[1024];
-                        while ((length = src.read(bytes)) != -1) {
-                            fos.write(bytes, 0, length);
-                        }
-                    } else {
-                        throw new SAML2Exception("File " + source + 
-                            " could not be found in fedlet.war");
-                    }
-                } catch (IOException e) {
-                    throw new SAML2Exception(e.getMessage());
-                } finally {
-                    try {
-                        if (fos != null) {
-                            fos.close();
-                        }
-                        if (src != null) {
-                            src.close();
-                        }
-                    } catch (IOException ex) {
-                        //ignore
-                    }
-                }
-            }
-            if(flag ==1){
-            MetaDataParser lparser = new MetaDataParser();
-            lparser.createCOT();
+             MetaDataParser lparser = new MetaDataParser();
             IDPid = lparser.getIDPEntityID();
             SPid = lparser.getSPEntityID();
             SPurl = lparser.getSPbaseUrl();
+        }
+           
+        files = new String[] {                
+                ".keypass",
+                ".storepass",
+                "keystore.jks"};
+            
+    } else {
+            
+         files = new String[] {
+             "idp.xml",
+             "idp-extended.xml",
+             };
+         flag = 1;
+            
+    }
+                
+    File dir = new File(fedletHomeDir);
+            
+    ServletContext servletCtx = getServletContext();
+    for (int i = 0; i < files.length; i++) {
+        String source = "/conf/" + files[i];
+        String dest =  dir.getPath() + File.separator + files[i];
+        FileOutputStream fos = null;
+        InputStream src = null;
+        try {
+            src = servletCtx.getResourceAsStream(source);
+            if (src != null) {
+                fos = new FileOutputStream(dest);
+                int length = 0;
+                byte[] bytes = new byte[1024];
+                while ((length = src.read(bytes)) != -1) {
+                    fos.write(bytes, 0, length);
+                }
+            } else {
+                throw new SAML2Exception("File " + source + 
+                    " could not be found in fedlet.war");
             }
-           %>
+        } catch (IOException e) {
+            throw new SAML2Exception(e.getMessage());
+        } finally {
+            try {
+                if (fos != null) {
+                    fos.close();
+                }
+                if (src != null) {
+                     src.close();
+                }
+            } catch (IOException ex) {
+                //ignore
+            }
+        }
+    }
+    if (flag ==1) {
+        MetaDataParser lparser = new MetaDataParser();
+        lparser.createCOT();
+        IDPid = lparser.getIDPEntityID();
+        SPid = lparser.getSPEntityID();
+        SPurl = lparser.getSPbaseUrl();
+    }
+%>
                 
 <%if(request.getMethod() =="POST")
     {%>
@@ -176,7 +176,7 @@ height="55" width="31" /></td></tr></tbody></table>
         String encodedResMsg = SAML2Utils.encodeForPOST(ag.getResponse(newpackage.getselos(),
                 newpackage.getselos2()));
         MetaDataParser lparser = new MetaDataParser();
-        String relayState ="http://ide-5.red.iplanet.com:8080/vimfedtest/fedletSampleApp.jsp";//newpackage.getrelaystate();//"http://ide-5.red.iplanet.com:8080/vimfedtest/fedletSampleApp.jsp";
+        String relayState = null;
         String acsURL = lparser.getSPbaseUrl();
         
         if(newpackage.getrelaystate() != null){
@@ -184,7 +184,7 @@ height="55" width="31" /></td></tr></tbody></table>
         }
         SAML2Utils.postToTarget(response, "SAMLResponse",
                    encodedResMsg, "RelayState", relayState, acsURL);
-     %>
+    %>
     <BR>
 
 

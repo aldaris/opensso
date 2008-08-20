@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<EntityConfig entityID="http://ide-3.red.iplanet.com:8080/fam" hosted="0rue" xmlns="urn:sun:fm:SAML:2.0:entityconfig">
+<EntityConfig entityID="http://test.idp.com:8080/opensso" hosted="0" xmlns="urn:sun:fm:SAML:2.0:entityconfig">
     <IDPSSOConfig metaAlias="/idp">
         <Attribute name="description">
             <Value/>
@@ -75,7 +75,7 @@
             <Value/>
         </Attribute>
         <Attribute name="cotlist">
-            <Value>vimarsh</Value>
+            <Value>saml2cot</Value>
         </Attribute>
         <Attribute name="discoveryBootstrappingEnabled">
             <Value>false</Value>
@@ -88,7 +88,7 @@
         </Attribute>
         <Attribute name="saeAppSecretList"/>
         <Attribute name="saeIDPUrl">
-            <Value>http://ide-3.red.iplanet.com:8080/fam/idpsaehandler/metaAlias/idp</Value>
+            <Value>http://test.idp.com:8080/opensso/idpsaehandler/metaAlias/idp</Value>
         </Attribute>
         <Attribute name="AuthUrl">
             <Value/>

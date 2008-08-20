@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------------
 README file for Open Federation Library
 ------------------------------------------------------------------------------
-   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
   
 Copyright (c) 2008 Sun Microsystems Inc. All Rights Reserved
   
@@ -24,34 +24,66 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.1 2008-08-15 23:56:57 vimarsh Exp $
+$Id: README,v 1.2 2008-08-20 21:39:13 qcheng Exp $
 
 
 
 %% Contents:
     %% 1. Contents of this directory 
-    %% 2. How to use AG.war for demo.
-    %% 3. How to embed Assertion Generator with existing fedlet application.
-   
+    %% 2. How to use AG.war with your Fedlet application 
 
 
 %% 1. Contents of this directory 
-   This README file provides information on Assertion Generator.
+   This README file provides information on Assertion Generator (AG).
+   The Assertion Generator is a deployable WAR which could be used to
+   generate SAMLv2 Single Sign-on Assertions to validate your Fedlet setup.
  
    AG.zip 
      |
-     |- AG.war        AG WAR file. This is a ready-to-deploy WAR 
-     |                    to check the Fedlet configuration.
+     |- AG.war        Assertion Generation WAR file. This is a ready-to-deploy 
+     |                WAR to test the Fedlet configuration.
      |
-     |- README            This README file. The file shows how to use Assertion Generator.
+     |- README        This README file. The file shows how to use the
+                      Assertion Generator with your Fedlet application.
 
 
-%% 2. How to use AG.war for demo 
+%% 2. How to use AG.war with your Fedlet application 
      
-Before deploying the Assertion generator war file, the fedlet has to be configured i.e. there should a fedlet directory that should present in the home directory with all the IDP and SP meta data. If IDP is not using the default private key or the IDP metadata is unknown then only add SP metadata and FederationConfig.properties files in the fedlet directory.Deploy the AG war in the same web container. If the IDP metadata is not present it will prompt if you would to use the IDP data as provided by the AG. 
-AG index page has relaystate and attribute input fields for the user to enter.  To add the attributes the user first need to remove the null value. Selecting the null value from the first column and click on the remove button will remove the value. Now to add an attribute enter the name and value of the attribute in the respective field and click enter. Once all the attribute have been entered, select all the values under the Name column and similarly select all the values under the Value column.
-Now press submit, if the fedlet is configured correctly the single sign on will be successful.
+Before deploying the Assertion generator war file, the Fedlet has to be deployed
+and configured, i.e. there should a Fedlet home directory that contains the IDP 
+and Fedlet (SP) meta data. 
 
-     
-%% 3. How to embed Assertion Generator with existing fedlet application
-  The Assertion generator has to be deployed in the same web container where the fedlet is deploy.
+The Assertion generator WAR has to be deployed in the same web container where 
+your Fedlet application is deploy.
+
+There are two ways to run the Assertion Generator with your Fedlet application:
+Note : please save a copy of the whole Fedlet home directory before making
+       following changes. You will need to restore them before running Fedlet
+       application with your real IDP. 
+a) If you are not able to get the private key from your real IDP, remove the
+   idp.xml and idp-extended.xml from the Fedlet home directory before starting
+   the web container. This is the most common case. Now access the AG index.jsp
+   page, AG will copy a test IDP metadata and keystore to the Fedlet home 
+   directory. The test IDP will be used to validate your Fedlet setup.
+b) If you are able to get the private key from your real IDP, you need to import
+   the the private key into the "keystore.jks" under your Fedlet home directory 
+   after access the Assertion Generator index.jsp and before actually running
+   the assertion generation test. Make sure you are using the alias name
+   "test" when importing the private key into the keystore.jks file (you need 
+   to remove the bundled "test" private key before importing the new one). 
+
+After setup, edit the "FederationConfig.properties" under your Fedlet home
+directory. Replace all occurence of "@FEDLET_HOME@" with the actual fedlet
+home directory name, e.g. "/fedlet". Restart your web container and acces the AG
+index.jsp page using your browser. The AG index page has relaystate and 
+attribute input fields for you to enter.  To add attributes, you first need 
+to remove the null value. Selecting the null value from the first column and 
+click on the remove button will remove the value. To add an attribute, enter 
+the name and value of the attribute in the respective field and click the 
+"Add" button. Once all the desired attribute have been entered, select all the 
+values under the Name column and select all the values under the Value column, 
+click "Submit Query" button to run the Assertion Generator code. The AG will 
+create a SAML2 Single Sign-on Assertion and post it to your Fedlet application.
+If your Fedlet is configured correctly, Single Sign-on will be successful, and 
+your Fedlet application will be invoked. 
+
