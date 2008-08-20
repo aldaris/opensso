@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.54 2008-08-19 21:34:12 rmisra Exp $
+ * $Id: TestCommon.java,v 1.55 2008-08-20 22:28:23 arunav Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -107,6 +107,7 @@ public class TestCommon implements TestConstants {
     protected static String serverHost;
     protected static String serverPort;
     protected static String serverUri;
+    protected static String keyAlias;
     
     static {
         try {
@@ -138,6 +139,8 @@ public class TestCommon implements TestConstants {
             serverHost = rb_amconfig.getString(TestConstants.KEY_AMC_HOST);
             serverPort = rb_amconfig.getString(TestConstants.KEY_AMC_PORT);
             serverUri = rb_amconfig.getString(TestConstants.KEY_AMC_URI);             
+            keyAlias = rb_amconfig.getString(
+                    TestConstants.KEY_AMC_XMLSIG_CERTALIAS);
             distAuthEnabled = ((String)rb_amconfig.getString(
                     TestConstants.KEY_DIST_AUTH_ENABLED)).equals("true");
             if (!distAuthEnabled) {
