@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSLogoutUtil.java,v 1.10 2008-08-19 19:11:07 veiming Exp $
+ * $Id: FSLogoutUtil.java,v 1.11 2008-08-20 01:07:05 exu Exp $
  *
  */
 
@@ -461,6 +461,15 @@ public class FSLogoutUtil {
         String metaAlias,
         Object ssoToken) 
     {
+        return getCurrentProvider(userID, metaAlias, ssoToken, null);
+    }
+
+    public static HashMap getCurrentProvider(
+        String userID,
+        String metaAlias,
+        Object ssoToken,
+        FSSession curSession) 
+    {
         if (FSUtils.debug.messageEnabled()) {
             FSUtils.debug.message("Entered getCurrentProvider for user : " +
                 userID);
@@ -473,6 +482,9 @@ public class FSLogoutUtil {
                 metaAlias);
 
             FSSession session = sessionMgr.getSession(ssoToken);
+            if (session == null && curSession != null) {
+                session = curSession;
+            }
             if (session != null) {
                 List partners = session.getSessionPartners();
                 if (partners != null && !partners.isEmpty()) {
@@ -493,6 +505,7 @@ public class FSLogoutUtil {
                     return null;
                 }
             }
+
             return null;
         } catch(Exception e) {
             FSUtils.debug.error("FSLogoutUtil.getCurrentProvider:: Exception" +

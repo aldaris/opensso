@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSSOAndFedHandler.java,v 1.8 2008-06-25 05:46:59 qcheng Exp $ 
+ * $Id: FSSSOAndFedHandler.java,v 1.9 2008-08-20 01:07:05 exu Exp $ 
  *
  */
 
@@ -813,6 +813,7 @@ public abstract class FSSSOAndFedHandler {
                 new FSSessionPartner(spEntityId, false));
             sessionManager.addSession(userID, session);
         }
+
         // check for federation
         String autoFedStr = IDFFMetaUtils.getFirstAttributeValueFromConfig(
             hostedConfig, IFSConstants.ENABLE_AUTO_FEDERATION);
@@ -1482,8 +1483,9 @@ public abstract class FSSSOAndFedHandler {
                  "New Authentication request:" + newAuthnRequest.toXMLString());
          }
 
-         FSSessionManager sessManager = 
-             FSSessionManager.getInstance(metaAlias);
+         FSSessionManager sessManager = FSSessionManager.getInstance(
+             IDFFMetaUtils.getMetaAlias(
+                 realm, hostedEntityId, IFSConstants.SP, ssoToken));
          String requestID = newAuthnRequest.getRequestID();
          sessManager.setAuthnRequest(requestID, newAuthnRequest);
          sessManager.setProxySPDescriptor(requestID, spDescriptor);

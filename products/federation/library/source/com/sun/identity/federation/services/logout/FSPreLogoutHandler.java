@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSPreLogoutHandler.java,v 1.9 2008-06-25 05:47:01 qcheng Exp $
+ * $Id: FSPreLogoutHandler.java,v 1.10 2008-08-20 01:07:05 exu Exp $
  *
  */
 
@@ -530,7 +530,8 @@ public  class FSPreLogoutHandler {
         HashMap providerMap = new HashMap();
         FSSessionPartner sessionPartner = null;
         providerMap = FSLogoutUtil.getCurrentProvider(
-            userID, metaAlias, ssoToken);
+            userID, metaAlias, ssoToken, session);
+       
 
         if (providerMap != null) {
             sessionPartner = (FSSessionPartner)providerMap.get(

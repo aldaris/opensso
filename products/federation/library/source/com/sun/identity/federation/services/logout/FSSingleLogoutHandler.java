@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSingleLogoutHandler.java,v 1.11 2008-06-25 05:47:01 qcheng Exp $
+ * $Id: FSSingleLogoutHandler.java,v 1.12 2008-08-20 01:07:05 exu Exp $
  *
  */
 
@@ -68,6 +68,7 @@ import com.sun.identity.saml.protocol.Status;
 import com.sun.identity.saml.protocol.StatusCode;
 import com.sun.identity.saml.xmlsig.XMLSignatureManager;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -1136,6 +1137,7 @@ public class FSSingleLogoutHandler {
                                     }
                                 }
                             }
+                            
                             Status status = respObj.getStatus();
                             StatusCode statusCode = status.getStatusCode();
                             StatusCode secondLevelStatus = 
@@ -1179,6 +1181,39 @@ public class FSSingleLogoutHandler {
     }
     
     
+    public FSLogoutStatus doIDPProxySoapProfile(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        FSSessionPartner currentSessionProvider,
+        String userID,
+        String sessionIndex,
+        Object ssoToken) 
+    {
+        this.request = request;
+        this.response = response;
+        this.userID = userID;
+        this.ssoToken = ssoToken;
+        this.sessionIndex = sessionIndex;
+        isCurrentProviderIDPRole = true;
+        this.remoteEntityId = currentSessionProvider.getPartner();
+        setRemoteDescriptor(getRemoteDescriptor(remoteEntityId));
+
+        FSLogoutStatus retStatus = doSoapProfile(remoteEntityId);
+        if (retStatus.getStatus().equalsIgnoreCase(IFSConstants.SAML_SUCCESS)) {
+            if (FSUtils.debug.messageEnabled()) {
+                FSUtils.debug.message(
+                    "FSSingleLogoutHandler.doIDPProxySoapProfile: " + 
+                    "single logout from " + remoteEntityId);
+            }
+            // remove current session partner
+            FSLogoutUtil.removeCurrentSessionPartner(
+                metaAlias, remoteEntityId, ssoToken, userID);
+            callPostSingleLogoutSuccess(respObj,
+                IFSConstants.LOGOUT_IDP_SOAP_PROFILE);
+        }
+        return retStatus;
+    }
+
     /**
      * Creates the logoutNotification message for a provider.
      * @param acctInfo the curerent user-provider information
@@ -1505,12 +1540,24 @@ public class FSSingleLogoutHandler {
                         // ignore;
                     }
                 }
+
+                // handle idp proxy case
+                FSLogoutStatus proxyStatus = 
+                    handleIDPProxyLogout(sourceEntityId);
+                if (proxyStatus != null && 
+                    !proxyStatus.getStatus().equalsIgnoreCase(
+                        IFSConstants.SAML_SUCCESS))
+                {
+                    logoutStatus = false;
+                }
+
                 FSLogoutUtil.destroyPrincipalSession(
                     userID, 
                     metaAlias,
                     reqLogout.getSessionIndex(),
                     request,
                     response);
+
                 // call multi-federation protocol processing
                 int retStatus = handleMultiProtocolLogout(true,null,
                     sourceEntityId);
@@ -1521,6 +1568,23 @@ public class FSSingleLogoutHandler {
                     return new FSLogoutStatus(IFSConstants.SAML_SUCCESS);
                 }
             } else {
+                // get ssoToken corresponding to the session index
+                Vector sessionObjList = FSLogoutUtil.getSessionObjectList(
+                    userID, metaAlias, sessionIndex);
+                if ((sessionObjList != null) && !sessionObjList.isEmpty()) {
+                    String sessid = 
+                        ((FSSession) sessionObjList.get(0)).getSessionID();
+                    try {
+                        ssoToken = 
+                            SessionManager.getProvider().getSession(sessid);
+                    } catch (SessionException ex) {
+                        // ignore;
+                    }
+                }
+                // handle idp proxy case.
+                FSLogoutStatus proxyStatus = 
+                    handleIDPProxyLogout(sourceEntityId);
+
                 // Check if any of the connections use HTTP GET/Redirect
                 String currentEntityId = currentSessionProvider.getPartner();
                 isCurrentProviderIDPRole = 
@@ -1552,6 +1616,15 @@ public class FSSingleLogoutHandler {
                 if (FSUtils.debug.messageEnabled()) {
                     FSUtils.debug.message("Logout completed first round " +
                         "with status : " + bLogoutStatus);
+                }
+
+                if (bLogoutStatus.getStatus().equalsIgnoreCase(
+                    IFSConstants.SAML_SUCCESS) &&
+                    (proxyStatus != null) && 
+                    !proxyStatus.getStatus().equalsIgnoreCase(
+                        IFSConstants.SAML_SUCCESS))
+                {
+                    bLogoutStatus = proxyStatus;
                 }
                 return bLogoutStatus;
             }
@@ -1698,6 +1771,100 @@ public class FSSingleLogoutHandler {
         }
     }
     
+    private FSLogoutStatus handleIDPProxyLogout(String sourceEntityId)
+    {
+        FSLogoutStatus retStatus = null;
+        FSUtils.debug.message("FSSingleLogoutHandler.handleIDPProxyLogout.");
+        
+        // get sp metaAlias if any
+        String proxySPAlias = null;
+        boolean isProxy = false;
+        BaseConfigType proxySPConfig = null;
+        ProviderDescriptorType proxySPDescriptor = null;
+        if (hostedRole == IFSConstants.IDP) {
+            // see if there is a hosted SP with the same hostedEntityId
+            proxySPAlias = IDFFMetaUtils.getMetaAlias(
+                realm, hostedEntityId, IFSConstants.SP, ssoToken);
+            if (proxySPAlias != null) {
+                // check to see if original SP is idp proxy enabled
+                if (metaManager != null) {
+                    try {
+                        BaseConfigType sourceSPConfig = 
+                            metaManager.getSPDescriptorConfig(
+                                realm, sourceEntityId);
+                        String enabledString = 
+                            IDFFMetaUtils.getFirstAttributeValueFromConfig(
+                                sourceSPConfig, IFSConstants.ENABLE_IDP_PROXY);
+                        if (enabledString != null && 
+                            enabledString.equalsIgnoreCase("true")) 
+                        {
+                            isProxy = true; 
+                        }
+                    } catch (IDFFMetaException ie) {
+                        // Shouldn't be here
+                        isProxy = false;
+                    }
+                }
+            }
+        }
+        if (isProxy) {
+            FSUtils.debug.message(
+                "FSSingleLogoutHandler.handleIDPProxyLogout:isProxy is true.");
+            // see if there is any session with that proxySPAlias
+            try {
+                FSSessionManager sessionMgr = 
+                    FSSessionManager.getInstance(proxySPAlias);
+                FSSession session = sessionMgr.getSession(ssoToken);
+                if (session != null) {
+                    List partners = session.getSessionPartners();
+                    if (partners != null && !partners.isEmpty()) {
+                        FSSingleLogoutHandler handler =
+                            new FSSingleLogoutHandler();
+                        proxySPConfig = metaManager.getSPDescriptorConfig(
+                            realm, hostedEntityId);
+                        proxySPDescriptor = metaManager.getSPDescriptor(
+                            realm, hostedEntityId);
+                        handler.setHostedDescriptor(proxySPDescriptor);
+                        handler.setHostedDescriptorConfig(proxySPConfig);
+                        handler.setRealm(realm);
+                        handler.setHostedEntityId(hostedEntityId);
+                        handler.setHostedProviderRole(IFSConstants.SP);
+                        handler.setMetaAlias(proxySPAlias);
+                        Iterator iter = partners.iterator();
+                        retStatus = new FSLogoutStatus(
+                            IFSConstants.SAML_SUCCESS);
+                        // most of the time it will have only one idp partner
+                        while (iter.hasNext()) {
+                            FSSessionPartner sessionPartner =
+                                (FSSessionPartner)iter.next();
+                            String curEntityId = sessionPartner.getPartner();
+                            if (curEntityId.equals(sourceEntityId) ||
+                                !sessionPartner.getIsRoleIDP())
+                            {
+                                continue;
+                            }
+                            FSLogoutStatus curStatus = 
+                                handler.doIDPProxySoapProfile(request, response,
+                                    sessionPartner, userID, 
+                                    session.getSessionIndex(), ssoToken);
+                            if (!curStatus.getStatus().equalsIgnoreCase(
+                                IFSConstants.SAML_SUCCESS))
+                            {
+                               retStatus = curStatus;
+                            }
+                        }
+                    }
+                }
+            } catch(Exception e) {
+                FSUtils.debug.error("FSSingleLogoutHandler.handleIDPProxy:",e);
+                retStatus = new FSLogoutStatus(IFSConstants.SAML_RESPONDER);
+            }
+        }
+        
+        return retStatus;
+        
+    }
+
     private int handleMultiProtocolLogout(boolean isSOAPInited, 
         String responseXML, String remoteSPId) {
         
