@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.64 2008-08-14 19:36:12 alanchu Exp $
+   $Id: build.xml,v 1.65 2008-08-20 00:18:52 bigfatrat Exp $
 
 -->
 
@@ -221,6 +221,7 @@
                 <include name="com/iplanet/services/naming/**"/>
                 <include name="com/sun/identity/session/**"/>
                 <include name="com/sun/identity/authentication/**"/>
+                <include name="com/sun/identity/log/**"/>
                 <include name="com/sun/identity/policy/**"/>
                 <include name="com/sun/identity/delegation/**"/>
                 <include name="com/sun/identity/idm/**"/>
@@ -240,6 +241,7 @@
                 <include name="com/iplanet/am/sdk/**"/>
                 <include name="com/iplanet/sso/**"/>
                 <include name="com/iplanet/dpro/**"/>
+                <include name="com/sun/identity/log/**"/>
                 <include name="com/sun/identity/session/**"/>
                 <include name="com/sun/identity/policy/**"/>
                 <include name="com/sun/identity/authentication/**"/>
