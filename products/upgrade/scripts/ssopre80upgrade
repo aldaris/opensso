@@ -23,19 +23,19 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: fampre80upgrade,v 1.4 2008-08-19 19:14:57 veiming Exp $
+# $Id: ssopre80upgrade,v 1.1 2008-08-20 21:11:54 bina Exp $
 #
 #
 
 #
-# This script does the preparation before upgrade to OpenSSO
-# 8.0 binaries. The script can be run on Java ES 2 , Java ES 3, Java ES 4  and
+# This script does the preparation before upgrade to OpenSSO 8.0 binaries.
+# The script can be run on Java ES 3, Java ES 4  , Java ES 5 and
 # FM 7.0 installations.
 #
 # It does the following:
 #
-# 1. Backs up the essential OpenSSO files on the existing system.
-# 2. Removes the Sun Java(tm) System Access Manager 6.2 , 6.3 , 7.0 ,7.1 Packages.
+# 1. Backs up the essential Access Manager files on the existing system.
+# 2. Removes the Sun Java(tm) System Access Manager 6.3 , 7.0 , 7.1 Packages.
 # 3. Removes the Sun Java(tm) Federation Manager 7.0 Packages
 # 4. Removes the SAMLv2 Plugin package.
 # 5. Updates the /var/sadm/install/productregistry file to reflect the package
@@ -327,7 +327,7 @@ get_log_dir() {
 
     $NECHO "<?xml version=\"1.0\" encoding=\"$XML_ENCODING\"?>" > /tmp/log.file.xml
     $NECHO "<!DOCTYPE Requests" >>  /tmp/log.file.xml
-    $NECHO "PUBLIC \"-//iPlanet//OpenSSO 2005Q4 Admin CLI DTD//EN\"" >> /tmp/log.file.xml
+    $NECHO "PUBLIC \"-//iPlanet//Sun Java System Access Manager 2005Q4 Admin CLI DTD//EN\"" >> /tmp/log.file.xml
     $NECHO "\"jar://com/iplanet/am/admin/cli/amAdmin.dtd\"">> /tmp/log.file.xml
     $NECHO ">" >> /tmp/log.file.xml
 
@@ -691,7 +691,7 @@ get_am_version() {
     VERSION="`$GREP com.iplanet.am.version= $AMCONFIG \
 	      | $SED -e 's/com.iplanet.am.version=//g'`"
 
-    $NECHO "OpenSSO Version : $VERSION" >> $LOG 2>&1
+    $NECHO "Access Manager Version : $VERSION" >> $LOG 2>&1
 }
 
 
@@ -729,7 +729,7 @@ get_upgrade_dir() {
     tmp=""
     while [ "$tmp" = "" ]; do
         read tmp
-        file=`find $tmp/upgrade/scripts -name famupgrade -print` >> $LOG_DIR  2>&1
+        file=`find $tmp/upgrade/scripts -name ssoupgrade -print` >> $LOG_DIR  2>&1
         if [ x = x${file} ]; then
             tmp=""
             eval $ECHO "`gettext 'Incorrect upgrade directory specified. Re-enter the correct value '` "
@@ -931,17 +931,17 @@ cleanupAM() {
 check_root_user
 check_instance
 
-$NECHO "fampre80upgrade debug log" > $LOG
+$NECHO "ssopre80upgrade debug log" > $LOG
 
 
 if [ $isFM = "true" ]; then
-    $NECHO "A log of the fampreupgrade process can be found in $FM_LOG" 
+    $NECHO "A log of the ssopreupgrade process can be found in $FM_LOG" 
     get_fm_staging_dir
     get_fm_base_dir
     PKGDIR=$FM_BASE_DIR/$PRODUCT_DIR
     INSTANCE_TYPE="FM"
 else 
-    $NECHO "A log of the fampreupgrade process can be found in $LOG" 
+    $NECHO "A log of the ssopreupgrade process can be found in $LOG" 
     get_am_version
     get_host_info
     get_base_dir
@@ -1008,11 +1008,11 @@ $NECHO "`$gettext 'This can take a few minutes.'`"
 backup_files
 
 UPGRADE_DIR="$FAM_UPGRADE_DIR/upgrade"
-replaceTag "$UPGRADE_DIR/scripts/famupgrade" "$UPGRADE_DIR" "FAM_UPGRADE_DIR"
-replaceTag "$UPGRADE_DIR/scripts/famupgrade" "$STAGING_DIR/WEB-INF" "STAGING_DIR"
-replaceTag "$UPGRADE_DIR/scripts/famupgrade" "$FAM_CONFIG_DIR" "FAM_CONFIG_DIR"
+replaceTag "$UPGRADE_DIR/scripts/ssoupgrade" "$UPGRADE_DIR" "FAM_UPGRADE_DIR"
+replaceTag "$UPGRADE_DIR/scripts/ssoupgrade" "$STAGING_DIR/WEB-INF" "STAGING_DIR"
+replaceTag "$UPGRADE_DIR/scripts/ssoupgrade" "$FAM_CONFIG_DIR" "FAM_CONFIG_DIR"
 
-replaceTag  "$UPGRADE_DIR/config/famUpgradeConfig.properties" "$INSTANCE_TYPE" "FAM_INSTANCE_TYPE"
+replaceTag  "$UPGRADE_DIR/config/ssoUpgradeConfig.properties" "$INSTANCE_TYPE" "FAM_INSTANCE_TYPE"
 
       
 if [ "$isFM" = "true" ]; then

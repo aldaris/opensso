@@ -22,17 +22,18 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README,v 1.4 2008-08-19 19:14:57 veiming Exp $
+   $Id: README,v 1.5 2008-08-20 21:10:56 bina Exp $
 
 -->
 
 OpenSSO 8.0 Upgrade
 =============================================================
     This document describes the steps to upgrade/migrate to
+OpenSSO 8.0 from the following Sun Java System Access Manager and 
 OpenSSO 8.0 from the following OpenSSO and 
 Sun Java System Federation Manager versions : 
 
-    OpenSSO (AM)
+    Sun Java System Access Manager (AM)
         - JES 3 2005Q1 (AM 6.3)
         - JES 4 2005Q4 (AM 7.0)
         - JES 5 (AM 7.1)
@@ -44,16 +45,17 @@ Following are the supported platforms :
 ===============================================================
   
 1. Solaris Sparc/x86 & Linux : 
+      Upgrade/Migration from Sun Java System Access Manager (AM 6.3/7.0/7.1) &
       Upgrade/Migration from Access Manager (AM 6.3/7.0/7.1) &
       Federation Manager 7.0 
 
 2. Windows : 
-      Upgrade/Migration from Access Manager (AM 7.1) &
+      Upgrade/Migration from Sun Java System Access Manager (AM 7.1) &
       Federation Manager 7.0 
 
 =================================================================
-Upgrade Steps to Migrate OpenSSO/Federation Manager to
-OpenSSO 8.0
+Upgrade Steps to migrate Sun Java System Access Manager & 
+Federation Manager to OpenSSO 8.0
 =================================================================
 
 i. Pre-Upgrade steps :
@@ -180,15 +182,15 @@ vii. Configure the war against the existing AM schema.
         
 viii.  Prepare the system for upgrade by running the preupgrade tool.
         - Change to <upgrade_base_dir>/upgrade/scripts.
-        - Run the "fampre80upgrade" tool . 
+        - Run the "ssopre80upgrade" tool . 
 
 	  Solaris Sparc/x86 & Linux : At the command prompt enter :
-	    ./fampre80upgrade 
+	    ./ssopre80upgrade 
 
 	  Windows : At the command prompt enter :
-	    fampre80upgrade.bat
+	    ssopre80upgrade.bat
 
-    - "fampre80upgrade" will require the following inputs :
+    - "ssopre80upgrade" will require the following inputs :
 	o FM 7.0 Staging Directory (if the instance is FM)
 	o Directory Server full qualified host name
 	o Directory Server port
@@ -199,7 +201,7 @@ viii.  Prepare the system for upgrade by running the preupgrade tool.
 	o OpenSSO 8.0 Upgrade Base Directory
 	o OpenSSO 8.0 Staging Directory 
 
-ix. Update the <upgrade-base-dir>/upgrade/config/famUpgradeConfig.properties
+ix. Update the <upgrade-base-dir>/upgrade/config/ssoUpgradeConfig.properties
     to set the following properties 
         o XML_ENCODING - Enter the value of the XML_ENCODING eg. UTF-8
         o BASEDIR - Enter the value of the upgrade base directory 
@@ -213,15 +215,15 @@ ix. Update the <upgrade-base-dir>/upgrade/config/famUpgradeConfig.properties
 
 x. Upgrade/Migrate the AM Schema to OpenSSO 8.0 schema.
     - Change to <upgrade_base_dir>/upgrade/scripts.
-        - Run the "famupgrade" tool . 
+        - Run the "ssoupgrade" tool . 
 
 	  Solaris Sparc/x86 & Linux : At the command prompt enter :
-	    ./famupgrade 
+	    ./ssoupgrade 
 	
 	  Windows : At the command prompt enter :
-	    famupgrade.bat
+	    ssoupgrade.bat
 
-    - "famupgrade" will require the following inputs 
+    - "ssoupgrade" will require the following inputs 
                 o OpenSSO 8.0 Upgrade Base Directory
 	o OpenSSO 8.0 Configuration Directory
 	o OpenSSO 8.0 Staging Dir 
@@ -239,7 +241,7 @@ xii.Login to OpenSSO 8.0 <protocol>://<host>:<port>/<deployURI>/UI/Login
 xiii. Post Installation Step (Optional) :
 	Windows : The uninstall of OpenSSO Packages has to
         be done manually . Follow the JES 5 Windows document 
-        on uninstallation of OpenSSO:
+        on uninstallation of OpenSSO :
             http://docs.sun.com/app/docs/doc/819-5699
 
 	Federation Manager : The FM 7.0 staging directory can be manually

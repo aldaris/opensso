@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.8 2008-06-25 05:53:09 qcheng Exp $
+   $Id: build.xml,v 1.9 2008-08-20 21:10:57 bina Exp $
 
 -->
 
@@ -148,14 +148,21 @@
         </copy>
         <copy todir="${upgrade.dist.dir}/upgrade/scripts">
              <fileset dir="${upgrade.src.dir}/scripts/">
-                 <include name="famupgrade*"/>
-                 <include name="fampre80upgrade*"/>
+                 <include name="ssoupgrade*"/>
+                 <include name="ssopre80upgrade*"/>
              </fileset>
         </copy>
         <chmod perm="ugo+rx">
-            <fileset dir="${upgrade.dist.dir}/upgrade/scripts"/>
+            <fileset dir="${upgrade.dist.dir}/upgrade/scripts">
+                 <include name="ssoupgrade*"/>
+                 <include name="ssopre80upgrade*"/>
+             </fileset>
         </chmod>
-         <copy file="${upgrade.src.dir}/resources/famUpgradeConfig.properties"
+         <copy file="${upgrade.src.dir}/resources/ssoUpgradeConfig.properties"
+            todir="${upgrade.dist.dir}/upgrade/config"  />
+         <copy file="${upgrade.src.dir}/resources/FM_DAI_install.ldif"
+            todir="${upgrade.dist.dir}/upgrade/config"  />
+         <copy file="${upgrade.src.dir}/resources/FM_DAI_ds_remote_schema.ldif"
             todir="${upgrade.dist.dir}/upgrade/config"  />
          <copy file="${tools.built.dir}/amadm_setup.jar"
             todir="${upgrade.dist.dir}/upgrade/lib"  />

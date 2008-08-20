@@ -23,7 +23,7 @@
 : your own identifying information:
 : "Portions Copyrighted [year] [name of copyright owner]"
 :
-: $Id: fampre80upgrade.bat,v 1.4 2008-08-19 19:14:58 veiming Exp $
+: $Id: ssopre80upgrade.bat,v 1.1 2008-08-20 21:11:54 bina Exp $
 :
 
 @echo off
@@ -44,7 +44,7 @@ set /p UPGRADE_DIR=Enter the OpenSSO 8.0 base directory :
 echo.
 set /p STAGING_DIR=Enter the OpenSSO 8.0 staging directory :
 echo.
-set /p CONFIG_DIR=Enter the OpenSSO configuration directory :
+set /p CONFIG_DIR=Enter the OpenSSO 8.0 configuration directory :
 
 "%JAVA_HOME%/bin/java.exe" -Xms64m -Xmx256m -cp "%CONFIG_DIR%;%STAGING_DIR%\WEB-INF\lib\ldapjdk.jar;%STAGING_DIR%\WEB-INF\lib\opensso-sharedlib.jar;%UPGRADE_DIR%\upgrade\lib\upgrade.jar;%STAGING_DIR%\WEB-INF\lib\amserver.jar" -D"basedir=%UPGRADE_DIR%" -D"stagingDir=%STAGING_DIR%" -D"configDir=%CONFIG_DIR%" com.sun.identity.upgrade.FAMPreUpgrade %PARAMS% 
 endlocal
