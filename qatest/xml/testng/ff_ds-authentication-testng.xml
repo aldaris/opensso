@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ff_ds-authentication-testng.xml,v 1.10 2008-08-14 19:23:11 cmwesley Exp $
+ $Id: ff_ds-authentication-testng.xml,v 1.11 2008-08-20 22:10:46 cmwesley Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -1019,5 +1019,16 @@
         <classes>
             <class name="com.sun.identity.qatest.authentication.PostAuthProcessingTest"/>
         </classes>
-    </test>            
+    </test>
+    <test name="AuthContextLogoutSubRealm">
+        <parameter name="testRealm" value="logoutrealm"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthContextLogout"/>
+        </classes>
+    </test>
 </suite>
