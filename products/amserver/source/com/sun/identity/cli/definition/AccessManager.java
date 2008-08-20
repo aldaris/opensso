@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.83 2008-08-19 19:08:58 veiming Exp $
+ * $Id: AccessManager.java,v 1.84 2008-08-20 18:34:45 veiming Exp $
  *
  */
 
@@ -1703,7 +1703,8 @@ public class AccessManager {
             "import-service-configuration-connecting-to-ds=Connecting to directory server.",
             "import-service-configuration-connected-to-ds=Connected to directory server.",
             "import-service-configuration-prompt-delete=Directory Service contains existing data. Do you want to delete it? [y|N]",
-            "import-service-configuration-cannot-load-lidf=Could not locate LDIF, {0}."
+            "import-service-configuration-cannot-load-lidf=Could not locate LDIF, {0}.",
+            "import-service-configuration-unable-to-locate-hash-secret=Cannot locate hashed encryption key, please make sure that the last line of importing XML file have it."
         }
     )
     private String import_svc_cfg;
