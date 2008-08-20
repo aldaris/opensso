@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateSAML2HostedProviderTemplate.java,v 1.23 2008-08-01 20:53:10 bina Exp $
+ * $Id: CreateSAML2HostedProviderTemplate.java,v 1.24 2008-08-20 03:24:55 exu Exp $
  *
  */
 
@@ -71,7 +71,7 @@ public class CreateSAML2HostedProviderTemplate {
         String url,
         boolean hosted
     )  {
-        if (url != null) {
+        if (url == null) {
             url = getHostURL();
         }
         StringBuffer buff = new StringBuffer();
