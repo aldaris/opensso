@@ -17,27 +17,27 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [ of copyright owner]"
  *
- * $Id: SecurityTokenTest.java,v 1.4 2008-06-26 20:28:08 rmisra Exp $
+ * $Id: SecurityTokenTest.java,v 1.5 2008-08-20 22:25:33 arunav Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.wss;
 
+import com.iplanet.am.util.SystemProperties;
+import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.qatest.common.IDMCommon;
 import com.sun.identity.qatest.common.SMSCommon;
 import com.sun.identity.qatest.common.TestCommon;
+import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.wss.provider.DiscoveryConfig;
 import com.sun.identity.wss.provider.ProviderConfig;
 import com.sun.identity.wss.provider.TrustAuthorityConfig;
 import com.sun.identity.wss.security.PasswordCredential;
 import com.sun.identity.wss.security.handler.SOAPRequestHandler;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.MessageFactory;
-import javax.security.auth.Subject;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -48,6 +48,7 @@ import java.io.OutputStream;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.AccessController;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -57,6 +58,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.MessageFactory;
+import javax.security.auth.Subject;
 import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterSuite;
@@ -66,7 +71,7 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 /**
- * This class tests securing the resquest for different security tokens. This 
+ * This class tests securing the resquest for different security tokens. This
  * includes both WS-* and Liberty tokens. Further this also test configuring
  * providers using ProviderConfig class.
  */
@@ -84,33 +89,33 @@ public class SecurityTokenTest extends TestCommon {
     private TrustAuthorityConfig taconfig;
     private String strLocRB = "SecurityTokenTest";
     private String strUser = "wsstestuser";
-
+    
     /**
      * Default constructor. Creates admintoken and helper class instances.
      */
-    public SecurityTokenTest() 
+    public SecurityTokenTest()
     throws Exception{
         super("SecurityTokenTest");
         rbp = ResourceBundle.getBundle("wss" + fileseparator + strLocRB);
         token = getToken(adminUser, adminPassword, basedn);
         idmc = new IDMCommon();
-        smsc = new SMSCommon(token);
+        smsc = new SMSCommon(token);        
     }
     
     /**
-     * Updates bootstrap security mechanism in Discovery service to null:X509 and
-     * creates users.
+     * Updates bootstrap security mechanism in Discovery service to null:X509
+     * and creates users.
      */
     @BeforeSuite(groups={"ff_ds_sec", "ds_ds_sec"})
-    public void createUser() 
+    public void createUser()
     throws Exception {
         try {
             Set set = new HashSet();
-            set.add(getBootsrapDiscoEntry("2005-02:null:X509"));            
+            set.add(getBootsrapDiscoEntry("2005-02:null:X509"));
             smsc.updateSvcSchemaAttribute(
                     "sunIdentityServerDiscoveryService",
                     "sunIdentityServerBootstrappingDiscoEntry", set, "Global");
-
+            
             Map map = new HashMap();
             set = new HashSet();
             set.add(strUser);
@@ -131,32 +136,71 @@ public class SecurityTokenTest extends TestCommon {
             throw e;
         }
     }
-
+    
+    /**
+     * Changes the runtime application user from UrlAccessAgent to amadmin
+     */
+    @BeforeSuite(groups={"ff_ds_sec", "ds_ds_sec"})
+    public void changeRunTimeUser() throws
+            Exception{
+        
+        try {
+            SSOToken runtimeToken = (SSOToken) AccessController.doPrivileged(
+                    AdminTokenAction.getInstance());
+            log(Level.FINEST, "changeRunTimeUser", "Runtime user name is" +
+                    runtimeToken.getPrincipal().getName());
+            SSOTokenManager.getInstance().destroyToken(runtimeToken);
+            
+            try{
+                SSOTokenManager.getInstance().refreshSession(runtimeToken);
+            } catch (SSOException s) {
+                log(Level.FINEST, "RefreshSession Exception", s.getMessage());
+            }
+            SystemProperties.initializeProperties("com.sun.identity." +
+                    "agents.app.username", adminUser);
+            SystemProperties.initializeProperties("com.iplanet.am." +
+                    "service.password", adminPassword);
+            
+            SSOToken newToken = (SSOToken) AccessController.doPrivileged(
+                    AdminTokenAction.getInstance());
+            log(Level.FINEST, "changeRunTimeUser", "Runtime user name after " +
+                    "change \n" + runtimeToken.getPrincipal().getName());
+            
+        } catch(Exception e) {
+            log(Level.SEVERE, "changeRunTimeUser", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
+    
+    
     /**
      * Creates agent profiles for web service providers and web service clients.
      */
     @Parameters({"testIdx"})
     @BeforeClass(groups={"ff_ds_sec", "ds_ds_sec"})
-    public void setup(String testIdx) 
+    public void setup(String testIdx)
     throws Exception {
         Object[] params = {testIdx};
         entering("setup", params);
         try {
+            
+            //changeRunTimeUser();
             testIndex = new Integer(testIdx).intValue();
-
+            
             strServiceURL = rbp.getString(strLocRB + testIndex + ".url");
             log(Level.FINEST, "setup", "Service URL: " + strServiceURL);
-
+            
             isLibertyToken = new Boolean(rbp.getString(strLocRB + testIndex +
                     ".isLibertyToken")).booleanValue();
             log(Level.FINEST, "setup", "Is Liberty Token: " + isLibertyToken);
-
+            
             strWSCId = createAgentProfile(testIndex, "WSC");
             log(Level.FINEST, "setup", "WSC Agent Id: " + strWSCId);
-
+            
             strWSPId = createAgentProfile(testIndex, "WSP");
             log(Level.FINEST, "setup", "WSP Agent Id: " + strWSPId);
-
+            
             if (isLibertyToken)
                 registerWSPWithDisco(strWSPId);
         } catch(Exception e) {
@@ -164,28 +208,28 @@ public class SecurityTokenTest extends TestCommon {
             e.printStackTrace();
             throw e;
         }
-
+        
         exiting("setup");
     }
-
+    
     /**
      * Creates and makes the actual web service call.
      */
     @Test(groups={"ff_ds_sec", "ds_ds_sec"})
-    public void evaluateSecuirtyToken()
+    public void evaluateSecurityToken()
     throws Exception {
-        entering("evaluateSecuirtyToken", null);
-        StringBuffer soapMessage = getStockQuoteRequest("SUNW");
-        log(Level.FINEST, "evaluateSecuirtyToken", "SOAPMessage before" +
+        entering("evaluateSecurityToken", null);
+        StringBuffer soapMessage = getStockQuoteRequest("JAVA");
+        log(Level.FINEST, "evaluateSecurityToken", "SOAPMessage before" +
                 " security headers\n" + soapMessage);
-
+        
         // Constrcut the SOAP Message
         MimeHeaders mimeHeader = new MimeHeaders();
         mimeHeader.addHeader("Content-Type", "text/xml");
         MessageFactory msgFactory = MessageFactory.newInstance();
         SOAPMessage message = msgFactory.createMessage(mimeHeader,
-        new ByteArrayInputStream(soapMessage.toString().getBytes()));
-
+                new ByteArrayInputStream(soapMessage.toString().getBytes()));
+        
         // Construct Access Manager's SOAPRquestHandler to
         // secure the SOAP message
         SOAPRequestHandler handler = new SOAPRequestHandler();
@@ -194,7 +238,7 @@ public class SecurityTokenTest extends TestCommon {
         // In AM console the configuration would be "wscWSC" agent
         params.put("providername", strWSCId);
         handler.init(params);
-
+        
         // Secure the SOAP message using "wsc" configuration
         Subject subj = new Subject();
         SSOToken locToken = getToken(strUser, strUser, basedn);
@@ -206,21 +250,21 @@ public class SecurityTokenTest extends TestCommon {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         encMessage.writeTo(baos);
         String request = baos.toString();
-        log(Level.FINEST, "evaluateSecuirtyToken", "\nEncoded Message:\n" +
+        log(Level.FINEST, "evaluateSecurityToken", "\nEncoded Message: \n" +
                 request);
-
+        
         // Send the SOAP message to Stock Quote Service
-        log(Level.FINEST, "evaluateSecuirtyToken", "\nConnection URL:" +
+        log(Level.FINEST, "evaluateSecurityToken", "\nConnection URL:" +
                 strServiceURL + "\n");
         String response = getStockQuote(strServiceURL, request);
-        log(Level.FINEST, "evaluateSecuirtyToken", "\n\nStock Service" +
+        log(Level.FINEST, "evaluateSecurityToken", "\n\nStock Service" +
                 " Response:\n" + response);
         if (response == null)
             assert false;
-
-        exiting("evaluateSecuirtyToken");
+        
+        exiting("evaluateSecurityToken");
     }
-
+    
     /**
      * Deletest the agent profiles for webservice clients and providers.
      */
@@ -228,38 +272,38 @@ public class SecurityTokenTest extends TestCommon {
     public void cleanup()
     throws Exception {
         entering("cleanup", null);
-       
+        
         log(Level.FINEST, "cleanup", "WSC Agent Id: " + strWSCId + "WSC");
         log(Level.FINEST, "cleanup", "WSP Agent Id: " + strWSPId + "WSP");
-
+        
         if (isLibertyToken) {
             unregisterWSPWithDisco("urn:wsp");
             ProviderConfig.deleteProvider("localDisco", "Discovery");
         }
-        ProviderConfig.deleteProvider(strWSCId, "WSC");
-        ProviderConfig.deleteProvider(strWSPId, "WSP");
-  
+        ProviderConfig.deleteProvider(strWSCId, ProviderConfig.WSC);
+        ProviderConfig.deleteProvider(strWSPId, ProviderConfig.WSP);
+        
         exiting("cleanup");
     }
-
+    
     /**
      * Deletes users and resets bootstrap security mechanism in Discovery
      * service to null:null.
      */
     @AfterSuite(groups={"ff_ds_sec", "ds_ds_sec"})
-    public void deleteUser() 
+    public void deleteUser()
     throws Exception {
-        idmc.deleteIdentity(token, realm, IdType.USER, strUser); 
+        idmc.deleteIdentity(token, realm, IdType.USER, strUser);
         Set set = new HashSet();
-        set.add(getBootsrapDiscoEntry("2003-08:null:null"));            
+        set.add(getBootsrapDiscoEntry("2003-08:null:null"));
         smsc.updateSvcSchemaAttribute("sunIdentityServerDiscoveryService",
                 "sunIdentityServerBootstrappingDiscoEntry", set, "Global");
         destroyToken(token);
     }
-
-   /**
-    * Registers webservice agent with Discovery service.
-    */
+    
+    /**
+     * Registers webservice agent with Discovery service.
+     */
     private void registerWSPWithDisco(String name)
     throws Exception {
         entering("registerWSPWithDisco", null);
@@ -268,10 +312,10 @@ public class SecurityTokenTest extends TestCommon {
         discoConfig.registerProviderWithTA(pc, pc.getServiceType());
         exiting("registerWSPWithDisco");
     }
-
-   /**
-    * unregisters webservice agent with Discovery service.
-    */
+    
+    /**
+     * unregisters webservice agent with Discovery service.
+     */
     private void unregisterWSPWithDisco(String name)
     throws Exception {
         entering("unregisterWSPWithDisco", null);
@@ -279,107 +323,133 @@ public class SecurityTokenTest extends TestCommon {
         discoConfig.unregisterProviderWithTA(name);
         exiting("unregisterWSPWithDisco");
     }
-
+    
     /**
      * Creates agent profile for webservice clients and providers.
      */
     private String createAgentProfile(int testIndex, String agentType)
     throws Exception {
-        String strIdx =  strLocRB + testIndex + "." +
-                agentType.toLowerCase() + "."; 
-        log(Level.FINEST, "createAgentProfile",
-                "Property file string index: " + strIdx);
-
-        String name = rbp.getString(strIdx + "name");
-        String secMechanism = rbp.getString(strIdx + "secMechanism");
-        boolean hasUserCredential = new Boolean(rbp.getString(strIdx +
-                "hasUserCredential")).booleanValue();
-        boolean isRequestSigned = new Boolean(rbp.getString(strIdx +
-                "isRequestSigned")).booleanValue();
-        boolean isRequestEncrypted = new Boolean(rbp.getString(strIdx +
-                "isRequestEncrypted")).booleanValue();
-        boolean isResponseSigVerified = new Boolean(rbp.getString(strIdx +
-                "isResponseSigVerified")).booleanValue();
-        boolean isResponseDecrypted = new Boolean(rbp.getString(strIdx +
-                "isResponseDecrypted")).booleanValue();
-        boolean keystoreUsage = new Boolean(rbp.getString(strIdx +
-                "keystoreUsage")).booleanValue();
-        boolean keepPrivateSecHeaderInMsg = new Boolean(rbp.getString(strIdx +
-                "keepPrivateSecHeaderInMsg")).booleanValue();
-        String svcType = rbp.getString(strIdx + "svcType");
-
-        log(Level.FINEST, "createAgentProfile", "name: " + name);
-        log(Level.FINEST, "createAgentProfile", "secMechanism: " +
-                secMechanism);
-        log(Level.FINEST, "createAgentProfile", "hasUserCredential: " +
-                hasUserCredential);
-        log(Level.FINEST, "createAgentProfile", "isRequestSigned: " +
-                isRequestSigned);
-        log(Level.FINEST, "createAgentProfile", "isRequestEncrypted: " +
-                isRequestEncrypted);
-        log(Level.FINEST, "createAgentProfile", "isResponseSigVerified: " +
-                isResponseSigVerified);
-        log(Level.FINEST, "createAgentProfile", "isResponseDecrypted: " +
-                isResponseDecrypted);
-        log(Level.FINEST, "createAgentProfile", "keystoreUsage: " +
-                keystoreUsage);
-        log(Level.FINEST, "createAgentProfile", "keepPrivateSecHeaderInMsg: " +
-                keepPrivateSecHeaderInMsg);
-        log(Level.FINEST, "createAgentProfile", "svcType: " +
-                svcType);
-        log(Level.FINEST, "createAgentProfile", "isLibertyToken: " +
-                isLibertyToken);
-
-        ProviderConfig pc = ProviderConfig.getProvider(name, agentType);
-        List listSec = new ArrayList();
-        listSec.add(secMechanism);
-        pc.setSecurityMechanisms(listSec);
-        if (hasUserCredential) {
-            List listUsers = new ArrayList();
-            int noOfCred = new Integer(rbp.getString(strIdx +
-                    "noUserCredential")).intValue();
-            String strUsername;
-            String strPassword;
-            PasswordCredential cred;
-            for (int i = 0; i < noOfCred; i++) {
-                strUsername = rbp.getString(strIdx + "UserCredential" + i +
-                        ".username");
-                strPassword = rbp.getString(strIdx + "UserCredential" + i +
-                        ".password");
-                cred = new PasswordCredential(strUsername, strPassword);
-                listUsers.add(cred);
+        
+        try {
+            ProviderConfig pc = null ;
+            String strIdx =  strLocRB + testIndex + "." +
+                    agentType.toLowerCase() + ".";
+            log(Level.FINEST, "createAgentProfile",
+                    "Property file string index: " + strIdx);
+            
+            String name = rbp.getString(strIdx + "name");
+            String secMechanism = rbp.getString(strIdx + "secMechanism");
+            boolean hasUserCredential = new Boolean(rbp.getString(strIdx +
+                    "hasUserCredential")).booleanValue();
+            boolean isRequestSigned = new Boolean(rbp.getString(strIdx +
+                    "isRequestSigned")).booleanValue();
+            boolean isRequestEncrypted = new Boolean(rbp.getString(strIdx +
+                    "isRequestEncrypted")).booleanValue();
+            boolean isResponseSigVerified = new Boolean(rbp.getString(strIdx +
+                    "isResponseSigVerified")).booleanValue();
+            boolean isResponseDecrypted = new Boolean(rbp.getString(strIdx +
+                    "isResponseDecrypted")).booleanValue();
+            boolean keystoreUsage = new Boolean(rbp.getString(strIdx +
+                    "keystoreUsage")).booleanValue();
+            boolean keepPrivateSecHeaderInMsg = new Boolean(rbp.getString(strIdx +
+                    "keepPrivateSecHeaderInMsg")).booleanValue();
+            String svcType = rbp.getString(strIdx + "svcType");
+            
+            log(Level.FINEST, "createAgentProfile", "name: " + name);
+            log(Level.FINEST, "createAgentProfile", "secMechanism: " +
+                    secMechanism);
+            log(Level.FINEST, "createAgentProfile", "hasUserCredential: " +
+                    hasUserCredential);
+            log(Level.FINEST, "createAgentProfile", "isRequestSigned: " +
+                    isRequestSigned);
+            log(Level.FINEST, "createAgentProfile", "isRequestEncrypted: " +
+                    isRequestEncrypted);
+            log(Level.FINEST, "createAgentProfile", "isResponseSigVerified: " +
+                    isResponseSigVerified);
+            log(Level.FINEST, "createAgentProfile", "isResponseDecrypted: " +
+                    isResponseDecrypted);
+            log(Level.FINEST, "createAgentProfile", "keystoreUsage: " +
+                    keystoreUsage);
+            log(Level.FINEST, "createAgentProfile", "keepPrivateSecHeaderInMsg: " +
+                    keepPrivateSecHeaderInMsg);
+            log(Level.FINEST, "createAgentProfile", "svcType: " +
+                    svcType);
+            log(Level.FINEST, "createAgentProfile", "isLibertyToken: " +
+                    isLibertyToken);
+            if (agentType.equals("WSP")) {
+                pc = ProviderConfig.getProvider(name, ProviderConfig.WSP);
+            } else if  (agentType.equals("WSC")) {
+                pc = ProviderConfig.getProvider(name, ProviderConfig.WSC);
             }
-            log(Level.FINEST, "createAgentProfile", "UserCredential: " +
-                    listUsers);
-            pc.setUsers(listUsers);
-        }
-        pc.setRequestSignEnabled(isRequestSigned);
-        pc.setRequestEncryptEnabled(isRequestEncrypted);
-        pc.setResponseSignEnabled(isResponseSigVerified);
-        pc.setResponseEncryptEnabled(isResponseDecrypted);
-        pc.setDefaultKeyStore(keystoreUsage);
-        pc.setPreserveSecurityHeader(keepPrivateSecHeaderInMsg);
-        pc.setServiceType(svcType);
-
-        if (agentType.equals("WSP"))
-            pc.setWSPEndpoint("http://wsp.com");
-
-        if (agentType.equals("WSC")) {
-            if (isLibertyToken) {
-                //Trust AuthoritiyConfig
-                taconfig = TrustAuthorityConfig.getConfig("localDisco",
-                        TrustAuthorityConfig.DISCOVERY_TRUST_AUTHORITY);
-                taconfig.setEndpoint(protocol + ":" + "//" + host + ":" +
-                        port + uri + "/Liberty/disco");
-                TrustAuthorityConfig.saveConfig(taconfig);
-                pc.setTrustAuthorityConfig(taconfig);
+            
+            List listSec = new ArrayList();
+            listSec.add(secMechanism);
+            pc.setSecurityMechanisms(listSec);
+            if (hasUserCredential) {
+                List listUsers = new ArrayList();
+                int noOfCred = new Integer(rbp.getString(strIdx +
+                        "noUserCredential")).intValue();
+                String strUsername;
+                String strPassword;
+                PasswordCredential cred;
+                for (int i = 0; i < noOfCred; i++) {
+                    strUsername = rbp.getString(strIdx + "UserCredential" + i +
+                            ".username");
+                    strPassword = rbp.getString(strIdx + "UserCredential" + i +
+                            ".password");
+                    cred = new PasswordCredential(strUsername, strPassword);
+                    listUsers.add(cred);
+                }
+                log(Level.FINEST, "createAgentProfile", "UserCredential: " +
+                        listUsers);
+                pc.setUsers(listUsers);
             }
+            pc.setRequestSignEnabled(isRequestSigned);
+            pc.setRequestEncryptEnabled(isRequestEncrypted);
+            pc.setResponseSignEnabled(isResponseSigVerified);
+            pc.setResponseEncryptEnabled(isResponseDecrypted);
+            pc.setDefaultKeyStore(keystoreUsage);
+            pc.setPreserveSecurityHeader(keepPrivateSecHeaderInMsg);
+            pc.setServiceType(svcType);
+            pc.setKeyAlias(keyAlias);
+            pc.setPublicKeyAlias(keyAlias);
+            
+            if (agentType.equals("WSP"))
+                pc.setWSPEndpoint("http://wsp.com");
+            
+            if (agentType.equals("WSC")) {
+                if (isLibertyToken) {
+                    //Trust AuthoritiyConfig
+                    taconfig = TrustAuthorityConfig.getConfig("localDisco",
+                            TrustAuthorityConfig.DISCOVERY_TRUST_AUTHORITY);
+                    taconfig.setEndpoint(protocol + ":" + "//" + host + ":" +
+                            port + uri + "/Liberty/disco");
+                    TrustAuthorityConfig.saveConfig(taconfig);
+                    pc.setTrustAuthorityConfig(taconfig);
+                }
+            }
+            ProviderConfig.saveProvider(pc);
+            if (agentType.equals("WSP")) {
+                log(Level.FINEST, "createAgentProfile",
+                        "WSP provider is exists()\n" +
+                        ProviderConfig.isProviderExists(name,
+                        ProviderConfig.WSP));
+            }
+            if (agentType.equals("WSC")) {
+                log(Level.FINEST, "createAgentProfile",
+                        "WSC provider is exists()\n" +
+                        ProviderConfig.isProviderExists(name,
+                        ProviderConfig.WSC));
+            }
+            return (name);
+        } catch(Exception e) {
+            log(Level.SEVERE, "setup", e.getMessage());
+            e.printStackTrace();
+            throw e;
         }
-        ProviderConfig.saveProvider(pc);
-
-        return (name);
+        
     }
-
+    
     /**
      * Convienence method to make web service call.
      */
@@ -392,13 +462,13 @@ public class SecurityTokenTest extends TestCommon {
         connection.setDoOutput(true);
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type",
-            "text/xml; charset=\"utf-8\"");
-
+                "text/xml; charset=\"utf-8\"");
+        
         // Output
         byte[] data = message.getBytes("UTF-8");
         int requestLength = data.length;
         connection.setRequestProperty("Content-Length", Integer
-            .toString(requestLength));
+                .toString(requestLength));
         OutputStream out = null;
         try {
             out = connection.getOutputStream();
@@ -406,11 +476,11 @@ public class SecurityTokenTest extends TestCommon {
             ce.printStackTrace();
             return (null);
         }
-
+        
         // Write out the message
         out.write(data);
         out.flush();
-
+        
         // Get the response
         try {
             in_buf = connection.getInputStream();
@@ -420,18 +490,18 @@ public class SecurityTokenTest extends TestCommon {
             ioe.printStackTrace();
             return (null);
         }
-
+        
         // Return the response
         StringBuffer inbuf = new StringBuffer();
         String line;
         BufferedReader reader = new BufferedReader(new InputStreamReader(
-            in_buf, "UTF-8"));
+                in_buf, "UTF-8"));
         while ((line = reader.readLine()) != null) {
             inbuf.append(line).append("\n");
         }
         return (new String(inbuf));
     }
-
+    
     /**
      * Creates the XML for making the webservice resquest.
      */
@@ -451,7 +521,7 @@ public class SecurityTokenTest extends TestCommon {
         .append("</env:Body></env:Envelope>");
         return sb;
     }
-
+    
     /**
      * Creates the XML for updating the Discovery service security bootstrap
      * entry.
@@ -481,8 +551,9 @@ public class SecurityTokenTest extends TestCommon {
         sb.append("</ServiceInstance>");
         sb.append("</ResourceOffering>");
         sb.append("</DiscoEntry>");
-        log (Level.FINEST, "getBootsrapDiscoEntry", "Discovery Bootstrap" +
+        log(Level.FINEST, "getBootsrapDiscoEntry", "Discovery Bootstrap" +
                 " Resource Offering:" + sb.toString());
         return (sb.toString());
     }
+    
 }
