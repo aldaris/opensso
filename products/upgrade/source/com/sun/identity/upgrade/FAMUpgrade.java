@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMUpgrade.java,v 1.8 2008-08-19 19:15:00 veiming Exp $
+ * $Id: FAMUpgrade.java,v 1.9 2008-08-20 21:13:06 bina Exp $
  *
  */
 package com.sun.identity.upgrade;
@@ -57,7 +57,7 @@ import com.sun.identity.shared.encode.Hash;
  */
 public class FAMUpgrade {
 
-    final static String UPGRADE_CONFIG_FILE = "famUpgradeConfig.properties";
+    final static String UPGRADE_CONFIG_FILE = "ssoUpgradeConfig.properties";
     final static String AMADMIN_USER_PROPERTY = 
         "com.sun.identity.authentication.super.user";
     final static String DS_PORT_PROPERTY = "com.iplanet.am.directory.port";
@@ -76,7 +76,7 @@ public class FAMUpgrade {
     static String configDir;
     static boolean enableRealms = false;
     static boolean realmMode = false;
-    static Debug debug = Debug.getInstance("famUpgrade");
+    static Debug debug = Debug.getInstance("ssoUpgrade");
     static String basedir = null;
     static String stagingDir = null;
 
@@ -578,7 +578,7 @@ public class FAMUpgrade {
         p.put("People_NM_ORG_ROOT_SUFFIX",
                 UpgradeUtils.getPeopleOrgRootSuffix());
         p.put("ORG_ROOT_SUFFIX",UpgradeUtils.getNormalizedRootSuffix());
-        p.put("FAM_ROOT_SUFFIX",UpgradeUtils.getNormalizedRootSuffix());
+        p.put("SSO_ROOT_SUFFIX",UpgradeUtils.getNormalizedRootSuffix());
         p.put("RSUFFIX_HAT",UpgradeUtils.getRootSuffix().replaceAll(",", "^"));
         p.put("SERVER_HOST",UpgradeUtils.getServerHost());
         p.put("RS_RDN",UpgradeUtils.getRsDN());

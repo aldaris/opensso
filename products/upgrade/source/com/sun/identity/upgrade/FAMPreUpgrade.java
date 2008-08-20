@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMPreUpgrade.java,v 1.4 2008-08-19 19:15:00 veiming Exp $
+ * $Id: FAMPreUpgrade.java,v 1.5 2008-08-20 21:13:06 bina Exp $
  *
  */
 package com.sun.identity.upgrade;
@@ -76,8 +76,8 @@ public class FAMPreUpgrade {
     String instanceType = "AM"; //default value
 
     String DEBUG_PROPERTY = "com.iplanet.services.debug.directory";
-    String WIN_UPGRADE_FILE = "fampre80upgrade.bat";
-    String WIN_FAM_UPGRADE_FILE = "famupgrade.bat";
+    String WIN_UPGRADE_FILE = "ssopre80upgrade.bat";
+    String WIN_FAM_UPGRADE_FILE = "ssoupgrade.bat";
     String AMCONFIG_FILE = "AMConfig.properties";
     String SERVERCONFIG_FILE = "serverconfig.xml";
     final static int AUTH_SUCCESS =
@@ -86,7 +86,7 @@ public class FAMPreUpgrade {
             "com.sun.identity.authentication.super.user";
     final static String DS_PORT_PROPERTY = "com.iplanet.am.directory.port";
     final static String DS_HOST_PROPERTY = "com.iplanet.am.directory.host";
-    final static String LOG_FILE = "fampre80upgrade.log";
+    final static String LOG_FILE = "ssopre80upgrade.log";
     static BufferedWriter writer = null;
     Properties amConfigProperties = null;
 
