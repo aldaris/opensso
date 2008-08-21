@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigUnconfig.java,v 1.3 2008-06-26 20:02:41 rmisra Exp $
+ * $Id: ConfigUnconfig.java,v 1.4 2008-08-21 22:02:41 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,7 @@ import com.sun.identity.qatest.common.webtest.DefaultTaskHandler;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.net.InetAddress;
 import java.util.ResourceBundle;
@@ -105,19 +106,26 @@ public class ConfigUnconfig extends TestCommon {
         log(Level.FINE, "startServer", "Client URL: " + clientURL);
 
         String warFile = rb_client.getString("war_file");
-        log(Level.FINE, "startServer", "WAR File: " + warFile);
-        wac.setWar(warFile);
+        if (new File(warFile).exists()) {
+            log(Level.FINE, "startServer", "WAR File: " + warFile);
+            wac.setWar(warFile);
 
-        server.setHandler(wac);
-        server.setStopAtShutdown(true);
+            server.setHandler(wac);
+            server.setStopAtShutdown(true);
 
-        log(Level.FINE, "startServer",
-                "Deploying war and starting jetty server");
-        server.start();
-        log(Level.FINE, "startServer", "Deployed war and started jetty server");
+            log(Level.FINE, "startServer",
+                    "Deploying war and starting jetty server");
+            server.start();
+            log(Level.FINE, "startServer", "Deployed war and started jetty server");
 
-        configureWAR();
-        exiting("startServer");
+            configureWAR();
+            exiting("startServer");
+        } else {
+            log(Level.SEVERE, "startServer", "The client war file" + warFile + 
+                    " does not exist.  Please verify the value of the war_file"
+                    + " property in clientsamplesGlobal.properties");
+            assert false;
+        }
     }
 
     /**
