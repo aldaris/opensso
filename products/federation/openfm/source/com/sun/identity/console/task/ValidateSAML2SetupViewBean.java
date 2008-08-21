@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ValidateSAML2SetupViewBean.java,v 1.4 2008-07-24 18:16:55 veiming Exp $
+ * $Id: ValidateSAML2SetupViewBean.java,v 1.5 2008-08-21 04:37:46 veiming Exp $
  *
  */
 
@@ -267,9 +267,19 @@ public class ValidateSAML2SetupViewBean
         html = html.substring(0, idx) + html.substring(idx1+9);
 
         idx = html.indexOf("<div class=\"ConFldSetLgdDiv\">");
-        idx = html.lastIndexOf("<div ", idx-3);
-        html = html.substring(0, idx+5) + "id=\"divCOTTable\" " +
-            html.substring(idx+5);
+        if (idx == -1) {
+            idx = html.indexOf("<legend class=\"ConFldSetLgd\"");
+            idx = html.lastIndexOf("<fieldset ", idx);
+            html = html.substring(0, idx) + "<div id=\"divCOTTable\">" +
+                html.substring(idx);
+            idx = html.indexOf("</fieldset>", idx);
+            html = html.substring(0, idx+11) + "</div>" +
+                html.substring(idx+11);
+        } else {
+            idx = html.lastIndexOf("<div ", idx-3);
+            html = html.substring(0, idx+5) + "id=\"divCOTTable\" " +
+                html.substring(idx+5);
+        }
         
         idx = html.indexOf("tfIDP");
         idx = html.lastIndexOf("<img ", idx);
