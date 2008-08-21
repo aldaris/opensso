@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthClientUtils.java,v 1.20 2008-08-19 19:08:50 veiming Exp $
+ * $Id: AuthClientUtils.java,v 1.21 2008-08-21 17:12:20 pawand Exp $
  *
  */
 
@@ -1514,6 +1514,9 @@ public class AuthClientUtils {
                 utilDebug.message("Create AM cookie");
             }
             cookie = createCookie(cookieName,cookieValue,cookieDomain);
+            if (CookieUtils.isCookieSecure()) {
+                cookie.setSecure(true);
+            }
         } catch (Exception e) {
             if (utilDebug.messageEnabled()) {
                 utilDebug.message("Error getCookieString : " 
