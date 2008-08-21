@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.55 2008-08-20 22:28:23 arunav Exp $
+ * $Id: TestCommon.java,v 1.56 2008-08-21 05:04:10 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -48,6 +48,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.ConnectException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -1226,6 +1227,7 @@ public class TestCommon implements TestConstants {
      * server.
      */
     protected void stopNotificationServer(Map notificationIDMap)
+    throws Exception
      {
        try {
        log(Level.FINE, "stopNotificationServer", "Stopping the notification" +
@@ -1249,9 +1251,10 @@ public class TestCommon implements TestConstants {
                      "Still up. Couldn't shut down the server");
         }
         deregisterNotificationServerURL(notificationIDMap);
+        } catch (ConnectException e) {
+            log(Level.FINEST, "stopNotificationServer", "Notification server is stopped");
         } catch (Exception e) {
-            log(Level.SEVERE, "stopNotificationServer", e.getMessage());
-            e.printStackTrace();
+            throw e;
         }
     }
 
