@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataLayer.java,v 1.15 2008-08-08 00:40:55 ww203982 Exp $
+ * $Id: DataLayer.java,v 1.16 2008-08-21 04:30:24 veiming Exp $
  *
  */
 
@@ -133,6 +133,10 @@ public class DataLayer implements java.io.Serializable {
     
     static {
         debug = Debug.getInstance(IUMSConstants.UMS_DEBUG);
+        initConnectionParams();
+    }
+    
+    public static void initConnectionParams() {
         String numRetryStr = SystemProperties.get(LDAP_CONNECTION_NUM_RETRIES);
         if (numRetryStr != null) {
             try {

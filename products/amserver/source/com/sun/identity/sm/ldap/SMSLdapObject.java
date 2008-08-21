@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSLdapObject.java,v 1.19 2008-08-07 17:22:04 arviranga Exp $
+ * $Id: SMSLdapObject.java,v 1.20 2008-08-21 04:30:24 veiming Exp $
  *
  */
 
@@ -195,6 +195,7 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
             debug.message("SMSLdapObject: LDAP Initialized successfully");
 
             // Get connection retry parameters
+            DataLayer.initConnectionParams();
             connNumRetry = DataLayer.getConnNumRetry();
             connRetryInterval = DataLayer.getConnRetryInterval();
             retryErrorCodes = DataLayer.getRetryErrorCodes();
@@ -263,81 +264,83 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
             return (null);
         }
 
-        LDAPAttributeSet attrSet = null;
-        LDAPConnection conn = getConnection(token.getPrincipal());
-        int errorCode = 0;
-        try {
-            LDAPEntry ldapEntry = null;
-            int retry = 0;
-            while (retry <= connNumRetry) {
-                if (debug.messageEnabled()) {
-                    debug.message("SMSLdapObject.read() retry: " + retry);
-                }
-                try {
-                    ldapEntry = conn.read(getNormalizedName(token, dn),
-                        getAttributeNames());
-                    break;
-                } catch (LDAPException e) {
-                    errorCode = e.getLDAPResultCode();
-                    if (!retryErrorCodes.contains("" + e.getLDAPResultCode())
-                            || retry == connNumRetry) {
-                        throw e;
-                    }
-                    retry++;
-                    try {
-                        Thread.sleep(connRetryInterval);
-                    } catch (InterruptedException ex) {
-                    }
-                }
+        LDAPEntry ldapEntry = null;
+        int retry = 0;
+        while (retry < connNumRetry) {
+            if (debug.messageEnabled()) {
+                debug.message("SMSLdapObject.read() retry: " + retry);
             }
 
-            if (ldapEntry == null) {
-                if (debug.warningEnabled()) {
-                    debug.warning("SMSLdapObject: insufficient access rights "
-                            + "to access DN=" + dn);
+            int errorCode = 0;
+            LDAPConnection conn = getConnection(token.getPrincipal());
+            try {
+                ldapEntry = conn.read(getNormalizedName(token, dn),
+                getAttributeNames());
+                break;
+            } catch (LDAPException e) {
+                errorCode = e.getLDAPResultCode();
+                if (!retryErrorCodes.contains(Integer.toString(errorCode)) ||
+                    (retry == connNumRetry)
+                ) {
+                    if (errorCode == LDAPException.NO_SUCH_OBJECT) {
+                        // Add to not present Set
+                        objectChanged(dn, DELETE);
+                        if (debug.messageEnabled()) {
+                            debug.message(
+                                "SMSLdapObject.read: entry not present:" + dn);
+                        }
+                        break;
+                    } else {
+                        if (debug.warningEnabled()) {
+                            debug.warning("SMSLdapObject.read: " +
+                                "Error in accessing entry DN: " + dn, e);
+                        }
+                        throw new SMSException(e, "sms-entry-cannot-access");
+                    }
                 }
-                throw (new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
-                        IUMSConstants.SMS_INSUFFICIENT_ACCESS_RIGHTS, null));
-            }
-            attrSet = ldapEntry.getAttributeSet();
-            if (debug.messageEnabled()) {
-                debug.message("SMSLdapObject: reading entry: " + dn);
-            }
-        } catch (LDAPException ex) {
-            errorCode = ex.getLDAPResultCode();
-            // Check if the entry is not present
-            if (ex.getLDAPResultCode() == LDAPException.NO_SUCH_OBJECT) {
-                // Add to not present Set
-                objectChanged(dn, DELETE);
-                if (debug.messageEnabled()) {
-                    debug.message("SMSLdapObject: entry not present:" + dn);
+                retry++;
+                try {
+                    Thread.sleep(connRetryInterval);
+                } catch (InterruptedException ex) {
+                    // ignored
                 }
-            } else {
-                if (debug.warningEnabled()) {
-                    debug.warning(
-                        "SMSLdapObject.read: Error in accessing entry DN: " +
-                            dn, ex);
+            } finally {
+                if (conn != null) {
+                    releaseConnection(conn, errorCode);
                 }
-                throw (new SMSException(ex, "sms-entry-cannot-access"));
             }
-        } finally {
-            releaseConnection(conn, errorCode);
         }
 
-        // Convert LDAPAttributeSet to Map
+        if (ldapEntry != null) {
+            LDAPAttributeSet attrSet = ldapEntry.getAttributeSet();
+            if (debug.messageEnabled()) {
+                debug.message("SMSLdapObject.read(): reading entry: " + dn);
+            }
+            return convertLDAPAttributeSetToMap(attrSet);
+        } else {
+            return null;
+        }
+    }
+
+    private static Map convertLDAPAttributeSetToMap(LDAPAttributeSet attrSet) {
         Map answer = null;
+
         if (attrSet != null) {
             for (Enumeration enums = attrSet.getAttributes(); enums
                     .hasMoreElements();) {
                 LDAPAttribute attr = (LDAPAttribute) enums.nextElement();
                 String attrName = attr.getName();
+
                 if (attr != null) {
                     Set values = new HashSet();
                     String[] value = attr.getStringValueArray();
-                    for (int i = 0; i < value.length; i++)
+
+                    for (int i = 0; i < value.length; i++) {
                         values.add(value[i]);
-                    if (answer == null)
+                    }
+                    if (answer == null) {
                         answer = new CaseInsensitiveHashMap(10);
+                    }
                     answer.put(attrName, values);
                 }
             }
@@ -362,53 +365,58 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
      */
     private static void create(Principal p, String dn, Map attrs)
             throws SMSException, SSOException {
-        LDAPConnection conn = getConnection(p);
-        try {
-            int retry = 0;
-            while (retry <= connNumRetry) {
+        int retry = 0;
+        while (retry < connNumRetry) {
+            if (debug.messageEnabled()) {
+                debug.message("SMSLdapObject.create() retry: " + retry);
+            }
+
+            int errorCode = 0;
+            LDAPConnection conn = getConnection(p);
+            try {
+                LDAPAttributeSet attrSet = copyMapToAttrSet(attrs);
+                conn.add(new LDAPEntry(dn, attrSet));
                 if (debug.messageEnabled()) {
-                    debug.message("SMSLdapObject.create() retry: " + retry);
+                    debug.message(
+                        "SMSLdapObject.create Successfully created entry: " +
+                        dn);
                 }
+                break;
+            } catch (LDAPException e) {
+                errorCode = e.getLDAPResultCode();
+                if (errorCode == LDAPException.ENTRY_ALREADY_EXISTS) {
+                    // During install time, this error gets throws
+                    // due to unknown issue. Issue: 
+                    // Hence mask it during install time only
+                    String installTime = SystemProperties.get(
+                        Constants.SYS_PROPERTY_INSTALL_TIME, "false");
+                    if (installTime.equalsIgnoreCase("true")) {
+                        debug.warning("SMSLdapObject.create() Entry " +
+                            "Already Exists Error during install time for DN" +
+                            dn);
+                        break;
+                    }
+                }
+
+                if (!retryErrorCodes.contains(Integer.toString(errorCode)) ||
+                    (retry >= connNumRetry) 
+                ) {
+                    debug.error(
+                        "SMSLdapObject.create() Error in creating entry: " +
+                        dn + "\nBy Principal: " + p.getName(), e);
+                    throw new SMSException(e, "sms-entry-cannot-create");
+                }
+                retry++;
                 try {
-                    LDAPAttributeSet attrSet = copyMapToAttrSet(attrs);
-                    conn.add(new LDAPEntry(dn, attrSet));
-                    break;
-                } catch (LDAPException e) {
-                    int errorCode = e.getLDAPResultCode();
-                    if (errorCode == LDAPException.ENTRY_ALREADY_EXISTS) {
-                        // During install time, this error gets throws
-                        // due to unknown issue. Issue: 
-                        // Hence mask it during install time only
-                        String installTime = SystemProperties.get(
-                            Constants.SYS_PROPERTY_INSTALL_TIME, "false");
-                        if (installTime.equalsIgnoreCase("true")) {
-                            debug.error("SMSLdapObject.create() Entry " +
-                                "Already Exists Error during install time " +
-                                "for DN" + dn);
-                            break;
-                        }
-                    }
-                    if (!retryErrorCodes.contains(Integer.toString(errorCode))
-                        || retry == connNumRetry) {
-                        throw e;
-                    }
-                    retry++;
-                    try {
-                        Thread.sleep(connRetryInterval);
-                    } catch (InterruptedException ex) {
-                    }
+                    Thread.sleep(connRetryInterval);
+                } catch (InterruptedException ex) {
+                    //ignored
+                }
+            } finally {
+                if (conn != null) {
+                    releaseConnection(conn, errorCode);
                 }
             }
-        } catch (LDAPException le) {
-            debug.error("SMSLdapObject::create() Error in creating entry: "
-                    + dn + "\nBy Principal: " + p.getName(), le);
-            throw (new SMSException(le, "sms-entry-cannot-create"));
-        } finally {
-            releaseConnection(conn);
-        }
-
-        if (debug.messageEnabled()) {
-            debug.message("SMSLdapObject: Successfully created entry: " + dn);
         }
     }
 
@@ -417,42 +425,47 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
      * used to get the proxy connection.
      */
     public void modify(SSOToken token, String dn, ModificationItem mods[])
-            throws SMSException, SSOException {
+        throws SMSException, SSOException {
+        int retry = 0;
+        while (retry <= connNumRetry) {
+            if (debug.messageEnabled()) {
+                debug.message("SMSLdapObject.modify() retry: " + retry);
+            }
 
-        LDAPConnection conn = getConnection(token.getPrincipal());
-        try {
-            int retry = 0;
-            while (retry <= connNumRetry) {
+            int errorCode = 0;
+            LDAPConnection conn = getConnection(token.getPrincipal());
+            try {
+                LDAPModificationSet modSet = copyModItemsToLDAPModSet(mods);
+                conn.modify(getNormalizedName(token, dn), modSet);
                 if (debug.messageEnabled()) {
-                    debug.message("SMSLdapObject.modify() retry: " + retry);
+                    debug.message(
+                        "SMSLdapObject.modify(): Successfully modified entry: "
+                        + dn);
                 }
+                break;
+            } catch (LDAPException e) {
+                errorCode = e.getLDAPResultCode();
+
+                if (!retryErrorCodes.contains(Integer.toString(errorCode)) ||
+                    (retry == connNumRetry)
+                ) {
+                    debug.error(
+                        "SMSLdapObject.modify(): Error in modifying entry: " +
+                            dn + "\nBy Principal: " +
+                            token.getPrincipal().getName(), e);
+                    throw new SMSException(e, "sms-entry-cannot-modify");
+                }
+                retry++;
                 try {
-                    LDAPModificationSet modSet = copyModItemsToLDAPModSet(mods);
-                    conn.modify(getNormalizedName(token, dn), modSet);
-                    break;
-                } catch (LDAPException e) {
-                    if (!retryErrorCodes.contains("" + e.getLDAPResultCode())
-                            || retry == connNumRetry) {
-                        throw e;
-                    }
-                    retry++;
-                    try {
-                        Thread.sleep(connRetryInterval);
-                    } catch (InterruptedException ex) {
-                    }
+                    Thread.sleep(connRetryInterval);
+                } catch (InterruptedException ex) {
+                    // ignored
+                }
+            } finally {
+                if (conn != null) {
+                    releaseConnection(conn, errorCode);
                 }
             }
-        } catch (LDAPException le) {
-            debug.error("SMSLdapObject::modify() Error in modifying entry: "
-                    + dn + "\nBy Principal: " + token.getPrincipal().getName(),
-                    le);
-            throw (new SMSException(le, "sms-entry-cannot-modify"));
-        } finally {
-            releaseConnection(conn);
-        }
-
-        if (debug.messageEnabled()) {
-            debug.message("SMSLdapObject: Successfully modified entry: " + dn);
         }
     }
 
@@ -554,81 +567,86 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
     private Set getSubEntries(SSOToken token, String dn, String filter,
             int numOfEntries, boolean sortResults, boolean ascendingOrder)
             throws SMSException, SSOException {
-
-        LDAPConnection conn = getConnection(token.getPrincipal());
-        // Setup the search constraints
-        LDAPSearchConstraints constraints = conn.getSearchConstraints();
-        constraints.setMaxResults(numOfEntries);
-        constraints.setServerTimeLimit(0);
-
         LDAPSearchResults results = null;
-        try {
-            int retry = 0;
-            while (retry <= connNumRetry) {
-                if (debug.messageEnabled()) {
-                    debug.message("SMSLdapObject.subEntries() retry: " + retry);
+        int retry = 0;
+
+        while (retry < connNumRetry) {
+            if (debug.messageEnabled()) {
+                debug.message("SMSLdapObject.subEntries() retry: " + retry);
+            }
+
+            int errorCode = 0;
+            LDAPConnection conn = getConnection(token.getPrincipal());
+            LDAPSearchConstraints constraints = conn.getSearchConstraints();
+            constraints.setMaxResults(numOfEntries);
+            constraints.setServerTimeLimit(0);
+            try {
+                // Get the sub entries
+                results = conn.search(getNormalizedName(token, dn),
+                    LDAPConnection.SCOPE_ONE, filter, OU_ATTR, false, 
+                    constraints);
+                // Check if the results have to sorted
+                if (sortResults) {
+                    LDAPCompareAttrNames comparator = new LDAPCompareAttrNames(
+                        getNamingAttribute(), ascendingOrder);
+                    results.sort(comparator);
                 }
-                try {
-                    // Get the sub entries
-                    results = conn.search(getNormalizedName(token, dn),
-                        LDAPConnection.SCOPE_ONE, filter, OU_ATTR, false, 
-                        constraints);
-                    // Check if the results have to sorted
-                    if (sortResults) {
-                        LDAPCompareAttrNames comparator = 
-                            new LDAPCompareAttrNames(
-                                getNamingAttribute(), ascendingOrder);
-                        results.sort(comparator);
+                break;
+            } catch (LDAPException e) {
+                errorCode = e.getLDAPResultCode();
+                if (errorCode == LDAPException.NO_SUCH_OBJECT) {
+                    if (debug.messageEnabled()) {
+                        debug.message(
+                            "SMSLdapObject.subEntries(): entry not present:" +
+                            dn);
                     }
                     break;
-                } catch (LDAPException e) {
-                    if (!retryErrorCodes.contains("" + e.getLDAPResultCode())
-                            || retry == connNumRetry) {
-                        throw e;
+                }
+                if (!retryErrorCodes.contains(Integer.toString(errorCode)) ||
+                    (retry >= connNumRetry)
+                ) {
+                    if (debug.warningEnabled()) {
+                        debug.warning(
+                            "SMSLdapObject.subEntries: Unable to search for " +
+                            "sub-entries: " + dn, e);
                     }
-                    retry++;
-                    try {
-                        Thread.sleep(connRetryInterval);
-                    } catch (InterruptedException ex) {
-                    }
+                    throw new SMSException(e, "sms-entry-cannot-search");
+                }
+                retry++;
+                try {
+                    Thread.sleep(connRetryInterval);
+                } catch (InterruptedException ex) {
+                    // ignored
+                }
+            } finally {
+                if (conn != null) {
+                    releaseConnection(conn, errorCode);
                 }
             }
-        } catch (LDAPException le) {
-            if (le.getLDAPResultCode() == LDAPException.NO_SUCH_OBJECT) {
-                if (debug.messageEnabled()) {
-                    debug.message("SMSLdapObject: entry not present:" + dn);
-                }
-            } else {
-                if (debug.warningEnabled()) {
-                    debug.warning("SMSLdapObject: Unable to search for "
-                            + "sub-entries: " + dn, le);
-                }
-                throw (new SMSException(le, "sms-entry-cannot-search"));
-            }
-        } finally {
-            releaseConnection(conn);
         }
 
         // Construct the results and return
-        LDAPEntry entry;
         Set answer = new OrderedSet();
-        while (results != null && results.hasMoreElements()) {
-            try {
-                entry = results.next();
-            } catch (LDAPException ldape) {
-                if (debug.warningEnabled()) {
-                    debug.warning("SMSLdapObject: Error in obtaining "
-                            + "sub-entries: " + dn, ldape);
+        if (results != null) {
+            while (results.hasMoreElements()) {
+                try {
+                    LDAPEntry entry = results.next();
+                    String temp = LDAPDN.explodeDN(entry.getDN(), true)[0]; 
+                    answer.add(getDenormalizedName(token, temp));
+                } catch (LDAPException e) {
+                    if (debug.warningEnabled()) {
+                        debug.warning(
+                            "SMSLdapObject.subEntries: Error in obtaining " +
+                            "sub-entries: " + dn, e);
+                    }
+                    throw new SMSException(e, "sms-entry-cannot-obtain");
                 }
-                throw (new SMSException(ldape, "sms-entry-cannot-obtain"));
             }
-            
-            String temp = LDAPDN.explodeDN(entry.getDN(), true)[0]; 
-            answer.add(getDenormalizedName(token, temp));
-        }
-        if (debug.messageEnabled()) {
-            debug.message("SMSLdapObject: Successfully obtained "
-                    + "sub-entries for : " + dn);
+            if (debug.messageEnabled()) {
+                debug.message(
+                    "SMSLdapObject.subEntries: Successfully obtained " +
+                    "sub-entries for : " + dn);
+            }
         }
         return (answer);
     }
@@ -716,68 +734,69 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
             debug.message("SMSLdapObject: search filter: " + filter);
         }
 
-        LDAPConnection conn = getConnection(adminPrincipal);
         LDAPSearchResults results = null;
-        Set answer = new OrderedSet();
-        try {
-            // Setup the search constraints
+        int retry = 0;
+
+        while (retry < connNumRetry) {
+            if (debug.messageEnabled()) {
+                debug.message("SMSLdapObject.search() retry: " + retry);
+            }
+
+            int errorCode = 0;
+            LDAPConnection conn = getConnection(adminPrincipal);
             LDAPSearchConstraints constraints = conn.getSearchConstraints();
             constraints.setMaxResults(0);
             constraints.setServerTimeLimit(0);
 
-            int retry = 0;
-            while (retry <= connNumRetry) {
-                if (debug.messageEnabled()) {
-                    debug.message("SMSLdapObject.search() retry: " + retry);
+            try {
+                results = conn.search(getNormalizedName(token, startDN),
+                    LDAPConnection.SCOPE_SUB,filter, null, false, constraints);
+                break;
+            } catch (LDAPException e) {
+                errorCode = e.getLDAPResultCode();
+                if (!retryErrorCodes.contains(Integer.toString(errorCode)) ||
+                    (retry >= connNumRetry)
+                ) {
+                    if (debug.warningEnabled()) {
+                        debug.warning(
+                            "SMSLdapObject.search(): LDAP exception in search "
+                            + "for filter match: " + filter, e);
+                    }
+                    throw new SMSException(e, "sms-error-in-searching");
                 }
-                
+                retry++;
                 try {
-                    results = conn.search(getNormalizedName(token, startDN),
-                        LDAPConnection.SCOPE_SUB,filter, null, false, 
-                        constraints);
-                    break;
-                } catch (LDAPException e) {
-                    if (!retryErrorCodes.contains("" + e.getLDAPResultCode())
-                            || retry == connNumRetry) {
-                        throw e;
-                    }
-                    retry++;
-                    try {
-                        Thread.sleep(connRetryInterval);
-                    } catch (InterruptedException ex) {
-                    }
+                    Thread.sleep(connRetryInterval);
+                } catch (InterruptedException ex) {
+                    //ignored
+                }
+            } finally {
+                if (conn != null) {
+                    releaseConnection(conn, errorCode);
                 }
             }
-
-        } catch (LDAPException le) {
-            if (debug.warningEnabled()) {
-                debug.warning("SMSLdapObject: LDAP exception in search "
-                    + "for filter match: " + filter, le);
-            }
-            throw (new SMSException(le, "sms-error-in-searching"));
-        } finally {
-            releaseConnection(conn);
         }
 
         // Convert LDAP results to DNs
-        LDAPEntry entry;
-        while (results.hasMoreElements()) {
+        Set answer = new OrderedSet();
+        while ((results != null) && results.hasMoreElements()) {
             try {
-                entry = results.next();
+                LDAPEntry entry = results.next();
+                answer.add(entry.getDN());
             } catch (LDAPException ldape) {
                 if (debug.warningEnabled()) {
-                    debug.warning("SMSLdapObject: Error in searching for "
-                            + "filter match: " + filter, ldape);
+                    debug.warning(
+                        "SMSLdapObject.search(): Error in searching for " +
+                        "filter match: " + filter, ldape);
                 }
-                throw (new SMSException(ldape, "sms-error-in-searching"));
+                throw new SMSException(ldape, "sms-error-in-searching");
             }
-            answer.add(entry.getDN());
         }
         if (debug.messageEnabled()) {
-            debug.message("SMSLdapObject::search returned successfully: "
+            debug.message("SMSLdapObject.search() returned successfully: "
                     + filter + "\n\tObjects: " + answer);
         }
-        return (answer);
+        return answer;
     }
 
     /**
@@ -983,89 +1002,95 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
         boolean ascendingOrder, 
         boolean recursive
     ) throws SMSException, SSOException {
-        LDAPConnection conn = getConnection(token.getPrincipal());
-        // Setup the search constraints
-        LDAPSearchConstraints constraints = conn.getSearchConstraints();
-        constraints.setMaxResults(numOfEntries);
-        constraints.setServerTimeLimit(0);
-
         LDAPSearchResults results = null;
-        int scope = LDAPConnection.SCOPE_ONE;
-        try {
-            int retry = 0;
-            while (retry <= connNumRetry) {
-                if (debug.messageEnabled()) {
-                    debug.message(
-                        "SMSLdapObject.searchSubOrganizationNames() retry: " +
-                        retry);
-                }
-                try {
-                    // Get the suborganization names
-                    if (recursive) {
-                        scope = LDAPConnection.SCOPE_SUB;
-                    }
-                    results = conn.search(getNormalizedName(token, dn), 
-                        scope, filter, O_ATTR, false, constraints);
+        int scope = (recursive) ? LDAPConnection.SCOPE_SUB :
+            LDAPConnection.SCOPE_ONE;
+        int retry = 0;
 
-                    // Check if the results have to be sorted
-                    if (sortResults) {
-                        LDAPCompareAttrNames comparator =
-                            new LDAPCompareAttrNames(
-                                getOrgNamingAttribute(), ascendingOrder);
-                        results.sort(comparator);
+        while (retry < connNumRetry) {
+            if (debug.messageEnabled()) {
+                debug.message(
+                    "SMSLdapObject.searchSubOrganizationNames() retry: " +
+                    retry);
+            }
+
+            int errorCode = 0;
+            LDAPConnection conn = getConnection(token.getPrincipal());
+            LDAPSearchConstraints constraints = conn.getSearchConstraints();
+            constraints.setMaxResults(numOfEntries);
+            constraints.setServerTimeLimit(0);
+
+            try {
+                // Get the suborganization names
+                results = conn.search(getNormalizedName(token, dn), 
+                    scope, filter, O_ATTR, false, constraints);
+
+                // Check if the results have to be sorted
+                if (sortResults) {
+                    LDAPCompareAttrNames comparator = new LDAPCompareAttrNames(
+                        getOrgNamingAttribute(), ascendingOrder);
+                    results.sort(comparator);
+                }
+                break;
+            } catch (LDAPException e) {
+                errorCode = e.getLDAPResultCode();
+
+                if (!retryErrorCodes.contains(Integer.toString(errorCode)) ||
+                    (retry >= connNumRetry)
+                ) {
+                    if (errorCode == LDAPException.NO_SUCH_OBJECT) {
+                        if (debug.messageEnabled()) {
+                            debug.message(
+                                "SMSLdapObject.searchSubOrganizationNames(): " +
+                                "suborg not present:" + dn);
+                        }
+                        break;
+                    } else {
+                        if (debug.warningEnabled()) {
+                            debug.warning(
+                                "SMSLdapObject.searchSubOrganizationName(): " + 
+                                "Unable to search for suborganization names: "
+                                + dn, e);
+                        }
+                        throw new SMSException(e, "sms-suborg-cannot-search");
                     }
-                    break;
-                } catch (LDAPException e) {
-                    if (!retryErrorCodes.contains("" + e.getLDAPResultCode())
-                            || retry == connNumRetry) {
-                        throw e;
-                    }
-                    retry++;
-                    try {
-                        Thread.sleep(connRetryInterval);
-                    } catch (InterruptedException ex) {
-                    }
+                }
+                retry++;
+                try {
+                    Thread.sleep(connRetryInterval);
+                } catch (InterruptedException ex) {
+                    // ignored
+                }
+            } finally {
+                if (conn != null) {
+                    releaseConnection(conn, errorCode);
                 }
             }
-        } catch (LDAPException le) {
-            if (le.getLDAPResultCode() == LDAPException.NO_SUCH_OBJECT) {
-                if (debug.messageEnabled()) {
-                    debug.message("SMSLdapObject: suborg not present:" + dn);
-                }
-            } else {
-                if (debug.warningEnabled()) {
-                    debug.warning("SMSLdapObject: Unable to search for "
-                            + "suborganization names: " + dn, le);
-                }
-                throw (new SMSException(le, "sms-suborg-cannot-search"));
-            }
-        } finally {
-            releaseConnection(conn);
         }
 
         // Construct the results and return
-        LDAPEntry entry;
         Set answer = new OrderedSet();
-
-        while (results != null && results.hasMoreElements()) {
+        while ((results != null) && results.hasMoreElements()) {
             try {
-                entry = results.next();
-            } catch (LDAPException ldape) {
+                LDAPEntry entry = results.next();
+                String rdn = (entry.getDN()).toString();
+                answer.add(rdn);
+            } catch (LDAPException e) {
                 if (debug.warningEnabled()) {
-                    debug.warning("SMSLdapObject: Error in obtaining "
-                            + "suborganization names: " + dn, ldape);
+                    debug.warning(
+                        "SMSLdapObject.searchSubOrganizationName: " +
+                        "Error in obtaining suborganization names: " + dn, e);
                 }
-                throw (new SMSException(ldape, "sms-suborg-cannot-obtain"));
+                throw new SMSException(e, "sms-suborg-cannot-obtain");
             }
 
-            String rdn = (entry.getDN()).toString();
-            answer.add(rdn);
         }
         if (debug.messageEnabled()) {
-            debug.message("SMSLdapObject: Successfully obtained "
-                    + "suborganization names for : " + dn);
-            debug.message("SMSLdapObject: Successfully obtained "
-                    + "suborganization names  : " + answer.toString());
+            debug.message("SMSLdapObject.searchSubOrganizationName: " + 
+                "Successfully obtained suborganization names for : " + dn);
+            debug.message("SMSLdapObject.searchSubOrganizationName: " +
+                "Successfully obtained suborganization names  : " +
+                answer.toString());
         }
         return (answer);
     }
@@ -1156,85 +1181,91 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
     private Set getOrgNames(SSOToken token, String dn, String filter,
             int numOfEntries, boolean sortResults, boolean ascendingOrder)
             throws SMSException, SSOException {
-
-        LDAPConnection conn = getConnection(token.getPrincipal());
-        // Setup the search constraints
-        LDAPSearchConstraints constraints = conn.getSearchConstraints();
-        constraints.setMaxResults(numOfEntries);
-        constraints.setServerTimeLimit(0);
-
         LDAPSearchResults results = null;
-        int scope = LDAPConnection.SCOPE_SUB;
-        try {
-            int retry = 0;
-            while (retry <= connNumRetry) {
-                if (debug.messageEnabled()) {
-                    debug.message("SMSLdapObject.getOrgNames() retry: "+ retry);
-                }
-                try {
-                    // Get the organization names
-                    results = conn.search(getNormalizedName(token, dn),
-                        scope, filter, O_ATTR, false, constraints);
+        int retry = 0;
 
-                    // Check if the results have to be sorted
-                    if (sortResults) {
-                        LDAPCompareAttrNames comparator = 
-                            new LDAPCompareAttrNames(
-                                getOrgNamingAttribute(), ascendingOrder);
-                        results.sort(comparator);
+        while (retry < connNumRetry) {
+            if (debug.messageEnabled()) {
+                debug.message("SMSLdapObject.getOrgNames() retry: "+ retry);
+            }
+
+            int errorCode = 0;
+            LDAPConnection conn = getConnection(token.getPrincipal());
+            LDAPSearchConstraints constraints = conn.getSearchConstraints();
+            constraints.setMaxResults(numOfEntries);
+            constraints.setServerTimeLimit(0);
+
+            try {
+                // Get the organization names
+                results = conn.search(getNormalizedName(token, dn),
+                    LDAPConnection.SCOPE_SUB, filter, O_ATTR, false,
+                    constraints);
+
+                // Check if the results have to be sorted
+                if (sortResults) {
+                    LDAPCompareAttrNames comparator = new LDAPCompareAttrNames(
+                        getOrgNamingAttribute(), ascendingOrder);
+                    results.sort(comparator);
+                }
+                break;
+            } catch (LDAPException e) {
+                errorCode = e.getLDAPResultCode();
+                if (!retryErrorCodes.contains(Integer.toString(errorCode)) ||
+                    (retry == connNumRetry)
+                ) {
+                    if (errorCode == LDAPException.NO_SUCH_OBJECT) {
+                        if (debug.messageEnabled()) {
+                            debug.message(
+                                "SMSLdapObject.getOrgNames(): org not present:" 
+                                + dn);
+                        }
+                        break;
+                    } else {
+                        if (debug.warningEnabled()) {
+                            debug.warning(
+                                "SMSLdapObject.getOrgNames: " +
+                                "Unable to search for organization names: " +
+                                dn, e);
+                        }
+                        throw new SMSException(e, "sms-org-cannot-search");
                     }
-                    break;
-                } catch (LDAPException e) {
-                    if (!retryErrorCodes.contains("" + e.getLDAPResultCode())
-                            || retry == connNumRetry) {
-                        throw e;
-                    }
-                    retry++;
-                    try {
-                        Thread.sleep(connRetryInterval);
-                    } catch (InterruptedException ex) {
-                    }
+                }
+                retry++;
+                try {
+                    Thread.sleep(connRetryInterval);
+                } catch (InterruptedException ex) {
+                    // ignored
+                }
+            } finally {
+                if (conn != null) {
+                    releaseConnection(conn, errorCode);
                 }
             }
-        } catch (LDAPException le) {
-            if (le.getLDAPResultCode() == LDAPException.NO_SUCH_OBJECT) {
-                if (debug.messageEnabled()) {
-                    debug.message("SMSLdapObject: org not present:" + dn);
-                }
-            } else {
-                if (debug.warningEnabled()) {
-                    debug.warning("SMSLdapObject: Unable to search for "
-                            + "organization names: " + dn, le);
-                }
-                throw (new SMSException(le, "sms-org-cannot-search"));
-            }
-        } finally {
-            releaseConnection(conn);
         }
 
         // Construct the results and return
-        LDAPEntry entry;
         Set answer = new OrderedSet();
 
-        while (results != null && results.hasMoreElements()) {
+        while ((results != null) && results.hasMoreElements()) {
             try {
-                entry = results.next();
-            } catch (LDAPException ldape) {
+                LDAPEntry entry = results.next();
+                String rdn = (entry.getDN()).toString();
+                answer.add(rdn);
+            } catch (LDAPException e) {
                 if (debug.warningEnabled()) {
-                    debug.warning("SMSLdapObject: Error in obtaining "
-                            + "organization names: " + dn, ldape);
+                    debug.warning("SMSLdapObject.getOrgNames: " +
+                        "Error in obtaining organization names: " + dn, e);
                 }
-                throw (new SMSException(ldape, "sms-org-cannot-obtain"));
+                throw new SMSException(e, "sms-org-cannot-obtain");
             }
-
-            String rdn = (entry.getDN()).toString();
-            answer.add(rdn);
         }
+
         if (debug.messageEnabled()) {
-            debug.message("SMSLdapObject: Successfully obtained "
-                    + "organization names for : " + dn);
-            debug.message("SMSLdapObject: Successfully obtained "
-                    + "organization names  : " + answer.toString());
+            debug.message("SMSLdapObject.getOrgNames(): " +
+                "Successfully obtained organization names for : " + dn);
+            debug.message("SMSLdapObject.getOrgNames(): " + 
+                "Successfully obtained organization names  : " +
+                    answer.toString());
         }
         return (answer);
     }
