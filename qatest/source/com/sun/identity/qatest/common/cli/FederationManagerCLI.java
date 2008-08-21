@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManagerCLI.java,v 1.16 2008-08-12 21:45:40 nithyas Exp $
+ * $Id: FederationManagerCLI.java,v 1.17 2008-08-21 20:27:38 srivenigan Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,15 +25,12 @@
 package com.sun.identity.qatest.common.cli;
 
 import com.sun.identity.qatest.cli.CLIConstants;
-import com.sun.identity.qatest.cli.CommandMessages;
 import com.sun.identity.qatest.cli.FederationManagerCLIConstants;
 import com.sun.identity.qatest.cli.GlobalConstants;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.TestConstants;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -90,7 +87,35 @@ public class FederationManagerCLI extends CLIUtility
             throw e;         
         }        
     }
-    
+
+    /**
+     * This method creates a test service by generating xml 
+     * with given service name and revision number.
+     * @param serviceXmlName - Name of the service xml to be created. 
+     * @param initRevisionNo - Revision number initial value 
+     * @return the exit status of the "create-svc" command
+     */
+    public int createService(String serviceXmlName, String initRevisionNo) 
+    throws Exception {
+        setSubcommand(CREATE_SERVICE_SUBCOMMAND);
+        addXMLFileArguments(serviceXmlName, initRevisionNo);
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));
+    }
+
+    /**
+     * 
+     * @param serviceName - Name of the service to be deleted.
+     * @return the exit status of the "delete-svc" command
+     */    
+    public int deleteService(String serviceName) 
+    throws Exception {
+        setSubcommand(DELETE_SERVICE_SUBCOMMAND);
+        addServiceNameArguments(serviceName);
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));
+    }
+
     /**
      * Get the absolute path to the ssoadm CLI.
      *
@@ -515,6 +540,7 @@ public class FederationManagerCLI extends CLIUtility
      * Get revision number.
      * 
      * @param serviceName - the name of the service.
+     * @return the exit status of the "get-revision-number" command
      */
     public int getRevisionNumber(String serviceName)
     throws Exception {
@@ -528,6 +554,7 @@ public class FederationManagerCLI extends CLIUtility
      * Set revision number.
      * 
      * @param serviceName - the name of the service.
+     * @return the exit status of the "set-revision-number" command
      */
     public int setRevisionNumber(String serviceName, String revisionNumber)
     throws Exception {
@@ -1449,7 +1476,7 @@ public class FederationManagerCLI extends CLIUtility
         addArgument(dataFileArg);
         addArgument(attFile);
     }
-    
+
     /**
      * Add the "--idnames" argument and value to the argument list
      */
@@ -1468,6 +1495,135 @@ public class FederationManagerCLI extends CLIUtility
             addArgument(tokenizer.nextToken());
         }
     }
+
+    /**
+     * Add the "--xmlfile" argument and XML file to the argument list
+     * @param xmlFileArg
+     */
+    private void addXMLFileArguments(String serviceXmlFileName,
+            String initRevisionNo) throws Exception {
+        String xmlFileArg;
+        if (useLongOptions) {
+            xmlFileArg = PREFIX_ARGUMENT_LONG + XML_FILE_ARGUMENT;
+        } else {
+            xmlFileArg = PREFIX_ARGUMENT_SHORT + SHORT_XML_FILE_ARGUMENT;
+        }
+        addArgument(xmlFileArg);
+        addServiceXmlArg(serviceXmlFileName, initRevisionNo);
+    }
+
+    /**
+     * Generates the service xml file and adds to the argument list
+     * Location of generated xml file will be
+     * <QATEST_HOME>/<SERVER_NAME>/built/classes/cli/<xml-file-name>.xml
+     * @param serviceName - Name of the service xml
+     * @param initRevisionNo - Initial revision number to be assigned
+     * @throws java.lang.Exception
+     */
+    private void addServiceXmlArg(String serviceName, String initRevisionNo) 
+    throws Exception {
+        ResourceBundle rb_amconfig = 
+                ResourceBundle.getBundle(TestConstants.TEST_PROPERTY_AMCONFIG);
+        String attFileDir = getBaseDir() + fileseparator + 
+                rb_amconfig.getString(TestConstants.KEY_ATT_SERVER_NAME) + 
+                fileseparator + "built" + fileseparator + "classes" + 
+                fileseparator + "cli" + fileseparator;
+        String attFile = attFileDir + serviceName + ".xml";
+        
+        BufferedWriter out = new BufferedWriter(new FileWriter(attFile));
+        // now generate the service xml file
+        out.write("<!DOCTYPE ServicesConfiguration");
+        out.write(newline);
+        out.write("PUBLIC \"=//iPlanet//Service Management " +
+        		"Services (SMS) 1.0 DTD//EN\"" + newline);
+        out.write("\"jar://com/sun/identity/sm/sms.dtd\">" + newline);
+        out.write("<ServicesConfiguration>" + newline);
+        out.write("<Service name=\"" + serviceName + "\" version=\"1.0\">");
+        out.write(newline);
+        out.write("<Schema " + newline);
+        out.write("revisionNumber=\"" + initRevisionNo + "\">");
+        out.write(newline);
+        out.write("<Global>");
+        out.write(newline);
+        out.write("<AttributeSchema name=\"mock\"" + newline);
+        out.write("type=\"single\"" + newline);
+        out.write("syntax=\"string\"" + newline);
+        out.write("i18nKey=\"\">" + newline);
+        out.write("</AttributeSchema>" + newline);
+        out.write("<AttributeSchema name=\"mock-boolean\"" + newline);
+        out.write("type=\"single\"" + newline);
+        out.write("syntax=\"boolean\"" + newline);
+        out.write("i18nKey=\"\">" + newline);
+        out.write("</AttributeSchema>" + newline);
+        out.write("<AttributeSchema name=\"mock-single-choice\"");
+        out.write(newline);
+        out.write("type=\"single_choice\"" + newline);
+        out.write("syntax=\"string\"" + newline);
+        out.write("i18nKey=\"\">" + newline);
+        out.write("</AttributeSchema>" + newline);
+        out.write("<AttributeSchema name=\"mock-number\"" + newline);
+        out.write("type=\"single\"" + newline);
+        out.write("syntax=\"number_range\"" + newline);
+        out.write("rangeStart=\"0\" rangeEnd=\"1\"" + newline);
+        out.write("i18nKey=\"\">" + newline);
+        out.write("</AttributeSchema>" + newline);
+        out.write("<SubSchema name=\"subschemaY\" inheritance=\"single\">");
+        out.write(newline);
+        out.write("<AttributeSchema name=\"mock\"" + newline);
+        out.write("type=\"single\"" + newline);
+        out.write("syntax=\"string\"" + newline);
+        out.write("i18nKey=\"\">" + newline);
+        out.write("</AttributeSchema>" + newline);
+        out.write("<AttributeSchema name=\"mock-boolean\"" + newline);
+        out.write("type=\"single\"" + newline);
+        out.write("syntax=\"boolean\"" + newline);
+        out.write("i18nKey=\"\">" + newline);
+        out.write("</AttributeSchema>" + newline);
+        out.write("<AttributeSchema name=\"mock-single-choice\"" + newline);
+        out.write("type=\"single_choice\"" + newline);
+        out.write("syntax=\"string\"" + newline);
+        out.write("i18nKey=\"\">" + newline);
+        out.write("</AttributeSchema>" + newline);
+        out.write("<AttributeSchema name=\"mock-number\"" + newline);
+        out.write("type=\"single\"" + newline);
+        out.write("syntax=\"number_range\"" + newline);
+        out.write("rangeStart=\"0\" rangeEnd=\"1\"" + newline);
+        out.write("i18nKey=\"\">" + newline);
+        out.write("</AttributeSchema>" + newline);
+        out.write("</SubSchema>" + newline);
+        out.write("<SubSchema name=\"subschema-inheritance\" " +
+        		"inheritance=\"single\">" + newline);
+        out.write("<AttributeSchema name=\"attr\"" + newline);
+        out.write("type=\"single\"" + newline);
+        out.write("syntax=\"string\" />" + newline);
+        out.write("</SubSchema>" + newline);
+        out.write("<SubSchema name=\"subschemaX\" " +
+        		"inheritance=\"multiple\">" + newline);
+        out.write("<AttributeSchema name=\"attr1\"" + newline);
+        out.write("type=\"single\"" + newline);
+        out.write("syntax=\"string\" />" + newline);
+        out.write("<AttributeSchema name=\"attr2\"" + newline);
+        out.write("type=\"single\"" + newline);
+        out.write("syntax=\"string\" />" + newline);
+        out.write("<AttributeSchema name=\"attr3\"" + newline);
+        out.write("type=\"single\"" + newline);
+        out.write("syntax=\"string\" />" + newline);
+        out.write("</SubSchema>" + newline);
+        out.write("</Global>" + newline);
+        out.write("</Schema>" + newline);
+        out.write("<Configuration>" + newline);
+        out.write("<GlobalConfiguration>" + newline);
+        out.write("<SubConfiguration name=\"subschemaX\">" + newline);
+        out.write("</SubConfiguration>" + newline);
+        out.write("</GlobalConfiguration>" + newline);
+        out.write("</Configuration>" + newline);
+        out.write("</Service>" + newline);
+        out.write("</ServicesConfiguration>" + newline);
+        out.close();
+        
+        addArgument(attFile);
+    }
+
        
     /**
      * Sets the sub-command in the second argument of the argument list
