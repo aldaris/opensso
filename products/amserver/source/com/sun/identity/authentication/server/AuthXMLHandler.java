@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLHandler.java,v 1.15 2008-06-25 05:42:03 qcheng Exp $
+ * $Id: AuthXMLHandler.java,v 1.16 2008-08-21 22:46:33 pawand Exp $
  *
  */
 
@@ -604,32 +604,29 @@ public class AuthXMLHandler implements RequestHandler {
                         }
                     }
                 }
-                if (!logoutCalled) {
-                    try {
-                        boolean isTokenValid = SSOTokenManager.getInstance().
-                            isValidToken(token);
-                        if ((token != null) && isTokenValid) {
-                            Session session = Session.getSession(
-                                new SessionID(sessionID));
-                            session.logout();
-                            debug.message("logout successful.");
-                        }
-	            } catch (com.iplanet.dpro.session.SessionException 
-                        sessExp) {
-                        if (debug.messageEnabled()) {
-                            debug.message("AuthXMLHandler."
-                                + "processAuthXMLRequest: SessionException"
-                                + " checking validity of SSO Token");
-                        }
-	            } catch (com.iplanet.sso.SSOException ssoExp) {
-                        if (debug.messageEnabled()) {
-                            debug.message("AuthXMLHandler."
-                                + "processAuthXMLRequest: SSOException "
-                                + "checking validity of SSO Token");
-                        }
+                try {
+                    boolean isTokenValid = SSOTokenManager.getInstance().
+                        isValidToken(token);
+                    if ((token != null) && isTokenValid) {
+                        AuthD.getAuth().logLogout(token);
+                        Session session = Session.getSession(
+                            new SessionID(sessionID));
+                        session.logout();
+                        debug.message("logout successful.");
                     }
-
-
+	        } catch (com.iplanet.dpro.session.SessionException 
+                    sessExp) {
+                    if (debug.messageEnabled()) {
+                        debug.message("AuthXMLHandler."
+                            + "processAuthXMLRequest: SessionException"
+                            + " checking validity of SSO Token");
+                    }
+	        } catch (com.iplanet.sso.SSOException ssoExp) {
+                    if (debug.messageEnabled()) {
+                        debug.message("AuthXMLHandler."
+                            + "processAuthXMLRequest: SSOException "
+                            + "checking validity of SSO Token");
+                    }
                 }
                 authResponse.setLoginStatus(AuthContext.Status.COMPLETED);
                 checkACException(authResponse, authContext);

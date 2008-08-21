@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogoutViewBean.java,v 1.10 2008-06-25 05:41:49 qcheng Exp $
+ * $Id: LogoutViewBean.java,v 1.11 2008-08-21 22:45:40 pawand Exp $
  *
  */
 
@@ -290,6 +290,7 @@ public class LogoutViewBean extends AuthViewBeanBase {
             
         if ((token != null) && isTokenValid) {
             try {
+                AuthD.getAuth().logLogout(token);
                 Session session = Session.getSession(sessionID);
                 session.logout();
                 logoutDebug.message("logout successful.");

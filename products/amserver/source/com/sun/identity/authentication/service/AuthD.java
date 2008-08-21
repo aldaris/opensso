@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthD.java,v 1.18 2008-08-19 19:08:52 veiming Exp $
+ * $Id: AuthD.java,v 1.19 2008-08-21 22:44:51 pawand Exp $
  *
  */
 
@@ -52,6 +52,7 @@ import com.sun.identity.idm.IdSearchResults;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.log.Logger;
+import com.sun.identity.log.LogConstants;
 import com.sun.identity.log.messageid.MessageProviderFactory;
 import com.sun.identity.log.messageid.LogMessageProviderBase;
 import com.sun.identity.security.AdminTokenAction;
@@ -66,10 +67,12 @@ import com.sun.identity.sm.ServiceSchemaManager;
 import com.sun.identity.sm.ServiceConfig;
 import java.io.IOException;
 import java.security.AccessController;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -726,6 +729,56 @@ public class AuthD  {
             return "en_US";
         return defaultAuthLocale;
     }
+    /**
+     * Log Logout status 
+     */
+    public void logLogout(SSOToken ssot){
+        try {
+            String logLogout = bundle.getString("logout");
+            List dataList = new ArrayList();
+            dataList.add(logLogout);
+            StringBuffer messageId = new StringBuffer();
+            messageId.append("LOGOUT");
+            String indexType = ssot.getProperty(ISAuthConstants.INDEX_TYPE);
+            if (indexType != null) {
+                messageId.append("_").append(indexType.toString()
+                .toUpperCase());
+                dataList.add(indexType.toString());
+            }
+            String[] data = (String[])dataList.toArray(new String[0]);
+            
+            Hashtable props = new Hashtable();
+            String client = ssot.getProperty(ISAuthConstants.HOST);
+            if (client != null) {
+                props.put(LogConstants.IP_ADDR, client);
+            }
+            String userDN = ssot.getProperty(ISAuthConstants.PRINCIPAL);
+            if (userDN != null) {
+                props.put(LogConstants.LOGIN_ID, userDN);
+            }
+            String orgDN = ssot.getProperty(ISAuthConstants.ORGANIZATION);
+            if (orgDN != null) {
+                props.put(LogConstants.DOMAIN, orgDN);
+            }
+            String authMethName = ssot.getProperty(ISAuthConstants.AUTH_TYPE);
+            if (authMethName != null) {
+                props.put(LogConstants.MODULE_NAME, authMethName);
+            }
+            String contextId = null;
+            contextId = ssot.getProperty(Constants.AM_CTX_ID);
+            if (contextId != null) {
+                props.put(LogConstants.CONTEXT_ID, contextId);
+            }
+            props.put(LogConstants.LOGIN_ID_SID, ssot.getTokenID()
+                .toString());
+            this.logIt(data,this.LOG_ACCESS, messageId.toString(), props);
+        } catch (SSOException ssoExp) {
+            debug.error("AuthD.logLogout: SSO Error", ssoExp);
+        } catch (Exception e) {
+            debug.error("AuthD.logLogout: Error " , e);
+        }
+    }
+    
     
     
     ////////////////////////////////////////////////////////////////
