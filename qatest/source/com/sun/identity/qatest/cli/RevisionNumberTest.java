@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RevisionNumberTest.java,v 1.1 2008-07-30 22:14:15 srivenigan Exp $
+ * $Id: RevisionNumberTest.java,v 1.2 2008-08-21 20:40:46 srivenigan Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,7 @@
 /**
  * RevisionNumberTest automates the following test cases:
  * CLI_revision-number01, CLI_revision-number02, CLI_revision-number03
+ * CLI_revision-number04, CLI_revision-number05
  */
 
 package com.sun.identity.qatest.cli;
@@ -46,12 +47,14 @@ public class RevisionNumberTest extends TestCommon implements CLIExitCodes {
     private String locTestName;
     private ResourceBundle rb;
     private String serviceName;
+    private String initRevisionNo;
     private String revisionNumberToSet;
     private boolean useVerboseOption;
     private boolean useDebugOption;
     private boolean useLongOptions;
     private String expectedMessage;
-    private String expectedExitCode;
+    private String getRevExpectedExitCode;
+    private String setRevExpectedExitCode;
     private String description;
     private FederationManagerCLI cli;
 
@@ -76,6 +79,8 @@ public class RevisionNumberTest extends TestCommon implements CLIExitCodes {
                     "RevisionNumberTest"); 
             serviceName = ((String)rb.getString(locTestName + 
                     "-service-name"));
+            initRevisionNo = ((String)rb.getString(locTestName + 
+                    "-init-revision-number"));
             useVerboseOption = ((String)rb.getString(locTestName + 
                     "-use-verbose-option")).equals("true");
             useDebugOption = ((String)rb.getString(locTestName + 
@@ -89,13 +94,21 @@ public class RevisionNumberTest extends TestCommon implements CLIExitCodes {
             log(Level.FINEST, "setup", "use-long-options: " + useLongOptions);
 
             Reporter.log("ServiceName: " + serviceName);
+            Reporter.log("Initial Revision Number: " + initRevisionNo);
             Reporter.log("UseDebugOption: " + useDebugOption);
             Reporter.log("UseVerboseOption: " + useVerboseOption);
             Reporter.log("UseLongOptions: " + useLongOptions);
 
             cli = new FederationManagerCLI(useDebugOption, useVerboseOption, 
                     useLongOptions);
-            
+            if (cli.createService(serviceName, initRevisionNo) != 
+                    SUCCESS_STATUS) {
+                log(Level.SEVERE, "setup", 
+                        "Service creation failed.");
+                assert false;
+            }
+            cli.logCommand("setup");
+            cli.resetArgList();
             exiting("setup");
         } catch (Exception e) {
             log(Level.SEVERE, "setup", e.getMessage(), null);
@@ -105,8 +118,8 @@ public class RevisionNumberTest extends TestCommon implements CLIExitCodes {
     }
 
     /**
-     * This method is used to execute tests involving "famadm get-revision-
-     * number" and "famadm set-revision-number"
+     * This method is used to execute tests involving "ssoadm get-revision-
+     * number" and "ssoadm set-revision-number"
      * using input data from the RevisionNumberTest.properties file.
      */
     @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
@@ -118,8 +131,10 @@ public class RevisionNumberTest extends TestCommon implements CLIExitCodes {
         try {
             expectedMessage = (String) rb.getString(locTestName + 
                     "-message-to-find");
-            expectedExitCode = (String) rb.getString(locTestName + 
-                    "-expected-exit-code");
+            getRevExpectedExitCode = (String) rb.getString(locTestName + 
+                    "-get-expected-exit-code");
+            setRevExpectedExitCode = (String) rb.getString(locTestName + 
+                    "-set-expected-exit-code");            
             serviceName = (String) rb.getString(locTestName + 
                     "-service-name");
             revisionNumberToSet = (String) rb.getString(locTestName +
@@ -138,10 +153,10 @@ public class RevisionNumberTest extends TestCommon implements CLIExitCodes {
                     useLongOptions);
             log(Level.FINEST, "testGetRevisionNumber", "message-to-find: " + 
                     expectedMessage);
-            log(Level.FINEST, "testGetRevisionNumber", "set-revision-number: " + 
-                    expectedMessage);
-            log(Level.FINEST, "testGetRevisionNumber", "expected-exit-code: " + 
-                    expectedExitCode);
+            log(Level.FINEST, "testGetRevisionNumber", 
+                    "get-expected-exit-code: " + getRevExpectedExitCode);
+            log(Level.FINEST, "testGetRevisionNumber", 
+                    "set-expected-exit-code: " + setRevExpectedExitCode);
 
             Reporter.log("TestName: " + locTestName);
             Reporter.log("Description: " + description);
@@ -150,7 +165,8 @@ public class RevisionNumberTest extends TestCommon implements CLIExitCodes {
             Reporter.log("UseVerboseOption: " + useVerboseOption);
             Reporter.log("UseLongOptions: " + useLongOptions);
             Reporter.log("ExpectedMessage: " + expectedMessage);
-            Reporter.log("ExpectedExitCode: " + expectedExitCode);
+            Reporter.log("GetExpectedExitCode: " + getRevExpectedExitCode);
+            Reporter.log("SetExpectedExitCode: " + setRevExpectedExitCode);
             
             /*
              * Gets the revision number of service specified in service-name
@@ -162,35 +178,35 @@ public class RevisionNumberTest extends TestCommon implements CLIExitCodes {
             cli.logCommand("testRevisionNumber");
             String revisionNumberBU = getRevisionNumber(cli
                     .getCommand().getOutput());
-            log(Level.FINE, "testRevsionNumber", "Revision Number of " +
+            log(Level.FINEST, "testRevsionNumber", "Revision Number of " +
                     "service " + serviceName + "is: " + revisionNumberBU);
-
-            if (expectedExitCode.equals(
+            if (getRevExpectedExitCode.equals(
                     new Integer(SUCCESS_STATUS).toString())) {
                 stringsFound = cli.findStringsInOutput(expectedMessage, ";");
                 log(Level.FINEST, "testRevisionNumber", 
                         "Output Messages Found: " + stringsFound);
                 assert (getCommandStatus == 
-                        new Integer(expectedExitCode).intValue()) && 
+                        new Integer(getRevExpectedExitCode).intValue()) && 
                      stringsFound;
             } else {
-                if (!expectedExitCode.equals(
+                if (!getRevExpectedExitCode.equals(
                         new Integer(INVALID_OPTION_STATUS).toString())) {
                     stringsFound = 
 			cli.findStringsInError(expectedMessage, ";");
                 } else {
                     String argString = cli.getAllArgs().replaceFirst(
-                            cli.getCliPath(), "famadm ");
+                            cli.getCliPath(), "ssoadm ");
                     Object[] params = {argString};
                     String usageError = MessageFormat.format(expectedMessage, 
                             params);
                     stringsFound = cli.findStringsInError(usageError, 
                             ";" + newline);                      
                 }
-                log(logLevel, "testGetRevisionNumber", "Error Messages Found: " + 
-                        stringsFound);
+                log(logLevel, "testGetRevisionNumber", "Error Messages Found: "  
+                        + stringsFound);
                 assert (getCommandStatus == 
-                    new Integer(expectedExitCode).intValue()) && stringsFound;
+                    new Integer(getRevExpectedExitCode).intValue()) && 
+                    stringsFound;
             }
             cli.resetArgList();
             
@@ -204,22 +220,22 @@ public class RevisionNumberTest extends TestCommon implements CLIExitCodes {
             int setCommandStatus = cli.setRevisionNumber(serviceName,
                     revisionNumberToSet);
             cli.logCommand("testRevisionNumber");
-            if (expectedExitCode.equals(
+            if (setRevExpectedExitCode.equals(
                     new Integer(SUCCESS_STATUS).toString())) {
                 stringsFound = cli.findStringsInOutput(expectedMessage, ";");
                 log(Level.FINEST, "testRevisionNumber", 
                         "Output Messages Found: " + stringsFound);
                 assert (setCommandStatus == 
-                        new Integer(expectedExitCode).intValue()) && 
+                        new Integer(setRevExpectedExitCode).intValue()) && 
 			stringsFound;
             } else {
-                if (!expectedExitCode.equals(
+                if (!setRevExpectedExitCode.equals(
                         new Integer(INVALID_OPTION_STATUS).toString())) {
                     stringsFound = 
 			cli.findStringsInError(expectedMessage, ";");
                 } else {
                     String argString = cli.getAllArgs().replaceFirst(
-                            cli.getCliPath(), "famadm ");
+                            cli.getCliPath(), "ssoadm ");
                     Object[] params = {argString};
                     String usageError = MessageFormat.format(expectedMessage, 
                             params);
@@ -229,7 +245,8 @@ public class RevisionNumberTest extends TestCommon implements CLIExitCodes {
                 log(logLevel, "testRevisionNumber", "Error Messages Found: " + 
                         stringsFound);
                 assert (setCommandStatus == 
-                    new Integer(expectedExitCode).intValue()) && stringsFound;
+                    new Integer(setRevExpectedExitCode).intValue()) 
+                    && stringsFound;
             }
             cli.resetArgList();
 
@@ -245,25 +262,28 @@ public class RevisionNumberTest extends TestCommon implements CLIExitCodes {
                     .getCommand().getOutput());
             log(Level.FINE, "testRevsionNumber", "Revision Number of " +
                     "service " + serviceName + "is: " + newRevisionNumber);
-            if (!newRevisionNumber.equals(revisionNumberToSet)) 
-                assert false;
             
-            if (expectedExitCode.equals(
+            if (setRevExpectedExitCode.equals(
+                    new Integer(SUCCESS_STATUS).toString())) {
+                if (!newRevisionNumber.equals(revisionNumberToSet))
+                    assert false;
+            } 
+            if (getRevExpectedExitCode.equals(
                     new Integer(SUCCESS_STATUS).toString())) {
                 stringsFound = cli.findStringsInOutput(expectedMessage, ";");
                 log(Level.FINEST, "testRevisionNumber", 
                         "Output Messages Found: " + stringsFound);
                 assert (getNewCommandStatus == 
-                        new Integer(expectedExitCode).intValue()) && 
+                        new Integer(getRevExpectedExitCode).intValue()) && 
 			stringsFound;
             } else {
-                if (!expectedExitCode.equals(
+                if (!getRevExpectedExitCode.equals(
                         new Integer(INVALID_OPTION_STATUS).toString())) {
                     stringsFound = 
 			cli.findStringsInError(expectedMessage, ";");
                 } else {
                     String argString = cli.getAllArgs().replaceFirst(
-                            cli.getCliPath(), "famadm ");
+                            cli.getCliPath(), "ssoadm ");
                     Object[] params = {argString};
                     String usageError = MessageFormat.format(expectedMessage, 
                             params);
@@ -273,90 +293,8 @@ public class RevisionNumberTest extends TestCommon implements CLIExitCodes {
                 log(logLevel, "testRevisionNumber", "Error Messages Found: " + 
                         stringsFound);
                 assert (getNewCommandStatus == 
-                    new Integer(expectedExitCode).intValue()) && stringsFound;
-            }
-            cli.resetArgList();
-
-            /*
-             * Resets the revision number of service specified in service-name
-             * from RevisionNumberTest.properties with original revision 
-             * number before update.
-             */
-            cli = new FederationManagerCLI(useDebugOption, useVerboseOption, 
-                    useLongOptions);
-            int resetCommandStatus = cli.setRevisionNumber(serviceName, 
-                    revisionNumberBU);
-            cli.logCommand("testRevisionNumber");
-            if (expectedExitCode.equals(
-                    new Integer(SUCCESS_STATUS).toString())) {
-                stringsFound = cli.findStringsInOutput(expectedMessage, ";");
-                log(Level.FINEST, "testRevisionNumber", 
-                        "Output Messages Found: " + stringsFound);
-                assert (resetCommandStatus == 
-                        new Integer(expectedExitCode).intValue()) && 
-			stringsFound;
-            } else {
-                if (!expectedExitCode.equals(
-                        new Integer(INVALID_OPTION_STATUS).toString())) {
-                    stringsFound = 
-			cli.findStringsInError(expectedMessage, ";");
-                } else {
-                    String argString = cli.getAllArgs().replaceFirst(
-                            cli.getCliPath(), "famadm ");
-                    Object[] params = {argString};
-                    String usageError = MessageFormat.format(expectedMessage, 
-                            params);
-                    stringsFound = cli.findStringsInError(usageError, 
-                            ";" + newline);                      
-                }
-                log(logLevel, "testRevisionNumber", "Error Messages Found: " + 
-                        stringsFound);
-                assert (getCommandStatus == 
-                    new Integer(expectedExitCode).intValue()) && stringsFound;
-            }
-            cli.resetArgList();
-
-            /*
-             * Validates that the revision number of service specified in 
-             * service-name from RevisionNumberTest.properties is reset.
-             */
-            cli = new FederationManagerCLI(useDebugOption, useVerboseOption,
-                    useLongOptions);
-            int getUpdatedCommandStatus = cli.getRevisionNumber(serviceName);
-            cli.logCommand("testRevisionNumber");
-            String oldRevisionNumber = getRevisionNumber(
-                    cli.getCommand().getOutput());
-            log(Level.FINE, "testRevsionNumber", "Revision Number of " +
-                    "service " + serviceName + "is: " + oldRevisionNumber);
-
-            if (!oldRevisionNumber.equals(revisionNumberBU)) 
-                assert false;
-            if (expectedExitCode.equals(
-                    new Integer(SUCCESS_STATUS).toString())) {
-                stringsFound = cli.findStringsInOutput(expectedMessage, ";");
-                log(Level.FINEST, "testRevisionNumber", 
-                        "Output Messages Found: " + stringsFound);
-                assert (getUpdatedCommandStatus == 
-                        new Integer(expectedExitCode).intValue()) && 
-			stringsFound;
-            } else {
-                if (!expectedExitCode.equals(
-                        new Integer(INVALID_OPTION_STATUS).toString())) {
-                    stringsFound = 
-			cli.findStringsInError(expectedMessage, ";");
-                } else {
-                    String argString = cli.getAllArgs().replaceFirst(
-                            cli.getCliPath(), "famadm ");
-                    Object[] params = {argString};
-                    String usageError = MessageFormat.format(expectedMessage, 
-                            params);
-                    stringsFound = cli.findStringsInError(usageError, 
-                            ";" + newline);                      
-                }
-                log(logLevel, "testRevisionNumber", "Error Messages Found: " + 
-                        stringsFound);
-                assert (getUpdatedCommandStatus == 
-                    new Integer(expectedExitCode).intValue()) && stringsFound;
+                    new Integer(getRevExpectedExitCode).intValue())
+                    && stringsFound;
             }
             cli.resetArgList();
             exiting("testRevisionNumber");
@@ -368,14 +306,24 @@ public class RevisionNumberTest extends TestCommon implements CLIExitCodes {
     }
     
     /**
-     * This method remove any realms that were created during the setup and
-     * testRealmCreation methods using "famadm delete-realm".
+     * This method removes services that were created during the setup 
+     * using "ssoadm delete-svc".
      */
     @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
     public void cleanup() 
     throws Exception {
         entering("cleanup", null);
         try {            
+            cli = new FederationManagerCLI(useDebugOption, useVerboseOption, 
+                    useLongOptions);
+            if (cli.deleteService(serviceName) != SUCCESS_STATUS) {
+                log(Level.SEVERE, "cleanup", 
+                        "Service deletion failed.");
+                assert false;
+            }
+            cli.logCommand("cleanup");
+            cli.resetArgList();
+            
             log(Level.FINEST, "cleanup", "useDebugOption: " + useDebugOption);
             log(Level.FINEST, "cleanup", "useVerboseOption: " + 
                     useVerboseOption);
