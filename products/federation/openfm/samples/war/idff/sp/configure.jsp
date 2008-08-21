@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configure.jsp,v 1.12 2008-08-15 01:05:35 veiming Exp $
+   $Id: configure.jsp,v 1.13 2008-08-21 18:03:33 qcheng Exp $
 
 --%>
 
@@ -153,7 +153,7 @@
                     // [START] Make a call to CLI to get IDP meta data template
                     String[] args2 = {"create-metadata-templ", 
                         "--spec", "idff",
-                        "--entityid", entityName,
+                        "--entityid", realBaseURL,
                         "--identityprovider", "/idp"};
                     outputWriter = new StringOutputWriter();
                     env.put(CLIConstants.SYS_PROPERTY_OUTPUT_WRITER, 

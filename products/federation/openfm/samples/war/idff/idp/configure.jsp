@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configure.jsp,v 1.12 2008-08-15 01:05:34 veiming Exp $
+   $Id: configure.jsp,v 1.13 2008-08-21 18:03:32 qcheng Exp $
 
 --%>
 
@@ -157,7 +157,7 @@
                     // [START] Make a call to CLI to get SP meta data template
                     String[] args2 = {"create-metadata-templ", 
                         "--spec", "idff",
-                        "--entityid", entityName,
+                        "--entityid", realBaseURL,
                         "--serviceprovider", "/sp"};
                     outputWriter = new StringOutputWriter();
                     env.put(CLIConstants.SYS_PROPERTY_OUTPUT_WRITER, 
