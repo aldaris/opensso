@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMX509TrustManager.java,v 1.2 2008-06-25 05:52:58 qcheng Exp $
+ * $Id: AMX509TrustManager.java,v 1.3 2008-08-21 20:11:13 beomsuk Exp $
  *
  */
 
@@ -32,6 +32,8 @@ import java.io.FileInputStream;
 import java.security.KeyStore;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.security.Provider;
+import java.security.Security;
 
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
@@ -82,7 +84,23 @@ public class AMX509TrustManager implements X509TrustManager {
             FileInputStream fis = new FileInputStream(trustStore);
             trustKeyStore.load(fis, null);
                     
-            tmf = TrustManagerFactory.getInstance("SunX509", "SunJSSE");
+            Provider sProviders[] = Security.getProviders();
+            String provider = null;
+            String algorithm = null;
+            for (int i = 0; i < sProviders.length; i++) {
+                if (sProviders[i].getName().equalsIgnoreCase("IBMJSSE2")) {
+                    provider = "IBMJSSE2";
+                    algorithm = "IbmX509";
+                }
+            }
+
+            if (provider == null) {
+                provider = "SunJSSE";
+                algorithm = "SunX509";
+            }
+            
+            tmf = TrustManagerFactory.getInstance(algorithm,  provider);
+        
             tmf.init(trustKeyStore);
             sunX509TrustManager =
                  (X509TrustManager)tmf.getTrustManagers()[0];

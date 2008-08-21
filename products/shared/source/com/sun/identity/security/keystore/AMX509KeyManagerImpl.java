@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMX509KeyManagerImpl.java,v 1.2 2008-06-25 05:52:58 qcheng Exp $
+ * $Id: AMX509KeyManagerImpl.java,v 1.3 2008-08-21 20:11:13 beomsuk Exp $
  *
  */
 
@@ -33,6 +33,8 @@ import java.net.Socket;
 import java.security.KeyStore;
 import java.security.Principal;
 import java.security.PrivateKey;
+import java.security.Provider;
+
 import java.security.Security;
 import java.security.cert.X509Certificate;
 import java.util.ResourceBundle;
@@ -70,6 +72,23 @@ public class AMX509KeyManagerImpl implements AMX509KeyManager {
     private X509KeyManager sunX509KeyManager = null;
     private KeyStore keyStore = null;
     KeyStore.Builder builder = null;
+    static String provider = null;
+    static String algorithm = null;
+    
+    static {
+        Provider sProviders[] = Security.getProviders();
+        for (int i = 0; i < sProviders.length; i++) {
+            if (sProviders[i].getName().equalsIgnoreCase("IBMJSSE2")) {
+                provider = "IBMJSSE2";
+                algorithm = "NewIbmX509";
+            }
+        }
+
+        if (provider == null) {
+            provider = "SunJSSE";
+            algorithm = "NewSunX509";
+        }
+    }
   
     // create sunX509KeyManager
     //
@@ -140,7 +159,7 @@ public class AMX509KeyManagerImpl implements AMX509KeyManager {
             KeyStoreBuilderParameters param = 
                           new KeyStoreBuilderParameters(builder);
                     
-            kmf = KeyManagerFactory.getInstance("NewSunX509", "SunJSSE");
+            kmf = KeyManagerFactory.getInstance(algorithm, provider);
             kmf.init(param);
         } catch (Exception e) {
             debug.error(e.toString());
