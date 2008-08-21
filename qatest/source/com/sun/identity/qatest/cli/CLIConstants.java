@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIConstants.java,v 1.8 2008-08-12 21:45:08 nithyas Exp $
+ * $Id: CLIConstants.java,v 1.9 2008-08-21 20:24:26 srivenigan Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -164,6 +164,11 @@ public interface CLIConstants {
      * String for the "create-svc" sub-command
      */
     public static final String CREATE_SERVICE_SUBCOMMAND = "create-svc";
+    
+    /**
+     * String for the "delete-svc" sub-command
+     */
+    public static final String DELETE_SERVICE_SUBCOMMAND = "delete-svc";
     
     /**
      * String for the "create-svrcfg-xml" sub-command
