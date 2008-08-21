@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthUtils.java,v 1.21 2008-08-19 19:08:53 veiming Exp $
+ * $Id: AuthUtils.java,v 1.22 2008-08-21 17:10:04 pawand Exp $
  *
  */
 
@@ -407,6 +407,9 @@ public class AuthUtils extends AuthClientUtils {
                 utilDebug.message("Create AM AUTH cookie");
             }
             cookie = createCookie(cookieName,sidString,cookieDomain);
+            if (CookieUtils.isCookieSecure()) {
+                cookie.setSecure(true);
+            }
         } catch (Exception e) {
             if (utilDebug.messageEnabled()) {
                 utilDebug.message("Error getting sid : " + e.getMessage());
