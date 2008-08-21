@@ -46,6 +46,7 @@ com/iplanet/am/util/QCharset.class
 com/sun/identity/shared/search/FileLookupException.class
 com/sun/identity/shared/search/FileLookup.class
 com/iplanet/am/util/ThreadPool*.class
+com/iplanet/ums/Guid.class
 com/iplanet/ums/SearchControl.class
 com/iplanet/ums/SortKey.class
 com/iplanet/am/sdk/AMAssignableDynamicGroup.class
