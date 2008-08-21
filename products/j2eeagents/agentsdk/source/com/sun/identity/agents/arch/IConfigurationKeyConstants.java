@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IConfigurationKeyConstants.java,v 1.8 2008-06-25 05:51:36 qcheng Exp $
+ * $Id: IConfigurationKeyConstants.java,v 1.9 2008-08-21 23:34:15 huacui Exp $
  *
  */
 
@@ -164,6 +164,12 @@ public interface IConfigurationKeyConstants {
      public static final String CONFIG_SUBKEY_LOCK_ENABLE = 
         "lock.enable";    
      
+     /**
+      * Configuration subkey for agent profile name .
+      */
+     public static final String CONFIG_SUBKEY_PROFILE_NAME = 
+        "profilename";    
+     
              
     /**
      * A list of all configuration subkeys that do not participate in hot-swap.
@@ -262,5 +268,11 @@ public interface IConfigurationKeyConstants {
       */
       public static final String CONFIG_LOCK_ENABLE =
           AGENT_CONFIG_PREFIX + CONFIG_SUBKEY_LOCK_ENABLE;
+
+     /**
+      * Configuration key for agent profile name.
+      */
+      public static final String CONFIG_PROFILE_NAME =
+          AGENT_CONFIG_PREFIX + CONFIG_SUBKEY_PROFILE_NAME;
 
 }

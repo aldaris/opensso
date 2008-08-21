@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.31 2008-08-19 19:13:36 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.32 2008-08-21 23:34:14 huacui Exp $
  *
  */
 
@@ -499,7 +499,8 @@ public class AgentConfiguration implements
         throws AgentException {
         Properties result = new Properties();
         String tokenId = getAppSSOToken().getTokenID().toString();
-        result = AgentRemoteConfigUtils.getAgentProperties(urls, tokenId);
+        result = AgentRemoteConfigUtils.getAgentProperties(
+                                        urls, tokenId, getProfileName());
         if (isLogMessageEnabled()) {
             logMessage("AgentConfiguration: Centralized agent properties =" 
                     + result);
@@ -644,6 +645,7 @@ public class AgentConfiguration implements
                 setApplicationPassword();               
                 setAppSSOToken();
                 setLockConfig();
+                setProfileName();
                 
                 // instantiate the instance of DebugPropertiesObserver
                 debugObserver = DebugPropertiesObserver.getInstance();
@@ -937,6 +939,18 @@ public class AgentConfiguration implements
                 _applicationPassword.trim().length() == 0) {
                 throw new RuntimeException(
                         "Invalid application password specified");
+            }
+        }
+    }
+    
+    private static synchronized void setProfileName() {
+        if (!isInitialized()) {
+            _profileName = getProperty(CONFIG_PROFILE_NAME);
+            if ((_profileName == null) ||(_profileName.trim().length() == 0)) {
+                _profileName = getApplicationUser();
+            }
+            if (isLogMessageEnabled()) {
+                logMessage("AgentConfiguration: Profile Name: " + _profileName);
             }
         }
     }
@@ -1428,6 +1442,10 @@ public class AgentConfiguration implements
         return _lockConfig;
     }
     
+    private static String getProfileName() {
+        return _profileName;
+    }
+    
     private static void setLockConfig() {
         if (!isInitialized()) {
             String lockConfig = getProperty(CONFIG_LOCK_ENABLE);
@@ -1468,6 +1486,7 @@ public class AgentConfiguration implements
     private static Vector _attributeServiceURLs = null;
     private static DebugPropertiesObserver debugObserver; 
     private static boolean _lockConfig = false;
+    private static String _profileName;
     
     static {
         initializeConfiguration();

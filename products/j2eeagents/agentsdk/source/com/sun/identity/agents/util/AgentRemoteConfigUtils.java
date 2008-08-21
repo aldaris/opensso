@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentRemoteConfigUtils.java,v 1.5 2008-08-04 20:03:34 huacui Exp $
+ * $Id: AgentRemoteConfigUtils.java,v 1.6 2008-08-21 23:34:15 huacui Exp $
  *
  */
 
@@ -51,13 +51,13 @@ import com.sun.identity.agents.arch.AgentException;
 
 public class AgentRemoteConfigUtils {
 
-    static final String USER_DETAILS = "userdetails";
+    static final String USER_DETAILS = "identitydetails";
     static final String ATTRIBUTE = "attribute";
     static final String ATTRIBUTE_NAME = "name";
     static final String VALUE = "value";
     static final String FREE_FORM_PROPERTY =
                         "com.sun.identity.agents.config.freeformproperties";
-    static final String ATTRIBUTE_SERVICE = "/xml/attributes?subjectid=";
+    static final String ATTRIBUTE_SERVICE = "/xml/read";
     static final String VERSION_SERVICE = "/SMSServlet?method=version";
     
     /**
@@ -66,9 +66,8 @@ public class AgentRemoteConfigUtils {
      * @param xml the XML document for the <code>Properties</code> object.
      * @return constructed <code>Properties</code> object.
      */
-    public static Properties getAgentProperties(Vector urls, String tokenId)
-        throws AgentException
-    {
+    public static Properties getAgentProperties(Vector urls, String tokenId, 
+        String profileName) throws AgentException {
         Properties result = new Properties();
         if (urls == null) {
             return result;
@@ -77,7 +76,7 @@ public class AgentRemoteConfigUtils {
         String xml = null;
         for (int i = 0; i < urls.size(); i++) {
             URL url = (URL)urls.get(i);
-            xml = getAttributesInXMLFromRest(url, tokenId);
+            xml = getAttributesInXMLFromRest(url, tokenId, profileName);
             if (xml != null) {
                 break;
             }
@@ -270,15 +269,18 @@ public class AgentRemoteConfigUtils {
         return;
     }
     
-    private static String getAttributesInXMLFromRest(URL url, String tokenId) 
-        throws AgentException {
+    private static String getAttributesInXMLFromRest(URL url, String tokenId,
+        String profileName) throws AgentException {
 	HttpURLConnection conn = null;
         char[] buf = new char[1024];
         StringBuffer in_buf = new StringBuffer();
         int len;
 	try {
-            String attributeServiceURL = 
-                    url + ATTRIBUTE_SERVICE + URLEncoder.encode(tokenId, "UTF-8"); 
+            String attributeServiceURL = url + ATTRIBUTE_SERVICE 
+                + "?name=" + URLEncoder.encode(profileName, "UTF-8") 
+                + "&attributes_names=objecttype"
+                + "&attributes_values_objecttype=Agent"
+                + "&admin=" + URLEncoder.encode(tokenId, "UTF-8"); 
             URL serviceURL = new URL(attributeServiceURL);
 	    conn = (HttpURLConnection)serviceURL.openConnection();
             BufferedReader in = new BufferedReader(
