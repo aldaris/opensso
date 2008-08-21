@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ff_ds-cli-testng.xml,v 1.12 2008-08-12 21:47:39 nithyas Exp $
+ $Id: ff_ds-cli-testng.xml,v 1.13 2008-08-21 20:34:30 srivenigan Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -3399,7 +3399,7 @@
             <class name="com.sun.identity.qatest.cli.ListAuthInstancesTest"/>
         </classes>
     </test>   
-    <test name="CLI_get-revision-number01">
+    <test name="CLI_revision-number01">
         <parameter name="testName" value="revisionnumber-test1"/>
         <groups>
             <run>
@@ -3410,7 +3410,7 @@
             <class name="com.sun.identity.qatest.cli.RevisionNumberTest"/>
         </classes>
     </test>
-    <test name="CLI_get-revision-number02">
+    <test name="CLI_revision-number02">
         <parameter name="testName" value="revisionnumber-test2"/>
         <groups>
             <run>
@@ -3421,8 +3421,30 @@
             <class name="com.sun.identity.qatest.cli.RevisionNumberTest"/>
         </classes>
     </test>
-    <test name="CLI_get-revision-number03">
+    <test name="CLI_revision-number03">
         <parameter name="testName" value="revisionnumber-test3"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RevisionNumberTest"/>
+        </classes>
+    </test>    
+    <test name="CLI_revision-number04">
+        <parameter name="testName" value="revisionnumber-test4"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RevisionNumberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_revision-number05">
+        <parameter name="testName" value="revisionnumber-test5"/>
         <groups>
             <run>
                 <include name="ff_ds"/>
