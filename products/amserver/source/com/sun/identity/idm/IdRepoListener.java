@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoListener.java,v 1.13 2008-08-19 19:09:10 veiming Exp $
+ * $Id: IdRepoListener.java,v 1.14 2008-08-21 18:48:18 sean_brydon Exp $
  *
  */
 
@@ -119,7 +119,7 @@ public final class IdRepoListener {
 
     /**
      * 
-     * This method has been deprecated as of OpenSSO 8.0.
+     * This method has been deprecated as of OpenSSO Enterprise 8.0.
      * 
      * @param name name of the identity that changed
      * @param type change type i.e., add, delete, modify, etc.
@@ -285,8 +285,17 @@ public final class IdRepoListener {
         // If configMap is null, then this is a "remote" cache update
         if ((cMap == null) || cMap.isEmpty()) {
             String ct[] = new String[1];
-            ct[0] = "id=" + name + ",ou=" + type.getName() + "," +
-                ServiceManager.getBaseDN();
+            if (DN.isDN(name)) {
+                // Name should be the universal id
+                ct[0] = name;
+            } else {
+                if (type == null) {
+                    // Default to user
+                    type = IdType.USER;
+                }
+                ct[0] = "id=" + name + ",ou=" + type.getName() + "," +
+                        ServiceManager.getBaseDN();
+            }
             return ct;
         }
         String changedTypes[] = null;

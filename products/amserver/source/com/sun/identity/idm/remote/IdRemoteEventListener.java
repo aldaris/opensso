@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: IdRemoteEventListener.java,v 1.2 2008-07-06 05:48:33 arviranga Exp $
+* $Id: IdRemoteEventListener.java,v 1.3 2008-08-21 18:48:18 sean_brydon Exp $
 */
 
 package com.sun.identity.idm.remote;
@@ -74,8 +74,6 @@ public class IdRemoteEventListener {
     
     private static final String IDREPO_SERVICE = "IdRepoServiceIF";
     
-    private static IdRepoListener repoListener;
-    
     public synchronized static IdRemoteEventListener getInstance() {
         if (instance == null) {
             instance = new IdRemoteEventListener();
@@ -101,11 +99,7 @@ public class IdRemoteEventListener {
         if (client == null) {
             client = new SOAPClient("DirectoryManagerIF");
         }
-        
-        if (repoListener == null) {
-            repoListener = new IdRepoListener();
-        }
-                
+                     
         // Check if notification is enabled 
         // Default the notification enabled to true if the property
         // is not found for backward compatibility.
@@ -246,7 +240,7 @@ public class IdRemoteEventListener {
                         + "Decoded Event: " + attrs);
             }
 
-            // Parse the entity name to get the realm name, and method
+            // Parse to get the entity name and the method
             String entityName = getAttributeValue(attrs, ENTITY_NAME);
             String method = getAttributeValue(attrs, METHOD);
             if (entityName == null || entityName.length() == 0
@@ -258,25 +252,19 @@ public class IdRemoteEventListener {
                 }
                 return;
             }
-            String pureId = entityName;
-            String amsdkDN = null;
-            int dnIndex = entityName.indexOf(",amsdkdn=");
-            if (dnIndex > 0) {
-                pureId = entityName.substring(0, dnIndex);
-                amsdkDN = entityName.substring(dnIndex + 9);
-            }
 
-            DN dnObject = new DN(pureId);
-            DN realmDN = dnObject.getParent().getParent();
-
-            // Construct IdRepoListener
+            // Construct IdRepoListener and set the realm
+            IdRepoListener repoListener = new IdRepoListener();
+            DN entityDN = new DN(entityName);
+            String realm = entityDN.getParent().getParent().toRFCString();
             Map configMap = new HashMap();
-            configMap.put("realm", realmDN.toRFCString());
+            configMap.put("realm", realm);
             repoListener.setConfigMap(configMap);
 
+            // Send the notification change
             if (method.equalsIgnoreCase(OBJECT_CHANGED)) {
                 int eventType = getEventType((Set) attrs.get(EVENT_TYPE));
-                repoListener.objectChanged(entityName, eventType, null);
+                repoListener.objectChanged(entityName, null, eventType, null);
             } else if (method.equalsIgnoreCase(ALL_OBJECTS_CHANGED)) {
                 repoListener.allObjectsChanged();
             } else {
