@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManagerCLIConstants.java,v 1.10 2008-08-12 21:44:37 nithyas Exp $
+ * $Id: FederationManagerCLIConstants.java,v 1.11 2008-08-21 20:22:14 srivenigan Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -221,9 +221,19 @@ public interface FederationManagerCLIConstants {
     String REVISION_NO_ARGUMENT = "revisionnumber";
 
     /**
-     * Revision number argument/option
+     * Short revision number argument/option
      */
     String SHORT_REVISION_NO_ARGUMENT = "r";
+    
+    /**
+     * Xml File argument/option
+     */
+    String XML_FILE_ARGUMENT = "xmlfile";
+    
+    /**
+     * Short xml file argument/option
+     */
+    String SHORT_XML_FILE_ARGUMENT = "X";
     
     /**
      * agenttype argument/option
@@ -254,5 +264,15 @@ public interface FederationManagerCLIConstants {
      * Short agenttype argument/option
      */
     String SHORT_AGENTNAMES_ARGUMENT = "s";
+
+    /**
+     * Continue argument/option
+     */
+    String CONTINUE_ARGUMENT = "continue";
+    
+    /**
+     * Short continue argument/option
+     */
+    String SHORT_CONTINUE_ARGUMENT = "c";
 
 }
