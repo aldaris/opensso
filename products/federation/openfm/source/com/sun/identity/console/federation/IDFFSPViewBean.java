@@ -22,10 +22,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFSPViewBean.java,v 1.10 2008-06-25 05:49:36 qcheng Exp $
+ * $Id: IDFFSPViewBean.java,v 1.11 2008-08-21 18:31:08 asyhuang Exp $
  *
  */
-
 package com.sun.identity.console.federation;
 
 import com.iplanet.jato.model.ModelControlException;
@@ -52,19 +51,19 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 public class IDFFSPViewBean
-    extends IDFFViewBeanBase {
+        extends IDFFViewBeanBase {
 
     public static final String DEFAULT_DISPLAY_URL =
-        "/console/federation/IDFFSP.jsp";
+            "/console/federation/IDFFSP.jsp";
     public static final String CHILD_AUTH_CONTEXT_TILED_VIEW = "tableTiledView";
     public static final String TBL_AUTHENTICATION_CONTEXTS =
-        "tblAuthenticationContext";
+            "tblAuthenticationContext";
     public static final String TBL_COL_SUPPORTED = "tblColSupported";
     public static final String TBL_COL_CONTEXT_REFERENCE =
-        "tblColContextReference";
+            "tblColContextReference";
     public static final String TBL_COL_LEVEL = "tblColLevel";
     public static final String TBL_DATA_CONTEXT_REFERENCE =
-        "tblDataContextReference";
+            "tblDataContextReference";
     public static final String TBL_DATA_SUPPORTED = "tblDataSupported";
     public static final String TBL_DATA_LABEL = "tblDataLabel";
     public static final String TBL_DATA_LEVEL = "tblDataLevel";
@@ -79,7 +78,7 @@ public class IDFFSPViewBean
         super.registerChildren();
         if (isHosted()) {
             registerChild(CHILD_AUTH_CONTEXT_TILED_VIEW,
-                AMTableTiledView.class);
+                    AMTableTiledView.class);
         }
     }
 
@@ -89,9 +88,9 @@ public class IDFFSPViewBean
             view = new AMTableTiledView(this, tblAuthContextsModel, name);
         } else if (isHosted() && (name.equals(TBL_AUTHENTICATION_CONTEXTS))) {
             CCActionTable child = new CCActionTable(
-                this, tblAuthContextsModel, name);
+                    this, tblAuthContextsModel, name);
             child.setTiledView((ContainerView) getChild(
-                CHILD_AUTH_CONTEXT_TILED_VIEW));
+                    CHILD_AUTH_CONTEXT_TILED_VIEW));
             view = child;
         } else {
             view = super.createChild(name);
@@ -100,23 +99,23 @@ public class IDFFSPViewBean
     }
 
     public void beginDisplay(DisplayEvent event)
-        throws ModelControlException {
+            throws ModelControlException {
         super.beginDisplay(event);
         IDFFModel model =
-            (IDFFModel) getModelInternal();
+                (IDFFModel) getModelInternal();
         psModel.setValue(IDFFModel.ATTR_PROVIDER_TYPE,
-            (String) getPageSessionAttribute(ENTITY_LOCATION));
+                (String) getPageSessionAttribute(ENTITY_LOCATION));
         populateValue(realm, entityName);
         if (isHosted()) {
             IDFFAuthContexts authContexts = null;
             try {
                 authContexts = model.getSPAuthenticationContexts(
-                    realm,
-                    entityName);
+                        realm,
+                        entityName);
             } catch (AMConsoleException e) {
                 debug.warning("IDFFSPViewBean", e);
                 setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
-                    e.getMessage());
+                        e.getMessage());
             }
             populateAuthenticationContext(authContexts);
         }
@@ -134,18 +133,18 @@ public class IDFFSPViewBean
     }
 
     private void populateAuthenticationContext(
-        String name,
-        IDFFAuthContexts authContexts,
-        int index) {
+            String name,
+            IDFFAuthContexts authContexts,
+            int index) {
         if (index != 0) {
             tblAuthContextsModel.appendRow();
         }
 
         IDFFModel model =
-            (IDFFModel) getModelInternal();
+                (IDFFModel) getModelInternal();
         tblAuthContextsModel.setValue(TBL_DATA_CONTEXT_REFERENCE, name);
         tblAuthContextsModel.setValue(TBL_DATA_LABEL,
-            model.getLocalizedString(getAuthContextI18nKey(name)));
+                model.getLocalizedString(getAuthContextI18nKey(name)));
 
         IDFFAuthContexts.IDFFAuthContext c = null;
         if (authContexts != null) {
@@ -170,15 +169,15 @@ public class IDFFSPViewBean
     private void populateValue(String realm, String name) {
         try {
             IDFFModel model =
-                (IDFFModel) getModelInternal();
+                    (IDFFModel) getModelInternal();
             Map values = model.getEntitySPDescriptor(realm, name);
             values.putAll(model.getSPEntityConfig(realm, name,
-                location));
+                    location));
             AMPropertySheet ps = (AMPropertySheet) getChild(PROPERTY_ATTRIBUTES);
             ps.setAttributeValues(values, model);
         } catch (AMConsoleException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
-                e.getMessage());
+                    e.getMessage());
         }
     }
 
@@ -191,15 +190,15 @@ public class IDFFSPViewBean
         retrieveCommonProperties();
         if (isHosted()) {
             psModel = new AMPropertySheetModel(
-                getClass().getClassLoader().getResourceAsStream(
-                "com/sun/identity/console/propertyIDFFSPHosted.xml"));
+                    getClass().getClassLoader().getResourceAsStream(
+                    "com/sun/identity/console/propertyIDFFSPHosted.xml"));
             createAuthContextsModel();
             psModel.setModel(TBL_AUTHENTICATION_CONTEXTS,
-                tblAuthContextsModel);
+                    tblAuthContextsModel);
         } else {
             psModel = new AMPropertySheetModel(
-                getClass().getClassLoader().getResourceAsStream(
-                "com/sun/identity/console/propertyIDFFSPRemote.xml"));
+                    getClass().getClassLoader().getResourceAsStream(
+                    "com/sun/identity/console/propertyIDFFSPRemote.xml"));
         }
 
         psModel.clear();
@@ -207,21 +206,21 @@ public class IDFFSPViewBean
 
     private void createAuthContextsModel() {
         tblAuthContextsModel = new CCActionTableModel(
-            getClass().getClassLoader().getResourceAsStream(
-            "com/sun/identity/console/tblIDFFSPAuthenticationContext.xml"));
+                getClass().getClassLoader().getResourceAsStream(
+                "com/sun/identity/console/tblIDFFSPAuthenticationContext.xml"));
         tblAuthContextsModel.setTitleLabel("label.items");
         tblAuthContextsModel.setActionValue(TBL_COL_SUPPORTED,
-            "idff.sp.authenticationContext.table.name.supported.name");
+                "idff.sp.authenticationContext.table.name.supported.name");
         tblAuthContextsModel.setActionValue(TBL_COL_CONTEXT_REFERENCE,
-            "idff.sp.authenticationContext.table.name.contextReference.name");
+                "idff.sp.authenticationContext.table.name.contextReference.name");
         tblAuthContextsModel.setActionValue(TBL_COL_LEVEL,
-            "idff.sp.authenticationContext.table.name.level.name");
+                "idff.sp.authenticationContext.table.name.level.name");
     }
 
     private IDFFAuthContexts getAuthenticationContexts()
-        throws ModelControlException {
+            throws ModelControlException {
         CCActionTable tbl = (CCActionTable) getChild(
-            TBL_AUTHENTICATION_CONTEXTS);
+                TBL_AUTHENTICATION_CONTEXTS);
         tbl.restoreStateData();
 
         int size = 10;
@@ -230,11 +229,11 @@ public class IDFFSPViewBean
         for (int i = 0; i < size; i++) {
             tblAuthContextsModel.setLocation(i);
             String name = (String) tblAuthContextsModel.getValue(
-                TBL_DATA_CONTEXT_REFERENCE);
+                    TBL_DATA_CONTEXT_REFERENCE);
             String supported = (String) tblAuthContextsModel.getValue(
-                TBL_DATA_SUPPORTED);
+                    TBL_DATA_SUPPORTED);
             String level = (String) tblAuthContextsModel.getValue(
-                TBL_DATA_LEVEL);
+                    TBL_DATA_LEVEL);
             authContexts.put(name, supported, level);
         }
         return authContexts;
@@ -246,49 +245,49 @@ public class IDFFSPViewBean
      * @param event Request invocation event
      */
     public void handleButton1Request(RequestInvocationEvent event)
-        throws ModelControlException {
+            throws ModelControlException {
         retrieveCommonProperties();
         try {
             IDFFModel model =
-                (IDFFModel) getModel();
+                    (IDFFModel) getModel();
             AMPropertySheet ps =
-                (AMPropertySheet) getChild(PROPERTY_ATTRIBUTES);
+                    (AMPropertySheet) getChild(PROPERTY_ATTRIBUTES);
 
-            // update standard metadata and extended metadata
-            Map origStdMeta =
-                model.getEntitySPDescriptor(realm, entityName);
-            Map stdValues = ps.getAttributeValues(origStdMeta, false, model);
-            Map origExtMeta = model.getSPEntityConfig(
-                realm,
-                entityName,
-                location);
-            Map extValues = ps.getAttributeValues(origExtMeta, false, model);
+            // update standard metadata and extended metadata           
+            Map stdValues = ps.getAttributeValues(
+                    model.getEntitySPDescriptor(realm, entityName),
+                    false,
+                    model);
+            Map extValues = ps.getAttributeValues(
+                    model.getAllSPExtendedMetaMap(),
+                    false,
+                    model);
 
             model.updateEntitySPDescriptor(
-                realm,
-                entityName,
-                stdValues,
-                extValues,
-                isHosted());
+                    realm,
+                    entityName,
+                    stdValues,
+                    extValues,
+                    isHosted());
             model.updateSPEntityConfig(
-                realm,
-                entityName,
-                extValues);
+                    realm,
+                    entityName,
+                    extValues);
 
             if (isHosted()) {
                 // update Authentication Contexts
                 model.updateSPAuthenticationContexts(
-                    realm,
-                    entityName,
-                    getAuthenticationContexts());
+                        realm,
+                        entityName,
+                        getAuthenticationContexts());
             }
 
             setInlineAlertMessage(CCAlert.TYPE_INFO,
-                "message.information",
-                "idff.entityDescriptor.provider.sp.updated");
+                    "message.information",
+                    "idff.entityDescriptor.provider.sp.updated");
         } catch (AMConsoleException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
-                e.getMessage());
+                    e.getMessage());
             debug.warning("IDFFSPViewBean -> handleButton1Request", e);
         }
         forwardTo();

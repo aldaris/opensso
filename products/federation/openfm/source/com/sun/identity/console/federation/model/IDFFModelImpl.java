@@ -22,10 +22,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFModelImpl.java,v 1.5 2008-06-25 05:49:40 qcheng Exp $
+ * $Id: IDFFModelImpl.java,v 1.6 2008-08-21 18:31:08 asyhuang Exp $
  *
  */
-
 package com.sun.identity.console.federation.model;
 
 import com.sun.identity.console.base.model.AMAdminUtils;
@@ -62,21 +61,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBException;
 
 public class IDFFModelImpl
-    extends EntityModelImpl
-    implements IDFFModel {
+        extends EntityModelImpl
+        implements IDFFModel {
 
     private IDFFMetaManager metaManager;
     private static Map extendedMetaMap = new HashMap(24);
     private static Map extendedMetaIdpMap = new HashMap(9);
     private static Map extendedMetaSpMap = new HashMap(13);
-    
     private static List federationTerminationProfileList = new ArrayList(2);
 
     static {
         federationTerminationProfileList.add("http://projectliberty.org/profiles/fedterm-sp-http");
         federationTerminationProfileList.add("http://projectliberty.org/profiles/fedterm-sp-soap");
     }
-    
     private static List singleLogoutProfileList = new ArrayList(3);
 
     static {
@@ -84,14 +81,12 @@ public class IDFFModelImpl
         singleLogoutProfileList.add("http://projectliberty.org/profiles/slo-idp-http-get");
         singleLogoutProfileList.add("http://projectliberty.org/profiles/slo-sp-soap");
     }
-    
     private static List nameRegistrationProfileList = new ArrayList(2);
 
     static {
         nameRegistrationProfileList.add("http://projectliberty.org/profiles/rni-sp-http");
         nameRegistrationProfileList.add("http://projectliberty.org/profiles/rni-sp-soap");
     }
-    
     private static List federationProfileList = new ArrayList(3);
 
     static {
@@ -111,105 +106,105 @@ public class IDFFModelImpl
     // BOTH idp AND SP extended metadata
     static {
         extendedMetaMap.put(ATTR_DO_FEDERATION_PAGE_URL,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaMap.put(ATTR_ATTRIBUTE_MAPPER_CLASS,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaMap.put(ATTR_ENABLE_AUTO_FEDERATION,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaMap.put(ATTR_REGISTERATION_DONE_URL,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaMap.put(ATTR_COT_LIST,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaMap.put(ATTR_RESPONSD_WITH,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaMap.put(ATTR_ENABLE_NAME_ID_ENCRYPTION,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaMap.put(ATTR_SSO_FAILURE_REDIRECT_URL,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaMap.put(ATTR_LIST_OF_COTS_PAGE_URL,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaMap.put(ATTR_DEFAULT_AUTHN_CONTEXT,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaMap.put(ATTR_SIGNING_CERT_ALIAS,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaMap.put(ATTR_REALM_NAME,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaMap.put(ATTR_USER_PROVIDER_CLASS,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaMap.put(ATTR_NAME_ID_IMPLEMENETATION_CLASS,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaMap.put(ATTR_FEDERATION_DONE_URL,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaMap.put(ATTR_AUTH_TYPE,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaMap.put(ATTR_ENCRYPTION_CERT_ALIAS,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaMap.put(ATTR_TERMINATION_DONE_URL,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaMap.put(ATTR_AUTO_FEDERATION_ATTRIBUTE,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaMap.put(ATTR_ERROR_PAGE_URL,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaMap.put(ATTR_PROVIDER_STATUS,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaMap.put(ATTR_PROVIDER_DESCRIPTION,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaMap.put(ATTR_LOGOUT_DONE_URL,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaMap.put(ATTR_PROVIDER_HOME_PAGE_URL,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
     }
 
     // IDP extend meta attribute ONLY IDP
     static {
         extendedMetaIdpMap.put(ATTR_ASSERTION_LIMIT,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaIdpMap.put(ATTR_ATTRIBUTE_PLUG_IN,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaIdpMap.put(ATTR_IDP_ATTRIBUTE_MAP,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaIdpMap.put(ATTR_ASSERTION_ISSUER,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaIdpMap.put(ATTR_CLEANUP_INTERVAL,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaIdpMap.put(ATTR_IDP_AUTHN_CONTEXT_MAPPING,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaIdpMap.put(ATTR_GERNERATE_BOOT_STRAPPING,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaIdpMap.put(ATTR_ARTIFACT_TIMEOUT,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaIdpMap.put(ATTR_ASSERTION_INTERVAL,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
     }
 
     // SP extend meta attribute.. ONLY SP
     static {
         extendedMetaSpMap.put(ATTR_IS_PASSIVE,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaSpMap.put(ATTR_SP_ATTRIBUTE_MAP,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaSpMap.put(ATTR_SP_AUTHN_CONTEXT_MAPPING,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaSpMap.put(ATTR_IDP_PROXY_LIST,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaSpMap.put(ATTR_ENABLE_IDP_PROXY,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaSpMap.put(ATTR_NAME_ID_POLICY,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaSpMap.put(ATTR_FEDERATION_SP_ADAPTER_ENV,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaSpMap.put(ATTR_ENABLE_AFFILIATION,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaSpMap.put(ATTR_FORCE_AUTHN,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaSpMap.put(ATTR_IDP_PROXY_COUNT,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaSpMap.put(ATTR_FEDERATION_SP_ADAPTER,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaSpMap.put(ATTR_USE_INTRODUCTION_FOR_IDP_PROXY,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         extendedMetaSpMap.put(ATTR_SUPPORTED_SSO_PROFILE,
-            Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
     }
 
     /**
@@ -230,7 +225,7 @@ public class IDFFModelImpl
      * @throws IDFFMetaException if attribute values cannot be obtained.
      */
     public Map getCommonAttributeValues(String realm, String entityName)
-        throws AMConsoleException {
+            throws AMConsoleException {
         Map values = new HashMap(26);
         String[] param = {realm, entityName, "IDFF", "General"};
         logEvent("ATTEMPT_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", param);
@@ -238,17 +233,18 @@ public class IDFFModelImpl
         try {
             IDFFMetaManager manager = getIDFFMetaManager();
             EntityDescriptorElement desc = manager.getEntityDescriptor(
-                realm, entityName);
+                    realm, entityName);
             values.put(ATTR_VALID_UNTIL, returnEmptySetIfValueIsNull(
-                desc.getValidUntil()));
+                    desc.getValidUntil()));
             values.put(ATTR_CACHE_DURATION, returnEmptySetIfValueIsNull(
-                desc.getCacheDuration()));
+                    desc.getCacheDuration()));
             logEvent("SUCCEED_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", param);
         } catch (IDFFMetaException e) {
-            String[] paramsEx = {realm, entityName, "IDFF", "General", 
-            getErrorString(e)};
+            String[] paramsEx = {realm, entityName, "IDFF", "General",
+                getErrorString(e)
+            };
             logEvent("FEDERATION_EXCEPTION_GET_ENTITY_DESCRIPTOR_ATTR_VALUES",
-                paramsEx);
+                    paramsEx);
             throw new AMConsoleException(getErrorString(e));
         }
         return values;
@@ -263,19 +259,19 @@ public class IDFFModelImpl
      * @throws AMConsoleException if profile cannot be modified.
      */
     public void modifyEntityProfile(String realm, String entityName, Map map)
-        throws AMConsoleException {
+            throws AMConsoleException {
         String[] param = {entityName};
         logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", param);
 
         try {
             IDFFMetaManager manager = getIDFFMetaManager();
             EntityDescriptorElement desc = manager.getEntityDescriptor(
-                realm, entityName);
+                    realm, entityName);
 
             desc.setValidUntil((String) AMAdminUtils.getValue(
-                (Set) map.get(ATTR_VALID_UNTIL)));
+                    (Set) map.get(ATTR_VALID_UNTIL)));
             desc.setCacheDuration((String) AMAdminUtils.getValue(
-                (Set) map.get(ATTR_CACHE_DURATION)));
+                    (Set) map.get(ATTR_CACHE_DURATION)));
 
             manager.setEntityDescriptor(realm, desc);
             logEvent("SUCCEED_MODIFY_ENTITY_DESCRIPTOR", param);
@@ -294,7 +290,7 @@ public class IDFFModelImpl
      * @return map of IDP key/value pairs
      */
     public Map getEntityIDPDescriptor(String realm, String entityName)
-        throws AMConsoleException {
+            throws AMConsoleException {
         String[] params = {realm, entityName, "IDFF", "IDP-Standard Metadata"};
         logEvent("ATTEMPT_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", params);
         Map map = new HashMap();
@@ -304,47 +300,47 @@ public class IDFFModelImpl
 
             // common attributes
             map.put(ATTR_PROTOCOL_SUPPORT_ENUMERATION,
-                convertListToSet(pDesc.getProtocolSupportEnumeration()));
+                    convertListToSet(pDesc.getProtocolSupportEnumeration()));
 
             //communication URLs
             map.put(ATTR_SOAP_END_POINT,
-                returnEmptySetIfValueIsNull(pDesc.getSoapEndpoint()));
+                    returnEmptySetIfValueIsNull(pDesc.getSoapEndpoint()));
             map.put(ATTR_SINGLE_SIGN_ON_SERVICE_URL,
-                returnEmptySetIfValueIsNull(pDesc.getSingleSignOnServiceURL()));
+                    returnEmptySetIfValueIsNull(pDesc.getSingleSignOnServiceURL()));
             map.put(ATTR_SINGLE_LOGOUT_SERVICE_URL,
-                returnEmptySetIfValueIsNull(pDesc.getSingleLogoutServiceURL()));
+                    returnEmptySetIfValueIsNull(pDesc.getSingleLogoutServiceURL()));
             map.put(ATTR_SINGLE_LOGOUT_SERVICE_RETURN_URL,
-                returnEmptySetIfValueIsNull(
-                pDesc.getSingleLogoutServiceReturnURL()));
+                    returnEmptySetIfValueIsNull(
+                    pDesc.getSingleLogoutServiceReturnURL()));
             map.put(ATTR_FEDERATION_TERMINATION_SERVICES_URL,
-                returnEmptySetIfValueIsNull(
-                pDesc.getFederationTerminationServiceURL()));
+                    returnEmptySetIfValueIsNull(
+                    pDesc.getFederationTerminationServiceURL()));
             map.put(ATTR_FEDERATION_TERMINATION_SERVICE_RETURN_URL,
-                returnEmptySetIfValueIsNull(
-                pDesc.getFederationTerminationServiceReturnURL()));
+                    returnEmptySetIfValueIsNull(
+                    pDesc.getFederationTerminationServiceReturnURL()));
             map.put(ATTR_REGISTRATION_NAME_IDENTIFIER_SERVICE_URL,
-                returnEmptySetIfValueIsNull(
-                pDesc.getRegisterNameIdentifierServiceURL()));
+                    returnEmptySetIfValueIsNull(
+                    pDesc.getRegisterNameIdentifierServiceURL()));
             map.put(ATTR_REGISTRATION_NAME_IDENTIFIER_SERVICE_RETURN_URL,
-                returnEmptySetIfValueIsNull(
-                pDesc.getRegisterNameIdentifierServiceReturnURL()));
+                    returnEmptySetIfValueIsNull(
+                    pDesc.getRegisterNameIdentifierServiceReturnURL()));
 
             // communication profiles
             map.put(ATTR_FEDERATION_TERMINATION_NOTIFICATION_PROTOCOL_PROFILE,
-                returnEmptySetIfValueIsNull(
-                (String) pDesc.getFederationTerminationNotificationProtocolProfile().get(0)));
+                    returnEmptySetIfValueIsNull(
+                    (String) pDesc.getFederationTerminationNotificationProtocolProfile().get(0)));
             map.put(ATTR_SINGLE_LOGOUT_PROTOCOL_PROFILE,
-                returnEmptySetIfValueIsNull((String) pDesc.getSingleLogoutProtocolProfile().get(0)));
+                    returnEmptySetIfValueIsNull((String) pDesc.getSingleLogoutProtocolProfile().get(0)));
             map.put(ATTR_REGISTRATION_NAME_IDENTIFIER_PROFILE_PROFILE,
-                returnEmptySetIfValueIsNull((String) pDesc.getRegisterNameIdentifierProtocolProfile().get(0)));
+                    returnEmptySetIfValueIsNull((String) pDesc.getRegisterNameIdentifierProtocolProfile().get(0)));
             map.put(ATTR_SINGLE_SIGN_ON_PROTOCOL_PROFILE,
-                returnEmptySetIfValueIsNull((String) pDesc.getSingleSignOnProtocolProfile().get(0)));
+                    returnEmptySetIfValueIsNull((String) pDesc.getSingleSignOnProtocolProfile().get(0)));
 
             // get signing key size and algorithm               
             EncInfo encinfo = KeyUtil.getEncInfo(
-                (ProviderDescriptorType) pDesc,
-                entityName,
-                true); //isIDP
+                    (ProviderDescriptorType) pDesc,
+                    entityName,
+                    true); //isIDP
             if (encinfo == null) {
                 map.put(ATTR_ENCRYPTION_KEY_SIZE, Collections.EMPTY_SET);
                 map.put(ATTR_ENCRYPTION_ALGORITHM, Collections.EMPTY_SET);
@@ -352,17 +348,17 @@ public class IDFFModelImpl
                 int size = encinfo.getDataEncStrength();
                 String alg = encinfo.getDataEncAlgorithm();
                 map.put(ATTR_ENCRYPTION_KEY_SIZE,
-                    returnEmptySetIfValueIsNull(Integer.toString(size)));
+                        returnEmptySetIfValueIsNull(Integer.toString(size)));
                 map.put(ATTR_ENCRYPTION_ALGORITHM,
-                    returnEmptySetIfValueIsNull(alg));
+                        returnEmptySetIfValueIsNull(alg));
             }
             logEvent("SUCCEED_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", params);
         } catch (IDFFMetaException e) {
             String strError = getErrorString(e);
             String[] paramsEx =
-                {realm, entityName, "IDFF", "IDP-Standard Metadata", strError};
+                    {realm, entityName, "IDFF", "IDP-Standard Metadata", strError};
             logEvent("FEDERATION_EXCEPTION_GET_ENTITY_DESCRIPTOR_ATTR_VALUES",
-                paramsEx);
+                    paramsEx);
             throw new AMConsoleException(strError);
         }
         return map;
@@ -376,7 +372,7 @@ public class IDFFModelImpl
      * @return map of SP key/value pairs
      */
     public Map getEntitySPDescriptor(String realm, String entityName)
-        throws AMConsoleException {
+            throws AMConsoleException {
         String[] params = {realm, entityName, "IDFF", "SP-Standard Metadata"};
         logEvent("ATTEMPT_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", params);
 
@@ -389,65 +385,65 @@ public class IDFFModelImpl
 
             // common attributes
             map.put(ATTR_PROTOCOL_SUPPORT_ENUMERATION,
-                convertListToSet(pDesc.getProtocolSupportEnumeration()));
+                    convertListToSet(pDesc.getProtocolSupportEnumeration()));
 
             //communication URLs
             map.put(ATTR_SOAP_END_POINT,
-                returnEmptySetIfValueIsNull(pDesc.getSoapEndpoint()));
+                    returnEmptySetIfValueIsNull(pDesc.getSoapEndpoint()));
             map.put(ATTR_SINGLE_LOGOUT_SERVICE_URL,
-                returnEmptySetIfValueIsNull(pDesc.getSingleLogoutServiceURL()));
+                    returnEmptySetIfValueIsNull(pDesc.getSingleLogoutServiceURL()));
             map.put(ATTR_SINGLE_LOGOUT_SERVICE_RETURN_URL,
-                returnEmptySetIfValueIsNull(
-                pDesc.getSingleLogoutServiceReturnURL()));
+                    returnEmptySetIfValueIsNull(
+                    pDesc.getSingleLogoutServiceReturnURL()));
             map.put(ATTR_FEDERATION_TERMINATION_SERVICES_URL,
-                returnEmptySetIfValueIsNull(
-                pDesc.getFederationTerminationServiceURL()));
+                    returnEmptySetIfValueIsNull(
+                    pDesc.getFederationTerminationServiceURL()));
             map.put(ATTR_FEDERATION_TERMINATION_SERVICE_RETURN_URL,
-                returnEmptySetIfValueIsNull(
-                pDesc.getFederationTerminationServiceReturnURL()));
+                    returnEmptySetIfValueIsNull(
+                    pDesc.getFederationTerminationServiceReturnURL()));
             map.put(ATTR_REGISTRATION_NAME_IDENTIFIER_SERVICE_URL,
-                returnEmptySetIfValueIsNull(
-                pDesc.getRegisterNameIdentifierServiceURL()));
+                    returnEmptySetIfValueIsNull(
+                    pDesc.getRegisterNameIdentifierServiceURL()));
             map.put(ATTR_REGISTRATION_NAME_IDENTIFIER_SERVICE_RETURN_URL,
-                returnEmptySetIfValueIsNull(
-                pDesc.getRegisterNameIdentifierServiceReturnURL()));
+                    returnEmptySetIfValueIsNull(
+                    pDesc.getRegisterNameIdentifierServiceReturnURL()));
 
             // communication profiles
             map.put(ATTR_FEDERATION_TERMINATION_NOTIFICATION_PROTOCOL_PROFILE,
-                returnEmptySetIfValueIsNull(
-                (String) pDesc.getFederationTerminationNotificationProtocolProfile().get(0)));
+                    returnEmptySetIfValueIsNull(
+                    (String) pDesc.getFederationTerminationNotificationProtocolProfile().get(0)));
             map.put(ATTR_SINGLE_LOGOUT_PROTOCOL_PROFILE,
-                returnEmptySetIfValueIsNull((String) pDesc.getSingleLogoutProtocolProfile().get(0)));
+                    returnEmptySetIfValueIsNull((String) pDesc.getSingleLogoutProtocolProfile().get(0)));
             map.put(ATTR_REGISTRATION_NAME_IDENTIFIER_PROFILE_PROFILE,
-                returnEmptySetIfValueIsNull((String) pDesc.getRegisterNameIdentifierProtocolProfile().get(0)));
+                    returnEmptySetIfValueIsNull((String) pDesc.getRegisterNameIdentifierProtocolProfile().get(0)));
 
             // only for Service Provider
             com.sun.identity.liberty.ws.meta.jaxb.SPDescriptorType.AssertionConsumerServiceURLType assertionType =
-                (com.sun.identity.liberty.ws.meta.jaxb.SPDescriptorType.AssertionConsumerServiceURLType) ((List) pDesc.getAssertionConsumerServiceURL()).get(0);
+                    (com.sun.identity.liberty.ws.meta.jaxb.SPDescriptorType.AssertionConsumerServiceURLType) ((List) pDesc.getAssertionConsumerServiceURL()).get(0);
             if (assertionType != null) {
                 map.put(ATTR_ASSERTION_CUSTOMER_SERVICE_URIID,
-                    returnEmptySetIfValueIsNull(assertionType.getId()));
+                        returnEmptySetIfValueIsNull(assertionType.getId()));
                 map.put(ATTR_ASSERTION_CUSTOMER_SERVICE_URL,
-                    returnEmptySetIfValueIsNull(assertionType.getValue()));
+                        returnEmptySetIfValueIsNull(assertionType.getValue()));
                 map.put(ATTR_ASSERTION_CUSTOMER_SERVICE_URL_AS_DEFAULT,
-                    returnEmptySetIfValueIsNull(assertionType.isIsDefault()));
+                        returnEmptySetIfValueIsNull(assertionType.isIsDefault()));
             } else {
                 map.put(ATTR_ASSERTION_CUSTOMER_SERVICE_URIID,
-                    Collections.EMPTY_SET);
+                        Collections.EMPTY_SET);
                 map.put(ATTR_ASSERTION_CUSTOMER_SERVICE_URL,
-                    Collections.EMPTY_SET);
+                        Collections.EMPTY_SET);
                 map.put(ATTR_ASSERTION_CUSTOMER_SERVICE_URL_AS_DEFAULT,
-                    Collections.EMPTY_SET);
+                        Collections.EMPTY_SET);
             }
 
             map.put(ATTR_AUTHN_REQUESTS_SIGNED,
-                returnEmptySetIfValueIsNull(pDesc.isAuthnRequestsSigned()));
+                    returnEmptySetIfValueIsNull(pDesc.isAuthnRequestsSigned()));
 
             // get signing key size and algorithm                           
             EncInfo encinfo = KeyUtil.getEncInfo(
-                (ProviderDescriptorType) pDesc,
-                entityName,
-                false); //isIDP
+                    (ProviderDescriptorType) pDesc,
+                    entityName,
+                    false); //isIDP
             if (encinfo == null) {
                 map.put(ATTR_ENCRYPTION_KEY_SIZE, Collections.EMPTY_SET);
                 map.put(ATTR_ENCRYPTION_ALGORITHM, Collections.EMPTY_SET);
@@ -455,17 +451,17 @@ public class IDFFModelImpl
                 int size = encinfo.getDataEncStrength();
                 String alg = encinfo.getDataEncAlgorithm();
                 map.put(ATTR_ENCRYPTION_KEY_SIZE,
-                    returnEmptySetIfValueIsNull(Integer.toString(size)));
+                        returnEmptySetIfValueIsNull(Integer.toString(size)));
                 map.put(ATTR_ENCRYPTION_ALGORITHM,
-                    returnEmptySetIfValueIsNull(alg));
+                        returnEmptySetIfValueIsNull(alg));
             }
             logEvent("SUCCEED_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", params);
         } catch (IDFFMetaException e) {
             String strError = getErrorString(e);
             String[] paramsEx =
-                {realm, entityName, "IDFF", "SP-Standard Metadata", strError};
+                    {realm, entityName, "IDFF", "SP-Standard Metadata", strError};
             logEvent("FEDERATION_EXCEPTION_GET_ENTITY_DESCRIPTOR_ATTR_VALUES",
-                paramsEx);
+                    paramsEx);
             throw new AMConsoleException(strError);
         }
 
@@ -481,9 +477,9 @@ public class IDFFModelImpl
      * @return attributes values of provider.
      */
     public Map getIDPEntityConfig(
-        String realm,
-        String entityName,
-        String location) throws AMConsoleException {
+            String realm,
+            String entityName,
+            String location) throws AMConsoleException {
         String[] params = {realm, entityName, "IDFF", "IDP-Extended Metadata"};
         logEvent("ATTEMPT_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", params);
 
@@ -495,7 +491,7 @@ public class IDFFModelImpl
             String metaAlias = null;
 
             BaseConfigType idpConfig =
-                manager.getIDPDescriptorConfig(realm, entityName);
+                    manager.getIDPDescriptorConfig(realm, entityName);
             if (idpConfig != null) {
                 map = IDFFMetaUtils.getAttributes(idpConfig);
                 metaAlias = idpConfig.getMetaAlias();
@@ -508,34 +504,34 @@ public class IDFFModelImpl
             while (iterator.hasNext()) {
                 Map.Entry entry = (Map.Entry) iterator.next();
                 tmpMap.put((String) entry.getKey(),
-                    returnEmptySetIfValueIsNull(
-                    convertListToSet((List) entry.getValue())));
+                        returnEmptySetIfValueIsNull(
+                        convertListToSet((List) entry.getValue())));
             }
             tmpMap.put(ATTR_PROVIDER_ALIAS,
-                returnEmptySetIfValueIsNull(metaAlias));
+                    returnEmptySetIfValueIsNull(metaAlias));
             if (!tmpMap.containsKey(ATTR_SIGNING_CERT_ALIAS)) {
                 tmpMap.put(ATTR_SIGNING_CERT_ALIAS,
-                    Collections.EMPTY_SET);
+                        Collections.EMPTY_SET);
             }
             if (!tmpMap.containsKey(ATTR_ENCRYPTION_CERT_ALIAS)) {
                 tmpMap.put(ATTR_ENCRYPTION_CERT_ALIAS,
-                    Collections.EMPTY_SET);
+                        Collections.EMPTY_SET);
             }
 
             logEvent("SUCCEED_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", params);
         } catch (IDFFMetaException e) {
             String strError = getErrorString(e);
             String[] paramsEx =
-                {realm, entityName, "IDFF", "IDP-Extended Metadata", strError};
+                    {realm, entityName, "IDFF", "IDP-Extended Metadata", strError};
             logEvent("FEDERATION_EXCEPTION_GET_ENTITY_DESCRIPTOR_ATTR_VALUES",
-                paramsEx);
+                    paramsEx);
             throw new AMConsoleException(getErrorString(e));
         } catch (AMConsoleException e) {
             String strError = getErrorString(e);
             String[] paramsEx =
-                {realm, entityName, "IDFF", "IDP-Extended Metadata", strError};
+                    {realm, entityName, "IDFF", "IDP-Extended Metadata", strError};
             logEvent("FEDERATION_EXCEPTION_GET_ENTITY_DESCRIPTOR_ATTR_VALUES",
-                paramsEx);
+                    paramsEx);
             throw new AMConsoleException(getErrorString(e));
         }
         return tmpMap;
@@ -550,9 +546,9 @@ public class IDFFModelImpl
      * @return attributes values of provider.
      */
     public Map getSPEntityConfig(
-        String realm,
-        String entityName,
-        String location) throws AMConsoleException {
+            String realm,
+            String entityName,
+            String location) throws AMConsoleException {
         String[] params = {realm, entityName, "IDFF", "SP-Extended Metadata"};
         logEvent("ATTEMPT_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", params);
         IDFFMetaManager manager;
@@ -563,7 +559,7 @@ public class IDFFModelImpl
             String metaAlias = null;
 
             BaseConfigType spConfig =
-                manager.getSPDescriptorConfig(realm, entityName);
+                    manager.getSPDescriptorConfig(realm, entityName);
             if (spConfig != null) {
                 map = IDFFMetaUtils.getAttributes(spConfig);
                 metaAlias = spConfig.getMetaAlias();
@@ -579,50 +575,50 @@ public class IDFFModelImpl
                     List supportedSSOProfileList = (List) entry.getValue();
                     if (!supportedSSOProfileList.isEmpty()) {
                         tmpMap.put((String) entry.getKey(),
-                            returnEmptySetIfValueIsNull(
-                            (String) supportedSSOProfileList.get(0)));
+                                returnEmptySetIfValueIsNull(
+                                (String) supportedSSOProfileList.get(0)));
                     }
                 } else {
                     tmpMap.put((String) entry.getKey(),
-                        returnEmptySetIfValueIsNull(
-                        convertListToSet((List) entry.getValue())));
+                            returnEmptySetIfValueIsNull(
+                            convertListToSet((List) entry.getValue())));
                 }
             }
             tmpMap.put(ATTR_PROVIDER_ALIAS,
-                returnEmptySetIfValueIsNull(metaAlias));
+                    returnEmptySetIfValueIsNull(metaAlias));
             if (!tmpMap.containsKey(ATTR_SIGNING_CERT_ALIAS)) {
                 tmpMap.put(ATTR_SIGNING_CERT_ALIAS,
-                    Collections.EMPTY_SET);
+                        Collections.EMPTY_SET);
             }
             if (!tmpMap.containsKey(ATTR_ENCRYPTION_CERT_ALIAS)) {
                 tmpMap.put(ATTR_ENCRYPTION_CERT_ALIAS,
-                    Collections.EMPTY_SET);
+                        Collections.EMPTY_SET);
             }
             logEvent("SUCCEED_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", params);
         } catch (IDFFMetaException e) {
             String strError = getErrorString(e);
             String[] paramsEx =
-                {realm, entityName, "IDFF", "SP-Extended Metadata", strError};
-            logEvent("FEDERATION_EXCEPTION_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", 
-                paramsEx);
+                    {realm, entityName, "IDFF", "SP-Extended Metadata", strError};
+            logEvent("FEDERATION_EXCEPTION_GET_ENTITY_DESCRIPTOR_ATTR_VALUES",
+                    paramsEx);
             throw new AMConsoleException(getErrorString(e));
         } catch (AMConsoleException e) {
             String strError = getErrorString(e);
             String[] paramsEx =
-                {realm, entityName, "IDFF", "SP-Extended Metadata", strError};
-            logEvent("FEDERATION_EXCEPTION_GET_ENTITY_DESCRIPTOR_ATTR_VALUES", 
-                paramsEx);
+                    {realm, entityName, "IDFF", "SP-Extended Metadata", strError};
+            logEvent("FEDERATION_EXCEPTION_GET_ENTITY_DESCRIPTOR_ATTR_VALUES",
+                    paramsEx);
             throw new AMConsoleException(getErrorString(e));
         }
         return tmpMap;
     }
 
     public void updateEntitySPDescriptor(
-        String realm,
-        String entityName,
-        Map attrValues,
-        Map extendedValues,
-        boolean ishosted) throws AMConsoleException {
+            String realm,
+            String entityName,
+            Map attrValues,
+            Map extendedValues,
+            boolean ishosted) throws AMConsoleException {
         String[] params = {realm, entityName, "IDFF", "SP-Standard Metadata"};
         logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", params);
         try {
@@ -630,115 +626,113 @@ public class IDFFModelImpl
             //save key and encryption details if present for hosted
             if (ishosted == true) {
                 String keysize = getValueByKey(attrValues,
-                    ATTR_ENCRYPTION_KEY_SIZE);
+                        ATTR_ENCRYPTION_KEY_SIZE);
                 String algorithm = getValueByKey(attrValues,
-                    ATTR_ENCRYPTION_ALGORITHM);
+                        ATTR_ENCRYPTION_ALGORITHM);
                 String e_certAlias = getValueByKey(extendedValues,
-                    ATTR_ENCRYPTION_CERT_ALIAS);
+                        ATTR_ENCRYPTION_CERT_ALIAS);
                 String s_certAlias = getValueByKey(extendedValues,
-                    ATTR_SIGNING_CERT_ALIAS);
-                int keysi = (keysize != null && keysize.length() > 0) ? 
-                    Integer.parseInt(keysize) : 128;
-                String alg = (algorithm == null || algorithm.length() == 0) ? 
-                    "http://www.w3.org/2001/04/xmlenc#aes128-cbc" : algorithm;
+                        ATTR_SIGNING_CERT_ALIAS);
+                int keysi = (keysize != null && keysize.length() > 0) ? Integer.parseInt(keysize) : 128;
+                String alg = (algorithm == null || algorithm.length() == 0) ? "http://www.w3.org/2001/04/xmlenc#aes128-cbc" : algorithm;
                 IDFFMetaSecurityUtils.updateProviderKeyInfo(realm,
-                    entityName, e_certAlias, false, false, alg, keysi);
+                        entityName, e_certAlias, false, false, alg, keysi);
                 IDFFMetaSecurityUtils.updateProviderKeyInfo(realm,
-                    entityName, s_certAlias, true, false, alg, keysi);
+                        entityName, s_certAlias, true, false, alg, keysi);
             }
 
             IDFFMetaManager idffManager = getIDFFMetaManager();
             EntityDescriptorElement entityDescriptor =
-                idffManager.getEntityDescriptor(realm, entityName);
+                    idffManager.getEntityDescriptor(realm, entityName);
             SPDescriptorType pDesc = idffManager.getSPDescriptor(
-                realm, entityName);
+                    realm, entityName);
 
             //Protocol Support Enumeration
             pDesc.getProtocolSupportEnumeration().clear();
             pDesc.getProtocolSupportEnumeration().add(
-                (String) AMAdminUtils.getValue(
-                (Set) attrValues.get(ATTR_PROTOCOL_SUPPORT_ENUMERATION)));
+                    (String) AMAdminUtils.getValue(
+                    (Set) attrValues.get(ATTR_PROTOCOL_SUPPORT_ENUMERATION)));
 
             //communication URLs
             pDesc.setSoapEndpoint(
-                (String) AMAdminUtils.getValue((Set) attrValues.get(
-                ATTR_SOAP_END_POINT)));
+                    (String) AMAdminUtils.getValue((Set) attrValues.get(
+                    ATTR_SOAP_END_POINT)));
             pDesc.setSingleLogoutServiceURL(
-                (String) AMAdminUtils.getValue((Set) attrValues.get(
-                ATTR_SINGLE_LOGOUT_SERVICE_URL)));
+                    (String) AMAdminUtils.getValue((Set) attrValues.get(
+                    ATTR_SINGLE_LOGOUT_SERVICE_URL)));
             pDesc.setSingleLogoutServiceReturnURL(
-                (String) AMAdminUtils.getValue((Set) attrValues.get(
-                ATTR_SINGLE_LOGOUT_SERVICE_RETURN_URL)));
+                    (String) AMAdminUtils.getValue((Set) attrValues.get(
+                    ATTR_SINGLE_LOGOUT_SERVICE_RETURN_URL)));
             pDesc.setFederationTerminationServiceURL(
-                (String) AMAdminUtils.getValue((Set) attrValues.get(
-                ATTR_FEDERATION_TERMINATION_SERVICES_URL)));
+                    (String) AMAdminUtils.getValue((Set) attrValues.get(
+                    ATTR_FEDERATION_TERMINATION_SERVICES_URL)));
             pDesc.setFederationTerminationServiceReturnURL(
-                (String) AMAdminUtils.getValue((Set) attrValues.get(
-                ATTR_FEDERATION_TERMINATION_SERVICE_RETURN_URL)));
+                    (String) AMAdminUtils.getValue((Set) attrValues.get(
+                    ATTR_FEDERATION_TERMINATION_SERVICE_RETURN_URL)));
             pDesc.setRegisterNameIdentifierServiceURL(
-                (String) AMAdminUtils.getValue((Set) attrValues.get(
-                ATTR_REGISTRATION_NAME_IDENTIFIER_SERVICE_URL)));
+                    (String) AMAdminUtils.getValue((Set) attrValues.get(
+                    ATTR_REGISTRATION_NAME_IDENTIFIER_SERVICE_URL)));
             pDesc.setRegisterNameIdentifierServiceReturnURL(
-                (String) AMAdminUtils.getValue((Set) attrValues.get(
-                ATTR_REGISTRATION_NAME_IDENTIFIER_SERVICE_RETURN_URL)));
+                    (String) AMAdminUtils.getValue((Set) attrValues.get(
+                    ATTR_REGISTRATION_NAME_IDENTIFIER_SERVICE_RETURN_URL)));
 
             // communication profiles
             pDesc.getFederationTerminationNotificationProtocolProfile().clear();
             pDesc.getFederationTerminationNotificationProtocolProfile().add(
-                (String) AMAdminUtils.getValue((Set) attrValues.get(
-                ATTR_FEDERATION_TERMINATION_NOTIFICATION_PROTOCOL_PROFILE)));
+                    (String) AMAdminUtils.getValue((Set) attrValues.get(
+                    ATTR_FEDERATION_TERMINATION_NOTIFICATION_PROTOCOL_PROFILE)));
             int size = federationTerminationProfileList.size();
             for (int i = 0; i < size; i++) {
                 if (!federationTerminationProfileList.get(i).equals(
-                    (String) AMAdminUtils.getValue((Set) attrValues.get(
-                    ATTR_FEDERATION_TERMINATION_NOTIFICATION_PROTOCOL_PROFILE)))) {
+                        (String) AMAdminUtils.getValue((Set) attrValues.get(
+                        ATTR_FEDERATION_TERMINATION_NOTIFICATION_PROTOCOL_PROFILE)))) {
                     pDesc.getFederationTerminationNotificationProtocolProfile().add(
-                        federationTerminationProfileList.get(i));
+                            federationTerminationProfileList.get(i));
                 }
             }
 
             pDesc.getSingleLogoutProtocolProfile().clear();
             pDesc.getSingleLogoutProtocolProfile().add(
-                (String) AMAdminUtils.getValue((Set) attrValues.get(
-                ATTR_SINGLE_LOGOUT_PROTOCOL_PROFILE)));
+                    (String) AMAdminUtils.getValue((Set) attrValues.get(
+                    ATTR_SINGLE_LOGOUT_PROTOCOL_PROFILE)));
             size = singleLogoutProfileList.size();
             for (int i = 0; i < size; i++) {
                 if (!singleLogoutProfileList.get(i).equals(
-                    (String) AMAdminUtils.getValue((Set) attrValues.get(
-                    ATTR_SINGLE_LOGOUT_PROTOCOL_PROFILE)))) {
+                        (String) AMAdminUtils.getValue((Set) attrValues.get(
+                        ATTR_SINGLE_LOGOUT_PROTOCOL_PROFILE)))) {
                     pDesc.getSingleLogoutProtocolProfile().add(
-                        singleLogoutProfileList.get(i));
+                            singleLogoutProfileList.get(i));
                 }
             }
 
             pDesc.getRegisterNameIdentifierProtocolProfile().clear();
             pDesc.getRegisterNameIdentifierProtocolProfile().add(
-                (String) AMAdminUtils.getValue((Set) attrValues.get(
-                ATTR_REGISTRATION_NAME_IDENTIFIER_PROFILE_PROFILE)));
+                    (String) AMAdminUtils.getValue((Set) attrValues.get(
+                    ATTR_REGISTRATION_NAME_IDENTIFIER_PROFILE_PROFILE)));
             size = nameRegistrationProfileList.size();
             for (int i = 0; i < size; i++) {
                 if (!nameRegistrationProfileList.get(i).equals(
-                    (String) AMAdminUtils.getValue((Set) attrValues.get(
-                    ATTR_REGISTRATION_NAME_IDENTIFIER_PROFILE_PROFILE)))) {
+                        (String) AMAdminUtils.getValue((Set) attrValues.get(
+                        ATTR_REGISTRATION_NAME_IDENTIFIER_PROFILE_PROFILE)))) {
                     pDesc.getRegisterNameIdentifierProtocolProfile().add(
-                        nameRegistrationProfileList.get(i));
+                            nameRegistrationProfileList.get(i));
                 }
             }
 
             // only for sp
             String id = (String) AMAdminUtils.getValue(
-                (Set) attrValues.get(ATTR_ASSERTION_CUSTOMER_SERVICE_URIID));
+                    (Set) attrValues.get(ATTR_ASSERTION_CUSTOMER_SERVICE_URIID));
             String value = (String) AMAdminUtils.getValue(
-                (Set) attrValues.get(ATTR_ASSERTION_CUSTOMER_SERVICE_URL));
+                    (Set) attrValues.get(ATTR_ASSERTION_CUSTOMER_SERVICE_URL));
             String isDefault = (String) AMAdminUtils.getValue(
-                (Set) attrValues.get(
-                ATTR_ASSERTION_CUSTOMER_SERVICE_URL_AS_DEFAULT));
+                    (Set) attrValues.get(
+                    ATTR_ASSERTION_CUSTOMER_SERVICE_URL_AS_DEFAULT));
             String authnRequestsSigned = (String) AMAdminUtils.getValue(
-                (Set) attrValues.get(ATTR_AUTHN_REQUESTS_SIGNED));
+                    (Set) attrValues.get(ATTR_AUTHN_REQUESTS_SIGNED));
             com.sun.identity.liberty.ws.meta.jaxb.ObjectFactory objFactory =
-                new com.sun.identity.liberty.ws.meta.jaxb.ObjectFactory();
+                    new com.sun.identity.liberty.ws.meta.jaxb.ObjectFactory();
             com.sun.identity.liberty.ws.meta.jaxb.SPDescriptorType.AssertionConsumerServiceURLType assertionType =
-                objFactory.createSPDescriptorTypeAssertionConsumerServiceURLType();
+                    objFactory.createSPDescriptorTypeAssertionConsumerServiceURLType();
             assertionType.setId(id);
             assertionType.setValue(value);
             if (isDefault.equals("true")) {
@@ -762,14 +756,14 @@ public class IDFFModelImpl
             debug.error("IDFFMetaException, updateEntitySPDescriptor");
             String strError = getErrorString(e);
             String[] paramsEx =
-                {realm, entityName, "IDFF", "SP-Standard Metadata", strError};
+                    {realm, entityName, "IDFF", "SP-Standard Metadata", strError};
             logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR", paramsEx);
             throw new AMConsoleException(strError);
         } catch (JAXBException e) {
             debug.error("JAXBException, updateEntitySPDescriptor");
             String strError = getErrorString(e);
             String[] paramsEx =
-                {realm, entityName, "IDFF", "SP-Standard Metadata", strError};
+                    {realm, entityName, "IDFF", "SP-Standard Metadata", strError};
             logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR", paramsEx);
             throw new AMConsoleException(strError);
 
@@ -777,11 +771,11 @@ public class IDFFModelImpl
     }
 
     public void updateEntityIDPDescriptor(
-        String realm,
-        String entityName,
-        Map attrValues,
-        Map extendedValues,
-        boolean ishosted) throws AMConsoleException {
+            String realm,
+            String entityName,
+            Map attrValues,
+            Map extendedValues,
+            boolean ishosted) throws AMConsoleException {
         String[] params = {realm, entityName, "IDFF", "IDP-Standard Metadata"};
         logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", params);
         try {
@@ -789,115 +783,113 @@ public class IDFFModelImpl
             //save key and encryption details if present for hosted
             if (ishosted == true) {
                 String keysize = getValueByKey(attrValues,
-                    ATTR_ENCRYPTION_KEY_SIZE);
+                        ATTR_ENCRYPTION_KEY_SIZE);
                 String algorithm = getValueByKey(attrValues,
-                    ATTR_ENCRYPTION_ALGORITHM);
+                        ATTR_ENCRYPTION_ALGORITHM);
                 String e_certAlias = getValueByKey(extendedValues,
-                    ATTR_ENCRYPTION_CERT_ALIAS);
+                        ATTR_ENCRYPTION_CERT_ALIAS);
                 String s_certAlias = getValueByKey(extendedValues,
-                    ATTR_SIGNING_CERT_ALIAS);
-                int keysi = (keysize != null && keysize.length() > 0) ? 
-                    Integer.parseInt(keysize) : 128;
-                String alg = (algorithm == null || algorithm.length() == 0) ? 
-                    "http://www.w3.org/2001/04/xmlenc#aes128-cbc" : algorithm;
+                        ATTR_SIGNING_CERT_ALIAS);
+                int keysi = (keysize != null && keysize.length() > 0) ? Integer.parseInt(keysize) : 128;
+                String alg = (algorithm == null || algorithm.length() == 0) ? "http://www.w3.org/2001/04/xmlenc#aes128-cbc" : algorithm;
                 IDFFMetaSecurityUtils.updateProviderKeyInfo(realm,
-                    entityName, e_certAlias, false, true, alg, keysi);
+                        entityName, e_certAlias, false, true, alg, keysi);
                 IDFFMetaSecurityUtils.updateProviderKeyInfo(realm,
-                    entityName, s_certAlias, true, true, alg, keysi);
+                        entityName, s_certAlias, true, true, alg, keysi);
             }
 
             IDFFMetaManager idffManager = getIDFFMetaManager();
             EntityDescriptorElement entityDescriptor =
-                idffManager.getEntityDescriptor(realm, entityName);
+                    idffManager.getEntityDescriptor(realm, entityName);
             IDPDescriptorType pDesc = idffManager.getIDPDescriptor(
-                realm, entityName);
+                    realm, entityName);
 
             //Protocol Support Enumeration
             pDesc.getProtocolSupportEnumeration().clear();
             pDesc.getProtocolSupportEnumeration().add(
-                (String) AMAdminUtils.getValue(
-                (Set) attrValues.get(ATTR_PROTOCOL_SUPPORT_ENUMERATION)));
+                    (String) AMAdminUtils.getValue(
+                    (Set) attrValues.get(ATTR_PROTOCOL_SUPPORT_ENUMERATION)));
 
             //communication URLs
             pDesc.setSoapEndpoint(
-                (String) AMAdminUtils.getValue((Set) attrValues.get(
-                ATTR_SOAP_END_POINT)));
+                    (String) AMAdminUtils.getValue((Set) attrValues.get(
+                    ATTR_SOAP_END_POINT)));
             pDesc.setSingleSignOnServiceURL(
-                (String) AMAdminUtils.getValue((Set) attrValues.get(
-                ATTR_SINGLE_SIGN_ON_SERVICE_URL)));
+                    (String) AMAdminUtils.getValue((Set) attrValues.get(
+                    ATTR_SINGLE_SIGN_ON_SERVICE_URL)));
             pDesc.setSingleLogoutServiceURL(
-                (String) AMAdminUtils.getValue((Set) attrValues.get(
-                ATTR_SINGLE_LOGOUT_SERVICE_URL)));
+                    (String) AMAdminUtils.getValue((Set) attrValues.get(
+                    ATTR_SINGLE_LOGOUT_SERVICE_URL)));
             pDesc.setSingleLogoutServiceReturnURL(
-                (String) AMAdminUtils.getValue((Set) attrValues.get(
-                ATTR_SINGLE_LOGOUT_SERVICE_RETURN_URL)));
+                    (String) AMAdminUtils.getValue((Set) attrValues.get(
+                    ATTR_SINGLE_LOGOUT_SERVICE_RETURN_URL)));
             pDesc.setFederationTerminationServiceURL(
-                (String) AMAdminUtils.getValue((Set) attrValues.get(
-                ATTR_FEDERATION_TERMINATION_SERVICES_URL)));
+                    (String) AMAdminUtils.getValue((Set) attrValues.get(
+                    ATTR_FEDERATION_TERMINATION_SERVICES_URL)));
             pDesc.setFederationTerminationServiceReturnURL(
-                (String) AMAdminUtils.getValue((Set) attrValues.get(
-                ATTR_FEDERATION_TERMINATION_SERVICE_RETURN_URL)));
+                    (String) AMAdminUtils.getValue((Set) attrValues.get(
+                    ATTR_FEDERATION_TERMINATION_SERVICE_RETURN_URL)));
             pDesc.setRegisterNameIdentifierServiceURL(
-                (String) AMAdminUtils.getValue((Set) attrValues.get(
-                ATTR_REGISTRATION_NAME_IDENTIFIER_SERVICE_URL)));
+                    (String) AMAdminUtils.getValue((Set) attrValues.get(
+                    ATTR_REGISTRATION_NAME_IDENTIFIER_SERVICE_URL)));
             pDesc.setRegisterNameIdentifierServiceReturnURL(
-                (String) AMAdminUtils.getValue((Set) attrValues.get(
-                ATTR_REGISTRATION_NAME_IDENTIFIER_SERVICE_RETURN_URL)));
+                    (String) AMAdminUtils.getValue((Set) attrValues.get(
+                    ATTR_REGISTRATION_NAME_IDENTIFIER_SERVICE_RETURN_URL)));
 
             // communication profiles
             pDesc.getFederationTerminationNotificationProtocolProfile().clear();
             pDesc.getFederationTerminationNotificationProtocolProfile().add(
-                (String) AMAdminUtils.getValue((Set) attrValues.get(
-                ATTR_FEDERATION_TERMINATION_NOTIFICATION_PROTOCOL_PROFILE)));
+                    (String) AMAdminUtils.getValue((Set) attrValues.get(
+                    ATTR_FEDERATION_TERMINATION_NOTIFICATION_PROTOCOL_PROFILE)));
             int size = federationTerminationProfileList.size();
             for (int i = 0; i < size; i++) {
                 if (!federationTerminationProfileList.get(i).equals(
-                    (String) AMAdminUtils.getValue((Set) attrValues.get(
-                    ATTR_FEDERATION_TERMINATION_NOTIFICATION_PROTOCOL_PROFILE)))) {
+                        (String) AMAdminUtils.getValue((Set) attrValues.get(
+                        ATTR_FEDERATION_TERMINATION_NOTIFICATION_PROTOCOL_PROFILE)))) {
                     pDesc.getFederationTerminationNotificationProtocolProfile().add(
-                        federationTerminationProfileList.get(i));
+                            federationTerminationProfileList.get(i));
                 }
             }
 
             pDesc.getSingleLogoutProtocolProfile().clear();
             pDesc.getSingleLogoutProtocolProfile().add(
-                (String) AMAdminUtils.getValue((Set) attrValues.get(
-                ATTR_SINGLE_LOGOUT_PROTOCOL_PROFILE)));
+                    (String) AMAdminUtils.getValue((Set) attrValues.get(
+                    ATTR_SINGLE_LOGOUT_PROTOCOL_PROFILE)));
             size = singleLogoutProfileList.size();
             for (int i = 0; i < size; i++) {
                 if (!singleLogoutProfileList.get(i).equals(
-                    (String) AMAdminUtils.getValue((Set) attrValues.get(
-                    ATTR_SINGLE_LOGOUT_PROTOCOL_PROFILE)))) {
+                        (String) AMAdminUtils.getValue((Set) attrValues.get(
+                        ATTR_SINGLE_LOGOUT_PROTOCOL_PROFILE)))) {
                     pDesc.getSingleLogoutProtocolProfile().add(
-                        singleLogoutProfileList.get(i));
+                            singleLogoutProfileList.get(i));
                 }
             }
 
             pDesc.getRegisterNameIdentifierProtocolProfile().clear();
             pDesc.getRegisterNameIdentifierProtocolProfile().add(
-                (String) AMAdminUtils.getValue((Set) attrValues.get(
-                ATTR_REGISTRATION_NAME_IDENTIFIER_PROFILE_PROFILE)));
+                    (String) AMAdminUtils.getValue((Set) attrValues.get(
+                    ATTR_REGISTRATION_NAME_IDENTIFIER_PROFILE_PROFILE)));
             size = nameRegistrationProfileList.size();
             for (int i = 0; i < size; i++) {
                 if (!nameRegistrationProfileList.get(i).equals(
-                    (String) AMAdminUtils.getValue((Set) attrValues.get(
-                    ATTR_REGISTRATION_NAME_IDENTIFIER_PROFILE_PROFILE)))) {
+                        (String) AMAdminUtils.getValue((Set) attrValues.get(
+                        ATTR_REGISTRATION_NAME_IDENTIFIER_PROFILE_PROFILE)))) {
                     pDesc.getRegisterNameIdentifierProtocolProfile().add(
-                        nameRegistrationProfileList.get(i));
+                            nameRegistrationProfileList.get(i));
                 }
             }
 
             pDesc.getSingleSignOnProtocolProfile().clear();
             pDesc.getSingleSignOnProtocolProfile().add(
-                (String) AMAdminUtils.getValue((Set) attrValues.get(
-                ATTR_SINGLE_SIGN_ON_PROTOCOL_PROFILE)));
+                    (String) AMAdminUtils.getValue((Set) attrValues.get(
+                    ATTR_SINGLE_SIGN_ON_PROTOCOL_PROFILE)));
             size = federationProfileList.size();
             for (int i = 0; i < size; i++) {
                 if (!federationProfileList.get(i).equals(
-                    (String) AMAdminUtils.getValue((Set) attrValues.get(
-                    ATTR_SINGLE_SIGN_ON_PROTOCOL_PROFILE)))) {
+                        (String) AMAdminUtils.getValue((Set) attrValues.get(
+                        ATTR_SINGLE_SIGN_ON_PROTOCOL_PROFILE)))) {
                     pDesc.getSingleSignOnProtocolProfile().add(
-                        federationProfileList.get(i));
+                            federationProfileList.get(i));
                 }
 
             }
@@ -910,15 +902,15 @@ public class IDFFModelImpl
             debug.error("IDFFMetaException , updateEntityIDPDescriptor", e);
             String strError = getErrorString(e);
             String[] paramsEx =
-                {realm, entityName, "IDFF", "SP-Standard Metadata", strError};
+                    {realm, entityName, "IDFF", "SP-Standard Metadata", strError};
             logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR", paramsEx);
             throw new AMConsoleException(strError);
         }
     }
 
     private void updateAttrInConfig(
-        BaseConfigType baseConfig,
-        Map values) throws AMConsoleException {
+            BaseConfigType baseConfig,
+            Map values) throws AMConsoleException {
         List attrList = baseConfig.getAttribute();
         for (Iterator i = attrList.iterator(); i.hasNext();) {
             AttributeElement avpnew = (AttributeElement) i.next();
@@ -941,28 +933,29 @@ public class IDFFModelImpl
      * @throws JAXBException if provider cannot be retrieved.
      */
     public void updateIDPEntityConfig(
-        String realm,
-        String entityName,
-        Map attrValues) throws AMConsoleException {
+            String realm,
+            String entityName,
+            Map attrValues) throws AMConsoleException {
         String[] params = {realm, entityName, "IDFF", "IDP-Extended Metadata"};
         logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", params);
 
         try {
             IDFFMetaManager idffMetaMgr = getIDFFMetaManager();
             EntityConfigElement entityConfig =
-                idffMetaMgr.getEntityConfig(realm, entityName);
+                    idffMetaMgr.getEntityConfig(realm, entityName);
             if (entityConfig == null) {
                 throw new AMConsoleException("invalid.entity.name");
             }
 
             IDPDescriptorConfigElement idpDecConfigElement =
-                idffMetaMgr.getIDPDescriptorConfig(realm, entityName);
+                    idffMetaMgr.getIDPDescriptorConfig(realm, entityName);
             if (idpDecConfigElement == null) {
                 throw new AMConsoleException("invalid.config.element");
             } else {
                 updateAttrInConfig(
-                    idpDecConfigElement,
-                    attrValues);
+                        idpDecConfigElement,
+                        attrValues,
+                        EntityModel.IDENTITY_PROVIDER);
             }
 
             //saves the attributes by passing the new entityConfig object
@@ -971,7 +964,13 @@ public class IDFFModelImpl
         } catch (IDFFMetaException e) {
             String strError = getErrorString(e);
             String[] paramsEx =
-                {realm, entityName, "IDFF", "IDP-Extended Metadata", strError};
+                    {realm, entityName, "IDFF", "IDP-Extended Metadata", strError};
+            logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR", paramsEx);
+            throw new AMConsoleException(strError);
+        } catch (JAXBException e) {
+            String strError = getErrorString(e);
+            String[] paramsEx =
+                    {realm, entityName, "IDFF", "IDP-Extended Metadata", strError};
             logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR", paramsEx);
             throw new AMConsoleException(strError);
         }
@@ -987,46 +986,47 @@ public class IDFFModelImpl
      * @throws JAXBException if provider cannot be retrieved.
      */
     public void updateSPEntityConfig(
-        String realm,
-        String entityName,
-        Map attrValues) throws AMConsoleException {
+            String realm,
+            String entityName,
+            Map attrValues) throws AMConsoleException {
         String[] params = {realm, entityName, "IDFF", "SP-Extended Metadata"};
         logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", params);
 
         try {
             IDFFMetaManager idffMetaMgr = getIDFFMetaManager();
             EntityConfigElement entityConfig =
-                idffMetaMgr.getEntityConfig(realm, entityName);
+                    idffMetaMgr.getEntityConfig(realm, entityName);
             if (entityConfig == null) {
                 throw new AMConsoleException("invalid.entity.name");
             }
 
             SPDescriptorConfigElement spDecConfigElement =
-                idffMetaMgr.getSPDescriptorConfig(realm, entityName);
+                    idffMetaMgr.getSPDescriptorConfig(realm, entityName);
             if (spDecConfigElement == null) {
                 throw new AMConsoleException("invalid.config.element");
             } else {
                 // update sp entity config
                 updateAttrInConfig(
-                    spDecConfigElement,
-                    attrValues);
+                        spDecConfigElement,
+                        attrValues,
+                        EntityModel.SERVICE_PROVIDER);
                 //handle supported sso profile
                 List supportedSSOProfileList = new ArrayList();
                 supportedSSOProfileList.add((String) AMAdminUtils.getValue(
-                    (Set) attrValues.get(ATTR_SUPPORTED_SSO_PROFILE)));
+                        (Set) attrValues.get(ATTR_SUPPORTED_SSO_PROFILE)));
                 int size = supportedSSOProfileList.size();
                 for (int i = 0; i < size; i++) {
                     if (!supportedSSOProfileList.get(i).equals(
-                        (String) AMAdminUtils.getValue((Set) attrValues.get(
-                        ATTR_SUPPORTED_SSO_PROFILE)))) {
+                            (String) AMAdminUtils.getValue((Set) attrValues.get(
+                            ATTR_SUPPORTED_SSO_PROFILE)))) {
                         supportedSSOProfileList.add(
-                            supportedSSOProfileList.get(i));
+                                supportedSSOProfileList.get(i));
                     }
                 }
                 updateAttrInConfig(
-                    spDecConfigElement,
-                    ATTR_SUPPORTED_SSO_PROFILE,
-                    supportedSSOProfileList);
+                        spDecConfigElement,
+                        ATTR_SUPPORTED_SSO_PROFILE,
+                        supportedSSOProfileList);
             }
 
             //saves the attributes by passing the new entityConfig object
@@ -1035,7 +1035,13 @@ public class IDFFModelImpl
         } catch (IDFFMetaException e) {
             String strError = getErrorString(e);
             String[] paramsEx =
-                {realm, entityName, "IDFF", "SP-Extended Metadata", strError};
+                    {realm, entityName, "IDFF", "SP-Extended Metadata", strError};
+            logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR", paramsEx);
+            throw new AMConsoleException(strError);
+        } catch (JAXBException e) {
+            String strError = getErrorString(e);
+            String[] paramsEx =
+                    {realm, entityName, "IDFF", "IDP-Extended Metadata", strError};
             logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR", paramsEx);
             throw new AMConsoleException(strError);
         }
@@ -1050,32 +1056,33 @@ public class IDFFModelImpl
      *        Authentication Contexts values
      */
     public void updateIDPAuthenticationContexts(
-        String realm,
-        String entityName,
-        IDFFAuthContexts cxt) throws AMConsoleException {
+            String realm,
+            String entityName,
+            IDFFAuthContexts cxt) throws AMConsoleException {
 
         List list = cxt.toIDPAuthContextInfo();
-        String[] params = {realm, entityName, "IDFF", 
-            "IDP-updateIDPAuthenticationContexts"};
+        String[] params = {realm, entityName, "IDFF",
+            "IDP-updateIDPAuthenticationContexts"
+        };
         logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", params);
 
         try {
             IDFFMetaManager idffMetaMgr = getIDFFMetaManager();
             EntityConfigElement entityConfig =
-                idffMetaMgr.getEntityConfig(realm, entityName);
+                    idffMetaMgr.getEntityConfig(realm, entityName);
             if (entityConfig == null) {
                 throw new AMConsoleException("invalid.entity.name");
             }
 
             IDPDescriptorConfigElement idpDecConfigElement =
-                idffMetaMgr.getIDPDescriptorConfig(realm, entityName);
+                    idffMetaMgr.getIDPDescriptorConfig(realm, entityName);
             if (idpDecConfigElement == null) {
                 throw new AMConsoleException("invalid.config.element");
             } else {
                 updateAttrInConfig(
-                    idpDecConfigElement,
-                    ATTR_IDP_AUTHN_CONTEXT_MAPPING,
-                    list);
+                        idpDecConfigElement,
+                        ATTR_IDP_AUTHN_CONTEXT_MAPPING,
+                        list);
             }
 
             //saves the attributes by passing the new entityConfig object
@@ -1084,11 +1091,12 @@ public class IDFFModelImpl
         } catch (IDFFMetaException e) {
             String strError = getErrorString(e);
             String[] paramsEx =
-                {realm, 
-                 entityName, 
-                 "IDFF", 
-                 "IDP-updateIDPAuthenticationContexts", 
-                 strError};
+                    {realm,
+                entityName,
+                "IDFF",
+                "IDP-updateIDPAuthenticationContexts",
+                strError
+            };
             logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR", paramsEx);
             throw new AMConsoleException(strError);
         }
@@ -1105,35 +1113,36 @@ public class IDFFModelImpl
      *        Authentication Contexts values
      */
     public void updateSPAuthenticationContexts(
-        String realm,
-        String entityName,
-        IDFFAuthContexts cxt) throws AMConsoleException {
+            String realm,
+            String entityName,
+            IDFFAuthContexts cxt) throws AMConsoleException {
         List list = cxt.toSPAuthContextInfo();
         String[] params = {
-            realm, 
-            entityName, 
-            "IDFF", 
-            "SP-updateSPAuthenticationContexts"};
+            realm,
+            entityName,
+            "IDFF",
+            "SP-updateSPAuthenticationContexts"
+        };
         logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", params);
 
         try {
             IDFFMetaManager idffMetaMgr = getIDFFMetaManager();
             EntityConfigElement entityConfig =
-                idffMetaMgr.getEntityConfig(realm, entityName);
+                    idffMetaMgr.getEntityConfig(realm, entityName);
             if (entityConfig == null) {
                 throw new AMConsoleException("invalid.entity.name");
             }
 
             SPDescriptorConfigElement spDecConfigElement =
-                idffMetaMgr.getSPDescriptorConfig(realm, entityName);
+                    idffMetaMgr.getSPDescriptorConfig(realm, entityName);
             if (spDecConfigElement == null) {
                 throw new AMConsoleException("invalid.config.element");
             } else {
                 // update sp entity config
                 updateAttrInConfig(
-                    spDecConfigElement,
-                    ATTR_SP_AUTHN_CONTEXT_MAPPING,
-                    list);
+                        spDecConfigElement,
+                        ATTR_SP_AUTHN_CONTEXT_MAPPING,
+                        list);
             }
 
             //saves the attributes by passing the new entityConfig object
@@ -1142,11 +1151,12 @@ public class IDFFModelImpl
         } catch (IDFFMetaException e) {
             String strError = getErrorString(e);
             String[] paramsEx =
-                {realm, 
-                 entityName, 
-                 "IDFF", 
-                 "SP-updateSPAuthenticationContexts", 
-                 strError};
+                    {realm,
+                entityName,
+                "IDFF",
+                "SP-updateSPAuthenticationContexts",
+                strError
+            };
             logEvent("FEDERATION_EXCEPTION_MODIFY_ENTITY_DESCRIPTOR", paramsEx);
             throw new AMConsoleException(strError);
         }
@@ -1154,9 +1164,9 @@ public class IDFFModelImpl
     }
 
     private void updateAttrInConfig(
-        BaseConfigType baseConfig,
-        String attributeName,
-        List list) throws AMConsoleException {
+            BaseConfigType baseConfig,
+            String attributeName,
+            List list) throws AMConsoleException {
         List attrList = baseConfig.getAttribute();
         for (Iterator i = attrList.iterator(); i.hasNext();) {
             AttributeElement avpnew = (AttributeElement) i.next();
@@ -1164,6 +1174,59 @@ public class IDFFModelImpl
             if (name.equals(attributeName)) {
                 avpnew.getValue().clear();
                 avpnew.getValue().addAll(list);
+            }
+        }
+    }
+
+    private BaseConfigType addAttributeType(Map values, BaseConfigType bctype)
+            throws JAXBException {
+        ObjectFactory objFactory = new ObjectFactory();
+        for (Iterator iter = values.keySet().iterator();
+                iter.hasNext();) {
+            AttributeType avp = objFactory.createAttributeElement();
+            String key = (String) iter.next();
+            avp.setName(key);
+            avp.getValue().addAll(Collections.EMPTY_LIST);
+            bctype.getAttribute().add(avp);
+        }
+        return bctype;
+    }
+
+    /**
+     * Updates the BaseConfigElement.
+     *
+     * @param baseConfig is the BaseConfigType passed.
+     * @param values the Map which contains the new attribute/value pairs.
+     * @param role the role of entity.
+     * @throws AMConsoleException if update of baseConfig object fails.
+     */
+    private void updateAttrInConfig(
+            BaseConfigType baseConfig,
+            Map values,
+            String role) throws JAXBException, AMConsoleException {
+        List attrList = baseConfig.getAttribute();
+        if (role.equals(EntityModel.IDENTITY_PROVIDER)) {
+            attrList.clear();
+            baseConfig = addAttributeType(
+                    getAllIDPExtendedMetaMap(),
+                    baseConfig);
+            attrList = baseConfig.getAttribute();
+        } else if (role.equals(EntityModel.SERVICE_PROVIDER)) {
+            attrList.clear();
+            baseConfig = addAttributeType(
+                    getAllSPExtendedMetaMap(),
+                    baseConfig);
+            attrList = baseConfig.getAttribute();
+        }
+        for (Iterator it = attrList.iterator(); it.hasNext();) {
+            AttributeElement avpnew = (AttributeElement) it.next();
+            String name = avpnew.getName();
+            if (values.keySet().contains(name)) {
+                Set set = (Set) values.get(name);
+                if (set != null) {
+                    avpnew.getValue().clear();
+                    avpnew.getValue().addAll(set);
+                }
             }
         }
     }
@@ -1176,8 +1239,8 @@ public class IDFFModelImpl
      * @return attributes values of provider.
      */
     public IDFFAuthContexts getIDPAuthenticationContexts(
-        String realm,
-        String entityName) throws AMConsoleException {
+            String realm,
+            String entityName) throws AMConsoleException {
         String str = null;
         IDFFAuthContexts cxt = new IDFFAuthContexts();
 
@@ -1187,7 +1250,7 @@ public class IDFFModelImpl
             Map map = new HashMap();
 
             BaseConfigType idpConfig =
-                manager.getIDPDescriptorConfig(realm, entityName);
+                    manager.getIDPDescriptorConfig(realm, entityName);
             if (idpConfig != null) {
                 map = IDFFMetaUtils.getAttributes(idpConfig);
             } else {
@@ -1235,8 +1298,8 @@ public class IDFFModelImpl
      * @return attributes values of provider.
      */
     public IDFFAuthContexts getSPAuthenticationContexts(
-        String realm,
-        String entityName) throws AMConsoleException {
+            String realm,
+            String entityName) throws AMConsoleException {
         IDFFAuthContexts cxt = new IDFFAuthContexts();
         String str = null;
 
@@ -1246,7 +1309,7 @@ public class IDFFModelImpl
             Map map = new HashMap();
 
             BaseConfigType spConfig =
-                manager.getSPDescriptorConfig(realm, entityName);
+                    manager.getSPDescriptorConfig(realm, entityName);
             if (spConfig != null) {
                 map = IDFFMetaUtils.getAttributes(spConfig);
             } else {
@@ -1272,25 +1335,25 @@ public class IDFFModelImpl
     }
 
     public void createEntityConfig(
-        String realm,
-        String entityName,
-        String role,
-        String location) throws AMConsoleException {
+            String realm,
+            String entityName,
+            String role,
+            String location) throws AMConsoleException {
         try {
             IDFFMetaManager idffMetaMgr = getIDFFMetaManager();
             ObjectFactory objFactory = new ObjectFactory();
             // Check whether the entity id existed in the DS
             EntityDescriptorElement entityDesc =
-                idffMetaMgr.getEntityDescriptor(realm, entityName);
+                    idffMetaMgr.getEntityDescriptor(realm, entityName);
 
             if (entityDesc == null) {
                 throw new AMConsoleException("invalid.entity.name");
             }
             EntityConfigElement entityConfig =
-                idffMetaMgr.getEntityConfig(realm, entityName);
+                    idffMetaMgr.getEntityConfig(realm, entityName);
             if (entityConfig == null) {
                 entityConfig =
-                    objFactory.createEntityConfigElement();
+                        objFactory.createEntityConfigElement();
                 // add to entityConfig
                 entityConfig.setEntityID(entityName);
                 if (location.equals("remote")) {
@@ -1306,11 +1369,11 @@ public class IDFFModelImpl
             // Decide which role EntityDescriptorElement includes
             // It could have one sp and one idp.
             if ((role.equals(IFSConstants.SP)) &&
-                (IDFFMetaUtils.getSPDescriptor(entityDesc) != null)) {
+                    (IDFFMetaUtils.getSPDescriptor(entityDesc) != null)) {
                 baseCfgType = objFactory.createSPDescriptorConfigElement();
 
                 for (Iterator iter = extendedMetaMap.keySet().iterator();
-                    iter.hasNext();) {
+                        iter.hasNext();) {
                     AttributeType atype = objFactory.createAttributeType();
                     String key = (String) iter.next();
                     atype.setName(key);
@@ -1319,7 +1382,7 @@ public class IDFFModelImpl
                 }
 
                 for (Iterator iter = extendedMetaSpMap.keySet().iterator();
-                    iter.hasNext();) {
+                        iter.hasNext();) {
                     AttributeType atype = objFactory.createAttributeType();
                     String key = (String) iter.next();
                     atype.setName(key);
@@ -1328,11 +1391,11 @@ public class IDFFModelImpl
                 }
                 entityConfig.getSPDescriptorConfig().add(baseCfgType);
             } else if ((role.equals(IFSConstants.IDP)) &&
-                (IDFFMetaUtils.getIDPDescriptor(entityDesc) != null)) {
+                    (IDFFMetaUtils.getIDPDescriptor(entityDesc) != null)) {
                 baseCfgType = objFactory.createIDPDescriptorConfigElement();
 
                 for (Iterator iter = extendedMetaMap.keySet().iterator();
-                    iter.hasNext();) {
+                        iter.hasNext();) {
                     AttributeType atype = objFactory.createAttributeType();
                     String key = (String) iter.next();
                     atype.setName(key);
@@ -1341,7 +1404,7 @@ public class IDFFModelImpl
                 }
 
                 for (Iterator iter = extendedMetaIdpMap.keySet().iterator();
-                    iter.hasNext();) {
+                        iter.hasNext();) {
                     AttributeType atype = objFactory.createAttributeType();
                     String key = (String) iter.next();
                     atype.setName(key);
@@ -1358,8 +1421,22 @@ public class IDFFModelImpl
         }
     }
 
+    public Map getAllSPExtendedMetaMap() {
+        Map map = new HashMap();
+        map.putAll(extendedMetaMap);
+        map.putAll(extendedMetaSpMap);
+        return map;
+    }
+
+    public Map getAllIDPExtendedMetaMap() {
+        Map map = new HashMap();
+        map.putAll(extendedMetaMap);
+        map.putAll(extendedMetaIdpMap);
+        return map;
+    }
+
     protected IDFFMetaManager getIDFFMetaManager()
-        throws IDFFMetaException {
+            throws IDFFMetaException {
         if (metaManager == null) {
             metaManager = new IDFFMetaManager(getUserSSOToken());
         }
@@ -1374,14 +1451,14 @@ public class IDFFModelImpl
      * @throws AMConsoleException if entity cannot be retrieved.
      */
     public boolean isAffiliate(String realm, String entityName)
-        throws AMConsoleException {
+            throws AMConsoleException {
         boolean isAffiliate = false;
         try {
             IDFFMetaManager idffManager = getIDFFMetaManager();
-            AffiliationDescriptorType ad = 
-                (AffiliationDescriptorType) idffManager.getAffiliationDescriptor(
-                realm, 
-                entityName);
+            AffiliationDescriptorType ad =
+                    (AffiliationDescriptorType) idffManager.getAffiliationDescriptor(
+                    realm,
+                    entityName);
             if (ad != null) {
                 isAffiliate = true;
             }
@@ -1402,24 +1479,24 @@ public class IDFFModelImpl
      * @throws AMConsoleException if attribute values cannot be obtained.
      */
     public Map getAffiliateProfileAttributeValues(
-        String realm,
-        String entityName) throws AMConsoleException {
+            String realm,
+            String entityName) throws AMConsoleException {
         String[] params = {realm, entityName, "IDFF", "IDP"};
         logEvent("ATTEMPT_GET_AFFILIATE_ENTITY_DESCRIPTOR_ATTR_VALUES", params);
         Map values = new HashMap();
         try {
             IDFFMetaManager idffManager = getIDFFMetaManager();
-            AffiliationDescriptorType aDesc = 
-                (AffiliationDescriptorType) idffManager.getAffiliationDescriptor(
-                realm, 
-                entityName);
+            AffiliationDescriptorType aDesc =
+                    (AffiliationDescriptorType) idffManager.getAffiliationDescriptor(
+                    realm,
+                    entityName);
 
             if (aDesc != null) {
                 values.put(ATTR_AFFILIATE_ID,
-                    returnEmptySetIfValueIsNull(aDesc.getAffiliationID()));
+                        returnEmptySetIfValueIsNull(aDesc.getAffiliationID()));
 
                 values.put(ATTR_AFFILIATE_OWNER_ID,
-                    returnEmptySetIfValueIsNull(aDesc.getAffiliationOwnerID()));
+                        returnEmptySetIfValueIsNull(aDesc.getAffiliationOwnerID()));
 
 
             } else {
@@ -1427,24 +1504,24 @@ public class IDFFModelImpl
                 values.put(ATTR_AFFILIATE_OWNER_ID, Collections.EMPTY_SET);
                 values.put(ATTR_AFFILIATE_VALID_UNTIL, Collections.EMPTY_SET);
                 values.put(ATTR_AFFILIATE_CACHE_DURATION,
-                    Collections.EMPTY_SET);
+                        Collections.EMPTY_SET);
                 values.put(ATTR_AFFILIATE_SIGNING_CERT_ALIAS,
-                    Collections.EMPTY_SET);
+                        Collections.EMPTY_SET);
                 values.put(ATTR_AFFILIATE_ENCRYPTION_CERT_ALIAS,
-                    Collections.EMPTY_SET);
+                        Collections.EMPTY_SET);
                 values.put(ATTR_AFFILIATE_ENCRYPTION_KEY_SIZE,
-                    Collections.EMPTY_SET);
+                        Collections.EMPTY_SET);
                 values.put(ATTR_AFFILIATE_ENCRYPTION_KEY_METHOD,
-                    Collections.EMPTY_SET);
+                        Collections.EMPTY_SET);
             }
-            logEvent("SUCCEED_GET_AFFILIATE_ENTITY_DESCRIPTOR_ATTR_VALUES", 
-                params);
+            logEvent("SUCCEED_GET_AFFILIATE_ENTITY_DESCRIPTOR_ATTR_VALUES",
+                    params);
         } catch (IDFFMetaException e) {
             String strError = getErrorString(e);
             String[] paramsEx =
-                {realm, entityName, "IDFF", "SP", strError};
-            logEvent("FEDERATION_EXCEPTION_GET_AFFILIATE_ENTITY_DESCRIPTOR_ATTR_VALUES", 
-                paramsEx);
+                    {realm, entityName, "IDFF", "SP", strError};
+            logEvent("FEDERATION_EXCEPTION_GET_AFFILIATE_ENTITY_DESCRIPTOR_ATTR_VALUES",
+                    paramsEx);
             throw new AMConsoleException(strError);
         }
         return (values != null) ? values : Collections.EMPTY_MAP;
@@ -1460,26 +1537,26 @@ public class IDFFModelImpl
      * @throws AMConsoleException if profile cannot be modified.
      */
     public void updateAffiliateProfile(
-        String realm,
-        String entityName,
-        Map values,
-        Set members) throws AMConsoleException {
+            String realm,
+            String entityName,
+            Map values,
+            Set members) throws AMConsoleException {
         String[] params = {realm, entityName, "IDFF", "Affiliate"};
         logEvent("ATTEMPT_MODIFY_AFFILIATE_ENTITY_DESCRIPTOR", params);
         try {
             IDFFMetaManager idffManager = getIDFFMetaManager();
             EntityDescriptorElement entityDescriptor =
-                idffManager.getEntityDescriptor(realm, entityName);
+                    idffManager.getEntityDescriptor(realm, entityName);
             AffiliationDescriptorType aDesc =
-                entityDescriptor.getAffiliationDescriptor();
+                    entityDescriptor.getAffiliationDescriptor();
 
             aDesc.setAffiliationID(
-                (String) AMAdminUtils.getValue((Set) values.get(
-                ATTR_AFFILIATE_ID)));
+                    (String) AMAdminUtils.getValue((Set) values.get(
+                    ATTR_AFFILIATE_ID)));
 
             aDesc.setAffiliationOwnerID(
-                (String) AMAdminUtils.getValue((Set) values.get(
-                ATTR_AFFILIATE_OWNER_ID)));
+                    (String) AMAdminUtils.getValue((Set) values.get(
+                    ATTR_AFFILIATE_OWNER_ID)));
 
             //TBD : common attributes which may be added here later
             /*ATTR_AFFILIATE_VALID_UNTIL,
@@ -1503,9 +1580,9 @@ public class IDFFModelImpl
         } catch (IDFFMetaException e) {
             String strError = getErrorString(e);
             String[] paramsEx =
-                {realm, entityName, "IDFF", "Affiliate", strError};
-            logEvent("FEDERATION_EXCEPTION_MODIFY_AFFILIATE_ENTITY_DESCRIPTOR", 
-                paramsEx);
+                    {realm, entityName, "IDFF", "Affiliate", strError};
+            logEvent("FEDERATION_EXCEPTION_MODIFY_AFFILIATE_ENTITY_DESCRIPTOR",
+                    paramsEx);
             throw new AMConsoleException(strError);
         }
     }
@@ -1518,7 +1595,7 @@ public class IDFFModelImpl
      * @throws AMConsoleException
      */
     public Set getAllEntityDescriptorNames(String realm)
-        throws AMConsoleException {
+            throws AMConsoleException {
         Set entitySet = null;
         try {
             IDFFMetaManager idffManager = getIDFFMetaManager();
@@ -1533,7 +1610,7 @@ public class IDFFModelImpl
      * @return a Set of all the idff Affiliate entities.
      */
     public Set getAllAffiliateEntityDescriptorNames(String realm)
-        throws AMConsoleException {
+            throws AMConsoleException {
         Set entitySet = new HashSet();
         try {
             IDFFMetaManager idffManager = getIDFFMetaManager();
@@ -1559,14 +1636,14 @@ public class IDFFModelImpl
      * @throws AMConsoleException if values cannot be obtained.
      */
     public Set getAllAffiliateMembers(String realm, String entityName)
-        throws AMConsoleException {
+            throws AMConsoleException {
         Set memberSet = null;
         try {
             IDFFMetaManager idffManager = getIDFFMetaManager();
-            AffiliationDescriptorType aDesc = 
-                (AffiliationDescriptorType) idffManager.getAffiliationDescriptor(
-                realm, 
-                entityName);
+            AffiliationDescriptorType aDesc =
+                    (AffiliationDescriptorType) idffManager.getAffiliationDescriptor(
+                    realm,
+                    entityName);
             memberSet = convertListToSet(aDesc.getAffiliateMember());
         } catch (IDFFMetaException e) {
             throw new AMConsoleException(e.getMessage());
