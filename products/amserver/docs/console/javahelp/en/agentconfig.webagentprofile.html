@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Web Policy Agent - Sun Federated Access Manager 8.0 Console Online Help
+  <title>Web Policy Agent - Sun OpenSSO 8.0 Console Online Help
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -34,11 +34,11 @@
 <p>A web agent instance can be configured using this interface. The properties described
 only apply if during agent creation, centralized configuration was chosen. If local configuration
 was selected, the properties related to this agent must be edited in the
-<tt>FAMAgentConfiguration.properites</tt> file in the agent installation directory.</p><p>The types of configuration available are divided into the following categories:</p>
+<tt>OpenSSOAgentConfiguration.properites</tt> file in the agent installation directory.</p><p>The types of configuration available are divided into the following categories:</p>
 <ul><li><p><a href="#ggmrx">Global</a></p></li>
 <li><p><a href="#ggmna">Application</a></p></li>
 <li><p><a href="#ggphk">SSO</a></p></li>
-<li><p><a href="#ggwgp">FAM Services</a></p></li>
+<li><p><a href="#ggwgp">OpenSSO Services</a></p></li>
 <li><p><a href="#ggwhz">Miscellaneous</a></p></li>
 <li><p><a href="#ggmtu">Advanced</a></p></li></ul>
 
@@ -66,13 +66,13 @@ if you want to remove the protection the agent provides.</p>
 <p>If desired, change the configuration location to whichever of the two options is
 available: centralized or local. The centralized location allows you to control the configuration
 in a centralized manner, such as from the Console.</p><p>The local option is provided for backward compatibility purposes. If the local configuration
-option is selected, the agent will use its local configuration in the <tt>FAMAgentConfiguration.properites</tt>
+option is selected, the agent will use its local configuration in the <tt>OpenSSOAgentConfiguration.properites</tt>
 file in the agent installation directory. In addition, the Console will only display
 the following properties: Password, Password (confirmation), and Status.</p>
 
 <a name="ggwku"></a><h5>Agent Configuration Change Notification</h5>
-<p>When enabled, the agent receives notification messages from the Federated Access Manager server
-about configuration changes.</p>
+<p>When enabled, the agent receives notification messages from the OpenSSO server about configuration
+changes.</p>
 
 <a name="ggmri"></a><h5>Enable Notifications</h5>
 <p>When enabled, notifications help maintain the following agent caches: SSO, policy, and configuration.</p>
@@ -86,7 +86,7 @@ value for this attribute is used by the agent to register notification listeners
 
 <a name="ggmwj"></a><h5>Configuration Reload Interval</h5>
 <p>The interval in minutes for the agent to fetch the agent configuration from
-Federated Access Manager. The default value is <tt>60</tt>.</p>
+OpenSSO. The default value is <tt>60</tt>.</p>
 
 <a name="ggmvs"></a><h5>Configuration Cleanup Interval</h5>
 <p>The interval in minutes for updating old agent configuration entries, as long as
@@ -114,13 +114,13 @@ File Size.</p>
 new file.</p>
 
 <a name="ggmno"></a><h5>Agent Remote Log Filename</h5>
-<p>Name of the Federated Access Manager log file to which each URL
-access to Federated Access Manager is recorded.</p>
+<p>Name of the OpenSSO log file to which each URL access to
+OpenSSO is recorded.</p>
 
 <a name="ggmof"></a><h5>URL Access Remote Logging Type</h5>
 <p>The URL access logging level setting. This setting refers to URL access as
-saved to the Federated Access Manager log file, whose name is specified by
-the attribute labeled Agent Remote Log Filename.</p>
+saved to the OpenSSO log file, whose name is specified by the attribute
+labeled Agent Remote Log Filename.</p>
 
 <a name="ggmnb"></a><h5>FQDN Check</h5>
 <p>When enabled, the FQDN default value and the FQDN map values are checked.</p>
@@ -133,8 +133,9 @@ is set during agent installation. Do not modify this setting unless necessary.</
 <p>A mapping to an actual or valid host name. This mapping is
 from a host name that is not recognized to one that is recognized.
 This mapping is useful in the following situations: when an IP address or an
-incorrect URL is entered by the user or when a virtual host is
-used for protected resources.</p>
+incorrect URL is entered by the user, or when a virtual host is
+used for protected resources.</p><p>Enter values for the Map Key and the Corresponding Map Values and click
+Add. </p>
 
 <a name="ggmna"></a><h5>Application</h5>
 <p>These properties tend to be application specific.</p>
@@ -168,8 +169,8 @@ a request.</p>
 
 <a name="ggmst"></a><h5>Profile Attributes Map</h5>
 <p>A list of mappings from profile attribute names to <tt>HTTP</tt> header names. These
-attribute names are populated under specific names for the currently authenticated user. The
-format of values for this property is as follows: <tt>[profile_attribute_name]=http_header_name</tt></p>
+attribute names are populated under specific names for the currently authenticated user. </p><p>Enter a profile attribute name value for the Map Key and the HTTP
+header name for the Corresponding Map Values. Click Add. </p>
 
 <a name="ggmwy"></a><h5>Response Attributes Fetch Mode</h5>
 <p>The modes available to fetch additional user response attributes to be introduced into
@@ -186,18 +187,16 @@ a request.</p>
 
 <a name="ggmub"></a><h5>Session Attributes Map</h5>
 <p>A list of mappings from session attribute names to <tt>HTTP</tt> header names. These
-attribute names are populated under specific names for the currently authenticated user. The
-format of values for this property is as follows: <tt>[session_attribute_name]=http_header_name</tt></p>
+attribute names are populated under specific names for the currently authenticated user. </p><p>Enter a session attribute name value for the Map Key and the HTTP
+header name for the Corresponding Map Values. Click Add. </p>
 
 <a name="ggphk"></a><h5>SSO</h5>
 <p>These properties allow you to configure features of the agent related to single
 sign-on (SSO) and cross domain single sign-on (CDSSO).</p>
 
 <a name="ggmsf"></a><h5>Cookie Name</h5>
-<p>The name of the SSO cookie token used between Federated Access Manager
-and the agent.</p>
-<hr><p><b>Caution &#8211; </b>Changing this property in the agent without correspondingly changing Federated Access Manager disables
-the SDK.</p>
+<p>The name of the SSO cookie token used between OpenSSO and the agent.</p>
+<hr><p><b>Caution &#8211; </b>Changing this property in the agent without correspondingly changing OpenSSO disables the SDK.</p>
 <hr>
 
 
@@ -206,13 +205,12 @@ the SDK.</p>
 agent marks cookies as secure before sending them.</p>
 
 <a name="ggmwn"></a><h5>Cookies Reset</h5>
-<p>When enabled, the agent resets cookies in the response before redirecting to Federated
-Access Manager for authentication. By default this property is not enabled.</p>
+<p>When enabled, the agent resets cookies in the response before redirecting to OpenSSO
+for authentication. By default this property is not enabled.</p>
 
 <a name="ggmwt"></a><h5>Cookies List for Reset</h5>
-<p>A list of cookies to be included in the redirect response to
-Federated Access Manager. This list is only used when the Cookies Reset property
-is enabled.</p><p>Example:</p><pre>[0]=name[=value][;Domain=value]</pre>
+<p>A list of cookies to be included in the redirect response to OpenSSO.
+This list is only used when the Cookies Reset property is enabled.</p>
 
 <a name="ggmth"></a><h5>Cookies Domain List</h5>
 <p>When CDSSO is enabled, this list of domains indicates which cookies must be
@@ -224,28 +222,35 @@ enabled.</p>
 
 <a name="ggmtp"></a><h5>CDSSO Servlet URL List</h5>
 <p>When enabled, this list indicates which URLs of the available CDSSO controllers can
-be used by the agent for CDSSO processing.</p>
+be used by the agent for CDSSO processing. Once you have entered the
+list of URLs, select a URL and use the buttons to the right
+of the list to order them accordingly.</p>
 
-<a name="ggwgp"></a><h5>FAM Services</h5>
-<p>These properties configure the Federated Access Manager services that the agent uses, such
-as policy service, session service, authentication service, and service management (SM) service.</p>
+<a name="ggwgp"></a><h5>OpenSSO Services</h5>
+<p>These properties configure the OpenSSO services that the agent uses, such as policy
+service, session service, authentication service, and service management (SM) service.</p>
 
-<a name="ggmqt"></a><h5>FAM Login URL</h5>
-<p>A list of URLs to Federated Access Manager authentication. When authentication is required,
-the agent redirects incoming users to the appropriate authentication service as specified by
-the URL.</p>
+<a name="ggmqt"></a><h5>OpenSSO Login URL</h5>
+<p>A list of URLs to OpenSSO authentication. When authentication is required, the agent
+redirects incoming users to the appropriate authentication service as specified by the URL.
+Once you have entered the list of URLs, select a URL and use
+the buttons to the right of the list to order them accordingly.</p>
 
 <a name="ggnej"></a><h5>Agent Connection Timeout:</h5>
-<p>The timeout period in seconds for an agent connection with the Federated
-Access Manager authentication server. The default value is <tt>2</tt> seconds. The error related to
-this setting is as follows: <tt>unable to find active Access Manager Auth server.</tt></p>
+<p>The timeout period in seconds for an agent connection with the OpenSSO authentication
+server. The default value is <tt>2</tt> seconds. The error related to this setting
+is as follows: <tt>unable to find active OpenSSO Auth server.</tt></p>
 
 <a name="ggmnh"></a><h5>Polling Period for Primary Server</h5>
 <p>The interval in minutes that the agent polls the primary server to ensure
 that it is running. The default value is <tt>5</tt>.</p>
 
 <a name="ggmty"></a><h5>Logout URL List</h5>
-<p>The list of logout URLs for applications.</p>
+<p>The list of logout URLs for applications. Once you have entered the list
+of URLs, select a URL and use the buttons to the right
+of the list to order them accordingly. Once you have entered the list of
+URLs, select a URL and use the buttons to the right of
+the list to order them accordingly.</p>
 
 <a name="ggmsu"></a><h5>Logout Cookies List for Reset</h5>
 <p>The list of cookies to be reset upon log out. The format
@@ -282,8 +287,7 @@ use in policy evaluation.</p>
 
 <a name="ggmoa"></a><h5>Policy Clock Skew</h5>
 <p>The number of seconds used to adjust the time difference between the agent
-machine and Federated Access Manager. Clock skew in seconds equals agent time minus
-Federated Access Manager time.</p>
+machine and OpenSSO. Clock skew in seconds equals agent time minus OpenSSO time.</p>
 
 <a name="ggwhz"></a><h5>Miscellaneous</h5>
 <p>These properties do not fit smoothly in other categories.</p>
@@ -318,7 +322,7 @@ preferred naming URL as an attribute in the naming request.</p>
 
 <a name="ggmox"></a><h5>Ignore Server Check</h5>
 <p>When enabled, meaning that &#8220;ignore&#8221; is enabled, the agent does <b>not</b> ensure that
-Federated Access Manager is running before performing a <tt>302 redirect</tt>.</p>
+OpenSSO is running before performing a <tt>302 redirect</tt>.</p>
 
 <a name="ggmse"></a><h5>Ignore Path Info in Request URL</h5>
 <p>When enabled, path information is not stripped from the request URL even if
@@ -341,7 +345,7 @@ in UTF-8.</p>
 in more-complex or less-common deployments.</p>
 
 <a name="ggmve"></a><h5>Load Balancer Setup</h5>
-<p>When enabled, a load balancer is used for Federated Access Manager services.</p>
+<p>When enabled, a load balancer is used for OpenSSO services.</p>
 
 <a name="ggmxj"></a><h5>Override Request URL Protocol</h5>
 <p>Set this property (as well as the properties labeled as follows: Override Request

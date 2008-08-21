@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Security - Sun Federated Access Manager 8.0 Console Online Help
+  <title>Security - Sun OpenSSO 8.0 Console Online Help
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -59,7 +59,7 @@ Java.   </p>
 
 <a name="ggkay"></a><h5>Platform Low Level Comm. Max. Content Length</h5>
 <p>Default value is 16384 or 16k. Specifies the maximum content-length for an <tt>HttpRequest</tt>
-that Federated Access Manager will accept.</p>
+that OpenSSO will accept.</p>
 
 <a name="ggkbb"></a><h5>Client IP Address Check</h5>
 <p>Default value is NO. Specifies whether or not the IP address of the
@@ -74,28 +74,28 @@ valid session handler ID. The value of this cookie name is used to
 retrieve the valid session information.</p>
 
 <a name="ggkaw"></a><h5>Secure Cookie</h5>
-<p>Allows the Federated Access Manager cookie to be set in a secure mode
-in which the browser will only return the cookie when a secure protocol
-such as <tt>HTTP(s)</tt> is used.  Default value is false. </p>
+<p>Allows the OpenSSO cookie to be set in a secure mode in
+which the browser will only return the cookie when a secure protocol such as
+<tt>HTTP(s)</tt> is used.  Default value is false. </p>
 
 <a name="ggkbk"></a><h5>Encode Cookie Value</h5>
-<p>This property allows Access Manager to <tt>URLencode</tt> the cookie value which converts characters
-to ones that are understandable by HTTP.</p>
+<p>This property allows OpenSSO to <tt>URLencode</tt> the cookie value which converts characters to
+ones that are understandable by HTTP.</p>
 
 <a name="ggkbc"></a><h5>Keystore</h5>
 <p>The following attributes allow you to configure keystore information for additional sites and
 servers that you create:</p>
 
 <a name="ggkbj"></a><h5>Keystore File</h5>
-<p>Value is set during installation. Example: <tt></tt><i>FederatedAccessManager-base</i><tt>/</tt><i>server_URI</i><tt>/keystore.jks</tt>.  Specifies the path to the
+<p>Value is set during installation. Example: <tt></tt><i>OpenSSO-base</i><tt>/</tt><i>server_URI</i><tt>/keystore.jks</tt>.  Specifies the path to the
 SAML XML keystore password file.</p>
 
 <a name="ggkbu"></a><h5>Keystore Password File</h5>
-<p>Value is set during installation. Example: <tt></tt><i>FederatedAccessManager-base</i><tt>/</tt><i>server_URI</i><tt>/.storepass</tt>.  Specifies the path to the
+<p>Value is set during installation. Example: <tt></tt><i>OpenSSO-base</i><tt>/</tt><i>server_URI</i><tt>/.storepass</tt>.  Specifies the path to the
 SAML XML key storepass file.</p>
 
 <a name="ggkbs"></a><h5>Private Key Password File</h5>
-<p>Value is set during installation. Example: <tt></tt><i>FederatedAccessManager-base</i><tt>/</tt><i>server_URI</i><tt>/.keypass</tt>  Specifies the path to the
+<p>Value is set during installation. Example: <tt></tt><i>OpenSSO-base</i><tt>/</tt><i>server_URI</i><tt>/.keypass</tt>  Specifies the path to the
 SAML XML key password file.</p>
 
 <a name="ggkaq"></a><h5>Certificate Alias</h5>
@@ -109,15 +109,14 @@ information. </p>
 
 <a name="ggkch"></a><h5>LDAP Server Host Name</h5>
 <p>Specifies the name of the LDAP server where the certificates are stored. The
-default value is the host name specified when Federated Access Manager was installed.
-The host name of any LDAP Server where the certificates are stored can
-be used. </p>
+default value is the host name specified when OpenSSO was installed. The host
+name of any LDAP Server where the certificates are stored can be used.
+</p>
 
 <a name="ggkau"></a><h5>LDAP Server Port Number</h5>
 <p>Specifies the port number of the LDAP server where the certificates are stored.
-The default value is the port specified when Federated Access Manager was installed.
-The port of any LDAP Server where the certificates are stored can be
-used. </p>
+The default value is the port specified when OpenSSO was installed. The port
+of any LDAP Server where the certificates are stored can be used. </p>
 
 <a name="ggkam"></a><h5>SSL Enabled</h5>
 <p>Specifies whether to use SSL to access the LDAP server. The default is
@@ -134,7 +133,7 @@ bind user.</p>
 <a name="ggkce"></a><h5>LDAP Search Base DN</h5>
 <p>This attribute specifies the base DN used by the LDAP Users subject in
 the LDAP server from which to begin the search. By default, it is
-the top-level realm of the Access Manager installation base.</p>
+the top-level realm of the OpenSSO installation base.</p>
 
 <a name="ggkbp"></a><h5>Search Attributes</h5>
 <p>Any DN component of issuer's <tt>subjectDN</tt> can be used to retrieve a CRL
@@ -142,12 +141,12 @@ from a local LDAP server. It is a single value string, like, "cn".
 All Root CAs need to use the same search attribute.</p>
 
 <a name="ggkaa"></a><h5>Online Certificate Status Protocol Check</h5>
-<p>The Online Certificate Status Protocol (OCSP) enables Federated Access Manager services to determine
-the (revocation) state of a specified certificate. OCSP may be used to satisfy
-some of the operational requirements of providing more timely revocation information than is
-possible with CRLs and may also be used to obtain additional status information. An
-OCSP client issues a status request to an OCSP responder and suspends acceptance
-of the certificate in question until the responder provides a response. </p>
+<p>The Online Certificate Status Protocol (OCSP) enables OpenSSO services to determine the (revocation)
+state of a specified certificate. OCSP may be used to satisfy some of
+the operational requirements of providing more timely revocation information than is possible with CRLs
+and may also be used to obtain additional status information. An OCSP client
+issues a status request to an OCSP responder and suspends acceptance of the
+certificate in question until the responder provides a response. </p>
 
 <a name="ggkal"></a><h5>Check Enabled</h5>
 <p>This attribute enables OCSP checking. It is enabled by default.</p>

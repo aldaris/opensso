@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>ID-FF Identity Provider Customization - Sun Federated Access Manager 8.0 Console Online Help
+  <title>ID-FF Identity Provider Customization - Sun OpenSSO 8.0 Console Online Help
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -72,9 +72,10 @@ hosted or remote</p>
 <p>Defines the security certificate alias that is used to sign requests and responses.</p>
 
 <a name="ggwob"></a><h5>Encryption Key</h5>
-<p>Defines the security certificate alias that is used for encryption. for Signing Key
-and Encryption Key. Certificates are stored in a Java keystore file. Each specific
-certificate is mapped to an alias that is used to fetch the certificate.</p>
+<p>Defines the security certificate alias that is used for encryption for the Signing
+Key and Encryption Key. Certificates are stored in a Java keystore file. Each
+specific certificate is mapped to an alias that is used to fetch the
+certificate.</p>
 
 <a name="ggwmo"></a><h5>Name Identifier Encryption</h5>
 <p>Select the check box to enable encryption of the name identifier.</p>
@@ -155,7 +156,7 @@ is established.</p>
 <ul><li><p>Browser Post (specifies a browser-based HTTP POST protocol)</p></li>
 <li><p>Browser Artifact (specifies a non-browser SOAP-based protocol)</p></li>
 <li><p>LECP (specifies a Liberty-enabled Client Proxy)</p>
-<hr><p><b>Note &#8211; </b>Federated Access Manager can handle requests that come from a Liberty-enabled client proxy profile, but it requires additional configuration that is beyond the scope of this manual.</p>
+<hr><p><b>Note &#8211; </b>OpenSSO can handle requests that come from a Liberty-enabled client proxy profile, but it requires additional configuration that is beyond the scope of this manual.</p>
 <hr>
 </li></ul>
 
@@ -181,7 +182,7 @@ hosted locally:</p>
 
 <a name="ggwmt"></a><h5>Assertion Issuer</h5>
 <p>Defines the name of the host that issues the assertion. This value might
-be the load balancer's host name if Federated Access Manager is behind one.</p>
+be the load balancer's host name if OpenSSO is behind one.</p>
 
 <a name="ggwys"></a><h5>Responds With</h5>
 <p>Specifies the type of statements the identity provider can generate. For example 
@@ -313,9 +314,9 @@ an unknown user tries to access a protected resource.</p><dl><dt>Supported</dt>
 <li><p>Time-Sync-Token</p></li></ul>
 </dd>
 <dt>Key</dt>
-<dd><p>Choose the Federated Access Manager authentication type to which the context is mapped.</p></dd>
+<dd><p>Choose the OpenSSO authentication type to which the context is mapped.</p></dd>
 <dt>Value</dt>
-<dd><p>Type the Federated Access Manager authentication option.</p></dd>
+<dd><p>Type the OpenSSO authentication option.</p></dd>
 <dt>Level</dt>
 <dd><p>Choose a priority level for cases where there are multiple contexts.</p></dd>
 </dl>

@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Logging - Sun Federated Access Manager 8.0 Console Online Help
+  <title>Logging - Sun OpenSSO 8.0 Console Online Help
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,10 +31,10 @@
 
 
 <a name="service.scserviceprofile.iplanetamloggingservice"></a><h4>Logging</h4>
-<p><a name="indexterm-203"></a>The Logging service provides status and error messages related to Federated Access Manager
-administration. An administrator can configures values such as log file size and log
-file location. Federated Access Manager can record events in flat text files or
-in a relational database. The Logging service attributes are global attributes. The attributes are:</p>
+<p><a name="indexterm-203"></a>The Logging service provides status and error messages related to OpenSSO administration. An
+administrator can configures values such as log file size and log file location.
+OpenSSO can record events in flat text files or in a relational database.
+The Logging service attributes are global attributes. The attributes are:</p>
 <ul><li><p><a href="#fxbsv">Maximum Log Size</a></p></li>
 <li><p><a href="#fxbsg">Number of History Files</a></p></li>
 <li><p><a href="#fxbzh">Log File Location</a></p></li>
@@ -57,7 +57,7 @@ in a relational database. The Logging service attributes are global attributes. 
 
 <a name="fxbsv"></a><h5>Maximum Log Size</h5>
 <p>This attribute accepts a value for the maximum size (in bytes) of a
-Federated Access Manager log file. The default value is 1000000.</p>
+OpenSSO log file. The default value is 1000000.</p>
 
 <a name="fxbsg"></a><h5>Number of History Files</h5>
 <p>This attribute has a value equal to the number of backup log files
@@ -65,7 +65,7 @@ that will be retained for historical analysis. Any integer can be entered depend
 on the partition size and available disk space of the local system. The
 default value is 3.</p><p>The files only apply to the FILE logging type. When the logging type
 is set to DB, there are no history files and limit explicitly set
-by Federated Access Manager to the size of the files.</p>
+by OpenSSO to the size of the files.</p>
 <hr><p><b>Note &#8211; </b>Entering a value of 0 is interpreted to be the same as a
 value of 1, meaning that if you specify 0, a history log
 file will be created.</p>
@@ -74,11 +74,12 @@ file will be created.</p>
 
 <a name="fxbzh"></a><h5>Log File Location</h5>
 <p>The file-based logging function needs a location where log files can be stored.
-. The default location is:</p><p><tt>CONFIG_DIR_SERVER_URI/logs</tt></p><p>The <tt>CONFIG_DIR_SERVER_URI</tt> strings represents the directory in which you deployed Federated Access Manager
-and the deployment directory URI. This string should not be replaced, unless you enter
-the absolute pathname to the directory to which the files will be logged.</p><p>If a non-default directory is specified, Federated Access Manager will create the directory
-if it does not exist. You should then set the appropriate permissions for
-that directory (for example, 0700).</p><p>When configuring the log location for DB (database) logging (such as, Oracle or
+. The default location is:</p><p><tt>CONFIG_DIR_SERVER_URI/logs</tt></p><p><tt>CONFIG_DIR_SERVER_URI/logs</tt> is a tag representing the base configuration directory and the OpenSSO's server's
+URI. At runtime, the logging service determines the instance's proper  directory for logging.
+This attribute's value can be set to  an explicit path , but
+the base path  should be its configuration directory.</p><p>If a non-default directory is specified, OpenSSO will create the directory if it
+does not exist. You should then set the appropriate permissions for that directory
+(for example, 0700).</p><p>When configuring the log location for DB (database) logging (such as, Oracle or
 MySQL), part of the log location is case sensitive. For example, if you
 are logging to an Oracle database, the log location should be (note case
 sensitivity):</p><p><tt>jdbc:oracle:thin:@machine.domain:port:DBName</tt></p><p>To configure logging to DB, add the JDBC driver files to the web
@@ -99,8 +100,8 @@ LogRecord's HostName field.</p>
 <a name="fxbwg"></a><h5>Logging Type</h5>
 <p>Enables you to specify either File, for flat file logging, or DB for
 database logging.</p><p>If the Database User Name or Database User Password is invalid, it will
-seriously affect Federated Access Manager processing. If Federated Access Manager or the console
-becomes unstable, you set the Log Status attribute to Inactive. </p><p>After you have set the property, restart the server. You can then log
+seriously affect OpenSSO processing. If OpenSSO or the console becomes unstable, you set
+the Log Status attribute to Inactive. </p><p>After you have set the property, restart the server. You can then log
 in to the console and reset the logging attribute. Then, change the Log
 Status property to <i>ACTIVE</i>  and restart the server.</p>
 
@@ -145,6 +146,10 @@ The default time is 900 seconds. This parameter applies to secure logging only.<
 <a name="fxcbz"></a><h5>Secure Logging</h5>
 <p>This attribute enables or disables secure logging. By default, secure logging is off.
 Secure Logging enables detection of unauthorized changes or tampering of security logs.</p>
+<hr><p><b>Note &#8211; </b>Secure logging can only be used for flat files. This option does not
+work for Database (DB) logging.</p>
+<hr>
+
 
 <a name="ggdct"></a><h5>Secure Logging Signing Algorithm</h5>
 <p>This attribute defines RSA and DSA (Digital Signature Algorithm), which have private keys
@@ -162,6 +167,12 @@ appended to the last record of the most recent signature. For validation, it
 well decrypt the signature with the RSA public key and compare the decrypted
 value to the group of logged records. The secure logging feature will then
 will detect any modifications to any logged record.</p>
+
+<a name="ghaeg"></a><h5>Logging Certificate Store Location</h5>
+<p>When secure logging is enabled, the logging service looks for its certificate at
+the location specified by this attribute.  The actual directory path is determined
+at  runtime.  The value can be set to an explicit path,
+but the base  path should be accessible by the OpenSSO instance.</p>
 
 <a name="fxbxt"></a><h5>Maximum Number of Records</h5>
 <p>This attribute sets the maximum number of records that the Java LogReader
@@ -182,9 +193,9 @@ The default is one record.</p>
 <a name="fxbvh"></a><h5>DB Failure Memory Buffer Size</h5>
 <p>This attribute defines the maximum number of log records held in memory if
 database (DB) logging fails. This attribute is only applicable when DB logging is
-specified. When the Federated Access Manager logging service loses connection to the DB,
-it will buffer up to the number of records specified. This attribute defaults
-to two times of the value defined in the Buffer Size attribute.</p>
+specified. When the OpenSSO logging service loses connection to the DB, it will
+buffer up to the number of records specified. This attribute defaults to two
+times of the value defined in the Buffer Size attribute.</p>
 
 <a name="fxcea"></a><h5>Buffer Time</h5>
 <p>This attribute defines the amount of time that the log records will buffered
@@ -193,9 +204,17 @@ This attribute applies if Enable Time Buffering is ON. The default is 3600
 seconds.</p>
 
 <a name="fxbsn"></a><h5>Time Buffering</h5>
-<p>When selected as ON, Federated Access Manager will set a time limit for
-log records to be buffered in memory. The amount of time is set
-in the Buffer Time attribute.</p>
+<p>When selected as ON, OpenSSO will set a time limit for log
+records to be buffered in memory. The amount of time is set in
+the Buffer Time attribute.</p>
+
+<a name="ghaer"></a><h5>Logging Level</h5>
+<p>Use this attribute to configure the degree of detail to be contained in
+a specific log file by selecting one of the choices. OpenSSO services log
+at the INFO level. SAML and Identity Federation services also log at more
+detailed levels (FINE, FINER, FINEST).  In addition there is a level OFF
+that can be used to turn off logging, and a level ALL that
+can be used to enable logging of all messages.</p>
 <br/>
 
 </body>

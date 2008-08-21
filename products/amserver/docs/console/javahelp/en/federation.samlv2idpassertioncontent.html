@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>SAMLv2 Identity Provider Customization - Sun Federated Access Manager 8.0 Console Online Help
+  <title>SAMLv2 Identity Provider Customization - Sun OpenSSO 8.0 Console Online Help
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -116,7 +116,7 @@ value of the user profile attribute. If it is not specified, an random
 number will be generated. </p>
 
 <a name="ggwer"></a><h5>Authentication Context</h5>
-<p>This attribute maps the Liberty-defined authentication context classes to authentication methods available from
+<p>This attribute maps the SAMLv2-defined authentication context classes to authentication methods available from
 the identity provider.</p><dl><dt>Mapper</dt>
 <dd><p>Specifies the implementation of the <tt>IDPAuthnContextMapper</tt> interface used to create the requested authentication context. The default implementation is <tt>com.sun.identity.saml2.plugins.DefaultIDPAttributeMapper</tt>.</p></dd>
 <dt>Default Authentication Context</dt>
@@ -124,7 +124,7 @@ the identity provider.</p><dl><dt>Mapper</dt>
 <dt>Supported</dt>
 <dd><p>Select the check box next to the authentication context class if the identity provider supports it.</p></dd>
 <a name="indexterm-68"></a><a name="indexterm-69"></a><a name="indexterm-70"></a><dt>Context Reference</dt>
-<dd><p>The Liberty-defined authentication context classes are:</p>
+<dd><p>The SAMLv2-defined authentication context classes are:</p>
 <ul><li><p>InternetProtocol</p></li>
 <li><p>InternetProtocolPassword</p></li>
 <li><p>Kerberos</p></li>
@@ -152,11 +152,11 @@ the identity provider.</p><dl><dt>Mapper</dt>
 <li><p>Unspecified</p></li></ul>
 </dd>
 <dt>Key</dt>
-<dd><p>Choose the Federated Access Manager authentication type to which the context is mapped.</p></dd>
+<dd><p>Choose the OpenSSO authentication type to which the context is mapped.</p></dd>
 <dt>Value</dt>
-<dd><p>Type the Federated Access Manager authentication option.</p></dd>
+<dd><p>Type the OpenSSO authentication option.</p></dd>
 <dt>Level</dt>
-<dd><p>Takes as a value a positive number that maps to an authentication level defined in the Federated Access Manager Authentication Framework. The authentication level indicates how much to trust a method of authentication.</p><p>In this framework, each identity provider is configured with a default authentication context (preferred method of authentication). However, the provider might like to change the assigned authentication context to one that is based on the defined authentication level. For example, provider B would like to generate a local session with an authentication level of 3 so it requests the identity provider to authenticate the user with an authentication context assigned that level. The value of this query parameter determines the authentication context to be used by the identity provider.</p></dd>
+<dd><p>Takes as a value a positive number that maps to an authentication level defined in the OpenSSO Authentication Framework. The authentication level indicates how much to trust a method of authentication.</p><p>In this framework, each identity provider is configured with a default authentication context (preferred method of authentication). However, the provider might like to change the assigned authentication context to one that is based on the defined authentication level. For example, provider B would like to generate a local session with an authentication level of 3 so it requests the identity provider to authenticate the user with an authentication context assigned that level. The value of this query parameter determines the authentication context to be used by the identity provider.</p></dd>
 </dl>
 
 
@@ -189,10 +189,6 @@ be generated during the Liberty-based single sign-on process for bootstrapping p
 <p>Specifies the values to define the mappings used by the default attribute mapper
 plug-in. The default plug-in class is <tt>com.sun.identity.saml2.plugins.DefaultIDPAttributeMapper</tt>.</p><p>Mappings should be configured in the format:</p><p><i>SAML-attribute</i>=<i>local-attribute</i></p><p>For example, <tt>EmailAddress=mail</tt> or <tt>Address=postaladdress</tt>. Type the mapping as a New Value
 and click Add.</p>
-<hr><p><b>Note &#8211; </b>If auto-federation is enabled, the value of <i>SAML v2-attribute</i> is equal to the
-value of <tt>Auto Federation</tt>.</p>
-<hr>
-
 
 <a name="ggwcl"></a><h5>Account Mapper</h5>
 <p>Specifies the implementation of the <tt>AccountMapper</tt> interface used to map a remote user
@@ -200,10 +196,18 @@ account to a local user account for purposes of single sign-on. The default
 value is <tt>com.sun.identity.saml2.plugins.DefaultIDPAccountMapper</tt>, the default implementation.</p>
 
 <a name="ggwyj"></a><h5>Local Configuration</h5>
-<p>This attribute contains configuration specific to the Federated Access Manager instance. </p>
+<p>These attribute contains configuration specific to the OpenSSO instance. </p>
 
 <a name="ggwwx"></a><h5>Auth URL</h5>
-<p>Defines the Authentication URL to which the IDP will redirect for authentication.</p>
+<p>Defines the Authentication URL to which the identity provider will redirect for authentication.</p>
+
+<a name="ghcia"></a><h5>External Application Logout URL</h5>
+<p>The External Application Logout URL defines the logout URL for an external application.
+Once the server receives logout request from the remote partner, a request will
+be sent to the logout URL using back channel <tt>HTTP POST</tt> with all cookies.
+Optionally, a user session property could be sent as <tt>HTTP header</tt> and <tt>POST</tt> parameter
+if a query parameter <tt>appsessionproperty</tt> (set to the session property name) is
+included in the URL.</p>
 
 <a name="ggwaw"></a><h5>Services</h5>
 
@@ -218,9 +222,8 @@ value is <tt>com.sun.identity.saml2.plugins.DefaultIDPAccountMapper</tt>, the de
 <p>Specifies a <tt>metaAlias</tt> for the provider being configured. The <tt>metaAlias</tt> is used to
 locate the provider's entity identifier and the organization in which it is located. The
 value is a string equal to the realm or organization name (dependent on
-whether the SAML v2 Plug-in for Federation Services is installed in Federated
-Access Manager) coupled with a forward slash and the provider name. For example,
-<tt>/suncorp/travelprovider</tt>.</p>
+whether the SAML v2 Plug-in for Federation Services is installed in OpenSSO) coupled
+with a forward slash and the provider name. For example, <tt>/suncorp/travelprovider</tt>.</p>
 <hr><p><b>Caution &#8211; </b>The names used in the <tt>metaAlias</tt> must not contain a <tt>/</tt>.</p>
 <hr>
 
@@ -235,7 +238,7 @@ message. </p>
 <p>The Single Logout Service synchronizes the logout functionality across all sessions authenticated by
 the identity provider. </p><p><tt>Location</tt> specifies the URL of the provider to which the request is sent.
 <tt>Response Location</tt> specifies the URL of the provider to which the response is sent.
-. The request types are:</p>
+The binding types are:</p>
 <ul><li><p>HTTP Redirect</p></li>
 <li><p>POST</p></li>
 <li><p>SOAP</p></li></ul>
@@ -246,7 +249,7 @@ the identity provider. </p><p><tt>Location</tt> specifies the URL of the provide
 service provider to specify a new name identifier for the principal. (Registration can
 occur only after a federation session is established.)</p><p><tt>Location</tt> specifies the URL of the provider to which the request is sent.
 <tt>Response Location</tt> specifies the URL of the provider to which the response is sent.
-. The request types are:</p>
+. The binding types are:</p>
 <ul><li><p>HTTP Redirect</p></li>
 <li><p>POST</p></li>
 <li><p>SOAP</p></li></ul>
@@ -255,7 +258,7 @@ occur only after a federation session is established.)</p><p><tt>Location</tt> s
 <a name="ggwhr"></a><h5>Single Sign-On Service</h5>
 <p>Defines the endpoint(s) that support the profiles of the Authentication Request protocol. All
 identity providers must support at least one such endpoint. </p><p><tt>Location</tt> specifies the URL of the provider to which the request is sent.
-The request types are:</p>
+The binding types are:</p>
 <ul><li><p>HTTP Redirect</p></li>
 <li><p>POST</p></li>
 <li><p>SOAP</p></li></ul>

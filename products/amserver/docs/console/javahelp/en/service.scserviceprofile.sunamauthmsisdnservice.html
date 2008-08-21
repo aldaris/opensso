@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>MSISDN - Sun Federated Access Manager 8.0 Console Online Help
+  <title>MSISDN - Sun OpenSSO 8.0 Console Online Help
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -67,12 +67,11 @@ parameters for the MSISDN number.</p>
 <a name="fumxf"></a><h5>LDAP Server and Port</h5>
 <p>Specifies the host name and port number of the Directory Server in which
 the search will occur for the users with MSISDN numbers. The format is<tt></tt><i>hostname:port</i><tt></tt>. If
-there is no port number, assume <tt>389</tt>.</p><p>If you have Federated Access Manager deployed with multiple domains, you can specify
-the communication link between specific instances of Federated Access Manager and Directory Server
-in the following format (multiple entries must be prefixed by the local server
-name):</p><p><tt>local_servername|server:port local_servername2|server2:port2 ...</tt></p><p>For example, if you have two Federated Access Manager instances deployed in different
-locations (L1-machine1-IS and L2- machine2-IS) communicating with different instances of Directory Server (L1-machine1-DS and
-L2-machine2-DS), it would look the following:</p><p><tt>L1-machine1-IS.example.com|L1-machine1-DS.example.com:389</tt></p><p><tt>L2-machine2-IS.example.com|L2-machine2-DS.example.com:389</tt></p>
+there is no port number, assume <tt>389</tt>.</p><p>If you have OpenSSO deployed with multiple domains, you can specify the communication
+link between specific instances of OpenSSO and Directory Server in the following format
+(multiple entries must be prefixed by the local server name):</p><p><tt>local_servername|server:port local_servername2|server2:port2 ...</tt></p><p>For example, if you have two OpenSSO instances deployed in different locations (L1-machine1-IS
+and L2- machine2-IS) communicating with different instances of Directory Server (L1-machine1-DS and L2-machine2-DS), it
+would look the following:</p><p><tt>L1-machine1-IS.example.com|L1-machine1-DS.example.com:389</tt></p><p><tt>L2-machine2-IS.example.com|L2-machine2-DS.example.com:389</tt></p>
 
 <a name="fumxi"></a><h5>LDAP Start Search DN</h5>
 <p>Specifies the DN of the node where the search for the user's MSISDN
@@ -121,12 +120,12 @@ The supported values are as follows:</p><dl><dt>Cookie Header</dt>
 
 
 <a name="fumxr"></a><h5>Return User DN on Authentication</h5>
-<p>When the Federated Access Manager directory is the same as the directory configured
-for MSDISN, this option may be enabled. If enabled, this option allows the
-authentication module to return the DN instead of the User ID, and no
-search is necessary. Normally, an authentication module returns only the User ID, and
-the authentication service searches for the user in the local Federated Access Manager.
-If an external directory is used, this option is typically not enabled.</p>
+<p>When the OpenSSO directory is the same as the directory configured for MSDISN,
+this option may be enabled. If enabled, this option allows the authentication module
+to return the DN instead of the User ID, and no search is
+necessary. Normally, an authentication module returns only the User ID, and the authentication
+service searches for the user in the local OpenSSO. If an external directory
+is used, this option is typically not enabled.</p>
 
 <a name="fumxs"></a><h5>Authentication Level</h5>
 <p>The authentication level is set separately for each method of authentication. The value

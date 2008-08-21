@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Policy Configuration - Sun Federated Access Manager 8.0 Console Online Help
+  <title>Policy Configuration - Sun OpenSSO 8.0 Console Online Help
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -62,13 +62,13 @@ rule definition. Resource comparison is used for both policy creation and evalua
 if a DENY policy decision exists. If it is not selected (default), policy
 evaluation would skip subsequent policies once the DENY decision is recognized.</p>
 
-<a name="fufng"></a><h5>Advices Handleable by Federated Access Manager</h5>
+<a name="fufng"></a><h5>Advices Handleable by OpenSSO</h5>
 <p>Defines the names of policy advice keys for which the Policy Enforcement Point
-(Policy Agent) would redirect the user agent to Federated Access Manager. If the
-agent receives a policy decision that does not allow access to a resource,
-but does posses advices, the agent checks to see whether it has a
-advice key listed in this attribute.</p><p>If such an advice is found, the user agent is redirected to Federated
-Access Manager, potentially allowing  the access to the resource.</p>
+(Policy Agent) would redirect the user agent to OpenSSO. If the agent receives
+a policy decision that does not allow access to a resource, but does
+posses advices, the agent checks to see whether it has a advice key
+listed in this attribute.</p><p>If such an advice is found, the user agent is redirected to OpenSSO,
+potentially allowing  the access to the resource.</p>
 
 <a name="gdpdm"></a><h5>Organization Alias Referrals</h5>
 <p>When set to Yes, this attribute allows you to create policies in sub-realms
@@ -82,26 +82,24 @@ as No. </p>
 
 <a name="fufmg"></a><h5>Primary LDAP Server</h5>
 <p>Specifies the host name and port number of the primary LDAP server specified
-during Federated Access Manager installation that will be used to search for Policy
-subjects, such as LDAP users, LDAP roles, LDAP groups, and so forth.</p><p>The format is <i>hostname:port</i>. For example: <tt>machine1.example.com:389</tt></p><p>For failover configuration to multiple LDAP server hosts, this value can be a
+during OpenSSO installation that will be used to search for Policy subjects, such
+as LDAP users, LDAP roles, LDAP groups, and so forth.</p><p>The format is <i>hostname:port</i>. For example: <tt>machine1.example.com:389</tt></p><p>For failover configuration to multiple LDAP server hosts, this value can be a
 space-delimited list of hosts. The format is  <i>hostname1:port1 hostname2:port2...</i></p><p>For example: <tt>machine1.example1.com:389 machine2.example1.com:389</tt></p><p>Multiple entries must be prefixed by the local server name. This is to
-allow specific Federated Access Managers to be configured to talk to specific Directory
-Servers.</p><p>The format is <i>servername|hostname:port</i> For example:</p><p><tt>machine1.example1.com|machine1.example1.com:389</tt></p><p><tt>machine1.example2.com|machine1.example2.com:389</tt></p><p>For failover configuration:</p><p><tt>AM_Server1.example1.com|machine1.example1.com:389 machine2.example.com1:389</tt></p><p><tt>AM_Server2.example2.com|machine1.example2.com:389 machine2.example2.com:389</tt></p>
+allow specific OpenSSOs to be configured to talk to specific Directory Servers.</p><p>The format is <i>servername|hostname:port</i> For example:</p><p><tt>machine1.example1.com|machine1.example1.com:389</tt></p><p><tt>machine1.example2.com|machine1.example2.com:389</tt></p><p>For failover configuration:</p><p><tt>AM_Server1.example1.com|machine1.example1.com:389 machine2.example.com1:389</tt></p><p><tt>AM_Server2.example2.com|machine1.example2.com:389 machine2.example2.com:389</tt></p>
 
 <a name="fufmc"></a><h5>LDAP Base DN</h5>
 <p>Specifies the base DN in the LDAP server from which to begin the
-search. By default, it is the top-level realm of the Federated Access Manager
-installation.</p>
+search. By default, it is the top-level realm of the OpenSSO installation.</p>
 
 <a name="fufmd"></a><h5>LDAP Users Base DN</h5>
 <p>This attribute specifies the base DN used by the LDAP Users subject in
 the LDAP server from which to begin the search. By default, it is
-the top-level realm of the Federated Access Manager installation base.</p>
+the top-level realm of the OpenSSO installation base.</p>
 
-<a name="fufmz"></a><h5>Federated Access Manager Roles Base DN</h5>
+<a name="fufmz"></a><h5>OpenSSO Roles Base DN</h5>
 <p>Defines the DN of the realm or organization which is used as a
-base while searching for the values of Federated Access Manager Roles. This attribute
-is used by the <i>AccessManagerRoles</i> policy subject.</p>
+base while searching for the values of OpenSSO Roles. This attribute is used
+by the <i>AccessManagerRoles</i> policy subject.</p>
 
 <a name="fufme"></a><h5>LDAP Bind DN</h5>
 <p>Specifies the bind DN in the LDAP server.</p>
@@ -159,9 +157,8 @@ The scope must be one of the following:</p>
 <li><p>SCOPE_SUB (default)</p></li></ul>
 
 
-<a name="fufmy"></a><h5>Federated Access Manager Roles Search Scope</h5>
-<p>Defines the scope to be used to find entries for Federated Access Manager
-Roles subject.</p>
+<a name="fufmy"></a><h5>OpenSSO Roles Search Scope</h5>
+<p>Defines the scope to be used to find entries for OpenSSO Roles subject.</p>
 <ul><li><p>SCOPE_BASE</p></li>
 <li><p>SCOPE_ONE</p></li>
 <li><p>SCOPE_SUB (default)</p></li></ul>
@@ -196,8 +193,8 @@ that point will be returned</p>
 <a name="fufmi"></a><h5>LDAP SSL</h5>
 <p>Specifies whether or not the LDAP server is running SSL. Selecting enables SSL,
 deselecting (default) disables SSL.</p><p>If the LDAP Server is running with SSL enabled (LDAPS), you must make
-sure that Federated Access Manager is configured with proper SSL-trusted certificates so that
-Federated Access Manager can connect to Directory server over LDAPS protocol.</p>
+sure that OpenSSO is configured with proper SSL-trusted certificates so that OpenSSO can
+connect to Directory server over LDAPS protocol.</p>
 
 <a name="fufmk"></a><h5>LDAP Connection Pool Minimum Size</h5>
 <p>Specifies the minimal size of connection pools to be used for connecting to
@@ -238,8 +235,8 @@ policy evaluation.</p>
 resource whose subject's member in a remote Directory Server aliases a local user.
 This attribute must be enabled, for example, if you create <tt>uid=rmuser</tt> in the
 remote Directory Server and then add <tt>rmuser</tt> as an alias to a local
-user (such as <tt>uid=luser</tt>) in Federated Access Manager. When you login as <tt>rmuser</tt>, a
-session is created with the local user (<tt>luser</tt>) and policy enforcement is successful.</p>
+user (such as <tt>uid=luser</tt>) in OpenSSO. When you login as <tt>rmuser</tt>, a session is
+created with the local user (<tt>luser</tt>) and policy enforcement is successful.</p>
 
 <a name="fufni"></a><h5>Selected Response Providers</h5>
 <p>Defines the policy response provider plug-ins that are enabled for the realm. Only

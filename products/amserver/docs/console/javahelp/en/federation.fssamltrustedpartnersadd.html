@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Trusted Partners: Configuring Trusted Partner Attributes - Sun Federated Access Manager 8.0 Console Online Help
+  <title>Trusted Partners: Configuring Trusted Partner Attributes - Sun OpenSSO 8.0 Console Online Help
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -76,16 +76,16 @@ Profile page to complete the modification.</p>
 <dd><p>The class that is used to get single sign-on information and map partner actions to authorization decisions. You need to implement an action mapper from the included interface. If no class is specified, the <tt>DefaultActionMapper</tt> will be used.</p></dd>
 </dl>
 </li>
-<li><b>Type in values for the Source subattributes.</b><dl><dt>Artifact: SOAP URL</dt>
+<li><b>Type in values for the Source sub-attributes.</b><dl><dt>Artifact: SOAP URL</dt>
 <dd><p>The URL to the SAML SOAP Receiver.</p></dd>
 <dt>Authentication Type</dt>
 <dd><p>Authentication types that can be used with SAML:</p>
 <ul><li><p>Specify <tt>NOAUTH</tt> if the URL to the SAML SOAP receiver is accessed using HTTP, and the SAML SOAP receiver is not protected by HTTP basic authentication and/or SSL.</p></li>
 <li><p>Specify <tt>BASICAUTH</tt> if the URL to the SAML SOAP receiver is accessed using HTTP, and the SAML SOAP receiver is protected by HTTP basic authentication.</p></li>
-<li><p>Specify <tt>SSL</tt> if the URL to the SAML SOAP receiver is accessed using HTTPS, and the SAML SOAP receiver is not protected by not protected by HTTP SSL.</p></li>
+<li><p>Specify <tt>SSL</tt> if the URL to the SAML SOAP receiver is accessed using HTTPS, and the SAML SOAP receiver is not protected by HTTP SSL.</p></li>
 <li><p>Specify <tt>SSLWITHBASICAUTH</tt> if the URL to the SAML SOAP receiver is accessed using HTTPS, and the SAML SOAP receiver is not protected by<tt> BASIC AUTH WITH SSL</tt>.</p></li></ul>
 
-<hr><p><b>Note &#8211; </b>If you are protecting the SAML SOAP receiver URL with HTTP basic authentication, you do so in the web container configuration and not in the Federated Access Manager configuration. You do, however, supply the HTTP basic authentication user ID and password in the Federated Access Manager configuration.</p>
+<hr><p><b>Note &#8211; </b>If you are protecting the SAML SOAP receiver URL with HTTP basic authentication, you do so in the web container configuration and not in the OpenSSO configuration. You do, however, supply the HTTP basic authentication user ID and password in the OpenSSO configuration.</p>
 <hr>
 <p>This attribute is optional. If not specified, the default is  <tt>NOAUTH</tt>. If <tt>BASICAUTH</tt> or <tt>SSLWITHBASICAUTH</tt> is specified, the Trusted Partners attribute is required and should be <tt>HTTPS</tt>.</p></dd>
 <dt>User</dt>

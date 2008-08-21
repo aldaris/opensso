@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>User - Sun Federated Access Manager 8.0 Console Online Help
+  <title>User - Sun OpenSSO 8.0 Console Online Help
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -42,33 +42,32 @@ zone, locale and DN starting view. The User service attributes are dynamic attri
 
 <a name="fxckn"></a><h5>User Preferred Language</h5>
 <p>This field specifies the user's choice for the text language displayed in the
-Federated Access Manager console. The default value is en. This value maps a
-set of localization keys to the user session so that the on-screen text
-appears in a language appropriate for the user.</p>
+OpenSSO console. The default value is en. This value maps a set of
+localization keys to the user session so that the on-screen text appears in
+a language appropriate for the user.</p>
 
 <a name="fxcnb"></a><h5>User Preferred Timezone</h5>
-<p>This field specifies the time zone in which the user accesses the Federated
-Access Manager console. There is no default value.</p>
+<p>This field specifies the time zone in which the user accesses the OpenSSO
+console. There is no default value.</p>
 
 <a name="fxcte"></a><h5>Inherited Locale</h5>
 <p>This field specifies the locale for the user. The default value is en_US.
 See <a href="supportedlang.html">Supported Language Locales</a> for a list of locales.</p>
 
 <a name="fxcpk"></a><h5>Administrator Starting View</h5>
-<p>If this user is a Federated Access Manager administrator, this field specifies the
-node that would be the starting point displayed in the Federated Access Manager
-console when this user logs in. There is no default value. A valid
-DN for which the user has, at the least, read access can be
-used.</p>
+<p>If this user is a OpenSSO administrator, this field specifies the node that
+would be the starting point displayed in the OpenSSO console when this user
+logs in. There is no default value. A valid DN for which the
+user has, at the least, read access can be used.</p>
 
 <a name="fxciz"></a><h5>Default User Status</h5>
 <p>This option indicates the default status for any newly created user. This status
 is superseded by the User Entry status. Only active users can authenticate through
-Federated Access Manager. The default value is Active. Either of the following can
-be selected from the pull-down menu:</p><dl><dt>Active</dt>
-<dd><p>The user can authenticate through Federated Access Manager.</p></dd>
+OpenSSO. The default value is Active. Either of the following can be selected
+from the pull-down menu:</p><dl><dt>Active</dt>
+<dd><p>The user can authenticate through OpenSSO.</p></dd>
 <dt>Inactive</dt>
-<dd><p>The user cannot authenticate through Federated Access Manager, but the user profile remains stored in the directory.</p></dd>
+<dd><p>The user cannot authenticate through OpenSSO, but the user profile remains stored in the directory.</p></dd>
 </dl>
 <p>The individual user status is set by registering the User service, choosing the
 value, applying it to a role and adding the role to the user's

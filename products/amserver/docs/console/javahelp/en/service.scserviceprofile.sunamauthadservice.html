@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Active Directory - Sun Federated Access Manager 8.0 Console Online Help
+  <title>Active Directory - Sun OpenSSO 8.0 Console Online Help
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -54,25 +54,24 @@ realm. The Active Directory authentication attributes are realm attributes. The 
 
 <a name="fwfdx"></a><h5>Primary Active Directory Server</h5>
 <p>Specifies the host name and port number of the primary Active Directory server
-specified during Federated Access Manager installation. This is the first server contacted for
-Active Directory authentication. The format is<tt></tt><i>hostname:port</i><tt></tt>. If there is no port number, assume <tt>389</tt>.</p><p>If you have Federated Access Manager deployed with multiple domains, you can specify
-the communication link between specific instances of Federated Access Manager and Directory Server
-in the following format (multiple entries must be prefixed by the local server
-name):</p><p><tt>local_servername|server:port local_servername2|server2:port2 ...</tt></p><p>For example, if you have two Federated Access Manager instances deployed in different
-locations (L1-machine1-IS and L2- machine2-IS) communicating with different instances of Directory Server (L1-machine1-DS and
-L2-machine2-DS), it would look the following:</p><p><tt>L1-machine1-IS.example.com|L1-machine1-DS.example.com:389</tt></p><p><tt>L2-machine2-IS.example.com|L2-machine2-DS.example.com:389</tt></p>
+specified during OpenSSO installation. This is the first server contacted for Active Directory
+authentication. The format is<tt></tt><i>hostname:port</i><tt></tt>. If there is no port number, assume <tt>389</tt>.</p><p>If you have OpenSSO deployed with multiple domains, you can specify the communication
+link between specific instances of OpenSSO and Directory Server in the following format
+(multiple entries must be prefixed by the local server name):</p><p><tt>local_servername|server:port local_servername2|server2:port2 ...</tt></p><p>For example, if you have two OpenSSO instances deployed in different locations (L1-machine1-IS
+and L2- machine2-IS) communicating with different instances of Directory Server (L1-machine1-DS and L2-machine2-DS), it
+would look the following:</p><p><tt>L1-machine1-IS.example.com|L1-machine1-DS.example.com:389</tt></p><p><tt>L2-machine2-IS.example.com|L2-machine2-DS.example.com:389</tt></p>
 
 <a name="fwbmo"></a><h5>Secondary Active Directory Server</h5>
 <p>Specifies the host name and port number of a secondary Active Directory server
-available to the Federated Access Manager platform. If the primary Active Directory server
-does not respond to a request for authentication, this server would then be
-contacted. If the primary server is up, Federated Access Manager will switch back
-to the primary server. The format is also <tt></tt><i>hostname:port</i><tt></tt>. Multiple entries must be prefixed
-by the local server name.</p>
-<hr><p><b>Caution &#8211; </b>When authenticating users from a Directory Server that is remote from the Federated
-Access Manager enterprise, it is important that both the Primary and Secondary LDAP
-Server Ports have values. The value for one Directory Server location can be
-used for both fields.</p>
+available to the OpenSSO platform. If the primary Active Directory server does not
+respond to a request for authentication, this server would then be contacted. If
+the primary server is up, OpenSSO will switch back to the primary server.
+The format is also <tt></tt><i>hostname:port</i><tt></tt>. Multiple entries must be prefixed by the local
+server name.</p>
+<hr><p><b>Caution &#8211; </b>When authenticating users from a Directory Server that is remote from the OpenSSO,
+it is important that both the Primary and Secondary LDAP Server Ports have
+values. The value for one Directory Server location can be used for both
+fields.</p>
 <hr>
 
 
@@ -98,7 +97,7 @@ search for a matching user DN based on the user login ID. The
 default is <tt>amldapuser.</tt> Any valid DN will be recognized.</p><p>Make sure that password is correct before you logout. If it is incorrect,
 you will be locked out. If this should occur, you can login with
 the super user DN. By default, this the <tt>amAdmin</tt> account with which you
-would normally log in, although you will use the full DN. For example:</p><p><tt>uid_amAdmin,ou=People,</tt><i>FederatedAccessManager-base</i><tt></tt></p>
+would normally log in, although you will use the full DN. For example:</p><p><tt>uid_amAdmin,ou=People,</tt><i>OpenSSO-base</i><tt></tt></p>
 
 <a name="fwbix"></a><h5>Password for Root User Bind</h5>
 <p>Carries the password for the administrator profile specified in the DN for Root
@@ -110,9 +109,9 @@ Directory password is recognized.</p>
 
 <a name="fwblg"></a><h5>Attribute Used to Retrieve User Profile</h5>
 <p>Specifies the attribute used for the naming convention of user entries. By default,
-Federated Access Manager assumes that user entries are identified by the uid attribute.
-If your Directory Server uses a different attribute (such as <i>givenname</i>) specify the attribute
-name in this field.</p>
+OpenSSO assumes that user entries are identified by the uid attribute. If your
+Directory Server uses a different attribute (such as <i>givenname</i>) specify the attribute name in
+this field.</p>
 
 <a name="fwbpi"></a><h5>Attributes Used to Search for a User to be Authenticated</h5>
 <p>Lists the attributes to be used to form the search filter for a
@@ -143,17 +142,17 @@ following choices can be selected from the list:</p><dl><dt>OBJECT</dt>
 <p>Enables SSL access to the Directory Server specified in the Primary and Secondary
 Server and Port field. By default, the box is not checked and the
 SSL protocol will not be used to access the Directory Server.</p><p>If the Active Directory server is running with SSL enabled (LDAPS), you must
-make sure that Federated Access Manager is configured with proper SSL trusted certificates
-so that AM could connect to Directory server over LDAPS protocol</p>
+make sure that OpenSSO is configured with proper SSL trusted certificates so that
+AM could connect to Directory server over LDAPS protocol</p>
 
 <a name="fwbpx"></a><h5>Return User DN to Authenticate</h5>
-<p>When the Federated Access Manager directory is the same as the directory configured
-for Active Directory, this option may be enabled. If enabled, this option allows
-the Active Directory authentication module instance to return the DN instead of the
-User ID, and no search is necessary. Normally, an authentication module instance returns only
-the User ID, and the authentication service searches for the user in the
-local Federated Access Manager instance. If an external Active Directory is used, this
-option is typically not enabled.</p>
+<p>When the OpenSSO directory is the same as the directory configured for Active
+Directory, this option may be enabled. If enabled, this option allows the Active
+Directory authentication module instance to return the DN instead of the User ID,
+and no search is necessary. Normally, an authentication module instance returns only the
+User ID, and the authentication service searches for the user in the local OpenSSO
+instance. If an external Active Directory is used, this option is typically not
+enabled.</p>
 
 <a name="fwbjb"></a><h5>Active Directory Server Check Interval</h5>
 <p>This attribute is used for Active Directory Server failback. It defines the number

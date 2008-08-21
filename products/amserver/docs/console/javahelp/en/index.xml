@@ -54,10 +54,10 @@
     <indexitem target="policy.sessionpropertyconditionadd" text="Session Property"></indexitem>
     <indexitem target="policy.pmdefaulttimeconditionadd" text="Time"></indexitem></indexitem>
  <indexitem target="service.scconfig" text="Configuration">
-    <indexitem target="authattrs" text="Authentication"></indexitem>
-    <indexitem target="consoleprops" text="Console Properties"></indexitem>
-    <indexitem target="global" text="Global Properties"></indexitem>
-    <indexitem target="systemprops" text="System Properties"></indexitem></indexitem>
+    <indexitem target="service.scconfigauth" text="Authentication"></indexitem>
+    <indexitem target="service.scconfigconsole" text="Console Properties"></indexitem>
+    <indexitem target="servic.scconfigglobal" text="Global Properties"></indexitem>
+    <indexitem target="service.scfonfigsystem" text="System Properties"></indexitem></indexitem>
  <indexitem text="Console Properties">
     <indexitem target="service.scserviceprofile.amadminconsoleservice" text="Administration"></indexitem>
     <indexitem target="service.smg11n" text="Globalization Settings"></indexitem></indexitem>

@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>LDAP - Sun Federated Access Manager 8.0 Console Online Help
+  <title>LDAP - Sun OpenSSO 8.0 Console Online Help
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -54,25 +54,23 @@ attributes are:</p>
 
 <a name="fwazv"></a><h5>Primary LDAP Server</h5>
 <p>Specifies the host name and port number of the primary LDAP server specified
-during Federated Access Manager installation. This is the first server contacted for authentication.
-The format is<tt></tt><i>hostname:port</i><tt></tt>. If there is no port number, assume <tt>389</tt>.</p><p>If you have Federated Access Manager deployed with multiple domains, you can specify
-the communication link between specific instances of Federated Access Manager and Directory Server
-in the following format (multiple entries must be prefixed by the local server
-name):</p><p><tt>local_servername|server:port local_servername2|server2:port2 ...</tt></p><p>For example, if you have two Federated Access Manager instances deployed in different
-locations (L1-machine1-IS and L2- machine2-IS) communicating with different instances of Directory Server (L1-machine1-DS and
-L2-machine2-DS), it would look the following:</p><p><tt>L1-machine1-IS.example.com|L1-machine1-DS.example.com:389</tt></p><p><tt>L2-machine2-IS.example.com|L2-machine2-DS.example.com:389</tt></p>
+during OpenSSO installation. This is the first server contacted for authentication. The format
+is<tt></tt><i>hostname:port</i><tt></tt>. If there is no port number, assume <tt>389</tt>.</p><p>If you have OpenSSO deployed with multiple domains, you can specify the communication
+link between specific instances of OpenSSO and Directory Server in the following format
+(multiple entries must be prefixed by the local server name):</p><p><tt>local_servername|server:port local_servername2|server2:port2 ...</tt></p><p>For example, if you have two OpenSSO instances deployed in different locations (L1-machine1-IS
+and L2- machine2-IS) communicating with different instances of Directory Server (L1-machine1-DS and L2-machine2-DS), it
+would look the following:</p><p><tt>L1-machine1-IS.example.com|L1-machine1-DS.example.com:389</tt></p><p><tt>L2-machine2-IS.example.com|L2-machine2-DS.example.com:389</tt></p>
 
 <a name="fwbac"></a><h5>Secondary LDAP Server</h5>
 <p>Specifies the host name and port number of a secondary LDAP server available
-to the Federated Access Manager platform. If the primary LDAP server does not
-respond to a request for authentication, this server would then be contacted. If
-the primary server is up, Federated Access Manager will switch back to the
-primary server. The format is also <tt></tt><i>hostname:port</i><tt></tt>. Multiple entries must be prefixed by the
-local server name.</p>
-<hr><p><b>Caution &#8211; </b>When authenticating users from a Directory Server that is remote from the Federated
-Access Manager enterprise, it is important that both the Primary and Secondary LDAP
-Server Ports have values. The value for one Directory Server location can be
-used for both fields.</p>
+to the OpenSSO platform. If the primary LDAP server does not respond to
+a request for authentication, this server would then be contacted. If the primary
+server is up, OpenSSO will switch back to the primary server. The format
+is also <tt></tt><i>hostname:port</i><tt></tt>. Multiple entries must be prefixed by the local server name.</p>
+<hr><p><b>Caution &#8211; </b>When authenticating users from a Directory Server that is remote from the OpenSSO,
+it is important that both the Primary and Secondary LDAP Server Ports have
+values. The value for one Directory Server location can be used for both
+fields.</p>
 <hr>
 
 
@@ -107,9 +105,9 @@ password will be recognized.</p>
 
 <a name="fwazs"></a><h5>Attribute Used to Retrieve User Profile</h5>
 <p>Specifies the attribute used for the naming convention of user entries. By default,
-Federated Access Manager assumes that user entries are identified by the uid attribute.
-If your Directory Server uses a different attribute (such as <i>givenname</i>) specify the attribute
-name in this field.</p>
+OpenSSO assumes that user entries are identified by the uid attribute. If your
+Directory Server uses a different attribute (such as <i>givenname</i>) specify the attribute name in
+this field.</p>
 
 <a name="fwazy"></a><h5>Attributes Used to Search for a User to be Authenticated</h5>
 <p>Lists the attributes to be used to form the search filter for a
@@ -140,17 +138,16 @@ can be selected from the list:</p><dl><dt>OBJECT</dt>
 <p>Enables SSL access to the Directory Server specified in the Primary and Secondary
 LDAP Server and Port field. By default, the box is not checked and
 the SSL protocol will not be used to access the Directory Server.</p><p>If the LDAP Server is running with SSL enabled (LDAPS), you must make
-sure that Federated Access Manager is configured with proper SSL trusted certificates so
-that AM could connect to Directory server over LDAPS protocol</p>
+sure that OpenSSO is configured with proper SSL trusted certificates so that AM
+could connect to Directory server over LDAPS protocol</p>
 
 <a name="fwbak"></a><h5>Return User DN to Authenticate</h5>
-<p>When the Federated Access Manager directory is the same as the directory configured
-for LDAP, this option may be enabled. If enabled, this option allows the
-LDAP authentication module to return the DN instead of the User ID, and
-no search is necessary. Normally, an authentication module returns only the User ID,
-and the authentication service searches for the user in the local Federated Access
-Manager LDAP. If an external LDAP directory is used, this option is typically
-not enabled.</p>
+<p>When the OpenSSO directory is the same as the directory configured for LDAP,
+this option may be enabled. If enabled, this option allows the LDAP authentication
+module to return the DN instead of the User ID, and no search
+is necessary. Normally, an authentication module returns only the User ID, and the
+authentication service searches for the user in the local OpenSSO LDAP. If an
+external LDAP directory is used, this option is typically not enabled.</p>
 
 <a name="fwbaf"></a><h5>LDAP Server Check Interval</h5>
 <p>This attribute is used for LDAP Server failback. It defines the number of

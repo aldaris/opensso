@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Core - Sun Federated Access Manager 8.0 Console Online Help
+  <title>Core - Sun OpenSSO 8.0 Console Online Help
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,12 +31,11 @@
 
 
 <a name="service.scserviceprofile.iplanetamauthservice"></a><h4>Core</h4>
-<p><a name="indexterm-170"></a>This module is the general configuration base for the Federated Access Manager authentication
-services. It must be registered and configured to use any of the specific
-authentication module instances. It enables the administrator to define default values that will be
-picked up for the values that are not specifically set in the Federated
-Access Manager default authentication modules. The Core attributes are global and realm. The
-attributes are:</p>
+<p><a name="indexterm-170"></a>This module is the general configuration base for the OpenSSO authentication services. It
+must be registered and configured to use any of the specific authentication module
+instances. It enables the administrator to define default values that will be picked up
+for the values that are not specifically set in the OpenSSO default authentication
+modules. The Core attributes are global and realm. The attributes are:</p>
 <ul><li><p><a href="#gcnje">Pluggable Authentication Module Classes</a></p></li>
 <li><p><a href="#gcnjc">Supported Authentication Module for Clients</a></p></li>
 <li><p><a href="#gcnir">LDAP Connection Pool Size</a></p></li>
@@ -71,11 +70,10 @@ attributes are:</p>
 
 <a name="gcnje"></a><h5>Pluggable Authentication Module Classes</h5>
 <p>Specifies the Java classes of the authentication modules available to any realm configured
-within the Federated Access Manager platform. You can write custom authentication modules by
-implementing the AMLoginModule SPI or the JAAS LoginModule SPI. For more information, see
-the Federated Access Manager Developer's Guide. To define new services, this field must take
-a text string specifying the full class name (including package name) of each
-new authentication service.</p>
+within the OpenSSO platform. You can write custom authentication modules by implementing the
+AMLoginModule SPI or the JAAS LoginModule SPI. For more information, see the OpenSSO Developer's
+Guide. To define new services, this field must take a text string specifying
+the full class name (including package name) of each new authentication service.</p>
 
 <a name="gcnjc"></a><h5>Supported Authentication Module for Clients</h5>
 <p>Specifies a list of supported authentication modules for a specific client. The format
@@ -98,9 +96,9 @@ not be used from LDAP Connection Default Pool Size.</p>
 <a name="gcnkq"></a><h5>User Profile</h5>
 <p>This option enables you to specify options for a user profile. The options
 are:</p><dl><dt><b>Required</b></dt>
-<dd><p>This specifies that on successful authentication, the user needs to have a profile in the local Directory Server installed with Federated Access Manager for the authentication service to issue an SSOToken.</p></dd>
+<dd><p>This specifies that on successful authentication, the user needs to have a profile in the local Directory Server installed with OpenSSO for the authentication service to issue an SSOToken.</p></dd>
 <dt><b>Dynamic</b></dt>
-<dd><p>This specifies that on successful authentication, the authentication service will create the user profile if one does not already exist. The SSOToken will then be issued. The user profile is created in the local Directory Server installed with Federated Access Manager.</p></dd>
+<dd><p>This specifies that on successful authentication, the authentication service will create the user profile if one does not already exist. The SSOToken will then be issued. The user profile is created in the local Directory Server installed with OpenSSO.</p></dd>
 <dt><b>Dynamic With User Alias</b></dt>
 <dd><p>This specifies that on successful authentication, the authentication services will create the user profile with the User Alias List attribute. </p></dd>
 <dt><b>Ignore</b></dt>
@@ -110,29 +108,29 @@ are:</p><dl><dt><b>Required</b></dt>
 
 <a name="ggukq"></a><h5>Remote Auth Security</h5>
 <p>If enabled, all remote authentication requests require the application's SSOToken to validate the
-identity of the caller, so Federated Access Manager's configuration information can obtain the
-valid values of the username and password associated with the application.</p>
+identity of the caller, so OpenSSO's configuration information can obtain the valid values
+of the username and password associated with the application.</p>
 
 <a name="ggull"></a><h5>Keep Post Process Objects for Logout Processing</h5>
 <p>If enabled, the instances of the post-process authentication plug-ins used during the log
-in process are preserved in the Federated Access Manager session. When log out
-is later invoked, the <tt>onLogout</tt> method of these instances are called. If
-this attribute is not enabled, the post-process instances from the log in process are
-not preserved. New instances of post process plug-ins are created when logout is
-invoked and the <tt>onLogout</tt> method is called. </p>
+in process are preserved in the OpenSSO session. When log out is later
+invoked, the <tt>onLogout</tt> method of these instances are called. If this attribute is
+not enabled, the post-process instances from the log in process are not preserved. New
+instances of post process plug-ins are created when logout is invoked and the
+<tt>onLogout</tt> method is called. </p>
 
 <a name="gguji"></a><h5>Keep Authentication Module Objects for Logout Processing</h5>
 <p>If enabled, all of the instances of authentication modules used during the authentication
-process are preserved in the Federated Access Manager session. Later, when log out
-is invoked, the logout/destroyModulestate method is called on the same instances. If this
-attribute is not enabled, the authentication module instances from the log out process
-are not preserved. No method on the authentication modules is called upon log out.</p>
+process are preserved in the OpenSSO session. Later, when log out is invoked,
+the logout/destroyModulestate method is called on the same instances. If this attribute is
+not enabled, the authentication module instances from the log out process are not preserved.
+No method on the authentication modules is called upon log out.</p>
 
 <a name="gcnks"></a><h5>Administrator Authentication Configuration</h5>
 <p>Defines the authentication service for administrators only. This attribute can be used if
 the authentication module for administrators needs to be different from the module for
 end users. The modules configured in this attribute are picked up when the
-Federated Access Manager console is accessed. For example:</p><p><tt><b>http://</tt><i>servername.port/console_deploy_uri</i><tt></b></tt></p>
+OpenSSO console is accessed. For example:</p><p><tt><b>http://</tt><i>servername.port/console_deploy_uri</i><tt></b></tt></p>
 
 <a name="gcnjw"></a><h5>User Profile Dynamic Creation Default Roles</h5>
 <p>This field specifies the roles assigned to a new user whose profiles are
@@ -140,9 +138,9 @@ created if Dynamic Creation is selected through the User Profile. There is no
 default value. The administrator must specify the DNs of the roles that will
 be assigned to the new user.  </p>
 <hr><p><b>Note &#8211; </b>The role specified must be under the realm for which authentication is being
-configured. This role can be either an Federated Access Manager or LDAP role,
-but it cannot be a filtered role.</p><p>If you wish to automatically assign specific services to the user, you have to
-configure the Required Services attribute in the User Profile.</p>
+configured. This role can be either an OpenSSO or LDAP role, but it
+cannot be a filtered role.</p><p>If you wish to automatically assign specific services to the user, you have
+to configure the Required Services attribute in the User Profile.</p>
 <hr>
 
 
@@ -204,8 +202,8 @@ To send email notification to multiple addresses, separate each email address wi
 space. For non-English locales, the format is:</p><p><tt>email_address|locale|charset</tt> </p>
 
 <a name="gcnkr"></a><h5>Warn User After N Failures</h5>
-<p>Specifies the number of authentication failures that can occur before Federated Access Manager
-sends a warning message that the user will be locked out.</p>
+<p>Specifies the number of authentication failures that can occur before OpenSSO sends a
+warning message that the user will be locked out.</p>
 
 <a name="gcnkc"></a><h5>Login Failure Lockout Duration</h5>
 <p>Enables memory locking. By default, the lockout mechanism will inactivate the User Profile
@@ -222,9 +220,9 @@ will be locked out of the account for 6 minutes.</p>
 <a name="gcnjy"></a><h5>Lockout Attribute Name</h5>
 <p>Designates any LDAP attribute that is to be set for lockout. The value
 in Lockout Attribute Value must also be changed to enable lockout for this
-attribute name. By default, Lockout Attribute Name is empty in the Federated Access
-Manager Console. The default implementation values are <i>inetuserstatus</i> (LDAP attribute) and <i>inactive</i> when the
-user is locked out and Login Failure Lockout Duration is set to 0.</p>
+attribute name. By default, Lockout Attribute Name is empty in the OpenSSO Console.
+The default implementation values are <i>inetuserstatus</i> (LDAP attribute) and <i>inactive</i> when the user
+is locked out and Login Failure Lockout Duration is set to 0.</p>
 
 <a name="gcnle"></a><h5>Lockout Attribute Value</h5>
 <p>This attribute specifies whether lockout is enabled or disabled for the attribute defined
@@ -260,8 +258,7 @@ Name Generator Class.</p>
 when Enable Generate UserID Mode is used.</p>
 
 <a name="gcnki"></a><h5>Identity Types</h5>
-<p>Lists the type or types of identities for which Federated Access Manager will
-search.</p>
+<p>Lists the type or types of identities for which OpenSSO will search.</p>
 
 <a name="gcnlh"></a><h5>Pluggable User Status Event Classes</h5>
 <p>Extends the authentication SPIs to provide a callback mechanism for user status changes
@@ -274,10 +271,10 @@ during the authentication process. The following status changes are supported:</
 
 <a name="gcnjv"></a><h5>Store Invalid Attempts in Data Store</h5>
 <p>If enabled, this attribute allows the sharing of login failure attempts in a
-identity repository that is shared by multiple Federated Access Manager instances. For example,
-if the identity repository that is used for a specific deployment is Directory
-Server, the invalid attempts are stored in the <tt>sunAMAuthInvalidAttemptsData</tt> (which belongs to <tt>sunAMAuthAccountLockout</tt>objectclass). The format
-of the data is stored as:</p><p><tt>&#60;InvalidPassword>&#60;InvalidCount>&#60;/InvalidCount>&#60;LastInvalidAt>&#60;/LastInvalidAt>&#60;LockedoutAt>&#60;/LockedoutAt>&#60;ActualLockoutDuration>&#60;/ActualLockoutDuration>&#60;/InvalidPassword></tt></p><p>This information is maintained in the Directory Server for each user. As the
+identity repository that is shared by multiple OpenSSO instances. For example, if the
+identity repository that is used for a specific deployment is Directory Server, the
+invalid attempts are stored in the <tt>sunAMAuthInvalidAttemptsData</tt> (which belongs to <tt>sunAMAuthAccountLockout</tt>objectclass). The format of the
+data is stored as:</p><p><tt>&#60;InvalidPassword>&#60;InvalidCount>&#60;/InvalidCount>&#60;LastInvalidAt>&#60;/LastInvalidAt>&#60;LockedoutAt>&#60;/LockedoutAt>&#60;ActualLockoutDuration>&#60;/ActualLockoutDuration>&#60;/InvalidPassword></tt></p><p>This information is maintained in the Directory Server for each user. As the
 invalid attempts occur, <tt>&#60;InvalidCount></tt> is increased.</p>
 
 <a name="gcnjo"></a><h5>Module-based Authentication</h5>
@@ -288,7 +285,7 @@ attribute is not enabled, module-based login is not allowed. All login attempts 
 <a name="ggurt"></a><h5>User Attribute Mapping to Session Attribute</h5>
 <p>This enables the attributes to be set as session properties from the authenticating
 user profile (stored in a data store) to the user's SSOToken. The format
-is::</p><p><tt>UserProfile_Attribute|Session_Attribute_name</tt></p><p>If the <tt>Session_Attribute_name</tt> is not specified, the property name for the session is
+is:</p><p><tt>UserProfile_Attribute|Session_Attribute_name</tt></p><p>If the <tt>Session_Attribute_name</tt> is not specified, the property name for the session is
 retrieved as the value of the User Profile attribute. All session attributes contain
 the am.<tt>protected</tt> prefix to ensure that they cannot be edited from the
 client SDK.</p>
@@ -305,8 +302,8 @@ level.</p><p>The authentication level should be set within the realm's specific 
 Default Authentication Level value described here will apply only when no authentication level
 has been specified in the Authentication Level field for a specific realm's authentication template.
 The Default Authentication Level default value is 0. (The value in this attribute
-is not used by Federated Access Manager but by any external application that
-may chose to use it.)</p>
+is not used by OpenSSO but by any external application that may chose
+to use it.)</p>
 <br/>
 
 </body>

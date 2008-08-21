@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Request Handler List - Sun Federated Access Manager 8.0 Console Online Help
+  <title>Request Handler List - Sun OpenSSO 8.0 Console Online Help
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -42,16 +42,15 @@ in the following table.</p><table><col width="50%"><col width="50%"><tr><th alig
 </tr>
 <tr><td align="left" valign="top" scope="row"><p><tt>key</tt></p></td>
 <td align="left" valign="top" scope="row"><p>The required <tt>key</tt> parameter is the last part of the
-URI path to a SOAP endpoint. The SOAP endpoint in Access Manager
-is the SOAP Receiver servlet. The URI to the SOAP Receiver is: <tt><b></tt><i>protocol</i><tt>://</tt><i>host</i><tt>:</tt><i>port</i><tt>/</tt><i>deploy-uri</i><tt>/Liberty/key</b></tt>
-If you define <tt><b>disco</b></tt> as the key, the URI path to the SOAP endpoint
-for the corresponding Discovery Service would be: <tt><b></tt><i>protocol</i><tt>://</tt><i>host</i><tt>:</tt><i>port</i><tt>/amserver/Liberty/disco</b></tt>. Different service clients use different
-keys when connecting to the SOAP Receiver.</p></td>
+URI path to a SOAP endpoint. The SOAP endpoint in OpenSSO is the
+SOAP Receiver servlet. The URI to the SOAP Receiver is: <tt><b></tt><i>protocol</i><tt>://</tt><i>host</i><tt>:</tt><i>port</i><tt>/</tt><i>deploy-uri</i><tt>/Liberty/key</b></tt> If you
+define <tt><b>disco</b></tt> as the key, the URI path to the SOAP endpoint for
+the corresponding Discovery Service would be: <tt><b></tt><i>protocol</i><tt>://</tt><i>host</i><tt>:</tt><i>port</i><tt>/amserver/Liberty/disco</b></tt>. Different service clients use different keys
+when connecting to the SOAP Receiver.</p></td>
 </tr>
 <tr><td align="left" valign="top" scope="row"><p><tt>class</tt></p></td>
-<td align="left" valign="top" scope="row"><p>The required <tt>class</tt> parameter specifies the name
-of the Request Handler implementation class for the particular identity service. For example:
-<tt>class=com.example.identity.liberty.ws.disco.DiscoveryService</tt>.</p></td>
+<td align="left" valign="top" scope="row"><p>The required <tt>class</tt> parameter specifies the name of
+the Request Handler implementation class for the particular identity service. For example: <tt>class=com.example.identity.liberty.ws.disco.DiscoveryService</tt>.</p></td>
 </tr>
 </table><p>To add a new Request Handler, see <a href="service.scsoapbindingrequesthandlerlistadd.html">To Configure a Request Handler</a>.</p>
 <br/>

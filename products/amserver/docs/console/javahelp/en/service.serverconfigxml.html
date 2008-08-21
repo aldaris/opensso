@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Directory Configuration - Sun Federated Access Manager 8.0 Console Online Help
+  <title>Directory Configuration - Sun OpenSSO 8.0 Console Online Help
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -54,9 +54,23 @@ default is 10.</p>
 default, the amldapuser password that was entered during installation is used as the
 bind user.</p>
 
+<a name="ghama"></a><h5>Server</h5>
+<p>This attribute defines the directory server that will serve as the configuration data
+store for the OpenSSO instance. To add a configuration server, click the Add
+button, and provide values for the following attributes:</p><dl><dt>Name</dt>
+<dd><p>Enter a name for the server.</p></dd>
+<dt>Host Name</dt>
+<dd><p>Specifies fully-qualified host name of the Directory Server. For example:</p><p><tt></tt><i>DirectoryServerHost.domainName</i><tt>.com</tt></p></dd>
+<dt>Port Number</dt>
+<dd><p>Specifies the Directory Server port number .</p></dd>
+<dt>Connection Type</dt>
+<dd><p>Defines the connection type for the Directory Server. By default, SIMPLE is selected. You can also choose SSL.</p></dd>
+</dl>
+
+
 <a name="ggkdu"></a><h5>Legacy Configuration</h5>
-<p>The following attribute define basic directory-server configurations for Legacy mode instances of Federated
-Access Manager. These attributes will only appear in a Legacy mode installation.</p>
+<p>The following attribute define basic directory-server configurations for Legacy mode instances of OpenSSO.
+These attributes will only appear in a Legacy mode installation.</p>
 
 <a name="ggkej"></a><h5>Minimum Connection Pool</h5>
 <p>Specifies the minimal size of connection pools to be used for connecting to

@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Session - Sun Federated Access Manager 8.0 Console Online Help
+  <title>Session - Sun OpenSSO 8.0 Console Online Help
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -51,10 +51,10 @@ user attributes. The attributes are:</p>
 
 <a name="fwfeu"></a><h5>Secondary Configuration Instance</h5>
 <p>Provides the connection information for the session repository used for the session failover
-functionality in Federated Access Manager. The URL of the load balancer should be
-given as the identifier to this secondary configuration. If the secondary configuration is
-defined in this case, the session failover feature will be automatically enabled and become
-effective after the server restart. See <a href="service.subconfigadd.html">To Add a Sub Configuration</a> for more information.</p>
+functionality in OpenSSO. The URL of the load balancer should be given as
+the identifier to this secondary configuration. If the secondary configuration is defined in
+this case, the session failover feature will be automatically enabled and become effective after
+the server restart. See <a href="service.subconfigadd.html">To Add a Sub Configuration</a> for more information.</p>
 
 <a name="fwfew"></a><h5>Maximum Number of Search Results</h5>
 <p>This attribute specifies the maximum number of results returned by a session search.
@@ -66,11 +66,11 @@ The default value is 5 seconds.</p>
 
 <a name="fwfez"></a><h5>Enable Property Change Notifications</h5>
 <p>Enables or disables the feature session property change notification. In a single sign-on
-environment, one Federated Access Manager session can be shared by multiple applications. If
-this feature is set to ON, if one application changes any of the
-session properties specified in the Notification Properties list (defined as a separate session service
-attribute), the notification will be sent to other applications participating in the same
-single sign-on environment.</p>
+environment, one OpenSSO session can be shared by multiple applications. If this feature
+is set to ON, if one application changes any of the session properties
+specified in the Notification Properties list (defined as a separate session service attribute), the
+notification will be sent to other applications participating in the same single sign-on
+environment.</p>
 
 <a name="fwfey"></a><h5>Enable Quota Constraints</h5>
 <p>Enables or disables session quota constraints. The enforcement of session quota constraints enables
@@ -93,8 +93,8 @@ the session constraint checking. If YES, even though the session constraint is e
 there will be no session quota checking for these administrators.</p><p>The default setting for this attribute is NO. You must restart the server
 if the settings are changed. This attribute will take effect only when the
 session quota constraint is enabled.</p>
-<hr><p><b>Note &#8211; </b>the super user defined for the Federated Access Manager in <tt>AMConfig.properties</tt>  (<tt>com.sun.identity.authentication.super.user</tt>)
-is always exempt from the session quota constraint checking. </p>
+<hr><p><b>Note &#8211; </b>the super user defined for the OpenSSO in <tt>AMConfig.properties</tt>  (<tt>com.sun.identity.authentication.super.user</tt>) is always
+exempt from the session quota constraint checking. </p>
 <hr>
 
 
@@ -137,10 +137,10 @@ Idle Time interval to a relatively low value.)</p>
 
 <a name="fwffh"></a><h5>Maximum Caching Time</h5>
 <p>This attribute accepts a value (in minutes) equal to the maximum interval before
-the client contacts Federated Access Manager to refresh cached session information. A value
-of 0 or higher will be accepted. The default value is 3. It
-is recommended that the maximum caching time should always be less than the
-maximum idle time.</p>
+the client contacts OpenSSO to refresh cached session information. A value of 0
+or higher will be accepted. The default value is 3. It is recommended
+that the maximum caching time should always be less than the maximum idle
+time.</p>
 
 <a name="fwffi"></a><h5>Active User Sessions</h5>
 <p>Specifies the maximum number of concurrent sessions allowed for a user.</p>

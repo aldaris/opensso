@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Administration - Sun Federated Access Manager 8.0 Console Online Help
+  <title>Administration - Sun OpenSSO 8.0 Console Online Help
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,10 +31,10 @@
 
 
 <a name="service.scserviceprofile.amadminconsoleservice"></a><h4>Administration</h4>
-<p><a name="indexterm-187"></a>The Administration service enables you to configure the Federated Access Manager console at
-both the global level as well as at a configured realm level (Preferences
-or Options specific to a configured realm). The Administration service attributes are global and
-realm attributes. </p>
+<p><a name="indexterm-187"></a>The Administration service enables you to configure the OpenSSO console at both the
+global level as well as at a configured realm level (Preferences or Options
+specific to a configured realm). The Administration service attributes are global and realm attributes.
+</p>
 <hr><p><b>Note &#8211; </b>Some of the attributes listed in this section apply to Legacy Mode installation
 only.</p>
 <hr>
@@ -90,26 +90,26 @@ the field The Federation Management tab will not appear in the console.</p>
 
 <a name="fsvge"></a><h5>User Management</h5>
 <p>Enables User Management. This is enabled by default. This attribute is applicable when
-Federated Access Manager is installed in legacy mode. </p>
+OpenSSO is installed in legacy mode. </p>
 
 <a name="fsvgj"></a><h5>People Containers</h5>
-<p>This attribute is deselected by default and is applicable only when Federated Access
-Manager is installed in legacy mode. Selecting this attribute will display people containers
-under the Directory Management tab. It is recommended that you use a single
-people container in your DIT and then use roles to manage accounts and
-services. The default behavior of the Federated Access Manager console is to hide the
-People Containers. However, if you have multiple people containers in your DIT, select
-this attribute to display People Containers as managed objects.</p>
+<p>This attribute is deselected by default and is applicable only when OpenSSO is
+installed in legacy mode. Selecting this attribute will display people containers under the
+Directory Management tab. It is recommended that you use a single people container
+in your DIT and then use roles to manage accounts and services. The
+default behavior of the OpenSSO console is to hide the People Containers. However, if
+you have multiple people containers in your DIT, select this attribute to display
+People Containers as managed objects.</p>
 
 <a name="fsvgm"></a><h5>Organizational Unit Containers</h5>
-<p>This attribute is deselected by default and is applicable when Federated Access Manager
-is installed in legacy mode. Selecting this attribute will display containers in the
-Directory Management tab.</p>
+<p>This attribute is deselected by default and is applicable when OpenSSO is installed
+in legacy mode. Selecting this attribute will display containers in the Directory Management
+tab.</p>
 
 <a name="fsvgq"></a><h5>Group Containers</h5>
-<p>This attribute is deselected by default and is applicable when Federated Access Manager
-is installed in legacy mode. Selecting this attribute will display group containers in
-the Directory Management tab.</p>
+<p>This attribute is deselected by default and is applicable when OpenSSO is installed
+in legacy mode. Selecting this attribute will display group containers in the Directory
+Management tab.</p>
 
 <a name="fsvgh"></a><h5>Managed Group Type</h5>
 <p>Specifies whether subscription groups created through the console are static or dynamic. The
@@ -129,8 +129,8 @@ only be created within the User Management view by choosing Membership by Filter
 <a name="fsvgr"></a><h5>Default Role Permissions</h5>
 <p>Defines a list of default access control instructions (ACIs) or <b>permissions</b> that are
 used to grant administrator privileges when creating new roles. Select one of these
-ACIs for the level of privilege you wish. Federated Access Manager ships with
-four default role permissions:</p><p>No Permissions &#8212; No permissions are to be set on the role.</p><p>Organization Admin &#8212; The Organization Administrator has read and write access to all
+ACIs for the level of privilege you wish. OpenSSO ships with four default
+role permissions:</p><p>No Permissions &#8212; No permissions are to be set on the role.</p><p>Organization Admin &#8212; The Organization Administrator has read and write access to all
 entries in the configured organization.</p><p>Organization Help Desk Admin &#8212; The Organization Help Desk Administrator has read access
 to all entries in the configured organization and write access to the <tt>userPassword</tt>
 attribute.</p><p>Organization Policy Admin &#8212; The Organization Policy Administrator has read and write access
@@ -143,15 +143,14 @@ many Sun Java System components to map between DNS names and realm entries.</p><
 created, provided that the DNS name of the realm is entered at the
 time the realm is created. The DNS name field will appear in
 the realm Create page. This option is only applicable to top-level realms, and will
-not be displayed for subrealms.</p><p>Any status change made to the <i>inetdomainstatus</i> attribute through the Federated Access Manager
-SDK in the realm tree will update the corresponding DC tree entry status.
-(Updates to status that are not made through the Federated Access Manager SDK
-will not be synchronized.) For example, if a new realm, sun, is created
-with the DNS name attribute <tt>sun.com</tt> , the following entry will be
-created in the DC tree:</p><p><tt>dc=sun,dc=com,o=internet,root suffix</tt></p><p>By default, this is set to the Federated Access Manager root. If a
-different suffix is desired, this suffix must be created using LDAP commands. The
-ACIs for administrators that create realms required modification so that they have unrestricted
-access to the new DC tree root.</p>
+not be displayed for subrealms.</p><p>Any status change made to the <i>inetdomainstatus</i> attribute through the OpenSSO SDK in
+the realm tree will update the corresponding DC tree entry status. (Updates to
+status that are not made through the OpenSSO SDK will not be synchronized.)
+For example, if a new realm, sun, is created with the DNS name
+attribute <tt>sun.com</tt> , the following entry will be created in the DC tree:</p><p><tt>dc=sun,dc=com,o=internet,root suffix</tt></p><p>By default, this is set to the OpenSSO root. If a different suffix
+is desired, this suffix must be created using LDAP commands. The ACIs for
+administrators that create realms required modification so that they have unrestricted access to
+the new DC tree root.</p>
 
 <a name="fsvgs"></a><h5>Administrative Groups</h5>
 <p>Specifies whether to create the DomainAdministrators and DomainHelpDeskAdministrators groups. If enabled, these groups
@@ -171,8 +170,8 @@ same behavior applies.</p>
 
 <a name="fsvgv"></a><h5>Compliance User Deletion</h5>
 <p>Specifies whether a user's entry will be deleted, or just marked as deleted,
-from the directory. This attribute is only applicable when Federated Access Manager is
-installed in legacy mode.</p><p>When a user's entry is deleted and this option is selected (true), the
+from the directory. This attribute is only applicable when OpenSSO is installed in
+legacy mode.</p><p>When a user's entry is deleted and this option is selected (true), the
 user's entry will still exist in the directory, but will be marked as
 deleted. User entries that are marked for deletion are not returned during Directory
 Server searches. If this option is not selected, the user's entry will be
@@ -180,9 +179,9 @@ deleted from the directory.</p>
 
 <a name="fsvgu"></a><h5>Dynamic Administrative Roles ACIs</h5>
 <p>This attribute defines the access control instructions for the administrator roles that are
-created dynamically when a group or realm is configured using Federated Access Manager.
-These roles are used for granting administrative privileges for the specific grouping of entries
-created. The default ACIs can be modified only under this attribute listing.</p>
+created dynamically when a group or realm is configured using OpenSSO. These roles
+are used for granting administrative privileges for the specific grouping of entries created.
+The default ACIs can be modified only under this attribute listing.</p>
 <hr><p><b>Note &#8211; </b>Administrators at the realm level have a wider scope of access than do
 group administrators. But, by default, when a user is added to a group
 administrator role, that user can change the password of anyone in the group.
@@ -194,18 +193,18 @@ unit.</p><p>The Realm Help Desk Admin has read access to all entries in a
 realm and write access to the <i>userPassword</i> attribute.  When a sub&#8212;realm is created,
 remember that the administration roles are created in the sub-realm, not in the
 parent realm.</p><p>The Container Admin role has read and write access to all entries in
-an LDAP organizational unit. In Federated Access Manager, the LDAP organizational unit is
-often referred to as a container.</p><p>The Organization Policy Administrator has read and write access to all policies, and
+an LDAP organizational unit. In OpenSSO, the LDAP organizational unit is often referred
+to as a container.</p><p>The Organization Policy Administrator has read and write access to all policies, and
 can create, assign, modify, and delete all policies within that realm.</p><p>ThePeople Container Admin is by default, any user entry in an newly created
 realm is a member of that realm's People Container. The People Container Administrator
 has read and write access to all user entries in the realm's People
 Container. Keep in mind that this role DOES NOT have read and write
 access to the attributes that contain role and group DNs therefore, they cannot
 modify the attributes of, or remove a user from, a role or a
-group.</p><p>Other containers can be configured with Federated Access Manager to hold user entries,
-group entries or even other containers. To apply an Administrator role to a
-container created after the realm has already been configured, the Container Admin Role
-or Container Help Desk Admin defaults would be used.</p><p>The Group Admin has read and write access to all members of a
+group.</p><p>Other containers can be configured with OpenSSO to hold user entries, group entries
+or even other containers. To apply an Administrator role to a container created
+after the realm has already been configured, the Container Admin Role or Container
+Help Desk Admin defaults would be used.</p><p>The Group Admin has read and write access to all members of a
 specific group, and can create new users, assign users to the groups they
 manage, and delete the users the that they have created. When a group
 is created, the Group Administrator role is automatically generated with the necessary privileges
@@ -213,7 +212,7 @@ to manage the group. The role is not automatically assigned to a group
 member. It must be assigned by the group's creator, or anyone that has
 access to the Group Administrator Role.</p><p>The Top-level Admin has read and write access to all entries in the
 top-level realm. In other words, this Top-level Admin role has privileges for every
-configuration principal within the Federated Access Manager application.</p><p>The Organization Administrator has read and write access to all entries in a
+configuration principal within the OpenSSO application.</p><p>The Organization Administrator has read and write access to all entries in a
 realm. When a realm is created, the Organization Admin role is automatically generated
 with the necessary privileges to manage the realm.</p>
 
@@ -283,20 +282,20 @@ the People Container fallback order.</p>
 when creating a new user. This list can be used if there are
 multiple People Containers in the directory tree. (If no People Containers are specified
 in this list or in the Groups Default People Container field, users are
-created in the default Federated Access Manager people container, <tt>ou=people</tt>.) There is no default
+created in the default OpenSSO people container, <tt>ou=people</tt>.) There is no default
 value for this field.</p><p>The syntax for this attribute is:</p><p><tt></tt><i>dn of group</i><tt> | </tt><i>dn of people container</i><tt></tt>   </p><p>When a user is created, this attribute is checked for a container in
 which to place the entry. If the attribute is empty, the Groups Default
 People Container attribute is checked for a container. If the latter attribute is
-empty, the entry is created under <tt>ou=people</tt> .</p><p>This attribute is only applicable when Federated Access Manager is installed in legacy
-mode. There is no default value.</p>
+empty, the entry is created under <tt>ou=people</tt> .</p><p>This attribute is only applicable when OpenSSO is installed in legacy mode. There
+is no default value.</p>
 
 <a name="fsvhc"></a><h5>User Profile Display Class</h5>
-<p>Specifies the Java class used by the Federated Access Manager console when it
-displays the User Profile pages.</p>
+<p>Specifies the Java class used by the OpenSSO console when it displays the
+User Profile pages.</p>
 
 <a name="fsvhh"></a><h5>End User Profile Display Class</h5>
-<p>Specifies the Java class used by the Federated Access Manager console when it
-displays the End User Profile pages.</p>
+<p>Specifies the Java class used by the OpenSSO console when it displays the
+End User Profile pages.</p>
 
 <a name="fsvhi"></a><h5>Show Roles on User Profile Page</h5>
 <p>Specifies whether to display a list of roles assigned to a user as
@@ -318,7 +317,7 @@ is selected.</p>
 <a name="fsvhk"></a><h5>User Profile Display Options</h5>
 <p>This menu specifies which service attributes will be displayed in the user profile
 page. An administrator can select from the following:</p><dl><dt>UserOnly</dt>
-<dd><p>Display viewable User schema attributes for services assigned to the user. User service attribute values are viewable by the user when the attribute contains the keyword Display. See the Federated Access Manager Developer's Guide for details.</p></dd>
+<dd><p>Display viewable User schema attributes for services assigned to the user. User service attribute values are viewable by the user when the attribute contains the keyword Display. See the OpenSSO Developer's Guide for details.</p></dd>
 <dt>Combined</dt>
 <dd><p>Display viewable User and Dynamic schema attributes for services assigned to the user.</p></dd>
 </dl>
@@ -328,8 +327,7 @@ page. An administrator can select from the following:</p><dl><dt>UserOnly</dt>
 <p>This listing defines roles that will be assigned to newly created users automatically.
 There is no default value. An administrator can input the DN of one
 or more roles.  </p><p>This field only takes a full Distinguished Name address, not a role name.
-The roles can only be Federated Access Manager roles, not LDAP (Directory Server)
-roles.</p>
+The roles can only be OpenSSO roles, not LDAP (Directory Server) roles.</p>
 
 <a name="fsvhm"></a><h5>Administrative Console Tabs</h5>
 <p>This field lists the Java classes of modules that will be displayed at
@@ -340,11 +338,11 @@ in the console.</p>
 <p>This field defines the maximum number of results returned from a search. The
 default value is 200.  </p><p>Do not set this attribute to a large value (greater than 1000) unless
 sufficient system resources are allocated.</p>
-<hr><p><b>Note &#8211; </b>Federated Access Manager is preconfigured to return a maximum size of 4000 search
-entries.  This value can be changed through the console or by using
-<tt>ldapmodify</tt>. If you wish to change it using <tt>ldapmodify,</tt>create a <tt>newConfig.xml</tt>, with the
-following values (in this example, <tt>nsSizeLimit</tt>: -1 means unlimited):</p>dn: cn=puser,ou=DSAME Users,ORG_ROOT_SUFFIX changetype: modify replace:nsSizeLimit nsSizeLimit: -1<p>Then, run <tt>ldapmodify</tt>. For example:</p>setenv LD_LIBRARY_PATH /opt/SUNWam/lib/:/opt/SUNWam/ldaplib/ldapsdk:/usr/lib/mps:/usr/share/lib/mps/secv1:/usr/lib/mps/secv1: $LD_LIBRARY_PATH  ./ldapmodify -D "cn=Directory Manager" -w "iplanet333" -c -a -h hostname.domain -p 389 -f  newConfig.xml<p>Modifications to this attribute done through <tt>LDAPModify</tt> will take precedence to those
-made through the Federated Access Manager Console. </p>
+<hr><p><b>Note &#8211; </b>OpenSSO is preconfigured to return a maximum size of 4000 search entries. 
+This value can be changed through the console or by using <tt>ldapmodify</tt>. If
+you wish to change it using <tt>ldapmodify,</tt>create a <tt>newConfig.xml</tt>, with the following values (in
+this example, <tt>nsSizeLimit</tt>: -1 means unlimited):</p>dn: cn=puser,ou=DSAME Users,ORG_ROOT_SUFFIX changetype: modify replace:nsSizeLimit nsSizeLimit: -1<p>Then, run <tt>ldapmodify</tt>. For example:</p>setenv LD_LIBRARY_PATH /opt/SUNWam/lib/:/opt/SUNWam/ldaplib/ldapsdk:/usr/lib/mps:/usr/share/lib/mps/secv1:/usr/lib/mps/secv1: $LD_LIBRARY_PATH  ./ldapmodify -D "cn=Directory Manager" -w "iplanet333" -c -a -h hostname.domain -p 389 -f  newConfig.xml<p>Modifications to this attribute done through <tt>LDAPModify</tt> will take precedence to those
+made through the OpenSSO Console. </p>
 <hr>
 
 
@@ -363,24 +361,22 @@ following values (this example changes the timeout from 120 seconds to 3600 seco
 <a name="fsvhs"></a><h5>JSP Directory Name</h5>
 <p>Specifies the name of the directory that contains the JSP files for a
 realm. It allows administrator to have different appearance (customization) for different realm. The
-default value for this attribute is <tt>console</tt>. This attribute is applicable only when Federated
-Access Manager is installed in legacy mode. </p>
+default value for this attribute is <tt>console</tt>. This attribute is applicable only when OpenSSO
+is installed in legacy mode. </p>
 
 <a name="fsvhr"></a><h5>Online Help Documents</h5>
 <p>This field lists the online help links that will be created on the
-main Federated Access Manager help page. This allows other applications to add their
-online help links in the Federated Access Manager page. The format for this
-attribute is:</p><p><tt>linki18nkey | html page to load | i18n properties file | remote server</tt>  </p><p>The remote server attribute is an optional argument that allows you to specify
+main OpenSSO help page. This allows other applications to add their online help
+links in the OpenSSO page. The format for this attribute is:</p><p><tt>linki18nkey | html page to load | i18n properties file | remote server</tt>  </p><p>The remote server attribute is an optional argument that allows you to specify
 the remote server on which the online help document is located. The default
-value is:</p><p><tt>DSAME Help|/contents.html|amAdminModlueMsgs</tt></p><p>This attribute is only applicable when Federated Access Manager is installed in legacy
-mode.</p>
+value is:</p><p><tt>DSAME Help|/contents.html|amAdminModlueMsgs</tt></p><p>This attribute is only applicable when OpenSSO is installed in legacy mode.</p>
 
 <a name="fsvhq"></a><h5>Required Services</h5>
 <p>This field lists the services that are dynamically added to the users' entries
 when they are created. Administrators can choose which services are added at the
 time of creation. This attribute is not used by the console, but by
-the Federated Access Manager SDK. Users that are dynamically created by the <tt>amadmin</tt>
-command line utility will be assigned the services listed in this attribute.</p>
+the OpenSSO SDK. Users that are dynamically created by the <tt>amadmin</tt> command line
+utility will be assigned the services listed in this attribute.</p>
 
 <a name="fsvhu"></a><h5>User Search Key</h5>
 <p>This attribute defines the attribute name that is to be searched upon when
@@ -399,13 +395,13 @@ performance degradation, use an attribute whose value is set in a user's entry.<
 <p>This field defines a list of email addresses that will be sent notification
 when a new user is created. Multiple email addresses can be specified, as
 in the following syntax:</p><p> <tt>e-mail|locale|charset</tt> </p><p><tt>e-mail|locale|charset</tt> </p><p><tt>e-mail|locale|charset</tt></p><p>The notification list also accepts different locales by using the <tt>-|locale</tt> option.</p><p>See <a href="supportedlang.html">Supported Language Locales</a>for a list of locales.  </p><p>The sender email ID can be changed by modifying property 497 in <tt>amProfile.properties</tt>,
-which is located, by default, at <tt></tt><i>FederatedAccessManager-base</i><tt>/SUNWam/locale</tt> .</p>
+which is located, by default, at <tt></tt><i>OpenSSO-base</i><tt>/SUNWam/locale</tt> .</p>
 
 <a name="fsvhw"></a><h5>User Deletion Notification List</h5>
 <p>This field defines a list of email addresses that will be sent notification
 when a user is deleted. Multiple email addresses can be specified, as in
 the following syntax:</p><p> <tt>e-mail|locale|charset</tt> </p><p><tt>e-mail|locale|charset</tt> </p><p><tt>e-mail|locale|charset</tt></p><p>The notification list also accepts different locales by using the <tt>-|locale</tt> option.</p><p>See for a list of local<a href="supportedlang.html">Supported Language Locales</a>.  </p><p>The sender email ID can be changed by modifying property 497 in <tt>amProfile.properties</tt>,
-which is located, by default, at <tt></tt><i>FederatedAccessManager-base</i><tt>/SUNWam/locale</tt> .</p><p>The default sender ID is <tt>DSAME</tt>.</p>
+which is located, by default, at <tt></tt><i>OpenSSO-base</i><tt>/SUNWam/locale</tt> .</p><p>The default sender ID is <tt>DSAME</tt>.</p>
 
 <a name="fsvhx"></a><h5>User Modification Notification List</h5>
 <p>Defines a list of attributes and email addresses associated with the attribute. When
@@ -427,7 +423,7 @@ page.</p>
 
 <a name="fsvhz"></a><h5>Event Listener Classes</h5>
 <p>This attribute contains a list of listeners that receive creation, modification and deletion
-events from the Federated Access Manager console.</p>
+events from the OpenSSO console.</p>
 
 <a name="fsvhy"></a><h5>Pre and Post Processing Classes</h5>
 <p>This field defines a list of implementation classes through plug-ins that extend the
@@ -439,14 +435,14 @@ roles and groups. The operations are:</p>
 <li><p>add users to roles/groups</p></li>
 <li><p>delete users from roles/groups</p></li></ul>
 <p>You must enter the full class name of the plug-in and then
-change the class path of your web container (from the Federated Access Manager installation
-base) to include the full path to the location of the plug-in class</p>
+change the class path of your web container (from the OpenSSO installation base) to
+include the full path to the location of the plug-in class</p>
 
 <a name="fsvic"></a><h5>External Attributes Fetch</h5>
 <p>This option enables callbacks for plug-ins to retrieve external attributes (any external application-specific
-attribute). External attributes are not cached in the Federated Access Manager SDK, so this
-attribute allows you enable attribute retrieval per realm level. By default, this option
-is not enabled</p>
+attribute). External attributes are not cached in the OpenSSO SDK, so this attribute
+allows you enable attribute retrieval per realm level. By default, this option is not
+enabled</p>
 
 <a name="fsvib"></a><h5>Invalid User ID Characters</h5>
 <p>This attribute defines a list of characters that are not allowed in a
@@ -457,7 +453,7 @@ user's name. Each character must be separated by the | character. For example:</
 this class need to be overridden by the implementation plug-in modules that validate
 the userID and/or password for the user. The implementation plug-in modules will be
 invoked whenever a userID or password value is being added or modified using
-the Federated Access Manager console, the <tt>amadmin</tt> command line interface, or using the SDK.</p><p>The plug-ins that extend this class can be configured per realm. If a
+the OpenSSO console, the <tt>amadmin</tt> command line interface, or using the SDK.</p><p>The plug-ins that extend this class can be configured per realm. If a
 plug-in is not configured for an realm, then the plug-in configured at the
 global level will be used.</p><p>If the validation of the plug-in fails, the plug-in module can throw an
 exception to notify the application to indicate the error in the userID or

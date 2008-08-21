@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>J2EE Policy Agent - Sun Federated Access Manager 8.0 Console Online Help
+  <title>J2EE Policy Agent - Sun OpenSSO 8.0 Console Online Help
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -34,11 +34,11 @@
 <p>A J2EE agent instance can be configured using this interface. The properties described
 only apply if during agent creation, centralized configuration was chosen. If local configuration
 was selected, the properties related to this agent must be edited in the
-<tt>FAMAgentConfiguration.properites</tt> file in the agent installation directory.</p><p>The types of configuration available are divided into the following categories:</p>
+<tt>OpenSSOAgentConfiguration.properites</tt> file in the agent installation directory.</p><p>The types of configuration available are divided into the following categories:</p>
 <ul><li><p><a href="#ggmvd">Global</a></p></li>
 <li><p><a href="#ggmwz">Application</a></p></li>
 <li><p><a href="#ggmwl">SSO</a></p></li>
-<li><p><a href="#ggmwi">FAM Services</a></p></li>
+<li><p><a href="#ggmwi">OpenSSO Services</a></p></li>
 <li><p><a href="#ggmug">Miscellaneous</a></p></li>
 <li><p><a href="#ggmud">Advanced</a></p></li></ul>
 
@@ -69,7 +69,7 @@ if you want to remove the protection the agent provides.</p>
 <p>If desired, change the configuration location to whichever of the two options is
 available: centralized or local. The centralized location allows you to control the configuration
 in a centralized manner, such as from the Console.</p><p>The local option is provided for backward compatibility purposes. If the local configuration
-option is selected, the agent will use its local configuration in the <tt>FAMAgentConfiguration.properites</tt>
+option is selected, the agent will use its local configuration in the <tt>OpenSSOAgentConfiguration.properites</tt>
 file in the agent installation directory. In addition, the Console will only display
 the following properties: Password, Password (confirmation), and Status.</p>
 
@@ -78,12 +78,16 @@ the following properties: Password, Password (confirmation), and Status.</p>
 the hot-swap mechanism.</p>
 
 <a name="ggwkv"></a><h5>Agent Configuration Change Notification</h5>
-<p>When enabled, the agent receives notification messages from the Federated Access Manager server
-about configuration changes.</p>
+<p>When enabled, the agent receives notification messages from the OpenSSO server about configuration
+changes.</p>
 
 <a name="ggmvt"></a><h5>Agent Filter Mode</h5>
-<p>The mode of operation for the filter.</p><p>Example:</p><pre>ALL
-[BankApp]=URL_POLICY</pre>
+<p>The mode of operation for the filter. For this properly, a global value
+can be set to apply to all the applications that don't have their
+own specific filter mode. </p><p>Enter a web application name for the Map Key and a value
+for the Corresponding Map Values. Valid values are ALL, J2EE_POLICY, URL_POLICY, SSO_ONLY, and NONE.
+To set ALL as the global filter mode: leave Map Key field empty,
+and enter ALL in Corresponding Map Value field. </p>
 
 <a name="ggmvu"></a><h5>Resource Access Denied URI:</h5>
 <p>The URL of the customized access denied page. If no value is provided,
@@ -106,8 +110,8 @@ the user request is blocked. A value of <tt>0</tt> disables this feature.</p>
 
 <a name="ggmtr"></a><h5>Custom Response Header</h5>
 <p>A list of mappings of custom headers. The headers are set by the
-agent on the client browser. The key is the header name while the
-value represents the header value.</p><p>Example:</p><pre>[Cache-Control]=no-cache</pre>
+agent on the client browser. Enter a header name for the Map
+Key and the header value for the Corresponding Map Values.</p>
 
 <a name="ggmtt"></a><h5>Redirect Attempt Limit</h5>
 <p>The number of successive single point redirects allowed during a single browser session
@@ -143,8 +147,8 @@ is not enabled.</p>
 <p>The location to which audit messages are logged.</p>
 
 <a name="ggmxz"></a><h5>Remote Log File Name</h5>
-<p>Name of the Federated Access Manager log file to which each URL
-access to Federated Access Manager is recorded.</p>
+<p>Name of the OpenSSO log file to which each URL access to
+OpenSSO is recorded.</p>
 
 <a name="ggmxy"></a><h5>Rotate Local Audit Log</h5>
 <p>When enabled, audit log files are rotated when they reach the size specified
@@ -165,16 +169,17 @@ a new file.</p>
 from a host name that is not recognized to one that is recognized.
 This mapping is useful in the following situations: when an IP address or an
 incorrect URL is entered by the user or when a virtual host is
-used for protected resources.</p><p>Example:</p><pre>[myserver]=myserver.mydomain.com</pre>
+used for protected resources.</p><p>Enter values for the Map Key and the Corresponding Map Values and click
+Add. </p>
 
 <a name="ggmwz"></a><h5>Application</h5>
 <p>These properties tend to be application specific.</p>
 
 <a name="ggmxm"></a><h5>Login Form URI</h5>
-<p>The list of absolute URIs corresponding to an application's <tt>web.xml</tt> form-login-page element.</p><p>Example:</p><pre>[0]=/BankApp/jsp/login.jsp</pre>
+<p>The list of absolute URIs corresponding to an application's <tt>web.xml</tt> form-login-page element.</p>
 
 <a name="ggmzf"></a><h5>Login Error URI</h5>
-<p>The list of absolute URIs corresponding to an application's <tt>web.xml</tt> form-error-page element.</p><p>Example:</p><pre>[0]=/BankApp/jsp/error.jsp</pre>
+<p>The list of absolute URIs corresponding to an application's <tt>web.xml</tt> form-error-page element.</p>
 
 <a name="ggmyn"></a><h5>Use Internal Login</h5>
 <p>When enabled, agent uses the customized internal content as specified by the property
@@ -184,17 +189,19 @@ internal content.</p>
 <a name="ggmxs"></a><h5>Login Content File Name</h5>
 <p>The complete path and name of the custom login content file.</p>
 
-<a name="ggmyw"></a><h5>Logout Application Handler</h5>
+<a name="ggmyw"></a><h5>Application Logout Handler</h5>
 <p>Application-specific mappings, each of which identifies a handler to be used for logout
-processing.</p><p>Example:</p><pre>[BankApp]=BankAppLogoutHandler</pre>
+processing.</p><p>Enter the logout handler for the Map Key field and the application logout
+handler class name in the Corresponding Map Values field. Click Add. </p>
 
-<a name="ggmzp"></a><h5>Logout Application URI</h5>
+<a name="ggmzp"></a><h5>Application Logout URI</h5>
 <p>Application-specific mappings, each of which identifies a request URI. The presence of the
-specified request URI indicates a logout event.</p><p>Example:</p><pre>[BankApp]=/BankApp/logout.jsp</pre>
+specified request URI indicates a logout event.</p><p>Enter the logout URI for the Map Key field and the application logout
+URI  in the Corresponding Map Values field. Click Add. </p>
 
 <a name="ggmxw"></a><h5>Logout Request Parameter</h5>
 <p>Application-specific mappings, each of which identifies a parameter. The presence of the specified
-parameter in the <tt>HTTP</tt> request indicates a logout event.</p><p>Example:</p><pre>[BankApp]=logoutparam</pre>
+parameter in the <tt>HTTP</tt> request indicates a logout event.</p>
 
 <a name="ggmzu"></a><h5>Logout Introspect Enabled</h5>
 <p>When enabled, the agent to searches the <tt>HTTP</tt> request body to locate the
@@ -202,13 +209,13 @@ logout parameter.</p>
 
 <a name="ggmyj"></a><h5>Logout Entry URI</h5>
 <p>Application specific mappings, each of which identifies a URI to be used as
-an entry point after successful logout and, if applicable, after subsequent successful authentication.</p><p>Example:</p><pre>[BankApp]=/BankApp/welcome.html</pre>
+an entry point after successful logout and, if applicable, after subsequent successful authentication.</p><p>Enter the value for the Map Key field and the logout entry
+URI  in the Corresponding Map Values field. Click Add. </p>
 
 <a name="ggmxn"></a><h5>Not Enforced URIs</h5>
 <p>A URI list for which no authentication is performed. For every URI on
 this list, protection is not enforced by the agent and credentials are not
-requested.</p><p>Example:</p><pre>[0]=/BankApp/public/*
-[1]=/BankApp/images/*</pre>
+requested.</p>
 
 <a name="ggmyy"></a><h5>Invert Not Enforced URIs</h5>
 <p>When enabled, the not enforced URI list becomes the enforced list. Therefore, all
@@ -227,8 +234,7 @@ specified for this property is used to set the cache size.</p>
 <a name="ggmzd"></a><h5>Not Enforced Client IP List</h5>
 <p>Client IP address list, requests from which do not undergo authentication or authorization.
 For every IP address on this list, access is granted, credentials are not
-requested for authentication or authorization.</p><p>Example:</p><pre>[0]=192.18.145.*
-[1]=192.18.146.123</pre>
+requested for authentication or authorization.</p>
 
 <a name="ggmzn"></a><h5>Not Enforced IP Invert List</h5>
 <p>When enabled, the not-enforced client IP list becomes the enforced list. Therefore, all
@@ -251,8 +257,7 @@ a request.</p>
 <a name="ggmzo"></a><h5>Profile Attribute Mapping</h5>
 <p>A list of mappings from profile attribute names to <tt>HTTP</tt> header names. The
 <tt>HTTP</tt> header names are populated under specific names for the currently authenticated user.
-The format of values for this property is as follows: <tt>[profile_attribute_name]=http_header_name</tt></p><p>Example:</p><pre>[cn]=CUSTOM-Common-Name
-[mail]=CUSTOM-Email</pre>
+</p>
 
 <a name="ggmym"></a><h5>Response Attribute Fetch Mode</h5>
 <p>The modes available to fetch additional user response attributes to be introduced into
@@ -261,7 +266,7 @@ a request.</p>
 <a name="ggmzg"></a><h5>Response Attribute Mapping</h5>
 <p>A list of mappings from response attribute names to <tt>HTTP</tt> header names. The
 HTTP header names are populated under specific names for the currently authenticated user.
-The format of values for this property is as follows: <tt>[response_attribute_name]=http_header_name</tt></p><p>Example:</p><pre>[uid]=CUSTOM-USER-NAME</pre>
+</p>
 
 <a name="ggmxl"></a><h5>Cookie Separator Character</h5>
 <p>The character to be used to separate multiple values of the same attribute
@@ -282,23 +287,23 @@ a request.</p>
 <a name="ggmyu"></a><h5>Session Attribute Mapping</h5>
 <p>A list of mappings from session attribute names to <tt>HTTP</tt> header names. The
 session attribute names are populated under specific names for the currently authenticated user.
-The format of values for this property is as follows: <tt>[session_attribute_name]=http_header_name</tt></p><p>Example:</p><pre>[UserToken]=CUSTOM-userid</pre>
+</p>
 
 <a name="ggmyi"></a><h5>Default Privileged Attribute</h5>
 <p>A list of privileged attributes to authenticated users. These attributes are granted to
-all users who have a valid Federated Access Manager session.</p><p>Example:</p><pre>[0]=AUTHENTICATED_USERS</pre>
+all users who have a valid OpenSSO session.</p>
 
 <a name="ggmxo"></a><h5>Privileged Attribute Type</h5>
-<p>A list of privileged attribute types to be fetched for each user.</p><p>Example:</p><pre>[0]=Group</pre>
+<p>A list of privileged attribute types to be fetched for each user.</p>
 
 <a name="ggmyb"></a><h5>Privileged Attributes To Lower Case</h5>
 <p>A list of mappings from privileged attribute types to values of <tt>true</tt> or
 <tt>false</tt>: <tt>true</tt> to indicate that the attribute type is converted to lowercase or
-<tt>false</tt> if it is not converted.</p><p>Example:</p><pre>[Group]=false</pre>
+<tt>false</tt> if it is not converted.</p>
 
 <a name="ggmyt"></a><h5>Privileged Session Attribute</h5>
 <p>A list of session property names that hold privileged attributes for the authenticated
-user.</p><p>Example:</p><pre>[0]=UserToken</pre>
+user.</p>
 
 <a name="ggmxk"></a><h5>Enable Privileged Attribute Mapping</h5>
 <p>When enabled, mappings are applied from an attribute's original value to an alternate
@@ -307,31 +312,30 @@ value as specified by the property labeled Privileged Attribute Mapping.</p>
 <a name="ggmya"></a><h5>Privileged Attribute Mapping</h5>
 <p>A list of mappings from an attribute's original value to an alternate value.
 This property is effective only when the property labeled Enable Privileged Attribute Mapping
-is enabled.</p><p>Example:</p><pre>[id=manager,ou=group,dc=opensso,dc=java,dc=net]=am_manager_role
-[id=employee,ou=group,dc=opensso,dc=java,dc=net]=am_employee_role</pre>
+is enabled.</p>
 
 <a name="ggmyg"></a><h5>Custom Authentication Handler</h5>
 <p>A list of mappings from an application to the authentication handler specific to
 that application. Each authentication handler is used by the agent to authenticate the
-user within the container for the specified application.</p><p>Example:</p><pre>[BankApp]=BankAuthHandler</pre>
+user within the container for the specified application.</p>
 
 <a name="ggmyq"></a><h5>Custom Logout Handler</h5>
 <p>A list of mappings from an application to the logout handler specific to
 that application. Each logout handler is used by the agent to log out
-the user within the container for the specified application.</p><p>Example:</p><pre>[BankApp]=BankLogoutHandler</pre>
+the user within the container for the specified application.</p>
 
 <a name="ggmxv"></a><h5>Custom Verification Handler</h5>
 <p>A list of mappings from an application to the local verification handler specific
 to that application. Local verification handlers are used by the agent to validate
-the user credentials with the local repository.</p><p>Example:</p><pre>[BankApp]=BankVerificationHandler</pre>
+the user credentials with the local repository.</p>
 
 <a name="ggmwl"></a><h5>SSO</h5>
 <p>These properties allow you to configure features of the agent related to single
 sign-on (SSO) and cross domain single sign-on (CDSSO).</p>
 
 <a name="ggmyo"></a><h5>Cookie Name</h5>
-<p>The name of the SSO token cookie used between the Federated Access
-Manager server and the agent.</p>
+<p>The name of the SSO token cookie used between the OpenSSO server and
+the agent.</p>
 
 <a name="ggmxu"></a><h5>SSO Cache Enable</h5>
 <p>When enabled, the SSO cache is active for the agent and can be
@@ -345,17 +349,16 @@ used through public APIs exposed by the agent SDK.</p>
 
 <a name="ggmyd"></a><h5>CDSSO Servlet URL</h5>
 <p>A list of URLs of the available CDSSO controllers. These URLs can be
-used by the agent for CDSSO processing.</p><p>Example:</p><pre>[0]=http://host:port/opensso/cdcservlet</pre>
+used by the agent for CDSSO processing.</p>
 
 <a name="ggmzc"></a><h5>CDSSO Clock Skew</h5>
 <p>The number of seconds to be used by the agent to determine
 the validity of the CDSSO <tt>AuthnResponse</tt> assertion.</p>
 
 <a name="ggmyz"></a><h5>CDSSO Trusted ID Provider</h5>
-<p>A list of Federated Access Manager Server/ID providers to be trusted by the
-agent when evaluating the CDC Liberty responses. Setting this property is necessary when
-a load balancer, firewall, or both are present between the agent and the
-Federated Access Manager instance.</p><p>Example:</p><pre>[0]=http://host:port/opensso/cdcservlet</pre>
+<p>A list ofOpenSSO Server/ID providers to be trusted by the agent when evaluating
+the CDC Liberty responses. Setting this property is necessary when a load balancer,
+firewall, or both are present between the agent and theOpenSSO instance.</p>
 
 <a name="ggmzj"></a><h5>CDSSO Secure Enable</h5>
 <p>When enabled and when the communications channel with the host is secure, the
@@ -364,7 +367,7 @@ mode are marked secure.</p>
 
 <a name="ggmze"></a><h5>CDSSO Domain List</h5>
 <p>A list of domains for which cookies have to be set in
-a CDSSO scenario.</p><p>Example:</p><pre>[0]=.sun.com</pre>
+a CDSSO scenario.</p>
 
 <a name="ggmyx"></a><h5>Cookie Reset</h5>
 <p>When enabled, the agent resets cookies in the response before redirecting to authentication.</p>
@@ -383,55 +386,49 @@ used when a reset event occurs (the value).</p>
 Cookie Reset Name List (the key) to the path of the cookie to
 be used when a reset event occurs (the value).</p>
 
-<a name="ggmxp"></a><h5>SSO Decode</h5>
-<p>When enabled, the agent decodes (specifically, the agent URL-decodes) the SSO token before
-the token is used.</p>
+<a name="ggmwi"></a><h5>OpenSSO Services</h5>
+<p>These properties configure the OpenSSO services that the agent uses, such as policy
+service, session service, authentication service, and service management (SM) service.</p>
 
-<a name="ggmwi"></a><h5>FAM Services</h5>
-<p>These properties configure the Federated Access Manager services that the agent uses, such
-as policy service, session service, authentication service, and service management (SM) service.</p>
-
-<a name="ggmxr"></a><h5>FAM Login URL</h5>
-<p>A list of URLs to Federated Access Manager authentication. When authentication is required,
-the agent redirects incoming users to the appropriate authentication service as specified by
-the URL.</p><p>Example:</p><pre>[0]=http://host:port/opensso/UI/Login</pre>
+<a name="ggmxr"></a><h5>OpenSSO Login URL</h5>
+<p>A list of URLs to OpenSSO authentication. When authentication is required, the agent
+redirects incoming users to the appropriate authentication service as specified by the URL.</p>
 
 <a name="ggmzr"></a><h5>Login URL Prioritized</h5>
 <p>When enabled, prioritizes the failover sequence for Login URLs or CDSSO URLs as
-defined by the property labeled FAM Login URL.</p>
+defined by the property labeled OpenSSO Login URL.</p>
 
 <a name="ggmyh"></a><h5>Login URL Probe</h5>
 <p>When enabled, the agent checks the availability of the URLs defined by the
-property labeled FAM Login URL before redirecting to them.</p>
+property labeled OpenSSO Login URL before redirecting to them.</p>
 
 <a name="ggmxq"></a><h5>Login URL Probe Timeout</h5>
 <p>When the property labeled Login URL Probe is enabled, the value specified for
 this property determines the number of milliseconds for the connect timeout.</p>
 
-<a name="ggmxx"></a><h5>FAM Logout URL</h5>
-<p>A list of Federated Access Manager logout page URLs.</p><p>Example:</p><pre>[0]=http://host:port/opensso/UI/Logout</pre>
+<a name="ggmxx"></a><h5>OpenSSO Logout URL</h5>
+<p>A list of OpenSSO logout page URLs.</p>
 
 <a name="ggmzv"></a><h5>Logout URL Prioritized</h5>
 <p>When enabled, prioritizes the failover sequence for logout URLs as defined by the
-property labeled FAM Login URL.</p>
+property labeled OpenSSO Login URL.</p>
 
 <a name="ggmzx"></a><h5>Logout URL Probe</h5>
 <p>When enabled, the agent checks the availability of logout URLs, as defined by
-the property labeled FAM Login URL, before redirecting to them.</p>
+the property labeled OpenSSO Login URL, before redirecting to them.</p>
 
 <a name="ggmzy"></a><h5>Logout URL Probe Timeout</h5>
 <p>When the property labeled Logout URL Probe is enabled, the value specified for
 this property determines the number of milliseconds for the connect timeout.</p>
 
-<a name="ggmzz"></a><h5>FAM Authentication Service Protocol</h5>
-<p>The protocol to be used by the Federated Access Manager authentication service.</p>
+<a name="ggmzz"></a><h5>OpenSSO Authentication Service Protocol</h5>
+<p>The protocol to be used by the OpenSSO authentication service.</p>
 
-<a name="ggmzw"></a><h5>FAM Authentication Service Host Name</h5>
-<p>The host name to be used by the Federated Access Manager authentication service.</p>
+<a name="ggmzw"></a><h5>OpenSSO Authentication Service Host Name</h5>
+<p>The host name to be used by the OpenSSO authentication service.</p>
 
-<a name="ggnaw"></a><h5>FAM Authentication Service Port</h5>
-<p>The number of the port to be used by the Federated Access
-Manager authentication service.</p>
+<a name="ggnaw"></a><h5>OpenSSO Authentication Service Port</h5>
+<p>The number of the port to be used by the OpenSSO authentication service.</p>
 
 <a name="ggnak"></a><h5>Enable Policy Notifications</h5>
 <p>When enabled, notifications are operative for the remote policy client.</p>
@@ -451,28 +448,23 @@ valid values are as follows: <tt>subtree</tt> or <tt>self</tt>.</p>
 <p>The resource comparators to be used for different service names.</p>
 
 <a name="ggnan"></a><h5>Policy Client Clock Skew</h5>
-<p>The number of seconds allowed to accommodate the time difference between the Federated
-Access Manager server machine and the remote policy client machine.</p>
+<p>The number of seconds allowed to accommodate the time difference between the OpenSSO
+server machine and the remote policy client machine.</p>
 
 <a name="ggnbd"></a><h5>URL Policy Env GET Parameters</h5>
 <p>A list of <tt>HTTP GET</tt> request parameters whose names and values are to be
-set in the environment map for URL policy evaluation at Federated Access Manager
-server.</p><p>The map key is in the format of <tt>GET</tt> <i>parameterName</i> while the
-map value is a set of string values of the parameter.</p><p>Example:</p><pre>[0]=name
-[1]=phonenumber</pre>
+set in the environment map for URL policy evaluation at OpenSSO server.</p><p>The map key is in the format of <tt>GET</tt> <i>parameterName</i> while the
+map value is a set of string values of the parameter.</p>
 
 <a name="ggnax"></a><h5>URL Policy Env POST Parameters</h5>
 <p>A list of <tt>HTTP POST</tt> request parameters whose names and values are to be
-set in the environment map for URL policy evaluation at Federated Access Manager
-server.</p><p>The map key is in the format of <tt>POST</tt> <i>parameterName</i> while the
-map value is a set of string values of the parameter.</p><p>Example:</p><pre>[0]=name
-[1]=phonenumber</pre>
+set in the environment map for URL policy evaluation at OpenSSO erver.</p><p>The map key is in the format of <tt>POST</tt> <i>parameterName</i> while the
+map value is a set of string values of the parameter.</p>
 
 <a name="ggnaa"></a><h5>URL Policy Env jsession Parameters</h5>
 <p>A list of <tt>HTTP SESSION</tt> attributes whose names and values are to be set
-in the environment map for URL policy evaluation at Federated Access Manager server.</p><p>The map key is in the format of <tt>JSESSION</tt> <i>parameterName</i> while the
-map value is a set of string values of the parameter.</p><p>Example:</p><pre>[0]=name
-[1]=phonenumber</pre>
+in the environment map for URL policy evaluation at OpenSSO server.</p><p>The map key is in the format of <tt>JSESSION</tt> <i>parameterName</i> while the
+map value is a set of string values of the parameter.</p>
 
 <a name="ggnai"></a><h5>User Data Cache Polling Time</h5>
 <p>The cache update time in minutes for user management data. If set to
@@ -513,12 +505,10 @@ necessary to handle requests requiring port correction.</p>
 <a name="ggnac"></a><h5>Port Check Setting</h5>
 <p>A list of mappings from port numbers to protocols. The key is the
 listening port number while the value is the listening protocol to be used
-by the agent to identify requests with invalid port numbers.</p><p>Example:</p><pre>[80] = http
-[443] = https</pre>
+by the agent to identify requests with invalid port numbers.</p>
 
 <a name="ggnbf"></a><h5>Bypass Principal List</h5>
-<p>A list of principals bypassed by the agent for authentication and search purposes.</p><p>Example:</p><pre>[0]=guest
-[1]=testuser</pre>
+<p>A list of principals bypassed by the agent for authentication and search purposes.</p>
 
 <a name="ggojq"></a><h5>Legacy Support Enable</h5>
 <p>When enabled, legacy user agents (browsers) are supported.</p>

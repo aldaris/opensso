@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>2.2 Policy Agent - Sun Federated Access Manager 8.0 Console Online Help
+  <title>2.2 Policy Agent - Sun OpenSSO 8.0 Console Online Help
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,10 +31,10 @@
 
 
 <a name="agentconfig.22agentprofile"></a><h4>2.2 Policy Agent</h4>
-<p>Federated Access Manager is backward compatible with Policy Agent 2.2. Policy Agent 2.2
-must be configured locally from the deployment container on which it is installed.
-Therefore, from Federated Access Manager Console, a very limited number of Policy Agent
-2.2 options can be configured.</p>
+<p>OpenSSO is backward compatible with Policy Agent 2.2. Policy Agent 2.2 must be
+configured locally from the deployment container on which it is installed. Therefore, from
+the OpenSSO Console, a very limited number of Policy Agent 2.2 options can
+be configured.</p>
 
 <a name="ggmti"></a><h5>Password</h5>
 <p>The password was set when you created the agent profile. However, you can
@@ -54,9 +54,9 @@ if you want to remove the protection the agent provides.</p>
 <a name="ggowa"></a><h5>Agent Key Value</h5>
 <p>A required setting when enabling CDSSO and when configuring the deployment to prevent
 cookie hijacking.</p><p>This attribute serves as a key in a pairing of a key
-and a value. This attribute is used by Federated Access Manager to receive
-agent requests for credential assertions about users. Only one attribute is valid in this
-key-value pairing. All other attributes are ignored. Use the following format:</p><pre>agentRootURL=protocol://<i>hostname</i>:<i>port</i>/</pre><p>The entry must be precise. For example, the string representing the key, <tt>agentRootURL</tt>,
+and a value. This attribute is used by OpenSSO to receive agent requests
+for credential assertions about users. Only one attribute is valid in this key-value pairing.
+All other attributes are ignored. Use the following format:</p><pre>agentRootURL=protocol://<i>hostname</i>:<i>port</i>/</pre><p>The entry must be precise. For example, the string representing the key, <tt>agentRootURL</tt>,
 is case sensitive.</p>
 <br/>
 

@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Authorizer - Sun Federated Access Manager 8.0 Console Online Help
+  <title>Authorizer - Sun OpenSSO 8.0 Console Online Help
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -37,9 +37,9 @@ that can be done:</p>
 <ol><li><p>Is the requesting entity authorized to access the requested resource profile information?</p></li>
 <li><p>Is the requested resource published to the requestor?</p></li></ol>
 <p>Authorization occurs via a plug-in to the Liberty Personal Profile Service: an
-implementation of the <tt>com.sun.identity.liberty.ws.interfaces.Authorizer</tt> interface. Although a new implementation can be developed, Federated Access
-Manager provides the default: <tt>com.sun.identity.liberty.ws.idpp.plugin.IDPPAuthorizer</tt>. This plug-in defines four policy action values for
-the query and modify operations:</p>
+implementation of the <tt>com.sun.identity.liberty.ws.interfaces.Authorizer</tt> interface. Although a new implementation can be developed, OpenSSO provides
+the default: <tt>com.sun.identity.liberty.ws.idpp.plugin.IDPPAuthorizer</tt>. This plug-in defines four policy action values for the query and
+modify operations:</p>
 <ul><li><p>Allow</p></li>
 <li><p>Deny</p></li>
 <li><p>Interact For Consent</p></li>

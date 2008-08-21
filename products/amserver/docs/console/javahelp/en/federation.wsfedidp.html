@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>WS-FED Identity Provider Customization - Sun Federated Access Manager 8.0 Console Online Help
+  <title>WS-FED Identity Provider Customization - Sun OpenSSO 8.0 Console Online Help
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -34,20 +34,25 @@
 <p>The following attributes apply to the WS-FED Identity Provider role:</p>
 
 <a name="ggwvh"></a><h5>Signing Cert Alias</h5>
-<p>This attribute specifies the provider certificate alias used to find the correct signing
-certificate in the keystore</p>
+<p>This attribute specifies the provider certificate alias used to find the assertion signing
+certificate in the keystore.</p>
 
 <a name="ggwve"></a><h5>Claim Types</h5>
-<p>Claim Types</p>
+<p>Specifies the claim type so the WS-FED service can recognize the type of
+token that is exchanged between federation partners. </p><p>The EmailAddress claim type is used to identify a specific security principal by
+an email address. </p><p>The UPN claim type is used to identify a specific security principal via
+a User Principal Name. </p><p>The CommonName claim type is used to identify a security principal via a
+CN value consistent with X.500 naming conventions. The value of this claim is
+not necessarily unique and should not be used for authorization purposes. </p>
 
 <a name="ggwwj"></a><h5>Account Mapper</h5>
 <p>This attribute specifies the implementation of the <tt>AccountMapper</tt> interface used to map
 a remote user account to a local user account for purposes of single
-sign-on. The default value is <tt>com.sun.identity.wsfed.plugins.</tt> </p><p> <tt>DefaultIDPAccountMapper</tt> is the default implementation.</p>
+sign-on. The default value is <tt>com.sun.identity.wsfed.plugins.DefaultIDPAccountMapper</tt>. </p>
 
 <a name="ggwuq"></a><h5>Attribute Mapper</h5>
 <p>This defines the class used to map attributes in the assertion to user
-attributes defined locally by the identity provider. The default class is <tt>com.sun.identity.wsfederation.plugins.DefaultIDPAccountMapper</tt>.</p>
+attributes defined locally by the identity provider. The default class is <tt>com.sun.identity.wsfederation.plugins.DefaultIDPAttributeMapper</tt>.</p>
 
 <a name="ggwul"></a><h5>Attribute Map</h5>
 <p>Specifies values to define the mappings used by the default attribute mapper plug-in.
@@ -56,8 +61,7 @@ and click Add.</p>
 
 <a name="ggwrj"></a><h5>Assertion Effective Time</h5>
 <p>Assertions are valid for a period of time and not before or after.
-This attribute specifies a grace period (in seconds) for the <tt>Not Vefore Time Skew</tt> value.
-The default value is <tt>600</tt>. It has no relevance to the <tt>notAfter</tt> value.</p><p><tt>Effective Time</tt> specifies (in seconds) the amount of time that an assertion is valid
+</p><p><tt>Effective Time</tt> specifies (in seconds) the amount of time that an assertion is valid
 counting from the assertion's issue time. The default value is <tt>600</tt> seconds.</p>
 <br/>
 

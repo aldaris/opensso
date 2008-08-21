@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Security Token Service Attributes - Sun Federated Access Manager 8.0 Console Online Help
+  <title>Security Token Service Agent Attributes - Sun OpenSSO 8.0 Console Online Help
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -30,17 +30,16 @@
 
 
 
-<a name="agentconfig.webservicestsedit"></a><h4>Security Token Service Attributes</h4>
+<a name="agentconfig.webservicestsedit"></a><h4>Security Token Service Agent Attributes</h4>
 <p>A Security Token Service is a Web service that provides issuance and management
-of security tokens . That is, it makes security statements or claims often,
-although not required to be, in encrypted sets. These statements are based on
-the receipt of evidence that it can directly verify security tokens from authorities
-that it trusts. To assert trust, a service might prove its right to
-assert a set of claims by providing a security token or set of
-security tokens issued by an STS, or it could issue a security token
-with its own trust statement (note that for some security token formats this
-can just be a re-issuance or co-signature). This forms the basis of trust
-brokering.</p>
+of security tokens. That is, it makes security statements or claims often, although
+not required to be, in encrypted sets. These statements are based on the
+receipt of evidence that it can directly verify security tokens from authorities that
+it trusts. To assert trust, a service might prove its right to assert
+a set of claims by providing a security token or set of security
+tokens issued by an STS, or it could issue a security token with
+its own trust statement (note that for some security token formats this can
+just be a re-issuance or co-signature). This forms the basis of trust brokering.</p>
 
 <a name="ggpce"></a><h5>General</h5>
 <p>The following General attributes define basic Security Token service properties:</p>
@@ -68,19 +67,20 @@ web service responses from a web service provider.</p>
 <a name="ggpfe"></a><h5>Security</h5>
 <p>The following attributes define Security Token service security attributes:</p>
 
-<a name="ggpdy"></a><h5>Security Mechanism</h5>
-<p>Defines the type of security credential that is used to secure the Security
-Token service request. You can choose from the following security types:</p>
+<a name="ghery"></a><h5>Security Mechanism</h5>
+<p>Defines the type of security credential that is used to secure the STS
+request. You can choose one of the following security credential types:</p>
 <ul><li><p>Anonymous &#8212; The anonymous security mechanism contains no security credentials.</p></li>
+<li><p>KerberosToken &#8212; Uses Kerberos security tokens.</p></li>
 <li><p>LibertyDiscoverySecurity &#8212; Uses Liberty-based security tokens.</p></li>
 <li><p>SAML-HolderOfKey &#8212; Uses the SAML 1.1 assertion type Holder-Of-Key.</p></li>
-<li><p>SAML-SenderVouches &#8212; Uses the SAML 1.1 assertion type Sender Vouches.</p></li>
+<li><p>SAML-SenderVouches &#8212; Uses the SAML 1.1 assertion type Sender Vouchest.</p></li>
 <li><p>SAML2&#8211;HolderOfKey &#8212; Uses the SAML 2.0 assertion token type Holder-Of-Key.</p></li>
 <li><p>SAML2&#8211;SenderVouches &#8212; Uses the SAML 2.0 assertion token type Sender Vouches.</p></li>
-<li><p>STSSecurity &#8212; Defines that the Security Token service agent obtains the security token from the Security Token service.</p></li>
-<li><p>UserNameToken &#8212; Uses a user name token to secure the Security Token service requests.</p></li>
-<li><p>UserNameToken-Plain &#8212; Uses a user name token with a clear text password for securing Security Token service requests.</p></li>
-<li><p>X509Token &#8212; Uses the X509 certificate to secure the Security token.</p></li></ul>
+<li><p>STSSecurity &#8212; Uses the security token generated from the Security Token service for a given web service provider.</p></li>
+<li><p>UserNameToken &#8212; Uses User Name Token with digest password.</p></li>
+<li><p>UserNameToken-Plain &#8212; Uses a user name token with a clear text password for securing web service requests.</p></li>
+<li><p>X509Token &#8212; Uses the X509 certificate.</p></li></ul>
 
 
 <a name="ggpdk"></a><h5>STS Configuration</h5>
@@ -97,7 +97,7 @@ the Security Token service agent for further processing.</p>
 <p>The attribute represents the username/password shared secrets that are used by the Security
 Token service agent to generate a Username security token.</p>
 
-<a name="ggpbt"></a><h5>Singing and Encryption</h5>
+<a name="ggpbt"></a><h5>signing and Encryption</h5>
 <p>The following attributes define signing and encryption configuration for the Security Token service:</p>
 
 <a name="ggpdp"></a><h5>Is Request Singed</h5>
@@ -139,9 +139,45 @@ The following values must be defined for a custom key store:</p>
 <a name="ggpbr"></a><h5>End Points</h5>
 <p>The following attributes define web service endpoints:</p>
 
-<a name="ggpfc"></a><h5>Web Service End Point</h5>
-<p>This attribute defines a web service end point to which the web service
-client is making a request.</p>
+<a name="ghbab"></a><h5>Security Token Service End Point</h5>
+<p>This field takes a value equal to: </p><p><tt>%protocol://%host:%port%uri/sts</tt> </p><p>This syntax allows for dynamic substitution of the Security Token Service Endpoint URL
+based on the specific session parameters.</p>
+
+<a name="ghbcm"></a><h5>Security Token Service MEX End Point</h5>
+<p>This field takes a value equal to:</p><p><tt>%protocol://%host:%port%uri/sts/mex </tt></p><p>This syntax allows for dynamic substitution of the Security Token Service MEX Endpoint
+URL based on the specific session parameters.</p>
+
+<a name="ghcdb"></a><h5>Kerberos Configuration</h5>
+<p>Kerberos is a security profile supported by the web services security to secure
+web services communications between a web service client and a web service provider.
+In a typical scenario, a user authenticates to the desktop and invokes a
+web service and the web service client. This requires a Kerberos ticket to
+secure the request to web service provider by identifying his principal as Kerberos
+token. Typically, Kerberos-based web services security is used in same the context of Kerberos
+domain (realm) as opposed to across boundaries, for example SAML-based web services security.
+However, Kerberos is one of the strongest authentication mechanisms, especially in the Windows
+Domain Controller environment.</p>
+
+<a name="ghcgo"></a><h5>Kerberos Domain Server</h5>
+<p>This attribute specifies the Kerberos Distribution Center (the domain controller) hostname. You must
+enter the fully qualified domain name (FQDN) of the domain controller.</p>
+
+<a name="ghceh"></a><h5>Kerberos Domain</h5>
+<p>This attribute specifies the Kerberos Distribution Center (KDC) domain name. Depending up on
+your configuration, the domain name of the domain controller may be different than
+the OpenSSO domain name.</p>
+
+<a name="ghcgw"></a><h5>Kerberos Service Principal</h5>
+<p>Specifies the Security Token Service principal registered with the KDC. </p><p>Use the following format: </p><p><tt>HTTP/hostname.domainname@dc_domain_name</tt> </p><p><tt>hostname</tt> and <tt>domainame</tt> represent the hostname and domain name of the OpenSSO instance.
+<tt>dc_domain_name</tt>  is the Kerberos domain in which the Windows Kerberos server (domain
+controller) resides. It is possible that the Kerberos server is different from the
+domain name of the OpenSSO instance.</p>
+
+<a name="ghcea"></a><h5>Kerberos Ticket Cache Directory</h5>
+<p>Specifies the Kerberos TGT (Ticket Granting Ticket) cache directory. When the user authenticates
+to the desktop or initializes using <tt>kinit</tt> (the command used to obtain
+the TGT from KDC), the TGT is stored in the local cache, as
+defined in this attribute.</p>
 <br/>
 
 </body>

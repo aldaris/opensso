@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>SDK - Sun Federated Access Manager 8.0 Console Online Help
+  <title>SDK - Sun OpenSSO 8.0 Console Online Help
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -52,12 +52,12 @@ o to ensure proper delegation check, this flag must be set to 'true'
 in legacy mode installation to make use of the ACIs for access control.
 Otherwise the delegation check will fail.  </p><p>In realm mode, this value should be set to false so only
 the delegation policies are used for access control. In version 7.0 and later, Access
-Manager supports data-agnostic feature in realm mode installation. So, in addition to Directory
-Server, other servers may be used to store service configuration data.  Additionally,
-this flag will report to the Service Management feature that the Directory Proxy does
-not need to be used for the read, write, and/or modify operations to
-the back-end storage. This is because some data stores, like Active Directory, may
-not support proxy.</p>
+Manager or OpenSSO supports data-agnostic feature in realm mode installation. So, in addition
+to Directory Server, other servers may be used to store service configuration data.
+ Additionally, this flag will report to the Service Management feature that the
+Directory Proxy does not need to be used for the read, write, and/or
+modify operations to the back-end storage. This is because some data stores, like Active
+Directory, may not support proxy.</p>
 
 <a name="ggkcv"></a><h5>Event Service</h5>
 <p>The following attributes define event service notification for the data store:</p>
@@ -86,10 +86,10 @@ will not be restarted. Only the connections that are timed out will be reset.</p
 <a name="ggndm"></a><h5>Disabled Event Service Connection</h5>
 <p>Specifies which event connection can be disabled. Values (case insensitive) can be: </p>
 <ul><li><p>aci &#8212; Changes to the aci attribute, with the search using the LDAP filter (aci=*).</p></li>
-<li><p>sm &#8212; Changes in the Federated Access Manager information tree (or service management node), which includes objects with the <tt>sunService</tt> or <tt>sunServiceComponent</tt> marker object class. For example, you might create a policy to define access privileges for a protected resource, or you might modify the rules, subjects, conditions, or response providers for an existing policy.</p></li>
+<li><p>sm &#8212; Changes in the OpenSSO information tree (or service management node), which includes objects with the <tt>sunService</tt> or <tt>sunServiceComponent</tt> marker object class. For example, you might create a policy to define access privileges for a protected resource, or you might modify the rules, subjects, conditions, or response providers for an existing policy.</p></li>
 <li><p>um &#8212; Changes in the user directory (or user management node). For example, you might change a user's name or address.</p></li></ul>
-<p>For example, to disable persistent searches for changes to the Access Manager information
-tree (or service management node):  </p><p><tt>com.sun.am.event.connection.disable.list=sm </tt></p>
+<p>For example, to disable persistent searches for changes to the OpenSSO information tree
+(or service management node):  </p><p><tt>com.sun.am.event.connection.disable.list=sm </tt></p>
 <hr><p><b>Caution &#8211; </b>Persistent searches cause some performance overhead on Directory Server. If you determine that
 removing some of this performance overhead is absolutely critical in a production environment,
 you can disable one or more persistent searches using this property.  </p><p>However, before disabling a persistent search, you should understand the limitations described above.
@@ -101,14 +101,14 @@ not need to use this property.  </p><p>Disabling persistent searches for any of 
 component with a disabled persistent search does not receive notifications from Directory Server.
 Consequently, changes made in Directory Server for that particular component will not be notified
 to the component cache. For example, if you disable persistent searches for changes
-in the user directory (<tt>um</tt>), Access Manager will not receive notifications from Directory
-Server. Therefore, an agent would not get notifications from Access Manager to update its
-local user cache with the new values for the user attribute. Then, if
-an application queries the agent for the user attributes, it might receive the
-old value for that attribute.  </p><p>Use this property only in special circumstances when absolutely required. For example, if you
+in the user directory (<tt>um</tt>), OpenSSO will not receive notifications from Directory Server.
+Therefore, an agent would not get notifications from OpenSSO to update its local user
+cache with the new values for the user attribute. Then, if an application
+queries the agent for the user attributes, it might receive the old value
+for that attribute.  </p><p>Use this property only in special circumstances when absolutely required. For example, if you
 know that Service Configuration changes (related to changing values to any of services
-such as Session Service and Authentication Services) will not happen in production environment, the
-persistent search to the Service Management (<tt>sm</tt>) component can be disabled. However, if
+such as Session Service and Authentication Services) will not happen in production environment,
+the persistent search to the Service Management (<tt>sm</tt>) component can be disabled. However, if
 any changes occur for any of the services, a server restart would be
 required. The same condition also applies to other persistent searches, specified by the
 <tt>aci</tt> and <tt>um</tt> values. </p>

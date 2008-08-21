@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>JDBC - Sun Federated Access Manager 8.0 Console Online Help
+  <title>JDBC - Sun OpenSSO 8.0 Console Online Help
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,11 +31,10 @@
 
 
 <a name="service.scserviceprofile.sunamauthjdbcservice"></a><h4>JDBC</h4>
-<p><a name="indexterm-174"></a>The Java Database Connectivity (JDBC) authentication module allows Federated Access Manager to authenticate
-users through any Structured Query Language (SQL) databases that provide JDBC-enabled drivers. The connection
-to the SQL database can be either directly through a JDBC driver or
-through a JNDI connection pool. The JDBC attributes are realm attributes. The attributes
-are:</p>
+<p><a name="indexterm-174"></a>The Java Database Connectivity (JDBC) authentication module allows OpenSSO to authenticate users through
+any Structured Query Language (SQL) databases that provide JDBC-enabled drivers. The connection to the
+SQL database can be either directly through a JDBC driver or through a
+JNDI connection pool. The JDBC attributes are realm attributes. The attributes are:</p>
 <ul><li><p><a href="#fwajx">Connection Type</a></p></li>
 <li><p><a href="#fwafb">Connection Pool JNDI Name</a></p></li>
 <li><p><a href="#fwaap">JDBC Driver</a></p></li>
@@ -60,7 +59,7 @@ Naming and Directory Interface) connection pool or JDBC driver. The options are:
 <p>If JNDI is selected in Connection Type, this field specifies the connection pool
 name. Because JDBC authentication uses the JNDI connection pool provided by the web
 container, the setup of JNDI connection pool may not be consistent among other
-web containers. See the Federated Access Manager Administration Guide for examples</p>
+web containers. See the OpenSSO Administration Guide for examples</p>
 
 <a name="fwaap"></a><h5>JDBC Driver</h5>
 <p>If JDBC is selected in <a href="#fwajx">Connection Type</a>, this field specifies the JDBC driver provided

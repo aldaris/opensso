@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Session - Sun Federated Access Manager 8.0 Console Online Help
+  <title>Session - Sun OpenSSO 8.0 Console Online Help
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -56,16 +56,16 @@ property is used by the client application to check if the session has
 timed out through SSO APIs. At the end of this extended time period,
 the session is destroyed. The session is not sustained during the extended time
 period if the user logs out or if the session is explicitly destroyed
-by an Access Manager component. The session is in the INVALID state during
-this extended period.</p>
+by an OpenSSO component. The session is in the INVALID state during this
+extended period.</p>
 
 <a name="ggkbl"></a><h5>Statistics</h5>
 <p>The following attributes set statistical configuration:</p>
 
 <a name="ggkbf"></a><h5>Logging Interval</h5>
 <p>Default value is 60. Specifies number of minutes to elapse between statistics logging.
-Minimum is 5 seconds to avoid CPU saturation. Access Manager assumes any value
-less than 5 seconds to be 5 seconds.</p>
+Minimum is 5 seconds to avoid CPU saturation. OpenSSO assumes any value less
+than 5 seconds to be 5 seconds.</p>
 
 <a name="ggkbn"></a><h5>State</h5>
 <p>Default value is file. Specifies location of statistics log. Possible values are: 
@@ -76,7 +76,7 @@ less than 5 seconds to be 5 seconds.</p>
 
 
 <a name="ggkcf"></a><h5>Directory</h5>
-<p>Value is set during installation. Example: <tt></tt><i>FederatedAccessManager-base</i><tt>/</tt><i>server-URI</i><tt>/stats</tt>. Specifies directory where debug files are
+<p>Value is set during installation. Example: <tt></tt><i>OpenSSO-base</i><tt>/</tt><i>server-URI</i><tt>/stats</tt>. Specifies directory where debug files are
 created.</p>
 
 <a name="ggkca"></a><h5>Enable Host Lookup</h5>

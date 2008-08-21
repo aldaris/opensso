@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Web Service Client Attributes - Sun Federated Access Manager 8.0 Console Online Help
+  <title>Web Service Client Attributes - Sun OpenSSO 8.0 Console Online Help
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -65,6 +65,7 @@ and will validate web service responses from a web service provider.</p>
 <p>Defines the type of security credential that is used to secure the web
 service client request. You can choose one of the following security credential types:</p>
 <ul><li><p>Anonymous &#8212; The anonymous security mechanism contains no security credentials.</p></li>
+<li><p>KerberosToken &#8212; Uses Kerberos security tokens.</p></li>
 <li><p>LibertyDiscoverySecurity &#8212; Uses Liberty-based security tokens.</p></li>
 <li><p>SAML-HolderOfKey &#8212; Uses the SAML 1.1 assertion type Holder-Of-Key.</p></li>
 <li><p>SAML-SenderVouches &#8212; Uses the SAML 1.1 assertion type Sender Vouchest.</p></li>
@@ -95,6 +96,11 @@ user to be authenticated in order to gain access.</p>
 <p>When enabled, this attribute defines that the SOAP security headers are preserved by
 the web service client for further processing.</p>
 
+<a name="ghbbp"></a><h5>Use Pass Through Security Token</h5>
+<p>When enabled, this attribute indicates that the web service client will pass through
+the received Security token from the Subject. It will not try to create
+the token locally or from STS communication.</p>
+
 <a name="ggllx"></a><h5>Liberty Service Type URN</h5>
 <p>The URN (Universal Resource Name) describes a Liberty service type that the web
 service client will use for service lookups.</p>
@@ -103,7 +109,7 @@ service client will use for service lookups.</p>
 <p>The attribute represents the username/password shared secrets that are used by the web
 service client to generate a Username security token.</p>
 
-<a name="ggliu"></a><h5>Singing and Encryption</h5>
+<a name="ggliu"></a><h5>signing and Encryption</h5>
 <p>The following attributes define signing and encryption configuration for web service security:</p>
 
 <a name="gglna"></a><h5>Is Request Singed</h5>
@@ -149,6 +155,42 @@ The following values must be defined for a custom key store:</p>
 <p>This attribute defines a web service end point to which the web service
 client is making a request. This end point is optional unless it is
 configured as a web security proxy.</p>
+
+<a name="ghbdv"></a><h5>Web Service End Point</h5>
+<p>This attribute defines a web service end point to which the web service
+client is making a request.</p>
+
+<a name="ghcei"></a><h5>Kerberos Configuration</h5>
+<p>Kerberos is a security profile supported by the web services security to secure
+web services communications between a web service client and a web service provider.
+In a typical scenario, a user authenticates to the desktop and invokes a
+web service and the web service client. This requires a Kerberos ticket to
+secure the request to web service provider by identifying his principal as Kerberos
+token. Typically, Kerberos-based web services security is used in same the context of Kerberos
+domain (realm) as opposed to across boundaries, for example SAML-based web services security.
+However, Kerberos is one of the strongest authentication mechanisms, especially in the Windows
+Domain Controller environment.</p>
+
+<a name="ghcfu"></a><h5>Kerberos Domain Server</h5>
+<p>This attribute specifies the Kerberos Distribution Center (the domain controller) hostname. You must
+enter the fully qualified domain name (FQDN) of the domain controller.</p>
+
+<a name="ghccy"></a><h5>Kerberos Domain</h5>
+<p>This attribute specifies the Kerberos Distribution Center (KDC) domain name. Depending up on
+your configuration, the domain name of the domain controller may be different than
+the OpenSSO domain name.</p>
+
+<a name="ghcfa"></a><h5>Kerberos Service Principal</h5>
+<p>Specifies the web service principal registered with the KDC. </p><p>Use the following format: </p><p><tt>HTTP/hostname.domainname@dc_domain_name</tt> </p><p><tt>hostname</tt> and <tt>domainame</tt> represent the hostname and domain name of the OpenSSO instance.
+<tt>dc_domain_name</tt>  is the Kerberos domain in which the Windows Kerberos server (domain
+controller) resides. It is possible that the Kerberos server is different from the
+domain name of the OpenSSO instance.</p>
+
+<a name="ghcdq"></a><h5>Kerberos Ticket Cache Directory</h5>
+<p>Specifies the Kerberos TGT (Ticket Granting Ticket) cache directory. When the user authenticates
+to the desktop or initializes using <tt>kinit</tt> (the command used to obtain
+the TGT from KDC), the TGT is stored in the local cache, as
+defined in this attribute.</p>
 <br/>
 
 </body>

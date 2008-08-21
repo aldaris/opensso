@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>WS-FED Service Provider Customization - Sun Federated Access Manager 8.0 Console Online Help
+  <title>WS-FED Service Provider Customization - Sun OpenSSO 8.0 Console Online Help
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -33,8 +33,8 @@
 <a name="federation.wsfedsp"></a><h4>WS-FED Service Provider Customization</h4>
 <p>The following attributes apply to the WS-FED service provider role:</p>
 
-<a name="ggwtj"></a><h5>Artifact Response</h5>
-<p>When enabled, the identity provider must sign the <tt>ArtifactResponse</tt> element.</p>
+<a name="ggwtj"></a><h5>Assertion Signed</h5>
+<p>All assertions received by this service provider must be signed.</p>
 
 <a name="ggwsg"></a><h5>Account Mapper</h5>
 <p>This attribute specifies the implementation of the <tt>AccountMapper</tt> interface used to map
@@ -52,8 +52,7 @@ and click Add.</p>
 
 <a name="ggwvn"></a><h5>Assertion Effective Time</h5>
 <p>Assertions are valid for a period of time and not before or after.
-This attribute specifies a grace period (in seconds) for the <tt>Not Vefore Time Skew</tt> value.
-The default value is <tt>600</tt>. It has no relevance to the <tt>notAfter</tt> value.</p><p><tt>Effective Time</tt> specifies (in seconds) the amount of time that an assertion is valid
+</p><p><tt>Effective Time</tt> specifies (in seconds) the amount of time that an assertion is valid
 counting from the assertion's issue time. The default value is <tt>600</tt> seconds.</p>
 
 <a name="ggwsk"></a><h5>Assertion Skew Time</h5>
@@ -74,10 +73,13 @@ sign-on URL would be:</p><p><tt>http://</tt><i>host</i><tt>:</tt><i>port</i><tt>
 
 
 <a name="ggwvk"></a><h5>Home Realm Discovery</h5>
-<p>Home Realm Discovery</p>
+<p>Specifies the service so that the service provider can identify the preferred identity
+provider. The service URL is specified as a contact endpoint by the service
+provider. </p>
 
 <a name="ggwwb"></a><h5>Account Realm Selection</h5>
-<p>Account Realm Selection</p>
+<p>Specifies the identity provider selection mechanism and configuration. Either the <tt>cookie</tt> or <tt>HTTP Request</tt>
+header attribute can be used to locate the identity provider.</p>
 <br/>
 
 </body>
