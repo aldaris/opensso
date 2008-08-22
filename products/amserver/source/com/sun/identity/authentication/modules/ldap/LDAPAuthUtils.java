@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPAuthUtils.java,v 1.14 2008-08-08 00:40:56 ww203982 Exp $
+ * $Id: LDAPAuthUtils.java,v 1.15 2008-08-22 20:36:26 ericow Exp $
  *
  */
 
@@ -32,6 +32,7 @@ package com.sun.identity.authentication.modules.ldap;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.internal.AuthPrincipal;
+import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.common.LDAPConnectionPool;
 import com.sun.identity.common.ShutdownListener;
 import com.sun.identity.common.ShutdownManager;
@@ -825,7 +826,7 @@ public class LDAPAuthUtils {
                 LDAPException.CONSTRAINT_VIOLATION)
             {
                 debug.message("Exceed password retry limit.");
-                throw new LDAPUtilException("ExceedRetryLimit",
+                throw new LDAPUtilException(ISAuthConstants.EXCEED_RETRY_LIMIT,
                     LDAPException.CONSTRAINT_VIOLATION, null);
             } else {
                 if (debug.messageEnabled()) {

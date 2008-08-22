@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAP.java,v 1.11 2008-08-19 19:08:52 veiming Exp $
+ * $Id: LDAP.java,v 1.12 2008-08-22 20:36:25 ericow Exp $
  *
  */
 
@@ -546,7 +546,7 @@ public class LDAP extends AMLoginModule {
                 case LDAPUtilException.CONSTRAINT_VIOLATION:
                     debug.message("Exceed password retry limit.");
                     throw new AuthLoginException(amAuthLDAP,
-                            "ExceedRetryLimit", null);
+                            ISAuthConstants.EXCEED_RETRY_LIMIT, null);
                 default:
                     throw new AuthLoginException(amAuthLDAP, "LDAPex", null);
             }

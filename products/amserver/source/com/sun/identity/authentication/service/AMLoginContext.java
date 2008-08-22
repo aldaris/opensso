@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginContext.java,v 1.14 2008-08-12 22:13:10 manish_rustagi Exp $
+ * $Id: AMLoginContext.java,v 1.15 2008-08-22 20:35:28 ericow Exp $
  *
  */
 
@@ -87,6 +87,7 @@ public class AMLoginContext {
      * AuthThreadManager associated with this AMLoginContext
      */
     public static AuthThreadManager authThread  = null;
+    private String exceedRetryLimit=null;
     private static final String bundleName = "amAuth";
     private static AuthD ad = AuthD.getAuth();
     private static Debug debug = ad.debug;
@@ -209,6 +210,9 @@ public class AMLoginContext {
                 com.sun.identity.shared.locale.Locale.getLocale(llc);
             bundle = AMResourceBundleCache.getInstance().getResBundle(
                 bundleName, loc);
+            exceedRetryLimit = AMResourceBundleCache.getInstance().
+                getResBundle("amAuthLDAP",loc).
+                getString(ISAuthConstants.EXCEED_RETRY_LIMIT);
         }
         if (debug.messageEnabled()) {
             debug.message("LoginState : " + loginState);
@@ -555,6 +559,9 @@ public class AMLoginContext {
         } catch (AuthLoginException le) {
             if ( AMAuthErrorCode.AUTH_TIMEOUT.equals(le.getMessage())) {
                 debug.message("LOGINFAILED Error Timed Out....");
+            } else if (ISAuthConstants.EXCEED_RETRY_LIMIT.
+                    equals(le.getErrorCode())) {
+                ad.debug.message("LOGINFAILED ExceedRetryLimit");
             } else {
                 debug.message("LOGINFAILED Error....");
             }
@@ -566,6 +573,9 @@ public class AMLoginContext {
                 logFailedMessage = bundle.getString("loginTimeout");
                 logFailedError = "LOGINTIMEOUT";
                 loginState.setErrorCode(AMAuthErrorCode.AUTH_TIMEOUT);
+            } else if (ISAuthConstants.EXCEED_RETRY_LIMIT.
+                    equals(le.getErrorCode())) {
+                loginState.setErrorMessage(exceedRetryLimit);
             } else {
                 loginState.setErrorCode(AMAuthErrorCode.AUTH_LOGIN_FAILED);
             }
