@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step3.java,v 1.26 2008-08-19 19:09:03 veiming Exp $
+ * $Id: Step3.java,v 1.27 2008-08-22 20:01:01 kevinserwin Exp $
  *
  */
 package com.sun.identity.config.wizard;
@@ -398,6 +398,37 @@ public class Step3 extends LDAPStoreWizardPage {
             ld.search(rootSuffix, LDAPConnection.SCOPE_BASE, filter,
                 attrs, false);
             writeToResponse("ok");
+        } catch (LDAPException lex) {
+            switch (lex.getLDAPResultCode()) {
+                case LDAPException.CONNECT_ERROR:
+                    writeToResponse(getLocalizedString("ldap.connect.error")); 
+                    break;
+                case LDAPException.SERVER_DOWN:
+                    writeToResponse(getLocalizedString("ldap.server.down"));   
+                    break;
+                case LDAPException.INVALID_DN_SYNTAX:
+                    writeToResponse(getLocalizedString("ldap.invalid.dn"));  
+                    break;
+                case LDAPException.NO_SUCH_OBJECT:
+                    writeToResponse(getLocalizedString("ldap.nosuch.object"));
+                    break;
+                case LDAPException.INVALID_CREDENTIALS:
+                    writeToResponse(
+                            getLocalizedString("ldap.invalid.credentials"));
+                    break;
+                case LDAPException.UNWILLING_TO_PERFORM:
+                    writeToResponse(getLocalizedString("ldap.unwilling"));
+                    break;
+                case LDAPException.INAPPROPRIATE_AUTHENTICATION:
+                    writeToResponse(getLocalizedString("ldap.inappropriate"));
+                    break;
+                case LDAPException.CONSTRAINT_VIOLATION:
+                    writeToResponse(getLocalizedString("ldap.constraint"));
+                    break;
+                default:
+                    writeToResponse(
+                        getLocalizedString("cannot.connect.to.SM.datastore"));                                              
+            }           
         } catch (Exception e) {
             writeToResponse(
                 getLocalizedString("cannot.connect.to.SM.datastore"));
