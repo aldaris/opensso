@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateWSFedMetaDataTemplate.java,v 1.5 2008-06-25 05:50:01 qcheng Exp $
+ * $Id: CreateWSFedMetaDataTemplate.java,v 1.6 2008-08-22 02:06:47 superpat7 Exp $
  *
  */
 
@@ -249,7 +249,7 @@ public class CreateWSFedMetaDataTemplate {
         
         String[][] configDefaults = { 
             { WSFederationConstants.DISPLAY_NAME, idpAlias },
-            { WSFederationConstants.UPN_DOMAIN, "" },
+            { WSFederationConstants.UPN_DOMAIN, getHostDomain() },
             { SAML2Constants.SIGNING_CERT_ALIAS, idpSCertAlias },
             { SAML2Constants.ASSERTION_NOTBEFORE_SKEW_ATTRIBUTE, "600" },
             { SAML2Constants.ASSERTION_EFFECTIVE_TIME_ATTRIBUTE, "600" },
@@ -357,5 +357,15 @@ public class CreateWSFedMetaDataTemplate {
 
     private static String buildMetaAliasInURI(String alias) {
         return "/" + SAML2MetaManager.NAME_META_ALIAS_IN_URI + alias;
+    }
+    
+    private static String getHostDomain() {
+        String host = SystemPropertiesManager.get(Constants.AM_SERVER_HOST);
+        int dot = host.indexOf('.');
+        if ( dot == -1 || (dot + 1) == host.length() ) {
+            // There must be a dot and it can't be the last character
+            return null;
+        }
+        return host.substring(dot + 1);
     }
 }
