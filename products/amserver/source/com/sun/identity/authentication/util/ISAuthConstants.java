@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISAuthConstants.java,v 1.14 2008-06-25 05:42:07 qcheng Exp $
+ * $Id: ISAuthConstants.java,v 1.15 2008-08-22 20:37:09 ericow Exp $
  *
  */
 
@@ -590,6 +590,9 @@ public interface ISAuthConstants {
     // Attribute to check if Remote Auth Security is enabled
     public static final String REMOTE_AUTH_APP_TOKEN_ENABLED = 
         "sunRemoteAuthSecurityEnabled";
+
+    // Key in locale file for exceeding auth retry limit error
+    public static final String EXCEED_RETRY_LIMIT = "ExceedRetryLimit";
 
     // Property to store the Distributed Authentication Login URL in SSOToken
     public static final String DISTAUTH_LOGINURL = "DistAuthLoginURL";
