@@ -17,13 +17,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSvcsTestIdentitySOAP.java,v 1.2 2008-08-14 17:11:57 vimal_67 Exp $
+ * $Id: IdSvcsTestIdentitySOAP.java,v 1.3 2008-08-22 16:15:37 vimal_67 Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.idsvcs;
 
+import com.iplanet.sso.SSOToken;
+import com.sun.identity.qatest.common.IDMCommon;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.idsvcs.Attribute;
 import com.sun.identity.qatest.idsvcs.IdentityDetails;
@@ -52,13 +54,15 @@ public class IdSvcsTestIdentitySOAP extends TestCommon {
 
     private IdentityServicesImplService_Impl service;
     private IdentityServicesImpl isimpl;
+    private IDMCommon idmcommon;
     private ResourceBundle rb_amconfig;
     private ResourceBundle rbid;
-    private String admTokenSOAP = "";
     private String idsProp = "IdSvcsTestIdentitySOAP";
     private String strCleanup;
     private String strSetup;
     private String strTestRealm;
+    private Boolean idTypeSupported = false;
+    private SSOToken idTypeSupportedToken;
     private Token userTokenSOAP = null;
     private int index;
       
@@ -70,8 +74,8 @@ public class IdSvcsTestIdentitySOAP extends TestCommon {
         super("IdSvcsTestIdentitySOAP");
         rb_amconfig = ResourceBundle.getBundle("AMConfig");
         strTestRealm = rb_amconfig.getString("execution_realm");
-        rbid = ResourceBundle.getBundle("idsvcs" + 
-                fileseparator + idsProp);
+        rbid = ResourceBundle.getBundle("idsvcs" + fileseparator + idsProp);
+        idmcommon = new IDMCommon();
     }
     
     /**
@@ -89,6 +93,10 @@ public class IdSvcsTestIdentitySOAP extends TestCommon {
             index = new Integer(testNumber).intValue();
             strSetup = setup;
             strCleanup = cleanup;
+            
+            // admin user token for idTypeSupported function
+            idTypeSupportedToken = getToken(adminUser, adminPassword, basedn);
+            
             service = new IdentityServicesImplService_Impl();
             isimpl = service.getIdentityServicesImplPort();
         } catch (Exception e) {
@@ -148,8 +156,16 @@ public class IdSvcsTestIdentitySOAP extends TestCommon {
                         identity.setType(identity_type);
                         identity.setRealm(strTestRealm);
                         attrArray = getAttributes(attributes);
-                        identity.setAttributes(attrArray);      
-                        isimpl.create(identity, token);
+                        identity.setAttributes(attrArray);
+                        idTypeSupported = idmcommon.isIdTypeSupported(
+                                idTypeSupportedToken, strTestRealm, 
+                                identity_type);
+                        if (idTypeSupported) {
+                            isimpl.create(identity, token);
+                        } else {
+                            log(Level.FINEST, "testIdSvcsSOAP", 
+                                    operationName + " IdType Not Supported");
+                        }
                         log(Level.FINEST, "testIdSvcsSOAP", operationName);
                     } else if (operationName.equals("search")) {
                         IdentityDetails identity = new IdentityDetails();
@@ -161,97 +177,127 @@ public class IdSvcsTestIdentitySOAP extends TestCommon {
                                 "." + "operation" + i + "." + "attributes");
                         String exist = rbid.getString(idsProp + index +
                                 "." + "operation" + i + "." + "exist");
-                        Reporter.log("Search filter: " + filter); 
-                        attrArray = getAttributes(attributes);
-                        String[] searchArray = isimpl.search(filter, attrArray,
-                                token);
-                        for (int t = 0; t < searchArray.length; t++) {
-                            if (t == searchArray.length -1) {
-                                searchArrayResult = searchArrayResult + 
-                                    searchArray[t];
-                            } else {
-                                searchArrayResult = searchArrayResult + 
-                                    searchArray[t] + ",";
+                        String objecttype = rbid.getString(idsProp + index +
+                                "." + "operation" + i + "." + "objecttype");
+                        idTypeSupported = idmcommon.isIdTypeSupported(
+                                idTypeSupportedToken, strTestRealm, 
+                                objecttype);
+                        if (idTypeSupported) {
+                            Reporter.log("Search filter: " + filter); 
+                            attrArray = getAttributes(attributes);
+                            String[] searchArray = isimpl.search(filter, 
+                                    attrArray, token);
+                            for (int t = 0; t < searchArray.length; t++) {
+                                if (t == searchArray.length -1) {
+                                    searchArrayResult = searchArrayResult + 
+                                        searchArray[t];
+                                } else {
+                                    searchArrayResult = searchArrayResult + 
+                                        searchArray[t] + ",";
+                                }
                             }
+                            log(Level.FINEST, "testIdSvcsSOAP", operationName + 
+                                    " " + searchArrayResult);
+                        
+                            // verifying search if filter contains "*"
+                            if (filter.contains("*")) {
+                                String identities = rbid.getString(idsProp +
+                                        index + "." + "operation" + i +
+                                        "." + "identities");
+                                String[] iden = getArrayOfString(identities);
+                                if (exist.equals("yes")) {
+                                    for (int p = 0; p < iden.length; p++) {
+                                        log(Level.FINEST, "testIdSvcsSOAP", 
+                                            operationName + " " + iden[p]);
+                                        if (!searchArrayResult.contains(
+                                                iden[p]))
+                                            assert false;   
+                                    }
+                                } else {
+                                    for (int p=0; p < iden.length; p++) {
+                                        log(Level.FINEST, "testIdSvcsSOAP", 
+                                            operationName + " " + iden[p]);
+                                        if (searchArrayResult.contains(iden[p]))
+                                            assert false;   
+                                    }
+                                }
+                            } 
+                        
+                            // verifying search if filter does not contain "*"
+                            else {
+                                if (exist.equals("yes")) {
+                                    if (!filter.equals(searchArrayResult))
+                                            assert false;   
+                                } else {
+                                    if (filter.equals(searchArrayResult))
+                                            assert false;   
+                                }
+                            }
+                        } else {
+                            log(Level.FINEST, "testIdSvcsSOAP", 
+                                    operationName + " IdType Not Supported");
                         }
-                        log(Level.FINEST, "testIdSvcsSOAP" + operationName, 
-                                    searchArrayResult);
-                        
-                        // verifying search if filter contains "*"
-                        if (filter.contains("*")) {
-                            String identities = rbid.getString(idsProp +
-                                    index + "." + "operation" + i +
-                                    "." + "identities");
-                            String identity_type = rbid.getString(idsProp + 
-                                    index + "." + "operation" + i + 
-                                    "." + "identity_type");
-                            String[] iden = getArrayOfString(identities);
-                            if (exist.equals("yes")) {
-                                for (int p = 0; p < iden.length; p++) {
-                                    log(Level.FINEST, "testIdSvcsSOAP" + 
-                                        operationName, iden[p]);
-                                    if (!searchArrayResult.contains(iden[p]))
-                                        assert false;   
-                                }
-                            } else {
-                                for (int p=0; p < iden.length; p++) {
-                                    log(Level.FINEST, "testIdSvcsSOAP" + 
-                                        operationName, iden[p]);
-                                    if (searchArrayResult.contains(iden[p]))
-                                        assert false;   
-                                }
-                            }
-                        } 
-                        
-                        // verifying search if filter does not contain "*"
-                        else {
-                            if (exist.equals("yes")) {
-                                if (!filter.equals(searchArrayResult))
-                                        assert false;   
-                            } else {
-                                if (filter.equals(searchArrayResult))
-                                        assert false;   
-                            }
-                        } 
                     } else if (operationName.equals("read")) {
                         Attribute[] attrArray = null;
                         String identity_name = rbid.getString(idsProp + 
                                 index + "." + "operation" + i + 
                                 "." + "identity_name");
+                        String objecttype = rbid.getString(idsProp + 
+                                index + "." + "operation" + i +
+                                "." + "objecttype");
                         String attributes = rbid.getString(idsProp + 
                                 index + "." + "operation" + i +
                                 "." + "attributes");
                         Reporter.log("Read Attributes: " + identity_name);
                         attrArray = getAttributes(attributes);
-                        IdentityDetails id = isimpl.read(identity_name,
+                        idTypeSupported = idmcommon.isIdTypeSupported(
+                                idTypeSupportedToken, strTestRealm, 
+                                objecttype);
+                        if (idTypeSupported) {
+                            IdentityDetails id = isimpl.read(identity_name,
                                 attrArray, token);
-                        log(Level.FINEST, "testIdSvcsSOAP",
-                                  operationName);
-                        if (!id.getName().equals(identity_name)) 
-                            assert false;
+                            log(Level.FINEST, "testIdSvcsSOAP", operationName);
+                            if (!id.getName().equals(identity_name)) 
+                                assert false;
                         
-                        // checking each attribute
-                        Attribute[] attr = id.getAttributes();
-                        for (int m = 0; m < attr.length; m++) {
-                            log(Level.FINEST, "testIdSvcsSOAP",
-                                "Attribute name: " + attr[m].getName());
-                            String attrKey = attr[m].getName();
-                            String attrValues = "";
-                            String[] vals = attr[m].getValues();
-                            for (int n = 0; n < vals.length; n++) {
+                            // checking each attribute
+                            Attribute[] attr = id.getAttributes();
+                            for (int m = 0; m < attr.length; m++) {
                                 log(Level.FINEST, "testIdSvcsSOAP",
-                                "Attribute value: " + vals[n]);
-                                if (n == vals.length - 1) {
-                                    attrValues = attrValues + vals[n];
+                                    "Attribute name: " + attr[m].getName());
+                                String attrKey = attr[m].getName();
+                                String attrValues = "";
+                                String[] vals = attr[m].getValues();
+                                for (int n = 0; n < vals.length; n++) {
+                                    log(Level.FINEST, "testIdSvcsSOAP",
+                                    "Attribute value: " + vals[n]);
+                                    if (n == vals.length - 1) {
+                                        attrValues = attrValues + vals[n];
+                                    } else {
+                                        attrValues = attrValues + vals[n] + "&";
+                                    }
+                                }
+                                String attrResult = attrKey + "=" + attrValues;
+                                log(Level.FINEST, "testIdSvcsSOAP",
+                                    "Attribute Result: " + attrResult);
+                                if (attributes.contains(attrResult)) {
+                                    log(Level.FINEST, "testIdSvcsSOAP",
+                                        "Attribute Key " + attrKey + " with " +
+                                        "Value " + attrValues + " Found");
+                                } else if (attributes.contains(attrKey)) {
+                                    log(Level.FINEST, "testIdSvcsSOAP",
+                                        "Attribute Key " + attrKey + " only " +
+                                        "Found");
                                 } else {
-                                    attrValues = attrValues + vals[n] + "&";
+                                    log(Level.FINEST, "testIdSvcsSOAP",
+                                        "Attribute Key " + attrKey + " with " +
+                                        "Value " + attrValues + " Not Found");
+                                    assert false;
                                 }
                             }
-                            String attrResult = attrKey + "=" + attrValues;
-                            log(Level.FINEST, "testIdSvcsSOAP",
-                                "Attribute Result: " + attrResult);
-                            if (!attributes.contains(attrResult)) 
-                                assert false;
+                        } else {
+                            log(Level.FINEST, "testIdSvcsSOAP", 
+                                    operationName + " IdType Not Supported");
                         }
                     } else if (operationName.equals("update")) {
                         IdentityDetails identity = new IdentityDetails();
@@ -270,8 +316,16 @@ public class IdSvcsTestIdentitySOAP extends TestCommon {
                         identity.setType(identity_type);
                         identity.setRealm(strTestRealm);
                         attrArray = getAttributes(attributes);
-                        identity.setAttributes(attrArray);      
-                        isimpl.update(identity, token);
+                        identity.setAttributes(attrArray);
+                        idTypeSupported = idmcommon.isIdTypeSupported(
+                                idTypeSupportedToken, strTestRealm, 
+                                identity_type);
+                        if (idTypeSupported) {
+                            isimpl.update(identity, token);
+                        } else {
+                            log(Level.FINEST, "testIdSvcsSOAP", 
+                                    operationName + " IdType Not Supported");
+                        }
                         log(Level.FINEST, "testIdSvcsSOAP", operationName);
                     } else if (operationName.equals("delete") &&
                             strCleanup.equals("false")) {
@@ -286,85 +340,128 @@ public class IdSvcsTestIdentitySOAP extends TestCommon {
                         Reporter.log("Type: " + identity_type);
                         identity.setName(identity_name);
                         identity.setType(identity_type);
-                        isimpl.delete(identity, token);
+                        idTypeSupported = idmcommon.isIdTypeSupported(
+                                idTypeSupportedToken, strTestRealm, 
+                                identity_type);
+                        if (idTypeSupported) {
+                            isimpl.delete(identity, token);
+                        } else {
+                            log(Level.FINEST, "testIdSvcsSOAP", 
+                                    operationName + " IdType Not Supported");
+                            Reporter.log("IdType Not Supported");
+                        }
                         log(Level.FINEST, "testIdSvcsSOAP", operationName);
                     } else if (operationName.equals("isTokenValid")) {
                         Boolean bool = false;
+                        String identity_type = rbid.getString(idsProp + index +
+                                "." + "operation" + i + "." + "identity_type");
                         String paramName = rbid.getString(idsProp + index +
                                 "." + "operation" + i + "." + "parameter_name");
                         String userType = rbid.getString(idsProp + index +
-                                "." + "operation" + i + "." + "parameter_name");
-                        Reporter.log("Identity: " + userType); 
-                        Reporter.log("isTokenvalid: " + paramName);
-                        if (userType.equals("normaluser")) {
-                            bool = isimpl.isTokenValid(userTokenSOAP);
+                                "." + "operation" + i + "." + "user_type");
+                        idTypeSupported = idmcommon.isIdTypeSupported(
+                                idTypeSupportedToken, strTestRealm, 
+                                identity_type);
+                        if (idTypeSupported) {
+                            Reporter.log("User Type: " + userType); 
+                            Reporter.log("isTokenvalid: " + paramName);
+                            if (userType.equals("normaluser")) {
+                                bool = isimpl.isTokenValid(userTokenSOAP);
                             
-                            // releasing token
-                            isimpl.logout(userTokenSOAP);
+                                // releasing token
+                                isimpl.logout(userTokenSOAP);
+                            } else {
+                                bool = isimpl.isTokenValid(token);
+                            }
+                            log(Level.FINEST, "testIdSvcsSOAP",
+                                    operationName + " " + bool);
+                            if (!bool) 
+                                assert false;
                         } else {
-                            bool = isimpl.isTokenValid(token);
+                            log(Level.FINEST, "testIdSvcsSOAP", 
+                                    operationName + " IdType Not Supported");
+                            Reporter.log("IdType Not Supported");
                         }
-                        log(Level.FINEST, "testIdSvcsSOAP" + 
-                                operationName, bool);
-                        if (!bool) 
-                            assert false;
-                     } else if (operationName.equals("authenticate")) {
+                    } else if (operationName.equals("authenticate")) {
                         String username = rbid.getString(idsProp + index + 
                                 "." + "operation" + i + "." + "username");
                         String password = rbid.getString(idsProp + index +
                                 "." + "operation" + i + "." + "password");
-                        Reporter.log("Username: " + username);
-                        Reporter.log("Password: " + password);
-                        userTokenSOAP = isimpl.authenticate(username, password,
-                                "realm=" + strTestRealm);
-                        log(Level.FINEST, "testIdSvcsSOAP",
-                                operationName);
-                        String tokenString = userTokenSOAP.getId();
-                        log(Level.FINEST, "testIdSvcsSOAP", "Token ID: " +
-                                tokenString);
+                        String identity_type = rbid.getString(idsProp + index +
+                                "." + "operation" + i + "." + "identity_type");
+                        idTypeSupported = idmcommon.isIdTypeSupported(
+                                idTypeSupportedToken, strTestRealm, 
+                                identity_type);
+                        if (idTypeSupported) {
+                            Reporter.log("Username: " + username);
+                            Reporter.log("Password: " + password);
+                            userTokenSOAP = isimpl.authenticate(username, 
+                                    password, "realm=" + strTestRealm);
+                            log(Level.FINEST, "testIdSvcsSOAP",
+                                    operationName);
+                            String tokenString = userTokenSOAP.getId();
+                            log(Level.FINEST, "testIdSvcsSOAP", "Token ID: " +
+                                    tokenString);
+                        } else {
+                            log(Level.FINEST, "testIdSvcsSOAP", 
+                                    operationName + " IdType Not Supported");
+                        }
                     } else if (operationName.equals("attributes")) {
                         String identity_name = rbid.getString(idsProp + index + 
                                 "." + "operation" + i + "." + "identity_name");
                         String userpassword = rbid.getString(idsProp + index + 
                                 "." + "operation" + i + "." + "userpassword");
-                        Token attrUserToken = isimpl.authenticate(identity_name,
-                                userpassword, "realm=" + strTestRealm);
-                        Reporter.log("Username: " + identity_name);
-                        Reporter.log("Password: " + userpassword);
-                        String tokID = attrUserToken.getId();
-                        log(Level.FINEST, "testIdSvcsSOAP",
-                                "Token ID: " + tokID);
-                        Reporter.log("Token String: " + tokID);
-                        String attributes = rbid.getString(idsProp + 
+                        String identity_type = rbid.getString(idsProp + 
                                 index + "." + "operation" + i + 
-                                "." + "attributes");
-                        String[] attributeNames = getAttributesStr(attributes);
-                        log(Level.FINEST, "testIdSvcsSOAP",
-                                  attributeNames);
-                        UserDetails ud = isimpl.attributes(attributeNames, 
-                                attrUserToken);
-                        log(Level.FINEST, "testIdSvcsSOAP",
-                                  operationName);
-                        Attribute[] attr = ud.getAttributes();
-                        for (int m = 0; m < attr.length; m++) {
+                                "." + "identity_type");
+                        idTypeSupported = idmcommon.isIdTypeSupported(
+                                idTypeSupportedToken, strTestRealm, 
+                                identity_type);
+                        if (idTypeSupported) {
+                            Token attrUserToken = isimpl.authenticate(
+                                    identity_name, userpassword, "realm=" +
+                                    strTestRealm);
+                            Reporter.log("Username: " + identity_name);
+                            Reporter.log("Password: " + userpassword);
+                            String tokID = attrUserToken.getId();
                             log(Level.FINEST, "testIdSvcsSOAP",
-                                "Attribute name: " + attr[m].getName());
-                            String[] vals = attr[m].getValues();
-                            for (int n = 0; n < vals.length; n++) {
+                                    "Token ID: " + tokID);
+                            Reporter.log("Token String: " + tokID);
+                            String attributes = rbid.getString(idsProp + 
+                                    index + "." + "operation" + i + 
+                                    "." + "attributes");
+                            String[] attributeNames = getAttributesStr(
+                                    attributes);
+                            log(Level.FINEST, "testIdSvcsSOAP",
+                                      attributeNames);
+                            UserDetails ud = isimpl.attributes(attributeNames, 
+                                    attrUserToken);
+                            log(Level.FINEST, "testIdSvcsSOAP",
+                                      operationName);
+                            Attribute[] attr = ud.getAttributes();
+                            for (int m = 0; m < attr.length; m++) {
                                 log(Level.FINEST, "testIdSvcsSOAP",
-                                "Attribute value: " + vals[n]);
-                                if (vals[n].indexOf(identity_name + 
-                                        "_alias") == -1) 
-                                    assert false;
+                                    "Attribute name: " + attr[m].getName());
+                                String[] vals = attr[m].getValues();
+                                for (int n = 0; n < vals.length; n++) {
+                                    log(Level.FINEST, "testIdSvcsSOAP",
+                                    "Attribute value: " + vals[n]);
+                                    if (vals[n].indexOf(identity_name + 
+                                            "_alias") == -1) 
+                                        assert false;
+                                }
                             }
-                        }
                         
-                        // releasing attribute user token
-                        isimpl.logout(attrUserToken);
+                            // releasing attribute user token
+                            isimpl.logout(attrUserToken);
+                        } else {
+                            log(Level.FINEST, "testIdSvcsSOAP", 
+                                    operationName + " IdType Not Supported");
+                        }
                     } else {
                         if (strCleanup.equals("false")) {
                             log(Level.FINEST, "testIdSvcsSOAP", 
-                                    "Not a Valid SOAP Operation" + 
+                                    "Not a Valid SOAP Operation " + 
                                     operationName);
                         }
                     }
@@ -393,7 +490,7 @@ public class IdSvcsTestIdentitySOAP extends TestCommon {
             throws Exception {
         entering("cleanup", null);
         
-        //authenticate using admin user
+        // authenticate using admin user
         Token admTokenSOAP = isimpl.authenticate(adminUser, adminPassword,
                 "realm=" + strTestRealm);
         try {
@@ -403,6 +500,8 @@ public class IdSvcsTestIdentitySOAP extends TestCommon {
                 operations = new Integer(rbid.getString(idsProp + index +
                         "." + "operations")).intValue();
                 while (i < operations) {
+                    String operationName = rbid.getString(idsProp + index +
+                            "." + "operation" + i + "." + "name"); 
                     IdentityDetails identity = new IdentityDetails();
                     String identity_name = rbid.getString(idsProp + index +
                             "." + "operation" + i + "." + "identity_name");
@@ -412,8 +511,16 @@ public class IdSvcsTestIdentitySOAP extends TestCommon {
                     Reporter.log("Type: " + identity_type);
                     identity.setName(identity_name);
                     identity.setType(identity_type);
-                    isimpl.delete(identity, admTokenSOAP);
-                    log(Level.FINEST, "testIdSvcsSOAP", "delete");
+                    idTypeSupported = idmcommon.isIdTypeSupported(
+                            idTypeSupportedToken, strTestRealm, identity_type);
+                    if (idTypeSupported) {
+                        log(Level.FINEST, "testIdSvcsSOAP", "Delete");
+                        isimpl.delete(identity, admTokenSOAP);
+                    } else {
+                        log(Level.FINEST, "testIdSvcsSOAP", 
+                                    operationName + " IdType Not Supported");
+                        Reporter.log("IdType Not Supported");
+                    }
                     i++;
                 }
             }
@@ -425,6 +532,10 @@ public class IdSvcsTestIdentitySOAP extends TestCommon {
                         
             // releasing admin user token
             isimpl.logout(admTokenSOAP);
+            
+            // releasing admin user token of idTypeSupported function
+            if (validateToken(idTypeSupportedToken)) 
+                destroyToken(idTypeSupportedToken);
         }
         exiting("cleanup");
     }
@@ -442,7 +553,7 @@ public class IdSvcsTestIdentitySOAP extends TestCommon {
             String akey = token.substring(0, token.indexOf("="));
             String avalue = token.substring(token.indexOf("=") + 1, 
                     token.length());
-            
+                                    
             // tokenizing the multiple values
             StringTokenizer strTokenAmp = new StringTokenizer(avalue, "&");
             String[] avalues = new String[strTokenAmp.countTokens()];

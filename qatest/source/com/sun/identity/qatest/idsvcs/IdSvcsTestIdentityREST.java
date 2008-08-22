@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSvcsTestIdentityREST.java,v 1.3 2008-08-14 17:10:55 vimal_67 Exp $
+ * $Id: IdSvcsTestIdentityREST.java,v 1.4 2008-08-22 16:14:52 vimal_67 Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,6 +26,8 @@ package com.sun.identity.qatest.idsvcs;
 
 import com.gargoylesoftware.htmlunit.TextPage;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.iplanet.sso.SSOToken;
+import com.sun.identity.qatest.common.IDMCommon;
 import com.sun.identity.qatest.common.IdSvcsCommon;
 import com.sun.identity.qatest.common.TestCommon;
 import java.net.URLEncoder;
@@ -53,6 +55,7 @@ public class IdSvcsTestIdentityREST extends TestCommon {
     private ResourceBundle rbid;
     private TextPage page;
     private IdSvcsCommon idsvcsc;
+    private IDMCommon idmcommon;
     private WebClient webClient;
     private String idsProp = "IdSvcsTestIdentityREST";
     private int index;
@@ -61,6 +64,8 @@ public class IdSvcsTestIdentityREST extends TestCommon {
     private String strCleanup;
     private String admToken = "";
     private String userToken = "";
+    private Boolean idTypeSupported = false;
+    private SSOToken idTypeSupportedToken;
         
     /**
      * Class constructor Definition
@@ -70,8 +75,8 @@ public class IdSvcsTestIdentityREST extends TestCommon {
         super("IdSvcsTestIdentityREST");
         rb_amconfig = ResourceBundle.getBundle("AMConfig");
         strTestRealm = rb_amconfig.getString("execution_realm");
-        rbid = ResourceBundle.getBundle("idsvcs" + 
-                fileseparator + idsProp);
+        rbid = ResourceBundle.getBundle("idsvcs" + fileseparator + idsProp);
+        idmcommon = new IDMCommon();
         idsvcsc = new IdSvcsCommon();
     }
     
@@ -88,6 +93,10 @@ public class IdSvcsTestIdentityREST extends TestCommon {
             index = new Integer(testNumber).intValue();
             strSetup = setup;
             strCleanup = cleanup;
+            
+            // admin user token for idTypeSupported function
+            idTypeSupportedToken = getToken(adminUser, adminPassword, basedn);
+                                     
         } catch (Exception e) {
             log(Level.SEVERE, "setup", e.getMessage());
             e.printStackTrace();
@@ -107,7 +116,7 @@ public class IdSvcsTestIdentityREST extends TestCommon {
             int i = 0;
             int operations = 0;
             webClient = new WebClient();
-            admToken = idsvcsc.authenticateREST(adminUser, adminPassword); 
+            admToken = idsvcsc.authenticateREST(adminUser, adminPassword);
                 operations = new Integer(rbid.getString(idsProp + index + 
                         "." + "operations")).intValue();
                 String description = rbid.getString(idsProp + index + "." +
@@ -139,12 +148,21 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                         pmap.put("identity_realm", 
                                 URLEncoder.encode(strTestRealm));
                         anmap = getAttributes(attributes);
-                        page = idsvcsc.commonURLREST(operationName, pmap, 
-                                anmap, admToken);
-                        log(Level.FINEST, "testIdSvcsREST - Create", "Page: " +
-                                page.getContent());
-                        Reporter.log("Create Identity: " + identity_name); 
-                        Reporter.log("Type: " + identity_type);
+                        idTypeSupported = idmcommon.isIdTypeSupported(
+                                idTypeSupportedToken, strTestRealm, 
+                                identity_type);
+                        if (idTypeSupported) {
+                            Reporter.log("Create Identity: " + identity_name); 
+                            Reporter.log("Type: " + identity_type);
+                            page = idsvcsc.commonURLREST(operationName, pmap, 
+                                    anmap, admToken);
+                            log(Level.FINEST, "testIdSvcsREST",
+                                    "Page for " + operationName  + " : " +
+                                    page.getContent());
+                        } else {
+                            log(Level.FINEST, "testIdSvcsREST", 
+                                    operationName + " IdType Not Supported");
+                        }
                     } else if (operationName.equals("search")) {
                         Map anmap = new HashMap();    
                         Map pmap = new HashMap();     
@@ -154,50 +172,62 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                                 "." + "operation" + i + "." + "attributes");
                         String exist = rbid.getString(idsProp + index +
                                 "." + "operation" + i + "." + "exist");
+                        String objecttype = rbid.getString(idsProp + 
+                                    index + "." + "operation" + i + 
+                                    "." + "objecttype");
                         pmap.put("filter", filter);
                         anmap = getAttributes(attributes);
-                        page = idsvcsc.commonURLREST(operationName, pmap, 
+                        idTypeSupported = idmcommon.isIdTypeSupported(
+                                idTypeSupportedToken, strTestRealm, 
+                                objecttype);
+                        if (idTypeSupported) {
+                            Reporter.log("Search filter: " + filter);
+                            page = idsvcsc.commonURLREST(operationName, pmap, 
                                 anmap, admToken);
-                        log(Level.FINEST, "testIdSvcsREST - Search", "Page: " +
-                                page.getContent());
+                            log(Level.FINEST, "testIdSvcsREST",
+                                    "Page for " + operationName  + " : " +
+                                    page.getContent());
                         
-                        // search filter contains "*"
-                        if (filter.contains("*")) {
-                            String identities = rbid.getString(idsProp + 
-                                    index + "." + "operation" + i +
-                                    "." + "identities");
-                            String identity_type = rbid.getString(idsProp + 
-                                    index + "." + "operation" + i + 
-                                    "." + "identity_type");
-                            String[] iden = getArrayOfString(identities);
-                            if (exist.equals("yes")) {
-                                idsvcsc.commonSearchREST(identity_type, 
-                                        admToken, page, filter, 
-                                        iden, Boolean.TRUE);
-                            } else {
-                                idsvcsc.commonSearchREST(identity_type, 
-                                        admToken, page, filter,
-                                        iden, Boolean.FALSE);
-                            }                                        
-                        } 
-                        
-                        // search filter does not contain "*"
-                        else {
-                            String str = page.getContent();
-                            filter = filter + "\n";
-                            if (exist.equals("yes")) {
-                                if (!str.contains(filter)) {
-                                    log(Level.SEVERE, "testIdSvcsREST - Search", 
-                                        "Identity does not exists: " + filter);
-                                    assert false; 
-                                }
-                            } else {
-                                if (str.contains(filter)) {
-                                    log(Level.SEVERE, "testIdSvcsREST - Search", 
-                                        "Identity exists: " + filter);
-                                    assert false; 
-                                }
+                            // search filter contains "*"
+                            if (filter.contains("*")) {
+                                String identities = rbid.getString(idsProp + 
+                                        index + "." + "operation" + i +
+                                        "." + "identities");
+                                String[] iden = getArrayOfString(identities);
+                                if (exist.equals("yes")) {
+                                    idsvcsc.commonSearchREST(objecttype,
+                                            admToken, page, filter, 
+                                            iden, Boolean.TRUE);
+                                } else {
+                                    idsvcsc.commonSearchREST(objecttype, 
+                                            admToken, page, filter, 
+                                            iden, Boolean.FALSE);
+                                }                                        
                             } 
+                        
+                            // search filter does not contain "*"
+                            else {
+                                String str = page.getContent();
+                                filter = filter + "\n";
+                                if (exist.equals("yes")) {
+                                    if (!str.contains(filter)) {
+                                        log(Level.SEVERE, "testIdSvcsREST", 
+                                                operationName + " Identity " +
+                                                "does not exists: " + filter);
+                                        assert false; 
+                                    }
+                                } else {
+                                    if (str.contains(filter)) {
+                                        log(Level.SEVERE, "testIdSvcsREST",
+                                                operationName + 
+                                                " Identity exists: " + filter);
+                                        assert false; 
+                                    }
+                                } 
+                            }
+                        } else {
+                            log(Level.FINEST, "testIdSvcsREST", 
+                                    operationName + " IdType Not Supported");
                         }
                     } else if (operationName.equals("read")) {
                         Map anmap = new HashMap();   
@@ -215,12 +245,20 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                         pmap.put("name", identity_name);
                         pmap.put("attributes_names", "objecttype");
                         pmap.put("attributes_values_objecttype", objecttype);
-                        page = idsvcsc.commonURLREST(operationName, pmap, 
+                        idTypeSupported = idmcommon.isIdTypeSupported(
+                                idTypeSupportedToken, strTestRealm, 
+                                objecttype);
+                        if (idTypeSupported) {
+                            Reporter.log("Read Attributes: " + identity_name);
+                            page = idsvcsc.commonURLREST(operationName, pmap, 
                                 anmap, admToken);
-                        log(Level.FINEST, "testIdSvcsREST - Read", "Page: " +
-                                page.getContent());
-                        Reporter.log("Read Attributes: " + identity_name);
-                    
+                            log(Level.FINEST, "testIdSvcsREST",
+                                    "Page for " + operationName  + " : " +
+                                    page.getContent());
+                        } else {
+                            log(Level.FINEST, "testIdSvcsREST", 
+                                    operationName + " IdType Not Supported");
+                        }
                     } else if (operationName.equals("update")) {
                         Map anmap = new HashMap();    
                         Map pmap = new HashMap();     
@@ -238,11 +276,20 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                         pmap.put("identity_type", identity_type);
                         pmap.put("attributes_names", "objecttype");
                         pmap.put("attributes_values_objecttype", identity_type);
-                        page = idsvcsc.commonURLREST(operationName, pmap, 
+                        idTypeSupported = idmcommon.isIdTypeSupported(
+                                idTypeSupportedToken, strTestRealm, 
+                                identity_type);
+                        if (idTypeSupported) {
+                            Reporter.log("Update Attributes: " + identity_name);
+                            page = idsvcsc.commonURLREST(operationName, pmap, 
                                 anmap, admToken);
-                        log(Level.FINEST, "testIdSvcsREST - Update", "Page: " +
-                                page.getContent());
-                        Reporter.log("Update Attributes: " + identity_name);
+                            log(Level.FINEST, "testIdSvcsREST",
+                                    "Page for " + operationName  + " : " +
+                                    page.getContent());
+                        } else {
+                            log(Level.FINEST, "testIdSvcsREST", 
+                                    operationName + " IdType Not Supported");
+                        }
                     } else if (operationName.equals("delete") &&
                             strCleanup.equals("false")) {
                         Map anmap = new HashMap(); 
@@ -259,79 +306,124 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                         anmap = getAttributes(attributes);
                         pmap.put("identity_name", identity_name);
                         pmap.put("identity_type", identity_type);
-                        page = idsvcsc.commonURLREST(operationName, pmap, 
+                        idTypeSupported = idmcommon.isIdTypeSupported(
+                                idTypeSupportedToken, strTestRealm, 
+                                identity_type);
+                        if (idTypeSupported) {
+                            Reporter.log("Delete Identity: " + identity_name); 
+                            Reporter.log("Type: " + identity_type);
+                            page = idsvcsc.commonURLREST(operationName, pmap, 
                                 anmap, admToken);
-                        log(Level.FINEST, "testIdSvcsREST - Delete", "Page: " +
-                                page.getContent());
-                        Reporter.log("Delete Identity: " + identity_name); 
-                        Reporter.log("Type: " + identity_type);
+                            log(Level.FINEST, "testIdSvcsREST",
+                                    "Page for " + operationName  + " : " +
+                                    page.getContent());
+                        } else {
+                            log(Level.FINEST, "testIdSvcsREST", 
+                                    operationName + " IdType Not Supported");
+                        }
                     } else if (operationName.equals("isTokenValid")) {
                         Map anmap = new HashMap();
                         Map pmap = new HashMap(); 
+                        String identity_type = rbid.getString(idsProp +
+                                index + "." + "operation" + i + 
+                                "." + "identity_type");
                         String attributes = rbid.getString(idsProp + index +
                                 "." + "operation" + i + "." + "attributes");
                         anmap = getAttributes(attributes);
                         String paramName = rbid.getString(idsProp + index +
                                 "." + "operation" + i + "." + "parameter_name");
                         String userType = rbid.getString(idsProp + index +
-                                "." + "operation" + i + "." + "parameter_name");
-                        if (userType.equals("normaluser")) {
-                            if (paramName.equals("tokenid")) { 
-                                pmap.put("tokenid", 
-                                        URLEncoder.encode(userToken, "UTF-8"));
-                            } else {
-                                pmap.put("iPlanetDirectoryPro", 
-                                        URLEncoder.encode(userToken, "UTF-8"));
-                            }
-                            page = idsvcsc.commonURLREST(operationName, pmap, 
-                                anmap, userToken);
+                                "." + "operation" + i + "." + "user_type");
+                        idTypeSupported = idmcommon.isIdTypeSupported(
+                                idTypeSupportedToken, strTestRealm, 
+                                identity_type);
+                        if (idTypeSupported) {
+                            Reporter.log("User Type: " + userType); 
+                            Reporter.log("isTokenvalid: " + paramName);
+                            if (userType.equals("normaluser")) {
+                                if (paramName.equals("tokenid")) { 
+                                    pmap.put("tokenid", 
+                                            URLEncoder.encode(userToken, 
+                                            "UTF-8"));
+                                } else {
+                                    pmap.put("iPlanetDirectoryPro", 
+                                            URLEncoder.encode(userToken, 
+                                            "UTF-8"));
+                                }
+                                page = idsvcsc.commonURLREST(operationName, 
+                                        pmap, anmap, userToken);
                             
-                            // Releasing user token
-                            idsvcsc.commonLogOutREST(userToken);
-                        } else {
-                            if (paramName.equals("tokenid")) { 
-                                pmap.put("tokenid", 
-                                        URLEncoder.encode(admToken, "UTF-8"));
+                                // releasing user token
+                                idsvcsc.commonLogOutREST(userToken);
                             } else {
-                                pmap.put("iPlanetDirectoryPro",
-                                        URLEncoder.encode(admToken, "UTF-8"));
+                                if (paramName.equals("tokenid")) { 
+                                    pmap.put("tokenid", 
+                                            URLEncoder.encode(admToken, 
+                                            "UTF-8"));
+                                } else {
+                                    pmap.put("iPlanetDirectoryPro",
+                                            URLEncoder.encode(admToken, 
+                                            "UTF-8"));
+                                }
+                                page = idsvcsc.commonURLREST(operationName, 
+                                        pmap, anmap, admToken);
                             }
-                            page = idsvcsc.commonURLREST(operationName, pmap, 
-                                anmap, admToken);
+                            log(Level.FINEST, "testIdSvcsREST",
+                                    "Page for " + operationName  + " : " +
+                                    page.getContent());
+                            String str = "boolean=true" + "\n";
+                            if (!page.getContent().equals(str)) 
+                                assert false;
+                        } else {
+                            log(Level.FINEST, "testIdSvcsREST", 
+                                    operationName + " IdType Not Supported");
                         }
-                        log(Level.FINEST, "testIdSvcsREST - isTokenValid",
-                                "Page: " + page.getContent());
-                        Reporter.log("Identity: " + userType); 
-                        Reporter.log("isTokenvalid: " + paramName);
-                        String str = "boolean=true" + "\n";
-                        log(Level.FINEST, "testIdSvcsREST", "Page: " +
-                            page.getContent());
-                        if (!page.getContent().equals(str)) 
-                            assert false;
                     } else if (operationName.equals("authenticate")) {
                         String username = rbid.getString(idsProp + index + 
                                 "." + "operation" + i + "." + "username");
                         String password = rbid.getString(idsProp + index +
                                 "." + "operation" + i + "." + "password");
-                        userToken = idsvcsc.authenticateREST(username, 
-                                password);
-                        Reporter.log("Username: " + username);
-                        Reporter.log("Password: " + password);
+                        String identity_type = rbid.getString(idsProp + index +
+                                "." + "operation" + i + "." + "identity_type");
+                        idTypeSupported = idmcommon.isIdTypeSupported(
+                                idTypeSupportedToken, strTestRealm, 
+                                identity_type);
+                        if (idTypeSupported) {
+                            Reporter.log("Username: " + username);
+                            Reporter.log("Password: " + password);
+                            userToken = idsvcsc.authenticateREST(username, 
+                                    password);
+                        } else {
+                            log(Level.FINEST, "testIdSvcsREST", 
+                                    operationName + " IdType Not Supported");
+                        }
                     } else if (operationName.equals("attributes")) {
                         Map anmap = new HashMap(); 
-                        Map pmap = new HashMap();  
+                        Map pmap = new HashMap(); 
+                        String identity_type = rbid.getString(idsProp +
+                                index + "." + "operation" + i + 
+                                "." + "identity_type");
                         String attributes = rbid.getString(idsProp + 
                                 index + "." + "operation" + i +
                                 "." + "attributes");
                         anmap = getAttributes(attributes);
-                        page = idsvcsc.commonURLREST(operationName, pmap, 
-                                anmap, admToken);
-                        log(Level.FINEST, "testIdSvcsREST - Attributes", 
-                                "Page: " + page.getContent());
+                        idTypeSupported = idmcommon.isIdTypeSupported(
+                                idTypeSupportedToken, strTestRealm, 
+                                identity_type);
+                        if (idTypeSupported) {
+                            page = idsvcsc.commonURLREST(operationName, pmap,
+                                    anmap, admToken);
+                            log(Level.FINEST, "testIdSvcsREST",
+                                    "Page for " + operationName  + " : " +
+                                    page.getContent());
+                        } else {
+                            log(Level.FINEST, "testIdSvcsREST", 
+                                    operationName + " IdType Not Supported");
+                        }
                     } else {
                         if (strCleanup.equals("false")) {
                             log(Level.FINEST, "testIdSvcsREST", 
-                                    "Not a Valid REST Operation" + 
+                                    "Not a Valid REST Operation " + 
                                     operationName);
                         }
                     }
@@ -344,7 +436,7 @@ public class IdSvcsTestIdentityREST extends TestCommon {
             throw e;
         } finally {
             
-            //Releasing adminUser token
+            // releasing admin user token
             idsvcsc.commonLogOutREST(admToken);
         }
         exiting("testIdSvcsREST");
@@ -380,8 +472,15 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                     anmap = getAttributes(attributes);
                     pmap.put("identity_name", identity_name);
                     pmap.put("identity_type", identity_type);
-                    page = idsvcsc.commonURLREST(operationName, pmap, 
-                       anmap, admToken); 
+                    idTypeSupported = idmcommon.isIdTypeSupported(
+                            idTypeSupportedToken, strTestRealm, identity_type);
+                    if (idTypeSupported) {
+                        page = idsvcsc.commonURLREST(operationName, pmap, 
+                                anmap, admToken); 
+                    } else {
+                        log(Level.FINEST, "testIdSvcsREST", 
+                                    operationName + " IdType Not Supported");
+                    }
                     i++;
                 }
             }
@@ -391,8 +490,12 @@ public class IdSvcsTestIdentityREST extends TestCommon {
             throw e;
         } finally {
                         
-            //Releasing adminUser token
+            // releasing admin user token
             idsvcsc.commonLogOutREST(admToken);
+            
+            // releasing admin user token of idTypeSupported function
+            if (validateToken(idTypeSupportedToken)) 
+                destroyToken(idTypeSupportedToken);
         }
         exiting("cleanup");
     }

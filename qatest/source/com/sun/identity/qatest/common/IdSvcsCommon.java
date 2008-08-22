@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSvcsCommon.java,v 1.3 2008-08-14 17:13:11 vimal_67 Exp $
+ * $Id: IdSvcsCommon.java,v 1.4 2008-08-22 16:16:29 vimal_67 Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,7 +41,7 @@ public class IdSvcsCommon extends TestCommon {
     private String serverURI;
     private TextPage page;
     private WebClient webClient;
-   
+                
     /**
      * Class constructor Definition
      */
@@ -65,13 +65,11 @@ public class IdSvcsCommon extends TestCommon {
                     "/identity/authenticate?username=" + user +
                     "&password=" + password);
             String s0 = page.getContent();
-            log(Level.FINEST, "authenticateREST",
-                    "Token: " + s0);
+            log(Level.FINEST, "authenticateREST", "Token: " + s0);
             int i1 = s0.indexOf("=");
             token = s0.substring(i1 + 1, s0.length()).trim();
         } catch (Exception e) {
-            log(Level.SEVERE, "authenticateREST",
-                    e.getMessage());
+            log(Level.SEVERE, "authenticateREST", e.getMessage());
             e.printStackTrace();
             throw e;
         } 
@@ -112,7 +110,6 @@ public class IdSvcsCommon extends TestCommon {
         String parameters = "";
         String readParameters = "";
         String att_names = "";
-        Boolean readFlag = false;
         Object identity_value = null;
         try {
             
@@ -131,11 +128,6 @@ public class IdSvcsCommon extends TestCommon {
                 } else {
                     parameters = parameters + "&" + key + "=" + value;
                 }
-                if (key.toString().equals("attributes_values_objecttype") && 
-                        (value.toString().equals("role") || 
-                        value.toString().equals("filteredrole"))) {
-                    readFlag = true;
-                }
             }
             log(Level.FINEST, "commonURLREST", "Parameters URL: " + parameters);
             
@@ -144,37 +136,46 @@ public class IdSvcsCommon extends TestCommon {
             Iterator iter_att = set_att.iterator();
             while (iter_att.hasNext()) {
                 Object key = iter_att.next();       
-                Object value = att_map.get(key);    
-                
+                Object value = att_map.get(key);
+                               
                 // Calling REST Operation read
                 // Checking attributes one by one after calling read
                 if (operation.equals("read")) {
-                    String rdattrs = "";
-                    if (readFlag) {
-                        rdattrs = "identitydetails.attribute.name=" + key;
-                    } else {
-                        rdattrs = "identitydetails.attribute.name=" + key +
-                        "\n" + "identitydetails.attribute.value=" + value;
-                    }
-                                                         
-                    //Reading the attributes 
+                    String rdattrsKey = "identitydetails.attribute.name=" + 
+                            key;
+                    String rdattrsKeyValue = "identitydetails.attribute.name=" +
+                            key + "\n" + "identitydetails.attribute.value=" + 
+                            value;
+                                                                                            
+                    // Reading the attributes 
                     URL  = (TextPage)webClient.getPage(serverURI +
                             "/identity/read?&attributes_names=" + key + 
                             parameters + readParameters + "&admin=" + 
                             URLEncoder.encode(token, "UTF-8"));
-                    log(Level.FINEST, "commonURLREST", 
-                            "Page: " + URL.getContent());
-                    if (!URL.getContent().contains(rdattrs))
+                    log(Level.FINEST, "commonURLREST", "Page for " +
+                            operation + " : " + URL.getContent());
+                    if (URL.getContent().contains(rdattrsKeyValue)) {
+                        log(Level.FINEST, "commonURLREST", operation + " " + 
+                                "Attribute with Key " + key + " and Value " + 
+                                value + " together Found");
+                    } else if (URL.getContent().contains(rdattrsKey)) {
+                        log(Level.FINEST, "commonURLREST", operation + " " +  
+                                "Attribute with Key " + key + " only Found");
+                    } else {
+                        log(Level.FINEST, "commonURLREST", operation +  " " + 
+                                "Attribute with neither Key " + key + " nor " +
+                                "Value " + value + " Found");
                         assert false;
+                    }
                 } else if (operation.equals("update")) {
                     
-                    //Reading the attributes with old values
+                    // Reading the attributes with old values
                     URL  = (TextPage)webClient.getPage(serverURI +
                             "/identity/read?&attributes_names=" + key + 
                             "&name=" + identity_value + readParameters + 
                             "&admin=" + URLEncoder.encode(token, "UTF-8"));
-                    log(Level.FINEST, "commonURLREST Operation: Update",
-                            "Page: " + URL.getContent());
+                    log(Level.FINEST, "commonURLREST", "Page for " +
+                            operation + " : " + URL.getContent());
                     att_names = "&identity_attribute_names=" + key +
                     "&identity_attribute_values_" + key + "=" + value +
                     att_names;
@@ -193,7 +194,7 @@ public class IdSvcsCommon extends TestCommon {
                     "Attributes Names URL: " + att_names);
             log(Level.FINEST, "commonURLREST ", "Operation: " + operation);
             
-            //Calling REST Operations
+            // Calling REST Operations
             if (operation.equals("search")) {
                 URL = (TextPage)webClient.getPage(serverURI +
                       "/identity/" + operation + "?" + parameters + att_names +
@@ -218,13 +219,14 @@ public class IdSvcsCommon extends TestCommon {
                       "/identity/" + operation + "?" + att_names +
                       "&subjectid=" + URLEncoder.encode(token, "UTF-8"));
             } else if (operation.equals("read")) {
-                log(Level.FINEST, "commonURLREST ", "Read");
+                log(Level.FINEST, "commonURLREST", "Read");
             } else {
-                log(Level.SEVERE, "commonURLREST ", "Operation Not Found " + 
+                log(Level.SEVERE, "commonURLREST", "Operation Not Found " + 
                         operation);
                 assert false;
             }
-            log(Level.FINEST, "commonURLREST", "Page: " + URL.getContent());
+            log(Level.FINEST, "commonURLREST", "Page for " +
+                    operation + " : " + URL.getContent());
                                    
         } catch(Exception e) {
             log(Level.SEVERE, "commonURLREST", e.getMessage());
@@ -252,30 +254,26 @@ public class IdSvcsCommon extends TestCommon {
                 for (int i = 0; i < identities.length; i++) {
                     identities[i] = identities[i] + "\n";
                     
-                    //  For Identities exists
+                    // For Identities exists
                     if (contains) {
                         if (!str.contains(identities[i])) {
-                            log(Level.SEVERE, "commonSearchREST", 
-                                    "Identity does not exists: " +
-                                    identities[i]);
+                            log(Level.SEVERE, "commonSearchREST", "Identity " +
+                                    "does not exist: " + identities[i]);
                             assert false;
                         } else {
                             log(Level.FINEST, "commonSearchREST",
-                                    "Identity exists: " +
-                                    identities[i]);
+                                    "Identity exists: " + identities[i]);
                         }
                     } 
-                    //  For Identities not exists
+                    // For Identities not exists
                     else {
                         if (str.contains(identities[i])) {
-                            log(Level.SEVERE, "commonSearchREST",
-                                    "Identity does not exists: " +
-                                    identities[i]);
+                            log(Level.SEVERE, "commonSearchREST", "Identity " +
+                                    "does not exist: " + identities[i]);
                             assert false;
                         } else {
                             log(Level.FINEST, "commonSearchREST", 
-                                    "Identity exists: " +
-                                    identities[i]);
+                                    "Identity exists: " + identities[i]);
                         }
                     }
                 }
@@ -289,21 +287,19 @@ public class IdSvcsCommon extends TestCommon {
                     identities[i] = identities[i] + "\n";
                     String str = page.getContent();
 
-                    //  For Identities exists
+                    // For Identities exists
                     if (contains.TRUE) {
                         if (!str.contains(identities[i])) {
-                            log(Level.SEVERE, "commonSearchREST", 
-                                    "Identity does not exists: " +
-                                    identities[i]);
+                            log(Level.SEVERE, "commonSearchREST", "Identity " +
+                                    "does not exists: " + identities[i]);
                             assert false;
                         }
                     } 
-                    //  For Identities not exists 
+                    // For Identities not exists 
                     else {
                         if (str.contains(identities[i])) {
-                            log(Level.SEVERE, "commonSearchREST", 
-                                    "Identity exists: " +
-                                    identities[i]);
+                            log(Level.SEVERE, "commonSearchREST",
+                                    "Identity exists: " + identities[i]);
                             assert false;
                         }
                     }
