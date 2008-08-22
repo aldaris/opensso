@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPCache.java,v 1.16 2008-08-01 22:22:10 hengming Exp $
+ * $Id: IDPCache.java,v 1.17 2008-08-22 20:40:42 hengming Exp $
  *
  */
 
@@ -198,6 +198,13 @@ public class IDPCache {
       */
     public static Hashtable idpSessionsBySessionID = new Hashtable(); 
     
+    /** 
+      * Cache saves user ID for transient NameID 
+      * key   : NameID value (String) 
+      * value : user ID 
+      */
+    public static Hashtable userIDByTransientNameIDValue = new Hashtable(); 
+
     /** 
       * Cache saves the original LogoutRequest coming from SP to IDP proxy
       * key   : requestID (String) 

@@ -22,17 +22,21 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSessionListener.java,v 1.4 2008-07-30 19:55:32 weisun2 Exp $
+ * $Id: IDPSessionListener.java,v 1.5 2008-08-22 20:40:42 hengming Exp $
  *
  */
 
 
 package com.sun.identity.saml2.profile;
 
+import java.util.Iterator;
+import java.util.List;
+
 import com.sun.identity.plugin.session.SessionListener;
 import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionProvider;
 import com.sun.identity.plugin.session.SessionException;
+import com.sun.identity.saml2.assertion.NameID;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Utils;
 
@@ -92,7 +96,23 @@ public class IDPSessionListener
                }
                return;
            }
-           IDPCache.idpSessionsByIndices.remove(sessionIndex);
+           IDPSession idpSession =
+               (IDPSession)IDPCache.idpSessionsByIndices.remove(sessionIndex);
+           if (idpSession != null) {
+               synchronized(IDPCache.idpSessionsByIndices) {
+                   List list = (List)idpSession.getNameIDandSPpairs();
+                   for(Iterator iter = list.iterator(); iter.hasNext();) {
+                       NameIDandSPpair pair = (NameIDandSPpair)iter.next();
+                       NameID nameID = pair.getNameID();
+                       if (SAML2Constants.NAMEID_TRANSIENT_FORMAT.equals(
+                           nameID.getFormat())) {
+                           IDPCache.userIDByTransientNameIDValue.remove(
+                               nameID.getValue());
+                       }
+                   }
+               }
+           }
+
            IDPCache.authnContextCache.remove(sessionIndex);
            String  sessID = sessionProvider.getSessionID(session); 
            if (IDPCache.idpSessionsBySessionID.get(sessID) != null) {

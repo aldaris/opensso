@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultAttributeAuthorityMapper.java,v 1.2 2008-06-25 05:47:50 qcheng Exp $
+ * $Id: DefaultAttributeAuthorityMapper.java,v 1.3 2008-08-22 20:40:02 hengming Exp $
  *
  */
 
@@ -98,7 +98,7 @@ public class DefaultAttributeAuthorityMapper implements
         HttpServletResponse response, AttributeQuery attrQuery,
         String attrAuthorityEntityID, String realm) throws SAML2Exception {
 
-        return AttributeQueryUtil.getIdentityFromDataStore(attrQuery,
+        return AttributeQueryUtil.getIdentity(attrQuery,
             attrAuthorityEntityID, realm);
     }
 

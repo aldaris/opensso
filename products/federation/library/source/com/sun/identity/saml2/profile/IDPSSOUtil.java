@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.38 2008-08-01 22:22:10 hengming Exp $
+ * $Id: IDPSSOUtil.java,v 1.39 2008-08-22 20:40:42 hengming Exp $
  *
  */
 
@@ -1396,6 +1396,11 @@ public class IDPSSOUtil {
 
         subject.setNameID(nameID);
     
+        if (isTransient) {
+            IDPCache.userIDByTransientNameIDValue.put(nameID.getValue(),
+                userName);
+        }
+
         String inResponseTo = null;
         if (authnReq != null) {
             inResponseTo = authnReq.getID();

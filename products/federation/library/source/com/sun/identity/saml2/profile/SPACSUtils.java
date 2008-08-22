@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.30 2008-08-01 22:22:10 hengming Exp $
+ * $Id: SPACSUtils.java,v 1.31 2008-08-22 20:40:42 hengming Exp $
  *
  */
 
@@ -1153,10 +1153,11 @@ public class SPACSUtils {
             throw new SAML2Exception(
                 SAML2Utils.bundle.getString("noUserMapping"));
         }
-        
-        boolean writeFedInfo = ((!SAML2Constants.NAMEID_TRANSIENT_FORMAT.equals(
-            nameId.getFormat())) && (!SAML2Utils.isFedInfoExists(userName,
-            hostEntityId, remoteHostId, nameId)));
+
+        boolean isTransient = SAML2Constants.NAMEID_TRANSIENT_FORMAT.equals(
+            nameId.getFormat());
+        boolean writeFedInfo = ((!isTransient) && (!SAML2Utils.isFedInfoExists(
+            userName, hostEntityId, remoteHostId, nameId)));
             // TODO: check if this few lines are needed
             /*
                 DN dnObject = new DN(userName);
@@ -1299,7 +1300,7 @@ public class SPACSUtils {
         String requestID = respInfo.getResponse().getInResponseTo();
         // save info in memory for logout
         saveInfoInMemory(sessionProvider, session, sessionIndex, info,
-            IDPProxyUtil.isIDPProxyEnabled(requestID));
+            IDPProxyUtil.isIDPProxyEnabled(requestID), isTransient);
 
         // invoke SP Adapter
         SAML2ServiceProviderAdapter spAdapter =
@@ -1441,10 +1442,9 @@ public class SPACSUtils {
         return attrMapper;
     }
 
-    private static void saveInfoInMemory(
-        SessionProvider sessionProvider, Object session,
-        String sessionIndex, NameIDInfo info, boolean isIDPProxy) 
-        throws SAML2Exception {
+    private static void saveInfoInMemory(SessionProvider sessionProvider,
+        Object session, String sessionIndex, NameIDInfo info,
+        boolean isIDPProxy, boolean isTransient) throws SAML2Exception {
         
         String infoKeyString = (new NameIDInfoKey(
             info.getNameIDValue(),
@@ -1469,6 +1469,26 @@ public class SPACSUtils {
                     sessionProvider.setProperty(
                         session, infoKeyAttribute, values);
                 }
+            }
+            if (isTransient) {
+                String nameIDInfoStr = info.toValueString();
+                String infoAttribute = AccountUtils.getNameIDInfoAttribute();
+                String[] nameIDInfoStrs = sessionProvider.getProperty(session,
+                    infoAttribute);
+                if (nameIDInfoStrs == null) {
+                    nameIDInfoStrs = new String[1];
+                    nameIDInfoStrs[0] = nameIDInfoStr;
+                } else {
+                    Set nameIDInfoStrSet = new HashSet();
+                    for(int i=0; i<nameIDInfoStrs.length; i++) {
+                        nameIDInfoStrSet.add(nameIDInfoStrs[i]);
+                    }
+                    nameIDInfoStrSet.add(nameIDInfoStr);
+                    nameIDInfoStrs = (String[])nameIDInfoStrSet.toArray(
+                        new String[nameIDInfoStrSet.size()]);
+                }
+                sessionProvider.setProperty(session, infoAttribute,
+                    nameIDInfoStrs);
             }
         } catch (SessionException sessE) {
             throw new SAML2Exception(sessE);

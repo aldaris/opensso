@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeQueryUtil.java,v 1.7 2008-06-27 00:45:55 hengming Exp $
+ * $Id: AttributeQueryUtil.java,v 1.8 2008-08-22 20:40:42 hengming Exp $
  *
  */
 
@@ -511,7 +511,7 @@ public class AttributeQueryUtil {
         }
     }
 
-    public static String getIdentityFromDataStore(AttributeQuery attrQuery,
+    public static String getIdentity(AttributeQuery attrQuery,
         String attrAuthorityEntityID, String realm) throws SAML2Exception {
 
         Subject subject = attrQuery.getSubject();
@@ -528,21 +528,22 @@ public class AttributeQueryUtil {
             nameID = subject.getNameID();
         }
 
-        if (!SAML2Utils.isPersistentNameID(nameID)) {
-            throw new SAML2Exception(SAML2Utils.bundle.getString(
-                "unsupportedAttrQuerySubjectNameID"));
-        }
+        String nameIDFormat = nameID.getFormat();
+        if (SAML2Constants.NAMEID_TRANSIENT_FORMAT.equals(nameIDFormat)) {
+            return (String)IDPCache.userIDByTransientNameIDValue.get(
+                nameID.getValue());
+        } else {
+            String requestedEntityID = attrQuery.getIssuer().getValue();
 
-        String requestedEntityID = attrQuery.getIssuer().getValue();
-
-        try {
-            return dsProvider.getUserID(realm, SAML2Utils.getNameIDKeyMap(
-                nameID, attrAuthorityEntityID, requestedEntityID, realm,
-                SAML2Constants.IDP_ROLE));
-        } catch (DataStoreProviderException dse) {
-            SAML2Utils.debug.error(
-                "AttributeQueryUtil.getIdentityFromDataStore:", dse);
-            throw new SAML2Exception(dse.getMessage());
+            try {
+                return dsProvider.getUserID(realm, SAML2Utils.getNameIDKeyMap(
+                    nameID, attrAuthorityEntityID, requestedEntityID, realm,
+                    SAML2Constants.IDP_ROLE));
+            } catch (DataStoreProviderException dse) {
+                SAML2Utils.debug.error(
+                    "AttributeQueryUtil.getIdentityFromDataStore:", dse);
+                throw new SAML2Exception(dse.getMessage());
+            }
         }
     }
 
