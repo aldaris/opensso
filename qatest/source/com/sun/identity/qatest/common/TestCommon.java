@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.56 2008-08-21 05:04:10 mrudulahg Exp $
+ * $Id: TestCommon.java,v 1.57 2008-08-22 23:07:50 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,15 +39,19 @@ import com.sun.identity.jaxrpc.JAXRPCUtil;
 import com.sun.identity.shared.jaxrpc.SOAPClient;
 import java.io.BufferedWriter;
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.ConnectException;
+import java.net.HttpURLConnection;
 import java.net.ConnectException;
 import java.net.URL;
 import java.text.MessageFormat;
@@ -72,6 +76,7 @@ import javax.security.auth.callback.PasswordCallback;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.webapp.WebAppContext;
 import org.testng.Reporter;
+import java.net.URLEncoder;
 
 /**
  * This class is the base for all <code>OpenSSO</code> QA testcases.
@@ -393,7 +398,7 @@ public class TestCommon implements TestConstants {
     }
     
     /**
-     * Creates a map object and adds all the configutaion properties to that.
+     * Creates a map object and adds all the configuration properties to that.
      */
     protected Map getConfigurationMap(String rb, String strProtocol,
             String strHost, String strPort, String strURI)
@@ -429,16 +434,16 @@ public class TestCommon implements TestConstants {
                 TestConstants.KEY_ATT_DS_DIRMGRDN));
         map.put(TestConstants.KEY_ATT_DS_DIRMGRPASSWD,
                 cfg.getString(TestConstants.KEY_ATT_DS_DIRMGRPASSWD));
-        map.put(TestConstants.KEY_ATT_LOAD_UMS, cfg.getString(
-                TestConstants.KEY_ATT_LOAD_UMS));
-        
+        map.put(TestConstants.KEY_ATT_CONFIG_UMDATASTORE, cfg.getString(
+                TestConstants.KEY_ATT_CONFIG_UMDATASTORE));
+              
         exiting("getConfigurationMap");
         
         return map;
     }
     
     /**
-     * Creates a map object and adds all the configutaion properties to that.
+     * Creates a map object and adds all the configuration properties to that.
      */
     protected Map getConfigurationMap(String rb)
     throws Exception {
@@ -446,8 +451,326 @@ public class TestCommon implements TestConstants {
     }
     
     /**
-     * Configures opensso using the configurator page. It map needs to set the
-     * following values:
+     * Creates a URLencoded String of all the configuration parameters.
+     * map               A map of all the configuration data
+     * strServerNo       The id number of the server being configured in
+     *                   multi server tests
+     */
+    protected String getPostString(Map map, String strServerNo)
+    throws Exception {
+        // Forming the Server protocol, host & port
+        StringBuffer strBuff = new StringBuffer();
+        String strServerURL = (String)map.get("serverurl");
+        String strServerURI = (String)map.get("serveruri");        
+        log(Level.FINEST, "getPostString", "serverurl=" + strServerURL + 
+                "serveruri=" + strServerURI);
+        String strLocalURL = strServerURL;
+        int iIndex;
+        iIndex = strServerURL.indexOf("://");
+        String strServerProtocol = strLocalURL.substring(0, iIndex);
+        log(Level.FINEST, "getPostString", "strServerProtocol=" + 
+                strServerProtocol);
+        strLocalURL = strLocalURL.substring(iIndex + 3, strLocalURL.length());
+        iIndex = strLocalURL.indexOf(":");
+        String strServerHost = strLocalURL.substring(0, iIndex);
+        log(Level.FINEST, "getPostString", "strServerHost=" + 
+                strServerHost);
+        strLocalURL = strLocalURL.substring(iIndex + 1, strLocalURL.length());
+        String strServerPort = strLocalURL;
+        log(Level.FINEST, "getPostString", "strServerPort=" + 
+                strServerPort);
+        String strURL = strServerURL + strServerURI + "/config/configurator";
+        log(Level.FINEST, "getPostString", "strURL: " + strURL);          
+        strBuff.append(URLEncoder.encode("SERVER_URL", "UTF-8"))
+		.append("=")
+		.append(URLEncoder.encode(strServerURL, "UTF-8"))
+                .append("&")
+                .append(URLEncoder.encode("SERVER_PORT", "UTF-8"))
+		.append("=")
+		.append(URLEncoder.encode(strServerPort, "UTF-8"))
+                .append("&")
+                .append(URLEncoder.encode("SERVER_HOST", "UTF-8"))
+		.append("=")
+		.append(URLEncoder.encode(strServerHost, "UTF-8"))
+                .append("&")
+                .append(URLEncoder.encode("COOKIES_DOMAIN", "UTF-8"))
+ 		.append("=")
+                .append(URLEncoder.encode(
+                    (String)map.get(
+                        TestConstants.KEY_ATT_COOKIE_DOMAIN), "UTF-8"))
+                .append("&")
+                .append(URLEncoder.encode("BASE_DIR", "UTF-8"))
+		.append("=")
+     		.append(URLEncoder.encode(
+                    (String)map.get(TestConstants.KEY_ATT_CONFIG_DIR), "UTF-8"))
+                .append("&");
+        
+        String strEncryptKey = (String)map.get(
+                TestConstants.KEY_ATT_AM_ENC_PWD);
+        if (!(strEncryptKey.equals(null)) && !(strEncryptKey.equals(""))) {
+            strBuff.append(URLEncoder.encode("AM_ENC_KEY", "UTF-8"))
+                    .append("=")		
+                    .append(URLEncoder.encode(strEncryptKey, "UTF-8")); 
+        } else {
+            strBuff.append(URLEncoder.encode("AM_ENC_KEY", "UTF-8"))
+                    .append("=")		
+                    .append(URLEncoder.encode(
+                        "FederatedAccessManagerEncryptionKey", "UTF-8")); 
+        }
+
+        strBuff.append("&")
+                .append(URLEncoder.encode("PLATFORM_LOCALE", "UTF-8"))
+		.append("=")
+		.append(URLEncoder.encode("en_US", "UTF-8"))
+                .append("&")
+                .append(URLEncoder.encode("ADMIN_PWD", "UTF-8"))
+		.append("=")
+		.append(URLEncoder.encode( 
+                    (String)map.get(
+                    TestConstants.KEY_ATT_AMADMIN_PASSWORD), "UTF-8"))
+                .append("&")
+                .append(URLEncoder.encode("ADMIN_CONFIRM_PWD", "UTF-8"))
+		.append("=")		
+		.append(URLEncoder.encode( 
+                    (String)map.get(
+                    TestConstants.KEY_ATT_AMADMIN_PASSWORD), "UTF-8"))
+                .append("&");
+        
+        //DIRECTORY SERVER PARAMETERS
+        String strConfigStore = (String)map.get(
+                    TestConstants.KEY_ATT_CONFIG_DATASTORE);
+        log(Level.FINE, "configureProduct", "Config store is: " +
+                strConfigStore);
+        strBuff.append(URLEncoder.encode("DIRECTORY_SSL", "UTF-8"))
+                .append("=")
+                .append(URLEncoder.encode("SIMPLE", "UTF-8"))
+                .append("&");
+
+        strBuff.append(URLEncoder.encode("DIRECTORY_SERVER", "UTF-8"))
+                .append("=")
+                .append(URLEncoder.encode(host, "UTF-8"))
+                .append("&");        
+        strBuff.append(URLEncoder.encode("DS_DIRMGRDN", "UTF-8"))
+                .append("=")
+                .append(URLEncoder.encode(
+                    (String)map.get(TestConstants.KEY_ATT_DS_DIRMGRDN),
+                    "UTF-8"))
+                .append("&")
+                .append(URLEncoder.encode("ROOT_SUFFIX", "UTF-8"))
+                .append("=")
+                .append(URLEncoder.encode((String)map.get(
+                    TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX), "UTF-8"))
+                .append("&")
+                .append(URLEncoder.encode("DATA_STORE", "UTF-8"))
+                .append("=")
+                .append(URLEncoder.encode(strConfigStore, "UTF-8"))        
+                .append("&")
+                .append(URLEncoder.encode("DIRECTORY_PORT", "UTF-8"))
+                .append("=")
+                .append(URLEncoder.encode(
+                    (String)map.get(
+                    TestConstants.KEY_ATT_DIRECTORY_PORT), "UTF-8"))
+                .append("&")
+                .append(URLEncoder.encode("DS_DIRMGRPASSWD", "UTF-8"))
+                .append("=")
+                .append(URLEncoder.encode(
+                    (String)map.get(
+                    TestConstants.KEY_ATT_DS_DIRMGRPASSWD), "UTF-8"));
+ 
+        //USER STORE PARAMETERS
+        ResourceBundle umCfgData = ResourceBundle.getBundle("config" +
+                    fileseparator + "UMGlobalDatastoreConfig");      
+        ResourceBundle umGblCfgData = ResourceBundle.getBundle("config" +
+                    fileseparator + "default" + fileseparator +
+                    "UMGlobalDatastoreConfig");      
+        String strUMStore = (String)map.get(
+                    TestConstants.KEY_ATT_CONFIG_UMDATASTORE);
+        log(Level.FINE, "configureProduct", "UM store is: " + strUMStore + 
+                ". Defaulting to Config Store parameters");
+        if (strUMStore.equals("embedded")) {
+            strBuff.append("&")
+                    .append(URLEncoder.encode("USERSTORE_TYPE", "UTF-8"))
+                    .append("=")
+                    .append(URLEncoder.encode("LDAPv3", "UTF-8"))
+                    .append("&")
+                    .append(URLEncoder.encode("USERSTORE_MGRDN", "UTF-8"))
+                    .append("=")
+                    .append(URLEncoder.encode(
+                        (String)map.get(
+                        TestConstants.KEY_ATT_DS_DIRMGRDN), "UTF-8"))
+                    .append("&")
+                    .append(URLEncoder.encode("USERSTORE_HOST", "UTF-8"))
+                    .append("=")
+                    .append(URLEncoder.encode(host, "UTF-8"))        
+                    .append("&")
+                    .append(URLEncoder.encode("USERSTORE_PASSWD", "UTF-8"))
+                    .append("=")
+                    .append(URLEncoder.encode(
+                        (String)map.get(
+                        TestConstants.KEY_ATT_DS_DIRMGRPASSWD), "UTF-8"))
+                    .append("&")
+                    .append(URLEncoder.encode("USERSTORE_SSL", "UTF-8"))
+                    .append("=")
+                    .append(URLEncoder.encode("SIMPLE", "UTF-8"))
+                    .append("&")
+                    .append(URLEncoder.encode("USERSTORE_PORT", "UTF-8"))
+                    .append("=")
+                    .append(URLEncoder.encode((String)map.get(
+                        TestConstants.KEY_ATT_DIRECTORY_PORT), "UTF-8"))
+                    .append("&")
+                    .append(URLEncoder.encode("USERSTORE_SUFFIX", "UTF-8"))
+                    .append("=")
+                    .append(URLEncoder.encode((String)map.get(
+                        TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX), "UTF-8"));                            
+                    
+        } else {
+            String strUMDSType = umCfgData.getString(
+                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX + strServerNo + "." 
+                    + SMSConstants.UM_DATASTORE_TYPE + ".0");
+            String strUMSSL = "SIMPLE";
+            if (umGblCfgData.getString(SMSConstants.UM_DATASTORE_PARAMS_PREFIX 
+                    + "." + strUMDSType + "." + 
+                    SMSConstants.UM_LDAPv3_LDAP_SSL_ENABLED).equals("true")) {
+                strUMSSL = "SSL";
+            } 
+            strBuff.append("&")
+                    .append(URLEncoder.encode("USERSTORE_TYPE", "UTF-8"))
+                    .append("=")
+                    .append(URLEncoder.encode(strUMDSType, "UTF-8"))
+                    .append("&")
+                    .append(URLEncoder.encode("USERSTORE_MGRDN", "UTF-8"))
+                    .append("=")
+                    .append(URLEncoder.encode(umGblCfgData.getString(
+                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX 
+                            + "." + strUMDSType + "." + 
+                            SMSConstants.UM_DATASTORE_ADMINID), "UTF-8"))
+                    .append("&")
+                    .append(URLEncoder.encode("USERSTORE_HOST", "UTF-8"))
+                    .append("=")
+                    .append(URLEncoder.encode(umCfgData.getString(
+                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + 
+                            strServerNo + "." + 
+                            SMSConstants.UM_LDAPv3_LDAP_SERVER + ".0"),
+                            "UTF-8"))        
+                    .append("&")
+                    .append(URLEncoder.encode("USERSTORE_PASSWD", "UTF-8"))
+                    .append("=")
+                    .append(URLEncoder.encode(umCfgData.getString(
+                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + 
+                             strServerNo + "." + 
+                             SMSConstants.UM_DATASTORE_ADMINPW + ".0"),
+                            "UTF-8"))
+                    .append("&")
+                    .append(URLEncoder.encode("USERSTORE_SSL", "UTF-8"))
+                    .append("=")
+                    .append(URLEncoder.encode(strUMSSL, "UTF-8"))
+                    .append("&")
+                    .append(URLEncoder.encode("USERSTORE_PORT", "UTF-8"))
+                    .append("=")
+                    .append(URLEncoder.encode(umCfgData.getString(
+                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                             strServerNo + "." + 
+                             SMSConstants.UM_LDAPv3_LDAP_PORT + ".0"),
+                            "UTF-8"))
+                    .append("&")
+                    .append(URLEncoder.encode("USERSTORE_SUFFIX", "UTF-8"))
+                    .append("=")
+                    .append(URLEncoder.encode(umCfgData.getString(
+                            SMSConstants.UM_DATASTORE_PARAMS_PREFIX + 
+                             strServerNo + "." + 
+                             SMSConstants.UM_DATASTORE_ROOT_SUFFIX + 
+                            ".0" ), "UTF-8"));        
+        }
+            //AMLDAPUSERPASSWD
+	strBuff.append("&")
+                .append(URLEncoder.encode("AMLDAPUSERPASSWD", "UTF-8"))
+		.append("=")
+		.append(URLEncoder.encode((String)map.get(
+                    TestConstants.KEY_AMC_SERVICE_PASSWORD), "UTF-8"))
+                .append("&")
+                .append(URLEncoder.encode("AMLDAPUSERPASSWD_CONFIRM", "UTF-8"))
+		.append("=")
+		.append(URLEncoder.encode((String)map.get(
+                    TestConstants.KEY_AMC_SERVICE_PASSWORD), "UTF-8"))
+                .append("&")
+                .append("LB_SITE_NAME=")
+                .append("&")
+                .append("LB_PRIMARY_URL=")        
+                .append("&")
+                .append("DS_EMB_REPL_HOST2=")
+                .append("&")
+                .append("DS_EMB_REPLPORT1=")
+                .append("&")
+                .append("DS_EMB_REPLPORT2=")
+                .append("&")
+                .append("DS_EMB_REPL_FLAG=")
+                .append("&")
+                .append("DS_EMB_REPL_PORT2=");
+      
+        
+        return strBuff.toString();
+        
+    }
+    
+    /** 
+     * Posts the configuration data to the configurator servlet
+     * strURL            The URL to post the data
+     * map               A map of all the configuration data
+     * strServerNo       The id number of the server being configured in
+     *                   multi server tests
+     */
+    protected boolean postConfigData(String strURL, Map map, String strServerNo) 
+    throws Exception{
+        String strURLParameters = getPostString(map, strServerNo);
+        URL url = new URL(strURL);
+        log(Level.FINEST, "postConfigData", "Configuration strURLParameters: "
+                + strURLParameters);        
+        log(Level.FINEST, "postConfigData", "Configuration strURL: "
+                + strURL);        
+
+        HttpURLConnection urlConn = null;
+        urlConn = (HttpURLConnection) url.openConnection();
+        log(Level.FINEST, "postConfigData", "AFTER OPENING CONNECTION: ");
+
+        urlConn.setRequestMethod("POST");
+        urlConn.setRequestProperty("Content-Length", "" + Integer.toString(
+                strURLParameters.getBytes().length));
+        urlConn.setRequestProperty("Content-Language", "en-US");  
+        urlConn.setRequestProperty("Content-Type", 
+                "application/x-www-form-urlencoded");
+        urlConn.setUseCaches (false);
+        urlConn.setDoInput(true);
+        urlConn.setDoOutput(true);
+        DataOutputStream printout = new DataOutputStream 
+                (urlConn.getOutputStream ());
+        printout.writeBytes (strURLParameters);
+        printout.flush ();
+        printout.close ();        
+        log(Level.FINEST, "postConfigData", "GETTING RESPONSE ");
+        
+        // getting the response is required to force the request, 
+        //otherwise it might not even be sent at all
+        BufferedReader in = new BufferedReader(new 
+                InputStreamReader(urlConn.getInputStream()));
+        String input;
+        StringBuffer response = new StringBuffer(256);
+
+        while((input = in.readLine()) != null) {
+                response.append(input + "\r");
+        }
+        log(Level.FINEST, "postConfigData", "postConfigData Response : " + 
+                response);
+        if ((response.toString()).contains("Configuration complete!")) {
+            return true;
+        } else {
+            return false;
+        }
+         
+    }
+    
+    /**
+     * Configures opensso using the configurator servlet. 
+     * The map needs the following values:
      * serverurl                 <protocol + ":" + "//" + host + ":" + port>
      * serveruri                 <URI for configured instance>
      * cookiedomain              <full cookie domain name>
@@ -465,17 +788,18 @@ public class TestCommon implements TestConstants {
      *                            privilages>
      * ds_dirmgrpasswd           <password for directory user with
      *                            administration privilages>
-     * load_ums                  <to load user schema or not(yes or no)>
+     * umdatastore                <type of userstore: embedded or dirServer>
+     * 
+     * strServerNo               The id number of the server being configured in
+     *                           multi server tests
      */
-    protected boolean configureProduct(Map map)
+    protected boolean configureProduct(Map map, String strServerNo)
     throws Exception {
         entering("configureProduct", null);
-        
         log(Level.FINEST, "configureProduct", "Configuration Map: " + map);
-        
         WebClient webclient = new WebClient();
         String strURL = (String)map.get("serverurl") +
-                (String)map.get("serveruri") + "/configurator.jsp?type=custom";
+                (String)map.get("serveruri") + "/config/options.htm";
         log(Level.FINEST, "configureProduct", "strURL: " + strURL);
         URL url = new URL(strURL);
         HtmlPage page = null;
@@ -490,6 +814,8 @@ public class TestCommon implements TestConstants {
                     Thread.sleep(10000);
                     pageIter++;
                 } catch (com.gargoylesoftware.htmlunit.ScriptException e) {
+                    log(Level.SEVERE, "configureProduct", strURL + " cannot " +
+                            "be reached.");
                 }
             }
         } catch(com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException e) {
@@ -516,180 +842,81 @@ public class TestCommon implements TestConstants {
             return false;
         }
         
-        if (getHtmlPageStringIndex(page, "configurator.jsp") != -1) {
+        if (getHtmlPageStringIndex(page, "configuration") != -1) {
             log(Level.FINE, "configureProduct", "Inside configurator.");
+            log(Level.FINE, "configureProduct", "----New config start----");
+            String baseDir = getBaseDir() + fileseparator
+                    + rb_amconfig.getString(TestConstants.KEY_ATT_SERVER_NAME)
+                    + fileseparator + "built" + fileseparator + "classes"
+                    + fileseparator;
+            String xmlfile = baseDir + "config" + fileseparator + 
+                    "ConfigXMlData.xml";
             
-            HtmlForm form = (HtmlForm)page.getForms().get(0);
-            
-            HtmlTextInput txtServer =
-                    (HtmlTextInput)form.getInputByName("SERVER_URL");
-            txtServer.setValueAttribute((String)map.get("serverurl"));
-            
-            HtmlTextInput txtCookieDomain =
-                    (HtmlTextInput)form.getInputByName("COOKIE_DOMAIN");
-            txtCookieDomain.setValueAttribute((String)map.get(
-                    TestConstants.KEY_ATT_COOKIE_DOMAIN));
-            
-            HtmlPasswordInput txtAmadminPassword =
-                    (HtmlPasswordInput)form.getInputByName("ADMIN_PWD");
-            txtAmadminPassword.setValueAttribute((String)map.get(
-                    TestConstants.KEY_ATT_AMADMIN_PASSWORD));
-            HtmlPasswordInput txtAmadminPasswordR =
-                    (HtmlPasswordInput)form.getInputByName("ADMIN_CONFIRM_PWD");
-            txtAmadminPasswordR.setValueAttribute((String)map.get(
-                    TestConstants.KEY_ATT_AMADMIN_PASSWORD));
-            
-            HtmlPasswordInput txtUrlAccessAgentPassword =
-                    (HtmlPasswordInput)form.getInputByName("AMLDAPUSERPASSWD");
-            txtUrlAccessAgentPassword.setValueAttribute((String)map.get(
-                    TestConstants.KEY_AMC_SERVICE_PASSWORD));
-            HtmlPasswordInput txtUrlAccessAgentPasswordR =
-                    (HtmlPasswordInput)form.getInputByName(
-                    "AMLDAPUSERPASSWD_CONFIRM");
-            txtUrlAccessAgentPasswordR.setValueAttribute((String)map.get(
-                    TestConstants.KEY_AMC_SERVICE_PASSWORD));
-            
-            HtmlTextInput txtConfigDir =
-                    (HtmlTextInput)form.getInputByName("BASE_DIR");
-            txtConfigDir.setValueAttribute((String)map.get(
-                    TestConstants.KEY_ATT_CONFIG_DIR));
-            
-            HtmlTextInput txtEncryptionKey =
-                    (HtmlTextInput)form.getInputByName("AM_ENC_KEY");
-            String strEncryptKey = (String)map.get(
-                    TestConstants.KEY_ATT_AM_ENC_PWD);
-            if (!(strEncryptKey.equals(null)) && !(strEncryptKey.equals("")))
-                txtEncryptionKey.setValueAttribute(strEncryptKey);
-            
-            String strConfigStore = (String)map.get(
-                    TestConstants.KEY_ATT_CONFIG_DATASTORE);
-            log(Level.FINE, "configureProduct", "Config store is: " +
-                    strConfigStore);
-            
-            HtmlRadioButtonInput rbDataStore =
-                    (HtmlRadioButtonInput)form.getInputByName("DATA_STORE");
-            rbDataStore.setDefaultValue(strConfigStore);
-            
-            if (strConfigStore.equals("embedded")) {
-                log(Level.FINE, "configureProduct",
-                        "Doing embedded System configuration.");
-                
-                HtmlTextInput txtDirServerPort =
-                        (HtmlTextInput)form.getInputByName("DIRECTORY_PORT");
-                txtDirServerPort.
-                        setValueAttribute((String)map.get(
-                        TestConstants.KEY_ATT_DIRECTORY_PORT));
-                
-                HtmlTextInput txtDirConfigData =
-                        (HtmlTextInput)form.getInputByName("ROOT_SUFFIX");
-                txtDirConfigData.setValueAttribute((String)map.
-                        get(TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX));
-                
-                HtmlPasswordInput txtDirAdminPassword =
-                        (HtmlPasswordInput)form.
-                        getInputByName("DS_DIRMGRPASSWD");
-                txtDirAdminPassword.setValueAttribute((String)map.
-                        get(TestConstants.KEY_ATT_DS_DIRMGRPASSWD));
+            //Posting configuration parameters to the configurator servlet
+            if (postConfigData((String)map.get("serverurl") +
+                (String)map.get("serveruri") + "/config/configurator", map, 
+                strServerNo)) {
+              String strNewURL = (String)map.get("serverurl") +
+                        (String)map.get("serveruri") + "/UI/Login" + "?" +
+                        "IDToken1=" + map.get(
+                        TestConstants.KEY_ATT_AMADMIN_USER) + "&IDToken2=" +
+                        map.get(TestConstants.KEY_ATT_AMADMIN_PASSWORD);
+                log(Level.FINE, "configureProduct", "strNewURL: " + strNewURL);
+                url = new URL(strNewURL);
+                try {
+                    page = (HtmlPage)webclient.getPage(url);
+                } catch (com.gargoylesoftware.htmlunit.ScriptException e) {
+                    log(Level.SEVERE, "configureProduct", strURL + " cannot " +
+                            "be reached.");
+                    return false;
+                }
+                if ((getHtmlPageStringIndex(page, "Authentication Failed") 
+                        != -1) ||
+                        (getHtmlPageStringIndex(page, "/config/options.htm")
+                        != -1)) {
+                    log(Level.SEVERE, "configureProduct",
+                            "Product Configuration was" +
+                            " not successfull. Configuration failed.");
+                    exiting("configureProduct");
+                    return false;
+                } else {
+                    log(Level.FINE, "configureProduct",
+                            "Product Configuration was" +
+                            " successfull. New bits were successfully " +
+                            "configured.");
+                    strNewURL = (String)map.get("serverurl") +
+                            (String)map.get("serveruri") + "/UI/Logout";
+                    consoleLogout(webclient, strNewURL);
+                    exiting("configureProduct");
+                    return true;
+                }                
             } else {
-                log(Level.FINE, "configureProduct",
-                        "Doing directory configuration.");
-                
-                HtmlTextInput txtDirServerName =
-                        (HtmlTextInput)form.getInputByName("DIRECTORY_SERVER");
-                txtDirServerName.
-                        setValueAttribute((String)map.get(
-                        TestConstants.KEY_ATT_DIRECTORY_SERVER));
-                
-                HtmlTextInput txtDirServerPort =
-                        (HtmlTextInput)form.getInputByName("DIRECTORY_PORT");
-                txtDirServerPort.
-                        setValueAttribute((String)map.get(
-                        TestConstants.KEY_ATT_DIRECTORY_PORT));
-                
-                HtmlTextInput txtDirConfigData =
-                        (HtmlTextInput)form.getInputByName("ROOT_SUFFIX");
-                txtDirConfigData.setValueAttribute((String)map.
-                        get(TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX));
-                
-                HtmlTextInput txtDirAdminDN =
-                        (HtmlTextInput)form.getInputByName("DS_DIRMGRDN");
-                txtDirAdminDN.setValueAttribute((String)map.
-                        get(TestConstants.KEY_ATT_DS_DIRMGRDN));
-                
-                HtmlPasswordInput txtDirAdminPassword =
-                        (HtmlPasswordInput)form.
-                        getInputByName("DS_DIRMGRPASSWD");
-                txtDirAdminPassword.setValueAttribute((String)map.
-                        get(TestConstants.KEY_ATT_DS_DIRMGRPASSWD));
-                
-                HtmlCheckBoxInput chkLoadUMS =
-                        (HtmlCheckBoxInput)form.getInputByName("DS_UM_SCHEMA");
-                if (((String)map.get(TestConstants.KEY_ATT_LOAD_UMS)).
-                        equals("yes"))
-                    chkLoadUMS.setChecked(true);
-                else
-                    chkLoadUMS.setChecked(false);
-            }
-            try {
-                page = (HtmlPage)form.submit();
-                log(Level.FINEST, "configureProduct", "Returned Page:\n" +
-                        page.asXml());
-            } catch (com.gargoylesoftware.htmlunit.ScriptException e) {
-            }
-            if ((getHtmlPageStringIndex(page, "Status: Failed") != -1)) {
                 log(Level.SEVERE, "configureProduct",
-                        "Product Configuration was" +
-                        " not successfull. Configuration failed.");
+                    "Product Configuration was not" +
+                    " successfull. The configurator servlet was not found." +
+                    " Please check if war is deployed properly.");
                 exiting("configureProduct");
                 return false;
-            }
-            String strNewURL = (String)map.get("serverurl") +
-                    (String)map.get("serveruri") + "/UI/Login" + "?" +
-                    "IDToken1=" + map.get(TestConstants.KEY_ATT_AMADMIN_USER) +
-                    "&IDToken2=" +
-                    map.get(TestConstants.KEY_ATT_AMADMIN_PASSWORD);
-            log(Level.FINE, "configureProduct", "strNewURL: " + strNewURL);
-            url = new URL(strNewURL);
-            try {
-                page = (HtmlPage)webclient.getPage(url);
-            } catch (com.gargoylesoftware.htmlunit.ScriptException e) {
-            }
-            if ((getHtmlPageStringIndex(page, "Authentication Failed") != -1) ||
-                    (getHtmlPageStringIndex(page, "configurator.jsp") != -1)) {
-                log(Level.SEVERE, "configureProduct",
-                        "Product Configuration was" +
-                        " not successfull. Configuration failed.");
-                exiting("configureProduct");
-                return false;
-            } else {
-                log(Level.FINE, "configureProduct",
-                        "Product Configuration was" +
-                        " successfull. New bits were successfully configured.");
-                strNewURL = (String)map.get("serverurl") +
-                        (String)map.get("serveruri") + "/UI/Logout";
-                consoleLogout(webclient, strNewURL);
-                exiting("configureProduct");
-                return true;
             }
         } else {
             String strNewURL = (String)map.get("serverurl") +
                     (String)map.get("serveruri") + "/UI/Login" + "?" +
                     "IDToken1=" + adminUser + "&IDToken2=" +
-                    map.get(TestConstants.KEY_ATT_AMADMIN_PASSWORD);
-            log(Level.FINE, "configureProduct", "strNewURL: " +
+            map.get(TestConstants.KEY_ATT_AMADMIN_PASSWORD);
+            log(Level.FINE, "configureProduct", "strNewURL: " + 
                     strNewURL);
             url = new URL(strNewURL);
             page = (HtmlPage)webclient.getPage(url);
-            if (getHtmlPageStringIndex(page,
+            if (getHtmlPageStringIndex(page, 
                     "Authentication Failed") != -1) {
-                log(Level.FINE, "configureProduct",
-                        "Product was already configured. " +
+                log(Level.FINE, "configureProduct", 
+                        "Product was already configured. " + 
                         "Super admin login failed.");
                 exiting("configureProduct");
                 return false;
             } else {
-                log(Level.FINE, "configureProduct", "Product was " +
-                        "already configured. " +
+                log(Level.FINE, "configureProduct", "Product was " + 
+                        "already configured. " + 
                         "Super admin login successful.");
                 strNewURL = (String)map.get("serverurl") +
                         (String)map.get("serveruri") + "/UI/Logout";

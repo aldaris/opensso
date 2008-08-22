@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupProduct.java,v 1.17 2008-06-26 21:24:15 rmisra Exp $
+ * $Id: SetupProduct.java,v 1.18 2008-08-22 23:09:05 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -230,7 +230,7 @@ public class SetupProduct extends TestCommon {
                 
                 bserver0 = configureProduct(getConfigurationMap("Configurator-"
                         + serverName0 + "-Generated", namingProtocol,
-                        namingHost, namingPort, namingURI));
+                        namingHost, namingPort, namingURI), "0");
                 if (!bserver0) {
                     log(Level.FINE, "SetupProduct",
                             "Configuration failed for " + serverName0);
@@ -322,7 +322,7 @@ public class SetupProduct extends TestCommon {
                         serverName1);
                 bserver1 = configureProduct(
                         getConfigurationMap("Configurator-" + serverName1 +
-                        "-Generated"));
+                        "-Generated"), "1");
                 if (!bserver1) {
                     log(Level.FINE, "SetupProduct", "Configuration failed" +
                             " for " + serverName1);
@@ -376,9 +376,8 @@ public class SetupProduct extends TestCommon {
                     
                     bserver2 = configureProduct(
                             getConfigurationMap("Configurator-" + serverName2 +
-                            "-Generated",
-                            namingProtocol, namingHost, namingPort, 
-                            namingURI));
+                            "-Generated", namingProtocol, namingHost, 
+                            namingPort, namingURI), "2");
                     if (!bserver2) {
                         log(Level.FINE, "SetupProduct", "Configuration failed" +
                                 " for " + serverName2);
@@ -473,7 +472,7 @@ public class SetupProduct extends TestCommon {
                             getConfigurationMap("Configurator-" + serverName3 +
                             "-Generated",
                             namingProtocol, namingHost, namingPort,
-                            namingURI));
+                            namingURI), "3");
                     if (!bserver3) {
                         log(Level.FINE, "SetupProduct", "Configuration failed" +
                                 " for " + serverName3);
@@ -591,7 +590,7 @@ public class SetupProduct extends TestCommon {
                 
                 bserver1 = configureProduct(getConfigurationMap("Configurator-"
                         + serverName0 + "-Generated", namingProtocol,
-                        namingHost, namingPort, namingURI));
+                        namingHost, namingPort, namingURI), "1");
                 if (!bserver1) {
                     log(Level.FINE, "SetupProduct", "Configuration failed for" +
                             " " + serverName0);

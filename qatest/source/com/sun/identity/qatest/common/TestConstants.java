@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestConstants.java,v 1.25 2008-08-15 22:06:37 mrudulahg Exp $
+ * $Id: TestConstants.java,v 1.26 2008-08-22 23:08:37 nithyas Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -197,6 +197,11 @@ public interface TestConstants {
      * Property key for <code>load_ums</code>.
      */
     String KEY_ATT_LOAD_UMS = "load_ums";
+    
+    /**
+     * Property key for <code>umdatastore</code>.
+     */
+    String KEY_ATT_CONFIG_UMDATASTORE = "umdatastore";
     
     /**
      * Property key for <code>defaultorg</code>.

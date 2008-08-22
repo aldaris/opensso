@@ -56,6 +56,3 @@ config_root_suffix=
 
 ds_dirmgrpasswd=
 
-# Whether to load User schema or not. Values can be yes or no.
-load_ums=
-
