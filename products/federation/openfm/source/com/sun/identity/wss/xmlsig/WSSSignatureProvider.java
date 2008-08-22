@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSSignatureProvider.java,v 1.8 2008-08-13 18:56:42 mrudul_uchil Exp $
+ * $Id: WSSSignatureProvider.java,v 1.9 2008-08-22 04:07:58 mallas Exp $
  *
  */
 
@@ -58,6 +58,7 @@ import com.sun.identity.wss.security.STRTransform;
 import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.wss.security.BinarySecurityToken;
 import com.iplanet.security.x509.CertUtils;
+import java.lang.ClassNotFoundException;
 
 /**
  * <code>WSSSignatureProvider</code> is a class for signing and 
@@ -66,18 +67,25 @@ import com.iplanet.security.x509.CertUtils;
  */ 
 public class WSSSignatureProvider extends AMSignatureProvider {
     
+    private boolean isSTRTransformRegistered = false;
+    
     /** Creates a new instance of WSSSignatureProvider */
     public WSSSignatureProvider() {
         super();
+
+    }
+    
+    private synchronized void registerSTRTransform() {
         try {
             Transform.register(STRTransform.STR_TRANSFORM_URI,
                                STRTransform.class.getName());
+            isSTRTransformRegistered = true;
         } catch (Exception e) {
             if(WSSUtils.debug.messageEnabled()) {
                WSSUtils.debug.message("WSSSignatureProvider.constructor: STR"+
                     " Transform is already registered");
             }
-        }
+        }        
     }
     
     /**
@@ -98,6 +106,10 @@ public class WSSSignatureProvider extends AMSignatureProvider {
                                    java.lang.String algorithm,
                                    java.util.List ids)
         throws XMLSignatureException {
+        
+        if(!isSTRTransformRegistered) {
+           registerSTRTransform();
+        }
         
         if (doc == null) {
             WSSUtils.debug.error("WSSSignatureProvider.signWithSAMLToken: " +
@@ -335,6 +347,10 @@ public class WSSSignatureProvider extends AMSignatureProvider {
                                    String referenceType)
         throws XMLSignatureException {
 
+        if(!isSTRTransformRegistered) {
+           registerSTRTransform();
+        }
+        
         if (doc == null) {
             SAMLUtils.debug.error("WSSSignatureProvider.signWithBinarySecurity" +
             "Token:: XML doc is null.");
@@ -439,12 +455,16 @@ public class WSSSignatureProvider extends AMSignatureProvider {
                 signature.addDocument("#"+id, transforms,
                         Constants.ALGO_ID_DIGEST_SHA1);
             }
-
-            Transforms strtransforms = new Transforms(doc);
-            strtransforms.addTransform(
+            
+            Element tokenE = (Element)root.getElementsByTagNameNS(
+                      WSSConstants.WSSE_NS,tokenType).item(0);
+            if (tokenE != null) {
+                Transforms strtransforms = new Transforms(doc);
+                strtransforms.addTransform(
                                STRTransform.STR_TRANSFORM_URI, transformParams);
-            signature.addDocument("#"+secRefId, strtransforms,
+                signature.addDocument("#"+secRefId, strtransforms,
                         Constants.ALGO_ID_DIGEST_SHA1);
+            }
 
             if(referenceType == null || referenceType.equals(
                     WSSConstants.DIRECT_REFERENCE)) {
@@ -505,6 +525,10 @@ public class WSSSignatureProvider extends AMSignatureProvider {
     public boolean verifyWSSSignature(org.w3c.dom.Document doc,
                                        java.lang.String certAlias)
         throws XMLSignatureException {
+        
+        if(!isSTRTransformRegistered) {
+           registerSTRTransform();
+        }
 
         if (doc == null) {
             WSSUtils.debug.error("WSSSignatureProvider.verifyWSSSignature: " +

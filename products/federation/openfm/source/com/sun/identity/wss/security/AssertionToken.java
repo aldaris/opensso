@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionToken.java,v 1.5 2008-06-25 05:50:06 qcheng Exp $
+ * $Id: AssertionToken.java,v 1.6 2008-08-22 04:07:56 mallas Exp $
  *
  */
 
@@ -33,6 +33,9 @@ import java.util.Date;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 import java.text.ParseException;
 import java.math.BigInteger;
 import java.security.PublicKey;
@@ -40,6 +43,7 @@ import java.security.cert.X509Certificate;
 import java.security.interfaces.DSAPublicKey;
 import java.security.interfaces.DSAParams;
 import java.security.interfaces.RSAPublicKey;
+import javax.xml.namespace.QName;
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 import org.w3c.dom.Text;
@@ -61,7 +65,9 @@ import com.sun.identity.saml.assertion.SubjectConfirmation;
 import com.sun.identity.saml.assertion.SubjectStatement;
 import com.sun.identity.saml.common.SAMLException;
 import com.sun.identity.saml.common.SAMLConstants;
-import com.sun.identity.saml.common.SAMLServiceManager;
+import com.sun.identity.saml.assertion.AttributeStatement;
+import com.sun.identity.saml.assertion.Attribute;
+
 
 /**
  * This class implements the interface <code>SecurityToken</code> for the 
@@ -77,7 +83,7 @@ public class AssertionToken implements SecurityToken {
       private Element assertionE = null;
       private static final String KEY_INFO_TYPE =
          "com.sun.identity.liberty.ws.security.keyinfotype";
-
+      
       private static String keyInfoType = SystemConfigurationUtil.getProperty(
                                           KEY_INFO_TYPE);
       /**
@@ -125,26 +131,39 @@ public class AssertionToken implements SecurityToken {
           NameIdentifier nameIdentifier = spec.getSenderIdentity();
           certAlias = spec.getSubjectCertAlias();
 
-          if((nameIdentifier == null) || (securityMechanism == null)
-                  || (certAlias == null)) {
+          if(nameIdentifier == null) {
              throw new SecurityException(
                    WSSUtils.bundle.getString("invalidAssertionTokenSpec"));
           }
 
-          String confirmationMethod = 
-                getConfirmationMethod(securityMechanism.getURI());
+          String confirmationMethod = spec.getConfirmationMethod();
+          if(confirmationMethod == null) {
+             confirmationMethod = 
+                     getConfirmationMethod(securityMechanism.getURI());
+          }
 
-          // TODO: Read the issuer from the service xml??
-          String issuer = SystemConfigurationUtil.getProperty(Constants.AM_SERVER_HOST);
+          
+          String issuer = spec.getIssuer();
+          if(issuer == null) {
+             issuer =
+                SystemConfigurationUtil.getProperty(Constants.AM_SERVER_HOST);
+          }
           Date issueInstant = new Date();
-
+          Set statements = new HashSet();
           AuthenticationStatement authStatement = 
                     createAuthenticationStatement(
                     nameIdentifier,confirmationMethod);
-
-          Set statements = new HashSet();
+                    
           if(authStatement != null) {
              statements.add(authStatement);
+          }
+          Map attributes = spec.getClaimedAttributes();
+          if(attributes != null && !attributes.isEmpty()) {
+             AttributeStatement attrStatement = 
+                             createAttributeStatement(spec);
+             if(attrStatement != null) {
+                statements.add(attrStatement);
+             }
           }
 
           if(WSSUtils.debug.messageEnabled()) {
@@ -155,7 +174,8 @@ public class AssertionToken implements SecurityToken {
           }
 
           try {
-              assertion = new Assertion("", issuer, issueInstant, statements); 
+              assertion = new Assertion(spec.getAssertionID(), issuer,
+                      issueInstant, statements); 
           } catch (SAMLException se) {
               WSSUtils.debug.error("AssertionToken.createAssertion: " +
                "SAMLException in creating the assertion.", se);
@@ -475,6 +495,40 @@ public class AssertionToken implements SecurityToken {
       */
      public Assertion getAssertion() {
          return assertion;
+     }
+     
+     private AttributeStatement createAttributeStatement(
+             AssertionTokenSpec spec) throws SecurityException {
+         Map attributes = spec.getClaimedAttributes();         
+         if(attributes == null) {
+            return null;
+         }         
+         try {
+             List samlAttributes = new ArrayList();         
+             Iterator iter = attributes.keySet().iterator();
+             while(iter.hasNext()) {
+                 QName qName = (QName)iter.next();
+                 String attrName = qName.getLocalPart();
+                 String nameSpace = qName.getNamespaceURI();
+                 if("NameID".equals(qName.getLocalPart())) {
+                    continue; 
+                 }
+                 List values = (List)attributes.get(qName);
+                 Attribute attr = new Attribute(attrName, nameSpace, values);             
+                 samlAttributes.add(attr);            
+             } 
+             if(samlAttributes.isEmpty()) {
+                return null;
+             }
+             Subject subject = new Subject(spec.getSenderIdentity());
+             AttributeStatement attrStatement = 
+                    new AttributeStatement(subject, samlAttributes);         
+             return attrStatement;
+         } catch (SAMLException se) {
+             WSSUtils.debug.error("AssertionToken.createAttributeStatement: " +
+                     "Unable to create attribute statement", se);
+             throw new SecurityException(se.getMessage());
+         }
      }
 
 }

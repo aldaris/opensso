@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HTTPRequestHandler.java,v 1.8 2008-07-30 05:00:45 mallas Exp $
+ * $Id: HTTPRequestHandler.java,v 1.9 2008-08-22 04:07:57 mallas Exp $
  *
  */
 
@@ -175,7 +175,7 @@ public class HTTPRequestHandler implements HTTPRequestHandlerInterface {
         } catch (Exception e) {
             if(debug.messageEnabled()) {
                 debug.message("HTTPRequestHandler.setTokenInSubject: " + 
-                        "Can not set SSOToken in Subject ");
+                        "Can not set SSOToken in Subject ", e);
             }
             return false;
         }
@@ -222,7 +222,7 @@ public class HTTPRequestHandler implements HTTPRequestHandlerInterface {
                     return null;
                 }
          });
-         ThreadLocalService.setSSOToken(ssoToken);
+         //ThreadLocalService.setSSOToken(ssoToken);
     }
 
     // Sets the authenticated principal to the subject.

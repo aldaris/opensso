@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.23 2008-08-07 23:17:01 mallas Exp $
+ * $Id: SOAPRequestHandler.java,v 1.24 2008-08-22 04:07:58 mallas Exp $
  *
  */
 
@@ -40,6 +40,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Set;
 import java.util.Map;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.io.FileOutputStream;
@@ -99,6 +100,7 @@ import com.sun.identity.wss.security.AssertionToken;
 import com.sun.identity.wss.security.SAML2Token;
 import com.sun.identity.wss.sts.STSConstants;
 import com.sun.identity.wss.logging.LogUtil;
+import com.iplanet.services.util.Crypt;
 
 /* iPlanet-PUBLIC-CLASS */
 
@@ -908,10 +910,14 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                         "UserName token");
             }
             List creds = null;
-
+            
             try {
                 SubjectSecurity subjectSecurity = getSubjectSecurity(subject);
-                creds = subjectSecurity.userCredentials;
+                SSOToken ssoToken = subjectSecurity.ssoToken;
+                creds = getUserCredentialsFromSSOToken(ssoToken);
+                if(creds == null || creds.isEmpty()) {
+                   creds = subjectSecurity.userCredentials;
+                }                
             } catch (Exception ex) {
                 if(debug.messageEnabled()) {
                     debug.message("SOAPRequestHandler.getSecurityToken:: " +
@@ -1507,5 +1513,30 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         }
         return null;
     }
+    
+    private List getUserCredentialsFromSSOToken(SSOToken ssoToken) {
         
+        if(ssoToken == null) {
+           return null; 
+        }        
+        try {
+            if(SSOTokenManager.getInstance().isValidToken(ssoToken)) {
+               String encryptedPassword = ssoToken.getProperty(
+                       WSSConstants.ENCRYPTED_USER_PASSWORD);
+               if(encryptedPassword == null) {
+                  return null;          
+               }
+               String password = Crypt.decrypt(encryptedPassword);               
+               String userId = ssoToken.getProperty("UserId");
+               List list = new ArrayList();
+               PasswordCredential pc = new PasswordCredential(userId, password);
+               list.add(pc);
+               return list;
+            }
+        } catch (SSOException se) {
+            return null;
+        }        
+        return null;
     }
+        
+}

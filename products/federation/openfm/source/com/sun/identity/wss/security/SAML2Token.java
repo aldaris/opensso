@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Token.java,v 1.5 2008-06-25 05:50:08 qcheng Exp $
+ * $Id: SAML2Token.java,v 1.6 2008-08-22 04:07:56 mallas Exp $
  *
  */
 
@@ -30,6 +30,7 @@ package com.sun.identity.wss.security;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Iterator;
 import java.util.ArrayList;
 import java.security.cert.X509Certificate;
@@ -42,6 +43,7 @@ import java.security.interfaces.RSAPublicKey;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
+import javax.xml.namespace.QName;
 
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
@@ -63,7 +65,10 @@ import com.sun.identity.saml2.assertion.SubjectConfirmationData;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.common.SAML2SDKUtils;
-
+import com.sun.identity.saml2.assertion.AudienceRestriction;
+import com.sun.identity.saml2.assertion.Conditions;
+import com.sun.identity.saml2.assertion.AttributeStatement;
+import com.sun.identity.saml2.assertion.Attribute;
 
 /**
  * This class <code>SAML2Token</code> represents a SAML2
@@ -75,6 +80,7 @@ import com.sun.identity.saml2.common.SAML2SDKUtils;
  */
 public class SAML2Token implements SecurityToken {
     
+    private SAML2TokenSpec spec = null;
     private String authType = "";
     private String authTime = "";
     private Assertion assertion;
@@ -85,7 +91,7 @@ public class SAML2Token implements SecurityToken {
     private static String keyInfoType = SystemConfigurationUtil.getProperty(
                                           KEY_INFO_TYPE);
     private static AssertionFactory factory = AssertionFactory.getInstance();
-    
+        
     /**
      * Constructor that initializes the SAML2Token.
      */ 
@@ -100,7 +106,8 @@ public class SAML2Token implements SecurityToken {
          }
 
          validateSSOToken(ssoToken);
-         createAssertion(spec);
+         this.spec = spec;
+         createAssertion();
      }
      
      public SAML2Token(Element element) 
@@ -138,30 +145,40 @@ public class SAML2Token implements SecurityToken {
       /**
        * Create Assertion using SAML2 token specification
        */
-      private void createAssertion(SAML2TokenSpec spec) 
-              throws SecurityException {
+      private void createAssertion() throws SecurityException {
           assertion = factory.createAssertion();          
           SecurityMechanism securityMechanism = spec.getSecurityMechanism();
           NameID nameIdentifier = spec.getSenderIdentity();
           certAlias = spec.getSubjectCertAlias();
 
-          if((nameIdentifier == null) || (securityMechanism == null)
-                  || (certAlias == null)) {
+          if(nameIdentifier == null) {
              throw new SecurityException(
                    WSSUtils.bundle.getString("invalidSAML2TokenSpec"));
           }
 
-          String confirmationMethod = 
-                getConfirmationMethod(securityMechanism.getURI());
+          
+          String confirmationMethod = spec.getConfirmationMethod();
+          if(confirmationMethod == null) {
+             confirmationMethod = 
+                     getConfirmationMethod(securityMechanism.getURI());
+          }
 
           // TODO: Read the issuer from the trustd authority configuration
           // when the STS is ready.
           try {
               assertion.setVersion("2.0");
-              assertion.setID(SAML2SDKUtils.generateID());
+              String assertionID = spec.getAssertionID();
+              if(assertionID == null) {
+                 assertionID =  SAML2SDKUtils.generateID();
+              }
+              assertion.setID(assertionID);
               Issuer issuer = factory.createIssuer();
-              issuer.setValue(SystemConfigurationUtil.getProperty(
-                  Constants.AM_SERVER_HOST));          
+              String issuerName = spec.getIssuer();
+              if(issuerName == null) {
+                 issuerName =  SystemConfigurationUtil.getProperty(
+                               Constants.AM_SERVER_HOST);
+              }
+              issuer.setValue(issuerName);          
               assertion.setIssuer(issuer);
           
               Date issueInstant = new Date();
@@ -170,6 +187,16 @@ public class SAML2Token implements SecurityToken {
                     createSubject(nameIdentifier, confirmationMethod));
               List authnStatements = new ArrayList();          
               authnStatements.add(createAuthnStatement());
+              assertion.setAuthnStatements(authnStatements);
+              
+              Map attributes = spec.getClaimedAttributes();
+              if(attributes != null && !attributes.isEmpty()) {
+                 AttributeStatement attrStatement = 
+                             createAttributeStatement();
+                 if(attrStatement != null) {
+                    assertion.getAttributeStatements().add(attrStatement);
+                 }
+              }
           
               if(WSSUtils.debug.messageEnabled()) {
                  WSSUtils.debug.message("SAML2Token.createAssertion: " +
@@ -178,7 +205,20 @@ public class SAML2Token implements SecurityToken {
                  "Issuer: " + issuer + "\n");
                }
                                         
-               assertion.setAuthnStatements(authnStatements);
+               
+               String appliesTo = spec.getAppliesTo();
+               if(appliesTo != null) {
+                  AudienceRestriction arc = factory.createAudienceRestriction();
+                  List auds = new ArrayList();
+                  auds.add(appliesTo);
+                  arc.setAudience(auds);
+                  List list = new ArrayList();
+                  list.add(arc);
+                  Conditions conds = factory.createConditions();
+                  conds.setAudienceRestrictions(list);
+                  assertion.setConditions(conds);
+               }
+               
                
           } catch (SAML2Exception se) {
               WSSUtils.debug.error("SAML2Token.createAssertion:", se);
@@ -245,9 +285,13 @@ public class SAML2Token implements SecurityToken {
               AuthnStatement authnStatement = factory.createAuthnStatement();
               authnStatement.setAuthnInstant(new Date());
               AuthnContext authnContext = factory.createAuthnContext();
-              authnContext.setAuthnContextClassRef(
-                  WSSConstants.CLASSREF_AUTHN_CONTEXT_SOFTWARE_PKI);
-              authnStatement.setAuthnContext(authnContext);
+              String authnCtxClassRef = spec.getAuthnContextClassRef();
+              if(authnCtxClassRef == null) {
+                 authnCtxClassRef =  
+                         WSSConstants.CLASSREF_AUTHN_CONTEXT_SOFTWARE_PKI;
+              }
+              authnContext.setAuthnContextClassRef(authnCtxClassRef);                  
+              authnStatement.setAuthnContext(authnContext);                            
               return authnStatement;
           } catch (SAML2Exception se) {
               WSSUtils.debug.error("SAML2Token.createAuthnStatement: SAML2" +
@@ -492,5 +536,32 @@ public class SAML2Token implements SecurityToken {
              return true;
          }
          return false;
+     }
+     
+     private AttributeStatement createAttributeStatement() 
+                throws SAML2Exception {
+         Map<QName, List<String>> attributes = spec.getClaimedAttributes();         
+         if(attributes == null) {
+            return null;
+         }         
+         List samlAttributes = new ArrayList();                  
+         Iterator iter = attributes.keySet().iterator();
+         while(iter.hasNext()) {
+             QName qName = (QName)iter.next();
+             String attrName = qName.getLocalPart();
+             if("NameID".equals(qName.getLocalPart())) {
+                continue; 
+             }             
+             Attribute attr = factory.createAttribute();
+             attr.setName(attrName);
+             attr.setAttributeValue(attributes.get(qName));
+             samlAttributes.add(attr);            
+         }
+         if(samlAttributes.isEmpty()) {
+            return null;
+         }         
+         AttributeStatement attrStatement = factory.createAttributeStatement();
+         attrStatement.setAttribute(samlAttributes);
+         return attrStatement;
      }
 }

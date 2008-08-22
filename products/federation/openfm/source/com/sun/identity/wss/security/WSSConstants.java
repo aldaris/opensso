@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSConstants.java,v 1.9 2008-08-05 04:11:00 mallas Exp $
+ * $Id: WSSConstants.java,v 1.10 2008-08-22 04:07:57 mallas Exp $
  *
  */
 
@@ -174,6 +174,9 @@ public class WSSConstants {
     public static final String TAG_X509_ISSUERNAME = "X509IssuerName";
     
     public static final String CUSTOM_TOKEN = "CustomToken";
+    
+    public static final String ENCRYPTED_USER_PASSWORD = 
+                        "EncryptedUserPassword";
 
 }
 

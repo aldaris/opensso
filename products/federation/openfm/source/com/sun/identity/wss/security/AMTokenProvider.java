@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTokenProvider.java,v 1.7 2008-07-30 05:00:44 mallas Exp $
+ * $Id: AMTokenProvider.java,v 1.8 2008-08-22 04:07:55 mallas Exp $
  *
  */
 package com.sun.identity.wss.security;
@@ -117,13 +117,15 @@ public class AMTokenProvider implements TokenProvider {
                  WSSUtils.bundle.getString("tokenSpecNotSpecified"));
         }
         if(tokenSpec instanceof AssertionTokenSpec) {
+            AssertionTokenSpec assertionTokenSpec = 
+                    (AssertionTokenSpec)tokenSpec;
            AssertionToken assertionToken = new AssertionToken(
-                    (AssertionTokenSpec)tokenSpec, ssoToken);
-
-           // Currently it reads the same SAML Authority until the STS
-           // service is ready.
-           String trustAlias = SystemConfigurationUtil.getProperty(
-              Constants.SAML_XMLSIG_CERT_ALIAS);
+                    assertionTokenSpec, ssoToken);
+           String trustAlias = assertionTokenSpec.getSigningAlias();
+           if(trustAlias == null) {
+              trustAlias = SystemConfigurationUtil.getProperty(
+                  Constants.SAML_XMLSIG_CERT_ALIAS);
+           }
 
            assertionToken.sign(trustAlias);
            return assertionToken; 
@@ -138,10 +140,14 @@ public class AMTokenProvider implements TokenProvider {
            return new UserNameToken((UserNameTokenSpec)tokenSpec);
            
         } else if(tokenSpec instanceof SAML2TokenSpec) {
+            SAML2TokenSpec saml2TokenSpec = (SAML2TokenSpec)tokenSpec;
             SAML2Token saml2Token = 
-                    new SAML2Token((SAML2TokenSpec)tokenSpec, ssoToken);
-            String trustAlias = SystemConfigurationUtil.getProperty(
-                 Constants.SAML_XMLSIG_CERT_ALIAS);
+                    new SAML2Token(saml2TokenSpec, ssoToken);
+            String trustAlias = saml2TokenSpec.getSigningAlias();
+            if(trustAlias == null) {
+                trustAlias = SystemConfigurationUtil.getProperty(
+                  Constants.SAML_XMLSIG_CERT_ALIAS);
+            }            
             saml2Token.sign(trustAlias);
             return saml2Token;             
             
