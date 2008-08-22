@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServicesDefaultValues.java,v 1.34 2008-07-29 20:11:29 veiming Exp $
+ * $Id: ServicesDefaultValues.java,v 1.35 2008-08-22 22:50:01 veiming Exp $
  *
  */
 
@@ -161,6 +161,10 @@ public class ServicesDefaultValues {
         String umRootSuffix = null;
         boolean bUseExtUMDS = (userRepo != null) && !userRepo.isEmpty();
         if (bUseExtUMDS) {
+            map.put(SetupConstants.UM_DS_DIRMGRDN, 
+                UserIdRepo.getBindDN(userRepo));
+            map.put(SetupConstants.UM_DS_DIRMGRPASSWD,
+                UserIdRepo.getBindPassword(userRepo));
             map.put(SetupConstants.UM_DIRECTORY_SERVER,
                 UserIdRepo.getHost(userRepo));
             map.put(SetupConstants.UM_DIRECTORY_PORT,
@@ -171,6 +175,10 @@ public class ServicesDefaultValues {
             umRootSuffix =(String)userRepo.get(
                 SetupConstants.USER_STORE_ROOT_SUFFIX);
         } else {
+            map.put(SetupConstants.UM_DS_DIRMGRDN, 
+                map.get(SetupConstants.CONFIG_VAR_DS_MGR_DN));
+            map.put(SetupConstants.UM_DS_DIRMGRPASSWD,
+                map.get(SetupConstants.CONFIG_VAR_DS_MGR_PWD));
             map.put(SetupConstants.UM_DIRECTORY_SERVER,
                 map.get(SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_HOST));
             map.put(SetupConstants.UM_DIRECTORY_PORT,

@@ -24,7 +24,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amAuthLDAP.xml,v 1.5 2008-06-25 05:45:41 qcheng Exp $
+    $Id: amAuthLDAP.xml,v 1.6 2008-08-22 22:50:01 veiming Exp $
 
 -->
 
@@ -67,7 +67,7 @@
                     syntax="dn"
                     i18nKey="a104">
                     <DefaultValues>
-                        <Value>cn=amldapuser,ou=DSAME Users,@UM_NORMALIZED_ORGBASE@</Value>
+                        <Value>@UM_DS_DIRMGRDN@</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="iplanet-am-auth-ldap-bind-passwd"
@@ -189,7 +189,7 @@
                         syntax="dn"
                         i18nKey="a104">
                         <DefaultValues>
-                            <Value>cn=amldapuser,ou=DSAME Users,@UM_NORMALIZED_ORGBASE@</Value>
+                            <Value>@UM_DS_DIRMGRDN@</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema name="iplanet-am-auth-ldap-bind-passwd"
@@ -291,7 +291,7 @@
             <OrganizationConfiguration name="/">                
                 <AttributeValuePair>
                     <Attribute name="iplanet-am-auth-ldap-bind-passwd"/>
-                    <Value>@AMLDAPUSERPASSWD@</Value>
+                    <Value>@UM_DS_DIRMGRPASSWD@</Value>
                 </AttributeValuePair>
             </OrganizationConfiguration>
         </Configuration>

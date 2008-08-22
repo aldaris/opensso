@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserIdRepo.java,v 1.10 2008-08-19 19:09:24 veiming Exp $
+ * $Id: UserIdRepo.java,v 1.11 2008-08-22 22:50:01 veiming Exp $
  *
  */
 
@@ -187,11 +187,11 @@ class UserIdRepo {
         return (String)userRepo.get(SetupConstants.USER_STORE_PORT);
     }
     
-    private String getBindDN(Map userRepo) {
+    static String getBindDN(Map userRepo) {
         return (String) userRepo.get(SetupConstants.USER_STORE_LOGIN_ID);
     }
     
-    private String getBindPassword(Map userRepo) {
+    static String getBindPassword(Map userRepo) {
         return (String) userRepo.get(SetupConstants.USER_STORE_LOGIN_PWD);
     }
     
