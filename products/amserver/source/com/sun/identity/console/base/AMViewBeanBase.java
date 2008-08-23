@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMViewBeanBase.java,v 1.8 2008-08-19 19:09:04 veiming Exp $
+ * $Id: AMViewBeanBase.java,v 1.9 2008-08-23 02:38:58 babysunil Exp $
  *
  */
 
@@ -906,7 +906,7 @@ public abstract class AMViewBeanBase
     public String getPath(String child) {
         AMModel model = getModel();
         StringBuffer path = new StringBuffer();
-        path.append(AMFormatUtils.DNToName(model, model.getStartDSDN()));
+        path.append("/");
         String startDN = model.getStartDN();
         if (startDN.charAt(0) != '/') {
             startDN = "/" + startDN;

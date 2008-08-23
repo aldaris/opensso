@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMFormatUtils.java,v 1.3 2008-06-25 05:42:49 qcheng Exp $
+ * $Id: AMFormatUtils.java,v 1.4 2008-08-23 02:39:24 babysunil Exp $
  *
  */
 
@@ -138,8 +138,12 @@ public class AMFormatUtils
     public static String DNToName(AMModel model, String dn) {
         String ret = dn;
         if (DN.isDN(dn)) {
-            String [] comps = LDAPDN.explodeDN(dn, true);
-            ret = comps[0];
+            if (LDAPDN.equals(dn, SMSEntry.getRootSuffix())) {
+                ret = model.getLocalizedString("top.level.realm");
+            } else {
+                String [] comps = LDAPDN.explodeDN(dn, true);
+                ret = comps[0];
+            }
         }
         return ret;
     }
