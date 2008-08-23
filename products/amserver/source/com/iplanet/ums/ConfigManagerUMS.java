@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigManagerUMS.java,v 1.4 2008-06-25 05:41:44 qcheng Exp $
+ * $Id: ConfigManagerUMS.java,v 1.5 2008-08-23 17:02:54 ericow Exp $
  *
  */
 
@@ -521,7 +521,7 @@ public class ConfigManagerUMS implements java.io.Serializable {
                 if (_debug.messageEnabled())
                     _debug.message("ConfigManager->getConfigData: updating " +
                             "cache for " + dn);
-                synchronized (_cch) {
+                synchronized (lock_cch) {
                     updateCache(fdn);
                 }
                 if (_cch.containsKey(cacheKey))
@@ -604,7 +604,7 @@ public class ConfigManagerUMS implements java.io.Serializable {
                 if (_debug.messageEnabled())
                     _debug.message("ConfigManager->getConfigTemplateNames: " +
                             "updating " + dn);
-                synchronized (_cch) {
+                synchronized (lock_cch) {
                     updateCache(fdn);
                 }
                 if (_cch.containsKey(cacheKey))
@@ -970,6 +970,8 @@ public class ConfigManagerUMS implements java.io.Serializable {
     private static ConfigManagerUMS _instance = null;
 
     static Hashtable _cch = null;
+
+    private static final Object lock_cch = new Object();
 
     private static Cache _checkListCache = null;
 
