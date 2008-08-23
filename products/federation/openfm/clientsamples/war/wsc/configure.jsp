@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configure.jsp,v 1.6 2008-08-15 01:05:33 veiming Exp $
+   $Id: configure.jsp,v 1.7 2008-08-23 00:38:15 hengming Exp $
 
 --%>
 
@@ -38,72 +38,6 @@
 java.io.*,
 java.util.Properties"
 %>
-
-<%
-    String bootstrapFile = System.getProperty("user.home") +
-        File.separator + "ClientSampleWSC.properties";
-
-    boolean configured = false;
-    String errorMsg = null;
-
-    String idpProt = request.getParameter("idpProt");
-    String idpHost = request.getParameter("idpHost");
-    String idpPort = request.getParameter("idpPort");
-    String idpDeploymenturi = request.getParameter("idpDeploymenturi");
-    String submit = request.getParameter("submit");
-    String servletPath = request.getServletPath();
-    String configDir = System.getProperty("user.home");
-
-    if (submit != null) {
-        File configDirF = new File(configDir);
-        if (!configDirF.exists()) {
-            errorMsg = "Configuration Directory '" + configDir + "' doesn't" +
-                " exist.";
-        } else {
-            File fedConfig = new File(configDir + File.separator +
-                "AMConfig.properties");
-            if (!fedConfig.exists()) {
-                errorMsg = configDir + " is not a valid configuration " +
-                    "directory.";
-            } else {
-                Properties fcprops = new Properties();
-                fcprops.load(new FileInputStream(fedConfig));
-                String spProt =
-                    fcprops.getProperty("com.iplanet.am.server.protocol");
-                String spHost =
-                    fcprops.getProperty("com.iplanet.am.server.host");
-                String spPort =
-                    fcprops.getProperty("com.iplanet.am.server.port");
-                String spDeployUri = fcprops.getProperty(
-                    "com.iplanet.am.services.deploymentDescriptor");
-
-                String spProviderID = spProt + "://" + spHost + ":" + spPort +
-                    spDeployUri;
-                Properties props = new Properties();
-                props.setProperty("spProviderID", spProviderID);
-                props.setProperty("idpProt", idpProt);
-                props.setProperty("idpHost", idpHost);
-                props.setProperty("idpPort", idpPort);
-                props.setProperty("idpDeploymenturi", idpDeploymenturi);
-                props.setProperty("configDir", configDir);
-                FileOutputStream fo = null;
-                try {
-                    fo = new FileOutputStream(bootstrapFile);
-                    props.store(fo, null);
-                    configured = true;
-                }catch (IOException ioex) {
-                    errorMsg = "Unable to create WSC sample property " +
-                        "file. " + ioex.getMessage();
-                } finally {
-                    if (fo != null) {
-                        fo.close();
-                    }
-                }
-            }
-        }
-    }
-%>
-
 </head>
 
 <body class="DefBdy">
@@ -126,7 +60,64 @@ java.util.Properties"
 
 
 <%
-    if (!configured) {
+
+    String configDir = System.getProperty("user.home");
+
+    File fedConfig = new File(configDir + File.separator +
+        "AMConfig.properties");
+    if (!fedConfig.exists()) {
+%>
+<p>&nbsp;</p>
+Client SDK is not configured. Please click <a class="named" href="../Configurator.jsp">here</a> to configure it first.
+<%
+    } else {
+
+        boolean configured = false;
+        String errorMsg = null;
+        String idpProt = request.getParameter("idpProt");
+        String idpHost = request.getParameter("idpHost");
+        String idpPort = request.getParameter("idpPort");
+        String idpDeploymenturi = request.getParameter("idpDeploymenturi");
+        String submit = request.getParameter("submit");
+        if (submit != null) {
+
+            String bootstrapFile = System.getProperty("user.home") +
+                File.separator + "ClientSampleWSC.properties";
+
+            Properties fcprops = new Properties();
+            fcprops.load(new FileInputStream(fedConfig));
+            String spProt = fcprops.getProperty(
+                "com.iplanet.am.server.protocol");
+            String spHost = fcprops.getProperty("com.iplanet.am.server.host");
+            String spPort = fcprops.getProperty("com.iplanet.am.server.port");
+            String spDeployUri = fcprops.getProperty(
+                "com.iplanet.am.services.deploymentDescriptor");
+
+            String spProviderID = spProt + "://" + spHost + ":" + spPort +
+                spDeployUri;
+            Properties props = new Properties();
+            props.setProperty("spProviderID", spProviderID);
+            props.setProperty("idpProt", idpProt);
+            props.setProperty("idpHost", idpHost);
+            props.setProperty("idpPort", idpPort);
+            props.setProperty("idpDeploymenturi", idpDeploymenturi);
+            props.setProperty("configDir", configDir);
+            FileOutputStream fo = null;
+            try {
+                fo = new FileOutputStream(bootstrapFile);
+                props.store(fo, null);
+                configured = true;
+            }catch (IOException ioex) {
+                errorMsg = "Unable to create WSC sample property " +
+                    "file. " + ioex.getMessage();
+            } finally {
+                if (fo != null) {
+                    fo.close();
+                }
+            }
+        }
+
+        if (!configured) {
 %>
 
 <h3>Configuring WSC Sample</h3>
@@ -138,7 +129,7 @@ java.util.Properties"
     <table border=0 cellpadding=5 cellspacing=0>
 
 <%
-    if (errorMsg != null) {
+            if (errorMsg != null) {
 %>
     <tr>
     <td colspan="2" align="center">
@@ -147,7 +138,7 @@ java.util.Properties"
     </td>
     </tr>
 <%
-}
+            }
 %>
 
 
@@ -177,12 +168,13 @@ java.util.Properties"
 </form>
 
 <%
-} else {
+        } else {
 %>
 <p>&nbsp;</p>
 WSC Sample is configured. Click <a href="index.html">here</a> to return
 <%
-}
+        }
+    }
 %>
 </td></tr></table>
 </body>
