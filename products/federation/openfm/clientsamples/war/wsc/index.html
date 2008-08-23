@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.html,v 1.6 2008-08-19 19:11:29 veiming Exp $
+   $Id: index.html,v 1.7 2008-08-23 01:08:07 hengming Exp $
 
 -->
 <html>
@@ -89,6 +89,8 @@
        user attributes.
 </p>
 <h3>Setup</h3>
+
+In the following instructions we use unix path seperator '/'. For windows enviroment please change '/' to '\'.<br><br>
 1. Deploy OpenSSO server WAR (opensso.war) on machine A,
    and configure the IDFF sample to run as IDP. This instance will also act as
    DS and ID-SIS-PP role in the sample scenario.
@@ -100,18 +102,18 @@
 <br>
 4. Deploy OpenSSO client sample WAR (opensso-client-jdk14.war
    for web container running JDK 1.4.x or opensso-client-jdk15.war for
-   web container running JDK 1.5.x) on
-   machine B. If you want to deploy the war on different machine C, you need to
-   create a configuration directoy on machine C and copy
-   AMConfig.properties and FederationConfig.properties from machine B
-   configuration directory to this configuration directory.
+   web container running JDK 1.5.x) on machine C.
 <br>
-5. Click <a class="named" href="configure.jsp">here</a> to configure.
+5. Click <a class="named" href="../Configurator.jsp">here</a> to configure Client SDK. If you have done it, skip to next step. Enter SP information and save.
 <br>
-6. If you want to enable interaction for IDPP query and modify please see the
+6. If you changed SP cookie name, you need to edit property "com.iplanet.am.cookie.name" in AMConfig.properties in your home directory.
+<br>
+7. Click <a class="named" href="configure.jsp">here</a> to configure.
+<br>
+8. If you want to enable interaction for IDPP query and modify please see the
    section "Enable interaction for IDPP query and modify"
 <br>
-7. If you want to enable name id encryption in session context of discovery
+9. If you want to enable name id encryption in session context of discovery
    bootstrap, please see the section "Enable name id encryption in session
    context of discovery bootstrap".
 <br>
@@ -123,124 +125,107 @@ visit this <a class="named" href="index.jsp">link</a> to try out this sample.
 
 <h3 name="enc">Enable interaction for IDPP query and modify</h3>
 On IDP machine turn on IDPP policy evaluation:<br>
-1. Download or build ssoAdminTools.zip and install.<br>
-2. Save administrator password in a file. And Run<br>
-ssoadm set-attribute-defaults -s sunIdentityServerLibertyPPService -u amadmin -f &lt;admin password file name&gt; -t Global -a "sunIdentityServerPPisQueryPolicyEvalRequired=true"<br>
-
-3. Run<br>
-ssoadm set-attribute-defaults -s sunIdentityServerLibertyPPService -u amadmin -f &lt;admin password file name&gt; -t Global -a "sunIdentityServerPPisModifyPolicyEvalRequired=true"<br>
+1. Bring up a browser and go to "&lt;IDP protocol&gt;://&lt;IDP hostname&gt;:&lt;IDP port&gt;&lt;IDP depoly uri&gt;" and login into console as user 'amadmin'<br>
+2. Click 'Web Services' tab.<br>
+3. Click 'Personal Profile' tab.<br>
+4. Click check box 'Require Query PolicyEval'<br>
+5. Click check box 'Require Modify PolicyEval'<br>
+6. Click 'Save'.<br>
 
 <br>
 Create policy for IDPP query and modify:<br>
 1. Bring up a browser and go to "&lt;IDP protocol&gt;://&lt;IDP hostname&gt;:&lt;IDP port&gt;&lt;IDP depoly uri&gt;" and login into console as user 'amadmin'<br>
-2. Click realm 'opensso'.<br>
-3. Click 'Policies' tab.<br>
-4. Click 'New Policy ...'<br>
-5. Enter any policy name in the 'Name' text field.<br>
-6. Click 'New...' under 'Rules' section.<br>
-7. Select 'Liberty Personal Profile Service (with resource name) then click 'Next'.<br>
-8. Enter any rule name in the 'Name' text field.<br>
-9. Enter '*' in the 'Resource Name' text field.<br>
-10. Click both check boxes next to action 'MODIFY' and 'QUERY' and select
+2. Click 'Access Control' tab.<br>
+3. Click realm '/ (Top-Level Realm)'.<br>
+4. Click 'Policies' tab.<br>
+5. Click 'New Policy ...'<br>
+6. Enter any policy name in the 'Name' text field.<br>
+7. Click 'New...' under 'Rules' section.<br>
+8. Select 'Liberty Personal Profile Service (with resource name) then click 'Next'.<br>
+9. Enter any rule name in the 'Name' text field.<br>
+10. Enter '*' in the 'Resource Name' text field.<br>
+11. Click both check boxes next to action 'MODIFY' and 'QUERY' and select
     'interactForConsent' in both drop down menus under 'Value' then click
     'Finish'.<br>
-11. Click 'New...' under 'Subjects' section.<br>
-12. Select 'Authenticated Users' then click 'Next'.<br>
-13. Enter user name of IDP user you created before (e.g. idp) in the 'Name'
+12. Click 'New...' under 'Subjects' section.<br>
+13. Select 'Authenticated Users' then click 'Next'.<br>
+14. Enter user name of IDP user you created before (e.g. idp) in the 'Name'
     text field then click 'Finish'.<br>
-14. Click 'OK' to save this policy.<br>
+15. Click 'OK' to save this policy.<br>
 <br>
 <h3 name="enc">Enable name id encryption in session context of discovery bootstrap</h3>
-Set up keystore:<br>
-1.  On IDP, SP and WSC machines(if different from SP machine), run <br>
-   &lt;JDK Home&gt;/bin/keytool -genkey -keyalg rsa -alias test -dname "cn=sun-unix,ou=SUN Java System OpenSSO,o=Sun, c=US" -keypass 11111111 -keystore &lt;configuration dir&gt;/keystore.jks -storepass 11111111
-<br>
-2. On IDP machine, go to &lt;IDP protocol&gt;://&lt;IDP hostname&gt;:&lt;IDP port&gt;&lt;IDP depoly uri&gt;/encode.jsp and type '11111111' and click 'Encode'.
-   Save encoded value to &lt;configuration dir&gt;/.storepass and
-   &lt;configuration dir&gt;/.keypass<br>   
-3. On SP machine go to &lt;SP protocol&gt;://&lt;SP hostname&gt;:&lt;SP port&gt;&lt;IDP depoly uri&gt;/encode.jsp and type '11111111' and click 'Encode'.
-   Save encoded value to &lt;configuration dir&gt;/.storepass and
-   &lt;configuration dir&gt;/.keypass<br>
-4. If WSC machine is different from SP machine, copy
-   &lt;configuration dir&gt;/.storepass and &lt;configuration dir&gt;/.keypass
-   from SP to &lt;configuration dir&gt;/.storepass and
-   &lt;configuration dir&gt;/.keypass to WSC machine.<br>
-
-5. On IDP, SP and WSC(if different from SP machine) machines, edit &lt;configuration dir&gt;/FederationConfig.properties<br>
-   com.sun.identity.saml.xmlsig.keystore= &lt;configuration dir&gt;/keystore.jks<br>
-   com.sun.identity.saml.xmlsig.storepass= &lt;configuration dir&gt;/.storepass<br>
-   com.sun.identity.saml.xmlsig.keypass= &lt;configuration dir&gt;/.keypass<br>
-   com.sun.identity.saml.xmlsig.certalias=test<br>
-<br>
-
-
 Set up IDP machine:<br>
-1. Download or build ssoAdminTools.zip and install.<br>
-2. Run<br>
-ssoadm set-attribute-defaults -s sunIdentityServerDiscoveryService -u amadmin -f &lt;admin password file name&gt; -t Global -a "sunIdentityServerDiscoProviderID=&lt;IDP protocol&gt;://&lt;IDP hostname&gt;:&lt;IDP port&gt;&lt;IDP depoly uri&gt;"<br>
-3. Run<br>
-ssoadm set-attribute-defaults -s sunIdentityServerDiscoveryService -u amadmin -f &lt;admin password file name&gt; -t Global -a "sunIdentityServerBootstrappingEncryptNIinSessionContext=true"<br>
-4. Run<br>
-ssoadm show-attribute-defaults -s sunIdentityServerDiscoveryService -u amadmin -f &lt;admin password file name&gt; -t Global -a sunIdentityServerBootstrappingDiscoEntry<br>
+1. Bring up a browser and go to "&lt;IDP protocol&gt;://&lt;IDP hostname&gt;:&lt;IDP port&gt;&lt;IDP depoly uri&gt;" and login into console as user 'amadmin'<br>
+2. Click 'Web Services' tab.<br>
+3. Click 'Discover Service' tab.<br>
+4. Change "Provider ID" to &lt;IDP protocol&gt;://&lt;IDP hostname&gt;:&lt;IDP port&gt;&lt;IDP depoly uri&gt;.<br>
+5. Click check box "Encrypt Name Identifier in Session Context for Bootstrapping".<br>
+6. Click "Save".<br>
+7. Click "urn:liberty:disco:2003-08" under "Resource Offerings for Bootstrapping".<br>
+8. Click "edit" next to "urn:liberty:security:2003-08:null:null" under "Service Description".<br>
+9. Select "urn:liberty:security:2003-08:null:SAML" from "Available" and click "Add".<br>
+10. Select "urn:liberty:security:2003-08:null:null" from "Selected" and click "Remove".<br>
+11. Click "Save".<br>
+12. Change "Provider ID" under "Service Instance" to<br>
+ %SERVER_PROTO%://%SERVER_HOST%:%SERVER_PORT%%SERVER_URI%<br>
+13. Click check box "AuthorizeRequester" and select "urn:liberty:security:2003-08:null:SAML" under the check box.<br>
+14. Click "Save".<br>
+15. Click "Save".<br>
+16. Click "Configuration" tab.<br>
+17. Click "Global" tab.<br>
+18. Click "Liberty ID-WSF Security Service".<br>
+19. Enter "test" in "Default WSC certificate alias" and "Trusted Authority signing certificate alias" and "Trusted CA signing certificate aliases" text fields.<br>
+20. Click "Save".<br>
+21. Download or build ssoAdminTools.zip and install.<br>
 
-5.Save 'sunIdentityServerBootstrappingDiscoEntry=...' in the previous step to a file 'datafile'<br>
+22. Run<br>
+ssoadm delete-entity -y &lt;IDP protocol&gt;://&lt;IDP hostname&gt;:&lt;IDP port&gt;&lt;IDP depoly uri&gt; -u amadmin -f &lt;admin password file name&gt; -c idff<br>
 
-6.Edit file 'datafile'<br>
-Replace '&lt;ProviderID&gt;&lt;IDP protocol&gt;://&lt;IDP hostname&gt;:&lt;IDP port&gt;&lt;IDP depoly uri&gt;/Liberty/disco&lt;/ProviderID&gt;' with '&lt;ProviderID&gt;&lt;IDP protocol&gt;://&lt;IDP hostname&gt;:&lt;IDP port&gt;&lt;IDP depoly uri&gt;&lt;/ProviderID&gt;'<br>
-Replace '&lt;SecurityMechID&gt;urn:liberty:security:2003-08:null:null&lt;/SecurityMechID&gt;' with '&lt;SecurityMechID&gt;urn:liberty:security:2003-08:null:SAML&lt;/SecurityMechID&gt;'<br>
-Replace '&lt;/ResourceOffering&gt;&lt;/DiscoEntry&gt;' with  '&lt;/ResourceOffering&gt;&lt;AuthorizeRequester xmlns="urn:liberty:disco:2003-08"/&gt;&lt;/DiscoEntry&gt;'<br>
+23. Run<br>
+ssoadm delete-entity -y &lt;SP protocol&gt;://&lt;SP hostname&gt;:&lt;SP port&gt;&lt;SP depoly uri&gt; -u amadmin -f &lt;admin password file name&gt; -c idff<br>
 
-7. Run<br>
-ssoadm set-attribute-defaults -s sunIdentityServerDiscoveryService -u amadmin -f &lt;admin password file name&gt; -t Global -D datafile<br>
-
-8. Edit &lt;configuration dir&gt;/FederationConfig.properties<br>
-com.sun.identity.liberty.ws.ta.certalias=test<br>
-com.sun.identity.liberty.ws.trustedca.certaliases=test<br>
-com.sun.identity.liberty.ws.wsc.certalias=test<br>
-
-9. Run<br>
-ssoadm delete-entity -e &lt;IDP protocol&gt;://&lt;IDP hostname&gt;:&lt;IDP port&gt;&lt;IDP depoly uri&gt; -u amadmin -f &lt;admin password file name&gt; -c idff<br>
-
-10. Run<br>
-ssoadm delete-entity -e &lt;SP protocol&gt;://&lt;SP hostname&gt;:&lt;SP port&gt;&lt;SP depoly uri&gt; -u amadmin -f &lt;admin password file name&gt; -c idff<br>
-
-11.Run<br>
-ssoadm create-metadata-template -u amadmin -f &lt;admin password file name&gt; -e &lt;IDP protocol&gt;://&lt;IDP hostname&gt;:&lt;IDP port&gt;&lt;IDP depoly uri&gt; -m /tmp/idpm -x /tmp/idpx -i /idp -b test -g test -c idff<br>
-
-12. Edit file '/tmp/idpx'<br>
+24.Run<br>
+ssoadm create-metadata-templ -u amadmin -f &lt;admin password file name&gt; -y &lt;IDP protocol&gt;://&lt;IDP hostname&gt;:&lt;IDP port&gt;&lt;IDP depoly uri&gt; -m /tmp/idpm -x /tmp/idpx -i /idp -b test -g test -c idff<br>
+25. Edit file '/tmp/idpx'<br>
 Change the value of attribute "enableNameIDEncryption" to "true"<br>
 
-13. Run<br>
+26. Run<br>
 ssoadm import-entity -u amadmin -f &lt;admin password file name&gt; -m /tmp/idpm -x /tmp/idpx -t sampleidffcot -c idff<br>
 
-14. Copy '/tmp/spm'(generated at step 4 in section "Set up SP machine" below) from SP machine to '/tmp/spm' on this machine<br>
+27. Copy '/tmp/spm' and '/tmp/spx'(generated at step 4 in section "Set up SP machine" below) from SP machine to '/tmp/spm' and '/tmp/spx' on this machine<br>
 
-15. Run<br>
-ssoadm import-entity -u amadmin -f &lt;admin password file name&gt; -m /tmp/spm -t sampleidffcot -c idff<br>
+28. Edit file '/tmp/spx'<br>
+Change the value of "hosted" to "0"<br>
+
+29. Run<br>
+ssoadm import-entity -u amadmin -f &lt;admin password file name&gt; -m /tmp/spm -x /tmp/spx -t sampleidffcot -c idff<br>
 <br>
 
 
 Set up SP machine:<br>
 1. Download or build ssoAdminTools.zip and install.<br>
 2. Run<br>
-ssoadm delete-entity -e &lt;IDP protocol&gt;://&lt;IDP hostname&gt;:&lt;IDP port&gt;&lt;IDP depoly uri&gt; -u amadmin -f &lt;admin password file name&gt; -c idff<br>
+ssoadm delete-entity -y &lt;IDP protocol&gt;://&lt;IDP hostname&gt;:&lt;IDP port&gt;&lt;IDP depoly uri&gt; -u amadmin -f &lt;admin password file name&gt; -c idff<br>
 
 3. Run<br>
-ssoadm delete-entity -e &lt;SP protocol&gt;://&lt;SP hostname&gt;:&lt;SP port&gt;&lt;SP depoly uri&gt; -u amadmin -f &lt;admin password file name&gt; -c idff<br>
+ssoadm delete-entity -y &lt;SP protocol&gt;://&lt;SP hostname&gt;:&lt;SP port&gt;&lt;SP depoly uri&gt; -u amadmin -f &lt;admin password file name&gt; -c idff<br>
 
 4. Run<br>
-ssoadm create-metadata-template -u amadmin -f &lt;admin password file name&gt; -e &lt;SP protocol&gt;://&lt;SP hostname&gt;:&lt;SP port&gt;&lt;SP depoly uri&gt; -m /tmp/spm -x /tmp/spx -s /sp -a test -r test -c idff<br>
+ssoadm create-metadata-templ -u amadmin -f &lt;admin password file name&gt; -y &lt;SP protocol&gt;://&lt;SP hostname&gt;:&lt;SP port&gt;&lt;SP depoly uri&gt; -m /tmp/spm -x /tmp/spx -s /sp -a test -r test -c idff<br>
 
 5. Run<br>
 ssoadm import-entity -u amadmin -f &lt;admin password file name&gt; -m /tmp/spm -x /tmp/spx -t sampleidffcot -c idff<br>
 
-6. Copy '/tmp/idpm'(generated at step 11 in section "Set up IDP machine" above) from IDP machine to '/tmp/idpm' on this machine<br>
+6. Copy '/tmp/idpm' and 'tmp/idpx' (generated at step 24 in section "Set up IDP machine" above) from IDP machine to '/tmp/idpm' and '/tmp/idpx' on this machine<br>
 
-7. Run<br>
-ssoadm import-entity -u amadmin -f &lt;admin password file name&gt; -m /tmp/idpm  -c idff -t sampleidffcot<br>
+7. Edit file '/tmp/idpx'<br>
+Change the value of "hosted" to "0"<br>
+
+8. Run<br>
+ssoadm import-entity -u amadmin -f &lt;admin password file name&gt; -m /tmp/idpm -x /tmp/idpx -c idff -t sampleidffcot<br>
 
 <br>
-Restart web containers on IDP, SP and WSC machines
+Restart web containers on IDP and SP machines.
 
 </td></tr></table>
 
