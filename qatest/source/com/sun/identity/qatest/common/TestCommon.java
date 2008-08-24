@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.57 2008-08-22 23:07:50 nithyas Exp $
+ * $Id: TestCommon.java,v 1.58 2008-08-24 19:39:49 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -898,6 +898,36 @@ public class TestCommon implements TestConstants {
                 exiting("configureProduct");
                 return false;
             }
+            String strNewURL = (String)map.get("serverurl") +
+                    (String)map.get("serveruri") + "/UI/Login" + "?" +
+                    "IDToken1=" + map.get(TestConstants.KEY_ATT_AMADMIN_USER) +
+                    "&IDToken2=" +
+                    map.get(TestConstants.KEY_ATT_AMADMIN_PASSWORD);
+            log(Level.FINE, "configureProduct", "strNewURL: " + strNewURL);
+            url = new URL(strNewURL);
+            try {
+                page = (HtmlPage)webclient.getPage(url);
+            } catch (com.gargoylesoftware.htmlunit.ScriptException e) {
+            }
+            if ((getHtmlPageStringIndex(page, "Authentication Failed") != -1) ||
+                    (getHtmlPageStringIndex(page, "configurator.jsp") != -1)) {
+                log(Level.SEVERE, "configureProduct",
+                        "Product Configuration was" +
+                        " not successfull. Configuration failed.");
+                exiting("configureProduct");
+                return false;
+            } else {
+                log(Level.FINE, "configureProduct",
+                        "Product Configuration was" +
+                        " successfull. New bits were successfully configured.");
+                createShowServerConfigDataFile((String)map.get("serverurl"),
+                        (String)map.get("serveruri"), webclient);
+                strNewURL = (String)map.get("serverurl") +
+                        (String)map.get("serveruri") + "/UI/Logout";
+                consoleLogout(webclient, strNewURL);
+                exiting("configureProduct");
+                return true;
+            }
         } else {
             String strNewURL = (String)map.get("serverurl") +
                     (String)map.get("serveruri") + "/UI/Login" + "?" +
@@ -918,6 +948,8 @@ public class TestCommon implements TestConstants {
                 log(Level.FINE, "configureProduct", "Product was " + 
                         "already configured. " + 
                         "Super admin login successful.");
+                createShowServerConfigDataFile((String)map.get("serverurl"),
+                        (String)map.get("serveruri"), webclient);
                 strNewURL = (String)map.get("serverurl") +
                         (String)map.get("serveruri") + "/UI/Logout";
                 consoleLogout(webclient, strNewURL);
@@ -925,6 +957,33 @@ public class TestCommon implements TestConstants {
                 return true;
             }
         }
+    }
+
+    /**
+     * Creates an html file containing the information output from
+     * showServerConfig.jsp 
+     * @param server FQDN of server
+     * @param uri URI of server
+     * @param webclient handle to browser with super admin authenticated session
+     * @throws java.lang.Exception
+     */
+    protected void createShowServerConfigDataFile(String server, String uri,
+            WebClient webclient)
+            throws Exception {
+                String strSSC = server + uri + "/showServerConfig.jsp";
+                URL url = new URL(server);
+                String strHost = url.getHost();
+                String strURI = uri;
+                String strFilName = url.getProtocol() + "_" +
+                        strHost.replace(".", "_") + "_" + url.getPort() +
+                        "_" + strURI.replace("/", "");
+                HtmlPage page = (HtmlPage)webclient.getPage(strSSC);
+                BufferedWriter out =
+                        new BufferedWriter(new FileWriter(getBaseDir() +
+                        fileseparator + serverName + fileseparator + 
+                        strFilName + ".html"));
+                out.write(page.asXml());
+                out.close();
     }
     
     /**
