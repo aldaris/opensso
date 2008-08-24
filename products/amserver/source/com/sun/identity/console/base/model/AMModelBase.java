@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMModelBase.java,v 1.15 2008-08-19 19:09:06 veiming Exp $
+ * $Id: AMModelBase.java,v 1.16 2008-08-24 19:38:11 veiming Exp $
  *
  */
 
@@ -226,8 +226,20 @@ public class AMModelBase
     }
 
     private void setUserLocale(HttpServletRequest req) {
-        localeContext.setLocale(req);
-        locale = localeContext.getLocale();
+        boolean bSet = false;
+        try {
+            String ssoPropLocale = ssoToken.getProperty("Locale");
+            if ((ssoPropLocale != null) && (ssoPropLocale.length() > 0)) {
+                locale = Locale.getLocale(ssoPropLocale);
+                bSet = true;
+            }
+        } catch (SSOException e) {
+            debug.warning("AMModelBase.setUserLocale", e);
+        }
+        if (!bSet) {
+            localeContext.setLocale(req);
+            locale = localeContext.getLocale();
+        }
     }
 
     /**

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMPrimaryMastHeadViewBean.java,v 1.7 2008-06-25 05:42:47 qcheng Exp $
+ * $Id: AMPrimaryMastHeadViewBean.java,v 1.8 2008-08-24 19:38:11 veiming Exp $
  *
  */
 
@@ -238,6 +238,8 @@ public abstract class AMPrimaryMastHeadViewBean
         String logo = 
             "../" + consoleDirectory + "/images/PrimaryProductName.png";
         mm.setSrc(logo);
+        mm.setWidth("78");
+        mm.setHeight("40");
         mm.setVersionProductNameSrc(logo);
 
         /*
