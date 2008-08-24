@@ -18,7 +18,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: opensso-common.xml,v 1.13 2008-07-29 21:10:39 kmeduri Exp $
+ $Id: opensso-common.xml,v 1.14 2008-08-24 19:32:48 rmisra Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -59,6 +59,11 @@
         <copy todir="${runtime.report.dir}/xml">
             <fileset dir="${built.classes.dir}">
 	      	<include name="**/*.xml"/>
+            </fileset>
+        </copy>
+        <copy todir="${runtime.report.dir}">
+            <fileset dir="${SERVER_DIR}">
+	      	<include name="**/*.html"/>
             </fileset>
         </copy>
     </target>
