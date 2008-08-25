@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerConfigInheritViewBean.java,v 1.4 2008-07-02 23:41:21 asyhuang Exp $
+ * $Id: ServerConfigInheritViewBean.java,v 1.5 2008-08-25 22:15:38 veiming Exp $
  *
  */
 
@@ -170,7 +170,7 @@ public class ServerConfigInheritViewBean
     }
 
     private void populatePropertyNameTableModel(Collection propertyNames) {
-        if (!submitCycle) {
+        if (!submitCycle && (propertyNames != null)) {
             tblPropertyNamesModel.clearAll();
             SerializedField szCache = (SerializedField)getChild(SZ_CACHE);
             
