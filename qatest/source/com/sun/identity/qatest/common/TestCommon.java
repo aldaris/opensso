@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.58 2008-08-24 19:39:49 rmisra Exp $
+ * $Id: TestCommon.java,v 1.59 2008-08-25 19:25:05 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -884,6 +884,8 @@ public class TestCommon implements TestConstants {
                             "Product Configuration was" +
                             " successfull. New bits were successfully " +
                             "configured.");
+                createShowServerConfigDataFile((String)map.get("serverurl"),
+                        (String)map.get("serveruri"), webclient);
                     strNewURL = (String)map.get("serverurl") +
                             (String)map.get("serveruri") + "/UI/Logout";
                     consoleLogout(webclient, strNewURL);
@@ -897,36 +899,6 @@ public class TestCommon implements TestConstants {
                     " Please check if war is deployed properly.");
                 exiting("configureProduct");
                 return false;
-            }
-            String strNewURL = (String)map.get("serverurl") +
-                    (String)map.get("serveruri") + "/UI/Login" + "?" +
-                    "IDToken1=" + map.get(TestConstants.KEY_ATT_AMADMIN_USER) +
-                    "&IDToken2=" +
-                    map.get(TestConstants.KEY_ATT_AMADMIN_PASSWORD);
-            log(Level.FINE, "configureProduct", "strNewURL: " + strNewURL);
-            url = new URL(strNewURL);
-            try {
-                page = (HtmlPage)webclient.getPage(url);
-            } catch (com.gargoylesoftware.htmlunit.ScriptException e) {
-            }
-            if ((getHtmlPageStringIndex(page, "Authentication Failed") != -1) ||
-                    (getHtmlPageStringIndex(page, "configurator.jsp") != -1)) {
-                log(Level.SEVERE, "configureProduct",
-                        "Product Configuration was" +
-                        " not successfull. Configuration failed.");
-                exiting("configureProduct");
-                return false;
-            } else {
-                log(Level.FINE, "configureProduct",
-                        "Product Configuration was" +
-                        " successfull. New bits were successfully configured.");
-                createShowServerConfigDataFile((String)map.get("serverurl"),
-                        (String)map.get("serveruri"), webclient);
-                strNewURL = (String)map.get("serverurl") +
-                        (String)map.get("serveruri") + "/UI/Logout";
-                consoleLogout(webclient, strNewURL);
-                exiting("configureProduct");
-                return true;
             }
         } else {
             String strNewURL = (String)map.get("serverurl") +
