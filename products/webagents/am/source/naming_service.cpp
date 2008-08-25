@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: naming_service.cpp,v 1.11 2008-06-25 08:14:33 qcheng Exp $
+ * $Id: naming_service.cpp,v 1.12 2008-08-25 21:00:23 madan_ranganath Exp $
  *
  */ 
 
@@ -364,7 +364,6 @@ void NamingService::addLoadBalancerCookie(NamingInfo& namingInfo,
             memset(cookieValue,'\0',cookieLen);
             
             strcpy(tmplbCookie, lbCookieStr.c_str()); 
-            tmpPtr = tmplbCookie;
             
             tmpPtr = strchr(tmplbCookie,'=');
             if (tmpPtr != NULL) {
@@ -372,6 +371,7 @@ void NamingService::addLoadBalancerCookie(NamingInfo& namingInfo,
                strncpy(cookieName, tmplbCookie, tmpPtr-tmplbCookie);
            
                // Retrieve the cookie value
+               // Skip the '=' character
                tmpPtr++;
                strcpy(cookieValue,tmpPtr);           
             

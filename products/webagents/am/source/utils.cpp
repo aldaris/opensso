@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: utils.cpp,v 1.10 2008-06-25 08:14:40 qcheng Exp $
+ * $Id: utils.cpp,v 1.11 2008-08-25 21:00:23 madan_ranganath Exp $
  *
  */ 
 #include <stdexcept>
@@ -349,7 +349,7 @@ Utils::getTTL(const PRIVATE_NAMESPACE_NAME::XMLElement &element,
 am_resource_match_t
 compare_sub_pat(const char *r1, const char *r2,
 		const am_resource_traits_t *traits,bool fwdcmp) {
-    am_resource_match_t result;
+    am_resource_match_t result = AM_EXACT_PATTERN_MATCH;                    
     
     if (r1 != NULL && r2 != NULL) {
         string r1_str(r1);
@@ -358,8 +358,8 @@ compare_sub_pat(const char *r1, const char *r2,
         string::size_type r2_loc = r2_str.find("?",0);
     
         // First thing to check is whether r1 or r2 have a "?" in it.
-        // This requires extra pattern matching. If neither one of them have it
-        // we can ignore the below check and continue as before.
+        // This requires extra pattern matching. If neither one of them 
+	// have it, we can ignore the below check and continue as before.
         if ((r1_loc != string::npos) || (r2_loc != string::npos)) {
             // We have a "?" in either the pattern or the match_string
             // Need to parse them and see whether they are matching or 
@@ -370,48 +370,64 @@ compare_sub_pat(const char *r1, const char *r2,
                 return AM_NO_MATCH;
             }
             // We have a "?" in both the pattern and the match string,
-            // continue further. The algorithm is to strtok the pattern and
+            // continue further. The algorithm is to do strchr the pattern and
             // the match string at "?" and send this each of the pattern 
-            // tokens and match tokens to the match_patterns algorithm. 
-            char *tmp_r1 = NULL;
-            char *tmp_r2 = NULL;
+            // tokens and match tokens to the match_patterns algorithm. Also
+	    // perform the similar call for the remainder of the pattern and
+	    // the match string
+            const char *tmp_r1 = NULL;
+            const char *tmp_r2 = NULL;
             char *pattern = NULL;            
             char *match_str = NULL;
-            char *pattern_holder = NULL;
-            char *match_str_holder = NULL;
+            int pattern_len = 0;
+            int match_len = 0;
         
-            tmp_r1 = strdup(r1);
-            if (tmp_r1 != NULL) {                
-                tmp_r2 = strdup(r2);
-                if (tmp_r2 != NULL) {                                        
-                    result = AM_EXACT_PATTERN_MATCH;                    
-                    pattern = strtok_r(tmp_r1, "?", &pattern_holder);
-                    match_str = strtok_r(tmp_r2, "?", &match_str_holder);
+	    pattern_len = strlen(r1)+1;
+	    pattern = (char *)malloc(pattern_len);
+	    memset(pattern, '\0', pattern_len);
+
+            tmp_r1 = strchr(r1, '?');
+            if (tmp_r1 != NULL) {
+                match_len = strlen(r2)+1;
+                match_str = (char *)malloc(match_len);
+		memset(match_str, '\0', match_len);
+
+                tmp_r2 = strchr(r2, '?');
+                if (tmp_r2 != NULL) {
+                    strncpy(pattern,tmp_r1, tmp_r1 - r1);
+                    strncpy(match_str,tmp_r2, tmp_r2 - r2);
                     
-                    while (pattern != NULL && match_str != NULL && 
-                            result == AM_EXACT_PATTERN_MATCH) {
+                    if (pattern != NULL && match_str != NULL) {
                         result = match_patterns(pattern, match_str,
                                          B_TRUE==traits->ignore_case,false,
                                          traits->separator);            
-                        if (result == AM_NO_MATCH) {
-                            // No need to continue further as the 
-                            // pattern match has failed.
-                             continue;
-                        }
-                        pattern = strtok_r(NULL, "?", &pattern_holder);
-                        match_str = strtok_r(NULL, "?", &match_str_holder);
-                        if ((pattern != NULL && match_str == NULL) ||
-                            (pattern == NULL && match_str != NULL)) {
-                            result =  AM_NO_MATCH;
+                        if (result != AM_NO_MATCH) {
+                            // success so far, continue for the remainder of 
+                            // the pattern and the match string 
+                            memset(pattern, '\0', pattern_len);
+                            memset(match_str, '\0', match_len);
+
+                            // Skip the '?' character
+                            tmp_r1++;
+                            tmp_r2++;
+
+                            strcpy(pattern,tmp_r1);
+                            strcpy(match_str,tmp_r2);
+
+                            if (pattern != NULL && match_str != NULL) {
+                                result = match_patterns(pattern, match_str,
+                                         B_TRUE==traits->ignore_case,false,
+                                         traits->separator);            
+                            }
                         }
                     }
-                    if (tmp_r1 != NULL)
-                        free(tmp_r1);
-                    if (tmp_r2 != NULL)
-                        free(tmp_r2);
+                    if (pattern != NULL)
+                        free(pattern);
+                    if (match_str != NULL)
+                        free(match_str);
                 } else {
-                    if (tmp_r1 != NULL)
-                        free(tmp_r1);
+                    if (match_str != NULL)
+                        free(match_str);
                     result = AM_NO_MATCH;
                 }
           } else {
