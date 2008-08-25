@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PropertyXMLBuilderBase.java,v 1.11 2008-08-13 18:01:10 veiming Exp $
+ * $Id: PropertyXMLBuilderBase.java,v 1.12 2008-08-25 22:21:36 veiming Exp $
  *
  */
 
@@ -496,7 +496,8 @@ public abstract class PropertyXMLBuilderBase
                     xml.append(MessageFormat.format(
                         COMPONENT_EDITABLE_LIST_START_TAG, param));
                 } else if (orderedList) {
-                    xml.append(COMPONENT_ORDERED_LIST_START_TAG);
+                    xml.append(MessageFormat.format(
+                        COMPONENT_ORDERED_LIST_START_TAG, param));
                 } else if (unorderedList) {
                     xml.append(MessageFormat.format(
                         COMPONENT_UNORDERED_LIST_START_TAG, param));
