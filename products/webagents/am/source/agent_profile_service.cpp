@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: agent_profile_service.cpp,v 1.17 2008-08-14 20:25:20 subbae Exp $
+ * $Id: agent_profile_service.cpp,v 1.18 2008-08-26 00:18:36 subbae Exp $
  *
  */
 
@@ -58,7 +58,7 @@ USING_PRIVATE_NAMESPACE
 
 #define DEFAULT_AGENT_AUTH_MODULE "Application"
 #define DEFAULT_AGENT_ORG_NAME "/"
-#define ATTRIB_URI "xml/attributes"
+#define ATTRIB_URI "xml/read"
 
 const std::string authURLAttribute("iplanet-am-naming-auth-url");
 const std::string restURLAttribute("sun-naming-idsvcs-rest-url");
@@ -144,6 +144,8 @@ load_bootinfo_to_properties(Utils::boot_info_t *boot_ptr, am_properties_t proper
     const char *org_name = NULL;
     const char *debugFile = NULL;
     const char *localAuditLogFile = NULL;
+    const char *sharedAgentProfileName = NULL;
+    const char *realmName = NULL;
     
     if (AM_SUCCESS == status) {
         parameter = AM_POLICY_PASSWORD_PROPERTY;
@@ -274,6 +276,20 @@ load_bootinfo_to_properties(Utils::boot_info_t *boot_ptr, am_properties_t proper
         am_properties_set(properties, parameter, localAuditLogFile);
     }
 
+    if (AM_SUCCESS == status) {
+        parameter = AM_AGENT_PROFILE_NAME_PROPERTY;
+        status = am_properties_get(boot_ptr->properties, parameter,
+                &sharedAgentProfileName);
+        am_properties_set(properties, parameter, sharedAgentProfileName);
+    }
+
+    if (AM_SUCCESS == status) {
+        parameter = AM_POLICY_ORG_NAME_PROPERTY;
+        status = am_properties_get(boot_ptr->properties, parameter,
+                &realmName);
+        am_properties_set(properties, parameter, realmName);
+    }
+
     return status;
 }
 
@@ -296,6 +312,8 @@ void AgentProfileService::fetchAndUpdateAgentConfigCache()
     am_status_t authStatus = AM_FAILURE;
     std::string userName(boot_info.agent_name);
     std::string passwd(boot_info.agent_passwd);
+    std::string sharedAgentProfileName(boot_info.shared_agent_profile_name);
+    std::string realmName(boot_info.realm_name);
     const char* agentConfigFile = boot_info.agent_config_file;
     const Properties& propPtr =
         *reinterpret_cast<Properties *>(boot_info.properties);
@@ -315,7 +333,10 @@ void AgentProfileService::fetchAndUpdateAgentConfigCache()
             status = am_properties_create(&tmpPropPtr);
             
             if (status == AM_SUCCESS) {
-                status = getAgentAttributes(agentSSOToken, tmpPropPtr);               
+                status = getAgentAttributes(agentSSOToken, 
+                            sharedAgentProfileName,
+                            realmName,
+                            tmpPropPtr);               
                 if (status == AM_SUCCESS) {
                     const char* repoType = NULL;
                     boolean_t repoKeyPresent;
@@ -419,6 +440,8 @@ void AgentProfileService::deleteOldAgentConfigInstances()
  */
 am_status_t AgentProfileService::getAgentAttributes(
     const std::string appSSOToken, 
+    const std::string sharedAgentProfileName, 
+    const std::string realmName, 
     am_properties_t properties)
 {
     am_status_t status = AM_FAILURE;
@@ -430,12 +453,22 @@ am_status_t AgentProfileService::getAgentAttributes(
     std::string::size_type pos;
 
     std::string encodedAgentToken = Http::encode(appSSOToken);
-    std::string urlparam = "?subjectid=";
-    urlparam.append(encodedAgentToken);
+    std::string encodedSharedAgentProfileName = Http::encode(sharedAgentProfileName);
+    std::string encodedRealmName = Http::encode(realmName);
+
+    std::string urlParams = "?name=";
+    urlParams.append(encodedSharedAgentProfileName);
+    urlParams.append("&attributes_names=realm");
+    urlParams.append("&attributes_values_realm=");
+    urlParams.append(encodedRealmName); 
+    urlParams.append("&attributes_names=objecttype");
+    urlParams.append("&attributes_values_objecttype=Agent" );
+    urlParams.append("&admin=" );
+    urlParams.append(encodedAgentToken);
 
     setRestSvcInfo(mRestURL);
 
-    status =  doHttpGet(mRestSvcInfo, urlparam, Http::CookieList(),
+    status =  doHttpGet(mRestSvcInfo, urlParams, Http::CookieList(),
                         response, READ_INIT_BUF_LEN,
                         certName);
     if(status == AM_SUCCESS) {
@@ -512,7 +545,7 @@ am_status_t  AgentProfileService::parseAgentResponse(const std::string xmlRespon
     XMLElement element1; 
 
     // get the root element userdetails
-    if (element.isNamed("userdetails")) {
+    if (element.isNamed("identitydetails")) {
 
         // get the first attribute element
         element.getSubElement("attribute", element);

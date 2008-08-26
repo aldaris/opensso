@@ -192,3 +192,14 @@ com.sun.identity.agents.config.forward.proxy.port =
 com.sun.identity.agents.config.forward.proxy.user =
 com.sun.identity.agents.config.forward.proxy.password =
 
+#
+# AGENT PROFILE NAME
+#   The profile name used by the Agent to fetch the agent configuration data.
+#   The value of this property is the same as that of com.sun.identity.agents.app.username
+#   in most cases. However if multiple agent instances need to use the same credentials
+#   to authenticate, com.sun.identity.agents.app.username and com.iplanet.am.service.secret
+#   need to be set to the authenticating credentials accordingly.
+# Hot-Swap Enabled: No
+#
+com.sun.identity.agents.config.profilename = @AGENT_PROFILE_NAME@ 
+

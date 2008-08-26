@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am.h,v 1.20 2008-08-19 19:15:03 veiming Exp $
+ * $Id: am.h,v 1.21 2008-08-26 00:18:37 subbae Exp $
  *
  */
 
@@ -111,6 +111,9 @@ AM_BEGIN_EXTERN_C
 #define AM_AGENT_DEBUG_FILE_PROPERTY	AM_COMMON_PROPERTY_PREFIX "debug.file"
 #define AM_AGENT_DEBUG_FILE_ROTATE_PROPERTY	AM_COMMON_PROPERTY_PREFIX "debug.file.rotate"
 #define AM_AGENT_DEBUG_FILE_SIZE_PROPERTY	AM_COMMON_PROPERTY_PREFIX "debug.file.size"
+
+/* shared agent profile name */
+#define AM_AGENT_PROFILE_NAME_PROPERTY	AM_COMMON_PROPERTY_PREFIX "profilename"
 
 /*
 * Agent debug File minimum size

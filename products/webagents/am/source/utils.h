@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: utils.h,v 1.6 2008-06-25 08:14:40 qcheng Exp $
+ * $Id: utils.h,v 1.7 2008-08-26 00:18:37 subbae Exp $
  *
  */ 
 #ifndef __UTILS_H__
@@ -152,9 +152,9 @@ typedef struct boot_info_t {
     am_properties_t properties;
     url_info_list_t naming_url_list;
     am_log_module_id_t log_module;
+    const char *shared_agent_profile_name;
+    const char *realm_name;
 } boot_info_t;
-
-
 
 void parseIPAddresses(const std::string &property,
         std::set<std::string> &ipAddrSet );

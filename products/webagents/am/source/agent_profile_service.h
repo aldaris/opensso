@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: agent_profile_service.h,v 1.9 2008-06-25 08:14:25 qcheng Exp $
+ * $Id: agent_profile_service.h,v 1.10 2008-08-26 00:18:36 subbae Exp $
  *
  */
 
@@ -61,8 +61,10 @@ public:
     explicit AgentProfileService(const Properties& props, Utils::boot_info_t boot_info_prop);
     virtual ~AgentProfileService();
 
-    am_status_t getAgentAttributes( const std::string ssoToken,  
-                           am_properties_t properties);
+    am_status_t getAgentAttributes(const std::string ssoToken,  
+            const std::string sharedAgentProfileName,
+            const std::string realmName,
+            am_properties_t properties);
     am_status_t agentLogin();
 
     am_status_t agentLogout(const Properties &config); 

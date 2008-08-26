@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.cpp,v 1.32 2008-08-04 19:22:12 huacui Exp $
+ * $Id: am_web.cpp,v 1.33 2008-08-26 00:18:37 subbae Exp $
  *
  */
 
@@ -494,15 +494,6 @@ load_bootstrap_properties(Utils::boot_info_t *boot_ptr,
         }
     }
 
-/*
-    if (AM_SUCCESS == status) {
-	function_name = "am_properties_get";
-	parameter = AM_WEB_AGENT_REPOSITORY_LOCATION_PROPERTY;
-	am_properties_get(boot_ptr->properties, parameter,
-				  &boot_ptr->agent_props_location);
-     }
-*/
-
     if (AM_SUCCESS == status) {
         parameter = AM_POLICY_PASSWORD_PROPERTY;
         status = am_properties_get(boot_ptr->properties, parameter,
@@ -528,12 +519,25 @@ load_bootstrap_properties(Utils::boot_info_t *boot_ptr,
     }
 
     if (AM_SUCCESS == status) {
-	function_name = "am_properties_get";
-	parameter = AM_POLICY_USER_NAME_PROPERTY;
-	status = am_properties_get(boot_ptr->properties, parameter,
-                                      &boot_ptr->agent_name);
+        function_name = "am_properties_get";
+        parameter = AM_POLICY_USER_NAME_PROPERTY;
+        status = am_properties_get(boot_ptr->properties, parameter,
+            &boot_ptr->agent_name);
     }
 
+    if (AM_SUCCESS == status) {
+        function_name = "am_properties_get";
+        parameter = AM_AGENT_PROFILE_NAME_PROPERTY;
+        status = am_properties_get(boot_ptr->properties, parameter,
+            &boot_ptr->shared_agent_profile_name);
+    }
+
+    if (AM_SUCCESS == status) {
+        function_name = "am_properties_get";
+        parameter = AM_POLICY_ORG_NAME_PROPERTY;
+        status = am_properties_get(boot_ptr->properties, parameter,
+            &boot_ptr->realm_name);
+    }
 
     // Get the naming URL.
     if (AM_SUCCESS == status) {
