@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ds_ds_sec-samlv2-testng.xml,v 1.6 2008-08-15 21:07:28 sridharev Exp $
+ $Id: ds_ds_sec-samlv2-testng.xml,v 1.7 2008-08-26 22:32:22 sridharev Exp $
 
  Copyright 2008 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -1341,6 +1341,17 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.samlv2.SAMLv2AttributeQueryTests"/>
+        </classes>
+    </test>
+    <test name="AssertionQueryTest">
+        <parameter name="groupName" value="ds_ds_sec"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv2.SAMLv2AssertionQueryTests"/>
         </classes>
     </test>
 </suite>
