@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFedSmokeTest.java,v 1.4 2008-06-26 20:27:37 rmisra Exp $
+ * $Id: WSFedSmokeTest.java,v 1.5 2008-08-26 05:00:39 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,7 +25,6 @@
 package com.sun.identity.qatest.wsfed;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.ScriptException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.sun.identity.qatest.common.FederationManager;
@@ -56,7 +55,6 @@ public class WSFedSmokeTest extends WSFedCommon {
     private URL url;
     private FederationManager fmSP;
     private FederationManager fmIDP;
-    private String fileseparator;
     private String spurl;
     private String idpurl;
     
@@ -76,7 +74,6 @@ public class WSFedSmokeTest extends WSFedCommon {
         ArrayList list;
         try {
             entering("setup", null);
-            fileseparator = System.getProperty("file.separator");
             //Upload global properties file in configMap
             ResourceBundle rb_amconfig = ResourceBundle.getBundle(
                     TestConstants.TEST_PROPERTY_AMCONFIG);
@@ -207,15 +204,35 @@ public class WSFedSmokeTest extends WSFedCommon {
         try {
             log(Level.FINE, "wsfedSPSLOInit",
                     "Running: wsfedSPSLOInit");
-            getWebClient();
-            xmlfile = baseDir + "wsfedsmoketest_SPSLOInit.xml";
-            getxmlSPInitSLO(xmlfile, configMap);
-            log(Level.FINE, "wsfedSPSLOInit", "Run " + xmlfile);
-            task1 = new DefaultTaskHandler(xmlfile);
-            page1 = task1.execute(webClient);
+            String sp_proto = (String)configMap.get(TestConstants.
+                    KEY_SP_PROTOCOL);
+            String sp_port = (String)configMap.get(TestConstants.KEY_SP_PORT);
+            String sp_host = (String)configMap.get(TestConstants.KEY_SP_HOST);
+            String sp_deployment_uri = (String)configMap.get(
+                    TestConstants.KEY_SP_DEPLOYMENT_URI);
+            String sp_alias = (String)configMap.get(TestConstants.
+                    KEY_SP_METAALIAS);
+            String strResult = (String)configMap.get(TestConstants.
+                    KEY_SP_SLO_RESULT);
+
+            String strsloURL = sp_proto +"://" + sp_host + ":"
+                    + sp_port + sp_deployment_uri
+                    + "/WSFederationServlet/metaAlias" + sp_alias
+                    + "?wa=wsignout1.0";
+            url = new URL(strsloURL);
+            HtmlPage SLOpage = (HtmlPage)webClient.getPage(url);
+            Thread.sleep(10000);
+            if (getHtmlPageStringIndex(SLOpage, strResult) != -1) {
+                log(Level.FINE, "wsfedSPSLOInit", "Signing out ..."); 
+            } else {
+                log(Level.FINE, "wsfedSPSLOInit", "Not able to sign out " + 
+                        SLOpage.getWebResponse().getContentAsString());
+                assert false;
+            }
+
             url = new URL(spurl);
-            HtmlPage page = (HtmlPage)webClient.getPage(url);
-            if (getHtmlPageStringIndex(page, "Authentication") != -1) {
+            HtmlPage sppage = (HtmlPage)webClient.getPage(url);
+            if (getHtmlPageStringIndex(sppage, "Authentication") != -1) {
                 log(Level.FINE, "wsfedSPSLOInit", "SP side logout was " +
                         "successful");
             } else {
@@ -223,9 +240,10 @@ public class WSFedSmokeTest extends WSFedCommon {
                         "successful");
                 assert false;
             }
+            Thread.sleep(10000);
             url = new URL(idpurl);
-            page = (HtmlPage)webClient.getPage(url);
-            if (getHtmlPageStringIndex(page, "Authentication") != -1) {
+            HtmlPage idppage = (HtmlPage)webClient.getPage(url);
+            if (getHtmlPageStringIndex(idppage, "Authentication") != -1) {
                 log(Level.FINE, "wsfedSPSLOInit", "IDP side logout was " +
                         "successful");
             } else {
@@ -260,14 +278,34 @@ public class WSFedSmokeTest extends WSFedCommon {
             log(Level.FINE, "wsfedIDPSLOInit", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
             page1 = task1.execute(webClient);
-            xmlfile = baseDir + "wsfedsmoketest_IDPSLOInit.xml";
-            getxmlIDPInitSLO(xmlfile, configMap);
-            log(Level.FINE, "wsfedIDPSLOInit", "Run " + xmlfile);
-            task1 = new DefaultTaskHandler(xmlfile);
-            page1 = task1.execute(webClient);
+
+            String idp_proto = (String)configMap.get(TestConstants.
+                    KEY_IDP_PROTOCOL);
+            String idp_port = (String)configMap.get(TestConstants.KEY_IDP_PORT);
+            String idp_host = (String)configMap.get(TestConstants.KEY_IDP_HOST);
+            String idp_deployment_uri = (String)configMap.get(
+                    TestConstants.KEY_IDP_DEPLOYMENT_URI);
+            String idp_alias = (String)configMap.get(TestConstants.
+                    KEY_IDP_METAALIAS);
+            String strResult = (String)configMap.get(TestConstants.
+                    KEY_IDP_SLO_RESULT);
+
+            String SLOUrl = idp_proto +"://" + idp_host + ":"
+                    + idp_port + idp_deployment_uri
+                    + "/WSFederationServlet/metaAlias" + idp_alias
+                    + "?wa=wsignout1.0";
+            HtmlPage SLOpage = (HtmlPage)webClient.getPage(SLOUrl);
+            if (getHtmlPageStringIndex(SLOpage, strResult) != -1) {
+                log(Level.FINE, "wsfedSPSLOInit", "Signing out");
+            } else {
+                log(Level.FINE, "wsfedSPSLOInit", "Cannot sign out");
+                assert false;
+            }
+            Thread.sleep(10000);
+
             url = new URL(spurl);
-            HtmlPage page = (HtmlPage)webClient.getPage(url);
-            if (getHtmlPageStringIndex(page, "Authentication") != -1) {
+            HtmlPage sppage = (HtmlPage)webClient.getPage(url);
+            if (getHtmlPageStringIndex(sppage, "Authentication") != -1) {
                 log(Level.FINE, "wsfedSPSLOInit", "SP side logout was " +
                         "successful");
             } else {
@@ -275,9 +313,10 @@ public class WSFedSmokeTest extends WSFedCommon {
                         "successful");
                 assert false;
             }
+            Thread.sleep(10000);
             url = new URL(idpurl);
-            page = (HtmlPage)webClient.getPage(url);
-            if (getHtmlPageStringIndex(page, "Authentication") != -1) {
+            HtmlPage idppage = (HtmlPage)webClient.getPage(url);
+            if (getHtmlPageStringIndex(idppage, "Authentication") != -1) {
                 log(Level.FINE, "wsfedSPSLOInit", "IDP side logout was " +
                         "successful");
             } else {
@@ -330,8 +369,8 @@ public class WSFedSmokeTest extends WSFedCommon {
             log(Level.FINE, "cleanup", "idp users to delete :" +
                     configMap.get(TestConstants.KEY_IDP_USER));
             if (FederationManager.getExitCode(fmIDP.deleteIdentities(webClient,
-                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), idList,
-                    "User")) != 0) {
+                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM), 
+                    idList, "User")) != 0) {
                 log(Level.SEVERE, "cleanup", "deleteIdentities famadm command" +
                         " failed");
                 assert false;
