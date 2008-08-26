@@ -152,13 +152,13 @@
     <p>$page.getLocalizedString("step4.description")</p>
     
     <input type="radio" id="userStoreDefault" name="userStoreCustom"
-        style="margin-left:1em" value="false" $selectEmbeddedUM
-        onclick="enableEmbeddedConfig();"/>
+        style="margin-left:1em" value="false" $selectEmbeddedUM 
+        $radioDataTypeDisabled onclick="enableEmbeddedConfig();"/>
     <span>$page.getLocalizedString("configurator.embedded")</span><br/>
 
     <input type="radio" id="userStoreCustom" name="userStoreCustom"
         style="margin-left:1em" value="true" $selectExternalUM
-        onclick="enableExternalConfig();"/>
+        $radioDataTypeDisabled onclick="enableExternalConfig();"/>
     <span>$page.getLocalizedString("configurator.remote")</span>
     
     <div id="userStoreModule" style="width:610px;">

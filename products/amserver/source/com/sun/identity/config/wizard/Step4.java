@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step4.java,v 1.13 2008-08-22 20:01:01 kevinserwin Exp $
+ * $Id: Step4.java,v 1.14 2008-08-26 04:36:31 veiming Exp $
  *
  */
 package com.sun.identity.config.wizard;
@@ -95,6 +95,15 @@ public class Step4 extends AjaxPage {
             ctx.setSessionAttribute("EXT_DATA_STORE", "true");
             ctx.setSessionAttribute(SetupConstants.USER_STORE_TYPE,
                 "LDAPv3ForAMDS");
+        }
+
+        String smsType = getAttribute(SetupConstants.CONFIG_VAR_DATA_STORE,
+            "embedded");
+        if (!smsType.equals("embedded")) {
+            ctx.setSessionAttribute("EXT_DATA_STORE", "true");
+            addModel("radioDataTypeDisabled", "disabled");
+        } else {
+            addModel("radioDataTypeDisabled", "");
         }
 
         String val = getAttribute(SetupConstants.USER_STORE_HOST,getHostName());
