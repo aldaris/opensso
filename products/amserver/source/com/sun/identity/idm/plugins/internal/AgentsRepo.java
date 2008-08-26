@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.36 2008-07-10 00:24:23 veiming Exp $
+ * $Id: AgentsRepo.java,v 1.37 2008-08-26 23:49:43 goodearth Exp $
  *
  */
 
@@ -1125,8 +1125,12 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
      * @see com.sun.identity.idm.IdRepo#shutdown()
      */
     public void shutdown() {
-        scm.removeListener(scmListenerId);
-        ssm.removeListener(ssmListenerId);
+        if (scm != null) {
+            scm.removeListener(scmListenerId);
+        }
+        if (ssm != null) {
+            ssm.removeListener(ssmListenerId);
+        }
     }
 
     private void loadSupportedOps() {
@@ -1413,12 +1417,12 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         } catch (SMSException smse) {
             if (debug.warningEnabled()) {
                 debug.warning("AgentsRepo.getOrgConfig(): "
-                        + "Unable to init ssm and scm due to " + smse);
+                    + "Unable to get Organization Config due to " + smse);
             }
         } catch (SSOException ssoe) {
             if (debug.warningEnabled()) {
                 debug.warning("AgentsRepo.getOrgConfig(): "
-                        + "Unable to init ssm and scm due to " + ssoe);
+                    + "Unable to get Organization Config due to " + ssoe);
             }
         }
         return (orgConfigCache);
@@ -1449,12 +1453,12 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         } catch (SMSException smse) {
             if (debug.warningEnabled()) {
                 debug.warning("AgentsRepo.getAgentGroupConfig: "
-                        + "Unable to init ssm and scm due to " + smse);
+                        + "Unable to get Agent Group Config due to " + smse);
             }
         } catch (SSOException ssoe) {
             if (debug.warningEnabled()) {
                 debug.warning("AgentsRepo.getAgentGroupConfig: "
-                        + "Unable to init ssm and scm due to " + ssoe);
+                        + "Unable to get Agent Group Config due to " + ssoe);
             }
         }
         return (agentGroupConfigCache);
