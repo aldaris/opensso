@@ -22,14 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RealmSetAttributeValues.java,v 1.5 2008-08-26 00:00:42 veiming Exp $
- *
+ * $Id: RealmSetAttributeValues.java,v 1.6 2008-08-26 20:16:40 goodearth Exp $
  */
 
 package com.sun.identity.cli.realm;
 
 
-import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.cli.AttributeValues;
 import com.sun.identity.cli.AuthenticatedCommand;
@@ -39,14 +37,9 @@ import com.sun.identity.cli.IArgument;
 import com.sun.identity.cli.IOutput;
 import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
-import com.sun.identity.idm.AMIdentity;
-import com.sun.identity.idm.AMIdentityRepository;
-import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.SMSException;
-import com.sun.identity.sm.ServiceConfig;
 import java.text.MessageFormat;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -86,91 +79,10 @@ public class RealmSetAttributeValues extends AuthenticatedCommand {
 
         Map attributeValues = AttributeValues.parse(
             getCommandManager(), datafile, attrValues);
-        
-        try {
-            AMIdentityRepository repo = new AMIdentityRepository(
-                adminSSOToken, realm);
-            AMIdentity ai = repo.getRealmIdentity();
-            Set servicesFromIdRepo = ai.getAssignedServices();
-        
-            if (servicesFromIdRepo.contains(serviceName)) {
-                handleDynamicAttributes(ai, realm, serviceName, attributeValues,
-                    bAppend);
-            } else {
-                handleOrganizatioAttribute(realm, serviceName, attributeValues,
-                    bAppend);
-            }
-        } catch (IdRepoException e) {
-            String[] args = {realm, e.getMessage()};
-            debugError("RealmSetAttributeValues.handleRequest", e);
-            writeLog(LogWriter.LOG_ERROR, Level.INFO,
-                "FAILED_SET_ATTR_VALUES_REALM", args);
-            throw new CLIException(e,ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
-        } catch (SSOException e) {
-            String[] args = {realm, e.getMessage()};
-            debugError("RealmSetAttributeValues.handleRequest", e);
-            writeLog(LogWriter.LOG_ERROR, Level.INFO,
-                "FAILED_SET_ATTR_VALUES_REALM", args);
-            throw new CLIException(e,ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
-        }
-    }
-    
-    private void handleDynamicAttributes(
-        AMIdentity idRealm,
-        String realm,
-        String serviceName,
-        Map attributeValues,
-        boolean bAppend
-    ) throws CLIException, IdRepoException, SSOException {
-        String[] params = {realm, serviceName};
-        IOutput outputWriter = getOutputWriter();
-        writeLog(LogWriter.LOG_ACCESS, Level.INFO,
-            "ATTEMPT_ADD_ATTR_VALUES_REALM", params);
-
-        if (bAppend) {
-            Map newValues = new HashMap();
-            Map currentVal = idRealm.getAttributes(attributeValues.keySet());
-            for (Iterator i = attributeValues.keySet().iterator(); i.hasNext();)
-            {
-                String attrName = (String)i.next();
-                Set origVal = (Set)currentVal.get(attrName);
-                Set newVal = (Set)attributeValues.get(attrName);
-                if ((origVal == null) || origVal.isEmpty()) {
-                    newValues.put(attrName, newVal);
-                } else {
-                    origVal.addAll(newVal);
-                    newValues.put(attrName, origVal);
-                }
-            }
-            idRealm.modifyService(serviceName, newValues);
-        } else {
-            idRealm.modifyService(serviceName, attributeValues);
-        }
-        writeLog(LogWriter.LOG_ACCESS, Level.INFO,
-            "SUCCEED_ADD_ATTR_VALUES_REALM", params);
-        outputWriter.printlnMessage(MessageFormat.format(
-            getResourceString("set-attribute-values-realm-succeed"),
-            (Object[]) params));
-    }
-    
-    private void handleOrganizatioAttribute(
-        String realm,
-        String serviceName,
-        Map attributeValues,
-        boolean bAppend
-    ) throws CLIException {
-        SSOToken adminSSOToken = getAdminSSOToken();
-        IOutput outputWriter = getOutputWriter();
 
         try {
             OrganizationConfigManager ocm = new OrganizationConfigManager(
                 adminSSOToken, realm);
-            if (!ocm.getAssignedServices().contains(serviceName)) {
-                throw new CLIException(getResourceString(
-                    "realm-set-attr-values-service-not-assigned"),
-                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
-            }
-            ServiceConfig config = ocm.getServiceConfig(serviceName);
             if (bAppend) {
                 for (Iterator i = attributeValues.keySet().iterator();
                     i.hasNext();
@@ -181,7 +93,7 @@ public class RealmSetAttributeValues extends AuthenticatedCommand {
                     
                     writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                         "ATTEMPT_ADD_ATTR_VALUES_REALM", params);
-                    config.addAttribute(attributeName, values);
+                    ocm.addAttributeValues(serviceName, attributeName, values);
                     writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                         "SUCCEED_ADD_ATTR_VALUES_REALM", params);
                     outputWriter.printlnMessage(MessageFormat.format(
@@ -192,19 +104,13 @@ public class RealmSetAttributeValues extends AuthenticatedCommand {
                 String[] params = {realm, serviceName};
                 writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                     "ATTEMPT_SET_ATTR_VALUES_REALM", params);
-                config.setAttributes(attributeValues);
+                ocm.setAttributes(serviceName, attributeValues);
                 writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                     "SUCCEED_SET_ATTR_VALUES_REALM", params);
                 outputWriter.printlnMessage(MessageFormat.format(
                     getResourceString("set-attribute-values-realm-succeed"),
                     (Object[])params));
             }
-        } catch (SSOException e) {
-            String[] args = {realm, e.getMessage()};
-            debugError("RealmSetAttributeValues.handleRequest", e);
-            writeLog(LogWriter.LOG_ERROR, Level.INFO,
-                "FAILED_SET_ATTR_VALUES_REALM", args);
-            throw new CLIException(e,ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (SMSException e) {
             String[] args = {realm, e.getMessage()};
             debugError("RealmSetAttributeValues.handleRequest", e);
@@ -214,3 +120,4 @@ public class RealmSetAttributeValues extends AuthenticatedCommand {
         }
     }
 }
+
