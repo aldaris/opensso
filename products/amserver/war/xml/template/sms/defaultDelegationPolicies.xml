@@ -140,6 +140,26 @@
     </Conditions>
 </Policy>
 
+<!-- Delegation policy for shared agents to read the profile of other agents -->
+<Policy name="SharedAgentReadOnlyPermission" referralPolicy="false" active="true" >
+    <Rule name="sharedagent-idrepo-read-rule">
+        <ServiceName name="sunAMDelegationService" />
+        <ResourceName name="sms://*@SM_CONFIG_ROOT_SUFFIX@/sunIdentityRepositoryService/1.0/application/agent*" />
+        <AttributeValuePair>
+            <Attribute name="READ" />
+            <Value>allow</Value>
+        </AttributeValuePair>
+    </Rule>
+    <Subjects name="Subjects" description="">
+        <Subject name="AuthenticatedSharedAgents" type="AuthenticatedSharedAgents" includeType="inclusive">
+        </Subject>
+    </Subjects>
+    <Conditions name="AttrCondition" description="">
+        <Condition name="condition" type="AuthenticatedSharedAgentsCondition">
+        </Condition>
+    </Conditions>
+</Policy>
+
 <Policy name="@SM_ROOT_SUFFIX_HAT@^^AgentLogging" referralPolicy="false" active="true" >
     <Rule name="delegation-rule1">
         <ServiceName name="sunAMDelegationService" />
