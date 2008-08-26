@@ -1,0 +1,84 @@
+<!DOCTYPE suite SYSTEM "http://beust.com/testng/testng-1.0.dtd" >
+
+<!--
+ The contents of this file are subject to the terms
+ of the Common Development and Distribution License
+ (the License). You may not use this file except in
+ compliance with the License.
+
+ You can obtain a copy of the License at
+ https://opensso.dev.java.net/public/CDDLv1.0.html or
+ opensso/legal/CDDLv1.0.txt
+ See the License for the specific language governing
+ permission and limitations under the License.
+
+ When distributing Covered Code, include this CDDL
+ Header Notice in each file and include the License file
+ at opensso/legal/CDDLv1.0.txt.
+ If applicable, add the following below the CDDL Header,
+ with the fields enclosed by brackets [] replaced by
+ your own identifying information:
+ "Portions Copyrighted [year] [name of copyright owner]"
+
+ $Id: ff_ds_sec-samlv1x-testng.xml,v 1.1 2008-08-26 23:44:27 sridharev Exp $
+
+ Copyright 2007 Sun Microsystems Inc. All Rights Reserved
+-->
+<suite name="ff_ds_sec-samlv1x" verbose="1">
+    <parameter name="groupName" value="ff_ds_sec"/>
+    <test name="samlv1xTestsSPArtifactProfile">
+        <parameter name="ptestName" value="SP-Inited-ArtifactProfile-Test"/>
+        <parameter name="ptestType" value="artifact"/>
+        <parameter name="ptestInit" value="sp"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv1x.ConfigureSAMLv1x"/>
+            <class name="com.sun.identity.qatest.samlv1x.ConfigUnconfig"/>
+            <class name="com.sun.identity.qatest.samlv1x.SAMLv1xProfileTests"/>
+            <class name="com.sun.identity.qatest.samlv1x.UnconfigureSAMLv1x"/>
+        </classes>
+    </test>
+    <test name="samlv1xTestsSPPostProfile">
+        <parameter name="ptestName" value="SP-Inited-PostProfile-Test"/>
+        <parameter name="ptestType" value="post"/>
+        <parameter name="ptestInit" value="sp"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv1x.SAMLv1xProfileTests"/>
+        </classes>
+    </test>
+    <test name="samlv1xTestsIDPArtifactProfile">
+        <parameter name="ptestName" value="IDP-Inited-ArtifactProfile-Test"/>
+        <parameter name="ptestType" value="artifact"/>
+        <parameter name="ptestInit" value="idp"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv1x.SAMLv1xProfileTests"/>
+        </classes>
+    </test>
+    <test name="samlv1xTestsIDPPostProfile">
+        <parameter name="ptestName" value="IDP-Inited-PostProfile-Test"/>
+        <parameter name="ptestType" value="post"/>
+        <parameter name="ptestInit" value="idp"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.samlv1x.SAMLv1xProfileTests"/>
+        </classes>
+    </test>
+</suite>
