@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.32 2008-08-21 23:34:14 huacui Exp $
+ * $Id: AgentConfiguration.java,v 1.33 2008-08-26 00:35:35 huacui Exp $
  *
  */
 
@@ -500,7 +500,7 @@ public class AgentConfiguration implements
         Properties result = new Properties();
         String tokenId = getAppSSOToken().getTokenID().toString();
         result = AgentRemoteConfigUtils.getAgentProperties(
-                                        urls, tokenId, getProfileName());
+               urls, tokenId, getProfileName(), getOrganizationName());
         if (isLogMessageEnabled()) {
             logMessage("AgentConfiguration: Centralized agent properties =" 
                     + result);

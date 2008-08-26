@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentRemoteConfigUtils.java,v 1.6 2008-08-21 23:34:15 huacui Exp $
+ * $Id: AgentRemoteConfigUtils.java,v 1.7 2008-08-26 00:35:35 huacui Exp $
  *
  */
 
@@ -67,7 +67,7 @@ public class AgentRemoteConfigUtils {
      * @return constructed <code>Properties</code> object.
      */
     public static Properties getAgentProperties(Vector urls, String tokenId, 
-        String profileName) throws AgentException {
+        String profileName, String realm) throws AgentException {
         Properties result = new Properties();
         if (urls == null) {
             return result;
@@ -76,7 +76,7 @@ public class AgentRemoteConfigUtils {
         String xml = null;
         for (int i = 0; i < urls.size(); i++) {
             URL url = (URL)urls.get(i);
-            xml = getAttributesInXMLFromRest(url, tokenId, profileName);
+            xml = getAttributesInXMLFromRest(url, tokenId, profileName, realm);
             if (xml != null) {
                 break;
             }
@@ -270,7 +270,7 @@ public class AgentRemoteConfigUtils {
     }
     
     private static String getAttributesInXMLFromRest(URL url, String tokenId,
-        String profileName) throws AgentException {
+        String profileName, String realm) throws AgentException {
 	HttpURLConnection conn = null;
         char[] buf = new char[1024];
         StringBuffer in_buf = new StringBuffer();
@@ -278,6 +278,9 @@ public class AgentRemoteConfigUtils {
 	try {
             String attributeServiceURL = url + ATTRIBUTE_SERVICE 
                 + "?name=" + URLEncoder.encode(profileName, "UTF-8") 
+                + "&attributes_names=realm"
+                + "&attributes_values_realm=" 
+                + URLEncoder.encode(realm, "UTF-8")
                 + "&attributes_names=objecttype"
                 + "&attributes_values_objecttype=Agent"
                 + "&admin=" + URLEncoder.encode(tokenId, "UTF-8"); 
