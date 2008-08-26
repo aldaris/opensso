@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RealmSetAttributeValues.java,v 1.6 2008-08-26 20:16:40 goodearth Exp $
+ * $Id: RealmSetAttributeValues.java,v 1.7 2008-08-26 21:13:15 veiming Exp $
  */
 
 package com.sun.identity.cli.realm;
