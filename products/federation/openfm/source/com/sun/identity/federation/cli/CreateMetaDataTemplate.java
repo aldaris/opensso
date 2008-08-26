@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataTemplate.java,v 1.33 2008-06-25 05:49:52 qcheng Exp $
+ * $Id: CreateMetaDataTemplate.java,v 1.34 2008-08-26 05:05:39 qcheng Exp $
  *
  */
 
@@ -46,6 +46,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.cert.CertificateEncodingException;
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -219,13 +221,42 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         pepECertAlias = getStringOptionValue(
             FedCLIConstants.ARGUMENT_PEP_E_CERT_ALIAS);
 
-        protocol = SystemPropertiesManager.get(Constants.AM_SERVER_PROTOCOL);
-        host = SystemPropertiesManager.get(Constants.AM_SERVER_HOST);
-        port = SystemPropertiesManager.get(Constants.AM_SERVER_PORT);
-        deploymentURI = SystemPropertiesManager.get(
-            Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
         String webURL = getCommandManager().getWebEnabledURL();
         isWebBased = (webURL != null) && (webURL.trim().length() > 0);
+        if (isWebBased) {
+            try {
+                URL url = new URL(webURL);
+                protocol = url.getProtocol();
+                host = url.getHost();
+                int iPort = url.getPort();
+                if (iPort == -1) {
+                    port = "" + url.getDefaultPort();
+                } else {
+                    port = "" + iPort;
+                }
+                String uri = url.getPath();
+                int slash = uri.indexOf("/", 1);
+                if (slash == -1) {
+                    deploymentURI = uri;
+                } else {
+                    deploymentURI = uri.substring(0, slash);
+                }
+            } catch (MalformedURLException ex) {
+                // default to local host
+                protocol = 
+                    SystemPropertiesManager.get(Constants.AM_SERVER_PROTOCOL);
+                host = SystemPropertiesManager.get(Constants.AM_SERVER_HOST);
+                port = SystemPropertiesManager.get(Constants.AM_SERVER_PORT);
+                deploymentURI = SystemPropertiesManager.get(
+                    Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
+            }
+        } else {
+            protocol = SystemPropertiesManager.get(Constants.AM_SERVER_PROTOCOL);
+            host = SystemPropertiesManager.get(Constants.AM_SERVER_HOST);
+            port = SystemPropertiesManager.get(Constants.AM_SERVER_PORT);
+            deploymentURI = SystemPropertiesManager.get(
+                    Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
+        }
     }
     
     private void normalizeOptions() {
@@ -438,7 +469,8 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
 
             String xml =
                 CreateSAML2HostedProviderTemplate.buildMetaDataTemplate(
-                    entityID, getWorkflowParamMap(), null);
+                    entityID, getWorkflowParamMap(), 
+                    protocol + "://" + host + ":" + port + deploymentURI);
             pw.write(xml);
             
             if (!isWebBased) {
@@ -483,7 +515,8 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
 
             String xml =
                 CreateSAML2HostedProviderTemplate.createExtendedDataTemplate(
-                entityID, getWorkflowParamMap(), null);
+                entityID, getWorkflowParamMap(), 
+                protocol + "://" + host + ":" + port + deploymentURI);
             pw.write(xml);
             
             if (!isWebBased) {
@@ -556,7 +589,8 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             }
             
             String xml = CreateIDFFMetaDataTemplate.createStandardMetaTemplate(
-                entityID, getWorkflowParamMap(), null);
+                entityID, getWorkflowParamMap(), 
+                protocol + "://" + host + ":" + port + deploymentURI);
             pw.write(xml);
             
             if (!isWebBased) {
@@ -594,7 +628,8 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             }
             
             String xml = CreateWSFedMetaDataTemplate.createStandardMetaTemplate(
-                entityID, getWorkflowParamMap(), null);
+                entityID, getWorkflowParamMap(), 
+                protocol + "://" + host + ":" + port + deploymentURI);
             pw.write(xml);
             
             if (!isWebBased) {

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: ssoadm.jsp,v 1.4 2008-08-19 19:12:29 veiming Exp $
+   $Id: ssoadm.jsp,v 1.5 2008-08-26 05:05:40 qcheng Exp $
   
 --%>
 
@@ -67,7 +67,7 @@
 
         WebCLIHelper helper = new WebCLIHelper(request,
             "com.sun.identity.federation.cli.FederationManager,com.sun.identity.cli.AccessManager",
-            "ssoadm", "ssoadm.jsp");
+            "ssoadm", request.getRequestURL().toString());
         out.println(helper.getHTML(request, ssoToken));
         Object[] param = {"0"};
         out.println(MessageFormat.format(
