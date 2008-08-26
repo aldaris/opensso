@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.63 2008-08-08 21:29:39 mrudul_uchil Exp $
+   $Id: AgentService.xml,v 1.64 2008-08-26 23:48:09 goodearth Exp $
 
 -->
 
@@ -3473,6 +3473,42 @@
                             <Value>com.sun.identity.sm.RequiredValueValidator</Value>
                         </DefaultValues>
                     </AttributeSchema>                
+                </SubSchema>
+                <SubSchema name="SharedAgent" inheritance="multiple">
+                    <AttributeSchema name="userpassword"
+                        type="single"
+                        syntax="password"
+                        validator="RequiredValueValidator"
+                        i18nKey="a100">
+                        <DefaultValues>
+                            <Value>&#160;</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="sunIdentityServerDeviceStatus"
+                        type="single_choice"
+                        syntax="string"
+                        validator="RequiredValueValidator"
+                        i18nKey="a101">
+                        <ChoiceValues>
+                            <ChoiceValue i18nKey="a102">Active</ChoiceValue>
+                            <ChoiceValue i18nKey="a103">Inactive</ChoiceValue>
+                        </ChoiceValues>
+                        <DefaultValues>
+                            <Value>Active</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="RequiredValueValidator"
+                        type="validator"
+                        syntax="string">
+                        <DefaultValues>
+                            <Value>com.sun.identity.sm.RequiredValueValidator</Value>
+                        </DefaultValues>
+                    </AttributeSchema>                
+                    <AttributeSchema name="com.sun.identity.agents.config.profiles.allowed.to.read"
+                    type="list"
+                    syntax="string"
+                    i18nKey="a600">
+                </AttributeSchema>
                 </SubSchema>
             </Organization>
         </Schema>

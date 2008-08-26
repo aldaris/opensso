@@ -24,7 +24,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amPolicy.xml,v 1.7 2008-06-25 05:46:12 qcheng Exp $
+    $Id: amPolicy.xml,v 1.8 2008-08-26 23:48:09 goodearth Exp $
 
 -->
 
@@ -211,6 +211,12 @@
             i18nFileName="amPolicy"
             i18nKey="iplanet-userselfcheck-condition-name" />
         <PluginSchema
+            name="AuthenticatedSharedAgentsCondition"
+            interfaceName="Condition"
+            className="com.sun.identity.policy.plugins.AuthenticatedSharedAgentsCondition"
+            i18nFileName="amPolicy"
+            i18nKey="iplanet-sharedagents-condition-name" />
+        <PluginSchema
             name="SessionPropertyCondition"
             interfaceName="Condition"
             className="com.sun.identity.policy.plugins.SessionPropertyCondition"
@@ -256,5 +262,12 @@
             interfaceName="Subject"
             className="com.sun.identity.policy.plugins.AuthenticatedAgents"
             i18nFileName="amPolicy" />
+        <PluginSchema
+            name="AuthenticatedSharedAgents"
+            interfaceName="Subject"
+            className="com.sun.identity.policy.plugins.AuthenticatedSharedAgents"
+            i18nFileName="amPolicy"
+            i18nKey="SunIdentityServer-subject-AuthenticatedSharedAgents-name"
+            propertiesViewBeanURL = "../policy/PMAuthenticatedSharedAgentsSubject" />
     </Service>
 </ServicesConfiguration>
