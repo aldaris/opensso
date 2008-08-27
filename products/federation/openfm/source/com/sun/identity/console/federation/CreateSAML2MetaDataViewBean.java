@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateSAML2MetaDataViewBean.java,v 1.3 2008-08-12 17:14:23 babysunil Exp $
+ * $Id: CreateSAML2MetaDataViewBean.java,v 1.4 2008-08-27 17:50:15 babysunil Exp $
  *
  */
 
@@ -38,6 +38,7 @@ import com.sun.identity.console.base.AMPropertySheet;
 import com.sun.identity.console.base.AMPrimaryMastHeadViewBean;
 import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
+import com.sun.identity.console.base.model.AMAdminConstants;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.federation.model.CreateMetaDataModel;
 import com.sun.identity.console.federation.model.CreateMetaDataModelImpl;
@@ -58,22 +59,22 @@ import java.util.TreeSet;
 import javax.servlet.http.HttpServletRequest;
 
 public class CreateSAML2MetaDataViewBean
-        extends AMPrimaryMastHeadViewBean 
+        extends AMPrimaryMastHeadViewBean
 {
-    public static final String DEFAULT_DISPLAY_URL = 
-        "/console/federation/CreateSAML2MetaData.jsp";    
-    private static final String PROPERTIES = "propertyAttributes";    
+    public static final String DEFAULT_DISPLAY_URL =
+        "/console/federation/CreateSAML2MetaData.jsp";
+    private static final String PROPERTIES = "propertyAttributes";
     private static final String PGTITLE_TWO_BTNS = "pgtitleTwoBtns";
     private static final String AFFI_MEMBERS = "affimembers";
     private static final String PROTO_SAMLv2 = "samlv2";
     private static final String PROTO_IDFF = "idff";
     private static final String PROTO_WSFED = "wsfed";
-    
+
 
     private CCPageTitleModel ptModel;
     private AMPropertySheetModel psModel;
     private String protocol;
-    
+
     /**
      * Creates a authentication domains view bean.
      */
@@ -81,7 +82,7 @@ public class CreateSAML2MetaDataViewBean
         super("CreateSAML2MetaData");
         setDefaultDisplayURL(DEFAULT_DISPLAY_URL);
     }
-    
+
     protected void initialize() {
         if (!initialized) {
             protocol = (String) getPageSessionAttribute("protocol");
@@ -97,7 +98,7 @@ public class CreateSAML2MetaDataViewBean
         }
         super.registerChildren();
     }
-    
+
     protected void registerChildren() {
         super.registerChildren();
         registerChild(PROPERTIES, AMPropertySheet.class);
@@ -105,7 +106,7 @@ public class CreateSAML2MetaDataViewBean
         psModel.registerChildren(this);
         ptModel.registerChildren(this);
     }
-    
+
     protected View createChild(String name) {
         View view = null;
         if (name.equals(PGTITLE_TWO_BTNS)) {
@@ -121,7 +122,7 @@ public class CreateSAML2MetaDataViewBean
         }
         return view;
     }
-    
+
     public void beginDisplay(DisplayEvent event)
         throws ModelControlException
     {
@@ -132,7 +133,7 @@ public class CreateSAML2MetaDataViewBean
         populateRealmData();
         psModel.setModel(AFFI_MEMBERS, new CCEditableListModel());
     }
-    
+
     private void createPageTitleModel() {
         ptModel = new CCPageTitleModel(
             getClass().getClassLoader().getResourceAsStream(
@@ -147,12 +148,12 @@ public class CreateSAML2MetaDataViewBean
         ptModel.setValue("button1", "button.create");
         ptModel.setValue("button2", "button.cancel");
     }
-    
+
     protected AMModel getModelInternal() {
         HttpServletRequest req = getRequestContext().getRequest();
         return new CreateMetaDataModelImpl(req, getPageSessionAttributes());
     }
-    
+
     private void createPropertyModel() {
         if (protocol == null) {
             protocol = (String)getPageSessionAttribute("protocol");
@@ -165,19 +166,19 @@ public class CreateSAML2MetaDataViewBean
         psModel.setModel(AFFI_MEMBERS, new CCEditableListModel());
         psModel.clear();
     }
-    
+
     private void populateRealmData() {
         CreateMetaDataModel model = (CreateMetaDataModel)getModel();
         try{
             Set realmNames = new TreeSet(model.getRealmNames("/", "*"));
             CCDropDownMenu menu =
-                (CCDropDownMenu)getChild("singleChoiceRealm");        
+                (CCDropDownMenu)getChild("singleChoiceRealm");
             OptionList list = new OptionList();
             for (Iterator i = realmNames.iterator(); i.hasNext();) {
                 String name = (String)i.next();
                 list.add(getPath(name), name);
             }
-            menu.setOptions(list);         
+            menu.setOptions(list);
         } catch (AMConsoleException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
                 e.getMessage());
@@ -190,13 +191,17 @@ public class CreateSAML2MetaDataViewBean
      * @param event Request invocation event
      */
     public void handleButton1Request(RequestInvocationEvent event)
-        throws ModelControlException     
-    {    
+        throws ModelControlException
+    {
+	setPageSessionAttribute(getTrackingTabIDName(),
+	    AMAdminConstants.FED_TAB_ID);
+        setPageSessionAttribute(AMAdminConstants.PREVIOUS_TAB_ID,
+            getTrackingTabIDName());
         CreateMetaDataModel model = (CreateMetaDataModel)getModel();
         try {
             String realm = getDisplayFieldStringValue("singleChoiceRealm");
             String entityId = getDisplayFieldStringValue("tfEntityId");
-            
+
             if ((realm == null) || (realm.trim().length() == 0)) {
                 setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
                     model.getLocalizedString(
@@ -229,8 +234,8 @@ public class CreateSAML2MetaDataViewBean
             forwardTo();
         }
     }
-    
-    private Map getWorkflowParamMap(String realm, CreateMetaDataModel model) 
+
+    private Map getWorkflowParamMap(String realm, CreateMetaDataModel model)
         throws AMConsoleException {
         Map map = new HashMap();
         boolean hasRole = false;
@@ -252,14 +257,14 @@ public class CreateSAML2MetaDataViewBean
             hasRole |= addStringToMap(map,
                 MetaTemplateParameters.P_ATTR_QUERY_PROVIDER,
                 "tfattrqueryprovider", realm);
-            addStringToMap(map, 
+            addStringToMap(map,
                 MetaTemplateParameters.P_ATTR_QUERY_PROVIDER_S_CERT,
                 "tfattrqscertalias");
-            addStringToMap(map, 
+            addStringToMap(map,
                 MetaTemplateParameters.P_ATTR_QUERY_PROVIDER_E_CERT,
                 "tfattrqecertalias");
 
-            hasRole |= addStringToMap(map, 
+            hasRole |= addStringToMap(map,
                 MetaTemplateParameters.P_ATTR_AUTHORITY,
                 "tfattrauthority", realm);
             addStringToMap(map, MetaTemplateParameters.P_ATTR_AUTHORITY_E_CERT,
@@ -267,7 +272,7 @@ public class CreateSAML2MetaDataViewBean
             addStringToMap(map, MetaTemplateParameters.P_ATTR_AUTHORITY_S_CERT,
                 "tfattraecertalias");
 
-            hasRole |= addStringToMap(map, 
+            hasRole |= addStringToMap(map,
                 MetaTemplateParameters.P_AUTHN_AUTHORITY,
                 "tfauthnauthority", realm);
             addStringToMap(map, MetaTemplateParameters.P_AUTHN_AUTHORITY_E_CERT,
@@ -304,7 +309,7 @@ public class CreateSAML2MetaDataViewBean
                 throw new AMConsoleException(
                         model.getLocalizedString(
                         "samlv2.create.provider.missing.affiliation.owner"));
-            } 
+            }
 
 
             CCEditableList eList = (CCEditableList) getChild(AFFI_MEMBERS);
@@ -325,14 +330,14 @@ public class CreateSAML2MetaDataViewBean
             throw new AMConsoleException(
                 model.getLocalizedString(
                 "samlv2.create.provider.missing.roles"));
-        }        
+        }
         return map;
     }
-    
+
     private boolean addStringToMap(
-        Map map, 
-        String key, 
-        String name, 
+        Map map,
+        String key,
+        String name,
         String realm
     ) {
         String val = this.getDisplayFieldStringValue(name);
@@ -356,14 +361,18 @@ public class CreateSAML2MetaDataViewBean
             return false;
         }
     }
-    
+
 
     /**
      * Handles page cancel request.
-     * 
+     *
      * @param event Request invocation event
      */
     public void handleButton2Request(RequestInvocationEvent event) {
+        setPageSessionAttribute(getTrackingTabIDName(),
+            AMAdminConstants.FED_TAB_ID);
+        setPageSessionAttribute(AMAdminConstants.PREVIOUS_TAB_ID,
+            getTrackingTabIDName());
         FederationViewBean vb = (FederationViewBean)
             getViewBean(FederationViewBean.class);
         backTrail();

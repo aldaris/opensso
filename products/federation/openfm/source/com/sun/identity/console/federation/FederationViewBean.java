@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationViewBean.java,v 1.22 2008-07-07 20:39:20 veiming Exp $
+ * $Id: FederationViewBean.java,v 1.23 2008-08-27 17:49:59 babysunil Exp $
  *
  */
 
@@ -80,9 +80,9 @@ public  class FederationViewBean
     protected static final String PROPERTY_ATTRIBUTE = "propertyAttributes";
     private boolean tablePopulated = false;
     private boolean initialized = false;
-    
+
     private AMPropertySheetModel propertySheetModel;
-    
+
     // cot table properties
     private static final String COT_TABLE = "cotTable";
     private static final String COT_NAME_VALUE = "cotNameValue";
@@ -90,7 +90,7 @@ public  class FederationViewBean
     private static final String COT_ENTITY_VALUE = "cotEntityValue";
     private static final String COT_REALM_VALUE = "cotRealmValue";
     private static final String COT_STATUS_VALUE = "statusValue";
-    
+
     // entity table properties
     private static final String ENTITY_TABLE = "entityTable";
     private static final String ENTITY_NAME_VALUE = "entityNameValue";
@@ -99,7 +99,7 @@ public  class FederationViewBean
     private static final String ENTITY_ROLE_VALUE = "roleValue";
     private static final String ENTITY_LOCATION_VALUE = "locationValue";
     private static final String ENTITY_REALM_VALUE = "entityRealmValue";
-    
+
     // SAML Configuration table
     private static final String SAML_TABLE = "samlTable";
     protected static final String TABLE_TRUSTED_PARTNERS =
@@ -114,7 +114,7 @@ public  class FederationViewBean
         "trustedPartnerDestinationType";
     protected static final String SAML_TRUSTED_PARTNER_SOURCE_TYPE =
         "trustedPartnerSourceType";
-    
+
     /**
      * Creates a authentication domains view bean.
      */
@@ -122,7 +122,7 @@ public  class FederationViewBean
         super ("Federation");
         setDefaultDisplayURL (DEFAULT_DISPLAY_URL);
     }
-    
+
     protected void initialize ()  {
         if (!initialized) {
             initialized = true;
@@ -134,13 +134,13 @@ public  class FederationViewBean
             registerChildren ();
         }
     }
-    
+
     protected void registerChildren () {
         super.registerChildren ();
         registerChild (PROPERTY_ATTRIBUTE, AMPropertySheet.class);
         propertySheetModel.registerChildren (this);
     }
-    
+
     protected View createChild (String name) {
         if (!tablePopulated) {
             populateCOTTable ();
@@ -148,7 +148,7 @@ public  class FederationViewBean
             populateSAMLTable ();
         }
         View view = null;
-        
+
         if (name.equals (PROPERTY_ATTRIBUTE)) {
             view = new AMPropertySheet (this, propertySheetModel, name);
         } else if (propertySheetModel.isChildSupported (name)) {
@@ -158,76 +158,79 @@ public  class FederationViewBean
         }
         return view;
     }
-    
+
     public void beginDisplay (DisplayEvent event)
     throws ModelControlException {
         super.beginDisplay (event);
+        setSelectedTabNode(getCurrentRealm());
+        String id = (String)getPageSessionAttribute(getTrackingTabIDName());
+        setPageSessionAttribute(AMAdminConstants.PREVIOUS_TAB_ID, id);
         resetButtonState ("deleteCOTButton");
         resetButtonState ("deleteEntityButton");
         resetButtonState ("deleteTPButton");
-        
+
         AMPropertySheet ps =
             (AMPropertySheet)getChild (PROPERTY_ATTRIBUTE);
-        
+
         populateCOTTable ();
         populateEntityTable ();
         populateSAMLTable ();
-        
+
         String msg = (String)removePageSessionAttribute(MESSAGE_TEXT);
         if (msg != null) {
             setInlineAlertMessage(
                 CCAlert.TYPE_INFO, "message.information", msg);
         }
     }
-    
+
     protected AMModel getModelInternal () {
         HttpServletRequest req = getRequestContext ().getRequest ();
         return new FSAuthDomainsModelImpl (req, getPageSessionAttributes ());
     }
-    
+
     private EntityModel getEntityModel () {
         RequestContext rc = RequestManager.getRequestContext ();
         HttpServletRequest req = rc.getRequest ();
         return new EntityModelImpl (req, getPageSessionAttributes ()  );
     }
-    
+
     private AMModel getSAMLModel () {
         HttpServletRequest req = getRequestContext ().getRequest ();
         return new FSSAMLServiceModelImpl (req, getPageSessionAttributes ());
     }
-    
+
     private void populateSAMLTable () {
         tablePopulated = true;
         FSSAMLServiceModel model = (FSSAMLServiceModel)getSAMLModel ();
         Map attrValues = model.getAttributeValues ();
-        
+
         CCActionTableModel tblModel = (CCActionTableModel)
         propertySheetModel.getModel (SAML_TABLE);
         tblModel.clearAll ();
         removePageSessionAttribute (SAML_TABLE_ATTRIBUTE);
         List cache = new ArrayList ();
-        
+
         for (Iterator iter = attrValues.keySet().iterator(); iter.hasNext(); ) {
             String name = (String)iter.next ();
             Set values = (Set)attrValues.get (name);
-            
+
             if (name.equals (TABLE_TRUSTED_PARTNERS)) {
                 AMPipeDelimitAttrTokenizer tokenizer =
                     AMPipeDelimitAttrTokenizer.getInstance ();
                 boolean firstEntry = true;
                 int counter = 0;
-                
+
                 for (Iterator iter2 = values.iterator (); iter2.hasNext (); ) {
                     if (!firstEntry) {
                         tblModel.appendRow ();
                     } else {
                         firstEntry = false;
                     }
-                    
+
                     String tokenizedValue = (String)iter2.next ();
                     Map map = AMAdminUtils.upCaseKeys (
                         tokenizer.tokenizes (tokenizedValue));
-                    
+
                     String partnerName =
                         (String)map.get(SAMLConstants.PARTNERNAME);
                     if (partnerName == null) {
@@ -237,17 +240,17 @@ public  class FederationViewBean
                     tblModel.setValue (SAML_TRUSTED_PARTNER_HREF,
                         Integer.toString (counter++));
                     cache.add (tokenizedValue);
-                    
+
                     // get trusted partner type
-                    
+
                     SAMLPropertyXMLBuilder builder =
                         SAMLPropertyXMLBuilder.getInstance ();
                     List profiles = (ArrayList)builder.getSAMLProperties (map);
-                    
+
                     StringBuffer trustedPartnerSourceType = new StringBuffer ();
                     StringBuffer trustedPartnerDestinationType =
                         new StringBuffer ();
-                    
+
                     int size = profiles.size ();
                     for (int i=0;i<size;i++) {
                         if (((SAMLProperty) profiles.get (i)).getRole ().equals (
@@ -255,7 +258,7 @@ public  class FederationViewBean
                             if (trustedPartnerDestinationType.length () != 0) {
                                 trustedPartnerDestinationType.append (", ");
                             }
-                            
+
                             trustedPartnerDestinationType.append (
                                 getTrustedPartnersSelectType (
                                 ((SAMLProperty)profiles.get (i)).getBindMethod ()));
@@ -263,13 +266,13 @@ public  class FederationViewBean
                             if (trustedPartnerSourceType.length () != 0) {
                                 trustedPartnerSourceType.append (", ");
                             }
-                            
+
                             trustedPartnerSourceType.append (
                                 getTrustedPartnersSelectType (
                                 ((SAMLProperty)profiles.get (i)).getBindMethod ()));
                         }
                     }
-                    
+
                     tblModel.setValue (SAML_TRUSTED_PARTNER_DESTINATION_TYPE,
                         trustedPartnerDestinationType.toString ());
                     tblModel.setValue (SAML_TRUSTED_PARTNER_SOURCE_TYPE,
@@ -280,7 +283,7 @@ public  class FederationViewBean
         }
         setPageSessionAttribute (SAML_TABLE_ATTRIBUTE, (ArrayList)cache);
     }
-    
+
     private String getTrustedPartnersSelectType (String input){
         FSSAMLServiceModel model = (FSSAMLServiceModel)getSAMLModel ();
         String ret = null;
@@ -296,7 +299,7 @@ public  class FederationViewBean
         }
         return ret;
     }
-    
+
     private void populateEntityTable() {
         tablePopulated=true;
         CCActionTableModel tableModel = (CCActionTableModel)
@@ -332,14 +335,14 @@ public  class FederationViewBean
             return;
         }
     }
-    
+
   private void addRows (
-          Map entities,  
-          EntityModel eModel, 
-          CCActionTableModel tableModel, 
+          Map entities,
+          EntityModel eModel,
+          CCActionTableModel tableModel,
           boolean firstRow,
           List entityList
-  ) { 
+  ) {
         for (Iterator i = entities.keySet().iterator(); i.hasNext(); ) {
             if (!firstRow) {
                 tableModel.appendRow();
@@ -352,50 +355,50 @@ public  class FederationViewBean
             String protocol = (String)data.get(EntityModel.PROTOCOL);
             String realm = (String)data.get(EntityModel.REALM);
             String location = (String)data.get(eModel.LOCATION);
-            String completeValue = name+"|"+protocol+"|"+realm+"|"+location;           
+            String completeValue = name+"|"+protocol+"|"+realm+"|"+location;
             tableModel.setValue(ENTITY_NAME_HREF, stringToHex(completeValue));
             tableModel.setValue(ENTITY_NAME_VALUE, name);
             tableModel.setValue(ENTITY_REALM_VALUE, realm);
-            tableModel.setValue(ENTITY_PROTOCOL_VALUE, protocol);         
-            
+            tableModel.setValue(ENTITY_PROTOCOL_VALUE, protocol);
+
             try {
-                if(eModel.isAffiliate(protocol, realm, name)){               
-                    tableModel.setValue(ENTITY_LOCATION_VALUE, "");               
-                    tableModel.setValue(ENTITY_ROLE_VALUE, 
+                if(eModel.isAffiliate(protocol, realm, name)){
+                    tableModel.setValue(ENTITY_LOCATION_VALUE, "");
+                    tableModel.setValue(ENTITY_ROLE_VALUE,
                         "affiliate" );
-                } else {               
-                    tableModel.setValue(ENTITY_LOCATION_VALUE, 
-                        location+".label");   
+                } else {
+                    tableModel.setValue(ENTITY_LOCATION_VALUE,
+                        location+".label");
                     tableModel.setValue(ENTITY_ROLE_VALUE,
                         (String)data.get(eModel.ROLE));
                 }
-            } catch (AMConsoleException e) { 
-                 debug.error ("FederationViewBean.populateEntityTable", e);                 
+            } catch (AMConsoleException e) {
+                 debug.error ("FederationViewBean.populateEntityTable", e);
             }
-            
+
             // name|protocol|realm needed while deleting/exporting entities
             entityList.add(completeValue);
-        }       
+        }
 }
 
     private void populateCOTTable () {
         tablePopulated=true;
         FSAuthDomainsModel model = (FSAuthDomainsModel)getModel();
         Set circleOfTrustDescriptors = model.getCircleOfTrustDescriptors();
-        
+
         CCActionTableModel tableModel = (CCActionTableModel)
         propertySheetModel.getModel (COT_TABLE);
         tableModel.clearAll ();
-        
+
         SerializedField szCache = (SerializedField)getChild(SZ_CACHE);
-        
+
         if ((circleOfTrustDescriptors != null)
-            && (!circleOfTrustDescriptors.isEmpty ())) 
+            && (!circleOfTrustDescriptors.isEmpty ()))
         {
             List cache = new ArrayList(circleOfTrustDescriptors.size());
             boolean first = true;
             for (Iterator iter = circleOfTrustDescriptors.iterator();
-                iter.hasNext (); ) 
+                iter.hasNext (); )
             {
                 if (first) {
                     first = false;
@@ -407,9 +410,9 @@ public  class FederationViewBean
                 String name = desc.getCircleOfTrustName();
                 tableModel.setValue(COT_NAME_VALUE, name);
                 tableModel.setValue(COT_NAME_HREF, stringToHex(name));
-               
+
                 // get entity/provider name
-                Set entitySet = desc.getTrustedProviders();               
+                Set entitySet = desc.getTrustedProviders();
                 if ((entitySet != null) && (!entitySet.isEmpty())) {
                     Iterator it = entitySet.iterator();
                     StringBuffer sb = new StringBuffer();
@@ -417,19 +420,19 @@ public  class FederationViewBean
                         String entity = (String)it.next();
                         sb.append (entity).append("<br>");
                     }
-                    tableModel.setValue(COT_ENTITY_VALUE, sb.toString());                   
+                    tableModel.setValue(COT_ENTITY_VALUE, sb.toString());
                 } else {
                     tableModel.setValue(COT_ENTITY_VALUE, "");
                 }
-                
+
                 // get realm name
                 String realm = desc.getCircleOfTrustRealm();
                 tableModel.setValue(COT_REALM_VALUE, realm);
-              
+
                 // get cot status
                 String status = desc.getCircleOfTrustStatus();
                 tableModel.setValue (COT_STATUS_VALUE, status);
-                
+
                 cache.add (name + "|" + realm);
             }
             szCache.setValue ((ArrayList)cache);
@@ -437,14 +440,14 @@ public  class FederationViewBean
             szCache.setValue (null);
         }
     }
-    
+
     private void createPropertyModel () {
         propertySheetModel = new AMPropertySheetModel (
             getClass().getClassLoader().getResourceAsStream (
             "com/sun/identity/console/propertyFederationView.xml"));
         propertySheetModel.clear ();
     }
-    
+
     /*
      * Responsible for creating the circle of trust table.
      */
@@ -462,7 +465,7 @@ public  class FederationViewBean
         tableModel.setActionValue ("statusColumn", "cot.status.column.label");
         propertySheetModel.setModel (COT_TABLE, tableModel);
     }
-    
+
     /*
      * Responsible for creating the entity table.
      */
@@ -470,7 +473,7 @@ public  class FederationViewBean
         CCActionTableModel tableModel = new CCActionTableModel(
             getClass().getClassLoader().getResourceAsStream(
             "com/sun/identity/console/entityTable.xml"));
-        
+
         tableModel.setMaxRows(getModel().getPageSize());
         tableModel.setTitleLabel("label.items");
         tableModel.setActionValue(
@@ -491,7 +494,7 @@ public  class FederationViewBean
             "realmColumn", "entity.realm.column.label");
         propertySheetModel.setModel(ENTITY_TABLE, tableModel);
     }
-    
+
     /*
      * Responsible for creating the entity table.
      */
@@ -511,7 +514,7 @@ public  class FederationViewBean
             "saml.trusted.partner.destination.column.label");
         propertySheetModel.setModel (SAML_TABLE, tableModel);
     }
-    
+
     /*****************************************************************
      *
      * SAML Event Handlers.
@@ -520,7 +523,7 @@ public  class FederationViewBean
      * There is also a handler for editing the local properties.
      *
      *****************************************************************/
-    
+
     /**
      * Handles the new trusted partner request. There is no real processing
      * done here. We are just forwarding the request onto the view bean
@@ -536,7 +539,7 @@ public  class FederationViewBean
         passPgSessionMap (vb);
         vb.forwardTo (getRequestContext ());
     }
-    
+
     /**
      * Handles the delete trusted partner request. The items which are
      * selected in the SAML table will be removed. After the processing is
@@ -551,16 +554,16 @@ public  class FederationViewBean
         tbl.restoreStateData ();
         CCActionTableModel tblModel = (CCActionTableModel)
         propertySheetModel.getModel (SAML_TABLE);
-        
+
         // get selected rows here
         Integer[] selected = tblModel.getSelectedRows ();
-        
+
         List currentList = (List) getPageSessionAttribute (SAML_TABLE_ATTRIBUTE);
         Set selectedSet = new HashSet ();
         for (int i = 0; i < selected.length; i++) {
             selectedSet.add (currentList.get (selected[i].intValue ()));
         }
-        
+
         try {
             FSSAMLServiceModel model = (FSSAMLServiceModel)getSAMLModel ();
             model.deleteTrustPartners (selectedSet);
@@ -575,20 +578,20 @@ public  class FederationViewBean
             setInlineAlertMessage (CCAlert.TYPE_ERROR, "message.error",
                 e.getMessage ());
         }
-        
+
         forwardTo ();
     }
-    
+
     public void handleLocalSitePropertiesRequest (RequestInvocationEvent event) {
         removePageSessionAttribute(PROPERTY_ATTRIBUTE);
         FSSAMLServiceViewBean vb = (FSSAMLServiceViewBean)
         getViewBean (FSSAMLServiceViewBean.class);
-        
+
         unlockPageTrail ();
         passPgSessionMap (vb);
         vb.forwardTo (getRequestContext ());
     }
-    
+
     public void handleTrustedPartnerHrefRequest (
         RequestInvocationEvent event
         ) throws ModelControlException {
@@ -597,22 +600,22 @@ public  class FederationViewBean
         String strValue = currentList.get (Integer.parseInt (idx)).toString ();
         Map values = AMPipeDelimitAttrTokenizer.getInstance ().tokenizes (
             strValue);
-        
+
         SAMLPropertyXMLBuilder builder = SAMLPropertyXMLBuilder.getInstance ();
         setPageSessionAttribute (FSSAMLTrustedPartnersViewBeanBase.PROFILES,
             (ArrayList)builder.getSAMLProperties (values));
-        
+
         FSSAMLTrustedPartnersViewBeanBase vb =
             (FSSAMLTrustedPartnersViewBeanBase)getViewBean (
             FSSAMLTrustedPartnersEditViewBean.class) ;
-        
+
         unlockPageTrail ();
         passPgSessionMap (vb);
         vb.populateValues (idx);
         vb.forwardTo (getRequestContext ());
     }
-    
-    
+
+
     /*****************************************************************
      *
      * Circle of Trust Event Handlers
@@ -625,23 +628,23 @@ public  class FederationViewBean
         passPgSessionMap (vb);
         vb.forwardTo (getRequestContext ());
     }
-    
+
     public void handleDeleteCOTButtonRequest (RequestInvocationEvent event)
     throws ModelControlException {
         CCActionTable tbl = (CCActionTable)getChild (COT_TABLE);
         tbl.restoreStateData ();
         CCActionTableModel tableModel = (CCActionTableModel)
         propertySheetModel.getModel (COT_TABLE);
-        
+
         // get selected rows
         Integer[] selected = tableModel.getSelectedRows ();
         SerializedField szCache = (SerializedField)getChild (SZ_CACHE);
         List list = (List)szCache.getSerializedObj ();
-        
+
         FSAuthDomainsModel model = (FSAuthDomainsModel)getModel ();
         StringBuffer successMessage = new StringBuffer ();
         StringBuffer errorMessage  = new StringBuffer ();
-        
+
         // each COT is deleted separately as they can be in separate realms
         for ( int i = 0; i < selected.length; i++) {
             String str = (String)list.get (selected[i].intValue ());
@@ -665,14 +668,14 @@ public  class FederationViewBean
                 errorMessage.append ("<li>").append (e.getMessage ());
             }
         }
-        
+
         successMessage.append ("</ul>").append (errorMessage);
         setInlineAlertMessage (CCAlert.TYPE_INFO, "message.information",
             successMessage.toString ());
-        
+
         forwardTo ();
     }
-    
+
     public void handleCotNameHrefRequest (RequestInvocationEvent event)
     throws ModelControlException {
         String name = hexToString((String)getDisplayFieldValue(COT_NAME_HREF));
@@ -683,7 +686,7 @@ public  class FederationViewBean
         vb.setPageSessionAttribute (FSAuthDomainsModel.TF_NAME, name);
         vb.forwardTo (getRequestContext ());
     }
-    
+
     /*****************************************************************
      *
      * Entity Event handlers
@@ -696,7 +699,7 @@ public  class FederationViewBean
 //
 //            vb.forwardTo(getRequestContext());
     }
-    
+
     public void handleImportEntityButtonRequest (RequestInvocationEvent event) {
         ImportEntityViewBean vb = (ImportEntityViewBean)
         getViewBean (ImportEntityViewBean.class);
@@ -704,7 +707,7 @@ public  class FederationViewBean
         passPgSessionMap (vb);
         vb.forwardTo (getRequestContext ());
     }
-    
+
     public void handleDeleteEntityButtonRequest(RequestInvocationEvent event)
     throws ModelControlException {
         CCActionTable table = (CCActionTable)getChild(ENTITY_TABLE);
@@ -717,7 +720,7 @@ public  class FederationViewBean
         List successList = new ArrayList();
         List failureList = new ArrayList();
         String name = null;
-        
+
         for (int i = 0; i < selected.length; i++) {
             String selectedRow =
                     (String)entitiesList.get(selected[i].intValue());
@@ -729,25 +732,25 @@ public  class FederationViewBean
             String realmStr = protStr.substring(posProtocol+1);
             int posrealm = realmStr.indexOf("|");
             String realm = realmStr.substring(0, posrealm);
-            try {                
+            try {
                 model.deleteEntities(name, protocol, realm);
                 successList.add(name);
             }catch (AMConsoleException e) {
                 failureList.add(name);
             }
-            
+
         }
-        StringBuffer finalStr = printDeleteMessage(model, successList, failureList);       
+        StringBuffer finalStr = printDeleteMessage(model, successList, failureList);
         setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
                finalStr.toString());
         forwardTo();
     }
-    
+
     private StringBuffer printDeleteMessage(
-        EntityModel model, 
-        List slist, 
-        List flist 
-    ) {        
+        EntityModel model,
+        List slist,
+        List flist
+    ) {
         StringBuffer fBuffer = new StringBuffer();
         StringBuffer sBuffer = new StringBuffer();
         if (slist.size()>0 ) {
@@ -766,65 +769,66 @@ public  class FederationViewBean
                 fBuffer.append("<li>").append(key);
             }
         }
-        StringBuffer strBuffer = sBuffer.append("<br>").append(fBuffer);        
-      return strBuffer;     
-       
+        StringBuffer strBuffer = sBuffer.append("<br>").append(fBuffer);
+      return strBuffer;
+
     }
-        
-    public void handleEntityNameHrefRequest(RequestInvocationEvent event) {  
+
+    public void handleEntityNameHrefRequest(RequestInvocationEvent event) {
         // store the current selected tab in the page session
         String id = (String)getPageSessionAttribute(getTrackingTabIDName());
-        setPageSessionAttribute(AMAdminConstants.PREVIOUS_TAB_ID, id);        
-               
+        setPageSessionAttribute(AMAdminConstants.PREVIOUS_TAB_ID, id);
+
         String tmp = hexToString(
             (String)getDisplayFieldValue(ENTITY_NAME_HREF));
         int index = tmp.lastIndexOf("|");
-        
-        String location = tmp.substring(index+1);  
 
-        tmp = tmp.substring(0, index);        
+        String location = tmp.substring(index+1);
+
+        tmp = tmp.substring(0, index);
         index = tmp.lastIndexOf("|");
-        
-        String realm = tmp.substring(index+1);        
-        tmp = tmp.substring(0, index);        
+
+        String realm = tmp.substring(index+1);
+        tmp = tmp.substring(0, index);
         index = tmp.indexOf("|");
-        
+
         String protocol = tmp.substring(index + 1);
-        String name = tmp.substring(0,index);                   
-        
+        String name = tmp.substring(0,index);
+
         EntityPropertiesBase vb = null;
         List roles = null;
         EntityModel eModel = (EntityModel) getEntityModel();
-        if (protocol.equals(EntityModel.SAMLV2)) {                      
+        if (protocol.equals(EntityModel.SAMLV2)) {
             roles = eModel.getSAMLv2Roles(name, realm );
             String strViewBean = (String)roles.get(0);
-            vb = getSAMLv2ViewBean(strViewBean); 
+            vb = getSAMLv2ViewBean(strViewBean);
         } else if (protocol.equals(EntityModel.IDFF)) {
             roles = eModel.getIDFFRoles(name, realm );
             String strViewBean = (String)roles.get(0);
-            vb = getIDFFViewBean(strViewBean); 
+            vb = getIDFFViewBean(strViewBean);
         } else if (protocol.equals(EntityModel.WSFED)) {
             vb = (WSFedGeneralViewBean)getViewBean(WSFedGeneralViewBean.class);
         }
 
         if (vb != null) {
-            setPageSessionAttribute(getTrackingTabIDName(), "1"); 
-            setPageSessionAttribute(EntityPropertiesBase.ENTITY_NAME, name);        
+            setPageSessionAttribute(getTrackingTabIDName(),
+               AMAdminConstants.PREVIOUS_TAB_ID);
+            setPageSessionAttribute(EntityPropertiesBase.ENTITY_NAME, name);
             setPageSessionAttribute(EntityPropertiesBase.ENTITY_REALM, realm);
             setPageSessionAttribute(
                 EntityPropertiesBase.ENTITY_LOCATION, location);
-            
+
             unlockPageTrail();
             passPgSessionMap(vb);
-            vb.forwardTo(getRequestContext());  
+            vb.forwardTo(getRequestContext());
         } else {
-            setInlineAlertMessage(CCAlert.TYPE_ERROR, 
+            setInlineAlertMessage(CCAlert.TYPE_ERROR,
                 getModel().getLocalizedString("unknown.object.type.title"),
                 getModel().getLocalizedString("unknown.object.type"));
             forwardTo();
-        }       
-    }    
-    
+        }
+    }
+
     /*
      * This handler is called when the dropdown menu is invoked in the
      * entity provider table. The value in the <code>actionMenu</code>
@@ -836,9 +840,9 @@ public  class FederationViewBean
         String actionValue = (String)getDisplayFieldValue ("actionMenu");
 
             forwardTo ();
-        
+
     }
-    
+
     private EntityPropertiesBase getSAMLv2ViewBean(String strViewBean) {
         EntityPropertiesBase vb = null;
         if (strViewBean.equals(EntityModel.SERVICE_PROVIDER)) {
@@ -870,7 +874,7 @@ public  class FederationViewBean
         }
         return vb;
     }
-    
+
     private EntityPropertiesBase getIDFFViewBean(String strViewBean) {
         EntityPropertiesBase vb = null;
         if (strViewBean.equals(EntityModel.SERVICE_PROVIDER)) {
@@ -885,5 +889,5 @@ public  class FederationViewBean
         }
         return vb;
     }
-    
+
 }

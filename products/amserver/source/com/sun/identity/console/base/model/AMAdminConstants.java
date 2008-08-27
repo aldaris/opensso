@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAdminConstants.java,v 1.9 2008-06-25 05:42:48 qcheng Exp $
+ * $Id: AMAdminConstants.java,v 1.10 2008-08-27 17:48:46 babysunil Exp $
  *
  */
 
@@ -174,6 +174,11 @@ public interface AMAdminConstants {
      */
     String PREVIOUS_TAB_ID = "PreviousTabID";
 
+    /**
+     * Tab Id of Federation tab
+     */
+    String FED_TAB_ID = "2"; 
+    
     /**
      * Organization node identifier.
      */
