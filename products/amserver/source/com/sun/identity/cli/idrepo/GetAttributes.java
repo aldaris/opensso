@@ -22,12 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetAttributes.java,v 1.7 2008-06-25 05:42:15 qcheng Exp $
+ * $Id: GetAttributes.java,v 1.8 2008-08-27 23:41:30 sean_brydon Exp $
  *
  */
 
 package com.sun.identity.cli.idrepo;
-
 
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
@@ -85,26 +84,26 @@ public class GetAttributes extends IdentityCommand {
                 "ATTEMPT_IDREPO_GET_ATTRIBUTES", params);
             AMIdentity amid = new AMIdentity(
                 adminSSOToken, idName, idType, realm, null); 
-            Set attrSchemas = getAttributeSchemas(type, adminSSOToken);
-            Set attrNames = new HashSet();
+            Set attrSchemas = getAttributeSchemas(type, adminSSOToken);             
             Map rawValues = null;
-            
+          
             if ((attributeNames != null) && !attributeNames.isEmpty()) {
+                //if user specified particular attributes as command option args
+                Set attrNames = new HashSet();                                  
                 attrNames.addAll(attributeNames);
                 rawValues = amid.getAttributes(attrNames);
             } else {
                 rawValues = amid.getAttributes();
             }
             
-            Map values = correctAttributeNames(rawValues, attrSchemas);
             Object[] args = {idName};
 
-            if ((values != null) && !values.isEmpty()) {
+            if ((rawValues != null) && !rawValues.isEmpty()) {
                 String msg = getResourceString("idrepo-attribute-result");
                 String[] arg = {"", ""};
-                for (Iterator i = values.keySet().iterator(); i.hasNext(); ) {
+                for (Iterator i = rawValues.keySet().iterator(); i.hasNext(); ) {
                     String attrName = (String)i.next();
-                    Set attrValues = (Set)values.get(attrName);
+                    Set attrValues = (Set)rawValues.get(attrName);
                     arg[0] = attrName;
                     
                     arg[1] = isPassword(attrSchemas, attrName) ? "********" :
@@ -152,32 +151,12 @@ public class GetAttributes extends IdentityCommand {
         }
         return isPwd;
     }
-    
-    private Map correctAttributeNames(Map raw, Set attrSchemas) {
-        Map map = new HashMap(attrSchemas.size() *2);
-        Map values = new HashMap(raw.size() *2);
-        
-        for (Iterator i = attrSchemas.iterator(); i.hasNext(); ) {
-            AttributeSchema as = (AttributeSchema)i.next();
-            String name = as.getName();
-            map.put(name.toLowerCase(), name);
-        }
-        
-        for (Iterator i = raw.keySet().iterator(); i.hasNext(); ) {
-            String k = (String)i.next();
-            String actualAttrname = (String)map.get(k);
-            if (actualAttrname != null) {
-                values.put(actualAttrname, raw.get(k));
-            }
-        }
-        
-        return values;
-    }
-    
+ 
     private Set getAttributeSchemas(String idType, SSOToken token)
-        throws SMSException, SSOException, IdRepoException {
+        throws SMSException, SSOException, IdRepoException { 
         Set attributeSchemas = Collections.EMPTY_SET;
         String serviceName = getSvcNameForIdType(idType);
+  
         if (serviceName != null) {
             ServiceSchemaManager svcSchemaMgr = new ServiceSchemaManager(
                 serviceName, token);
@@ -186,7 +165,6 @@ public class GetAttributes extends IdentityCommand {
                 attributeSchemas = svcSchema.getAttributeSchemas();
             }
         }
-        
         for (Iterator i = attributeSchemas.iterator(); i.hasNext(); ) {
             AttributeSchema as = (AttributeSchema)i.next();
             String i18nKey = as.getI18NKey();
@@ -199,7 +177,7 @@ public class GetAttributes extends IdentityCommand {
     
     private String getSvcNameForIdType(String idType)
         throws IdRepoException {
-        String serviceName = IdUtils.getServiceName(IdUtils.getType(idType));
+        String serviceName = IdUtils.getServiceName(IdUtils.getType(idType));        
         if ((serviceName == null) || (serviceName.trim().length() == 0)) {
             if (ServiceManager.isCoexistenceMode()) {
                 BackwardCompSupport support = BackwardCompSupport.getInstance();
@@ -208,6 +186,5 @@ public class GetAttributes extends IdentityCommand {
         }
         return serviceName;
     }
-  
 
 }
