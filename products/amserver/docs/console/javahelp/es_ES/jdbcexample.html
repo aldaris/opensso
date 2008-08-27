@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Para configurar un conjunto de conexiones: ejemplo - Ayuda en l&#237;nea de la consola de Sun Java System Federated Access Manager 8.0
+  <title>Para configurar un conjunto de conexiones: ejemplo - Ayuda en l&#237;nea de la consola de Sun Federated Access Manager 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -45,14 +45,14 @@ con los siguientes atributos:</b><dl><dt>Nombre de conjunto</dt>
 <dt>usuario</dt>
 <dd><p>Nombre de usuario de la contrase&#241;a de la base de datos:</p></dd>
 <dt>contrase&#241;a</dt>
-<dd><p>La contrase&#241;a del usuario.</p></dd>
+<dd><p> La contrase&#241;a del usuario.</p></dd>
 <dt>Nombre de base de datos</dt>
 <dd><p>El nombre de la base de datos.</p></dd>
 </dl>
 
-<hr><p><b>Nota &#8211; </b>El archivo jar que contiene la clase de origen de datos y
-la clase de controlador JDBC que se mencionan en los pasos siguientes
-debe agregarse a la ruta de la clase de aplicaci&#243;n</p>
+<hr><p><b>Nota &#8211; </b>El archivo jar que contiene la clase de <i>origen de datos</i> y la clase
+de controlador JDBC que se mencionan en los pasos siguientes debe agregarse
+a la ruta de la clase de aplicaci&#243;n</p>
 <hr>
 </li>
 <li><b>Configure los recursos de JDBC. En la consola de Web Server, cree
@@ -68,7 +68,7 @@ un recurso de JDBC con los siguientes atributos:</b><dl><dt>Nombre JNDI</dt>
       &#60;res-ref-name>jdbc/mySQL&#60;/res-ref-name>
       &#60;jndi-name>jdbc/samplePool&#60;/jndi-name>
 &#60;/resource-ref></pre></li>
-<li><b>Agregue las siguientes l&#237;neas al archivo web.xml de la aplicaci&#243;n: </b><pre>&#60;resource-ref>
+<li><b>Agregue las siguientes l&#237;neas al archivo web.xml de la aplicaci&#243;n:</b><pre>&#60;resource-ref>
        &#60;description>mySQL Database&#60;/description>
        &#60;res-ref-name>jdbc/mySQL&#60;/res-ref-name>
        &#60;res-type>javax.sql.DataSource&#60;/res-type>

@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>SOAP 绑定属性 - Sun Java System Federated Access Manager 8.0 控制台联机帮助
+  <title>SOAP 绑定属性 - Sun Federated Access Manager 8.0 控制台联机帮助
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -34,10 +34,10 @@
 
 
 <a name="ggocx"></a><h5>Web 服务验证程序</h5>
-<a name="indexterm-162"></a><a name="indexterm-163"></a><p>此属性采用的值是 Web 服务验证程序接口的实现类。此类用于为 Web 服务使用方验证请求和生成证书。</p>
+<a name="indexterm-155"></a><a name="indexterm-156"></a><p>此属性采用的值是 Web 服务验证程序接口的实现类。此类用于为 Web 服务使用方验证请求和生成证书。</p>
 
 <a name="ggock"></a><h5>支持的验证机制</h5>
-<a name="indexterm-164"></a><a name="indexterm-165"></a><p>此属性用于指定 SOAP 接收方所支持的验证机制。验证机制提供了用户验证、数据完整性和加密。默认情况下，所有可用的验证机制都处于选定状态。如果 Web 服务使用方 (WSC) 使用未选定的验证机制发送请求，则系统将拒绝该请求。以下是支持的验证机制的列表：</p>
+<a name="indexterm-157"></a><a name="indexterm-158"></a><p>此属性用于指定 SOAP 接收方所支持的验证机制。验证机制提供了用户验证、数据完整性和加密。默认情况下，所有可用的验证机制都处于选定状态。如果 Web 服务使用方 (WSC) 使用未选定的验证机制发送请求，则系统将拒绝该请求。以下是支持的验证机制的列表：</p>
 <ul><li><p><tt>urn:liberty:security:2003-08:null:null</tt></p></li>
 <li><p><tt>urn:liberty:security:2003-08:null:X509</tt></p></li>
 <li><p><tt>urn:liberty:security:2003-08:null:SAML</tt></p></li>
@@ -56,7 +56,7 @@
 <p>如果启用该属性，它将强制在 SOAP 消息中发送 <tt>ProviderID</tt> 标头以确定该提供者存在于系统中。如果提供者不存在，请求将被拒绝。如果未启用该属性，将跳过上述检查。</p>
 
 <a name="ggoci"></a><h5>SSL 客户机验证的证书别名</h5>
-<p>该值在安装过程中设置。将在 Liberty SOAP 绑定的 SSL 连接中使用的客户机证书别名。</p>
+<p>在安装期间设置该值。将在 Liberty SOAP 绑定的 SSL 连接中使用的客户机证书别名。</p>
 
 <a name="ggocs"></a><h5>过时消息的时间限制</h5>
 <p>默认值是 300000。确定消息是否过时并从此不再值得信任。如果消息时间戳早于当前时间戳达到指定的时间（以毫秒为单位），则认为该消息过时。</p>

@@ -1,217 +1,535 @@
-<?xml version='1.0' encoding='euc-tw'?>
+<?xml version='1.0' encoding='utf-8'?>
 <!-- ident   "%Z%%M% %I%   %E% SMI" -->
 <!DOCTYPE toc PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN" "toc_1_0.dtd">
 <toc version="2.0">
 
- <tocitem target="aawelcome" text="Sun Java System Federated Access Manager 8.0 îÀÄ¸ë©Íü" expand="false">
+ <tocitem target="aawelcome" text="SunTM Federated Access Manager 8.0 îÀÄ¸ë©Íü" expand="false">
     <tocitem target="intro" text="öüÄõ" expand="false"></tocitem></tocitem>
+ <tocitem target="commontasks" text="ÇÁÆîÉ¢äÆ" expand="false">
+    <tocitem target="task.home" text="ÇÁÆîÉ¢äÆÄ÷Çµ" expand="false"></tocitem></tocitem>
  <tocitem target="accesscontrol" text="ÇôÌ½ÚÕÌ±" expand="false">
     <tocitem target="realm.rmrealm" text="î¯ÞØ" expand="false">
-        <tocitem target="realm.rmrealmadd" text="ÐúÇ¡ä»Îûî¯ÞØ" expand="false"></tocitem></tocitem>
-    <tocitem target="realm.realmproperties" text="Ä¡×ïÖÖÍÌ" expand="false"></tocitem></tocitem>
- <tocitem target="authentication.authproperties" text="ë¥øý" expand="false">
-    <tocitem target="authentication.newauthinstance" text="ÐúÇ¡ä»Îûë¥øýí¼ÜÚèÒËó" expand="false"></tocitem>
-    <tocitem target="authentication.newauthconfig" text="ÐúÇ¡ä»Îûë¥øýù¹ÚÙ" expand="false"></tocitem></tocitem>
- <tocitem target="realm.services" text="Î¤Ù­" expand="false">
-    <tocitem target="realm.servicesadd" text="ÙòÎ¤Ù­ä»ìÁÈÝî¯ÞØ" expand="false"></tocitem></tocitem>
- <tocitem target="realm.idrepo" text="æñÕèÇôÍóÙ´" expand="false">
-    <tocitem target="realm.idreposelecttype" text="ÐúÇ¡ä»ÎûæñÕèÇôÍóÙ´" expand="false"></tocitem></tocitem>
- <tocitem target="idrepoadd" text="Federated Access Manager æñÕèÇôÍóÙ´ùËÐÎ" expand="false">
-    <tocitem target="idrepoadd" text="Active Directory" expand="false"></tocitem>
-    <tocitem target="idrepoadd" text="Ý×Æî LDAPv3" expand="false"></tocitem>
-    <tocitem target="idrepoadd" text="Ì¦È´ Federated Access Manager í¼È¢Îû Sun Directory Server" expand="false"></tocitem></tocitem>
- <tocitem target="adattrs" text="Active Directory úèÍÌ" expand="false">
-    <tocitem target="adattrs" text="LDAP ÈùÎ¤ðÂ" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP ÝÙá¸ DN" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP ÝÙá¸Ùïî£" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP ÝÙá¸Ùïî£ (íýë¥)" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP ÜÚöþ DN" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP SSL" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP ÝÙÚÙóÃÇôÙ´Þ²ÄÑÄËÄÑ" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP ÝÙÚÙóÃÇôÙ´Þ²ÄËÄËÄÑ" expand="false"></tocitem>
-    <tocitem target="adattrs" text="Ú·ä²Þòã®ÇßÎûÞ²Çéá¸Îª" expand="false"></tocitem>
-    <tocitem target="adattrs" text="ä²Þòç·Õë" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP ËíäùÙ¶äù" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAPv3 óÃÇôÕ»ÆÀÚâá£È¢ùËÉ±ÇØê¢" expand="false"></tocitem>
-    <tocitem target="adattrs" text="Ä¡×ïúèÍÌÇØê¢è×ÑÐ" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAPv3 ÆÀÚâá£È¢ÅÅßÎÎûùËÐÎÌÏÉ¢äÆ" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAPv3 ÆÀÚâá£È¢ä²Þòî¯ÞØ" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP ËðÆîÏ¯ä²ÞòúèÍÌ" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP ËðÆîÏ¯ä²ÞòñäòÙðÂ" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP ËðÆîÏ¯ÎìÇµùËÉ±" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP ËðÆîÏ¯úèÍÌ" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP ËðÆîÏ¯ÐúÇ¡úèÍÌè×ÑÐ" expand="false"></tocitem>
-    <tocitem target="adattrs" text="ËðÆîÏ¯ÎíèèúèÍÌ" expand="false"></tocitem>
-    <tocitem target="adattrs" text="ËðÆîÏ¯ÎíèèËðÆîÄãÎûÔ«" expand="false"></tocitem>
-    <tocitem target="adattrs" text="ËðÆîÏ¯ÎíèèÏæËðÆîÄãÎûÔ«" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP åúÜÚä²ÞòúèÍÌ" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP åúÜÚä²ÞòñäòÙðÂ" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP åúÜÚÕ©ðÂÌÔÇØúèÍÌ" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP åúÜÚÕ©ðÂÔ«" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP åúÜÚÎìÇµùËÉ±" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP åúÜÚúèÍÌ" expand="false"></tocitem>
-    <tocitem target="adattrs" text="åúÜÚÈ©ÔÞËÎÇ¹úèÍÌ" expand="false"></tocitem>
-    <tocitem target="adattrs" text="ÙÄÄ¡È©ÔÞúèÍÌ" expand="false"></tocitem>
-    <tocitem target="adattrs" text="åúÜÚÈ©ÔÞ URL úèÍÌ" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP ËðÆîÏ¯Õ©ðÂÌÔÇØúèÍÌ" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP ËðÆîÏ¯Õ©ðÂÔ«" expand="false"></tocitem>
-    <tocitem target="adattrs" text="ÅîÜ¡á£È¢ä²ÞòúèÍÌ" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP ÅîÜ¡á£È¢Õ©ðÂÌÔÇØúèÍÌ" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP ÅîÜ¡á£È¢Õ©ðÂÔ«" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP ÅîÜ¡á£È¢ä²ÞòñäòÙðÂ" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP ÅîÜ¡á£È¢ÎìÇµùËÉ±" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP ÅîÜ¡á£È¢úèÍÌ" expand="false"></tocitem>
-    <tocitem target="adattrs" text="Æ«ë¥øýÎûøüÉ±ùËÐÎ" expand="false"></tocitem>
-    <tocitem target="adattrs" text="Ñ½úýä²ÞòÙ×Íµ DN" expand="false"></tocitem>
-    <tocitem target="adattrs" text="Ñ½úýä²ÞòñäòÙðÂ" expand="false"></tocitem>
-    <tocitem target="adattrs" text="Óìä»ÚöÙ¯Ð©Ñ½úýä²ÞòÞ²ÏÛâçåôÕëâæ" expand="false"></tocitem>
-    <tocitem target="adattrs" text="ÅøÜ¢òãë¨î£Ñ¥ÎûÞ²ÄËÓìæÜÈ¹í°" expand="false"></tocitem>
-    <tocitem target="adattrs" text="ÓìæÜÄæâæÎûÍ·òÚÕëâæ" expand="false"></tocitem>
-    <tocitem target="adattrs" text="ëæÓÑÓìæÜÎû LDAPException òãë¨î£" expand="false"></tocitem>
-    <tocitem target="adattrs" text="Ê¸Ì½" expand="false"></tocitem>
-    <tocitem target="adattrs" text="Ê¸Ì½âúÆøÎûÞ²ÏÛÏñÖçÕëâæ" expand="false"></tocitem>
-    <tocitem target="adattrs" text="Ê¸Ì½ÎûÞ²ÄËÄËÄÑ" expand="false"></tocitem></tocitem>
- <tocitem target="gdoto" text="Ý×Æî LDAPv3 úèÍÌ" expand="false">
-    <tocitem target="gdoto" text="LDAP ÈùÎ¤ðÂ" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP ÝÙá¸ DN" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP ÝÙá¸Ùïî£" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP ÝÙá¸Ùïî£ (íýë¥)" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP ÜÚöþ DN" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP SSL" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP ÝÙÚÙóÃÇôÙ´Þ²ÄÑÄËÄÑ" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP ÝÙÚÙóÃÇôÙ´Þ²ÄËÄËÄÑ" expand="false"></tocitem>
-    <tocitem target="gdoto" text="Ú·ä²Þòã®ÇßÎûÞ²Çéá¸Îª" expand="false"></tocitem>
-    <tocitem target="gdoto" text="ä²Þòç·Õë" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP ËíäùÙ¶äù" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAPv3 óÃÇôÕ»ÆÀÚâá£È¢ùËÉ±ÇØê¢" expand="false"></tocitem>
-    <tocitem target="gdoto" text="Ä¡×ïúèÍÌÇØê¢è×ÑÐ" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAPv3 ÆÀÚâá£È¢ÅÅßÎÎûùËÐÎÌÏÉ¢äÆ" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAPv3 ÆÀÚâá£È¢ä²Þòî¯ÞØ" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP ËðÆîÏ¯ä²ÞòúèÍÌ" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP ËðÆîÏ¯ä²ÞòñäòÙðÂ" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP ËðÆîÏ¯ÎìÇµùËÉ±" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP ËðÆîÏ¯úèÍÌ" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP ËðÆîÏ¯ÐúÇ¡úèÍÌè×ÑÐ" expand="false"></tocitem>
-    <tocitem target="gdoto" text="ËðÆîÏ¯ÎíèèúèÍÌ" expand="false"></tocitem>
-    <tocitem target="gdoto" text="ËðÆîÏ¯ÎíèèËðÆîÄãÎûÔ«" expand="false"></tocitem>
-    <tocitem target="gdoto" text="ËðÆîÏ¯ÎíèèÏæËðÆîÄãÎûÔ«" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP åúÜÚä²ÞòúèÍÌ" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP åúÜÚä²ÞòñäòÙðÂ" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP åúÜÚÕ©ðÂÌÔÇØúèÍÌ" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP åúÜÚÕ©ðÂÔ«" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP åúÜÚÎìÇµùËÉ±" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP åúÜÚúèÍÌ" expand="false"></tocitem>
-    <tocitem target="gdoto" text="åúÜÚÈ©ÔÞËÎÇ¹úèÍÌ" expand="false"></tocitem>
-    <tocitem target="gdoto" text="ÙÄÄ¡È©ÔÞúèÍÌ" expand="false"></tocitem>
-    <tocitem target="gdoto" text="åúÜÚÈ©ÔÞ URL úèÍÌ" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP ËðÆîÏ¯Õ©ðÂÌÔÇØúèÍÌ" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP ËðÆîÏ¯Õ©ðÂÔ«" expand="false"></tocitem>
-    <tocitem target="gdoto" text="ÅîÜ¡á£È¢ä²ÞòúèÍÌ" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP ÅîÜ¡á£È¢Õ©ðÂÌÔÇØúèÍÌ" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP ÅîÜ¡á£È¢Õ©ðÂÔ«" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP ÅîÜ¡á£È¢ä²ÞòñäòÙðÂ" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP ÅîÜ¡á£È¢ÎìÇµùËÉ±" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP ÅîÜ¡á£È¢úèÍÌ" expand="false"></tocitem>
-    <tocitem target="gdoto" text="Æ«ë¥øýÎûøüÉ±ùËÐÎ" expand="false"></tocitem>
-    <tocitem target="gdoto" text="Ñ½úýä²ÞòÙ×Íµ DN" expand="false"></tocitem>
-    <tocitem target="gdoto" text="Ñ½úýä²ÞòñäòÙðÂ" expand="false"></tocitem>
-    <tocitem target="gdoto" text="Óìä»ÚöÙ¯Ð©Ñ½úýä²ÞòÞ²ÏÛâçåôÕëâæ" expand="false"></tocitem>
-    <tocitem target="gdoto" text="ÅøÜ¢òãë¨î£Ñ¥ÎûÞ²ÄËÓìæÜÈ¹í°" expand="false"></tocitem>
-    <tocitem target="gdoto" text="ÓìæÜÄæâæÎûÍ·òÚÕëâæ" expand="false"></tocitem>
-    <tocitem target="gdoto" text="ëæÓÑÓìæÜÎû LDAPException òãë¨î£" expand="false"></tocitem>
-    <tocitem target="gdoto" text="Ê¸Ì½" expand="false"></tocitem>
-    <tocitem target="gdoto" text="Ê¸Ì½âúÆøÎûÞ²ÏÛÏñÖçÕëâæ" expand="false"></tocitem>
-    <tocitem target="gdoto" text="Ê¸Ì½ÎûÞ²ÄËÄËÄÑ" expand="false"></tocitem></tocitem>
- <tocitem target="sundirattrs" text="Ì¦È´ Federated Access Manager í¼È¢Îû Sun Directory Server úèÍÌ" expand="false">
-    <tocitem target="sundirattrs" text="LDAP ÈùÎ¤ðÂ" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP ÝÙá¸ DN" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP ÝÙá¸Ùïî£" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP ÝÙá¸Ùïî£ (íýë¥)" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP ÜÚöþ DN" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP SSL" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP ÝÙÚÙóÃÇôÙ´Þ²ÄÑÄËÄÑ" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP ÝÙÚÙóÃÇôÙ´Þ²ÄËÄËÄÑ" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="Ú·ä²Þòã®ÇßÎûÞ²Çéá¸Îª" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="ä²Þòç·Õë" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP ËíäùÙ¶äù" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAPv3 óÃÇôÕ»ÆÀÚâá£È¢ùËÉ±ÇØê¢" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="Ä¡×ïúèÍÌÇØê¢è×ÑÐ" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAPv3 ÆÀÚâá£È¢ÅÅßÎÎûùËÐÎÌÏÉ¢äÆ" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAPv3 ÆÀÚâá£È¢ä²Þòî¯ÞØ" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP ËðÆîÏ¯ä²ÞòúèÍÌ" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP ËðÆîÏ¯ä²ÞòñäòÙðÂ" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP ËðÆîÏ¯ÎìÇµùËÉ±" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP ËðÆîÏ¯úèÍÌ" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP ËðÆîÏ¯ÐúÇ¡úèÍÌè×ÑÐ" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="ËðÆîÏ¯ÎíèèúèÍÌ" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="ËðÆîÏ¯ÎíèèËðÆîÄãÎûÔ«" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="ËðÆîÏ¯ÎíèèÏæËðÆîÄãÎûÔ«" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP åúÜÚä²ÞòúèÍÌ" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP åúÜÚä²ÞòñäòÙðÂ" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP åúÜÚÕ©ðÂÌÔÇØúèÍÌ" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP åúÜÚÕ©ðÂÔ«" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP åúÜÚÎìÇµùËÉ±" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP åúÜÚúèÍÌ" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="åúÜÚÈ©ÔÞËÎÇ¹úèÍÌ" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="ÙÄÄ¡È©ÔÞúèÍÌ" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="åúÜÚÈ©ÔÞ URL úèÍÌ" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP ËðÆîÏ¯Õ©ðÂÌÔÇØúèÍÌ" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP ËðÆîÏ¯Õ©ðÂÔ«" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="ÅîÜ¡á£È¢ä²ÞòúèÍÌ" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP ÅîÜ¡á£È¢Õ©ðÂÌÔÇØúèÍÌ" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP ÅîÜ¡á£È¢Õ©ðÂÔ«" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP ÅîÜ¡á£È¢ä²ÞòñäòÙðÂ" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP ÅîÜ¡á£È¢ÎìÇµùËÉ±" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP ÅîÜ¡á£È¢úèÍÌ" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="Æ«ë¥øýÎûøüÉ±ùËÐÎ" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="Ñ½úýä²ÞòÙ×Íµ DN" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="Ñ½úýä²ÞòñäòÙðÂ" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="Óìä»ÚöÙ¯Ð©Ñ½úýä²ÞòÞ²ÏÛâçåôÕëâæ" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="ÅøÜ¢òãë¨î£Ñ¥ÎûÞ²ÄËÓìæÜÈ¹í°" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="ÓìæÜÄæâæÎûÍ·òÚÕëâæ" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="ëæÓÑÓìæÜÎû LDAPException òãë¨î£" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="Ê¸Ì½" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="Ê¸Ì½âúÆøÎûÞ²ÏÛÏñÖçÕëâæ" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="Ê¸Ì½ÎûÞ²ÄËÄËÄÑ" expand="false"></tocitem></tocitem>
- <tocitem target="delegation.delegation" text="ûâÓî" expand="false">
-    <tocitem target="delegation.delegationproperties" text="ûâÓîÖÖÍÌ" expand="false"></tocitem></tocitem>
- <tocitem target="policy.policy" text="á¬Ü©" expand="false">
-    <tocitem target="normalpolicy" text="Ä¡×ïá¬Ü©" expand="false">
-        <tocitem target="policy.policynormaladd" text="ÐúÇ¡ä»ÎûÄ¡×ïá¬Ü©" expand="false"></tocitem></tocitem></tocitem>
- <tocitem target="normalrule" text="Ý½Ð¬" expand="false">
-    <tocitem target="policy.ruleadd" text="ÙòÝ½Ð¬ä»ìÁÈÝá¬Ü©" expand="false"></tocitem></tocitem>
- <tocitem target="normalsubject" text="ÅäüÕ" expand="false">
-    <tocitem target="policy.subjectadd" text="ÙòÅäüÕä»ìÁÈÝá¬Ü©" expand="false"></tocitem></tocitem>
- <tocitem target="policyconditions" text="Û¾Çµ" expand="false">
-    <tocitem target="policy.selectconditiontype" text="ÙòÛ¾Çµä»ìÁÈÝá¬Ü©" expand="false"></tocitem></tocitem>
- <tocitem target="policy.pmdefaultsessioncondtionadd" text="ËðÆîÄãÎûâêÑôÉ¢äÆÕëâæ" expand="false"></tocitem>
- <tocitem target="policy.authtoserviceadd" text="Ñºí¼ÜÚù¹ë¥øý" expand="false"></tocitem>
- <tocitem target="policy.pmdefaultauthlevelconditionadd" text="ë¥øýìÒ×È (ÄËÍõÍÐá«Íõ)" expand="false"></tocitem>
- <tocitem target="gdovl" text="ë¥øýìÒ×È (ÄÑÍõÍÐá«Íõ)" expand="false"></tocitem>
- <tocitem target="policy.pmdefaultauthschemeconditionadd" text="Ñºí¼ÜÚèÒËóë¥øý" expand="false"></tocitem>
- <tocitem target="policy.sessionpropertyconditionadd" text="ÆøÐ©ÎûâêÑôÉ¢äÆÖÖÍÌ" expand="false"></tocitem>
- <tocitem target="policy.pmdefaultipcondition" text="IP ÈíÉß/DNS ÇØê¢" expand="false"></tocitem>
- <tocitem target="policy.conditionadd" text="LDAP ñäòÙðÂÛ¾Çµ" expand="false"></tocitem>
- <tocitem target="policy.authtorealmadd" text="î¯ÞØë¥øý" expand="false"></tocitem>
- <tocitem target="policy.pmdefaulttimeconditionadd" text="Õëâæ (ÑÓßæÞý¡£ÅÊßæ¡£ÕëâæÌÏÕëÙ´)" expand="false"></tocitem>
- <tocitem target="responseprovider" text="ÇßóÜßÈËòÏ¯" expand="false">
-    <tocitem target="policy.responseprovideradd" text="ÙòÇßóÜßÈËòÏ¯ä»ìÁÈÝá¬Ü©" expand="false"></tocitem></tocitem>
- <tocitem target="fyfby" text="Ù¶äùá¬Ü©" expand="false">
-    <tocitem target="policy.policyreferraladd" text="ÐúÇ¡ä»ÎûÙ¶äùá¬Ü©" expand="false"></tocitem></tocitem>
- <tocitem target="referrals" text="Ù¶äù" expand="false">
-    <tocitem target="policy.selectreferraltype" text="ÙòÙ¶äùä»ìÁÈÝá¬Ü©" expand="false"></tocitem></tocitem>
- <tocitem target="idm.entities" text="ÅäüÕ" expand="false">
-    <tocitem target="subjectuser" text="ËðÆîÏ¯" expand="false">
-        <tocitem target="subjectcreateuser" text="ÐúÇ¡ÍÐÔºÊÑËðÆîÏ¯" expand="false"></tocitem>
-        <tocitem target="addusertogroup" text="ä»ìÁËðÆîÏ¯ÈÝËÅÈãêØåúÜÚ" expand="false"></tocitem>
-        <tocitem target="idm.entityservices" text="ä»ìÁÎ¤Ù­ÈÝøüÉ±" expand="false"></tocitem></tocitem></tocitem>
- <tocitem target="subject.filteredrole" text="ñäòÙÎûËÅÈã" expand="false">
-    <tocitem target="subject.createfiltrole" text="ÐúÇ¡ñäòÙËÅÈã" expand="false"></tocitem></tocitem>
- <tocitem target="subject.role" text="ËÅÈã" expand="false">
-    <tocitem target="subject.createrole" text="ÐúÇ¡ÍÐÔºÊÑËÅÈã" expand="false"></tocitem>
-    <tocitem target="idm.entitymembers" text="ä»ìÁËðÆîÏ¯ÈÝËÅÈãÍÐåúÜÚ" expand="false"></tocitem></tocitem>
- <tocitem target="subject.group" text="åúÜÚ" expand="false">
-    <tocitem target="subject.creategroup" text="ÐúÇ¡ÍÐÔºÊÑåúÜÚ" expand="false"></tocitem></tocitem>
+        <tocitem target="realm.rmrealmadd" text="ÐúÇ¡ä»Îûî¯ÞØ" expand="false"></tocitem>
+        <tocitem target="realm.realmproperties" text="Ä¡×ïÖÖÍÌ" expand="false"></tocitem></tocitem>
+    <tocitem target="authentication.authproperties" text="ë¥øý" expand="false">
+        <tocitem target="authentication.newauthinstance" text="ÐúÇ¡ä»Îûë¥øýí¼ÜÚèÒËó" expand="false"></tocitem>
+        <tocitem target="authentication.newauthconfig" text="ÐúÇ¡ä»Îûë¥øýù¹ÚÙ" expand="false"></tocitem></tocitem>
+    <tocitem target="realm.services" text="Î¤Ù­" expand="false">
+        <tocitem target="realm.servicesadd" text="ÙòÎ¤Ù­ìÁÅûÈÝî¯ÞØ" expand="false"></tocitem></tocitem>
+    <tocitem target="realm.idrepo" text="æñÕèÇôÍóÙ´" expand="false">
+        <tocitem target="realm.idreposelecttype" text="ÐúÇ¡ä»ÎûæñÕèÇôÍóÙ´" expand="false"></tocitem>
+        <tocitem target="idrepoadd" text="Federated Access Manager æñÕèÇôÍóÙ´ùËÐÎ" expand="false">
+            <tocitem target="idrepoadd" text="Active Directory" expand="false"></tocitem>
+            <tocitem target="idrepoadd" text="Ý×Æî LDAPv3" expand="false"></tocitem>
+            <tocitem target="idrepoadd" text="Sun Directory Server FAM í¼È¢" expand="false"></tocitem></tocitem>
+        <tocitem target="realm.idrepoedit" text="ØÙåôæñÕèÇôÍóÙ´" expand="false"></tocitem>
+        <tocitem target="realm.idrepoeditad" text="Active Directory úèÍÌ" expand="false">
+            <tocitem target="realm.idrepoeditad" text="LDAP ÈùÎ¤ðÂ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="LDAP ÝÙá¸ DN" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="LDAP ÝÙá¸Ùïî£" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="LDAP ÝÙá¸Ùïî£ (íýë¥)" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="LDAP ÜÚöþ DN" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="LDAP SSL" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="LDAP ÝÙÚÙóÃÇôÙ´Þ²ÄÑÄËÄÑ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="LDAP ÝÙÚÙóÃÇôÙ´Þ²ÄËÄËÄÑ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="Ú·ä²Þòã®ÇßÎûÞ²Çéá¸Îª" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="ä²Þòç·Õë" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="LDAP ËíäùÙ¶äù" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="LDAPv3 óÃÇôÕ»ÆÀÚâá£È¢ùËÉ±ÇØê¢" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="úèÍÌÇØê¢è×ÑÐ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="LDAPv3 ÆÀÚâá£È¢ÅÅßÎÎûùËÐÎÌÏÉ¢äÆ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="LDAPv3 ÆÀÚâá£È¢ä²Þòî¯ÞØ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="LDAP ËðÆîÏ¯ä²ÞòúèÍÌ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="LDAP ËðÆîÏ¯ä²ÞòñäòÙðÂ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="LDAP ËðÆîÏ¯ÎìÇµùËÉ±" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="LDAP ËðÆîÏ¯úèÍÌ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="ÐúÇ¡ËðÆîÏ¯úèÍÌè×ÑÐ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="ËðÆîÏ¯ÎíèèÎûúèÍÌÇØê¢" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="ËðÆîÏ¯ÎíèèËðÆîÄãÎûÔ«" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="ËðÆîÏ¯ÎíèèÏæËðÆîÄãÎûÔ«" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="LDAP åúÜÚä²ÞòúèÍÌ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="LDAP åúÜÚä²ÞòñäòÙðÂ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="LDAP åúÜÚÕ©ðÂÌÔÇØúèÍÌ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="LDAP åúÜÚÕ©ðÂÔ«" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="LDAP åúÜÚÎìÇµùËÉ±" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="LDAP åúÜÚúèÍÌ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="åúÜÚÈ©ÔÞËÎÇ¹ÎûúèÍÌÇØê¢" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="ÙÄÄ¡È©ÔÞÎûúèÍÌÇØê¢" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="åúÜÚÈ©ÔÞ URL ÎûúèÍÌÇØê¢" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="LDAP ËðÆîÏ¯Õ©ðÂÌÔÇØúèÍÌ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="LDAP ËðÆîÏ¯Õ©ðÂÔ«" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="Æ«ë¥øýÎûøüÉ±ùËÐÎ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="ë¥øýÌÔÇØúèÍÌ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="Ñ½úýä²ÞòÙ×Íµ DN" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="Ñ½úýä²ÞòñäòÙðÂ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="Ñ½úýä²Þòî¯ÞØ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="Óìä»ÚöÙ¯Ð©Ñ½úýä²ÞòÞ²ÏÛâçåôÕëâæ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="ÅøÜ¢òãë¨î£Ñ¥ÎûÞ²ÄËÓìæÜÈ¹í°" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="ÓìæÜÄæâæÎûÍ·òÚÕëâæ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="ëæÓÑÓìæÜÎû LDAPException òãë¨î£" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="Ê¸Ì½" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="Ê¸Ì½âúÆøÎûÞ²ÏÛÏñÖçÕëâæ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditad" text="Ê¸Ì½ÎûÞ²ÄËÄËÄÑ" expand="false"></tocitem></tocitem>
+        <tocitem target="realm.idrepoeditldapv3" text="Ý×Æî LDAPv3 úèÍÌ" expand="false">
+            <tocitem target="realm.idrepoeditldapv3" text="LDAP ÈùÎ¤ðÂ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="LDAP ÝÙá¸ DN" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="LDAP ÝÙá¸Ùïî£" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="LDAP ÝÙá¸Ùïî£ (íýë¥)" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="LDAP ÜÚöþ DN" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="LDAP SSL" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="LDAP ÝÙÚÙóÃÇôÙ´Þ²ÄÑÄËÄÑ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="LDAP ÝÙÚÙóÃÇôÙ´Þ²ÄËÄËÄÑ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="Ú·ä²Þòã®ÇßÎûÞ²Çéá¸Îª" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="ä²Þòç·Õë" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="LDAP ËíäùÙ¶äù" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="LDAPv3 óÃÇôÕ»ÆÀÚâá£È¢ùËÉ±ÇØê¢" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="úèÍÌÇØê¢è×ÑÐ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="LDAPv3 ÆÀÚâá£È¢ÅÅßÎÎûùËÐÎÌÏÉ¢äÆ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="LDAPv3 ÆÀÚâá£È¢ä²Þòî¯ÞØ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="LDAP ËðÆîÏ¯ä²ÞòúèÍÌ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="LDAP ËðÆîÏ¯ä²ÞòñäòÙðÂ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="LDAP ËðÆîÏ¯ÎìÇµùËÉ±" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="LDAP ËðÆîÏ¯úèÍÌ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="ÐúÇ¡ËðÆîÏ¯úèÍÌè×ÑÐ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="ËðÆîÏ¯ÎíèèÎûúèÍÌÇØê¢" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="ËðÆîÏ¯ÎíèèËðÆîÄãÎûÔ«" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="ËðÆîÏ¯ÎíèèÏæËðÆîÄãÎûÔ«" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="LDAP åúÜÚä²ÞòúèÍÌ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="LDAP åúÜÚä²ÞòñäòÙðÂ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="LDAP åúÜÚÕ©ðÂÌÔÇØúèÍÌ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="LDAP åúÜÚÕ©ðÂÔ«" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="LDAP åúÜÚÎìÇµùËÉ±" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="LDAP åúÜÚúèÍÌ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="åúÜÚÈ©ÔÞæñÖªÎûúèÍÌÇØê¢" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="ÙÄÄ¡È©ÔÞÎûúèÍÌÇØê¢" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="åúÜÚÈ©ÔÞ URL ÎûúèÍÌÇØê¢" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="çßÝÃåúÜÚÈ©ÔÞÎûËðÆîÏ¯ DN" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="LDAP ËðÆîÏ¯Õ©ðÂÌÔÇØúèÍÌ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="LDAP ËðÆîÏ¯Õ©ðÂÔ«" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="Æ«ë¥øýÎûøüÉ±ùËÐÎ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="Ñ½úýä²ÞòÙ×Íµ DN" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="Ñ½úýä²ÞòñäòÙðÂ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="Ñ½úýä²Þòî¯ÞØ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="Óìä»ÚöÙ¯Ð©Ñ½úýä²ÞòÞ²ÏÛâçåôÕëâæ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="ÅøÜ¢òãë¨î£Ñ¥ÎûÞ²ÄËÓìæÜÈ¹í°" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="ÓìæÜÄæâæÎûÍ·òÚÕëâæ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="ëæÓÑÓìæÜÎû LDAPException òãë¨î£" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="Ê¸Ì½" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="Ê¸Ì½âúÆøÎûÞ²ÏÛÏñÖçÕëâæ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditldapv3" text="Ê¸Ì½ÎûÞ²ÄËÄËÄÑ" expand="false"></tocitem></tocitem>
+        <tocitem target="realm.idrepoeditfamschema" text="Ì¦È´ Federated Access Manager í¼È¢Îû Sun Directory Server úèÍÌ" expand="false">
+            <tocitem target="realm.idrepoeditfamschema" text="LDAP ÈùÎ¤ðÂ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="LDAP ÝÙá¸ DN" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="LDAP ÝÙá¸Ùïî£" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="LDAP ÝÙá¸Ùïî£ (íýë¥)" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="LDAP ÜÚöþ DN" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="LDAP SSL" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="LDAP ÝÙÚÙóÃÇôÙ´Þ²ÄÑÄËÄÑ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="LDAP ÝÙÚÙóÃÇôÙ´Þ²ÄËÄËÄÑ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="Ú·ä²Þòã®ÇßÎûÞ²Çéá¸Îª" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="ä²Þòç·Õë" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="LDAP ËíäùÙ¶äù" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="LDAPv3 óÃÇôÕ»ÆÀÚâá£È¢ùËÉ±ÇØê¢" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="úèÍÌÇØê¢è×ÑÐ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="LDAPv3 ÆÀÚâá£È¢ÅÅßÎÎûùËÐÎÌÏÉ¢äÆ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="LDAPv3 ÆÀÚâá£È¢ä²Þòî¯ÞØ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="LDAP ËðÆîÏ¯ä²ÞòúèÍÌ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="LDAP ËðÆîÏ¯ä²ÞòñäòÙðÂ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="LDAP ËðÆîÏ¯ÎìÇµùËÉ±" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="LDAP ËðÆîÏ¯úèÍÌ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="ÐúÇ¡ËðÆîÏ¯úèÍÌè×ÑÐ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="ËðÆîÏ¯ÎíèèÎûúèÍÌÇØê¢" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="LDAP åúÜÚä²ÞòúèÍÌ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="LDAP åúÜÚä²ÞòñäòÙðÂ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="LDAP åúÜÚÕ©ðÂÌÔÇØúèÍÌ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="LDAP åúÜÚÕ©ðÂÔ«" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="LDAP åúÜÚÎìÇµùËÉ±" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="LDAP åúÜÚúèÍÌ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="åúÜÚÈ©ÔÞËÎÇ¹ÎûúèÍÌÇØê¢" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="ÙÄÄ¡È©ÔÞÎûúèÍÌÇØê¢" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="åúÜÚÈ©ÔÞ URL ÎûúèÍÌÇØê¢" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="LDAP ËÅÈãä²ÞòúèÍÌ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="LDAP ËÅÈãä²ÞòñäòÙ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="LDAP ËÅÈãÎìÇµùËÉ±" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="LDAP ËÅÈãúèÍÌ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="LDAP ñäòÙËÅÈãä²ÞòúèÍÌ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="LDAP ñäòÙËÅÈãä²ÞòñäòÙ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="LDAP ñäòÙËÅÈãÎìÇµùËÉ±" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="LDAP ñäòÙËÅÈãúèÍÌ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="LDAP ËðÆîÏ¯Õ©ðÂÌÔÇØúèÍÌ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="LDAP ËðÆîÏ¯Õ©ðÂÔ«" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="Æ«ë¥øýÎûøüÉ±ùËÐÎ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="Ñ½úýä²ÞòÙ×Íµ DN" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="Ñ½úýä²ÞòñäòÙðÂ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="Ñ½úýä²Þòî¯ÞØ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="Óìä»ÚöÙ¯Ð©Ñ½úýä²ÞòÞ²ÏÛâçåôÕëâæ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="ÅøÜ¢òãë¨î£Ñ¥ÎûÞ²ÄËÓìæÜÈ¹í°" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="ÓìæÜÄæâæÎûÍ·òÚÕëâæ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="ëæÓÑÓìæÜÎû LDAPException òãë¨î£" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="Ê¸Ì½" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="Ê¸Ì½âúÆøÎûÞ²ÏÛÏñÖçÕëâæ" expand="false"></tocitem>
+            <tocitem target="realm.idrepoeditfamschema" text="Ê¸Ì½ÎûÞ²ÄËÄËÄÑ" expand="false"></tocitem></tocitem></tocitem>
+    <tocitem target="delegation.delegation" text="ûâÓî" expand="false">
+        <tocitem target="delegation.delegationproperties" text="ûâÓîÖÖÍÌ" expand="false"></tocitem></tocitem>
+    <tocitem target="policy.policy" text="á¬Ü©" expand="false">
+        <tocitem target="normalpolicy" text="Ä¡×ïá¬Ü©" expand="false">
+            <tocitem target="policy.policynormaladd" text="ÐúÇ¡ä»ÎûÄ¡×ïá¬Ü©" expand="false"></tocitem></tocitem>
+        <tocitem target="policy.selectservicetype" text="Ý½Ð¬" expand="false">
+            <tocitem target="policy.ruleadd" text="ÙòÝ½Ð¬ìÁÅûÈÝá¬Ü©" expand="false"></tocitem></tocitem>
+        <tocitem target="policy.selectsubjecttype" text="ÅäüÕ" expand="false">
+            <tocitem target="policy.subjectadd" text="ÙòÅäüÕìÁÅûÈÝá¬Ü©" expand="false"></tocitem></tocitem>
+        <tocitem target="policy.selectcondition" text="Û¾Çµ" expand="false">
+            <tocitem target="policy.selectconditiontype" text="ÙòÛ¾ÇµìÁÅûÈÝá¬Ü©" expand="false"></tocitem></tocitem>
+        <tocitem target="policy.pmdefaultsessioncondtionadd" text="ËðÆîÄãÎûâêÑôÉ¢äÆÕëâæ" expand="false"></tocitem>
+        <tocitem target="policy.authtoserviceadd" text="Ñºí¼ÜÚù¹ë¥øý" expand="false"></tocitem>
+        <tocitem target="policy.pmdefaultauthlevelconditionadd" text="ë¥øýìÒ×È (ÄËÍõÍÐá«Íõ)" expand="false"></tocitem>
+        <tocitem target="gdovl" text="ë¥øýìÒ×È (ÄÑÍõÍÐá«Íõ)" expand="false"></tocitem>
+        <tocitem target="policy.pmdefaultauthschemeconditionadd" text="Ñºí¼ÜÚèÒËóë¥øý" expand="false"></tocitem>
+        <tocitem target="policy.sessionpropertyconditionadd" text="ÆøÐ©ÎûâêÑôÉ¢äÆÖÖÍÌ" expand="false"></tocitem>
+        <tocitem target="policy.pmdefaultipcondition" text="IP ÈíÉß/DNS ÇØê¢" expand="false"></tocitem>
+        <tocitem target="policy.membershipconditionadd" text="øüÉ±È©ÔÞËÎÇ¹" expand="false"></tocitem>
+        <tocitem target="policy.conditionadd" text="LDAP ñäòÙðÂÛ¾Çµ" expand="false"></tocitem>
+        <tocitem target="policy.authtorealmadd" text="î¯ÞØë¥øý" expand="false"></tocitem>
+        <tocitem target="policy.pmdefaulttimeconditionadd" text="Õëâæ (ÑÓßæÞý¡£ÅÊßæ¡£ÕëâæÌÏÕëÙ´)" expand="false"></tocitem>
+        <tocitem target="responseprovider" text="ÇßóÜßÈËòÏ¯" expand="false">
+            <tocitem target="policy.responseprovideradd" text="ÙòÇßóÜßÈËòÏ¯ìÁÅûÈÝá¬Ü©" expand="false"></tocitem></tocitem>
+        <tocitem target="fyfby" text="Ù¶äùá¬Ü©" expand="false">
+            <tocitem target="policy.policyreferraladd" text="ÐúÇ¡ä»ÎûÙ¶äùá¬Ü©" expand="false"></tocitem></tocitem>
+        <tocitem target="referrals" text="Ù¶äù" expand="false">
+            <tocitem target="policy.selectreferraltype" text="ÙòÙ¶äùìÁÅûÈÝá¬Ü©" expand="false"></tocitem></tocitem></tocitem>
+    <tocitem target="idm.entities" text="ÅäüÕ" expand="false">
+        <tocitem target="idm.entityadd" text="ÐúÇ¡ÅäüÕ" expand="false"></tocitem>
+        <tocitem target="subjectuser" text="ËðÆîÏ¯" expand="false">
+            <tocitem target="idm.entityadduser" text="ÐúÇ¡ÍÐÔºÊÑËðÆîÏ¯" expand="false"></tocitem>
+            <tocitem target="idm.entitymembership" text="ÙòËðÆîÏ¯ìÁÅûÈÝåúÜÚ" expand="false"></tocitem>
+            <tocitem target="idm.entityservices" text="ÙòÎ¤Ù­ìÁÅûÈÝËðÆîÏ¯" expand="false"></tocitem></tocitem>
+        <tocitem target="idm.entitiesgroup" text="åúÜÚ" expand="false">
+            <tocitem target="idm.entityaddgroup" text="ÐúÇ¡ÍÐÔºÊÑåúÜÚ" expand="false"></tocitem></tocitem></tocitem>
+    <tocitem target="agentconfig.agents" text="ÅîÜ¡á£È¢" expand="false">
+        <tocitem target="ggobs" text="ÐúÇ¡ä»åúÜÚÌÏÅîÜ¡á£È¢" expand="false">
+            <tocitem target="agentconfig.agentadd" text="ÐúÇ¡ä»ÅîÜ¡á£È¢" expand="false"></tocitem>
+            <tocitem target="agentconfig.agentgroupadd" text="ÐúÇ¡ä»åúÜÚ" expand="false"></tocitem>
+            <tocitem target="ggouy" text="üéÅîÜ¡á£È¢Ú·åúÜÚú«ÍÕÖÖÍÌ" expand="false"></tocitem></tocitem>
+        <tocitem target="agentconfig.genericagentprofile" text="ØÙåôÅîÜ¡á£È¢" expand="false"></tocitem>
+        <tocitem target="agentconfig.webagentprofile" text="Web á¬Ü©ÅîÜ¡á£È¢" expand="false">
+            <tocitem target="agentconfig.webagentprofile" text="ÇÀÙÑ" expand="false">
+                <tocitem target="agentconfig.webagentprofile" text="åúÜÚ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="Ùïî£" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="Ùïî£íýë¥" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="Îíèè" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ÅîÜ¡á£È¢ØÙåôóÃÇôÕ»ÎûÈíåô" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ÅîÜ¡á£È¢ØÙåôüÈÊÕÝ×Ï¡" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ÚöÆîÝ×Ï¡" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ÅîÜ¡á£È¢Ý×Ï¡ URL" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ÅîÜ¡á£È¢Ýåå÷ URI Ð©ê¼" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ØÙåôÓìä»ç¥Ä«âæçÒ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ØÙåôÛÒØæâæçÒ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ã¯ SSO í¼È¢" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ÍÜáºæñäãÇôÌ½ URL" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ÅîÜ¡á£È¢Øæòãá«×È" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ÈÜÙ¯ÓìÐúÅîÜ¡á£È¢ÆÛñ¢Ø´òçóò" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ÅîÜ¡á£È¢ÆÛñ¢Ø´òçóòÄËÄÑ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ÅîÜ¡á£È¢ë¿ê¦Ø´òçóòÕùÇØê¢" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="URL ÇôÌ½ë¿ê¦Ø´òçùËÐÎ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="FQDN óôÑç" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="FQDN çßÝÃ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="FQDN áðóéÅäñ¢è×ÑÐ" expand="false"></tocitem></tocitem>
+            <tocitem target="agentconfig.webagentprofile" text="óÜÆîá£È¢" expand="false">
+                <tocitem target="agentconfig.webagentprofile" text="ÏæÚ°Ì± URL ÛÒÞÌ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="Å°Ç×óôÑçÏæÚ°Ì± URL ÛÒÞÌ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="öÊÌ½ÏæÚ°Ì± URL ÎûúèÍÌ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ÏæÚ°Ì±ÆîÅÂê¦ IP ÛÒÞÌ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ÆîÅÂê¦ IP üÓøý" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ÝÃÌùóòúèÍÌöÊÌ½í¼È¢" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ÝÃÌùóòúèÍÌè×ÑÐ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ÇßóÜúèÍÌöÊÌ½í¼È¢" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ÇßóÜúèÍÌè×ÑÐ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="âêÑôÉ¢äÆúèÍÌöÊÌ½í¼È¢" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="âêÑôÉ¢äÆúèÍÌè×ÑÐ" expand="false"></tocitem></tocitem>
+            <tocitem target="agentconfig.webagentprofile" text="SSO" expand="false">
+                <tocitem target="agentconfig.webagentprofile" text="Cookie ÇØê¢" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="Cookie ÇøÇÀÍÌ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ÓìÝÃ Cookie" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ÓÑÓìÝÃÎû Cookie ÛÒÞÌ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="Cookie ê½ÙÑÛÒÞÌ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="CDSSO" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="CDSSO Servlet URL ÛÒÞÌ" expand="false"></tocitem></tocitem>
+            <tocitem target="agentconfig.webagentprofile" text="FAM Î¤Ù­" expand="false">
+                <tocitem target="agentconfig.webagentprofile" text="FAM àôÄ« URL" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ÅîÜ¡á£È¢ÝÙîÀç·Õë¡¨" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ÅäÈùÎ¤ðÂÎûïÇææßæ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="àôÅø URL ÛÒÞÌ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ÓÑÓìÝÃÎûàôÅø Cookie ÛÒÞÌ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="á¬Ü©Ê¸Ì½ïÇææßæ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="SSO Ê¸Ì½ïÇææßæ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ËðÆîÏ¯ ID Ù¶í°" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ËðÆîÏ¯ ID Ù¶í°ùËÐÎ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ÕüæñäãÎûöÊÌ½á¬Ü©" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="öÊÌ½ÆîÅÂê¦Åäñ¢ÇØê¢" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="á¬Ü©ÕëúÌÙ£Õ¸" expand="false"></tocitem></tocitem>
+            <tocitem target="agentconfig.webagentprofile" text="Ì§Åì" expand="false">
+                <tocitem target="agentconfig.webagentprofile" text="ÅîÜ¡á£È¢ë£ËÆô¿èº" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="Ù³ÇØËðÆîÏ¯çßÝÃÔ«" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="Ù³ÇØËðÆîÏ¯" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ÝÃÌùóòúèÍÌ Cookie Ð©ê¼" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ÝÃÌùóòúèÍÌ Cookie Þ²ÏÛÇôÇãÕëâæ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="URL ÅÒç¤ÄËÄÑìÑÒÞÜÊóôÑç" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="î¾î£ URL ÎûÖÖÖ±ÇóÄ÷" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ÍÁÜ©ÌÔÇØîùÊåÄãÎûÞÅÇïÌÔÇØ URL" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ÍÁÜ©ÈùÎ¤ðÂóôÑç" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ÍÁÜ©îùÊå URL ÄãÎûæûÕÀæñØ¹" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ë¿ê¦Ø´òçÆÂÚõÕëÍÜáºæñäãÇôÌ½" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ÝÃÌùóòúèÍÌÎûÔÏÆíî¾î£" expand="false"></tocitem></tocitem>
+            <tocitem target="agentconfig.webagentprofile" text="âÐâê" expand="false">
+                <tocitem target="agentconfig.webagentprofile" text="Ó×ç¥ÆÍò¯ðÂÝÃÌù" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="åôßÐîùÊå URL Ì¶Ìù" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="åôßÐîùÊå URL Åäñ¢" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="åôßÐîùÊå URL ÝÙÚÙÙÕ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="åôßÐÝ×Ï¡ URL" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="POST æñÕèÏñÖç" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="POST æñÕèâúÆøÊ¸Ì½ßæâæ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="åôßÐÅîÜ¡ÈùÎ¤ðÂÎûÅäñ¢ÌÏÝÙÚÙÙÕ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ë¥øýùËÐÎ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ÓìØÊÙïî£ÏÚý¬" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ñäòÙðÂóÀÇ¿âûÊ©" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ËðÆî OWA ØÙåôÎûñäòÙðÂ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="Ùò URL Ì¶ÌùüÈÊÕÒ³ https" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="âçåôâêÑôÉ¢äÆç·ÕëÓ÷Óò URL" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="óôÑç Domino æñÕèÕ»ÄãÎûËðÆîÏ¯" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ËðÆî LTPA Ø´æÀ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="LTPA Ø´æÀ Cookie ÇØê¢" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="LTPA Ø´æÀØÙåôÇØê¢" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="LTPA Ø´æÀÜÚöþÇØê¢" expand="false"></tocitem>
+                <tocitem target="agentconfig.webagentprofile" text="ÈÜÓÔÖÖÍÌ" expand="false"></tocitem></tocitem></tocitem>
+        <tocitem target="agentconfig.j2eeagentprofile" text="J2EE á¬Ü©ÅîÜ¡á£È¢" expand="false">
+            <tocitem target="agentconfig.j2eeagentprofile" text="ÇÀÙÑ" expand="false">
+                <tocitem target="agentconfig.j2eeagentprofile" text="åúÜÚ" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="Ùïî£" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="Ùïî£íýë¥" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="Îíèè" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÅîÜ¡á£È¢Ý×Ï¡ URL" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÅîÜ¡á£È¢ØÙåôóÃÇôÕ»ÎûÈíåô" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ØÙåôÓìä»ç¥Ä«âæçÒ" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÅîÜ¡á£È¢ØÙåôüÈÊÕÝ×Ï¡" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÅîÜ¡á£È¢ñäòÙðÂí¼È¢" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÍÜáºæñäãÇôÌ½Îû URI¡¨" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="HTTP âêÑôÉ¢äÆÝÙá¸" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="GOTO Ù¶í°ÇØê¢" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="àôÄ«è©æÜÓîÌ±" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÈÜÓÔÇßóÜíºó¤" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="Óìä»ðÒÇ×è©æÜÓîÌ±" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÅîÜ¡á£È¢Øæòãá«×È" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ËðÆîÏ¯è×ÑÐí¼È¢" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ËðÆîÏ¯úèÍÌÇØê¢" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ËðÆîÏ¯ÅäüÕé¡íº" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ËðÆîÏ¯Ø´æÀÇØê¢" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="î¨ÕøÇôÌ½ùËÐÎ" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="î¨ÕøØ´òçÈíåô" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ë¿ê¦Ø´òçóòÇØê¢" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÈÜÙ¯ÓìÐúÆÛñ¢î¨ÕøØ´òç" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÆÛñ¢î¨ÕøØ´òçÈÜÙ¯ÓìÐúÄËÄÑ" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="FQDN óôÑç" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="FQDN çßÝÃ" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="FQDN áðóéÅäñ¢è×ÑÐ" expand="false"></tocitem></tocitem>
+            <tocitem target="agentconfig.j2eeagentprofile" text="óÜÆîá£È¢" expand="false">
+                <tocitem target="agentconfig.j2eeagentprofile" text="àôÄ«ÏÐÞÌ URI" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="àôÄ«òãë¨ URI" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ËðÆîÄùÝåàôÄ«" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="àôÄ«ÄùÕ©óòÕùÇØê¢" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="óÜÆîá£È¢àôÅøÝ¨Ü¡á£È¢" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="óÜÆîá£È¢àôÅø URI" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="àôÅøîùÊåÙ¶í°" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÄØÚöÆîàôÅøÄùáþ" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="àôÅøâÐÄ« URI" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÏæÚ°Ì± URI" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="Å°Ç×ÏæÚ°Ì± URI" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÚöÆîÏæÚ°Ì± URI Ê¸Ì½" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÏæÚ°Ì± URI Ê¸Ì½ÄËÄÑ" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÏæÚ°Ì±ÆîÅÂê¦ IP ÛÒÞÌ" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÏæÚ°Ì± IP Å°Ç×ÛÒÞÌ" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÏæÚ°Ì± IP Ê¸Ì½é¡íº" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÏæÚ°Ì± IP Ê¸Ì½ÄËÄÑ" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÝÃÌùóòúèÍÌöÊÌ½í¼È¢" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÝÃÌùóòúèÍÌè×ÑÐ" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÇßóÜúèÍÌöÊÌ½í¼È¢" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÇßóÜúèÍÌè×ÑÐ" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="Cookie Å¡çÒÜÊÇóÄ÷" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="öÊÌ½úèÍÌÅÊßæÖªÈ¢" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="úèÍÌ Cookie î¾î£" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="âêÑôÉ¢äÆúèÍÌöÊÌ½í¼È¢" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="âêÑôÉ¢äÆúèÍÌè×ÑÐ" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="çßÝÃÌ¦È´ûâÓîÎûúèÍÌ" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="Ì¦È´ûâÓîÎûúèÍÌùËÐÎ" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÙòÌ¦È´ûâÓîÎûúèÍÌ÷ËßÐÈ©ÄÑìÑ" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="Ì¦È´ûâÓîÎûâêÑôÉ¢äÆúèÍÌ" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÚöÆîÌ¦È´ûâÓîÎûúèÍÌè×ÑÐ" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="Ì¦È´ûâÓîÎûúèÍÌè×ÑÐ" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÈÜÓÔë¥øýÝ¨Ü¡á£È¢" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÈÜÓÔàôÅøÝ¨Ü¡á£È¢" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÈÜÓÔüÓøýÝ¨Ü¡á£È¢" expand="false"></tocitem></tocitem>
+            <tocitem target="agentconfig.j2eeagentprofile" text="SSO" expand="false">
+                <tocitem target="agentconfig.j2eeagentprofile" text="Cookie ÇØê¢" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÚöÆî SSO Ê¸Ì½" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="æúê½ÙÑ SSO" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="CDSSO Óìä»ðÒÇ× URI" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="CDSSO Servlet URL" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="CDSSO ÕëúÌÙ£Õ¸" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="CDSSO ÏêÇ¶Îû ID ßÈËòÏ¯" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÚöÆî CDSSO ÇøÇÀ" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="CDSSO ê½ÙÑÛÒÞÌ" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÓìÝÃ Cookie" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="Cookie ÓìÝÃÇØê¢ÛÒÞÌ" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="Cookie ÓìÝÃê½ÙÑè×ÑÐ" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="Cookie ÓìÝÃæûÕÀè×ÑÐ" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="SSO æØî£" expand="false"></tocitem></tocitem>
+            <tocitem target="agentconfig.j2eeagentprofile" text="FAM Î¤Ù­" expand="false">
+                <tocitem target="agentconfig.j2eeagentprofile" text="FAM àôÄ« URL" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÝÃÌùàôÄ« URL óÀÇ¿âûÊ©" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="àôÄ« URL àÁæÜ" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="àôÄ« URL àÁæÜç·Õë" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="FAM àôÅø URL" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÝÃÌùàôÅø URL óÀÇ¿âûÊ©" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="àôÅø URL àÁæÜ" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="àôÅø URL àÁæÜç·Õë" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="FAM ë¥øýÎ¤Ù­Ì¶Ìù" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="FAM ë¥øýÎ¤Ù­Åäñ¢ÇØê¢" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="FAM ë¥øýÎ¤Ù­ÝÙÚÙÙÕ" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÚöÆîá¬Ü©Ý×Ï¡" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="á¬Ü©ÆîÅÂê¦ïÇææâæçÒ" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="á¬Ü©ÆîÅÂê¦Ê¸Ì½í¼È¢" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="á¬Ü©ÆîÅÂê¦ÆÌÎ¯Ù¯É¢Ô«" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="á¬Ü©ÆîÅÂê¦æñäãÅÒç¤á£È¢" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="á¬Ü©ÆîÅÂê¦ÕëúÌÙ£Õ¸" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="URL á¬Ü©ô¿èº GET Ù¶í°" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="URL á¬Ü©ô¿èº POST Ù¶í°" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="URL á¬Ü©ô¿èº jsession Ù¶í°" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ËðÆîÏ¯æñÕèÊ¸Ì½ïÇææÕëâæ" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÚöÆîÎ¤Ù­æñÕèÊ¸Ì½Ý×Ï¡" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="Î¤Ù­æñÕèÊ¸Ì½Õëâæ" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÚöÆîÆîÅÂê¦ïÇææ" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÆîÅÂê¦ïÇææßæ" expand="false"></tocitem></tocitem>
+            <tocitem target="agentconfig.j2eeagentprofile" text="Ì§Åì" expand="false">
+                <tocitem target="agentconfig.j2eeagentprofile" text="ë£ËÆô¿èº (ë£ËÆ)" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ë£ËÆô¿èº (ÙÏÕ¥)" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÚöÆîÝÙÚÙÙÕóôÑç" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÝÙÚÙÙÕóôÑçóòÕù" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÝÙÚÙÙÕóôÑçÝÃÌù" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="Ü©ç´ÅäüÕÛÒÞÌ" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÚöÆî÷®È´ÅÅßÎ" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="÷®È´ËðÆîÏ¯ÅîÜ¡á£È¢" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="÷®È´Óìä»ðÒÇ× URI" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÅûÙïßÈËòÏ¯" expand="false"></tocitem></tocitem>
+            <tocitem target="agentconfig.j2eeagentprofile" text="âÐâê" expand="false">
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÆîÅÂê¦ IP ÈíÉßíºó¤" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÆîÅÂê¦Åäñ¢ÇØê¢íºó¤" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÚöÆî Web Î¤Ù­" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="Web Î¤Ù­ê¦öµ" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÚöÆî Web Î¤Ù­Ý¨Ü¡ GET" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="Web Î¤Ù­ë¥øýá£È¢" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="Web Î¤Ù­ÄùÝåòãë¨ÄùÕ©óòÕù" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="Web Î¤Ù­Úæûâòãë¨ÄùÕ©óòÕù" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ßåÅîÅîÜ¡á£È¢Åäñ¢ÇØê¢" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ßåÅîÅîÜ¡á£È¢ÝÙÚÙÙÕæÀî£" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ßåÅîÅîÜ¡á£È¢Ì¶Ìù" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="ÈÜÓÔÖÖÍÌ" expand="false"></tocitem></tocitem></tocitem>
+        <tocitem target="agentconfig.webserviceprovideredit" text="Web Î¤Ù­ßÈËòÏ¯" expand="false">
+            <tocitem target="agentconfig.webserviceprovideredit" text="Ä¡×ï" expand="false">
+                <tocitem target="agentconfig.webserviceprovideredit" text="åúÜÚ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceprovideredit" text="Ùïî£" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceprovideredit" text="Ùïî£íýë¥" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceprovideredit" text="Îíèè" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceprovideredit" text="Ý×ÆîøüÉ±î£" expand="false"></tocitem></tocitem>
+            <tocitem target="agentconfig.webserviceprovideredit" text="ÇøÇÀÍÌ" expand="false">
+                <tocitem target="agentconfig.webserviceprovideredit" text="ÇøÇÀñ¢Ì±" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceprovideredit" text="ë¥øýù¹ÚÙ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceprovideredit" text="ÏñÖçØ¹ÕÉÄãÎûÇøÇÀÍÌíºó¤" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceprovideredit" text="Liberty Î¤Ù­ùËÐÎ URN" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceprovideredit" text="ËðÆîÏ¯Ø´æÀÎûðÕøý" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceprovideredit" text="Ë³È´ÏÚý¬ùËÐÎ" expand="false"></tocitem></tocitem>
+            <tocitem target="agentconfig.webserviceprovideredit" text="SAML ØÙåô" expand="false">
+                <tocitem target="agentconfig.webserviceprovideredit" text="SAML úèÍÌè×ÑÐ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceprovideredit" text="SAML NameID è×ÑÐá£È¢ÆÀÚâá£È¢" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceprovideredit" text="SAML úèÍÌÇØê¢Ï¨âæ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceprovideredit" text="ÅýÉÖÈ©ÔÞËÎÇ¹" expand="false"></tocitem></tocitem>
+            <tocitem target="agentconfig.webserviceprovideredit" text="øÜå÷êØÅûÙï" expand="false">
+                <tocitem target="agentconfig.webserviceprovideredit" text="ÇßóÜÑÒÉÁÄØøÜå÷" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceprovideredit" text="ÇßóÜÑÒÉÁÄØÅûÙï" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceprovideredit" text="îùÊåøÜÇØÑÒÉÁÄØüÓøý" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceprovideredit" text="îùÊåíºó¤ÑÒÉÁÄØæØÙï" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceprovideredit" text="îùÊåÑÒÉÁÄØæØÙï" expand="false"></tocitem></tocitem>
+            <tocitem target="agentconfig.webserviceprovideredit" text="ÏÚý¬Õ»" expand="false">
+                <tocitem target="agentconfig.webserviceprovideredit" text="Web Î¤Ù­ÆîÅÂê¦ÎûÄüâäÏÚý¬É±ÇØ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceprovideredit" text="Ë³È´ÏÚý¬É±ÇØ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceprovideredit" text="ÏÚý¬Õ»ÆîÎÎ" expand="false"></tocitem></tocitem>
+            <tocitem target="agentconfig.webserviceprovideredit" text="ê¦öµ" expand="false">
+                <tocitem target="agentconfig.webserviceprovideredit" text="Web Î¤Ù­ÅîÜ¡ÈùÎ¤ðÂê¦öµ" expand="false"></tocitem></tocitem></tocitem>
+        <tocitem target="agentconfig.webserviceclientedit" text="Web Î¤Ù­ÆîÅÂê¦úèÍÌ" expand="false">
+            <tocitem target="agentconfig.webserviceclientedit" text="Ä¡×ï" expand="false">
+                <tocitem target="agentconfig.webserviceclientedit" text="åúÜÚ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceclientedit" text="Ùïî£" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceclientedit" text="Ùïî£íýë¥" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceclientedit" text="Îíèè" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceclientedit" text="Ý×ÆîøüÉ±î£" expand="false"></tocitem></tocitem>
+            <tocitem target="agentconfig.webserviceclientedit" text="ÇøÇÀÍÌ" expand="false">
+                <tocitem target="agentconfig.webserviceclientedit" text="ÇøÇÀñ¢Ì±" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceclientedit" text="STS ØÙåô" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceclientedit" text="ÚØ×ÄØÙåô" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceclientedit" text="ëæÓÑËðÆîÏ¯ë¥øý" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceclientedit" text="ÏñÖçØ¹ÕÉÄãÎûÇøÇÀÍÌíºó¤" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceclientedit" text="Liberty Î¤Ù­ùËÐÎ URN" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceclientedit" text="ËðÆîÏ¯Ø´æÀÎûðÕøý" expand="false"></tocitem></tocitem>
+            <tocitem target="agentconfig.webserviceclientedit" text="øÜå÷êØÅûÙï" expand="false">
+                <tocitem target="agentconfig.webserviceclientedit" text="îùÊåÑÒÉÁÄØøÜå÷" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceclientedit" text="îùÊåíºó¤ÑÒÉÁÄØÅûÙï" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceclientedit" text="îùÊåÑÒÉÁÄØÅûÙï" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceclientedit" text="ÇßóÜøÜÇØÑÒÉÁÄØüÓøý" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceclientedit" text="ÇßóÜÑÒÉÁÄØæØÙï" expand="false"></tocitem></tocitem>
+            <tocitem target="agentconfig.webserviceclientedit" text="ÏÚý¬Õ»" expand="false">
+                <tocitem target="agentconfig.webserviceclientedit" text="Web Î¤Ù­ßÈËòÏ¯ÎûÄüâäÏÚý¬É±ÇØ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceclientedit" text="Ë³È´ÏÚý¬É±ÇØ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceclientedit" text="ÏÚý¬Õ»ÆîÎÎ" expand="false"></tocitem></tocitem>
+            <tocitem target="agentconfig.webserviceclientedit" text="ê¦öµ" expand="false">
+                <tocitem target="agentconfig.webserviceclientedit" text="Web Î¤Ù­ÅîÜ¡ÈùÎ¤ðÂê¦öµ" expand="false"></tocitem></tocitem></tocitem>
+        <tocitem target="agentconfig.stsclientedit" text="STS ÆîÅÂê¦" expand="false"></tocitem>
+        <tocitem target="agentconfig.discoveryagentprofile" text="ÚØ×ÄÅîÜ¡á£È¢úèÍÌ" expand="false">
+            <tocitem target="agentconfig.discoveryagentprofile" text="åúÜÚ" expand="false"></tocitem>
+            <tocitem target="agentconfig.discoveryagentprofile" text="Ùïî£" expand="false"></tocitem>
+            <tocitem target="agentconfig.discoveryagentprofile" text="Ùïî£íýë¥" expand="false"></tocitem>
+            <tocitem target="agentconfig.discoveryagentprofile" text="Îíèè" expand="false"></tocitem>
+            <tocitem target="agentconfig.discoveryagentprofile" text="ÅîÜ¡á£È¢ØÙåôóÃÇôÕ»ÎûÈíåô" expand="false"></tocitem>
+            <tocitem target="agentconfig.discoveryagentprofile" text="Ë³È´ÏÚý¬É±ÇØ" expand="false"></tocitem>
+            <tocitem target="agentconfig.discoveryagentprofile" text="ÚØ×ÄÎ¤Ù­ê¦öµ" expand="false"></tocitem>
+            <tocitem target="agentconfig.discoveryagentprofile" text="ë¥øý Web Î¤Ù­ê¦öµ" expand="false"></tocitem></tocitem>
+        <tocitem target="agentconfig.webservicestsedit" text="ÇøÇÀÍÌØ´æÀÎ¤Ù­úèÍÌ" expand="false">
+            <tocitem target="agentconfig.webservicestsedit" text="Ä¡×ï" expand="false">
+                <tocitem target="agentconfig.webservicestsedit" text="åúÜÚ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webservicestsedit" text="Ùïî£" expand="false"></tocitem>
+                <tocitem target="agentconfig.webservicestsedit" text="Ùïî£íýë¥" expand="false"></tocitem>
+                <tocitem target="agentconfig.webservicestsedit" text="Îíèè" expand="false"></tocitem>
+                <tocitem target="agentconfig.webservicestsedit" text="Ý×ÆîøüÉ±î£" expand="false"></tocitem></tocitem>
+            <tocitem target="agentconfig.webservicestsedit" text="ÇøÇÀÍÌ" expand="false">
+                <tocitem target="agentconfig.webservicestsedit" text="ÇøÇÀñ¢Ì±" expand="false"></tocitem>
+                <tocitem target="agentconfig.webservicestsedit" text="STS ØÙåô" expand="false"></tocitem>
+                <tocitem target="agentconfig.webservicestsedit" text="ÏñÖçØ¹ÕÉÄãÎûÇøÇÀÍÌíºó¤" expand="false"></tocitem>
+                <tocitem target="agentconfig.webservicestsedit" text="ËðÆîÏ¯Ø´æÀÎûðÕøý" expand="false"></tocitem></tocitem>
+            <tocitem target="agentconfig.webservicestsedit" text="øÜå÷êØÅûÙï" expand="false">
+                <tocitem target="agentconfig.webservicestsedit" text="îùÊåÑÒÉÁÄØøÜå÷" expand="false"></tocitem>
+                <tocitem target="agentconfig.webservicestsedit" text="îùÊåíºó¤ÑÒÉÁÄØÅûÙï" expand="false"></tocitem>
+                <tocitem target="agentconfig.webservicestsedit" text="îùÊåÑÒÉÁÄØÅûÙï" expand="false"></tocitem>
+                <tocitem target="agentconfig.webservicestsedit" text="ÇßóÜøÜÇØÑÒÉÁÄØüÓøý" expand="false"></tocitem>
+                <tocitem target="agentconfig.webservicestsedit" text="ÇßóÜÑÒÉÁÄØæØÙï" expand="false"></tocitem></tocitem>
+            <tocitem target="agentconfig.webservicestsedit" text="ÏÚý¬Õ»" expand="false">
+                <tocitem target="agentconfig.webservicestsedit" text="Web Î¤Ù­ßÈËòÏ¯ÎûÄüâäÏÚý¬É±ÇØ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webservicestsedit" text="Ë³È´ÏÚý¬É±ÇØ" expand="false"></tocitem>
+                <tocitem target="agentconfig.webservicestsedit" text="ÏÚý¬Õ»ÆîÎÎ" expand="false"></tocitem></tocitem>
+            <tocitem target="agentconfig.webservicestsedit" text="ê¦öµ" expand="false">
+                <tocitem target="agentconfig.webservicestsedit" text="Web Î¤Ù­ê¦öµ" expand="false"></tocitem></tocitem></tocitem>
+        <tocitem target="agentconfig.22agentprofile" text="2.2 á¬Ü©ÅîÜ¡á£È¢" expand="false">
+            <tocitem target="agentconfig.22agentprofile" text="Ùïî£" expand="false"></tocitem>
+            <tocitem target="agentconfig.22agentprofile" text="Ùïî£íýë¥" expand="false"></tocitem>
+            <tocitem target="agentconfig.22agentprofile" text="Îíèè" expand="false"></tocitem>
+            <tocitem target="agentconfig.22agentprofile" text="ßÀÓÝ" expand="false"></tocitem>
+            <tocitem target="agentconfig.22agentprofile" text="ÅîÜ¡á£È¢ÏÚý¬Ô«" expand="false"></tocitem></tocitem></tocitem></tocitem>
  <tocitem target="dirmang" text="Æøòçê§Ü¡" expand="false">
     <tocitem target="dm.home" text="Æøòçê§Ü¡" expand="false"></tocitem></tocitem>
  <tocitem target="federation.federation" text="ôúÇÙ" expand="false">
@@ -219,39 +537,264 @@
         <tocitem target="federation.createcot" text="ÐúÇ¡ä»ÎûÏêÇ¶ÙÎ" expand="false"></tocitem>
         <tocitem target="federation.fsauthdomainsedit" text="ÔºÊÑÏêÇ¶ÙÎÝÃÌùóò" expand="false"></tocitem>
         <tocitem target="federation.fsauthdomainsselectprovider" text="ÙòßÈËòÏ¯ä»ìÁÌ¯ÏêÇ¶ÙÎ" expand="false"></tocitem>
-        <tocitem target="deleteauthdomain" text="É´ØæÏêÇ¶ÙÎÝÃÌùóò" expand="false"></tocitem></tocitem></tocitem>
- <tocitem target="federation.fsentitydescriptors" text="èÒüÕ¡¨ßÈËòÏ¯Å¯ÏáúèßÈËòÏ¯" expand="false">
-    <tocitem target="federation.fsentitydescriptorsadd" text="ÐúÇ¡ßÈËòÏ¯èÒüÕÍÐÏáúèßÈËòÏ¯èÒüÕ" expand="false"></tocitem>
-    <tocitem target="federation.fsentitydescriptorsprofile" text="ÔºÊÑßÈËòÏ¯èÒüÕÍÐÑÒÏáúèßÈËòÏ¯èÒüÕÎûÄ¡×ïúèÍÌ" expand="false"></tocitem>
-    <tocitem target="federation.fsidentityprovider" text="ä»ìÁøüÉ±ßÈËòÏ¯ÈÝßÈËòÏ¯èÒüÕ" expand="false"></tocitem>
-    <tocitem target="federation.fsidentityproviderhostedadd" text="ä»ìÁÄ¡Ô¶ä»ÎûÅîê§øüÉ±ßÈËòÏ¯ÈÝßÈËòÏ¯èÒüÕ" expand="false"></tocitem>
-    <tocitem target="federation.fsidentityproviderremoteadd" text="ä»ìÁÄ¡Ô¶ä»Îûë¿ê¦øüÉ±ßÈËòÏ¯ÈÝßÈËòÏ¯èÒüÕ" expand="false"></tocitem>
-    <tocitem target="federation.fsserviceprovider" text="ä»ìÁÎ¤Ù­ßÈËòÏ¯ÈÝßÈËòÏ¯èÒüÕ" expand="false"></tocitem>
-    <tocitem target="federation.fsserviceproviderhostedadd" text="ä»ìÁÄ¡Ô¶ä»ÎûÅîê§Î¤Ù­ßÈËòÏ¯ÈÝßÈËòÏ¯èÒüÕ" expand="false"></tocitem>
-    <tocitem target="federation.fsserviceproviderremoteadd" text="ä»ìÁÄ¡Ô¶ä»Îûë¿ê¦Î¤Ù­ßÈËòÏ¯ÈÝßÈËòÏ¯èÒüÕ" expand="false"></tocitem>
-    <tocitem target="federation.fsidentityproviderhostedprofile" text="ÔºÊÑßÈËòÏ¯èÒüÕÄùÎûÅîê§øüÉ±ßÈËòÏ¯úèÍÌ" expand="false"></tocitem>
-    <tocitem target="federation.fsidentityproviderremoteprofile" text="ÔºÊÑßÈËòÏ¯èÒüÕÄùÎûë¿ê¦øüÉ±ßÈËòÏ¯úèÍÌ" expand="false"></tocitem>
-    <tocitem target="federation.fsserviceproviderhostedprofile" text="ÔºÊÑßÈËòÏ¯èÒüÕÄùÎûÅîê§Î¤Ù­ßÈËòÏ¯úèÍÌ" expand="false"></tocitem>
-    <tocitem target="federation.fsserviceproviderremoteprofile" text="ÔºÊÑßÈËòÏ¯èÒüÕÄùÎûë¿ê¦Î¤Ù­ßÈËòÏ¯úèÍÌ" expand="false"></tocitem>
-    <tocitem target="federation.fscreatecontactperson" text="ä»ìÁÝÙá¾Ä©ÔÞÈÝßÈËòÏ¯èÒüÕÄùÎûßÈËòÏ¯" expand="false"></tocitem>
-    <tocitem target="federation.fseditcontactperson" text="ÔºÊÑßÈËòÏ¯èÒüÕÄùÎûÝÙá¾Ä©ÔÞÝÃÌùóò" expand="false"></tocitem>
-    <tocitem target="federation.fsentitydescriptorsaffiliate" text="ä»ìÁÈ©ÔÞÈÝÏáúèßÈËòÏ¯èÒüÕ" expand="false"></tocitem></tocitem>
- <tocitem target="federation.fssamlservice" text="SAML1.x " expand="false">
-    <tocitem target="targetspecifier" text="ÆøíºÑÀÌùÜÊæÀ" expand="false"></tocitem>
-    <tocitem target="siteidentifiers" text="ê½×»øüÉ±î£" expand="false">
-        <tocitem target="federation.fssamlsiteidadd" text="ØÙåôê½×»øüÉ±î£ " expand="false"></tocitem></tocitem></tocitem>
- <tocitem target="trustedpartners" text="Æ«ÏêÇ¶ÎûÇÙÉ¢èÁÈò" expand="false">
-    <tocitem target="federation.fssamlselecttrustedpartnertype" text="Æ«ÏêÇ¶ÎûÇÙÉ¢èÁÈò¡¨òÙÌ½èÁÈòùËÐÎÅ¯ÝÃÌùóò" expand="false"></tocitem>
-    <tocitem target="federation.fssamltrustedpartnersadd" text="Æ«ÏêÇ¶ÎûÇÙÉ¢èÁÈò¡¨ØÙåôÆ«ÏêÇ¶ÎûÇÙÉ¢èÁÈòúèÍÌ" expand="false"></tocitem></tocitem>
- <tocitem target="targeturl" text="Æøíº URL" expand="false">
-    <tocitem target="federation.fssamltargeturlsadd" text="ØÙåôÆøíº URL" expand="false"></tocitem></tocitem>
- <tocitem target="assertiontimeout" text="ÑÀÌùç·Õë" expand="false"></tocitem>
- <tocitem target="assertionskew" text="notBefore ÕëâæÎûØõÝÃÙ£ÚûÇÞ×Ã¡¤" expand="false"></tocitem>
- <tocitem target="artifacttimeout" text="ÄÖÇµç·Õë" expand="false"></tocitem>
- <tocitem target="samlartifactname" text="SAML ÄÖÇµÇØê¢" expand="false"></tocitem>
- <tocitem target="signsamlassertion" text="øÜÇØ SAML ÑÀÌù" expand="false"></tocitem>
- <tocitem target="signsamlrequest" text="øÜÇØ SAML îùÊå" expand="false"></tocitem>
- <tocitem target="signsamlresponse" text="øÜÇØ SAML ÇßóÜ" expand="false"></tocitem>
+        <tocitem target="deleteauthdomain" text="É´ØæÏêÇ¶ÙÎÝÃÌùóò" expand="false"></tocitem></tocitem>
+    <tocitem target="federation.createsaml2metadata" text="èÒüÕßÈËòÏ¯" expand="false">
+        <tocitem target="ggwxp" text="SAMLv2 ßÈËòÏ¯èÒüÕ" expand="false">
+            <tocitem target="federation.createsaml2" text="ÐúÇ¡ SAMLv2 èÒüÕßÈËòÏ¯" expand="false"></tocitem></tocitem>
+        <tocitem target="ggwwz" text="ID-FF ßÈËòÏ¯èÒüÕ" expand="false">
+            <tocitem target="federation.createidffprovider" text="ÐúÇ¡ ID-FF èÒüÕßÈËòÏ¯" expand="false"></tocitem></tocitem>
+        <tocitem target="federation.createwsfedprovider" text="WS-FED ßÈËòÏ¯èÒüÕ" expand="false">
+            <tocitem target="ggwwr" text="ÐúÇ¡ WS-FED èÒüÕßÈËòÏ¯" expand="false"></tocitem></tocitem>
+        <tocitem target="federation.samlv2spassertioncontent" text="ÈÜÓÔ SAMLv2 Î¤Ù­ßÈËòÏ¯" expand="false">
+            <tocitem target="federation.samlv2spassertioncontent" text="ÑÀÌùÄùÕ©" expand="false">
+                <tocitem target="federation.samlv2spassertioncontent" text="îùÊå/ÇßóÜøÜÇØ" expand="false"></tocitem>
+                <tocitem target="federation.samlv2spassertioncontent" text="ÅûÙï" expand="false"></tocitem>
+                <tocitem target="federation.samlv2spassertioncontent" text="ðÕøýÉ±ÇØ" expand="false"></tocitem>
+                <tocitem target="federation.samlv2spassertioncontent" text="ÇØê¢ ID ÖªÈ¢" expand="false"></tocitem>
+                <tocitem target="federation.samlv2spassertioncontent" text="ë¥øýô¿èº" expand="false"></tocitem>
+                <tocitem target="federation.samlv2spassertioncontent" text="ÑÀÌùÕëâæÙ£Õ¸" expand="false"></tocitem>
+                <tocitem target="federation.samlv2spassertioncontent" text="Ù×ÆÛë¥øý" expand="false"></tocitem></tocitem>
+            <tocitem target="federation.samlv2spassertioncontent" text="ÑÀÌùÝ¨Ü¡" expand="false">
+                <tocitem target="federation.samlv2spassertioncontent" text="úèÍÌè×ÑÐá£È¢" expand="false"></tocitem>
+                <tocitem target="federation.samlv2spassertioncontent" text="ÈÜÙ¯ôúÇÙ" expand="false"></tocitem>
+                <tocitem target="federation.samlv2spassertioncontent" text="Ú¨æÀè×ÑÐá£È¢" expand="false"></tocitem>
+                <tocitem target="federation.samlv2spassertioncontent" text="í²èèËðÆîÏ¯" expand="false"></tocitem>
+                <tocitem target="federation.samlv2spassertioncontent" text="URL" expand="false"></tocitem>
+                <tocitem target="federation.samlv2spassertioncontent" text="çßÝÃ÷ËØÊÎíèè" expand="false"></tocitem>
+                <tocitem target="federation.samlv2spassertioncontent" text="ÄõÓò" expand="false"></tocitem></tocitem>
+            <tocitem target="federation.samlv2spassertioncontent" text="Î¤Ù­" expand="false">
+                <tocitem target="federation.samlv2spassertioncontent" text="ÄãÄõÉ±ÇØ" expand="false"></tocitem>
+                <tocitem target="federation.samlv2spassertioncontent" text="ÞÌÄ¡àôÅøÎ¤Ù­" expand="false"></tocitem>
+                <tocitem target="federation.samlv2spassertioncontent" text="ê§Ü¡ÇØê¢ ID Î¤Ù­" expand="false"></tocitem>
+                <tocitem target="federation.samlv2spassertioncontent" text="ÑÀÌù Artifact ÆîÅÂÎ¤Ù­" expand="false"></tocitem></tocitem>
+            <tocitem target="federation.samlv2spassertioncontent" text="âÐâê" expand="false">
+                <tocitem target="federation.samlv2spassertioncontent" text="SP URL" expand="false"></tocitem>
+                <tocitem target="federation.samlv2spassertioncontent" text="SP àôÅø URL" expand="false"></tocitem>
+                <tocitem target="federation.samlv2spassertioncontent" text="óÜÆîá£È¢Ùïî£ÛÒÞÌ" expand="false"></tocitem>
+                <tocitem target="federation.samlv2spassertioncontent" text="PAOS" expand="false"></tocitem>
+                <tocitem target="federation.samlv2spassertioncontent" text="îùÊå IDP ÛÒÞÌÞòÊÆðÂèÒÉ¢" expand="false"></tocitem>
+                <tocitem target="federation.samlv2spassertioncontent" text="îùÊå IDP ÛÒÞÌÌ½ÚµÉùÈ©" expand="false"></tocitem>
+                <tocitem target="federation.samlv2spassertioncontent" text="îùÊå IDP ÛÒÞÌ" expand="false"></tocitem>
+                <tocitem target="federation.samlv2spassertioncontent" text="IDP ÅîÜ¡ÈùÎ¤ðÂ" expand="false"></tocitem>
+                <tocitem target="federation.samlv2spassertioncontent" text="öüÄõ" expand="false"></tocitem>
+                <tocitem target="federation.samlv2spassertioncontent" text="ÅîÜ¡ÈùÎ¤ðÂÓÓí°" expand="false"></tocitem>
+                <tocitem target="federation.samlv2spassertioncontent" text="IDP ÅîÜ¡ÈùÎ¤ðÂÛÒÞÌ" expand="false"></tocitem></tocitem></tocitem>
+        <tocitem target="federation.samlv2idpassertioncontent" text="ÈÜÓÔ SAMLv2 ËÎÇ¹øüÉ±ßÈËòÏ¯" expand="false">
+            <tocitem target="federation.samlv2idpassertioncontent" text="ÑÀÌùÄùÕ©" expand="false">
+                <tocitem target="federation.samlv2idpassertioncontent" text="îùÊå/ÇßóÜøÜÇØ" expand="false"></tocitem>
+                <tocitem target="federation.samlv2idpassertioncontent" text="ÅûÙï" expand="false"></tocitem>
+                <tocitem target="federation.samlv2idpassertioncontent" text="ðÕøýÉ±ÇØ" expand="false"></tocitem>
+                <tocitem target="federation.samlv2idpassertioncontent" text="ÇØê¢ ID ÖªÈ¢" expand="false"></tocitem>
+                <tocitem target="federation.samlv2idpassertioncontent" text="ÇØê¢ ID Ô«è×ÑÐ" expand="false"></tocitem>
+                <tocitem target="federation.samlv2idpassertioncontent" text="ë¥øýô¿èº" expand="false"></tocitem>
+                <tocitem target="federation.samlv2idpassertioncontent" text="ÑÀÌùÕëâæ" expand="false"></tocitem>
+                <tocitem target="federation.samlv2idpassertioncontent" text="Ù×ÆÛë¥øý" expand="false"></tocitem>
+                <tocitem target="federation.samlv2idpassertioncontent" text="ÑÀÌùÊ¸Ì½" expand="false"></tocitem>
+                <tocitem target="federation.samlv2idpassertioncontent" text="ÚöÙ¯á£È¢" expand="false"></tocitem></tocitem>
+            <tocitem target="federation.samlv2idpassertioncontent" text="ÑÀÌùÝ¨Ü¡" expand="false">
+                <tocitem target="federation.samlv2idpassertioncontent" text="úèÍÌè×ÑÐá£È¢" expand="false"></tocitem>
+                <tocitem target="federation.samlv2idpassertioncontent" text="Ú¨æÀè×ÑÐá£È¢" expand="false"></tocitem></tocitem>
+            <tocitem target="federation.samlv2idpassertioncontent" text="ÆÛñ¢ØÙåô" expand="false">
+                <tocitem target="federation.samlv2idpassertioncontent" text="ë¥øý URL" expand="false"></tocitem></tocitem>
+            <tocitem target="federation.samlv2idpassertioncontent" text="Î¤Ù­" expand="false">
+                <tocitem target="federation.samlv2idpassertioncontent" text="ÄãÄõÉ±ÇØ" expand="false"></tocitem>
+                <tocitem target="federation.samlv2idpassertioncontent" text="Artifact æØÎµÎ¤Ù­" expand="false"></tocitem>
+                <tocitem target="federation.samlv2idpassertioncontent" text="ÞÌÄ¡àôÅøÎ¤Ù­" expand="false"></tocitem>
+                <tocitem target="federation.samlv2idpassertioncontent" text="ê§Ü¡ÇØê¢ ID Î¤Ù­" expand="false"></tocitem>
+                <tocitem target="federation.samlv2idpassertioncontent" text="ÞÌÈ¹àôÄ«Î¤Ù­" expand="false"></tocitem></tocitem>
+            <tocitem target="federation.samlv2idpassertioncontent" text="âÐâê" expand="false">
+                <tocitem target="federation.samlv2idpassertioncontent" text="IDP URL" expand="false"></tocitem>
+                <tocitem target="federation.samlv2idpassertioncontent" text="óÜÆîá£È¢Ùïî£ÛÒÞÌ" expand="false"></tocitem>
+                <tocitem target="federation.samlv2idpassertioncontent" text="IDP è×ÑÐá£È¢âêÑôÉ¢äÆ" expand="false"></tocitem></tocitem></tocitem>
+        <tocitem target="federation.samlv2pdp" text="ÈÜÓÔ SAMLv2 XACML PDP" expand="false">
+            <tocitem target="federation.samlv2pdp" text="Ì¶ÌùÅÅßÎÇÄõ¨" expand="false"></tocitem>
+            <tocitem target="federation.samlv2pdp" text="øÜå÷ÏÚý¬É±ÇØ" expand="false"></tocitem>
+            <tocitem target="federation.samlv2pdp" text="ÅûÙïÏÚý¬É±ÇØ" expand="false"></tocitem>
+            <tocitem target="federation.samlv2pdp" text="Ù×ÆÛÚæûâ" expand="false"></tocitem>
+            <tocitem target="federation.samlv2pdp" text="ÄØøÜÇØÚæûâÊîÌùÑçææ" expand="false"></tocitem>
+            <tocitem target="federation.samlv2pdp" text="ÚæûâÎ¤Ù­" expand="false"></tocitem></tocitem>
+        <tocitem target="federation.samlv2pep" text="ÈÜÓÔ SAMLv2 XACML PEP" expand="false">
+            <tocitem target="federation.samlv2pep" text="Ì¶ÌùÅÅßÎÇÄõ¨" expand="false"></tocitem>
+            <tocitem target="federation.samlv2pep" text="øÜå÷ÏÚý¬É±ÇØ" expand="false"></tocitem>
+            <tocitem target="federation.samlv2pep" text="ÅûÙïÏÚý¬É±ÇØ" expand="false"></tocitem>
+            <tocitem target="federation.samlv2pep" text="Ù×ÆÛÚæûâ" expand="false"></tocitem>
+            <tocitem target="federation.samlv2pep" text="ÄØøÜÇØÚæûâÊîÌùÇßóÜ" expand="false"></tocitem>
+            <tocitem target="federation.samlv2pep" text="ÑÀÌùÄØÅûÙï" expand="false"></tocitem></tocitem>
+        <tocitem target="federation.samlv2attrauthority" text="ÈÜÓÔ SAMLv2 úèÍÌÚæûâ" expand="false">
+            <tocitem target="federation.samlv2attrauthority" text="øÜå÷êØÅûÙï" expand="false"></tocitem>
+            <tocitem target="federation.samlv2attrauthority" text="úèÍÌÎ¤Ù­" expand="false"></tocitem>
+            <tocitem target="federation.samlv2attrauthority" text="AssertionID îùÊå" expand="false"></tocitem>
+            <tocitem target="federation.samlv2attrauthority" text="úèÍÌÝÃÌùóò" expand="false"></tocitem>
+            <tocitem target="federation.samlv2attrauthority" text="ðÕøýÉ±ÇØ" expand="false"></tocitem>
+            <tocitem target="federation.samlv2attrauthority" text="ÅäüÕæñÕèÇôÍóÙ´" expand="false"></tocitem></tocitem>
+        <tocitem target="federation.samlv2attrquery" text="ÈÜÓÔ SAMLv2 úèÍÌÑçææ" expand="false">
+            <tocitem target="federation.samlv2attrquery" text="ÇØê¢ ID ÖªÈ¢" expand="false"></tocitem>
+            <tocitem target="federation.samlv2attrquery" text="ðÕøýÉ±ÇØ" expand="false"></tocitem></tocitem>
+        <tocitem target="federation.samlv2authnauthority" text="ÈÜÓÔ SAMLv2 ë¥øýÚæûâ" expand="false">
+            <tocitem target="federation.samlv2authnauthority" text="øÜå÷êØÅûÙï" expand="false"></tocitem>
+            <tocitem target="federation.samlv2authnauthority" text="ë¥øýÑçææÎ¤Ù­" expand="false"></tocitem>
+            <tocitem target="federation.samlv2authnauthority" text="AssertionID îùÊå" expand="false"></tocitem>
+            <tocitem target="federation.samlv2authnauthority" text="ðÕøýÉ±ÇØ" expand="false"></tocitem></tocitem>
+        <tocitem target="federation.samlv2affiliate" text="ÈÜÓÔ SAMLv2 Åîê§ÏáúèßÈËòÏ¯" expand="false">
+            <tocitem target="federation.samlv2affiliate" text="ÄãÄõÉ±ÇØ" expand="false"></tocitem>
+            <tocitem target="federation.samlv2affiliate" text="È©ÔÞ" expand="false"></tocitem>
+            <tocitem target="federation.samlv2affiliate" text="ë¥øýÉ±ÇØ" expand="false"></tocitem></tocitem>
+        <tocitem target="federation.idffidp" text="ÈÜÓÔ ID-FF ËÎÇ¹øüÉ±ßÈËòÏ¯" expand="false">
+            <tocitem target="federation.idffidp" text="ÇÁÆîúèÍÌ" expand="false">
+                <tocitem target="federation.idffidp" text="ßÈËòÏ¯ùËÐÎ" expand="false"></tocitem>
+                <tocitem target="federation.idffidp" text="ßÀÓÝ" expand="false"></tocitem>
+                <tocitem target="federation.idffidp" text="Ì¶ÌùÅÅßÎÇÄõ¨" expand="false"></tocitem>
+                <tocitem target="federation.idffidp" text="øÜå÷ÏÚý¬" expand="false"></tocitem>
+                <tocitem target="federation.idffidp" text="ÅûÙïÏÚý¬" expand="false"></tocitem>
+                <tocitem target="federation.idffidp" text="ÇØê¢øüÉ±î£ÅûÙï" expand="false"></tocitem></tocitem>
+            <tocitem target="federation.idffidp" text="Ý×Ø¹ URL" expand="false">
+                <tocitem target="federation.idffidp" text="SOAP ê¦öµ" expand="false"></tocitem>
+                <tocitem target="federation.idffidp" text="ÞÌÈ¹àôÄ«Î¤Ù­ URL" expand="false"></tocitem>
+                <tocitem target="federation.idffidp" text="ÞÌÄ¡àôÅøÎ¤Ù­" expand="false"></tocitem>
+                <tocitem target="federation.idffidp" text="ÞÌÄ¡àôÅøÇßã®" expand="false"></tocitem>
+                <tocitem target="federation.idffidp" text="ôúÇÙÜÜÅÏÎ¤Ù­" expand="false"></tocitem>
+                <tocitem target="federation.idffidp" text="ôúÇÙÜÜÅÏÇßã®" expand="false"></tocitem>
+                <tocitem target="federation.idffidp" text="ÇØê¢â¡ÅõÎ¤Ù­" expand="false"></tocitem>
+                <tocitem target="federation.idffidp" text="ÇØê¢â¡ÅõÇßã®" expand="false"></tocitem></tocitem>
+            <tocitem target="federation.idffidp" text="Ý×Ø¹ÝÃÌùóò" expand="false">
+                <tocitem target="federation.idffidp" text="ôúÇÙÜÜÅÏ" expand="false"></tocitem>
+                <tocitem target="federation.idffidp" text="ÞÌÄ¡àôÅø" expand="false"></tocitem>
+                <tocitem target="federation.idffidp" text="ÇØê¢â¡Åõ" expand="false"></tocitem>
+                <tocitem target="federation.idffidp" text="ÞÌÈ¹àôÄ«/ôúÇÙ" expand="false"></tocitem></tocitem>
+            <tocitem target="federation.idffidp" text="ËÎÇ¹øüÉ±ßÈËòÏ¯ØÙåô" expand="false">
+                <tocitem target="federation.idffidp" text="ßÈËòÏ¯É±ÇØ" expand="false"></tocitem>
+                <tocitem target="federation.idffidp" text="ë¥øýùËÐÎ" expand="false"></tocitem>
+                <tocitem target="federation.idffidp" text="ÑÀÌùàõÈçÏ¯" expand="false"></tocitem>
+                <tocitem target="federation.idffidp" text="ÇßóÜÄùÕ©" expand="false"></tocitem>
+                <tocitem target="federation.idffidp" text="ßÈËòÏ¯Îíèè" expand="false"></tocitem></tocitem>
+            <tocitem target="federation.idffidp" text="Î¤Ù­ URL" expand="false">
+                <tocitem target="federation.idffidp" text="ÓûÓ÷ URL" expand="false"></tocitem>
+                <tocitem target="federation.idffidp" text="ÞÌÄ¡àôÄ«ÆÂÚõÓìä»ðÒÇ× URL" expand="false"></tocitem>
+                <tocitem target="federation.idffidp" text="ôúÇÙÓ÷Óò URL" expand="false"></tocitem>
+                <tocitem target="federation.idffidp" text="â¡ÅõÉùÈ© URL" expand="false"></tocitem>
+                <tocitem target="federation.idffidp" text="COT Ó÷Óò URL ÎûÛÒÞÌ" expand="false"></tocitem>
+                <tocitem target="federation.idffidp" text="ÜÜÅÏ URL" expand="false"></tocitem>
+                <tocitem target="federation.idffidp" text="ÜÜÅÏÉùÈ© URL" expand="false"></tocitem>
+                <tocitem target="federation.idffidp" text="òãë¨Ó÷Óò URL" expand="false"></tocitem>
+                <tocitem target="federation.idffidp" text="àôÅøÉùÈ© URL" expand="false"></tocitem></tocitem>
+            <tocitem target="federation.idffidp" text="ÆÀÚâá£È¢" expand="false">
+                <tocitem target="federation.idffidp" text="ÇØê¢øüÉ±î£ÉùÈ©" expand="false"></tocitem>
+                <tocitem target="federation.idffidp" text="úèÍÌÚøÓÝÆÀÚâá£È¢" expand="false"></tocitem>
+                <tocitem target="federation.idffidp" text="ËðÆîÏ¯ßÈËòÏ¯ùËÉ±" expand="false"></tocitem></tocitem>
+            <tocitem target="federation.idffidp" text="ËÎÇ¹øüÉ±ßÈËòÏ¯úèÍÌè×ÑÐá£È¢" expand="false">
+                <tocitem target="federation.idffidp" text="úèÍÌè×ÑÐá£È¢ùËÉ±" expand="false"></tocitem>
+                <tocitem target="federation.idffidp" text="ËÎÇ¹øüÉ±ßÈËòÏ¯úèÍÌè×ÑÐ" expand="false"></tocitem></tocitem>
+            <tocitem target="federation.idffidp" text="ÚöÙ¯á£È¢" expand="false">
+                <tocitem target="federation.idffidp" text="Ü¨ÆíÚØ×ÄÚöÙ¯á£È¢æñäãßÈËò" expand="false"></tocitem></tocitem>
+            <tocitem target="federation.idffidp" text="ÈÜÙ¯ôúÇÙ" expand="false">
+                <tocitem target="federation.idffidp" text="ÈÜÙ¯ôúÇÙ" expand="false"></tocitem>
+                <tocitem target="federation.idffidp" text="ÈÜÙ¯ôúÇÙÇÁÆîúèÍÌÇØê¢" expand="false"></tocitem></tocitem>
+            <tocitem target="federation.idffidp" text="ë¥øýô¿èº" expand="false"></tocitem>
+            <tocitem target="federation.idffidp" text="SAML úèÍÌ" expand="false">
+                <tocitem target="federation.idffidp" text="ÑÀÌùâæçÒ" expand="false"></tocitem>
+                <tocitem target="federation.idffidp" text="ÛÒØæâæçÒ" expand="false"></tocitem>
+                <tocitem target="federation.idffidp" text="Artifact ç·Õë" expand="false"></tocitem>
+                <tocitem target="federation.idffidp" text="ÑÀÌùÓîÌ±" expand="false"></tocitem></tocitem></tocitem>
+        <tocitem target="federation.idffsp" text="ÈÜÓÔ ID-FF Î¤Ù­ßÈËòÏ¯" expand="false">
+            <tocitem target="federation.idffsp" text="ÇÁÆîúèÍÌ" expand="false">
+                <tocitem target="federation.idffsp" text="ßÈËòÏ¯ùËÐÎ" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="ßÀÓÝ" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="Ì¶ÌùÅÅßÎÇÄõ¨" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="øÜå÷ÏÚý¬" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="ÅûÙïÏÚý¬" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="ÇØê¢øüÉ±î£ÅûÙï" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="øÜå÷ë¥øýîùÊå" expand="false"></tocitem></tocitem>
+            <tocitem target="federation.idffsp" text="Ý×Ø¹ URL" expand="false">
+                <tocitem target="federation.idffsp" text="SOAP ê¦öµ" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="ÞÌÄ¡àôÅøÎ¤Ù­" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="ÞÌÄ¡àôÅøÇßã®" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="ôúÇÙÜÜÅÏÎ¤Ù­" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="ôúÇÙÜÜÅÏÇßã®" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="ÇØê¢â¡ÅõÎ¤Ù­" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="ÇØê¢â¡ÅõÇßã®" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="ÑÀÌùÆîÅÂ URL" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="ÑÀÌùÆîÅÂÎ¤Ù­ URL ID" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="ÙòÑÀÌùÆîÅÂÎ¤Ù­ URL ÝÃÌùÒ³çßÝÃÔ«" expand="false"></tocitem></tocitem>
+            <tocitem target="federation.idffsp" text="Ý×Ø¹ÝÃÌùóò" expand="false">
+                <tocitem target="federation.idffsp" text="ôúÇÙÜÜÅÏ" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="ÞÌÄ¡àôÅø" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="ÇØê¢â¡Åõ" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="ÅÅßÎÎû SSO ÝÃÌùóò" expand="false"></tocitem></tocitem>
+            <tocitem target="federation.idffsp" text="Î¤Ù­ßÈËòÏ¯ØÙåô" expand="false">
+                <tocitem target="federation.idffsp" text="ßÈËòÏ¯É±ÇØ" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="ë¥øýùËÐÎ" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="ËÎÇ¹øüÉ±ßÈËòÏ¯ÎûÚ°Ì±ë¥øý" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="îùÊåËÎÇ¹øüÉ±ßÈËòÏ¯Ò³Ý·Ù¯" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="ôúÇÙÑ¥ÎûÇØê¢â¡Åõ " expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="ÇØê¢ ID á¬Ü©" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="ÏáúèßÈËòÏ¯ôúÇÙ" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="ßÈËòÏ¯Îíèè" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="ÇßóÜÄùÕ©" expand="false"></tocitem></tocitem>
+            <tocitem target="federation.idffsp" text="Î¤Ù­ URL" expand="false">
+                <tocitem target="federation.idffsp" text="COT Ó÷Óò URL ÎûÛÒÞÌ" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="ôúÇÙÓ÷Óò URL" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="ÓûÓ÷ URL" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="ÞÌÄ¡àôÄ«ÆÂÚõÓìä»ðÒÇ× URL" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="ÜÜÅÏÉùÈ© URL" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="òãë¨Ó÷Óò URL" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="àôÅøÉùÈ© URL" expand="false"></tocitem></tocitem>
+            <tocitem target="federation.idffsp" text="ÆÀÚâá£È¢" expand="false">
+                <tocitem target="federation.idffsp" text="Î¤Ù­ßÈËòÏ¯ÄõÓò" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="ôúÇÙ SP ÄõÓòô¿èº" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="ËðÆîÏ¯ßÈËòÏ¯ùËÉ±" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="ÇØê¢øüÉ±î£ÉùÈ©" expand="false"></tocitem></tocitem>
+            <tocitem target="federation.idffsp" text="Î¤Ù­ßÈËòÏ¯úèÍÌè×ÑÐá£È¢" expand="false">
+                <tocitem target="federation.idffsp" text="úèÍÌè×ÑÐá£È¢ùËÉ±" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="Î¤Ù­ßÈËòÏ¯úèÍÌè×ÑÐ" expand="false"></tocitem></tocitem>
+            <tocitem target="federation.idffsp" text="ÈÜÙ¯ôúÇÙ" expand="false">
+                <tocitem target="federation.idffsp" text="ÈÜÙ¯ôúÇÙ" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="ÈÜÙ¯ôúÇÙÇÁÆîúèÍÌÇØê¢" expand="false"></tocitem></tocitem>
+            <tocitem target="federation.idffsp" text="ë¥øýô¿èº" expand="false"></tocitem>
+            <tocitem target="federation.idffsp" text="ÅîÜ¡ÈùÎ¤ðÂë¥øýØÙåô" expand="false">
+                <tocitem target="federation.idffsp" text="ÅîÜ¡ÈùÎ¤ðÂë¥øý" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="ÅîÜ¡ÈùÎ¤ðÂËÎÇ¹øüÉ±ßÈËòÏ¯ÛÒÞÌ" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="Þ²ÄËÅîÜ¡ÈùÎ¤ðÂí°Æø" expand="false"></tocitem>
+                <tocitem target="federation.idffsp" text="ËðÆîöüÄõ Cookie ÙÚÈçÅîÜ¡É¢äÆ" expand="false"></tocitem></tocitem></tocitem>
+        <tocitem target="federation.wsfedgeneral" text="WS-FED Ä¡×ïúèÍÌ" expand="false">
+            <tocitem target="federation.wsfedgeneral" text="SP üÏÆüÇØê¢" expand="false"></tocitem>
+            <tocitem target="federation.wsfedgeneral" text="IDP üÏÆüÇØê¢" expand="false"></tocitem>
+            <tocitem target="federation.wsfedgeneral" text="î¯ÞØ" expand="false"></tocitem>
+            <tocitem target="federation.wsfedgeneral" text="Ø´æÀàõÈçÏ¯ÇØê¢" expand="false"></tocitem>
+            <tocitem target="federation.wsfedgeneral" text="Ø´æÀàõÈçÏ¯ê¦öµ" expand="false"></tocitem></tocitem>
+        <tocitem target="federation.wsfedidp" text="WS-FED ËÎÇ¹øüÉ±ßÈËòÏ¯ÈÜÓÔ" expand="false">
+            <tocitem target="federation.wsfedidp" text="øÜå÷ðÕøýÉ±ÇØ" expand="false"></tocitem>
+            <tocitem target="federation.wsfedidp" text="ÓÑÊåùËÐÎ" expand="false"></tocitem>
+            <tocitem target="federation.wsfedidp" text="Ú¨æÀè×ÑÐá£È¢" expand="false"></tocitem>
+            <tocitem target="federation.wsfedidp" text="úèÍÌè×ÑÐá£È¢" expand="false">
+                <tocitem target="federation.wsfedidp" text="úèÍÌè×ÑÐ" expand="false"></tocitem></tocitem>
+            <tocitem target="federation.wsfedidp" text="ÑÀÌùÈ´ÕæÕëâæ" expand="false"></tocitem></tocitem>
+        <tocitem target="federation.wsfedsp" text="WS-FED Î¤Ù­ßÈËòÏ¯ÈÜÓÔ" expand="false">
+            <tocitem target="federation.wsfedsp" text="ÑÀÌùÄØøÜÇØ" expand="false"></tocitem>
+            <tocitem target="federation.wsfedsp" text="Ú¨æÀè×ÑÐá£È¢" expand="false"></tocitem>
+            <tocitem target="federation.wsfedsp" text="úèÍÌè×ÑÐá£È¢" expand="false">
+                <tocitem target="federation.wsfedsp" text="úèÍÌè×ÑÐ" expand="false"></tocitem></tocitem>
+            <tocitem target="federation.wsfedsp" text="ÑÀÌùÈ´ÕæÕëâæ" expand="false"></tocitem>
+            <tocitem target="federation.wsfedsp" text="ÑÀÌùÙ£Õ¸Õëâæ" expand="false"></tocitem>
+            <tocitem target="federation.wsfedsp" text="çßÝÃ÷ËØÊÎíèè" expand="false"></tocitem>
+            <tocitem target="federation.wsfedsp" text="Åäî¯ÞØÚØ×Ä" expand="false"></tocitem>
+            <tocitem target="federation.wsfedsp" text="Ú¨æÀî¯ÞØòÙÌ½" expand="false"></tocitem></tocitem></tocitem>
+    <tocitem target="federation.fssamlservice" text="SAML1.x" expand="false">
+        <tocitem target="targetspecifier" text="ÆøíºÑÀÌùÜÊæÀ" expand="false"></tocitem>
+        <tocitem target="siteidentifiers" text="ê½×»øüÉ±î£" expand="false">
+            <tocitem target="federation.fssamlsiteidadd" text="ØÙåôê½×»øüÉ±î£ " expand="false"></tocitem></tocitem>
+        <tocitem target="trustedpartners" text="Æ«ÏêÇ¶ÎûÇÙÉ¢èÁÈò" expand="false">
+            <tocitem target="federation.fssamlselecttrustedpartnertype" text="Æ«ÏêÇ¶ÎûÇÙÉ¢èÁÈò¡¨òÙÌ½èÁÈòùËÐÎÅ¯ÝÃÌùóò" expand="false"></tocitem>
+            <tocitem target="federation.fssamltrustedpartnersadd" text="Æ«ÏêÇ¶ÎûÇÙÉ¢èÁÈò¡¨ØÙåôÆ«ÏêÇ¶ÎûÇÙÉ¢èÁÈòúèÍÌ" expand="false"></tocitem></tocitem>
+        <tocitem target="federation.fsssamltargeturlsadd" text="Æøíº URL" expand="false">
+            <tocitem target="federation.fssamltargeturlsadd" text="ØÙåôÆøíº URL" expand="false"></tocitem></tocitem>
+        <tocitem target="assertiontimeout" text="ÑÀÌùç·Õë" expand="false"></tocitem>
+        <tocitem target="assertionskew" text="notBefore ÕëâæÎûÑÀÌùÙ£ÚûÇÞ×Ã" expand="false"></tocitem>
+        <tocitem target="artifacttimeout" text="Artifact ç·Õë" expand="false"></tocitem>
+        <tocitem target="samlartifactname" text="SAML Artifact ÇØê¢" expand="false"></tocitem>
+        <tocitem target="signsamlassertion" text="øÜÇØ SAML ÑÀÌù" expand="false"></tocitem>
+        <tocitem target="signsamlrequest" text="øÜÇØ SAML îùÊå" expand="false"></tocitem>
+        <tocitem target="signsamlresponse" text="øÜÇØ SAML ÇßóÜ" expand="false"></tocitem>
+        <tocitem target="ggyfk" text="úèÍÌÑçææ" expand="false"></tocitem></tocitem></tocitem>
  <tocitem target="webservices" text="Web Î¤Ù­" expand="false">
     <tocitem target="webservices.wspersonalprofileservice" text="Liberty Ô¶Ä©ÝÃÌùóòÎ¤Ù­" expand="false">
         <tocitem target="resourceidmapper" text="ResourceID è×ÑÐá£È¢" expand="false"></tocitem>
@@ -261,51 +804,51 @@
         <tocitem target="namescheme" text="ÇØê¢ÅÉÕù" expand="false"></tocitem>
         <tocitem target="namespaceprefix" text="ÇØê¢Ï¨âæÐ©ê¼" expand="false"></tocitem>
         <tocitem target="supportedcontainers" text="ÅÅßÎÎûÕ©ðÂ" expand="false">
-            <tocitem target="webservices.wsppservicesupportedcontaineradd" text="ØÙåôÅÅßÎÎûÕ©ðÂ" expand="false"></tocitem></tocitem></tocitem>
-    <tocitem target="ppldapattributemaplist" text="PPLDAP úèÍÌè×ÑÐÛÒÞÌ" expand="false">
-        <tocitem target="webservices.wsppservicedsattributemaplistadd" text="ØÙåôúèÍÌè×ÑÐ" expand="false"></tocitem></tocitem></tocitem>
- <tocitem target="requirequery" text="ÓÑÊåÑçææá¬Ü©â£Èõ¡¨" expand="false"></tocitem>
- <tocitem target="requiremodify" text="ÓÑÊåÔºÊÑá¬Ü©â£Èõ¡¨" expand="false"></tocitem>
- <tocitem target="extensioncontainerattributes" text="Í·ÈúÕ©ðÂúèÍÌ" expand="false"></tocitem>
- <tocitem target="extensionattributesnamespaceprefix" text="Í·ÈúúèÍÌÇØê¢Ï¨âæÐ©ê¼" expand="false"></tocitem>
- <tocitem target="serviceupdateenabled" text="Î¤Ù­ÊÕä»" expand="false"></tocitem>
- <tocitem target="serviceinstanceupdateclass" text="Î¤Ù­èÒËóÊÕä»ùËÉ±" expand="false"></tocitem>
- <tocitem target="alternateendpoint" text="ßåÅîê¦öµ" expand="false"></tocitem>
- <tocitem target="alternatesecuritymechanisms" text="ßåÅîÇøÇÀñ¢Ì±" expand="false"></tocitem>
- <tocitem target="service.smdiscoveryservice" text="ÚØ×ÄÎ¤Ù­" expand="false">
-    <tocitem target="dsproviderid" text="ßÈËòÏ¯ ID" expand="false"></tocitem>
-    <tocitem target="supportedauthmechanisms" text="ÅÅßÎÎûë¥øýñ¢Ì±" expand="false"></tocitem>
-    <tocitem target="supporteddirectives" text="ÅÅßÎÎûÑÀÅï" expand="false"></tocitem>
-    <tocitem target="policyevaldiscolookup" text="ÚØ×ÄÑçÊÆÎûá¬Ü©â£Èõ" expand="false"></tocitem>
-    <tocitem target="policyevaldiscoupdate" text="ÚØ×ÄÊÕä»Îûá¬Ü©â£Èõ" expand="false"></tocitem>
-    <tocitem target="authorizerpluginclass" text="Úæûâá£È¢ÆÀÚâá£È¢ùËÉ±¡¨" expand="false"></tocitem>
-    <tocitem target="entryhandlerpluginclass" text="âúÆøÝ¨Ü¡á£È¢ÆÀÚâá£È¢ùËÉ±¡¨" expand="false"></tocitem>
-    <tocitem target="resourceidmapperpluginclass" text="ResourceID è×ÑÐá£È¢ÆÀÚâá£È¢ùËÉ±" expand="false">
-        <tocitem target="service.smdiscoveryproviderresourceidmapperadd" text="ØÙåô ResourceID è×ÑÐá£È¢" expand="false"></tocitem></tocitem></tocitem>
- <tocitem target="authresponsemessage" text="ë¥øýÇßóÜØ¹ÕÉ" expand="false"></tocitem>
- <tocitem target="generatesessioncontext" text="ÚöÙ¯á£È¢ÎûâêÑôÉ¢äÆô¿èºÚøÓÝ" expand="false"></tocitem>
- <tocitem target="encryptnameidentifier" text="Ò³ÚöÙ¯á£È¢ÅûÙïâêÑôÉ¢äÆô¿èºÄãÎûÇØê¢øüÉ±î£" expand="false"></tocitem>
- <tocitem target="useimpliedresource" text="ö¡ÉÖæñäã" expand="false"></tocitem>
- <tocitem target="resourceofferingsbootstrapping" text="ÚöÙ¯á£È¢ÎûæñäãßÈËò" expand="false">
-    <tocitem target="service.smdiscoverybootstraprefoffadd" text="ØÙåôÚöÙ¯á£È¢ÎûæñäãßÈËò" expand="false"></tocitem>
-    <tocitem target="service.smdiscoverydescriptionadd" text="ØÙåôÎ¤Ù­ßÀÓÝ" expand="false"></tocitem></tocitem>
- <tocitem target="service.scsoapbinding" text="SOAP ÝÙá¸Î¤Ù­" expand="false">
-    <tocitem target="requesthandlerlist" text="îùÊåÝ¨Ü¡á£È¢ÛÒÞÌ" expand="false">
-        <tocitem target="service.scsoapbindingrequesthandlerlistadd" text="ØÙåôîùÊåÝ¨Ü¡á£È¢" expand="false"></tocitem></tocitem></tocitem>
- <tocitem target="ggodb" text="SOAP ÝÙá¸úèÍÌ" expand="false">
-    <tocitem target="ggodb" text="Web Î¤Ù­ë¥øýá£È¢" expand="false"></tocitem>
-    <tocitem target="ggodb" text="ÅÅßÎÎûë¥øýñ¢Ì±" expand="false"></tocitem>
-    <tocitem target="ggodb" text="ã¯Ú°Ì±ÄØÏ¡ÎûßÈËòÏ¯" expand="false"></tocitem>
-    <tocitem target="ggodb" text="SSL ÆîÅÂê¦ë¥øýÎûðÕøýÉ±ÇØ" expand="false"></tocitem>
-    <tocitem target="ggodb" text="÷®Ø¹ÕÉÎûÕëâæÓîÌ±" expand="false"></tocitem>
-    <tocitem target="ggodb" text="Ø¹ÕÉ ID Ê¸Ì½ÛÒØæâæçÒ" expand="false"></tocitem>
-    <tocitem target="ggodb" text="ÅÅßÎÎû SOAP ÈçÙ¯á£È¢" expand="false"></tocitem>
-    <tocitem target="ggodb" text="ÇØê¢Ï¨âæÐ©ê¼è×ÑÐ" expand="false"></tocitem>
-    <tocitem target="ggodb" text="JAXB ÔïæÒÝÔüÕÛÒÞÌ" expand="false"></tocitem>
-    <tocitem target="ggodb" text="Liberty øüÉ± Web Î¤Ù­ÎêÆÛ" expand="false"></tocitem></tocitem>
- <tocitem target="webservices.wsauthnservices" text="ë¥øý Web Î¤Ù­" expand="false">
-    <tocitem target="mechanismhandlerslist" text="ñ¢Ì±Ý¨Ü¡á£È¢ÛÒÞÌ" expand="false">
-        <tocitem target="webservices.wsauthnserviceshandlersadd" text="ØÙåôä»Îûñ¢Ì±Ý¨Ü¡á£È¢" expand="false"></tocitem></tocitem></tocitem>
+            <tocitem target="webservices.wsppservicesupportedcontaineradd" text="ØÙåôÅÅßÎÎûÕ©ðÂ" expand="false"></tocitem></tocitem>
+        <tocitem target="ppldapattributemaplist" text="PPLDAP úèÍÌè×ÑÐÛÒÞÌ" expand="false">
+            <tocitem target="webservices.wsppservicedsattributemaplistadd" text="ØÙåôúèÍÌè×ÑÐ" expand="false"></tocitem></tocitem>
+        <tocitem target="requirequery" text="ÓÑÊåÑçææá¬Ü©â£Èõ¡¨" expand="false"></tocitem>
+        <tocitem target="requiremodify" text="ÓÑÊåÔºÊÑá¬Ü©â£Èõ¡¨" expand="false"></tocitem>
+        <tocitem target="extensioncontainerattributes" text="Í·ÈúÕ©ðÂúèÍÌ" expand="false"></tocitem>
+        <tocitem target="extensionattributesnamespaceprefix" text="Í·ÈúúèÍÌÇØê¢Ï¨âæÐ©ê¼" expand="false"></tocitem>
+        <tocitem target="serviceupdateenabled" text="Î¤Ù­ÊÕä»" expand="false"></tocitem>
+        <tocitem target="serviceinstanceupdateclass" text="Î¤Ù­èÒËóÊÕä»ùËÉ±" expand="false"></tocitem>
+        <tocitem target="alternateendpoint" text="ßåÅîê¦öµ" expand="false"></tocitem>
+        <tocitem target="alternatesecuritymechanisms" text="ßåÅîÇøÇÀñ¢Ì±" expand="false"></tocitem></tocitem>
+    <tocitem target="service.smdiscoveryservice" text="ÚØ×ÄÎ¤Ù­" expand="false">
+        <tocitem target="dsproviderid" text="ßÈËòÏ¯ ID" expand="false"></tocitem>
+        <tocitem target="supportedauthmechanisms" text="ÅÅßÎÎûë¥øýñ¢Ì±" expand="false"></tocitem>
+        <tocitem target="supporteddirectives" text="ÅÅßÎÎûÑÀÅï" expand="false"></tocitem>
+        <tocitem target="policyevaldiscolookup" text="ÚØ×ÄÑçÊÆÎûá¬Ü©â£Èõ" expand="false"></tocitem>
+        <tocitem target="policyevaldiscoupdate" text="ÚØ×ÄÊÕä»Îûá¬Ü©â£Èõ" expand="false"></tocitem>
+        <tocitem target="authorizerpluginclass" text="Úæûâá£È¢ÆÀÚâá£È¢ùËÉ±¡¨" expand="false"></tocitem>
+        <tocitem target="entryhandlerpluginclass" text="âúÆøÝ¨Ü¡á£È¢ÆÀÚâá£È¢ùËÉ±¡¨" expand="false"></tocitem>
+        <tocitem target="resourceidmapperpluginclass" text="ResourceID è×ÑÐá£È¢ÆÀÚâá£È¢ùËÉ±" expand="false">
+            <tocitem target="service.smdiscoveryproviderresourceidmapperadd" text="ØÙåô ResourceID è×ÑÐá£È¢" expand="false"></tocitem></tocitem>
+        <tocitem target="authresponsemessage" text="ë¥øýÇßóÜØ¹ÕÉ" expand="false"></tocitem>
+        <tocitem target="generatesessioncontext" text="ÚöÙ¯á£È¢ÎûâêÑôÉ¢äÆô¿èºÚøÓÝ" expand="false"></tocitem>
+        <tocitem target="encryptnameidentifier" text="Ò³ÚöÙ¯á£È¢ÅûÙïâêÑôÉ¢äÆô¿èºÄãÎûÇØê¢øüÉ±î£" expand="false"></tocitem>
+        <tocitem target="useimpliedresource" text="ö¡ÉÖæñäã" expand="false"></tocitem>
+        <tocitem target="resourceofferingsbootstrapping" text="ÚöÙ¯á£È¢ÎûæñäãßÈËò" expand="false">
+            <tocitem target="service.smdiscoverybootstraprefoffadd" text="ØÙåôÚöÙ¯á£È¢ÎûæñäãßÈËò" expand="false"></tocitem>
+            <tocitem target="service.smdiscoverydescriptionadd" text="ØÙåôÎ¤Ù­ßÀÓÝ" expand="false"></tocitem></tocitem></tocitem>
+    <tocitem target="service.scsoapbinding" text="SOAP ÝÙá¸Î¤Ù­" expand="false">
+        <tocitem target="requesthandlerlist" text="îùÊåÝ¨Ü¡á£È¢ÛÒÞÌ" expand="false">
+            <tocitem target="service.scsoapbindingrequesthandlerlistadd" text="ØÙåôîùÊåÝ¨Ü¡á£È¢" expand="false"></tocitem></tocitem>
+        <tocitem target="ggodb" text="SOAP ÝÙá¸úèÍÌ" expand="false">
+            <tocitem target="ggodb" text="Web Î¤Ù­ë¥øýá£È¢" expand="false"></tocitem>
+            <tocitem target="ggodb" text="ÅÅßÎÎûë¥øýñ¢Ì±" expand="false"></tocitem>
+            <tocitem target="ggodb" text="ã¯Ú°Ì±ÄØÏ¡ÎûßÈËòÏ¯" expand="false"></tocitem>
+            <tocitem target="ggodb" text="SSL ÆîÅÂê¦ë¥øýÎûðÕøýÉ±ÇØ" expand="false"></tocitem>
+            <tocitem target="ggodb" text="÷®Ø¹ÕÉÎûÕëâæÓîÌ±" expand="false"></tocitem>
+            <tocitem target="ggodb" text="Ø¹ÕÉ ID Ê¸Ì½ÛÒØæâæçÒ" expand="false"></tocitem>
+            <tocitem target="ggodb" text="ÅÅßÎÎû SOAP ÈçÙ¯á£È¢" expand="false"></tocitem>
+            <tocitem target="ggodb" text="ÇØê¢Ï¨âæÐ©ê¼è×ÑÐ" expand="false"></tocitem>
+            <tocitem target="ggodb" text="JAXB ÔïæÒÝÔüÕÛÒÞÌ" expand="false"></tocitem>
+            <tocitem target="ggodb" text="Liberty øüÉ± Web Î¤Ù­ÎêÆÛ" expand="false"></tocitem></tocitem></tocitem>
+    <tocitem target="webservices.wsauthnservices" text="ë¥øý Web Î¤Ù­" expand="false">
+        <tocitem target="mechanismhandlerslist" text="ñ¢Ì±Ý¨Ü¡á£È¢ÛÒÞÌ" expand="false">
+            <tocitem target="webservices.wsauthnserviceshandlersadd" text="ØÙåôä»Îûñ¢Ì±Ý¨Ü¡á£È¢" expand="false"></tocitem></tocitem></tocitem></tocitem>
  <tocitem target="service.scconfig" text="ØÙåôúèÍÌ" expand="false">
     <tocitem target="authattrs" text="ë¥øý" expand="false">
         <tocitem target="service.scserviceprofile.sunamauthadservice" text="Active Directory" expand="false">
@@ -345,6 +888,7 @@
             <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="Ùò SSL ÆîÍõ LDAP ÇôÌ½" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="ÆîÍõÇôÌ½ËðÆîÏ¯ÝÃÌùóòÎûðÕøýúñÈí" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="ÆîÍõÇôÌ½ËðÆîÏ¯ÝÃÌùóòÎûÌ§ÅìðÕøýúñÈí" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="ÇôÌ½ËðÆîÏ¯ÝÃÌùóòÎû SubjectAltNameExt Ô«ùËÐÎ" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="Æ«ÏêÇ¶Îûë¿ê¦Åäñ¢" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="SSL ÝÙÚÙÙÕî¾æÀ" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="ÆîÅÂê¦ðÕøýÎû HTTP íºó¤ÇØê¢" expand="false"></tocitem>
@@ -355,6 +899,9 @@
             <tocitem target="service.scserviceprofile.iplanetamauthservice" text="LDAP ÝÙÚÙóÃÇôÙ´ÄËÄÑ" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamauthservice" text="çßÝÃ LDAP ÝÙÚÙóÃÇôÙ´ÄËÄÑ" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamauthservice" text="ËðÆîÏ¯ÝÃÌùóò" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="ë¿ê¦ë¥øýÇøÇÀÍÌ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="ÏñÖçàôÅøÝ¨Ü¡Îû Post Ý¨Ü¡ÎìÇµ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="ÏñÖçàôÅøÝ¨Ü¡Îûë¥øýí¼ÜÚÎìÇµ" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamauthservice" text="ê§Ü¡ÔÞë¥øýØÙåô" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamauthservice" text="ËðÆîÏ¯ÝÃÌùóòÙ¯èèÐúÇ¡çßÝÃËÅÈã" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamauthservice" text="ÆãÄ¼ÍÌ Cookie í¼È¢" expand="false"></tocitem>
@@ -368,6 +915,7 @@
             <tocitem target="service.scserviceprofile.iplanetamauthservice" text="ÚÙÈ­Ðì÷ÕÝ×Ï¡ÎûçÙÄÍâÓÇµÇâÉß" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamauthservice" text="N È¹ÆÂÚõÑ¥úÀÉËËðÆîÏ¯" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamauthservice" text="àôÄ«ÆÂÚõÐì÷ÕÑ½úýÕëâæ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Ðì÷ÕÑ½úýÕëâæÓýí°" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Ðì÷ÕúèÍÌÇØê¢" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Ðì÷ÕúèÍÌÔ«" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamauthservice" text="çßÝÃÈ©ÅüàôÄ« URL" expand="false"></tocitem>
@@ -379,9 +927,12 @@
             <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Æ«ßÆÚÙÈ¢ËðÆîÏ¯ÎíèèËçÇµùËÉ±" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamauthservice" text="ÇãæñÕèÇôÍóÙ´ÄãóÃÇôàÒÕæè©æÜ" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Ù×Íõí¼ÜÚÎûë¥øý" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="ËðÆîÏ¯úèÍÌè×ÑÐÈÝâêÑôÉ¢äÆúèÍÌ" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamauthservice" text="çßÝÃë¥øýìÒ×È" expand="false"></tocitem></tocitem>
         <tocitem target="service.scserviceprofile.sunamauthdatastoreservice" text="æñÕèÇôÍóÙ´" expand="false">
             <tocitem target="service.scserviceprofile.sunamauthdatastoreservice" text="ë¥øý×ÈÉ±" expand="false"></tocitem></tocitem>
+        <tocitem target="ggulh" text="ôúÇÙ" expand="false">
+            <tocitem target="ggulh" text="ë¥øý×ÈÉ±" expand="false"></tocitem></tocitem>
         <tocitem target="service.scserviceprofile.iplanetamauthhttpbasicservice" text="HTTP Basic" expand="false">
             <tocitem target="service.scserviceprofile.iplanetamauthhttpbasicservice" text="ë¥øý×ÈÉ±" expand="false"></tocitem></tocitem>
         <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="JDBC" expand="false">
@@ -395,8 +946,8 @@
             <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="Ùïî£úñÇóÈë" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="äíÞ¬ÎûßÀÓÝ" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="üÈßÐÙïî£ë£ÎÎÎûùËÉ±" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="ë¥øý×ÈÉ±" expand="false">
-                <tocitem target="jdbcexample" text="ØÙåôÝÙîÀÈÁ â€” î¯Ëó" expand="false"></tocitem></tocitem></tocitem>
+            <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="ë¥øý×ÈÉ±" expand="false"></tocitem>
+            <tocitem target="jdbcexample" text="ØÙåôÝÙîÀÈÁ â€” î¯Ëó" expand="false"></tocitem></tocitem>
         <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="LDAP " expand="false">
             <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="Åä LDAP ÈùÎ¤ðÂ" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="È¹ LDAP ÈùÎ¤ðÂ" expand="false"></tocitem>
@@ -417,18 +968,6 @@
             <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="Þ²ÄÑÙïî£ÏÛÐù" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="çßÝÃËðÆîÏ¯ËÅÈã" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="â¡ÅõÑ¥ËðÆîÏ¯Îíèè" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="Åä LDAP ÈùÎ¤ðÂ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="È¹ LDAP ÈùÎ¤ðÂ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="ÚöÙ¯ËðÆîÏ¯ä²ÞòÄæ DN" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="â¾×ÈËðÆîÏ¯ÝÙá¸Äæ DN" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="â¾×ÈËðÆîÏ¯ÝÙá¸ÄæÙïî£" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="â¾×ÈËðÆîÏ¯ÝÙá¸ÄæÙïî£ (íýë¥)" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="ÆîÍõöÊÌ½ËðÆîÏ¯ÝÃÌùóòÎûúèÍÌ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="ÆîÍõä²ÞòÓÑë¥øýÎûËðÆîÏ¯ÄæúèÍÌ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="ËðÆîÏ¯ä²Þòç´öÛ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="ä²Þòî¯ÞØ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="ÚöÆî SSL ÅèÇôÌ½ LDAP ÈùÎ¤ðÂ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="ã®Çßë¥øýÎûËðÆîÏ¯ DN" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="ë¥øý×ÈÉ±" expand="false"></tocitem></tocitem>
         <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="MSISDN " expand="false">
             <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="Æ«ÏêÇ¶ÎûçÐç¬ IP ÈíÉß" expand="false"></tocitem>
@@ -462,12 +1001,10 @@
             <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="EASSP ÎêÆÛ" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="Þ²ÄÑë¥øýá£È¢Ú°Ðù" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="ë¥øý×ÈÉ±" expand="false"></tocitem></tocitem>
-        <tocitem target="service.scserviceprofile.sunamauthsamlservice" text="SAML" expand="false">
-            <tocitem target="service.scserviceprofile.sunamauthsamlservice" text="ë¥øý×ÈÉ±" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.sunamauthsaeservice" text="SAE" expand="false">
+            <tocitem target="service.scserviceprofile.sunamauthsaeservice" text="ë¥øý×ÈÉ±" expand="false"></tocitem></tocitem>
         <tocitem target="service.scserviceprofile.iplanetamauthsecuridservice" text="SecurID " expand="false">
             <tocitem target="service.scserviceprofile.iplanetamauthsecuridservice" text="ACE/Server ØÙåôæûÕÀ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthsecuridservice" text="ëºÉ·á£È¢ØÙåôÝÙÚÙÙÕ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthsecuridservice" text="ëºÉ·á£È¢ë¥øýÝÙÚÙÙÕ" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamauthsecuridservice" text="ë¥øý×ÈÉ±" expand="false"></tocitem></tocitem>
         <tocitem target="service.scserviceprofile.iplanetamauthunixservice" text="UNIX " expand="false">
             <tocitem target="service.scserviceprofile.iplanetamauthunixservice" text="ØÙåôÝÙÚÙÙÕ" expand="false"></tocitem>
@@ -651,7 +1188,7 @@
             <tocitem target="service.scserviceprofile.sunfamsaml2configuration" text="IDP ÚØ×ÄÎ¤Ù­Îû Cookie ê½ÙÑ" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.sunfamsaml2configuration" text="IDP ÚØ×ÄÎ¤Ù­Îû Cookie ùËÐÎ" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.sunfamsaml2configuration" text="IDP ÚØ×ÄÎ¤Ù­Îû URL í¼È¢" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamsaml2configuration" text="SML ÅûÙï SPI èÒÉ¢ùËÉ±" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.sunfamsaml2configuration" text="XML Encryption SPI èÒÉ¢ùËÉ±" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.sunfamsaml2configuration" text="Çã KeyInfo Ä÷×ÃÄãÅýÉÖÅûÙïÏÚý¬" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.sunfamsaml2configuration" text="XML øÜå÷èÒÉ¢ùËÉ±" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.sunfamsaml2configuration" text="XML øÜå÷ðÕøýüÓøý" expand="false"></tocitem>
@@ -662,17 +1199,18 @@
             <tocitem target="service.scserviceprofile.amsessionservice" text="ëºÉ·ØÙåôèÒËó" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.amsessionservice" text="ä²Þòá¸ÎªÎûÞ²ÄËí°âØ" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.amsessionservice" text="ä²Þòç·Õë" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amsessionservice" text="ÖÖÍÌüÈÊÕÝ×Ï¡" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amsessionservice" text="ØÙ÷ìÓîÌ±" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amsessionservice" text="ÚöÆîÖÖÍÌüÈÊÕÝ×Ï¡" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amsessionservice" text="ÚöÆîØÙ÷ìÓîÌ±" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.amsessionservice" text="ûôÌ½ØÙ÷ìÓîÌ±Õëç·Õë" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.amsessionservice" text="É­ØæÞ¡ìÒê§Ü¡ÔÞÎûÓîÌ±óôÑç" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.amsessionservice" text="Ó¼ÆîéðâêÑôÉ¢äÆÎûØÙ÷ìÙòðÒÓ³" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.amsessionservice" text="åµâêÑôÉ¢äÆóÃÇôÕ»ÄãöËÕëÍÜáºËðÆîÏ¯àôÄ«" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.amsessionservice" text="Ý×Ï¡ÖÖÍÌ" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.amsessionservice" text="Þ²ÏÛâêÑôÉ¢äÆÕëâæ" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.amsessionservice" text="Þ²ÏÛâçåôÕëâæ" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.amsessionservice" text="Þ²ÏÛÊ¸Ì½Õëâæ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amsessionservice" text="ËðÆîÄãÎûËðÆîÏ¯âêÑôÉ¢äÆ" expand="false"></tocitem>
-            <tocitem target="service.subconfigadd" text="ä»ìÁÄÍØÙåô" expand="false"></tocitem></tocitem>
+            <tocitem target="service.scserviceprofile.amsessionservice" text="ËðÆîÄãÎûËðÆîÏ¯âêÑôÉ¢äÆ" expand="false"></tocitem></tocitem>
+        <tocitem target="service.subconfigadd" text="ä»ìÁÄÍØÙåô" expand="false"></tocitem>
         <tocitem target="service.scserviceprofile.iplanetamuserservice" text="ËðÆîÏ¯" expand="false">
             <tocitem target="service.scserviceprofile.iplanetamuserservice" text="ËðÆîÏ¯ÞÅÇïÎûë£ËÆ" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamuserservice" text="ËðÆîÏ¯ÞÅÇïÎûÕëÙ´" expand="false"></tocitem>
@@ -686,12 +1224,14 @@
                 <tocitem target="service.scserviceprofile.iplanetamclientdetection" text="ÆîÅÂê¦ùËÐÎ" expand="false"></tocitem></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamclientdetection" text="çßÝÃÆîÅÂê¦ùËÐÎ" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamclientdetection" text="ÆîÅÂê¦ØþàÁùËÉ±" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamclientdetection" text="ÆîÅÂê¦ØþàÁ" expand="false"></tocitem>
-            <tocitem target="service.mapcreatedevice" text="ä»ìÁÆîÅÂê¦" expand="false"></tocitem></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamclientdetection" text="ÆîÅÂê¦ØþàÁ" expand="false"></tocitem></tocitem>
+        <tocitem target="service.mapcreatedevice" text="ä»ìÁÆîÅÂê¦" expand="false"></tocitem>
         <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="Ø´òç" expand="false">
             <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="Þ²ÄËØ´òçÄËÄÑ" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="ñ¥Æ¸óòÕùí°âØ" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="Ø´òçóòÈíåô" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="Ø´òçÎíèè" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="ÅÊë¢Ø´òçæØÎµÅäñ¢ÇØê¢" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="Ø´òçùËÐÎ" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="æñÕèÕ»ËðÆîÏ¯ÇØê¢" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="æñÕèÕ»ËðÆîÏ¯Ùïî£" expand="false"></tocitem>
@@ -702,450 +1242,134 @@
             <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="Ø´òçøÜÇØÕëâæ" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="ÇøÇÀØ´òç" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="ÇøÇÀØ´òçøÜå÷é½ê«ÎÎ" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="Ø´òçðÕøýÇôÍóÙ´Èíåô" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="Þ²ÄËØ´òçí°" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="ÇÖö×óòóòÕùÎûóòÕùí°" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="îÂîíÙ´ÄËÄÑ" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="DB ÆÂÚõØ´ðÙüÕîÂîíÙ´ÄËÄÑ" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="îÂîíÙ´Õëâæ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="ÕëâæîÂîí" expand="false"></tocitem></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="ÕëâæîÂîí" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="Ø´òçìÒ×È" expand="false"></tocitem></tocitem>
         <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="ÌÔÇØ" expand="false">
             <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="ÝÃÌùóòÎ¤Ù­ URL" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="âêÑôÉ¢äÆÎ¤Ù­ URL" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="Ø´òçÎ¤Ù­ URL" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="á¬Ü©Î¤Ù­ URL" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="ë¥øýÎ¤Ù­ URL" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="SAML ê½ëãê½æûÝÃÌùóò/ÄÖÇµÎ¤Ù­ URL" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="SAML ê½ëãê½æûÝÃÌùóò/Artifact Î¤Ù­ URL" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="SAML SOAP Î¤Ù­ URL" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="SAML ê½ëãê½æûÝÃÌùóò/POST Î¤Ù­ URL" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="SAML ØõÝÃê§Ü¡á£È¢Î¤Ù­ URL" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="ôúåÁØõÝÃê§Ü¡á£È¢Î¤Ù­ URL" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="SAML ÑÀÌùê§Ü¡á£È¢Î¤Ù­ URL" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="ôúÇÙÑÀÌùê§Ü¡á£È¢Î¤Ù­ URL" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="ÇøÇÀØ´æÀê§Ü¡á£È¢ URL" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="JAXRPC ê¦öµ URL" expand="false"></tocitem></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="JAXRPC ê¦öµ URL" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="ËÎÇ¹øüÉ± Web Î¤Ù­ê¦öµ URL" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="ËÎÇ¹øüÉ± REST Î¤Ù­ê¦öµ URL" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="ÇøÇÀÍÌØ´æÀÎ¤Ù­ê¦öµ URL" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="ÇøÇÀÍÌØ´æÀÎ¤Ù­ MEX ê¦öµ URL" expand="false"></tocitem></tocitem>
         <tocitem target="service.scplatform" text="ÆÍÆº" expand="false">
-            <tocitem target="service.scplatform" text="ê½×»ÇØê¢" expand="false"></tocitem>
-            <tocitem target="service.scplatform" text="èÒËóÇØê¢" expand="false"></tocitem>
             <tocitem target="service.scplatform" text="ÆÍÆºë£ËÆô¿èº" expand="false"></tocitem>
             <tocitem target="service.scplatform" text="Cookie ê½ÙÑ" expand="false"></tocitem>
-            <tocitem target="service.scplatform" text="àôÄ«Î¤Ù­ URL" expand="false"></tocitem>
-            <tocitem target="service.scplatform" text="àôÅøÎ¤Ù­ URL" expand="false"></tocitem>
             <tocitem target="service.scplatform" text="Æ«ÆîÎûë£ËÆô¿èº" expand="false"></tocitem>
-            <tocitem target="service.scplatform" text="ÆîÅÂê¦ÇóÄ÷âõ" expand="false"></tocitem>
-            <tocitem target="service.scplatformclientcharsetsadd" text="ÐúÇ¡ä»ÎûÇóÄ÷âõ" expand="false"></tocitem></tocitem></tocitem>
+            <tocitem target="service.scplatform" text="ÆîÅÂê¦ÇóÄ÷âõ" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scplatformclientcharsetsadd" text="ÐúÇ¡ä»ÎûÇóÄ÷âõ" expand="false"></tocitem></tocitem>
     <tocitem target="service.serversite" text="ÈùÎ¤ðÂêØê½×»" expand="false">
-        <tocitem target="service.serveradd" text="ÐúÇ¡ä»ÎûÈùÎ¤ðÂèÒËó" expand="false"></tocitem></tocitem>
-    <tocitem target="service.serverconfiginherit" text="ú«ÍÕÍÌÝÃÌù" expand="false"></tocitem>
-    <tocitem target="service.servereditgeneral" text="Ä¡×ï" expand="false">
-        <tocitem target="service.servereditgeneral" text="ê½×»úèÍÌ" expand="false">
-            <tocitem target="service.servereditgeneral" text="ÅØË·ê½×»" expand="false"></tocitem></tocitem>
-        <tocitem target="service.servereditgeneral" text="Ë·ÜÓúèÍÌ" expand="false">
-            <tocitem target="service.servereditgeneral" text="Ù×ÍµÇøæÒÆøòç" expand="false"></tocitem>
-            <tocitem target="service.servereditgeneral" text="çßÝÃë£ËÆô¿èº" expand="false"></tocitem>
-            <tocitem target="service.servereditgeneral" text="Ý×Ï¡ URL" expand="false"></tocitem>
-            <tocitem target="service.servereditgeneral" text="XML üÓøý" expand="false"></tocitem></tocitem>
-        <tocitem target="service.servereditgeneral" text="ØæòãúèÍÌ" expand="false">
-            <tocitem target="service.servereditgeneral" text="Øæòãá«×È" expand="false"></tocitem>
-            <tocitem target="service.servereditgeneral" text="ØæòãÆøòç" expand="false"></tocitem></tocitem>
-        <tocitem target="service.servereditgeneral" text="âÓÇµÈùÎ¤ðÂ" expand="false">
-            <tocitem target="service.servereditgeneral" text="âÓÇµÈùÎ¤ðÂÅäñ¢ÇØê¢" expand="false"></tocitem>
-            <tocitem target="service.servereditgeneral" text="âÓÇµÈùÎ¤ðÂÝÙÚÙÙÕæÀî£" expand="false"></tocitem></tocitem></tocitem>
-    <tocitem target="service.servereditsecurity" text="ÇøÇÀÍÌ" expand="false">
-        <tocitem target="service.servereditsecurity" text="ÅûÙï" expand="false">
-            <tocitem target="service.servereditsecurity" text="Ùïî£ÅûÙïÏÚý¬" expand="false"></tocitem>
-            <tocitem target="service.servereditsecurity" text="ë¥øýÎ¤Ù­ÇÁÆîÙïî£" expand="false"></tocitem>
-            <tocitem target="service.servereditsecurity" text="ÅûÙïùËÉ±" expand="false"></tocitem>
-            <tocitem target="service.servereditsecurity" text="ÇøÇÀòññ¢ÄÖìÞùËÉ±" expand="false"></tocitem></tocitem>
-        <tocitem target="service.servereditsecurity" text="üÓøý" expand="false">
-            <tocitem target="service.servereditsecurity" text="ÆÍÆºÉ¥âêÝ×Ø¹Þ²ÄËÄùÕ©ÏÛÐù" expand="false"></tocitem>
-            <tocitem target="service.servereditsecurity" text="ÆîÅÂê¦ IP ÈíÉßóôÑç" expand="false"></tocitem></tocitem>
-        <tocitem target="service.servereditsecurity" text="Cookie" expand="false">
-            <tocitem target="service.servereditsecurity" text="Cookie ÇØê¢" expand="false"></tocitem>
-            <tocitem target="service.servereditsecurity" text="ÇøÇÀ Cookie" expand="false"></tocitem>
-            <tocitem target="service.servereditsecurity" text="î¾î£ Cookie Ô«" expand="false"></tocitem></tocitem>
-        <tocitem target="service.servereditsecurity" text="ÏÚý¬Õ»" expand="false">
-            <tocitem target="service.servereditsecurity" text="ÏÚý¬Õ»óòÕù" expand="false"></tocitem>
-            <tocitem target="service.servereditsecurity" text="ÏÚý¬Õ»Ùïî£óòÕù" expand="false"></tocitem>
-            <tocitem target="service.servereditsecurity" text="Ë³ÙïÏÚý¬Ùïî£óòÕù" expand="false"></tocitem>
-            <tocitem target="service.servereditsecurity" text="ðÕøýÉ±ÇØ" expand="false"></tocitem></tocitem>
-        <tocitem target="service.servereditsecurity" text="ðÕøýèôïÚÛÒÞÌÊ¸Ì½" expand="false">
-            <tocitem target="service.servereditsecurity" text="LDAP ÈùÎ¤ðÂÅäñ¢ÇØê¢" expand="false"></tocitem>
-            <tocitem target="service.servereditsecurity" text="LDAP ÈùÎ¤ðÂÝÙÚÙÙÕæÀî£" expand="false"></tocitem>
-            <tocitem target="service.servereditsecurity" text="ÄØÚöÆî SSL" expand="false"></tocitem>
-            <tocitem target="service.servereditsecurity" text="LDAP ÈùÎ¤ðÂÝÙá¸ËðÆîÏ¯ÇØê¢" expand="false"></tocitem>
-            <tocitem target="service.servereditsecurity" text="LDAP ÈùÎ¤ðÂÝÙá¸Ùïî£" expand="false"></tocitem>
-            <tocitem target="service.servereditsecurity" text="LDAP ä²ÞòÙ×Íµ DN" expand="false"></tocitem>
-            <tocitem target="service.servereditsecurity" text="ä²ÞòúèÍÌ" expand="false"></tocitem></tocitem>
-        <tocitem target="service.servereditsecurity" text="îÀÄ¸ðÕøýÎíèèÌ¶ÌùóôÑç" expand="false">
-            <tocitem target="service.servereditsecurity" text="ÄØÚöÆîóôÑç" expand="false"></tocitem>
-            <tocitem target="service.servereditsecurity" text="ÇßóÜá£È¢ URL" expand="false"></tocitem>
-            <tocitem target="service.servereditsecurity" text="ðÕøýí´ê¢" expand="false"></tocitem></tocitem>
-        <tocitem target="service.servereditsecurity" text="ôúËÚæñØ¹Ý¨Ü¡íºäí" expand="false">
-            <tocitem target="service.servereditsecurity" text="FIPS í¼È¢" expand="false"></tocitem></tocitem></tocitem>
-    <tocitem target="service.servereditsession" text="âêÑôÉ¢äÆ" expand="false">
-        <tocitem target="service.servereditsession" text="âêÑôÉ¢äÆÓîÌ±" expand="false">
-            <tocitem target="service.servereditsession" text="Þ²ÄËâêÑôÉ¢äÆí°" expand="false"></tocitem>
-            <tocitem target="service.servereditsession" text="ËðâêÑôÉ¢äÆàÒÕæÎûÞ²ÏÛÕëâæ" expand="false"></tocitem>
-            <tocitem target="service.servereditsession" text="âêÑôÉ¢äÆÛÒØæÍ·òÚ" expand="false"></tocitem></tocitem>
-        <tocitem target="service.servereditsession" text="ÜÓÓÓ" expand="false">
-            <tocitem target="service.servereditsession" text="Ø´òçâæçÒ" expand="false"></tocitem>
-            <tocitem target="service.servereditsession" text="Îíèè" expand="false"></tocitem>
-            <tocitem target="service.servereditsession" text="Æøòç" expand="false"></tocitem>
-            <tocitem target="service.servereditsession" text="ÚöÆîÅäñ¢ÑçÊÆ" expand="false"></tocitem></tocitem>
-        <tocitem target="service.servereditsession" text="Ý×Ï¡" expand="false">
-            <tocitem target="service.servereditsession" text="Ý×Ï¡ÈÁÄËÄÑ" expand="false"></tocitem>
-            <tocitem target="service.servereditsession" text="Ý×Ï¡ÙÚÈçêÅÈÁõ§ÒÌÔ«" expand="false"></tocitem></tocitem>
-        <tocitem target="service.servereditsession" text="üÓøý" expand="false">
-            <tocitem target="service.servereditsession" text="ÄâÙ´Å¡ÄËÄÑìÑÎûÆîÅÂê¦ DN ÅÒç¤" expand="false"></tocitem></tocitem></tocitem>
-    <tocitem target="service.servereditsdk" text="SDK" expand="false">
-        <tocitem target="service.servereditsdk" text="æñÕèÇôÍóÙ´" expand="false">
-            <tocitem target="service.servereditsdk" text="ÚöÆîæñÕèÇôÍóÙ´Ý×Ï¡" expand="false"></tocitem>
-            <tocitem target="service.servereditsdk" text="ÚöÆîÆøòçÅîÜ¡ÈùÎ¤ðÂ" expand="false"></tocitem></tocitem>
-        <tocitem target="service.servereditsdk" text="ËçÇµÎ¤Ù­" expand="false">
-            <tocitem target="service.servereditsdk" text="ËçÇµÎ¤Ù­ÝÙîÀÎûÓìæÜÈ¹í°" expand="false"></tocitem>
-            <tocitem target="service.servereditsdk" text="LDAP ÝÙîÀè©æÜÄæâæÎûÍ·òÚ" expand="false"></tocitem>
-            <tocitem target="service.servereditsdk" text="LDAP ÝÙîÀè©æÜÎûòãë¨î£" expand="false"></tocitem>
-            <tocitem target="service.servereditsdk" text="âçåôç·Õë" expand="false"></tocitem>
-            <tocitem target="service.servereditsdk" text="ÄØØôÆîËçÇµÎ¤Ù­ÝÙîÀ" expand="false"></tocitem></tocitem>
-        <tocitem target="service.servereditsdk" text="LDAP ÝÙîÀ" expand="false">
-            <tocitem target="service.servereditsdk" text="LDAP ÝÙîÀÎûÓìæÜÈ¹í°" expand="false"></tocitem>
-            <tocitem target="service.servereditsdk" text="LDAP ÝÙîÀÓìæÜÄæâæÎûÍ·òÚ" expand="false"></tocitem>
-            <tocitem target="service.servereditsdk" text="LDAP ÝÙîÀÓìæÜÎûòãë¨î£" expand="false"></tocitem></tocitem>
-        <tocitem target="service.servereditsdk" text="Ê¸Ì½êØîïÆÛ" expand="false">
-            <tocitem target="service.servereditsdk" text="SDK Ê¸Ì½Þ²ÄËÄËÄÑ" expand="false"></tocitem>
-            <tocitem target="service.servereditsdk" text="SDK îïÆÛÓìæÜÈ¹í°" expand="false"></tocitem>
-            <tocitem target="service.servereditsdk" text="SDK îïÆÛè©æÜÄæâæÎûÍ·òÚ" expand="false"></tocitem></tocitem></tocitem>
-    <tocitem target="service.serverconfigxml" text="ÆøòçØÙåô" expand="false">
+        <tocitem target="service.serveradd" text="ÐúÇ¡ä»ÎûÈùÎ¤ðÂèÒËó" expand="false"></tocitem>
+        <tocitem target="service.serverconfiginherit" text="ú«ÍÕÍÌÝÃÌù" expand="false"></tocitem>
+        <tocitem target="service.servereditgeneral" text="Ä¡×ï" expand="false">
+            <tocitem target="service.servereditgeneral" text="ê½×»úèÍÌ" expand="false">
+                <tocitem target="service.servereditgeneral" text="ÅØË·ê½×»" expand="false"></tocitem></tocitem>
+            <tocitem target="service.servereditgeneral" text="Ë·ÜÓúèÍÌ" expand="false">
+                <tocitem target="service.servereditgeneral" text="Ù×ÍµÇøæÒÆøòç" expand="false"></tocitem>
+                <tocitem target="service.servereditgeneral" text="çßÝÃë£ËÆô¿èº" expand="false"></tocitem>
+                <tocitem target="service.servereditgeneral" text="Ý×Ï¡ URL" expand="false"></tocitem>
+                <tocitem target="service.servereditgeneral" text="XML üÓøý" expand="false"></tocitem></tocitem>
+            <tocitem target="service.servereditgeneral" text="ØæòãúèÍÌ" expand="false">
+                <tocitem target="service.servereditgeneral" text="Øæòãá«×È" expand="false"></tocitem>
+                <tocitem target="service.servereditgeneral" text="ØæòãÆøòç" expand="false"></tocitem></tocitem>
+            <tocitem target="service.servereditgeneral" text="âÓÇµÈùÎ¤ðÂ" expand="false">
+                <tocitem target="service.servereditgeneral" text="âÓÇµÈùÎ¤ðÂÅäñ¢ÇØê¢" expand="false"></tocitem>
+                <tocitem target="service.servereditgeneral" text="âÓÇµÈùÎ¤ðÂÝÙÚÙÙÕæÀî£" expand="false"></tocitem></tocitem></tocitem>
+        <tocitem target="service.servereditsecurity" text="ÇøÇÀÍÌ" expand="false">
+            <tocitem target="service.servereditsecurity" text="ÅûÙï" expand="false">
+                <tocitem target="service.servereditsecurity" text="Ùïî£ÅûÙïÏÚý¬" expand="false"></tocitem>
+                <tocitem target="service.servereditsecurity" text="ë¥øýÎ¤Ù­ÇÁÆîÙïî£" expand="false"></tocitem>
+                <tocitem target="service.servereditsecurity" text="ÅûÙïùËÉ±" expand="false"></tocitem>
+                <tocitem target="service.servereditsecurity" text="ÇøÇÀòññ¢ÄÖìÞùËÉ±" expand="false"></tocitem></tocitem>
+            <tocitem target="service.servereditsecurity" text="üÓøý" expand="false">
+                <tocitem target="service.servereditsecurity" text="ÆÍÆºÉ¥âêÝ×Ø¹Þ²ÄËÄùÕ©ÏÛÐù" expand="false"></tocitem>
+                <tocitem target="service.servereditsecurity" text="ÆîÅÂê¦ IP ÈíÉßóôÑç" expand="false"></tocitem></tocitem>
+            <tocitem target="service.servereditsecurity" text="Cookie" expand="false">
+                <tocitem target="service.servereditsecurity" text="Cookie ÇØê¢" expand="false"></tocitem>
+                <tocitem target="service.servereditsecurity" text="ÇøÇÀ Cookie" expand="false"></tocitem>
+                <tocitem target="service.servereditsecurity" text="î¾î£ Cookie Ô«" expand="false"></tocitem></tocitem>
+            <tocitem target="service.servereditsecurity" text="ÏÚý¬Õ»" expand="false">
+                <tocitem target="service.servereditsecurity" text="ÏÚý¬Õ»óòÕù" expand="false"></tocitem>
+                <tocitem target="service.servereditsecurity" text="ÏÚý¬Õ»Ùïî£óòÕù" expand="false"></tocitem>
+                <tocitem target="service.servereditsecurity" text="Ë³ÙïÏÚý¬Ùïî£óòÕù" expand="false"></tocitem>
+                <tocitem target="service.servereditsecurity" text="ðÕøýÉ±ÇØ" expand="false"></tocitem></tocitem>
+            <tocitem target="service.servereditsecurity" text="ðÕøýèôïÚÛÒÞÌÊ¸Ì½" expand="false">
+                <tocitem target="service.servereditsecurity" text="LDAP ÈùÎ¤ðÂÅäñ¢ÇØê¢" expand="false"></tocitem>
+                <tocitem target="service.servereditsecurity" text="LDAP ÈùÎ¤ðÂÝÙÚÙÙÕæÀî£" expand="false"></tocitem>
+                <tocitem target="service.servereditsecurity" text="ÄØÚöÆî SSL" expand="false"></tocitem>
+                <tocitem target="service.servereditsecurity" text="LDAP ÈùÎ¤ðÂÝÙá¸ËðÆîÏ¯ÇØê¢" expand="false"></tocitem>
+                <tocitem target="service.servereditsecurity" text="LDAP ÈùÎ¤ðÂÝÙá¸Ùïî£" expand="false"></tocitem>
+                <tocitem target="service.servereditsecurity" text="LDAP ä²ÞòÙ×Íµ DN" expand="false"></tocitem>
+                <tocitem target="service.servereditsecurity" text="ä²ÞòúèÍÌ" expand="false"></tocitem></tocitem>
+            <tocitem target="service.servereditsecurity" text="îÀÄ¸ðÕøýÎíèèÌ¶ÌùóôÑç" expand="false">
+                <tocitem target="service.servereditsecurity" text="ÄØÚöÆîóôÑç" expand="false"></tocitem>
+                <tocitem target="service.servereditsecurity" text="ÇßóÜá£È¢ URL" expand="false"></tocitem>
+                <tocitem target="service.servereditsecurity" text="ðÕøýí´ê¢" expand="false"></tocitem></tocitem>
+            <tocitem target="service.servereditsecurity" text="ôúËÚæñØ¹Ý¨Ü¡íºäí" expand="false">
+                <tocitem target="service.servereditsecurity" text="FIPS í¼È¢" expand="false"></tocitem></tocitem></tocitem>
+        <tocitem target="service.servereditsession" text="âêÑôÉ¢äÆ" expand="false">
+            <tocitem target="service.servereditsession" text="âêÑôÉ¢äÆÓîÌ±" expand="false">
+                <tocitem target="service.servereditsession" text="Þ²ÄËâêÑôÉ¢äÆí°" expand="false"></tocitem>
+                <tocitem target="service.servereditsession" text="ËðâêÑôÉ¢äÆàÒÕæÎûÞ²ÏÛÕëâæ" expand="false"></tocitem>
+                <tocitem target="service.servereditsession" text="âêÑôÉ¢äÆÛÒØæÍ·òÚ" expand="false"></tocitem></tocitem>
+            <tocitem target="service.servereditsession" text="ÜÓÓÓ" expand="false">
+                <tocitem target="service.servereditsession" text="Ø´òçâæçÒ" expand="false"></tocitem>
+                <tocitem target="service.servereditsession" text="Îíèè" expand="false"></tocitem>
+                <tocitem target="service.servereditsession" text="Æøòç" expand="false"></tocitem>
+                <tocitem target="service.servereditsession" text="ÚöÆîÅäñ¢ÑçÊÆ" expand="false"></tocitem></tocitem>
+            <tocitem target="service.servereditsession" text="Ý×Ï¡" expand="false">
+                <tocitem target="service.servereditsession" text="Ý×Ï¡ÈÁÄËÄÑ" expand="false"></tocitem>
+                <tocitem target="service.servereditsession" text="Ý×Ï¡ÙÚÈçêÅÈÁõ§ÒÌÔ«" expand="false"></tocitem></tocitem>
+            <tocitem target="service.servereditsession" text="üÓøý" expand="false">
+                <tocitem target="service.servereditsession" text="ÄâÙ´Å¡ÄËÄÑìÑÎûÆîÅÂê¦ DN ÅÒç¤" expand="false"></tocitem></tocitem></tocitem>
+        <tocitem target="service.servereditsdk" text="SDK" expand="false">
+            <tocitem target="service.servereditsdk" text="æñÕèÇôÍóÙ´" expand="false">
+                <tocitem target="service.servereditsdk" text="ÚöÆîæñÕèÇôÍóÙ´Ý×Ï¡" expand="false"></tocitem>
+                <tocitem target="service.servereditsdk" text="ÚöÆîÆøòçÅîÜ¡ÈùÎ¤ðÂ" expand="false"></tocitem></tocitem>
+            <tocitem target="service.servereditsdk" text="ËçÇµÎ¤Ù­" expand="false">
+                <tocitem target="service.servereditsdk" text="ËçÇµÎ¤Ù­ÝÙîÀÎûÓìæÜÈ¹í°" expand="false"></tocitem>
+                <tocitem target="service.servereditsdk" text="LDAP ÝÙîÀè©æÜÄæâæÎûÍ·òÚ" expand="false"></tocitem>
+                <tocitem target="service.servereditsdk" text="LDAP ÝÙîÀè©æÜÎûòãë¨î£" expand="false"></tocitem>
+                <tocitem target="service.servereditsdk" text="âçåôç·Õë" expand="false"></tocitem>
+                <tocitem target="service.servereditsdk" text="ÄØØôÆîËçÇµÎ¤Ù­ÝÙîÀ" expand="false"></tocitem></tocitem>
+            <tocitem target="service.servereditsdk" text="LDAP ÝÙîÀ" expand="false">
+                <tocitem target="service.servereditsdk" text="LDAP ÝÙîÀÎûÓìæÜÈ¹í°" expand="false"></tocitem>
+                <tocitem target="service.servereditsdk" text="LDAP ÝÙîÀÓìæÜÄæâæÎûÍ·òÚ" expand="false"></tocitem>
+                <tocitem target="service.servereditsdk" text="LDAP ÝÙîÀÓìæÜÎûòãë¨î£" expand="false"></tocitem></tocitem>
+            <tocitem target="service.servereditsdk" text="Ê¸Ì½êØîïÆÛ" expand="false">
+                <tocitem target="service.servereditsdk" text="SDK Ê¸Ì½Þ²ÄËÄËÄÑ" expand="false"></tocitem>
+                <tocitem target="service.servereditsdk" text="SDK îïÆÛÓìæÜÈ¹í°" expand="false"></tocitem>
+                <tocitem target="service.servereditsdk" text="SDK îïÆÛè©æÜÄæâæÎûÍ·òÚ" expand="false"></tocitem></tocitem></tocitem>
         <tocitem target="service.serverconfigxml" text="ÆøòçØÙåô" expand="false">
-            <tocitem target="service.serverconfigxml" text="Þ²ÄÑÝÙîÀÈÁ" expand="false"></tocitem>
-            <tocitem target="service.serverconfigxml" text="Þ²ÄËÝÙîÀÈÁ" expand="false"></tocitem>
-            <tocitem target="service.serverconfigxml" text="ÝÙá¸ DN" expand="false"></tocitem>
-            <tocitem target="service.serverconfigxml" text="ÝÙá¸Ùïî£" expand="false"></tocitem></tocitem>
-        <tocitem target="service.serverconfigxml" text="÷®È´ØÙåô" expand="false">
-            <tocitem target="service.serverconfigxml" text="Þ²ÄÑÝÙîÀÈÁ" expand="false"></tocitem>
-            <tocitem target="service.serverconfigxml" text="Þ²ÄËÝÙîÀÈÁ" expand="false"></tocitem>
-            <tocitem target="service.serverconfigxml" text="ÈùÎ¤ðÂ" expand="false"></tocitem></tocitem>
+            <tocitem target="service.serverconfigxml" text="ÆøòçØÙåô" expand="false">
+                <tocitem target="service.serverconfigxml" text="Þ²ÄÑÝÙîÀÈÁ" expand="false"></tocitem>
+                <tocitem target="service.serverconfigxml" text="Þ²ÄËÝÙîÀÈÁ" expand="false"></tocitem>
+                <tocitem target="service.serverconfigxml" text="ÝÙá¸ DN" expand="false"></tocitem>
+                <tocitem target="service.serverconfigxml" text="ÝÙá¸Ùïî£" expand="false"></tocitem>
+                <tocitem target="service.serverconfigxml" text="ÈùÎ¤ðÂ" expand="false"></tocitem></tocitem>
+            <tocitem target="service.serverconfigxml" text="÷®È´ØÙåô" expand="false">
+                <tocitem target="service.serverconfigxml" text="Þ²ÄÑÝÙîÀÈÁ" expand="false"></tocitem>
+                <tocitem target="service.serverconfigxml" text="Þ²ÄËÝÙîÀÈÁ" expand="false"></tocitem>
+                <tocitem target="service.serverconfigxml" text="ÈùÎ¤ðÂ" expand="false"></tocitem></tocitem></tocitem>
+        <tocitem target="ggwyq" text="âÐâê" expand="false"></tocitem>
         <tocitem target="service.siteadd" text="ÐúÇ¡ä»Îûê½×»èÒËó" expand="false"></tocitem>
-        <tocitem target="service.siteedit" text="î¾òÒê½×»èÒËó" expand="false"></tocitem></tocitem></tocitem>
- <tocitem target="agentconfig.agents" text="ÅîÜ¡á£È¢" expand="false">
-    <tocitem target="ggobs" text="ÐúÇ¡ä»åúÜÚÌÏÅîÜ¡á£È¢" expand="false">
-        <tocitem target="ggobg" text="ÐúÇ¡ä»åúÜÚ" expand="false"></tocitem>
-        <tocitem target="agentconfig.agentadd" text="ÐúÇ¡ä»ÅîÜ¡á£È¢" expand="false"></tocitem>
-        <tocitem target="ggouy" text="üéÅîÜ¡á£È¢Ú·åúÜÚú«ÍÕÖÖÍÌ" expand="false"></tocitem></tocitem></tocitem>
- <tocitem target="ggmok" text="Web á¬Ü©ÅîÜ¡á£È¢" expand="false">
-    <tocitem target="ggmok" text="ÇÀÙÑ" expand="false">
-        <tocitem target="ggmok" text="åúÜÚ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="Ùïî£" expand="false"></tocitem>
-        <tocitem target="ggmok" text="Ùïî£íýë¥" expand="false"></tocitem>
-        <tocitem target="ggmok" text="Îíèè" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ÅîÜ¡á£È¢ØÙåôóÃÇôÕ»ÎûÈíåô" expand="false"></tocitem>
-        <tocitem target="ggmok" text="FAM àôÄ« URL" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ÅîÜ¡á£È¢Ýåå÷ URI Ð©ê¼" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ÅîÜ¡á£È¢ë£ËÆô¿èº" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ÈÜÙ¯ÓìÐúÅîÜ¡á£È¢ÆÛñ¢Ø´òçóò" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ÅîÜ¡á£È¢ÆÛñ¢Ø´òçóòÄËÄÑ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ÅîÜ¡á£È¢ë¿ê¦Ø´òçóòÕùÇØê¢" expand="false"></tocitem>
-        <tocitem target="ggmok" text="URL ÇôÌ½ë¿ê¦Ø´òçùËÐÎ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ÅîÜ¡á£È¢Øæòãá«×È" expand="false"></tocitem>
-        <tocitem target="ggmok" text="FQDN óôÑç" expand="false"></tocitem>
-        <tocitem target="ggmok" text="FQDN çßÝÃ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="FQDN áðóéÅäñ¢è×ÑÐ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ÍÁÜ©ÈùÎ¤ðÂóôÑç" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ÍÁÜ©ÌÔÇØîùÊåÄãÎûÞÅÇïÌÔÇØ URL" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ë¿ê¦Ø´òçÆÂÚõÕëÍÜáºæñäãÇôÌ½" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ÍÜáºæñäãÇôÌ½ URL" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ÝÃÌùóòúèÍÌÎûÔÏÆíî¾î£" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ÏæÚ°Ì± URL ÛÒÞÌ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="Å°Ç×óôÑçÏæÚ°Ì± URL ÛÒÞÌ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ÏæÚ°Ì±ÆîÅÂê¦ IP ÛÒÞÌ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="öÊÌ½ÏæÚ°Ì± URL ÎûúèÍÌ" expand="false"></tocitem></tocitem>
-    <tocitem target="ggmok" text="óÜÆîá£È¢" expand="false">
-        <tocitem target="ggmok" text="ÅîÜ¡á£È¢ÝÙîÀç·Õë¡¨" expand="false"></tocitem>
-        <tocitem target="ggmok" text="á¬Ü©Ê¸Ì½ïÇææßæ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="SSO Ê¸Ì½ïÇææßæ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ËðÆîÏ¯ ID Ù¶í°" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ËðÆîÏ¯ ID Ù¶í°ùËÐÎ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ÕüæñäãÎûöÊÌ½á¬Ü©" expand="false"></tocitem>
-        <tocitem target="ggmok" text="á¬Ü©ÕëúÌÙ£Õ¸" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ÝÃÌùóòúèÍÌ Cookie Ð©ê¼" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ÝÃÌùóòúèÍÌ Cookie Þ²ÏÛÇôÇãÕëâæ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ÚöÆîÝ×Ï¡" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ÅîÜ¡á£È¢Ý×Ï¡ URL" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ÅäÈùÎ¤ðÂÎûïÇææßæ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ÅîÜ¡á£È¢ØÙåôöÊÌ½ïÇææßæ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ÅîÜ¡á£È¢ØÙåôÛÒØæïÇææßæ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ÆîÅÂê¦ IP üÓøý" expand="false"></tocitem>
-        <tocitem target="ggmok" text="öÊÌ½ÆîÅÂê¦Åäñ¢ÇØê¢" expand="false"></tocitem>
-        <tocitem target="ggmok" text="Ó×ç¥ÆÍò¯ðÂÝÃÌù" expand="false"></tocitem>
-        <tocitem target="ggmok" text="åôßÐîùÊå URL Ì¶Ìù" expand="false"></tocitem>
-        <tocitem target="ggmok" text="åôßÐîùÊå URL Åäñ¢" expand="false"></tocitem>
-        <tocitem target="ggmok" text="åôßÐîùÊå URL ÝÙÚÙÙÕ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="åôßÐÝ×Ï¡ URL" expand="false"></tocitem>
-        <tocitem target="ggmok" text="URL ÅÒç¤ÄËÄÑìÑÒÞÜÊóôÑç" expand="false"></tocitem>
-        <tocitem target="ggmok" text="î¾î£ URL ÎûÖÖÖ±ÇóÄ÷" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ÍÁÜ©îùÊå URL ÄãÎûæûÕÀæñØ¹" expand="false"></tocitem>
-        <tocitem target="ggmok" text="àôÅø URL ÛÒÞÌ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ÓÑÓìÝÃÎûàôÅø Cookie ÛÒÞÌ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="POST æñÕèÏñÖç" expand="false"></tocitem>
-        <tocitem target="ggmok" text="POST æñÕèâúÆøÊ¸Ì½ßæâæ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ÝÃÌùóòúèÍÌöÊÌ½í¼È¢" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ÝÃÌùóòúèÍÌè×ÑÐ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="âêÑôÉ¢äÆúèÍÌöÊÌ½í¼È¢" expand="false"></tocitem>
-        <tocitem target="ggmok" text="âêÑôÉ¢äÆúèÍÌè×ÑÐ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ÇßóÜúèÍÌöÊÌ½í¼È¢" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ÇßóÜúèÍÌè×ÑÐ" expand="false"></tocitem></tocitem>
-    <tocitem target="ggmok" text="SSO" expand="false">
-        <tocitem target="ggmok" text="ã¯ SSO" expand="false"></tocitem>
-        <tocitem target="ggmok" text="Ù³ÇØËðÆîÏ¯çßÝÃÔ«" expand="false"></tocitem>
-        <tocitem target="ggmok" text="Ù³ÇØËðÆîÏ¯" expand="false"></tocitem>
-        <tocitem target="ggmok" text="Cookie ÇØê¢" expand="false"></tocitem>
-        <tocitem target="ggmok" text="Cookie ÇøÇÀÍÌ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ÓìÝÃ Cookie" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ÓÑÓìÝÃÎû Cookie ÛÒÞÌ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="Cookie ê½ÙÑÛÒÞÌ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="CDSSO" expand="false"></tocitem>
-        <tocitem target="ggmok" text="CDSSO Servlet URL ÛÒÞÌ" expand="false"></tocitem></tocitem>
-    <tocitem target="ggmok" text="âÐâê" expand="false">
-        <tocitem target="ggmok" text="ÈÜÓÔÖÖÍÌ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="åôßÐÅîÜ¡ÈùÎ¤ðÂÎûÅäñ¢ÌÏÝÙÚÙÙÕ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ë¥øýùËÐÎ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ÓìØÊÙïî£ÏÚý¬" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ñäòÙðÂóÀÇ¿âûÊ©" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ËðÆî OWA ØÙåôÎûñäòÙðÂ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="Ùò URL Ì¶ÌùüÈÊÕÒ³ https" expand="false"></tocitem>
-        <tocitem target="ggmok" text="âçåôâêÑôÉ¢äÆç·ÕëÓ÷Óò URL" expand="false"></tocitem>
-        <tocitem target="ggmok" text="óôÑç Domino æñÕèÕ»ÄãÎûËðÆîÏ¯" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ËðÆî LTPA Ø´æÀ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="LTPA Ø´æÀ Cookie ÇØê¢" expand="false"></tocitem>
-        <tocitem target="ggmok" text="LTPA Ø´æÀØÙåôÇØê¢" expand="false"></tocitem>
-        <tocitem target="ggmok" text="LTPA Ø´æÀØÙåôÇØê¢" expand="false"></tocitem></tocitem></tocitem>
- <tocitem target="ggmui" text="J2EE á¬Ü©ÅîÜ¡á£È¢" expand="false">
-    <tocitem target="ggmui" text="ÇÀÙÑ" expand="false">
-        <tocitem target="ggmui" text="åúÜÚ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="Ùïî£" expand="false"></tocitem>
-        <tocitem target="ggmui" text="Ùïî£íýë¥" expand="false"></tocitem>
-        <tocitem target="ggmui" text="Îíèè" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÅîÜ¡á£È¢Ý×Ï¡ URL" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÅîÜ¡á£È¢ØÙåôóÃÇôÕ»ÎûÈíåô" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ØÙåôÓìä»ç¥Ä«âæçÒ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÚöÆîâõÄãÈ¢Ý×Ï¡" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÅîÜ¡á£È¢ñäòÙðÂí¼È¢" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÍÜáºæñäãÇôÌ½Îû URI¡¨" expand="false"></tocitem>
-        <tocitem target="ggmui" text="HTTP âêÑôÉ¢äÆÝÙá¸" expand="false"></tocitem>
-        <tocitem target="ggmui" text="com.sun.identity.agents.config.redirect.param" expand="false"></tocitem>
-        <tocitem target="ggmui" text="àôÄ«è©æÜÓîÌ±" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÈÜÓÔÇßóÜíºó¤" expand="false"></tocitem>
-        <tocitem target="ggmui" text="Óìä»ðÒÇ×è©æÜÓîÌ±" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÅîÜ¡á£È¢Øæòãá«×È" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ËðÆîÏ¯è×ÑÐí¼È¢" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ËðÆîÏ¯úèÍÌÇØê¢" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ËðÆîÏ¯ÅäüÕíºì×" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ËðÆîÏ¯Ø´æÀÇØê¢" expand="false"></tocitem>
-        <tocitem target="ggmui" text="î¨ÕøÇôÌ½ùËÐÎ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="î¨ÕøØ´òçÈíåô" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ë¿ê¦Ø´òçóòÇØê¢" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÈÜÙ¯ÓìÐúÆÛñ¢î¨ÕøØ´òç" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÆÛñ¢î¨ÕøØ´òçÈÜÙ¯ÓìÐúÄËÄÑ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÆîÅÂê¦ IP ÈíÉßíºó¤" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÆîÅÂê¦Åäñ¢ÇØê¢íºó¤" expand="false"></tocitem></tocitem>
-    <tocitem target="ggmui" text="óÜÆîá£È¢" expand="false">
-        <tocitem target="ggmui" text="àôÄ«ÏÐÞÌ URI" expand="false"></tocitem>
-        <tocitem target="ggmui" text="àôÄ«òãë¨ URI" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ËðÆîÄùÝåàôÄ«" expand="false"></tocitem>
-        <tocitem target="ggmui" text="àôÄ«ÄùÕ©óòÕùÇØê¢" expand="false"></tocitem>
-        <tocitem target="ggmui" text="àôÅøóÜÆîá£È¢Ý¨Ü¡á£È¢" expand="false"></tocitem>
-        <tocitem target="ggmui" text="àôÅøóÜÆîá£È¢ URI" expand="false"></tocitem>
-        <tocitem target="ggmui" text="àôÅøîùÊåÙ¶í°" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÄØÚöÆîàôÅøÄùáþ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="àôÅøâÐÄ« URI" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÏæÚ°Ì± URI" expand="false"></tocitem>
-        <tocitem target="ggmui" text="Å°Ç×ÏæÚ°Ì± URI" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÚöÆîÏæÚ°Ì± URI Ê¸Ì½" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÏæÚ°Ì± URI Ê¸Ì½ÄËÄÑ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÏæÚ°Ì±ÆîÅÂê¦ IP ÛÒÞÌ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÏæÚ°Ì± IP Å°Ç×ÛÒÞÌ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÏæÚ°Ì± IP Ê¸Ì½íºì×" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÏæÚ°Ì± IP Ê¸Ì½ÄËÄÑ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÝÃÌùóòúèÍÌöÊÌ½í¼È¢" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÝÃÌùóòúèÍÌè×ÑÐ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÇßóÜúèÍÌöÊÌ½í¼È¢" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÇßóÜúèÍÌè×ÑÐ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="Cookie Å¡çÒÜÊÇóÄ÷" expand="false"></tocitem>
-        <tocitem target="ggmui" text="öÊÌ½úèÍÌÅÊßæÖªÈ¢" expand="false"></tocitem>
-        <tocitem target="ggmui" text="úèÍÌ Cookie î¾î£" expand="false"></tocitem>
-        <tocitem target="ggmui" text="âêÑôÉ¢äÆúèÍÌöÊÌ½í¼È¢" expand="false"></tocitem>
-        <tocitem target="ggmui" text="âêÑôÉ¢äÆúèÍÌè×ÑÐ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="çßÝÃÌ¦È´ûâÓîÎûúèÍÌ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="Ì¦È´ûâÓîÎûúèÍÌùËÐÎ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÙòÌ¦È´ûâÓîÎûúèÍÌ÷ËßÐÈ©ÄÑìÑ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="Ì¦È´ûâÓîÎûâêÑôÉ¢äÆúèÍÌ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÚöÆîÌ¦È´ûâÓîÎûúèÍÌè×ÑÐ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="Ì¦È´ûâÓîÎûúèÍÌè×ÑÐ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÈÜÓÔë¥øýÝ¨Ü¡á£È¢" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÈÜÓÔàôÅøÝ¨Ü¡á£È¢" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÈÜÓÔüÓøýÝ¨Ü¡á£È¢" expand="false"></tocitem></tocitem>
-    <tocitem target="ggmui" text="SSO" expand="false">
-        <tocitem target="ggmui" text="Cookie ÇØê¢" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÚöÆî SSO Ê¸Ì½" expand="false"></tocitem>
-        <tocitem target="ggmui" text="æúê½ÙÑ SSO" expand="false"></tocitem>
-        <tocitem target="ggmui" text="CDSSO Óìä»ðÒÇ× URI" expand="false"></tocitem>
-        <tocitem target="ggmui" text="CDSSO Servlet URL" expand="false"></tocitem>
-        <tocitem target="ggmui" text="CDSSO ÕëúÌÙ£Õ¸" expand="false"></tocitem>
-        <tocitem target="ggmui" text="CDSSO ÏêÇ¶Îû ID ßÈËòÏ¯" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÚöÆî CDSSO ÇøÇÀ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="CDSSO ê½ÙÑÛÒÞÌ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÓìÝÃ Cookie" expand="false"></tocitem>
-        <tocitem target="ggmui" text="Cookie ÓìÝÃÇØê¢ÛÒÞÌ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="Cookie ÓìÝÃê½ÙÑè×ÑÐ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="Cookie ÓìÝÃæûÕÀè×ÑÐ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="SSO æØî£" expand="false"></tocitem></tocitem>
-    <tocitem target="ggmui" text="FAM Î¤Ù­" expand="false">
-        <tocitem target="ggmui" text="FAM àôÄ« URL" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÝÃÌùàôÄ« URL óÀÇ¿âûÊ©" expand="false"></tocitem>
-        <tocitem target="ggmui" text="àôÄ« URL àÁæÜ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="àôÄ« URL àÁæÜç·Õë" expand="false"></tocitem>
-        <tocitem target="ggmui" text="FAM àôÅø URL" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÝÃÌùàôÅø URL óÀÇ¿âûÊ©" expand="false"></tocitem>
-        <tocitem target="ggmui" text="àôÅø URL àÁæÜ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="àôÅø URL àÁæÜç·Õë" expand="false"></tocitem>
-        <tocitem target="ggmui" text="FAM ë¥øýÎ¤Ù­Ì¶Ìù" expand="false"></tocitem>
-        <tocitem target="ggmui" text="FAM ë¥øýÎ¤Ù­Åäñ¢ÇØê¢" expand="false"></tocitem>
-        <tocitem target="ggmui" text="FAM ë¥øýÎ¤Ù­ÝÙÚÙÙÕ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="á¬Ü©ë¿ê¦Ø´òçóòÇØê¢" expand="false"></tocitem>
-        <tocitem target="ggmui" text="á¬Ü©Ø´òçá«×È" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÚöÆîá¬Ü©Ý×Ï¡" expand="false"></tocitem>
-        <tocitem target="ggmui" text="á¬Ü©ÆîÅÂê¦ïÇææâæçÒ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="á¬Ü©ÆîÅÂê¦Ê¸Ì½í¼È¢" expand="false"></tocitem>
-        <tocitem target="ggmui" text="á¬Ü©ÆîÅÂê¦ÆÌÎ¯Ù¯É¢Ô«" expand="false"></tocitem>
-        <tocitem target="ggmui" text="á¬Ü©ÆîÅÂê¦æñäãÅÒç¤á£È¢" expand="false"></tocitem>
-        <tocitem target="ggmui" text="á¬Ü©ÆîÅÂê¦ÕëúÌÙ£Õ¸" expand="false"></tocitem>
-        <tocitem target="ggmui" text="URL á¬Ü©ô¿èº GET Ù¶í°" expand="false"></tocitem>
-        <tocitem target="ggmui" text="URL á¬Ü©ô¿èº POST Ù¶í°" expand="false"></tocitem>
-        <tocitem target="ggmui" text="URL á¬Ü©ô¿èº jsession Ù¶í°" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ËðÆîÏ¯æñÕèÊ¸Ì½ïÇææÕëâæ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÚöÆîÎ¤Ù­æñÕèÊ¸Ì½Ý×Ï¡" expand="false"></tocitem>
-        <tocitem target="ggmui" text="Î¤Ù­æñÕèÊ¸Ì½Õëâæ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÚöÆîÆîÅÂê¦ïÇææ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÆîÅÂê¦ïÇææßæ" expand="false"></tocitem></tocitem>
-    <tocitem target="ggmui" text="Ì§Åì" expand="false">
-        <tocitem target="ggmui" text="ë£ËÆô¿èº (ë£ËÆ)" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ë£ËÆô¿èº (ÙÏÕ¥)" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÚöÆîÝÙÚÙÙÕóôÑç" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÝÙÚÙÙÕóôÑçóòÕù" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÝÙÚÙÙÕóôÑçÝÃÌù" expand="false"></tocitem>
-        <tocitem target="ggmui" text="Ü©ç´ÅäüÕÛÒÞÌ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÚöÆî÷®È´ÅÅßÎ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="÷®È´ËðÆîÏ¯ÅîÜ¡á£È¢" expand="false"></tocitem>
-        <tocitem target="ggmui" text="÷®È´Óìä»ðÒÇ× URI" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÅûÙïßÈËòÏ¯" expand="false"></tocitem></tocitem>
-    <tocitem target="ggmui" text="âÐâê" expand="false">
-        <tocitem target="ggmui" text="com.sun.identity.agents.config.webservice.enable " expand="false"></tocitem>
-        <tocitem target="ggmui" text="com.sun.identity.agents.config.webservice.endpoint " expand="false"></tocitem>
-        <tocitem target="ggmui" text="com.sun.identity.agents.config.webservice.process.get.enable " expand="false"></tocitem>
-        <tocitem target="ggmui" text="com.sun.identity.agents.config.webservice.authenticator " expand="false"></tocitem>
-        <tocitem target="ggmui" text="com.sun.identity.agents.config.webservice.internalerror.content " expand="false"></tocitem>
-        <tocitem target="ggmui" text="com.sun.identity.agents.config.webservice.autherror.content " expand="false"></tocitem>
-        <tocitem target="ggmui" text="ßåÅîÅîÜ¡á£È¢Åäñ¢ÇØê¢" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ßåÅîÅîÜ¡á£È¢ÝÙÚÙÙÕæÀî£" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ßåÅîÅîÜ¡á£È¢Ì¶Ìù" expand="false"></tocitem>
-        <tocitem target="ggmui" text="FQDN óôÑç" expand="false"></tocitem>
-        <tocitem target="ggmui" text="FQDN çßÝÃ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="FQDN áðóéÅäñ¢è×ÑÐ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ÈÜÓÔÖÖÍÌ" expand="false"></tocitem></tocitem></tocitem>
- <tocitem target="agentconfig.webserviceprovideredit" text="Web Î¤Ù­ßÈËòÏ¯" expand="false">
-    <tocitem target="agentconfig.webserviceprovideredit" text="Ä¡×ï" expand="false">
-        <tocitem target="agentconfig.webserviceprovideredit" text="åúÜÚ" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceprovideredit" text="Ùïî£" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceprovideredit" text="Ùïî£íýë¥" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceprovideredit" text="Îíèè" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceprovideredit" text="Ý×ÆîøüÉ±î£" expand="false"></tocitem></tocitem>
-    <tocitem target="agentconfig.webserviceprovideredit" text="ÇøÇÀÍÌ" expand="false">
-        <tocitem target="agentconfig.webserviceprovideredit" text="ÇøÇÀñ¢Ì±" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceprovideredit" text="ë¥øýù¹ÚÙ" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceprovideredit" text="ÏñÖçØ¹ÕÉÄãÎûÇøÇÀÍÌíºó¤" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceprovideredit" text="Liberty Î¤Ù­ùËÐÎ URN" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceprovideredit" text="ËðÆîÏ¯Ø´æÀÎûðÕøý" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceprovideredit" text="Ë³È´ÏÚý¬ùËÐÎ" expand="false"></tocitem></tocitem>
-    <tocitem target="agentconfig.webserviceprovideredit" text="SAML ØÙåô" expand="false">
-        <tocitem target="agentconfig.webserviceprovideredit" text="SAML úèÍÌè×ÑÐ" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceprovideredit" text="SAML NameID è×ÑÐá£È¢ÆÀÚâá£È¢" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceprovideredit" text="SAML úèÍÌÇØê¢Ï¨âæ" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceprovideredit" text="ÅýÉÖÈ©ÔÞËÎÇ¹" expand="false"></tocitem></tocitem>
-    <tocitem target="agentconfig.webserviceprovideredit" text="øÜå÷êØÅûÙï" expand="false">
-        <tocitem target="agentconfig.webserviceprovideredit" text="ÇßóÜÑÒÉÁÄØøÜå÷" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceprovideredit" text="ÇßóÜÑÒÉÁÄØÅûÙï" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceprovideredit" text="îùÊåøÜÇØÑÒÉÁÄØüÓøý" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceprovideredit" text="îùÊåíºó¤ÑÒÉÁÄØÅûÙï" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceprovideredit" text="îùÊåÑÒÉÁÄØæØÙï" expand="false"></tocitem></tocitem>
-    <tocitem target="agentconfig.webserviceprovideredit" text="ÏÚý¬Õ»" expand="false">
-        <tocitem target="agentconfig.webserviceprovideredit" text="Web Î¤Ù­ÆîÅÂê¦ÎûÄüâäÏÚý¬É±ÇØ" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceprovideredit" text="Ë³È´ÏÚý¬É±ÇØ" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceprovideredit" text="ÏÚý¬Õ»ÆîÎÎ" expand="false"></tocitem></tocitem>
-    <tocitem target="agentconfig.webserviceprovideredit" text="ê¦öµ" expand="false">
-        <tocitem target="agentconfig.webserviceprovideredit" text="Web Î¤Ù­ê¦öµ" expand="false"></tocitem></tocitem></tocitem>
- <tocitem target="agentconfig.webserviceclientedit" text="Web Î¤Ù­ÆîÅÂê¦úèÍÌ" expand="false">
-    <tocitem target="agentconfig.webserviceclientedit" text="Ä¡×ï" expand="false">
-        <tocitem target="agentconfig.webserviceclientedit" text="åúÜÚ" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceclientedit" text="Ùïî£" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceclientedit" text="Ùïî£íýë¥" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceclientedit" text="Îíèè" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceclientedit" text="Ý×ÆîøüÉ±î£" expand="false"></tocitem></tocitem>
-    <tocitem target="agentconfig.webserviceclientedit" text="ÇøÇÀÍÌ" expand="false">
-        <tocitem target="agentconfig.webserviceclientedit" text="ÇøÇÀñ¢Ì±" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceclientedit" text="STS ØÙåô" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceclientedit" text="ÚØ×ÄØÙåô" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceclientedit" text="ëæÓÑËðÆîÏ¯ë¥øý" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceclientedit" text="ÏñÖçØ¹ÕÉÄãÎûÇøÇÀÍÌíºó¤" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceclientedit" text="Liberty Î¤Ù­ùËÐÎ URN" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceclientedit" text="ËðÆîÏ¯Ø´æÀÎûðÕøý" expand="false"></tocitem></tocitem>
-    <tocitem target="agentconfig.webserviceclientedit" text="øÜå÷êØÅûÙï" expand="false">
-        <tocitem target="agentconfig.webserviceclientedit" text="îùÊåÑÒÉÁÄØøÜå÷" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceclientedit" text="îùÊåíºó¤ÑÒÉÁÄØÅûÙï" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceclientedit" text="îùÊåÑÒÉÁÄØÅûÙï" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceclientedit" text="ÇßóÜøÜÇØÑÒÉÁÄØüÓøý" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceclientedit" text="ÇßóÜÑÒÉÁÄØæØÙï" expand="false"></tocitem></tocitem>
-    <tocitem target="agentconfig.webserviceclientedit" text="ÏÚý¬Õ»" expand="false">
-        <tocitem target="agentconfig.webserviceclientedit" text="Web Î¤Ù­ßÈËòÏ¯ÎûÄüâäÏÚý¬É±ÇØ" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceclientedit" text="Ë³È´ÏÚý¬É±ÇØ" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceclientedit" text="ÏÚý¬Õ»ÆîÎÎ" expand="false"></tocitem></tocitem>
-    <tocitem target="agentconfig.webserviceclientedit" text="ê¦öµ" expand="false">
-        <tocitem target="agentconfig.webserviceclientedit" text="Web Î¤Ù­ê¦öµ" expand="false"></tocitem></tocitem></tocitem>
- <tocitem target="agentconfig.webservicestsedit" text="ÇøÇÀÍÌØ´æÀÎ¤Ù­" expand="false">
-    <tocitem target="agentconfig.webservicestsedit" text="Ä¡×ï" expand="false">
-        <tocitem target="agentconfig.webservicestsedit" text="åúÜÚ" expand="false"></tocitem>
-        <tocitem target="agentconfig.webservicestsedit" text="Ùïî£" expand="false"></tocitem>
-        <tocitem target="agentconfig.webservicestsedit" text="Ùïî£íýë¥" expand="false"></tocitem>
-        <tocitem target="agentconfig.webservicestsedit" text="Îíèè" expand="false"></tocitem>
-        <tocitem target="agentconfig.webservicestsedit" text="Ý×ÆîøüÉ±î£" expand="false"></tocitem></tocitem>
-    <tocitem target="agentconfig.webservicestsedit" text="ÇøÇÀÍÌ" expand="false">
-        <tocitem target="agentconfig.webservicestsedit" text="ÇøÇÀñ¢Ì±" expand="false"></tocitem>
-        <tocitem target="agentconfig.webservicestsedit" text="STS ØÙåô" expand="false"></tocitem>
-        <tocitem target="agentconfig.webservicestsedit" text="ÏñÖçØ¹ÕÉÄãÎûÇøÇÀÍÌíºó¤" expand="false"></tocitem>
-        <tocitem target="agentconfig.webservicestsedit" text="ËðÆîÏ¯Ø´æÀÎûðÕøý" expand="false"></tocitem></tocitem>
-    <tocitem target="agentconfig.webservicestsedit" text="øÜå÷êØÅûÙï" expand="false">
-        <tocitem target="agentconfig.webservicestsedit" text="îùÊåÑÒÉÁÄØøÜå÷" expand="false"></tocitem>
-        <tocitem target="agentconfig.webservicestsedit" text="îùÊåíºó¤ÑÒÉÁÄØÅûÙï" expand="false"></tocitem>
-        <tocitem target="agentconfig.webservicestsedit" text="îùÊåÑÒÉÁÄØÅûÙï" expand="false"></tocitem>
-        <tocitem target="agentconfig.webservicestsedit" text="ÇßóÜøÜÇØÑÒÉÁÄØüÓøý" expand="false"></tocitem>
-        <tocitem target="agentconfig.webservicestsedit" text="ÇßóÜÑÒÉÁÄØæØÙï" expand="false"></tocitem></tocitem>
-    <tocitem target="agentconfig.webservicestsedit" text="ÏÚý¬Õ»" expand="false">
-        <tocitem target="agentconfig.webservicestsedit" text="Web Î¤Ù­ßÈËòÏ¯ÎûÄüâäÏÚý¬É±ÇØ" expand="false"></tocitem>
-        <tocitem target="agentconfig.webservicestsedit" text="Ë³È´ÏÚý¬É±ÇØ" expand="false"></tocitem>
-        <tocitem target="agentconfig.webservicestsedit" text="ÏÚý¬Õ»ÆîÎÎ" expand="false"></tocitem></tocitem>
-    <tocitem target="agentconfig.webservicestsedit" text="ê¦öµ" expand="false">
-        <tocitem target="agentconfig.webservicestsedit" text="Web Î¤Ù­ê¦öµ" expand="false"></tocitem></tocitem></tocitem>
- <tocitem target="agentconfig.genericagentprofile" text="ÚØ×ÄÅîÜ¡á£È¢" expand="false">
-    <tocitem target="agentconfig.genericagentprofile" text="åúÜÚ" expand="false"></tocitem>
-    <tocitem target="agentconfig.genericagentprofile" text="Ùïî£" expand="false"></tocitem>
-    <tocitem target="agentconfig.genericagentprofile" text="Ùïî£íýë¥" expand="false"></tocitem>
-    <tocitem target="agentconfig.genericagentprofile" text="ÅîÜ¡á£È¢ØÙåôóÃÇôÕ»ÎûÈíåô" expand="false"></tocitem>
-    <tocitem target="agentconfig.genericagentprofile" text="Ë³È´ÏÚý¬É±ÇØ" expand="false"></tocitem>
-    <tocitem target="agentconfig.genericagentprofile" text="ÚØ×ÄÎ¤Ù­ê¦öµ" expand="false"></tocitem>
-    <tocitem target="agentconfig.genericagentprofile" text="ë¥øý Web Î¤Ù­ê¦öµ" expand="false"></tocitem></tocitem>
- <tocitem target="ggnbx" text="2.2 á¬Ü©ÅîÜ¡á£È¢" expand="false">
-    <tocitem target="ggnbx" text="Ùïî£" expand="false"></tocitem>
-    <tocitem target="ggnbx" text="Ùïî£íýë¥" expand="false"></tocitem>
-    <tocitem target="ggnbx" text="Îíèè" expand="false"></tocitem>
-    <tocitem target="ggnbx" text="ßÀÓÝ" expand="false"></tocitem>
-    <tocitem target="ggnbx" text="sunIdentityServerDeviceKeyValue" expand="false"></tocitem></tocitem>
+        <tocitem target="service.siteedit" text="î¾òÒê½×»èÒËó" expand="false"></tocitem>
+        <tocitem target="ggvwi" text="ÈùÎ¤ðÂêØê½×»ÅäÚÕÆºúèÍÌè×ÑÐ" expand="false"></tocitem></tocitem></tocitem>
  <tocitem target="sessions" text="âêÑôÉ¢äÆ" expand="false">
     <tocitem target="sessionpage" text="âêÑôÉ¢äÆÓ÷Óò" expand="false">
         <tocitem target="sessionsearch" text="ä²Þò" expand="false"></tocitem>
@@ -1155,9 +1379,8 @@
             <tocitem target="session.smprofile" text="Þ·ïõÕëâæ (Å¡úÌ)" expand="false"></tocitem>
             <tocitem target="session.smprofile" text="Þ²ÏÛâêÑôÉ¢äÆÕëâæ (Å¡úÌ)" expand="false"></tocitem>
             <tocitem target="session.smprofile" text="âçåôÕëâæ (Å¡úÌ)" expand="false"></tocitem>
-            <tocitem target="session.smprofile" text="Þ²ÏÛâçåôÕëâæ (Å¡úÌ)" expand="false"></tocitem>
-            <tocitem target="invalidatesession" text="ËðâêÑôÉ¢äÆàÒÕæ" expand="false"></tocitem>
-</tocitem>
+            <tocitem target="session.smprofile" text="Þ²ÏÛâçåôÕëâæ (Å¡úÌ)" expand="false"></tocitem></tocitem>
+        <tocitem target="invalidatesession" text="ËðâêÑôÉ¢äÆàÒÕæ" expand="false"></tocitem>
 </tocitem>
 </tocitem>
 </toc>

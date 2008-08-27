@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Zertifikat  - Online-Hilfe zur Sun Java System Federated Access Manager 8.0-Konsole
+  <title>Zertifikat - Online-Hilfe zur Sun Federated Access Manager 8.0-Konsole
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -30,8 +30,8 @@
 
 
 
-<a name="service.scserviceprofile.iplanetamauthcertservice"></a><h4>Zertifikat </h4>
-<p><a name="indexterm-176"></a>Mit diesem Modul kann sich ein Benutzer &#252;ber ein pers&#246;nliches digitales Zertifikat
+<a name="service.scserviceprofile.iplanetamauthcertservice"></a><h4>Zertifikat</h4>
+<p><a name="indexterm-169"></a>Mit diesem Modul kann sich ein Benutzer &#252;ber ein pers&#246;nliches digitales Zertifikat
  (PDC) anmelden. Die Modulinstanz kann zur Ermittlung des Zertifikatstatus die Anwendung
 des Online Certificate Status Protocol (OCSP) verlangen. Die Verwendung des OCSP ist
 jedoch optional. Der Zugriff auf eine Ressource wird dem Benutzer auf Basis
@@ -48,7 +48,6 @@ Zertifikatauthentifizierung handelt es sich um Bereichsattribute. Es existieren 
 <li><p><a href="#fwbqp">Principal-Benutzer f&#252;r LDAP-Server</a></p></li>
 <li><p><a href="#fwbst">Principal-Passwort f&#252;r LDAP-Server</a></p></li>
 <li><p><a href="#fwbiu">Principal-Passwort f&#252;r LDAP-Server (Best&#228;tigung)</a></p></li>
-<li><p><b>Broken Link (Target ID: FWBLO)</b></p></li>
 <li><p><a href="#fwblm">SSL f&#252;r LDAP-Zugriff verwenden</a></p></li>
 <li><p><a href="#fwbof">F&#252;r den Zugriff auf das Benutzerprofil verwendetes Zertifikatsfeld</a></p></li>
 <li><p><a href="#fwbna">F&#252;r den Zugriff auf das Benutzerprofil verwendetes weiteres Zertifikatsfeld</a></p></li>
@@ -94,14 +93,16 @@ angegebene Wert wird f&#252;r die Suche verwendet. Der Standardwert ist <tt>cn</
 <a name="fwbin"></a><h5>HTTP-Parameter f&#252;r CRL-Aktualisierung</h5>
 <p>Gibt die HTTP-Parameter an, die bei der Aktualisierung einer CRL zum Abrufen
 der CRL von einem Servlet verwendet werden. Die Werte dieser Parameter erhalten
-Sie von Ihrem ZA-Administrator. </p>
+Sie von Ihrem ZA-Administrator.</p>
 
 <a name="fwbil"></a><h5>OCSP-&#220;berpr&#252;fung</h5>
 <p>Aktiviert die Durchf&#252;hrung der OCSP-&#220;berpr&#252;fung durch einen Verbindungsaufbau zum jeweiligen OCSP-Empf&#228;nger. Der
-OCSP-Empf&#228;nger wird bei der Ausf&#252;hrung wie folgt festgelegt:</p>
-<ul><li><p>Wenn <tt>com.sun.identity.authentication.ocspCheck</tt> aktiviert ist und der OCSP-Empf&#228;nger im Attribut <i>com.sun.identity.authentication.ocsp.repsonder.url </i> angegeben ist, wird der Wert des Attributs als OSCP-Empf&#228;nger verwendet.</p></li>
-<li><p>Wenn <tt>com.sun.identity.authentication.ocspCheck</tt> aktiviert ist, der Wert des Attributs in der Datei <tt> AMConfig.properties</tt> jedoch nicht festgelegt ist, wird der OSCP-Empf&#228;nger im Client-Zertifikat als OCSP-Empf&#228;nger verwendet. </p></li>
-<li><p>Wenn <tt>com.sun.identity.authentication.ocspCheck</tt> deaktiviert ist oder wenn <i>com.sum.identity.authentication.ocspCheck</i> aktiviert ist, jedoch kein OCSP-Empf&#228;nger gefunden wird, wird keine OCSP-&#220;berpr&#252;fung durchgef&#252;hrt.</p></li></ul>
+OCSP-Empf&#228;nger wird bei der Ausf&#252;hrung wie folgt festgelegt.  Die erw&#228;hnten Attribute
+befinden sich in der Konsole unter "Konfiguration" &#62; "Servers und Sites" &#62;
+"Sicherheit":</p>
+<ul><li><p>Wenn dieser Wert auf "true" (wahr) gesetzt ist und der OCSP-Empf&#228;nger im Attribut <a href="service.servereditsecurity.html#ggkav">Empf&#228;nger-URL</a> festgelegt ist, wird der Wert des Attributs als OCSP-Empf&#228;nger verwendet.</p></li>
+<li><p>Wenn <a href="service.servereditsecurity.html#ggkaa">&#220;berpr&#252;fung des Online Certificate Status Protocol</a> aktiviert ist und wenn der Wert f&#252;r dieses Attribut nicht festgelegt ist, wird der in Ihrem Client-Zertifikat genannte OCSP-Empf&#228;nger als OCSP-Empf&#228;nger verwendet. </p></li>
+<li><p>Wenn <a href="service.servereditsecurity.html#ggkaa">&#220;berpr&#252;fung des Online Certificate Status Protocol</a> nicht aktiviert ist oder wenn <a href="service.servereditsecurity.html#ggkaa">&#220;berpr&#252;fung des Online Certificate Status Protocol</a> aktiviert ist und kein OCSP-Empf&#228;nger gefunden werden kann, wird keine OCSP-Validierung durchgef&#252;hrt.</p></li></ul>
 <p>Stellen Sie vor dem Aktivieren der OCSP-&#220;berpr&#252;fung sicher, dass die Uhrzeit des
 Federated Access Manager-Computers mit der des OCSP-Empf&#228;ngercomputers so weit wie m&#246;glich &#252;bereinstimmt.
 Die Uhrzeit auf dem Federated Access Manager-Computer darf keinesfalls nach der Uhrzeit
@@ -133,7 +134,7 @@ Directory Server gespeicherten Zertifikatdaten berechtigt sein.</p>
 <a name="fwbst"></a><h5>Principal-Passwort f&#252;r LDAP-Server</h5>
 <p>Gibt das LDAP-Passwort des im Feld ";Principal-Benutzer f&#252;r LDAP-Server" festgelegten Benutzers an.
 F&#252;r dieses Feld gibt es keinen Standardwert; das g&#252;ltige LDAP-Passwort f&#252;r den
-angegebenen Principal-Benutzer ist zul&#228;ssig.  Dieser Wert wird als lesbarer Text im Verzeichnis
+angegebenen Principal-Benutzer ist zul&#228;ssig. Dieser Wert wird als lesbarer Text im Verzeichnis
 gespeichert.</p>
 
 <a name="fwbiu"></a><h5>Principal-Passwort f&#252;r LDAP-Server (Best&#228;tigung)</h5>
@@ -163,6 +164,14 @@ Komponenten:</p>
 Zertifikatsfeld" auf "Weitere" gesetzt ist, gibt dieses Feld das Attribut an, das
 aus dem <i>subjectDN </i>-Wert des empfangenen Zertifikats ausgew&#228;hlt wird. Der Authentifizierungsdienst sucht dann
 nach dem Benutzerprofil, das dem Wert dieses Attributs entspricht.</p>
+
+<a name="ggumk"></a><h5>Werttyp SubjectAltNameExt f&#252;r Zugriff auf Benutzer</h5>
+<p>Wird ein anderer Werttyp als <tt>none</tt> ausgew&#228;hlt, hat dieses Attribut Vorrang vor
+dem Attribut <tt>F&#252;r den Zugriff auf das Benutzerprofil verwendetes Zertifikatsfeld</tt> oder <tt>F&#252;r den Zugriff auf das Benutzerprofil verwendetes weiteres Zertifikatsfeld</tt>. </p>
+<ul><li><p>RFC822Name</p></li></ul>
+
+<ul><li><p>UPN</p></li></ul>
+
 
 <a name="fwbiw"></a><h5>Vertrauensw&#252;rdige Remote-Hosts</h5>
 <p>Legt eine Liste der vertrauensw&#252;rdigen Hosts fest, denen die Versendung von Zertifikaten

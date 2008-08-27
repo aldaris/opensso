@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>ディレクトリ設定 - Sun Java System Federated Access Manager 8.0 コンソールオンラインヘルプ
+  <title>ディレクトリ設定 - Sun Federated Access Manager 8.0 コンソールオンラインヘルプ
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -48,8 +48,20 @@
 <a name="ggkdn"></a><h5>バインドパスワード</h5>
 <p>LDAP サーバーへのバインドに使用するパスワードを定義します。デフォルトでは、インストール時に入力された amldapuser パスワードが、バインドユーザーとして使用されます。</p>
 
+<a name="ghama"></a><h5>サーバー</h5>
+<p>この属性は、Federated Access Manager インスタンスの設定データストアとして機能するディレクトリサーバーを定義します。設定サーバーを追加するには、「追加」ボタンをクリックし、次の属性の値を指定します。</p><dl><dt>名前</dt>
+<dd><p>サーバーの名前を入力します。</p></dd>
+<dt>ホスト名</dt>
+<dd><p>ディレクトリサーバーの完全修飾ホスト名を指定します。次に例を示します。</p><p><tt></tt><i>DirectoryServerHost.domainName</i><tt>.com </tt></p></dd>
+<dt>ポート番号</dt>
+<dd><p>ディレクトリサーバーのポート番号を指定します。</p></dd>
+<dt>接続のタイプ</dt>
+<dd><p>ディレクトリサーバーの接続のタイプを定義します。デフォルトでは、SIMPLE が選択されています。SSL を選択することもできます。</p></dd>
+</dl>
+
+
 <a name="ggkdu"></a><h5>旧バージョンの設定</h5>
-<p>次の属性は、Federated Access Manager の旧バージョンモードインスタンスの基本的なディレクトリサーバー設定を定義します。</p>
+<p>次の属性は、Federated Access Manager の旧バージョンモードインスタンスの基本的なディレクトリサーバー設定を定義します。これらの属性は、旧バージョンモードのインストールでのみ表示されます。</p>
 
 <a name="ggkej"></a><h5>最小接続プール</h5>
 <p>LDAP サーバー属性に指定されたとおり、Directory Server への接続に使用する接続プールの最小サイズを指定します。デフォルトは 1 です。</p>
@@ -58,7 +70,7 @@
 <p>この属性は、LDAP サーバー属性に指定されたとおり、Directory Server への接続に使用する接続プールの最大サイズを指定します。デフォルトは 10 です。</p>
 
 <a name="ggkey"></a><h5>サーバー</h5>
-<p>この属性は、ロードバランサのプロトコル、ホスト名、およびポートを一覧表示します。次に例を示します。<tt>http://lb.example.com:80</tt>。</p>
+<p>この属性は、ロードバランサのプロトコル、ホスト名、およびポートを一覧表示します。次に例を示します。<tt>http://lb.example.com:80</tt></p>
 <br/>
 
 </body>

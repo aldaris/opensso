@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Atributos de enlace SOAP - Ayuda en l&#237;nea de la consola de Sun Java System Federated Access Manager 8.0
+  <title>Atributos de enlace SOAP - Ayuda en l&#237;nea de la consola de Sun Federated Access Manager 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -34,18 +34,18 @@
 
 
 <a name="ggocx"></a><h5>Autenticador de servicio Web</h5>
-<a name="indexterm-162"></a><a name="indexterm-163"></a><p>Este atributo toma como valor la clase de implementaci&#243;n de la interfaz
+<a name="indexterm-155"></a><a name="indexterm-156"></a><p>Este atributo toma como valor la clase de implementaci&#243;n de la interfaz
 del autenticador de servicio Web. Esta clase autentica una solicitud y genera
 una credencial para un consumidor de servicios Web.</p>
 
 <a name="ggock"></a><h5>Mecanismos de autenticaci&#243;n admitidos</h5>
-<a name="indexterm-164"></a><a name="indexterm-165"></a><p>Este atributo especifica los mecanismos de autenticaci&#243;n admitidos por el receptor de
+<a name="indexterm-157"></a><a name="indexterm-158"></a><p>Este atributo especifica los mecanismos de autenticaci&#243;n admitidos por el receptor de
 SOAP. Los mecanismos de autenticaci&#243;n ofrecen autenticaci&#243;n de usuario, as&#237; como integridad
 de datos y cifrado. De forma predeterminada, todas los mecanismos de autenticaci&#243;n
 disponibles est&#225;n seleccionados. Si no se selecciona ninguno y un consumidor de
 servicios Web (WXC) env&#237;a una solicitud mediante este m&#233;todo, se rechazar&#225; la
 solicitud. A continuaci&#243;n se muestra una lista de los mecanismos de autenticaci&#243;n
-admitidos: </p>
+admitidos:</p>
 <ul><li><p><tt>urn:liberty:security:2003-08:null:null</tt></p></li>
 <li><p><tt>urn:liberty:security:2003-08:null:X509</tt></p></li>
 <li><p><tt>urn:liberty:security:2003-08:null:SAML</tt></p></li>
@@ -66,25 +66,26 @@ mensaje SOAP para garantizar que exista el proveedor en el sistema. De
 lo contrario, se rechazar&#225; la solicitud. Si no se habilita este atributo,
 se omitir&#225; la comprobaci&#243;n. </p>
 
-<a name="ggoci"></a><h5>Alias de certificado para la autenticaci&#243;n de cliente SSL </h5>
+<a name="ggoci"></a><h5>Alias de certificado para la autenticaci&#243;n de cliente SSL</h5>
 <p>Este valor se establece durante la instalaci&#243;n. El alias de certificado de
 cliente que se utilizar&#225; en la conexi&#243;n SSL para el enlace SOAP
 de Liberty.</p>
 
-<a name="ggocs"></a><h5>L&#237;mite de tiempo del mensaje de estado</h5>
-<p>El valor predeterminado es 300.000. Determina si el mensaje no es v&#225;lido
- y, por lo tanto, ya no es de confianza. Si la
-marca del tiempo del mensaje es anterior a la marca del tiempo
-actual en funci&#243;n del n&#250;mero de milisegundos especificado, el mensaje se considerar&#225;
-no v&#225;lido.</p>
+<a name="ggocs"></a><h5>L&#237;mite de tiempo del mensaje obsoleto</h5>
+<p>El valor predeterminado es 300000.       
+   Determina si el mensaje est&#225; obsoleto y, por lo
+tanto, ya no es de confianza.  Si la marca del tiempo
+del mensaje es anterior a la marca del tiempo actual en funci&#243;n
+del n&#250;mero de milisegundos especificado, el mensaje se considerar&#225; no v&#225;lido.</p>
 
 <a name="ggofw"></a><h5>Intervalo de vaciado de la cach&#233; de Id. de mensaje </h5>
-<p>El valor predeterminado es 60.000. Especifica el n&#250;mero de segundos transcurridos antes
-de que comiencen los eventos de vaciado de la cach&#233;. Cada mensaje
-se almacena en la cach&#233; con su propio Id. de mensaje para
-evitar que existan mensajes duplicados. Cuando el tiempo actual del mensaje menos
-el tiempo recibido supera el valor de l&#237;mite de tiempo de caducidad,
-el mensaje se eliminar&#225; de la cach&#233;.</p>
+<p>El valor predeterminado es 60000.       
+    Especifica el n&#250;mero de milisegundos que deben transcurrir
+antes de que comiencen los eventos de limpieza de la cach&#233;. 
+Cada mensaje se almacena en la cach&#233; con su propio Id. de
+mensaje para evitar que existan mensajes duplicados. Cuando el tiempo actual del
+mensaje menos el tiempo recibido supera el valor de l&#237;mite de tiempo
+de caducidad, el mensaje se eliminar&#225; de la cach&#233;.</p>
 
 <a name="ggohr"></a><h5>Actores SOAP admitidos</h5>
 <p>El valor predeterminado es <tt>http://schemas.xmlsoap.org/soap/actor/next </tt>. Especifica los actores SOAP admitidos. Cada actor

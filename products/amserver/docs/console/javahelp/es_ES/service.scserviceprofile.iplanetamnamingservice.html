@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Asignaci&#243;n de nombres  - Ayuda en l&#237;nea de la consola de Sun Java System Federated Access Manager 8.0
+  <title>Asignaci&#243;n de nombres - Ayuda en l&#237;nea de la consola de Sun Federated Access Manager 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -30,8 +30,8 @@
 
 
 
-<a name="service.scserviceprofile.iplanetamnamingservice"></a><h4>Asignaci&#243;n de nombres </h4>
-<p><a name="indexterm-210"></a>El servicio de asignaci&#243;n de nombres se utiliza para obtener y definir
+<a name="service.scserviceprofile.iplanetamnamingservice"></a><h4>Asignaci&#243;n de nombres</h4>
+<p><a name="indexterm-204"></a>El servicio de asignaci&#243;n de nombres se utiliza para obtener y definir
 las direcciones URL, complementos y configuraciones, as&#237; como las notificaciones de solicitudes
 para diversos servicios de Federated Access Manager como sesi&#243;n, autenticaci&#243;n, registro SAML
 y federaci&#243;n.</p><p>Este servicio permite que los clientes encuentren la direcci&#243;n URL correcta del
@@ -69,7 +69,7 @@ sesi&#243;n en funci&#243;n de los par&#225;metros de sesi&#243;n espec&#237;fic
 en funci&#243;n de los par&#225;metros de sesi&#243;n espec&#237;ficos.</p>
 
 <a name="fwfgh"></a><h5>URL de servicio de pol&#237;tica</h5>
-<p>Este campo contiene un valor igual a: </p><p><tt>%protocol://%host:%port/Server_DEPLOY_URI/policyservice</tt></p><p>Esta sintaxis permite la sustituci&#243;n din&#225;mica de la direcci&#243;n URL de la
+<p>Este campo contiene un valor igual a:</p><p> <tt>%protocol://%host:%port/Server_DEPLOY_URI/policyservice</tt></p><p>Esta sintaxis permite la sustituci&#243;n din&#225;mica de la direcci&#243;n URL de la
 pol&#237;tica en funci&#243;n de los par&#225;metros de sesi&#243;n espec&#237;ficos.</p>
 
 <a name="fwfge"></a><h5>Direcci&#243;n URL del servicio de autenticaci&#243;n</h5>
@@ -106,6 +106,26 @@ del token de seguridad en funci&#243;n de los par&#225;metros de sesi&#243;n esp
 <a name="fwfgo"></a><h5>URL de punto final de JAXRPC</h5>
 <p>Este campo contiene un valor igual a:</p><p><tt>%protocol://%host:%port/amserver/jaxrpc/</tt></p><p>Esta sintaxis permite la sustituci&#243;n din&#225;mica de la direcci&#243;n URL de punto
 final de JAXRPC en funci&#243;n de los par&#225;metros de sesi&#243;n espec&#237;ficos.</p>
+
+<a name="gguep"></a><h5>URL de punto final de los servicios web de identidad</h5>
+<p>Este campo contiene un valor igual a:</p><p><tt>%protocolo://%host:%puerto%uri/serviciosidentidad/</tt></p><p>Esta sintaxis permite la sustituci&#243;n din&#225;mica de la direcci&#243;n URL de punto
+final de Servicios web de identidad en funci&#243;n de los par&#225;metros de
+sesi&#243;n espec&#237;ficos.</p>
+
+<a name="ggudo"></a><h5>URL de punto final de los servicios REST de identidad</h5>
+<p>Este campo contiene un valor igual a:</p><p><tt>%protocolo://%host:%puerto%uri/identidad//</tt></p><p>Esta sintaxis permite la sustituci&#243;n din&#225;mica de la direcci&#243;n URL de punto
+final de Servicios REST de identidad en funci&#243;n de los par&#225;metros de
+sesi&#243;n espec&#237;ficos.</p>
+
+<a name="ggueo"></a><h5>URL de punto final del servicio del token de seguridad</h5>
+<p>Este campo contiene un valor igual a:</p><p><tt>%protocolo://%host:%puerto%uri/sts</tt></p><p>Esta sintaxis permite la sustituci&#243;n din&#225;mica de la direcci&#243;n URL del punto
+final del servicio token de seguridad en funci&#243;n de los par&#225;metros de
+sesi&#243;n espec&#237;ficos.</p>
+
+<a name="gguff"></a><h5>URL de punto MEX del servicio del token de seguridad</h5>
+<p>Este campo contiene un valor igual a:</p><p><tt>%protocolo://%host:%puerto%uri/sts/mex</tt></p><p>Esta sintaxis permite la sustituci&#243;n din&#225;mica de la direcci&#243;n URL del punto
+final MEX del servicio token de seguridad en funci&#243;n de los par&#225;metros
+de sesi&#243;n espec&#237;ficos.</p>
 <br/>
 
 </body>

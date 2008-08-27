@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>リソース ID マッパープラグイン用のクラス - Sun Java System Federated Access Manager 8.0 コンソールオンラインヘルプ
+  <title>リソース ID マッパープラグイン用のクラス - Sun Federated Access Manager 8.0 コンソールオンラインヘルプ
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,10 +31,10 @@
 
 
 <a name="resourceidmapperpluginclass"></a><h4>リソース ID マッパープラグイン用のクラス</h4>
-<a name="indexterm-141"></a><a name="indexterm-142"></a><p>この属性の値は、組織またはロールに対して設定されるリソースオファリングの ID を生成するクラスのリストです。<tt>com.sun.identity.liberty.ws.interfaces.</tt><tt>ResourceIDMapper</tt> は、ユーザー ID を、それと関連付けられたリソース ID にマップするために使用されるインタフェースです。ディスカバリサービスは、このインタフェースのために次の 2 つの実装プラグインを提供します。</p>
-<ul><li><p><tt>com.sun.identity.liberty.ws.</tt><tt>disco.plugins.</tt><tt>Default64ResourceIDMapper </tt> (形式: <i>プロバイダ ID</i> + "/" + <i>Base64 エンコードされたユーザー ID</i>)</p></li>
-<li><p><tt>com.sun.identity.liberty.ws.</tt><tt>disco.plugins.</tt><tt>DefaultHexResourceIDMapper</tt> (形式: <i>プロバイダ ID</i> + "/" + <i>ユーザー ID の 16 進文字列</i>)</p></li></ul>
-<p>実装クラスを使用してさまざまな実装プラグインを開発し、この属性の値として追加することができます。そのためには、「新規」をクリックして次の形式を使用します。</p><p><tt><b>providerid=</tt><i>providerID</i><tt>|</tt><i> class_name_and_path</i><tt></b></tt></p><p><b>Broken Link (Target ID: SERVICE.SMDISCOVERYPROVIDERRESOURCEIDMAPADD)</b>を参照してください。</p>
+<a name="indexterm-134"></a><a name="indexterm-135"></a><p>この属性の値は、組織またはロールに対して設定されるリソースオファリングの ID を生成するクラスのリストです。<tt>com.sun.identity.liberty.ws.interfaces.ResourceIDMapper</tt> は、ユーザー ID を、それと関連付けられたリソース ID にマップするために使用されるインタフェースです。ディスカバリサービスは、このインタフェースのために次の 2 つの実装プラグインを提供します。</p>
+<ul><li><p><tt>com.sun.identity.liberty.ws.disco.plugins.Default64ResourceIDMapper</tt> (形式: <i>プロバイダ ID</i> + "/" + <i>Base64 エンコードされたユーザー ID</i>)</p></li>
+<li><p><tt>com.sun.identity.liberty.ws.disco.plugins.DefaultHexResourceIDMapper</tt> (形式: <i>プロバイダ ID</i> + "/" + <i>ユーザー ID の 16 進文字列</i>)</p></li></ul>
+<p>実装クラスを使用してさまざまな実装プラグインを開発し、この属性の値として追加することができます。そのためには、「新規」をクリックして次の形式を使用します。</p><p><tt><b>providerid=</tt><i>providerID</i><tt>|</tt><i> class_name_and_path</i><tt></b></tt></p>
 <br/>
 
 </body>

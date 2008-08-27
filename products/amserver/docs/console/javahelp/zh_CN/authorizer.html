@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>授权者 - Sun Java System Federated Access Manager 8.0 控制台联机帮助
+  <title>授权者 - Sun Federated Access Manager 8.0 控制台联机帮助
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,7 +31,7 @@
 
 
 <a name="authorizer"></a><h4>授权者</h4>
-<a name="indexterm-96"></a><a name="indexterm-97"></a><p>在处理请求前，Liberty 个人配置文件服务会检验发出该请求的 WSC 的授权。可以进行两个级别的授权检查：</p>
+<a name="indexterm-89"></a><a name="indexterm-90"></a><p>在处理请求前，Liberty 个人配置文件服务会检验发出该请求的 WSC 的授权。可以进行两个级别的授权检查：</p>
 <ol><li><p>请求实体是否已获授权访问其所请求的资源配置文件信息？</p></li>
 <li><p>请求者所请求的资源对其公开吗？</p></li></ol>
 <p>通过 Liberty 个人配置文件服务的插件进行授权：<tt>com.sun.identity.liberty.ws.interfaces.</tt><tt>Authorizer</tt> 接口的实现。虽然 Federated Access Manager 提供了默认的<tt>com.sun.identity.liberty.ws.idpp.plugin.</tt><tt>IDPPAuthorizer</tt>，但您可以开发新实现。此插件为“查询”和“修改”操作定义了如下四种策略操作值：</p>

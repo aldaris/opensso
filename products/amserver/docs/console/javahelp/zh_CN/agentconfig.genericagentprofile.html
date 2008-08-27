@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>搜索代理 - Sun Java System Federated Access Manager 8.0 控制台联机帮助
+  <title>配置代理 - Sun Federated Access Manager 8.0 控制台联机帮助
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -30,29 +30,16 @@
 
 
 
-<a name="agentconfig.genericagentprofile"></a><h4>搜索代理</h4>
-<p>“搜索代理”配置文件保留信任授权机构配置，Web 服务客户机/配置文件使用该配置与 Liberty 搜索服务进行通信，以进行 Web 服务查找、注册和获取安全证书。</p>
+<a name="agentconfig.genericagentprofile"></a><h4>配置代理</h4>
+<p>创建代理后，即可自定义每个代理的角色。要实现此操作，首先单击要配置的代理的名称，然后修改代理的属性。参见以下部分以了解每种代理类型及其已定义角色的定义：</p>
+<ul><li><p><a href="agentconfig.webagentprofile.html">Web 策略代理</a></p></li>
+<li><p><a href="agentconfig.j2eeagentprofile.html">J2EE 策略代理</a></p></li>
+<li><p><a href="agentconfig.webserviceprovideredit.html">Web 服务提供者</a></p></li>
+<li><p><a href="agentconfig.webserviceclientedit.html">Web 服务客户机属性</a></p></li>
+<li><p><a href="agentconfig.discoveryagentprofile.html">搜索代理属性</a></p></li>
+<li><p><a href="agentconfig.webservicestsedit.html">安全令牌服务属性</a></p></li>
+<li><p><a href="agentconfig.22agentprofile.html">2.2 策略代理</a></p></li></ul>
 
-<a name="gglro"></a><h5>组</h5>
-<p>可通过“组”机制来定义相似代理类型的集合。组必须在将特定代理纳入集合之前进行定义。</p>
-
-<a name="gglpn"></a><h5>密码</h5>
-<p>定义搜索代理的密码。</p>
-
-<a name="ggloy"></a><h5>密码确认</h5>
-<p>确认密码。</p>
-
-<a name="ggloo"></a><h5>代理配置系统信息库的位置</h5>
-<p>此属性定义搜索代理配置系统信息库的代理位置。</p>
-
-<a name="gglqv"></a><h5>私钥别名</h5>
-<p>此属性定义信任授权机构客户机用来签署搜索服务的 SOAP 消息请求的证书别名。</p>
-
-<a name="gglny"></a><h5>搜索服务端点</h5>
-<p>此属性定义信任授权机构客户机为注册和查找服务而在其中建立通信的搜索服务端点。</p>
-
-<a name="gglra"></a><h5>验证 Web 服务端点</h5>
-<p>此属性定义验证服务端点， Web 服务客户机使用该端点进行验证，方法是使用最终用户的 SSOToken 来接收搜索服务资源提供（也称为引导资源提供）。</p>
 <br/>
 
 </body>

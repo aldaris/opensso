@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Sesi&#243;n - Ayuda en l&#237;nea de la consola de Sun Java System Federated Access Manager 8.0
+  <title>Sesi&#243;n - Ayuda en l&#237;nea de la consola de Sun Federated Access Manager 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,17 +31,17 @@
 
 
 <a name="service.scserviceprofile.amsessionservice"></a><h4>Sesi&#243;n</h4>
-<p><a name="indexterm-202"></a>El servicio de sesi&#243;n define valores para una sesi&#243;n de usuario autenticado
+<p><a name="indexterm-196"></a>El servicio de sesi&#243;n define valores para una sesi&#243;n de usuario autenticado
 como, por ejemplo, el tiempo m&#225;ximo de la sesi&#243;n y el tiempo
 m&#225;ximo de inactividad. Los atributos de sesi&#243;n son globales, din&#225;micos o de
 usuario. Los atributos son:</p>
 <ul><li><p><a href="#fwfeu">Instancia de configuraci&#243;n secundaria</a></p></li>
 <li><p><a href="#fwfew">N&#250;mero m&#225;ximo de resultados de b&#250;squeda</a></p></li>
 <li><p><a href="#fwfex">Tiempo de espera para b&#250;squeda</a></p></li>
-<li><p><a href="#fwfez">Notificaciones de cambio de propiedades</a></p></li>
-<li><p><a href="#fwfey">Restricciones de cuotas</a></p></li>
+<li><p><a href="#fwfez">Habilitar notificaciones de cambio de propiedades</a></p></li>
+<li><p><a href="#fwfey">Habilitar restricciones de cuotas</a></p></li>
 <li><p><a href="#fwffa">Lectura de tiempo de espera para restricci&#243;n de cuotas</a></p></li>
-<li><p><a href="#fwffb">Exenci&#243;n de administraciones generales de la comprobaci&#243;n de restricciones </a></p></li>
+<li><p><a href="#fwffb">Exenci&#243;n de administraciones generales de la comprobaci&#243;n de restricciones</a></p></li>
 <li><p><a href="#fwffc">Comportamiento resultante si se agota la cuota de la sesi&#243;n</a></p></li>
 <li><p><a href="#fwffd">Propiedades de notificaci&#243;n</a></p></li>
 <li><p><a href="#fwffe">Tiempo por sesi&#243;n m&#225;ximo</a></p></li>
@@ -67,7 +67,7 @@ de sesi&#243;n. El valor predeterminado es 120.</p>
 <p>Este atributo define el tiempo m&#225;ximo antes de que se finalice una
 b&#250;squeda de sesi&#243;n. El valor predeterminado es 5 segundos.</p>
 
-<a name="fwfez"></a><h5>Notificaciones de cambio de propiedades</h5>
+<a name="fwfez"></a><h5>Habilitar notificaciones de cambio de propiedades</h5>
 <p>Habilita o deshabilita la notificaci&#243;n de cambio de propiedad de la sesi&#243;n.
 En un entorno de inicio de sesi&#243;n &#250;nico, varias aplicaciones pueden compartir
 una sesi&#243;n de Federated Access Manager. Con esta funci&#243;n est&#225; definida como
@@ -77,7 +77,7 @@ atributo de servicio de sesi&#243;n independiente), la notificaci&#243;n se envi
 de aplicaciones que participan en el mismo entorno de inicio de sesi&#243;n
 &#250;nico.</p>
 
-<a name="fwfey"></a><h5>Restricciones de cuotas</h5>
+<a name="fwfey"></a><h5>Habilitar restricciones de cuotas</h5>
 <p>Habilita o deshabilita las restricciones de cuotas de sesi&#243;n. Al activar las
 restricciones de cuotas de sesi&#243;n, se permite que los administradores limiten el
 n&#250;mero de sesiones activas/concurrentes de un usuario a un n&#250;mero espec&#237;fico en
@@ -94,12 +94,12 @@ de sesi&#243;n est&#233; habilitada en la implementaci&#243;n de conmutaci&#243;
 sesi&#243;n. El valor predeterminado es 6.000 milisegundos. Debe reiniciar el servidor si
 ha cambiado la configuraci&#243;n.</p>
 
-<a name="fwffb"></a><h5>Exenci&#243;n de administraciones generales de la comprobaci&#243;n de restricciones </h5>
+<a name="fwffb"></a><h5>Exenci&#243;n de administraciones generales de la comprobaci&#243;n de restricciones</h5>
 <p>Especifica si los usuarios con el rol de Administrador de nivel superior
 deber&#225;n estar exentos de la comprobaci&#243;n de restricciones de sesi&#243;n. En caso
 AFIRMATIVO, incluso si se ha habilitado la restricci&#243;n de cuotas de sesi&#243;n,
-no se realizar&#225; ninguna comprobaci&#243;n de la misma para estos administradores.</p><p>La configuraci&#243;n predeterminada de este atributo es NO. Debe reiniciar el servidor
-si se modifica la configuraci&#243;n. Este atributo s&#243;lo se aplicar&#225; cuando la
+no se realizar&#225; ninguna comprobaci&#243;n de la misma para estos administradores.</p><p>The default setting for this attribute is NO. Debe reiniciar el servidor
+si ha cambiado la configuraci&#243;n. Este atributo s&#243;lo se aplicar&#225; cuando la
 restricci&#243;n de cuotas de sesi&#243;n est&#233; habilitada.</p>
 <hr><p><b>Nota &#8211; </b>El superusuario definido para Federated Access Manager en <tt>AMConfig.properties</tt> (<tt>com.sun.identity.authentication.super.user</tt>) siempre est&#225;
 exento de la comprobaci&#243;n de restricci&#243;n de cuotas de sesi&#243;n. </p>
@@ -116,6 +116,11 @@ usuario. Existen dos opciones para este atributo:</p><dl><dt>DESTROY_OLD_SESSION
 <p>Este atributo s&#243;lo se aplicar&#225; cuando la restricci&#243;n de cuotas de sesi&#243;n
 est&#233; habilitada y la configuraci&#243;n predeterminada sea DESTROY_OLD_SESSION.</p>
 
+<a name="ggyer"></a><h5>Denegar el inicio de sesi&#243;n del usuario cuando el dep&#243;sito de sesiones est&#233; inactivo</h5>
+<p>Si est&#225; configurado en YES, este atributo obligar&#225; el bloqueo del usuario
+al servidor cuando el dep&#243;sito de sesiones est&#233; inactivo. Este atributo s&#243;lo
+se aplicar&#225; cuando est&#233; habilitada la restricci&#243;n de cuota de sesi&#243;n.</p>
+
 <a name="fwffd"></a><h5>Propiedades de notificaci&#243;n</h5>
 <p>Cuando se produce un cambio en una propiedad de sesi&#243;n definida en
 la lista, se enviar&#225; una notificaci&#243;n a las escuchas registradas. El atributo
@@ -126,28 +131,27 @@ de propiedad de sesi&#243;n) est&#233; habilitada.</p>
 <p>Este atributo acepta un valor en minutos para expresar el tiempo m&#225;ximo
 antes de que caduque la sesi&#243;n y el usuario deba volver a
 autenticarse para acceder. Se aceptar&#225; el valor 1 o superior. El valor
-predeterminado es 120. (Para equilibrar los requisitos de seguridad y comodidad, considere
-definir el intervalo de Tiempo por sesi&#243;n m&#225;ximo en un valor superior
-y definir el intervalo de Tiempo inactivo m&#225;ximo en un valor relativamente
-bajo.)El tiempo por sesi&#243;n m&#225;ximo limita la validez de la sesi&#243;n. No
-se ampliar&#225; m&#225;s del valor configurado.</p>
+predeterminado es 120. (To balance the requirements of security and convenience, consider
+setting the Max Session Time interval to a higher value and setting
+the Max Idle Time interval to a relatively low value.) Max Session
+Time limits the validity of the session. No se ampliar&#225; m&#225;s del
+valor configurado.</p>
 
 <a name="fwfff"></a><h5>Tiempo inactivo m&#225;ximo</h5>
 <p>Este atributo acepta un valor (en minutos) igual al tiempo m&#225;ximo sin
 actividad antes de que caduque la sesi&#243;n y el usuario deba volver
-a autenticarse para acceder. Se aceptar&#225; el valor 1 o superior. El
-valor predeterminado es 30. (Para equilibrar los requisitos de seguridad y comodidad,
-considere definir el intervalo de Tiempo por sesi&#243;n m&#225;ximo en un valor
-superior y definir el intervalo de Tiempo inactivo m&#225;ximo en un valor
-relativamente bajo.))</p>
+a autenticarse para acceder. Se aceptar&#225; el valor 1 o superior. The
+default value is 30. (To balance the requirements of security and convenience,
+consider setting the Max Session Time interval to a higher value and
+setting the Max Idle Time interval to a relatively low value.)</p>
 
 <a name="fwffh"></a><h5>Tiempo en cach&#233; m&#225;ximo</h5>
 <p>Este atributo acepta un valor (en minutos) igual al intervalo m&#225;ximo antes
 de que el cliente se ponga en contacto con Federated Access Manager
 para actualizar la informaci&#243;n de la sesi&#243;n en cach&#233;. Se aceptar&#225; el
-valor 0 o superior. El valor predeterminado es 3. Se recomienda que
-el tiempo m&#225;ximo en cach&#233; sea siempre inferior al tiempo m&#225;ximo de
-inactividad.</p>
+valor 0 o superior. El valor predeterminado es 3. It is recommended
+that the maximum caching time should always be less than the maximum
+idle time.</p>
 
 <a name="fwffi"></a><h5>Activar sesiones de usuario</h5>
 <p>Especifica el n&#250;mero m&#225;ximo de sesiones concurrentes permitidas para un usuario.</p>

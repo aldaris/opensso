@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>策略配置 - Sun Java System Federated Access Manager 8.0 主控台線上說明
+  <title>策略配置 - Sun Federated Access Manager 8.0 主控台線上說明
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,7 +31,7 @@
 
 
 <a name="service.scpolicy"></a><h4>策略配置</h4>
-<p><a name="indexterm-197"></a>「策略配置」屬性可讓管理員設定策略服務所使用的全域配置及範圍特性。</p>
+<p><a name="indexterm-191"></a>「策略配置」屬性可讓管理員設定策略服務所使用的全域配置及範圍特性。</p>
 <ul><li><p><a href="#fufnk">全域特性</a></p></li>
 <li><p><a href="#fufmb">範圍屬性</a></p></li></ul>
 
@@ -174,7 +174,7 @@ Access Manager 透過 LDAPS 通訊協定來連接目錄伺服器。</p>
 的同一策略進行評估，策略架構會擷取快取的主體結果，而不是評估主體實例。這會大大減少策略評估的時間。</p>
 
 <a name="fufnm"></a><h5>使用者別名</h5>
-<p>如果建立策略以保護在遠端 Directory Server 中主體成員別名為本機使用者的資源，則必須啟用此屬性。例如，如果在遠端 Directory Server 中建立 <tt>uid=rmuser</tt>，然後將 <tt>rmuser</tt> 做為別名加入到 Federated Access
+<p>如果建立策略以保護在遠端 Directory Server 中主體成員別名為本機使用者的資源，則必須啟用此屬性。例如，如果在遠端 Directory Server 中建立 <tt>uid=rmuser</tt>，然後將 <tt>rmuser</tt> 做為別名增加到 Federated Access
 Manager 中的本機使用者 (如 <tt>uid=luser</tt>)，則必須啟用此屬性。當您以 <tt>rmuser</tt> 登入時，系統會經由本機使用者 (<tt>luser</tt>) 建立階段作業，從而使策略執行成功。</p>
 
 <a name="fufni"></a><h5>選取的回應提供者</h5>

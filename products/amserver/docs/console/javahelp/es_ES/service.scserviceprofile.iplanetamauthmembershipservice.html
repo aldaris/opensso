@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Condici&#243;n de miembro - Ayuda en l&#237;nea de la consola de Sun Java System Federated Access Manager 8.0
+  <title>Condici&#243;n de miembro - Ayuda en l&#237;nea de la consola de Sun Federated Access Manager 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,25 +31,13 @@
 
 
 <a name="service.scserviceprofile.iplanetamauthmembershipservice"></a><h4>Condici&#243;n de miembro</h4>
-<p><a name="indexterm-182"></a>El m&#243;dulo de autenticaci&#243;n Condici&#243;n de miembro se implementa para sitios personalizados.
+<p><a name="indexterm-176"></a>El m&#243;dulo de autenticaci&#243;n Condici&#243;n de miembro se implementa para sitios personalizados.
 Cuando se habilita, un usuario se puede autorregistrar. Esto significa que el
 usuario puede crear una cuenta, personalizarla y acceder a ella sin necesidad
 de un administrador. Los atributos son atributos de dominio. Los atributos son:</p>
 <ul><li><p><a href="#fumys">Longitud de contrase&#241;a m&#237;nima</a></p></li>
 <li><p><a href="#fumyr">Roles de usuario predeterminados</a></p></li>
 <li><p><a href="#fumyt">Estado de usuario despu&#233;s del registro</a></p></li>
-<li><p><a href="#fumzt">Servidor LDAP principal</a></p></li>
-<li><p><a href="#fumza">Servidor LDAP secundario</a></p></li>
-<li><p><a href="#fumyz">DN para iniciar b&#250;squeda de usuario</a></p></li>
-<li><p><a href="#fumzb">DN para conexi&#243;n de superusuario</a></p></li>
-<li><p><a href="#fumze">Contrase&#241;a para conexi&#243;n de superusuario</a></p></li>
-<li><p><a href="#fumzd">Contrase&#241;a para conexi&#243;n de superusuario (root) (confirmar)</a></p></li>
-<li><p><a href="#fumzc">Atributo utilizado para recuperar el perfil de usuario</a></p></li>
-<li><p><a href="#fumzh">Atributos utilizados para buscar un usuario que se va a autenticar</a></p></li>
-<li><p><a href="#fumzg">Filtro de b&#250;squeda de usuarios</a></p></li>
-<li><p><a href="#fumzj">&#193;mbito de b&#250;squeda</a></p></li>
-<li><p><a href="#fumzi">Habilitar SSL para acceder al servidor LDAP</a></p></li>
-<li><p><a href="#fumzk">Devolver DN de usuario para autenticar</a></p></li>
 <li><p><a href="#fumzm">Nivel de autenticaci&#243;n</a></p></li></ul>
 
 
@@ -75,119 +63,6 @@ LDAP, sin embargo, no se aceptan roles filtrados.</p>
 haya autorregistrado. El valor predeterminado es Active (activo) y los servicios est&#225;n
 disponibles para el nuevo usuario. Al seleccionar Inactive (inactivo), el administrador elige
 que no haya servicios disponibles para el nuevo usuario.</p>
-
-<a name="fumzt"></a><h5>Servidor LDAP principal</h5>
-<p>Indica el nombre de host y el n&#250;mero de puerto del servidor
-LDAP principal especificado durante la instalaci&#243;n de Federated Access Manager. Este servidor
-es el primero al que se recurre para la autenticaci&#243;n. El formato
-es <tt></tt><i>hostname:port</i><tt></tt>. Si no hay ning&#250;n n&#250;mero de puerto, utilice <tt>389</tt>.</p><p>Si tiene Federated Access Manager implementado con varios dominios, puede especificar el
-v&#237;nculo de comunicaci&#243;n entre instancias espec&#237;ficas de Federated Access Manager y Directory
-Server con el siguiente formato (las distintas entradas deben tener el nombre
-del servidor local como prefijo):</p><p><tt>local_servername|server:port local_servername2|server2:port2 ...</tt></p><p>Por ejemplo, si tiene dos instancias de Federated Access Manager implementadas en
-ubicaciones distintas (L1-machine1-IS y L2- machine2-IS) que se comunican con diferentes instancias
-de Directory Server (L1-machine1-DS y L2-machine2-DS), deber&#237;a mostrar el siguiente aspecto:</p><p><tt>L1-machine1-IS.example.com|L1-machine1-DS.example.com:389 </tt></p><p><tt>L2-machine2-IS.example.com|L2-machine2-DS.example.com:389 </tt></p>
-
-<a name="fumza"></a><h5>Servidor LDAP secundario</h5>
-<p>Especifica el nombre de host y el n&#250;mero de puerto de un
-servidor LDAP secundario disponible para la plataforma Federated Access Manager. Si el
-servidor LDAP principal no responde a una solicitud de autenticaci&#243;n, se deber&#225;
-establecer comunicaci&#243;n con este servidor. Si el servidor principal est&#225; activo, Federated
-Access Manager conmutar&#225; al servidor principal. El formato tambi&#233;n es <tt></tt><i>hostname:port</i><tt></tt>. Si
-hay varias entradas, el nombre del servidor local debe ir en primer
-lugar.</p>
-<hr><p><b>Precauci&#243;n &#8211; </b>Al autenticar usuarios de un servidor de directorios que se encuentre lejos
-de la empresa de Federated Access Manager, es importante que existan valores
-para el puerto del servidor LDAP principal y el del servidor LDAP
-secundario. Se puede utilizar el valor de una ubicaci&#243;n de Directory Server
-para ambos campos.</p>
-<hr>
-
-
-<a name="fumyz"></a><h5>DN para iniciar b&#250;squeda de usuario</h5>
-<p>Especifica el DN del nodo en el que debe comenzar la b&#250;squeda
-de un usuario. (Por motivos de rendimiento, este DN debe ser lo
-m&#225;s espec&#237;fico posible.) El valor predeterminado es la ra&#237;z del &#225;rbol de
-directorios. Se reconocer&#225; cualquier DN v&#225;lido. Si OBJETO est&#225; seleccionado en el
-atributo &#193;mbito de b&#250;squeda, el DN deber&#237;a especificar el nivel inmediato superior
-al nivel donde existe el perfil. Si hay varias entradas, el nombre
-del servidor local debe ir en primer lugar. El formato es <tt></tt><i>servername|search dn</i><tt></tt>.</p><p>Para entradas m&#250;ltiples:</p><p><tt></tt><i>servername1|search dn servername2|search dn servername3|search dn</i><tt>...</tt></p><p>Si hay varias entradas bajo la organizaci&#243;n root con el mismo Id.
-de usuario, deber&#237;a definirse este par&#225;metro para que s&#243;lo se pueda buscar
-o encontrar la entrada que se autenticar&#225;. Por ejemplo, si el Id.
-de agente y el Id. de usuario se encuentran en la misma
-organizaci&#243;n root, deber&#237;a utilizarse el par&#225;metro <tt>ou=Agents</tt> para que la organizaci&#243;n root
-realice la autenticaci&#243;n mediante el Id. de agente y <tt>ou=People</tt> para que
-la organizaci&#243;n root realice la autenticaci&#243;n mediante el Id. de usuario.</p>
-
-<a name="fumzb"></a><h5>DN para conexi&#243;n de superusuario</h5>
-<p>Especifica el DN del usuario que se utilizar&#225; para conectar con el
-servidor de directorios especificado en el campo "Puerto y servidor LDAP principales"
-como administrador. El servicio de autenticaci&#243;n debe establecer un enlace mediante este
-DN para buscar un DN de usuario coincidente en funci&#243;n del Id.
-de inicio de sesi&#243;n del usuario. El valor predeterminado es <tt>amldapuser.</tt> Se
-reconocer&#225; cualquier DN v&#225;lido.</p>
-
-<a name="fumze"></a><h5>Contrase&#241;a para conexi&#243;n de superusuario</h5>
-<p>Contiene la contrase&#241;a para el perfil de administrador especificado en el campo
-"DN para conexi&#243;n de superusuario (root)". No hay ning&#250;n valor predeterminado. S&#243;lo
-se reconocer&#225; la contrase&#241;a LDAP v&#225;lida del administrador.</p>
-
-<a name="fumzd"></a><h5>Contrase&#241;a para conexi&#243;n de superusuario (root) (confirmar)</h5>
-<p>Confirmaci&#243;n de la contrase&#241;a.</p>
-
-<a name="fumzc"></a><h5>Atributo utilizado para recuperar el perfil de usuario</h5>
-<p>Especifica el atributo utilizado en el convenio de asignaci&#243;n de nombre de
-las entradas de usuario. De forma predeterminada, Federated Access Manager asume que
-las entradas de usuario se identifican mediante el atributo uid. Si Directory
-Server utiliza un atributo diferente (como, por ejemplo, <i>givenname</i>), especifique el nombre
-de atributo en el campo.</p>
-
-<a name="fumzh"></a><h5>Atributos utilizados para buscar un usuario que se va a autenticar</h5>
-<p>Muestra los atributos que se van a utilizar para formar el filtro
-de b&#250;squeda para un usuario que se va a autenticar y permite
-que el usuario se autentique con m&#225;s de un atributo en la
-entrada del usuario. Por ejemplo, si este campo se define como <i>uid</i>,
-<i>n&#250;meroempleado</i> y <i>correo</i>, el usuario se podr&#225; autenticar con cualquiera de esos
-nombres.</p>
-
-<a name="fumzg"></a><h5>Filtro de b&#250;squeda de usuarios</h5>
-<p>Especifica un atributo que se utilizar&#225; para buscar al usuario en el
-campo "DN para iniciar b&#250;squeda de usuario". Funciona con el atributo de
-nombre de usuario. No hay ning&#250;n valor predeterminado. Se reconocer&#225; cualquier atributo
-de entrada de usuario v&#225;lido.</p>
-
-<a name="fumzj"></a><h5>&#193;mbito de b&#250;squeda</h5>
-<p>Indica el n&#250;mero de niveles en el servidor de directorios en el
-que se buscar&#225; un perfil de usuario coincidente. La b&#250;squeda comienza en
-el nodo especificado en el atributo "DN to Start User Search" (DN
-para iniciar b&#250;squeda de usuario) en la p&#225;gina 315. El valor predeterminado
-es SUBTREE (&#193;rbol). Se puede seleccionar una de las siguientes opciones en
-la lista:</p><dl><dt>OBJETO</dt>
-<dd><p>Busca s&#243;lo el nodo especificado.</p></dd>
-<dt>UNNIVEL</dt>
-<dd><p>Busca en el nivel del nodo especificado y en un nivel por debajo de &#233;ste</p></dd>
-<dt>&#193;RBOL</dt>
-<dd><p>Busca en todas las entradas del nodo especificado y de los niveles inferiores a &#233;ste.</p></dd>
-</dl>
-
-
-<a name="fumzi"></a><h5>Habilitar SSL para acceder al servidor LDAP</h5>
-<p>Permite que SSL acceda al servidor de directorios especificado en los campos
-"Puerto y servidor LDAP principales y secundarios". De forma predeterminada, la casilla
-no est&#225; seleccionada y el protocolo SSL no se utilizar&#225; para acceder
-a Directory Server.</p><p>Si se est&#225; ejecutando el servidor LDAP con SSL habilitado (LDAPS), debe
-asegurarse de que Federated Access Manager est&#233; configurado con los certificados SSL
-de confianza adecuados para que AM pueda conectarse al servidor de directorios
-con el protocolo LDAPS</p>
-
-<a name="fumzk"></a><h5>Devolver DN de usuario para autenticar</h5>
-<p>Esta opci&#243;n puede habilitarse cuando el directorio de Federated Access Manager es
-igual al directorio configurado para LDAP. En ese caso, esta opci&#243;n permite
-que el m&#243;dulo de autenticaci&#243;n LDAP devuelva el DN en lugar del
-ID de usuario y no es necesario realizar ninguna b&#250;squeda. Normalmente, un
-m&#243;dulo de autenticaci&#243;n devuelve s&#243;lo el Id. de usuario y el servicio
-de autenticaci&#243;n busca al usuario en el LDAP local de Federated Access
-Manager. Si se utiliza un directorio LDAP externo, normalmente esta opci&#243;n no
-est&#225; habilitada.</p>
 
 <a name="fumzm"></a><h5>Nivel de autenticaci&#243;n</h5>
 <p>El nivel de autenticaci&#243;n se define de forma independiente para cada m&#233;todo

@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Gemeinsame Verbindungskonfiguration - Online-Hilfe zur Sun Java System Federated Access Manager 8.0-Konsole
+  <title>Gemeinsame Verbindungskonfiguration - Online-Hilfe zur Sun Federated Access Manager 8.0-Konsole
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -46,8 +46,9 @@
 <p>Gibt die Implementierungsklasse f&#252;r den Sitzungsanbieter an.</p>
 
 <a name="ggogv"></a><h5>Maximal zul&#228;ssige Inhaltsl&#228;nge</h5>
-<p>Dieses Attribut gibt die maximale Inhaltsl&#228;nge f&#252;r eine HTTP-Anforderung an, die in
-SAML verwendet werden soll.</p>
+<p>Dieses Attribut gibt maximal zul&#228;ssige Inhaltsl&#228;nge f&#252;r eine HTTP-Anforderung an, die in
+Verbindungsdiensten verwendet werden soll. Jede Anforderung, die angegebene maximale Inhaltsl&#228;nge &#252;berschreitet, wird
+zur&#252;ckgewiesen.</p>
 
 <a name="ggogu"></a><h5>SPI-Implementierungsklasse f&#252;r Passwort-Decodierer</h5>
 <p>Dieses Attribut gibt die Implementierungsklasse f&#252;r die <tt> com.sun.identity.saml.xmlsig.PasswordDecoder</tt>-Schnittstelle an, die zur Dekodierung
@@ -55,19 +56,21 @@ des gespeicherten Passworts f&#252;r den XML-Signatur-Schl&#252;sselspeicher und
 unter SAML 1.x verwendet wird.</p>
 
 <a name="ggohx"></a><h5>SPI-Implementierungsklasse f&#252;r Signaturanbieter</h5>
-<p>Dieses Attribut gibt die SAML XML-Signaturanbieterklasse an.</p>
+<p>Dieses Attribut gibt die SAML XML-Signaturanbieterklasse an. Der Standardwert f&#252;r SPI lautet:
+<tt>com.sun.identity.saml.xmlsig.AMSignatureProvider </tt>.</p>
 
 <a name="ggohm"></a><h5>SPI-Implementierungsklasse f&#252;r Schl&#252;sselanbieter</h5>
-<p>Dieses Attribut gibt die XML-Signatur-Schl&#252;sselanbieterklasse an.</p>
+<p>Dieses Attribut gibt die XML-Signatur-Schl&#252;sselanbieterklasse an. Der Standardwert f&#252;r SPI lautet: <tt>com.sun.identity.saml.xmlsig.JKSKeyProvider</tt>.</p>
 
 <a name="ggofo"></a><h5>Vorhandensein von Zertifikaten pr&#252;fen</h5>
-<p>Ist diese Option auf <tt>on</tt> gesetzt, muss das Zertifikat im Schl&#252;sselspeicher f&#252;r
-die  XML-Signaturvalidierung vorgelegt werden. Ist diese Option auf <tt>off</tt> gesetzt, wird
-die &#220;berpr&#252;fung des Vorhandenseins des Zertifikats &#252;bersprungen.</p>
+<p>Ist diese Option auf <tt>on</tt> (ein) gesetzt, muss das Zertifikat dem Schl&#252;sselspeicher
+f&#252;r die  XML-Signaturvalidierung vorgelegt werden.  Ist diese Option auf <tt>off</tt>
+gesetzt, wird die &#220;berpr&#252;fung des Vorhandenseins des Zertifikats &#252;bersprungen. Dies gilt nur
+f&#252;r SMAL1.x.</p>
 
 <a name="ggohn"></a><h5>XML-Kanonikalisierungsalgorithmus</h5>
 <p>Dieses Attribut gibt den XML-Kannonikalisierungsalgorithmus an, der f&#252;r die Generierung und Verifizierung
-der SAML XML-Signatur verwendet wird.</p>
+der SAML XML-Signatur verwendet wird. Der Standardwert lautet <tt>http://www.w3.org/2001/10/xml-exc-c14n#</tt>.</p>
 
 <a name="ggohp"></a><h5>XML-Signaturalgorithmus</h5>
 <p>Dieses Attribut gibt den XML-Signaturalgorithmus an, der f&#252;r die Generierung und Verifizierung

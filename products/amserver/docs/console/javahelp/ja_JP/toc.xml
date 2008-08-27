@@ -1,217 +1,64 @@
-<?xml version='1.0' encoding='euc-jp'?>
+<?xml version='1.0' encoding='utf-8'?>
 <!-- ident   "%Z%%M% %I%   %E% SMI" -->
 <!DOCTYPE toc PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN" "toc_1_0.dtd">
 <toc version="2.0">
 
- <tocitem target="aawelcome" text="Sun Java System Federated Access Manager 8.0 オンラインヘルプ" expand="false">
+ <tocitem target="aawelcome" text="SunTM Federated Access Manager 8.0 オンラインヘルプ" expand="false">
     <tocitem target="intro" text="概要" expand="false"></tocitem></tocitem>
+ <tocitem target="commontasks" text="共通タスク" expand="false">
+    <tocitem target="task.home" text="共通タスクのコンポーネント" expand="false"></tocitem></tocitem>
  <tocitem target="accesscontrol" text="アクセス制御" expand="false">
     <tocitem target="realm.rmrealm" text="レルム" expand="false">
-        <tocitem target="realm.rmrealmadd" text="新しいレルムを作成する" expand="false"></tocitem></tocitem>
-    <tocitem target="realm.realmproperties" text="一般プロパティー" expand="false"></tocitem></tocitem>
- <tocitem target="authentication.authproperties" text="認証" expand="false">
-    <tocitem target="authentication.newauthinstance" text="新しい認証モジュールインスタンスを作成する" expand="false"></tocitem>
-    <tocitem target="authentication.newauthconfig" text="新しい認証連鎖を作成する" expand="false"></tocitem></tocitem>
- <tocitem target="realm.services" text="サービス" expand="false">
-    <tocitem target="realm.servicesadd" text="サービスをレルムに追加する" expand="false"></tocitem></tocitem>
- <tocitem target="realm.idrepo" text="データストア" expand="false">
-    <tocitem target="realm.idreposelecttype" text="新しいデータストアを作成する" expand="false"></tocitem></tocitem>
- <tocitem target="idrepoadd" text="Federated Access Manager データストアの種類" expand="false">
-    <tocitem target="idrepoadd" text="Active Directory" expand="false"></tocitem>
-    <tocitem target="idrepoadd" text="汎用 LDAPv3" expand="false"></tocitem>
-    <tocitem target="idrepoadd" text="Federated Access Manager スキーマを含んだ Sun Directory Server" expand="false"></tocitem></tocitem>
- <tocitem target="adattrs" text="Active Directory の属性" expand="false">
-    <tocitem target="adattrs" text="LDAP サーバー" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP バインド DN" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP バインドパスワード" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP バインドパスワード (確認)" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP 組織 DN" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP SSL" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP 接続プールの最小サイズ" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP 接続プールの最大サイズ" expand="false"></tocitem>
-    <tocitem target="adattrs" text="検索で返される結果の最大数" expand="false"></tocitem>
-    <tocitem target="adattrs" text="検索タイムアウト" expand="false"></tocitem>
-    <tocitem target="adattrs" text="参照先も LDAP 検索する" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAPv3 リポジトリプラグインクラス名" expand="false"></tocitem>
-    <tocitem target="adattrs" text="一般属性名マッピング" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAPv3 プラグインでサポートされるタイプおよび操作" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAPv3 プラグイン検索範囲" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP ユーザー検索属性" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP ユーザー検索フィルタ" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP ユーザーオブジェクトクラス" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP ユーザー属性" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP ユーザー作成属性マッピング" expand="false"></tocitem>
-    <tocitem target="adattrs" text="ユーザー状態属性" expand="false"></tocitem>
-    <tocitem target="adattrs" text="ユーザー状態のアクティブ値" expand="false"></tocitem>
-    <tocitem target="adattrs" text="ユーザー状態の非アクティブ値" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP グループ検索属性" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP グループ検索フィルタ" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP グループコンテナネーミング属性" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP グループコンテナ値" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP グループオブジェクトクラス" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP グループ属性" expand="false"></tocitem>
-    <tocitem target="adattrs" text="グループメンバーシップ属性" expand="false"></tocitem>
-    <tocitem target="adattrs" text="一意のメンバー属性" expand="false"></tocitem>
-    <tocitem target="adattrs" text="グループメンバー URL 属性" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP ピープルコンテナネーミング属性" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP ピープルコンテナ値" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP エージェント検索属性" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP エージェントコンテナネーミング属性" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP エージェントコンテナ値" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP エージェント検索フィルタ" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP エージェントオブジェクトクラス" expand="false"></tocitem>
-    <tocitem target="adattrs" text="LDAP エージェント属性" expand="false"></tocitem>
-    <tocitem target="adattrs" text="認証可能なアイデンティティータイプ" expand="false"></tocitem>
-    <tocitem target="adattrs" text="持続検索ベース DN" expand="false"></tocitem>
-    <tocitem target="adattrs" text="持続検索フィルタ" expand="false"></tocitem>
-    <tocitem target="adattrs" text="再起動前の持続検索の最大アイドル時間" expand="false"></tocitem>
-    <tocitem target="adattrs" text="エラーコードの後の再試行の最大数" expand="false"></tocitem>
-    <tocitem target="adattrs" text="再試行の間の遅延時間" expand="false"></tocitem>
-    <tocitem target="adattrs" text="再試行する LDAPException エラーコード" expand="false"></tocitem>
-    <tocitem target="adattrs" text="キャッシュ" expand="false"></tocitem>
-    <tocitem target="adattrs" text="キャッシュされた項目の最長有効期間" expand="false"></tocitem>
-    <tocitem target="adattrs" text="キャッシュの最大サイズ" expand="false"></tocitem></tocitem>
- <tocitem target="gdoto" text="汎用 LDAPv3 属性" expand="false">
-    <tocitem target="gdoto" text="LDAP サーバー" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP バインド DN" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP バインドパスワード" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP バインドパスワード (確認)" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP 組織 DN" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP SSL" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP 接続プールの最小サイズ" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP 接続プールの最大サイズ" expand="false"></tocitem>
-    <tocitem target="gdoto" text="検索で返される結果の最大数" expand="false"></tocitem>
-    <tocitem target="gdoto" text="検索タイムアウト" expand="false"></tocitem>
-    <tocitem target="gdoto" text="参照先も LDAP 検索する" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAPv3 リポジトリプラグインクラス名" expand="false"></tocitem>
-    <tocitem target="gdoto" text="一般属性名マッピング" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAPv3 プラグインでサポートされるタイプおよび操作" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAPv3 プラグイン検索範囲" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP ユーザー検索属性" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP ユーザー検索フィルタ" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP ユーザーオブジェクトクラス" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP ユーザー属性" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP ユーザー作成属性マッピング" expand="false"></tocitem>
-    <tocitem target="gdoto" text="ユーザー状態属性" expand="false"></tocitem>
-    <tocitem target="gdoto" text="ユーザー状態のアクティブ値" expand="false"></tocitem>
-    <tocitem target="gdoto" text="ユーザー状態の非アクティブ値" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP グループ検索属性" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP グループ検索フィルタ" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP グループコンテナネーミング属性" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP グループコンテナ値" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP グループオブジェクトクラス" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP グループ属性" expand="false"></tocitem>
-    <tocitem target="gdoto" text="グループメンバーシップ属性" expand="false"></tocitem>
-    <tocitem target="gdoto" text="一意のメンバー属性" expand="false"></tocitem>
-    <tocitem target="gdoto" text="グループメンバー URL 属性" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP ピープルコンテナネーミング属性" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP ピープルコンテナ値" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP エージェント検索属性" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP エージェントコンテナネーミング属性" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP エージェントコンテナ値" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP エージェント検索フィルタ" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP エージェントオブジェクトクラス" expand="false"></tocitem>
-    <tocitem target="gdoto" text="LDAP エージェント属性" expand="false"></tocitem>
-    <tocitem target="gdoto" text="認証可能なアイデンティティータイプ" expand="false"></tocitem>
-    <tocitem target="gdoto" text="持続検索ベース DN" expand="false"></tocitem>
-    <tocitem target="gdoto" text="持続検索フィルタ" expand="false"></tocitem>
-    <tocitem target="gdoto" text="再起動前の持続検索の最大アイドル時間" expand="false"></tocitem>
-    <tocitem target="gdoto" text="エラーコードの後の再試行の最大数" expand="false"></tocitem>
-    <tocitem target="gdoto" text="再試行の間の遅延時間" expand="false"></tocitem>
-    <tocitem target="gdoto" text="再試行する LDAPException エラーコード" expand="false"></tocitem>
-    <tocitem target="gdoto" text="キャッシュ" expand="false"></tocitem>
-    <tocitem target="gdoto" text="キャッシュされた項目の最長有効期間" expand="false"></tocitem>
-    <tocitem target="gdoto" text="キャッシュの最大サイズ" expand="false"></tocitem></tocitem>
- <tocitem target="sundirattrs" text="Federated Access Manager スキーマ属性を含んだ Sun Directory Server" expand="false">
-    <tocitem target="sundirattrs" text="LDAP サーバー" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP バインド DN" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP バインドパスワード" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP バインドパスワード (確認)" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP 組織 DN" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP SSL" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP 接続プールの最小サイズ" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP 接続プールの最大サイズ" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="検索で返される結果の最大数" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="検索タイムアウト" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="参照先も LDAP 検索する" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAPv3 リポジトリプラグインクラス名" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="一般属性名マッピング" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAPv3 プラグインでサポートされるタイプおよび操作" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAPv3 プラグイン検索範囲" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP ユーザー検索属性" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP ユーザー検索フィルタ" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP ユーザーオブジェクトクラス" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP ユーザー属性" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP ユーザー作成属性マッピング" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="ユーザー状態属性" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="ユーザー状態のアクティブ値" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="ユーザー状態の非アクティブ値" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP グループ検索属性" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP グループ検索フィルタ" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP グループコンテナネーミング属性" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP グループコンテナ値" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP グループオブジェクトクラス" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP グループ属性" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="グループメンバーシップ属性" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="一意のメンバー属性" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="グループメンバー URL 属性" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP ピープルコンテナネーミング属性" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP ピープルコンテナ値" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP エージェント検索属性" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP エージェントコンテナネーミング属性" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP エージェントコンテナ値" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP エージェント検索フィルタ" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP エージェントオブジェクトクラス" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="LDAP エージェント属性" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="認証可能なアイデンティティータイプ" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="持続検索ベース DN" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="持続検索フィルタ" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="再起動前の持続検索の最大アイドル時間" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="エラーコードの後の再試行の最大数" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="再試行の間の遅延時間" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="再試行する LDAPException エラーコード" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="キャッシュ" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="キャッシュされた項目の最長有効期間" expand="false"></tocitem>
-    <tocitem target="sundirattrs" text="キャッシュの最大サイズ" expand="false"></tocitem></tocitem>
- <tocitem target="delegation.delegation" text="権限" expand="false">
-    <tocitem target="delegation.delegationproperties" text="権限プロパティー" expand="false"></tocitem></tocitem>
- <tocitem target="policy.policy" text="ポリシー" expand="false">
-    <tocitem target="normalpolicy" text="標準ポリシー" expand="false">
-        <tocitem target="policy.policynormaladd" text="新しい標準ポリシーを作成する" expand="false"></tocitem></tocitem></tocitem>
- <tocitem target="normalrule" text="ルール" expand="false">
-    <tocitem target="policy.ruleadd" text="ルールをポリシーに追加する" expand="false"></tocitem></tocitem>
- <tocitem target="normalsubject" text="対象" expand="false">
-    <tocitem target="policy.subjectadd" text="対象をポリシーに追加する" expand="false"></tocitem></tocitem>
- <tocitem target="policyconditions" text="条件" expand="false">
-    <tocitem target="policy.selectconditiontype" text="条件をポリシーに追加する" expand="false"></tocitem></tocitem>
- <tocitem target="policy.pmdefaultsessioncondtionadd" text="アクティブなセッション時間" expand="false"></tocitem>
- <tocitem target="policy.authtoserviceadd" text="モジュール連鎖による認証" expand="false"></tocitem>
- <tocitem target="policy.pmdefaultauthlevelconditionadd" text="認証レベル (大きいか等しい)" expand="false"></tocitem>
- <tocitem target="gdovl" text="認証レベル (小さいか等しい)" expand="false"></tocitem>
- <tocitem target="policy.pmdefaultauthschemeconditionadd" text="モジュールインスタンスによる認証" expand="false"></tocitem>
- <tocitem target="policy.sessionpropertyconditionadd" text="現在のセッションプロパティー" expand="false"></tocitem>
- <tocitem target="policy.pmdefaultipcondition" text="IP アドレス/DNS 名" expand="false"></tocitem>
- <tocitem target="policy.conditionadd" text="LDAP フィルタ条件" expand="false"></tocitem>
- <tocitem target="policy.authtorealmadd" text="レルムへの認証" expand="false"></tocitem>
- <tocitem target="policy.pmdefaulttimeconditionadd" text="時間 (曜日、日付、時刻、タイムゾーン)" expand="false"></tocitem>
- <tocitem target="responseprovider" text="応答プロバイダ" expand="false">
-    <tocitem target="policy.responseprovideradd" text="応答プロバイダをポリシーに追加する" expand="false"></tocitem></tocitem>
- <tocitem target="fyfby" text="参照ポリシー" expand="false">
-    <tocitem target="policy.policyreferraladd" text="新しい参照ポリシーを作成する" expand="false"></tocitem></tocitem>
- <tocitem target="referrals" text="参照" expand="false">
-    <tocitem target="policy.selectreferraltype" text="参照をポリシーに追加する" expand="false"></tocitem></tocitem>
- <tocitem target="idm.entities" text="対象" expand="false">
-    <tocitem target="subjectuser" text="ユーザー" expand="false">
-        <tocitem target="subjectcreateuser" text="ユーザーを作成または変更する" expand="false"></tocitem>
-        <tocitem target="addusertogroup" text="ユーザーをロールとグループに追加する" expand="false"></tocitem>
-        <tocitem target="idm.entityservices" text="サービスをアイデンティティーに追加する" expand="false"></tocitem></tocitem></tocitem>
- <tocitem target="subject.filteredrole" text="フィルタロール" expand="false">
-    <tocitem target="subject.createfiltrole" text="フィルタロールを作成する" expand="false"></tocitem></tocitem>
- <tocitem target="subject.role" text="ロール" expand="false">
-    <tocitem target="subject.createrole" text="ロールを作成または変更する" expand="false"></tocitem>
-    <tocitem target="idm.entitymembers" text="ユーザーをロールまたはグループに追加する" expand="false"></tocitem></tocitem>
- <tocitem target="subject.group" text="グループ" expand="false">
-    <tocitem target="subject.creategroup" text="グループを作成または変更する" expand="false"></tocitem></tocitem>
+        <tocitem target="realm.rmrealmadd" text="新しいレルムを作成する" expand="false"></tocitem>
+        <tocitem target="realm.realmproperties" text="一般プロパティー" expand="false"></tocitem></tocitem>
+    <tocitem target="authentication.authproperties" text="認証" expand="false">
+        <tocitem target="authentication.newauthinstance" text="新しい認証モジュールインスタンスを作成する" expand="false"></tocitem>
+        <tocitem target="authentication.newauthconfig" text="新しい認証連鎖を作成する" expand="false"></tocitem></tocitem>
+    <tocitem target="realm.services" text="サービス" expand="false">
+        <tocitem target="realm.servicesadd" text="サービスをレルムに追加する" expand="false"></tocitem></tocitem>
+    <tocitem target="realm.idrepo" text="データストア" expand="false">
+        <tocitem target="realm.idreposelecttype" text="新しいデータストアを作成する" expand="false"></tocitem>
+        <tocitem target="idrepoadd" text="Federated Access Manager データストアの種類" expand="false"></tocitem>
+        <tocitem target="realm.idrepoedit" text="データストアの設定" expand="false"></tocitem>
+        <tocitem target="realm.idrepoeditad" text="Active Directory の属性" expand="false"></tocitem>
+        <tocitem target="realm.idrepoeditldapv3" text="汎用 LDAPv3 属性" expand="false"></tocitem>
+        <tocitem target="realm.idrepoeditfamschema" text="Federated Access Manager スキーマ属性を含んだ Sun Directory Server" expand="false"></tocitem></tocitem>
+    <tocitem target="delegation.delegation" text="権限" expand="false">
+        <tocitem target="delegation.delegationproperties" text="権限プロパティー" expand="false"></tocitem></tocitem>
+    <tocitem target="policy.policy" text="ポリシー" expand="false">
+        <tocitem target="normalpolicy" text="標準ポリシー" expand="false"></tocitem>
+        <tocitem target="policy.selectservicetype" text="ルール" expand="false"></tocitem>
+        <tocitem target="policy.selectsubjecttype" text="対象" expand="false"></tocitem>
+        <tocitem target="policy.selectcondition" text="条件" expand="false"></tocitem>
+        <tocitem target="policy.pmdefaultsessioncondtionadd" text="アクティブなセッション時間" expand="false"></tocitem>
+        <tocitem target="policy.authtoserviceadd" text="モジュール連鎖による認証" expand="false"></tocitem>
+        <tocitem target="policy.pmdefaultauthlevelconditionadd" text="認証レベル (大きいか等しい)" expand="false"></tocitem>
+        <tocitem target="gdovl" text="認証レベル (小さいか等しい)" expand="false"></tocitem>
+        <tocitem target="policy.pmdefaultauthschemeconditionadd" text="モジュールインスタンスによる認証" expand="false"></tocitem>
+        <tocitem target="policy.sessionpropertyconditionadd" text="現在のセッションプロパティー" expand="false"></tocitem>
+        <tocitem target="policy.pmdefaultipcondition" text="IP アドレス/DNS 名" expand="false"></tocitem>
+        <tocitem target="policy.membershipconditionadd" text="アイデンティティーメンバーシップ" expand="false"></tocitem>
+        <tocitem target="policy.conditionadd" text="LDAP フィルタ条件" expand="false"></tocitem>
+        <tocitem target="policy.authtorealmadd" text="レルムへの認証" expand="false"></tocitem>
+        <tocitem target="policy.pmdefaulttimeconditionadd" text="時間 (曜日、日付、時刻、タイムゾーン)" expand="false"></tocitem>
+        <tocitem target="responseprovider" text="応答プロバイダ" expand="false"></tocitem>
+        <tocitem target="fyfby" text="参照ポリシー" expand="false"></tocitem>
+        <tocitem target="referrals" text="参照" expand="false"></tocitem></tocitem>
+    <tocitem target="idm.entities" text="対象" expand="false">
+        <tocitem target="idm.entityadd" text="対象の作成" expand="false"></tocitem>
+        <tocitem target="subjectuser" text="ユーザー" expand="false"></tocitem>
+        <tocitem target="idm.entitiesgroup" text="グループ" expand="false"></tocitem></tocitem>
+    <tocitem target="agentconfig.agents" text="エージェント" expand="false">
+        <tocitem target="ggobs" text="新しいグループおよびエージェントの作成" expand="false"></tocitem>
+        <tocitem target="agentconfig.genericagentprofile" text="エージェントの設定" expand="false"></tocitem>
+        <tocitem target="agentconfig.webagentprofile" text="Web ポリシーエージェント" expand="false"></tocitem>
+        <tocitem target="agentconfig.j2eeagentprofile" text="J2EE ポリシーエージェント" expand="false"></tocitem>
+        <tocitem target="agentconfig.webserviceprovideredit" text="Web サービスプロバイダ" expand="false"></tocitem>
+        <tocitem target="agentconfig.webserviceclientedit" text="Web サービスクライアント属性" expand="false"></tocitem>
+        <tocitem target="agentconfig.stsclientedit" text="STS クライアント" expand="false"></tocitem>
+        <tocitem target="agentconfig.discoveryagentprofile" text="ディスカバリエージェント属性" expand="false"></tocitem>
+        <tocitem target="agentconfig.webservicestsedit" text="セキュリティートークンサービス属性" expand="false"></tocitem>
+        <tocitem target="agentconfig.22agentprofile" text="2.2 ポリシーエージェント" expand="false"></tocitem></tocitem></tocitem>
  <tocitem target="dirmang" text="ディレクトリ管理" expand="false">
     <tocitem target="dm.home" text="ディレクトリ管理" expand="false"></tocitem></tocitem>
  <tocitem target="federation.federation" text="連携" expand="false">
@@ -219,39 +66,37 @@
         <tocitem target="federation.createcot" text="新しいトラストサークルを作成する" expand="false"></tocitem>
         <tocitem target="federation.fsauthdomainsedit" text="トラストサークルプロファイルを変更する" expand="false"></tocitem>
         <tocitem target="federation.fsauthdomainsselectprovider" text="トラストサークルにプロバイダを追加する" expand="false"></tocitem>
-        <tocitem target="deleteauthdomain" text="トラストサークルプロファイルを削除する" expand="false"></tocitem></tocitem></tocitem>
- <tocitem target="federation.fsentitydescriptors" text="エンティティー: プロバイダおよびアフィリエイト" expand="false">
-    <tocitem target="federation.fsentitydescriptorsadd" text="プロバイダエンティティーまたはアフィリエイトエンティティーを作成する" expand="false"></tocitem>
-    <tocitem target="federation.fsentitydescriptorsprofile" text="プロバイダエンティティーまたはアフィリエイトエンティティーの一般属性を変更する" expand="false"></tocitem>
-    <tocitem target="federation.fsidentityprovider" text="アイデンティティープロバイダをプロバイダエンティティーに追加する" expand="false"></tocitem>
-    <tocitem target="federation.fsidentityproviderhostedadd" text="新しいホストアイデンティティープロバイダをプロバイダエンティティーに追加する" expand="false"></tocitem>
-    <tocitem target="federation.fsidentityproviderremoteadd" text="新しいリモートアイデンティティープロバイダをプロバイダエンティティーに追加する" expand="false"></tocitem>
-    <tocitem target="federation.fsserviceprovider" text="サービスプロバイダをプロバイダエンティティーに追加する" expand="false"></tocitem>
-    <tocitem target="federation.fsserviceproviderhostedadd" text="新しいホストサービスプロバイダをプロバイダエンティティーに追加する" expand="false"></tocitem>
-    <tocitem target="federation.fsserviceproviderremoteadd" text="新しいリモートサービスプロバイダをプロバイダエンティティーに追加する" expand="false"></tocitem>
-    <tocitem target="federation.fsidentityproviderhostedprofile" text="プロバイダエンティティーに含まれるホストアイデンティティープロバイダ属性を変更する" expand="false"></tocitem>
-    <tocitem target="federation.fsidentityproviderremoteprofile" text="プロバイダエンティティーに含まれるリモートアイデンティティープロバイダ属性を変更する" expand="false"></tocitem>
-    <tocitem target="federation.fsserviceproviderhostedprofile" text="プロバイダエンティティーに含まれるホストサービスプロバイダ属性を変更する" expand="false"></tocitem>
-    <tocitem target="federation.fsserviceproviderremoteprofile" text="プロバイダエンティティーに含まれるリモートサービスプロバイダ属性を変更する" expand="false"></tocitem>
-    <tocitem target="federation.fscreatecontactperson" text="担当者をプロバイダエンティティーに含まれるプロバイダに追加する" expand="false"></tocitem>
-    <tocitem target="federation.fseditcontactperson" text="プロバイダエンティティーに含まれる担当者プロファイルを変更する" expand="false"></tocitem>
-    <tocitem target="federation.fsentitydescriptorsaffiliate" text="アフィリエイトエンティティーにメンバーを追加する" expand="false"></tocitem></tocitem>
- <tocitem target="federation.fssamlservice" text="SAML1.x " expand="false">
-    <tocitem target="targetspecifier" text="ターゲット指定子" expand="false"></tocitem>
-    <tocitem target="siteidentifiers" text="サイト ID" expand="false">
-        <tocitem target="federation.fssamlsiteidadd" text="サイト ID を設定する" expand="false"></tocitem></tocitem></tocitem>
- <tocitem target="trustedpartners" text="信頼パートナー" expand="false">
-    <tocitem target="federation.fssamlselecttrustedpartnertype" text="信頼パートナー: パートナータイプおよびプロファイルを選択する" expand="false"></tocitem>
-    <tocitem target="federation.fssamltrustedpartnersadd" text="信頼パートナー: 信頼パートナー属性を設定する" expand="false"></tocitem></tocitem>
- <tocitem target="targeturl" text="ターゲット URL" expand="false">
-    <tocitem target="federation.fssamltargeturlsadd" text="ターゲット URL を設定する" expand="false"></tocitem></tocitem>
- <tocitem target="assertiontimeout" text="表明のタイムアウト" expand="false"></tocitem>
- <tocitem target="assertionskew" text="notBefore 時間の表明スキュー係数" expand="false"></tocitem>
- <tocitem target="artifacttimeout" text="アーティファクトのタイムアウト" expand="false"></tocitem>
- <tocitem target="samlartifactname" text="SAML アーティファクト名" expand="false"></tocitem>
- <tocitem target="signsamlassertion" text="署名 SAML 表明" expand="false"></tocitem>
- <tocitem target="signsamlrequest" text="署名 SAML 要求" expand="false"></tocitem>
- <tocitem target="signsamlresponse" text="署名 SAML 応答" expand="false"></tocitem>
+        <tocitem target="deleteauthdomain" text="トラストサークルプロファイルを削除する" expand="false"></tocitem></tocitem>
+    <tocitem target="federation.createsaml2metadata" text="エンティティープロバイダ" expand="false">
+        <tocitem target="ggwxp" text="SAMLv2 プロバイダエンティティー" expand="false"></tocitem>
+        <tocitem target="ggwwz" text="ID-FF プロバイダエンティティー " expand="false"></tocitem>
+        <tocitem target="federation.createwsfedprovider" text="WS 連携プロバイダエンティティー" expand="false"></tocitem>
+        <tocitem target="federation.samlv2spassertioncontent" text="SAMLv2 サービスプロバイダのカスタマイズ " expand="false"></tocitem>
+        <tocitem target="federation.samlv2idpassertioncontent" text="SAMLv2 アイデンティティープロバイダのカスタマイズ" expand="false"></tocitem>
+        <tocitem target="federation.samlv2pdp" text="SAMLv2 XACML PDP のカスタマイズ " expand="false"></tocitem>
+        <tocitem target="federation.samlv2pep" text="SAMLv2 XACML PEP のカスタマイズ" expand="false"></tocitem>
+        <tocitem target="federation.samlv2attrauthority" text="SAMLv2 属性権限のカスタマイズ" expand="false"></tocitem>
+        <tocitem target="federation.samlv2attrquery" text="SAMLv2 属性クエリーのカスタマイズ" expand="false"></tocitem>
+        <tocitem target="federation.samlv2authnauthority" text="SAMLv2 認証権限のカスタマイズ" expand="false"></tocitem>
+        <tocitem target="federation.samlv2affiliate" text="SAMLv2 ホストアフィリエイトのカスタマイズ" expand="false"></tocitem>
+        <tocitem target="federation.idffidp" text="ID-FF アイデンティティープロバイダのカスタマイズ" expand="false"></tocitem>
+        <tocitem target="federation.idffsp" text="ID-FF サービスプロバイダのカスタマイズ" expand="false"></tocitem>
+        <tocitem target="federation.wsfedgeneral" text="WS 連携の一般属性" expand="false"></tocitem>
+        <tocitem target="federation.wsfedidp" text="WS 連携アイデンティティープロバイダのカスタマイズ" expand="false"></tocitem>
+        <tocitem target="federation.wsfedsp" text="WS 連携サービスプロバイダのカスタマイズ" expand="false"></tocitem></tocitem>
+    <tocitem target="federation.fssamlservice" text="SAML1.x" expand="false">
+        <tocitem target="targetspecifier" text="ターゲット指定子" expand="false"></tocitem>
+        <tocitem target="siteidentifiers" text="サイト ID" expand="false"></tocitem>
+        <tocitem target="trustedpartners" text="信頼パートナー" expand="false"></tocitem>
+        <tocitem target="federation.fsssamltargeturlsadd" text="ターゲット URL" expand="false"></tocitem>
+        <tocitem target="assertiontimeout" text="表明のタイムアウト" expand="false"></tocitem>
+        <tocitem target="assertionskew" text="notBefore 時間の表明スキュー係数" expand="false"></tocitem>
+        <tocitem target="artifacttimeout" text="アーティファクトのタイムアウト" expand="false"></tocitem>
+        <tocitem target="samlartifactname" text="SAML アーティファクト名" expand="false"></tocitem>
+        <tocitem target="signsamlassertion" text="署名 SAML 表明" expand="false"></tocitem>
+        <tocitem target="signsamlrequest" text="署名 SAML 要求" expand="false"></tocitem>
+        <tocitem target="signsamlresponse" text="署名 SAML 応答" expand="false"></tocitem>
+        <tocitem target="ggyfk" text="属性クエリー" expand="false"></tocitem></tocitem></tocitem>
  <tocitem target="webservices" text="Web サービス" expand="false">
     <tocitem target="webservices.wspersonalprofileservice" text="Liberty 個人プロファイルサービス" expand="false">
         <tocitem target="resourceidmapper" text="リソース ID マッパー" expand="false"></tocitem>
@@ -260,904 +105,98 @@
         <tocitem target="ppproviderid" text="プロバイダ ID" expand="false"></tocitem>
         <tocitem target="namescheme" text="ネーミング方式" expand="false"></tocitem>
         <tocitem target="namespaceprefix" text="ネームスペースプレフィックス" expand="false"></tocitem>
-        <tocitem target="supportedcontainers" text="サポートされているコンテナ" expand="false">
-            <tocitem target="webservices.wsppservicesupportedcontaineradd" text="サポートされているコンテナを設定する" expand="false"></tocitem></tocitem></tocitem>
-    <tocitem target="ppldapattributemaplist" text="PPLDAP 属性マップリスト" expand="false">
-        <tocitem target="webservices.wsppservicedsattributemaplistadd" text="属性マッピングを設定する" expand="false"></tocitem></tocitem></tocitem>
- <tocitem target="requirequery" text="ポリシー評価のクエリーが必要:" expand="false"></tocitem>
- <tocitem target="requiremodify" text="ポリシー評価の変更が必要:" expand="false"></tocitem>
- <tocitem target="extensioncontainerattributes" text="拡張コンテナ属性" expand="false"></tocitem>
- <tocitem target="extensionattributesnamespaceprefix" text="拡張属性のネームスペースプレフィックス" expand="false"></tocitem>
- <tocitem target="serviceupdateenabled" text="サービスの更新" expand="false"></tocitem>
- <tocitem target="serviceinstanceupdateclass" text="サービスインスタンス更新クラス" expand="false"></tocitem>
- <tocitem target="alternateendpoint" text="代替エンドポイント" expand="false"></tocitem>
- <tocitem target="alternatesecuritymechanisms" text="代替セキュリティーメカニズム" expand="false"></tocitem>
- <tocitem target="service.smdiscoveryservice" text="ディスカバリサービス" expand="false">
-    <tocitem target="dsproviderid" text="プロバイダ ID" expand="false"></tocitem>
-    <tocitem target="supportedauthmechanisms" text="サポートされている認証メカニズム" expand="false"></tocitem>
-    <tocitem target="supporteddirectives" text="サポートされているディレクティブ" expand="false"></tocitem>
-    <tocitem target="policyevaldiscolookup" text="ディスカバリ検索のポリシー評価" expand="false"></tocitem>
-    <tocitem target="policyevaldiscoupdate" text="ディスカバリ更新のポリシー評価" expand="false"></tocitem>
-    <tocitem target="authorizerpluginclass" text="オーサライザプラグインクラス:" expand="false"></tocitem>
-    <tocitem target="entryhandlerpluginclass" text="エントリハンドラプラグインクラス:" expand="false"></tocitem>
-    <tocitem target="resourceidmapperpluginclass" text="リソース ID マッパープラグイン用のクラス" expand="false">
-        <tocitem target="service.smdiscoveryproviderresourceidmapperadd" text="リソース ID マッパーを設定する" expand="false"></tocitem></tocitem></tocitem>
- <tocitem target="authresponsemessage" text="応答メッセージの認証" expand="false"></tocitem>
- <tocitem target="generatesessioncontext" text="ブートストラップ用のセッションコンテキストステートメント" expand="false"></tocitem>
- <tocitem target="encryptnameidentifier" text="ブートストラップ用のセッションコンテキスト内での NameIdentifier の暗号化" expand="false"></tocitem>
- <tocitem target="useimpliedresource" text="暗黙のリソース" expand="false"></tocitem>
- <tocitem target="resourceofferingsbootstrapping" text="ブートストラップのリソースオファリング" expand="false">
-    <tocitem target="service.smdiscoverybootstraprefoffadd" text="ブートストラップのリソースオファリングを設定する" expand="false"></tocitem>
-    <tocitem target="service.smdiscoverydescriptionadd" text="サービス記述を設定する" expand="false"></tocitem></tocitem>
- <tocitem target="service.scsoapbinding" text="SOAP バインドサービス" expand="false">
-    <tocitem target="requesthandlerlist" text="要求ハンドラリスト" expand="false">
-        <tocitem target="service.scsoapbindingrequesthandlerlistadd" text="要求ハンドラを設定する" expand="false"></tocitem></tocitem></tocitem>
- <tocitem target="ggodb" text="SOAP バインド属性" expand="false">
-    <tocitem target="ggodb" text="Web サービス認証" expand="false"></tocitem>
-    <tocitem target="ggodb" text="サポートされている認証メカニズム" expand="false"></tocitem>
-    <tocitem target="ggodb" text="既知のプロバイダのみを強制" expand="false"></tocitem>
-    <tocitem target="ggodb" text="SSL クライアント認証用の証明書エイリアス" expand="false"></tocitem>
-    <tocitem target="ggodb" text="古いメッセージの制限時間" expand="false"></tocitem>
-    <tocitem target="ggodb" text="メッセージ ID キャッシュのクリーンアップ間隔" expand="false"></tocitem>
-    <tocitem target="ggodb" text="サポートされる SOAP アクター" expand="false"></tocitem>
-    <tocitem target="ggodb" text="ネームスペースプレフィックスマッピング" expand="false"></tocitem>
-    <tocitem target="ggodb" text="JAXB パッケージリスト" expand="false"></tocitem>
-    <tocitem target="ggodb" text="Liberty アイデンティティー Web サービスのバージョン" expand="false"></tocitem></tocitem>
- <tocitem target="webservices.wsauthnservices" text="認証 Web サービス" expand="false">
-    <tocitem target="mechanismhandlerslist" text="メカニズムハンドラリスト" expand="false">
-        <tocitem target="webservices.wsauthnserviceshandlersadd" text="新規メカニズムハンドラを設定する" expand="false"></tocitem></tocitem></tocitem>
+        <tocitem target="supportedcontainers" text="サポートされているコンテナ" expand="false"></tocitem>
+        <tocitem target="ppldapattributemaplist" text="PPLDAP 属性マップリスト" expand="false"></tocitem>
+        <tocitem target="requirequery" text="ポリシー評価のクエリーが必要:" expand="false"></tocitem>
+        <tocitem target="requiremodify" text="ポリシー評価の変更が必要:" expand="false"></tocitem>
+        <tocitem target="extensioncontainerattributes" text="拡張コンテナ属性" expand="false"></tocitem>
+        <tocitem target="extensionattributesnamespaceprefix" text="拡張属性のネームスペースプレフィックス" expand="false"></tocitem>
+        <tocitem target="serviceupdateenabled" text="サービスの更新" expand="false"></tocitem>
+        <tocitem target="serviceinstanceupdateclass" text="サービスインスタンス更新クラス" expand="false"></tocitem>
+        <tocitem target="alternateendpoint" text="代替エンドポイント" expand="false"></tocitem>
+        <tocitem target="alternatesecuritymechanisms" text="代替セキュリティーメカニズム" expand="false"></tocitem></tocitem>
+    <tocitem target="service.smdiscoveryservice" text="ディスカバリサービス" expand="false">
+        <tocitem target="dsproviderid" text="プロバイダ ID" expand="false"></tocitem>
+        <tocitem target="supportedauthmechanisms" text="サポートされている認証メカニズム" expand="false"></tocitem>
+        <tocitem target="supporteddirectives" text="サポートされているディレクティブ" expand="false"></tocitem>
+        <tocitem target="policyevaldiscolookup" text="ディスカバリ検索のポリシー評価" expand="false"></tocitem>
+        <tocitem target="policyevaldiscoupdate" text="ディスカバリ更新のポリシー評価" expand="false"></tocitem>
+        <tocitem target="authorizerpluginclass" text="オーサライザプラグインクラス:" expand="false"></tocitem>
+        <tocitem target="entryhandlerpluginclass" text="エントリハンドラプラグインクラス:" expand="false"></tocitem>
+        <tocitem target="resourceidmapperpluginclass" text="リソース ID マッパープラグイン用のクラス" expand="false"></tocitem>
+        <tocitem target="authresponsemessage" text="応答メッセージの認証" expand="false"></tocitem>
+        <tocitem target="generatesessioncontext" text="ブートストラップ用のセッションコンテキストステートメント" expand="false"></tocitem>
+        <tocitem target="encryptnameidentifier" text="ブートストラップ用のセッションコンテキスト内での NameIdentifier の暗号化" expand="false"></tocitem>
+        <tocitem target="useimpliedresource" text="暗黙のリソース" expand="false"></tocitem>
+        <tocitem target="resourceofferingsbootstrapping" text="ブートストラップのリソースオファリング" expand="false"></tocitem></tocitem>
+    <tocitem target="service.scsoapbinding" text="SOAP バインドサービス" expand="false">
+        <tocitem target="requesthandlerlist" text="要求ハンドラリスト" expand="false"></tocitem>
+        <tocitem target="ggodb" text="SOAP バインド属性" expand="false"></tocitem></tocitem>
+    <tocitem target="webservices.wsauthnservices" text="認証 Web サービス" expand="false">
+        <tocitem target="mechanismhandlerslist" text="メカニズムハンドラリスト" expand="false"></tocitem></tocitem></tocitem>
  <tocitem target="service.scconfig" text="設定属性" expand="false">
     <tocitem target="authattrs" text="認証" expand="false">
-        <tocitem target="service.scserviceprofile.sunamauthadservice" text="Active Directory" expand="false">
-            <tocitem target="service.scserviceprofile.sunamauthadservice" text="プライマリ Active Directory サーバー" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunamauthadservice" text="セカンダリ Active Directory サーバー" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunamauthadservice" text="ユーザー検索の開始 DN" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunamauthadservice" text="root ユーザーバインド DN" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunamauthadservice" text="root ユーザーバインドパスワード" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunamauthadservice" text="root ユーザーバインドパスワード (確認)" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunamauthadservice" text="ユーザープロファイルの取得に使用する属性" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunamauthadservice" text="認証するユーザーの検索に使用する属性" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunamauthadservice" text="ユーザー検索フィルタ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunamauthadservice" text="検索範囲" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunamauthadservice" text="Active Directory サーバーへの SSL アクセス" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunamauthadservice" text="認証するユーザー DN を返す" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunamauthadservice" text="Active Directory サーバーのチェック間隔" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunamauthadservice" text="ユーザー作成属性" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunamauthadservice" text="認証レベル" expand="false"></tocitem></tocitem>
-        <tocitem target="service.scserviceprofile.iplanetamauthanonymousservice" text="匿名" expand="false">
-            <tocitem target="service.scserviceprofile.iplanetamauthanonymousservice" text="有効な匿名ユーザー" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthanonymousservice" text="デフォルトの匿名ユーザー名" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthanonymousservice" text="大文字と小文字を区別するユーザー ID" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthanonymousservice" text="認証レベル" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.sunamauthadservice" text="Active Directory" expand="false"></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamauthanonymousservice" text="匿名" expand="false"></tocitem>
         <tocitem target="authentication.authconfig" text="認証設定" expand="false"></tocitem>
-        <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="証明書" expand="false">
-            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="LDAP で証明書を照合" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="LDAP での証明書の検索に使用する対象 DN 属性" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="CRL に対して証明書を照合" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="LDAP での CRL の検索に使用する発行者 DN 属性" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="CRL 更新用の HTTP パラメータ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="OCSP 検証" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="証明書が格納されている LDAP サーバー" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="LDAP 検索開始 DN" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="LDAP サーバーの主体ユーザー" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="LDAP サーバーの主体パスワード" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="LDAP サーバーの主体パスワード (確認)" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="LDAP アクセスに SSL を使用" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="ユーザープロファイルへのアクセスに使用する証明書フィールド" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="ユーザープロファイルへのアクセスに使用するその他の証明書フィールド" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="信頼できるリモートホスト" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="SSL ポート番号" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="クライアント証明書のための HTTP ヘッダー名" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="認証レベル" expand="false"></tocitem></tocitem>
-        <tocitem target="service.scserviceprofile.iplanetamauthservice" text="コア" expand="false">
-            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="プラグイン可能な認証モジュールクラス" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="クライアント用にサポートされている認証モジュール" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="LDAP 接続のプールサイズ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="LDAP 接続のデフォルトプールサイズ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="ユーザープロファイル" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="管理者認証設定" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="動的ユーザープロファイル作成のデフォルトロール" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="持続 Cookie モード" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="Cookie の最大持続時間" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="エイリアス検索属性名" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="デフォルト認証ロケール" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="組織認証設定" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="ログイン失敗時のロックアウトモード" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="ログイン失敗が右の回数に達したらロックアウト" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="ログイン失敗回数を加算する間隔" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="ロックアウト通知を送信する電子メールアドレス" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="ユーザーに警告を出すまでの失敗回数" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="ログイン失敗時のロックアウト持続時間" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="ロックアウト属性名" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="ロックアウト属性値" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="ログイン成功時に返すデフォルトの URL" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="ログイン失敗時に返すデフォルトの URL" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="認証ポストプロセスクラス" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="ユーザー ID 生成モード" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="プラグイン可能なユーザー名ジェネレータクラス" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="アイデンティティータイプ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="プラグイン可能なユーザー状態イベントクラス" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="無効な試行をデータストアに格納する" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="モジュールベースの認証" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthservice" text="デフォルト認証レベル" expand="false"></tocitem></tocitem>
-        <tocitem target="service.scserviceprofile.sunamauthdatastoreservice" text="データストア" expand="false">
-            <tocitem target="service.scserviceprofile.sunamauthdatastoreservice" text="認証レベル" expand="false"></tocitem></tocitem>
-        <tocitem target="service.scserviceprofile.iplanetamauthhttpbasicservice" text="HTTP 基本" expand="false">
-            <tocitem target="service.scserviceprofile.iplanetamauthhttpbasicservice" text="認証レベル" expand="false"></tocitem></tocitem>
-        <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="JDBC" expand="false">
-            <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="接続のタイプ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="接続プールの JNDI 名" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="JDBC ドライバ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="JDBC URL" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="データベースに接続するユーザー" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="データベースへ接続するためのパスワード" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="データベースへ接続するためのパスワード (確認)" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="パスワードカラムの文字列" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="準備されているステートメント" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="パスワード構文を変換するためのクラス" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="認証レベル" expand="false">
-                <tocitem target="jdbcexample" text="接続プールを設定する ��� 例" expand="false"></tocitem></tocitem></tocitem>
-        <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="LDAP " expand="false">
-            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="プライマリ LDAP サーバー" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="セカンダリ LDAP サーバー" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="ユーザー検索の開始 DN" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="root ユーザーバインド DN" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="root ユーザーバインドパスワード" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="root ユーザーバインドパスワード (確認)" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="ユーザープロファイルの取得に使用する属性" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="認証するユーザーの検索に使用する属性" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="ユーザー検索フィルタ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="検索範囲" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="SSL の LDAP サーバーへのアクセスを有効" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="認証するユーザー DN を返す" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="LDAP サーバーのチェック間隔" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="ユーザー作成属性リスト" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="認証レベル" expand="false"></tocitem></tocitem>
-        <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="メンバーシップ" expand="false">
-            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="パスワードの最少文字数" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="デフォルトユーザーロール" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="登録後のユーザー状態" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="プライマリ LDAP サーバー" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="セカンダリ LDAP サーバー" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="ユーザー検索の開始 DN" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="root ユーザーバインド DN" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="root ユーザーバインドパスワード" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="root ユーザーバインドパスワード (確認)" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="ユーザープロファイルの取得に使用する属性" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="認証するユーザーの検索に使用する属性" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="ユーザー検索フィルタ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="検索範囲" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="SSL の LDAP サーバーへのアクセスを有効" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="認証するユーザー DN を返す" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="認証レベル" expand="false"></tocitem></tocitem>
-        <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="MSISDN" expand="false">
-            <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="信頼できるゲートウェイの IP アドレス" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="MSISDN 番号引数" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="LDAP サーバーおよびポート" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="LDAP 検索開始 DN" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="LDAP の検索に使用する属性" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="LDAP サーバーの主体ユーザー" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="LDAP サーバーの主体パスワード" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="LDAP サーバーの主体パスワード (確認)" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="LDAP アクセス用に SSL を有効" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="ユーザープロファイルの取得に使用する LDAP 属性" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="認証時のユーザー DN を返す" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="認証レベル" expand="false"></tocitem></tocitem>
-        <tocitem target="service.scserviceprofile.iplanetamauthradiusservice" text="RADIUS " expand="false">
-            <tocitem target="service.scserviceprofile.iplanetamauthradiusservice" text="サーバー 1" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthradiusservice" text="サーバー 2" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthradiusservice" text="共有シークレット" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthradiusservice" text="共有シークレット (確認)" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthradiusservice" text="ポート番号" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthradiusservice" text="タイムアウト" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthradiusservice" text="認証レベル" expand="false"></tocitem></tocitem>
-        <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="SafeWord" expand="false">
-            <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="サーバー" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="サーバー検証ファイルのディレクトリ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="ログを有効" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="ログレベル" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="ログファイル" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="認証接続タイムアウト" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="クライアントタイプ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="EASSP バージョン" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="オーセンティケータ最小強度" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="認証レベル" expand="false"></tocitem></tocitem>
-        <tocitem target="service.scserviceprofile.sunamauthsamlservice" text="SAML" expand="false">
-            <tocitem target="service.scserviceprofile.sunamauthsamlservice" text="認証レベル" expand="false"></tocitem></tocitem>
-        <tocitem target="service.scserviceprofile.iplanetamauthsecuridservice" text="SecurID " expand="false">
-            <tocitem target="service.scserviceprofile.iplanetamauthsecuridservice" text="ACE/サーバー設定パス" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthsecuridservice" text="ヘルパー設定ポート" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthsecuridservice" text="ヘルパー認証ポート" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthsecuridservice" text="認証レベル" expand="false"></tocitem></tocitem>
-        <tocitem target="service.scserviceprofile.iplanetamauthunixservice" text="UNIX " expand="false">
-            <tocitem target="service.scserviceprofile.iplanetamauthunixservice" text="設定ポート" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthunixservice" text="認証ポート" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthunixservice" text="タイムアウト" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthunixservice" text="スレッド" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthunixservice" text="認証レベル" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthunixservice" text="PAM サービス名" expand="false"></tocitem></tocitem>
-        <tocitem target="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice" text="Windows デスクトップ SSO" expand="false">
-            <tocitem target="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice" text="サービス主体" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice" text="Keytab ファイル名" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice" text="Kerberos レルム" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice" text="Kerberos サーバー名" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice" text="ドメイン名を含む主体を返す" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice" text="認証レベル" expand="false"></tocitem></tocitem>
-        <tocitem target="service.scserviceprofile.iplanetamauthntservice" text="Windows NT" expand="false">
-            <tocitem target="service.scserviceprofile.iplanetamauthntservice" text="認証ドメイン" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthntservice" text="認証ホスト" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthntservice" text="Samba 設定ファイル名" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamauthntservice" text="認証レベル" expand="false"></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamauthcertservice" text="証明書" expand="false"></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamauthservice" text="コア" expand="false"></tocitem>
+        <tocitem target="service.scserviceprofile.sunamauthdatastoreservice" text="データストア" expand="false"></tocitem>
+        <tocitem target="ggulh" text="連携" expand="false"></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamauthhttpbasicservice" text="HTTP 基本" expand="false"></tocitem>
+        <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="JDBC" expand="false"></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="LDAP" expand="false"></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="メンバーシップ" expand="false"></tocitem>
+        <tocitem target="service.scserviceprofile.sunamauthmsisdnservice" text="MSISDN" expand="false"></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamauthradiusservice" text="RADIUS" expand="false"></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamauthsafewordservice" text="SafeWord" expand="false"></tocitem>
+        <tocitem target="service.scserviceprofile.sunamauthsaeservice" text="SAE" expand="false"></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamauthsecuridservice" text="SecurID" expand="false"></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamauthunixservice" text="UNIX" expand="false"></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice" text="Windows デスクトップ SSO" expand="false"></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamauthntservice" text="Windows NT" expand="false"></tocitem>
         <tocitem target="supportedlang" text="サポートされている言語ロケール" expand="false"></tocitem></tocitem>
     <tocitem target="consoleprops" text="コンソールプロパティー" expand="false">
-        <tocitem target="service.scserviceprofile.amadminconsoleservice" text="管理" expand="false">
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="連携管理" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="ユーザー管理" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="ピープルコンテナ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="組織単位コンテナ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="グループコンテナ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="管理されているグループタイプ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="デフォルトロールアクセス権" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="ドメインコンポーネントツリー" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="管理グループ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="ユーザー削除時に削除フラグをつける" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="動的管理ロール ACI" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="ユーザープロファイルサービスクラス" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="DC ノード属性リスト" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="削除するオブジェクトの検索フィルタ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="デフォルトピープルコンテナ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="デフォルトグループコンテナ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="デフォルトエージェントコンテナ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="グループのデフォルトピープルコンテナ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="グループのピープルコンテナリスト" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="ユーザープロファイル表示クラス" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="エンドユーザープロファイル表示クラス" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="ユーザープロファイルページにロールを表示" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="ユーザープロファイルページにグループを表示" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="ユーザーによるグループへの自己登録" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="ユーザープロファイル表示オプション" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="ユーザー作成時に割り当てるデフォルトロール" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="管理コンソールタブ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="検索で返される結果の最大数" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="検索のタイムアウト" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="JSP ディレクトリ名" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="オンラインヘルプドキュメント" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="必要なサービス" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="ユーザー検索キー" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="ユーザー検索により返される属性" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="ユーザー作成通知リスト" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="ユーザー削除通知リスト" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="ユーザー修正通知リスト" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="ページごとの最大表示エントリ数" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="イベントリスナークラス" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="プリプロセスおよびポストプロセスクラス" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="外部属性のフェッチ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="無効なユーザー ID 文字" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amadminconsoleservice" text="ユーザー ID とパスワードの検証プラグインクラス" expand="false"></tocitem></tocitem>
-        <tocitem target="service.smg11n" text="国際化設定" expand="false">
-            <tocitem target="service.smg11n" text="各ロケールでサポートされる文字セット" expand="false"></tocitem>
-            <tocitem target="service.smg11n" text="文字セットのエイリアス" expand="false"></tocitem>
-            <tocitem target="service.smg11n" text="自動生成される共通名の形式" expand="false"></tocitem></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.amadminconsoleservice" text="管理" expand="false"></tocitem>
+        <tocitem target="service.smg11n" text="国際化設定" expand="false"></tocitem></tocitem>
     <tocitem target="global" text="グローバル属性" expand="false">
-        <tocitem target="service.scserviceprofile.sunfamfederationcommon" text="共通連携設定" expand="false">
-            <tocitem target="service.scserviceprofile.sunfamfederationcommon" text="データストア SPI 実装クラス" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamfederationcommon" text="構成インスタンス SPI 実装クラス" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamfederationcommon" text="ロガー SPI 実装クラス" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamfederationcommon" text="セッションプロバイダ SPI 実装クラス" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamfederationcommon" text="許可されるコンテンツ最大長" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamfederationcommon" text="パスワードデコーダ SPI 実装クラス" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamfederationcommon" text="署名プロバイダ SPI 実装クラス" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamfederationcommon" text="キープロバイダ SPI 実装クラス" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamfederationcommon" text="証明書の存在を確認する" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamfederationcommon" text="XML 正規化アルゴリズム" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamfederationcommon" text="XML 署名アルゴリズム" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamfederationcommon" text="XML 変換アルゴリズム" expand="false"></tocitem></tocitem>
-        <tocitem target="service.scserviceprofile.sunfamidffconfiguration" text="Liberty ID-FF サービス設定" expand="false">
-            <tocitem target="service.scserviceprofile.sunfamidffconfiguration" text="連携 Cookie 名" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamidffconfiguration" text="IDP プロキシ検索 SPI 実装クラス" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamidffconfiguration" text="要求キャッシュクリーンアップ間隔" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamidffconfiguration" text="要求キャッシュタイムアウト" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamidffconfiguration" text="IDP ログイン URl" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamidffconfiguration" text="XML 署名先" expand="false"></tocitem></tocitem>
-        <tocitem target="service.scserviceprofile.sunfamlibertysecurityservice" text="Liberty ID-WSF セキュリティーサービス" expand="false">
-            <tocitem target="service.scserviceprofile.sunfamlibertysecurityservice" text="セキュリティー属性プラグインクラス" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamlibertysecurityservice" text="キー情報のタイプ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamlibertysecurityservice" text="セキュリティートークンプロバイダクラス" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamlibertysecurityservice" text="デフォルトの WSC 証明書エイリアス" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamlibertysecurityservice" text="信頼できる発行局の署名証明書エイリアス" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamlibertysecurityservice" text="信頼できる証明書発行局 (CA) の署名証明書エイリアス" expand="false"></tocitem></tocitem>
-        <tocitem target="service.scserviceprofile.sunfamlibertyinteractionservice" text="Liberty 対話サービス" expand="false">
-            <tocitem target="service.scserviceprofile.sunfamlibertyinteractionservice" text="ユーザーを対話のためにリダイレクトする WSP" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamlibertyinteractionservice" text="ユーザーをデータの対話のためにリダイレクトする WSP" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamlibertyinteractionservice" text="WSP の対話予想持続時間" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamlibertyinteractionservice" text="returnToURL が SSL を要件とするように強制する WSP" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamlibertyinteractionservice" text="ホストへの戻りが要求ホストと同じになるように強制する WSP" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamlibertyinteractionservice" text="HTML スタイルシートの場所" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamlibertyinteractionservice" text="WML スタイルシートの場所" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamlibertyinteractionservice" text="WSP 対話 URL" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamlibertyinteractionservice" text="ロードバランサの背後にある場合の WSP 対話 URL" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamlibertyinteractionservice" text="ロードバランサの背後にある WSP クラスタ (サイト) の対話 URL のリスト" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamlibertyinteractionservice" text="対話設定クラス" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamlibertyinteractionservice" text="対話に参加する WSC のオプション" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamlibertyinteractionservice" text="userInteractionHeader を含む WSC" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamlibertyinteractionservice" text="ユーザーを対話のためにリダイレクトする WSC" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamlibertyinteractionservice" text="WSC の対話予想持続時間" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamlibertyinteractionservice" text="リダイレクト URL が SSL を要件とするように強制する WSC" expand="false"></tocitem></tocitem>
-        <tocitem target="service.scserviceprofile.sunmultifederationprotocol" text="マルチ連携プロトコル" expand="false">
-            <tocitem target="service.scserviceprofile.sunmultifederationprotocol" text="シングルログアウトハンドラリスト" expand="false"></tocitem></tocitem>
-        <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="パスワードリセット" expand="false">
-            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="ユーザー検証" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="秘密の質問" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="検索フィルタ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="ベース DN" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="バインド DN" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="バインドパスワード" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="パスワードリセットのオプション" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="パスワードの変更通知のオプション" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="パスワードリセット" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="ユーザー独自の質問" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="質問の最大数" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="次のログイン時にパスワード変更を強制" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="パスワードリセットの失敗によるロックアウト" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="パスワードリセットの失敗が右の回数に達したらロックアウト" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="右の間隔内にパスワードリセットを完了しなければロックアウト" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="ロックアウト通知を送信する電子メールアドレス" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="ユーザーに警告を出すまでの失敗回数" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="パスワードリセットの失敗によるロックアウトの持続時間" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="パスワードリセットのロックアウト属性名" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="パスワードリセットのロックアウト属性値" expand="false"></tocitem></tocitem>
-        <tocitem target="service.scpolicy" text="ポリシー設定" expand="false">
-            <tocitem target="service.scpolicy" text="グローバル属性" expand="false">
-                <tocitem target="service.scpolicy" text="リソースコンパレータ" expand="false"></tocitem>
-                <tocitem target="service.scpolicy" text="拒否決定時の評価継続" expand="false"></tocitem>
-                <tocitem target="service.scpolicy" text="Federated Access Manager により処理可能なアドバイス" expand="false"></tocitem>
-                <tocitem target="service.scpolicy" text="組織エイリアス参照" expand="false"></tocitem></tocitem>
-            <tocitem target="service.scpolicy" text="レルム属性" expand="false">
-                <tocitem target="service.scpolicy" text="プライマリ LDAP サーバー" expand="false"></tocitem>
-                <tocitem target="service.scpolicy" text="LDAP ベース DN" expand="false"></tocitem>
-                <tocitem target="service.scpolicy" text="LDAP ユーザーベース DN" expand="false"></tocitem>
-                <tocitem target="service.scpolicy" text="Federated Access Manager ロールベースDN" expand="false"></tocitem>
-                <tocitem target="service.scpolicy" text="LDAP バインド DN" expand="false"></tocitem>
-                <tocitem target="service.scpolicy" text="LDAP バインドパスワード" expand="false"></tocitem>
-                <tocitem target="service.scpolicy" text="LDAP 組織検索フィルタ" expand="false"></tocitem>
-                <tocitem target="service.scpolicy" text="LDAP 組織検索範囲" expand="false"></tocitem>
-                <tocitem target="service.scpolicy" text="LDAP グループ検索範囲" expand="false"></tocitem>
-                <tocitem target="service.scpolicy" text="LDAP グループの検索フィルタ" expand="false"></tocitem>
-                <tocitem target="service.scpolicy" text="LDAP ユーザー検索フィルタ" expand="false"></tocitem>
-                <tocitem target="service.scpolicy" text="LDAP ユーザー検索範囲" expand="false"></tocitem>
-                <tocitem target="service.scpolicy" text="LDAP ロール検索フィルタ" expand="false"></tocitem>
-                <tocitem target="service.scpolicy" text="LDAP ロール検索範囲" expand="false"></tocitem>
-                <tocitem target="service.scpolicy" text="Federated Access Manager ロール検索範囲" expand="false"></tocitem>
-                <tocitem target="service.scpolicy" text="LDAP 組織検索属性" expand="false"></tocitem>
-                <tocitem target="service.scpolicy" text="LDAP グループ検索属性" expand="false"></tocitem>
-                <tocitem target="service.scpolicy" text="LDAP ユーザー検索属性" expand="false"></tocitem>
-                <tocitem target="service.scpolicy" text="LDAP ロールの検索属性" expand="false"></tocitem>
-                <tocitem target="service.scpolicy" text="検索で返される結果の最大数" expand="false"></tocitem>
-                <tocitem target="service.scpolicy" text="検索タイムアウト" expand="false"></tocitem>
-                <tocitem target="service.scpolicy" text="LDAP SSL" expand="false"></tocitem>
-                <tocitem target="service.scpolicy" text="LDAP 接続プールの最小サイズ" expand="false"></tocitem>
-                <tocitem target="service.scpolicy" text="LDAP 接続プールの最大サイズ" expand="false"></tocitem>
-                <tocitem target="service.scpolicy" text="選択したポリシー対象" expand="false"></tocitem>
-                <tocitem target="service.scpolicy" text="選択したポリシー条件" expand="false"></tocitem>
-                <tocitem target="service.scpolicy" text="選択したポリシー参照" expand="false"></tocitem>
-                <tocitem target="service.scpolicy" text="対象結果の有効時間" expand="false"></tocitem>
-                <tocitem target="service.scpolicy" text="ユーザーエイリアス" expand="false"></tocitem>
-                <tocitem target="service.scpolicy" text="選択した応答プロバイダ" expand="false"></tocitem>
-                <tocitem target="service.scpolicy" text="選択した動的応答属性" expand="false"></tocitem></tocitem></tocitem>
-        <tocitem target="service.scserviceprofile.sunfamsaml2configuration" text="SAMLv2 サービス設定" expand="false">
-            <tocitem target="service.scserviceprofile.sunfamsaml2configuration" text="キャッシュクリーンアップ間隔" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamsaml2configuration" text="名前 ID 情報の属性名" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamsaml2configuration" text="名前 ID 情報キーの属性名" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamsaml2configuration" text="IDP ディスカバリサービスの Cookie ドメイン" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamsaml2configuration" text="IDP ディスカバリサービスの Cookie タイプ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamsaml2configuration" text="IDP ディスカバリサービスの URL スキーマ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamsaml2configuration" text="SML 暗号 SPI 実装クラス" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamsaml2configuration" text="KeyInfo 要素内に EncryptedKey を含める" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamsaml2configuration" text="XML 署名実装クラス" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamsaml2configuration" text="XML 署名証明書検証" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.sunfamsaml2configuration" text="証明書発行局の証明書検証" expand="false"></tocitem></tocitem>
-        <tocitem target="service.scsaml2soapbinding" text="SAMLv2 SOAP バインド" expand="false">
-            <tocitem target="service.scsaml2soapbinding" text="要求ハンドラリスト" expand="false"></tocitem></tocitem>
-        <tocitem target="service.scserviceprofile.amsessionservice" text="セッション" expand="false">
-            <tocitem target="service.scserviceprofile.amsessionservice" text="セカンダリ設定インスタンス" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amsessionservice" text="検索結果の最大数" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amsessionservice" text="検索のタイムアウト" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amsessionservice" text="プロパティーの変更通知" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amsessionservice" text="割り当て制限" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amsessionservice" text="割り当て制限のタイムアウトを読み取り" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amsessionservice" text="最上位管理者は制限の確認を免除" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amsessionservice" text="セッション制限がいっぱいになった場合に生じる動作" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amsessionservice" text="通知プロパティー" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amsessionservice" text="最大セッション時間" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amsessionservice" text="最大アイドル時間" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amsessionservice" text="最大キャッシュ時間" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.amsessionservice" text="アクティブなユーザーセッション" expand="false"></tocitem>
-            <tocitem target="service.subconfigadd" text="サブ設定を追加する" expand="false"></tocitem></tocitem>
-        <tocitem target="service.scserviceprofile.iplanetamuserservice" text="ユーザー" expand="false">
-            <tocitem target="service.scserviceprofile.iplanetamuserservice" text="ユーザー設定言語" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamuserservice" text="ユーザー設定タイムゾーン" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamuserservice" text="継承するロケール" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamuserservice" text="管理者 DN 開始表示" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamuserservice" text="デフォルトユーザー状態" expand="false"></tocitem></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.sunfamfederationcommon" text="共通連携設定" expand="false"></tocitem>
+        <tocitem target="service.scserviceprofile.sunfamidffconfiguration" text="Liberty ID-FF サービス設定" expand="false"></tocitem>
+        <tocitem target="service.scserviceprofile.sunfamlibertysecurityservice" text="Liberty ID-WSF セキュリティーサービス" expand="false"></tocitem>
+        <tocitem target="service.scserviceprofile.sunfamlibertyinteractionservice" text="Liberty 対話サービス" expand="false"></tocitem>
+        <tocitem target="service.scserviceprofile.sunmultifederationprotocol" text="マルチ連携プロトコル" expand="false"></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetampasswordresetservice" text="パスワードリセット" expand="false"></tocitem>
+        <tocitem target="service.scpolicy" text="ポリシー設定" expand="false"></tocitem>
+        <tocitem target="service.scserviceprofile.sunfamsaml2configuration" text="SAMLv2 サービス設定" expand="false"></tocitem>
+        <tocitem target="service.scsaml2soapbinding" text="SAMLv2 SOAP バインド" expand="false"></tocitem>
+        <tocitem target="service.scserviceprofile.amsessionservice" text="セッション" expand="false"></tocitem>
+        <tocitem target="service.subconfigadd" text="サブ設定を追加する" expand="false"></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamuserservice" text="ユーザー" expand="false"></tocitem></tocitem>
     <tocitem target="systemprops" text="システムプロパティー" expand="false">
-        <tocitem target="service.scserviceprofile.iplanetamclientdetection" text="クライアントディテクション" expand="false">
-            <tocitem target="service.scserviceprofile.iplanetamclientdetection" text="クライアントタイプ" expand="false">
-                <tocitem target="service.scserviceprofile.iplanetamclientdetection" text="クライアントマネージャー" expand="false"></tocitem>
-                <tocitem target="service.scserviceprofile.iplanetamclientdetection" text="クライアントタイプ" expand="false"></tocitem></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamclientdetection" text="デフォルトクライアントタイプ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamclientdetection" text="クライアントディテクションクラス" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamclientdetection" text="クライアントディテクション" expand="false"></tocitem>
-            <tocitem target="service.mapcreatedevice" text="新しいクライアントを追加する" expand="false"></tocitem></tocitem>
-        <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="ログ" expand="false">
-            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="最大ログサイズ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="履歴ファイルの数" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="ログファイルの場所" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="ログタイプ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="データベースユーザー名" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="データベースユーザーパスワード" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="データベースユーザーパスワード (確認)" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="データベースドライバ名" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="設定可能なログフィールド" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="ログ検証頻度" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="ログ署名時間" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="セキュリティー保護されたログ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="セキュリティー保護されたログの署名アルゴリズム" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="レコードの最大数" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="アーカイブあたりのファイル数" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="バッファーサイズ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="DB 失敗メモリーバッファーサイズ" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="バッファー時間" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="時間バッファリング" expand="false"></tocitem></tocitem>
-        <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="ネーミング" expand="false">
-            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="プロファイルサービス URL" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="セッションサービス URL" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="ログサービス URL" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="ポリシーサービス URL" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="認証サービス URL" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="SAML Web プロファイル/アーティファクトサービス URL" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="SAML SOAP サービス URL" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="SAML Web プロファイル/POST サービス URL" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="SAML 表明マネージャーサービス URL" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="連携表明マネージャーサービス URL" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="セキュリティートークンマネージャー URL" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="JAXRPC エンドポイント URL" expand="false"></tocitem></tocitem>
-        <tocitem target="service.scplatform" text="プラットフォーム" expand="false">
-            <tocitem target="service.scplatform" text="サイト名" expand="false"></tocitem>
-            <tocitem target="service.scplatform" text="インスタンス名" expand="false"></tocitem>
-            <tocitem target="service.scplatform" text="プラットフォームロケール" expand="false"></tocitem>
-            <tocitem target="service.scplatform" text="Cookie ドメイン" expand="false"></tocitem>
-            <tocitem target="service.scplatform" text="ログインサービス URL" expand="false"></tocitem>
-            <tocitem target="service.scplatform" text="ログアウトサービス URL" expand="false"></tocitem>
-            <tocitem target="service.scplatform" text="使用可能なロケール" expand="false"></tocitem>
-            <tocitem target="service.scplatform" text="クライアント文字セット" expand="false"></tocitem>
-            <tocitem target="service.scplatformclientcharsetsadd" text="新しい文字セットを作成する" expand="false"></tocitem></tocitem></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamclientdetection" text="クライアントディテクション" expand="false"></tocitem>
+        <tocitem target="service.mapcreatedevice" text="新しいクライアントを追加する" expand="false"></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="ログ" expand="false"></tocitem>
+        <tocitem target="service.scserviceprofile.iplanetamnamingservice" text="ネーミング" expand="false"></tocitem>
+        <tocitem target="service.scplatform" text="プラットフォーム" expand="false"></tocitem>
+        <tocitem target="service.scplatformclientcharsetsadd" text="新しい文字セットを作成する" expand="false"></tocitem></tocitem>
     <tocitem target="service.serversite" text="サーバーおよびサイト" expand="false">
-        <tocitem target="service.serveradd" text="新しいサーバーインスタンスを作成する" expand="false"></tocitem></tocitem>
-    <tocitem target="service.serverconfiginherit" text="継承設定値" expand="false"></tocitem>
-    <tocitem target="service.servereditgeneral" text="一般" expand="false">
-        <tocitem target="service.servereditgeneral" text="サイト属性" expand="false">
-            <tocitem target="service.servereditgeneral" text="親サイト" expand="false"></tocitem></tocitem>
-        <tocitem target="service.servereditgeneral" text="システム属性" expand="false">
-            <tocitem target="service.servereditgeneral" text="ベースインストールディレクトリ" expand="false"></tocitem>
-            <tocitem target="service.servereditgeneral" text="デフォルトのロケール" expand="false"></tocitem>
-            <tocitem target="service.servereditgeneral" text="通知 URL" expand="false"></tocitem>
-            <tocitem target="service.servereditgeneral" text="XML 検証" expand="false"></tocitem></tocitem>
-        <tocitem target="service.servereditgeneral" text="デバッグ属性" expand="false">
-            <tocitem target="service.servereditgeneral" text="デバッグレベル" expand="false"></tocitem>
-            <tocitem target="service.servereditgeneral" text="デバッグディレクトリ" expand="false"></tocitem></tocitem>
-        <tocitem target="service.servereditgeneral" text="メールサーバー" expand="false">
-            <tocitem target="service.servereditgeneral" text="メールサーバーホスト名" expand="false"></tocitem>
-            <tocitem target="service.servereditgeneral" text="メールサーバーポート番号" expand="false"></tocitem></tocitem></tocitem>
-    <tocitem target="service.servereditsecurity" text="セキュリティー" expand="false">
-        <tocitem target="service.servereditsecurity" text="暗号化" expand="false">
-            <tocitem target="service.servereditsecurity" text="パスワードの暗号鍵" expand="false"></tocitem>
-            <tocitem target="service.servereditsecurity" text="認証サービス共有シークレット" expand="false"></tocitem>
-            <tocitem target="service.servereditsecurity" text="暗号クラス" expand="false"></tocitem>
-            <tocitem target="service.servereditsecurity" text="セキュリティー保護されたランダムファクトリクラス" expand="false"></tocitem></tocitem>
-        <tocitem target="service.servereditsecurity" text="検証" expand="false">
-            <tocitem target="service.servereditsecurity" text="プラットフォームの低レベル通信の最大コンテンツ長" expand="false"></tocitem>
-            <tocitem target="service.servereditsecurity" text="クライアント IP アドレス確認" expand="false"></tocitem></tocitem>
-        <tocitem target="service.servereditsecurity" text="Cookie" expand="false">
-            <tocitem target="service.servereditsecurity" text="Cookie 名" expand="false"></tocitem>
-            <tocitem target="service.servereditsecurity" text="セキュリティー保護された Cookie" expand="false"></tocitem>
-            <tocitem target="service.servereditsecurity" text="Cookie 値のエンコード" expand="false"></tocitem></tocitem>
-        <tocitem target="service.servereditsecurity" text="キーストア" expand="false">
-            <tocitem target="service.servereditsecurity" text="キーストアファイル" expand="false"></tocitem>
-            <tocitem target="service.servereditsecurity" text="キーストアパスワードファイル" expand="false"></tocitem>
-            <tocitem target="service.servereditsecurity" text="非公開鍵パスワードファイル" expand="false"></tocitem>
-            <tocitem target="service.servereditsecurity" text="証明書エイリアス" expand="false"></tocitem></tocitem>
-        <tocitem target="service.servereditsecurity" text="証明書失効リストのキャッシュ" expand="false">
-            <tocitem target="service.servereditsecurity" text="LDAP サーバーのホスト名" expand="false"></tocitem>
-            <tocitem target="service.servereditsecurity" text="LDAP サーバーのポート番号" expand="false"></tocitem>
-            <tocitem target="service.servereditsecurity" text="SSL を有効" expand="false"></tocitem>
-            <tocitem target="service.servereditsecurity" text="LDAP サーバーのバインドユーザー名" expand="false"></tocitem>
-            <tocitem target="service.servereditsecurity" text="LDAP サーバーのバインドパスワード" expand="false"></tocitem>
-            <tocitem target="service.servereditsecurity" text="LDAP 検索のベース DN" expand="false"></tocitem>
-            <tocitem target="service.servereditsecurity" text="属性の検索" expand="false"></tocitem></tocitem>
-        <tocitem target="service.servereditsecurity" text="オンライン証明書の状態プロトコルの確認" expand="false">
-            <tocitem target="service.servereditsecurity" text="確認が有効" expand="false"></tocitem>
-            <tocitem target="service.servereditsecurity" text="レスポンダ URL" expand="false"></tocitem>
-            <tocitem target="service.servereditsecurity" text="証明書のニックネーム" expand="false"></tocitem></tocitem>
-        <tocitem target="service.servereditsecurity" text="連邦情報処理規格" expand="false">
-            <tocitem target="service.servereditsecurity" text="FIPS モード" expand="false"></tocitem></tocitem></tocitem>
-    <tocitem target="service.servereditsession" text="セッション" expand="false">
-        <tocitem target="service.servereditsession" text="セッションの制限" expand="false">
-            <tocitem target="service.servereditsession" text="最大セッション" expand="false"></tocitem>
-            <tocitem target="service.servereditsession" text="セッション最大時間を無効にする" expand="false"></tocitem>
-            <tocitem target="service.servereditsession" text="セッション削除遅延" expand="false"></tocitem></tocitem>
-        <tocitem target="service.servereditsession" text="統計" expand="false">
-            <tocitem target="service.servereditsession" text="ログの出力間隔" expand="false"></tocitem>
-            <tocitem target="service.servereditsession" text="状態" expand="false"></tocitem>
-            <tocitem target="service.servereditsession" text="ディレクトリ" expand="false"></tocitem>
-            <tocitem target="service.servereditsession" text="ホスト検索を有効" expand="false"></tocitem></tocitem>
-        <tocitem target="service.servereditsession" text="通知" expand="false">
-            <tocitem target="service.servereditsession" text="通知プールサイズ" expand="false"></tocitem>
-            <tocitem target="service.servereditsession" text="通知スレッドプールのしきい値" expand="false"></tocitem></tocitem>
-        <tocitem target="service.servereditsession" text="検証" expand="false">
-            <tocitem target="service.servereditsession" text="大文字小文字を区別しないクライアント DN 比較" expand="false"></tocitem></tocitem></tocitem>
-    <tocitem target="service.servereditsdk" text="SDK" expand="false">
-        <tocitem target="service.servereditsdk" text="データストア " expand="false">
-            <tocitem target="service.servereditsdk" text="データストア通知を有効" expand="false"></tocitem>
-            <tocitem target="service.servereditsdk" text="ディレクトリプロキシを有効" expand="false"></tocitem></tocitem>
-        <tocitem target="service.servereditsdk" text="イベントサービス" expand="false">
-            <tocitem target="service.servereditsdk" text="イベントサービス接続の再試行回数" expand="false"></tocitem>
-            <tocitem target="service.servereditsdk" text="LDAP 接続試行間の遅延" expand="false"></tocitem>
-            <tocitem target="service.servereditsdk" text="LDAP 接続試行のエラーコード" expand="false"></tocitem>
-            <tocitem target="service.servereditsdk" text="アイドルタイムアウト" expand="false"></tocitem>
-            <tocitem target="service.servereditsdk" text="無効にするイベントサービス接続" expand="false"></tocitem></tocitem>
-        <tocitem target="service.servereditsdk" text="LDAP 接続" expand="false">
-            <tocitem target="service.servereditsdk" text="LDAP 接続のための再試行回数" expand="false"></tocitem>
-            <tocitem target="service.servereditsdk" text="LDAP 接続再試行間の遅延" expand="false"></tocitem>
-            <tocitem target="service.servereditsdk" text="LDAP 接続再試行のエラーコード" expand="false"></tocitem></tocitem>
-        <tocitem target="service.servereditsdk" text="キャッシュおよびレプリカ" expand="false">
-            <tocitem target="service.servereditsdk" text="SDK キャッシュの最大サイズ" expand="false"></tocitem>
-            <tocitem target="service.servereditsdk" text="SDK レプリカ再試行数" expand="false"></tocitem>
-            <tocitem target="service.servereditsdk" text="SDK レプリカ試行間の遅延" expand="false"></tocitem></tocitem></tocitem>
-    <tocitem target="service.serverconfigxml" text="ディレクトリ設定" expand="false">
-        <tocitem target="service.serverconfigxml" text="ディレクトリ設定" expand="false">
-            <tocitem target="service.serverconfigxml" text="最小接続プール" expand="false"></tocitem>
-            <tocitem target="service.serverconfigxml" text="最大接続プール" expand="false"></tocitem>
-            <tocitem target="service.serverconfigxml" text="バインド DN" expand="false"></tocitem>
-            <tocitem target="service.serverconfigxml" text="バインドパスワード" expand="false"></tocitem></tocitem>
-        <tocitem target="service.serverconfigxml" text="旧バージョンの設定" expand="false">
-            <tocitem target="service.serverconfigxml" text="最小接続プール" expand="false"></tocitem>
-            <tocitem target="service.serverconfigxml" text="最大接続プール" expand="false"></tocitem>
-            <tocitem target="service.serverconfigxml" text="サーバー" expand="false"></tocitem></tocitem>
+        <tocitem target="service.serveradd" text="新しいサーバーインスタンスを作成する" expand="false"></tocitem>
+        <tocitem target="service.serverconfiginherit" text="継承設定値" expand="false"></tocitem>
+        <tocitem target="service.servereditgeneral" text="一般" expand="false"></tocitem>
+        <tocitem target="service.servereditsecurity" text="セキュリティー" expand="false"></tocitem>
+        <tocitem target="service.servereditsession" text="セッション" expand="false"></tocitem>
+        <tocitem target="service.servereditsdk" text="SDK" expand="false"></tocitem>
+        <tocitem target="service.serverconfigxml" text="ディレクトリ設定" expand="false"></tocitem>
+        <tocitem target="ggwyq" text="拡張" expand="false"></tocitem>
         <tocitem target="service.siteadd" text="新しいサイトインスタンスを作成する" expand="false"></tocitem>
-        <tocitem target="service.siteedit" text="サイトインスタンスを編集する" expand="false"></tocitem></tocitem></tocitem>
- <tocitem target="agentconfig.agents" text="エージェント" expand="false">
-    <tocitem target="ggobs" text="新しいグループおよびエージェントの作成" expand="false">
-        <tocitem target="ggobg" text="新規グループを作成する" expand="false"></tocitem>
-        <tocitem target="agentconfig.agentadd" text="新規エージェントを作成する" expand="false"></tocitem>
-        <tocitem target="ggouy" text="エージェントがグループからプロパティーを継承できるようにする" expand="false"></tocitem></tocitem></tocitem>
- <tocitem target="ggmok" text="Web ポリシーエージェント" expand="false">
-    <tocitem target="ggmok" text="グローバル" expand="false">
-        <tocitem target="ggmok" text="グループ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="パスワード" expand="false"></tocitem>
-        <tocitem target="ggmok" text="パスワードの確認" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ステータス" expand="false"></tocitem>
-        <tocitem target="ggmok" text="エージェント設定リポジトリの場所" expand="false"></tocitem>
-        <tocitem target="ggmok" text="FAM ログイン URL" expand="false"></tocitem>
-        <tocitem target="ggmok" text="エージェント配備 URI プレフィックス" expand="false"></tocitem>
-        <tocitem target="ggmok" text="エージェントロケール" expand="false"></tocitem>
-        <tocitem target="ggmok" text="エージェントローカルログファイルローテーション" expand="false"></tocitem>
-        <tocitem target="ggmok" text="エージェントローカルログファイルサイズ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="エージェントリモートログファイル名" expand="false"></tocitem>
-        <tocitem target="ggmok" text="URL アクセスリモートログタイプ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="エージェントデバッグレベル" expand="false"></tocitem>
-        <tocitem target="ggmok" text="FQDN 確認" expand="false"></tocitem>
-        <tocitem target="ggmok" text="FQDN デフォルト" expand="false"></tocitem>
-        <tocitem target="ggmok" text="FQDN 仮想ホストマップ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="サーバー確認を無視" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ネーミング要求内の優先ネーミング URL を無視" expand="false"></tocitem>
-        <tocitem target="ggmok" text="リモートログ失敗時のリソースアクセスを拒否" expand="false"></tocitem>
-        <tocitem target="ggmok" text="リソースアクセス拒否 URL" expand="false"></tocitem>
-        <tocitem target="ggmok" text="プロファイル属性のネイティブエンコーディング" expand="false"></tocitem>
-        <tocitem target="ggmok" text="適用されない URL のリスト" expand="false"></tocitem>
-        <tocitem target="ggmok" text="適用されない URL のリストに対する反転チェック" expand="false"></tocitem>
-        <tocitem target="ggmok" text="適用されないクライアント IP のリスト" expand="false"></tocitem>
-        <tocitem target="ggmok" text="適用されない URL の属性のフェッチ" expand="false"></tocitem></tocitem>
-    <tocitem target="ggmok" text="アプリケーション" expand="false">
-        <tocitem target="ggmok" text="エージェント接続タイムアウト:" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ポリシーキャッシュポーリング期間" expand="false"></tocitem>
-        <tocitem target="ggmok" text="SSO キャッシュポーリング期間" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ユーザー ID パラメータ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ユーザー ID パラメータタイプ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ルートリソースからのポリシーの取得" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ポリシークロックスキュー" expand="false"></tocitem>
-        <tocitem target="ggmok" text="プロファイル属性 Cookie プレフィックス" expand="false"></tocitem>
-        <tocitem target="ggmok" text="プロファイル属性 Cookie Maxage" expand="false"></tocitem>
-        <tocitem target="ggmok" text="通知を有効" expand="false"></tocitem>
-        <tocitem target="ggmok" text="エージェント通知 URL" expand="false"></tocitem>
-        <tocitem target="ggmok" text="プライマリサーバーのポーリング期間" expand="false"></tocitem>
-        <tocitem target="ggmok" text="エージェント設定フェッチポーリング期間" expand="false"></tocitem>
-        <tocitem target="ggmok" text="エージェント設定クリーンアップポーリング期間" expand="false"></tocitem>
-        <tocitem target="ggmok" text="クライアント IP 検証" expand="false"></tocitem>
-        <tocitem target="ggmok" text="クライアントホスト名の取得" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ロードバランサの設定" expand="false"></tocitem>
-        <tocitem target="ggmok" text="要求 URL プロトコルの上書き" expand="false"></tocitem>
-        <tocitem target="ggmok" text="要求 URL ホストの上書き" expand="false"></tocitem>
-        <tocitem target="ggmok" text="要求 URL ポートの上書き" expand="false"></tocitem>
-        <tocitem target="ggmok" text="通知 URL の上書き" expand="false"></tocitem>
-        <tocitem target="ggmok" text="URL の大文字と小文字の区別を比較する確認" expand="false"></tocitem>
-        <tocitem target="ggmok" text="URL の特殊文字のエンコード" expand="false"></tocitem>
-        <tocitem target="ggmok" text="要求 URL 内のパス情報を無視" expand="false"></tocitem>
-        <tocitem target="ggmok" text="ログアウト URL リスト" expand="false"></tocitem>
-        <tocitem target="ggmok" text="リセットのためのログアウト Cookie リスト" expand="false"></tocitem>
-        <tocitem target="ggmok" text="POST データ保持" expand="false"></tocitem>
-        <tocitem target="ggmok" text="POST データ入力キャッシュ期間" expand="false"></tocitem>
-        <tocitem target="ggmok" text="プロファイル属性フェッチモード" expand="false"></tocitem>
-        <tocitem target="ggmok" text="プロファイル属性マップ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="セッション属性フェッチモード" expand="false"></tocitem>
-        <tocitem target="ggmok" text="セッション属性マップ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="応答属性フェッチモード" expand="false"></tocitem>
-        <tocitem target="ggmok" text="応答属性マップ" expand="false"></tocitem></tocitem>
-    <tocitem target="ggmok" text="SSO" expand="false">
-        <tocitem target="ggmok" text="SSO のみ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="匿名ユーザーのデフォルト値" expand="false"></tocitem>
-        <tocitem target="ggmok" text="匿名ユーザー" expand="false"></tocitem>
-        <tocitem target="ggmok" text="Cookie 名" expand="false"></tocitem>
-        <tocitem target="ggmok" text="Cookie セキュリティー" expand="false"></tocitem>
-        <tocitem target="ggmok" text="Cookie リセット" expand="false"></tocitem>
-        <tocitem target="ggmok" text="リセットのための Cookie リスト" expand="false"></tocitem>
-        <tocitem target="ggmok" text="Cookie ドメインリスト" expand="false"></tocitem>
-        <tocitem target="ggmok" text="CDSSO" expand="false"></tocitem>
-        <tocitem target="ggmok" text="CDSSO サーブレット URL リスト" expand="false"></tocitem></tocitem>
-    <tocitem target="ggmok" text="拡張" expand="false">
-        <tocitem target="ggmok" text="カスタムプロパティー" expand="false"></tocitem>
-        <tocitem target="ggmok" text="プロキシサーバーのホストとポートの上書き" expand="false"></tocitem>
-        <tocitem target="ggmok" text="認証タイプ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="再実行パスワードキー" expand="false"></tocitem>
-        <tocitem target="ggmok" text="フィルタ優先順位" expand="false"></tocitem>
-        <tocitem target="ggmok" text="OWA で設定されたフィルタ" expand="false"></tocitem>
-        <tocitem target="ggmok" text="URL プロトコルを HTTPS に変更" expand="false"></tocitem>
-        <tocitem target="ggmok" text="アイドルセッションタイムアウトページ URL" expand="false"></tocitem>
-        <tocitem target="ggmok" text="Domino データベース内のユーザーを確認" expand="false"></tocitem>
-        <tocitem target="ggmok" text="LTPA トークンを使用" expand="false"></tocitem>
-        <tocitem target="ggmok" text="LTPA トークン Cookie 名" expand="false"></tocitem>
-        <tocitem target="ggmok" text="LTPA トークン設定名" expand="false"></tocitem>
-        <tocitem target="ggmok" text="LTPA トークン設定名" expand="false"></tocitem></tocitem></tocitem>
- <tocitem target="ggmui" text="J2EE ポリシーエージェント" expand="false">
-    <tocitem target="ggmui" text="グローバル" expand="false">
-        <tocitem target="ggmui" text="グループ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="パスワード" expand="false"></tocitem>
-        <tocitem target="ggmui" text="パスワードの確認" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ステータス" expand="false"></tocitem>
-        <tocitem target="ggmui" text="エージェント通知 URL" expand="false"></tocitem>
-        <tocitem target="ggmui" text="エージェント設定リポジトリの場所" expand="false"></tocitem>
-        <tocitem target="ggmui" text="設定再読み込み間隔" expand="false"></tocitem>
-        <tocitem target="ggmui" text="集中管理通知を有効" expand="false"></tocitem>
-        <tocitem target="ggmui" text="エージェントフィルタモード" expand="false"></tocitem>
-        <tocitem target="ggmui" text="リソースアクセス拒否 URI:" expand="false"></tocitem>
-        <tocitem target="ggmui" text="HTTP セッションバインド" expand="false"></tocitem>
-        <tocitem target="ggmui" text="com.sun.identity.agents.config.redirect.param" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ログイン試行制限" expand="false"></tocitem>
-        <tocitem target="ggmui" text="カスタム応答ヘッダー" expand="false"></tocitem>
-        <tocitem target="ggmui" text="リダイレクト試行制限" expand="false"></tocitem>
-        <tocitem target="ggmui" text="エージェントデバッグレベル" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ユーザーマッピングモード" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ユーザー属性名" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ユーザー主体フラグ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ユーザートークン名" expand="false"></tocitem>
-        <tocitem target="ggmui" text="監査アクセスタイプ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="監査ログ位置" expand="false"></tocitem>
-        <tocitem target="ggmui" text="リモートログファイル名" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ローカル監査ログのローテーション" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ローカル監査ログローテーションサイズ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="クライアント IP アドレスヘッダー" expand="false"></tocitem>
-        <tocitem target="ggmui" text="クライアントホスト名ヘッダー" expand="false"></tocitem></tocitem>
-    <tocitem target="ggmui" text="アプリケーション" expand="false">
-        <tocitem target="ggmui" text="ログインフォーム URI" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ログインエラー URI" expand="false"></tocitem>
-        <tocitem target="ggmui" text="内部ログインを使用" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ログインコンテンツファイル名" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ログアウトアプリケーションハンドラ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ログアウトアプリケーション URI" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ログアウト要求パラメータ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ログアウトのイントロスペクションが有効" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ログアウトエントリ URI" expand="false"></tocitem>
-        <tocitem target="ggmui" text="適用されない URI" expand="false"></tocitem>
-        <tocitem target="ggmui" text="適用されない URI の反転" expand="false"></tocitem>
-        <tocitem target="ggmui" text="適用されない URI のキャッシュが有効" expand="false"></tocitem>
-        <tocitem target="ggmui" text="適用されない URI のキャッシュサイズ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="適用されないクライアント IP のリスト" expand="false"></tocitem>
-        <tocitem target="ggmui" text="適用されない IP の反転リスト" expand="false"></tocitem>
-        <tocitem target="ggmui" text="適用されない IP のキャッシュフラグ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="適用されない IP のキャッシュサイズ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="プロファイル属性フェッチモード" expand="false"></tocitem>
-        <tocitem target="ggmui" text="プロファイル属性マッピング" expand="false"></tocitem>
-        <tocitem target="ggmui" text="応答属性フェッチモード" expand="false"></tocitem>
-        <tocitem target="ggmui" text="応答属性マッピング" expand="false"></tocitem>
-        <tocitem target="ggmui" text="Cookie 区切り文字" expand="false"></tocitem>
-        <tocitem target="ggmui" text="属性の日時形式の取得" expand="false"></tocitem>
-        <tocitem target="ggmui" text="属性 Cookie エンコード" expand="false"></tocitem>
-        <tocitem target="ggmui" text="セッション属性フェッチモード" expand="false"></tocitem>
-        <tocitem target="ggmui" text="セッション属性マッピング" expand="false"></tocitem>
-        <tocitem target="ggmui" text="デフォルトの特権属性" expand="false"></tocitem>
-        <tocitem target="ggmui" text="特権属性タイプ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="特権属性を小文字に" expand="false"></tocitem>
-        <tocitem target="ggmui" text="特権セッション属性" expand="false"></tocitem>
-        <tocitem target="ggmui" text="特権属性マッピングを有効" expand="false"></tocitem>
-        <tocitem target="ggmui" text="特権属性マッピング" expand="false"></tocitem>
-        <tocitem target="ggmui" text="カスタム認証ハンドラ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="カスタムログアウトハンドラ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="カスタム検証ハンドラ" expand="false"></tocitem></tocitem>
-    <tocitem target="ggmui" text="SSO" expand="false">
-        <tocitem target="ggmui" text="Cookie 名" expand="false"></tocitem>
-        <tocitem target="ggmui" text="SSO キャッシュが有効" expand="false"></tocitem>
-        <tocitem target="ggmui" text="クロスドメイン SSO" expand="false"></tocitem>
-        <tocitem target="ggmui" text="CDSSO リダイレクト URI" expand="false"></tocitem>
-        <tocitem target="ggmui" text="CDSSO サーブレット URL" expand="false"></tocitem>
-        <tocitem target="ggmui" text="CDSSO クロックスキュー" expand="false"></tocitem>
-        <tocitem target="ggmui" text="CDSSO で信頼される ID プロバイダ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="CDSSO のセキュリティー保護が有効" expand="false"></tocitem>
-        <tocitem target="ggmui" text="CDSSO ドメインリスト" expand="false"></tocitem>
-        <tocitem target="ggmui" text="Cookie リセット" expand="false"></tocitem>
-        <tocitem target="ggmui" text="Cookie リセット名リスト" expand="false"></tocitem>
-        <tocitem target="ggmui" text="Cookie リセットドメインマップ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="Cookie リセットパスマップ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="SSO デコード" expand="false"></tocitem></tocitem>
-    <tocitem target="ggmui" text="FAM サービス" expand="false">
-        <tocitem target="ggmui" text="FAM ログイン URL" expand="false"></tocitem>
-        <tocitem target="ggmui" text="優先順位付きログイン URL" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ログイン URL プローブ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ログイン URL プローブタイムアウト" expand="false"></tocitem>
-        <tocitem target="ggmui" text="FAM ログアウト URL" expand="false"></tocitem>
-        <tocitem target="ggmui" text="優先順位付きログアウト URL" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ログアウト URL プローブ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ログアウト URL プローブタイムアウト" expand="false"></tocitem>
-        <tocitem target="ggmui" text="FAM 認証サービスプロトコル" expand="false"></tocitem>
-        <tocitem target="ggmui" text="FAM 認証サービスホスト名" expand="false"></tocitem>
-        <tocitem target="ggmui" text="FAM 認証サービスポート" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ポリシーリモートログファイル名" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ポリシーログレベル" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ポリシー通知を有効" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ポリシークライアントポーリング間隔" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ポリシークライアントキャッシュモード" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ポリシークライアントブールアクション値" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ポリシークライアントリソース演算子" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ポリシークライアントクロックスキュー" expand="false"></tocitem>
-        <tocitem target="ggmui" text="URL ポリシー環境 GET パラメータ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="URL ポリシー環境 POST パラメータ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="URL ポリシー環境 jsession パラメータ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ユーザーデータキャッシュのポーリング時間" expand="false"></tocitem>
-        <tocitem target="ggmui" text="サービスデータキャッシュの通知を有効" expand="false"></tocitem>
-        <tocitem target="ggmui" text="サービスデータキャッシュ時間" expand="false"></tocitem>
-        <tocitem target="ggmui" text="クライアントポーリングを有効" expand="false"></tocitem>
-        <tocitem target="ggmui" text="クライアントポーリング期間" expand="false"></tocitem></tocitem>
-    <tocitem target="ggmui" text="その他" expand="false">
-        <tocitem target="ggmui" text="ロケール言語" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ロケールの国" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ポートチェックが有効" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ポートチェックファイル" expand="false"></tocitem>
-        <tocitem target="ggmui" text="ポートチェックの設定" expand="false"></tocitem>
-        <tocitem target="ggmui" text="バイパス主体リスト" expand="false"></tocitem>
-        <tocitem target="ggmui" text="旧バージョンのサポートが有効" expand="false"></tocitem>
-        <tocitem target="ggmui" text="旧バージョンのユーザーエージェント" expand="false"></tocitem>
-        <tocitem target="ggmui" text="旧バージョンのリダイレクト URI" expand="false"></tocitem>
-        <tocitem target="ggmui" text="暗号化プロバイダ" expand="false"></tocitem></tocitem>
-    <tocitem target="ggmui" text="拡張" expand="false">
-        <tocitem target="ggmui" text="com.sun.identity.agents.config.webservice.enable " expand="false"></tocitem>
-        <tocitem target="ggmui" text="com.sun.identity.agents.config.webservice.endpoint " expand="false"></tocitem>
-        <tocitem target="ggmui" text="com.sun.identity.agents.config.webservice.process.get.enable " expand="false"></tocitem>
-        <tocitem target="ggmui" text="com.sun.identity.agents.config.webservice.authenticator " expand="false"></tocitem>
-        <tocitem target="ggmui" text="com.sun.identity.agents.config.webservice.internalerror.content " expand="false"></tocitem>
-        <tocitem target="ggmui" text="com.sun.identity.agents.config.webservice.autherror.content " expand="false"></tocitem>
-        <tocitem target="ggmui" text="代替のエージェントホスト名" expand="false"></tocitem>
-        <tocitem target="ggmui" text="代替のエージェントポート名" expand="false"></tocitem>
-        <tocitem target="ggmui" text="代替のエージェントプロトコル" expand="false"></tocitem>
-        <tocitem target="ggmui" text="FQDN 確認" expand="false"></tocitem>
-        <tocitem target="ggmui" text="FQDN デフォルト" expand="false"></tocitem>
-        <tocitem target="ggmui" text="FQDN 仮想ホストマップ" expand="false"></tocitem>
-        <tocitem target="ggmui" text="カスタムプロパティー" expand="false"></tocitem></tocitem></tocitem>
- <tocitem target="agentconfig.webserviceprovideredit" text="Web サービスプロバイダ" expand="false">
-    <tocitem target="agentconfig.webserviceprovideredit" text="一般" expand="false">
-        <tocitem target="agentconfig.webserviceprovideredit" text="グループ" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceprovideredit" text="パスワード" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceprovideredit" text="パスワードの確認" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceprovideredit" text="ステータス" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceprovideredit" text="汎用識別子" expand="false"></tocitem></tocitem>
-    <tocitem target="agentconfig.webserviceprovideredit" text="セキュリティー" expand="false">
-        <tocitem target="agentconfig.webserviceprovideredit" text="セキュリティーメカニズム" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceprovideredit" text="認証連鎖" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceprovideredit" text="メッセージにセキュリティーヘッダーを保存する" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceprovideredit" text="Liberty サービスタイプ URN" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceprovideredit" text="ユーザートークンの資格情報" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceprovideredit" text="非公開鍵のタイプ" expand="false"></tocitem></tocitem>
-    <tocitem target="agentconfig.webserviceprovideredit" text="SAML 設定" expand="false">
-        <tocitem target="agentconfig.webserviceprovideredit" text="SAML 属性マッピング" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceprovideredit" text="SAML NameID マッパープラグイン" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceprovideredit" text="SAML 属性名前空間" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceprovideredit" text="包含メンバーシップ" expand="false"></tocitem></tocitem>
-    <tocitem target="agentconfig.webserviceprovideredit" text="署名と暗号化" expand="false">
-        <tocitem target="agentconfig.webserviceprovideredit" text="応答には署名が必要" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceprovideredit" text="応答の暗号化が必要" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceprovideredit" text="リクエストの署名の確認が必要" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceprovideredit" text="リクエストヘッダーの暗号化が必要" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceprovideredit" text="リクエストの復号化が必要" expand="false"></tocitem></tocitem>
-    <tocitem target="agentconfig.webserviceprovideredit" text="キーストア" expand="false">
-        <tocitem target="agentconfig.webserviceprovideredit" text="Web サービスクライアントの公開鍵のエイリアス" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceprovideredit" text="非公開鍵のエイリアス" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceprovideredit" text="キーストアの使用法" expand="false"></tocitem></tocitem>
-    <tocitem target="agentconfig.webserviceprovideredit" text="エンドポイント" expand="false">
-        <tocitem target="agentconfig.webserviceprovideredit" text="Web サービスエンドポイント" expand="false"></tocitem></tocitem></tocitem>
- <tocitem target="agentconfig.webserviceclientedit" text="Web サービスクライアント属性" expand="false">
-    <tocitem target="agentconfig.webserviceclientedit" text="一般" expand="false">
-        <tocitem target="agentconfig.webserviceclientedit" text="グループ" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceclientedit" text="パスワード" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceclientedit" text="パスワードの確認" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceclientedit" text="ステータス" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceclientedit" text="汎用識別子" expand="false"></tocitem></tocitem>
-    <tocitem target="agentconfig.webserviceclientedit" text="セキュリティー" expand="false">
-        <tocitem target="agentconfig.webserviceclientedit" text="セキュリティーメカニズム" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceclientedit" text="STS 設定" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceclientedit" text="ディスカバリ設定" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceclientedit" text="ユーザー認証が必要" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceclientedit" text="メッセージにセキュリティーヘッダーを保存する" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceclientedit" text="Liberty サービスタイプ URN" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceclientedit" text="ユーザートークンの資格情報" expand="false"></tocitem></tocitem>
-    <tocitem target="agentconfig.webserviceclientedit" text="署名と暗号化" expand="false">
-        <tocitem target="agentconfig.webserviceclientedit" text="リクエストには署名が必要" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceclientedit" text="リクエストヘッダーの暗号化が必要" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceclientedit" text="リクエストの暗号化が必要" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceclientedit" text="応答の署名の確認が必要" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceclientedit" text="応答の復号化が必要" expand="false"></tocitem></tocitem>
-    <tocitem target="agentconfig.webserviceclientedit" text="キーストア" expand="false">
-        <tocitem target="agentconfig.webserviceclientedit" text="Web サービスプロバイダの公開鍵のエイリアス" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceclientedit" text="非公開鍵のエイリアス" expand="false"></tocitem>
-        <tocitem target="agentconfig.webserviceclientedit" text="キーストアの使用法" expand="false"></tocitem></tocitem>
-    <tocitem target="agentconfig.webserviceclientedit" text="エンドポイント" expand="false">
-        <tocitem target="agentconfig.webserviceclientedit" text="Web サービスエンドポイント" expand="false"></tocitem></tocitem></tocitem>
- <tocitem target="agentconfig.webservicestsedit" text="セキュリティートークンサービス" expand="false">
-    <tocitem target="agentconfig.webservicestsedit" text="一般" expand="false">
-        <tocitem target="agentconfig.webservicestsedit" text="グループ" expand="false"></tocitem>
-        <tocitem target="agentconfig.webservicestsedit" text="パスワード" expand="false"></tocitem>
-        <tocitem target="agentconfig.webservicestsedit" text="パスワードの確認" expand="false"></tocitem>
-        <tocitem target="agentconfig.webservicestsedit" text="ステータス" expand="false"></tocitem>
-        <tocitem target="agentconfig.webservicestsedit" text="汎用識別子" expand="false"></tocitem></tocitem>
-    <tocitem target="agentconfig.webservicestsedit" text="セキュリティー" expand="false">
-        <tocitem target="agentconfig.webservicestsedit" text="セキュリティーメカニズム" expand="false"></tocitem>
-        <tocitem target="agentconfig.webservicestsedit" text="STS 設定" expand="false"></tocitem>
-        <tocitem target="agentconfig.webservicestsedit" text="メッセージにセキュリティーヘッダーを保存する" expand="false"></tocitem>
-        <tocitem target="agentconfig.webservicestsedit" text="ユーザートークンの資格情報" expand="false"></tocitem></tocitem>
-    <tocitem target="agentconfig.webservicestsedit" text="署名と暗号化" expand="false">
-        <tocitem target="agentconfig.webservicestsedit" text="リクエストには署名が必要" expand="false"></tocitem>
-        <tocitem target="agentconfig.webservicestsedit" text="リクエストヘッダーの暗号化が必要" expand="false"></tocitem>
-        <tocitem target="agentconfig.webservicestsedit" text="リクエストの暗号化が必要" expand="false"></tocitem>
-        <tocitem target="agentconfig.webservicestsedit" text="応答の署名の確認が必要" expand="false"></tocitem>
-        <tocitem target="agentconfig.webservicestsedit" text="応答の復号化が必要" expand="false"></tocitem></tocitem>
-    <tocitem target="agentconfig.webservicestsedit" text="キーストア" expand="false">
-        <tocitem target="agentconfig.webservicestsedit" text="Web サービスプロバイダの公開鍵のエイリアス" expand="false"></tocitem>
-        <tocitem target="agentconfig.webservicestsedit" text="非公開鍵のエイリアス" expand="false"></tocitem>
-        <tocitem target="agentconfig.webservicestsedit" text="キーストアの使用法" expand="false"></tocitem></tocitem>
-    <tocitem target="agentconfig.webservicestsedit" text="エンドポイント" expand="false">
-        <tocitem target="agentconfig.webservicestsedit" text="Web サービスエンドポイント" expand="false"></tocitem></tocitem></tocitem>
- <tocitem target="agentconfig.genericagentprofile" text="ディスカバリエージェント" expand="false">
-    <tocitem target="agentconfig.genericagentprofile" text="グループ" expand="false"></tocitem>
-    <tocitem target="agentconfig.genericagentprofile" text="パスワード" expand="false"></tocitem>
-    <tocitem target="agentconfig.genericagentprofile" text="パスワードの確認" expand="false"></tocitem>
-    <tocitem target="agentconfig.genericagentprofile" text="エージェント設定リポジトリの場所" expand="false"></tocitem>
-    <tocitem target="agentconfig.genericagentprofile" text="非公開鍵のエイリアス" expand="false"></tocitem>
-    <tocitem target="agentconfig.genericagentprofile" text="ディスカバリサービスエンドポイント" expand="false"></tocitem>
-    <tocitem target="agentconfig.genericagentprofile" text="認証 Web サービスエンドポイント" expand="false"></tocitem></tocitem>
- <tocitem target="ggnbx" text="2.2 ポリシーエージェント" expand="false">
-    <tocitem target="ggnbx" text="パスワード" expand="false"></tocitem>
-    <tocitem target="ggnbx" text="パスワードの確認" expand="false"></tocitem>
-    <tocitem target="ggnbx" text="ステータス" expand="false"></tocitem>
-    <tocitem target="ggnbx" text="説明" expand="false"></tocitem>
-    <tocitem target="ggnbx" text="sunIdentityServerDeviceKeyValue" expand="false"></tocitem></tocitem>
+        <tocitem target="service.siteedit" text="サイトインスタンスを編集する" expand="false"></tocitem>
+        <tocitem target="ggvwi" text="サーバーおよびサイトのコンソール属性マップ" expand="false"></tocitem></tocitem></tocitem>
  <tocitem target="sessions" text="セッション" expand="false">
     <tocitem target="sessionpage" text="「セッション」ページ" expand="false">
         <tocitem target="sessionsearch" text="検索" expand="false"></tocitem>
         <tocitem target="viewsession" text="セッションの表示" expand="false"></tocitem>
-        <tocitem target="session.smprofile" text="「セッション」ウィンドウ" expand="false">
-            <tocitem target="session.smprofile" text="ユーザー ID" expand="false"></tocitem>
-            <tocitem target="session.smprofile" text="残り時間 (分)" expand="false"></tocitem>
-            <tocitem target="session.smprofile" text="最大セッション時間 (分)" expand="false"></tocitem>
-            <tocitem target="session.smprofile" text="アイドル時間 (分)" expand="false"></tocitem>
-            <tocitem target="session.smprofile" text="最大アイドル時間 (分)" expand="false"></tocitem>
-            <tocitem target="invalidatesession" text="セッションの無効化" expand="false"></tocitem>
-</tocitem>
+        <tocitem target="session.smprofile" text="「セッション」ウィンドウ" expand="false"></tocitem>
+        <tocitem target="invalidatesession" text="セッションの無効化" expand="false"></tocitem>
 </tocitem>
 </tocitem>
 </toc>

@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Sicherheitstoken-Dienst - Online-Hilfe zur Sun Java System Federated Access Manager 8.0-Konsole
+  <title>Attribute des Sicherheitstoken-Diensts - Online-Hilfe zur Sun Federated Access Manager 8.0-Konsole
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -30,17 +30,17 @@
 
 
 
-<a name="agentconfig.webservicestsedit"></a><h4>Sicherheitstoken-Dienst</h4>
+<a name="agentconfig.webservicestsedit"></a><h4>Attribute des Sicherheitstoken-Diensts</h4>
 <p>Ein Sicherheitstoken-Dienst ist ein Webdienst f&#252;r die Ausgabe und Verwaltung von Sicherheitstokens.
 Dies bedeutet, dass er Sicherheitsaussagen bzw. -behauptungen h&#228;ufig, wenn auch nicht notwendigerweise,
 in verschl&#252;sselten Sets erstellt. Diese Behauptungen beruhen auf dem Erhalt von Belegen,
 die direkt &#252;berpr&#252;ft werden k&#246;nnen, oder von Sicherheitstokens von Autorit&#228;ten, die als
-vertrauensw&#252;rdig eingestuft werden. Um die Vertrauensw&#252;rdigkeit zu best&#228;tigen, kann ein Dienst sein
-Recht zur Best&#228;tigung einer Menge von Behauptungen beweisen, indem er ein Sicherheitstoken
-oder ein Set von Sicherheitstokens vorweist, die von einem STS ausgestellt wurden.
-Alternativ k&#246;nnte er ein Sicherheitstoken mit seiner eigenen Vertrauensw&#252;rdigkeitsaussage ausgeben (beachten Sie,
-dass dies bei einigen Sicherheitstoken-Formaten einfach nur eine erneute Ausgabe oder eine
-Co-Signatur sein kann). Dies bildet die Grundlage des Trust-Brokering.</p>
+vertrauensw&#252;rdig eingestuft werden.  Um die Vertrauensw&#252;rdigkeit zu best&#228;tigen, kann ein Dienst
+sein Recht zur Best&#228;tigung einer Menge von Behauptungen beweisen, indem er ein
+Sicherheitstoken oder ein Set von Sicherheitstokens vorweist, die von einem STS ausgestellt
+wurden. Alternativ k&#246;nnte er ein Sicherheitstoken mit seiner eigenen Vertrauensw&#252;rdigkeitsaussage ausgeben (beachten
+Sie, dass dies bei einigen Sicherheitstoken-Formaten einfach nur eine erneute Ausgabe oder
+eine Co-Signatur sein kann). Dies bildet die Grundlage des Trust-Brokering.</p>
 
 <a name="ggpce"></a><h5>Allgemein</h5>
 <p>Folgende allgemeine Attribute definieren die grundlegenden Eigenschaften f&#252;r den Sicherheitstoken-Dienst:</p>
@@ -51,15 +51,16 @@ muss definiert sein, bevor der betreffende Agent in die Sammlung aufgenommen wir
 </p>
 
 <a name="ggpec"></a><h5>Password</h5>
-<p>Definiert das Passwort f&#252;r das Attribut des Sicherheitstoken-Diensts.</p>
+<p>Definiert das Passwort f&#252;r den Agenten des Sicherheitstoken-Diensts.</p>
 
 <a name="ggpex"></a><h5>Passwortbest&#228;tigung</h5>
 <p> Best&#228;tigen Sie das Passwort.</p>
 
 <a name="ggpdu"></a><h5>Status</h5>
-<p>Legt fest, ob der Agent f&#252;r den Sicherheitstoken-Dienst an der Sicherung ausgehender
-Dienstanforderungen beteiligt ist. Standardm&#228;&#223;ig ist dieser Wert auf <tt> Active</tt> gesetzt, was bedeutet,
-dass er beteiligt ist. </p>
+<p>Legt fest, ob der Agent im System aktiv oder inaktiv sein soll.
+Standardm&#228;&#223;ig ist dieses Attribut auf "Aktiv" gesetzt, was bedeutet, dass der Agent
+an der Sicherung ausgehender Webdienstanforderungen von Webdienst-Clients und der Validierung von Webdienstantworten
+von einem Webdienstanbieter beteiligt ist.</p>
 
 <a name="ggpdg"></a><h5>Universalbezeichner</h5>
 <p>Listet die grundlegenden LDAP-Eigenschaften auf, die den Agenten f&#252;r den Sicherheitstoken-Dienst eindeutig
@@ -72,25 +73,26 @@ definieren.</p>
 <p>Legt den Sicherheitsnachweistyp fest, der zur Sicherung der Anforderung f&#252;r den Sicherheitstoken-Dienst
 verwendet wird. Folgende Sicherheitstypen stehen zur Auswahl:</p>
 <ul><li><p>Anonymous (Anonym) &#8211; Der anonyme Sicherheitsmechanismus enth&#228;lt keine Sicherheitsnachweise.</p></li>
-<li><p>LibertyDiscoverySecurity &#8211; Verwendet Liberty-basierte Sicherheitstokens zur Sicherung der Anforderung.</p></li>
-<li><p>SAML-HolderOfKey &#8211; Verwendet den SAML 1.1-Assertionstyp Holder-Of-Key zur Sicherung der Anforderung.</p></li>
-<li><p>SAML-SenderVouches &#8211; Verwendet den SAML 1.1-Assertionstyp "Sender Vouches" zur Sicherung der Anforderung.</p></li>
-<li><p>SAML2-HolderOfKey &#8211; Verwendet den SAML 2.0-Assertionstoken-Typ Holder-Of-Key zur Sicherung der Anforderung.</p></li>
-<li><p>SAML2-SenderVouches &#8211; Verwendet den SAML 2.0-Assertionstoken-Typ "Sender Vouches" zur Sicherung der Anforderung.</p></li>
-<li><p>STSSecurity &#8211; Definiert, dass der Sicherheitstoken-Dienstagent das Sicherheitstoken vom Sicherheitstoken-Dienst abruft. </p></li>
+<li><p>LibertyDiscoverySecurity &#8211; Verwendet Liberty-basierte Sicherheitstoken.</p></li>
+<li><p>SAML-HolderOfKey &#8211; Verwendet den SAML 1.1-Behauptungstyp "Holder-Of-Key".</p></li>
+<li><p>SAML-SenderVouches &#8211; Verwendet den SAML 1.1-Behauptungstyp "Sender Vouches".</p></li>
+<li><p>SAML2&#8211;HolderOfKey &#8211; Verwendet den SAML 2.0-Behauptungstoken-Typ "Holder-Of-Key".</p></li>
+<li><p>SAML2&#8211;SenderVouches &#8211; Verwendet den SAML 2.0-Behauptungstoken-Typ " Sender Vouches".</p></li>
+<li><p>STSSecurity &#8211; Definiert, dass der Sicherheitstoken-Dienstagent das Sicherheitstoken vom Sicherheitstoken-Dienst abruft.</p></li>
 <li><p>UserNameToken &#8211; Verwendet ein Benutzernamens-Token zur Sicherung der Anforderungen an den Sicherheitstoken-Dienst.</p></li>
 <li><p>UserNameToken-Plain &#8211; Verwendet ein Benutzernamens-Token mit einem Klartextpasswort zur Sicherung der Anforderungen an den Sicherheitstoken-Dienst.</p></li>
-<li><p>X509Token &#8211; Verwendet das X509-Zertifikat zur Sicherung der Agentenanforderungen an den Sicherheitstoken-Dienst.</p></li></ul>
+<li><p>X509Token &#8211;Verwendet das X509-Zertifikat zur Sicherung des Sicherheitstokens.</p></li></ul>
 
 
 <a name="ggpdk"></a><h5>STS-Konfiguration</h5>
 <p>Dieses Attribut ist aktiviert, wenn der Sicherheitstoken-Dienstagent den Sicherheitstoken-Dienst (Security Token Service,
-STS) verwendet. Diese Konfiguration beschreibt eine Liste von STS-Agentenprofilen, die zur Sicherung
-der Anforderungen an den STS-Dienst verwendet werden.</p>
+STS) als Sicherheitsmechanismus verwendet. Diese Konfiguration beschreibt eine Liste von STS-Agentenprofilen, die
+zur Kommunikation mit den und Sicherung der Anforderungen an den STS-Dienst verwendet
+werden.</p>
 
 <a name="ggpfs"></a><h5>Sicherheits-Header in Nachricht beibehalten</h5>
-<p>Wenn dieses Attribut aktiviert ist, legt es fest, dass die SOAP-Sicherheits-Header zur
-weiteren Verarbeitung beim Sicherheitstoken-Dienst beibehalten werden.</p>
+<p>Wenn dieses Attribut aktiviert ist, legt es fest, dass die SOAP-Sicherheits-Header vom
+Sicherheitstoken-Dienst zur weiteren Verarbeitung beibehalten werden.</p>
 
 <a name="ggpej"></a><h5>Berechtigungsnachweis f&#252;r Benutzertoken</h5>
 <p>Das Attribut stellt die gemeinsamen Grundschl&#252;ssel (Shared Secrets) f&#252;r  Benutzername/Passwort dar,
@@ -108,25 +110,25 @@ Anforderung mithilfe eines angegebenen Tokentyps.</p>
 Sicherheitstoken-Dienst verschl&#252;sselt.</p>
 
 <a name="ggpca"></a><h5>Ist Anforderung verschl&#252;sselt</h5>
-<p>Wenn dieses Attribut aktiviert ist, wird die Anforderung des Sicherheitstoken-Diensts aktiviert.</p>
+<p>Wenn diese Option aktiviert ist, wird die Anforderung des Sicherheitstoken-Diensts verschl&#252;sselt.</p>
 
 <a name="ggpfo"></a><h5>Ist die Antwortsignatur verifiziert</h5>
 <p>Wenn dieses Attribut aktiviert ist, ist die Signatur des Sicherheitstoken-Diensts verifiziert.</p>
 
 <a name="ggpdo"></a><h5>Ist Antwort entschl&#252;sselt</h5>
-<p>Wenn dieses Attribut aktiviert ist, wird die Antwort des Sicherheitstoken-Diensts entschl&#252;sselt. </p>
+<p>Wenn dieses Attribut aktiviert ist, wird die Antwort des Sicherheitstoken-Diensts entschl&#252;sselt.</p>
 
 <a name="ggpeh"></a><h5>Schl&#252;sselspeicher</h5>
 <p>Folgende Attribute konfigurieren den Schl&#252;sselspeicher, der zum Speichern und Abrufen des Zertifikats
 verwendet werden soll: </p>
 
 <a name="ggpcg"></a><h5>Alias des &#246;ffentlichen Schl&#252;ssels des Webdienstanbieters</h5>
-<p>Dieses Attribut definiert den Alias des &#246;ffentlichen Zertifikatschl&#252;ssels, der zur Verschl&#252;sselung der
-Webdienstanforderung verwendet wird.</p>
+<p>Dieses Attribut definiert den Alias des &#246;ffentlichen Zertifikatschl&#252;ssels, der verwendet wird, um
+die Webdienstanforderung zu verschl&#252;sseln oder die Signatur der Webdienstantwort zu verifizieren.</p>
 
 <a name="ggpfg"></a><h5>Alias des privaten Schl&#252;ssels</h5>
-<p>Dieses Attribut definiert den Alias des privaten Zertifikatschl&#252;ssels, der zum Signieren/Entschl&#252;sseln der
-Webdienstantwort verwendet wird.</p>
+<p>Dieses Attribut definiert den Alias des privaten Zertifikatschl&#252;ssels, der verwendet wird, um
+die Webdienstanforderung zu signieren oder die Webdienstantwort zu entschl&#252;sseln.</p>
 
 <a name="ggpdc"></a><h5>Schl&#252;sselspeichernutzung</h5>
 <p>Diese Konfiguration definiert, ob der Standardschl&#252;sselspeicher oder ein benutzerdefinierter Schl&#252;sselspeicher verwendet werden

@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Plataforma - Ayuda en l&#237;nea de la consola de Sun Java System Federated Access Manager 8.0
+  <title>Plataforma - Ayuda en l&#237;nea de la consola de Sun Federated Access Manager 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,40 +31,15 @@
 
 
 <a name="service.scplatform"></a><h4>Plataforma</h4>
-<p><a name="indexterm-211"></a>El servicio de plataforma es aqu&#233;l en el que se pueden agregar
+<p><a name="indexterm-205"></a>El servicio de plataforma es aqu&#233;l en el que se pueden agregar
 servidores adicionales a las configuraciones de Federated Access Manager, as&#237; como otras
 opciones aplicadas en el nivel superior de la aplicaci&#243;n Federated Access Manager.
 Los atributos del servicio de plataforma son globales. Los atributos son:</p>
-<ul><li><p><a href="#fxcsy">Nombre del sitio</a></p></li>
-<li><p><a href="#fxcqf">Nombre de ejemplo</a></p></li>
-<li><p><a href="#fxcgy">Idioma de plataforma</a></p></li>
+<ul><li><p><a href="#fxcgy">Idioma de plataforma</a></p></li>
 <li><p><a href="#fxcpo">Dominios de cookies</a></p></li>
-<li><p><a href="#fxcsh">URL de servicio de inicio de sesi&#243;n</a></p></li>
-<li><p><a href="#fxcrt">URL de servicio de cierre de sesi&#243;n</a></p></li>
 <li><p><a href="#fxcmi">Idiomas disponibles</a></p></li>
 <li><p><a href="#fxctg">Conjunto de caracteres del cliente</a></p></li></ul>
 
-
-<a name="fxcsy"></a><h5>Nombre del sitio</h5>
-<p>El servicio de asignaci&#243;n de nombres lee este atributo en el momento
-de la inicializaci&#243;n. La lista identifica de forma exclusiva el nombre FQDN
-con el n&#250;mero de puerto del equilibrador de carga o el SRA
-de equilibrado de carga para los servidores secundarios de Federated Access Manager.
-Si el host especificado en una solicitud para una URL de servicio
-no se encuentra en la lista, el servicio de asignaci&#243;n de nombres
-rechazar&#225; la solicitud. En este atributo s&#243;lo debe utilizarse el protocolo de
-servicio de asignaci&#243;n de nombres. Consulte <b>Broken Link (Target ID: SERVICE.SCPLATFORMSITELISTADD)</b>.</p>
-
-<a name="fxcqf"></a><h5>Nombre de ejemplo</h5>
-<p>El servicio de asignaci&#243;n de nombres lee este atributo en el momento
-de la inicializaci&#243;n. Esta lista contiene los servidores de la sesi&#243;n de
-Federated Access Manager en una &#250;nica configuraci&#243;n de Federated Access Manager. Por
-ejemplo, si hay dos instancias de Federated Access Manager instaladas que deben
-funcionar como una, deben incluirse ambas en esta lista. Si el host
-especificado en una solicitud para una URL de servicio no se encuentra
-en la lista, el servicio de asignaci&#243;n de nombres rechazar&#225; la solicitud.
-En este atributo s&#243;lo debe utilizarse el protocolo de servicio de asignaci&#243;n
-de nombres. Consulte <b>Broken Link (Target ID: SERVICE.SCPLATFORMSERVERLISTADD)</b>.</p>
 
 <a name="fxcgy"></a><h5>Idioma de plataforma</h5>
 <p>El valor de configuraci&#243;n regional de la plataforma es el subtipo de
@@ -85,14 +60,6 @@ dominios de cookies en este atributo. Si se utiliza un equilibrador de
 carga, el dominio de cookies debe ser el del dominio del equilibrador
 de carga y no los servidores detr&#225;s del equilibrador. El valor predeterminado
 de este campo es el dominio del Federated Access Manager instalado.</p>
-
-<a name="fxcsh"></a><h5>URL de servicio de inicio de sesi&#243;n</h5>
-<p>Este campo especifica la URL de la p&#225;gina de inicio de sesi&#243;n.
-El valor predeterminado de este atributo es <tt>/Service_DEPLOY_URI/UI/Login</tt>. </p>
-
-<a name="fxcrt"></a><h5>URL de servicio de cierre de sesi&#243;n</h5>
-<p>Este campo especifica la URL de la p&#225;gina de cierre de sesi&#243;n.
-El valor predeterminado de este atributo es <tt>/Service_DEPLOY_URI/UI/Logout</tt>. </p>
 
 <a name="fxcmi"></a><h5>Idiomas disponibles</h5>
 <p>Este atributo almacena todos las configuraciones regionales configuradas para la plataforma. Considere

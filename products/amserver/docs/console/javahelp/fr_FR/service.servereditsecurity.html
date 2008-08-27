@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>S&#233;curit&#233; - Aide en ligne de la console Sun Java System Federated Access Manager 8.0
+  <title>S&#233;curit&#233; - Aide en ligne de la console Sun Federated Access Manager 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -40,31 +40,31 @@ de cookie pour contr&#244;ler le niveau de s&#233;curit&#233; de l'instance de s
 <a name="ggkcb"></a><h5>Cl&#233; de chiffrement du mot de passe</h5>
 <p>Sp&#233;cifie la cl&#233; utilis&#233;e pour chiffrer et d&#233;chiffrer les mots de passe
 et est stock&#233; dans la configuration du syst&#232;me de gestion des services.
-Cette valeur est d&#233;finie pendant l'installation. Exemple : dSB9LkwPCSoXfIKHVMhIt3bKgibtsggd</p>
+Cette valeur est d&#233;finie pendant l'installation. Exemple&#160;: <tt>dSB9LkwPCSoXfIKHVMhIt3bKgibtsggd </tt></p>
 
 <a name="ggkbg"></a><h5>Secret partag&#233; du service d'authentification</h5>
 <p>Secret partag&#233; du module d'authentification d'application. Cette valeur est d&#233;finie pendant l'installation.
-Exemple : AQICPX9e1cxSxB2RSy1WG1+O4msWpt/6djZl </p>
+Exemple&#160;: <tt>AQICPX9e1cxSxB2RSy1WG1+O4msWpt/6djZl </tt></p>
 
 <a name="ggkbd"></a><h5>Classe de chiffrement</h5>
 <p>La valeur par d&#233;faut est <tt>com.iplanet.services.util.JCEEncryption</tt>. Sp&#233;cifie l'impl&#233;mentation de classe de chiffrement.
-Les classes disponibles sont&#160;: <tt> com.iplanet.services.util.JCEEncryption</tt> et <tt>com.iplanet.services.util.JSSEncryption </tt>.</p>
+Les classes disponibles sont <tt>com.iplanet.services.util.JCEEncryption</tt> et <tt>com.iplanet.services.util.JSSEncryption</tt>.</p>
 
 <a name="ggkby"></a><h5>Classe de fabrique al&#233;atoire s&#233;curis&#233;e</h5>
-<p># La valeur par d&#233;faut est <tt>com.iplanet.am.</tt><tt>util.JSSSecureRandomFactoryImp </tt>l. Sp&#233;cifie le nom de classe
-de fabrique de <tt>SecureRandomFactory</tt>. Les classes d'impl&#233;mentation disponibles sont&#160;: <tt>com.iplanet.am.</tt><tt>util.JSSSecureRandomFactoryImpl </tt> qui utilise
-JSS et <tt>com.iplanet.am.</tt><tt>util.SecureRandomFactoryImpl </tt> qui utilise le langage Java pur. </p>
+<p>La valeur par d&#233;faut est <tt>com.iplanet.am.util.JSSSecureRandomFactoryImpl</tt>. Sp&#233;cifie le nom de la classe
+de fabrique <tt>SecureRandomFactory</tt>. Les classes d'impl&#233;mentation disponibles sont <tt>com.iplanet.am.util.JSSSecureRandomFactoryImpl</tt> qui utilise JSS,
+et <tt>com.iplanet.am.util.SecureRandomFactoryImpl</tt> qui utilise du code purement Java.   </p>
 
 <a name="ggkbr"></a><h5>Validation</h5>
 <p>Les attributs de validation sont&#160;:</p>
 
-<a name="ggkay"></a><h5>Longueur de contenu max. de comm. bas niveau de plate-forme</h5>
+<a name="ggkay"></a><h5>Communication de bas niveau sur plate-forme. Max. Longueur du contenu</h5>
 <p>La valeur par d&#233;faut est 16384 ou 16k. Sp&#233;cifie la longueur de
 contenu maximale de requ&#234;te <tt>HttpRequest</tt> accept&#233;e par Federated Access Manager.</p>
 
 <a name="ggkbb"></a><h5>V&#233;rification de l'adresse IP du client</h5>
 <p>La valeur par d&#233;faut est NO. Sp&#233;cifie si l'adresse IP du client
-est v&#233;rifi&#233;e ou non dans toutes les cr&#233;ations ou validations <tt>SSOToken</tt>.</p>
+est v&#233;rifi&#233;e lors de chaque cr&#233;ation ou validation de jetons <tt>SSOToken</tt>.</p>
 
 <a name="ggkba"></a><h5>Cookie</h5>
 <p>Les attributs de cookie sont&#160;:</p>
@@ -90,16 +90,16 @@ qui convertit les caract&#232;res en caract&#232;res compr&#233;hensibles par le
 sites et serveurs suppl&#233;mentaires que vous cr&#233;ez&#160;:</p>
 
 <a name="ggkbj"></a><h5>Fichier keystore</h5>
-<p>Cette valeur est d&#233;finie pendant l'installation. Exemple : <tt></tt><i>FederatedAccessManager-base </i><tt>/</tt><i>server_URI</i><tt>/keystore.jks</tt>. Sp&#233;cifie le chemin
-du fichier de mots de passe de keystore XML SAML.</p>
+<p>Cette valeur est d&#233;finie pendant l'installation. Exemple&#160;: <tt></tt><i>FederatedAccessManager-base</i><tt>/</tt><i>server_URI</i><tt>/keystore.jks</tt>. Sp&#233;cifie le chemin du
+fichier de mots de passe de keystore XML SAML.</p>
 
 <a name="ggkbu"></a><h5>Fichier de mots de passe de keystore</h5>
-<p>Cette valeur est d&#233;finie pendant l'installation. Exemple : <tt></tt><i>FederatedAccessManager-base </i><tt>/</tt><i>server_URI</i><tt>/.storepass</tt>. Sp&#233;cifie le chemin
-du fichier storepass de cl&#233; XML SAML.</p>
+<p>Cette valeur est d&#233;finie pendant l'installation. Exemple&#160;: <tt></tt><i>FederatedAccessManager-base</i><tt>/</tt><i>server_URI</i><tt>/.storepass</tt>. Sp&#233;cifie le chemin du
+fichier storepass de cl&#233; XML SAML.</p>
 
 <a name="ggkbs"></a><h5>Fichier de mots de passe de cl&#233; priv&#233;e</h5>
-<p>Cette valeur est d&#233;finie pendant l'installation. Exemple : <tt></tt><i>FederatedAccessManager-base </i><tt>/</tt><i>server_URI</i><tt>/.keypass</tt> Sp&#233;cifie le chemin
-du fichier de mots de passe de cl&#233; XML SAML.</p>
+<p>Cette valeur est d&#233;finie pendant l'installation. Exemple&#160;: <tt></tt><i>FederatedAccessManager-base</i><tt>/</tt><i>server_URI</i><tt>/.keypass</tt> Sp&#233;cifie le chemin d'acc&#232;s
+au fichier de mots de passe de cl&#233; XML SAML.</p>
 
 <a name="ggkaq"></a><h5>Alias du certificat</h5>
 <p>La valeur par d&#233;faut est test.</p>
@@ -143,9 +143,9 @@ Manager.</p>
 
 <a name="ggkbp"></a><h5>Attributs de recherche</h5>
 <p>N'importe quel composant DN du <tt>subjectDN</tt> de l'&#233;metteur peut &#234;tre utilis&#233; pour
-extraire une LRC d'un serveur LDAP local. Il s'agit d'une cha&#238;ne de
-valeur unique, telle que "cn". Tous les AC racine doivent utiliser le
-m&#234;me attribut de recherche.</p>
+extraire une LRC d'un serveur LDAP local. Cha&#238;ne de valeur unique, telle
+que "cn". Tous les AC racine doivent utiliser le m&#234;me attribut de
+recherche.</p>
 
 <a name="ggkaa"></a><h5>V&#233;rification du protocole OCSP</h5>
 <p>Le protocole OCSP (Online Certificate Status Protocol) permet aux services de Federated
@@ -162,7 +162,7 @@ une r&#233;ponse. </p>
 
 <a name="ggkav"></a><h5>URL de r&#233;pondeur</h5>
 <p>Cet attribut d&#233;finit une URL qui identifie l'emplacement du r&#233;pondeur OCSP. Par
-exemple, <tt>http://ocsp.example.net:80</tt>. </p><p>Par d&#233;faut, l'emplacement du r&#233;pondeur OCSP est d&#233;termin&#233; implicitement &#224; partir du
+exemple, <tt>http://ocsp.example.net:80</tt>.</p><p>Par d&#233;faut, l'emplacement du r&#233;pondeur OCSP est d&#233;termin&#233; implicitement &#224; partir du
 certificat en cours de validation. La propri&#233;t&#233; est utilis&#233;e lorsque l'extension Authority
 Information Access (d&#233;finie par RFC 3280) est absente du certificat ou lorsqu'elle
 doit &#234;tre ignor&#233;e. </p>

@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Core - Online-Hilfe zur Sun Java System Federated Access Manager 8.0-Konsole
+  <title>Core - Online-Hilfe zur Sun Federated Access Manager 8.0-Konsole
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,7 +31,7 @@
 
 
 <a name="service.scserviceprofile.iplanetamauthservice"></a><h4>Core</h4>
-<p><a name="indexterm-177"></a>Dieses Modul ist die allgemeine Konfigurationsbasis f&#252;r die Authentifizierungsdienste von Federated Access
+<p><a name="indexterm-170"></a>Dieses Modul ist die allgemeine Konfigurationsbasis f&#252;r die Authentifizierungsdienste von Federated Access
 Manager. Es muss f&#252;r die einzelnen Authentifizierungsmodulinstanzen registriert und konfiguriert sein. In
 diesem Modul legt der Administrator Standardwerte fest, die f&#252;r Werte &#252;bernommen werden,
 welche nicht explizit in den Standard-Authentifizierungsmodulen von Federated Access Manager angegeben sind.
@@ -107,6 +107,28 @@ Optionen zur Verf&#252;gung:</p><dl><dt><b>Erforderlich</b></dt>
 <dd><p>Diese Option legt fest, dass f&#252;r die erfolgreiche Authentifizierung und die Ausstellung eines SSO-Tokens durch den Authentifizierungsdienst kein Benutzerprofil ben&#246;tigt wird.</p></dd>
 </dl>
 
+
+<a name="ggukq"></a><h5>Sicherheit f&#252;r Remoteauthentifizierung</h5>
+<p>Wenn diese Option aktiviert ist, ist es f&#252;r alle Authentifizierungsanforderungen erforderlich, dass
+das SSOToken der Anwendung die Identit&#228;t des Aufrufers &#252;berpr&#252;ft, sodass die Konfigurationsinformationen
+von  Federated Access Manager die g&#252;ltigen Werte f&#252;r Benutzernamen und Passwort
+f&#252;r die Anwendung abrufen k&#246;nnen.</p>
+
+<a name="ggull"></a><h5>Nachverarbeitungsobjekte f&#252;r Abmeldungsverarbeitung beibehalten</h5>
+<p>Wenn diese Option aktiviert ist, werden die Instanzen der Nachverarbeitungs-Authentifizierungs-Plugins, die w&#228;hrend
+der Anmeldungsverarbeitung verwendet werden, w&#228;hrend der Federated Access Manager-Sitzung beibehalten. Wenn sp&#228;ter
+die Abmeldung aufgerufen wird, wird die <tt>onLogout </tt>-Methode dieser Instanzen aufgerufen. Wenn dieses
+Attribut nicht aktiviert ist, werden die Nachverarbeitungsinstanzen aus dem Anmeldevorgang nicht beibehalten.
+Beim Aufrufen der Abmeldung werden neue Instanzen von Nachverarbeitungs-Plugins erstellt und die
+Methode <tt>onLogout</tt> wird aufgerufen. </p>
+
+<a name="gguji"></a><h5>Authentifizierungsmodulobjekte f&#252;r Abmeldungsverarbeitung beibehalten</h5>
+<p>Wenn diese Option aktiviert ist, werden alle Instanzen der Authentifizierungsmodule, die w&#228;hrend
+des Authentifizierungsvorgangs verwendet werden, w&#228;hrend der Federated Access Manager-Sitzung beibehalten. Wenn sp&#228;ter
+die Abmeldung aufgerufen wird, wird die Methode "logout/destroyModulestate" f&#252;r dieselben Instanzen aufgerufen.
+Wenn dieses Attribut nicht aktiviert ist, werden die Instanzen des Authentifizierungsmoduls aus
+dem Abmeldevorgang nicht beibehalten. Beim Abmelden wird keine Methode f&#252;r die Authentifizierungsmodule
+aufgerufen.</p>
 
 <a name="gcnks"></a><h5>Administrator-Authentifizierungskonfiguration</h5>
 <p>Legt den Authentifizierungsdienst f&#252;r Administratoren fest. Dieses Attribut kann verwendet werden, wenn
@@ -196,6 +218,12 @@ unter <i>Sperrattributname</i> angegebene Benutzerprofil. Wenn der Wert von ";An
 0 ist, werden die Arbeitsspeichersperre und das Benutzerkonto f&#252;r die angegebene Dauer
 (in Minuten) gesperrt.</p>
 
+<a name="ggulj"></a><h5>Multiplikator f&#252;r Sperrdauer</h5>
+<p>Dieses Attribut definiert den Wert, mit dem die Sperrdauer bei Anmeldefehler f&#252;r
+jede auf einander folgende Sperrung multipliziert wird. Beispiel: Wenn "Anmeldefehler Sperrdauer" auf
+3 Minuten gesetzt ist und "Multiplikator f&#252;r Sperrdauer" auf 2, wird der
+das Konto 6 Minuten lang f&#252;r den Benutzer gesperrt. </p>
+
 <a name="gcnjy"></a><h5>Sperrattributname</h5>
 <p>Legt ein beliebiges LDAP-Attribut fest, das f&#252;r die Sperre eingerichtet werden soll.
 Um die Sperre f&#252;r diesen Attributnamen zu erm&#246;glichen, muss auch der Wert
@@ -210,7 +238,7 @@ oder deaktiviert ist. Standardm&#228;&#223;ig ist dieses Attribut f&#252;r <i>in
 <a name="gcnkz"></a><h5>Standard-URL f&#252;r erfolgreiche Anmeldung</h5>
 <p>Hier k&#246;nnen Sie mehrere URLs eingeben, zu denen der Benutzer nach einer
 erfolgreichen Authentifizierung umgeleitet wird. Das Format dieses Attributs lautet <tt>clientType|URL</tt>. Sie k&#246;nnen
-auch nur den Wert des URL angeben, der einen HTML-Standardtyp annimmt.  Der
+auch nur den Wert des URL angeben, der einen HTML-Standardtyp annimmt. Der
 Standardwert lautet <i>/amserver/console </i> .</p>
 
 <a name="gcnlf"></a><h5>Standard-URL f&#252;r erfolglose Anmeldung</h5>
@@ -220,7 +248,7 @@ auch nur den Wert des URL angeben, der einen HTML-Standardtyp annimmt.</p>
 
 <a name="gcnlb"></a><h5>Nachverarbeitungs-Authentifizierungsklasse</h5>
 <p>Gibt den Namen der Java-Klasse an, die zur Anpassung der Nachverarbeitungsvorg&#228;nge nach
-einer erfolgreichen oder fehlgeschlagenen Anmeldung verwendet wird. Beispiel:</p><p><tt>com.abc.authentication.</tt><tt>PostProcessClass </tt> </p><p>Die Java-Klasse muss folgende Java-Schnittstelle implementieren:</p><p><tt>com.sun.identity.authentication.spi.AMPostAuthProcessInterface </tt></p><p>Au&#223;erdem m&#252;ssen Sie im Java Classpath-Attribut des Web Servers den Pfad der
+einer erfolgreichen oder fehlgeschlagenen Anmeldung verwendet wird. Beispiel:</p><p><tt>com.abc.authentication.PostProcessClass</tt> </p><p>Die Java-Klasse muss folgende Java-Schnittstelle implementieren:</p><p><tt>com.sun.identity.authentication.spi.AMPostAuthProcessInterface </tt></p><p>Au&#223;erdem m&#252;ssen Sie im Java Classpath-Attribut des Web Servers den Pfad der
 Klasse angeben.</p>
 
 <a name="gcnjl"></a><h5>Modus f&#252;r UserID-Erzeugung</h5>
@@ -249,14 +277,20 @@ Status&#228;nderungen werden unterst&#252;tzt:</p><dl><dt><tt>account lockout</t
 <p>Wenn dieses Attribut aktiviert ist, ist die gemeinsame Nutzung fehlgeschlagener Anmeldeversuche in
 einem Identit&#228;ts-Repository m&#246;glich, das von mehreren Federated Access Manager-Objekten gemeinsam genutzt wird.
 Wenn beispielsweise Directory Server als Identit&#228;ts-Repository f&#252;r eine bestimmte Bereitstellung verwendet wird,
-werden die ung&#252;ltigen Versuche in  <tt>sunAMAuthInvalidAttemptsData</tt> gespeichert (geh&#246;rt zur Objektklasse <tt>sunAMAuthAccountLockout</tt>).
-Das Format der Daten wird gespeichert als:</p><p><tt>&#60;InvalidPassword>&#60;InvalidCount>&#60;/InvalidCount>&#60;LastInvalidAt>&#60;/LastInvalidAt>&#60;LockedoutAt>&#60;/LockedoutAt>&#60;ActualLockoutDuration>&#60;/ActualLockoutDuration>&#60;/InvalidPassword> </tt></p><p>Diese Informationen werden f&#252;r jeden Benutzer im Directory Server aufrechterhalten. Beim Auftreten
-ung&#252;ltiger Versuche wird <tt>&#60;InvalidCount></tt> jeweils erh&#246;ht.</p>
+werden die ung&#252;ltigen Versuche in  <tt>sunAMAuthInvalidAttemptsData</tt> gespeichert (geh&#246;rt zur Objektklasse <tt>sunAMAuthAccountLockout). </tt>
+Das Format der Daten wird gespeichert als:</p><p><tt>&#60;InvalidPassword&#62;&#60;InvalidCount&#62;&#60;/InvalidCount&#62;&#60;LastInvalidAt&#62;&#60;/LastInvalidAt&#62;  &#60;LockedoutAt&#62;&#60;/LockedoutAt&#62;&#60;ActualLockoutDuration&#62;&#60;/ActualLockoutDuration&#62;&#60;/InvalidPassword&#62; </tt></p><p>Diese Informationen werden f&#252;r jeden Benutzer im Directory Server aufrechterhalten. Beim Auftreten
+ung&#252;ltiger Versuche wird <tt>&#60;InvalidCount&#62;</tt> jeweils erh&#246;ht.</p>
 
 <a name="gcnjo"></a><h5>Modulbasierte Authentifizierung</h5>
 <p>Wenn dieses Attribut aktiviert ist, k&#246;nnen sich die Benutzer &#252;ber modulbasierte Authentifizierung
 anmelden. Wenn dieses Attribut nicht aktiviert ist, ist modulbasierte Anmeldung nicht zul&#228;ssig.
-S&#228;mtliche Anmeldeversuche mit <tt>module=&#60; </tt><i> module_instance_name</i><tt>></tt> schlagen fehl.</p>
+S&#228;mtliche Anmeldeversuche mit <tt>module=&#60;</tt><i> Modulinstanzname</i><tt>&#62;</tt> schlagen fehl.</p>
+
+<a name="ggurt"></a><h5>Benutzerattributzuordnung zu Sitzungsattribut</h5>
+<p>Dadurch k&#246;nnen die Attribute als Sitzungseigenschaften vom authentifizierenden Benutzerprofil (im Datenspeicher gespeichert)
+f&#252;r das SSOToken des Benutzers festgelegt werden. Das Format lautet:</p><p><tt>Benutzerprofilattribut|Sitzungsattributname</tt></p><p>Wenn der <tt>Sitzungsattributname</tt> nicht angegeben wurde, wird der Eigenschaftsname f&#252;r die Sitzung
+als Wert des Benutzerprofilattributs abgerufen. Alle Sitzungsattribute enthalten das Pr&#228;fix am.<tt>protected </tt>, um
+sicherzustellen, dass sie nicht &#252;ber das Client-SDK bearbeitet werden k&#246;nnen.</p>
 
 <a name="fwbfn"></a><h5>Standard-Authentifizierungsebene</h5>
 <p>Mit dem Wert f&#252;r die Authentifizierungsebene wird angegeben, wie stark einer Authentifizierung
@@ -267,10 +301,10 @@ ob die Authentifizierungsebene ausreicht, um dem Benutzer Zugriff zu gew&#228;hr
 im SSO-Token gespeicherte Authentifizierungsebene nicht den erforderlichen Mindestwert aufweist, wird der Benutzer
 aufgefordert, sich erneut &#252;ber einen Dienst mit einer h&#246;heren Authentifizierungsebene zu authentifizieren.</p><p>Die Authentifizierungsebene sollte in der Authentifizierungsvorlage des jeweiligen Bereichs festgelegt sein. Der
 im Attribut ";Standard-Authentifizierungsebene" eingegebene Wert wird nur verwendet, wenn im Feld "Authentifizierungsebene"
-der Authentifizierungsvorlage eines Bereichs kein Wert angegeben wurde. Der Standardwert von "Standard-Authentifizierungsebene"
-ist 0. (Der Wert dieses Attributs wird von Federated Access Manager nicht
-verwendet, steht jedoch f&#252;r externe Anwendungen zur Verf&#252;gung, sofern diese den Wert
-ben&#246;tigen.)</p>
+der Authentifizierungsvorlage eines Bereichs kein Wert angegeben wurde. The Default Authentication Level
+default value is 0. (The value in this attribute is not used
+by Federated Access Manager but by any external application that may chose
+to use it.)</p>
 <br/>
 
 </body>

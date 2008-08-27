@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>国際化設定 - Sun Java System Federated Access Manager 8.0 コンソールオンラインヘルプ
+  <title>国際化設定 - Sun Federated Access Manager 8.0 コンソールオンラインヘルプ
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,7 +31,7 @@
 
 
 <a name="service.smg11n"></a><h4>国際化設定</h4>
-<p><a name="indexterm-194"></a>国際化設定サービスには、さまざまなロケールや文字セット用に Federated Access Manager を設定するためのグローバル属性が含まれます。属性は次のとおりです。</p>
+<p><a name="indexterm-188"></a>国際化設定サービスには、さまざまなロケールや文字セット用に Federated Access Manager を設定するためのグローバル属性が含まれます。属性は次のとおりです。</p>
 <ul><li><p><a href="#fsvdx">「各ロケールでサポートされる文字セット」</a></p></li>
 <li><p><a href="#fsvec">「文字セットのエイリアス」</a></p></li>
 <li><p><a href="#fsveb">「自動生成される共通名の形式」</a></p></li></ul>
@@ -49,12 +49,12 @@
 <p>この属性では、応答を送信するのに使用されるコードセット名 (IANA 名にマッピングされる) が一覧表示されます。これらのコードセット名は Java のコードセット名と一致する必要はありません。現在、Java の文字セットと IANA の文字セットを相互にマッピングするためのハッシュ表が存在しています。</p><p>「新規文字セットのエイリアス」を追加するには、「追加」をクリックして次のパラメータを定義します。</p><dl><dt>MIME 名</dt>
 <dd><p>IANA マッピング名。たとえば、<tt>Shift_JIS</tt> のように指定します。</p></dd>
 <dt>Java 名</dt>
-<dd><p>IANA の文字セットにマッピングする Java 文字セット。</p></dd>
+<dd><p>IANA の文字セットにマッピングする Java 文字セット。 </p></dd>
 </dl>
 <p>既存の「文字セットのエイリアス」を編集するには、表でその名前をクリックします。作業が終了したら、「了解」をクリックします。</p>
 
 <a name="fsveb"></a><h5>自動生成される共通名の形式</h5>
-<p>この表示オプションで、異なるロケールおよび文字セットに適応した名前を自動的に生成する方法を定義できます。デフォルトの構文は次のとおりです。実際に名前を表示する際に、定義内に含めたコンマやスペースもそのまま表示されることに注意してください。</p><p><tt>en_us = {givenname} {initials} {sn}</tt></p><p>たとえば、uid (11111) と ユーザー (User One) の新しい名前形式を中国語の文字セットで表示する場合、次のように定義します。</p><p><tt>zh = {sn}{givenname}({uid})</tt></p><p>結果は次のように表示されます。</p><p><tt>OneUser (11111)</tt></p>
+<p>この表示オプションで、異なるロケールおよび文字セットに適応した名前を自動的に生成する方法を定義できます。デフォルトの構文は次のとおりです。実際に名前を表示する際に、定義内に含めたコンマやスペースもそのまま表示されることに注意してください。</p><p><tt>en_us = {givenname} {initials} {sn}</tt></p><p>たとえば、uid (11111) とユーザー (User One) の新しい名前形式を中国語の文字セットで表示する場合、次のように定義します。</p><p><tt>zh = {sn}{givenname}({uid})</tt></p><p>結果は次のように表示されます。</p><p><tt>OneUser (11111)</tt></p>
 <br/>
 
 </body>

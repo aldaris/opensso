@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Klassen f&#252;r ResourceID-Mapper-Plugin - Online-Hilfe zur Sun Java System Federated Access Manager 8.0-Konsole
+  <title>Klassen f&#252;r ResourceID-Mapper-Plugin - Online-Hilfe zur Sun Federated Access Manager 8.0-Konsole
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,15 +31,16 @@
 
 
 <a name="resourceidmapperpluginclass"></a><h4>Klassen f&#252;r ResourceID-Mapper-Plugin</h4>
-<a name="indexterm-141"></a><a name="indexterm-142"></a><p>Der Wert dieses Attributs ist eine Liste von Klassen, mit denen IDs
-f&#252;r ein f&#252;r die Organisation oder Rolle konfiguriertes Ressourcenangebot erstellt werden. <tt>com.sun.identity.liberty.ws.interfaces.</tt><tt>ResourceIDMapper </tt>
-ist eine Schnittstelle, mit der Benutzer-IDs den entsprechenden Ressourcen-IDs zugeordnet werden. Der
- Discovery-Dienst stellt f&#252;r diese Schnittstelle zwei Implementierungen bereit:</p>
-<ul><li><p><tt>com.sun.identity.liberty.ws.</tt><tt>disco.plugins.</tt><tt>Default64ResourceIDMapper </tt> (Format: <i>providerID</i> + "/" + <i>the Base64 encoded userIDs</i>)</p></li>
-<li><p><tt>com.sun.identity.liberty.ws.</tt><tt>disco.plugins.</tt><tt>DefaultHexResourceIDMapper </tt> (Format: <i>providerID</i> + "/" + <i>the hex string of userID</i>)</p></li></ul>
+<a name="indexterm-134"></a><a name="indexterm-135"></a><p>Der Wert dieses Attributs ist eine Liste von Klassen, mit denen IDs
+f&#252;r ein f&#252;r die Organisation oder Rolle konfiguriertes Ressourcenangebot erstellt werden. <tt>com.sun.identity.liberty.ws.interfaces.ResourceIDMapper </tt>
+is an interface used to map a user identifier to the resource
+identifier associated with it. Der  Discovery&#45;Dienst stellt f&#252;r diese Schnittstelle zwei
+Implementierungen bereit:</p>
+<ul><li><p><tt>com.sun.identity.liberty.ws.disco.plugins.Default64ResourceIDMapper </tt> (format: <i>providerID</i> + "/" + <i>the Base64 encoded userIDs</i>)</p></li>
+<li><p><tt>com.sun.identity.liberty.ws.disco.plugins.DefaultHexResourceIDMapper </tt> (format: <i>providerID</i> + "/" + <i>the hex string of userID</i>)</p></li></ul>
 <p>Mithilfe der Implementierungsklasse k&#246;nnen Sie weitere Implementierungen entwickeln und als Wert dieses
 Attributs hinzuf&#252;gen. Klicken Sie dazu auf "Neu" und verwenden Sie das folgende
-Format:</p><p><tt><b>providerid=</tt><i>providerID</i><tt>|</tt><i> class_name_and_path</i><tt></b></tt></p><p>Siehe <b>Broken Link (Target ID: SERVICE.SMDISCOVERYPROVIDERRESOURCEIDMAPADD)</b>.</p>
+Format:</p><p><tt><b>providerid=</tt><i>providerID</i><tt>|</tt><i> class_name_and_path</i><tt></b></tt></p>
 <br/>
 
 </body>

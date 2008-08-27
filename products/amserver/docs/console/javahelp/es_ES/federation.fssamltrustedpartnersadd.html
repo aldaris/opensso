@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Socios de confianza: configuraci&#243;n de los atributos de socios de confianza. - Ayuda en l&#237;nea de la consola de Sun Java System Federated Access Manager 8.0
+  <title>Socios de confianza: configuraci&#243;n de los atributos de socios de confianza. - Ayuda en l&#237;nea de la consola de Sun Federated Access Manager 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,43 +31,44 @@
 
 
 <a name="federation.fssamltrustedpartnersadd"></a><h5>Socios de confianza: configuraci&#243;n de los atributos de socios de confianza.</h5>
-<a name="indexterm-90"></a><p>A continuaci&#243;n, se describe la segunda parte del proceso de configuraci&#243;n de
-un socio de confianza. El punto de partida es <a href="federation.fssamlselecttrustedpartnertype.html">Socios de confianza: selecci&#243;n del tipo de socio y el perfil</a>. En funci&#243;n
-del rol o roles que se hayan seleccionado en la primera parte,
+<a name="indexterm-83"></a><p>A continuaci&#243;n, se describe la segunda parte del proceso de configuraci&#243;n de
+un socio de confianza. El punto de partida es <a href="federation.fssamlselecttrustedpartnertype.html">Socios de confianza: selecci&#243;n del tipo de socio y el perfil</a>. Dependiendo de
+la funci&#243;n o funciones que se hayan seleccionado en la primera parte,
 es posible que se deban definir algunos de los subatributos mostrados en
 las secciones siguientes para el socio de confianza.</p>
 <hr><p><b>Nota &#8211; </b>Si ha accedido a esta p&#225;gina haciendo clic en Editar o Duplicar
 en la pantalla de configuraci&#243;n de SAML en Federaci&#243;n, modifique el perfil
 de socio de confianza en funci&#243;n de los pasos siguientes y haga
 clic en Guardar para cambiar los valores. Haga clic en Guardar en
-la p&#225;gina de perfil SAML para completar la modificaci&#243;n. </p>
+la p&#225;gina de perfil SAML para completar la modificaci&#243;n.</p>
 <hr>
 <ol>
-<li><b>Escriba los valores para los atributos de configuraci&#243;n com&#250;n.</b><dl><dt>Id. de origen</dt>
+<li><b>Escriba los valores para los atributos de configuraci&#243;n com&#250;n.</b><dl><dt>Nom</dt>
+<dd><p>Puede ser cualquier cadena, como por ejemplo el nombre de una organizaci&#243;n.</p></dd>
+<dt>Id. de origen</dt>
 <dd><p>Se trata de una secuencia de 20 bytes (codificada mediante el formato Base64) que proviene del sitio del socio. Normalmente, es el mismo valor que el utilizado para el atributo Id. de sitio al configurar el atributo Identificadores de sitio.</p></dd>
 <dt>Destino</dt>
 <dd><p>Es el dominio del sitio del socio (con o sin un n&#250;mero de puerto). Si desea establecer conexi&#243;n con una p&#225;gina Web alojada en este dominio, la URL de redirecci&#243;n se tomar&#225; de los valores definidos en el atributo de socio de confianza.</p>
-<hr><p><b>Nota &#8211; </b>En caso de que existan dos entradas definidas para el mismo dominio (una con un n&#250;mero de puerto y otra sin &#233;l), tendr&#225; prioridad la entrada que contenga el n&#250;mero de puerto. Por ejemplo, suponga que las siguientes son dos definiciones de socio de confianza: <tt>target=sun.com</tt> y <tt>target=sun.com:8080</tt>. Si el principal busca <tt>http://machine.sun.com:8080/index.html</tt>, se seleccionar&#225; la segunda definici&#243;n.</p>
+<hr><p><b>Nota &#8211; </b>En caso de que existan dos entradas definidas para el mismo dominio (una con un n&#250;mero de puerto y otra sin &#233;l), tendr&#225; prioridad la entrada que contenga el n&#250;mero de puerto. For example, assume the following two trusted partner definitions: <tt>target=sun.com</tt> and <tt>target=sun.com:8080</tt>. Si el principal busca <tt>http://machine.sun.com:8080/index.html</tt>, se seleccionar&#225; la segunda definici&#243;n.</p>
 <hr>
 </dd>
-<dt>Asignador de atributos de sitio</dt>
-<dd><p>La clase se utiliza para devolver una lista de valores de atributos definidos como elementos <tt>AttributeStatements</tt> en una aserci&#243;n de autenticaci&#243;n. Un asignador de atributos de sitio debe implementarse desde la interfaz <tt>com.sun.identity.saml.plugins.</tt><tt>PartnerSiteAttributeMapper</tt>. </p><p>Si no se define ninguna clase, no se incluir&#225; ning&#250;n atributo en la aserci&#243;n.</p></dd>
-<dt>Versi&#243;n</dt>
-<dd><p>La versi&#243;n de SAML utilizada (<tt>1.0</tt> &#243; <tt> 1.1</tt>) para enviar solicitudes de SAML. Si este par&#225;metro no tiene ning&#250;n valor, se utilizar&#225;n los siguientes valores predeterminados (definidos en <tt>AMConfig.properties</tt>):</p>
-<ul><li><p><tt>com.example.identity.saml.assertion.version=1.1</tt></p></li>
-<li><p><tt>com.example.identity.saml.protocol.version=1.1</tt></p></li></ul>
-</dd>
-<dt>Asignador del identificador de nombre</dt>
-<dd><p>La clase que define el modo en que el asunto de una aserci&#243;n se relaciona con una identidad del sitio de destino. Un asignador de cuentas debe implementarse desde la interfaz <tt>com.sun.identity.saml.plugins.</tt><tt>PartnerAccountMapper </tt>. El valor predeterminado es <tt>com.sun.identity.saml.plugins.</tt><tt>DefaultAccountMapper </tt> .</p><p>Si no se define ninguna clase, no se incluir&#225; ning&#250;n atributo en la aserci&#243;n.</p></dd>
-<dt>Certificado</dt>
-<dd><p>Un certificado utilizado para verificar la firma de una aserci&#243;n cuando &#233;sta se lleva a cabo por parte del socio y el certificado no se encuentra en la secci&#243;n <tt>KeyInfo</tt> de la aserci&#243;n firmada.</p></dd>
+<dt>URL de SAML</dt>
+<dd><p> URL pointant vers le servlet qui impl&#233;mente le profil d'art&#233;fact du navigateur Web.</p></dd>
 <dt>Lista de hosts</dt>
 <dd><p>Una lista de las direcciones IP, el nombre de host DNS o el alias del certificado de autenticaci&#243;n de cliente utilizado por el cliente. Se configura para todos los hosts en el sitio del socio que puede enviar solicitudes a la autoridad. Esta lista permite garantizar que el solicitante es realmente el receptor previsto del artefacto. Si el solicitante se encuentra definido en esta lista, la interacci&#243;n continuar&#225;. Si la informaci&#243;n del solicitante no coincide con ning&#250;n host definido en la lista de hosts, se rechazar&#225; la solicitud.</p></dd>
+<dt>Asignador de atributos de sitio</dt>
+<dd><p>La clase se utiliza para devolver una lista de valores de atributos definidos como elementos <tt>AttributeStatements</tt> en una aserci&#243;n de autenticaci&#243;n. Un asignador de atributos de sitio debe implementarse desde la interfaz <tt>PartnerSiteAttributeMapper</tt>.</p><p>Si aucune classe n'est d&#233;finie, aucun attribut ne sera inclus dans l'assertion.</p></dd>
+<dt>Mappeur d'identificateur de nom</dt>
+<dd><p>La clase que define el modo en que el asunto de una aserci&#243;n se relaciona con una identidad del sitio de destino. An account mapper needs to be implemented from the <tt>com.sun.identity.saml.plugins.PartnerAccountMapper </tt> interface. The default is <tt>com.sun.identity.saml.plugins.DefaultAccountMapper </tt> .</p><p>Si no se define ninguna clase, no se incluir&#225; ning&#250;n atributo en la aserci&#243;n.</p></dd>
+<dt>Versi&#243;n</dt>
+<dd><p>La versi&#243;n de SAML utilizada (<tt>1.0</tt> &#243; <tt> 1.1</tt>) para enviar solicitudes de SAML. Para cambiar la versi&#243;n o el protocolo, haga clic en el bot&#243;n Propiedades del sitio local y cambie los atributos Protocolo y Aserci&#243;n seg&#250;n sea necesario. </p></dd>
+<dt>Certificado</dt>
+<dd><p>Un certificado utilizado para verificar la firma de una aserci&#243;n cuando &#233;sta se lleva a cabo por parte del socio y el certificado no se encuentra en la secci&#243;n <tt>KeyInfo</tt> de la aserci&#243;n firmada.</p></dd>
 <dt>Emisor</dt>
 <dd><p>El creador de una aserci&#243;n generada. La sintaxis predeterminada es <i>hostname</i><tt>:</tt><i> port</i>.</p></dd>
 </dl>
 </li>
-<li><b>Escriba los valores para los subatributos de destino.</b><dl><dt>Artefacto: URL de SAML</dt>
+<li><b>Escriba los valores para los atributos de destino.</b><dl><dt>Artefacto: URL de SAML</dt>
 <dd><p>La URL que se&#241;ala al servlet que implementa el perfil de artefacto del explorador Web.</p></dd>
 <dt>Env&#237;o: URL de env&#237;o</dt>
 <dd><p>La URL que se&#241;ala al servlet que implementa el perfil de POST (env&#237;o) del explorador Web.</p></dd>
@@ -77,16 +78,16 @@ la p&#225;gina de perfil SAML para completar la modificaci&#243;n. </p>
 <dd><p>La clase utilizada para obtener informaci&#243;n de inicio de sesi&#243;n &#250;nico y asignar acciones de socios a las decisiones de autorizaci&#243;n. Debe implementar un asignador de acciones desde la interfaz incluida. Si no se especifica ninguna clase, se utilizar&#225; <tt>DefaultActionMapper</tt>.</p></dd>
 </dl>
 </li>
-<li><b>Escriba los valores para los subatributos de origen.</b><dl><dt>Artefacto: URL de SOAP</dt>
+<li><b>Escriba los valores para los atributos de origen.</b><dl><dt>Artefacto: URL de SOAP</dt>
 <dd><p>La URL al receptor de SOAP de SAML.</p></dd>
 <dt>Tipo de autenticaci&#243;n</dt>
 <dd><p>Entre los tipos de autenticaci&#243;n que pueden utilizarse con SAML, se incluyen:</p>
-<ul><li><p>Especifique <tt>NOAUTH</tt> si se accede a la URL del receptor SAML SOAP utilizando HTTP y el receptor SAML SOAP no est&#225; protegido por la autenticaci&#243;n b&#225;sica HTTP.</p></li>
-<li><p>Especifique <tt>BASICAUTH</tt> si se accede a la URL del receptor SAML SOAP utilizando HTTP y el receptor SAML SOAP no est&#225; protegido por la autenticaci&#243;n b&#225;sica HTTP.</p></li>
-<li><p>Especifique <tt>SSL</tt> si se accede a la URL del receptor SAML SOAP utilizando HTTP y el receptor SAML SOAP no est&#225; protegido por la autenticaci&#243;n b&#225;sica HTTP.</p></li>
-<li><p>Especifique <tt>SSLWITHBASICAUTH</tt> si se accede a la URL del receptor SAML SOAP utilizando HTTP y el receptor SAML SOAP no est&#225; protegido por la autenticaci&#243;n b&#225;sica HTTP.</p></li></ul>
+<ul><li><p>Especifique <tt>NOAUTH</tt> si se accede a la URL del receptor SAML SOAP utilizando HTTP y el receptor SAML SOAP no est&#225; protegido por la autenticaci&#243;n b&#225;sica HTTP o SSL.</p></li>
+<li><p>Sp&#233;cifiez <tt>BASICAUTH</tt> si l'URL vers le r&#233;cepteur SOAP SAML est accessible via HTTP, et si le r&#233;cepteur SOAP SAML est prot&#233;g&#233; par une authentification de base HTTP.</p></li>
+<li><p>Especifique <tt>SSL</tt> si se accede a la URL del receptor SAML SOAP utilizando HTTP y el receptor SAML SOAP no est&#225; protegido por HTTP SSL.</p></li>
+<li><p>Especifique <tt>SSLWITHBASICAUTH</tt> si se accede a la URL del receptor SAML SOAP mediante HTTPS, y el receptor SAML SOAP no est&#225; protegido por <tt> BASIC AUTH WITH SSL</tt>.</p></li></ul>
 
-<hr><p><b>Nota &#8211; </b>Si est&#225; protegiendo la URL del receptor SAML SOAP con autenticaci&#243;n b&#225;sica HTTP, tambi&#233;n lo protege de esta manera en la configuraci&#243;n del contenedor web y no en la configuraci&#243;n de Federated Access Manager. Sin embargo, debe especificar el Id. de usuario de la autenticaci&#243;n b&#225;sica HTTP y la contrase&#241;a en la configuraci&#243;n de Federated Access Manager.</p>
+<hr><p><b>Nota &#8211; </b>Si vous prot&#233;gez l'URL du r&#233;cepteur SOAP SAML avec une authentification de base HTTP, vous devez le faire &#224; partir de la configuration du conteneur Web et pas depuis la configuration de Federated Access Manager. Cependant, vous devez effectivement fournir l'ID utilisateur d'authentification de base HTTP et le mot de passe dans la configuration de Federated Access Manager.</p>
 <hr>
 <p>Este atributo es opcional. Si no se especifica ninguno, el valor predeterminado es <tt> NOAUTH</tt>. Si se especifica <tt>BASICAUTH</tt> o <tt>SSLWITHBASICAUTH </tt>, es necesario el atributo Socios de confianza y &#233;ste debe ser <tt>HTTPS</tt>.</p></dd>
 <dt>Usuario</dt>
@@ -98,8 +99,7 @@ la p&#225;gina de perfil SAML para completar la modificaci&#243;n. </p>
 </dl>
 </li>
 <li><b>Haga clic en Finalizar (Finish).</b></li>
-<li><b>Pulse Guardar en la p&#225;gina de perfil SAML para completar la configuraci&#243;n.
-</b></li></ol>
+<li><b>Pulse Guardar en la p&#225;gina de perfil SAML para completar la configuraci&#243;n.</b></li></ol>
 <br/>
 
 </body>

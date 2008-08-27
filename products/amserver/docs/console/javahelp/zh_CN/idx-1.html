@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>索引 - Sun Java System Federated Access Manager 8.0 控制台联机帮助
+  <title>索引 - Sun Federated Access Manager 8.0 控制台联机帮助
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -33,10 +33,19 @@
 <dl>
 <dd>PPLDAP 属性映射列表, <a href="ppldapattributemaplist.html">PPLDAP 属性映射列表</a></dd>
 </dl>
+</div><h4>R</h4>
+<div class="indexdiv">
+<dl>
+<dd><tt>RelayState</tt><dl>
+<dd><a href="federation.samlv2spassertioncontent.html#ggvgt">声明处理</a></dd>
+<dd><a href="federation.wsfedsp.html#ggwts">默认中继状态</a></dd>
+</dl>
+</dd>
+</dl>
 </div><h4>S</h4>
 <div class="indexdiv">
 <dl>
-<dd>SAML, <a href="federation.fssamlservice.html">SAML1.x </a><dl>
+<dd>SAML, <a href="federation.fssamlservice.html">SAML1.x</a><dl>
 <dd>可信赖的伙伴<dl>
 <dd>配置步骤 1, <a href="federation.fssamlselecttrustedpartnertype.html">可信赖的伙伴：选择伙伴类型和配置文件</a></dd>
 <dd>配置步骤 2, <a href="federation.fssamltrustedpartnersadd.html">可信赖的伙伴：配置可信赖的伙伴属性</a></dd>
@@ -61,7 +70,7 @@
 <dd><a href="requesthandlerlist.html">请求处理程序列表</a></dd>
 <dd><a href="service.scsoapbindingrequesthandlerlistadd.html">配置请求处理程序</a></dd>
 <dd><a href="service.scsaml2soapbinding.html#ggokv">请求处理程序列表</a></dd>
-<dd><a href="ggojs.html">配置请求处理程序</a></dd>
+<dd><a href="service.scsaml2soapbindingrequesthandlerlistadd.html">配置请求处理程序</a></dd>
 </dl>
 </dd>
 <dd>支持的验证机制, <a href="ggodb.html#ggock">支持的验证机制</a></dd>
@@ -87,16 +96,16 @@
 <dd>策略, <a href="policy.policy.html">策略</a><dl>
 <dd>常规策略, <a href="normalpolicy.html">常规策略</a></dd>
 <dd>创建新的引用策略, <a href="policy.policyreferraladd.html">创建新的引用策略</a></dd>
-<dd>规则, <a href="normalrule.html">规则</a></dd>
+<dd>规则, <a href="policy.selectservicetype.html">规则</a></dd>
 <dd>添加规则, <a href="policy.ruleadd.html">向策略添加规则</a></dd>
 <dd>添加条件, <a href="policy.selectconditiontype.html">向策略添加条件</a></dd>
 <dd>添加响应提供者, <a href="policy.responseprovideradd.html">向策略添加响应提供者</a></dd>
 <dd>添加引用, <a href="policy.selectreferraltype.html">向策略添加引用</a></dd>
-<dd>添加主题, <a href="policy.subjectadd.html">向策略添加主题</a></dd>
-<dd>条件, <a href="policyconditions.html">条件</a></dd>
+<dd>添加主体, <a href="policy.subjectadd.html">向策略添加主体</a></dd>
+<dd>条件, <a href="policy.selectcondition.html">条件</a></dd>
 <dd>响应提供者, <a href="responseprovider.html">响应提供者</a></dd>
 <dd>引用策略, <a href="fyfby.html">引用策略</a></dd>
-<dd>主题, <a href="normalsubject.html">主题</a></dd>
+<dd>主体, <a href="policy.selectsubjecttype.html">主体</a></dd>
 </dl>
 </dd>
 </dl>
@@ -147,7 +156,18 @@
 </div><h4>规</h4>
 <div class="indexdiv">
 <dl>
-<dd>规则, <a href="normalrule.html">规则</a></dd>
+<dd>规则, <a href="policy.selectservicetype.html">规则</a></dd>
+</dl>
+</div><h4>环</h4>
+<div class="indexdiv">
+<dl>
+<dd>环境参考属性<dl>
+<dd><a href="federation.samlv2spassertioncontent.html#ggvhb">声明内容</a></dd>
+<dd><a href="federation.samlv2idpassertioncontent.html#ggwdf">声明内容</a></dd>
+<dd><a href="federation.idffidp.html#ggwnn">验证环境</a></dd>
+<dd><a href="federation.idffsp.html#ggwrv">验证环境</a></dd>
+</dl>
+</dd>
 </dl>
 </div><h4>会</h4>
 <div class="indexdiv">
@@ -206,14 +226,7 @@
 </div><h4>联</h4>
 <div class="indexdiv">
 <dl>
-<dd>联合提供者实, 常规属性, <a href="federation.fsentitydescriptorsprofile.html">修改提供者实体或联合提供者实体的常规属性</a></dd>
-</dl>
-<dl>
-<dd>联合提供者实体, <a href="federation.fsentitydescriptors.html">实体：提供者和联合提供者</a><dl>
-<dd>创建, <a href="federation.fsentitydescriptorsadd.html">创建提供者实体或联合提供者实体</a></dd>
-<dd>和联合提供者, <a href="federation.fsentitydescriptorsaffiliate.html">向联合提供者实体添加成员</a></dd>
-</dl>
-</dd>
+<dd>联合提供者实体, <a href="federation.createsaml2metadata.html">实体提供者</a></dd>
 </dl>
 </div><h4>领</h4>
 <div class="indexdiv">
@@ -233,7 +246,7 @@
 </dd>
 <dd>数据存储库, <a href="realm.idrepo.html">数据存储库</a></dd>
 <dd>验证, <a href="authentication.authproperties.html">验证</a></dd>
-<dd>主题, <a href="idm.entities.html">主题</a></dd>
+<dd>主体, <a href="idm.entities.html">主体</a></dd>
 </dl>
 </dd>
 </dl>
@@ -279,7 +292,7 @@
 <dl>
 <dd>配置<dl>
 <dd><a href="service.scsoapbindingrequesthandlerlistadd.html">配置请求处理程序</a></dd>
-<dd><a href="ggojs.html">配置请求处理程序</a></dd>
+<dd><a href="service.scsaml2soapbindingrequesthandlerlistadd.html">配置请求处理程序</a></dd>
 </dl>
 </dd>
 </dl>
@@ -310,7 +323,7 @@
 <dl>
 <dd>身份管理<dl>
 <dd>用户<dl>
-<dd>添加到服务、角色和组, <a href="addusertogroup.html">向角色和组添加用户</a></dd>
+<dd>添加到服务、角色和组, <a href="idm.entitymembership.html">将用户添加到组</a></dd>
 </dl>
 </dd>
 </dl>

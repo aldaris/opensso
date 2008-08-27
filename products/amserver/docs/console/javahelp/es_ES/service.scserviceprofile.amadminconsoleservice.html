@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Administraci&#243;n  - Ayuda en l&#237;nea de la consola de Sun Java System Federated Access Manager 8.0
+  <title>Administraci&#243;n - Ayuda en l&#237;nea de la consola de Sun Federated Access Manager 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -30,12 +30,16 @@
 
 
 
-<a name="service.scserviceprofile.amadminconsoleservice"></a><h4>Administraci&#243;n </h4>
-<p><a name="indexterm-193"></a>El servicio Administraci&#243;n permite configurar la consola de Federated Access Manager tanto
-en el nivel de aplicaci&#243;n (igual que en un men&#250; de preferencias
-u opciones) como en el nivel del dominio configurado (las preferencias u
-opciones espec&#237;ficas de un dominio configurado). Los atributos del servicio Administraci&#243;n son
-globales y de dominio. Los atributos son:</p>
+<a name="service.scserviceprofile.amadminconsoleservice"></a><h4>Administraci&#243;n</h4>
+<p><a name="indexterm-187"></a>El servicio Administraci&#243;n permite configurar la consola de Federated Access Manager tanto
+en el nivel global (igual que en un men&#250; de preferencias u
+opciones) como en el nivel del dominio configurado (las preferencias u opciones
+espec&#237;ficas de un dominio configurado).  Los atributos del servicio Administraci&#243;n son
+globales y de dominio. </p>
+<hr><p><b>Nota &#8211; </b>Parte de los atributos que aparecen en esta secci&#243;n s&#243;lo se aplican
+a la instalaci&#243;n en Modo heredado.</p>
+<hr>
+<p>Los atributos son:</p>
 <ul><li><p><a href="#fufly">Administraci&#243;n de federaci&#243;n</a></p></li>
 <li><p><a href="#fsvge">Administraci&#243;n de usuarios</a></p></li>
 <li><p><a href="#fsvgj">Contenedores de personas</a></p></li>
@@ -119,9 +123,9 @@ ficha Directory Management (Administraci&#243;n de directorio).</p>
 o din&#225;micos. La consola crear&#225; o mostrar&#225; grupos de suscripci&#243;n est&#225;ticos o
 din&#225;micos, pero no ambos (los grupos filtrados siempre son compatibles independientemente del
 valor especificado en este atributo). El valor predeterminado es din&#225;mico.</p>
-<ul><li><p>Un grupo est&#225;tico muestra expl&#237;citamente cada miembro del grupo utilizando la clase de objeto <tt>groupOfNames</tt> o <tt>groupOfUniqueNames</tt>. La entrada de grupo contiene el atributo <i>uniqueMember</i> para cada miembro del grupo. Los miembros de los grupos est&#225;ticos se agregan manualmente; la entrada del usuario permanece inalterada. Los grupos est&#225;ticos son adecuados para grupos con pocos miembros. </p></li>
-<li><p>Un grupo din&#225;mico utiliza un atributo <tt>memberOf</tt> en la entrada de cada miembro del grupo. Los miembros de los grupos din&#225;micos se generan mediante la utilizaci&#243;n de un filtro LDAP que busca y muestra todas las entradas que contengan el atributo <tt>memberOf</tt>. Los grupos din&#225;micos son adecuados para grupos con un gran n&#250;mero de miembros. </p></li>
-<li><p>Un grupo filtrado utiliza un filtro LDAP para buscar y mostrar los miembros que satisfacen los requisitos definidos en el filtro. Por ejemplo, el filtro puede generar los miembros con un uid (<tt>uid=g*</tt>) o direcci&#243;n de correo electr&#243;nico (<tt>mail=*@example.com</tt>) espec&#237;fica. </p></li></ul>
+<ul><li><p>Un grupo est&#225;tico muestra expl&#237;citamente cada miembro del grupo utilizando la clase de objeto <tt>groupOfNames</tt> o <tt>groupOfUniqueNames. </tt> La entrada de grupo contiene el atributo <i>uniqueMember</i> para cada miembro del grupo. Los miembros de los grupos est&#225;ticos se agregan manualmente; la entrada del usuario permanece inalterada. Los grupos est&#225;ticos son adecuados para grupos con pocos miembros. </p></li>
+<li><p>Un grupo din&#225;mico utiliza un atributo <tt>memberOf</tt> en la entrada de cada miembro del grupo. Los miembros de los grupos din&#225;micos se generan mediante la utilizaci&#243;n de un filtro LDAP que busca y muestra todas las entradas que contengan el atributo <tt>memberOf. </tt> Los grupos din&#225;micos son adecuados para grupos con un gran n&#250;mero de miembros. </p></li>
+<li><p>Un grupo filtrado utiliza un filtro LDAP para buscar y mostrar los miembros que satisfacen los requisitos definidos en el filtro. Por ejemplo, el filtro puede generar los miembros con un uid (<tt>uid=g&#42;</tt>) o direcci&#243;n de correo electr&#243;nico (<tt>mail=&#42;&#64;example.com</tt>) espec&#237;fica. </p></li></ul>
 <p>En los ejemplos mostrados anteriormente, el filtro LDAP deber&#237;a mostrar todos los
 usuarios cuyo uid comienza por <tt>g</tt> o cuyas direcciones de correo electr&#243;nico
 terminasen en <tt>example.com</tt>, respectivamente. Los grupos filtrados s&#243;lo se pueden crear en
@@ -157,12 +161,11 @@ entrada correspondiente en el &#225;rbol DC. (Las actualizaciones en el estado q
 no se realicen con Federated Access Manager SDK no se sincronizar&#225;n.) Por
 ejemplo, si se crea un nuevo dominio, sun, con el atributo de
 nombre de DNS <tt>sun.com </tt>, se crear&#225; la siguiente entrada en el &#225;rbol
-DC:</p><p><tt>dc=sun,dc=com,o=internet,root suffix</tt></p><p>El &#225;rbol DC puede tener de forma opcional su propio sufijo ra&#237;z
-configurado si se establece <tt>com.iplanet.am.domaincomponent</tt> en <tt> AMConfig.properties</tt>. De forma predeterminada, esto se
-define como la ra&#237;z de Federated Access Manager. Si se desea un
-sufijo distinto, &#233;ste se debe crear utilizando los comandos LDAP. Las ACI
-para los administradores que crean los dominios deben modificarse, por lo que
-tienen un acceso sin restricciones a la nueva ra&#237;z del &#225;rbol DC.</p>
+DC:</p><p><tt>dc=sun,dc=com,o=internet,root suffix</tt></p><p>De forma predeterminada, esto se define como la ra&#237;z de Federated Access
+Manager. Si se desea un sufijo distinto, &#233;ste se debe crear utilizando
+los comandos LDAP. Las ACI para los administradores que crean los dominios
+deben modificarse, por lo que tienen un acceso sin restricciones a la
+nueva ra&#237;z del &#225;rbol DC.</p>
 
 <a name="fsvgs"></a><h5>Grupos administrativos</h5>
 <p>Especifica si se deben crear los grupos DomainAdministrators y DomainHelpDeskAdministrators. Si se
@@ -208,7 +211,7 @@ a cualquier administrador de dominio que sea miembro de dicho grupo.</p>
 un dominio y acceso de escritura al atributo <i>userPassword</i> s&#243;lo en las
 entradas de usuario de esta unidad de contenedor.</p><p>El Administrador del servicio de atenci&#243;n al cliente del dominio tiene acceso
 de lectura a todas las entradas de un dominio y acceso de
-escritura al atributo <i>userPassword</i>.  Al crear un subdominio, recuerde que los roles
+escritura al atributo <i>userPassword. </i> Al crear un subdominio, recuerde que los roles
 de administraci&#243;n se crean en este subdominio, no en el dominio principal.</p><p>El rol Container Admin (Administrador de contenedores) tiene acceso de lectura y
 escritura a todas las entradas en la unidad organizativa LDAP. En Federated
 Access Manager, la unidad organizativa LDAP se indica a menudo como un
@@ -315,7 +318,7 @@ utilizar si hay varios contenedores de personas en el &#225;rbol de directorio.
 (Si no se especifica ning&#250;n contenedor de personas en esta lista o
 en el campo Contenedor de personas predeterminado de grupos, los usuarios se
 crean en el contenedor de personas predeterminado de Federated Access Manager, <tt>ou=people</tt>.)
-No existe ning&#250;n valor predeterminado para este campo.</p><p>La sintaxis para este atributo es:</p><p><tt></tt><i>dn of group</i><tt> | </tt><i>dn of people container</i><tt></tt>  </p><p>Cuando se crea un usuario, este atributo se activa para un contenedor
+No existe ning&#250;n valor predeterminado para este campo.</p><p>La sintaxis para este atributo es:</p><p><tt></tt><i>dn of group</i><tt> | </tt><i>dn of people container</i><tt></tt>   </p><p>Cuando se crea un usuario, este atributo se activa para un contenedor
 en el que colocar la entrada. Si el atributo est&#225; vac&#237;o, el
 atributo Groups Default People Container (Contenedor de personas predeterminado de grupos) se
 activa para un contenedor. Si el &#250;ltimo atributo est&#225; vac&#237;o, la entrada
@@ -353,7 +356,7 @@ la p&#225;gina Perfil de usuario) est&#225; seleccionada.</p>
 <a name="fsvhk"></a><h5>Opciones de visualizaci&#243;n de perfiles de usuario</h5>
 <p>Este men&#250; especifica los atributos de servicio que se mostrar&#225;n en la
 p&#225;gina del perfil del usuario. Un administrador puede seleccionar una de las
-siguientes opciones: </p><dl><dt>S&#243;lo usuario</dt>
+siguientes opciones:</p><dl><dt>S&#243;lo usuario</dt>
 <dd><p>Muestra los atributos de esquema del usuario visibles para los servicios asignados al usuario. El usuario puede ver los valores de los atributos del servicio de usuario cuando el atributo contiene la palabra clave Display (Ver). Consulte el documento Federated Access Manager Developer's Guide (Gu&#237;a de desarrolladores de Federated Access Manager) para obtener m&#225;s informaci&#243;n.</p></dd>
 <dt>Combinado</dt>
 <dd><p>Muestra los atributos de esquema din&#225;micos y del usuario visibles para los servicios asignados al usuario.</p></dd>
@@ -378,9 +381,9 @@ El valor predeterminado es 200.  </p><p>No establezca un valor grande para este 
 menos que se asignen suficientes recursos de sistema.</p>
 <hr><p><b>Nota &#8211; </b>Federated Access Manager se ha configurado previamente para que devuelva un tama&#241;o
 m&#225;ximo de 4.000 entradas de b&#250;squeda. Este valor puede cambiarse mediante la
-consola o utilizando <tt>ldapmodify</tt>. Si desea cambiarlo mediante <tt>ldapmodify</tt>, cree un archivo
-<tt>newConfig.xml</tt> con los siguientes valores (en este ejemplo, <tt>nsSizeLimit </tt>: -1 indica un
-n&#250;mero ilimitado):</p>dn: cn=puser,ou=DSAME Users,ORG_ROOT_SUFFIX changetype: modify replace:nsSizeLimit nsSizeLimit: -1<p>A continuaci&#243;n, ejecute <tt>ldapmodify</tt>. Por ejemplo:</p>setenv LD_LIBRARY_PATH /opt/SUNWam/lib/:/opt/SUNWam/ldaplib/ldapsdk:/usr/lib/mps:/usr/share/lib/mps/secv1:/usr/lib/mps/secv1: $LD_LIBRARY_PATH  ./ldapmodify -D "cn=Directory Manager" -w "iplanet333" -c -a -h hostname.domain -p 389 -f  newConfig.xml<p>Las modificaciones realizadas en este atributo con <tt>LDAPModify</tt> tendr&#225;n preferencia sobre las
+consola o utilizando <tt>ldapmodify</tt>. If you wish to change it using <tt>ldapmodify,</tt>create
+a <tt>newConfig.xml </tt>, with the following values (in this example, <tt>nsSizeLimit </tt>: -1 means
+unlimited):</p>dn: cn=puser,ou=DSAME Users,ORG_ROOT_SUFFIX changetype: modify replace:nsSizeLimit nsSizeLimit: -1<p>A continuaci&#243;n, ejecute <tt>ldapmodify</tt>. Por ejemplo:</p>setenv LD_LIBRARY_PATH /opt/SUNWam/lib/:/opt/SUNWam/ldaplib/ldapsdk:/usr/lib/mps:/usr/share/lib/mps/secv1:/usr/lib/mps/secv1: $LD_LIBRARY_PATH ./ldapmodify -D "cn=Directory Manager" -w "iplanet333" -c -a -h hostname.domain -p 389 -f newConfig.xml<p>Las modificaciones realizadas en este atributo con <tt>LDAPModify</tt> tendr&#225;n preferencia sobre las
 realizadas con la consola de Federated Access Manager. </p>
 <hr>
 
@@ -394,7 +397,7 @@ b&#250;squeda y se devolver&#225; un error. El valor predeterminado es 5 segundo
 espera de 120 segundos. Este valor puede cambiarse mediante la consola de
 Directory Server o utilizando <tt>ldapmodify</tt>. Si desea cambiarlo mediante <tt>ldapmodify</tt>, cree un
 archivo <tt> newConfig.xml</tt> con los siguientes valores (en este ejemplo, se cambia el
-valor de tiempo de espera de 120 segundos por 3.600 segundos):</p>dn: cn=config changetype: modify replace:nsslapd-timelimit nsslapd-timelimit: 3600<p>A continuaci&#243;n, ejecute <tt>ldapmodify</tt>. Por ejemplo:</p>setenv LD_LIBRARY_PATH /opt/SUNWam/lib/:/opt/SUNWam/ldaplib/ldapsdk:/usr/lib/mps:/usr/share/lib/mps/secv1:/usr/lib/mps/secv1: $LD_LIBRARY_PATH  ./ldapmodify -D "cn=Directory Manager" -w "iplanet333" -c -a -h hostname.domain -p 389 -f  newConfig.xml
+valor de tiempo de espera de 120 segundos por 3.600 segundos):</p>dn: cn=config changetype: modify replace:nsslapd-timelimit nsslapd-timelimit: 3600<p>A continuaci&#243;n, ejecute <tt>ldapmodify </tt>. Por ejemplo:</p>setenv LD_LIBRARY_PATH /opt/SUNWam/lib/:/opt/SUNWam/ldaplib/ldapsdk:/usr/lib/mps:/usr/share/lib/mps/secv1:/usr/lib/mps/secv1: $LD_LIBRARY_PATH ./ldapmodify -D "cn=Directory Manager" -w "iplanet333" -c -a -h hostname.domain -p 389 -f newConfig.xml
 <hr>
 
 
@@ -425,7 +428,7 @@ les asignar&#225;n los servicios que se indican en este atributo.</p>
 <a name="fsvhu"></a><h5>Clave de b&#250;squeda de usuario</h5>
 <p>Este atributo define el nombre de atributo que se buscar&#225; cuando se
 realice una b&#250;squeda sencilla en la p&#225;gina Navigation (Navegaci&#243;n). El valor predeterminado
-para este atributo es <tt>cn</tt>.</p><p>Por ejemplo, si escribe <tt> j*</tt>en el campo Nombre, en el cuadro Navegaci&#243;n,
+para este atributo es <tt>cn</tt>.</p><p>Por ejemplo, si escribe <tt> j&#42;</tt>en el campo Nombre, en el cuadro Navegaci&#243;n,
 se mostrar&#225;n los usuarios cuyos nombres comiencen con "j" o "J".</p>
 
 <a name="fsvht"></a><h5>Atributo de devoluci&#243;n de b&#250;squeda de usuario</h5>
@@ -441,7 +444,7 @@ definido en una entrada del usuario.</p>
 <p>Este campo define una lista de las direcciones de correo electr&#243;nico a
 las que se enviar&#225; una notificaci&#243;n cuando se cree un nuevo usuario.
 Se pueden especificar varias direcciones de correo electr&#243;nico, de acuerdo con la
-siguiente sintaxis: </p><p><tt>e-mail|locale|charset</tt> </p><p><tt>e-mail|locale|charset</tt> </p><p><tt>e-mail|locale|charset</tt></p><p>La lista de notificaci&#243;n tambi&#233;n acepta diferentes configuraciones regionales mediante la opci&#243;n
+siguiente sintaxis:</p><p> <tt>e-mail|locale|charset</tt> </p><p><tt>e-mail|locale|charset</tt> </p><p><tt>e-mail|locale|charset</tt></p><p>La lista de notificaci&#243;n tambi&#233;n acepta diferentes configuraciones regionales mediante la opci&#243;n
 <tt>-|locale</tt>.</p><p>Consulte <a href="supportedlang.html">Idiomas admitidos</a> pata obtener una lista de las configuraciones regionales.  </p><p>El Id. de correo electr&#243;nico del remitente puede cambiarse si se modifica
 la propiedad 497 de <tt>amProfile.properties</tt>, ubicado de forma predeterminada en <tt></tt><i>FederatedAccessManager-base</i><tt>/SUNWam/locale </tt> .</p>
 
@@ -449,7 +452,7 @@ la propiedad 497 de <tt>amProfile.properties</tt>, ubicado de forma predetermina
 <p>Este campo define una lista de las direcciones de correo electr&#243;nico a
 las que se enviar&#225; una notificaci&#243;n cuando se elimine un nuevo usuario.
 Se pueden especificar varias direcciones de correo electr&#243;nico, de acuerdo con la
-siguiente sintaxis: </p><p><tt>e-mail|locale|charset</tt> </p><p><tt>e-mail|locale|charset</tt> </p><p><tt>e-mail|locale|charset</tt></p><p>La lista de notificaci&#243;n tambi&#233;n acepta diferentes configuraciones regionales mediante la opci&#243;n
+siguiente sintaxis:</p><p> <tt>e-mail|locale|charset</tt> </p><p><tt>e-mail|locale|charset</tt> </p><p><tt>e-mail|locale|charset</tt></p><p>La lista de notificaci&#243;n tambi&#233;n acepta diferentes configuraciones regionales mediante la opci&#243;n
 <tt>-|locale</tt>.</p><p>Para obtener una lista de las configuraciones regionales, consulte <a href="supportedlang.html">Idiomas admitidos</a>.  </p><p>El Id. de correo electr&#243;nico del remitente puede cambiarse si se modifica
 la propiedad 497 de <tt>amProfile.properties</tt>, ubicado de forma predeterminada en <tt></tt><i>FederatedAccessManager-base</i><tt>/SUNWam/locale </tt> .</p><p>El Id. predeterminado del remitente es <tt>DSAME</tt>.</p>
 
@@ -462,28 +465,27 @@ distinto de direcciones asociado. Se pueden especificar varias direcciones de co
 de acuerdo con la siguiente sintaxis:</p><p><tt>attrName </tt><i>e-mail</i><tt>| </tt><i> locale</i><tt>|</tt><i>charset</i><tt> </tt><i>e-mail </i><tt> |</tt><i>locale</i><tt>|</tt><i>charset</i><tt> ..... </tt> </p><p><tt>attrName </tt><i>e-mail</i><tt>| </tt><i> locale</i><tt>|</tt><i>charset</i><tt> </tt><i>e-mail </i><tt> |</tt><i>locale</i><tt>|</tt><i>charset</i><tt> ..... </tt> </p><p>La palabra clave <tt>-self</tt> se puede usar en el lugar de una
 de las direcciones. De esta forma, se env&#237;a un mensaje de correo
 electr&#243;nico al usuario cuyo perfil se ha modificado. Por ejemplo, supongamos que
-se utiliza la siguiente instrucci&#243;n:</p><p><tt>manager someuser@sun.com|self|admin@sun.com</tt></p><p>Se enviar&#225; un mensaje de correo electr&#243;nico a la direcci&#243;n especificada en
-el atributo de administrador, <tt>someuser@sun.com</tt>, <tt>admin@sun</tt>, la persona que modific&#243; el usuario
+se utiliza la siguiente instrucci&#243;n:</p><p><tt>manager someuser&#64;sun.com|self|admin&#64;sun.com</tt></p><p>Se enviar&#225; un mensaje de correo electr&#243;nico a la direcci&#243;n especificada en
+el atributo de administrador, <tt>someuser&#64;sun.com</tt>, <tt>admin&#64;sun</tt>, la persona que modific&#243; el usuario
 (self).</p><p>La lista de notificaci&#243;n tambi&#233;n acepta diferentes configuraciones regionales mediante la opci&#243;n
-<tt>-|locale</tt>. Por ejemplo, para enviar la notificaci&#243;n a un administrador en Francia:</p><p><tt>manager someuser@sun.com|self|admin@sun.com|fr</tt> Consulte <a href="supportedlang.html">Idiomas admitidos</a> para obtener una lista de las configuraciones regionales.  </p><p>El nombre de atributo es el mismo que aparece en el esquema
+<tt>-|locale. </tt> Por ejemplo, para enviar la notificaci&#243;n a un administrador en Francia:</p><p><tt>manager someuser&#64;sun.com|self|admin&#64;sun.com|fr</tt> Consulte <a href="supportedlang.html">Idiomas admitidos</a> para obtener una lista de las configuraciones regionales.  </p><p>El nombre de atributo es el mismo que aparece en el esquema
 de Directory Server y no el nombre que se muestra en la
 consola.</p>
 
 <a name="fsvia"></a><h5>N&#250;mero m&#225;ximo de entradas por p&#225;gina</h5>
 <p>Este atributo permite definir el n&#250;mero m&#225;ximo de filas que se puede
-mostrar por p&#225;gina. El valor predeterminado es 25. Por ejemplo, si una
-b&#250;squeda de usuario devuelve 100 filas, habr&#225; 4 p&#225;ginas con 25 filas
-en cada p&#225;gina.</p>
+mostrar por p&#225;gina. The default is 25. For example, if a user
+search returns 100 rows, there will be 4 pages with 25 rows
+displayed in each page.</p>
 
 <a name="fsvhz"></a><h5>Clases de escuchas de eventos</h5>
 <p>Este atributo contiene una lista de las escuchas que reciben los eventos
 de creaci&#243;n, modificaci&#243;n, y eliminaci&#243;n de la consola de Federated Access Manager.</p>
 
 <a name="fsvhy"></a><h5>Clases de procesamiento previo y posterior</h5>
-<p>Este campo define una lista de las clases de implementaci&#243;n mediante los
-complementos que ampl&#237;an la clase <tt>com.iplanet.am.sdk.</tt><tt>AMCallBack</tt> para recibir devoluciones de llamadas durante
-las operaciones de procesamiento previo y posterior de los usuarios, el dominio,
-los roles y los grupos. Las operaciones son:</p>
+<p>This field defines a list of implementation classes through plug-ins that extend
+the <tt>com.iplanet.am.sdk.AMCallBack</tt> class to receive callbacks during pre and post processing operations
+for users, realm, roles and groups. Las operaciones son:</p>
 <ul><li><p>creaci&#243;n</p></li>
 <li><p>delete</p></li>
 <li><p>modificar</p></li>
@@ -504,7 +506,7 @@ forma predeterminada, esta opci&#243;n no est&#225; habilitada.</p>
 <a name="fsvib"></a><h5>Caracteres del ID de usuario no v&#225;lidos</h5>
 <p>Este atributo define una lista de los caracteres que no se permiten
 en un nombre de usuario. Cada car&#225;cter debe estar separado por el
-car&#225;cter |. Por ejemplo:</p><p><tt>*|(|)|&#38;|!</tt></p>
+car&#225;cter |. Por ejemplo:</p><p><tt>&#42;|(|)|&#38;|!</tt></p>
 
 <a name="fsvie"></a><h5>Clase de complemento de validaci&#243;n de Id. de usuario y contrase&#241;a</h5>
 <p>Esta clase proporciona un mecanismo de complemento de validaci&#243;n de Id. de

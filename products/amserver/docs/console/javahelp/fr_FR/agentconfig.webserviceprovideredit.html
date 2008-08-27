@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Fournisseur de services Web - Aide en ligne de la console Sun Java System Federated Access Manager 8.0
+  <title>Fournisseur de services Web - Aide en ligne de la console Sun Federated Access Manager 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,10 +31,11 @@
 
 
 <a name="agentconfig.webserviceprovideredit"></a><h4>Fournisseur de services Web</h4>
-<p>Le profil d'agent du fournisseur de services Web d&#233;crit la configuration utilis&#233;e
-pour s&#233;curiser les demandes de service Web d'un fournisseur de services Web.
-Les noms des services Web doivent &#234;tre uniques &#224; chaque fournisseur de
-services Web.</p>
+<p>Le profil d'agent Fournisseur de services Web d&#233;crit la configuration utilis&#233;e pour
+valider les demandes de services Web &#233;mises par les clients de services
+Web et pour s&#233;curiser les r&#233;ponses renvoy&#233;es par un fournisseur de services
+Web. Le nom du fournisseur de services Web doit &#234;tre unique pour
+l'ensemble des agents.</p>
 
 <a name="ggouz"></a><h5>D'ordre g&#233;n&#233;ral</h5>
 <p>Les attributs d'ordre g&#233;n&#233;ral suivants d&#233;finissent les propri&#233;t&#233;s du fournisseur de services
@@ -46,16 +47,17 @@ similaires. Vous devez d&#233;finir le groupe avant d'inclure l'agent sp&#233;ci
 ensemble. </p>
 
 <a name="ggotz"></a><h5>Mot de passe</h5>
-<p>D&#233;finit le mot de passe de l'attribut du fournisseur de services Web.</p>
+<p>D&#233;finit le mot de passe de l'agent fournisseur de services Web.</p>
 
 <a name="ggotl"></a><h5>Confirmation de mot de passe</h5>
 <p>Confirmez le mot de passe.</p>
 
 <a name="ggova"></a><h5>Statut</h5>
-<p>D&#233;termine si l'agent du fournisseur de services Web participe ou non &#224;
-la s&#233;curisation des demandes de service sortantes. Par d&#233;faut, cet attribut est
-d&#233;fini sur <tt>Active</tt>, ce qui signifie que l'agent participe &#224; la s&#233;curisation.
-</p>
+<p>D&#233;finit si l'agent fournisseur de services Web est actif ou inactif au
+sein du syst&#232;me. Par d&#233;faut, il est actif, ce qui signifie que
+l'agent va participer &#224; la validation des demandes de services Web &#233;mises
+par les clients de services Web et &#224; la s&#233;curisation des r&#233;ponses
+renvoy&#233;es par un fournisseur de services Web.</p>
 
 <a name="ggowp"></a><h5>Identificateur universel</h5>
 <p>R&#233;pertorie les propri&#233;t&#233;s LDAP de base qui d&#233;finissent de mani&#232;re unique l'agent
@@ -66,51 +68,62 @@ du fournisseur de services Web.</p>
 Web&#160;: </p>
 
 <a name="gglhw"></a><h5>M&#233;canisme de s&#233;curit&#233;</h5>
-<p>D&#233;finit le type de r&#233;f&#233;rence de s&#233;curit&#233; utilis&#233; pour s&#233;curiser la demande
-du fournisseur de services Web. Vous pouvez effectuer un choix parmi les
-types de s&#233;curit&#233; suivants&#160;: </p>
+<p>D&#233;finit le type de r&#233;f&#233;rence de s&#233;curit&#233;, utilis&#233; pour valider la demande
+de services Web. Ce type de m&#233;canisme de s&#233;curit&#233; est inclus dans
+la demande de services Web &#233;mise par un client de services Web
+et est accept&#233; par un fournisseur de services Web. Faites votre choix
+parmi les types suivants&#160;: </p>
 <ul><li><p>Anonyme &#8212; Le m&#233;canisme de s&#233;curit&#233; anonyme ne contient aucune r&#233;f&#233;rence de s&#233;curit&#233;.</p></li>
-<li><p>LibertyBearerToken</p></li>
-<li><p>LibertySAMLToken</p></li>
-<li><p>LibertyX509Token &#8212; Utilise le certificat X509 d&#233;fini par Liberty pour s&#233;curiser la demande du fournisseur Web.</p></li>
-<li><p>SAML-HolderOfKey &#8212; Utilise le type d'assertion SAML 1.1 Holder-Of-Key pour s&#233;curiser la demande.</p></li>
-<li><p>SAML-SenderVouches &#8212; Utilise le type d'assertion SAML 1.1 Sender Vouches pour s&#233;curiser la demande.</p></li>
-<li><p>SAML2&#8211;HolderOfKey &#8212; Utilise le type de jeton d'assertion SAML 2.0 Holder-Of-Key pour s&#233;curiser la demande.</p></li>
-<li><p>SAML2&#8211;SenderVouches &#8212; Utilise le type de jeton d'assertion SAML 2.0 Sender Vouches pour s&#233;curiser la demande.</p></li>
-<li><p>UserNameToken &#8212; Utilise un jeton de nom d'utilisateur pour s&#233;curiser les demandes du client du fournisseur Web.</p></li>
-<li><p>UserNameToken-Plain &#8212; Utilise un jeton de nom d'utilisateur avec un mot de passe en texte clair pour s&#233;curiser les demandes du fournisseur Web.</p></li>
-<li><p>X509Token &#8212; Utilise le certificat X509 pour s&#233;curiser les demandes du fournisseur Web.</p></li></ul>
+<li><p>LibertyBearerToken &#8212; Utilise le jeton de support Liberty.</p></li>
+<li><p>LibertySAMLToken &#8212; Utilise le jeton SAML Liberty.</p></li>
+<li><p>LibertyX509Token &#8212; Utilise le certificat X.509 Liberty.</p></li>
+<li><p>SAML-HolderOfKey &#8212; Utilise le type d'assertion SAML 1.1 Holder-Of-Key.</p></li>
+<li><p>SAML-SenderVouches &#8212; Utilise le type d'assertion SAML 1.1 SenderVouches.</p></li>
+<li><p>SAML2&#8211;HolderOfKey &#8212; Utilise le type de jeton d'assertion SAML 2.0 Holder-Of-Key.</p></li>
+<li><p>SAML2&#8211;SenderVouches &#8212; Utilise le type de jeton d'assertion SAML 2.0 SenderVouches.</p></li>
+<li><p>UserNameToken &#8212; Utilise un jeton de nom d'utilisateur.</p></li>
+<li><p>UserNameToken-Plain &#8212; Utilise un jeton de nom d'utilisateur avec un mot de passe non chiffr&#233;.</p></li>
+<li><p>X509Token &#8212; Utilise le certificat X509.</p></li></ul>
 
 
 <a name="gglfy"></a><h5>Cha&#238;ne d'authentification</h5>
-<p>D&#233;finition &#8211; </p>
+<p>D&#233;finit la cha&#238;ne d'authentification ou le nom de service pouvant &#234;tre utilis&#233;
+pour s'authentifier aupr&#232;s du service d'authentification de Federated Access Manager, en utilisant
+les r&#233;f&#233;rences provenant du jeton de s&#233;curit&#233; d'une demande de services Web
+entrante pour g&#233;n&#233;rer le jeton SSO authentifi&#233; de Federated Access Manager.</p>
 
 <a name="ggoum"></a><h5>Pr&#233;server les en-t&#234;tes de s&#233;curit&#233; dans les messages</h5>
 <p>Lorsque cet attribut est activ&#233;, il indique que les en-t&#234;tes de s&#233;curit&#233;
-SOAP sont conserv&#233;s pour le fournisseur de services Web en vue d'un
-traitement approfondi. </p>
+SOAP sont conserv&#233;s par le fournisseur de services Web en vue d'un
+traitement approfondi.</p>
 
 <a name="ggovi"></a><h5>URN de type de service Liberty</h5>
 <p>L'URN (Universal Resource Name) d&#233;crit un type de service Liberty que le
 fournisseur de services Web utilise pour les recherches de services.</p>
 
 <a name="ggovn"></a><h5>R&#233;f&#233;rences du jeton d'utilisateur</h5>
-<p>L'attribut repr&#233;sente les secrets partag&#233;s nom d'utilisateur/mot de passe que le fournisseur
-de services Web utilise pour g&#233;n&#233;rer un jeton de s&#233;curit&#233; de nom
-d'utilisateur.</p>
+<p>Cet attribut repr&#233;sente le nom d'utilisateur et le mot de passe utilis&#233;s
+par le fournisseur de services Web pour valider un jeton de s&#233;curit&#233;
+de nom d'utilisateur provenant d'une demande de services Web entrante. Ces r&#233;f&#233;rences
+sont compar&#233;es &#224; celle du jeton de s&#233;curit&#233; du nom d'utilisateur provenant
+d'une demande de services Web entrante.</p>
 
 <a name="gglhq"></a><h5>Type de cl&#233; priv&#233;e</h5>
-<p>D&#233;finition &#8211; </p>
+<p>D&#233;finit le type de cl&#233; utilis&#233; par le fournisseur de services Web
+pendant la v&#233;rification de la signature de la demande de services Web.
+La valeur par d&#233;faut est <tt>PublicKey</tt>.</p>
 
 <a name="gglfz"></a><h5>Configuration SAML</h5>
 <p>Les attributs suivants configurent le langage SAML (Security Assertion Markup Language) du
 fournisseur de services Web&#160;:</p>
 
 <a name="gglfx"></a><h5>Mappage d'attribut SAML</h5>
-<p>Cette configuration repr&#233;sente un attribut SAML devant &#234;tre g&#233;n&#233;r&#233; par le service
-de jeton de s&#233;curit&#233; pendant la cr&#233;ation de l'assertion. Le m&#234;me mappage
-est utilis&#233; pour &#234;tre int&#233;gr&#233; au jeton SSOToken par le fournisseur de
-services Web.</p>
+<p>Cette configuration repr&#233;sente un attribut SAML qui doit &#234;tre g&#233;n&#233;r&#233; en tant
+que d&#233;claration d'attribut lors de la cr&#233;ation de l'assertion SAML par le
+service de jeton de s&#233;curit&#233; pour un fournisseur de services Web. Le
+format est <tt></tt><i>SAML_attr_name</i><tt></tt>=<tt></tt><i> Real_attr_name</i><tt></tt>.</p><p><tt></tt><i>SAML_attr_name</i><tt></tt> est le nom de l'attribut SAML provenant d'une assertion SAML d'une
+demande de services Web entrante. <tt></tt><i>Real_attr_name</i><tt></tt> est le nom d'attribut extrait du
+jeton SSO authentifi&#233; ou du r&#233;f&#233;rentiel d'identit&#233;s.</p>
 
 <a name="gglgf"></a><h5>Plug-in de mappeur NameID SAML</h5>
 <p>D&#233;finit la classe de plug-in de mapper NameID utilis&#233;e pour le mappage
@@ -129,49 +142,51 @@ la s&#233;curit&#233; du fournisseur Web&#160;:</p>
 
 <a name="ggowr"></a><h5>La r&#233;ponse est sign&#233;e</h5>
 <p>Lorsque cet attribut est activ&#233;, le fournisseur de services Web signe la
-r&#233;ponse avec un type de jeton donn&#233;.</p>
+r&#233;ponse avec son certificat X509.</p>
 
 <a name="ggouo"></a><h5>La r&#233;ponse est chiffr&#233;e</h5>
 <p>Lorsque cet attribut est activ&#233;, la r&#233;ponse du service Web est chiffr&#233;e.</p>
 
 <a name="ggowz"></a><h5>La signature de demande est v&#233;rifi&#233;e</h5>
-<p>Lorsque cet attribut est activ&#233;, la signature de demande du service Web
-est v&#233;rifi&#233;e.</p>
+<p>Lorsque cet attribut est activ&#233;, la signature de la demande de service
+Web est v&#233;rifi&#233;e.</p>
 
-<a name="ggouw"></a><h5>L'en-t&#234;te de demande est chiffr&#233;</h5>
-<p>Lorsque cet attribut est activ&#233;, l'en-t&#234;te de s&#233;curit&#233; du client du service
-Web est chiffr&#233;e.</p>
+<a name="ggouw"></a><h5>En-t&#234;te de la demande d&#233;chiffr&#233;</h5>
+<p>Lorsque cet attribut est activ&#233;, l'en-t&#234;te de s&#233;curit&#233; de la demande du
+client de services Web est chiffr&#233;.</p>
 
 <a name="ggotr"></a><h5>La demande est d&#233;chiffr&#233;e</h5>
-<p>Lorsque cet attribut est activ&#233;, la demande du fournisseur de services Web
+<p>Lorsque cet attribut est activ&#233;, la demande du client de services Web
 est d&#233;chiffr&#233;e.</p>
 
 <a name="gglls"></a><h5>Keystore</h5>
 <p>Les attributs suivants configurent le keystore &#224; utiliser pour le stockage et
 l'extraction du certificat&#160;: </p>
 
-<a name="gglld"></a><h5>Alias de cl&#233; publique du client du service Web</h5>
-<p>Cet attribut d&#233;finit l'alias de cl&#233; de certificat publique utilis&#233; pour chiffrer
-la r&#233;ponse du service Web.</p>
+<a name="gglld"></a><h5>Alias de cl&#233; publique du client de service Web</h5>
+<p>Cet attribut d&#233;finit l'alias de cl&#233; de certificat publique, utilis&#233; pour coder
+la r&#233;ponse du service Web ou v&#233;rifier la signature de la demande
+du service Web.</p>
 
 <a name="gglmc"></a><h5>Alias de cl&#233; priv&#233;e</h5>
-<p>Cet attribut d&#233;finit l'alias de cl&#233; de certificat priv&#233;e utilis&#233; pour signer/d&#233;chiffrer
-la demande du service Web.</p>
+<p>Cet attribut d&#233;finit l'alias de cl&#233; de certificat priv&#233;e, utilis&#233; pour signer
+la r&#233;ponse de service Web ou d&#233;coder la demande de service Web.</p>
 
 <a name="ggljf"></a><h5>Utilisation du keystore</h5>
 <p>Cette configuration sp&#233;cifie d'utiliser le keystore par d&#233;faut ou un keystore personnalis&#233;.
 Les valeurs suivantes doivent &#234;tre d&#233;finies pour un keystore personnalis&#233;&#160;:</p>
-<ul><li><p>Emplacement du keystore</p></li>
-<li><p>Mot de passe du keystore</p></li>
+<ul><li><p>Emplacement de keystore</p></li>
+<li><p>Mot de passe de keystore</p></li>
 <li><p>Mot de passe de cl&#233;</p></li></ul>
 
 
 <a name="gglko"></a><h5>Points d'arriv&#233;e</h5>
 <p>Les attributs suivants d&#233;finissent les points d'arriv&#233;e du service Web&#160;:</p>
 
-<a name="gglmp"></a><h5>Point d'arriv&#233;e de service Web</h5>
+<a name="gglmp"></a><h5>Extr&#233;mit&#233; proxy du service Web</h5>
 <p>Cet attribut d&#233;finit un point d'arriv&#233;e de service Web auquel le client
-du service Web fait une demande.</p>
+du service Web fait une demande. L'extr&#233;mit&#233; est facultative sauf si elle
+est configur&#233;e pour utiliser le proxy de s&#233;curit&#233; Web. </p>
 <br/>
 
 </body>

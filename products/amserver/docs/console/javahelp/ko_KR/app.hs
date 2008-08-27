@@ -1,9 +1,9 @@
-<?xml version='1.0' encoding='euc-kr'?>
+<?xml version='1.0' encoding='utf-8'?>
 <!-- ident   "%Z%%M% %I%   %E% SMI" -->
 <!DOCTYPE helpset PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp HelpSet Version 2.0//EN" "helpset_1_0.dtd">
 
 <helpset version="2.0" xml:lang="ko">
-<title>Sun Java System Federated Access Manager 8.0 콘솔 온라인 도움말</title>
+<title>Sun Federated Access Manager 8.0 콘솔 온라인 도움말</title>
 <maps>
 	<homeID></homeID>
 	<mapref location="map.jhm"/>

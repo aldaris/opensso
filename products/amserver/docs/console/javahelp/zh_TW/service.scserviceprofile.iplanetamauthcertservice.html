@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>憑證  - Sun Java System Federated Access Manager 8.0 主控台線上說明
+  <title>憑證  - Sun Federated Access Manager 8.0 主控台線上說明
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,7 +31,7 @@
 
 
 <a name="service.scserviceprofile.iplanetamauthcertservice"></a><h4>憑證 </h4>
-<p><a name="indexterm-176"></a>此模組可讓使用者透過個人數位憑證 (PDC) 來登入。模組實例需要使用線上憑證狀態通訊協定 (OCSP)，才能判定憑證的狀態。使用 OCSP 是選擇性的。根據憑證是否有效，來授予或拒絕使用者存取資源的權限。憑證認證屬性為範圍屬性。這些屬性包括：</p>
+<p><a name="indexterm-169"></a>此模組可讓使用者透過個人數位憑證 (PDC) 來登入。模組實例需要使用線上憑證狀態通訊協定 (OCSP)，才能判定憑證的狀態。使用 OCSP 是選擇性的。根據憑證是否有效，來授予或拒絕使用者存取資源的權限。憑證認證屬性為範圍屬性。這些屬性包括：</p>
 <ul><li><p><a href="#fwbia">符合 LDAP 中的憑證</a></p></li>
 <li><p><a href="#fwbiq">用於在 LDAP 中搜尋憑證的主體 DN 屬性</a></p></li>
 <li><p><a href="#fwbim">使憑證符合 CRL</a></p></li>
@@ -43,7 +43,6 @@
 <li><p><a href="#fwbqp">LDAP 伺服器主體使用者</a></p></li>
 <li><p><a href="#fwbst">LDAP 伺服器主體密碼</a></p></li>
 <li><p><a href="#fwbiu">LDAP 伺服器主體密碼 (確認)</a></p></li>
-<li><p><b>Broken Link (Target ID: FWBLO)</b></p></li>
 <li><p><a href="#fwblm">將 SSL 用於 LDAP 存取</a></p></li>
 <li><p><a href="#fwbof">用於存取使用者設定檔的憑證欄位</a></p></li>
 <li><p><a href="#fwbna">用於存取使用者設定檔的其他憑證欄位</a></p></li>
@@ -71,10 +70,10 @@
 <p>指定 HTTP 參數 (用於從 servlet 取得 CRL) 以更新 CRL。請聯絡您的 CA 管理員，以取得這些參數。</p>
 
 <a name="fwbil"></a><h5>OCSP 驗證</h5>
-<p>透過聯絡對應的 OCSP 回應者，來啟用要執行的 OCSP 驗證。在執行階段，OCSP 回應者如下決定：</p>
-<ul><li><p>如果 <tt>com.sun.identity.authentication.ocspCheck</tt> 為 true，且在 <i>com.sun.identity.authentication.ocsp.repsonder.url</i> 屬性中設定了 OCSP 回應者，則此屬性的值將用作 OCSP 回應者。</p></li>
-<li><p>如果將 <tt>com.sun.identity.authentication.ocspCheck</tt> 設定為 true，且未在 <tt>AMConfig.properties</tt> 檔案中設定此屬性值，則在您的用戶端憑證中顯示的 OCSP 回應者會被用作 OCSP 回應者。</p></li>
-<li><p>如果將 <tt>com.sun.identity.authentication.ocspCheck</tt> 設定為 false，或將 <i>com.sum.identity.authentication.ocspCheck</i> 設定為 true，且無法找到 OCSP 回應者，則不會執行任何 OCSP 驗證。</p></li></ul>
+<p>透過聯絡對應的 OCSP 回應者，來啟用要執行的 OCSP 驗證。在執行階段，OCSP 回應者如下決定。所提及的屬性位於主控台的 [配置] > [伺服器與網站] > [安全性]：</p>
+<ul><li><p>如果此值設定為 true，並在<a href="service.servereditsecurity.html#ggkav">回應程式 URL</a>屬性中設定了 OCSP 回應程式，此屬性的值將會當做 OCSP 回應程式使用。</p></li>
+<li><p>如果已經啟用<a href="service.servereditsecurity.html#ggkaa">線上憑證狀態協定檢查</a>，而且未設定此屬性的值，則您用戶端憑證中顯示的 OCSP 回應程式會當做 OCSP 回應程式使用。</p></li>
+<li><p>如果未啟用<a href="service.servereditsecurity.html#ggkaa">線上憑證狀態協定檢查</a>，或者如果已經啟用<a href="service.servereditsecurity.html#ggkaa">線上憑證狀態協定檢查</a>但找不到 OCSP 回應程式，則不會執行任何 OCSP 驗證。</p></li></ul>
 <p>在啟用 OCSP 驗證之前，請確定 Federated Access Manager 機器與 OCSP 回應者機器上的時間儘可能同步。而且，Federated Access Manager 機器上的時間不能晚於
 OCSP 回應者機器上的時間。例如：</p><p><tt>OCSP responder machine - 12:00:00 pm</tt></p><p><tt>Federated Access Manager machine - 12:00:30 pm</tt></p>
 
@@ -108,6 +107,13 @@ OCSP 回應者機器上的時間。例如：</p><p><tt>OCSP responder machine - 
 
 <a name="fwbna"></a><h5>用於存取使用者設定檔的其他憑證欄位</h5>
 <p>如果將 [用於存取使用者設定檔的憑證欄位] 屬性設為其他，則此欄位指定要從已接收憑證的 <i>subjectDN</i> 值中選取的屬性。然後，此認證服務將搜尋與該屬性值相符的使用者設定檔。</p>
+
+<a name="ggumk"></a><h5>存取使用者設定檔的 SubjectAltNameExt 值類型</h5>
+<p>如果選取 [<tt>無</tt>] 以外的任何值類型，此屬性的優先順序高於 [<tt>用於存取使用者設定檔的憑證欄位</tt>] 或 [<tt>用於存取使用者設定檔的其他憑證欄位</tt>] 屬性。</p>
+<ul><li><p>RFC822Name</p></li></ul>
+
+<ul><li><p>UPN</p></li></ul>
+
 
 <a name="fwbiw"></a><h5>可信任的遠端主機</h5>
 <p>定義信任的主機清單，這些主機可被信任以向 Federated Access Manager 傳送憑證。Federated Access Manager 必須驗證憑證是否來自這些主機中的一個。此屬性用於 Portal Server 閘道、搭配 SSL

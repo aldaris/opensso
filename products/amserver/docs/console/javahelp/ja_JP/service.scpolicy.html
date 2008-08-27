@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>ポリシー設定 - Sun Java System Federated Access Manager 8.0 コンソールオンラインヘルプ
+  <title>ポリシー設定 - Sun Federated Access Manager 8.0 コンソールオンラインヘルプ
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,7 +31,7 @@
 
 
 <a name="service.scpolicy"></a><h4>ポリシー設定</h4>
-<p><a name="indexterm-197"></a>「ポリシー設定」属性により、管理者はポリシーサービスによって使用されるグローバル属性およびレルム属性を設定できます。</p>
+<p><a name="indexterm-191"></a>「ポリシー設定」属性により、管理者はポリシーサービスによって使用されるグローバル属性およびレルム属性を設定できます。</p>
 <ul><li><p><a href="#fufnk">「グローバル属性」</a></p></li>
 <li><p><a href="#fufmb">「レルム属性」</a></p></li></ul>
 
@@ -43,9 +43,9 @@
 <p>「ポリシー」ルール定義で指定されたリソースの比較に使用されるリソースコンパレータ情報を指定します。リソースの比較は、ポリシーの作成と評価の両方に使用します。</p><p>「追加」ボタンをクリックして、次の属性を定義します。</p><dl><dt>サービスタイプ</dt>
 <dd><p>コンパレータを使用するサービスを指定します。</p></dd>
 <dt>クラス</dt>
-<dd><p>リソース比較アルゴリズムを実装する Java クラスを定義します。</p></dd>
+<dd><p>リソース比較アルゴリズムを実装する Java クラスを定義します。 </p></dd>
 <dt>区切り文字</dt>
-<dd><p>リソース名に使用する区切り記号を指定します。</p></dd>
+<dd><p>リソース名に使用する区切り記号を指定します。 </p></dd>
 <dt>ワイルドカード</dt>
 <dd><p>リソース名に使用可能なワイルドカードを指定します。</p></dd>
 <dt>1 レベルのワイルドカード</dt>
@@ -62,13 +62,13 @@
 <p>ポリシー適用ポイント (ポリシーエージェント) がユーザーエージェントを Federated Access Manager にリダイレクトするポリシーアドバイスキーの名前を定義します。エージェントが、あるリソースへのアクセスを許可しないというポリシー決定を受け取っても、アドバイスを間違いなく所有している場合は、この属性に一覧表示されているアドバイスキーを所有しているかどうかを確認します。</p><p>そのようなアドバイスが見つかった場合、ユーザーエージェントは Federated Access Manager にリダイレクトされ、その結果、そのリソースへのアクセスが許可されることもあります。</p>
 
 <a name="gdpdm"></a><h5>組織エイリアス参照</h5>
-<p>この属性を「はい」に設定すると、最上位レルムまたは親レルムから参照ポリシーを作成することなく、サブレルムにポリシーを作成できます。作成できるのは、完全修飾ホスト名がレルムの DNS エイリアスに一致する HTTP リソースまたは HTTPS リソースを保護するポリシーだけです。デフォルトでは、この属性は「いいえ」として定義されています。</p>
+<p>この属性を「はい」に設定すると、最上位レルムまたは親レルムから参照ポリシーを作成することなく、サブレルムにポリシーを作成できます。作成できるのは、完全修飾ホスト名がレルムの DNS エイリアスに一致する HTTP リソースまたは HTTPS リソースを保護するポリシーだけです。デフォルトでは、この属性は「いいえ」として定義されています。 </p>
 
 <a name="fufmb"></a><h5>レルム属性</h5>
 <p>LDAP プロパティーは次のとおりです。</p>
 
 <a name="fufmg"></a><h5>プライマリ LDAP サーバー</h5>
-<p>Federated Access Manager インストール時に指定されたプライマリ LDAP サーバーのホスト名とポート番号を指定します。このホスト名とポート番号は、LDAP ユーザー、LDAP ロール、LDAP グループなどのポリシー対象を検索する際に使用します。</p><p>形式は <i>hostname:port</i> です。次に例を示します。<tt>machine1.example.com:389</tt></p><p>複数の LDAP サーバーホストに対してフェイルオーバーを設定する場合は、この値をスペース区切りのホストのリストとすることができます。形式は <i>hostname1:port1 hostname2:port2...</i> です。</p><p>次に例を示します。<tt>machine1.example1.com:389 machine2.example1.com:389 </tt></p><p>複数のエントリの場合は、ローカルサーバー名をプレフィックスとして付ける必要があります。これによって、特定の Federated Access Manager を、特定の Directory Server と接続するように設定できます。</p><p>形式は <i>servername|hostname:port</i> です。次に例を示します。</p><p><tt>machine1.example1.com|machine1.example1.com:389</tt></p><p><tt>machine1.example2.com|machine1.example2.com:389</tt></p><p>フェイルオーバー設定の場合は次のようになります。</p><p><tt>AM_Server1.example1.com|machine1.example1.com:389 machine2.example.com1:389 </tt></p><p><tt>AM_Server2.example2.com|machine1.example2.com:389 machine2.example2.com:389 </tt></p>
+<p>Federated Access Manager インストール時に指定されたプライマリ LDAP サーバーのホスト名とポート番号を指定します。このホスト名とポート番号は、LDAP ユーザー、LDAP ロール、LDAP グループなどのポリシー対象を検索する際に使用します。</p><p>形式は <i>hostname:port</i> です。次に例を示します。<tt>machine1.example.com:389</tt></p><p>複数の LDAP サーバーホストに対してフェイルオーバーを設定する場合は、この値をスペース区切りのホストのリストとすることができます。形式は <i>hostname1:port1 hostname2:port2...</i> です。</p><p>次に例を示します。<tt>machine1.example1.com:389 machine2.example1.com:389</tt></p><p>複数のエントリの場合は、ローカルサーバー名をプレフィックスとして付ける必要があります。これによって、特定の Federated Access Manager を、特定の Directory Server と接続するように設定できます。</p><p>形式は <i>servername|hostname:port</i> です。次に例を示します。</p><p><tt>machine1.example1.com|machine1.example1.com:389</tt></p><p><tt>machine1.example2.com|machine1.example2.com:389</tt></p><p>フェイルオーバー設定の場合は次のようになります。</p><p><tt>AM_Server1.example1.com|machine1.example1.com:389 machine2.example.com1:389 </tt></p><p><tt>AM_Server2.example2.com|machine1.example2.com:389 machine2.example2.com:389 </tt></p>
 
 <a name="fufmc"></a><h5>LDAP ベース DN</h5>
 <p>検索を開始する LDAP サーバー内のベース DN を指定します。デフォルトでは、Federated Access Manager インストールの最上位レルムです。</p>
@@ -76,7 +76,7 @@
 <a name="fufmd"></a><h5>LDAP ユーザーベース DN</h5>
 <p>この属性は、LDAP サーバーの LDAP ユーザー対象が使用するベース DN を指定します。そこから検索が開始されます。デフォルトでは、Federated Access Manager インストールベースの最上位レルムです。</p>
 
-<a name="fufmz"></a><h5>Federated Access Manager ロールベースDN</h5>
+<a name="fufmz"></a><h5>Federated Access Manager ロールベース DN</h5>
 <p>Federated Access Manager ロールの値の検索時にベースとして使用するレルムまたは組織の DN を定義します。この属性は <i>AccessManagerRoles</i> ポリシー対象によって使用されます。</p>
 
 <a name="fufme"></a><h5>LDAP バインド DN</h5>
@@ -141,7 +141,7 @@
 <a name="fufmu"></a><h5>LDAP ユーザー検索属性</h5>
 <p>ユーザーに対して検索を行うための属性タイプを定義します。デフォルトは <tt>uid</tt> です。</p>
 
-<a name="fufmx"></a><h5>LDAP ロールの検索属性</h5>
+<a name="fufmx"></a><h5>LDAP ロール検索属性</h5>
 <p>このフィールドは、ロールに対して検索を行うための属性タイプを定義します。デフォルトは <tt>cn</tt> です。</p>
 
 <a name="fufnj"></a><h5>検索で返される結果の最大数</h5>

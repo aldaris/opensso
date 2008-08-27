@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>プラットフォーム - Sun Java System Federated Access Manager 8.0 コンソールオンラインヘルプ
+  <title>プラットフォーム - Sun Federated Access Manager 8.0 コンソールオンラインヘルプ
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,23 +31,12 @@
 
 
 <a name="service.scplatform"></a><h4>プラットフォーム</h4>
-<p><a name="indexterm-211"></a>プラットフォームサービスでは、Federated Access Manager 設定にサーバーを追加したり、Federated Access Manager アプリケーションの最上位レベルで適用されるその他のオプションを設定したりすることができます。プラットフォームサービスの属性は、グローバル属性です。属性は次のとおりです。</p>
-<ul><li><p><a href="#fxcsy">「サイト名」</a></p></li>
-<li><p><a href="#fxcqf">「インスタンス名」</a></p></li>
-<li><p><a href="#fxcgy">「プラットフォームロケール」</a></p></li>
+<p><a name="indexterm-205"></a>プラットフォームサービスでは、Federated Access Manager 設定にサーバーを追加したり、Federated Access Manager アプリケーションの最上位レベルで適用されるその他のオプションを設定したりすることができます。プラットフォームサービスの属性は、グローバル属性です。属性は次のとおりです。</p>
+<ul><li><p><a href="#fxcgy">「プラットフォームロケール」</a></p></li>
 <li><p><a href="#fxcpo">「Cookie ドメイン」</a></p></li>
-<li><p><a href="#fxcsh">「ログインサービス URL」</a></p></li>
-<li><p><a href="#fxcrt">「ログアウトサービス URL」</a></p></li>
 <li><p><a href="#fxcmi">「使用可能なロケール」</a></p></li>
 <li><p><a href="#fxctg">「クライアント文字セット」</a></p></li></ul>
 
-
-<a name="fxcsy"></a><h5>サイト名</h5>
-<p>ネーミングサービスは初期化時にこの属性を読み取ります。このリストでは、バックエンド Federated Access Manager サーバー上に存在するロードバランサまたは負荷分散用 SRA のポート番号によって FQDN を一意に識別します。サービス URL の要求で指定したホストがこのリストにない場合、ネーミングサービスは要求を拒否します。この属性では、ネーミングサービスプロトコルのみを使用します。<b>Broken Link (Target ID: SERVICE.SCPLATFORMSITELISTADD)</b>を参照してください。</p>
-
-<a name="fxcqf"></a><h5>インスタンス名</h5>
-<p>ネーミングサービスは初期化時にこの属性を読み取ります。このリストには、1 つの Federated Access Manager 設定での Federated Access Manager セッションサーバーが含まれています。たとえば、2 つの Federated
-Access Manager をインストールして 1 つのサーバーとして動作させる場合は、両方ともこのリストに入れる必要があります。サービス URL の要求で指定したホストがこのリストにない場合、ネーミングサービスは要求を拒否します。この属性では、ネーミングサービスプロトコルのみを使用します。<b>Broken Link (Target ID: SERVICE.SCPLATFORMSERVERLISTADD)</b>を参照してください。</p>
 
 <a name="fxcgy"></a><h5>プラットフォームロケール</h5>
 <p>プラットフォームロケールの値は、Federated Access Manager とともにインストールしたデフォルト言語のサブタイプです。認証サービス、ログサービス、および管理サービスは、この値の言語で管理されます。デフォルトは en_US です。サポートされている言語サブタイプのリストについては、<a href="supportedlang.html">「サポートされている言語ロケール」</a>を参照してください。</p>
@@ -56,12 +45,6 @@ Access Manager をインストールして 1 つのサーバーとして動作�
 <p>認証中にユーザーのブラウザに Cookie を設定するときに Cookie ヘッダーで返される、ドメインのリストです。空の場合、Cookie ドメインは設定されません。言い換えると、Federated Access Manager セッション Cookie は Federated
 Access Manager 自体にだけ転送され、ドメインのほかのサーバーには転送されません。</p><p>ドメインのほかのサーバーで SSO が必要な場合は、Cookie ドメインでこの属性を設定する必要があります。1 つの Federated Access Manager 上で異なるドメインに 2 つのインタフェースがある場合、両方の Cookie
 ドメインをこの属性に設定する必要があります。ロードバランサを使用する場合、Cookie ドメインは、ロードバランサの背後にあるサーバーではなく、ロードバランサのドメインのものであることが必要です。このフィールドのデフォルト値は、インストールされている Federated Access Manager のドメインです。</p>
-
-<a name="fxcsh"></a><h5>ログインサービス URL</h5>
-<p>このフィールドはログインページの URL を指定します。この属性のデフォルト値は <tt>/Service_DEPLOY_URI/UI/Login</tt> です。</p>
-
-<a name="fxcrt"></a><h5>ログアウトサービス URL</h5>
-<p>このフィールドはログアウトページの URL を指定します。この属性のデフォルト値は <tt>/Service_DEPLOY_URI/UI/Logout</tt> です。</p>
 
 <a name="fxcmi"></a><h5>使用可能なロケール</h5>
 <p>この属性は、プラットフォーム用に設定したすべての使用可能なロケールを格納します。たとえば、ユーザーにロケールを選択させるアプリケーションを考えます。このアプリケーションは、プラットフォームのプロファイルからこの属性を取得して、ロケールのリストをユーザーに提示します。ユーザーがロケールを選択すると、アプリケーションがそれをユーザーエントリ <i>preferredLocale</i> に設定します。</p>

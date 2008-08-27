@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>활성 디렉토리 - Sun Java System Federated Access Manager 8.0 콘솔 온라인 도움말
+  <title>활성 디렉토리 - Sun Federated Access Manager 8.0 콘솔 온라인 도움말
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,7 +31,7 @@
 
 
 <a name="service.scserviceprofile.sunamauthadservice"></a><h4>활성 디렉토리</h4>
-<p><a name="indexterm-173"></a>이 모듈 유형은 LDAP 인증 모듈 유형과 비슷하게 작동하지만 LDAP 디렉토리 대신
+<p><a name="indexterm-166"></a>이 모듈 유형은 LDAP 인증 모듈 유형과 비슷하게 작동하지만 LDAP 디렉토리 대신
 Microsoft Active Directory를 사용합니다. 이 모듈 유형을 사용하면 LDAP와 활성 디렉토리가 모두
 동일한 영역에서 공존할 수 있습니다. 활성 디렉토리 인증 속성은 영역 속성입니다. 속성은
 다음과 같습니다.</p>
@@ -87,10 +87,9 @@ Manager 인스턴스가 Directory Server(L1-machine1-DS 및 L2-machine2-DS)의 �
 <a name="fwbjl"></a><h5>루트 사용자 바인드용 DN</h5>
 <p>주 LDAP 서버 및 포트 필드에 지정된 디렉토리 서버에 관리자로 바인드하는 데
 사용되는 사용자의 DN을 지정합니다. 사용자 로그인 아이디에 기초하여 일치하는 사용자 DN을 검색하려면
-인증 서비스가 이 DN으로 바인드되어야 합니다. 기본값은 <tt>amldapuser</tt>입니다. 유효한 DN이 인식됩니다.</p><p>로그아웃하기 전에 비밀번호가 올바른지를 확인합니다. 올바르지 않으면 사용자가 잠깁니다. 사용자가 잠긴 경우
-<tt>AMConfig.Properties</tt> 파일의 <i>com.iplanet.authentication.super.user</i> 등록 정보에 있는 수퍼유저 DN을 사용하여 로그인할 수 있습니다.
-기본적으로 전체 DN을 사용하더라도 이 <tt>amAdmin</tt> 계정을 사용하여 로그인하게 됩니다. 예를 들면
-다음과 같습니다.</p><p><tt>uid_amAdmin,ou=People,</tt><i>FederatedAccessManager-base </i><tt></tt></p>
+인증 서비스가 이 DN으로 바인드되어야 합니다. 기본값은 <tt>amldapuser</tt>입니다. 유효한 DN이 인식됩니다.</p><p>로그아웃하기 전에 비밀번호가 올바른지를 확인합니다. 올바르지 않으면 사용자가 잠깁니다. 이런 경우에는 수퍼유저
+DN을 사용하여 로그인할 수 있습니다. 기본적으로 전체 DN을 사용하더라도 이 <tt>amAdmin</tt> 계정을
+사용하여 로그인하게 됩니다. 예를 들면 다음과 같습니다.</p><p><tt>uid_amAdmin,ou=People,</tt><i>FederatedAccessManager-base </i><tt></tt></p>
 
 <a name="fwbix"></a><h5>루트 사용자 바인드용 비밀번호</h5>
 <p>루트 사용자 바인드용 DN 필드에 지정된 관리자 프로필의 비밀번호를 포함합니다. 기본값은 없습니다.

@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Plattform - Online-Hilfe zur Sun Java System Federated Access Manager 8.0-Konsole
+  <title>Plattform - Online-Hilfe zur Sun Federated Access Manager 8.0-Konsole
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,36 +31,15 @@
 
 
 <a name="service.scplatform"></a><h4>Plattform</h4>
-<p><a name="indexterm-211"></a>Mithilfe des Plattformdienstes k&#246;nnen zus&#228;tzliche Server zur Federated Access Manager-Konfiguration hinzugef&#252;gt und
+<p><a name="indexterm-205"></a>Mithilfe des Plattformdienstes k&#246;nnen zus&#228;tzliche Server zur Federated Access Manager-Konfiguration hinzugef&#252;gt und
 andere Optionen auf der obersten Ebene der Federated Access Manager-Anwendung &#252;bernommen werden.
 Bei den Plattformdienstattributen handelt es sich um globale Attribute. Es existieren folgende
 Attribute:</p>
-<ul><li><p><a href="#fxcsy">Site-Name</a></p></li>
-<li><p><a href="#fxcqf">Objektname</a></p></li>
-<li><p><a href="#fxcgy">Plattform-L&#228;ndereinstellung</a></p></li>
+<ul><li><p><a href="#fxcgy">Plattform-L&#228;ndereinstellung</a></p></li>
 <li><p><a href="#fxcpo">Cookie-Dom&#228;nen</a></p></li>
-<li><p><a href="#fxcsh">URL des Anmeldedienstes</a></p></li>
-<li><p><a href="#fxcrt">URL des Abmeldedienstes</a></p></li>
 <li><p><a href="#fxcmi">Verf&#252;gbare L&#228;ndereinstellungen</a></p></li>
 <li><p><a href="#fxctg">Client-Zeichens&#228;tze</a></p></li></ul>
 
-
-<a name="fxcsy"></a><h5>Site-Name</h5>
-<p>Der Namensdienst liest diese Attribute w&#228;hrend der Initialisierung ein. Diese Liste identifiziert
-den FQDN mit der Anschlussnummer des Lastenausgleichs oder dem SRA f&#252;r den
-Lastenausgleich auf den Federated Access Manager-Back-end-Servern eindeutig. Wenn sich der in einer
-Dienst-URL-Anforderung angegebene Host nicht in dieser Liste befindet, lehnt der Namensdienst diese
-Anforderung ab. Nur das Namensdienstprotokoll sollte f&#252;r dieses Attribut angegeben sein. Weitere
-Informationen finden Sie unter <b>Broken Link (Target ID: SERVICE.SCPLATFORMSITELISTADD)</b>.</p>
-
-<a name="fxcqf"></a><h5>Objektname</h5>
-<p>Der Namensdienst liest diese Attribute w&#228;hrend der Initialisierung ein. Diese Liste enth&#228;lt
-die innerhalb einer Federated Access Manager-Konfiguration verf&#252;gbaren Federated Access Manager-Sitzungs-Server. Sind beispielsweise
-zwei Federated Access Manager installiert und sollen diese als eine Instanz zusammenarbeiten,
-m&#252;ssen beide in dieser Liste eingetragen sein. Wenn sich der in einer
-Dienst-URL-Anforderung angegebene Host nicht in dieser Liste befindet, lehnt der Namensdienst diese
-Anforderung ab. Nur das Namensdienstprotokoll sollte f&#252;r dieses Attribut angegeben sein. Weitere
-Informationen finden Sie unter <b>Broken Link (Target ID: SERVICE.SCPLATFORMSERVERLISTADD)</b>.</p>
 
 <a name="fxcgy"></a><h5>Plattform-L&#228;ndereinstellung</h5>
 <p>Der Wert dieses Attributs ist der Standard-Sprachenuntertyp, mit dem Federated Access Manager
@@ -80,14 +59,6 @@ Cookie-Dom&#228;nen angegeben werden. Wird ein Lastenausgleichssystem eingesetzt
 als Cookie-Dom&#228;ne angegeben werden und nicht die Dom&#228;ne der Server hinter diesem
 System. Der Standardwert f&#252;r dieses Feld ist die Dom&#228;ne des installierten Federated
 Access Manager.</p>
-
-<a name="fxcsh"></a><h5>URL des Anmeldedienstes</h5>
-<p>In diesem Feld wird der URL der Anmeldeseite angegeben. Der Standardwert f&#252;r
-dieses Attribut lautet <tt>/Service_DEPLOY_URI/UI/Login</tt>. </p>
-
-<a name="fxcrt"></a><h5>URL des Abmeldedienstes</h5>
-<p>In diesem Feld wird der URL der Abmeldeseite angegeben. Der Standardwert f&#252;r
-dieses Attribut lautet <tt>/Service_DEPLOY_URI/UI/Logout</tt>. </p>
 
 <a name="fxcmi"></a><h5>Verf&#252;gbare L&#228;ndereinstellungen</h5>
 <p>Dieses Attribut speichert alle f&#252;r die Plattform verf&#252;gbaren L&#228;ndereinstellungen. Verwenden Sie nach

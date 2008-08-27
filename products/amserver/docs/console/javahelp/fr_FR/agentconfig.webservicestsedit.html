@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Service de jeton de s&#233;curit&#233; - Aide en ligne de la console Sun Java System Federated Access Manager 8.0
+  <title>Attributs du service de jeton de s&#233;curit&#233; - Aide en ligne de la console Sun Federated Access Manager 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -30,19 +30,19 @@
 
 
 
-<a name="agentconfig.webservicestsedit"></a><h4>Service de jeton de s&#233;curit&#233;</h4>
+<a name="agentconfig.webservicestsedit"></a><h4>Attributs du service de jeton de s&#233;curit&#233;</h4>
 <p>Un service de jeton de s&#233;curit&#233; est un service Web qui &#233;met
 et g&#232;re les jetons de s&#233;curit&#233;. Cela signifie que les instructions ou
 les r&#233;clamations de s&#233;curit&#233; figurent souvent dans des ensembles chiffr&#233;s, bien que
-cela ne soit pas obligatoire. Ces instructions reposent sur la preuve qu'il
-peut proc&#233;der &#224; une v&#233;rification directe ou sur des jetons de s&#233;curit&#233;
-provenant d'autorit&#233;s de confiance. Pour &#233;tablir la confiance, un service peut d&#233;montrer
-son droit &#224; revendiquer un ensemble de r&#233;clamations en fournissant un jeton
-de s&#233;curit&#233; ou un ensemble de jetons de s&#233;curit&#233; &#233;mis par un
-service de jeton de s&#233;curit&#233;, ou il peut &#233;mettre un jeton de
-s&#233;curit&#233; avec sa propre instruction de confiance (pour certains formats de jeton
-de s&#233;curit&#233;, il peut simplement s'agir d'une r&#233;-&#233;mission ou d'une co-signature). Ceci
-forme la base de l'&#233;tablissement de confiance.</p>
+cela ne soit pas obligatoire. Ces d&#233;clarations reposent sur la r&#233;ception d'une
+preuve attestant qu'il peut v&#233;rifier directement les jetons de s&#233;curit&#233; provenant d'autorit&#233;s
+de confiance. Pour &#233;tablir la confiance, un service peut d&#233;montrer son droit
+&#224; revendiquer un ensemble de r&#233;clamations en fournissant un jeton de s&#233;curit&#233;
+ou un ensemble de jetons de s&#233;curit&#233; &#233;mis par un service de
+jeton de s&#233;curit&#233;, ou il peut &#233;mettre un jeton de s&#233;curit&#233; avec
+sa propre instruction de confiance (pour certains formats de jeton de s&#233;curit&#233;,
+il peut simplement s'agir d'une r&#233;-&#233;mission ou d'une co-signature). Ceci forme la
+base de l'&#233;tablissement de confiance.</p>
 
 <a name="ggpce"></a><h5>D'ordre g&#233;n&#233;ral</h5>
 <p>Les attributs d'ordre g&#233;n&#233;ral suivants d&#233;finissent les propri&#233;t&#233;s du service de jeton
@@ -54,17 +54,18 @@ similaires. Vous devez d&#233;finir le groupe avant d'inclure l'agent sp&#233;ci
 ensemble. </p>
 
 <a name="ggpec"></a><h5>Mot de passe</h5>
-<p>D&#233;finit le mot de passe de l'attribut du service de jeton de
+<p>D&#233;finit le mot de passe de l'agent du service de jeton de
 s&#233;curit&#233;.</p>
 
 <a name="ggpex"></a><h5>Confirmation de mot de passe</h5>
 <p>Confirmez le mot de passe.</p>
 
 <a name="ggpdu"></a><h5>Statut</h5>
-<p>D&#233;termine si l'agent du service de jeton de s&#233;curit&#233; participe ou non
-&#224; la s&#233;curisation des demandes de service sortantes. Par d&#233;faut, cet attribut
-est d&#233;fini sur <tt>Active</tt>, ce qui signifie que l'agent participe &#224; la
-s&#233;curisation. </p>
+<p>D&#233;finit si l'agent sera actif ou inactif au sein du syst&#232;me. Par
+d&#233;faut, cet attribut est activ&#233;, ce qui signifie que l'agent va participer
+&#224; la s&#233;curisation des demandes de services Web sortantes &#233;mises par les
+clients de services Web et va valider les r&#233;ponses de services Web
+renvoy&#233;es par un fournisseur de services Web.</p>
 
 <a name="ggpdg"></a><h5>Identificateur universel</h5>
 <p>R&#233;pertorie les propri&#233;t&#233;s LDAP de base qui d&#233;finissent de mani&#232;re unique l'agent
@@ -79,26 +80,26 @@ de s&#233;curit&#233;&#160;:</p>
 du service de jeton de s&#233;curit&#233;. Vous pouvez effectuer un choix parmi
 les types de s&#233;curit&#233; suivants&#160;:</p>
 <ul><li><p>Anonyme &#8212; Le m&#233;canisme de s&#233;curit&#233; anonyme ne contient aucune r&#233;f&#233;rence de s&#233;curit&#233;.</p></li>
-<li><p>LibertyDiscoverySecurity &#8212; Utilise les jetons de s&#233;curit&#233; Liberty pour s&#233;curiser la demande.</p></li>
-<li><p>SAML-HolderOfKey &#8212; Utilise le type d'assertion SAML 1.1 Holder-Of-Key pour s&#233;curiser la demande.</p></li>
-<li><p>SAML-SenderVouches &#8212; Utilise le type d'assertion SAML 1.1 Sender Vouches pour s&#233;curiser la demande.</p></li>
-<li><p>SAML2&#8211;HolderOfKey &#8212; Utilise le type de jeton d'assertion SAML 2.0 Holder-Of-Key pour s&#233;curiser la demande.</p></li>
-<li><p>SAML2&#8211;SenderVouches &#8212; Utilise le type de jeton d'assertion SAML 2.0 Sender Vouches pour s&#233;curiser la demande.</p></li>
-<li><p>STSSecurity &#8212; Sp&#233;cifie que l'agent du service de jeton de s&#233;curit&#233; obtient le jeton de s&#233;curit&#233; aupr&#232;s du service de jeton de s&#233;curit&#233;. </p></li>
+<li><p>LibertyDiscoverySecurity &#8212; Utilise des jetons de s&#233;curit&#233; Liberty.</p></li>
+<li><p>SAML-HolderOfKey &#8212; Utilise le type d'assertion SAML 1.1 Holder-Of-Key.</p></li>
+<li><p>SAML-SenderVouches &#8212; Utilise le type d'assertion SAML 1.1 SenderVouches.</p></li>
+<li><p>SAML2&#8211;HolderOfKey &#8212; Utilise le type de jeton d'assertion SAML 2.0 Holder-Of-Key.</p></li>
+<li><p>SAML2&#8211;SenderVouches &#8212; Utilise le type de jeton d'assertion SAML 2.0 SenderVouches.</p></li>
+<li><p>STSSecurity &#8212; Sp&#233;cifie que l'agent du service de jeton de s&#233;curit&#233; obtient le jeton de s&#233;curit&#233; aupr&#232;s du service de jeton de s&#233;curit&#233;.</p></li>
 <li><p>UserNameToken &#8212; Utilise un jeton de nom d'utilisateur pour s&#233;curiser les demandes du service de jeton de s&#233;curit&#233;.</p></li>
 <li><p>UserNameToken-Plain &#8212; Utilise un jeton de nom d'utilisateur avec un mot de passe en texte clair pour s&#233;curiser les demandes du service de jeton de s&#233;curit&#233;.</p></li>
-<li><p>X509Token &#8212; Utilise le certificat X509 pour s&#233;curiser les demandes de l'agent du service de jeton de s&#233;curit&#233;.</p></li></ul>
+<li><p>X509Token &#8212; Utilise le certificat X509 pour s&#233;curiser le jeton de s&#233;curit&#233;.</p></li></ul>
 
 
 <a name="ggpdk"></a><h5>Configuration STS</h5>
 <p>Cet attribut est activ&#233; lorsque l'agent du service de jeton de s&#233;curit&#233;
-utilise le service de jeton de s&#233;curit&#233; (STS, Security Token Service). Cette
-configuration d&#233;crit une liste de profils d'agent STS utilis&#233;s pour s&#233;curiser les
-demandes au service STS.</p>
+utilise le service STS comme m&#233;canisme de s&#233;curit&#233;. Cette configuration d&#233;crit une
+liste de profils d'agent STS utilis&#233;s pour communiquer les demandes au service
+STS et les s&#233;curiser.</p>
 
 <a name="ggpfs"></a><h5>Pr&#233;server les en-t&#234;tes de s&#233;curit&#233; dans les messages</h5>
 <p>Lorsque cet attribut est activ&#233;, il indique que les en-t&#234;tes de s&#233;curit&#233;
-SOAP sont conserv&#233;s pour l'agent du service de jeton de s&#233;curit&#233; en
+SOAP sont conserv&#233;s par l'agent du service de jeton de s&#233;curit&#233; en
 vue d'un traitement approfondi.</p>
 
 <a name="ggpej"></a><h5>R&#233;f&#233;rences du jeton d'utilisateur</h5>
@@ -119,8 +120,8 @@ signe la demande avec un type de jeton donn&#233;.</p>
 de jeton de s&#233;curit&#233; est chiffr&#233;.</p>
 
 <a name="ggpca"></a><h5>La demande est chiffr&#233;e</h5>
-<p>Lorsque cet attribut est activ&#233;, la demande du service de jeton de
-s&#233;curit&#233; est activ&#233;e.</p>
+<p>Lorsque cet attribut est activ&#233;, la demande de service de jeton de
+s&#233;curit&#233; est chiffr&#233;e.</p>
 
 <a name="ggpfo"></a><h5>La signature de r&#233;ponse est v&#233;rifi&#233;e</h5>
 <p>Lorsque cet attribut est activ&#233;, la signature de r&#233;ponse du service de
@@ -128,19 +129,20 @@ jeton de s&#233;curit&#233; est v&#233;rifi&#233;e.</p>
 
 <a name="ggpdo"></a><h5>La r&#233;ponse est d&#233;chiffr&#233;e</h5>
 <p>Lorsque cet attribut est activ&#233;, la r&#233;ponse du service de jeton de
-s&#233;curit&#233; est d&#233;chiffr&#233;e. </p>
+s&#233;curit&#233; est d&#233;chiffr&#233;e.</p>
 
 <a name="ggpeh"></a><h5>Keystore</h5>
 <p>Les attributs suivants configurent le keystore &#224; utiliser pour le stockage et
 l'extraction du certificat&#160;: </p>
 
 <a name="ggpcg"></a><h5>Alias de cl&#233; publique du fournisseur de services Web</h5>
-<p>Cet attribut d&#233;finit l'alias de cl&#233; de certificat publique utilis&#233; pour chiffrer
-la demande du service Web.</p>
+<p>Cet attribut d&#233;finit l'alias de cl&#233; de certificat publique, utilis&#233; pour chiffrer
+la demande de services Web ou v&#233;rifier la signature de la r&#233;ponse
+des services Web.</p>
 
 <a name="ggpfg"></a><h5>Alias de cl&#233; priv&#233;e</h5>
-<p>Cet attribut d&#233;finit l'alias de cl&#233; de certificat priv&#233;e utilis&#233; pour signer/d&#233;chiffrer
-la r&#233;ponse du service Web.</p>
+<p>Cet attribut d&#233;finit l'alias de cl&#233; de certificat priv&#233;e, utilis&#233; pour signer
+la demande de services Web ou d&#233;chiffrer la r&#233;ponse des services Web.</p>
 
 <a name="ggpdc"></a><h5>Utilisation du keystore</h5>
 <p>Cette configuration sp&#233;cifie d'utiliser le keystore par d&#233;faut ou un keystore personnalis&#233;.

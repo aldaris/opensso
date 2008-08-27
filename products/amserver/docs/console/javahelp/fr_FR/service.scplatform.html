@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Plate-forme - Aide en ligne de la console Sun Java System Federated Access Manager 8.0
+  <title>Plate-forme - Aide en ligne de la console Sun Federated Access Manager 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,39 +31,15 @@
 
 
 <a name="service.scplatform"></a><h4>Plate-forme</h4>
-<p><a name="indexterm-211"></a>Le service Plate-forme est le service qui permet d'ajouter d'autres serveurs &#224;
+<p><a name="indexterm-205"></a>Le service Plate-forme est le service qui permet d'ajouter d'autres serveurs &#224;
 la configuration de Federated Access Manager, ainsi que d'autres options appliqu&#233;es au
 premier niveau de l'application Federated Access Manager. Les attributs du service Plate-forme
 sont des attributs g&#233;n&#233;raux. Ces attributs sont les suivants :</p>
-<ul><li><p><a href="#fxcsy">Nom du site</a></p></li>
-<li><p><a href="#fxcqf">Nom d'instance</a></p></li>
-<li><p><a href="#fxcgy">Param&#232;tre r&#233;gional de la plate-forme</a></p></li>
+<ul><li><p><a href="#fxcgy">Param&#232;tre r&#233;gional de la plate-forme</a></p></li>
 <li><p><a href="#fxcpo">Domaines de cookies</a></p></li>
-<li><p><a href="#fxcsh">URL du service de connexion</a></p></li>
-<li><p><a href="#fxcrt">URL du service de d&#233;connexion</a></p></li>
 <li><p><a href="#fxcmi">Param&#232;tres r&#233;gionaux disponibles</a></p></li>
 <li><p><a href="#fxctg">Jeux de caract&#232;res client</a></p></li></ul>
 
-
-<a name="fxcsy"></a><h5>Nom du site</h5>
-<p>Le service de noms lit cet attribut au moment de l'initialisation. Cette
-liste identifie de fa&#231;on unique le nom de domaine complet &#224; l'aide
-du num&#233;ro de port de l'&#233;quilibreur de charge ou du SRA pour
-l'&#233;quilibrage de charge sur les serveurs Federated Access Manager d'arri&#232;re-plan. Si l'h&#244;te
-sp&#233;cifi&#233; dans une demande de service URL ne figure pas dans la
-liste, le service de nom va rejeter la demande. Seul le protocole
-de service de nom doit &#234;tre utilis&#233; dans cet attribut. Reportez-vous &#224;
-<b>Broken Link (Target ID: SERVICE.SCPLATFORMSITELISTADD)</b>.</p>
-
-<a name="fxcqf"></a><h5>Nom d'instance</h5>
-<p>Le service de noms lit cet attribut au moment de l'initialisation. Cette
-liste contient les serveurs de session Federated Access Manager d'une configuration Federated
-Access Manager unique. Par exemple, si deux serveurs Federated Access Manager sont
-install&#233;s et doivent fonctionner comme une seule entit&#233;, ils doivent tous deux
-&#234;tre inclus dans la liste. Si l'h&#244;te sp&#233;cifi&#233; dans une demande de
-service URL ne figure pas dans la liste, le service de nom
-va rejeter la demande. Seul le protocole de service de nom doit
-&#234;tre utilis&#233; dans cet attribut. Reportez-vous &#224; <b>Broken Link (Target ID: SERVICE.SCPLATFORMSERVERLISTADD)</b>.</p>
 
 <a name="fxcgy"></a><h5>Param&#232;tre r&#233;gional de la plate-forme</h5>
 <p>La valeur du param&#232;tre r&#233;gional de la plate-forme correspond au sous-type de
@@ -86,14 +62,6 @@ Si l'&#233;quilibreur de charge est utilis&#233;, le domaine de cookie doit &#23
 celui de l'&#233;quilibreur de charge et non ceux des serveurs situ&#233;s derri&#232;re
 ce dernier. La valeur par d&#233;faut de ce champ est le domaine
 du serveur Federated Access Manager install&#233;.</p>
-
-<a name="fxcsh"></a><h5>URL du service de connexion</h5>
-<p>Ce champ sp&#233;cifie l'URL de la page de connexion. La valeur par
-d&#233;faut de cet attribut est <tt>/URI_DEPLOIEMENT_Service/UI/Login</tt>. </p>
-
-<a name="fxcrt"></a><h5>URL du service de d&#233;connexion</h5>
-<p>Ce champ sp&#233;cifie l'URL de la page de d&#233;connexion. La valeur par
-d&#233;faut de cet attribut est <tt>/URI_DEPLOIEMENT_Service/UI/Logout</tt>. </p>
 
 <a name="fxcmi"></a><h5>Param&#232;tres r&#233;gionaux disponibles</h5>
 <p>Cet attribut enregistre les param&#232;tres r&#233;gionaux configur&#233;s pour la plate-forme. Supposez une

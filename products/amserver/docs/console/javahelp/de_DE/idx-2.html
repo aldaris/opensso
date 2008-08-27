@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title> - Online-Hilfe zur Sun Java System Federated Access Manager 8.0-Konsole
+  <title> - Online-Hilfe zur Sun Federated Access Manager 8.0-Konsole
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -46,7 +46,7 @@
 <dl>
 <dd>Identit&#228;tsverwaltung<dl>
 <dd>Benutzer<dl>
-<dd>Hinzuf&#252;gen zu Diensten, Rollen und Gruppen, <a href="addusertogroup.html">So f&#252;gen Sie einen Benutzer zu Rollen und Gruppen hinzu</a></dd>
+<dd>Hinzuf&#252;gen zu Diensten, Rollen und Gruppen, <a href="idm.entitymembership.html">So f&#252;gen Sie einen Benutzer zu einer Gruppe hinzu</a></dd>
 </dl>
 </dd>
 </dl>
@@ -68,8 +68,17 @@
 </dl>
 <dl>
 <dd>Konsoleneigenschaften<dl>
-<dd>Administration, <a href="service.scserviceprofile.amadminconsoleservice.html">Administration </a></dd>
+<dd>Administration, <a href="service.scserviceprofile.amadminconsoleservice.html">Administration</a></dd>
 <dd>Globalisierungseinstellungen, <a href="service.smg11n.html">Globalisierungseinstellungen</a></dd>
+</dl>
+</dd>
+</dl>
+<dl>
+<dd>Kontextreferenzattribut<dl>
+<dd><a href="federation.samlv2spassertioncontent.html#ggvhb">Assertion-Inhalt</a></dd>
+<dd><a href="federation.samlv2idpassertioncontent.html#ggwdf">Assertion-Inhalt</a></dd>
+<dd><a href="federation.idffidp.html#ggwnn">Authentifizierungskontext</a></dd>
+<dd><a href="federation.idffsp.html#ggwrv">Authentifizierungskontext</a></dd>
 </dl>
 </dd>
 </dl>
@@ -95,15 +104,10 @@
 </div><h4>P</h4>
 <div class="indexdiv">
 <dl>
-<dd>Partner-Entity, <a href="federation.fsentitydescriptors.html">Entities: Anbieter und Partner</a><dl>
-<dd>Allgemeine Attribute, <a href="federation.fsentitydescriptorsprofile.html">So &#228;ndern Sie die allgemeinen Attribute einer Anbieter-Entity oder einer Partner-Entity</a></dd>
-<dd>erstellen, <a href="federation.fsentitydescriptorsadd.html">So erstellen Sie eine Anbieter-Entity oder eine Partner-Entity</a></dd>
-<dd>und Partner, <a href="federation.fsentitydescriptorsaffiliate.html">So f&#252;gen Sie Mitglieder zu einer Partner-Entity hinzu</a></dd>
-</dl>
-</dd>
+<dd>Partner-Entity, <a href="federation.createsaml2metadata.html">Entity-Anbieter</a></dd>
 </dl>
 <dl>
-<dd>Pers&#246;nlicher Profildienst, <a href="webservices.wspersonalprofileservice.html">Pers&#246;nlicher Liberty-Profildienst</a><dl>
+<dd>Pers&#246;nlicher Profildienst, <a href="webservices.wspersonalprofileservice.html">Pers&#246;nlicher Liberty&#45;Profildienst</a><dl>
 <dd>alternativer Endpunkt, <a href="alternateendpoint.html">Alternativer Endpunkt</a></dd>
 <dd>alternativer Sicherheitsmechanismus, <a href="alternatesecuritymechanisms.html">Alternativer Sicherheitsmechanismus</a></dd>
 <dd>Anbieter-ID, <a href="ppproviderid.html">Anbieter-ID</a></dd>
@@ -138,7 +142,14 @@
 </div><h4>R</h4>
 <div class="indexdiv">
 <dl>
-<dd>Regeln, <a href="normalrule.html">Regeln</a></dd>
+<dd>Regeln, <a href="policy.selectservicetype.html">Regeln</a></dd>
+</dl>
+<dl>
+<dd><tt>RelayState</tt><dl>
+<dd><a href="federation.samlv2spassertioncontent.html#ggvgt">Assertion-Verarbeitung</a></dd>
+<dd><a href="federation.wsfedsp.html#ggwts">Standard-Relay-Status</a></dd>
+</dl>
+</dd>
 </dl>
 <dl>
 <dd>ResourceID-Mapper, <a href="resourceidmapper.html">ResourceID-Mapper</a></dd>
@@ -158,13 +169,13 @@
 <dl>
 <dd>Richtlinien, <a href="policy.policy.html">Richtlinien</a><dl>
 <dd>Bedingung hinzuf&#252;gen, <a href="policy.selectconditiontype.html">So f&#252;gen Sie einer Richtlinie eine Bedingung hinzu.</a></dd>
-<dd>Bedingungen, <a href="policyconditions.html">Bedingungen</a></dd>
+<dd>Bedingungen, <a href="policy.selectcondition.html">Bedingungen</a></dd>
 <dd>Betreff hinzuf&#252;gen, <a href="policy.subjectadd.html">So f&#252;gen Sie einer Richtlinie einen Betreff hinzu.</a></dd>
-<dd>Betreffe, <a href="normalsubject.html">Betreffe</a></dd>
+<dd>Betreffe, <a href="policy.selectsubjecttype.html">Betreffe</a></dd>
 <dd>Bezugsrichtlinien, <a href="fyfby.html">Bezugsrichtlinien</a></dd>
 <dd>Neue Regel hinzuf&#252;gen, <a href="policy.ruleadd.html">So f&#252;gen Sie einer Richtlinie eine Regel hinzu.</a></dd>
 <dd>Normale Richtlinien, <a href="normalpolicy.html">Normale Richtlinien</a></dd>
-<dd>Regeln, <a href="normalrule.html">Regeln</a></dd>
+<dd>Regeln, <a href="policy.selectservicetype.html">Regeln</a></dd>
 <dd>Response-Anbieter, <a href="responseprovider.html">Response-Anbieter</a></dd>
 <dd>Response-Anbieter hinzuf&#252;gen, <a href="policy.responseprovideradd.html">So f&#252;gen Sie einer Richtlinie einen Response-Anbieter hinzu.</a></dd>
 <dd>So erstellen Sie eine neue Bezugsrichtlinie, <a href="policy.policyreferraladd.html">So erstellen Sie eine neue Bezugsrichtlinie</a></dd>
@@ -180,9 +191,9 @@
 </div><h4>S</h4>
 <div class="indexdiv">
 <dl>
-<dd>SAML, <a href="federation.fssamlservice.html">SAML1.x </a><dl>
+<dd>SAML, <a href="federation.fssamlservice.html">SAML1.x</a><dl>
 <dd>Site-Bezeichner<dl>
-<dd>konfigurieren, <a href="federation.fssamlsiteidadd.html">So konfigurieren Sie einen Site-Bezeichner </a></dd>
+<dd>konfigurieren, <a href="federation.fssamlsiteidadd.html">So konfigurieren Sie einen Site-Bezeichner</a></dd>
 </dl>
 vertrauensw&#252;rdiger Partner<dl>
 <dd>Schritt 1 konfigurieren, <a href="federation.fssamlselecttrustedpartnertype.html">Vertrauensw&#252;rdige Partner: Ausw&#228;hlen von Partnertyp und -profil</a></dd>
@@ -193,7 +204,7 @@ Ziel-URL, <a href="federation.fssamltargeturlsadd.html">So konfigurieren Sie ein
 </dd>
 </dl>
 <dl>
-<dd>Site-Bezeichner, <a href="federation.fssamlsiteidadd.html">So konfigurieren Sie einen Site-Bezeichner </a></dd>
+<dd>Site-Bezeichner, <a href="federation.fssamlsiteidadd.html">So konfigurieren Sie einen Site-Bezeichner</a></dd>
 </dl>
 <dl>
 <dd>Sitzung anzeigen, <a href="viewsession.html">Sitzung anzeigen</a></dd>
@@ -214,12 +225,12 @@ Ziel-URL, <a href="federation.fssamltargeturlsadd.html">So konfigurieren Sie ein
 <dd>Sitzungsmodul, <a href="sessions.html">Sitzungen</a></dd>
 </dl>
 <dl>
-<dd>SOAP Binding-Dienst, <a href="service.scsoapbinding.html">SOAP Binding-Dienst</a><dl>
+<dd>SOAP Binding-Dienst, <a href="service.scsoapbinding.html">SOAP Binding&#45;Dienst</a><dl>
 <dd>Anforderungs-Handler-Liste<dl>
 <dd><a href="requesthandlerlist.html">Anforderungs-Handler-Liste</a></dd>
 <dd><a href="service.scsoapbindingrequesthandlerlistadd.html">So konfigurieren Sie einen Anforderungs-Handler</a></dd>
 <dd><a href="service.scsaml2soapbinding.html#ggokv">Anforderungs-Handler-Liste</a></dd>
-<dd><a href="ggojs.html">So konfigurieren Sie einen Anforderungs-Handler</a></dd>
+<dd><a href="service.scsaml2soapbindingrequesthandlerlistadd.html">So konfigurieren Sie einen Anforderungs-Handler</a></dd>
 </dl>
 </dd>
 <dd>Mechanismus-Handler-Liste<dl>
@@ -238,9 +249,9 @@ Ziel-URL, <a href="federation.fssamltargeturlsadd.html">So konfigurieren Sie ein
 <dl>
 <dd>Systemeigenschaften<dl>
 <dd>Client-Erkennung, <a href="service.scserviceprofile.iplanetamclientdetection.html">Client-Erkennung</a></dd>
-<dd>Namen, <a href="service.scserviceprofile.iplanetamnamingservice.html">Namen </a></dd>
+<dd>Namen, <a href="service.scserviceprofile.iplanetamnamingservice.html">Namen</a></dd>
 <dd>Plattform, <a href="service.scplatform.html">Plattform</a></dd>
-<dd>Protokollierung, <a href="service.scserviceprofile.iplanetamloggingservice.html">Protokollierung </a></dd>
+<dd>Protokollierung, <a href="service.scserviceprofile.iplanetamloggingservice.html">Protokollierung</a></dd>
 </dl>
 </dd>
 </dl>

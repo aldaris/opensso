@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>SecurID  - Online-Hilfe zur Sun Java System Federated Access Manager 8.0-Konsole
+  <title>SecurID - Online-Hilfe zur Sun Federated Access Manager 8.0-Konsole
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -30,15 +30,13 @@
 
 
 
-<a name="service.scserviceprofile.iplanetamauthsecuridservice"></a><h4>SecurID </h4>
-<p><a name="indexterm-187"></a>Dieses Modul erm&#246;glicht die Authentifizierung mithilfe von RSA ACE/Server-Software und RSA SecurID-Authentifizierung.
+<a name="service.scserviceprofile.iplanetamauthsecuridservice"></a><h4>SecurID</h4>
+<p><a name="indexterm-181"></a>Dieses Modul erm&#246;glicht die Authentifizierung mithilfe von RSA ACE/Server-Software und RSA SecurID-Authentifizierung.
 Das Authentifizierungsmodul ";SecurID" ist nicht f&#252;r die Plattformen Linux bzw. Solaris x86
 verf&#252;gbar und sollte nicht auf diesen beiden Plattformen registriert, konfiguriert bzw. aktiviert
 werden. Das Modul steht nur f&#252;r Solaris zur Verf&#252;gung. Bei den Attributen
 f&#252;r die SecurID-Authentifizierung handelt es sich um Bereichsattribute. Es existieren folgende Attribute:</p>
 <ul><li><p><a href="#fwbpt">ACE-/Serverkonfigurationspfad</a></p></li>
-<li><p><a href="#fwbkv">Helper-Konfigurationsanschluss</a></p></li>
-<li><p><a href="#fwbpq">Helper-Authentifizierungsanschluss</a></p></li>
 <li><p><a href="#fwbma">Authentifizierungsebene</a></p></li></ul>
 
 
@@ -47,20 +45,6 @@ f&#252;r die SecurID-Authentifizierung handelt es sich um Bereichsattribute. Es 
 befindet. Standardm&#228;&#223;ig ist dies das Verzeichnis <tt>/opt/ace/data</tt>. Wenn Sie ein anderes Verzeichnis
 angeben, m&#252;ssen Sie sicherstellen, dass das Verzeichnis bereits eingerichtet ist, bevor Sie
 versuchen, eine SecurID-Authentifizierung durchzuf&#252;hren.</p>
-
-<a name="fwbkv"></a><h5>Helper-Konfigurationsanschluss</h5>
-<p>Gibt den Anschluss an, den SecurID Helper &#252;berwacht, nachdem die Konfigurationsinformationen aus
-dem Attribut ";Anschluss f&#252;r SecurID Helper-Authentifizierung" aktiviert wurden. Der Standardanschluss ist 58943.</p><p> Falls Sie dieses Attribut &#228;ndern, m&#252;ssen Sie auch den Eintrag <i>securidHelper.ports </i>in
-der Datei <tt>AMConfig.properties</tt> entsprechend &#228;ndern und Federated Access Manager neu starten. Der
-Eintrag in der Datei <tt>AMConfig.properties </tt> ist eine durch Leerschritte getrennte Liste der
-Anschl&#252;sse f&#252;r die Instanzen von SecurID Helpers. F&#252;r jeden Bereich, der mit
-einem anderen ACE/Server kommuniziert (der eine andere <tt>sdconf.rec</tt>-Datei verwendet), muss ein separater
-SecurID Helper vorhanden sein.</p>
-
-<a name="fwbpq"></a><h5>Helper-Authentifizierungsanschluss</h5>
-<p>Gibt den Anschluss an, den das SecurID-Authentifizierungsmodul des Bereichs als SecurID Helper-Instanz
-f&#252;r den Empfang von Authentifizierungsanforderungen konfiguriert. Diese Anschlussnummer muss in allen Bereichen
-eindeutig sein, die die SecurID- oder UNIX-Authentifizierung verwenden. Der Standardanschluss ist 57943.</p>
 
 <a name="fwbma"></a><h5>Authentifizierungsebene</h5>
 <p>Die Authentifizierungsebene wird f&#252;r jede Authentifizierungsmethode einzeln festgelegt. Mit diesem Wert wird

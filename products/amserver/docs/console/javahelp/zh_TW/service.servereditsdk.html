@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>SDK - Sun Java System Federated Access Manager 8.0 主控台線上說明
+  <title>SDK - Sun Federated Access Manager 8.0 主控台線上說明
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -40,8 +40,8 @@
 <p>指定是否啟用後端資料存放區通知。如果此值設為「false」，則會啟用記憶體內部通知。</p>
 
 <a name="ggkfc"></a><h5>啟用目錄代理伺服器</h5>
-<p>預設值為 false。此標幟的目的在於向服務管理報告，目錄伺服器的讀取、寫入和/或修改作業必須使用目錄代理伺服器。此標幟也會決定是否使用 ACI 或委託權限。Access Manager SDK (7 或 7.1 版) 與 Access
-Manger 6.3 版進行通訊時，此標幟必須設為「true」。</p><p>例如，在共存/舊有模式中，此值應為「true」。舊有 DIT 中不支援委託策略。僅支援 ACI，因此為確保執行適當的委託檢查，在舊有模式安裝中此標幟必須設為「true」，以便使用 ACI 進行存取控制。否則委託檢查將失敗。</p><p>在範圍模式中，此值應設為 false，以便僅使用委託策略進行存取控制。在 7.0 版及更新版本中，Access Manager 支援在範圍模式安裝中使用資料未知功能。因此，除了 Directory Server 之外，其他伺服器都可以用來儲存服務配置資料。此外，此標幟會向服務管理功能報告，對後端儲存執行讀取、寫入和/或修改作業時，不需要使用目錄代理伺服器。這是因為某些資料存放區 (如 Active Directory)
+<p>預設值為 false。此旗標的目的在於向服務管理報告，目錄伺服器的讀取、寫入和/或修改作業必須使用目錄代理伺服器。此旗標也會決定是否使用 ACI 或委託權限。Access Manager SDK (7 或 7.1 版) 與 Access
+Manager 6.3 版進行通訊時，此旗標必須設為「true」。</p><p>例如，在共存/舊有模式中，此值應為「true」。舊有 DIT 中不支援委託策略。僅支援 ACI，因此為確保執行適當的委託檢查，在舊有模式安裝中此旗標必須設為「true」，以便使用 ACI 進行存取控制。否則委託檢查將失敗。</p><p>在範圍模式中，此值應設為 false，以便僅使用委託策略進行存取控制。在 7.0 版及更新版本中，Access Manager 支援在範圍模式安裝中使用資料未知功能。因此，除了 Directory Server 之外，其他伺服器都可以用來儲存服務配置資料。此外，此旗標會向服務管理功能報告，對後端儲存執行讀取、寫入和/或修改作業時，不需要使用目錄代理伺服器。這是因為某些資料存放區 (如 Active Directory)
 可能不支援代理伺服器。</p>
 
 <a name="ggkcv"></a><h5>事件服務</h5>

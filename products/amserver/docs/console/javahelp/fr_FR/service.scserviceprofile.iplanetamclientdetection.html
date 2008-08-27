@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>D&#233;tection de client - Aide en ligne de la console Sun Java System Federated Access Manager 8.0
+  <title>D&#233;tection de client - Aide en ligne de la console Sun Federated Access Manager 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,7 +31,7 @@
 
 
 <a name="service.scserviceprofile.iplanetamclientdetection"></a><h4>D&#233;tection de client</h4>
-<p><a name="indexterm-206"></a>L'&#233;tape initiale du processus d'authentification consiste &#224; identifier le type du client
+<p><a name="indexterm-200"></a>L'&#233;tape initiale du processus d'authentification consiste &#224; identifier le type du client
 qui &#233;met la demande HTTP(S). Cette fonction Federated Access Manager est appel&#233;e
 d&#233;tection de client. Les informations d'URL sont utilis&#233;es pour r&#233;cup&#233;rer les caract&#233;ristiques
 du client. Sur la base de ces caract&#233;ristiques, les pages d'authentification appropri&#233;es
@@ -61,10 +61,11 @@ Par d&#233;faut, Federated Access Manager contient les types de client suivants 
 <li><p>XHTML</p></li>
 <li><p>cHTML</p></li>
 <li><p>iHTML</p></li></ul>
-<p>Pour consulter des descriptions de ces types de client, reportez-vous au <a href="http://docs.sun.com/app/docs/coll/1483.1">http://docs.sun.com/app/docs/coll/1483.1</a>.</p>
+<p>Vous trouverez ici des descriptions de ces types de client : 
+<a href="http://docs.sun.com/app/docs/coll/1483.1">http://docs.sun.com/app/docs/coll/1483.1</a>.</p>
 
 <a name="gciwk"></a><h5>Gestionnaire de clients</h5>
-<p><a name="indexterm-207"></a>Le gestionnaire de clients est l'interface qui r&#233;pertorie les clients de base,
+<p><a name="indexterm-201"></a>Le gestionnaire de clients est l'interface qui r&#233;pertorie les clients de base,
 leurs styles et leurs propri&#233;t&#233;s, et qui permet d'ajouter et de configurer
 des p&#233;riph&#233;riques. Les types de client de base sont r&#233;pertori&#233;s en haut
 du gestionnaire de clients. Ces types de client contiennent les propri&#233;t&#233;s par
@@ -94,7 +95,7 @@ dans la liste d&#233;roulante :</p><dl><dt>Plate-forme mat&#233;rielle</dt>
 </dl>
 
 <hr><p><b>Remarque &#8211; </b>Pour obtenir des d&#233;finitions de propri&#233;t&#233;s sp&#233;cifiques, reportez-vous au <b>protocole WAP OMA (Open Mobile Alliance Ltd.), version 20-Oct-2001</b>.</p><p>Pour acc&#233;der &#224; ce document, vous devez vous enregistrer dans le WAP Forum<sup>TM</sup>.
-Pour obtenir des informations, visitez le site <a href="http://www.wapforum.org/faqs/index.htm">http://www.wapforum.org/faqs/index.htm</a>.</p>
+For information, please visit <a href="http://www.wapforum.org/faqs/index.htm">http://www.wapforum.org/faqs/index.htm </a>.</p>
 <hr>
 
 
@@ -108,7 +109,7 @@ par d&#233;faut est genericHTML.</p>
 les demandes de d&#233;tection de client sont achemin&#233;es. La cha&#238;ne retourn&#233;e par
 cet attribut doit correspondre &#224; l'un des types de client r&#233;pertori&#233;s dans
 l'attribut Types de client. La classe de d&#233;tection de client par d&#233;faut
-est <tt>com.sun.mobile.cdm.FEDIClientDetector</tt>. Federated Access Manager contient &#233;galement la classe <tt>com.iplanet.services.cdm.</tt><tt>ClientDetectionDefaultImpl </tt> .</p>
+est <tt>com.sun.mobile.cdm.FEDIClientDetector</tt>. Federated Access Manager also contains <tt>com.iplanet.services.cdm.ClientDetectionDefaultImpl </tt> .</p>
 
 <a name="fxbvy"></a><h5>D&#233;tection de client</h5>
 <p>Active la d&#233;tection de client. Si la d&#233;tection de client est activ&#233;e

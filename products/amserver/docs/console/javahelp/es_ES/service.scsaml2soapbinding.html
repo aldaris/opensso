@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Enlace SOAP de SAMLv2 - Ayuda en l&#237;nea de la consola de Sun Java System Federated Access Manager 8.0
+  <title>Enlace SOAP de SAMLv2 - Ayuda en l&#237;nea de la consola de Sun Federated Access Manager 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,35 +31,26 @@
 
 
 <a name="service.scsaml2soapbinding"></a><h4>Enlace SOAP de SAMLv2</h4>
-
+<p>El servicio de enlace SAMLv2 SOAP proporciona intercambio basado en SOAP del
+mensaje de Solicitud y respuesta de SAMLv2 entre un Cliente Federated Access
+Manager Client y el servidor Federated Access Manager. Las solicitudes recibidas se
+delegan al controlador de solicitud para su posterior procesamiento. La clave del
+Controlador de solicitudes del alias de meta se encuentra en la URL
+del servicio de enlace SOAP. En el servicio de enlace SAMLv2 SOAP
+se almacena una asignaci&#243;n del meta alias y el RequestHandler, que se
+pueden leer desde el almac&#233;n de configuraci&#243;n de Federated Access Manager. </p>
 
 <a name="ggokv"></a><h5>Lista de administradores de solicitudes</h5>
-<a name="indexterm-198"></a><a name="indexterm-199"></a><p>El Servicio de enlace de SOAP proporciona la interfaz <tt>RequestHandler</tt> para procesar
-el mensaje de solicitud y devolver una respuesta. La interfaz debe implementarse
-en el servidor por parte de cada servicio de identidad basado en
-Liberty que utilice el Servicio de enlace de SOAP. El atributo âLista
-de administradores de solicitudesâ guarda informaci&#243;n sobre las clases de implementaci&#243;n de
-los servicios Web que implementa el administrador de solicitudes. La lista de
-administradores de solicitudes muestra entradas que contienen pares clave-valor separados por una
-l&#237;nea vertical como en: <tt>key=disco|class=com.example.identity.liberty.ws.disco.DiscoveryService </tt>. Los par&#225;metros se explican en la siguiente
-tabla.</p><table><col width="50%"><col width="50%"><tr><th align="left" valign="top" scope="column"><p>Par&#225;metro</p></th>
-<th align="left" valign="top" scope="column"><p>Encabezado</p></th>
-</tr>
-<tr><td align="left" valign="top" scope="row"><p><tt>key</tt></p></td>
-<td align="left" valign="top" scope="row"><p>El par&#225;metro <tt>key</tt> requerido es la &#250;ltima parte de la ruta del
-URI a un punto final de SOAP. El punto final de SOAP
-en Access Manager el servlet del receptor de SOAP. El URI para
-el receptor de SOAP es: <tt><b></tt><i>protocol</i><tt>://</tt><i> host</i><tt>:</tt><i>port</i><tt>/</tt><i>deploy-uri</i><tt>/Liberty/key </b></tt> Si define <tt><b>disco</b></tt> como clave, la
-ruta del URI al punto final de SOAP para el Servicio de
-detecci&#243;n correspondiente ser&#225;: <tt><b></tt><i> protocol</i><tt>://</tt><i>host</i><tt>:</tt><i>port </i><tt>/amserver/Liberty/disco</b></tt>. Distintos clientes de servicios utilizan distintas claves al
-conectarse al receptor de SOAP.</p></td>
-</tr>
-<tr><td align="left" valign="top" scope="row"><p><tt>class</tt></p></td>
-<td align="left" valign="top" scope="row"><p>Este par&#225;metro <tt>class</tt> requerido especifica el nombre de
-la clase de implementaci&#243;n del administrador de solicitudes para el servicio de
-identidades concreto. Por ejemplo: <tt>class=com.example.identity.liberty.ws.disco.DiscoveryService </tt>.</p></td>
-</tr>
-</table><p>Para agregar un nuevo administrador de solicitudes, consulte <b>Broken Link (Target ID: SERVICE.SCSAML2SOAPBINDINGREQUESTHANDLERLISTADD)</b>.</p>
+<a name="indexterm-192"></a><a name="indexterm-193"></a><p>La RequestHandlerList es una lista de las entradas de parejas clave/valor que
+contiene la asignaci&#243;n del alias meta a la implementaci&#243;n de RequestHandler. Este
+atributo debe definirse si se est&#225; configurando un servidor Federated Access Manager
+8.0 para que funcione como un Punto de decisi&#243;n de directiva (PDP).
+</p><p>La <i>Clave</i> es el alias meta del Punto de decisi&#243;n de directiva,
+mientras que la <i>Clase</i> es el nombre de clase Java, que es
+la implementaci&#243;n de la Interfaz RequestHandler que puede procesar solicitudes XACML. 
+</p><p>Por ejemplo, si el alias meta del Punto de decisi&#243;n de directiva
+XACML es <tt>/pdp </tt>y la implementaci&#243;n de la interfaz es <tt>com.sun.identity.xacml.plugins.XACMLAuthzDecisionQueryHandler </tt>, la clave
+deber&#237;a definirse en <tt>/pdp</tt> y la clase en <tt>com.sun.identity.xacml.plugins.XACMLAuthzDecisionQueryHandler </tt>. </p>
 <br/>
 
 </body>

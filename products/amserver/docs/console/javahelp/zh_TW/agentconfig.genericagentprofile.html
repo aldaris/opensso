@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>探索代理程式 - Sun Java System Federated Access Manager 8.0 主控台線上說明
+  <title>配置代理程式 - Sun Federated Access Manager 8.0 主控台線上說明
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -30,29 +30,16 @@
 
 
 
-<a name="agentconfig.genericagentprofile"></a><h4>探索代理程式</h4>
-<p>[探索代理程式] 設定檔保存了信任授權配置，Web 服務的用戶端/設定檔可以使用它來與「Liberty 探索」服務通訊，以進行 Web 服務查找、註冊及取得安全憑證。</p>
+<a name="agentconfig.genericagentprofile"></a><h4>配置代理程式</h4>
+<p>建立代理程式之後，就可以自訂每個代理程式的角色。若要這麼做，先按一下要配置的代理程式的名稱，然後修改代理程式的屬性。請參閱下列各章節以獲知每個代理程式類型及其已定義角色的定義：</p>
+<ul><li><p><a href="agentconfig.webagentprofile.html">Web 策略代理程式</a></p></li>
+<li><p><a href="agentconfig.j2eeagentprofile.html">J2EE 策略代理程式</a></p></li>
+<li><p><a href="agentconfig.webserviceprovideredit.html">Web 服務提供者</a></p></li>
+<li><p><a href="agentconfig.webserviceclientedit.html">Web 服務用戶端屬性</a></p></li>
+<li><p><a href="agentconfig.discoveryagentprofile.html">探索代理程式屬性</a></p></li>
+<li><p><a href="agentconfig.webservicestsedit.html">安全性記號服務屬性</a></p></li>
+<li><p><a href="agentconfig.22agentprofile.html">2.2 策略代理程式</a></p></li></ul>
 
-<a name="gglro"></a><h5>群組</h5>
-<p>[群組] 機制可讓您定義一個相似類型的代理程式的集合。您必須先定義群組，才能將特定代理程式加入集合中。</p>
-
-<a name="gglpn"></a><h5>密碼</h5>
-<p>定義「探索代理程式」的密碼。</p>
-
-<a name="ggloy"></a><h5>密碼確認</h5>
-<p>確認密碼。</p>
-
-<a name="ggloo"></a><h5>代理程式配置儲存庫的位置</h5>
-<p>此屬性為「探索代理程式」定義配置儲存庫的代理程式位置。</p>
-
-<a name="gglqv"></a><h5>私有金鑰別名</h5>
-<p>此屬性定義信任授權用戶端的憑證別名，用來簽署針對探索服務的 SOAP 訊息請求。</p>
-
-<a name="gglny"></a><h5>探索服務端點</h5>
-<p>此屬性定義探索服務端點，信任授權用戶端會在其中建立通訊，以進行服務註冊與查找。</p>
-
-<a name="gglra"></a><h5>認證 Web 服務端點</h5>
-<p>此屬性定義認證服務端點，Web 服務用戶端會使用此端點來進行認證，方法是使用一般使用者的 SSOToken 接收探索服務資源提供 (亦稱為啟動程式資源提供)。</p>
 <br/>
 
 </body>

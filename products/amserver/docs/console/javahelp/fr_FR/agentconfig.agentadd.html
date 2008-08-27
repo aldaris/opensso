@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Cr&#233;ation d'un agent - Aide en ligne de la console Sun Java System Federated Access Manager 8.0
+  <title>Cr&#233;ation d'un agent - Aide en ligne de la console Sun Federated Access Manager 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -32,17 +32,21 @@
 
 <a name="agentconfig.agentadd"></a><h5>Cr&#233;ation d'un agent</h5>
 <p>Cr&#233;er un agent est &#233;galement appel&#233; cr&#233;er un profil d'agent. Vous pouvez
-effectuer cette t&#226;che dans la console d'administration de Federated Access Manager . Cette
-t&#226;che s'applique aux agents Web, J2EE et 2.2. Cependant, certaines &#233;tapes particuli&#232;res
-ne s'appliquent pas aux agents&#160;2.2.</p><ol>
-<li><b>Cliquez sur Agents dans l'onglet Configuration.</b></li>
-<li><b>Si n&#233;cessaire, s&#233;lectionnez l'onglet correspondant au type d'agent appropri&#233;.</b><ul>
-<li><b>Agents Web&#160;:</b><p>L'onglet Web est destin&#233; aux agents Web et est s&#233;lectionn&#233; par d&#233;faut.
-Aucune autre s&#233;lection n'est n&#233;cessaire.</p></li>
-<li><b>Agents J2EE&#160;:</b><p>L'onglet J2EE est destin&#233; aux agents J2EE. Le cas &#233;ch&#233;ant, cliquez sur
-cet onglet.</p></li>
-<li><b>Agents 2.2</b><p>L'onglet Agents&#160;2.2 est destin&#233; aux agents de la suite logicielle Policy Agent&#160;2.2.
-Le cas &#233;ch&#233;ant, cliquez sur cet onglet.</p></li></ul></li>
+effectuer cette t&#226;che dans la console d'administration de Federated Access Manager. Certaines
+&#233;tapes ne concernent que les agents de strat&#233;gie J2EE et Web.</p><ol>
+<li><b>Cliquez sur l'onglet Contr&#244;le d'acc&#232;s.</b></li>
+<li><b>Cliquez sur le nom du domaine auquel l'agent appartiendra.</b></li>
+<li><b>Cliquez sur l'onglet Agents.</b></li>
+<li><b>Cliquez sur l'onglet correspondant au type d'agent appropri&#233;.</b><ul>
+<li><b>Agents Web</b></li>
+<li><b>Agents J2EE</b></li>
+<li><b>Agents de fournisseur de services Web</b></li>
+<li><b>Agents de client de services Web</b></li>
+<li><b>Agent de client STS</b><p>L'agent de client du service de jeton de s&#233;curit&#233; existe en deux
+types&#160;: Agent de d&#233;couverte et Agent STS. Pour plus d'informations sur ces
+types d'agent, reportez-vous &#224; la rubrique <a href="agentconfig.stsclientedit.html">Client STS</a>.</p></li>
+<li><b>Agents 2.2</b><p>L'onglet Agents 2.2 est destin&#233; aux agents de la suite logicielle Policy
+Agent 2.2.</p></li></ul></li>
 <li><b>Dans la section Agent, cliquez sur Nouveau.</b></li>
 <li><b>Dans le champ Nom, entrez le nom du nouveau profil d'agent.</b></li>
 <li><b>Entrez et confirmez le mot de passe.</b>
@@ -50,17 +54,23 @@ Le cas &#233;ch&#233;ant, cliquez sur cet onglet.</p></li></ul></li>
 le fichier de mots de passe de profil d'agent que vous sp&#233;cifiez
 lorsque vous ex&#233;cutez le programme <tt>agentadmin</tt> pour installer l'agent.</p>
 <hr>
+<p><b>Les &#233;tapes 8 &#224; 10 ne concernent que les agents de strat&#233;gie Web et J2EE.</b></p></li>
+<li><b>S&#233;lectionnez la configuration appropri&#233;e (locale ou centralis&#233;e).</b><p>Si vous choisissez la configuration locale, vous ne pouvez pas modifier les
+propri&#233;t&#233;s de cet agent dans la console. Dans ce cas, l'agent extrait
+les informations de configuration des fichiers locaux <tt>FAMAgentBootstrap.properties</tt> et <tt>FAMAgentConfiguration.properties</tt>, situ&#233;s dans
+le r&#233;pertoire d'installation de l'agent. Pour un agent configur&#233; localement, modifiez la
+valeur des propri&#233;t&#233;s directement dans le fichier <tt>FAMAgentConfiguration.properties</tt>.</p></li>
+<li><b>Dans le champ URL du serveur, saisissez l'URL du serveur de Federated
+Access Manager.</b><p>Par exemple :</p><pre>http://famHost.example.com:8080/fam</pre></li>
+<li><b>Dans le champ URL de l'agent, saisissez l'URL de l'application agent <tt>agentapp</tt>
+.</b><p>Par exemple :</p><dl><dt>Agents Web</dt>
+<dd><p><tt>http://agentHost.example.com:8090</tt></p></dd>
+<dt>Agents J2EE</dt>
+<dd><p><tt>http://agentHost.example.com:8090/agentapp</tt></p></dd>
+</dl>
 </li>
-<li><b>S&#233;lectionnez la configuration applicable&#160;: locale ou centralis&#233;e (ne s'applique pas aux agents&#160;2.2).</b><p>De plus, si une configuration locale est s&#233;lectionn&#233;e, les attributs associ&#233;s &#224;
-cet agent ne peuvent &#234;tre modifi&#233;s qu'&#224; partir d'un fichier dans l'agent.
-Ils ne peuvent pas &#234;tre modifi&#233;s &#224; partir de la console.</p></li>
-<li><b>Dans le champ URL de serveur, entrez l'URL du serveur de Federated
-Access Manager (ne s'applique pas aux agents&#160;2.2).</b><p>Par exemple :</p><pre>http://fam.example.com:8080/fam</pre></li>
-<li><b>Dans le champ URL d'agent, entrez l'URL de l'application d'agent, <tt> agentapp</tt> (ne
-s'applique pas aux agents&#160;2.2).</b><p>Par exemple :</p><pre>http://fam.example.com:8090/agentapp</pre></li>
-<li><b>Cliquez sur Cr&#233;er.</b><p>La console cr&#233;e le profil d'agent et affiche de nouveau la page
-d'agent (Web, J2EE ou 2.2) avec un lien vers le nouveau profil
-d'agent.</p><p>Pour effectuer d'autres t&#226;ches de configuration du profil d'agent, cliquez sur ce
+<li><b>Cliquez sur Cr&#233;er.</b><p>La console cr&#233;e le profil de l'agent et affiche de nouveau sa
+page avec un lien pointant vers le nouveau profil.</p><p>Pour effectuer d'autres t&#226;ches de configuration du profil d'agent, cliquez sur ce
 lien afin d'afficher la page Modification de groupe d'agents.</p></li></ol>
 <br/>
 

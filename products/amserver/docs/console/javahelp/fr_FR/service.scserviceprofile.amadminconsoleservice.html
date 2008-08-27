@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Administration  - Aide en ligne de la console Sun Java System Federated Access Manager 8.0
+  <title>Administration - Aide en ligne de la console Sun Federated Access Manager 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -30,11 +30,15 @@
 
 
 
-<a name="service.scserviceprofile.amadminconsoleservice"></a><h4>Administration </h4>
-<p><a name="indexterm-193"></a>Le service d'administration vous permet de configurer la console Federated Access Manager
-au niveau de l'application et du domaine configur&#233; (Pr&#233;f&#233;rences ou Options propres
-&#224; un domaine configur&#233;). Les attributs de service Administration comprennent des attributs
-globaux et de domaine. Ces attributs sont les suivants :</p>
+<a name="service.scserviceprofile.amadminconsoleservice"></a><h4>Administration</h4>
+<p><a name="indexterm-187"></a>Le service d'administration vous permet de configurer la console Federated Access Manager
+au niveau global et du domaine configur&#233; (Pr&#233;f&#233;rences ou Options propres &#224;
+un domaine configur&#233;). Les attributs de service Administration comprennent des attributs globaux
+et de domaine. </p>
+<hr><p><b>Remarque &#8211; </b>Certains des attributs r&#233;pertori&#233;s dans cette section ne concernent que l'installation en
+mode h&#233;rit&#233;.</p>
+<hr>
+<p>Ces attributs sont les suivants :</p>
 <ul><li><p><a href="#fufly">Gestion des f&#233;d&#233;rations</a></p></li>
 <li><p><a href="#fsvge">Gestion des utilisateurs</a></p></li>
 <li><p><a href="#fsvgj">Conteneurs de personnes</a></p></li>
@@ -115,10 +119,10 @@ sont statiques ou dynamiques. La console cr&#233;e et affiche des groupes d'abon
 qui sont soit statiques soit dynamiques, mais pas les deux. (Les groupes
 filtr&#233;s sont toujours pris en charge, quelle que soit la valeur de
 cet attribut.) La valeur par d&#233;faut est dynamique.</p>
-<ul><li><p>Un groupe statique r&#233;pertorie de mani&#232;re explicite tous les membres du groupe, en utilisant la classe d'objets <tt>groupOfNames</tt> ou <tt>groupOfUniqueNames</tt>. L'entr&#233;e de groupe contient l'attribut <i>uniqueMember</i> de chaque membre du groupe. Les membres d'un groupe statique sont ajout&#233;s manuellement ; l'entr&#233;e utilisateur proprement dite reste inchang&#233;e. Les groupes statiques conviennent aux groupes contenant peu de membres. </p></li>
-<li><p>Un groupe dynamique utilise un attribut <tt>memberOf</tt> dans l'entr&#233;e de chaque membre du groupe. Les membres de groupes dynamiques sont g&#233;n&#233;r&#233;s &#224; l'aide d'un filtre LDAP qui recherche et renvoie toutes les entr&#233;es contenant l'attribut <tt>memberOf</tt>. Les groupes dynamiques conviennent aux groupes comprenant de nombreux membres. </p></li>
-<li><p>Un groupe filtr&#233; utilise un filtre LDAP pour rechercher et renvoyer les membres satisfaisant aux conditions du filtre. Par exemple, le filtre peut g&#233;n&#233;rer des membres avec un uid (<tt>uid=g*</tt>) ou un adresse e-mail (<tt>mail=*@example.com</tt>) sp&#233;cifique. </p></li></ul>
-<p>Dans les exemples ci-dessus, le filtre LDAP renvoie tous les utilisateurs dont
+<ul><li><p>Un groupe statique r&#233;pertorie de mani&#232;re explicite tous les membres du groupe, en utilisant la classe d'objets <tt>groupOfNames</tt> ou <tt>groupOfUniqueNames. </tt> L'entr&#233;e de groupe contient l'attribut <i>uniqueMember</i> de chaque membre du groupe. Les membres d'un groupe statique sont ajout&#233;s manuellement ; l'entr&#233;e utilisateur proprement dite reste inchang&#233;e. Les groupes statiques conviennent aux groupes contenant peu de membres. </p></li>
+<li><p>Un groupe dynamique utilise un attribut <tt>memberOf</tt> dans l'entr&#233;e de chaque membre du groupe. Les membres de groupes dynamiques sont g&#233;n&#233;r&#233;s &#224; l'aide d'un filtre LDAP qui recherche et renvoie toutes les entr&#233;es contenant l'attribut <tt>memberOf. </tt> Les groupes dynamiques conviennent aux groupes comprenant de nombreux membres. </p></li>
+<li><p>Un groupe filtr&#233; utilise un filtre LDAP pour rechercher et renvoyer les membres satisfaisant aux conditions du filtre. Par exemple, le filtre peut g&#233;n&#233;rer des membres avec un uid (<tt>uid=g&#42;</tt>) ou un adresse e-mail (<tt>mail=&#42;&#64;example.com</tt>) sp&#233;cifique. </p></li></ul>
+<p>Dans les exemples ci-dessis, le filtre LDAP renvoie tous les utilisateurs dont
 l'uid commence par <tt>g</tt> ou dont l'adresse e-mail se termine par <tt>example.com</tt>,
 respectivement. Les groupes filtr&#233;s ne peuvent &#234;tre cr&#233;&#233;s dans la vue Gestion
 des utilisateurs qu'en choisissant l'option Appartenance par filtre.</p><p>Un administrateur peut s&#233;lectionner l'une des options suivantes :</p>
@@ -151,12 +155,11 @@ Access Manager dans l'arborescence du domaine met &#224; jour l'&#233;tat de l'e
 d'arborescence DC correspondance. (Les mises &#224; jour d'&#233;tat non effectu&#233;es par l'interm&#233;diaire
 du SDK Federated Access Manager ne seront pas synchronis&#233;es.) Par exemple, si
 un domaine Sun est cr&#233;&#233; avec l'attribut de nom DNS <tt>sun.com</tt>, l'entr&#233;e
-suivante est cr&#233;&#233;e dans l'arborescence DC :</p><p><tt>dc=sun,dc=com,o=internet,root suffix</tt></p><p>L'arborescence DC peut &#233;ventuellement avoir son propre suffixe root configur&#233; en d&#233;finissant
-<tt>com.iplanet.am.domaincomponent</tt> dans <tt>AMConfig.properties</tt>. Par d&#233;faut, c'est la racine de Federated Access Manager.
-Si un suffixe diff&#233;rent est souhait&#233;, ce suffixe doit &#234;tre cr&#233;&#233; &#224;
-l'aide des commandes LDAP. Les ACI des administrateurs qui cr&#233;ent des domaines
-requi&#232;rent une modification afin qu'ils b&#233;n&#233;ficient d'un acc&#232;s illimit&#233; &#224; la racine
-de la nouvelle arborescence DC.</p>
+suivante est cr&#233;&#233;e dans l'arborescence DC :</p><p><tt>dc=sun,dc=com,o=internet,root suffix</tt></p><p>Par d&#233;faut, c'est la racine de Federated Access Manager. Si un suffixe
+diff&#233;rent est souhait&#233;, ce suffixe doit &#234;tre cr&#233;&#233; &#224; l'aide des commandes
+LDAP. Les ACI des administrateurs qui cr&#233;ent des domaines requi&#232;rent une modification
+afin qu'ils b&#233;n&#233;ficient d'un acc&#232;s illimit&#233; &#224; la racine de la nouvelle
+arborescence DC.</p>
 
 <a name="fsvgs"></a><h5>Groupes administratifs</h5>
 <p>Sp&#233;cifie si des groupes d'administrateurs de domaines et d'administrateurs d'assistance de domaines
@@ -198,7 +201,7 @@ tout administrateur de domaine qui serait membre du groupe.</p>
 <p>Le r&#244;le Administrateur d'assistance de conteneur dispose d'un acc&#232;s en lecture sur toutes les entr&#233;es
 d'une unit&#233; de domaine et d'un acc&#232;s en &#233;criture sur l'attribut <i>userPassword</i>
 des entr&#233;es utilisateur de ce conteneur uniquement.</p><p>L'administrateur d'assistance de domaine dispose d'un acc&#232;s en lecture sur toutes les
-entr&#233;es d'un domaine et d'un acc&#232;s en &#233;criture sur l'attribut <i>userPassword</i>.  Lorsqu'un
+entr&#233;es d'un domaine et d'un acc&#232;s en &#233;criture sur l'attribut <i>userPassword. </i> Lorsqu'un
 sous-domaine est cr&#233;&#233;, rappelez-vous que les r&#244;les d'administration sont alors cr&#233;&#233;s au
 sein du sous-domaine et non du domaine parent.</p><p>Le r&#244;le Administrateur de conteneur dispose d'un acc&#232;s en lecture et en
 &#233;criture &#224; toutes les entr&#233;es d'une unit&#233; d'organisation LDAP. Dans Federated Access
@@ -300,7 +303,7 @@ un choix lors de la cr&#233;ation d'un nouvel utilisateur. Cette liste peut
 aucun conteneur de personnes n'est sp&#233;cifi&#233; dans la liste ou dans le
 champ Conteneur de personnes par d&#233;faut du groupe, les utilisateurs sont cr&#233;&#233;s
 dans le conteneur de personnes Federated Access Manager par d&#233;faut <tt>ou=people</tt>.) Il
-n'existe pas de valeur par d&#233;faut pour ce champ.</p><p>La syntaxe de cet attribut est la suivante :</p><p><tt></tt><i>dn du groupe</i><tt> | </tt><i>dn du conteneur de personnes</i><tt></tt>  </p><p>Lorsqu'un utilisateur est cr&#233;&#233;, le programme v&#233;rifie si cet attribut indique un
+n'existe pas de valeur par d&#233;faut pour ce champ.</p><p>La syntaxe de cet attribut est la suivante :</p><p><tt></tt><i>dn du groupe</i><tt> | </tt><i>dn du conteneur de personnes</i><tt></tt>   </p><p>Lorsqu'un utilisateur est cr&#233;&#233;, le programme v&#233;rifie si cet attribut indique un
 conteneur o&#249; placer la nouvelle entr&#233;e. Si l'attribut est vide, le programme
 recherche un conteneur dans l'attribut Conteneur de personnes par d&#233;faut du groupe.
 Si le dernier attribut est vide, l'entr&#233;e est cr&#233;&#233;e sous <tt>ou=people</tt>.</p><p>Cet attribut s'applique uniquement lorsque Federated Access Manager est install&#233; en mode
@@ -336,7 +339,7 @@ la page du profil utilisateur est s&#233;lectionn&#233;e.</p>
 <a name="fsvhk"></a><h5>Options d'affichage du profil utilisateur</h5>
 <p>Ce menu indique les attributs de service qui seront affich&#233;s sur la
 page du profil utilisateur. Un administrateur peut s&#233;lectionner l'une des options suivantes
-: </p><dl><dt>Utilisateur seulement</dt>
+:</p><dl><dt>Utilisateur seulement</dt>
 <dd><p>Affiche les attributs de sch&#233;ma consultables de l'utilisateur pour les services assign&#233;s &#224; cet utilisateur. Les valeurs des attributs de service peuvent &#234;tre consult&#233;es par l'utilisateur si l'attribut contient le mot-cl&#233; Display. Pour plus de d&#233;tails, reportez-vous au manuel Federated Access Manager Developer's Guide.</p></dd>
 <dt>Combin&#233;</dt>
 <dd><p>Affiche les attributs de sch&#233;ma consultables et dynamiques de l'utilisateur pour les services assign&#233;s &#224; cet utilisateur.</p></dd>
@@ -361,9 +364,9 @@ une recherche. La valeur par d&#233;faut est 200.  </p><p>Vous ne devez attribue
 1000) que si les ressources syst&#232;me allou&#233;es sont suffisantes.</p>
 <hr><p><b>Remarque &#8211; </b>Federated Access Manager est pr&#233;configur&#233; pour renvoyer un maximum de 4 000
 entr&#233;es de recherche. Cette valeur peut &#234;tre modifi&#233;e &#224; l'aide de la
-console ou de <tt>ldapmodify</tt>. Pour la modifier via <tt>ldapmodify,</tt> cr&#233;ez un fichier
-<tt>newConfig.xml </tt> comportant les valeurs suivantes (dans cet exemple, <tt>nsSizeLimit </tt> : -1 signifie
-illimit&#233;) :</p>dn: cn=puser,ou=DSAME Users,ORG_ROOT_SUFFIX changetype: modify replace:nsSizeLimit nsSizeLimit: -1<p>Ex&#233;cutez ensuite <tt>ldapmodify</tt>. Par exemple :</p>setenv LD_LIBRARY_PATH /opt/SUNWam/lib/:/opt/SUNWam/ldaplib/ldapsdk:/usr/lib/mps:/usr/share/lib/mps/secv1:/usr/lib/mps/secv1: $LD_LIBRARY_PATH  ./ldapmodify -D "cn=Directory Manager" -w "iplanet333" -c -a -h hostname.domain -p 389 -f  newConfig.xml<p>Les modifications de cet attribut apport&#233;es via la commande <tt>LDAPModify</tt> ont priorit&#233;
+console ou de <tt>ldapmodify</tt>. If you wish to change it using <tt>ldapmodify,</tt>create
+a <tt>newConfig.xml </tt>, with the following values (in this example, <tt>nsSizeLimit </tt>: -1 means
+unlimited):</p>dn: cn=puser,ou=DSAME Users,ORG_ROOT_SUFFIX changetype: modify replace:nsSizeLimit nsSizeLimit: -1<p>Ex&#233;cutez ensuite <tt>ldapmodify</tt>. Par exemple :</p>setenv LD_LIBRARY_PATH /opt/SUNWam/lib/:/opt/SUNWam/ldaplib/ldapsdk:/usr/lib/mps:/usr/share/lib/mps/secv1:/usr/lib/mps/secv1: $LD_LIBRARY_PATH ./ldapmodify -D "cn=Directory Manager" -w "iplanet333" -c -a -h hostname.domain -p 389 -f newConfig.xml<p>Les modifications de cet attribut apport&#233;es via la commande <tt>LDAPModify</tt> ont priorit&#233;
 sur celles r&#233;alis&#233;es par le biais de la console Federated Access Manager.
 </p>
 <hr>
@@ -378,7 +381,7 @@ et renvoie une erreur. La valeur par d&#233;faut est 5 secondes.</p>
 valeur peut &#234;tre modifi&#233;e via la console Directory Server ou <tt>ldapmodify.</tt> Pour
 la modifier via <tt>ldapmodify,</tt> cr&#233;ez un fichier <tt> newConfig.xml</tt> comportant les valeurs suivantes
 (cet exemple change le d&#233;lai d'attente de 120 &#224; 3 600 secondes)
-:</p>dn: cn=config changetype: modify replace:nsslapd-timelimit nsslapd-timelimit: 3600<p>Ex&#233;cutez ensuite <tt>ldapmodify</tt>. Par exemple :</p>setenv LD_LIBRARY_PATH /opt/SUNWam/lib/:/opt/SUNWam/ldaplib/ldapsdk:/usr/lib/mps:/usr/share/lib/mps/secv1:/usr/lib/mps/secv1: $LD_LIBRARY_PATH  ./ldapmodify -D "cn=Directory Manager" -w "iplanet333" -c -a -h hostname.domain -p 389 -f  newConfig.xml
+:</p>dn: cn=config changetype: modify replace:nsslapd-timelimit nsslapd-timelimit: 3600<p>Ex&#233;cutez ensuite <tt>ldapmodify </tt>. Par exemple :</p>setenv LD_LIBRARY_PATH /opt/SUNWam/lib/:/opt/SUNWam/ldaplib/ldapsdk:/usr/lib/mps:/usr/share/lib/mps/secv1:/usr/lib/mps/secv1: $LD_LIBRARY_PATH ./ldapmodify -D "cn=Directory Manager" -w "iplanet333" -c -a -h hostname.domain -p 389 -f newConfig.xml
 <hr>
 
 
@@ -408,7 +411,7 @@ de commande <tt>amadmin</tt> se voient attribuer les services mentionn&#233;s da
 <a name="fsvhu"></a><h5>Cl&#233; de recherche d'utilisateur</h5>
 <p>Cet attribut d&#233;finit le nom d'attribut qui doit &#234;tre recherch&#233; lors d'une
 recherche simple dans la page de navigation. La valeur par d&#233;faut de
-cet attribut est <tt>cn</tt>.</p><p>Par exemple, si vous entrez <tt> j*</tt> dans le champ Nom du cadre
+cet attribut est <tt>cn</tt>.</p><p>Par exemple, si vous entrez <tt> j&#42;</tt> dans le champ Nom du cadre
 Navigation, les utilisateurs dont le nom commence par "j" ou "J" sont
 affich&#233;s.</p>
 
@@ -423,13 +426,13 @@ l'entr&#233;e utilisateur.</p>
 <a name="fsvhv"></a><h5>Liste de notification de la cr&#233;ation d'utilisateur</h5>
 <p>Ce champ d&#233;finit une liste d'adresses e-mail auxquelles des notifications seront envoy&#233;es
 en cas de cr&#233;ation d'un nouvel utilisateur. Il est possible d'indiquer plusieurs
-adresses e-mail, en utilisant la syntaxe ci-dessous : </p><p><tt>adresse_e-mail|param&#232;tre_r&#233;gional|jeu_de_caract&#232;res</tt> </p><p><tt>adresse_e-mail|param&#232;tre_r&#233;gional|jeu_de_caract&#232;res</tt> </p><p><tt>adresse_e-mail|param&#232;tre_r&#233;gional|jeu_de_caract&#232;res</tt></p><p>La liste de notification accepte &#233;galement diff&#233;rents param&#232;tres gr&#226;ce &#224; l'option <tt>-|param&#232;tre_r&#233;gional</tt>.</p><p>Pour consulter la liste des langues disponibles, reportez-vous &#224; <a href="supportedlang.html">Environnements linguistiques pris en charge</a>.  </p><p>Vous pouvez changer l'ID d'adresse e-mail de l'exp&#233;diteur en modifiant la propri&#233;t&#233;
+adresses e-mail, en utilisant la syntaxe ci-dessous :</p><p> <tt>adresse_e-mail|param&#232;tre_r&#233;gional|jeu_de_caract&#232;res</tt> </p><p><tt>adresse_e-mail|param&#232;tre_r&#233;gional|jeu_de_caract&#232;res</tt> </p><p><tt>adresse_e-mail|param&#232;tre_r&#233;gional|jeu_de_caract&#232;res</tt></p><p>La liste de notification accepte &#233;galement diff&#233;rents param&#232;tres gr&#226;ce &#224; l'option <tt>-|param&#232;tre_r&#233;gional</tt>.</p><p>Pour consulter la liste des langues disponibles, reportez-vous &#224; <a href="supportedlang.html">Environnements linguistiques pris en charge</a>.  </p><p>Vous pouvez changer l'ID d'adresse e-mail de l'exp&#233;diteur en modifiant la propri&#233;t&#233;
 497 dans le fichier <tt>amProfile.properties</tt> situ&#233; par d&#233;faut &#224; l'emplacement <tt></tt><i>FederatedAccessManager-base</i><tt>/SUNWam/locale </tt>.</p>
 
 <a name="fsvhw"></a><h5>Liste de notification de la suppression d'utilisateur</h5>
 <p>Ce champ d&#233;finit une liste d'adresses e-mail auxquelles des notifications seront envoy&#233;es
 en cas de suppression d'un utilisateur. Il est possible d'indiquer plusieurs adresses
-e-mail, en utilisant la syntaxe ci-dessous : </p><p><tt>adresse_e-mail|param&#232;tre_r&#233;gional|jeu_de_caract&#232;res</tt> </p><p><tt>adresse_e-mail|param&#232;tre_r&#233;gional|jeu_de_caract&#232;res</tt> </p><p><tt>adresse_e-mail|param&#232;tre_r&#233;gional|jeu_de_caract&#232;res</tt></p><p>La liste de notification accepte &#233;galement diff&#233;rents param&#232;tres gr&#226;ce &#224; l'option <tt>-|param&#232;tre_r&#233;gional</tt>.</p><p>Pour consulter la liste des langues disponibles, reportez-vous &#224; <a href="supportedlang.html">Environnements linguistiques pris en charge</a>.  </p><p>Vous pouvez changer l'ID d'adresse e-mail de l'exp&#233;diteur en modifiant la propri&#233;t&#233;
+e-mail, en utilisant la syntaxe ci-dessous :</p><p> <tt>adresse_e-mail|param&#232;tre_r&#233;gional|jeu_de_caract&#232;res</tt> </p><p><tt>adresse_e-mail|param&#232;tre_r&#233;gional|jeu_de_caract&#232;res</tt> </p><p><tt>adresse_e-mail|param&#232;tre_r&#233;gional|jeu_de_caract&#232;res</tt></p><p>La liste de notification accepte &#233;galement diff&#233;rents param&#232;tres gr&#226;ce &#224; l'option <tt>-|param&#232;tre_r&#233;gional</tt>.</p><p>Pour consulter la liste des langues disponibles, reportez-vous &#224; <a href="supportedlang.html">Environnements linguistiques pris en charge</a>.  </p><p>Vous pouvez changer l'ID d'adresse e-mail de l'exp&#233;diteur en modifiant la propri&#233;t&#233;
 497 dans le fichier <tt>amProfile.properties</tt> situ&#233; par d&#233;faut &#224; l'emplacement <tt></tt><i>FederatedAccessManager-base</i><tt>/SUNWam/locale </tt>.</p><p>L'ID d'exp&#233;diteur par d&#233;faut est <tt>DSAME</tt>.</p>
 
 <a name="fsvhx"></a><h5>Liste de notification de la modification d'utilisateur</h5>
@@ -439,26 +442,26 @@ associ&#233;e &#224; l'attribut re&#231;oit une notification. Chaque attribut pe
 diff&#233;rents groupes d'adresses. Il est possible d'indiquer plusieurs adresses e-mail, en utilisant
 la syntaxe ci-dessous :</p><p><tt>attrName </tt><i>e-mail</i><tt>| </tt><i> locale</i><tt>|</tt><i>charset</i><tt> </tt><i>e-mail </i><tt> |</tt><i>locale</i><tt>|</tt><i>charset</i><tt> ..... </tt> </p><p><tt>attrName </tt><i>e-mail</i><tt>| </tt><i> locale</i><tt>|</tt><i>charset</i><tt> </tt><i>e-mail </i><tt> |</tt><i>locale</i><tt>|</tt><i>charset</i><tt> ..... </tt> </p><p>Le mot-cl&#233; <tt>-self</tt> peut &#234;tre utilis&#233; &#224; la place de l'une des
 adresses. Ceci a pour effet d'envoyer une notification &#224; l'utilisateur dont le
-profil a &#233;t&#233; modifi&#233;. Supposez par exemple :</p><p><tt>gestionnaire utilisateur@sun.com|self|admin@sun.com</tt></p><p>Un mail est envoy&#233; &#224; l'adresse sp&#233;cifi&#233;e dans l'attribut gestionnaire, <tt>someuser@sun.com</tt>, <tt>admin@sun</tt>,
-la personne ayant modifi&#233; l'utilisateur (self).</p><p>La liste de notification accepte &#233;galement diff&#233;rents param&#232;tres gr&#226;ce &#224; l'option <tt>-|param&#232;tre_r&#233;gional</tt>.
-Par exemple, pour envoyer la notification &#224; un administrateur en France :</p><p><tt>gestionnaire utilisateur@sun.com|self|admin@sun.com|fr</tt> Pour consulter la liste des langues, reportez-vous &#224; <a href="supportedlang.html">Environnements linguistiques pris en charge</a>.  </p><p>Le nom d'attribut est celui qui appara&#238;t dans le sch&#233;ma Directory Server
+profil a &#233;t&#233; modifi&#233;. Supposez par exemple :</p><p><tt>gestionnaire utilisateur&#64;sun.com|self|admin&#64;sun.com</tt></p><p>Un mail est envoy&#233; &#224; l'adresse sp&#233;cifi&#233;e dans l'attribut gestionnaire, <tt>someuser&#64;sun.com</tt>, <tt>admin&#64;sun</tt>,
+la personne ayant modifi&#233; l'utilisateur (self).</p><p>La liste de notification accepte &#233;galement diff&#233;rents param&#232;tres gr&#226;ce &#224; l'option <tt>-|param&#232;tre_r&#233;gional. </tt>
+Par exemple, pour envoyer la notification &#224; un administrateur en France :</p><p><tt>gestionnaire utilisateur&#64;sun.com|self|admin&#64;sun.com|fr</tt> Pour consulter la liste des langues, reportez-vous &#224; <a href="supportedlang.html">Environnements linguistiques pris en charge</a>.  </p><p>Le nom d'attribut est celui qui appara&#238;t dans le sch&#233;ma Directory Server
 et nom celui affich&#233; dans la console.</p>
 
 <a name="fsvia"></a><h5>Maximum d'&#233;l&#233;ments affich&#233;s par page</h5>
 <p>Cet attribut vous permet de d&#233;finir le nombre maximal de lignes qui
-seront affich&#233;es par page. La valeur par d&#233;faut est 25. Par exemple,
-si une recherche d'utilisateurs renvoie 100 lignes, les r&#233;sultats seront affich&#233;s sur
-4 pages de 25 lignes chacune.</p>
+seront affich&#233;es par page. The default is 25. For example, if a
+user search returns 100 rows, there will be 4 pages with 25
+rows displayed in each page.</p>
 
 <a name="fsvhz"></a><h5>Classes du module d'&#233;coute des &#233;v&#233;nements</h5>
 <p>Cet attribut contient une liste de listeners qui re&#231;oivent les &#233;v&#233;nements de
 cr&#233;ation, modification et suppression &#224; partir de la console Federated Access Manager.</p>
 
 <a name="fsvhy"></a><h5>Classes de pr&#233; et post-traitement</h5>
-<p>Ce champ d&#233;finit une liste des classes d'impl&#233;mentation gr&#226;ce &#224; des plug-ins
-qui &#233;tendent la classe <tt>com.iplanet.am.sdk.</tt><tt>AMCallBack</tt> pour recevoir des rappels lors des op&#233;rations
-de pr&#233; et de post-traitement pour les utilisateurs, le domaine, les r&#244;les
-et les groupes. Les op&#233;rations possibles sont les suivantes :</p>
+<p>This field defines a list of implementation classes through plug-ins that extend
+the <tt>com.iplanet.am.sdk.AMCallBack</tt> class to receive callbacks during pre and post processing operations
+for users, realm, roles and groups. Les op&#233;rations possibles sont les suivantes
+:</p>
 <ul><li><p>cr&#233;ation</p></li>
 <li><p>delete</p></li>
 <li><p>Modification</p></li>
@@ -479,7 +482,7 @@ Par d&#233;faut, cette option n'est pas activ&#233;e.</p>
 <a name="fsvib"></a><h5>Caract&#232;res de l'ID utilisateur non valides :</h5>
 <p>Cet attribut d&#233;finit une liste de caract&#232;res non autoris&#233;s dans un nom
 d'utilisateur. Les diff&#233;rents caract&#232;res doivent &#234;tre s&#233;par&#233;s par le caract&#232;re | .
-Par exemple :</p><p><tt>*|(|)|&#38;|!</tt></p>
+Par exemple :</p><p><tt>&#42;|(|)|&#38;|!</tt></p>
 
 <a name="fsvie"></a><h5>Classe de plug-in de validation du mot de passe et de l'ID utilisateur</h5>
 <p>Cette classe fournit un m&#233;canisme de plug-in de validation de l'ID utilisateur

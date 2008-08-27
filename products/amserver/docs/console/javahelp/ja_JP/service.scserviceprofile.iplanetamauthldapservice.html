@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>LDAP  - Sun Java System Federated Access Manager 8.0 コンソールオンラインヘルプ
+  <title>LDAP - Sun Federated Access Manager 8.0 コンソールオンラインヘルプ
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -30,8 +30,8 @@
 
 
 
-<a name="service.scserviceprofile.iplanetamauthldapservice"></a><h4>LDAP </h4>
-<p><a name="indexterm-181"></a>このモジュールにより、LDAP バインド (ユーザー ID とパスワードを特定の LDAP エントリと関連付ける Directory Server 操作) を使用した認証が可能になります。1 つのレルムに対して複数の
+<a name="service.scserviceprofile.iplanetamauthldapservice"></a><h4>LDAP</h4>
+<p><a name="indexterm-175"></a>このモジュールにより、LDAP バインド (ユーザー ID とパスワードを特定の LDAP エントリと関連付ける Directory Server 操作) を使用した認証が可能になります。1 つのレルムに対して複数の
 LDAP 認証設定を定義できます。LDAP 認証属性はレルム属性です。属性は次のとおりです。</p>
 <ul><li><p><a href="#fwazv">「プライマリ LDAP サーバー」</a></p></li>
 <li><p><a href="#fwbac">「セカンダリ LDAP サーバー」</a></p></li>
@@ -81,7 +81,7 @@ DN でバインドする必要があります。デフォルトは <tt>amldapuse
 <p>ユーザーエントリのネーミング規則に使用する属性を指定します。デフォルトでは、Federated Access Manager はユーザーエントリが uid 属性によって識別されるものと想定します。Directory Server で異なる属性 (<i>givenname</i> など) を使用している場合は、このフィールドにその属性名を指定します。</p>
 
 <a name="fwazy"></a><h5>認証するユーザーの検索に使用する属性</h5>
-<p>認証を受けるユーザーの検索フィルタを設定するのに使用する属性を一覧表示します。これにより、ユーザーは 1 つ以上の属性によって認証を受けることができます。たとえば、このフィールドが <i>uid</i>、<i>employeenumber</i>、および <i>mail</i> に設定されている場合、ユーザーはこれらの名前のどれを使用しても認証を受けることができます。これらの属性は個別に設定する必要があります。</p>
+<p>認証を受けるユーザーの検索フィルタを設定するのに使用する属性を一覧表示します。これにより、ユーザーは 1 つ以上の属性によって認証を受けることができます。たとえば、このフィールドが <i>uid</i>、<i>employeenumber</i>、および <i>mail</i> に設定されている場合、ユーザーはこれらの名前のどれを使用しても認証を受けることができます。これらの属性は個別に設定する必要があります。 </p>
 
 <a name="fwazw"></a><h5>ユーザー検索フィルタ</h5>
 <p>「ユーザー検索の開始 DN」フィールドの下でユーザーの検索に使用する属性を指定します。これはユーザーネーミング属性とともに機能します。デフォルト値は存在しません。有効なユーザーエントリ属性はすべて認識されます。</p>

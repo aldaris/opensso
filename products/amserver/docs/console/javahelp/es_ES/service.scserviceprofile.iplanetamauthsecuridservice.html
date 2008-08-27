@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>SecurID  - Ayuda en l&#237;nea de la consola de Sun Java System Federated Access Manager 8.0
+  <title>SecurID - Ayuda en l&#237;nea de la consola de Sun Federated Access Manager 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -30,16 +30,14 @@
 
 
 
-<a name="service.scserviceprofile.iplanetamauthsecuridservice"></a><h4>SecurID </h4>
-<p><a name="indexterm-187"></a>Este m&#243;dulo permite realizar la autenticaci&#243;n mediante el software RSA ACE/Server y
+<a name="service.scserviceprofile.iplanetamauthsecuridservice"></a><h4>SecurID</h4>
+<p><a name="indexterm-181"></a>Este m&#243;dulo permite realizar la autenticaci&#243;n mediante el software RSA ACE/Server y
 los autenticadores RSA SecurID. El m&#243;dulo de autenticaci&#243;n SecurID no est&#225; disponible
 para las plataformas x86 de Solaris o Linux, y no debe registrarse,
 configurarse ni habilitarse en estas dos plataformas. S&#243;lo est&#225; disponible para Solaris.
 Los atributos de autenticaci&#243;n de SecurID son atributos de dominio. Los atributos
 son:</p>
 <ul><li><p><a href="#fwbpt">Ruta de configuraci&#243;n de ACE/Server</a></p></li>
-<li><p><a href="#fwbkv">Puerto de configuraci&#243;n de auxiliar</a></p></li>
-<li><p><a href="#fwbpq">Puerto de autenticaci&#243;n de auxiliar</a></p></li>
 <li><p><a href="#fwbma">Nivel de autenticaci&#243;n</a></p></li></ul>
 
 
@@ -48,23 +46,6 @@ son:</p>
 SecurID ACE/Server; de forma predeterminada en <tt>/opt/ace/data</tt>. Si especifica un directorio distinto
 en este campo, el directorio debe existir antes de intentar la autenticaci&#243;n
 mediante SecurID.</p>
-
-<a name="fwbkv"></a><h5>Puerto de configuraci&#243;n de auxiliar</h5>
-<p>Especifica el puerto en el que el auxiliar de SecurID recibe la
-informaci&#243;n de configuraci&#243;n del atributo de puerto de autenticaci&#243;n de auxiliar de
-SecurID durante el inicio. El valor predeterminado es 58943.</p><p>Si se cambia este atributo, tambi&#233;n deber&#225; cambiar la entrada <i>securidHelper.ports</i> en
-el archivo <tt>AMConfig.properties</tt> y reiniciar Federated Access Manager. La entrada del archivo
-<tt>AMConfig.properties</tt> es una lista separada por espacios de los puertos para las
-instancias de los asistentes de SecurID. Debe haber un asistente de SecurID
-independiente para cada dominio que se comunica con un ACE/Server distinto (que
-tiene un archivo <tt>sdconf.rec</tt> diferente).</p>
-
-<a name="fwbpq"></a><h5>Puerto de autenticaci&#243;n de auxiliar</h5>
-<p>Especifica el puerto que el m&#243;dulo de autenticaci&#243;n SecurID de dominio configurar&#225;
-para que la instancia del auxiliar de SecurID reciba las solicitudes de
-autenticaci&#243;n. Este n&#250;mero de puerto debe ser exclusivo en todos los dominios
-que utilizan la autenticaci&#243;n de SecurID o UNIX. El valor predeterminado es
-57943.</p>
 
 <a name="fwbma"></a><h5>Nivel de autenticaci&#243;n</h5>
 <p>El nivel de autenticaci&#243;n se define de forma independiente para cada m&#233;todo

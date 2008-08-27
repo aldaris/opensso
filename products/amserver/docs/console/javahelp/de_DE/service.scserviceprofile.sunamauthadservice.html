@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Active Directory - Online-Hilfe zur Sun Java System Federated Access Manager 8.0-Konsole
+  <title>Active Directory - Online-Hilfe zur Sun Federated Access Manager 8.0-Konsole
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,7 +31,7 @@
 
 
 <a name="service.scserviceprofile.sunamauthadservice"></a><h4>Active Directory</h4>
-<p><a name="indexterm-173"></a>Dieser Modultyp funktioniert &#228;hnlich wie der  Modultyp "LDAP-Authentifizierung", verwendet jedoch anstatt
+<p><a name="indexterm-166"></a>Dieser Modultyp funktioniert &#228;hnlich wie der  Modultyp "LDAP-Authentifizierung", verwendet jedoch anstatt
 eines LDAP-Verzeichnisses das Microsoft Active Directory. Dieser Modultyp erm&#246;glicht die gleichzeitige Verwendung
 von LDAP und Active Directory in einem Bereich. Bei Active Directory-Authentifizierungsattributen handelt
 es sich um Bereichsattribute. Es existieren folgende Attribute:</p>
@@ -56,8 +56,8 @@ es sich um Bereichsattribute. Es existieren folgende Attribute:</p>
 <p>Gibt den Host-Namen und die Anschlussnummer des w&#228;hrend der Federated Access Manager-Installation
 festgelegten prim&#228;ren Active Directory Servers an. Es handelt sich hierbei um den
 Server, auf den bei der Active Directory-Authentifizierung zuerst zugegriffen wird. Das Format
-lautet<tt></tt><i>hostname:port</i><tt></tt>. Wenn keine Portnummer angegeben wurde, kann in der Regel <tt>389</tt> verwendet
-werden.</p><p>Wenn Sie Federated Access Manager in mehreren Dom&#228;nen bereitstellen, k&#246;nnen Sie den
+lautet <tt></tt><i> hostname:port</i><tt></tt>. Wenn keine Portnummer angegeben wurde, kann in der Regel <tt>389</tt>
+verwendet werden.</p><p>Wenn Sie Federated Access Manager in mehreren Dom&#228;nen bereitstellen, k&#246;nnen Sie den
 Kommunikationslink zwischen bestimmten Instanzen von Federated Access Manager und Directory Server in
 folgendem Format angeben (bei Mehrfacheingaben muss der lokale Servername vorangestellt werden):</p><p><tt>local_servername|server:port local_servername2|server2:port2 ...</tt></p><p>Wenn beispielsweise zwei Federated Access Manager-Instanzen an unterschiedlichen Standorten bereitgestellt wurden (L1-machine1-IS
 und L2- machine2-IS), die mit unterschiedlichen Instanzen von Directory Server kommunizieren (L1-machine1-DS
@@ -98,9 +98,8 @@ dem im Feld ";Primary LDAP-Server und -Anschluss" angegebenen Directory Server d
 Der BIND-Vorgang f&#252;r den Authentifizierungsdienst muss mit diesem DN erfolgen, um die
 Suche nach einem mit der Anmeldungs-ID &#252;bereinstimmenden Benutzer-DN zu erm&#246;glichen. Der Standardwert
 lautet <tt>amldapuser.</tt> Jeder g&#252;ltige DN wird erkannt.</p><p>Stellen Sie vor der Abmeldung sicher, dass das Passwort korrekt ist. Falls
-es nicht korrekt ist, werden Sie gesperrt. In diesem Fall k&#246;nnen Sie
-sich mit der Super-Benutzer-DN, die in der Datei  <tt>AMConfig.Properties</tt> in der
-Eigenschaft  <i>com.iplanet.authentication.super.user </i> festgelegt ist, anmelden. Standardm&#228;&#223;ig handelt es sich um das
+es nicht korrekt ist, werden Sie gesperrt. Wenn dieser Fall eintritt, k&#246;nnen
+Sie sich mit dem Superuser-DEN anmelden. Standardm&#228;&#223;ig handelt es sich um das
 Konto  <tt>amAdmin</tt>, mit dem Sie sich normalerweise anmelden, allerdings verwenden Sie
 den vollst&#228;ndigen DN. Beispiel:</p><p><tt>uid_amAdmin,ou=People,</tt><i>FederatedAccessManager-base </i><tt></tt></p>
 
@@ -164,7 +163,7 @@ deaktiviert.</p>
 
 <a name="fwbjb"></a><h5>Intervall der Active Directory Server-&#220;berpr&#252;fung</h5>
 <p>Dieses Attribut wird f&#252;r das Active Directory Server-Failback verwendet. Es legt die
-Anzahl der Minuten fest, in denen ein Thread &#8220;inaktiv&#8222; ist, bevor er
+Anzahl der Minuten fest, in denen ein Thread ?inaktiv&#8220; ist, bevor er
 &#252;berpr&#252;ft, ob der prim&#228;re Active Directory Server ausgef&#252;hrt wird.</p>
 
 <a name="fwbtk"></a><h5>Benutzererstellungsattribute</h5>

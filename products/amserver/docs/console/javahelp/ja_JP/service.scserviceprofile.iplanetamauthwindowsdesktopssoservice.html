@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Windows デスクトップ SSO - Sun Java System Federated Access Manager 8.0 コンソールオンラインヘルプ
+  <title>Windows デスクトップ SSO - Sun Federated Access Manager 8.0 コンソールオンラインヘルプ
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,7 +31,7 @@
 
 
 <a name="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice"></a><h4>Windows デスクトップ SSO</h4>
-<p><a name="indexterm-189"></a>このモジュールは Windows に固有であり、Kerberos 認証としても知られます。ユーザーは、SPNEGO (Simple and Protected GSS-API Negotiation Mechanism) プロトコルを介して、Federated Access
+<p><a name="indexterm-183"></a>このモジュールは Windows に固有であり、Kerberos 認証としても知られます。ユーザーは、SPNEGO (Simple and Protected GSS-API Negotiation Mechanism) プロトコルを介して、Federated Access
 Manager に Kerberos トークンを提供します。Windows デスクトップ SSO 認証プラグインモジュールにより、クライアント (ユーザー) はデスクトップからのシングルサインオンが可能です。すなわち、鍵配布センターで認証済みのユーザーは、再びログイン情報を提供しなくても Federated Access Manager
 によって認証されます。Windows デスクトップ SSO 属性はグローバル属性です。属性は次のとおりです。</p>
 <ul><li><p><a href="#fwbfr">「サービス主体」</a></p></li>
@@ -43,7 +43,7 @@ Manager に Kerberos トークンを提供します。Windows デスクトップ
 
 
 <a name="fwbfr"></a><h5>サービス主体</h5>
-<p>認証に使用される Kerberos 主体を指定します。次の形式を使用します。</p><p><tt><b>HTTP/</tt><i>hostname.domainname@dc_domain_name</i><tt></b></tt></p><p><b>hostname</b> と <b>domainame</b> はそれぞれ、Federated Access Manager インスタンスのホスト名とドメイン名を表します。<b>dc_domain_name</b> は、Windows 2000 Kerberos サーバー (ドメインコントローラ)
+<p>認証に使用される Kerberos 主体を指定します。次の形式を使用します。</p><p><tt><b>HTTP/</tt><i>hostname.domainname&#64;dc_domain_name</i><tt></b></tt></p><p><b>hostname</b> と <b>domainame</b> はそれぞれ、Federated Access Manager インスタンスのホスト名とドメイン名を表します。<b>dc_domain_name</b> は、Windows 2000 Kerberos サーバー (ドメインコントローラ)
 が存在する Kerberos ドメインです。Federated Access Manager のドメイン名とは異なる場合もあります。</p>
 
 <a name="fwbfo"></a><h5>Keytab ファイル名</h5>

@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>策略配置 - Sun Java System Federated Access Manager 8.0 控制台联机帮助
+  <title>策略配置 - Sun Federated Access Manager 8.0 控制台联机帮助
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,7 +31,7 @@
 
 
 <a name="service.scpolicy"></a><h4>策略配置</h4>
-<p><a name="indexterm-197"></a>“策略配置”属性允许管理员设置“策略”服务所使用的全局和领域配置属性。</p>
+<p><a name="indexterm-191"></a>“策略配置”属性允许管理员设置“策略”服务所使用的全局和领域配置属性。</p>
 <ul><li><p><a href="#fufnk">全局属性</a></p></li>
 <li><p><a href="#fufmb">领域属性</a></p></li></ul>
 
@@ -68,16 +68,16 @@
 <p>LDAP 属性包括：</p>
 
 <a name="fufmg"></a><h5>主 LDAP 服务器</h5>
-<p>指定安装 Federated Access Manager 过程中指定的主 LDAP 服务器的主机名和端口号，这些数据将用于搜索策略主题，如 LDAP 用户、LDAP 角色、LDAP 组等。</p><p>格式为 <i>hostname:port</i>。例如：<tt>machine1.example.com:389</tt></p><p>对于多个 LDAP 服务器主机的故障切换配置，该值可为以空格分隔的主机列表。格式为 <i>hostname1:port1 hostname2:port2...</i></p><p>例如：<tt>machine1.example1.com:389 machine2.example1.com:389 </tt></p><p>如果指定多个条目，条目前面必须带有本地服务器名称。这样可将特定的 Federated Access Managers 配置为与特定 Directory Server 进行通信。</p><p>格式为 <i>servername|hostname:port</i>。例如：</p><p><tt>machine1.example1.com|machine1.example1.com:389</tt></p><p><tt>machine1.example2.com|machine1.example2.com:389</tt></p><p>对于故障切换配置：</p><p><tt>AM_Server1.example1.com|machine1.example1.com:389 machine2.example.com1:389 </tt></p><p><tt>AM_Server2.example2.com|machine1.example2.com:389 machine2.example2.com:389 </tt></p>
+<p>指定安装 Federated Access Manager 过程中指定的主 LDAP 服务器的主机名和端口号，这些数据将用于搜索策略主体，如 LDAP 用户、LDAP 角色、LDAP 组等。</p><p>格式为 <i>hostname:port</i>。例如：<tt>machine1.example.com:389</tt></p><p>对于多个 LDAP 服务器主机的故障切换配置，该值可为以空格分隔的主机列表。格式为 <i>hostname1:port1 hostname2:port2...</i></p><p>例如：<tt>machine1.example1.com:389 machine2.example1.com:389 </tt></p><p>如果指定多个条目，条目前面必须带有本地服务器名称。这样可将特定的 Federated Access Managers 配置为与特定 Directory Server 进行通信。</p><p>格式为 <i>servername|hostname:port</i>。例如：</p><p><tt>machine1.example1.com|machine1.example1.com:389</tt></p><p><tt>machine1.example2.com|machine1.example2.com:389</tt></p><p>对于故障切换配置：</p><p><tt>AM_Server1.example1.com|machine1.example1.com:389 machine2.example.com1:389 </tt></p><p><tt>AM_Server2.example2.com|machine1.example2.com:389 machine2.example2.com:389 </tt></p>
 
 <a name="fufmc"></a><h5>LDAP 基 DN</h5>
 <p>指定 LDAP 服务器中的基 DN，搜索将从该 DN 开始。默认情况下，它是 Federated Access Manager 安装的顶层领域。</p>
 
 <a name="fufmd"></a><h5>LDAP 用户基 DN</h5>
-<p>该属性指定由 LDAP 服务器中的 LDAP 用户主题使用的基 DN，搜索将从此 DN 开始进行。默认情况下，它是 Federated Access Manager 安装库的顶层领域。</p>
+<p>该属性指定由 LDAP 服务器中的 LDAP 用户主体使用的基 DN，搜索将从此 DN 开始进行。默认情况下，它是 Federated Access Manager 安装库的顶层领域。</p>
 
 <a name="fufmz"></a><h5>Federated Access Manager 角色基 DN</h5>
-<p>定义领域或组织的 DN，在搜索 Federated Access Manager 角色的值时会将该领域或组织用作基础。该属性由 <i>AccessManagerRoles</i> 策略主题使用。 </p>
+<p>定义领域或组织的 DN，在搜索 Federated Access Manager 角色的值时会将该领域或组织用作基础。该属性由 <i>AccessManagerRoles</i> 策略主体使用。 </p>
 
 <a name="fufme"></a><h5>LDAP 绑定 DN</h5>
 <p>指定 LDAP 服务器中的绑定 DN。</p>
@@ -126,7 +126,7 @@
 
 
 <a name="fufmy"></a><h5>Federated Access Manager 角色搜索范围</h5>
-<p>定义用于查找 Federated Access Manager 角色主题条目的范围。</p>
+<p>定义用于查找 Federated Access Manager 角色主体条目的范围。</p>
 <ul><li><p>SCOPE_BASE</p></li>
 <li><p>SCOPE_ONE</p></li>
 <li><p>SCOPE_SUB（默认值）</p></li></ul>
@@ -160,8 +160,8 @@ Access Manager 可以通过 LDAPS 协议连接到 Directory Server。</p>
 <a name="fufmj"></a><h5>连接池的最大尺寸</h5>
 <p>该属性指定用于连接 Directory Server 的连接池的最大尺寸，它与 LDAP 服务器属性中指定的一致。默认值为 10。</p>
 
-<a name="fufna"></a><h5>选定的策略主题</h5>
-<p>允许选择一组可用的主题类型以用于在领域中定义策略。</p>
+<a name="fufna"></a><h5>选定的策略主体</h5>
+<p>允许选择一组可用的主体类型以用于在领域中定义策略。</p>
 
 <a name="fufnc"></a><h5>选定的策略条件</h5>
 <p>允许选择一组可用的条件类型以用于在领域中定义策略。</p>
@@ -169,11 +169,11 @@ Access Manager 可以通过 LDAPS 协议连接到 Directory Server。</p>
 <a name="fufnd"></a><h5>选定的策略引用组织</h5>
 <p>允许选择一组可用的引用类型以用于在领域中定义策略。</p>
 
-<a name="fufml"></a><h5>主题结果的生存时间</h5>
-<p>该属性指定一段时间（以分钟为单位），在这段时间内，可以使用缓存的主题结果基于单点登录令牌对同一策略请求进行评估。</p><p>当基于 SSO 令牌对策略开始进行评估时，将评估该策略中的主题实例以确定该策略是否适用于给定的用户。通过 SSO 令牌 ID 添加了密钥的主题结果缓存在策略中。如果在“主题结果的生存时间”属性中指定的时间内对同一个策略中的同一个 SSO 令牌 ID 进行了另一次评估，策略框架将检索缓存的主题结果，而不是评估主题实例。这会明显减少策略评估的时间。</p>
+<a name="fufml"></a><h5>主体结果的生存时间</h5>
+<p>该属性指定一段时间（以分钟为单位），在这段时间内，可以使用缓存的主体结果基于单点登录令牌对同一策略请求进行评估。</p><p>当基于 SSO 令牌对策略开始进行评估时，将评估该策略中的主体实例以确定该策略是否适用于给定的用户。通过 SSO 令牌 ID 添加了密钥的主体结果缓存在策略中。如果在“主体结果的生存时间”属性中指定的时间内对同一个策略中的同一个 SSO 令牌 ID 进行了另一次评估，策略框架将检索缓存的主体结果，而不是评估主体实例。这会明显减少策略评估的时间。</p>
 
 <a name="fufnm"></a><h5>用户别名</h5>
-<p>如果创建策略来保护其主题的成员在远程 Directory Server 中化名为本地用户的资源，则必须启用该属性。例如，如果在远程 Directory Server 中创建 <tt>uid=rmuser</tt>，然后将 <tt>rmuser</tt> 作为别名添加到 Federated Access
+<p>如果创建策略来保护其主体的成员在远程 Directory Server 中化名为本地用户的资源，则必须启用该属性。例如，如果在远程 Directory Server 中创建 <tt>uid=rmuser</tt>，然后将 <tt>rmuser</tt> 作为别名添加到 Federated Access
 Manager 中的本地用户（如 <tt>uid=luser</tt>），则必须启用该属性。以 <tt>rmuser</tt> 身份登录时，将使用本地用户 (<tt>luser</tt>) 创建会话，并会成功强制实行策略。</p>
 
 <a name="fufni"></a><h5>选定的响应提供者</h5>

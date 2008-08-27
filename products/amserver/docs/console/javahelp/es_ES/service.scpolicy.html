@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Configuraci&#243;n de pol&#237;ticas - Ayuda en l&#237;nea de la consola de Sun Java System Federated Access Manager 8.0
+  <title>Configuraci&#243;n de pol&#237;ticas - Ayuda en l&#237;nea de la consola de Sun Federated Access Manager 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,7 +31,7 @@
 
 
 <a name="service.scpolicy"></a><h4>Configuraci&#243;n de pol&#237;ticas</h4>
-<p><a name="indexterm-197"></a>Los atributos de configuraci&#243;n de pol&#237;ticas permiten al administrador definir las propiedades
+<p><a name="indexterm-191"></a>Los atributos de configuraci&#243;n de pol&#237;ticas permiten al administrador definir las propiedades
 de dominio y globales de configuraci&#243;n utilizadas por el servicio de pol&#237;tica.</p>
 <ul><li><p><a href="#fufnk">Propiedades globales</a></p></li>
 <li><p><a href="#fufmb">Atributos de dominio</a></p></li></ul>
@@ -89,9 +89,9 @@ como No. </p>
 <p>Establece el nombre de host y el n&#250;mero de puerto del servidor
 LDAP principal especificado durante la instalaci&#243;n de Federated Access Manager que se
 utilizar&#225;n para buscar asuntos de pol&#237;tica, como usuarios de LDAP, roles de
-LDAP, grupos de LDAP, etc.</p><p>El formato es <i>hostname:port</i>. Por ejemplo: <tt>machine1.example.com:389</tt></p><p>Para la configuraci&#243;n de conmutaci&#243;n por error en varios hosts del servidor
+LDAP, grupos de LDAP, etc.</p><p>El formato es <i>hostname:port</i>. For example: <tt>machine1.example.com:389</tt></p><p>Para la configuraci&#243;n de conmutaci&#243;n por error en varios hosts del servidor
 LDAP, este valor puede ser una lista de hosts delimitados por espacios.
-El formato es <i>hostname1:port1 hostname2:port2...</i></p><p>Por ejemplo: <tt>machine1.example1.com:389 machine2.example1.com:389 </tt></p><p>Si hay varias entradas, el nombre del servidor local debe ir en
+El formato es <i>hostname1:port1 hostname2:port2...</i></p><p>For example: <tt>machine1.example1.com:389 machine2.example1.com:389 </tt></p><p>Si hay varias entradas, el nombre del servidor local debe ir en
 primer lugar. Esto permite configurar Federated Access Manager espec&#237;ficos para que se
 conecten a determinados servidores de Directory Server.</p><p>El formato es <i>servername|hostname:port</i>. Por ejemplo:</p><p><tt>machine1.example1.com|machine1.example1.com:389</tt></p><p><tt>machine1.example2.com|machine1.example2.com:389</tt></p><p>Para la configuraci&#243;n de conmutaci&#243;n por error:</p><p><tt>AM_Server1.example1.com|machine1.example1.com:389 machine2.example.com1:389 </tt></p><p><tt>AM_Server2.example2.com|machine1.example2.com:389 machine2.example2.com:389 </tt></p>
 
@@ -121,7 +121,7 @@ se utiliza de forma predeterminada como usuario de conexi&#243;n.</p>
 
 <a name="fufmn"></a><h5>Filtro de b&#250;squeda de organizaciones de LDAP</h5>
 <p>Especifica el filtro de b&#250;squeda que se va a utilizar para encontrar
-las entradas de organizaci&#243;n. El valor predeterminado es <tt>(objectclass=sunMangagedOrganization)</tt>. </p>
+las entradas de organizaci&#243;n. El valor predeterminado es <tt>(objectclass=sunMangagedOrganization)</tt>.</p>
 
 <a name="fufmm"></a><h5>&#193;mbito de b&#250;squeda de organizaciones de LDAP</h5>
 <p>Define el &#225;mbito que se va a utilizar para encontrar las entradas
@@ -194,8 +194,9 @@ la b&#250;squeda en un rol. El valor predeterminado es <tt>cn</tt>.</p>
 
 <a name="fufnj"></a><h5>N&#250;mero m&#225;ximo de resultados de b&#250;squeda</h5>
 <p>Este campo define el n&#250;mero m&#225;ximo de resultados que muestra la b&#250;squeda.
-El valor predeterminado es 100. Si el l&#237;mite de b&#250;squeda supera la
-cantidad especificada, s&#243;lo se mostrar&#225;n las entradas recibidas hasta el n&#250;mero especificado.</p>
+The default value is 100. If the search limit exceeds the amount
+specified, the entries that have been found to that point will be
+returned.</p>
 
 <a name="fufnl"></a><h5>Tiempo de espera de b&#250;squeda</h5>
 <p>Especifica el intervalo de tiempo antes de que se produzca el tiempo

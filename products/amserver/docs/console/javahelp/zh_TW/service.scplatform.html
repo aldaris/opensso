@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>平台 - Sun Java System Federated Access Manager 8.0 主控台線上說明
+  <title>平台 - Sun Federated Access Manager 8.0 主控台線上說明
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,23 +31,12 @@
 
 
 <a name="service.scplatform"></a><h4>平台</h4>
-<p><a name="indexterm-211"></a>平台服務是其他伺服器可以新增至 Federated Access Manager 配置的位置，以及其他在 Federated Access Manager 應用程式頂層套用的選項。平台服務屬性為全域屬性。這些屬性包括：</p>
-<ul><li><p><a href="#fxcsy">網站名稱</a></p></li>
-<li><p><a href="#fxcqf">實例名稱</a></p></li>
-<li><p><a href="#fxcgy">平台語言環境</a></p></li>
+<p><a name="indexterm-205"></a>平台服務是其他伺服器可以新增至 Federated Access Manager 配置的位置，以及其他在 Federated Access Manager 應用程式頂層套用的選項。平台服務屬性為全域屬性。這些屬性包括：</p>
+<ul><li><p><a href="#fxcgy">平台語言環境</a></p></li>
 <li><p><a href="#fxcpo">Cookie 網域</a></p></li>
-<li><p><a href="#fxcsh">登入服務 URL</a></p></li>
-<li><p><a href="#fxcrt">登出服務 URL</a></p></li>
 <li><p><a href="#fxcmi">可用的語言環境</a></p></li>
 <li><p><a href="#fxctg">用戶端字元集</a></p></li></ul>
 
-
-<a name="fxcsy"></a><h5>網站名稱</h5>
-<p>命名服務在初始化期間讀取此屬性。本清單以後端 Federated Access Manager 伺服器上的負載平衡器或用於平衡的 SRA 之連接埠號碼獨特地識別 FQDN。如果此清單中未列出請求服務 URL 時指定的主機，則命名服務將拒絕此請求。僅有命名服務通訊協定應該用在這個屬性中。請參閱<b>Broken Link (Target ID: SERVICE.SCPLATFORMSITELISTADD)</b>。</p>
-
-<a name="fxcqf"></a><h5>實例名稱</h5>
-<p>命名服務在初始化期間讀取此屬性。此清單包含單一 Federated Access Manager 配置中的 Federated Access Manager 階段作業伺服器。例如，如果安裝了兩個 Federated Access Manager，但是應該做為一個整體使用，則它們必須均包含在此清單中。如果此清單中未列出請求服務
-URL 時指定的主機，則命名服務將拒絕此請求。僅有命名服務通訊協定應該用在這個屬性中。請參閱<b>Broken Link (Target ID: SERVICE.SCPLATFORMSERVERLISTADD)</b>。</p>
 
 <a name="fxcgy"></a><h5>平台語言環境</h5>
 <p>此平台語言環境值是安裝 Federated Access Manager 所使用的預設語言子類型。將在此值的語言環境中管理認證、記錄與管理服務。預設值為 en_US。請參閱<a href="supportedlang.html">支援的語言環境</a>，以取得支援的語言子類型清單。</p>
@@ -56,12 +45,6 @@ URL 時指定的主機，則命名服務將拒絕此請求。僅有命名服務�
 <p>認證期間在使用者的瀏覽器中設置 Cookie 時，將在 Cookie 標頭中傳回網域清單。如果清單為空，則不會設定 Cookie 網域。換句話說，Federated Access Manager 階段作業 Cookie 將僅轉寄至
 Federated Access Manager 本身，而不會轉寄至此網域中的任何其他伺服器。</p><p>如果此網域中的其他伺服器要求 SSO，則必須將此屬性設定為具有 Cookie 網域的屬性。如果在一個 Federated Access Manager 的不同網域中有兩個介面，則將需要在此屬性中設定兩個 Cookie 網域。如果使用負載平衡器，Cookie 網域必須屬於負載平衡器網域，而不是負載平衡器後面的伺服器網域。此欄位的預設值是已安裝 Federated
 Access Manager 的網域。</p>
-
-<a name="fxcsh"></a><h5>登入服務 URL</h5>
-<p>此欄位指定登入頁面的 URL。此屬性的預設值為 <tt>/Service_DEPLOY_URI/UI/Login</tt>。</p>
-
-<a name="fxcrt"></a><h5>登出服務 URL</h5>
-<p>此欄位指定登出頁面的 URL。此屬性的預設值為 <tt>/Service_DEPLOY_URI/UI/Logout</tt>。</p>
 
 <a name="fxcmi"></a><h5>可用的語言環境</h5>
 <p>此屬性儲存為此平台配置的所有可用語言環境。請考量讓使用者選擇其各自語言環境的應用程式。此應用程式會從平台設定檔中取得此屬性，然後將語言環境清單展示給使用者。使用者將選擇某種語言環境，然後此應用程式會在使用者項目 <i>preferredLocale</i> 中設定此語言環境。</p>

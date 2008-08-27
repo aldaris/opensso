@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Registros  - Ayuda en l&#237;nea de la consola de Sun Java System Federated Access Manager 8.0
+  <title>Registros - Ayuda en l&#237;nea de la consola de Sun Federated Access Manager 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -30,8 +30,8 @@
 
 
 
-<a name="service.scserviceprofile.iplanetamloggingservice"></a><h4>Registros </h4>
-<p><a name="indexterm-209"></a>El servicio de registro proporciona mensajes de error y estado relacionados con
+<a name="service.scserviceprofile.iplanetamloggingservice"></a><h4>Registros</h4>
+<p><a name="indexterm-203"></a>El servicio de registro proporciona mensajes de error y estado relacionados con
 la administraci&#243;n de Federated Access Manager. Un administrador puede configurar valores como,
 por ejemplo, el tama&#241;o del archivo de registro y la ubicaci&#243;n de
 dicho archivo. Federated Access Manager puede registrar eventos en archivos de texto
@@ -79,14 +79,18 @@ de registro de historial.</p>
 
 <a name="fxbzh"></a><h5>Ubicaci&#243;n de archivo de registro</h5>
 <p>La funci&#243;n de registro basada en archivos necesita una ubicaci&#243;n en la
-que guardar los archivos de registro. Este campo acepta una ruta de
-directorio completa a dicha ubicaci&#243;n. La ubicaci&#243;n predeterminada es:</p><p><tt>/var/opt/SUNWam/logs</tt></p><p>Si se especifica un directorio diferente al predeterminado, Federated Access Manager crear&#225;
+que guardar los archivos de registro. .  La ubicaci&#243;n predeterminada es:</p><p><tt>CONFIG_DIR_SERVER_URI/logs</tt></p><p><tt>CONFIG_DIR_SERVER_URI/logs</tt> es una etiqueta que representa el directorio de configuraci&#243;n b&#225;sico y
+el URI del servidor de Federated Access Manager. En el tiempo de
+ejecuci&#243;n, el servicio de registro determina el directorio correcto de la instancia
+a la hora de realizar el proceso de registro. El valor de
+este atributo puede establecerse en una ruta expl&#237;cita, pero la ruta base
+deber&#225; ser su directorio de configuraci&#243;n.</p><p>Si se especifica un directorio diferente al predeterminado, Federated Access Manager crear&#225;
 este directorio en caso de no existir. Deber&#237;a definir los permisos necesarios
 para ese directorio (por ejemplo, 0700).</p><p>Cuando se configura la ubicaci&#243;n para el registro de base de datos
 (como Oracle o MySQL), parte de la ubicaci&#243;n del registro distingue entre
 may&#250;sculas y min&#250;sculas. Por ejemplo, si el registro se realiza en una
 base de datos Oracle, la ubicaci&#243;n del registro deber&#237;a ser (advierta la
-utilizaci&#243;n de may&#250;sculas y min&#250;sculas):</p><p><tt>jdbc:oracle:thin:@machine.domain:port:DBName</tt></p><p>Para configurar el registro en la base de datos, agregue los archivos
+utilizaci&#243;n de may&#250;sculas y min&#250;sculas):</p><p><tt>jdbc:oracle:thin:&#64;machine.domain:port:DBName</tt></p><p>Para configurar el registro en la base de datos, agregue los archivos
 del controlador JDBC a la ruta de clase JVM del contenedor Web.
 Deber&#225; agregar manualmente los archivos del controlador JDBC a la ruta de
 clase de la secuencia de comandos <tt>amadmin</tt>, de lo contrario, el registro
@@ -94,14 +98,24 @@ de <tt>amadmin</tt> no puede cargar el controlador JDBC.</p><p>Los cambios reali
 de guardarlos. No es necesario reiniciar el servidor. Sin embargo, s&#237; debe
 reiniciarlo si realiza cambios en el registro de seguridad.</p>
 
+<a name="ggyhl"></a><h5>Estado de registro</h5>
+<p>Especifica si el registro est&#225; activado (ACTIVO) o desactivado (INACTIVO). Durante la
+instalaci&#243;n el valor se configura en ACTIVO. </p>
+
+<a name="ggydj"></a><h5>Nombre de host de resoluci&#243;n de las entradas del registro</h5>
+<p>Si se establece en "false" (falso), las b&#250;squedas de host no se
+realizar&#225;n para rellenar el campo Nombre de host de la entrada del
+registro.</p>
+
 <a name="fxbwg"></a><h5>Tipo de registro</h5>
 <p>Permite especificar File (Archivo) para el registro de archivo sin formato, o
 DB para el registro de base de datos.</p><p>Si el nombre de usuario o la contrase&#241;a de base de datos
 no es v&#225;lida, esto afectar&#225; gravemente al procesamiento de Federated Access Manager.
-Si Federated Access Manager o la consola se vuelven inestables, debe definir
-la siguiente propiedad en <tt>AMConfig.properties</tt>:</p><p><i>com.iplanet.am.logstatus=INACTIVE</i></p><p>Una vez definida la propiedad, reinicie el servidor. A continuaci&#243;n, puede iniciar
+Si Federated Access Manager o la consola presentan inestabilidad, deber&#225; establecer el
+atributo Estado de registro en Inactivo. </p><p>Una vez definida la propiedad, reinicie el servidor. A continuaci&#243;n, puede iniciar
 una sesi&#243;n en la consola y restablecer el atributo de registro. A
-continuaci&#243;n, cambie la propiedad <i>logstatus</i> a <i>ACTIVE </i> y reinicie el servidor.</p>
+continuaci&#243;n, cambie la propiedad Estado de registro a <i>ACTIVO</i> y reinicie el
+servidor.</p>
 
 <a name="fxbrd"></a><h5>Nombre de usuario de base de datos</h5>
 <p>Este atributo acepta el nombre del usuario que se conectar&#225; a la
@@ -167,12 +181,19 @@ con la clave p&#250;blica RSA y se comparar&#225; el valor descifrado con
 el grupo de entradas registradas. La funci&#243;n de registro de seguridad detectar&#225;
 cualquier modificaci&#243;n en cualquier entrada registrada.</p>
 
+<a name="ghaeg"></a><h5>Registro de ubicaci&#243;n del almac&#233;n de certificados</h5>
+<p>Cuando est&#233; habilitado el registro seguro, el servicio de registro busca el
+certificado en la ubicaci&#243;n especificada por este atributo. La ruta de directorio
+real se determina en el tiempo de ejecuci&#243;n. El valor puede definirse
+en una ruta expl&#237;cita, pero Federated Access Manager deber&#225; poder acceder a
+la ruta b&#225;sica.</p>
+
 <a name="fxbxt"></a><h5>N&#250;mero m&#225;ximo de registros</h5>
 <p>Este atributo define el n&#250;mero m&#225;ximo de registros que mostrar&#225;n las interfaces
 de Java LogReader, independientemente de los registros que coincidan con la consulta
-de lectura. De forma predeterminada, est&#225; definido en 500. El usuario que
-llama a la API de registro mediante la clase <i>LogQuery</i> puede anular
-este registro.</p>
+de lectura. By default, it is set to 500. This attribute can
+be overridden by the caller of the Logging API through the <i> LogQuery</i>
+class.</p>
 
 <a name="fxbwp"></a><h5>N&#250;mero de archivos por archivaci&#243;n</h5>
 <p>Este atributo s&#243;lo es v&#225;lido para el registro seguro. Especifica cu&#225;ndo se
@@ -205,6 +226,15 @@ segundos.</p>
 <p>Cuando se selecciona como ON (Activado), Federated Access Manager define un l&#237;mite
 de tiempo para guardar en b&#250;fer los registros. La cantidad de tiempo
 se define en el atributo de tiempo de almacenamiento en b&#250;fer.</p>
+
+<a name="ghaer"></a><h5>Nivel de registro</h5>
+<p>Utilice este atributo para configurar el grado de detalle que debe contener
+un archivo de registro determinado eligiendo una de las opciones. Registro de
+servicios Federated Access Manager a nivel INFO. Los servicios SAML y de
+Federaci&#243;n de identidad tambi&#233;n registran a niveles m&#225;s detallados (FINE, FINER, FINEST).
+Adem&#225;s, tiene a su disposici&#243;n el nivel OFF, que puede utilizarse para
+desactivar el registro, y el nivel ALL, que puede utilizarse para habilitar
+el registro de todos los mensajes.</p>
 <br/>
 
 </body>

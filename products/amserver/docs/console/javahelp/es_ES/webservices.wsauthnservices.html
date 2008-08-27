@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Servicio Web de autenticaci&#243;n - Ayuda en l&#237;nea de la consola de Sun Java System Federated Access Manager 8.0
+  <title>Servicio Web de autenticaci&#243;n - Ayuda en l&#237;nea de la consola de Sun Federated Access Manager 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,7 +31,7 @@
 
 
 <a name="webservices.wsauthnservices"></a><h3>Servicio Web de autenticaci&#243;n</h3>
-<a name="indexterm-166"></a><p>El Servicio Web de autenticaci&#243;n define c&#243;mo realizar la autenticaci&#243;n mediante SOAP.
+<a name="indexterm-159"></a><p>El Servicio Web de autenticaci&#243;n define c&#243;mo realizar la autenticaci&#243;n mediante SOAP.
 El intercambio de informaci&#243;n de autenticaci&#243;n entre un consumidor de servicios Web
 (WSC) y el proveedor de servicios Web (WSP) se realiza mediante mensajes
 enlazados con SOAP. Los mensajes son una serie de solicitudes de clientes
@@ -42,10 +42,10 @@ adicionales o indicar un fallo o &#233;xito de autenticaci&#243;n. El Servicio W
 de autenticaci&#243;n se utiliza para la autenticaci&#243;n de servicio a servicio (no
 para usuarios). Los siguientes pasos detallan la secuencia entre el WSC y
 el Servicio Web de autenticaci&#243;n (WSP).</p>
-<ol><li><p>El intercambio de autenticaci&#243;n comienza con un WSC que env&#237;a una solicitud de autenticaci&#243;n SASL al Servicio Web de autenticaci&#243;n en nombre de un servicio principal. </p><p>El mensaje de solicitud contiene un identificador para el servicio principal e indica uno o m&#225;s mecanismos SASL que el servicio puede elegir.</p></li>
-<li><p>El Servicio Web de autenticaci&#243;n responde confirmando el m&#233;todo que se utilizar&#225; y, si se puede, iniciando un desaf&#237;o. </p><p>Si el Servicio Web de autenticaci&#243;n no admite ninguno de los m&#233;todos citados, responder&#225; anulando el intercambio. </p></li>
+<ol><li><p>El intercambio de autenticaci&#243;n comienza con un WSC que env&#237;a una solicitud de autenticaci&#243;n SASL al Servicio Web de autenticaci&#243;n en nombre de un servicio principal.</p><p>El mensaje de solicitud contiene un identificador para el servicio principal e indica uno o m&#225;s mecanismos SASL que el servicio puede elegir.</p></li>
+<li><p>El Servicio Web de autenticaci&#243;n responde confirmando el m&#233;todo que se utilizar&#225; y, si se puede, iniciando un desaf&#237;o.</p><p> Si el Servicio Web de autenticaci&#243;n no admite ninguno de los m&#233;todos citados, responder&#225; anulando el intercambio. </p></li>
 <li><p>El WSC responde con las credenciales necesarias para el m&#233;todo de autenticaci&#243;n seleccionado.</p></li>
-<li><p>El Servicio Web de autenticaci&#243;n responde aprobando o rechazando la autenticaci&#243;n. </p><p>Si se aprueba, la respuesta incluye las credenciales que el WSC necesita para invocar otros servicios Web (como el Servicio de detecci&#243;n). </p></li></ol>
+<li><p>El Servicio Web de autenticaci&#243;n responde aprobando o rechazando la autenticaci&#243;n.</p><p> Si se aprueba, la respuesta incluye las credenciales que el WSC necesita para invocar otros servicios Web (como el Servicio de detecci&#243;n). </p></li></ol>
 <p>Se pueden configurar los siguientes atributos globales del Servicio Web de autenticaci&#243;n
 para la implementaci&#243;n.</p>
 <ul><li><p><a href="mechanismhandlerslist.html">Lista de administradores de mecanismos</a></p></li>

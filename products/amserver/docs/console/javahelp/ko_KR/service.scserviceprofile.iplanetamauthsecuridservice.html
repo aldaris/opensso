@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>SecurID  - Sun Java System Federated Access Manager 8.0 콘솔 온라인 도움말
+  <title>SecurID  - Sun Federated Access Manager 8.0 콘솔 온라인 도움말
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,13 +31,11 @@
 
 
 <a name="service.scserviceprofile.iplanetamauthsecuridservice"></a><h4>SecurID </h4>
-<p><a name="indexterm-187"></a>이 모듈은 RSA ACE/서버 소프트웨어 및 RSA SecurID 인증자를 사용하는 인증을 허용합니다.
+<p><a name="indexterm-181"></a>이 모듈은 RSA ACE/서버 소프트웨어 및 RSA SecurID 인증자를 사용하는 인증을 허용합니다.
 Linux 또는 Solaris x86 플랫폼에서는 SecurID 인증 모듈을 사용할 수 없으므로 이
 두 플랫폼에서 등록, 구성 및 사용해서는 안됩니다. SecurID 인증 모듈은 Solaris에서만 사용할
 수 있습니다. SecurID 인증 속성은 영역 속성입니다. 속성은 다음과 같습니다.</p>
 <ul><li><p><a href="#fwbpt">ACE/서버 구성 경로</a></p></li>
-<li><p><a href="#fwbkv">도우미 구성 포트</a></p></li>
-<li><p><a href="#fwbpq">도우미 인증 포트</a></p></li>
 <li><p><a href="#fwbma">인증 수준</a></p></li></ul>
 
 
@@ -45,18 +43,6 @@ Linux 또는 Solaris x86 플랫폼에서는 SecurID 인증 모듈을 사용할 �
 <p>SecurID ACE/서버 <tt>sdconf.rec</tt> 파일이 있는 디렉토리를 지정합니다. 기본적으로 이 파일은 <tt>/opt/ace/data</tt>에 있습니다.
 이 필드에 다른 디렉토리를 지정한 경우에는 이 디렉토리가 있어야 SecurID 인증을 시도할
 수 있습니다.</p>
-
-<a name="fwbkv"></a><h5>도우미 구성 포트</h5>
-<p>SecurID 도우미가 시작될 때 SecurID 도우미 인증 포트 속성에 포함된 구성 정보를
-'수신'하는 포트를 지정합니다. 기본값은 58943입니다.</p><p>이 속성을 변경하는 경우 <tt>AMConfig.properties</tt> 파일의 <i>securidHelper.ports</i> 항목도 변경하고 Federated Access Manager를
-다시 시작해야 합니다. <tt>AMConfig.properties</tt> 파일의 항목은 SecurID 도우미 인스턴스에 대한 포트 목록입니다.
-각 포트는 공백으로 구분되어 있습니다. 다른 <tt>sdconf.rec</tt> 파일을 가진 다른 ACE/서버와 통신하는
-각 영역에 대해 별도의 SecurID 도우미가 있어야 합니다.</p>
-
-<a name="fwbpq"></a><h5>도우미 인증 포트</h5>
-<p>영역의 SecurID 인증 모듈이 인증 요청을 '수신'하도록 SecurID 도우미 인스턴스를 구성하는 포트를
-지정합니다. 이 포트 번호는 SecurID 또는 UNIX 인증을 사용하는 모든 영역에서 고유해야
-합니다. 기본값은 57943입니다.</p>
 
 <a name="fwbma"></a><h5>인증 수준</h5>
 <p>인증 수준은 각 인증 방법에 대해 별도로 설정됩니다. 이 값은 인증 기법을

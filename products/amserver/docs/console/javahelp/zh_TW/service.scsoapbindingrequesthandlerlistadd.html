@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>配置請求處理程式 - Sun Java System Federated Access Manager 8.0 主控台線上說明
+  <title>配置請求處理程式 - Sun Federated Access Manager 8.0 主控台線上說明
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,7 +31,7 @@
 
 
 <a name="service.scsoapbindingrequesthandlerlistadd"></a><h5>配置請求處理程式</h5>
-<a name="indexterm-160"></a><a name="indexterm-161"></a><p>每一個使用 SOAP 連結服務並基於 Liberty 的識別服務都必須在伺服器端實作 <tt>RequestHandler</tt> 介面。請求處理程式清單屬性會儲存 Web 服務 (用來執行請求處理程式) 實作類別的相關資訊。請求處理程式清單會顯示包含以管道分隔的鍵/值對的項目，如下所示：<tt>key=disco|class=com.example.identity.liberty.ws.disco.DiscoveryService</tt>。</p><ol>
+<a name="indexterm-153"></a><a name="indexterm-154"></a><p>每一個使用 SOAP 連結服務並基於 Liberty 的識別服務都必須在伺服器端實作 <tt>RequestHandler</tt> 介面。請求處理程式清單屬性會儲存 Web 服務 (用來執行請求處理程式) 實作類別的相關資訊。請求處理程式清單會顯示包含以管道分隔的鍵/值對的項目，如下所示：<tt>key=disco|class=com.example.identity.liberty.ws.disco.DiscoveryService</tt>。</p><ol>
 <li><b>按一下 [新建] 以顯示 [新建請求處理程式] 屬性，或按一下已配置的鍵值以修改現有屬性。</b></li>
 <li><b>根據下列資訊提供屬性值：</b><dl><dt>key</dt>
 <dd><p>此必需的參數是 SOAP 端點之 URI 路徑的最後部份。Access Manager 中的 SOAP 端點是 SOAP 收件者 servlet。SOAP 收件者的 URI 是 <tt><b></tt><i>protocol </i><tt>://</tt><i>host</i><tt>:</tt><i>port</i><tt>/</tt><i> deploy-uri</i><tt>/Liberty/</tt><i>key</i><tt></b></tt>。如果您將 <tt><b>disco</b></tt> 定義為 key，則對應探索服務的 SOAP 端點的 URI 路徑將是：<tt><b></tt><i>protocol</i><tt>://</tt><i>host</i><tt>:</tt><i>port </i><tt>/amserver/Liberty/disco</b></tt>。連線至 SOAP 收件者時，不同服務用戶端使用不同的 key。</p></dd>

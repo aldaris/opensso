@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Active Directory - Ayuda en l&#237;nea de la consola de Sun Java System Federated Access Manager 8.0
+  <title>Active Directory - Ayuda en l&#237;nea de la consola de Sun Federated Access Manager 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,7 +31,7 @@
 
 
 <a name="service.scserviceprofile.sunamauthadservice"></a><h4>Active Directory</h4>
-<p><a name="indexterm-173"></a>Este tipo de m&#243;dulo funciona del mismo modo que el tipo de
+<p><a name="indexterm-166"></a>Este tipo de m&#243;dulo funciona del mismo modo que el tipo de
 m&#243;dulo de autenticaci&#243;n LDAP, pero utiliza Microsoft Active Directory en lugar de
 un directorio LDAP. La utilizaci&#243;n de este m&#243;dulo permite que LDAP y
 Active Directory coexistan en el mismo dominio. Los atributos de autenticaci&#243;n de
@@ -103,11 +103,10 @@ como administrador. El servicio de autenticaci&#243;n debe establecer un enlace 
 DN para buscar un DN de usuario coincidente en funci&#243;n del Id.
 de inicio de sesi&#243;n del usuario. El valor predeterminado es <tt>amldapuser.</tt> Se
 reconocer&#225; cualquier DN v&#225;lido.</p><p>Aseg&#250;rese de que la contrase&#241;a es correcta antes de cerrar la sesi&#243;n.
-Si es incorrecta, se le bloquear&#225;. En caso de que se produzca
-esta situaci&#243;n, puede iniciar una sesi&#243;n con el DN de superusuario en
-la propiedad <i>com.iplanet.authentication.super.user </i> del <tt>AMConfig.Properties</tt>. De forma predeterminada, &#233;sta es la cuenta
-<tt>amAdmin</tt> con la que iniciar&#237;a una sesi&#243;n normalmente, aunque se utilizar&#225; el
-DN completo. Por ejemplo:</p><p><tt>uid_amAdmin,ou=People,</tt><i>FederatedAccessManager-base </i><tt></tt></p>
+Si es incorrecta, se le bloquear&#225;. Si esto sucede puede iniciar la
+sesi&#243;n con el ND de superusuario. De forma predeterminada, &#233;sta es la
+cuenta <tt>amAdmin</tt> con la que iniciar&#237;a una sesi&#243;n normalmente, aunque se utilizar&#225;
+el DN completo. Por ejemplo:</p><p><tt>uid_amAdmin,ou=People,</tt><i>FederatedAccessManager-base </i><tt></tt></p>
 
 <a name="fwbix"></a><h5>Contrase&#241;a para conexi&#243;n de superusuario</h5>
 <p>Contiene la contrase&#241;a para el perfil de administrador especificado en el campo

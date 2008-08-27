@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Configuration d'un pool de connexions &#8212; Exemple - Aide en ligne de la console Sun Java System Federated Access Manager 8.0
+  <title>Configuration d'un pool de connexions &#8212; Exemple - Aide en ligne de la console Sun Federated Access Manager 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -45,35 +45,35 @@ avec les attributs suivants :</b><dl><dt>Nom du pool</dt>
 <dt>utilisateur</dt>
 <dd><p>Nom d'utilisateur du mot de passe de base de donn&#233;es.</p></dd>
 <dt>mot de passe</dt>
-<dd><p>Mot de passe de l'utilisateur.</p></dd>
+<dd><p> Mot de passe de l'utilisateur.</p></dd>
 <dt>Nom de la base de donn&#233;es</dt>
 <dd><p>Nom de la base de donn&#233;es.</p></dd>
 </dl>
 
-<hr><p><b>Remarque &#8211; </b>Le fichier jar contenant la classe de sources de donn&#233;es et la
-classe de pilotes JDBC mentionn&#233;e dans les &#233;tapes suivantes doivent &#234;tre ajout&#233;es
-au chemin de la classe d'applications.</p>
+<hr><p><b>Remarque &#8211; </b>Le fichier jar contenant la classe <i>DataSource</i> et la classe de pilotes
+JDBC mentionn&#233;e dans les &#233;tapes suivantes doit &#234;tre ajout&#233; au chemin de
+la classe d'applications.</p>
 <hr>
 </li>
 <li><b>Configurez les ressources JDBC. Dans la console du serveur Web, cr&#233;ez une
 ressource JDBC avec les attributs suivants :</b><dl><dt>Nom JNDI</dt>
 <dd><p><i>jdbc/Pool_exemple</i></p></dd>
 <dt>Nom du pool</dt>
-<dd><p><i>Pool_exemple</i></p></dd>
+<dd><p><i>pool_exemple</i></p></dd>
 <dt>Ressource de donn&#233;es activ&#233;e</dt>
 <dd><p><i>on</i></p></dd>
 </dl>
 </li>
-<li><b>Ajoutez les lignes suivantes dans le fichier <tt>sun-web.xml</tt> de l'application :</b><pre>&#60;r&#233;f-ressource>
-      &#60;nom-r&#233;f-res>jdbc/mySQL&#60;/nom-r&#233;f-res>
-      &#60;nom-jndi>jdbc/samplePool&#60;/nom-jndi>
-&#60;/r&#233;f-ressource></pre></li>
-<li><b>Ajoutez les lignes suivantes au fichier web.xml de l'application : </b><pre>&#60;r&#233;f-ressource>
-       &#60;description>Base de donn&#233;es mySQL&#60;/description>
-       &#60;nom-r&#233;f-res>jdbc/mySQL&#60;/nom-r&#233;f-res>
-       &#60;type-res>javax.sql.DataSource&#60;/type-res>
-       &#60;auth-res>Container&#60;/auth-res>
-&#60;/r&#233;f-ressource></pre></li>
+<li><b>Ajoutez les lignes suivantes dans le fichier <tt>sun-web.xml</tt> de l'application :</b><pre>&#60;resource-ref>
+      &#60;res-ref-name>jdbc/mySQL&#60;/res-ref-name>
+      &#60;jndi-name>jdbc/samplePool&#60;/jndi-name>
+&#60;/resource-ref></pre></li>
+<li><b>Ajoutez les lignes suivantes au fichier web.xml de l'application :</b><pre>&#60;resource-ref>
+       &#60;description>mySQL Database&#60;/description>
+       &#60;res-ref-name>jdbc/mySQL&#60;/res-ref-name>
+       &#60;res-type>javax.sql.DataSource&#60;/res-type>
+       &#60;res-auth>Container&#60;/res-auth>
+&#60;/resource-ref></pre></li>
 <li><b>Une fois les param&#232;tres saisis, la valeur de cet attribut devient <i>java:comp/env/jdbc/mySQL</i>.</b></li></ol>
 <br/>
 

@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>索引 - Sun Java System Federated Access Manager 8.0 主控台線上說明
+  <title>索引 - Sun Federated Access Manager 8.0 主控台線上說明
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -36,6 +36,13 @@
 </div><h4>R</h4>
 <div class="indexdiv">
 <dl>
+<dd><tt>RelayState</tt><dl>
+<dd><a href="federation.samlv2spassertioncontent.html#ggvgt">指定處理</a></dd>
+<dd><a href="federation.wsfedsp.html#ggwts">預設轉送狀態</a></dd>
+</dl>
+</dd>
+</dl>
+<dl>
 <dd>resourceID 對映程式, <a href="resourceidmapper.html">ResourceID 對映程式</a></dd>
 </dl>
 <dl>
@@ -44,7 +51,7 @@
 </div><h4>S</h4>
 <div class="indexdiv">
 <dl>
-<dd>SAML, <a href="federation.fssamlservice.html">SAML1.x </a><dl>
+<dd>SAML, <a href="federation.fssamlservice.html">SAML1.x</a><dl>
 <dd>可信任的合作夥伴<dl>
 <dd>配置步驟 1, <a href="federation.fssamlselecttrustedpartnertype.html">可信任的合作夥伴：選取夥伴類型及設定檔</a></dd>
 <dd>配置步驟 2, <a href="federation.fssamltrustedpartnersadd.html">可信任的合作夥伴：配置可信任的合作夥伴屬性</a></dd>
@@ -67,7 +74,7 @@
 <dd><a href="requesthandlerlist.html">請求處理程式清單</a></dd>
 <dd><a href="service.scsoapbindingrequesthandlerlistadd.html">配置請求處理程式</a></dd>
 <dd><a href="service.scsaml2soapbinding.html#ggokv">請求處理程式清單</a></dd>
-<dd><a href="ggojs.html">配置請求處理程式</a></dd>
+<dd><a href="service.scsaml2soapbindingrequesthandlerlistadd.html">配置請求處理程式</a></dd>
 </dl>
 </dd>
 <dd>機制處理程式清單<dl>
@@ -122,14 +129,12 @@
 </dl>
 <dl>
 <dd>主體<dl>
-<dd><a href="normalsubject.html">主體</a></dd>
+<dd><a href="policy.selectsubjecttype.html">主體</a></dd>
 <dd><a href="idm.entities.html">主體</a></dd>
 </dl>
 <dl>
-<dd>角色, <a href="subject.role.html">角色</a></dd>
 <dd>使用者, <a href="subjectuser.html">使用者</a></dd>
-<dd>群組, <a href="subject.group.html">群組</a></dd>
-<dd>篩選的角色, <a href="subject.filteredrole.html">篩選的角色</a></dd>
+<dd>群組, <a href="idm.entitiesgroup.html">群組</a></dd>
 </dl>
 </dd>
 </dl>
@@ -170,12 +175,7 @@
 </dd>
 </dl>
 <dl>
-<dd>附屬提供者實體, <a href="federation.fsentitydescriptors.html">實體：提供者及附屬提供者</a><dl>
-<dd>一般屬性, <a href="federation.fsentitydescriptorsprofile.html">修改提供者實體或是附屬提供者實體的一般屬性</a></dd>
-<dd>建立, <a href="federation.fsentitydescriptorsadd.html">建立提供者實體或附屬提供者實體</a></dd>
-<dd>與附屬提供者, <a href="federation.fsentitydescriptorsaffiliate.html">新增成員至附屬提供者實體</a></dd>
-</dl>
-</dd>
+<dd>附屬提供者實體, <a href="federation.createsaml2metadata.html">實體提供者</a></dd>
 </dl>
 <dl>
 <dd>服務更新, <a href="serviceupdateenabled.html">服務更新</a></dd>
@@ -187,7 +187,7 @@
 <dd>服務實例更新類別, <a href="serviceinstanceupdateclass.html">服務實例更新類別</a></dd>
 </dl>
 <dl>
-<dd>使用者, 新增至服務、角色和群組, <a href="addusertogroup.html">新增使用者至角色與群組</a></dd>
+<dd>使用者, 增加至服務、角色和群組, <a href="idm.entitymembership.html">將使用者增加至群組</a></dd>
 </dl>
 <dl>
 <dd>使用者管理, <a href="dm.home.html">目錄管理</a></dd>
@@ -256,7 +256,7 @@
 <dd>階段作業模組, <a href="sessions.html">階段作業</a></dd>
 </dl>
 <dl>
-<dd>規則, <a href="normalrule.html">規則</a></dd>
+<dd>規則, <a href="policy.selectservicetype.html">規則</a></dd>
 </dl>
 <dl>
 <dd>探索更新的策略評估, <a href="policyevaldiscoupdate.html">探索更新的策略評估</a></dd>
@@ -294,7 +294,7 @@
 <dd>授權程式外掛程式類別, <a href="authorizerpluginclass.html">授權程式外掛程式類別：</a></dd>
 </dl>
 <dl>
-<dd>條件, <a href="policyconditions.html">條件</a><dl>
+<dd>條件, <a href="policy.selectcondition.html">條件</a><dl>
 <dd>IP 位址/DNS 名稱, <a href="policy.pmdefaultipcondition.html">IP 位址/DNS 名稱</a></dd>
 <dd>LDAP 篩選器, <a href="policy.conditionadd.html">LDAP 篩選器條件</a></dd>
 <dd>按模組實例認證, <a href="policy.pmdefaultauthschemeconditionadd.html">按模組實例認證</a></dd>
@@ -319,17 +319,17 @@
 <dl>
 <dd>策略, <a href="policy.policy.html">策略</a><dl>
 <dd>一般策略, <a href="normalpolicy.html">一般策略</a></dd>
-<dd>主體, <a href="normalsubject.html">主體</a></dd>
+<dd>主體, <a href="policy.selectsubjecttype.html">主體</a></dd>
 <dd>回應提供者, <a href="responseprovider.html">回應提供者</a></dd>
 <dd>若要建立新參照策略, <a href="policy.policyreferraladd.html">建立新的參照策略</a></dd>
-<dd>若要新增主體, <a href="policy.subjectadd.html">將主體新增至策略</a></dd>
-<dd>若要新增回應提供者, <a href="policy.responseprovideradd.html">將回應提供者新增至策略</a></dd>
-<dd>若要新增參照, <a href="policy.selectreferraltype.html">將參照新增至策略</a></dd>
-<dd>若要新增規則, <a href="policy.ruleadd.html">將規則新增至策略</a></dd>
-<dd>若要新增條件, <a href="policy.selectconditiontype.html">將條件新增至策略</a></dd>
+<dd>若要增加主體, <a href="policy.subjectadd.html">將主體增加至策略</a></dd>
+<dd>若要增加回應提供者, <a href="policy.responseprovideradd.html">將回應提供者增加至策略</a></dd>
+<dd>若要增加參照, <a href="policy.selectreferraltype.html">將參照增加至策略</a></dd>
+<dd>若要增加規則, <a href="policy.ruleadd.html">將規則增加至策略</a></dd>
+<dd>若要增加條件, <a href="policy.selectconditiontype.html">將條件增加至策略</a></dd>
 <dd>參照策略, <a href="fyfby.html">參照策略</a></dd>
-<dd>規則, <a href="normalrule.html">規則</a></dd>
-<dd>條件, <a href="policyconditions.html">條件</a></dd>
+<dd>規則, <a href="policy.selectservicetype.html">規則</a></dd>
+<dd>條件, <a href="policy.selectcondition.html">條件</a></dd>
 </dl>
 </dd>
 </dl>
@@ -340,13 +340,7 @@
 <dd>提供者 ID (探索服務), <a href="dsproviderid.html">提供者 ID</a></dd>
 </dl>
 <dl>
-<dd>提供者實體, <a href="federation.fsentitydescriptors.html">實體：提供者及附屬提供者</a><dl>
-<dd>一般屬性, <a href="federation.fsentitydescriptorsprofile.html">修改提供者實體或是附屬提供者實體的一般屬性</a></dd>
-<dd>建立, <a href="federation.fsentitydescriptorsadd.html">建立提供者實體或附屬提供者實體</a></dd>
-<dd>與服務提供者, <a href="federation.fsserviceprovider.html">新增服務提供者至提供者實體</a></dd>
-<dd>與識別提供者, <a href="federation.fsidentityprovider.html">新增識別提供者至提供者實體</a></dd>
-</dl>
-</dd>
+<dd>提供者實體, <a href="federation.createsaml2metadata.html">實體提供者</a></dd>
 </dl>
 <dl>
 <dd>項目處理程式外掛程式類別, <a href="entryhandlerpluginclass.html">項目處理程式外掛程式類別：</a></dd>
@@ -359,9 +353,9 @@
 </dl>
 <dl>
 <dd>資料存放區, <a href="realm.idrepo.html">資料存放區</a><dl>
-<dd>Active Directory 屬性, <a href="adattrs.html">Active Directory 屬性</a></dd>
-<dd>LDPAv3 儲存庫外掛程式屬性, <a href="gdoto.html">通用 LDAPv3 屬性</a></dd>
-<dd>具有 AM 模式的 Sun Directory Server 屬性, <a href="sundirattrs.html">具有 Federated Access Manager 模式的 Sun Directory Server 屬性</a></dd>
+<dd>Active Directory 屬性, <a href="realm.idrepoeditad.html">Active Directory 屬性</a></dd>
+<dd>LDPAv3 儲存庫外掛程式屬性, <a href="realm.idrepoeditldapv3.html">通用 LDAPv3 屬性</a></dd>
+<dd>具有 AM 模式的 Sun Directory Server 屬性, <a href="realm.idrepoeditfamschema.html">具有 Federated Access Manager 模式的 Sun Directory Server 屬性</a></dd>
 <dd>建立新的資料存放區, <a href="realm.idreposelecttype.html">建立新的資料存放區</a></dd>
 </dl>
 </dd>
@@ -374,20 +368,8 @@
 </dl>
 <dl>
 <dd>實體<dl>
-<dd>在附屬提供者實體中建立附屬提供者, <a href="federation.fsentitydescriptorsaffiliate.html">新增成員至附屬提供者實體</a></dd>
-<dd>附屬提供者, <a href="federation.fsentitydescriptors.html">實體：提供者及附屬提供者</a></dd>
-<dd>建立附屬提供者, <a href="federation.fsentitydescriptorsadd.html">建立提供者實體或附屬提供者實體</a></dd>
-<dd>建立提供者, <a href="federation.fsentitydescriptorsadd.html">建立提供者實體或附屬提供者實體</a></dd>
-<dd>修改一般屬性, <a href="federation.fsentitydescriptorsprofile.html">修改提供者實體或是附屬提供者實體的一般屬性</a></dd>
-<dd>修改連絡人員, <a href="federation.fseditcontactperson.html">修改提供者實體內的連絡人員設定檔</a></dd>
-<dd>修改提供者實體內的代管服務提供者屬性, <a href="federation.fsserviceproviderhostedprofile.html">修改提供者實體內的代管服務提供者屬性</a></dd>
-<dd>修改提供者實體內的代管識別提供者屬性, <a href="federation.fsidentityproviderhostedprofile.html">修改提供者實體內的代管識別提供者屬性</a></dd>
-<dd>修改提供者實體內的遠端服務提供者屬性, <a href="federation.fsserviceproviderremoteprofile.html">修改提供者實體內的遠端服務提供者屬性</a></dd>
-<dd>修改提供者實體內的遠端識別提供者屬性, <a href="federation.fsidentityproviderremoteprofile.html">修改提供者實體內的遠端識別提供者屬性</a></dd>
-<dd>提供者, <a href="federation.fsentitydescriptors.html">實體：提供者及附屬提供者</a></dd>
-<dd>新增服務提供者至提供者實體, <a href="federation.fsserviceprovider.html">新增服務提供者至提供者實體</a></dd>
-<dd>新增連絡人員, <a href="federation.fscreatecontactperson.html">新增連絡人員至提供者實體內的提供者</a></dd>
-<dd>新增識別提供者至提供者實體, <a href="federation.fsidentityprovider.html">新增識別提供者至提供者實體</a></dd>
+<dd>附屬提供者, <a href="federation.createsaml2metadata.html">實體提供者</a></dd>
+<dd>提供者, <a href="federation.createsaml2metadata.html">實體提供者</a></dd>
 </dl>
 </dd>
 </dl>
@@ -398,6 +380,18 @@
 <dd>認證回應訊息, <a href="authresponsemessage.html">認證回應訊息</a></dd>
 </dl>
 <dl>
+<dd>認證環境<dl>
+<dd>屬性<dl>
+<dd><a href="federation.samlv2spassertioncontent.html#ggvhb">指定內容</a></dd>
+<dd><a href="federation.samlv2idpassertioncontent.html#ggwdf">指定內容</a></dd>
+<dd><a href="federation.idffidp.html#ggwnn">認證環境</a></dd>
+<dd><a href="federation.idffsp.html#ggwrv">認證環境</a></dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl>
 <dd>認證屬性<dl>
 <dd>Active Directory, <a href="service.scserviceprofile.sunamauthadservice.html">Active Directory</a></dd>
 <dd>HTTP Basic, <a href="service.scserviceprofile.iplanetamauthhttpbasicservice.html">HTTP Basic</a></dd>
@@ -405,8 +399,8 @@
 <dd>LDAP, <a href="service.scserviceprofile.iplanetamauthldapservice.html">LDAP </a></dd>
 <dd>MSISDN, <a href="service.scserviceprofile.sunamauthmsisdnservice.html">MSISDN </a></dd>
 <dd>RADIUS, <a href="service.scserviceprofile.iplanetamauthradiusservice.html">RADIUS </a></dd>
+<dd>SAE, <a href="service.scserviceprofile.sunamauthsaeservice.html">SAE</a></dd>
 <dd>SafeWord, <a href="service.scserviceprofile.iplanetamauthsafewordservice.html">SafeWord</a></dd>
-<dd>SAML, <a href="service.scserviceprofile.sunamauthsamlservice.html">SAML</a></dd>
 <dd>SecurID, <a href="service.scserviceprofile.iplanetamauthsecuridservice.html">SecurID </a></dd>
 <dd>UNIX, <a href="service.scserviceprofile.iplanetamauthunixservice.html">UNIX </a></dd>
 <dd>Windows Desktop SSO, <a href="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice.html">Windows Desktop SSO</a></dd>
@@ -417,6 +411,7 @@
 <dd>資料存放區, <a href="service.scserviceprofile.sunamauthdatastoreservice.html">資料存放區</a></dd>
 <dd>認證配置, <a href="authentication.authconfig.html">認證配置</a></dd>
 <dd>憑證, <a href="service.scserviceprofile.iplanetamauthcertservice.html">憑證 </a></dd>
+<dd>聯合, <a href="ggulh.html">聯合</a></dd>
 </dl>
 </dd>
 </dl>
@@ -428,7 +423,7 @@
 <dd>建立新的, <a href="realm.rmrealmadd.html">建立新的範圍</a></dd>
 <dd>建立新的認證模組, <a href="authentication.newauthinstance.html">建立新的認證模組實例</a></dd>
 <dd>建立新的認證鏈接, <a href="authentication.newauthconfig.html">建立新的認證鏈接</a></dd>
-<dd>將服務新增至, <a href="realm.servicesadd.html">將服務新增至範圍</a></dd>
+<dd>將服務增加至, <a href="realm.servicesadd.html">將服務增加至範圍</a></dd>
 <dd>策略, <a href="policy.policy.html">策略</a></dd>
 <dd>資料存放區, <a href="realm.idrepo.html">資料存放區</a></dd>
 <dd>認證, <a href="authentication.authproperties.html">認證</a></dd>
@@ -448,7 +443,7 @@
 <dl>
 <dd>配置<dl>
 <dd><a href="service.scsoapbindingrequesthandlerlistadd.html">配置請求處理程式</a></dd>
-<dd><a href="ggojs.html">配置請求處理程式</a></dd>
+<dd><a href="service.scsaml2soapbindingrequesthandlerlistadd.html">配置請求處理程式</a></dd>
 </dl>
 </dd>
 </dl>
@@ -464,12 +459,33 @@
 <dd>隱含資源, <a href="useimpliedresource.html">隱含資源</a></dd>
 </dl>
 <dl>
+<dd>環境參照屬性<dl>
+<dd><a href="federation.samlv2spassertioncontent.html#ggvhb">指定內容</a></dd>
+<dd><a href="federation.samlv2idpassertioncontent.html#ggwdf">指定內容</a></dd>
+<dd><a href="federation.idffidp.html#ggwnn">認證環境</a></dd>
+<dd><a href="federation.idffsp.html#ggwrv">認證環境</a></dd>
+</dl>
+</dd>
+</dl>
+<dl>
 <dd>檢視階段作業, <a href="viewsession.html">檢視階段作業</a></dd>
 </dl>
 <dl>
 <dd>識別管理<dl>
 <dd>使用者<dl>
-<dd>新增至服務、角色和群組, <a href="addusertogroup.html">新增使用者至角色與群組</a></dd>
+<dd>增加至服務、角色和群組, <a href="idm.entitymembership.html">將使用者增加至群組</a></dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl>
+<dd>屬性<dl>
+<dd>環境參照<dl>
+<dd><a href="federation.samlv2spassertioncontent.html#ggvhb">指定內容</a></dd>
+<dd><a href="federation.samlv2idpassertioncontent.html#ggwdf">指定內容</a></dd>
+<dd><a href="federation.idffidp.html#ggwnn">認證環境</a></dd>
+<dd><a href="federation.idffsp.html#ggwrv">認證環境</a></dd>
 </dl>
 </dd>
 </dl>

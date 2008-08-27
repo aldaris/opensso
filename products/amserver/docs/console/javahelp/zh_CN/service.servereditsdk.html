@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>SDK - Sun Java System Federated Access Manager 8.0 控制台联机帮助
+  <title>SDK - Sun Federated Access Manager 8.0 控制台联机帮助
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -62,7 +62,7 @@ Directory）可能不支持代理服务器。</p>
 <a name="ggndm"></a><h5>禁用的事件服务连接</h5>
 <p>指定要禁用的事件连接。值（不区分大小写）可以为：</p>
 <ul><li><p>aci &#8212; 更改为 aci 属性，使用 LDAP 过滤器 (aci=*) 搜索。</p></li>
-<li><p>sm &#8212; Federated Access Manager 信息树（或服务管理节点）中的更改，包含具有 <tt>sunService</tt> 或 <tt>sunServiceComponent</tt> 标记对象类的对象。例如，您可以创建用于定义受保护资源的访问权限的策略，或者修改现有策略的规则、主题、条件或响应提供者。</p></li>
+<li><p>sm &#8212; Federated Access Manager 信息树（或服务管理节点）中的更改，包含具有 <tt>sunService</tt> 或 <tt>sunServiceComponent</tt> 标记对象类的对象。例如，您可以创建用于定义受保护资源的访问权限的策略，或者修改现有策略的规则、主体、条件或响应提供者。</p></li>
 <li><p>um &#8212; 用户目录（或用户管理节点）中的更改。例如，您可以更改用户的名称或地址。</p></li></ul>
 <p>例如，要禁用对 Access Manager 信息树（或服务管理节点）更改的持久性搜索：</p><p><tt>com.sun.am.event.connection.disable.list=sm </tt></p>
 <hr><p><b>注意 &#8211; </b>持久性搜索会消耗 Directory Server 的部分性能。如果认为在产品环境中删除一些性能消耗十分重要，则可以利用该属性禁用一个或多个持久性搜索。</p><p>但是，在禁用持久性搜索之前，您应该了解如上所述的限制。除非绝对必要，否则强烈建议不要更改该属性。引入该属性主要用于在使用多个 2.1 J2EE 代理时避免消耗 Directory Server，因为每个代理都要建立这些持久性搜索。2.2 J2EE 代理不再建立这些持久性搜索，因此您可能无需使用该属性。</p><p>不建议禁用这些组件的持久性搜索，因为禁用了持久性搜索的组件无法从 Directory Server 接收通知。因此，不会通知组件高速缓存在 Directory Server 中对特定组件所作的更改。例如，如果您在用户目录 (<tt>um</tt>) 中禁用了对更改的持久性搜索，则 Access Manager 不会从

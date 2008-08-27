@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>SAMLv2 SOAP バインド - Sun Java System Federated Access Manager 8.0 コンソールオンラインヘルプ
+  <title>SAMLv2 SOAP バインド - Sun Federated Access Manager 8.0 コンソールオンラインヘルプ
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,21 +31,11 @@
 
 
 <a name="service.scsaml2soapbinding"></a><h4>SAMLv2 SOAP バインド</h4>
-
+<p>SAMLv2 SOAP バインドサービスは、Federated Access Manager クライアントと Federated Access Manager サーバーとの間で SAMLv2 の要求および応答メッセージを
+SOAP ベースで交換できるようにします。受信された要求は、要求ハンドラに委譲され、さらに処理されます。要求ハンドラに対するキーであるメタエイリアスは、SOAP バインドサービス URL にあります。メタエイリアスと要求ハンドラのマッピングは、SAMLv2 SOAP バインドサービスに格納され、Federated Access Manager の設定ストアから読み取ることができます。 </p>
 
 <a name="ggokv"></a><h5>要求ハンドラリスト</h5>
-<a name="indexterm-198"></a><a name="indexterm-199"></a><p>SOAP バインドサービスは、要求メッセージを処理して応答を返信するための <tt>RequestHandler</tt> インタフェースを提供します。このインタフェースは、SOAP バインドサービスを使用している Liberty ベースの各アイデンティティーサービスによって、サーバー側に実装される必要があります。「要求ハンドラリスト」属性は、要求ハンドラを実装している Web サービスの実装クラスに関する情報を格納します。要求ハンドラリストには、キーと値のペアを含むエントリがパイプ文字で区切られて表示されます。たとえば、<tt>key=disco|class=com.example.identity.liberty.ws.disco.DiscoveryService</tt> のように表示されます。次の表は各パラメータの説明です。</p><table><col width="50%"><col width="50%"><tr><th align="left" valign="top" scope="column"><p>パラメータ</p></th>
-<th align="left" valign="top" scope="column"><p>ヘッダー</p></th>
-</tr>
-<tr><td align="left" valign="top" scope="row"><p><tt>key</tt></p></td>
-<td align="left" valign="top" scope="row"><p>必須の<tt>キー</tt>パラメータは、SOAP エンドポイントに対する URI
-パスの最後の部分です。Access Manager の SOAP エンドポイントは、SOAP 受信者サーブレットです。SOAP 受信者の URI は <tt><b></tt><i>protocol</i><tt>://</tt><i> host</i><tt>:</tt><i>port</i><tt>/</tt><i>deploy-uri</i><tt>/Liberty/key</b></tt> です。キーとして <tt><b>disco</b></tt>
-を定義する場合、対応するディスカバリサービスの SOAP エンドポイントへの URI パスは <tt><b></tt><i> protocol</i><tt>://</tt><i>host</i><tt>:</tt><i>port</i><tt>/amserver/Liberty/disco</b></tt> のようになります。SOAP 受信者への接続時には、さまざまなサービスクライアントがそれぞれ別のキーを使用します。</p></td>
-</tr>
-<tr><td align="left" valign="top" scope="row"><p><tt>class</tt></p></td>
-<td align="left" valign="top" scope="row"><p>必須の<tt>クラス</tt>パラメータは、特定のアイデンティティーサービスの要求ハンドラ実装クラスの名前を指定します。次に例を示します。<tt>class=com.example.identity.liberty.ws.disco.DiscoveryService</tt></p></td>
-</tr>
-</table><p>新しい要求ハンドラを追加するには、<b>Broken Link (Target ID: SERVICE.SCSAML2SOAPBINDINGREQUESTHANDLERLISTADD)</b>を参照してください。</p>
+<a name="indexterm-192"></a><a name="indexterm-193"></a><p>要求ハンドラリストは、メタエイリアスから要求ハンドラ実装へのマッピングを含むキーと値のペアのエントリのリストです。Federated Access Manager 8.0 サーバーがポリシー決定ポイント (PDP) として機能するように設定されている場合は、この属性を設定する必要があります。 </p><p>「<i>キー</i>」はポリシー決定ポイントのメタエイリアスで、「<i>クラス</i>」は XACML 要求を処理できる要求ハンドラインタフェースの実装を表す Java クラス名です。  </p><p>たとえば、XACML ポリシー決定ポイントが <tt>/pdp</tt> で、インタフェースの実装が <tt>com.sun.identity.xacml.plugins.XACMLAuthzDecisionQueryHandler</tt> である場合は、キーを <tt>/pdp</tt> に設定し、クラスを <tt>com.sun.identity.xacml.plugins.XACMLAuthzDecisionQueryHandler</tt> に設定するようにしてください。 </p>
 <br/>
 
 </body>

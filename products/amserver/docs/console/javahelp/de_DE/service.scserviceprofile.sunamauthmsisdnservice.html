@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>MSISDN  - Online-Hilfe zur Sun Java System Federated Access Manager 8.0-Konsole
+  <title>MSISDN - Online-Hilfe zur Sun Federated Access Manager 8.0-Konsole
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -30,13 +30,13 @@
 
 
 
-<a name="service.scserviceprofile.sunamauthmsisdnservice"></a><h4>MSISDN </h4>
-<p><a name="indexterm-183"></a>Das Authentifizierungsmodul "Mobile Station Integrated Services Digital Network (MSISDN)" erm&#246;glicht die Authentifizierung
+<a name="service.scserviceprofile.sunamauthmsisdnservice"></a><h4>MSISDN</h4>
+<p><a name="indexterm-177"></a>Das Authentifizierungsmodul "Mobile Station Integrated Services Digital Network (MSISDN)" erm&#246;glicht die Authentifizierung
 mithilfe einer Mobilabonnenten-ISDN, die einem Mobiltelefon oder einem &#228;hnlichen Ger&#228;t zugeordnet ist.
- Es handelt sich dabei nicht um ein interaktives Modul. Das Modul
-erh&#228;lt die Abonnenten-ISDN und &#252;berpr&#252;ft diese anhand des Directory Server, um einen
-mit der Nummer &#252;bereinstimmenden Benutzer zu suchen. Bei den Attributen f&#252;r die
-MSISDN-Authentifizierung handelt es sich um Bereichsattribute. Zu den MSISDN-Authentifizierungsattributen z&#228;hlen folgende Attribute:</p>
+Es handelt sich dabei nicht um ein interaktives Modul. Das Modul erh&#228;lt
+die Abonnenten-ISDN und &#252;berpr&#252;ft diese anhand des Directory Server, um einen mit
+der Nummer &#252;bereinstimmenden Benutzer zu suchen. Bei den Attributen f&#252;r die MSISDN-Authentifizierung
+handelt es sich um Bereichsattribute. Zu den MSISDN-Authentifizierungsattributen z&#228;hlen folgende Attribute:</p>
 <ul><li><p><a href="#fumxe">Vertrauensw&#252;rdige Gateway-IP-Adresse</a></p></li>
 <li><p><a href="#fumxg">MSISDN-Nummernargument</a></p></li>
 <li><p><a href="#fumxf">LDAP-Server und -Anschluss</a></p></li>
@@ -53,12 +53,12 @@ MSISDN-Authentifizierung handelt es sich um Bereichsattribute. Zu den MSISDN-Aut
 
 <a name="fumxe"></a><h5>Vertrauensw&#252;rdige Gateway-IP-Adresse</h5>
 <p>Gibt eines Liste mit IP-Adressen von vertrauensw&#252;rdigen Clients an, die Zugriff auf
-das MSISDN-Modul haben. Sie k&#246;nnen festlegen, dass die IP-Adressen von allen Clients
-Zugriff auf das MSISDN-Modul erhalten, indem Sie die IP-Adresse (beispielsweise <tt> 123.456.123.111</tt>) in
-das Eingabefeld eingeben und auf ";Hinzuf&#252;gen" klicken. Die Liste enth&#228;lt standardm&#228;&#223;ig keine
-Eintr&#228;ge. Wenn das Attribut leer ist, wird der Zugriff f&#252;r alle Clients
-erlaubt. Wenn Sie ";Keine" angeben, ist der Zugriff f&#252;r keinen der Clients
-erlaubt.</p>
+das MSISDN-Modul haben. You can set the IP addresses of all clients
+allows to access the MSISDN module by entering the address (for example,
+<tt>123.456.123.111</tt>) in the entry field and clicking Add. By default, the list
+is empty. Wenn das Attribut leer ist, wird der Zugriff f&#252;r alle
+Clients erlaubt. Wenn Sie ";Keine" angeben, ist der Zugriff f&#252;r keinen der
+Clients erlaubt.</p>
 
 <a name="fumxg"></a><h5>MSISDN-Nummernargument</h5>
 <p>Gibt eine Liste mit Parameternamen an, nach denen im Anforderungs- oder Cookie-Header
@@ -69,8 +69,8 @@ MSISDN-Nummer.</p>
 <a name="fumxf"></a><h5>LDAP-Server und -Anschluss</h5>
 <p>Gibt den Hostnamen und die Anschlussnummer f&#252;r den Directory Server an, auf
 dem die Suche nach Benutzern mit einer MSISDN durchgef&#252;hrt wird. Das Format
-lautet<tt></tt><i>hostname:port</i><tt></tt>. Wenn keine Portnummer angegeben wurde, kann in der Regel <tt>389</tt> verwendet
-werden.</p><p>Wenn Sie Federated Access Manager in mehreren Dom&#228;nen bereitstellen, k&#246;nnen Sie den
+lautet <tt></tt><i> hostname:port</i><tt></tt>. Wenn keine Portnummer angegeben wurde, kann in der Regel <tt>389</tt>
+verwendet werden.</p><p>Wenn Sie Federated Access Manager in mehreren Dom&#228;nen bereitstellen, k&#246;nnen Sie den
 Kommunikationslink zwischen bestimmten Instanzen von Federated Access Manager und Directory Server in
 folgendem Format angeben (bei Mehrfacheingaben muss der lokale Servername vorangestellt werden):</p><p><tt>local_servername|server:port local_servername2|server2:port2 ...</tt></p><p>Wenn beispielsweise zwei Federated Access Manager-Instanzen an unterschiedlichen Standorten bereitgestellt wurden (L1-machine1-IS
 und L2- machine2-IS), die mit unterschiedlichen Instanzen von Directory Server kommunizieren (L1-machine1-DS

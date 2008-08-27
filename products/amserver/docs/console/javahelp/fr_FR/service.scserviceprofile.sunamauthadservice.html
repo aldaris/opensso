@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Active Directory - Aide en ligne de la console Sun Java System Federated Access Manager 8.0
+  <title>Active Directory - Aide en ligne de la console Sun Federated Access Manager 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,7 +31,7 @@
 
 
 <a name="service.scserviceprofile.sunamauthadservice"></a><h4>Active Directory</h4>
-<p><a name="indexterm-173"></a>Ce type de module fonctionne de mani&#232;re similaire au type de module
+<p><a name="indexterm-166"></a>Ce type de module fonctionne de mani&#232;re similaire au type de module
 d'authentification LDAP, &#224; la diff&#233;rence pr&#232;s qu'il utilise Microsoft Active Directory au
 lieu d'un annuaire LDAP. L'utilisation de ce type de module permet de
 faire coexister l'annuaire LDAP et Active Directory sous le m&#234;me domaine. Les
@@ -103,10 +103,9 @@ Le service d'authentification doit &#234;tre associ&#233; &#224; ce DN afin de p
 rechercher le DN utilisateur correspondant &#224; un ID de connexion utilisateur donn&#233;.
 La valeur par d&#233;faut est <tt>amldapuser.</tt> Tout DN valide est reconnu.</p><p>Assurez-vous que le mot de passe est correct avant de vous d&#233;connecter.
 S'il est incorrect, vous serez bloqu&#233;. Dans ce cas, vous pouvez vous
-connecter avec le DN superutilisateur stock&#233; dans la propri&#233;t&#233; <i>com.iplanet.authentication.super.user</i> du fichier
-<tt>AMConfig.Properties</tt>. Par d&#233;faut, il s'agit du compte <tt>amAdmin</tt> avec lequel vous vous
-connectez normalement, m&#234;me si vous allez utiliser le DN complet. Par exemple
-:</p><p><tt>uid_amAdmin,ou=People,</tt><i>FederatedAccessManager-base </i><tt></tt></p>
+connecter avec le DN du superutilisateur. Par d&#233;faut, il s'agit du compte
+<tt>amAdmin</tt> avec lequel vous vous connectez normalement, m&#234;me si vous allez utiliser
+le DN complet. Par exemple :</p><p><tt>uid_amAdmin,ou=People,</tt><i>FederatedAccessManager-base </i><tt></tt></p>
 
 <a name="fwbix"></a><h5>Mot de passe pour liaison utilisateur root</h5>
 <p>Contient le mot de passe du profil administrateur sp&#233;cifi&#233; dans le champ

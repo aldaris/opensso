@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Seguridad - Ayuda en l&#237;nea de la consola de Sun Java System Federated Access Manager 8.0
+  <title>Seguridad - Ayuda en l&#237;nea de la consola de Sun Federated Access Manager 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -40,37 +40,37 @@ utilizada para controlar el nivel de seguridad de la instancia del servidor.</p>
 <a name="ggkcb"></a><h5>Clave de cifrado de contrase&#241;a</h5>
 <p>Especifica la clave utilizada para cifrar y descifrar las contrase&#241;as, y se
 almacena en la configuraci&#243;n del sistema de administraci&#243;n de servicios. Este valor
-se establece durante la instalaci&#243;n. Ejemplo: dSB9LkwPCSoXfIKHVMhIt3bKgibtsggd</p>
+se establece durante la instalaci&#243;n. Ejemplo: <tt>dSB9LkwPCSoXfIKHVMhIt3bKgibtsggd </tt></p>
 
 <a name="ggkbg"></a><h5>Secreto compartido del servicio de autenticaci&#243;n</h5>
 <p>El secreto compartido del m&#243;dulo de autenticaci&#243;n de la aplicaci&#243;n. Este valor
-se establece durante la instalaci&#243;n. Ejemplo: AQICPX9e1cxSxB2RSy1WG1+O4msWpt/6djZl </p>
+se establece durante la instalaci&#243;n. Ejemplo: <tt>AQICPX9e1cxSxB2RSy1WG1+O4msWpt/6djZl </tt></p>
 
 <a name="ggkbd"></a><h5>Clase de cifrado</h5>
 <p>El valor predeterminado es <tt>com.iplanet.services.util.JCEEncryption</tt>. Especifica la implementaci&#243;n de la clase de
 cifrado. Las clases disponibles son: <tt> com.iplanet.services.util.JCEEncryption</tt> y <tt>com.iplanet.services.util.JSSEncryption </tt>.</p>
 
 <a name="ggkby"></a><h5>Clase de f&#225;brica aleatoria de seguridad</h5>
-<p># El valor predeterminado es <tt>com.iplanet.am.</tt><tt>util.JSSSecureRandomFactoryImp </tt>l. Especifica el nombre de la clase
-de f&#225;brica para <tt>SecureRandomFactory </tt>. Las clases de implementaci&#243;n disponibles son: <tt>com.iplanet.am.</tt><tt>util.JSSSecureRandomFactoryImpl </tt> que
-utiliza JSS y <tt>com.iplanet.am.</tt><tt>util.SecureRandomFactoryImpl </tt> que utiliza &#250;nicamente Java. </p>
+<p>El valor predeterminado es <tt>com.iplanet.am.util.JSSSecureRandomFactoryImp </tt>l. Especifica el nombre de clase de f&#225;brica
+para <tt>SecureRandomFactory </tt>. Las clases de implementaci&#243;n disponibles son: <tt>com.iplanet.am.util.JSSSecureRandomFactoryImpl </tt> que utiliza JSS,
+y <tt>com.iplanet.am.util.SecureRandomFactoryImpl </tt> que utiliza Java puro.   </p>
 
 <a name="ggkbr"></a><h5>Validaci&#243;n</h5>
 <p>Los atributos de validaci&#243;n son:</p>
 
-<a name="ggkay"></a><h5>Longitud m&#225;x. del contenido para las comunicaciones de nivel inferior de la plataforma</h5>
+<a name="ggkay"></a><h5>Comunicaciones de nivel bajo de la plataforma Max. Longitud del contenido</h5>
 <p>El valor predeterminado es 16.384 &#243; 16.000. Especifica la longitud m&#225;xima del
 contenido de la solicitud HTTP (<tt>HttpRequest</tt>) que aceptar&#225; Federated Access Manager.</p>
 
 <a name="ggkbb"></a><h5>Comprobaci&#243;n de la direcci&#243;n IP del cliente</h5>
-<p>El valor predeterminado es NO. Especifica si se debe comprobar o no
-la direcci&#243;n IP del cliente en todas las creaciones o validaciones de
-<tt>SSOToken</tt>.</p>
+<p>El valor predeterminado es NO.  Especifica si se debe comprobar o
+no la direcci&#243;n IP del cliente en todas las creaciones o validaciones
+de <tt>SSOToken</tt>.</p>
 
 <a name="ggkba"></a><h5>Cookie</h5>
 <p>Los atributos de cookies son:</p>
 
-<a name="ggkad"></a><h5>Nombre de cookie</h5>
+<a name="ggkad"></a><h5>Nombre del cookie</h5>
 <p>El valor predeterminado es <tt>iPlanetDirectoryPro</tt>. El nombre de la cookie utilizada por
 el servicio de autenticaci&#243;n para establecer el Id. de controlador de sesi&#243;n
 v&#225;lido. El valor de este nombre de cookie se utiliza para recuperar
@@ -100,8 +100,8 @@ al archivo de contrase&#241;as del almac&#233;n de claves XML de SAML.</p>
 al archivo "storepass" de claves XML de SAML.</p>
 
 <a name="ggkbs"></a><h5>Archivo de contrase&#241;as de claves privadas</h5>
-<p>Este valor se establece durante la instalaci&#243;n. Ejemplo: <tt></tt><i>FederatedAccessManager-base </i><tt>/</tt><i>server_URI</i><tt>/.keypass</tt> Especifica el archivo
-de contrase&#241;as de claves XML de SAML.</p>
+<p>Este valor se establece durante la instalaci&#243;n. Ejemplo: <tt></tt><i>FederatedAccessManager-base </i><tt>/</tt><i>server_URI</i><tt>/.keypass</tt> Especifica la ruta
+del archivo de contrase&#241;a de claves XML de SAML.</p>
 
 <a name="ggkaq"></a><h5>Alias de certificado</h5>
 <p>El valor predeterminado es "test".</p>
@@ -131,7 +131,7 @@ predeterminada, el servicio de autenticaci&#243;n de certificados no utiliza SSL
 acceso LDAP.</p>
 
 <a name="ggkbv"></a><h5>Nombre de usuario del enlace del servidor LDAP</h5>
-<p>Especifica el DN de enlace del servidor LDAP. </p>
+<p>Especifica el DN de conexi&#243;n del servidor LDAP. </p>
 
 <a name="ggkaj"></a><h5>Contrase&#241;a del enlace del servidor LDAP.</h5>
 <p>Define la contrase&#241;a que se va a utilizar para la conexi&#243;n con
@@ -147,8 +147,8 @@ Access Manager.</p>
 <a name="ggkbp"></a><h5>Atributos de b&#250;squeda</h5>
 <p>Se puede utilizar cualquier componente de DN del DN de asunto (<tt>subjectDN</tt>)
 del emisor para recuperar una CRL de un servidor LDAP local. Es
-una cadena de un solo valor como, por ejemplo, "cn". Todas las
-CA ra&#237;z deben utilizar el mismo atributo de b&#250;squeda.</p>
+una cadena de valores &#250;nica, como "cn". Todas las CA ra&#237;z deben
+utilizar el mismo atributo de b&#250;squeda.</p>
 
 <a name="ggkaa"></a><h5>Comprobaci&#243;n del Protocolo de estado de los certificados en l&#237;nea</h5>
 <p>El Protocolo de estado de los certificados en l&#237;nea (OCSP) permite a
@@ -165,7 +165,7 @@ del certificado en cuesti&#243;n hasta que el contestador proporcione una respue
 
 <a name="ggkav"></a><h5>URL del contestador</h5>
 <p>Este atributo define una URL que identifica la ubicaci&#243;n del contestador de
-OCSP. Por ejemplo, <tt>http://ocsp.example.net:80</tt>. </p><p>De forma predeterminada, la ubicaci&#243;n del contestador de OCSP se determina impl&#237;citamente
+OCSP. Por ejemplo, <tt>http://ocsp.example.net:80</tt>.</p><p>De forma predeterminada, la ubicaci&#243;n del contestador de OCSP se determina impl&#237;citamente
 desde el certificado que se va a validar. Esta propiedad se utiliza
 cuando falta la extensi&#243;n de acceso de informaci&#243;n de la entidad emisora
 (definida en RFC 3280) en el certificado o cuando es necesario anularla.
@@ -173,15 +173,15 @@ cuando falta la extensi&#243;n de acceso de informaci&#243;n de la entidad emiso
 
 <a name="ggkai"></a><h5>Sobrenombre del certificado</h5>
 <p>El sobrenombre del contestador de OCSP es el sobrenombre del certificado de
-CA de ese contestador como, por ejemplo, <tt>Certificate Manager - sun</tt>. Si se establece esta
-propiedad, el certificado de CA debe estar presente en la base de
-datos de certificados del servidor web. Si se establece la URL de
-OCSP, tambi&#233;n debe establecerse el sobrenombre del contestador de OCSP. De lo
-contrario, ambos se omitir&#225;n. Si no se establece, se utilizar&#225; la URL
-del contestador de OCSP presente en el certificado del usuario para la
-validaci&#243;n de OCSP. Si la URL del contestador de OCSP no est&#225;
-presente en el certificado del usuario, no se realizar&#225; ninguna validaci&#243;n de
-OCSP. </p>
+CA de ese contestador como, por ejemplo, <tt>Certificate Manager - sun</tt>.  Si se establece
+esta propiedad, el certificado de CA debe estar presente en la base
+de datos de certificados del servidor web. Si se establece la URL
+de OCSP, tambi&#233;n debe establecerse el sobrenombre del contestador de OCSP. De
+lo contrario, ambos se omitir&#225;n. Si no se establece, se utilizar&#225; la
+URL del contestador de OCSP presente en el certificado del usuario para
+la validaci&#243;n de OCSP. Si la URL del contestador de OCSP no
+est&#225; presente en el certificado del usuario, no se realizar&#225; ninguna validaci&#243;n
+de OCSP. </p>
 
 <a name="ggkag"></a><h5>Normas federales de procesamiento de la informaci&#243;n</h5>
 <p>En virtud de la ley de administraci&#243;n de tecnolog&#237;a de la informaci&#243;n

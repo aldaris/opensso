@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>SecurID  - Aide en ligne de la console Sun Java System Federated Access Manager 8.0
+  <title>SecurID - Aide en ligne de la console Sun Federated Access Manager 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -30,16 +30,14 @@
 
 
 
-<a name="service.scserviceprofile.iplanetamauthsecuridservice"></a><h4>SecurID </h4>
-<p><a name="indexterm-187"></a>Ce module permet de s'authentifier &#224; l'aide du logiciel RSA ACE/Server et
-d'authentificateurs RSA SecurID. Le module d'authentification SecurID n'est pas disponible sous les
+<a name="service.scserviceprofile.iplanetamauthsecuridservice"></a><h4>SecurID</h4>
+<p><a name="indexterm-181"></a>Ce module permet de s'authentifier &#224; l'aide du logiciel RSA ACE/Server et
+d'authentifieurs RSA SecurID. Le module d'authentification SecurID n'est pas disponible sous les
 plates-formes Linux ou Solaris x86. Il ne doit donc pas &#234;tre enregistr&#233;,
 configur&#233; ou activ&#233; sur ces deux plates-formes. Il est disponible uniquement pour
 Solaris. Les attributs d'authentification SecurID sont des attributs de domaine. Ces attributs
 sont les suivants :</p>
 <ul><li><p><a href="#fwbpt">Chemin d'acc&#232;s &#224; la configuration de ACE/Serveur.</a></p></li>
-<li><p><a href="#fwbkv">Port de configuration de l'assistant</a></p></li>
-<li><p><a href="#fwbpq">Port d'authentification de l'assistant</a></p></li>
 <li><p><a href="#fwbma">Niveau d'authentification</a></p></li></ul>
 
 
@@ -47,22 +45,6 @@ sont les suivants :</p>
 <p>Indique le r&#233;pertoire dans lequel se trouve le fichier <tt>sdconf.rec</tt> de SecurID
 ACE/Server, par d&#233;faut dans <tt>/opt/ace/data</tt>. Si vous sp&#233;cifiez un autre r&#233;pertoire dans
 ce champ, ce r&#233;pertoire doit exister avant toute tentative d'authentification SecurID.</p>
-
-<a name="fwbkv"></a><h5>Port de configuration de l'assistant</h5>
-<p>Sp&#233;cifie le port d'&#233;coute utilis&#233; par l'assistant SecurID d&#232;s le d&#233;marrage pour
-d&#233;tecter les informations de configuration contenues dans l'attribut Port d'authentification de l'assistant
-SecurID. La valeur par d&#233;faut est 58943.</p><p>Si cet attribut est modifi&#233;, vous devez &#233;galement modifier l'entr&#233;e <i>securidHelper.ports</i> dans
-le fichier <tt>AMConfig.properties</tt> et red&#233;marrer Federated Access Manager. L'entr&#233;e dans le fichier
-<tt>AMConfig.properties</tt> est une liste s&#233;par&#233;e par des espaces, qui r&#233;pertorie les ports
-des instances des assistants SecurID. Pour chaque domaine qui communique avec un
-serveur ACE/Server diff&#233;rent (poss&#233;dant un fichier <tt>sdconf.rec</tt> diff&#233;rent), il doit exister un
-assistant SecurID distinct.</p>
-
-<a name="fwbpq"></a><h5>Port d'authentification de l'assistant</h5>
-<p>Indique le port qui sera configur&#233; par le module d'authentification SecurID du
-domaine comme port d'&#233;coute de son instance d'assistant SecurID pour d&#233;tecter les
-demandes d'authentification. Ce num&#233;ro de port doit &#234;tre unique pour tous les
-domaines utilisant l'authentification SecurID ou UNIX. Le port par d&#233;faut est 57943.</p>
 
 <a name="fwbma"></a><h5>Niveau d'authentification</h5>
 <p>Le niveau d'authentification est d&#233;fini s&#233;par&#233;ment pour chaque m&#233;thode d'authentification. La valeur

@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>MSISDN  - Sun Java System Federated Access Manager 8.0 控制台联机帮助
+  <title>MSISDN  - Sun Federated Access Manager 8.0 控制台联机帮助
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,7 +31,7 @@
 
 
 <a name="service.scserviceprofile.sunamauthmsisdnservice"></a><h4>MSISDN </h4>
-<p><a name="indexterm-183"></a>移动站集成服务数字网络 (Mobile Station Integrated Services Digital Network, MSISDN) 验证模块将使用与设备（如移动电话）关联的移动用户 ISDN 来启用验证。它是一种非交互式模块。该模块检索用户 ISDN
+<p><a name="indexterm-177"></a>移动站集成服务数字网络 (Mobile Station Integrated Services Digital Network, MSISDN) 验证模块将使用与设备（如移动电话）关联的移动用户 ISDN 来启用验证。它是一种非交互式模块。该模块检索用户 ISDN
 并根据 Directory Server 对其进行验证，以查找与编号匹配的用户。 验证属性是领域属性。MSISDN 验证属性包括：</p>
 <ul><li><p><a href="#fumxe">信任的网关 IP 地址</a></p></li>
 <li><p><a href="#fumxg">MSISDN 编号参数</a></p></li>
@@ -51,7 +51,7 @@
 <p>指定能存取 MSIDSN 模块的可信任客户机 IP 地址的列表。可将所有客户机的 IP 地址均设置为允许访问 MSISDN 模块，方法是在输入字段中输入地址（例如，<tt>123.456.123.111</tt>），然后单击“添加”。默认情况下，该列表为空。如果此属性为空，则将允许所有的客户机存取。如果指定无，不允许任何客户机存取。</p>
 
 <a name="fumxg"></a><h5>MSISDN 编号参数</h5>
-<p>指定一个参数名的列表，这些参数名用于标识在请求或 cookie 标题中对哪些参数搜索 MSISDN 编号的参数。例如，如果定义了 <i>x-Cookie-Param</i>、<i>AM_NUMBER</i> 和 <i>COOKIE-ID</i>，MSISDN 验证服务将会在那些参数中搜索 MSISDN 编号。</p>
+<p>指定一个参数名的列表，这些参数名用于标识在请求标头或 cookie 标头中对哪些参数搜索 MSISDN 编号的参数。例如，如果定义了 <i>x-Cookie-Param</i>、<i>AM_NUMBER</i> 和 <i>COOKIE-ID</i>，MSISDN 验证服务将会在那些参数中搜索 MSISDN 编号。</p>
 
 <a name="fumxf"></a><h5>LDAP 服务器和端口</h5>
 <p>指定 Directory Server 的主机名和端口号，将在其中搜索拥有 MSISDN 编号的用户。格式为 <tt></tt><i>hostname:port</i><tt></tt>。如果没有端口号，将采用 <tt>389</tt>。</p><p>如果在多个域部署 Federated Access Manager，则可按以下格式指定 Federated Access Manager 与 Directory Server 的特定实例之间的通信链接（如果指定了多个条目，则条目前必须带有本地服务器名称）：</p><p><tt>local_servername|server:port local_servername2|server2:port2 ...</tt></p><p>例如，如果将两个 Federated Access Manager 实例部署在不同位置（L1-machine1-IS 和 L2- machine2-IS），它们分别与 Directory Server 的不同实例（L1-machine1-DS 和
@@ -77,10 +77,10 @@ L2-machine2-DS）进行通信，则形式如下：</p><p><tt>L1-machine1-IS.exam
 <p>启用 SSL 来访问“LDAP 服务器和端口”属性中指定的 Directory Server。默认情况下，不启用该属性，并且不使用 SSL 协议访问 Directory Server。但是，如果启用该属性，您可以绑定到非 SSL 服务器。</p>
 
 <a name="fumxp"></a><h5>用于检索用户配置文件的 LDAP 属性</h5>
-<p>指定用于搜索 MSISDN 编号请求的标题。支持的值包括：</p><dl><dt>Cookie 标题</dt>
+<p>指定用于搜索 MSISDN 编号请求的标头。支持的值包括：</p><dl><dt>Cookie 标头</dt>
 <dd><p>在 cookie 中进行搜索。</p></dd>
-<dt>请求标题</dt>
-<dd><p>在请求标题中进行搜索。</p></dd>
+<dt>请求标头</dt>
+<dd><p>在请求标头中进行搜索。</p></dd>
 <dt>请求参数</dt>
 <dd><p>在请求参数中进行搜索。默认情况下，选择所有选项。</p></dd>
 </dl>

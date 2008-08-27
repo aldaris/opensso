@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Configuration de r&#232;gles - Aide en ligne de la console Sun Java System Federated Access Manager 8.0
+  <title>Configuration de r&#232;gles - Aide en ligne de la console Sun Federated Access Manager 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,8 +31,8 @@
 
 
 <a name="service.scpolicy"></a><h4>Configuration de r&#232;gles</h4>
-<p><a name="indexterm-197"></a>L'attribut Configuration des strat&#233;gies permet &#224; l'administrateur de d&#233;finir les propri&#233;t&#233;s g&#233;n&#233;rales
-et du domaine, utilis&#233;es par le service Strat&#233;gie.</p>
+<p><a name="indexterm-191"></a>L'attribut Configuration des strat&#233;gies permet &#224; l'administrateur de d&#233;finir les propri&#233;t&#233;s g&#233;n&#233;rales
+et du domaine, utilis&#233;es par le service Strag&#233;gie.</p>
 <ul><li><p><a href="#fufnk">Propri&#233;t&#233;s g&#233;n&#233;rales</a></p></li>
 <li><p><a href="#fufmb">Attributs du domaine</a></p></li></ul>
 
@@ -50,7 +50,7 @@ strat&#233;gies.</p><p>Cliquez sur le bouton Ajouter et d&#233;finissez les attr
 <dd><p>D&#233;finit la classe Java qui impl&#233;mente l'algorithme de comparaison des ressources. </p></dd>
 <dt>S&#233;parateur</dt>
 <dd><p>Sp&#233;cifie le s&#233;parateur &#224; utiliser dans le nom de ressource. </p></dd>
-<dt>Caract&#232;re g&#233;n&#233;rique</dt>
+<dt>Carat&#232;re g&#233;n&#233;rique</dt>
 <dd><p>Sp&#233;cifie le caract&#232;re g&#233;n&#233;rique pouvant &#234;tre d&#233;fini dans les noms de ressource.</p></dd>
 <dt>Caract&#232;re g&#233;n&#233;rique de niveau un</dt>
 <dd><p>Remplace z&#233;ro, un ou plusieurs caract&#232;res.</p></dd>
@@ -88,9 +88,9 @@ est d&#233;fini sur Non. </p>
 <p>Sp&#233;cifie le nom d'h&#244;te et le num&#233;ro de port du serveur LDAP
 principal sp&#233;cifi&#233; lors de l'installation Federated Access Manager qui sera utilis&#233; pour
 rechercher les objets de strat&#233;gie tels que les utilisateurs LDAP, r&#244;les LDAP,
-groupes LDAP, etc.</p><p>Le format est <i>nomh&#244;te:port</i>. Par exemple : <tt>machine1.exemple.com:389</tt></p><p>Pour la configuration du basculement sur plusieurs h&#244;tes serveur LDAP, cette valeur
+groupes LDAP, etc.</p><p>Le format est <i>nomh&#244;te:port</i>. For example: <tt>machine1.example.com:389</tt></p><p>Pour la configuration du basculement sur plusieurs h&#244;tes serveur LDAP, cette valeur
 peut &#234;tre une liste de plusieurs h&#244;tes d&#233;limit&#233;s par des espaces. Le
-format est <i>nomh&#244;te1:port1 nomh&#244;te2:port2...</i></p><p>Par exemple : <tt>machine1.exemple1.com:389 machine2.exemple1.com:389 </tt></p><p>Les entr&#233;es multiples doivent &#234;tre pr&#233;c&#233;d&#233;es du nom du serveur local. Ceci
+format est <i>nomh&#244;te1:port1 nomh&#244;te2:port2...</i></p><p>For example: <tt>machine1.example1.com:389 machine2.example1.com:389 </tt></p><p>Les entr&#233;es multiples doivent &#234;tre pr&#233;c&#233;d&#233;es du nom du serveur local. Ceci
 permet &#224; des serveurs Federated Access Manager sp&#233;cifiques d'&#234;tre configur&#233;s de mani&#232;re
 &#224; communiquer avec des serveurs Directory Server sp&#233;cifiques.</p><p>Le format est <i>nomserveur|nomh&#244;te:port</i>. Par exemple :</p><p><tt>machine1.exemple1.com|machine1.exemple1.com:389</tt></p><p><tt>machine1.exemple2.com|machine1.exemple2.com:389</tt></p><p>Pour la configuration du basculement :</p><p><tt>Serveur_AM1.exemple1.com|machine1.exemple1.com:389 machine2.exemple.com1:389 </tt></p><p><tt>Serveur_AM2.exemple2.com|machine1.exemple2.com:389 machine2.exemple2.com:389 </tt></p>
 
@@ -120,7 +120,7 @@ de l'installation est utilis&#233; comme utilisateur de liaison.</p>
 
 <a name="fufmn"></a><h5>Filtre de recherche d'organisations LDAP</h5>
 <p>Sp&#233;cifie le filtre de recherche &#224; utiliser pour rechercher les entr&#233;es organisation.
-La valeur par d&#233;faut est <tt>(objectclass=sunMangagedOrganization)</tt>. </p>
+La valeur par d&#233;faut est <tt>(objectclass=sunMangagedOrganization)</tt>.</p>
 
 <a name="fufmm"></a><h5>&#201;tendue de la recherche d'organisations LDAP</h5>
 <p>D&#233;finit l'&#233;tendue &#224; utiliser pour rechercher les entr&#233;es organisation. L'&#233;tendue peut avoir
@@ -156,7 +156,7 @@ l'une des valeurs suivantes :</p>
 
 <a name="fufmv"></a><h5>Filtre de recherche de r&#244;les LDAP</h5>
 <p>Sp&#233;cifie le filtre de recherche &#224; utiliser pour rechercher les entr&#233;es pour
-les r&#244;les. La valeur par d&#233;faut est <tt>(&#38;(objectclass=ldapsubentry)(objectclass=nsroledefinitions)) </tt> .</p>
+les r&#244;les. La valeur par d&#233;faut est <tt>(&#38;;(objectclass=ldapsubentry)(objectclass=nsroledefinitions))</tt> .</p>
 
 <a name="fufmw"></a><h5>&#201;tendue de la recherche de r&#244;les LDAP</h5>
 <p>Cet attribut d&#233;finit l'&#233;tendue &#224; utiliser pour rechercher les entr&#233;es pour les
@@ -192,9 +192,9 @@ La valeur par d&#233;faut est <tt>cn</tt>.</p>
 
 <a name="fufnj"></a><h5>Maximum de r&#233;sultats renvoy&#233;s par la recherche</h5>
 <p>Ce champ d&#233;finit le nombre maximal de r&#233;sultats pouvant &#234;tre renvoy&#233;s par
-une recherche. La valeur par d&#233;faut est 100. Si la limite de
-recherche d&#233;passe la quantit&#233; indiqu&#233;e, seules les entr&#233;es trouv&#233;es jusqu'&#224; ce point
-seront renvoy&#233;es.</p>
+une recherche. The default value is 100. If the search limit exceeds
+the amount specified, the entries that have been found to that point
+will be returned.</p>
 
 <a name="fufnl"></a><h5>D&#233;lai de recherche</h5>
 <p>Sp&#233;cifie la dur&#233;e d&#233;finissant le d&#233;lai d'expiration d'une recherche. Si la recherche

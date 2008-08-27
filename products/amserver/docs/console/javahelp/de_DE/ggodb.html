@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>SOAP Binding-Attribute - Online-Hilfe zur Sun Java System Federated Access Manager 8.0-Konsole
+  <title>SOAP Binding-Attribute - Online-Hilfe zur Sun Federated Access Manager 8.0-Konsole
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -34,15 +34,15 @@
 
 
 <a name="ggocx"></a><h5>Webdienst-Authentifizierung</h5>
-<a name="indexterm-162"></a><a name="indexterm-163"></a><p>Dieses Attribut akzeptiert als Wert die Implementierungsklasse f&#252;r die Schnittstelle zur Webdienst-Authentifizierung.
+<a name="indexterm-155"></a><a name="indexterm-156"></a><p>Dieses Attribut akzeptiert als Wert die Implementierungsklasse f&#252;r die Schnittstelle zur Webdienst-Authentifizierung.
 Diese Klasse authentifiziert Anforderungen und generiert Anmeldeinformationen f&#252;r Webdienstbenutzer.</p>
 
 <a name="ggock"></a><h5>Unterst&#252;tzte Authentifizierungsmechanismen</h5>
-<a name="indexterm-164"></a><a name="indexterm-165"></a><p>Dieses Attribut legt den vom SOAP-Empf&#228;nger unterst&#252;tzten Authentifizierungsmechanismus fest. Authentifizierungsmechanismen erm&#246;glichen die
+<a name="indexterm-157"></a><a name="indexterm-158"></a><p>Dieses Attribut legt den vom SOAP-Empf&#228;nger unterst&#252;tzten Authentifizierungsmechanismus fest. Authentifizierungsmechanismen erm&#246;glichen die
 Benutzerauthentifizierung, die Verschl&#252;sselung von Daten und sorgen f&#252;r Datenintegrit&#228;t. Standardm&#228;&#223;ig sind alle
 verf&#252;gbaren Authentifizierungsmechanismen ausgew&#228;hlt. Wenn ein Webdienstbenutzer (Web Service Consumer, WSC) eine Anforderung
 mit einem nicht ausgew&#228;hlten Authentifizierungsmechanismus sendet, wird die Anforderung abgelehnt. Die folgende
-Liste enth&#228;lt die unterst&#252;tzten Authentifizierungsmechanismen: </p>
+Liste enth&#228;lt die unterst&#252;tzten Authentifizierungsmechanismen:</p>
 <ul><li><p><tt>urn:liberty:security:2003-08:null:null</tt></p></li>
 <li><p><tt>urn:liberty:security:2003-08:null:X509</tt></p></li>
 <li><p><tt>urn:liberty:security:2003-08:null:SAML</tt></p></li>
@@ -63,19 +63,19 @@ erzwungen, um sicherzustellen, dass der Provider im System vorhanden ist. Wenn e
 nicht vorhanden ist, wird die Anforderung abgelehnt. Wenn dieses Attribut nicht aktiviert
 ist, wird die Pr&#252;fung &#252;bersprungen. </p>
 
-<a name="ggoci"></a><h5>Zertifizierungs-Alias f&#252;r SSL-Client-Authentifizierung </h5>
+<a name="ggoci"></a><h5>Zertifizierungs-Alias f&#252;r SSL-Client-Authentifizierung</h5>
 <p>Der  Wert wird w&#228;hrend der Installation festgelegt. Clientzertifikatalias, der in der
 SSL-Verbindung f&#252;r Liberty SOAP Binding verwendet wird.</p>
 
 <a name="ggocs"></a><h5>Zeitlimit f&#252;r Statusmeldung</h5>
 <p>Der Standardwert ist 300000. Bestimmt, ob eine Nachricht veraltet und somit nicht
-mehr vertrauensw&#252;rdig ist. Wenn der Zeitstempel der Nachricht um die angegebene Anzahl
-an Millisekunden vor dem aktuellen Zeitstempel liegt, wird die Nachricht als veraltet
-betrachtet.</p>
+mehr vertrauensw&#252;rdig ist.  Wenn der Zeitstempel der Nachricht um die angegebene
+Anzahl an Millisekunden vor dem aktuellen Zeitstempel liegt, wird die Nachricht als
+veraltet betrachtet.</p>
 
 <a name="ggofw"></a><h5>Intervall f&#252;r Cache-Bereinigung bei Nachrichten-ID </h5>
-<p>Der Standardwert ist 60000. Er gibt an, nach wie vielen Millisekunden die
-Cache-Bereinigung beginnen soll. Jede Nachricht wird mit der zugeh&#246;rigen ownmessageID in einem
+<p>Der Standardwert ist 60000. Gibt an, nach wie vielen Millisekunden die Cache-Bereinigung
+beginnen soll.  Jede Nachricht wird mit der zugeh&#246;rigen ownmessageID in einem
 Cache gespeichert, um doppelte Nachrichten zu vermeiden. Wenn die aktuelle Zeit einer
 Nachricht minus der Zeit Ihres Eingangs den Wert staleTimeLimit &#252;berschreitet, wird die
 Nachricht aus dem Cache entfernt.</p>
@@ -90,7 +90,7 @@ m&#252;ssen durch einen senkrechten Strich (|) voneinander getrennt werden.</p>
 liberty/pp|is=urn:liberty:is:2003-08</pre><p>Gibt die Namespace-Pr&#228;fix-Zuordnung an, die bei der Bereitstellung eines JAXB-Inhaltsbaums f&#252;r einen
 DOM-Baum verwendet wird. Die Syntax lautet <tt>prefix=namespace|prefix=namespace|... </tt></p>
 
-<a name="ggoho"></a><h5>JAXB-Paketliste</h5>
+<a name="ggoho"></a><h5>JAXB-Paket-Liste</h5>
 <p>Gibt die bei der Konstruktion von <tt>JAXBContext </tt> verwendete JAXB-Paketliste an. Die einzelnen
 Pakete m&#252;ssen durch Doppelpunkt getrennt sein (:).</p>
 

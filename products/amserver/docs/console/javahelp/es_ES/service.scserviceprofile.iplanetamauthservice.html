@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>N&#250;cleo - Ayuda en l&#237;nea de la consola de Sun Java System Federated Access Manager 8.0
+  <title>Principal - Ayuda en l&#237;nea de la consola de Sun Federated Access Manager 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -30,8 +30,8 @@
 
 
 
-<a name="service.scserviceprofile.iplanetamauthservice"></a><h4>N&#250;cleo</h4>
-<p><a name="indexterm-177"></a>Este m&#243;dulo es la base de configuraci&#243;n general de los servicios de
+<a name="service.scserviceprofile.iplanetamauthservice"></a><h4>Principal</h4>
+<p><a name="indexterm-170"></a>Este m&#243;dulo es la base de configuraci&#243;n general de los servicios de
 autenticaci&#243;n de Federated Access Manager. Se debe registrar y configurar para utilizar
 cualquiera de las instancias del m&#243;dulo de autenticaci&#243;n espec&#237;ficas. Permite que el
 administrador defina los valores predeterminados que se seleccionar&#225;n para los valores que
@@ -112,6 +112,31 @@ opciones son:</p><dl><dt><b>Obligatorio</b></dt>
 <dd><p>Esta opci&#243;n especifica que el servicio de autenticaci&#243;n no requiere el perfil de usuario para emitir SSOToken para realizar una autenticaci&#243;n con &#233;xito.</p></dd>
 </dl>
 
+
+<a name="ggukq"></a><h5>Seguridad de autenticaci&#243;n remota</h5>
+<p>Si est&#225; habilitado, todas las solicitudes de autenticaci&#243;n remotas requieren que el
+SSOToken de la aplicaci&#243;n valide la identidad del remitente, de forma que
+la informaci&#243;n de configuraci&#243;n de Federated Access Manager pueda obtener los valores
+v&#225;lidos del nombre de usuario y la contrase&#241;a asociada a la aplicaci&#243;n.</p>
+
+<a name="ggull"></a><h5>Conservar objetos de procesos POST para el procesamiento de cierre de sesi&#243;n</h5>
+<p>Si est&#225; habilitado, las instancias de los complementos de autenticaci&#243;n posteriores al
+proceso utilizados durante el proceso de inicio de sesi&#243;n se conservar&#225;n en
+la sesi&#243;n de Federated Access Manager. Cuando posteriormente se invoca el cierre
+de sesi&#243;n, se llama al m&#233;todo <tt>onLogout </tt> de estas instancias. Si este
+atributo no est&#225; habilitado, no se conservan las instancias posteriores al proceso
+de inicio de sesi&#243;n. Cuando se invoca el cierre de sesi&#243;n y
+se llama al m&#233;todo <tt>onLogout</tt> se crean nuevas instancias de los complementos
+posteriores al proceso. </p>
+
+<a name="gguji"></a><h5>Conservar objetos de m&#243;dulos de autenticaci&#243;n para el procesamiento de cierre de sesi&#243;n</h5>
+<p>Si est&#225; habilitado, todas las instancias de los m&#243;dulos de autenticaci&#243;n utilizados
+durante el proceso de autenticaci&#243;n se conservan en la sesi&#243;n de Federated
+Access Manager. Posteriormente, cuando se invoca el cierre de sesi&#243;n, se llama
+al m&#233;todo logout/destroyModulestate en las mismas instancias. Si este atributo no est&#225;
+habilitado, no se conservan las instancias del m&#243;dulo de autenticaci&#243;n del proceso
+de cierre de sesi&#243;n. Tras el cierre de sesi&#243;n no se llama
+a ninguno de los m&#233;todos de los m&#243;dulos de autenticaci&#243;n.</p>
 
 <a name="gcnks"></a><h5>Configuraci&#243;n de autenticaci&#243;n del administrador</h5>
 <p>Define el servicio de autenticaci&#243;n s&#243;lo para los administradores. Este atributo se
@@ -216,6 +241,14 @@ fallo de inicio de sesi&#243;n es superior a 0, el bloqueo de
 memoria se activar&#225; y la cuenta de usuario se bloquear&#225; durante el
 n&#250;mero de minutos especificado.</p>
 
+<a name="ggulj"></a><h5>Multiplicador de la duraci&#243;n del bloqueo</h5>
+<p>Este atributo define el valor multiplicado por la Duraci&#243;n de bloqueo de
+fallo de inicio de sesi&#243;n para cada bloqueo sucesivo. Por ejemplo, si
+el valor Duraci&#243;n de bloqueo de fallo de inicio de sesi&#243;n est&#225;
+establecido en 3 minutos, y el Multiplicador de duraci&#243;n de bloqueo est&#225;
+establecido en 2, se impedir&#225; al usuario acceder a la cuenta durante
+6 minutos.</p>
+
 <a name="gcnjy"></a><h5>Nombre de atributo de bloqueo</h5>
 <p>Designa cualquier atributo LDAP que se vaya a definir para el bloqueo.
 El valor en Lockout Attribute Value (Valor de atributo de bloqueo) tambi&#233;n
@@ -236,7 +269,7 @@ valor se define como inactivo para <i>inetuserstatus</i>.</p>
 direcci&#243;n URL a la que se redirige a los usuarios tras una
 autenticaci&#243;n con &#233;xito. El formato de este atributo es <tt>clientType|URL</tt>, aunque se
 puede especificar s&#243;lo el valor de la direcci&#243;n URL, que asume un
-tipo predeterminado de HTML.  El valor predeterminado es <i>/amserver/console</i>.</p>
+tipo predeterminado de HTML. El valor predeterminado es <i>/amserver/console</i>.</p>
 
 <a name="gcnlf"></a><h5>URL de fallo de inicio de sesi&#243;n predeterminada</h5>
 <p>El campo acepta una lista de los distintos valores que especifican la
@@ -247,7 +280,7 @@ un tipo predeterminado de HTML.</p>
 
 <a name="gcnlb"></a><h5>Clase de procesamiento posterior de autenticaci&#243;n</h5>
 <p>Especifica el nombre de la clase Java utilizada para personalizar los procesos
-posteriores a la autenticaci&#243;n para inicios de sesi&#243;n v&#225;lidos o err&#243;neos. Ejemplo:</p><p><tt>com.abc.authentication.</tt><tt>PostProcessClass</tt> </p><p>La clase Java debe implementar la siguiente interfaz de Java:</p><p><tt>com.sun.identity.authentication.spi.AMPostAuthProcessInterface </tt></p><p>Adem&#225;s, debe agregar la ruta de la ubicaci&#243;n de la clase al
+posteriores a la autenticaci&#243;n para inicios de sesi&#243;n v&#225;lidos o err&#243;neos. Ejemplo:</p><p><tt>com.abc.authentication.PostProcessClass</tt> </p><p>La clase Java debe implementar la siguiente interfaz de Java:</p><p><tt>com.sun.identity.authentication.spi.AMPostAuthProcessInterface </tt></p><p>Adem&#225;s, debe agregar la ruta de la ubicaci&#243;n de la clase al
 atributo Java Classpath de Web Server.</p>
 
 <a name="gcnjl"></a><h5>Modo de creaci&#243;n de Id. de usuario</h5>
@@ -281,15 +314,23 @@ autenticaci&#243;n. Se admiten los siguientes cambios de estado:</p><dl><dt><tt>
 de sesi&#243;n en un repositorio de identidades compartido por varias instancias de
 Federated Access Manager. Por ejemplo, si el repositorio de identidades que se
 utiliza para una implementaci&#243;n espec&#237;fica es Directory Server, los intentos no v&#225;lidos
-se almacenan en <tt>sunAMAuthInvalidAttemptsData</tt> (que pertenece a la clase de objeto <tt>sunAMAuthAccountLockout</tt>).
-Los datos se almacenan con el siguiente formato:</p><p><tt>&#60;InvalidPassword>&#60;InvalidCount>&#60;/InvalidCount>&#60;LastInvalidAt>&#60;/LastInvalidAt>&#60;LockedoutAt>&#60;/LockedoutAt>&#60;ActualLockoutDuration>&#60;/ActualLockoutDuration>&#60;/InvalidPassword> </tt></p><p>Esta informaci&#243;n se conserva en Directory Server para cada usuario. A media
-que se producen intentos no v&#225;lidos, el valor de <tt>&#60;InvalidCount></tt> aumenta.</p>
+se almacenan en <tt>sunAMAuthInvalidAttemptsData</tt> (que pertenece a la clase de objeto <tt>sunAMAuthAccountLockout). </tt>
+Los datos se almacenan con el siguiente formato:</p><p><tt>&#60;InvalidPassword&#62;&#60;InvalidCount&#62;&#60;/InvalidCount&#62;&#60;LastInvalidAt&#62;&#60;/LastInvalidAt&#62;&#60;LockedoutAt&#62;&#60;/LockedoutAt&#62;&#60;ActualLockoutDuration&#62;&#60;/ActualLockoutDuration&#62;&#60;/InvalidPassword&#62; </tt></p><p>Esta informaci&#243;n se conserva en Directory Server para cada usuario. Cuanto mayor
+sea el n&#250;mero de intentos no v&#225;lidos, aumentar&#225; el valor de <tt>&#60;InvalidCount&#62;</tt>.</p>
 
 <a name="gcnjo"></a><h5>Autenticaci&#243;n basada en m&#243;dulos</h5>
 <p>Si se habilita, este atributo permite a los usuarios realizar una autenticaci&#243;n
 basada en m&#243;dulos. Si, por el contrario, no se habilita, no se
 permite el inicio de sesi&#243;n basado en m&#243;dulos. Todos los intentos de
-inicio de sesi&#243;n con <tt>module=&#60;</tt><i> module_instance_name</i><tt>></tt> fallar&#225;n.</p>
+inicio de sesi&#243;n con <tt>module=&#60; </tt><i> module_instance_name</i><tt>&#62;</tt> fallar&#225;n.</p>
+
+<a name="ggurt"></a><h5>Asignaci&#243;n de atributos de usuario al atributo de sesi&#243;n</h5>
+<p>Permite definir los atributos como propiedades de sesi&#243;n desde el perfil de
+usuario (almacenado en un almac&#233;n de datos) que est&#225; autenticando en el
+SSOToken del usuario. El formato es:</p><p><tt>UserProfile_Attribute|Session_Attribute_name</tt></p><p>Si no est&#225; especificado <tt>Session_Attribute_name</tt>, el nombre de la propiedad de la
+sesi&#243;n se recupera como el valor del atributo Perfil de usuario. Todos
+los atributos de la sesi&#243;n contienen el prefijo am.<tt>protegido </tt> para asegurarse de
+que no pueden editarse desde el SDK cliente.</p>
 
 <a name="fwbfn"></a><h5>Nivel de autenticaci&#243;n predeterminado</h5>
 <p>El valor de nivel de autenticaci&#243;n indica en qu&#233; medida se debe
@@ -304,9 +345,9 @@ nuevo mediante un servicio con un mayor nivel de autenticaci&#243;n.</p><p>El ni
 espec&#237;fica del dominio. El valor de nivel de autenticaci&#243;n predeterminado descrito aqu&#237;
 se aplicar&#225; s&#243;lo cuando no se haya especificado ning&#250;n nivel de autenticaci&#243;n
 en el campo Authentication Level (Nivel de autenticaci&#243;n) para una plantilla de
-autenticaci&#243;n de un determinado dominio. El valor predeterminado de nivel de autenticaci&#243;n
-es 0. (Este atributo no lo utiliza Federated Access Manager, sino cualquier
-aplicaci&#243;n externa que decida usarlo)</p>
+autenticaci&#243;n de un determinado dominio. The Default Authentication Level default value is
+0. (The value in this attribute is not used by Federated Access
+Manager but by any external application that may chose to use it.)</p>
 <br/>
 
 </body>

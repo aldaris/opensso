@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Certificat  - Aide en ligne de la console Sun Java System Federated Access Manager 8.0
+  <title>Certificat - Aide en ligne de la console Sun Federated Access Manager 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -30,8 +30,8 @@
 
 
 
-<a name="service.scserviceprofile.iplanetamauthcertservice"></a><h4>Certificat </h4>
-<p><a name="indexterm-176"></a>Ce module permet &#224; un utilisateur de se connecter gr&#226;ce &#224; un
+<a name="service.scserviceprofile.iplanetamauthcertservice"></a><h4>Certificat</h4>
+<p><a name="indexterm-169"></a>Ce module permet &#224; un utilisateur de se connecter gr&#226;ce &#224; un
 certificat num&#233;rique personnel (CNP). Cette instance de module peut exiger l'utilisation du
 protocole OCSP (Online Certificate Status Protocol) pour d&#233;terminer l'&#233;tat d'un certificat. L'utilisation
 du protocole OCSP est facultatif. L'utilisateur se voit accorder ou refuser l'acc&#232;s
@@ -49,7 +49,6 @@ suivants :</p>
 <li><p><a href="#fwbqp">Utilisateur principal du serveur LDAP</a></p></li>
 <li><p><a href="#fwbst">Mot de passe principal du serveur LDAP</a></p></li>
 <li><p><a href="#fwbiu">Mot de passe principal du serveur LDAP (confirmer)</a></p></li>
-<li><p><b>Broken Link (Target ID: FWBLO)</b></p></li>
 <li><p><a href="#fwblm">Utiliser SSL pour l'acc&#232;s LDAP</a></p></li>
 <li><p><a href="#fwbof">Champ de certificat utilis&#233; pour acc&#233;der au profil utilisateur</a></p></li>
 <li><p><a href="#fwbna">Autre champ de certificat utilis&#233; pour acc&#233;der au profil utilisateur</a></p></li>
@@ -97,15 +96,16 @@ est <tt>cn</tt>.</p>
 <a name="fwbin"></a><h5>Param&#232;tres HTTP pour la mise &#224; jour des CRL</h5>
 <p>Sp&#233;cifie les param&#232;tres HTTP pour l'obtention d'une CRL &#224; partir d'un servlet
 pour une mise &#224; jour des CRL. Pour obtenir ces param&#232;tres, contactez
-l'administrateur de votre autorit&#233; de certification. </p>
+l'administrateur de votre autorit&#233; de certification.</p>
 
 <a name="fwbil"></a><h5>Validation OCSP</h5>
 <p>Permet l'ex&#233;cution de la validation OCSP par contact avec le r&#233;pondeur OCSP
-correspondant. Le r&#233;pondeur OCSP est d&#233;termin&#233; comme suit au moment de l'ex&#233;cution
-:</p>
-<ul><li><p>Si <tt>com.sun.identity.authentication.ocspCheck</tt> est vrai et que le r&#233;pondeur OCSP est d&#233;fini dans l'attribut <i>com.sun.identity.authentication.ocsp.repsonder.url </i>, la valeur de ce dernier est utilis&#233;e comme r&#233;pondeur OCSP.</p></li>
-<li><p>Si <tt>com.sun.identity.authentication.ocspCheck</tt> est vrai et que la valeur de l'attribut n'est pas d&#233;finie dans le fichier <tt>AMConfig.properties</tt>, le r&#233;pondeur OCSP pr&#233;sent&#233; dans le certificat client est utilis&#233; comme r&#233;pondeur OCSP. </p></li>
-<li><p>Si <tt>com.sun.identity.authentication.ocspCheck</tt> est faux ou que <i>com.sum.identity.authentication.ocspCheck</i> est vrai et qu'aucun r&#233;pondeur OCSP ne peut &#234;tre trouv&#233;, aucune validation OCSP n'est effectu&#233;e.</p></li></ul>
+correspondant. Le r&#233;pondeur OCSP est d&#233;termin&#233; comme suit lors de l'ex&#233;cution&#160;: Les
+attributs mentionn&#233;s se trouvent dans la console sous Configuration &#62; Serveurs et
+sites &#62; S&#233;curit&#233;&#160;:</p>
+<ul><li><p>Si cette valeur est activ&#233;e (true) et que le r&#233;pondeur OCSP est d&#233;fini par l'attribut <a href="service.servereditsecurity.html#ggkav">URL de r&#233;pondeur</a>, la valeur de ce dernier est utilis&#233;e comme r&#233;pondeur OCSP.</p></li>
+<li><p>Si l'attribut <a href="service.servereditsecurity.html#ggkaa">V&#233;rification du protocole OCSP</a> est activ&#233; et si sa valeur n'est pas d&#233;finie, le r&#233;pondeur OCSP affich&#233; dans votre certification client est utilis&#233; comme r&#233;pondeur OCSP. </p></li>
+<li><p>Si l'attribut <a href="service.servereditsecurity.html#ggkaa">V&#233;rification du protocole OCSP</a> n'est pas activ&#233; ou si <a href="service.servereditsecurity.html#ggkaa">V&#233;rification du protocole OCSP</a> est activ&#233; sans qu'aucun r&#233;pondeur OCSP ne soit d&#233;tect&#233;, aucune validation OCSP n'a lieu.</p></li></ul>
 <p>Avant d'activer la validation OCSP, assurez-vous que l'heure de la machine Federated
 Access Manager et celle de la machine r&#233;pondeur OCSP sont aussi synchronis&#233;es
 que possible. Par ailleurs, l'heure de la machine Federated Access Manager ne
@@ -141,7 +141,7 @@ Directory Server.</p>
 <p>Ce champ contient le mot de passe LDAP associ&#233; &#224; l'utilisateur sp&#233;cifi&#233;
 dans le champ Utilisateur principal du serveur LDAP. Il n'y a pas
 de valeur par d&#233;faut pour ce champ qui reconna&#238;t le mot de
-passe LDAP valide de l'utilisateur principal sp&#233;cifi&#233;.  Cette valeur est enregistr&#233;e sous
+passe LDAP valide de l'utilisateur principal sp&#233;cifi&#233;. Cette valeur est enregistr&#233;e sous
 la forme de texte lisible dans l'annuaire.</p>
 
 <a name="fwbiu"></a><h5>Mot de passe principal du serveur LDAP (confirmer)</h5>
@@ -173,12 +173,20 @@ s&#233;lectionn&#233; &#224; partir de la valeur de <i>DN objet</i> pour le cert
 Le service d'authentification recherchera alors le profil utilisateur correspondant &#224; la valeur
 de cet attribut.</p>
 
+<a name="ggumk"></a><h5>Type de valeur SubjectAltNameExt utilis&#233; pour acc&#233;der &#224; l'utilisateur</h5>
+<p>Si une valeur autre que <tt>none</tt> est s&#233;lectionn&#233;e, cet attribut a priorit&#233;
+sur les attributs <tt>Certificate Field Used to Access User Profile</tt> et <tt>Other Certificate Field Used to Access User Profile</tt>.</p>
+<ul><li><p>RFC822Name</p></li></ul>
+
+<ul><li><p>UPN</p></li></ul>
+
+
 <a name="fwbiw"></a><h5>H&#244;tes distants approuv&#233;s</h5>
 <p>D&#233;finit une liste d'h&#244;tes approuv&#233;s pouvant &#234;tre utilis&#233;s pour l'envoi de certificats
 &#224; Federated Access Manager. Federated Access Manager doit v&#233;rifier que le certificat
 &#233;mane bien de l'un de ces h&#244;tes. Cet attribut est utilis&#233; pour
-Portal Server Gateway, pour un &#233;quilibreur de charge avec une terminaison SSL
-et pour l'authentification distribu&#233;e. </p><dl><dt>none</dt>
+Portal Server Gateway, pour un &#233;quilibreur de charge avec terminaison SSL et
+pour l'authentification distribu&#233;e. </p><dl><dt>none</dt>
 <dd><p>D&#233;sactive l'attribut. Ceci est la valeur par d&#233;faut.</p></dd>
 <dt>tous</dt>
 <dd><p>Accepte l'authentification de certificat de style Portal Server Gateway de la part de n'importe quelle adresse IP client.</p></dd>

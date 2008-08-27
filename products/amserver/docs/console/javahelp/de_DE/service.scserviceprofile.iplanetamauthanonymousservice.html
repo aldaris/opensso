@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Anonymous - Online-Hilfe zur Sun Java System Federated Access Manager 8.0-Konsole
+  <title>Anonymous - Online-Hilfe zur Sun Federated Access Manager 8.0-Konsole
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,7 +31,7 @@
 
 
 <a name="service.scserviceprofile.iplanetamauthanonymousservice"></a><h4>Anonymous</h4>
-<p><a name="indexterm-174"></a>Dieser Modultyp erm&#246;glicht die Anmeldung von Benutzern ohne Angabe von Anmeldeinformationen. Wenn
+<p><a name="indexterm-167"></a>Dieser Modultyp erm&#246;glicht die Anmeldung von Benutzern ohne Angabe von Anmeldeinformationen. Wenn
 Sie einen anonymen Benutzer einrichten, kann sich jeder Benutzer ";anonym" anmelden, ohne
 ein Passwort eingeben zu m&#252;ssen. Anonyme Verbindungen werden jedoch in der Regel
 vom Federated Access Manager-Administrator so konfiguriert, dass anonyme Benutzer nur eingeschr&#228;nkten Zugriff
@@ -40,7 +40,7 @@ es sich um Bereichsattribute. Es existieren folgende Attribute:</p>
 <ul><li><p><a href="#fwblp">G&#252;ltige anonyme Benutzer</a></p></li>
 <li><p><a href="#fwbnz">Standardname f&#252;r anonymen Benutzer</a></p></li>
 <li><p> <a href="#fwbto">Benutzer-IDs mit Unterscheidung von Gro&#223;-/Kleinschreibung</a></p></li>
-<li><p> <a href="#fwbli">Authentifizierungsebene</a></p></li></ul>
+<li><p><a href="#fwbli">Authentifizierungsebene</a></p></li></ul>
 
 
 <a name="fwblp"></a><h5>G&#252;ltige anonyme Benutzer</h5>
@@ -51,7 +51,7 @@ wird der betreffenden Benutzer-ID zugeordnet.</p><p>Ist diese Liste leer, wird d
 Standardmodulinstanz unter der im Feld ";Standardname f&#252;r anonymen Benutzer" angegebenen Benutzer-ID authentifiziert:</p><p><tt>protocol://server_host.server_domain:server_port/server_deploy_uri/UI/Login?module=Anonymous&#38;org=org_name </tt></p><p>Wenn die Liste nicht leer ist, wird der Benutzer beim Zugriff auf
 den Anmelde-URL der Standardmodulinstanz (siehe oben) aufgefordert, einen g&#252;ltigen anonymen Benutzernamen einzugeben.
 Enth&#228;lt die Liste Eintr&#228;ge, kann sich der Benutzer auch ohne die Anmeldeseite
-&#252;ber folgenden URL anmelden:</p><p><tt>protocol://server_host.server_domain:server_port/server_deploy_uri/UI/Login?module=Anonymous&#38;org=org_name&#38;IDToken1=&#60;valid Anonymous username></tt> </p>
+&#252;ber folgenden URL anmelden:</p><p><tt>protocol://server_host.server_domain:server_port/server_deploy_uri/UI/Login?module=Anonymous&#38;org=org_name&#38;IDToken1=&#60;Benutzername f&#252;r g&#252;ltigen anonymen Benutzer&#62;</tt> </p>
 
 <a name="fwbnz"></a><h5>Standardname f&#252;r anonymen Benutzer</h5>
 <p>Legt die Benutzer-ID fest, der eine Sitzung zugeordnet wird, wenn die Liste
@@ -61,7 +61,7 @@ Benutzer erstellt wurde.</p>
 <hr><p><b>Hinweis &#8211; </b>Wenn die Liste der g&#252;ltigen anonymen Benutzer nicht leer ist, k&#246;nnen Sie
 sich anmelden, ohne die Anmeldeseite aufzurufen, indem Sie den unter ";Standardname f&#252;r
 anonymen Benutzer" definierten Benutzer verwenden. auf den folgenden URL den unter ";Standardname
-f&#252;r anonymen Benutzer" angegebenen Benutzer ein:</p><p><tt>protocol://server_host.server_domain:server_port/server_deploy_uri/UI/Login?module=Anonymous&#38;org=org_name&#38;IDToken1= </tt> <tt></tt><i>DefaultAnonymous User Name</i><tt></tt></p>
+f&#252;r anonymen Benutzer" angegebenen Benutzer ein:</p><p><tt>protocol://server_host.server_domain:server_port/server_deploy_uri/UI/Login?module=Anonymous&#38;org=org_name&#38;IDToken1= </tt> <tt></tt><i>Standardname f&#252;r anonymen Benutzer</i><tt></tt></p>
 <hr>
 
 

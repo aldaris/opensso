@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>SAMLv2 SOAP 바인딩 - Sun Java System Federated Access Manager 8.0 콘솔 온라인 도움말
+  <title>SAMLv2 SOAP 바인딩 - Sun Federated Access Manager 8.0 콘솔 온라인 도움말
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,29 +31,18 @@
 
 
 <a name="service.scsaml2soapbinding"></a><h4>SAMLv2 SOAP 바인딩</h4>
-
+<p>SAMLv2 SOAP 바인딩 서비스는 Federated Access Manager 클라이언트와 Federated Access Manager 서버
+간에 SAMLv2 요청 및 응답 메시지의 SOAP 기반 교환을 제공합니다. 수신된 요청은
+요청 처리기로 위임되어 추가적인 처리를 진행합니다. Request Handler와 메타 별칭의 키는 SOAP
+바인딩 서비스 URL에 있습니다. 메타 별칭과 RequestHandler의 매핑은 SAMLv2 SOAP 바인딩 서비스에
+저장되며, Federated Access Manager 구성 저장소에서 읽을 수 있습니다. </p>
 
 <a name="ggokv"></a><h5>요청 처리기 목록</h5>
-<a name="indexterm-198"></a><a name="indexterm-199"></a><p>SOAP 바인드 서비스는 요청 메시지를 처리하고 응답을 반환하는 <tt>RequestHandler</tt> 인터페이스를 제공합니다. 이
-인터페이스는 SOAP 바인드 서비스를 사용하는 각 리버티 기반 Identity 서비스에 의해 서버측에서
-구현되어야 합니다. 요청 처리기 목록 속성은 요청 처리기를 구현하는 웹 서비스의 구현
-클래스에 대한 정보를 저장합니다. 요청 처리기 목록에서는 다음과 같이 파이프로 구분된 키/값
-쌍이 포함된 항목을 표시합니다(예: <tt>key=disco|class=com.example.identity.liberty.ws.discoDiscoveryService</tt>). 해당 매개 변수는 다음 표에 설명되어 있습니다.</p><table><col width="50%"><col width="50%"><tr><th align="left" valign="top" scope="column"><p>매개
-변수</p></th>
-<th align="left" valign="top" scope="column"><p>헤더</p></th>
-</tr>
-<tr><td align="left" valign="top" scope="row"><p><tt>key</tt></p></td>
-<td align="left" valign="top" scope="row"><p>필수 <tt>key</tt> 매개 변수는 SOAP 종점에 대한 URI 경로의 마지막 부분입니다. Access
-Manager에서 SOAP 종점은 SOAP 수신자 서블릿입니다. SOAP 수신자에 대한 URI는 <tt><b></tt><i>protocol</i><tt>://</tt><i> host</i><tt>:</tt><i>port</i><tt>/</tt><i>deploy-uri</i><tt>/Liberty/key</b></tt>입니다. <tt><b>disco</b></tt>를
-key로 정의하면 해당 검색 서비스에 대한 SOAP 종점의 URI 경로는 다음과 같습니다.
-<tt><b></tt><i> protocol</i><tt>://</tt><i>host</i><tt>:</tt><i>port </i><tt>/amserver/Liberty/disco</b></tt>. 서비스 클라이언트마다 서로 다른 키를 사용하여 SOAP 수신자를 연결합니다.</p></td>
-</tr>
-<tr><td align="left" valign="top" scope="row"><p><tt>class</tt></p></td>
-<td align="left" valign="top" scope="row"><p>필수 <tt>class</tt> 매개
-변수는 특정 Identity 서비스에 대한 요청 처리기 구현 클래스의 이름을 지정합니다. 예를
-들면 다음과 같습니다. <tt>class=com.example.identity.liberty.ws.disco.DiscoveryService</tt></p></td>
-</tr>
-</table><p>새 요청 처리기를 추가하려면 <b>Broken Link (Target ID: SERVICE.SCSAML2SOAPBINDINGREQUESTHANDLERLISTADD)</b>을 참조하십시오.</p>
+<a name="indexterm-192"></a><a name="indexterm-193"></a><p>RequestHandlerList는 RequestHandler 구현에 대한 메타 별칭 매핑이 포함된 키/값 항목 목록입니다. Federated
+Access Manager 8.0 서버가 PDP(Policy Decision Point) 역할을 하도록 구성하는 경우 이
+속성을 설정해야 합니다. </p><p><i>키</i>는 정책 결정 지점(PDP) 메타 별칭입니다. <i>클래스</i>는 Java 클래스 이름으로, XACML 요청을
+처리할 수 있는 RequestHandler 인터페이스의 구현입니다. </p><p>예를 들어 XACML 정책 결정 지점(PDP)의 메타 별칭이 <tt>/pdp</tt>이고 해당 인터페이스의 구현이
+<tt>com.sun.identity.xacml.plugins.XACMLAuthzDecisionQueryHandler</tt>인 경우 키는 <tt>/pdp</tt>로 설정되고 클래스는 <tt>com.sun.identity.xacml.plugins.XACMLAuthzDecisionQueryHandler</tt>로 설정되어야 합니다. </p>
 <br/>
 
 </body>

@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>MSISDN  - Ayuda en l&#237;nea de la consola de Sun Java System Federated Access Manager 8.0
+  <title>MSISDN - Ayuda en l&#237;nea de la consola de Sun Federated Access Manager 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -30,8 +30,8 @@
 
 
 
-<a name="service.scserviceprofile.sunamauthmsisdnservice"></a><h4>MSISDN </h4>
-<p><a name="indexterm-183"></a>El m&#243;dulo de autenticaci&#243;n Red digital de servicios integrados de estaci&#243;n m&#243;vil
+<a name="service.scserviceprofile.sunamauthmsisdnservice"></a><h4>MSISDN</h4>
+<p><a name="indexterm-177"></a>El m&#243;dulo de autenticaci&#243;n Red digital de servicios integrados de estaci&#243;n m&#243;vil
 (MSISDN, Mobile Station Integrated Services Digital Network) permite la autenticaci&#243;n mediante la
 red RDSI del suscriptor m&#243;vil asociada a un dispositivo como, por ejemplo,
 un tel&#233;fono celular. Se trata de un m&#243;dulo que no es interactivo.
@@ -39,13 +39,13 @@ El m&#243;dulo recupera la RDSI de abonado y la valida con Directory
 Server para encontrar un usuario que coincida con el n&#250;mero. Los atributos
 de autenticaci&#243;n de MSISDN son atributos de dominio. Los atributos de autenticaci&#243;n
 de MSISDN son:</p>
-<ul><li><p><a href="#fumxe">Direcci&#243;n IP de puerta de enlace de confianza</a></p></li>
+<ul><li><p><a href="#fumxe">Direcci&#195;³n IP de puerta de enlace de confianza</a></p></li>
 <li><p><a href="#fumxg">Argumento de n&#250;mero MSISDN</a></p></li>
 <li><p><a href="#fumxf">Puerto y servidor LDAP</a></p></li>
 <li><p><a href="#fumxi">DN de b&#250;squeda de inicio de LDAP</a></p></li>
 <li><p><a href="#fumxk">Atributo para buscar en LDAP</a></p></li>
 <li><p><a href="#fumxl">Usuario principal del servidor LDAP</a></p></li>
-<li><p><a href="#fumxn"> principal del servidor LDAP</a></p></li>
+<li><p><a href="#fumxn">Contrase&#241;a principal del servidor LDAP</a></p></li>
 <li><p><a href="#fumxm">Contrase&#241;a principal del servidor LDAP (confirmar)</a></p></li>
 <li><p><a href="#fumxo">Active SSL para el acceso LDAP</a></p></li>
 <li><p><a href="#fumxp">Atributo LDAP utilizado para recuperar el perfil de usuario</a></p></li>
@@ -53,14 +53,14 @@ de MSISDN son:</p>
 <li><p><a href="#fumxs">Nivel de autenticaci&#243;n</a></p></li></ul>
 
 
-<a name="fumxe"></a><h5>Direcci&#243;n IP de puerta de enlace de confianza</h5>
+<a name="fumxe"></a><h5>Direcci&#195;³n IP de puerta de enlace de confianza</h5>
 <p>Especifica una lista de direcciones IP de clientes de confianza que pueden
-acceder a m&#243;dulos MSISDN. Puede definir las direcciones IP de todos los
-clientes para permitir el acceso al m&#243;dulo MSISDN introduciendo la direcci&#243;n (por
-ejemplo, <tt> 123.456.123.111</tt>) en el campo de entrada y haciendo clic en Agregar.
-La lista est&#225; vac&#237;a de forma predeterminada. Si el atributo se deja
-vac&#237;o, se permitir&#225; el acceso a todos los clientes. Si especifica none
-(ninguno), no se permitir&#225; el acceso a ning&#250;n cliente.</p>
+acceder a m&#243;dulos MSISDN. You can set the IP addresses of all
+clients allows to access the MSISDN module by entering the address (for
+example, <tt>123.456.123.111</tt>) in the entry field and clicking Add. By default, the
+list is empty. Si el atributo se deja vac&#237;o, se permitir&#225; el
+acceso a todos los clientes. Si especifica none (ninguno), no se permitir&#225;
+el acceso a ning&#250;n cliente.</p>
 
 <a name="fumxg"></a><h5>Argumento de n&#250;mero MSISDN</h5>
 <p>Especifica una lista de los nombres que identifican los par&#225;metros que se
@@ -102,7 +102,7 @@ n&#250;mero MSISDN.</p>
 <p>Especifica el DN de conexi&#243;n LDAP para permitir b&#250;squedas de MSISDN en
 Directory Server. El DN de enlace predeterminado es <tt>cn=amldapuser,ou=DSAME Users,dc=sun,dc=com</tt>.</p>
 
-<a name="fumxn"></a><h5> principal del servidor LDAP</h5>
+<a name="fumxn"></a><h5>Contrase&#241;a principal del servidor LDAP</h5>
 <p>Especifica la contrase&#241;a de conexi&#243;n LDAP para el DN de conexi&#243;n como
 se ha definido en el usuario principal del servidor LDAP.</p>
 

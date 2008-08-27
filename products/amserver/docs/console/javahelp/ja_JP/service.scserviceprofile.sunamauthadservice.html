@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Active Directory - Sun Java System Federated Access Manager 8.0 コンソールオンラインヘルプ
+  <title>Active Directory - Sun Federated Access Manager 8.0 コンソールオンラインヘルプ
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,7 +31,7 @@
 
 
 <a name="service.scserviceprofile.sunamauthadservice"></a><h4>Active Directory</h4>
-<p><a name="indexterm-173"></a>このモジュールタイプは、LDAP 認証モジュールタイプと同様に機能しますが、LDAP ディレクトリの代わりに Microsoft Active Directory を使用します。このモジュールタイプを使用すると、LDAP と Active Directory の両方を同じレルムの下に置くことが可能になります。Active Directory
+<p><a name="indexterm-166"></a>このモジュールタイプは、LDAP 認証モジュールタイプと同様に機能しますが、LDAP ディレクトリの代わりに Microsoft Active Directory を使用します。このモジュールタイプを使用すると、LDAP と Active Directory の両方を同じレルムの下に置くことが可能になります。Active Directory
 認証属性はレルム属性です。属性は次のとおりです。</p>
 <ul><li><p><a href="#fwfdx">「プライマリ Active Directory サーバー」</a></p></li>
 <li><p><a href="#fwbmo">「セカンダリ Active Directory サーバー」</a></p></li>
@@ -69,7 +69,7 @@ ID を使用して認証するにはこのパラメータを <tt>ou=People</tt> 
 
 <a name="fwbjl"></a><h5>root ユーザーバインド DN</h5>
 <p>「プライマリ LDAP サーバーおよびポート」フィールドで指定した Directory Server に管理者としてバインドするのに使用するユーザーの DN を指定します。ユーザーログイン ID に基づいて、一致するユーザー DN を検索するためには、認証サービスはこの
-DN でバインドする必要があります。デフォルトは <tt>amldapuser</tt> です。任意の有効な DN が認識されます。</p><p>ログアウトする前に、パスワードが正しいことを確認します。正しくない場合はロックアウトされます。ロックアウトされた場合は、<tt>AMConfig.Properties</tt> ファイルの <i>com.iplanet.authentication.super.user</i> プロパティーにあるスーパーユーザー DN でログインします。デフォルトでは、これは <tt>amAdmin</tt> アカウントです。ログインアカウントとして、<tt>amAdmin</tt> の完全な DN 形式を指定しなくても、<tt>amAdmin</tt> でログインできます。次に例を示します。</p><p><tt>uid_amAdmin,ou=People,</tt><i>FederatedAccessManager-base </i><tt></tt></p>
+DN でバインドする必要があります。デフォルトは <tt>amldapuser</tt> です。任意の有効な DN が認識されます。</p><p>ログアウトする前に、パスワードが正しいことを確認します。正しくない場合はロックアウトされます。ロックアウトされた場合は、スーパーユーザー DN でログインできます。デフォルトでは、これは <tt>amAdmin</tt> アカウントです。通常のログインと同じアカウントですが、完全な DN を使用します。次に例を示します。</p><p><tt>uid_amAdmin,ou=People,</tt><i>FederatedAccessManager-base </i><tt></tt></p>
 
 <a name="fwbix"></a><h5>root ユーザーバインドパスワード</h5>
 <p>「root ユーザーバインド DN」フィールドで指定される管理者プロファイルのパスワードを指定します。デフォルト値は存在しません。管理者の有効な Active Directory パスワードだけが認識されます。</p>
@@ -108,7 +108,7 @@ DN を返すことができるため、検索が不要になります。通常�
 <p>この属性は Active Directory サーバーのフェイルバックに使用されます。Active Directory プライマリサーバーが実行されているかを確認するまでの、スレッドがスリープしている時間を分単位で定義します。</p>
 
 <a name="fwbtk"></a><h5>ユーザー作成属性</h5>
-<p>Active Directory サーバーが外部 Active Directory サーバーとして設定されている場合、この属性は Active Directory 認証モジュールインスタンスで使用されます。リストには、ローカルと外部 Directory Server 間の属性のマッピングが含まれます。形式は次のとおりです。</p><p><i>attr1|externalattr1</i></p><p><i>attr2|externalattr2</i></p><p>この属性が生成されると、外部属性値が外部 Directory Server から読み込まれて、内部 Directory Server 属性に設定されます。外部属性値が内部属性に設定されるのは、コア認証モジュールタイプの「ユーザープロファイル」属性で「動的」が選択されていて、ローカル Directory Server インスタンスにユーザーが存在しない場合だけです。<tt></tt>新しく作成されたユーザーには、ユーザー作成属性リストに指定されているような、マッピングする外部属性値をともなう内部属性値が含まれます。</p>
+<p>Active Directory サーバーが外部 Active Directory サーバーとして設定されている場合、この属性は Active Directory 認証モジュールインスタンスで使用されます。リストには、ローカルと外部 Directory Server 間の属性のマッピングが含まれます。形式は次のとおりです。</p><p><i>attr1|externalattr1</i></p><p><i>attr2|externalattr2</i></p><p>この属性が生成されると、外部属性値が外部 Directory Server から読み込まれて、内部 Directory Server 属性に設定されます。外部属性値が内部属性に設定されるのは、コア認証モジュールタイプの「ユーザープロファイル」属性で「動的」が選択されていて、ローカル Directory Server インスタンスにユーザーが存在しない場合だけです。<tt></tt>新しく作成されたユーザーには、ユーザー作成属性リストに指定されているような、マッピングする外部属性値をともなう内部属性値が含まれます。 </p>
 
 <a name="fwboz"></a><h5>認証レベル</h5>
 <p>認証レベルは認証方法ごとに個別に設定します。この値は、認証メカニズムの信頼度を示します。ユーザーが認証を受けると、この値がセッションの SSO トークンに格納されます。ユーザーがアクセスするアプリケーションに SSO トークンが提供されると、そのアプリケーションは格納されている値を使用して、ユーザーにアクセスを許可するのに十分なレベルかどうかを判別します。SSO トークンに格納されている認証レベルが必要な最小値に満たない場合、アプリケーションはユーザーにより高い認証レベルのサービスで認証を再度受けるよう要求することがあります。デフォルト値は 0 です。</p>

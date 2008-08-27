@@ -8,10 +8,10 @@
 
 <head>
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Windows NT - Online-Hilfe zur Sun Java System Federated Access Manager 8.0-Konsole
+  <title>Windows NT - Online-Hilfe zur Sun Federated Access Manager 8.0-Konsole
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,13 +31,13 @@
 
 
 <a name="service.scserviceprofile.iplanetamauthntservice"></a><h4>Windows NT</h4>
-<p><a name="indexterm-190"></a>Das Authentifizierungsmodul "Windows NT" erm&#246;glicht die Authentifizierung bei einem Microsoft Windows NT-Server.
+<p><a name="indexterm-184"></a>Das Authentifizierungsmodul "Windows NT" erm&#246;glicht die Authentifizierung bei einem Microsoft Windows NT-Server.
 Bei diesen Attributen handelt es sich um Bereichsattribute. Die diesen Attributen in
 der Dienstkonfiguration zugewiesenen Werte werden in der Windows NT-Authentifizierungsvorlage als Standardwerte verwendet.
 Die Dienstvorlage muss nach der Registrierung des Dienstes f&#252;r den Bereich erstellt
 werden. Die Standardwerte k&#246;nnen nach der Registrierung vom Bereichsadministrator ge&#228;ndert werden. Die
 Bereichsattribute werden nicht von Eintr&#228;gen in den Unterstrukturen des Bereichs &#252;bernommen.</p><p>Zur Aktivierung des Windows NT-Authentifizierungsmoduls muss Samba Client 2.2.2 heruntergeladen und im
-folgenden Verzeichnis installiert werden: </p><p><tt></tt><i>AcessManager-base</i><tt>/SUNWam/bin</tt></p><p>Der Samba Client ist ein Datei- und Druckserver f&#252;r die Integration von
+folgenden Verzeichnis installiert werden:</p><p><tt></tt><i>AcessManager-base</i><tt>/SUNWam/bin</tt></p><p>Der Samba Client ist ein Datei- und Druckserver f&#252;r die Integration von
 Windows- und UNIX-Computern ohne Verwendung eines separaten Windows NT/2000-Servers.</p><p>Red Hat Linux wird bereits mit einem Samba Client ausgeliefert, der sich
 im Verzeichnis <tt>/usr/bin </tt> befindet.</p><p>Zur Authentifizierung mit dem Windows NT-Authentifizierungsdienst f&#252;r Linux m&#252;ssen Sie die Bin&#228;rdatei
 des Client in das Verzeichnis  <tt></tt><i>FederatedAccessManager-base</i><tt> /identity/bin</tt> kopieren.</p><p>Die Windows NT-Attribute sind:</p>
@@ -54,15 +54,14 @@ des Client in das Verzeichnis  <tt></tt><i>FederatedAccessManager-base</i><tt> /
 <p>Legt den Hostnamen f&#252;r die Windows NT-Authentifizierung fest. Der Hostname sollte der
 netBIOS-Name sein und nicht der voll qualifizierte Dom&#228;nenname (FQDN). Standardm&#228;&#223;ig ist der
 erste Teil des FQDN der netBIOS-Name.</p><p>Falls DHCP (Dynamic Host Configuration Protocol) verwendet wird, f&#252;gen Sie einen entsprechenden
-Eintrag in die HOSTS-Datei auf dem Windows 2000-Computer ein. </p><p>Die Namensaufl&#246;sung basiert auf dem netBIOS-Namen. Falls Sie in Ihrem Subnet &#252;ber
+Eintrag in die HOSTS-Datei auf dem Windows 2000-Computer ein.</p><p>Die Namensaufl&#246;sung basiert auf dem netBIOS-Namen. Falls Sie in Ihrem Subnet &#252;ber
 keinen Server verf&#252;gen, der die netBIOS-Namensaufl&#246;sung bereitstellt, sollten Hardcode-Zuordnungen durchgef&#252;hrt werden. Der
-Hostname sollte beispielsweise im Format <tt>example1</tt> eingegeben werden (nicht im Format <tt>example1.company1.com</tt>).
-</p>
+Hostname sollte beispielsweise im Format <tt>example1</tt> eingegeben werden (nicht im Format <tt>example1.company1.com</tt>).</p>
 
 <a name="fumvq"></a><h5>Dateiname f&#252;r Samba-Konfiguration</h5>
-<p>Legt den Dateinamen f&#252;r die Samba-Konfiguration fest und unterst&#252;tzt im Befehl <tt>smbclient</tt>
-die Option<tt>-s </tt>. Der Wert muss der vollst&#228;ndige Pfad des Verzeichnisses sein, in
-dem sich die Samba-Konfigurationsdatei befindet. Beispiel: <tt>/etc/opt/SUNWam/config/smb.conf</tt></p>
+<p>Legt den Dateinamen f&#252;r die Samba-Konfiguration fest und unterst&#252;tzt im Befehl <tt>-smbclient</tt>
+die Option<tt>s </tt>. Der Wert muss der vollst&#228;ndige Pfad des Verzeichnisses sein, in
+dem sich die Samba-Konfigurationsdatei befindet. For example: <tt>/etc/opt/SUNWam/config/smb.conf</tt></p>
 
 <a name="fumwi"></a><h5>Authentifizierungsebene</h5>
 <p>Die Authentifizierungsebene wird f&#252;r jede Authentifizierungsmethode einzeln festgelegt. Mit diesem Wert wird
