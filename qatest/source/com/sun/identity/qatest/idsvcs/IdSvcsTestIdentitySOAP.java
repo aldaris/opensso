@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSvcsTestIdentitySOAP.java,v 1.3 2008-08-22 16:15:37 vimal_67 Exp $
+ * $Id: IdSvcsTestIdentitySOAP.java,v 1.4 2008-08-27 19:02:33 vimal_67 Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -553,7 +553,10 @@ public class IdSvcsTestIdentitySOAP extends TestCommon {
             String akey = token.substring(0, token.indexOf("="));
             String avalue = token.substring(token.indexOf("=") + 1, 
                     token.length());
-                                    
+            if (avalue.contains("^")) {
+                    avalue.replace("^", ",");
+            }
+            
             // tokenizing the multiple values
             StringTokenizer strTokenAmp = new StringTokenizer(avalue, "&");
             String[] avalues = new String[strTokenAmp.countTokens()];

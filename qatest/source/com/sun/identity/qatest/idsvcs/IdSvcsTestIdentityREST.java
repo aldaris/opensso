@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSvcsTestIdentityREST.java,v 1.4 2008-08-22 16:14:52 vimal_67 Exp $
+ * $Id: IdSvcsTestIdentityREST.java,v 1.5 2008-08-27 19:02:07 vimal_67 Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,7 +34,7 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.StringTokenizer;
+import java.util.Set;
 import java.util.logging.Level;
 import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
@@ -132,7 +132,7 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                             "." + "operation" + i + "." + "name"); 
                     Reporter.log("Operation: " + operationName);
                     if (operationName.equals("create")) {
-                        Map anmap = new HashMap(); 
+                        Map<String, Set<String>> anmap = new HashMap(); 
                         Map pmap = new HashMap();  
                         String identity_name = rbid.getString(idsProp + 
                                 index + "." + "operation" + i +
@@ -147,7 +147,7 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                         pmap.put("identity_type", identity_type);
                         pmap.put("identity_realm", 
                                 URLEncoder.encode(strTestRealm));
-                        anmap = getAttributes(attributes);
+                        anmap = parseStringToMap(attributes, ",", "&");
                         idTypeSupported = idmcommon.isIdTypeSupported(
                                 idTypeSupportedToken, strTestRealm, 
                                 identity_type);
@@ -164,7 +164,7 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                                     operationName + " IdType Not Supported");
                         }
                     } else if (operationName.equals("search")) {
-                        Map anmap = new HashMap();    
+                        Map<String, Set<String>> anmap = new HashMap();    
                         Map pmap = new HashMap();     
                         String filter = rbid.getString(idsProp + index +
                                 "." + "operation" + i + "." + "filter");
@@ -176,7 +176,7 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                                     index + "." + "operation" + i + 
                                     "." + "objecttype");
                         pmap.put("filter", filter);
-                        anmap = getAttributes(attributes);
+                        anmap = parseStringToMap(attributes, ",", "&");
                         idTypeSupported = idmcommon.isIdTypeSupported(
                                 idTypeSupportedToken, strTestRealm, 
                                 objecttype);
@@ -230,7 +230,7 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                                     operationName + " IdType Not Supported");
                         }
                     } else if (operationName.equals("read")) {
-                        Map anmap = new HashMap();   
+                        Map<String, Set<String>> anmap = new HashMap();   
                         Map pmap = new HashMap();    
                         String identity_name = rbid.getString(idsProp + 
                                 index + "." + "operation" + i + 
@@ -241,7 +241,7 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                         String attributes = rbid.getString(idsProp + 
                                 index + "." + "operation" + i +
                                 "." + "attributes");
-                        anmap = getAttributes(attributes);
+                        anmap = parseStringToMap(attributes, ",", "&");
                         pmap.put("name", identity_name);
                         pmap.put("attributes_names", "objecttype");
                         pmap.put("attributes_values_objecttype", objecttype);
@@ -260,7 +260,7 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                                     operationName + " IdType Not Supported");
                         }
                     } else if (operationName.equals("update")) {
-                        Map anmap = new HashMap();    
+                        Map<String, Set<String>> anmap = new HashMap();    
                         Map pmap = new HashMap();     
                         String identity_name = rbid.getString(idsProp + 
                                 index + "." + "operation" + i +
@@ -271,7 +271,7 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                         String attributes = rbid.getString(idsProp + 
                                 index + "." + "operation" + i + 
                                 "." + "attributes");
-                        anmap = getAttributes(attributes);
+                        anmap = parseStringToMap(attributes, ",", "&");
                         pmap.put("identity_name", identity_name);
                         pmap.put("identity_type", identity_type);
                         pmap.put("attributes_names", "objecttype");
@@ -292,7 +292,7 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                         }
                     } else if (operationName.equals("delete") &&
                             strCleanup.equals("false")) {
-                        Map anmap = new HashMap(); 
+                        Map<String, Set<String>> anmap = new HashMap(); 
                         Map pmap = new HashMap();  
                         String identity_name = rbid.getString(idsProp + 
                                 index + "." + "operation" + i + 
@@ -303,7 +303,7 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                         String attributes = rbid.getString(idsProp + 
                                 index + "." + "operation" + i + 
                                 "." + "attributes");
-                        anmap = getAttributes(attributes);
+                        anmap = parseStringToMap(attributes, ",", "&");
                         pmap.put("identity_name", identity_name);
                         pmap.put("identity_type", identity_type);
                         idTypeSupported = idmcommon.isIdTypeSupported(
@@ -322,14 +322,14 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                                     operationName + " IdType Not Supported");
                         }
                     } else if (operationName.equals("isTokenValid")) {
-                        Map anmap = new HashMap();
+                        Map<String, Set<String>> anmap = new HashMap();
                         Map pmap = new HashMap(); 
                         String identity_type = rbid.getString(idsProp +
                                 index + "." + "operation" + i + 
                                 "." + "identity_type");
                         String attributes = rbid.getString(idsProp + index +
                                 "." + "operation" + i + "." + "attributes");
-                        anmap = getAttributes(attributes);
+                        anmap = parseStringToMap(attributes, ",", "&");
                         String paramName = rbid.getString(idsProp + index +
                                 "." + "operation" + i + "." + "parameter_name");
                         String userType = rbid.getString(idsProp + index +
@@ -398,7 +398,7 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                                     operationName + " IdType Not Supported");
                         }
                     } else if (operationName.equals("attributes")) {
-                        Map anmap = new HashMap(); 
+                        Map<String, Set<String>> anmap = new HashMap(); 
                         Map pmap = new HashMap(); 
                         String identity_type = rbid.getString(idsProp +
                                 index + "." + "operation" + i + 
@@ -406,7 +406,7 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                         String attributes = rbid.getString(idsProp + 
                                 index + "." + "operation" + i +
                                 "." + "attributes");
-                        anmap = getAttributes(attributes);
+                        anmap = parseStringToMap(attributes, ",", "&");
                         idTypeSupported = idmcommon.isIdTypeSupported(
                                 idTypeSupportedToken, strTestRealm, 
                                 identity_type);
@@ -461,7 +461,7 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                 while (i < operations) {
                     String operationName = rbid.getString(idsProp + index + 
                             "." + "operation" + i + "." + "name"); 
-                    Map anmap = new HashMap();
+                    Map<String, Set<String>> anmap = new HashMap();
                     Map pmap = new HashMap(); 
                     String identity_name = rbid.getString(idsProp + index +
                             "." + "operation" + i + "." + "identity_name");
@@ -469,7 +469,7 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                             "." + "operation" + i + "." + "identity_type");
                     String attributes = rbid.getString(idsProp + index +
                             "." + "operation" + i + "." + "attributes");
-                    anmap = getAttributes(attributes);
+                    anmap = parseStringToMap(attributes, ",", "&");
                     pmap.put("identity_name", identity_name);
                     pmap.put("identity_type", identity_type);
                     idTypeSupported = idmcommon.isIdTypeSupported(
@@ -498,23 +498,6 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                 destroyToken(idTypeSupportedToken);
         }
         exiting("cleanup");
-    }
-    
-    /**
-     * Get Attributes
-     */
-    private Map getAttributes(String atts) {
-        String token = "";
-        Map mp = new HashMap();
-        StringTokenizer strTokenComma = new StringTokenizer(atts, ",");
-        while (strTokenComma.hasMoreTokens()) {
-            token = strTokenComma.nextToken();
-            String akey = token.substring(0, token.indexOf("="));
-            String avalue = token.substring(token.indexOf("=") + 1, 
-                    token.length());
-            mp.put(akey, avalue);
-        }
-        return mp;
     }
         
 }

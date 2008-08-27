@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSvcsCommon.java,v 1.4 2008-08-22 16:16:29 vimal_67 Exp $
+ * $Id: IdSvcsCommon.java,v 1.5 2008-08-27 19:01:33 vimal_67 Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -103,8 +103,8 @@ public class IdSvcsCommon extends TestCommon {
      * like identity name, identity type,..etc, and map of attributes like cn,
      * sn, ..etc
      */
-    public TextPage commonURLREST(String operation, Map par_map, Map att_map, 
-            String token) throws Exception {
+    public TextPage commonURLREST(String operation, Map par_map, Map<String, 
+            Set<String>> att_map, String token) throws Exception {
         entering("commonURLREST", null);
         TextPage URL = null;
         String parameters = "";
@@ -135,60 +135,76 @@ public class IdSvcsCommon extends TestCommon {
             Set set_att = att_map.keySet();
             Iterator iter_att = set_att.iterator();
             while (iter_att.hasNext()) {
-                Object key = iter_att.next();       
-                Object value = att_map.get(key);
-                               
-                // Calling REST Operation read
-                // Checking attributes one by one after calling read
-                if (operation.equals("read")) {
-                    String rdattrsKey = "identitydetails.attribute.name=" + 
-                            key;
-                    String rdattrsKeyValue = "identitydetails.attribute.name=" +
-                            key + "\n" + "identitydetails.attribute.value=" + 
-                            value;
-                                                                                            
-                    // Reading the attributes 
-                    URL  = (TextPage)webClient.getPage(serverURI +
-                            "/identity/read?&attributes_names=" + key + 
-                            parameters + readParameters + "&admin=" + 
-                            URLEncoder.encode(token, "UTF-8"));
-                    log(Level.FINEST, "commonURLREST", "Page for " +
-                            operation + " : " + URL.getContent());
-                    if (URL.getContent().contains(rdattrsKeyValue)) {
-                        log(Level.FINEST, "commonURLREST", operation + " " + 
-                                "Attribute with Key " + key + " and Value " + 
-                                value + " together Found");
-                    } else if (URL.getContent().contains(rdattrsKey)) {
-                        log(Level.FINEST, "commonURLREST", operation + " " +  
-                                "Attribute with Key " + key + " only Found");
-                    } else {
-                        log(Level.FINEST, "commonURLREST", operation +  " " + 
-                                "Attribute with neither Key " + key + " nor " +
-                                "Value " + value + " Found");
-                        assert false;
-                    }
-                } else if (operation.equals("update")) {
-                    
-                    // Reading the attributes with old values
-                    URL  = (TextPage)webClient.getPage(serverURI +
-                            "/identity/read?&attributes_names=" + key + 
-                            "&name=" + identity_value + readParameters + 
-                            "&admin=" + URLEncoder.encode(token, "UTF-8"));
-                    log(Level.FINEST, "commonURLREST", "Page for " +
-                            operation + " : " + URL.getContent());
-                    att_names = "&identity_attribute_names=" + key +
-                    "&identity_attribute_values_" + key + "=" + value +
-                    att_names;
-                } else if (operation.equals("search")) {
-                    att_names = "&attributes_names=" + key +
-                    "&attributes_values_" + key + "=" + value + att_names;
-                } else if (operation.equals("attributes")) {
-                    att_names = "&attributes_names=" + key + att_names;
+                String value = "";
+                String keyString = "";
+                String valueString = "";
+                Object key = iter_att.next(); 
+                Set values = (Set) att_map.get(key);
+                
+                if (operation.equals("search") || 
+                        operation.equals("attributes")) {
+                    keyString = "&attributes_names=" + key;
                 } else {
-                    att_names = "&identity_attribute_names=" + key +
-                    "&identity_attribute_values_" + key + "=" + value +
-                    att_names;
+                    keyString = "&identity_attribute_names=" + key;
+                } 
+                String rdattrsKey = "identitydetails.attribute.name=" +
+                        key;
+                String[] strValuesArr = (String[]) values.toArray(
+                        new String[0]);
+                for (int j = 0; j < strValuesArr.length; j++) {
+                    value = strValuesArr[j];
+                    if (value.toString().contains("^")) {
+                        value.toString().replace("^", ",");
+                    }
+                
+                    // Calling REST Operation read
+                    // Checking attributes one by one after calling read
+                    if (operation.equals("read")) {
+                        String rdattrsValue = "identitydetails.attribute." +
+                                "value=" + value;
+                                                                                            
+                        // Reading the attributes 
+                        URL  = (TextPage)webClient.getPage(serverURI +
+                                "/identity/read?&attributes_names=" + key + 
+                                parameters + readParameters + "&admin=" + 
+                                URLEncoder.encode(token, "UTF-8"));
+                        log(Level.FINEST, "commonURLREST", "Page for " +
+                                operation + " : " + URL.getContent());
+                        if (URL.getContent().contains(rdattrsKey) && 
+                                URL.getContent().contains(rdattrsValue)) {
+                            log(Level.FINEST, "commonURLREST", operation + " " + 
+                                    "attribute with Key " + key + " and " +
+                                    "Value " + value + " together found");
+                        } else if (URL.getContent().contains(rdattrsKey)) {
+                            log(Level.FINEST, "commonURLREST", operation + " " +  
+                                    "attribute with Key " + key +
+                                    " only found");
+                        } else {
+                            log(Level.FINEST, "commonURLREST", operation + " " + 
+                                    "attribute with neither Key " + key +
+                                    " nor " + "Value " + value + " found");
+                            assert false;
+                        }
+                    } else if (operation.equals("update")) {
+                    
+                        // Reading the attributes with old values
+                        URL  = (TextPage)webClient.getPage(serverURI +
+                                "/identity/read?&attributes_names=" + key + 
+                                "&name=" + identity_value + readParameters + 
+                                "&admin=" + URLEncoder.encode(token, "UTF-8"));
+                        log(Level.FINEST, "commonURLREST", "Page for " +
+                                operation + " : " + URL.getContent());
+                        valueString = "&identity_attribute_values_" + key +
+                                "=" + value + valueString;
+                    } else if (operation.equals("search")) {
+                        valueString = "&attributes_values_" + key + "=" +
+                                value + valueString;
+                    } else {
+                        valueString = "&identity_attribute_values_" + key +
+                                "=" + value + valueString;
+                    }
                 }
+                att_names = keyString + valueString + att_names;
             }
             log(Level.FINEST, "commonURLREST", 
                     "Attributes Names URL: " + att_names);
