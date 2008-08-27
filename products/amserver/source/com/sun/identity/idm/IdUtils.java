@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdUtils.java,v 1.25 2008-08-07 17:22:08 arviranga Exp $
+ * $Id: IdUtils.java,v 1.26 2008-08-27 18:01:30 manish_rustagi Exp $
  *
  */
 
@@ -484,6 +484,20 @@ public final class IdUtils {
             id = DNMapper.orgNameToDN(orgIdentifier);
         } else if (DN.isDN(orgIdentifier)) {
             id = orgIdentifier;
+            try {
+                // Search for realms with orgIdentifier name
+                OrganizationConfigManager ocm = 
+                    new OrganizationConfigManager(token, orgIdentifier);
+            } catch (SMSException smse) {
+                // debug message here.
+                if (debug.messageEnabled()) {
+                    debug.message("IdUtils.getOrganization Exception in "
+                            + "getting org name from SMS", smse);
+                }
+                Object[] args = { orgIdentifier };
+                throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "401", 
+                        args);            	
+            }
         } else if (ServiceManager.isCoexistenceMode()) {
             // Return the org DN as determined by AMStoreConnection
             if (debug.messageEnabled()) {
