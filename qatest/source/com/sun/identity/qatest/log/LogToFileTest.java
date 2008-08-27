@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogToFileTest.java,v 1.3 2008-06-26 20:14:57 rmisra Exp $
+ * $Id: LogToFileTest.java,v 1.4 2008-08-27 05:46:19 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -188,10 +188,12 @@ public class LogToFileTest extends LogCommon implements LogTestConstants {
     throws Exception {
         entering("cleanUp", null);
         try {
-            if (idm.doesIdentityExists(userId, "user", adminSSOToken, realm)) {
-                destroyToken(userSSOToken);
-                log(Level.FINE, "cleanUp", "Delete test user : " + userId);
-                idm.deleteID(userId, "user", adminSSOToken, realm);
+            if (userId != null) {
+                if (idm.doesIdentityExists(userId, "user", adminSSOToken, realm)) {
+                    destroyToken(userSSOToken);
+                    log(Level.FINE, "cleanUp", "Delete test user : " + userId);
+                    idm.deleteID(userId, "user", adminSSOToken, realm);
+                }
             }
             if (restore.equals("true")) {
                 log(Level.FINE, "cleanUp", "Resetting logService config.");
@@ -199,8 +201,11 @@ public class LogToFileTest extends LogCommon implements LogTestConstants {
                 destroyToken(adminSSOToken);
             }
         } catch (Exception ex) {
+            log(Level.SEVERE, "cleanUp", "Error occured during test with user id :" + 
+                    userId);
             log(Level.SEVERE, "cleanUp", "Error writing log :" + 
                     ex.getMessage());
+            ex.printStackTrace();
         }
         exiting("cleanUp");
     }

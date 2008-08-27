@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogToDBTest.java,v 1.3 2008-06-26 20:14:56 rmisra Exp $
+ * $Id: LogToDBTest.java,v 1.4 2008-08-27 05:46:19 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -226,10 +226,22 @@ public class LogToDBTest extends LogCommon implements LogTestConstants {
     throws Exception {
         entering("readLog", null);
         try {
-            String lastRec = readLastLogEntry(dbConn, tableName);
-            log(Level.FINEST, "readLog", "Last Rec :" + lastRec);
+            int i = 0;
+            String lastRec;
             String expMsg = testCaseInfo.getString(curTestName + "." +
                     LOGTEST_KEY_EXPECTED_MESSAGE);
+            lastRec = readLastLogEntry(dbConn, tableName);
+            while (i < 5) {
+                i++;
+                lastRec = readLastLogEntry(dbConn, tableName);
+                log(Level.FINEST, "readLog", "Last Rec :" + lastRec);
+                if (lastRec.indexOf(expMsg) == -1) {
+                    log(Level.FINEST, "readLog", "Last Rec doesnt match. " +
+                            "Wait for " + notificationSleepTime + " secs & read again");
+                    Thread.sleep(notificationSleepTime);
+                } else 
+                    break;
+            }
             if (lastRec.indexOf(expMsg) == -1) {
                 log(Level.SEVERE, "readLog", "Record doesn't contain " +
                         "expected message");
