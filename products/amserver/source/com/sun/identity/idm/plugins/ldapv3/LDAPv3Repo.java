@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.53 2008-08-13 19:24:30 goodearth Exp $
+ * $Id: LDAPv3Repo.java,v 1.54 2008-08-27 21:07:14 goodearth Exp $
  *
  */
 
@@ -1395,10 +1395,6 @@ public class LDAPv3Repo extends IdRepo {
     public int addListener(SSOToken token, IdRepoListener listener)
             throws IdRepoException, SSOException {
 
-        // If CLI, do not have persistent search for notifications.
-        if (!SystemProperties.isServerMode()) {
-            return 0;
-        }
         if (debug.messageEnabled()) {
             debug.message("LDAPv3Repo: addListener called"
                     + "  LDAPv3Config_LDAP_SERVER="
@@ -1416,6 +1412,10 @@ public class LDAPv3Repo extends IdRepo {
         // listener.setConfigMap(configMap);
         myListener = listener;
 
+        // If CLI, do not have persistent search for notifications.
+        if (!SystemProperties.isServerMode()) {
+            return 0;
+        }
         // see if we already have an event service for this server.
         if (ldapServerName == null) {
             getLDAPServerName(myConfigMap);
