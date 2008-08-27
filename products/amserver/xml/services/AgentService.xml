@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.64 2008-08-26 23:48:09 goodearth Exp $
+   $Id: AgentService.xml,v 1.65 2008-08-27 05:00:13 huacui Exp $
 
 -->
 
@@ -46,6 +46,11 @@
                         <DefaultValues>
                             <Value>&#160;</Value>
                         </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="sunIdentityServerDeviceKeyValue"
+                        type="list"
+                        syntax="string"
+                        i18nKey="a501">
                     </AttributeSchema>
                     <AttributeSchema name="sunIdentityServerDeviceStatus"
                         type="single_choice"
@@ -1028,6 +1033,11 @@
                              <Value>&#160;</Value>
                          </DefaultValues>
                      </AttributeSchema>
+                     <AttributeSchema name="sunIdentityServerDeviceKeyValue"
+                        type="list"
+                        syntax="string"
+                        i18nKey="a501">
+                     </AttributeSchema>
                      <AttributeSchema name="sunIdentityServerDeviceStatus"
                          type="single_choice"
                          syntax="string"
@@ -1638,7 +1648,7 @@
                         name="com.sun.identity.agents.config.cdsso.cdcservlet.url"
                         type="list"
                         syntax="string"
-                        uitype="unorderedlist"
+                        uitype="orderedlist"
                         validator="ListValueValidator"
                         i18nKey="a166">
                         <DefaultValues>
@@ -1658,7 +1668,7 @@
                         name="com.sun.identity.agents.config.cdsso.trusted.id.provider"
                         type="list"
                         syntax="string"
-                        uitype="unorderedlist"
+                        uitype="orderedlist"
                         validator="ListValueValidator"
                         i18nKey="a168">
                         <DefaultValues>
