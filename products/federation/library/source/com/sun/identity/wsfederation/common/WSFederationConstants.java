@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationConstants.java,v 1.10 2008-08-19 19:11:16 veiming Exp $
+ * $Id: WSFederationConstants.java,v 1.11 2008-08-27 19:00:07 superpat7 Exp $
  *
  */
 
@@ -309,4 +309,15 @@ public final class WSFederationConstants {
      * The default attribute for short user name
      */
     public static final String UID = "uid";
+    
+    /**
+     * The URL prefix for WS-Fed metadata requests
+     */
+    public static final String METADATA_URL_PREFIX = 
+        "/FederationMetadata/2006-12";
+    
+    /**
+     * The URL suffix for WS-Fed metadata requests
+     */
+    public static final String METADATA_URL_SUFFIX = "/FederationMetadata.xml";
 }

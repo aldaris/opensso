@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationActionFactory.java,v 1.2 2008-06-25 05:48:09 qcheng Exp $
+ * $Id: WSFederationActionFactory.java,v 1.3 2008-08-27 19:00:07 superpat7 Exp $
  *
  */
 
@@ -107,7 +107,12 @@ public class WSFederationActionFactory {
         }
 
         if ( request.getMethod().equals("GET")){
-            if (wa == null || wa.equals(WSFederationConstants.WSIGNIN10)) {
+            if (request.getRequestURI().
+                startsWith(request.getContextPath() + WSFederationConstants.METADATA_URL_PREFIX)) {
+                // Metadata request
+                action = new MetadataRequest(request, response);
+            } else  if (wa == null || 
+                wa.equals(WSFederationConstants.WSIGNIN10)) {
                 // We allow missing wa for RP signin request to accomodate 
                 // agents etc
                 if ( wtrealm != null && (wtrealm.length()>0)) {
