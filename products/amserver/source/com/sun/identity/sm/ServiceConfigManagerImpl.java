@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfigManagerImpl.java,v 1.10 2008-07-15 21:04:18 arviranga Exp $
+ * $Id: ServiceConfigManagerImpl.java,v 1.11 2008-08-27 16:30:30 goodearth Exp $
  *
  */
 
@@ -315,15 +315,17 @@ class ServiceConfigManagerImpl implements SMSObjectListener {
      * ID was issued when the listener was registered.
      */
     void removeListener(String listenerID) {
-        synchronized (listenerObjects) {
-            listenerObjects.remove(listenerID);
-            if (listenerObjects.isEmpty()) {
-                deregisterListener();
+        if (listenerObjects != null) {
+            synchronized (listenerObjects) {
+                listenerObjects.remove(listenerID);
+                if (listenerObjects.isEmpty()) {
+                    deregisterListener();
+                }
             }
-        }
-        if (debug.messageEnabled()) {
-            debug.message("ServiceConfigManagerImpl(" + serviceName +
-                "):removeListener ListenerId: " +  listenerID);
+            if (debug.messageEnabled()) {
+                debug.message("ServiceConfigManagerImpl(" + serviceName +
+                    "):removeListener ListenerId: " +  listenerID);
+            }
         }
     }
     
