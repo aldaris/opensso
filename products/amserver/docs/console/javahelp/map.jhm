@@ -29,7 +29,7 @@
 	<mapID target="policy.policy" url="policy.policy.html"/>
 	<mapID target="normalpolicy" url="normalpolicy.html"/>
 	<mapID target="policy.policynormaladd" url="policy.policynormaladd.html"/>
-	<mapID target="policy.selectservicetype" url="policy.ruleadd.hmtl"/>
+	<mapID target="policy.selectservicetype" url="policy.selectservicetype.html"/>
 	<mapID target="policy.ruleadd" url="policy.ruleadd.html"/>
 	<mapID target="policy.selectsubjecttype" url="policy.selectsubjecttype.html"/>
 	<mapID target="policy.subjectadd" url="policy.subjectadd.html"/>
@@ -54,7 +54,6 @@
 	<mapID target="policy.selectreferraltype" url="policy.selectreferraltype.html"/>
 	<mapID target="idm.entities" url="idm.entities.html"/>
 	<mapID target="idm.entityadd" url="idm.entityadd.html"/>
-    <mapID target="idm.entity.edit" url="idm.entityadd.html"/>
 	<mapID target="subjectuser" url="subjectuser.html"/>
 	<mapID target="idm.entityadduser" url="idm.entityadduser.html"/>
 	<mapID target="idm.entitymembership" url="idm.entitymembership.html"/>
@@ -90,14 +89,8 @@
 	<mapID target="federation.createidffprovider" url="federation.createidffprovider.html"/>
 	<mapID target="federation.createwsfedprovider" url="federation.createwsfedprovider.html"/>
 	<mapID target="ggwwr" url="ggwwr.html"/>
-	<mapID target="federation.samlv2spassertioncontent" url="federation.samlv2spassertioncontent.html"/>	
-	<mapID target="federation.samlv2spassertionprocessing" url="federation.samlv2spassertioncontent.html"/>
-	<mapID target="federation.samlv2spservices" url="federation.samlv2spassertioncontent.html"/>
-	<mapID target="federation.samlv2spadvanced" url="federation.samlv2spassertioncontent.html"/>
+	<mapID target="federation.samlv2spassertioncontent" url="federation.samlv2spassertioncontent.html"/>
 	<mapID target="federation.samlv2idpassertioncontent" url="federation.samlv2idpassertioncontent.html"/>
-	<mapID target="federation.samlv2idpassertionprocessing" url="federation.samlv2idpassertioncontent.html"/>
-    <mapID target="federation.samlv2idpservices" url="federation.samlv2idpassertioncontent.html"/>
-    <mapID target="federation.samlv2idpadvanced" url="federation.samlv2idpassertioncontent.html"/>
 	<mapID target="federation.samlv2pdp" url="federation.samlv2pdp.html"/>
 	<mapID target="federation.samlv2pep" url="federation.samlv2pep.html"/>
 	<mapID target="federation.samlv2attrauthority" url="federation.samlv2attrauthority.html"/>
@@ -116,7 +109,6 @@
 	<mapID target="trustedpartners" url="trustedpartners.html"/>
 	<mapID target="federation.fssamlselecttrustedpartnertype" url="federation.fssamlselecttrustedpartnertype.html"/>
 	<mapID target="federation.fssamltrustedpartnersadd" url="federation.fssamltrustedpartnersadd.html"/>
-    <mapID target="federation.fasamltrustedpartnersedit" url="federation.fssamltrustedpartnersadd.html"/>
 	<mapID target="federation.fsssamltargeturlsadd" url="federation.fsssamltargeturlsadd.html"/>
 	<mapID target="federation.fssamltargeturlsadd" url="federation.fssamltargeturlsadd.html"/>
 	<mapID target="assertiontimeout" url="assertiontimeout.html"/>
@@ -172,7 +164,7 @@
 	<mapID target="mechanismhandlerslist" url="mechanismhandlerslist.html"/>
 	<mapID target="webservices.wsauthnserviceshandlersadd" url="webservices.wsauthnserviceshandlersadd.html"/>
 	<mapID target="service.scconfig" url="service.scconfig.html"/>
-	<mapID target="authattrs" url="authattrs.html"/>
+	<mapID target="service.scconfigauth" url="service.scconfigauth.html"/>
 	<mapID target="service.scserviceprofile.sunamauthadservice" url="service.scserviceprofile.sunamauthadservice.html"/>
 	<mapID target="service.scserviceprofile.iplanetamauthanonymousservice" url="service.scserviceprofile.iplanetamauthanonymousservice.html"/>
 	<mapID target="authentication.authconfig" url="authentication.authconfig.html"/>
@@ -194,10 +186,10 @@
 	<mapID target="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice" url="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice.html"/>
 	<mapID target="service.scserviceprofile.iplanetamauthntservice" url="service.scserviceprofile.iplanetamauthntservice.html"/>
 	<mapID target="supportedlang" url="supportedlang.html"/>
-	<mapID target="consoleprops" url="consoleprops.html"/>
+	<mapID target="service.scconfigconsole" url="service.scconfigconsole.html"/>
 	<mapID target="service.scserviceprofile.amadminconsoleservice" url="service.scserviceprofile.amadminconsoleservice.html"/>
 	<mapID target="service.smg11n" url="service.smg11n.html"/>
-	<mapID target="global" url="global.html"/>
+	<mapID target="servic.scconfigglobal" url="servic.scconfigglobal.html"/>
 	<mapID target="service.scserviceprofile.sunfamfederationcommon" url="service.scserviceprofile.sunfamfederationcommon.html"/>
 	<mapID target="service.scserviceprofile.sunfamidffconfiguration" url="service.scserviceprofile.sunfamidffconfiguration.html"/>
 	<mapID target="service.scserviceprofile.sunfamlibertysecurityservice" url="service.scserviceprofile.sunfamlibertysecurityservice.html"/>
@@ -208,10 +200,11 @@
 	<mapID target="service.scserviceprofile.sunfamsaml2configuration" url="service.scserviceprofile.sunfamsaml2configuration.html"/>
 	<mapID target="service.scsaml2soapbinding" url="service.scsaml2soapbinding.html"/>
 	<mapID target="service.scsaml2soapbindingrequesthandlerlistadd" url="service.scsaml2soapbindingrequesthandlerlistadd.html"/>
+	<mapID target="service.securitytokenservice" url="service.securitytokenservice.html"/>
 	<mapID target="service.scserviceprofile.amsessionservice" url="service.scserviceprofile.amsessionservice.html"/>
 	<mapID target="service.subconfigadd" url="service.subconfigadd.html"/>
 	<mapID target="service.scserviceprofile.iplanetamuserservice" url="service.scserviceprofile.iplanetamuserservice.html"/>
-	<mapID target="systemprops" url="systemprops.html"/>
+	<mapID target="service.scfonfigsystem" url="service.scfonfigsystem.html"/>
 	<mapID target="service.scserviceprofile.iplanetamclientdetection" url="service.scserviceprofile.iplanetamclientdetection.html"/>
 	<mapID target="service.mapcreatedevice" url="service.mapcreatedevice.html"/>
 	<mapID target="service.scserviceprofile.iplanetamloggingservice" url="service.scserviceprofile.iplanetamloggingservice.html"/>

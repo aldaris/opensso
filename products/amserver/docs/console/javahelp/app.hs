@@ -3,7 +3,7 @@
 <!DOCTYPE helpset PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp HelpSet Version 2.0//EN" "helpset_1_0.dtd">
 
 <helpset version="2.0" xml:lang="en">
-<title>Sun Federated Access Manager 8.0 Console Online Help</title>
+<title>Sun OpenSSO 8.0 Console Online Help</title>
 <maps>
 	<homeID></homeID>
 	<mapref location="map.jhm"/>
