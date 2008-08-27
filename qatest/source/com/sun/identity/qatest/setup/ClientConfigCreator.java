@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientConfigCreator.java,v 1.21 2008-06-26 20:27:12 rmisra Exp $
+ * $Id: ClientConfigCreator.java,v 1.22 2008-08-27 04:47:52 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -110,23 +110,23 @@ public class ClientConfigCreator {
                     KEY_ATT_MULTIPROTOCOL_ENABLED).equalsIgnoreCase("true")) {
                 getDefaultValues(testDir, serverName1, 
                         configMap.get(TestConstants.KEY_ATT_IDFF_SP), 
-                        serverName2, properties_idff);
+                        serverName2, properties_idff, "multiprotocol");
                 getDefaultValues(testDir, serverName1, 
                         configMap.get(TestConstants.KEY_ATT_WSFED_SP), 
-                        properties_wsfed);
+                        properties_wsfed, "multiprotocol");
                 getDefaultValues(testDir, serverName1, serverName2, 
                         configMap.get(TestConstants.KEY_ATT_IDFF_SP),
-                        properties_saml);
+                        properties_saml, "multiprotocol");
             } else {
                 getDefaultValues(testDir, serverName1, serverName2, 
-                        properties_saml);
+                        properties_saml, "samlv2");
                 getDefaultValues(testDir, serverName1, serverName2, 
-                        properties_idff);
+                        properties_idff, "idff");
                 getDefaultValues(testDir, serverName1, serverName2, 
-                        properties_wsfed);
+                        properties_wsfed, "wsfed");
             }
                 getDefaultValues(testDir, serverName1, serverName2, 
-                        properties_sae);
+                        properties_sae, "sae");
             createFileFromMap(properties_saml, SAML_FILE_CLIENT_PROPERTIES);
             createFileFromMap(properties_idff, IDFF_FILE_CLIENT_PROPERTIES);
             createFileFromMap(properties_wsfed, WSFED_FILE_CLIENT_PROPERTIES);
@@ -236,7 +236,7 @@ public class ClientConfigCreator {
      * file.
      */
     private void getDefaultValues(String testDir, String serverName1,
-            String serverName2, Map properties_protocol)
+            String serverName2, Map properties_protocol, String strModule)
         throws Exception {
 
         Map<String, String> configMap1 = new HashMap<String, String>();
@@ -282,7 +282,7 @@ public class ClientConfigCreator {
                 else if (key.equals(TestConstants.KEY_ATT_METAALIAS))
                     value = strHost;
                 else if (key.equals(TestConstants.KEY_ATT_ENTITY_NAME))
-                    value = strHost;
+                    value = strModule + ".idp." + strHost;
                 else if (key.equals(TestConstants.KEY_ATT_COT))
                     value = "idpcot";
             }
@@ -398,7 +398,7 @@ public class ClientConfigCreator {
                 else if (key.equals(TestConstants.KEY_ATT_METAALIAS))
                     value = strHost;
                 else if (key.equals(TestConstants.KEY_ATT_ENTITY_NAME))
-                    value = strHost;
+                    value = strModule + ".sp." + strHost;
                 else if (key.equals(TestConstants.KEY_ATT_COT))
                     value = "spcot";
             }
@@ -443,11 +443,11 @@ public class ClientConfigCreator {
      * serverName3 will be used as IDP proxy
      */
     public void getDefaultValues(String testDir, String serverName1, String 
-            serverName2, String serverName3, Map properties_protocol)
+            serverName2, String serverName3, Map properties_protocol, String strModule)
             throws Exception
     {
         getDefaultValues(testDir, serverName1, serverName2, 
-                properties_protocol);
+                properties_protocol, strModule);
         Map<String, String> configMap3 = new HashMap<String, String>();
         configMap3 = getMapFromResourceBundle(testDir + fileseparator + 
                 "resources" + fileseparator + "config" + fileseparator +
@@ -491,7 +491,7 @@ public class ClientConfigCreator {
                 else if (key.equals(TestConstants.KEY_ATT_METAALIAS))
                     value = strHost;
                 else if (key.equals(TestConstants.KEY_ATT_ENTITY_NAME))
-                    value = strHost;
+                    value = strModule + ".proxy." + strHost;
                 else if (key.equals(TestConstants.KEY_ATT_COT))
                     value = "proxycot";
             }
