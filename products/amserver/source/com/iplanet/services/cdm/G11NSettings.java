@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: G11NSettings.java,v 1.7 2008-08-19 19:08:42 veiming Exp $
+ * $Id: G11NSettings.java,v 1.8 2008-08-27 22:05:40 veiming Exp $
  *
  */
 
@@ -39,6 +39,7 @@ import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceListener;
+import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
 import java.security.AccessController;
@@ -307,7 +308,7 @@ public class G11NSettings implements ServiceListener, ICDMConstants,
 
         //TOFIX: Need to check if clientdata service is enabled or not.
         // Check if AMSDK is configured
-        if (IdUtils.isAMSDKEnabled()) {
+        if (ServiceManager.isAMSDKEnabled()) {
             try {
                 intCapInstance = AMClientCapData.getInternalInstance();
                 intCapInstance.addListener(this); // register to internal

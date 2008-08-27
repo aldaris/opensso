@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdUtils.java,v 1.26 2008-08-27 18:01:30 manish_rustagi Exp $
+ * $Id: IdUtils.java,v 1.27 2008-08-27 22:05:41 veiming Exp $
  *
  */
 
@@ -47,7 +47,6 @@ import com.sun.identity.sm.DNMapper;
 import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.OrgConfigViaAMSDK;
-
 
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceConfig;
@@ -115,10 +114,6 @@ public final class IdUtils {
     // Special Users
     private static Set specialUsers = new HashSet();
     
-    // Flag to check if AMSDK is enabled
-    private static boolean isAMSDKEnabled;
-    private static boolean amsdkChecked;
-
     static {
         initialize();
     }
@@ -220,9 +215,6 @@ public final class IdUtils {
                 }
             }
         }
-        
-        // Reset the check for AMSDK being enabled
-        amsdkChecked = false;
     }
 
     /**
@@ -325,7 +317,7 @@ public final class IdUtils {
         // users in AMSDK as IdUtils does not check if AMSDK is configured in 
         // any of the realms. 
         try {
-            if (!isAMSDKEnabled() || ((realm != null) && 
+            if (!ServiceManager.isAMSDKEnabled() || ((realm != null) && 
                 !OrgConfigViaAMSDK.isAMSDKConfigured(realm)) ||
                     (!ServiceManager.isAMSDKConfigured())) { 
                 // Not configured for AMSDK, return
@@ -675,7 +667,7 @@ public final class IdUtils {
                 throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "401", 
                         args);
             }
-        } else if (isAMSDKEnabled()) {
+        } else if (ServiceManager.isAMSDKEnabled()) {
             // Return the org DN as determined by AMStoreConnection.
             try {
                 AMStoreConnection amsc = new AMStoreConnection(token);
@@ -819,36 +811,6 @@ public final class IdUtils {
         return (username);
     } 
     
-    /**
-     * Returns <code>true</code> if AMSDK IdRepo plugin is enabled/present
-     * in IdRepo Service Configuration schema
-     */
-    public static boolean isAMSDKEnabled() {
-        if (amsdkChecked) {
-            return (isAMSDKEnabled);
-        }
-        SSOToken adminToken = (SSOToken) AccessController
-            .doPrivileged(AdminTokenAction.getInstance());
-        try {
-            if (!ServiceManager.isRealmEnabled()) {
-                amsdkChecked = true;
-            } else {
-                ServiceSchemaManager ssm = new ServiceSchemaManager(
-                    IdConstants.REPO_SERVICE, adminToken);
-                ServiceSchema idRepoSubSchema = ssm.getOrganizationSchema();
-                Set idRepoPlugins = idRepoSubSchema.getSubSchemaNames();
-                if (idRepoPlugins.contains("amSDK")) {
-                    isAMSDKEnabled = true;
-                }
-                amsdkChecked = true;
-            }
-        } catch (Exception e) {
-            debug.error("IdUtils.isAMSDKEnabled() " +
-                "Error in checking AM.SDK being configured", e);
-        }
-        return (isAMSDKEnabled);
-    }
-
     // SMS service listener to reinitialize if IdRepo service changes
     static class IdUtilsListener implements com.sun.identity.sm.ServiceListener 
     {

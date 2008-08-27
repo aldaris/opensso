@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceManager.java,v 1.21 2008-08-13 16:17:34 arviranga Exp $
+ * $Id: ServiceManager.java,v 1.22 2008-08-27 22:05:41 veiming Exp $
  *
  */
 
@@ -131,6 +131,10 @@ public class ServiceManager {
 
     // Debug & I18n
     private static Debug debug = SMSEntry.debug;
+
+    private static boolean amsdkChecked;
+
+    private static boolean isAMSDKEnabled;
 
     /**
      * Creates an instance of <code>ServiceManager</code>.
@@ -690,6 +694,7 @@ public class ServiceManager {
         serviceNameAndOCs = new CaseInsensitiveHashMap();
         serviceVersions = new CaseInsensitiveHashMap();
         accessManagerServers = null;
+        amsdkChecked = false;
 
         // Call respective Impl classes
         CachedSMSEntry.clearCache();
@@ -1094,5 +1099,36 @@ public class ServiceManager {
 
         buff.append("</ServicesConfiguration>\n");
         return buff.toString().replaceAll("&amp;#160;", "&#160;");
+    }
+
+    /**
+     * Returns <code>true</code> if AMSDK IdRepo plugin is enabled/present
+     * in IdRepo Service Configuration schema
+     */
+    public static boolean isAMSDKEnabled() {
+        if (amsdkChecked) {
+            return (isAMSDKEnabled);
+        }
+        SSOToken adminToken = (SSOToken) AccessController
+            .doPrivileged(AdminTokenAction.getInstance());
+        try {
+            if (!ServiceManager.isRealmEnabled()) {
+                amsdkChecked = true;
+            } else {
+                ServiceSchemaManager ssm = new ServiceSchemaManager(
+                    IdConstants.REPO_SERVICE, adminToken);
+                ServiceSchema idRepoSubSchema = ssm.getOrganizationSchema();
+                Set idRepoPlugins = idRepoSubSchema.getSubSchemaNames();
+                if (idRepoPlugins.contains("amSDK")) {
+                    isAMSDKEnabled = true;
+                }
+                amsdkChecked = true;
+            }
+        } catch (Exception e) {
+            debug.error("IdUtils.isAMSDKEnabled() " +
+                "Error in checking AM.SDK being configured", e);
+        }
+        amsdkChecked = true;
+        return (isAMSDKEnabled);
     }
 }

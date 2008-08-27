@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BackwardCompSupport.java,v 1.3 2008-06-27 20:56:24 arviranga Exp $
+ * $Id: BackwardCompSupport.java,v 1.4 2008-08-27 22:05:41 veiming Exp $
  *
  */
 
@@ -34,6 +34,7 @@ import com.sun.identity.console.base.model.AMModelBase;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.sm.AttributeSchema;
+import com.sun.identity.sm.ServiceManager;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -73,7 +74,7 @@ public class BackwardCompSupport {
         mapIdTypeToSubSchemaName.put(IdType.FILTEREDROLE.getName(),
             "FilteredRole");
 
-        if (IdUtils.isAMSDKEnabled()) {
+        if (ServiceManager.isAMSDKEnabled()) {
             namingAttribute = AdminInterfaceUtils.getNamingAttribute(
                 AMObject.USER, AMModelBase.debug);
         } else {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrgConfigViaAMSDK.java,v 1.11 2008-06-25 05:44:04 qcheng Exp $
+ * $Id: OrgConfigViaAMSDK.java,v 1.12 2008-08-27 22:05:41 veiming Exp $
  *
  */
 
@@ -691,7 +691,9 @@ public class OrgConfigViaAMSDK {
     }
     
     static String getNamingAttrForOrg() {
-        return AMNamingAttrManager.getNamingAttr(AMObject.ORGANIZATION);
+        return (ServiceManager.isAMSDKEnabled()) ?
+            AMNamingAttrManager.getNamingAttr(AMObject.ORGANIZATION) :
+            SMSEntry.ORG_PLACEHOLDER_RDN;
     }
     
     static String getNamingAttrForOrgUnit() {
