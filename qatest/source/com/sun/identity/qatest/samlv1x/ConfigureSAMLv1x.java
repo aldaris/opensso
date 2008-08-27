@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureSAMLv1x.java,v 1.1 2008-08-26 23:42:14 sridharev Exp $
+ * $Id: ConfigureSAMLv1x.java,v 1.2 2008-08-27 23:10:26 sridharev Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -93,7 +93,7 @@ public class ConfigureSAMLv1x extends TestCommon {
                     configMap.get(TestConstants.KEY_SP_PORT) +
                     configMap.get(TestConstants.KEY_SP_DEPLOYMENT_URI);
             getWebClient();
-            // Create sp users
+            // Create sp configuration
             consoleLogin(spWebClient, spurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
@@ -109,7 +109,7 @@ public class ConfigureSAMLv1x extends TestCommon {
                 assert (false);
             }
             String spsiteID = getSiteID(spattrPage);
-            // Create idp users
+            // Create idp configuration
             idpurl = configMap.get(TestConstants.KEY_IDP_PROTOCOL) +
                     "://" + configMap.get(TestConstants.KEY_IDP_HOST) + ":" +
                     configMap.get(TestConstants.KEY_IDP_PORT) +
@@ -131,7 +131,8 @@ public class ConfigureSAMLv1x extends TestCommon {
             // Configure SP SAMLv1x site configuration
             String strSPSiteconf = "iplanet-am-saml-partner-urls=" 
                     + "partnername=" + configMap.get(TestConstants.KEY_IDP_HOST) 
-                    + "|target=iplanet.com" 
+                    + "|target=" 
+                    + configMap.get(TestConstants.KEY_IDP_COOKIE_DOMAIN)
                     + "|sourceid=" + idpsiteID 
                     + "|samlurl=" 
                     + idpurl + "/SAMLAwareServlet" 
@@ -150,7 +151,9 @@ public class ConfigureSAMLv1x extends TestCommon {
             // Configure IDP SAMLv1x site configuration
             String strIDPSiteconf = "iplanet-am-saml-partner-urls=" 
                     + "partnername=" + configMap.get(TestConstants.KEY_SP_HOST) 
-                    + "|target=iplanet.com" + "|sourceid=" + spsiteID 
+                    + "|target="
+                    + configMap.get(TestConstants.KEY_SP_COOKIE_DOMAIN)
+                    + "|sourceid=" + spsiteID 
                     + "|samlurl=" + spurl + "/SAMLAwareServlet" 
                     + "|soapurl=" + spurl + "/SAMLSOAPReceiver" 
                     + "|posturl=" + spurl + "/SAMLPOSTProfileServlet" 
