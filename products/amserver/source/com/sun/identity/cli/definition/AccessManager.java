@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.85 2008-08-26 00:00:42 veiming Exp $
+ * $Id: AccessManager.java,v 1.86 2008-08-27 22:08:37 veiming Exp $
  *
  */
 
@@ -431,6 +431,24 @@ public class AccessManager {
     private String add_svc_attrs;
 
     @SubCommandInfo(
+        implClassName="com.sun.identity.cli.realm.RealmSetServiceAttributeValues",
+        description="Set attribute values of a service that is assigned to a realm.",
+        webSupport="true",
+        mandatoryOptions={
+            "realm|e|s|Name of realm.",
+            "servicename|s|s|Name of service."},
+        optionAliases={},
+        macro="authentication",
+        optionalOptions={
+            "append|p|u|Set this flag to append the values to existing ones.",
+            "attributevalues|a|m|Attribute values e.g. homeaddress=here.",
+            "datafile|D|s|Name of file that contains attribute values data."},
+        resourceStrings={
+            "realm-set-svc-attr-values-service-not-assigned=Service was not assigned to realm.",
+            "set-svc-attribute-values-realm-succeed=Attribute values were set."})
+    private String set_realm_svc_attrs;
+
+    @SubCommandInfo(
         implClassName="com.sun.identity.cli.realm.RealmSetAttributeValues",
         description="Set attribute values of a realm.",
         webSupport="true",
@@ -444,7 +462,6 @@ public class AccessManager {
             "attributevalues|a|m|Attribute values e.g. homeaddress=here.",
             "datafile|D|s|Name of file that contains attribute values data."},
         resourceStrings={
-            "realm-set-attr-values-service-not-assigned=Service was not assigned to realm.",
             "add-attribute-values-realm-succeed=Attribute values were added.",
             "set-attribute-values-realm-succeed=Attribute values were set."})
     private String set_realm_attrs;

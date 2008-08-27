@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NamingResponse.java,v 1.4 2008-06-25 05:41:40 qcheng Exp $
+ * $Id: NamingResponse.java,v 1.5 2008-08-27 22:08:37 veiming Exp $
  *
  */
 
@@ -182,8 +182,7 @@ public class NamingResponse {
     /**
      * Sets the exception.
      * 
-     * @param id
-     *            A string representing the exception.
+     * @param ex A string representing the exception.
      */
     public void setException(String ex) {
         exception = ex;

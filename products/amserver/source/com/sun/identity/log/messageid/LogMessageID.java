@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogMessageID.java,v 1.5 2008-06-25 05:43:37 qcheng Exp $
+ * $Id: LogMessageID.java,v 1.6 2008-08-27 22:08:38 veiming Exp $
  *
  */
 
@@ -74,7 +74,6 @@ public class LogMessageID {
      * @param name Unique name.
      * @param description Description of this log.
      * @param dataInfo Information on the data logged.
-     * @param triggers Possible events that trigger this log.
      */
     public LogMessageID(
         Level logLevel,

@@ -22,7 +22,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: CLILogMessageIDs.xml,v 1.28 2008-08-19 19:10:52 veiming Exp $
+    $Id: CLILogMessageIDs.xml,v 1.29 2008-08-27 22:08:38 veiming Exp $
 
 -->
 
@@ -5926,6 +5926,45 @@
         </datainfo>
         <triggers>
             <item>Execute add AMSDK IdRepo Plugin Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_SET_SVC_ATTR_VALUES_REALM" id="5200"
+        loglevel="LL_INFO"
+        description="Attempt to set attribute value to a service that is assigned to a realm.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of service</item>
+        </datainfo>
+        <triggers>
+            <item>Execute set attribute values a service that is assigned to a to realm Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEED_SET_SVC_ATTR_VALUES_REALM" id="5201"
+        loglevel="LL_INFO"
+        description="Attribute values is set to a service that is assigned to a realm.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of service</item>
+        </datainfo>
+        <triggers>
+            <item>Execute set attribute values to a service that is assigned to a realm Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_SET_SVC_ATTR_VALUES_REALM" id="5202"
+        loglevel="LL_INFO"
+        description="Unable to set attribute values to a service that is assigned to a realm.">
+        <datainfo>
+            <item>name of realm</item>
+            <item>name of service</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute set attribute values to a service that is assigned to a realm Commandline interface.</item>
         </triggers>
         <actions>
             <item>Look under debug file for more information.</item>

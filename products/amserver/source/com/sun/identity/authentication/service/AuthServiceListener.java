@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthServiceListener.java,v 1.1 2008-08-13 15:56:58 pawand Exp $
+ * $Id: AuthServiceListener.java,v 1.2 2008-08-27 22:08:37 veiming Exp $
  *
  */
 
@@ -162,6 +162,8 @@ public class AuthServiceListener implements ServiceListener{
      *		  name of the service.
      * @param version
      *		  version of the service.
+     * @param orgName
+     *            Name of the organization.
      * @param groupName
      *		  name of the configuration grouping.
      * @param serviceComponent
@@ -170,7 +172,7 @@ public class AuthServiceListener implements ServiceListener{
      *		  change type, i.e., ADDED, REMOVED or MODIFIED.
      */
     public void organizationConfigChanged(String serviceName, String version, 
-        String orgName,String  goupName, String serviceComponent, int type) {
+        String orgName, String goupName, String serviceComponent, int type) {
         if (debug.messageEnabled()) {
             debug.message("AuthServiceListener."
             + "organizationConfigChanged : Config changed for Org="
