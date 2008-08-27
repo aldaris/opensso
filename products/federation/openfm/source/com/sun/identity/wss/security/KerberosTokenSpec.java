@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: KerberosTokenSpec.java,v 1.2 2008-06-25 05:50:07 qcheng Exp $
+ * $Id: KerberosTokenSpec.java,v 1.3 2008-08-27 19:05:52 mrudul_uchil Exp $
  *
  */
 package com.sun.identity.wss.security;
@@ -31,7 +31,10 @@ import java.util.Map;
 
 
 /**
- * This class represents Kerberos Token Specification.
+ * This class represents Kerberos Security Token Specification.
+ * It implements <code>SecurityTokenSpec</code> interface.
+ * 
+ * @supported.all.api
  */
 public class KerberosTokenSpec implements SecurityTokenSpec {
     

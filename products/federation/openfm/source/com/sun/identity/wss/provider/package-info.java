@@ -22,12 +22,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: package-info.java,v 1.2 2008-06-25 05:50:05 qcheng Exp $
+ * $Id: package-info.java,v 1.3 2008-08-27 19:05:52 mrudul_uchil Exp $
  *
  */
 
 /**
- * Defines Web Services provider classes.
+ * Defines Web Services provider classes. These classes include abstract classes
+ * for implementing provider configuration for Web Service Client, Web Service 
+ * Provider, Security Token Service client and Liberty Discovery client entities
+ * in order to identity each of them with their unique configuration. This 
+ * configuration would be attribute / value pairs.
  *
  * @supported.api
  */

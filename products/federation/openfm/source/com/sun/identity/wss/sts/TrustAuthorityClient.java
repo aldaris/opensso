@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityClient.java,v 1.17 2008-08-05 04:11:01 mallas Exp $
+ * $Id: TrustAuthorityClient.java,v 1.18 2008-08-27 19:05:53 mrudul_uchil Exp $
  *
  */
 
@@ -52,9 +52,14 @@ import com.sun.identity.wss.logging.LogUtil;
 import com.sun.identity.classloader.FAMClassLoader;
 
 /**
- * The class <code>TrustAuthorityClient</code> is used to obtain the 
- * security tokens from the trusted authority services such as Security
- * Token Service (STS) or Liberty Discovery Service.
+ * The class <code>TrustAuthorityClient</code> is a client API class that is 
+ * used to obtain the Security Tokens from the trusted authority services such 
+ * as Security Token Service (STS) or Liberty Discovery Service.
+ * 
+ * In this current OpenSSO 8.0 release, this client API is used as STS client 
+ * API class that retrieves Security Tokens from STS service by making WS-Trust 
+ * request and receiving WS-Trust response. 
+ * 
  * @supported.all.api
  */
 public class TrustAuthorityClient {
@@ -71,7 +76,7 @@ public class TrustAuthorityClient {
      * Returns the <code>SecurityToken</code> for the web services client from
      * a trusted authority, which is Security Token Service (STS). 
      * The web services client configuation and web service
-     * information is identified by the provider configuration.
+     * information is identified by the client provider configuration.
      *
      * @param pc Provider configuration of the web services client.
      * @param credential User's credential. The user's credential could be
@@ -89,7 +94,7 @@ public class TrustAuthorityClient {
      * Returns the <code>SecurityToken</code> for the web services client from
      * a trusted authority, which is Security Token Service (STS). 
      * The web services client configuation and web service
-     * information is identified by the provider configuration.
+     * information is identified by the client provider configuration.
      *
      * @param pc Provider configuration of the web services client.
      * @param credential User's credential. The user's credential could be
@@ -112,7 +117,8 @@ public class TrustAuthorityClient {
      * @param wspEndPoint Web Service Provider end point.
      * @param stsEndPoint Security Token Service end point.
      * @param stsMexEndPoint Security Token Service MEX end point.
-     * @param credential user's credential.
+     * @param credential User's credential. The user's credential could be
+     *        Single Sign-On Token or a SAML Assertion or any other object.
      * @param securityMech Required Security Mechanism by Web Service Client.
      * @param context web context under which this class is running.
      * @return SecurityToken security token for the web services consumer.   
@@ -135,7 +141,8 @@ public class TrustAuthorityClient {
      * @param wspEndPoint Web Service Provider end point.
      * @param stsEndPoint Security Token Service end point.
      * @param stsMexEndPoint Security Token Service MEX end point.
-     * @param credential user's credential.
+     * @param credential User's credential. The user's credential could be
+     *        Single Sign-On Token or a SAML Assertion or any other object.
      * @param securityMech Required Security Mechanism by Web Service Client.
      * @param tokenType the token type for the returned security token.
      * @param context web context under which this class is running.
@@ -253,18 +260,23 @@ public class TrustAuthorityClient {
     
     /**
      * Renews the issued security token that was obtained from previous
-     * interactions.
+     * interactions with Security Token Service (STS).
      * This method applies only for the STS Tokens.
+     * 
+     * In this current OpenSSO 8.0 release, this method implementation is not 
+     * supported.
+     * 
      * @param securityToken security token that needs to be renewed.
      * @param pc provider configuration of the web services client.
-     * @param ssoToken single sign-on token of the principal.     
+     * @param credential User's credential. The user's credential could be
+     *        Single Sign-On Token or a SAML Assertion or any other object.     
      * @return SecurityToken security token for the web services consumer.   
      * @exception FAMSTSException if it's unable to renew security token or
      *            if the trust authority configuration is not of STS.
      */
     public SecurityToken renewIssuedToken(SecurityToken securityToken,
             ProviderConfig pc,            
-            Object ssoToken) throws FAMSTSException {
+            Object credential) throws FAMSTSException {
         //TODO To be implemented
         throw new FAMSTSException("unsupported");
         
@@ -272,9 +284,13 @@ public class TrustAuthorityClient {
     
     /**
      * Cancels the issued security token that was obtained from previous 
-     * interactions.
+     * interactions with Security Token Service (STS).
      * This method applies only for the STS Tokens.
-     * @param securityToken security token that needs to be renewed.
+     * 
+     * In this current OpenSSO 8.0 release, this method implementation is not 
+     * supported.
+     * 
+     * @param securityToken security token that needs to be canceled.
      * @param pc provider configuration of the web services client.
      * @return true if succeed in cancelling the issued token.   
      * @exception FAMSTSException if there is an exception in cancelling

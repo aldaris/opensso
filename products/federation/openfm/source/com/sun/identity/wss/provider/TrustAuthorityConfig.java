@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityConfig.java,v 1.10 2008-07-30 05:00:43 mallas Exp $
+ * $Id: TrustAuthorityConfig.java,v 1.11 2008-08-27 19:05:51 mrudul_uchil Exp $
  *
  */
 
@@ -46,17 +46,33 @@ import com.sun.identity.shared.Constants;
 /* iPlanet-PUBLIC-CLASS */
 
 /**
- * This is an abstract that represents the configuration about a trusted
- * authority.
- *
- *<p>The trusted authority configuration is used to register the provider
- * configuration information at a trusted authority.
- *
- * <p> This class can be extended to define the trust authority config
- * such as discovery configuration, ws-trust etc.
+ * This abstract class <code>TrustAuthorityConfig</code> represents the 
+ * configuration of a Trusted Authority entity.  
  * 
+ * <p>The Trusted Authority configuration is used to register the provider
+ * configuration information at a Trusted Authority.
+ * 
+ * <p>This class can be extended to define the trust authority config
+ * such as Discovery client configuration, WS-Trust protocol based client 
+ * (STS client) configuration.
+ * 
+ * <p>Pluggable implementation of this abstract class can choose to store this 
+ * configuration in desired configuration store. This pluggable implementation
+ * class can be configured in client's AMConfig.properties as value of 
+ * "com.sun.identity.wss.discovery.config.plugin" property for Discovery client 
+ * configuration and "com.sun.identity.wss.sts.config.plugin" property 
+ * for STS client configuration.
+ * 
+ * Having obtained an instance of TrustAuthorityConfig, its methods can be 
+ * called to create, delete, modify, retrieve WSS agent profile and 
+ * configuration for Discovery client or STS client attributes 
+ * (key /value pairs).
+ * 
+ * <p>All the static methods in this class are for the persistent 
+ * operations.
  * @supported.all.api
  */
+
 public abstract class TrustAuthorityConfig {
 
     protected String endpoint;
@@ -80,19 +96,20 @@ public abstract class TrustAuthorityConfig {
     private static Debug debug = ProviderUtils.debug;
 
     /**
-     * Property string for the web services discovery configuration plugin.
+     * Property string for the web services discovery client configuration 
+     * plugin.
     */
     public static final String WSS_DISCOVERY_CONFIG_PLUGIN =
         "com.sun.identity.wss.discovery.config.plugin";
     
     /**
-     * Property string for the web services sts configuration plugin.
+     * Property string for the web services STS client configuration plugin.
      */
     public static final String WSS_STS_CONFIG_PLUGIN = 
         "com.sun.identity.wss.sts.config.plugin";
  
     /**
-     * Discovery service configuration type.
+     * Trusted Authority client configuration type.
      */
     public static final String DISCOVERY_TRUST_AUTHORITY = "DiscoveryAgent";
     
@@ -106,6 +123,10 @@ public abstract class TrustAuthorityConfig {
         return name;
     }
     
+    /**
+     * Sets the trust authority name.
+     * @param name the name of the trust authority.
+     */
     public void setName(String name) {
         this.name = name;
     }
@@ -127,7 +148,7 @@ public abstract class TrustAuthorityConfig {
     }
 
     /**
-     * Returns the authority end point.
+     * Returns the trust authority end point.
      *
      * @return the endpoint of the trust authority. 
      */
@@ -136,7 +157,7 @@ public abstract class TrustAuthorityConfig {
     }
 
     /**
-     * Sets the end point.
+     * Sets the trust authority end point.
      *
      * @param endpoint the end point for the trust authority.
      */
@@ -145,52 +166,53 @@ public abstract class TrustAuthorityConfig {
     }
 
     /**
-     * Returns the key alias for this provider.
+     * Returns the key alias for this trust authority client.
      * 
-     * @return the key alias of the provider.
+     * @return the key alias of the trust authority client.
      */
     public String getKeyAlias() {
         return privateKeyAlias;
     }
    
     /**
-     * Sets the key alias for this provider.
+     * Sets the key alias for this trust authority client.
      * 
-     * @param alias the key alias for this provider.
+     * @param alias the key alias for the trust authority client.
      */
     public void setKeyAlias(String alias) {
         this.privateKeyAlias = alias;
     }
 
     /**
-     * Returns the Public key alias for this provider's partner.
+     * Returns the Public key alias for this trust authority client's partner.
      * 
-     * @return the Public key alias of the provider's partner.
+     * @return the Public key alias of the trust authority client's partner.
      */
     public String getPublicKeyAlias() {
         return publicKeyAlias;
     }
    
     /**
-     * Sets the Public key alias for this provider's partner.
+     * Sets the Public key alias for this trust authority client's partner.
      * 
-     * @param alias the Public key alias for this provider's partner.
+     * @param alias the Public key alias for this trust authority client's 
+     * partner.
      */
     public void setPublicKeyAlias(String alias) {
         this.publicKeyAlias = alias;
     }
     
     /**
-     * Sets the list of security mechanisms that the trust authority supports
+     * Sets the list of security mechanisms that the trust authority supports.
      * @param secMech list of security mechanisms that the trust 
-     *                authority supports
+     *                authority supports.
      */
     public void setSecurityMechs(List secMech) {
         this.secMech = secMech;
     }
     
     /**
-     * Returns the list of security mechanisms that the trust authority supports
+     * Returns the list of security mechanisms that the trust authority supports.
      */
     public List getSecurityMech() {
         return secMech;
@@ -303,7 +325,7 @@ public abstract class TrustAuthorityConfig {
         return usercredentials;
     }
     
-        /**
+    /**
      * Returns signing reference type.
      * @return the signing reference type.     
      */
@@ -320,7 +342,7 @@ public abstract class TrustAuthorityConfig {
     }
     
     /**
-     * Returns the encryption algorithm
+     * Returns the encryption algorithm.
      * @return the encryption algorithm
      */
     public String getEncryptionAlgorithm() {
@@ -344,7 +366,7 @@ public abstract class TrustAuthorityConfig {
     }
     
     /**
-     * Sets the encryption data strength.     * 
+     * Sets the encryption data strength.
      * @param keyStrength the encryption data strength.
      */
     public void setEncryptionStrength(int keyStrength) {
@@ -421,7 +443,7 @@ public abstract class TrustAuthorityConfig {
      * @param type the type of the trust authority. The type must have
      *         one of the values.
      *         <p> {@link #DISCOVERY_TRUST_AUTHORITY}
-     *
+     *         <p> {@link #STS_TRUST_AUTHORITY}
      * @exception ProviderException if any failure in 
      *            deleting the trust authority configuration.
      */

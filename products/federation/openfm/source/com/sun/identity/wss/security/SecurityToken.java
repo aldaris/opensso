@@ -22,22 +22,22 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityToken.java,v 1.7 2008-08-19 19:12:26 veiming Exp $
+ * $Id: SecurityToken.java,v 1.8 2008-08-27 19:05:52 mrudul_uchil Exp $
  *
  */
-
 
 package com.sun.identity.wss.security;
 
 import org.w3c.dom.Element;
-
  
 /**
- * This interface represents ws-security token that can be inserted into
- * web services security header. 
+ * This interface represents WS-Security token that can be inserted into
+ * or extracted from SOAP messages headers for Web Services Security 
+ * transactions. 
  *
- * <p> Each security token must need to implement this interface along with
- * <code>SecurityTokenSpec</code> for generating the security tokens. 
+ * <p> Each Security Token must need to implement this interface along with
+ * <code>SecurityTokenSpec</code> for generating the Security Tokens. 
+ * 
  * @supported.all.api
  */
 public interface SecurityToken {
@@ -62,7 +62,9 @@ public interface SecurityToken {
       */
      public static final String WSS_USERNAME_TOKEN = 
                                  "urn:sun:wss:usernametoken";
-     
+     /**
+      * The <code>URI</code> to identify the Liberty SAML Security Token
+      */
      public static final String LIBERTY_ASSERTION_TOKEN = 
                                  "urn:sun:wss:libertyassertion";
      
@@ -87,7 +89,7 @@ public interface SecurityToken {
       public String getTokenType();
 
       /**
-       * Convert the security token into DOM Object.
+       * Converts the Security Token into DOM Object.
        * 
        * @return the DOM Document Element.
        *

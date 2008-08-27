@@ -22,12 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: package-info.java,v 1.2 2008-06-25 05:50:13 qcheng Exp $
+ * $Id: package-info.java,v 1.3 2008-08-27 19:05:53 mrudul_uchil Exp $
  *
  */
 
 /**
- * Defines STS client classes. 
+ * Defines STS client API and end user token conversion interface (SPI) classes. 
  *
  * @supported.api
  */

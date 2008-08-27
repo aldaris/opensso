@@ -22,13 +22,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderException.java,v 1.3 2008-06-25 05:50:04 qcheng Exp $
+ * $Id: ProviderException.java,v 1.4 2008-08-27 19:05:51 mrudul_uchil Exp $
  *
  */
 
 package com.sun.identity.wss.provider;
 
 /**
+ * This class <code>ProviderException</code> represents the Exception
+ * that can be thrown for any errors in accessing any provider configuration 
+ * (Web Services Client, Web Services Provider, STS client or Discovery client).
  * @supported.all.api
  */
 

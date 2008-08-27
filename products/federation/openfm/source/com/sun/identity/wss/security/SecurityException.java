@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityException.java,v 1.2 2008-06-25 05:50:08 qcheng Exp $
+ * $Id: SecurityException.java,v 1.3 2008-08-27 19:05:52 mrudul_uchil Exp $
  *
  */
 
@@ -31,8 +31,9 @@ package com.sun.identity.wss.security;
 
 /**
  * This class <code>SecurityException</code> is used to generate the
- * exceptions during failures for generating or handing web services 
- * security.
+ * exceptions during failures for generating or handing Web Services 
+ * Security classes or functionalities.
+ * 
  * @supported.all.api
  */
 
@@ -47,10 +48,10 @@ public class SecurityException extends Exception {
 
     /**
      * Create an <code>SecurityException</code> with a message.
-     * @param s message for the exception
+     * @param message message for the exception
      */
-    public SecurityException(String s) {
-	super(s);
+    public SecurityException(String message) {
+	super(message);
     }
 }
 

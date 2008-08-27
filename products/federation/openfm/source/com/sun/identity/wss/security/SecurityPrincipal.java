@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityPrincipal.java,v 1.4 2008-07-02 16:57:23 mallas Exp $
+ * $Id: SecurityPrincipal.java,v 1.5 2008-08-27 19:05:52 mrudul_uchil Exp $
  *
  */
 
@@ -31,11 +31,12 @@ package com.sun.identity.wss.security;
 import java.io.Serializable;
 import  java.security.Principal;
 
-
-
 /**
  * This class <code>SecurityPrincipal</code> exposes the authenticated
  * principal via the message level security.
+ * It implements <code>Principal</code> and <code>Serializable</code>
+ * interfaces.
+ * 
  * @supported.all.api
  */
 public class SecurityPrincipal implements Principal, Serializable {
@@ -43,7 +44,7 @@ public class SecurityPrincipal implements Principal, Serializable {
     private String name;
 
     /**
-     * Default Constructor
+     * Constructs SecurityPrincipal object.
      * @param name the name of the principal
      */
     public SecurityPrincipal(String name) {
@@ -52,7 +53,8 @@ public class SecurityPrincipal implements Principal, Serializable {
 
     /**
      * Compares with given object.
-     * @return false if the given object is not equal to this principal
+     * @param o the given object
+     * @return false if the given object is not equal to this principal.
      */
     public boolean equals(Object o) {
         return true;
@@ -68,7 +70,7 @@ public class SecurityPrincipal implements Principal, Serializable {
 
     /**
      * Converts to string.
-     * @return String the principal name
+     * @return String the principal name string.
      */
     public String toString() {
        return name;

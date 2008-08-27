@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserNameTokenSpec.java,v 1.3 2008-06-25 05:50:10 qcheng Exp $
+ * $Id: UserNameTokenSpec.java,v 1.4 2008-08-27 19:05:53 mrudul_uchil Exp $
  *
  */
 
@@ -31,7 +31,10 @@ package com.sun.identity.wss.security;
 
 
 /**
- * This class defines the specification for generating the username tokens.
+ * This class defines the specification for generating the Username security 
+ * tokens.
+ * It implements <code>SecurityTokenSpec</code> interface.
+ * 
  * @supported.all.api
  */ 
 public class UserNameTokenSpec implements SecurityTokenSpec {

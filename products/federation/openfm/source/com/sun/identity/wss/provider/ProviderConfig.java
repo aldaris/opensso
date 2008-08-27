@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderConfig.java,v 1.22 2008-07-30 05:00:43 mallas Exp $
+ * $Id: ProviderConfig.java,v 1.23 2008-08-27 19:05:51 mrudul_uchil Exp $
  *
  */
 package com.sun.identity.wss.provider; 
@@ -52,9 +52,16 @@ import com.sun.identity.wss.security.SecurityMechanism;
 
 
 /**
- * This class <code>ProviderConfig</code> represents the web services
- * server provider or the web services client  provider configuration.  
- *
+ * This abstract class <code>ProviderConfig</code> represents the Web Services
+ * Server provider or the Web Services Client provider configuration.  
+ * <p>Pluggable implementation of this abstract class can choose to store this 
+ * configuration in desired configuration store. This pluggable implementation
+ * class can be configured in client's AMConfig.properties as value of 
+ * "com.sun.identity.wss.provider.config.plugin" property.
+ * Having obtained an instance of ProviderConfig, its methods can be called to 
+ * create, delete, modify, retrieve WSS agent profile and configuration for WSC 
+ * and/or WSP attributes (key /value pairs).
+ * 
  * <p>All the static methods in this class are for the persistent 
  * operations.
  * @supported.all.api
@@ -152,6 +159,8 @@ public abstract class ProviderConfig {
     /**
      * Returns the value of the property.
      *
+     * @param property the name of property for which value is being retrieved.
+     * 
      * @return the value of the property.
      */
     public String getProperty(String property) {
@@ -161,7 +170,7 @@ public abstract class ProviderConfig {
     /**
      * Sets the value for the given property in Provider Configuration.
      *
-     * @param property the name of the being set.
+     * @param property the name of the property being set.
      *
      * @param value the property value being set.
      */
@@ -224,7 +233,7 @@ public abstract class ProviderConfig {
 
     /**
      * Sets the user credentials list.
-     * @param usercredentials list of <code>PasswordCredential</code>objects.
+     * @param usercredentials list of <code>PasswordCredential</code> objects.
      */
     public void setUsers(List usercredentials) {
         this.usercredentials = usercredentials;
@@ -582,7 +591,7 @@ public abstract class ProviderConfig {
     
     /**
      * Sets a boolean flag to enable or disable validate kerberos signature.
-     * @param validate  boolean flag to enable or disable validate krb signature.
+     * @param validate boolean flag to enable or disable validate krb signature.
      */
     public void setValidateKerberosSignature(boolean validate) {
         this.verifyKrbSignature = validate;
@@ -591,7 +600,7 @@ public abstract class ProviderConfig {
     /**
      * Returns the provider's trusted authorities list.
      *
-     * @return the list of the <code>TrustAuthorityConfig</code> s. 
+     * @return the list of the <code>TrustAuthorityConfig</code>s. 
      */
     public TrustAuthorityConfig getTrustAuthorityConfig() {
         return taconfig;
@@ -836,21 +845,21 @@ public abstract class ProviderConfig {
     }
     
     /**
-     * Stores the provider configuration
+     * Stores the provider configuration.
      *
      * @exception ProviderException if there is any failure.
      */
     protected abstract void store() throws ProviderException;
 
     /**
-     * Deletes the provider configuration
+     * Deletes the provider configuration.
      *
      * @exception ProviderException if there is any failure.
      */
     protected abstract void delete() throws ProviderException;
 
     /**
-     * Checks if the provider configuration exists
+     * Checks if the provider configuration exists.
      *
      * @return true if the provider exists.
      */
@@ -864,6 +873,9 @@ public abstract class ProviderConfig {
      * @param providerType the provider type.
      *
      * @param token Single Sign-on token.
+     * 
+     * @param isEndPoint Boolean flag indicating whether provider needs to be 
+     * searched based on its end point value.
      *
      * @exception ProviderException if there is any failure.
      */

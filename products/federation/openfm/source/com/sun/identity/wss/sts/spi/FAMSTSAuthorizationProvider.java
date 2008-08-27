@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSAuthorizationProvider.java,v 1.2 2008-06-25 05:50:14 qcheng Exp $
+ * $Id: FAMSTSAuthorizationProvider.java,v 1.3 2008-08-27 19:05:53 mrudul_uchil Exp $
  *
  */
  
@@ -34,7 +34,6 @@ import java.util.*;
 
 import javax.security.auth.Subject;
 
-import com.sun.identity.shared.debug.Debug;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
 
@@ -44,9 +43,6 @@ import com.sun.identity.policy.client.PolicyEvaluator;
 import com.sun.xml.ws.api.security.trust.STSAuthorizationProvider;
 
 public class FAMSTSAuthorizationProvider implements STSAuthorizationProvider {
-    
-    private static Debug debug = 
-        Debug.getInstance("FAMSTSAuthorizationProvider");
 
     private static SSOToken getSSOToken(Subject subject) {
         Set pc = subject.getPublicCredentials();

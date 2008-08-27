@@ -22,39 +22,39 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TokenProvider.java,v 1.2 2008-06-25 05:50:09 qcheng Exp $
+ * $Id: TokenProvider.java,v 1.3 2008-08-27 19:05:53 mrudul_uchil Exp $
  *
  */
 
 package com.sun.identity.wss.security;
 
-
 /**
- * The interface <code>TokenProvider</code> represents a security token
- * provider for generating the security tokens. 
+ * The interface <code>TokenProvider</code> represents a Security Token
+ * provider for generating the Security Tokens. 
  *
  * <p> Each token provider implementation must implement this interface
  * to generate the <code>SecurityToken</code>s that may be attached to the
- * Web services security headers.
+ * Web services security (SOAP) headers.
+ * 
  * @supported.all.api
  */
 public interface TokenProvider {
 
     /**
-     * Initialize the <code>TokenProvider</code> to generate the necessary
-     * security token. 
+     * Initializes the <code>TokenProvider</code> to generate the necessary
+     * Security Token. 
      *
      * @param tokenSpec the token specification required to generate the
-     *        security token. 
+     *        Security Token. 
      */
     public void init(SecurityTokenSpec tokenSpec);
 
     /**
      * Returns the <code>SecurityToken</code> for the WS-Security.
      *
-     * @return the security token.
+     * @return the Security Token.
      *
-     * @exception SecurityException if unable to generate.
+     * @exception SecurityException if unable to generate the Security Token.
      */
     public  SecurityToken getSecurityToken() throws SecurityException;
 

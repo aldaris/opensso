@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionTokenSpec.java,v 1.3 2008-08-22 04:07:56 mallas Exp $
+ * $Id: AssertionTokenSpec.java,v 1.4 2008-08-27 19:05:52 mrudul_uchil Exp $
  *
  */
 
@@ -35,8 +35,10 @@ import com.sun.identity.saml.assertion.NameIdentifier;
 
 
 /**
- * This class implements the interface <code>SecurityTokenSpec</code to
- * create <code>SAML</code> Assertions.
+ * This class implements the interface <code>SecurityTokenSpec</code> to
+ * create <code>SAML1.0</code> and <code>SAML1.1</code> Assertions / Security 
+ * Tokens.
+ * 
  * @supported.all.api 
  */
 public class AssertionTokenSpec implements SecurityTokenSpec {

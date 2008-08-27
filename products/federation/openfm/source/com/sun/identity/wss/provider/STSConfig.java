@@ -22,19 +22,27 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSConfig.java,v 1.5 2008-08-05 04:10:59 mallas Exp $
+ * $Id: STSConfig.java,v 1.6 2008-08-27 19:05:51 mrudul_uchil Exp $
  *
  */
 package com.sun.identity.wss.provider;
 
 /**
- * This is an abstract that represents the configuration about a 
- * STS trusted authority.
+ * This abstract class <code>STSConfig</code> represents the 
+ * configuration of a Security Token Service client entity. It extends 
+ * <code>TrustAuthorityConfig</code>.
  * 
- *
- * <p> This class can be extended to define the trust authority config
- * such as discovery configuration, ws-trust etc.
+ * <p>This class can be extended to define the trust authority config
+ * which is WS-Trust protocol based client (STS client) configuration.
  * 
+ * <p>Pluggable implementation of this abstract class can choose to store this 
+ * configuration in desired configuration store. This pluggable implementation
+ * class can be configured in client's AMConfig.properties as value of 
+ * "com.sun.identity.wss.sts.config.plugin" property 
+ * for STS client configuration.
+ * 
+ * <p>All the static methods in this class are for the persistent 
+ * operations.
  * @supported.all.api
  */
 
@@ -53,7 +61,7 @@ public abstract class STSConfig extends TrustAuthorityConfig {
     }
     
     /**
-     * Returns STS Mex endpoint
+     * Returns STS Mex endpoint.
      * @return STS Mex endpoint
      */
     public String getMexEndpoint() {
@@ -61,7 +69,7 @@ public abstract class STSConfig extends TrustAuthorityConfig {
     }         
     
     /**
-     * Sets STS Mex endpoint
+     * Sets STS Mex endpoint.
      * @param mexEndpoint STS Mex endpoint
      *
      */
@@ -70,7 +78,7 @@ public abstract class STSConfig extends TrustAuthorityConfig {
     }
 
     /**
-     * Returns STS configuration name
+     * Returns STS configuration name.
      * @return STS configuration name
      */
     public String getSTSConfigName() {
@@ -78,7 +86,7 @@ public abstract class STSConfig extends TrustAuthorityConfig {
     }         
     
     /**
-     * Sets STS configuration name
+     * Sets STS configuration name.
      * @param stsConfigName STS configuration name
      *
      */
@@ -87,7 +95,7 @@ public abstract class STSConfig extends TrustAuthorityConfig {
     }
     
     /**
-     * Returns Kerberos Domain Controller Domain
+     * Returns Kerberos Domain Controller Domain.
      * @return Kerberos Domain Controller Domain
      */
      
@@ -96,7 +104,7 @@ public abstract class STSConfig extends TrustAuthorityConfig {
     }
     
     /**
-     * Sets Kerberos Domain Controller Domain
+     * Sets Kerberos Domain Controller Domain.
      * @param domain Kerberos Domain Controller Domain
      */
     public void setKDCDomain(String domain) {
@@ -112,7 +120,7 @@ public abstract class STSConfig extends TrustAuthorityConfig {
     }
     
     /**
-     * Sets Kerberos Domain Controller Server
+     * Sets Kerberos Domain Controller Server.
      * @param kdcServer Kerberos Domain Controller Server
      */
     public void setKDCServer(String kdcServer) {
@@ -120,6 +128,7 @@ public abstract class STSConfig extends TrustAuthorityConfig {
     }
     
     /**
+     * Returns the kerberos ticket cache directory.
      * This method is used by the web services client to get the kerberos
      * ticket cache directory.
      * @return kerberos ticket cache dir
@@ -129,7 +138,7 @@ public abstract class STSConfig extends TrustAuthorityConfig {
     }
     
     /**
-     * Sets kerberos ticket cache dir.
+     * Sets kerberos ticket cache directory.
      * @param cacheDir kerberos ticket cache dir
      */
     public void setKerberosTicketCacheDir(String cacheDir) {
@@ -137,7 +146,7 @@ public abstract class STSConfig extends TrustAuthorityConfig {
     }
     
     /**
-     * Returns kerberos service principal
+     * Returns kerberos service principal.
      * @return the kerberos service principal
      */
     public String getKerberosServicePrincipal() {
@@ -153,7 +162,7 @@ public abstract class STSConfig extends TrustAuthorityConfig {
     }
     
     /**
-     * Returns the protocol version
+     * Returns the protocol version.
      * @return the protocol version
      */
     public String getProtocolVersion() {

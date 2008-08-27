@@ -22,12 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: package-info.java,v 1.2 2008-06-25 05:50:10 qcheng Exp $
+ * $Id: package-info.java,v 1.3 2008-08-27 19:05:53 mrudul_uchil Exp $
  *
  */
 
 /**
- * Defines Web Services Security Token interfaces and classes.
+ * Defines Web Services Security Token specification and Token interfaces 
+ * with their respective implementation classes for different WS-* Security
+ * Tokens.
  *
  * @supported.api
  */

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2TokenSpec.java,v 1.4 2008-08-22 04:07:56 mallas Exp $
+ * $Id: SAML2TokenSpec.java,v 1.5 2008-08-27 19:05:52 mrudul_uchil Exp $
  *
  */
 
@@ -34,8 +34,8 @@ import javax.xml.namespace.QName;
 import com.sun.identity.saml2.assertion.NameID;
 
 /**
- * This class implements the interface <code>SecurityTokenSpec</code to
- * create <code>SAML2</code> Assertions.
+ * This class implements the interface <code>SecurityTokenSpec</code> to
+ * create <code>SAML2</code> Assertions / Security tokens.
  *
  * @supported.all.api
  */

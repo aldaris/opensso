@@ -22,21 +22,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityTokenSpec.java,v 1.2 2008-06-25 05:50:09 qcheng Exp $
+ * $Id: SecurityTokenSpec.java,v 1.3 2008-08-27 19:05:52 mrudul_uchil Exp $
  *
  */
 
 package com.sun.identity.wss.security;
 
-
-
 /**
- * A transparent specification of the security token that constitutues a
+ * A transparent specification of the Security Token that constitutues a
  * <code>SecurityToken</code>.
  *
  *<p> This interface contains no methods or constants, the only purpose
- * of this is to group the all the security token specifications. Each
- * security token specification must implement this interface. 
+ * of this is to group the all the Security Token specifications. Each
+ * Security Token specification must implement this interface. 
+ * 
  * @supported.all.api
  */
 public interface SecurityTokenSpec {

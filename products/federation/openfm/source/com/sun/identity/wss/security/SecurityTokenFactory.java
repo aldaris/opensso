@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityTokenFactory.java,v 1.2 2008-06-25 05:50:09 qcheng Exp $
+ * $Id: SecurityTokenFactory.java,v 1.3 2008-08-27 19:05:52 mrudul_uchil Exp $
  *
  */
 
@@ -31,15 +31,15 @@ package com.sun.identity.wss.security;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
 
-
 /**
  * This class <code>SecurityTokenFactory</code> represents a factory class to 
- * create <code>WSS</code> Security tokens.
+ * create WS-Security tokens.
  *
  * This class uses pluggable <code>TokenProvider</code>s to generate the
- * <code>WSS</code> security tokens. If the <code>TokenProvider</code> is
+ * WS-Security tokens. If the <code>TokenProvider</code> is
  * not specified, this class will use the default implementation of the 
  * Token Provider.
+ * 
  * @supported.all.api
  */
 public class SecurityTokenFactory {
@@ -54,9 +54,9 @@ public class SecurityTokenFactory {
     }
 
     /**
-     * Returns the security token factory instance. The default 
+     * Returns the Security Token factory instance. The default 
      * <code>TokenProvider</code> is used to generate the 
-     * <code>WSS</code> security tokens.
+     * WS-Security tokens.
      *
      * @param credential The credential of the authenticated subject.
      *
@@ -77,7 +77,7 @@ public class SecurityTokenFactory {
     }
 
     /**
-     * Returns the security token factory instance. 
+     * Returns the Security Token factory instance. 
      *
      * @param provider the token provider implementation.
      *
@@ -95,7 +95,7 @@ public class SecurityTokenFactory {
     }
 
     /**
-     * Creates a security token from the security token specificaion.
+     * Returns / Creates a security token from the security token specificaion.
      *
      * @param tokenSpec Security Token Specification that is needed to 
      *        generate the security tokens.
@@ -113,7 +113,7 @@ public class SecurityTokenFactory {
     }
 
     /**
-     * Returns the provider of this security token factory object.
+     * Returns the provider of this Security Token factory object.
      *
      * @return the token provider.
      */

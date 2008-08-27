@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSException.java,v 1.2 2008-06-25 05:50:12 qcheng Exp $
+ * $Id: FAMSTSException.java,v 1.3 2008-08-27 19:05:53 mrudul_uchil Exp $
  *
  */
 
@@ -48,10 +48,10 @@ public class FAMSTSException extends Exception {
 
     /**
      * Create an <code>SecurityException</code> with a message.
-     * @param s message for the exception
+     * @param message message for the exception
      */
-    public FAMSTSException(String s) {
-	super(s);
+    public FAMSTSException(String message) {
+	super(message);
     }
 }
 

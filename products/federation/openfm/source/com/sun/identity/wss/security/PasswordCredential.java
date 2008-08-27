@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PasswordCredential.java,v 1.2 2008-06-25 05:50:07 qcheng Exp $
+ * $Id: PasswordCredential.java,v 1.3 2008-08-27 19:05:52 mrudul_uchil Exp $
  *
  */
 
@@ -32,7 +32,9 @@ import com.iplanet.services.util.Crypt;
 
 /**
  * This class <code>PasswordCredential</code> is a place holder for the
- * username/password. 
+ * username/password object. 
+ * 
+ * @supported.all.api
  */
 public class PasswordCredential {
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DiscoveryConfig.java,v 1.4 2008-06-25 05:50:04 qcheng Exp $
+ * $Id: DiscoveryConfig.java,v 1.5 2008-08-27 19:05:51 mrudul_uchil Exp $
  *
  */
 package com.sun.identity.wss.provider;
@@ -55,26 +55,36 @@ import com.sun.identity.liberty.ws.common.wsse.BinarySecurityToken;
 import com.sun.identity.liberty.ws.common.Status;
 import com.sun.identity.wss.security.SecurityMechanism;
 
-
 /**
- * This class has information about the discovery as the 
- * trusted authority configuration. This class extends from 
+ * This abstract class <code>DiscoveryConfig</code> represents the 
+ * configuration of a Discovery client entity. It extends 
  * <code>TrustAuthorityConfig</code>.
- * <p> This class also provides methods for registering and un-registering
- * with the discovery service.
+ * 
+ * <p>This class can be extended to define the trust authority config
+ * which is Discovery client configuration.
+ * 
+ * <p>Pluggable implementation of this abstract class can choose to store this 
+ * configuration in desired configuration store. This pluggable implementation
+ * class can be configured in client's AMConfig.properties as value of 
+ * "com.sun.identity.wss.discovery.config.plugin" property 
+ * for Discovery client configuration.
+ * 
+ * <p>This class also provides methods for registering and un-registering
+ * with the discovery service. All the static methods in this class are for 
+ * the persistent operations.
+ * @supported.all.api
  */
+
 public abstract class DiscoveryConfig extends TrustAuthorityConfig {
 
       protected String authServiceEndpoint = null;
 
-      /**
-       * Constructor
-       */
+      /** Creates a new instance of DiscoveryConfig */
       public DiscoveryConfig() {}
 
 
       /**
-       * Returns Authentication Web Service End point
+       * Returns Authentication Web Service End point.
        * @return Authentication Web Service End point
        */
       public String getAuthServiceEndPoint() {
@@ -82,7 +92,7 @@ public abstract class DiscoveryConfig extends TrustAuthorityConfig {
       }         
 
       /**
-       * Sets Authentication Web Service End point
+       * Sets Authentication Web Service End point.
        * @param authServiceEndpoint Authentication Web Service End point
        *
        */
@@ -91,9 +101,9 @@ public abstract class DiscoveryConfig extends TrustAuthorityConfig {
       }        
 
       /**
-       * Registers the provider configuration with trusted authority.
+       * Registers the Discovery client configuration with trusted authority.
        *
-       * @param config the configuration of the provider.
+       * @param config the configuration of the Discovery client.
        *
        * @param serviceURI the <code>URI</code> of the web services provider.
        *
@@ -107,9 +117,9 @@ public abstract class DiscoveryConfig extends TrustAuthorityConfig {
        
 
       /**
-       * Registers the provider configuration with trusted authority.
+       * Registers the Discovery client configuration with trusted authority.
        *
-       * @param config the configuration of the provider.
+       * @param config the configuration of the Discovery client.
        *
        * @param serviceURI the <code>URI</code> of the web services provider.
        *
@@ -151,7 +161,7 @@ public abstract class DiscoveryConfig extends TrustAuthorityConfig {
       }
 
      /**
-      * Unregister the provider with trusted authority.
+      * Unregisters the provider with trusted authority.
       *
       * @param serviceURI the service <code>URI</code> of the 
       *            web services provider.
