@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LdapSPValidator.java,v 1.3 2008-06-25 05:49:30 qcheng Exp $
+ * $Id: LdapSPValidator.java,v 1.4 2008-08-28 20:22:10 manish_rustagi Exp $
  *
  */
 
@@ -278,7 +278,7 @@ public class LdapSPValidator implements SPValidator {
             if (value.startsWith(PROVIDER_ID_ATTR_NAME)) {
                 URL u = new URL(value.substring(PROVIDER_ID_ATTR_LEN));
                 hostnames.add(u.getHost());
-                valid = u.getHost().toLowerCase().equals(gotoHost) &&
+                valid |= u.getHost().toLowerCase().equals(gotoHost) &&
                     u.getProtocol().toLowerCase().equals(gotoProtocol) &&
                     (u.getPort() == gotoPort);
             }
