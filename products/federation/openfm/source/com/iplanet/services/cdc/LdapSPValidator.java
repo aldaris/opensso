@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LdapSPValidator.java,v 1.4 2008-08-28 20:22:10 manish_rustagi Exp $
+ * $Id: LdapSPValidator.java,v 1.5 2008-08-28 22:51:08 manish_rustagi Exp $
  *
  */
 
@@ -67,6 +67,9 @@ public class LdapSPValidator implements SPValidator {
     private static final String HOSTNAME_ATTR_NAME = "hostname";
     private static final int HOSTNAME_ATTR_LEN = 9;
     private static final String REALM_NAME_ATTR = "Realm=";
+    private static final String HTTPS = "https";
+    private static final int HTTPS_DEFAULT_PORT = 443;
+    private static final int HTTP_DEFAULT_PORT = 80;    
     
     private AMIdentityRepository amIdRepo = null;
     private Exception exception;
@@ -162,6 +165,14 @@ public class LdapSPValidator implements SPValidator {
             String gotoHost = gotoUrl.getHost().toLowerCase();
             String gotoProtocol = gotoUrl.getProtocol().toLowerCase();
             int gotoPort = gotoUrl.getPort();
+            //use default port when port is not specified explicitly
+            if(gotoPort == -1){ 
+                if(HTTPS.equalsIgnoreCase(gotoProtocol)){
+                    gotoPort = HTTPS_DEFAULT_PORT;
+                } else {
+                    gotoPort = HTTP_DEFAULT_PORT;
+                }
+            }
 
             for (Iterator i = agents.keySet().iterator(); i.hasNext(); ) {
                 AMIdentity amid = (AMIdentity)i.next();
