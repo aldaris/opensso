@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: discovery-query.jsp,v 1.3 2008-06-25 05:48:50 qcheng Exp $
+   $Id: discovery-query.jsp,v 1.4 2008-08-28 19:39:20 qcheng Exp $
 
 --%>
 
@@ -36,6 +36,7 @@ com.sun.identity.liberty.ws.security.*,
 com.sun.identity.plugin.session.SessionManager,
 com.sun.identity.plugin.session.SessionProvider,
 com.sun.identity.saml.common.*,
+com.sun.identity.setup.SetupClientWARSamples,
 com.sun.identity.shared.xml.XMLUtils,
 com.sun.liberty.jaxrpc.LibertyManagerClient"
 %>
@@ -56,7 +57,11 @@ com.sun.liberty.jaxrpc.LibertyManagerClient"
             String providerID = request.getParameter("providerID");
             if ((providerID == null) || (providerID.length() == 0)) {
                 String bootstrapFile = System.getProperty("user.home") +
-                    File.separator + "ClientSampleWSC.properties";
+                    File.separator +
+                    SetupClientWARSamples.CLIENT_WAR_CONFIG_TOP_DIR +
+                    File.separator +
+                    SetupClientWARSamples.getNormalizedRealPath(getServletContext()) +
+                    "ClientSampleWSC.properties";
                 FileInputStream fin = new FileInputStream(bootstrapFile);
                 Properties props = new Properties();
                 props.load(fin);
@@ -156,6 +161,9 @@ com.sun.liberty.jaxrpc.LibertyManagerClient"
                             String entryID = offer.getEntryID();
                             String resOffFN = System.getProperty(
                                 "user.home") + File.separator + 
+                                SetupClientWARSamples.CLIENT_WAR_CONFIG_TOP_DIR
+                                + File.separator + 
+                                SetupClientWARSamples.getNormalizedRealPath(getServletContext()) + 
                                 "RO_"+ fnSuffix + "_" + i;
                             String secAssertion = null;
                             try {

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configure.jsp,v 1.7 2008-08-23 00:38:15 hengming Exp $
+   $Id: configure.jsp,v 1.8 2008-08-28 19:39:20 qcheng Exp $
 
 --%>
 
@@ -35,6 +35,7 @@
 
 
 <%@ page import="
+com.sun.identity.setup.SetupClientWARSamples,
 java.io.*,
 java.util.Properties"
 %>
@@ -61,9 +62,11 @@ java.util.Properties"
 
 <%
 
-    String configDir = System.getProperty("user.home");
+    String configDir = System.getProperty("user.home") + File.separator +
+        SetupClientWARSamples.CLIENT_WAR_CONFIG_TOP_DIR;
 
     File fedConfig = new File(configDir + File.separator +
+        SetupClientWARSamples.getNormalizedRealPath(getServletContext()) +
         "AMConfig.properties");
     if (!fedConfig.exists()) {
 %>
@@ -81,8 +84,9 @@ Client SDK is not configured. Please click <a class="named" href="../Configurato
         String submit = request.getParameter("submit");
         if (submit != null) {
 
-            String bootstrapFile = System.getProperty("user.home") +
-                File.separator + "ClientSampleWSC.properties";
+            String bootstrapFile = configDir + File.separator +
+                SetupClientWARSamples.getNormalizedRealPath(getServletContext())
+                + "ClientSampleWSC.properties";
 
             Properties fcprops = new Properties();
             fcprops.load(new FileInputStream(fedConfig));
@@ -104,10 +108,15 @@ Client SDK is not configured. Please click <a class="named" href="../Configurato
             props.setProperty("configDir", configDir);
             FileOutputStream fo = null;
             try {
+                // check if configDir exist before creating
+                File configDirFile = new File(configDir);
+                if (!configDirFile.exists()) {
+                    configDirFile.mkdirs();
+                }
                 fo = new FileOutputStream(bootstrapFile);
                 props.store(fo, null);
                 configured = true;
-            }catch (IOException ioex) {
+            } catch (IOException ioex) {
                 errorMsg = "Unable to create WSC sample property " +
                     "file. " + ioex.getMessage();
             } finally {

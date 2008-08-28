@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.jsp,v 1.3 2008-06-25 05:48:50 qcheng Exp $
+   $Id: index.jsp,v 1.4 2008-08-28 19:39:21 qcheng Exp $
 
 --%>
 
@@ -36,6 +36,7 @@ com.sun.identity.liberty.ws.security.SecurityAssertion,
 com.sun.identity.plugin.session.SessionManager,
 com.sun.identity.plugin.session.SessionProvider,
 com.sun.identity.saml.common.*,
+com.sun.identity.setup.SetupClientWARSamples,
 com.sun.identity.shared.Constants,
 com.sun.liberty.jaxrpc.LibertyManagerClient"
 %>
@@ -58,7 +59,10 @@ com.sun.liberty.jaxrpc.LibertyManagerClient"
 public void jspInit() {
     try {
         String bootstrapFile = System.getProperty("user.home") +
-            File.separator + "ClientSampleWSC.properties";
+            File.separator + SetupClientWARSamples.CLIENT_WAR_CONFIG_TOP_DIR +
+            File.separator + 
+            SetupClientWARSamples.getNormalizedRealPath(getServletContext()) +
+            "ClientSampleWSC.properties";
         FileInputStream fin = new FileInputStream(bootstrapFile);
         Properties props = new Properties();
         props.load(fin);
@@ -84,7 +88,10 @@ public void jspInit() {
 <%
     try {
         String bootstrapFile = System.getProperty("user.home") +
-            File.separator + "ClientSampleWSC.properties";
+            File.separator + SetupClientWARSamples.CLIENT_WAR_CONFIG_TOP_DIR +
+            File.separator +
+            SetupClientWARSamples.getNormalizedRealPath(getServletContext()) +
+            "ClientSampleWSC.properties";
         FileInputStream fin = new FileInputStream(bootstrapFile);
         Properties props = new Properties();
         props.load(fin);
@@ -108,7 +115,11 @@ public void jspInit() {
 		String fnSuffix = remoteProvider.replace('/','_')
                     .replace(':','_');
 		String fileName = System.getProperty("user.home") +
-                    File.separator + "RO_" + fnSuffix;
+                    File.separator + 
+                    SetupClientWARSamples.CLIENT_WAR_CONFIG_TOP_DIR +
+                    File.separator +
+                    SetupClientWARSamples.getNormalizedRealPath(getServletContext()) +
+                    "RO_" + fnSuffix;
 		PrintWriter pw = new PrintWriter(new FileWriter(fileName));
                 pw.print(offering.toString());
                 pw.close();

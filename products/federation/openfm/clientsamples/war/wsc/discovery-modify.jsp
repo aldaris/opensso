@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: discovery-modify.jsp,v 1.3 2008-06-25 05:48:50 qcheng Exp $
+   $Id: discovery-modify.jsp,v 1.4 2008-08-28 19:39:20 qcheng Exp $
 
 --%>
 
@@ -36,6 +36,7 @@ com.sun.identity.liberty.ws.idpp.plugin.IDPPResourceIDMapper,
 com.sun.identity.plugin.session.SessionManager,
 com.sun.identity.plugin.session.SessionProvider,
 com.sun.identity.saml.common.*,
+com.sun.identity.setup.SetupClientWARSamples,
 com.sun.identity.shared.xml.XMLUtils,
 com.sun.liberty.jaxrpc.LibertyManagerClient"
 %>
@@ -67,7 +68,11 @@ com.sun.liberty.jaxrpc.LibertyManagerClient"
         if ((submit != null) && submit.equals("Add PP Resource Offering")) {
 
             String bootstrapFile = System.getProperty("user.home") +
-            File.separator + "ClientSampleWSC.properties";
+                File.separator + 
+                SetupClientWARSamples.CLIENT_WAR_CONFIG_TOP_DIR +
+                File.separator +
+                SetupClientWARSamples.getNormalizedRealPath(getServletContext())
+                + "ClientSampleWSC.properties";
             FileInputStream fin = new FileInputStream(bootstrapFile);
             Properties props = new Properties();
             props.load(fin);
@@ -134,17 +139,17 @@ com.sun.liberty.jaxrpc.LibertyManagerClient"
             String resourceXMLFile = request.getParameter("discoResourceOffering");
 	    String resourceXML = null;
             try {
-                    BufferedReader bir = new BufferedReader(
-				new FileReader(resourceXMLFile));
-            	    StringBuffer buffer = new StringBuffer(2000);
-            	    int b1;
-            	    while ((b1=bir.read ())!= -1) {
+                BufferedReader bir = new BufferedReader(
+                    new FileReader(resourceXMLFile));
+           	StringBuffer buffer = new StringBuffer(2000);
+            	int b1;
+            	while ((b1=bir.read ())!= -1) {
                 	buffer.append((char) b1);
-            	    }
-            	    resourceXML = buffer.toString();
-        	} catch (Exception e) {
-            	    %>Warning: cannot read disco resource offering.<%
-        	}
+                }
+           	resourceXML = buffer.toString();
+            } catch (Exception e) {
+                %>Warning: cannot read disco resource offering.<%
+            }
             String insertString = request.getParameter("insertStr");
             String entryID = request.getParameter("entryID");
             String providerID = request.getParameter("providerID");

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupClientWARSamples.java,v 1.9 2008-08-19 19:12:25 veiming Exp $
+ * $Id: SetupClientWARSamples.java,v 1.10 2008-08-28 19:39:46 qcheng Exp $
  *
  */
 
@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.MalformedURLException;
 import java.util.Iterator;
 import java.util.Properties;
 import javax.servlet.ServletContext;
@@ -52,6 +53,7 @@ import javax.servlet.ServletException;
  */
 public class SetupClientWARSamples {
 
+    public static final String CLIENT_WAR_CONFIG_TOP_DIR = "OpenSSOClient"; 
     private static final String TAG_SERVER_PROTOCOL = "SERVER_PROTOCOL";
     private static final String TRUST_ALL_CERTS =
         "com.iplanet.am.jssproxy.trustAllServerCerts=true\n";
@@ -97,6 +99,15 @@ public class SetupClientWARSamples {
         
         }
         
+        // create parent directory if does not exists
+        File file = new File(configFile);
+        String parentDir = file.getParent();
+        if (parentDir != null) {
+            file = new File(parentDir);
+            if (!file.exists()) {
+                file.mkdirs();
+            }
+        } 
         BufferedWriter out = new BufferedWriter(new FileWriter(configFile));
         out.write(content);
         out.close();
@@ -172,5 +183,62 @@ public class SetupClientWARSamples {
         fos.write(b);
         fos.flush();
         fos.close();
+    }
+
+
+    /**
+     * Returns normalized path for the web application as string.
+     * The normalized path of a web application is obtained by replacing the 
+     * file separator (e.g. "/") with "_" in the absolute file path where
+     * the web application is deployed.
+     * For example, if the OpenSSO WAR is deployed on 
+     * "/opt/tomcat/webapps/opensso/", the normalized path would be
+     * "_opt_tomcat_webapps_opensso_".
+     * @param servletCtx ServletContext of the web application 
+     * @return normalized path as string.
+     * @throws ServletException if failed to get the path 
+     */
+    public static String getNormalizedRealPath(ServletContext servletCtx)
+        throws ServletException {    
+        String path = null;
+        if (servletCtx != null) {
+            path = getAppResource(servletCtx);
+            
+            if (path != null) {
+                String realPath = servletCtx.getRealPath("/");
+                if ((realPath != null) && (realPath.length() > 0)) {
+                    realPath = realPath.replace('\\', '/');
+                    path = realPath.replaceAll("/", "_");
+                } else {
+                    path = path.replaceAll("/", "_");
+                }
+                int idx = path.indexOf(":");
+                if (idx != -1) {
+                    path = path.substring(idx + 1);
+                }
+            }
+        }
+        return path;
+    }
+
+    /**
+     * Returns URL of the default resource.
+     *
+     * @param servletCtx ServletContext of the web application 
+     * @return URL of the default resource. Returns null if servlet context is
+     *         null.
+     * @throws ServletException if failed to get the default source. 
+     */
+    private static String getAppResource(ServletContext servletCtx)
+        throws ServletException {
+        if (servletCtx != null) {
+            try {
+                java.net.URL turl = servletCtx.getResource("/");
+                return turl.getPath();
+            } catch (MalformedURLException mue) {
+                throw new ServletException(mue.getMessage());
+            }
+        }
+        return null;
     }
 }

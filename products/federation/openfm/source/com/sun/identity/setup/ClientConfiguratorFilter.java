@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientConfiguratorFilter.java,v 1.4 2008-06-25 05:50:00 qcheng Exp $
+ * $Id: ClientConfiguratorFilter.java,v 1.5 2008-08-28 19:39:19 qcheng Exp $
  *
  */
 package com.sun.identity.setup;
@@ -55,9 +55,7 @@ public final class ClientConfiguratorFilter implements Filter {
     // see if the configure.jsp page is executed
     public static boolean isConfigured = false;
     private static final String SETUP_URI = "/Configurator.jsp";
-    private static final String configFile = 
-        System.getProperty("user.home") + File.separator + 
-        "AMConfig.properties"; 
+    private static String configFile = null;
     private boolean passThrough = false;
 
     /**
@@ -113,6 +111,10 @@ public final class ClientConfiguratorFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
         setFilterConfig(filterConfig);
         servletCtx = filterConfig.getServletContext();
+        configFile = System.getProperty("user.home") + File.separator + 
+            SetupClientWARSamples.CLIENT_WAR_CONFIG_TOP_DIR + File.separator + 
+            SetupClientWARSamples.getNormalizedRealPath(servletCtx) +
+            "AMConfig.properties";
         File file = new File(configFile);
         if (file.exists()) {
             setAMConfigProperties(configFile);
