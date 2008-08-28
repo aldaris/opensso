@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: realmSelection.jsp,v 1.8 2008-08-19 19:11:19 veiming Exp $
+   $Id: realmSelection.jsp,v 1.9 2008-08-28 14:47:44 superpat7 Exp $
 
 --%>
 
@@ -47,7 +47,7 @@
     }
 
     String spMetaAlias = WSFederationMetaUtils.getMetaAliasByUri(
-                                        request.getRequestURI());
+        request.getRequestURI());
     if ( spMetaAlias==null || spMetaAlias.length()==0) {
         response.sendError(response.SC_BAD_REQUEST, "Null metaAlias"
                 /* TODO SAML2Utils.bundle.getString("nullSPEntityID") */);
@@ -95,27 +95,11 @@
 
     writeCSS('<%= contextPath %>');
 
+    function formSubmit() {
+        var frm = document.forms['realm_form'];
 
-    var defaultBtn = 'Submit';
-    var elmCount = 0;
-
-    /** submit form with default command button */
-    function defaultSubmit() {
-	LoginSubmit(defaultBtn);
-    }
-
-    /**
-     * submit form with given button value
-     *
-     * @param value of button
-     */
-    function LoginSubmit(value) {
-        aggSubmit();
-        var hiddenFrm = document.forms['Login'];
-
-        if (hiddenFrm != null) {
-	    hiddenFrm.elements['IDButton'].value = value;
-            hiddenFrm.submit();
+        if (frm != null) {
+            frm.submit();
         }
     }
 
@@ -136,7 +120,6 @@
     <tr class="LogTopBnd" style="background-image: url(<%= contextPath %>/images/gradlogtop.jpg); 
     background-repeat: repeat-x; background-position: left top;">
       <td><img src="<%= contextPath %>/images/dot.gif" width="1" height="30" alt="" /></td>
-
       <td>&nbsp;</td>
     </tr>
     <tr>
@@ -150,17 +133,16 @@
             <td width="260"><img src="<%= contextPath %>/images/dot.gif" width="260" height="245" alt="" /></td>
             <td width="415" bgcolor="#ffffff" valign="top"><img name="Login.productLogo" 
             src="<%= contextPath %>/images/PrimaryProductName.png" alt="OpenSSO" 
-            border="0" height="40" width="300" />
+            border="0" />
 
-        <form name="realm_form" action="<%=request.getRequestURI()%>">
+        <form name="realm_form" action="<%=request.getRequestURI()%>" 
+            onSubmit="formSubmit(); return false;" method="post">
               <table border="0" cellspacing="0" cellpadding="0">
                 <tr>
                   <td colspan="2">
 		      <img src="<%= contextPath %>/images/dot.gif" width="1" height="25" alt="" />		    	    
 		  </td>
                 </tr>
-
-	<!-- display authentication scheme -->
 
         <!-- Header display -->
 
@@ -173,31 +155,8 @@
 	</div></td>
 	</tr>
 	<!-- End of Header display -->      
-  
-	
 
-	
-
-	<script language="javascript">
-	    elmCount++;
-	</script>
-
-	
-
-	
-
-	
-
-	<!-- end of tiledCallbacks -->
-
-	
-
-	<script language="javascript">
-	    elmCount++;
-	</script>
-
-	
-	<!-- text box display -->
+        <!-- text box display -->
 	<tr>
 
 	<td nowrap="nowrap"><div class="logLbl">
@@ -211,108 +170,89 @@
 	
 	<td><div class="logInp">
 
-<!-- -->
-
-<input type="hidden" name="wreply" value="<%=wreply%>" />
+        <input type="hidden" name="wreply" value="<%=wreply%>" />
 <%
-    if ( wctx != null && wctx.length() > 0 ) {
+        if ( wctx != null && wctx.length() > 0 ) {
 %>
-<input type="hidden" name="wctx" value="<%=wctx%>" />
+        <input type="hidden" name="wctx" value="<%=wctx%>" />
 <%
-    }
-%>
-<select name="realm_list">
-<%
-    String accountRealmCookieValue = null;
-    Cookie cookies[] = request.getCookies();
-    if (cookies != null) {
-      for (int i = 0; i < cookies.length; i++) {
-        if (cookies[i].getName().equals( accountRealmCookieName )) 
-        {
-          accountRealmCookieValue = cookies[i].getValue();
-          break;
         }
-      }
-    }
-    if (debug.messageEnabled()) {
-        debug.message(jspFile + "Account Realm Cookie: " + 
-            accountRealmCookieValue);
-    }
-
-    for (String idpEntityId : 
-        WSFederationMetaManager.getAllRemoteIdentityProviderEntities(spRealm))
-    { 
-        FederationElement idp = 
-            WSFederationMetaManager.getEntityDescriptor(spRealm, idpEntityId);
-        IDPSSOConfigElement idpconfig = 
-            WSFederationMetaManager.getIDPSSOConfig(spRealm, idpEntityId);
-            
-        String issuerName = WSFederationMetaManager.
-            getTokenIssuerName(idp);
-
-        String displayName = 
-            WSFederationMetaUtils.getAttribute(idpconfig,
-            WSFederationConstants.DISPLAY_NAME);
-
-        if (debug.messageEnabled()) {
-            debug.message(jspFile + "account realm key: " + issuerName + 
-                " display name: " + displayName);
-        }
-        
-        if (displayName == null || displayName.length() == 0){
-            displayName = issuerName;
-        }        
 %>
-        <option value="<%=issuerName%>" <%=((accountRealmCookieValue != null) && 
-            (accountRealmCookieValue.equals(issuerName))?"selected":"")%>>
-            <%=displayName%>
-        </option>
+        <select name="realm_list">
 <%
-    }
+            String accountRealmCookieValue = null;
+            Cookie cookies[] = request.getCookies();
+            if (cookies != null) {
+              for (int i = 0; i < cookies.length; i++) {
+                if (cookies[i].getName().equals( accountRealmCookieName )) 
+                {
+                  accountRealmCookieValue = cookies[i].getValue();
+                  break;
+                }
+              }
+            }
+            if (debug.messageEnabled()) {
+                debug.message(jspFile + "Account Realm Cookie: " + 
+                    accountRealmCookieValue);
+            }
+
+            for (String idpEntityId : 
+                WSFederationMetaManager.getAllRemoteIdentityProviderEntities(spRealm))
+            { 
+                FederationElement idp = 
+                    WSFederationMetaManager.getEntityDescriptor(spRealm, 
+                    idpEntityId);
+                IDPSSOConfigElement idpconfig = 
+                    WSFederationMetaManager.getIDPSSOConfig(spRealm, 
+                    idpEntityId);
+                
+                if ( WSFederationMetaManager.isTrustedProvider(spRealm, 
+                    spEntityId, idpEntityId) ) {
+                    String issuerName = WSFederationMetaManager.
+                        getTokenIssuerName(idp);
+
+                    String displayName = 
+                        WSFederationMetaUtils.getAttribute(idpconfig,
+                        WSFederationConstants.DISPLAY_NAME);
+
+                    if (debug.messageEnabled()) {
+                        debug.message(jspFile + "account realm key: " + 
+                            issuerName + " display name: " + displayName);
+                    }
+
+                    if (displayName == null || displayName.length() == 0){
+                        displayName = issuerName;
+                    }        
 %>
-</select>
-<!-- -->
-		</div>
+                    <option value="<%=issuerName%>" 
+                        <%=((accountRealmCookieValue != null) && 
+                        (accountRealmCookieValue.equals(issuerName))?"selected":"")%>>
+                        <%=displayName%>
+                    </option>
+<%
+                }
+            }
+%>
+        </select>
+
+                </div>
 	</td>
 	</tr>	
 	<!-- end of textBox -->
-	
-
-	
-
-	
-
-	<!-- end of tiledCallbacks -->
-	
-
-	<script language="javascript">
-	    elmCount++;
-	</script>
-	<!-- end of tiledCallbacks -->
-	<!-- end of validContent -->
 	<!-- Submit button -->
-
-	
-
-	
 	<tr>
 	<td><img src="<%= contextPath %>/images/dot.gif" 
         width="1" height="15" alt="" /></td>
-<!-- <input type="submit" value="Proceed" /> -->
 	    <script language="javascript">
 		markupButton(
 		    'Proceed',
-		   	"javascript:LoginSubmit('Proceed')");
+		   	"javascript:formSubmit()");
 	    </script>
 	</tr>
-	<!-- end of hasNoButton -->
-	
+	<!-- end of Submit button -->
 
-	<!-- end of ContentButtonLogin -->
-	
-	<tr>
+        <tr>
             <td>&nbsp;</td>
-
         </tr>
 	<tr>
             <td><img src="<%= contextPath %>/images/dot.gif" 
@@ -325,7 +265,6 @@
       <td width="45"><img src="<%= contextPath %>/images/dot.gif" 
       width="45" height="245" alt="" /></td>
     </tr>
-
     </table>
     </td>
     <td class="LogMidBnd" style="background-image: url(<%= contextPath %>/images/gradlogsides.jpg);
@@ -340,10 +279,7 @@
       </td>
       <td>&nbsp;</td>
     </tr>
-  </table>
+  </table>  
 </body>
-
-
-
 </html>
 

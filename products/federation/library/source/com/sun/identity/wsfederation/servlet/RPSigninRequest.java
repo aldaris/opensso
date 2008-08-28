@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RPSigninRequest.java,v 1.6 2008-06-25 05:48:09 qcheng Exp $
+ * $Id: RPSigninRequest.java,v 1.7 2008-08-28 14:47:45 superpat7 Exp $
  *
  */
 
@@ -45,6 +45,7 @@ import com.sun.identity.wsfederation.jaxb.entityconfig.SPSSOConfigElement;
 import com.sun.identity.wsfederation.jaxb.wsfederation.FederationElement;
 import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
 import com.sun.identity.wsfederation.meta.WSFederationMetaUtils;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -219,20 +220,29 @@ public class RPSigninRequest extends WSFederationAction {
         }
 
         if (idpEntityId == null) {
-            // See if there is only one IdP configured...
-            List<String> idpList = 
+            // See if there is only one trusted IdP configured...
+            List<String> allRemoteIdPs = 
                 WSFederationMetaManager.
                 getAllRemoteIdentityProviderEntities(spRealm);
+            ArrayList<String> trustedRemoteIdPs = new ArrayList<String>();
+            
+            for ( String idp : allRemoteIdPs )
+            {
+                if ( WSFederationMetaManager.isTrustedProvider(spRealm, 
+                    spEntityId, idp) ) {
+                    trustedRemoteIdPs.add(idp);
+                }
+            }
 
-            if ( idpList.size() == 0 )
+            if ( trustedRemoteIdPs.size() == 0 )
             {
                 // Misconfiguration!
                 throw new WSFederationException(
                     WSFederationUtils.bundle.getString("noIDPConfigured"));
             }
-            else if ( idpList.size() == 1 )
+            else if ( trustedRemoteIdPs.size() == 1 )
             {
-                idpEntityId = idpList.get(0);
+                idpEntityId = trustedRemoteIdPs.get(0);
             }
         }
 
