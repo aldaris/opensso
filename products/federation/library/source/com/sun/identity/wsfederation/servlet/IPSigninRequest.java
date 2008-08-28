@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPSigninRequest.java,v 1.6 2008-06-25 05:48:08 qcheng Exp $
+ * $Id: IPSigninRequest.java,v 1.7 2008-08-28 20:49:23 superpat7 Exp $
  *
  */
 
@@ -266,7 +266,7 @@ public class IPSigninRequest extends WSFederationAction {
 
         if ((acsURL == null) || (acsURL.trim().length() == 0)) {
             debug.error(classMethod + "no ACS URL found.");
-            String[] data = { wtrealm };
+            String[] data = { realm, spEntityId, wreply };
             LogUtil.error(Level.INFO,
                 LogUtil.NO_ACS_URL, data, null);
             throw new WSFederationException(

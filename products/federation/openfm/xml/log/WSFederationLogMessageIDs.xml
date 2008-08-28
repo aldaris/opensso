@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: WSFederationLogMessageIDs.xml,v 1.5 2008-08-28 04:55:06 superpat7 Exp $
+   $Id: WSFederationLogMessageIDs.xml,v 1.6 2008-08-28 20:49:23 superpat7 Exp $
 
 -->
 
@@ -725,6 +725,33 @@
         </datainfo>
         <triggers>
             <item>Creation of WS-Federation IdP Signin Response.</item>
+        </triggers>
+        <actions/>
+    </logmessage>
+    <logmessage name="NO_ACS_URL" id="50"
+        loglevel="LL_INFO"
+        description="Could not find an Assertion Consumer Service URL.">
+        <datainfo>
+            <item>Realm or organization name</item>
+            <item>Service provider ID</item>
+            <item>Reply URL</item>
+        </datainfo>
+        <triggers>
+            <item>No ACS URL in configuration.</item>
+            <item>ACS URL provided in request not found in configuration.</item>
+        </triggers>
+        <actions>
+            <item>Check configuration for service provider.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="SLO_SUCCESSFUL" id="51"
+        loglevel="LL_INFO"
+        description="Single logout completed successfully.">
+        <datainfo>
+            <item>Reply URL</item>
+        </datainfo>
+        <triggers>
+            <item>Successful single logout.</item>
         </triggers>
         <actions/>
     </logmessage>

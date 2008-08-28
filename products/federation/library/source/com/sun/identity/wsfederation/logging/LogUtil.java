@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogUtil.java,v 1.4 2008-08-28 04:55:06 superpat7 Exp $
+ * $Id: LogUtil.java,v 1.5 2008-08-28 20:49:23 superpat7 Exp $
  *
  */
 
@@ -135,14 +135,12 @@ public abstract class LogUtil {
         "CONFIG_ERROR_GET_ALL_ENTITIES";
     public static final String GOT_ALL_ENTITIES =
         "GOT_ALL_ENTITIES";                                
+    public static final String ASSERTION_CREATED =
+        "ASSERTION_CREATED";
     public static final String NO_ACS_URL = 
         "NO_ACS_URL";
     public static final String SLO_SUCCESSFUL =
         "SLO_SUCCESSFUL";
-    public static final String ERROR_PROCESSING_MESSAGE =
-        "ERROR_PROCESSING_MESSAGE";
-    public static final String ASSERTION_CREATED =
-        "ASSERTION_CREATED";
           
     private static final String WSFEDERATION_LOG = "WSFederation";
     private static Logger logger = null;

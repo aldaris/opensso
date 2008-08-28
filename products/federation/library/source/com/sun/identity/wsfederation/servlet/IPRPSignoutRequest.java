@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPRPSignoutRequest.java,v 1.4 2008-06-25 05:48:08 qcheng Exp $
+ * $Id: IPRPSignoutRequest.java,v 1.5 2008-08-28 20:49:22 superpat7 Exp $
  *
  */
 
@@ -238,10 +238,11 @@ public class IPRPSignoutRequest extends WSFederationAction {
             throw new WSFederationException(se);
         }
         
+        // Can't pass session, since we just invalidated it!
         String[] data = {wreply};
         LogUtil.access(Level.INFO,
                 LogUtil.SLO_SUCCESSFUL,
                 data,
-                session);
+                null);
     }
 }
