@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.36 2008-08-28 16:50:25 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.37 2008-08-28 18:00:49 veiming Exp $
  *
  */
 
@@ -380,6 +380,15 @@ public class AgentConfiguration {
         //overwrite inherited values with what user has given
         inheritedValues.putAll(attributeValues);
         
+        if (serverURL == null) {
+            // need to set an arbitrary number to com.iplanet.am.server.port
+            // so that number validator will pass
+            Map map = new HashMap(4);
+            map.put("SERVER_PORT", "80");
+            map.put("AGENT_PORT", "80");
+            tagswapAttributeValues(attributeValues, map);
+        }
+        
         if ((serverURL != null) || (agentURL != null)) {
             tagswapAttributeValues(inheritedValues, agentType, serverURL,
                 agentURL);
@@ -466,7 +475,12 @@ public class AgentConfiguration {
                 map.put("AUDIT_LOG_FILENAME", logFileName);
             }
         }
-
+        tagswapAttributeValues(attributeValues, map);
+    }
+    
+    private static void tagswapAttributeValues(
+        Map attributeValues,
+        Map tagswapInfo) {
         for (Iterator i = attributeValues.keySet().iterator(); i.hasNext(); ) {
             String attrName = (String)i.next();
             Set values = (Set)attributeValues.get(attrName);
@@ -474,7 +488,7 @@ public class AgentConfiguration {
 
             for (Iterator j = values.iterator(); j.hasNext(); ) {
                 String value = (String)j.next();
-                newValues.add(tagswap(map, value));
+                newValues.add(tagswap(tagswapInfo, value));
             }
             values.clear();
             values.addAll(newValues);
