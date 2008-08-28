@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: QueryClient.java,v 1.6 2008-08-06 17:28:19 exu Exp $
+ * $Id: QueryClient.java,v 1.7 2008-08-28 19:52:47 bina Exp $
  *
  */
 
@@ -150,21 +150,22 @@ public class QueryClient {
                 if (debug.messageEnabled()) {
                     debug.message(classMethod + "XACML Query XML String :"
                             + xmlString);
-                    // retrieve endpoint from meta data
-                    String endPoint = null;
-                    XACMLAuthzDecisionQueryConfigElement pepConfig =
+                }
+                // retrieve endpoint from meta data
+                String endPoint = null;
+                XACMLAuthzDecisionQueryConfigElement pepConfig =
                             getPEPConfig(realm,pepEntityID);
-                    endPoint = getPDPEndPoint(pdpEntityID);
-                    if (debug.messageEnabled()) {
-                        debug.message(classMethod + " ResponseLocation is :" +
+                endPoint = getPDPEndPoint(pdpEntityID);
+                if (debug.messageEnabled()) {
+                   debug.message(classMethod + " ResponseLocation is :" +
                                 endPoint);
-                    }
-                    // create SOAP message
-                    try {
-                        String soapMessage =
-                                SAML2SDKUtils.createSOAPMessageString(xmlString);
+                }
+                // create SOAP message
+                try {
+                   String soapMessage =
+                       SAML2SDKUtils.createSOAPMessageString(xmlString);
                         
-                        endPoint =
+                   endPoint =
                                 SAML2SDKUtils.fillInBasicAuthInfo(
                                 pepConfig,endPoint);
                         String[] urls = { endPoint };
@@ -239,7 +240,6 @@ public class QueryClient {
                     }
                 }
             }
-        }
         return response;
     }
     
