@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.59 2008-08-25 19:25:05 rmisra Exp $
+ * $Id: TestCommon.java,v 1.60 2008-08-28 17:32:24 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -518,6 +518,7 @@ public class TestCommon implements TestConstants {
                         "FederatedAccessManagerEncryptionKey", "UTF-8")); 
         }
 
+        String strDirServerFQDN = (String) map.get(TestConstants.KEY_ATT_DIRECTORY_SERVER);
         strBuff.append("&")
                 .append(URLEncoder.encode("PLATFORM_LOCALE", "UTF-8"))
 		.append("=")
@@ -548,7 +549,7 @@ public class TestCommon implements TestConstants {
 
         strBuff.append(URLEncoder.encode("DIRECTORY_SERVER", "UTF-8"))
                 .append("=")
-                .append(URLEncoder.encode(host, "UTF-8"))
+                .append(URLEncoder.encode(strDirServerFQDN, "UTF-8"))
                 .append("&");        
         strBuff.append(URLEncoder.encode("DS_DIRMGRDN", "UTF-8"))
                 .append("=")
@@ -601,7 +602,7 @@ public class TestCommon implements TestConstants {
                     .append("&")
                     .append(URLEncoder.encode("USERSTORE_HOST", "UTF-8"))
                     .append("=")
-                    .append(URLEncoder.encode(host, "UTF-8"))        
+                    .append(URLEncoder.encode(strDirServerFQDN, "UTF-8"))       
                     .append("&")
                     .append(URLEncoder.encode("USERSTORE_PASSWD", "UTF-8"))
                     .append("=")
