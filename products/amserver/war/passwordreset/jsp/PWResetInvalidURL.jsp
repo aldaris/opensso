@@ -22,14 +22,14 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: PWResetInvalidURL.jsp,v 1.4 2008-08-15 01:05:26 veiming Exp $
+   $Id: PWResetInvalidURL.jsp,v 1.5 2008-08-28 06:41:11 mahesh_prasad_r Exp $
 
 --%>
 
 
 <html>
 <%@include file="../ui/PWResetBase.jsp" %>
-<%@page info="PWResetInvalidURL" language="java"%>
+<%@page info="PWResetInvalidURL" language="java" pageEncoding="UTF-8"%>
 <%@taglib uri="/WEB-INF/jato.tld" prefix="jato"%>
 <jato:useViewBean className="com.sun.identity.password.ui.PWResetInvalidURLViewBean" fireChildDisplayEvents="true">
 

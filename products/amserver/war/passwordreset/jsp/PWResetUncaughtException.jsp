@@ -22,14 +22,14 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: PWResetUncaughtException.jsp,v 1.4 2008-08-15 01:05:27 veiming Exp $
+   $Id: PWResetUncaughtException.jsp,v 1.5 2008-08-28 06:41:11 mahesh_prasad_r Exp $
 
 --%>
 
 
 <html>
 <%@include file="../ui/PWResetBase.jsp" %>
-<%@page info="PWResetUncaughtException" language="java"%>
+<%@page info="PWResetUncaughtException" language="java" pageEncoding="UTF-8"%>
 <%@taglib uri="/WEB-INF/jato.tld" prefix="jato"%>
 <jato:useViewBean className="com.sun.identity.password.ui.PWResetUncaughtExceptionViewBean" fireChildDisplayEvents="true">
 

@@ -22,14 +22,14 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: PWResetSuccess.jsp,v 1.4 2008-08-15 01:05:26 veiming Exp $
+   $Id: PWResetSuccess.jsp,v 1.5 2008-08-28 06:41:11 mahesh_prasad_r Exp $
 
 --%>
 
 
 <html>
 <%@include file="../ui/PWResetBase.jsp" %>
-<%@page info="PWResetSuccess" language="java"%>
+<%@page info="PWResetSuccess" language="java" pageEncoding="UTF-8"%>
 <%@taglib uri="/WEB-INF/jato.tld" prefix="jato"%>
 <jato:useViewBean className="com.sun.identity.password.ui.PWResetSuccessViewBean" fireChildDisplayEvents="true">
 
