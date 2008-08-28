@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DNOrIPAddressListTokenRestriction.java,v 1.4 2008-06-25 05:41:29 qcheng Exp $
+ * $Id: DNOrIPAddressListTokenRestriction.java,v 1.5 2008-08-28 20:25:31 manish_rustagi Exp $
  *
  */
 
@@ -63,9 +63,24 @@ public class DNOrIPAddressListTokenRestriction implements TokenRestriction {
    public DNOrIPAddressListTokenRestriction(String dn, List hostNames)
         throws Exception
     {
+        String val = ""; 
+        boolean hostmatch = false;    
         this.dn = Misc.canonicalize(dn);
         for (Iterator i = hostNames.iterator(); i.hasNext();) {
-            addressList.add(InetAddress.getByName((String) i.next()));
+            try { 
+                val = (String)i.next();  
+                addressList.add(InetAddress.getByName(val)); 
+                hostmatch = true; 
+            } catch (java.net.UnknownHostException e) { 
+                if (SessionService.sessionDebug.warningEnabled()) { 
+                    SessionService.sessionDebug.warning(
+                    "DNOrIPAddressListTokenRestriction.constructor: " +
+                    "failure resolving host " + val); 
+                } 
+                if (!i.hasNext() && !hostmatch) {
+                    throw new java.net.UnknownHostException (val); 
+                }
+            } 
         }
 
         StringBuffer buf = new StringBuffer();
