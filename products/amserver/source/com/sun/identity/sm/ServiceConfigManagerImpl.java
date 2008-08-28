@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfigManagerImpl.java,v 1.11 2008-08-27 16:30:30 goodearth Exp $
+ * $Id: ServiceConfigManagerImpl.java,v 1.12 2008-08-28 18:36:30 arviranga Exp $
  *
  */
 
@@ -36,6 +36,7 @@ import com.sun.identity.common.DNUtils;
 import com.sun.identity.shared.debug.Debug;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -452,38 +453,42 @@ class ServiceConfigManagerImpl implements SMSObjectListener {
     }
 
     void notifyGlobalConfigChange(String groupName, String comp, int type) {
-        synchronized (listenerObjects) {        
-            Iterator items = listenerObjects.values().iterator();
-            while (items.hasNext()) {
-                ServiceListener sl = (ServiceListener) items.next();
-                try {
-                    sl.globalConfigChanged(serviceName, version, groupName,
+        HashSet lObject = new HashSet();
+        synchronized (listenerObjects) {
+            lObject.addAll(listenerObjects.values());
+        }
+        Iterator items = lObject.iterator();
+        while (items.hasNext()) {
+            ServiceListener sl = (ServiceListener) items.next();
+            try {
+                sl.globalConfigChanged(serviceName, version, groupName,
                         comp, type);
-                } catch (Throwable t) {
-                    SMSEntry.eventDebug.error("ServiceConfigManagerImpl(:" +
+            } catch (Throwable t) {
+                SMSEntry.eventDebug.error("ServiceConfigManagerImpl(:" +
                         serviceName + ") notifyGlobalConfigChange Error " +
                         "sending notification to ServiceListener: " +
                         sl.getClass().getName(), t);
-                }
             }
         }
     }
 
     void notifyOrgConfigChange(String orgName, String groupName, String comp,
         int type) {
+        HashSet lObject = new HashSet();
         synchronized (listenerObjects) {        
-            Iterator items = listenerObjects.values().iterator();
-            while (items.hasNext()) {
-                ServiceListener sl = (ServiceListener) items.next();
-                try {
-                    sl.organizationConfigChanged(serviceName, version, orgName,
+            lObject.addAll(listenerObjects.values());
+        }
+        Iterator items = lObject.iterator();
+        while (items.hasNext()) {
+            ServiceListener sl = (ServiceListener) items.next();
+            try {
+                sl.organizationConfigChanged(serviceName, version, orgName,
                         groupName, comp, type);
-                } catch (Throwable t) {
-                    SMSEntry.eventDebug.error("ServiceConfigManagerImpl(:" +
+            } catch (Throwable t) {
+                SMSEntry.eventDebug.error("ServiceConfigManagerImpl(:" +
                         serviceName + ") notifyOrgConfigChange Error " +
                         "sending notification to ServiceListener: " +
                         sl.getClass().getName(), t);
-                }
             }
         }
     }

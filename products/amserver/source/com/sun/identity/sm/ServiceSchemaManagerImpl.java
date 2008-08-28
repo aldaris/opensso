@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceSchemaManagerImpl.java,v 1.7 2008-07-11 01:46:21 arviranga Exp $
+ * $Id: ServiceSchemaManagerImpl.java,v 1.8 2008-08-28 18:36:30 arviranga Exp $
  *
  */
 
@@ -338,10 +338,12 @@ class ServiceSchemaManagerImpl implements SMSObjectListener {
      * ID was issued when the listener was registered.
      */
     synchronized void removeListener(String listenerID) {
-        listenerObjects.remove(listenerID);
-        if (listenerObjects.isEmpty()) {
-            SMSNotificationManager.getInstance().removeCallbackHandler(
-                listenerID);
+        if (listenerObjects != null) {
+            listenerObjects.remove(listenerID);
+            if (listenerObjects.isEmpty()) {
+                SMSNotificationManager.getInstance().removeCallbackHandler(
+                        listenerID);
+            }
         }
     }
     
@@ -363,23 +365,25 @@ class ServiceSchemaManagerImpl implements SMSObjectListener {
     // registered via addListener
     public void allObjectsChanged() {
         if ((listenerObjects != null) && !listenerObjects.isEmpty()) {
+            HashSet lObjects = new HashSet();
             synchronized (listenerObjects) {
-                Iterator l = listenerObjects.values().iterator();
-                while (l.hasNext()) {
-                    ServiceListener listener = (ServiceListener) l.next();
-                    if (debug.messageEnabled()) {
-                        debug.message("ServiceSchemaManagerImpl:" +
+                lObjects.addAll(listenerObjects.values());
+            }
+            Iterator l = lObjects.iterator();
+            while (l.hasNext()) {
+                ServiceListener listener = (ServiceListener) l.next();
+                if (debug.messageEnabled()) {
+                    debug.message("ServiceSchemaManagerImpl:" +
                             "Sending change notification to: " +
                             listener.getClass().getName());
-                    }
-                    try {
-                        listener.schemaChanged(serviceName, version);
-                    } catch (Throwable t) {
-                        debug.error("ServiceSchemaManagerImpl:" +
+                }
+                try {
+                    listener.schemaChanged(serviceName, version);
+                } catch (Throwable t) {
+                    debug.error("ServiceSchemaManagerImpl:" +
                             "allObjectsChanged. Listeners Exception sending " +
                             "notification to class: " +
                             listener.getClass().getName(), t);
-                    }
                 }
             }
         }
