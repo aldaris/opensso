@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContextLogout.java,v 1.1 2008-08-20 22:09:58 cmwesley Exp $
+ * $Id: AuthContextLogout.java,v 1.2 2008-08-28 13:17:44 cmwesley Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,7 @@
 package com.sun.identity.qatest.authentication;
 
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.AuthContext;
@@ -210,7 +211,7 @@ public class AuthContextLogout extends TestCommon {
                         if (callbacks[i] instanceof NameCallback) {
                             NameCallback namecallback =
                                     (NameCallback)callbacks[i];
-                            namecallback.setName(moduleName);
+                            namecallback.setName(userName);
                         }
                         if (callbacks[i] instanceof PasswordCallback) {
                             PasswordCallback passwordcallback =
@@ -227,12 +228,13 @@ public class AuthContextLogout extends TestCommon {
                 }
             }
         }
+        
         if (lc.getStatus() == AuthContext.Status.SUCCESS) {
             try {
                 userToken = lc.getSSOToken();                
                 log(Level.FINE, "testAuthContextLogout", 
                         "Verifying expected behavior that the user token is " +
-                        "valid after successful authentication ...");
+                        "valid after successful authentication ...");                
                 sessionValid = 
                         SSOTokenManager.getInstance().isValidToken(userToken);
                 if (!sessionValid) {
@@ -248,8 +250,17 @@ public class AuthContextLogout extends TestCommon {
                 log(Level.FINE, "testAuthContextLogout", 
                         "Verifying expected behavior that the user token is " +
                         "no longer valid after logout");
-                sessionValid = 
-                        SSOTokenManager.getInstance().isValidToken(userToken);
+                try {
+                    SSOTokenManager.getInstance().refreshSession(userToken);                
+                } catch (SSOException ssoe) {
+                    log(Level.FINEST, "testAuthContextLogout", 
+                            "SSOException message = " + ssoe.getMessage());
+                    log(Level.FINEST, "testAuthContextLogout", 
+                            "An SSOException was thrown when calling " +
+                            "refereshSession for an invalid session");
+                    sessionValid = false;
+                }
+
                 if (sessionValid) {
                     log(Level.SEVERE, "testAuthContextLogout", 
                             "Token for user " + userName + 
