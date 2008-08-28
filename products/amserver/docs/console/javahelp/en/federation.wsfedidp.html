@@ -33,6 +33,38 @@
 <a name="federation.wsfedidp"></a><h4>WS-FED Identity Provider Customization</h4>
 <p>The following attributes apply to the WS-FED Identity Provider role:</p>
 
+<a name="ghfke"></a><h5>NameID Format</h5>
+<p>Defines the format of the name identifier component of the single sign-on response
+sent from the identity provider to the service provider. WS-Federation single sign-on supports
+the following identifier formats (default is UPN): :</p>
+<ul><li><p>Email</p></li></ul>
+
+<ul><li><p>Common Name</p></li>
+<li><p>UPN &#8211; User Principal Name. The syntax is <tt>username@domain</tt>, where an example of <tt>domain</tt>is <tt>example.com</tt>.</p></li></ul>
+
+
+<a name="ghfog"></a><h5>NameID Attribute</h5>
+<p>Defines the attribute in the user's profile that will be used as the
+name ID value. The default is <tt>uid</tt>. </p>
+
+<a name="ghflq"></a><h5>Name Includes Domain</h5>
+<p>When using the UPN format defined in the NameID Format attribute, this specifies
+whether the NameID Attribute in the user's profile includes a domain. If it
+does, then the NameID Attribute will be used for the UPN as it
+is currently defined. Otherwise, it is combined with a domain to form a
+UPN.</p>
+
+<a name="ghfmk"></a><h5>Domain Attribute</h5>
+<p>When using the UPN format, if the Name Includes Domain attribute is not
+selected, this specifies an attribute in the user's profile to be used as
+the UPN domain. </p>
+
+<a name="ghfnw"></a><h5>UPN Domain</h5>
+<p>When using UPN format, if the Name Includes Domain attribute is not selected,
+and if a value for Domain Attribute is not specified, or if there
+is no value for that attribute for a particular user, then this attribute
+is used to constructing the UPN. </p>
+
 <a name="ggwvh"></a><h5>Signing Cert Alias</h5>
 <p>This attribute specifies the provider certificate alias used to find the assertion signing
 certificate in the keystore.</p>
