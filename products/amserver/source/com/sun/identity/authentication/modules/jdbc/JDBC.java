@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JDBC.java,v 1.4 2008-06-25 05:41:57 qcheng Exp $
+ * $Id: JDBC.java,v 1.5 2008-08-28 21:56:45 madan_ranganath Exp $
  *
  */
 
@@ -209,11 +209,7 @@ public class JDBC extends AMLoginModule {
                         debug.message("No DBPASSWORD for configuring");
                         errorMsg = "noDBPASSWORD";
                         return;
-                    } else  {
-                        if (debug.messageEnabled())
-                            debug.message("Found config for DBPASSWORD: " +
-                                          dbpassword);
-                    }
+                    } 
                 }
                 
                 // and get the props that apply to both connection types 
@@ -407,7 +403,7 @@ public class JDBC extends AMLoginModule {
                     debug.message("Got my Transform Object" + 
                             syntaxTransform.toString() );
                 }
-                resultPassword = syntaxTransform.transform(resultPassword);
+                password = syntaxTransform.transform(password);
 
                 if (debug.messageEnabled()) {
                     debug.message("Password transformed by: " + transform );
