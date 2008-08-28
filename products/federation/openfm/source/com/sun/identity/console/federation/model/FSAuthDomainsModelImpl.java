@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAuthDomainsModelImpl.java,v 1.9 2008-07-09 02:04:51 veiming Exp $
+ * $Id: FSAuthDomainsModelImpl.java,v 1.10 2008-08-28 06:45:17 asyhuang Exp $
  *
  */
 
@@ -33,30 +33,20 @@ import com.sun.identity.console.base.model.AMModelBase;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.federation.meta.IDFFMetaException;
 import com.sun.identity.federation.meta.IDFFMetaManager;
-import com.sun.identity.federation.meta.IDFFMetaUtils;
 import com.sun.identity.wsfederation.meta.WSFederationMetaException;
 import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
-import com.sun.identity.liberty.ws.meta.jaxb.EntityDescriptorElement;
 import com.sun.identity.cot.CircleOfTrustManager;
 import com.sun.identity.cot.CircleOfTrustDescriptor;
 import com.sun.identity.cot.COTException;
-import com.sun.identity.cot.COTUtils;
 import com.sun.identity.cot.COTConstants;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
-import com.sun.identity.saml2.meta.SAML2MetaUtils;
-import com.sun.identity.console.base.model.AMFormatUtils;
-import com.sun.identity.sm.OrganizationConfigManager;
-import com.sun.identity.sm.SMSException;
-import com.sun.identity.common.DisplayUtils;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -241,7 +231,7 @@ public class FSAuthDomainsModelImpl extends AMModelBase
         throws AMConsoleException 
     {
         Map values = new HashMap(16);
-        String[] param = {name};
+        String[] param = {realm, name};
         logEvent("ATTEMPT_GET_AUTH_DOMAIN_ATTR_VALUES", param);
         try {
             CircleOfTrustManager manager = getCircleOfTrustManager();
@@ -264,7 +254,7 @@ public class FSAuthDomainsModelImpl extends AMModelBase
             logEvent("SUCCEED_GET_AUTH_DOMAIN_ATTR_VALUES", param);
         } catch (COTException e) {
             String strError = getErrorString(e);
-            String[] paramsEx = {name, strError};
+            String[] paramsEx = {realm, name, strError};
             logEvent("FEDERATION_EXCEPTION_GET_AUTH_DOMAIN_ATTR_VALUES",
                 paramsEx);
             throw new AMConsoleException(strError);
@@ -283,7 +273,7 @@ public class FSAuthDomainsModelImpl extends AMModelBase
     public void setAttributeValues(String realm, String name, Map values)
         throws AMConsoleException 
     {
-        String[] param = {name};
+        String[] param = {realm, name};
         logEvent("ATTEMPT_MODIFY_AUTH_DOMAIN", param);
         try {
             CircleOfTrustManager manager =
@@ -306,7 +296,7 @@ public class FSAuthDomainsModelImpl extends AMModelBase
             logEvent("SUCCEED_MODIFY_AUTH_DOMAIN", param);
         } catch (COTException e) {
             String strError = getErrorString(e);
-            String[] paramsEx = {name, strError};
+            String[] paramsEx = {realm, name, strError};
             logEvent("FEDERATION_EXCEPTION_MODIFY_AUTH_DOMAIN", paramsEx);
             throw new AMConsoleException(strError);
         }
@@ -392,7 +382,7 @@ public class FSAuthDomainsModelImpl extends AMModelBase
     {
         Set providers = null;
         try {
-            String[] param = {name};
+            String[] param = {realm, name};
             logEvent("ATTEMPT_GET_PROVIDER_NAMES_UNDER_AUTH_DOMAIN", param);
             CircleOfTrustManager manager = getCircleOfTrustManager();
             CircleOfTrustDescriptor desc = manager.getCircleOfTrust(realm, name);
@@ -400,7 +390,7 @@ public class FSAuthDomainsModelImpl extends AMModelBase
             logEvent("SUCCEED_GET_PROVIDER_NAMES_UNDER_AUTH_DOMAIN", param);            
         } catch (COTException e) {
             String strError = getErrorString(e);
-            String[] paramsEx = {name, strError};
+            String[] paramsEx = {realm, name, strError};
             logEvent(
                     "FEDERATION_EXCEPTION_GET_PROVIDER_NAMES_UNDER_AUTH_DOMAIN",
                     paramsEx);
