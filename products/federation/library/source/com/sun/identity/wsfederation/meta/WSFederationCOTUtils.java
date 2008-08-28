@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationCOTUtils.java,v 1.3 2008-06-25 05:48:05 qcheng Exp $
+ * $Id: WSFederationCOTUtils.java,v 1.4 2008-08-28 23:24:53 superpat7 Exp $
  *
  */
 
@@ -98,8 +98,8 @@ public class WSFederationCOTUtils {
                     ele.getIDPSSOConfigOrSPSSOConfig();
             // Decide which role EntityDescriptorElement includes
             // Right now, it is either an SP or an IdP
-            // IdP will have a token signing cert
-            if (WSFederationMetaManager.getTokenSigningCertificate(edes) != 
+            // IdP will have UriNamedClaimTypesOffered
+            if (WSFederationMetaManager.getUriNamedClaimTypesOffered(edes) != 
                 null) {
                 bctype = objFactory.createIDPSSOConfigElement();
                 bctype.getAttribute().add(atype);
