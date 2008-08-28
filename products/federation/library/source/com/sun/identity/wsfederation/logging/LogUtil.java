@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogUtil.java,v 1.3 2008-06-25 05:48:05 qcheng Exp $
+ * $Id: LogUtil.java,v 1.4 2008-08-28 04:55:06 superpat7 Exp $
  *
  */
 
@@ -141,6 +141,8 @@ public abstract class LogUtil {
         "SLO_SUCCESSFUL";
     public static final String ERROR_PROCESSING_MESSAGE =
         "ERROR_PROCESSING_MESSAGE";
+    public static final String ASSERTION_CREATED =
+        "ASSERTION_CREATED";
           
     private static final String WSFEDERATION_LOG = "WSFederation";
     private static Logger logger = null;

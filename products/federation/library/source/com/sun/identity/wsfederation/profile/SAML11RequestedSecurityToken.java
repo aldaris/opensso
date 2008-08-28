@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: SAML11RequestedSecurityToken.java,v 1.3 2008-06-25 05:48:08 qcheng Exp $
+ * $Id: SAML11RequestedSecurityToken.java,v 1.4 2008-08-28 04:55:06 superpat7 Exp $
  * 
  */
 
@@ -37,7 +37,6 @@ import com.sun.identity.saml.assertion.NameIdentifier;
 import com.sun.identity.saml.assertion.Statement;
 import com.sun.identity.saml.assertion.Subject;
 import com.sun.identity.saml.assertion.SubjectStatement;
-import com.sun.identity.saml.common.LogUtils;
 import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.saml.common.SAMLException;
 import com.sun.identity.saml2.common.SAML2Constants;
@@ -214,17 +213,14 @@ public class SAML11RequestedSecurityToken implements RequestedSecurityToken {
                 assertion.signXML(certAlias);
             }
             
-            if (LogUtils.isAccessLoggable(Level.FINER)) {
-                String[] data = { WSFederationUtils.bundle.
-                    getString("assertionCreated"),
-                    assertion.toString(true, true)};
-                LogUtils.access(java.util.logging.Level.FINER,
-                    LogUtils.ASSERTION_CREATED, data);
+            if (LogUtil.isAccessLoggable(Level.FINER)) {
+                String[] data = { assertion.toString(true, true)};
+                LogUtil.access(java.util.logging.Level.FINER,
+                    LogUtil.ASSERTION_CREATED, data);
             } else {
-                String[] data = { WSFederationUtils.bundle.
-                    getString("assertionCreated"),aIDString};
-                LogUtils.access(java.util.logging.Level.INFO,
-                    LogUtils.ASSERTION_CREATED, data);
+                String[] data = { aIDString};
+                LogUtil.access(java.util.logging.Level.INFO,
+                    LogUtil.ASSERTION_CREATED, data);
             }
         } catch (SAMLException se) {
             throw new WSFederationException(se);

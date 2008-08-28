@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: WSFederationLogMessageIDs.xml,v 1.4 2008-08-19 19:13:02 veiming Exp $
+   $Id: WSFederationLogMessageIDs.xml,v 1.5 2008-08-28 04:55:06 superpat7 Exp $
 
 -->
 
@@ -714,6 +714,17 @@
         </datainfo>
         <triggers>
             <item>Get all entities.</item>
+        </triggers>
+        <actions/>
+    </logmessage>
+    <logmessage name="ASSERTION_CREATED" id="49"
+        loglevel="LL_INFO"
+        description="Assertion created successfully.">
+        <datainfo>
+            <item>Assertion or assertion ID</item>
+        </datainfo>
+        <triggers>
+            <item>Creation of WS-Federation IdP Signin Response.</item>
         </triggers>
         <actions/>
     </logmessage>
