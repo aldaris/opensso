@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.35 2008-07-15 20:12:37 subbae Exp $
+ * $Id: AgentConfiguration.java,v 1.36 2008-08-28 16:50:25 veiming Exp $
  *
  */
 
@@ -67,6 +67,7 @@ public class AgentConfiguration {
     public final static String AGENT_TYPE_J2EE = "J2EEAgent";
     public final static String AGENT_TYPE_WEB = "WebAgent";
     public final static String AGENT_TYPE_2_DOT_2_AGENT = "2.2_Agent";
+    public final static String AGENT_TYPE_AGENT_AUTHENTICATOR = "SharedAgent";
     public final static String ATTR_NAME_PWD = "userpassword";
     public final static String ATTR_NAME_FREE_FORM =
         "com.sun.identity.agents.config.freeformproperties";

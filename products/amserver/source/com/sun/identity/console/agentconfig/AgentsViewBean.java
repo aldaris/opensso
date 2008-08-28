@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsViewBean.java,v 1.11 2008-07-07 20:39:18 veiming Exp $
+ * $Id: AgentsViewBean.java,v 1.12 2008-08-28 16:50:26 veiming Exp $
  *
  */
 
@@ -940,7 +940,7 @@ public class AgentsViewBean
      * @return <code>true</code> if agent type is not 2.2 agent.
      */
     public boolean beginTblSearchGroupDisplay(ChildDisplayEvent event) {
-        return !is2dot2Agent();
+        return !is2dot2Agent() && !isAgentAuthenticator();
     }
 
     /**
@@ -949,7 +949,7 @@ public class AgentsViewBean
      * @return <code>true</code> if agent type is not 2.2 agent.
      */
     public boolean beginBtnGroupSearchDisplay(ChildDisplayEvent event) {
-        return !is2dot2Agent();
+        return !is2dot2Agent() && !isAgentAuthenticator();
     }
     
 
@@ -959,13 +959,19 @@ public class AgentsViewBean
      * @return <code>true</code> if agent type is not 2.2 agent.
      */
     public boolean beginTfGroupFilterDisplay(ChildDisplayEvent event) {
-        return !is2dot2Agent();
+        return !is2dot2Agent() && !isAgentAuthenticator();
     }
     
-    protected boolean is2dot2Agent() {
+    private boolean is2dot2Agent() {
         String agentType = getDisplayIDType();
         return (agentType != null) && 
             agentType.equals(AgentConfiguration.AGENT_TYPE_2_DOT_2_AGENT);
+    }
+    
+    private boolean isAgentAuthenticator() {
+        String agentType = getDisplayIDType();
+        return (agentType != null) && 
+            agentType.equals(AgentConfiguration.AGENT_TYPE_AGENT_AUTHENTICATOR);    
     }
     
     private static boolean isPropertiesLocallyStored(AMIdentity amid)
