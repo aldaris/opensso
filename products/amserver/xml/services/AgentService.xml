@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.65 2008-08-27 05:00:13 huacui Exp $
+   $Id: AgentService.xml,v 1.66 2008-08-28 23:26:20 huacui Exp $
 
 -->
 
@@ -3493,6 +3493,11 @@
                         <DefaultValues>
                             <Value>&#160;</Value>
                         </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema name="sunIdentityServerDeviceKeyValue"
+                        type="list"
+                        syntax="string"
+                        i18nKey="a501">
                     </AttributeSchema>
                     <AttributeSchema name="sunIdentityServerDeviceStatus"
                         type="single_choice"
