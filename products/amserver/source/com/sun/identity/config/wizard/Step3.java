@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step3.java,v 1.27 2008-08-22 20:01:01 kevinserwin Exp $
+ * $Id: Step3.java,v 1.28 2008-08-28 17:28:35 veiming Exp $
  *
  */
 package com.sun.identity.config.wizard;
@@ -59,6 +59,8 @@ public class Step3 extends LDAPStoreWizardPage {
         new ActionLink("setConfigType", this, "setConfigType");
     public ActionLink validateLocalPortLink = 
         new ActionLink("validateLocalPort", this, "validateLocalPort");
+    public ActionLink validateEncKey =
+        new ActionLink("validateEncKey", this, "validateEncKey");
     
     private static final String QUOTE = "\"";
     private static final String SEPARATOR = "\" : \"";
@@ -189,8 +191,28 @@ public class Step3 extends LDAPStoreWizardPage {
         setPath(null);        
         return false;    
     }
-        
-        
+
+    /**
+     * Returns <code>false</code> always. Length of encryption key
+     * must be at least 10 chars.
+     */
+    public boolean validateEncKey() {
+        String key = toString("encKey");
+
+        if (key == null) {
+            writeToResponse(getLocalizedString("missing.required.field"));
+        } else {
+            getContext().setSessionAttribute("encryptionKey", key);
+            if (key.length() < 10) {
+                writeToResponse(getLocalizedString("enc.key.need.10.chars"));
+            } else {
+                writeToResponse("true");
+            }
+        }
+        setPath(null);
+        return false;
+    } 
+
     /*
      * a call is made to the OpenSSO url entered in the browser. If
      * the OpenSSO server

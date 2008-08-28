@@ -34,11 +34,22 @@
 	validate();
     }
 
-    function validateEncryptionKey() {
+    function validateEncKey() {
         $('nextTabButton').disabled = true;
-	field = "encryptionKey";
+        var value = escape($('encryptionKey').value);
+        var callUrl =
+            "$context$path?actionLink=validateEncKey&encKey=" + value;
         setTimeout("enableNextButton()", 500);
-	validate();
+        AjaxUtils.call(callUrl, validateEncKeyResponse);
+    }
+
+    function validateEncKeyResponse(response) {
+        if (response.responseText == "true") {
+            $('encryptionKeyStatus').innerHTML = okString;
+         } else {
+             $('encryptionKeyStatus').innerHTML = warningImage +
+                '<small>' + response.responseText + '</small>';
+        }
     }
 
     function validateConfigStoreSSL() {
@@ -263,11 +274,11 @@
             $('nextTabButton').disabled = 
                 !isFieldOK('configStoreHost') ||
                 !isFieldOK('configStorePort') ||
-                !isFieldOK('encryptionKey') ||
+                !isEncryptionKeyOk() ||
                 !isFieldOK('rootSuffix');
         } else {
             var allFieldsValid = isFieldOK('configStoreHost') &&
-                isFieldOK('configStorePort') && isFieldOK('encryptionKey') &&
+                isFieldOK('configStorePort') && isEncryptionKeyOk() &&
                 isFieldOK('rootSuffix') && isFieldOK('configStoreLoginId') &&
                 isFieldOK('configStorePassword') &&
                 (document.getElementById('configStorePassword').value != '');
@@ -279,6 +290,11 @@
                 $('nextTabButton').disabled = true;
             }
         }
+    }
+
+    function isEncryptionKeyOk() {
+        var value = escape($('encryptionKey').value);
+        return (value.length > 0);
     }
 
     function validateSMHost(response) {
@@ -386,7 +402,7 @@
                             <input id="encryptionKey" name="encryptionKey" 
                                 type="text" class="text" style="width:200px" 
                                 value="$encryptionKey" 
-                                onkeyup="APP.callDelayed(this, validateEncryptionKey)"/>
+                                onkeyup="APP.callDelayed(this, validateEncKey)"/>
                             <span id="encryptionKeyStatus"></span></td>
                     </tr>   
                     <tr>
