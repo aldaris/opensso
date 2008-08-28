@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateWSFedMetaDataTemplate.java,v 1.6 2008-08-22 02:06:47 superpat7 Exp $
+ * $Id: CreateWSFedMetaDataTemplate.java,v 1.7 2008-08-28 06:20:57 babysunil Exp $
  *
  */
 
@@ -249,6 +249,10 @@ public class CreateWSFedMetaDataTemplate {
         
         String[][] configDefaults = { 
             { WSFederationConstants.DISPLAY_NAME, idpAlias },
+            { WSFederationConstants.NAMEID_FORMAT, "" },
+            { WSFederationConstants.NAMEID_ATTRIBUTE, "" },
+            { WSFederationConstants.NAME_INCLUDES_DOMAIN, "" },
+            { WSFederationConstants.DOMAIN_ATTRIBUTE, "" }, 
             { WSFederationConstants.UPN_DOMAIN, getHostDomain() },
             { SAML2Constants.SIGNING_CERT_ALIAS, idpSCertAlias },
             { SAML2Constants.ASSERTION_NOTBEFORE_SKEW_ATTRIBUTE, "600" },
