@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMDataLayer.java,v 1.14 2008-08-08 00:40:58 ww203982 Exp $
+ * $Id: SMDataLayer.java,v 1.15 2008-08-28 19:08:21 arviranga Exp $
  *
  */
 
 package com.sun.identity.sm.ldap;
 
+import com.iplanet.am.util.SystemProperties;
 import java.util.HashMap;
 import netscape.ldap.LDAPBind;
 import netscape.ldap.LDAPConnection;
@@ -241,8 +242,13 @@ class SMDataLayer {
                         + "Error getting server config.");
             }
 
-            int poolMin = svrCfg.getMinConnections();
-            int poolMax = svrCfg.getMaxConnections();
+            int poolMin = 1;
+            int poolMax = 2;
+            // Initialize the Connection Pool size only for the server
+            if (SystemProperties.isServerMode()) {
+                poolMin = svrCfg.getMinConnections();
+                poolMax = svrCfg.getMaxConnections();
+            }
             String connDN = svrCfg.getAuthID();
             String connPWD = svrCfg.getPasswd();
             int maxBackLog = svrCfg.getIntValue(LDAP_MAXBACKLOG, MAX_BACKLOG);

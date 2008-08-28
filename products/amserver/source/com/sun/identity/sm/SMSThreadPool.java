@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSThreadPool.java,v 1.4 2008-08-08 00:40:58 ww203982 Exp $
+ * $Id: SMSThreadPool.java,v 1.5 2008-08-28 19:08:22 arviranga Exp $
  *
  */
 
@@ -46,7 +46,7 @@ import com.iplanet.am.util.ThreadPoolException;
 public class SMSThreadPool {
     
     private static ThreadPool thrdPool;
-    private static ShutdownListener shutdownListener, newShutdownListener;
+    private static ShutdownListener shutdownListener;
     private static int poolSize;
     
     private static Debug debug = Debug.getInstance("amSMS");
@@ -67,8 +67,13 @@ public class SMSThreadPool {
         }
         int newPoolSize = DEFAULT_POOL_SIZE;
         try {
-            newPoolSize = Integer.parseInt(SystemProperties.get(
-                Constants.SM_THREADPOOL_SIZE));
+            if (SystemProperties.isServerMode()) {
+                newPoolSize = Integer.parseInt(SystemProperties.get(
+                        Constants.SM_THREADPOOL_SIZE));
+            } else {
+                // For clients and CLIs, it is hardcoded to 3
+                newPoolSize = 2;
+            }
         } catch (Exception e) {
             newPoolSize = DEFAULT_POOL_SIZE;
         }

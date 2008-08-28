@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSNotificationManager.java,v 1.9 2008-08-19 21:55:05 goodearth Exp $
+ * $Id: SMSNotificationManager.java,v 1.10 2008-08-28 19:08:22 arviranga Exp $
  *
  */
 package com.sun.identity.sm;
@@ -84,13 +84,18 @@ public class SMSNotificationManager implements SMSObjectListener {
         boolean previousDataStoreNotification = enableDataStoreNotification;
         enableDataStoreNotification = Boolean.parseBoolean(
             SystemProperties.get(Constants.SMS_ENABLE_DB_NOTIFICATION));
-        // If not config time and in legacy mode, enable dataStoreNotification
-        // ServiceManager will be called only if not config time
-        // Also disable the check for clients
         boolean configTime = Boolean.parseBoolean(SystemProperties.get(
             Constants.SYS_PROPERTY_INSTALL_TIME));
         SMSObject object = SMSEntry.getSMSObject();
         isClient = object instanceof SMSJAXRPCObject;
+        // In the case of CLI, disable datastore notification since it
+        // adds additional psearch connections to the directory
+        if (!isClient && !SystemProperties.isServerMode()) {
+            enableDataStoreNotification = false;
+        }
+        // If not config time and in legacy mode, enable dataStoreNotification
+        // ServiceManager will be called only if not config time
+        // Also disable the check for clients
         if (!isClient && !enableDataStoreNotification && !configTime &&
             !ServiceManager.isRealmEnabled()) {
             enableDataStoreNotification = true;
