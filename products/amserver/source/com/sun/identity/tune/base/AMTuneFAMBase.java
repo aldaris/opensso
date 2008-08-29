@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneFAMBase.java,v 1.6 2008-08-19 19:09:27 veiming Exp $
+ * $Id: AMTuneFAMBase.java,v 1.7 2008-08-29 10:08:04 kanduls Exp $
  */
 
 package com.sun.identity.tune.base;
@@ -33,9 +33,7 @@ import com.sun.identity.tune.common.AMTuneLogger;
 import com.sun.identity.tune.config.AMTuneConfigInfo;
 import com.sun.identity.tune.intr.TuneFAM;
 import com.sun.identity.tune.util.AMTuneUtil;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -53,7 +51,7 @@ import javax.net.ssl.HttpsURLConnection;
  *
  */
 public abstract class AMTuneFAMBase extends TuneFAM {
-    private String famPassFilePath;
+    protected String famPassFilePath;
     protected String famCmdPath;
     protected AMTuneConfigInfo configInfo;
     protected AMTuneLogger pLogger;
@@ -76,7 +74,6 @@ public abstract class AMTuneFAMBase extends TuneFAM {
         famadmCommonParamsNoServer = " --adminid " +
                 configInfo.getFAMAdmUser() + " --password-file " +
                 famPassFilePath;
-        writePasswordToFile();
     }
     
     /**
@@ -93,38 +90,10 @@ public abstract class AMTuneFAMBase extends TuneFAM {
                     "ssoadm ";
         }
         File famAdmF = new File(famCmdPath.trim());
-        if (!famAdmF.isFile()) {
-            mWriter.writelnLocaleMsg("pt-fam-tool-not-found");
-            mWriter.writelnLocaleMsg("pt-cannot-proceed");
-            mWriter.writeLocaleMsg("pt-conf-parm-cust-msg");
-            mWriter.writeln(SSOADM_LOCATION);
-        }
-    }
-    
-    /**
-     * Writes password to file.
-     *
-     * @throws com.sun.identity.tune.common.AMTuneException
-     */
-    protected void writePasswordToFile ()
-    throws AMTuneException {
-        try {
-            pLogger.log(Level.FINE, "writePasswordToFile", "Creating FAM " +
-                    "password file.");
-            File passFile = new File(famPassFilePath);
-            BufferedWriter pOut = new BufferedWriter(new FileWriter(passFile));
-            pOut.write(configInfo.getFamAdminPassword());
-            pOut.flush();
-            pOut.close();
-            if (!AMTuneUtil.isWindows()) {
-                String chmodCmd = "/bin/chmod 400 " + famPassFilePath;
-                StringBuffer rbuff = new StringBuffer();
-                int ext = AMTuneUtil.executeCommand(chmodCmd, rbuff);
-            }
-        } catch (Exception ex) {
-            pLogger.log(Level.SEVERE, "writePassWordToFile",
-                    "Couldn't write password to file. ");
-            throw new AMTuneException(ex.getMessage());
+        if (!famAdmF.exists()) {
+            AMTuneUtil.printErrorMsg(SSOADM_LOCATION);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-fam-tool-not-found"));
         }
     }
 
@@ -132,15 +101,13 @@ public abstract class AMTuneFAMBase extends TuneFAM {
      * Deletes password file.
      */
     protected void deletePasswordFile() {
-        if (!AMTuneUtil.isWindows()) {
-            String chmodCmd = "/bin/chmod 700 " + famPassFilePath;
-            StringBuffer rbuff = new StringBuffer();
-            int ext = AMTuneUtil.executeCommand(chmodCmd, rbuff);
-        }
-        File passFile = new File(famPassFilePath);
-        passFile.delete();
+        AMTuneUtil.deleteFile(famPassFilePath);
     }
-
+    
+    protected void writePasswordToFile() {
+        //Nothing need to be done
+    }
+    
     /**
      * Updates Service config
      * @param args List of properties to be updated.
@@ -172,26 +139,29 @@ public abstract class AMTuneFAMBase extends TuneFAM {
                 }
                 pLogger.log(Level.FINEST, "updateFAMServiceCfg", 
                         "Executing cmd " + cmd);
-                if (!AMTuneUtil.isWindows()) {
-                    try {
-                        retVal = AMTuneUtil.executeScriptCmd(cmd, resultBuffer);
-                    } catch (AMTuneException ex) {
-                        retVal = -1;
+                try {
+                    if (!AMTuneUtil.isWindows()) {
+                        retVal = AMTuneUtil.executeScriptCmd(cmd,
+                                configInfo.getFamAdminPassword(),
+                                famPassFilePath,
+                                resultBuffer);
+
+                    } else {
+                        retVal = AMTuneUtil.executeCommand(cmd,
+                                configInfo.getFamAdminPassword(),
+                                famPassFilePath,
+                                resultBuffer);
                     }
-                } else {
-                    retVal = AMTuneUtil.executeCommand(cmd, resultBuffer);
+                } catch (AMTuneException ex) {
+                    retVal = -1;
                 }
                 if (retVal == -1) {
-                    pLogger.log(Level.SEVERE, "updateFAMServiceCfg", 
-                            "Error updating OpenSSO service " +
-                            "config values.");
-                    throw new AMTuneException("Error updating " + 
-                            "OpenSSO service configuration");
+                    throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                            .getString("pt-error-updating-opensso-config"));
                 }
             }
         } catch (Exception ex) {
-            pLogger.log(Level.SEVERE, "updateFAMServiceCfg", "Error updating " +
-                "OpenSSO Server configuration. " + ex.getMessage());
+            pLogger.log(Level.SEVERE, "updateFAMServiceCfg", ex.getMessage());
         }
     }
     
@@ -214,10 +184,13 @@ public abstract class AMTuneFAMBase extends TuneFAM {
             dataStoreListCmd.append(realmName);
             dataStoreListCmd.append(famadmCommonParamsNoServer);
             StringBuffer rBuff = new StringBuffer();
-            int extVal = AMTuneUtil.executeCommand(dataStoreListCmd.toString(), 
+            int extVal = AMTuneUtil.executeCommand(dataStoreListCmd.toString(),
+                    configInfo.getFamAdminPassword(), 
+                    famPassFilePath,
                     rBuff);
             if (extVal == -1) {
-                    throw new AMTuneException("List data store cmd failed. ");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-error-datastore-list"));
             }
             if (rBuff.indexOf("There were no datastores") != -1) {
                 pLogger.log(Level.SEVERE, "getDataStoreList",
@@ -247,7 +220,8 @@ public abstract class AMTuneFAMBase extends TuneFAM {
      * This method queries the OpenSSO server and returns the
      * server configuration in the form of Map.
      */
-    protected Map getFAMServerConfig() {
+    protected Map getFAMServerConfig() 
+    throws AMTuneException {
         Map famCfgInfo = new HashMap();
         StringBuffer listSerCfgCmd = new StringBuffer(famCmdPath);
         listSerCfgCmd.append(LIST_SERVER_CFG_SUB_CMD);
@@ -259,7 +233,15 @@ public abstract class AMTuneFAMBase extends TuneFAM {
         listSerCfgCmd.append(" -w");
         StringBuffer rBuff = new StringBuffer();
         int extVal = AMTuneUtil.executeCommand(listSerCfgCmd.toString(),
+                configInfo.getFamAdminPassword(),
+                famPassFilePath,
                 rBuff);
+        if (rBuff.toString().indexOf("Login failed") != -1) {
+            mWriter.writelnLocaleMsg(
+                    "pt-error-opensso-check-user-password-msg");
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-login-failed"));
+        }
         if (extVal != -1) {
             StringTokenizer str =
                     new StringTokenizer(rBuff.toString(), "\n");
@@ -287,100 +269,6 @@ public abstract class AMTuneFAMBase extends TuneFAM {
             famCfgInfo.toString());
         return famCfgInfo;
     }
-    
-    protected List getRealmServices(String realmName) {
-        List realmServices = new ArrayList();
-        try {
-            pLogger.log(Level.FINEST, "getRealmServices", "Finding svc for " +
-                realmName);
-            StringBuffer getRealmSvcCmd = new StringBuffer(famCmdPath);
-            getRealmSvcCmd.append(SHOW_REALM_SVC_SUB_CMD);
-            getRealmSvcCmd.append(" ");
-            getRealmSvcCmd.append(REALM_OPT);
-            getRealmSvcCmd.append(" ");
-            getRealmSvcCmd.append(realmName);
-            getRealmSvcCmd.append(famadmCommonParamsNoServer);
-            StringBuffer rBuff = new StringBuffer();
-            int extVal = AMTuneUtil.executeCommand(getRealmSvcCmd.toString(),
-                    rBuff);
-            if (extVal != -1) {
-                StringTokenizer str =
-                        new StringTokenizer(rBuff.toString(), "\n");
-                while (str.hasMoreTokens()) {
-                    String line = str.nextToken();
-                    if (line != null && line.trim().length() > 0 && 
-                            line.indexOf("Services were returned.") == -1) {
-                        realmServices.add(line.trim());
-                    }
-                }
-            }
-        } catch (Exception ex) {
-            pLogger.log(Level.WARNING, "getRealmServices",
-                    "Error getting realm services: " + ex.getMessage());
-        } 
-        pLogger.log(Level.FINEST, "getRealmServices", "Returning realm svc " +
-                realmServices.toString());
-        return realmServices;
-    }
-    
-    protected Map getSessionServiceAttrVals(String realmName) 
-    throws AMTuneException {
-        Map sessionAttrVals = new HashMap();
-        try {
-            pLogger.log(Level.FINEST, "getSessionServiceAttrVals",
-                    "Getting session service values for realm: " + realmName);
-            //check if the session service is available or not.
-            List serviceList = getRealmServices(realmName);
-            if (serviceList != null && 
-                    serviceList.indexOf(SESSION_SERVICE) != -1) {
-                StringBuffer attrValCmd = new StringBuffer(famCmdPath);
-                attrValCmd.append(GET_REALM_SVC_ATTRS_SUB_CMD);
-                attrValCmd.append(" ");
-                attrValCmd.append(REALM_OPT);
-                attrValCmd.append(" ");
-                attrValCmd.append(realmName);
-                attrValCmd.append(" ");
-                attrValCmd.append(SERVICE_NAME_OPT);
-                attrValCmd.append(" ");
-                attrValCmd.append(SESSION_SERVICE);
-                attrValCmd.append(famadmCommonParamsNoServer);
-                StringBuffer rBuff = new StringBuffer();
-                int extVal = AMTuneUtil.executeCommand(attrValCmd.toString(),
-                        rBuff);
-                if (extVal != -1) {
-                    StringTokenizer str =
-                            new StringTokenizer(rBuff.toString(), "\n");
-                    while (str.hasMoreTokens()) {
-                        String line = str.nextToken();
-                        if (line != null && line.trim().length() > 0) {
-                            StringTokenizer lStr = new StringTokenizer(line, 
-                                    PARAM_VAL_DELIM);
-                            lStr.hasMoreTokens();
-                            String key = lStr.nextToken();
-                            if (lStr.hasMoreTokens()) {
-                                String val = lStr.nextToken();
-                                sessionAttrVals.put(key, val);
-                            } else {
-                                sessionAttrVals.put(key, "");
-                            }
-                        }
-                    }
-                }
-            } else {
-                mWriter.writelnLocaleMsg("pt-no-session-svc");
-                pLogger.log(Level.INFO, "getSessionServiceAttrVals", 
-                        "Session service is not available for the realm.");
-            }
-        } catch (Exception ex) {
-            pLogger.log(Level.SEVERE, "getSessionServiceAttrVals",
-                    "Error getting session service values: ");
-            throw new AMTuneException(ex.getMessage());
-        }
-        pLogger.log(Level.FINEST, "getSessionServiceAttrVals", 
-                "Returning session service values " + 
-                sessionAttrVals.toString());
-        return sessionAttrVals;
-    }
 
     protected boolean isFAMServerUp() {
         boolean isUp = true;
@@ -402,4 +290,6 @@ public abstract class AMTuneFAMBase extends TuneFAM {
         }   
         return isUp;
     }
+    
+    
 }

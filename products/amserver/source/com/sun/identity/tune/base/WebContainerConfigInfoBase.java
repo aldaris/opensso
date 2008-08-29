@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebContainerConfigInfoBase.java,v 1.1 2008-07-02 18:44:02 kanduls Exp $
+ * $Id: WebContainerConfigInfoBase.java,v 1.2 2008-08-29 10:08:04 kanduls Exp $
  */
 
 package com.sun.identity.tune.base;
@@ -33,7 +33,6 @@ import com.sun.identity.tune.common.AMTuneLogger;
 import com.sun.identity.tune.constants.WebContainerConstants;
 import com.sun.identity.tune.util.AMTuneUtil;
 import java.io.File;
-import java.util.logging.Level;
 
 /**
  * This contains all the common properties for Web Server and Application server
@@ -41,9 +40,6 @@ import java.util.logging.Level;
  */
 public abstract class WebContainerConfigInfoBase implements 
         WebContainerConstants {
-    private String hostName;
-    private String containerBaseDir;
-    private String containerInstanceName;
     private String containerInstanceDir;
     private String webContainer;
     protected AMTuneLogger pLogger;
@@ -57,68 +53,11 @@ public abstract class WebContainerConfigInfoBase implements
     public WebContainerConfigInfoBase() 
     throws AMTuneException {
         isJVM64Bit = false;
-        hostName = AMTuneUtil.getHostName();
         pLogger = AMTuneLogger.getLoggerInst();
         mWriter = MessageWriter.getInstance();
         
     }
-    
-    /**
-     * Set Container Base directory
-     * @param containerBaseDir container base directory.
-     * @throws com.sun.identity.tune.common.AMTuneException
-     */
-    protected void setContainerBaseDir(String containerBaseDir) 
-    throws AMTuneException {
-        if (containerBaseDir != null && containerBaseDir.trim().length() > 0) {
-            File instDir = new File(containerBaseDir);
-            if (!instDir.isDirectory()) {
-                mWriter.writeLocaleMsg("pt-web-conf-dir-not-found");
-                mWriter.writelnLocaleMsg("pt-cannot-proceed");
-                mWriter.writeLocaleMsg("pt-conf-parm-cust-msg");
-                mWriter.writeln(CONTAINER_BASE_DIR);
-                throw new AMTuneException("Invalid web container base " +
-                        "directory");
-            } else {
-                this.containerBaseDir = containerBaseDir.trim();
-            }
-        } else {
-            pLogger.log(Level.SEVERE, "setContainerBaseDir",
-                    "Please check the value for " + CONTAINER_BASE_DIR);
-            throw new AMTuneException("Invalid web container base " +
-                    "directory");
-        }
-    }
-    
-    /**
-     * Return container base directory.
-     * @return container base directory.
-     */
-    public String getContainerBaseDir() {
-        return containerBaseDir;
-    }
-    
-    /**
-     * Set container instance name.
-     * @param containerInstanceName container instance name.
-     */
-    protected void setContainerInstanceName(String containerInstanceName) {
-        if (containerInstanceName != null && 
-                containerInstanceName.length() > 0) {
-            this.containerInstanceName = containerInstanceName.trim();
-        } else {
-            containerInstanceName = AMTuneUtil.getHostName();
-        }
-    }
-    
-    /**
-     * Return container instance name.
-     * @return container instance name.
-     */
-    public String getContainerInstanceName() {
-        return containerInstanceName;
-    }
-    
+   
     /**
      * Set container instance directory.
      * @param containerInstanceDir container instance directory.
@@ -128,22 +67,18 @@ public abstract class WebContainerConfigInfoBase implements
     throws AMTuneException {
             if (containerInstanceDir != null &&
                 containerInstanceDir.trim().length() > 0) {
-            File instDir = new File(containerInstanceDir);
+            File instDir = new File(containerInstanceDir.trim());
             if (!instDir.isDirectory()) {
-                mWriter.writeLocaleMsg("pt-web-inst-dir-not-found");
-                mWriter.writelnLocaleMsg("pt-cannot-proceed");
-                mWriter.writeLocaleMsg("pt-conf-parm-cust-msg");
-                mWriter.writeln(CONTAINER_INSTANCE_DIR);
-                throw new AMTuneException("Invalid WebContainer Instance " +
-                        "directory.");
+                AMTuneUtil.printErrorMsg(CONTAINER_INSTANCE_DIR);
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-web-inst-dir-not-found"));
             } else {
                 this.containerInstanceDir = containerInstanceDir.trim();
             }
         } else {
-            pLogger.log(Level.SEVERE, "setContainerInstanceDir",
-                    "Please check the value for " + CONTAINER_INSTANCE_DIR);
-            throw new AMTuneException("Invalid web container instance " +
-                    "directory");
+            AMTuneUtil.printErrorMsg(CONTAINER_INSTANCE_DIR);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-web-inst-dir-not-found"));
         }
     }
     
@@ -186,4 +121,9 @@ public abstract class WebContainerConfigInfoBase implements
     public boolean isJVM64Bit() {
         return isJVM64Bit;
     }
+    
+    /**
+     * Deletes the password file.
+     */
+    protected abstract void deletePasswordFile();
 }
