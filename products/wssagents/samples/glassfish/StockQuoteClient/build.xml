@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.6 2008-06-25 05:54:43 qcheng Exp $
+   $Id: build.xml,v 1.7 2008-08-29 21:22:50 arunav Exp $
 
 -->
 
@@ -69,6 +69,10 @@
     <target name="deploy">
       <exec executable="${glassfish.home}/bin/asadmin${wsimport-script-suffix}">
          <arg line=" deploy "/>
+         <arg line="--user admin"/>
+         <arg line="--passwordfile ${glassfish.passwordfile}"/>
+         <arg line="--host ${glassfish.host}"/>
+	 <arg line="--port ${glassfish.adminport} "/>
          <arg line=" dist/StockQuoteClient.war" />
        </exec>
     </target>
