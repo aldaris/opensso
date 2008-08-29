@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MultipleMigrateDriver.java,v 1.3 2008-06-25 05:51:22 qcheng Exp $
+ * $Id: MultipleMigrateDriver.java,v 1.4 2008-08-29 20:23:39 leiming Exp $
  *
  */
 
@@ -259,7 +259,7 @@ public class MultipleMigrateDriver extends MigrateDriver {
                 new I18NInfo(LOC_MIGRATE_FROM_PRODUCT_HOME, STR_GROUP);
         InteractionInfo interactionInfo = new InteractionInfo(
                 STR_MIGRATE_FROM_PRODUCT_HOME, null, i18Info, null, true, false,
-                "install", null);
+                "install", true, null);
         ValidationInfo validationInfo = new ValidationInfo(
             "DIR_EXISTS",
             new HashMap(),
@@ -299,7 +299,9 @@ public class MultipleMigrateDriver extends MigrateDriver {
             if (file.isDirectory()) {
                 migrateFromProductHome = file.getAbsolutePath();
             }
-            
+
+            // convert Windows path
+            migrateFromProductHome = migrateFromProductHome.replace('\\', '/');
             if (!verifyMigrateFromProductHome(migrateFromProductHome)) {
                 stateAccess.clear();
                 continue;

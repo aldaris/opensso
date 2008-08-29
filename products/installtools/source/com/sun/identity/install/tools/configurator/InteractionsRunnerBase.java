@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InteractionsRunnerBase.java,v 1.3 2008-06-25 05:51:21 qcheng Exp $
+ * $Id: InteractionsRunnerBase.java,v 1.4 2008-08-29 20:23:39 leiming Exp $
  *
  */
 
@@ -35,7 +35,7 @@ import java.util.Map;
 
 import com.sun.identity.install.tools.util.Debug;
 import com.sun.identity.install.tools.util.LocalizedMessage;
-
+        
 abstract class InteractionsRunnerBase {
 
     InteractionsRunnerBase(InstallRunInfo installRunInfo,
@@ -44,6 +44,7 @@ abstract class InteractionsRunnerBase {
         setAllInteractions(new ArrayList());
         setAllConfiguredInteractionKeys(new ArrayList());
         setUserResponseHandler(uHandler);
+        setInstallRunInfo(installRunInfo);
         createAllInteractions(installRunInfo);
     }
 
@@ -156,7 +157,28 @@ abstract class InteractionsRunnerBase {
             result = interaction.interactSilent(getStateAccess(),
                     getUserResponseMap());
         } else { // Interactive mode
-            result = interaction.interact(getStateAccess());
+            /* If there's optional-display attribute for this interaction and
+             * its value is false, installer just get its default value without 
+             * displaying the interaction.
+             */
+            if (getInstallRunInfo().isCheckDisplay() && 
+                        !interaction.getInteractionInfo().isDisplay()) {
+                String strResult = 
+                    interaction.processDefaultValFromAllSources(
+                        getStateAccess());
+                getStateAccess().put(interaction.getKey(), strResult);
+                LocalizedMessage summaryDesc = 
+                    LocalizedMessage.get(
+                        InteractionConstants.LOC_IN_MESS_SUMMARY_DESC_FORMAT,
+                        new Object[] { interaction.getSummaryDesc(), 
+                            strResult });
+                result = new InteractionResult(
+                        InteractionResultStatus.STATUS_CONTINUE,
+                        null, summaryDesc);
+                
+            } else {
+                result = interaction.interact(getStateAccess());
+            }
         }
         return result;
     }
@@ -301,6 +323,14 @@ abstract class InteractionsRunnerBase {
     private void setUserResponseMap(Map map) {
         userResponseMap = map;
     }
+    
+    public InstallRunInfo getInstallRunInfo() {
+        return installRunInfo;
+    }
+    
+    private void setInstallRunInfo(InstallRunInfo installRunInfo) {
+        this.installRunInfo = installRunInfo;
+    }
 
     private Map userResponseMap;
 
@@ -317,6 +347,9 @@ abstract class InteractionsRunnerBase {
     private ArrayList allInteractions;
 
     private UserResponseHandler userResponseHandler;
+    
+    private InstallRunInfo installRunInfo;
 
     public static final String LOC_DR_MSG_USER_ABORT = "DR_MSG_USER_ABORT";
+
 }

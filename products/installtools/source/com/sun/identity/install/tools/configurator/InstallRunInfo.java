@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InstallRunInfo.java,v 1.2 2008-06-25 05:51:21 qcheng Exp $
+ * $Id: InstallRunInfo.java,v 1.3 2008-08-29 20:23:39 leiming Exp $
  *
  */
 
@@ -82,6 +82,8 @@ public class InstallRunInfo implements InstallConstants {
             buff.append("  ");
             buff.append(instanceTasks.get(i)).append(LINE_SEP);
         }
+        buff.append("Check optional-display attribute:" + isCheckDisplay()).
+                append(LINE_SEP);
         buff.append("--------------------------------------------------");
         buff.append(LINE_SEP);
         return buff.toString();
@@ -90,7 +92,8 @@ public class InstallRunInfo implements InstallConstants {
     public InstallRunInfo(boolean isInstall, String homeDirLocator,
             ArrayList instanceFinderInteractions, ArrayList commonInteractions,
             ArrayList instanceInteractions, ArrayList commonTasks,
-            ArrayList instanceTasks, I18NInfo welcomeMess, I18NInfo exitMess) {
+            ArrayList instanceTasks, I18NInfo welcomeMess, I18NInfo exitMess,
+            boolean checkDisplay) {
         setInstallFlag(isInstall);
         setHomeDirLocator(homeDirLocator);
         setInstanceFinderInteractions(instanceFinderInteractions);
@@ -100,6 +103,8 @@ public class InstallRunInfo implements InstallConstants {
         setInstanceTasks(instanceTasks);
         setWelcomeMessageInfo(welcomeMess);
         setExitMessageInfo(exitMess);
+        setCheckDisplay(checkDisplay);
+        
     }
 
     public String getHomeDirLocator() {
@@ -138,6 +143,11 @@ public class InstallRunInfo implements InstallConstants {
         return exitMessageInfo;
     }
 
+    
+    public boolean isCheckDisplay() {
+        return checkDisplay;
+    }
+    
     private void setInstanceTasks(ArrayList tasks) {
         instanceTasks = tasks;
     }
@@ -178,6 +188,10 @@ public class InstallRunInfo implements InstallConstants {
         exitMessageInfo = exitMess;
     }
 
+    private void setCheckDisplay(boolean checkDisplay) {
+        this.checkDisplay = checkDisplay;
+    }
+
     private String homeDirLocator;
 
     private ArrayList instanceFinderInteractions;
@@ -195,4 +209,7 @@ public class InstallRunInfo implements InstallConstants {
     private I18NInfo welcomeMessageInfo;
 
     private I18NInfo exitMessageInfo;
+    
+    private boolean checkDisplay;
+
 }

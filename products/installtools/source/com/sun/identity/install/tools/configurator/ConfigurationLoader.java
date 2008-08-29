@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigurationLoader.java,v 1.4 2008-06-25 05:51:17 qcheng Exp $
+ * $Id: ConfigurationLoader.java,v 1.5 2008-08-29 20:23:39 leiming Exp $
  *
  */
 package com.sun.identity.install.tools.configurator;
@@ -114,7 +114,8 @@ public class ConfigurationLoader {
         InstallRunInfo info = new InstallRunInfo(false,
                 getHomeDirLocatorClass(), getInstanceFinderInteractions(),
                 commonInteractions, instanceInteractions, commonTasks,
-                instanceTasks, getWelcomeMessageInfo(), getExitMessageInfo());
+                instanceTasks, getWelcomeMessageInfo(), getExitMessageInfo(),
+                false);
         setUninstallRunInfo(info);
     }
 
@@ -129,7 +130,8 @@ public class ConfigurationLoader {
         InstallRunInfo info = new InstallRunInfo(false,
                 getHomeDirLocatorClass(), getInstanceFinderInteractions(),
                 commonInteractions, instanceInteractions, commonTasks,
-                instanceTasks, getWelcomeMessageInfo(), getExitMessageInfo());
+                instanceTasks, getWelcomeMessageInfo(), getExitMessageInfo(),
+                false);
         setMigrateRunInfo(info);
     }    
     
@@ -147,7 +149,8 @@ public class ConfigurationLoader {
             InstallRunInfo info = new InstallRunInfo(false,
                 getHomeDirLocatorClass(), getInstanceFinderInteractions(),
                 commonInteractions, instanceInteractions, commonTasks,
-                instanceTasks, getWelcomeMessageInfo(), getExitMessageInfo());
+                instanceTasks, getWelcomeMessageInfo(), getExitMessageInfo(),
+                false);
             setCustomInstallRunInfo(info);
         }
     }
@@ -164,7 +167,8 @@ public class ConfigurationLoader {
         InstallRunInfo info = new InstallRunInfo(true,
                 getHomeDirLocatorClass(), getInstanceFinderInteractions(),
                 commonInteractions, instanceInteractions, commonTasks,
-                instanceTasks, getWelcomeMessageInfo(), getExitMessageInfo());
+                instanceTasks, getWelcomeMessageInfo(), getExitMessageInfo(),
+                true);
         setIntallRunInfo(info);
     }
 
@@ -307,6 +311,13 @@ public class ConfigurationLoader {
             persistent = false;
         }
 
+        boolean display = true;
+        String displayString = element.getAttributeValue(STR_DISPLAY);
+        if (displayString != null
+                && displayString.trim().equalsIgnoreCase(STR_FALSE)) {
+            display = false;
+        }
+        
         String interType = STR_INSTALL_INTER;
         String type = element.getAttributeValue(STR_INTER_TYPE);
 
@@ -316,7 +327,7 @@ public class ConfigurationLoader {
 
         InteractionInfo result = new InteractionInfo(lookupKey, skipIfInfo,
                 i18nInfo, defaultValueFinderInfo, required, persistent,
-                interType, valueNormalizerClass);
+                interType, display, valueNormalizerClass);
 
         XMLElement validations = getUniqueElement(STR_VALIDATIONS, element);
         ArrayList list = validations.getNamedChildElements(STR_VALIDATION);
@@ -630,6 +641,8 @@ public class ConfigurationLoader {
     public static final String STR_PROPERTY = "property";
 
     public static final String STR_REQUIRED = "required";
+    
+    public static final String STR_DISPLAY = "optional-display";
 
     public static final String STR_PERSISTENT = "persistent";
 

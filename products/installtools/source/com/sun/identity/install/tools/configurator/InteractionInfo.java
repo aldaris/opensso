@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InteractionInfo.java,v 1.2 2008-06-25 05:51:21 qcheng Exp $
+ * $Id: InteractionInfo.java,v 1.3 2008-08-29 20:23:39 leiming Exp $
  *
  */
 
@@ -50,6 +50,8 @@ public class InteractionInfo {
         buff.append("    Is-Required  : ").append(getRequiredFlag());
         buff.append(NEW_LINE);
         buff.append("    Is-Persistent: ").append(isPersistent());
+        buff.append(NEW_LINE);
+        buff.append("    optional-display: ").append(isDisplay());
 
         if (getSkipIfInfo() != null) {
             buff.append(NEW_LINE);
@@ -82,8 +84,8 @@ public class InteractionInfo {
 
     public InteractionInfo(String lookupKey, SkipIfInfo skipIfInfo,
             I18NInfo i18nInfo, DefaultValueFinderInfo defaultValueFinderInfo,
-            boolean required, boolean persistent, String type,
-            String valueNormalizerClass) {
+            boolean required, boolean persistent, String type, 
+            boolean display, String valueNormalizerClass) {
         setLookupKey(lookupKey);
         setSkipIfInfo(skipIfInfo);
         setI18NInfo(i18nInfo);
@@ -91,6 +93,7 @@ public class InteractionInfo {
         setRequired(required);
         setPersistent(persistent);
         setType(type);
+        setDisplay(display);
         setValueNormalizerClass(valueNormalizerClass);
     }
 
@@ -138,6 +141,10 @@ public class InteractionInfo {
         return valueNormalizerClass;
     }
 
+    public boolean isDisplay() {
+        return display;
+    }
+    
     private void setLookupKey(String lookupKey) {
         this.lookupKey = lookupKey;
     }
@@ -173,6 +180,10 @@ public class InteractionInfo {
     private void setValueNormalizerClass(String className) {
         valueNormalizerClass = className;
     }
+    
+    private void setDisplay(boolean display) {
+        this.display = display;
+    }
 
     private String lookupKey;
 
@@ -187,13 +198,16 @@ public class InteractionInfo {
     private boolean persistent;
 
     private String type;
-
+    
     private String valueNormalizerClass;
 
     private SkipIfInfo skipIfInfo;
+    
+    private boolean display;
 
     public static final String DEFAULT_INTER_TYPE = "install";
 
     public static final String NEW_LINE = System.getProperty("line.separator",
             "\n");
+
 }

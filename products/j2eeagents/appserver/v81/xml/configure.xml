@@ -39,6 +39,18 @@
 					<class name="PathNormalizer" type="system"/>
 				</value-normalizer>
 			</interaction>
+			<interaction lookupkey="INSTANCE_NAME" optional-display="false">
+				<i18n key="INT_INSTANCE_NAME" group="as81Tools"/>
+				<default-value-finder>
+					<class name="StaticDefaultValueFinder" type="system"/>
+					<static value="server"/>
+				</default-value-finder>
+				<validations>
+					<validation name="VALID_STRING">
+						<class name="StringValidator" type="system"/>
+					</validation>
+				</validations>
+			</interaction>
 		</instance-finder-interactions>
 	</instance-finder>	
 	<install>
@@ -156,18 +168,6 @@
 	</install>
 	<custom-install>
 		<common-interactions>
-			<interaction lookupkey="INSTANCE_NAME">
-				<i18n key="INT_INSTANCE_NAME" group="as81Tools"/>
-				<default-value-finder>
-					<class name="StaticDefaultValueFinder" type="system"/>
-					<static value="server"/>
-				</default-value-finder>
-				<validations>
-					<validation name="VALID_STRING">
-						<class name="StringValidator" type="system"/>
-					</validation>
-				</validations>
-			</interaction>
 		        <interaction lookupkey="AM_SERVER_URL" persistent="false">
 				<i18n key="INT_AM_SERVER_URL" group="amToolsMessages"/>
 				<validations>			
