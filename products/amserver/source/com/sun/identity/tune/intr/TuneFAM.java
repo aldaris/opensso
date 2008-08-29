@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneFAM.java,v 1.3 2008-08-19 19:09:31 veiming Exp $
+ * $Id: TuneFAM.java,v 1.4 2008-08-29 10:35:44 kanduls Exp $
  */
 
 package com.sun.identity.tune.intr;
@@ -40,7 +40,7 @@ public abstract class TuneFAM implements Tuning, FAMConstants {
     /**
      * abstract method for tuning FAM Server configuration
      */
-    protected abstract void tuneFAMServerConfig();
+    protected abstract void tuneFAMServerConfig() throws AMTuneException;
     
      /**
      * abstract method for tuning OpenSSO Serverconfig.xml
@@ -52,22 +52,6 @@ public abstract class TuneFAM implements Tuning, FAMConstants {
      * @throws com.sun.identity.tune.common.AMTuneException
      */
     protected abstract void tuneLDAPConnPool() throws AMTuneException;
-    
-    /**
-     * abstract method for tuning LDAP Search Criteria in 
-     * iPlanetAMAuthLDAPService for Default Org
-     * 
-     * @throws com.sun.identity.tune.common.AMTuneException
-     */
-    protected abstract void tuneLDAPSearchCriteriaForDefaultOrg() 
-    throws AMTuneException;
-    
-    /**
-     * abstract mehtod for Session Timeouts in Global iPlanetAMSessionService
-     * 
-     * @throws com.sun.identity.tune.common.AMTuneException
-     */
-    protected abstract void tuneSessionTimeouts() throws AMTuneException;
     
     /**
      * Creates password file.
