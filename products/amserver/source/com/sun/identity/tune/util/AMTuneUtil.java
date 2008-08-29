@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneUtil.java,v 1.7 2008-08-19 19:09:31 veiming Exp $
+ * $Id: AMTuneUtil.java,v 1.8 2008-08-29 09:57:49 kanduls Exp $
  */
 
 package com.sun.identity.tune.util;
@@ -43,7 +43,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.text.DateFormat;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -51,6 +53,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 
 import java.util.logging.Level;
@@ -78,7 +82,12 @@ import java.util.zip.ZipOutputStream;
     private static String osArch;
     private static boolean isNiagara = false;
     private static String date;
+    private static ResourceBundle rb = null;
     public static String TMP_DIR;
+    
+    static {
+          pLogger = AMTuneLogger.getLoggerInst();
+    }
     /**
      * Initializes utils
      *
@@ -88,8 +97,7 @@ import java.util.zip.ZipOutputStream;
     public static boolean initializeUtil()
     throws AMTuneException {
         date = new SimpleDateFormat(
-                  "MM/dd/yyyy hh:mm:ss:SSS a zzz").format(new Date());
-        pLogger = AMTuneLogger.getLoggerInst();
+                      "MM/dd/yyyy hh:mm:ss:SSS a zzz").format(new Date());
         mWriter = MessageWriter.getInstance();
         checkSystemEnv();
         setTmpDir();
@@ -114,7 +122,8 @@ import java.util.zip.ZipOutputStream;
                 getAIXSystemInfo();
             } else {
                 utilInit = false;
-                throw new AMTuneException("Unsupported OS.");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-unsupported-os"));
             }
             pLogger.log(Level.FINEST, "initializeUtil", 
                     "System configuration : " + sysInfoMap.toString());
@@ -145,12 +154,12 @@ import java.util.zip.ZipOutputStream;
                 if (solVersion > 8) {
                     return;
                 } else {
-                    mWriter.writelnLocaleMsg("pt-unsupported-sol");
-                    throw new AMTuneException("Unsupported Solaris Version");
+                    throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                            .getString("pt-unsupported-sol"));
                 }
             } else {
-                mWriter.writelnLocaleMsg("pt-unsupported-arch");
-                throw new AMTuneException("Unsupported Architecture");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-unsupported-arch"));
             }
         } else if (osName.equalsIgnoreCase(WINDOWS_2003)) {
             isWindows2003 = true;
@@ -163,8 +172,8 @@ import java.util.zip.ZipOutputStream;
         } else if (osName.equalsIgnoreCase(AIX_OS)) {
             isAix = true;
         } else {
-            mWriter.writelnLocaleMsg("pt-unsupported-os");
-            throw new AMTuneException("Unsupported Operating system.");
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-unsupported-os"));
         }
     }
     
@@ -180,9 +189,9 @@ import java.util.zip.ZipOutputStream;
         StringBuffer rBuf = new StringBuffer();
         int extVal = executeCommand(nCmd, rBuf);
         if (extVal == -1) {
-            mWriter.writeLocaleMsg("pt-unable-avmem");
             mWriter.writelnLocaleMsg("pt-cannot-proceed");
-            throw new AMTuneException("prtconf command error.");
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-unable-avmem"));
         } else {
             try {
                 StringTokenizer st = new StringTokenizer(rBuf.toString(),
@@ -227,9 +236,9 @@ import java.util.zip.ZipOutputStream;
             StringBuffer rBuf = new StringBuffer();
             int extVal = executeCommand(nCmd, rBuf);
             if (extVal == -1) {
-                mWriter.writeLocaleMsg("pt-unable-hw-pt");
                 mWriter.writelnLocaleMsg("pt-cannot-proceed");
-                throw new AMTuneException("Error finding hardware platform");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-unable-hw-pt"));
             } 
             String hwPlatform = rBuf.toString();
             if (hwPlatform != null && hwPlatform.trim().length() > 0) {
@@ -238,25 +247,26 @@ import java.util.zip.ZipOutputStream;
                 }
                 sysInfoMap.put(HWPLATFORM, hwPlatform.trim());
             } else {
-                mWriter.writeLocaleMsg("pt-unable-hw-pt");
                 mWriter.writelnLocaleMsg("pt-cannot-proceed");
-                throw new AMTuneException("Hardware platform is null.");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-unable-hw-pt"));
             }
             nCmd = "/usr/sbin/psrinfo";
             rBuf.setLength(0);
             extVal = executeCommand(nCmd, rBuf);
             if (extVal == -1) {
-                mWriter.writeLocaleMsg("pt-unable-no-cpu");
                 mWriter.writelnLocaleMsg("pt-cannot-proceed");
-                throw new AMTuneException("psrinfo command error.");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-unable-no-cpu"));
             }
             int noCpus = getWordCount(rBuf.toString(), "on-line");
             if (noCpus == 0) {
-                mWriter.writeLocaleMsg("pt-unable-no-cpu");
                 mWriter.writelnLocaleMsg("pt-cannot-proceed");
-                throw new AMTuneException("No of CPUs 0.");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-unable-no-cpu"));
             } else {
-                if (hwPlatform != null && hwPlatform.indexOf(NIAGARABOX) >= 0) {
+                if (hwPlatform != null && hwPlatform.indexOf(NIAGARABOX) != -1)
+                {
                     isNiagara = true;
                     pLogger.log(Level.INFO, "getSunOSSystemInfo", 
                             "Tuning Niagarabox");
@@ -272,9 +282,9 @@ import java.util.zip.ZipOutputStream;
             nCmd = "/usr/sbin/prtconf";
             extVal = executeCommand(nCmd, rBuf);
             if (extVal == -1) {
-                mWriter.writeLocaleMsg("pt-unable-avmem");
                 mWriter.writelnLocaleMsg("pt-cannot-proceed");
-                throw new AMTuneException("prtconf command error.");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-unable-avmem"));
             } else {
                 StringTokenizer st = new StringTokenizer(rBuf.toString(), "\n");
                 while (st.hasMoreTokens()) {
@@ -304,9 +314,9 @@ import java.util.zip.ZipOutputStream;
             StringBuffer rBuf = new StringBuffer();
             int extVal = executeCommand(nCmd, rBuf);
             if (extVal == -1) {
-                mWriter.writeLocaleMsg("pt-unable-domainname");
                 mWriter.writelnLocaleMsg("pt-cannot-proceed");
-                throw new AMTuneException("Domainname command error.");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-unable-domainname"));
             }
             String domainName = rBuf.toString();
             if ((domainName != null) && (domainName.length() > 1)) {
@@ -314,15 +324,16 @@ import java.util.zip.ZipOutputStream;
             } else {
                 mWriter.writeLocaleMsg("pt-unable-domainname");
                 mWriter.writelnLocaleMsg("pt-cannot-proceed");
-                throw new AMTuneException("Domain name is null");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-error-null-domain-name"));
             }
             nCmd = "/bin/hostname";
             rBuf.setLength(0);
             extVal = executeCommand(nCmd, rBuf);
             if (extVal == -1) {
-                mWriter.writeLocaleMsg("pt-unable-hostname");
                 mWriter.writelnLocaleMsg("pt-cannot-proceed");
-                throw new AMTuneException("Hostname command error.");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-unable-hostname"));
             }
             String hostName = rBuf.toString();
             if ((hostName != null) && (hostName.trim().length() > 1)) {
@@ -334,7 +345,8 @@ import java.util.zip.ZipOutputStream;
             } else {
                 mWriter.writeLocaleMsg("pt-unable-hostname");
                 mWriter.writelnLocaleMsg("pt-cannot-proceed");
-                throw new AMTuneException("Host name is null");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-error-null-host-name"));
             }
         } catch (Exception ex) {
             pLogger.log(Level.SEVERE, "getCommonNXSystemInfo", 
@@ -355,18 +367,18 @@ import java.util.zip.ZipOutputStream;
                 int size = Integer.parseInt(memSize) / 1024;
                 sysInfoMap.put(MEMORY_LINE, Integer.toString(size)); 
             } else {
-                mWriter.writeLocaleMsg("pt-unable-avmem");
                 mWriter.writelnLocaleMsg("pt-cannot-proceed");
-                throw new AMTuneException("Couldn't find memory size.");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-unable-avmem"));
             }
             FileHandler fh2 = new FileHandler("/proc/cpuinfo");
             String[] lines = fh2.getMattchingLines("processor", false);
             if (lines.length >= 0) {
                 sysInfoMap.put(PROCESSERS_LINE, Integer.toString(lines.length));
             } else {
-                mWriter.writeLocaleMsg("pt-unable-no-cpu");
                 mWriter.writelnLocaleMsg("pt-cannot-proceed");
-                throw new AMTuneException("Couldn't find no of cpus.");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-unable-no-cpu"));
             }
         } catch (Exception ex) {
             pLogger.log(Level.SEVERE, "getLinuxSystemInfo", "Error finding" +
@@ -383,8 +395,10 @@ import java.util.zip.ZipOutputStream;
         String userName = System.getProperty("user.name");
         mWriter.writelnLocaleMsg("pt-check-user");
         if (userName.indexOf("root") < 0) {
+            mWriter.writelnLocaleMsg("pt-cannot-proceed");
             mWriter.writelnLocaleMsg("pt-should-be-root-user");
-            throw new AMTuneException("Not root user.");
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-root-user-error"));
         }
     }
     /**
@@ -401,8 +415,9 @@ import java.util.zip.ZipOutputStream;
             StringBuffer rBuf = new StringBuffer();
             int extVal = executeCommand(hostNameCmd, rBuf);
             if (extVal == -1) {
-                throw new AMTuneException("Couldn't get System information " +
-                        "tuning will not be done.");
+                mWriter.writelnLocaleMsg("pt-cannot-proceed");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-error-finding-sys-info"));
             }
 
             FileHandler fh = new FileHandler(tempFile);
@@ -414,7 +429,8 @@ import java.util.zip.ZipOutputStream;
             } else {
                 mWriter.writeLocaleMsg("pt-unable-domainname");
                 mWriter.writelnLocaleMsg("pt-cannot-proceed");
-                throw new AMTuneException("Domain name is null");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-error-null-domain-name"));
             }
             String hostName;
             reqLine = fh.getLine(HOST_NAME_LINE);
@@ -428,7 +444,8 @@ import java.util.zip.ZipOutputStream;
             } else {
                 mWriter.writeLocaleMsg("pt-unable-hostname");
                 mWriter.writelnLocaleMsg("pt-cannot-proceed");
-                throw new AMTuneException("Host name is null");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-error-null-host-name"));
             }
             String numProcessors;
             reqLine = fh.getLine(PROCESSERS_LINE);
@@ -438,10 +455,9 @@ import java.util.zip.ZipOutputStream;
                 numProcessors = numProcessors.substring(0, 2).trim();
                 sysInfoMap.put(PROCESSERS_LINE, numProcessors);
             } else {
-                mWriter.writeLocaleMsg("pt-unable-no-cpu");
                 mWriter.writelnLocaleMsg("pt-cannot-proceed");
-                throw new AMTuneException("Couldn't find number of " +
-                        "processors.");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-unable-no-cpu"));
             }
             String memSize;
             reqLine = fh.getLine(MEMORY_LINE);
@@ -454,10 +470,9 @@ import java.util.zip.ZipOutputStream;
                 memSize = memSize.replace(",", "");
                 sysInfoMap.put(MEMORY_LINE, memSize);
             } else {
-                mWriter.writeLocaleMsg("pt-unable-avmem");
                 mWriter.writelnLocaleMsg("pt-cannot-proceed");
-                throw new AMTuneException("Couldn't find number of " +
-                        "processors.");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-unable-avmem"));
             }
             if (hostName != null && domainName != null) {
                 domainName = domainName.replace(hostName.toLowerCase() + ".", 
@@ -570,7 +585,8 @@ import java.util.zip.ZipOutputStream;
             pLogger.log(Level.INFO, "executeCommand", "Command exit value " +
                     exitValue);
             if (exitValue != 0 && errorOccured){
-                throw new AMTuneException("Error executing command. ");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-error-cmd-error"));
             }
             return(exitValue);
         } catch (Exception ex) {
@@ -602,8 +618,7 @@ import java.util.zip.ZipOutputStream;
                         new BufferedWriter(new FileWriter(tempSh));
                 br.write(command);
                 br.close();
-                extVal = executeCommand("chmod 700 " + tempF,
-                        resultBuffer);
+                AMTuneUtil.changeFilePerm(tempF, "700");
                 extVal = executeCommand(tempF, resultBuffer);
                 tempSh.delete();
             }
@@ -794,18 +809,18 @@ import java.util.zip.ZipOutputStream;
         try {
             File confF = new File(confFile);
             if (!confF.isFile()) {
-                    mWriter.writelnLocaleMsg("pt-conf-file-missing");
-                    throw new AMTuneException("Config file " + confFile +
-                            " is missing." );
+                mWriter.writelnLocaleMsg("pt-conf-file-missing");
+                throw new AMTuneException("Config file " + confFile +
+                        " is missing.");
             }
-            File bkDir = new File (getCurDir() + "../.." + FILE_SEP +
-                    backupDir);
+            File bkDir = new File (getCurDir() + ".." +FILE_SEP +".." + 
+                    FILE_SEP + backupDir);
             if (!bkDir.isDirectory()) {
                 bkDir.mkdirs();
             }
             String baseFileName = confF.getName();
             String bkFileName = bkDir + FILE_SEP + baseFileName +
-                    "-orig" + getRandomStr();
+                    "-orig-" + getRandomStr();
             mWriter.writeLocaleMsg("pt-bk-file");
             mWriter.writeln(" " + confFile + " to " + bkFileName);
             CopyFile(new File(confFile), new File(bkFileName));
@@ -820,15 +835,15 @@ import java.util.zip.ZipOutputStream;
     throws AMTuneException {
         try {
             File confF = new File(confFile);
-            if (!confF.isFile()) {
-                    mWriter.writelnLocaleMsg("pt-conf-file-missing");
-                    throw new AMTuneException("Config file " + confFile +
-                            " is missing." );
+            if (!confF.exists()) {
+                mWriter.writelnLocaleMsg("pt-conf-file-missing");
+                throw new AMTuneException("Config file " + confFile +
+                        " is missing.");
             }
             String bkDir = confF.getParent();
             String baseFileName = confF.getName();
             String bkFileName = bkDir + FILE_SEP + baseFileName +
-                    "-orig" + getRandomStr();
+                    "-orig-" + getRandomStr();
             mWriter.writeLocaleMsg("pt-bk-file");
             mWriter.writeln(" " + confFile + " to " + bkFileName);
             CopyFile(new File(confFile), new File(bkFileName));
@@ -985,7 +1000,7 @@ import java.util.zip.ZipOutputStream;
             restartCmd.append(WebContainerConstants.WADM_RESTART_SUB_CMD);
             restartCmd.append(wsConfigInfo.getWSAdminCommonParams());
             StringBuffer resultBuffer = new StringBuffer();
-            int retVal = AMTuneUtil.executeCommand(restartCmd.toString(),
+            int retVal = executeCommand(restartCmd.toString(),
                     resultBuffer);
             if (retVal == -1) {
                 pLogger.log(Level.SEVERE, "reStartServ",
@@ -1002,9 +1017,10 @@ import java.util.zip.ZipOutputStream;
      * @return
      */
     public static boolean isSupportedWebContainer(String webContainer) {
-        if (webContainer.indexOf(WebContainerConstants.WS7_CONTAINER) != -1 ||
-                webContainer.indexOf(
-                WebContainerConstants.AS91_CONTAINER) != -1) {
+        if (webContainer.equalsIgnoreCase(
+                WebContainerConstants.WS7_CONTAINER) ||
+                webContainer.equalsIgnoreCase(
+                WebContainerConstants.AS91_CONTAINER)) {
             return true;
         } else {
             return false;
@@ -1013,26 +1029,11 @@ import java.util.zip.ZipOutputStream;
     }
     
     /**
-     * Return true if the DS version is supported for storing OpenSSO
-     * Service data.
-     */
-    public static boolean isSupportedSMDSVersion(String dsVersion) {
-        if ((dsVersion.indexOf(DSConstants.DS63_VERSION) != -1 ||
-                dsVersion.indexOf(DSConstants.DS5_VERSION)!= -1 ||
-                dsVersion.equalsIgnoreCase(DSConstants.OPEN_DS)) && 
-                !dsVersion.equalsIgnoreCase(DSConstants.DS62_VERSION)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-    
-    /**
      * Return true if the DS version is supported for storing User information.
      * 
      */
     public static boolean isSupportedUMDSVersion(String dsVersion) {
-        if ((dsVersion.indexOf(DSConstants.DS63_VERSION) != -1 ||
+        if ((dsVersion.indexOf(DSConstants.DS6_VERSION) != -1 ||
                 dsVersion.indexOf(DSConstants.DS5_VERSION)!= -1) && 
                 !dsVersion.equalsIgnoreCase(DSConstants.DS62_VERSION)) {
             return true;
@@ -1065,7 +1066,8 @@ import java.util.zip.ZipOutputStream;
         if (instanceDir != null && !instanceDir.isDirectory()) {
             pLogger.log(Level.SEVERE, "getFileList", "Directory not present :" +
                     directory);
-            throw new AMTuneException("Not a valid directory ");
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-not-valid-dir"));
         }
         String[] list = instanceDir.list();
         for (int i = 0; i < list.length; i++) {
@@ -1124,7 +1126,8 @@ import java.util.zip.ZipOutputStream;
         } catch(Exception ex) {
             pLogger.log(Level.SEVERE, "createZipFile", 
                     "Exception while creating zip file " + ex.getMessage());
-            throw new AMTuneException("Error creating zip file.");
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-zip-file"));
         } finally {
             if (out != null) {
                 try {
@@ -1205,11 +1208,7 @@ import java.util.zip.ZipOutputStream;
                 {"../../../template/windows/bin/amtune/" +
                          "amtune-env.properties.template",
                          zBinWinDir + FILE_SEP + "amtune-env.properties"},
-                {configInfo.getFAMConfigDir() + FILE_SEP + "index.ldif",
-                         zLdifDir + FILE_SEP + "index.ldif"},
-                {configInfo.getFAMConfigDir() + FILE_SEP + "fam_sds_index.ldif",
-                         zLdifDir + FILE_SEP + "fam_sds_index.ldif"},
-            } ;
+            };
             for (int i = 0; i < filesToCopy.length; i++) {
                 File source = new File(filesToCopy[i][0]);
                 File dest = new File(filesToCopy[i][1]);
@@ -1231,8 +1230,10 @@ import java.util.zip.ZipOutputStream;
                 AMTuneUtil.CopyFile(lFiles[i], new File(zLocaleDir + FILE_SEP +
                         fileName));
             }
-            changeFilePerm(zBinUnxDir + FILE_SEP + "amtune-env.properties", 
-                    "600");
+            updateDSParamsInEnvFile(configInfo, 
+                    zBinWinDir + FILE_SEP + "amtune-env.properties");
+            updateDSParamsInEnvFile(configInfo, 
+                    zBinUnxDir + FILE_SEP + "amtune-env.properties");
             String zipPath = AMTuneUtil.createZipFile(baseDir, "amtune");
             mWriter.writeLocaleMsg("pt-ds-tar-file-location");
             mWriter.writeln(" " + zipPath);
@@ -1244,6 +1245,7 @@ import java.util.zip.ZipOutputStream;
             mWriter.writelnLocaleMsg("pt-ds-execute-review-mode");
             mWriter.writelnLocaleMsg("pt-ds-review");
             mWriter.writelnLocaleMsg("pt-ds-change-mode");
+            mWriter.writeln(PARA_SEP);
         } catch (Exception ex) {
             pLogger.log(Level.SEVERE, "createRemoteDSTuningZipFile",
                     "Error creating amtune.zip file." + ex.getMessage());
@@ -1252,6 +1254,122 @@ import java.util.zip.ZipOutputStream;
         }
     }
     
+    /**
+     * This method replace required properties in amtune-env.properties file
+     * @param configInfo
+     * @param fileName
+     */
+    private static void updateDSParamsInEnvFile(AMTuneConfigInfo configInfo,
+            String fileName) {
+        FileHandler fh = null;
+        try {
+            fh = new FileHandler(fileName);
+            
+            String propName = DSConstants.DS_HOST + "=";
+            int reqIdx = fh.getLineNum(propName);
+            String reqLine = fh.getLine(reqIdx);
+            reqLine = reqLine.replace(propName, propName + 
+                    configInfo.getDSConfigInfo().getDsHost());
+            fh.replaceLine(reqIdx, reqLine);
+            
+            propName = DSConstants.DS_PORT + "=";
+            reqIdx = fh.getLineNum(propName);
+            reqLine = fh.getLine(reqIdx);
+            reqLine = reqLine.replace(propName, propName + 
+                    configInfo.getDSConfigInfo().getDsPort());
+            fh.replaceLine(reqIdx, reqLine);
+            
+            propName = DSConstants.ROOT_SUFFIX + "=";
+            reqIdx = fh.getLineNum(propName);
+            reqLine = fh.getLine(reqIdx);
+            reqLine = reqLine.replace(propName, propName + 
+                    configInfo.getDSConfigInfo().getRootSuffix());
+            fh.replaceLine(reqIdx, reqLine);
+            
+            propName = DSConstants.DS_VERSION + "=";
+            reqIdx = fh.getLineNum(propName);
+            reqLine = fh.getLine(reqIdx);
+            reqLine = reqLine.replace(propName, propName + 
+                    configInfo.getDSConfigInfo().getDsVersion());
+            fh.replaceLine(reqIdx, reqLine);
+            
+            propName = DSConstants.DIRMGR_BIND_DN + "=";
+            reqIdx = fh.getLineNum(propName);
+            reqLine = fh.getLine(reqIdx);
+            reqLine = reqLine.replace(propName, propName + 
+                    configInfo.getDSConfigInfo().getDirMgrUid());
+            fh.replaceLine(reqIdx, reqLine);
+            
+            propName = DSConstants.DS_TOOLS_DIR + "=";
+            reqIdx = fh.getLineNum(propName);
+            reqLine = fh.getLine(reqIdx);
+            String toolsBinDir = configInfo.getDSConfigInfo()
+                    .getDSToolsBinDir();
+            if (toolsBinDir != null && toolsBinDir.trim().length() > 0 ) {
+                reqLine = reqLine.replace(propName, propName + toolsBinDir);
+                fh.replaceLine(reqIdx, reqLine);
+            }
+            
+            propName = DSConstants.DS_INSTANCE_DIR + "=";
+            reqIdx = fh.getLineNum(propName);
+            reqLine = fh.getLine(reqIdx);
+            String instDir = configInfo.getDSConfigInfo()
+                    .getDsInstanceDir();
+            if (instDir != null && instDir.trim().length() > 0 ) {
+                reqLine = reqLine.replace(propName, propName + instDir);
+                fh.replaceLine(reqIdx, reqLine);
+            }
+            
+            propName = AMTuneConstants.AMTUNE_MODE + "=";
+            reqIdx = fh.getLineNum(propName);
+            reqLine = fh.getLine(reqIdx);
+            reqLine = reqLine.replace(propName, propName + "REVIEW");
+            fh.replaceLine(reqIdx, reqLine);
+            
+            propName = DSConstants.AMTUNE_TUNE_DS + "=";
+            reqIdx = fh.getLineNum(propName);
+            reqLine = fh.getLine(reqIdx);
+            reqLine = reqLine.replace(propName, propName +
+                    configInfo.isTuneDS());
+            fh.replaceLine(reqIdx, reqLine);
+            
+            propName = DSConstants.AMTUNE_TUNE_OS + "=";
+            reqIdx = fh.getLineNum(propName);
+            reqLine = fh.getLine(reqIdx);
+            reqLine = reqLine.replace(propName, propName + "false");
+            fh.replaceLine(reqIdx, reqLine);
+            
+            propName = DSConstants.AMTUNE_TUNE_WEB_CONTAINER + "=";
+            reqIdx = fh.getLineNum(propName);
+            reqLine = fh.getLine(reqIdx);
+            reqLine = reqLine.replace(propName, propName + "false");
+            fh.replaceLine(reqIdx, reqLine);
+            
+            propName = DSConstants.AMTUNE_TUNE_IDENTITY + "=";
+            reqIdx = fh.getLineNum(propName);
+            reqLine = fh.getLine(reqIdx);
+            reqLine = reqLine.replace(propName, propName + "false");
+            fh.replaceLine(reqIdx, reqLine);
+            
+            propName = DSConstants.AMTUNE_LOG_LEVEL + "=";
+            reqIdx = fh.getLineNum(propName);
+            reqLine = fh.getLine(reqIdx);
+            reqLine = reqLine.replace(propName, propName + "FILE");
+            fh.replaceLine(reqIdx, reqLine);
+            
+        } catch (Exception ex) {
+            pLogger.log(Level.WARNING, "replaceDSParamsInEnvFile",
+                    "Error replacing DS params: " + ex.getMessage());
+        } finally {
+            if (fh != null) {
+                try {
+                    fh.close();
+                } catch (Exception ex) {
+                    //ignore
+                }
+            }
+        }
+    }
     /**
      * Changes the file permission 
      * @param fileName Absolute path of the file
@@ -1263,5 +1381,136 @@ import java.util.zip.ZipOutputStream;
             int extVal = executeCommand("chmod " + perm + " " + fileName,
                     rBuff);
         } 
+    }
+    
+    /**
+     * Checks if the password file have readonly permissions by owner only.
+     * @param fileName
+     * @throws com.sun.identity.tune.common.AMTuneException if the file doesn't
+     * have readonly by owner only. 
+     */
+    public static void validatePwdFilePermissions(String fileName)
+    throws AMTuneException {
+        if (System.getProperty("path.separator").equals(":")) {
+            StringBuffer lsCmd = new StringBuffer("/bin/ls");
+            lsCmd.append(" -l ");
+            lsCmd.append(fileName);
+            StringBuffer rBuf = new StringBuffer();
+            executeCommand(lsCmd.toString(), rBuf);
+            String s = rBuf.toString();
+            if (s != null) {
+                int idx = s.indexOf(" ");
+                if (idx != -1) {
+                    String permission = s.substring(0, idx);
+                    if (!permission.equals("-r--------")) {
+                        String msg = getResourceBundle().getString(
+                                "pt-error-password-file-not-readonly");
+                        Object[] param = {fileName};
+                        throw new AMTuneException(MessageFormat.format(
+                                msg, param));
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * Returns amtune resource bundle
+     */
+    public static ResourceBundle getResourceBundle() 
+    throws AMTuneException {
+        try {
+            if (rb == null) {
+               rb = ResourceBundle.getBundle(AMTuneConstants.RB_NAME);
+            }
+        } catch(MissingResourceException me) {
+            throw new AMTuneException("Couldn't find resource file: " +
+                    AMTuneConstants.RB_NAME);
+        }
+        return rb;
+    }
+    
+    /**
+     * Writes password to file
+     * @param password Password string to be written into file
+     * @param passFilePath Absolute path of the file.
+     * @throws java.io.IOException
+     */
+      public static void writePasswordToFile(String password, 
+              String passFilePath)
+      throws IOException {
+          pLogger.log(Level.FINE, "writePasswordToFile", "Creating " +
+                  "password file.");
+          File passFile = new File(passFilePath);
+          BufferedWriter pOut =
+                  new BufferedWriter(new FileWriter(passFile));
+          pOut.write(password);
+          pOut.flush();
+          pOut.close();
+          AMTuneUtil.changeFilePerm(passFilePath, "400");
+      }
+    
+    /**
+     * Deletes the file
+     * @param filePath Absolute path of the file
+     */
+    public static void deleteFile(String filePath) {
+        File f = new File(filePath);
+        if (f.isFile()) {
+            f.delete();
+        }
+    }
+    
+    /**
+     * Wrapper function to execute cmd which requires password.  This method 
+     * writes password to file and deletes the file after the 
+     * execution is completed.
+     * @param cmd Command to execute
+     * @param password Password for executing command 
+     * @param passFilePath Absolute path for the password file.
+     * @param resultBuffer Command execution result.
+     * @return command exit value.
+     * @throws com.sun.identity.tune.common.AMTuneException
+     */
+    public static int executeCommand(String cmd, String password, 
+            String passFilePath, StringBuffer resultBuffer) 
+    throws AMTuneException {
+        int extVal = -1;
+        try {
+            writePasswordToFile(password, passFilePath);
+            extVal = executeCommand(cmd, resultBuffer);
+        } catch (IOException ioe) {
+            pLogger.log(Level.SEVERE, "executeScriptCmd", 
+                    "Error creating password file " + ioe.getMessage());
+        } finally {
+            deleteFile(passFilePath);
+        }
+        return extVal;
+    }
+    
+    /**
+     * Wrapper function to execute commands.  This method writes password 
+     * to file and deletes the file after the execution is completed.
+     * @param cmd Command to execute
+     * @param password Password for executing command 
+     * @param passFilePath Absolute path for the password file.
+     * @param resultBuffer Command execution result.
+     * @return command exit value.
+     * @throws com.sun.identity.tune.common.AMTuneException
+     */
+    public static int executeScriptCmd(String cmd, String password, 
+            String passFilePath, StringBuffer resultBuffer) 
+    throws AMTuneException {
+        int extVal = -1;
+        try {
+            writePasswordToFile(password, passFilePath);
+            extVal = executeScriptCmd(cmd, resultBuffer);
+        } catch (IOException ioe) {
+            pLogger.log(Level.SEVERE, "executeScriptCmd", 
+                    "Error writing password to file " + ioe.getMessage());
+        } finally {
+            deleteFile(passFilePath);
+        }
+        return extVal;
     }
 }
