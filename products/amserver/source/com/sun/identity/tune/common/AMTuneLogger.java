@@ -22,14 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneLogger.java,v 1.1 2008-07-02 18:45:44 kanduls Exp $
+ * $Id: AMTuneLogger.java,v 1.2 2008-08-29 10:13:08 kanduls Exp $
  */
 
 
 package com.sun.identity.tune.common;
 
 import com.sun.identity.tune.constants.AMTuneConstants;
-import com.sun.identity.tune.util.AMTuneUtil;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -87,14 +86,18 @@ public class AMTuneLogger {
             simpleF = new SimpleFormatter();
             dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss:SSS a zzz");
             logTemplate = this.getClass().getName() + ".{0}: {1}";
-            //Create a logs directory under the cur directory
-            File logDir = new File(AMTuneUtil.getCurDir() + "../.." +
+            //Create a logs directory two levels below the cur directory
+            File tempF = new File("tempdbk");
+            String filePath = tempF.getAbsolutePath();
+            filePath = filePath.replace("tempdbk", "");
+            tempF.delete();
+            File logDir = new File(filePath + "../.." +
                     AMTuneConstants.FILE_SEP + AMTuneConstants.LOG_DIR);
             if (!logDir.isDirectory()) {
                 logDir.mkdir();
             }
             debugLogsFile = logDir.getAbsolutePath() + 
-                    AMTuneConstants.FILE_SEP + "amtune-debug-logs";
+                    AMTuneConstants.FILE_SEP + "amtune-errors";
             fileH = new FileHandler(debugLogsFile);
             fileH.setFormatter(simpleF);
             logger.addHandler(fileH);
@@ -148,9 +151,11 @@ public class AMTuneLogger {
     /**
      * Closes the logger.
      */
-    public void finalize() {
+    public void close() {
         if(fileH != null) {
+            fileH.flush();
             fileH.close();
         }
+        fileH = null;
     }
 }

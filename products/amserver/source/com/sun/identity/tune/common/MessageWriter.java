@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MessageWriter.java,v 1.2 2008-07-25 06:03:56 kanduls Exp $
+ * $Id: MessageWriter.java,v 1.3 2008-08-29 10:13:08 kanduls Exp $
  */
 
 package com.sun.identity.tune.common;
@@ -191,7 +191,7 @@ public class MessageWriter {
     /**
      * Closes the file
      */
-    protected void finalize() {
+    public void close() {
         if (logFile == null) {
             return;
         }
