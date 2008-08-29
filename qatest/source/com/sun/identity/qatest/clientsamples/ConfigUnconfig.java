@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigUnconfig.java,v 1.4 2008-08-21 22:02:41 cmwesley Exp $
+ * $Id: ConfigUnconfig.java,v 1.5 2008-08-29 19:27:51 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -55,6 +55,7 @@ public class ConfigUnconfig extends TestCommon {
     private Server server;
     private String clientURL;
     private String baseDir;
+    private String strWarType;
 
     /**
      * Creates a new instance of ConfigUnconfig
@@ -71,6 +72,7 @@ public class ConfigUnconfig extends TestCommon {
             + System.getProperty("file.separator") + "built"
             + System.getProperty("file.separator") + "classes"
             + System.getProperty("file.separator");
+        strWarType = rb_client.getString("warfile_type");        
     }
     
     /**
@@ -81,52 +83,67 @@ public class ConfigUnconfig extends TestCommon {
     public void startServer()
     throws Exception {
         entering("startServer", null);
-
-        server = new Server();
-        Connector connector = new SelectChannelConnector();
-
-        String deployPort = rb_client.getString("deploy_port");
-        log(Level.FINE, "startServer", "Deploy port: " + deployPort);
-        connector.setPort(new Integer(deployPort).intValue());
-
-        InetAddress addr = InetAddress.getLocalHost();
-        String hostname = addr.getCanonicalHostName();
-
-        log(Level.FINE, "startServer", "Deploy host: " + hostname);
-        connector.setHost(hostname);
-        server.addConnector(connector);
-
-        WebAppContext wac = new WebAppContext();
-
-        String deployURI = rb_client.getString("deploy_uri");
-        log(Level.FINE, "startServer", "Deploy URI: " + deployURI);
-        wac.setContextPath(deployURI);
-
-        clientURL = protocol + "://" + hostname +  ":" + deployPort + deployURI;
-        log(Level.FINE, "startServer", "Client URL: " + clientURL);
-
         String warFile = rb_client.getString("war_file");
-        if (new File(warFile).exists()) {
-            log(Level.FINE, "startServer", "WAR File: " + warFile);
-            wac.setWar(warFile);
+        if (strWarType.equals("internal")) {
+            server = new Server();
+            Connector connector = new SelectChannelConnector();
 
-            server.setHandler(wac);
-            server.setStopAtShutdown(true);
+            String deployPort = rb_client.getString("deploy_port");
+            log(Level.FINE, "startServer", "Deploy port: " + deployPort);
+            connector.setPort(new Integer(deployPort).intValue());
 
-            log(Level.FINE, "startServer",
-                    "Deploying war and starting jetty server");
-            server.start();
-            log(Level.FINE, "startServer", "Deployed war and started jetty server");
+            InetAddress addr = InetAddress.getLocalHost();
+            String hostname = addr.getCanonicalHostName();
 
-            configureWAR();
-            exiting("startServer");
+            log(Level.FINE, "startServer", "Deploy host: " + hostname);
+            connector.setHost(hostname);
+            server.addConnector(connector);
+
+            WebAppContext wac = new WebAppContext();
+
+            String deployURI = rb_client.getString("deploy_uri");
+            log(Level.FINE, "startServer", "Deploy URI: " + deployURI);
+            wac.setContextPath(deployURI);
+
+            clientURL = protocol + "://" + hostname +  ":" + deployPort + deployURI;
+            log(Level.FINE, "startServer", "Client URL: " + clientURL);
+            if (new File(warFile).exists()) {
+                log(Level.FINE, "startServer", "WAR File: " + warFile);
+                wac.setWar(warFile);
+
+                server.setHandler(wac);
+                server.setStopAtShutdown(true);
+
+                log(Level.FINE, "startServer",
+                        "Deploying war and starting jetty server");
+                server.start();
+                log(Level.FINE, "startServer", "Deployed war and started jetty server");
+
+                configureWAR();
+                exiting("startServer");
+            } else {
+                log(Level.SEVERE, "startServer", "The client war file" + warFile + 
+                        " does not exist.  Please verify the value of the war_file"
+                        + " property in clientsamplesGlobal.properties");
+                assert false;
+            }
         } else {
-            log(Level.SEVERE, "startServer", "The client war file" + warFile + 
-                    " does not exist.  Please verify the value of the war_file"
-                    + " property in clientsamplesGlobal.properties");
-            assert false;
+            log(Level.FINE, "startServer", "Configuring an external war");            
+            clientURL = warFile;
+            log(Level.FINE, "startServer", "Client URL: " + clientURL);            
+            try {
+                WebClient webClient = new WebClient();
+                HtmlPage page = (HtmlPage)webClient.getPage(clientURL);
+            } catch(com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException
+                    e) {
+                log(Level.SEVERE, "startServer", clientURL + " cannot be " +
+                        "reached.");
+                assert false;
+            }
+            configureWAR();
+            exiting("startServer");            
         }
-    }
+}
 
     /**
      * Stop the jetty server. This basically undeploys the war.
@@ -135,14 +152,14 @@ public class ConfigUnconfig extends TestCommon {
     public void stopServer()
     throws Exception {
         entering("stopServer", null);
+        if (strWarType.equals("internal")) {
+            log(Level.FINE, "stopServer", "Stopping jetty server");
+            server.stop();
+            log(Level.FINE, "stopServer", "Stopped jetty server");
 
-        log(Level.FINE, "stopServer", "Stopping jetty server");
-        server.stop();
-        log(Level.FINE, "stopServer", "Stopped jetty server");
-
-        // Time delay required by the jetty server process to die
-        Thread.sleep(30000);
-
+            // Time delay required by the jetty server process to die
+            Thread.sleep(30000);
+        }
         exiting("stopServer");
     }
 
@@ -153,16 +170,12 @@ public class ConfigUnconfig extends TestCommon {
     throws Exception {
         WebClient webClient = new WebClient();
         HtmlPage page = (HtmlPage)webClient.getPage(clientURL);
-        if (getHtmlPageStringIndex(page, rb_client.getString("client_txt"))
-                == -1) {
-            log(Level.FINE, "configureWAR", "WAR file is not configured." +
-                    " Configuring the deployed war.");
-            generateConfigXML();
-            DefaultTaskHandler task = new DefaultTaskHandler(baseDir +
-                    "sampleconfigurator.xml");
-            page = task.execute(webClient);
-        } else
-            log(Level.FINE, "configureWAR", "WAR file is already configured.");
+        log(Level.FINE, "configureWAR", "WAR file is not configured." +
+                " Configuring the deployed war.");
+        generateConfigXML();
+        DefaultTaskHandler task = new DefaultTaskHandler(baseDir +
+                "sampleconfigurator.xml");
+        page = task.execute(webClient);
     }
 
     /**

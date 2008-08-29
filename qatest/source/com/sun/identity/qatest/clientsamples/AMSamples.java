@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSamples.java,v 1.9 2008-07-18 17:44:05 rmisra Exp $
+ * $Id: AMSamples.java,v 1.10 2008-08-29 19:28:46 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -117,21 +117,27 @@ public class AMSamples extends TestCommon {
     throws Exception {
         entering("setup", null);
         try {
-            clientDomain = rb_client.getString("client_domain_name");
-            log(Level.FINE, "setup", "Client host domain name: " +
-                    clientDomain);
-            
-            String deployPort = rb_client.getString("deploy_port");
-            log(Level.FINE, "setup", "Deploy port: " + deployPort);
-            
-            String deployURI = rb_client.getString("deploy_uri");
-            log(Level.FINE, "setup", "Deploy URI: " + deployURI);
-            
-            InetAddress addr = InetAddress.getLocalHost();
-            String hostname = addr.getCanonicalHostName();
-            
-            clientURL = protocol + "://" + hostname +  clientDomain + ":" +
-                    deployPort + deployURI;
+            String strWarType = rb_client.getString("warfile_type");
+            if (strWarType.equals("internal")) {
+                clientDomain = rb_client.getString("client_domain_name");
+                log(Level.FINE, "setup", "Client host domain name: " +
+                        clientDomain);
+
+                String deployPort = rb_client.getString("deploy_port");
+                log(Level.FINE, "setup", "Deploy port: " + deployPort);
+
+                String deployURI = rb_client.getString("deploy_uri");
+                log(Level.FINE, "setup", "Deploy URI: " + deployURI);
+
+                InetAddress addr = InetAddress.getLocalHost();
+                String hostname = addr.getCanonicalHostName();
+
+                clientURL = protocol + "://" + hostname +  clientDomain + ":" +
+                        deployPort + deployURI;
+            } else {
+                clientURL = rb_client.getString("war_file");            
+                log(Level.FINE, "setup", "Client URL: " + clientURL);                            
+            }
             log(Level.FINE, "setup", "Client URL: " + clientURL);
             
             serviceconfigURL = clientURL + rb_ams.getString("serviceconfig_uri");
