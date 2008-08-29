@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.34 2008-08-22 22:50:01 veiming Exp $
+ * $Id: SetupConstants.java,v 1.35 2008-08-29 19:56:47 kevinserwin Exp $
  *
  */
 
@@ -358,7 +358,7 @@ public interface SetupConstants {
     /**
      * Configuration Variable for bootstarp file base directory.
      */
-    String CONFIG_VAR_BOOTSTRAP_BASE_DIR = "AccessManager";
+    String CONFIG_VAR_BOOTSTRAP_BASE_DIR = ".openssocfg";
 
     /**
      * Configuration Variable for bootstarp file base prefix.
