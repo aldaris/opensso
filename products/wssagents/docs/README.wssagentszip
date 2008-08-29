@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.wssagentszip,v 1.9 2008-08-19 19:15:09 veiming Exp $
+   $Id: README.wssagentszip,v 1.10 2008-08-29 21:10:30 arunav Exp $
 
 -->
 
@@ -40,3 +40,4 @@ openssowssproviders.zip
              |____ README.glassfish (instructions to setup glassfish environment for WSS Providers/Agents)
              |____ license.txt
              |____ samples/glassfish/* (WSC/WSP samples using WSS Providers/Agents on Glassfish / AS 9.1 container)
+             |____ config/* (Automation Scripts to Configure the WSS Providers on Glassfish / AS 9.1 container )
