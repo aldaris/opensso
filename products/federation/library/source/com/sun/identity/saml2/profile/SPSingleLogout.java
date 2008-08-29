@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSingleLogout.java,v 1.19 2008-08-08 22:30:53 qcheng Exp $
+ * $Id: SPSingleLogout.java,v 1.20 2008-08-29 04:57:57 exu Exp $
  *
  */
 
@@ -30,6 +30,7 @@
 package com.sun.identity.saml2.profile;
 
 import javax.xml.soap.SOAPMessage;
+import com.sun.identity.federation.common.FSUtils;
 import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
@@ -896,7 +897,7 @@ public class SPSingleLogout {
                 boolean foundPeer = false;
                 List remoteServiceURLs = null;
                 if (isLBReq) {
-                    remoteServiceURLs =SAML2Utils.getRemoteServiceURLs(request);
+                    remoteServiceURLs = FSUtils.getRemoteServiceURLs(request);
                     foundPeer = remoteServiceURLs != null &&
                                 !remoteServiceURLs.isEmpty();
                 }

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spMNIRequestInit.jsp,v 1.7 2008-08-01 22:23:08 hengming Exp $
+   $Id: spMNIRequestInit.jsp,v 1.8 2008-08-29 04:56:24 exu Exp $
 
 --%>
 
@@ -30,6 +30,7 @@
 
 
 <%@ page import="com.sun.identity.shared.debug.Debug" %>
+<%@ page import="com.sun.identity.federation.common.FSUtils" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Constants" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Utils" %>
 <%@ page import="com.sun.identity.saml2.common.SAML2Exception" %>
@@ -68,7 +69,7 @@
     // affiliationID - affiliation entity ID
     // Query parameters supported will be documented.
 
-    if (SAML2Utils.needSetLBCookieAndRedirect(request, response, false)) {
+    if (FSUtils.needSetLBCookieAndRedirect(request, response, false)) {
         return;
     }
 

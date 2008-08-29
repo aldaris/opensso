@@ -22,13 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOFederate.java,v 1.15 2008-08-01 22:22:10 hengming Exp $
+ * $Id: IDPSSOFederate.java,v 1.16 2008-08-29 04:57:57 exu Exp $
  *
  */
 
 package com.sun.identity.saml2.profile;
 
-import com.sun.identity.saml2.protocol.Scoping;
+import com.sun.identity.federation.common.FSUtils;
 import com.sun.identity.multiprotocol.MultiProtocolUtils;
 import com.sun.identity.multiprotocol.SingleLogoutManager;
 import com.sun.identity.plugin.session.SessionManager;
@@ -54,6 +54,7 @@ import com.sun.identity.saml2.protocol.RequestedAuthnContext;
 import com.sun.identity.saml2.protocol.NameIDPolicy;
 import com.sun.identity.saml2.protocol.ProtocolFactory;
 import com.sun.identity.saml2.protocol.Response;
+import com.sun.identity.saml2.protocol.Scoping;
 import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.shared.encode.URLEncDec;
 import com.sun.identity.shared.xml.XMLUtils;
@@ -117,7 +118,7 @@ public class IDPSSOFederate {
 
         String classMethod = "IDPSSOFederate.doSSOFederate: ";
 
-        if (SAML2Utils.needSetLBCookieAndRedirect(request, response, true)) {
+        if (FSUtils.needSetLBCookieAndRedirect(request, response, true)) {
             return;
         }
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSSOFederate.java,v 1.22 2008-08-01 22:22:10 hengming Exp $
+ * $Id: SPSSOFederate.java,v 1.23 2008-08-29 04:57:57 exu Exp $
  *
  */
 
@@ -33,6 +33,7 @@ import com.sun.identity.liberty.ws.paos.PAOSException;
 import com.sun.identity.liberty.ws.paos.PAOSConstants;
 import com.sun.identity.liberty.ws.paos.PAOSHeader;
 import com.sun.identity.liberty.ws.paos.PAOSRequest;
+import com.sun.identity.federation.common.FSUtils;
 import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.saml.xmlsig.KeyProvider;
 import com.sun.identity.saml2.assertion.AssertionFactory;
@@ -178,7 +179,7 @@ public class SPSSOFederate {
                                  Map paramsMap) 
                                  throws SAML2Exception {
 
-        if (SAML2Utils.needSetLBCookieAndRedirect(request, response, false)) {
+        if (FSUtils.needSetLBCookieAndRedirect(request, response, false)) {
             return;
         }
 
