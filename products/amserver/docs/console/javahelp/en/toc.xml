@@ -58,7 +58,8 @@
         <tocitem target="agentconfig.stsclientedit" text="STS Client" expand="false"></tocitem>
         <tocitem target="agentconfig.discoveryagentprofile" text="Discovery Agent Attributes" expand="false"></tocitem>
         <tocitem target="agentconfig.webservicestsedit" text="Security Token Service Agent Attributes" expand="false"></tocitem>
-        <tocitem target="agentconfig.22agentprofile" text="2.2 Policy Agent" expand="false"></tocitem></tocitem></tocitem>
+        <tocitem target="agentconfig.22agentprofile" text="2.2 Policy Agent" expand="false"></tocitem>
+        <tocitem target="ghfif" text="Agent Authenticator" expand="false"></tocitem></tocitem></tocitem>
  <tocitem target="dirmang" text="Directory Management" expand="false">
     <tocitem target="dm.home" text="Directory Management" expand="false"></tocitem></tocitem>
  <tocitem target="federation.federation" text="Federation" expand="false">
