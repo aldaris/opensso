@@ -23,7 +23,40 @@
 : your own identifying information:
 : "Portions Copyrighted [year] [name of copyright owner]"
 :
-: $Id: amtune.bat,v 1.2 2008-07-25 05:30:44 kanduls Exp $
+: $Id: amtune.bat,v 1.3 2008-08-29 09:50:48 kanduls Exp $
+
+SETLOCAL
 
 set TOOLS_HOME="@TOOLS_HOME@"
-"@JAVA_HOME@/bin/java.exe" -cp "%TOOLS_HOME%/resources;%TOOLS_HOME%/lib/ldapjdk.jar;%TOOLS_HOME%/lib/amtune.jar;./;" com.sun.identity.tune.AMTune
+
+set JAVA_HOME=@JAVA_HOME@
+
+if not exist "%TOOLS_HOME%\lib\amtune.jar" goto invalidToolsHome
+
+goto checkJavaHome
+
+:invalidToolsHome
+echo The defined TOOLS_HOME environment variable in amtune.bat is not correct.
+
+goto exit
+
+:checkJavaHome
+
+if not exist "%JAVA_HOME%\bin\java.exe" goto invalidJavaHome
+
+goto validJavaHome
+
+:invalidJavaHome
+
+echo The defined JAVA_HOME environment variable in amtune.bat is not correct.
+
+goto exit
+
+:validJavaHome
+
+"%JAVA_HOME%/bin/java.exe" -cp "%TOOLS_HOME%/resources;%TOOLS_HOME%/lib/ldapjdk.jar;%TOOLS_HOME%/lib/amtune.jar;./;" com.sun.identity.tune.AMTune %*
+ENDLOCAL
+
+:exit
+exit /b 1
+
