@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureAttrs.java,v 1.7 2008-07-16 22:46:49 rajeevangal Exp $
+ * $Id: SecureAttrs.java,v 1.8 2008-08-29 06:28:22 rajeevangal Exp $
  *
  */
 
@@ -382,8 +382,10 @@ public class SecureAttrs
            return null;
         }
 
+        if (str.indexOf(' ') > 0)
+            str = str.replace(' ', '+');
         byte[] bytes = Base64.decode(str); 
-        String decoded = new String(bytes); // , "UTF-8");
+        String decoded = new String(bytes, "UTF-8");
         if(decoded.indexOf("|") == -1) {
             return null;
         }
