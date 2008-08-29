@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.33 2008-08-29 20:00:09 dillidorai Exp $
+ * $Id: LoginState.java,v 1.34 2008-08-29 21:21:28 ericow Exp $
  *
  */
 
@@ -1060,7 +1060,8 @@ public class LoginState {
      * @param ac
      * @return true if user session is activated successfully 
      */
-    public boolean activateSession(Subject subject, AuthContextLocal ac) {
+    public boolean activateSession(Subject subject, AuthContextLocal ac)
+            throws AuthException {
         return activateSession(subject, ac, null);
     }
     
@@ -1073,48 +1074,42 @@ public class LoginState {
      * @return true if user session is activated successfully 
      */
     public boolean activateSession(Subject subject, AuthContextLocal ac, Object
-        loginContext) {
+        loginContext) throws AuthException {
         try {
             if (messageEnabled) {
                 debug.message("activateSession - Token is : "+ token);
                 debug.message("activateSession - userDN is : "+ userDN);
             }
             
-            boolean activated = false;
-            try {
-                setSuccessLoginURL(indexType,indexName);
-                if (AuthD.isHttpSessionUsed()) {
-                    session = ad.newSession(getOrgDN(), null); 
-                    //save the AuthContext object in Session
-                    sid = session.getID();
-                    //session.setObject(ISAuthConstants.AUTH_CONTEXT_OBJ, ac);
-                    if (hsession != null) {
-                        hsession.removeAttribute(
-                            ISAuthConstants.AUTH_CONTEXT_OBJ);
-                        hsession.invalidate();
-                        hsession = null;
-                    }
-                } else {
-                    session.removeObject(ISAuthConstants.AUTH_CONTEXT_OBJ);
+            setSuccessLoginURL(indexType,indexName);
+            if (AuthD.isHttpSessionUsed()) {
+                session = ad.newSession(getOrgDN(), null); 
+                //save the AuthContext object in Session
+                sid = session.getID();
+                //session.setObject(ISAuthConstants.AUTH_CONTEXT_OBJ, ac);
+                if (hsession != null) {
+                    hsession.removeAttribute(
+                        ISAuthConstants.AUTH_CONTEXT_OBJ);
+                    hsession.invalidate();
+                    hsession = null;
                 }
-                this.subject = addSSOTokenPrincipal(subject);
-                setSessionProperties(session);
-                if ((modulesInSession) && (loginContext != null)) {
-                    session.setObject(ISAuthConstants.LOGIN_CONTEXT,
-                    loginContext);
-                }
-                activated = session.activate(userDN);
-            } catch (AuthException e) {
-		return false;
+            } else {
+                session.removeObject(ISAuthConstants.AUTH_CONTEXT_OBJ);
             }
 
+            this.subject = addSSOTokenPrincipal(subject);
+            setSessionProperties(session);
+            if ((modulesInSession) && (loginContext != null)) {
+                session.setObject(ISAuthConstants.LOGIN_CONTEXT,
+                loginContext);
+            }
             if (messageEnabled) {
 		debug.message("Activating session: " + session);
             }
-            return activated;
+            return session.activate(userDN);
         } catch (Exception e) {
-            debug.error("Error activating session: ");
-            return false;
+            debug.error("Error activating session: ", e);
+            throw new AuthException("sessionActivationFailed", null);
         }
     }
     
