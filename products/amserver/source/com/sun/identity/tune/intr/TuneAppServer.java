@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneAppServer.java,v 1.1 2008-07-02 18:56:21 kanduls Exp $
+ * $Id: TuneAppServer.java,v 1.2 2008-08-29 10:00:22 kanduls Exp $
  */
 
 package com.sun.identity.tune.intr;
@@ -40,5 +40,9 @@ public abstract class TuneAppServer implements Tuning {
      */
     protected abstract void tuneDomainXML() throws AMTuneException;
     
-
+    /**
+     * Deletes the password file, appserver tunner should implement this method
+     * so the no password file is left out in the temporary directory
+     */
+    protected abstract void deletePasswordFile();
 }
