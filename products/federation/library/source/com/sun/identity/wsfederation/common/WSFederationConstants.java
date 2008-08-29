@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationConstants.java,v 1.11 2008-08-27 19:00:07 superpat7 Exp $
+ * $Id: WSFederationConstants.java,v 1.12 2008-08-29 02:29:17 superpat7 Exp $
  *
  */
 
@@ -72,6 +72,11 @@ public final class WSFederationConstants {
      */ 
     public static final String URN_OASIS_NAMES_TC_SAML_11 = 
         "urn:oasis:names:tc:SAML:1.1";
+    /**
+     * Claim URI.
+     */ 
+    public static final String CLAIMS_URI = 
+        "http://schemas.xmlsoap.org/claims";
     /**
      * Group claim URI.
      */ 

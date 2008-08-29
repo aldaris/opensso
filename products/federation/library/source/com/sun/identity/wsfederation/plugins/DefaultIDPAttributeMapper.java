@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultIDPAttributeMapper.java,v 1.3 2008-06-25 05:48:06 qcheng Exp $
+ * $Id: DefaultIDPAttributeMapper.java,v 1.4 2008-08-29 02:29:17 superpat7 Exp $
  *
  */
 
@@ -43,6 +43,8 @@ import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.plugin.datastore.DataStoreProviderException;
 import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionException;
+import com.sun.identity.saml.common.SAMLUtils;
+import com.sun.identity.wsfederation.common.WSFederationConstants;
 
 /**
  * This class <code>DefaultAttributeMapper</code> implements the
@@ -189,7 +191,6 @@ public class DefaultIDPAttributeMapper extends DefaultAttributeMapper
      */
     protected Attribute getSAMLAttribute(String name, String[] values)
       throws WSFederationException {
-        String namespace = ""; // TODO!!!
         if(name == null) {
             throw new WSFederationException(bundle.getString(
                 "nullInput"));
@@ -198,12 +199,21 @@ public class DefaultIDPAttributeMapper extends DefaultAttributeMapper
         List list = new ArrayList();
         if(values != null) {
             for (int i=0; i<values.length; i++) {
-                list.add(XMLUtils.escapeSpecialCharacters(values[i]));
+                // Make the AttributeValue element 'by hand', since Attribute 
+                // constructor below is expecting a list of AttributeValue 
+                // elements
+                String attrValueString = SAMLUtils.makeStartElementTagXML(
+                    "AttributeValue", true, true)
+                    + (XMLUtils.escapeSpecialCharacters(values[i]))
+                    + SAMLUtils.makeEndElementTagXML("AttributeValue",true);
+                list.add(XMLUtils.toDOMDocument(attrValueString,
+                                    SAMLUtils.debug).getDocumentElement());
             }
         }
         Attribute attribute = null;
         try {
-            attribute = new Attribute(name, namespace, list);
+            attribute = new Attribute(name, WSFederationConstants.CLAIMS_URI, 
+                list);
         } catch (SAMLException se) {
             throw new WSFederationException(se);
         }
