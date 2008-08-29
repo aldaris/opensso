@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.54 2008-08-27 21:07:14 goodearth Exp $
+ * $Id: LDAPv3Repo.java,v 1.55 2008-08-29 18:10:52 ericow Exp $
  *
  */
 
@@ -1821,6 +1821,9 @@ public class LDAPv3Repo extends IdRepo {
         }
  
         checkConnPool();
+        if (name.startsWith("#")) {
+            name = "\\" + name;
+        }
         String eDN = getDN(type, name);
         LDAPConnection ld = null;
         Map origAttrMap = null;
@@ -1887,6 +1890,16 @@ public class LDAPv3Repo extends IdRepo {
                     Set set = (Set) (privAttrMap.get(attrName));
                     String attrValues[] = (set == null ? null : (String[]) set
                         .toArray(new String[set.size()]));
+
+                    if (attrName.equals(getNamingAttr(type))) {
+                        for (int i = 0; i < attrValues.length; i++) {
+                            if (attrValues[i].startsWith("#")) {
+                                String s = "\\"+attrValues[i];
+                                attrValues[i] = s;
+                            }
+                        }
+                    }
+
                     if (debug.messageEnabled()) {
                         if (attrName.equalsIgnoreCase("userpassword")) {
                             debug.message("    : attrName= " + attrName);
