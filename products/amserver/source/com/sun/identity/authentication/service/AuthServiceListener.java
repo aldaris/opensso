@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthServiceListener.java,v 1.2 2008-08-27 22:08:37 veiming Exp $
+ * $Id: AuthServiceListener.java,v 1.3 2008-08-29 20:02:24 dillidorai Exp $
  *
  */
 
@@ -97,7 +97,8 @@ public class AuthServiceListener implements ServiceListener{
         Map retVal = (Map) serviceAttributeCache.get(serviceName+","+orgDN);
         if (debug.messageEnabled()) {
      	    debug.message("AuthServiceListener." +
-                "getServiceAttributeCache: Returning from cache = " + retVal);
+                "getServiceAttributeCache(): Returning from cache = " + retVal
+                + ", orgDN=" + orgDN);
         }
         return retVal;
     }
@@ -117,8 +118,8 @@ public class AuthServiceListener implements ServiceListener{
         serviceAttributeCache.put(serviceName+","+orgDN, serviceAttributes);
         if (debug.messageEnabled()) {
      	    debug.message("AuthServiceListener." +
-                "setServiceAttributeCache: Cache after add= " 
-                + serviceAttributeCache);
+                "setServiceAttributeCache(): Cache after add= " 
+                + serviceAttributeCache + ", orgDN=" + orgDN);
         }
     }
 
@@ -179,13 +180,7 @@ public class AuthServiceListener implements ServiceListener{
             + orgName + "Service = "+serviceName+ " Change type = "+ type);
         }
         if (type != ADDED) {
-            Set keySet = serviceAttributeCache.keySet();
-            for (Iterator iter = keySet.iterator(); iter.hasNext();) {
-                String key = (String)iter.next();
-                if (key.indexOf(orgName) >= 0) {
-                    serviceAttributeCache.remove(key);
-                }
-            }
+            serviceAttributeCache.remove(serviceName + "," + orgName);
         }
     }
 }
