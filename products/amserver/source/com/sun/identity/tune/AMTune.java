@@ -22,18 +22,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTune.java,v 1.6 2008-08-19 19:09:26 veiming Exp $
+ * $Id: AMTune.java,v 1.7 2008-08-29 09:56:10 kanduls Exp $
  */
 
 package com.sun.identity.tune;
 
-import com.sun.identity.tune.common.FileHandler;
-import com.sun.identity.tune.common.MessageWriter;
 import com.sun.identity.tune.common.AMTuneException;
+import com.sun.identity.tune.common.MessageWriter;
 import com.sun.identity.tune.common.AMTuneLogger;
 import com.sun.identity.tune.config.AMTuneConfigInfo;
-import com.sun.identity.tune.constants.DSConstants;
 import com.sun.identity.tune.constants.AMTuneConstants;
+import com.sun.identity.tune.constants.DSConstants;
 import com.sun.identity.tune.constants.WebContainerConstants;
 import com.sun.identity.tune.impl.TuneAS9Container;
 import com.sun.identity.tune.impl.TuneDS5Impl;
@@ -44,10 +43,10 @@ import com.sun.identity.tune.impl.TuneSolarisOS;
 import com.sun.identity.tune.impl.TuneWS7Container;
 import com.sun.identity.tune.intr.Tuning;
 import com.sun.identity.tune.util.AMTuneUtil;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.StringTokenizer;
 import java.util.logging.Level;
 
 /**
@@ -62,26 +61,40 @@ public class AMTune {
         AMTuneConfigInfo confInfo = null;
         try {
             String confFilePath = AMTuneConstants.ENV_FILE_NAME;
+            String passFilePath = null;
             pLogger = AMTuneLogger.getLoggerInst();
             mWriter = MessageWriter.getInstance();
             AMTuneLogger.setLogLevel("FINEST");
+            if (args.length == 1) {
+                File passFile = new File(args[0]);
+                if (passFile.exists()) {
+                    AMTuneUtil.validatePwdFilePermissions(args[0]);
+                    passFilePath = args[0];
+                } else if (args[0].indexOf(AMTuneConstants.CMD_OPTION2) != -1) {
+                    AMTuneLogger.setLogLevel(
+                            AMTuneUtil.getLastToken(args[0], "="));
+                } else if(args[0].indexOf("--help") != -1 || 
+                        args[0].indexOf("-?") != -1) {
+                    mWriter.writelnLocaleMsg("pt-usage");
+                    System.exit(0);
+                } else {
+                    mWriter.writelnLocaleMsg("pt-usage");
+                    System.exit(0);
+                }
+            }
+            if (args.length == 2 && 
+                    args[1].indexOf(AMTuneConstants.CMD_OPTION2) != -1) {
+                    AMTuneLogger.setLogLevel(
+                            AMTuneUtil.getLastToken(args[1], "="));
+            }
             mWriter.writeln(AMTuneConstants.PARA_SEP);
-            mWriter.writeln("Debug log file : " + pLogger.getLogFilePath());
+            mWriter.writeln("Error log file : " + pLogger.getLogFilePath());
             mWriter.writeln("Configuration information file : " + 
                     mWriter.getConfigurationFilePath());
             mWriter.writeln(AMTuneConstants.PARA_SEP);
              //init utils
             AMTuneUtil.initializeUtil();
-            if (args.length == 1) {
-                StringTokenizer st = new StringTokenizer(args[0], "=");
-                st.hasMoreTokens();
-                String opt = st.nextToken();
-                if (opt.indexOf(AMTuneConstants.CMD_OPTION2) != -1) {
-                    st.hasMoreTokens();
-                    AMTuneLogger.setLogLevel(st.nextToken());
-                }
-            }
-            confInfo = new AMTuneConfigInfo(confFilePath);
+            confInfo = new AMTuneConfigInfo(confFilePath, passFilePath);
             List tunerList = getTuners(confInfo);
             Iterator itr = tunerList.iterator();
             while (itr.hasNext()) {
@@ -90,6 +103,7 @@ public class AMTune {
                 compTuner.startTuning();
             }
         } catch (Exception ex) {
+           
             if (pLogger != null) {
                 pLogger.log(Level.SEVERE, "main", ex.getMessage());
                 pLogger.logException("main", ex);
@@ -97,13 +111,20 @@ public class AMTune {
                 ex.printStackTrace();
             }
             if (mWriter != null) {
-                mWriter.writelnLocaleMsg("pt-error-tuning-msg");
+                mWriter.writeln(" ");
+                mWriter.writeLocaleMsg("pt-error-tuning-msg");
+                mWriter.writeln(ex.getMessage());
             } else {
-                System.out.println("Error occured while tuning. " +
-                        "Check logs for root cause.");
+                System.out.println("Error occured while tuning: " +
+                        ex.getMessage());
             }
         } finally {
-            replacePasswords();
+            if (pLogger != null) {
+                pLogger.close();
+            }
+            if (mWriter != null) {
+                mWriter.close();
+            }
         }
     }
 
@@ -122,7 +143,8 @@ public class AMTune {
             } else if (AMTuneUtil.isLinux()) {
                 tunerList.add(new TuneLinuxOS());
             }  else {
-                throw new AMTuneException("Unsupported OS for tuning.");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-unsupported-os-tuning"));
             }
         }
         if (confInfo.isTuneDS()) {
@@ -132,81 +154,32 @@ public class AMTune {
                 String dsVersion = confInfo.getDSConfigInfo().getDsVersion();
                 if (AMTuneUtil.isSupportedUMDSVersion(dsVersion)) {
                     if (dsVersion.indexOf(DSConstants.DS5_VERSION) != -1) {
-                        tunerList.add(new TuneDS5Impl(false));
+                        tunerList.add(new TuneDS5Impl());
                     } else if (dsVersion.indexOf(
-                            DSConstants.DS63_VERSION) != -1) {
-                        tunerList.add(new TuneDS6Impl(false));
+                            DSConstants.DS6_VERSION) != -1) {
+                        tunerList.add(new TuneDS6Impl());
                     }
                 } else {
-                    throw new AMTuneException("Invalid UM DS Version: " +
-                            dsVersion);
-                }
-            }
-            if (!confInfo.isUMSMDSSame() && !confInfo.isUMOnlyTune()) {
-                if (confInfo.getSMConfigInfo().isRemoteDS()) {
-                    AMTuneUtil.createRemoteDSTuningZipFile(confInfo);
-                } else {
-                    String smDSVersion =
-                            confInfo.getSMConfigInfo().getDsVersion();
-                    if (AMTuneUtil.isSupportedSMDSVersion(smDSVersion)) {
-                        if (smDSVersion.indexOf(
-                                DSConstants.DS5_VERSION) != -1) {
-                            tunerList.add(new TuneDS5Impl(true));
-                        } else if (smDSVersion.indexOf(
-                                DSConstants.DS63_VERSION) != -1) {
-                            tunerList.add(new TuneDS6Impl(true));
-                        } else {
-                            throw new AMTuneException(
-                                    "Tuner not available for " + smDSVersion);
-                        }
-                    } else {
-                        throw new AMTuneException("Invalid SM DS Version: " +
-                                smDSVersion);
-                    }
+                    throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                            .getString("pt-ds-unsupported-msg"));
                 }
             }
         }
         if (confInfo.isTuneWebContainer()) {
-            if (confInfo.getWebContainer().equals(
+            if (confInfo.getWebContainer().equalsIgnoreCase(
                     WebContainerConstants.WS7_CONTAINER)) {
                 tunerList.add(new TuneWS7Container());
-            } else if (confInfo.getWebContainer().equals(
+            } else if (confInfo.getWebContainer().equalsIgnoreCase(
                     WebContainerConstants.AS91_CONTAINER)) {
                 tunerList.add(new TuneAS9Container());
             } else {
-                throw new AMTuneException("Invalid WebContainer.");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-unsupported-wc-tuning"));
             }
         }
         if (confInfo.isTuneFAM()) {
             tunerList.add(new TuneFAM8Impl());
         }
         return tunerList;
-    }
-    
-    private static void replacePasswords() {
-        try {
-            String propFile = AMTuneUtil.getCurDir() + 
-                    AMTuneConstants.FILE_SEP +
-                    AMTuneConstants.ENV_FILE_NAME + ".properties";
-            FileHandler fh = new FileHandler(propFile);
-            int reqLine =
-                    fh.getLineNum(AMTuneConstants.OPENSSOADMIN_PASSWORD + "=");
-            fh.replaceLine(reqLine, AMTuneConstants.OPENSSOADMIN_PASSWORD + 
-                    "=");
-            reqLine = fh.getLineNum(AMTuneConstants.SM_DIRMGR_PASSWORD + "=");
-            fh.replaceLine(reqLine, AMTuneConstants.SM_DIRMGR_PASSWORD + "=");
-            reqLine =
-                    fh.getLineNum(AMTuneConstants.WSADMIN_PASSWORD + "=");
-            fh.replaceLine(reqLine, AMTuneConstants.WSADMIN_PASSWORD + "=");
-            reqLine = fh.getLineNum(AMTuneConstants.ASADMIN_PASSWORD + "=");
-            fh.replaceLine(reqLine, AMTuneConstants.ASADMIN_PASSWORD + "=");
-            reqLine = fh.getLineNum("^" + AMTuneConstants.DIRMGR_PASSWORD + 
-                    "=");
-            fh.replaceLine(reqLine, AMTuneConstants.DIRMGR_PASSWORD + "=");
-            fh.close();
-        } catch (Exception ex) {
-            System.out.println("Error in password replacement " +
-                    ex.getMessage());
-        }
     }
 }
