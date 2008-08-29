@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: tree.cpp,v 1.5 2008-07-08 01:45:44 madan_ranganath Exp $
+ * $Id: tree.cpp,v 1.6 2008-08-29 17:35:40 subbae Exp $
  *
  */ 
 #include "tree.h"
@@ -68,7 +68,8 @@ Tree::Tree(PDRefCntPtr &root,
 }
 
 Tree::~Tree() {
-	rootNode->destroyNode();
+    // fix for memory leak issue 2883
+    rootNode->removeAllChildren();
 }
 
 /* Throws std::invalid_argument if any argument is invalid */
