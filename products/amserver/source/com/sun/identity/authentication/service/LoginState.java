@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.32 2008-08-19 19:08:54 veiming Exp $
+ * $Id: LoginState.java,v 1.33 2008-08-29 20:00:09 dillidorai Exp $
  *
  */
 
@@ -1244,6 +1244,7 @@ public class LoginState {
             univId = IdUtils.getUniversalId(amIdentityUser);
         }
         
+        String userId = DNUtils.DNtoName(userDN);
         if (messageEnabled) {
             debug.message(
                 "setSessionProperties Principal = " + userDN + "\n" +
@@ -1296,7 +1297,7 @@ public class LoginState {
                 session.putProperty(ISAuthConstants.AUTH_TYPE, authMethName);
             }
             session.putProperty(ISAuthConstants.PRINCIPAL, userDN);
-            session.putProperty(ISAuthConstants.USER_ID, token);
+            session.putProperty(ISAuthConstants.USER_ID, userId);
             session.putProperty(ISAuthConstants.USER_TOKEN, token);
             session.putProperty(ISAuthConstants.ORGANIZATION, getOrgDN());
             session.putProperty(ISAuthConstants.LOCALE, 
