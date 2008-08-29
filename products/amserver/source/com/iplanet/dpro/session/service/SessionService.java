@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionService.java,v 1.26 2008-08-19 19:08:40 veiming Exp $
+ * $Id: SessionService.java,v 1.27 2008-08-29 15:00:20 subashvarma Exp $
  *
  */
 
@@ -2161,9 +2161,6 @@ public class SessionService {
                                                 .currentTimeMillis());
                                   SessionNotificationHandler.handler
                                         .processNotification(sn);
-                                  // remove this URL so that it will not be processed
-                                  // when remote notifications are processed.
-                                  iter.remove();  
                             } else {
                                 remoteURLExists = true;
                             }
