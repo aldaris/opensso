@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: iws_agent.c,v 1.16 2008-08-04 19:22:11 huacui Exp $
+ * $Id: iws_agent.c,v 1.17 2008-08-29 21:32:22 robertis Exp $
  *
  *
  */
@@ -240,6 +240,7 @@ static void register_post_data(Session *sn, Request *rq,char *url,
     * otherwise, web server will wait for serveral minutes
     * for non existant data
     */
+    param_free(pblock_remove("content-length", rq->headers));
     pblock_nvinsert("content-length", "0", rq->headers);
 
 }
@@ -714,6 +715,7 @@ char * get_post_assertion_data(Session *sn, Request *rq, char *url)
     * otherwise, web server will wait for serveral minutes
     * for non existant data
     */
+    param_free(pblock_remove("content-length", rq->headers));
     pblock_nvinsert("content-length", "0", rq->headers);
     return body;
 
