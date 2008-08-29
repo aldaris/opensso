@@ -74,6 +74,7 @@
 	<mapID target="agentconfig.discoveryagentprofile" url="agentconfig.discoveryagentprofile.html"/>
 	<mapID target="agentconfig.webservicestsedit" url="agentconfig.webservicestsedit.html"/>
 	<mapID target="agentconfig.22agentprofile" url="agentconfig.22agentprofile.html"/>
+	<mapID target="ghfif" url="ghfif.html"/>
 	<mapID target="dirmang" url="dirmang.html"/>
 	<mapID target="dm.home" url="dm.home.html"/>
 	<mapID target="federation.federation" url="federation.federation.html"/>
