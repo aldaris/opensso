@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GeneralAgentTests.java,v 1.8 2008-07-31 20:19:19 nithyas Exp $
+ * $Id: GeneralAgentTests.java,v 1.9 2008-08-29 20:21:14 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -118,7 +118,7 @@ public class GeneralAgentTests extends TestCommon {
             String strHeaderFetchMode = rbg.getString(strGblRB + 
                                 ".headerFetchMode");
             strScriptURL = strScriptURL.substring(0, strScriptURL.length() - 1);
-            strScriptURL = strScriptURL + "?fetch_mode=" + 
+            strScriptURL = strScriptURL + "fetch_mode=" + 
                     strHeaderFetchMode;
         }
         log(Level.FINEST, "setup", "Header script URL: " + strScriptURL);
