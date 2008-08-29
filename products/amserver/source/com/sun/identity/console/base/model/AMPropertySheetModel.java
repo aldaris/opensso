@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMPropertySheetModel.java,v 1.5 2008-07-31 16:48:29 veiming Exp $
+ * $Id: AMPropertySheetModel.java,v 1.6 2008-08-29 18:14:52 veiming Exp $
  *
  */
 
@@ -41,6 +41,7 @@ import com.sun.identity.console.ui.view.CCGlobalMapList;
 import com.sun.identity.console.ui.view.CCMapList;
 import com.sun.identity.console.ui.view.CCOrderedList;
 import com.sun.identity.console.ui.view.CCUnOrderedList;
+import com.sun.identity.shared.encode.Base64;
 import com.sun.web.ui.common.CCDescriptor;
 import com.sun.web.ui.common.CCTagClass;
 import com.sun.web.ui.model.CCActionTableModel;
@@ -52,6 +53,8 @@ import com.sun.web.ui.view.editablelist.CCEditableList;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.io.ByteArrayInputStream;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -101,6 +104,18 @@ public class AMPropertySheetModel
         "com.sun.identity.console.ui.taglib.CCMapListTag";
     public static final String GLOBAL_MAP_LIST =
         "com.sun.identity.console.ui.taglib.CCGlobalMapListTag";
+    public static String passwordRandom;
+
+    static {
+        try {
+            byte[] bytes = new byte[24];
+            SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+            random.nextBytes(bytes);
+            passwordRandom = Base64.encode(bytes).trim();
+        } catch (NoSuchAlgorithmException e) {
+            passwordRandom = "KmhUnWR1MYWDYW4xuqdF5nbm+CXIyOVt";
+        }
+    }
 
     public AMPropertySheetModel() {
         super();
@@ -262,8 +277,23 @@ public class AMPropertySheetModel
         }
 
         if (passwordComponents.contains(name)) {
-            super.setValues(name + PropertyTemplate.PWD_CONFIRM_SUFFIX, values);
-            super.setValues(name, values);
+            // do not need to mask the password with random string
+            // if password value is blank
+            boolean bRandom = false;
+            if ((values != null) && (values.length > 0)) {
+                String tmp = (String)values[0];
+                bRandom = (tmp != null) && (tmp.trim().length() > 0);
+            }
+
+            if (bRandom) {
+                super.setValue(name + PropertyTemplate.PWD_CONFIRM_SUFFIX,
+                    passwordRandom);
+                super.setValue(name, passwordRandom);
+            } else {
+                super.setValues(name + PropertyTemplate.PWD_CONFIRM_SUFFIX,
+                    values);
+                super.setValues(name, values);
+            }
         } else if (dateComponents.contains(name)) {
             super.setValues(name, getDateInUserLocale(values, model));
         } else {

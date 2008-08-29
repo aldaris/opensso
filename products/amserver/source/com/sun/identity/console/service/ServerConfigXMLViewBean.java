@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerConfigXMLViewBean.java,v 1.6 2008-08-07 17:22:03 arviranga Exp $
+ * $Id: ServerConfigXMLViewBean.java,v 1.7 2008-08-29 18:14:52 veiming Exp $
  *
  */
 
@@ -280,7 +280,7 @@ public class ServerConfigXMLViewBean
                     (ServerConfigXML.DirUserObject)bindInfo.iterator().next();
                 propertySheetModel.setValue(TF_SERVER_BIND_DN, bind.dn);
                 propertySheetModel.setValue(TF_SERVER_BIND_PWD, 
-                    Crypt.decrypt(bind.password));
+                    AMPropertySheetModel.passwordRandom);
             }
             
             if (bAMSDKEnabled) {
@@ -291,10 +291,10 @@ public class ServerConfigXMLViewBean
                     DirUserObject o = (DirUserObject)i.next();
                     if (o.type.equals("proxy")) {
                         propertySheetModel.setValue(TF_USER_PROXY_PWD,
-                            Crypt.decrypt(o.password));
+                            AMPropertySheetModel.passwordRandom);
                     } else if (o.type.equals("admin")) {
                         propertySheetModel.setValue(TF_USER_ADMIN_PWD,
-                            Crypt.decrypt(o.password));
+                            AMPropertySheetModel.passwordRandom);
                     }
                 }
             }
@@ -391,7 +391,6 @@ public class ServerConfigXMLViewBean
         String svrMinPool = (String)getDisplayFieldValue(TF_SERVER_MIN_POOL);
         String svrMaxPool = (String)getDisplayFieldValue(TF_SERVER_MAX_POOL);
         String bindDN = (String)getDisplayFieldValue(TF_SERVER_BIND_DN);
-        String bindPwd = (String)getDisplayFieldValue(TF_SERVER_BIND_PWD);
         
         String serverName = (String)getPageSessionAttribute(
             ServerEditViewBeanBase.PG_ATTR_SERVER_NAME);
@@ -422,13 +421,19 @@ public class ServerConfigXMLViewBean
                     if (o.type.equals("proxy")) {
                         o.dn = "cn=puser,ou=DSAME Users," +
                             defaultServerGroup.dsBaseDN;
-                        o.password = Crypt.encode((String)getDisplayFieldValue(
-                            TF_USER_PROXY_PWD));
+                        String pwd = (String)getDisplayFieldValue(
+                            TF_USER_PROXY_PWD);
+                        if (!pwd.equals(AMPropertySheetModel.passwordRandom)) {
+                            o.password = Crypt.encode(pwd);
+                        }
                     } else if (o.type.equals("admin")) {
                         o.dn = "cn=dsameuser,ou=DSAME Users," +
                             defaultServerGroup.dsBaseDN;
-                        o.password = Crypt.encode((String)getDisplayFieldValue(
-                            TF_USER_ADMIN_PWD));
+                        String pwd = (String)getDisplayFieldValue(
+                            TF_USER_ADMIN_PWD);
+                        if (!pwd.equals(AMPropertySheetModel.passwordRandom)) {
+                            o.password = Crypt.encode(pwd);
+                        }
                     }
                 }
             }
@@ -439,7 +444,11 @@ public class ServerConfigXMLViewBean
             ServerConfigXML.DirUserObject bind = (ServerConfigXML.DirUserObject)
                 userGroup.iterator().next();
             bind.dn = bindDN;
-            bind.password = Crypt.encode(bindPwd);
+        
+            String bindPwd = (String)getDisplayFieldValue(TF_SERVER_BIND_PWD);
+            if (!bindPwd.equals(AMPropertySheetModel.passwordRandom)) {
+                bind.password = Crypt.encode(bindPwd);
+            }
             
             model.setServerConfigXML(serverName, xmlObj.toXML());
             setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",

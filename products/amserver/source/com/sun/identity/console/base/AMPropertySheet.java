@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMPropertySheet.java,v 1.7 2008-07-04 02:34:21 veiming Exp $
+ * $Id: AMPropertySheet.java,v 1.8 2008-08-29 18:14:52 veiming Exp $
  *
  */
 
@@ -83,7 +83,7 @@ public class AMPropertySheet
     extends CCPropertySheet
 {
     private static String PASSWORD_MASK = "*********";
-
+    
     // Copying set of constructors from parent class
     public AMPropertySheet(
         ContainerView parent,
@@ -474,8 +474,12 @@ public class AMPropertySheet
                     String confirmPwd = (String)model.getValue(
                         name + PropertyTemplate.PWD_CONFIRM_SUFFIX);
                     if (!matchPwd || pwd.equals(confirmPwd)) {
-                        values = new HashSet(2);
-                        values.add(pwd);
+                        if (!pwd.equals(AMPropertySheetModel.passwordRandom)) {
+                            values = new HashSet(2);
+                            values.add(pwd);
+                        } else {
+                            values = (Set)orig.get(name);
+                        }
                     } else {
                         throw new AMConsoleException("password-mismatched");
                     }
