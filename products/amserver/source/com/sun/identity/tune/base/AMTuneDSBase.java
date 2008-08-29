@@ -22,24 +22,21 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneDSBase.java,v 1.5 2008-08-19 19:09:27 veiming Exp $
+ * $Id: AMTuneDSBase.java,v 1.6 2008-08-29 10:11:07 kanduls Exp $
  */
 
 package com.sun.identity.tune.base;
 
-import com.sun.identity.tune.common.FileHandler;
 import com.sun.identity.tune.common.MessageWriter;
 import com.sun.identity.tune.common.AMTuneException;
-import com.sun.identity.tune.common.AMTuneFileFilter;
 import com.sun.identity.tune.common.AMTuneLogger;
 import com.sun.identity.tune.config.DSConfigInfo;
 import com.sun.identity.tune.config.AMTuneConfigInfo;
 import com.sun.identity.tune.constants.AMTuneConstants;
 import com.sun.identity.tune.intr.TuneDS;
 import com.sun.identity.tune.util.AMTuneUtil;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -78,20 +75,15 @@ public abstract class AMTuneDSBase extends TuneDS {
     protected MessageWriter mWriter;
     protected AMTuneLogger pLogger;
     protected String dseLdifPath;
-    protected String dsPassFilePath;
     protected DSConfigInfo dsConfInfo;
-    protected boolean isSM;
     private long memAvail;
     private List dbDirs;
     private boolean init = false;
-    private boolean smInit = false;
     private LDAPConnection ldapCon;
-    private LDAPConnection smCon;
     private long memNeeded;
     
     
-    protected AMTuneDSBase(boolean isSM) {
-        this.isSM = isSM;
+    protected AMTuneDSBase() {
     }
     /**
      * This method initializes the Performance tuning configuration information.
@@ -103,19 +95,17 @@ public abstract class AMTuneDSBase extends TuneDS {
     throws AMTuneException {
         try {
             this.configInfo = configInfo;
-            if (!isSM){
-                dsConfInfo = configInfo.getDSConfigInfo();
-            } else {
-                dsConfInfo = configInfo.getSMConfigInfo();
-            }
+            dsConfInfo = configInfo.getDSConfigInfo();
             if (!init) {
                 pLogger = AMTuneLogger.getLoggerInst();
                 mWriter = MessageWriter.getInstance();
                 initializeLdapCon();
             }
-            if (!configInfo.isUMSMDSSame() && !smInit) {
-                initSMLDAPConnection();
-            }
+            validateRootSuffix();
+            instanceDir = dsConfInfo.getDsInstanceDir();
+            dseLdifPath = instanceDir + FILE_SEP + "config" +
+                    FILE_SEP + "dse.ldif";
+            validateInstanceDir();
             curNumberOfWorkerThreads =
                     Integer.parseInt(getNumberOfWorkerThreads());
             curAccessLogStatus = getAccessLogStatus();
@@ -123,11 +113,6 @@ public abstract class AMTuneDSBase extends TuneDS {
             dbSuffix = getBackEnd();
             curDBHomeLocation = getDBHomeLocation();
             dbDirectory = getDBDirectory();
-
-            dsPassFilePath = AMTuneUtil.TMP_DIR + "dspassfile";
-            instanceDir = dsConfInfo.getDsInstanceDir();
-            dseLdifPath = instanceDir + FILE_SEP + "config" +
-                    FILE_SEP + "dse.ldif";
             writePasswordToFile();
         } catch (Exception ex) {
             if (pLogger != null) {
@@ -137,34 +122,30 @@ public abstract class AMTuneDSBase extends TuneDS {
             throw new AMTuneException(ex.getMessage());
         }
     }
-
-    /**
-     * Deletes the password file.
-     */
-    protected void deletePasswordFile() {
-        File passFile = new File(dsPassFilePath);
-        passFile.delete();
+    
+    protected void validateInstanceDir() 
+    throws AMTuneException {
+        File ldifFile = new File(dseLdifPath.trim());
+        if (!ldifFile.exists()) {
+            AMTuneUtil.printErrorMsg(DS_INSTANCE_DIR);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-invalid-ds-instance-dir"));
+        }
     }
-
-    /**
-     * Writes the password to file.
-     *
-     * @throws com.sun.identity.tune.common.AMTuneException
-     */
-    protected void writePasswordToFile ()
+    
+    protected void validateRootSuffix() 
     throws AMTuneException {
         try {
-            pLogger.log(Level.FINE, "writePasswordToFile", "Creating DS " +
-                    "password file.");
-            File passFile = new File(dsPassFilePath);
-            BufferedWriter pOut = new BufferedWriter(new FileWriter(passFile));
-            pOut.write(dsConfInfo.getDsDirMgrPassword());
-            pOut.flush();
-            pOut.close();
-        } catch (Exception ex) {
-            pLogger.log(Level.SEVERE, "writePassWordToFile",
-                    "Couldn't write password to file. ");
-            throw new AMTuneException(ex.getMessage());
+            pLogger.log(Level.FINE, "validateRootSuffix", 
+                    "Validating Root Suffix " + dsConfInfo.getRootSuffix());
+            searchLDAPAttrVal(dsConfInfo.getRootSuffix(), 
+                    dsConfInfo.getRootSuffix(), null);
+        } catch(AMTuneException aex) {
+            pLogger.log(Level.SEVERE, "validateRootSuffix",
+                    "Root suffix validation failed: " + aex.getMessage());
+            AMTuneUtil.printErrorMsg(ROOT_SUFFIX);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-invalid-root-suffix"));
         }
     }
 
@@ -187,31 +168,31 @@ public abstract class AMTuneDSBase extends TuneDS {
                 init = true;
             }
         } catch (LDAPException ex) {
+            mWriter.writelnLocaleMsg("pt-cannot-proceed");
             pLogger.logException("initializeLdapCon", ex);
             init = false;
-            throw new AMTuneException(ex.getMessage());
-        }
-    }
-    
-    private void initSMLDAPConnection() 
-    throws AMTuneException {
-        try {
-            if (!smInit) {
-                pLogger.log(Level.FINE, "initSMLDAPConnection",
-                        "Initializing LDAP Connection to SM DS.");
-                smCon = new LDAPConnection();
-                DSConfigInfo smInfo = configInfo.getSMConfigInfo();
-                smCon.connect(AMTuneConstants.LDAP_VERSION,
-                        smInfo.getDsHost(),
-                        Integer.parseInt(smInfo.getDsPort()),
-                        smInfo.getDirMgrUid(),
-                        smInfo.getDsDirMgrPassword());
-                smInit = true;
+            int errorCode = ex.getLDAPResultCode();
+            if ( errorCode == LDAPException.INSUFFICIENT_ACCESS_RIGHTS ) {
+                mWriter.writelnLocaleMsg("pt-error-check-ds-dn-and-password");
+                throw new AMTuneException(
+                        "pt-error-ldap-insufficient-access-rights");
+            } else if (errorCode == LDAPException.UNAVAILABLE || 
+                     errorCode == LDAPException.SERVER_DOWN || 
+                     errorCode == LDAPException.CONNECT_ERROR) {
+                mWriter.writelnLocaleMsg("pt-error-check-ds-params-msg");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-error-cannot-connect-to-ds"));
+            } else if (errorCode == LDAPException.INVALID_CREDENTIALS) {
+                mWriter.writelnLocaleMsg("pt-error-check-ds-dn-and-password");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-error-invalid-ds-vals"));
+            } else if (errorCode == LDAPException.INVALID_DN_SYNTAX) {
+                AMTuneUtil.printErrorMsg(DIRMGR_BIND_DN);
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-error-invalid-bind-dn"));
+            } else {
+                 throw new AMTuneException(ex.getMessage());
             }
-        } catch (LDAPException ex) {
-            pLogger.logException("initSMLDAPConnection", ex);
-            smInit = false;
-            throw new AMTuneException(ex.getMessage());
         }
     }
 
@@ -240,7 +221,7 @@ public abstract class AMTuneDSBase extends TuneDS {
      * @throws com.sun.identity.tune.common.AMTuneException
      */
     protected String searchLDAPAttrVal(String base,int scope, String filter,
-            String attr)
+            String attr) 
     throws AMTuneException {
         try {
             pLogger.log(Level.FINE, "searchLDAPAttrVal", "Searching for " +
@@ -265,47 +246,14 @@ public abstract class AMTuneDSBase extends TuneDS {
                     }
                 }
             }
-        } catch (Exception lex) {
+        } catch (LDAPException lex) {
             pLogger.log(Level.SEVERE, "searchLDAPAttrVal",
                     "Error getting ldap attribute value " + attr +
-                    "from base " + base);
+                    " from base " + base);
+            pLogger.logException("searchLDAPAttrVal", lex);
             throw new AMTuneException(lex.getMessage());
         }
         return null;
-    }
-
-    /**
-     * Returns Index for the DB.
-     *
-     * @param dName DB Name.
-     * @return List of the Index.
-     * @throws com.sun.identity.tune.common.AMTuneException
-     */
-    protected List getIndexForDB(String dName)
-    throws AMTuneException {
-        List iList = new ArrayList();
-        try {
-            pLogger.log(Level.FINE, "getIndexForDB", "Get index for DB " +
-                    dName);
-            String[] attr = {"dn"};
-            LDAPSearchResults idxList = ldapCon.search("cn=index,cn=" +
-                    dName + "," + LDBM_DATABASE_DN, LDAPv3.SCOPE_SUB,
-                    OBJ_CLASS_FILTER, attr, false);
-            while (idxList.hasMoreElements()) {
-                LDAPEntry myEntry = idxList.next();
-                String dn = myEntry.getDN();
-                StringTokenizer firstCol = new StringTokenizer(dn, ",");
-                String firstCn = firstCol.nextToken().replace("cn=", "");
-                iList.add(firstCn);
-            }
-        } catch (Exception ex) {
-            pLogger.log(Level.SEVERE, "getIndexForDB" , "Error finding index " +
-                "for " + dName);
-            throw new AMTuneException(ex.getMessage());
-        }
-        pLogger.log(Level.FINEST, "getIndexForDB" , "Existing index for " +
-                dName + " is " + iList.toString());
-        return iList;
     }
 
     /**
@@ -325,7 +273,8 @@ public abstract class AMTuneDSBase extends TuneDS {
             mWriter.writeLocaleMsg("pt-failed-to-obtain-conf");
             mWriter.writelnLocaleMsg("pt-no-worker-threads-msg");
             mWriter.writelnLocaleMsg("pt-inval-config");
-            throw new AMTuneException("Null DS worker threads");
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-null-worker-threads"));
         }
         pLogger.log(Level.FINEST, "getNumberOfWorkerThreads",
                 "Returning value " + val);
@@ -344,12 +293,11 @@ public abstract class AMTuneDSBase extends TuneDS {
         String val= searchLDAPAttrVal(CONFIG_DN, LDAPv3.SCOPE_BASE,
                 OBJ_CLASS_FILTER, NSSLAPD_ACCESSLOG_LOGGING_ENABLED);
         if (val == null || (val != null && val.length() <= 0)) {
-            pLogger.log(Level.SEVERE, "getAccessLogStatus",
-                    "Access log Status is null");
             mWriter.writeLocaleMsg("pt-failed-to-obtain-conf");
             mWriter.writelnLocaleMsg("pt-access-log-status");
             mWriter.writelnLocaleMsg("pt-inval-config");
-            throw new AMTuneException("Access log Status is null");
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-null-access-log-status"));
         }
         pLogger.log(Level.FINE, "getAccessLogStatus",
                 "Returning value. " + val);
@@ -368,12 +316,11 @@ public abstract class AMTuneDSBase extends TuneDS {
                 "(" + NSSLAPD_SUFFIX + "=" + dsConfInfo.getRootSuffix() + ")",
                 NSSLAPD_DIRECTORY);
         if (val == null || (val != null && val.length() <= 0)) {
-            pLogger.log(Level.SEVERE, "getDBDirectory",
-                    "Directory Server DB directory null");
             mWriter.writeLocaleMsg("pt-failed-to-obtain-conf");
             mWriter.writelnLocaleMsg("pt-db-directory");
             mWriter.writelnLocaleMsg("pt-inval-config");
-            throw new AMTuneException("Invalid DB directory.");
+            throw new AMTuneException(AMTuneUtil.getResourceBundle().
+                    getString("pt-error-invalid-db-directory"));
         }
         pLogger.log(Level.FINEST, "getDBDirectory", "Returning value " + val);
         return val;
@@ -391,12 +338,11 @@ public abstract class AMTuneDSBase extends TuneDS {
                 "(" + NSSLAPD_SUFFIX + "=" + dsConfInfo.getRootSuffix() + ")",
                 "dn");
         if (val == null || (val != null && val.length() <= 0)) {
-            pLogger.log(Level.SEVERE, "getDBDN",
-                    "Null DBDN");
             mWriter.writeLocaleMsg("pt-failed-to-obtain-conf");
             mWriter.writelnLocaleMsg("pt-db-dn-msg");
             mWriter.writelnLocaleMsg("pt-inval-config");
-            throw new AMTuneException("Null DBDN.");
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-null-db-dn"));
         }
         pLogger.log(Level.FINEST, "getDBDN", "Returning DB DN. " + val);
         return val;
@@ -416,12 +362,14 @@ public abstract class AMTuneDSBase extends TuneDS {
                 "(&(" + NSSLAPD_SUFFIX + "=*" + dsConfInfo.getRootSuffix() +
                 ")(cn=" + backEnd + "))", "dn");
         if (val == null || (val != null && val.length() <= 0)) {
-            pLogger.log(Level.SEVERE, "getDBDNbyBackend",
-                    "Null DBDN for " + backEnd);
             mWriter.writeLocaleMsg("pt-failed-to-obtain-conf");
             mWriter.writeln("DB DN value for " + backEnd);
             mWriter.writelnLocaleMsg("pt-inval-config");
-            throw new AMTuneException("Null DBDN for " + backEnd);
+            String msg = AMTuneUtil.getResourceBundle().getString(
+                    "pt-error-null-db-db-msg");
+            Object[] param = {backEnd};
+            throw new AMTuneException(MessageFormat.format(
+                    msg, param));
         }
         pLogger.log(Level.FINEST, "getDBDNbyBackend", "Returning value " +
                 val);
@@ -440,14 +388,15 @@ public abstract class AMTuneDSBase extends TuneDS {
                 "(&(|(cn=" + dsConfInfo.getRootSuffix() + ")(cn=\"" +
                 dsConfInfo.getRootSuffix() + "\")(" + NSSLAPD_PARENT_SUFFIX +
                 "=" + dsConfInfo.getRootSuffix() + "))(" + NSSLAPD_BACKEND +
-                "=*))", NSSLAPD_BACKEND).replaceFirst("NetscapeRoot", "");
+                "=*))", NSSLAPD_BACKEND);
         if (val == null || (val != null && val.length() <= 0)) {
-            pLogger.log(Level.SEVERE, "getBackEnd",
-                    "Null Back End");
             mWriter.writeLocaleMsg("pt-failed-to-obtain-conf");
             mWriter.writelnLocaleMsg("pt-backend-db");
             mWriter.writelnLocaleMsg("pt-inval-config");
-            throw new AMTuneException("Null Back End");
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-null-back-end"));
+        } else {
+            val = val.replaceFirst("NetscapeRoot", "");
         }
         pLogger.log(Level.FINEST, "getBackEnd", "Returning value " + val);
         return val;
@@ -473,8 +422,11 @@ public abstract class AMTuneDSBase extends TuneDS {
             mWriter.writeLocaleMsg("pt-entry-size-msg");
             mWriter.writeln(backEnd);
             mWriter.writelnLocaleMsg("pt-inval-config");
-            throw new AMTuneException("Null DB Entry cache size for " +
-                    "back end " + backEnd);
+            String msg = AMTuneUtil.getResourceBundle().getString(
+                    "pt-error-null-db-entry-cache-size");
+            Object[] param = {backEnd};
+            throw new AMTuneException(MessageFormat.format(
+                    msg, param));
         }
         pLogger.log(Level.FINEST, "getDBEntryCacheSizebyBackend",
                 "Returning value " + val);
@@ -494,13 +446,15 @@ public abstract class AMTuneDSBase extends TuneDS {
         String val = searchLDAPAttrVal(CONFIG_DN,
                 "(cn=" + backEnd + ")", NSSLAPD_SUFFIX);
         if (val == null || (val != null && val.length() <= 0)) {
-            pLogger.log(Level.SEVERE, "getSuffixbyBackend",
-                    "Null suffix for back end " + backEnd);
             mWriter.writeLocaleMsg("pt-failed-to-obtain-conf");
             mWriter.writeLocaleMsg("pt-back-end-suffix-msg");
             mWriter.writeln(backEnd);
             mWriter.writelnLocaleMsg("pt-inval-config");
-            throw new AMTuneException("Null suffix for back end " + backEnd);
+            String msg = AMTuneUtil.getResourceBundle().getString(
+                    "pt-error-null-suffix-back-end");
+            Object[] param = {backEnd};
+            throw new AMTuneException(MessageFormat.format(
+                    msg, param));
         }
         pLogger.log(Level.FINEST, "getSuffixbyBackend", "Returning value " +
                 val);
@@ -518,12 +472,11 @@ public abstract class AMTuneDSBase extends TuneDS {
         String val = searchLDAPAttrVal(DB_PLUGIN_CONF_DN, LDAPv3.SCOPE_BASE,
                 OBJ_CLASS_FILTER, NSSLAPD_DBCACHESIZE);
         if (val == null || (val != null && val.length() <= 0)) {
-            pLogger.log(Level.SEVERE, "getDBCacheSize",
-                    "Null DB cache size ");
             mWriter.writeLocaleMsg("pt-failed-to-obtain-conf");
             mWriter.writelnLocaleMsg("pt-db-size-msg");
             mWriter.writelnLocaleMsg("pt-inval-config");
-            throw new AMTuneException("Null DB cache size ");
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-null-db-cache-size"));
         }
         pLogger.log(Level.FINEST, "getDBCacheSize", "Returning value " + val);
         return val;
@@ -540,12 +493,11 @@ public abstract class AMTuneDSBase extends TuneDS {
         String val = searchLDAPAttrVal(DB_PLUGIN_CONF_DN, LDAPv3.SCOPE_BASE,
                 OBJ_CLASS_FILTER, NSSLAPD_DB_HOME_DIRECTORY);
         if (val == null || (val != null && val.length() <= 0)) {
-            pLogger.log(Level.SEVERE, "getDBHomeLocation",
-                    "Null DB Home Location ");
             mWriter.writeLocaleMsg("pt-failed-to-obtain-conf");
             mWriter.writelnLocaleMsg("pt-db-home-location");
             mWriter.writelnLocaleMsg("pt-inval-config");
-            throw new AMTuneException("Null DB Home Location ");
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-null-db-home-location"));
         }
         pLogger.log(Level.FINEST, "getDBHomeLocation", "Getting DB Home" +
                 " location.");
@@ -565,12 +517,11 @@ public abstract class AMTuneDSBase extends TuneDS {
                 dsConfInfo.getRootSuffix() + "\"))(" + NSSLAPD_BACKEND + "=*))",
                 NSSLAPD_BACKEND);
         if (val == null || (val != null && val.length() <= 0)) {
-            pLogger.log(Level.SEVERE, "getDBName",
-                    "Null DB Name");
             mWriter.writeLocaleMsg("pt-failed-to-obtain-conf");
             mWriter.writelnLocaleMsg("pt-db-name-msg");
             mWriter.writelnLocaleMsg("pt-inval-config");
-            throw new AMTuneException("Null DB Name");
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-null-db-name"));
         }
         pLogger.log(Level.FINEST, "getDBName", "Returing value. " + val );
         return val;
@@ -583,9 +534,6 @@ public abstract class AMTuneDSBase extends TuneDS {
         try {
             if (ldapCon != null && init) {
                 ldapCon.disconnect();
-            }
-            if (smCon != null && smInit) {
-                smCon.disconnect();
             }
         } catch (LDAPException lex) {
             //Ignore
@@ -685,7 +633,8 @@ public abstract class AMTuneDSBase extends TuneDS {
                     mWriter.writeLocaleMsg("pt-fail-ds-conf");
                     mWriter.writeln("DB Entry Cache Size " + curToken);
                     mWriter.writelnLocaleMsg("pt-inval-config");
-                    throw new AMTuneException("DB cache entry size is 0");
+                    throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                            .getString("pt-error-invalid-db-entry-cache-size"));
                 }
                 long newDBEntryCacheSize =
                         suggestDBEntryCacheSizebyBackend(curToken);
@@ -693,8 +642,9 @@ public abstract class AMTuneDSBase extends TuneDS {
                     mWriter.writeLocaleMsg("pt-cannot-compute-rec-val");
                     mWriter.writeln("DB Cache Size for " + curToken);
                     mWriter.writelnLocaleMsg("pt-cannot-proceed");
-                    throw new AMTuneException("New DB cache entry size " +
-                            "is 0.");
+                    throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                            .getString(
+                            "pt-error-invalid-new-db-entry-cache-size"));
                 }
                 mWriter.writeLocaleMsg("pt-suffix-msg");
                 mWriter.writeln(getSuffixbyBackend(curToken));
@@ -831,117 +781,6 @@ public abstract class AMTuneDSBase extends TuneDS {
     }
 
     /**
-     * This method finds the OpenSSO search Attributes.
-     * @return List of OpenSSO search attributes.
-     * @throws com.sun.identity.tune.common.AMTuneException
-     */
-    protected List getFAMSearchAttrs ()
-    throws AMTuneException {
-        ArrayList attrList = new ArrayList();
-        try {
-            pLogger.log(Level.FINE, "getFAMSearchAttrs",
-                    "Getting OpenSSO search attributes.");
-            String sunKeyAttr[] = {SUNKEY_VALUE};
-            String searchAttr = IPLANET_AM_AUTH_LDAP_USER_SEARCH_ATTRIBUTES;
-            //If SM store is different then use smconfig info get connecting to 
-            //ldap
-            LDAPConnection dsCon = null;
-            String rootSuffix = null;
-            if (!configInfo.isUMSMDSSame()) {
-                dsCon = smCon;
-                rootSuffix = configInfo.getSMConfigInfo().getRootSuffix();
-            } else {
-                dsCon = ldapCon;
-                rootSuffix = configInfo.getDSConfigInfo().getRootSuffix();
-            }
-            LDAPSearchResults myResults = dsCon.search(AUTH_LDAP_SERVICE_DN +
-                    rootSuffix, LDAPv3.SCOPE_SUB,
-                    OBJ_CLASS_FILTER, sunKeyAttr, false);
-            while (myResults.hasMoreElements()) {
-                LDAPEntry myEntry = myResults.next();
-                LDAPAttributeSet entryAttrs = myEntry.getAttributeSet();
-                Enumeration attrsInSet = entryAttrs.getAttributes();
-                while (attrsInSet.hasMoreElements()) {
-                    LDAPAttribute nextAttr =
-                            (LDAPAttribute) attrsInSet.nextElement();
-                    Enumeration attrVals = nextAttr.getStringValues();
-                    while (attrVals.hasMoreElements()) {
-                        String reqVal = (String) attrVals.nextElement();
-                        if (reqVal.indexOf(searchAttr) != -1) {
-                            StringTokenizer st = new StringTokenizer(reqVal,
-                                    "=");
-                            String vals = null;
-                            while (st.hasMoreTokens()) {
-                                vals = st.nextToken();
-                            }
-                            if (vals != null) {
-                                attrList.add(vals);
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (Exception ex) {
-            pLogger.log(Level.FINER, "getFAMSearchAttrs",
-                    "Error getting OpenSSO Search Attributes.");
-            throw new AMTuneException(ex.getMessage());
-        }
-        if (attrList.size() == 0) {
-            pLogger.log(Level.FINER, "getFAMSearchAttrs",
-                    "No values found in " + AUTH_LDAP_SERVICE_DN + 
-                    " using default.");
-            attrList.add("uid");
-        }
-        pLogger.log(Level.FINER, "getFAMSearchAttrs",
-            "Returning OpenSSO search attributes. " +
-            attrList.toString());
-        return attrList;
-    }
-
-    /**
-     * Finds the attributes that need to be indexed.
-     * @param amSearchAttributes OpenSSO search attributes
-     * @param existingIndex Existing LDAP search attributes
-     * @return List of attributes need to be indexed.
-     * @throws com.sun.identity.tune.common.AMTuneException
-     */
-    protected List verifyIndex(List amSearchAttributes, List existingIndex)
-    throws AMTuneException {
-        ArrayList notInIndexList = new ArrayList();
-        try {
-            pLogger.log(Level.FINE, "verifyIndex", "AM Search Attribute " +
-                    amSearchAttributes.toString());
-            pLogger.log(Level.FINE, "verifyIndex", "Existing Index " +
-                    existingIndex.toString());
-            mWriter.writelnLocaleMsg("pt-index-exist");
-            mWriter.writeln("-------------        ----------");
-            Iterator searchAttrItr = amSearchAttributes.iterator();
-            while (searchAttrItr.hasNext()) {
-                String extAt = null;
-                String amAttr = (String) searchAttrItr.next();
-                Iterator extItr = existingIndex.iterator();
-                boolean exist = false;
-                while (extItr.hasNext()) {
-                    extAt = (String) extItr.next();
-                    if (extAt.equalsIgnoreCase(amAttr)) {
-                        exist = true;
-                        mWriter.writeln("Yes              " + amAttr);
-                    }
-                }
-                if (!exist) {
-                    mWriter.writeln("No               " + amAttr);
-                    notInIndexList.add(amAttr);
-                }
-            }
-        } catch (Exception ex) {
-            throw new AMTuneException(ex.getMessage());
-        }
-        pLogger.log(Level.FINE, "verifyIndex", "Attributes to be indexed " +
-                    notInIndexList.toString());
-        return (List)notInIndexList;
-    }
-
-    /**
      * Utility function to merge tow lists.
      * @param list1
      * @param list2
@@ -964,53 +803,6 @@ public abstract class AMTuneDSBase extends TuneDS {
             }
         }
         return list1;
-    }
-
-    /**
-     * Finds the attributes to be indexed.
-     * @param existingIndex List of Existing LDAP index.
-     * @return List of attributes to be indexed.
-     * @throws com.sun.identity.tune.common.AMTuneException
-     */
-    protected List tuneDSIndex(List existingIndex)
-    throws AMTuneException {
-        try {
-            pLogger.log(Level.FINE, "tuneDSIndex", "Tuning DS index.");
-            List amSearchAttrList = getFAMSearchAttrs();
-            List notInSearchIndex;
-            List notInDefaultIdx;
-            mWriter.writeln(LINE_SEP);
-            mWriter.writelnLocaleMsg("pt-tuning-ds-idx");
-            mWriter.writeln(" ");
-            mWriter.writelnLocaleMsg("pt-param-tuning");
-            mWriter.writeln(" ");
-            mWriter.writeLocaleMsg("pt-root-suffix-msg");
-            mWriter.writeln(dsConfInfo.getRootSuffix());
-            mWriter.writeln(" ");
-            mWriter.writelnLocaleMsg("pt-auth-attr-msg");
-            mWriter.writelnLocaleMsg("pt-recommend-idx-msg");
-            mWriter.write(" ");
-            pLogger.log(Level.FINE, "tuneDSIndex", "Verifying amsearch " +
-                    "attributes in existing index attributes list.");
-            notInSearchIndex = verifyIndex(amSearchAttrList, existingIndex);
-            mWriter.writeln(" ");
-            mWriter.writelnLocaleMsg("pt-verify-fam-index-list");
-            mWriter.writeln(" ");
-            /*List defaultList = new ArrayList();
-            for ( int i=0; i< amDefaultIndex.length; i++) {
-                defaultList.add(amDefaultIndex[i]);
-            }*
-             */
-            List defaultList = getListDefaultFAMIndexes();
-            pLogger.log(Level.FINE, "tuneDSIndex", "Verifying default " +
-                    "attributes in existing index attributes list.");
-            notInDefaultIdx = verifyIndex(defaultList, existingIndex);
-            mWriter.writeln(" ");
-            return mergeLists(notInSearchIndex, notInDefaultIdx);
-        } catch (Exception ex) {
-            pLogger.log(Level.SEVERE, "tuneDSIndex", "Error tuning Index.");
-            throw new AMTuneException(ex.getMessage());
-        }
     }
 
     /**
@@ -1063,6 +855,7 @@ public abstract class AMTuneDSBase extends TuneDS {
         mWriter.writelnLocaleMsg("pt-delegated-admin-msg1");
         mWriter.writelnLocaleMsg("pt-delegated-admin-msg2");
         mWriter.writeln(" ");
+        mWriter.writeln(PARA_SEP);
     }
 
     /**
@@ -1079,22 +872,21 @@ public abstract class AMTuneDSBase extends TuneDS {
             mWriter.writelnLocaleMsg("pt-calc-ds-mem");
             dbDirs = availableDBDirs();
             if (dbDirs.size() == 0) {
-                mWriter.writeLocaleMsg("pt-error-loc-db-dir");
                 mWriter.writelnLocaleMsg("pt-cannot-proceed");
-                throw new AMTuneException("Error finding database directory");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-error-loc-db-dir"));
             }
             newDBCacheSize = calculateDBCacheSize();
             if (newDBCacheSize == 0) {
-                mWriter.writeLocaleMsg("pt-error-compute-db-size=");
                 mWriter.writelnLocaleMsg("pt-cannot-proceed");
-                throw new AMTuneException("Error computing DB cache size.");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-error-compute-db-size"));
             }
             memNeeded = newDBCacheSize + calculateTotalNewEntryDBCacheSize();
             if (memNeeded == 0) {
-                mWriter.writeLocaleMsg("pt-unable-mem-req");
                 mWriter.writelnLocaleMsg("pt-cannot-proceed");
-                throw new AMTuneException("Error computing required " +
-                        "memory.");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-unable-mem-req"));
             }
             mWriter.writeLocaleMsg("pt-avail-mem-size");
             mWriter.writeln(Long.toString(memAvail));
@@ -1103,8 +895,8 @@ public abstract class AMTuneDSBase extends TuneDS {
             if (memNeeded <= memAvail) {
                 mWriter.writelnLocaleMsg("pt-enough-mem");
             } else {
-                mWriter.writelnLocaleMsg("pt-no-enough-mem");
-                throw new AMTuneException("No enought memory.");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-no-enough-mem"));
             }
             String dbDirName = new File(instanceDir).getName();
             newDBHomeLocation = AMTuneUtil.TMP_DIR + dbDirName;
@@ -1114,22 +906,15 @@ public abstract class AMTuneDSBase extends TuneDS {
                 createStat = newDBHome.mkdir();
             }
             if (!createStat) {
-                mWriter.writeLocaleMsg("pt-cannot-new-db-home");
                 mWriter.writelnLocaleMsg("pt-cannot-proceed");
-                throw new AMTuneException("Error creating new DB Home.");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-cannot-new-db-home"));
             }
             newNumberOfWorkerThreads = Integer.parseInt(LDAP_WORKER_THREADS);
             if (newNumberOfWorkerThreads == 0) {
-                mWriter.writeLocaleMsg("pt-cannot-new-ds-threads");
                 mWriter.writelnLocaleMsg("pt-cannot-proceed");
-                throw new AMTuneException("Error computing new DS " +
-                        "worker threads");
-            }
-            File checkPassFile = new File(dsPassFilePath);
-            if (!checkPassFile.isFile()) {
-                mWriter.writeLocaleMsg("pt-error-ds-pass-file");
-                mWriter.writelnLocaleMsg("pt-cannot-proceed");
-                throw new AMTuneException("DS Password file not found.");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-cannot-new-ds-threads"));
             }
         } catch (NumberFormatException ex) {
             throw new AMTuneException(ex.getMessage());
@@ -1164,11 +949,11 @@ public abstract class AMTuneDSBase extends TuneDS {
             long sugVal =
                     suggestDBEntryCacheSizebyBackend(curSuffix);
             if (sugVal == 0) {
-                mWriter.writelnLocaleMsg("pt-cannot-compute-rec-db-size");
-                mWriter.write(curSuffix + " ");
                 mWriter.writeLocaleMsg("pt-cannot-proceed");
-                throw new AMTuneException("Error computing recommended db " +
-                        "cache size.");
+                String msg = AMTuneUtil.getResourceBundle()
+                        .getString("pt-cannot-compute-rec-db-size");
+                Object[] param = {curSuffix + " "};
+                throw new AMTuneException(MessageFormat.format(msg, param));
             }
             totalVal = totalVal + sugVal;
         }
@@ -1218,54 +1003,13 @@ public abstract class AMTuneDSBase extends TuneDS {
         return dirList;
     }
     
-    /**
-     * This method parses the index.ldif file and finds out the current
-     * OpenSSO indexes.
-     * 
-     */
-    protected List getListDefaultFAMIndexes() 
+    
+    protected void writePasswordToFile() 
     throws AMTuneException {
-        List dIndex = new ArrayList();
-        try {
-            String idxFile = configInfo.getFAMConfigDir() + FILE_SEP + 
-                    "index.ldif";
-            File idxFh = new File(idxFile);
-            if (!idxFh.isFile()) {
-                pLogger.log(Level.SEVERE, "getListDefaultFAMIndexes",
-                        "Couldn't find file " + idxFile);
-                //throw new AMTuneException("Couldn't find index.ldif.");
-            } else {
-                FileHandler fh = new FileHandler(idxFile);
-                String[] matLines = fh.getMattchingLines("dn:", false);
-                for (int i = 0; i < matLines.length; i++) {
-                    String dn = matLines[i].substring(matLines[i].indexOf(" ") 
-                            + 1, matLines[i].indexOf(","));
-                    String idxattr = AMTuneUtil.getLastToken(dn, "=");
-                    dIndex.add(idxattr.trim());
-                }
-            }
-            String sdsIdxFile = configInfo.getFAMConfigDir() + FILE_SEP + 
-                    "fam_sds_index.ldif";
-            File sdsIdxFh = new File(sdsIdxFile);
-            if (!sdsIdxFh.isFile()) {
-                pLogger.log(Level.SEVERE, "getListDefaultFAMIndexes",
-                        "Couldn't find file " + sdsIdxFile);
-                //throw new AMTuneException("Couldn't find index.ldif.");
-            } else {
-                FileHandler fh = new FileHandler(sdsIdxFile);
-                String[] matLines = fh.getMattchingLines("dn:", false);
-                for (int i = 0; i < matLines.length; i++) {
-                    String dn = matLines[i].substring(matLines[i].indexOf(" ") 
-                            + 1, matLines[i].indexOf(","));
-                    String idxattr = AMTuneUtil.getLastToken(dn, "=");
-                    dIndex.add(idxattr.trim());
-                }
-            }
-        } catch (Exception ex) {
-            throw new AMTuneException(
-                "Error getting default OpenSSO indexes : " +
-                ex.getMessage());
-        }
-        return dIndex;
-    } 
+        //nothing to do
+    }
+    
+    protected void deletePasswordFile() {
+        //nothing to do
+    }
 }
