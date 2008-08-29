@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDMCommon.java,v 1.13 2008-08-19 21:34:12 rmisra Exp $
+ * $Id: IDMCommon.java,v 1.14 2008-08-29 20:40:21 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -41,6 +41,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.StringTokenizer;
@@ -987,63 +988,87 @@ public class IDMCommon extends TestCommon {
      * strPropValue are added to the exisiting list
      */
     public void hotSwapProperty(AMIdentity amid, String strPropName, 
-            String strPropValue)
+            String strPropValue, String strRbl)
     throws Exception {
         entering("hotSwapProperty", null);
         Set set;
         Set origSet;
         Map map;
         String strPropValueOrig;
+        boolean isAutoGenKey;
         try {
             log(Level.FINE, "hotSwapProperty", "Inside IDMCommon");
             map = new HashMap();
             set = new HashSet();
             origSet = new HashSet();
             origSet = amid.getAttribute(strPropName);
+            isAutoGenKey = isPropertyNumberedList(strRbl, strPropName);
+            SortedSet sortset;
+            Iterator itr;
+            String maxSetValue = "0";
+            log(Level.FINE, "hotSwapProperty", "origSet : " + origSet);
             if (origSet.size() != 0) { 
-                SortedSet sortset = new TreeSet();
-                Iterator itr = origSet.iterator();                
-                while (itr.hasNext()) {
-                    strPropValueOrig = (String)itr.next();
-                    sortset.add(strPropValueOrig);
+                if (isAutoGenKey) {
+                    sortset = new TreeSet();
+                    itr = origSet.iterator();                
+                    while (itr.hasNext()) {
+                        strPropValueOrig = (String)itr.next();
+                        sortset.add(strPropValueOrig);
+                    }
+                    maxSetValue = (String)sortset.last();
                 }
-                String maxSetValue = (String)sortset.last();
+                int pos;
+                int pos1;
+                int maxSetVal = 0;
+                if (isAutoGenKey) {
+                    pos = maxSetValue.indexOf("[");
+                    pos1 = maxSetValue.indexOf("]");
+                    maxSetVal = new Integer(maxSetValue.substring(pos + 1 , 
+                        pos1)).intValue();                        
+                }                    
                 map = new HashMap();
                 String strProp;
                 if (origSet.size() > 1) {
                     set = amid.getAttribute(strPropName);
-                    int pos = maxSetValue.indexOf("[");
-                    int pos1 = maxSetValue.indexOf("]");
-                    int maxSetVal = new Integer(maxSetValue.substring(pos 
-                            + 1 , pos1)).intValue();
                     if (strPropValue.contains("|")) {
+ 
                         String strSplit[] = strPropValue.split("\\|");
                         for (int i = 0; i < strSplit.length; i++) {
-                            strProp = "[" + (maxSetVal + i + 1) + "]=" + 
-                                strSplit[i];
                             log(Level.FINE, "hotSwapProperty", "strProp : " + 
-                                strProp);
-                            set.add(strProp);                  
-                        log(Level.FINE, "hotSwapProperty", "strProp(Adding " +
-                                "multi value to multi valued attribute): "
-                                + strProp);
-
+                                strSplit[i]);
+                            if (isAutoGenKey) {
+                                strProp = "[" + (maxSetVal + i + 1) + "]=" + 
+                                        strSplit[i];
+                                log(Level.FINE, "hotSwapProperty", "strProp : " 
+                                        + strProp);
+                                set.add(strProp);                              
+                            } else {
+                                set.add(strSplit[i]);                  
+                                log(Level.FINE, "hotSwapProperty", "strProp(" +
+                                        "Adding multi value to multi valued " +
+                                        "attribute): " + strSplit[i]);
+                            }
                         }                            
                     } else {
-                        strProp = "[" + (maxSetVal + 1) + "]=" + 
-                                strPropValue;
-                        set.add(strProp);                  
-                        log(Level.FINE, "hotSwapProperty", "strProp(Adding " +
-                                "single value to multi valued attribute): "
-                                + strProp);
+                        if (isAutoGenKey) {
+                            set.add("[" + (maxSetVal + 1) + "]=" + 
+                                    strPropValue);
+                            log(Level.FINE, "hotSwapProperty", "strProp : [0]=" 
+                                    + strPropValue);
+                        } else {
+
+                            strProp = strPropValue;
+                            set.add(strPropValue);                  
+                            log(Level.FINE, "hotSwapProperty", "strProp(Adding "
+                                    + "single value to multi valued attribute):"
+                                    + strProp);
+                        }
                     }
                 } else {
-                    if (maxSetValue.contains("[")) {
+                    if (isAutoGenKey) {
                         set.add("[0]=" + strPropValue);
-                        log(Level.FINE, "hotSwapProperty", "strProp(Setting " +
-                                "first value in multi valued attribute): "
-                                + "[0]=" + strPropValue);
-
+                        log(Level.FINE, "hotSwapProperty", "strProp : [0]=" 
+                                + strPropValue);
                     } else {
                        log(Level.FINE, "hotSwapProperty", "Setting " +
                                 "single valued attribute): " + strPropValue);
@@ -1064,5 +1089,36 @@ public class IDMCommon extends TestCommon {
             throw e;
         } 
         exiting("hotSwapProperty");
+    }
+    
+    /**
+     * Checks if the property to be hotswapped is a list that needs an .
+     * autogenerated key. 
+     * strPropBundle       File which lists the properties that need auto gen 
+     * keys
+     * strProp             Property which needs to be checked.
+     */
+    public boolean isPropertyNumberedList(String strPropBundle, String strProp) 
+            throws Exception {
+        boolean isTrue=false;
+        try {
+            ResourceBundle rbl = ResourceBundle.getBundle(strPropBundle);
+            ArrayList alProp = new ArrayList();
+            String strLocalRB = strPropBundle.substring(strPropBundle.indexOf(
+                    fileseparator) + 1, strPropBundle.length());
+            int noofProp = new Integer(rbl.getString(strLocalRB + 
+                    ".noOfProperties")).intValue();
+            for (int i = 0; i < noofProp; i++) {
+                alProp.add(rbl.getString(strLocalRB + i + ".name"));
+            }
+            if (alProp.contains(strProp)) {
+                isTrue = true;
+            } 
+             return isTrue;       
+        } catch (Exception e) {
+            log(Level.SEVERE, "hotSwapProperty", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        } 
     }
 }

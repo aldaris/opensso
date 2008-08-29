@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureUnconfigure.java,v 1.11 2008-07-31 21:31:48 nithyas Exp $
+ * $Id: ConfigureUnconfigure.java,v 1.12 2008-08-29 20:37:30 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -112,15 +112,24 @@ public class ConfigureUnconfigure extends TestCommon {
                         map.put("AgentType",set);
                     }
                 }
-                if (!setValuesHasString(idmc.searchIdentities(admintoken,
+                //Deleting agent profile if exists
+                if (setValuesHasString(idmc.searchIdentities(admintoken,
                         agentId, IdType.AGENTONLY), agentId)) {
-                    idmc.createIdentity(admintoken, realm, IdType.AGENTONLY,
-                            agentId, map);
-                    if (agentType.contains("3.0") && 
-                            agentConfigurationType.equals("centralized")) { 
-                        create.create(agentId, agentType);
-                    }
+                    log(Level.FINEST, "createAgentProfile", "Agent :" + agentId 
+                            + " exists. Deleting it." );
+                    idmc.deleteIdentity(admintoken, realm, IdType.AGENTONLY,
+                            agentId);
                 }
+                //Creating agent profile
+                idmc.createIdentity(admintoken, realm, IdType.AGENTONLY,
+                        agentId, map);
+                if (agentType.contains("3.0") && 
+                        agentConfigurationType.equals("centralized")) { 
+                    log(Level.FINEST, "createAgentProfile", "creating agent " 
+                            + agentId);
+                    create.create(agentId, agentType);
+                }
+
             }
         } catch (Exception e) {
             stopNotificationServer(notificationMap);

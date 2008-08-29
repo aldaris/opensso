@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HotSwapProperties.java,v 1.4 2008-07-31 21:43:19 nithyas Exp $
+ * $Id: HotSwapProperties.java,v 1.5 2008-08-29 20:39:29 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,6 +51,7 @@ public class HotSwapProperties extends TestCommon {
     private int testIdx;
     private String strGblRB = "agentsGlobal";
     private String strLocRB = "HotSwapProperties";
+    private String strPropRB = "AgentPropertieswithAutoGenKeys";
     private String agentId;
     private String strAgentType;    
     private String logoutURL;    
@@ -184,7 +185,8 @@ public class HotSwapProperties extends TestCommon {
                 }
                 String maxSetValue = (String)sortset.last();
                 mapProp.put(strPropName,origSet);
-                idmc.hotSwapProperty(amid, strPropName, strPropValue);
+                idmc.hotSwapProperty(amid, strPropName, strPropValue, "agents" 
+                        + fileseparator + strPropRB);
             } else {
                 log(Level.SEVERE, "hotSwapProperty", "Property : " + 
                         strPropName + " is NOT present. Check property name.");

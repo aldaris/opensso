@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: J2EEAgentHotSwapTests.java,v 1.5 2008-07-29 22:25:45 nithyas Exp $
+ * $Id: J2EEAgentHotSwapTests.java,v 1.6 2008-08-29 20:38:26 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -205,8 +205,7 @@ public class J2EEAgentHotSwapTests  extends TestCommon {
                 strHeaderFetchMode);
         strScriptURL = rbg.getString(strGblRB + ".headerEvalScriptName");
         strScriptURL = strScriptURL.substring(0, strScriptURL.length() - 1);
-        strScriptURL = strScriptURL + "?fetch_mode=" + 
-                strHeaderFetchMode;
+        strScriptURL = strScriptURL + "?fetch_mode=" + strHeaderFetchMode;
         log(Level.FINEST, "formJ2EEScriptURL", "Header Script URL: " + 
                 strScriptURL);
         return strScriptURL;
@@ -454,7 +453,7 @@ public class J2EEAgentHotSwapTests  extends TestCommon {
         String strPropName="";
         String strPropValue="";
         String strEvalValue="";
-        String strResVal="";
+        String strKey="";
         WebClient webClient = new WebClient();
         try {
             strPropName = rbp.getString(strHotSwapRB + testIdx + 
@@ -464,10 +463,16 @@ public class J2EEAgentHotSwapTests  extends TestCommon {
             log(Level.FINE,"accessDeniedURI", "strAgentSampleURI : " + 
                     agentURL + ",strPropValue : " + strPropValue);
             if (!strPropValue.equals("")) {
-            strResVal = rbg.getString(strPropValue);            
-            strPropValue = strResVal.substring(
-                    agentURL.length(),  
-                    strResVal.length());
+                if (strPropValue.contains("]=")) {
+                    strKey = strPropValue.substring(0, 
+                            strPropValue.indexOf("="));
+                    String strResVal = strPropValue.substring(
+                            strPropValue.indexOf("=") + 1, strPropValue.length());
+                    strPropValue = rbg.getString(strResVal);            
+                    strPropValue = strKey + "=" + strPropValue; 
+                } else {
+                    strPropValue = rbg.getString(strPropValue);
+                }
             }
             log(Level.FINE,"accessDeniedURI", "strAgentSampleURI : " + 
                     agentURL + ",strPropValue : " + strPropValue);
@@ -533,7 +538,7 @@ public class J2EEAgentHotSwapTests  extends TestCommon {
             if (!strPropValue.equals("")) {
             strResVal = rbg.getString(strPropValue);            
             strPropValue = strResVal.substring(
-                    agentURL.length(),  
+                            agentURL.length(),  
                     strResVal.length());
             }
             strEvalValue = rbp.getString(strHotSwapRB + testIdx + 
