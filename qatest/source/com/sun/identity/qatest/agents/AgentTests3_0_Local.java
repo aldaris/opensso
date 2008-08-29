@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentTests3_0_Local.java,v 1.3 2008-07-31 21:33:32 nithyas Exp $
+ * $Id: AgentTests3_0_Local.java,v 1.4 2008-08-29 20:31:28 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -147,7 +147,7 @@ public class AgentTests3_0_Local extends TestCommon {
                     strAgentBeingTested.contains("WEBLOGIC")) {
                     strScriptURL = strScriptURL.substring(0,
                             strScriptURL.length() - 1);
-                    strScriptURL = strScriptURL + "?fetch_mode=" + 
+                    strScriptURL = strScriptURL + "fetch_mode=" + 
                             strHeaderFetchMode;
                 }
                 log(Level.FINEST, "setup", "Header script URL: " + 
