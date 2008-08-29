@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AS9ContainerConfigInfo.java,v 1.3 2008-08-04 17:16:32 kanduls Exp $
+ * $Id: AS9ContainerConfigInfo.java,v 1.4 2008-08-29 10:15:27 kanduls Exp $
  */
 
 package com.sun.identity.tune.config;
@@ -31,9 +31,7 @@ import com.sun.identity.tune.base.WebContainerConfigInfoBase;
 import com.sun.identity.tune.common.FileHandler;
 import com.sun.identity.tune.common.AMTuneException;
 import com.sun.identity.tune.util.AMTuneUtil;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -64,33 +62,32 @@ public class AS9ContainerConfigInfo extends WebContainerConfigInfoBase {
     private String tempFile;
     private String acceptorThreadParam;
     private String adminPassFile;
+    private String asAdminPass;
+    String passwordStr; 
     
     /**
      * Creates instance of AS9ContainerConfigInfo
      * @param confRbl Tuning configuration information
      * @throws com.sun.identity.tune.common.AMTuneException
      */
-    public AS9ContainerConfigInfo(ResourceBundle confRbl) 
+    public AS9ContainerConfigInfo(ResourceBundle confRbl, String passFilePath) 
     throws AMTuneException {
         try {
             setWebContainer(AS91_CONTAINER);
             adminPassFile = AMTuneUtil.TMP_DIR + "asadminpass";
             tempFile = AMTuneUtil.TMP_DIR + "cmdoutput";
-            setContainerBaseDir(confRbl.getString(CONTAINER_BASE_DIR));
-            setContainerInstanceName(
-                    confRbl.getString(WEB_CONTAINER_INSTANCE_NAME));
             setContainerInstanceDir(confRbl.getString(CONTAINER_INSTANCE_DIR));
+            setASAdminDir(confRbl.getString(ASADMIN_DIR));
+            setASAdminCmd();
             setASAdminUser(confRbl.getString(ASADMIN_USER));
             setASAdminHost(confRbl.getString(ASADMIN_HOST));
             setASAdminPort(confRbl.getString(ASADMIN_PORT));
             setASAdminSecure(confRbl.getString(ASADMIN_SECURE));
-            setIsInteractive(confRbl.getString(ASADMIN_INTERACTIVE));
             setASAdminTarget(confRbl.getString(ASADMIN_TARGET));
-            setASAdminDir(confRbl.getString(ASADMIN_DIR));
-            setASAdminCmd();
             setASAdminHttpListener(confRbl.getString(ASADMIN_HTTPLISTENER));
             setTuneWebContainerJavaPolicy(
                     confRbl.getString(AMTUNE_WEB_CONTAINER_JAVA_POLICY));
+            setIsInteractive();
             asAdminCommonParamsNoTarget = new StringBuffer("--user ");
             asAdminCommonParamsNoTarget.append(getASAdminUser());
             asAdminCommonParamsNoTarget.append(" --passwordfile ");
@@ -111,7 +108,19 @@ public class AS9ContainerConfigInfo extends WebContainerConfigInfoBase {
             asAdminCommonParams.append(getASAdminTarget());
             acceptorThreadParam = "server.http-service.http-listener." +
                     getASAdminHttpListener() + ACCEPTOR_THREAD_PARAM;
-            writePasswordToFile(confRbl.getString(ASADMIN_PASSWORD));
+            FileHandler pHdl = new FileHandler(passFilePath);
+            String reqLine = pHdl.getLine(ASADMIN_PASSWORD);
+            if (reqLine == null ||
+                    (reqLine != null && 
+                    reqLine.trim().length() < ASADMIN_PASSWORD.length() + 1)) {
+                mWriter.writelnLocaleMsg("pt-cannot-proceed");
+                mWriter.writelnLocaleMsg("pt-as-password-not-found-msg");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle().
+                        getString("pt-as-password-not-found"));
+            } else {
+                setAsAdminPass(AMTuneUtil.getLastToken(reqLine, "="));
+                passwordStr = ASADMIN_PASSWORD_SYNTAX + getAsAdminPass();
+            }
             checkAppServer64BitEnabled();
             fillCfgMap();
         } catch (Exception ex) {
@@ -119,47 +128,30 @@ public class AS9ContainerConfigInfo extends WebContainerConfigInfoBase {
                     "Failed to set Appserver 91 configuration information. ");
             throw new AMTuneException(ex.getMessage());
         } finally {
-            File tempF = new File(tempFile);
-            if (tempF.isFile()) {
-                tempF.delete();
-            }
+            AMTuneUtil.deleteFile(tempFile);
+            deletePasswordFile();
         }
     }
     
-    /**
-     * Writes password to file.
-     * @param password
-     * @throws com.sun.identity.tune.common.AMTuneException
-     */
-    protected void writePasswordToFile (String password)
+    private void setAsAdminPass(String asAdminPass)
     throws AMTuneException {
-        try {
-            pLogger.log(Level.FINE, "writePasswordToFile", "Creating AS91 " +
-                    "password file.");
-            if (password != null && password.trim().length() > 0) {
-                File passFile = new File(adminPassFile);
-                BufferedWriter pOut =
-                        new BufferedWriter(new FileWriter(passFile));
-                pOut.write(ASADMIN_PASSWORD_SYNTAX);
-                pOut.write(password);
-                pOut.flush();
-                pOut.close();
-            } else {
-                mWriter.write(ASADMIN_PASSWORD + " ");
-                mWriter.writeLocaleMsg("pt-not-configured");
-                mWriter.writelnLocaleMsg("pt-cannot-proceed");
-                mWriter.writeLocaleMsg("pt-conf-parm-cust-msg");
-                mWriter.writeln(" amtune-env");
-                throw new AMTuneException("Application Server admin " +
-                        "password not set.");
-            }
-        } catch (Exception ex) {
-            pLogger.log(Level.SEVERE, "writePassWordToFile",
-                    "Couldn't write password to file. ");
-            throw new AMTuneException(ex.getMessage());
+        if (asAdminPass != null && asAdminPass.trim().length() > 0) {
+            this.asAdminPass = asAdminPass.trim();
+        } else {
+            mWriter.writelnLocaleMsg("pt-as-password-not-found-msg");
+            throw new AMTuneException(AMTuneUtil.getResourceBundle().
+                    getString("pt-as-password-null"));
         }
     }
-
+    
+    public String getAsAdminPass() {
+        return asAdminPass;
+    }
+        
+    protected void deletePasswordFile() {
+        AMTuneUtil.deleteFile(getAdminPassfilePath());
+    }
+    
     /**
      * Return admin password file path
      */
@@ -189,7 +181,15 @@ public class AS9ContainerConfigInfo extends WebContainerConfigInfoBase {
             String reqLine = "";
             cfgMap = new HashMap();
             int retVal = AMTuneUtil.executeCommand(getCmd.toString(), 
+                    passwordStr, 
+                    adminPassFile,
                     resultBuffer);
+            if (resultBuffer.toString().indexOf(
+                    "No object matches the specified name") != -1) {
+                AMTuneUtil.printErrorMsg(ASADMIN_HTTPLISTENER);
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-error-invalid-as-http-listener"));
+            }
             if (retVal == 0) {
                 AMTuneUtil.writeResultBufferToTempFile(resultBuffer,
                         tempFile);
@@ -207,11 +207,8 @@ public class AS9ContainerConfigInfo extends WebContainerConfigInfoBase {
                         AMTuneUtil.getLastToken(reqLine, PARAM_VAL_DELIM));
                 cfgF.close();
             } else {
-                pLogger.log(Level.SEVERE, "fillCfgMap",
-                        "Error getting acceptor threads, count threads and " +
-                        "queue size values. ");
-                throw new AMTuneException("Error getting current setting " +
-                        "for threads and queue size.");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-error-get-as-thread-queue-size"));
             }
             String jvmOptParam = getASAdminTarget() + 
                     ".java-config.jvm-options";
@@ -222,9 +219,17 @@ public class AS9ContainerConfigInfo extends WebContainerConfigInfoBase {
             getJvmOptCmd.append(jvmOptParam);
             resultBuffer.setLength(0);
             retVal = AMTuneUtil.executeCommand(getJvmOptCmd.toString(), 
+                    passwordStr, 
+                    adminPassFile,
                     resultBuffer);
             List curJVMOptList = new ArrayList();
-            if (retVal ==0) {
+            if (resultBuffer.toString()
+                    .indexOf("No object matches the specified name") != -1) {
+                AMTuneUtil.printErrorMsg(ASADMIN_TARGET);
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-error-invalid-as-target"));
+            }
+            if (retVal == 0) {
                 String cmdOutput = resultBuffer.toString().
                         replace(jvmOptParam + " = ","");
                 StringTokenizer st = new StringTokenizer(cmdOutput, ",");
@@ -286,10 +291,8 @@ public class AS9ContainerConfigInfo extends WebContainerConfigInfoBase {
                             PARALLEL_GC_THREADS, true));
                 }
             } else {
-                pLogger.log(Level.SEVERE, "fillCfgMap", 
-                        "Error getting Current JVM options ");
-                throw new AMTuneException("Error getting current " +
-                        "JVM options");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-error-getting-jvm-options"));
             }
         } catch (Exception ex) {
             pLogger.log(Level.SEVERE, "fillCfgMap", 
@@ -308,14 +311,13 @@ public class AS9ContainerConfigInfo extends WebContainerConfigInfoBase {
      */
     private void setASAdminUser(String asAdminUser)
     throws AMTuneException {
-        if (asAdminUser != null) {
+        if (asAdminUser != null && asAdminUser.trim().length() > 0) {
             this.asAdminUser = asAdminUser.trim();
         } else {
             mWriter.writeLocaleMsg("pt-not-configured");
-            mWriter.writelnLocaleMsg("pt-cannot-proceed");
-            mWriter.writeLocaleMsg("pt-conf-parm-cust-msg");
-            mWriter.writeln(ASADMIN_USER);
-            throw new AMTuneException("Appserver adminuser is null.");
+            AMTuneUtil.printErrorMsg(ASADMIN_USER);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-as-admin-user-null"));
         }
     }
 
@@ -336,12 +338,13 @@ public class AS9ContainerConfigInfo extends WebContainerConfigInfoBase {
      */
     private void setASAdminHost(String asAdminHost) 
     throws AMTuneException {
-        if (asAdminHost != null) {
+        if (asAdminHost != null && asAdminHost.trim().length() > 0) {
             this.asAdminHost = asAdminHost.trim();
         } else {
-            pLogger.log(Level.INFO, "setASAdminHost", "Appserver adminuser" +
-                    " host name is null so using localhost. ");
-            this.asAdminHost = AMTuneUtil.getHostName();
+            mWriter.writeLocaleMsg("pt-not-configured");
+            AMTuneUtil.printErrorMsg(ASADMIN_HOST);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-null-as-admin-host"));
         }
     }
     
@@ -364,14 +367,19 @@ public class AS9ContainerConfigInfo extends WebContainerConfigInfoBase {
     private void setASAdminPort(String asAdminPort) 
     throws AMTuneException {
         if (asAdminPort != null && asAdminPort.trim().length() > 0) {
+            try {
+                Integer.parseInt(asAdminPort.trim());
+            } catch (NumberFormatException ne) {
+                AMTuneUtil.printErrorMsg(ASADMIN_PORT);
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-error-invalid-port-no"));
+            }
             this.asAdminPort = asAdminPort.trim();
         } else {
              mWriter.writeLocaleMsg("pt-not-configured");
-             mWriter.writelnLocaleMsg("pt-cannot-proceed");
-             mWriter.writeLocaleMsg("pt-conf-parm-cust-msg");
-             mWriter.writeln(ASADMIN_PORT);
-             throw new AMTuneException("Invalid Application server " +
-                     "Admin port.");
+             AMTuneUtil.printErrorMsg(ASADMIN_PORT);
+             throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                     .getString("pt-error-null-as-admin-port"));
         }
     }
     
@@ -389,9 +397,16 @@ public class AS9ContainerConfigInfo extends WebContainerConfigInfoBase {
      * 
      * @param asAdminSecure Admin server secure parameter value.
      */
-    private void setASAdminSecure(String asAdminSecure) {
+    private void setASAdminSecure(String asAdminSecure) 
+    throws AMTuneException {
         if (asAdminSecure != null && asAdminSecure.trim().length() > 0) {
-            this.asAdminSecure = asAdminSecure.trim();
+            if (asAdminSecure.equals("--secure")) {
+                this.asAdminSecure = asAdminSecure.trim();
+            } else {
+                AMTuneUtil.printErrorMsg(ASADMIN_SECURE);
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                     .getString("pt-error-invalid-as-secure-prop"));
+            }
         } else {
             pLogger.log(Level.INFO, "setAdminSecure", 
                     "Application Server Admin port is not secured. ");
@@ -413,14 +428,8 @@ public class AS9ContainerConfigInfo extends WebContainerConfigInfoBase {
      * 
      * @param isInteractive 
      */
-    private void setIsInteractive(String isInteractive) {
-        if (isInteractive != null && isInteractive.trim().length() > 0) {
-            this.isInteractive = Boolean.parseBoolean(isInteractive);
-        } else {
-            pLogger.log(Level.INFO, "setIsInteractive", 
-                    "Setting isInteractive to false.");
+    private void setIsInteractive() {
             this.isInteractive = false;
-        }
     }
     
     /**
@@ -437,13 +446,14 @@ public class AS9ContainerConfigInfo extends WebContainerConfigInfoBase {
      * 
      * @param asAdminTarget
      */
-    private void setASAdminTarget(String asAdminTarget) {
+    private void setASAdminTarget(String asAdminTarget) 
+    throws AMTuneException {
         if (asAdminTarget != null && asAdminTarget.trim().length() > 0) {
             this.asAdminTarget = asAdminTarget.trim();
         } else {
-            pLogger.log(Level.INFO, "setASAdminTarget", 
-                    "Using \"server\" as target.");
-            this.asAdminTarget = "server";
+            AMTuneUtil.printErrorMsg(ASADMIN_TARGET);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-null-as-target"));
         }
     }
     /**
@@ -470,17 +480,15 @@ public class AS9ContainerConfigInfo extends WebContainerConfigInfoBase {
             } else {
                 mWriter.writeLocaleMsg("pt-not-valid-dir");
                 mWriter.writeln(" " + asAdminDir);
-                mWriter.writelnLocaleMsg("pt-cannot-proceed");
-                mWriter.writeLocaleMsg("pt-conf-parm-cust-msg");
-                mWriter.writeln(ASADMIN_DIR);
-                throw new AMTuneException("Invalid asadmin directory.");
+                AMTuneUtil.printErrorMsg(ASADMIN_DIR);
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-error-invalid-as-admin-dir"));
             }
         } else {
             mWriter.writeLocaleMsg("pt-not-configured");
-            mWriter.writelnLocaleMsg("pt-cannot-proceed");
-            mWriter.writeLocaleMsg("pt-conf-parm-cust-msg");
-            mWriter.writeln(ASADMIN_DIR);
-            throw new AMTuneException("Null asadmin directory.");
+            AMTuneUtil.printErrorMsg(ASADMIN_DIR);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-null-as-admin-dir"));
         }
     }
     
@@ -509,10 +517,9 @@ public class AS9ContainerConfigInfo extends WebContainerConfigInfoBase {
         if (!asToolF.isFile()) {
             mWriter.write(asAdminCmd);
             mWriter.writelnLocaleMsg("pt-tool-not-found");
-            mWriter.writelnLocaleMsg("pt-cannot-proceed");
-            mWriter.writeLocaleMsg("pt-conf-parm-cust-msg");
-            mWriter.writeln(ASADMIN_DIR);
-            throw new AMTuneException("asadmin tool not found.");
+            AMTuneUtil.printErrorMsg(ASADMIN_DIR);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-as-admin-tool-not-found"));
         }
     }
     
@@ -619,14 +626,26 @@ public class AS9ContainerConfigInfo extends WebContainerConfigInfoBase {
         jvmcmd.append(" ");
         jvmcmd.append(getAsAdminCommonParamsNoTarget());
         StringBuffer resultBuffer = new StringBuffer();
-        int retVal = AMTuneUtil.executeCommand(jvmcmd.toString(), resultBuffer);
+        int retVal = AMTuneUtil.executeCommand(jvmcmd.toString(), passwordStr, 
+                adminPassFile,
+                resultBuffer);
         if (resultBuffer.indexOf("Unable to connect to admin-server") != -1) {
             mWriter.writelnLocaleMsg("pt-web-not-running-msg");
-            throw new AMTuneException("Unable to connect to appserver.");
-        }
-        if (resultBuffer.indexOf("Unknown host") != -1) {
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-unable-to-connect-to-asadmin-srv"));
+        } else if (resultBuffer.indexOf("Unknown host") != -1) {
             mWriter.writelnLocaleMsg("pt-web-not-running-msg");
-            throw new AMTuneException("Unknow host.");
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-unknow-host"));
+        } else if (resultBuffer.indexOf("Invalid user or password") != -1) {
+            mWriter.writelnLocaleMsg("pt-error-as-check-user-password-msg");
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-as-invalid-user-password"));
+        } else if (resultBuffer.toString().indexOf(
+                "SSL peer shut down incorrectly") != -1) {
+            mWriter.writelnLocaleMsg("pt-error-as-port-ssl-msg");
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-invalid-as-secure-prop"));
         }
         if (retVal == 0) {
             if (resultBuffer.toString().indexOf("sun.arch.data.model = 64") == 

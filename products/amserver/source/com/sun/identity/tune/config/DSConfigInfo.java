@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DSConfigInfo.java,v 1.4 2008-08-12 05:16:34 kanduls Exp $
+ * $Id: DSConfigInfo.java,v 1.5 2008-08-29 10:15:27 kanduls Exp $
  */
 
 package com.sun.identity.tune.config;
@@ -30,6 +30,7 @@ package com.sun.identity.tune.config;
 import com.sun.identity.tune.common.MessageWriter;
 import com.sun.identity.tune.common.AMTuneException;
 import com.sun.identity.tune.common.AMTuneLogger;
+import com.sun.identity.tune.common.FileHandler;
 import com.sun.identity.tune.constants.DSConstants;
 import com.sun.identity.tune.util.AMTuneUtil;
 import java.io.File;
@@ -45,43 +46,48 @@ public class DSConfigInfo implements DSConstants {
     private String dirMgrUid;
     private String dsVersion;
     private String dsToolsDir;
-    private String perlBinDir;
     private AMTuneLogger pLogger;
     private MessageWriter mWriter;
     private boolean isRemoteDS;
-    public DSConfigInfo(ResourceBundle confBundle, boolean isSM) 
+    public DSConfigInfo(ResourceBundle confBundle, String passFilePath) 
     throws AMTuneException {
-        pLogger = AMTuneLogger.getLoggerInst();
-        mWriter = MessageWriter.getInstance();
-        if (!isSM) {
+        try {
+            pLogger = AMTuneLogger.getLoggerInst();
+            mWriter = MessageWriter.getInstance();
             setDsHost(confBundle.getString(DS_HOST));
             checkIsDSHostRemote();
             setDsPort(confBundle.getString(DS_PORT));
             setRootSuffix(confBundle.getString(ROOT_SUFFIX));
-            setDirMgrUid(confBundle.getString(DIRMGR_UID));
-            setDsDirMgrPassword(confBundle.getString(DIRMGR_PASSWORD));
-            setDsVersion(confBundle.getString(DS_VERSION));
+            setDsInstanceDir(confBundle.getString(DS_INSTANCE_DIR));
             if (!isRemoteDS) {
-                setDsInstanceDir(confBundle.getString(DS_INSTANCE_DIR));
-                if (getDsVersion().indexOf(DS5_VERSION) != -1) {
-                    setPerlBinDir(confBundle.getString(PERL_BIN_DIR));
+                if (passFilePath == null || 
+                        (passFilePath != null && 
+                        !new File(passFilePath).exists())) {
+                    mWriter.writelnLocaleMsg("pt-password-file-keys-msg");
+                    throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                            .getString("pt-error-password-file-not-found"));
                 }
-                if (getDsVersion().indexOf(DS63_VERSION) != -1) {
-                    setDSToolsBinDir(confBundle.getString(DS_TOOLS_DIR));
+                FileHandler pHdl = new FileHandler(passFilePath);
+                String reqLine = pHdl.getLine(DIRMGR_PASSWORD);
+                if (reqLine == null ||
+                        (reqLine != null &&
+                        reqLine.trim().length() < DIRMGR_PASSWORD.length() + 
+                        1)) {
+                    mWriter.writelnLocaleMsg("pt-cannot-proceed");
+                    mWriter.writelnLocaleMsg("pt-ds-password-not-found-msg");
+                    throw new AMTuneException(AMTuneUtil.getResourceBundle().
+                            getString("pt-ds-password-not-found"));
+                } else {
+                    setDsDirMgrPassword(AMTuneUtil.getLastToken(reqLine, "="));
                 }
             }
-        } else {
-            setSMDSHost(confBundle.getString(SM_DS_HOST));
-            checkIsDSHostRemote();
-            setSMDSVersion(confBundle.getString(SM_DS_VERSION));
-            setSMDSPort(confBundle.getString(SM_DS_PORT));
-            setSMRootSuffix(confBundle.getString(SM_ROOT_SUFFIX));
-            setSMDirMgrUid(confBundle.getString(SM_DS_DIRMGR_UID));
-            setSMDSDirMgrPassword(confBundle.getString(SM_DIRMGR_PASSWORD));
-            if (!isRemoteDS && getDsVersion().indexOf(DS63_VERSION) != -1) {
-                setSMDSInstanceDir(confBundle.getString(SM_DS_INSTANCE_DIR));
-                setSMDSToolsBinDir(confBundle.getString(SM_DS_TOOLS_DIR));
+            setDsVersion(confBundle.getString(DS_VERSION));
+            if (getDsVersion().indexOf(DS6_VERSION) != -1) {
+                setDSToolsBinDir(confBundle.getString(DS_TOOLS_DIR));
             }
+            setDirMgrUid(confBundle.getString(DIRMGR_BIND_DN));
+        } catch (Exception ex) {
+            throw new AMTuneException(ex.getMessage());
         }
     }
 
@@ -108,13 +114,9 @@ public class DSConfigInfo implements DSConstants {
         if (dsDirMgrPassword != null && dsDirMgrPassword.trim().length() > 0) {
             this.dsDirMgrPassword = dsDirMgrPassword.trim();
         } else {
-            mWriter.writeLocaleMsg("pt-inval-val-msg");
-            AMTuneUtil.printErrorMsg(DIRMGR_PASSWORD);
-            pLogger.log(Level.SEVERE, "setDsDirMgrPassword", 
-                    "Error setting Directory Server Manager Password. " +
-                    "Please check the value for the property " + 
-                    DIRMGR_PASSWORD);
-            throw new AMTuneException("Invalid value for " + DIRMGR_PASSWORD);
+            mWriter.writelnLocaleMsg("pt-ds-password-not-found-msg");
+            throw new AMTuneException(AMTuneUtil.getResourceBundle().
+                    getString("pt-ds-password-null"));
         }
     }
     
@@ -129,24 +131,22 @@ public class DSConfigInfo implements DSConstants {
      */
     private void setDsInstanceDir(String dsInstanceDir) 
     throws AMTuneException {
-        if (dsInstanceDir != null && dsInstanceDir.trim().length() >0){
+        if (dsInstanceDir != null && dsInstanceDir.trim().length() > 0){
             File dirTest = new File(dsInstanceDir);
-            if (dirTest.isDirectory()) {
-                this.dsInstanceDir = dsInstanceDir.trim();
-            } else {
+            if (!dirTest.isDirectory() && !isRemoteDS) {
                 mWriter.writelnLocaleMsg("pt-not-valid-dir");
                 AMTuneUtil.printErrorMsg(DS_INSTANCE_DIR);
-                pLogger.log(Level.SEVERE, "setDsInstanceDir", 
-                        "Directory instance path is not valid directory");
-                throw new AMTuneException("Invalid Directory Path.");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-not-valid-dir"));
+                
+            } else {
+                this.dsInstanceDir = dsInstanceDir.trim();
             }
-        } else {
+        } else if (!isRemoteDS) {
             mWriter.writeLocaleMsg("pt-inval-val-msg");
             AMTuneUtil.printErrorMsg(DS_INSTANCE_DIR);
-            pLogger.log(Level.SEVERE, "setDsInstanceDir", 
-                        "Error setting Directory Instance Path. " +
-                        "Please check the value for " + DS_INSTANCE_DIR);
-                throw new AMTuneException("Invalid Directory Path.");
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-not-valid-dir"));
         }
     }
     
@@ -162,14 +162,17 @@ public class DSConfigInfo implements DSConstants {
     private void setDsHost(String dsHost) 
     throws AMTuneException {
         if (dsHost != null && dsHost.trim().length() > 0) {
+            if (dsHost.indexOf(".") <= 0) {
+                AMTuneUtil.printErrorMsg(DS_HOST);
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-error-fqdn-ds-host-name"));
+            }
             this.dsHost = dsHost.trim();
         } else {
             mWriter.writeLocaleMsg("pt-inval-val-msg");
             AMTuneUtil.printErrorMsg(DS_HOST);
-            pLogger.log(Level.SEVERE, "setDsHost", 
-                    "Error setting Directory Server Host Name. " +
-                    "Please check the value for the property " + DS_HOST);
-            throw new AMTuneException("Invalid value for " + DS_HOST);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-null-ds-host"));
         }
     }
     
@@ -185,14 +188,19 @@ public class DSConfigInfo implements DSConstants {
     private void setDsPort(String dsPort) 
     throws AMTuneException {
         if (dsPort != null && dsPort.trim().length() > 0) {
+            try {
+                Integer.parseInt(dsPort.trim());
+            } catch (NumberFormatException ne) {
+                AMTuneUtil.printErrorMsg(DS_PORT);
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-error-invalid-port-no"));
+            }
             this.dsPort = dsPort.trim();
         } else {
             mWriter.writeLocaleMsg("pt-inval-val-msg");
             AMTuneUtil.printErrorMsg(DS_PORT);
-            pLogger.log(Level.SEVERE, "setDsPort", 
-                    "Error setting Directory Server Port. " +
-                    "Please check the value for the property " + DS_PORT);
-            throw new AMTuneException("Invalid value for " + DS_PORT);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-null-ds-port"));
         }
     }
     
@@ -212,10 +220,8 @@ public class DSConfigInfo implements DSConstants {
         } else {
             mWriter.writeLocaleMsg("pt-inval-val-msg");
             AMTuneUtil.printErrorMsg(ROOT_SUFFIX);
-            pLogger.log(Level.SEVERE, "setRootSuffix",
-                    "Error setting Root Suffix. " +
-                    "Please check the value for the property " + ROOT_SUFFIX);
-            throw new AMTuneException("Invalid value for " + ROOT_SUFFIX);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-null-ds-root-suffix"));
         }
     }
     
@@ -234,11 +240,9 @@ public class DSConfigInfo implements DSConstants {
             this.dirMgrUid = dirMgrUid.trim();
         } else {
             mWriter.writeLocaleMsg("pt-inval-val-msg");
-            AMTuneUtil.printErrorMsg(DIRMGR_UID);
-            pLogger.log(Level.SEVERE, "setDirMgrUid", 
-                    "Error setting Directory Managre UID. " +
-                    "Please check the value for the property " + DIRMGR_UID);
-            throw new AMTuneException("Invalid value for " + DIRMGR_UID);
+            AMTuneUtil.printErrorMsg(DIRMGR_BIND_DN);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-null-ds-bind-dn"));
         }
     }
     public String getDirMgrUid() {
@@ -257,168 +261,13 @@ public class DSConfigInfo implements DSConstants {
         } else {
             mWriter.writeLocaleMsg("pt-inval-val-msg");
             AMTuneUtil.printErrorMsg(DS_VERSION);
-            pLogger.log(Level.SEVERE, "setDsVersion", 
-                    "Error setting Directory server version " +
-                    "Please check the value for " + DS_VERSION);
-            throw new AMTuneException("Invalid value for " + DS_VERSION);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-null-ds-version"));
         }
     }
     
     public String getDsVersion() {
         return dsVersion;
-    }
-    
-    /**
-     * Set Directory server version.
-     * @param dsVersion
-     * @throws com.sun.identity.tune.common.AMTuneException
-     */
-    private void setSMDSVersion(String dsVersion) 
-    throws AMTuneException { 
-        if (dsVersion != null && dsVersion.trim().length() > 0) {
-            this.dsVersion = dsVersion.trim();
-            if (!AMTuneUtil.isSupportedSMDSVersion(dsVersion)) {
-                throw new AMTuneException("Unsupported SM DS Version " + 
-                        SM_DS_VERSION);
-            }
-        } else {
-            mWriter.writeLocaleMsg("pt-inval-val-msg");
-            AMTuneUtil.printErrorMsg(SM_DS_VERSION);
-            pLogger.log(Level.SEVERE, "setSMDSVersion", 
-                    "Error setting Directory server version " +
-                    "Please check the value for " + SM_DS_VERSION);
-            throw new AMTuneException("Invalid value for " + SM_DS_VERSION);
-        }
-    }
-    
-    /**
-     * Set Directory server Manager UID.
-     * @param dirMgrUid
-     * @throws com.sun.identity.tune.common.AMTuneException
-     */
-    private void setSMDirMgrUid(String dirMgrUid) 
-    throws AMTuneException {
-        if (dirMgrUid != null && dirMgrUid.trim().length() > 0) {
-            this.dirMgrUid = dirMgrUid.trim();
-        } else {
-            mWriter.writeLocaleMsg("pt-inval-val-msg");
-            AMTuneUtil.printErrorMsg(SM_DS_DIRMGR_UID);
-            pLogger.log(Level.SEVERE, "setSMDirMgrUid", 
-                    "Error setting Directory Managre UID. " +
-                    "Please check the value for the property " + 
-                    SM_DS_DIRMGR_UID);
-            throw new AMTuneException("Invalid value for " + 
-                    SM_DS_DIRMGR_UID);
-        }
-    }
-    /**
-     * Set Root suffix.
-     * @param rootSuffix
-     * @throws com.sun.identity.tune.common.AMTuneException
-     */
-    private void setSMRootSuffix(String rootSuffix) 
-    throws AMTuneException {
-        if (rootSuffix != null && rootSuffix.trim().length() > 0) {
-            this.rootSuffix = rootSuffix.trim();
-        } else {
-            mWriter.writeLocaleMsg("pt-inval-val-msg");
-            AMTuneUtil.printErrorMsg(SM_ROOT_SUFFIX);
-            pLogger.log(Level.SEVERE, "setSMRootSuffix",
-                    "Error setting Root Suffix. " +
-                    "Please check the value for the property " + 
-                    SM_ROOT_SUFFIX);
-            throw new AMTuneException("Invalid value for " + SM_ROOT_SUFFIX);
-        }
-    }
-    
-    /**
-     * Set Directory Server administrator password.
-     * @param dsDirMgrPassword
-     * @throws com.sun.identity.tune.common.AMTuneException
-     */
-    private void setSMDSDirMgrPassword(String dsDirMgrPassword) 
-    throws AMTuneException {
-        if (dsDirMgrPassword != null && dsDirMgrPassword.trim().length() > 0) {
-            this.dsDirMgrPassword = dsDirMgrPassword.trim();
-        } else {
-            mWriter.writeLocaleMsg("pt-inval-val-msg");
-            AMTuneUtil.printErrorMsg(SM_DIRMGR_PASSWORD);
-            pLogger.log(Level.SEVERE, "setDsDirMgrPassword", 
-                    "Error setting Directory Server Manager Password. " +
-                    "Please check the value for the property " + 
-                    SM_DIRMGR_PASSWORD);
-            if(dsVersion.equalsIgnoreCase(OPEN_DS)) {
-                mWriter.writelnLocaleMsg("pt-fam-password-same");
-            }
-            throw new AMTuneException("Invalid value for " + 
-                    SM_DIRMGR_PASSWORD);
-        }
-    }
-    
-    /**
-     * Set directory Server instance Directory.
-     * @param dsInstanceDir
-     * @throws com.sun.identity.tune.common.AMTuneException
-     */
-    private void setSMDSInstanceDir(String dsInstanceDir) 
-    throws AMTuneException {
-        if (dsInstanceDir != null && dsInstanceDir.trim().length() >0){
-            File dirTest = new File(dsInstanceDir);
-            if (dirTest.isDirectory()) {
-                this.dsInstanceDir = dsInstanceDir.trim();
-            } else {
-                mWriter.writelnLocaleMsg("pt-not-valid-dir");
-                AMTuneUtil.printErrorMsg(SM_DS_INSTANCE_DIR);
-                pLogger.log(Level.SEVERE, "setSMDSInstanceDir", 
-                        "Directory instance path is not valid directory");
-                throw new AMTuneException("Invalid Directory Path.");
-            }
-        } else {
-            mWriter.writeLocaleMsg("pt-inval-val-msg");
-            AMTuneUtil.printErrorMsg(SM_DS_INSTANCE_DIR);
-            pLogger.log(Level.SEVERE, "setSMDSInstanceDir", 
-                        "Error setting Directory Instance Path. " +
-                        "Please check the value for " + SM_DS_INSTANCE_DIR);
-                throw new AMTuneException("Invalid Directory Path.");
-        }
-    }
-    
-    /**
-     * Set Directory Server Host name.
-     * @param dsHost
-     * @throws com.sun.identity.tune.common.AMTuneException
-     */
-    private void setSMDSHost(String dsHost) 
-    throws AMTuneException {
-        if (dsHost != null && dsHost.trim().length() > 0) {
-            this.dsHost = dsHost.trim();
-        } else {
-            mWriter.writeLocaleMsg("pt-inval-val-msg");
-            AMTuneUtil.printErrorMsg(SM_DS_HOST);
-            pLogger.log(Level.SEVERE, "setSMDSHost", 
-                    "Error setting Directory Server Host Name. " +
-                    "Please check the value for the property " + SM_DS_HOST);
-            throw new AMTuneException("Invalid value for " + SM_DS_HOST);
-        }
-    }
-    
-    /**
-     * Set Directory server port.
-     * @param dsPort
-     * @throws com.sun.identity.tune.common.AMTuneException
-     */
-    private void setSMDSPort(String dsPort) 
-    throws AMTuneException {
-        if (dsPort != null && dsPort.trim().length() > 0) {
-            this.dsPort = dsPort.trim();
-        } else {
-            mWriter.writeLocaleMsg("pt-inval-val-msg");
-            AMTuneUtil.printErrorMsg(SM_DS_PORT);
-            pLogger.log(Level.SEVERE, "setSMDSPort", 
-                    "Error setting Directory Server Port. " +
-                    "Please check the value for the property " + SM_DS_PORT);
-            throw new AMTuneException("Invalid value for " + SM_DS_PORT);
-        }
     }
     
     /**
@@ -429,24 +278,20 @@ public class DSConfigInfo implements DSConstants {
     private void setDSToolsBinDir(String dsToolsDir) 
     throws AMTuneException {
         if (dsToolsDir != null && dsToolsDir.trim().length() > 0) {
-            this.dsToolsDir = dsToolsDir.trim();
             File dir = new File(dsToolsDir);
-            if (!dir.isDirectory()) {
+            if (!dir.isDirectory() && !isRemoteDS) {
                 mWriter.writelnLocaleMsg("pt-not-valid-dir");
                 AMTuneUtil.printErrorMsg(DS_TOOLS_DIR);
-                pLogger.log(Level.SEVERE, "setDS6BinDir",
-                        "Invalid Bin Directory Path. " +
-                        "Please check the value for " + DS_TOOLS_DIR);
-                throw new AMTuneException("Invalid directory path for " +
-                        DS_TOOLS_DIR);
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-not-valid-dir"));
+            } else {
+            	this.dsToolsDir = dsToolsDir.trim();
             }
-        } else {
+        } else if (!isRemoteDS) {
             mWriter.writeLocaleMsg("pt-inval-val-msg");
             AMTuneUtil.printErrorMsg(DS_TOOLS_DIR);
-            pLogger.log(Level.SEVERE, "setDS6BinDir",
-                    "Error setting Directory 6 bin directory " +
-                    "Please check the value for " + DS_TOOLS_DIR);
-            throw new AMTuneException("Invalid value for " + DS_TOOLS_DIR);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-null-ds-tools-dir"));
         }
     }
     
@@ -454,43 +299,6 @@ public class DSConfigInfo implements DSConstants {
         return dsToolsDir;
     }
     
-    /**
-     * Set DSEE 6.X bin directory.
-     * @param dsToolsBinDir
-     * @throws com.sun.identity.tune.common.AMTuneException
-     */
-    private void setSMDSToolsBinDir(String dsToolsDir) 
-    throws AMTuneException {
-        if (dsToolsDir != null && dsToolsDir.trim().length() > 0) {
-            this.dsToolsDir = dsToolsDir.trim();
-            File dir = new File(dsToolsDir);
-            if (!dir.isDirectory()) {
-                mWriter.writelnLocaleMsg("pt-not-valid-dir");
-                AMTuneUtil.printErrorMsg(SM_DS_TOOLS_DIR);
-                pLogger.log(Level.SEVERE, "setSMDSToolsBinDir",
-                        "Invalid Bin Directory Path. " +
-                        "Please check the value for " + SM_DS_TOOLS_DIR);
-                throw new AMTuneException("Invalid directory path for " +
-                        SM_DS_TOOLS_DIR);
-            }
-        } else {
-            mWriter.writeLocaleMsg("pt-inval-val-msg");
-            AMTuneUtil.printErrorMsg(SM_DS_TOOLS_DIR);
-            pLogger.log(Level.SEVERE, "setDS6BinDir",
-                    "Error setting Directory 6 bin directory " +
-                    "Please check the value for " + SM_DS_TOOLS_DIR);
-            throw new AMTuneException("Invalid value for " + SM_DS_TOOLS_DIR);
-        }
-    }
-    
-    private void setPerlBinDir(String perlBinDir) {
-        this.perlBinDir = perlBinDir;
-    }
-    
-    public String getPerlBinDir() {
-        return perlBinDir;
-    }
-
     public boolean isRemoteDS() {
         return isRemoteDS;
     }

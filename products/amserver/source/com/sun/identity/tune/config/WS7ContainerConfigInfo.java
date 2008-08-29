@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WS7ContainerConfigInfo.java,v 1.2 2008-07-25 06:14:04 kanduls Exp $
+ * $Id: WS7ContainerConfigInfo.java,v 1.3 2008-08-29 10:15:27 kanduls Exp $
  */
 
 package com.sun.identity.tune.config;
@@ -31,9 +31,7 @@ import com.sun.identity.tune.base.WebContainerConfigInfoBase;
 import com.sun.identity.tune.common.FileHandler;
 import com.sun.identity.tune.common.AMTuneException;
 import com.sun.identity.tune.util.AMTuneUtil;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -60,6 +58,8 @@ public class WS7ContainerConfigInfo extends WebContainerConfigInfoBase {
     private String wsAdminCommonParams;
     private Map cfgMap;
     private String tempFile;
+    private String wsAdminPass;
+    private String passWordStr;
 
     /**
      * Constructs the object
@@ -67,20 +67,29 @@ public class WS7ContainerConfigInfo extends WebContainerConfigInfoBase {
      * @param confRbl
      * @throws com.sun.identity.tune.common.AMTuneException
      */
-    public WS7ContainerConfigInfo(ResourceBundle confRbl)
+    public WS7ContainerConfigInfo(ResourceBundle confRbl, String passFilePath)
     throws AMTuneException {
         try {
             setWebContainer(WS7_CONTAINER);
             adminPassFile = AMTuneUtil.TMP_DIR + "wsadminpass";
             tempFile = AMTuneUtil.TMP_DIR + "cmdoutput";
-            setContainerBaseDir(confRbl.getString(CONTAINER_BASE_DIR));
-            setContainerInstanceName(
-                    confRbl.getString(WEB_CONTAINER_INSTANCE_NAME));
             setContainerInstanceDir(confRbl.getString(CONTAINER_INSTANCE_DIR));
             setWSAdminDir(confRbl.getString(WSADMIN_DIR));
             setWSAdminCmd();
             setWSAdminUser(confRbl.getString(WSADMIN_USER));
-            writePasswordToFile(confRbl.getString(WSADMIN_PASSWORD));
+            FileHandler pHdl = new FileHandler(passFilePath);
+            String reqLine = pHdl.getLine(WADM_PASSWORD);
+            if (reqLine == null ||
+                    (reqLine != null && 
+                    reqLine.trim().length() < WADM_PASSWORD.length() + 1)) {
+                mWriter.writelnLocaleMsg("pt-cannot-proceed");
+                mWriter.writelnLocaleMsg("pt-ws-password-not-found-msg");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle().
+                        getString("pt-ws-password-not-found"));
+            } else {
+                setWsAdminPass(AMTuneUtil.getLastToken(reqLine, "="));
+                passWordStr = WS7ADMIN_PASSWORD_SYNTAX + getWsAdminPass();
+            }
             setWSAdminHost(confRbl.getString(WSADMIN_HOST));
             setWSAdminPort(confRbl.getString(WSADMIN_PORT));
             setWSAdminSecure(confRbl.getString(WSADMIN_SECURE));
@@ -101,69 +110,32 @@ public class WS7ContainerConfigInfo extends WebContainerConfigInfoBase {
                    "Failed to set webserver configuration information. ");
            throw new AMTuneException(ex.getMessage());
         } finally {
-            File tempF = new File(tempFile);
-            if (tempF.isFile()) {
-                tempF.delete();
-            }
+            AMTuneUtil.deleteFile(tempFile);
+            deletePasswordFile();
         }
     }
 
-    /**
-     * Writes password to file.
-     * @param password
-     * @throws com.sun.identity.tune.common.AMTuneException
-     */
-    protected void writePasswordToFile (String password)
+    protected void deletePasswordFile() {
+        AMTuneUtil.deleteFile(getWSAdminPassFilePath());
+    }
+
+    private void setWsAdminPass(String wsAdminPass)
     throws AMTuneException {
-        try {
-            pLogger.log(Level.FINE, "writePasswordToFile", "Creating WS7 " +
-                    "password file.");
-            if (password != null && password.trim().length() > 0) {
-                File passFile = new File(adminPassFile);
-                BufferedWriter pOut =
-                        new BufferedWriter(new FileWriter(passFile));
-                pOut.write(WS7ADMIN_PASSWORD_SYNTAX);
-                pOut.write(password);
-                pOut.flush();
-                pOut.close();
-            } else {
-                mWriter.writeLocaleMsg("pt-not-configured");
-                mWriter.writelnLocaleMsg("pt-cannot-proceed");
-                mWriter.writeLocaleMsg("pt-conf-parm-cust-msg");
-                mWriter.writeln(WSADMIN_PASSWORD);
-                throw new AMTuneException("Webserver admin " +
-                        "password not set.");
-            }
-        } catch (Exception ex) {
-            pLogger.log(Level.SEVERE, "writePassWordToFile",
-                    "Couldn't write password to file. ");
-            throw new AMTuneException(ex.getMessage());
+        if (wsAdminPass != null && wsAdminPass.trim().length() > 0) {
+            this.wsAdminPass = wsAdminPass.trim();
+        } else {
+            mWriter.writelnLocaleMsg("pt-ws-password-not-found-msg");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle().
+                        getString("pt-ws-password-null"));
         }
     }
-
+    
+    public String getWsAdminPass() {
+        return wsAdminPass;
+    }
     
     public String getWSAdminPassFilePath() {
         return adminPassFile;
-    }
-
-    protected void setContainerInstanceName(String containerInstanceName) {
-        if ((containerInstanceName == null) ||
-                (containerInstanceName != null &&
-                (containerInstanceName.trim().length() == 0))) {
-            super.setContainerInstanceName(AMTuneUtil.getHostName());
-        } else {
-            super.setContainerInstanceName(containerInstanceName.trim());
-        }
-    }
-
-    protected void setContainerInstanceDir(String containerInstanceDir)
-    throws AMTuneException {
-        if (containerInstanceDir == null) {
-            super.setContainerInstanceDir(getContainerBaseDir() +
-                    FILE_SEP + "https-" + getContainerInstanceName());
-        } else {
-            super.setContainerInstanceDir(containerInstanceDir);
-        }
     }
 
     private void setWSAdminDir(String wsAdminDir)
@@ -173,10 +145,9 @@ public class WS7ContainerConfigInfo extends WebContainerConfigInfoBase {
             this.wsAdminDir = wsAdminDir.trim();
         } else {
             mWriter.writeLocaleMsg("pt-not-configured");
-            mWriter.writelnLocaleMsg("pt-cannot-proceed");
-            mWriter.writeLocaleMsg("pt-conf-parm-cust-msg");
-            mWriter.writeln(WSADMIN_DIR);
-            throw new AMTuneException("WS7 installation location is wrong.");
+            AMTuneUtil.printErrorMsg(WSADMIN_DIR);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-invalid-wadm-tool-dir"));
         }
     }
 
@@ -196,7 +167,8 @@ public class WS7ContainerConfigInfo extends WebContainerConfigInfoBase {
             mWriter.write(wsAdminCmd);
             mWriter.writeLocaleMsg("pt-tool-not-found");
             mWriter.writeLocaleMsg("pt-cannot-proceed");
-            throw new AMTuneException("Couldn't find wadm file.");
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-tool-not-found"));
         }
     }
 
@@ -204,13 +176,15 @@ public class WS7ContainerConfigInfo extends WebContainerConfigInfoBase {
         return wsAdminCmd;
     }
 
-    
-
-    private void setWSAdminHost(String wsAdminHost) {
-        if (wsAdminHost != null) {
+    private void setWSAdminHost(String wsAdminHost) 
+    throws AMTuneException {
+        if (wsAdminHost != null && wsAdminHost.trim().length() > 0) {
             this.wsAdminHost = wsAdminHost.trim();
         } else {
-            this.wsAdminHost = AMTuneUtil.getHostName();
+            mWriter.writeLocaleMsg("pt-not-configured");
+            AMTuneUtil.printErrorMsg(WSADMIN_HOST);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-null-ws-host-name"));
         }
     }
 
@@ -218,12 +192,23 @@ public class WS7ContainerConfigInfo extends WebContainerConfigInfoBase {
         return wsAdminHost;
     }
 
-    private void setWSAdminSecure(String wsAdminSecure) {
-        if (wsAdminSecure != null &&
-                wsAdminSecure.indexOf("--ssl=true") != -1) {
-            isAdminPortSecure = true;
+    private void setWSAdminSecure(String wsAdminSecure) 
+    throws AMTuneException {
+        if (wsAdminSecure != null && wsAdminSecure.trim().length() > 0) {
+            if (wsAdminSecure.equals("--ssl=true")) {
+                isAdminPortSecure = true;
+            } else if (wsAdminSecure.equals("--ssl=false")) {
+                isAdminPortSecure = false;
+            } else {
+                AMTuneUtil.printErrorMsg(WSADMIN_SECURE);
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-error-invalid-ws-secure-prop"));
+            }
         } else {
-            isAdminPortSecure = false;
+            mWriter.writeLocaleMsg("pt-not-configured");
+            AMTuneUtil.printErrorMsg(WSADMIN_SECURE);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-null-ws-admin-secure"));
         }
     }
 
@@ -231,11 +216,15 @@ public class WS7ContainerConfigInfo extends WebContainerConfigInfoBase {
         return isAdminPortSecure;
     }
 
-    private void setWSAdminConfig(String wsAdminConfig) {
-        if (wsAdminConfig == null) {
-            this.wsAdminConfig = getContainerInstanceName();
+    private void setWSAdminConfig(String wsAdminConfig) 
+    throws AMTuneException {
+        if (wsAdminConfig != null && wsAdminConfig.trim().length() > 0) {
+            this.wsAdminConfig = wsAdminConfig.trim();
         } else {
-            this.wsAdminConfig = wsAdminConfig;
+            mWriter.writeLocaleMsg("pt-not-configured");
+            AMTuneUtil.printErrorMsg(WSADMIN_CONFIG);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-null-ws-config-name"));
         }
     }
 
@@ -247,13 +236,12 @@ public class WS7ContainerConfigInfo extends WebContainerConfigInfoBase {
     throws AMTuneException {
         if (wsAdminHTTPListener != null &&
                 wsAdminHTTPListener.trim().length() > 0) {
-            this.wsAdminHttpListener = wsAdminHTTPListener;
+            this.wsAdminHttpListener = wsAdminHTTPListener.trim();
         } else {
             mWriter.writeLocaleMsg("pt-not-configured");
-            mWriter.writelnLocaleMsg("pt-cannot-proceed");
-            mWriter.writeLocaleMsg("pt-conf-parm-cust-msg");
-            mWriter.writeln(WSADMIN_HTTPLISTENER + " ");
-            throw new AMTuneException("WebServer http Listener is null.");
+            AMTuneUtil.printErrorMsg(WSADMIN_HTTPLISTENER);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-null-ws-http-listener"));
         }
     }
 
@@ -271,26 +259,66 @@ public class WS7ContainerConfigInfo extends WebContainerConfigInfoBase {
         String resultCmd = getWSAdminCmd() + "list-configs" +
                 wsadmCommonParamsNoConfig;
         StringBuffer resultBuffer = new StringBuffer();
-        int retVal = AMTuneUtil.executeCommand(resultCmd, resultBuffer);
+        int retVal = AMTuneUtil.executeCommand(resultCmd, passWordStr, 
+                adminPassFile,
+                resultBuffer);
+        if (resultBuffer.indexOf("Unable to connect to admin-server") != -1) {
+            mWriter.writelnLocaleMsg("pt-web-not-running-msg");
+            throw new AMTuneException(AMTuneUtil.getResourceBundle().getString(
+                    "pt-error-unable-to-connect-to-asadmin-srv"));
+        } else if (resultBuffer.toString().indexOf(
+                "Invalid user or password") != -1) {
+            mWriter.writelnLocaleMsg("pt-error-ws-check-user-password-msg");
+            throw new AMTuneException(AMTuneUtil.getResourceBundle().getString(
+                    "pt-error-ws-invalid-user-password"));
+        } else if (resultBuffer.toString().indexOf("Unknown host :") != -1) {
+            AMTuneUtil.printErrorMsg(WSADMIN_HOST);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle().getString(
+                    "pt-error-unknow-host"));
+        } else if(resultBuffer.toString().indexOf("Invalid value for ssl") != 
+                -1) {
+            AMTuneUtil.printErrorMsg(WSADMIN_SECURE);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle().getString(
+                    "pt-error-invalid-ws-ssl"));
+        } else if(resultBuffer.toString().indexOf(
+                "The server requires an SSL connection") != -1) {
+            mWriter.writelnLocaleMsg("pt-error-ws-port-ssl-msg");
+            AMTuneUtil.printErrorMsg(WSADMIN_SECURE);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle().getString(
+                    "pt-error-invalid-ws-ssl"));
+        }
+        boolean valid = false;
         if (retVal == 0) {
-            if (resultBuffer.toString().indexOf(getWSAdminConfig()) == -1) {
-                mWriter.writeLocaleMsg("pt-web-conf-error");
-                mWriter.write(WSADMIN_CONFIG + " ");
-                mWriter.writelnLocaleMsg("pt-web-invalid");
+            StringTokenizer str = new StringTokenizer(resultBuffer.toString(),
+                    "\n");
+            while (str.hasMoreTokens()) {
+                String token = str.nextToken();
+                if (token.indexOf(getWSAdminConfig()) != -1) {
+                    StringTokenizer str2 = new StringTokenizer(token, " ");
+                    while (str2.hasMoreTokens()) {
+                        if (str2.nextToken().trim().equalsIgnoreCase(
+                                getWSAdminConfig())) {
+                            valid = true;
+                        }
+                    }
+                }
+            }
+            if (!valid) {
                 mWriter.writeLocaleMsg("pt-web-cur-wadm-settings");
                 mWriter.writeln(getWSAdminConfig());
                 mWriter.writeLocaleMsg("pt-web-cur-configs");
                 mWriter.writeln(resultBuffer.toString());
                 mWriter.writeLocaleMsg("pt-conf-parm-cust-msg");
                 mWriter.writeln(WSADMIN_CONFIG);
-                throw new AMTuneException("Web server config is wrong");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-error-invalid-ws-config-name"));
             } else {
                 pLogger.log(Level.INFO, "validateWSConfig", "Validated WS " +
                         "config " + resultBuffer.toString());
             }
         } else {
-            mWriter.writelnLocaleMsg("pt-web-wadm-conf-error");
-            throw new AMTuneException("Error validating WS 7.x config.");
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-web-wadm-conf-error"));
         }
     }
 
@@ -303,37 +331,57 @@ public class WS7ContainerConfigInfo extends WebContainerConfigInfoBase {
         String resultCmd = getWSAdminCmd() + "list-http-listeners" +
                 wsAdminCommonParams;
         StringBuffer resultBuffer = new StringBuffer();
-        int retVal = AMTuneUtil.executeCommand(resultCmd, resultBuffer);
+        int retVal = AMTuneUtil.executeCommand(resultCmd, passWordStr, 
+                adminPassFile,
+                resultBuffer);
+        boolean valid = false;
         if (retVal == 0) {
-            if (resultBuffer.toString().indexOf(
-                    getWSAdminHttpListener()) == -1) {
+            StringTokenizer str = new StringTokenizer(resultBuffer.toString(),
+                    "\n");
+            while (str.hasMoreTokens()) {
+                String token = str.nextToken();
+                if (token.indexOf(getWSAdminHttpListener()) != -1) {
+                    StringTokenizer str2 = new StringTokenizer(token, " ");
+                    while (str2.hasMoreTokens()) {
+                        if (str2.nextToken().trim()
+                                .equalsIgnoreCase(getWSAdminHttpListener())) {
+                        valid = true;
+                        }
+                    }
+                }
+            }
+            if (!valid) {
                 mWriter.writeLocaleMsg("pt-web-cur-http-listener-msg");
                 mWriter.writeln(getWSAdminHttpListener());
                 mWriter.writeLocaleMsg("pt-web-cur-listeners");
                 mWriter.writeln(resultBuffer.toString());
                 mWriter.writeLocaleMsg("pt-conf-parm-cust-msg");
                 mWriter.writeln(WSADMIN_HTTPLISTENER);
-                throw new AMTuneException("Web server Http-Listener " +
-                        "is not valid" );
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-error-invalid-ws-http-listener"));
             } else {
                 pLogger.log(Level.INFO, "validateWSHttpListener",
-                        "Validated WS httplistener" + resultBuffer.toString());
+                        "Validated WS httplistener " + 
+                        getWSAdminHttpListener());
             }
         } else {
-            mWriter.writelnLocaleMsg("pt-web-wadm-httplistener-error");
-            throw new AMTuneException("Error validating HTTPListener.");
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-web-wadm-httplistener-error"));
         }
     }
 
     /**
      * Checks if Web server is using 64 bit JVM
      */
-    private void checkWebContainer64BitEnabled() {
+    private void checkWebContainer64BitEnabled() 
+    throws AMTuneException {
         mWriter.writelnLocaleMsg("pt-web-check-jvmbits");
         String jvmcmd = getWSAdminCmd() + "get-config-prop" +
                 wsAdminCommonParams + " platform";
         StringBuffer resultBuffer = new StringBuffer();
-        int retVal = AMTuneUtil.executeCommand(jvmcmd, resultBuffer);
+        int retVal = AMTuneUtil.executeCommand(jvmcmd, passWordStr, 
+                adminPassFile,
+                resultBuffer);
         if (retVal == 0) {
             if (resultBuffer.toString().indexOf("64") == -1) {
                 setJVM64BitEnabled(false);
@@ -369,7 +417,9 @@ public class WS7ContainerConfigInfo extends WebContainerConfigInfoBase {
             StringBuffer resultBuffer = new StringBuffer();
             String reqLine = "";
             cfgMap = new HashMap();
-            int retVal = AMTuneUtil.executeCommand(propCmd, resultBuffer);
+            int retVal = AMTuneUtil.executeCommand(propCmd, passWordStr, 
+                    adminPassFile,
+                    resultBuffer);
             if (retVal == 0) {
                 AMTuneUtil.writeResultBufferToTempFile(resultBuffer,
                         tempFile);
@@ -391,10 +441,13 @@ public class WS7ContainerConfigInfo extends WebContainerConfigInfoBase {
                 pLogger.log(Level.SEVERE, "fillCfgMap",
                         "Error getting get-thread-pool-prop configuration " +
                         "information. ");
-                throw new AMTuneException("Error getting thread pool prop.");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-error-getting-thread-pool-prop"));
             }
             resultBuffer.setLength(0);
-            retVal = AMTuneUtil.executeCommand(httpPropCmd, resultBuffer);
+            retVal = AMTuneUtil.executeCommand(httpPropCmd, passWordStr, 
+                    adminPassFile,
+                    resultBuffer);
             if (retVal == 0) {
                 AMTuneUtil.writeResultBufferToTempFile(resultBuffer,
                         tempFile);
@@ -407,10 +460,13 @@ public class WS7ContainerConfigInfo extends WebContainerConfigInfoBase {
                 pLogger.log(Level.SEVERE, "fillCfgMap",
                         "Error getting get-http-listener-prop configuration " +
                         "information. ");
-                throw new AMTuneException("Error getting http listener prop");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-error-getting-http-list-prop"));
             }
             resultBuffer.setLength(0);
-            retVal = AMTuneUtil.executeCommand(statsPropCmd, resultBuffer);
+            retVal = AMTuneUtil.executeCommand(statsPropCmd, passWordStr, 
+                    adminPassFile,
+                    resultBuffer);
             if (retVal == 0) {
                 AMTuneUtil.writeResultBufferToTempFile(resultBuffer,
                         tempFile);
@@ -423,10 +479,13 @@ public class WS7ContainerConfigInfo extends WebContainerConfigInfoBase {
                 pLogger.log(Level.SEVERE, "fillCfgMap",
                         "Error getting get-stats-prop configuration " +
                         "information. ");
-                throw new AMTuneException("Error getting stats prop.");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-error-getting-stats-prop"));
             }
             resultBuffer.setLength(0);
-             retVal = AMTuneUtil.executeCommand(listJvmOptions, resultBuffer);
+            retVal = AMTuneUtil.executeCommand(listJvmOptions, passWordStr,
+                    adminPassFile,
+                    resultBuffer);
             if (retVal == 0) {
                 AMTuneUtil.writeResultBufferToTempFile(resultBuffer,
                         tempFile);
@@ -473,7 +532,8 @@ public class WS7ContainerConfigInfo extends WebContainerConfigInfoBase {
                 pLogger.log(Level.SEVERE, "fillCfgMap",
                         "Error getting list-jvm-options configuration " +
                         "information. ");
-                throw new AMTuneException("Error gettig list jvm options.");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-error-getting-jvm-options"));
             }
         } catch (Exception ex) {
             pLogger.log(Level.SEVERE, "fillCfgMap", "Error getting " +
@@ -515,13 +575,19 @@ public class WS7ContainerConfigInfo extends WebContainerConfigInfoBase {
     private void setWSAdminPort(String wsAdminPort) 
     throws AMTuneException {
         if (wsAdminPort != null && wsAdminPort.trim().length() > 0) {
+            try {
+                Integer.parseInt(wsAdminPort.trim());
+            } catch (NumberFormatException ne) {
+                AMTuneUtil.printErrorMsg(WSADMIN_PORT);
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-error-invalid-port-no"));
+            }
             this.wsAdminPort = wsAdminPort.trim();
         } else {
              mWriter.writeLocaleMsg("pt-not-configured");
-             mWriter.writelnLocaleMsg("pt-cannot-proceed");
-             mWriter.writeLocaleMsg("pt-conf-parm-cust-msg");
-             mWriter.writeln(WSADMIN_PORT);
-             throw new AMTuneException("Invalid Web server Admin port.");
+             AMTuneUtil.printErrorMsg(WSADMIN_PORT);
+             throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                     .getString("pt-error-null-ws-admin-port"));
         }
     }
     
@@ -546,10 +612,9 @@ public class WS7ContainerConfigInfo extends WebContainerConfigInfoBase {
             this.wsAdminUser = wsAdminUser.trim();
         } else {
              mWriter.writeLocaleMsg("pt-not-configured");
-             mWriter.writelnLocaleMsg("pt-cannot-proceed");
-             mWriter.writeLocaleMsg("pt-conf-parm-cust-msg");
-             mWriter.writeln(WSADMIN_USER);
-             throw new AMTuneException("Invalid Web server Admin User.");
+             AMTuneUtil.printErrorMsg(WSADMIN_USER);
+             throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                     .getString("pt-error-null-ws-admin-user"));
         }
     }
     

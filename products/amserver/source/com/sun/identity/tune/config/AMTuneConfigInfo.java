@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneConfigInfo.java,v 1.7 2008-08-19 19:09:28 veiming Exp $
+ * $Id: AMTuneConfigInfo.java,v 1.8 2008-08-29 10:15:27 kanduls Exp $
  */
 
 package com.sun.identity.tune.config;
@@ -31,6 +31,7 @@ import com.sun.identity.tune.base.WebContainerConfigInfoBase;
 import com.sun.identity.tune.common.MessageWriter;
 import com.sun.identity.tune.common.AMTuneException;
 import com.sun.identity.tune.common.AMTuneLogger;
+import com.sun.identity.tune.common.FileHandler;
 import com.sun.identity.tune.constants.DSConstants;
 import com.sun.identity.tune.constants.FAMConstants;
 import com.sun.identity.tune.constants.AMTuneConstants;
@@ -39,6 +40,7 @@ import com.sun.identity.tune.util.AMTuneUtil;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 
@@ -52,14 +54,12 @@ FAMConstants, WebContainerConstants {
     private AMTuneLogger pLogger;
     private MessageWriter mWriter;
     private boolean isReviewMode;
+    private String logType;
     private boolean tuneOS;
     private boolean tuneWebContainer;
     private boolean tuneDS;
     private boolean tuneFAM;
     private boolean isJVM64BitAvailable;
-    private String osType;
-    private String osPlatform;
-    private String hostName;
     private String webContainer;
     private String famAdmLocation;
     private String famConfigDir;
@@ -107,9 +107,7 @@ FAMConstants, WebContainerConstants {
     private WebContainerConfigInfoBase webConfigInfo = null;
     private ResourceBundle confBundle;
     private DSConfigInfo dsConfigInfo;
-    private DSConfigInfo smConfigInfo;
-    private boolean isUMSMDSSame;
-    private boolean tuneUMOnly;
+    private String passFilePath  = null;
     
     /**
      * Constructs the instance of AMTuneConfigInfo
@@ -118,9 +116,10 @@ FAMConstants, WebContainerConstants {
      * searched in the classpath.
      * @throws com.sun.identity.tune.common.AMTuneException
      */
-    public AMTuneConfigInfo(String confFileName)
+    public AMTuneConfigInfo(String confFileName, String passFilePath)
     throws AMTuneException {
         this.confFileName = confFileName;
+        this.passFilePath = passFilePath;
         pLogger = AMTuneLogger.getLoggerInst();
         mWriter = MessageWriter.getInstance();
         initialize();
@@ -138,14 +137,31 @@ FAMConstants, WebContainerConstants {
             setReviewMode(confBundle.getString(AMTUNE_MODE));
             setLogType(confBundle.getString(AMTUNE_LOG_LEVEL));
             setTuneOS(confBundle.getString(AMTUNE_TUNE_OS));
+            setTuneDS(confBundle.getString(AMTUNE_TUNE_DS));
             setTuneWebContainer(
                     confBundle.getString(AMTUNE_TUNE_WEB_CONTAINER));
-            setWebContainer(confBundle.getString(WEB_CONTAINER));
-            if (isTuneWebContainer() || isTuneFAM()) {
-                if (getWebContainer().equals(WS7_CONTAINER)) {
-                    webConfigInfo = new WS7ContainerConfigInfo(confBundle);
-                } else if (getWebContainer().equals(AS91_CONTAINER)) {
-                    webConfigInfo = new AS9ContainerConfigInfo(confBundle);
+            setTuneFAM(confBundle.getString(AMTUNE_TUNE_IDENTITY));
+            if (isTuneFAM() || isTuneWebContainer()) {
+                if (passFilePath == null || 
+                        (passFilePath != null && 
+                        !new File(passFilePath).exists())) {
+                    mWriter.writelnLocaleMsg("pt-password-file-keys-msg");
+                    throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                            .getString("pt-error-password-file-not-found"));
+                }
+                setWebContainer(confBundle.getString(WEB_CONTAINER));
+                if (isTuneWebContainer() && 
+                        !AMTuneUtil.isSupportedWebContainer(getWebContainer()))
+                {
+                    throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-unsupported-wc-tuning"));
+                }
+                if (getWebContainer().equalsIgnoreCase(WS7_CONTAINER)) {
+                    webConfigInfo = new WS7ContainerConfigInfo(confBundle,
+                            passFilePath);
+                } else if (getWebContainer().equalsIgnoreCase(AS91_CONTAINER)) {
+                    webConfigInfo = new AS9ContainerConfigInfo(confBundle,
+                            passFilePath);
                 }
             }
             if (webConfigInfo != null) {
@@ -153,65 +169,49 @@ FAMConstants, WebContainerConstants {
             } else {
                 isJVM64BitAvailable = false;
             }
-            setTuneDS(confBundle.getString(AMTUNE_TUNE_DS));
-            setTuneFAM(confBundle.getString(AMTUNE_TUNE_IDENTITY));
             if (isTuneFAM()) {
-                setFamAdminPassword(
-                        confBundle.getString(OPENSSOADMIN_PASSWORD));
-                setFAMServerUrl(confBundle.getString(OPENSSOSERVER_URL));
-                setFAMAdmUser(confBundle.getString(OPENSSOADMIN_USER));
-                setRealms(confBundle.getString(REALM_NAME));
+                FileHandler pHdl = new FileHandler(passFilePath);
+                String reqLine = pHdl.getLine(SSOADM_PASSWORD);
+                if (reqLine == null ||
+                    (reqLine != null && reqLine.trim().length() < 
+                    SSOADM_PASSWORD.length() + 1)) {
+                    mWriter.writelnLocaleMsg("pt-cannot-proceed");
+                    mWriter.writelnLocaleMsg(
+                            "pt-opensso-password-not-found-msg");
+                    throw new AMTuneException(AMTuneUtil.getResourceBundle().
+                        getString("pt-opensso-password-not-found"));
+                } else {
+                    setFamAdminPassword(AMTuneUtil.getLastToken(reqLine, "="));
+                }
                 setFAMAdmLocation(confBundle.getString(SSOADM_LOCATION));
-                setFAMConfigDir(confBundle.getString(OPENSSO_CONFIG_DIR));
+                setFAMAdmUser(confBundle.getString(OPENSSOADMIN_USER));
+                setFAMServerUrl(confBundle.getString(OPENSSOSERVER_URL));
+                setRealms(confBundle.getString(REALM_NAME));
             }
-            setFAMTuneMinMemoryToUseInMB(
-                    confBundle.getString(AMTUNE_MIN_MEMORY_TO_USE_IN_MB));
-            setFAMTuneMaxMemoryToUseInMBDefault(
-                    confBundle.getString(
-                    AMTUNE_MAX_MEMORY_TO_USE_IN_MB_DEFAULT));
-            setFAMTuneMaxMemoryToUseInMB();
-            setFAMTunePerThreadStackSizeInKB(confBundle.getString(
-                    AMTUNE_PER_THREAD_STACK_SIZE_IN_KB));
-            setFAMTunePerThreadStackSizeInKB64Bit(confBundle.getString(
-                    AMTUNE_PER_THREAD_STACK_SIZE_IN_KB_64_BIT));
-            setFAMTuneDontTouchSessionParameters(confBundle.getString(
-                    AMTUNE_DONT_TOUCH_SESSION_PARAMETERS));
-            setFAMTunePctMemoryToUse(
-                    confBundle.getString(AMTUNE_PCT_MEMORY_TO_USE));
-            setFAMTuneSessionMaxSessionTimeInMts(
-                    confBundle.getString(
-                    AMTUNE_SESSION_MAX_SESSION_TIME_IN_MTS));
-            setFAMTuneSessionMaxIdleTimeInMts(
-                    confBundle.getString(AMTUNE_SESSION_MAX_IDLE_TIME_IN_MTS));
-            setFAMTuneSessionMaxCachingTimeInMts(
-                    confBundle.getString(
-                    AMTUNE_SESSION_MAX_CACHING_TIME_IN_MTS));
-            setFAMTuneMemMaxHeapSizeRatio(confBundle.getString(
-                    AMTUNE_MEM_MAX_HEAP_SIZE_RATIO));
-            setFAMTuneMemMinHeapSizeRatio(confBundle.getString(
-                    AMTUNE_MEM_MIN_HEAP_SIZE_RATIO));
-            setDefaultOrgPeopleContainer(
-                    confBundle.getString(DEFAULT_ORG_PEOPLE_CONTAINER));
             if (isTuneDS()) {
-                setUMSMDSSame(confBundle.getString(IS_UM_SM_DATASTORE_SAME));
-                setTuneUMOnly(confBundle.getString(TUNE_UM_ONLY));
-                dsConfigInfo = new DSConfigInfo(confBundle, false);
-                if (!isUMSMDSSame()) {
-                    smConfigInfo = new DSConfigInfo(confBundle, true);
-                }
-                //famconfig dir is required if DS is remote for creating
-                //amtune.zip file.
-                if (dsConfigInfo.isRemoteDS() || 
-                        (smConfigInfo != null && smConfigInfo.isRemoteDS() &&
-                        !isUMOnlyTune())) {
-                    setFAMConfigDir(confBundle.getString(OPENSSO_CONFIG_DIR));
-                }
+                dsConfigInfo = new DSConfigInfo(confBundle, passFilePath);
             } 
-            calculateTuneParams();
+            if (isTuneWebContainer() || isTuneFAM()) {
+                setFAMTuneMinMemoryToUseInMB(
+                        confBundle.getString(AMTUNE_MIN_MEMORY_TO_USE_IN_MB));
+                setFAMTuneMaxMemoryToUseInMB();
+                setFAMTunePerThreadStackSizeInKB(confBundle.getString(
+                        AMTUNE_PER_THREAD_STACK_SIZE_IN_KB));
+                setFAMTunePerThreadStackSizeInKB64Bit(confBundle.getString(
+                        AMTUNE_PER_THREAD_STACK_SIZE_IN_KB_64_BIT));
+                setFAMTunePctMemoryToUse(
+                        confBundle.getString(AMTUNE_PCT_MEMORY_TO_USE));
+                setFAMTuneMemMaxHeapSizeRatio(confBundle.getString(
+                        AMTUNE_MEM_MAX_HEAP_SIZE_RATIO));
+                setFAMTuneMemMinHeapSizeRatio(confBundle.getString(
+                        AMTUNE_MEM_MIN_HEAP_SIZE_RATIO));
+                calculateTuneParams();
+            }
+        } catch (AMTuneException aex) {
+            throw aex;
         } catch (Exception ex) {
             pLogger.logException("initialize", ex);
-            throw new AMTuneException("Couldn't initialize " +
-                    "configuration data");
+            throw new AMTuneException(ex.getMessage());
         }
     }
     
@@ -230,13 +230,9 @@ FAMConstants, WebContainerConstants {
                 realms.add(realmNames);
             }
         } else {
-            mWriter.writelnLocaleMsg("pt-inval-config");
             AMTuneUtil.printErrorMsg(REALM_NAME);
-            pLogger.log(Level.SEVERE, "setRealms",
-                    "Error setting Realms. " +
-                    "Please check the value for the property " +
-                    REALM_NAME);
-            throw new AMTuneException("Invalid value for " + REALM_NAME);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-null-realm-name"));
         }
     }
     
@@ -248,12 +244,21 @@ FAMConstants, WebContainerConstants {
         return realms;
     }
     
-    private void setReviewMode(String reviewMode) {
-        if (reviewMode != null && 
-                reviewMode.trim().equalsIgnoreCase("CHANGE")) {
+    private void setReviewMode(String reviewMode) 
+    throws AMTuneException {
+        if (reviewMode == null || 
+                (reviewMode != null && reviewMode.trim().length() == 0 )) {
+            AMTuneUtil.printErrorMsg(AMTUNE_MODE);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-null-amtune-mode"));
+        } else if (reviewMode.trim().equalsIgnoreCase("REVIEW")) {
+            isReviewMode = true;
+        } else if (reviewMode.trim().equalsIgnoreCase("CHANGE")) {
             isReviewMode = false;
         } else {
-            isReviewMode = true;
+            AMTuneUtil.printErrorMsg(AMTUNE_MODE);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-invalid-amtune-mode"));
         }
         pLogger.log(Level.INFO, "setReviewMode", "Review mode is set to : " + 
                 isReviewMode);
@@ -268,28 +273,47 @@ FAMConstants, WebContainerConstants {
     }
     
     /**
-     * Set logging Type
+     * Set configuration information logging Type
      * @param logType
      */
-    private void setLogType(String logType) {
-        if (logType != null && logType.trim().equals("NONE")) {
+    private void setLogType(String logType) 
+    throws AMTuneException {
+        this.logType = logType;
+        if (logType == null || (logType != null && 
+                logType.trim().length() == 0)) {
+            AMTuneUtil.printErrorMsg(AMTUNE_LOG_LEVEL);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-null-config-log-type"));
+        } else if (logType.trim().equalsIgnoreCase("NONE")) {
             MessageWriter.setWriteToFile(true);
             MessageWriter.setWriteToTerm(false);
-        } else if (logType != null && logType.trim().equals("TERM")) {
+        } else if (logType.trim().equalsIgnoreCase("TERM")) {
             MessageWriter.setWriteToFile(false);
             MessageWriter.setWriteToTerm(true);
-        } else if (logType != null && logType.trim().equals("FILE")) {
+        } else if (logType.trim().equalsIgnoreCase("FILE")) {
             MessageWriter.setWriteToFile(true);
             MessageWriter.setWriteToTerm(true);
+        } else {
+            AMTuneUtil.printErrorMsg(AMTUNE_LOG_LEVEL);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-invalid-log-level"));
         }
     }
     
-    private void setTuneOS(String value) {
-        if (value != null && value.equalsIgnoreCase("true")) {
+    public String getLogType() {
+        return logType;
+    }
+    
+    private void setTuneOS(String value) 
+    throws AMTuneException {
+        if (value == null || (value != null && value.trim().length() == 0)) {
+            AMTuneUtil.printErrorMsg(AMTUNE_TUNE_OS);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-null-tune-os"));
+        } else if(value.trim().equalsIgnoreCase("true")) {
             tuneOS = true;
         } else {
             tuneOS = false;
-            pLogger.log(Level.INFO, "setTuneOS", "OS will not be tuned.");
         }
     }
     
@@ -297,13 +321,16 @@ FAMConstants, WebContainerConstants {
         return tuneOS;
     }
     
-    private void setTuneWebContainer(String value) {
-        if (value != null && value.equalsIgnoreCase("true")) {
+    private void setTuneWebContainer(String value) 
+    throws AMTuneException {
+        if (value == null || (value != null && value.trim().length() == 0)) {
+            AMTuneUtil.printErrorMsg(AMTUNE_TUNE_WEB_CONTAINER);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-null-tune-ws"));
+        } else if (value.trim().equalsIgnoreCase("true")) {
             tuneWebContainer = true;
         } else {
             tuneWebContainer = false;
-            pLogger.log(Level.INFO, "setTuneWebContainer", "Web container " +
-                    "will not be tuned.");
         }
     }
     
@@ -311,13 +338,16 @@ FAMConstants, WebContainerConstants {
         return tuneWebContainer;
     }
     
-    private void setTuneDS(String value) {
-        if (value != null && value.equals("true")) {
+    private void setTuneDS(String value) 
+    throws AMTuneException {
+        if (value == null || (value != null && value.trim().length() == 0)) {
+            AMTuneUtil.printErrorMsg(AMTUNE_TUNE_DS);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-null-tune-ds"));
+        } else if (value.trim().equalsIgnoreCase("true")) {
             tuneDS = true;
         } else {
             tuneDS = false;
-            pLogger.log(Level.INFO, "setTuneDS", "Directory Server will not " +
-                    "be tuned.");
         }
     }
     
@@ -325,42 +355,22 @@ FAMConstants, WebContainerConstants {
         return tuneDS;
     }
     
-    private void setTuneFAM(String value) {
-        if (value != null && value.equals("true")) {
+    private void setTuneFAM(String value) 
+    throws AMTuneException {
+        if (value == null || (value != null && value.trim().length() == 0)) {
+            AMTuneUtil.printErrorMsg(AMTUNE_TUNE_IDENTITY);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-null-tune-opensso"));
+        }
+        if (value.trim().equalsIgnoreCase("true")) {
             tuneFAM = true;
         } else {
             tuneFAM = false;
-            pLogger.log(Level.INFO, "setTuneFAM", "Federated AccessManager " +
-                    "will not be tuned.");
         }
     }
     
     public boolean isTuneFAM() {
         return tuneFAM;
-    }
-    
-    private void setOSType() {
-        osType = System.getProperty("os.name");
-    }
-    
-    public String getOSType() {
-        return osType;
-    }
-    
-    private void setOSPlatform() {
-        osPlatform = System.getProperty("os.arch");
-    }
-    
-    public String getOSPlatform() {
-        return osPlatform;
-    }
-    
-    private void setHostName() {
-        hostName = AMTuneUtil.getHostName();
-    }
-    
-    public String getHostName() {
-        return hostName;
     }
     
     /**
@@ -370,16 +380,12 @@ FAMConstants, WebContainerConstants {
      */
     private void setWebContainer(String webContainer) 
     throws AMTuneException {
-        if (webContainer != null && webContainer.trim().length() > 0 &&
-                AMTuneUtil.isSupportedWebContainer(webContainer.trim())) {
+        if (webContainer != null && webContainer.trim().length() > 0) {
             this.webContainer = webContainer.trim();
         } else {
-            pLogger.log(Level.SEVERE, "setWebContainer",
-                    "Unsupported web container.  Please check the value for " +
-                    WEB_CONTAINER);
-            mWriter.writelnLocaleMsg("pt-webcon-not-supported");
             AMTuneUtil.printErrorMsg(WEB_CONTAINER);
-            throw new AMTuneException("Unsupported Web Container");
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-null-wc"));
         }
     }
     
@@ -396,73 +402,26 @@ FAMConstants, WebContainerConstants {
     throws AMTuneException {
         if (famAdmLocation != null &&
                 famAdmLocation.trim().length() > 0) {
-            File famDir = new File(famAdmLocation);
+            File famDir = new File(famAdmLocation.trim());
             if (famDir.isDirectory()) {
                 this.famAdmLocation = famAdmLocation.trim();
             } else {
                 mWriter.write(famAdmLocation + " ");
                 mWriter.writeLocaleMsg("pt-not-valid-dir");
-                pLogger.log(Level.SEVERE, "setFAMAdmLocation",
-                        "OpenSSO Admin tools location is not valid Directory." +
-                        " Please check the value for the property " +
-                        SSOADM_LOCATION);
-                throw new AMTuneException("Invalid OpenSSO admin tools " +
-                        "location");
+                AMTuneUtil.printErrorMsg(SSOADM_LOCATION);
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-error-invalid-opensso-admin-tools"));
             }
         } else {
             mWriter.writelnLocaleMsg("pt-inval-config");
             AMTuneUtil.printErrorMsg(SSOADM_LOCATION);
-            pLogger.log(Level.SEVERE, "setFAMAdmLocation",
-                    "Error setting OpenSSO Admin Location. " +
-                    "Please check the value for the property " +
-                    SSOADM_LOCATION);
-            throw new AMTuneException("Invalid value for " + SSOADM_LOCATION);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-invalid-opensso-admin-tools"));
         }
     }
     
     public String getFAMAdmLocation() {
         return famAdmLocation;
-    }
-    
-    /**
-     * Sets OpenSSO configuration directory location.
-     * @param famConfigDir OpenSSO configuration directory location.
-     * @throws com.sun.identity.tune.common.AMTuneException
-     */
-    private void setFAMConfigDir(String famConfigDir) 
-    throws AMTuneException {
-        if (famConfigDir != null &&
-                famConfigDir.trim().length() > 0) {
-            File famDir = new File(famConfigDir);
-            if (famDir.isDirectory()) {
-                this.famConfigDir = famConfigDir.trim();
-            } else {
-                mWriter.write(famConfigDir + " ");
-                mWriter.writeLocaleMsg("pt-not-valid-dir");
-                pLogger.log(Level.SEVERE, "setFAMAdmLocation",
-                        "OpenSSO config is not valid Directory. " +
-                        "Please check the value for the property " +
-                        OPENSSO_CONFIG_DIR);
-                throw new AMTuneException("Invalid OpenSSO install location");
-            }
-        } else {
-            mWriter.writelnLocaleMsg("pt-inval-config");
-            AMTuneUtil.printErrorMsg(OPENSSO_CONFIG_DIR);
-            pLogger.log(Level.SEVERE, "setFAMAdmLocation",
-                    "Error setting OpenSSO config Location. " +
-                    "Please check the value for the property " +
-                    OPENSSO_CONFIG_DIR);
-            if (dsConfigInfo != null && dsConfigInfo.isRemoteDS() ||
-                        smConfigInfo != null && smConfigInfo.isRemoteDS()) {
-                    mWriter.writelnLocaleMsg("pt-fam-config-dir-req");
-            }
-            throw new AMTuneException("Invalid value for " + 
-                    OPENSSO_CONFIG_DIR);
-        }
-    }
-    
-    public String getFAMConfigDir() {
-        return famConfigDir;
     }
     
     /**
@@ -473,15 +432,11 @@ FAMConstants, WebContainerConstants {
     private void setFAMServerUrl(String famServerUrl) 
     throws AMTuneException {
         if (famServerUrl != null && famServerUrl.trim().length() > 0) {
-            this.famServerUrl = famServerUrl;
+            this.famServerUrl = famServerUrl.trim();
         } else {
-            mWriter.writelnLocaleMsg("pt-fam-server-url-not-found");
             AMTuneUtil.printErrorMsg(OPENSSOSERVER_URL);
-            pLogger.log(Level.SEVERE, "setFAMServerUrl", 
-                    "Error setting OpenSSO Server URL. " +
-                    "Please check the value for the property " + 
-                    OPENSSOSERVER_URL);
-            throw new AMTuneException("Invalid value for " + OPENSSOSERVER_URL);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-fam-server-url-not-found"));
         }
     }
     
@@ -497,33 +452,16 @@ FAMConstants, WebContainerConstants {
     private void setFAMAdmUser(String famAdmUser) 
     throws AMTuneException {
         if (famAdmUser != null && famAdmUser.trim().length() > 0) {
-            this.famAdmUser = famAdmUser;
+            this.famAdmUser = famAdmUser.trim();
         } else {
-            mWriter.writelnLocaleMsg("pt-fam-admin-user-not-found");
             AMTuneUtil.printErrorMsg(OPENSSOADMIN_USER);
-            pLogger.log(Level.SEVERE, "setFAMServerUrl", 
-                    "Error setting OpenSSO Admin User. " +
-                    "Please check the value for the property " + 
-                   OPENSSOADMIN_USER);
-            throw new AMTuneException("Invalid value for " + OPENSSOADMIN_USER);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-fam-admin-user-not-found"));
         }
     }
     
     public String getFAMAdmUser() {
         return famAdmUser;
-    }
-    
-    /**
-     * Set default organization people container.
-     * @param defaultOrgPeopleContainer
-     */
-    private void setDefaultOrgPeopleContainer(
-            String defaultOrgPeopleContainer) {
-        this.defaultOrgPeopleContainer = defaultOrgPeopleContainer;
-    }
-    
-    public String getDefaultOrgPeopleContainer() {
-        return defaultOrgPeopleContainer;
     }
     
     /**
@@ -534,8 +472,13 @@ FAMConstants, WebContainerConstants {
     public void setFAMTunePctMemoryToUse(String famTunePctMemoryToUse) 
     throws AMTuneException {
         try {
-            this.famTunePctMemoryToUse = 
-                    Integer.parseInt(famTunePctMemoryToUse.trim());
+            if (famTunePctMemoryToUse != null && 
+                    famTunePctMemoryToUse.trim().length() > 0) {
+                this.famTunePctMemoryToUse = 
+                        Integer.parseInt(famTunePctMemoryToUse.trim());
+            } else {
+                this.famTunePctMemoryToUse = 75;
+            }
             if (this.famTunePctMemoryToUse > 100 ) {
                 pLogger.log(Level.WARNING, "setFAMTunePctMemoryToUse", 
                     AMTUNE_PCT_MEMORY_TO_USE + " value is > 100 so using " +
@@ -547,13 +490,11 @@ FAMConstants, WebContainerConstants {
                     "default value 0.");
                 this.famTunePctMemoryToUse = 0;
             }
-        } catch (Exception ex) {
+        } catch (NumberFormatException ex) {
             mWriter.writeLocaleMsg("pt-inval-val-msg");
             AMTuneUtil.printErrorMsg(AMTUNE_PCT_MEMORY_TO_USE);
-            pLogger.log(Level.SEVERE, "setFAMTunePctMemoryToUse", 
-                    "Error setting % memory to use, make sure the value " +
-                    "for "+ AMTUNE_PCT_MEMORY_TO_USE +" is valid Integer.");
-            throw new AMTuneException(ex.getMessage());
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-not-valid-int"));
         }
     }
     
@@ -570,15 +511,18 @@ FAMConstants, WebContainerConstants {
             String famTunePerThreadStackSizeInKB)
     throws AMTuneException {
         try {
-            this.famTunePerThreadStackSizeInKB =
-                    Integer.parseInt(famTunePerThreadStackSizeInKB.trim());
-        } catch (Exception ex) {
+            if (famTunePerThreadStackSizeInKB != null && 
+                    famTunePerThreadStackSizeInKB.trim().length() > 0) {
+                this.famTunePerThreadStackSizeInKB =
+                        Integer.parseInt(famTunePerThreadStackSizeInKB.trim());
+            } else {
+                this.famTunePerThreadStackSizeInKB = 128;
+            }
+        } catch (NumberFormatException ex) {
             mWriter.writeLocaleMsg("pt-inval-val-msg");
             AMTuneUtil.printErrorMsg(AMTUNE_PER_THREAD_STACK_SIZE_IN_KB);
-            pLogger.log(Level.SEVERE, "setFAMTunePerThreadStackSizeInKB",
-                    "Error parsing value, make sure the value for " +
-                    AMTUNE_PER_THREAD_STACK_SIZE_IN_KB + " is valid Integer. ");
-            throw new AMTuneException(ex.getMessage());
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-not-valid-int"));
         }
     }
 
@@ -595,131 +539,26 @@ FAMConstants, WebContainerConstants {
             String famTunePerThreadStackSizeInKB64Bit)
     throws AMTuneException {
         try {
-            this.famTunePerThreadStackSizeInKB64Bit =
-                    Integer.parseInt(famTunePerThreadStackSizeInKB64Bit.trim());
-        } catch (Exception ex) {
+            if (famTunePerThreadStackSizeInKB64Bit != null &&
+                    famTunePerThreadStackSizeInKB64Bit.trim().length() > 0) {
+                this.famTunePerThreadStackSizeInKB64Bit =
+                        Integer.parseInt(
+                        famTunePerThreadStackSizeInKB64Bit.trim());
+            } else {
+                this.famTunePerThreadStackSizeInKB64Bit = 512;
+            }
+        } catch (NumberFormatException ex) {
             mWriter.writeLocaleMsg("pt-inval-val-msg");
             AMTuneUtil.printErrorMsg(AMTUNE_PER_THREAD_STACK_SIZE_IN_KB_64_BIT);
-            pLogger.log(Level.SEVERE, "setFAMTunePerThreadStackSizeInKB64Bit",
-                    "Error setting value, make sure the value " +
-                    "for " + AMTUNE_PER_THREAD_STACK_SIZE_IN_KB_64_BIT +
-                    " is valid Integer. ");
-            throw new AMTuneException(ex.getMessage());
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-not-valid-int"));
         }
     }
 
     public int getFAMTunePerThreadStackSizeInKB64Bit() {
         return famTunePerThreadStackSizeInKB64Bit;
     }
-    
-    /**
-     * Set value for session parameters.
-     * @param amTuneDontTouchSessionParameters
-     */
-    private void setFAMTuneDontTouchSessionParameters(
-            String amTuneDontTouchSessionParameters) {
-            this.famTuneDontTouchSessionParameters = 
-            Boolean.parseBoolean(amTuneDontTouchSessionParameters);
-    }
-    
-    public boolean getFAMTuneDontTouchSessionParameters() {
-        return famTuneDontTouchSessionParameters;
-    }
-    
-    /**
-     * Set Max session time in minutes.
-     * @param famTuneSessionMaxSessionTimeInMts
-     * @throws com.sun.identity.tune.common.AMTuneException
-     */
-    private void setFAMTuneSessionMaxSessionTimeInMts(
-            String famTuneSessionMaxSessionTimeInMts) 
-    throws AMTuneException {
-        try {
-            if (!getFAMTuneDontTouchSessionParameters() && 
-                    famTuneSessionMaxSessionTimeInMts == null) {
-                this.famTuneSessionMaxSessionTimeInMts = 60;
-            } else {
-                this.famTuneSessionMaxSessionTimeInMts = 
-                        Integer.parseInt(
-                        famTuneSessionMaxSessionTimeInMts.trim());
-            }
-        } catch (Exception ex) {
-            mWriter.writeLocaleMsg("pt-inval-val-msg");
-            AMTuneUtil.printErrorMsg(AMTUNE_SESSION_MAX_SESSION_TIME_IN_MTS);
-            pLogger.log(Level.SEVERE, "setFAMTuneSessionMaxSessionTimeInMts",
-                    "Error setting value, make sure the value for " +
-                    AMTUNE_SESSION_MAX_SESSION_TIME_IN_MTS +
-                    " is valid Integer.");
-            throw new AMTuneException(ex.getMessage());
-        }
-    }
-    
-    public int getFAMTuneSessionMaxSessionTimeInMts() {
-        return famTuneSessionMaxSessionTimeInMts;
-    }
-    
-    /**
-     * Set Session Max ideal time in Minutes
-     * @param famTuneSessionMaxIdleTimeInMts
-     * @throws com.sun.identity.tune.common.AMTuneException
-     */
-    private void setFAMTuneSessionMaxIdleTimeInMts(
-            String famTuneSessionMaxIdleTimeInMts) 
-    throws AMTuneException {
-        try {
-            if (!getFAMTuneDontTouchSessionParameters() &&
-                    famTuneSessionMaxIdleTimeInMts == null) {
-                this.famTuneSessionMaxIdleTimeInMts = 10;
-            } else {
-                this.famTuneSessionMaxIdleTimeInMts =
-                        Integer.parseInt(famTuneSessionMaxIdleTimeInMts.trim());
-            }
-        } catch (Exception ex) {
-            mWriter.writeLocaleMsg("pt-inval-val-msg");
-            AMTuneUtil.printErrorMsg(AMTUNE_SESSION_MAX_IDLE_TIME_IN_MTS);
-            pLogger.log(Level.SEVERE, "setFAMTuneSessionMaxIdleTimeInMts",
-                    "Error setting value, make sure the value for " +
-                    AMTUNE_SESSION_MAX_IDLE_TIME_IN_MTS + " is valid Integer.");
-            throw new AMTuneException(ex.getMessage());
-        }
-    }
-    
-    public int getFAMTuneSessionMaxIdleTimeInMts() {
-        return famTuneSessionMaxIdleTimeInMts;
-    }
-    
-    /**
-     * Set session max caching time in minutes
-     * @param famTuneSessionMaxCachingTimeInMts
-     * @throws com.sun.identity.tune.common.AMTuneException
-     */
-    private void setFAMTuneSessionMaxCachingTimeInMts(
-            String famTuneSessionMaxCachingTimeInMts) 
-    throws AMTuneException {
-        try {
-            if (!getFAMTuneDontTouchSessionParameters() &&
-                    famTuneSessionMaxCachingTimeInMts == null) {
-                this.famTuneSessionMaxCachingTimeInMts = 2;
-            } else {
-                this.famTuneSessionMaxCachingTimeInMts =
-                        Integer.parseInt(
-                        famTuneSessionMaxCachingTimeInMts.trim());
-            }
-        } catch (Exception ex) {
-            mWriter.writeLocaleMsg("pt-inval-val-msg");
-            AMTuneUtil.printErrorMsg(AMTUNE_SESSION_MAX_CACHING_TIME_IN_MTS);
-            pLogger.log(Level.SEVERE, "setFAMTuneSessionMaxCachingTimeInMts",
-                    "Error setting value, make sure the value for " +
-                    AMTUNE_SESSION_MAX_CACHING_TIME_IN_MTS +
-                    " is valid Integer.");
-            throw new AMTuneException(ex.getMessage());
-        }
-    }
-    
-    public int getFAMTuneSessionMaxCachingTimeInMts() {
-        return famTuneSessionMaxCachingTimeInMts;
-    }
-    
+
     /**
      * Set Maximum heap size ratio.
      * @param famTuneMemMaxHeapSizeRatio
@@ -732,14 +571,18 @@ FAMConstants, WebContainerConstants {
             this.famTuneMemMaxHeapSizeRatio = 
                     AMTuneUtil.evaluteDivExp(
                     famTuneMemMaxHeapSizeRatio.trim());
-            this.famTuneMemMaxHeapSizeRatioExp = famTuneMemMaxHeapSizeRatio;
-        } catch (Exception ex) {
+            this.famTuneMemMaxHeapSizeRatioExp = 
+                    famTuneMemMaxHeapSizeRatio.trim();
+        } catch (NumberFormatException ex) {
             mWriter.writeLocaleMsg("pt-inval-val-msg");
             AMTuneUtil.printErrorMsg(AMTUNE_MEM_MAX_HEAP_SIZE_RATIO);
-            pLogger.log(Level.SEVERE, "setFAMTuneMemMaxHeapSizeRatio",
-                    "Error setting vlaue, make sure the value for " +
-                    AMTUNE_MEM_MAX_HEAP_SIZE_RATIO + " is valid expression.");
-            throw new AMTuneException(ex.getMessage());
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-not-valid-exp"));
+        } catch (NullPointerException ne) {
+            mWriter.writeLocaleMsg("pt-inval-val-msg");
+            AMTuneUtil.printErrorMsg(AMTUNE_MEM_MAX_HEAP_SIZE_RATIO);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-null-operands"));
         }
     }
             
@@ -761,14 +604,17 @@ FAMConstants, WebContainerConstants {
     throws AMTuneException {
         try {
             this.famTuneMemMinHeapSizeRatio = 
-                    AMTuneUtil.evaluteDivExp(famTuneMemMinHeapSizeRatio);
-        } catch (Exception ex) {
+                    AMTuneUtil.evaluteDivExp(famTuneMemMinHeapSizeRatio.trim());
+        } catch (NumberFormatException ex) {
             mWriter.writeLocaleMsg("pt-inval-val-msg");
             AMTuneUtil.printErrorMsg(AMTUNE_MEM_MIN_HEAP_SIZE_RATIO);
-            pLogger.log(Level.SEVERE, "setFAMTuneMemMinHeapSizeRatio",
-                    "Error setting value, make sure the value for " +
-                    AMTUNE_MEM_MIN_HEAP_SIZE_RATIO + " is valid expresseion.");
-            throw new AMTuneException(ex.getMessage());
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-not-valid-exp"));
+        } catch (NullPointerException ne) {
+            mWriter.writeLocaleMsg("pt-inval-val-msg");
+            AMTuneUtil.printErrorMsg(AMTUNE_MEM_MIN_HEAP_SIZE_RATIO);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-null-operands"));
         }
     }
     
@@ -783,15 +629,17 @@ FAMConstants, WebContainerConstants {
     private void setFAMTuneMinMemoryToUseInMB(String famTuneMinMemoryToUseInMB) 
     throws AMTuneException {
         try {
-            this.famTuneMinMemoryToUseInMB = 
-                    Integer.parseInt(famTuneMinMemoryToUseInMB);
-        } catch (Exception exp) {
+            if (famTuneMinMemoryToUseInMB != null) {
+                this.famTuneMinMemoryToUseInMB = 
+                        Integer.parseInt(famTuneMinMemoryToUseInMB);
+            } else {
+                this.famTuneMinMemoryToUseInMB = 512;
+            }
+        } catch (NumberFormatException exp) {
             mWriter.writeLocaleMsg("pt-inval-val-msg");
             AMTuneUtil.printErrorMsg(AMTUNE_MIN_MEMORY_TO_USE_IN_MB);
-            pLogger.log(Level.SEVERE, "setFAMTuneMinMemoryToUseInMB",
-                    "Error setting value, make sure the value for " +
-                    AMTUNE_MIN_MEMORY_TO_USE_IN_MB + " is valid integer.");
-            throw new AMTuneException(exp.getMessage());
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-not-valid-int"));
         }
     }
     
@@ -799,30 +647,26 @@ FAMConstants, WebContainerConstants {
     throws Exception {
         if (AMTuneUtil.isLinux() || AMTuneUtil.isSunOs() || 
                 AMTuneUtil.isAIX()) {
-            if (getWebContainer().equals(WS7_CONTAINER)) {
+            if (getWebContainer().equalsIgnoreCase(WS7_CONTAINER)) {
                 if (AMTuneUtil.isLinux()) {
                     setFAMTuneMaxMemoryToUseInMB(
-                            confBundle.getString(
-                            AMTUNE_MAX_MEMORY_TO_USE_IN_MB_X86));
+                            AMTUNE_MAX_MEMORY_TO_USE_IN_MB_X86);
                 } else {
                     setFAMTuneMaxMemoryToUseInMB(
-                            confBundle.getString(
-                            AMTUNE_MAX_MEMORY_TO_USE_IN_MB_SOLARIS));
+                            AMTUNE_MAX_MEMORY_TO_USE_IN_MB_SOLARIS);
                 }
             } else {
                 if (AMTuneUtil.getOSPlatform().indexOf("sparc") == -1) {
                     setFAMTuneMaxMemoryToUseInMB(
-                            confBundle.getString(
-                            AMTUNE_MAX_MEMORY_TO_USE_IN_MB_X86));
+                            AMTUNE_MAX_MEMORY_TO_USE_IN_MB_X86);
                 } else {
                     setFAMTuneMaxMemoryToUseInMB(
-                            confBundle.getString(
-                            AMTUNE_MAX_MEMORY_TO_USE_IN_MB_SOLARIS));
+                            AMTUNE_MAX_MEMORY_TO_USE_IN_MB_SOLARIS);
                 }
             }
         } else if (AMTuneUtil.isWindows()) {
-            setFAMTuneMaxMemoryToUseInMB(                   
-                    Integer.toString(getFAMTuneMaxMemoryToUseInMBDefault()));
+            setFAMTuneMaxMemoryToUseInMB(
+                    AMTUNE_MAX_MEMORY_TO_USE_IN_MB_DEFAULT);
         }
     }
     
@@ -836,48 +680,31 @@ FAMConstants, WebContainerConstants {
      * @throws com.sun.identity.tune.common.AMTuneException
      */
     private void setFAMTuneMaxMemoryToUseInMB (
-            String famTuneMaxMemoryToUseInMB) 
+            String famTuneMaxMemoryToUseInMBKey) 
     throws AMTuneException {
         try {
-            this.famTuneMaxMemoryToUseInMB = 
-                    Integer.parseInt(famTuneMaxMemoryToUseInMB);
-        } catch (Exception exp) {
-            pLogger.log(Level.SEVERE, "setFAMTuneMaxMemoryToUseInMb",
-                    "Error setting value, is valid integer.");
-            throw new AMTuneException(exp.getMessage());
+            String val = confBundle.getString(famTuneMaxMemoryToUseInMBKey);
+            if (val == null || (val != null && val.trim().length() == 0 )) {
+                AMTuneUtil.printErrorMsg(famTuneMaxMemoryToUseInMBKey);
+                throw new AMTuneException("Null value for " + 
+                        famTuneMaxMemoryToUseInMBKey);
+            }
+            this.famTuneMaxMemoryToUseInMB = Integer.parseInt(val.trim());
+        } catch (NumberFormatException exp) {
+            AMTuneUtil.printErrorMsg(famTuneMaxMemoryToUseInMBKey);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-not-valid-int"));
+        } catch (MissingResourceException mex) {
+            AMTuneUtil.printErrorMsg(famTuneMaxMemoryToUseInMBKey);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-key-not-found"));
         }
     }
     
     public int getFAMTuneMaxMemoryToUseInMB() {
         return famTuneMaxMemoryToUseInMB;
     }
-    
-    /**
-     * Set Default maximum memory to be used.
-     * @param famTuneMaxMemoryToUseInMBDefault
-     * @throws com.sun.identity.tune.common.AMTuneException
-     */
-    private void setFAMTuneMaxMemoryToUseInMBDefault 
-            (String famTuneMaxMemoryToUseInMBDefault) 
-    throws AMTuneException {
-        try {
-            this.famTuneMaxMemoryToUseInMBDefault = 
-                    Integer.parseInt(famTuneMaxMemoryToUseInMBDefault);
-        } catch (Exception exp) {
-            mWriter.writeLocaleMsg("pt-inval-val-msg");
-            AMTuneUtil.printErrorMsg(AMTUNE_MAX_MEMORY_TO_USE_IN_MB_DEFAULT);
-            pLogger.log(Level.SEVERE, "setFAMTuneMaxMemoryToUseInMbDefault",
-                    "Error setting value, make sure the value for " +
-                    AMTUNE_MAX_MEMORY_TO_USE_IN_MB_DEFAULT +
-                    " is valid integer.");
-            throw new AMTuneException(exp.getMessage());
-        }
-    }
-    
-    public int getFAMTuneMaxMemoryToUseInMBDefault () {
-        return famTuneMaxMemoryToUseInMBDefault;
-    }
-    
+   
     /**
      * Set OpenSSO admin Password.
      * @param famAdminPassword
@@ -888,14 +715,9 @@ FAMConstants, WebContainerConstants {
         if (famAdminPassword != null && famAdminPassword.trim().length() > 0) {
             this.famAdminPassword = famAdminPassword.trim();
         } else {
-            mWriter.writeLocaleMsg("pt-inval-val-msg");
-            AMTuneUtil.printErrorMsg(OPENSSOADMIN_PASSWORD);
-            pLogger.log(Level.SEVERE, "setFamAdminPassword",
-                    "Error setting FAM Administrator Password. " +
-                    "Please check the value for the property " +
-                    OPENSSOADMIN_PASSWORD);
-            throw new AMTuneException("Invalid value for " + 
-                    OPENSSOADMIN_PASSWORD);
+            mWriter.writelnLocaleMsg("pt-opensso-password-not-found-msg");
+            throw new AMTuneException(AMTuneUtil.getResourceBundle().
+                    getString("pt-opensso-password-null"));
         }
     }
     
@@ -928,8 +750,9 @@ FAMConstants, WebContainerConstants {
             mWriter.writeln(tuneDS + " ");
             mWriter.writeLocaleMsg("pt-web-msg");
             mWriter.writeln(tuneWebContainer + " ");
-            if (webContainer.equals(WS7_CONTAINER) || 
-                    webContainer.equals(WS61_CONTAINER)) {
+            if (webContainer.equalsIgnoreCase(WS7_CONTAINER) || 
+                    webContainer.equalsIgnoreCase(WS61_CONTAINER) ||
+                    webContainer.equalsIgnoreCase(AS91_CONTAINER)) {
                 if (isJVM64BitAvailable) {
                     mWriter.writelnLocaleMsg("pt-ws-64-msg");
                 } else {
@@ -961,17 +784,15 @@ FAMConstants, WebContainerConstants {
             mWriter.writeLocaleMsg("pt-mem-to-use-msg");
             mWriter.writeln(memToUse + " ");
             if (memToUse == 0) {
-                mWriter.writeLocaleMsg("pt-unable-mem-req");
-                mWriter.writelnLocaleMsg("pt-cannot-proceed");
-                throw new AMTuneException("Error computing memory " +
-                        "requirements");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-unable-mem-req"));
             }
 
             if (memToUse >= getFAMTuneMinMemoryToUseInMB()) {
                 mWriter.writelnLocaleMsg("pt-enough-mem");
             } else {
-                mWriter.writelnLocaleMsg("pt-no-enough-mem");
-                throw new AMTuneException("Not Enough memory.");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-no-enough-mem"));
             }
             mWriter.writeln(LINE_SEP);
             mWriter.writelnLocaleMsg("pt-conf-calc-tune-params");
@@ -988,7 +809,7 @@ FAMConstants, WebContainerConstants {
             mWriter.writeLocaleMsg("pt-max-new-size-msg");
             mWriter.writeln(maxNewSize + " ");
 
-            if (getWebContainer().equals(WS61_CONTAINER)) {
+            if (getWebContainer().equalsIgnoreCase(WS61_CONTAINER)) {
                 maxPermSize =
                         (int) ((double) maxHeapSize * AMTUNE_MEM_MAX_PERM_SIZE);
                 mWriter.writeLocaleMsg("pt-max-perm-size-msg");
@@ -1252,8 +1073,7 @@ FAMConstants, WebContainerConstants {
     public int getSessionCacheSize() {
         return sessionCacheSize;
     }
-    
-    
+        
     /**
      * Return web container configuration object.
      * @return
@@ -1261,57 +1081,9 @@ FAMConstants, WebContainerConstants {
     public WebContainerConfigInfoBase getWSConfigInfo() {
         return webConfigInfo;
     }
-    
-    /**
-     * Set to true if datastore for UM and SM are same.
-     */
-    private void setUMSMDSSame(String isUMSMDSSame) 
-    throws AMTuneException {
-        if (isUMSMDSSame != null && isUMSMDSSame.trim().length() > 0) {
-            this.isUMSMDSSame = Boolean.parseBoolean(isUMSMDSSame);
-        } else {
-            mWriter.writeLocaleMsg("pt-inval-val-msg");
-            AMTuneUtil.printErrorMsg(IS_UM_SM_DATASTORE_SAME);
-            pLogger.log(Level.SEVERE, "setUMSMDSSame", 
-                    "Please check the value for the property " + 
-                    IS_UM_SM_DATASTORE_SAME);
-            throw new AMTuneException("Invalid value for " + 
-                    IS_UM_SM_DATASTORE_SAME);
-        }
-    }
-    
-    public boolean isUMSMDSSame() {
-        return isUMSMDSSame;
-    }
-    
-    /**
-     * Set to true if only UM need to be tuned.
-     */
-    
-    private void setTuneUMOnly(String tuneUMOnly) 
-    throws AMTuneException {
-        if (tuneUMOnly != null && tuneUMOnly.trim().length() > 0) {
-            this.tuneUMOnly = Boolean.parseBoolean(tuneUMOnly);
-        } else {
-            mWriter.writeLocaleMsg("pt-inval-val-msg");
-            AMTuneUtil.printErrorMsg(TUNE_UM_ONLY);
-            pLogger.log(Level.SEVERE, "setTuneUMOnly", 
-                    "Please check the value for the property " + 
-                    TUNE_UM_ONLY);
-            throw new AMTuneException("Invalid value for " + 
-                    TUNE_UM_ONLY);
-        }
-    }
-    
-    public boolean isUMOnlyTune() {
-        return tuneUMOnly;
-    }
-    
+        
     public DSConfigInfo getDSConfigInfo() {
         return dsConfigInfo;
-    }
-    public DSConfigInfo getSMConfigInfo() {
-        return smConfigInfo;
     }
     
 }
