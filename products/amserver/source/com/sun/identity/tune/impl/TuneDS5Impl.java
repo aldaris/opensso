@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneDS5Impl.java,v 1.4 2008-08-12 05:23:17 kanduls Exp $
+ * $Id: TuneDS5Impl.java,v 1.5 2008-08-29 10:25:39 kanduls Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -35,13 +35,7 @@ import com.sun.identity.tune.util.AMTuneUtil;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.StringTokenizer;
 import java.util.logging.Level;
-import netscape.ldap.LDAPAttribute;
-import netscape.ldap.LDAPAttributeSet;
-import netscape.ldap.LDAPEntry;
 
 /**
  * <code>TuneDS5Impl<\code> extends the <code>AMTuneDSBase<\code> and tunes
@@ -50,7 +44,6 @@ import netscape.ldap.LDAPEntry;
  */
 public class TuneDS5Impl extends AMTuneDSBase {
     private String db2BakPath;
-    private String db2IndexPath;
     private String stopCmdPath;
     private String startCmdPath;
     private String dbBackUpDir;
@@ -58,8 +51,7 @@ public class TuneDS5Impl extends AMTuneDSBase {
     /**
      * Constructs the instance of this class
      */
-    public TuneDS5Impl(boolean isSMStore) {
-        super(isSMStore);
+    public TuneDS5Impl() {
     }
 
     /**
@@ -74,16 +66,26 @@ public class TuneDS5Impl extends AMTuneDSBase {
         super.initialize(confInfo);
         if (AMTuneUtil.isWindows()) {
             db2BakPath = instanceDir + FILE_SEP + "db2bak.bat ";
-            db2IndexPath = instanceDir + FILE_SEP + "db2index.pl ";
             stopCmdPath = instanceDir + FILE_SEP + "stop-slapd.bat";
             startCmdPath = instanceDir + FILE_SEP + "start-slapd.bat";
         } else {
             db2BakPath = instanceDir + FILE_SEP + "db2bak ";
-            db2IndexPath = instanceDir + FILE_SEP + "db2index.pl ";
             stopCmdPath = instanceDir + FILE_SEP + "stop-slapd";
             startCmdPath = instanceDir + FILE_SEP + "start-slapd";
         }
+        validateAdminToolPath();
         dbBackUpDir = DB_BACKUP_DIR_PREFIX + "-" + AMTuneUtil.getRandomStr();
+    }
+    
+    protected void validateAdminToolPath() 
+    throws AMTuneException {
+        File db2bakFile = new File(db2BakPath.trim());
+        if (!db2bakFile.exists()) {
+            mWriter.writelnLocaleMsg("pt-error-ds-tool-not-found");
+            AMTuneUtil.printErrorMsg(DS_INSTANCE_DIR);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-invalid-ds-instance-dir"));
+        }
     }
 
     /**
@@ -98,9 +100,6 @@ public class TuneDS5Impl extends AMTuneDSBase {
             pLogger.log(Level.FINE, "startTuning","Start tuning.");
             mWriter.writeln(CHAPTER_SEP);
             mWriter.writelnLocaleMsg("pt-fam-ds-tuning");
-            if (isSM) {
-                mWriter.writelnLocaleMsg("pt-fam-sm-ds-tuning");
-            }
             mWriter.writeln(CHAPTER_SEP);
             mWriter.writelnLocaleMsg("pt-init");
             mWriter.writeln(LINE_SEP);
@@ -110,9 +109,6 @@ public class TuneDS5Impl extends AMTuneDSBase {
             if ( !AMTuneUtil.isWindows()) {
                 //For Windows changing dse with this script is not recommended.
                 tuneUsingDSE();
-            }
-            if (!isSM) {
-                tuneDSIndex();
             }
             tuneFuture();
             mWriter.writelnLocaleMsg("pt-ds-um-mutliple-msg");
@@ -131,7 +127,7 @@ public class TuneDS5Impl extends AMTuneDSBase {
     }
 
     /**
-     * This method modify s the DB home location in dse.ldif to point to
+     * This method modifys the DB home location in dse.ldif to point to
      * new location.
      *
      * @throws com.sun.identity.tune.common.AMTuneException
@@ -191,103 +187,7 @@ public class TuneDS5Impl extends AMTuneDSBase {
             startDS();
         }
     }
-
-    /**
-     * This method finds the attributes that need to be indexed, if tuning mode
-     * is set to "CHANGE" it creates the index for the required attributes.
-     *
-     * @throws com.sun.identity.tune.common.AMTuneException
-     */
-    private void tuneDSIndex()
-    throws AMTuneException {
-        try {
-            pLogger.log(Level.FINE, "tuneDSIndex", "Tune DS Index.");
-            String dn = getDBDN();
-            StringTokenizer firstCol = new StringTokenizer(dn, ",");
-            String dbName = firstCol.nextToken().replace("cn=", "");
-            List existingIdx = getIndexForDB(dbName);
-            List notIdxList = tuneDSIndex(existingIdx);
-            if (configInfo.isReviewMode()) {
-                return;
-            }
-            if (notIdxList.size() == 0) {
-                mWriter.writelnLocaleMsg("pt-all-idx-exist");
-            } else {
-                mWriter.writeLocaleMsg("pt-creating-idx");
-                mWriter.writeln(notIdxList.toString());
-                Iterator idxListItr = notIdxList.iterator();
-                while(idxListItr.hasNext()) {
-                    String curAttr = (String)idxListItr.next();
-                    mWriter.writeLocaleMsg("pt-create-idx-attr");
-                    mWriter.writeln(curAttr);
-                    createIndex(curAttr);
-                    mWriter.writelnLocaleMsg("pt-done");;
-                }
-            }
-        } catch (Exception ex) {
-            pLogger.log(Level.SEVERE, "tundeDSIndex", "Error tuning DS5 index");
-            throw new AMTuneException(ex.getMessage());
-        }
-    }
-
-    /**
-     * Creates index for the required attribute, creates new index dn for the
-     * attribute and invokes db2index.pl script
-     *
-     * @param attrName Name of the attribute to be indexed.
-     *
-     * @throws com.sun.identity.tune.common.AMTuneException
-     */
-    private void createIndex(String attrName)
-    throws AMTuneException {
-        try {
-            pLogger.log(Level.FINE, "createIndex", "Creating index for " +
-                    attrName);
-            String dbName = getDBName();
-            String newDn = "cn=" + attrName + ",cn=index,cn=" + dbName +
-                    "," + LDBM_DATABASE_DN;
-            String[] objClassArr = {"top", "nsIndex"};
-            String[] idxTypes = {"pres", "eq", "sub"};
-            LDAPAttribute[] attrs = {
-                new LDAPAttribute("objectClass", objClassArr),
-                new LDAPAttribute("cn", attrName),
-                new LDAPAttribute("nsSystemIndex", idxTypes)
-            };
-            LDAPAttributeSet attrSet = new LDAPAttributeSet(attrs);
-            LDAPEntry newIdxEntry = new LDAPEntry(newDn, attrSet);
-            addLDAPEntry(newIdxEntry);
-            String perlExePath = dsConfInfo.getPerlBinDir() + FILE_SEP;
-            if (AMTuneUtil.isWindows()) {
-                    perlExePath += "perl.exe ";
-                } else {
-                    perlExePath += "perl ";
-                }
-            File pexe = new File (perlExePath);
-            if (!pexe.isFile()) {
-                //Assuming perl is in system path
-                if (AMTuneUtil.isWindows()) {
-                    perlExePath = "perl.exe ";
-                } else {
-                    perlExePath = "perl ";
-                }
-            }
-            String idxCmd = perlExePath + db2IndexPath + "-D \"" +
-                    dsConfInfo.getDirMgrUid() + "\" -j " + dsPassFilePath +
-                    " -n " + dbName + " -t " + attrName;
-            StringBuffer resultBuffer = new StringBuffer();
-            int retVal = AMTuneUtil.executeCommand(idxCmd, resultBuffer);
-            if (retVal == -1) {
-                throw new AMTuneException("Creating index command failed.");
-            }
-        } catch (Exception ex) {
-            //just print the message
-            mWriter.writelnLocaleMsg("pt-idx-create-error");
-            pLogger.log(Level.SEVERE, "createIndex", "Error creating index " +
-                    "for attribute " + attrName + " : " + ex.getMessage());
-
-        }
-    }
-
+    
     /**
      * Takes the backup of the DS 5.2 by invoking db2bak.bat
      *
@@ -315,7 +215,8 @@ public class TuneDS5Impl extends AMTuneDSBase {
             int retVal = AMTuneUtil.executeCommand(db2BakCmd, resultBuffer);
             if (retVal == -1) {
                 mWriter.writelnLocaleMsg("pt-cannot-backup-db");
-                throw new AMTuneException("Data Base Backup failed.");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-error-ds-db-backup-failed"));
             }
             pLogger.log(Level.FINE, "backUpDS", "Backing up Done...");
             try {
@@ -327,8 +228,9 @@ public class TuneDS5Impl extends AMTuneDSBase {
                 AMTuneUtil.CopyFile(dseLdif, bakDseFile);
                 pLogger.log(Level.FINE, "backUpDS", "Backing Done..");
             } catch (Exception ex) {
-                throw new AMTuneException("Couldn't bakup dse.ldif. " +
-                        ex.getMessage());
+                pLogger.log(Level.SEVERE, "backupDS", ex.getMessage());
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-error-ds-conf-file-backup"));
             }
             successFile.createNewFile();
         } catch (Exception ex) {
@@ -347,7 +249,8 @@ public class TuneDS5Impl extends AMTuneDSBase {
         StringBuffer resultBuffer = new StringBuffer();
         int retVal = AMTuneUtil.executeCommand(stopCmdPath, resultBuffer);
         if (retVal == -1){
-            throw new AMTuneException("Error stopping DS 5.");
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-ds-stop"));
         }
         pLogger.log(Level.FINE, "stopDS", "DS Successfully stopped.");
     }
@@ -363,7 +266,8 @@ public class TuneDS5Impl extends AMTuneDSBase {
         StringBuffer resultBuffer = new StringBuffer();
         int retVal = AMTuneUtil.executeCommand(startCmdPath, resultBuffer);
         if (retVal == -1){
-            throw new AMTuneException("Error starting DS 5.");
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-ds-start"));
         }
         pLogger.log(Level.FINE, "startDS", "DS Successfully started.");
     }

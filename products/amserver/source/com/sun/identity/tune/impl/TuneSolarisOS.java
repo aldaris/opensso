@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneSolarisOS.java,v 1.3 2008-07-25 06:07:37 kanduls Exp $
+ * $Id: TuneSolarisOS.java,v 1.4 2008-08-29 10:25:40 kanduls Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -74,35 +74,41 @@ public class TuneSolarisOS extends TuneOS {
     public void startTuning() 
     throws AMTuneException {
         try {
-        if (osVersion.equals("5.10")) {
-            String cmd = "/usr/sbin/zoneadm list";
-            StringBuffer rBuf = new StringBuffer();
-            int extVal = AMTuneUtil.executeCommand(cmd, rBuf);
-            if (extVal == -1) {
-                mWriter.writelnLocaleMsg("pt-sol-error-tuning");
-                    throw new AMTuneException("Error executing command " +
-                            "zoneadm.");
-            } else {
-                if (rBuf.toString().toLowerCase().indexOf("global") != -1) {
-                    mWriter.writelnLocaleMsg("pt-sol-tuning-msg");
-                    mWriter.writeln(LINE_SEP);
-                    tuneKernel();
-                    tuneTCP();
-                    mWriter.writelnLocaleMsg("pt-lnx-reboot-msg");
-                    mWriter.writeln(PARA_SEP);
+            boolean globalZone = true;
+            if (osVersion.equals("5.10")) {
+                String cmd = "/usr/sbin/zoneadm list";
+                StringBuffer rBuf = new StringBuffer();
+                int extVal = AMTuneUtil.executeCommand(cmd, rBuf);
+                if (extVal == -1) {
+                    mWriter.writelnLocaleMsg("pt-sol-error-tuning");
+                    throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                            .getString("pt-error-zonadm"));
+                } else if (rBuf.toString().toLowerCase().indexOf("global") !=
+                        -1) {
+                    globalZone = true;
                 } else {
-                    pLogger.log(Level.WARNING, "startTuning", 
-                            "Not in Global zone");
+                    mWriter.writeln(CHAPTER_SEP);
                     mWriter.writelnLocaleMsg("pt-non-global-zone-msg");
-                    return;
+                    mWriter.writeln(CHAPTER_SEP);
+                    globalZone = false;
                 }
             }
+            if (globalZone) {
+                mWriter.writelnLocaleMsg("pt-sol-tuning-msg");
+                mWriter.writeln(LINE_SEP);
+                tuneKernel();
+                tuneTCP();
+                if (!confInfo.isReviewMode()) {
+                    mWriter.writelnLocaleMsg("pt-lnx-reboot-msg");
+                }
+                mWriter.writeln(PARA_SEP);
             }
         } catch (Exception ex) {
             pLogger.log(Level.SEVERE, "startTuning",
                     "Error tuning Solaris operating system.");
-            mWriter.writelnLocaleMsg("pt-error-tuning-msg");
-            mWriter.writeLocaleMsg("pt-os-tuning-error-msg");
+            mWriter.writeln(" ");
+            mWriter.writeLocaleMsg("pt-error-tuning-msg");
+            mWriter.writelnLocaleMsg("pt-os-tuning-error-msg");
             mWriter.writelnLocaleMsg("pt-manual-msg");
             pLogger.logException("startTuning", ex);
         }
@@ -262,7 +268,8 @@ public class TuneSolarisOS extends TuneOS {
             mWriter.writelnLocaleMsg("pt-tcp-slow-start-initial");
             mWriter.writeLocaleMsg("pt-cur-val");
             mWriter.write(TCP_DIV + SOL_TCP_SLOW_START_INTITIAL);
-            mWriter.writeln(" " + tcpCurCFGMap.get(SOL_TCP_SLOW_START_INTITIAL));
+            mWriter.writeln(" " + 
+                    tcpCurCFGMap.get(SOL_TCP_SLOW_START_INTITIAL));
             mWriter.writeLocaleMsg("pt-rec-val");
             mWriter.write(TCP_DIV + SOL_TCP_SLOW_START_INTITIAL);
             mWriter.writeln(" " + SLOW_START_INITIAL_VAL);
@@ -301,7 +308,7 @@ public class TuneSolarisOS extends TuneOS {
             mWriter.writeln(" " + 
                     tcpCurCFGMap.get(SOL_TCP_DEFERRED_ACK_INTERVAL));
             mWriter.writeLocaleMsg("pt-rec-val");
-            mWriter.write(TCP_DIV + SOL_TCP_IP_ABORT_CINTERVAL);
+            mWriter.write(TCP_DIV + SOL_TCP_DEFERRED_ACK_INTERVAL);
             mWriter.writeln(" " + ACK_INTERVAL_VAL);
             mWriter.writeln(" ");
             
@@ -313,32 +320,38 @@ public class TuneSolarisOS extends TuneOS {
             mWriter.write(TCP_DIV + SOL_TCP_STRONG_ISS);
             mWriter.writeln(" " + STRONG_ISS_VAL);
             mWriter.writeln(" ");
-            
             if (confInfo.isReviewMode()) {
                 return;
             }
-            AMTuneUtil.backupConfigFile(tuneFile);
+            if (new File(tuneFile).exists()) {
+                AMTuneUtil.backupConfigFile(tuneFile);
+                FileHandler solConfFile = new FileHandler(tuneFile);
+                String[] delStrs = { "#" + START_FAM_MSG, 
+                    SOL_TCP_TIME_WAIT_INTERVAL, 
+                    SOL_TCP_FIN_WAIT_2_FLUSH_INTERVAL,
+                    SOL_TCP_CONN_REQ_MAX_Q,
+                    SOL_TCP_CONN_REQ_MAX_Q0,
+                    SOL_TCP_IP_ABORT_INTERVAL,
+                    SOL_TCP_KEEPALIVE_INTERVAL,
+                    SOL_TCP_REXMIT_INTERVAL_MAX,
+                    SOL_TCP_REXMIT_INTERVAL_MIN,
+                    SOL_TCP_REXMIT_INTERVAL_INITIAL,
+                    SOL_TCP_SMALLEST_ANON_PORT,
+                    SOL_TCP_SLOW_START_INTITIAL,
+                    SOL_TCP_XMIT_HIWAT,
+                    SOL_TCP_RECV_HIWAT,
+                    SOL_TCP_IP_ABORT_CINTERVAL,
+                    SOL_TCP_DEFERRED_ACK_INTERVAL,
+                    SOL_TCP_STRONG_ISS,
+                    "#" + END_FAM_MSG
+                };
+                solConfFile.removeMatchingLines(delStrs);
+                solConfFile.close();
+            } else {
+                //create the file
+                new File(tuneFile).createNewFile();
+            }
             FileHandler fh = new FileHandler(tuneFile);
-            String[] delStrs = { "#" + START_FAM_MSG, 
-                SOL_TCP_TIME_WAIT_INTERVAL, 
-                SOL_TCP_FIN_WAIT_2_FLUSH_INTERVAL,
-                SOL_TCP_CONN_REQ_MAX_Q,
-                SOL_TCP_CONN_REQ_MAX_Q0,
-                SOL_TCP_IP_ABORT_INTERVAL,
-                SOL_TCP_KEEPALIVE_INTERVAL,
-                SOL_TCP_REXMIT_INTERVAL_MAX,
-                SOL_TCP_REXMIT_INTERVAL_MIN,
-                SOL_TCP_REXMIT_INTERVAL_INITIAL,
-                SOL_TCP_SMALLEST_ANON_PORT,
-                SOL_TCP_SLOW_START_INTITIAL,
-                SOL_TCP_XMIT_HIWAT,
-                SOL_TCP_RECV_HIWAT,
-                SOL_TCP_IP_ABORT_CINTERVAL,
-                SOL_TCP_DEFERRED_ACK_INTERVAL,
-                SOL_TCP_STRONG_ISS,
-                "#" + END_FAM_MSG
-            };
-            fh.removeMatchingLines(delStrs);
             fh.appendLine("#" + START_FAM_MSG);
             String setCmd = "ndd -set " + TCP_DIV;
             fh.appendLine(setCmd + SOL_TCP_FIN_WAIT_2_FLUSH_INTERVAL +
@@ -373,11 +386,9 @@ public class TuneSolarisOS extends TuneOS {
             br.write(". " + tuneFile.trim());
             br.close();
             //Chmod for both the files.
-            String chmd = "chmod 744 ";
             StringBuffer rBuff = new StringBuffer();
-            AMTuneUtil.executeCommand(chmd + tuneFile + " " + 
-                    wrap.getAbsolutePath() , rBuff);
-            rBuff.setLength(0);
+            AMTuneUtil.changeFilePerm(tuneFile, "700");
+            AMTuneUtil.changeFilePerm(wrap.getAbsolutePath(), "700");
             int extVal = AMTuneUtil.executeCommand("/bin/sh " + 
                     wrap.getAbsolutePath(), rBuff);
             if (extVal == -1) {

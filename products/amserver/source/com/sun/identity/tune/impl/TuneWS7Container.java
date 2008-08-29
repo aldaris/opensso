@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneWS7Container.java,v 1.5 2008-08-19 19:09:30 veiming Exp $
+ * $Id: TuneWS7Container.java,v 1.6 2008-08-29 10:25:40 kanduls Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -35,7 +35,10 @@ import com.sun.identity.tune.config.WS7ContainerConfigInfo;
 import com.sun.identity.tune.constants.WebContainerConstants;
 import com.sun.identity.tune.intr.TuneWebServer;
 import com.sun.identity.tune.util.AMTuneUtil;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -54,6 +57,7 @@ public class TuneWS7Container extends TuneWebServer implements
     private MessageWriter mWriter;
     private String tuneFile;
     private Map curCfgMap;
+    private String passwordStr = null;
 
     /**
      * Initializes the configuration information.
@@ -67,10 +71,13 @@ public class TuneWS7Container extends TuneWebServer implements
     throws AMTuneException {
         this.configInfo = configInfo;
         wsConfigInfo = (WS7ContainerConfigInfo)configInfo.getWSConfigInfo();
+        passwordStr = WS7ADMIN_PASSWORD_SYNTAX + 
+                    wsConfigInfo.getWsAdminPass();
         pLogger = AMTuneLogger.getLoggerInst();
         mWriter = MessageWriter.getInstance();
         tuneFile = wsConfigInfo.getContainerInstanceDir() + FILE_SEP +
                 "config" + FILE_SEP + "server.xml";
+        validateInstanceDir();
         curCfgMap = wsConfigInfo.getServerCfgMap();
     }
 
@@ -88,6 +95,7 @@ public class TuneWS7Container extends TuneWebServer implements
             mWriter.writeln(PARA_SEP);
         } catch (Exception ex) {
             pLogger.log(Level.SEVERE, "startTuning", "Error tuning WS7");
+            mWriter.writeln(" ");
             mWriter.writelnLocaleMsg("pt-error-tuning-msg");
             mWriter.writeLocaleMsg("pt-web-tuning-error-msg");
             mWriter.writelnLocaleMsg("pt-manual-msg");
@@ -101,8 +109,6 @@ public class TuneWS7Container extends TuneWebServer implements
         }
     }
     
-    
-    
     /**
      * This method finds the current Web Server configuration information and
      * recommends if any parameters require tuning.  If review mode is set to
@@ -113,7 +119,11 @@ public class TuneWS7Container extends TuneWebServer implements
     protected void tuneServerConfigFile()
     throws AMTuneException {
         try {
+            mWriter.writeln(CHAPTER_SEP);
             mWriter.writelnLocaleMsg("pt-web-server-inst");
+            mWriter.writeln(CHAPTER_SEP);
+            mWriter.writelnLocaleMsg("pt-init");
+            mWriter.writeln(LINE_SEP);
             mWriter.writeln(" ");
             mWriter.writeLocaleMsg("pt-file");
             mWriter.writeln(tuneFile + " " + "(using wadm command line tool)");
@@ -299,17 +309,26 @@ public class TuneWS7Container extends TuneWebServer implements
             }
             //AMTuneUtil.backupConfigFile(tuneFile, "config-ws7-backup");
             String bakFile = wsConfigInfo.getContainerInstanceDir() + 
-                    FILE_SEP + "server.xml-orig" + AMTuneUtil.getRandomStr();
+                    FILE_SEP + "server.xml-orig-" + AMTuneUtil.getRandomStr();
             AMTuneUtil.CopyFile(new File(tuneFile), new File(bakFile));
             boolean isThreadPoolPropChanged = false;
-            int curMax = Integer.parseInt(curMaxThreads);
-            if (curMax != getMaxThreadPoolVal()) {
+            //In Windows Vista WS7 is returning "default" value
+            if (!curMaxThreads.equals("default")) {
+                int curMax = Integer.parseInt(curMaxThreads);
+                if (curMax != getMaxThreadPoolVal()) {
+                    isThreadPoolPropChanged = setThreadPoolProp();
+                }
+            } else {
                 isThreadPoolPropChanged = setThreadPoolProp();
             }
             boolean isHttpListnerPropChanged = false;
-            int curAcceptorT = Integer.parseInt(
-                    curCfgMap.get(ACCEPTOR_THREADS).toString());
-            if (curAcceptorT < configInfo.getAcceptorThreads()) {
+            if (!curCfgMap.get(ACCEPTOR_THREADS).toString().equals("default")) {
+                int curAcceptorT = Integer.parseInt(
+                        curCfgMap.get(ACCEPTOR_THREADS).toString());
+                if (curAcceptorT < configInfo.getAcceptorThreads()) {
+                    isHttpListnerPropChanged = setHttpListenerProp();
+                }
+            } else {
                 isHttpListnerPropChanged = setHttpListenerProp();
             }
             boolean statsEnb =
@@ -403,14 +422,22 @@ public class TuneWS7Container extends TuneWebServer implements
             if (isThreadPoolPropChanged || isHttpListnerPropChanged || 
                     isStatsChanged || isHeapOptDel || isJvmOptDel || 
                     isInsertHeapOpt || isInsertJVMOpt) {
-                deployConfig();
-                AMTuneUtil.reStartWS7Serv(wsConfigInfo);
+                boolean retVal = deployConfig();
+                if (retVal) {
+                    AMTuneUtil.reStartWS7Serv(wsConfigInfo);
+                } else {
+                    
+                    mWriter.writelnLocaleMsg("pt-error-ws-deployment-failed");
+                }
             } else {
                 mWriter.writelnLocaleMsg("pt-web-conf-same-rec-msg");
             }
-        } catch (Exception ex) {
+        } catch (AMTuneException amex) {
             pLogger.log(Level.SEVERE, "tuneServerConfigFile",
                     "Error tuning webserver7 configuration.");
+            throw amex;  
+        } catch (Exception ex) {
+            pLogger.logException("tuneServerConfigFile", ex);
             throw new AMTuneException(ex.getMessage());
         }
     }
@@ -418,7 +445,7 @@ public class TuneWS7Container extends TuneWebServer implements
     /**
      * This method deploys new Web Server 7 configuration using wadm tool.
      */
-    private void deployConfig() {
+    private boolean deployConfig() {
         try {
             pLogger.log(Level.INFO, "deployConfig", "Deploying configuration.");
             String deployCmd = wsConfigInfo.getWSAdminCmd() + 
@@ -426,16 +453,19 @@ public class TuneWS7Container extends TuneWebServer implements
                     wsConfigInfo.getWSAdmCommonParamsNoConfig() + " " +
                     wsConfigInfo.getWSAdminConfig();
             StringBuffer resultBuffer = new StringBuffer();
-            int retVal = AMTuneUtil.executeCommand(deployCmd,
+            int retVal = AMTuneUtil.executeCommand(deployCmd, passwordStr, 
+                    wsConfigInfo.getWSAdminPassFilePath(),
                     resultBuffer);
             if (retVal == -1) {
                 pLogger.log(Level.SEVERE, "deployConfig",
                         "Error executing command " + deployCmd);
+                return false;
             }
         } catch (Exception ex) {
             pLogger.log(Level.SEVERE, "deployConfig",
                     "Deploying configuration failed. " + ex.getMessage());
         }
+        return true;
     }
 
     /**
@@ -449,7 +479,8 @@ public class TuneWS7Container extends TuneWebServer implements
                     wsConfigInfo.getWSAdminCommonParams() + " " + ENABLED +
                     "=" + AMTUNE_STATISTIC_ENABLED;
             StringBuffer resultBuffer = new StringBuffer();
-            int retVal = AMTuneUtil.executeCommand(statsCmd,
+            int retVal = AMTuneUtil.executeCommand(statsCmd, passwordStr, 
+                    wsConfigInfo.getWSAdminPassFilePath(),
                     resultBuffer);
             if (retVal == -1) {
                 mWriter.writelnLocaleMsg("pt-set-param-error-msg");
@@ -479,7 +510,8 @@ public class TuneWS7Container extends TuneWebServer implements
                     wsConfigInfo.getWSAdminHttpListener() +
                     " acceptor-threads=" + configInfo.getAcceptorThreads();
             StringBuffer resultBuffer = new StringBuffer();
-            int retVal = AMTuneUtil.executeCommand(setListenerCmd,
+            int retVal = AMTuneUtil.executeCommand(setListenerCmd, passwordStr, 
+                    wsConfigInfo.getWSAdminPassFilePath(),
                     resultBuffer);
             if (retVal == -1) {
                 mWriter.writelnLocaleMsg("pt-set-param-error-msg");
@@ -520,7 +552,8 @@ public class TuneWS7Container extends TuneWebServer implements
             StringBuffer resultBuffer = new StringBuffer();
             int retVal = 0;
             if (wsConfigInfo.isJVM64Bit()) {
-                retVal = AMTuneUtil.executeCommand(setProp64Cmd,
+                retVal = AMTuneUtil.executeCommand(setProp64Cmd, passwordStr,
+                        wsConfigInfo.getWSAdminPassFilePath(),
                         resultBuffer);
                 if (retVal == -1) {
                     mWriter.writelnLocaleMsg("pt-set-param-error-msg");
@@ -531,7 +564,8 @@ public class TuneWS7Container extends TuneWebServer implements
                     threadPoolPropChange = true;
                 }
             } else {
-                retVal = AMTuneUtil.executeCommand(setPropCmd,
+                retVal = AMTuneUtil.executeCommand(setPropCmd, passwordStr,
+                        wsConfigInfo.getWSAdminPassFilePath(),
                         resultBuffer);
                 if (retVal == -1) {
                     mWriter.writelnLocaleMsg("pt-set-param-error-msg");
@@ -633,18 +667,23 @@ public class TuneWS7Container extends TuneWebServer implements
         }
         StringBuffer resultBuffer = new StringBuffer();
         int retVal = -1;
-        if (!AMTuneUtil.isWindows()) {
-            try {
-                retVal = AMTuneUtil.executeScriptCmd(delJVMCmd, resultBuffer);
-            } catch (AMTuneException ex) {
-                retVal = -1;
+        try {
+            if (!AMTuneUtil.isWindows()) {
+                retVal = AMTuneUtil.executeScriptCmd(delJVMCmd, passwordStr,
+                        wsConfigInfo.getWSAdminPassFilePath(),
+                        resultBuffer);
+            } else {
+                retVal = AMTuneUtil.executeCommand(delJVMCmd, passwordStr,
+                        wsConfigInfo.getWSAdminPassFilePath(),
+                        resultBuffer);
             }
-        } else {
-            retVal = AMTuneUtil.executeCommand(delJVMCmd, resultBuffer);
+        } catch (AMTuneException aex) {
+            pLogger.log(Level.WARNING, "deleteJVMOptionUsingWSAdmin",
+                    "Deleting jvm opt failed" + aex.getMessage());
+            retVal = -1;
         }
         if (retVal == -1) {
             mWriter.writelnLocaleMsg("pt-del-jvm-error-msg");
-            mWriter.writelnLocaleMsg("pt-check-dbg-logs-msg");
             return false;
         } else {
             return true;
@@ -689,16 +728,23 @@ public class TuneWS7Container extends TuneWebServer implements
             addJVMCmd = addJVMCmd + "\"";
         }
         StringBuffer resultBuffer = new StringBuffer();
-        int retVal = 0;
-        if (AMTuneUtil.isWindows()) {
-            retVal = AMTuneUtil.executeCommand(addJVMCmd, resultBuffer);
-        } else {
-            try {
-                retVal = AMTuneUtil.executeScriptCmd(addJVMCmd, resultBuffer);
-            } catch (AMTuneException ex) {
-                retVal = -1;
+        int retVal = 0; 
+        try {
+            if (AMTuneUtil.isWindows()) {
+                retVal = AMTuneUtil.executeCommand(addJVMCmd, passwordStr,
+                        wsConfigInfo.getWSAdminPassFilePath(),
+                        resultBuffer);
+            } else {
+                retVal = AMTuneUtil.executeScriptCmd(addJVMCmd, passwordStr,
+                        wsConfigInfo.getWSAdminPassFilePath(),
+                        resultBuffer);
             }
+        } catch (AMTuneException ex) {
+            pLogger.log(Level.WARNING, "insertJVMOptionUsingWSAdmin",
+                   "Inserting jvm opts failed " + ex.getMessage());
+            retVal = -1;
         }
+        
         if (retVal == -1) {
             mWriter.writelnLocaleMsg("pt-create-jvm-opts-error-msg");
             mWriter.writelnLocaleMsg("pt-check-dbg-logs-msg");
@@ -708,11 +754,8 @@ public class TuneWS7Container extends TuneWebServer implements
         }
     }
      
-    private void deletePasswordFile() {
-        File passFile = new File(wsConfigInfo.getWSAdminPassFilePath());
-        if (passFile.isFile()) {
-            passFile.delete();
-        }
+    protected void deletePasswordFile() {
+        AMTuneUtil.deleteFile(wsConfigInfo.getWSAdminPassFilePath());
     }
     
     /**
@@ -727,5 +770,20 @@ public class TuneWS7Container extends TuneWebServer implements
             recMaxThreadPool = AMTUNE_NUM_WS_THREADS_MAX_VAL;
         }
         return recMaxThreadPool;
+    }
+    
+    /**
+     * Validates the instance directory
+     * @throws com.sun.identity.tune.common.AMTuneException
+     */
+    private void validateInstanceDir() 
+    throws AMTuneException {
+        File serConfFile = new File(tuneFile);
+        if (!serConfFile.exists()) {
+            mWriter.writelnLocaleMsg("pt-error-ws-conf-file-not-found");
+            AMTuneUtil.printErrorMsg(CONTAINER_INSTANCE_DIR);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-ws-invalid-instance-dir"));
+        }
     }
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneLinuxOS.java,v 1.2 2008-07-10 12:40:28 kanduls Exp $
+ * $Id: TuneLinuxOS.java,v 1.3 2008-08-29 10:25:40 kanduls Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -61,13 +61,16 @@ public class TuneLinuxOS extends TuneOS {
             tuneKernel();
             tuneRcLocal();
             tuneSecurityLimits();
-            mWriter.writelnLocaleMsg("pt-lnx-reboot-msg");
+            if (!confInfo.isReviewMode()) {
+                mWriter.writelnLocaleMsg("pt-lnx-reboot-msg");
+            }
             mWriter.writeln(PARA_SEP);
         } catch (Exception ex) {
             pLogger.log(Level.SEVERE, "startTuning", 
                     "Error tuning linux system.");
-            mWriter.writelnLocaleMsg("pt-error-tuning-msg");
-            mWriter.writeLocaleMsg("pt-os-tuning-error-msg");
+            mWriter.writeln(" ");
+            mWriter.writeLocaleMsg("pt-error-tuning-msg");
+            mWriter.writelnLocaleMsg("pt-os-tuning-error-msg");
             mWriter.writelnLocaleMsg("pt-manual-msg");
             pLogger.logException("startTuning", ex);
         }
@@ -75,11 +78,14 @@ public class TuneLinuxOS extends TuneOS {
     
     protected void tuneKernel()
     throws AMTuneException {
+        FileHandler sysOutHdlr = null;
+        File outFile = null;
+        FileHandler tuneFileFh = null;
         try {
             String tuneFile = "/etc/sysctl.conf";
             List recVals = new ArrayList();
             String recVal;
-            FileHandler tuneFileFh = new FileHandler(tuneFile);
+            tuneFileFh = new FileHandler(tuneFile);
             mWriter.writeln(LINE_SEP);
             mWriter.writelnLocaleMsg("pt-lnx-kernel-tuning-msg");
             mWriter.writeln(" ");
@@ -98,16 +104,6 @@ public class TuneLinuxOS extends TuneOS {
             recVals.add(recVal);
             mWriter.writeln(" ");
             
-            mWriter.writelnLocaleMsg("pt-lnx-dbflush-msg");
-            mWriter.writeLocaleMsg("pt-cur-val");
-            reqLine = tuneFileFh.getLine(LNX_DB_FLUSH);
-            mWriter.writeln(LNX_DB_FLUSH + " = " + 
-                    AMTuneUtil.getLastToken(reqLine, "="));
-            mWriter.writeLocaleMsg("pt-rec-val");
-            recVal = LNX_DB_FLUSH + " = " + AMTUNE_LINUX_VM_BDFLUSH;
-            mWriter.writeln(recVal);
-            recVals.add(recVal);
-            mWriter.writeln(" ");
             // Execute sysctl cmd and get all the values into resultbuffer
             String sysCtlCmd = "/sbin/sysctl ";
             StringBuffer rBuff = new StringBuffer();
@@ -115,21 +111,19 @@ public class TuneLinuxOS extends TuneOS {
             if (extVal != -1) {
                 String sysOutTempFile = AMTuneUtil.TMP_DIR + "sysctlout";
                 AMTuneUtil.writeResultBufferToTempFile(rBuff, sysOutTempFile);
-                FileHandler sysOutHdlr = new FileHandler(sysOutTempFile);
-                File outFile = new File(sysOutTempFile);
-                if (outFile.isFile()) {
-                    outFile.delete();
-                }
+                sysOutHdlr = new FileHandler(sysOutTempFile);
+                outFile = new File(sysOutTempFile);
                 mWriter.writelnLocaleMsg("pt-lnx-ip-local-port-range");
                 mWriter.writeLocaleMsg("pt-cur-val");
                 reqLine = sysOutHdlr.getLine(LNX_IPV4_LOCAL_PORT_RANGE);
-                mWriter.writeln(LNX_IPV4_LOCAL_PORT_RANGE + " = " + 
+                mWriter.writeln(LNX_IPV4_LOCAL_PORT_RANGE + " = " +  
                         AMTuneUtil.getLastToken(reqLine, "=" ));
                 mWriter.writeLocaleMsg("pt-rec-val");
                 recVal = LNX_IPV4_LOCAL_PORT_RANGE + " = " + 
                         AMTUNE_LINUX_IPV4_LOCAL_PORT_RANGE;
                 mWriter.writeln(recVal);
                 recVals.add(recVal);
+                mWriter.writeln(" ");
                 mWriter.writelnLocaleMsg("pt-lnx-core-rmem-max-msg");
                 mWriter.writeLocaleMsg("pt-cur-val");
                 reqLine = sysOutHdlr.getLine(LNX_CORE_RMEM_MAX);
@@ -244,12 +238,13 @@ public class TuneLinuxOS extends TuneOS {
                 mWriter.writeln(" ");
                 
             } else {
-                throw new AMTuneException("Error running sysctl cmd. ");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-error-sysctl-cmd"));
             } 
             if (confInfo.isReviewMode()) {
                 return;
             }
-            String[] delLines = { START_FAM_MSG, LNX_FILE_MAX, LNX_DB_FLUSH,
+            String[] delLines = { START_FAM_MSG, LNX_FILE_MAX,
                 LNX_IPV4_LOCAL_PORT_RANGE, LNX_CORE_RMEM_MAX, 
                 LNX_CORE_RMEM_DEFAULT, LNX_IPV4_TCP_RMEM, LNX_IPV4_TCP_WMEM,
                 LNX_IPV4_TCP_SACK, LNX_IPV4_TCP_TIMESTAMPS,
@@ -262,12 +257,12 @@ public class TuneLinuxOS extends TuneOS {
             tuneFileFh.removeMatchingLines(delLines);
             tuneFileFh.appendLine("# " + START_FAM_MSG + " " + 
                      AMTuneUtil.getTodayDateStr());
-            tuneFileFh.appendLine("# " + END_FAM_MSG + " " + 
-                     AMTuneUtil.getTodayDateStr());
              Iterator itr = recVals.iterator();
              while(itr.hasNext()) {
                  tuneFileFh.appendLine((String)itr.next());
              }
+             tuneFileFh.appendLine("# " + END_FAM_MSG + " " + 
+                     AMTuneUtil.getTodayDateStr());
              tuneFileFh.close();
              mWriter.writeLocaleMsg("pt-lnx-load-vals-msg");
              mWriter.writeln(" " + tuneFile);
@@ -278,13 +273,28 @@ public class TuneLinuxOS extends TuneOS {
                          "Linux kernel tuning successful.");
              } else {
                  mWriter.writelnLocaleMsg("pt-lnx-kernel-tuning-error-msg");
-                 pLogger.log(Level.SEVERE, "tuneKernel", 
-                         "Error tuning Linux kernel." );
              }
+        } catch(AMTuneException amex) {
+            throw amex;
         } catch (Exception ex) {
             pLogger.logException("tuneKernel", ex);
-            throw new AMTuneException("Exception while tuning Linux kernel");
-        } 
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-lnx-kernel-tuning-error-msg"));
+        } finally {
+            try {
+                if (sysOutHdlr != null){
+                    sysOutHdlr.close();
+                }
+                if (outFile != null) {
+                    outFile.delete();
+                }
+                if (tuneFileFh != null) {
+                    tuneFileFh.close();
+                }
+            } catch(Exception ex) {
+                pLogger.log(Level.WARNING, "tuneKernel", ex.getMessage());
+            }
+        }
     }
     
     protected void tuneTCP() 
@@ -345,17 +355,7 @@ public class TuneLinuxOS extends TuneOS {
             mWriter.writeln(recVal);
             recVals.add(recVal);
             mWriter.writeln(" ");
-            
-            mWriter.writeln("5.   " + LNX_VM_BDFLUSH_NAME);
-            mWriter.writeLocaleMsg("pt-cur-val");
-            mWriter.writeln(fh.getLine(LNX_VM_BDFLUSH_NAME));
-            mWriter.writeLocaleMsg("pt-rec-val");
-            recVal = "echo " + AMTUNE_LINUX_VM_BDFLUSH + 
-                    " > " + LNX_VM_BDFLUSH_NAME;
-            mWriter.writeln(recVal);
-            recVals.add(recVal);
-            mWriter.writeln(" ");
-            
+
             mWriter.writeLocaleMsg("pt-lnx-loading-kernel-msg");
             mWriter.writeln(LNX_LOAD_SYSCTL_CMD);
             mWriter.writeLocaleMsg("pt-cur-val");
@@ -374,7 +374,7 @@ public class TuneLinuxOS extends TuneOS {
             String delLines[] = {
                 START_FAM_MSG, LNX_TCP_FIN_TIMEOUT_NAME, 
                 LNX_TCP_KEEPALIVE_TIME_NAME, LNX_TCP_KEEPALIVE_INTVL_NAME,
-                LNX_TCP_WINDOW_SCALING_NAME, LNX_VM_BDFLUSH_NAME,
+                LNX_TCP_WINDOW_SCALING_NAME,
                 LNX_LOAD_SYSCTL_CMD, END_FAM_MSG
             };
             fh.removeMatchingLines(delLines);
@@ -391,7 +391,8 @@ public class TuneLinuxOS extends TuneOS {
             fh.close();
         } catch (Exception ex) {
             pLogger.logException("tuneRcLocal", ex);
-            throw new AMTuneException("Error tuning Linux Boot file.");
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-lnx-boot-file-error"));
         }
     }
     
@@ -457,7 +458,7 @@ public class TuneLinuxOS extends TuneOS {
             }
             mWriter.writeLocaleMsg("pt-rec-val");
             mWriter.writeln(newNoFileHardString);
-            
+            mWriter.writeln(" ");
             if (confInfo.isReviewMode()) {
                 return;
             }
@@ -466,7 +467,7 @@ public class TuneLinuxOS extends TuneOS {
                     "Deleting configuration from " + tuneFile);
             String[] delLines = { START_FAM_MSG, END_FAM_MSG };
             tuneFileFh.removeMatchingLines(delLines);
-            if (reqLns.length == 1) {
+            if (reqLns.length > 0) {
                 tuneFileFh.removeMatchingLines(reqLns);
             }
             if (noFLines.length > 0) {
@@ -477,13 +478,14 @@ public class TuneLinuxOS extends TuneOS {
             tuneFileFh.appendLine("# " + START_FAM_MSG + " " +
                     AMTuneUtil.getTodayDateStr());
             tuneFileFh.appendLine(newNoFileSoftString);
-            tuneFileFh.appendLine(newNoFileSoftString);
+            tuneFileFh.appendLine(newNoFileHardString);
             tuneFileFh.appendLine("# " + END_FAM_MSG + " " +
                     AMTuneUtil.getTodayDateStr());
             tuneFileFh.close();
         } catch (Exception ex) {
             pLogger.logException("tuneSecurityLimits", ex);
-            throw new AMTuneException("Error tuning limits.conf.");
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-lnx-limits-conf-error"));
         }
     }
 }

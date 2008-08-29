@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneDS6Impl.java,v 1.3 2008-07-25 05:49:59 kanduls Exp $
+ * $Id: TuneDS6Impl.java,v 1.4 2008-08-29 10:25:40 kanduls Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -35,10 +35,6 @@ import com.sun.identity.tune.util.AMTuneUtil;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.StringTokenizer;
 import java.util.logging.Level;
 
 /**
@@ -48,11 +44,9 @@ import java.util.logging.Level;
  */
 public class TuneDS6Impl extends AMTuneDSBase {
     private String dsAdmPath;
-    private String dsConf;
     private String dbBackupDir;
     
-    public TuneDS6Impl(boolean isSMStore) {
-        super(isSMStore);
+    public TuneDS6Impl() {
     }
     
     /**
@@ -67,30 +61,44 @@ public class TuneDS6Impl extends AMTuneDSBase {
         super.initialize(configInfo);
         if (AMTuneUtil.isWindows()) {
             dsAdmPath = dsConfInfo.getDSToolsBinDir() + FILE_SEP + "dsadm.exe ";
-            dsConf = dsConfInfo.getDSToolsBinDir() + FILE_SEP + "dsconf.exe ";
         } else {
             dsAdmPath = dsConfInfo.getDSToolsBinDir() + FILE_SEP + "dsadm ";
-            dsConf = dsConfInfo.getDSToolsBinDir() + FILE_SEP + "dsconf ";
         }
+        validateDSADMPath();
         dbBackupDir = DB_BACKUP_DIR_PREFIX + "-" + AMTuneUtil.getRandomStr();
         checkDSRealVersion();
     }
     
+    /**
+     * Validates Directory server tools path
+     * @throws com.sun.identity.tune.common.AMTuneException
+     */
+    private void validateDSADMPath() 
+    throws AMTuneException {
+        File dsadm = new File(dsAdmPath.trim());
+            if (!dsadm.exists()) {
+                AMTuneUtil.printErrorMsg(DS_TOOLS_DIR);
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-error-ds-tool-not-found"));
+            }
+        }
+    
+    /**
+     * Executes dsadm command to fine real version of the DS.
+     * @throws com.sun.identity.tune.common.AMTuneException
+     */
     private void checkDSRealVersion()
     throws AMTuneException {
         String verCmd = dsAdmPath + " --version";
         StringBuffer rBuff = new StringBuffer();
         int extVal = AMTuneUtil.executeCommand(verCmd, rBuff);
         if (extVal == -1) {
-            mWriter.writelnLocaleMsg("pt-ds-version-fail-msg");
-            mWriter.writelnLocaleMsg("pt-cannot-proceed");
-            throw new AMTuneException("Error getting DS version.");
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-ds-version-fail-msg"));
         } else {
-            if (rBuff.toString().indexOf(DS63_VERSION) == -1 &&
-                rBuff.indexOf(DS62_VERSION) != -1) {
-                mWriter.writelnLocaleMsg("pt-ds-unsupported-msg");
-                mWriter.writelnLocaleMsg("pt-cannot-proceed");
-                throw new AMTuneException("Unsupported DS version.");
+            if (rBuff.indexOf(DS62_VERSION) != -1) {
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-ds-unsupported-msg"));
             }
         }
     }
@@ -107,26 +115,21 @@ public class TuneDS6Impl extends AMTuneDSBase {
             pLogger.log(Level.FINE, "startTuning","Start tuning.");
             mWriter.writeln(CHAPTER_SEP);
             mWriter.writelnLocaleMsg("pt-fam-ds6-tuning");
-            if (isSM) {
-                mWriter.writelnLocaleMsg("pt-fam-sm-ds-tuning");
-            }
             mWriter.writeln(CHAPTER_SEP);
             mWriter.writelnLocaleMsg("pt-init");
             mWriter.writeln(LINE_SEP);
             computeTuneValues();
             mWriter.writeln(PARA_SEP);
             modifyLDAP();
-            if ( ! AMTuneUtil.isWindows()) {
+            if ( !AMTuneUtil.isWindows()) {
                 //For Windows changing dse is not recommended.
                 tuneUsingDSE();
-            }
-            if (!isSM) {
-                tuneDSIndex();
             }
             tuneFuture();
             mWriter.writelnLocaleMsg("pt-ds-um-mutliple-msg");
         } catch (Exception ex) {
             pLogger.log(Level.SEVERE, "startTuning", "Error Tuning DSEE6.0");
+            mWriter.writeln(" ");
             mWriter.writelnLocaleMsg("pt-error-tuning-msg");
             pLogger.logException("startTuning", ex);
         } finally {
@@ -136,108 +139,6 @@ public class TuneDS6Impl extends AMTuneDSBase {
             //ignore
             }
             deletePasswordFile();
-        }
-    }
-
-    /**
-     * This method modify the DB home location in dse.ldif to point to
-     * new location.
-     *
-     * @throws com.sun.identity.tune.common.AMTuneException
-     */
-    private List getIndexForDB()
-    throws AMTuneException {
-        List idxList = new ArrayList();
-        try {
-            pLogger.log(Level.FINE, "getIndexForDB", "Get existing index.");
-            String listIndexCmd = dsConf + "list-indexes --port " +
-                    dsConfInfo.getDsPort() + " --unsecured --no-inter " +
-                    "--pwd-file " + dsPassFilePath + " " +
-                    dsConfInfo.getRootSuffix();
-            StringBuffer resultBuffer = new StringBuffer();
-            int retVal = AMTuneUtil.executeCommand(listIndexCmd,
-                    resultBuffer);
-            if (retVal == -1){
-                throw new AMTuneException(resultBuffer.toString());
-            }
-            StringTokenizer idxTokens =
-                    new StringTokenizer(resultBuffer.toString(), " ");
-            while(idxTokens.hasMoreTokens()) {
-                idxList.add(idxTokens.nextToken().trim());
-            }
-            pLogger.log(Level.FINE, "getIndexForDB", "Returning idx list " +
-                    idxList.toString());
-        } catch (Exception ex) {
-            pLogger.log(Level.SEVERE, "getIndexForDB", "Error finding index");
-            throw new AMTuneException(ex.getMessage());
-        }
-       return idxList;
-    }
-
-    /**
-     * This method finds the attributes that need to be indexed, if tuning mode
-     * is set to "CHANGE" it creates the index for the required attributes.
-     *
-     * @throws com.sun.identity.tune.common.AMTuneException
-     */
-    private void tuneDSIndex()
-    throws AMTuneException {
-        try {
-            pLogger.log(Level.FINE, "tuneDSIndex", "Tune DS Index.");
-            List existingIdx = getIndexForDB();
-            List notIdxList = tuneDSIndex(existingIdx);
-            if (configInfo.isReviewMode()) {
-                return;
-            }
-            if (notIdxList.size() == 0) {
-                mWriter.writelnLocaleMsg("pt-all-idx-exist");
-            } else {
-                mWriter.writeLocaleMsg("pt-creating-idx");
-                mWriter.writeln(notIdxList.toString());
-                Iterator idxListItr = notIdxList.iterator();
-                while(idxListItr.hasNext()) {
-                    String curAttr = (String)idxListItr.next();
-                    mWriter.writeLocaleMsg("pt-create-idx-attr");
-                    mWriter.writeln(curAttr);
-                    createIndex(curAttr);
-                    mWriter.writelnLocaleMsg("pt-done");;
-                }
-            }
-        } catch (Exception ex) {
-            pLogger.log(Level.SEVERE, "tuneDSIndex", "Error tuning index.");
-            throw new AMTuneException(ex.getMessage());
-        }
-    }
-
-    /**
-     * Creates index for the required attribute, creates new index dn for the
-     * attribute and invokes dsconf create-index.
-     *
-     * @param attrName Name of the attribute to be indexed.
-     *
-     * @throws com.sun.identity.tune.common.AMTuneException
-     */
-
-    private void createIndex(String attrName)
-    throws AMTuneException {
-        try {
-            pLogger.log(Level.FINE, "createIndex", "Create index for " +
-                    attrName);
-            String createIndexCmd = dsConf + "create-index --port " +
-                    dsConfInfo.getDsPort() + 
-                    " --unsecured --no-inter --pwd-file " +
-                    dsPassFilePath + " " +dsConfInfo.getRootSuffix() + " " +
-                    attrName;
-            StringBuffer resultBuffer = new StringBuffer();
-            int retVal = AMTuneUtil.executeCommand(createIndexCmd,
-                    resultBuffer);
-            if (retVal == -1){
-                throw new AMTuneException(resultBuffer.toString());
-            }
-        } catch (Exception ex) {
-            mWriter.writelnLocaleMsg("pt-idx-create-error");
-            pLogger.log(Level.SEVERE, "createIndex", "Error creating index " +
-                    "for attribute " + attrName);
         }
     }
 
@@ -331,7 +232,8 @@ public class TuneDS6Impl extends AMTuneDSBase {
             int retVal = AMTuneUtil.executeCommand(db2BakCmd, resultBuffer);
             if (retVal == -1) {
                 mWriter.writelnLocaleMsg("pt-cannot-backup-db");
-                throw new AMTuneException("Data Base Backup failed.");
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-error-ds-db-backup-failed"));
             }
             pLogger.log(Level.FINE, "backUpDS", "Backing up Done...");
             try {
@@ -343,8 +245,9 @@ public class TuneDS6Impl extends AMTuneDSBase {
                 AMTuneUtil.CopyFile(dseLdif, bakDseFile);
                 pLogger.log(Level.FINE, "backUpDS", "Backing Done..");
             } catch (Exception ex) {
-                throw new AMTuneException("Couldn't bakup dse.ldif. " +
-                        ex.getMessage());
+                pLogger.log(Level.SEVERE, "backupDS", ex.getMessage());
+                throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                        .getString("pt-error-ds-conf-file-backup"));
             }
             successFile.createNewFile();
         } catch (Exception ex) {

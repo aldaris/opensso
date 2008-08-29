@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneAS9Container.java,v 1.6 2008-08-19 19:09:29 veiming Exp $
+ * $Id: TuneAS9Container.java,v 1.7 2008-08-29 10:25:39 kanduls Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -54,6 +54,7 @@ public class TuneAS9Container extends TuneAppServer implements
     private AMTuneConfigInfo configInfo;
     private AS9ContainerConfigInfo asConfigInfo;
     private Map curCfgMap;
+    private String passwordStr;
     
     /**
      * Constructs instance of TuneAS9Container
@@ -76,7 +77,10 @@ public class TuneAS9Container extends TuneAppServer implements
         try {
             this.configInfo = confInfo;
             asConfigInfo = (AS9ContainerConfigInfo) confInfo.getWSConfigInfo();
-            curCfgMap = asConfigInfo.getCurASConfigInfo();       
+            passwordStr = ASADMIN_PASSWORD_SYNTAX + 
+                    asConfigInfo.getAsAdminPass();
+            curCfgMap = asConfigInfo.getCurASConfigInfo();
+            validateInstanceDir();
         } catch (Exception ex) {
             pLogger.log(Level.SEVERE, "initialize", 
                     "Error initializing Application server 9.1.");
@@ -92,13 +96,20 @@ public class TuneAS9Container extends TuneAppServer implements
     public void startTuning() 
     throws AMTuneException {
         try {
+            mWriter.writeln(CHAPTER_SEP);
             mWriter.writelnLocaleMsg("pt-app-tuning-msg");
+            mWriter.writeln(CHAPTER_SEP);
+            mWriter.writelnLocaleMsg("pt-init");
             mWriter.writeln(LINE_SEP);
             tuneDomainXML();
+            if (AMTuneUtil.isLinux()) {
+                tuneSecurityLimits();
+            }
             mWriter.writeln(PARA_SEP);
         } catch (Exception ex) {
             pLogger.log(Level.SEVERE, "startTuning", 
                     "Error Tuning Application server 9.1.");
+            mWriter.writeln(" ");
             mWriter.writelnLocaleMsg("pt-error-tuning-msg");
             mWriter.writeLocaleMsg("pt-web-tuning-error-msg");
             mWriter.writelnLocaleMsg("pt-manual-msg");
@@ -156,7 +167,7 @@ public class TuneAS9Container extends TuneAppServer implements
             
             int newMinHeapVal = configInfo.getMaxHeapSize();
             int newMaxHeapVal = configInfo.getMaxHeapSize();
-            //workaround as WS u3 is not starting if the heap size is more 
+            //workaround as AS is not starting if the heap size is more 
             //than 12 GB
             if (newMinHeapVal > 12288) {
                 newMinHeapVal = 12288;
@@ -297,7 +308,8 @@ public class TuneAS9Container extends TuneAppServer implements
                         AMTuneUtil.getNumberOfCPUS();
                 mWriter.writelnLocaleMsg("pt-as-parallel-gc-threads-msg");
                 mWriter.writeLocaleMsg("pt-cur-val");
-                mWriter.writeln((String) curCfgMap.get(PARALLEL_GC_THREADS));
+                mWriter.writeln(PARALLEL_GC_THREADS + "=" + 
+                        curCfgMap.get(PARALLEL_GC_THREADS));
                 mWriter.writeLocaleMsg("pt-rec-val");
                 mWriter.writeln(asadminNewParallelGCThreads);
                 mWriter.writeln(" ");
@@ -390,6 +402,9 @@ public class TuneAS9Container extends TuneAppServer implements
             }
             deleteCurJVMOptions(delOptList);
             insertNewJVMOptions(newOptList);
+            if (delOptList.size() > 0 || newOptList.size() > 0) {
+                mWriter.writelnLocaleMsg("pt-as-restart-msg");
+            }
         } catch (Exception ex) {
             pLogger.log(Level.SEVERE, "tuneDomainXML", 
                     "Error tuning Application server 9.1 domain xml file.");
@@ -445,7 +460,9 @@ public class TuneAS9Container extends TuneAppServer implements
             setCmd.append(asConfigInfo.getAsAdminCommonParamsNoTarget());
             setCmd.append(" ");
             setCmd.append(asAdminSetParams.toString());
-            int retVal = AMTuneUtil.executeCommand(setCmd.toString(),
+            int retVal = AMTuneUtil.executeCommand(setCmd.toString(), 
+                    passwordStr, 
+                    asConfigInfo.getAdminPassfilePath(),
                     resultBuffer);
             if (retVal != 0) {
                 mWriter.writelnLocaleMsg("pt-set-param-error-msg");
@@ -499,6 +516,8 @@ public class TuneAS9Container extends TuneAppServer implements
             depOptCmd.append(delOpts.toString());
             StringBuffer resultBuffer = new StringBuffer();
             int retVal = AMTuneUtil.executeCommand(depOptCmd.toString(), 
+                    passwordStr, 
+                    asConfigInfo.getAdminPassfilePath(),
                     resultBuffer);
             if (retVal != 0) {
                 mWriter.writelnLocaleMsg("pt-del-jvm-error-msg");
@@ -547,6 +566,8 @@ public class TuneAS9Container extends TuneAppServer implements
             newOptCmd.append(asConfigInfo.getAsAdminCommonParams());
             newOptCmd.append(newOpts.toString());
             int retVal = AMTuneUtil.executeCommand(newOptCmd.toString(), 
+                    passwordStr, 
+                    asConfigInfo.getAdminPassfilePath(),
                     resultBuffer);
             if (retVal != 0) {
                 mWriter.writelnLocaleMsg("pt-create-jvm-opts-error-msg");
@@ -563,15 +584,16 @@ public class TuneAS9Container extends TuneAppServer implements
      */
     protected void tuneSecurityLimits() 
     throws AMTuneException {
+        String tuneFile = "/etc/security/limits.conf";
+        FileHandler fh = null;
         try {
-            String tuneFile = "/etc/security/limits.conf";
+            fh = new FileHandler(tuneFile);
             mWriter.writeln(LINE_SEP);
             mWriter.writelnLocaleMsg("pt-app-stack-size-tuning");
             mWriter.writeln(" ");
             mWriter.writeLocaleMsg("pt-file");
             mWriter.writeln(tuneFile);
             mWriter.writelnLocaleMsg("pt-param-tuning");
-            FileHandler fh = new FileHandler(tuneFile);
             String[] mLines = fh.getMattchingLines("^#", true);
             mLines = AMTuneUtil.getMatchedLines(mLines, "stack");
             mLines = AMTuneUtil.getMatchedLines(mLines, "hard");
@@ -589,12 +611,15 @@ public class TuneAS9Container extends TuneAppServer implements
             mWriter.writelnLocaleMsg("pt-stack-size-msg");
             mWriter.writeLocaleMsg("pt-cur-val");
             mWriter.writeln(curStackSizeStr);
-            mWriter.writelnLocaleMsg("pt-rec-val");
+            mWriter.writeLocaleMsg("pt-rec-val");
             mWriter.writeln(newStackSize);
-            if (configInfo.isReviewMode()) {
+            if (configInfo.isReviewMode() || 
+                    (curStackSizeStr != null && 
+                    curStackSizeStr.trim().length() > 0 &&
+                    curStackSizeStr.equals(newStackSize))) {
                 return;
             }
-            String[] delLines = new String[2];
+            String[] delLines = new String[3];
             delLines[0] = "Start: AS9.1 OpenSSO Tuning :";
             delLines[1] = "End: AS9.1 OpenSSO Tuning :";
             if (curStackSizeStr != null && curStackSizeStr.trim().length() >0) {
@@ -604,11 +629,17 @@ public class TuneAS9Container extends TuneAppServer implements
             fh.appendLine("# " + delLines[0] + AMTuneUtil.getTodayDateStr());
             fh.appendLine(newStackSize);
             fh.appendLine("# " + delLines[1] + AMTuneUtil.getTodayDateStr());
-            fh.close();
+            mWriter.writelnLocaleMsg("pt-lnx-reboot-msg");
         } catch (Exception ex) {
             pLogger.log(Level.SEVERE, "tuneSecurityLimits",
                     "Error tuning security limits " + ex.getMessage());
             throw new AMTuneException(ex.getMessage());
+        } finally {
+            try {
+                fh.close();
+            } catch (Exception ex) {
+                //ignore
+            }
         }
     }
 
@@ -648,10 +679,24 @@ public class TuneAS9Container extends TuneAppServer implements
 
     }
     
-    private void deletePasswordFile() {
-        File passFile = new File(asConfigInfo.getAdminPassfilePath());
-        if (passFile.isFile()) {
-            passFile.delete();
+    protected void deletePasswordFile() {
+        AMTuneUtil.deleteFile(asConfigInfo.getAdminPassfilePath());
+    }
+    
+    /**
+     * Validates the instance directory.
+     * @throws com.sun.identity.tune.common.AMTuneException
+     */
+    private void validateInstanceDir() 
+    throws AMTuneException {
+        String appConfFile =asConfigInfo.getContainerInstanceDir() + 
+                    FILE_SEP + "config" + FILE_SEP + "domain.xml";
+        File confFile = new File(appConfFile);
+        if (!confFile.exists()) {
+            mWriter.writelnLocaleMsg("pt-error-as-conf-file-not-found");
+            AMTuneUtil.printErrorMsg(CONTAINER_INSTANCE_DIR);
+            throw new AMTuneException(AMTuneUtil.getResourceBundle()
+                    .getString("pt-error-as-invalid-instance-dir"));
         }
     }
 }
