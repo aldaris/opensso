@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSUtils.java,v 1.4 2008-07-31 00:56:31 exu Exp $
+ * $Id: FSUtils.java,v 1.5 2008-08-29 04:57:15 exu Exp $
  *
  */
 
 package com.sun.identity.federation.common;
 
+import com.sun.identity.common.SystemConfigurationException;
 import com.sun.identity.common.SystemConfigurationUtil;
 import com.sun.identity.federation.meta.IDFFMetaManager;
 import com.sun.identity.plugin.session.SessionException;
@@ -35,14 +36,19 @@ import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionProvider;
 import com.sun.identity.saml.common.SAMLUtils;
 import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.encode.Base64;
+import com.sun.identity.shared.encode.CookieUtils;
 import com.sun.identity.shared.locale.Locale;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +56,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import javax.servlet.http.Cookie;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -73,6 +80,25 @@ public class FSUtils {
     private static SecureRandom random = new SecureRandom();
     public static final String FSID_PREFIX = "f"; 
     public static IDFFMetaManager metaInstance = null;    
+
+    private static String server_protocol =
+        SystemPropertiesManager.get(Constants.AM_SERVER_PROTOCOL);
+    private static String server_host =
+        SystemPropertiesManager.get(Constants.AM_SERVER_HOST);
+    private static String server_port =
+        SystemPropertiesManager.get(Constants.AM_SERVER_PORT);
+    private static String server_uri = SystemPropertiesManager.get(
+        Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
+    private static String localURL = server_protocol + "://" + server_host +
+            ":" + server_port + server_uri;
+    private static int int_server_port = 0;
+    static {
+        try {
+            int_server_port = Integer.parseInt(server_port);
+        } catch (NumberFormatException nfe) {
+            debug.error("Unable to parse port " + server_port, nfe);
+        }
+    }
 
     /**
      * Constructor
@@ -442,4 +468,214 @@ public class FSUtils {
         }
         return null;
     }
+
+    public static boolean needSetLBCookieAndRedirect(
+        HttpServletRequest request, HttpServletResponse response,
+        boolean isIDP) {
+
+        List remoteServiceURLs = FSUtils.getRemoteServiceURLs(request);
+        if ((remoteServiceURLs == null) || (remoteServiceURLs.isEmpty())) {
+            return false;
+        }
+
+        Cookie lbCookie = CookieUtils.getCookieFromReq(request,
+            getlbCookieName());
+        if (lbCookie != null) {
+            return false;
+        }
+
+
+        if (debug.messageEnabled()) {
+            debug.message("FSUtils.needSetLBCookieAndRedirect:" +
+                " lbCookie not set.");
+        }
+
+        String redirected = request.getParameter("redirected");
+        if (redirected != null) {
+            if (debug.messageEnabled()) {
+                debug.message("FSUtils.needSetLBCookieAndRedirect: " +
+                " redirected already and lbCookie not set correctly.");
+            }
+            return false;
+        }
+
+        FSUtils.setlbCookie(response);
+
+        String queryString = request.getQueryString();
+        StringBuffer reqURLSB = new StringBuffer();
+        reqURLSB.append(request.getRequestURL().toString())
+            .append("?redirected=1");
+        if (queryString != null) {
+            reqURLSB.append("&").append(queryString);
+        }
+
+        try {
+            String reqMethod = request.getMethod();
+            if (reqMethod.equals("POST")) {
+                String samlMessageName = null;
+                String samlMessage = null;
+                if (isIDP) {
+                    samlMessageName = IFSConstants.SAML_REQUEST;
+                    samlMessage = request.getParameter(samlMessageName);
+                } else {
+                    samlMessageName = IFSConstants.SAML_RESPONSE;
+                    samlMessage = request.getParameter(samlMessageName);
+                    if (samlMessage == null) {
+                        samlMessageName = IFSConstants.SAML_ART;
+                        samlMessage = request.getParameter(samlMessageName);
+                    }
+                }
+                if (samlMessage == null) {
+                    return false;
+                }
+                String relayState = request.getParameter(
+                    IFSConstants.RELAY_STATE);
+                FSUtils.postToTarget(response, samlMessageName,
+                    samlMessage, IFSConstants.RELAY_STATE, relayState,
+                    reqURLSB.toString());
+            } else if (reqMethod.equals("GET")) {
+                response.sendRedirect(reqURLSB.toString());
+            } else {
+                return false;
+            }
+            return true;
+        } catch (IOException ioe) {
+            debug.error("FSUtils.needSetLBCookieAndRedirect: ", ioe);
+        }
+        return false;
+    }
+
+    /**
+     * Gets remote service URLs
+     * @param request http request
+     * @return remote service URLs
+     */
+    public static List getRemoteServiceURLs(HttpServletRequest request) {
+        String requestURL = request.getScheme() + "://" +
+                request.getServerName() + ":" +
+                request.getServerPort();
+        if (debug.messageEnabled()) {
+            debug.message("FSUtils.getRemoteServiceURLs: requestURL = " +
+                    requestURL);
+        }
+
+        List serverList = null;
+
+        try {
+            serverList = SystemConfigurationUtil.getServerList();
+            List siteList = SystemConfigurationUtil.getSiteList();
+            if (debug.messageEnabled()) {
+                debug.message("FSUtils.getRemoteServiceURLs: servers=" +
+                    serverList + ", siteList=" + siteList);
+            }
+            serverList.removeAll(siteList);
+            if (debug.messageEnabled()) {
+                debug.message("FSUtils.getRemoteServiceURLs: new servers=" +
+                    serverList);
+            }
+        } catch (Exception ex) {
+            if (debug.messageEnabled()) {
+                debug.message("FSUtils.getRemoteServiceURLs:", ex);
+            }
+        }
+        if (serverList == null) {
+            return null;
+        }
+
+        List remoteServiceURLs = new ArrayList();
+        for(Iterator iter = serverList.iterator(); iter.hasNext();) {
+            String serviceURL = (String)iter.next();
+            if ((!serviceURL.equalsIgnoreCase(requestURL)) &&
+                    (!serviceURL.equalsIgnoreCase(localURL))) {
+                remoteServiceURLs.add(serviceURL);
+            }
+        }
+
+        if (debug.messageEnabled()) {
+            debug.message("FSUtils.getRemoteServiceURLs: " +
+                    "remoteServiceURLs = " + remoteServiceURLs);
+        }
+        return remoteServiceURLs;
+    }
+
+    /**
+     * Sets load balancer cookie.
+     * @param response HttpServletResponse object
+     */
+    public static void setlbCookie(HttpServletResponse response) {
+        String cookieName = getlbCookieName();
+        String cookieValue = getlbCookieValue();
+        Cookie cookie = null;
+        if ((cookieName != null) && (cookieName.length() != 0)) {
+            List domains = null;
+            try {
+                domains = SystemConfigurationUtil.getCookieDomains();
+            } catch (SystemConfigurationException scex) {
+                if (debug.warningEnabled()) {
+                    debug.warning("FSUtils.setlbCookie:", scex);
+                }
+            }
+            if ((domains!= null) && (!domains.isEmpty())) {
+                for (Iterator it = domains.iterator(); it.hasNext(); ) {
+                    String domain = (String)it.next();
+                    cookie = CookieUtils.newCookie(cookieName, cookieValue,
+                        "/", domain);
+                    response.addCookie(cookie);
+                }
+            } else {
+                cookie = CookieUtils.newCookie(cookieName, cookieValue, "/",
+                    null);
+                response.addCookie(cookie);
+            }
+        }
+    }
+
+    public static String getlbCookieName() {
+        return SystemPropertiesManager.get(Constants.AM_LB_COOKIE_NAME,
+            "amlbcookie");
+    }
+
+    public static String getlbCookieValue() {
+        String loadBalanceCookieValue =
+            SystemPropertiesManager.get(Constants.AM_LB_COOKIE_VALUE);
+        if ((loadBalanceCookieValue == null) ||
+            (loadBalanceCookieValue.length() == 0)) {
+            if (SystemConfigurationUtil.isServerMode()) {
+               try {
+                   return SystemConfigurationUtil.getServerID(server_protocol,
+                       server_host, int_server_port, server_uri);
+               } catch (SystemConfigurationException scex) {
+                   debug.error("FSUtils.getlbCookieValue:", scex);
+                   return null;
+               }
+            }
+        }
+        return loadBalanceCookieValue;
+    }
+
+    public static void postToTarget(HttpServletResponse response,
+        String SAMLmessageName, String SAMLmessageValue, String relayStateName,
+        String relayStateValue, String targetURL) throws IOException {
+
+        PrintWriter out = response.getWriter();
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Cache-Control", "no-cache,no-store");
+        out.println("<HTML>");
+        out.println("<HEAD>\n");
+        out.println("<TITLE>Access rights validated</TITLE>\n");
+        out.println("</HEAD>\n");
+        out.println("<BODY Onload=\"document.forms[0].submit()\">");
+
+        out.println("<FORM METHOD=\"POST\" ACTION=\"" + targetURL + "\">");
+        out.println("<INPUT TYPE=\"HIDDEN\" NAME=\""+ SAMLmessageName
+            + "\" " + "VALUE=\"" + SAMLmessageValue + "\">");
+        if (relayStateValue != null && relayStateValue.length() != 0) {
+            out.println("<INPUT TYPE=\"HIDDEN\" NAME=\""+
+                relayStateName + "\" " +
+                "VALUE=\"" + relayStateValue + "\">");
+        }
+        out.println("</FORM></BODY></HTML>");
+        out.close();
+    }
+
 }

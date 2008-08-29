@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSPreLoginHandler.java,v 1.3 2008-06-25 05:46:42 qcheng Exp $
+ * $Id: FSPreLoginHandler.java,v 1.4 2008-08-29 04:57:16 exu Exp $
  *
  */
 
@@ -60,6 +60,9 @@ public class FSPreLoginHandler extends HttpServlet {
         HttpServletResponse response)
         throws ServletException,IOException 
     {
+        if (FSUtils.needSetLBCookieAndRedirect(request, response, false)) {
+            return;
+        }
         String metaAlias = request.getParameter(IFSConstants.META_ALIAS);
         if(metaAlias != null && metaAlias.length() > 0) {
             if (FSUtils.debug.messageEnabled()) {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSSOAndFedService.java,v 1.5 2008-06-25 05:46:59 qcheng Exp $
+ * $Id: FSSSOAndFedService.java,v 1.6 2008-08-29 04:57:16 exu Exp $
  *
  */
 
@@ -117,6 +117,10 @@ public class FSSSOAndFedService  extends HttpServlet {
             return;
         }
         
+        if (FSUtils.needSetLBCookieAndRedirect(request, response, true)) {
+            return;
+        }
+
         // check for post authn
         boolean bPostAuthn = false;
         boolean bLECP = false;
@@ -271,6 +275,9 @@ public class FSSSOAndFedService  extends HttpServlet {
             return;
         }
         
+        if (FSUtils.needSetLBCookieAndRedirect(request, response, true)) {
+            return;
+        }
         // Check if it's an LECP request
         if (isLECPRequest(request)) {
             // TODO: assume auth framework will understand this param

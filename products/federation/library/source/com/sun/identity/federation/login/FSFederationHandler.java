@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSFederationHandler.java,v 1.2 2008-06-25 05:46:42 qcheng Exp $
+ * $Id: FSFederationHandler.java,v 1.3 2008-08-29 04:57:15 exu Exp $
  *
  */
 
@@ -82,6 +82,9 @@ public class FSFederationHandler extends HttpServlet {
                     "FSFederationHandler::LRURL is null in reqest ");
             }
         } else {
+            if (FSUtils.needSetLBCookieAndRedirect(request, response, false)) {
+                return;
+            }
             try {
                 String metaAlias =
                     request.getParameter(IFSConstants.META_ALIAS);

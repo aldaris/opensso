@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSServiceUtils.java,v 1.9 2008-08-19 19:11:08 veiming Exp $
+ * $Id: FSServiceUtils.java,v 1.10 2008-08-29 04:57:17 exu Exp $
  *
  */
 
@@ -219,13 +219,13 @@ public class FSServiceUtils {
             gotoBuffer.append ("&");
         }
         gotoBuffer.append (IFSConstants.META_ALIAS)
-            .append ("=").append (metaAlias).append("&");
+            .append ("=").append (metaAlias);
         if (resourceUrl == null || resourceUrl.length() == 0) {
             resourceUrl = IDFFMetaUtils.getFirstAttributeValueFromConfig(
                 hostConfig, IFSConstants.PROVIDER_HOME_PAGE_URL);
         }
         if(resourceUrl != null && !resourceUrl.equals ("")){
-            gotoBuffer.append (IFSConstants.LRURL)
+            gotoBuffer.append("&").append (IFSConstants.LRURL)
                 .append ("=").append (URLEncDec.encode (resourceUrl));
             commonLoginPageUrl.append (IFSConstants.LRURL).append ("=").
                 append (URLEncDec.encode (resourceUrl)).append("&");

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSTerminationInitiationServlet.java,v 1.5 2008-06-25 05:47:04 qcheng Exp $
+ * $Id: FSTerminationInitiationServlet.java,v 1.6 2008-08-29 04:57:17 exu Exp $
  *
  */
 
@@ -178,6 +178,16 @@ public class FSTerminationInitiationServlet extends HttpServlet {
                     IFSConstants.FAILED_HOSTED_DESCRIPTOR));
             return;
         }
+        boolean isIDP = false;
+        if (hostedRole != null && hostedRole.equalsIgnoreCase(IFSConstants.IDP))
+        {
+            isIDP = true;
+        }
+
+        if (FSUtils.needSetLBCookieAndRedirect(request, response, isIDP)) {
+            return;
+        }
+
         this.request = request;
         setTerminationURL(hostedConfig, providerAlias);
         doTerminationInitiation(request, response, hostedProviderDesc, 

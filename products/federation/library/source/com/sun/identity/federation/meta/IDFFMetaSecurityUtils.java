@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFMetaSecurityUtils.java,v 1.3 2008-06-25 05:46:49 qcheng Exp $
+ * $Id: IDFFMetaSecurityUtils.java,v 1.4 2008-08-29 04:57:16 exu Exp $
  *
  */
 
@@ -53,7 +53,6 @@ import com.sun.identity.liberty.ws.meta.jaxb.KeyDescriptorElement;
 import com.sun.identity.liberty.ws.meta.jaxb.IDPDescriptorType;
 import com.sun.identity.liberty.ws.meta.jaxb.SPDescriptorType;
 import com.sun.identity.liberty.ws.meta.jaxb.ProviderDescriptorType;
-import com.sun.identity.saml2.meta.SAML2MetaConstants;
 import com.sun.identity.shared.xml.XMLUtils;
 
 import java.util.HashSet;

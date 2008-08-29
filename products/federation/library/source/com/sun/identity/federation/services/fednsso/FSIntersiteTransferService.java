@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSIntersiteTransferService.java,v 1.5 2008-06-25 05:46:58 qcheng Exp $
+ * $Id: FSIntersiteTransferService.java,v 1.6 2008-08-29 04:57:16 exu Exp $
  *
  */
 
@@ -313,6 +313,14 @@ public class FSIntersiteTransferService extends HttpServlet {
     ) throws ServletException, IOException 
     {
         FSUtils.debug.message("FSIntersiteTransferService.doGet: Called");
+        /**
+         * Check to see if there is a need to set lb cookie.
+         * This is for the use case that AuthnRequest is not created by the 
+         * preLogin process and lb cookie wasn't set there.
+         */ 
+        if (FSUtils.needSetLBCookieAndRedirect(request, response, false)) {
+            return;
+        }
         try {
             IDPDescriptorType idpDescriptor = null;
             

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IFSConstants.java,v 1.11 2008-06-25 05:46:41 qcheng Exp $
+ * $Id: IFSConstants.java,v 1.12 2008-08-29 04:57:15 exu Exp $
  *
  */
 
@@ -2398,5 +2398,21 @@ public interface IFSConstants {
      * root realm.
      */
     public String ROOT_REALM = "/";
+
+    /**
+     * SAMLRequest query parameter name
+     */
+    public String SAML_REQUEST = "SAMLRequest";
+
+    /**
+     * SAMLResponse query parameter name
+     */
+    public String SAML_RESPONSE = "SAMLResponse";
+
+    /**
+     * Parameter name for SAML artifact in http request.
+     */
+    public String SAML_ART = "SAMLart";
+
 }
 
