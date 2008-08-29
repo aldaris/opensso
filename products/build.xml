@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.34 2008-08-08 22:37:37 kevinserwin Exp $
+   $Id: build.xml,v 1.35 2008-08-29 22:08:32 kevinserwin Exp $
 
 -->
 
@@ -36,7 +36,27 @@
     <import file="installtools/installtools.xml" />
     <import file="j2eeagents/j2eeagents.xml" />
     <import file="upgrade/upgrade.xml" />
+    
+    <condition property="build.number.set" value="${build.number}">
+        <isset property="build.number"/>
+    </condition>
+    <condition property="build.number.set" value="6">
+        <not><isset property="build.number"/></not>
+    </condition>
+    <echo message="OpenSSO Build Number: ${build.number.set}"/>
+  
+  <target name="enterprise">
+        <property name="build.enterprise" value="true"/>
+        <antcall target="create-version" />
+        <antcall target="nightly" />
+    </target>
 
+    <target name="express">
+        <property name="build.express" value="true"/>
+        <antcall target="create-version" />
+        <antcall target="nightly" />
+    </target>    
+    
     <target name="nightly">
         <delete dir="${prd.nightly.dist.dir}" />
         <antcall target="server-nightly" />
@@ -216,7 +236,16 @@
         <tstamp>
             <format property="war.time.stamp" pattern="yyyyMMddhhmm"/>
         </tstamp>
-        <filter token="DATESTAMP" value="${war.time.stamp}" />
+        <condition property="version.date" value="Enterprise 8.0 Build ${build.number.set} ${war.time.stamp}" >
+            <isset property="build.enterprise"/>
+        </condition>
+        <condition property="version.date" value="Express Build ${build.number.set} ${war.time.stamp}" >
+            <isset property="build.express"/>
+        </condition>        
+        <!-- note that if version.date is set above, the following line is ignored -->
+        <property name="version.date" value="${war.time.stamp}"/>
+      
+        <filter token="DATESTAMP" value="${version.date}"/>
         <copy file="${amserver.base.dir}/version.template"
             tofile="${prd.nightly.dist.dir}/version"
             filtering="true"/>      

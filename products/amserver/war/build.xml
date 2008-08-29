@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.52 2008-08-19 22:24:04 kevinserwin Exp $
+   $Id: build.xml,v 1.53 2008-08-29 22:07:25 kevinserwin Exp $
 
 -->
 
@@ -65,8 +65,17 @@
         <tstamp>
             <format property="war.time.stamp" pattern="yyyy-MMMM-d hh:mm"/>
         </tstamp>
-        <filter token="DATESTAMP" value="${war.time.stamp}" />
-        <filter token="VERSION" value="8.0" />
+        <condition property="version.set" value="Enterprise 8.0 Build ${build.number.set}" >
+            <isset property="build.enterprise"/>
+        </condition>
+        <condition property="version.set" value="Express Build ${build.number.set}" >
+            <isset property="build.express"/>
+        </condition>        
+        <!-- note that if version.date is set above, the following line is ignored -->
+        <property name="version.set" value=""/>
+      
+        <filter token="DATESTAMP" value="${war.time.stamp}"/>        
+        <filter token="VERSION" value="${version.set}" />
         <copy file="${war.xml.dir}/template/sms/AMConfig.properties"
             tofile="${amserver.built.res.dir}/AMConfig.properties"
             filtering="true"/>
