@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServicesDefaultValues.java,v 1.35 2008-08-22 22:50:01 veiming Exp $
+ * $Id: ServicesDefaultValues.java,v 1.36 2008-08-29 21:51:25 veiming Exp $
  *
  */
 
@@ -372,7 +372,8 @@ public class ServicesDefaultValues {
             ekey = AMSetupServlet.getRandomString().trim();
             map.put(SetupConstants.CONFIG_VAR_ENCRYPTION_KEY, ekey);
         }
-        return ((ekey != null) && (ekey.length() > 10)) ? true : false;
+        // in future release need to check if length of greater from 10.
+        return ((ekey != null) && (ekey.length() > 0)) ? true : false;
     }
 
     /**
