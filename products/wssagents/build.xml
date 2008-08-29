@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.15 2008-07-23 17:58:18 veiming Exp $
+   $Id: build.xml,v 1.16 2008-08-29 21:09:05 arunav Exp $
 
 -->
 
@@ -146,6 +146,9 @@
         </copy>
         <copy todir="${zip.temp.dir}/samples">
             <fileset file="${wssagents.samples.dir}/**" />
+        </copy>
+        <copy todir="${zip.temp.dir}/config">
+            <fileset file="${wssagents.config.dir}/**" />
         </copy>
         
         <copy file="${openfm.built.dir}/clientsamples/package/sdk/resources/AMConfig.properties.template" tofile="${zip.temp.dir}/resources/AMConfig.properties" />
