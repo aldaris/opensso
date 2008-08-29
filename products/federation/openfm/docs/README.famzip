@@ -22,8 +22,16 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.famzip,v 1.4 2008-08-19 19:11:31 veiming Exp $
+   $Id: README.famzip,v 1.5 2008-08-29 20:51:19 kevinserwin Exp $
 
 -->
 
-OpenSSO - Zip file
+Before installation or configuration of OpenSSO, please refer to the Release 
+Notes for Sun OpenSSO Enterprise 8.0 which can be downloaded from
+http://opensso.dev.java.net/public/use/docs/index.html
+
+Although written for the productized version of OpenSSO, the Release Notes
+contain information applicable to other versions of the open-source software.
+
+
+
