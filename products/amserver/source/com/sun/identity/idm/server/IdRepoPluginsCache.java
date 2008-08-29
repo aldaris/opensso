@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: IdRepoPluginsCache.java,v 1.6 2008-08-13 20:43:02 arviranga Exp $
+* $Id: IdRepoPluginsCache.java,v 1.7 2008-08-29 01:34:55 arviranga Exp $
 */
 
 package com.sun.identity.idm.server;
@@ -417,6 +417,11 @@ public class IdRepoPluginsCache implements ServiceListener {
                     // Get the version number
                     svcRevisionNumber = idRepoServiceSchemaManager
                         .getRevisionNumber();
+                    
+                    // Initialize listener for JAXRPCObject
+                    IdRepoListener.addRemoteListener(
+                        new JAXRPCObjectImplEventListener());
+                    
                     initializedListeners = true;
                 } catch (SMSException smse) {
                     // Exceptions will be throws during install and config
@@ -502,9 +507,7 @@ public class IdRepoPluginsCache implements ServiceListener {
                 getContextClassLoader().loadClass(IdConstants.SPECIAL_PLUGIN);
             pluginClass = (IdRepo) thisClass.newInstance();
             HashMap config = new HashMap(2);
-            HashSet realmName = new HashSet();
-            realmName.add(ServiceManager.getBaseDN());
-            config.put("realm", config);
+            config.put("realm", ServiceManager.getBaseDN());
             pluginClass.initialize(config);
             IdRepoListener lter = new IdRepoListener();
             lter.setConfigMap(config);

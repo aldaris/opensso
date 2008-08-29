@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddAMSDKIdRepoPlugin.java,v 1.1 2008-08-07 17:22:03 arviranga Exp $
+ * $Id: AddAMSDKIdRepoPlugin.java,v 1.2 2008-08-29 01:34:56 arviranga Exp $
  *
  */
 
@@ -44,6 +44,8 @@ import com.sun.identity.common.configuration.ServerConfigXML.DirUserObject;
 import com.sun.identity.common.configuration.ServerConfigXML.ServerGroup;
 import com.sun.identity.common.configuration.ServerConfiguration;
 import com.sun.identity.idm.IdConstants;
+import com.sun.identity.policy.PolicyManager;
+import com.sun.identity.policy.PolicyUtils;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.sm.ServiceSchema;
@@ -88,6 +90,16 @@ public class AddAMSDKIdRepoPlugin extends AuthenticatedCommand {
             "puser-password-file") :
             CLIUtil.getFileContent(getStringOptionValue(
             "puser-password-file"), true);
+        String namingAttr = "uid";
+        String orgAttr = "o";
+        String attr = getStringOptionValue("user");
+        if (attr != null && attr.trim().length() > 0) {
+            namingAttr = attr.trim();
+        }
+        attr = getStringOptionValue("org");
+        if (attr != null && attr.trim().length() > 0) {
+            orgAttr = attr.trim();
+        }
         String[] params = { "AMSDK plugin" };
         writeLog(LogWriter.LOG_ACCESS, Level.INFO, "ATTEMPT_ADD_AMSDK_PLUGIN",
             params);
@@ -98,8 +110,8 @@ public class AddAMSDKIdRepoPlugin extends AuthenticatedCommand {
             if (!sm.getServiceNames().contains("DAI")) {
                 xmlData = getResourceContent("ums.xml");
                 // Tag swap: @USER_NAMING_ATTR & @ORG_NAMING_ATTR
-                xmlData = xmlData.replaceAll("@USER_NAMING_ATTR@", "uid");
-                xmlData = xmlData.replaceAll("@ORG_NAMING_ATTR@", "o");
+                xmlData = xmlData.replaceAll("@USER_NAMING_ATTR@", namingAttr);
+                xmlData = xmlData.replaceAll("@ORG_NAMING_ATTR@", orgAttr);
                 registerService(xmlData, adminSSOToken);
             }
             
@@ -115,6 +127,27 @@ public class AddAMSDKIdRepoPlugin extends AuthenticatedCommand {
                 InputStream xmlInputStream = (InputStream)
                     new ByteArrayInputStream(xmlData.getBytes());
                 ss.addSubSchema(xmlInputStream);
+            }
+            
+            // Load delegation policies for Top-level Admin Role and others
+            try {
+                xmlData = getResourceContent(
+                    "defaultDelegationPoliciesForAmSDK.xml");
+                // Tag swap: @SM_CONFIG_ROOT_SUFFIX@ & @SM_ROOT_SUFFIX_HAT@
+                String smsRootSuffix = ServiceManager.getBaseDN();
+                xmlData = xmlData.replaceAll("@SM_CONFIG_ROOT_SUFFIX@",
+                    smsRootSuffix);
+                String smsRootSuffixHat = smsRootSuffix.replaceAll(",", "^");
+                xmlData = xmlData.replaceAll("@SM_ROOT_SUFFIX_HAT@",
+                    smsRootSuffixHat);
+                InputStream xmlInputStream = (InputStream)
+                    new ByteArrayInputStream(xmlData.getBytes());
+                PolicyManager pm = new PolicyManager(adminSSOToken,
+                    "/sunamhiddenrealmdelegationservicepermissions");
+                PolicyUtils.createPolicies(pm, xmlInputStream);
+            } catch (Exception e) {
+                outputWriter.printlnMessage("Adding Delegation policies " +
+                    "failed: " + e.getMessage());
             }
             
             // Update server-config.xml with AMSDK information

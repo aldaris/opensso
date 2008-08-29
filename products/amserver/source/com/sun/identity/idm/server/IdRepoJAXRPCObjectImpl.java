@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: IdRepoJAXRPCObjectImpl.java,v 1.2 2008-07-06 05:48:33 arviranga Exp $
+* $Id: IdRepoJAXRPCObjectImpl.java,v 1.3 2008-08-29 01:34:55 arviranga Exp $
 */
 
 package com.sun.identity.idm.server;
@@ -143,9 +143,6 @@ public abstract class IdRepoJAXRPCObjectImpl implements DirectoryManagerIF {
         if (idServices == null) {
             idServices = IdServicesFactory.getDataStoreServices();
         }
-        
-        // Initialize listener
-        IdRepoListener.addRemoteListener(new JAXRPCObjectImplEventListener());
     }
 
     protected boolean isClientOnSameServer(String clientURL) {
@@ -699,11 +696,12 @@ public abstract class IdRepoJAXRPCObjectImpl implements DirectoryManagerIF {
                 " type: " + type + " attrName: " + attrNames);
         }
         // Return if cache size is 0 or there are no remote clients
-        if ((cacheSize == 0) || idRepoNotificationURLs.isEmpty()) {
+        if ((cacheSize == 0) && idRepoNotificationURLs.isEmpty()) {
             if (idRepoDebug.messageEnabled()) {
-                idRepoDebug.message("IdRepoJAXRPCObjectImpl.processEntryChaged"
-                    + " No registered notification URLs: " +
-                    idRepoNotificationURLs + " or cache size is: " + cacheSize);
+                idRepoDebug.message("IdRepoJAXRPCObjectImpl." +
+                    "processEntryChaged No registered notification URLs: " +
+                    idRepoNotificationURLs + " and cache size is: " +
+                    cacheSize);
             }
             return;
         }

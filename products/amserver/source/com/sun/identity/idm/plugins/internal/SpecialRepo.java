@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SpecialRepo.java,v 1.16 2008-08-09 01:08:57 arviranga Exp $
+ * $Id: SpecialRepo.java,v 1.17 2008-08-29 01:34:55 arviranga Exp $
  *
  */
 package com.sun.identity.idm.plugins.internal;
@@ -943,7 +943,8 @@ public class SpecialRepo extends IdRepo implements ServiceListener {
     public void globalConfigChanged(String serviceName, String version,
         String groupName, String serviceComponent, int type) {
         // Send notifcations for users in special users
-        if ((specialUsers != null) && !specialUsers.isEmpty()) {
+        if ((specialUsers != null) && !specialUsers.isEmpty() &&
+            (repoListener != null)) {
             for (Iterator items = specialUsers.iterator(); items.hasNext();) {
                 String specialUser = (String) items.next();
                 repoListener.objectChanged(specialUser, IdType.USER, type,

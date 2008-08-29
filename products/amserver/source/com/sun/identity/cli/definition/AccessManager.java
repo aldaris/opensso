@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.86 2008-08-27 22:08:37 veiming Exp $
+ * $Id: AccessManager.java,v 1.87 2008-08-29 01:34:56 arviranga Exp $
  *
  */
 
@@ -1504,6 +1504,7 @@ public class AccessManager {
         implClassName="com.sun.identity.cli.authentication.GetAuthConfigurationEntries",
         description="Get authentication configuration entries",
         webSupport="true",
+
         mandatoryOptions={
             "realm|e|s|Name of realm.",
             "name|m|s|Name of authentication configuration."},
@@ -1604,7 +1605,9 @@ public class AccessManager {
             "puser-password-file|p|s|File that contains password of the puser"},
         optionAliases={ },
         macro="authentication",
-        optionalOptions={},
+        optionalOptions={
+            "user|a|s|User objects naming attribute (defaults to 'uid')",
+            "org|o|s|Organization objects naming attribute (defaults to 'o')"},
         resourceStrings={
             "datastore-add-amsdk-idrepo-plugin-succeeded=Plug-in was created."
         }

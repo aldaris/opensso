@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoListener.java,v 1.14 2008-08-21 18:48:18 sean_brydon Exp $
+ * $Id: IdRepoListener.java,v 1.15 2008-08-29 01:34:55 arviranga Exp $
  *
  */
 
@@ -179,24 +179,31 @@ public final class IdRepoListener {
                         case OBJECT_CHANGED:
                         case OBJECT_ADDED:
                             l.identityChanged(changed[i]);
-                            if (remoteListener != null) {
-                                remoteListener.identityChanged(changed[i]);
-                            }
                             break;
                         case OBJECT_REMOVED:
                             l.identityDeleted(changed[i]);
-                            if (remoteListener != null) {
-                                remoteListener.identityDeleted(changed[i]);
-                            }
                             break;
                         case OBJECT_RENAMED:
                             l.identityRenamed(changed[i]);
-                            if (remoteListener != null) {
-                                remoteListener.identityRenamed(changed[i]);
-                            }
                         }
                     }
-                }   
+                }
+                
+                // Handle remote listener, should not be mixed with
+                // IdRepo listeners, since it can null or empty
+                if (remoteListener != null) {
+                    switch (changeType) {
+                        case OBJECT_CHANGED:
+                        case OBJECT_ADDED:
+                            remoteListener.identityChanged(changed[i]);
+                            break;
+                        case OBJECT_REMOVED:
+                            remoteListener.identityDeleted(changed[i]);
+                            break;
+                        case OBJECT_RENAMED:
+                            remoteListener.identityRenamed(changed[i]);
+                    }
+                }
             }
         }
     }
