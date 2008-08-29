@@ -23,10 +23,20 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amtune,v 1.2 2008-07-25 05:31:28 kanduls Exp $
+# $Id: amtune,v 1.3 2008-08-29 09:49:08 kanduls Exp $
 
 TOOLS_HOME="@TOOLS_HOME@"
 JAVA_HOME="@JAVA_HOME@"
 
-${JAVA_HOME}/bin/java -cp "${TOOLS_HOME}/resources:${TOOLS_HOME}/lib/ldapjdk.jar:${TOOLS_HOME}/lib/amtune.jar:./:" com.sun.identity.tune.AMTune
+if [ ! -f "$TOOLS_HOME"/lib/amtune.jar ]; then
+  echo "The defined TOOLS_HOME environment variable in amtune script is not correct."
+  exit 1
+fi
+
+if [ ! -x "$JAVA_HOME"/bin/java ]; then
+  echo "The defined JAVA_HOME environment variable in amtune script is not correct."
+  exit 1
+fi
+
+${JAVA_HOME}/bin/java -cp "${TOOLS_HOME}/resources:${TOOLS_HOME}/lib/ldapjdk.jar:${TOOLS_HOME}/lib/amtune.jar:./:" com.sun.identity.tune.AMTune "$@"
 
