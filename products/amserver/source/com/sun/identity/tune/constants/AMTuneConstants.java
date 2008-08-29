@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneConstants.java,v 1.6 2008-08-19 19:09:28 veiming Exp $
+ * $Id: AMTuneConstants.java,v 1.7 2008-08-29 10:22:47 kanduls Exp $
  */
 
 package com.sun.identity.tune.constants;
@@ -137,8 +137,6 @@ public interface AMTuneConstants {
     static int AMTUNE_INVALID_CMDLINE_PARAMETER = 100;
     static int AMTUNE_INVALID_ENVIRON_SETTING = 200;
     
-    static String AMTUNE_LINUX_VM_BDFLUSH= 
-            "100 1200 128 512 15 5000 500 1884 2";
     static String AMTUNE_LINUX_IPV4_LOCAL_PORT_RANGE = "1204 65000";
     static String AMTUNE_LINUX_CORE_RMEM_MAX = "262140";
     static String AMTUNE_LINUX_CORE_RMEM_DEFAULT = "262140";
@@ -152,11 +150,10 @@ public interface AMTuneConstants {
     static String AMTUNE_LINUX_IPV4_TCP_FIN_TIMEOUT = "30";
     static String AMTUNE_LINUX_STACK_SIZE_LIMITS = "256";
     //All password contants
-    static String OPENSSOADMIN_PASSWORD = "OPENSSOADMIN_PASSWORD";
-    static String WSADMIN_PASSWORD = "WSADMIN_PASSWORD";
+    static String SSOADM_PASSWORD = "SSOADM_PASSWORD";
+    static String WADM_PASSWORD = "WADM_PASSWORD";
     static String ASADMIN_PASSWORD = "ASADMIN_PASSWORD";
     static String DIRMGR_PASSWORD = "DIRMGR_PASSWORD";
-    static String SM_DIRMGR_PASSWORD = "SM_DIRMGR_PASSWORD";
     static String AMTUNE_MIN_MEMORY_TO_USE_IN_MB = 
             "AMTUNE_MIN_MEMORY_TO_USE_IN_MB";
     static String AMTUNE_MAX_MEMORY_TO_USE_IN_MB_DEFAULT =
@@ -165,8 +162,6 @@ public interface AMTuneConstants {
             "AMTUNE_MAX_MEMORY_TO_USE_IN_MB_SOLARIS";
     static String AMTUNE_MAX_MEMORY_TO_USE_IN_MB_X86 = 
             "AMTUNE_MAX_MEMORY_TO_USE_IN_MB_X86";
-    static String AMTUNE_DONT_TOUCH_SESSION_PARAMETERS = 
-            "AMTUNE_DONT_TOUCH_SESSION_PARAMETERS";
     static String AMTUNE_PCT_MEMORY_TO_USE = "AMTUNE_PCT_MEMORY_TO_USE";
     static String AMTUNE_MEM_MAX_HEAP_SIZE_RATIO = 
             "AMTUNE_MEM_MAX_HEAP_SIZE_RATIO";
@@ -176,15 +171,6 @@ public interface AMTuneConstants {
             "AMTUNE_PER_THREAD_STACK_SIZE_IN_KB";
     static String AMTUNE_PER_THREAD_STACK_SIZE_IN_KB_64_BIT =
             "AMTUNE_PER_THREAD_STACK_SIZE_IN_KB_64_BIT";
-    static String AMTUNE_SESSION_MAX_SESSION_TIME_IN_MTS = 
-            "AMTUNE_SESSION_MAX_SESSION_TIME_IN_MTS";
-    static String AMTUNE_SESSION_MAX_IDLE_TIME_IN_MTS = 
-            "AMTUNE_SESSION_MAX_IDLE_TIME_IN_MTS";
-    static String AMTUNE_SESSION_MAX_CACHING_TIME_IN_MTS =
-            "AMTUNE_SESSION_MAX_CACHING_TIME_IN_MTS";
-    static String DEFAULT_ORG_PEOPLE_CONTAINER =
-            "DEFAULT_ORG_PEOPLE_CONTAINER";
-    
     static int LDAP_VERSION = 3;
     static String NO_VAL_SET = "<No value set>";
     static String LINE_SEP = "-----------------------------------------------" + 

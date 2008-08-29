@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DSConstants.java,v 1.1 2008-07-02 18:50:40 kanduls Exp $
+ * $Id: DSConstants.java,v 1.2 2008-08-29 10:22:48 kanduls Exp $
  */
 
 package com.sun.identity.tune.constants;
@@ -37,7 +37,7 @@ public interface DSConstants extends AMTuneConstants {
     static String DS_HOST = "DS_HOST";
     static String DS_PORT = "DS_PORT";
     static String ROOT_SUFFIX = "ROOT_SUFFIX";
-    static String DIRMGR_UID = "DIRMGR_UID";
+    static String DIRMGR_BIND_DN = "DIRMGR_BIND_DN";
     static String DS_VERSION = "DS_VERSION";
     static String ENABLE_MODE = "ENABLE_MODE";
     static String NM_SUFFIX = "NM_SUFFIX";
@@ -46,15 +46,6 @@ public interface DSConstants extends AMTuneConstants {
     static String ORG_ROOT_SUFFIX = "ORG_ROOT_SUFFIX";
     static String PERL_BIN_DIR = "PERL_BIN_DIR";
     static String DS_TOOLS_DIR = "DS_TOOLS_DIR";
-    static String SM_DS_HOST = "SM_DS_HOST";
-    static String SM_DS_PORT = "SM_DS_PORT";
-    static String SM_ROOT_SUFFIX = "SM_ROOT_SUFFIX";
-    static String SM_DS_DIRMGR_UID = "SM_DS_DIRMGR_UID";
-    static String SM_DS_INSTANCE_DIR = "SM_DS_INSTANCE_DIR";
-    static String SM_DS_VERSION = "SM_DS_VERSION";
-    static String SM_DS_TOOLS_DIR = "SM_DS_TOOLS_DIR";
-    static String IS_UM_SM_DATASTORE_SAME = "IS_UM_SM_DATASTORE_SAME";
-    static String TUNE_UM_ONLY = "TUNE_UM_ONLY";
     static String NSSLAPD_DB_HOME_DIRECTORY = "nsslapd-db-home-directory";
     static String NSSLAPD_DIRECTORY = "nsslapd-directory";
     static String NSSLAPD_SUFFIX = "nsslapd-suffix";
@@ -89,7 +80,7 @@ public interface DSConstants extends AMTuneConstants {
     static String DB_BACKUP_DIR_PREFIX = "amtune";
     static String LDAP_WORKER_THREADS = "24";
     static String DS5_VERSION = "5.";
-    static String DS63_VERSION = "6.3";
+    static String DS6_VERSION = "6.";
     static String DS62_VERSION = "6.2";
     static String OPEN_DS = "openDS";
     

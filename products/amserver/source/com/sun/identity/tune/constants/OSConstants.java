@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OSConstants.java,v 1.1 2008-07-02 18:50:39 kanduls Exp $
+ * $Id: OSConstants.java,v 1.2 2008-08-29 10:22:48 kanduls Exp $
  */
 
 package com.sun.identity.tune.constants;
@@ -58,7 +58,6 @@ public interface OSConstants {
     static String ACK_INTERVAL_VAL = "5";
     static String STRONG_ISS_VAL = "2";
     static String LNX_FILE_MAX = "fs.file-max";
-    static String LNX_DB_FLUSH = "vm.bdflush";
     static String LNX_IPV4_LOCAL_PORT_RANGE = "net.ipv4.ip_local_port_range";
     static String LNX_CORE_RMEM_MAX = "net.core.rmem_max";
     static String LNX_CORE_RMEM_DEFAULT = "net.core.rmem_default";
@@ -78,8 +77,6 @@ public interface OSConstants {
             "/proc/sys/net/ipv4/tcp_keepalive_intvl";
     static String LNX_TCP_WINDOW_SCALING_NAME =
             "/proc/sys/net/ipv4/tcp_window_scaling";
-    static String LNX_VM_BDFLUSH_NAME = 
-            "/proc/sys/vm/bdflush";
     static String LNX_LOAD_SYSCTL_CMD =
             "sysctl -p /etc/sysctl.conf";
 }

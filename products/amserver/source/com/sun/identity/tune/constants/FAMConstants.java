@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMConstants.java,v 1.5 2008-08-19 19:09:29 veiming Exp $
+ * $Id: FAMConstants.java,v 1.6 2008-08-29 10:22:48 kanduls Exp $
  */
 
 package com.sun.identity.tune.constants;
@@ -36,7 +36,6 @@ public interface FAMConstants extends AMTuneConstants {
     static String SSOADM_LOCATION = "SSOADM_LOCATION";
     static String OPENSSOSERVER_URL = "OPENSSOSERVER_URL";
     static String OPENSSOADMIN_USER = "OPENSSOADMIN_USER";
-    static String OPENSSO_CONFIG_DIR = "OPENSSO_CONFIG_DIR";
     static String REALM_NAME = "REALM_NAME";
     static String SDK_CACHE_MAXSIZE = "com.iplanet.am.sdk.cache.maxSize";
     static String NOTIFICATION_THREADPOOL_SIZE = 
@@ -62,7 +61,6 @@ public interface FAMConstants extends AMTuneConstants {
     static String SHOW_REALM_SVC_SUB_CMD = "show-realm-svcs";
     static String GET_REALM_SVC_ATTRS_SUB_CMD = "get-realm-svc-attrs";
     static String SET_REALM_SVC_ATTRS_SUB_CMD = "set-svc-attrs";
-    static String SESSION_SERVICE = "iPlanetAMSessionService";
     static String SERVICE_NAME_OPT = "--servicename";
     static String ATTR_NAMES_OPT = "--attributenames";
     static String OUTFILE_OPT = "--outfile";
@@ -77,14 +75,13 @@ public interface FAMConstants extends AMTuneConstants {
     static String MAX_CONN_POOL = "maxConnPool";
     static String AUTH_SVC = "iPlanetAMAuthService";
     static String AUTH_LDAP_SVC = "iPlanetAMAuthLDAPService";
+    static String LOGGING_SVC = "iPlanetAMLoggingService";
     static String GLOBAL_SCHEMA = "global";
+    static String DYNAMIC_SCHEMA = "dynamic";
     static String ORG_SCHEMA = "organization";
     static String LDAP_CONNECTION_POOL_SIZE = 
             "iplanet-am-auth-ldap-connection-pool-default-size";
-    static String LDAP_SEARCH_SCOPE = "iplanet-am-auth-ldap-search-scope";
-    static String MAX_SESSION_TIME = "iplanet-am-session-max-session-time";
-    static String MAX_IDLE_TIME = "iplanet-am-session-max-idle-time";
-    static String MAX_CACHING_TIME = "iplanet-am-session-max-caching-time";
+    static String LOGGING_BUFFER_SIZE = "iplanet-am-logging-buffer-size";
     static String LDAP_CONN_POOL_MIN = 
             "sun-idrepo-ldapv3-config-connection_pool_min_size";
     static String LDAP_CONN_POOL_MAX =

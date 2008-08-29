@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebContainerConstants.java,v 1.2 2008-07-25 05:56:23 kanduls Exp $
+ * $Id: WebContainerConstants.java,v 1.3 2008-08-29 10:22:48 kanduls Exp $
  */
 
 package com.sun.identity.tune.constants;
@@ -41,8 +41,6 @@ public interface WebContainerConstants extends AMTuneConstants {
     static String AS91_CONTAINER = "AS91";
     static String WS7ADMIN_PASSWORD_SYNTAX = "wadm_password=";
     static String ASADMIN_PASSWORD_SYNTAX= "AS_ADMIN_PASSWORD=";
-    static String CONTAINER_BASE_DIR = "CONTAINER_BASE_DIR";
-    static String WEB_CONTAINER_INSTANCE_NAME = "WEB_CONTAINER_INSTANCE_NAME";
     static String CONTAINER_INSTANCE_DIR = "CONTAINER_INSTANCE_DIR";
     static String WSADMIN_DIR = "WSADMIN_DIR";
     static String WSADMIN_USER = "WSADMIN_USER";
@@ -87,7 +85,6 @@ public interface WebContainerConstants extends AMTuneConstants {
     static String ASADMIN_SECURE = "ASADMIN_SECURE";
     static String ASADMIN_TARGET = "ASADMIN_TARGET";
     static String ASADMIN_HTTPLISTENER = "ASADMIN_HTTPLISTENER";
-    static String ASADMIN_INTERACTIVE = "ASADMIN_INTERACTIVE";
     static String AMTUNE_WEB_CONTAINER_JAVA_POLICY = 
             "AMTUNE_WEB_CONTAINER_JAVA_POLICY";
     static String JAVA_SECURITY_POLICY = "-Djava.security.policy";
