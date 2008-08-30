@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.34 2008-08-19 19:14:56 veiming Exp $
+ * $Id: Constants.java,v 1.35 2008-08-30 06:14:47 ericow Exp $
  *
  */
 
@@ -677,6 +677,17 @@ public interface Constants {
      */
     String URLCHECKER_SLEEP_INTERVAL =
         "com.sun.identity.urlchecker.sleep.interval";
+
+    /**
+     *  Property string for URL Checker Retry Interval
+     */
+    public static final String URLCHECKER_RETRY_INTERVAL = 
+                  "com.sun.identity.urlchecker.retry.interval";
+    /**
+     *  Property string for URL Checker Retry Limit
+     */
+    public static final String URLCHECKER_RETRY_LIMIT = 
+                  "com.sun.identity.urlchecker.retry.limit";
 
     /**
      * Property string for Site Status Check Class name
