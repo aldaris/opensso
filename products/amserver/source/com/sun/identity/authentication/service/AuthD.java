@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthD.java,v 1.19 2008-08-21 22:44:51 pawand Exp $
+ * $Id: AuthD.java,v 1.20 2008-08-30 05:47:52 dillidorai Exp $
  *
  */
 
@@ -41,6 +41,7 @@ import com.iplanet.dpro.session.service.SessionService;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
+import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.common.DNUtils;
 import com.sun.identity.common.RequestUtils;
@@ -744,8 +745,23 @@ public class AuthD  {
                 messageId.append("_").append(indexType.toString()
                 .toUpperCase());
                 dataList.add(indexType.toString());
+                if (indexType.equals(AuthContext.IndexType.USER.toString())) { 
+                    dataList.add(ssot.getProperty(ISAuthConstants.PRINCIPAL));
+                } else if (indexType.equals(
+                        AuthContext.IndexType.ROLE.toString())) {
+                    dataList.add(ssot.getProperty(ISAuthConstants.ROLE));
+                } else if (indexType.equals(
+                        AuthContext.IndexType.SERVICE.toString())) {
+                    dataList.add(ssot.getProperty(ISAuthConstants.SERVICE));
+                } else if (indexType.equals(
+                        AuthContext.IndexType.LEVEL.toString())) {
+                    dataList.add(ssot.getProperty(ISAuthConstants.AUTH_LEVEL));
+                } else if (indexType.equals(
+                        AuthContext.IndexType.MODULE_INSTANCE.toString())) {
+                    dataList.add(ssot.getProperty(
+                            ISAuthConstants.AUTH_TYPE));
+                }
             }
-            String[] data = (String[])dataList.toArray(new String[0]);
             
             Hashtable props = new Hashtable();
             String client = ssot.getProperty(ISAuthConstants.HOST);
@@ -771,6 +787,8 @@ public class AuthD  {
             }
             props.put(LogConstants.LOGIN_ID_SID, ssot.getTokenID()
                 .toString());
+
+            String[] data = (String[])dataList.toArray(new String[0]);
             this.logIt(data,this.LOG_ACCESS, messageId.toString(), props);
         } catch (SSOException ssoExp) {
             debug.error("AuthD.logLogout: SSO Error", ssoExp);
