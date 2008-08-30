@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSDKRepo.java,v 1.20 2008-07-02 17:20:29 kenwho Exp $
+ * $Id: AMSDKRepo.java,v 1.21 2008-08-30 16:34:55 goodearth Exp $
  *
  */
 
@@ -1952,7 +1952,7 @@ public class AMSDKRepo extends IdRepo {
 
     protected static String constructFilter(int filterModifier, Map avPairs) {
         StringBuffer filterSB = new StringBuffer();
-        if (filterModifier == IdRepo.NO_MOD) {
+        if (avPairs == null || filterModifier == IdRepo.NO_MOD) {
             return null;
         } else if (filterModifier == IdRepo.OR_MOD) {
             filterSB.append("(|");
