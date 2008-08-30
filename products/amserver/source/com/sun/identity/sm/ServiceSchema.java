@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceSchema.java,v 1.11 2008-08-30 05:45:59 goodearth Exp $
+ * $Id: ServiceSchema.java,v 1.12 2008-08-30 16:46:47 goodearth Exp $
  *
  */
 
@@ -840,18 +840,10 @@ public class ServiceSchema {
         return (stNode);
     }
 
-    public Node getOrgAttrSchemaNode() {
-        Node node = null;
-        try {
-            node = getOrgAttrSchemaNode(ssm.getDocumentCopy());
-        } catch (SMSException ssme) {
-            debug.error("ServiceSchema::getOrgAttrSchemaNode: "+
-                "invalid OrgAttrschema");
-        }
-        return (node);
-    }
-
-    public Node getOrgAttrSchemaNode(Document doc) throws SMSException {
+    // -----------------------------------------------------------
+    // Method to obtain organizationattributeschema node
+    // -----------------------------------------------------------
+    Node getOrgAttrSchemaNode(Document doc) throws SMSException {
         NodeList nodes = doc.getElementsByTagName(
             SMSUtils.ORG_ATTRIBUTE_SCHEMA);
         if (nodes == null || (nodes.getLength() == 0)) {
