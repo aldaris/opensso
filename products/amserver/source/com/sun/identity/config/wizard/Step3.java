@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step3.java,v 1.28 2008-08-28 17:28:35 veiming Exp $
+ * $Id: Step3.java,v 1.29 2008-08-30 06:22:58 kevinserwin Exp $
  *
  */
 package com.sun.identity.config.wizard;
@@ -182,7 +182,7 @@ public class Step3 extends LDAPStoreWizardPage {
                     writeToResponse(getLocalizedString("invalid.port.number"));
                 } else {
                     getContext().setSessionAttribute("configStorePort", port);
-                    writeToResponse("true");
+                    writeToResponse("ok");
                 }
             } catch (NumberFormatException e) {
                  writeToResponse(getLocalizedString("invalid.port.number"));

@@ -23,16 +23,28 @@
         validateStoreLoginId('$type');
     }
 
-    function validatePort() {
-        $('nextTabButton').disabled = true;
-	field = "configStorePort";
-	if ($(field).value > 65535) {
-	    $(field+'Status').innerHTML = "Invalid Port Number";
-	    return;
-	}
+    function validateUserFields(response) {
+        if (response.responseText == "ok") { 
+	    eval(field + "Valid = true;" );
+            $(field + 'Status').innerHTML = okString;
+            allValid();
+        } else {
+            eval(field + "Valid = false;" );
+            $(field + 'Status').innerHTML = errorImage +
+                '<small>' + response.responseText + '</small>';
+        }                
+        field = "";
+    }  
+    
+   function validatePort() {
+        field = "configStorePort";
+        var callUrl = "$context$path?actionLink=validateLocalPort";
+        var param = "&port=" + $('configStorePort').value;
+        ie7fix++;
+        callUrl = callUrl + "&ie7fix=" + ie7fix;
         setTimeout("enableNextButton()", 500);
-	validate();
-    }
+        AjaxUtils.call(callUrl+param, validateUserFields);
+    }    
 
     function validateEncKey() {
         $('nextTabButton').disabled = true;
