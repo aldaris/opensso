@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.55 2008-08-29 18:10:52 ericow Exp $
+ * $Id: LDAPv3Repo.java,v 1.56 2008-08-30 16:35:53 goodearth Exp $
  *
  */
 
@@ -3285,12 +3285,6 @@ public class LDAPv3Repo extends IdRepo {
 
             StringBuffer filterSB = new StringBuffer();
 
-            if (filterOp == IdRepo.OR_MOD) {
-                filterSB.append("(|");
-            } else if (filterOp == IdRepo.AND_MOD) {
-                filterSB.append("(&");
-            } // do nothing for IdRepo.NO_MOD
-
             filterSB.append("(&").append(
                     constructFilter(
                         namingAttr, objectClassFilter, pattern)); // note A
@@ -3300,10 +3294,6 @@ public class LDAPv3Repo extends IdRepo {
             }
 
             filterSB.append(")"); // matches "(" in note A above
-
-            if ((filterOp == IdRepo.AND_MOD) || (filterOp == IdRepo.OR_MOD)) {
-                filterSB.append(")");
-            }
 
             if (debug.messageEnabled()) {
                 debug.message("LDAPv3Repo: before ld.search call:" + "filterSB:"
@@ -5212,23 +5202,22 @@ public class LDAPv3Repo extends IdRepo {
 
     private String constructFilter(int filterModifier, Map avPairs) {
         if (debug.messageEnabled()) {
-            debug.message("LDAPv3Repo: constructFilter: avPairs=" + avPairs);
+            debug.message("LDAPv3Repo: constructFilter: avPairs=" + avPairs 
+                + "filterModifier=" + filterModifier);
         }
+        if (avPairs == null || filterModifier == IdRepo.NO_MOD) {
+            return null;
+        }
+
         StringBuffer filterSB = new StringBuffer();
-        boolean appendedAmp = false;
 
-        Iterator iter = avPairs.keySet().iterator();
-
-        if ((filterModifier == IdRepo.NO_MOD) || !iter.hasNext()) {
-            return filterSB.toString();
-        } else if (filterModifier == IdRepo.OR_MOD) {
+        if (filterModifier == IdRepo.OR_MOD) {
             filterSB.append("(|");
-            appendedAmp = true;
         } else if (filterModifier == IdRepo.AND_MOD) {
             filterSB.append("(&");
-            appendedAmp = true;
         }
 
+        Iterator iter = avPairs.keySet().iterator();
         while (iter.hasNext()) {
             String attributeName = (String) iter.next();
             Iterator iter2 = ((Set) (avPairs.get(attributeName))).iterator();
@@ -5239,10 +5228,7 @@ public class LDAPv3Repo extends IdRepo {
                         attributeValue).append(")");
             }
         }
-
-        if (appendedAmp == true) {
-            filterSB.append(")");
-        }
+        filterSB.append(")");
         if (debug.messageEnabled()) {
             debug.message("LDAPv3Repo: exit constructFilter: " + "filterSB= "
                     + filterSB);
