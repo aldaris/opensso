@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceResultCache.java,v 1.11 2008-08-19 19:09:15 veiming Exp $
+ * $Id: ResourceResultCache.java,v 1.12 2008-08-30 02:34:21 lakshman_abburi Exp $
  *
  */
 
@@ -1135,6 +1135,15 @@ class ResourceResultCache implements SSOTokenListener {
                             if (tokenIDScopesMap != null) {
                                 tokenIDScopesMap.remove(tokenID);
                             }
+                            
+                            boolean tokenPresent = tokenRegistry.remove(tokenID);
+                            if ( (tokenPresent == false) &&
+                                (debug.messageEnabled()) ) {
+                                debug.message("ResourceResultCache. tokenID= "
+                                    + SECRET_MASK
+                                    + " not found in Token Registry.");
+                            }
+
                             if (debug.messageEnabled()) {
                                 debug.message("ResourceResultCache."
                                     + "ssoTokenChanged():"
