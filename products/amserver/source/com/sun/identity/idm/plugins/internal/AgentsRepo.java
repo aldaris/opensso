@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.37 2008-08-26 23:49:43 goodearth Exp $
+ * $Id: AgentsRepo.java,v 1.38 2008-08-30 05:48:41 goodearth Exp $
  *
  */
 
@@ -1221,7 +1221,6 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             
             // If notification URLs are present, send notification
             if (groupName.equalsIgnoreCase("default")) {
-                sendNotificationSet(type, IdType.AGENT, name);
                 sendNotificationSet(type, IdType.AGENTONLY, name);
             } else {
                 sendNotificationSet(type, IdType.AGENTGROUP, name);
