@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SiteStatusCheckThreadImpl.java,v 1.3 2008-06-25 05:41:39 qcheng Exp $
+ * $Id: SiteStatusCheckThreadImpl.java,v 1.4 2008-08-30 06:19:49 ericow Exp $
  *
  */
 
@@ -51,7 +51,7 @@ import com.sun.identity.shared.Constants;
 public class SiteStatusCheckThreadImpl implements SiteStatusCheck {
     protected static Debug debug = Debug.getInstance("amNaming");
     private static int timeout = Long.valueOf(SystemProperties.
-    		get(Constants.MONITORING_TIMEOUT, "10000")).intValue();
+            get(Constants.MONITORING_TIMEOUT, "10000")).intValue();
     private static final String hcPath = SystemProperties.
             get(Constants.URLCHECKER_TARGET_URL, "/amserver/namingservice");
     private static int urlCheckerInvalidateInterval = 
@@ -59,6 +59,10 @@ public class SiteStatusCheckThreadImpl implements SiteStatusCheck {
             get(Constants.URLCHECKER_INVALIDATE_INTERVAL, "70000")).intValue();
     private static int urlCheckerSleep = Long.valueOf(SystemProperties.
             get(Constants.URLCHECKER_SLEEP_INTERVAL, "30000")).intValue();
+    private static int urlCheckerRetryInterval = Long.valueOf(SystemProperties.
+            get(Constants.URLCHECKER_RETRY_INTERVAL, "500")).intValue();
+    private static int urlCheckerRetryLimit = Long.valueOf(SystemProperties.
+            get(Constants.URLCHECKER_RETRY_LIMIT, "3")).intValue();
 
     private HashMap urlCheckers = null;
 
@@ -76,10 +80,16 @@ public class SiteStatusCheckThreadImpl implements SiteStatusCheck {
     }
     
     private URLChecker getURLChecker(URL url) {
-        if(urlCheckers.get(getThreadName(url)) == null) {
-            URLChecker checker = new URLChecker(getThreadName(url), url);
+        URLChecker checker = (URLChecker)urlCheckers.get(getThreadName(url));
+        if (checker == null) {
             synchronized(urlCheckers) {
+                checker = (URLChecker)urlCheckers.get(getThreadName(url));
+                if (checker != null) {
+                     return checker;
+                }
+                checker = new URLChecker(getThreadName(url), url);
                 urlCheckers.put(getThreadName(url), checker);
+                checker.check();
             }
             checker.start();
             try {
@@ -105,10 +115,8 @@ public class SiteStatusCheckThreadImpl implements SiteStatusCheck {
             synchronized(urlCheckers) {
                 urlCheckers.remove(getThreadName(url));
             }
-            if (debug.messageEnabled()) {
-                debug.message("SiteStatusCheckThreadImpl.doCheckSiteStatus() :" 
+            debug.error("SiteStatusCheckThreadImpl.doCheckSiteStatus() " 
                     + "Killing thread " + getThreadName(url));
-            }
             return false;
         } else if ((checker != null) &&  
         		   (checker.getStatus() == URLStatus.STATUS_AVAILABLE)) {
@@ -158,23 +166,23 @@ public class SiteStatusCheckThreadImpl implements SiteStatusCheck {
             setUrlStatus(new URLStatus());
         }
 
-        public void run() {
-            if (debug.messageEnabled()) {
-                debug.message("URLChecker.run() : monitoring URL " +
-                    url.toExternalForm());
-            }
-            while (!isTerminateThread()) {
+        public void check() {
+            int cnt = 0;
+            boolean statusNotSet = true;
+            while (cnt < urlCheckerRetryLimit && statusNotSet) {
+                cnt++;
                 try {
                     boolean sockStatus = checkSocketConnection(url);
                     if (!sockStatus) {
                         getUrlStatus().setStatus(URLStatus.STATUS_UNAVAILABLE);
+                        Thread.sleep(urlCheckerRetryInterval);
                     } else {
                         Date t0 = null;
                         if (debug.messageEnabled()) {
                             t0 = Calendar.getInstance().getTime();
                         }
 
-                        HttpURLConnection huc =
+                        HttpURLConnection huc = 
                                 HttpURLConnectionManager.getConnection(url);
                         huc.setDoInput(true);
                         huc.setRequestMethod("GET");
@@ -183,42 +191,56 @@ public class SiteStatusCheckThreadImpl implements SiteStatusCheck {
                         if (debug.messageEnabled()) {
                             Date t1 = Calendar.getInstance().getTime();
                             long t = t1.getTime() - t0.getTime();
-                            debug.message("URLChecker.run() : " + 
+                            debug.message("URLChecker.check() : " +
                                 "Http connection took " + t + " ms");
                         }
                         
                         if (s != null) {
                             if (debug.messageEnabled()) {
-                                debug.message("URLChecker.run() : " + 
+                                debug.message("URLChecker.check() : " +
                                     " setting status to " +
                                 	"AVAILABLE for " + url.toExternalForm());
                             }
+                            statusNotSet = false;
                             getUrlStatus().setStatus(
                                 URLStatus.STATUS_AVAILABLE);
                         } else {
                             if (debug.messageEnabled()) {
-                                debug.message("URLChecker.run() : " + 
+                                debug.message("URLChecker.check() : " +
                                     "setting status to " + 
                             	    "** UNAVAILABLE ** for " + 
                             	url.toExternalForm());
                             }
-                            getUrlStatus().setStatus(
-                                URLStatus.STATUS_UNAVAILABLE);
+                            if (cnt == urlCheckerRetryLimit) {
+                                getUrlStatus().setStatus(
+                                        URLStatus.STATUS_UNAVAILABLE);
+                            } else {
+                                Thread.sleep(urlCheckerRetryInterval);
+                            }
                         }
                         huc.disconnect();
                     }
                 } catch (Exception e) {
-                    debug.error("URLChecker.run() :  setting status to " +
+                    debug.error("URLChecker.check() :  setting status to " +
                         "** UNAVAILABLE ** for " + url.toExternalForm(), e);
                     getUrlStatus().setStatus(URLStatus.STATUS_UNAVAILABLE);
-                } finally {
-                    try {
-                        Thread.sleep(urlCheckerSleep);
-                    } catch (InterruptedException e) {
-                        debug.error("URLChecker.run() : Thread is interrupted "
-                            + url.toExternalForm(), e);
-                    }
                 }
+            }
+        }
+
+        public void run() {
+            if (debug.messageEnabled()) {
+                debug.message("URLChecker.run() : monitoring URL " +
+                    url.toExternalForm());
+            }
+            while (!isTerminateThread()) {
+                try {
+                    Thread.sleep(urlCheckerSleep);
+                } catch (InterruptedException e) {
+                    debug.error("URLChecker.run() : Thread is interrupted " +
+                            url.toExternalForm(), e);
+                }
+                check();
             }
         }
 
