@@ -23,7 +23,7 @@
 : your own identifying information:
 : "Portions Copyrighted [year] [name of copyright owner]"
 :
-: $Id: setup.bat,v 1.10 2008-07-23 17:14:33 veiming Exp $
+: $Id: setup.bat,v 1.11 2008-08-30 00:37:11 ww203982 Exp $
 :
 
 if not "%JAVA_HOME%" == "" goto checkJavaHome
@@ -39,15 +39,39 @@ goto validJavaHome
 echo The defined JAVA_HOME environment variable is not correct
 echo setup program will use the JVM defined in JAVA_HOME for all the CLI tools
 goto exit
-:validJavaHome
 
+:validJavaHome
 SETLOCAL
+CALL %JAVA_HOME%\bin\java.exe -version 2>&1|more > java_version.txt
+SET /P java_version=< java_version.txt
+DEL java_version.txt
+CALL :GET_VERSION_NUM %java_version:"1.= %
+CALL :GET_MID_VERSION_NUM %java_version:.= %
+IF "%java_version%" == "0" goto invalidJavaVersion
+IF "%java_version%" == "1" goto invalidJavaVersion
+IF "%java_version%" == "2" goto invalidJavaVersion
+IF "%java_version%" == "3" goto invalidJavaVersion
+goto runSetup
+
+:invalidJavaVersion
+echo This program is designed to work with 1.4 or newer JRE.
+goto exit
+
+:GET_VERSION_NUM
+SET java_version=%3
+goto exit
+
+:GET_MID_VERSION_NUM
+SET java_version=%1
+goto exit
+
+:runSetup
 IF "%1" == "-h" SET help_print=yes
 IF "%1" == "--help" SET help_print=yes
 IF "%1" == "-p" SET path_AMConfig=%~2
 IF "%1" == "--path" SET path_AMConfig=%~2
 
-"%JAVA_HOME%/bin/java.exe" -version:"1.4+" -D"load.config=yes" -D"help.print=%help_print%" -D"path.AMConfig=%path_AMConfig%" -cp "lib/amserver.jar;lib/amadm_setup.jar;lib/opensso-sharedlib.jar;lib/ldapjdk.jar;lib/OpenDS.jar;resources" com.sun.identity.tools.bundles.Main
+"%JAVA_HOME%/bin/java.exe" -D"load.config=yes" -D"help.print=%help_print%" -D"path.AMConfig=%path_AMConfig%" -cp "lib/amserver.jar;lib/amadm_setup.jar;lib/opensso-sharedlib.jar;lib/ldapjdk.jar;lib/OpenDS.jar;resources" com.sun.identity.tools.bundles.Main
 ENDLOCAL
 
 :exit
