@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Session.java,v 1.17 2008-08-08 00:40:54 ww203982 Exp $
+ * $Id: Session.java,v 1.18 2008-08-30 06:43:59 manish_rustagi Exp $
  *
  */
 
@@ -252,6 +252,11 @@ public class Session extends GeneralTaskRunnable {
      */
     private static boolean pollingEnabled = false;
     
+    private static boolean pollerPoolInitialized = false;
+    
+    private static final String ENABLE_POLLING_PROPERTY = 
+        "com.iplanet.am.session.client.polling.enable";
+    
     /**
      * Indicates whether to enable or disable the session cleanup thread.
      */
@@ -308,61 +313,17 @@ public class Session extends GeneralTaskRunnable {
             serverID = null;
         }
         
-        if (!isServerMode()) {
-            pollingEnabled = 
-                Boolean.valueOf(SystemProperties
-                        .get("com.iplanet.am.session.client.polling.enable", 
-                                "false")).booleanValue();
-        }
-
         String purgeDelayProperty = SystemProperties.get(
                 "com.iplanet.am.session.purgedelay", "120");
         try {
             purgeDelay = Long.parseLong(purgeDelayProperty);
         } catch (Exception le) {
             purgeDelay = 120;
-        }
-        
-        if (pollingEnabled) {
-            int poolSize;
-           int threshold;
-           try {
-               poolSize = Integer.parseInt(SystemProperties.get(
-                   Constants.POLLING_THREADPOOL_SIZE));
-           } catch (Exception e) {
-               poolSize = DEFAULT_POOL_SIZE;
-           }
-           try {
-               threshold = Integer.parseInt(SystemProperties.get(
-                   Constants.POLLING_THREADPOOL_THRESHOLD));
-           } catch (Exception e) {
-               threshold = DEFAULT_THRESHOLD;
-           }
-           ShutdownManager shutdownMan = ShutdownManager.getInstance();
-           if (shutdownMan.acquireValidLock()) {
-               try {
-                   threadPool = new ThreadPool("amSessionPoller", poolSize,
-                       threshold, true, sessionDebug);
-                   shutdownMan.addShutdownListener(
-                       new ShutdownListener() {
-                           public void shutdown() {
-                               threadPool.shutdown();
-                           }
-                       }
-                   );
-               } finally {
-                   shutdownMan.releaseLockAndNotify();
-               }
-           }
-        } else {
-            sessionDebug.message("Session Cache cleanup is set to "
-                + sessionCleanupEnabled); 
-        }
-        
-        if (pollingEnabled || sessionCleanupEnabled) {
+        }        
+      
+        if (pollingEnabled || sessionCleanupEnabled){
             timerPool = SystemTimerPool.getTimerPool();
-        }
-        
+        }        
     }
 
     /**
@@ -379,6 +340,73 @@ public class Session extends GeneralTaskRunnable {
      */
     protected boolean getIsPolling() {
         return isPolling;
+    }
+    
+    /**
+     * Checks if Polling is enabled
+     * @return <code> true if polling is enabled , <code>false<code> otherwise
+     */    
+    protected static boolean isPollingEnabled(){   	
+        // This is only a transitional solution before the complete 
+        // implementation for making the session properties
+        // hot-swappable is in place    	
+        if (!isServerMode()) {
+            pollingEnabled = 
+                Boolean.valueOf(SystemProperties
+                    .get(ENABLE_POLLING_PROPERTY, 
+                        "false")).booleanValue();
+        }
+        if (sessionDebug.messageEnabled()) {
+            sessionDebug.message("Session.isPollingEnabled is "
+                + pollingEnabled);
+        }        
+        
+        if(!pollerPoolInitialized){
+            if (pollingEnabled) {
+                int poolSize;
+                int threshold;
+                try {
+                    poolSize = Integer.parseInt(SystemProperties.get(
+                        Constants.POLLING_THREADPOOL_SIZE));
+                } catch (Exception e) {
+                    poolSize = DEFAULT_POOL_SIZE;
+                }
+                try {
+                    threshold = Integer.parseInt(SystemProperties.get(
+                        Constants.POLLING_THREADPOOL_THRESHOLD));
+                } catch (Exception e) {
+                    threshold = DEFAULT_THRESHOLD;
+                }
+                ShutdownManager shutdownMan = ShutdownManager.getInstance();
+                if (shutdownMan.acquireValidLock()) {
+                    try {
+                        threadPool = new ThreadPool("amSessionPoller", poolSize,
+                            threshold, true, sessionDebug);
+                        shutdownMan.addShutdownListener(
+                            new ShutdownListener() {
+                                public void shutdown() {
+                                    threadPool.shutdown();
+                                }
+                            }
+                        );
+                    } finally {
+                        shutdownMan.releaseLockAndNotify();
+                    }
+                }
+                pollerPoolInitialized = true;
+            } else {
+                if (sessionDebug.messageEnabled()) {
+                    sessionDebug.message("Session Cache cleanup is set to "
+                        + sessionCleanupEnabled);
+                }
+            }	        
+        }
+        
+        if ((pollingEnabled || sessionCleanupEnabled) && timerPool == null) {
+            timerPool = SystemTimerPool.getTimerPool();
+        }
+        
+        return pollingEnabled;
     }
 
     /*
@@ -416,7 +444,7 @@ public class Session extends GeneralTaskRunnable {
     }
     
     public void run() {
-        if (pollingEnabled) {
+        if (isPollingEnabled()) {
             final SessionID sid = getID();
             try {
                 if (!getIsPolling()) {
@@ -989,14 +1017,14 @@ public class Session extends GeneralTaskRunnable {
         session.context = RestrictedTokenContext.getCurrent();
 
         sessionTable.put(sid, session);
-        if (!pollingEnabled) {
+        if (!isPollingEnabled()) {
             session.addInternalSessionListener();
         }
         return session;
     }
 
     private void scheduleToTimerPool() {
-        if (pollingEnabled) {
+        if (isPollingEnabled()) {
             long timeoutTime = (latestRefreshTime + (maxIdleTime * 60)) * 1000;
             if (cacheBasedPolling) {
                 timeoutTime = Math.min((latestRefreshTime +
@@ -1268,7 +1296,7 @@ public class Session extends GeneralTaskRunnable {
      */
     public void addSessionListenerOnAllSessions(SessionListener listener)
             throws SessionException {
-        if (!pollingEnabled) {
+        if (!isPollingEnabled()) {
             try {
                 String url = WebtopNaming.getNotificationURL().toString();
                 if (sessionService != null) {
