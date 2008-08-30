@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.24 2008-08-22 04:07:58 mallas Exp $
+ * $Id: SOAPRequestHandler.java,v 1.25 2008-08-30 01:25:03 mallas Exp $
  *
  */
 
@@ -95,7 +95,7 @@ import com.sun.identity.saml2.assertion.AssertionFactory;
 import com.sun.identity.saml2.assertion.NameID;
 import com.sun.identity.wss.sts.TrustAuthorityClient;
 import com.sun.identity.wss.sts.FAMSTSException;
-import com.sun.identity.wss.sts.config.FAMSTSConfiguration;
+import com.sun.identity.wss.sts.config.STSRemoteConfig;
 import com.sun.identity.wss.security.AssertionToken;
 import com.sun.identity.wss.security.SAML2Token;
 import com.sun.identity.wss.sts.STSConstants;
@@ -183,7 +183,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             throws SecurityException {
        
         ProviderConfig config = null;
-        FAMSTSConfiguration stsConfig = null;
+        STSRemoteConfig stsConfig = null;
         
         String[] data = {WSSUtils.print(soapRequest.getSOAPPart())};
         LogUtil.access(Level.FINE,
@@ -197,7 +197,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         
         if (isSTS) {
             debug.message("ValidateRequest: This is WS-Trust Request");
-            stsConfig = new FAMSTSConfiguration();
+            stsConfig = new STSRemoteConfig();
             config = getSTSProviderConfig(stsConfig);
         } else {
             config = getWSPConfig();
@@ -362,7 +362,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 null);
         
         ProviderConfig config = null;
-        FAMSTSConfiguration stsConfig = null;
+        STSRemoteConfig stsConfig = null;
         
         Boolean isTrustMessage = (Boolean) sharedState.get("IS_TRUST_MSG");
         boolean isSTS = 
@@ -370,7 +370,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         
         if (isSTS) {
             debug.message("SecureResponse: This is WS-Trust Response");
-            stsConfig = new FAMSTSConfiguration();
+            stsConfig = new STSRemoteConfig();
             config = getSTSProviderConfig(stsConfig);
         } else {
             ThreadLocalService.removeSubject();
@@ -1398,12 +1398,12 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         }
     }
     
-    private ProviderConfig getSTSProviderConfig(FAMSTSConfiguration stsConfig) 
+    private ProviderConfig getSTSProviderConfig(STSRemoteConfig stsConfig) 
             throws SecurityException {
         
         if(stsConfig == null) {
            return null;
-        }
+        }      
         try {
              ProviderConfig pc = ProviderConfig.getProvider(stsConfig.getIssuer(),
                 ProviderConfig.WSP);
