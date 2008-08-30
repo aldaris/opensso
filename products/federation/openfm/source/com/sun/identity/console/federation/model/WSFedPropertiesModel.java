@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]
  *
- * $Id: WSFedPropertiesModel.java,v 1.9 2008-06-25 05:49:40 qcheng Exp $
+ * $Id: WSFedPropertiesModel.java,v 1.10 2008-08-30 01:23:29 babysunil Exp $
  *
  */
 
@@ -162,7 +162,15 @@ public interface WSFedPropertiesModel extends EntityModel {
     String TFIDPATTR_MAPPER = "idpAttributeMapper";
     
     // attribute for AttributeMap
-    String TFIDPATTR_MAP = "attributeMap";
+    String TFIDPATTR_MAP = "attributeMap";  
+    
+    String TFNAMEID_FORMAT = "nameIdFormat";
+    String TFNAMEID_ATTRIBUTE = "nameIdAttribute";
+    String TFNAME_INCLU_DOMAIN = "nameIncludesDomain";
+    String TFDOMAIN_ATTRIBUTE = "domainAttribute";
+    String TFUPN_DOMAIN = "upnDomain";
+    String COT_LIST = "cotlist";
+    
     
     /**
      * Returns a map with service provider attributes and values.

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: WSFedIDP.jsp,v 1.3 2008-06-25 05:50:25 qcheng Exp $
+   $Id: WSFedIDP.jsp,v 1.4 2008-08-30 01:20:42 babysunil Exp $
    
 --%>
 
@@ -41,6 +41,7 @@
     pageTitle="webconsole.title" 
     bundleID="amConsole" 
     copyrightYear="2004" 
+    onLoad="javascript:disableFields()"
     fireDisplayEvents="true">
 
 <script language="javascript" src="../console/js/am.js"></script>
@@ -53,6 +54,92 @@
         return confirm("<cc:text name="txtLogout"
             defaultValue="masthead.logoutMessage" bundleID="amConsole"/>");
     }
+    
+  function disableFields() {
+     var formElement = document.forms["WSFedIDP"];
+     var isHosted='1';
+     for (i=0; i<document.WSFedIDP.elements.length; i++) {
+          if ((document.WSFedIDP.elements[i].type=="select-one") && 
+             (document.WSFedIDP.elements[i].name=="WSFedIDP.nameIdFormat")){
+           isHosted='0';
+          }
+     }
+          
+   if (isHosted=="0") {
+         if(formElement.elements['WSFedIDP.nameIdFormat'].value=="UPN") {  
+              if (formElement.elements['WSFedIDP.nameIncludesDomain'].checked == true) {
+                  formElement.elements['WSFedIDP.domainAttribute'].disabled = true;
+                  formElement.elements['WSFedIDP.upnDomain'].disabled = true;
+               } else if (formElement.elements['WSFedIDP.nameIncludesDomain'].checked == false) {
+                  formElement.elements['WSFedIDP.domainAttribute'].disabled = false;
+                  formElement.elements['WSFedIDP.upnDomain'].disabled = false;
+               }
+               formElement.elements['WSFedIDP.nameIdAttribute'].value = 'uid';
+
+           } else if (formElement.elements['WSFedIDP.nameIdFormat'].value=="Email") {
+               formElement.elements['WSFedIDP.nameIncludesDomain'].disabled = true;
+               formElement.elements['WSFedIDP.domainAttribute'].disabled = true;
+               formElement.elements['WSFedIDP.upnDomain'].disabled = true;
+               formElement.elements['WSFedIDP.nameIncludesDomain'].checked = false;
+               formElement.elements['WSFedIDP.nameIdAttribute'].value = 'mail';
+           } else if (formElement.elements['WSFedIDP.nameIdFormat'].value=="Common Name") {
+               formElement.elements['WSFedIDP.nameIncludesDomain'].disabled = true;
+               formElement.elements['WSFedIDP.domainAttribute'].disabled = true;
+               formElement.elements['WSFedIDP.upnDomain'].disabled = true;
+               formElement.elements['WSFedIDP.nameIncludesDomain'].checked = false;
+               formElement.elements['WSFedIDP.nameIdAttribute'].value = 'cn';
+           }
+          
+    } else if (isHosted=="1") {
+         if (formElement.elements['WSFedIDP.nameIncludesDomain'].checked == true) {
+         formElement.elements['WSFedIDP.domainAttribute'].disabled = true;
+         } else  if (formElement.elements['WSFedIDP.nameIncludesDomain'].checked == false) {
+         formElement.elements['WSFedIDP.domainAttribute'].disabled = false;
+         }
+    }
+           
+  }
+
+ function SelectOne(radio) {
+       var formElement = document.forms["WSFedIDP"];       
+       if(radio.value=="UPN") {           
+            if (formElement.elements['WSFedIDP.nameIncludesDomain'].checked == true) {
+              formElement.elements['WSFedIDP.domainAttribute'].disabled = true;
+              formElement.elements['WSFedIDP.upnDomain'].disabled = true;
+           } else if (formElement.elements['WSFedIDP.nameIncludesDomain'].checked == false) {
+              formElement.elements['WSFedIDP.domainAttribute'].disabled = false;
+              formElement.elements['WSFedIDP.upnDomain'].disabled = false;
+              formElement.elements['WSFedIDP.nameIncludesDomain'].disabled = false;
+           }
+           formElement.elements['WSFedIDP.nameIdAttribute'].value = 'uid';
+           
+       } else if (radio.value=="Email") {
+          formElement.elements['WSFedIDP.nameIncludesDomain'].disabled = true;
+          formElement.elements['WSFedIDP.nameIncludesDomain'].checked = false;
+           formElement.elements['WSFedIDP.domainAttribute'].disabled = true;
+           formElement.elements['WSFedIDP.upnDomain'].disabled = true;
+           formElement.elements['WSFedIDP.nameIdAttribute'].value = 'mail';
+       } else if (radio.value=="Common Name") {
+           formElement.elements['WSFedIDP.nameIncludesDomain'].disabled = true;
+           formElement.elements['WSFedIDP.nameIncludesDomain'].checked = false;
+           formElement.elements['WSFedIDP.domainAttribute'].disabled = true;
+           formElement.elements['WSFedIDP.upnDomain'].disabled = true;
+           formElement.elements['WSFedIDP.nameIdAttribute'].value = 'cn';
+           }        
+ } 
+    
+  function disableSome(chekbox) {
+    var formElement = document.forms["WSFedIDP"];
+       if (formElement.elements['WSFedIDP.nameIncludesDomain'].checked == true) {
+           formElement.elements['WSFedIDP.domainAttribute'].disabled = true;
+              formElement.elements['WSFedIDP.upnDomain'].disabled = true;
+          } else if (formElement.elements['WSFedIDP.nameIncludesDomain'].checked == false) {
+            formElement.elements['WSFedIDP.domainAttribute'].disabled = false;
+              formElement.elements['WSFedIDP.upnDomain'].disabled = false;
+          }      
+  }
+   
+    
 </script>
 <cc:primarymasthead name="mhCommon" bundleID="amConsole"
     logoutOnClick="return confirmLogout();" 
@@ -87,4 +174,4 @@
 
 </cc:form>
 </cc:header>
-</jato:useViewBean>                                         
+</jato:useViewBean>                                 

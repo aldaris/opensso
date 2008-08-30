@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]
  *
- * $Id: WSFedPropertiesModelImpl.java,v 1.10 2008-06-25 05:49:40 qcheng Exp $
+ * $Id: WSFedPropertiesModelImpl.java,v 1.11 2008-08-30 01:23:40 babysunil Exp $
  *
  */
 
@@ -64,9 +64,9 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
 {
     private static Map GEN_DATA_MAP = new HashMap(6);
     private static Map GEN_DUAL_DATA_MAP = new HashMap(8);
-    private static Map SPEX_DATA_MAP = new HashMap(24);
+    private static Map SPEX_DATA_MAP = new HashMap(26);
     private static Map IDPSTD_DATA_MAP = new HashMap(2);
-    private static Map IDPEX_DATA_MAP = new HashMap(18);
+    private static Map IDPEX_DATA_MAP = new HashMap(30);
     
     static {
         GEN_DATA_MAP.put(TF_DISPNAME, Collections.EMPTY_SET);
@@ -97,6 +97,7 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
         SPEX_DATA_MAP.put(TFACCT_REALM_COOKIE, Collections.EMPTY_SET);
         SPEX_DATA_MAP.put(TFACCT_REALM_SELECTION, Collections.EMPTY_SET);
         SPEX_DATA_MAP.put(TFACCT_HOMEREALM_DISC_SERVICE, Collections.EMPTY_SET);
+        SPEX_DATA_MAP.put(COT_LIST, Collections.EMPTY_SET);
     }
     
     static {
@@ -107,7 +108,13 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
         IDPEX_DATA_MAP.put(TFIDPAUTH_CONTMAPPER, Collections.EMPTY_SET);
         IDPEX_DATA_MAP.put(TFIDPACCT_MAPPER, Collections.EMPTY_SET);
         IDPEX_DATA_MAP.put(TFIDPATTR_MAPPER, Collections.EMPTY_SET);
-        IDPEX_DATA_MAP.put(TFIDPATTR_MAP, Collections.EMPTY_SET);
+        IDPEX_DATA_MAP.put(TFIDPATTR_MAP, Collections.EMPTY_SET);        
+        IDPEX_DATA_MAP.put(TFNAMEID_FORMAT, Collections.EMPTY_SET);
+        IDPEX_DATA_MAP.put(TFNAMEID_ATTRIBUTE, Collections.EMPTY_SET);
+        IDPEX_DATA_MAP.put(TFNAME_INCLU_DOMAIN, Collections.EMPTY_SET);
+        IDPEX_DATA_MAP.put(TFDOMAIN_ATTRIBUTE, Collections.EMPTY_SET);
+        IDPEX_DATA_MAP.put(TFUPN_DOMAIN, Collections.EMPTY_SET);
+        IDPEX_DATA_MAP.put(COT_LIST, Collections.EMPTY_SET);
     }
     
     static {
@@ -355,6 +362,7 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
         String location
     ) throws AMConsoleException {
         try {
+            String role = EntityModel.SERVICE_PROVIDER;
             //fed is the extended entity configuration object under the realm
             FederationConfigElement fed =
                 WSFederationMetaManager.getEntityConfig(realm,fedId);
@@ -367,7 +375,7 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
             SPSSOConfigElement  spsso = getspsso(fed);
             if (spsso != null) {
                 BaseConfigType baseConfig = (BaseConfigType)spsso;
-                updateBaseConfig(baseConfig, spExtvalues);
+                updateBaseConfig(baseConfig, spExtvalues, role);
             }
             //saves the attributes by passing the new fed object
             WSFederationMetaManager.setEntityConfig(realm,fed);
@@ -396,6 +404,7 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
         String location
     ) throws AMConsoleException {
         try {
+            String role = EntityModel.IDENTITY_PROVIDER;
             // fed is the extended entity configuration under the realm
             FederationConfigElement fed =
                     WSFederationMetaManager.getEntityConfig(realm,fedId);
@@ -408,7 +417,7 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
             IDPSSOConfigElement  idpsso = getidpsso(fed);
             if (idpsso != null){
                 BaseConfigType baseConfig = (BaseConfigType)idpsso;
-                updateBaseConfig(idpsso, idpExtValues);
+                updateBaseConfig(idpsso, idpExtValues, role);
             }
             
             //saves the new configuration by passing new fed element created
@@ -556,19 +565,32 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
      */
     private void updateBaseConfig(
         BaseConfigType baseConfig,
-        Map values
+        Map values,
+        String role
     ) throws AMConsoleException {
         List attrList = baseConfig.getAttribute();
-        for (Iterator i = attrList.iterator(); i.hasNext(); ) {
-            AttributeElement avpnew = (AttributeElement)i.next();
+        if (role.equals(EntityModel.IDENTITY_PROVIDER)) {
+            attrList.clear();
+            baseConfig = createAttributeElement(getIDPEXDataMap(), baseConfig);
+            attrList = baseConfig.getAttribute();
+        } else if (role.equals(EntityModel.SERVICE_PROVIDER)) {
+            attrList.clear();
+            baseConfig = createAttributeElement(getSPEXDataMap(), baseConfig);
+            attrList = baseConfig.getAttribute();
+        }
+        for (Iterator it = attrList.iterator(); it.hasNext(); ) {
+            AttributeElement avpnew = (AttributeElement)it.next();
             String name = avpnew.getName();
-            Set set = (Set)values.get(name);
-            if (set != null) {
-               avpnew.getValue().clear();
-               avpnew.getValue().addAll(set);
+            if (values.keySet().contains(name)) {
+                Set set = (Set)values.get(name);
+                if (set != null) {
+                    avpnew.getValue().clear();
+                    avpnew.getValue().addAll(set);
+                }
             }
-        } 
+        }
     }
+    
     
    /**
      * Creates the extended config object when it does not exist.
