@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.15 2008-06-25 05:41:52 qcheng Exp $
+ * $Id: LoginViewBean.java,v 1.16 2008-08-30 05:57:32 manish_rustagi Exp $
  *
  */
 
@@ -329,7 +329,7 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                 } else {
                     loginDebug.message("Old Session is Active.");
                     newOrgExist = checkNewOrg(ssoToken);
-                    if (!newOrgExist) {
+                    if (!newOrgExist && !dontLogIntoDiffOrg) {
                         if (isPost) {
                             isBackPost = canGetOrigCredentials(ssoToken);
                         }
@@ -340,16 +340,20 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
             }
             
             if (sessionUpgrade) {
-                loginDebug.message(
-                    "New AuthContext with existing valid SSOToken");
+               if (loginDebug.messageEnabled()) {
+                    loginDebug.message("New AuthContext with " +
+                         "existing valid SSOToken");
+                }
                 ac = new AuthContext(ssoToken);
                 newRequest = true;
-            } else if ( (session.isNew()) || 
+            } else if ((ssoToken == null && (session.isNew() || 
                     (authCookieValue == null) || 
-                    (authCookieValue.length() == 0) ||
-                    (authCookieValue.equalsIgnoreCase("LOGOUT")) ||
-                    (!isOrgSame()) ) {
-                if (loginDebug.messageEnabled()) {
+                    (authCookieValue.length() == 0))) ||
+                    (authCookieValue != null && 
+                     authCookieValue.equalsIgnoreCase("LOGOUT")) ||
+                    (!isOrgSame()) || 
+                     AuthClientUtils.newSessionArgExists(reqDataHash)) {
+            	if (loginDebug.messageEnabled()) {
                     loginDebug.message("New AuthContext with OrgName = "
                     + orgName);
                 }
@@ -369,11 +373,11 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                 session.setAttribute("OrgName", orgName);
                 session.setAttribute("AuthContext", ac);
                 cookieSupported = AuthClientUtils.isCookieSupported(request);
-		if (cookieSupported) {
-		    if (AuthClientUtils.persistAMCookie(reqDataHash)) {
-			enableCookieTimeToLive();
-		    }
-		}
+                if (cookieSupported) {
+                    if (AuthClientUtils.persistAMCookie(reqDataHash)) {
+                        enableCookieTimeToLive();
+                    }
+                }
             } else if ( (authCookieValue != null) &&
                     (authCookieValue.length() != 0) &&
                     (!authCookieValue.equalsIgnoreCase("LOGOUT")) ) {
@@ -392,6 +396,10 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                         cookieSupported = false;
                     }
                 }
+            } else {
+                ISLocaleContext localeContext = new ISLocaleContext();
+                localeContext.setLocale(request);
+                locale = localeContext.getLocale();   
             }
             
             if (loginDebug.messageEnabled()) {
@@ -406,11 +414,14 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
             fallbackLocale = locale;
             rb =  rbCache.getResBundle(bundleName, locale);
             
-            processLogin();
-            if ((newRequest) && (AuthClientUtils.isCookieSupported(request))) {
-                setServerCookies();
-                setCookie();
-                setlbCookie();
+            if ((errorTemplate==null)||(errorTemplate.length() == 0)) {            
+                processLogin();
+                if ((newRequest) && 
+                        (AuthClientUtils.isCookieSupported(request))) {
+                    setServerCookies();
+                    setCookie();
+                    setlbCookie();
+                }
             }
             
         } catch (Exception e) {
@@ -634,7 +645,8 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
         loginDebug.message("In processLogin()");
         
         try {
-            if (ssoToken != null && !sessionUpgrade) {
+            if (ssoToken != null && !sessionUpgrade && !checkNewOrg &&
+                   !AuthClientUtils.newSessionArgExists(reqDataHash)) {
                 loginDebug.message("Session is Valid / already authenticated");
                 bValidSession = true;
 
@@ -645,8 +657,7 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                 redirect_url = gotoUrl;
 
                 if ((gotoUrl == null) || (gotoUrl.length() == 0) ||
-                    (gotoUrl.equalsIgnoreCase("null"))
-                ) {
+                    (gotoUrl.equalsIgnoreCase("null"))) {
                     redirect_url = ssoToken.getProperty("successURL");
                 }
 
@@ -1309,7 +1320,8 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
     // Method to check if this is Session Upgrade
     private boolean checkNewOrg(SSOToken ssoToken) {
         loginDebug.message("Check New Organization!");
-        boolean checkNewOrg = false;
+        checkNewOrg = false;
+        dontLogIntoDiffOrg = false;
         
         try {
             // always make sure the orgName is the same
@@ -1341,18 +1353,26 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                 
                 if ((strButton != null) && (strButton.length() != 0)) {
                     java.util.Locale locale =
-                        com.sun.identity.shared.locale.Locale.getLocale(
-                    ssoToken.getProperty("Locale"));
+                    com.sun.identity.shared.locale.Locale.getLocale(
+                        ssoToken.getProperty("Locale"));
                     rb =  rbCache.getResBundle(bundleName, locale);
                     
-                    if (strButton.trim().equals(rb.getString("Yes").trim())) {
-                        loginDebug.message("Submit with YES. Destroy session.");
+                    if (strButton.trim().equals(
+                            rb.getString("Yes").trim())) {
+                        if (loginDebug.messageEnabled()) {
+                            loginDebug.message("Submit with YES." +
+                            "Destroy session.");
+                        }
                         param = queryOrg;
                         clearCookie();
                         manager.destroyToken(ssoToken);
-                    } else if (!(strButton.trim().equals(
-                    rb.getString("No").trim()))) {
-                        loginDebug.message("newOrg:Submit with Invalid button");
+                    } else if ((strButton.trim().equals(
+                            rb.getString("No").trim()))) {
+                        if (loginDebug.messageEnabled()) {
+                            loginDebug.message("Submit with NO." + 
+                            "Don't destroy session.");
+                        }
+                        dontLogIntoDiffOrg = true;
                         return checkNewOrg;
                     }
                 } else {
@@ -1599,11 +1619,7 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
     // Checks whether the subsequent request invokation is for the same Org as 
     // the previous request
     private boolean isOrgSame() {
-        String tmpOrgName = "";
-        if (session != null) {
-            tmpOrgName = (String) session.getAttribute("OrgName");
-        }
-        if (tmpOrgName != null && !tmpOrgName.equals(orgName) && !isPost) {
+    	if (checkNewOrg && isPost) {
             return false;
         } else {
             return true;
@@ -1850,7 +1866,8 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
     ////////////////////////////////////////////////////////////////////////////
     // Class variables
     ////////////////////////////////////////////////////////////////////////////
-    
+    boolean checkNewOrg = false;
+    boolean dontLogIntoDiffOrg = false;
     /** Page name for login */
     public static final String PAGE_NAME="Login";
     /** Result value */
