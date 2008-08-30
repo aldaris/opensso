@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.5 2008-06-25 05:43:44 qcheng Exp $
+ * $Id: PolicyEvaluator.java,v 1.6 2008-08-30 06:31:30 ericow Exp $
  *
  */
 
@@ -576,7 +576,7 @@ public class PolicyEvaluator {
                                         resourceName, actionNames.toString(), 
                                         decision };
                             PolicyUtils.logAccessMessage("POLICY_EVALUATION",
-                                                objs, token);
+                                                objs, token, serviceTypeName);
                     }
                 }
                 if ( mergedPolicyDecision == null ) {
@@ -987,7 +987,8 @@ public class PolicyEvaluator {
         if (PolicyUtils.logStatus && (token != null)) {
             String[] objs = { principalName, 
                     resourceName, pp };
-            PolicyUtils.logAccessMessage("PROTECTED_RESOURCES", objs, token);
+            PolicyUtils.logAccessMessage("PROTECTED_RESOURCES", objs, token,
+                    serviceTypeName);
         }
         return protectingPolicies;
     }

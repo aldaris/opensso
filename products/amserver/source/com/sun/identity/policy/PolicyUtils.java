@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyUtils.java,v 1.12 2008-08-19 19:09:14 veiming Exp $
+ * $Id: PolicyUtils.java,v 1.13 2008-08-30 06:31:30 ericow Exp $
  *
  */
 
@@ -40,6 +40,7 @@ import com.iplanet.services.ldap.LDAPServiceException;
 import com.iplanet.services.util.Crypt; //from products/shared
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
+import com.sun.identity.delegation.DelegationManager;
 import com.sun.identity.log.Logger;
 import com.sun.identity.log.LogRecord;
 import com.sun.identity.log.messageid.LogMessageProvider;
@@ -89,6 +90,7 @@ public class PolicyUtils {
     private static LogMessageProvider msgProvider;
     private static Logger accessLogger;
     private static Logger errorLogger;
+    private static Logger delegationLogger;
 
     static {
         String status = SystemProperties.get(Constants.AM_LOGSTATUS);
@@ -97,6 +99,8 @@ public class PolicyUtils {
         if (logStatus) {
             accessLogger = (Logger)Logger.getLogger("amPolicy.access");
             errorLogger = (Logger)Logger.getLogger("amPolicy.error");
+            delegationLogger = (Logger)Logger.getLogger(
+                    "amPolicyDelegation.access");
         }
     }
 
@@ -598,6 +602,15 @@ public class PolicyUtils {
         String data[],
         SSOToken token
     ) throws SSOException {
+        logAccessMessage(msgIdName, data, token, null);
+    }
+
+    public static void logAccessMessage(
+        String msgIdName,
+        String data[],
+        SSOToken token,
+        String serviceType
+    ) throws SSOException {
         try {
             if (msgProvider == null) {
                 msgProvider = MessageProviderFactory.getProvider("Policy");
@@ -613,7 +626,12 @@ public class PolicyUtils {
             if (lr != null) {
                 SSOToken ssoToken = (SSOToken)AccessController.doPrivileged(
                     AdminTokenAction.getInstance());
-                accessLogger.log(lr, ssoToken);
+                if (serviceType != null && serviceType.equals(
+                        DelegationManager.DELEGATION_SERVICE)) {
+                    delegationLogger.log(lr, ssoToken);
+                } else {
+                    accessLogger.log(lr, ssoToken);
+                }
             }
         }
     }
