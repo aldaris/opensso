@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StringUtils.java,v 1.2 2008-06-25 05:52:00 qcheng Exp $
+ * $Id: StringUtils.java,v 1.3 2008-08-30 01:40:55 huacui Exp $
  *
  */
 
@@ -30,6 +30,7 @@ package com.sun.identity.agents.util;
 
 import java.net.URLDecoder;
 import java.util.StringTokenizer;
+import javax.servlet.http.HttpServletRequest;
 
 import com.sun.identity.agents.arch.AgentException;
 
@@ -37,6 +38,36 @@ import com.sun.identity.agents.arch.AgentException;
  * A util class to manage a query string
  */
 public class StringUtils {
+    
+    public static String removePathInfo(HttpServletRequest request) {
+        if (request == null) {
+            return null;
+        }
+        String protocol = request.getScheme();
+        String serverName = request.getServerName();
+        int serverPort = request.getServerPort();
+        String requestURI = request.getRequestURI();
+        String pathInfo = request.getPathInfo();
+        String query = request.getQueryString();      
+        if ((pathInfo != null) && (pathInfo.length() != 0)) {
+            int index = requestURI.lastIndexOf(pathInfo);
+            requestURI = requestURI.substring(0, index);
+        }
+        StringBuffer sb = new StringBuffer();
+        sb.append(protocol);
+        sb.append("://");
+        sb.append(serverName);
+        sb.append(":");
+        sb.append(serverPort);
+        if ((requestURI != null) && (requestURI.length() != 0)) {
+            sb.append(requestURI);
+        }
+        if (query != null) {
+            sb.append("?");
+            sb.append(query);
+        }
+        return sb.toString();
+    }
     
    /**
     * Removes the specified parameter from the query string and returns the

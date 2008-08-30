@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotenforcedListTaskHandler.java,v 1.4 2008-08-07 18:04:46 huacui Exp $
+ * $Id: NotenforcedListTaskHandler.java,v 1.5 2008-08-30 01:40:54 huacui Exp $
  *
  */
 
@@ -34,6 +34,7 @@ import com.sun.identity.agents.arch.AgentException;
 import com.sun.identity.agents.arch.Manager;
 import com.sun.identity.agents.common.CommonFactory;
 import com.sun.identity.agents.common.INotenforcedURIHelper;
+import com.sun.identity.agents.util.StringUtils;
 
 /**
  *  FIXME: Rename this class to remove the word LIST from all places.
@@ -82,6 +83,10 @@ implements INotenforcedListTaskHandler {
         CommonFactory cf = new CommonFactory(getModule());
         setNotEnforcedListURIHelper(cf.newNotenforcedURIHelper(
                 isInverted, cacheEnabled, cacheSize, notenforcedURIs));
+        
+        pathInfoIgnored = getConfigurationBoolean(
+                CONFIG_IGNORE_PATH_INFO, DEFAULT_IGNORE_PATH_INFO);
+        
     }
 
     /**
@@ -102,13 +107,23 @@ implements INotenforcedListTaskHandler {
     {
         AmFilterResult result = null;
         HttpServletRequest request = ctx.getHttpServletRequest();
-        //requestURI includes complete URL requested
-        String requestURI = ctx.getPolicyDestinationURL();
+        String requestURL;
+        if (getPathInfoIgnored()) {
+            requestURL = StringUtils.removePathInfo(request);
+        } else {
+            requestURL = ctx.getPolicyDestinationURL();
+        }
+        if (isLogMessageEnabled()) {
+            logMessage(
+                "NotenforcedListTaskHandler: pathInfoIgnored=" + pathInfoIgnored
+                + "; requestURL=" + requestURL
+                + "; pathinfo=" + request.getPathInfo());
+        }       
         String accessDeniedURI = ctx.getAccessDeniedURI();
-        if(isNotEnforcedURI(requestURI, accessDeniedURI)) {
+        if(isNotEnforcedURI(requestURL, accessDeniedURI)) {
             if(isLogMessageEnabled()) {
                 logMessage("NotenforcedListTaskHandler: The request URI "
-                           + requestURI + " was found in Not Enforced List");
+                           + requestURL + " was found in Not Enforced List");
             }
             result = ctx.getContinueResult();
             result.markAsNotEnforced();
@@ -135,6 +150,10 @@ implements INotenforcedListTaskHandler {
         return AM_FILTER_NOT_ENFORCED_LIST_TASK_HANDLER_NAME;
     }
 
+    public boolean getPathInfoIgnored() {
+        return pathInfoIgnored;
+    }
+    
     private boolean isNotEnforcedURI(String uri, String accessDeniedURI) {
         return getNotEnforcedListURIHelper().isNotEnforced(uri, accessDeniedURI);
     }
@@ -148,4 +167,5 @@ implements INotenforcedListTaskHandler {
     }
 
     private INotenforcedURIHelper _notEnforcedListURIHelper;
+    private boolean pathInfoIgnored = false;
 }

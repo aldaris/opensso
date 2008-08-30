@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: URLPolicyTaskHandler.java,v 1.7 2008-07-22 18:01:41 sean_brydon Exp $
+ * $Id: URLPolicyTaskHandler.java,v 1.8 2008-08-30 01:40:55 huacui Exp $
  *
  */
 
@@ -69,6 +69,8 @@ public class URLPolicyTaskHandler extends AmFilterTaskHandler
         super.initialize(context, mode);
         setAmWebPolicy(AmWebPolicyManager.getAmWebPolicyInstance());
         initCompositeAdviceFormContent();
+        pathInfoIgnored = getConfigurationBoolean(
+                CONFIG_IGNORE_PATH_INFO, DEFAULT_IGNORE_PATH_INFO);
     }
     
     /**
@@ -89,10 +91,23 @@ public class URLPolicyTaskHandler extends AmFilterTaskHandler
         AmFilterResult result = null;
         SSOValidationResult ssoValidationResult = ctx.getSSOValidationResult();
         HttpServletRequest request = ctx.getHttpServletRequest();
+        
+        String requestURL;
+        if (getPathInfoIgnored()) {
+            requestURL = StringUtils.removePathInfo(request);
+        } else {
+            requestURL = ctx.getPolicyDestinationURL();
+        }
+        if (isLogMessageEnabled()) {
+            logMessage(
+                "URLPolicyTaskHandler: pathInfoIgnored=" + pathInfoIgnored
+                + "; requestURL=" + requestURL
+                + "; pathinfo=" + request.getPathInfo());
+        }
         AmWebPolicyResult policyResult =
                 getAmWebPolicy().checkPolicyForResource(
                 ssoValidationResult.getSSOToken(),
-                ctx.getPolicyDestinationURL(), request.getMethod(),
+                requestURL, request.getMethod(),
                 ssoValidationResult.getClientIPAddress(),
                 ssoValidationResult.getClientHostName(),
                 request);
@@ -216,8 +231,13 @@ public class URLPolicyTaskHandler extends AmFilterTaskHandler
         return _amWebPolicy;
     }
     
+    public boolean getPathInfoIgnored() {
+        return pathInfoIgnored;
+    }
+    
     private IAmWebPolicy _amWebPolicy;
     private String _compositeAdviceFormContent;
+    private boolean pathInfoIgnored = false;
     private static final String COMPOSITE_ADVICE_FILENAME =
             "CompositeAdviceForm.txt";
 }

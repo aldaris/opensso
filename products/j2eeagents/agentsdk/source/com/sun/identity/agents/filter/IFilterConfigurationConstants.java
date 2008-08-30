@@ -41,7 +41,7 @@
 
  *
 
- * $Id: IFilterConfigurationConstants.java,v 1.12 2008-06-25 05:51:46 qcheng Exp $
+ * $Id: IFilterConfigurationConstants.java,v 1.13 2008-08-30 01:40:54 huacui Exp $
 
  *
 
@@ -525,12 +525,17 @@ public interface IFilterConfigurationConstants {
         "amsso.cache.enable";
 
     
+    public static final String CONFIG_IGNORE_PATH_INFO =
 
-    public static final boolean DEFAULT_AM_SSO_CACHE_ENABLE = true;
+        "ignore.path.info";
+
 
 
 
     //Default Values
+
+    public static final boolean DEFAULT_AM_SSO_CACHE_ENABLE = true;
+
 
     public static final String DEFAULT_REDIRECT_PARAM_NAME = "goto";
 
@@ -669,6 +674,8 @@ public interface IFilterConfigurationConstants {
 
     public static final boolean DEFAULT_WEBSERVICE_PROCESS_GET = true;
 
+
+    public static final boolean DEFAULT_IGNORE_PATH_INFO = false; 
 
 
     // Other supporting constants

@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: OpenSSOAgentConfiguration.template,v 1.4 2008-08-19 19:14:48 veiming Exp $
+# $Id: OpenSSOAgentConfiguration.template,v 1.5 2008-08-30 01:40:55 huacui Exp $
 #
 #
 
@@ -907,3 +907,12 @@ com.sun.identity.client.notification.url=@AGENT_PREF_PROTO@://@AGENT_HOST@:@AGEN
 # Hot-Swap Enabled: Yes
 #
 com.iplanet.services.debug.level=@DEBUG_LEVEL@
+
+#
+# IGNORE REQUEST URL PATH INFO
+#  The path info will be stripped from the request URL while doing Not Enforced
+#  List check and url policy evaluation if the value is set to true.
+#
+# Hot-Swap Enabled: Yes
+#
+com.sun.identity.agents.config.ignore.path.info = false

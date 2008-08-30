@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.66 2008-08-28 23:26:20 huacui Exp $
+   $Id: AgentService.xml,v 1.67 2008-08-30 01:44:17 huacui Exp $
 
 -->
 
@@ -2398,6 +2398,19 @@
                         </BooleanValues>
                         <DefaultValues>
                             <Value>true</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.identity.agents.config.ignore.path.info"
+                        type="single"
+                        syntax="boolean"
+                        i18nKey="a454">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
