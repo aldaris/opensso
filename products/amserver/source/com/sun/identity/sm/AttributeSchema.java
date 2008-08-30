@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeSchema.java,v 1.10 2008-07-28 23:43:36 veiming Exp $
+ * $Id: AttributeSchema.java,v 1.11 2008-08-30 05:45:59 goodearth Exp $
  *
  */
 
@@ -865,6 +865,15 @@ public class AttributeSchema {
             }
             Node attrSchemaNode = XMLUtils.getNamedChildNode(schemaNode,
                     SMSUtils.SCHEMA_ATTRIBUTE, SMSUtils.NAME, getName());
+
+            // Try getting OrganizationAttributeSchema if AttributeSchema
+            // node is not there within Organization node.
+            // This will be a special case for idrepo service.
+            if (attrSchemaNode == null) {
+                schemaNode = ss.getOrgAttrSchemaNode(schemaDoc);
+                attrSchemaNode = XMLUtils.getNamedChildNode(schemaNode,
+                    SMSUtils.SCHEMA_ATTRIBUTE, SMSUtils.NAME, getName());
+            }
             Node oNode = XMLUtils.getChildNode(attrSchemaNode, elementName);
             if (oNode != null) {
                 attrSchemaNode.replaceChild(nNode, oNode);
