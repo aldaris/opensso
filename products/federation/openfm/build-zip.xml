@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-zip.xml,v 1.25 2008-08-20 21:39:14 qcheng Exp $
+   $Id: build-zip.xml,v 1.26 2008-08-31 06:58:15 hengming Exp $
 
 -->
 
@@ -218,6 +218,8 @@
             <fileset file="${fm.dist.dir}/ssoAdminTools.zip" />
             <fileset file="${fm.dist.dir}/ssoSessionTools.zip" />
         </copy>
+        <copy file="${openfm.extlib.dir}/amConfiguratorTools.zip"
+            tofile="${zip.temp.dir}/tools/ssoConfiguratorTools.zip" />
         
         <copy todir="${zip.temp.dir}/xml">
             <fileset dir="${openfm.services.xml.dir}" includes="**/*.xml"/>

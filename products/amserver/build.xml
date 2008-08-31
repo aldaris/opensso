@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.66 2008-08-29 22:08:15 kevinserwin Exp $
+   $Id: build.xml,v 1.67 2008-08-31 06:57:28 hengming Exp $
 
 -->
 
@@ -498,6 +498,8 @@
     <target name="tools" depends="build,jars,prepXML-not-enterprise,prepXML-enterprise">
         <ant antfile="${amserver.warbase.dir}/build.xml" inheritRefs="true"/>
         <ant antfile="${amserver.warbase.dir}/build.xml" target="session-tools"
+            inheritRefs="true"/>        
+        <ant antfile="${amserver.warbase.dir}/build.xml" target="configurator"
             inheritRefs="true"/>        
     </target>
     

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetSetupProgress.java,v 1.4 2008-07-07 20:33:02 veiming Exp $
+ * $Id: SetSetupProgress.java,v 1.5 2008-08-31 06:56:18 hengming Exp $
  *
  */
 
@@ -44,32 +44,39 @@ public class SetSetupProgress extends HttpServlet
     { 
         req.setCharacterEncoding("UTF-8");
         response.setContentType("text/html; charset=UTF-8");
-
+        String mode = req.getParameter("mode");
+        boolean isTextMode = ((mode != null) && (mode.equals("text")));
+        
         PrintWriter out = response.getWriter();
-        out.println(
-            "<html>\n"+
-              "<head>\n"+
-              "<link rel=\"stylesheet\" type=\"text/css\" href=\"../com_sun_web_ui/css/css_ns6up.css\">\n" +
-              "<script language=\"Javascript\">\n"+
-                "function addProgressText(str)\n"+ 
-                "{\n"+ 
-                   "var obj = document.getElementById(\"progressText\");\n"+ 
-                   "obj.innerHTML += str;\n"+
-                   "var obj = document.getElementById(\"progressP\");\n"+
-                   "obj.scrollTop = obj.scrollHeight;\n"+ 
-                 "}\n"+
-               "</script>\n"+
-               "</head>\n"+
-               "<body>\n"+
-                 "<p id=\"progressP\" style=\"height:200px; overflow:auto; border:1px solid grey;\">\n"+
-                   "<span id=\"progressText\"></span>\n"+
-                 "</p>\n");
-        out.flush();
+        if (!isTextMode) {
+            out.println(
+                "<html>\n"+
+                  "<head>\n"+
+                  "<link rel=\"stylesheet\" type=\"text/css\" href=\"../com_sun_web_ui/css/css_ns6up.css\">\n" +
+              "    <script language=\"Javascript\">\n"+
+                    "function addProgressText(str)\n"+ 
+                    "{\n"+ 
+                       "var obj = document.getElementById(\"progressText\");\n"+ 
+                       "obj.innerHTML += str;\n"+
+                       "var obj = document.getElementById(\"progressP\");\n"+
+                       "obj.scrollTop = obj.scrollHeight;\n"+ 
+                     "}\n"+
+                   "</script>\n"+
+                   "</head>\n"+
+                   "<body>\n"+
+                     "<p id=\"progressP\" style=\"height:200px; overflow:auto; border:1px solid grey;\">\n"+
+                       "<span id=\"progressText\"></span>\n"+
+                     "</p>\n");
+            out.flush();
+        }
         SetupWriter writer = new SetupWriter(out);
+        SetupProgress.setTextMode(isTextMode);
         SetupProgress.setWriter(writer);
         writer.realFlush();
-        out.println("</body>\n");
-        out.println("</html>\n");
+        if (!isTextMode) {
+            out.println("</body>\n");
+            out.println("</html>\n");
+        }
         out.flush();
     }
 }

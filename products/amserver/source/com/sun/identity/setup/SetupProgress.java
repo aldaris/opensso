@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupProgress.java,v 1.9 2008-07-07 20:33:02 veiming Exp $
+ * $Id: SetupProgress.java,v 1.10 2008-08-31 06:56:18 hengming Exp $
  *
  */
 
@@ -45,6 +45,7 @@ public class SetupProgress {
     static private String encoding = System.getProperty("file.encoding");
     static private ResourceBundle bundle = ResourceBundle.getBundle(
         bundleName, Locale.getDefault());
+    static private boolean isTextMode = false;
 
     /**
      * Returns writer associated with reporting progress to enduser.
@@ -83,32 +84,57 @@ public class SetupProgress {
             out = null;
             return;
         }
-        out = new OutputStream() {
-            public void write(int b) throws IOException {
-                writer.write("<script>addProgressText('");
-                writer.write(URLEncoder.encode(String.valueOf((char) b),
-                    encoding));
-                writer.write("<br>');</script>");
-                writer.flush();
-            }
-            public void write(byte[] b) throws IOException {
-                writer.write("<script>addProgressText('");
-                writer.write(URLEncoder.encode(new String(b, encoding),
-                    encoding));
-                writer.write("<br>');</script>");
-                writer.flush();
-            }
-            public void write(byte[] b, int off, int len) throws IOException {
-                writer.write("<script>addProgressText('");
-                writer.write(URLEncoder.encode(
-                    new String(b, off, len, encoding), encoding));
-                writer.write("<br>');</script>");
-                writer.flush();
-            }
-            public void flush() throws IOException {
-                writer.flush();
-            }
-        };
+        if (isTextMode) {
+            out = new OutputStream() {
+                public void write(int b) throws IOException {
+                    writer.write(URLEncoder.encode(String.valueOf((char) b),
+                        encoding));
+                    writer.flush();
+                }
+                public void write(byte[] b) throws IOException {
+                    writer.write(URLEncoder.encode(new String(b, encoding),
+                        encoding));
+                    writer.flush();
+                }
+                public void write(byte[] b, int off, int len)
+                    throws IOException {
+
+                    writer.write(URLEncoder.encode(
+                        new String(b, off, len, encoding), encoding));
+                    writer.flush();
+                }
+                public void flush() throws IOException {
+                    writer.flush();
+                }
+            };
+        } else {
+            out = new OutputStream() {
+                public void write(int b) throws IOException {
+                    writer.write("<script>addProgressText('");
+                    writer.write(URLEncoder.encode(String.valueOf((char) b),
+                        encoding));
+                    writer.write("<br>');</script>");
+                    writer.flush();
+                }
+                public void write(byte[] b) throws IOException {
+                    writer.write("<script>addProgressText('");
+                    writer.write(URLEncoder.encode(new String(b, encoding),
+                        encoding));
+                    writer.write("<br>');</script>");
+                    writer.flush();
+                }
+                public void write(byte[] b, int off, int len) throws IOException {
+                    writer.write("<script>addProgressText('");
+                    writer.write(URLEncoder.encode(
+                        new String(b, off, len, encoding), encoding));
+                    writer.write("<br>');</script>");
+                    writer.flush();
+                }
+                public void flush() throws IOException {
+                    writer.flush();
+                }
+            };
+        }
     }
 
     /**
@@ -117,6 +143,15 @@ public class SetupProgress {
      */
     public static void setOutputStream(OutputStream  ostr) {
         out = ostr;
+    }
+
+    /**
+     * Sets text mode.
+     * @param textMode true if output should be in text format or false in 
+           html format.
+     */
+    public static void setTextMode(boolean textMode) {
+        isTextMode = textMode;
     }
 
     /**
@@ -165,11 +200,18 @@ public class SetupProgress {
                 InstallLog.getInstance().write(istr);
             }
             if (writer != null) {
-                if (newline) {
-                    istr += "<br />";
+                if (isTextMode) {
+                    if (newline) {
+                        istr += "\n";
+                    }
+                    writer.write(istr);
+                } else {
+                    if (newline) {
+                        istr += "<br />";
+                    }
+                    writer.write(
+                        "<script>addProgressText('" + istr + "');</script>");
                 }
-                writer.write(
-                    "<script>addProgressText('" + istr + "');</script>");
                 writer.flush();
             }
         } catch (IOException ex) {
