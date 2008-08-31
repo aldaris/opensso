@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthnRequestImpl.java,v 1.5 2008-06-25 05:47:59 qcheng Exp $
+ * $Id: AuthnRequestImpl.java,v 1.6 2008-08-31 05:49:48 bina Exp $
  *
  */
 
@@ -718,14 +718,14 @@ public class AuthnRequestImpl extends RequestAbstractImpl
 
         // Get ForceAuthn Attribute
         String forceAuthnAttr = element.getAttribute(SAML2Constants.FORCEAUTHN);
-	if ((forceAuthnAttr != null) && (forceAuthnAttr.length() > 0)) {
-            forceAuthn = Boolean.valueOf(forceAuthnAttr);
-	}
+        if ((forceAuthnAttr != null) && (forceAuthnAttr.length() > 0)) {
+            forceAuthn = SAML2SDKUtils.booleanValueOf(forceAuthnAttr);
+        }
         
         String isPassiveAttr = element.getAttribute(SAML2Constants.ISPASSIVE);
-	if ((isPassiveAttr != null) && (isPassiveAttr.length() > 0)) {
-            isPassive = Boolean.valueOf(isPassiveAttr);
-	}
+        if ((isPassiveAttr != null) && (isPassiveAttr.length() > 0)) {
+            isPassive = SAML2SDKUtils.booleanValueOf(isPassiveAttr);
+        }
         
         protocolBinding = element.getAttribute(SAML2Constants.PROTOBINDING);
         

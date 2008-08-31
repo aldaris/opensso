@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NameIDPolicyImpl.java,v 1.4 2008-06-25 05:48:00 qcheng Exp $
+ * $Id: NameIDPolicyImpl.java,v 1.5 2008-08-31 05:49:48 bina Exp $
  *
  */
 
@@ -258,8 +258,8 @@ public class NameIDPolicyImpl implements NameIDPolicy {
 	format = element.getAttribute(FORMAT);
 	spNameQualifier=element.getAttribute(SPNAMEQUALIFIER);
 	String allowCreateStr = element.getAttribute(ALLOWCREATE);
-	if ((allowCreateStr != null) && (allowCreateStr.length() > 0 )) {
-	    allowCreate = Boolean.valueOf(allowCreateStr);
+        if ((allowCreateStr != null) && (allowCreateStr.length() > 0 )) {
+            allowCreate = SAML2SDKUtils.booleanValueOf(allowCreateStr);
 	}
     }
 

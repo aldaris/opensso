@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2SDKUtils.java,v 1.11 2008-06-25 05:47:45 qcheng Exp $
+ * $Id: SAML2SDKUtils.java,v 1.12 2008-08-31 05:49:48 bina Exp $
  *
  */
 
@@ -793,5 +793,15 @@ public class SAML2SDKUtils {
         } else {
             return uri.substring(loc);
         }
+    }
+
+    /**
+     * Returns the boolean value as a <code>Boolean</code> object.
+     *
+     * @param value boolean value true or false.
+     *
+     */
+    public static Boolean booleanValueOf(String value) {
+        return new Boolean("true".equalsIgnoreCase(value) || "1".equals(value));
     }
 }
