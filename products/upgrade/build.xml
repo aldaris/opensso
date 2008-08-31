@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.9 2008-08-20 21:10:57 bina Exp $
+   $Id: build.xml,v 1.10 2008-08-31 05:46:29 bina Exp $
 
 -->
 
@@ -167,6 +167,8 @@
          <copy file="${tools.built.dir}/amadm_setup.jar"
             todir="${upgrade.dist.dir}/upgrade/lib"  />
          <copy file="${legacy.src.dir}/resources/locale/amAdminCLI.properties"
+	    todir="${upgrade.dist.dir}/upgrade/locale" />
+         <copy file="${upgrade.src.dir}/resources/locale/ssoUpgrade.properties"
 	    todir="${upgrade.dist.dir}/upgrade/locale" />
          <copy file="${upgrade.src.dir}/README"
 	    todir="${upgrade.dist.dir}/upgrade/README" />
