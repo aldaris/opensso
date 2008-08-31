@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.25 2008-08-30 01:25:03 mallas Exp $
+ * $Id: SOAPRequestHandler.java,v 1.26 2008-08-31 15:50:03 mrudul_uchil Exp $
  *
  */
 
@@ -750,7 +750,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 config = ProviderConfig.getProvider(providerName,
                     ProviderConfig.WSP, true);
                 if (!ProviderConfig.isProviderExists(
-                    providerName, ProviderConfig.WSP)) {
+                    providerName, ProviderConfig.WSP, true)) {
                     providerName = SystemConfigurationUtil.getProperty(
                         "com.sun.identity.wss.provider.defaultWSP", "wsp");
                     config = ProviderConfig.getProvider(providerName,
@@ -785,15 +785,10 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         try {
             if (!ProviderConfig.isProviderExists(
                     providerName, ProviderConfig.WSC)) {
+                providerName = SystemConfigurationUtil.getProperty(
+                    "com.sun.identity.wss.provider.defaultWSC", "wsc");
                 config = ProviderConfig.getProvider(providerName,
-                    ProviderConfig.WSC, true);
-                if (!ProviderConfig.isProviderExists(
-                    providerName, ProviderConfig.WSC)) {
-                    providerName = SystemConfigurationUtil.getProperty(
-                        "com.sun.identity.wss.provider.defaultWSC", "wsc");
-                    config = ProviderConfig.getProvider(providerName,
-                        ProviderConfig.WSC);
-                }
+                    ProviderConfig.WSC);
             } else {
                 config = ProviderConfig.getProvider(providerName,
                     ProviderConfig.WSC);

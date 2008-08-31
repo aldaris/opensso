@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProvider.java,v 1.28 2008-08-05 04:10:59 mallas Exp $
+ * $Id: AgentProvider.java,v 1.29 2008-08-31 15:50:02 mrudul_uchil Exp $
  *
  */
 
@@ -231,27 +231,15 @@ public class AgentProvider extends ProviderConfig {
         
         // Obtain the provider from Agent profile based on ProviderName
         try {
-            if (idRepo == null) {
-                idRepo = new AMIdentityRepository(token, "/");
+            AMIdentity provider = 
+                new AMIdentity(token, providerName, IdType.AGENTONLY, "/", null);
+            Map attributes = (Map) provider.getAttributes(attrNames);
+            profilePresent = true;
+            if (debug.messageEnabled()) {
+                debug.message("Attributes from provider : " 
+                    + attributes);
             }
-
-            IdSearchControl control = new IdSearchControl();
-            control.setAllReturnAttributes(true);
-            IdSearchResults results = idRepo.searchIdentities(IdType.AGENTONLY,
-                providerName, control);
-            Set agents = results.getSearchResults();
-            if (!agents.isEmpty()) {
-                //Map attrs = (Map) results.getResultAttributes();
-                AMIdentity provider = (AMIdentity) agents.iterator().next();
-                profilePresent = true;
-                //Map attributes = (Map) attrs.get(provider);
-                Map attributes = (Map) provider.getAttributes(attrNames);
-                if (debug.messageEnabled()) {
-                    debug.message("Attributes from provider : " 
-                        + attributes);
-                }
-                parseAgentKeyValues(attributes);
-            }
+            parseAgentKeyValues(attributes);
             
         } catch (Exception e) {
             debug.error("AgentProvider.init: Unable to get idRepo", e);

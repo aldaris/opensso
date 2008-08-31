@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderConfig.java,v 1.23 2008-08-27 19:05:51 mrudul_uchil Exp $
+ * $Id: ProviderConfig.java,v 1.24 2008-08-31 15:50:02 mrudul_uchil Exp $
  *
  */
 package com.sun.identity.wss.provider; 
@@ -126,6 +126,7 @@ public abstract class ProviderConfig {
      protected String encryptionAlgorithm = "DESede";
      protected int encryptionStrength = 0;
      protected String signingRefType = "DirectReference";
+     protected static SSOToken adminToken = null;
 
      private static Class adapterClass;
 
@@ -954,6 +955,30 @@ public abstract class ProviderConfig {
             return false;
         }
     }
+    
+    /**
+     * Checks if the provider of given type does exists.
+     * 
+     * @param providerName the name of the provider.
+     *
+     * @param providerType type of the provider.
+     * 
+     * @param isEndPoint flag to indicate check/search based on WSP end point.
+     *
+     * @return true if the provider exists with a given name and type.
+     */
+    public static boolean isProviderExists(String providerName, 
+                  String providerType, boolean isEndPoint) {
+        try {
+            ProviderConfig config = getProvider(providerName, providerType,
+                isEndPoint);
+            return config.isExists();
+        } catch (ProviderException pe) {
+            ProviderUtils.debug.error("ProviderConfig.isProviderExists:: " +
+            "Provider Exception ", pe);
+            return false;
+        }
+    }
 
     /**
      * Removes the provider configuration.
@@ -1054,18 +1079,32 @@ public abstract class ProviderConfig {
         }
     }
 
-    private  static SSOToken getAdminToken() throws ProviderException {
-        SSOToken adminToken = null;
-        try {
-            adminToken = (SSOToken) AccessController.doPrivileged(
-                AdminTokenAction.getInstance());
-            SSOTokenManager.getInstance().refreshSession(adminToken);
-        } catch (SSOException se) {
-            ProviderUtils.debug.message("ProviderConfig.getAdminToken:: " +
-               "Trying second time ....");
-            adminToken = (SSOToken) AccessController.doPrivileged(
-               AdminTokenAction.getInstance());
+    private static SSOToken getAdminToken() throws ProviderException {
+        if (adminToken == null) {
+            try {
+                adminToken = (SSOToken) AccessController.doPrivileged(
+                    AdminTokenAction.getInstance());
+                SSOTokenManager.getInstance().refreshSession(adminToken);
+            } catch (SSOException se) {
+                ProviderUtils.debug.message("ProviderConfig.getAdminToken:: " +
+                   "Trying second time ....");
+                adminToken = (SSOToken) AccessController.doPrivileged(
+                   AdminTokenAction.getInstance());
+            }
         }
         return adminToken;
+    }
+    
+    /**
+     * Sets the admin token.
+     * This admin token is required to be set if "create", "delete" or "save"
+     * operations are invoked on this <code>ProviderConfig</code> object.
+     * This admin token needs to be the valid SSOToken of the user who has
+     * "Agent Administrator" privileges.
+     * 
+     * @param adminToken the agent admin token.
+     */
+    public void setAdminToken(SSOToken adminToken) {
+        this.adminToken = adminToken;
     }
 }

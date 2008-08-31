@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityClientImpl.java,v 1.7 2008-08-05 04:11:01 mallas Exp $
+ * $Id: TrustAuthorityClientImpl.java,v 1.8 2008-08-31 15:50:03 mrudul_uchil Exp $
  *
  */
 
@@ -40,7 +40,6 @@ import com.sun.identity.wss.security.SecurityToken;
 /**
  * The class <code>TrustAuthorityClientImpl</code> is the implementation of
  * <code>TrustAuthorityClient</code> class.
- * @supported.all.api
  */
 public class TrustAuthorityClientImpl {
     

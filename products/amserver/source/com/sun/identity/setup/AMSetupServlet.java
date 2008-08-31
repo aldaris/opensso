@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.88 2008-08-19 19:09:24 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.89 2008-08-31 15:50:01 mrudul_uchil Exp $
  *
  */
 
@@ -1899,7 +1899,7 @@ public class AMSetupServlet extends HttpServlet {
         config.put("EncryptionStrength","256");
         config.put("SigningRefType","DirectReference");
         config.put("AgentType","WSCAgent");
-        createAgent(token, idrepo, "wsc", "WSC", "", config);
+        createAgent(token, idrepo, "wsc", "wsc", "WSC", "", config);
 
         // Add WSP configuration
         config.remove("AgentType");
@@ -1909,7 +1909,9 @@ public class AMSetupServlet extends HttpServlet {
                                   "urn:sun:wss:security:null:SAML2Token-HK," +
                                   "urn:sun:wss:security:null:SAML2Token-SV," +
                                   "urn:sun:wss:security:null:X509Token");
-        createAgent(token, idrepo, "wsp", "WSP", "", config);
+        createAgent(token, idrepo, "wsp", "wsp", "WSP", "", config);
+        config.remove("keepSecurityHeaders");
+        createAgent(token, idrepo, "SunSTS", "SunSTS", "WSP", "", config);
 
         // Add STS Client configuration
         config.remove("AgentType");
@@ -1922,8 +1924,18 @@ public class AMSetupServlet extends HttpServlet {
         config.put("STSMexEndpoint",serverURL + deployuri + "/sts/mex");
         config.put("WSTrustVersion", "1.3");
         //createAgent(idrepo, "defaultSTS", "STS", "", config);
-        createAgent(token, idrepo, "SecurityTokenService", "STS", "", config);
+        createAgent(token, idrepo, "SecurityTokenService", 
+            "SecurityTokenService", "STS", "", config);
 
+        // Add Agent Authenticator configuration
+        Map configAgentAuth = new HashMap();
+        configAgentAuth.put("AgentType","SharedAgent");
+        configAgentAuth.put("sunIdentityServerDeviceStatus","Active");
+        configAgentAuth.put("com.sun.identity.agents.config.profiles.allowed.to.read",
+            "wsc,wsp,SecurityTokenService,SunSTS");
+        createAgent(token, idrepo, "agentAuth", "changeit", 
+            "Agent_Authenticator", "", configAgentAuth);
+        
         /*
         // Add UsernameToken profile
         createAgent(idrepo, "UserNameToken", "WSP",
@@ -2010,6 +2022,7 @@ public class AMSetupServlet extends HttpServlet {
         SSOToken adminToken,
         AMIdentityRepository idrepo,
         String name,
+        String password,
         String type,
         String desc,
         Map config
@@ -2020,7 +2033,7 @@ public class AMSetupServlet extends HttpServlet {
             Map attributes = new HashMap();
 
             Set values = new HashSet();
-            values.add(name);
+            values.add(password);
             attributes.put("userpassword", values);
 
             for (Iterator i = config.keySet().iterator(); i.hasNext();) {

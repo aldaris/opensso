@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurityMechanism.java,v 1.7 2008-06-25 05:50:08 qcheng Exp $
+ * $Id: SecurityMechanism.java,v 1.8 2008-08-31 15:50:03 mrudul_uchil Exp $
  *
  */
 
@@ -34,11 +34,10 @@ import java.util.Map;
 import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.List;
-
  
 /**
- * This class exposes the <code>SecurityMechnism</code>s of the web services
- * security. 
+ * This class exposes the <code>SecurityMechanism</code>s used in the Web 
+ * Services Security. 
  * @supported.all.api
  */
 public class SecurityMechanism {
@@ -600,7 +599,7 @@ public class SecurityMechanism {
     private boolean registerEnabled = false;
 
     /**
-     * Constructor
+     * Constructs <code>SecurityMechanism</code>.
      *
      * @param name the security mechanism name.
      *
@@ -611,7 +610,7 @@ public class SecurityMechanism {
     }
 
     /**
-     * Constructor 
+     * Constructs <code>SecurityMechanism</code>.
      * @param name the name of the security mechanism.
      * @param useTA the boolean variable to let enable for the 
      *        trust authority look up or registration.
@@ -633,7 +632,7 @@ public class SecurityMechanism {
     }
 
     /**
-     * Returns the <code>URI of the security mechanism.
+     * Returns the <code>URI</code> of the security mechanism.
      *
      * @return the name of the security mechanism.
      */
@@ -717,9 +716,9 @@ public class SecurityMechanism {
     
     /**
      * Returns all the list of <code>SecurityMechanism</code>s supported
-     * by the web services client.
+     * by the Web Services Client.
      * @return the list of <code>SecurityMechanism<code>s supported
-     * by the web services provider.
+     * by the Web Services Client.
      */
     public static List getAllWSCSecurityMechanisms() {
         List list = new ArrayList();
@@ -739,9 +738,9 @@ public class SecurityMechanism {
 
     /**
      * Returns all the list of <code>SecurityMechanism<code>s supported
-     *     by the web services provider.
+     *     by the Web Services Provider.
      * @return the list of <code>SecurityMechanism</code>s supported
-     *     by the web services provier.
+     *     by the Web Services Provider.
      */
     public static List getAllWSPSecurityMechanisms() {
         List list = new ArrayList();

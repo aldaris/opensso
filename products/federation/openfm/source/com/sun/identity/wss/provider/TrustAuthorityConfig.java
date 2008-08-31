@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityConfig.java,v 1.11 2008-08-27 19:05:51 mrudul_uchil Exp $
+ * $Id: TrustAuthorityConfig.java,v 1.12 2008-08-31 15:50:02 mrudul_uchil Exp $
  *
  */
 
@@ -94,6 +94,7 @@ public abstract class TrustAuthorityConfig {
     private static Class discoveryConfigClass;
     private static Class stsConfigClass;
     private static Debug debug = ProviderUtils.debug;
+    protected static SSOToken adminToken = null;
 
     /**
      * Property string for the web services discovery client configuration 
@@ -500,17 +501,31 @@ public abstract class TrustAuthorityConfig {
     }
 
     private static SSOToken getAdminToken() throws ProviderException {
-        SSOToken adminToken =  null;
-        try {
-            adminToken = (SSOToken) AccessController.doPrivileged(
-                AdminTokenAction.getInstance());
-            SSOTokenManager.getInstance().refreshSession(adminToken);
-        } catch (SSOException se) {
-            ProviderUtils.debug.message(
-                "TrustAuthorityConfig.getAdminToken: Trying second time...");
-            adminToken = (SSOToken) AccessController.doPrivileged(
-                AdminTokenAction.getInstance());
+        if (adminToken == null) {
+            try {
+                adminToken = (SSOToken) AccessController.doPrivileged(
+                    AdminTokenAction.getInstance());
+                SSOTokenManager.getInstance().refreshSession(adminToken);
+            } catch (SSOException se) {
+                ProviderUtils.debug.message(
+                    "TrustAuthorityConfig.getAdminToken: Trying second time..");
+                adminToken = (SSOToken) AccessController.doPrivileged(
+                    AdminTokenAction.getInstance());
+            }
         }
         return adminToken;
+    }
+    
+    /**
+     * Sets the admin token.
+     * This admin token is required to be set if "create", "delete" or "save"
+     * operations are invoked on this <code>TrustAuthorityConfig</code> object.
+     * This admin token needs to be the valid SSOToken of the user who has
+     * "Agent Administrator" privileges.
+     * 
+     * @param adminToken the agent admin token.
+     */
+    public void setAdminToken(SSOToken adminToken) {
+        this.adminToken = adminToken;
     }
 }

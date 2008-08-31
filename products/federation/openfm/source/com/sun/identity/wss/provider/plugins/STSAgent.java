@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSAgent.java,v 1.12 2008-08-07 23:30:06 mallas Exp $
+ * $Id: STSAgent.java,v 1.13 2008-08-31 15:50:02 mrudul_uchil Exp $
  *
  */
 
@@ -149,23 +149,11 @@ public class STSAgent extends STSConfig {
 
         // Obtain the provider from Agent profile
         try {
-            if (idRepo == null) {
-                idRepo = new AMIdentityRepository(token, "/");
-            }
-
-            IdSearchControl control = new IdSearchControl();
-            control.setAllReturnAttributes(true);
-            IdSearchResults results = idRepo.searchIdentities(IdType.AGENTONLY,
-                name, control);
-            Set agents = results.getSearchResults();
-            if (!agents.isEmpty()) {
-                //Map attrs = (Map) results.getResultAttributes();
-                AMIdentity provider = (AMIdentity) agents.iterator().next();
-                profilePresent = true;
-                //Map attributes = (Map) attrs.get(provider);
-                Map attributes = (Map) provider.getAttributes(attrNames);
-                parseAgentKeyValues(attributes);
-            }
+            AMIdentity provider = 
+                new AMIdentity(token, name, IdType.AGENTONLY, "/", null);
+            Map attributes = (Map) provider.getAttributes(attrNames);
+            profilePresent = true;
+            parseAgentKeyValues(attributes);
         } catch (Exception e) {
             debug.error("STSAgent.init: Unable to get idRepo", e);
             throw (new ProviderException("idRepo exception: "+ e.getMessage()));
