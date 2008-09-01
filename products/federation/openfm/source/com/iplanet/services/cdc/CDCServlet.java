@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CDCServlet.java,v 1.5 2008-08-19 19:12:19 veiming Exp $
+ * $Id: CDCServlet.java,v 1.6 2008-09-01 06:22:17 madan_ranganath Exp $
  *
  */
 
@@ -30,6 +30,8 @@ package com.iplanet.services.cdc;
 
 import com.iplanet.dpro.session.SessionException;
 import com.iplanet.dpro.session.service.SessionService;
+import com.iplanet.dpro.session.TokenRestriction;
+
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
@@ -294,12 +296,17 @@ public class CDCServlet extends HttpServlet {
                 String spDescriptor = request.getParameter(PROVIDER_ID);
                 
                 String resTokenID = null;
+                /**
+                 * validateAndGetRestriction throws an exception if an agent
+                 * profile with provider id and goto url is not present
+                 */
+                TokenRestriction tokenRes = 
+                    spValidator.validateAndGetRestriction(
+                            FSAuthnRequest.parseURLEncodedRequest(request),
+                            gotoURL);
                 if (uniqueCookieEnabled) {
                     resTokenID = sessionService.getRestrictedTokenId(
-                        token.getTokenID().toString(),
-                        spValidator.validateAndGetRestriction(
-                            FSAuthnRequest.parseURLEncodedRequest(request),
-                            gotoURL));
+                        token.getTokenID().toString(), tokenRes);
                 } else {
                     resTokenID = token.getTokenID().toString();
                 }
