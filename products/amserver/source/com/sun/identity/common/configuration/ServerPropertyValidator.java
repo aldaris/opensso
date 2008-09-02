@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerPropertyValidator.java,v 1.4 2008-07-29 17:58:48 babysunil Exp $
+ * $Id: ServerPropertyValidator.java,v 1.5 2008-09-02 23:44:07 babysunil Exp $
  *
  */
 
@@ -30,11 +30,13 @@ package com.sun.identity.common.configuration;
 
 import com.sun.identity.sm.ServiceAttributeValidator;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -75,13 +77,13 @@ public class ServerPropertyValidator implements ServiceAttributeValidator{
             } else {
                 if (value.length() > 0) {
                     StringTokenizer st = new StringTokenizer(value, ",");
-                    Set set = new HashSet(st.countTokens() *2);
+                    List list = new ArrayList(st.countTokens());
                     while (st.hasMoreTokens()) {
-                        set.add(st.nextElement());
+                        list.add(st.nextElement());
                     }
-                    keyToPossibleValues.put(key, set);
+                    keyToPossibleValues.put(key, list);
                 } else {
-                    keyToPossibleValues.put(key, Collections.EMPTY_SET);
+                    keyToPossibleValues.put(key, Collections.EMPTY_LIST);
                 }
             }
         }
@@ -239,7 +241,7 @@ public class ServerPropertyValidator implements ServiceAttributeValidator{
         }
         
         if (value.length() > 0) {
-            Set possibleValues = (Set)keyToPossibleValues.get(key);
+            List possibleValues = (List)keyToPossibleValues.get(key); 
             if (!possibleValues.isEmpty()) {
                 if (!possibleValues.contains(value)) {
                     String[] param = {key};
@@ -258,9 +260,8 @@ public class ServerPropertyValidator implements ServiceAttributeValidator{
      * @return the true value of a property.
      */
     public static String getTrueValue(String propertyKey) {
-        Set set = (Set)keyToPossibleValues.get(propertyKey);
-        Iterator i = set.iterator();
-        return (String)i.next();
+        List list = (List)keyToPossibleValues.get(propertyKey);
+        return (String)list.get(0);
     }
 
     /**
@@ -270,9 +271,7 @@ public class ServerPropertyValidator implements ServiceAttributeValidator{
      * @return the false value of a property.
      */
     public static String getFalseValue(String propertyKey) {
-        Set set = (Set)keyToPossibleValues.get(propertyKey);
-        Iterator i = set.iterator();
-        i.next();
-        return (String)i.next();
+        List list = (List)keyToPossibleValues.get(propertyKey);
+        return (String)list.get(1);
     }
 }
