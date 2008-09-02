@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoadSchema.java,v 1.3 2008-06-25 05:42:17 qcheng Exp $
+ * $Id: LoadSchema.java,v 1.4 2008-09-02 18:11:18 veiming Exp $
  *
  */
 
@@ -81,7 +81,9 @@ public class LoadSchema extends AuthenticatedCommand {
         }
 
         CommandManager mgr = getCommandManager();
+        boolean bError = false;
         String url = mgr.getWebEnabledURL();
+
         if ((url != null) && (url.length() > 0)) {
             String[] param = {CLIConstants.WEB_INPUT};
             writeLog(LogWriter.LOG_ACCESS, Level.INFO, "ATTEMPT_LOAD_SCHEMA",
@@ -104,6 +106,7 @@ public class LoadSchema extends AuthenticatedCommand {
                     writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                         "SUCCESS_LOAD_SCHEMA", param);
                 } catch (CLIException e) {
+                    bError = true;
                     if (continueFlag) {
                         outputWriter.printlnError(
                             getResourceString("schema-failed") +e.getMessage());
@@ -116,6 +119,13 @@ public class LoadSchema extends AuthenticatedCommand {
                     }
                 }
             }
+        }
+
+        // if continue flag is on; throw cannot process exception
+        if (bError) {
+            throw new CLIException(
+                getResourceString("one-or-more-services-not-added"),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }
     }
 

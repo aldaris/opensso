@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.87 2008-08-29 01:34:56 arviranga Exp $
+ * $Id: AccessManager.java,v 1.88 2008-09-02 18:11:16 veiming Exp $
  *
  */
 
@@ -160,6 +160,7 @@ public class AccessManager {
         optionalOptions={
             "continue|c|u|Continue adding service if one or more previous service cannot be added."},
         resourceStrings={
+            "one-or-more-services-not-added=One or more services were not added.",
             "schema-added=Service was added.",
             "schema-failed=Service was not added."})
     private String create_svc;
