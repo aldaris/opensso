@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.34 2008-08-29 21:21:28 ericow Exp $
+ * $Id: LoginState.java,v 1.35 2008-09-02 19:59:08 ericow Exp $
  *
  */
 
@@ -1771,8 +1771,17 @@ public class LoginState {
         String url,
         HttpServletResponse response,
         boolean useAMCookie) {
+
         if (messageEnabled) {
             debug.message("in encodeURL");
+        }
+        boolean appendSessCookieInURL = Boolean.valueOf(SystemProperties.get(
+            Constants.APPEND_SESS_COOKIE_IN_URL,"true")).booleanValue();
+        if (!appendSessCookieInURL) {
+            return url;
+        }
+
+        if (messageEnabled) {
             debug.message("cookieDetect : " + cookieDetect);
             debug.message("cookieSupported : " + cookieSupported);
         }
