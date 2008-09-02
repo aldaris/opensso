@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.35 2008-08-30 06:14:47 ericow Exp $
+ * $Id: Constants.java,v 1.36 2008-09-02 19:59:50 ericow Exp $
  *
  */
 
@@ -401,6 +401,13 @@ public interface Constants {
      */
     String REWRITE_AS_PATH = 
         "com.sun.identity.cookieRewritingInPath";
+
+    /**
+     * Property string for determining if session cookie needs to be appended
+     * in the URL
+     */
+    String APPEND_SESS_COOKIE_IN_URL = 
+        "com.sun.identity.appendSessionCookieInURL";
 
     /**
      * Property string for Application session max-caching-time.
