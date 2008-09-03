@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMObjectImpl.java,v 1.10 2008-06-25 05:41:21 qcheng Exp $
+ * $Id: AMObjectImpl.java,v 1.11 2008-09-03 07:05:12 lakshman_abburi Exp $
  *
  */
 
@@ -1496,7 +1496,7 @@ class AMObjectImpl implements AMObject {
         }
 
         if ((graceperiod > -1)
-                && (graceperiod < AMStoreConnection.daysSinceModified(token,
+                && (graceperiod > AMStoreConnection.daysSinceModified(token,
                         entryDN))) {
             // Return with a logged message. Cannot purge till grace period
             // has expired.

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMStoreConnection.java,v 1.11 2008-06-25 05:41:23 qcheng Exp $
+ * $Id: AMStoreConnection.java,v 1.12 2008-09-03 07:04:50 lakshman_abburi Exp $
  *
  */
 
@@ -1690,15 +1690,23 @@ public final class AMStoreConnection implements AMConstants {
             return (-1);
         }
 
-        Date d = df.parse(n.toString(), pp);
-        int days = (int) (d.getTime() / (1000 * 60 * 60 * 24));
+        Date modDate = df.parse(n.toString(), pp);
+        Date nowDate = new Date();
+
+        // getTime() fn returns number of milliseconds
+        // since January 1, 1970, 00:00:00 GMT
+        long modTimeMSecs = modDate.getTime();
+        long nowTimeMSecs = nowDate.getTime();
+
+        long elapsedTimeMSecs = nowTimeMSecs - modTimeMSecs;
+        int elapsedDays = (int) (elapsedTimeMSecs / (1000 * 60 * 60 * 24));
 
         if (debug.messageEnabled()) {
             debug.message("AMStoreConnection.daysSinceModified() for dn: "
-                    + entryDN + ", days: " + days + "days");
+                    + entryDN + ", days: " + elapsedDays + " days");
         }
 
-        return (days);
+        return (elapsedDays);
     }
 
     /**
