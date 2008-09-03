@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderConfig.java,v 1.24 2008-08-31 15:50:02 mrudul_uchil Exp $
+ * $Id: ProviderConfig.java,v 1.25 2008-09-03 03:51:17 mallas Exp $
  *
  */
 package com.sun.identity.wss.provider; 
@@ -126,7 +126,7 @@ public abstract class ProviderConfig {
      protected String encryptionAlgorithm = "DESede";
      protected int encryptionStrength = 0;
      protected String signingRefType = "DirectReference";
-     protected static SSOToken adminToken = null;
+     protected static SSOToken customAdminToken = null;
 
      private static Class adapterClass;
 
@@ -1080,17 +1080,19 @@ public abstract class ProviderConfig {
     }
 
     private static SSOToken getAdminToken() throws ProviderException {
-        if (adminToken == null) {
-            try {
-                adminToken = (SSOToken) AccessController.doPrivileged(
+        if (customAdminToken != null) {
+            return customAdminToken;
+        }
+        SSOToken adminToken = null;
+        try {
+            adminToken = (SSOToken) AccessController.doPrivileged(
                     AdminTokenAction.getInstance());
-                SSOTokenManager.getInstance().refreshSession(adminToken);
-            } catch (SSOException se) {
-                ProviderUtils.debug.message("ProviderConfig.getAdminToken:: " +
+            SSOTokenManager.getInstance().refreshSession(adminToken);
+        } catch (SSOException se) {
+            ProviderUtils.debug.message("ProviderConfig.getAdminToken:: " +
                    "Trying second time ....");
-                adminToken = (SSOToken) AccessController.doPrivileged(
-                   AdminTokenAction.getInstance());
-            }
+            adminToken = (SSOToken) AccessController.doPrivileged(
+                   AdminTokenAction.getInstance());            
         }
         return adminToken;
     }
@@ -1105,6 +1107,6 @@ public abstract class ProviderConfig {
      * @param adminToken the agent admin token.
      */
     public void setAdminToken(SSOToken adminToken) {
-        this.adminToken = adminToken;
+        this.customAdminToken = adminToken;
     }
 }
