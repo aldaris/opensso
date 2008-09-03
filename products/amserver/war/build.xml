@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.54 2008-08-31 06:57:28 hengming Exp $
+   $Id: build.xml,v 1.55 2008-09-03 08:15:56 kevinserwin Exp $
 
 -->
 
@@ -74,11 +74,11 @@
         <condition property="version.set" value="Enterprise 8.0 Build ${build.number.set}" >
             <isset property="build.enterprise"/>
         </condition>
-        <condition property="version.set" value="Express Build ${build.number.set}" >
+        <condition property="version.set" value="Express 8.0 Build ${build.number.set}" >
             <isset property="build.express"/>
         </condition>        
         <!-- note that if version.date is set above, the following line is ignored -->
-        <property name="version.set" value=""/>
+        <property name="version.set" value="8.0"/>
       
         <filter token="DATESTAMP" value="${war.time.stamp}"/>        
         <filter token="VERSION" value="${version.set}" />
