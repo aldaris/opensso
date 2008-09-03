@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProvider.java,v 1.29 2008-08-31 15:50:02 mrudul_uchil Exp $
+ * $Id: AgentProvider.java,v 1.30 2008-09-03 00:19:01 mallas Exp $
  *
  */
 
@@ -233,6 +233,13 @@ public class AgentProvider extends ProviderConfig {
         try {
             AMIdentity provider = 
                 new AMIdentity(token, providerName, IdType.AGENTONLY, "/", null);
+            if(!provider.isExists()) {
+               if(debug.messageEnabled()) {
+                  debug.message("AgentProvider.init: provider " 
+                          + providerName  + " does not exist");
+               }
+               return; 
+            }
             Map attributes = (Map) provider.getAttributes(attrNames);
             profilePresent = true;
             if (debug.messageEnabled()) {
@@ -277,6 +284,9 @@ public class AgentProvider extends ProviderConfig {
                secMech = new ArrayList();
            }
 
+           if(value == null) {
+              return; 
+           }
            StringTokenizer st = new StringTokenizer(value, ","); 
            while(st.hasMoreTokens()) {
                secMech.add(st.nextToken());
