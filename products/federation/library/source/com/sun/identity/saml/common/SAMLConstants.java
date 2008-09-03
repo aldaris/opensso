@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLConstants.java,v 1.11 2008-08-19 19:11:12 veiming Exp $
+ * $Id: SAMLConstants.java,v 1.12 2008-09-03 22:28:19 weisun2 Exp $
  *
  */
 
@@ -1461,4 +1461,11 @@ public final class SAMLConstants
         "urn:com:sun:identity:attrnamespace";
 
     public static final String TAG_USERNAME_TOKEN = "UsernameToken";
+    /**
+     * Keyname for escaping special characters in <code>AttributeValue</code>.
+     * If true, escaping special characters. Otherwise, will not. Default 
+     * value is "true". 
+     */
+    public static final String ESCAPE_ATTR_VALUE = 
+        "com.sun.identity.saml.escapeattributevalue"; 
 }

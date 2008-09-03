@@ -22,13 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Attribute.java,v 1.3 2008-06-25 05:47:31 qcheng Exp $
+ * $Id: Attribute.java,v 1.4 2008-09-03 22:28:40 weisun2 Exp $
  *
  */
 
 
 package com.sun.identity.saml.assertion;
 
+import com.sun.identity.common.SystemConfigurationUtil;
 import java.util.*; 
 import org.w3c.dom.*; 
 import com.sun.identity.saml.common.SAMLUtilsCommon;
@@ -46,7 +47,7 @@ import com.sun.identity.shared.xml.XMLUtils;
  * @supported.all.api 
  */
 public class Attribute extends AttributeDesignator {
-    protected  List _attributeValue;  
+    protected  List _attributeValue; 
     
     /**
      * Constructs an attribute element from an existing XML block.
@@ -228,8 +229,17 @@ public class Attribute extends AttributeDesignator {
      */
     public Attribute(String name, String nameSpace, String attributeValue) 
                                                     throws SAMLException {
-        super(name, nameSpace);    
-        this.addAttributeValue(attributeValue);
+        super(name, nameSpace);
+        String escapeAttVal = SystemConfigurationUtil.getProperty(
+            SAMLConstants.ESCAPE_ATTR_VALUE, "true"); 
+        boolean escapeAtt = "true".equalsIgnoreCase(escapeAttVal) ?
+            true : false; 
+        if (escapeAtt) {     
+            this.addAttributeValue(XMLUtils.
+                escapeSpecialCharacters(attributeValue));
+        } else {
+            this.addAttributeValue(attributeValue);
+        }
     }
     
     /**
