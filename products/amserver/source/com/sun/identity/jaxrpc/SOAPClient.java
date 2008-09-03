@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPClient.java,v 1.8 2008-06-25 05:43:34 qcheng Exp $
+ * $Id: SOAPClient.java,v 1.9 2008-09-03 07:06:30 lakshman_abburi Exp $
  *
  */
 
@@ -192,6 +192,7 @@ public class SOAPClient {
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type",
                 "text/xml; charset=\"utf-8\"");
+            connection.setRequestProperty("SOAPAction", "\"\"");
             if (cookies == null) {
                 if (SystemProperties.iasGXId != null) {
                     connection.setRequestProperty("Cookie", "GX_jst="
