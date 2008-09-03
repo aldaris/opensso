@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.88 2008-09-02 18:11:16 veiming Exp $
+ * $Id: AccessManager.java,v 1.89 2008-09-03 22:04:43 veiming Exp $
  *
  */
 
@@ -177,6 +177,7 @@ public class AccessManager {
             "continue|c|u|Continue deleting service if one or more previous services cannot be deleted.",
             "deletepolicyrule|r|u|Delete policy rule."},
         resourceStrings={
+            "one-or-more-services-not-deleted=One or more services were not deleted.",
             "service-deleted=Service was deleted.",
             "service-deletion-failed=Service was not deleted.",
             "delete-service-no-policy-rules=There were no policy rules.",

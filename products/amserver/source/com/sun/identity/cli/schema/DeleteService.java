@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteService.java,v 1.5 2008-06-25 05:42:17 qcheng Exp $
+ * $Id: DeleteService.java,v 1.6 2008-09-03 22:04:43 veiming Exp $
  *
  */
 
@@ -74,6 +74,7 @@ public class DeleteService extends AuthenticatedCommand {
         IOutput outputWriter = getOutputWriter();        
         List serviceNames = (List)rc.getOption(IArgument.SERVICE_NAME);
         ServiceManager ssm = null;
+        boolean bError = false;
         
         try {
             ssm = new ServiceManager(adminSSOToken);
@@ -96,6 +97,7 @@ public class DeleteService extends AuthenticatedCommand {
                 writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                     "SUCCEED_DELETE_SERVICE", param);
             } catch (CLIException e) {
+                bError = true;
                 if (continueFlag) {
                     outputWriter.printlnError(
                         getResourceString("service-deletion-failed") +
@@ -107,6 +109,12 @@ public class DeleteService extends AuthenticatedCommand {
                     throw e;
                 }
             }
+        }
+
+        if (bError) {
+            throw new CLIException(
+                getResourceString("one-or-more-services-not-deleted"),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }
     }
 
