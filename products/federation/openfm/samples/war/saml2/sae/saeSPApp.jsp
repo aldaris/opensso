@@ -22,10 +22,10 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: saeSPApp.jsp,v 1.4 2008-08-15 01:05:37 veiming Exp $
+   $Id: saeSPApp.jsp,v 1.5 2008-09-04 23:50:30 exu Exp $
 
 --%>
-
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <%@ page import="com.sun.identity.sae.api.SecureAttrs"%>
 <%@ page import="java.io.*"%>
 <%@ page import="java.util.*"%>
@@ -46,7 +46,7 @@ public void jspInit()
 <html>
 <head>
 <title>Secure Attributes Exchange IDP APP SAMPLE</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="stylesheet" type="text/css" href="<%= deployuri %>/com_sun_web_ui/css/css_ns6up.css" />
 </head>
 <body>
@@ -54,6 +54,7 @@ public void jspInit()
 <br><b>SAE SP APP SAMPLE</b><br>
 <br>
 <% 
+    request.setCharacterEncoding("UTF-8");
     try {
         String cryptotype = SecureAttrs.SAE_CRYPTO_TYPE_SYM;
         // Symmetric : Shared secret between this SP-App and local FM-SP

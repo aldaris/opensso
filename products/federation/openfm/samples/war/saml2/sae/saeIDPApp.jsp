@@ -22,10 +22,10 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: saeIDPApp.jsp,v 1.8 2008-08-19 19:12:16 veiming Exp $
+   $Id: saeIDPApp.jsp,v 1.9 2008-09-04 23:50:30 exu Exp $
 
 --%>
-
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <%@ page import="com.sun.identity.sae.api.SecureAttrs"%>
 <%@ page import="com.sun.identity.sae.api.Utils"%>
 <%@ page import="java.io.*"%>
@@ -46,13 +46,14 @@ public void jspInit()
 <html>
 <head>
 <title>Secure Attributes Exchange IDP APP SAMPLE</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="stylesheet" type="text/css" href="<%= deployuri %>/com_sun_web_ui/css/css_ns6up.css" />
 </head>
 <body>
 <%@ include file="header.jsp" %>
 <br><b>Secure Attributes Exchange IDP APP SAMPLE</b><br>
 <% 
+    request.setCharacterEncoding("UTF-8");
     // Crypto type to be used with local <OpenSSO>-IDP
     String cryptotype     = SecureAttrs.SAE_CRYPTO_TYPE_SYM;
     // Shared secret with local <OpenSSO>-IDP
@@ -90,18 +91,18 @@ public void jspInit()
 This sample represents an IDP-App wishing to securely invoke a remote SP-App and pass it some secure attributes (mail and branch).
 <br>
 <br>
-IDP-App -sae---> IDP-%lt;OpenSSO> --samlv2---> SP-%lt;OpenSSO> --sae--> SP-App 
+IDP-App -sae---> IDP-&lt;OpenSSO> --samlv2---> SP-&lt;OpenSSO> --sae--> SP-App 
 <br>
 <br>
 <b>Prerequisites :</b>
 <br>
 IDP=Identity Provider  SP=Service Provider
 <br>
-i) Trust key (shared secret for symmetric crypto  or publickey for asymmetric signing) & this application provisioned on IDP-%lt;OpenSSO> in one of the hosted extended metadata - you will enter the same appname and secret here.
+i) Trust key (shared secret for symmetric crypto  or publickey for asymmetric signing) & this application provisioned on IDP-&lt;OpenSSO> in one of the hosted extended metadata - you will enter the same appname and secret here.
 <br>
-ii) SP_App and corresponding shared secret or key-pair provisioned on SP-%lt;OpenSSO> and destination SP-App. You will enter SP-App here.
+ii) SP_App and corresponding shared secret or key-pair provisioned on SP-&lt;OpenSSO> and destination SP-App. You will enter SP-App here.
 <br>
-iii) "auto-federation" and corresponding attributes setup (branch and mail) on both SP-%lt;OpenSSO> and IDP-%lt;OpenSSO> ends.
+iii) "auto-federation" and corresponding attributes setup (branch and mail) on both SP-&lt;OpenSSO> and IDP-&lt;OpenSSO> ends.
 <br>
 iv) SP-App is already deployed and ready to accept requests.
 <br>
