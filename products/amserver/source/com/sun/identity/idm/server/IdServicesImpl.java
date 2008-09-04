@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: IdServicesImpl.java,v 1.50 2008-08-31 15:50:01 mrudul_uchil Exp $
+* $Id: IdServicesImpl.java,v 1.51 2008-09-04 21:23:33 goodearth Exp $
 *
 */
 
@@ -1022,12 +1022,19 @@ public class IdServicesImpl implements IdServices {
        // Iterate through other plugins
        Iterator it = configuredPluginClasses.iterator();
        boolean exists = false;
-       while (it.hasNext()) {
-           IdRepo idRepo = (IdRepo) it.next();
-           exists = idRepo.isExists(token, type, name);
-           if (exists) {
-               break;
+       try {
+           while (it.hasNext()) {
+               IdRepo idRepo = (IdRepo) it.next();
+               exists = idRepo.isExists(token, type, name);
+               if (exists) {
+                   break;
+               }
            }
+       } catch (Exception idm) {
+           // Ignore the exception if not found in one plugin.
+           // Iterate through all configured plugins and look for the
+           // identity and if found break the loop, if not finally return
+           // false.
        }
        return exists;
    }
