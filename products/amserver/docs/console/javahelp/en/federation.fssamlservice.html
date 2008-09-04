@@ -39,7 +39,23 @@ be a printer.) A SAML authority (also referred to as the <b>asserting party</b>)
 platform or application that has been integrated with SAML API, allowing it to
 relay security information. For example, asserting that a subject has been authenticated into
 its system by passing the required attributes. Trusted partner sites receive the security
-information and rely on its authenticity.</p><p>The following SAML attributes can be configured for your implementation by clicking the
+information and rely on its authenticity.</p>
+<hr><p><b>Note &#8211; </b>By default character escaping is enabled so that you can use the following
+special characters in SAML 1.x attributes in the OpenSSO console:</p>
+<ul><li><p>&#38;</p></li>
+<li><p>&#60;</p></li>
+<li><p>></p></li>
+<li><p>&#8220;</p></li>
+<li><p>'</p></li>
+<li><p>/</p></li></ul>
+<p>To disable character escaping:</p>
+<ol><li><p>In the OpenSSO Console, go to Configuration>Servers and Sites>Default Server Setting>Advanced.</p></li>
+<li><p>Enter the <tt>com.sun.identity.saml.escapeattributevalue</tt> as the key, and <tt>false</tt> as the value.</p></li>
+<li><p>Restart the server.</p></li></ol>
+<p>If you wish to enable character escaping, change the value to <tt>true</tt>
+and restart the server.</p>
+<hr>
+<p>The following SAML attributes can be configured for your implementation by clicking the
 Local Site Properties button:</p>
 <ul><li><p><a href="targetspecifier.html">Target Specifier</a></p></li>
 <li><p><a href="siteidentifiers.html">Site Identifiers</a></p></li>
