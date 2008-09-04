@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Agents.jsp,v 1.8 2008-07-22 21:36:56 babysunil Exp $
+   $Id: Agents.jsp,v 1.9 2008-09-04 00:05:17 asyhuang Exp $
 
 --%>
 
@@ -98,7 +98,7 @@
 <table border="0" cellpadding="0" cellspacing="0">
     <tr>
         <td><cc:spacer name="spacer" height="1" width="10" newline="false" /></td>
-        <td nowrap><cc:label name="lblFilter" elementName="tfFilter" /><cc:textfield name="tfFilter" defaultValue="*" /></td>
+        <td nowrap><cc:label name="lblFilter" elementName="tfFilter" /><cc:textfield name="tfFilter" defaultValue="*" onKeyDown="if (event.keyCode == 13) {document.forms['Agents'].submit(); return false;}" /></td>
         <td><cc:spacer name="spacer" height="1" width="3" newline="false" /></td>
         <td><cc:button name="btnSearch" bundleID="amConsole" defaultValue="button.search" type="primary" onClick="document.forms['Agents'].submit();" /></td>
     </tr>
@@ -126,7 +126,7 @@
 <table border="0" cellpadding="0" cellspacing="0">
     <tr>
         <td><cc:spacer name="spacer" height="1" width="10" newline="false" /></td>
-        <td nowrap><cc:label name="lblGroupFilter" elementName="tfGroupFilter" /><cc:textfield name="tfGroupFilter" defaultValue="*" /></td>
+        <td nowrap><cc:label name="lblGroupFilter" elementName="tfGroupFilter" /><cc:textfield name="tfGroupFilter" defaultValue="*" onKeyDown="if (event.keyCode == 13) {document.forms['Agents'].submit(); return false;}" /></td>
         <td><cc:spacer name="spacer" height="1" width="3" newline="false" /></td>
         <td><cc:button name="btnGroupSearch" bundleID="amConsole" defaultValue="button.search" type="primary" onClick="document.forms['Agents'].submit();" /></td>
     </tr>
