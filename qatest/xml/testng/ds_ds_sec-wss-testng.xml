@@ -20,11 +20,10 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ds_ds_sec-wss-testng.xml,v 1.2 2008-08-20 22:32:34 arunav Exp $: 
+ $Id: ds_ds_sec-wss-testng.xml,v 1.3 2008-09-04 07:15:54 arunav Exp $: 
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
-
 <suite name="ds_ds_sec-wss" verbose="1">
     <test name="SecurityTokenTest 0">
         <parameter name="testIdx" value="0"/>
@@ -289,5 +288,694 @@
         <classes>
             <class name="com.sun.identity.qatest.wss.SecurityTokenTest"/>
         </classes>
-    </test>   
+    </test>
+    <test name="StockQuoteSampleTest 0">
+        <parameter name="testIdx" value="0"/>
+        <parameter name="STSSecurity" value="false"/>
+        <parameter name="UserAuth" value="true"/>
+        <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+    <test name="StockQuoteSampleTest 1">
+        <parameter name="testIdx" value="1"/>
+        <parameter name="STSSecurity" value="false"/>
+        <parameter name="UserAuth" value="true"/>
+        <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+    <test name="StockQuoteSampleTest 2">
+        <parameter name="testIdx" value="2"/>
+        <parameter name="STSSecurity" value="false"/>
+        <parameter name="UserAuth" value="true"/>
+        <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+    <test name="StockQuoteSampleTest 3">
+        <parameter name="testIdx" value="3"/>
+        <parameter name="STSSecurity" value="false"/>
+        <parameter name="UserAuth" value="true"/>
+        <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+    <test name="StockQuoteSampleTest 4">
+        <parameter name="testIdx" value="4"/>
+        <parameter name="STSSecurity" value="false"/>
+        <parameter name="UserAuth" value="true"/>
+        <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+    <test name="StockQuoteSampleTest 5">
+        <parameter name="testIdx" value="5"/>
+        <parameter name="STSSecurity" value="false"/>
+        <parameter name="UserAuth" value="true"/>
+        <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+    <test name="StockQuoteSampleTest 6">
+        <parameter name="testIdx" value="6"/>
+        <parameter name="STSSecurity" value="false"/>
+        <parameter name="UserAuth" value="true"/>
+        <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+    
+    <test name="StockQuoteSampleTest 7">
+        <parameter name="testIdx" value="7"/>
+        <parameter name="STSSecurity" value="false"/>
+        <parameter name="UserAuth" value="true"/>
+        <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+    
+    <test name="StockQuoteSampleTest 8">
+        <parameter name="testIdx" value="8"/>
+        <parameter name="STSSecurity" value="false"/>
+        <parameter name="UserAuth" value="true"/>
+        <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+    <test name="StockQuoteSampleTest 9">
+        <parameter name="testIdx" value="9"/>
+        <parameter name="STSSecurity" value="false"/>
+        <parameter name="UserAuth" value="true"/>
+        <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+    <test name="StockQuoteSampleTest 10">
+        <parameter name="testIdx" value="10"/>
+        <parameter name="STSSecurity" value="false"/>
+        <parameter name="UserAuth" value="true"/>
+        <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+    <test name="StockQuoteSampleTest 11">
+        <parameter name="testIdx" value="11"/>
+        <parameter name="STSSecurity" value="false"/>
+        <parameter name="UserAuth" value="true"/>
+        <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+    <test name="StockQuoteSampleTest 12">
+        <parameter name="testIdx" value="12"/>
+        <parameter name="STSSecurity" value="false"/>
+        <parameter name="UserAuth" value="true"/>
+        <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+    <test name="StockQuoteSampleTest 13">
+        <parameter name="testIdx" value="13"/>
+        <parameter name="STSSecurity" value="false"/>
+        <parameter name="UserAuth" value="true"/>
+        <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+    <test name="StockQuoteSampleTest 14">
+        <parameter name="testIdx" value="14"/>
+        <parameter name="STSSecurity" value="false"/>
+        <parameter name="UserAuth" value="true"/>
+        <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+    <test name="StockQuoteSampleTest 15">
+        <parameter name="testIdx" value="15"/>
+        <parameter name="STSSecurity" value="false"/>
+        <parameter name="UserAuth" value="true"/>
+        <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+    <test name="StockQuoteSampleTest 16">
+        <parameter name="testIdx" value="16"/>
+        <parameter name="STSSecurity" value="false"/>
+        <parameter name="UserAuth" value="true"/>
+        <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+    <test name="StockQuoteSampleTest 17">
+        <parameter name="testIdx" value="17"/>
+        <parameter name="STSSecurity" value="false"/>
+        <parameter name="UserAuth" value="true"/>
+        <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+    <test name="StockQuoteSampleTest 18">
+        <parameter name="testIdx" value="18"/>
+        <parameter name="STSSecurity" value="false"/>
+        <parameter name="UserAuth" value="true"/>
+        <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+    <test name="StockQuoteSampleTest 19">
+        <parameter name="testIdx" value="19"/>
+        <parameter name="STSSecurity" value="false"/>
+        <parameter name="UserAuth" value="true"/>
+        <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+    <test name="StockQuoteSampleTest 20">
+        <parameter name="testIdx" value="20"/>
+        <parameter name="STSSecurity" value="false"/>
+        <parameter name="UserAuth" value="true"/>
+        <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+    <test name="StockQuoteSampleTest 21">
+        <parameter name="testIdx" value="21"/>
+        <parameter name="STSSecurity" value="false"/>
+        <parameter name="UserAuth" value="true"/>
+        <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+    <test name="StockQuoteSampleTest 22">
+        <parameter name="testIdx" value="22"/>
+        <parameter name="STSSecurity" value="false"/>
+        <parameter name="UserAuth" value="true"/>
+        <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+    <test name="StockQuoteSampleTest 23">
+        <parameter name="testIdx" value="23"/>
+        <parameter name="STSSecurity" value="false"/>
+        <parameter name="UserAuth" value="true"/>
+        <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>     
+    <test name="StockQuoteSampleTest 36">
+        <parameter name="testIdx" value="36"/>
+        <parameter name="STSSecurity" value="false"/>
+        <parameter name="UserAuth" value="true"/>
+        <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+    
+    <test name="StockQuoteSampleTest 37">
+        <parameter name="testIdx" value="37"/>
+        <parameter name="STSSecurity" value="false"/>
+        <parameter name="UserAuth" value="true"/>
+        <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+    <test name="StockQuoteSampleTest 38">
+        <parameter name="testIdx" value="38"/>
+        <parameter name="STSSecurity" value="false"/>
+        <parameter name="UserAuth" value="true"/>
+        <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+    <test name="StockQuoteSampleTest 39">
+        <parameter name="testIdx" value="39"/>
+        <parameter name="STSSecurity" value="false"/>
+        <parameter name="UserAuth" value="true"/>
+        <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+    <test name="StockQuoteSampleTest 40">
+        <parameter name="testIdx" value="40"/>
+        <parameter name="STSSecurity" value="false"/>
+        <parameter name="UserAuth" value="true"/>
+        <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+    <test name="StockQuoteSampleTest 41">
+        <parameter name="testIdx" value="41"/>
+        <parameter name="STSSecurity" value="false"/>
+        <parameter name="UserAuth" value="true"/>
+        <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+    <test name="StockQuoteSampleTest 42">
+        <parameter name="testIdx" value="42"/>
+        <parameter name="STSSecurity" value="false"/>
+        <parameter name="UserAuth" value="true"/>
+        <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+    <test name="StockQuoteSampleTest 43">
+        <parameter name="testIdx" value="43"/>
+        <parameter name="STSSecurity" value="false"/>
+        <parameter name="UserAuth" value="true"/>
+        <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>     
+      <test name="StockQuoteSampleTest20_With_STS">
+        <parameter name="testIdx" value="20"/>
+        <parameter name="STSSecurity" value="true"/>
+         <parameter name="UserAuth" value="false"/>
+          <parameter name="EvaluateClient" value="true"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>      
+    </test>     
+       <test name="StockQuoteSampleTest12_With_STS">
+        <parameter name="testIdx" value="12"/>
+        <parameter name="STSSecurity" value="true"/>
+         <parameter name="UserAuth" value="false"/>
+         <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+       <test name="StockQuoteSampleTest13_With_STS">
+        <parameter name="testIdx" value="13"/>
+        <parameter name="STSSecurity" value="true"/>
+         <parameter name="UserAuth" value="false"/>
+          <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+       <test name="StockQuoteSampleTest14_With_STS">
+        <parameter name="testIdx" value="14"/>
+        <parameter name="STSSecurity" value="true"/>
+         <parameter name="UserAuth" value="false"/>
+          <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+      <test name="StockQuoteSampleTest15_With_STS">
+        <parameter name="testIdx" value="15"/>
+        <parameter name="STSSecurity" value="true"/>
+         <parameter name="UserAuth" value="false"/>
+          <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+        <test name="StockQuoteSampleTest36_With_STS">
+        <parameter name="testIdx" value="36"/>
+        <parameter name="STSSecurity" value="true"/>
+         <parameter name="UserAuth" value="false"/>
+          <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+       <test name="StockQuoteSampleTest37_With_STS">
+        <parameter name="testIdx" value="37"/>
+        <parameter name="STSSecurity" value="true"/>
+          <parameter name="UserAuth" value="false"/>
+           <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+       <test name="StockQuoteSampleTest38_With_STS">
+        <parameter name="testIdx" value="38"/>
+        <parameter name="STSSecurity" value="true"/>
+         <parameter name="UserAuth" value="false"/>
+          <parameter name="EvaluateClient" value="true" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+      <test name="StockQuoteSampleTest39With_STS">
+        <parameter name="testIdx" value="39"/>
+        <parameter name="STSSecurity" value="true"/>
+         <parameter name="UserAuth" value="false"/>
+          <parameter name="EvaluateClient" value="true" />
+        <groups>
+          <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+     <test name="StockQuoteSampleTest16_With_STS">
+        <parameter name="testIdx" value="16"/>
+        <parameter name="STSSecurity" value="true"/>
+         <parameter name="UserAuth" value="true"/>
+          <parameter name="EvaluateClient" value="false" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+       <test name="StockQuoteSampleTest17_With_STS">
+        <parameter name="testIdx" value="17"/>
+        <parameter name="STSSecurity" value="true"/>
+          <parameter name="UserAuth" value="true"/>
+          <parameter name="EvaluateClient" value="false" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+     <test name="StockQuoteSampleTest18With_STS">
+        <parameter name="testIdx" value="18"/>
+        <parameter name="STSSecurity" value="true"/>
+          <parameter name="UserAuth" value="true"/>
+          <parameter name="EvaluateClient" value="false" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+     <test name="StockQuoteSampleTest19_With_STS">
+        <parameter name="testIdx" value="19"/>
+        <parameter name="STSSecurity" value="true"/>
+          <parameter name="UserAuth" value="true"/>
+          <parameter name="EvaluateClient" value="false" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+      <test name="StockQuoteSampleTest40_With_STS">
+        <parameter name="testIdx" value="40"/>
+        <parameter name="STSSecurity" value="true"/>
+          <parameter name="UserAuth" value="true"/>
+          <parameter name="EvaluateClient" value="false" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+      <test name="StockQuoteSampleTest41_With_STS">
+        <parameter name="testIdx" value="41"/>
+        <parameter name="STSSecurity" value="true"/>
+          <parameter name="UserAuth" value="true"/>
+          <parameter name="EvaluateClient" value="false" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+      <test name="StockQuoteSampleTest42_With_STS">
+        <parameter name="testIdx" value="42"/>
+        <parameter name="STSSecurity" value="true"/>
+          <parameter name="UserAuth" value="true"/>
+          <parameter name="EvaluateClient" value="false" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
+     <test name="StockQuoteSampleTest43_With_STS">
+        <parameter name="testIdx" value="43"/>
+        <parameter name="STSSecurity" value="true"/>
+          <parameter name="UserAuth" value="true"/>
+          <parameter name="EvaluateClient" value="false" />
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.wss.StockQuoteSampleTest"/>
+        </classes>
+    </test>
 </suite>
