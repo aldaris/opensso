@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.15 2008-06-25 05:41:49 qcheng Exp $
+ * $Id: LoginViewBean.java,v 1.16 2008-09-04 09:22:59 bhavnab Exp $
  *
  */
 
@@ -383,9 +383,6 @@ public class LoginViewBean extends AuthViewBeanBase {
             }
             ac = AuthUtils.getAuthContext(
                 request, response, sessionID, sessionUpgrade, isBackPost);
-            if (sessionUpgrade) {
-                ac.getLoginState().setForceAuth(forceAuth);
-            }
             java.util.Locale locale =
                 com.sun.identity.shared.locale.Locale.getLocale(
                     AuthUtils.getLocale(ac));
@@ -394,6 +391,9 @@ public class LoginViewBean extends AuthViewBeanBase {
             if (loginDebug.messageEnabled()) {
                 loginDebug.message("ac = " + ac);
                 loginDebug.message("JSPLocale = " + locale);
+            }
+            if (sessionUpgrade) {
+                ac.getLoginState().setForceAuth(forceAuth);
             }
             if (!AuthUtils.getInetDomainStatus(ac)) {//domain inactive
                 if ((errorTemplate==null)||(errorTemplate.length() == 0)) {
@@ -431,6 +431,13 @@ public class LoginViewBean extends AuthViewBeanBase {
                 }
             }
         } catch (Exception e) {
+            ISLocaleContext localeContext = new ISLocaleContext();
+            localeContext.setLocale(request);
+            fallbackLocale = localeContext.getLocale();
+            rb =  rbCache.getResBundle(bundleName, fallbackLocale);
+            if (loginDebug.messageEnabled()) {
+                loginDebug.message("JSPLocale = " + fallbackLocale);
+            }
             setErrorMessage(e);
             jsp_page = errorTemplate;
             if (requestContext==null) {
