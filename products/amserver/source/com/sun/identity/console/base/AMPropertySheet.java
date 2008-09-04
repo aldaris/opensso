@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMPropertySheet.java,v 1.8 2008-08-29 18:14:52 veiming Exp $
+ * $Id: AMPropertySheet.java,v 1.9 2008-09-04 00:01:16 veiming Exp $
  *
  */
 
@@ -606,8 +606,10 @@ public class AMPropertySheet
                 String confirmPwd = (String)model.getValue(
                     name + PropertyTemplate.PWD_CONFIRM_SUFFIX);
                 if (pwd.equals(confirmPwd)) {
-                    values = new HashSet(2);
-                    values.add(pwd);
+                    if (!pwd.equals(AMPropertySheetModel.passwordRandom)) {
+                        values = new HashSet(2);
+                        values.add(pwd);
+                    }
                 } else {
                     throw new AMConsoleException("password-mismatched");
                 }
@@ -618,7 +620,9 @@ public class AMPropertySheet
                 }
             }
 
-            attrValues.put(name, values);
+            if (values != null) {
+                attrValues.put(name, values);
+            }
         }
 
         return attrValues;
