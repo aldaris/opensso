@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-tools.xml,v 1.16 2008-08-08 22:36:30 qcheng Exp $
+   $Id: build-tools.xml,v 1.17 2008-09-04 16:35:27 kevinserwin Exp $
 
 -->
 
@@ -40,7 +40,7 @@
 
     <property name="tools.temp.dir" value="${openfm.built.dir}/.tools" />
 
-    <target name="all">
+    <target name="all">       
         <delete dir="${tools.temp.dir}" />
         <mkdir dir="${tools.temp.dir}" />
         <unzip src="${openfm.extlib.dir}/amAdminTools.zip"
@@ -56,10 +56,11 @@
         </copy>
         <copy todir="${tools.temp.dir}/resources" flatten="true">
             <fileset dir="${openfm.res.i18n.dir}" includes="**/*.properties"/>
-            <fileset dir="${library.res.i18n.dir}" includes="**/*.properties"/>
+            <fileset dir="${library.res.i18n.dir}" includes="**/*.properties"/>         
         </copy>
-        <copy file="${openfm.dir}/scripts/bin/ssoadm"
-            tofile="${tools.temp.dir}/template/unix/bin/ssoadm.template" />
+        <copy tofile="${tools.temp.dir}/template/unix/bin/ssoadm.template">
+            <fileset file="${openfm.dir}/scripts/bin/ssoadm"/>
+        </copy>
         <copy file="${openfm.dir}/scripts/bin/ssoadm.bat"
             tofile="${tools.temp.dir}/template/windows/bin/ssoadm.bat.template" />
         <zip destfile="${fm.dist.dir}/ssoAdminTools.zip" whenempty="create">

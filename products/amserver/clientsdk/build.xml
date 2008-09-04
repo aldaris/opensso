@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.9 2008-06-25 05:40:24 qcheng Exp $
+   $Id: build.xml,v 1.10 2008-09-04 16:37:21 kevinserwin Exp $
 
 -->
 
@@ -41,7 +41,7 @@
 
     <!-- properties for clientsdk -->
     <property name="clientsdk.name" value="am_client_sdk"/>
-    <property name="clientsdk.version" value="${amserver.version}"/>
+    <property name="clientsdk.version" value="${opensso.version}"/>
     <tstamp>
         <format property="pstamp" pattern="yyyy-MMMM-d hh:mm"/>
     </tstamp>

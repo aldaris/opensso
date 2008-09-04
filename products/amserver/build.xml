@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.67 2008-08-31 06:57:28 hengming Exp $
+   $Id: build.xml,v 1.68 2008-09-04 16:40:01 kevinserwin Exp $
 
 -->
 
@@ -34,10 +34,10 @@
 
     <property name="tracker" value="${amserver.basedir}/tracker.properties" />
 
-   <available file="${extlib.dir}/swec.jar" type="file"
+    <available file="${extlib.dir}/swec.jar" type="file"
         property="enterprise.authmodules.present"/>
         
-   <condition property="enterprise.authmodules.not.present">
+    <condition property="enterprise.authmodules.not.present">
         <not>
             <isset property="enterprise.authmodules.present"/>
         </not>
@@ -70,6 +70,18 @@
             <include name="**/*.jar"/>
         </fileset>
     </path>
+    
+    <tstamp>
+        <format property="war.time.stamp" pattern="yyyy-MMMM-d hh:mm"/>       
+    </tstamp>
+    <condition property="version.set" value="${opensso.enterprise} Build ${build.number.set}" >
+        <isset property="build.enterprise"/>
+    </condition>
+    <condition property="version.set" value="${opensso.express} Build ${build.number.set}" >
+        <isset property="build.express"/>
+    </condition>           
+    <!-- note that if version.set is set above, the following line is ignored -->
+    <property name="version.set" value="${opensso.nightly}"/>    
 
     <target name="checkjar">
         <ant antfile="${products.basedir}/build-checkjars.xml" inheritRefs="true" />
@@ -108,8 +120,11 @@
             <classpath refid="build.class.path"/>
             <exclude name="**/package-info.java"/>
         </javac>
-        
-        <copy todir="${amserver.built.res.dir}" flatten="true">
+    
+        <filter token="DATESTAMP" value="${war.time.stamp}"/>        
+        <filter token="VERSION" value="${version.set}" />
+            
+        <copy todir="${amserver.built.res.dir}" flatten="true" filtering="true">
             <fileset dir="${amserver.res.i18n.dir}">
                 <include name="**/*.properties"/>
                 <exclude name="Services.properties"/>
@@ -209,8 +224,11 @@
             <classpath refid="build.class.path"/>
             <exclude name="**/package-info.java"/>
         </javac>
+
+        <filter token="DATESTAMP" value="${war.time.stamp}"/>        
+        <filter token="VERSION" value="${version.set}" />
         
-        <copy todir="${amserver.built.res.dir}" flatten="true">
+        <copy todir="${amserver.built.res.dir}" flatten="true" filtering="true">
             <fileset dir="${amserver.res.i18n.dir}">
                 <include name="**/*.properties"/>
                 <exclude name="Services.properties"/>
@@ -221,7 +239,7 @@
             </fileset>
         </copy>
 
-        <copy todir="${amserver.built.res.dir}">
+        <copy todir="${amserver.built.res.dir}" filtering="true">
             <fileset dir="${amserver.config.res.dir}">
                 <include name="*.properties"/>
             </fileset>

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.55 2008-09-03 08:15:56 kevinserwin Exp $
+   $Id: build.xml,v 1.56 2008-09-04 16:40:51 kevinserwin Exp $
 
 -->
 
@@ -66,20 +66,8 @@
              dir="${amserver.base.dir}" 
              inheritRefs="true"/>
     </target>
-
-    <target name="war" depends="createwebxml">
-        <tstamp>
-            <format property="war.time.stamp" pattern="yyyy-MMMM-d hh:mm"/>
-        </tstamp>
-        <condition property="version.set" value="Enterprise 8.0 Build ${build.number.set}" >
-            <isset property="build.enterprise"/>
-        </condition>
-        <condition property="version.set" value="Express 8.0 Build ${build.number.set}" >
-            <isset property="build.express"/>
-        </condition>        
-        <!-- note that if version.date is set above, the following line is ignored -->
-        <property name="version.set" value="8.0"/>
-      
+    
+    <target name="war" depends="createwebxml">   
         <filter token="DATESTAMP" value="${war.time.stamp}"/>        
         <filter token="VERSION" value="${version.set}" />
         <copy file="${war.xml.dir}/template/sms/AMConfig.properties"

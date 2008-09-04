@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-tools.xml,v 1.18 2008-08-08 22:36:50 kevinserwin Exp $
+   $Id: build-tools.xml,v 1.19 2008-09-04 16:40:01 kevinserwin Exp $
 
 -->
 
@@ -72,6 +72,10 @@
     <property name="manifest.classes.dir" value="${manifest.built.dir}/classes"/>
     <property name="manifest.package.dir"
         value="${manifest.classes.dir}/${manifest.package.path}"/>    
+    <property name="patch.built.dir" value="${amserver.built.dir}/patch"/>
+    <property name="patch.classes.dir" value="${patch.built.dir}/classes"/>
+    <property name="patch.package.dir"
+        value="${patch.classes.dir}/${patch.package.path}"/>    
     
     <target name="prepareBuild">
         <mkdir dir="${amadm.res.dir}"/>
@@ -87,12 +91,21 @@
         <mkdir dir="${amadm.package.dir}"/>
         <mkdir dir="${manifest.classes.dir}"/>
         <mkdir dir="${manifest.package.dir}"/>        
+        <mkdir dir="${patch.classes.dir}"/>
+        <mkdir dir="${patch.package.dir}"/>        
     </target>
     <target name="makeJar" depends="prepareBuild">
         <copy todir="${amadm.package.dir}"
             overwrite="yes" encoding="UTF-8">
             <fileset dir="${amserver.built.dir}/classes/${amadm.package.path}"
                 includes="*"/>
+        </copy>
+     
+        <filter token="DATESTAMP" value="${war.time.stamp}"/>        
+        <filter token="VERSION" value="${version.set}" />            
+                
+        <copy todir="${amadm.package.dir}"
+            overwrite="yes" filtering="true">
             <fileset dir="${amserver.res.dir}/locale"
                 includes="amadmtoolssetup.properties"/>
         </copy>
@@ -118,6 +131,20 @@
                 </manifest>
             </jar>
     </target>
+    <target name="makePatchJar" depends="prepareBuild">
+            <copy todir="${patch.package.dir}"
+                overwrite="yes" encoding="UTF-8">
+                <fileset dir="${amserver.built.dir}/classes/${patch.package.path}"
+                    includes="**/*"/>
+            </copy>
+            <jar destfile="${amadm.lib.dir}/ssopatch.jar"
+                basedir="${patch.classes.dir}">
+                <manifest>
+                    <attribute name="Main-Class"
+                        value="com.sun.identity.tools.patch.Main"/>
+                </manifest>
+            </jar>
+    </target>        
     <target name="makeManifestJar" depends="prepareBuild">
             <copy todir="${manifest.package.dir}"
                 overwrite="yes" encoding="UTF-8">
@@ -132,7 +159,7 @@
                 </manifest>
             </jar>
     </target>        
-    <target name="copyNeededFiles" depends="makeJar, makeTuneJar, makeManifestJar">
+    <target name="copyNeededFiles" depends="makeJar, makeTuneJar, makeManifestJar,makePatchJar">
         <copy todir="${amadm.lib.dir}"
             overwrite="yes" flatten="yes" encoding="UTF-8">
             <fileset dir="${extlib.dir}"
