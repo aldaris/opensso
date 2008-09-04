@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMClientDetector.java,v 1.7 2008-06-25 05:41:27 qcheng Exp $
+ * $Id: AMClientDetector.java,v 1.8 2008-09-04 16:16:34 dillidorai Exp $
  *
  */
 
@@ -39,6 +39,7 @@ import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
 import java.security.AccessController;
 import java.util.Map;
+import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -201,6 +202,15 @@ public class AMClientDetector {
             clientManager = new DefaultClientTypesManager();
         }
         clientManager.initManager();
+        Set allClientTypes = clientManager.getAllClientTypes();
+        if (allClientTypes == null || allClientTypes.isEmpty()) {
+            if (debug.warningEnabled()) {
+                debug.warning("AMClientDetector.initClientManager():"
+                        + " no client types found, "
+                        + " setting detectionEnabled to false");
+            }
+            detectionEnabled = false;
+        }
 
         return;
     }
@@ -249,8 +259,15 @@ public class AMClientDetector {
             try {
                 defaultClientDetector = (ClientDetectionInterface) (Class
                         .forName(clientDetectionClass).newInstance());
-            } catch (Exception ex) {
-                debug.warning("AMClientDetector.executeClientDetector", ex);
+            } catch (ClassNotFoundException ex) {
+                debug.warning("AMClientDetector.executeClientDetector():"
+                        + " ClassNotFound: " + ex.getMessage());
+            } catch (InstantiationException ex) {
+                debug.warning("AMClientDetector.executeClientDetector():"
+                        + " not able to instantiate: " + clientDetectionClass);
+            } catch (IllegalAccessException ex) {
+                debug.warning("AMClientDetector.executeClientDetector():"
+                        + " IllegalAccessException: " + ex.getMessage());
             }
         }
     }

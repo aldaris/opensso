@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthClientUtils.java,v 1.21 2008-08-21 17:12:20 pawand Exp $
+ * $Id: AuthClientUtils.java,v 1.22 2008-09-04 16:16:34 dillidorai Exp $
  *
  */
 
@@ -835,6 +835,10 @@ public class AuthClientUtils {
      */
     private static String getProperty(String clientType, String property) {
 
+        if (clientDetector == null || !isClientDetectionEnabled()) {
+            return null;
+        }
+
         try {
             return (getClientInstance(clientType).getProperty(property));
         } catch (Exception ce) {
@@ -863,17 +867,24 @@ public class AuthClientUtils {
      * return the charset associated with the clientType
      */
     public static String getCharSet(String clientType,java.util.Locale locale) {
-        String charset = Client.CDM_DEFAULT_CHARSET;
-        try {
-            charset = getClientInstance(clientType).getCharset(locale);
-        } catch (Exception ce) {
-            utilDebug.warning("AuthClientUtils.getCharSet:Client data was "+
-                "not found, setting charset to UTF-8.");
-            charset = Constants.CONSOLE_UI_DEFAULT_CHARSET;
-        }
-        if (utilDebug.messageEnabled()) {
-            utilDebug.message("AuthClientUtils.getCharSet: Charset from"+
-                " Client is : " + charset);
+        String charset = Client.CDM_DEFAULT_CHARSET; // ISO-8859-1
+        if (isClientDetectionEnabled()) {
+            try {
+                charset = getClientInstance(clientType).getCharset(locale);
+            } catch (Exception ce) {
+                if (utilDebug.warningEnabled()) {
+                    utilDebug.warning("AuthClientUtils.getCharSet:"
+                        + " Client data was "
+                        + "not found, setting charset to UTF-8.");
+                }
+                charset = Constants.CONSOLE_UI_DEFAULT_CHARSET;
+            }
+            if (utilDebug.messageEnabled()) {
+                utilDebug.message("AuthClientUtils.getCharSet: Charset from"+
+                    " Client is : " + charset);
+            }
+        } else {
+            charset = Constants.CONSOLE_UI_DEFAULT_CHARSET; // UTF-8
         }
         return (charset);
     }

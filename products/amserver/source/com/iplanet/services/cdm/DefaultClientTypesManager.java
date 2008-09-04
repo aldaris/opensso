@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultClientTypesManager.java,v 1.3 2008-06-25 05:41:33 qcheng Exp $
+ * $Id: DefaultClientTypesManager.java,v 1.4 2008-09-04 16:16:34 dillidorai Exp $
  *
  */
 
@@ -150,13 +150,19 @@ public class DefaultClientTypesManager implements ClientTypesManager,
             try {
                 intCapInstance = AMClientCapData.getInternalInstance();
             } catch (AMClientCapException ce) {
-                debug.error(CLASS + "Unable to get instance of InternalData");
+                if (debug.warningEnabled()) {
+                    debug.warning(CLASS 
+                            + "Unable to get instance of InternalData");
+                }
             }
 
             try {
                 extCapInstance = AMClientCapData.getExternalInstance();
             } catch (AMClientCapException ce) {
-                debug.error(CLASS + "Unable to get instance of ExternalData");
+                if (debug.warningEnabled()) {
+                    debug.warning(CLASS 
+                        + "Unable to get instance of ExternalData");
+                }
             }
 
         } catch (Throwable t) {
@@ -181,10 +187,14 @@ public class DefaultClientTypesManager implements ClientTypesManager,
                 long st = System.currentTimeMillis();
 
                 // Load minimal client info for all internal clients
-                initMinimalInternalClientTypesData();
+                if (intCapInstance != null) {
+                    initMinimalInternalClientTypesData();
+                }
 
                 // Load minimal client info for all external clients
-                initMinimalExternalClientTypesData();
+                if (extCapInstance != null) {
+                    initMinimalExternalClientTypesData();
+                }
 
                 // Merge internal client data with the external client data
                 mergeInternalWithExternal();
@@ -198,8 +208,12 @@ public class DefaultClientTypesManager implements ClientTypesManager,
                             + (end - st));
                 }
 
-                intCapInstance.addListener(this); // register to internal
-                extCapInstance.addListener(this); // register to external
+                if (intCapInstance != null) {
+                    intCapInstance.addListener(this); // register to internal
+                }
+                if (extCapInstance != null) {
+                    extCapInstance.addListener(this); // register to external
+                }
             }
         }
     }
@@ -829,7 +843,9 @@ public class DefaultClientTypesManager implements ClientTypesManager,
 
         // If client was not loaded earlier then load from internal DB
         if (iMap == null) {
-            iMap = intCapInstance.getProperties(clientType);
+            if (intCapInstance != null) {
+                iMap = intCapInstance.getProperties(clientType);
+            }
             if (iMap == null) {
                 return null;
             }
@@ -851,7 +867,9 @@ public class DefaultClientTypesManager implements ClientTypesManager,
 
         // If client was not loaded earlier then load from external DB
         if (eMap == null) {
-            eMap = extCapInstance.getProperties(clientType);
+            if (extCapInstance != null) {
+                eMap = extCapInstance.getProperties(clientType);
+            }
             if (eMap == null) {
                 return null;
             }
