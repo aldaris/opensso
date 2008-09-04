@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMPropertySheet.java,v 1.9 2008-09-04 00:01:16 veiming Exp $
+ * $Id: AMPropertySheet.java,v 1.10 2008-09-04 23:59:36 veiming Exp $
  *
  */
 
@@ -345,8 +345,32 @@ public class AMPropertySheet
             CCAddRemoveModel m = (CCAddRemoveModel)model.getModel(name);
             if (Set.class.isInstance(values)) {
                 Set selectedSet = (Set)values;
-                m.setSelectedOptionList(AMViewBeanBase.createOptionList(
-                    selectedSet, amModel.getUserLocale()));
+                OptionList possibleOptions = model.getAddRemoveAvailOptions(name);
+                if (possibleOptions != null) {
+                    OptionList availOptions = new OptionList();
+                    
+                    if ((selectedSet != null) && !selectedSet.isEmpty()) {
+                        OptionList optList = new OptionList();
+                        for (Iterator i = selectedSet.iterator(); i.hasNext();) {
+                            String val = (String)i.next();
+                            optList.add(possibleOptions.getValueLabel(val), val);
+                        }
+                        m.setSelectedOptionList(optList);
+                    
+                        for (int i = 0; i < possibleOptions.size(); i++) {
+                            Option opt = possibleOptions.get(i);
+                            if (!selectedSet.contains(opt.getValue())) { 
+                                availOptions.add(opt);
+                            }
+                        }
+                        m.setAvailableOptionList(availOptions);
+                    } else {
+                        m.setAvailableOptionList(possibleOptions);
+                    }
+                } else {
+                    m.setSelectedOptionList(AMViewBeanBase.createOptionList(
+                        selectedSet, amModel.getUserLocale()));
+                }
             }
             set = true;
         }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMPropertySheetModel.java,v 1.6 2008-08-29 18:14:52 veiming Exp $
+ * $Id: AMPropertySheetModel.java,v 1.7 2008-09-04 23:59:36 veiming Exp $
  *
  */
 
@@ -32,6 +32,7 @@ import com.iplanet.jato.view.ContainerView;
 import com.iplanet.jato.view.ContainerViewBase;
 import com.iplanet.jato.view.View;
 import com.iplanet.jato.view.DisplayFieldImpl;
+import com.iplanet.jato.view.html.Option;
 import com.iplanet.jato.view.html.OptionList;
 import com.sun.identity.console.property.PropertyTemplate;
 import com.sun.identity.console.ui.model.CCMapListModel;
@@ -50,9 +51,12 @@ import com.sun.web.ui.model.CCPropertySheetModel;
 import com.sun.web.ui.model.CCEditableListModel;
 import com.sun.web.ui.view.addremove.CCAddRemove;
 import com.sun.web.ui.view.editablelist.CCEditableList;
+import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Date;
@@ -95,6 +99,7 @@ public class AMPropertySheetModel
     private Map radioDefaultValue;
     private Map childMap;
     private Set dateComponents;
+    private Map addRemoveOptions;
     private boolean hasSubConfigTable;
     public static final String ORDERED_LIST =
         "com.sun.identity.console.ui.taglib.CCOrderedListTag";
@@ -104,6 +109,8 @@ public class AMPropertySheetModel
         "com.sun.identity.console.ui.taglib.CCMapListTag";
     public static final String GLOBAL_MAP_LIST =
         "com.sun.identity.console.ui.taglib.CCGlobalMapListTag";
+    public static final String ADDREMOVE_LIST =
+        "com.sun.web.ui.taglib.addremove.CCAddRemoveTag";
     public static String passwordRandom;
 
     static {
@@ -149,6 +156,14 @@ public class AMPropertySheetModel
     }
 
     public void setDocument(InputStream is) {
+        try {
+            String strXML = toString(is);
+            strXML = extractAddRemoveOptions(strXML);
+            is = new ByteArrayInputStream(strXML.getBytes(UTF_8));
+        } catch (IOException e) {
+            AMModelBase.debug.error("AMPropertySheetModel.setDocument", e);
+        }
+        
         super.setDocument(is);
         passwordComponents = new HashSet();
         dateComponents = new HashSet();
@@ -273,7 +288,8 @@ public class AMPropertySheetModel
             }
         }
         if ((m != null) && CCEditableListModel.class.isInstance(m)) {
-            ((CCEditableListModel)m).setOptionList(AMAdminUtils.toSet(values));
+            ((CCEditableListModel) m).setOptionList(
+                AMAdminUtils.toSet(values));
         }
 
         if (passwordComponents.contains(name)) {
@@ -372,6 +388,9 @@ public class AMPropertySheetModel
                 m.setMsgInvalidNoKey(model.getLocalizedString(
                     "maplist.msg.invalid.nokey"));
                 setModel(name, m);
+            } else if (tagName.equals(ADDREMOVE_LIST)) {
+                CCAddRemoveModel m = new CCAddRemoveModel();
+                setModel(name, m);
             }
 
         }
@@ -447,5 +466,67 @@ public class AMPropertySheetModel
                 }
             }
         }
+    }
+    
+    private static String toString(InputStream is)
+        throws IOException {
+        BufferedReader rawReader = null;
+
+        String content = null;
+
+        try {
+            rawReader = new BufferedReader(new InputStreamReader(is));
+            StringBuffer buff = new StringBuffer();
+            String line = null;
+
+            while ((line = rawReader.readLine()) != null) {
+                buff.append(line);
+            }
+
+            rawReader.close();
+            rawReader = null;
+            content = buff.toString();
+        } finally {
+            if (rawReader != null) {
+                rawReader.close();
+            }
+        }
+        return content;
+    }
+
+    private String extractAddRemoveOptions(String strXML) {
+        int idx = strXML.indexOf(ADDREMOVE_LIST);
+        addRemoveOptions = new HashMap();
+        while (idx != -1) {
+            String name = getPropertyValue(strXML, idx, "name");
+            OptionList options = new OptionList();
+            idx = strXML.indexOf(">", idx);
+            int idx2 = strXML.indexOf("</cc>", idx);
+            
+            int idx3 = strXML.indexOf("<option ", idx);
+            while ((idx3 != -1) && (idx3 < idx2)) {
+                int idx4 = strXML.indexOf("/>", idx3);
+                String label = getPropertyValue(strXML, idx4, "label");
+                String value = getPropertyValue(strXML, idx4, "value");
+                options.add(label, value);
+                strXML = strXML.substring(0, idx3) + strXML.substring(idx4+2);
+                idx3 = strXML.indexOf("<option ", idx);
+                idx2 = strXML.indexOf("</cc>", idx);
+            }
+            
+            addRemoveOptions.put(name, options);
+            idx = strXML.indexOf(ADDREMOVE_LIST, idx2);
+        }
+        return strXML;
+    }
+    
+    private String getPropertyValue(String xml, int idx, String name) {
+        int idx1 = xml.lastIndexOf(name+"=\"", idx);
+        int idx2 = xml.indexOf("\"", idx1 + name.length()+3);
+        return xml.substring(idx1+name.length()+2, idx2);
+    }
+    
+    public OptionList getAddRemoveAvailOptions(String name) {
+        return (OptionList)addRemoveOptions.get(name);
     }
 } 

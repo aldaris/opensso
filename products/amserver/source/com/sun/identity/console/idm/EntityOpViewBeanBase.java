@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityOpViewBeanBase.java,v 1.3 2008-06-25 05:42:59 qcheng Exp $
+ * $Id: EntityOpViewBeanBase.java,v 1.4 2008-09-04 23:59:37 veiming Exp $
  *
  */
 
@@ -55,6 +55,7 @@ public abstract class EntityOpViewBeanBase
 
     public static final String ENTITY_NAME = "tfEntityName";
     public static final String ENTITY_TYPE = "entityTypeName";
+    public static final String ENTITY_AGENT_TYPE = "entityAgentType";
     public static final String ENTITY_TYPE_NAME = "tfEntityTypeName";
 
     protected CCPageTitleModel ptModel;
@@ -108,10 +109,12 @@ public abstract class EntityOpViewBeanBase
         EntitiesModel model = (EntitiesModel)getModel();
         String realmName = (String)getPageSessionAttribute(
             AMAdminConstants.CURRENT_REALM);
-
+        String agentType = (String)getPageSessionAttribute(
+            ENTITY_AGENT_TYPE);
         try {
             psModel = new AMPropertySheetModel(
-                model.getPropertyXMLString(realmName, type, isCreateViewBean(),
+                model.getPropertyXMLString(realmName, type, 
+                agentType, isCreateViewBean(),
                 getClass().getName()));
         } catch (AMConsoleException e) {
             psModel = handleNoAttributeToDisplay(e);

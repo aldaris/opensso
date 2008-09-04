@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PropertyXMLBuilderBase.java,v 1.12 2008-08-25 22:21:36 veiming Exp $
+ * $Id: PropertyXMLBuilderBase.java,v 1.13 2008-09-04 23:59:38 veiming Exp $
  *
  */
 
@@ -80,6 +80,7 @@ public abstract class PropertyXMLBuilderBase
 
         mapUITypeToName.put(AttributeSchema.UIType.BUTTON, "button");
         mapUITypeToName.put(AttributeSchema.UIType.LINK, "link");
+        mapUITypeToName.put(AttributeSchema.UIType.ADDREMOVELIST, "addremove");
         mapUITypeToName.put(AttributeSchema.UIType.NAME_VALUE_LIST,
             "namevaluelist");
         mapUITypeToName.put(AttributeSchema.UIType.RADIO, "radio");
@@ -127,7 +128,7 @@ public abstract class PropertyXMLBuilderBase
 
         if (uitype != null) {
             String val = (String)mapUITypeToName.get(uitype);
-            try {
+                try {
                 tagClassName = properties.getString(val);
             } catch (MissingResourceException e) {
                 // do nothing
@@ -437,8 +438,15 @@ public abstract class PropertyXMLBuilderBase
             boolean mapList = tagClassName.equals(TAGNAME_MAP_LIST);
             boolean globalMapList = tagClassName.equals(
                 TAGNAME_GLOBAL_MAP_LIST);
+            
+            AttributeSchema.Type type = as.getType();
+            AttributeSchema.UIType uitype = as.getUIType();
+            boolean addremovelist = 
+                type.equals(AttributeSchema.Type.MULTIPLE_CHOICE) &&
+                (uitype != null) &&
+                uitype.equals(AttributeSchema.UIType.ADDREMOVELIST);
             boolean listTyped = editableList || orderedList || unorderedList ||
-                mapList || globalMapList;
+                mapList || globalMapList || addremovelist;
             
             if (listTyped) {
                 /*
@@ -456,87 +464,100 @@ public abstract class PropertyXMLBuilderBase
 
             addLabel(as, xml, serviceBundle);
 
-            //need to handle link specially.
-            if (tagClassName.equals(TAGNAME_BUTTON)) {
-                String editString = model.getLocalizedString("label.edit");
-                Object[] pLink = {"'" + name + "'", editString};
-                xml.append(MessageFormat.format(
-                    COMPONENT_BUTTON_START_TAG, pLink));
-            } else if (tagClassName.equals(TAGNAME_HREF)) {
-                String editString = model.getLocalizedString("label.edit");
-                Object[] pLink = {
-                    PropertyTemplate.PARAM_ATTR_NAME + "=" + name +
-                    "&amp;" + PropertyTemplate.PARAM_PROPERTIES_VIEW_BEAN_URL +
-                        "=" + as.getPropertiesViewBeanURL(),
-                    "linkLabel" + name,
-                    editString};
-                xml.append(MessageFormat.format(
-                    COMPONENT_LINK_START_TAG, pLink));
-            } else if (tagClassName.equals(TAGNAME_CHECKBOX)) {
-                Object[] param = {name, tagClassName,
-                    model.getLocalizedString("label.Enable")};
-                xml.append(MessageFormat.format( 
-                    COMPONENT_BOOLEAN_START_TAG, param));
-            } else if (listTyped) {
-                /* 
-                * putting the editable list component wihin a group tag
-                * to help isolate the list box and text box together on the
-                * page. Otherwise the list component blends in with other
-                * components on the page.
-                */
-                Object[] param = { 
-                    name, 
-                    model.getLocalizedString("label.current.value"),
-                    model.getLocalizedString("label.new.value")
-                };
-                
+
+            if (addremovelist) {
                 xml.append(GROUP_START_TAG).append(PROPERTY_START_TAG);
-                
-                if (editableList) {
-                    xml.append(MessageFormat.format(
-                        COMPONENT_EDITABLE_LIST_START_TAG, param));
-                } else if (orderedList) {
-                    xml.append(MessageFormat.format(
-                        COMPONENT_ORDERED_LIST_START_TAG, param));
-                } else if (unorderedList) {
-                    xml.append(MessageFormat.format(
-                        COMPONENT_UNORDERED_LIST_START_TAG, param));
-                } else if (mapList) {
-                    xml.append(MessageFormat.format(
-                        COMPONENT_MAP_LIST_START_TAG, param));
-                } else if (globalMapList) {
-                    xml.append(MessageFormat.format(
-                        COMPONENT_GLOBAL_MAP_LIST_START_TAG, param));
-                }
+                appendAddRemoveListComponent(as, xml, serviceBundle);
+                addremovelist = true;
             } else {
-                Object[] param = {name, tagClassName};
-                xml.append(MessageFormat.format(COMPONENT_START_TAG, param));
+                //need to handle link specially.
+                if (tagClassName.equals(TAGNAME_BUTTON)) {
+                    String editString = model.getLocalizedString("label.edit");
+                    Object[] pLink = {"'" + name + "'", editString};
+                    xml.append(MessageFormat.format(
+                        COMPONENT_BUTTON_START_TAG, pLink));
+                } else if (tagClassName.equals(TAGNAME_HREF)) {
+                    String editString = model.getLocalizedString("label.edit");
+                    Object[] pLink = {
+                        PropertyTemplate.PARAM_ATTR_NAME + "=" + name +
+                        "&amp;" + 
+                        PropertyTemplate.PARAM_PROPERTIES_VIEW_BEAN_URL +
+                        "=" + as.getPropertiesViewBeanURL(),
+                        "linkLabel" + name,
+                        editString
+                    };
+                    xml.append(MessageFormat.format(
+                        COMPONENT_LINK_START_TAG, pLink));
+                } else if (tagClassName.equals(TAGNAME_CHECKBOX)) {
+                    Object[] param = {name, tagClassName,
+                        model.getLocalizedString("label.Enable")
+                    };
+                    xml.append(MessageFormat.format(
+                        COMPONENT_BOOLEAN_START_TAG, param));
+                } else if (listTyped) {
+                    /* 
+                     * putting the editable list component wihin a group tag
+                     * to help isolate the list box and text box together on the
+                     * page. Otherwise the list component blends in with other
+                     * components on the page.
+                     */
+                    Object[] param = {
+                        name,
+                        model.getLocalizedString("label.current.value"),
+                        model.getLocalizedString("label.new.value")
+                    };
 
-                /*
-                * if its a textarea component add the no localize attribute
-                * set the size of the text field based on its syntax
-                */
-                if (tagClassName.equals(TAGNAME_TEXTFIELD)) {
-                    Object[] pSize = { getStringFieldSize(as) };
-                    xml.append(MessageFormat.format(TEXTBOX_SIZE_TAG, pSize));
-                    xml.append(NON_LOCALIZED_FIELD);
-                    xml.append(NO_AUTO_SUBMIT);
-                } else if (tagClassName.equals(TAGNAME_TEXTAREA)) {
-                    xml.append(NON_LOCALIZED_FIELD);
-                } else if (tagClassName.equals(TAGNAME_PASSWORD)) {
-                    xml.append(NO_AUTO_SUBMIT);
+                    xml.append(GROUP_START_TAG).append(PROPERTY_START_TAG);
+
+                    if (editableList) {
+                        xml.append(MessageFormat.format(
+                            COMPONENT_EDITABLE_LIST_START_TAG, param));
+                    } else if (orderedList) {
+                        xml.append(MessageFormat.format(
+                            COMPONENT_ORDERED_LIST_START_TAG, param));
+                    } else if (unorderedList) {
+                        xml.append(MessageFormat.format(
+                            COMPONENT_UNORDERED_LIST_START_TAG, param));
+                    } else if (mapList) {
+                        xml.append(MessageFormat.format(
+                            COMPONENT_MAP_LIST_START_TAG, param));
+                    } else if (globalMapList) {
+                        xml.append(MessageFormat.format(
+                            COMPONENT_GLOBAL_MAP_LIST_START_TAG, param));
+                    }
+                } else {
+                    Object[] param = {name, tagClassName};
+                    xml.append(MessageFormat.format(COMPONENT_START_TAG,param));
+
+                    /*
+                     * if its a textarea component add the no localize attribute
+                     * set the size of the text field based on its syntax
+                     */
+                    if (tagClassName.equals(TAGNAME_TEXTFIELD)) {
+                        Object[] pSize = {getStringFieldSize(as)};
+                        xml.append(MessageFormat.format(TEXTBOX_SIZE_TAG, 
+                            pSize));
+                        xml.append(NON_LOCALIZED_FIELD);
+                        xml.append(NO_AUTO_SUBMIT);
+                    } else if (tagClassName.equals(TAGNAME_TEXTAREA)) {
+                        xml.append(NON_LOCALIZED_FIELD);
+                    } else if (tagClassName.equals(TAGNAME_PASSWORD)) {
+                        xml.append(NO_AUTO_SUBMIT);
+                    }
+
+                    appendChoiceValues(as, xml, model, serviceBundle);
                 }
 
-                appendChoiceValues(as, xml, model, serviceBundle);
+                xml.append(COMPONENT_END_TAG);
             }
 
-            xml.append(COMPONENT_END_TAG);
-
-            AttributeSchema.Type type = as.getType();
             if (type.equals(AttributeSchema.Type.MULTIPLE_CHOICE)) {
-                appendMultipleChoiceCheckboxes(as, xml, serviceBundle);
+                if ((uitype == null) ||
+                    !uitype.equals(AttributeSchema.UIType.ADDREMOVELIST)) {
+                    appendMultipleChoiceCheckboxes(as, xml, serviceBundle);
+                }
             }
-
+            
             appendDateMarker(as, xml);
             getInlineHelp(as, xml, serviceBundle);
 
@@ -738,6 +759,24 @@ public abstract class PropertyXMLBuilderBase
             xml.append(MessageFormat.format(DYN_GUI_MULTIPLE_LIST_CHECKBOX_XML,
                 params));
         }
+    }
+    
+    private void appendAddRemoveListComponent(
+        AttributeSchema as,
+        StringBuffer xml,
+        ResourceBundle serviceBundle) {
+        Map map = new HashMap();
+        Set sorted = getSortedChoiceValues(as, map, serviceBundle);
+        String name = as.getName();
+        Object[] nameArg = {name};
+        xml.append(MessageFormat.format(ADD_REMOVE_COMPONENT_XML, nameArg));
+        
+        for (Iterator iter = sorted.iterator(); iter.hasNext(); ) {
+            String localizedName = (String)iter.next();
+            Object[] params = {localizedName, (String)map.get(localizedName)};
+            xml.append(MessageFormat.format(OPTION_TAG, params));
+        }
+        xml.append(COMPONENT_END_TAG);
     }
 
     public static String getMultipleChoiceCheck(

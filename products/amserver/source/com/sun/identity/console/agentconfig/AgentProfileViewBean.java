@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProfileViewBean.java,v 1.10 2008-06-25 05:42:44 qcheng Exp $
+ * $Id: AgentProfileViewBean.java,v 1.11 2008-09-04 23:59:36 veiming Exp $
  *
  */
 
@@ -150,11 +150,13 @@ public abstract class AgentProfileViewBean
                     AgentsViewBean.LOCAL_OR_NOT);
             if (checkAgentType(type)) {
                 inheritedPropertyNames = (!isGroup && !is2dot2Agent() &&
+                    !isAgentAuthenticator() &&
                     !choice.equals(AgentsViewBean.PROP_LOCAL)) ?
                         model.getInheritedPropertyNames(curRealm, universalId) :
                         Collections.EMPTY_SET;
             } else {
-                inheritedPropertyNames = (!isGroup && !is2dot2Agent()) ?
+                inheritedPropertyNames = (!isGroup && !is2dot2Agent() &&
+                    !isAgentAuthenticator()) ?
                     model.getInheritedPropertyNames(curRealm, universalId) :
                     Collections.EMPTY_SET;
             }
@@ -255,11 +257,15 @@ public abstract class AgentProfileViewBean
                     AgentsViewBean.LOCAL_OR_NOT);
             if (checkAgentType(agentType)) {
                 if (choice != null && !choice.equals(AgentsViewBean.PROP_LOCAL)
-                && !isGroup && !is2dot2Agent() && isFirstTab()) {
+                    && !isGroup && !is2dot2Agent()  && !isAgentAuthenticator() 
+                    &&  isFirstTab()
+                ) {
                     setProperty(model, agentType, universalId);
                 }
             } else {
-                if ( !isGroup && !is2dot2Agent() && isFirstTab()) {
+                if (!isGroup && !is2dot2Agent() && !isAgentAuthenticator() && 
+                    isFirstTab()
+                ) {
                     setProperty(model, agentType, universalId);
                 }
             }
@@ -341,7 +347,8 @@ public abstract class AgentProfileViewBean
         try {
             Map values = getFormValues();
             if (checkAgentType(type)) {
-                if (!isGroup && !is2dot2Agent() && choice != null && 
+                if (!isGroup && !is2dot2Agent() && !isAgentAuthenticator() &&
+                        (choice != null) && 
                         !choice.equals(AgentsViewBean.PROP_LOCAL)) {
                     for (Iterator i = inheritedPropertyNames.iterator();
                         i.hasNext(); ) {
@@ -349,7 +356,7 @@ public abstract class AgentProfileViewBean
                     }
                 }
             } else {
-                if (!isGroup && !is2dot2Agent()) {
+                if (!isGroup && !is2dot2Agent() && !isAgentAuthenticator()) {
                     for (Iterator i = inheritedPropertyNames.iterator();
                         i.hasNext(); ) {
                         values.remove(i.next());
@@ -362,8 +369,8 @@ public abstract class AgentProfileViewBean
                 AMAdminConstants.CURRENT_REALM);
             
             if (checkAgentType(type)) {
-                if (!isGroup && !is2dot2Agent() && isFirstTab() 
-                    && choice != null && 
+                if (!isGroup && !is2dot2Agent() && isFirstTab() &&
+                    !isAgentAuthenticator() && (choice != null) && 
                     !choice.equals(AgentsViewBean.PROP_LOCAL)) {
                     String agentGroup = getDisplayFieldStringValue(
                         CHILD_AGENT_GROUP);
@@ -378,7 +385,9 @@ public abstract class AgentProfileViewBean
                     }
                 }
             } else {
-                if (!isGroup && !is2dot2Agent() && isFirstTab()) {
+                if (!isGroup && !is2dot2Agent() && !isAgentAuthenticator() &&
+                    isFirstTab()
+                ) {
                     String agentGroup = getDisplayFieldStringValue(
                         CHILD_AGENT_GROUP);
                     bRefresh =model.setGroup(curRealm, universalId, agentGroup);
@@ -486,6 +495,12 @@ public abstract class AgentProfileViewBean
     protected boolean is2dot2Agent() {
         String agentType = getAgentType();
         return agentType.equals(AgentConfiguration.AGENT_TYPE_2_DOT_2_AGENT);
+    }
+
+    protected boolean isAgentAuthenticator() {
+        String agentType = getAgentType();
+        return (agentType != null) &&
+            agentType.equals(AgentConfiguration.AGENT_TYPE_AGENT_AUTHENTICATOR);
     }
     
     protected boolean checkAgentType(String type) {

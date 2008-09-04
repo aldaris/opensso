@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeSchema.java,v 1.11 2008-08-30 05:45:59 goodearth Exp $
+ * $Id: AttributeSchema.java,v 1.12 2008-09-04 23:59:38 veiming Exp $
  *
  */
 
@@ -1088,6 +1088,13 @@ public class AttributeSchema {
          */
         public static final UIType GLOBALMAPLIST = new UIType("globalmaplist");
         
+        /**
+         * The <code>ADDREMOVELIST</code> attribute type specifies that the
+         * multiple choice attribute should be display as add remove list
+         * widget.
+         */
+        public static final UIType ADDREMOVELIST = new UIType("addremovelist");
+
         private String attrType;
 
         private UIType() {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PropertyTemplate.java,v 1.3 2008-08-13 18:01:10 veiming Exp $
+ * $Id: PropertyTemplate.java,v 1.4 2008-09-04 23:59:37 veiming Exp $
  *
  */
 
@@ -144,6 +144,9 @@ public interface PropertyTemplate {
     String DYN_GUI_MULTIPLE_LIST_CHECKBOX_XML =
         "<cc name=\"__DYN_GUI_MULTIPLE_LIST_CHECKBOX_{0}_{1}\" tagclass=\"com.sun.web.ui.taglib.html.CCCheckBoxTag\"><attribute name=\"label\" value=\"{2}\" /></cc><cc name=\"multiplelistsep\" tagclass=\"com.sun.web.ui.taglib.html.CCStaticTextFieldTag\"><attribute name=\"defaultValue\" value=\"&lt;br>\" /><attribute name=\"escape\" value=\"false\"/></cc>";
 
+    String ADD_REMOVE_COMPONENT_XML = 
+        "<cc name=\"{0}\" tagclass=\"com.sun.web.ui.taglib.addremove.CCAddRemoveTag\">" +
+        "<attribute name=\"showMoveUpDownButtons\" value=\"false\" /><attribute name=\"labelLocation\" value=\"LABEL_ABOVE\" />";
     String SUB_CONFIG_TABLE_VIEW_BEAN = "<viewBean>";
     String SUB_CONFIG_TABLE_XML =
         "<section name=\"subconfig\" defaultValue=\"subconfig.section.header\"><property span=\"true\"><cc name=\"tblSubConfig\" tagclass=\"com.sun.web.ui.taglib.table.CCActionTableTag\"><attribute name=\"title\" value=\"services.subconfig.table.title\" /><attribute name=\"empty\" value=\"services.subconfig.table.empty.message\" /><attribute name=\"showPaginationControls\" value=\"false\" /><attribute name=\"selectionType\" value=\"multiple\" /><attribute name=\"showAdvancedSortingIcon\" value=\"false\" /><attribute name=\"showLowerActions\" value=\"false\" /><attribute name=\"showPaginationControls\" value=\"false\" /><attribute name=\"showPaginationIcon\" value=\"false\" /><attribute name=\"showSelectionIcons\" value=\"true\" /><attribute name=\"showSelectionSortIcon\" value=\"false\" /><attribute name=\"showSortingRow\" value=\"true\" /><attribute name=\"selectionJavascript\" value=\"toggleTblButtonState('" + SUB_CONFIG_TABLE_VIEW_BEAN + "', '" + SUB_CONFIG_TABLE_VIEW_BEAN + ".tblSubConfig', 'tblButton', '" + SUB_CONFIG_TABLE_VIEW_BEAN + ".tblSubConfigButtonDelete', this)\" /></cc></property></section>";

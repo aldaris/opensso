@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitiesModel.java,v 1.4 2008-06-25 05:43:00 qcheng Exp $
+ * $Id: EntitiesModel.java,v 1.5 2008-09-04 23:59:37 veiming Exp $
  *
  */
 
@@ -30,7 +30,6 @@ package com.sun.identity.console.idm.model;
 
 import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.base.model.AMConsoleException;
-import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdSearchResults;
 import com.sun.identity.idm.IdType;
 import java.util.Map;
@@ -43,7 +42,8 @@ public interface EntitiesModel
 {
     String TF_NAME = "tfName";
     String TF_TYPE = "tfType";
-
+    String AGENT_ROOT_URL = "agentRootURL=";
+    
     /**
      * Agent profile, device key value attribute name.
      */
@@ -67,6 +67,7 @@ public interface EntitiesModel
      *
      * @param realmName Name of Realm.
      * @param idType Type of Entity.
+     * @param agentType mainly for agent type.
      * @param bCreate <code>true</code> for creation operation.
      * @param viewbeanClassName Class Name of View Bean.
      * @return property sheet XML for Entity Profile.
@@ -75,6 +76,7 @@ public interface EntitiesModel
     String getPropertyXMLString(
         String realmName,
         String idType,
+        String agentType,
         boolean bCreate,
         String viewbeanClassName
     ) throws AMConsoleException;
@@ -83,10 +85,14 @@ public interface EntitiesModel
      * Returns defauls values for an Entity Type.
      *
      * @param idType Type of Entity.
+     * @param agentType mainly for agent type.
      * @param bCreate true for Creation page.
      * @throws AMConsoleException if default values cannot be obtained.
      */
-    Map getDefaultAttributeValues(String idType, boolean bCreate)
+    Map getDefaultAttributeValues(
+        String idType,
+        String agentType,
+        boolean bCreate)
         throws AMConsoleException;
 
     /**
@@ -391,9 +397,10 @@ public interface EntitiesModel
      * Returns service name of a given ID type.
      *
      * @param idType ID Type.
+     * @param agentType Agent Type.
      * @return service name of a given ID type.
      */
-    String getServiceNameForIdType(String idType);
+    String getServiceNameForIdType(String idType, String agentType);
 
     /**
      * Set end user flag.

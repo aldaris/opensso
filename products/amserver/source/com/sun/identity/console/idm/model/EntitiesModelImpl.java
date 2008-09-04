@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitiesModelImpl.java,v 1.11 2008-08-15 01:07:17 veiming Exp $
+ * $Id: EntitiesModelImpl.java,v 1.12 2008-09-04 23:59:37 veiming Exp $
  *
  */
 
@@ -41,8 +41,10 @@ import com.sun.identity.console.delegation.model.DelegationConfig;
 import com.sun.identity.console.property.PropertyTemplate;
 import com.sun.identity.console.property.PropertyXMLBuilder;
 import com.sun.identity.common.CaseInsensitiveHashMap;
+import com.sun.identity.common.configuration.AgentConfiguration;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;
+import com.sun.identity.idm.IdConstants;
 import com.sun.identity.idm.IdOperation;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdSearchResults;
@@ -228,8 +230,23 @@ public class EntitiesModelImpl
             tempMap.putAll(amid.getAttributes());
             validateUserStatusEntry(tempMap);
             Map values = new HashMap();
+      
+            String agentType = null;
+            boolean webJ2EEagent = false;
+            Set agentTypes = amid.getAttribute("AgentType");
+            if ((agentTypes != null) && !agentTypes.isEmpty()) {
+                agentType = (String)agentTypes.iterator().next();
+                
+                webJ2EEagent = 
+                    agentType.equals(AgentConfiguration.AGENT_TYPE_J2EE) ||
+                    agentType.equals(AgentConfiguration.AGENT_TYPE_WEB) ||
+                    agentType.equals(
+                        AgentConfiguration.AGENT_TYPE_AGENT_AUTHENTICATOR);
+            }
+      
+          
             Set attributeSchemas = getAttributeSchemas(
-                amid.getType().getName(), bCreate);
+                amid.getType().getName(), agentType, bCreate);
             Set attributeNames = new HashSet();
 
             for (Iterator iter = attributeSchemas.iterator(); iter.hasNext(); ){
@@ -237,8 +254,21 @@ public class EntitiesModelImpl
                 String name = as.getName();
                 if (!tempMap.containsKey(name)) {
                     values.put(name, Collections.EMPTY_SET);
-                } else {                
-                    values.put(name, tempMap.get(name));
+                } else {
+                    if (webJ2EEagent && name.equals(AGENT_ATTRIBUTE_LIST)) {
+                        Set newValues = new HashSet();
+                        Set temp = (Set)tempMap.get(name);
+                        for (Iterator i = temp.iterator(); i.hasNext();) {
+                            String val = (String) i.next();
+                            if (val.startsWith(AGENT_ROOT_URL)) {
+                                val = val.substring(AGENT_ROOT_URL.length());
+                            }
+                            newValues.add(val);
+                        }
+                        values.put(name, newValues);
+                    } else {
+                        values.put(name, tempMap.get(name));
+                    }
                 }
                 attributeNames.add(name);
             }
@@ -275,6 +305,7 @@ public class EntitiesModelImpl
      *
      * @param realmName Name of Realm.
      * @param idType Type of Entity.
+     * @param agentType agent type.
      * @param bCreate <code>true</code> for creation operation.
      * @param viewbeanClassName Class Name of View Bean.
      * @return property sheet XML for Entity Profile.
@@ -282,14 +313,16 @@ public class EntitiesModelImpl
     public String getPropertyXMLString(
         String realmName,
         String idType,
+        String agentType,
         boolean bCreate,
         String viewbeanClassName
     ) throws AMConsoleException {
         setLocationDN(realmName);
         String xml = null;
         try {
-            Set attributeSchemas = getAttributeSchemas(idType, bCreate);
-            String serviceName = getSvcNameForIdType(idType);
+            Set attributeSchemas = getAttributeSchemas(idType, agentType, 
+                bCreate);
+            String serviceName = getSvcNameForIdType(idType, agentType);
             if (serviceName != null) {
                 PropertyXMLBuilder builder = new PropertyXMLBuilder(
                     serviceName, this, attributeSchemas);
@@ -369,13 +402,18 @@ public class EntitiesModelImpl
      * Returns defauls values for an Entity Type.
      *
      * @param idType Type of Entity.
+     * @param agentType mainly for agent type
      * @param bCreate true for creation page.
      * @throws AMConsoleException if default values cannot be obtained.
      */
-    public Map getDefaultAttributeValues(String idType, boolean bCreate)
-        throws AMConsoleException {
+    public Map getDefaultAttributeValues(
+        String idType, 
+        String agentType,
+        boolean bCreate
+    ) throws AMConsoleException {
         try {
-            Set attributeSchemas = getAttributeSchemas(idType, bCreate);
+            Set attributeSchemas =getAttributeSchemas(
+                idType, agentType, bCreate);
             Map values = new HashMap(attributeSchemas.size() *2);
 
             for (Iterator i = attributeSchemas.iterator(); i.hasNext(); ) {
@@ -402,15 +440,22 @@ public class EntitiesModelImpl
         }
     }
 
-    private Set getAttributeSchemas(String idType, boolean bCreate)
-        throws SMSException, SSOException, IdRepoException {
+    private Set getAttributeSchemas(
+        String idType, 
+        String agentType, 
+        boolean bCreate
+    ) throws SMSException, SSOException, IdRepoException {
         Set attributeSchemas = null;
-        String serviceName = getSvcNameForIdType(idType);
+        String serviceName = getSvcNameForIdType(idType, agentType);
         if (serviceName != null) {
+            boolean bAgentType = (agentType != null) && 
+                (agentType.length() > 0);
             ServiceSchemaManager svcSchemaMgr = new ServiceSchemaManager(
                 serviceName, getUserSSOToken());
 
-            ServiceSchema svcSchema = svcSchemaMgr.getSchema(idType);
+            ServiceSchema svcSchema = (bAgentType) ?
+                svcSchemaMgr.getOrganizationSchema().getSubSchema(agentType) :
+                svcSchemaMgr.getSchema(idType);
             if (svcSchema != null) {
                 attributeSchemas = svcSchema.getAttributeSchemas();
             } else {
@@ -447,7 +492,17 @@ public class EntitiesModelImpl
                 beforeDisplay(idType, attributeSchemas);
             } else {
                 String[] show = {"display", "adminDisplay" };
-                PropertyXMLBuilder.filterAttributes(attributeSchemas, show);
+                if (!bAgentType) {
+                    PropertyXMLBuilder.filterAttributes(attributeSchemas, show);
+                } else {
+                    for (Iterator i = attributeSchemas.iterator(); i.hasNext();) {
+                        AttributeSchema as = (AttributeSchema) i.next();
+                        AttributeSchema.Type type = as.getType();
+                        if (type.equals(AttributeSchema.Type.VALIDATOR)) {
+                            i.remove();
+                        }
+                    }
+                }
             }
         }
 
@@ -573,14 +628,16 @@ public class EntitiesModelImpl
     public void modifyEntity(String realmName, String universalId, Map values) 
         throws AMConsoleException {
         if ((values != null) && !values.isEmpty()) {
-            validateAttributes(values);
             String attrNames = AMAdminUtils.getString(
                 values.keySet(), ",", false);
-            String[] param = {universalId, attrNames};
+
             try {
-                logEvent("ATTEMPT_MODIFY_IDENTITY_ATTRIBUTE_VALUE", param);
                 AMIdentity amid = IdUtils.getIdentity(
                     getUserSSOToken(), universalId);
+
+                validateAttributes(amid, values);
+                String[] param = {universalId, attrNames};
+                logEvent("ATTEMPT_MODIFY_IDENTITY_ATTRIBUTE_VALUE", param);
                 String entityName = amid.getName();
                 String idType = amid.getType().getName();
 
@@ -639,6 +696,42 @@ public class EntitiesModelImpl
         }
     }
 
+    private void validateAttributes(AMIdentity amid, Map values)
+        throws AMConsoleException {
+        String agentType = null;
+        boolean webJ2EEagent = false;
+        try {
+            Set agentTypes = amid.getAttribute("AgentType");
+            if ((agentTypes != null) && !agentTypes.isEmpty()) {
+                agentType = (String) agentTypes.iterator().next();
+                webJ2EEagent =
+                    agentType.equals(AgentConfiguration.AGENT_TYPE_J2EE) ||
+                    agentType.equals(AgentConfiguration.AGENT_TYPE_WEB) ||
+                    agentType.equals(
+                    AgentConfiguration.AGENT_TYPE_AGENT_AUTHENTICATOR);
+            }
+            if (webJ2EEagent) {
+                for (Iterator iter = values.keySet().iterator(); iter.hasNext();) {
+                    String attrName = (String) iter.next();
+                    if (attrName.equals(AGENT_ATTRIBUTE_LIST)) {
+                        Set newValues = new HashSet();
+                        Set temp = (Set) values.get(AGENT_ATTRIBUTE_LIST);
+                        for (Iterator i = temp.iterator(); i.hasNext();) {
+                            String val = AGENT_ROOT_URL + (String) i.next();
+                            newValues.add(val);
+                        }
+                        values.put(AGENT_ATTRIBUTE_LIST, newValues);
+                    }
+                }
+            }
+        } catch (IdRepoException e) {
+            throw new AMConsoleException(e);
+        } catch (SSOException e) {
+            throw new AMConsoleException(e);
+        }
+        validateAttributes(values);
+    }
+    
     private void validateAttributes(Map values)
         throws AMConsoleException {
         for (Iterator iter = values.keySet().iterator(); iter.hasNext(); ) {
@@ -824,22 +917,26 @@ public class EntitiesModelImpl
      * Returns service name of a given ID type.
      *
      * @param idType ID Type.
+     * @param agentType Agent Type.
      * @return service name of a given ID type.
      */
-    public String getServiceNameForIdType(String idType) {
+    public String getServiceNameForIdType(String idType, String agentType) {
         String serviceName = null;
 
         try {
-            serviceName = getSvcNameForIdType(idType);
+            serviceName = getSvcNameForIdType(idType, agentType);
         } catch (IdRepoException e) {
             debug.warning("EntitiesModelImpl.getServiceNameForIdType", e);
         }
         return serviceName;
     }
 
-    private String getSvcNameForIdType(String idType)
+    private String getSvcNameForIdType(String idType, String agentType)
         throws IdRepoException {
-        String serviceName = IdUtils.getServiceName(IdUtils.getType(idType));
+        String serviceName = ((agentType != null) && (agentType.length() > 0)) ?
+            IdConstants.AGENT_SERVICE :
+            IdUtils.getServiceName(IdUtils.getType(idType));
+
         if ((serviceName == null) || (serviceName.trim().length() == 0)) {
             if (ServiceManager.isCoexistenceMode()) {
                 BackwardCompSupport support = BackwardCompSupport.getInstance();

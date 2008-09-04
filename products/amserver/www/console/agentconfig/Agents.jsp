@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Agents.jsp,v 1.9 2008-09-04 00:05:17 asyhuang Exp $
+   $Id: Agents.jsp,v 1.10 2008-09-04 23:59:38 veiming Exp $
 
 --%>
 
@@ -50,7 +50,7 @@
         frm.submit();
     }
 </script>
-<div id="main" style="position: absolute; margin: 0; border: none; padding: 0; width:auto; height:101%">
+<div id="main" style="position: absolute; margin: 0; border: none; padding: 0; width:100%; height:101%">
 
 <cc:form name="Agents" method="post" defaultCommandChild="/btnSearch">
 <jato:hidden name="szCache" />

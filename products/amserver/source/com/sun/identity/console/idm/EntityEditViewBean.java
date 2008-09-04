@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityEditViewBean.java,v 1.7 2008-08-15 01:07:17 veiming Exp $
+ * $Id: EntityEditViewBean.java,v 1.8 2008-09-04 23:59:37 veiming Exp $
  *
  */ 
         
@@ -144,7 +144,10 @@ public class EntityEditViewBean
     protected void checkForAttributesToDisplay(String type) {
         if (this.getClass().equals(EntityEditViewBean.class)) {
             EntitiesModel model = (EntitiesModel)getModel();
-            String serviceName = model.getServiceNameForIdType(type);
+            String agentType = (String)getPageSessionAttribute(
+                ENTITY_AGENT_TYPE);
+            String serviceName = model.getServiceNameForIdType(type, 
+                agentType);
             hasNoAttributeToDisplay =
                 (serviceName == null) || (serviceName.trim().length() == 0);
         }

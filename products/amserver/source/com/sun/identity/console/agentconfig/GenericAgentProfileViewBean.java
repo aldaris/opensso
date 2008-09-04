@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GenericAgentProfileViewBean.java,v 1.12 2008-06-25 05:42:44 qcheng Exp $
+ * $Id: GenericAgentProfileViewBean.java,v 1.13 2008-09-04 23:59:36 veiming Exp $
  *
  */
 
@@ -62,6 +62,7 @@ public class GenericAgentProfileViewBean
     static final String TAB_PREFIX = "4600";
     static final int TAB_GENERAL_ID = 4600;
     static final int TAB_GROUP_ID = 4601;
+    private static final String AGENT_ROOT_URL = "agentRootURL=";
 
     private Set attributeSchemas;
     
@@ -115,7 +116,8 @@ public class GenericAgentProfileViewBean
                     agentType, isGroup, true, tabName, model);
             } else {
                 blder = new AgentPropertyXMLBuilder(
-                    agentType, isGroup, is2dot2Agent(), tabName, model);
+                    agentType, isGroup, 
+                    is2dot2Agent() || isAgentAuthenticator(), tabName, model);
             }
             attributeSchemas = blder.getAttributeSchemas();
             return new AMPropertySheetModel(blder.getXML(
@@ -147,6 +149,7 @@ public class GenericAgentProfileViewBean
                     // the identity is a group.
                     Map attrValues = model.getAttributeValues(curRealm,
                         universalId, !isGroup);
+                    removeAgentRootURLKey(attrValues);
                     propertySheetModel.clear();
                     AMPropertySheet prop = (AMPropertySheet)getChild(
                         PROPERTY_ATTRIBUTE);
@@ -166,7 +169,9 @@ public class GenericAgentProfileViewBean
     protected Map getFormValues()
         throws AMConsoleException, ModelControlException {
         AMPropertySheet prop = (AMPropertySheet)getChild(PROPERTY_ATTRIBUTE);
-        return prop.getAttributeValues(getPropertyNames());
+        Map values = prop.getAttributeValues(getPropertyNames());
+        addAgentRootURLKey(values);
+        return values;
     }
     
     protected HashSet getPropertyNames() {
@@ -218,8 +223,8 @@ public class GenericAgentProfileViewBean
     public boolean beginBtnInheritDisplay(ChildDisplayEvent event) {
         String choice = (String)getPageSessionAttribute(
                 AgentsViewBean.LOCAL_OR_NOT);
-        return super.beginBtnInheritDisplay(event) && !is2dot2Agent() 
-            && !isLocalConfig(getAgentType());
+        return super.beginBtnInheritDisplay(event) && !is2dot2Agent() && 
+            !isAgentAuthenticator() && !isLocalConfig(getAgentType());
     }
 
      /**
@@ -303,4 +308,42 @@ public class GenericAgentProfileViewBean
         return (String)getPageSessionAttribute(
             AgentsViewBean.PG_SESSION_SUPERCEDE_AGENT_TYPE);
     }
+
+    private void removeAgentRootURLKey(Map map) {
+        String type = getAgentType();
+        if (!checkAgentType(type) && !isAgentAuthenticator()) {
+            return;
+        }
+        
+        Set values = (Set)map.get(AgentsViewBean.DEVICE_KEY);
+        if ((values != null) && !values.isEmpty()) {
+            Set newValues = new HashSet();
+            for (Iterator i = values.iterator(); i.hasNext(); )  {
+                String val = (String)i.next();
+                if (val.startsWith(AGENT_ROOT_URL)) {
+                    val = val.substring(AGENT_ROOT_URL.length());
+                }
+                newValues.add(val);
+            }
+            map.put(AgentsViewBean.DEVICE_KEY, newValues);
+        }
+    }
+
+    private void addAgentRootURLKey(Map map) {
+        String type = getAgentType();
+        if (!checkAgentType(type) && !isAgentAuthenticator()) {
+            return;
+        }
+
+        Set values = (Set)map.get(AgentsViewBean.DEVICE_KEY);
+        if ((values != null) && !values.isEmpty()) {
+            Set newValues = new HashSet();
+            for (Iterator i = values.iterator(); i.hasNext(); )  {
+                String val = AGENT_ROOT_URL + (String)i.next();
+                newValues.add(val);
+            }
+            map.put(AgentsViewBean.DEVICE_KEY, newValues);
+        }
+    }
+
 }

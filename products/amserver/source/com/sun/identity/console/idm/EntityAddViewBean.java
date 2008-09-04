@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityAddViewBean.java,v 1.3 2008-06-25 05:42:58 qcheng Exp $
+ * $Id: EntityAddViewBean.java,v 1.4 2008-09-04 23:59:37 veiming Exp $
  *
  */
 
@@ -108,7 +108,9 @@ public class EntityAddViewBean
     {
         if (!submitCycle && (propertySheetModel != null)) {
             EntitiesModel model = (EntitiesModel)getModel();
-            Map defaultValues = model.getDefaultAttributeValues(type, true);
+            // null for agent type
+            Map defaultValues = model.getDefaultAttributeValues(
+                type, null, true);
 
             for (Iterator i = defaultValues.keySet().iterator(); i.hasNext();) {
                 String name = (String)i.next();
@@ -137,8 +139,9 @@ public class EntityAddViewBean
         entityName = entityName.trim();
 
         try {
+            // null for agent type
             Map defaultValues = model.getDefaultAttributeValues(
-                entityType, true);
+                entityType, null, true);
             Map values = prop.getAttributeValues(defaultValues.keySet());
             String realmName = (String)getPageSessionAttribute(
                 AMAdminConstants.CURRENT_REALM);

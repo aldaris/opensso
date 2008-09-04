@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EndUserViewBean.java,v 1.3 2008-06-25 05:42:58 qcheng Exp $
+ * $Id: EndUserViewBean.java,v 1.4 2008-09-04 23:59:36 veiming Exp $
  *
  */
 
@@ -32,6 +32,7 @@ import com.iplanet.jato.model.ModelControlException;
 import com.iplanet.jato.RequestContext;
 import com.iplanet.jato.RequestManager;
 import com.iplanet.jato.view.event.DisplayEvent;
+import com.iplanet.sso.SSOException;
 import com.sun.identity.console.base.AuthenticatedViewBean;
 import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.idm.model.EntitiesModel;
@@ -40,6 +41,7 @@ import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdUtils;
 import com.sun.web.ui.model.CCPageTitleModel;
+import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 public class EndUserViewBean
@@ -77,9 +79,20 @@ public class EndUserViewBean
                 setPageSessionAttribute(EntityOpViewBeanBase.ENTITY_NAME,
                     amid.getName());
                 setPageSessionAttribute(EntityOpViewBeanBase.ENTITY_TYPE,
-                    amid.getType().getName());
+                        amid.getType().getName());
+                 Set agentTypes = amid.getAttribute("AgentType");
+                if ((agentTypes != null) && !agentTypes.isEmpty()) {
+                    setPageSessionAttribute(
+                        EntityOpViewBeanBase.ENTITY_AGENT_TYPE,
+                        (String)agentTypes.iterator().next());
+                }               
                 super.forwardTo(rc);
             } catch (IdRepoException e) {
+                AuthenticatedViewBean vb = (AuthenticatedViewBean)
+                    getViewBean(AuthenticatedViewBean.class);
+                passPgSessionMap(vb);
+                vb.forwardTo(rc);
+            } catch (SSOException e) {
                 AuthenticatedViewBean vb = (AuthenticatedViewBean)
                     getViewBean(AuthenticatedViewBean.class);
                 passPgSessionMap(vb);

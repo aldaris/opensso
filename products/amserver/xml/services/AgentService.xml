@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.68 2008-09-04 02:35:43 goodearth Exp $
+   $Id: AgentService.xml,v 1.69 2008-09-04 23:59:39 veiming Exp $
 
 -->
 
@@ -50,7 +50,7 @@
                     <AttributeSchema name="sunIdentityServerDeviceKeyValue"
                         type="list"
                         syntax="string"
-                        i18nKey="a501">
+                        i18nKey="a601">
                     </AttributeSchema>
                     <AttributeSchema name="sunIdentityServerDeviceStatus"
                         type="single_choice"
@@ -1036,7 +1036,7 @@
                      <AttributeSchema name="sunIdentityServerDeviceKeyValue"
                         type="list"
                         syntax="string"
-                        i18nKey="a501">
+                        i18nKey="a601">
                      </AttributeSchema>
                      <AttributeSchema name="sunIdentityServerDeviceStatus"
                          type="single_choice"
@@ -3510,7 +3510,7 @@
                     <AttributeSchema name="sunIdentityServerDeviceKeyValue"
                         type="list"
                         syntax="string"
-                        i18nKey="a501">
+                        i18nKey="a601">
                     </AttributeSchema>
                     <AttributeSchema name="sunIdentityServerDeviceStatus"
                         type="single_choice"
@@ -3533,21 +3533,20 @@
                         </DefaultValues>
                     </AttributeSchema>                
                     <AttributeSchema name="AgentsAllowedToRead"
-                    type="multiple_choice"
-                    syntax="string"
-                    i18nKey="a600">
-                    <ChoiceValues>
-                        <ChoiceValuesClassName
-                            className=
-                "com.sun.identity.policy.plugins.AllowedAgents" />
-                    </ChoiceValues>
-                    <DefaultValues>
-                        <Value>wsc</Value>
-                        <Value>wsp</Value>
-                        <Value>SecurityTokenService</Value>
-                        <Value>SunSTS</Value>
-                    </DefaultValues>
-                </AttributeSchema>
+                        type="multiple_choice"
+                        syntax="string"
+                        uitype="addremovelist"
+                        i18nKey="a600">
+                        <ChoiceValues>
+                        <ChoiceValuesClassName className="com.sun.identity.policy.plugins.AllowedAgents" />
+                        </ChoiceValues>
+                        <DefaultValues>
+                            <Value>wsc</Value>
+                            <Value>wsp</Value>
+                            <Value>SecurityTokenService</Value>
+                            <Value>SunSTS</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
                 </SubSchema>
             </Organization>
         </Schema>
