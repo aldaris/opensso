@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.38 2008-08-30 05:48:41 goodearth Exp $
+ * $Id: AgentsRepo.java,v 1.39 2008-09-04 21:24:40 goodearth Exp $
  *
  */
 
@@ -402,25 +402,29 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                     // Return the attributes for the given agent under 
                     // default group.
                     ServiceConfig orgConfig = getOrgConfig(token);
-                    agentsAttrMap = getAgentAttrs(orgConfig, name);
+                    agentsAttrMap = getAgentAttrs(orgConfig, name, type);
                 } else if (type.equals(IdType.AGENTGROUP)) {
-                    ServiceConfig agentGroupConfig = getAgentGroupConfig(token);
+                    ServiceConfig agentGroupConfig = 
+                        getAgentGroupConfig(token);
                     // Return the attributes of agent under specified group.
-                    agentsAttrMap = getAgentAttrs(agentGroupConfig, name);
+                    agentsAttrMap = 
+                        getAgentAttrs(agentGroupConfig, name, type);
                 } else if (type.equals(IdType.AGENT)) {
                     // By default return the union of agents under
                     // default group and the agent group.
                     ServiceConfig orgConfig = getOrgConfig(token);
-                    agentsAttrMap = getAgentAttrs(orgConfig, name);
+                    agentsAttrMap = getAgentAttrs(orgConfig, name, type);
 
                     String groupName = getGroupName(orgConfig, name);
                     if ((groupName != null) &&
                         (groupName.trim().length() > 0)) {
-                        ServiceConfig agentGroupConfig = getAgentGroupConfig(token);
+                        ServiceConfig agentGroupConfig = 
+                            getAgentGroupConfig(token);
                         Map agentGroupMap = getAgentAttrs(agentGroupConfig, 
-                            groupName);
+                            groupName, type);
 
-                        if ((agentsAttrMap != null) && (agentGroupMap != null)){
+                        if ((agentsAttrMap != null) && 
+                            (agentGroupMap != null)) {
                             agentGroupMap.putAll(agentsAttrMap);
                             agentsAttrMap = agentGroupMap;
                         }
@@ -428,14 +432,18 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                 }
                 return agentsAttrMap;
             } catch (SMSException e) {
-                debug.error("AgentsRepo.getAttributes(): Unable to read agent"
-                    + " attributes ", e);
+                if (debug.warningEnabled()) {
+                    debug.warning("AgentsRepo.getAttributes(): Unable to "+
+                        "read/get agent attributes SMSException.", e);
+                }
                 Object args[] = { NAME };
                 throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "200", 
                     args);
             } catch (IdRepoException idpe) {
-                debug.error("AgentsRepo.getAttributes(): Unable to read agent"
-                    + " attributes ", idpe);
+                if (debug.warningEnabled()) {
+                    debug.warning("AgentsRepo.getAttributes(): Unable to "+
+                        "read/get agent attributes IdRepoException.", idpe);
+                }
                 Object args[] = { NAME };
                 throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "200", 
                     args);
@@ -447,7 +455,8 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
     }
 
 
-    private Map getAgentAttrs(ServiceConfig svcConfig, String agentName)
+    private Map getAgentAttrs(ServiceConfig svcConfig, String agentName, 
+        IdType type)
         throws IdRepoException, SSOException {
 
         if (debug.messageEnabled()) {
@@ -463,6 +472,11 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                 Set vals = new HashSet(2);
                 vals.add(aCfg.getSchemaID());
                 answer.put(IdConstants.AGENT_TYPE, vals);
+            } else {
+                // Agent not found, throw an exception
+                Object args[] = { agentName, type.getName() };
+                throw (new IdRepoException(IdRepoBundle.BUNDLE_NAME,
+                        "223", args));
             }
         } catch (SMSException sme) {
             debug.error("AgentsRepo.getAgentAttrs(): "
