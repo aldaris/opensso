@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XMLUtils.java,v 1.8 2008-06-25 05:53:08 qcheng Exp $
+ * $Id: XMLUtils.java,v 1.9 2008-09-04 23:49:28 exu Exp $
  *
  */
 
@@ -663,30 +663,14 @@ public class XMLUtils {
     }
 
     /**
-     * Print a Node tree recursively.
+     * Print a Node tree recursively using UTF-8 encoding.
      * 
      * @param node
      *            A DOM tree Node
      * @return An xml String representation of the DOM tree.
      */
     public static String print(Node node) {
-        if (node == null) {
-            return null;
-        }
-
-        try {
-            TransformerFactory tFactory = TransformerFactory.newInstance();
-            Transformer transformer = tFactory.newTransformer();
-            transformer.setOutputProperty("omit-xml-declaration", "yes");
-            DOMSource source = new DOMSource(node);
-            ByteArrayOutputStream os = new ByteArrayOutputStream(2000);
-            StreamResult result = new StreamResult(os);
-            transformer.transform(source, result);
-            return os.toString();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        return print(node, "UTF-8");
     }
     
     /**
@@ -705,6 +689,7 @@ public class XMLUtils {
                 TransformerFactory.newInstance();
             Transformer transformer = tFactory.newTransformer();
             transformer.setOutputProperty("omit-xml-declaration", "yes");
+            transformer.setOutputProperty("encoding", encoding);
             DOMSource source = new DOMSource(node);
             ByteArrayOutputStream os = new ByteArrayOutputStream(2000);
             StreamResult result = new StreamResult(os);
