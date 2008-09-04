@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: IdRepoJAXRPCObjectImpl.java,v 1.3 2008-08-29 01:34:55 arviranga Exp $
+* $Id: IdRepoJAXRPCObjectImpl.java,v 1.4 2008-09-04 05:25:57 ericow Exp $
 */
 
 package com.sun.identity.idm.server;
@@ -33,8 +33,6 @@ import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -90,11 +88,11 @@ public abstract class IdRepoJAXRPCObjectImpl implements DirectoryManagerIF {
     protected static final String IDREPO_SERVICE = "IdRepoServiceIF";
     
     // Cache of modifications for last 30 minutes & notification URLs
-    protected static int cacheSize = 30;
+    protected static int cacheSize = -1;
         
     static LinkedList idrepoCacheIndices = new LinkedList();
         
-    static HashMap idrepoCache = new HashMap(cacheSize);
+    static HashMap idrepoCache = null;
     
     protected static HashMap idRepoNotificationURLs = new HashMap();
     
@@ -103,13 +101,8 @@ public abstract class IdRepoJAXRPCObjectImpl implements DirectoryManagerIF {
     
     protected static String serverPort;
     
-    /**
-     * Initializes this class with system properties.
-     * Called only by getSSOToken() method. Hence all other methods
-     * must call either getSSOToken() or initialize() directly.
-     */
-    protected void initialize_idrepo() {
-        if (idServices != null) {
+    protected static void initialize_cacheSize() {
+        if (cacheSize > -1) {
             return;
         }
         
@@ -122,12 +115,28 @@ public abstract class IdRepoJAXRPCObjectImpl implements DirectoryManagerIF {
                 cacheSize = 30;
             }
         } catch(NumberFormatException e) {
-            //do nothing
+            cacheSize = 30;
         }
         if (idRepoDebug.messageEnabled()) {
             idRepoDebug.message("IdRepoJAXRPCObjectImpl.static " +
                 "EventNotification cache size is set to " + cacheSize);
         }
+    }
+
+    private static void initialize_cache() {
+        initialize_cacheSize();
+        if (idrepoCache == null && cacheSize > 0) {
+            idrepoCache = new HashMap(cacheSize);
+        }
+    }
+
+    /**
+     * Initializes this class with system properties.
+     * Called only by getSSOToken() method. Hence all other methods
+     * must call either getSSOToken() or initialize() directly.
+     */
+    protected static void initialize_idrepo() {
+        initialize_cache();
 
         // Construct serverURL
         serverPort = SystemProperties.get(Constants.AM_SERVER_PORT);
@@ -637,16 +646,13 @@ public abstract class IdRepoJAXRPCObjectImpl implements DirectoryManagerIF {
     public Set objectsChanged_idrepo(int time) throws RemoteException {
         Set answer = new HashSet();
         // Get the cache index for times upto time+2
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        // Add 1 minute to offset, the initial lookup
-        calendar.add(Calendar.MINUTE, 1);
+        initialize_cache();
+        long cacheIndex = System.currentTimeMillis() / 60000;
         for (int i = 0; i < time + 3; i++) {
-            calendar.add(Calendar.MINUTE, -1);
-            String cacheIndex = calendarToString(calendar);
-            Set modDNs = (Set) idrepoCache.get(cacheIndex);
+            Set modDNs = (Set)idrepoCache.get(Long.toString(cacheIndex));
             if (modDNs != null)
                 answer.addAll(modDNs);
+            cacheIndex--;
         }
         if (idRepoDebug.messageEnabled()) {
             idRepoDebug.message("IdRepoJAXRPCObjectImpl.objectsChanged " +
@@ -695,6 +701,7 @@ public abstract class IdRepoJAXRPCObjectImpl implements DirectoryManagerIF {
                 + "method processing method: " + method + " name: " + name +
                 " type: " + type + " attrName: " + attrNames);
         }
+        initialize_cache();
         // Return if cache size is 0 or there are no remote clients
         if ((cacheSize == 0) && idRepoNotificationURLs.isEmpty()) {
             if (idRepoDebug.messageEnabled()) {
@@ -734,20 +741,15 @@ public abstract class IdRepoJAXRPCObjectImpl implements DirectoryManagerIF {
         // Update cache for polling by remote clients
         if (cacheSize > 0) {
             // Obtain the cache index
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(new Date());
-            String cacheIndex = calendarToString(calendar);
-            Set modDNs = (Set) idrepoCache.get(cacheIndex);
+            long currentTime = System.currentTimeMillis() / 60000;
+            String cacheIndex = Long.toString(currentTime);
+            Set modDNs = (Set)idrepoCache.get(cacheIndex);
             if (modDNs == null) {
                 modDNs = new HashSet();
                 idrepoCache.put(cacheIndex, modDNs);
                 // Maintain cacheIndex
                 idrepoCacheIndices.addFirst(cacheIndex);
-                if (idrepoCacheIndices.size() > cacheSize) {
-                    String removedIndex = (String)
-                        idrepoCacheIndices.removeLast();
-                    idrepoCache.remove(removedIndex);
-                }
+                cleanupCache(idrepoCacheIndices, idrepoCache, currentTime);
             }
 
             
@@ -798,20 +800,32 @@ public abstract class IdRepoJAXRPCObjectImpl implements DirectoryManagerIF {
         }
     }
     
-    protected static String calendarToString(Calendar calendar) {
-        // Get year, month, date, hour and minute
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int date = calendar.get(Calendar.DATE);
-        int hour = calendar.get(Calendar.HOUR);
-        int minute = calendar.get(Calendar.MINUTE);
-        StringBuffer sb = new StringBuffer(200);
-        sb.append(serverURL);
-        sb.append(":").append(year).append(month).append(date);
-        sb.append(hour).append(minute);
-        return (sb.toString());
+    protected static void cleanupCache(LinkedList cIndices, HashMap thisCache,
+            long currentTime) {
+
+        // remove the last cache entries
+        if (cIndices.size() > cacheSize) {
+            String removedIndex = (String)cIndices.removeLast();
+            thisCache.remove(removedIndex);
+            if (idRepoDebug.messageEnabled()) {
+                idRepoDebug.message("IdRepoJAXRPCObjectImpl:cleanupCache last "
+                        + removedIndex);
+            }
+        }
+
+        // remove expired cache entries
+        long lastIndex = Long.parseLong((String)cIndices.getLast());
+        while ((currentTime - cacheSize) > lastIndex) {
+            String removedIndex = (String)cIndices.removeLast();
+            thisCache.remove(removedIndex);
+            if (idRepoDebug.messageEnabled()) {
+                idRepoDebug.message("IdRepoJAXRPCObjectImpl:cleanupCache expired "
+                        + removedIndex);
+            }
+            lastIndex = Long.parseLong((String)cIndices.getLast());
+        }
     }
-    
+ 
     private Map IdSearchResultsToMap(IdSearchResults res) {
         // TODO ..check if the Map gets properly populated and sent.
         Map answer = new HashMap();

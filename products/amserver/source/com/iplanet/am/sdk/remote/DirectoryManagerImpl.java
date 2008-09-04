@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryManagerImpl.java,v 1.18 2008-07-11 01:46:23 arviranga Exp $
+ * $Id: DirectoryManagerImpl.java,v 1.19 2008-09-04 05:24:53 ericow Exp $
  *
  */
 
@@ -32,8 +32,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.security.AccessController;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -83,7 +81,7 @@ public class DirectoryManagerImpl extends IdRepoJAXRPCObjectImpl implements
     // Cache of modifications for last 30 minutes & notification URLs    
     static LinkedList cacheIndices = new LinkedList();
         
-    static HashMap cache = new HashMap(30);
+    static HashMap cache = null;
         
     static HashMap notificationURLs = new HashMap();
     
@@ -91,6 +89,16 @@ public class DirectoryManagerImpl extends IdRepoJAXRPCObjectImpl implements
         // Empty constructor
     }
     
+    private static void initialize_cache() {
+        initialize_cacheSize();
+        if (cache == null && cacheSize > 0) {
+            if (debug.messageEnabled()) {
+                debug.message("DirectoryManagerImpl::initialize_cache EventNotification cache size is set to " + cacheSize);
+            }
+            cache = new HashMap(cacheSize);
+        }
+    }
+
     protected void initialize() throws RemoteException {
         super.initialize_idrepo();
         if (initialized) {
@@ -925,18 +933,15 @@ public class DirectoryManagerImpl extends IdRepoJAXRPCObjectImpl implements
         // Since clients tend to request for objects changed
         // donot initialize which might thrown an excpetion
         // initialize();
+        initialize_cache();
         Set answer = new HashSet();
         // Get the cache index for times upto time+2
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        // Add 1 minute to offset, the initial lookup
-        calendar.add(Calendar.MINUTE, 1);
+        long cacheIndex = System.currentTimeMillis() / 60000;
         for (int i = 0; i < time + 3; i++) {
-            calendar.add(Calendar.MINUTE, -1);
-            String cacheIndex = calendarToString(calendar);
-            Set modDNs = (Set) cache.get(cacheIndex);
+            Set modDNs = (Set)cache.get(Long.toString(cacheIndex));
             if (modDNs != null)
                 answer.addAll(modDNs);
+            cacheIndex--;
         }
         if (debug.messageEnabled()) {
             debug.message("DirectoryManagerImpl:objectsChanged in time: "
@@ -996,21 +1001,18 @@ public class DirectoryManagerImpl extends IdRepoJAXRPCObjectImpl implements
         
         debug.message("DirectoryManagerImpl.processEntryChaged method "
                 + "processing");
+        initialize_cache();
         
         // Obtain the cache index
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        String cacheIndex = calendarToString(calendar);
+        long currentTime = System.currentTimeMillis() / 60000;
+        String cacheIndex = Long.toString(currentTime);
         Set modDNs = (Set) cache.get(cacheIndex);
         if (modDNs == null) {
             modDNs = new HashSet();
             cache.put(cacheIndex, modDNs);
             // Maintain cacheIndex
             cacheIndices.addFirst(cacheIndex);
-            if (cacheIndices.size() > cacheSize) {
-                String removedIndex = (String) cacheIndices.removeLast();
-                cache.remove(removedIndex);
-            }
+            cleanupCache(cacheIndices, cache, currentTime);
         }
         
         // Construct the XML document for the event change
