@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsViewBean.java,v 1.12 2008-08-28 16:50:26 veiming Exp $
+ * $Id: AgentsViewBean.java,v 1.13 2008-09-04 23:18:43 veiming Exp $
  *
  */
 
@@ -217,6 +217,7 @@ public class AgentsViewBean
     protected void registerChildren() {
         super.registerChildren();
         registerChild(TF_FILTER, CCTextField.class);
+        registerChild(TF_GROUP_FILTER, CCTextField.class);
         registerChild(BTN_SEARCH, CCButton.class);
         registerChild(PARENTAGE_PATH, CCBreadCrumbs.class);
         registerChild(PARENTAGE_PATH_HREF, HREF.class);
@@ -679,7 +680,15 @@ public class AgentsViewBean
             szCache.setValue(null);
         }
     }
-
+    /**
+     * Handles search request.
+     *
+     * @param event Request Invocation Event.
+     */
+    public void handleBtnGroupSearchRequest(RequestInvocationEvent event) {
+        forwardTo();
+    }
+    
     /**
      * Handles search request.
      *
