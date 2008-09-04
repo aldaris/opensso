@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.90 2008-09-04 00:34:00 rajeevangal Exp $
+ * $Id: AMSetupServlet.java,v 1.91 2008-09-04 02:37:27 goodearth Exp $
  *
  */
 
@@ -1946,7 +1946,7 @@ public class AMSetupServlet extends HttpServlet {
         Map configAgentAuth = new HashMap();
         configAgentAuth.put("AgentType","SharedAgent");
         configAgentAuth.put("sunIdentityServerDeviceStatus","Active");
-        configAgentAuth.put("com.sun.identity.agents.config.profiles.allowed.to.read",
+        configAgentAuth.put("AgentsAllowedToRead",
             "wsc,wsp,SecurityTokenService,SunSTS");
         createAgent(token, idrepo, "agentAuth", "changeit", 
             "Agent_Authenticator", "", configAgentAuth);

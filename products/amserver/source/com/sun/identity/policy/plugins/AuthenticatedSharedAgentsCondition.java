@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticatedSharedAgentsCondition.java,v 1.1 2008-08-26 23:53:19 goodearth Exp $
+ * $Id: AuthenticatedSharedAgentsCondition.java,v 1.2 2008-09-04 02:38:46 goodearth Exp $
  *
  */
 
@@ -82,8 +82,7 @@ public class AuthenticatedSharedAgentsCondition implements Condition,
 
     private static final String version = "1.0";
 
-    private static final String attributeToRead = 
-        "com.sun.identity.agents.config.profiles.allowed.to.read";
+    private static final String attributeToRead = "AgentsAllowedToRead";
 
     private static final String agentserviceName = IdConstants.AGENT_SERVICE;
 
@@ -284,13 +283,19 @@ public class AuthenticatedSharedAgentsCondition implements Condition,
                 Set agentsFromEnv = new HashSet();
                 SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                     AdminTokenAction.getInstance());
+                ServiceConfig orgConfig = getOrgConfig(adminToken, realmName);
 
                 String[] retVal = split(resourceName);
+                if ((retVal[0].equalsIgnoreCase("agent") &&
+                    retVal[1].equalsIgnoreCase("agent")) ||
+                    (retVal[0].equalsIgnoreCase("agentonly") &&
+                     retVal[1].equalsIgnoreCase("agentonly"))) {
+                    agentsFromEnv.add(retVal[0]);
+                }
+
                 if ((!retVal[0].equalsIgnoreCase("agent")) &&
                     (!retVal[0].equalsIgnoreCase("agentonly"))) {
 
-                    ServiceConfig orgConfig = getOrgConfig(adminToken, 
-                        realmName);
                     if (retVal[0].equalsIgnoreCase(sharedAgentName)) {
                         Map envMap = getAttributes(orgConfig, retVal[0]);
                         agentsFromEnv = (Set) envMap.get(attributeToRead);
@@ -302,32 +307,31 @@ public class AuthenticatedSharedAgentsCondition implements Condition,
                             "getConditionDecision: agentsFromEnv: " +
                             agentsFromEnv + "retVal[0] "+retVal[0]);
                     }
-                    // Check in cache
-                    if ((sharedAgentsCache != null) &&
-                        (sharedAgentsCache.containsKey(sharedAgentUnivId))) {
-                        Set agentsfromCache = 
-                            (Set) sharedAgentsCache.get(sharedAgentUnivId);
-
-                        allowed = getPermission(agentsFromEnv,agentsfromCache); 
-                        return new ConditionDecision(allowed);
-                    }
-
-                    // If not in cache.
-                    // Return the attributes for the given agent under
-                    // default group.
-                    Map agentsAttrMap = getAttributes(orgConfig, 
-                        sharedAgentName);
-                    Set agentsToRead = (Set) agentsAttrMap.get(attributeToRead);
-                    if (debug.messageEnabled()) {
-                        debug.message("AuthenticatedSharedAgentsCondition." +
-                            "getConditionDecision: agentsToRead: " +
-                            agentsToRead);
-                    }
-
-                    allowed = getPermission(agentsFromEnv, agentsToRead); 
-                    // Update the cache.
-                    updateCache(sharedAgentUnivId, agentsToRead);
                 }
+                // Check in cache
+                if ((sharedAgentsCache != null) &&
+                    (sharedAgentsCache.containsKey(sharedAgentUnivId))) {
+                    Set agentsfromCache = 
+                        (Set) sharedAgentsCache.get(sharedAgentUnivId);
+
+                    allowed = getPermission(agentsFromEnv,agentsfromCache); 
+                    return new ConditionDecision(allowed);
+                }
+
+                // If not in cache.
+                // Return the attributes for the given agent under
+                // default group.
+                Map agentsAttrMap = getAttributes(orgConfig, sharedAgentName);
+                Set agentsToRead = (Set) agentsAttrMap.get(attributeToRead);
+                if (debug.messageEnabled()) {
+                    debug.message("AuthenticatedSharedAgentsCondition." +
+                        "getConditionDecision: agentsToRead: " +
+                            agentsToRead);
+                }
+
+                allowed = getPermission(agentsFromEnv, agentsToRead); 
+                // Update the cache.
+                updateCache(sharedAgentUnivId, agentsToRead);
             } catch (IdRepoException idpe) {
                 debug.error("AuthenticatedSharedAgentsCondition."+
                     "getConditionDecision(): Unable to read agent"+
