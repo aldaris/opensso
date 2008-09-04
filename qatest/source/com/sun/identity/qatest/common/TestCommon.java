@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.60 2008-08-28 17:32:24 nithyas Exp $
+ * $Id: TestCommon.java,v 1.61 2008-09-04 19:39:05 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -364,6 +364,56 @@ public class TestCommon implements TestConstants {
         return (list);
     }
     
+    /**
+     * Converts native session id  string to opensso specific url safe char66
+     * encoded string.
+     * This is not a general purpose utility.
+     * This is meant only for internal use
+     *
+     * @param sidString plain text string
+     * @return url safe modifed char66 encoded string
+     *
+     * @see #c66DecodeCookieString(String)
+     *
+     * Sample session id string:
+     * AQIC5wM2LY4SfcxPEcjVKCEI7QdmYvlOZvKZpdEErxVPvx8=@AAJTSQACMDE=#
+     *
+     * We would replace
+     * + with -
+     * / with _
+     * = with .
+     * @ with star
+     * # with star
+     *
+     * while reconstucting the original cookie value first occurence of
+     * star would be replaced with @ and the subsequent occurunce star would
+     * be replaced with #
+     */
+    protected String c66EncodeSidString(String sidString) {
+        if (sidString == null || sidString.length() == 0) {
+            return sidString;
+        }
+        int length = sidString.length();
+        char[] chars = new char[length];
+        for (int i = 0; i < length; i++) {
+            char c = sidString.charAt(i);
+            if (c == '+') {
+                chars[i] = '-';
+            } else if (c == '/') {
+                chars[i] = '_';
+            } else if (c == '=') {
+                chars[i] = '.';
+            } else if (c == '@') {
+                chars[i] = '*';
+            } else if (c == '#') {
+                chars[i] = '*';
+            } else {
+                chars[i] = c;
+            }
+        }
+        return new String(chars);
+    }
+
     /**
      * Login to admin console using htmlunit
      */
