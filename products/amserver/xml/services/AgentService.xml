@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.67 2008-08-30 01:44:17 huacui Exp $
+   $Id: AgentService.xml,v 1.68 2008-09-04 02:35:43 goodearth Exp $
 
 -->
 
@@ -3532,10 +3532,21 @@
                             <Value>com.sun.identity.sm.RequiredValueValidator</Value>
                         </DefaultValues>
                     </AttributeSchema>                
-                    <AttributeSchema name="com.sun.identity.agents.config.profiles.allowed.to.read"
-                    type="list"
+                    <AttributeSchema name="AgentsAllowedToRead"
+                    type="multiple_choice"
                     syntax="string"
                     i18nKey="a600">
+                    <ChoiceValues>
+                        <ChoiceValuesClassName
+                            className=
+                "com.sun.identity.policy.plugins.AllowedAgents" />
+                    </ChoiceValues>
+                    <DefaultValues>
+                        <Value>wsc</Value>
+                        <Value>wsp</Value>
+                        <Value>SecurityTokenService</Value>
+                        <Value>SunSTS</Value>
+                    </DefaultValues>
                 </AttributeSchema>
                 </SubSchema>
             </Organization>
