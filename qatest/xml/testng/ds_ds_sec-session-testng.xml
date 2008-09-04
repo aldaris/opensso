@@ -20,12 +20,23 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ds_ds_sec-session-testng.xml,v 1.3 2008-04-19 01:25:43 srivenigan Exp $: 
+ $Id: ds_ds_sec-session-testng.xml,v 1.4 2008-09-04 16:34:41 rmisra Exp $: 
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
 <suite name="ds_ds_sec-session" verbose="1">
+    <test name="Session Property Change Notification">
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.session.ConfigUnconfig"/>
+            <class name="com.sun.identity.qatest.session.PropertyChangeNotification"/>
+        </classes>
+    </test>
     <test name="SessionConstraints Global">
        <parameter name="inheritancelevel" value="Global"/>
         <groups>
