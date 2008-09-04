@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Logger.java,v 1.10 2008-08-19 19:09:12 veiming Exp $
+ * $Id: Logger.java,v 1.11 2008-09-04 00:34:00 rajeevangal Exp $
  *
  */
 
@@ -61,6 +61,7 @@ import com.sun.identity.log.spi.Debug;
  */
 public class Logger extends java.util.logging.Logger {
     
+    public static ThreadLocal token = new ThreadLocal();
     private String currentFileName = new String();
     private static LogManager lm;
     private String logName;
@@ -253,7 +254,8 @@ public class Logger extends java.util.logging.Logger {
      * @param record The <code>LogRecord</code> to be logged.
      */
     public void log(LogRecord record) {
-        log(record, null);
+        Object obj = token.get();
+        log(record, obj);
     }
 
     /**
@@ -286,40 +288,44 @@ public class Logger extends java.util.logging.Logger {
         }
         /* add LoggedBy info */
         SSOToken ssoToken = null;
-        com.sun.identity.log.LogRecord ourRecord = 
-            (com.sun.identity.log.LogRecord)record;
-        if (cred instanceof SSOToken) {
-            ssoToken = (SSOToken)cred;
-            String loggedBySID = ssoToken.getTokenID().toString();
-            ourRecord.addLogInfo(LogConstants.LOGGED_BY_SID, loggedBySID);
-            String clientID = null;
-            try {
-                clientID = ssoToken.getPrincipal().getName();
-            } catch (SSOException ssoe) {
-                Debug.error("Logger:log:" + logName + 
-                    ": could not get clientID from ssoToken:", ssoe);
+        try {
+            com.sun.identity.log.LogRecord ourRecord = 
+                (com.sun.identity.log.LogRecord)record;
+            if (cred instanceof SSOToken) {
+                ssoToken = (SSOToken)cred;
+                String loggedBySID = ssoToken.getTokenID().toString();
+                ourRecord.addLogInfo(LogConstants.LOGGED_BY_SID, loggedBySID);
+                String clientID = null;
+                try {
+                    clientID = ssoToken.getPrincipal().getName();
+                } catch (SSOException ssoe) {
+                    Debug.error("Logger:log:" + logName + 
+                        ": could not get clientID from ssoToken:", ssoe);
+                }
+                ourRecord.addLogInfo(LogConstants.LOGGED_BY, clientID);
+            } 
+            /* add module name */
+            String existModuleName = 
+                (String)ourRecord.getLogInfoMap().get(LogConstants.MODULE_NAME);
+            if (existModuleName == null || existModuleName.length() <= 0) {
+                /* add module name only if it's already not added. */
+                ourRecord.addLogInfo(LogConstants.MODULE_NAME, this.getName());
             }
-            ourRecord.addLogInfo(LogConstants.LOGGED_BY, clientID);
-        } 
-        /* add module name */
-        String existModuleName = 
-            (String)ourRecord.getLogInfoMap().get(LogConstants.MODULE_NAME);
-        if (existModuleName == null || existModuleName.length() <= 0) {
-            /* add module name only if it's already not added. */
-            ourRecord.addLogInfo(LogConstants.MODULE_NAME, this.getName());
-        }
-        /*
-         * These are normally done by the LogManager private method
-         * doLog(). But since this record is not passing through that
-         * method we have to explicitly do this.
-         * ResourceBundle logic has been simplified.
-         */
-        ourRecord.setLoggerName(this.getName());
-        String rbName = this.getResourceBundleName();
-        ResourceBundle bundle = null;
-        if (rbName != null) {
-            bundle = ResourceBundle.getBundle(rbName);
-            ourRecord.setResourceBundle(bundle);
+            /*
+             * These are normally done by the LogManager private method
+             * doLog(). But since this record is not passing through that
+             * method we have to explicitly do this.
+             * ResourceBundle logic has been simplified.
+             */
+            ourRecord.setLoggerName(this.getName());
+            String rbName = this.getResourceBundleName();
+            ResourceBundle bundle = null;
+            if (rbName != null) {
+                bundle = ResourceBundle.getBundle(rbName);
+                ourRecord.setResourceBundle(bundle);
+            }
+        } catch (ClassCastException ex) {
+            Debug.warning("Logger.log:LogRecord type:" + ex.getMessage());
         }
         try {
             rwLock.readRequest();
@@ -330,10 +336,10 @@ public class Logger extends java.util.logging.Logger {
              */
             if(lm.isSecure()) {
                 synchronized(this) {
-                    super.log(ourRecord);
+                    super.log(record);
                 }
             } else {
-                super.log(ourRecord);
+                super.log(record);
             }
         } catch (Exception ex) {
             Debug.error("Logger.log:" + logName + ":" + ex.getMessage());

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Wizard.java,v 1.24 2008-07-07 20:33:02 veiming Exp $
+ * $Id: Wizard.java,v 1.25 2008-09-04 00:34:00 rajeevangal Exp $
  *
  */
 package com.sun.identity.config.wizard;
@@ -128,6 +128,10 @@ public class Wizard extends AjaxPage {
 
                 tmp = getAttribute("existingRepPort", "");
                 request.addParameter(SetupConstants.DS_EMB_REPL_REPLPORT2, tmp);
+
+                tmp = getAttribute("existingserverid", "");
+                request.addParameter(SetupConstants.DS_EMB_EXISTING_SERVERID, 
+                                     tmp);
             }
         }
 

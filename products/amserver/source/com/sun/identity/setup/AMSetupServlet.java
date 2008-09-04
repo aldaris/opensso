@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.89 2008-08-31 15:50:01 mrudul_uchil Exp $
+ * $Id: AMSetupServlet.java,v 1.90 2008-09-04 00:34:00 rajeevangal Exp $
  *
  */
 
@@ -46,6 +46,10 @@ import com.sun.identity.common.configuration.ConfigurationException;
 import com.sun.identity.common.configuration.ServerConfigXMLObserver;
 import com.sun.identity.common.configuration.ServerConfiguration;
 import com.sun.identity.common.configuration.SiteConfiguration;
+import com.sun.identity.common.configuration.ServerConfigXML;
+import com.sun.identity.common.configuration.ServerConfigXML.DirUserObject;
+import com.sun.identity.common.configuration.ServerConfigXML.ServerGroup;
+import com.sun.identity.common.configuration.ServerConfigXML.ServerObject;
 import com.sun.identity.common.configuration.UnknownPropertyNameException;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.AMIdentity;
@@ -54,6 +58,7 @@ import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.policy.PolicyException;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.security.DecodeAction;
 import com.sun.identity.servicetag.registration.StartRegister;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
@@ -165,6 +170,12 @@ public class AMSetupServlet extends HttpServlet {
             // this will sync up bootstrap file will serverconfig,xml
             // due startup; and also register the observer.
             ServerConfigXMLObserver.getInstance().update(true);
+
+            // Syncup embedded opends replication with current server instances
+            if (syncServerInfoWithRelication() == false) {
+                Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                    "AMSetupServlet.init: embedded replication sync failed.");
+            }
         }
     }
 
@@ -414,6 +425,10 @@ public class AMSetupServlet extends HttpServlet {
                             ServerConfiguration.addToSite(
                                 adminToken, serverInstanceName, site);
                         }
+                    }
+                    if (EmbeddedOpenDS.isMultiServer(map)) {
+                        // Setup Replication port in SMS for each server
+                        updateReplPortInfo(map);
                     }
                 }
             }
@@ -2252,5 +2267,143 @@ public class AMSetupServlet extends HttpServlet {
         throws IOException {
         String version = SystemProperties.get(Constants.AM_VERSION);
         writeToFile(basedir + "/.version", version);
+    }
+
+    /**
+     * Synchronizes embedded replication state with current server list.
+     * @returns boolean true is sync succeeds else false.
+     */
+    private static boolean syncServerInfoWithRelication()
+    {
+        // We need to execute syn only if we are in Embedded mode
+ 
+        String baseDir = SystemProperties.get(SystemProperties.CONFIG_PATH);
+        boolean isEmbeddedDS = (new File(baseDir + "/opends")).exists();
+        if (!isEmbeddedDS) {
+            return true;
+        }
+        try {
+            if (getAdminSSOToken() == null) {
+                Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                "AMSetupServlet.syncServerInfoWithRelication: "+
+                     "Could not sync servers with embedded replication:"+
+                     "no admin token");
+                return false;
+            }
+            // Determine which server this is
+            String myName = WebtopNaming.getLocalServer();
+
+            // See if we need to execute sync
+
+            // Check if we are already replication with other servers
+            Properties props = ServerConfiguration.getServerInstance
+                                                 (adminToken, myName);
+            String syncFlag = props.getProperty(
+                                    "com.sun.embedded.sync.servers");
+            if ("off".equals(syncFlag)) {
+                return true;
+            }
+            String myReplPort = props.getProperty(
+                                    "com.sun.embedded.replicationport");
+            String myDSPort = null;
+            // Get server list
+            Set serverSet = ServerConfiguration.getServers(adminToken);
+            if (serverSet == null || serverSet.size() < 2) {
+                return true;
+            }
+
+            Iterator iter = serverSet.iterator();
+            Set currServerSet = new HashSet();
+            Set currServerDSSet = new HashSet();
+            while (iter.hasNext()) {
+                String sname = (String) iter.next();
+                Properties p = ServerConfiguration.getServerInstance(
+                                   adminToken, sname);
+                String hname = p.getProperty("com.iplanet.am.server.host");
+                String rPort = p.getProperty("com.sun.embedded.replicationport");
+                currServerSet.add(hname+":"+rPort);
+                ServerGroup sg = getSMSServerGroup(sname); 
+                currServerDSSet.add(hname+":"+getSMSPort(sg));
+            }
+            ServerGroup sGroup = getSMSServerGroup(myName); 
+            boolean stats = EmbeddedOpenDS.syncReplicatedServers(
+                  currServerSet, getSMSPort(sGroup), getSMSPassword(sGroup));
+            boolean statd = EmbeddedOpenDS.syncReplicatedDomains(
+                  currServerSet, getSMSPort(sGroup), getSMSPassword(sGroup));
+            boolean statl = EmbeddedOpenDS.syncReplicatedServerList(
+                  currServerDSSet, getSMSPort(sGroup), getSMSPassword(sGroup));
+            return stats || statd || statl;
+        } catch (Exception ex) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                "AMSetupServlet.syncServerInfoWithRelication: "+
+                 "Could not sync servers with embedded replication:", ex);
+            return false;
+        }
+    }
+
+    /**
+     * Gets <code>ServerGroup</code> for SMS for specified server
+     * @param servername
+     * @returns <code>ServerGroup</code> instance
+     */
+    private static ServerGroup getSMSServerGroup(String sname) throws Exception
+    {
+        String xml = ServerConfiguration.getServerConfigXML(adminToken, sname);
+        ServerConfigXML scc = new ServerConfigXML(xml);
+        return scc.getSMSServerGroup() ;
+    }
+    /**
+     * Gets clear password of SMS datastore
+     * @param <code>ServerGroup</code> instance representing SMS datastore
+     * @returns clear password
+     */
+    private static String getSMSPassword(ServerGroup ssg) throws Exception
+    {
+        DirUserObject sduo = (DirUserObject) ssg.dsUsers.get(0);
+        String epass = sduo.password;
+        String pass = (String) AccessController.doPrivileged(
+            new DecodeAction(epass));
+        return pass;
+    }
+    /**
+     * Gets port number of SMS datastore
+     * @param <code>ServerGroup</code> instance representing SMS datastore
+     * @returns port
+     */
+    private static String getSMSPort(ServerGroup ssg) throws Exception
+    {
+        ServerObject sobj = (ServerObject) ssg.hosts.get(0);
+        return sobj.port;
+    }
+
+    private static void updateReplPortInfo(Map map)
+    {
+        try {
+            String instanceName = WebtopNaming.getLocalServer();
+            Map newValues = new HashMap();
+            // Update this instance first...
+            newValues.put("com.sun.embedded.replicationport", 
+                      (String) map.get(SetupConstants.DS_EMB_REPL_REPLPORT1));
+            ServerConfiguration.setServerInstance(
+                    getAdminSSOToken(),
+                    instanceName,
+                    newValues);
+
+            // Update remote instance
+            instanceName = 
+                (String) map.get(SetupConstants.DS_EMB_EXISTING_SERVERID);
+            newValues.put("com.sun.embedded.replicationport", 
+                      (String) map.get(SetupConstants.DS_EMB_REPL_REPLPORT2));
+
+            // Updaet remote instance ...
+            ServerConfiguration.setServerInstance(
+                    getAdminSSOToken(),
+                    instanceName,
+                    newValues);
+        } catch (Exception ex ) {
+            Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                "AMSetupServlet.updateReplPortInfo: "+
+                "could not add replication port info to SM", ex);
+        }
     }
 }

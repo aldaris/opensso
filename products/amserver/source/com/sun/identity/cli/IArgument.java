@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IArgument.java,v 1.8 2008-06-25 05:42:08 qcheng Exp $
+ * $Id: IArgument.java,v 1.9 2008-09-04 00:33:58 rajeevangal Exp $
  *
  */
 
@@ -207,4 +207,14 @@ public interface IArgument {
      * Site secondary URLs.
      */
     String SECONDARY_URLS = "secondaryurls";
+
+    /**
+     * Embedded store port.
+     */
+    String EMBEDDED_PORT = "port";
+
+    /**
+     * Embedded store password
+     */
+    String EMBEDDED_PASSWORD = "password";
 }

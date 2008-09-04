@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.35 2008-08-29 19:56:47 kevinserwin Exp $
+ * $Id: SetupConstants.java,v 1.36 2008-09-04 00:34:00 rajeevangal Exp $
  *
  */
 
@@ -481,6 +481,11 @@ public interface SetupConstants {
      * OpenDS Replication : remote server host.
      */
     String DS_EMB_REPL_HOST2 = "DS_EMB_REPL_HOST2";
+
+    /**
+     * OpenDS Replication : remote server host.
+     */
+    String DS_EMB_EXISTING_SERVERID = "existingserverid";
 
     /**
      * OpenDS Replication : remote OpenDS server port.

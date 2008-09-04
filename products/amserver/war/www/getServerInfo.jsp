@@ -22,12 +22,13 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: getServerInfo.jsp,v 1.5 2008-07-22 00:08:26 ak138937 Exp $
+   $Id: getServerInfo.jsp,v 1.6 2008-09-04 00:34:01 rajeevangal Exp $
 
 --%>
 
 <%@ page
 import="com.iplanet.am.util.SystemProperties,
+        com.iplanet.services.naming.WebtopNaming,
         com.iplanet.sso.SSOException,
         com.iplanet.sso.SSOToken,
         com.iplanet.sso.SSOTokenManager,
@@ -118,6 +119,7 @@ import="com.iplanet.am.util.SystemProperties,
     String dshost = (String) bMap.get(BootstrapData.DS_HOST);
     String dsmgr = (String) bMap.get(BootstrapData.DS_MGR);
     String dspwd = (String) bMap.get(BootstrapData.DS_PWD);
+    String serverid = WebtopNaming.getLocalServer();
 
     // if embedded get replication port status. Two cases :
     //   i) No replication port -> generate a new one
@@ -177,6 +179,10 @@ import="com.iplanet.am.util.SystemProperties,
     if (defAgentPwd != null) {
         buf.append("&ENCLDAPUSERPASSWD=").append(
             URLEncoder.encode(defAgentPwd, "UTF-8"));
+    }
+    if (serverid != null) {
+        buf.append("&existingserverid=").append(
+            URLEncoder.encode(serverid, "UTF-8"));
     }
 
     out.println(buf.toString());

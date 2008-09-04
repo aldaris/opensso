@@ -22,7 +22,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: CLILogMessageIDs.xml,v 1.29 2008-08-27 22:08:38 veiming Exp $
+    $Id: CLILogMessageIDs.xml,v 1.30 2008-09-04 00:34:02 rajeevangal Exp $
 
 -->
 
@@ -5965,6 +5965,42 @@
         </datainfo>
         <triggers>
             <item>Execute set attribute values to a service that is assigned to a realm Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_EMBEDDED_STATUS" id="5103"
+        loglevel="LL_INFO"
+        description="Get Embedded Status.">
+        <datainfo>
+            <item>port number of embedded store</item>
+        </datainfo>
+        <triggers>
+            <item>Execute Embedded Status Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_EMBEDDED_STATUS" id="5104"
+        loglevel="LL_INFO"
+        description="Embedded Status Successful.">
+        <datainfo>
+            <item>port number of embedded store</item>
+        </datainfo>
+        <triggers>
+            <item>Execute Embedded Status Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_EMBEDDED_STATUS" id="5105"
+        loglevel="LL_INFO"
+        description="Failed to get embedded status.">
+        <datainfo>
+            <item>port number of embedded store</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute Embedded Status Commandline interface.</item>
         </triggers>
         <actions>
             <item>Look under debug file for more information.</item>

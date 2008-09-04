@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.89 2008-09-03 22:04:43 veiming Exp $
+ * $Id: AccessManager.java,v 1.90 2008-09-04 00:33:58 rajeevangal Exp $
  *
  */
 
@@ -2209,6 +2209,19 @@ public class AccessManager {
         }
     )
     private String list_servers;
+
+    @SubCommandInfo(
+        implClassName="com.sun.identity.cli.serverconfig.EmbeddedStatus",
+        description="Status of embedded store.",
+        webSupport="true",
+        mandatoryOptions={"port|p|s|Embedded store port"},
+        optionAliases={},
+        optionalOptions={"password|w|s|Embedded store password"},
+        macro="authentication",
+        resourceStrings={
+            "embedded-status-status=STATUS: {0}"}
+    )
+    private String embedded_status;
 
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.serverconfig.CreateSite",

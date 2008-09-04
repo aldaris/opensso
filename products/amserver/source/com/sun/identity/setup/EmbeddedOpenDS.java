@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EmbeddedOpenDS.java,v 1.16 2008-08-08 00:40:57 ww203982 Exp $
+ * $Id: EmbeddedOpenDS.java,v 1.17 2008-09-04 00:34:00 rajeevangal Exp $
  *
  */
 
@@ -33,13 +33,23 @@ import com.sun.identity.common.ShutdownManager;
 import com.sun.identity.common.ShutdownPriority;
 import com.sun.identity.shared.debug.Debug;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.StringReader;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
@@ -49,13 +59,15 @@ import netscape.ldap.LDAPAttribute;
 import netscape.ldap.LDAPConnection;
 import netscape.ldap.LDAPEntry;
 import netscape.ldap.LDAPException;
+import netscape.ldap.LDAPModification;
 
+import org.opends.messages.Message;
 import org.opends.server.core.DirectoryServer;
 import org.opends.server.extensions.ConfigFileHandler;
-import org.opends.messages.Message;
-import org.opends.server.util.EmbeddedUtils;
-import org.opends.server.types.DirectoryEnvironmentConfig;
 import org.opends.server.extensions.SaltedSHA512PasswordStorageScheme;
+import org.opends.server.tools.dsconfig.DSConfig;
+import org.opends.server.types.DirectoryEnvironmentConfig;
+import org.opends.server.util.EmbeddedUtils;
 
 // Until we have apis to setup replication we will use the clin interface.
 import org.opends.guitools.replicationcli.ReplicationCliMain;
@@ -462,6 +474,40 @@ public class EmbeddedOpenDS {
         }
         return ret;
     }
+
+    /**
+     * Returns Replication Status by invoking opends <code>dsreplication</code>
+     * CLI
+     * @param port LDAP port number of embedded opends
+     * @param passwd Directory Manager password
+     * @param oo Standard output
+     * @param err : Standard error
+     * @return <code>dsreplication</code> CLI exit code.
+     */
+    public static int getReplicationStatus(String port, String passwd,
+                OutputStream oo, OutputStream err)
+    {
+        Debug debug = Debug.getInstance(SetupConstants.DEBUG_NAME);
+        String[] statusCmd= {
+                              "status","--no-prompt",
+                              "-h",  "localhost",
+                              "-p",  port,
+                              "--adminUID", "admin",
+                              "--adminPassword",  passwd,
+                              "-s"
+                            };
+        if (debug.messageEnabled()) {
+            String dbgcmd = concat(statusCmd).replaceAll(passwd, "****");
+            debug.message("EmbeddedOpenDS:getReplicationStatus:exec dsreplication :"
+                             +dbgcmd);
+        }
+        int ret = ReplicationCliMain.mainCLI(statusCmd, false, oo, err, null); 
+        if (debug.messageEnabled()) {
+            debug.message("EmbeddedOpenDS:getReplicationStatus:dsreplication ret:"
+                           +ret);
+        }
+        return ret;
+    }
  
     /**
       * @return true if multi server option is selected in the configurator.
@@ -579,7 +625,248 @@ public class EmbeddedOpenDS {
         return replPort;
        
     }
+   
+    /**
+     * Synchronizes replication server info with current list of opensso servers. 
+     */
+    public static boolean syncReplicatedServers(
+                          Set currServerSet, String port, String passwd)
+    {
+        Debug debug = Debug.getInstance(SetupConstants.DEBUG_NAME);
+        debug.message("EmbeddedOPenDS:syncReplication:start processing.");
+        String[] args = {
+            "-p", port,      // 1 : ds port num
+            "-h", "localhost", 
+            "-D",  "cn=directory manager",
+            "-w", passwd,    // 7 : password
+            "list-replication-server",
+            "--provider-name", "Multimaster Synchronization",
+            "--property", "replication-server",
+            "--property", "replication-port","--no-prompt"
+        };
+        if (debug.messageEnabled()) {
+            String dbgcmd = concat(args).replaceAll(passwd, "****");
+            debug.message("EmbeddedOpenDS:syncReplication:exec dsconfig:"
+                             +dbgcmd);
+        }
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ByteArrayOutputStream boe = new ByteArrayOutputStream();
+        DSConfig.main(args, false, bos, boe);
+        String str = bos.toString();
+        String stre = boe.toString();
+        if (stre.length() > 0) {
+            debug.error("EmbeddedOpenDS:syncReplication: stderr is not empty:"
+                           +stre);
+        }
+        BufferedReader brd = new BufferedReader(new StringReader(str));
+        String line = null;
+        try {
+            line = brd.readLine(); // 1st line
+            line = brd.readLine(); // 2nd line
+            line = brd.readLine(); // 3rd line
+        } catch (Exception ex) {
+            debug.error("EmbeddedOpenDS:syncReplication:Failed:",ex);
+        } 
+        if (line == null)  {
+            debug.error("EmbeddedOpenDS:syncReplication:cmd failed"+str);
+            return false;
+        }
+        try {
+            int lastcolon= line.lastIndexOf(':');
+            int stcolon = line.indexOf(':', line.indexOf(':')+1);
+            String replservers = line.substring(stcolon+1, lastcolon);
+
+            StringTokenizer stok = new StringTokenizer(replservers, ",");
+            // Check if this server is part of server list
+            List cmdlist = new ArrayList();
+            cmdlist.add("-p"); 
+            cmdlist.add(port);
+            cmdlist.add("-h"); 
+            cmdlist.add("localhost"); 
+            cmdlist.add("-D");  
+            cmdlist.add("cn=directory manager");
+            cmdlist.add("-w"); 
+            cmdlist.add(passwd);
+            cmdlist.add("--no-prompt");
+            cmdlist.add("set-replication-server-prop");
+            cmdlist.add("--provider-name"); 
+            cmdlist.add("Multimaster Synchronization");
+
+            int numremoved = 0;
+            while (stok.hasMoreTokens()) {
+                String tok = stok.nextToken().trim();
+                if (!currServerSet.contains(tok)) {
+                    cmdlist.add("--remove"); 
+                    cmdlist.add("replication-server:"+tok);
+                    numremoved++;
+                }
+            }
+            if (numremoved > 0) {
+                String[] args1 = 
+                    (String[]) cmdlist.toArray(new String[cmdlist.size()]);
+                if (debug.messageEnabled()) {
+                    String dbgcmd1 = concat(args1).replaceAll(passwd, "****");
+                    debug.message("EmbeddedOpenDS:syncReplication:Execute:"+
+                             dbgcmd1);
+                }
+                bos = new ByteArrayOutputStream();
+                boe = new ByteArrayOutputStream();
+                DSConfig.main(args1, false, bos, boe);
+                str = bos.toString();
+                stre = boe.toString();
+                if (debug.messageEnabled()) {
+                    debug.message("EmbeddedOpenDS:syncReplication:Result:"+
+                         str);
+                }
+                if (stre.length() != 0) {
+                    debug.error("EmbeddedOpenDS:syncReplication:cmd stderr:"
+                                 +stre);
+                }
+            } 
+        } catch (Exception ex) {
+            debug.error("EmbeddedOpenDS:syncReplication:Failed:",ex);
+            return false;
+        } 
+        return true;
+    }
+    /**
+     * Synchronizes replication domain info with current list of opensso servers. 
+     */
+    public static boolean syncReplicatedDomains(
+                          Set currServerSet, String port, String passwd)
+    {
+        Debug debug = Debug.getInstance(SetupConstants.DEBUG_NAME);
+        debug.message("EmbeddedOpenDS:syncReplication:Domains:started");
+        String[] args = {
+            "-p", port,      // 1 : ds port num
+            "-h", "localhost", 
+            "-D",  "cn=directory manager",
+            "-w", passwd,    // 7 : password
+            "list-replication-domains",
+            "--provider-name", "Multimaster Synchronization",
+            "--property", "replication-server",
+            "--no-prompt"
+        };
+        if (debug.messageEnabled()) {
+            String dbgcmd = concat(args).replaceAll(passwd, "****");
+            debug.message("EmbeddedOpenDS:syncReplication:exec dsconfig:"
+                             +dbgcmd);
+        }
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ByteArrayOutputStream boe = new ByteArrayOutputStream();
+        DSConfig.main(args, false, bos, boe);
+        String str = bos.toString();
+        String stre = boe.toString();
+        if (stre.length() != 0) {
+            debug.error("EmbeddedOpenDS:syncReplication:stderr:"+stre);
+        }
+        BufferedReader brd = new BufferedReader(new StringReader(str));
+        String line = null;
+        try {
+            line = brd.readLine(); // 1st line
+            line = brd.readLine(); // 2nd line
+            while ((line = brd.readLine()) != null) {
+                try {
+                    int dcolon = line.indexOf(':');
+                    String domainname = line.substring(0, dcolon).trim();
+                    int stcolon = line.indexOf(':', dcolon+1);
+                    String replservers = line.substring(stcolon+1);
+                    if (debug.messageEnabled()) {
+                        debug.message("EmbeddedOpenDS:syncRepl:domain="+
+                                      domainname+" replservers="+replservers);
+                    }
     
+                    StringTokenizer stok = new StringTokenizer(replservers, ",");
+                    // Check if this server is part of server list
+                    List cmdlist = new ArrayList();
+                    cmdlist.add("-p"); 
+                    cmdlist.add(port);
+                    cmdlist.add("-h"); 
+                    cmdlist.add("localhost"); 
+                    cmdlist.add("-D");  
+                    cmdlist.add("cn=directory manager");
+                    cmdlist.add("-w"); 
+                    cmdlist.add(passwd);
+                    cmdlist.add("--no-prompt");
+                    cmdlist.add("set-replication-domain-prop");
+                    cmdlist.add("--provider-name"); 
+                    cmdlist.add("Multimaster Synchronization");
+                    cmdlist.add("--domain-name"); 
+                    cmdlist.add(domainname);
+    
+                    int numremoved = 0;
+                    while (stok.hasMoreTokens()) {
+                        String tok = stok.nextToken().trim();
+                        if (!currServerSet.contains(tok)) {
+                            cmdlist.add("--remove"); 
+                            cmdlist.add("replication-server:"+tok);
+                            numremoved++;
+                        }
+                    }
+                    if (numremoved > 0) {
+                        String[] args1 = 
+                            (String[]) cmdlist.toArray(new String[cmdlist.size()]);
+                        if (debug.messageEnabled()) {
+                            String dbgcmd1 = 
+                                concat(args1).replaceAll(passwd, "****");
+                            debug.message("EmbeddedOpenDS:syncReplication:Execute:"+
+                                     dbgcmd1);
+                        }
+                        bos = new ByteArrayOutputStream();
+                        boe = new ByteArrayOutputStream();
+                        DSConfig.main(args1, false, bos, boe);
+                        str = bos.toString();
+                        stre = boe.toString();
+                        if (stre.length() != 0) {
+                            debug.error("EmbeddedOpenDS:syncRepl:stderr="+stre);
+                        }
+                        if (debug.messageEnabled()) {
+                          debug.message("EmbeddedOpenDS:syncReplication:Result:"+
+                                 str);
+                        }
+                    } 
+                } catch (Exception ex) {
+                    debug.error("EmbeddedOpenDS:syncReplication:Failed:",ex);
+                    return false;
+                } 
+            }
+        } catch (Exception ex) {
+            debug.error("EmbeddedOpenDS:syncReplication:Failed:",ex);
+            return false;
+        } 
+        return true;
+    }
+    /**
+     * Synchronizes replication domain info with current list of opensso servers. 
+     */
+    public static boolean syncReplicatedServerList(
+                          Set currServerSet, String port, String passwd)
+    {
+        LDAPConnection lc = null;
+        try {
+            lc = getLDAPConnection(
+                "localhost",
+                port,
+                "cn=Directory Manager",
+                passwd
+            );
+            Set dsServers =  getServerSet(lc);
+
+            if (dsServers == null)
+                return false;
+            Iterator iter = dsServers.iterator();
+            while (iter.hasNext()) {
+                String tok = (String) iter.next();
+                if (!currServerSet.contains(tok))
+                    delOpenDSServer(lc, tok);
+            }
+        } catch (Exception ex) {
+            return false;
+        } finally {
+            disconnectDServer(lc);
+        }
+        return true;
+    }
     /**
      * Helper method to return Ldap connection to a embedded opends
      * server.
@@ -615,5 +902,102 @@ public class EmbeddedOpenDS {
             }
         }
     } 
-
+    static final String replDN = 
+            "cn=all-servers,cn=Server Groups,cn=admin data";
+    /**
+     *  Removes host:port from opends replication
+     */
+    public static void delOpenDSServer(
+        LDAPConnection lc,
+        String delServer
+    ) {
+        String replServerDN = 
+           "cn="+delServer+",cn=Servers,cn=admin data";
+        final String[] attrs = { "ds-cfg-key-id" };
+        Debug debug = Debug.getInstance(SetupConstants.DEBUG_NAME);
+        if (lc == null) {
+            debug.error("EmbeddedOpenDS:syncOpenDSServer():"+
+                        "Could not connect to local opends instance."+replServerDN);
+            return;
+        }
+        String trustKey = null;
+        try {
+            LDAPEntry le = lc.read(replServerDN, attrs);
+            if (le != null) {
+                LDAPAttribute la = le.getAttribute(attrs[0]);
+                if (la != null) {
+                    Enumeration en = la.getStringValues();
+                    if (en != null && en.hasMoreElements()) {
+                         trustKey = (String) en.nextElement();
+                    }
+                }
+                String keyDN = "ds-cfg-key-id="+trustKey+
+                       ",cn=instance keys,cn=admin data";
+                lc.delete(keyDN);
+            } else {
+                debug.error("EmbeddedOpenDS:syncOpenDSServer():"+
+                            "Could not find trustkey for:"+replServerDN);
+            }
+        } catch (Exception ex) {
+            debug.error("EmbeddedOpenDS.syncOpenDSServer()."+
+                        " Error getting replication key:", ex);
+             
+        }
+        try {
+            lc.delete(replServerDN);
+        } catch (Exception ex) {
+            debug.error("EmbeddedOpenDS.syncOpenDSServer()."+
+                        " Error getting deleting server entrt:"+replServerDN, ex);
+             
+        }
+        try {
+            LDAPAttribute attr = new LDAPAttribute( 
+                                    "uniqueMember", "cn="+ delServer);
+            LDAPModification mod = new LDAPModification(
+                                   LDAPModification.DELETE, attr);
+            lc.modify(replDN, mod);
+        } catch (Exception ex) {
+            debug.error("EmbeddedOpenDS.syncOpenDSServer()."+
+                        " Error getting removing :"+replDN, ex);
+             
+        }
+    }
+    /**
+     *  Gets list of replicated servers from local opends directory.
+     */
+    public static Set getServerSet(
+        LDAPConnection lc
+    ) {
+        final String[] attrs = { "uniqueMember" };
+        Debug debug = Debug.getInstance(SetupConstants.DEBUG_NAME);
+        try {
+            if (lc != null) {
+                LDAPEntry le = lc.read(replDN, attrs);
+                if (le != null) {
+                    Set hostSet = new HashSet();
+                    LDAPAttribute la = le.getAttribute(attrs[0]);
+                    if (la != null) {
+                        Enumeration en = la.getStringValues();
+                        while (en != null && en.hasMoreElements()) {
+                             String val=(String) en.nextElement();
+                             // strip "cn="
+                             hostSet.add(val.substring(3, val.length()));
+                        }
+                    }
+                    return hostSet;
+                } else {
+                    debug.error("EmbeddedOpenDS:syncOpenDSServer():"+
+                                "Could not find trustkey for:"+replDN);
+                }
+            } else {
+                debug.error("EmbeddedOpenDS:syncOpenDSServer():"+
+                            "Could not connect to local opends instance.");
+            }
+        } catch (Exception ex) {
+            debug.error("EmbeddedOpenDS.syncOpenDSServer()."+
+                        " Error getting replication key:", ex);
+             
+        }
+        return null;
+    }
 }
