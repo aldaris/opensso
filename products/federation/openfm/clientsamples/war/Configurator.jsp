@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Configurator.jsp,v 1.8 2008-08-28 19:39:19 qcheng Exp $
+   $Id: Configurator.jsp,v 1.9 2008-09-04 00:22:10 inthanga Exp $
 
 --%>
 
@@ -47,7 +47,7 @@ java.util.Properties"
     String configFile = System.getProperty("user.home") +
         File.separator + SetupClientWARSamples.CLIENT_WAR_CONFIG_TOP_DIR +
         File.separator + 
-        SetupClientWARSamples.getNormalizedRealPath(getServletContext()) +
+        SetupClientWARSamples.getNormalizedRealPath(getServletConfig().getServletContext()) +
         "AMConfig.properties";
     String configTemplate = "/WEB-INF/classes/AMConfig.properties.template";
     String errorMsg = null;
