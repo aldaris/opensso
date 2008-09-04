@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPCommon.java,v 1.6 2008-06-26 20:10:39 rmisra Exp $
+ * $Id: LDAPCommon.java,v 1.7 2008-09-04 20:55:02 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -177,8 +177,15 @@ public class LDAPCommon extends TestCommon {
                             fn = basedir + fileseparator + serverName +
                                     fileseparator + "ldif" + fileseparator + 
                                     schemaFile.substring(index + 1);
-                            ldMap.put("ROOT_SUFFIX", dsrootsuffix);
-                            ldMap.put("@ROOT_SUFFIX@", dsrootsuffix);
+                            ldMap = new HashMap();
+ 			    if (searchStringInFile(schemaFile, 
+                                    "@ROOT_SUFFIX@")) {
+                            	ldMap.put("@ROOT_SUFFIX@", dsrootsuffix); 
+			    } else {
+                            	ldMap.put("ROOT_SUFFIX", dsrootsuffix);
+			    }
+                            log(Level.FINEST, "loadAMUserSchema", "ldMap=" + 
+                                     ldMap);
                             replaceStringInFile(schemaFile, fn, ldMap);
                         } else
                             fn = schemaFile;

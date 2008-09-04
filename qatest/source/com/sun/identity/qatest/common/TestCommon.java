@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.61 2008-09-04 19:39:05 rmisra Exp $
+ * $Id: TestCommon.java,v 1.62 2008-09-04 20:55:42 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2082,4 +2082,26 @@ public class TestCommon implements TestConstants {
             return propValue;
         }
     }
+
+    /**
+     * Searches for a string in a file
+     * @param file - path to the file name to search
+     * @param strSearch String which needs to be searched for
+     */
+    protected boolean searchStringInFile(String file, String strSearch)
+    throws Exception {
+        entering("searchStringInFile", null);
+        BufferedReader buff = new BufferedReader(new FileReader(file));
+        for (String inputStr = buff.readLine(); (inputStr != null);
+        inputStr = buff.readLine()) {
+                if (inputStr.contains(strSearch)) {
+                    log(Level.FINEST, "searchStringInFile", "String:" +
+                            strSearch + "matched at " + 
+                            inputStr.indexOf(inputStr));
+                    return true;
+                }
+        }
+        exiting("searchStringInFile");
+        return false;
+    }    
 }
