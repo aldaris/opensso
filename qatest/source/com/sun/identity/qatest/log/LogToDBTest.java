@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogToDBTest.java,v 1.4 2008-08-27 05:46:19 mrudulahg Exp $
+ * $Id: LogToDBTest.java,v 1.5 2008-09-05 00:36:58 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -197,6 +197,10 @@ public class LogToDBTest extends LogCommon implements LogTestConstants {
                     LOGTEST_KEY_LOGGER_LEVEL);
             String recordLevel = testCaseInfo.getString(curTestName + "." +
                     LOGTEST_KEY_RECORD_LEVEL);
+            if (modifyServConfig.equals("true")) 
+                assert(writeLog(adminSSOToken, userSSOToken, tableName, "This is dummy msg", 
+                        moduleName, getLevel(loggerLevel), getLevel(recordLevel)));
+            Thread.sleep(4000);
             Reporter.log("Test Name : " + curTestName);
             Reporter.log("Test Description : " + testCaseInfo.getString(
                     curTestName + "." + LOGTEST_KEY_DESCRIPTION));
@@ -237,7 +241,7 @@ public class LogToDBTest extends LogCommon implements LogTestConstants {
                 log(Level.FINEST, "readLog", "Last Rec :" + lastRec);
                 if (lastRec.indexOf(expMsg) == -1) {
                     log(Level.FINEST, "readLog", "Last Rec doesnt match. " +
-                            "Wait for " + notificationSleepTime + " secs & read again");
+                            "Wait for " + notificationSleepTime + " milisecs & read again");
                     Thread.sleep(notificationSleepTime);
                 } else 
                     break;
