@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.36 2008-09-02 19:59:50 ericow Exp $
+ * $Id: Constants.java,v 1.37 2008-09-05 00:51:03 ww203982 Exp $
  *
  */
 
@@ -912,4 +912,11 @@ public interface Constants {
      */
     static final String ENABLE_TRIM_SESSION = 
         "iplanet-am-session-enable-session-trimming";        
+
+    /**
+      * property string to the size of SystemTimerPool
+      */
+    public static final String SYSTEM_TIMERPOOL_SIZE =
+        "com.sun.identity.common.systemtimerpool.size";
+
 }

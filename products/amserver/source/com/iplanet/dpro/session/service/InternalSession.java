@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InternalSession.java,v 1.17 2008-08-19 19:08:39 veiming Exp $
+ * $Id: InternalSession.java,v 1.18 2008-09-05 00:51:01 ww203982 Exp $
  *
  */
 
@@ -459,16 +459,20 @@ public class InternalSession implements TaskRunnable, Serializable {
                 if (timeLeft == 0) {
                     changeStateAndNotify(SessionEvent.MAX_TIMEOUT);
                     if (timerPool != null) {
-                        timerPool.schedule(this, new Date((timedOutAt +
-                            (purgeDelay * 60)) * 1000));
+                        if (purgeDelay > 0) {
+                            timerPool.schedule(this, new Date((timedOutAt +
+                                (purgeDelay * 60)) * 1000));
+                        }
                     }
                 } else {
                     long idleTimeLeft = (maxIdleTime * 60) - getIdleTime();
                     if (idleTimeLeft <= 0 && sessionState != Session.INACTIVE) {
                         changeStateAndNotify(SessionEvent.IDLE_TIMEOUT);
                         if (timerPool != null) {
-                            timerPool.schedule(this, new Date((timedOutAt +
-                                (purgeDelay * 60)) * 1000));
+                            if (purgeDelay > 0) {
+                                timerPool.schedule(this, new Date((timedOutAt +
+                                    (purgeDelay * 60)) * 1000));
+                            }
                         }
                     } else {
                         long timeToWait = Math.min(timeLeft, idleTimeLeft);

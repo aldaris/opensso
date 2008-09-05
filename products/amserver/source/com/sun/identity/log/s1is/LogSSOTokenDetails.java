@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogSSOTokenDetails.java,v 1.3 2008-06-25 05:43:37 qcheng Exp $
+ * $Id: LogSSOTokenDetails.java,v 1.4 2008-09-05 00:51:01 ww203982 Exp $
  *
  */
 
@@ -109,7 +109,8 @@ public class LogSSOTokenDetails {
             }
             lr.addLogInfo(LogConstants.IP_ADDR, ipAddress);
 
-            clientDomain = ssoToken.getProperty("cdomain");
+            //clientDomain = ssoToken.getProperty("cdomain");
+            clientDomain = ssoToken.getProperty("Organization");
             lr.addLogInfo(LogConstants.DOMAIN, clientDomain);
             
             clientID = ssoToken.getPrincipal().getName();

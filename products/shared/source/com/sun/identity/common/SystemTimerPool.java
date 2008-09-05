@@ -22,13 +22,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SystemTimerPool.java,v 1.4 2008-08-08 00:40:59 ww203982 Exp $
+ * $Id: SystemTimerPool.java,v 1.5 2008-09-05 00:51:02 ww203982 Exp $
  *
  */
 
 package com.sun.identity.common;
 
+import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.configuration.SystemPropertiesManager;
 
 /**
  * SystemTimerPool is a TimerPool which shared in the system.
@@ -38,7 +40,23 @@ public class SystemTimerPool {
     
     protected static TimerPool instance;
     protected static Debug debug;
-    public static int DEFAULT_POOL_SIZE = 3;
+    public static final int DEFAULT_POOL_SIZE = 3;
+    private static int poolSize;
+
+    static {
+        debug = Debug.getInstance("SystemTimerPool");
+        poolSize = DEFAULT_POOL_SIZE;
+        String size = SystemPropertiesManager.get(
+            Constants.SYSTEM_TIMERPOOL_SIZE);
+        if (size != null) {
+            try {
+                poolSize = Integer.parseInt(size);
+            } catch (NumberFormatException ex) {
+                debug.error("SystemTimerPool.<init>: incorrect pool size "
+                    + size + " defaulting to " + DEFAULT_POOL_SIZE);
+            }
+        }
+    }
     
     /**
      * Create and return the system timer pool.
@@ -46,12 +64,11 @@ public class SystemTimerPool {
     
     public static synchronized TimerPool getTimerPool() {
         if (instance == null) {
-            debug = Debug.getInstance("SystemTimerPool");
             ShutdownManager shutdownMan = ShutdownManager.getInstance();
             if (shutdownMan.acquireValidLock()) {
                 try {
                     instance = new TimerPool("SystemTimerPool", 
-                        DEFAULT_POOL_SIZE, false, debug);
+                        poolSize, false, debug);
                     shutdownMan.addShutdownListener(new ShutdownListener() {
                         public void shutdown() {
                             instance.shutdown();

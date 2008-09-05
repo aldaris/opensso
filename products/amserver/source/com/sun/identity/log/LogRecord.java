@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogRecord.java,v 1.5 2008-06-25 05:43:35 qcheng Exp $
+ * $Id: LogRecord.java,v 1.6 2008-09-05 00:51:01 ww203982 Exp $
  *
  */
 
@@ -136,9 +136,9 @@ public class LogRecord extends java.util.logging.LogRecord {
                     }
                 }
            }
-            clientDomain = ssoToken.getProperty("cdomain");
+            clientDomain = ssoToken.getProperty("Organization");
             if (clientDomain == null || clientDomain.length() == 0) {
-                clientDomain = ssoToken.getProperty("Organization");
+                clientDomain = ssoToken.getProperty("cdomain");
             } 
             clientID = ssoToken.getPrincipal().getName();
         } catch (SSOException se) {
