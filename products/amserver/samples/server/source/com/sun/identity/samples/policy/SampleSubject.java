@@ -1,44 +1,30 @@
 /**
-* Copyright © 2008 Sun Microsystems, Inc. All rights reserved.  
-* Sun Microsystems, Inc. has intellectual property rights relating to 
-* technology embodied in the product that is described in this document. 
-* In particular, and without limitation, these intellectual property 
-* rights may include one or more of the U.S. patents listed at 
-* http://www.sun.com/patents and one or more additional patents or pending 
-* patent applications in the U.S. and in other countries.
-* U.S. Government Rights - Commercial software. Government users are subject 
-* to the Sun Microsystems, Inc. standard license agreement and applicable 
-* provisions of the FAR and its supplements.
-* Use is subject to license terms.
-* This distribution may include materials developed by third parties.Sun, Sun 
-* Microsystems, the Sun logo, Java and Solaris are trademarks or registered 
-* trademarks of Sun Microsystems, Inc. in the U.S. and other countries. All 
-* SPARC trademarks are used under license and are trademarks or registered 
-* trademarks of SPARC International, Inc. in the U.S. and other countries.
-* UNIX is a registered trademark in the U.S. and other countries, exclusively 
-* licensed through X/Open Company, Ltd.
-* 
-* Copyright © 2008 Sun Microsystems, Inc. Tous droits réservés.
-* Sun Microsystems, Inc. détient les droits de propriété intellectuels 
-* relatifs à la technologie incorporée dans le produit qui est décrit 
-* dans ce document. En particulier, et ce sans limitation, ces droits de 
-* propriété intellectuelle peuvent inclure un ou plus des brevets américains 
-* listés à l'adresse http://www.sun.com/patents et un ou les brevets 
-* supplémentaires ou les applications de brevet en attente aux Etats - Unis 
-* et dans les autres pays.
-* L'utilisation est soumise aux termes du contrat de licence.
-* Cette distribution peut comprendre des composants développés par des tierces 
-* parties.
-* Sun, Sun Microsystems, le logo Sun, Java et Solaris sont des marques de 
-* fabrique ou des marques déposées de Sun Microsystems, Inc. aux 
-* Etats-Unis et dans d'autres pays. Toutes les marques SPARC sont utilisées 
-* sous licence et sont des marques de fabrique ou des marques déposées de 
-* SPARC International, Inc. aux Etats-Unis et dans d'autres pays.
-* UNIX est une marque déposée aux Etats-Unis et dans d'autres pays et 
-* licenciée exlusivement par X/Open Company, Ltd.
-*
-* $Id: SampleSubject.java,v 1.1 2008-08-13 21:40:49 dillidorai Exp $
-*/
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+ *
+ * Copyright (c) 2008 Sun Microsystems Inc. All Rights Reserved
+ *
+ * The contents of this file are subject to the terms
+ * of the Common Development and Distribution License
+ * (the License). You may not use this file except in
+ * compliance with the License.
+ *
+ * You can obtain a copy of the License at
+ * https://opensso.dev.java.net/public/CDDLv1.0.html or
+ * opensso/legal/CDDLv1.0.txt
+ * See the License for the specific language governing
+ * permission and limitations under the License.
+ *
+ * When distributing Covered Code, include this CDDL
+ * Header Notice in each file and include the License file
+ * at opensso/legal/CDDLv1.0.txt.
+ * If applicable, add the following below the CDDL Header,
+ * with the fields enclosed by brackets [] replaced by
+ * your own identifying information:
+ * "Portions Copyrighted [year] [name of copyright owner]"
+ *
+ * $Id: SampleSubject.java,v 1.2 2008-09-05 01:45:01 dillidorai Exp $
+ *
+ */
 
 package com.sun.identity.samples.policy;
 
