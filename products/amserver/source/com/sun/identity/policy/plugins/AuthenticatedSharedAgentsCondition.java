@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticatedSharedAgentsCondition.java,v 1.2 2008-09-04 02:38:46 goodearth Exp $
+ * $Id: AuthenticatedSharedAgentsCondition.java,v 1.3 2008-09-05 06:09:10 arviranga Exp $
  *
  */
 
@@ -48,8 +48,6 @@ import com.sun.identity.policy.ConditionDecision;
 import com.sun.identity.policy.PolicyException;
 import com.sun.identity.policy.Syntax;
 import com.sun.identity.policy.PolicyEvaluator;
-import com.sun.identity.policy.PolicyManager;
-import com.sun.identity.policy.ResBundleUtils;
 import com.sun.identity.common.CaseInsensitiveHashSet;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdConstants;
@@ -329,7 +327,9 @@ public class AuthenticatedSharedAgentsCondition implements Condition,
                             agentsToRead);
                 }
 
-                allowed = getPermission(agentsFromEnv, agentsToRead); 
+                if (agentsToRead != null && !agentsToRead.isEmpty()) {
+                    allowed = getPermission(agentsFromEnv, agentsToRead);
+                }
                 // Update the cache.
                 updateCache(sharedAgentUnivId, agentsToRead);
             } catch (IdRepoException idpe) {
