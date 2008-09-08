@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CTAuthModule.java,v 1.1 2008-09-02 13:39:10 wahmed Exp $
+ * $Id: CTAuthModule.java,v 1.2 2008-09-08 19:58:53 wahmed Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -114,12 +114,9 @@ public class CTAuthModule extends AMLoginModule {
         
     } 
 
-    /**
+   /**
      * This method process the login procedure for this authentication
-     * module. In this auth module, if the user chooses to just validate
-     * the HTTP headers set by the siteminder agent, this will not further
-     * validate the SMSESSION by the siteminder SDK since the same thing
-     * might have already been validated by the agent.
+     * module. 
      */
     public int process(Callback[] callbacks, int state) 
                  throws AuthLoginException {
@@ -131,7 +128,10 @@ public class CTAuthModule extends AMLoginModule {
         String CTCookie =  null;
         String principal = null;
         boolean cookieFound = false;
-        for (int i=0; i < cookies.length; i++) {
+        boolean ctsessionValid = false;
+	//// GAPA -- instead of for loop, just use a while loop to exit upon finding CTcookie
+	int i = 0;  ////Gapa
+	while((!cookieFound) && (i < cookies.length)){ 		////Gapa
              Cookie cookie = cookies[i];
              if(cookie.getName().equals("CTSESSION")) {
                 cookieFound = true;
@@ -149,14 +149,30 @@ public class CTAuthModule extends AMLoginModule {
                    }
 
                    ClearTrust remoteClient = new ClearTrust();
-                   remoteClient.connect(value);
+                   ctsessionValid = remoteClient.connect(value);
 
-            }
-        }
-      
+                   if(!ctsessionValid)  {
+		         debug.message("CTSESSION cookie validation failed");	
+		         throw new AuthLoginException("CTSESSION cookie validation failed");      
+                   }
+		
+            }// end if cookieFound
+	    i=i+1;	////Gapa
+        } //end while loop
+
+
+
+	//// GAPA -- What if cookies.length is  0 or cookie is not found,
+	//// 		do you still return LOGIN_SUCCEED?	
+	//// GAPA -- If CTCookie not found, throw AuthLoginException
+	if (!cookieFound) {
+		debug.message("CTCookie not found in request");	
+		throw new AuthLoginException("No CTCookie found in request");      
+	}
         return ISAuthConstants.LOGIN_SUCCEED;
 
     }
+
 
 
   public class ClearTrust  {
@@ -164,55 +180,57 @@ public class CTAuthModule extends AMLoginModule {
       private RuntimeAPI runtimeAPI = null;
       boolean result = false;
        
-      private void connect(String value)
+      private boolean connect(String value)
       { 
 
           debug.message("connect() cookie value: " + value);
           ConnectionDescriptor dispatcher = null;
-
-          for (Iterator iter = dispatchServerHostname.iterator();
-		 iter.hasNext();) {
+	  //// GAPA -- do we need to validate session on all listed dispatch host
+	  //// It is enough to check atleast on one server the session is valid
+	  ////	Exist the loop when a valid userId found in CT Token
+	  //// Use a While loop instead of for loop
+	  Iterator iter = dispatchServerHostname.iterator(); 	////Gapa
+	  boolean foundValidCTSession= false; 			////Gapa
+          
+	  while ((!foundValidCTSession) && (iter.hasNext())) { 	////Gapa
              String dispatchServer = (String)iter.next();
              if(dispatchServer == null) {
-                debug.message("DispatchServerHostName list is empty!");
-                break;
-             }
-
-             dispatcher = new ConnectionDescriptor(dispatchServer,
+                debug.message("DispatchServerHostName list is empty");
+             } else { 
+             	dispatcher = new ConnectionDescriptor(dispatchServer,
                                           dispatchServerPort,
                                           ServerDescriptor.SSL_ANON);
-             debug.message("Trying to connect to " + dispatchServer 
-				+ ":" + dispatchServerPort);
 
-             try {
+                try {
                    runtimeAPI = APIFactory.createFromServerDispatcher(dispatcher);
                    String newToken = runtimeAPI.validateToken(value);
                    userId = runtimeAPI.getTokenValue(newToken, TokenKeys.SC_USER_ID);
-                   debug.message("Connected to " + dispatchServer 
-				+ ":" + dispatchServerPort);
                    debug.message("result: " + result);
                    debug.message("userId: " + userId);
-		   break;
-             }
-                   catch( RuntimeAPIException e ) {
+		   foundValidCTSession = true;  ////Gapa
+                }
+                catch( RuntimeAPIException e ) {
                    debug.message("Error connecting to dispatch server " +
                         dispatchServer+ ":" + dispatchServerPort);
-                   debug.message("Error connecting to dispatch server " +
-                        dispatchServer + ":" + dispatchServerPort);
-                   e.printStackTrace();
-             }
+		   e.printStackTrace();
+                } //end try
+                finally {   
+                          // Disconnect from Dispatch Server - WXA
+			if (runtimeAPI != null)
+                	 	runtimeAPI.close();
+                } 
+	     } ////Gapa-added for the new else condition
+          } // end while
+	  
+	  //// Gapa - if valid token not found, display a message
+	  if (!foundValidCTSession)   		//// Gapa
+		debug.message("Unable to find valid CTSESSION Token");  /// Gapa
 
-          }
+          return foundValidCTSession;
+
       }
-  }
 
-
-   private void disconnect()
-    {
-        if (runtimeAPI != null)
-            runtimeAPI.close();
-    }
-
+  } 
 
 
     /**
