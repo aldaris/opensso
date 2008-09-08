@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.69 2008-09-04 23:59:39 veiming Exp $
+   $Id: AgentService.xml,v 1.70 2008-09-08 21:51:20 mallas Exp $
 
 -->
 
@@ -3540,12 +3540,6 @@
                         <ChoiceValues>
                         <ChoiceValuesClassName className="com.sun.identity.policy.plugins.AllowedAgents" />
                         </ChoiceValues>
-                        <DefaultValues>
-                            <Value>wsc</Value>
-                            <Value>wsp</Value>
-                            <Value>SecurityTokenService</Value>
-                            <Value>SunSTS</Value>
-                        </DefaultValues>
                     </AttributeSchema>
                 </SubSchema>
             </Organization>
