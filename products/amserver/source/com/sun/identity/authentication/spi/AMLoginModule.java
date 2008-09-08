@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginModule.java,v 1.13 2008-08-19 19:08:55 veiming Exp $
+ * $Id: AMLoginModule.java,v 1.14 2008-09-08 05:15:46 bhavnab Exp $
  *
  */
 
@@ -73,14 +73,19 @@ import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.authentication.util.ISValidation;
 import com.sun.identity.common.AdministrationServiceListener;
 import com.sun.identity.idm.AMIdentityRepository;
+import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdSearchControl;
 import com.sun.identity.idm.IdSearchResults;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
+import com.sun.identity.common.ISAccountLockout;
+import com.sun.identity.common.DNUtils;
+import com.sun.identity.common.AccountLockoutInfo;
 import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
+import netscape.ldap.util.DN;
 
 /**
  * An abstract class which implements JAAS LoginModule, it provides
@@ -224,6 +229,7 @@ public abstract class AMLoginModule implements LoginModule {
     private String moduleName = null;
     private String moduleClass = null;
     private static final String bundleName = "amAuth";
+    private static AuthD ad = AuthD.getAuth();
     private Principal principal = null;
     // the authentication status
     private boolean succeeded = false;
@@ -440,6 +446,27 @@ public abstract class AMLoginModule implements LoginModule {
      * @supported.api
      */
     public Callback[] getCallback(int index) throws AuthLoginException {
+        return getCallback(index, false);
+    }
+
+    /**
+     * Return a Callback array for a specific state.
+     * <p>
+     * This method can be used to retrieve Callback[] for any state. All
+     * previous submitted Callback[] information are kept until the login
+     * process is completed.
+     * @param index	order of state
+     * @param fetchOrig	boolean indicating even if the callbacks for this
+     *        state have been previously retrieved, get the original callbacks
+     *        from AMModuleProperties, if set to "true".
+     * @return Callback array for this state, return 0-length Callback array
+     *     if there is no Callback defined for this state
+     * @throws AuthLoginException if unable to read the callbacks
+     * @supported.api
+     */
+    public Callback[] getCallback(int index, boolean fetchOrig) 
+        throws AuthLoginException 
+    {
         // This method will be called by customer module, so it will
         // return Callback[] from external callback List
         // check if there is no callbacks defined for this module
@@ -447,7 +474,7 @@ public abstract class AMLoginModule implements LoginModule {
             return EMPTY_CALLBACK;
         }
         
-        if (internal == null) {
+        if ((internal == null) || ( fetchOrig )) {
             // get the callbacks for this class;
             origList = AMModuleProperties.getModuleProperties(fileName);
             if (origList == null || origList.isEmpty()) {
@@ -549,7 +576,7 @@ public abstract class AMLoginModule implements LoginModule {
             new Object[]{new Integer(state)});
         }
         // check callback length for the state
-        Callback[] ext = getCallback(state);
+        Callback[] ext = getCallback(state, true);
         if (ext.length<=0) {
             throw new AuthLoginException(bundleName, "invalidCallbackIndex",
             null);
@@ -2103,4 +2130,77 @@ public abstract class AMLoginModule implements LoginModule {
        loginState.createUserIdentity(userName,userAttributes,userRoles);
        return;
     }
+   
+    /**
+     * Get the number of failed login attempts for a user when account locking
+     * is enabled.
+     * @return number of failed attempts, -1 id account locking is not enabled. 
+     * @throws AuthenticationException if the user name passed in is not valid 
+     * or  null, or for any other error condition.
+     * @supported.api
+     */
+     public int getFailCount(String userName) throws AuthenticationException {
+         AccountLockoutInfo acInfo = null;
+         if (loginState == null) {
+            loginState = getLoginState();
+            if (loginState == null) {
+                throw new AuthenticationException(bundleName, "nullLoginState", 
+                    null);
+            }
+         }
+         ISAccountLockout isAccountLockout = new ISAccountLockout(
+            loginState.getLoginFailureLockoutMode(),
+            loginState.getLoginFailureLockoutTime(),
+            loginState.getLoginFailureLockoutCount(),
+            loginState.getLoginLockoutNotification(),
+            loginState.getLoginLockoutUserWarning(),
+            loginState.getLoginLockoutAttrName(),
+            loginState.getLoginLockoutAttrValue(),
+            loginState.getLoginFailureLockoutDuration(),
+            loginState.getLoginFailureLockoutMultiplier(),
+            bundleName);
+         isAccountLockout.setStoreInvalidAttemptsInDS(
+         loginState.getLoginFailureLockoutStoreInDS());
+         try {
+             if (!isAccountLockout.isLockoutEnabled()) {
+                  debug.message("Failure lockout mode disabled");
+                    return -1;
+             } else {
+                 if (debug.messageEnabled()) {
+                     debug.message("AMLogiModule.getFailCount()::"
+                         +"lockout is enabled");
+                 }
+                 String userDN = null;
+                 AMIdentity amIdentity = null;
+                 AMIdentity amIdUser = ad.getIdentity(IdType.USER, userName, 
+                     loginState.getOrgDN());
+                 userDN = normalizeDN(IdUtils.getDN(amIdUser));
+                 if (acInfo == null) {
+                     acInfo = isAccountLockout.getAcInfo(userDN,amIdUser);
+                 }
+                 int failCount = acInfo.getFailCount();
+                 if (debug.messageEnabled()) {
+                     debug.message("AMLoginModule.getFailCount:failCount "
+                          +"returned:" +failCount);
+                 }
+                 return failCount;
+             }
+         } catch (Exception e) {
+             debug.error("AMLoginModule.getFailCount:Error : " + e.toString());
+             throw new AuthenticationException(e.getMessage());
+         }
+    }
+
+    /* returns the normalized DN  */
+    private String normalizeDN(String userDN) {
+        String normalizedDN = userDN;
+        if ((userDN != null) && DN.isDN(userDN)) {
+            normalizedDN = DNUtils.normalizeDN(userDN);
+        }
+        if (ad.debug.messageEnabled()) {
+            ad.debug.message("Original DN is:" + userDN);
+            ad.debug.message("Normalized DN is:" + normalizedDN);
+        }
+        return normalizedDN;
+    }     
 }
