@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISAccountLockout.java,v 1.11 2008-06-25 05:42:25 qcheng Exp $
+ * $Id: ISAccountLockout.java,v 1.12 2008-09-08 05:29:34 bhavnab Exp $
  *
  */
 
@@ -212,7 +212,11 @@ public class ISAccountLockout {
         ) {
             lockedAt = now;
         }
-        
+        if (debug.messageEnabled()) {
+            debug.message("ISAccountLockout.invalidPasswd:fail_count:"
+                 +fail_count);
+        }
+       
         if (storeInvalidAttemptsInDS) {
             Map attrMap = new HashMap();
             Set invalidAttempts = new HashSet();

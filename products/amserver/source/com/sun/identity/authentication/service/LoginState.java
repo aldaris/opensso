@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.35 2008-09-02 19:59:08 ericow Exp $
+ * $Id: LoginState.java,v 1.36 2008-09-08 05:29:35 bhavnab Exp $
  *
  */
 
@@ -4108,22 +4108,22 @@ public class LoginState {
         return enableModuleBasedAuth;
     }
  
-    protected boolean getLoginFailureLockoutMode() {
+    public boolean getLoginFailureLockoutMode() {
         return loginFailureLockoutMode;
     }
-    protected boolean getLoginFailureLockoutStoreInDS() {
+    public boolean getLoginFailureLockoutStoreInDS() {
         return loginFailureLockoutStoreInDS;
     }
     
-    protected long getLoginFailureLockoutTime() {
+    public long getLoginFailureLockoutTime() {
         return loginFailureLockoutTime;
     }
     
-    protected int getLoginFailureLockoutCount() {
+    public int getLoginFailureLockoutCount() {
         return loginFailureLockoutCount;
     }
     
-    protected String getLoginLockoutNotification() {
+    public String getLoginLockoutNotification() {
         return loginLockoutNotification;
     }
     
@@ -4131,7 +4131,7 @@ public class LoginState {
      * Returns lockout warning message.
      * @return lockout warning message.
      */
-    protected int getLoginLockoutUserWarning() {
+    public int getLoginLockoutUserWarning() {
         return loginLockoutUserWarning;
     }
     
