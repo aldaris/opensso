@@ -22,16 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProxyPolicyEvaluator.java,v 1.2 2008-06-25 05:43:44 qcheng Exp $
+ * $Id: ProxyPolicyEvaluator.java,v 1.3 2008-09-08 06:46:05 bhavnab Exp $
  *
  */
 
 
 
 package com.sun.identity.policy;
-import com.iplanet.am.sdk.AMException;
-import com.iplanet.am.sdk.AMUser;
-import com.iplanet.am.sdk.AMStoreConnection;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
@@ -40,9 +37,16 @@ import com.sun.identity.authentication.server.AuthContextLocal;
 import com.sun.identity.authentication.service.AuthException;
 import com.sun.identity.authentication.service.AuthUtils;
 
+import com.sun.identity.sm.DNMapper;
+
+import com.sun.identity.delegation.DelegationEvaluator;
+import com.sun.identity.delegation.DelegationException;
+import com.sun.identity.delegation.DelegationPermission;
+
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.HashSet;
 import javax.security.auth.login.LoginException;
 
 import netscape.ldap.util.DN;
@@ -75,7 +79,6 @@ public class ProxyPolicyEvaluator {
             = "cn=Organization Policy Admin Role,";
 
     private SSOToken adminToken;
-    private AMUser adminUser;
     private String serviceType;
     private PolicyEvaluator policyEvaluator;
     private static String baseDNString;
@@ -109,14 +112,41 @@ public class ProxyPolicyEvaluator {
         SSOTokenManager.getInstance().validateToken(token);
         this.adminToken = token;
         this.serviceType = serviceType;
-        AMStoreConnection conn = new AMStoreConnection(adminToken);
-        this.adminUser = conn.getUser(adminToken.getPrincipal().getName());
         this.policyEvaluator 
                 = PolicyEvaluatorFactory.getInstance()
                 .getPolicyEvaluator(token, serviceType);
     }
 
     /**
+     * Evaluates a simple privilege of boolean type. The privilege indicates
+     * if the user identified by the <code>principalName</code> 
+     * can perform specified action on the specified resource.
+     *
+     * @param principalName principal name for whom to compute the privilege.
+     * @param realm realm of the user principal "/" separated format 
+     * @param resourceName name of the resource for which to compute 
+     *                     policy result.
+     * @param actionName name of the action the user is trying to perform on
+     * the resource
+     * @param env run time environment parameters
+     *
+     * @return the result of the evaluation as a boolean value
+     *
+     * @throws PolicyException exception form policy framework 
+     * @throws SSOException if single sign on token is invalid
+     * 
+     */
+    public boolean isAllowed(String principalName, String realm,  
+        String resourceName, String actionName, Map env) 
+        throws PolicyException, SSOException 
+    {
+        SSOToken token = getProxyToken(realm, principalName);
+        boolean allowed = policyEvaluator.isAllowed(token, resourceName,
+                actionName, env);
+        return allowed;
+    }
+
+     /**
      * Evaluates a simple privilege of boolean type. The privilege indicates
      * if the user identified by the <code>principalName</code> 
      * can perform specified action on the specified resource.
@@ -137,10 +167,7 @@ public class ProxyPolicyEvaluator {
     public boolean isAllowed(String principalName, String resourceName, 
         String actionName, Map env) throws PolicyException, SSOException 
     {
-        SSOToken token = getProxyToken(principalName);
-        boolean allowed = policyEvaluator.isAllowed(token, resourceName,
-                actionName, env);
-        return allowed;
+        return isAllowed(principalName, null, resourceName, actionName, env);
     }
 
     /**
@@ -149,6 +176,7 @@ public class ProxyPolicyEvaluator {
      *
      * @param principalName principal name for whom to compute the policy 
      *                      decision
+     * @param realm realm of the user principal "/" separated format 
      * @param resourceName name of the resource for which to compute policy 
      *                      decision
      * @param env run time environment parameters
@@ -159,11 +187,11 @@ public class ProxyPolicyEvaluator {
      * @throws SSOException if single sign on token is invalid
      * 
      */
-    public PolicyDecision getPolicyDecision(String principalName, 
+    public PolicyDecision getPolicyDecision(String principalName, String realm,
         String resourceName, Map env) 
         throws PolicyException, SSOException 
     {
-        SSOToken token = getProxyToken(principalName);
+        SSOToken token = getProxyToken(realm, principalName);
         PolicyDecision pd = policyEvaluator.getPolicyDecision(
                 token, resourceName, null, env); //null actionNames
         // Let us log all policy evaluation results
@@ -189,6 +217,28 @@ public class ProxyPolicyEvaluator {
         }
 
         return pd;
+    }
+    /**
+     * Gets policy decision for the user identified by the
+     * <code>principalName</code> for the given resource
+     *
+     * @param principalName principal name for whom to compute the policy 
+     *                      decision
+     * @param resourceName name of the resource for which to compute policy 
+     *                      decision
+     * @param env run time environment parameters
+     *
+     * @return the policy decision for the principal for the given resource
+     *
+     * @throws PolicyException exception form policy framework
+     * @throws SSOException if single sign on token is invalid
+     * 
+     */
+    public PolicyDecision getPolicyDecision(String principalName, 
+        String resourceName, Map env) 
+        throws PolicyException, SSOException 
+    {
+        return getPolicyDecision(principalName, null, resourceName, env);
     }
 
     /**
@@ -274,7 +324,45 @@ public class ProxyPolicyEvaluator {
     public Set getProtectedResourcesIgnoreConditions(String principalName, 
         String rootResource)  throws PolicyException, SSOException 
     {
-        SSOToken token = getProxyToken(principalName);
+            return getProtectedResourcesIgnoreConditions(principalName, null, 
+            rootResource);
+    }
+
+    /**
+     * Gets protected resources for a user identified by the
+     * <code>principalName</code>.  Conditions defined  in the policies are
+     * ignored while computing protected resources. 
+     * Only resources that are  sub resources of the  given 
+     * <code>rootResource</code> or equal to the given <code>rootResource</code>
+     * would be returned.
+     * If all policies applicable to a resource are 
+     * only referral policies, no <code>ProtectedResource</code> would be
+     * returned for such a resource.
+     *
+     * @param principalName principal name for whom to compute the privilege.
+     * @param realm realm of the user principal "/" separated format 
+     * @param rootResource  only resources that are sub resources of the  
+     *                      given <code>rootResource</code> or equal to the
+     *                      given <code>rootResource</code> would be returned.
+     *                      If <code>PolicyEvaluator.ALL_RESOURCES</code> is 
+     *                      passed as <code>rootResource</code>, resources under
+     *                      all root  resources of the service 
+     *                      type are considered while computing protected 
+     *                      resources.
+     *
+     * @return set of protected resources. The set contains
+     *         <code>ProtectedResource</code> objects. 
+     *
+     * @throws PolicyException exception form policy framework
+     * @throws SSOException if single sign on token is invalid
+     * @see ProtectedResource
+     * 
+     */
+    public Set getProtectedResourcesIgnoreConditions(String principalName, 
+        String realm, String rootResource)  
+        throws PolicyException, SSOException 
+    {
+        SSOToken token = getProxyToken(realm, principalName);
         return policyEvaluator.getProtectedResourcesIgnoreConditions(
                 token, rootResource);
     }
@@ -287,15 +375,25 @@ public class ProxyPolicyEvaluator {
      * @throws SSOException if the session token of the administrative user
      * is invalid
      */
-    private SSOToken getProxyToken(String principalName) 
+    private SSOToken getProxyToken(String realm, String principalName) 
         throws PolicyException, SSOException 
     {
+        if ((realm == null) || realm.trim().equals("")) {
+            realm = "/"; // set it to root org
+        }
         SSOTokenManager.getInstance().validateToken(adminToken);
         SSOToken token = null;
         boolean proxyPermission = false;
 
         try {
-            AuthContextLocal ac = AuthUtils.getAuthContext(baseDNString);
+            String orgDN = DNMapper.orgNameToDN(realm);
+            if (PolicyManager.debug.messageEnabled()) {
+                PolicyManager.debug.message("ProxyPolicyEvaluator."+
+                    "getProxyToken:principalName, orgDN="+principalName+
+                    ","+orgDN);
+            }
+            
+            AuthContextLocal ac = AuthUtils.getAuthContext(orgDN);
             ac.login(
                 com.sun.identity.authentication.AuthContext.IndexType.USER, 
                     principalName, true);
@@ -311,57 +409,18 @@ public class ProxyPolicyEvaluator {
         }
 
         try {
-            AMStoreConnection conn = new AMStoreConnection(adminToken);
-            AMUser user 
-                    = conn.getUser(token.getPrincipal().getName());
-            String userOrg = user.getOrganizationDN();
-            DN userOrgDN = new DN(userOrg);
-            Set adminRoles = adminUser.getRoleDNs();
-            String roleOrg = null;
-            DN roleOrgDN = null;
-            Iterator roleIter = adminRoles.iterator();
-            while (roleIter.hasNext()) {
-                String role = (String)roleIter.next();
-                if (role.startsWith(TOP_LEVEL_ADMIN_ROLE)) {
-                    roleOrg =
-                            role.substring(
-                            TOP_LEVEL_ADMIN_ROLE.length());
-                    roleOrgDN = new DN(roleOrg);
-                    if (roleOrgDN.equals(baseDN)) {
-                        proxyPermission = true;
-                        break;
-                    }
-                } else if (role.startsWith(TOP_LEVEL_POLICY_ADMIN_ROLE)) {
-                    roleOrg =
-                            role.substring(
-                            TOP_LEVEL_POLICY_ADMIN_ROLE.length());
-                    roleOrgDN = new DN(roleOrg);
-                    if (roleOrgDN.equals(baseDN)) {
-                        proxyPermission = true;
-                        break;
-                    }
-                } else if (role.startsWith(ORG_ADMIN_ROLE)) {
-                    roleOrg =
-                            role.substring(
-                            ORG_ADMIN_ROLE.length());
-                    roleOrgDN = new DN(roleOrg);
-                    if (userOrgDN.equals(roleOrgDN) 
-                                || userOrgDN.isDescendantOf(roleOrgDN)) {
-                        proxyPermission = true;
-                        break;
-                    }
-                } else if (role.startsWith(ORG_POLICY_ADMIN_ROLE)) {
-                    roleOrg =
-                            role.substring(
-                            ORG_POLICY_ADMIN_ROLE.length());
-                    roleOrgDN = new DN(roleOrg);
-                    if (userOrgDN.equals(roleOrgDN) 
-                                || userOrgDN.isDescendantOf(roleOrgDN)) {
-                        proxyPermission = true;
-                        break;
-                    }
-                }
-            }
+            Set actionNames = new HashSet();
+            actionNames.add("MODIFY");
+            DelegationEvaluator de = new DelegationEvaluator();
+            DelegationPermission permission =
+                new DelegationPermission("/", "iPlanetAMPolicyService",
+                    "1.0", "organization", "default",
+                    actionNames, null);
+            proxyPermission = de.isAllowed(adminToken, permission, null);
+            if (PolicyManager.debug.messageEnabled()) {
+                PolicyManager.debug.message("proxyPermission after delegation "
+                    +"check:" +proxyPermission);
+            }  
             if (!proxyPermission) {
                 SSOTokenManager.getInstance().destroyToken(token);
                 if (PolicyManager.debug.warningEnabled()) {
@@ -374,9 +433,8 @@ public class ProxyPolicyEvaluator {
                 throw new PolicyException(ResBundleUtils.rbName,
                         "no_permission_to_create_proxy_sso_token", null, null);
             }
-                
-        } catch(AMException ae) {
-            throw new PolicyException(ae);
+        } catch(DelegationException de) {
+            throw new PolicyException(de);        
         }
         return token;
     }
