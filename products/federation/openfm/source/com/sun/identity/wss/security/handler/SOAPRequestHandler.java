@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.27 2008-09-08 21:50:15 mallas Exp $
+ * $Id: SOAPRequestHandler.java,v 1.28 2008-09-08 22:50:15 mallas Exp $
  *
  */
 
@@ -1400,7 +1400,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
            return null;
         }      
         try {
-             ProviderConfig pc = ProviderConfig.getProviderConfig(
+             ProviderConfig pc = ProviderConfig.getProvider(
                      stsConfig.getIssuer(), ProviderConfig.WSP, false);
              pc.setKDCDomain(stsConfig.getKDCDomain());
              pc.setKDCServer(stsConfig.getKDCServer());
