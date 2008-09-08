@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityConfig.java,v 1.12 2008-08-31 15:50:02 mrudul_uchil Exp $
+ * $Id: TrustAuthorityConfig.java,v 1.13 2008-09-08 21:50:14 mallas Exp $
  *
  */
 
@@ -94,7 +94,7 @@ public abstract class TrustAuthorityConfig {
     private static Class discoveryConfigClass;
     private static Class stsConfigClass;
     private static Debug debug = ProviderUtils.debug;
-    protected static SSOToken adminToken = null;
+    protected static SSOToken customAdminToken = null;
 
     /**
      * Property string for the web services discovery client configuration 
@@ -501,18 +501,21 @@ public abstract class TrustAuthorityConfig {
     }
 
     private static SSOToken getAdminToken() throws ProviderException {
-        if (adminToken == null) {
-            try {
-                adminToken = (SSOToken) AccessController.doPrivileged(
-                    AdminTokenAction.getInstance());
-                SSOTokenManager.getInstance().refreshSession(adminToken);
-            } catch (SSOException se) {
-                ProviderUtils.debug.message(
-                    "TrustAuthorityConfig.getAdminToken: Trying second time..");
-                adminToken = (SSOToken) AccessController.doPrivileged(
-                    AdminTokenAction.getInstance());
-            }
+        if(customAdminToken != null) {
+           return customAdminToken;
         }
+        SSOToken adminToken = null;
+        try {
+            adminToken = (SSOToken) AccessController.doPrivileged(
+                    AdminTokenAction.getInstance());
+            SSOTokenManager.getInstance().refreshSession(adminToken);
+        } catch (SSOException se) {
+            ProviderUtils.debug.message(
+                "TrustAuthorityConfig.getAdminToken: Trying second time..");
+            adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        }
+        
         return adminToken;
     }
     
@@ -526,6 +529,6 @@ public abstract class TrustAuthorityConfig {
      * @param adminToken the agent admin token.
      */
     public void setAdminToken(SSOToken adminToken) {
-        this.adminToken = adminToken;
+        this.customAdminToken = adminToken;
     }
 }

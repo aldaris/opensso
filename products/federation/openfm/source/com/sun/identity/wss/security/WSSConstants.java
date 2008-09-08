@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSConstants.java,v 1.10 2008-08-22 04:07:57 mallas Exp $
+ * $Id: WSSConstants.java,v 1.11 2008-09-08 21:50:14 mallas Exp $
  *
  */
 
@@ -177,6 +177,23 @@ public class WSSConstants {
     
     public static final String ENCRYPTED_USER_PASSWORD = 
                         "EncryptedUserPassword";
+    
+    public static final String KERBEROS_AUTH_CTX_CLASS_REF = 
+            "urn:oasis:names:tc:SAML:2:0:ac:classes:Kerberos";
+    
+    public static final String PASSWORD_AUTH_CTX_CLASS_REF = 
+            "urn:oasis:names:tc:SAML:2.0:ac:classes:Password";
+    
+    public static final String PASSWORD_PROTECTED_AUTH_CTX_CLASS_REF =
+            "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport";
+    
+    public static final String PUBLIC_KEY_AUTH_CTX_CLASS_REF =
+            "urn:oasis:names:tc:SAML:2.0:ac:classes:X509";
+    
+    public static final String SOFTWARE_PKI_AUTH_CTX_CLASS_REF = 
+            "urn:oasis:names:tc:SAML:2.0:ac:classes:Software-PKI";
+    
+    public static final String AUTH_METHOD = "AuthMethod";
 
 }
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.26 2008-08-31 15:50:03 mrudul_uchil Exp $
+ * $Id: SOAPRequestHandler.java,v 1.27 2008-09-08 21:50:15 mallas Exp $
  *
  */
 
@@ -747,8 +747,8 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         try {
             if (!ProviderConfig.isProviderExists(
                     providerName, ProviderConfig.WSP)) {
-                config = ProviderConfig.getProvider(providerName,
-                    ProviderConfig.WSP, true);
+                config = ProviderConfig.getProviderByEndpoint(
+                        providerName, ProviderConfig.WSP);
                 if (!ProviderConfig.isProviderExists(
                     providerName, ProviderConfig.WSP, true)) {
                     providerName = SystemConfigurationUtil.getProperty(
@@ -1400,8 +1400,8 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
            return null;
         }      
         try {
-             ProviderConfig pc = ProviderConfig.getProvider(stsConfig.getIssuer(),
-                ProviderConfig.WSP);
+             ProviderConfig pc = ProviderConfig.getProviderConfig(
+                     stsConfig.getIssuer(), ProviderConfig.WSP, false);
              pc.setKDCDomain(stsConfig.getKDCDomain());
              pc.setKDCServer(stsConfig.getKDCServer());
              pc.setKerberosServicePrincipal(

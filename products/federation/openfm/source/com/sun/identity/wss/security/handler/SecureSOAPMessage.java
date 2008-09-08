@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureSOAPMessage.java,v 1.20 2008-08-13 18:56:41 mrudul_uchil Exp $
+ * $Id: SecureSOAPMessage.java,v 1.21 2008-09-08 21:50:15 mallas Exp $
  *
  */
 
@@ -406,6 +406,11 @@ public class SecureSOAPMessage {
          Node tokenNode = soapMessage.getSOAPPart().importNode(tokenE, true);
          WSSUtils.prependChildElement(wsseHeader, (Element)tokenNode, true, 
                 (Document)soapMessage.getSOAPPart());
+         try {
+             soapMessage.saveChanges();
+         } catch (SOAPException se) {
+             throw new SecurityException(se.getMessage());
+         }
      }
 
      /**
@@ -898,7 +903,7 @@ public class SecureSOAPMessage {
                   int encryptionKeyStrength,
                   boolean encryptBody, 
                   boolean encryptHeader) throws SecurityException {
-
+     
          Document doc = toDocument();
          String tokenType = null;
          // securityToken=null if the secmech is Anonymous
@@ -910,6 +915,7 @@ public class SecureSOAPMessage {
          Map elmMap = new HashMap();
          Document encryptedDoc = null;
          String searchType = null;
+         String searchNS = WSSConstants.WSSE_NS;
 
          try {
              if (encryptBody) {
@@ -925,7 +931,7 @@ public class SecureSOAPMessage {
 
              if (encryptHeader) {
                  String tokenId = null;
-
+                 
                  if (SecurityToken.WSS_X509_TOKEN.equals(tokenType)) {
                      searchType = SAMLConstants.BINARYSECURITYTOKEN;
                  } else if (SecurityToken.WSS_USERNAME_TOKEN.equals(tokenType)) {
@@ -935,6 +941,12 @@ public class SecureSOAPMessage {
                      AssertionToken assertionToken = 
                          (AssertionToken)securityToken;
                      tokenId = assertionToken.getAssertion().getAssertionID();
+                     searchNS = SAMLConstants.assertionSAMLNameSpaceURI;
+                 } else if (SecurityToken.WSS_SAML2_TOKEN.equals(tokenType)) {
+                     searchType = SAMLConstants.TAG_ASSERTION;
+                     SAML2Token saml2Token = (SAML2Token)securityToken;
+                     tokenId = saml2Token.getAssertion().getID();
+                     searchNS = SAML2Constants.ASSERTION_NAMESPACE_URI;
                  }
 
                  Element secHeaderElement = (Element) doc.getDocumentElement().
@@ -948,7 +960,7 @@ public class SecureSOAPMessage {
                  if (secHeaderElement != null) {
                      Element token = 
                          (Element)secHeaderElement.getElementsByTagNameNS(
-                         WSSConstants.WSSE_NS,searchType).item(0);
+                         searchNS,searchType).item(0);
                      
                      if ((token != null) && (tokenId == null)) {        
                          tokenId = token.getAttributeNS(WSSConstants.WSU_NS,
@@ -1039,7 +1051,7 @@ public class SecureSOAPMessage {
                  } else if (encryptHeader) {
                      Element token = 
                          (Element)wsseHeader.getElementsByTagNameNS(
-                         WSSConstants.WSSE_NS,searchType).item(0);
+                         searchNS,searchType).item(0);
 
                      if(debug.messageEnabled()) {
                          debug.message("SecureSOAPMessage.encrypt:: wsseHeader: " 
@@ -1230,6 +1242,9 @@ public class SecureSOAPMessage {
 
              if( (SAMLConstants.TAG_ASSERTION.equals(localName)) &&
                  (SAMLConstants.assertionSAMLNameSpaceURI.equals(nameSpace))) {
+                 searchType = SAMLConstants.TAG_ASSERTION;
+             } else if( (SAMLConstants.TAG_ASSERTION.equals(localName)) &&
+                 (SAML2Constants.ASSERTION_NAMESPACE_URI.equals(nameSpace))) {
                  searchType = SAMLConstants.TAG_ASSERTION;
              } else if( (WSSConstants.TAG_BINARY_SECURITY_TOKEN.
                          equals(localName)) && 

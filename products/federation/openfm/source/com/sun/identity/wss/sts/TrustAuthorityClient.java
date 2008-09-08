@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityClient.java,v 1.18 2008-08-27 19:05:53 mrudul_uchil Exp $
+ * $Id: TrustAuthorityClient.java,v 1.19 2008-09-08 21:50:15 mallas Exp $
  *
  */
 
@@ -48,6 +48,7 @@ import com.sun.identity.wss.provider.STSConfig;
 import com.sun.identity.wss.security.AssertionToken;
 import com.sun.identity.wss.security.FAMSecurityToken;
 import com.sun.identity.wss.security.SAML2Token;
+import com.sun.identity.wss.security.UserNameToken;
 import com.sun.identity.wss.logging.LogUtil;
 import com.sun.identity.classloader.FAMClassLoader;
 
@@ -368,7 +369,7 @@ public class TrustAuthorityClient {
             if(debug.messageEnabled()) {
                 debug.message("TrustAuthorityClient.getSTSToken:: Token "
                     + "type : " + type);
-                debug.message("TrustAuthorityClient.getSTSToken:: Assertion"
+                debug.message("TrustAuthorityClient.getSTSToken:: Token"
                     + " obtained from STS : " + XMLUtils.print(element));
             }
 
@@ -395,7 +396,9 @@ public class TrustAuthorityClient {
                     type.equals(STSConstants.SAML11_ASSERTION_TOKEN_TYPE)) {
                     return new AssertionToken(element);    
                 } else if (type.equals(SecurityToken.WSS_FAM_SSO_TOKEN)) {
-                    return new FAMSecurityToken(element);    
+                    return new FAMSecurityToken(element);
+                } else if (type.equals(SecurityToken.WSS_USERNAME_TOKEN)) {
+                    return new UserNameToken(element);
                 } else {
                     throw new FAMSTSException (
                             STSUtils.bundle.getString("unsupportedtokentype"));
@@ -444,17 +447,19 @@ public class TrustAuthorityClient {
         }
 
         if (elemName.equals(STSConstants.ASSERTION_ELEMENT)) {
-            String attrValue = 
-                element.getAttribute(STSConstants.SAML20_NAMESPACE);
+            String attrValue = element.getNamespaceURI();
             if ((attrValue != null) && (attrValue.length() != 0) 
-                && (attrValue.equals(STSConstants.SAML20_ASSERTION_TOKEN_TYPE)) ) {
+                && (attrValue.equals(STSConstants.SAML20_ASSERTION)) ) {
                 return STSConstants.SAML20_ASSERTION_TOKEN_TYPE;
             }
-            attrValue = element.getAttribute(STSConstants.SAML10_NAMESPACE);
+            attrValue = element.getNamespaceURI();
             if ((attrValue != null) && (attrValue.length() != 0) 
                 && (attrValue.equals(STSConstants.SAML10_ASSERTION)) ) {
                 return STSConstants.SAML11_ASSERTION_TOKEN_TYPE;
-            }
+            }            
+        } else if (elemName.equals(STSConstants.USER_NAME_TOKEN)) {
+            return SecurityToken.WSS_USERNAME_TOKEN;
+            
         } else if(elemName.equals("FAMToken")) {
             return SecurityToken.WSS_FAM_SSO_TOKEN;
         } else {

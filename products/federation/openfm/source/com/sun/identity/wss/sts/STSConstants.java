@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSConstants.java,v 1.13 2008-08-19 19:12:27 veiming Exp $
+ * $Id: STSConstants.java,v 1.14 2008-09-08 21:50:15 mallas Exp $
  *
  */
 
@@ -110,6 +110,7 @@ public class STSConstants {
     
     public static final String WST_VERSION_ATTR = "WSTrustVersion";
     
-
+    public static final String USER_NAME_TOKEN = "UsernameToken";
+        
 }
 

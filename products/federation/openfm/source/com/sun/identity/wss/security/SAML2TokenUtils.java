@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2TokenUtils.java,v 1.4 2008-06-25 05:50:08 qcheng Exp $
+ * $Id: SAML2TokenUtils.java,v 1.5 2008-09-08 21:50:14 mallas Exp $
  *
  */
 
@@ -30,8 +30,12 @@ package com.sun.identity.wss.security;
 
 import org.w3c.dom.Element;
 import java.util.List;
+import java.util.Iterator;
+import java.util.Map;
 import java.security.cert.X509Certificate;
 import com.sun.identity.saml2.assertion.Assertion;
+import com.sun.identity.saml2.assertion.AttributeStatement;
+import com.sun.identity.saml2.assertion.Attribute;
 import com.sun.identity.saml2.assertion.Subject;
 import com.sun.identity.saml2.assertion.SubjectConfirmation;
 import com.sun.identity.saml2.assertion.NameID;
@@ -93,7 +97,7 @@ public class SAML2TokenUtils {
      * Validates Assertion and sets the principal into the container Subject.
      */
     public static boolean validateAssertion(Assertion assertion, 
-            javax.security.auth.Subject subject) 
+            javax.security.auth.Subject subject, Map secureAttrs) 
                throws SecurityException {
 
         if((assertion.getConditions() != null) &&
@@ -128,6 +132,18 @@ public class SAML2TokenUtils {
            subject.getPublicCredentials().add(cert);
         }
         WSSUtils.setRoles(subject, ni.getValue());
+        
+        List attributeStatements = assertion.getAttributeStatements();
+        if(!attributeStatements.isEmpty()) {
+           AttributeStatement attribStatement = 
+                   (AttributeStatement)attributeStatements.get(0);
+           List attributes = attribStatement.getAttribute();
+           for (Iterator iter = attributes.iterator(); iter.hasNext();) {
+               Attribute attribute = (Attribute)iter.next();
+               secureAttrs.put(attribute.getName(),
+                       attribute.getAttributeValueString());
+           }
+        }
         return true;
     }
 }

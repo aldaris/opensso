@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderConfig.java,v 1.25 2008-09-03 03:51:17 mallas Exp $
+ * $Id: ProviderConfig.java,v 1.26 2008-09-08 21:50:14 mallas Exp $
  *
  */
 package com.sun.identity.wss.provider; 
@@ -915,23 +915,43 @@ public abstract class ProviderConfig {
     }
     
     /**
-     * Returns the provider configuration for a given provider name.
-     *
-     * @param providerName the provider name.
-     *
+     * Returns the provider configuration for a given provider name.     
+     * @param providerName the provider name.    
      * @param providerType the provider type.
-     * 
-     * @param isEndPoint flag to indicate search based on WSP end point.
-     *
+     * @param initalize if set to false the provider configuration will not
+     *        be retrieved from the persistent store and returns just the
+     *        memory image of the provider configuration. Also if set to
+     *        false the provider configuration can not be saved persistently
+     *        using {@link #store()}.
      * @exception ProviderException if unable to retrieve.
      */
     public static ProviderConfig getProvider(
-        String providerName, String providerType, boolean isEndPoint) 
+           String providerName, String providerType, boolean initialize)
+           throws ProviderException {
+           
+         if(!initialize) {
+            return getConfigAdapter();
+         }
+         return getProvider(providerName, providerType);
+    }
+    
+    /**
+     * Returns the provider configuration for a given end point     
+     *
+     * @param endpoint the end point is the search string to retrieve the
+     *        provider configuration.
+     *
+     * @param providerType the provider type.
+     *          
+     * @exception ProviderException if unable to retrieve.
+     */
+    public static ProviderConfig getProviderByEndpoint(
+        String endpoint, String providerType) 
         throws ProviderException {
 
          ProviderConfig pc = getConfigAdapter(); 
          SSOToken adminToken = getAdminToken();
-         pc.init(providerName, providerType, adminToken, isEndPoint);
+         pc.init(endpoint, providerType, adminToken, true);
          return pc; 
     }
 
@@ -970,8 +990,8 @@ public abstract class ProviderConfig {
     public static boolean isProviderExists(String providerName, 
                   String providerType, boolean isEndPoint) {
         try {
-            ProviderConfig config = getProvider(providerName, providerType,
-                isEndPoint);
+            ProviderConfig config = getProviderByEndpoint(
+                    providerName, providerType);
             return config.isExists();
         } catch (ProviderException pe) {
             ProviderUtils.debug.error("ProviderConfig.isProviderExists:: " +

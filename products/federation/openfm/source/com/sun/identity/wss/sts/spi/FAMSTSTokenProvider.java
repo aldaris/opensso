@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSTokenProvider.java,v 1.10 2008-08-19 19:12:28 veiming Exp $
+ * $Id: FAMSTSTokenProvider.java,v 1.11 2008-09-08 21:50:16 mallas Exp $
  *
  */
 
@@ -72,6 +72,7 @@ import java.util.logging.Level;
 import com.sun.xml.ws.security.trust.logging.LogStringsMessages;
 
 import java.security.cert.X509Certificate;
+import javax.security.auth.Subject;
 import java.util.UUID;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -94,6 +95,7 @@ import com.sun.identity.plugin.session.SessionProvider;
 import com.sun.identity.plugin.session.SessionException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.wss.sts.FAMSTSException;
 import com.sun.identity.wss.sts.STSClientUserToken;
 import com.sun.identity.wss.security.SAML11AssertionValidator;
@@ -104,6 +106,12 @@ import com.sun.identity.wss.security.SecurityException;
 import com.sun.identity.wss.sts.config.FAMSTSConfiguration;
 import com.sun.identity.wss.security.SecurityToken;
 import com.sun.identity.wss.logging.LogUtil;
+import com.sun.identity.wss.security.WSSConstants;
+import com.sun.identity.wss.security.UserNameTokenSpec;
+import com.iplanet.services.util.Crypt;
+import com.sun.identity.wss.security.SecurityTokenFactory;
+import com.sun.identity.wss.security.WSSUtils;
+import com.sun.identity.wss.security.SecurityMechanism;
 
 
 public class FAMSTSTokenProvider implements STSTokenProvider {
@@ -121,7 +129,14 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
                           SecurityToken.WSS_FAM_SSO_TOKEN)) {
            generateSSOToken(ctx);
            return;
-        }        
+        }
+        
+        if(tokenType != null && 
+                (tokenType.equals(WSSConstants.PASSWORD_PLAIN_TYPE) ||
+                 tokenType.equals(WSSConstants.PASSWORD_DIGEST_TYPE))) {
+           generateUserNameToken(ctx, tokenType);
+           return;
+        }
         String keyType = ctx.getKeyType();
         int tokenLifeSpan = 
             (int)(ctx.getExpirationTime().getTime() - ctx.getCreationTime().
@@ -161,7 +176,8 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
             WSTrustConstants.SAML11_ASSERTION_TOKEN_TYPE.equals(tokenType)){
             assertion = 
                 createSAML11Assertion(wstVer, tokenLifeSpan, confirMethod, 
-                assertionId, issuer, appliesTo, keyInfo, claimedAttrs, keyType);
+                assertionId, issuer, appliesTo, keyInfo, claimedAttrs, 
+                keyType, getAuthnMechanism(ctx));
             String[] data = {assertionId,issuer,appliesTo,confirMethod,
                 tokenType,keyType};
             LogUtil.access(Level.INFO,
@@ -170,9 +186,7 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
                         null);
         } else if (WSTrustConstants.SAML20_ASSERTION_TOKEN_TYPE.equals(
             tokenType)){
-            String authnCtx = 
-                (String)ctx.getOtherProperties().get(
-                IssuedTokenContext.AUTHN_CONTEXT);
+            String authnCtx = getAuthContextClassRef(ctx);                
             assertion = 
                 createSAML20Assertion(wstVer, tokenLifeSpan, confirMethod, 
                 assertionId, issuer, appliesTo, keyInfo, claimedAttrs, keyType, 
@@ -266,8 +280,8 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
     protected Assertion createSAML11Assertion(final WSTrustVersion wstVer, 
         int lifeSpan, String confirMethod, final String assertionId, 
         final String issuer, final String appliesTo, final KeyInfo keyInfo, 
-        final Map<QName, List<String>> claimedAttrs, String keyType) 
-        throws WSTrustException{
+        final Map<QName, List<String>> claimedAttrs, String keyType,
+        String authMethod) throws WSTrustException{
         
         Assertion assertion = null;
         try{
@@ -293,7 +307,8 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
             final List<String> confirmMethods = new ArrayList<String>();
             if (confirMethod == null){
                 if (keyType.equals(wstVer.getBearerKeyTypeURI())){
-                     confirMethod = STSConstants.SAML_BEARER_1_0;
+                     //confirMethod = STSConstants.SAML_BEARER_1_0;
+                    confirMethod = STSConstants.SAML_SENDER_VOUCHES_1_0;
             
                 } else {
                     confirMethod = STSConstants.SAML_HOLDER_OF_KEY_1_0;
@@ -340,7 +355,7 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
             
             final List<Object> statements = new ArrayList<Object>();
             final AuthenticationStatement statement = 
-                  samlFac.createAuthenticationStatement(null, issuerInst, 
+                  samlFac.createAuthenticationStatement(authMethod, issuerInst, 
                   subj, null, null);
             statements.add(statement); 
             if (!attrs.isEmpty()){                
@@ -411,8 +426,8 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
             KeyInfoConfirmationData keyInfoConfData = null;
             if (confirMethod == null){
                 if (keyType.equals(wstVer.getBearerKeyTypeURI())){
-                     confirMethod = STSConstants.SAML_BEARER_2_0;
-                    
+                     //confirMethod = STSConstants.SAML_BEARER_2_0;
+                    confirMethod = STSConstants.SAML_SENDER_VOUCHES_2_0;
 
                 } else {
                     confirMethod = STSConstants.SAML_HOLDER_OF_KEY_2_0;
@@ -463,7 +478,7 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
             }
             //}   
             final List<Object> statements = new ArrayList<Object>();
-            AuthnContext ctx = samlFac.createAuthnContext(authnCtx, null);
+            AuthnContext ctx = samlFac.createAuthnContext(authnCtx, null);           
             final AuthnStatement statement = 
                     samlFac.createAuthnStatement(issueInst, null, ctx);
             statements.add(statement); 
@@ -588,7 +603,7 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
         
         javax.security.auth.Subject subject = ctx.getRequestorSubject();
         if(subject == null) {
-           throw new WSTrustException("Subject is null"); 
+           throw new WSTrustException(STSUtils.bundle.getString("nullSubject")); 
         }        
         
         String subjectName = null;
@@ -681,4 +696,109 @@ public class FAMSTSTokenProvider implements STSTokenProvider {
             throw new WSTrustException(ssoe.getMessage());                    
         }
     }
+    
+    private void generateUserNameToken(IssuedTokenContext ctx, 
+            String tokenType) throws WSTrustException {
+        
+        javax.security.auth.Subject subject = ctx.getRequestorSubject();
+        if(subject == null) {
+           return;
+        }                        
+        Iterator iter = subject.getPublicCredentials().iterator();
+        while(iter.hasNext()) {
+            Object object = iter.next();
+            if(object instanceof Element) {
+               Element credential = (Element)object;
+               if(credential.getLocalName().equals("FAMToken")) {
+                  try {
+                      STSClientUserToken userToken =
+                          new STSClientUserToken(credential);
+                      String tokenID = userToken.getTokenId();
+                      if(!userToken.getType().equals(
+                              SecurityToken.WSS_FAM_SSO_TOKEN)) {
+                         continue;
+                      }                      
+                      SSOToken ssoToken = 
+                          SSOTokenManager.getInstance().createSSOToken(tokenID);
+                      String userid = ssoToken.getProperty("UserId");                        
+                      String encryptedPassword = ssoToken.getProperty(
+                              WSSConstants.ENCRYPTED_USER_PASSWORD);
+                      if(encryptedPassword == null || 
+                              encryptedPassword.length() ==0) {
+                         throw new WSTrustException("noEncryptionPassword");
+                      }
+                      String password = Crypt.decrypt(encryptedPassword);
+                      UserNameTokenSpec tokenSpec = new UserNameTokenSpec();
+                      tokenSpec.setCreateTimeStamp(true);
+                      tokenSpec.setNonce(true);
+                      tokenSpec.setPassword(password);
+                      tokenSpec.setUserName(userid);
+                      tokenSpec.setPasswordType(tokenType);                              
+                      SecurityTokenFactory tokenFactory = 
+                              SecurityTokenFactory.getInstance(
+                              WSSUtils.getAdminToken());
+                      SecurityToken securityToken = 
+                              tokenFactory.getSecurityToken(tokenSpec);
+                      ctx.setSecurityToken(
+                          new GenericToken(securityToken.toDocumentElement()));
+                  } catch (FAMSTSException fe) {
+                     STSUtils.debug.error(
+                         "FAMSTSTokenProvider.generateUserNameToken: " +                         
+                          "FAMSTSException ", fe);
+                     throw new WSTrustException(fe.getMessage()); 
+                  } catch (SSOException se) {
+                     STSUtils.debug.error(
+                         "FAMSTSTokenProvider.generateUserNameToken: " +                         
+                          "SSOException ", se);
+                     throw new WSTrustException(se.getMessage()); 
+                  } catch (SecurityException see) {
+                     STSUtils.debug.error(
+                         "FAMSTSTokenProvider.generateUserNameToken: " +                         
+                          "SSOException ", see);
+                     throw new WSTrustException(see.getMessage());                       
+                  }
+               }
+            }
+        }
+        
+    }
+    
+    private String getAuthnMechanism(IssuedTokenContext ctx) {
+        
+        Subject subject = ctx.getRequestorSubject();
+        if(subject == null) {
+           return null; 
+        }         
+        Set creds = subject.getPublicCredentials();
+        if(creds == null || creds.isEmpty()) {
+           return null; 
+        }
+        for (Iterator iter=creds.iterator();iter.hasNext();) {
+           Object obj = iter.next();
+           if(obj instanceof Map) {
+              Map secureAttrs = (Map)obj;
+              return (String)secureAttrs.get(WSSConstants.AUTH_METHOD);              
+           }           
+        }
+        return null;
+    } 
+    
+    private String getAuthContextClassRef(IssuedTokenContext ctx) {
+        String authMech = getAuthnMechanism(ctx);
+        if(SecurityMechanism.WSS_NULL_KERBEROS_TOKEN_URI.equals(authMech)) {
+           return WSSConstants.KERBEROS_AUTH_CTX_CLASS_REF; 
+        } else if(
+           SecurityMechanism.WSS_NULL_USERNAME_TOKEN_PLAIN_URI.equals(authMech)) {
+           return WSSConstants.PASSWORD_AUTH_CTX_CLASS_REF; 
+        } else if(
+           SecurityMechanism.WSS_NULL_USERNAME_TOKEN_URI.equals(authMech)) {
+           return WSSConstants.PASSWORD_PROTECTED_AUTH_CTX_CLASS_REF; 
+        } else if(SecurityMechanism.WSS_NULL_X509_TOKEN_URI.equals(authMech)) {
+           return WSSConstants.PUBLIC_KEY_AUTH_CTX_CLASS_REF;
+        } else {
+           return WSSConstants.SOFTWARE_PKI_AUTH_CTX_CLASS_REF; 
+        }
+        
+    }    
+    
 }

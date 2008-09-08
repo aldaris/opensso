@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultAuthenticator.java,v 1.13 2008-08-07 23:17:00 mallas Exp $
+ * $Id: DefaultAuthenticator.java,v 1.14 2008-09-08 21:50:15 mallas Exp $
  *
  */
 
@@ -34,6 +34,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.net.URL;
@@ -74,6 +76,7 @@ import com.sun.identity.saml.assertion.NameIdentifier;
 import com.sun.identity.saml.assertion.AttributeStatement;
 import com.sun.identity.saml.assertion.AuthenticationStatement;
 import com.sun.identity.saml.assertion.Statement;
+import com.sun.identity.saml.assertion.Attribute;
 import com.sun.identity.liberty.ws.soapbinding.Message;
 import com.sun.identity.liberty.ws.security.SecurityAssertion;
 import com.sun.identity.wss.security.SAML2Token;
@@ -151,14 +154,14 @@ public class DefaultAuthenticator implements MessageAuthenticator {
 
         debug.message("DefaultAuthenticator.authenticate: start");
         this.config = config;        
-        
+        Map secureAttrs = new HashMap();
         String authChain = null;
         if (config != null) {
             authChain = config.getAuthenticationChain();
         }
 
         if(isLiberty) {
-           return authenticateLibertyMessage(secureMessage, subject);
+           return authenticateLibertyMessage(secureMessage, subject,secureAttrs);
         }
         if(securityMechanism == null) {
            throw new SecurityException(
@@ -261,7 +264,7 @@ public class DefaultAuthenticator implements MessageAuthenticator {
                      bundle.getString("authenticationFailed"));
                 }
             } else if(!validateAssertion(
-                    assertionToken.getAssertion(), subject)) {
+                    assertionToken.getAssertion(), subject, secureAttrs)) {
                throw new SecurityException(
                      bundle.getString("authenticationFailed"));
             }
@@ -287,7 +290,7 @@ public class DefaultAuthenticator implements MessageAuthenticator {
                 }
             } else 
             if(!SAML2TokenUtils.validateAssertion(saml2Token.getAssertion(),
-                    subject)) {
+                    subject, secureAttrs)) {
                throw new SecurityException(
                      bundle.getString("authenticationFailed"));
             }
@@ -321,7 +324,8 @@ public class DefaultAuthenticator implements MessageAuthenticator {
         }
         
         if(securityMechanism != null) {
-           subject.getPublicCredentials().add(securityMechanism);                   
+           secureAttrs.put(WSSConstants.AUTH_METHOD, uri);
+           subject.getPublicCredentials().add(secureAttrs);
         }
         return subject;
     }
@@ -530,8 +534,8 @@ public class DefaultAuthenticator implements MessageAuthenticator {
     /**
      * Validates the security assertion token.
      */
-    private boolean validateAssertion(Assertion assertion, Subject subject)
-               throws SecurityException {
+    private boolean validateAssertion(Assertion assertion, Subject subject, 
+            Map secureAttrs) throws SecurityException {
 
         if((assertion.getConditions() != null) &&
                   !(assertion.getConditions().checkDateValidity(
@@ -566,6 +570,19 @@ public class DefaultAuthenticator implements MessageAuthenticator {
                   X509Certificate cert = WSSUtils.getCertificate(keyInfo);
                   subject.getPublicCredentials().add(cert);
                }
+               List attributes = attribStatement.getAttribute();
+               if(attributes.isEmpty()) {
+                  break; 
+               }
+               for (Iterator iter1 = attributes.iterator(); iter1.hasNext();) {
+                   Attribute attr = (Attribute)iter1.next();
+                   try {
+                       secureAttrs.put(attr.getAttributeName(), 
+                                               attr.getAttributeValue());
+                   } catch (Exception se) {
+                      throw new SecurityException(se.getMessage());
+                   }
+               }               
                break;
             }
         }
@@ -591,8 +608,8 @@ public class DefaultAuthenticator implements MessageAuthenticator {
     /**
      * Authenticates SOAPMessages using Liberty ID-WSF profiles.
      */
-    private Object authenticateLibertyMessage(Object message, Subject subject)
-         throws SecurityException  {
+    private Object authenticateLibertyMessage(Object message, Subject subject, 
+            Map secureAttrs) throws SecurityException  {
 
         if(message == null || subject == null) {
            throw new IllegalArgumentException(
@@ -601,7 +618,7 @@ public class DefaultAuthenticator implements MessageAuthenticator {
         Message requestMsg = (Message)message;
         SecurityAssertion assertion = requestMsg.getAssertion();
         if(assertion != null) {
-           if(!validateAssertion(assertion, subject)) {
+           if(!validateAssertion(assertion, subject, secureAttrs)) {
               throw new SecurityException(
                  bundle.getString("authenticationFailed"));
            } else {

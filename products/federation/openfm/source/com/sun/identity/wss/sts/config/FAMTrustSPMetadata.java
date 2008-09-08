@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMTrustSPMetadata.java,v 1.9 2008-08-05 04:11:01 mallas Exp $
+ * $Id: FAMTrustSPMetadata.java,v 1.10 2008-09-08 21:50:16 mallas Exp $
  *
  */
 
@@ -40,6 +40,7 @@ import com.sun.identity.common.SystemConfigurationUtil;
 import com.sun.identity.wss.sts.STSUtils;
 import com.sun.identity.wss.security.SecurityMechanism;
 import com.sun.identity.wss.security.WSSUtils;
+import com.sun.identity.wss.security.WSSConstants;
 
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;
@@ -233,6 +234,34 @@ public class FAMTrustSPMetadata implements TrustSPMetadata {
                         (secMech.contains(SecurityMechanism.WSS_CLIENT_TLS_SAML_SV_URI))) {
 
                         this.tokenType = STSConstants.SAML11_ASSERTION_TOKEN_TYPE;
+                    } else if( (secMech.contains(
+                         SecurityMechanism.WSS_NULL_USERNAME_TOKEN_URI)) ||
+                        (secMech.contains(
+                         SecurityMechanism.WSS_TLS_USERNAME_TOKEN_URI)) || 
+                        (secMech.contains(
+                         SecurityMechanism.WSS_CLIENT_TLS_USERNAME_TOKEN_URI)) ||
+                        (secMech.contains(
+                         SecurityMechanism.WSS_NULL_USERNAME_TOKEN_URI)) ||
+                        (secMech.contains(
+                         SecurityMechanism.WSS_TLS_USERNAME_TOKEN_URI)) ||
+                        (secMech.contains(
+                         SecurityMechanism.WSS_CLIENT_TLS_USERNAME_TOKEN_URI))) {
+
+                        this.tokenType = WSSConstants.PASSWORD_DIGEST_TYPE;
+                     } else if( (secMech.contains(
+                         SecurityMechanism.WSS_NULL_USERNAME_TOKEN_PLAIN_URI))||
+                        (secMech.contains(
+                         SecurityMechanism.WSS_TLS_USERNAME_TOKEN_PLAIN_URI)) || 
+                        (secMech.contains(
+                         SecurityMechanism.WSS_CLIENT_TLS_USERNAME_TOKEN_PLAIN_URI)) ||
+                        (secMech.contains(
+                         SecurityMechanism.WSS_NULL_USERNAME_TOKEN_PLAIN_URI)) ||
+                        (secMech.contains(
+                         SecurityMechanism.WSS_TLS_USERNAME_TOKEN_PLAIN_URI)) ||
+                        (secMech.contains(
+                         SecurityMechanism.WSS_CLIENT_TLS_USERNAME_TOKEN_PLAIN_URI))) {
+
+                        this.tokenType = WSSConstants.PASSWORD_PLAIN_TYPE;
                     } else {
                         this.tokenType = value;
                     }
