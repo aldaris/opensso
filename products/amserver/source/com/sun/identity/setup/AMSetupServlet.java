@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.91 2008-09-04 02:37:27 goodearth Exp $
+ * $Id: AMSetupServlet.java,v 1.92 2008-09-08 21:55:58 mallas Exp $
  *
  */
 
@@ -1925,8 +1925,7 @@ public class AMSetupServlet extends HttpServlet {
                                   "urn:sun:wss:security:null:SAML2Token-SV," +
                                   "urn:sun:wss:security:null:X509Token");
         createAgent(token, idrepo, "wsp", "wsp", "WSP", "", config);
-        config.remove("keepSecurityHeaders");
-        createAgent(token, idrepo, "SunSTS", "SunSTS", "WSP", "", config);
+        config.remove("keepSecurityHeaders");        
 
         // Add STS Client configuration
         config.remove("AgentType");
@@ -1947,7 +1946,7 @@ public class AMSetupServlet extends HttpServlet {
         configAgentAuth.put("AgentType","SharedAgent");
         configAgentAuth.put("sunIdentityServerDeviceStatus","Active");
         configAgentAuth.put("AgentsAllowedToRead",
-            "wsc,wsp,SecurityTokenService,SunSTS");
+            "wsc,wsp,SecurityTokenService");
         createAgent(token, idrepo, "agentAuth", "changeit", 
             "Agent_Authenticator", "", configAgentAuth);
         
