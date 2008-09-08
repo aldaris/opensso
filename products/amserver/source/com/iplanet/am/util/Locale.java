@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Locale.java,v 1.9 2008-08-19 19:08:37 veiming Exp $
+ * $Id: Locale.java,v 1.10 2008-09-08 05:08:13 bhavnab Exp $
  *
  */
 
@@ -812,6 +812,8 @@ public class Locale {
                         }
                         buf[offset++] = (byte) val;
                         i++;
+		    } else {
+		        buf[offset++] = (byte) carr[i++];
                     }
                     break;
                 default:
