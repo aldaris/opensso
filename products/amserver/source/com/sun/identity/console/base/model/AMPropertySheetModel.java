@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMPropertySheetModel.java,v 1.7 2008-09-04 23:59:36 veiming Exp $
+ * $Id: AMPropertySheetModel.java,v 1.8 2008-09-08 14:58:28 veiming Exp $
  *
  */
 
@@ -389,8 +389,10 @@ public class AMPropertySheetModel
                     "maplist.msg.invalid.nokey"));
                 setModel(name, m);
             } else if (tagName.equals(ADDREMOVE_LIST)) {
-                CCAddRemoveModel m = new CCAddRemoveModel();
-                setModel(name, m);
+                CCAddRemoveModel m = (CCAddRemoveModel)getModel(name);
+                if (m == null) {
+                    setModel(name, new CCAddRemoveModel());
+                }
             }
 
         }
@@ -502,20 +504,25 @@ public class AMPropertySheetModel
             OptionList options = new OptionList();
             idx = strXML.indexOf(">", idx);
             int idx2 = strXML.indexOf("</cc>", idx);
-            
             int idx3 = strXML.indexOf("<option ", idx);
-            while ((idx3 != -1) && (idx3 < idx2)) {
-                int idx4 = strXML.indexOf("/>", idx3);
-                String label = getPropertyValue(strXML, idx4, "label");
-                String value = getPropertyValue(strXML, idx4, "value");
-                options.add(label, value);
-                strXML = strXML.substring(0, idx3) + strXML.substring(idx4+2);
-                idx3 = strXML.indexOf("<option ", idx);
-                idx2 = strXML.indexOf("</cc>", idx);
-            }
             
-            addRemoveOptions.put(name, options);
-            idx = strXML.indexOf(ADDREMOVE_LIST, idx2);
+            if ((idx2 != -1) && (idx3 != -1)) {
+                while ((idx3 != -1) && (idx3 < idx2)) {
+                    int idx4 = strXML.indexOf("/>", idx3);
+                    String label = getPropertyValue(strXML, idx4, "label");
+                    String value = getPropertyValue(strXML, idx4, "value");
+                    options.add(label, value);
+                    strXML = strXML.substring(0, idx3) + 
+                        strXML.substring(idx4 + 2);
+                    idx3 = strXML.indexOf("<option ", idx);
+                    idx2 = strXML.indexOf("</cc>", idx);
+                }
+
+                addRemoveOptions.put(name, options);
+                idx = strXML.indexOf(ADDREMOVE_LIST, idx2);
+            } else {
+                idx = strXML.indexOf(ADDREMOVE_LIST, idx);
+            }
         }
         return strXML;
     }
