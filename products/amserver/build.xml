@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.68 2008-09-04 16:40:01 kevinserwin Exp $
+   $Id: build.xml,v 1.69 2008-09-08 14:59:49 veiming Exp $
 
 -->
 
@@ -34,9 +34,6 @@
 
     <property name="tracker" value="${amserver.basedir}/tracker.properties" />
 
-    <available file="${extlib.dir}/swec.jar" type="file"
-        property="enterprise.authmodules.present"/>
-        
     <condition property="enterprise.authmodules.not.present">
         <not>
             <isset property="enterprise.authmodules.present"/>
@@ -166,6 +163,8 @@
             </fileset>
         </copy>
 
+        <rename src="${amserver.built.res.dir}/serviceNames-enterprise.properties" dest="${amserver.built.res.dir}/serviceNames.properties" />
+
         <concat destfile="${amserver.built.res.dir}/amSDK.properties">
             <fileset dir="${amserver.res.i18n.dir}">
                 <include name="Services.properties"/>
@@ -242,6 +241,7 @@
         <copy todir="${amserver.built.res.dir}" filtering="true">
             <fileset dir="${amserver.config.res.dir}">
                 <include name="*.properties"/>
+                <exclude name="serviceNames-enterprise.properties" />
             </fileset>
             <fileset dir="${amserver.console.res.dir}">
                 <include name="*.properties"/>
