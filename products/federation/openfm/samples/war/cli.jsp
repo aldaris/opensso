@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: cli.jsp,v 1.3 2008-06-25 05:49:23 qcheng Exp $
+   $Id: cli.jsp,v 1.4 2008-09-09 21:31:43 qcheng Exp $
 
 --%>
 
@@ -45,7 +45,7 @@ import="com.sun.identity.cli.StringOutputWriter,
     env.put(CLIConstants.ARGUMENT_LOCALE, request.getLocale());
     env.put(CLIConstants.SYS_PROPERTY_DEFINITION_FILES,
         "com.sun.identity.federation.cli.FederationManager");
-    env.put(CLIConstants.SYS_PROPERTY_COMMAND_NAME, "famadm");
+    env.put(CLIConstants.SYS_PROPERTY_COMMAND_NAME, "ssoadm");
     CommandManager cmdManager = new CommandManager(env);
 
     SSOTokenManager manager = SSOTokenManager.getInstance();

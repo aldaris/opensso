@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: util.jsp,v 1.7 2008-06-25 05:49:25 qcheng Exp $ 
+   $Id: util.jsp,v 1.8 2008-09-09 21:32:14 qcheng Exp $ 
 
 --%>
 
@@ -173,7 +173,7 @@ import="java.io.IOException,
         env.put(CLIConstants.ARGUMENT_LOCALE, request.getLocale());
         env.put(CLIConstants.SYS_PROPERTY_DEFINITION_FILES,
             "com.sun.identity.federation.cli.FederationManager");
-        env.put(CLIConstants.SYS_PROPERTY_COMMAND_NAME, "famadm");
+        env.put(CLIConstants.SYS_PROPERTY_COMMAND_NAME, "ssoadm");
         CommandManager cmdManager = new CommandManager(env);
         // [END] create an instance of CommandManager
 
@@ -304,7 +304,7 @@ import="java.io.IOException,
         env.put(CLIConstants.ARGUMENT_LOCALE, request.getLocale());
         env.put(CLIConstants.SYS_PROPERTY_DEFINITION_FILES,
             "com.sun.identity.federation.cli.FederationManager");
-        env.put(CLIConstants.SYS_PROPERTY_COMMAND_NAME, "famadm");
+        env.put(CLIConstants.SYS_PROPERTY_COMMAND_NAME, "ssoadm");
         CommandManager cmdManager = new CommandManager(env);
         // [END] create an instance of CommandManager
 
@@ -436,7 +436,7 @@ import="java.io.IOException,
         env.put(CLIConstants.ARGUMENT_LOCALE, request.getLocale());
         env.put(CLIConstants.SYS_PROPERTY_DEFINITION_FILES,
             "com.sun.identity.federation.cli.FederationManager");
-        env.put(CLIConstants.SYS_PROPERTY_COMMAND_NAME, "famadm");
+        env.put(CLIConstants.SYS_PROPERTY_COMMAND_NAME, "ssoadm");
         CommandManager cmdManager = new CommandManager(env);
         // [END] create an instance of CommandManager
 
@@ -601,7 +601,7 @@ import="java.io.IOException,
         env.put(CLIConstants.ARGUMENT_LOCALE, request.getLocale());
         env.put(CLIConstants.SYS_PROPERTY_DEFINITION_FILES,
             "com.sun.identity.federation.cli.FederationManager");
-        env.put(CLIConstants.SYS_PROPERTY_COMMAND_NAME, "famadm");
+        env.put(CLIConstants.SYS_PROPERTY_COMMAND_NAME, "ssoadm");
         CommandManager cmdManager = new CommandManager(env);
         // [END] create an instance of CommandManager
 
@@ -732,7 +732,7 @@ import="java.io.IOException,
         env.put(CLIConstants.ARGUMENT_LOCALE, request.getLocale());
         env.put(CLIConstants.SYS_PROPERTY_DEFINITION_FILES,
             "com.sun.identity.federation.cli.FederationManager");
-        env.put(CLIConstants.SYS_PROPERTY_COMMAND_NAME, "famadm");
+        env.put(CLIConstants.SYS_PROPERTY_COMMAND_NAME, "ssoadm");
         CommandManager cmdManager = new CommandManager(env);
         // [END] create an instance of CommandManager
 
@@ -863,7 +863,7 @@ import="java.io.IOException,
         env.put(CLIConstants.ARGUMENT_LOCALE, request.getLocale());
         env.put(CLIConstants.SYS_PROPERTY_DEFINITION_FILES,
             "com.sun.identity.federation.cli.FederationManager");
-        env.put(CLIConstants.SYS_PROPERTY_COMMAND_NAME, "famadm");
+        env.put(CLIConstants.SYS_PROPERTY_COMMAND_NAME, "ssoadm");
         CommandManager cmdManager = new CommandManager(env);
         // [END] create an instance of CommandManager
 
