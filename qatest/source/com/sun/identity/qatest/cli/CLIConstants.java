@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIConstants.java,v 1.9 2008-08-21 20:24:26 srivenigan Exp $
+ * $Id: CLIConstants.java,v 1.10 2008-09-09 18:14:53 srivenigan Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -307,4 +307,24 @@ public interface CLIConstants {
      */
     public static final String DELETE_AGENTS_SUBCOMMAND = 
             "delete-agents";
+    
+    /**
+     * String for the "add-attr-defs" sub-command
+     */
+    public static final String ADD_ATTR_DEFS_SUBCOMMAND = "add-attr-defs";
+    
+    /**
+     * String for the "set-attr-defs" sub-command
+     */
+    public static final String SET_ATTR_DEFS_SUBCOMMAND = "set-attr-defs";    
+    
+    /**
+     * String for the "get-attr-defs" sub-command
+     */
+    public static final String GET_ATTR_DEFS_SUBCOMMAND = "get-attr-defs";
+    
+    /**
+     * String for the "remove-attr-defs" subcommand
+     */
+    public static final String REMOVE_ATTR_DEFS_SUBCOMMAND = "remove-attr-defs";
 }
