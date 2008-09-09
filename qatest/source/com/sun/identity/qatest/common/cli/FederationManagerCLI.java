@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManagerCLI.java,v 1.17 2008-08-21 20:27:38 srivenigan Exp $
+ * $Id: FederationManagerCLI.java,v 1.18 2008-09-09 18:10:31 srivenigan Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,7 +32,9 @@ import com.sun.identity.qatest.common.TestConstants;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -49,7 +51,7 @@ import java.util.logging.Level;
 public class FederationManagerCLI extends CLIUtility 
         implements CLIConstants, FederationManagerCLIConstants, 
         GlobalConstants, CLIExitCodes {
-    private boolean useDebugOption;
+	private boolean useDebugOption;
     private boolean useVerboseOption;
     private boolean useLongOptions;
     private long commandTimeout;
@@ -89,8 +91,59 @@ public class FederationManagerCLI extends CLIUtility
     }
 
     /**
-     * This method creates a test service by generating xml 
-     * with given service name and revision number.
+     * Creates valid test service if validServiceXml attribute is 
+     * true and invalid test service if the validServiceXml attribute is true.
+     * 
+     * @param serviceXmlName - Name(s) of the service xml.
+     * @param initRevisionNo - Revision number(s) of the service to be created.
+     * @param validServiceXml - Flag to generate valid or invalid service xml.
+     * @param continueAddingService - if "true" adds one or more 
+     * services continuously.
+     * @return int - exit status of "create-svc" command.
+     */
+    public int createService(String serviceXmlName, String initRevisionNo, 
+            boolean validServiceXml, boolean continueAddingService) 
+    throws Exception {
+        String xmlFileArg; 
+        if (useLongOptions) {
+            xmlFileArg = PREFIX_ARGUMENT_LONG + XML_FILE_ARGUMENT;
+        } else {
+            xmlFileArg = PREFIX_ARGUMENT_SHORT + SHORT_XML_FILE_ARGUMENT;
+        }   
+        addArgument(xmlFileArg);
+        setSubcommand(CREATE_SERVICE_SUBCOMMAND);
+        // check if service name argument is empty.
+        if (!serviceXmlName.trim().equals("")) {
+            String[] createServices = serviceXmlName.trim().split(",");
+            String[] revisionNumbers = initRevisionNo.split(",");
+            List serviceList = new LinkedList(Arrays.asList(createServices));
+            List revisionNumberList = new LinkedList(
+                    Arrays.asList(revisionNumbers));
+            // generate revision numbers for test services if not supplied.
+            while (revisionNumberList.size() < serviceList.size()) {
+                revisionNumberList.add("10");
+            } 
+            if (validServiceXml) {
+                for (int i=0; i < serviceList.size(); i++) {
+                    addServiceXmlArg((String)serviceList.get(i),
+                            (String)revisionNumberList.get(i));   
+                }
+            } else {
+                for (int i=0; i < serviceList.size(); i++) {
+                    addInvalidServiceXmlArg((String)serviceList.get(i));
+                }
+            }
+        }
+        if (continueAddingService) 
+            addContinueArgument();
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));
+    }
+    
+    /**
+     * Creates a test service by generating xml with given service name 
+     * and revision number.
+     * 
      * @param serviceXmlName - Name of the service xml to be created. 
      * @param initRevisionNo - Revision number initial value 
      * @return the exit status of the "create-svc" command
@@ -104,7 +157,132 @@ public class FederationManagerCLI extends CLIUtility
     }
 
     /**
+     * Get the attribute default values of the service with given schema type
+     * schema name and attribute names as list.
      * 
+     * @param serviceName - Name of service.
+     * @param schemaType - Type of schema.
+     * @param subSchemaName -  Name of sub schema.
+     * @param attNames - Attribute name(s).
+     * @return the exit status of the "get-attr-defs" command
+     * @throws Exception
+     */
+    public int getAttrDefs(String serviceName, String schemaType, 
+            String subSchemaName, List attNameList) 
+    throws Exception {
+    	String attNames = "";
+        setSubcommand(GET_ATTR_DEFS_SUBCOMMAND);
+        addServiceNameArguments(serviceName);
+        addSchemaTypeArguments(schemaType);
+        addSubSchemaNameArguments(subSchemaName);
+        for (int i=0; i < attNameList.size(); i++) {
+        	attNames = attNames + (String)attNameList.get(i) + ";";
+        }
+        addAttributeNamesArguments(attNames);
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));
+    }
+
+    /**
+     * 
+     * @param serviceName - Service name for which attributes are removed.
+     * @param schemaType - Schema type.
+     * @param subSchemaName - Name of sub schema. 
+     * @param attNames - Attribute values e.g. homeaddress=here.
+     * @return exit status 
+     * @throws java.lang.Exception
+     */
+    public int removeAttrDefs(String serviceName, String schemaType, 
+            String subSchemaName, String attNames) 
+    throws Exception {
+        setSubcommand(REMOVE_ATTR_DEFS_SUBCOMMAND);
+        addServiceNameArguments(serviceName);
+        addSchemaTypeArguments(schemaType);
+        addSubSchemaNameArguments(subSchemaName);
+        addAttributeNamesArguments(attNames);
+        return (executeCommand(commandTimeout));
+    }
+    
+    /**
+     * Sets the "--schematype" and schema type in the argument list.
+     * @param schemaType
+     */
+    private void addSchemaTypeArguments(String schemaType) {
+		String schemaTypeArg;
+		if (useLongOptions) {
+			schemaTypeArg = PREFIX_ARGUMENT_LONG + SCHEMA_TYPE_ARGUMENT;
+		} else {
+			schemaTypeArg = PREFIX_ARGUMENT_SHORT + SHORT_SCHEMA_TYPE_ARGUMENT;
+		}
+		addArgument(schemaTypeArg);
+		addArgument(schemaType);
+	}
+    
+    /**
+     * Sets the "--subschemaname" and sub-schema name in the argument list. 
+     * @param subSchemaName
+     */
+    private void addSubSchemaNameArguments(String subSchemaName) {
+    	String subSchemaNameArg;
+        if (!subSchemaName.trim().equals("")) {
+            if (useLongOptions) {
+                subSchemaNameArg = PREFIX_ARGUMENT_LONG + 
+                        SUB_SCHEMA_NAME_ARGUMENT;
+            } else {
+    		subSchemaNameArg = PREFIX_ARGUMENT_SHORT + 
+                        SHORT_SUB_SCHEMA_NAME_ARGUMENT;
+            }
+            addArgument(subSchemaNameArg);
+            addArgument(subSchemaName);
+        }
+    }
+
+    /**
+     * Generates invalid test service xml by taking name of the service.
+     * @param serviceName - Name of the service
+     * @throws java.lang.Exception
+     */
+    private void addInvalidServiceXmlArg(String serviceName) 
+    throws Exception {
+        ResourceBundle rb_amconfig = 
+                ResourceBundle.getBundle(TestConstants.TEST_PROPERTY_AMCONFIG);
+        String attFileDir = getBaseDir() + fileseparator + 
+                rb_amconfig.getString(TestConstants.KEY_ATT_SERVER_NAME) + 
+                fileseparator + "built" + fileseparator + "classes" + 
+                fileseparator + "cli" + fileseparator;
+        String attFile = attFileDir + serviceName + ".xml"; 
+        BufferedWriter out = new BufferedWriter(new FileWriter(attFile));
+        // now generate the invalid service xml file
+        out.write("<!DOCTYPE ServicesConfiguration");
+        out.write(newline);
+        out.write("PUBLIC \"=//iPlanet//Service Management " +
+        		"Services (SMS) 1.0 DTD//EN\"" + newline);
+        out.write("\"jar://com/sun/identity/sm/sms.dtd\">" + newline);
+        out.write("<ServicesConfiguration>" + newline);
+        out.write("<Service name=\"" + serviceName + "\" version=\"1.0\">");
+        out.write(newline);
+        out.write("<Schema " + newline);
+        out.write("revisionNumber=\"\">");
+        out.write(newline);
+        out.write("<Global>");
+        out.write(newline);
+        out.write("<AttributeSchema name=\"mock\"" + newline);
+        out.write("type=\"single\"" + newline);
+        out.write("syntax=\"string\"" + newline);
+        out.write("i18nKey=\"\">" + newline);
+        out.write("</AttributeSchema>" + newline);
+        out.write("<AttributeSchema name=\"mock-boolean\"" + newline);
+        out.write("type=\"single\"" + newline);
+        out.write("syntax=\"boolean\"" + newline);
+        out.write("i18nKey=\"\">" + newline);
+        out.write("</AttributeSchema>" + newline);       
+        out.close();
+        
+        addArgument(attFile);
+    }
+
+    /**
+     * Deletes the service with a given service name.
      * @param serviceName - Name of the service to be deleted.
      * @return the exit status of the "delete-svc" command
      */    
@@ -117,6 +295,29 @@ public class FederationManagerCLI extends CLIUtility
     }
 
     /**
+     * Deletes one or more service(s) continuously. 
+     * @param serviceName - Name of the service to be deleted
+     * @param continueDeletingService - Flag to specify whether to delete 
+     *                      services recursively.
+     * @return int - Exit status of the command.
+     * @throws java.lang.Exception
+     */
+    public int deleteService(String serviceName, boolean continueDeletingService,
+            boolean deletePolicyRule) 
+    throws Exception {
+        setSubcommand(DELETE_SERVICE_SUBCOMMAND);
+        addServiceNameArguments(serviceName);
+        if (continueDeletingService) {
+            addContinueArgument();
+        }
+        if(deletePolicyRule) {
+            addDeletePolicyRule();
+        }
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));
+    }
+    
+    /**
      * Get the absolute path to the ssoadm CLI.
      *
      * @return - the absolute path to ssoadm.
@@ -128,7 +329,33 @@ public class FederationManagerCLI extends CLIUtility
                 append(System.getProperty("file.separator")).append("ssoadm").
                 toString());
     }
+    
+    /**
+     * Sets the "--continue" argument in the argument list.
+     */
+    private void addContinueArgument() {
+        String continueArg;
+        if (useLongOptions) {
+            continueArg = PREFIX_ARGUMENT_LONG + CONTINUE_ARGUMENT;
+        } else {
+            continueArg = PREFIX_ARGUMENT_SHORT + SHORT_CONTINUE_ARGUMENT;
+        }
+        addArgument(continueArg);
+    }
      
+    /**
+     * Sets the "--deletepolicyrule" argument in the argument list.
+     */
+    private void addDeletePolicyRule() {
+        String deletePolicyRule;
+        if (useLongOptions) {
+            deletePolicyRule = PREFIX_ARGUMENT_LONG + DELETE_POLICY_RULE;
+        } else {
+            deletePolicyRule = PREFIX_ARGUMENT_SHORT + SHORT_DELETE_POLICY_RULE;
+        }
+        addArgument(deletePolicyRule);
+    }
+    
     /**
      * Sets the "--adminid" and admin user ID arguments in the argument list.
      */
@@ -339,7 +566,7 @@ public class FederationManagerCLI extends CLIUtility
      *
      * @param name - the name of the service
      */
-    private void addServiceNameArguments(String name) {
+    private void addServiceNameArguments(String names) {
         String serviceNameArg;
         if (useLongOptions) {
             serviceNameArg = PREFIX_ARGUMENT_LONG + SERVICENAME_ARGUMENT;
@@ -347,7 +574,10 @@ public class FederationManagerCLI extends CLIUtility
             serviceNameArg = PREFIX_ARGUMENT_SHORT + SHORT_SERVICENAME_ARGUMENT;
         }
         addArgument(serviceNameArg);
-        addArgument(name);
+        String[] name = names.split(",");
+        for (int i=0; i < name.length; i++) {
+            addArgument(name[i]);
+        }
     }
     
     /**  
@@ -740,7 +970,6 @@ public class FederationManagerCLI extends CLIUtility
         addIdtypeArguments(type);
         
         if (attributeValues != null) {
-            ArrayList attributeList = new ArrayList();
             
             if (useAttributeValues) {
                 addAttributevaluesArguments(attributeValues);
@@ -2346,4 +2575,65 @@ public class FederationManagerCLI extends CLIUtility
         }
         return agentsFound;
  }
+
+    /**
+     * Adds the attribute default values of the service with given schema type
+     * schema name and attribute values.
+     * 
+     * @param serviceName - name of the service.
+     * @param schemaType - type of the schema used.
+     * @param attributesToFind - values of the attributes to be found.
+     * @param useDataFile - flag to specify whether to use data file or not.
+     * @param subSchema - name of the subschema used.
+     * @return exit status of "add-att-defs" subcommand.
+     */
+    public int addAttrDefs(String serviceName, String schemaType,
+            String attributesToFind, boolean useDataFile,
+            String subSchema) 
+    throws Exception {
+        String[] attrs = attributesToFind.split(";");
+        List argList = Arrays.asList(attrs);
+        setSubcommand(ADD_ATTR_DEFS_SUBCOMMAND);
+        addServiceNameArguments(serviceName);
+        addSchemaTypeArguments(schemaType);
+        if (useDataFile) {
+            addDatafileArguments(argList, "attrVals", "txt");
+        } else {
+            addAttributevaluesArguments(argList);
+        }
+        addSubSchemaNameArguments(subSchema);
+        addGlobalOptions();
+        return executeCommand(commandTimeout);
+    }
+
+    /**
+     * Sets the attribute default values of the service with given schema type
+     * schema name and attribute values.
+     * 
+     * @param serviceName - name of the service.
+     * @param schemaType - type of the schema used.
+     * @param attributesToFind - values of the attributes to be found.
+     * @param useDataFile - flag to specify whether to use data file or not.
+     * @param subSchema - name of the subschema used.
+     * @return exit status of "set-attr-defs" subcommand.
+     */
+    public int setAttrDefs(String serviceName, String schemaType,
+            String attributesToFind, boolean useDataFile,
+            String subSchema) 
+    throws Exception {
+        String[] attrs = attributesToFind.split(";");
+        List argList = Arrays.asList(attrs);
+        setSubcommand(SET_ATTR_DEFS_SUBCOMMAND);
+        addServiceNameArguments(serviceName);
+        addSchemaTypeArguments(schemaType);
+        if (useDataFile) {
+            addDatafileArguments(argList, "attrVals", "txt");
+        } else {
+            addAttributevaluesArguments(argList);
+        }
+        addSubSchemaNameArguments(subSchema);
+        addGlobalOptions();
+        return executeCommand(commandTimeout);
+    }
 }
+
