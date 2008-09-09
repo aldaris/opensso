@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: amAccessControl.xml,v 1.17 2008-08-13 22:43:25 asyhuang Exp $
+   $Id: amAccessControl.xml,v 1.18 2008-09-09 17:17:10 babysunil Exp $
 
 -->
 
@@ -154,7 +154,7 @@
 
     <!-- ENTITIES -->
     <viewbean classname="com.sun.identity.console.agentconfig.AgentsViewBean" view="sunIdentityRepositoryService/1.0/application/agent" modify="sunIdentityRepositoryService/1.0/application/agent">
-	<actionhandler name="tblButtonGroupAdd,tblButtonAdd,tblDataActionHref,tblDataActionGroupHref,tblDataActionGroupMembersHref,tblButtonDelete,tblButtonGroupDelete" />
+	<actionhandler name="tblButtonGroupAdd,tblButtonAdd,tblButtonDelete,tblButtonGroupDelete" />
 	<table name="tblSearch" />
     </viewbean>
     <viewbean classname="com.sun.identity.console.idm.EntitiesViewBean" view="*" modify="*">
