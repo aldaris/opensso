@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebHelperCreator.java,v 1.4 2008-06-25 05:49:54 qcheng Exp $
+ * $Id: WebHelperCreator.java,v 1.5 2008-09-09 18:15:41 veiming Exp $
  *
  */
 
@@ -106,7 +106,7 @@ public class WebHelperCreator {
 
         buff.append("    public FederationManager(String url) {\n");
         buff.append("        amUrl = url;\n");
-        buff.append("        amadmUrl = url + \"/famadm.jsp?cmd=\";\n");
+        buff.append("        amadmUrl = url + \"/ssoadm.jsp?cmd=\";\n");
         buff.append("    }\n\n\n");
 
         buff.append("    public static int getExitCode(HtmlPage p) {\n");

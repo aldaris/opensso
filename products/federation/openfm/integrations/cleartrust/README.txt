@@ -2,8 +2,8 @@ README
 ======
 
 This README explains the installation and configuration of a custom 
-authentication module for Federation Access Manager (FAM) 8.0 in a 
-ClearTrust environment. The FAM custom authentication enables the SSO
+authentication module for OpenSSO in a 
+ClearTrust environment. The OpenSSO custom authentication enables the SSO
 integration between RSA ClearTrust (CT) access server and Federation
 Access Manager especially when the deployment contains CT for protecting
 existing applications.  
@@ -43,7 +43,7 @@ OpenSSO Installation and Configuration:
 
   5. Re-war opensso.war using jar cvf opensso.war from $WAR_DIR
 
-  6. Deploy opensso.war onto FAM web container. The deployment is self
+  6. Deploy opensso.war onto a web container. The deployment is self
      explanatory. Please check the web container documentation for war
      deployment.
 
@@ -51,7 +51,7 @@ OpenSSO Installation and Configuration:
       http://<host>:<port>/opensso
 
   8. Accessing deployed application redirects to opensso configurator.
-     Choose custom configuration. By default FAM uses embedded directory
+     Choose custom configuration. By default OpenSSO uses embedded directory
      server for configuration, however, you could choose to use existing
      or a new directory server instance for configuration. 
 
@@ -67,24 +67,24 @@ Auth module configuration:
 
 Now we have to load the ClearTrust authentication module service into 
 Open SSO and configure for the SSO integration. The auth module service
-is loaded from a FAM command line utility called as "famadm". For FAM,
-the famadm utitily is exposed in both console mode and browser based
-interfaces.  Here we will use use browser based famadm for FAM configuration
+is loaded from a OpenSSO command line utility called as "ssoadm". For OpenSSO,
+the ssoadm utitily is exposed in both console mode and browser based
+interfaces.  Here we will use use browser based ssoadm for OpenSSO configuration
 changes.
 
-  1. Login into FAM using amadmin
+  1. Login into OpenSSO using amadmin
 
   2. Now access the following URL
-     http://<host>:<port>/opensso/famadm.jsp
+     http://<host>:<port>/opensso/ssoadm.jsp
 
   3. Choose create-service option. 
 
   4. Copy and paste the xml file from authmodule/smauthservice.xml and Submit
-     This will load the auth module service into FAM configuration.
+     This will load the auth module service into OpenSSO configuration.
 
   5. Now register the auth module into the authentication core framework. 
 
-     http://<host>:<port>/opensso/famadm.jsp
+     http://<host>:<port>/opensso/ssoadm.jsp
      Choose register-auth-module option.
      Enter "com.sun.identity.authentication.cleartrust.CTAuthModule" as the
      auth module class name.
@@ -118,29 +118,29 @@ for cleartrust SDK installation.
    documentation and please check cleartrust documentation for more 
    information. 
 
-4. After successful authentication at Cleartrust server, access the FAM
+4. After successful authentication at Cleartrust server, access the OpenSSO
    auth module url as follows:
   
    http://<host>:<port>/opensso/UI/Login?module=CTAuth
 
-   This should provide a valid FAM session.
+   This should provide a valid OpenSSO session.
 
-   Note: Assumption here is that Cleartrust and FAM are in the same 
+   Note: Assumption here is that Cleartrust and OpenSSO are in the same 
          physical domain. 
 
-   By default FAM authentication framework looks for user profile existance
+   By default OpenSSO authentication framework looks for user profile existance
    in it's known data repositories. However, you could use ignoreProfile
    option if your integration does not require a user to be searched from
-   cleartrust's user repository. Check the FAM documentation for more info
+   cleartrust's user repository. Check the OpenSSO documentation for more info
    about ignoreProfile option.
 
 
 SAML2 Integration:
 =================
 
-When FAM is acting as an IDP,  the SAML2 metadata can be configured to
+When OpenSSO is acting as an IDP,  the SAML2 metadata can be configured to
 use a configured login url for authentication purposes to establish
-FAM session. The login url is configurable through SAML2 extended metadata
+OpenSSO session. The login url is configurable through SAML2 extended metadata
 and the login URL has to be in this case as below:
 
       http://<host>:<port>/opensso/UI/Login?module=CTAuth

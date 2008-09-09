@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Configurator.jsp,v 1.7 2008-08-19 19:12:29 veiming Exp $
+   $Id: Configurator.jsp,v 1.8 2008-09-09 18:15:41 veiming Exp $
 
 --%>
 
@@ -247,7 +247,7 @@ java.util.Properties"
     </tr>
     <tr>
     <td>Password Encryption Key:</td>
-    <td><input name="encPwd" type="password" size="20" value="" /><br>The key must be the same as the Password Encryption Key set in the server instance. The Password Encryption Key of the server instance could be retrieved using famadm.jsp export-server option, enter the server instance and get the value of am.encryption.pwd attribute in the exported server configuration XML file.</td>
+    <td><input name="encPwd" type="password" size="20" value="" /><br>The key must be the same as the Password Encryption Key set in the server instance. The Password Encryption Key of the server instance could be retrieved using ssoadm.jsp export-server option, enter the server instance and get the value of am.encryption.pwd attribute in the exported server configuration XML file.</td>
     </tr>
     <tr>
     <td>Application user name</td>
