@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProvider.java,v 1.30 2008-09-03 00:19:01 mallas Exp $
+ * $Id: AgentProvider.java,v 1.31 2008-09-09 20:54:26 mallas Exp $
  *
  */
 
@@ -232,14 +232,7 @@ public class AgentProvider extends ProviderConfig {
         // Obtain the provider from Agent profile based on ProviderName
         try {
             AMIdentity provider = 
-                new AMIdentity(token, providerName, IdType.AGENTONLY, "/", null);
-            if(!provider.isExists()) {
-               if(debug.messageEnabled()) {
-                  debug.message("AgentProvider.init: provider " 
-                          + providerName  + " does not exist");
-               }
-               return; 
-            }
+                new AMIdentity(token, providerName, IdType.AGENTONLY, "/", null);           
             Map attributes = (Map) provider.getAttributes(attrNames);
             profilePresent = true;
             if (debug.messageEnabled()) {
@@ -247,7 +240,15 @@ public class AgentProvider extends ProviderConfig {
                     + attributes);
             }
             parseAgentKeyValues(attributes);
-            
+        } catch (IdRepoException ire) {            
+            if(ire.getErrorCode().equals("402")) {
+               //permission denied
+               profilePresent = false;
+               return;
+            }
+            debug.error("AgentProvider.init: Unable to get idRepo", ire);
+            throw (new ProviderException("idRepo exception: "
+                    + ire.getMessage()));
         } catch (Exception e) {
             debug.error("AgentProvider.init: Unable to get idRepo", e);
             throw (new ProviderException("idRepo exception: "+ e.getMessage()));
