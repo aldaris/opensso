@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TaskRunner.java,v 1.2 2008-06-25 05:51:24 qcheng Exp $
+ * $Id: TaskRunner.java,v 1.3 2008-09-09 16:59:33 leiming Exp $
  *
  */
 
@@ -207,12 +207,14 @@ public class TaskRunner implements InstallConstants {
     }
 
     private void writeLogError(LocalizedMessage message1) {
-        LocalizedMessage message2 = LocalizedMessage
-                .get(LOC_DR_ERR_TASK_EXECUTE_FAIL);
-        Object[] args = { message1.getMessage(), message2.getMessage() };
-        LocalizedMessage combinedMessage = LocalizedMessage.get(
-                LOC_DR_MSG_TASK_LOG_COMBINED_MSG, args);
-        logInstall(combinedMessage);
+        if (message1 != null) {
+            LocalizedMessage message2 = LocalizedMessage
+                    .get(LOC_DR_ERR_TASK_EXECUTE_FAIL);
+            Object[] args = { message1.getMessage(), message2.getMessage() };
+            LocalizedMessage combinedMessage = LocalizedMessage.get(
+                    LOC_DR_MSG_TASK_LOG_COMBINED_MSG, args);
+            logInstall(combinedMessage);
+        }
     }
 
     private void printDone() {
@@ -224,12 +226,14 @@ public class TaskRunner implements InstallConstants {
     }
 
     private void writeLogSuccess(LocalizedMessage message1) {
-        LocalizedMessage message2 = LocalizedMessage
-                .get(LOC_DR_MSG_TASK_EXECUTE_SUCCESS);
-        Object[] args = { message1.getMessage(), message2.getMessage() };
-        LocalizedMessage combinedMessage = LocalizedMessage.get(
-                LOC_DR_MSG_TASK_LOG_COMBINED_MSG, args);
-        logInstall(combinedMessage);
+        if (message1 != null) {
+            LocalizedMessage message2 = LocalizedMessage
+                    .get(LOC_DR_MSG_TASK_EXECUTE_SUCCESS);
+            Object[] args = { message1.getMessage(), message2.getMessage() };
+            LocalizedMessage combinedMessage = LocalizedMessage.get(
+                    LOC_DR_MSG_TASK_LOG_COMBINED_MSG, args);
+            logInstall(combinedMessage);
+        }
     }
 
     private boolean promptForUserAction() throws InstallAbortException,
