@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManagerCLIConstants.java,v 1.11 2008-08-21 20:22:14 srivenigan Exp $
+ * $Id: FederationManagerCLIConstants.java,v 1.12 2008-09-09 18:16:45 srivenigan Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -274,5 +274,43 @@ public interface FederationManagerCLIConstants {
      * Short continue argument/option
      */
     String SHORT_CONTINUE_ARGUMENT = "c";
+    
+    /**
+     * Delete policy rule argument/option
+     */
+    String DELETE_POLICY_RULE = "deletepolicyrule";
+    
+    /**
+     * Short delete policy rule argument/option
+     */
+    String SHORT_DELETE_POLICY_RULE = "r";
+    
+    /**
+     * Schema type argument/option
+     */
+    String SCHEMA_TYPE_ARGUMENT = "schematype";
+    
+    /**
+     * Short schema type argument/option
+     */
+    String SHORT_SCHEMA_TYPE_ARGUMENT = "t";
+    
+    /**
+     * Sub schema name argument/option
+     */
+    String SUB_SCHEMA_NAME_ARGUMENT = "subschemaname";
+    
+    /**
+     * Short sub schema name argument/option
+     */
+    String SHORT_SUB_SCHEMA_NAME_ARGUMENT = "c";
+    
+    String DATASTORE_NAME_ARG = "name";
+    
+    String SHORT_DATASTORE_NAME_ARG = "m";
+    
+    String DATASTORE_TYPE_ARG = "datatype";
+    
+    String SHORT_DATASTORE_TYPE_ARG = "t";
 
 }
