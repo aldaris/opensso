@@ -20,12 +20,12 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ds_ds-cli-testng.xml,v 1.13 2008-08-21 20:30:27 srivenigan Exp $
+ $Id: ds_ds-cli-testng.xml,v 1.14 2008-09-09 17:31:15 srivenigan Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
-<suite name="ds_ds-cli" verbose="1">
+<suite name="ds_ds-cli" verbose="5">
     <test name="CLI_create-realm01">
         <parameter name="testName" value="createrealm-test1"/>
         <groups>
@@ -4365,6 +4365,446 @@
         </groups>
         <classes>
             <class name="com.sun.identity.qatest.cli.CreateAgentTest"/>
+        </classes>
+    </test>
+    <test name="CLI_remove-attr-defs01">
+        <parameter name="testName" value="removeattrdefs-test1"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveAttrDefsTest"/>
+        </classes>
+    </test>
+    <test name="CLI_remove-attr-defs02">
+        <parameter name="testName" value="removeattrdefs-test2"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveAttrDefsTest"/>
+        </classes>
+    </test>
+    <test name="CLI_remove-attr-defs03">
+        <parameter name="testName" value="removeattrdefs-test3"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveAttrDefsTest"/>
+        </classes>
+    </test>
+    <test name="CLI_remove-attr-defs04">
+        <parameter name="testName" value="removeattrdefs-test4"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveAttrDefsTest"/>
+        </classes>
+    </test>
+    <test name="CLI_remove-attr-defs05">
+        <parameter name="testName" value="removeattrdefs-test5"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveAttrDefsTest"/>
+        </classes>
+    </test>
+    <test name="CLI_remove-attr-defs06">
+        <parameter name="testName" value="removeattrdefs-test6"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>sssss
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveAttrDefsTest"/>
+        </classes>
+    </test>
+    <test name="CLI_remove-attr-defs07">
+        <parameter name="testName" value="removeattrdefs-test7"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveAttrDefsTest"/>
+        </classes>
+    </test>
+    <test name="CLI_remove-attr-defs08">
+        <parameter name="testName" value="removeattrdefs-test8"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveAttrDefsTest"/>
+        </classes>
+    </test>
+    <test name="CLI_remove-attr-defs09">
+        <parameter name="testName" value="removeattrdefs-test9"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveAttrDefsTest"/>
+        </classes>
+    </test>
+    <test name="CLI_remove-attr-defs10">
+        <parameter name="testName" value="removeattrdefs-test10"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveAttrDefsTest"/>
+        </classes>
+    </test>
+    <test name="CLI_add-attr-defs01">
+        <parameter name="testName" value="addAttrDefs-test1"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddAttrDefsTest"/>
+        </classes>
+    </test> 
+    <test name="CLI_add-attr-defs02">
+        <parameter name="testName" value="addAttrDefs-test2"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddAttrDefsTest"/>
+        </classes>
+    </test> 
+    <test name="CLI_add-attr-defs03">
+        <parameter name="testName" value="addAttrDefs-test3"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddAttrDefsTest"/>
+        </classes>
+    </test> 
+    <test name="CLI_add-attr-defs04">
+        <parameter name="testName" value="addAttrDefs-test4"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddAttrDefsTest"/>
+        </classes>
+    </test> 
+    <test name="CLI_add-attr-defs05">
+        <parameter name="testName" value="addAttrDefs-test5"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddAttrDefsTest"/>
+        </classes>
+    </test> 
+    <test name="CLI_add-attr-defs06">
+        <parameter name="testName" value="addAttrDefs-test6"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddAttrDefsTest"/>
+        </classes>
+    </test> 
+    <test name="CLI_add-attr-defs07">
+        <parameter name="testName" value="addAttrDefs-test7"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddAttrDefsTest"/>
+        </classes>
+    </test> 
+    <test name="CLI_add-attr-defs08">
+        <parameter name="testName" value="addAttrDefs-test8"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddAttrDefsTest"/>
+        </classes>
+    </test> 
+    <test name="CLI_add-attr-defs09">
+        <parameter name="testName" value="addAttrDefs-test9"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddAttrDefsTest"/>
+        </classes>
+    </test> 
+    <test name="CLI_add-attr-defs10">
+        <parameter name="testName" value="addAttrDefs-test10"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.AddAttrDefsTest"/>
+        </classes>
+    </test> 
+    <test name="CLI_create-svc01">
+        <parameter name="testName" value="createService-test1"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateServiceTest"/>
+        </classes>
+    </test>    
+    <test name="CLI_create-svc02">
+        <parameter name="testName" value="createService-test2"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateServiceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-svc03">
+        <parameter name="testName" value="createService-test3"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateServiceTest"/>
+        </classes>
+    </test> 
+    <test name="CLI_create-svc04">
+        <parameter name="testName" value="createService-test4"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateServiceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-svc05">
+        <parameter name="testName" value="createService-test5"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateServiceTest"/>
+        </classes>
+    </test>         
+    <test name="CLI_create-svc06">
+        <parameter name="testName" value="createService-test6"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateServiceTest"/>
+        </classes>
+    </test>        
+    <test name="CLI_create-svc07">
+        <parameter name="testName" value="createService-test7"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateServiceTest"/>
+        </classes>
+    </test>        
+    <test name="CLI_create-svc08">
+        <parameter name="testName" value="createService-test8"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateServiceTest"/>
+        </classes>
+    </test>        
+    <test name="CLI_create-svc09">
+        <parameter name="testName" value="createService-test9"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateServiceTest"/>
+        </classes>
+    </test>        
+    <test name="CLI_create-svc10">
+        <parameter name="testName" value="createService-test10"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateServiceTest"/>
+        </classes>
+    </test>        
+    <test name="CLI_delete-svc01">
+        <parameter name="testName" value="deleteService-test1"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteServiceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-svc02">
+        <parameter name="testName" value="deleteService-test2"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteServiceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-svc03">
+        <parameter name="testName" value="deleteService-test3"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteServiceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-svc04">
+        <parameter name="testName" value="deleteService-test4"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteServiceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-svc05">
+        <parameter name="testName" value="deleteService-test5"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteServiceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-svc06">
+        <parameter name="testName" value="deleteService-test6"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteServiceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-svc07">
+        <parameter name="testName" value="deleteService-test7"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteServiceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-svc08">
+        <parameter name="testName" value="deleteService-test8"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteServiceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-svc09">
+        <parameter name="testName" value="deleteService-test9"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteServiceTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-svc10">
+        <parameter name="testName" value="deleteService-test10"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteServiceTest"/>
         </classes>
     </test>
 </suite>
