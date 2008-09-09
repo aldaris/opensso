@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserSelfCheckCondition.java,v 1.4 2008-06-25 05:43:52 qcheng Exp $
+ * $Id: UserSelfCheckCondition.java,v 1.5 2008-09-09 20:50:00 goodearth Exp $
  *
  */
 
@@ -273,10 +273,16 @@ public class UserSelfCheckCondition implements Condition {
             debug.message("UserSelfCheckCondition.getConditionDecision: " +
                 "attributes check:" + attributeCheckOk);
         }
-        // if attributeCheckOk is false, then
-        // check if the attributes in the envMap are 
-        // part of the NotAttributes list
-        if (!(attributeCheckOk)) {
+        /*
+         * if attributeCheckOk is false, then
+         * check if the attributes in the envMap are 
+         * part of the NotAttributes list
+         * If notAttributes schema is not defined in sunAMDelegation
+         * service, then return false.
+         */
+
+        if (!attributeCheckOk && (notAttributes != null) && 
+            !(notAttributes.isEmpty())) {
             if ((attrSet != null) && !(attrSet.isEmpty())) {
                 if (debug.messageEnabled()) {
                     debug.message("UserSelfCheckCondition." +
@@ -287,11 +293,19 @@ public class UserSelfCheckCondition implements Condition {
                 for (int i = 0; it.hasNext(); i++) {
                     String attr = (String)it.next();
                     if ((notAttributes.contains(attr))) {
+                        attributeCheckOk = false;
                         break;
                     }
-                    // none of the attributes are in NotAttributes set
+                    // If notAttributes schema is defined and if
+                    // none of the attributes are in NotAttributes set,
+                    // then return true.
                     attributeCheckOk = true;
                 }
+            }
+            if (debug.messageEnabled()) {
+                debug.message("UserSelfCheckCondition.getConditionDecision:"+
+                    " attributeCheckOk "+ attributeCheckOk + 
+                    " for notAttributes " + notAttributes);
             }
         }
         if (attributeCheckOk) {

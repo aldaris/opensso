@@ -109,6 +109,13 @@
                 <Value>sunIdentityServerDeviceKeyValue</Value>
                 <Value>sunIdentityServerDeviceStatus</Value>
             </AttributeValuePair>
+
+<!-- To check for permissions based on attributes not allowed by the user, the 
+following "notAttributes" AttributeValuePair can be used. If defined, users 
+will not be able perform the specified action in these attributes. The 
+comments section below provides an example. Please remove the 'Comment tags' 
+to define the "notAttributes" AttributeValuePair.
+
             <AttributeValuePair>
                 <Attribute name="notAttributes"/>
                 <Value>nsroledn</Value>
@@ -136,6 +143,8 @@
                 <Value>iplanet-am-static-group-dn</Value>
                 <Value>uid</Value>
             </AttributeValuePair>
+End of comment for "notAttributes" AttributeValuePair -->
+
         </Condition>
     </Conditions>
 </Policy>
