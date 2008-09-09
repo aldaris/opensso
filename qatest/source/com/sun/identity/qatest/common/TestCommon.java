@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.62 2008-09-04 20:55:42 nithyas Exp $
+ * $Id: TestCommon.java,v 1.63 2008-09-09 18:21:58 srivenigan Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1322,8 +1322,10 @@ public class TestCommon implements TestConstants {
         while (stk.hasMoreTokens()) {
             strToken = stk.nextToken();
             idx = strToken.indexOf("=");
-            map.put(strToken.substring(0, idx), strToken.substring(idx + 1,
-                    strToken.length()));
+            if (idx != -1) {
+            	map.put(strToken.substring(0, idx), strToken.substring(idx + 1,
+            			strToken.length()));
+            }
         }
         log(Level.FINEST, "getAttributeMap", map);
         exiting("getAttributeMap");
