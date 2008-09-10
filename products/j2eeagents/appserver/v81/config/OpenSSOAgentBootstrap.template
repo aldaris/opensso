@@ -84,12 +84,16 @@ com.iplanet.am.service.secret = @AGENT_ENCRYPTED_PASSWORD@
 am.encryption.pwd = @AGENT_ENCRYPT_KEY@
 
 #
-# DEBUG SERVICE PROPERTY
+# DEBUG SERVICE PROPERTIES
 #   - com.iplanet.services.debug.directory: Specifies the complete path to the
 #     directory where debug files will be stored by the Agent.
+#   - com.sun.services.debug.mergeall: consolidates all the debug information
+#     into one file if it is set to on. Each component has its own debug file
+#     if it is set to off.
 # Hot-Swap Enabled: No
 #
 com.iplanet.services.debug.directory=@DEBUG_LOGS_DIR@
+com.sun.services.debug.mergeall=on
 
 #
 # AUDIT LOG PROPERTY
