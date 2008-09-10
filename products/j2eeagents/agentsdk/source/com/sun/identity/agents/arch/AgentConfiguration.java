@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.33 2008-08-26 00:35:35 huacui Exp $
+ * $Id: AgentConfiguration.java,v 1.34 2008-09-10 00:19:40 huacui Exp $
  *
  */
 
@@ -692,6 +692,10 @@ public class AgentConfiguration implements
                         sysPropertyMap.put(nextKey, nextValue);
                     }
                 }
+                // notify possible debug level change
+                if (debugObserver != null) {
+                    debugObserver.notifyChanges();
+                }
                 //used by agentsdk and clientsdk, not hot swappable
                 setClientNotificationURL();   
                 
@@ -1203,7 +1207,9 @@ public class AgentConfiguration implements
         if (loadProperties(fromNotification)) {
             notifyModuleConfigurationListeners();
             // notify possible debug level change
-            debugObserver.notifyChanges();
+            if (debugObserver != null) {
+                debugObserver.notifyChanges();
+            }
         }
     }
     
