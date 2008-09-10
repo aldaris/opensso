@@ -81,7 +81,6 @@
 ./WEB-INF/classes/agenttab.properties
 ./WEB-INF/classes/agenttaborder.properties
 ./WEB-INF/classes/amAccessControl.xml
-./WEB-INF/classes/amAdminCLI.properties
 ./WEB-INF/classes/amAdminConsole.properties
 ./WEB-INF/classes/amAdminConsole.xml
 ./WEB-INF/classes/amAdminConsole_de.properties
@@ -235,9 +234,7 @@
 ./WEB-INF/classes/amAuthRadius_ko.properties
 ./WEB-INF/classes/amAuthRadius_zh.properties
 ./WEB-INF/classes/amAuthRadius_zh_TW.properties
-./WEB-INF/classes/amAuthSafeWord-NT.xml
 ./WEB-INF/classes/amAuthSafeWord.properties
-./WEB-INF/classes/amAuthSafeWord.xml
 ./WEB-INF/classes/amAuthSafeWord_de.properties
 ./WEB-INF/classes/amAuthSafeWord_es.properties
 ./WEB-INF/classes/amAuthSafeWord_fr.properties
@@ -246,7 +243,6 @@
 ./WEB-INF/classes/amAuthSafeWord_zh.properties
 ./WEB-INF/classes/amAuthSafeWord_zh_TW.properties
 ./WEB-INF/classes/amAuthSecurID.properties
-./WEB-INF/classes/amAuthSecurID.xml
 ./WEB-INF/classes/amAuthSecurID_de.properties
 ./WEB-INF/classes/amAuthSecurID_es.properties
 ./WEB-INF/classes/amAuthSecurID_fr.properties
@@ -263,7 +259,6 @@
 ./WEB-INF/classes/amAuthUI_zh.properties
 ./WEB-INF/classes/amAuthUI_zh_TW.properties
 ./WEB-INF/classes/amAuthUnix.properties
-./WEB-INF/classes/amAuthUnix.xml
 ./WEB-INF/classes/amAuthUnix_de.properties
 ./WEB-INF/classes/amAuthUnix_es.properties
 ./WEB-INF/classes/amAuthUnix_fr.properties
@@ -717,13 +712,6 @@
 ./WEB-INF/classes/fmConfigurationService_zh_TW.properties
 ./WEB-INF/classes/fmConfiguratorPlugins.properties
 ./WEB-INF/classes/fmConfiguratorTagSwap.properties
-./WEB-INF/classes/fmConsole_de.properties
-./WEB-INF/classes/fmConsole_es.properties
-./WEB-INF/classes/fmConsole_fr.properties
-./WEB-INF/classes/fmConsole_ja.properties
-./WEB-INF/classes/fmConsole_ko.properties
-./WEB-INF/classes/fmConsole_zh.properties
-./WEB-INF/classes/fmConsole_zh_TW.properties
 ./WEB-INF/classes/fmDataStoreProvider.properties
 ./WEB-INF/classes/fmDataStoreProvider_de.properties
 ./WEB-INF/classes/fmDataStoreProvider_es.properties
@@ -1090,6 +1078,7 @@
 ./WEB-INF/lib/OpenDS.jar
 ./WEB-INF/lib/acmecrypt.jar
 ./WEB-INF/lib/activation.jar
+./WEB-INF/lib/amserver.jar
 ./WEB-INF/lib/ant-contrib-1.0b3.jar
 ./WEB-INF/lib/authapi.jar
 ./WEB-INF/lib/cc.jar
@@ -1100,6 +1089,7 @@
 ./WEB-INF/lib/cc_ja.jar
 ./WEB-INF/lib/cc_ko.jar
 ./WEB-INF/lib/cc_sv.jar
+./WEB-INF/lib/cc_zh.jar
 ./WEB-INF/lib/cc_zh_CN.jar
 ./WEB-INF/lib/cc_zh_HK.jar
 ./WEB-INF/lib/cc_zh_TW.jar
@@ -1107,8 +1097,6 @@
 ./WEB-INF/lib/click.jar
 ./WEB-INF/lib/commons-codec-1.3.jar
 ./WEB-INF/lib/crimsondeb.jar
-./WEB-INF/lib/opensso.jar
-./WEB-INF/lib/famauth.jar
 ./WEB-INF/lib/iaik_jce_full.jar
 ./WEB-INF/lib/iaik_ssl.jar
 ./WEB-INF/lib/idpdiscovery.jar
@@ -1127,9 +1115,10 @@
 ./WEB-INF/lib/mail.jar
 ./WEB-INF/lib/mfwk_instrum_tk-2.0.jar
 ./WEB-INF/lib/openfedlib.jar
+./WEB-INF/lib/opensso.jar
+./WEB-INF/lib/openssowssproviders.jar
 ./WEB-INF/lib/opensso-register.jar
 ./WEB-INF/lib/opensso-sharedlib.jar
-./WEB-INF/lib/amserver.jar
 ./WEB-INF/lib/relaxngDatatype.jar
 ./WEB-INF/lib/scn_stprs_util.jar
 ./WEB-INF/lib/swec.jar
@@ -1167,8 +1156,8 @@
 ./WEB-INF/template/opends/config/schema/03-rfc3712.ldif
 ./WEB-INF/template/opends/config/schema/03-uddiv3.ldif
 ./WEB-INF/template/opends/config/schema/04-rfc2307bis.ldif
-./WEB-INF/template/opends/config/upgrade/config.ldif.3883
-./WEB-INF/template/opends/config/upgrade/schema.ldif.3883
+./WEB-INF/template/opends/config/upgrade/config.ldif.4337
+./WEB-INF/template/opends/config/upgrade/schema.ldif.4337
 ./WEB-INF/template/opends/config/wordlist.txt
 ./WEB-INF/template/openfm/fam_ad_schema.ldif
 ./WEB-INF/template/openfm/fam_sds_index.ldif
@@ -1178,6 +1167,7 @@
 ./WEB-INF/template/sms/am_remote_opends_schema.ldif
 ./WEB-INF/template/sms/am_sm_ad_schema.ldif
 ./WEB-INF/template/sms/am_sm_ds_schema.ldif
+./WEB-INF/template/sms/ds_remote_s1ds_schema.ldif
 ./WEB-INF/template/sms/defaultDelegationPolicies.xml
 ./WEB-INF/template/sms/ds_remote_schema.ldif
 ./WEB-INF/template/sms/index.ldif
@@ -1189,7 +1179,6 @@
 ./WEB-INF/wsdl/IdentityServices.wsdl
 ./WEB-INF/wsdl/famsts.wsdl
 ./WEB-INF/wsdl/sts_schema.xsd
-./amadm.jsp
 ./assets/css/Specific/adminRealm.css
 ./assets/css/Specific/confUserStore.css
 ./assets/css/Specific/identityService.css
