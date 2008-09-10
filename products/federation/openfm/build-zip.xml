@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-zip.xml,v 1.26 2008-08-31 06:58:15 hengming Exp $
+   $Id: build-zip.xml,v 1.27 2008-09-10 17:37:12 kevinserwin Exp $
 
 -->
 
@@ -41,7 +41,7 @@
     <property name="zip.temp.dir1" value="${openfm.built.dir}/.zip" />
     <property name="zip.temp.dir" value="${zip.temp.dir1}/opensso" />
 
-    <target name="all" depends="consoleonlywebxml, noconsolewebxml">
+    <target name="all" depends="consoleonlywebxml, noconsolewebxml, unixhelper">
         <copy file="${openfm.dir}/license.txt"
             tofile="${zip.temp.dir}/license.txt" />
         <copy file="${openfm.dir}/docs/README.famzip"
@@ -84,6 +84,9 @@
                 <include name="*.jsp" />
             </fileset>
         </copy>
+        <copy todir="${zip.temp.dir}/deployable-war/distauth/click">
+            <fileset dir="${amserver.www.dir}/click" />
+        </copy>        
         <mkdir dir="${zip.temp.dir}/deployable-war/distauth/config" />
         <mkdir dir="${zip.temp.dir}/deployable-war/distauth/config/auth" />
         <mkdir dir="${zip.temp.dir}/deployable-war/distauth/config/auth/default" />
@@ -145,6 +148,9 @@
             todir="${zip.temp.dir}/deployable-war/console" />
         <copy file="${openfm.built.dir}/clientsamples/package/sdk/resources/AMConfig.properties.template"
              todir="${zip.temp.dir}/deployable-war/console/WEB-INF/classes" />
+        <copy todir="${zip.temp.dir}/deployable-war/console/click">
+            <fileset dir="${amserver.www.dir}/click" />
+        </copy>              
         <!-- Done copy console only related files -->
             
         <!-- Copy no console WAR related files -->
@@ -160,6 +166,9 @@
         <replace file="${zip.temp.dir}/deployable-war/noconsole/WEB-INF/classes/amAuth-NT.xml"
            token="&lt;Value&gt;/@SERVER_URI@/console&lt;/Value&gt;" 
            value="&lt;Value/&gt;"/>
+        <copy todir="${zip.temp.dir}/deployable-war/noconsole/click">
+            <fileset dir="${amserver.www.dir}/click" />
+        </copy>            
         <!-- Done copy console only related files -->
             
         <copy file="${openfm.dir}/docs/README"
@@ -241,6 +250,17 @@
         <delete dir="${zip.temp.dir}" />            
     </target>
 
+    <target name="unixhelper" if="enterprise.authmodules.present">
+        <!-- include the doUnix daemon -->
+        <mkdir dir="${zip.temp.dir}/tools/helpers/bin" />
+        <copy todir="${zip.temp.dir}/tools/helpers">
+            <fileset dir="${products.basedir}/extlib/helpers"/>
+        </copy>
+        <copy todir="${zip.temp.dir}/tools/helpers/bin">
+            <fileset dir="${amserver.src.dir}/com/sun/identity/authentication/modules/unix" includes="am*" />
+        </copy>
+    </target>
+    
     <target name="consoleonlywebxml">
         <delete dir="${zip.temp.dir}" />
         <mkdir dir="${zip.temp.dir}" />
