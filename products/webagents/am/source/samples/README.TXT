@@ -70,7 +70,7 @@ Building Sample Program on UNIX platforms
    3. Under install directory>/is_csdk/lib, please do the following
 
        ln -s libamsdk.so.3 libamsdk.so
-       ln -s libxml2.so.2 libxml2.so
+       ln -s libxml2.so.2 libxml2.so (if libxml2.so.2 is present)
 
    4. Include directory>/is_csdk/lib in LD_LIBRARY_PATH
 
@@ -78,29 +78,20 @@ Building Sample Program on UNIX platforms
       example, 
 
 	  $ gmake
+   6. If compiling on a 64-bit machine, please execute as following:
+
+	  $ gmake BUILD_VERSION=64
 
    6. This produces executables of the samples am_*_test in the same directory.
 
-Note on Red Hat Linux Advanced Server release 2.1AS/i686 platform:
+   On Solaris Sparc/x86 (32-bit machines) LD_LIBRARY_PATH must be set to have
+   /usr/lib:/usr/lib/mps:<C-SDK install directory>/is_csdk/lib:/usr/dt/lib:/usr/ucblib
 
-   On Linux platform, LD_LIBRARY_PATH must be set to have
-   /usr/ucblib:/SDK install directory>/is_csdk/lib:/usr/lib/mps
-   tcsh:
-	setenv LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:/usr/ucblib:/SDK install directory>/is_csdk/lib:/usr/lib/mps
-   bash:
-	export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/ucblib:/SDK install directory>/is_csdk/lib:/usr/lib/mps
+   On Solaris Sparc/x86 (64-bit machines) LD_LIBRARY_PATH must be set to have
+   /usr/lib/64:/<C-SDK install directory>/is_csdk/lib:/usr/lib/mps/64:/usr/dt/lib/sparcv9:/usr/ucblib/sparcv9:/usr/lib/mps/sparcv9
 
-   On the Red Hat Linux AS 2.1/i686 platform, the following versions 
-   (or later) of gcc and glibc must be used due to a bug in the default 
-   gcc and glibc that comes with RedHat Linux AS 2.1: 
-
-   gcc-2.96-124.7.2
-   glibc-2.2.4-32.11
- 
-   The rpms are available at: 
-
-   ftp://rpmfind.net/linux/redhat/updates/enterprise/2.1AS/en/os/SRPMS/gcc-2.96-124.7.2.src.rpm
-   ftp://rpmfind.net/linux/redhat/updates/enterprise/2.1AS/en/os/SRPMS/glibc-2.2.4-32.11.src.rpm
+   On Linux (32-bit/64-bit) machines LD_LIBRARY_PATH must be set to have
+   <C-SDK install directory>/lib
 
    7. Rename ../config/OpenSSOAgentBootstrap.template.orig as ../config/OpenSSOAgentBootstrap.properties and update the tags appropriately.
    8. Rename ../config/OpenSSOAgentConfiguration.template.orig as ../config/OpenSSOAgentConfiguration.properties and update the tags appropriately.
@@ -110,7 +101,7 @@ Building Sample Program on Windows
 ----------------------------------
 
    On Windows platform, the sample programs can be built using 
-   Microsoft Visual Studio 6.0.  Be sure to do the following: 
+   Microsoft Visual Studio 7.0.  Be sure to do the following: 
        - Define WINNT in the compile flags.
        - Add ../include as an additional include path. 
        - Add ../lib as an additional lib path. 
@@ -296,7 +287,7 @@ Executing the Sample Program on Solaris
    the generated executables on the command line. 
 
    Note: Set the LD_LIBRARY_PATH environment variable to include the
-   lib directories, /usr/lib/mps:/opt/SUNWam/lib:/usr/lib:/usr/ucblib
+   lib directories, /usr/lib/mps:/usr/lib:/usr/ucblib
    which contain libamsdk.so, libxml2.so, libssl3.so, libnss3.so,
    libplc4.so, libplds4.so, libnspr4.so, and libucb.so. The directory
    /usr/lib is included before /usr/ucblib so that common programs,

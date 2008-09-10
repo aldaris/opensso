@@ -62,14 +62,10 @@ endif
 #
 # Compiler to be used
 #
-ifeq ($(OS_ARCH), WINNT)
-CC = cc
-else
 ifeq ($(OS_ARCH), Linux)
 CC = g++
 else
-CC = gcc
-endif
+CC = cc
 endif
 
 #
@@ -81,9 +77,14 @@ else
 ifeq ($(OS_ARCH), Linux)
 LIBS = -lamsdk -lxml2 -lssl3 -lnss3 -lplc4 -lplds4 -lnspr4
 else
+ifeq ($(BUILD_VERSION), 64)
+LIBS = -lamsdk -lxml2 \
+	-L /usr/lib/mps/64 -lssl3 -lnss3 -lplc4 -lplds4 -lnspr4
+else
 LIBS = -lamsdk -lxml2 \
 	-L /usr/lib/mps -lssl3 -lnss3 -lplc4 -lplds4 -lnspr4 \
 	-L /usr/ucblib -lucb
+endif
 endif
 endif
 
@@ -98,7 +99,11 @@ else
 ifeq ($(OS_ARCH), Linux)
 CFLAGS += -g -Wall -DLINUX
 else
-CFLAGS += -g -Wall
+ifeq ($(BUILD_VERSION), 64)
+CFLAGS += -g -xO3 -DNDEBUG -DSOLARIS -mt -KPIC -fast -xarch=generic64
+else
+CFLAGS += -g
+endif
 endif
 endif
 

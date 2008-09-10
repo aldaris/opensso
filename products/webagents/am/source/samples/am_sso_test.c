@@ -33,6 +33,7 @@
 #include <am_notify.h>
 #include <am_utils.h>
 #include <am_log.h>
+#include <am_web.h>
 
 static const char *test_notif_msg = 
 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
