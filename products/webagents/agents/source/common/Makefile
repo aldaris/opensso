@@ -126,7 +126,9 @@ ZIP_FILE := $(PKG_DIR).zip
 ZIP_DIRS := bin config include samples
 EXTRA_PACKAGE_FILES += $(DEST_LIB_DIR)/amsdk.dll $(DEST_LIB_DIR)/amsdk.lib \
 	$(LIBXML_LIB_DIR)/libxml2.dll $(LIBXML_LIB_DIR)/libxml2.lib \
-	$(NSS_BIN_DIR)/certutil.exe
+	$(NSS_BIN_DIR)/certutil.exe $(NSS_BIN_DIR)/softokn3.dll \
+	$(NSS_BIN_DIR)/softokn3.chk $(NSS_BIN_DIR)/freebl3.chk \
+	$(NSS_BIN_DIR)/freebl3.dll
 
 $(ZIP_FILE): $(DEST_PACKAGE_SCRATCH_DIR) $(EXPORTED_HEADERS) $(EXPORTED_LIBS) $(EXTRA_PACKAGE_FILES)
 	$(RM) -r $(PKG_DIR)

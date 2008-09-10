@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: connection.cpp,v 1.7 2008-06-25 08:14:31 qcheng Exp $
+ * $Id: connection.cpp,v 1.8 2008-09-10 21:31:06 madan_ranganath Exp $
  *
  */
 #include <stdexcept>
@@ -140,7 +140,7 @@ am_status_t Connection::initialize(const Properties& properties)
 		 "calling NSS_Initialize() with directory = \"%s\" and "
 		 "prefix = \"%s\"", certDir.c_str(), dbPrefix.c_str());
 	Log::log(Log::ALL_MODULES, Log::LOG_DEBUG, "Connection::initialize() "
-		 "Connection timeout wen receiving data = %i milliseconds",timeout);
+		 "Connection timeout when receiving data = %i milliseconds",timeout);
 	if (tcp_nodelay_is_enabled) {
 		Log::log(Log::ALL_MODULES, Log::LOG_DEBUG, "Connection::initialize() "
 		   "Socket option TCP_NODELAY is enabled");
