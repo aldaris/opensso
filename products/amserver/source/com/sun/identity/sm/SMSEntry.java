@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.43 2008-08-09 00:52:04 veiming Exp $
+ * $Id: SMSEntry.java,v 1.44 2008-09-10 19:57:45 arviranga Exp $
  *
  */
 
@@ -1639,10 +1639,11 @@ public class SMSEntry implements Cloneable {
         String serviceName = parseTokens[4];
 
         // Ignore permission checks for DN that donot have config type
-        // and subConfigName, except for sunAMRealmService
-        if (!serviceName.equals(REALM_SERVICE)
-                && (configType.equalsIgnoreCase("*") || subConfigName
-                        .equalsIgnoreCase("*"))) {
+        // and subConfigName, except for sunAMRealmService and for read only
+        if (!serviceName.equals(REALM_SERVICE) &&
+            (configType.equalsIgnoreCase("*") ||
+            subConfigName.equalsIgnoreCase("*")) &&
+            (actions.size() == 1) && actions.contains(READ)) {
             return (delPermFlag);
         }
 

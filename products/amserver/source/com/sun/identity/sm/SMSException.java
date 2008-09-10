@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSException.java,v 1.5 2008-06-25 05:44:04 qcheng Exp $
+ * $Id: SMSException.java,v 1.6 2008-09-10 19:57:45 arviranga Exp $
  *
  */
 
@@ -95,6 +95,7 @@ public class SMSException extends Exception implements L10NMessage {
         super();
         exceptionStatus = status;
         this.errorCode = errorCode;
+        this.message = getL10NMessage(java.util.Locale.ENGLISH);
     }
 
     /**
@@ -109,7 +110,8 @@ public class SMSException extends Exception implements L10NMessage {
     public SMSException(int status, String exMessage, String errorCode) {
         exceptionStatus = status;
         this.errorCode = errorCode;
-        this.message = getL10NMessage(java.util.Locale.ENGLISH);
+        this.message = exMessage + ": " +
+            getL10NMessage(java.util.Locale.ENGLISH);
     }
 
     /**
@@ -119,7 +121,7 @@ public class SMSException extends Exception implements L10NMessage {
      */
     public SMSException(String msg) {
         exceptionStatus = STATUS_NONE;
-        this.message = getL10NMessage(java.util.Locale.ENGLISH);
+        this.message = msg;
     }
 
     /**
@@ -132,7 +134,7 @@ public class SMSException extends Exception implements L10NMessage {
     public SMSException(String msg, String errorCode) {
         exceptionStatus = STATUS_NONE;
         this.errorCode = errorCode;
-        this.message = getL10NMessage(java.util.Locale.ENGLISH);
+        this.message = msg + ": " + getL10NMessage(java.util.Locale.ENGLISH);
     }
 
     /**
@@ -167,7 +169,8 @@ public class SMSException extends Exception implements L10NMessage {
         // super(message, t); (can be used with JDK 1.4 and higher)
         rootCause = t;
         this.errorCode = errorCode;
-        this.message = message;
+        this.message = message + ": " +
+            getL10NMessage(java.util.Locale.ENGLISH);
         exceptionMapper();
     }
 
@@ -191,7 +194,8 @@ public class SMSException extends Exception implements L10NMessage {
         rootCause = t;
         this.errorCode = errorCode;
         this.bundleName = rbName;
-        this.message = getL10NMessage(java.util.Locale.ENGLISH);
+        this.message = message + ": " +
+            getL10NMessage(java.util.Locale.ENGLISH);
         if (rootCause != null && !(rootCause instanceof AMException)) {
             exceptionMapper();
         }
