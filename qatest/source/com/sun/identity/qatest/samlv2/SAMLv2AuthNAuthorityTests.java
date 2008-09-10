@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2AuthNAuthorityTests.java,v 1.1 2008-09-08 22:25:32 sridharev Exp $
+ * $Id: SAMLv2AuthNAuthorityTests.java,v 1.2 2008-09-10 01:07:09 sridharev Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -141,6 +141,8 @@ public class SAMLv2AuthNAuthorityTests extends TestCommon {
                     + "samlv2TestData", configMap);
             SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator 
                     + "samlv2TestConfigData", configMap);
+            SAMLv2Common.getEntriesFromResourceBundle("authentication" + fileseparator 
+                    + "authenticationConfigData", configMap);
             SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator 
                     + "SAMLv2AuthNAuthorityTests", configMap);
             configMap.put(TestConstants.KEY_SP_USER, "sp" + testName);
