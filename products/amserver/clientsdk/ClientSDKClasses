@@ -146,6 +146,7 @@ com/sun/identity/log/Logger.class
 com/sun/identity/log/LogManager.class
 com/sun/identity/log/LogRecord.class
 com/sun/identity/log/LogManagerUtil.class
+com/sun/identity/log/s1is/LogConfigReader.class
 com/sun/identity/log/spi/Debug.class
 com/sun/identity/log/spi/IDebug.class
 com/sun/identity/log/spi/ISDebug.class
