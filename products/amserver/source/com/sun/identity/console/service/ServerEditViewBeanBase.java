@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerEditViewBeanBase.java,v 1.2 2008-06-25 05:43:17 qcheng Exp $
+ * $Id: ServerEditViewBeanBase.java,v 1.3 2008-09-11 16:33:16 veiming Exp $
  *
  */
 
@@ -178,7 +178,15 @@ public abstract class ServerEditViewBeanBase
                 if (val == null) {
                     propertySheetModel.setValue(name, "");
                 } else {
-                    propertySheetModel.setValue(name, val);
+                    View view = this.getChild(name);
+                    if (view instanceof CCCheckBox) {
+                        String trueValue = ServerPropertyValidator.getTrueValue(
+                            propertyName);
+                        String v = (val.equals(trueValue)) ? "true" : "false";
+                        propertySheetModel.setValue(name, v);
+                    } else {
+                        propertySheetModel.setValue(name, val);
+                    }
                 }
             }
         }
