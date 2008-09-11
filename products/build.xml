@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.38 2008-09-10 17:36:56 kevinserwin Exp $
+   $Id: build.xml,v 1.39 2008-09-11 17:16:33 kevinserwin Exp $
 
 -->
 
@@ -241,17 +241,18 @@
     <target name="create-version"> 
         <tstamp>
             <format property="war.time.stamp" pattern="yyyyMMddhhmm"/>
-        </tstamp>
-        <condition property="version.date" value="Enterprise 8.0 Build ${build.number.set} ${war.time.stamp}" >
+        </tstamp>       
+        <condition property="version.set" value="${opensso.enterprise} Build ${build.number.set}" >
             <isset property="build.enterprise"/>
         </condition>
-        <condition property="version.date" value="Express Build ${build.number.set} ${war.time.stamp}" >
+        <condition property="version.set" value="${opensso.express} Build ${build.number.set}" >
             <isset property="build.express"/>
-        </condition>        
-        <!-- note that if version.date is set above, the following line is ignored -->
-        <property name="version.date" value="${war.time.stamp}"/>
-      
-        <filter token="DATESTAMP" value="${version.date}"/>
+        </condition>           
+        <!-- note that if version.set is set above, the following line is ignored -->
+        <property name="version.set" value="${opensso.nightly}"/>    
+            
+        <filter token="DATESTAMP" value="${war.time.stamp}"/>        
+        <filter token="VERSION" value="${version.set}" />
         <copy file="${amserver.base.dir}/version.template"
             tofile="${prd.nightly.dist.dir}/version"
             filtering="true"/>      

@@ -1,1 +1,1 @@
-identifier=@DATESTAMP@
+identifier=@VERSION@(@DATESTAMP@)
