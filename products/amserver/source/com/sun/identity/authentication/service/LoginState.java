@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.36 2008-09-08 05:29:35 bhavnab Exp $
+ * $Id: LoginState.java,v 1.37 2008-09-11 00:11:57 manish_rustagi Exp $
  *
  */
 
@@ -1137,15 +1137,26 @@ public class LoginState {
             userDN = getUserDN(amIdentityUser);
         }
         
+        AMIdentity newAMIdentity = 
+            ad.getIdentity(IdType.USER,userDN,getOrgDN());
         String oldUserDN = null;
+        AMIdentity oldAMIdentity = null;
         if (oldSession != null) {
-            oldUserDN = oldSession.getProperty(ISAuthConstants.PRINCIPAL);;
-            
+            oldUserDN = oldSession.getProperty(ISAuthConstants.PRINCIPAL);
+            oldAMIdentity = 
+                ad.getIdentity(IdType.USER,oldUserDN,getOrgDN());
         }
         if (messageEnabled) {
-            debug.message("userDN is : " + userDN);
-            debug.message("oldUserDN is : "+ oldUserDN);
-            debug.message("sessonUpgrade is : " + sessionUpgrade);
+            debug.message("LoginState.setSessionProperties()" + 
+            		      " userDN is: " + userDN);
+            debug.message("LoginState.setSessionProperties()" +
+            		      " oldUserDN is: " + oldUserDN);        	
+            debug.message("LoginState.setSessionProperties()" +
+                          " sessionUpgrade is: " + sessionUpgrade);
+            debug.message("LoginState.setSessionProperties()" + 
+                          " newAMIdentity is: " + newAMIdentity);
+            debug.message("LoginState.setSessionProperties()" + 
+                          " oldAMIdentity is: " + oldAMIdentity);            
         }
 
         Date authInstantDate = new Date();
@@ -1194,9 +1205,8 @@ public class LoginState {
             }
         }
         
-        if ((sessionUpgrade) && ((oldUserDN != null)
-        && (DNUtils.normalizeDN(userDN).equals(
-            DNUtils.normalizeDN(oldUserDN))))) {
+        if ((sessionUpgrade) && ((oldAMIdentity != null)
+        && (oldAMIdentity.equals(newAMIdentity)))) {
             sessionUpgrade();
         } else {
             sessionUpgrade = false;
