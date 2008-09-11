@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSNotificationManager.java,v 1.10 2008-08-28 19:08:22 arviranga Exp $
+ * $Id: SMSNotificationManager.java,v 1.11 2008-09-11 16:47:56 goodearth Exp $
  *
  */
 package com.sun.identity.sm;
@@ -82,10 +82,11 @@ public class SMSNotificationManager implements SMSObjectListener {
     protected void initializeProperties() {
         // Check if notifications are obtained from the datastore
         boolean previousDataStoreNotification = enableDataStoreNotification;
-        enableDataStoreNotification = Boolean.parseBoolean(
-            SystemProperties.get(Constants.SMS_ENABLE_DB_NOTIFICATION));
-        boolean configTime = Boolean.parseBoolean(SystemProperties.get(
-            Constants.SYS_PROPERTY_INSTALL_TIME));
+        enableDataStoreNotification = Boolean.valueOf(
+            SystemProperties.get(Constants.SMS_ENABLE_DB_NOTIFICATION)).
+                booleanValue();
+        boolean configTime = Boolean.valueOf(SystemProperties.get(
+            Constants.SYS_PROPERTY_INSTALL_TIME)).booleanValue();
         SMSObject object = SMSEntry.getSMSObject();
         isClient = object instanceof SMSJAXRPCObject;
         // In the case of CLI, disable datastore notification since it
@@ -100,12 +101,14 @@ public class SMSNotificationManager implements SMSObjectListener {
             !ServiceManager.isRealmEnabled()) {
             enableDataStoreNotification = true;
         }
-        cachedEnabled = Boolean.parseBoolean(
-            SystemProperties.get(Constants.SDK_GLOBAL_CACHE_PROPERTY, "true"));
+        cachedEnabled = Boolean.valueOf(SystemProperties.get(
+            Constants.SDK_GLOBAL_CACHE_PROPERTY, "true")).booleanValue();
+            
         if (!cachedEnabled) {
             // Check SMS cache property
-            cachedEnabled = Boolean.parseBoolean(
-                SystemProperties.get(Constants.SMS_CACHE_PROPERTY, "false"));
+            cachedEnabled = Boolean.valueOf(SystemProperties.get(
+                Constants.SMS_CACHE_PROPERTY, "false")).booleanValue();
+                
         }
         if (debug.messageEnabled()) {
             debug.message("SMSNotificationManager.init " +
