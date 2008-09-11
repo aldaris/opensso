@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSAgent.java,v 1.15 2008-09-09 20:54:26 mallas Exp $
+ * $Id: STSAgent.java,v 1.16 2008-09-11 05:24:14 mallas Exp $
  *
  */
 
@@ -151,6 +151,13 @@ public class STSAgent extends STSConfig {
         try {
             AMIdentity provider = 
                 new AMIdentity(token, name, IdType.AGENTONLY, "/", null);
+            if(!provider.isExists()) {
+               if(debug.messageEnabled()) {
+                  debug.message("STSAgent.init: provider " + name
+                          + "does not exist");
+               }
+               return; 
+            }
             Map attributes = (Map) provider.getAttributes(attrNames);
             profilePresent = true;
             parseAgentKeyValues(attributes);

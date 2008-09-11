@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProvider.java,v 1.31 2008-09-09 20:54:26 mallas Exp $
+ * $Id: AgentProvider.java,v 1.32 2008-09-11 05:24:14 mallas Exp $
  *
  */
 
@@ -232,7 +232,14 @@ public class AgentProvider extends ProviderConfig {
         // Obtain the provider from Agent profile based on ProviderName
         try {
             AMIdentity provider = 
-                new AMIdentity(token, providerName, IdType.AGENTONLY, "/", null);           
+                new AMIdentity(token, providerName, IdType.AGENTONLY, "/", null);
+            if(!provider.isExists()) {
+               if(debug.messageEnabled()) {
+                  debug.message("AgentProvider.init: provider " + providerName
+                          + "does not exist");
+               }
+               return; 
+            }
             Map attributes = (Map) provider.getAttributes(attrNames);
             profilePresent = true;
             if (debug.messageEnabled()) {

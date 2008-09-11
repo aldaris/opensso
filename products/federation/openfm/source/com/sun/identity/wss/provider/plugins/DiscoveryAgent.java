@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DiscoveryAgent.java,v 1.11 2008-09-09 20:54:26 mallas Exp $
+ * $Id: DiscoveryAgent.java,v 1.12 2008-09-11 05:24:14 mallas Exp $
  *
  */
 package com.sun.identity.wss.provider.plugins; 
@@ -116,7 +116,14 @@ public class DiscoveryAgent extends DiscoveryConfig {
          // Obtain the provider from Agent profile
          try {
              AMIdentity provider = 
-                 new AMIdentity(token, name, IdType.AGENTONLY, "/", null);             
+                 new AMIdentity(token, name, IdType.AGENTONLY, "/", null);
+             if(!provider.isExists()) {
+               if(debug.messageEnabled()) {
+                  debug.message("DiscoveryAgent.init: provider " + name
+                          + "does not exist");
+               }
+               return; 
+            }
              Map attributes = (Map) provider.getAttributes(attrNames);
              profilePresent = true;
              parseAgentKeyValues(attributes);
