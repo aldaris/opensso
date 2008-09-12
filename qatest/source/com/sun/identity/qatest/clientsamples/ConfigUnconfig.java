@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigUnconfig.java,v 1.5 2008-08-29 19:27:51 nithyas Exp $
+ * $Id: ConfigUnconfig.java,v 1.6 2008-09-12 01:04:46 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -169,13 +169,18 @@ public class ConfigUnconfig extends TestCommon {
     private void configureWAR()
     throws Exception {
         WebClient webClient = new WebClient();
-        HtmlPage page = (HtmlPage)webClient.getPage(clientURL);
-        log(Level.FINE, "configureWAR", "WAR file is not configured." +
-                " Configuring the deployed war.");
-        generateConfigXML();
-        DefaultTaskHandler task = new DefaultTaskHandler(baseDir +
-                "sampleconfigurator.xml");
-        page = task.execute(webClient);
+        HtmlPage page = (HtmlPage)webClient.getPage(clientURL + 
+                "/Configurator.jsp");
+        if (getHtmlPageStringIndex(page, rb_client.getString("client_txt"))
+                == -1) {
+            log(Level.FINE, "configureWAR", "WAR file is not configured." +
+                    " Configuring the deployed war.");
+            generateConfigXML();
+            DefaultTaskHandler task = new DefaultTaskHandler(baseDir +
+                    "sampleconfigurator.xml");
+            page = task.execute(webClient);
+        } else
+            log(Level.FINE, "configureWAR", "WAR file is already configured.");
     }
 
     /**
