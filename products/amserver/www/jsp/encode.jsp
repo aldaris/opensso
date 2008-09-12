@@ -1,6 +1,3 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
 <!--
    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
   
@@ -25,22 +22,26 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: encode.jsp,v 1.9 2008-08-19 19:10:47 veiming Exp $
+   $Id: encode.jsp,v 1.10 2008-09-12 00:09:34 veiming Exp $
 -->
+<%@ page contentType="text/html; charset=UTF-8" %> 
+<html>
+<head>
     <title>OpenSSO</title>
     <link rel="stylesheet" type="text/css" href="com_sun_web_ui/css/css_ns6up.css" />
     <link rel="shortcut icon" href="com_sun_web_ui/images/favicon/favicon.ico" type="image/x-icon" />
+</head>
 
 <%@ page import="com.iplanet.sso.SSOException" %>
 <%@ page import="com.iplanet.sso.SSOToken" %>
 <%@ page import="com.iplanet.sso.SSOTokenManager" %>
 <%@ page import="com.sun.identity.security.EncodeAction" %>
+<%@ page import="com.sun.identity.shared.locale.Locale" %>
 <%@ page import="com.sun.identity.sm.SMSEntry" %>
 <%@ page import="java.security.AccessController" %>
 <%@ page import="java.util.ResourceBundle" %>
 
 
-</head>
 <body class="DefBdy">
     <div class="SkpMedGry1"><a href="#SkipAnchor3860"><img src="com_sun_web_ui/images/other/dot.gif" alt="Jump to End of Masthead" border="0" height="1" width="1" /></a></div><div class="MstDiv">
     <table class="MstTblBot" title="" border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -58,11 +59,16 @@
     <table border="0" cellpadding="10" cellspacing="0" width="100%"><tr><td>
 
 <%
-    ResourceBundle rb = ResourceBundle.getBundle("encode");
     try {
         SSOTokenManager manager = SSOTokenManager.getInstance();
         SSOToken ssoToken = manager.createSSOToken(request);
         manager.validateToken(ssoToken);
+
+        String ssoPropLocale = ssoToken.getProperty("Locale");
+        ResourceBundle rb =
+            ((ssoPropLocale != null) && (ssoPropLocale.length() > 0)) ?
+            ResourceBundle.getBundle("encode", Locale.getLocale(ssoPropLocale)):
+            ResourceBundle.getBundle("encode");
 
         if (ssoToken.getPrincipal().getName().equals(
             "id=amadmin,ou=user," + SMSEntry.getRootSuffix())
