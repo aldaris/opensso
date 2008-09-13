@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeValidator.java,v 1.7 2008-08-06 16:43:24 veiming Exp $
+ * $Id: AttributeValidator.java,v 1.8 2008-09-13 00:58:15 veiming Exp $
  *
  */
 
 package com.sun.identity.sm;
 
+import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.util.AMEncryption;
 import com.iplanet.ums.IUMSConstants;
 import com.iplanet.ums.validation.BooleanValidator;
@@ -38,6 +39,7 @@ import com.iplanet.ums.validation.NumberValidator;
 import com.iplanet.ums.validation.URLValidator;
 import com.sun.identity.security.DecodeAction;
 import com.sun.identity.security.EncodeAction;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import java.security.AccessController;
 import java.util.Collections;
@@ -234,6 +236,8 @@ class AttributeValidator {
      * @throws com.sun.identity.sms.SMSException
      */
     private boolean validateType(Set values, Map env) throws SMSException {
+        String installTime = SystemProperties.get(
+            Constants.SYS_PROPERTY_INSTALL_TIME, "false");
         String[] array;
         AttributeSchema.Type type = as.getType();
         if (type == null)
@@ -260,6 +264,13 @@ class AttributeValidator {
             if (values.size() > 1) {
                 return (false);
             } else {
+                // we may not be able validate choice type attribute values
+                // correctly during installation time or when importing
+                // service configuration.
+                if (installTime.equalsIgnoreCase("true")) {
+                    return true;
+                }
+
                 array = as.getChoiceValues(env);
                 Iterator it = values.iterator();
                 String val = (it.hasNext()) ? (String) it.next() : null;
@@ -275,6 +286,13 @@ class AttributeValidator {
             }
         }
         if (type.equals(AttributeSchema.Type.MULTIPLE_CHOICE)) {
+            // we may not be able validate choice type attribute values
+            // correctly during installation time or when importing
+            // service configuration.
+            if (installTime.equalsIgnoreCase("true")) {
+                return true;
+            }
+
             array = as.getChoiceValues(env);
             int size = values.size();
             int minValue = as.getMinValue();

@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: IdRemoteEventListener.java,v 1.3 2008-08-21 18:48:18 sean_brydon Exp $
+* $Id: IdRemoteEventListener.java,v 1.4 2008-09-13 00:58:15 veiming Exp $
 */
 
 package com.sun.identity.idm.remote;
@@ -45,6 +45,7 @@ import com.iplanet.services.naming.WebtopNaming;
 import com.sun.identity.common.GeneralTaskRunnable;
 import com.sun.identity.common.SystemTimer;
 import com.sun.identity.idm.IdRepoListener;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.jaxrpc.SOAPClient;
 import com.sun.identity.sm.CreateServiceConfig;
@@ -331,6 +332,12 @@ public class IdRemoteEventListener {
         }
         
         public void run() {
+            String installTime = SystemProperties.get(
+                Constants.SYS_PROPERTY_INSTALL_TIME, "false");
+            if (installTime.equalsIgnoreCase("true")) {
+                return;
+            }
+
             try {
                 Object obj[] = { new Integer(pollingTime) };
                 Set mods = (Set) client.send("objectsChanged_idrepo", obj,
