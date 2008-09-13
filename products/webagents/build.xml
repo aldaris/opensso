@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.9 2008-06-25 05:54:12 qcheng Exp $
+   $Id: build.xml,v 1.10 2008-09-13 01:07:45 robertis Exp $
 
 -->
 
@@ -67,6 +67,14 @@
 
     <condition property="iis.build.ok" value="true">
         <os family="windows"/>
+    </condition>
+
+    <condition property="winnt.lib.ext" value="_64" else="">
+        <os family="windows" arch="amd64"/>
+    </condition>
+
+    <condition property="winnt.ext" value="_x64" else="">
+        <os family="windows" arch="amd64"/>
     </condition>
 
     <condition property="build.type.suffix" value="_64" else="">

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: utils.cpp,v 1.11 2008-08-25 21:00:23 madan_ranganath Exp $
+ * $Id: utils.cpp,v 1.12 2008-09-13 01:11:53 robertis Exp $
  *
  */ 
 #include <stdexcept>
@@ -35,7 +35,7 @@
 #include "utils.h"
 #include "url.h"
 
-#if defined(WINNT)
+#if (defined(WINNT) || defined(_AMD64_))
 #define strtok_r(s1, s2, p) strtok(s1, s2);
 #endif
 using std::string;
@@ -443,7 +443,11 @@ compare_sub_pat(const char *r1, const char *r2,
 	return result;
 
     string r_1(r1);
+#if defined(_AMD64_)
+    size_t size = r_1.size() - 1;
+#else
     int size = r_1.size() - 1;
+#endif
 
     if(*(r1 + size) == '*')
 	return AM_NO_MATCH;
@@ -517,8 +521,13 @@ ressubcmp(const char *r1, const char *r2, const am_resource_traits_t *traits,
 	    r_1.insert((std::size_t)0, (std::size_t)1, traits->separator);
 	}
 
+#if defined(_AMD64_)
+	size_t r1size = r_1.size();
+	size_t r2size = strlen(r2);
+#else
 	int r1size = r_1.size();
 	int r2size = strlen(r2);
+#endif
 	if(r1size > r2size) return false;
 
 	const char *rr2 = r2 + (r2size - r1size - 1);
@@ -545,8 +554,13 @@ compare_pat(const char *r1, const char *r2,
     // a super resource.
     string r_1(r1);
     string r_2(r2);
+#if defined(_AMD64_)
+    size_t size = r_1.size() - 1;
+    size_t r2size = r_2.size() - 1;
+#else
     int size = r_1.size() - 1;
     int r2size = r_2.size() - 1;
+#endif
 
     // If it is backward comparison, reverse the strings
     if(!fwdcmp) {

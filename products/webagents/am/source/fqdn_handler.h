@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: fqdn_handler.h,v 1.3 2008-06-25 08:14:31 qcheng Exp $
+ * $Id: fqdn_handler.h,v 1.4 2008-09-13 01:11:53 robertis Exp $
  *
  * Abstract:
  *
@@ -42,7 +42,7 @@
 #include "log.h"
 #include "properties.h"
 
-#if     defined(WINNT)
+#if (defined(WINNT) || defined(_AMD64_))
 #define snprintf        _snprintf
 #endif
 

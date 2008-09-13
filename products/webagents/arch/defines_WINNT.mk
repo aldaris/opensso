@@ -26,7 +26,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: defines_WINNT.mk,v 1.4 2008-06-25 05:54:25 qcheng Exp $
+# $Id: defines_WINNT.mk,v 1.5 2008-09-13 01:11:04 robertis Exp $
 # 
 #
 
@@ -67,14 +67,24 @@ LIB_EXT := .lib
 
 CFLAGS += -DWINNT -DWIN32
 ifdef	OS_IS_CYGWIN
+
+ifneq ($(CYGWIN_ARCH), WOW64)
 CXXFLAGS += -DWINNT -DWIN32 -EHsc -W3 -nologo -GF -Gy -GT -G5
+else
+CXXFLAGS += -DWINNT -D_AMD64_ -EHsc -W3 -nologo -D_CRT_SECURE_NO_WARNINGS
+endif
+
 else
 CXXFLAGS += -DWINNT -DWIN32
 endif
 
 LD_FILTER_SYMS_FLAG = -def:$(filter %$(MAPFILE_EXT),$^)
 ifdef	OS_IS_CYGWIN
+ifneq ($(CYGWIN_ARCH), WOW64)
 LD_MAKE_SHARED_LIB_FLAG := -DLL
+else
+LD_MAKE_SHARED_LIB_FLAG := -DLL /MACHINE:AMD64 
+endif
 else
 LD_MAKE_SHARED_LIB_FLAG := -dll
 endif
@@ -98,7 +108,11 @@ endif
 
 ifeq ($(BUILD_DEBUG), optimize)
 ifdef	OS_IS_CYGWIN
+ifeq ($(CYGWIN_ARCH), WOW64)
+    DEBUG_FLAGS := -Zi -O2 -DNDEBUG
+else
     DEBUG_FLAGS := -Zi -O2 -DNDEBUG -MD
+endif
     LINK_DEBUG_FLAGS := -DEBUG -opt:ref
 else
     DEBUG_FLAGS := -O -DNDEBUG

@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: defines.mk,v 1.8 2008-06-25 05:54:25 qcheng Exp $
+# $Id: defines.mk,v 1.9 2008-09-13 01:10:55 robertis Exp $
 #
 #
 
@@ -50,6 +50,12 @@ OS_ARCH_VER := $(shell uname -r)
 BUILD_DATE := $(shell date)
 BUILD_MACHINE := $(shell uname -n)
 MC_ARCH := $(shell uname -m)
+CYGWIN_ARCH := CYG32
+
+# this flag is defined for Cygwin running on WOW64 mode in Win64
+ifeq ($(strip $(findstring WOW64,$(OS_ARCH))), WOW64)
+    CYGWIN_ARCH := WOW64
+endif
 ifeq ($(strip $(patsubst CYGWIN_NT%, CYGWIN_NT, $(OS_ARCH))), CYGWIN_NT)
     OS_ARCH := WINNT
     OS_IS_CYGWIN := true

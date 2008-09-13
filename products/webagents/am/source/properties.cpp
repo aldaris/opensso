@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: properties.cpp,v 1.11 2008-06-25 08:14:35 qcheng Exp $
+ * $Id: properties.cpp,v 1.12 2008-09-13 01:11:53 robertis Exp $
  *
  */
 
@@ -242,7 +242,11 @@ am_status_t Properties::parseBuffer(char *buffer)
 {
     am_status_t status = AM_SUCCESS;
     char *nextLine;
+#if defined(_AMD64_)
+    size_t len;
+#else
     int len;
+#endif
 
     try {
 	for (buffer = skipWhitespaceAndComments(buffer);

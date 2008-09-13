@@ -22,25 +22,33 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.h,v 1.19 2008-08-04 19:22:12 huacui Exp $
+ * $Id: am_web.h,v 1.20 2008-09-13 01:11:53 robertis Exp $
  *
  */
 
 #ifndef AM_WEB_H
 #define AM_WEB_H
 
-#if     defined(WINNT) && !(AM_STATIC_LIB)
+#if     (defined(WINNT) || defined(_AMD64_)) && !(AM_STATIC_LIB)
 #if     defined(AM_BUILDING_LIB)
 
+#if defined(_AMD64_)
+#define AM_WEB_EXPORT 
+#else
 #define AM_WEB_EXPORT    __declspec(dllexport)
+#endif
 #else /* if defined(AM_BUILDING_LIB) */
+#if defined(_AMD64_)
+#define AM_WEB_EXPORT 
+#else
 #define AM_WEB_EXPORT    __declspec(dllimport)
+#endif
 #endif
 #else /* if defined(WINNT) */
 #define AM_WEB_EXPORT
 #endif
 
-#if !defined(WINNT)
+#if (!defined(WINNT) && !defined(_AMD64_))
 #define AM_WEB_ALLOW_USER_MSG            "User %s was allowed access to %s."
 #define AM_WEB_DENIED_USER_MSG            "User %s was denied access to %s."
 #endif

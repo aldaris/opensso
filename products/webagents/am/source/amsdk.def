@@ -13,6 +13,7 @@ EXPORTS
 	am_log_set_logger;
 	am_log_set_module_level;
 	am_log_vlog;
+	am_log_set_remote_info
 
 	am_log_record_create;
 	am_log_record_destroy;

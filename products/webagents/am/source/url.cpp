@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: url.cpp,v 1.6 2008-06-25 08:14:40 qcheng Exp $
+ * $Id: url.cpp,v 1.7 2008-09-13 01:11:53 robertis Exp $
  *
  */ 
 #include <iterator>
@@ -144,7 +144,11 @@ void URL::parseURLStrNew(const std::string &urlString,
     const char *url = urlString.c_str();
     const char *path_info_cstr = pathInfo.c_str();
     char *colon_ptr = NULL;
+#if defined(_AMD64_)
+    size_t proto_len = 0;
+#else
     unsigned proto_len = 0;
+#endif
     char *host_ptr = NULL;
     char *port_ptr = NULL;
     char *uri_ptr = NULL;
@@ -420,7 +424,11 @@ void URL::parseURLStrOld(const std::string &urlString,
 		port = defaultPort[protocol];
 		portStr = defaultPortStr[protocol];
 	    } else {
+#if defined(_AMD64_)
+	        size_t indx = portStr.find('*');
+#else
 	        int indx = portStr.find('*');
+#endif
 	  	if (indx < 0) {
 		    try {
 			port = Utils::getNumber(portStr);

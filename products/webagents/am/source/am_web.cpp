@@ -22,13 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.cpp,v 1.33 2008-08-26 00:18:37 subbae Exp $
+ * $Id: am_web.cpp,v 1.34 2008-09-13 01:11:53 robertis Exp $
  *
  */
 
 #include <ctype.h>
 #include <stdio.h>
-#if !defined(WINNT)
+#if (!defined(WINNT) && !defined(_AMD64_))
 #include <iconv.h>
 #include <langinfo.h>
 #endif
@@ -62,14 +62,20 @@
 
 #include <locale.h>
 
-#if	defined(WINNT)
+#if	(defined(WINNT) || defined(_AMD64_))
+#if(!defined(_AMD64_))
 #define _X86_
+#endif
 #include <windef.h>
 #include <winbase.h>
 #include <winuser.h>
 #include <winnls.h>
 #include <windows.h>
 #if	!defined(strncasecmp)
+#if defined(_AMD64_)
+#define stricmp _stricmp
+#define strnicmp _strnicmp
+#endif
 #define	strncasecmp	strnicmp
 #define	strcasecmp	stricmp
 #endif
@@ -256,7 +262,7 @@ void getFullQualifiedHostName(const am_map_t env_parameter_map,
     }
 }
 
-#if defined(WINNT)
+#if (defined(WINNT) || defined(_AMD64_))
 #include "resource.h"
 void get_string(UINT key, char *buf, size_t buflen) {
 
@@ -286,7 +292,7 @@ void get_string(const char *key, char *buf, size_t buflen) {
 }
 #endif
 
-#if	defined(WINNT)
+#if (defined(WINNT) || defined(_AMD64_))
 void mbyte_to_wchar(const char * orig_str,char *new_str, int dest_len)
 {
     int orgStrLen = strlen (orig_str);
@@ -1276,7 +1282,11 @@ am_web_get_parameter_value(const char* inpString,
     string inpStr = inpString;
     string paramStr = param_name;
     string outStr;
+#if defined(_AMD64_)
+    DWORD64 i = 0, end_param = 0;
+#else
     int i = 0, end_param = 0;
+#endif
 
     *param_value = NULL;
     if (inpString == NULL || param_name == NULL && param_value == NULL) {
@@ -1384,7 +1394,7 @@ log_access(am_status_t access_status,
 
     am_status_t status = AM_SUCCESS;
     char fmtStr[MSG_MAX_LEN];
-#if	defined(WINNT)
+#if (defined(WINNT) || defined(_AMD64_))
     UINT key = 0;
 #else
     const char *key = NULL;
@@ -1454,8 +1464,11 @@ am_web_is_access_allowed(const char *sso_token,
     am_bool_t isLogoutURL = AM_FALSE;
     am_status_t log_status = AM_SUCCESS;
     char * encodedUrl = NULL;
+#if defined(_AMD64_)
+    DWORD64 encodedUrlSize = 0;
+#else
     unsigned int encodedUrlSize = 0;
-
+#endif
 
     // The following two variables gets used in cookieless mode
     char *urlSSOToken = NULL;    //sso_token present in the url
@@ -3524,8 +3537,13 @@ am_web_create_post_preserve_urls(const char *request_url,
     char *dummy_url	= NULL;
     char *time_str	= NULL;
     post_urls_t *url_data = (post_urls_t *)malloc (sizeof(post_urls_t));
+#if defined(_AMD64_)
+    size_t posturllen = 0;
+    size_t keyvaluelen = 0;
+#else
     int posturllen = 0;
     int keyvaluelen = 0;
+#endif
 
     if ((*agentConfigPtr)->postcache_url != NULL){
 	posturllen = strlen((*agentConfigPtr)->postcache_url);
@@ -3570,7 +3588,11 @@ static char* escapeQuotationMark(char*& ptr)
     std::string valueStr(ptr);
 
     if(ptr && strchr(ptr,'"')) {
+#if defined(_AMD64_)
+       size_t pos  = 0;
+#else
        int pos  = 0;
+#endif
 
        while((pos = valueStr.find('"',pos)) != std::string::npos) {
           valueStr.erase(pos,1);
@@ -3665,7 +3687,11 @@ am_web_create_post_page(const char *key,
     char *buffer_page = NULL;
     int num_sectors = 0;
     int i =0;
+#if defined(_AMD64_)
+    size_t totalchars = 0;
+#else
     int totalchars = 0;
+#endif
     Utils::post_struct_t *post_data = split_post_data(postdata);
 
     num_sectors = post_data->count;
@@ -3741,7 +3767,11 @@ am_web_is_cookie_present(const char *cookie, const char *value,
 	string::size_type name_pos_in_cookie,
 			  val_pos_in_cookie;
 
+#if defined(_AMD64_)
+	size_t _new_length = 0;
+#else
 	unsigned int _new_length = 0;
+#endif
 
 	char sep = '=',
 	     ln_sep = '\n',
@@ -4195,7 +4225,11 @@ remove_cookie(const char *cookie_name, char *cookie_header_val)
 	// check if each cookie in cookie header
 	tok = strtok_r(cookie_header_val, ";", &last);
 	while (tok != NULL) {
+#if defined(_AMD64_)
+	    size_t cookie_name_len = strlen(cookie_name);
+#else
 	    unsigned int cookie_name_len = strlen(cookie_name);
+#endif
 	    bool match = false;
 	    char *equal_sign = strchr(tok, '=');
 	    // trim space before the cookie name in the cookie header.
@@ -5701,9 +5735,14 @@ am_web_set_cookie(char *cookie_header, const char *set_cookie_value,
 	    sts = AM_INVALID_ARGUMENT;
 	}
 	else {
+#if defined(_AMD64_)
+	    size_t cookie_name_len = equal_sign-set_cookie_value;
+	    size_t cookie_val_len = semi_sign-equal_sign-1;
+#else
 	    unsigned int cookie_name_len = equal_sign-set_cookie_value;
-	    char *cookie_name = (char *)malloc(cookie_name_len+1);
 	    unsigned int cookie_val_len = semi_sign-equal_sign-1;
+#endif
+	    char *cookie_name = (char *)malloc(cookie_name_len+1);
 	    char *cookie_val = NULL;
 	    if (cookie_name == NULL) {
 		sts = AM_NO_MEMORY;

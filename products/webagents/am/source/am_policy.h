@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_policy.h,v 1.11 2008-08-19 19:15:04 veiming Exp $
+ * $Id: am_policy.h,v 1.12 2008-09-13 01:11:52 robertis Exp $
  *
  * Abstract:
  *
@@ -38,6 +38,10 @@
 #include <am.h>
 #include <am_properties.h>
 #include <am_map.h>
+
+#if defined(_AMD64_)
+#include <windows.h>
+#endif
 
 AM_BEGIN_EXTERN_C
 
@@ -94,7 +98,11 @@ typedef struct am_resource_traits {
 /*
  * Opaque handle for a policy evaluation object.
  */
+#if defined(_AMD64_)
+typedef DWORD64 am_policy_t;
+#else
 typedef unsigned int am_policy_t;
+#endif
 
 /**
  * Destroy am_policy_result internal structures.

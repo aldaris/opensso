@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_sso.cpp,v 1.7 2008-06-25 08:14:28 qcheng Exp $
+ * $Id: am_sso.cpp,v 1.8 2008-09-13 01:11:52 robertis Exp $
  *
  */
 
@@ -256,6 +256,35 @@ am_sso_invalidate_token(const am_sso_token_handle_t sso_token_handle)
     return sts;
 }
 
+#if defined(_AMD64_)
+extern "C"
+ULONG64 am_sso_get_auth_level(const am_sso_token_handle_t sso_token_handle) 
+{
+    ULONG64 retVal = ULLONG_MAX; /* double check this max value*/
+
+    if(sso_token_handle != NULL) {
+	try {
+	    const SessionInfo &sessionInfo = *(reinterpret_cast<const SessionInfo *>(sso_token_handle));
+	    if(sessionInfo.isValid()) {
+		const Properties &properties = sessionInfo.getProperties();
+		retVal = Utils::getNumber(properties.get("AuthLevel"));
+	    }
+	} catch(...) {
+	    Log::log(ssoHdlModule, Log::LOG_ERROR,
+		     "am_sso_get_auth_level(): "
+		     "Unknown exception thrown.");
+	    retVal = ULLONG_MAX;
+	}
+    } else {
+	retVal = ULLONG_MAX;
+	Log::log(ssoHdlModule, Log::LOG_ERROR,
+		 "am_sso_get_auth_level(): "
+		 "One or more input parameters has an invalid value.");
+    }
+    return retVal;
+}
+
+#else
 extern "C"
 unsigned long
 am_sso_get_auth_level(const am_sso_token_handle_t sso_token_handle)
@@ -283,6 +312,7 @@ am_sso_get_auth_level(const am_sso_token_handle_t sso_token_handle)
     }
     return retVal;
 }
+#endif
 
 extern "C"
 const char *
@@ -393,7 +423,11 @@ am_string_set_t * am_get_char_seperated_string_set(const char *str, char sep)
     am_string_set_t *ret = NULL;
     int n_sep = 0;
     const char *ptr, *beg;
+#if defined(_AMD64_)
+    INT_PTR len;
+#else
     int len;
+#endif
     char c;
     int i;
 

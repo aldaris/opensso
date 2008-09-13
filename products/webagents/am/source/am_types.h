@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_types.h,v 1.8 2008-08-19 19:15:04 veiming Exp $
+ * $Id: am_types.h,v 1.9 2008-09-13 01:11:53 robertis Exp $
  *
  * Abstract:
  *
@@ -34,12 +34,24 @@
 #ifndef AM_TYPES_H
 #define AM_TYPES_H
 
-#if	defined(WINNT)
+#if (defined(WINNT) || defined(_AMD64_))
 #if	defined(AM_BUILDING_LIB)
+
+#if defined(_AMD64_)
+#define	AM_EXPORT	
+#else
 #define	AM_EXPORT	__declspec(dllexport)
+#endif
+
 #else
 #if	!defined(AM_STATIC_LIB)
+
+#if defined(_AMD64_)
+#define	AM_EXPORT	
+#else
 #define	AM_EXPORT	__declspec(dllimport)
+#endif
+
 #else
 #if	!defined(__cplusplus)
 #define	AM_EXPORT	extern
@@ -60,7 +72,7 @@
 
 AM_BEGIN_EXTERN_C
 
-#if defined(WINNT) || defined(LINUX) || defined(HPUX)
+#if defined(WINNT) || defined(_AMD64_) || defined(LINUX) || defined(HPUX)
 #include <sys/stat.h>     /* for time_t */
 typedef enum { 
     B_FALSE, 

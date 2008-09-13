@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.10 2008-08-04 19:22:14 huacui Exp $
+   $Id: build.xml,v 1.11 2008-09-13 01:11:25 robertis Exp $
 
 -->
 
@@ -180,17 +180,19 @@
             </fileset>
         </copy>
         <copy todir="${container.web_agent.bin.dir}">
-            <fileset dir="${webagents.basedir}/extlib/WINNT/nss/bin">
+            <fileset dir="${webagents.basedir}/extlib/WINNT/nss${winnt.lib.ext}/bin">
                     <include name="certutil.exe"/>
             </fileset>
         </copy>
         <copy todir="${container.web_agent.lib.dir}">
             <fileset dir="${webagents.basedir}/am/source">
                     <include name="amsdk.dll"/>
+                    <include name="amsdk.pdb"/>
+                    <include name="vc*.pdb"/>
             </fileset>
         </copy>
         <copy todir="${container.web_agent.lib.dir}">
-            <fileset dir="${webagents.basedir}/extlib/WINNT/nss/lib">
+            <fileset dir="${webagents.basedir}/extlib/WINNT/nss${winnt.lib.ext}/lib">
                     <include name="nss3.dll"/>
                     <include name="ssl3.dll"/>
                     <include name="softokn3.dll"/>
@@ -201,22 +203,19 @@
             </fileset>
         </copy>
         <copy todir="${container.web_agent.lib.dir}">
-            <fileset dir="${webagents.basedir}/extlib/WINNT/nspr/lib">
+            <fileset dir="${webagents.basedir}/extlib/WINNT/nspr${winnt.lib.ext}/lib">
                     <include name="libnspr4.dll"/>
                     <include name="libplc4.dll"/>
                     <include name="libplds4.dll"/>
             </fileset>
         </copy>
         <copy todir="${container.web_agent.lib.dir}">
-            <fileset dir="${webagents.basedir}/extlib/WINNT/libxml2/lib">
+            <fileset dir="${webagents.basedir}/extlib/WINNT/libxml2${winnt.lib.ext}/lib">
                     <include name="libxml2.dll"/>
             </fileset>
         </copy>
         <copy todir="${container.web_agent.lib.dir}">
-            <fileset dir="${webagents.basedir}/extlib/WINNT/msmfc/lib">
-                    <include name="msvcr71.dll"/>
-                    <include name="msvcp71.dll"/>
-            </fileset>
+            <fileset dir="${webagents.basedir}/extlib/WINNT/mscrt${winnt.lib.ext}/lib"/>
         </copy>
     </target>
 

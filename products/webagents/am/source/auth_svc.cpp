@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: auth_svc.cpp,v 1.5 2008-06-25 08:14:31 qcheng Exp $
+ * $Id: auth_svc.cpp,v 1.6 2008-09-13 01:11:53 robertis Exp $
  *
  */ 
 #include <iostream>
@@ -87,7 +87,7 @@ const char *CUSTOM_CALLBACK = "CustomCallback";
 const char *LOCALE = "Locale";
 const char *LANGUAGE = "language";
 const char *COUNTRY = "country";
-const char *VARIANT = "variant";
+const char *VARIANT_AM = "variant";
 const char *PROMPT = "Prompt";
 const char *ECHO_PASSWORD = "echoPassword";
 const char *SSO_TOKEN = "ssoToken";
@@ -1198,7 +1198,11 @@ AuthService::processGetModuleInstanceNames(AuthContext &auth_ctx,
     am_string_set_t *string_set;
  
     XMLElement valueNode;
+#if defined(_AMD64_)
+    int num_instances = 0;
+#else
     std::size_t num_instances = 0;
+#endif
     std::string value;
     if (getReqNode.getSubElement(VALUE, valueNode)) {
        
@@ -1647,7 +1651,7 @@ AuthService::processLanguageCallback(am_auth_language_callback_t &language_cb,
 	    }
 	}
 	std::string variantValueStr;
-	if(localeNode.getAttributeValue(VARIANT, variantValueStr)) {
+	if(localeNode.getAttributeValue(VARIANT_AM, variantValueStr)) {
 	    if(variantValueStr.length() > 0) {
 		language_cb.locale->variant =
 		(const char *) strdup(variantValueStr.c_str());

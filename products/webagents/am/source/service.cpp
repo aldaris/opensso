@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: service.cpp,v 1.24 2008-08-14 20:25:20 subbae Exp $
+ * $Id: service.cpp,v 1.25 2008-09-13 01:11:53 robertis Exp $
  *
  */
 
@@ -1133,7 +1133,11 @@ Service::getPolicyResult(const char *userSSOToken,
 		"rsrcTraits.canonicalize(...) did not suceeed.", AM_FAILURE);
     } else {
 	resName = c_res;
+#if (defined (_AMD64_))
+    free(c_res);
+#else
 	rsrcTraits.str_free(c_res);
+#endif
 	c_res = NULL;
     }
 

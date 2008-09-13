@@ -23,7 +23,7 @@
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
 #
-# $Id: Makefile,v 1.8 2008-06-25 05:54:12 qcheng Exp $
+# $Id: Makefile,v 1.9 2008-09-13 01:08:04 robertis Exp $
 #
 # Makefile file for building the Agents tree.
 #
@@ -61,7 +61,11 @@ endif
 endif
 
 ifeq ($(OS_ARCH), WINNT)
+ifeq ($(CYGWIN_ARCH), WOW64)
+
+else
 SUBDIRS += $(BUILD_AGENT)
+endif
 endif
 
 all: all_subdirs

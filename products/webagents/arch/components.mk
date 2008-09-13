@@ -26,7 +26,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: components.mk,v 1.10 2008-06-25 05:54:25 qcheng Exp $
+# $Id: components.mk,v 1.11 2008-09-13 01:10:44 robertis Exp $
 # 
 #
 
@@ -78,6 +78,11 @@ APACHE22_LIB_DIR = $(APACHE22_DIR)/lib
 IIS6_DIR := $(EXTERNAL_DIR)/iis6
 IIS6_INC_DIR := $(IIS6_DIR)/include
 
+ifeq ($(OS_ARCH), WINNT)
+ifeq ($(CYGWIN_ARCH), WOW64)
+BUILD_TYPE := 64
+endif
+endif
 
 ##########################################
 # LIBXML defines
@@ -85,6 +90,11 @@ IIS6_INC_DIR := $(IIS6_DIR)/include
 LIBXML_DIR := $(EXTERNAL_DIR)/libxml2
 ifeq ($(BUILD_TYPE), 64)
 LIBXML_DIR := $(EXTERNAL_DIR)/libxml2_64
+endif
+ifeq ($(OS_ARCH), WINNT)
+ifeq ($(CYGWIN_ARCH), WOW64)
+LIBXML_DIR := $(EXTERNAL_DIR)/libxml2_64
+endif
 endif
 LIBXML_INC_DIR := $(LIBXML_DIR)/include/libxml2
 LIBXML_LIB_DIR := $(LIBXML_DIR)/lib
@@ -110,6 +120,11 @@ NSPR_DIR := $(EXTERNAL_DIR)/nspr
 ifeq ($(BUILD_TYPE), 64)
 NSPR_DIR := $(EXTERNAL_DIR)/nspr_64
 endif
+ifeq ($(OS_ARCH), WINNT)
+ifeq ($(CYGWIN_ARCH), WOW64)
+NSPR_DIR := $(EXTERNAL_DIR)/nspr_64
+endif
+endif
 NSPR_INC_DIR := $(NSPR_DIR)/include
 NSPR_LIB_DIR := $(NSPR_DIR)/lib
 
@@ -132,6 +147,11 @@ endif
 NSS_DIR := $(EXTERNAL_DIR)/nss
 ifeq ($(BUILD_TYPE), 64)
 NSS_DIR := $(EXTERNAL_DIR)/nss_64
+endif
+ifeq ($(OS_ARCH), WINNT)
+ifeq ($(CYGWIN_ARCH), WOW64)
+NSS_DIR := $(EXTERNAL_DIR)/nss_64
+endif
 endif
 NSS_BIN_DIR := $(NSS_DIR)/bin
 NSS_INC_DIR := $(NSS_DIR)/include

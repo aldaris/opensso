@@ -22,12 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: server_info.cpp,v 1.4 2008-06-25 08:14:36 qcheng Exp $
+ * $Id: server_info.cpp,v 1.5 2008-09-13 01:11:53 robertis Exp $
  *
  */ 
 
 #include <stdio.h>
-#if     defined(WINNT)
+#if (defined(WINNT) || defined(_AMD64_))
 #define snprintf        _snprintf
 #endif
 

@@ -86,6 +86,7 @@ rem_log_test_OBJS := rem_log_test.o
 log_test_OBJS := log_test.o 
 utils_test_OBJS := utils_test.o 
 
+ifneq ($(CYGWIN_ARCH), WOW64)
 PROGRAM_NAMES := \
 	map_test \
 	naming_test \
@@ -99,6 +100,10 @@ PROGRAM_NAMES := \
 	rem_log_test \
 	log_test \
 	utils_test
+else
+PROGRAM_NAMES := \
+	map_test
+endif
 
 PROGRAMS := $(patsubst %,%$(EXE_EXT),$(PROGRAM_NAMES))
 
@@ -111,6 +116,7 @@ all: $(PROGRAMS)
 map_test$(EXE_EXT): $(map_test_OBJS)
 	$(MAKE_C_PROGRAM)
 
+ifneq ($(CYGWIN_ARCH), WOW64)
 naming_test$(EXE_EXT): $(naming_test_OBJS)
 	$(MAKE_CXX_PROGRAM)
 
@@ -143,6 +149,7 @@ log_test$(EXE_EXT): $(log_test_OBJS)
 
 utils_test$(EXE_EXT): $(utils_test_OBJS)
 	$(MAKE_CXX_PROGRAM)
+endif
 
 clean: clean_objs 
 	$(RM) $(PROGRAMS)

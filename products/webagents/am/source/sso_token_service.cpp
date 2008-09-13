@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: sso_token_service.cpp,v 1.7 2008-06-25 08:14:38 qcheng Exp $
+ * $Id: sso_token_service.cpp,v 1.8 2008-09-13 01:11:53 robertis Exp $
  *
  */
 #include <climits>
@@ -420,7 +420,11 @@ SSOTokenService::getSessionInfo(const ServiceInfo& serviceInfo,
     std::string ssoTokenID = ssoTokID;
     bool cookieEncoded = false;
     
+#if defined(_AMD64_)
+    size_t pos = ssoTokID.find('%');
+#else
     int pos = ssoTokID.find('%');
+#endif
     if (pos != std::string::npos)
 	cookieEncoded = true;
    
@@ -1041,12 +1045,21 @@ SSOTokenService::handleNotif(const std::string& notifData)
     return sts;
 }
 
+#if defined(_AMD64_)
+am_status_t 
+SSOTokenService::callSSOTokenListeners(
+	const std::string& sessionID, 
+	const XMLElement& sessionElem, 
+	const am_sso_token_event_type_t event_type, 
+	const long long event_time) 
+#else
 am_status_t 
 SSOTokenService::callSSOTokenListeners(
 	const std::string& sessionID, 
 	const XMLElement& sessionElem, 
 	const am_sso_token_event_type_t event_type, 
 	const long event_time) 
+#endif
 {
     am_status_t sts = AM_SUCCESS;
     am_status_t sts1 = AM_SUCCESS;
@@ -1095,11 +1108,19 @@ SSOTokenService::callSSOTokenListeners(
 }
 
 
+#if defined(_AMD64_)
+am_status_t 
+SSOTokenService::callSSOListeners(const std::string& sessionID, 
+				  const XMLElement& sessionElem, 
+				  const am_sso_token_event_type_t event_type, 
+				  const long long event_time) 
+#else
 am_status_t 
 SSOTokenService::callSSOListeners(const std::string& sessionID, 
 				  const XMLElement& sessionElem, 
 				  const am_sso_token_event_type_t event_type, 
 				  const long event_time) 
+#endif
 {
     am_status_t sts = AM_SUCCESS;
     am_status_t sts1 = AM_SUCCESS;
@@ -1141,6 +1162,15 @@ SSOTokenService::callSSOListeners(const std::string& sessionID,
     return sts;
 }
 
+#if defined(_AMD64_)
+am_status_t
+SSOTokenService::callTheListener(
+	SSOTokenListenerThreadFunc *listenerThrFunc,
+	const std::string& sessionID, 
+	const XMLElement& sessionElem, 
+	const am_sso_token_event_type_t event_type, 
+	const long long event_time) 
+#else
 am_status_t
 SSOTokenService::callTheListener(
 	SSOTokenListenerThreadFunc *listenerThrFunc,
@@ -1148,6 +1178,7 @@ SSOTokenService::callTheListener(
 	const XMLElement& sessionElem, 
 	const am_sso_token_event_type_t event_type, 
 	const long event_time) 
+#endif
 {
     am_status_t sts = AM_SUCCESS;
     try {

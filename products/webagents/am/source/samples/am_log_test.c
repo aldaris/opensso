@@ -57,6 +57,7 @@ void Usage(char **argv) {
     argv[0]);
 }
 
+void do_remote_logging(const char *loggingUrl, am_properties_t prop, const char *user_token_id, const char *log_name, const char *log_message, const char *logged_by_token_id, const char *log_module);
 
 int main(int argc, char *argv[])
 {
@@ -64,8 +65,6 @@ int main(int argc, char *argv[])
     const char* prop_file = "../../config/OpenSSOAgentBootstrap.properties";
     am_status_t status = AM_FAILURE;
     am_properties_t prop = AM_PROPERTIES_NULL;
-    am_log_record_t log_record = NULL;
-    boolean_t log_result = B_FALSE;
 
     const char *user_token_id = NULL;
     const char *log_name = NULL;
@@ -75,8 +74,8 @@ int main(int argc, char *argv[])
     const char *loggingservice = "loggingservice";
     int j;
     char c;
-    const char *serverUrl = NULL;
-    char *tmpUrl = NULL;
+    char *serverUrl = NULL;
+    const char *loggingUrl = NULL;
     int usage = 0;
 
     for (j=1; j < argc; j++) {
@@ -138,23 +137,41 @@ int main(int argc, char *argv[])
     status = am_log_init(prop);
     fail_on_error(status, "am_log_init");
 
-    serverUrl = (char *) malloc(250);
+    serverUrl = (char *) malloc(512);
+    memset(serverUrl,0,512);
+
+    do_remote_logging(serverUrl, prop, user_token_id, log_name, log_message, logged_by_token_id, log_module);
 
     if (serverUrl != NULL) {
+        free(serverUrl);
+    }
+
+    exit(0);
+}
+
+void do_remote_logging(const char *loggingUrl, am_properties_t prop, const char *user_token_id, const char *log_name, const char *log_message, const char *logged_by_token_id, const char *log_module)
+{
+    char *tmpUrl = NULL;
+    am_status_t status = AM_FAILURE;
+    boolean_t log_result = B_FALSE;
+    am_log_record_t log_record = NULL;
+
+    if (loggingUrl != NULL) {
 	status = am_properties_get(prop, 
-		   "com.sun.identity.agents.config.naming.url", &serverUrl);
-        if (strlen(serverUrl) == 0) {
+		   "com.sun.identity.agents.config.naming.url", &loggingUrl);
+        if (strlen(loggingUrl) == 0) {
 	    // The c-sdk is 2.2, the naming url property is different
 	    status = am_properties_get(prop, "com.sun.am.naming.url", 
-                                       &serverUrl);
+                                       &loggingUrl);
         }
-	if ((status == AM_SUCCESS) && (serverUrl != NULL)) {
-	   tmpUrl = strstr(serverUrl, "namingservice");
+	if ((status == AM_SUCCESS) && (loggingUrl != NULL)) {
+
+	   tmpUrl = strstr(loggingUrl, "namingservice");
 	   if (tmpUrl != NULL) {
-	      strncpy(tmpUrl,"loggingservice",strlen(loggingservice));
+              strcpy(tmpUrl,"loggingservice");
 
               /* log a message with fixed SSO Token ID */
-              status = am_log_set_remote_info(serverUrl,logged_by_token_id,
+              status = am_log_set_remote_info(loggingUrl,logged_by_token_id,
                                               log_name, prop);
               fail_on_error(status, "am_log_set_remote_info");
 
@@ -203,6 +220,5 @@ int main(int argc, char *argv[])
         printf("Logging Completed!\n");
     }
 
-    exit(0);
 }
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: xml_utilities.h,v 1.3 2008-06-25 08:14:42 qcheng Exp $
+ * $Id: xml_utilities.h,v 1.4 2008-09-13 01:11:54 robertis Exp $
  *
  * Abstract:
  *
@@ -37,7 +37,7 @@
 
 #if	defined(SOLARIS) || defined(LINUX)
 #include <strings.h>
-#elif	defined(WINNT)
+#elif	(defined(WINNT) || defined(_AMD64_))
 #endif
 
 #include "internal_macros.h"
@@ -49,7 +49,7 @@ inline bool matchesXMLString(const std::string& str1, const xmlChar *str2)
 #if	defined(SOLARIS) || defined(LINUX) || defined(HPUX)
     return (0 == strcasecmp(str1.c_str(),
 			    reinterpret_cast<const char *>(str2)));
-#elif	defined(WINNT)
+#elif	(defined(WINNT) || defined(_AMD64_))
     return (0 == _stricmp(str1.c_str(), reinterpret_cast<const char *>(str2)));
 #else
 #error "don't know how to do case-insensitve comparison on this platform "

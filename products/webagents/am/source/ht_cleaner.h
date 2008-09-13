@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ht_cleaner.h,v 1.3 2008-06-25 08:14:32 qcheng Exp $
+ * $Id: ht_cleaner.h,v 1.4 2008-09-13 01:11:53 robertis Exp $
  *
  * Abstract:
  *
@@ -102,7 +102,12 @@ class HTCleaner :public ThreadFunction {
 
 
 void operator()() const {
-    PRTime tps = PR_TicksPerSecond(), sleepCount = 0, rollover = 0;
+    PRTime sleepCount = 0, rollover = 0;
+#if defined(_AMD64_)
+    PRIntervalTime tps = PR_TicksPerSecond();
+#else
+    PRTime tps = PR_TicksPerSecond();
+#endif
 
     while(stayAlive) {
 

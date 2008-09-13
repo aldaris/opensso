@@ -22,11 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: xml_tree.cpp,v 1.3 2008-06-25 08:14:42 qcheng Exp $
+ * $Id: xml_tree.cpp,v 1.4 2008-09-13 01:11:53 robertis Exp $
  *
  */ 
 #include <stdio.h>
-#if	defined(WINNT)
+#if (defined(WINNT) || defined(_AMD64_))
 #define	vsnprintf	_vsnprintf
 #endif
 

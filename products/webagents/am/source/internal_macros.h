@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: internal_macros.h,v 1.5 2008-06-25 08:14:32 qcheng Exp $
+ * $Id: internal_macros.h,v 1.6 2008-09-13 01:11:53 robertis Exp $
  *
  */
 
@@ -120,7 +120,7 @@ extern const char *SERVER_HANDLED_ADVICES;
  * In good compilers, we do not want to pay the extra cost of constructing
  * a string.
  */
-#ifdef WINNT
+# if defined(WINNT) || defined(_AMD64_)
 #define PUSH_BACK_CHAR(str, c) str += c
 #else
 #define PUSH_BACK_CHAR(str, c) str.push_back(c);
@@ -133,7 +133,7 @@ enum NotificationType {
     NOTIFICATION_MODIFY
 };
 
-#if	defined(WINNT) && _MSC_VER == 1200
+#if	(defined(WINNT) || defined(_AMD64_)) && _MSC_VER >= 1200
 #define	BROKEN_MSVC
 #pragma warning(disable:4786)
 
@@ -183,14 +183,25 @@ namespace std {
 #endif	// defined(_INC_STRING)
 #endif // defined(WINNT) && _MSC_VER == 1200
 
-#if defined(WINNT)
+#if (defined(WINNT) || defined(_AMD64_))
 #if !defined(_INC_WINDOWS_CMPFUNCS)
 #define _INC_WINDOWS_CMPFUNCS
 #include <string.h>
+
+#if defined(_AMD64_)
+#define stricmp _stricmp
+#define strnicmp _strnicmp
+#endif
+
 #define strcasecmp stricmp
 #define strncasecmp strnicmp
 #define snprintf _snprintf
 #endif
+
+#if defined(_AMD64_)
+#define strdup _strdup
+#endif
+
 #endif
 
 #define DEFINE_BASE_INIT  \

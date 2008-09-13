@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: sso_token_listener_entry.h,v 1.3 2008-06-25 08:14:38 qcheng Exp $
+ * $Id: sso_token_listener_entry.h,v 1.4 2008-09-13 01:11:53 robertis Exp $
  *
  */ 
 #ifndef __SSO_TOKEN_LISTENER_ENTRY_H__
@@ -38,6 +38,10 @@
 #include "scope_lock.h"
 #include "session_info.h"
 #include "sso_token_listener_thrfunc.h"
+
+#if defined(_AMD64_)
+#include <windows.h>
+#endif
 
 BEGIN_PRIVATE_NAMESPACE
 
@@ -102,7 +106,11 @@ public:
         return retVal;
     }
 
+#if defined(_AMD64_)
+    DWORD64 getNumListeners() {
+#else
     int getNumListeners() {
+#endif
         return mListeners.size();
     }
 

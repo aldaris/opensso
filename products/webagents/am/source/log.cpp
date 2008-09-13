@@ -22,10 +22,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: log.cpp,v 1.6 2008-07-15 22:21:45 subbae Exp $
+ * $Id: log.cpp,v 1.7 2008-09-13 01:11:53 robertis Exp $
  *
  */ 
-#if	defined(WINNT)
+#if (defined(WINNT) || defined(_AMD64_))
 #include <stdio.h>
 #include <stdlib.h>
 #include <process.h>

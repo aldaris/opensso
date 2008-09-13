@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: policy_engine.cpp,v 1.7 2008-06-25 08:14:34 qcheng Exp $
+ * $Id: policy_engine.cpp,v 1.8 2008-09-13 01:11:53 robertis Exp $
  *
  */ 
 
@@ -41,7 +41,10 @@
 #include "policy_engine.h"
 #include "service.h"
 
-#if defined(WINNT)
+#if (defined(WINNT) || defined(_AMD64_))
+#if defined(_AMD64_)
+#define stricmp _stricmp
+#endif
 #define strcasecmp stricmp
 #endif
 
