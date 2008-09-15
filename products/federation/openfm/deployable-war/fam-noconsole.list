@@ -234,6 +234,7 @@
 ./WEB-INF/classes/amAuthRadius_ko.properties
 ./WEB-INF/classes/amAuthRadius_zh.properties
 ./WEB-INF/classes/amAuthRadius_zh_TW.properties
+./WEB-INF/classes/amAuthSafeWord.xml
 ./WEB-INF/classes/amAuthSafeWord.properties
 ./WEB-INF/classes/amAuthSafeWord_de.properties
 ./WEB-INF/classes/amAuthSafeWord_es.properties
@@ -242,6 +243,7 @@
 ./WEB-INF/classes/amAuthSafeWord_ko.properties
 ./WEB-INF/classes/amAuthSafeWord_zh.properties
 ./WEB-INF/classes/amAuthSafeWord_zh_TW.properties
+./WEB-INF/classes/amAuthSecurID.xml
 ./WEB-INF/classes/amAuthSecurID.properties
 ./WEB-INF/classes/amAuthSecurID_de.properties
 ./WEB-INF/classes/amAuthSecurID_es.properties
@@ -258,6 +260,7 @@
 ./WEB-INF/classes/amAuthUI_ko.properties
 ./WEB-INF/classes/amAuthUI_zh.properties
 ./WEB-INF/classes/amAuthUI_zh_TW.properties
+./WEB-INF/classes/amAuthUnix.xml
 ./WEB-INF/classes/amAuthUnix.properties
 ./WEB-INF/classes/amAuthUnix_de.properties
 ./WEB-INF/classes/amAuthUnix_es.properties
