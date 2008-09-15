@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ErrorPageTaskHandler.java,v 1.2 2008-06-25 05:51:44 qcheng Exp $
+ * $Id: ErrorPageTaskHandler.java,v 1.3 2008-09-15 19:27:01 huacui Exp $
  *
  */
 
@@ -32,6 +32,8 @@ import java.util.HashSet;
 
 import com.sun.identity.agents.arch.AgentException;
 import com.sun.identity.agents.arch.Manager;
+import com.sun.identity.agents.common.CommonFactory;
+import com.sun.identity.agents.common.IPatternMatcher;
 
 /**
  * <p>
@@ -60,6 +62,8 @@ implements IErrorPageTaskHandler {
     throws AgentException {
         super.initialize(context, mode);
         initErrorPageList();
+        CommonFactory cf = new CommonFactory(getModule());
+        setMatcher(cf.newPatternMatcher(getErrorPageList()));
     }
 
     /**
@@ -98,8 +102,7 @@ implements IErrorPageTaskHandler {
      * @return
      */
     private boolean isErrorPageRequest(AmFilterRequestContext ctx) {
-        return getErrorPageList().contains(ctx.getHttpServletRequest().
-                getRequestURI());
+        return getMatcher().match(ctx.getDestinationURL());
     }
 
     /**
@@ -108,7 +111,7 @@ implements IErrorPageTaskHandler {
      * @return true if this task handler is enabled, false otherwise
      */
     public boolean isActive() {
-        return isModeJ2EEPolicyActive() && (getErrorPageList().size() > 0);
+        return isModeJ2EEPolicyActive() && (getErrorPageList().length > 0);
     }
 
     /**
@@ -124,17 +127,8 @@ implements IErrorPageTaskHandler {
      *
      */
     private void initErrorPageList() {
-        String[] errorList =
-                        getConfigurationStrings(CONFIG_FORM_ERROR_LIST);
-
-        HashSet list = new HashSet();
-        if ((errorList != null) && (errorList.length > 0)) {
-            for (int i=0; i<errorList.length; i++) {
-                list.add(errorList[i]);
-            }
-        }
-
-        setErrorPageList(list);
+        String[] errorList = getConfigurationStrings(CONFIG_FORM_ERROR_LIST);
+        setErrorPageList(errorList);
     }
 
     /**
@@ -142,7 +136,7 @@ implements IErrorPageTaskHandler {
      *
      * @param list
      */
-    private void setErrorPageList(HashSet list) {
+    private void setErrorPageList(String[] list) {
         _errorPageList = list;
         if (isLogMessageEnabled()) {
             logMessage("ErrorPageTaskHandler: error page list is: " + list);
@@ -154,9 +148,20 @@ implements IErrorPageTaskHandler {
      *
      * @return
      */
-    private HashSet getErrorPageList() {
+    private String[] getErrorPageList() {
         return _errorPageList;
     }
 
-    private HashSet _errorPageList;
+    
+    private IPatternMatcher getMatcher() {
+        return _matcher;
+    }
+
+    
+    private void setMatcher(IPatternMatcher matcher) {
+        _matcher = matcher;
+    }
+   
+    private String[] _errorPageList;
+    private IPatternMatcher _matcher;
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmFilter.java,v 1.6 2008-08-07 18:04:46 huacui Exp $
+ * $Id: AmFilter.java,v 1.7 2008-09-15 19:27:01 huacui Exp $
  *
  */
 
@@ -44,8 +44,10 @@ import com.sun.identity.agents.arch.Manager;
 import com.sun.identity.agents.arch.ServiceFactory;
 import com.sun.identity.agents.common.CommonFactory;
 import com.sun.identity.agents.common.IURLFailoverHelper;
+import com.sun.identity.agents.common.IPatternMatcher;
 import com.sun.identity.agents.util.IUtilConstants;
 import com.sun.identity.agents.util.RequestDebugUtils;
+
 
 /**
  * The <code>AmFilter</code> is the service class for the filter module.
@@ -77,6 +79,7 @@ public class AmFilter extends AgentBase
                 CONFIG_REDIRECT_PARAM_NAME, DEFAULT_REDIRECT_PARAM_NAME));
         
         CommonFactory cf = new CommonFactory(getModule());
+        setMatcher(cf.newPatternMatcher(getFormLoginList()));
         initLoginURLFailoverHelper(cf);
         initLogoutURLFailoverHelper(cf);
         initSSOContext(cf);
@@ -287,7 +290,7 @@ public class AmFilter extends AgentBase
     }
 
     private boolean isFormLoginRequest(HttpServletRequest request) {
-       return getFormLoginList().contains(request.getRequestURI());
+       return getMatcher().match(request.getRequestURL().toString());
     }
 
     private void initResultHandlers() throws AgentException {
@@ -537,18 +540,14 @@ public class AmFilter extends AgentBase
     
     private void initFormLoginList() {
         String[] formList = getConfigurationStrings(CONFIG_FORM_LOGIN_LIST);
-        HashSet list = new HashSet();
-        for(int i = 0; i < formList.length; i++) {
-            list.add(formList[i]);
-        }
-        setFormLoginList(list);
+        setFormLoginList(formList);
     }
     
-    private HashSet getFormLoginList() {
+    private String[] getFormLoginList() {
         return _formLoginList;
     }
     
-    private void setFormLoginList(HashSet list) {
+    private void setFormLoginList(String[] list) {
         _formLoginList = list;
         if (isLogMessageEnabled()) {
             logMessage("AmFilter: form list is set to: " + _formLoginList);
@@ -663,18 +662,27 @@ public class AmFilter extends AgentBase
         }
     }
     
+    private IPatternMatcher getMatcher() {
+            return _matcher;
+    }
+
+    private void setMatcher(IPatternMatcher matcher) {
+        _matcher = matcher;
+    }
+    
     private IAmFilterTaskHandler[] _inboundTaskHandler;
     private IAmFilterTaskHandler[] _selfRedirectTaskHandler;
     private IAmFilterResultHandler[] _resultHandler;
     private boolean _defaultRefererInitialized;
     private boolean _cdssoEnabledFlag;
     private AmFilterMode _filterMode = AmFilterMode.MODE_ALL;
-    private HashSet _formLoginList;
+    private String[] _formLoginList;
     private String _redirectParameterName;
     private IURLFailoverHelper _loginURLFailoverHelper;
     private IURLFailoverHelper _logoutURLFailoverHelper;
     private ISSOContext _ssoContext;
     private String _agentHost;
     private int _agentPort;
-    private String _agentProtocol;    
+    private String _agentProtocol;
+    private IPatternMatcher _matcher;
 }
