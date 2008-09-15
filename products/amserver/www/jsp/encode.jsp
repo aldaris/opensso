@@ -1,4 +1,4 @@
-<!--
+<%--
    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
   
    Copyright (c) 2008 Sun Microsystems, Inc. All Rights Reserved.
@@ -22,8 +22,9 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: encode.jsp,v 1.10 2008-09-12 00:09:34 veiming Exp $
--->
+   $Id: encode.jsp,v 1.11 2008-09-15 16:41:56 veiming Exp $
+--%>
+
 <%@ page contentType="text/html; charset=UTF-8" %> 
 <html>
 <head>

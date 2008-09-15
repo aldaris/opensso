@@ -1,4 +1,4 @@
-<!--
+<%--
    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
   
    Copyright (c) 2006 Sun Microsystems Inc. All Rights Reserved
@@ -22,9 +22,9 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: Debug.jsp,v 1.12 2008-08-19 19:10:47 veiming Exp $
+   $Id: Debug.jsp,v 1.13 2008-09-15 16:41:56 veiming Exp $
   
--->
+--%>
 
 <%@ page 
     import="
@@ -37,9 +37,7 @@
         com.sun.identity.idm.IdRepoException,
         com.sun.identity.idm.IdType,
         com.sun.identity.idm.IdUtils,
-        com.sun.identity.security.AdminTokenAction,
         com.sun.identity.shared.debug.Debug,
-        java.security.AccessController,
         java.text.MessageFormat,
         java.util.ArrayList,
         java.util.Enumeration,
@@ -53,28 +51,6 @@
         java.util.Set,
         java.util.StringTokenizer,
         netscape.ldap.util.DN"
-    %>
-<%!
-
-    static Set adminUserSet = new HashSet();
-    static AMIdentity adminUserId;
-    static {
-        try {
-            // This will give you the 'amAdmin' user dn
-            String adminUser = SystemProperties.get(
-                "com.sun.identity.authentication.super.user");
-            if (adminUser != null) {
-                adminUserSet.add(DNUtils.normalizeDN(adminUser));
-                 // This will give you the 'amAdmin' Identity
-                SSOToken adminToken = (SSOToken)AccessController
-                    .doPrivileged(AdminTokenAction.getInstance());
-                adminUserId = new AMIdentity(adminToken, adminUser,
-                    IdType.USER, "/", null);
-            }
-        } catch (Exception e) {
-        }
-    }
-
 %>
 
 <% 
@@ -86,13 +62,26 @@
     ResourceBundle resourceBundle = ResourceBundle.getBundle("debug");
     ResourceBundle rbFiles = ResourceBundle.getBundle("debugfiles");
     Map categories = new HashMap();
+    Set adminUserSet = new HashSet();
+    AMIdentity adminUserId = null;
 
     try {
         SSOTokenManager sMgr = SSOTokenManager.getInstance();
         SSOToken ssoToken = sMgr.createSSOToken(request);
 
+        // This will give you the 'amAdmin' user dn
+        String adminUser = SystemProperties.get(
+            "com.sun.identity.authentication.super.user");
+        if (adminUser != null) {
+            adminUserSet.add(DNUtils.normalizeDN(adminUser));
+            // This will give you the 'amAdmin' Identity
+            adminUserId = new AMIdentity(ssoToken, adminUser,
+                IdType.USER, "/", null);
+        }
+
         // This will be your incoming user/token.
         AMIdentity user = new AMIdentity(ssoToken);
+
         if ((!adminUserSet.contains(DNUtils.normalizeDN(
             ssoToken.getPrincipal().getName()))) &&
             (!user.equals(adminUserId))) {

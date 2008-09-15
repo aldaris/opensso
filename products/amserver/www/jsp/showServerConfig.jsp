@@ -1,4 +1,4 @@
-<!--
+<%--
    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
   
    Copyright (c) 2008 Sun Microsystems Inc. All Rights Reserved
@@ -22,9 +22,9 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: showServerConfig.jsp,v 1.9 2008-08-19 19:10:48 veiming Exp $
+   $Id: showServerConfig.jsp,v 1.10 2008-09-15 16:41:56 veiming Exp $
 
--->
+--%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 

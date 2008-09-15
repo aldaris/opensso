@@ -1,4 +1,4 @@
-<!--
+<%--
    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
   
    Copyright (c) 2005 Sun Microsystems Inc. All Rights Reserved
@@ -22,9 +22,9 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: isAlive.jsp,v 1.7 2008-08-19 19:10:48 veiming Exp $
+   $Id: isAlive.jsp,v 1.8 2008-09-15 16:41:56 veiming Exp $
   
--->
+--%>
 
 <%@ page language="java" 
     import="java.security.AccessController,
