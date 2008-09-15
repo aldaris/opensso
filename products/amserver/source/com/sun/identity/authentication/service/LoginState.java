@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.37 2008-09-11 00:11:57 manish_rustagi Exp $
+ * $Id: LoginState.java,v 1.38 2008-09-15 18:22:24 manish_rustagi Exp $
  *
  */
 
@@ -1137,26 +1137,30 @@ public class LoginState {
             userDN = getUserDN(amIdentityUser);
         }
         
-        AMIdentity newAMIdentity = 
-            ad.getIdentity(IdType.USER,userDN,getOrgDN());
+        AMIdentity newAMIdentity = null;
         String oldUserDN = null;
         AMIdentity oldAMIdentity = null;
         if (oldSession != null) {
+            newAMIdentity = 
+                ad.getIdentity(IdType.USER,userDN,getOrgDN());        	
             oldUserDN = oldSession.getProperty(ISAuthConstants.PRINCIPAL);
             oldAMIdentity = 
                 ad.getIdentity(IdType.USER,oldUserDN,getOrgDN());
+            if (messageEnabled) {
+                debug.message("LoginState.setSessionProperties()" + 
+                              " newAMIdentity is: " + newAMIdentity);
+                debug.message("LoginState.setSessionProperties()" + 
+                              " oldAMIdentity is: " + oldAMIdentity);        	
+            }
         }
+        
         if (messageEnabled) {
             debug.message("LoginState.setSessionProperties()" + 
             		      " userDN is: " + userDN);
             debug.message("LoginState.setSessionProperties()" +
             		      " oldUserDN is: " + oldUserDN);        	
             debug.message("LoginState.setSessionProperties()" +
-                          " sessionUpgrade is: " + sessionUpgrade);
-            debug.message("LoginState.setSessionProperties()" + 
-                          " newAMIdentity is: " + newAMIdentity);
-            debug.message("LoginState.setSessionProperties()" + 
-                          " oldAMIdentity is: " + oldAMIdentity);            
+                          " sessionUpgrade is: " + sessionUpgrade);            
         }
 
         Date authInstantDate = new Date();
