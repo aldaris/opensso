@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticationCommon.java,v 1.8 2008-06-26 20:03:45 rmisra Exp $
+ * $Id: AuthenticationCommon.java,v 1.9 2008-09-15 18:19:53 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -102,7 +102,7 @@ public class AuthenticationCommon extends TestCommon {
         try {
             strTest = protocol + ":"  + "//" + host + ":" + port + uri +
                     "/UI/Login?" + mode + "=" + modeValue + "&IDToken1=" +
-                    user + "&IDToken2=" + password + "negative";
+                    user + "&IDToken2=not" + password;
             log(Level.FINEST, "testZeroPageLoginNegative", strTest);
             URL url = new URL(strTest);
             HtmlPage page = (HtmlPage)wc.getPage( url );
