@@ -1,4 +1,4 @@
-/* The contents of this file are subject to the terms
+/* Tha contents of this file are subject to the terms
  * of the Common Development and Distribution License
  * (the License). You may not use this file except in
  * compliance with the License.
@@ -17,17 +17,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAESmokeTests.java,v 1.6 2008-07-15 19:57:52 rmisra Exp $
+ * $Id: SAESmokeTests.java,v 1.7 2008-09-16 02:28:24 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.sae;
 
+import com.gargoylesoftware.htmlunit.html.ClickableElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlHiddenInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
+import com.gargoylesoftware.htmlunit.html.SubmittableElement;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.sun.identity.qatest.common.FederationManager;
 import com.sun.identity.qatest.common.MultiProtocolCommon;
@@ -45,7 +48,9 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 /**
- * This class tests the following: 
+ * This class test the SAE feature. It uses sample SAE jsp bundled in the 
+ * product to simulate attribute transfer from IDP App to SP App. All
+ * transactions are initiated from the IDP.
  */
 public class SAESmokeTests extends TestCommon {
     
@@ -73,6 +78,7 @@ public class SAESmokeTests extends TestCommon {
     private HtmlPage page;
     private HtmlPage result;
     private HtmlForm form;
+    private ClickableElement strLogoutURL;
 
     private  String AUTO_FED_ENABLED_FALSE = "<Attribute name=\""
             +  "autofedEnabled" + "\">\n"
@@ -93,9 +99,7 @@ public class SAESmokeTests extends TestCommon {
             +  "        </Attribute>";
     
     private String ATTRIB_MAP_DEFAULT = "<Attribute name=\""
-            +  "attributeMap\">\n"
-            +  "            <Value/>\n"
-            +  "        </Attribute>";
+            +  "attributeMap\"/>";
     private String ATTRIB_MAP_VALUE = "<Attribute name=\""
             +  "attributeMap\">\n"
             +  "            <Value>mail=mail</Value>\n"
@@ -117,11 +121,13 @@ public class SAESmokeTests extends TestCommon {
     /** Creates a new instance of SAESmokeTests */
     public SAESmokeTests() {
         super("SAESmokeTests");
-        saeConfig = ResourceBundle.getBundle("sae" + fileseparator + "SAESmokeTests");
+        saeConfig = ResourceBundle.getBundle("sae" + fileseparator +
+                "SAESmokeTests");
     }
     
     /**
-     * This is setup method. It creates required users for test
+     * This is setup method. It creates required users for test and updates
+     * metadata at IDP and SP.
      */
     @Parameters({"secMode"})
     @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
@@ -141,7 +147,8 @@ public class SAESmokeTests extends TestCommon {
                     + System.getProperty("file.separator");
             //Upload global properties file in configMap
             configMap = new HashMap<String, String>();
-            configMap = getMapFromResourceBundle("sae" + fileseparator + "saeTestConfigData");
+            configMap = getMapFromResourceBundle("sae" + fileseparator +
+                    "saeTestConfigData");
             log(Level.FINEST, "setup", "Config Map is " + configMap);
             spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL) +
                     "://" + configMap.get(TestConstants.KEY_SP_HOST) + ":" +
@@ -397,15 +404,73 @@ public class SAESmokeTests extends TestCommon {
         }
         exiting("setup");
     }
-    
+
+    /**
+     * This method test single sign using POST when the user profile is set
+     * to ignore at both IDP and SP. The security mechanism for attribute
+     * transfer is through symmetric keys.
+     * @throws java.lang.Exception
+     */
     @Test(groups={"ds_ds", "ff_ds"})
-    public void symmetricSSOWithProfileIgnored()
+    public void symmetricSSOWithProfileIgnoredPOST()
     throws Exception {
-        entering("symmetricSSOWithProfileIgnored", null);
+        entering("symmetricSSOWithProfileIgnoredPOST", null);
         try {
             enableUserProfile("SP", spfm, "ignore");
             enableUserProfile("IDP", idpfm, "ignore");
             setSPAppData("symmetric");
+            page = generateSSOSLOURL("symmetric");
+            form = (HtmlForm)page.getForms().get(0);
+            page = (HtmlPage)form.submit((SubmittableElement)null);
+            assert (getHtmlPageStringIndex(page,
+                    saeConfig.getString("mail_attribute")) != -1);
+            assert (getHtmlPageStringIndex(page,
+                    saeConfig.getString("branch_attribute")) != -1);
+        } catch (Exception e) {
+            log(Level.SEVERE, "symmetricSSOWithProfileIgnoredPOST", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        exiting("symmetricSSOWithProfileIgnoredPOST");
+    }
+    
+    /**
+     * This method test single logout using redirect when the user profile is
+     * set to ignore at both IDP and SP. The security mechanism for attribute
+     * transfer is through symmetric keys.
+     * @throws java.lang.Exception
+     */
+    @Test(groups={"ds_ds", "ff_ds"},
+    dependsOnMethods={"symmetricSSOWithProfileIgnoredPOST"})
+    public void symmetricSLOWithProfileIgnoredPOST()
+    throws Exception {
+        entering("symmetricSLOWithProfileIgnoredPOST", null);
+        try {
+            page = (HtmlPage) webClient.getPage(sloStr);
+            strLogoutURL = getLogoutURL(page);
+            result = (HtmlPage) strLogoutURL.click();
+            assert (getHtmlPageStringIndex(result, "Generate URL") != -1);
+        } catch (Exception e) {
+            log(Level.SEVERE, "symmetricSLOWithProfileIgnoredPOST",
+                    e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        exiting("symmetricSLOWithProfileIgnoredPOST");
+    }
+    
+    /**
+     * This method test single sign using redirect when the user profile is set
+     * to ignore at both IDP and SP. The security mechanism for attribute
+     * transfer is through symmetric keys.
+     * @throws java.lang.Exception
+     */
+    @Test(groups={"ds_ds", "ff_ds"},
+    dependsOnMethods={"symmetricSLOWithProfileIgnoredPOST"})
+    public void symmetricSSOWithProfileIgnored()
+    throws Exception {
+        entering("symmetricSSOWithProfileIgnored", null);
+        try {
             generateSSOSLOURL("symmetric");
             page = (HtmlPage) webClient.getPage(ssoStr);
             assert (getHtmlPageStringIndex(page,
@@ -420,6 +485,12 @@ public class SAESmokeTests extends TestCommon {
         exiting("symmetricSSOWithProfileIgnored");
     }
 
+    /**
+     * This method test single logout using redirect when the user profile is
+     * set to ignore at both IDP and SP. The security mechanism for attribute
+     * transfer is through symmetric keys.
+     * @throws java.lang.Exception
+     */
     @Test(groups={"ds_ds", "ff_ds"},
     dependsOnMethods={"symmetricSSOWithProfileIgnored"})
     public void symmetricSLOWithProfileIgnored()
@@ -427,7 +498,8 @@ public class SAESmokeTests extends TestCommon {
         entering("symmetricSLOWithProfileIgnored", null);
         try {
             page = (HtmlPage) webClient.getPage(sloStr);
-            result = (HtmlPage) webClient.getPage(getLogoutURL(page));
+            strLogoutURL = getLogoutURL(page);
+            result = (HtmlPage) strLogoutURL.click();
             assert (getHtmlPageStringIndex(result, "Generate URL") != -1);
         } catch (Exception e) {
             log(Level.SEVERE, "symmetricSLOWithProfileIgnored", e.getMessage());
@@ -437,13 +509,81 @@ public class SAESmokeTests extends TestCommon {
         exiting("symmetricSLOWithProfileIgnored");
     }
 
+    /**
+     * This method test single sign using POST when the user profile is set
+     * to required at SP and ignore at IDP. The security mechanism for attribute
+     * transfer is through symmetric keys.
+     * @throws java.lang.Exception
+     */    
     @Test(groups={"ds_ds", "ff_ds"},
     dependsOnMethods={"symmetricSLOWithProfileIgnored"})
+    public void symmetricSSOWithProfileRequiredPOST()
+    throws Exception {
+        entering("symmetricSSOWithProfileRequiredPOST", null);
+        try {
+            enableUserProfile("SP", spfm, "false");
+            page = generateSSOSLOURL("symmetric");
+            form = (HtmlForm)page.getForms().get(0);
+            page = (HtmlPage)form.submit((SubmittableElement)null);
+            form = page.getFormByName("Login");
+            HtmlHiddenInput txt1 =
+                    (HtmlHiddenInput)form.getInputByName("IDToken1");
+            txt1.setValueAttribute(saeConfig.getString("sp_user"));
+            HtmlHiddenInput txt2 =
+                    (HtmlHiddenInput)form.getInputByName("IDToken2");
+            txt2.setValueAttribute(saeConfig.getString("sp_userpw"));
+            page = (HtmlPage)form.submit((SubmittableElement)null);
+            assert (getHtmlPageStringIndex(page,
+                    saeConfig.getString("mail_attribute")) != -1);
+            assert (getHtmlPageStringIndex(page,
+                    saeConfig.getString("branch_attribute")) != -1);
+        } catch (Exception e) {
+            log(Level.SEVERE, "symmetricSSOWithProfileRequiredPOST",
+                    e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        exiting("symmetricSSOWithProfileRequiredPOST");
+    }
+
+    /**
+     * This method test single logout using redirect when the user profile is
+     * set to ignore at both IDP and SP. The security mechanism for attribute
+     * transfer is through symmetric keys.
+     * @throws java.lang.Exception
+     */
+    @Test(groups={"ds_ds", "ff_ds"},
+    dependsOnMethods={"symmetricSSOWithProfileRequiredPOST"})
+    public void symmetricSLOWithProfileRequiredPOST()
+    throws Exception {
+        entering("symmetricSLOWithProfileRequiredPOST", null);
+        try {
+            generateSSOSLOURL("symmetric");
+            page = (HtmlPage) webClient.getPage(sloStr);
+            strLogoutURL = getLogoutURL(page);
+            result = (HtmlPage) strLogoutURL.click();
+            assert (getHtmlPageStringIndex(result, "Generate URL") != -1);
+        } catch (Exception e) {
+            log(Level.SEVERE, "symmetricSLOWithProfileRequiredPOST",
+                    e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        exiting("symmetricSLOWithProfileRequiredPOST");
+    }
+    
+    /**
+     * This method test single sign using redirect when the user profile is set
+     * to required at SP and ignore at IDP. The security mechanism for attribute
+     * transfer is through symmetric keys.
+     * @throws java.lang.Exception
+     */       
+    @Test(groups={"ds_ds", "ff_ds"},
+    dependsOnMethods={"symmetricSLOWithProfileRequiredPOST"})
     public void symmetricSSOWithProfileRequired()
     throws Exception {
         entering("symmetricSSOWithProfileRequired", null);
         try {
-            enableUserProfile("SP", spfm, "false");
             generateSSOSLOURL("symmetric");
             page = (HtmlPage) webClient.getPage(ssoStr);
             form = page.getFormByName("Login");
@@ -453,7 +593,7 @@ public class SAESmokeTests extends TestCommon {
             HtmlHiddenInput txt2 =
                     (HtmlHiddenInput)form.getInputByName("IDToken2");
             txt2.setValueAttribute(saeConfig.getString("sp_userpw"));
-            page = (HtmlPage)form.submit();
+            page = (HtmlPage)form.submit((SubmittableElement)null);
             assert (getHtmlPageStringIndex(page,
                     saeConfig.getString("mail_attribute")) != -1);
             assert (getHtmlPageStringIndex(page,
@@ -467,6 +607,12 @@ public class SAESmokeTests extends TestCommon {
         exiting("symmetricSSOWithProfileRequired");
     }
 
+    /**
+     * This method test single logout using redirect when the user profile is
+     * set to ignore at IDP and required at SP. The security mechanism for
+     * attribute transfer is through symmetric keys.
+     * @throws java.lang.Exception
+     */    
     @Test(groups={"ds_ds", "ff_ds"},
     dependsOnMethods={"symmetricSSOWithProfileRequired"})
     public void symmetricSLOWithProfileRequired()
@@ -474,7 +620,8 @@ public class SAESmokeTests extends TestCommon {
         entering("symmetricSLOWithProfileRequired", null);
         try {
             page = (HtmlPage) webClient.getPage(sloStr);
-            result = (HtmlPage) webClient.getPage(getLogoutURL(page));
+            strLogoutURL = getLogoutURL(page);
+            result = (HtmlPage) strLogoutURL.click();
             assert (getHtmlPageStringIndex(result, "Generate URL") != -1);
         } catch (Exception e) {
             log(Level.SEVERE, "symmetricSLOWithProfileRequired",
@@ -485,14 +632,73 @@ public class SAESmokeTests extends TestCommon {
         exiting("symmetricSLOWithProfileRequired");
     }
 
+    /**
+     * This method test single sign using POST when the user profile is set
+     * to ignore at both IDP and SP. The security mechanism for attribute
+     * transfer is through asymmetric keys.
+     * @throws java.lang.Exception
+     */    
     @Test(groups={"ds_ds_sec", "ff_ds_sec"})
-    public void asymmetricSSOWithProfileIgnored()
+    public void asymmetricSSOWithProfileIgnoredPOST()
     throws Exception {
-        entering("asymmetricSSOWithProfileIgnored", null);
+        entering("asymmetricSSOWithProfileIgnoredPOST", null);
         try {
             enableUserProfile("SP", spfm, "ignore");
             enableUserProfile("IDP", idpfm, "ignore");
             setSPAppData("asymmetric");
+            HtmlPage page = generateSSOSLOURL("asymmetric");
+            HtmlForm form = (HtmlForm)page.getForms().get(0);
+            page = (HtmlPage)form.submit((SubmittableElement)null);            
+            assert (getHtmlPageStringIndex(page,
+                    saeConfig.getString("mail_attribute")) != -1);
+            assert (getHtmlPageStringIndex(page,
+                    saeConfig.getString("branch_attribute")) != -1);
+        } catch (Exception e) {
+            log(Level.SEVERE, "asymmetricSSOWithProfileIgnoredPOST",
+                    e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        exiting("asymmetricSSOWithProfileIgnoredPOST");
+    }
+    
+    /**
+     * This method test single logout using redirect when the user profile is
+     * set to ignore at both IDP and SP. The security mechanism for attribute
+     * transfer is through asymmetric keys.
+     * @throws java.lang.Exception
+     */    
+    @Test(groups={"ds_ds_sec", "ff_ds_sec"},
+    dependsOnMethods={"asymmetricSSOWithProfileIgnoredPOST"})
+    public void asymmetricSLOWithProfileIgnoredPOST()
+    throws Exception {
+        entering("asymmetricSLOWithProfileIgnoredPOST", null);
+        try {
+            page = (HtmlPage) webClient.getPage(sloStr);
+            strLogoutURL = getLogoutURL(page);
+            result = (HtmlPage) strLogoutURL.click();
+            assert (getHtmlPageStringIndex(result, "Generate URL") != -1);
+        } catch (Exception e) {
+            log(Level.SEVERE, "asymmetricSLOWithProfileIgnoredPOST",
+                    e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        exiting("asymmetricSLOWithProfileIgnoredPOST");
+    }
+    
+    /**
+     * This method test single sign using redirect when the user profile is set
+     * to ignore at both IDP and SP. The security mechanism for attribute
+     * transfer is through asymmetric keys.
+     * @throws java.lang.Exception
+     */    
+    @Test(groups={"ds_ds_sec", "ff_ds_sec"},
+    dependsOnMethods={"asymmetricSLOWithProfileIgnoredPOST"})
+    public void asymmetricSSOWithProfileIgnored()
+    throws Exception {
+        entering("asymmetricSSOWithProfileIgnored", null);
+        try {
             generateSSOSLOURL("asymmetric");
             page = (HtmlPage) webClient.getPage(ssoStr);
             assert (getHtmlPageStringIndex(page,
@@ -508,6 +714,12 @@ public class SAESmokeTests extends TestCommon {
         exiting("asymmetricSSOWithProfileIgnored");
     }
 
+    /**
+     * This method test single logout using redirect when the user profile is
+     * set to ignore at both IDP and SP. The security mechanism for attribute
+     * transfer is through asymmetric keys.
+     * @throws java.lang.Exception
+     */    
     @Test(groups={"ds_ds_sec", "ff_ds_sec"},
     dependsOnMethods={"asymmetricSSOWithProfileIgnored"})
     public void asymmetricSLOWithProfileIgnored()
@@ -515,7 +727,8 @@ public class SAESmokeTests extends TestCommon {
         entering("asymmetricSLOWithProfileIgnored", null);
         try {
             page = (HtmlPage) webClient.getPage(sloStr);
-            result = (HtmlPage) webClient.getPage(getLogoutURL(page));
+            strLogoutURL = getLogoutURL(page);
+            result = (HtmlPage) strLogoutURL.click();
             assert (getHtmlPageStringIndex(result, "Generate URL") != -1);
         } catch (Exception e) {
             log(Level.SEVERE, "asymmetricSLOWithProfileIgnored",
@@ -526,13 +739,80 @@ public class SAESmokeTests extends TestCommon {
         exiting("asymmetricSLOWithProfileIgnored");
     }
 
+    /**
+     * This method test single sign using POST when the user profile is set
+     * to required at SP and ignore at IDP. The security mechanism for attribute
+     * transfer is through asymmetric keys.
+     * @throws java.lang.Exception
+     */      
     @Test(groups={"ds_ds_sec", "ff_ds_sec"},
     dependsOnMethods={"asymmetricSLOWithProfileIgnored"})
+    public void asymmetricSSOWithProfileRequiredPOST()
+    throws Exception {
+        entering("asymmetricSSOWithProfileRequiredPOST", null);
+        try {
+            enableUserProfile("SP", spfm, "false");
+            HtmlPage page = generateSSOSLOURL("asymmetric");
+            HtmlForm form = (HtmlForm)page.getForms().get(0);
+            page = (HtmlPage)form.submit((SubmittableElement)null);            
+            form = page.getFormByName("Login");
+            HtmlHiddenInput txt1 =
+                    (HtmlHiddenInput)form.getInputByName("IDToken1");
+            txt1.setValueAttribute(saeConfig.getString("sp_user"));
+            HtmlHiddenInput txt2 =
+                    (HtmlHiddenInput)form.getInputByName("IDToken2");
+            txt2.setValueAttribute(saeConfig.getString("sp_userpw"));
+            page = (HtmlPage)form.submit((SubmittableElement)null);
+            assert (getHtmlPageStringIndex(page,
+                    saeConfig.getString("mail_attribute")) != -1);
+            assert (getHtmlPageStringIndex(page,
+                    saeConfig.getString("branch_attribute")) != -1);
+        } catch (Exception e) {
+            log(Level.SEVERE, "asymmetricSSOWithProfileRequiredPOST",
+                    e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        exiting("asymmetricSSOWithProfileRequiredPOST");
+    }
+    
+    /**
+     * This method test single logout using redirect when the user profile is
+     * set to ignore at IDP and required at SP. The security mechanism for
+     * attribute transfer is through asymmetric keys.
+     * @throws java.lang.Exception
+     */        
+    @Test(groups={"ds_ds_sec", "ff_ds_sec"},
+    dependsOnMethods={"asymmetricSSOWithProfileRequiredPOST"})
+    public void asymmetricSLOWithProfileRequiredPOST()
+    throws Exception {
+        entering("asymmetricSLOWithProfileRequiredPOST", null);
+        try {
+            page = (HtmlPage) webClient.getPage(sloStr);
+            strLogoutURL = getLogoutURL(page);
+            result = (HtmlPage) strLogoutURL.click();
+            assert (getHtmlPageStringIndex(result, "Generate URL") != -1);
+        } catch (Exception e) {
+            log(Level.SEVERE, "asymmetricSLOWithProfileRequiredPOST",
+                    e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        exiting("asymmetricSLOWithProfileRequiredPOST");
+    }
+    
+    /**
+     * This method test single sign using redirect when the user profile is set
+     * to required at SP and ignore at IDP. The security mechanism for attribute
+     * transfer is through asymmetric keys.
+     * @throws java.lang.Exception
+     */    
+    @Test(groups={"ds_ds_sec", "ff_ds_sec"},
+    dependsOnMethods={"asymmetricSLOWithProfileRequiredPOST"})
     public void asymmetricSSOWithProfileRequired()
     throws Exception {
         entering("asymmetricSSOWithProfileRequired", null);
         try {
-            enableUserProfile("SP", spfm, "false");
             generateSSOSLOURL("asymmetric");
             page = (HtmlPage) webClient.getPage(ssoStr);
             form = page.getFormByName("Login");
@@ -542,7 +822,7 @@ public class SAESmokeTests extends TestCommon {
             HtmlHiddenInput txt2 =
                     (HtmlHiddenInput)form.getInputByName("IDToken2");
             txt2.setValueAttribute(saeConfig.getString("sp_userpw"));
-            page = (HtmlPage)form.submit();
+            page = (HtmlPage)form.submit((SubmittableElement)null);
             assert (getHtmlPageStringIndex(page,
                     saeConfig.getString("mail_attribute")) != -1);
             assert (getHtmlPageStringIndex(page,
@@ -556,6 +836,12 @@ public class SAESmokeTests extends TestCommon {
         exiting("asymmetricSSOWithProfileRequired");
     }
 
+    /**
+     * This method test single logout using redirect when the user profile is
+     * set to ignore at IDP and required at SP. The security mechanism for
+     * attribute transfer is through asymmetric keys.
+     * @throws java.lang.Exception
+     */        
     @Test(groups={"ds_ds_sec", "ff_ds_sec"},
     dependsOnMethods={"asymmetricSSOWithProfileRequired"})
     public void asymmetricSLOWithProfileRequired()
@@ -563,7 +849,8 @@ public class SAESmokeTests extends TestCommon {
         entering("asymmetricSLOWithProfileRequired", null);
         try {
             page = (HtmlPage) webClient.getPage(sloStr);
-            result = (HtmlPage) webClient.getPage(getLogoutURL(page));
+            strLogoutURL = getLogoutURL(page);
+            result = (HtmlPage) strLogoutURL.click();
             assert (getHtmlPageStringIndex(result, "Generate URL") != -1);
         } catch (Exception e) {
             log(Level.SEVERE, "asymmetricSLOWithProfileRequired",
@@ -704,7 +991,7 @@ public class SAESmokeTests extends TestCommon {
             ((HtmlTextInput)form.getInputByName("privkeypass")).
                     setValueAttribute(sp_storepass);
         }
-        result = (HtmlPage)form.submit();
+        result = (HtmlPage)form.submit((SubmittableElement)null);
     }
 
     /**
@@ -758,8 +1045,8 @@ public class SAESmokeTests extends TestCommon {
                 setValueAttribute(idpurl + "/" +
                 idpAppURL);
 
-        ((HtmlTextInput)form.getInputByName("cryptotype")).
-                setValueAttribute(secMode);
+        ((HtmlSelect)form.getSelectByName("cryptotype")).
+                setDefaultValue(secMode);
 
         String sharedSecret = saeConfig.getString("sharedSecret");
         log(Level.FINEST, "generateSSOSLOURL", "sharedSecret: " + sharedSecret);
@@ -791,7 +1078,7 @@ public class SAESmokeTests extends TestCommon {
             ((HtmlTextInput)form.getInputByName("privkeypass")).
                     setValueAttribute(idp_storepass);
         }
-        result = (HtmlPage)form.submit();
+        result = (HtmlPage)form.submit((SubmittableElement)null);
         log(Level.FINEST, "generateSSOSLOURL", "Generate URL Page:\n" +
                 result.asXml());
         List list = result.getAnchors();
@@ -811,13 +1098,11 @@ public class SAESmokeTests extends TestCommon {
      * generated when one clicks on the page which lists the SSO and SLO url's.
      * This shows up when one clicks on SLO url.
      */
-    private String getLogoutURL(HtmlPage page)
+    private ClickableElement getLogoutURL(HtmlPage page)
     throws Exception {
         List list = page.getAnchors();
-        String anchStr = list.get(2).toString();
-        String logoutStr = anchStr.substring(anchStr.indexOf("=") + 2,
-                anchStr.length() - 3);
-        log(Level.FINEST, "getLogoutURL", "Logout URL:" + logoutStr);
-        return (logoutStr);
+        log(Level.FINEST, "getLogoutURL", "Logout URL: " + list.get(2));
+        ClickableElement link = (ClickableElement) list.get(2);
+        return (link);
     }
 }
