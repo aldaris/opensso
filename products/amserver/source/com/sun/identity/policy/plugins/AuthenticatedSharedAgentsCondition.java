@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticatedSharedAgentsCondition.java,v 1.3 2008-09-05 06:09:10 arviranga Exp $
+ * $Id: AuthenticatedSharedAgentsCondition.java,v 1.4 2008-09-16 00:40:35 goodearth Exp $
  *
  */
 
@@ -312,7 +312,11 @@ public class AuthenticatedSharedAgentsCondition implements Condition,
                     Set agentsfromCache = 
                         (Set) sharedAgentsCache.get(sharedAgentUnivId);
 
-                    allowed = getPermission(agentsFromEnv,agentsfromCache); 
+                    if (agentsfromCache != null && 
+                        !agentsfromCache.isEmpty()) {
+                        allowed = getPermission(agentsFromEnv, 
+                            agentsfromCache); 
+                    }
                     return new ConditionDecision(allowed);
                 }
 
@@ -508,16 +512,18 @@ public class AuthenticatedSharedAgentsCondition implements Condition,
 
         if (agentsFromEnv != null && !agentsFromEnv.isEmpty()) {
             Set envValues = new CaseInsensitiveHashSet(agentsFromEnv);
-            for (Iterator itr = agentsToRead.iterator();itr.hasNext();) {
-                String avName = (String) itr.next();
-                if ((envValues != null) &&
-                    (envValues.contains(avName))) {
-                    allowed = true;
-                    if (debug.messageEnabled()) {
-                        debug.message("AuthenticatedSharedAgentsCondition."
-                            + "getPermission(): returning true.");
+            if (agentsToRead != null && !agentsToRead.isEmpty()) {
+                for (Iterator itr = agentsToRead.iterator();itr.hasNext();) {
+                    String avName = (String) itr.next();
+                    if ((envValues != null) &&
+                        (envValues.contains(avName))) {
+                        allowed = true;
+                        if (debug.messageEnabled()) {
+                            debug.message("AuthenticatedSharedAgentsCondition."
+                                + "getPermission(): returning true.");
+                        }
+                        break;
                     }
-                    break;
                 }
             }
         }
