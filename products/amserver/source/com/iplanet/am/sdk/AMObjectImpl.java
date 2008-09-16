@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMObjectImpl.java,v 1.11 2008-09-03 07:05:12 lakshman_abburi Exp $
+ * $Id: AMObjectImpl.java,v 1.12 2008-09-16 21:52:46 222713 Exp $
  *
  */
 
@@ -2156,7 +2156,8 @@ class AMObjectImpl implements AMObject {
                         return;
                     }
 
-                    Iterator itr = objImplSet.iterator();
+                    // clone to provide ConcurrentModificationException
+                    Iterator itr = ((HashSet)((HashSet) objImplSet).clone()).iterator(); 
                     while (itr.hasNext()) {
                         AMObjectImpl dpObjImpl = (AMObjectImpl) itr.next();
                         dpObjImpl.sendEvents(dpEvent);
