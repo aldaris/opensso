@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.37 2008-09-05 00:51:03 ww203982 Exp $
+ * $Id: Constants.java,v 1.38 2008-09-16 18:14:57 bhavnab Exp $
  *
  */
 
@@ -53,6 +53,13 @@ public interface Constants {
      * Property string for interval of <code>Stats</code> service.
      */
     String AM_STATS_INTERVAL = "com.iplanet.am.stats.interval";
+
+    /**
+     *  property string representing set of invalid strings in a goto or target
+     *  query parameter for a CDC Servlet
+     */
+    public static final String INVALID_GOTO_STRINGS =
+    "com.iplanet.services.cdc.invalidGotoStrings";
 
     /**
      * Property string for state of <code>Stats</code> service.
