@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryServicesImpl.java,v 1.8 2008-06-25 05:41:25 qcheng Exp $
+ * $Id: DirectoryServicesImpl.java,v 1.9 2008-09-16 21:47:50 222713 Exp $
  *
  */
 
@@ -724,6 +724,7 @@ public class DirectoryServicesImpl implements AMConstants, IDirectoryServices {
              */
 
             attrSet.add(new Attr("dn", entryDN));
+            attrSet.add(new Attr("entryDN", entryDN));
 
             // Perform Compliance related checks
             checkComplianceAttributes(attrSet, ignoreCompliance);
