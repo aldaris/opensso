@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: ServerEditAdvanced.jsp,v 1.3 2008-06-25 05:44:53 qcheng Exp $
+   $Id: ServerEditAdvanced.jsp,v 1.4 2008-09-16 23:43:27 asyhuang Exp $
 
 --%>
 
@@ -169,8 +169,7 @@
     showLowerActions="false"
     showPaginationControls="false"
     showPaginationIcon="false"
-    showSelectionIcons="false"
-    selectionJavascript=""
+    showSelectionIcons="false"    
     showSelectionSortIcon="false"
     selectionJavascript="toggleTblButtonState('ServerEditAdvanced', 'ServerEditAdvanced.tblAdvancedProperties', 'tblButton', 'ServerEditAdvanced.tblButtonDelete', this)"
     showSortingRow="false">
