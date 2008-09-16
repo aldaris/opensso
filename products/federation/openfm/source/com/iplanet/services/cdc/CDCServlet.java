@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CDCServlet.java,v 1.6 2008-09-01 06:22:17 madan_ranganath Exp $
+ * $Id: CDCServlet.java,v 1.7 2008-09-16 18:13:47 bhavnab Exp $
  *
  */
 
@@ -64,6 +64,7 @@ import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.shared.encode.CookieUtils;
 import com.sun.identity.shared.encode.URLEncDec;
+import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetAddress;
@@ -74,6 +75,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.StringTokenizer;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -108,8 +111,6 @@ import javax.servlet.http.HttpServletResponse;
  * </ol>
  */
 public class CDCServlet extends HttpServlet {
-    static Debug debug;
-    
     private static final String UNIQUE_COOKIE_NAME =
         "sunIdentityServerAuthNServer";
     private static final String DEFAULT_DEPLOY_URI = "/amserver";
@@ -124,6 +125,16 @@ public class CDCServlet extends HttpServlet {
         FSServiceUtils.getBaseURL() + CDCURI;
     
     private static final List adviceParams = new ArrayList();
+    private static HashSet invalidSet = new HashSet();
+    private static final String LEFT_ANGLE              = "<";
+    private static final String RIGHT_ANGLE             = ">";
+    private static final String URLENC_RIGHT_ANGLE      = "%3e";
+    private static final String URLENC_LEFT_ANGLE       = "%3c";
+    private static final String URLENC_JAVASCRIPT       = "javascript%3a";
+    private static final String JAVASCRIPT              = "javascript:";
+    private static final String DELIM                   = ",";
+    private static final String DEBUG_FILE_NAME         = "amCDC";
+    static Debug  debug = Debug.getInstance(DEBUG_FILE_NAME);
     static {
         adviceParams.add("module");
         adviceParams.add("authlevel");
@@ -133,6 +144,26 @@ public class CDCServlet extends HttpServlet {
         adviceParams.add("realm");
         adviceParams.add("org");
         adviceParams.add("sunamcompositeadvice");
+        String invalidStrings = SystemPropertiesManager.get(
+            Constants.INVALID_GOTO_STRINGS);
+        if (invalidSet.isEmpty()) {
+            debug.message("CDCServlet:static block: creating invalidSet");
+            if (invalidStrings == null) {
+                debug.message("CDCServlet: invalidStrings is null");
+                invalidSet.add(LEFT_ANGLE);
+                invalidSet.add(RIGHT_ANGLE);
+                invalidSet.add(URLENC_LEFT_ANGLE);
+                invalidSet.add(URLENC_RIGHT_ANGLE);
+                invalidSet.add(JAVASCRIPT);
+                invalidSet.add(URLENC_JAVASCRIPT);
+            } else {
+                debug.message("CDCServlet: invalidStrings is NOT null");
+                StringTokenizer st = new StringTokenizer(invalidStrings, DELIM);
+                while ( st.hasMoreTokens()) {
+                    invalidSet.add((String)st.nextToken());
+                }
+            }
+        }
     }
     private static final String AUTHN_RESPONSE_HTML = 
         "<HTML><BODY Onload=\"document.Response.submit()\">" +
@@ -162,8 +193,6 @@ public class CDCServlet extends HttpServlet {
      */
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        
-        debug = Debug.getInstance("amCDC");
         debug.message("CDCServlet Initializing...");
         
         try {
@@ -255,7 +284,36 @@ public class CDCServlet extends HttpServlet {
             debug.message("CDCServlet.doGetPost: Query String received: " +
                 request.getQueryString());
         }
-        
+        String gotoParameter = request.getParameter(GOTO_PARAMETER);
+        String targetParameter = request.getParameter(TARGET_PARAMETER);
+        if (targetParameter == null) {
+            targetParameter =
+                request.getParameter(TARGET_PARAMETER.toLowerCase());
+        }
+        // if check if goto ot target have invalid strings, to avoid
+        // accepting invalid injected javascript.
+
+        if ((gotoParameter != null ) || (targetParameter != null)) {
+            debug.message("CDCServlet:doGetPost():goto or target is not null");
+            for (Iterator it = invalidSet.iterator(); it.hasNext();) {
+                String invalidStr = (String)it.next();
+                if ((gotoParameter != null ) &&
+                    (gotoParameter.toLowerCase().indexOf(invalidStr) != -1 ))
+                {
+                    showError(response, "GOTO parameter has invalid "
+                        +"characters");
+                    return;
+                }
+                if ((targetParameter != null ) &&
+                   (targetParameter.toLowerCase().indexOf(invalidStr) != -1 ))
+                {
+                    showError(response, "TARGET parameter has invalid "
+                        +"characters");
+                    return;
+                }
+            }
+        }
+
         /* Steps
          * 1. If no SSOToken, forward to authentication
          * 2. If SSOToken is valid construct AuthN response and return
