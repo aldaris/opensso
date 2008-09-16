@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProfileAttributesTest.java,v 1.9 2008-08-11 20:56:46 cmwesley Exp $
+ * $Id: ProfileAttributesTest.java,v 1.10 2008-09-16 17:30:11 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,17 +54,13 @@ public class ProfileAttributesTest extends TestCommon {
     private String testModule;
     private String locTestProfile;
     private String testAttribute;
-    private String createUserProp;
-    private boolean userExists;
+    private boolean createTestUser;
     private String testUser;
     private String testUserpass;
     private String testPassmsg;
     private String testURL;
     private String servicename = "iPlanetAMAuthService";
     private List<String> attributevalues = new ArrayList<String>();
-    private String lockoutPassmsg;
-    private String warnPassmsg;
-    private String failpage;
     private FederationManager fm;
     private WebClient webClient;
     private List moduleConfigData;
@@ -111,9 +107,9 @@ public class ProfileAttributesTest extends TestCommon {
                     fileseparator + "ProfileAttributesTest");
             testModule = testResources.getString(testAttribute + 
                     "-test-module");
-            createUserProp = testResources.getString(testAttribute
+            String createUserProp = testResources.getString(testAttribute
                     + "-test-createUser");
-            userExists = new Boolean(createUserProp).booleanValue();
+            createTestUser = new Boolean(createUserProp).booleanValue();
             testUser = testResources.getString(testAttribute + 
                     "-test-username");
             testUser.trim();
@@ -125,18 +121,16 @@ public class ProfileAttributesTest extends TestCommon {
             
             log(Level.FINEST, "setup", "profileAttribute: " + locTestProfile);
             log(Level.FINEST, "setup", "testModule: " + testModule);
-            log(Level.FINEST, "setup", "createUserProp: " + createUserProp);
-            log(Level.FINEST, "setup", "userExists: " + userExists);
+            log(Level.FINEST, "setup", "createTestUser: " + createTestUser);
             log(Level.FINEST, "setup", "testUser: " + testUser);
             log(Level.FINEST, "setup", "testUserPassword: " + testUserpass);
             log(Level.FINEST, "setup", "testPassmsg: " + testPassmsg);
-            Reporter.log("profileAttribute: " + locTestProfile);
-            Reporter.log("testModule: " + testModule);
-            Reporter.log("createUserProp: " + createUserProp);
-            Reporter.log("userExists: " + userExists);
-            Reporter.log("testUser: " + testUser);
-            Reporter.log("testUserPassword: " + testUserpass);
-            Reporter.log("testPassmsg: " + testPassmsg);
+            Reporter.log("Profile Creation Attribute: " + locTestProfile);
+            Reporter.log("Auth Module: " + testModule);
+            Reporter.log("Test Creates User: " + createTestUser);
+            Reporter.log("User: " + testUser);
+            Reporter.log("User Password: " + testUserpass);
+            Reporter.log("Test Passed Msg: " + testPassmsg);
             
             createModule(testModule);
             testURL = url + "?module=" + moduleSubConfig;
@@ -152,17 +146,13 @@ public class ProfileAttributesTest extends TestCommon {
             }
             
             testUserList.add(testUser);
-            if (!userExists) {
+            if (createTestUser) {
                 createUser(testUser, testUserpass);
-            }
-        } catch (AssertionError ae) {
-            log(Level.SEVERE, "setup", 
-                    "Calling cleanup due to failed ssoadm exit code ...");
-            cleanup();
-            throw ae;            
+            }           
         } catch(Exception e) {
             log(Level.SEVERE, "setup", e.getMessage());
             e.printStackTrace();
+            cleanup();
             throw e;
         } finally {
             consoleLogout(webClient, logoutURL);
@@ -177,12 +167,18 @@ public class ProfileAttributesTest extends TestCommon {
     public void testProfile()
     throws Exception {
         entering("testProfile", null);
+        log(Level.FINEST, "testProfile", "Description: Test authentication " +
+                "with iplanet-am-auth-dynamic-profile-creation set to " + 
+                locTestProfile);
+        Reporter.log("Description: Test authentication with " + 
+                "iplanet-am-auth-dynamic-profile-creation set to " + 
+                locTestProfile);
         Map executeMap = new HashMap();
         executeMap.put("Loginuser", testUser);
         executeMap.put("Loginpassword", testUserpass);
         executeMap.put("Passmsg", testPassmsg);
         executeMap.put("loginurl", testURL);
-        executeMap.put("profileattr",locTestProfile);
+        executeMap.put("profileattr", locTestProfile);
         AuthTestsValidator profileTestValidator =
                 new AuthTestsValidator(executeMap);
         profileTestValidator.testProfile();
@@ -291,17 +287,21 @@ public class ProfileAttributesTest extends TestCommon {
     
     /**
      * Returns the profile attribute based on the profile test performed
-     *
+     * @param profile - the value which indicates how the profile creation 
+     * should be set.
+     * @return a String containing the profile creation attribute name/value 
+     * pair to update in the authentication service.
      */
     private String getProfileAttribute(String profile){
-        String testAttribute;
+        String profileAttribute = null;
         if (profile.equals("dynamic")) {
-            testAttribute = "iplanet-am-auth-dynamic-profile-creation=true";
+            profileAttribute = "iplanet-am-auth-dynamic-profile-creation=true";
         } else if(profile.equals("required")) {
-            testAttribute = "iplanet-am-auth-dynamic-profile-creation=false";
+            profileAttribute = "iplanet-am-auth-dynamic-profile-creation=false";
         } else {
-            testAttribute = "iplanet-am-auth-dynamic-profile-creation=ignore";
+            profileAttribute = 
+                    "iplanet-am-auth-dynamic-profile-creation=ignore";
         }
-        return testAttribute;
+        return profileAttribute;
     }
 }
