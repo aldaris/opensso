@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CDCServlet.java,v 1.7 2008-09-16 18:13:47 bhavnab Exp $
+ * $Id: CDCServlet.java,v 1.8 2008-09-17 21:31:13 ericow Exp $
  *
  */
 
@@ -68,6 +68,10 @@ import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.MessageFormat;
 import java.text.ParseException;
@@ -347,7 +351,28 @@ public class CDCServlet extends HttpServlet {
         SSOToken token
     ) throws ServletException, IOException {
         String gotoURL = getRedirectURL(request, response);
-        
+        if (debug.messageEnabled()) {
+            debug.message("CDCServlet.redirectWithAuthNResponse: gotoURL = " + gotoURL);
+        }
+
+        // Special characters in the path or the query need to be encoded
+        try {
+            URL gotoUrl = new URL(gotoURL);
+            URI gotoUri = new URI(gotoUrl.getProtocol(), null,
+                    gotoUrl.getHost(), gotoUrl.getPort(), gotoUrl.getPath(),
+                    gotoUrl.getQuery(), null);
+            gotoURL = gotoUri.toString();
+        } catch (MalformedURLException mue) {
+            debug.error("CDCServlet.redirectWithAuthNResponse:MalformedURLException occured",mue);
+            showError(response);
+        } catch (URISyntaxException use) {
+            debug.error("CDCServlet.redirectWithAuthNResponse:URISyntaxException occured",use);
+            showError(response);
+        }
+        if (debug.messageEnabled()) {
+            debug.message("CDCServlet.redirectWithAuthNResponse: After encoding: gotoURL = " + gotoURL);
+        }
+
         if (gotoURL != null) {
             try {
                 String inResponseTo = request.getParameter(REQUEST_ID);
