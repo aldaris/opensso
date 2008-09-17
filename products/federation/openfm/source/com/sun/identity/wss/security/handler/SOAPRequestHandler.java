@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.28 2008-09-08 22:50:15 mallas Exp $
+ * $Id: SOAPRequestHandler.java,v 1.29 2008-09-17 03:07:31 mallas Exp $
  *
  */
 
@@ -388,6 +388,14 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 throw new SecurityException(sbe.getMessage());
             }
         }
+        
+        SecureSOAPMessage secureMessage =
+                new SecureSOAPMessage(soapMessage, true);
+        try {
+            secureMessage.getSOAPMessage().saveChanges();
+        } catch (SOAPException se) {
+            throw new SecurityException(se.getMessage());
+        }
 
         if ( ((config != null) && 
             (!config.isResponseSignEnabled() && 
@@ -418,9 +426,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
         SecurityToken securityToken =
                 factory.getSecurityToken(tokenSpec);
 
-        SecureSOAPMessage secureMessage =
-                new SecureSOAPMessage(soapMessage, true);
-
+        
         secureMessage.setSecurityToken(securityToken);
         secureMessage.setSecurityMechanism(
                 SecurityMechanism.WSS_NULL_X509_TOKEN);
@@ -911,7 +917,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 SSOToken ssoToken = subjectSecurity.ssoToken;
                 creds = getUserCredentialsFromSSOToken(ssoToken);
                 if(creds == null || creds.isEmpty()) {
-                   creds = subjectSecurity.userCredentials;
+                   creds = subjectSecurity.userCredentials;                   
                 }                
             } catch (Exception ex) {
                 if(debug.messageEnabled()) {
@@ -1521,7 +1527,10 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                if(encryptedPassword == null) {
                   return null;          
                }
-               String password = Crypt.decrypt(encryptedPassword);               
+               String password = Crypt.decrypt(encryptedPassword);
+               if(password == null) {
+                  return null;
+               }
                String userId = ssoToken.getProperty("UserId");
                List list = new ArrayList();
                PasswordCredential pc = new PasswordCredential(userId, password);

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityClient.java,v 1.19 2008-09-08 21:50:15 mallas Exp $
+ * $Id: TrustAuthorityClient.java,v 1.20 2008-09-17 03:07:31 mallas Exp $
  *
  */
 
@@ -207,6 +207,10 @@ public class TrustAuthorityClient {
                     SecurityMechanism.WSS_NULL_USERNAME_TOKEN_PLAIN_URI) ||
                 stsSecMech.equals(
                     SecurityMechanism.WSS_NULL_USERNAME_TOKEN_URI) ||
+                stsSecMech.equals(
+                    SecurityMechanism.WSS_NULL_SAML2_SV_URI) ||
+                stsSecMech.equals(
+                    SecurityMechanism.WSS_NULL_SAML_SV_URI) ||    
                 stsSecMech.equals(SecurityMechanism.STS_SECURITY_URI)) {               
                 if(STSConstants.WST_VERSION_10.equals(wstVersion)) {
                    keyType = STSConstants.WST10_BEARER_KEY;
@@ -235,6 +239,10 @@ public class TrustAuthorityClient {
                     SecurityMechanism.WSS_NULL_USERNAME_TOKEN_PLAIN_URI) ||
                     stsSecMechTemp.equals(
                     SecurityMechanism.WSS_NULL_USERNAME_TOKEN_URI) ||
+                    stsSecMechTemp.equals(
+                    SecurityMechanism.WSS_NULL_SAML2_SV_URI) ||
+                    stsSecMechTemp.equals(
+                    SecurityMechanism.WSS_NULL_SAML_SV_URI) ||
                     stsSecMechTemp.equals(SecurityMechanism.STS_SECURITY_URI)) {
                     if(wstVersion.equals(STSConstants.WST_VERSION_10)) {
                        keyType = STSConstants.WST10_BEARER_KEY;
