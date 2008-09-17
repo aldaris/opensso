@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: idpSingleLogoutInit.jsp,v 1.4 2008-06-25 05:48:36 qcheng Exp $
+   $Id: idpSingleLogoutInit.jsp,v 1.5 2008-09-17 21:41:56 exu Exp $
 
 --%>
 
@@ -47,6 +47,8 @@
 
     Some of the other optional parameters are :
     "RelayState" - the target URL on successful Single Logout
+    "goto" - the target URL on successful Single Logout.
+             "RelayState" takes precedence to "goto" parameter.
     "Destination" - A URI Reference indicating the address to
                     which the request has been sent.
     "Consent" - Specifies a URI a SAML defined identifier
@@ -73,6 +75,10 @@
 
     try {
         String RelayState = request.getParameter(SAML2Constants.RELAY_STATE);
+        if ((RelayState == null) || (RelayState.length() == 0)) {
+            RelayState = request.getParameter(SAML2Constants.GOTO);
+        }
+
         Object ssoToken = SessionManager.getProvider().getSession(request);
         if (ssoToken == null) {
             response.sendError(response.SC_BAD_REQUEST,
