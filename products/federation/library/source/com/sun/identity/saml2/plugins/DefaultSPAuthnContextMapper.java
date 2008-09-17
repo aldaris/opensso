@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultSPAuthnContextMapper.java,v 1.7 2008-06-25 05:47:51 qcheng Exp $
+ * $Id: DefaultSPAuthnContextMapper.java,v 1.8 2008-09-17 21:41:12 exu Exp $
  *
  */
 
@@ -64,6 +64,7 @@ import org.w3c.dom.Node;
 public class DefaultSPAuthnContextMapper implements SPAuthnContextMapper {
 
     static String DEFAULT = "default";
+    static String DEFAULT_CLASS_REF = "defaultClassRef";
 
     /**
      * Returns the <code>RequestedAuthnContext</code> object.
@@ -147,7 +148,9 @@ public class DefaultSPAuthnContextMapper implements SPAuthnContextMapper {
             Iterator i = authCtxSet.iterator();
             while (i.hasNext()) {
                 String className = (String)i.next();
-                if (DEFAULT.equals(className)) {
+                if (DEFAULT.equals(className) || 
+                    DEFAULT_CLASS_REF.equals(className)) 
+                {
                     continue;
                 }
 
@@ -162,12 +165,18 @@ public class DefaultSPAuthnContextMapper implements SPAuthnContextMapper {
         if ((authCtxList == null || authCtxList.isEmpty()) 
             && (authRefMap != null 
             && !authRefMap.isEmpty())) {   
-            Set authCtxSet = authRefMap.keySet();
-            Iterator i = authCtxSet.iterator();
-            while (i.hasNext()) {
-                String val = (String) i.next();
-                if (val != null && !val.equals(DEFAULT)) {
-                    authCtxList.add(val);
+            String defaultClassRef = (String) authRefMap.get(DEFAULT_CLASS_REF);
+            if (defaultClassRef != null) {
+                authCtxList.add(defaultClassRef);
+            } else {
+                Set authCtxSet = authRefMap.keySet();
+            
+                Iterator i = authCtxSet.iterator();
+                while (i.hasNext()) {
+                    String val = (String) i.next();
+                    if (val != null && !val.equals(DEFAULT)) {
+                        authCtxList.add(val);
+                    }
                 }
             }
         }
@@ -445,6 +454,12 @@ public class DefaultSPAuthnContextMapper implements SPAuthnContextMapper {
                                 authLevel);
                         }
                     }
+                }
+                if (isDefault && (authClass != null) &&
+                    (!authRefMap.containsKey(DEFAULT_CLASS_REF)))
+                {
+                    authRefMap.put(
+                        DEFAULT_CLASS_REF, prefixIfRequired(authClass));
                 }
             }
         }
