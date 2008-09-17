@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ScopingImpl.java,v 1.3 2008-06-25 05:48:00 qcheng Exp $
+ * $Id: ScopingImpl.java,v 1.4 2008-09-17 21:04:22 qcheng Exp $
  *
  */
 
@@ -200,8 +200,9 @@ public class ScopingImpl implements Scoping {
 	throws SAML2Exception {
 
 	String xmlElementString=null; 
-        if ((idpList != null) ||  (!requesterIDList.isEmpty())
-			     || (proxyCount != null)) {
+        if ((idpList != null) ||  
+            ((requesterIDList != null) && !requesterIDList.isEmpty()) ||
+	    (proxyCount != null)) {
 
 	    validateProxyCount(proxyCount);
 	    StringBuffer xmlString = new StringBuffer(300);
