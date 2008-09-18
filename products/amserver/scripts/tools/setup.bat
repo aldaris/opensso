@@ -23,7 +23,7 @@
 : your own identifying information:
 : "Portions Copyrighted [year] [name of copyright owner]"
 :
-: $Id: setup.bat,v 1.11 2008-08-30 00:37:11 ww203982 Exp $
+: $Id: setup.bat,v 1.12 2008-09-18 22:56:30 veiming Exp $
 :
 
 if not "%JAVA_HOME%" == "" goto checkJavaHome
@@ -68,10 +68,26 @@ goto exit
 :runSetup
 IF "%1" == "-h" SET help_print=yes
 IF "%1" == "--help" SET help_print=yes
+IF "%1" == "-l" SET path_log=%~2
+IF "%1" == "--log" SET path_log=%~2
+IF "%1" == "-d" SET path_debug=%~2
+IF "%1" == "--debug" SET path_debug=%~2
 IF "%1" == "-p" SET path_AMConfig=%~2
 IF "%1" == "--path" SET path_AMConfig=%~2
+IF "%3" == "-l" SET path_log=%~4
+IF "%3" == "--log" SET path_log=%~4
+IF "%3" == "-d" SET path_debug=%~4
+IF "%3" == "--debug" SET path_debug=%~4
+IF "%3" == "-p" SET path_AMConfig=%~4
+IF "%3" == "--path" SET path_AMConfig=%~4
+IF "%5" == "-l" SET path_log=%~6
+IF "%5" == "--log" SET path_log=%~6
+IF "%5" == "-d" SET path_debug=%~6
+IF "%5" == "--debug" SET path_debug=%~6
+IF "%5" == "-p" SET path_AMConfig=%~6
+IF "%5" == "--path" SET path_AMConfig=%~6
 
-"%JAVA_HOME%/bin/java.exe" -D"load.config=yes" -D"help.print=%help_print%" -D"path.AMConfig=%path_AMConfig%" -cp "lib/amserver.jar;lib/amadm_setup.jar;lib/opensso-sharedlib.jar;lib/ldapjdk.jar;lib/OpenDS.jar;resources" com.sun.identity.tools.bundles.Main
+"%JAVA_HOME%/bin/java.exe" -D"load.config=yes" -D"help.print=%help_print%" -D"path.AMConfig=%path_AMConfig%" -D"path.log=%path_log%" -D"path.debug=%path_debug%" -cp "lib/amserver.jar;lib/amadm_setup.jar;lib/opensso-sharedlib.jar;lib/ldapjdk.jar;lib/OpenDS.jar;resources" com.sun.identity.tools.bundles.Main
 ENDLOCAL
 
 :exit

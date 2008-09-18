@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.2 2008-06-25 05:44:12 qcheng Exp $
+ * $Id: SetupConstants.java,v 1.3 2008-09-18 22:56:31 veiming Exp $
  *
  */
 
@@ -84,4 +84,14 @@ public interface SetupConstants {
     int BUFFER_SIZE = 8192;
     String GZIP_EXT = ".gz";
     String PATH_DEST = "path.dest";
+
+    /**
+     * debug directory system property name.
+     */
+    String DEBUG_PATH = "path.debug";
+
+    /**
+     * log directory system property name.
+     */
+    String LOG_PATH = "path.log";
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogConstants.java,v 1.15 2008-08-19 19:09:11 veiming Exp $
+ * $Id: LogConstants.java,v 1.16 2008-09-18 22:56:31 veiming Exp $
  *
  */
 
@@ -558,4 +558,9 @@ public class LogConstants {
      * logging termination due to logging configuration change
      */
     public static final String END_LOG_CONFIG_NAME = "LOG_END_CONFIG";
+
+    /**
+     * System properties which specifies the log directory.
+     */
+    public static final String SYS_PROP_LOG_DIR = "com.sun.identity.log.dir";
 }

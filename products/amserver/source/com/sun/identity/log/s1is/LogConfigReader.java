@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogConfigReader.java,v 1.17 2008-08-09 04:49:50 bigfatrat Exp $
+ * $Id: LogConfigReader.java,v 1.18 2008-09-18 22:56:31 veiming Exp $
  *
  */
 
@@ -417,49 +417,9 @@ public class LogConfigReader implements ServiceListener{
         }   catch (Exception e) {
             debug.error("LogConfigReader: Could not read authz class", e);
         }
-        /*
-         *  log location subdirectory
-         *  is specified in AMConfig.properties.  read it here and append
-         *  to log location, so only have to deal with it here.
-         */
-        String locSubdir = null;
-        if (fileBackend) {
-            locSubdir = SystemProperties.get(LogConstants.LOG_LOCATION_SUBDIR);
-            if ((locSubdir != null) &&
-                (locSubdir.trim().length() > 0) &&
-                (!locSubdir.endsWith("/")))
-            {
-                locSubdir += "/";
-            }
-        }
-        // log location
-        try {
-            key = LogConstants.LOG_LOCATION;
-            value = CollectionHelper.getMapAttr(logAttributes, key);
-            if ((value == null) || (value.length() ==0)) {
-                debug.warning("LogConfigReader: LogLocation string is null");
-            } else {
-                value = value.replace('\\','/');
-		if (value.contains("%BASE_DIR%") ||
-		    value.contains("%SERVER_URI%"))
-		{
-		    value = value.replaceAll("%BASE_DIR%", basedir);
-		    value = value.replaceAll("%SERVER_URI%", famuri);
-		}
-                if (fileBackend && !value.endsWith("/")) {
-                    value += "/";
-                }
-                if ((locSubdir != null) && (locSubdir.trim().length() > 0))
-                {
-                    // locSubdir already ensured trailing slash, above
-                    value += locSubdir;
-                }
-                sbuffer.append(key).append("=")
-                       .append(value).append(LogConstants.CRLF);
-            }
-        }   catch (Exception e) {
-            debug.error("LogConfigReader: Could not read loglocation ", e);
-        }
+
+        getLoggingDirectory(fileBackend, basedir, famuri, sbuffer);
+
         // security status (on or off)
         try {
             key = LogConstants.SECURITY_STATUS;
@@ -866,6 +826,62 @@ public class LogConfigReader implements ServiceListener{
             debug.error("LogConfigReader: could not get from DS", e);
         }
         return sbuffer.toString();
+    }
+
+    private void getLoggingDirectory(
+        boolean fileBackend,
+        String basedir,
+        String famuri,
+        StringBuffer sbuffer
+    ) {
+        String key = LogConstants.LOG_LOCATION;
+
+        String logDir = SystemProperties.get(LogConstants.SYS_PROP_LOG_DIR);
+        if ((logDir != null) && (logDir.trim().length() > 0)) {
+            logDir = logDir.replace('\\','/');
+            logDir += "/";
+            sbuffer.append(key).append("=")
+                .append(logDir).append(LogConstants.CRLF);
+            return;
+        }
+
+        /*
+         *  log location subdirectory
+         *  is specified in AMConfig.properties.  read it here and append
+         *  to log location, so only have to deal with it here.
+         */
+        String locSubdir = null;
+        if (fileBackend) {
+            locSubdir = SystemProperties.get(LogConstants.LOG_LOCATION_SUBDIR);
+            if ((locSubdir != null) &&
+                (locSubdir.trim().length() > 0) &&
+                (!locSubdir.endsWith("/")))
+            {
+                locSubdir += "/";
+            }
+        }
+
+        String value = CollectionHelper.getMapAttr(logAttributes, key);
+        if ((value == null) || (value.length() ==0)) {
+            debug.warning("LogConfigReader: LogLocation string is null");
+        } else {
+            value = value.replace('\\','/');
+            if (value.contains("%BASE_DIR%") ||
+                    value.contains("%SERVER_URI%"))
+            {
+                value = value.replaceAll("%BASE_DIR%", basedir);
+                value = value.replaceAll("%SERVER_URI%", famuri);
+            }
+            if (fileBackend && !value.endsWith("/")) {
+                value += "/";
+            }
+            if ((locSubdir != null) && (locSubdir.trim().length() > 0)) {
+                // locSubdir already ensured trailing slash, above
+                value += locSubdir;
+            }
+            sbuffer.append(key).append("=")
+                .append(value).append(LogConstants.CRLF);
+        }
     }
     
     /**

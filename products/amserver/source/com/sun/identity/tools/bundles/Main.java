@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Main.java,v 1.8 2008-08-08 00:28:33 ww203982 Exp $
+ * $Id: Main.java,v 1.9 2008-09-18 22:56:31 veiming Exp $
  *
  */
 
@@ -32,6 +32,7 @@ import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.setup.Bootstrap;
 import java.io.File;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
@@ -54,30 +55,64 @@ public class Main implements SetupConstants{
 
         boolean loadConfig = (System.getProperty(CONFIG_LOAD) != null) &&
             System.getProperty(CONFIG_LOAD).equals(YES);
-        String configPath = null;
         String currentOS = SetupUtils.determineOS();
         Properties configProp = null;
+        String debugPath = null;
+        String logPath = null;
         
         if (loadConfig) {
-            configPath = System.getProperty(AMCONFIG_PATH);
+            String configPath = System.getProperty(AMCONFIG_PATH);
+            debugPath = System.getProperty(DEBUG_PATH);
+            logPath = System.getProperty(LOG_PATH);
+
             try {
                 if ((configPath == null) || (configPath.length() == 0)) {
                     configPath = SetupUtils.getUserInput(bundle.getString(
                         currentOS + QUESTION));
+                    if (!(new File(configPath).isAbsolute())) {
+                        System.out.println(bundle.getString(
+                            "message.error.dir.absolute"));
+                        System.exit(1);
+                    }
+
+                    if ((debugPath == null) || (debugPath.length() == 0)) {
+                        debugPath = SetupUtils.getUserInput(bundle.getString(
+                            currentOS + ".debug.dir"));
+                    }
+                    if (!(new File(debugPath).isAbsolute())) {
+                        System.out.println(bundle.getString(
+                            "message.error.dir.absolute"));
+                        System.exit(1);
+                    }
+
+                    if ((logPath == null) || (logPath.length() == 0)) {
+                        logPath = SetupUtils.getUserInput(bundle.getString(
+                            currentOS + ".log.dir"));
+                    }
+                    if (!(new File(logPath).isAbsolute())) {
+                        System.out.println(bundle.getString(
+                            "message.error.dir.absolute"));
+                            System.exit(1);
+                    }
+                } else {
+                    String toolsHome = new File(".").getCanonicalPath();
+                    toolsHome = toolsHome.replaceAll("\\\\", "/");
+
+                    if ((debugPath == null) || (debugPath.length() == 0)) {
+                        debugPath = toolsHome + "/debug";
+                    }
+                    if ((logPath == null) || (logPath.length() == 0)) {
+                        logPath = toolsHome + "/log";
+                    }
                 }
 
-                if (!(new File(configPath).isAbsolute())) {
-                    System.out.println(bundle.getString(
-                        "message.error.dir.absolute"));
-                    System.exit(1);
-                }
-                
                 configProp = Bootstrap.load(configPath, false);
-
                 if (configProp == null) {
                     System.out.println(bundle.getString("message.error.dir"));
                     System.exit(1);
                 }
+                new File(debugPath).mkdirs();
+                new File(logPath).mkdirs();
 
                 if (!configPath.endsWith(FILE_SEPARATOR)) {
                     configPath = configPath + FILE_SEPARATOR;
@@ -85,18 +120,28 @@ public class Main implements SetupConstants{
 
                 configProp.setProperty(USER_INPUT,
                     configPath.substring(0, configPath.length() - 1));
+                configProp.setProperty("LogDir", logPath);
+                configProp.setProperty("DebugDir",debugPath);
                 configProp.setProperty(CURRENT_PLATFORM, currentOS);
             } catch (Exception ex) {
-                System.out.println(bundle.getString("message.error.dir"));
+                System.out.println(ex.getMessage());
                 System.exit(1);
             }
         } else {
             configProp = new Properties();
         }
+
         SetupUtils.evaluateBundleValues(bundle, configProp);
         try {
             SetupUtils.copyAndFilterScripts(bundle, configProp);
             if (loadConfig) {
+                Object[] p = {debugPath};
+                System.out.println(MessageFormat.format(
+                    bundle.getString("message.info.debug.dir"), p));
+                p[0] = logPath;
+                System.out.println(MessageFormat.format(
+                    bundle.getString("message.info.log.dir"), p));
+
                 System.out.println(bundle.getString(
                     "message.info.version.tools") + " " +
                     bundle.getString(TOOLS_VERSION));
