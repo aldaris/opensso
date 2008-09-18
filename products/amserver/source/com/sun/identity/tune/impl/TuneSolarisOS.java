@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneSolarisOS.java,v 1.4 2008-08-29 10:25:40 kanduls Exp $
+ * $Id: TuneSolarisOS.java,v 1.5 2008-09-18 17:05:52 kanduls Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -353,7 +353,7 @@ public class TuneSolarisOS extends TuneOS {
             }
             FileHandler fh = new FileHandler(tuneFile);
             fh.appendLine("#" + START_FAM_MSG);
-            String setCmd = "ndd -set " + TCP_DIV;
+            String setCmd = nddCmd + "-set " + TCP_DIV;
             fh.appendLine(setCmd + SOL_TCP_FIN_WAIT_2_FLUSH_INTERVAL +
                 " " + FLUSH_INTERVAL_VAL);
             fh.appendLine(setCmd + SOL_TCP_CONN_REQ_MAX_Q + " " +
