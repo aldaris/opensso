@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.36 2008-09-04 00:34:00 rajeevangal Exp $
+ * $Id: SetupConstants.java,v 1.37 2008-09-18 20:58:57 bigfatrat Exp $
  *
  */
 
@@ -531,6 +531,21 @@ public interface SetupConstants {
      * <code>rsa_api.properties</code> file name.
      */
     String SECURID_PROPERTIES = "rsa_api.properties";
+
+    /**
+     * <code>servicetag-registry*.xml</code> file name.
+     */
+    String SERVICETAGREG = "servicetag-registry";
+
+    /**
+     * <code>.../lib/registration/servicetag-registry.xml</code> filepath.
+     */
+    String SERVICETAGREG_FILE = "/lib/registration/servicetag-registry.xml";
+
+    /**
+     * <code>VERSION</code> property in serviceDefaultValues.properties.
+     */
+    String VERSION = "VERSION";
 
     /**
      * Solaris operating system

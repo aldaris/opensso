@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.92 2008-09-08 21:55:58 mallas Exp $
+ * $Id: AMSetupServlet.java,v 1.93 2008-09-18 20:58:57 bigfatrat Exp $
  *
  */
 
@@ -1153,6 +1153,12 @@ public class AMSetupServlet extends HttpServlet {
                 "AMSetupServlet.initializeConfigProperties", e);
             throw e;
         }
+
+        // this is for the servicetag-registry.xml stuff, a bit later
+        String version = (String)map.get(SetupConstants.VERSION);
+        boolean isEnterprise = version.contains("Enterprise");
+        String libRegDir = basedir + "/" + deployuri + "/lib/registration";
+        File reglibDir = new File(libRegDir);
         
         for (Iterator i = dataFiles.iterator(); i.hasNext(); ) {
             String file = (String)i.next();
@@ -1219,6 +1225,32 @@ public class AMSetupServlet extends HttpServlet {
             {
                 writeToFile(basedir + deployuri + "/auth/ace/data/" + absFile,
                     swapped);
+            } else if (absFile.startsWith(SetupConstants.SERVICETAGREG)) {
+                /*
+                 * tagswap servicetag-registry-{ent,exp}.xml and
+                 * store it in
+                 * <configdir>/<uri>/lib/registration/servicetag-registry.xml
+                 * enterprise version swaps servicetag-registry-ent.xml;
+                 * express/nightly swaps servicetag-registry-ext.xml.
+                 */
+                if ((isEnterprise && absFile.contains("-ent")) ||
+                    (!isEnterprise && absFile.contains("-exp")))
+                {
+                    /*
+                     *  make the <configdir>/<uri>/lib/registration dir,
+                     *  then write the servicetag-registry.xml file there
+                     */
+                    if (reglibDir.mkdirs()) {
+                        writeToFile(basedir + deployuri +
+                            SetupConstants.SERVICETAGREG_FILE, swapped);
+                    } else {
+                        Debug.getInstance(SetupConstants.DEBUG_NAME).error(
+                            "AMSetupServlet.initializeConfigProperties: " +
+                            "failed to write servicetag-registry.xml to " +
+                            reglibDir.getPath());
+                        SetupProgress.reportEnd("emb.failed", null);
+                    }
+                }
             } else {
                 writeToFile(basedir + "/" + absFile, swapped);
             }
@@ -2081,7 +2113,7 @@ public class AMSetupServlet extends HttpServlet {
          */
         String libRegDir = basedir + "/" + deployuri + "/lib/registration";
         File reglibDir = new File(libRegDir);
-        if (reglibDir.mkdirs()) {
+        if (reglibDir.exists()) {
             if (copyRegFiles(libRegDir)) {
                 StartRegister sr = new StartRegister();
                 sr.servicetagTransfer();
@@ -2105,14 +2137,10 @@ public class AMSetupServlet extends HttpServlet {
         String [] jarFiles = {"scn_stprs_util.jar",
                               "commons-codec-1.3.jar",
                               "opensso-register.jar"};
-        String [] xmlFiles = {"servicetag-registry.xml"};
 
         try {
             for (int i = 0; i < jarFiles.length; i++) {
                 copyCtxFile ("/WEB-INF/lib/", jarFiles[i], destDir);
-            }
-            for (int i = 0; i < xmlFiles.length; i++) {
-                copyCtxFile ("/WEB-INF/classes/", xmlFiles[i], destDir);
             }
         } catch (IOException ioex) {
             Debug.getInstance(SetupConstants.DEBUG_NAME).error(
