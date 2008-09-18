@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneUtil.java,v 1.8 2008-08-29 09:57:49 kanduls Exp $
+ * $Id: AMTuneUtil.java,v 1.9 2008-09-18 17:19:04 kanduls Exp $
  */
 
 package com.sun.identity.tune.util;
@@ -582,12 +582,14 @@ import java.util.zip.ZipOutputStream;
                     errorOccured = true;
                 }
             }
-            pLogger.log(Level.INFO, "executeCommand", "Command exit value " +
-                    exitValue);
             if (exitValue != 0 && errorOccured){
+                //In some cases original error code may be used by calling func.
+                resultBuffer.append("\n Exit value:" + exitValue);
                 throw new AMTuneException(AMTuneUtil.getResourceBundle()
                         .getString("pt-error-cmd-error"));
-            }
+            } 
+            pLogger.log(Level.INFO, "executeCommand", "Command exit value " +
+                    exitValue);
             return(exitValue);
         } catch (Exception ex) {
             pLogger.log(Level.SEVERE, "executeCommand", "Executing command " +
@@ -999,10 +1001,15 @@ import java.util.zip.ZipOutputStream;
                     new StringBuffer(wsConfigInfo.getWSAdminCmd());
             restartCmd.append(WebContainerConstants.WADM_RESTART_SUB_CMD);
             restartCmd.append(wsConfigInfo.getWSAdminCommonParams());
+            String passwordStr = 
+                    WebContainerConstants.WS7ADMIN_PASSWORD_SYNTAX + 
+                    wsConfigInfo.getWsAdminPass();
             StringBuffer resultBuffer = new StringBuffer();
-            int retVal = executeCommand(restartCmd.toString(),
+            int retVal = executeCommand(restartCmd.toString(), passwordStr,
+                    wsConfigInfo.getWSAdminPassFilePath(),
                     resultBuffer);
             if (retVal == -1) {
+                mWriter.writelnLocaleMsg("pt-error-ws-deployment-failed");
                 pLogger.log(Level.SEVERE, "reStartServ",
                         "Error executing command " + restartCmd);
             }

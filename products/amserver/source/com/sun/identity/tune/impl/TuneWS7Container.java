@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneWS7Container.java,v 1.6 2008-08-29 10:25:40 kanduls Exp $
+ * $Id: TuneWS7Container.java,v 1.7 2008-09-18 17:21:24 kanduls Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -426,7 +426,6 @@ public class TuneWS7Container extends TuneWebServer implements
                 if (retVal) {
                     AMTuneUtil.reStartWS7Serv(wsConfigInfo);
                 } else {
-                    
                     mWriter.writelnLocaleMsg("pt-error-ws-deployment-failed");
                 }
             } else {
@@ -456,7 +455,10 @@ public class TuneWS7Container extends TuneWebServer implements
             int retVal = AMTuneUtil.executeCommand(deployCmd, passwordStr, 
                     wsConfigInfo.getWSAdminPassFilePath(),
                     resultBuffer);
-            if (retVal == -1) {
+            //wadm some times returns error code 125 even thought the 
+            //values gets updated properly, this should not be considered 
+            //to be failure case.
+            if (retVal == -1 && resultBuffer.toString().indexOf(":125") == -1) {
                 pLogger.log(Level.SEVERE, "deployConfig",
                         "Error executing command " + deployCmd);
                 return false;
