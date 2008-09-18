@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-zip.xml,v 1.27 2008-09-10 17:37:12 kevinserwin Exp $
+   $Id: build-zip.xml,v 1.28 2008-09-18 17:06:57 alanchu Exp $
 
 -->
 
@@ -58,9 +58,6 @@
 
         <mkdir dir="${zip.temp.dir}/fedlet" />
         <copy file="${fm.dist.dir}/Fedlet-unconfigured.zip"
-            todir="${zip.temp.dir}/fedlet" />
-
-	<copy file="${fm.dist.dir}/AssertionGenerator.zip"
             todir="${zip.temp.dir}/fedlet" />
 
         <!-- copy IDP discovery related files to deployable-war -->

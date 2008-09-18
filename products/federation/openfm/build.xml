@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.48 2008-08-31 06:58:15 hengming Exp $
+   $Id: build.xml,v 1.49 2008-09-18 17:06:57 alanchu Exp $
 
 -->
 
@@ -142,7 +142,7 @@
         <copy file="${openfm.docs.dir}/nightly.html" tofile="${fm.dist.dir}/index.html" filtering="true" />
     </target>
 
-    <target name="zip" depends="war,fedlet,AG,clientsamples,tools,publicdoc">
+    <target name="zip" depends="war,fedlet,clientsamples,tools,externaltools,publicdoc">
         <ant antfile="${openfm.dir}/build-zip.xml" inheritRefs="true"/>
     </target>
     
@@ -166,20 +166,8 @@
         </java>
     </target>
 
-    <target name="AG" depends="war">
-        <delete file="${openfm.dir}/built/dist/AssertionGenerator.zip"/>
-        <java classname="com.sun.identity.fedlet.CreateAGZip">
-            <classpath refid="build.class.path"/>
-            <classpath>
-                <pathelement location="${library.res.i18n.dir}"/>
-                <pathelement location="${openfm.res.i18n.dir}"/>
-            </classpath>
-            <arg value="${openfm.dir}/resources/AGBits.properties"/>
-            <arg value="${openfm.dir}/resources/fedletJarExtract.properties"/>
-            <arg value="${openfm.dir}/built/war/package"/>
-            <arg value="${openfm.dir}/built/dist/AssertionGenerator.zip"/>
-            <arg value="${library.dir}/fedlet/AG/README"/>
-        </java>
+    <target name="externaltools" depends="jars">
+	<ant antfile="${openfm.dir}/build-external-tools.xml" inheritRefs="true"/>
     </target>
 
     <target name="tools" depends="jars">
