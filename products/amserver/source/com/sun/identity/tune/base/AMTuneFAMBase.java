@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneFAMBase.java,v 1.7 2008-08-29 10:08:04 kanduls Exp $
+ * $Id: AMTuneFAMBase.java,v 1.8 2008-09-18 17:13:29 kanduls Exp $
  */
 
 package com.sun.identity.tune.base;
@@ -137,7 +137,7 @@ public abstract class AMTuneFAMBase extends TuneFAM {
                 if (AMTuneUtil.isWindows()) {
                     cmd = cmd + "\"";
                 }
-                pLogger.log(Level.FINEST, "updateFAMServiceCfg", 
+                pLogger.log(Level.FINEST, "updateServiceCfg", 
                         "Executing cmd " + cmd);
                 try {
                     if (!AMTuneUtil.isWindows()) {
@@ -161,7 +161,7 @@ public abstract class AMTuneFAMBase extends TuneFAM {
                 }
             }
         } catch (Exception ex) {
-            pLogger.log(Level.SEVERE, "updateFAMServiceCfg", ex.getMessage());
+            pLogger.log(Level.SEVERE, "updateServiceCfg", ex.getMessage());
         }
     }
     
@@ -261,12 +261,11 @@ public abstract class AMTuneFAMBase extends TuneFAM {
                 }
             }
         } else {
-            pLogger.log(Level.WARNING, "getFAMServerConfig",
+            pLogger.log(Level.WARNING, "getServerConfig",
                     "Error while getting server configuration.");
         }
-        pLogger.log(Level.FINEST, "getFAMServerConfig",
-            "Returning OpenSSO configuration Map " +
-            famCfgInfo.toString());
+        pLogger.log(Level.FINEST, "getServerConfig",
+            "Returning OpenSSO configuration Map " + famCfgInfo.toString());
         return famCfgInfo;
     }
 
@@ -274,8 +273,8 @@ public abstract class AMTuneFAMBase extends TuneFAM {
         boolean isUp = true;
         try {
             URL u = new URL(configInfo.getFAMServerUrl());
-            pLogger.log(Level.INFO, "isFAMServerUp", "Connect FAM URL : " +
-                    u.toString());
+            pLogger.log(Level.INFO, "isServerUp", 
+                    "Connect OpenSSO URL : " + u.toString());
             URLConnection  famConn = u.openConnection();
             if (u.getProtocol().equalsIgnoreCase("http")){
                 HttpURLConnection testConnect = (HttpURLConnection)famConn;
@@ -285,7 +284,7 @@ public abstract class AMTuneFAMBase extends TuneFAM {
                 testConnect.connect();
             }
         } catch (Exception ex) {
-            pLogger.log(Level.SEVERE, "isFAMServerUp", "FAM server is down");
+            pLogger.log(Level.SEVERE, "isServerUp", "OpenSSO server is down");
             isUp = false;
         }   
         return isUp;
