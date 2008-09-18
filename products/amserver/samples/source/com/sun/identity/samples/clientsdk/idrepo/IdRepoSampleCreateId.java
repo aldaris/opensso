@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoSampleCreateId.java,v 1.12 2008-06-25 05:41:13 qcheng Exp $
+ * $Id: IdRepoSampleCreateId.java,v 1.13 2008-09-18 00:36:36 goodearth Exp $
  *
  */
 
@@ -339,7 +339,6 @@ public class IdRepoSampleCreateId {
         } catch (IdRepoException ire) {
             System.err.println("idRepoProcessing IdRepoException " +
                 "creating '" + idtype + "': " + ire.getMessage());
-            System.err.println("SUJATHA ire "+ ire);
         } catch (SSOException ssoe) {
             System.err.println("idRepoProcessing: SSOException " +
                 "creating '" + idtype + "': " + ssoe.getMessage());
