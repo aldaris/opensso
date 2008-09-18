@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPConnectionPool.java,v 1.13 2008-08-01 22:37:10 ww203982 Exp $
+ * $Id: LDAPConnectionPool.java,v 1.14 2008-09-18 22:56:57 ericow Exp $
  *
  */
 
@@ -41,9 +41,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.StringTokenizer;
+import com.iplanet.am.util.SSLSocketFactoryManager;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.ldap.DSConfigMgr;
-import com.iplanet.services.ldap.LDAPServiceException;
 import com.sun.identity.common.FallBackManager;
 import com.sun.identity.shared.debug.Debug;
 import netscape.ldap.LDAPConnection;
@@ -277,7 +277,7 @@ public class LDAPConnectionPool {
         if (connOptions != null) {
             // createHostList and assign the first one to the this.host & 
             // this.port
-            createHostList(host);
+            createHostList(host, ldc);
         } else {
             this.host = host;
             this.port = port;
@@ -690,11 +690,18 @@ public class LDAPConnectionPool {
         }
     }
     
-    private void createHostList(String hostNameFromConfig) {
+    private void createHostList(String hostNameFromConfig, LDAPConnection ldc) {
         StringTokenizer st = new StringTokenizer(hostNameFromConfig);
         while(st.hasMoreElements()) {
             String str = (String)st.nextToken();
             if (str != null && str.length() != 0) {
+                str += ":";
+                if (ldc.getSocketFactory() != null) {
+                    str += DSConfigMgr.VAL_STYPE_SSL;
+                } else {
+                    str += DSConfigMgr.VAL_STYPE_SIMPLE;
+                }
+
                 if (debug.messageEnabled()) {
                     debug.message("LDAPConnectionPool:createHostList():" +
                         "host name:"+str);
@@ -893,8 +900,9 @@ public class LDAPConnectionPool {
     /**
      * Sets a valid ldapconnection after fallback to primary server.
      * @param con ldapconnection
+     * @return false if can not get new LDAPConnection
      */
-    public void fallBack(LDAPConnection con) {
+    public boolean fallBack(LDAPConnection con) {
 
         /*
          * Logic here is first get the HashMap key and value where the key
@@ -911,7 +919,7 @@ public class LDAPConnectionPool {
         // there are servers that are down in the HashMap.
         if (!isPrimaryUP()) {
 
-            LDAPConnection newConn = new LDAPConnection();
+            LDAPConnection newConn = null;
             int sze = hostArrList.size();
 
             for (int i = 0; i < sze; i++) {
@@ -919,6 +927,19 @@ public class LDAPConnectionPool {
                 StringTokenizer stn = new StringTokenizer(hpName,":");
                 String upHost = (String)stn.nextToken();
                 String upPort = (String)stn.nextToken();
+                String type = (String)stn.nextToken();
+
+                if (type.equals(DSConfigMgr.VAL_STYPE_SSL)) {
+                    try {
+                        newConn = new LDAPConnection(
+                                SSLSocketFactoryManager.getSSLSocketFactory());
+                    } catch (Exception e) {
+                        debug.error("getConnection.JSSSocketFactory", e);
+                        return false;
+                    }
+                } else {
+                    newConn = new LDAPConnection();
+                }
 
                 /*
                  * This 'if' check is to ensure that the shutdown server from
@@ -936,15 +957,20 @@ public class LDAPConnectionPool {
                     break;
                 }
             }
+            if (newConn == null) {
+                return false;
+            }
             reinit(newConn);
         }
+        return true;
     }
 
     /**
      * Sets a valid ldapconnection after failover to secondary server.
      * @param ld ldapconnection
+     * @return false if can not get new LDAPConnection
      */
-    public void failOver(LDAPConnection ld) {
+    public boolean failOver(LDAPConnection ld) {
 
         /* Since we are supporting fallback in FallBackManager class,
          * do the failover here, instead of relying on
@@ -959,7 +985,7 @@ public class LDAPConnectionPool {
          * Also update the HashMap with the key and this LDAPConnectionPool
          * object if the server is down.
          */
-        LDAPConnection newConn = new LDAPConnection();
+        LDAPConnection newConn = null;
         // Update the HashMap with the key and this LDAPConnectionPool
         // object if the server is down.
         String downKey = name + ":" + ld.getHost() + ":" +
@@ -976,6 +1002,19 @@ public class LDAPConnectionPool {
             StringTokenizer stn = new StringTokenizer(hpName,":");
             String upHost = (String)stn.nextToken();
             String upPort = (String)stn.nextToken();
+            String type = (String)stn.nextToken();
+
+            if (type.equals(DSConfigMgr.VAL_STYPE_SSL)) {
+                try {
+                    newConn = new LDAPConnection(
+                            SSLSocketFactoryManager.getSSLSocketFactory());
+                } catch (Exception e) {
+                    debug.error("getConnection.JSSSocketFactory", e);
+                    return false;
+                }
+            } else {
+                newConn = new LDAPConnection();
+            }
 
             /*
              * This 'if' check is to ensure that the shutdown server from
@@ -1007,7 +1046,11 @@ public class LDAPConnectionPool {
                 }
             }
         }
+        if (newConn == null) {
+            return false;
+        }
         reinit(newConn);
+        return true;
     }
 
     private LDAPConnection failoverAndfallback(
