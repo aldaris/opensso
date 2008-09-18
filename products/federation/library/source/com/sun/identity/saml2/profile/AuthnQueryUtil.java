@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthnQueryUtil.java,v 1.6 2008-08-01 22:22:10 hengming Exp $
+ * $Id: AuthnQueryUtil.java,v 1.7 2008-09-18 00:30:33 hengming Exp $
  *
  */
 
@@ -231,14 +231,15 @@ public class AuthnQueryUtil {
             authnQuery.getRequestedAuthnContext();
 
         List assertions = null;
+        String cacheKey = userID.toLowerCase();
         AssertionFactory assertionFactory = AssertionFactory.getInstance();
         if (SAML2Utils.isSAML2FailOverEnabled()) {
             if (SAML2Utils.debug.messageEnabled()) {
                 SAML2Utils.debug.message("AuthnQueryUtil.processAuthnQuery: " +
-                    "getting user assertions from DB. user = " + userID);
+                    "getting user assertions from DB. user = " + cacheKey);
             }
             List list = SAML2Repository.getInstance().retrieveWithSecondaryKey(
-                userID);
+                cacheKey);
             if ((list != null) && (!list.isEmpty())) {
                 assertions = new ArrayList();
                 for(Iterator iter = list.iterator(); iter.hasNext(); ) {
@@ -248,7 +249,7 @@ public class AuthnQueryUtil {
                 }
             }
         } else {
-            assertions = (List)IDPCache.assertionCache.get(userID);
+            assertions = (List)IDPCache.assertionCache.get(cacheKey);
         }
 
         if ((assertions != null) && (!assertions.isEmpty())) {

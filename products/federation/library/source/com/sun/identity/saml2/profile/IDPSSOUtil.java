@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.39 2008-08-22 20:40:42 hengming Exp $
+ * $Id: IDPSSOUtil.java,v 1.40 2008-09-18 00:30:33 hengming Exp $
  *
  */
 
@@ -870,13 +870,15 @@ public class IDPSSOUtil {
                    SAML2Utils.bundle.getString("invalidSSOToken")); 
             }    
 
-            List assertions = (List)IDPCache.assertionCache.get(userName);
+            String cacheKey = userName.toLowerCase();
+
+            List assertions = (List)IDPCache.assertionCache.get(cacheKey);
             if (assertions == null) {
                 synchronized (IDPCache.assertionCache) {
-                    assertions = (List)IDPCache.assertionCache.get(userName);
+                    assertions = (List)IDPCache.assertionCache.get(cacheKey);
                     if (assertions == null) {
                         assertions = new ArrayList();
-                        IDPCache.assertionCache.put(userName, assertions);
+                        IDPCache.assertionCache.put(cacheKey, assertions);
                     }
                 }
             }
@@ -888,7 +890,7 @@ public class IDPSSOUtil {
             if (SAML2Utils.isSAML2FailOverEnabled()) {
                 SAML2Repository.getInstance().save(assertionID,
                     assertion.toXMLString(true, true),
-                    conditions.getNotOnOrAfter().getTime(), userName);
+                    conditions.getNotOnOrAfter().getTime(), cacheKey);
 
                 if (SAML2Utils.debug.messageEnabled()) {
                     SAML2Utils.debug.message(classMethod +
