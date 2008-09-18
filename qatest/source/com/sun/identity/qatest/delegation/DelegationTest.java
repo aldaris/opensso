@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationTest.java,v 1.4 2008-06-26 20:11:13 rmisra Exp $
+ * $Id: DelegationTest.java,v 1.5 2008-09-18 16:53:23 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -556,11 +556,23 @@ public class DelegationTest extends DelegationCommon {
                     if (testIdType.equals("realm")) {
                         smsObj = new SMSCommon(ssoToken);
                         if (schema_type != null) {
-                            assert(smsObj.updateSvcSchemaAttribute(serviceName,
-                                    attrMap, schema_type));
+                            boolean bStat = false;
+                            try {
+                                smsObj.updateSvcSchemaAttribute(serviceName,
+                                    attrMap, schema_type);
+                            } catch (Exception e) {
+                                bStat = true;
+                            }
+                            assert (bStat);
                         } else {
-                            assert(smsObj.updateGlobalServiceDynamicAttributes(
-                                    serviceName, attrMap));
+                            boolean bStat = false;
+                            try {
+                                smsObj.updateGlobalServiceDynamicAttributes(
+                                    serviceName, attrMap);
+                            } catch (Exception e) {
+                                bStat = true;
+                            }
+                            assert (bStat);
                         }
                     } else {
                         assert(modifyUsersAssignedService(ssoToken, testIdName,
