@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneConfigInfo.java,v 1.8 2008-08-29 10:15:27 kanduls Exp $
+ * $Id: AMTuneConfigInfo.java,v 1.9 2008-09-18 17:16:02 kanduls Exp $
  */
 
 package com.sun.identity.tune.config;
@@ -480,12 +480,12 @@ FAMConstants, WebContainerConstants {
                 this.famTunePctMemoryToUse = 75;
             }
             if (this.famTunePctMemoryToUse > 100 ) {
-                pLogger.log(Level.WARNING, "setFAMTunePctMemoryToUse", 
+                pLogger.log(Level.WARNING, "setTunePctMemoryToUse", 
                     AMTUNE_PCT_MEMORY_TO_USE + " value is > 100 so using " +
                     "default value 100.");
                 this.famTunePctMemoryToUse = 100;
             } else if (this.famTunePctMemoryToUse < 0) {
-                pLogger.log(Level.WARNING, "setFAMTunePctMemoryToUse", 
+                pLogger.log(Level.WARNING, "setTunePctMemoryToUse", 
                     AMTUNE_PCT_MEMORY_TO_USE + " value is < 0 so using " +
                     "default value 0.");
                 this.famTunePctMemoryToUse = 0;
