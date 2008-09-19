@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPClient.java,v 1.13 2008-06-25 05:53:04 qcheng Exp $
+ * $Id: SOAPClient.java,v 1.14 2008-09-19 22:50:06 arviranga Exp $
  *
  */
 
@@ -87,9 +87,6 @@ public class SOAPClient {
     // Instance variables
     String serviceName;
     
-    // URL that will be used for JAXRPC calls
-    String serviceUrl;
-    
     // Variables for direct URLs
     String urls[];
     
@@ -149,7 +146,7 @@ public class SOAPClient {
             debug.message("SOAP Client: Message being sent:" + message);
         }
         // Setup the connection, support for failover
-        String url = serviceUrl;
+        String url = null;
         InputStream in_buf = null;
         boolean done = false;
         boolean isException = false;
@@ -168,14 +165,14 @@ public class SOAPClient {
                         }
                         throw (new RemoteException("no-server-found"));
                     }
-                    serviceUrl = url = urls[urlIndex++];
+                    url = urls[urlIndex++];
                 } else {
                     // This function throws RemoteException
                     // if no servers are found
                     boolean validServerFound = false;
                     try {
-                        if ((serviceUrl = url = JAXRPCHelper
-                                .getValidURL(serviceName)) != null) {
+                        if ((url = JAXRPCHelper.getValidURL(serviceName))
+                            != null) {
                             validServerFound = true;
                         }
                     } catch (RemoteException re) {
@@ -363,7 +360,8 @@ public class SOAPClient {
     }
     
     public void setURL(String url) {
-        serviceUrl = url;
+        urls = new String[1];
+        urls[0] = url;
     }
     
     void setURLs(String[] urls) {
