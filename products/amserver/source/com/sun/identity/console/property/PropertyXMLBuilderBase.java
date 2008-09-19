@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PropertyXMLBuilderBase.java,v 1.13 2008-09-04 23:59:38 veiming Exp $
+ * $Id: PropertyXMLBuilderBase.java,v 1.14 2008-09-19 15:55:30 veiming Exp $
  *
  */
 
@@ -701,6 +701,9 @@ public abstract class PropertyXMLBuilderBase
                     break;
                 case '>':
                     sb.append("&gt;");
+                    break;
+                case '"':
+                    sb.append("&quot;");
                     break;
                 default:
                     sb.append(c);
