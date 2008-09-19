@@ -22,17 +22,32 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSUtils.java,v 1.8 2008-08-13 18:56:42 mrudul_uchil Exp $
+ * $Id: STSUtils.java,v 1.9 2008-09-19 16:00:56 mallas Exp $
  *
  */
 
 package com.sun.identity.wss.sts;
 
+import java.io.InputStream;
+import java.io.IOException;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.ResourceBundle;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
+import org.w3c.dom.NodeList;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.SOAPConstants;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.MimeHeader;
+import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPHeader;
+import javax.xml.soap.SOAPPart;
+        
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.wss.security.WSSUtils;
 import com.sun.identity.idm.AMIdentity;
@@ -45,6 +60,9 @@ import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.wss.sts.config.FAMSTSConfiguration;
+import com.sun.identity.shared.xml.XMLUtils;
+import com.sun.identity.saml.common.SAMLUtils;
+import com.sun.identity.common.SystemConfigurationUtil;
 
 /**
  * This class provides utility classes for STS Service and clients
@@ -108,6 +126,7 @@ public class STSUtils {
                 } else {
                    agentConfig = provider.getAttributes();
                 }
+                agentConfig.put("Name", provider.getName());
                 return agentConfig;
             }
             return new HashMap();
@@ -143,5 +162,99 @@ public class STSUtils {
         set.add(Boolean.toString(stsConfig.shouldIncludeMemberships()));
         map.put("includeMemberships", set);
         return map;
+    }
+    
+    public static String getAppliesTo(Element element) {
+        NodeList nl = 
+                element.getElementsByTagNameNS(STSConstants.WSA_NS, "Address");
+        if(nl.getLength() == 0) {
+           return null;
+        }
+        Element addressE = (Element)nl.item(0);
+        return XMLUtils.getElementValue(addressE);               
+    }
+    
+    public static SOAPMessage prepareSOAPMessage(String url, String wstVersion)
+            throws FAMSTSException {
+        try {
+            String soapVersion = SystemConfigurationUtil.getProperty(
+                    "com.sun.identity.wss.soapversion", "1.2");
+            MessageFactory mf = null;
+            if(soapVersion.equals("1.2")) {
+               mf = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+            } else {
+               mf = MessageFactory.newInstance();
+            }
+            SOAPMessage soapMessage = mf.createMessage();
+            //Add addressing headers here
+            SOAPEnvelope envelope = soapMessage.getSOAPPart().getEnvelope();
+            SOAPHeader header = envelope.getHeader(); 
+            if(header == null) {
+               header = soapMessage.getSOAPPart().getEnvelope().addHeader();
+            }
+            SOAPPart soapPart = soapMessage.getSOAPPart();
+            Element to = soapPart.createElementNS(
+                          STSConstants.WSA_NS, 
+                          STSConstants.WSA_PREFIX + "To");
+            Text txtNode = soapPart.createTextNode(url);
+            to.appendChild(txtNode);
+            header.appendChild(to);
+                        
+            Element action = soapMessage.getSOAPPart().createElementNS(
+                          STSConstants.WSA_NS, 
+                          STSConstants.WSA_PREFIX + "Action");
+            String issueAction = STSConstants.WST10_NAMESPACE + "/RST/Issue";
+            if(STSConstants.WST_VERSION_13.equals(wstVersion)) {
+               issueAction = STSConstants.WST13_NAMESPACE + "/RST/Issue";
+            }
+            txtNode = soapPart.createTextNode(issueAction);            
+            action.appendChild(txtNode);
+            header.appendChild(action);
+            Element replyTo = soapMessage.getSOAPPart().createElementNS(
+                          STSConstants.WSA_NS, 
+                          STSConstants.WSA_PREFIX + "ReplyTo");
+            Element address = soapMessage.getSOAPPart().createElementNS(
+                          STSConstants.WSA_NS, 
+                          STSConstants.WSA_PREFIX + "Address");
+            txtNode = soapPart.createTextNode(STSConstants.ANONYMOUS_ADDRESS);
+            address.appendChild(txtNode);
+            replyTo.appendChild(address);
+            header.appendChild(replyTo);
+            Element messageID = soapMessage.getSOAPPart().createElementNS(
+                          STSConstants.WSA_NS, 
+                          STSConstants.WSA_PREFIX + "MessageID");
+            txtNode = soapPart.createTextNode(SAMLUtils.generateID());
+            messageID.appendChild(txtNode);
+            header.appendChild(messageID);
+            soapMessage.saveChanges();
+            return soapMessage;
+        } catch (SOAPException se) {
+            throw new FAMSTSException(se.getMessage());
+        }
+        
+    }
+    
+    public static SOAPMessage createSOAPMessage(InputStream is)
+            throws FAMSTSException {
+        try {
+            String soapVersion = SystemConfigurationUtil.getProperty(
+                    "com.sun.identity.wss.soapversion", "1.2");
+            MessageFactory mf = null;
+            String contentType = "text/xml";
+            if(soapVersion.equals("1.2")) {
+               mf = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+               contentType = "application/soap+xml";
+            } else {
+               mf = MessageFactory.newInstance();
+            }
+            
+            MimeHeaders headers = new MimeHeaders();
+            headers.addHeader("Content-Type", contentType);
+            return mf.createMessage(headers, is);
+        } catch (IOException ie) {
+            throw new FAMSTSException(ie.getMessage());
+        } catch (SOAPException se) {
+            throw new FAMSTSException(se.getMessage());
+        }
     }
 }

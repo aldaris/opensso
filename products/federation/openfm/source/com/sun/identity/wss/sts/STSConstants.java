@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSConstants.java,v 1.14 2008-09-08 21:50:15 mallas Exp $
+ * $Id: STSConstants.java,v 1.15 2008-09-19 16:00:55 mallas Exp $
  *
  */
 
@@ -41,6 +41,18 @@ public class STSConstants {
             "http://docs.oasis-open.org/ws-sx/ws-trust/200512";
     public static final String WST_VERSION_13= "1.3";
     public static final String WST_VERSION_10 = "1.0";
+    
+    public static final String WST_PREFIX = "wst:";    
+    public static final String WST_XMLNS = "xmlns:wst";
+    
+    public static final String WSP_PREFIX = "wsp:";
+    public static final String WSP_XMLNS = "xmlns:wsp";
+    public static final String WSP_NS = 
+                  "http://schemas.xmlsoap.org/ws/2004/09/policy";
+    public static final String WSA_PREFIX = "wsa:";
+    public static final String WSA_XMLNS = "xmlns:wsa";
+    public static final String WSA_NS = "http://www.w3.org/2005/08/addressing";
+                  
    
     /**
      * URI for KeyType
@@ -111,6 +123,9 @@ public class STSConstants {
     public static final String WST_VERSION_ATTR = "WSTrustVersion";
     
     public static final String USER_NAME_TOKEN = "UsernameToken";
+    
+    public static final String ANONYMOUS_ADDRESS = 
+            "http://www.w3.org/2005/08/addressing/anonymous";
         
 }
 

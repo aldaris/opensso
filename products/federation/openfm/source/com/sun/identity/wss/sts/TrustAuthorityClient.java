@@ -22,22 +22,28 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityClient.java,v 1.20 2008-09-17 03:07:31 mallas Exp $
+ * $Id: TrustAuthorityClient.java,v 1.21 2008-09-19 16:00:56 mallas Exp $
  *
  */
 
 package com.sun.identity.wss.sts;
 
-import com.sun.identity.wss.security.SecurityMechanism;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.lang.reflect.Method;
 import java.lang.reflect.Constructor;
-import org.w3c.dom.Element;
 import javax.servlet.ServletContext;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.SOAPException;
+import javax.security.auth.Subject;
 
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.shared.debug.Debug;
@@ -51,6 +57,16 @@ import com.sun.identity.wss.security.SAML2Token;
 import com.sun.identity.wss.security.UserNameToken;
 import com.sun.identity.wss.logging.LogUtil;
 import com.sun.identity.classloader.FAMClassLoader;
+import com.sun.identity.wss.security.SecurityMechanism;
+import com.sun.identity.wss.trust.WSTrustFactory;
+import com.sun.identity.wss.trust.WSTException;
+import com.sun.identity.wss.trust.RequestSecurityToken;
+import com.sun.identity.wss.trust.RequestSecurityTokenResponse;
+import com.sun.identity.wss.trust.RequestSecurityTokenResponseCollection;
+import com.sun.identity.common.SystemConfigurationUtil;
+import com.sun.identity.shared.jaxrpc.SOAPClient;
+import com.sun.identity.wss.security.handler.SOAPRequestHandler;
+import com.sun.identity.wss.security.SecurityException;
 
 /**
  * The class <code>TrustAuthorityClient</code> is a client API class that is 
@@ -65,7 +81,8 @@ import com.sun.identity.classloader.FAMClassLoader;
  */
 public class TrustAuthorityClient {
     
-    private static Debug debug = STSUtils.debug;    
+    private static Debug debug = STSUtils.debug;
+    private static Class clientTokenClass;
     
     /** 
      * Creates a new instance of TrustAuthorityClient.
@@ -173,6 +190,7 @@ public class TrustAuthorityClient {
             String tokenType,
             ServletContext context) throws FAMSTSException {
         String keyType = STSConstants.WST13_PUBLIC_KEY;
+        String stsAgentName = null;
         String wstVersion = STSConstants.WST_VERSION_13;                
         if (pc != null) {
             List securityMechanisms = pc.getSecurityMechanisms();
@@ -193,7 +211,7 @@ public class TrustAuthorityClient {
                throw new FAMSTSException(
                        STSUtils.bundle.getString("invalidtaconfig"));
             }
-
+            stsAgentName = stsConfig.getName();
             stsEndPoint = stsConfig.getEndpoint();        
             stsMexEndPoint = stsConfig.getMexEndpoint();                                
             wstVersion = stsConfig.getProtocolVersion();
@@ -222,6 +240,7 @@ public class TrustAuthorityClient {
         } else {
             Map attrMap = STSUtils.getAgentAttributes(stsEndPoint, 
                 "STSEndpoint", null, TrustAuthorityConfig.STS_TRUST_AUTHORITY);
+            stsAgentName = (String)attrMap.get("Name");
             Set versionSet = (Set)attrMap.get(STSConstants.WST_VERSION_ATTR);
             wstVersion = (String)versionSet.iterator().next();
             if((wstVersion == null) || wstVersion.length() == 0)  {
@@ -254,8 +273,16 @@ public class TrustAuthorityClient {
         }
         
         if(securityMech.equals(SecurityMechanism.STS_SECURITY_URI)) {
-           return getSTSToken(wspEndPoint,stsEndPoint,stsMexEndPoint,
+           String useMetro = SystemConfigurationUtil.getProperty(
+                            "com.sun.identity.wss.trustclient.enablemetro",
+                            "true");
+           if(!(Boolean.valueOf(useMetro)).booleanValue()) {
+               return getSTSToken(wspEndPoint, stsEndPoint, stsMexEndPoint, 
+                   credential, keyType, tokenType, wstVersion, stsAgentName); 
+           } else {
+               return getSTSToken(wspEndPoint,stsEndPoint,stsMexEndPoint,
                    credential,keyType, tokenType, wstVersion,context); 
+           }
         } else if (securityMech.equals(
                 SecurityMechanism.LIBERTY_DS_SECURITY_URI)) {
            return getLibertyToken(pc, credential);
@@ -396,7 +423,7 @@ public class TrustAuthorityClient {
                     data2,
                     null);
             }
-        
+                    
             if (type != null) {
                 if (type.equals(STSConstants.SAML20_ASSERTION_TOKEN_TYPE)) {
                     return new SAML2Token(element);
@@ -475,6 +502,204 @@ public class TrustAuthorityClient {
             return "getTokenType:NOT IMPLEMENTED TOKEN TYPE";
         }
         return null;
+    }
+    
+    private SecurityToken getSTSToken(String wspEndPoint,
+            String stsEndPoint,
+            String stsMexEndPoint,
+            Object credential, 
+            String keyType, 
+            String tokenType, 
+            String wstVersion,
+            String stsAgentName) throws FAMSTSException {
+        try {
+            if(debug.messageEnabled()) {
+               debug.message("TrustAuthorityClient.getSTSToken: WS-Trust" +
+                       " Parameters: " + "STSEndpoint = " + stsEndPoint +
+                       " keyType = " + keyType + " tokenType = " + tokenType +
+                       " wstVersion = " + wstVersion + 
+                       " STSAgentName = " + stsAgentName); 
+            }
+            WSTrustFactory trustFactory = 
+                                 WSTrustFactory.newInstance(wstVersion);
+            RequestSecurityToken rst = 
+                      trustFactory.createRequestSecurityToken();
+            rst.setAppliesTo(wspEndPoint);
+            rst.setKeyType(keyType);
+            
+            String requestType = STSConstants.WST10_NAMESPACE + "/Issue";
+            if(STSConstants.WST_VERSION_13.equals(wstVersion)) {
+               requestType = STSConstants.WST13_NAMESPACE + "/Issue"; 
+            }
+            rst.setRequestType(requestType);
+            if(credential != null) {
+               rst.setOnBehalfOf(getClientUserToken(credential));
+            }
+            rst.setTokenType(tokenType);
+            RequestSecurityTokenResponse rstR = 
+                   getTrustResponse(rst, stsEndPoint, stsAgentName, wstVersion); 
+            Element secTokenE = 
+                    (Element)rstR.getRequestedSecurityToken().getFirstChild();
+            return parseSecurityToken(secTokenE);
+        } catch (WSTException wse) {
+            debug.error("TrustAuthorityClient.getSTSToken: Failed in " +
+                    " retrieving Token from STS", wse);
+           throw new FAMSTSException(wse.getMessage()); 
+        }
+        
+    }            
+     
+    private RequestSecurityTokenResponse getTrustResponse(
+            RequestSecurityToken rst,
+            String url,
+            String stsAgentName,
+            String wstVersion) throws FAMSTSException {
+        
+        SOAPMessage soapMsg = STSUtils.prepareSOAPMessage(url, wstVersion);
+        if(soapMsg == null) {
+           throw new FAMSTSException("nullElement"); 
+        }
+        try {            
+            Node rstE = soapMsg.getSOAPPart().importNode(
+                    rst.toDOMElement(), true);
+            soapMsg.getSOAPBody().appendChild(rstE);
+            SOAPRequestHandler handler = new SOAPRequestHandler();
+            Map config = new HashMap();
+            config.put("providername", stsAgentName);
+            handler.init(config);
+            SOAPMessage secureMsg = handler.secureRequest(
+                    soapMsg, new Subject(), null);           
+            SOAPMessage response = getSOAPResponse(secureMsg, url);            
+            handler.validateResponse(response, config);
+            return getRequestSecurityTokenResponse(response, wstVersion);
+        } catch (SOAPException se) {
+            debug.error("TrustAuthorityClient.getTrustResponse: " +
+                    " SOAP Exception", se);
+            throw new FAMSTSException(se.getMessage());
+        } catch (WSTException we) {
+            debug.error("TrustAuthorityClient.getTrustResponse: " +
+                    " WST Exception", we);
+            throw new FAMSTSException(we.getMessage());
+        } catch (SecurityException sse) {
+            debug.error("TrustAuthorityClient.getTrustResponse: " +
+                    " SecurityException", sse);
+            throw new FAMSTSException(sse.getMessage());
+        }                        
+        
+    }
+    
+    private SOAPMessage getSOAPResponse(SOAPMessage soapMsg, String url)
+              throws FAMSTSException {
+        try {
+            SOAPClient soapClient = new SOAPClient();
+            soapClient.setURL(url);
+            String msg = XMLUtils.print(soapMsg.getSOAPPart(),"UTF-8");
+            InputStream is = soapClient.call(msg, null, null);
+            return STSUtils.createSOAPMessage(is);            
+        } catch (SOAPException se) {
+            debug.error("TrustAutorityClient.getSOAPResponse: " +
+                    " soap exception", se);
+            throw new FAMSTSException(se.getMessage());
+        } catch (Exception ex) {
+             debug.error("TrustAutorityClient.getSOAPResponse: " +
+                    "  exception", ex);
+            throw new FAMSTSException(ex.getMessage());
+        }
+    }
+    
+    private RequestSecurityTokenResponse getRequestSecurityTokenResponse(
+            SOAPMessage soapMsg, String wstVersion) throws FAMSTSException {
+        try {
+            Element rstRC = (Element)soapMsg.getSOAPBody().getFirstChild();
+            WSTrustFactory wstFactory =  WSTrustFactory.newInstance(wstVersion);
+            if("RequestSecurityTokenResponse".equals(rstRC.getLocalName())) {
+               return wstFactory.createRequestSecurityTokenResponse(rstRC); 
+            }
+            RequestSecurityTokenResponseCollection rstRCollection = 
+                 wstFactory.createRequestSecurityTokenResponseCollection(rstRC);
+            List rstResponses = 
+                    rstRCollection.getRequestSecurityTokenResponses();
+            if(rstResponses.size() == 0) {
+               throw new FAMSTSException("nullElements");
+            }
+            return (RequestSecurityTokenResponse)rstResponses.get(0);
+            
+        } catch (SOAPException se) {
+            debug.error("TrustAuthorityClient.getRequestSecurityTokenResponse:"
+                    + " soap exception", se);
+            throw new FAMSTSException(se.getMessage());
+        } catch (WSTException we) {
+            debug.error("TrustAuthorityClient.getRequestSecurityTokenResponse:"
+                    + " wst exception", we);
+            throw new FAMSTSException(we.getMessage());
+        }
+    }
+    
+    private SecurityToken parseSecurityToken(Element element) 
+            throws FAMSTSException {
+        String type = getTokenType(element);
+        try {
+            if (type != null) {
+                if (type.equals(STSConstants.SAML20_ASSERTION_TOKEN_TYPE)) {
+                    return new SAML2Token(element);
+                } else if (
+                    type.equals(STSConstants.SAML11_ASSERTION_TOKEN_TYPE)) {
+                    return new AssertionToken(element);    
+                } else if (type.equals(SecurityToken.WSS_FAM_SSO_TOKEN)) {
+                    return new FAMSecurityToken(element);
+                } else if (type.equals(SecurityToken.WSS_USERNAME_TOKEN)) {
+                    return new UserNameToken(element);
+                } else {
+                    throw new FAMSTSException (
+                            STSUtils.bundle.getString("unsupportedtokentype"));
+                }
+            } else {
+               throw new FAMSTSException (
+                       STSUtils.bundle.getString("nulltokentype"));
+            }
+        } catch (Exception se) {
+            debug.error("TrustAuthorityClient.parseSecurityToken: " +
+                    "Exception :", se);
+            throw new FAMSTSException(se.getMessage());
+        }
+            
+        
+    }
+    
+    private Element getClientUserToken(Object credential) 
+                throws FAMSTSException {
+        if (clientTokenClass == null) {
+            String className =   SystemConfigurationUtil.getProperty(
+                STSConstants.STS_CLIENT_USER_TOKEN_PLUGIN, 
+                "com.sun.identity.wss.sts.STSClientUserToken");
+            try {                
+                clientTokenClass = 
+                       (Thread.currentThread().getContextClassLoader()).
+                        loadClass(className);                               
+            } catch (Exception ex) {
+                 debug.error("TrustAuthorityClientImpl.getClientUserToken:"
+                           +  "Failed in obtaining class", ex);
+                 throw new FAMSTSException(
+                       STSUtils.bundle.getString("initializationFailed"));
+            }
+        }
+        
+        try {
+            ClientUserToken userToken =
+                (ClientUserToken) clientTokenClass.newInstance();
+            userToken.init(credential);
+            if(debug.messageEnabled()) {
+                debug.message("TrustAuthorityClientImpl:getClientUserToken: " + 
+                    "Client User Token : " + userToken);
+            }
+            return (Element)userToken.getTokenValue();
+
+        } catch (Exception ex) {
+            debug.error("TrustAuthorityClientImpl.getClientUserToken: " +
+                 "Failed in initialization", ex);
+             throw new FAMSTSException(
+                     STSUtils.bundle.getString("usertokeninitfailed"));
+        }
     }
             
     /**
