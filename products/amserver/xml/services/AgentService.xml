@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.70 2008-09-08 21:51:20 mallas Exp $
+   $Id: AgentService.xml,v 1.71 2008-09-19 18:58:03 madan_ranganath Exp $
 
 -->
 
@@ -51,6 +51,9 @@
                         type="list"
                         syntax="string"
                         i18nKey="a601">
+                        <DefaultValues>
+                            <Value>@AGENT_PROTO@://@AGENT_HOST@:@AGENT_PORT@/</Value>
+                        </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema name="sunIdentityServerDeviceStatus"
                         type="single_choice"
@@ -1021,6 +1024,15 @@
                             <Value>|</Value>
                         </DefaultValues>
                     </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.identity.agents.config.redirect.param"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a147">
+                        <DefaultValues>
+                            <Value>goto</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
                 </SubSchema>
                 <SubSchema name="J2EEAgent" inheritance="multiple">
                      <AttributeSchema
@@ -1037,6 +1049,9 @@
                         type="list"
                         syntax="string"
                         i18nKey="a601">
+                        <DefaultValues>
+                            <Value>@AGENT_PROTO@://@AGENT_HOST@:@AGENT_PORT@/</Value>
+                        </DefaultValues>
                      </AttributeSchema>
                      <AttributeSchema name="sunIdentityServerDeviceStatus"
                          type="single_choice"
