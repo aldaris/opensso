@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.10 2008-08-31 05:46:29 bina Exp $
+   $Id: build.xml,v 1.11 2008-09-19 05:50:29 mahesh_prasad_r Exp $
 
 -->
 
@@ -170,6 +170,20 @@
 	    todir="${upgrade.dist.dir}/upgrade/locale" />
          <copy file="${upgrade.src.dir}/resources/locale/ssoUpgrade.properties"
 	    todir="${upgrade.dist.dir}/upgrade/locale" />
+	 <copy file="${upgrade.src.dir}/resources/locale/de_DE/ssoUpgrade_de.properties"
+            todir="${upgrade.dist.dir}/upgrade/locale" />
+	 <copy file="${upgrade.src.dir}/resources/locale/es_ES/ssoUpgrade_es.properties"
+            todir="${upgrade.dist.dir}/upgrade/locale" />
+	 <copy file="${upgrade.src.dir}/resources/locale/fr_FR/ssoUpgrade_fr.properties"
+            todir="${upgrade.dist.dir}/upgrade/locale" />
+	 <copy file="${upgrade.src.dir}/resources/locale/ja_JP/ssoUpgrade_ja.properties"
+            todir="${upgrade.dist.dir}/upgrade/locale" />
+	 <copy file="${upgrade.src.dir}/resources/locale/ko_KR/ssoUpgrade_ko.properties"
+            todir="${upgrade.dist.dir}/upgrade/locale" />
+	 <copy file="${upgrade.src.dir}/resources/locale/zh_CN/ssoUpgrade_zh.properties"
+            todir="${upgrade.dist.dir}/upgrade/locale" />
+	 <copy file="${upgrade.src.dir}/resources/locale/zh_TW/ssoUpgrade_zh_TW.properties"
+            todir="${upgrade.dist.dir}/upgrade/locale" />
          <copy file="${upgrade.src.dir}/README"
 	    todir="${upgrade.dist.dir}/upgrade/README" />
     </target>
