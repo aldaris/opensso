@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: IdServicesImpl.java,v 1.51 2008-09-04 21:23:33 goodearth Exp $
+* $Id: IdServicesImpl.java,v 1.52 2008-09-19 02:38:52 sean_brydon Exp $
 *
 */
 
@@ -96,7 +96,7 @@ public class IdServicesImpl implements IdServices {
 
    private IdRepoPluginsCache idrepoCache;
 
-   private static volatile boolean shutdownCalled;
+   protected static volatile boolean shutdownCalled;
 
    private static HashSet READ_ACTION = new HashSet(2);
 

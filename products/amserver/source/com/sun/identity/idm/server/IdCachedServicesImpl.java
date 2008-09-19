@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdCachedServicesImpl.java,v 1.16 2008-08-08 00:40:57 ww203982 Exp $
+ * $Id: IdCachedServicesImpl.java,v 1.17 2008-09-19 02:38:52 sean_brydon Exp $
  *
  */
 
@@ -142,9 +142,12 @@ public class IdCachedServicesImpl extends IdServicesImpl implements
                     shutdownMan.addShutdownListener(
                         new ShutdownListener() {
                             public void shutdown() {
+                               synchronized (instance) {
+                                   shutdownCalled = true;
+                               }
                                 instance.clearIdRepoPlugins();
                             }
-                        });
+                        });                                                                             
                 } finally {
                     shutdownMan.releaseLockAndNotify();
                 }
