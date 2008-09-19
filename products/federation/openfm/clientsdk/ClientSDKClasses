@@ -14,6 +14,7 @@ com/sun/identity/wss/security/*.class
 com/sun/identity/wss/security/handler/*.class
 com/sun/identity/wss/xmlenc/*.class
 com/sun/identity/wss/xmlsig/*.class
+com/sun/identity/wss/trust/**/*.*
 com/sun/identity/wss/sts/FAMSTSException.class
 com/sun/identity/wss/sts/STSClientConfiguration.class
 com/sun/identity/wss/sts/STSConstants.class
