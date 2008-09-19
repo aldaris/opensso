@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSvcsTestIdentityREST.java,v 1.5 2008-08-27 19:02:07 vimal_67 Exp $
+ * $Id: IdSvcsTestIdentityREST.java,v 1.6 2008-09-19 21:47:47 vimal_67 Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -379,6 +379,8 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                                     operationName + " IdType Not Supported");
                         }
                     } else if (operationName.equals("authenticate")) {
+                        Map<String, Set<String>> anmap = new HashMap();
+                        Map pmap = new HashMap(); 
                         String username = rbid.getString(idsProp + index + 
                                 "." + "operation" + i + "." + "username");
                         String password = rbid.getString(idsProp + index +
@@ -393,6 +395,16 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                             Reporter.log("Password: " + password);
                             userToken = idsvcsc.authenticateREST(username, 
                                     password);
+                            pmap.put("tokenid", URLEncoder.encode(userToken, 
+                                            "UTF-8"));
+                            page = idsvcsc.commonURLREST("isTokenValid", 
+                                        pmap, anmap, userToken);
+                            log(Level.FINEST, "testIdSvcsREST",
+                                    "Page for " + operationName  + " : " +
+                                    page.getContent());
+                            String str = "boolean=true" + "\n";
+                            if (!page.getContent().equals(str)) 
+                                assert false;
                         } else {
                             log(Level.FINEST, "testIdSvcsREST", 
                                     operationName + " IdType Not Supported");

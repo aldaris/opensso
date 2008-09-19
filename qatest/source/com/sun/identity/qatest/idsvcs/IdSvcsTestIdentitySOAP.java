@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSvcsTestIdentitySOAP.java,v 1.4 2008-08-27 19:02:33 vimal_67 Exp $
+ * $Id: IdSvcsTestIdentitySOAP.java,v 1.5 2008-09-19 21:48:28 vimal_67 Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -25,6 +25,7 @@
 package com.sun.identity.qatest.idsvcs;
 
 import com.iplanet.sso.SSOToken;
+import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.qatest.common.IDMCommon;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.idsvcs.Attribute;
@@ -61,8 +62,10 @@ public class IdSvcsTestIdentitySOAP extends TestCommon {
     private String strCleanup;
     private String strSetup;
     private String strTestRealm;
+    private SSOTokenManager stMgr;
     private Boolean idTypeSupported = false;
     private SSOToken idTypeSupportedToken;
+    private SSOToken usertoken;
     private Token userTokenSOAP = null;
     private int index;
       
@@ -97,6 +100,7 @@ public class IdSvcsTestIdentitySOAP extends TestCommon {
             // admin user token for idTypeSupported function
             idTypeSupportedToken = getToken(adminUser, adminPassword, basedn);
             
+            stMgr = SSOTokenManager.getInstance();
             service = new IdentityServicesImplService_Impl();
             isimpl = service.getIdentityServicesImplPort();
         } catch (Exception e) {
@@ -402,6 +406,9 @@ public class IdSvcsTestIdentitySOAP extends TestCommon {
                             String tokenString = userTokenSOAP.getId();
                             log(Level.FINEST, "testIdSvcsSOAP", "Token ID: " +
                                     tokenString);
+                            usertoken = stMgr.createSSOToken(tokenString);
+                            if (!validateToken(usertoken))
+                                assert false;
                         } else {
                             log(Level.FINEST, "testIdSvcsSOAP", 
                                     operationName + " IdType Not Supported");
