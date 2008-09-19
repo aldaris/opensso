@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoveServerConfig.java,v 1.2 2008-06-25 05:42:21 qcheng Exp $
+ * $Id: RemoveServerConfig.java,v 1.3 2008-09-19 23:37:14 beomsuk Exp $
  *
  */
 
@@ -30,7 +30,6 @@ package com.sun.identity.cli.serverconfig;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
 import com.sun.identity.cli.IArgument;
@@ -47,7 +46,7 @@ import java.util.logging.Level;
 /**
  * Remove Server configuration.
  */
-public class RemoveServerConfig extends AuthenticatedCommand {
+public class RemoveServerConfig extends ServerConfigBase {
     /**
      * Services a Commandline Request.
      *

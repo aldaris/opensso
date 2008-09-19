@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EmbeddedStatus.java,v 1.1 2008-09-04 00:33:59 rajeevangal Exp $
+ * $Id: EmbeddedStatus.java,v 1.2 2008-09-19 23:36:43 beomsuk Exp $
  *
  */
 
@@ -31,7 +31,6 @@ package com.sun.identity.cli.serverconfig;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.cli.IArgument;
-import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
 import com.sun.identity.cli.IOutput;
@@ -49,7 +48,7 @@ import java.util.logging.Level;
 /**
  * Delete a server instance.
  */
-public class EmbeddedStatus extends AuthenticatedCommand {
+public class EmbeddedStatus extends ServerConfigBase {
     private static final String SERVER_CONFIG_XML_FILE = "serverconfigxml";
     
     /**

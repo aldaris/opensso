@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateServer.java,v 1.2 2008-06-25 05:42:21 qcheng Exp $
+ * $Id: CreateServer.java,v 1.3 2008-09-19 23:36:42 beomsuk Exp $
  *
  */
 
@@ -32,7 +32,6 @@ import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.cli.AttributeValues;
-import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.CLIUtil;
 import com.sun.identity.cli.ExitCodes;
@@ -53,7 +52,7 @@ import java.util.logging.Level;
 /**
  * Create a server instance.
  */
-public class CreateServer extends AuthenticatedCommand {
+public class CreateServer extends ServerConfigBase {
     private static final String SERVER_CONFIG_XML_FILE = "serverconfigxml";
     
     /**

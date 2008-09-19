@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetServerConfigXML.java,v 1.4 2008-08-07 17:22:07 arviranga Exp $
+ * $Id: SetServerConfigXML.java,v 1.5 2008-09-19 23:37:14 beomsuk Exp $
  *
  */
 
@@ -30,7 +30,6 @@ package com.sun.identity.cli.serverconfig;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.CLIUtil;
 import com.sun.identity.cli.ExitCodes;
@@ -47,7 +46,7 @@ import java.util.logging.Level;
 /**
  * Set server configuration XML.
  */
-public class SetServerConfigXML extends AuthenticatedCommand {
+public class SetServerConfigXML extends ServerConfigBase {
     /**
      * Set Server Configuration XML.
      *
