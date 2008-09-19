@@ -10,34 +10,34 @@
 
 
 <ModuleProperties moduleName="SecurID" version="1.0" >
-    <Callbacks length="2" order="1" timeout="120" header="This server uses SecurID Authentication" >
+    <Callbacks length="2" order="1" timeout="120" header="此伺服器使用 SecurID 認證" >
         <NameCallback>
-            <Prompt> Enter Your UserId </Prompt>
+            <Prompt> 輸入您的 UserId </Prompt>
         </NameCallback>
         <PasswordCallback echoPassword="false" >
-            <Prompt> Enter your Passcode </Prompt>
+            <Prompt> 輸入您的密碼 </Prompt>
         </PasswordCallback>
     </Callbacks>
-    <Callbacks length="1" order="2" timeout="120" header="New PIN Mode" >
+    <Callbacks length="1" order="2" timeout="120" header="新 PIN 模式" >
 	<!-- TextInputCallback not implemented in UI -->
 	<PasswordCallback echoPassword="false" >
-	    <Prompt> enter new PIN msg </Prompt>
+	    <Prompt> 輸入新的 PIN 訊息 </Prompt>
 	</PasswordCallback>
     </Callbacks>
-    <Callbacks length="1" order="3" timeout="120" header="Next PASSCODE" >
+    <Callbacks length="1" order="3" timeout="120" header="下一個密碼" >
 	<PasswordCallback echoPassword="false" >
-	    <Prompt> Wait for the code on your token to change, then enter next PASSCODE: </Prompt>
+	    <Prompt> 等待變更記號代碼，然後輸入下一個密碼: </Prompt>
 	</PasswordCallback>
     </Callbacks>
-    <Callbacks length="1" order="4" timeout="120" header="Generating new PIN" >
+    <Callbacks length="1" order="4" timeout="120" header="產生新 PIN" >
 	<!-- TextInputCallback not implemented in UI -->
 	<NameCallback>
-	    <Prompt> Always gets replaced </Prompt>
+	    <Prompt> 總是替代 </Prompt>
 	</NameCallback>
     </Callbacks>
-    <Callbacks length="1" order="5" timeout="120" header="Next PASSCODE" >
+    <Callbacks length="1" order="5" timeout="120" header="下一個密碼" >
 	<PasswordCallback echoPassword="false" >
-	    <Prompt> wait for token to change msg </Prompt>
+	    <Prompt> 等待記號變更訊息 </Prompt>
 	</PasswordCallback>
     </Callbacks>
 </ModuleProperties>

@@ -10,13 +10,13 @@
 	"jar://com/sun/identity/authentication/Auth_Module_Properties.dtd">
 
 <ModuleProperties moduleName="Unix" version="1.0" >    
-    <Callbacks length="2" order="1" timeout="60" header="This server uses Unix Authentication" >
+    <Callbacks length="2" order="1" timeout="60" header="Auf diesem Server kommt die Unix-Authentifizierung zum Einsatz." >
         <NameCallback>            
-            <Prompt> User Name: </Prompt>            
+            <Prompt> Benutzername </Prompt>            
         </NameCallback>
         <PasswordCallback echoPassword="false" >
-            <Prompt> Password: </Prompt>            
+            <Prompt> Passwort: </Prompt>            
         </PasswordCallback>           
     </Callbacks>
-    <Callbacks length="0" order="2" timeout="120" header=" Your password has expired. Please contact service desk to reset your password" error="true" />
+    <Callbacks length="0" order="2" timeout="120" header=" Ihr Passwort ist abgelaufen. Kontaktieren Sie das Service-Desk, damit Ihr Passwort zurückgesetzt werden kann." error="true"  />
 </ModuleProperties>

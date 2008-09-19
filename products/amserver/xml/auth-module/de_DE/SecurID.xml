@@ -10,34 +10,34 @@
 
 
 <ModuleProperties moduleName="SecurID" version="1.0" >
-    <Callbacks length="2" order="1" timeout="120" header="This server uses SecurID Authentication" >
+    <Callbacks length="2" order="1" timeout="120" header="Dieser Server verwendet die SecurID-Authentifizierung." >
         <NameCallback>
-            <Prompt> Enter Your UserId </Prompt>
+            <Prompt> Benutzer-ID eingeben </Prompt>
         </NameCallback>
         <PasswordCallback echoPassword="false" >
-            <Prompt> Enter your Passcode </Prompt>
+            <Prompt> Passcode eingeben </Prompt>
         </PasswordCallback>
     </Callbacks>
-    <Callbacks length="1" order="2" timeout="120" header="New PIN Mode" >
+    <Callbacks length="1" order="2" timeout="120" header="Neuer PIN-Modus" >
 	<!-- TextInputCallback not implemented in UI -->
 	<PasswordCallback echoPassword="false" >
-	    <Prompt> enter new PIN msg </Prompt>
+	    <Prompt> Meldung (Eingeben neuer PIN) </Prompt>
 	</PasswordCallback>
     </Callbacks>
-    <Callbacks length="1" order="3" timeout="120" header="Next PASSCODE" >
+    <Callbacks length="1" order="3" timeout="120" header="Nächster PASSCODE" >
 	<PasswordCallback echoPassword="false" >
-	    <Prompt> Wait for the code on your token to change, then enter next PASSCODE: </Prompt>
+	    <Prompt> Warten Sie, bis der Code auf Ihrem Token geändert wird, und geben Sie den nächsten PASSCODE ein: </Prompt>
 	</PasswordCallback>
     </Callbacks>
-    <Callbacks length="1" order="4" timeout="120" header="Generating new PIN" >
+    <Callbacks length="1" order="4" timeout="120" header="Generierung einer neuen PIN" >
 	<!-- TextInputCallback not implemented in UI -->
 	<NameCallback>
-	    <Prompt> Always gets replaced </Prompt>
+	    <Prompt> Wird immer ersetzt </Prompt>
 	</NameCallback>
     </Callbacks>
-    <Callbacks length="1" order="5" timeout="120" header="Next PASSCODE" >
+    <Callbacks length="1" order="5" timeout="120" header="Nächster PASSCODE" >
 	<PasswordCallback echoPassword="false" >
-	    <Prompt> wait for token to change msg </Prompt>
+	    <Prompt> Meldung (Warten, bis Token geändert wurde) </Prompt>
 	</PasswordCallback>
     </Callbacks>
 </ModuleProperties>
