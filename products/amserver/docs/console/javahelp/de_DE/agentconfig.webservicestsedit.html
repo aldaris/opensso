@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Attribute des Sicherheitstoken-Diensts - Online-Hilfe zur Sun Federated Access Manager 8.0-Konsole
+  <title>Attribute des Agenten f&#252;r den Sicherheitstoken-Dienst - Online-Hilfe zur Sun OpenSSO 8.0-Konsole
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -30,7 +30,7 @@
 
 
 
-<a name="agentconfig.webservicestsedit"></a><h4>Attribute des Sicherheitstoken-Diensts</h4>
+<a name="agentconfig.webservicestsedit"></a><h4>Attribute des Agenten f&#252;r den Sicherheitstoken-Dienst</h4>
 <p>Ein Sicherheitstoken-Dienst ist ein Webdienst f&#252;r die Ausgabe und Verwaltung von Sicherheitstokens.
 Dies bedeutet, dass er Sicherheitsaussagen bzw. -behauptungen h&#228;ufig, wenn auch nicht notwendigerweise,
 in verschl&#252;sselten Sets erstellt. Diese Behauptungen beruhen auf dem Erhalt von Belegen,
@@ -69,19 +69,20 @@ definieren.</p>
 <a name="ggpfe"></a><h5>Sicherheit</h5>
 <p>Folgende Attribute definieren die Sicherheitsattribute f&#252;r den Sicherheitstoken-Dienst:</p>
 
-<a name="ggpdy"></a><h5>Sicherheitsmechanismus</h5>
-<p>Legt den Sicherheitsnachweistyp fest, der zur Sicherung der Anforderung f&#252;r den Sicherheitstoken-Dienst
-verwendet wird. Folgende Sicherheitstypen stehen zur Auswahl:</p>
+<a name="ghery"></a><h5>Sicherheitsmechanismus</h5>
+<p>Legt den Sicherheitsnachweistyp fest, der zur Sicherung der STS-Anforderung verwendet wird. Folgende
+Sicherheitsnachweistypen stehen zur Auswahl:</p>
 <ul><li><p>Anonymous (Anonym) &#8211; Der anonyme Sicherheitsmechanismus enth&#228;lt keine Sicherheitsnachweise.</p></li>
+<li><p>KerberosToken &#8211; Es werden Kerberos-Sicherheitstoken verwendet.</p></li>
 <li><p>LibertyDiscoverySecurity &#8211; Verwendet Liberty-basierte Sicherheitstoken.</p></li>
 <li><p>SAML-HolderOfKey &#8211; Verwendet den SAML 1.1-Behauptungstyp "Holder-Of-Key".</p></li>
 <li><p>SAML-SenderVouches &#8211; Verwendet den SAML 1.1-Behauptungstyp "Sender Vouches".</p></li>
 <li><p>SAML2&#8211;HolderOfKey &#8211; Verwendet den SAML 2.0-Behauptungstoken-Typ "Holder-Of-Key".</p></li>
 <li><p>SAML2&#8211;SenderVouches &#8211; Verwendet den SAML 2.0-Behauptungstoken-Typ " Sender Vouches".</p></li>
-<li><p>STSSecurity &#8211; Definiert, dass der Sicherheitstoken-Dienstagent das Sicherheitstoken vom Sicherheitstoken-Dienst abruft.</p></li>
-<li><p>UserNameToken &#8211; Verwendet ein Benutzernamens-Token zur Sicherung der Anforderungen an den Sicherheitstoken-Dienst.</p></li>
-<li><p>UserNameToken-Plain &#8211; Verwendet ein Benutzernamens-Token mit einem Klartextpasswort zur Sicherung der Anforderungen an den Sicherheitstoken-Dienst.</p></li>
-<li><p>X509Token &#8211;Verwendet das X509-Zertifikat zur Sicherung des Sicherheitstokens.</p></li></ul>
+<li><p>STSSecurity &#8211; Verwendet das aus dem Sicherheitstoken-Dienst f&#252;r einen bestimmten Webdienstanbieter generierte Sicherheitstoken.</p></li>
+<li><p>UserNameToken &#8211; Verwendet ein Benutzernamens-Token mit Digest-Passwort.</p></li>
+<li><p>UserNameToken-Plain &#8211; Verwendet ein Benutzernamens-Token mit einem Klartextpasswort zur Sicherung der Webdienst-Anforderungen.</p></li>
+<li><p>X509Token &#8211; Verwendet das X509-Zertifikat.</p></li></ul>
 
 
 <a name="ggpdk"></a><h5>STS-Konfiguration</h5>
@@ -141,8 +142,43 @@ soll. Folgende Werte m&#252;ssen f&#252;r einen benutzerdefinierten Schl&#252;ss
 <a name="ggpbr"></a><h5>Endpunkte</h5>
 <p>Folgende Attribute definieren Webdienst-Endpunkte:</p>
 
-<a name="ggpfc"></a><h5>Webdienst-Endpunkt</h5>
-<p>Dieses Attribut definiert einen Webdienst-Endpunkt, an den der Webdienstclient eine Anforderung stellt.</p>
+<a name="ghbab"></a><h5>Endpunkt des Security Token Service</h5>
+<p>In diesem Feld ist ein Wert im folgenden Format zul&#228;ssig: </p><p><tt>%protocol://%host:%port%uri/sts</tt> </p><p>Diese Syntax erm&#246;glicht das dynamische Ersetzen der URL f&#252;r den Sicherheitstoken-Dienst-Endpunkt, basierend
+auf den sitzungsspezifischen Parametern.</p>
+
+<a name="ghbcm"></a><h5>Endpunkt von Security Token Service MEX</h5>
+<p>In diesem Feld ist ein Wert im folgenden Format zul&#228;ssig:</p><p><tt>%protocol://%host:%port%uri/sts/mex </tt></p><p>Diese Syntax erm&#246;glicht das dynamische Ersetzen der URL f&#252;r den Sicherheitstoken-Dienst-MEX-Endpunkt, basierend
+auf den sitzungsspezifischen Parametern.</p>
+
+<a name="ghcdb"></a><h5>Kerberos-Konfiguration</h5>
+<p>Kerberos ist ein von der Webdienstsicherheit unterst&#252;tztes Sicherheitsprofil zur Sicherung der Webdienstkommunikation
+zwischen einem Webdienstclient und einem Webdienstanbieter. In einem typischen Szenario authentifiziert sich
+ein Benutzer beim Desktop und ruft einen Webdienst und den Webdienstclient auf.
+Hierbei ist ein Kerberos-Ticket zur Sicherung der Anforderung an den Webdienstanbieter durch
+Identifizierung seines Principals als Kerberos-Token erforderlich. Normalerweise wird die Kerberos-basierte Webdienstsicherheit im
+selben Kontext der Kerberos-Dom&#228;ne (Bereich) und nicht &#252;ber Grenzen hinweg wie beispielsweise
+die SAML-basierte Webdienstsicherheit verwendet. Kerberos ist jedoch einer der leistungsst&#228;rksten Authentifizierungsmechanismen, insbesondere
+in Umgebungen mit Windows-Dom&#228;nencontroller.</p>
+
+<a name="ghcgo"></a><h5>Kerberos-Domain-Server</h5>
+<p>Gibt den Hostnamen des Kerberos-Verteilungscenters (Dom&#228;nencontroller) an. Hier ist der vollst&#228;ndig qualifizierte
+Dom&#228;nenname (FQDN) des Dom&#228;nencontrollers erforderlich.</p>
+
+<a name="ghceh"></a><h5>Kerberos-Domain</h5>
+<p>Dieses Attribut gibt den Dom&#228;nennamen des Kerberos-Verteilungscenters (Kerberos Distribution Center, KDC) an.
+Je nach Konfiguration ist der Dom&#228;nenname des Dom&#228;nencontrollers nicht identisch mit dem
+Dom&#228;nennamen von OpenSSO.</p>
+
+<a name="ghcgw"></a><h5>Kerberos-Dienstprincipal</h5>
+<p>Gibt den beim KDC registrierten Principal des Sicherheitstoken-Diensts an. </p><p>Verwenden Sie die folgende Syntax: </p><p><tt>HTTP/hostname.domainname&#64;dc_domain_name</tt> </p><p><tt>hostname</tt> und <tt>domainame</tt> stehen f&#252;r den Hostnamen und den Dom&#228;nennamen der OpenSSO-Instanz.
+<tt>dc_domain_name</tt> is the Kerberos domain in which the Windows Kerberos server (domain
+controller) resides. Der Kerberos-Server unterscheidet sich m&#246;glicherweise vom Dom&#228;nennamen der OpenSSO-Instanz.</p>
+
+<a name="ghcea"></a><h5>Cache-Verzeichnis f&#252;r Kerberos-Ticket</h5>
+<p>Gibt das Cache-Verzeichnis des Kerberos TGT (Ticket Granting Ticket) an. Wenn der
+Benutzer sich beim Desktop authentifiziert oder eine Initialisierung mit <tt> kinit</tt> (dem zum
+Abrufen des TGT vom KDC verwendeten Befehl) durchf&#252;hrt, wird das TGT wie
+in diesem Attribut definiert im lokalen Cache gespeichert.</p>
 <br/>
 
 </body>

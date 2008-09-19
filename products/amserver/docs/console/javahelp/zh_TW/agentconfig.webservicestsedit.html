@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>安全性記號服務屬性 - Sun Federated Access Manager 8.0 主控台線上說明
+  <title>安全性記號服務代理程式屬性 - Sun OpenSSO 8.0 主控台線上說明
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -30,7 +30,7 @@
 
 
 
-<a name="agentconfig.webservicestsedit"></a><h4>安全性記號服務屬性</h4>
+<a name="agentconfig.webservicestsedit"></a><h4>安全性記號服務代理程式屬性</h4>
 <p>「安全性記號服務」是提供安全性記號發佈及管理的 Web 服務。也就是說，它通常會採用加密形式 (即使不是必要) 發出安全性敘述或聲明。這些敘述是以特定的證據為基礎，這些證據可直接驗證從其信任的授權單位取得的安全性記號。若要指定信任，服務可能會透過提供由 STS 發出的安全性記號來證明其有權指定一系列聲明，或是使用本身擁有的信任敘述發出安全性記號 (請注意，對於某些安全性記號格式而言，這可能只是再發佈或共同簽名)。這構成信任代理的基礎。</p>
 
 <a name="ggpce"></a><h5>一般</h5>
@@ -54,18 +54,19 @@
 <a name="ggpfe"></a><h5>安全性</h5>
 <p>下列屬性定義「安全性記號」服務安全屬性：</p>
 
-<a name="ggpdy"></a><h5>安全機制</h5>
-<p>定義安全憑證的類型，用來保護「安全性記號」服務請求。您可以選擇下列安全類型：</p>
+<a name="ghery"></a><h5>安全機制</h5>
+<p>定義用來保護 STS 請求的安全憑證的類型。您可以選擇下面其中一種安全性憑證類型：</p>
 <ul><li><p>匿名 &#8212; 匿名安全機制不包含安全憑證。</p></li>
+<li><p>KerberosToken &#8212; 使用 Kerberos 安全性記號。</p></li>
 <li><p>LibertyDiscoverySecurity &#8212; 使用基於 Liberty 的安全性記號。</p></li>
 <li><p>SAML-HolderOfKey &#8212; 使用 SAML 1.1 指定類型 Holder-Of-Key。</p></li>
-<li><p>SAML-SenderVouches &#8212; 使用 SAML 1.1 指定類型 Sender Vouches。</p></li>
-<li><p>SAML2&#8211;HolderOfKey &#8212; 使用 SAML 2.0 指定記號類型 Holder-Of-Key。</p></li>
-<li><p>SAML2&#8211;SenderVouches &#8212; 使用 SAML 2.0 指定記號類型 Sender Vouches。</p></li>
-<li><p>STSSecurity &#8212; 定義「安全性記號」服務代理程式取得來自「安全性記號」服務的安全性記號。</p></li>
-<li><p>UserNameToken &#8212; 使用使用者名稱記號保護「安全性記號」服務請求。</p></li>
-<li><p>UserNameToken-Plain &#8212; 使用帶有明文密碼的使用者名稱記號保護「安全性記號」服務請求。</p></li>
-<li><p>X509Token &#8212; 使用 X509 憑證保護安全性記號。</p></li></ul>
+<li><p>SAML-SenderVouches &#8212; 使用 SAML 1.1 指定類型 Sender Vouchest。</p></li>
+<li><p>SAML2&#8211;HolderOfKey &#8211; 使用 SAML 2.0 指定記號類型 Holder-Of-Key。</p></li>
+<li><p>SAML2&#8211;SenderVouches &#8211; 使用 SAML 2.0 指定記號類型 Sender Vouches。</p></li>
+<li><p>STSSecurity &#8212; 使用由指定的 Web 服務提供者的安全性記號服務產生的安全性記號。</p></li>
+<li><p>UserNameToken &#8212; 使用帶有摘要密碼的使用使用者名稱記號。</p></li>
+<li><p>UserNameToken-Plain &#8212; 使用帶有明文密碼的使用者名稱記號保護 Web 服務請求。</p></li>
+<li><p>X509Token &#8211; 使用 X509 憑證。</p></li></ul>
 
 
 <a name="ggpdk"></a><h5>STS 配置</h5>
@@ -114,8 +115,31 @@
 <a name="ggpbr"></a><h5>端點</h5>
 <p>下列屬性可定義 Web 服務端點：</p>
 
-<a name="ggpfc"></a><h5>Web 服務端點</h5>
-<p>此屬性定義 Web 服務端點，Web 服務用戶端會對此端點發出請求。</p>
+<a name="ghbab"></a><h5>安全性記號服務端點</h5>
+<p>此欄位採用的值等於：</p><p><tt>%protocol://%host:%port%uri/sts</tt></p><p>此語法允許基於特定的階段作業參數動態取代安全性記號服務端點 URL。</p>
+
+<a name="ghbcm"></a><h5>安全性記號服務 MEX 端點</h5>
+<p>此欄位採用的值等於：</p><p><tt>%protocol://%host:%port%uri/sts/mex </tt></p><p>此語法允許基於特定的階段作業參數動態取代安全性記號服務 MEX 端點 URL。</p>
+
+<a name="ghcdb"></a><h5>Kerberos 配置</h5>
+<p>Kerberos 是 Web 服務安全所支援的安全性設定檔，可以保護 Web 服務用戶端與 Web 服務提供者之間 Web 服務通訊。在通常情況下，使用者會認證至桌面，並呼叫 Web 服務與
+Web 服務用戶端。這需要 Kerberos 票證，將針對 Web 服務提供者的請求的主體識別為 Keberos 記號，以保護該請求。通常，基於 Kerberos 的 Web 服務安全性用在與
+Kerberos 網域 (範圍) 相同的環境中，這與跨界 (例如 SAML 式的 Web 服務安全性) 相反。不過，Kerberos 卻是最強大的認證機制之一，特別是在 Windows
+網域控制器環境下。</p>
+
+<a name="ghcgo"></a><h5>Kerberos 網域伺服器</h5>
+<p>此屬性指定 Kerberos 發行中心 (網域控制器) 主機名稱。您必須輸入網域控制器的完整網域名稱 (FQDN)。</p>
+
+<a name="ghceh"></a><h5>Kerberos 網域</h5>
+<p>此屬性指定 Kerberos 發行中心 ( Kerberos Distribution Center, KDC) 網域名稱。依據您的配置，網域控制器的網域名稱可與 OpenSSO 網域名稱不同。</p>
+
+<a name="ghcgw"></a><h5>Kerberos 服務主體</h5>
+<p>指定以 KDC 註冊的安全性記號服務主體。</p><p>請使用以下格式：</p><p><tt>HTTP/hostname.domainname@dc_domain_name</tt></p><p><tt>hostname</tt> 與 <tt>domainame</tt> 代表 OpenSSO 實例的主機名稱與網域名稱。<tt>dc_domain_name</tt> 是 Windows Kerberos 伺服器 (網域控制器) 所在的
+Kerberos 網域。Kerberos 伺服器可能與 OpenSSO 實例的網域名稱不同。</p>
+
+<a name="ghcea"></a><h5>Kerberos 票證快取目錄</h5>
+<p>指定 Kerberos TGT (Ticket Granting Ticket, 票證授予票證) 快取目錄。此屬性定義：當使用者認證至桌面或使用 <tt>kinit</tt> (用來從 KDC 取得
+TGT 的指令) 來初始化時，TGT 儲存於本機快取中。</p>
 <br/>
 
 </body>

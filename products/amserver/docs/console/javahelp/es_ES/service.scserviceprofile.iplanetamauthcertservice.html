@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Certificado - Ayuda en l&#237;nea de la consola de Sun Federated Access Manager 8.0
+  <title>Certificado - Ayuda en l&#237;nea de la consola de Sun OpenSSO 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -108,18 +108,17 @@ la consola, en Configuraci&#243;n &#62; Servidores y sitios &#62; Seguridad:</p>
 <ul><li><p>Si este valor se define en true y la respuesta OCSP est&#225; definida en el atributo <a href="service.servereditsecurity.html#ggkav">URL del contestador</a>, el valor del atributo se utilizar&#225; como la respuesta OCSP.</p></li>
 <li><p>Si est&#225; habilitada la <a href="service.servereditsecurity.html#ggkaa">Comprobaci&#243;n del Protocolo de estado de los certificados en l&#237;nea</a> y si no est&#225; establecido el valor de este atributo, la respuesta OCSP presente en su certificado de cliente se utilizar&#225; como la respuesta OCSP. </p></li>
 <li><p>Si no est&#225; habilitada la <a href="service.servereditsecurity.html#ggkaa">Comprobaci&#243;n del Protocolo de estado de los certificados en l&#237;nea</a> o si <a href="service.servereditsecurity.html#ggkaa">Comprobaci&#243;n del Protocolo de estado de los certificados en l&#237;nea</a> est&#225; habilitada y no puede encontrarse una respuesta OCSP, no se efectuar&#225; la validaci&#243;n de OCSP.</p></li></ul>
-<p>Antes de habilitar la validaci&#243;n OCSP, aseg&#250;rese de que la hora de
-la m&#225;quina de Federated Access Manager y la m&#225;quina del contestador OCSP
-est&#225;n lo m&#225;s sincronizadas posible. Asimismo, la hora en la m&#225;quina de
-Federated Access Manager no debe ser posterior a la del contestador OCSP.
-Por ejemplo:</p><p><tt>OCSP responder machine - 12:00:00 pm</tt></p><p><tt>Federated Access Manager machine - 12:00:30 pm</tt> </p>
+<p>Antes de habilitar la validaci&#243;n OCSP, aseg&#250;rese de que la hora del
+equipo de OpenSSO y del equipo del contestador OCSP se encuentren lo
+m&#225;s sincronizadas posible. Asimismo, la hora del equipo de OpenSSO no debe
+ser posterior a la del contestador OCSP. Por ejemplo:</p><p><tt>OCSP responder machine - 12:00:00 pm</tt></p><p><tt>Equipo de OpenSSO: 12:00:30 pm</tt> </p>
 
 <a name="fwbij"></a><h5>Servidor LDAP en el que se almacenan los certificados</h5>
 <p>Especifica el nombre y el n&#250;mero de puerto del servidor LDAP en
 el que se almacenan los certificados. El valor predeterminado es el nombre
-de host y el puerto especificados al instalar Federated Access Manager. Se
-puede utilizar el nombre de host y el puerto de cualquier servidor
-LDAP donde se hayan guardado los certificados. El formato es <tt>hostname:port</tt>.</p>
+de host y el puerto especificados al instalar OpenSSO. Se puede utilizar
+el nombre de host y el puerto de cualquier servidor LDAP donde
+se hayan guardado los certificados. El formato es <tt>hostname:port</tt>.</p>
 
 <a name="fwbtp"></a><h5>DN de b&#250;squeda de inicio de LDAP</h5>
 <p>Especifica el DN del nodo en el que debe comenzar la b&#250;squeda
@@ -175,7 +174,7 @@ atributo que se seleccionar&#225; desde el valor <i>subjectDN </i> del certifica
 servicio de autenticaci&#243;n buscar&#225; el perfil de usuario que coincida con el
 valor de dicho atributo.</p>
 
-<a name="ggumk"></a><h5>Tipo de valor SubjectAltNameExt para usuario de acceso</h5>
+<a name="ggumk"></a><h5>Tipo de valor de "SubjectAltNameExt" para acceder al perfil de usuario</h5>
 <p>Si se selecciona cualquier valor que no sea <tt>none</tt>, este atributo tiene
 prioridad sobre el atributo <tt>Campo de certificado utilizado para acceder al perfil de usuario</tt> u <tt>Otro campo de certificado utilizado para acceder al perfil de usuario</tt>.</p>
 <ul><li><p>RFC822Name</p></li></ul>
@@ -185,10 +184,9 @@ prioridad sobre el atributo <tt>Campo de certificado utilizado para acceder al p
 
 <a name="fwbiw"></a><h5>Hosts remotos de confianza</h5>
 <p>Define una lista de los hosts de confianza para enviar certificados a
-Federated Access Manager. Federated Access Manager debe comprobar si el certificado procede
-de uno de estos hosts. Este atributo se utiliza para Portal Server
-Gateway, un equilibrador de carga con terminaci&#243;n SSL y la autenticaci&#243;n distribuida.
-</p><dl><dt>ninguno</dt>
+OpenSSO. OpenSSO debe comprobar si el certificado procede de uno de estos
+hosts. Este atributo se utiliza para Portal Server Gateway, un equilibrador de
+carga con terminaci&#243;n SSL y la autenticaci&#243;n distribuida. </p><dl><dt>ninguno</dt>
 <dd><p>Deshabilita el atributo. De forma predeterminada, esta opci&#243;n est&#225; habilitada.</p></dd>
 <dt>todos</dt>
 <dd><p>Acepta la autenticaci&#243;n de certificados de estilo Portal Server Gateway desde cualquier direcci&#243;n IP de un cliente.</p></dd>
@@ -201,9 +199,8 @@ Gateway, un equilibrador de carga con terminaci&#243;n SSL y la autenticaci&#243
 <p>Especifica el n&#250;mero de puerto del nivel de sockets seguro. En la
 actualidad, este atributo s&#243;lo lo utiliza el servlet de la puerta de
 enlace. Antes de agregar o cambiar un n&#250;mero de puerto SSL, consulte
-la secci&#243;n "Policy-Based Resource Management" (Administraci&#243;n de recursos basada en pol&#237;ticas) en
-el documento Federated Access Manager Administration Guide (Gu&#237;a de administraci&#243;n de Federated
-Access Manager).</p>
+la secci&#243;n "Policy-Based Resource Management" (Administraci&#243;n de recursos basada en directivas) en
+el documento OpenSSO Administration Guide.</p>
 
 <a name="gcabp"></a><h5>Nombre del encabezado HTTP para el certificado de cliente</h5>
 <p>Este atributo s&#243;lo se utiliza cuando el atributo Hosts remotos de confianza

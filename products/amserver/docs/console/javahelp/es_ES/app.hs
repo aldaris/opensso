@@ -1,9 +1,9 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <!-- ident   "%Z%%M% %I%   %E% SMI" -->
 <!DOCTYPE helpset PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp HelpSet Version 2.0//EN" "helpset_1_0.dtd">
 
 <helpset version="2.0" xml:lang="es">
-<title>Ayuda en l&#237;nea de la consola de Sun Federated Access Manager 8.0</title>
+<title>Ayuda en línea de la consola de Sun OpenSSO 8.0</title>
 <maps>
 	<homeID></homeID>
 	<mapref location="map.jhm"/>
@@ -16,13 +16,13 @@
 </view>
 <view>
 	<name>Index</name>
-	<label>&Iacute;ndice</label>
+	<label>Índice</label>
 	<type>javax.help.IndexView</type>
 	<data>index.xml</data>
 </view>
 <view>
 	<name>Search</name>
-	<label>B&uacute;squeda</label>
+	<label>Búsqueda</label>
 	<type>javax.help.SearchView</type>
 	<data engine="com.sun.java.help.search.DefaultSearchEngine">JavaHelpSearch</data>
 </view>

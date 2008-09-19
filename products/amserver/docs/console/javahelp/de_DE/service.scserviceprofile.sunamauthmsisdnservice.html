@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>MSISDN - Online-Hilfe zur Sun Federated Access Manager 8.0-Konsole
+  <title>MSISDN - Online-Hilfe zur Sun OpenSSO 8.0-Konsole
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -70,11 +70,11 @@ MSISDN-Nummer.</p>
 <p>Gibt den Hostnamen und die Anschlussnummer f&#252;r den Directory Server an, auf
 dem die Suche nach Benutzern mit einer MSISDN durchgef&#252;hrt wird. Das Format
 lautet <tt></tt><i> hostname:port</i><tt></tt>. Wenn keine Portnummer angegeben wurde, kann in der Regel <tt>389</tt>
-verwendet werden.</p><p>Wenn Sie Federated Access Manager in mehreren Dom&#228;nen bereitstellen, k&#246;nnen Sie den
-Kommunikationslink zwischen bestimmten Instanzen von Federated Access Manager und Directory Server in
-folgendem Format angeben (bei Mehrfacheingaben muss der lokale Servername vorangestellt werden):</p><p><tt>local_servername|server:port local_servername2|server2:port2 ...</tt></p><p>Wenn beispielsweise zwei Federated Access Manager-Instanzen an unterschiedlichen Standorten bereitgestellt wurden (L1-machine1-IS
-und L2- machine2-IS), die mit unterschiedlichen Instanzen von Directory Server kommunizieren (L1-machine1-DS
-und L2-machine2-DS), w&#252;rde dies wie folgt aussehen:</p><p><tt>L1-machine1-IS.example.com|L1-machine1-DS.example.com:389 </tt></p><p><tt>L2-machine2-IS.example.com|L2-machine2-DS.example.com:389 </tt></p>
+verwendet werden.</p><p>Wenn Sie OpenSSO in mehreren Dom&#228;nen bereitstellen, k&#246;nnen Sie den Kommunikationslink zwischen
+bestimmten Instanzen von OpenSSO und Directory Server in folgendem Format angeben (bei
+Mehrfacheingaben muss der Name des lokalen Servers vorangestellt werden):</p><p><tt>local_servername|server:port local_servername2|server2:port2 ...</tt></p><p>Wenn beispielsweise zwei OpenSSO-Instanzen an unterschiedlichen Standorten bereitgestellt wurden (L1-machine1-IS und L2-
+machine2-IS), die mit unterschiedlichen Instanzen von Directory Server kommunizieren (L1-machine1-DS und L2-machine2-DS),
+w&#252;rde dies wie folgt aussehen:</p><p><tt>L1-machine1-IS.example.com|L1-machine1-DS.example.com:389 </tt></p><p><tt>L2-machine2-IS.example.com|L2-machine2-DS.example.com:389 </tt></p>
 
 <a name="fumxi"></a><h5>LDAP-DN f&#252;r Start der Suche</h5>
 <p>Gibt den DN des Knotens an, bei dem die Suche nach der
@@ -123,12 +123,12 @@ wird. Folgende Werte werden unterst&#252;tzt:</p><dl><dt>Cookie-Header</dt>
 
 
 <a name="fumxr"></a><h5>Benutzer-DN bei Authentifizierung zur&#252;ckgeben</h5>
-<p>Wenn das Federated Access Manager-Verzeichnis mit dem f&#252;r MSDISN konfigurierten Verzeichnis &#252;bereinstimmt,
-ist diese Option m&#246;glicherweise aktiviert. Wenn diese Option aktiviert ist, l&#228;sst das
-Authentifizierungsmodul die R&#252;ckgabe des DN anstelle der Benutzer-ID zu, sodass kein Suchlauf
-erforderlich ist. Normalerweise gibt ein Authentifizierungsmodul nur die Benutzer-ID zur&#252;ck, und der
-Authentifizierungsdienst sucht nach dem Benutzer in dem lokalen Federated Access Manager. Wenn
-eine externes Verzeichnis verwendet wird, ist diese Option &#252;blicherweise deaktiviert.</p>
+<p>Wenn das OpenSSO-Verzeichnis mit dem f&#252;r MSDISN konfigurierten Verzeichnis &#252;bereinstimmt, ist diese
+Option m&#246;glicherweise aktiviert. Wenn diese Option aktiviert ist, l&#228;sst das Authentifizierungsmodul die
+R&#252;ckgabe des DN anstelle der Benutzer-ID zu, sodass kein Suchlauf erforderlich ist.
+Normalerweise gibt ein Authentifizierungsmodul nur die Benutzer-ID zur&#252;ck, und der Authentifizierungsdienst sucht
+im lokalen OpenSSO nach dem Benutzer. Wenn eine externes Verzeichnis verwendet wird,
+ist diese Option &#252;blicherweise deaktiviert.</p>
 
 <a name="fumxs"></a><h5>Authentifizierungsebene</h5>
 <p>Die Authentifizierungsebene wird f&#252;r jede Authentifizierungsmethode einzeln festgelegt. Mit diesem Wert wird

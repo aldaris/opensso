@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Zertifikat - Online-Hilfe zur Sun Federated Access Manager 8.0-Konsole
+  <title>Zertifikat - Online-Hilfe zur Sun OpenSSO 8.0-Konsole
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -104,15 +104,14 @@ befinden sich in der Konsole unter "Konfiguration" &#62; "Servers und Sites" &#6
 <li><p>Wenn <a href="service.servereditsecurity.html#ggkaa">&#220;berpr&#252;fung des Online Certificate Status Protocol</a> aktiviert ist und wenn der Wert f&#252;r dieses Attribut nicht festgelegt ist, wird der in Ihrem Client-Zertifikat genannte OCSP-Empf&#228;nger als OCSP-Empf&#228;nger verwendet. </p></li>
 <li><p>Wenn <a href="service.servereditsecurity.html#ggkaa">&#220;berpr&#252;fung des Online Certificate Status Protocol</a> nicht aktiviert ist oder wenn <a href="service.servereditsecurity.html#ggkaa">&#220;berpr&#252;fung des Online Certificate Status Protocol</a> aktiviert ist und kein OCSP-Empf&#228;nger gefunden werden kann, wird keine OCSP-Validierung durchgef&#252;hrt.</p></li></ul>
 <p>Stellen Sie vor dem Aktivieren der OCSP-&#220;berpr&#252;fung sicher, dass die Uhrzeit des
-Federated Access Manager-Computers mit der des OCSP-Empf&#228;ngercomputers so weit wie m&#246;glich &#252;bereinstimmt.
-Die Uhrzeit auf dem Federated Access Manager-Computer darf keinesfalls nach der Uhrzeit
-des OCSP-Empf&#228;ngers liegen. Beispiel:</p><p><tt>OCSP responder machine - 12:00:00 pm</tt></p><p><tt>Federated Access Manager machine - 12:00:30 pm</tt> </p>
+OpenSSO-Computers mit der des OCSP-Empf&#228;ngercomputers so weit wie m&#246;glich &#252;bereinstimmt. Die Uhrzeit
+auf dem OpenSSO-Computer darf keinesfalls nach der Uhrzeit des OCSP-Empf&#228;ngers liegen. Beispiel:</p><p><tt>OCSP responder machine - 12:00:00 pm</tt></p><p><tt>OpenSSO machine - 12:00:30 pm</tt> </p>
 
 <a name="fwbij"></a><h5>LDAP-Server, auf dem die Zertifikate gespeichert sind</h5>
 <p>Gibt den Namen und die Anschlussnummer des LDAP-Servers an, auf dem die
-Zertifikate gespeichert sind. Der Standardwert ist der bei der Installation von Federated
-Access Manager angegebene Hostname und Anschluss. Hier k&#246;nnen Hostname und Anschluss jedes
-LDAP-Servers angegeben werden, auf dem Zertifikate gespeichert werden. Das Format lautet <tt>hostname:port</tt>.</p>
+Zertifikate gespeichert sind. Der Standardwert ist der bei der Installation von OpenSSO
+angegebene Hostname und Anschluss. Hier k&#246;nnen Hostname und Anschluss jedes LDAP-Servers angegeben
+werden, auf dem Zertifikate gespeichert werden. Das Format lautet <tt>hostname:port</tt>.</p>
 
 <a name="fwbtp"></a><h5>LDAP-DN f&#252;r Start der Suche</h5>
 <p>Gibt den DN des Knotens an, bei dem die Suche nach dem
@@ -165,7 +164,7 @@ Zertifikatsfeld" auf "Weitere" gesetzt ist, gibt dieses Feld das Attribut an, da
 aus dem <i>subjectDN </i>-Wert des empfangenen Zertifikats ausgew&#228;hlt wird. Der Authentifizierungsdienst sucht dann
 nach dem Benutzerprofil, das dem Wert dieses Attributs entspricht.</p>
 
-<a name="ggumk"></a><h5>Werttyp SubjectAltNameExt f&#252;r Zugriff auf Benutzer</h5>
+<a name="ggumk"></a><h5>Werttyp SubjectAltNameExt f&#252;r Zugriff auf Benutzerprofil</h5>
 <p>Wird ein anderer Werttyp als <tt>none</tt> ausgew&#228;hlt, hat dieses Attribut Vorrang vor
 dem Attribut <tt>F&#252;r den Zugriff auf das Benutzerprofil verwendetes Zertifikatsfeld</tt> oder <tt>F&#252;r den Zugriff auf das Benutzerprofil verwendetes weiteres Zertifikatsfeld</tt>. </p>
 <ul><li><p>RFC822Name</p></li></ul>
@@ -175,10 +174,9 @@ dem Attribut <tt>F&#252;r den Zugriff auf das Benutzerprofil verwendetes Zertifi
 
 <a name="fwbiw"></a><h5>Vertrauensw&#252;rdige Remote-Hosts</h5>
 <p>Legt eine Liste der vertrauensw&#252;rdigen Hosts fest, denen die Versendung von Zertifikaten
-an Federated Access Manager anvertraut wird. Federated Access Manager muss &#252;berpr&#252;fen, ob
-das Zertifikat von einem dieser Hosts stammt. Dieses Attribut wird f&#252;r das
-Portal Server-Gateway, f&#252;r einen Lastenausgleich mit SSL-Beendigung und f&#252;r verteilte Authentifizierung verwendet.
-</p><dl><dt>Keiner</dt>
+an OpenSSO anvertraut wird. OpenSSO muss &#252;berpr&#252;fen, ob das Zertifikat von einem
+dieser Hosts stammt. Dieses Attribut wird f&#252;r das Portal Server-Gateway, f&#252;r einen
+Lastenausgleich mit SSL-Beendigung und f&#252;r verteilte Authentifizierung verwendet. </p><dl><dt>Keiner</dt>
 <dd><p>Deaktiviert das Attribut. Dies ist die Standardeinstellung.</p></dd>
 <dt>Alle</dt>
 <dd><p>Akzeptiert die Portal Server Gateway-Zertifikatauthentifizierung von jeder Client-IP-Adresse.</p></dd>
@@ -190,8 +188,8 @@ Portal Server-Gateway, f&#252;r einen Lastenausgleich mit SSL-Beendigung und f&#
 <a name="fwbkd"></a><h5>SSL-Anschlussnummer</h5>
 <p>Gibt die Anschlussnummer f&#252;r die Secure Socket Layer-Schicht (SSL) an. Zurzeit wird
 das Attribut nur vom Gateway-Servlet verwendet. Bevor Sie eine SSL-Anschlussnummer hinzuf&#252;gen oder
-&#228;ndern, sollten Sie den Abschnitt Policy-Based Resource Management (Richtliniengest&#252;tzte Ressourcenverwaltung) im Federated
-Access Manager Administration Guide lesen.</p>
+&#228;ndern, sollten Sie den Abschnitt "Policy-Based Resource Management" (Richtliniengest&#252;tzte Ressourcenverwaltung) im OpenSSO
+Administration Guide lesen.</p>
 
 <a name="gcabp"></a><h5>HTTP-Header-Name f&#252;r Clientzertifikat</h5>
 <p>Dieses Attribut wird nur verwendet, wenn das Attribut ";Vertrauensw&#252;rdige Remote-Hosts" auf "Alle"

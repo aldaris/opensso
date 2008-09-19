@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Para agregar una regla a una pol&#237;tica - Ayuda en l&#237;nea de la consola de Sun Federated Access Manager 8.0
+  <title>Para agregar una regla a una pol&#237;tica - Ayuda en l&#237;nea de la consola de Sun OpenSSO 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -43,13 +43,13 @@ m&#225;s servicios para la pol&#237;tica:</b><dl><dt>Discovery Service</dt>
 <dt>Liberty Personal Profile Service</dt>
 <dd><p>Define las acciones de autorizaci&#243;n para las invocaciones del protocolo de modificaci&#243;n y consulta de servicio de perfil personal Liberty realizadas por los clientes de servicios Web para un recurso especificado.</p></dd>
 <dt>Agente de pol&#237;tica de URL</dt>
-<dd><p>Define las acciones de autorizaci&#243;n para el servicio de agente de directiva de URL. Se utiliza para definir las directivas que protegen las URL HTTP y HTTPS. &#201;ste suele ser el uso m&#225;s habitual de las pol&#237;ticas de Federated Access Manager.</p></dd>
+<dd><p>Define las acciones de autorizaci&#243;n para el servicio de agente de directiva de URL. Se utiliza para definir las directivas que protegen las URL HTTP y HTTPS. &#201;ste suele ser el uso m&#225;s habitual de las directivas de OpenSSO.</p></dd>
 </dl>
 </li>
 <li><b>Haga clic en Siguiente.</b></li>
-<li><b>Agregue un nombre y un nombre de recurso para la regla.</b><p>Actualmente, los agentes de pol&#237;ticas s&#243;lo admiten recursos <tt>http://</tt> y <tt>https://</tt>, y
-no son compatibles con las direcciones IP especificadas en lugar del nombre
-de host.</p><p>Se admiten los comodines para el nombre de recurso, el protocolo, el
+<li><b>Agregue un nombre y un nombre de recurso para la regla.</b><p>Actualmente, los agentes de directivas de OpenSSO s&#243;lo admiten recursos <tt>http://</tt> y
+<tt>https://</tt>, y no son compatibles con las direcciones IP especificadas en lugar
+del nombre de host.</p><p>Se admiten los comodines para el nombre de recurso, el protocolo, el
 host y el puerto. Por ejemplo:</p><pre>http*://*:*/*.html</pre><p>Al utilizar el servicio de agente de pol&#237;tica de URL, si no
 se especifica ning&#250;n n&#250;mero de puerto, se utilizar&#225; el n&#250;mero de puerto
 predeterminado 80 para <tt>http://</tt> y 443 para <tt>https://</tt>.</p>

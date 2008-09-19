@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <!-- ident   "%Z%%M% %I%   %E% SMI" -->
 <!DOCTYPE index PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version 2.0//EN" "index_1_0.dtd">
 <index version="2.0">
@@ -57,10 +57,10 @@
     <indexitem target="policy.pmdefaultsessioncondtionadd" text="Session"></indexitem>
     <indexitem target="policy.pmdefaulttimeconditionadd" text="Temps"></indexitem></indexitem>
  <indexitem target="service.scconfig" text="Configuration">
-    <indexitem target="authattrs" text="Authentification"></indexitem>
-    <indexitem target="consoleprops" text="Propriétés de la console"></indexitem>
-    <indexitem target="systemprops" text="Propriétés du système"></indexitem>
-    <indexitem target="global" text="Propriétés générales"></indexitem></indexitem>
+    <indexitem target="service.scconfigauth" text="Authentification"></indexitem>
+    <indexitem target="service.scconfigconsole" text="Propriétés de la console"></indexitem>
+    <indexitem target="service.scfonfigsystem" text="Propriétés du système"></indexitem>
+    <indexitem target="servic.scconfigglobal" text="Propriétés générales"></indexitem></indexitem>
  <indexitem target="supportedcontainers" text="Conteneurs pris en charge"></indexitem>
  <indexitem text="Contexte d'authentification">
     <indexitem target="federation.samlv2spassertioncontent" text="Attribut"></indexitem><indexitem target="federation.samlv2idpassertioncontent" text="Attribut"></indexitem><indexitem target="federation.idffidp" text="Attribut"></indexitem><indexitem target="federation.idffsp" text="Attribut"></indexitem></indexitem>
@@ -109,7 +109,7 @@
  <indexitem target="realm.idrepo" text="Magasins de données">
     <indexitem target="realm.idrepoeditad" text="Attributs Active Directory"></indexitem>
     <indexitem target="realm.idrepoeditldapv3" text="Attributs du plug-in de référentiel LDPAv3"></indexitem>
-    <indexitem target="realm.idrepoeditfamschema" text="Attributs Sun Directory Server avec AM Schema"></indexitem>
+    <indexitem target="realm.idrepoeditfamschema" text="attributs Sun Directory Server avec schéma AM"></indexitem>
     <indexitem target="realm.idreposelecttype" text="Création d'un magasin de données"></indexitem></indexitem>
  <indexitem target="attributemapper" text="Mappeur d'attribut"></indexitem>
  <indexitem target="resourceidmapper" text="Mappeur d'ID de ressource"></indexitem>
@@ -138,7 +138,7 @@
     <indexitem target="service.scplatform" text="Plate-forme"></indexitem></indexitem>
  <indexitem text="Propriétés générales">
     <indexitem target="service.scpolicy" text="Configuration des stratégies"></indexitem>
-    <indexitem target="service.scserviceprofile.iplanetampasswordresetservice" text="Réinitialisation du mot de passe"></indexitem>
+    <indexitem target="service.scserviceprofile.iplanetampasswordresetservice" text="Réinitialisation du mot de passe fournit un service de réinitialisation du mot de passe qui permet aux utilisateurs de recevoir un message électronique contenant un nouveau mot de passe ou de réinitialiser le mot de passe d'un service ou d'une application protégé par OpenSSO."></indexitem>
     <indexitem target="service.scserviceprofile.amsessionservice" text="Session"></indexitem>
     <indexitem target="service.scserviceprofile.iplanetamuserservice" text="Utilisateur"></indexitem></indexitem>
  <indexitem target="policy.selectservicetype" text="Règles"></indexitem>
@@ -204,7 +204,7 @@
     <indexitem target="policy.selectsubjecttype" text="Objets"></indexitem>
     <indexitem target="policy.selectservicetype" text="Règles"></indexitem>
     <indexitem target="fyfby" text="Stratégies d'orientation"></indexitem>
-    <indexitem target="normalpolicy" text="Stratégies normales"></indexitem></indexitem>
+    <indexitem target="normalpolicy" text="stratégies normales"></indexitem></indexitem>
  <indexitem target="federation.fssamltargeturlsadd" text="URL cibles"></indexitem>
  <indexitem target="idm.entitymembership" text="Utilisateurs, Ajout aux services, rôles et groupes"></indexitem>
 </index>

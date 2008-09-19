@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>会话 - Sun Federated Access Manager 8.0 控制台联机帮助
+  <title>会话 - Sun OpenSSO 8.0 控制台联机帮助
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -43,13 +43,13 @@
 <p>默认值为 10。指定在会话创建后没有用户登录的情况下，要从会话表中删除无效会话所间隔的分钟数。该值应该始终大于“验证”模块属性文件中的超时值。</p>
 
 <a name="ggkaf"></a><h5>会话清除延迟</h5>
-<p>默认值为 60。指定延迟清除会话操作的时间（以分钟为单位）。会话超时后，会话将在这个延长时限内继续驻留在会话服务器中。客户机应用程序使用该属性通过 SSO API 检查会话是否超时。在延长时限即将结束时，会话将被销毁。如果用户注销或 Access Manager 组件明确销毁会话，则在延长时限内不会维持会话。会话在这一延长时限内处于“无效”状态。</p>
+<p>默认值为 60。指定延迟清除会话操作的时间（以分钟为单位）。会话超时后，会话将在这个延长时限内继续驻留在会话服务器中。客户机应用程序使用该属性通过 SSO API 检查会话是否超时。在延长时限即将结束时，会话将被销毁。如果用户注销或 OpenSSO 组件明确销毁会话，则在延长时限内不会维持会话。会话在这一延长时限内处于“无效”状态。</p>
 
 <a name="ggkbl"></a><h5>统计信息</h5>
 <p>以下属性设置统计信息配置：</p>
 
 <a name="ggkbf"></a><h5>记录的时间间隔</h5>
-<p>默认值为 60。指定统计信息记录之间的时间间隔（以分钟为单位）。最小为 5 秒，以避免 CPU 饱和。Access Manager 将小于 5 秒的值视为 5 秒。</p>
+<p>默认值为 60。指定统计信息记录之间的时间间隔（以分钟为单位）。最小为 5 秒，以避免 CPU 饱和。OpenSSO 将小于 5 秒的值视为 5 秒。</p>
 
 <a name="ggkbn"></a><h5>状态</h5>
 <p>默认值为 file。指定统计信息记录的位置。可能的值为：</p>
@@ -59,7 +59,7 @@
 
 
 <a name="ggkcf"></a><h5>目录</h5>
-<p>在安装期间设置该值。示例：<tt></tt><i>FederatedAccessManager-base </i><tt>/</tt><i>server-URI</i><tt>/stats</tt>。指定将在其中创建调试文件的目录。</p>
+<p>在安装期间设置该值。示例：<tt></tt><i>OpenSSO-base</i><tt>/</tt><i>server-URI</i><tt>/stats</tt>。指定将在其中创建调试文件的目录。</p>
 
 <a name="ggkca"></a><h5>启用主机查找</h5>
 <p>默认值为“假”。在会话记录期间启用或禁用主机查找。</p>

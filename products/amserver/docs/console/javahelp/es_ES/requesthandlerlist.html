@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Lista de administradores de solicitudes - Ayuda en l&#237;nea de la consola de Sun Federated Access Manager 8.0
+  <title>Lista de administradores de solicitudes - Ayuda en l&#237;nea de la consola de Sun OpenSSO 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -44,17 +44,17 @@ in: <tt>key=disco|class=com.example.identity.liberty.ws.disco.DiscoveryService <
 <tr><td align="left" valign="top" scope="row"><p><tt>key</tt></p></td>
 <td align="left" valign="top" scope="row"><p>El par&#225;metro <tt>key</tt>
 requerido es la &#250;ltima parte de la ruta del URI a un
-punto final de SOAP. El punto final de SOAP en Access Manager
-el servlet del receptor de SOAP. The URI to the SOAP Receiver
-is: <tt><b></tt><i> protocol</i><tt>://</tt><i>host</i><tt>:</tt><i>port </i><tt>/</tt><i>deploy-uri</i><tt>/Liberty/key</b></tt> If you define <tt><b>disco</b></tt> as the key, the URI path
-to the SOAP endpoint for the corresponding Servicio de detecci&#243;n would be:
-<tt><b></tt><i> protocol</i><tt>://</tt><i>host</i><tt>:</tt><i>port </i><tt>/amserver/Liberty/disco</b></tt>. Distintos clientes de servicios utilizan distintas claves al conectarse al receptor
-de SOAP.</p></td>
+punto final de SOAP. El punto final de SOAP de OpenSSO es
+el servlet del receptor SOAP. The URI to the SOAP Receiver is:
+<tt><b></tt><i> protocol</i><tt>://</tt><i>host</i><tt>:</tt><i>port </i><tt>/</tt><i>deploy-uri</i><tt>/Liberty/key</b></tt> If you define <tt><b>disco</b></tt> as the key, the URI path to
+the SOAP endpoint for the corresponding Servicio de detecci&#243;n would be: <tt><b></tt><i> protocol</i><tt>://</tt><i>host</i><tt>:</tt><i>port </i><tt>/amserver/Liberty/disco</b></tt>.
+Distintos clientes de servicios utilizan distintas claves al conectarse al receptor de
+SOAP.</p></td>
 </tr>
 <tr><td align="left" valign="top" scope="row"><p><tt>class</tt></p></td>
-<td align="left" valign="top" scope="row"><p>Este par&#225;metro <tt>class</tt> requerido especifica el nombre de la clase de
-implementaci&#243;n del administrador de solicitudes para el servicio de identidades concreto. For
-example: <tt>class=com.example.identity.liberty.ws.disco.DiscoveryService </tt>.</p></td>
+<td align="left" valign="top" scope="row"><p>Este par&#225;metro <tt>class</tt> requerido especifica el nombre de la clase de implementaci&#243;n
+del administrador de solicitudes para el servicio de identidades concreto. For example:
+<tt>class=com.example.identity.liberty.ws.disco.DiscoveryService </tt>.</p></td>
 </tr>
 </table><p>Para agregar un nuevo administrador de solicitudes, consulte <a href="service.scsoapbindingrequesthandlerlistadd.html">Para configurar un administrador de solicitudes</a>.</p>
 <br/>

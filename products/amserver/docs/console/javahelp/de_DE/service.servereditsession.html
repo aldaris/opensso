@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Sitzung - Online-Hilfe zur Sun Federated Access Manager 8.0-Konsole
+  <title>Sitzung - Online-Hilfe zur Sun OpenSSO 8.0-Konsole
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -56,8 +56,8 @@ gespeichert bleibt. Diese Eigenschaft wird von der Client-Anwendung verwendet, u
 APIs zu &#252;berpr&#252;fen, ob eine Zeit&#252;berschreitung bei der Sitzung aufgetreten ist. Nach
 Ablauf dieses erweiterten Zeitraums wird die Sitzung vernichtet. Die Sitzung bleibt nicht
 w&#228;hrend des gesamten erweiterten Zeitraums erhalten, wenn der Benutzer sich abmeldet oder
-die Sitzung explizit durch eine Access Manager-Komponente vernichtet wird. W&#228;hrend dieses erweiterten
-Zeitraums befindet sich die Sitzung im Zustand INVALID (ung&#252;ltig).</p>
+die Sitzung explizit durch eine OpenSSO-Komponente beendet wird. W&#228;hrend dieses erweiterten Zeitraums
+befindet sich die Sitzung im Zustand INVALID (ung&#252;ltig).</p>
 
 <a name="ggkbl"></a><h5>Statistiken</h5>
 <p>Folgende Attribute legen die statistische Konfiguration fest:</p>
@@ -65,8 +65,8 @@ Zeitraums befindet sich die Sitzung im Zustand INVALID (ung&#252;ltig).</p>
 <a name="ggkbf"></a><h5>Protokollintervall</h5>
 <p>Der Standardwert ist 60. Gibt an, wie viele Minuten zwischen den einzelnen
 Statistikprotokollierungen verstreichen sollen. Der Mindestwert ist 5 Sekunden, um eine CPU-S&#228;ttigung zu
-vermeiden. Access Manager interpretiert jeden Wert, der kleiner ist als 5 Sekunden,
-als 5 Sekunden.</p>
+vermeiden. OpenSSO interpretiert jeden Wert, der kleiner ist als 5 Sekunden, als
+5 Sekunden.</p>
 
 <a name="ggkbn"></a><h5>Status</h5>
 <p>Der Standardwert lautet "file" (Datei). Gibt den Speicherort des Statistikprotokolls an. M&#246;gliche
@@ -77,7 +77,7 @@ Werte:  </p>
 
 
 <a name="ggkcf"></a><h5>-Verzeichnis</h5>
-<p>Der  Wert wird w&#228;hrend der Installation festgelegt. Beispiel: <tt></tt><i>FederatedAccessManager-base </i><tt>/</tt><i>server-URI</i><tt>/stats</tt>. Gibt das
+<p>Der  Wert wird w&#228;hrend der Installation festgelegt. Beispiel: <tt></tt><i>OpenSSO-base </i><tt>/</tt><i>server-URI</i><tt>/stats</tt>. Gibt das
 Verzeichnis an, in dem die Fehlersuchdateien erstellt werden.</p>
 
 <a name="ggkca"></a><h5>Nachschlagen des Hosts aktivieren</h5>

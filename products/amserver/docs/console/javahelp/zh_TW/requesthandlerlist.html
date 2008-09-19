@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>請求處理程式清單 - Sun Federated Access Manager 8.0 主控台線上說明
+  <title>請求處理程式清單 - Sun OpenSSO 8.0 主控台線上說明
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -36,12 +36,12 @@
 </tr>
 <tr><td align="left" valign="top" scope="row"><p><tt>key</tt></p></td>
 <td align="left" valign="top" scope="row"><p>必需的
-<tt>key</tt> 參數是 SOAP 端點的 URI 路徑的最後部份。Access Manager 中的 SOAP 端點是 SOAP 收件者
-Servlet。SOAP 接收器的 URI 為：<tt><b></tt><i>protocol</i><tt>://</tt><i>host</i><tt>:</tt><i>port </i><tt>/</tt><i>deploy-uri</i><tt>/Liberty/key</b></tt>。如果您將 <tt><b>disco</b></tt> 定義為 key，則對應探索服務的 SOAP 端點的 URI 路徑將是：<tt><b></tt><i>protocol</i><tt>://</tt><i>host</i><tt>:</tt><i>port </i><tt>/amserver/Liberty/disco</b></tt>。當連接到 SOAP
-接收器時，不同的服務用戶端會使用不同的鍵值。</p></td>
+<tt>key</tt> 參數是 SOAP 端點的 URI 路徑的最後部份。OpenSSO 中的 SOAP 端點是 SOAP 收件者 Servlet。SOAP
+接收器的 URI 為：<tt><b></tt><i>protocol</i><tt>://</tt><i>host</i><tt>:</tt><i>port </i><tt>/</tt><i>deploy-uri</i><tt>/Liberty/key</b></tt>。如果您將 <tt><b>disco</b></tt> 定義為 key，則對應探索服務的 SOAP 端點的 URI 路徑將是：<tt><b></tt><i>protocol</i><tt>://</tt><i>host</i><tt>:</tt><i>port </i><tt>/amserver/Liberty/disco</b></tt>。當連接到 SOAP 接收器時，不同的服務用戶端會使用不同的鍵值。</p></td>
 </tr>
 <tr><td align="left" valign="top" scope="row"><p><tt>class</tt></p></td>
-<td align="left" valign="top" scope="row"><p>必需的 <tt>class</tt> 參數指定特殊識別服務的請求處理程式實作類別的名稱。例如：<tt>class=com.example.identity.liberty.ws.disco.DiscoveryService</tt>。</p></td>
+<td align="left" valign="top" scope="row"><p>必需的
+<tt>class</tt> 參數指定特殊識別服務的請求處理程式實作類別的名稱。例如：<tt>class=com.example.identity.liberty.ws.disco.DiscoveryService</tt>。</p></td>
 </tr>
 </table><p>若要新增請求處理程式，請參閱<a href="service.scsoapbindingrequesthandlerlistadd.html">配置請求處理程式</a>。</p>
 <br/>

@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>策略配置 - Sun Federated Access Manager 8.0 控制台联机帮助
+  <title>策略配置 - Sun OpenSSO 8.0 控制台联机帮助
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -58,8 +58,8 @@
 <a name="fufnh"></a><h5>拒绝决定时继续评估</h5>
 <p>指定策略框架是否应继续评估后续策略（甚至是在策略决定为“拒绝”时）。如果没有选择（默认设置），确认“拒绝”决策后，策略评估将跳过后续策略。</p>
 
-<a name="fufng"></a><h5>可由 Federated Access Manager 处理的建议</h5>
-<p>用于定义策略建议键的名称，策略强制点（策略代理）会通过这些名称将用户代理重定向至 Federated Access Manager。如果代理收到不允许访问某资源的策略决定，但又确实拥有建议，代理会检查是否在此属性中列有建议键。</p><p>如果发现此类建议，用户代理则被重定向至 Federated Access Manager，从而可能会允许访问该资源。</p>
+<a name="fufng"></a><h5>可由 OpenSSO 处理的建议</h5>
+<p>用于定义策略建议键的名称，策略强制点（策略代理）会为其将用户代理重定向至 OpenSSO。如果代理收到不允许访问某资源的策略决定，但又确实拥有建议，代理会检查是否在此属性中列有建议键。</p><p>如果发现此类建议，用户代理则被重定向至 OpenSSO，从而可能会允许访问该资源。</p>
 
 <a name="gdpdm"></a><h5>组织别名引用</h5>
 <p>设置为“是”时，该属性允许用户在子领域中创建策略，而不必在顶层或父领域中创建引用策略。用户只能创建用于保护 HTTP 或 HTTPS 资源的策略，且这些资源的全限定主机名应与领域的 DNS 别名相匹配。默认情况下，该属性设置为“否”。</p>
@@ -68,16 +68,16 @@
 <p>LDAP 属性包括：</p>
 
 <a name="fufmg"></a><h5>主 LDAP 服务器</h5>
-<p>指定安装 Federated Access Manager 过程中指定的主 LDAP 服务器的主机名和端口号，这些数据将用于搜索策略主体，如 LDAP 用户、LDAP 角色、LDAP 组等。</p><p>格式为 <i>hostname:port</i>。例如：<tt>machine1.example.com:389</tt></p><p>对于多个 LDAP 服务器主机的故障切换配置，该值可为以空格分隔的主机列表。格式为 <i>hostname1:port1 hostname2:port2...</i></p><p>例如：<tt>machine1.example1.com:389 machine2.example1.com:389 </tt></p><p>如果指定多个条目，条目前面必须带有本地服务器名称。这样可将特定的 Federated Access Managers 配置为与特定 Directory Server 进行通信。</p><p>格式为 <i>servername|hostname:port</i>。例如：</p><p><tt>machine1.example1.com|machine1.example1.com:389</tt></p><p><tt>machine1.example2.com|machine1.example2.com:389</tt></p><p>对于故障切换配置：</p><p><tt>AM_Server1.example1.com|machine1.example1.com:389 machine2.example.com1:389 </tt></p><p><tt>AM_Server2.example2.com|machine1.example2.com:389 machine2.example2.com:389 </tt></p>
+<p>指定安装 OpenSSO 过程中指定的主 LDAP 服务器的主机名和端口号，这些数据将用于搜索策略主体，如 LDAP 用户、LDAP 角色、LDAP 组等。</p><p>格式为 <i>hostname:port</i>。例如：<tt>machine1.example.com:389</tt></p><p>对于多个 LDAP 服务器主机的故障切换配置，该值可为以空格分隔的主机列表。格式为 <i>hostname1:port1 hostname2:port2...</i></p><p>例如：<tt>machine1.example1.com:389 machine2.example1.com:389 </tt></p><p>如果指定多个条目，条目前面必须带有本地服务器名称。这样可将特定的 OpenSSO 配置为与特定 Directory Server 进行通信。</p><p>格式为 <i>servername|hostname:port</i>。例如：</p><p><tt>machine1.example1.com|machine1.example1.com:389</tt></p><p><tt>machine1.example2.com|machine1.example2.com:389</tt></p><p>对于故障切换配置：</p><p><tt>AM_Server1.example1.com|machine1.example1.com:389 machine2.example.com1:389 </tt></p><p><tt>AM_Server2.example2.com|machine1.example2.com:389 machine2.example2.com:389 </tt></p>
 
 <a name="fufmc"></a><h5>LDAP 基 DN</h5>
-<p>指定 LDAP 服务器中的基 DN，搜索将从该 DN 开始。默认情况下，它是 Federated Access Manager 安装的顶层领域。</p>
+<p>指定 LDAP 服务器中的基 DN，搜索将从该 DN 开始。默认情况下，它是 OpenSSO 安装的顶层领域。</p>
 
 <a name="fufmd"></a><h5>LDAP 用户基 DN</h5>
-<p>该属性指定由 LDAP 服务器中的 LDAP 用户主体使用的基 DN，搜索将从此 DN 开始进行。默认情况下，它是 Federated Access Manager 安装库的顶层领域。</p>
+<p>该属性指定由 LDAP 服务器中的 LDAP 用户主体使用的基 DN，搜索将从此 DN 开始进行。默认情况下，它是 OpenSSO 安装基的顶层领域。</p>
 
-<a name="fufmz"></a><h5>Federated Access Manager 角色基 DN</h5>
-<p>定义领域或组织的 DN，在搜索 Federated Access Manager 角色的值时会将该领域或组织用作基础。该属性由 <i>AccessManagerRoles</i> 策略主体使用。 </p>
+<a name="fufmz"></a><h5>OpenSSO 角色基 DN</h5>
+<p>定义领域或组织的 DN，在搜索 OpenSSO 角色的值时会将该 DN 用作基础。该属性由 <i>AccessManagerRoles</i> 策略主体使用。 </p>
 
 <a name="fufme"></a><h5>LDAP 绑定 DN</h5>
 <p>指定 LDAP 服务器中的绑定 DN。</p>
@@ -125,8 +125,8 @@
 <li><p>SCOPE_SUB（默认值）</p></li></ul>
 
 
-<a name="fufmy"></a><h5>Federated Access Manager 角色搜索范围</h5>
-<p>定义用于查找 Federated Access Manager 角色主体条目的范围。</p>
+<a name="fufmy"></a><h5>OpenSSO 角色搜索范围</h5>
+<p>定义用于查找 OpenSSO 角色主体条目的范围。</p>
 <ul><li><p>SCOPE_BASE</p></li>
 <li><p>SCOPE_ONE</p></li>
 <li><p>SCOPE_SUB（默认值）</p></li></ul>
@@ -151,8 +151,8 @@
 <p>指定经过多长时间后搜索将超时。如果搜索超过了指定的时间，将返回在该时间前搜索到的条目。</p>
 
 <a name="fufmi"></a><h5>LDAP SSL</h5>
-<p>指定 LDAP 服务器是否运行 SSL。选择该属性将启用 SSL，取消选择（默认）则将禁用 SSL。</p><p>如果 LDAP 服务器已启用 SSL (LDAPS)，您必须确保 Federated Access Manager 已配置正确的 SSL 可信任证书，以使 Federated
-Access Manager 可以通过 LDAPS 协议连接到 Directory Server。</p>
+<p>指定 LDAP 服务器是否运行 SSL。选择该属性将启用 SSL，取消选择（默认）则将禁用 SSL。</p><p>如果 LDAP 服务器已启用 SSL (LDAPS)，您必须确保 OpenSSO 已配置正确的 SSL 可信赖证书，以使 OpenSSO 可以通过 LDAPS
+协议连接到 Directory Server。</p>
 
 <a name="fufmk"></a><h5>LDAP 连接池的最小尺寸</h5>
 <p>指定用于连接 Directory Server 的连接池的最小尺寸，它与 LDAP 服务器属性中指定的一致。默认端口为 1。</p>
@@ -173,8 +173,8 @@ Access Manager 可以通过 LDAPS 协议连接到 Directory Server。</p>
 <p>该属性指定一段时间（以分钟为单位），在这段时间内，可以使用缓存的主体结果基于单点登录令牌对同一策略请求进行评估。</p><p>当基于 SSO 令牌对策略开始进行评估时，将评估该策略中的主体实例以确定该策略是否适用于给定的用户。通过 SSO 令牌 ID 添加了密钥的主体结果缓存在策略中。如果在“主体结果的生存时间”属性中指定的时间内对同一个策略中的同一个 SSO 令牌 ID 进行了另一次评估，策略框架将检索缓存的主体结果，而不是评估主体实例。这会明显减少策略评估的时间。</p>
 
 <a name="fufnm"></a><h5>用户别名</h5>
-<p>如果创建策略来保护其主体的成员在远程 Directory Server 中化名为本地用户的资源，则必须启用该属性。例如，如果在远程 Directory Server 中创建 <tt>uid=rmuser</tt>，然后将 <tt>rmuser</tt> 作为别名添加到 Federated Access
-Manager 中的本地用户（如 <tt>uid=luser</tt>），则必须启用该属性。以 <tt>rmuser</tt> 身份登录时，将使用本地用户 (<tt>luser</tt>) 创建会话，并会成功强制实行策略。</p>
+<p>如果创建策略来保护其主体的成员在远程 Directory Server 中化名为本地用户的资源，则必须启用该属性。例如，如果在远程 Directory Server 中创建 <tt>uid=rmuser</tt>，然后将 <tt>rmuser</tt> 作为别名添加到 OpenSSO 中的本地用户（如
+<tt>uid=luser</tt>），则必须启用该属性。以 <tt>rmuser</tt> 身份登录时，将使用本地用户 (<tt>luser</tt>) 创建会话，并会成功强制实行策略。</p>
 
 <a name="fufni"></a><h5>选定的响应提供者</h5>
 <p>定义为领域启用的策略响应提供者插件。只有该属性中选定的响应提供者插件才能够被添加到领域中定义的策略中。</p>

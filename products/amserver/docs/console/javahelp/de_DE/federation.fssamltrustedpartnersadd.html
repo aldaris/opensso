@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Vertrauensw&#252;rdige Partner: Konfigurieren von Attributen f&#252;r vertrauensw&#252;rdige Partner - Online-Hilfe zur Sun Federated Access Manager 8.0-Konsole
+  <title>Vertrauensw&#252;rdige Partner: Konfigurieren von Attributen f&#252;r vertrauensw&#252;rdige Partner - Online-Hilfe zur Sun OpenSSO 8.0-Konsole
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -83,10 +83,10 @@ um die &#196;nderung abzuschlie&#223;en.</p>
 <dd><p>Folgende Authentifizierungstypen k&#246;nnen mit SAML verwendet werden:</p>
 <ul><li><p>Geben Sie <tt>NOAUTH</tt> an, wenn der Zugriff auf den URL zum SAML-SOAP-Empf&#228;nger &#252;ber HTTP erfolgt und der SAML-SOAP-Empf&#228;nger nicht durch HTTP-Basis-Authentifizierung und/oder SSL gesch&#252;tzt ist. </p></li>
 <li><p>Geben Sie <tt>BASICAUTH</tt> an, wenn der Zugriff auf den URL zum SAML-SOAP-Empf&#228;nger &#252;ber HTTP erfolgt und der SAML-SOAP-Empf&#228;nger durch HTTP-Basis-Authentifizierung gesch&#252;tzt ist.</p></li>
-<li><p>Geben Sie <tt>SSL</tt> an, wenn der Zugriff auf den URL zum SAML-SOAP-Empf&#228;nger &#252;ber HTTPS erfolgt und der SAML-SOAP-Empf&#228;nger nicht durch HTTP-SSL gesch&#252;tzt ist.</p></li>
+<li><p>Geben Sie <tt>SSL</tt> an, wenn der Zugriff auf die URL zum SAML-SOAP-Empf&#228;nger &#252;ber HTTPS erfolgt und der SAML-SOAP-Empf&#228;nger nicht durch HTTP SSL gesch&#252;tzt ist.</p></li>
 <li><p>Geben Sie <tt>SSLWITHBASICAUTH</tt> an, wenn der Zugriff auf den URL zum SAML-SOAP-Empf&#228;nger &#252;ber HTTPS erfolgt und der SAML-SOAP-Empf&#228;nger durch <tt>HTTP-Basis-Authentifizierung mit SSL</tt> gesch&#252;tzt ist.</p></li></ul>
 
-<hr><p><b>Hinweis &#8211; </b>Wenn Sie den URL des SAML-SOAP-Empf&#228;ngers durch HTTP-Basis-Authentifizierung sch&#252;tzen, f&#252;hren Sie dies in der Web-Container-Konfiguration und nicht in der Federated Access Manager-Konfiguration durch. Benutzer-ID und Passwort der HTTP-Basis-Authentifizierung geben Sie allerdings in der Federated Access Manager-Konfiguration an.</p>
+<hr><p><b>Hinweis &#8211; </b>Wenn Sie die URL des SAML-SOAP-Empf&#228;ngers durch HTTP-Basis-Authentifizierung sch&#252;tzen, f&#252;hren Sie dies in der Webcontainer-Konfiguration und nicht in der OpenSSO-Konfiguration durch. Benutzer-ID und Passwort der HTTP-Basis-Authentifizierung geben Sie allerdings in der OpenSSO-Konfiguration an.</p>
 <hr>
 <p>Dieses Attribut ist optional. Wenn nicht anders angegeben, lautet der Standardwert <tt>NOAUTH</tt>. Wenn <tt>BASICAUTH</tt> oder <tt>SSLWITHBASICAUTH </tt> angegeben ist, ist das Attribut "Vertrauensw&#252;rdige Partner" mit dem Wert <tt>HTTPS</tt> erforderlich.</p></dd>
 <dt>Benutzer</dt>

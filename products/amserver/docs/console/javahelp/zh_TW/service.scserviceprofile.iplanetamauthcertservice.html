@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>憑證  - Sun Federated Access Manager 8.0 主控台線上說明
+  <title>憑證  - Sun OpenSSO 8.0 主控台線上說明
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -70,15 +70,14 @@
 <p>指定 HTTP 參數 (用於從 servlet 取得 CRL) 以更新 CRL。請聯絡您的 CA 管理員，以取得這些參數。</p>
 
 <a name="fwbil"></a><h5>OCSP 驗證</h5>
-<p>透過聯絡對應的 OCSP 回應者，來啟用要執行的 OCSP 驗證。在執行階段，OCSP 回應者如下決定。所提及的屬性位於主控台的 [配置] > [伺服器與網站] > [安全性]：</p>
+<p>透過聯絡對應的 OCSP 回應程式，來啟用要執行的 OCSP 驗證。在執行階段，OCSP 回應程式如下決定。所提及的屬性位於主控台的 [配置] > [伺服器與網站] > [安全性]：</p>
 <ul><li><p>如果此值設定為 true，並在<a href="service.servereditsecurity.html#ggkav">回應程式 URL</a>屬性中設定了 OCSP 回應程式，此屬性的值將會當做 OCSP 回應程式使用。</p></li>
 <li><p>如果已經啟用<a href="service.servereditsecurity.html#ggkaa">線上憑證狀態協定檢查</a>，而且未設定此屬性的值，則您用戶端憑證中顯示的 OCSP 回應程式會當做 OCSP 回應程式使用。</p></li>
 <li><p>如果未啟用<a href="service.servereditsecurity.html#ggkaa">線上憑證狀態協定檢查</a>，或者如果已經啟用<a href="service.servereditsecurity.html#ggkaa">線上憑證狀態協定檢查</a>但找不到 OCSP 回應程式，則不會執行任何 OCSP 驗證。</p></li></ul>
-<p>在啟用 OCSP 驗證之前，請確定 Federated Access Manager 機器與 OCSP 回應者機器上的時間儘可能同步。而且，Federated Access Manager 機器上的時間不能晚於
-OCSP 回應者機器上的時間。例如：</p><p><tt>OCSP responder machine - 12:00:00 pm</tt></p><p><tt>Federated Access Manager machine - 12:00:30 pm</tt></p>
+<p>在啟用 OCSP 驗證之前，請確定 OpenSSO 機器與 OCSP 回應程式機器上的時間儘可能同步。而且，OpenSSO 機器上的時間不能晚於 OCSP 回應程式機器上的時間。例如：</p><p><tt>OCSP responder machine - 12:00:00 pm</tt></p><p><tt>OpenSSO machine - 12:00:30 pm</tt></p>
 
 <a name="fwbij"></a><h5>儲存憑證的 LDAP 伺服器</h5>
-<p>指定儲存憑證的 LDAP 伺服器名稱與連接埠號。預設值為安裝 Federated Access Manager 時指定的主機名稱與連接埠。可以使用任何儲存憑證的 LDAP 伺服器之主機名稱與連接埠。格式為 <tt>hostname:port</tt>。</p>
+<p>指定儲存憑證的 LDAP 伺服器名稱與連接埠號。預設值是安裝 OpenSSO 時指定的主機名稱與連接埠。可以使用任何儲存憑證的 LDAP 伺服器之主機名稱與連接埠。格式為 <tt>hostname:port</tt>。</p>
 
 <a name="fwbtp"></a><h5>LDAP 起始搜尋 DN</h5>
 <p>指定應該開始搜尋使用者之憑證的節點 DN。此欄位沒有預設值。此欄位將識別任何有效 DN。</p><p>多重項目必須以本機伺服器名稱為字首。格式如下所示：</p><p><tt>servername|search dn</tt></p><p>對於多個項目：</p><p><tt>servername1|search dn servername2|search dn servername3|search dn...</tt></p><p>如果在具有同一使用者 ID 的根組織之下有多個項目，則應該將此參數設定為只能搜尋或尋找一個項目進行認證。例如，當代理程式 ID 與使用者 ID 都在根組織下時，若根組織使用代理程式 ID 進行認證，此參數應該為 <tt>ou=Agents</tt>；若根組織採用使用者 ID 進行認證，此參數應該為
@@ -116,8 +115,7 @@ OCSP 回應者機器上的時間。例如：</p><p><tt>OCSP responder machine - 
 
 
 <a name="fwbiw"></a><h5>可信任的遠端主機</h5>
-<p>定義信任的主機清單，這些主機可被信任以向 Federated Access Manager 傳送憑證。Federated Access Manager 必須驗證憑證是否來自這些主機中的一個。此屬性用於 Portal Server 閘道、搭配 SSL
-終端的負載平衡器以及「分散式認證」。</p><dl><dt>無</dt>
+<p>定義信任的主機清單，這些主機可被信任以向 OpenSSO 傳送憑證。OpenSSO 必須驗證憑證是否從這些主機的其中一台發出。此屬性用於 Portal Server 閘道、搭配 SSL 終端的負載平衡器以及「分散式認證」。</p><dl><dt>無</dt>
 <dd><p>停用此屬性。這是依預設而設定的。</p></dd>
 <dt>全部</dt>
 <dd><p>會接受來自任意用戶端 IP 位址的 Portal Server Gateway 樣式之憑證認證。</p></dd>
@@ -127,7 +125,7 @@ OCSP 回應者機器上的時間。例如：</p><p><tt>OCSP responder machine - 
 
 
 <a name="fwbkd"></a><h5>SSL 連接埠編號</h5>
-<p>指定安全套接層的連接埠號。目前，此屬性僅由 Gateway servlet 使用。在新增或變更 SSL 連接埠號之前，請參閱「Federated Access Manager 管理指南」中的「以策略為基礎的資源管理」一節。</p>
+<p>指定安全套接層的連接埠號。目前，此屬性僅由 Gateway servlet 使用。在增加或變更 SSL 連接埠號之前，請參閱「OpenSSO 管理指南」中的「以策略為基礎的資源管理」一節。</p>
 
 <a name="gcabp"></a><h5>用戶端憑證的 HTTP 標頭名稱</h5>
 <p>僅當 [可信任的遠端主機] 屬性設定為 [全部] 時或定義了特定的主機名稱時，才使用此屬性。對於由負載平衡器或 SRA 插入的用戶端憑證，管理員必須為其指定 http 標頭名稱。</p>

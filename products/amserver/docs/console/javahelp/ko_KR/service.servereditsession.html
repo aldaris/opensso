@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>세션 - Sun Federated Access Manager 8.0 콘솔 온라인 도움말
+  <title>세션 - Sun OpenSSO 8.0 콘솔 온라인 도움말
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -50,16 +50,16 @@
 <p>기본값은 60이며 세션을 제거할 때까지 지연되는 시간(분)을 지정합니다. 세션 시간 초과 후
 해당 세션이 세션 서버에 계속 상주하는 연장 시간입니다. 이 등록 정보는 클라이언트
 응용 프로그램에서 SSO API를 통해 세션이 시간 초과되었는지 여부를 확인하는 데 사용합니다.
-이 연장 시간이 끝나면 세션이 삭제됩니다. 사용자가 로그아웃하거나 Access Manager 구성 요소에서
-해당 세션을 명시적으로 삭제한 경우에는 연장 시간 동안 세션이 지속되지 않습니다. 이
-연장 시간 동안에는 세션이 INVALID 상태입니다.</p>
+이 연장 시간이 끝나면 세션이 삭제됩니다. 사용자가 로그아웃하거나 OpenSSO 구성 요소에서 해당
+세션을 명시적으로 삭제한 경우에는 연장 시간 동안 세션이 지속되지 않습니다. 이 연장
+시간 동안에는 세션이 INVALID 상태입니다.</p>
 
 <a name="ggkbl"></a><h5>통계</h5>
 <p>다음 속성은 통계 구성을 설정합니다.</p>
 
 <a name="ggkbf"></a><h5>로깅 간격</h5>
 <p>기본값은 60입니다. 통계 로깅 사이의 경과 시간(분)을 지정합니다. CPU 포화를 방지하는 데
-필요한 최소값은 5초입니다. Access Manager에서는 5초 미만인 값을 5초로 간주합니다.</p>
+필요한 최소값은 5초입니다. OpenSSO에서는 5초 미만인 값을 5초로 간주합니다.</p>
 
 <a name="ggkbn"></a><h5>상태</h5>
 <p>기본값은 파일입니다. 통계 로그의 위치를 지정합니다. 사용 가능한 값은 다음과 같습니다. </p>
@@ -69,7 +69,7 @@
 
 
 <a name="ggkcf"></a><h5>디렉토리</h5>
-<p>이 값은 설치 중에 설정됩니다. 예: <tt></tt><i>FederatedAccessManager-base </i><tt>/</tt><i>server-URI</i><tt>/stats</tt>. 디버그 파일을 만들 디렉토리를 지정합니다.</p>
+<p>이 값은 설치 중에 설정됩니다. 예: <tt></tt><i>OpenSSO-base </i><tt>/</tt><i>server-URI</i><tt>/stats</tt>. 디버그 파일을 만들 디렉토리를 지정합니다.</p>
 
 <a name="ggkca"></a><h5>호스트 조회 사용</h5>
 <p>기본값은 false입니다. 세션 로깅 중에 호스트 조회를 사용하거나 사용하지 않도록 설정합니다.</p>

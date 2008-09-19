@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>JDBC - Online-Hilfe zur Sun Federated Access Manager 8.0-Konsole
+  <title>JDBC - Online-Hilfe zur Sun OpenSSO 8.0-Konsole
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,11 +31,11 @@
 
 
 <a name="service.scserviceprofile.sunamauthjdbcservice"></a><h4>JDBC</h4>
-<p><a name="indexterm-174"></a>Das Authentifizierungsmodul "Java Database Connectivity (JDBC)" erm&#246;glicht Federated Access Manager die Authentifizierung
-von Benutzern &#252;ber beliebige SQL-Datenbanken (Structured Query Language), die JDBC-f&#228;hige Treiber bieten.
-Die Verbindung zur SQL-Datenbank kann entweder direkt &#252;ber einen JDBC-Treiber oder &#252;ber
-ein JNDI-Verbindungspool erfolgen. Bei den JDBC-Attributen handelt es sich um Bereichsattribute. Es
-existieren folgende Attribute:</p>
+<p><a name="indexterm-174"></a>Das Authentifizierungsmodul "Java Database Connectivity (JDBC)" erm&#246;glicht OpenSSO die Authentifizierung von Benutzern
+&#252;ber beliebige SQL-Datenbanken (Structured Query Language), die JDBC-f&#228;hige Treiber bieten. Die Verbindung
+zur SQL-Datenbank kann entweder direkt &#252;ber einen JDBC-Treiber oder &#252;ber ein JNDI-Verbindungspool
+erfolgen. Bei den JDBC-Attributen handelt es sich um Bereichsattribute. Es existieren folgende
+Attribute:</p>
 <ul><li><p><a href="#fwajx">Verbindungstyp</a></p></li>
 <li><p><a href="#fwafb">JNDI-Name Verbindungspool</a></p></li>
 <li><p><a href="#fwaap">JDBC-Treiber</a></p></li>
@@ -60,8 +60,8 @@ folgende Optionen zur Verf&#252;gung:</p>
 <a name="fwafb"></a><h5>JNDI-Name Verbindungspool</h5>
 <p>Wenn JNDI als Verbindungstyp ausgew&#228;hlt wurde, gibt dieses Feld den Verbindungspoolnamen an.
 Da die JDBC-Authentifizierung das in dem Webcontainer bereitsgestellte JNDI-Verbindungspool verwendet, ist die
-Konfiguration des JNDI-Verbindungspools m&#246;glicherweise nicht mit anderen Webcontainern konsistent. Beispiele hierzu finden
-Sie im Federated Access Manager Administration Guide.</p>
+Konfiguration des JNDI-Verbindungspools m&#246;glicherweise nicht mit anderen Webcontainern konsistent. Beispiele finden Sie
+im OpenSSO Administration Guide.</p>
 
 <a name="fwaap"></a><h5>JDBC-Treiber</h5>
 <p>Wenn unter <a href="#fwajx">Verbindungstyp</a> ";JDBC" festgelegt wurde, gibt dieses Feld den von der

@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Configuration d'un gestionnaire de demandes - Aide en ligne de la console Sun Federated Access Manager 8.0
+  <title>Configuration d'un gestionnaire de demandes - Aide en ligne de la console Sun OpenSSO&#160;8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -40,7 +40,7 @@ pairs separated by a pipe as in: <tt>key=disco|class=com.example.identity.libert
 cliquez sur une valeur de cl&#233; configur&#233;e pour modifier les attributs existants.</b></li>
 <li><b>Fournissez les valeurs pour les attributs en vous basant sur les informations
 suivantes :</b><dl><dt>key</dt>
-<dd><p>Ce param&#232;tre obligatoire correspond &#224; la derni&#232;re partie du chemin d'URI vers une extr&#233;mit&#233; SOAP. Le point d'arriv&#233;e SOAP dans Access Manager est le servlet r&#233;cepteur SOAP.  L'URI pointant le r&#233;cepteur SOAP est <tt><b></tt><i>protocol </i><tt>://</tt><i>host</i><tt>:</tt><i>port</i><tt>/</tt><i> deploy-uri</i><tt>/Liberty/</tt><i>key</i><tt></b></tt>. If you define <tt><b>disco</b></tt> as the key, the URI path to the SOAP endpoint for the corresponding Service de d&#233;couverte would be: <tt><b></tt><i> protocol</i><tt>://</tt><i>host</i><tt>:</tt><i>port </i><tt>/amserver/Liberty/disco</b></tt>. Chaque client de service utilise une cl&#233; diff&#233;rente pour se connecter au r&#233;cepteur SOAP.</p></dd>
+<dd><p>Ce param&#232;tre obligatoire correspond &#224; la derni&#232;re partie du chemin d'URI vers une extr&#233;mit&#233; SOAP. Le point d'arriv&#233;e SOAP dans OpenSSO est le servlet r&#233;cepteur SOAP.  L'URI pointant le r&#233;cepteur SOAP est <tt><b></tt><i>protocol </i><tt>://</tt><i>host</i><tt>:</tt><i>port</i><tt>/</tt><i> deploy-uri</i><tt>/Liberty/</tt><i>key</i><tt></b></tt>. If you define <tt><b>disco</b></tt> as the key, the URI path to the SOAP endpoint for the corresponding Service de d&#233;couverte would be: <tt><b></tt><i> protocol</i><tt>://</tt><i>host</i><tt>:</tt><i>port </i><tt>/amserver/Liberty/disco</b></tt>. Chaque client de service utilise une cl&#233; diff&#233;rente pour se connecter au r&#233;cepteur SOAP.</p></dd>
 <dt>class</dt>
 <dd><p>Ce param&#232;tre obligatoire d&#233;finit le nom de la classe d'impl&#233;mentation du gestionnaire de demandes pour ce service d'identit&#233;s particulier. For example: <tt>class=com.example.identity.liberty.ws.disco.DiscoveryService </tt>.</p></dd>
 <dt>Action SOAP</dt>

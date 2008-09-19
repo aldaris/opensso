@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>SAMLv2 SOAP 連結 - Sun Federated Access Manager 8.0 主控台線上說明
+  <title>SAMLv2 SOAP 連結 - Sun OpenSSO 8.0 主控台線上說明
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,12 +31,11 @@
 
 
 <a name="service.scsaml2soapbinding"></a><h4>SAMLv2 SOAP 連結</h4>
-<p>SAMLv2 SOAP 連結服務會在 Federated Access Manager 用戶端和 Federated Access Manager 伺服器之間提供 SAMLv2
-請求和回應訊息的 SOAP 型交換。收到的請求會被委託給請求處理器進行進一步的處理。請求處理程式與中介別名的關鍵字位於 SOAP 連結服務 URL 中。中介別名與 RequestHandler 的對映儲存在 SAMLv2 SOAP 連結服務中，您可以從
-Federated Access Manager 配置存放區讀取。</p>
+<p>SAMLv2 SOAP 連結服務可以為 OpenSSO 用戶端和 OpenSSO 伺服器之間提供基於 SOAP 的 SAMLv2 請求和回應訊息交換。收到的請求會被委託給請求處理器進行進一步的處理。請求處理程式與中介別名的關鍵字位於 SOAP
+連結服務 URL 中。中介別名與 RequestHandler 的對映儲存在 SAMLv2 SOAP 連結服務中，您可以從 OpenSSO 配置存放區讀取。</p>
 
 <a name="ggokv"></a><h5>請求處理程式清單</h5>
-<a name="indexterm-192"></a><a name="indexterm-193"></a><p>RequestHandlerList 是關鍵字/值組項目的清單，其中包含中介別名與 RequestHandler 實作的對映。如果要配置 Federated Access Manager 8.0 伺服器用做策略決定點 (Policy Decision Point,PDP)，則必須設定此屬性。</p><p><i>關鍵字</i> 是策略決定點中介別名，而 <i>類別</i> 是 Java 類別名稱，此類別是可以處理 XACML 請求之 RequestHandler 介面的實作。</p><p>例如，如果 XACML 策略決定點的中介別名為 <tt>/pdp</tt>，而介面的實作為 <tt>com.sun.identity.xacml.plugins.XACMLAuthzDecisionQueryHandler</tt>，則關鍵字應設定為 <tt>/pdp</tt>，而類別應設定為 <tt>com.sun.identity.xacml.plugins.XACMLAuthzDecisionQueryHandler</tt>。</p>
+<a name="indexterm-192"></a><a name="indexterm-193"></a><p>RequestHandlerList 是關鍵字/值組項目的清單，其中包含中介別名與 RequestHandler 實作的對映。如果要配置 OpenSSO 8.0 伺服器用做策略決定點 (Policy Decision Point, PDP)，則必須設定此屬性。</p><p><i>關鍵字</i> 是策略決定點中介別名，而 <i>類別</i> 是 Java 類別名稱，此類別是可以處理 XACML 請求之 RequestHandler 介面的實作。</p><p>例如，如果 XACML 策略決定點的中介別名為 <tt>/pdp</tt>，而介面的實作為 <tt>com.sun.identity.xacml.plugins.XACMLAuthzDecisionQueryHandler</tt>，則關鍵字應設定為 <tt>/pdp</tt>，而類別應設定為 <tt>com.sun.identity.xacml.plugins.XACMLAuthzDecisionQueryHandler</tt>。</p>
 <br/>
 
 </body>

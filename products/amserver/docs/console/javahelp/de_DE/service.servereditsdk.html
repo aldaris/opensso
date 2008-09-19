@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>SDK - Online-Hilfe zur Sun Federated Access Manager 8.0-Konsole
+  <title>SDK - Online-Hilfe zur Sun OpenSSO 8.0-Konsole
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -52,11 +52,12 @@ Delegationspr&#252;fung zu gew&#228;hrleisten, muss dieses Flag daher bei einer 
 auf "true" (wahr) gesetzt sein, damit die ACIs f&#252;r die Zugriffssteuerung verwendet
 werden. Anderenfalls schl&#228;gt die Delegationspr&#252;fung fehl.  </p><p>Im Bereichsmodus sollte dieser Wert auf "false" (falsch) gesetzt sein, sodass nur
 die Delegationsrichtlinien f&#252;r die Zugriffssteuerung verwendet werden. In Version 7.0 und h&#246;her
-unterst&#252;tzt Access Manager die datenunabh&#228;ngige Funktion bei der Installation im Bereichsmodus. Daher
-k&#246;nnen neben Directory Server auch andere Server zum Speichern der Dienstkonfigurationsdaten verwendet
-werden. Zus&#228;tzlich meldet dieses Flag der Service Management-Funktion, dass f&#252;r die Lese-,
-Schreib-, und/oder &#196;nderungsvorg&#228;nge am Back-End-Speicher nicht der Verzeichnis-Proxy verwendet werden muss. Dies
-liegt daran, dass einige Datenspeicher, wie beispielsweise Active Directory, keinen Proxy unterst&#252;tzen.</p>
+unterst&#252;tzt Access Manager oder OpenSSO die datenunabh&#228;ngige Funktion bei der Installation im
+Bereichsmodus. Daher k&#246;nnen neben Directory Server auch andere Server zum Speichern der
+Dienstkonfigurationsdaten verwendet werden. Zus&#228;tzlich meldet dieses Flag der Service Management-Funktion, dass f&#252;r
+die Lese-, Schreib-, und/oder &#196;nderungsvorg&#228;nge am Back-End-Speicher nicht der Verzeichnis-Proxy verwendet werden
+muss. Dies liegt daran, dass einige Datenspeicher, wie beispielsweise Active Directory, keinen
+Proxy unterst&#252;tzen.</p>
 
 <a name="ggkcv"></a><h5>Ereignisdienst</h5>
 <p>Folgende Attribute definieren die Ereignisdienstbenachrichtigung f&#252;r den Datenspeicher:</p>
@@ -87,10 +88,10 @@ auftrat.</p>
 <a name="ggndm"></a><h5>Deaktivierte Ereignisdienstverbindung</h5>
 <p>Gibt an, welche Ereignisverbindung deaktiviert werden kann. G&#252;ltige Werte (Gro&#223;-/Kleinschreibung beachten): </p>
 <ul><li><p>aci &#8211; &#196;nderungen des Attributs "aci", wobei bei der Suche der LDAP-Filter (aci=&#42;) angewendet wird.</p></li>
-<li><p>sm &#8211; &#196;nderungen des Federated Access Manager-Informationsbaums (oder des Dienstverwaltungsknotens), der Objekte mit der Markerobjektklasse <tt>sunService</tt> oder <tt>sunServiceComponent </tt> enth&#228;lt. Sie k&#246;nnen beispielsweise eine Richtlinie erstellen, um Zugriffsberechtigungen f&#252;r eine gesch&#252;tzte Ressource festzulegen, oder die Regeln, Subjekte, Bedingungen oder Antwortanbieter f&#252;r eine bestehende Richtlinie &#228;ndern.</p></li>
+<li><p>sm &#8211; &#196;nderungen des OpenSSO-Informationsbaums (oder des Dienstverwaltungsknotens), der Objekte mit der Markerobjektklasse <tt>sunService</tt> oder <tt>sunServiceComponent </tt> enth&#228;lt. Sie k&#246;nnen beispielsweise eine Richtlinie erstellen, um Zugriffsberechtigungen f&#252;r eine gesch&#252;tzte Ressource festzulegen, oder die Regeln, Subjekte, Bedingungen oder Antwortanbieter f&#252;r eine bestehende Richtlinie &#228;ndern.</p></li>
 <li><p>um &#8211; &#196;nderungen des Benutzerverzeichnisses (oder des Benutzerverwaltungsknotens). Sie k&#246;nnen beispielsweise den Namen oder die Adresse eines Benutzers &#228;ndern.</p></li></ul>
-<p>So deaktivieren Sie beispielsweise die persistente Suche f&#252;r &#196;nderungen des Access Manager-Informationsbaums
-(oder des Dienstverwaltungsknotens)  </p><p><tt>com.sun.am.event.connection.disable.list=sm </tt></p>
+<p>So deaktivieren Sie beispielsweise die persistente Suche f&#252;r &#196;nderungen des OpenSSO-Informationsbaums (oder
+des Dienstverwaltungsknotens)  </p><p><tt>com.sun.am.event.connection.disable.list=sm </tt></p>
 <hr><p><b>Achtung &#8211; </b>Persistente Suchabfragen verursachen Performance-Overhead in Directory Server. In diesem Fall ist das
 Entfernen diese Performance-Overheads in einer Produktionsumgebung dringend erforderlich. Sie k&#246;nnen eine oder
 mehrere persistente Suchabfragen mit dieser Eigenschaft deaktivieren.  </p><p>Bevor Sie jedoch eine persistente Suche deaktivieren, sollten Sie mit den oben
@@ -103,11 +104,11 @@ Suchabfragen nicht mehr einrichten, m&#252;ssen Sie die Eigenschaft unter Umst&#
 da bei deaktivierter persistenter Suche keine Benachrichtigungen vom Directory Server empfangen werden.
 Folglich werden die in Directory Server f&#252;r die betreffende Komponente vorgenommenen &#196;nderungen
 nicht an den Komponenten-Cache gemeldet. Wenn Sie beispielsweise die persistenten Suchabfragen f&#252;r
-&#196;nderungen des Benutzerverzeichnisses (<tt>um</tt>) deaktivieren, erh&#228;lt der Access Manager-Server keine Benachrichtigungen vom
-Directory Server. Der Agent erh&#228;lt folglich keine Benachrichtigungen von Access Manager f&#252;r
-die Aktualisierung seines lokalen Benutzer-Caches mit den neuen Werten des Benutzerattributs. Wenn
-nun eine Anwendung die Benutzerattribute vom Agenten abfragt, erh&#228;lt die Anwendung unter
-Umst&#228;nden den alten Wert f&#252;r das Attribut.  </p><p>Verwenden Sie diese Eigenschaft nur in Ausnahmef&#228;llen, in denen die Eigenschaft unbedingt
+&#196;nderungen des Benutzerverzeichnisses (<tt>um</tt>) deaktivieren, erh&#228;lt der OpenSSO-Server keine Benachrichtigungen vom Directory
+Server. Der Agent erh&#228;lt folglich keine Benachrichtigungen von OpenSSO f&#252;r die Aktualisierung
+seines lokalen Benutzer-Caches mit den neuen Werten des Benutzerattributs. Wenn nun eine
+Anwendung die Benutzerattribute vom Agenten abfragt, erh&#228;lt die Anwendung unter Umst&#228;nden den
+alten Wert f&#252;r das Attribut.  </p><p>Verwenden Sie diese Eigenschaft nur in Ausnahmef&#228;llen, in denen die Eigenschaft unbedingt
 erforderlich ist. Wenn beispielsweise keine Dienstkonfigurations&#228;nderungen (keine &#196;nderung von Werten eines Dienstes,
 z. B. des Sitzungs- oder Authentifizierungsdienstes) in der Produktionsumgebung stattfinden, kann die
 persistente Suche f&#252;r die Service Management-Komponente (<tt>sm</tt>) deaktiviert werden. Wenn jedoch eine

@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Richtlinienkonfiguration - Online-Hilfe zur Sun Federated Access Manager 8.0-Konsole
+  <title>Richtlinienkonfiguration - Online-Hilfe zur Sun OpenSSO 8.0-Konsole
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -63,12 +63,12 @@ auch f&#252;r die Bewertung von Richtlinien verwendet.</p><p>Klicken Sie auf ";H
 DENY-Richtlinienentscheidung existiert. In der Standardeinstellung (deaktiviert) werden bei der Richtlinienbewertung nachfolgende Richtlinien
 ignoriert, sobald eine DENY-Entscheidung eingeht.</p>
 
-<a name="fufng"></a><h5>Von Federated Access Manager unterst&#252;tzte Advices</h5>
+<a name="fufng"></a><h5>Von OpenSSO verarbeitbare Advices</h5>
 <p>Legt die Namen der Richtlinien-Advice-Schl&#252;ssel fest, bei denen die Richtliniendurchsetzungsinstanz (Richtlinienagent) den
-Benutzeragenten zu Federated Access Manager umleitet. Wenn der Agent eine Richtlinienentscheidung erh&#228;lt,
-die zwar den Zugriff auf eine Ressource ablehnt, die jedoch Advices enth&#228;lt,
-&#252;berpr&#252;ft der Agent, ob dieses Attribut einen entsprechenden Advice-Schl&#252;ssel enth&#228;lt.</p><p>Ist ein solcher Advice-Schl&#252;ssel vorhanden, wird der Benutzeragent zu Federated Access Manager
-umgeleitet. Dieser kann den Zugriff auf die Ressource nun zulassen.</p>
+Benutzeragenten zu OpenSSO umleitet. Wenn der Agent eine Richtlinienentscheidung erh&#228;lt, die zwar
+den Zugriff auf eine Ressource ablehnt, die jedoch Advices enth&#228;lt, &#252;berpr&#252;ft der
+Agent, ob dieses Attribut einen entsprechenden Advice-Schl&#252;ssel enth&#228;lt.</p><p>Ist ein solcher Advice-Schl&#252;ssel vorhanden, wird der Benutzeragent zu OpenSSO umgeleitet. Dies
+kann den Zugriff auf die Ressource nun zulassen.</p>
 
 <a name="gdpdm"></a><h5>Organisations-Aliasbez&#252;ge</h5>
 <p>Wenn dieses Attribut auf ";Ja" eingestellt ist, k&#246;nnen Sie Richtlinien in Unterbereichen
@@ -81,26 +81,24 @@ der Wert "Nein" angegeben. </p>
 <p>Es gibt folgende LDAP-Eigenschaften:</p>
 
 <a name="fufmg"></a><h5>Prim&#228;rer LDAP-Server</h5>
-<p>Gibt den Hostnamen und die Anschlussnummer des w&#228;hrend der Federated Access Manager-Installation
-festgelegten prim&#228;ren LDAP-Servers an, der f&#252;r die Suche nach Richtlinienobjekten wie LDAP-Benutzer,
-LDAP-Rollen oder LDAP-Gruppen verwendet wird.</p><p>Das Format lautet <i>hostname:port</i>. For example: <tt>machine1.example.com:389</tt></p><p>Bei einer Failover-Konfiguration mit mehreren LDAP-Serverhosts kann dieser Wert auch eine durch
+<p>Gibt den Hostnamen und die Anschlussnummer des w&#228;hrend der OpenSSO-Installation festgelegten prim&#228;ren
+LDAP-Servers an, der f&#252;r die Suche nach Richtlinienobjekten wie LDAP-Benutzer, LDAP-Rollen oder
+LDAP-Gruppen verwendet wird.</p><p>Das Format lautet <i>hostname:port</i>. For example: <tt>machine1.example.com:389</tt></p><p>Bei einer Failover-Konfiguration mit mehreren LDAP-Serverhosts kann dieser Wert auch eine durch
 Leerzeichen getrennte Hostliste sein. Das Format lautet <i> hostname1:port1 hostname2:port2...</i></p><p>For example: <tt>machine1.example1.com:389 machine2.example1.com:389 </tt></p><p>Bei Mehrfacheingaben muss der lokale Servername vorangestellt werden. Nur so k&#246;nnen bestimmte
-Federated Access Manager so konfiguriert werden, dass sie mit bestimmten Directory Servern
-kommunizieren k&#246;nnen.</p><p>Das Format lautet <i>servername|hostname:port</i> Beispiel:</p><p><tt>machine1.example1.com|machine1.example1.com:389</tt></p><p><tt>machine1.example2.com|machine1.example2.com:389</tt></p><p>F&#252;r die Failover-Konfiguration:</p><p><tt>AM_Server1.example1.com|machine1.example1.com:389 machine2.example.com1:389 </tt></p><p><tt>AM_Server2.example2.com|machine1.example2.com:389 machine2.example2.com:389 </tt></p>
+OpenSSOs so konfiguriert werden, dass sie mit bestimmten Directory Servern kommunizieren k&#246;nnen.</p><p>Das Format lautet <i>servername|hostname:port</i> Beispiel:</p><p><tt>machine1.example1.com|machine1.example1.com:389</tt></p><p><tt>machine1.example2.com|machine1.example2.com:389</tt></p><p>F&#252;r die Failover-Konfiguration:</p><p><tt>AM_Server1.example1.com|machine1.example1.com:389 machine2.example.com1:389 </tt></p><p><tt>AM_Server2.example2.com|machine1.example2.com:389 machine2.example2.com:389 </tt></p>
 
 <a name="fufmc"></a><h5>LDAP-Basis-DN</h5>
 <p>Legt den Basis-DN des LDAP-Servers fest, bei dem die Suche beginnt. Standardm&#228;&#223;ig
-ist dies der oberste Bereich der Federated Access Manager-Installation.</p>
+ist dies der oberste Bereich der OpenSSO-Installation.</p>
 
 <a name="fufmd"></a><h5>LDAP-Benutzer-Basis-DN</h5>
 <p>Dieses Attribut legt den vom LDAP-Benutzer-Betreff verwendeten Basis-DN des LDAP-Servers fest, bei
-dem die Suche beginnt. Standardm&#228;&#223;ig ist dies der oberste Bereich der Federated
-Access Manager-Installationsbasis.</p>
+dem die Suche beginnt. Standardm&#228;&#223;ig ist dies der oberste Bereich der OpenSSO-Installationsbasis.</p>
 
-<a name="fufmz"></a><h5>Federated Access Manager-Rollen-Basis-DN</h5>
+<a name="fufmz"></a><h5>Basis-DN f&#252;r OpenSSO-Rollen</h5>
 <p>Legt den DN des Bereichs bzw. der Organisation fest, der bei der
-Suche nach den Werten von Federated Access Manager-Rollen als Basis verwendet wird.
-Dieses Attribut wird vom <i>AccessManagerRoles</i>-Richtlinienbetreff verwendet.</p>
+Suche nach den Werten von OpenSSO-Rollen als Basis verwendet wird. Dieses Attribut
+wird vom <i>AccessManagerRoles</i>-Richtlinienbetreff verwendet.</p>
 
 <a name="fufme"></a><h5>LDAP-BIND-DN</h5>
 <p>Dieses Attribut gibt den BIND-DN des LDAP-Servers an.</p>
@@ -158,8 +156,8 @@ einer der folgenden Werte sein:</p>
 <li><p>SCOPE_SUB (Standardwert)</p></li></ul>
 
 
-<a name="fufmy"></a><h5>Federated Access Manager-Rollen-Suchbereich</h5>
-<p>Legt den Bereich fest, der nach Federated Access Manager-Rollenbetreffeintr&#228;gen durchsucht wird.</p>
+<a name="fufmy"></a><h5>Suchbereich (OpenSSO-Rollen)</h5>
+<p>Legt den Bereich fest, der nach OpenSSO-Rollenbetreffeintr&#228;gen durchsucht wird.</p>
 <ul><li><p>SCOPE_BASE</p></li>
 <li><p>SCOPE_ONE</p></li>
 <li><p>SCOPE_SUB (Standardwert)</p></li></ul>
@@ -195,9 +193,9 @@ gefunden wurden.</p>
 <a name="fufmi"></a><h5>LDA-SSL</h5>
 <p>Gibt an, ob der LDAP-Server SSL unterst&#252;tzt. Durch Aktivierung dieses Attributs wird
 die Unterst&#252;tzung von SSL aktiviert, durch Deaktivierung (Standard) wird die Unterst&#252;tzung von
-SSL deaktiviert.</p><p>Wenn der LDAP-Server mit aktiviertem SSL (LDAPS) ausgef&#252;hrt wird, muss Federated Access
-Manager mit den entsprechenden vertrauensw&#252;rdigen SSL-Zertifikaten konfiguriert sein, damit Federated Access Manager
-&#252;ber das LDAPS-Protokoll eine Verbindung zum Directory Server herstellen kann.</p>
+SSL deaktiviert.</p><p>Wenn der LDAP-Server mit aktiviertem SSL (LDAPS) ausgef&#252;hrt wird, muss OpenSSO mit
+den entsprechenden vertrauensw&#252;rdigen SSL-Zertifikaten konfiguriert sein, damit OpenSSO &#252;ber das LDAPS-Protokoll eine
+Verbindung zum Directory Server herstellen kann.</p>
 
 <a name="fufmk"></a><h5>LDAP-Verbindung Pool-Mindestgr&#246;&#223;e</h5>
 <p>Gibt die minimale Gr&#246;&#223;e der Verbindungspools an, die f&#252;r die Verbindung zum
@@ -236,10 +234,9 @@ die Richtlinienbewertung ben&#246;tigte Zeit deutlich verringert.</p>
 Ressource erstellen, deren Objekt ein Mitglied eines entfernten Directory Servers enth&#228;lt, das
 Alias f&#252;r einen lokalen Benutzer ist. Dieses Attribut muss aktiviert sein, wenn
 Sie beispielsweise auf dem entfernten Directory Server den Benutzer <tt>uid=rmuser</tt> erstellen und
-dann in Federated Access Manager <tt>rmuser</tt> als Alias f&#252;r einen lokalen Benutzer
-hinzuf&#252;gen (beispielsweise f&#252;r <tt>uid=luser</tt>). Wenn Sie sich als  <tt>rmuser</tt> anmelden, wird
-eine Sitzung f&#252;r den lokalen Benutzer (<tt>luser</tt>) aufgebaut. Die Richtlinie wurde erfolgreich
-durchgef&#252;hrt.</p>
+dann in OpenSSO <tt>rmuser</tt> als Alias f&#252;r einen lokalen Benutzer hinzuf&#252;gen (beispielsweise
+f&#252;r <tt>uid=luser</tt>). Wenn Sie sich als  <tt>rmuser</tt> anmelden, wird eine Sitzung
+f&#252;r den lokalen Benutzer (<tt>luser</tt>) aufgebaut. Die Richtlinie wurde erfolgreich durchgef&#252;hrt.</p>
 
 <a name="fufni"></a><h5>Ausgew&#228;hlte Response-Anbieter</h5>
 <p>Legt die f&#252;r den Bereich aktivierten Response-Anbieter-Plugins f&#252;r Richtlinien fest. Nur die

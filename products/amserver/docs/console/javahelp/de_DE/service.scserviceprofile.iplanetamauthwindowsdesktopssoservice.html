@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Windows Desktop SSO - Online-Hilfe zur Sun Federated Access Manager 8.0-Konsole
+  <title>Windows Desktop SSO - Online-Hilfe zur Sun OpenSSO 8.0-Konsole
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -32,13 +32,12 @@
 
 <a name="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice"></a><h4>Windows Desktop SSO</h4>
 <p><a name="indexterm-183"></a>Dieses Modul ist speziell f&#252;r Windows bestimmt und ist auch als Kerberos-Authentifizierung
-bekannt. Der Benutzer legt Federated Access Manager &#252;ber das SPNEGO-Protokoll (Simple and
-Protected GSS-API Negotiation Mechanism) ein Kerberos-Token vor. Das Windows Desktop SSO-Authentifizierungs-Plugin stellt
-dem Client (Benutzer) auf dem Desktop Single Sign-On-Funktionalit&#228;t bereit. Das bedeutet, dass
-ein Benutzer, der sich bereits bei einem Schl&#252;sselverteilungscenter authentifiziert hat, in Federated
-Access Manager ohne erneute Eingabe der Anmeldeinformationen authentifiziert werden kann. Bei den
-Windows Desktop SSO-Attributen handelt es sich um globale Attribute. Es existieren folgende
-Attribute:</p>
+bekannt. Der Benutzer legt OpenSSO &#252;ber das SPNEGO-Protokoll (Simple and Protected GSS-API
+Negotiation Mechanism) ein Kerberos-Token vor. Das Windows Desktop SSO-Authentifizierungs-Plugin stellt dem Client
+(Benutzer) auf dem Desktop Single Sign-On-Funktionalit&#228;t bereit. Das bedeutet, dass ein Benutzer,
+der sich bereits bei einem Schl&#252;sselverteilungscenter authentifiziert hat, in OpenSSO ohne erneute
+Eingabe der Anmeldeinformationen authentifiziert werden kann. Bei den Windows Desktop SSO-Attributen handelt
+es sich um globale Attribute. Es existieren folgende Attribute:</p>
 <ul><li><p><a href="#fwbfr">Dienst-Principal</a></p></li>
 <li><p><a href="#fwbfo">Keytab-Dateiname</a></p></li>
 <li><p><a href="#fwbhy">Kerberos-Bereich</a></p></li>
@@ -49,26 +48,25 @@ Attribute:</p>
 
 <a name="fwbfr"></a><h5>Dienst-Principal</h5>
 <p>Gibt den Kerberos-Principal an, der zur Authentifizierung verwendet wird. Verwenden Sie die
-folgende Syntax:</p><p><tt><b>HTTP/</tt><i>hostname.domainname&#64;dc_domain_name</i><tt></b></tt></p><p><b>hostname</b> und <b>domainame</b> stehen f&#252;r den Hostnamen bzw. den Dom&#228;nennamen des Federated
-Access Manager-Objekts. <b> dc_domain_name</b> is the Kerberos domain in which the Windows 2000
-Kerberos server (domain controller) resides. It is possibly different from the domain
-name of the Federated Access Manager.</p>
+folgende Syntax:</p><p><tt><b>HTTP/</tt><i>hostname.domainname&#64;dc_domain_name</i><tt></b></tt></p><p><b>hostname</b> und <b>domainame</b> stehen f&#252;r den Hostnamen und den Dom&#228;nennamen der OpenSSO-Instanz.
+<b>dc_domain_name</b> is the Kerberos domain in which the Windows Kerberos server (domain
+controller) resides. Sie unterscheidet sich m&#246;glicherweise vom Dom&#228;nennamen von OpenSSO.</p>
 
 <a name="fwbfo"></a><h5>Keytab-Dateiname</h5>
 <p>Gibt die zur Authentifizierung verwendete Kerberos-Keytab-Datei an. Folgendes Format wird empfohlen, auch
-wenn es nicht vorgeschrieben ist:</p><p><tt><b></tt><i>hostname</i><tt>.HTTP.keytab</b></tt></p><p><b>hostname</b> ist der Hostname des Federated Access Manager-Objekts.</p>
+wenn es nicht vorgeschrieben ist:</p><p><tt><b></tt><i>hostname</i><tt>.HTTP.keytab</b></tt></p><p><b>hostname</b> ist der Hostname der OpenSSO-Instanz.</p>
 
 <a name="fwbhy"></a><h5>Kerberos-Bereich</h5>
 <p>Gibt den Dom&#228;nennamen des Kerberos-Verteilungscenters (Dom&#228;nencontroller) an. Je nach Konfiguration ist der
-Dom&#228;nenname des Dom&#228;nencontrollers nicht identisch mit dem Dom&#228;nennamen von Federated Access Manager.</p>
+Dom&#228;nenname des Dom&#228;nencontrollers nicht identisch mit dem Dom&#228;nennamen von OpenSSO.</p>
 
 <a name="fwbid"></a><h5>Kerberos-Servername</h5>
 <p>Gibt den Hostnamen des Kerberos-Verteilungscenters (Dom&#228;nencontroller) an. Hier ist der vollst&#228;ndig qualifizierte
 Dom&#228;nenname (FQDN) des Dom&#228;nencontrollers erforderlich.</p>
 
 <a name="fwbhw"></a><h5>Principal mit Dom&#228;nennamen zur&#252;ckgeben</h5>
-<p>Wenn aktiviert, kann Federated Access Manager w&#228;hrend der Authentifizierung den Kerberos-Principal mit
-dem Dom&#228;nennamen des Dom&#228;nencontrollers automatisch zur&#252;ckgeben.</p>
+<p>Wenn aktiviert, kann OpenSSO w&#228;hrend der Authentifizierung den Kerberos-Principal mit dem Dom&#228;nennamen
+des Dom&#228;nencontrollers automatisch zur&#252;ckgeben.</p>
 
 <a name="fwbic"></a><h5>Authentifizierungsebene</h5>
 <p>Die Authentifizierungsebene wird f&#252;r jede Authentifizierungsmethode einzeln festgelegt. Mit diesem Wert wird

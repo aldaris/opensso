@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>MSISDN - Ayuda en l&#237;nea de la consola de Sun Federated Access Manager 8.0
+  <title>MSISDN - Ayuda en l&#237;nea de la consola de Sun OpenSSO 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -72,12 +72,12 @@ de autenticaci&#243;n de MSISDN buscar&#225;n dichos par&#225;metros para el n&#
 <p>Especifica el nombre de host y n&#250;mero de puerto de Directory Server
 en el que se producir&#225; la b&#250;squeda de los usuarios con n&#250;meros
 MSISDN. El formato es <tt></tt><i>hostname:port</i><tt></tt>. Si no hay ning&#250;n n&#250;mero de puerto,
-utilice <tt>389</tt>.</p><p>Si tiene Federated Access Manager implementado con varios dominios, puede especificar el
-v&#237;nculo de comunicaci&#243;n entre instancias espec&#237;ficas de Federated Access Manager y Directory
-Server con el siguiente formato (las distintas entradas deben tener el nombre
-del servidor local como prefijo):</p><p><tt>local_servername|server:port local_servername2|server2:port2 ...</tt></p><p>Por ejemplo, si tiene dos instancias de Federated Access Manager implementadas en
-ubicaciones distintas (L1-machine1-IS y L2- machine2-IS) que se comunican con diferentes instancias
-de Directory Server (L1-machine1-DS y L2-machine2-DS), deber&#237;a mostrar el siguiente aspecto:</p><p><tt>L1-machine1-IS.example.com|L1-machine1-DS.example.com:389 </tt></p><p><tt>L2-machine2-IS.example.com|L2-machine2-DS.example.com:389 </tt></p>
+utilice <tt>389</tt>.</p><p>Si OpenSSO se ha implementado con varios dominios, puede especificar el v&#237;nculo
+de comunicaci&#243;n entre instancias espec&#237;ficas de OpenSSO y Directory Server con el
+siguiente formato (las distintas entradas deben tener el nombre del servidor local
+como prefijo):</p><p><tt>local_servername|server:port local_servername2|server2:port2 ...</tt></p><p>Por ejemplo, si ha implementado dos instancias de OpenSSO en ubicaciones distintas
+(L1-machine1-IS y L2- machine2-IS) que se comunican con diferentes instancias de Directory
+Server (L1-machine1-DS y L2-machine2-DS), deber&#237;a mostrar el siguiente aspecto:</p><p><tt>L1-machine1-IS.example.com|L1-machine1-DS.example.com:389 </tt></p><p><tt>L2-machine2-IS.example.com|L2-machine2-DS.example.com:389 </tt></p>
 
 <a name="fumxi"></a><h5>DN de b&#250;squeda de inicio de LDAP</h5>
 <p>Especifica el DN del nodo en el que debe comenzar la b&#250;squeda
@@ -128,13 +128,13 @@ MSISDN. Los valores admitidos son los siguientes:</p><dl><dt>Encabezado de cooki
 
 
 <a name="fumxr"></a><h5>Devolver DN de usuario en autenticaci&#243;n</h5>
-<p>Esta opci&#243;n puede habilitarse cuando el directorio de Federated Access Manager es
-igual al directorio configurado para MSISDN. En ese caso, esta opci&#243;n permite
-que el m&#243;dulo de autenticaci&#243;n devuelva el DN en lugar del Id.
-de usuario, y no es necesario realizar ninguna b&#250;squeda. Normalmente, un m&#243;dulo
-de autenticaci&#243;n devuelve s&#243;lo el Id. de usuario y el servicio de
-autenticaci&#243;n busca al usuario en la instancia local de Federated Access Manager.
-Si se utiliza un directorio externo, normalmente esta opci&#243;n no est&#225; habilitada.</p>
+<p>Esta opci&#243;n puede habilitarse cuando el directorio de OpenSSO es igual al
+directorio configurado para MSDISN. En ese caso, esta opci&#243;n permite que el
+m&#243;dulo de autenticaci&#243;n devuelva el DN en lugar del Id. de usuario,
+y no es necesario realizar ninguna b&#250;squeda. Normalmente, un m&#243;dulo de autenticaci&#243;n
+devuelve s&#243;lo el Id. de usuario y el servicio de autenticaci&#243;n busca
+al usuario en la instancia local de OpenSSO. Si se utiliza un
+directorio externo, normalmente esta opci&#243;n no est&#225; habilitada.</p>
 
 <a name="fumxs"></a><h5>Nivel de autenticaci&#243;n</h5>
 <p>El nivel de autenticaci&#243;n se define de forma independiente para cada m&#233;todo

@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Client-Erkennung - Online-Hilfe zur Sun Federated Access Manager 8.0-Konsole
+  <title>Client-Erkennung - Online-Hilfe zur Sun OpenSSO 8.0-Konsole
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -32,12 +32,12 @@
 
 <a name="service.scserviceprofile.iplanetamclientdetection"></a><h4>Client-Erkennung</h4>
 <p><a name="indexterm-200"></a>Ein erster Schritt beim Authentifizierungsprozess besteht in der Ermittlung des Clienttyps, von
-dem die HTTP(S)-Anforderung ausgeht. In Federated Access Manager wird diese Funktion als
-Client-Erkennung bezeichnet. Die URL-Informationen dienen zum Abrufen der Client-Merkmale. Auf Grundlage dieser
-Merkmale werden die entsprechenden Authentifizierungsseiten zur&#252;ckgegeben. Wenn beispielsweise ein Netscape-Browser zum Anfordern
-einer Webseite verwendet wird, wird von Federated Access Manager 8.0 eine HTML-Anmeldeseite
-angezeigt. Nach der Validierung des Benutzers wird der Client-Typ (Netscape-Browser) dem Sitzungs-Token
-hinzugef&#252;gt. Bei den Attributen des Client-Erkennungsdienstes handelt es sich um globale Attribute.</p>
+dem die HTTP(S)-Anforderung ausgeht. Diese Funktion von OpenSSO wird als Client-Erkennung bezeichnet.
+Die URL-Informationen dienen zum Abrufen der Client-Merkmale. Auf Grundlage dieser Merkmale werden
+die entsprechenden Authentifizierungsseiten zur&#252;ckgegeben. Wenn beispielsweise ein Netscape-Browser zum Anfordern einer Webseite
+verwendet wird, wird von OpenSSO 8.0 eine HTML-Anmeldeseite angezeigt. Nach der Validierung
+des Benutzers wird der Client-Typ (Netscape-Browser) dem Sitzungs-Token hinzugef&#252;gt. Bei den Attributen
+des Client-Erkennungsdienstes handelt es sich um globale Attribute.</p>
 <ul><li><p><a href="#fxcei">Client-Typen</a></p></li>
 <li><p><a href="#fxbxh">Standard-Client-Typ</a></p></li>
 <li><p><a href="#fxccp">Client-Erkennungsklasse</a></p></li>
@@ -45,11 +45,10 @@ hinzugef&#252;gt. Bei den Attributen des Client-Erkennungsdienstes handelt es si
 
 
 <a name="fxcei"></a><h5>Client-Typen</h5>
-<p>Zur Feststellung des Client-Typs muss Federated Access Manager die Merkmale zur Identifikation
-des Clients erkennen. Diese Merkmale identifizieren die Eigenschaften aller unterst&#252;tzten Typen mithilfe
-von Client-Daten. Mit diesem Attribut k&#246;nnen Sie die Client-Daten &#252;ber die Client-Manager-Schnittstelle
-&#228;ndern. Zum &#214;ffnen des Client-Managers klicken Sie auf ";Bearbeiten". Federated Access Manager
-bietet die folgenden Client-Typen:</p>
+<p>Zur Feststellung des Client-Typs muss OpenSSO die Merkmale zur Identifikation des Clients
+erkennen. Diese Merkmale identifizieren die Eigenschaften aller unterst&#252;tzten Typen mithilfe von Client-Daten.
+Mit diesem Attribut k&#246;nnen Sie die Client-Daten &#252;ber die Client-Manager-Schnittstelle &#228;ndern. Zum
+&#214;ffnen des Client-Managers klicken Sie auf ";Bearbeiten". OpenSSO bietet die folgenden Client-Typen:</p>
 <ul><li><p>HDML</p></li>
 <li><p>HTML</p></li>
 <li><p>JHTML</p></li>
@@ -98,14 +97,13 @@ wird. Die Standardeinstellung ist ";genericHTML".</p>
 <a name="fxccp"></a><h5>Client-Erkennungsklasse</h5>
 <p>Legt die Client-Erkennungsklasse fest, von der alle Client-Erkennungsanforderungen verarbeitet werden. Der von
 diesem Attribut zur&#252;ckgegebene Wert sollte mit einem der im Attribut ";Client-Typen" aufgef&#252;hrten
-Typen &#252;bereinstimmen. Die standardm&#228;&#223;ige Client-Erkennungsklasse lautet <tt>com.sun.mobile.cdm.FEDIClientDetector</tt>. Federated Access Manager also contains
-<tt>com.iplanet.services.cdm.ClientDetectionDefaultImpl </tt> .</p>
+Typen &#252;bereinstimmen. Die standardm&#228;&#223;ige Client-Erkennungsklasse lautet <tt>com.sun.mobile.cdm.FEDIClientDetector</tt>. OpenSSO enth&#228;lt au&#223;erdem <tt>com.iplanet.services.cdm.ClientDetectionDefaultImpl </tt>.</p>
 
 <a name="fxbvy"></a><h5>Client-Erkennung</h5>
 <p>Aktiviert die Client-Erkennung. Wenn die Client-Erkennung aktiviert ist, wird jede Anforderung von
 der im Attribut Client-Erkennungsklasse angegebenen Klasse verarbeitet. Standardm&#228;&#223;ig ist die Client-Erkennung aktiviert.
-Wenn dieses Attribut deaktiviert ist, geht Federated Access Manager von einem Client
-des Typs "genericHTML" aus, auf den &#252;ber einen HTML-Browser zugegriffen wird.</p>
+Wenn dieses Attribut deaktiviert ist, geht OpenSSO von einem Client des Typs
+"genericHTML" aus, auf den &#252;ber einen HTML-Browser zugegriffen wird.</p>
 <br/>
 
 </body>

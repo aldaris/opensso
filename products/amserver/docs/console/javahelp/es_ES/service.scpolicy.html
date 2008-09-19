@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Configuraci&#243;n de pol&#237;ticas - Ayuda en l&#237;nea de la consola de Sun Federated Access Manager 8.0
+  <title>Configuraci&#243;n de pol&#237;ticas - Ayuda en l&#237;nea de la consola de Sun OpenSSO 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -65,14 +65,13 @@ pol&#237;ticas posteriores, incluso si existe una decisi&#243;n de pol&#237;tica
 Si no se selecciona esta opci&#243;n (predeterminado), la evaluaci&#243;n de pol&#237;ticas omitir&#225;
 las pol&#237;ticas siguientes una vez reconocida la decisi&#243;n de denegaci&#243;n (DENY).</p>
 
-<a name="fufng"></a><h5>Avisos gestionados por Federated Access Manager</h5>
-<p>Define los nombres de claves de avisos de pol&#237;tica para los que
-el punto de aplicaci&#243;n de pol&#237;tica (Agente de pol&#237;tica) redirigir&#225; el agente
-de usuario a Federated Access Manager. Si el agente recibe una decisi&#243;n
-de pol&#237;tica que no permite el acceso a un recurso, pero posee
-avisos, el agente comprobar&#225; si dispone de una clave de aviso en
-este atributo.</p><p>En caso de que se encuentre dicho aviso, el agente de usuario
-ser&#225; redirigido a Federated Access Manager, permitiendo potencialmente el acceso al recurso.</p>
+<a name="fufng"></a><h5>Avisos que puede administrar OpenSSO</h5>
+<p>Define los nombres de claves de avisos de directivas para los que
+el punto de aplicaci&#243;n de directivas (Agente de directivas) redirigir&#225; el agente
+de usuario a OpenSSO. Si el agente recibe una decisi&#243;n de pol&#237;tica
+que no permite el acceso a un recurso, pero posee avisos, el
+agente comprobar&#225; si dispone de una clave de aviso en este atributo.</p><p>En caso de que se encuentre dicho aviso, el agente de usuario
+se redirigir&#225; a OpenSSO, permitiendo potencialmente el acceso al recurso.</p>
 
 <a name="gdpdm"></a><h5>Referencias de alias de la organizaci&#243;n</h5>
 <p>Si se establece en S&#237; (Yes), este atributo permite crear directivas en
@@ -87,29 +86,29 @@ como No. </p>
 
 <a name="fufmg"></a><h5>Servidor LDAP principal</h5>
 <p>Establece el nombre de host y el n&#250;mero de puerto del servidor
-LDAP principal especificado durante la instalaci&#243;n de Federated Access Manager que se
-utilizar&#225;n para buscar asuntos de pol&#237;tica, como usuarios de LDAP, roles de
-LDAP, grupos de LDAP, etc.</p><p>El formato es <i>hostname:port</i>. For example: <tt>machine1.example.com:389</tt></p><p>Para la configuraci&#243;n de conmutaci&#243;n por error en varios hosts del servidor
+LDAP principal especificado durante la instalaci&#243;n de OpenSSO que se utilizar&#225;n para
+buscar asuntos de directivas, como usuarios de LDAP, roles de LDAP, grupos
+de LDAP, etc.</p><p>El formato es <i>hostname:port</i>. For example: <tt>machine1.example.com:389</tt></p><p>Para la configuraci&#243;n de conmutaci&#243;n por error en varios hosts del servidor
 LDAP, este valor puede ser una lista de hosts delimitados por espacios.
 El formato es <i>hostname1:port1 hostname2:port2...</i></p><p>For example: <tt>machine1.example1.com:389 machine2.example1.com:389 </tt></p><p>Si hay varias entradas, el nombre del servidor local debe ir en
-primer lugar. Esto permite configurar Federated Access Manager espec&#237;ficos para que se
+primer lugar. Esto permite configurar instancias de OpenSSO espec&#237;ficas para que se
 conecten a determinados servidores de Directory Server.</p><p>El formato es <i>servername|hostname:port</i>. Por ejemplo:</p><p><tt>machine1.example1.com|machine1.example1.com:389</tt></p><p><tt>machine1.example2.com|machine1.example2.com:389</tt></p><p>Para la configuraci&#243;n de conmutaci&#243;n por error:</p><p><tt>AM_Server1.example1.com|machine1.example1.com:389 machine2.example.com1:389 </tt></p><p><tt>AM_Server2.example2.com|machine1.example2.com:389 machine2.example2.com:389 </tt></p>
 
 <a name="fufmc"></a><h5>DN de base de LDAP</h5>
 <p>Especifica el DN base del servidor LDAP desde el que comenzar&#225; la
 b&#250;squeda. De forma predeterminada, es el dominio de nivel superior de la
-instalaci&#243;n de Federated Access Manager.</p>
+de instalaci&#243;n de OpenSSO.</p>
 
 <a name="fufmd"></a><h5>DN de base de usuarios de LDAP</h5>
 <p>Este atributo especifica el DN base utilizado por el asunto de usuarios
 de LDAP del servidor LDAP para comenzar la b&#250;squeda. De forma predeterminada,
-es el dominio de nivel superior de la base de instalaci&#243;n de
-Federated Access Manager.</p>
+es el dominio de nivel superior de la de base de instalaci&#243;n
+de OpenSSO.</p>
 
-<a name="fufmz"></a><h5>DN de base de roles de Federated Access Manager</h5>
+<a name="fufmz"></a><h5>DN de base de los roles de OpenSSO</h5>
 <p>Define el DN del dominio u organizaci&#243;n que se va utilizar como
-base mientras se buscan los valores de los roles de Federated Access
-Manager. Este atributo lo utiliza el asunto de pol&#237;tica de <i>AccessManagerRoles</i>.</p>
+base mientras se buscan los valores de los roles de OpenSSO. Este
+atributo lo utiliza el asunto de pol&#237;tica de <i>AccessManagerRoles</i>.</p>
 
 <a name="fufme"></a><h5>DN de conexi&#243;n de LDAP</h5>
 <p>Especifica el DN de conexi&#243;n del servidor LDAP.</p>
@@ -168,9 +167,9 @@ siguientes:</p>
 <li><p>SCOPE_SUB (predeterminado)</p></li></ul>
 
 
-<a name="fufmy"></a><h5>&#193;mbito de b&#250;squeda de roles de Federated Access Manager</h5>
-<p>Define el &#225;mbito que se va a utilizar para encontrar entradas del
-asunto de los roles de Federated Access Manager.</p>
+<a name="fufmy"></a><h5>&#193;mbito de b&#250;squeda de los roles de OpenSSO</h5>
+<p>Define el &#225;mbito que se va a utilizar para buscar entradas del
+asunto de los roles de OpenSSO.</p>
 <ul><li><p>SCOPE_BASE</p></li>
 <li><p>SCOPE_ONE</p></li>
 <li><p>SCOPE_SUB (predeterminado)</p></li></ul>
@@ -207,9 +206,9 @@ s&#243;lo se mostrar&#225;n las entradas obtenidas hasta ese momento</p>
 <p>Especifica si el servidor LDAP ejecuta o no SSL. Si se selecciona
 esta opci&#243;n, se habilitar&#225; SSL. Si no se selecciona (predeterminado), se deshabilitar&#225;
 SSL.</p><p>Si se est&#225; ejecutando el servidor LDAP con SSL habilitado (LDAPS), debe
-asegurarse de que Federated Access Manager est&#233; configurado con los certificados SSL
-de confianza adecuados para que pueda conectarse al servidor de directorios con
-el protocolo LDAPS.</p>
+asegurarse de que OpenSSO est&#233; configurado con los certificados SSL de confianza
+adecuados para que OpenSSO pueda conectarse al servidor de directorios con el
+protocolo LDAPS.</p>
 
 <a name="fufmk"></a><h5>Tama&#241;o m&#237;nimo de grupo de conexi&#243;n LDAP</h5>
 <p>Especifica el tama&#241;o m&#237;nimo de los grupos  de conexiones que se
@@ -251,11 +250,11 @@ Esto reduce en gran medida el tiempo de evaluaci&#243;n de pol&#237;ticas.</p>
 <p>Este atributo debe estar habilitado si se crea una pol&#237;tica para proteger
 un recurso cuyo miembro de asunto en un Directory Server remoto asigna
 un alias a un usuario local. Este atributo debe estar habilitado, por
-ejemplo, si se crea <tt>uid=rmuser</tt> en el servidor de Directory Server remoto
+ejemplo, si se crea <tt>uid=rmuser</tt> en la instancia de Directory Server remoto
 y, a continuaci&#243;n, se agrega <tt>rmuser</tt> como alias para el usuario local
-(por ejemplo, <tt>uid=luser</tt>) en Federated Access Manager. Al iniciar una sesi&#243;n como
-<tt>rmuser</tt>, se crea una sesi&#243;n con el usuario local (<tt>luser</tt>) y la
-pol&#237;tica se aplica correctamente.</p>
+(por ejemplo, <tt>uid=luser</tt>) en OpenSSO. Al iniciar una sesi&#243;n como <tt>rmuser</tt>, se
+crea una sesi&#243;n con el usuario local (<tt>luser</tt>) y la pol&#237;tica se
+aplica correctamente.</p>
 
 <a name="fufni"></a><h5>Proveedores de respuesta seleccionados</h5>
 <p>Define los complementos de proveedor de respuesta de pol&#237;tica que se van

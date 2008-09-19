@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Detecci&#243;n de cliente - Ayuda en l&#237;nea de la consola de Sun Federated Access Manager 8.0
+  <title>Detecci&#243;n de cliente - Ayuda en l&#237;nea de la consola de Sun OpenSSO 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -32,15 +32,14 @@
 
 <a name="service.scserviceprofile.iplanetamclientdetection"></a><h4>Detecci&#243;n de cliente</h4>
 <p><a name="indexterm-200"></a>Un paso inicial del proceso de autenticaci&#243;n consiste en identificar el tipo
-de cliente que realiza la solicitud HTTP(S). Esta funci&#243;n de Federated Access
-Manager se conoce como detecci&#243;n de cliente. La informaci&#243;n de la direcci&#243;n
-URL se utiliza para recuperar las caracter&#237;sticas del cliente. En funci&#243;n de
-estas caracter&#237;sticas, se mostrar&#225;n las p&#225;ginas de autenticaci&#243;n adecuadas. Por ejemplo, cuando
-se utiliza el explorador Netscape para solicitar una p&#225;gina web, Federated Access
-Manager 8.0 muestra una p&#225;gina de inicio de sesi&#243;n HTML. Una vez
-validado el usuario, el tipo de cliente (explorador Netscape) se agrega al
-token de sesi&#243;n. Los atributos definidos en el servicio de detecci&#243;n de
-cliente son atributos globales.</p>
+de cliente que realiza la solicitud HTTP(S). Esta funci&#243;n de OpenSSO se
+conoce como detecci&#243;n de cliente. La informaci&#243;n de la direcci&#243;n URL se
+utiliza para recuperar las caracter&#237;sticas del cliente. En funci&#243;n de estas caracter&#237;sticas,
+se mostrar&#225;n las p&#225;ginas de autenticaci&#243;n adecuadas. Por ejemplo, cuando se utiliza
+el navegador Netscape para solicitar una p&#225;gina web, OpenSSO 8.0 muestra una
+p&#225;gina de inicio de sesi&#243;n HTML. Una vez validado el usuario, el
+tipo de cliente (explorador Netscape) se agrega al token de sesi&#243;n. Los
+atributos definidos en el servicio de detecci&#243;n de cliente son atributos globales.</p>
 <ul><li><p><a href="#fxcei">Tipos de cliente</a></p></li>
 <li><p><a href="#fxbxh">Tipo de cliente predeterminado</a></p></li>
 <li><p><a href="#fxccp">Clase de detecci&#243;n de cliente</a></p></li>
@@ -48,12 +47,12 @@ cliente son atributos globales.</p>
 
 
 <a name="fxcei"></a><h5>Tipos de cliente</h5>
-<p>Para poder detectar los tipos de clientes, Federated Access Manager debe reconocer
-sus caracter&#237;sticas de identificaci&#243;n. Estas caracter&#237;sticas identifican las propiedades de todos los
-tipos admitidos en forma de datos del cliente. Este atributo permite modificar
-los datos de cliente mediante la interfaz de Client Manager. Para acceder
-a Client Manager, haga clic en el v&#237;nculo Editar. Federated Access Manager
-contiene los siguientes tipos de clientes de serie:</p>
+<p>Para poder detectar los tipos de clientes, OpenSSO debe reconocer sus caracter&#237;sticas
+de identificaci&#243;n. Estas caracter&#237;sticas identifican las propiedades de todos los tipos admitidos
+en forma de datos del cliente. Este atributo permite modificar los datos
+de cliente mediante la interfaz de Client Manager. Para acceder a Client
+Manager, haga clic en el v&#237;nculo Editar. OpenSSO contiene los siguientes tipos
+de clientes de serie:</p>
 <ul><li><p>HDML</p></li>
 <li><p>HTML</p></li>
 <li><p>JHTML</p></li>
@@ -108,16 +107,16 @@ de cliente). El valor predeterminado es genericHTML.</p>
 se enrutan todas las solicitudes de detecci&#243;n de clientes. La cadena que
 este atributo devuelve debe coincidir con uno de los tipos de cliente
 que se indican en el atributo Client Types (Tipos de cliente). La
-clase de detecci&#243;n de cliente predeterminada es <tt>com.sun.mobile.cdm.FEDIClientDetector</tt>. Federated Access Manager also
-contains <tt>com.iplanet.services.cdm.ClientDetectionDefaultImpl </tt> .</p>
+clase de detecci&#243;n de cliente predeterminada es <tt>com.sun.mobile.cdm.FEDIClientDetector</tt>. OpenSSO contiene tambi&#233;n <tt>com.iplanet.services.cdm.ClientDetectionDefaultImpl </tt>
+.</p>
 
 <a name="fxbvy"></a><h5>Detecci&#243;n de cliente</h5>
 <p>Habilita la detecci&#243;n de clientes. Si se habilita la detecci&#243;n de clientes
 (valor predeterminado), cada solicitud se enruta mediante la clase especificada en el
 atributo Client Detection Class (Clase de detecci&#243;n de cliente). De forma predeterminada,
 la capacidad de detecci&#243;n de cliente est&#225; habilitada. Si no se selecciona
-este atributo, Federated Access Manager supone que el cliente es genericHTML y
-el acceso se obtendr&#225; desde un explorador HTML.</p>
+este atributo, OpenSSO supone que el cliente es genericHTML y el acceso
+se obtendr&#225; desde un navegador HTML.</p>
 <br/>
 
 </body>

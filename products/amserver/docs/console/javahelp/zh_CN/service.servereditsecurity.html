@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>安全 - Sun Federated Access Manager 8.0 控制台联机帮助
+  <title>安全 - Sun OpenSSO 8.0 控制台联机帮助
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -52,7 +52,7 @@
 <p>验证属性包括：</p>
 
 <a name="ggkay"></a><h5>平台底层通信的最大内容长度</h5>
-<p>默认值为 16384 或 16k。指定 Federated Access Manager 将要接受的 <tt>HttpRequest</tt> 的最大内容长度。</p>
+<p>默认值为 16384 或 16k。指定 OpenSSO 可接受的 <tt>HttpRequest</tt> 的最大内容长度。</p>
 
 <a name="ggkbb"></a><h5>客户机 IP 地址检查</h5>
 <p>默认值为“否”。指定在创建或验证所有 <tt>SSOToken</tt> 时是否检查客户机的 IP 地址。</p>
@@ -64,22 +64,22 @@
 <p>默认值为 <tt>iPlanetDirectoryPro</tt>。用于设置有效会话处理程序 ID 的“验证服务”所用的 Cookie 名称。该 Cookie 名称的值用于检索有效会话信息。</p>
 
 <a name="ggkaw"></a><h5>安全 Cookie</h5>
-<p>允许在安全模式下设置 Federated Access Manager Cookie，在该模式下，浏览器仅在使用诸如 <tt>HTTP(s)</tt> 等安全协议时才会返回 Cookie。默认值为“假”。</p>
+<p>允许在安全模式下设置 OpenSSO Cookie，在该模式下，浏览器仅在使用 <tt>HTTP(s)</tt> 等安全协议时才会返回 Cookie。默认值为“假”。</p>
 
 <a name="ggkbk"></a><h5>对 Cookie 值编码</h5>
-<p>Access Manager 可通过此属性对 Cookie 值进行 <tt>URLencode</tt>，此操作会将字符转换为 HTTP 可识别的字符。</p>
+<p>OpenSSO 可通过此属性对 Cookie 值进行 <tt>URLencode</tt>，此操作会将字符转换为 HTTP 可识别的字符。</p>
 
 <a name="ggkbc"></a><h5>密钥库</h5>
 <p>您可以通过以下属性来配置所创建的其他站点和服务器的密钥库信息：</p>
 
 <a name="ggkbj"></a><h5>密钥库文件</h5>
-<p>在安装期间设置该值。示例：<tt></tt><i>FederatedAccessManager-base </i><tt>/</tt><i>server_URI</i><tt>/keystore.jks</tt>。指定 SAML XML 密钥库密码文件的路径。</p>
+<p>在安装期间设置该值。示例：<tt></tt><i>OpenSSO-base</i><tt>/</tt><i>server_URI</i><tt>/keystore.jks</tt>。指定 SAML XML 密钥库密码文件的路径。</p>
 
 <a name="ggkbu"></a><h5>密钥库密码文件</h5>
-<p>在安装期间设置该值。示例：<tt></tt><i>FederatedAccessManager-base </i><tt>/</tt><i>server_URI</i><tt>/.storepass</tt>。指定 SAML XML 密钥存储密码文件的路径。</p>
+<p>在安装期间设置该值。示例：<tt></tt><i>OpenSSO-base</i><tt>/</tt><i>server_URI</i><tt>/.storepass</tt>。指定 SAML XML 密钥存储密码文件的路径。</p>
 
 <a name="ggkbs"></a><h5>私钥密码文件</h5>
-<p>在安装期间设置该值。示例：<tt></tt><i>FederatedAccessManager-base </i><tt>/</tt><i>server_URI</i><tt>/.keypass</tt>。指定 SAML XML 密钥密码文件的路径。</p>
+<p>在安装期间设置该值。示例：<tt></tt><i>OpenSSO-base</i><tt>/</tt><i>server_URI</i><tt>/.keypass</tt>。指定 SAML XML 密钥密码文件的路径。</p>
 
 <a name="ggkaq"></a><h5>证书别名</h5>
 <p>默认值为 test。</p>
@@ -88,10 +88,10 @@
 <p>这些属性定义本地证书撤销列表 (Certificate Revocation List, CRL) 高速缓存系统信息库，以用于保存来自证书授权机构的 CRL。任何需要获取 CRL 以进行证书验证的服务都将收到基于该信息的 CRL。</p>
 
 <a name="ggkch"></a><h5>LDAP 服务器主机名</h5>
-<p>指定存储证书的 LDAP 服务器的名称。默认值是安装 Federated Access Manager 时指定的主机名。可以使用存储证书的任意 LDAP 服务器的主机名。</p>
+<p>指定存储证书的 LDAP 服务器的名称。默认值为安装 OpenSSO 时指定的主机名。可以使用存储证书的任意 LDAP 服务器的主机名。</p>
 
 <a name="ggkau"></a><h5>LDAP 服务器端口号</h5>
-<p>指定存储证书的 LDAP 服务器的端口号。默认值是安装 Federated Access Manager 时指定的端口。可以使用存储证书的任意 LDAP 服务器的端口。</p>
+<p>指定存储证书的 LDAP 服务器的端口号。默认值为安装 OpenSSO 时指定的端口。可以使用存储证书的任意 LDAP 服务器的端口。</p>
 
 <a name="ggkam"></a><h5>已启用 SSL</h5>
 <p>指定是否使用 SSL 来访问 LDAP 服务器。在默认情况下，证书验证服务不使用 SSL 进行 LDAP 访问。</p>
@@ -103,14 +103,14 @@
 <p>定义用于绑定 LDAP 服务器的密码。默认情况下，会将安装过程中输入的 amldapuser 密码用作绑定用户。</p>
 
 <a name="ggkce"></a><h5>LDAP 搜索基 DN</h5>
-<p>该属性指定由 LDAP 服务器中的 LDAP 用户主体使用的基 DN，搜索将从此 DN 开始进行。默认情况下，它是 Access Manager 安装库的顶层领域。</p>
+<p>该属性指定由 LDAP 服务器中的 LDAP 用户主体使用的基 DN，搜索将从此 DN 开始进行。默认情况下，它是 OpenSSO 安装基的顶层领域。</p>
 
 <a name="ggkbp"></a><h5>搜索属性</h5>
 <p>颁发者的 <tt>subjectDN</tt> 的任何 DN 组件均可用于从本地 LDAP 服务器检索 CRL。这是单值字符串，如 "cn"。所有“根 CA”必须使用相同的搜索属性。</p>
 
 <a name="ggkaa"></a><h5>联机证书状态协议检查</h5>
-<p>联机证书状态协议 (Online Certificate Status Protocol, OCSP) 使 Federated Access Manager 服务能够确定指定证书的（撤销）状态。OCSP 可用于满足一些操作要求，以提供比使用
-CRL 时更及时的撤销信息，并且还可用于获取其他状态信息。OCSP 客户机会向 OCSP 响应器发出状态请求，并暂停接受正在处理的证书，直到响应器提供响应为止。</p>
+<p>联机证书状态协议 (Online Certificate Status Protocol, OCSP) 使 OpenSSO 服务能够确定指定证书的（撤销）状态。OCSP 可用于满足一些操作要求，以提供比使用 CRL 时更及时的撤销信息，并且还可用于获取其他状态信息。OCSP
+客户机会向 OCSP 响应器发出状态请求，并暂停接受正在处理的证书，直到响应器提供响应为止。</p>
 
 <a name="ggkal"></a><h5>已启用检查</h5>
 <p>此属性启用 OCSP 检查。它在默认情况下为启用。</p>

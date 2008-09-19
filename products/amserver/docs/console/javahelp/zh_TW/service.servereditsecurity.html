@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>安全性 - Sun Federated Access Manager 8.0 主控台線上說明
+  <title>安全性 - Sun OpenSSO 8.0 主控台線上說明
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -52,7 +52,7 @@
 <p>驗證屬性包括：</p>
 
 <a name="ggkay"></a><h5>平台低階通訊最大內容長度</h5>
-<p>預設值為 16384 或 16k。指定 Federated Access Manager 將接受的 <tt>HttpRequest</tt> 最大內容長度。</p>
+<p>預設值為 16384 或 16k。指定 OpenSSO 可接受的 <tt>HttpRequest</tt> 最大內容長度。</p>
 
 <a name="ggkbb"></a><h5>用戶端 IP 位址檢查</h5>
 <p>預設值為「否」。指定在建立或驗證所有 <tt>SSOToken</tt> 的過程中是否檢查用戶端的 IP 位址。</p>
@@ -64,22 +64,22 @@
 <p>預設值為 <tt>iPlanetDirectoryPro</tt>。「認證服務」用來設定有效的階段作業處理程式 ID 的 Cookie 名稱。此 Cookie 名稱的值可用來擷取有效的階段作業資訊。</p>
 
 <a name="ggkaw"></a><h5>安全 Cookie</h5>
-<p>允許在安全模式中設定 Federated Access Manager Cookie，在此模式中，瀏覽器只有在使用如 <tt>HTTP(s)</tt> 的安全協定時才會傳回 Cookie。預設值為 false。</p>
+<p>允許在安全模式中設定 OpenSSO Cookie，在此模式中，瀏覽器只有在使用如 <tt>HTTP(s)</tt> 的安全協定時才會傳回 Cookie。預設值為 false。</p>
 
 <a name="ggkbk"></a><h5>編碼 Cookie 值</h5>
-<p>此特性允許 Access Manager 對 Cookie 值執行 <tt>URLencode</tt>，此作業會將字元轉換成 HTTP 能夠了解的字元。</p>
+<p>此特性允許 OpenSSO 對 Cookie 值執行 <tt>URLencode</tt>，此作業會將字元轉換成 HTTP 能夠了解的字元。</p>
 
 <a name="ggkbc"></a><h5>金鑰庫</h5>
 <p>下列屬性可讓您為建立的額外網站和伺服器配置金鑰庫資訊：</p>
 
 <a name="ggkbj"></a><h5>金鑰庫檔案</h5>
-<p>值會在安裝期間設定。範例：<tt></tt><i>FederatedAccessManager-base </i><tt>/</tt><i>server_URI</i><tt>/keystore.jks</tt>。指定 SAML XML 金鑰庫密碼檔的路徑。</p>
+<p>值會在安裝期間設定。範例：<tt></tt><i>OpenSSO-base </i><tt>/</tt><i>server_URI</i><tt>/keystore.jks</tt>。指定 SAML XML 金鑰庫密碼檔的路徑。</p>
 
 <a name="ggkbu"></a><h5>金鑰庫密碼檔案</h5>
-<p>值會在安裝期間設定。範例：<tt></tt><i>FederatedAccessManager-base </i><tt>/</tt><i>server_URI</i><tt>/.storepass</tt>。指定 SAML XML 金鑰庫密碼檔案的路徑。</p>
+<p>值會在安裝期間設定。範例：<tt></tt><i>OpenSSO-base </i><tt>/</tt><i>server_URI</i><tt>/.storepass</tt>。指定 SAML XML 金鑰庫密碼檔案的路徑。</p>
 
 <a name="ggkbs"></a><h5>私密金鑰密碼檔案</h5>
-<p>值會在安裝期間設定。範例：<tt></tt><i>FederatedAccessManager-base </i><tt>/</tt><i>server_URI</i><tt>/.keypass</tt> 指定 SAML XML 金鑰密碼檔案的路徑。</p>
+<p>值會在安裝期間設定。範例：<tt></tt><i>OpenSSO-base </i><tt>/</tt><i>server_URI</i><tt>/.keypass。</tt> 指定 SAML XML 金鑰密碼檔案的路徑。</p>
 
 <a name="ggkaq"></a><h5>憑證別名</h5>
 <p>預設值為 test。</p>
@@ -88,10 +88,10 @@
 <p>這些屬性會定義本機憑證撤銷清單 (Certificate Revocation List , CRL) 快取儲存庫，用於保存來自憑證授權單位的 CRL。任何需要取得 CRL 進行憑證驗證的服務，都將收到以這項資訊為基礎的 CRL。</p>
 
 <a name="ggkch"></a><h5>LDAP 伺服器主機名稱</h5>
-<p>指定儲存憑證的 LDAP 伺服器名稱。預設值為安裝 Federated Access Manager 時指定的主機名稱。可以使用任何儲存憑證的 LDAP 伺服器之主機名稱。</p>
+<p>指定儲存憑證的 LDAP 伺服器名稱。預設值是安裝 OpenSSO 時指定的主機名稱。可以使用任何儲存憑證的 LDAP 伺服器之主機名稱。</p>
 
 <a name="ggkau"></a><h5>LDAP 伺服器連接埠號碼</h5>
-<p>指定儲存憑證的 LDAP 伺服器的連接埠號碼。預設值為安裝 Federated Access Manager 時指定的連接埠。可以使用任何儲存憑證的 LDAP 伺服器之連接埠。</p>
+<p>指定儲存憑證的 LDAP 伺服器的連接埠號碼。預設值是安裝 OpenSSO 時指定的連接埠。可以使用任何儲存憑證的 LDAP 伺服器之連接埠。</p>
 
 <a name="ggkam"></a><h5>已啟用 SSL</h5>
 <p>指定是否使用 SSL 來存取 LDAP 伺服器。預設情況下，憑證認證服務不使用 SSL 存取 LDAP。</p>
@@ -103,14 +103,14 @@
 <p>定義用於連結至 LDAP 伺服器的密碼。依預設，會使用安裝期間輸入的 amldapuser 密碼做為連結使用者。</p>
 
 <a name="ggkce"></a><h5>LDAP 搜尋基底 DN</h5>
-<p>此屬性指定 LDAP 伺服器中由 LDAP 使用者主體使用的基底 DN，搜尋將從此基底 DN 開始。依預設，它是 Access Manager 安裝基底的頂層範圍。</p>
+<p>此屬性指定 LDAP 伺服器中由 LDAP 使用者主體使用的基底 DN，搜尋將從此基底 DN 開始。依預設，它是 OpenSSO 安裝基底的頂層範圍。</p>
 
 <a name="ggkbp"></a><h5>搜尋屬性</h5>
 <p>發行者 <tt>subjectDN</tt> 的任何 DN 元件都可以用來從本機 LDAP 伺服器擷取 CRL。此為單值字串，如 "cn"。所有根 CA 都需使用相同的搜尋屬性。</p>
 
 <a name="ggkaa"></a><h5>線上憑證狀態協定檢查</h5>
-<p>線上憑證狀態協定 (Online Certificate Status Protocol , OCSP) 可讓 Federated Access Manager 服務判斷指定憑證的
-(撤銷) 狀態。OCSP 可用於滿足某些操作需求，提供比 CRL 更多的即時撤銷資訊，並且可用來取得額外的狀態資訊。OCSP 用戶端會向 OCSP 回應程式發出狀態請求，並且暫緩接受正在處理中的憑證，直到回應程式提供回應為止。</p>
+<p>線上憑證狀態協定 (Online Certificate Status Protocol, OCSP) 可讓 OpenSSO 服務判斷指定憑證的 (撤銷) 狀態。OCSP 可用於滿足某些操作需求，提供比
+CRL 更多的即時撤銷資訊，並且可用來取得額外的狀態資訊。OCSP 用戶端會向 OCSP 回應程式發出狀態請求，並且暫緩接受正在處理中的憑證，直到回應程式提供回應為止。</p>
 
 <a name="ggkal"></a><h5>已啟用檢查</h5>
 <p>此屬性會啟用 OCSP 檢查。依預設會啟用。</p>

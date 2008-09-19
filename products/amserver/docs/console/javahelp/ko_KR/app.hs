@@ -3,26 +3,26 @@
 <!DOCTYPE helpset PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp HelpSet Version 2.0//EN" "helpset_1_0.dtd">
 
 <helpset version="2.0" xml:lang="ko">
-<title>Sun Federated Access Manager 8.0 ÄÜ¼Ö ¿Â¶óÀÎ µµ¿ò¸»</title>
+<title>Sun OpenSSO 8.0 ì½˜ì†” ì˜¨ë¼ì¸ ë„ì›€ë§</title>
 <maps>
 	<homeID></homeID>
 	<mapref location="map.jhm"/>
 </maps>
 <view>
 	<name>TOC</name>
-	<label>¸ñÂ÷</label>
+	<label>ëª©ì°¨</label>
 	<type>javax.help.TOCView</type>
 	<data>toc.xml</data>
 </view>
 <view>
 	<name>Index</name>
-	<label>»öÀÎ</label>
+	<label>ìƒ‰ì¸</label>
 	<type>javax.help.IndexView</type>
 	<data>index.xml</data>
 </view>
 <view>
 	<name>Search</name>
-	<label>°Ë»ö</label>
+	<label>ê²€ìƒ‰</label>
 	<type>javax.help.SearchView</type>
 	<data engine="com.sun.java.help.search.DefaultSearchEngine">JavaHelpSearch</data>
 </view>

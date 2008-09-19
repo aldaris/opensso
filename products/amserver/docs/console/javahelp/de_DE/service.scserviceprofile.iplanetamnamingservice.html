@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Namen - Online-Hilfe zur Sun Federated Access Manager 8.0-Konsole
+  <title>Namen - Online-Hilfe zur Sun OpenSSO 8.0-Konsole
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -32,13 +32,13 @@
 
 <a name="service.scserviceprofile.iplanetamnamingservice"></a><h4>Namen</h4>
 <p><a name="indexterm-204"></a>Der Namensdienst wird zum Abrufen und Festlegen der URLs, Plugins und Konfigurationen
-sowie f&#252;r Anforderungsbenachrichtigungen f&#252;r verschiedene Federated Access Manager-Dienste verwendet, z. B. f&#252;r
-Sitzung, Authentifizierung, Protokollierung, SAML und Verbindung.</p><p>Dieser Dienst erm&#246;glicht es den Clients, den korrekten Dienst-URL zu finden, wenn
-Federated Access Manager auf der Plattform mehrfach ausgef&#252;hrt wird. Wenn eine Namens-URL
-gefunden wurde, entschl&#252;sselt der Namensdienst die Benutzersitzungsinformationen und ersetzt dynamisch die Werte
-f&#252;r Protokoll, Host und Anschluss mit den Parametern der Sitzung. Damit wird
-sichergestellt, dass der an den Dienst zur&#252;ckgegebene URL auf den Host verweist,
-auf dem die Benutzersitzung erstellt wurde. Es existieren folgende Namensattribute:</p>
+sowie f&#252;r Anforderungsbenachrichtigungen f&#252;r verschiedene OpenSSO-Dienste verwendet, z. B. f&#252;r Sitzung, Authentifizierung,
+Protokollierung, SAML und Verbindung.</p><p>Dieser Dienst erm&#246;glicht es den Clients, den korrekten Dienst-URL zu finden, wenn
+OpenSSO auf der Plattform mehrfach ausgef&#252;hrt wird. Wenn eine Namens-URL gefunden wurde,
+entschl&#252;sselt der Namensdienst die Benutzersitzungsinformationen und ersetzt dynamisch die Werte f&#252;r Protokoll,
+Host und Anschluss mit den Parametern der Sitzung. Damit wird sichergestellt, dass
+der an den Dienst zur&#252;ckgegebene URL auf den Host verweist, auf dem
+die Benutzersitzung erstellt wurde. Es existieren folgende Namensattribute:</p>
 <ul><li><p><a href="#fwfgc">URL des Profildienstes</a></p></li>
 <li><p><a href="#fwfgg">URL des Sitzungsdienstes</a></p></li>
 <li><p><a href="#fwfgf">URL des Protokollierungsdienstes</a></p></li>
@@ -86,7 +86,7 @@ Parametern.</p>
 Parametern. </p>
 
 <a name="fwfgi"></a><h5>URL des SAML-Assertion-Manager-Dienstes</h5>
-<p>In diesem Feld ist ein Wert im folgenden Format zul&#228;ssig:</p><p><tt>%protocol://%host:%port/Server_DEPLOY_URI/AssertionManagerServlet/  AssertionManagerIF</tt></p><p>Diese Syntax erm&#246;glicht das dynamische Ersetzen der SAML-Assertion-Manager-URL, basierend auf den sitzungsspezifischen
+<p>In diesem Feld ist ein Wert im folgenden Format zul&#228;ssig:</p><p><tt>%protocol://%host:%port/Server_DEPLOY_URI/AssertionManagerServlet/ AssertionManagerIF</tt></p><p>Diese Syntax erm&#246;glicht das dynamische Ersetzen der SAML-Assertion-Manager-URL, basierend auf den sitzungsspezifischen
 Parametern. </p>
 
 <a name="fwfgn"></a><h5>Dienst-URL f&#252;r Verbindungassertions-Manager</h5>

@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Para crear un nuevo agente - Ayuda en l&#237;nea de la consola de Sun Federated Access Manager 8.0
+  <title>Para crear un nuevo agente - Ayuda en l&#237;nea de la consola de Sun OpenSSO 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -33,9 +33,8 @@
 <a name="agentconfig.agentadd"></a><h5>Para crear un nuevo agente</h5>
 <p>La creaci&#243;n de un nuevo agente tambi&#233;n recibe el nombre de creaci&#243;n
 de un nuevo perfil de agente. Puede realizar esta tarea en la
-consola de administraci&#243;n de Federated Access Manager. Algunos de los pasos concretos
-se aplican &#250;nicamente a los tipos de agente de directivas J2EE y
-web.</p><ol>
+consola de administraci&#243;n de OpenSSO. Algunos de los pasos concretos se aplican
+&#250;nicamente a los tipos de agente de directivas J2EE y web.</p><ol>
 <li><b>Haga clic en la ficha Control de acceso.</b></li>
 <li><b>Haga clic en el nombre del dominio al que pertenecer&#225; el agente.
 </b></li>
@@ -49,7 +48,8 @@ web.</p><ol>
 entre dos tipos, Agente de detecci&#243;n y Agente STS. Para m&#225;s informaci&#243;n
 sobre estos tipos de agente, consulte <a href="agentconfig.stsclientedit.html">Cliente STS</a>.</p></li>
 <li><b>Agentes 2.2.</b><p>La ficha Agentes 2.2 se utiliza para los agentes del conjunto de
-software Policy Agent 2.2.</p></li></ul></li>
+software Policy Agent 2.2.</p></li>
+<li><b>Autenticador de agentes</b></li></ul></li>
 <li><b>En la secci&#243;n Agente, haga clic en Nuevo.</b></li>
 <li><b>En el campo Nombre, introduzca el nombre del nuevo perfil de agente.</b></li>
 <li><b>Introduzca y confirme la contrase&#241;a.</b>
@@ -60,12 +60,12 @@ archivo de contrase&#241;as del perfil de agente especificado al ejecutar el pro
 <p><b>Pasos 8&#8211;10 Aplicar &#250;nicamente a agentes de directiva web y J2EE.</b></p></li>
 <li><b>Seleccione la configuraci&#243;n aplicable: local o centralizada</b><p>Cuando se selecciona la configuraci&#243;n local, las propiedades relacionadas a este agente
 no podr&#225;n editarse desde la consola. En un escenario como &#233;ste, el
-agente recupera la informaci&#243;n de configuraci&#243;n de los archivos locales, <tt>FAMAgentBootstrap.properties</tt> y
-<tt>FAMAgentConfiguration.properites </tt>, en el directorio de instalaci&#243;n del agente. Para un agente configurado
+agente recupera la informaci&#243;n de configuraci&#243;n de los archivos locales, <tt>OpenSSOAgentBootstrap.properties</tt> y
+<tt>OpenSSOAgentConfiguration.properties </tt>, en el directorio de instalaci&#243;n del agente. Para un agente configurado
 de forma local, cambie los valores de la propiedad editando directamente el
-archivo <tt>FAMAgentConfiguration.properites </tt>.</p></li>
-<li><b>En el campo URL del servidor, introduzca la URL del servidor Federated
-Access Manager.</b><p>Por ejemplo:</p><pre>http://famHost.example.com:8080/fam</pre></li>
+archivo <tt>OpenSSOAgentConfiguration.properties </tt>.</p></li>
+<li><b>En el campo URL del servidor, introduzca la URL del servidor de
+OpenSSO.</b><p>Por ejemplo:</p><pre>http://OpenSSO_EnterpriseHost.example.com:8080/OpenSSO</pre></li>
 <li><b>En el campo URL del agente, introduzca la URL para la aplicaci&#243;n
 del agente, <tt> agentapp</tt> .</b><p>Por ejemplo:</p><dl><dt>Agentes web</dt>
 <dd><p><tt>http://agentHost.example.com:8090</tt></p></dd>

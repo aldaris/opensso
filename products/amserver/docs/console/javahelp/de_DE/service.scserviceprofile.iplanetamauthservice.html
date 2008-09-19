@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Core - Online-Hilfe zur Sun Federated Access Manager 8.0-Konsole
+  <title>Core - Online-Hilfe zur Sun OpenSSO 8.0-Konsole
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,12 +31,12 @@
 
 
 <a name="service.scserviceprofile.iplanetamauthservice"></a><h4>Core</h4>
-<p><a name="indexterm-170"></a>Dieses Modul ist die allgemeine Konfigurationsbasis f&#252;r die Authentifizierungsdienste von Federated Access
-Manager. Es muss f&#252;r die einzelnen Authentifizierungsmodulinstanzen registriert und konfiguriert sein. In
-diesem Modul legt der Administrator Standardwerte fest, die f&#252;r Werte &#252;bernommen werden,
-welche nicht explizit in den Standard-Authentifizierungsmodulen von Federated Access Manager angegeben sind.
-Bei den Kern-Attributen handelt es sich sowohl um globale als auch um
-Bereichsattribute. Es existieren folgende Attribute:</p>
+<p><a name="indexterm-170"></a>Dieses Modul ist die allgemeine Konfigurationsbasis f&#252;r die Authentifizierungsdienste von OpenSSO. Es
+muss f&#252;r die einzelnen Authentifizierungsmodulinstanzen registriert und konfiguriert sein. In diesem Modul
+legt der Administrator Standardwerte fest, die f&#252;r Werte &#252;bernommen werden, welche nicht
+explizit in den Standard-Authentifizierungsmodulen von OpenSSO angegeben sind. Bei den Kern-Attributen handelt
+es sich sowohl um globale als auch um Bereichsattribute. Es existieren folgende
+Attribute:</p>
 <ul><li><p><a href="#gcnje">PAM-Klassen (Pluggable Authentification Module)</a></p></li>
 <li><p><a href="#gcnjc">Unterst&#252;tzte Authentifizierungsmodule f&#252;r Clients</a></p></li>
 <li><p><a href="#gcnir">LDAP-Verbindung Pool-Gr&#246;&#223;e</a></p></li>
@@ -70,12 +70,11 @@ Bereichsattribute. Es existieren folgende Attribute:</p>
 
 
 <a name="gcnje"></a><h5>PAM-Klassen (Pluggable Authentification Module)</h5>
-<p>Gibt die Java-Klassen der Authentifizierungsmodule an, die f&#252;r alle innerhalb der Federated
-Access Manager-Plattform konfigurierten Bereiche zur Verf&#252;gung stehen. Mit der AMLoginModule-SPI oder der
-JAAS LoginModule-SPI k&#246;nnen Sie eigene Authentifizierungsmodule entwickeln. Weitere Informationen hierzu finden Sie
-im Federated Access Manager Developer's Guide. Zur Definition neuer Authentifizierungsdienste m&#252;ssen Sie
-in dieses Feld den vollst&#228;ndigen Klassennamen (einschlie&#223;lich des Paketnamens) des neuen Dienstes
-eingegeben.</p>
+<p>Gibt die Java-Klassen der Authentifizierungsmodule an, die f&#252;r alle innerhalb der OpenSSO-Plattform
+konfigurierten Bereiche zur Verf&#252;gung stehen. Mit der AMLoginModule-SPI oder der JAAS LoginModule-SPI
+k&#246;nnen Sie eigene Authentifizierungsmodule entwickeln. Weitere Informationen finden Sie im Handbuch f&#252;r
+Entwickler zu OpenSSO. Zur Definition neuer Authentifizierungsdienste m&#252;ssen Sie in dieses Feld
+den vollst&#228;ndigen Klassennamen (einschlie&#223;lich des Paketnamens) des neuen Dienstes eingegeben.</p>
 
 <a name="gcnjc"></a><h5>Unterst&#252;tzte Authentifizierungsmodule f&#252;r Clients</h5>
 <p>Legt eine Liste der unterst&#252;tzten Authentifizierungsmodule f&#252;r einen bestimmten Client fest. Das
@@ -98,9 +97,9 @@ und Maximum aus "LDAP-Verbindung Standard-Pool-Gr&#246;&#223;e" &#252;bernommen.
 <a name="gcnkq"></a><h5>Benutzerprofil</h5>
 <p>Hiermit legen Sie die Optionen f&#252;r ein Benutzerprofil fest. Es stehen folgende
 Optionen zur Verf&#252;gung:</p><dl><dt><b>Erforderlich</b></dt>
-<dd><p>Diese Option legt fest, dass nach der erfolgreichen Authentifizierung eines Benutzers im lokalen Directory Server von Federated Access Manager ein entsprechendes Benutzerprofil vorhanden sein muss, damit der Authentifizierungsdienst ein SSO-Token ausstellen kann.</p></dd>
+<dd><p>Diese Option legt fest, dass nach der erfolgreichen Authentifizierung eines Benutzers auf dem lokalen Directory Server von OpenSSO ein entsprechendes Benutzerprofil vorhanden sein muss, damit der Authentifizierungsdienst ein SSO-Token ausstellen kann.</p></dd>
 <dt><b>Dynamisch</b></dt>
-<dd><p>Diese Option legt fest, dass nach der erfolgreichen Authentifizierung eines Benutzers ein entsprechendes Benutzerprofil durch den Authentifizierungsdienst erstellt wird, sofern noch keines vorhanden ist. Das SSO-Token wird anschlie&#223;end ausgestellt. Das Benutzerprofil wird im lokalen Directory Server von Federated Access Manager erstellt.</p></dd>
+<dd><p>Diese Option legt fest, dass nach der erfolgreichen Authentifizierung eines Benutzers ein entsprechendes Benutzerprofil durch den Authentifizierungsdienst erstellt wird, sofern noch keines vorhanden ist. Das SSO-Token wird anschlie&#223;end ausgestellt. Das Benutzerprofil wird auf dem lokalen Directory Server von OpenSSO erstellt.</p></dd>
 <dt><b>Dynamisch mit Benutzer-Alias</b></dt>
 <dd><p>Diese Option legt fest, dass nach der erfolgreichen Authentifizierung eines Benutzers ein entsprechendes Benutzerprofil durch den Authentifizierungsdienst unter Verwendung des Attributs ";Benutzer-Alias-Liste" erstellt wird. </p></dd>
 <dt><b>Ignorieren</b></dt>
@@ -111,30 +110,29 @@ Optionen zur Verf&#252;gung:</p><dl><dt><b>Erforderlich</b></dt>
 <a name="ggukq"></a><h5>Sicherheit f&#252;r Remoteauthentifizierung</h5>
 <p>Wenn diese Option aktiviert ist, ist es f&#252;r alle Authentifizierungsanforderungen erforderlich, dass
 das SSOToken der Anwendung die Identit&#228;t des Aufrufers &#252;berpr&#252;ft, sodass die Konfigurationsinformationen
-von  Federated Access Manager die g&#252;ltigen Werte f&#252;r Benutzernamen und Passwort
-f&#252;r die Anwendung abrufen k&#246;nnen.</p>
+von OpenSSO die g&#252;ltigen Werte f&#252;r Benutzernamen und Passwort f&#252;r die Anwendung
+abrufen k&#246;nnen.</p>
 
 <a name="ggull"></a><h5>Nachverarbeitungsobjekte f&#252;r Abmeldungsverarbeitung beibehalten</h5>
 <p>Wenn diese Option aktiviert ist, werden die Instanzen der Nachverarbeitungs-Authentifizierungs-Plugins, die w&#228;hrend
-der Anmeldungsverarbeitung verwendet werden, w&#228;hrend der Federated Access Manager-Sitzung beibehalten. Wenn sp&#228;ter
-die Abmeldung aufgerufen wird, wird die <tt>onLogout </tt>-Methode dieser Instanzen aufgerufen. Wenn dieses
-Attribut nicht aktiviert ist, werden die Nachverarbeitungsinstanzen aus dem Anmeldevorgang nicht beibehalten.
-Beim Aufrufen der Abmeldung werden neue Instanzen von Nachverarbeitungs-Plugins erstellt und die
-Methode <tt>onLogout</tt> wird aufgerufen. </p>
+der Anmeldungsverarbeitung verwendet werden, w&#228;hrend der OpenSSO-Sitzung beibehalten. Wenn sp&#228;ter die Abmeldung
+aufgerufen wird, wird die <tt>onLogout </tt>-Methode dieser Instanzen aufgerufen. Wenn dieses Attribut nicht
+aktiviert ist, werden die Nachverarbeitungsinstanzen aus dem Anmeldevorgang nicht beibehalten. Beim Aufrufen
+der Abmeldung werden neue Instanzen von Nachverarbeitungs-Plugins erstellt und die Methode <tt>onLogout</tt>
+wird aufgerufen. </p>
 
 <a name="gguji"></a><h5>Authentifizierungsmodulobjekte f&#252;r Abmeldungsverarbeitung beibehalten</h5>
 <p>Wenn diese Option aktiviert ist, werden alle Instanzen der Authentifizierungsmodule, die w&#228;hrend
-des Authentifizierungsvorgangs verwendet werden, w&#228;hrend der Federated Access Manager-Sitzung beibehalten. Wenn sp&#228;ter
-die Abmeldung aufgerufen wird, wird die Methode "logout/destroyModulestate" f&#252;r dieselben Instanzen aufgerufen.
-Wenn dieses Attribut nicht aktiviert ist, werden die Instanzen des Authentifizierungsmoduls aus
-dem Abmeldevorgang nicht beibehalten. Beim Abmelden wird keine Methode f&#252;r die Authentifizierungsmodule
-aufgerufen.</p>
+des Authentifizierungsvorgangs verwendet werden, w&#228;hrend der OpenSSO-Sitzung beibehalten. Wenn sp&#228;ter die Abmeldung
+aufgerufen wird, wird die Methode "logout/destroyModulestate" f&#252;r dieselben Instanzen aufgerufen. Wenn dieses
+Attribut nicht aktiviert ist, werden die Instanzen des Authentifizierungsmoduls aus dem Abmeldevorgang
+nicht beibehalten. Beim Abmelden wird keine Methode f&#252;r die Authentifizierungsmodule aufgerufen.</p>
 
 <a name="gcnks"></a><h5>Administrator-Authentifizierungskonfiguration</h5>
 <p>Legt den Authentifizierungsdienst f&#252;r Administratoren fest. Dieses Attribut kann verwendet werden, wenn
 f&#252;r Administratoren ein anderes Authentifizierungsmodul verwendet werden soll als f&#252;r Endbenutzer. Die
-in diesem Attribut konfigurierten Module werden beim Zugriff auf die Federated Access
-Manager-Konsole &#252;bernommen. Beispiel:</p><p><tt><b>http://</tt><i>servername.port/console_deploy_uri</i><tt></b></tt></p>
+in diesem Attribut konfigurierten Module werden beim Zugriff auf die OpenSSO-Konsole &#252;bernommen.
+Beispiel:</p><p><tt><b>http://</tt><i>servername.port/console_deploy_uri</i><tt></b></tt></p>
 
 <a name="gcnjw"></a><h5>Standardrollen f&#252;r dynamisches Erstellen von Benutzerprofilen</h5>
 <p>Dieses Feld gibt an, welche Rollen einem neuen Benutzer bei der Profilerstellung
@@ -142,8 +140,8 @@ zugewiesen werden, wenn im Benutzerprofil die Option ";Dynamische Erstellung" ge
 gibt keinen Standardwert. Der Administrator muss die DNs der Rollen angeben, die
 selbst-registrierten Benutzer zugewiesen werden sollen.  </p>
 <hr><p><b>Hinweis &#8211; </b>Die angegebene Rolle muss unter dem Bereich liegen, f&#252;r den die Authentifizierung
-konfiguriert wird. Diese Rolle kann eine Federated Access Manager- oder LDAP-Rolle, jedoch
-keine gefilterte Rolle sein.</p><p> Wenn dem Benutzer automatisch bestimmte Dienste zugewiesen werden sollen, m&#252;ssen Sie im
+konfiguriert wird. Diese Rolle kann eine OpenSSO- oder LDAP-Rolle, jedoch keine gefilterte
+Rolle sein.</p><p> Wenn dem Benutzer automatisch bestimmte Dienste zugewiesen werden sollen, m&#252;ssen Sie im
 Benutzerprofil das Attribut ";Erforderliche Dienste" konfigurieren.</p>
 <hr>
 
@@ -209,8 +207,8 @@ Benutzer gesperrt wird. Mehrere Adressen, an die Nachrichten gesendet werden sol
 durch Leerzeichen getrennt werden. Bei einer nicht englischen L&#228;ndereinstellung gilt folgendes Format:</p><p><tt>email_address|locale|charset</tt> </p>
 
 <a name="gcnkr"></a><h5>Benutzer nach n Fehlern warnen</h5>
-<p>Legt die Anzahl der fehlgeschlagenen Authentifizierungsversuche fest, nach denen Federated Access Manager
-den Benutzer warnt, dass er gesperrt wird.</p>
+<p>Legt die Anzahl der fehlgeschlagenen Authentifizierungsversuche fest, nach denen OpenSSO den Benutzer
+warnt, dass er gesperrt wird.</p>
 
 <a name="gcnkc"></a><h5>Anmeldefehler Sperrdauer</h5>
 <p>Aktiviert die Arbeitsspeichersperre. Standardm&#228;&#223;ig deaktiviert der Sperrmechanismus nach einem fehlgeschlagenen Anmeldeversuch das
@@ -227,9 +225,9 @@ das Konto 6 Minuten lang f&#252;r den Benutzer gesperrt. </p>
 <a name="gcnjy"></a><h5>Sperrattributname</h5>
 <p>Legt ein beliebiges LDAP-Attribut fest, das f&#252;r die Sperre eingerichtet werden soll.
 Um die Sperre f&#252;r diesen Attributnamen zu erm&#246;glichen, muss auch der Wert
-des Attributs Sperrattributwert ge&#228;ndert werden. Standardm&#228;&#223;ig ist das Attribut "Sperrattributname" auf der
-Federated Access Manager-Konsole leer. Die Standard-Implementierungswerte sind <i>inetuserstatus</i>  (LDAP-Attribut) und <i>Inaktiv</i>,
-wenn der Benutzer gesperrt ist und ";Anmeldefehler Sperrdauer" auf 0 gesetzt ist.</p>
+des Attributs Sperrattributwert ge&#228;ndert werden. Standardm&#228;&#223;ig ist das Attribut "Sperrattributname" in der
+OpenSSO-Konsole leer. Die Standard-Implementierungswerte sind <i>inetuserstatus</i>  (LDAP-Attribut) und <i>Inaktiv</i>, wenn der
+Benutzer gesperrt ist und ";Anmeldefehler Sperrdauer" auf 0 gesetzt ist.</p>
 
 <a name="gcnle"></a><h5>Sperrattributwert</h5>
 <p>Legt fest, ob die Sperre f&#252;r das in ";Sperrattributname" angegebene Attribut aktiviert
@@ -239,7 +237,7 @@ oder deaktiviert ist. Standardm&#228;&#223;ig ist dieses Attribut f&#252;r <i>in
 <p>Hier k&#246;nnen Sie mehrere URLs eingeben, zu denen der Benutzer nach einer
 erfolgreichen Authentifizierung umgeleitet wird. Das Format dieses Attributs lautet <tt>clientType|URL</tt>. Sie k&#246;nnen
 auch nur den Wert des URL angeben, der einen HTML-Standardtyp annimmt. Der
-Standardwert lautet <i>/amserver/console </i> .</p>
+Standardwert lautet <i>/amserver/console</i> .</p>
 
 <a name="gcnlf"></a><h5>Standard-URL f&#252;r erfolglose Anmeldung</h5>
 <p>Hier k&#246;nnen Sie mehrere URLs eingeben, zu denen der Benutzer nach einer
@@ -262,7 +260,7 @@ Plugf&#228;hige Generator-Klasse f&#252;r Benutzernamen angegebenen Java-Klasse 
 verwendet wird, wenn Generierung des UserID-Modus aktivieren aktiviert ist.</p>
 
 <a name="gcnki"></a><h5>Identit&#228;tstypen</h5>
-<p>Gibt den bzw. die Identit&#228;tstypen an, nach denen Federated Access Manager sucht.</p>
+<p>Gibt den bzw. die Identit&#228;tstypen an, nach denen OpenSSO sucht.</p>
 
 <a name="gcnlh"></a><h5>Ersetzbare Benutzerstatus-Ereignisklassen</h5>
 <p>Erweitert die Authentifizierungs-SPIs um einen R&#252;ckruf-Mechanismus f&#252;r Benutzerstatus&#228;nderungen w&#228;hrend der Authentifizierung. Folgende
@@ -275,10 +273,10 @@ Status&#228;nderungen werden unterst&#252;tzt:</p><dl><dt><tt>account lockout</t
 
 <a name="gcnjv"></a><h5>Ung&#252;ltige Versuche im Data Store speichern</h5>
 <p>Wenn dieses Attribut aktiviert ist, ist die gemeinsame Nutzung fehlgeschlagener Anmeldeversuche in
-einem Identit&#228;ts-Repository m&#246;glich, das von mehreren Federated Access Manager-Objekten gemeinsam genutzt wird.
-Wenn beispielsweise Directory Server als Identit&#228;ts-Repository f&#252;r eine bestimmte Bereitstellung verwendet wird,
-werden die ung&#252;ltigen Versuche in  <tt>sunAMAuthInvalidAttemptsData</tt> gespeichert (geh&#246;rt zur Objektklasse <tt>sunAMAuthAccountLockout). </tt>
-Das Format der Daten wird gespeichert als:</p><p><tt>&#60;InvalidPassword&#62;&#60;InvalidCount&#62;&#60;/InvalidCount&#62;&#60;LastInvalidAt&#62;&#60;/LastInvalidAt&#62;  &#60;LockedoutAt&#62;&#60;/LockedoutAt&#62;&#60;ActualLockoutDuration&#62;&#60;/ActualLockoutDuration&#62;&#60;/InvalidPassword&#62; </tt></p><p>Diese Informationen werden f&#252;r jeden Benutzer im Directory Server aufrechterhalten. Beim Auftreten
+einem Identit&#228;ts-Repository m&#246;glich, das von mehreren OpenSSO-Instanzen gemeinsam genutzt wird. Wenn beispielsweise
+Directory Server als Identit&#228;ts-Repository f&#252;r eine bestimmte Bereitstellung verwendet wird, werden die
+ung&#252;ltigen Versuche in  <tt>sunAMAuthInvalidAttemptsData</tt> gespeichert (geh&#246;rt zur Objektklasse <tt>sunAMAuthAccountLockout). </tt> Das Format
+der Daten wird gespeichert als:</p><p><tt>&#60;InvalidPassword&#62;&#60;InvalidCount&#62;&#60;/InvalidCount&#62;&#60;LastInvalidAt&#62;&#60;/LastInvalidAt&#62; &#60;LockedoutAt&#62;&#60;/LockedoutAt&#62;&#60;ActualLockoutDuration&#62;&#60;/ActualLockoutDuration&#62;&#60;/InvalidPassword&#62; </tt></p><p>Diese Informationen werden f&#252;r jeden Benutzer im Directory Server aufrechterhalten. Beim Auftreten
 ung&#252;ltiger Versuche wird <tt>&#60;InvalidCount&#62;</tt> jeweils erh&#246;ht.</p>
 
 <a name="gcnjo"></a><h5>Modulbasierte Authentifizierung</h5>
@@ -302,9 +300,9 @@ im SSO-Token gespeicherte Authentifizierungsebene nicht den erforderlichen Minde
 aufgefordert, sich erneut &#252;ber einen Dienst mit einer h&#246;heren Authentifizierungsebene zu authentifizieren.</p><p>Die Authentifizierungsebene sollte in der Authentifizierungsvorlage des jeweiligen Bereichs festgelegt sein. Der
 im Attribut ";Standard-Authentifizierungsebene" eingegebene Wert wird nur verwendet, wenn im Feld "Authentifizierungsebene"
 der Authentifizierungsvorlage eines Bereichs kein Wert angegeben wurde. The Default Authentication Level
-default value is 0. (The value in this attribute is not used
-by Federated Access Manager but by any external application that may chose
-to use it.)</p>
+default value is 0. (Der Wert f&#252;r dieses Attribut wird nicht von
+OpenSSO, sondern von einer externen Anwendung, f&#252;r die es ausgew&#228;hlt werden kann,
+verwendet.)</p>
 <br/>
 
 </body>

@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>核心 - Sun Federated Access Manager 8.0 控制台联机帮助
+  <title>核心 - Sun OpenSSO 8.0 控制台联机帮助
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,7 +31,7 @@
 
 
 <a name="service.scserviceprofile.iplanetamauthservice"></a><h4>核心</h4>
-<p><a name="indexterm-170"></a>该模块是常规配置 Federated Access Manager 验证服务的基础。必须对其进行注册并配置才能使用任一特定的验证模块实例。它使管理员能够定义默认值，当未在 Federated Access Manager 默认验证模块中特别设置值时，将使用这些值。“核心”属性包括全局属性和领域属性。这些属性包括：</p>
+<p><a name="indexterm-170"></a>该模块是常规配置 OpenSSO 验证服务的基础。必须对其进行注册并配置才能使用任一特定的验证模块实例。它使管理员能够定义默认值，当未在 OpenSSO 默认验证模块中特别设置值时，将使用这些值。“核心”属性包括全局属性和领域属性。这些属性包括：</p>
 <ul><li><p><a href="#gcnje">可插接的验证模块类</a></p></li>
 <li><p><a href="#gcnjc">客户机支持的验证模块</a></p></li>
 <li><p><a href="#gcnir">LDAP 连接池大小</a></p></li>
@@ -65,8 +65,8 @@
 
 
 <a name="gcnje"></a><h5>可插接的验证模块类</h5>
-<p>指定 Federated Access Manager 平台中所有已配置的领域都可以使用的验证模块的 Java 类。可通过实现 AMLoginModule SPI 或 JAAS LoginModule
-SPI 来编写自定义验证模块。有关详细信息，请参见 Federated Access Manager Developer's Guide。要定义新的服务，该字段必须使用文本字符串以指定每个新验证服务的完整类名（包括软件包名称）。</p>
+<p>指定 OpenSSO 平台中所有已配置的领域都可以使用的验证模块的 Java 类。可通过实现 AMLoginModule SPI 或 JAAS LoginModule SPI 来编写自定义验证模块。有关详细信息，请参见“OpenSSO
+开发者指南”。要定义新的服务，该字段必须使用文本字符串以指定每个新验证服务的完整类名（包括软件包名称）。</p>
 
 <a name="gcnjc"></a><h5>客户机支持的验证模块</h5>
 <p>指定特定客户机所支持的验证模块列表。格式如下所示：</p><p><tt>clientType | module1,module2,module3</tt></p><p>当启用了“客户机检测”时，该属性有效。</p>
@@ -82,9 +82,9 @@ SPI 来编写自定义验证模块。有关详细信息，请参见 Federated Ac
 
 <a name="gcnkq"></a><h5>用户配置文件</h5>
 <p>该选项允许您为用户配置文件指定选项。这些选项包括：</p><dl><dt><b>必需</b></dt>
-<dd><p>指定如果验证成功，与 Federated Access Manager 一起安装的本地 Directory Server 中需要存在用户配置文件，验证服务才会发布 SSOToken。</p></dd>
+<dd><p>指定如果验证成功，与 OpenSSO 一起安装的本地 Directory Server 中需要存在用户配置文件，验证服务才会发布 SSOToken。</p></dd>
 <dt><b>动态</b></dt>
-<dd><p>指定如果验证成功，但尚无用户配置文件，验证服务将创建用户配置文件。然后发布 SSOToken。在随 Federated Access Manager 一起安装的本地 Directory Server 中创建用户配置文件。</p></dd>
+<dd><p>指定如果验证成功，但尚无用户配置文件，验证服务将创建用户配置文件。然后发布 SSOToken。在随 OpenSSO 一起安装的本地 Directory Server 中创建用户配置文件。</p></dd>
 <dt><b>随用户别名动态变换</b></dt>
 <dd><p>指定如果验证成功，验证服务将使用“用户别名列表”属性创建用户配置文件。</p></dd>
 <dt><b>忽略</b></dt>
@@ -93,21 +93,21 @@ SPI 来编写自定义验证模块。有关详细信息，请参见 Federated Ac
 
 
 <a name="ggukq"></a><h5>远程验证安全性</h5>
-<p>如果启用，则所有远程验证请求都需要应用程序的 SSOToken 以验证调用方的身份，因此 Federated Access Manager 配置信息可获取与应用程序相关的用户名和密码的有效值。</p>
+<p>如果启用，则所有远程验证请求都需要应用程序的 SSOToken 以验证调用方的身份，因此 OpenSSO 配置信息可获取与应用程序相关的用户名和密码的有效值。</p>
 
 <a name="ggull"></a><h5>保持 Post 处理对象用于注销处理</h5>
-<p>如果启用，则在登录过程使用的 Post 处理验证插件的实例会保存在 Federated Access Manager 会话中。以后调用注销时，需要调用这些实例的 <tt>onLogout</tt> 方法。如果没有启用该属性，则不会保存登录过程中的 Post 处理实例。调用注销和 <tt>onLogout</tt>
-方法时，可创建 Post 处理插件的新实例。</p>
+<p>如果启用，则在登录过程使用的 Post 处理验证插件的实例会保存在 OpenSSO 会话中。以后调用注销时，会调用这些实例的 <tt>onLogout</tt> 方法。如果没有启用该属性，则不会保存登录过程中的 Post 处理实例。调用注销和 <tt>onLogout</tt> 方法时，可创建 Post
+处理插件的新实例。</p>
 
 <a name="gguji"></a><h5>保持验证模块对象用于注销处理</h5>
-<p>如果启用，则所有在验证过程使用的验证模块的实例都会保存在 Federated Access Manager 会话中。以后调用注销时，会在相同的实例中调用 logout/destroyModulestate 方法。如果没有启用该属性，则不会保存注销过程中的验证模块实例。注销时不会调用验证模块中的任何方法。</p>
+<p>如果启用，则所有在验证过程使用的验证模块的实例都会保存在 OpenSSO 会话中。以后调用注销时，会在相同的实例中调用 logout/destroyModulestate 方法。如果没有启用该属性，则不会保存注销过程中的验证模块实例。注销时不会调用验证模块中的任何方法。</p>
 
 <a name="gcnks"></a><h5>管理员验证配置</h5>
-<p>定义仅向管理员提供的验证服务。如果需要将管理员的验证模块与最终用户的验证模块区别开来，则可以使用该属性。在访问 Federated Access Manager 控制台时，将使用该属性中配置的模块。例如：</p><p><tt><b>http://</tt><i>servername.port/console_deploy_uri</i><tt></b></tt></p>
+<p>定义仅向管理员提供的验证服务。如果需要将管理员的验证模块与最终用户的验证模块区别开来，则可以使用该属性。在访问 OpenSSO 控制台时，将使用该属性中配置的模块。例如：</p><p><tt><b>http://</tt><i>servername.port/console_deploy_uri</i><tt></b></tt></p>
 
 <a name="gcnjw"></a><h5>用户配置文件动态创建默认角色</h5>
 <p>如果在“用户配置文件”中选择了“动态创建”，则该字段指定分配给创建了配置文件的新用户的那些角色。该字段没有默认值。管理员必须指定要分配给新用户的角色的 DN。</p>
-<hr><p><b>注 &#8211; </b>所指定的角色必须属于正在为其配置验证的领域。该角色既可以是 Federated Access Manager 角色，也可以是 LDAP 角色，但不能是已过滤角色。</p><p>如果希望为用户自动指定特定服务，您必须配置用户配置文件中的“必需服务”属性。</p>
+<hr><p><b>注 &#8211; </b>所指定的角色必须属于正在为其配置验证的领域。该角色既可以是 OpenSSO 角色，也可以是 LDAP 角色，但不能是已过滤角色。</p><p>如果希望为用户自动指定特定服务，您必须配置用户配置文件中的“必需服务”属性。</p>
 <hr>
 
 
@@ -142,7 +142,7 @@ SPI 来编写自定义验证模块。有关详细信息，请参见 Federated Ac
 <p>指定发生用户锁定时将会接到通知的电子邮件地址。要向多个地址发送电子邮件通知，请用空格将每个电子邮件地址分隔开。对非英语语言环境，格式为：</p><p><tt>email_address|locale|charset</tt></p>
 
 <a name="gcnkr"></a><h5>N 次失败后警告用户</h5>
-<p>指定在 Federated Access Manager 发送警告消息警告用户将被锁定之前，允许发生的验证失败次数。</p>
+<p>指定在 OpenSSO 发送警告消息警告用户将被锁定之前，允许发生的验证失败次数。</p>
 
 <a name="gcnkc"></a><h5>登录失败锁定时间</h5>
 <p>启用内存锁定。默认情况下，锁定机制会使<i>锁定属性名</i>中定义的用户配置文件失效（一次登录失败后）。如果登录失败锁定时间的值大于 0，则将在指定的时间（分钟数）内锁定其内存锁定和用户帐户。</p>
@@ -151,7 +151,7 @@ SPI 来编写自定义验证模块。有关详细信息，请参见 Federated Ac
 <p>该属性为每次连续锁定定义与“登录失败锁定时间”相乘的值。例如，如果将“登录失败锁定时间”设置为 3 分钟，并且将“锁定时间乘数”设置为 2，那么会将用户帐户锁定 6 分钟。</p>
 
 <a name="gcnjy"></a><h5>锁定属性名</h5>
-<p>指定所有要设置为锁定的 LDAP 属性。还必须更改“锁定属性值”中的值以启用该属性名称的锁定。默认情况下，“锁定属性名”在 Federated Access Manager 控制台中为空。当用户被锁定且“登录失败锁定时间”设置为 0 时，默认实现值为 <i>inetuserstatus</i>（LDAP 属性）和 <i>inactive</i>。</p>
+<p>指定所有要设置为锁定的 LDAP 属性。还必须更改“锁定属性值”中的值以启用该属性名称的锁定。默认情况下，OpenSSO 控制台中的“锁定属性名”为空。当用户被锁定且“登录失败锁定时间”设置为 0 时，默认实现值为 <i>inetuserstatus</i>（LDAP 属性）和 <i>inactive</i>。</p>
 
 <a name="gcnle"></a><h5>锁定属性值</h5>
 <p>该属性用于指定对于“锁定属性名”中定义的属性启用或禁用锁定。默认情况下，<i>inetuserstatus</i> 的值被设置为“无效”。</p>
@@ -172,7 +172,7 @@ SPI 来编写自定义验证模块。有关详细信息，请参见 Federated Ac
 <p>指定当使用启用生成用户 ID 模式时，用来生成用户 ID 的 Java 类的名称。</p>
 
 <a name="gcnki"></a><h5>身份类型</h5>
-<p>列出 Federated Access Manager 将搜索的身份类型。</p>
+<p>列出 OpenSSO 将搜索的身份类型。</p>
 
 <a name="gcnlh"></a><h5>可插接的用户状态事件类</h5>
 <p>扩展验证 SPI 从而为验证过程中的用户状态更改提供回调机制。支持以下状态更改：</p><dl><dt><tt>帐户锁定</tt></dt>
@@ -183,7 +183,7 @@ SPI 来编写自定义验证模块。有关详细信息，请参见 Federated Ac
 
 
 <a name="gcnjv"></a><h5>将无效尝试存储到数据存储库中</h5>
-<p>如果启用，则此属性允许在由多个 Federated Access Manager 实例共享的身份系统信息库中共享登录失败尝试。例如，如果用于特定部署的身份系统信息库为 Directory Server，则无效尝试将存储在 <tt>sunAMAuthInvalidAttemptsData</tt>（属于 <tt>sunAMAuthAccountLockout</tt> 对象类）中。数据的存储格式为：</p><p><tt>&#60;InvalidPassword>&#60;InvalidCount>&#60;/InvalidCount>&#60;LastInvalidAt>&#60;/LastInvalidAt>&#60;LockedoutAt>&#60;/LockedoutAt>&#60;ActualLockoutDuration>&#60;/ActualLockoutDuration>&#60;/InvalidPassword> </tt></p><p>每位用户的这一信息都会保留在 Directory Server 中。出现无效尝试时，<tt>&#60;InvalidCount></tt> 随即增加。</p>
+<p>如果启用，则此属性允许在由多个 OpenSSO 实例共享的身份系统信息库中共享登录失败尝试。例如，如果用于特定部署的身份系统信息库为 Directory Server，则无效尝试将存储在 <tt>sunAMAuthInvalidAttemptsData</tt>（属于 <tt>sunAMAuthAccountLockout</tt> 对象类）中。数据的存储格式为：</p><p><tt>&#60;InvalidPassword>&#60;InvalidCount>&#60;/InvalidCount>&#60;LastInvalidAt>&#60;/LastInvalidAt>&#60;LockedoutAt>&#60;/LockedoutAt>&#60;ActualLockoutDuration>&#60;/ActualLockoutDuration>&#60;/InvalidPassword> </tt></p><p>每位用户的这一信息都会保留在 Directory Server 中。出现无效尝试时，<tt>&#60;InvalidCount></tt> 随即增加。</p>
 
 <a name="gcnjo"></a><h5>基于模块的验证</h5>
 <p>如果启用，此属性允许用户通过基于模块的验证进行验证。如果未启用，则不允许基于模块的登录。所有 <tt>module=&#60; </tt><i> module_instance_name</i><tt>></tt> 形式的登录尝试都将导致登录失败。</p>
@@ -192,7 +192,7 @@ SPI 来编写自定义验证模块。有关详细信息，请参见 Federated Ac
 <p>这样可将属性设置为从验证用户配置文件（保存在数据存储库中）到用户 SSOToken 的会话属性。格式为：</p><p><tt>UserProfile_Attribute|Session_Attribute_name</tt></p><p>如果未指定 <tt>Session_Attribute_name</tt>，则会检索会话的属性名作为用户配置文件属性的值。所有会话属性均包含 am.<tt>protected</tt> 前缀，以保证无法从客户机 SDK 编辑它们。</p>
 
 <a name="fwbfn"></a><h5>默认验证级别</h5>
-<p>验证级别值表示信任验证的程度。用户进行验证之后，该值将存储在会话的 SSO 令牌中。SSO 令牌被提交到用户要访问的应用程序时，该应用程序使用存储的值来判断验证级别是否足够高，以确定是否允许用户访问。如果 SSO 令牌中存储的验证级别没有达到所需的最小级别，应用程序将提示用户使用具有较高验证级别的服务再次进行验证。</p><p>验证级别应在领域的特定验证模板中进行设置。此处所述的“默认验证级别”值仅当未在特定领域的验证模板的“验证级别”字段中指定任何验证级别时才适用。“默认验证级别”的默认值为 0。（此属性中的值不由 Federated Access Manager 使用，而由可以选择使用它的任何外部应用程序所使用。）</p>
+<p>验证级别值表示信任验证的程度。用户进行验证之后，该值将存储在会话的 SSO 令牌中。SSO 令牌被提交到用户要访问的应用程序时，该应用程序使用存储的值来判断验证级别是否足够高，以确定是否允许用户访问。如果 SSO 令牌中存储的验证级别没有达到所需的最小级别，应用程序将提示用户使用具有较高验证级别的服务再次进行验证。</p><p>验证级别应在领域的特定验证模板中进行设置。此处所述的“默认验证级别”值仅当未在特定领域的验证模板的“验证级别”字段中指定任何验证级别时才适用。“默认验证级别”的默认值为 0。（此属性中的值不由 OpenSSO 使用，而由可以选择使用它的任何外部应用程序所使用。）</p>
 <br/>
 
 </body>

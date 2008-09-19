@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>SDK - Aide en ligne de la console Sun Federated Access Manager 8.0
+  <title>SDK - Aide en ligne de la console Sun OpenSSO&#160;8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -56,14 +56,15 @@ d&#233;l&#233;gation correcte, cet indicateur doit &#234;tre d&#233;fini sur tru
 mode h&#233;rit&#233; afin d'utiliser les ACI pour le contr&#244;le de l'acc&#232;s, sans
 quoi la v&#233;rification de d&#233;l&#233;gation &#233;chouera.  </p><p>En mode domaine, cette valeur doit &#234;tre d&#233;finie sur false afin que
 seules les strat&#233;gies de d&#233;l&#233;gation soient utilis&#233;es pour le contr&#244;le de l'acc&#232;s.
-Dans la version&#160;7.0 et ult&#233;rieure, Access Manager prend en charge la fonction
-agnostique de donn&#233;es dans l'installation en mode domaine. Ainsi, outre le serveur
-Directory Server, d'autres serveurs peuvent &#234;tre utilis&#233;s pour stocker les donn&#233;es de
-configuration de service. En outre, cet indicateur signale &#224; la fonction de
-gestion des services que le proxy d'annuaire n'a pas besoin d'&#234;tre utilis&#233;
-pour les op&#233;rations de lecture, d'&#233;criture et/ou de modification en vue du
-stockage d'arri&#232;re-plan. La raison &#224; cela est que certains magasins de donn&#233;es,
-tels qu'Active Directory, peuvent ne pas prendre en charge le protocole proxy.</p>
+Dans la version 7.0 et ult&#233;rieure, Access Manager ou OpenSSO prend en
+charge la fonction agnostique de donn&#233;es dans l'installation en mode domaine. Ainsi,
+outre le serveur Directory Server, d'autres serveurs peuvent &#234;tre utilis&#233;s pour stocker
+les donn&#233;es de configuration de service. En outre, cet indicateur signale &#224;
+la fonction de gestion des services que le proxy d'annuaire n'a pas
+besoin d'&#234;tre utilis&#233; pour les op&#233;rations de lecture, d'&#233;criture et/ou de modification
+en vue du stockage d'arri&#232;re-plan. La raison &#224; cela est que certains
+magasins de donn&#233;es, tels qu'Active Directory, peuvent ne pas prendre en charge
+le protocole proxy.</p>
 
 <a name="ggkcv"></a><h5>Service d'&#233;v&#233;nement</h5>
 <p>Les attributs suivants d&#233;finissent la notification de service d'&#233;v&#233;nement pour le magasin
@@ -98,10 +99,10 @@ r&#233;initialis&#233;es.</p>
 <p>Indique quelle connexion d'&#233;v&#233;nement peut &#234;tre d&#233;sactiv&#233;e. Les valeurs (sensibles &#224; la
 casse) peuvent &#234;tre : </p>
 <ul><li><p>aci &#8212; Modifications de l'attribut aci, avec la recherche &#224; l'aide du filtre LDAP (aci=&#42;).</p></li>
-<li><p>sm &#8212; Modifications de l'arborescence d'informations de Federated Access Manager (ou du n&#339;ud de gestion du service), qui comprend les objets appartenant &#224; la classe d'objet marqueur <tt>sunService</tt> ou <tt>sunServiceComponent </tt>. Vous pouvez, par exemple, cr&#233;er une strat&#233;gie visant &#224; d&#233;finir les privil&#232;ges d'acc&#232;s &#224; une ressource prot&#233;g&#233;e ou modifier les r&#232;gles, objets, conditions ou fournisseurs de r&#233;ponse d'une strat&#233;gie existante.</p></li>
+<li><p>sm &#8212; Modifications de l'arborescence d'informations d'OpenSSO (ou du n&#339;ud de gestion du service), qui comprend les objets appartenant &#224; la classe d'objet marqueur <tt>sunService</tt> ou <tt>sunServiceComponent </tt>. Vous pouvez, par exemple, cr&#233;er une strat&#233;gie visant &#224; d&#233;finir les privil&#232;ges d'acc&#232;s &#224; une ressource prot&#233;g&#233;e ou modifier les r&#232;gles, objets, conditions ou fournisseurs de r&#233;ponse d'une strat&#233;gie existante.</p></li>
 <li><p>um &#8212; Modifications dans le r&#233;pertoire utilisateur (ou n&#339;ud de gestion des utilisateurs). Vous pouvez, par exemple, modifier le nom ou l'adresse de l'utilisateur.</p></li></ul>
 <p>Par exemple, pour d&#233;sactiver des recherches persistantes de modifications de l'arborescence d'informations
-d'Access Manager (ou du n&#339;ud de gestion du service) :  </p><p><tt>com.sun.am.event.connection.disable.list=sm </tt></p>
+d'OpenSSO (ou du n&#339;ud de gestion du service) :  </p><p><tt>com.sun.am.event.connection.disable.list=sm </tt></p>
 <hr><p><b>Attention &#8211; </b>Les recherches persistantes provoquent quelques d&#233;passements de performances sur Directory Server. Si
 vous d&#233;terminez que la suppression d'une partie de ce d&#233;passement de performances
 est absolument indispensable dans un environnement de production, vous pouvez d&#233;sactiver une
@@ -116,12 +117,12 @@ ces composants. De fait, lorsqu'une recherche persistante d'un composant est d&#
 dernier ne re&#231;oit pas de notification de Directory Server. Par cons&#233;quent, les
 modifications effectu&#233;es dans le serveur Directory Server pour ce composant sp&#233;cifique ne
 seront pas signal&#233;es au cache de composant. Par exemple, si vous d&#233;sactivez
-les recherches persistantes des modifications dans le r&#233;pertoire utilisateur ((<tt>um</tt>), Access Manager
-ne recevra plus les notifications de Directory Server. Par cons&#233;quent, un agent
-ne recevra pas les notifications d'Access Manager l'avertissant de mettre &#224; jour
-son cache utilisateur local vers les nouvelles valeurs de l'attribut utilisateur. Si
-ensuite une application demande &#224; l'agent de lui fournir les attributs utilisateur,
-elle recevra les anciennes valeurs.  </p><p>N'utilisez cette propri&#233;t&#233; que dans des circonstances sp&#233;ciales et lorsque cela est
+les recherches persistantes des modifications dans le r&#233;pertoire utilisateur ((<tt>um</tt>), OpenSSO ne
+recevra plus les notifications de Directory Server. Par cons&#233;quent, un agent ne
+recevra pas les notifications d'OpenSSO l'avertissant de mettre &#224; jour son cache
+utilisateur local vers les nouvelles valeurs de l'attribut utilisateur. Si ensuite une
+application demande &#224; l'agent de lui fournir les attributs utilisateur, elle recevra
+les anciennes valeurs.  </p><p>N'utilisez cette propri&#233;t&#233; que dans des circonstances sp&#233;ciales et lorsque cela est
 absolument n&#233;cessaire. Par exemple, si vous savez que les modifications de la
 configuration du service (en rapport avec la modification des valeurs de n'importe
 quel service tel que le service de session ou les services d'authentification)

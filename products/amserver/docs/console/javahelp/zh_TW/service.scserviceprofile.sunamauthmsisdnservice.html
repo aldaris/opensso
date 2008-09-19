@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>MSISDN  - Sun Federated Access Manager 8.0 主控台線上說明
+  <title>MSISDN  - Sun OpenSSO 8.0 主控台線上說明
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -54,9 +54,8 @@ Directory Server 進行驗證，以找到符合該號碼的使用者。MSISDN �
 <p>指定參數名稱清單，這些名稱可識別在請求標頭或 cookie 標頭中，應搜尋的 MSISDN 編號參數。例如，若您定義 <i>x-Cookie-Param</i>、<i>AM_NUMBER</i> 及 <i>COOKIE-ID</i>，則 MSISDN 認證服務將在那些參數中搜尋 MSISDN 編號。</p>
 
 <a name="fumxf"></a><h5>LDAP 伺服器與連接埠</h5>
-<p>指定將為包含 MSISDN 編號之使用者搜尋結果的目錄伺服器之主機名稱與連接埠號。格式為 <tt></tt><i>hostname:port</i><tt></tt>。如果沒有連接埠號，則假定為 <tt>389</tt>。</p><p>如果您使用多重網域部署 Federated Access Manager，則可按以下格式 (多重項目必須以本機伺服器名稱為字首) 指定 Federated Access Manager 和 Directory Server
-特定實例之間的通訊連結：</p><p><tt>local_servername|server:port local_servername2|server2:port2 ...</tt></p><p>例如，若您有兩個在不同位置部署的 Federated Access Manager 實例 (L1-machine1-IS 及 L2- machine2-IS)，且與不同的 Directory Server 實例
-(L1-machine1-DS 及 L2-machine2-DS) 通訊，它將如下所示：</p><p><tt>L1-machine1-IS.example.com|L1-machine1-DS.example.com:389 </tt></p><p><tt>L2-machine2-IS.example.com|L2-machine2-DS.example.com:389 </tt></p>
+<p>指定將為包含 MSISDN 編號之使用者搜尋結果的目錄伺服器之主機名稱與連接埠號。格式為 <tt></tt><i>hostname:port</i><tt></tt>。如果沒有連接埠號，則假定為 <tt>389</tt>。</p><p>如果您使用多重網域部署 OpenSSO，則可按以下格式 (多重項目必須以本機伺服器名稱為字首) 指定 OpenSSO 和 Directory Server 特定實例之間的通訊連結：</p><p><tt>local_servername|server:port local_servername2|server2:port2 ...</tt></p><p>例如，若您有兩個在不同位置部署的 OpenSSO 實例 (L1-machine1-IS 及 L2- machine2-IS)，且與不同的 Directory Server 實例 (L1-machine1-DS 及
+L2-machine2-DS) 通訊，它將如下所示：</p><p><tt>L1-machine1-IS.example.com|L1-machine1-DS.example.com:389 </tt></p><p><tt>L2-machine2-IS.example.com|L2-machine2-DS.example.com:389 </tt></p>
 
 <a name="fumxi"></a><h5>LDAP 起始搜尋 DN</h5>
 <p>指定應該開始搜尋使用者的 MSISDN 號碼的節點 DN。此欄位沒有預設值。此欄位將識別任何有效 DN。多重項目必須以本機伺服器名稱為字首。格式為 <tt></tt><i>servername|search dn</i><tt></tt>。</p><p>對於多個項目：</p><p><tt></tt><i>servername1|search dn servername2|search dn servername3|search dn</i><tt>...</tt></p><p>如果在具有同一使用者 ID 的根組織之下有多個項目，則應該將此參數設定為只能搜尋或尋找一個項目進行認證。例如，當代理程式 ID 與使用者 ID 都在根組織下時，若根組織使用代理程式 ID 進行認證，此參數應該為 <tt>ou=Agents</tt>；若根組織採用使用者 ID 進行認證，此參數應該為
@@ -89,8 +88,7 @@ Server。但是，如果啟用了此屬性，則可以連結至非 SSL 伺服器
 
 
 <a name="fumxr"></a><h5>傳回認證的使用者 DN</h5>
-<p>當 Federated Access Manager 目錄與為 MSDISN 配置的目錄相同時，則可以啟用此選項。如果啟用了此選項，則允許認證模組傳回 DN，而不是使用者 ID，並且不必進行任何搜尋。通常，認證模組僅傳回使用者 ID，而且認證服務會在本機 Federated Access
-Manager 中搜尋使用者。如果使用外部目錄，則通常不啟用此選項。</p>
+<p>當 OpenSSO 目錄與為 MSDISN 配置的目錄相同時，則可以啟用此選項。如果啟用了此選項，則允許認證模組傳回 DN，而不是使用者 ID，並且不必進行任何搜尋。通常，認證模組僅傳回使用者 ID，而且認證服務會在本機 OpenSSO 中搜尋使用者。如果使用外部目錄，則通常不啟用此選項。</p>
 
 <a name="fumxs"></a><h5>認證級別</h5>
 <p>會分別為每個認證方法設定認證層級。此值指示信任認證機制的程度。使用者進行認證後，此值便會儲存在階段作業的 SSO 記號中。SSO 記號呈現給使用者要存取的應用程式時，應用程式將使用此儲存值以決定此層級是否達到了允許使用者存取的層級。如果儲存在 SSO 記號中的認證層級不滿足最小值需求，應用程式可以提示使用者透過具有較高認證層級的服務重新進行認證。預設值為 0。</p>

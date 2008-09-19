@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Plate-forme - Aide en ligne de la console Sun Federated Access Manager 8.0
+  <title>Plate-forme - Aide en ligne de la console Sun OpenSSO&#160;8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -32,9 +32,9 @@
 
 <a name="service.scplatform"></a><h4>Plate-forme</h4>
 <p><a name="indexterm-205"></a>Le service Plate-forme est le service qui permet d'ajouter d'autres serveurs &#224;
-la configuration de Federated Access Manager, ainsi que d'autres options appliqu&#233;es au
-premier niveau de l'application Federated Access Manager. Les attributs du service Plate-forme
-sont des attributs g&#233;n&#233;raux. Ces attributs sont les suivants :</p>
+la configuration d'OpenSSO, ainsi que d'autres options appliqu&#233;es au premier niveau de
+l'application OpenSSO. Les attributs du service Plate-forme sont des attributs g&#233;n&#233;raux. Ces
+attributs sont les suivants :</p>
 <ul><li><p><a href="#fxcgy">Param&#232;tre r&#233;gional de la plate-forme</a></p></li>
 <li><p><a href="#fxcpo">Domaines de cookies</a></p></li>
 <li><p><a href="#fxcmi">Param&#232;tres r&#233;gionaux disponibles</a></p></li>
@@ -43,25 +43,24 @@ sont des attributs g&#233;n&#233;raux. Ces attributs sont les suivants :</p>
 
 <a name="fxcgy"></a><h5>Param&#232;tre r&#233;gional de la plate-forme</h5>
 <p>La valeur du param&#232;tre r&#233;gional de la plate-forme correspond au sous-type de
-langue par d&#233;faut avec lequel Federated Access Manager a &#233;t&#233; install&#233;. Les
-services d'authentification, de journalisation et d'administration sont g&#233;r&#233;s dans cette langue. La
-valeur par d&#233;faut est en_US (anglais am&#233;ricain). Pour consulter la liste des
-sous-types de langue pris en charge, reportez-vous &#224; <a href="supportedlang.html">Environnements linguistiques pris en charge</a>.</p>
+langue par d&#233;faut avec lequel OpenSSO a &#233;t&#233; install&#233;. Les services d'authentification,
+de journalisation et d'administration sont g&#233;r&#233;s dans cette langue. La valeur par
+d&#233;faut est en_US (anglais am&#233;ricain). Pour consulter la liste des sous-types de
+langue pris en charge, reportez-vous &#224; <a href="supportedlang.html">Environnements linguistiques pris en charge</a>.</p>
 
 <a name="fxcpo"></a><h5>Domaines de cookies</h5>
 <p>Liste des domaines qui seront renvoy&#233;s dans l'en-t&#234;te de cookie lors de
 la d&#233;finition d'un cookie pour le navigateur de l'utilisateur lors de l'authentification.
 Si ce champ est vide, aucun domaine de cookie ne sera d&#233;fini.
-En d'autres termes, le cookie de session Federated Access Manager ne sera
-transmis qu'au serveur Federated Access Manager et &#224; aucun autre serveur du
-domaine.</p><p>Si la connexion unique (SSO) est requise avec d'autres serveurs du domaine,
+En d'autres termes, le cookie de session OpenSSO ne sera transmis qu'au
+serveur OpenSSO et &#224; aucun autre serveur du domaine.</p><p>Si la connexion unique (SSO) est requise avec d'autres serveurs du domaine,
 cet attribut doit &#234;tre d&#233;fini avec le domaine de cookie. Si vous
-avez deux interfaces dans des domaines diff&#233;rents sur un serveur Federated Access
-Manager, vous devez d&#233;finir les deux domaines de cookies dans cet attribut.
-Si l'&#233;quilibreur de charge est utilis&#233;, le domaine de cookie doit &#234;tre
-celui de l'&#233;quilibreur de charge et non ceux des serveurs situ&#233;s derri&#232;re
-ce dernier. La valeur par d&#233;faut de ce champ est le domaine
-du serveur Federated Access Manager install&#233;.</p>
+avez deux interfaces dans des domaines diff&#233;rents sur un serveur OpenSSO, vous
+devez d&#233;finir les deux domaines de cookies dans cet attribut. Si l'&#233;quilibreur
+de charge est utilis&#233;, le domaine de cookie doit &#234;tre celui de
+l'&#233;quilibreur de charge et non ceux des serveurs situ&#233;s derri&#232;re ce dernier.
+La valeur par d&#233;faut de ce champ est le domaine du serveur
+OpenSSO install&#233;.</p>
 
 <a name="fxcmi"></a><h5>Param&#232;tres r&#233;gionaux disponibles</h5>
 <p>Cet attribut enregistre les param&#232;tres r&#233;gionaux configur&#233;s pour la plate-forme. Supposez une

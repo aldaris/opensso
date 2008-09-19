@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Active Directory - Aide en ligne de la console Sun Federated Access Manager 8.0
+  <title>Active Directory - Aide en ligne de la console Sun OpenSSO&#160;8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -56,28 +56,26 @@ les suivants :</p>
 
 <a name="fwfdx"></a><h5>Serveur Active Directory principal</h5>
 <p>Indique le nom d'h&#244;te et le num&#233;ro de port du serveur Active
-Directory principal d&#233;finis lors de l'installation de Federated Access Manager. C'est le
-premier serveur contact&#233; pour l'authentification Active Directory. Le format est <tt></tt><i>nomh&#244;te:port</i><tt></tt>. Si
-aucun num&#233;ro de port n'est sp&#233;cifi&#233;, le port <tt>389</tt> est utilis&#233; par
-d&#233;faut.</p><p>Si Federated Access Manager est d&#233;ploy&#233; avec plusieurs domaines, vous pouvez sp&#233;cifier
-la liaison de communication entre des instances sp&#233;cifiques de Federated Access Manager
-et de Directory Server dans le format suivant (les entr&#233;es multiples doivent
-&#234;tre pr&#233;c&#233;d&#233;es du nom du serveur local) :</p><p><tt>nomserveur_local|serveur:port nomserveur_local2|serveur2:port2 ...</tt></p><p>Par exemple, si vous avez d&#233;ploy&#233; deux instances Federated Access Manager dans
-diff&#233;rents emplacements (L1-machine1-IS et L2- machine2-IS) qui communiquent avec diff&#233;rentes instances de
-Directory Server (L1-machine1-DS et L2-machine2-DS), la liaison de communication est la suivante
-:</p><p><tt>L1-machine1-IS.exemple.com|L1-machine1-DS.exemple.com:389 </tt></p><p><tt>L2-machine2-IS.exemple.com|L2-machine2-DS.exemple.com:389 </tt></p>
+Directory principal d&#233;finis lors de l'installation d'OpenSSO. C'est le premier serveur contact&#233;
+pour l'authentification Active Directory. Le format est <tt></tt><i>nomh&#244;te:port</i><tt></tt>. Si aucun num&#233;ro de
+port n'est sp&#233;cifi&#233;, le port <tt>389</tt> est utilis&#233; par d&#233;faut.</p><p>Si OpenSSO est d&#233;ploy&#233; avec plusieurs domaines, vous pouvez sp&#233;cifier la liaison
+de communication entre des instances sp&#233;cifiques d'OpenSSO et de Directory Server dans
+le format suivant (les entr&#233;es multiples doivent &#234;tre pr&#233;c&#233;d&#233;es du nom du
+serveur local)&#160;:</p><p><tt>nomserveur_local|serveur:port nomserveur_local2|serveur2:port2 ...</tt></p><p>Par exemple, si vous avez d&#233;ploy&#233; deux instances OpenSSO dans diff&#233;rents emplacements
+(L1-machine1-IS et L2- machine2-IS) qui communiquent avec diff&#233;rentes instances de Directory Server
+(L1-machine1-DS et L2-machine2-DS), la liaison de communication est la suivante&#160;:</p><p><tt>L1-machine1-IS.exemple.com|L1-machine1-DS.exemple.com:389 </tt></p><p><tt>L2-machine2-IS.exemple.com|L2-machine2-DS.exemple.com:389 </tt></p>
 
 <a name="fwbmo"></a><h5>Serveur Active Directory secondaire</h5>
 <p>Indique le nom d'h&#244;te et le num&#233;ro de port d'un serveur Active
-Directory secondaire disponible pour la plate-forme Federated Access Manager. Si le serveur
-Active Directory principal ne r&#233;pond pas &#224; une demande d'authentification, ce serveur
-sera contact&#233;. Si le serveur principal est en fonctionnement, Federated Access Manager
-rebascule vers ce serveur principal. Le format est &#233;galement <tt></tt><i>nomh&#244;te:port</i><tt></tt>. Les entr&#233;es
-multiples doivent &#234;tre pr&#233;c&#233;d&#233;es du nom du serveur local.</p>
+Directory secondaire disponible pour la plate-forme OpenSSO. Si le serveur Active Directory
+principal ne r&#233;pond pas &#224; une demande d'authentification, ce serveur sera contact&#233;.
+Si le serveur principal est en fonctionnement, OpenSSO rebascule vers ce serveur
+principal. Le format est &#233;galement <tt></tt><i>nomh&#244;te:port</i><tt></tt>. Les entr&#233;es multiples doivent &#234;tre pr&#233;c&#233;d&#233;es
+du nom du serveur local.</p>
 <hr><p><b>Attention &#8211; </b>Lors de l'authentification d'utilisateurs &#224; partir d'un serveur Directory Server distant par
-rapport &#224; l'entreprise Federated Access Manager, il est important de sp&#233;cifier les
-ports primaires et secondaires LDAP. La valeur d'un seul emplacement de serveur
-Directory Server peut &#234;tre utilis&#233;e pour les deux champs.</p>
+rapport &#224; l'entreprise OpenSSO, il est important de sp&#233;cifier les ports primaires
+et secondaires LDAP. La valeur d'un seul emplacement de serveur Directory Server
+peut &#234;tre utilis&#233;e pour les deux champs.</p>
 <hr>
 
 
@@ -105,7 +103,7 @@ La valeur par d&#233;faut est <tt>amldapuser.</tt> Tout DN valide est reconnu.</
 S'il est incorrect, vous serez bloqu&#233;. Dans ce cas, vous pouvez vous
 connecter avec le DN du superutilisateur. Par d&#233;faut, il s'agit du compte
 <tt>amAdmin</tt> avec lequel vous vous connectez normalement, m&#234;me si vous allez utiliser
-le DN complet. Par exemple :</p><p><tt>uid_amAdmin,ou=People,</tt><i>FederatedAccessManager-base </i><tt></tt></p>
+le DN complet. Par exemple :</p><p><tt>uid_amAdmin,ou=People,</tt><i>base OpenSSO</i><tt></tt></p>
 
 <a name="fwbix"></a><h5>Mot de passe pour liaison utilisateur root</h5>
 <p>Contient le mot de passe du profil administrateur sp&#233;cifi&#233; dans le champ
@@ -118,9 +116,9 @@ reconnu.</p>
 
 <a name="fwblg"></a><h5>Attribut utilis&#233; pour r&#233;cup&#233;rer le profil utilisateur</h5>
 <p>Indique l'attribut utilis&#233; comme convention de nommage des entr&#233;es utilisateur. Par d&#233;faut,
-Federated Access Manager suppose que les entr&#233;es utilisateur sont identifi&#233;es par l'attribut
-uid. Si votre serveur Directory Server utilise un attribut diff&#233;rent (tel que
-<i>givenname</i>), indiquez son nom dans ce champ.</p>
+OpenSSO suppose que les entr&#233;es utilisateur sont identifi&#233;es par l'attribut uid. Si
+votre serveur Directory Server utilise un attribut diff&#233;rent (tel que <i>givenname</i>), indiquez
+son nom dans ce champ.</p>
 
 <a name="fwbpi"></a><h5>Attributs utilis&#233;s pour rechercher un utilisateur &#224; authentifier</h5>
 <p>R&#233;pertorie les attributs du filtre de recherche &#224; utiliser pour authentifier un
@@ -153,18 +151,18 @@ dans la liste :</p><dl><dt>OBJET</dt>
 et port LDAP principaux et secondaires. Par d&#233;faut, cette case n'est pas
 coch&#233;e et le protocole SSL n'est pas utilis&#233; pour acc&#233;der &#224; Directory
 Server.</p><p>Si le serveur Active Directory fonctionne avec SSL activ&#233; (LDAPS), vous devez
-vous assurer que Federated Access Manager est configur&#233; avec les certificats de
-confiance SSL appropri&#233;s, afin qu'AM puisse se connecter au serveur Directory Server
-par le biais du protocole LDAPS.</p>
+vous assurer que OpenSSO est configur&#233; avec les certificats de confiance SSL
+appropri&#233;s, afin qu'AM puisse se connecter au serveur Directory Server par le
+biais du protocole LDAPS.</p>
 
 <a name="fwbpx"></a><h5>Renvoyer DN utilisateur &#224; authentifier</h5>
-<p>Lorsque le r&#233;pertoire Federated Access Manager est identique &#224; celui configur&#233; pour
-Active Directory, cette option peut &#234;tre activ&#233;e. Dans ce cas, elle permet
-&#224; l'instance du module d'authentification Active Directory de renvoyer le DN au
-lieu de l'ID utilisateur et aucune recherche n'est n&#233;cessaire. Normalement, une instance
-du module d'authentification renvoie uniquement l'ID utilisateur et le service d'authentification recherche
-l'utilisateur dans l'instance locale de Federated Access Manager. Si un serveur Active
-Directory externe est utilis&#233;, cette option n'est g&#233;n&#233;ralement pas activ&#233;e.</p>
+<p>Lorsque le r&#233;pertoire OpenSSO est identique &#224; celui configur&#233; pour Active Directory,
+cette option peut &#234;tre activ&#233;e. Dans ce cas, elle permet &#224; l'instance
+du module d'authentification Active Directory de renvoyer le DN au lieu de
+l'ID utilisateur et aucune recherche n'est n&#233;cessaire. Normalement, une instance du module
+d'authentification renvoie uniquement l'ID utilisateur et le service d'authentification recherche l'utilisateur dans
+l'instance locale d'OpenSSO. Si un serveur Active Directory externe est utilis&#233;, cette
+option n'est g&#233;n&#233;ralement pas activ&#233;e.</p>
 
 <a name="fwbjb"></a><h5>Intervalle de recherche du serveur Active Directory</h5>
 <p>Cet attribut est utilis&#233; pour le r&#233;tablissement du serveur Active Directory. Il

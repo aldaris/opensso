@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>S&#233;curit&#233; - Aide en ligne de la console Sun Federated Access Manager 8.0
+  <title>S&#233;curit&#233; - Aide en ligne de la console Sun OpenSSO&#160;8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -60,7 +60,7 @@ et <tt>com.iplanet.am.util.SecureRandomFactoryImpl</tt> qui utilise du code pure
 
 <a name="ggkay"></a><h5>Communication de bas niveau sur plate-forme. Max. Longueur du contenu</h5>
 <p>La valeur par d&#233;faut est 16384 ou 16k. Sp&#233;cifie la longueur de
-contenu maximale de requ&#234;te <tt>HttpRequest</tt> accept&#233;e par Federated Access Manager.</p>
+contenu maximale de requ&#234;te <tt>HttpRequest</tt> accept&#233;e par OpenSSO.</p>
 
 <a name="ggkbb"></a><h5>V&#233;rification de l'adresse IP du client</h5>
 <p>La valeur par d&#233;faut est NO. Sp&#233;cifie si l'adresse IP du client
@@ -76,29 +76,28 @@ de ce nom de cookie est utilis&#233;e pour extraire les informations de
 session valides.</p>
 
 <a name="ggkaw"></a><h5>Cookie s&#233;curis&#233;</h5>
-<p>Permet au cookie Federated Access Manager d'&#234;tre d&#233;fini dans un mode s&#233;curis&#233;
-dans lequel le navigateur ne renvoie le cookie que si un protocole
-s&#233;curis&#233; tel que <tt>HTTP</tt> est utilis&#233;. La valeur par d&#233;faut est false.
-</p>
+<p>Permet au cookie OpenSSO d'&#234;tre d&#233;fini dans un mode s&#233;curis&#233; dans lequel
+le navigateur ne renvoie le cookie que si un protocole s&#233;curis&#233; tel
+que <tt>HTTP</tt> est utilis&#233;. La valeur par d&#233;faut est false. </p>
 
 <a name="ggkbk"></a><h5>Coder la valeur de cookie</h5>
-<p>Cette propri&#233;t&#233; permet &#224; Access Manager de <tt>coder par URL (URLencode)</tt> la valeur de cookie
-qui convertit les caract&#232;res en caract&#232;res compr&#233;hensibles par le protocole HTTP.</p>
+<p>Cette propri&#233;t&#233; permet &#224; OpenSSO de <tt>coder par URL (URLencode)</tt> la valeur de cookie qui
+convertit les caract&#232;res en caract&#232;res compr&#233;hensibles par le protocole HTTP.</p>
 
 <a name="ggkbc"></a><h5>Keystore</h5>
 <p>Les attributs suivants vous permettent de configurer les informations de keystore des
 sites et serveurs suppl&#233;mentaires que vous cr&#233;ez&#160;:</p>
 
 <a name="ggkbj"></a><h5>Fichier keystore</h5>
-<p>Cette valeur est d&#233;finie pendant l'installation. Exemple&#160;: <tt></tt><i>FederatedAccessManager-base</i><tt>/</tt><i>server_URI</i><tt>/keystore.jks</tt>. Sp&#233;cifie le chemin du
+<p>Cette valeur est d&#233;finie pendant l'installation. Exemple&#160;: <tt></tt><i>base OpenSSO</i><tt>/</tt><i>URI_serveur</i><tt>/keystore.jks</tt>. Sp&#233;cifie le chemin du
 fichier de mots de passe de keystore XML SAML.</p>
 
 <a name="ggkbu"></a><h5>Fichier de mots de passe de keystore</h5>
-<p>Cette valeur est d&#233;finie pendant l'installation. Exemple&#160;: <tt></tt><i>FederatedAccessManager-base</i><tt>/</tt><i>server_URI</i><tt>/.storepass</tt>. Sp&#233;cifie le chemin du
+<p>Cette valeur est d&#233;finie pendant l'installation. Exemple&#160;: <tt></tt><i>base OpenSSO</i><tt>/</tt><i>URI_serveur</i><tt>/.storepass</tt>. Sp&#233;cifie le chemin du
 fichier storepass de cl&#233; XML SAML.</p>
 
 <a name="ggkbs"></a><h5>Fichier de mots de passe de cl&#233; priv&#233;e</h5>
-<p>Cette valeur est d&#233;finie pendant l'installation. Exemple&#160;: <tt></tt><i>FederatedAccessManager-base</i><tt>/</tt><i>server_URI</i><tt>/.keypass</tt> Sp&#233;cifie le chemin d'acc&#232;s
+<p>Cette valeur est d&#233;finie pendant l'installation. Exemple&#160;: <tt></tt><i>base OpenSSO</i><tt>/</tt><i>URI_serveur</i><tt>/.keypass</tt> Sp&#233;cifie le chemin d'acc&#232;s
 au fichier de mots de passe de cl&#233; XML SAML.</p>
 
 <a name="ggkaq"></a><h5>Alias du certificat</h5>
@@ -113,14 +112,14 @@ de certificat re&#231;oit la LRC en fonction de ces informations. </p>
 <a name="ggkch"></a><h5>Nom d'h&#244;te du serveur LDAP</h5>
 <p>Sp&#233;cifie le nom du serveur LDAP sur lequel les certificats sont stock&#233;s.
 La valeur par d&#233;faut est le nom d'h&#244;te sp&#233;cifi&#233; lors de l'installation
-de Federated Access Manager. Vous pouvez utiliser le nom d'h&#244;te de tout
-serveur LDAP contenant les certificats. </p>
+d'OpenSSO. Vous pouvez utiliser le nom d'h&#244;te de tout serveur LDAP contenant
+les certificats. </p>
 
 <a name="ggkau"></a><h5>Num&#233;ro de port du serveur LDAP</h5>
 <p>Sp&#233;cifie le num&#233;ro de port du serveur LDAP sur lequel les certificats
 sont stock&#233;s. La valeur par d&#233;faut est le port sp&#233;cifi&#233; lors de
-l'installation de Federated Access Manager. Vous pouvez utiliser le port de tout
-serveur LDAP contenant les certificats. </p>
+l'installation d'OpenSSO. Vous pouvez utiliser le port de tout serveur LDAP contenant
+les certificats. </p>
 
 <a name="ggkam"></a><h5>Protocole SSL activ&#233;</h5>
 <p>Indique si la fonction SSL doit &#234;tre utilis&#233;e pour acc&#233;der au serveur
@@ -138,8 +137,7 @@ de l'installation est utilis&#233; comme utilisateur de liaison.</p>
 <a name="ggkce"></a><h5>DN de base de recherche LDAP</h5>
 <p>Cet attribut sp&#233;cifie le DN de base utilis&#233; par l'objet Utilisateurs LDAP
 dans le serveur LDAP &#224; partir duquel commencer la recherche. Par d&#233;faut,
-il s'agit du domaine de niveau sup&#233;rieur dans l'installation de base Access
-Manager.</p>
+il s'agit du domaine de niveau sup&#233;rieur dans l'installation de base OpenSSO.</p>
 
 <a name="ggkbp"></a><h5>Attributs de recherche</h5>
 <p>N'importe quel composant DN du <tt>subjectDN</tt> de l'&#233;metteur peut &#234;tre utilis&#233; pour
@@ -148,21 +146,20 @@ que "cn". Tous les AC racine doivent utiliser le m&#234;me attribut de
 recherche.</p>
 
 <a name="ggkaa"></a><h5>V&#233;rification du protocole OCSP</h5>
-<p>Le protocole OCSP (Online Certificate Status Protocol) permet aux services de Federated
-Access Manager de d&#233;terminer l'&#233;tat (r&#233;vocation) d'un certificat sp&#233;cifi&#233;. Le protocole OCSP
-peut &#234;tre utilis&#233; pour r&#233;pondre &#224; certains besoins op&#233;rationnels de fournir des
-informations de r&#233;vocation plus rapidement que ne le permettent les LRC. Il
-peut aussi &#234;tre utilis&#233; pour obtenir des informations de statut suppl&#233;mentaires. Un
-client OCSP &#233;met une demande de statut vers un r&#233;pondeur OCSP et
-suspend l'acceptation du certificat en question jusqu'&#224; ce que le r&#233;pondeur fournisse
-une r&#233;ponse. </p>
+<p>Le protocole OCSP (Online Certificate Status Protocol) permet aux services d'OpenSSO de
+d&#233;terminer l'&#233;tat (r&#233;vocation) d'un certificat sp&#233;cifi&#233;. Le protocole OCSP peut &#234;tre utilis&#233;
+pour r&#233;pondre &#224; certains besoins op&#233;rationnels de fournir des informations de r&#233;vocation
+plus rapidement que ne le permettent les LRC. Il peut aussi &#234;tre
+utilis&#233; pour obtenir des informations de statut suppl&#233;mentaires. Un client OCSP &#233;met
+une demande de statut vers un r&#233;pondeur OCSP et suspend l'acceptation du
+certificat en question jusqu'&#224; ce que le r&#233;pondeur fournisse une r&#233;ponse. </p>
 
 <a name="ggkal"></a><h5>V&#233;rification activ&#233;e</h5>
 <p>Cet attribut active la v&#233;rification OCSP. Il est activ&#233; par d&#233;faut.</p>
 
 <a name="ggkav"></a><h5>URL de r&#233;pondeur</h5>
 <p>Cet attribut d&#233;finit une URL qui identifie l'emplacement du r&#233;pondeur OCSP. Par
-exemple, <tt>http://ocsp.example.net:80</tt>.</p><p>Par d&#233;faut, l'emplacement du r&#233;pondeur OCSP est d&#233;termin&#233; implicitement &#224; partir du
+exemple, <tt>http://ocsp.exemple.net:80</tt>.</p><p>Par d&#233;faut, l'emplacement du r&#233;pondeur OCSP est d&#233;termin&#233; implicitement &#224; partir du
 certificat en cours de validation. La propri&#233;t&#233; est utilis&#233;e lorsque l'extension Authority
 Information Access (d&#233;finie par RFC 3280) est absente du certificat ou lorsqu'elle
 doit &#234;tre ignor&#233;e. </p>

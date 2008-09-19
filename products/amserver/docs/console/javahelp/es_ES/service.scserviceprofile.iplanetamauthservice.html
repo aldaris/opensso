@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Principal - Ayuda en l&#237;nea de la consola de Sun Federated Access Manager 8.0
+  <title>Principal - Ayuda en l&#237;nea de la consola de Sun OpenSSO 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -32,12 +32,11 @@
 
 <a name="service.scserviceprofile.iplanetamauthservice"></a><h4>Principal</h4>
 <p><a name="indexterm-170"></a>Este m&#243;dulo es la base de configuraci&#243;n general de los servicios de
-autenticaci&#243;n de Federated Access Manager. Se debe registrar y configurar para utilizar
-cualquiera de las instancias del m&#243;dulo de autenticaci&#243;n espec&#237;ficas. Permite que el
-administrador defina los valores predeterminados que se seleccionar&#225;n para los valores que
-no se han definido espec&#237;ficamente en los m&#243;dulos de autenticaci&#243;n predeterminados de
-Federated Access Manager. Los atributos de m&#243;dulo principal son globales y de
-dominio. Los atributos son:</p>
+autenticaci&#243;n de OpenSSO. Se debe registrar y configurar para utilizar cualquiera de
+las instancias del m&#243;dulo de autenticaci&#243;n espec&#237;ficas. Permite que el administrador defina
+los valores predeterminados que se seleccionar&#225;n para los valores que no se
+hayan definido espec&#237;ficamente en los m&#243;dulos de autenticaci&#243;n predeterminados de OpenSSO. Los
+atributos de m&#243;dulo principal son globales y de dominio. Los atributos son:</p>
 <ul><li><p><a href="#gcnje">Clases de m&#243;dulo de autenticaci&#243;n conectable</a></p></li>
 <li><p><a href="#gcnjc">M&#243;dulo de autenticaci&#243;n admitido para clientes</a></p></li>
 <li><p><a href="#gcnir">Tama&#241;o de grupo de conexi&#243;n LDAP</a></p></li>
@@ -72,12 +71,12 @@ dominio. Los atributos son:</p>
 
 <a name="gcnje"></a><h5>Clases de m&#243;dulo de autenticaci&#243;n conectable</h5>
 <p>Especifica las clases Java de los m&#243;dulos de autenticaci&#243;n disponibles para cualquier
-dominio configurado en la plataforma Federated Access Manager. Puede escribir los m&#243;dulos
-de autenticaci&#243;n predeterminada implementando el SPI AMLoginModule o JAAS LoginModule. Para obtener
-m&#225;s informaci&#243;n, consulte el documento Federated Access Manager Developer's Guide (Gu&#237;a de
-desarrolladores de Federated Access Manager). Para definir los nuevos servicios, este campo
-debe tener una cadena de texto que especifique el nombre completo de
-clase (incluido el nombre del paquete) de cada nuevo servicio de autenticaci&#243;n.</p>
+dominio configurado en la plataforma OpenSSO. Puede escribir los m&#243;dulos de autenticaci&#243;n
+predeterminada implementando el SPI AMLoginModule o JAAS LoginModule. Para obtener m&#225;s informaci&#243;n
+consulte el documento "OpenSSO Developer's Guide". Para definir los nuevos servicios, este
+campo debe tener una cadena de texto que especifique el nombre completo
+de clase (incluido el nombre del paquete) de cada nuevo servicio de
+autenticaci&#243;n.</p>
 
 <a name="gcnjc"></a><h5>M&#243;dulo de autenticaci&#243;n admitido para clientes</h5>
 <p>Especifica una lista de los m&#243;dulos de autenticaci&#243;n admitidos para un cliente
@@ -103,9 +102,9 @@ la configuraci&#243;n m&#237;nima y m&#225;xima definida en LDAP Connection Defa
 <a name="gcnkq"></a><h5>Perfil de usuario</h5>
 <p>Esa opci&#243;n permite especificar las opciones de un perfil de usuario. Las
 opciones son:</p><dl><dt><b>Obligatorio</b></dt>
-<dd><p>Esta opci&#243;n especifica que, si la autenticaci&#243;n se realiza con &#233;xito, el usuario tendr&#225; que tener un perfil en el Directory Server local instalado con Federated Access Manager para el servicio de autenticaci&#243;n con el fin de emitir un SSOToken.</p></dd>
+<dd><p>Esta opci&#243;n especifica que, si la autenticaci&#243;n se realiza con &#233;xito, el usuario tendr&#225; que tener un perfil en la instancia local de Directory Server instalada con OpenSSO para el servicio de autenticaci&#243;n con el fin de emitir un SSOToken.</p></dd>
 <dt><b>Din&#225;mico</b></dt>
-<dd><p>Esta opci&#243;n especifica que, si la autenticaci&#243;n se realiza con &#233;xito, el servicio de autenticaci&#243;n crear&#225; el perfil de usuario si no existe uno. A continuaci&#243;n, se emitir&#225; SSOToken. El perfil de usuario se crea en el Directory Server local instalado con Federated Access Manager.</p></dd>
+<dd><p>Esta opci&#243;n especifica que, si la autenticaci&#243;n se realiza con &#233;xito, el servicio de autenticaci&#243;n crear&#225; el perfil de usuario si no existe uno. A continuaci&#243;n, se emitir&#225; SSOToken. El perfil de usuario se crea en la instancia local de Directory Server instalada con OpenSSO.</p></dd>
 <dt><b>Din&#225;mico con alias de usuario</b></dt>
 <dd><p>Esta opci&#243;n especifica que, si la autenticaci&#243;n se realiza con &#233;xito, los servicios de autenticaci&#243;n crear&#225;n el perfil de usuario con el atributo User Alias List (Lista de alias de usuario). </p></dd>
 <dt><b>Omitir</b></dt>
@@ -114,36 +113,36 @@ opciones son:</p><dl><dt><b>Obligatorio</b></dt>
 
 
 <a name="ggukq"></a><h5>Seguridad de autenticaci&#243;n remota</h5>
-<p>Si est&#225; habilitado, todas las solicitudes de autenticaci&#243;n remotas requieren que el
+<p>Si se habilita, todas las solicitudes de autenticaci&#243;n remotas requieren que el
 SSOToken de la aplicaci&#243;n valide la identidad del remitente, de forma que
-la informaci&#243;n de configuraci&#243;n de Federated Access Manager pueda obtener los valores
-v&#225;lidos del nombre de usuario y la contrase&#241;a asociada a la aplicaci&#243;n.</p>
+la informaci&#243;n de configuraci&#243;n de OpenSSO pueda obtener los valores v&#225;lidos del
+nombre de usuario y la contrase&#241;a asociada a la aplicaci&#243;n.</p>
 
 <a name="ggull"></a><h5>Conservar objetos de procesos POST para el procesamiento de cierre de sesi&#243;n</h5>
-<p>Si est&#225; habilitado, las instancias de los complementos de autenticaci&#243;n posteriores al
+<p>Si se habilita, las instancias de los complementos de autenticaci&#243;n posteriores al
 proceso utilizados durante el proceso de inicio de sesi&#243;n se conservar&#225;n en
-la sesi&#243;n de Federated Access Manager. Cuando posteriormente se invoca el cierre
-de sesi&#243;n, se llama al m&#233;todo <tt>onLogout </tt> de estas instancias. Si este
-atributo no est&#225; habilitado, no se conservan las instancias posteriores al proceso
-de inicio de sesi&#243;n. Cuando se invoca el cierre de sesi&#243;n y
-se llama al m&#233;todo <tt>onLogout</tt> se crean nuevas instancias de los complementos
-posteriores al proceso. </p>
+la sesi&#243;n de OpenSSO. Cuando posteriormente se invoca el cierre de sesi&#243;n,
+se llama al m&#233;todo <tt>onLogout </tt> de estas instancias. Si este atributo no
+est&#225; habilitado, no se conservan las instancias posteriores al proceso de inicio
+de sesi&#243;n. Cuando se invoca el cierre de sesi&#243;n y se llama
+al m&#233;todo <tt>onLogout</tt> se crean nuevas instancias de los complementos posteriores al
+proceso. </p>
 
 <a name="gguji"></a><h5>Conservar objetos de m&#243;dulos de autenticaci&#243;n para el procesamiento de cierre de sesi&#243;n</h5>
-<p>Si est&#225; habilitado, todas las instancias de los m&#243;dulos de autenticaci&#243;n utilizados
-durante el proceso de autenticaci&#243;n se conservan en la sesi&#243;n de Federated
-Access Manager. Posteriormente, cuando se invoca el cierre de sesi&#243;n, se llama
-al m&#233;todo logout/destroyModulestate en las mismas instancias. Si este atributo no est&#225;
-habilitado, no se conservan las instancias del m&#243;dulo de autenticaci&#243;n del proceso
-de cierre de sesi&#243;n. Tras el cierre de sesi&#243;n no se llama
-a ninguno de los m&#233;todos de los m&#243;dulos de autenticaci&#243;n.</p>
+<p>Si se habilita, todas las instancias de los m&#243;dulos de autenticaci&#243;n utilizados
+durante el proceso de autenticaci&#243;n se conservan en la sesi&#243;n de OpenSSO.
+Posteriormente, cuando se invoca el cierre de sesi&#243;n, se llama al m&#233;todo
+logout/destroyModulestate en las mismas instancias. Si este atributo no est&#225; habilitado, no
+se conservan las instancias del m&#243;dulo de autenticaci&#243;n del proceso de cierre
+de sesi&#243;n. Tras el cierre de sesi&#243;n no se llama a ninguno
+de los m&#233;todos de los m&#243;dulos de autenticaci&#243;n.</p>
 
 <a name="gcnks"></a><h5>Configuraci&#243;n de autenticaci&#243;n del administrador</h5>
 <p>Define el servicio de autenticaci&#243;n s&#243;lo para los administradores. Este atributo se
 puede utilizar si el m&#243;dulo de autenticaci&#243;n de los administradores tiene que
 ser distinto del m&#243;dulo de los usuarios finales. Los m&#243;dulos configurados en
-este atributo se seleccionan cuando se accede a la consola de Federated
-Access Manager. Por ejemplo:</p><p><tt><b>http://</tt><i>servername.port/console_deploy_uri</i><tt></b></tt></p>
+este atributo se seleccionan cuando se accede a la consola de OpenSSO.
+Por ejemplo:</p><p><tt><b>http://</tt><i>servername.port/console_deploy_uri</i><tt></b></tt></p>
 
 <a name="gcnjw"></a><h5>Roles predeterminados de creaci&#243;n din&#225;mica de perfil de usuario</h5>
 <p>Este campo especifica los roles asignados a un nuevo usuario cuyos perfiles
@@ -151,8 +150,8 @@ se crean si se ha seleccionado Creaci&#243;n din&#225;mica mediante Perfil de us
 No hay ning&#250;n valor predeterminado. El administrador debe especificar los DN de
 los roles que se asignar&#225;n al nuevo usuario.  </p>
 <hr><p><b>Nota &#8211; </b>El rol especificado debe encontrarse debajo del dominio para el que se
-est&#225; configurando la autenticaci&#243;n. Este rol puede ser un rol de Federated
-Access Manager o de LDAP, pero no puede ser un rol filtrado.</p><p>Si desea asignar autom&#225;ticamente servicios espec&#237;ficos al usuario, tendr&#225; que configurar el
+est&#225; configurando la autenticaci&#243;n. Este rol puede ser un rol de OpenSSO
+o LDAP, pero no puede ser un rol filtrado.</p><p>Si desea asignar autom&#225;ticamente servicios espec&#237;ficos al usuario, tendr&#225; que configurar el
 atributo Required Services (Servicios requeridos)  en User Profile (Perfil de usuario).</p>
 <hr>
 
@@ -229,9 +228,9 @@ a varias direcciones, separe cada direcci&#243;n de correo electr&#243;nico con 
 Para configuraciones regionales distintas al ingl&#233;s, el formato es:</p><p><tt>email_address|locale|charset</tt> </p>
 
 <a name="gcnkr"></a><h5>Avisar a usuario despu&#233;s de N fallos</h5>
-<p>Especifica el n&#250;mero de fallos de autenticaci&#243;n que pueden producirse antes de
-que Federated Access Manager env&#237;e un mensaje de advertencia en el que
-se indique que se bloquear&#225; el usuario.</p>
+<p>Especifica el n&#250;mero de errores de autenticaci&#243;n que pueden producirse antes de
+que OpenSSO env&#237;e un mensaje de advertencia en el que se indique
+que se bloquear&#225; el usuario.</p>
 
 <a name="gcnkc"></a><h5>Duraci&#243;n del bloqueo por fallo de inicio de sesi&#243;n</h5>
 <p>Habilita el bloqueo de memoria. De forma predeterminada, el mecanismo de bloqueo
@@ -254,10 +253,9 @@ establecido en 2, se impedir&#225; al usuario acceder a la cuenta durante
 El valor en Lockout Attribute Value (Valor de atributo de bloqueo) tambi&#233;n
 debe cambiarse para habilitar el bloqueo de este nombre de atributo. De
 forma predeterminada, el nombre de atributo de bloqueo est&#225; vac&#237;o en la
-consola de Federated Access Manager. Los valores de implementaci&#243;n predeterminados son <i>inetuserstatus</i>
-(atributo LDAP) e <i>inetuserstatus</i> cuando se bloquea el usuario y la opci&#243;n
-Duraci&#243;n de bloqueo por fallo de inicio de sesi&#243;n se define en
-0.</p>
+consola de OpenSSO. Los valores de implementaci&#243;n predeterminados son <i>inetuserstatus</i> (atributo LDAP)
+e <i>inetuserstatus</i> cuando se bloquea el usuario y la opci&#243;n Duraci&#243;n de
+bloqueo por fallo de inicio de sesi&#243;n se define en 0.</p>
 
 <a name="gcnle"></a><h5>Valor de atributo de bloqueo</h5>
 <p>Este atributo especifica si el bloqueo est&#225; habilitado o deshabilitado para el
@@ -297,7 +295,7 @@ los Id. de usuario cuando se utiliza Enable Generate UserID Mode (Activar
 generar modo UserID).</p>
 
 <a name="gcnki"></a><h5>Tipos de identidad</h5>
-<p>Muestra el tipo o tipos de identidades que buscar&#225; Federated Access Manager.</p>
+<p>Muestra el tipo o tipos de identidades que buscar&#225; OpenSSO.</p>
 
 <a name="gcnlh"></a><h5>Clases de eventos de estado de usuario conectable</h5>
 <p>Ampl&#237;a los SPI de autenticaci&#243;n para proporcionar un mecanismo de devoluci&#243;n de
@@ -312,10 +310,10 @@ autenticaci&#243;n. Se admiten los siguientes cambios de estado:</p><dl><dt><tt>
 <a name="gcnjv"></a><h5>Inclusi&#243;n de intentos no v&#225;lidos en un almac&#233;n de datos</h5>
 <p>Si se habilita, este atributo permite compartir los intentos fallidos de inicio
 de sesi&#243;n en un repositorio de identidades compartido por varias instancias de
-Federated Access Manager. Por ejemplo, si el repositorio de identidades que se
-utiliza para una implementaci&#243;n espec&#237;fica es Directory Server, los intentos no v&#225;lidos
-se almacenan en <tt>sunAMAuthInvalidAttemptsData</tt> (que pertenece a la clase de objeto <tt>sunAMAuthAccountLockout). </tt>
-Los datos se almacenan con el siguiente formato:</p><p><tt>&#60;InvalidPassword&#62;&#60;InvalidCount&#62;&#60;/InvalidCount&#62;&#60;LastInvalidAt&#62;&#60;/LastInvalidAt&#62;&#60;LockedoutAt&#62;&#60;/LockedoutAt&#62;&#60;ActualLockoutDuration&#62;&#60;/ActualLockoutDuration&#62;&#60;/InvalidPassword&#62; </tt></p><p>Esta informaci&#243;n se conserva en Directory Server para cada usuario. Cuanto mayor
+OpenSSO. Por ejemplo, si el repositorio de identidades que se utiliza para
+una implementaci&#243;n espec&#237;fica es Directory Server, los intentos no v&#225;lidos se almacenan
+en <tt>sunAMAuthInvalidAttemptsData</tt> (que pertenece a la clase de objeto <tt>sunAMAuthAccountLockout). </tt> Los datos
+se almacenan con el siguiente formato:</p><p><tt>&#60;InvalidPassword&#62;&#60;InvalidCount&#62;&#60;/InvalidCount&#62;&#60;LastInvalidAt&#62;&#60;/LastInvalidAt&#62;&#60;LockedoutAt&#62;&#60;/LockedoutAt&#62;&#60;ActualLockoutDuration&#62;&#60;/ActualLockoutDuration&#62;&#60;/InvalidPassword&#62; </tt></p><p>Esta informaci&#243;n se conserva en Directory Server para cada usuario. Cuanto mayor
 sea el n&#250;mero de intentos no v&#225;lidos, aumentar&#225; el valor de <tt>&#60;InvalidCount&#62;</tt>.</p>
 
 <a name="gcnjo"></a><h5>Autenticaci&#243;n basada en m&#243;dulos</h5>
@@ -346,8 +344,8 @@ espec&#237;fica del dominio. El valor de nivel de autenticaci&#243;n predetermin
 se aplicar&#225; s&#243;lo cuando no se haya especificado ning&#250;n nivel de autenticaci&#243;n
 en el campo Authentication Level (Nivel de autenticaci&#243;n) para una plantilla de
 autenticaci&#243;n de un determinado dominio. The Default Authentication Level default value is
-0. (The value in this attribute is not used by Federated Access
-Manager but by any external application that may chose to use it.)</p>
+0. (El valor de este atributo no se utiliza con OpenSSO, sino
+con cualquier aplicaci&#243;n externa seleccionada para utilizarlo).</p>
 <br/>
 
 </body>

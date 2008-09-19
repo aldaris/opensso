@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Liberty ID-WSF 安全服务 - Sun Federated Access Manager 8.0 控制台联机帮助
+  <title>Liberty ID-WSF 安全服务 - Sun OpenSSO 8.0 控制台联机帮助
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -50,7 +50,7 @@ DSA/RSA 密钥将包含在 <tt>KeyInfo</tt> 中。</p>
 <p>此属性指定信任的授权机构的证书别名，用于签署响应消息的 SAML 或 SAML BEARER 令牌。</p>
 
 <a name="ggohd"></a><h5>信任的 CA 签署证书别名</h5>
-<p>此属性指定用于外来请求的信任 CA。SAML 或 SAML BEARER 令牌的证书别名。此消息必须由列表中信任的 CA 签署。语法是 <tt>cert alias 1[:issuer 1]|cert alias 2[:issuer 2]|..... </tt></p><p>示例：<tt>myalias1:myissuer1|myalias2|myalias3:myissuer3</tt>。</p><p>当令牌的签名内没有 <tt>KeyInfo</tt> 时，就采用值发布者。令牌的发布者必须在列表中，且将使用相应的证书别名来验证该签名。如果存在 <tt>KeyInfo</tt>，则密钥库必须包含一个与 <tt>KeyInfo</tt> 相匹配的证书别名，并且该证书别名必须在列表中。</p>
+<p>此属性指定用于传入请求的可信赖 CA. SAML 或 SAML BEARER 令牌的证书别名。此消息必须由列表中信任的 CA 签署。语法是 <tt>cert alias 1[:issuer 1]|cert alias 2[:issuer 2]|..... </tt></p><p>示例：<tt>myalias1:myissuer1|myalias2|myalias3:myissuer3</tt>。</p><p>当令牌的签名内没有 <tt>KeyInfo</tt> 时，就采用值发布者。令牌的发布者必须在列表中，且将使用相应的证书别名来验证该签名。如果存在 <tt>KeyInfo</tt>，则密钥库必须包含一个与 <tt>KeyInfo</tt> 相匹配的证书别名，并且该证书别名必须在列表中。</p>
 <br/>
 
 </body>

@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Session - Aide en ligne de la console Sun Federated Access Manager 8.0
+  <title>Session - Aide en ligne de la console Sun OpenSSO&#160;8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -52,11 +52,11 @@ les suivants :</p>
 
 <a name="fwfeu"></a><h5>Instance de configuration secondaire</h5>
 <p>Fournit les informations de connexion pour le r&#233;f&#233;rentiel de session utilis&#233; pour
-la fonction de reprise de session dans Federated Access Manager. L'URL de
-l'&#233;quilibreur de charge doit &#234;tre fourni en tant qu'identificateur de cette configuration
-secondaire. Si la configuration secondaire est d&#233;finie dans ce cadre, la fonction
-de reprise de session sera automatiquement activ&#233;e et entrera en vigueur au
-red&#233;marrage du serveur. Pour plus d'informations, reportez-vous &#224; <a href="service.subconfigadd.html">Ajout d'une configuration secondaire</a>.</p>
+la fonction de reprise de session dans OpenSSO. L'URL de l'&#233;quilibreur de
+charge doit &#234;tre fourni en tant qu'identificateur de cette configuration secondaire. Si
+la configuration secondaire est d&#233;finie dans ce cadre, la fonction de reprise
+de session sera automatiquement activ&#233;e et entrera en vigueur au red&#233;marrage du
+serveur. Pour plus d'informations, reportez-vous &#224; <a href="service.subconfigadd.html">Ajout d'une configuration secondaire</a>.</p>
 
 <a name="fwfew"></a><h5>Nombre maximal de r&#233;sultats renvoy&#233;s par la recherche</h5>
 <p>Cet attribut sp&#233;cifie le nombre maximal de r&#233;sultats renvoy&#233;s par une recherche
@@ -68,12 +68,11 @@ La valeur par d&#233;faut est 5 secondes.</p>
 
 <a name="fwfez"></a><h5>Activer les notifications de modification de propri&#233;t&#233;</h5>
 <p>Active ou d&#233;sactive la notification de modification d'une propri&#233;t&#233; de session. Dans
-un environnement de connexion unique, une session Federated Access Manager peut &#234;tre
-partag&#233;e par plusieurs applications. Lorsque cette fonctionnalit&#233; est activ&#233;e, si une application
-modifie une des propri&#233;t&#233;s de session sp&#233;cifi&#233;es dans la liste Propri&#233;t&#233;s de
-notification (d&#233;finie en tant qu'attribut de service de session distinct), la notification
-est envoy&#233;e aux autres applications faisant partie de cet environnement de connexion
-unique.</p>
+un environnement de connexion unique, une session OpenSSO peut &#234;tre partag&#233;e par
+plusieurs applications. Lorsque cette fonctionnalit&#233; est activ&#233;e, si une application modifie une
+des propri&#233;t&#233;s de session sp&#233;cifi&#233;es dans la liste Propri&#233;t&#233;s de notification (d&#233;finie
+en tant qu'attribut de service de session distinct), la notification est envoy&#233;e
+aux autres applications faisant partie de cet environnement de connexion unique.</p>
 
 <a name="fwfey"></a><h5>Activer les contraintes li&#233;es aux quotas</h5>
 <p>Active ou d&#233;sactive les contraintes li&#233;es aux quotas. L'application de contraintes li&#233;es
@@ -95,11 +94,11 @@ les param&#232;tres sont modifi&#233;s.</p>
 <p>Indique si les utilisateurs dot&#233;s du r&#244;le d'administrateur de niveau sup&#233;rieur doivent
 &#234;tre exempt&#233;s des v&#233;rifications de contraintes de session. Si OUI, m&#234;me si
 les contraintes de sessions sont activ&#233;es, aucune v&#233;rification des contraintes li&#233;es aux
-quotas de session n'est effectu&#233;e pour ces administrateurs.</p><p>The default setting for this attribute is NO. Vous devez red&#233;marrer le
+quotas de session n'est effectu&#233;e pour ces administrateurs.</p><p>Par d&#233;faut, cet attribut est r&#233;gl&#233; sur NO. Vous devez red&#233;marrer le
 serveur si les param&#232;tres sont modifi&#233;s. Cet attribut s'appliquera uniquement si la
 contrainte li&#233;e aux quotas de session est activ&#233;e.</p>
-<hr><p><b>Remarque &#8211; </b>Le superutilisateur d&#233;fini pour Federated Access Manager dans <tt>AMConfig.properties</tt> (<tt>com.sun.identity.authentication.super.user</tt>) est toujours
-exempt&#233; des v&#233;rifications de contraintes li&#233;es aux quotas de session. </p>
+<hr><p><b>Remarque &#8211; </b>Le superutilisateur d&#233;fini pour OpenSSO dans <tt>AMConfig.properties</tt> (<tt>com.sun.identity.authentication.super.user</tt>) est toujours exempt&#233; des
+v&#233;rifications de contraintes li&#233;es aux quotas de session. </p>
 <hr>
 
 
@@ -129,28 +128,28 @@ activ&#233;e.</p>
 <p>Cet attribut accepte une valeur en minutes pour exprimer la dur&#233;e maximale
 avant qu'une session n'arrive &#224; expiration et que l'utilisateur doive se r&#233;authentifier
 pour b&#233;n&#233;ficier &#224; nouveau d'un acc&#232;s. Une valeur sup&#233;rieure ou &#233;gale &#224;
-1 est accept&#233;e. La valeur par d&#233;faut est 120. (To balance the
-requirements of security and convenience, consider setting the Max Session Time interval
-to a higher value and setting the Max Idle Time interval to
-a relatively low value.) Max Session Time limits the validity of the
-session. Elle ne peut &#234;tre &#233;tendue au-del&#224; de la valeur configur&#233;e.</p>
+1 est accept&#233;e. La valeur par d&#233;faut est 120. Pour trouver le
+bon compromis entre s&#233;curit&#233; et confort, r&#233;glez l'intervalle de dur&#233;e maximale de
+session sur une valeur sup&#233;rieure et l'intervalle de dur&#233;e maximale d'inactivit&#233; sur
+une valeur relativement faible. La dur&#233;e maximale de session limite la validit&#233;
+de la session dans le temps. Elle ne peut &#234;tre &#233;tendue au-del&#224;
+de la valeur configur&#233;e.</p>
 
 <a name="fwfff"></a><h5>Dur&#233;e maximale d'inactivit&#233;</h5>
 <p>Cet attribut accepte une valeur en minutes pour exprimer la dur&#233;e maximale
 d'inactivit&#233; avant qu'une session n'arrive &#224; expiration et que l'utilisateur doive se
 r&#233;authentifier pour b&#233;n&#233;ficier &#224; nouveau d'un acc&#232;s. Une valeur sup&#233;rieure ou &#233;gale
-&#224; 1 est accept&#233;e. The default value is 30. (To balance the
-requirements of security and convenience, consider setting the Max Session Time interval
-to a higher value and setting the Max Idle Time interval to
-a relatively low value.)</p>
+&#224; 1 est accept&#233;e. La valeur par d&#233;faut est 30. Pour trouver
+le bon compromis entre s&#233;curit&#233; et confort, r&#233;glez l'intervalle de dur&#233;e maximale
+de session sur une valeur sup&#233;rieure et l'intervalle de dur&#233;e maximale d'inactivit&#233;
+sur une valeur relativement faible.</p>
 
 <a name="fwffh"></a><h5>Dur&#233;e maximale de mise en cache</h5>
 <p>Cet attribut accepte une valeur en minutes correspondant &#224; l'intervalle maximal avant
-que le client ne doive contacter Federated Access Manager pour rafra&#238;chir les
-informations de session en m&#233;moire cache. Une valeur sup&#233;rieure ou &#233;gale &#224;
-0 est accept&#233;e. La valeur par d&#233;faut est 3. It is recommended
-that the maximum caching time should always be less than the maximum
-idle time.</p>
+que le client ne doive contacter OpenSSO pour rafra&#238;chir les informations de
+session en m&#233;moire cache. Une valeur sup&#233;rieure ou &#233;gale &#224; 0 est
+accept&#233;e. La valeur par d&#233;faut est 3. La dur&#233;e maximale de mise
+en cache doit toujours &#234;tre inf&#233;rieure &#224; la dur&#233;e maximale d'inactivit&#233;.</p>
 
 <a name="fwffi"></a><h5>Sessions utilisateur actives</h5>
 <p>Indique le nombre maximal de sessions simultan&#233;es autoris&#233;es pour un utilisateur.</p>

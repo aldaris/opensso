@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>授權程式 - Sun Federated Access Manager 8.0 主控台線上說明
+  <title>授權程式 - Sun OpenSSO 8.0 主控台線上說明
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -34,7 +34,7 @@
 <a name="indexterm-89"></a><a name="indexterm-90"></a><p>處理請求之前，Liberty 個人設定檔服務 將驗證發出請求之 WSC 的授權。可以完成兩種等級的授權檢查：</p>
 <ol><li><p>請求的實體已獲授權存取請求的資源配置文件資訊？</p></li>
 <li><p>請求的資源已發佈給請求者？</p></li></ol>
-<p>授權透過 Liberty 個人設定檔服務 的外掛程式  (<tt>com.sun.identity.liberty.ws.interfaces.</tt><tt>Authorizer</tt> 介面的實作) 發生。雖然可以開發新的實作，但是 Federated Access Manager 提供了預設值：<tt>com.sun.identity.liberty.ws.idpp.plugin.</tt><tt>IDPPAuthorizer</tt>。此外掛程式定義了四個針對查詢和修改作業的政策動作值：</p>
+<p>授權透過 Liberty 個人設定檔服務 的外掛程式  (<tt>com.sun.identity.liberty.ws.interfaces.</tt><tt>Authorizer</tt> 介面的實作) 發生。雖然可以開發新的實作，但是 OpenSSO 提供了預設實作：<tt>com.sun.identity.liberty.ws.idpp.plugin.</tt><tt>IDPPAuthorizer</tt>。此外掛程式定義了四個針對查詢和修改作業的政策動作值：</p>
 <ul><li><p>允許</p></li>
 <li><p>拒絕</p></li>
 <li><p>互動同意</p></li>

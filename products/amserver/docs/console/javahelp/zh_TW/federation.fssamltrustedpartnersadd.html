@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>可信任的合作夥伴：配置可信任的合作夥伴屬性 - Sun Federated Access Manager 8.0 主控台線上說明
+  <title>可信任的合作夥伴：配置可信任的合作夥伴屬性 - Sun OpenSSO 8.0 主控台線上說明
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -80,7 +80,7 @@
 <li><p>如果使用 HTTPS 存取 SAML SOAP 收件者的 URL，並且沒有透過 HTTP SSL 保護 SAML SOAP 收件者，則可指定 <tt>SSL</tt>。</p></li>
 <li><p>如果使用 HTTPS 存取 SAML SOAP 收件者的 URL，並且沒有透過 <tt>BASIC AUTH WITH SSL</tt> 保護 SAML SOAP 收件者，則可指定 <tt>SSLWITHBASICAUTH</tt>。</p></li></ul>
 
-<hr><p><b>備註 &#8211; </b>如果您正在使用 HTTP 基本認證保護 SAML SOAP 收件者的 URL，則需要在 Web 容器配置而非 Federated Access Manager 配置中執行此操作。然而，您還是要在 Federated Access Manager 配置中提供 HTTP 基本認證使用者 ID 與密碼。</p>
+<hr><p><b>備註 &#8211; </b>如果您正在使用 HTTP 基本認證保護 SAML SOAP 收件者的 URL，則需要在 Web 容器配置而非 OpenSSO 配置中執行此操作。然而，您還是要在 OpenSSO 配置中提供 HTTP 基本認證使用者 ID 與密碼。</p>
 <hr>
 <p>此為選用屬性。如果未指定，預設值為 <tt>NOAUTH</tt>。如果指定 <tt>BASICAUTH</tt> 或 <tt>SSLWITHBASICAUTH</tt>，則需要 [可信任的合作夥伴] 屬性，而且此屬性應為 <tt>HTTPS</tt>。</p></dd>
 <dt>使用者</dt>

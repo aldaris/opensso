@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Configuration de r&#232;gles - Aide en ligne de la console Sun Federated Access Manager 8.0
+  <title>Configuration de r&#232;gles - Aide en ligne de la console Sun OpenSSO&#160;8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -32,7 +32,7 @@
 
 <a name="service.scpolicy"></a><h4>Configuration de r&#232;gles</h4>
 <p><a name="indexterm-191"></a>L'attribut Configuration des strat&#233;gies permet &#224; l'administrateur de d&#233;finir les propri&#233;t&#233;s g&#233;n&#233;rales
-et du domaine, utilis&#233;es par le service Strag&#233;gie.</p>
+et du domaine, utilis&#233;es par le service Strat&#233;gie.</p>
 <ul><li><p><a href="#fufnk">Propri&#233;t&#233;s g&#233;n&#233;rales</a></p></li>
 <li><p><a href="#fufmb">Attributs du domaine</a></p></li></ul>
 
@@ -50,7 +50,7 @@ strat&#233;gies.</p><p>Cliquez sur le bouton Ajouter et d&#233;finissez les attr
 <dd><p>D&#233;finit la classe Java qui impl&#233;mente l'algorithme de comparaison des ressources. </p></dd>
 <dt>S&#233;parateur</dt>
 <dd><p>Sp&#233;cifie le s&#233;parateur &#224; utiliser dans le nom de ressource. </p></dd>
-<dt>Carat&#232;re g&#233;n&#233;rique</dt>
+<dt>Caract&#232;re g&#233;n&#233;rique</dt>
 <dd><p>Sp&#233;cifie le caract&#232;re g&#233;n&#233;rique pouvant &#234;tre d&#233;fini dans les noms de ressource.</p></dd>
 <dt>Caract&#232;re g&#233;n&#233;rique de niveau un</dt>
 <dd><p>Remplace z&#233;ro, un ou plusieurs caract&#232;res.</p></dd>
@@ -65,13 +65,13 @@ strat&#233;gies ult&#233;rieures, m&#234;me en cas de d&#233;cision de REFUS. Si
 pas s&#233;lectionn&#233;e (valeur par d&#233;faut), l'&#233;valuation de strat&#233;gie ignore les strat&#233;gies ult&#233;rieures
 d&#232;s lors qu'une d&#233;cision de REFUS est identifi&#233;e.</p>
 
-<a name="fufng"></a><h5>Conseils g&#233;rables par Federated Access Manager</h5>
+<a name="fufng"></a><h5>Avis pouvant &#234;tre g&#233;r&#233;s par OpenSSO</h5>
 <p>D&#233;finit les noms des cl&#233;s de conseil de strat&#233;gie, pour lesquelles Policy
-Enforcement Point (Policy Agent) doit rediriger l'agent utilisateur vers Federated Access Manager.
-Si l'agent re&#231;oit une d&#233;cision de strat&#233;gie qui n'autorise pas l'acc&#232;s &#224;
-une ressource mais contient un conseil, l'agent v&#233;rifie si cet attribut mentionne
-cette cl&#233; de conseil.</p><p>Dans l'affirmative, l'agent utilisateur est redirig&#233; vers Federated Access Manager, qui pourra
-&#233;ventuellement autoriser l'acc&#232;s &#224; la ressource.</p>
+Enforcement Point (Policy Agent) doit rediriger l'agent utilisateur vers OpenSSO. Si l'agent
+re&#231;oit une d&#233;cision de strat&#233;gie qui n'autorise pas l'acc&#232;s &#224; une ressource
+mais contient un conseil, l'agent v&#233;rifie si cet attribut mentionne cette cl&#233;
+de conseil.</p><p>Dans l'affirmative, l'agent utilisateur est redirig&#233; vers OpenSSO, qui pourra &#233;ventuellement autoriser
+l'acc&#232;s &#224; la ressource.</p>
 
 <a name="gdpdm"></a><h5>Orientations de l'alias de l'organisation</h5>
 <p>Lorsqu'il est d&#233;fini sur Oui, cet attribut vous permet de cr&#233;er des
@@ -86,29 +86,28 @@ est d&#233;fini sur Non. </p>
 
 <a name="fufmg"></a><h5>Serveur LDAP principal</h5>
 <p>Sp&#233;cifie le nom d'h&#244;te et le num&#233;ro de port du serveur LDAP
-principal sp&#233;cifi&#233; lors de l'installation Federated Access Manager qui sera utilis&#233; pour
-rechercher les objets de strat&#233;gie tels que les utilisateurs LDAP, r&#244;les LDAP,
-groupes LDAP, etc.</p><p>Le format est <i>nomh&#244;te:port</i>. For example: <tt>machine1.example.com:389</tt></p><p>Pour la configuration du basculement sur plusieurs h&#244;tes serveur LDAP, cette valeur
+principal sp&#233;cifi&#233; lors de l'installation OpenSSO qui sera utilis&#233; pour rechercher les
+objets de strat&#233;gie tels que les utilisateurs LDAP, r&#244;les LDAP, groupes LDAP,
+etc.</p><p>Le format est <i>nomh&#244;te:port</i>. Par exemple : <tt>machine1.exemple.com:389</tt></p><p>Pour la configuration du basculement sur plusieurs h&#244;tes serveur LDAP, cette valeur
 peut &#234;tre une liste de plusieurs h&#244;tes d&#233;limit&#233;s par des espaces. Le
-format est <i>nomh&#244;te1:port1 nomh&#244;te2:port2...</i></p><p>For example: <tt>machine1.example1.com:389 machine2.example1.com:389 </tt></p><p>Les entr&#233;es multiples doivent &#234;tre pr&#233;c&#233;d&#233;es du nom du serveur local. Ceci
-permet &#224; des serveurs Federated Access Manager sp&#233;cifiques d'&#234;tre configur&#233;s de mani&#232;re
-&#224; communiquer avec des serveurs Directory Server sp&#233;cifiques.</p><p>Le format est <i>nomserveur|nomh&#244;te:port</i>. Par exemple :</p><p><tt>machine1.exemple1.com|machine1.exemple1.com:389</tt></p><p><tt>machine1.exemple2.com|machine1.exemple2.com:389</tt></p><p>Pour la configuration du basculement :</p><p><tt>Serveur_AM1.exemple1.com|machine1.exemple1.com:389 machine2.exemple.com1:389 </tt></p><p><tt>Serveur_AM2.exemple2.com|machine1.exemple2.com:389 machine2.exemple2.com:389 </tt></p>
+format est <i>nomh&#244;te1:port1 nomh&#244;te2:port2...</i></p><p>Par exemple : <tt>machine1.exemple1.com:389 machine2.exemple1.com:389 </tt></p><p>Les entr&#233;es multiples doivent &#234;tre pr&#233;c&#233;d&#233;es du nom du serveur local. Ceci
+permet &#224; des serveurs OpenSSO sp&#233;cifiques d'&#234;tre configur&#233;s de mani&#232;re &#224; communiquer
+avec des serveurs Directory Server sp&#233;cifiques.</p><p>Le format est <i>nomserveur|nomh&#244;te:port</i>. Par exemple :</p><p><tt>machine1.exemple1.com|machine1.exemple1.com:389</tt></p><p><tt>machine1.exemple2.com|machine1.exemple2.com:389</tt></p><p>Pour la configuration du basculement :</p><p><tt>Serveur_AM1.exemple1.com|machine1.exemple1.com:389 machine2.exemple.com1:389 </tt></p><p><tt>Serveur_AM2.exemple2.com|machine1.exemple2.com:389 machine2.exemple2.com:389 </tt></p>
 
 <a name="fufmc"></a><h5>DN de base du serveur LDAP</h5>
 <p>Sp&#233;cifie le DN de base dans le serveur LDAP &#224; partir duquel
 commencer la recherche. Par d&#233;faut, il s'agit du domaine de niveau sup&#233;rieur
-dans l'installation Federated Access Manager.</p>
+dans l'installation d'OpenSSO.</p>
 
 <a name="fufmd"></a><h5>DN de base des utilisateurs LDAP</h5>
 <p>Cet attribut sp&#233;cifie le DN de base utilis&#233; par l'objet Utilisateurs LDAP
 dans le serveur LDAP &#224; partir duquel commencer la recherche. Par d&#233;faut,
-il s'agit du domaine de niveau sup&#233;rieur dans l'installation de base Federated
-Access Manager.</p>
+il s'agit du domaine de niveau sup&#233;rieur dans l'installation de base OpenSSO.</p>
 
-<a name="fufmz"></a><h5>DN de base des r&#244;les Federated Access Manager</h5>
+<a name="fufmz"></a><h5>DN de base des r&#244;les OpenSSO</h5>
 <p>D&#233;finit le DN du domaine ou de l'organisation, utilis&#233; comme base pour
-la recherche des valeurs des r&#244;les Federated Access Manager. Cet attribut est
-utilis&#233; par l'objet de strat&#233;gie <i>AccessManagerRoles</i>.</p>
+la recherche des valeurs des r&#244;les OpenSSO. Cet attribut est utilis&#233; par
+l'objet de strat&#233;gie <i>AccessManagerRoles</i>.</p>
 
 <a name="fufme"></a><h5>DN de la liaison LDAP</h5>
 <p>Sp&#233;cifie le DN de liaison dans le serveur LDAP.</p>
@@ -166,9 +165,8 @@ r&#244;les. L'&#233;tendue peut avoir l'une des valeurs suivantes :</p>
 <li><p>SCOPE_SUB (valeur par d&#233;faut)</p></li></ul>
 
 
-<a name="fufmy"></a><h5>&#201;tendue de la recherche des r&#244;les Federated Access Manager</h5>
-<p>D&#233;finit l'&#233;tendue &#224; utiliser pour rechercher les entr&#233;es pour l'objet R&#244;les Federated
-Access Manager.</p>
+<a name="fufmy"></a><h5>&#201;tendue de la recherche de r&#244;les OpenSSO</h5>
+<p>D&#233;finit l'&#233;tendue &#224; utiliser pour rechercher les entr&#233;es pour l'objet R&#244;les OpenSSO.</p>
 <ul><li><p>SCOPE_BASE</p></li>
 <li><p>SCOPE_ONE</p></li>
 <li><p>SCOPE_SUB (valeur par d&#233;faut)</p></li></ul>
@@ -192,9 +190,9 @@ La valeur par d&#233;faut est <tt>cn</tt>.</p>
 
 <a name="fufnj"></a><h5>Maximum de r&#233;sultats renvoy&#233;s par la recherche</h5>
 <p>Ce champ d&#233;finit le nombre maximal de r&#233;sultats pouvant &#234;tre renvoy&#233;s par
-une recherche. The default value is 100. If the search limit exceeds
-the amount specified, the entries that have been found to that point
-will be returned.</p>
+une recherche. La valeur par d&#233;faut est 100. If the search limit
+exceeds the amount specified, the entries that have been found to that
+point will be returned.</p>
 
 <a name="fufnl"></a><h5>D&#233;lai de recherche</h5>
 <p>Sp&#233;cifie la dur&#233;e d&#233;finissant le d&#233;lai d'expiration d'une recherche. Si la recherche
@@ -205,9 +203,9 @@ renvoy&#233;es.</p>
 <p>Sp&#233;cifie si le serveur LDAP ex&#233;cute ou non SSL. Si l'option est
 s&#233;lectionn&#233;e, SSL est activ&#233; ; si elle est d&#233;s&#233;lectionn&#233;e (valeur par d&#233;faut),
 SSL est d&#233;sactiv&#233;.</p><p>Si le serveur LDAP fonctionne avec SSL activ&#233; (LDAPS), vous devez vous
-assurer que Federated Access Manager est configur&#233; avec les certificats de confiance
-SSL appropri&#233;s, afin que Federated Access Manager puisse se connecter au serveur
-Directory server par le biais du protocole LDAPS.</p>
+assurer qu'OpenSSO est configur&#233; avec les certificats de confiance SSL appropri&#233;s, afin
+qu'OpenSSO puisse se connecter au serveur Directory server par le biais du
+protocole LDAPS.</p>
 
 <a name="fufmk"></a><h5>Taille minimale de pool de connexion LDAP</h5>
 <p>Sp&#233;cifie la taille minimale des pools de connexion devant &#234;tre utilis&#233;s pour
@@ -250,10 +248,9 @@ r&#233;duire de mani&#232;re significative la dur&#233;e d'&#233;valuation de la
 une ressource dont le membre objet sur un serveur Directory Server distant
 a comme alias un utilisateur local. Cet attribut doit &#234;tre activ&#233;, par
 exemple si vous cr&#233;ez <tt>uid=rmuser</tt> sur le serveur Directory Server distant, puis
-ajoutez <tt>rmuser</tt> comme alias d'un utilisateur local (tel que <tt>uid=luser</tt>) dans Federated
-Access Manager. Lorsque vous vous connectez en tant que <tt>rmuser</tt>, une session
-est cr&#233;&#233;e avec l'utilisateur local (<tt>luser</tt>) et l'application de la strat&#233;gie s'effectue
-correctement.</p>
+ajoutez <tt>rmuser</tt> comme alias d'un utilisateur local (tel que <tt>uid=luser</tt>) dans OpenSSO.
+Lorsque vous vous connectez en tant que <tt>rmuser</tt>, une session est cr&#233;&#233;e
+avec l'utilisateur local (<tt>luser</tt>) et l'application de la strat&#233;gie s'effectue correctement.</p>
 
 <a name="fufni"></a><h5>Fournisseurs de r&#233;ponse s&#233;lectionn&#233;s</h5>
 <p>D&#233;finit les plug-ins fournisseurs de r&#233;ponse de strat&#233;gie qui sont activ&#233;s pour

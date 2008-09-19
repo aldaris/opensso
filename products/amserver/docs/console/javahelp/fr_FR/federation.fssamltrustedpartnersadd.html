@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Partenaires de confiance : configuration des attributs du partenaire de confiance - Aide en ligne de la console Sun Federated Access Manager 8.0
+  <title>Partenaires de confiance : configuration des attributs du partenaire de confiance - Aide en ligne de la console Sun OpenSSO&#160;8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -83,10 +83,10 @@ pour terminer la modification.</p>
 <dd><p>Types d'authentification pouvant &#234;tre utilis&#233;s avec SAML :</p>
 <ul><li><p>Sp&#233;cifiez <tt>NOAUTH</tt> si l'URL pointant vers le r&#233;cepteur SOAP SAML est accessible via HTTP, et si le r&#233;cepteur SOAP SAML n'est pas prot&#233;g&#233; par une authentification standard HTTP et/ou SSL.</p></li>
 <li><p>Sp&#233;cifiez <tt>BASICAUTH</tt> si l'URL vers le r&#233;cepteur SOAP SAML est accessible via HTTP, et si le r&#233;cepteur SOAP SAML est prot&#233;g&#233; par une authentification de base HTTP.</p></li>
-<li><p>Sp&#233;cifiez <tt>SSL</tt> si l'URL pointant vers le r&#233;cepteur SOAP SAML est accessible via HTTPS, et si le r&#233;cepteur SOAP SAML n'est pas prot&#233;g&#233; par HTTP SSL.</p></li>
+<li><p>Sp&#233;cifiez <tt>SSL</tt> si l'URL vers le r&#233;cepteur SOAP SAML est accessible via HTTPS, et si le r&#233;cepteur SOAP SAML n'est pas prot&#233;g&#233; par authentification SSL HTTP.</p></li>
 <li><p>Sp&#233;cifiez <tt>SSLWITHBASICAUTH</tt> si l'URL pointant vers le r&#233;cepteur SOAP SAML est accessible via HTTPS, et si le r&#233;cepteur SOAP SAML n'est pas prot&#233;g&#233; par <tt>BASIC AUTH WITH SSL</tt>.</p></li></ul>
 
-<hr><p><b>Remarque &#8211; </b>Si vous prot&#233;gez l'URL du r&#233;cepteur SOAP SAML avec une authentification standard HTTP, vous devez le faire dans la configuration du conteneur Web et non dans la configuration de Federated Access Manager. Cependant, vous devez indiquer l'ID utilisateur et le mot de passe de l'authentification standard HTTP dans la configuration de Federated Access Manager.</p>
+<hr><p><b>Remarque &#8211; </b>Si vous prot&#233;gez l'URL du r&#233;cepteur SOAP SAML avec une authentification de base HTTP, vous devez le faire &#224; partir de la configuration du conteneur Web et pas depuis la configuration OpenSSO. Cependant, vous devez effectivement fournir l'ID utilisateur d'authentification de base HTTP et le mot de passe dans la configuration OpenSSO.</p>
 <hr>
 <p>Cet attribut est facultatif. S'il n'est pas sp&#233;cifi&#233;, la valeur par d&#233;faut est <tt>NOAUTH</tt>. Si <tt>BASICAUTH</tt> ou <tt>SSLWITHBASICAUTH</tt> est sp&#233;cifi&#233;, l'attribut Partenaires de confiance est requis et doit &#234;tre <tt>HTTPS</tt>.</p></dd>
 <dt>Utilisateur</dt>

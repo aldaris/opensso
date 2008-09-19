@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Seguridad - Ayuda en l&#237;nea de la consola de Sun Federated Access Manager 8.0
+  <title>Seguridad - Ayuda en l&#237;nea de la consola de Sun OpenSSO 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -60,7 +60,7 @@ y <tt>com.iplanet.am.util.SecureRandomFactoryImpl </tt> que utiliza Java puro.  
 
 <a name="ggkay"></a><h5>Comunicaciones de nivel bajo de la plataforma Max. Longitud del contenido</h5>
 <p>El valor predeterminado es 16.384 &#243; 16.000. Especifica la longitud m&#225;xima del
-contenido de la solicitud HTTP (<tt>HttpRequest</tt>) que aceptar&#225; Federated Access Manager.</p>
+contenido de la solicitud HTTP (<tt>HttpRequest</tt>) que aceptar&#225; OpenSSO.</p>
 
 <a name="ggkbb"></a><h5>Comprobaci&#243;n de la direcci&#243;n IP del cliente</h5>
 <p>El valor predeterminado es NO.  Especifica si se debe comprobar o
@@ -77,30 +77,29 @@ v&#225;lido. El valor de este nombre de cookie se utiliza para recuperar
 la informaci&#243;n de sesi&#243;n v&#225;lida.</p>
 
 <a name="ggkaw"></a><h5>Cookie segura</h5>
-<p>Permite establecer la cookie de Federated Access Manager en un modo seguro
-en el que el navegador s&#243;lo devolver&#225; la cookie cuando se utilice
-un protocolo seguro como, por ejemplo, <tt>HTTP(s)</tt>. El valor predeterminado es false.
-</p>
+<p>Permite establecer la cookie de OpenSSO en un modo seguro en el
+que el navegador s&#243;lo devolver&#225; la cookie cuando se utilice un protocolo
+seguro como, por ejemplo, <tt>HTTP(s)</tt>. El valor predeterminado es false. </p>
 
 <a name="ggkbk"></a><h5>Codificar valor de cookie</h5>
-<p>Esta propiedad permite a Access Manager codificar mediante URL (<tt>URLencode</tt>) el valor
-de cookie que convierte caracteres en n&#250;meros uno (1) que puede comprender
-el protocolo HTTP.</p>
+<p>Esta propiedad permite a OpenSSO codificar mediante URL (<tt>URLencode</tt>) el valor de
+cookie que convierte caracteres en n&#250;meros uno (1) que puede comprender el
+protocolo HTTP.</p>
 
 <a name="ggkbc"></a><h5>Almac&#233;n de claves</h5>
 <p>Los siguientes atributos permiten configurar la informaci&#243;n del almac&#233;n de claves para
 los servidores y sitios adicionales que cree:</p>
 
 <a name="ggkbj"></a><h5>Archivo del almac&#233;n de claves</h5>
-<p>Este valor se establece durante la instalaci&#243;n. Ejemplo: <tt></tt><i>FederatedAccessManager-base </i><tt>/</tt><i>server_URI</i><tt>/keystore.jks</tt>. Especifica la ruta
+<p>Este valor se establece durante la instalaci&#243;n. Ejemplo: <tt></tt><i>OpenSSO-base </i><tt>/</tt><i>server_URI</i><tt>/keystore.jks</tt>. Especifica la ruta
 al archivo de contrase&#241;as del almac&#233;n de claves XML de SAML.</p>
 
 <a name="ggkbu"></a><h5>Archivo de contrase&#241;as del almac&#233;n de claves</h5>
-<p>Este valor se establece durante la instalaci&#243;n. Ejemplo: <tt></tt><i>FederatedAccessManager-base </i><tt>/</tt><i>server_URI</i><tt>/.storepass</tt>. Especifica la ruta
+<p>Este valor se establece durante la instalaci&#243;n. Ejemplo: <tt></tt><i>OpenSSO-base </i><tt>/</tt><i>server_URI</i><tt>/.storepass</tt>. Especifica la ruta
 al archivo "storepass" de claves XML de SAML.</p>
 
 <a name="ggkbs"></a><h5>Archivo de contrase&#241;as de claves privadas</h5>
-<p>Este valor se establece durante la instalaci&#243;n. Ejemplo: <tt></tt><i>FederatedAccessManager-base </i><tt>/</tt><i>server_URI</i><tt>/.keypass</tt> Especifica la ruta
+<p>Este valor se establece durante la instalaci&#243;n. Ejemplo: <tt></tt><i>OpenSSO-base </i><tt>/</tt><i>server_URI</i><tt>/.keypass</tt> Especifica la ruta
 del archivo de contrase&#241;a de claves XML de SAML.</p>
 
 <a name="ggkaq"></a><h5>Alias de certificado</h5>
@@ -116,14 +115,14 @@ esta informaci&#243;n. </p>
 <a name="ggkch"></a><h5>Nombre de host del servidor LDAP</h5>
 <p>Especifica el nombre del servidor LDAP en el que se almacenan los
 certificados. El valor predeterminado es el nombre de host especificado al instalar
-Federated Access Manager. Se puede utilizar el nombre de host de cualquier
-servidor LDAP en el que se hayan guardado los certificados. </p>
+OpenSSO. Se puede utilizar el nombre de host de cualquier servidor LDAP
+en el que se hayan guardado los certificados. </p>
 
 <a name="ggkau"></a><h5>N&#250;mero de puerto del servidor LDAP</h5>
 <p>Especifica el n&#250;mero de puerto del servidor LDAP en el que se
-almacenan los certificados. El valor predeterminado es el n&#250;mero de puerto especificado
-al instalar Federated Access Manager. Se puede utilizar el puerto de cualquier
-servidor LDAP en el que se hayan guardado los certificados. </p>
+almacenan los certificados. El valor predeterminado es el puerto especificado al instalar
+OpenSSO. Se puede utilizar el puerto de cualquier servidor LDAP en el
+que se hayan guardado los certificados. </p>
 
 <a name="ggkam"></a><h5>SSL activado</h5>
 <p>Especifica si se utiliza SSL para acceder al servidor LDAP. De forma
@@ -141,8 +140,8 @@ se utiliza de forma predeterminada como usuario de conexi&#243;n.</p>
 <a name="ggkce"></a><h5>DN base de b&#250;squeda LDAP</h5>
 <p>Este atributo especifica el DN base utilizado por el asunto de usuarios
 de LDAP del servidor LDAP para comenzar la b&#250;squeda. De forma predeterminada,
-es el dominio de nivel superior de la base de instalaci&#243;n de
-Access Manager.</p>
+es el dominio de nivel superior de la de base de instalaci&#243;n
+de OpenSSO.</p>
 
 <a name="ggkbp"></a><h5>Atributos de b&#250;squeda</h5>
 <p>Se puede utilizar cualquier componente de DN del DN de asunto (<tt>subjectDN</tt>)
@@ -151,14 +150,15 @@ una cadena de valores &#250;nica, como "cn". Todas las CA ra&#237;z deben
 utilizar el mismo atributo de b&#250;squeda.</p>
 
 <a name="ggkaa"></a><h5>Comprobaci&#243;n del Protocolo de estado de los certificados en l&#237;nea</h5>
-<p>El Protocolo de estado de los certificados en l&#237;nea (OCSP) permite a
-los servicios de Federated Access Manager determinar el estado (de revocaci&#243;n) de
-un certificado espec&#237;fico. OCSP se puede utilizar para satisfacer algunos de los
-requisitos operativos relacionados con un suministro m&#225;s oportuno de la informaci&#243;n de
-revocaci&#243;n de la que es posible con las CRL. Adem&#225;s, puede utilizarse
-para obtener informaci&#243;n de estado adicional. Un cliente de OCSP emite una
-solicitud de estado a un contestador de OCSP y suspende la aceptaci&#243;n
-del certificado en cuesti&#243;n hasta que el contestador proporcione una respuesta. </p>
+<p>El protocolo de estado de los certificados en l&#237;nea (OCSP, Online Certificate
+Status Protocol) permite a los servicios de OpenSSO determinar el estado (de
+revocaci&#243;n) de un certificado espec&#237;fico. OCSP se puede utilizar para satisfacer algunos
+de los requisitos operativos relacionados con un suministro m&#225;s oportuno de la
+informaci&#243;n de revocaci&#243;n de la que es posible con las CRL. Adem&#225;s,
+puede utilizarse para obtener informaci&#243;n de estado adicional. Un cliente de OCSP
+emite una solicitud de estado a un contestador de OCSP y suspende
+la aceptaci&#243;n del certificado en cuesti&#243;n hasta que el contestador proporcione una
+respuesta. </p>
 
 <a name="ggkal"></a><h5>Comprobaci&#243;n habilitada</h5>
 <p>Este atributo habilita la comprobaci&#243;n de OCSP. Se habilita de forma predeterminada.</p>

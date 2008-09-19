@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <!-- ident   "%Z%%M% %I%   %E% SMI" -->
 <!DOCTYPE index PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version 2.0//EN" "index_1_0.dtd">
 <index version="2.0">
@@ -76,11 +76,11 @@
  <indexitem target="service.mapcreatedevice" text="Client-Erkennung, So fügen Sie einen neuen Client hinzu"></indexitem>
  <indexitem target="service.scserviceprofile.iplanetamclientdetection" text="Client-Manager"></indexitem>
  <indexitem target="extensioncontainerattributes" text="Container-Erweiterungsattribute"></indexitem>
+ <indexitem target="realm.idrepoeditad" text="Data Store, Active Directory-Attribute"></indexitem>
  <indexitem target="realm.idrepo" text="Data Stores">
     <indexitem target="realm.idrepoeditldapv3" text="LDPAv3-Repository-Plugin-Attribute"></indexitem>
     <indexitem target="realm.idreposelecttype" text="So erstellen Sie einen neuen Data Store"></indexitem>
-    <indexitem target="realm.idrepoeditfamschema" text="Sun Directory Server mit AM-Schemaattributen"></indexitem></indexitem>
- <indexitem target="realm.idrepoeditad" text="Datenspeicher, Active Directory-Attribute"></indexitem>
+    <indexitem target="realm.idrepoeditfamschema" text="Sun Directory Server mit AM-Schema-Attributen"></indexitem></indexitem>
  <indexitem target="serviceupdateenabled" text="Dienstaktualisierung"></indexitem>
  <indexitem target="service.smdiscoverydescriptionadd" text="Dienstbeschreibung, konfigurieren"></indexitem>
  <indexitem target="serviceinstanceupdateclass" text="Dienstinstanz-Aktualisierungsklasse"></indexitem>
@@ -104,9 +104,9 @@
     <indexitem target="federation.createsaml2metadata" text="Anbieter"></indexitem>
     <indexitem target="federation.createsaml2metadata" text="Partner"></indexitem></indexitem>
  <indexitem target="extensionattributesnamespaceprefix" text="Erweiterungsattribute, Namespace-Präfix"></indexitem>
- <indexitem target="service.scserviceprofile.iplanetampasswordresetservice" text="Global Properties, Passwortzurücksetzung"></indexitem>
  <indexitem text="Globale Eigenschaften">
     <indexitem target="service.scserviceprofile.iplanetamuserservice" text="Benutzer"></indexitem>
+    <indexitem target="service.scserviceprofile.iplanetampasswordresetservice" text="Passwortzurücksetzung"></indexitem>
     <indexitem target="service.scpolicy" text="Richtlinienkonfiguration"></indexitem>
     <indexitem target="service.scserviceprofile.amsessionservice" text="Sitzung"></indexitem></indexitem>
  <indexitem text="Identitätsverwaltung">
@@ -114,10 +114,10 @@
         <indexitem target="idm.entitymembership" text="Hinzufügen zu Diensten, Rollen und Gruppen"></indexitem></indexitem></indexitem>
  <indexitem target="useimpliedresource" text="Implizierte Ressource"></indexitem>
  <indexitem target="service.scconfig" text="Konfiguration">
-    <indexitem target="authattrs" text="Authentifizierung"></indexitem>
-    <indexitem target="global" text="Globale Eigenschaften"></indexitem>
-    <indexitem target="consoleprops" text="Konsoleneigenschaften"></indexitem>
-    <indexitem target="systemprops" text="Systemeigenschaften"></indexitem></indexitem>
+    <indexitem target="service.scconfigauth" text="Authentifizierung"></indexitem>
+    <indexitem target="servic.scconfigglobal" text="Globale Eigenschaften"></indexitem>
+    <indexitem target="service.scconfigconsole" text="Konsoleneigenschaften"></indexitem>
+    <indexitem target="service.scfonfigsystem" text="Systemeigenschaften"></indexitem></indexitem>
  <indexitem text="Konsoleneigenschaften">
     <indexitem target="service.scserviceprofile.amadminconsoleservice" text="Administration"></indexitem>
     <indexitem target="service.smg11n" text="Globalisierungseinstellungen"></indexitem></indexitem>

@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>LDAP - Ayuda en l&#237;nea de la consola de Sun Federated Access Manager 8.0
+  <title>LDAP - Ayuda en l&#237;nea de la consola de Sun OpenSSO 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -55,28 +55,27 @@ atributos son:</p>
 
 <a name="fwazv"></a><h5>Servidor LDAP principal</h5>
 <p>Indica el nombre de host y el n&#250;mero de puerto del servidor
-LDAP principal especificado durante la instalaci&#243;n de Federated Access Manager. Este servidor
-es el primero al que se recurre para la autenticaci&#243;n. El formato
-es <tt></tt><i>hostname:port</i><tt></tt>. Si no hay ning&#250;n n&#250;mero de puerto, utilice <tt>389</tt>.</p><p>Si tiene Federated Access Manager implementado con varios dominios, puede especificar el
-v&#237;nculo de comunicaci&#243;n entre instancias espec&#237;ficas de Federated Access Manager y Directory
-Server con el siguiente formato (las distintas entradas deben tener el nombre
-del servidor local como prefijo):</p><p><tt>local_servername|server:port local_servername2|server2:port2 ...</tt></p><p>Por ejemplo, si tiene dos instancias de Federated Access Manager implementadas en
-ubicaciones distintas (L1-machine1-IS y L2- machine2-IS) que se comunican con diferentes instancias
-de Directory Server (L1-machine1-DS y L2-machine2-DS), deber&#237;a mostrar el siguiente aspecto:</p><p><tt>L1-machine1-IS.example.com|L1-machine1-DS.example.com:389 </tt></p><p><tt>L2-machine2-IS.example.com|L2-machine2-DS.example.com:389 </tt></p>
+LDAP principal especificado durante la instalaci&#243;n de OpenSSO. Este servidor es el
+primero al que se recurre para la autenticaci&#243;n. El formato es <tt></tt><i>hostname:port </i><tt></tt>.
+Si no hay ning&#250;n n&#250;mero de puerto, utilice <tt>389 </tt>.</p><p>Si OpenSSO se ha implementado con varios dominios, puede especificar el v&#237;nculo
+de comunicaci&#243;n entre instancias espec&#237;ficas de OpenSSO y Directory Server con el
+siguiente formato (las distintas entradas deben tener el nombre del servidor local
+como prefijo):</p><p><tt>local_servername|server:port local_servername2|server2:port2 ...</tt></p><p>Por ejemplo, si ha implementado dos instancias de OpenSSO en ubicaciones distintas
+(L1-machine1-IS y L2- machine2-IS) que se comunican con diferentes instancias de Directory
+Server (L1-machine1-DS y L2-machine2-DS), deber&#237;a mostrar el siguiente aspecto:</p><p><tt>L1-machine1-IS.example.com|L1-machine1-DS.example.com:389 </tt></p><p><tt>L2-machine2-IS.example.com|L2-machine2-DS.example.com:389 </tt></p>
 
 <a name="fwbac"></a><h5>Servidor LDAP secundario</h5>
 <p>Especifica el nombre de host y el n&#250;mero de puerto de un
-servidor LDAP secundario disponible para la plataforma Federated Access Manager. Si el
-servidor LDAP principal no responde a una solicitud de autenticaci&#243;n, se deber&#225;
-establecer comunicaci&#243;n con este servidor. Si el servidor principal est&#225; activo, Federated
-Access Manager conmutar&#225; al servidor principal. El formato tambi&#233;n es <tt></tt><i>hostname:port</i><tt></tt>. Si
-hay varias entradas, el nombre del servidor local debe ir en primer
-lugar.</p>
-<hr><p><b>Precauci&#243;n &#8211; </b>Al autenticar usuarios de un servidor de directorios que se encuentre lejos
-de la empresa de Federated Access Manager, es importante que existan valores
-para el puerto del servidor LDAP principal y el del servidor LDAP
-secundario. Se puede utilizar el valor de una ubicaci&#243;n de Directory Server
-para ambos campos.</p>
+servidor LDAP secundario disponible para la plataforma OpenSSO. Si el servidor LDAP
+principal no responde a una solicitud de autenticaci&#243;n, se deber&#225; establecer comunicaci&#243;n
+con este servidor. Si el servidor principal est&#225; activo, OpenSSO conmutar&#225; a
+este servidor. El formato tambi&#233;n es <tt></tt><i>hostname:port </i><tt></tt>. Si hay varias entradas, el
+nombre del servidor local debe ir en primer lugar.</p>
+<hr><p><b>Precauci&#243;n &#8211; </b>Al autenticar usuarios de una instancia de Directory Server que se encuentre
+en una ubicaci&#243;n remota, lejos de la instancia de OpenSSO, es importante
+que existan valores para el puerto del servidores LDAP principal y secundario.
+Se puede utilizar el valor de una ubicaci&#243;n de Directory Server para
+ambos campos.</p>
 <hr>
 
 
@@ -113,10 +112,10 @@ se reconocer&#225; la contrase&#241;a LDAP v&#225;lida del administrador.</p>
 
 <a name="fwazs"></a><h5>Atributo utilizado para recuperar el perfil de usuario</h5>
 <p>Especifica el atributo utilizado en el convenio de asignaci&#243;n de nombre de
-las entradas de usuario. De forma predeterminada, Federated Access Manager asume que
-las entradas de usuario se identifican mediante el atributo uid. Si Directory
-Server utiliza un atributo diferente (como, por ejemplo, <i>givenname</i>), especifique el nombre
-de atributo en el campo.</p>
+las entradas de usuario. De forma predeterminada, OpenSSO asume que las entradas
+de usuario se identifican mediante el atributo uid. Si Directory Server utiliza
+un atributo diferente (como, por ejemplo, <i>givenname</i>), especifique el nombre de atributo
+en el campo.</p>
 
 <a name="fwazy"></a><h5>Atributos utilizados para buscar un usuario que se va a autenticar</h5>
 <p>Muestra los atributos que se van a utilizar para formar el filtro
@@ -150,19 +149,18 @@ SUBTREE. Se puede seleccionar una de las siguientes opciones en la lista:</p><dl
 "Puerto y servidor LDAP principales y secundarios". De forma predeterminada, la casilla
 no est&#225; seleccionada y el protocolo SSL no se utilizar&#225; para acceder
 a Directory Server.</p><p>Si se est&#225; ejecutando el servidor LDAP con SSL habilitado (LDAPS), debe
-asegurarse de que Federated Access Manager est&#233; configurado con los certificados SSL
-de confianza adecuados para que AM pueda conectarse al servidor de directorios
-con el protocolo LDAPS</p>
+asegurarse de que OpenSSO est&#233; configurado con los certificados SSL de confianza
+adecuados para que AM pueda conectarse al servidor de directorios con el
+protocolo LDAPS.</p>
 
 <a name="fwbak"></a><h5>Devolver DN de usuario para autenticar</h5>
-<p>Esta opci&#243;n puede habilitarse cuando el directorio de Federated Access Manager es
-igual al directorio configurado para LDAP. En ese caso, esta opci&#243;n permite
-que el m&#243;dulo de autenticaci&#243;n LDAP devuelva el DN en lugar del
-ID de usuario y no es necesario realizar ninguna b&#250;squeda. Normalmente, un
-m&#243;dulo de autenticaci&#243;n devuelve s&#243;lo el Id. de usuario y el servicio
-de autenticaci&#243;n busca al usuario en el LDAP local de Federated Access
-Manager. Si se utiliza un directorio LDAP externo, normalmente esta opci&#243;n no
-est&#225; habilitada.</p>
+<p>Esta opci&#243;n puede habilitarse cuando el directorio de OpenSSO es igual al
+directorio configurado para LDAP. En ese caso, esta opci&#243;n permite que el
+m&#243;dulo de autenticaci&#243;n LDAP devuelva el DN en lugar del ID de
+usuario y no es necesario realizar ninguna b&#250;squeda. Normalmente, un m&#243;dulo de
+autenticaci&#243;n devuelve s&#243;lo el Id. de usuario y el servicio de autenticaci&#243;n
+busca al usuario en la instancia local LDAP de OpenSSO. Si se
+utiliza un directorio LDAP externo, normalmente esta opci&#243;n no est&#225; habilitada.</p>
 
 <a name="fwbaf"></a><h5>Intervalo de comprobaci&#243;n de servidor LDAP</h5>
 <p>Este atributo se utiliza para una conmutaci&#243;n por error del servidor LDAP.

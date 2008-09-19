@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Attributs du service de jeton de s&#233;curit&#233; - Aide en ligne de la console Sun Federated Access Manager 8.0
+  <title>Attributs de l'agent du service de jeton de s&#233;curit&#233; - Aide en ligne de la console Sun OpenSSO&#160;8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -30,7 +30,7 @@
 
 
 
-<a name="agentconfig.webservicestsedit"></a><h4>Attributs du service de jeton de s&#233;curit&#233;</h4>
+<a name="agentconfig.webservicestsedit"></a><h4>Attributs de l'agent du service de jeton de s&#233;curit&#233;</h4>
 <p>Un service de jeton de s&#233;curit&#233; est un service Web qui &#233;met
 et g&#232;re les jetons de s&#233;curit&#233;. Cela signifie que les instructions ou
 les r&#233;clamations de s&#233;curit&#233; figurent souvent dans des ensembles chiffr&#233;s, bien que
@@ -75,20 +75,20 @@ du service de jeton de s&#233;curit&#233;.</p>
 <p>Les attributs suivants d&#233;finissent les attributs de s&#233;curit&#233; du service de jeton
 de s&#233;curit&#233;&#160;:</p>
 
-<a name="ggpdy"></a><h5>M&#233;canisme de s&#233;curit&#233;</h5>
+<a name="ghery"></a><h5>M&#233;canisme de s&#233;curit&#233;</h5>
 <p>D&#233;finit le type de r&#233;f&#233;rence de s&#233;curit&#233; utilis&#233; pour s&#233;curiser la demande
-du service de jeton de s&#233;curit&#233;. Vous pouvez effectuer un choix parmi
-les types de s&#233;curit&#233; suivants&#160;:</p>
+STS. Faites votre choix parmi les types de r&#233;f&#233;rences de s&#233;curit&#233; suivants&#160;:</p>
 <ul><li><p>Anonyme &#8212; Le m&#233;canisme de s&#233;curit&#233; anonyme ne contient aucune r&#233;f&#233;rence de s&#233;curit&#233;.</p></li>
+<li><p>Jeton Kerberos - Utilise des jetons de s&#233;curit&#233; Kerberos.</p></li>
 <li><p>LibertyDiscoverySecurity &#8212; Utilise des jetons de s&#233;curit&#233; Liberty.</p></li>
 <li><p>SAML-HolderOfKey &#8212; Utilise le type d'assertion SAML 1.1 Holder-Of-Key.</p></li>
 <li><p>SAML-SenderVouches &#8212; Utilise le type d'assertion SAML 1.1 SenderVouches.</p></li>
 <li><p>SAML2&#8211;HolderOfKey &#8212; Utilise le type de jeton d'assertion SAML 2.0 Holder-Of-Key.</p></li>
 <li><p>SAML2&#8211;SenderVouches &#8212; Utilise le type de jeton d'assertion SAML 2.0 SenderVouches.</p></li>
-<li><p>STSSecurity &#8212; Sp&#233;cifie que l'agent du service de jeton de s&#233;curit&#233; obtient le jeton de s&#233;curit&#233; aupr&#232;s du service de jeton de s&#233;curit&#233;.</p></li>
-<li><p>UserNameToken &#8212; Utilise un jeton de nom d'utilisateur pour s&#233;curiser les demandes du service de jeton de s&#233;curit&#233;.</p></li>
-<li><p>UserNameToken-Plain &#8212; Utilise un jeton de nom d'utilisateur avec un mot de passe en texte clair pour s&#233;curiser les demandes du service de jeton de s&#233;curit&#233;.</p></li>
-<li><p>X509Token &#8212; Utilise le certificat X509 pour s&#233;curiser le jeton de s&#233;curit&#233;.</p></li></ul>
+<li><p>STSSecurity &#8212; Utilise le jeton de s&#233;curit&#233; g&#233;n&#233;r&#233; &#224; partir du service STS pour un fournisseur de services Web donn&#233;.</p></li>
+<li><p>UserNameToken &#8212; Utilise le jeton de nom d'utilisateur avec un mot de passe digeste.</p></li>
+<li><p>UserNameToken-Plain &#8212; Utilise un jeton de nom d'utilisateur avec un mot de passe en texte clair pour s&#233;curiser les demandes du service Web.</p></li>
+<li><p>X509Token &#8212; Utilise le certificat X509.</p></li></ul>
 
 
 <a name="ggpdk"></a><h5>Configuration STS</h5>
@@ -107,11 +107,11 @@ vue d'un traitement approfondi.</p>
 service de jeton de s&#233;curit&#233; utilise pour g&#233;n&#233;rer un jeton de s&#233;curit&#233;
 de nom d'utilisateur.</p>
 
-<a name="ggpbt"></a><h5>Signature et chiffrement</h5>
+<a name="ggpbt"></a><h5>Signature et codage</h5>
 <p>Les attributs suivants d&#233;finissent la configuration de signature et de chiffrement pour
 le service de jeton de s&#233;curit&#233;&#160;:</p>
 
-<a name="ggpdp"></a><h5>La demande est sign&#233;e</h5>
+<a name="ggpdp"></a><h5>Demande sign&#233;e</h5>
 <p>Lorsque cet attribut est activ&#233;, l'agent du service de jeton de s&#233;curit&#233;
 signe la demande avec un type de jeton donn&#233;.</p>
 
@@ -155,9 +155,50 @@ Les valeurs suivantes doivent &#234;tre d&#233;finies pour un keystore personnal
 <a name="ggpbr"></a><h5>Points d'arriv&#233;e</h5>
 <p>Les attributs suivants d&#233;finissent les points d'arriv&#233;e du service Web&#160;:</p>
 
-<a name="ggpfc"></a><h5>Point d'arriv&#233;e de service Web</h5>
-<p>Cet attribut d&#233;finit un point d'arriv&#233;e de service Web auquel le client
-du service Web fait une demande.</p>
+<a name="ghbab"></a><h5>Extr&#233;mit&#233; du service de jeton de s&#233;curit&#233;</h5>
+<p>Ce champ accepte une valeur du type : </p><p><tt>%protocol://%host:%port%uri/sts</tt> </p><p>Cette syntaxe permet le remplacement dynamique de l'URL d'extr&#233;mit&#233; du service de
+jeton de s&#233;curit&#233;, en fonction des param&#232;tres de session sp&#233;cifiques.</p>
+
+<a name="ghbcm"></a><h5>Extr&#233;mit&#233; MEX du service de jeton de s&#233;curit&#233;</h5>
+<p>Ce champ accepte une valeur du type :</p><p><tt>%protocole://%h&#244;te:%port%uri/sts/mex </tt></p><p>Cette syntaxe permet le remplacement dynamique de l'URL d'extr&#233;mit&#233; MEX du service
+de jeton de s&#233;curit&#233;, en fonction des param&#232;tres de session sp&#233;cifiques.</p>
+
+<a name="ghcdb"></a><h5>Configuration Kerberos</h5>
+<p>Kerberos est un profil de s&#233;curit&#233; pris en charge par les services
+Web de s&#233;curit&#233; pour s&#233;curiser les communications de services Web entre un
+client et un fournisseur de services Web. Dans un sc&#233;nario standard, un
+utilisateur s'authentifie au poste de travail et appelle un service Web et
+le client du service Web. Cette op&#233;ration requiert un ticket Kerberos afin
+de s&#233;curiser la demande au fournisseur de services Web service en identifiant
+son principal comme jeton Kerberos. En r&#232;gle g&#233;n&#233;rale, la s&#233;curit&#233; des services
+Web bas&#233;s sur Kerberos est employ&#233;e dans le contexte d'un domaine Kerberos
+et non pas dans un contexte r&#233;seau h&#233;t&#233;rog&#232;ne ou &#233;tendu comme c'est
+le cas de la s&#233;curit&#233; des services Web bas&#233;e sur SAML. Cependant,
+Kerberos est l'un des plus forts m&#233;canismes d'authentification, en particulier dans l'environnement
+du contr&#244;leur de domaine Windows.</p>
+
+<a name="ghcgo"></a><h5>Serveur de domaine Kerberos</h5>
+<p>Cet attribut indique le nom d'h&#244;te de Kerberos Distribution Center (contr&#244;leur de
+domaine). Vous devez entrer le nom de domaine complet (FQDN) du contr&#244;leur
+de domaine.</p>
+
+<a name="ghceh"></a><h5>Domaine Kerberos</h5>
+<p>Cet attribut indique le nom de domaine de Kerberos Distribution Center (KDC).
+Selon votre configuration, le nom de domaine du contr&#244;leur de domaine peut
+&#234;tre diff&#233;rent du nom de domaine OpenSSO.</p>
+
+<a name="ghcgw"></a><h5>Service du Principal Kerberos</h5>
+<p>Indique le service de jeton de s&#233;curit&#233; principal enregistr&#233; avec le KDC
+(Kerberos Distribution Center). </p><p>Utilisez le format suivant : </p><p><tt>HTTP/nomh&#244;te.nomdomaine&#64;nom_domaine_dc</tt> </p><p><tt>nomh&#244;te</tt> et <tt>nomdomaine</tt> repr&#233;sentent le nom d'h&#244;te et le nom de domaine
+de l'instance OpenSSO. <tt>nom_domaine_dc</tt> est le domaine Kerberos dans lequel le serveur
+Kerberos Windows  (contr&#244;leur de domaine) r&#233;side. Le serveur Kerberos peut &#234;tre
+diff&#233;rent du nom de domaine de l'instance OpenSSO.</p>
+
+<a name="ghcea"></a><h5>R&#233;pertoire cache des tickets Kerberos</h5>
+<p>Sp&#233;cifie le r&#233;pertoire du cache Kerberos TGT (Ticket Granting Ticket). Lorsque l'utilisateur
+s'authentifie aupr&#232;s de l'ordinateur ou effectue une initialisation &#224; l'aide de <tt> kinit</tt>
+(la commande permettant d'obtenir le ticket TGT aupr&#232;s de KDC), le ticket
+TGT est stock&#233; dans le cache local, comme indiqu&#233; dans cet attribut.</p>
 <br/>
 
 </body>

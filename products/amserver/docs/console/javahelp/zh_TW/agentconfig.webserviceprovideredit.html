@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Web 服務提供者 - Sun Federated Access Manager 8.0 主控台線上說明
+  <title>Web 服務提供者 - Sun OpenSSO 8.0 主控台線上說明
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -58,6 +58,7 @@
 <a name="gglhw"></a><h5>安全機制</h5>
 <p>定義用來驗證 Web 服務請求的安全憑證的類型。安全性機制的類型是 Web 服務用戶端的 Web 服務請求的一部分，並且會被 Web 服務提供者接受。選擇下列類型：</p>
 <ul><li><p>匿名 &#8212; 匿名安全機制不包含安全憑證。</p></li>
+<li><p>KerberosToken &#8212; 使用 Kerberos 安全性記號。</p></li>
 <li><p>LibertyBearerToken &#8211; 使用 Liberty 定義的 Bearer 記號。</p></li>
 <li><p>LibertySAMLToken &#8211; 使用 Libery 定義的 SAML 記號。</p></li>
 <li><p>LibertyX509Token &#8211; 使用 Libery 定義的 X509 憑證。</p></li>
@@ -71,19 +72,27 @@
 
 
 <a name="gglfy"></a><h5>認證鏈接</h5>
-<p>定義認證鏈接或服務名稱，它們可使用來自內送 Web 服務請求之安全性記號的憑證對 Federated Access Manager 認證服務進行認證，以產生 Federated Access Manager 的認證 SSOToken。</p>
+<p>定義認證鏈接或服務名稱，它們可使用來自內送 Web 服務請求之安全性記號的憑證認證至 OpenSSO 認證服務，以產生 OpenSSO 的認證 SSOToken。</p>
+
+<a name="ghbbd"></a><h5>記號轉換類型</h5>
+<p>定義當 Web 服務提供者從安全性記號服務請求記號轉換時，要轉換的記號類型。將記號轉換為具有相同身份的指定 SAML 或 SSOToken (階段作業記號) 時，但卻使用該記號類型專屬的屬性定義。Web 服務提供者使用此新記號呼叫其他 Web 服務提供者以進行 Web
+服務時。您可定義的記號類型有：</p>
+<ul><li><p>SAML 1.1 記號</p></li>
+<li><p>SAML2 記號</p></li>
+<li><p>SSOToken</p></li></ul>
+<p>為了使用此屬性，必須選取<a href="#gglhw">安全機制</a>屬性中的任何 SAML 記號，以及為 Web 服務提供者定義任何<a href="#gglfy">認證鏈接</a>。</p>
 
 <a name="ggoum"></a><h5>保留訊息中的安全性標頭</h5>
 <p>啟用時，此屬性會定義 Web 服務提供者保留 SOAP 安全性標頭以供進一步處理。</p>
+
+<a name="gglhq"></a><h5>私有金鑰類型</h5>
+<p>定義 Web 服務提供者在 Web 服務請求簽名確認過程中使用的金鑰類型。預設值為 <tt>PublicKey</tt>。</p>
 
 <a name="ggovi"></a><h5>Liberty 服務類型 URN</h5>
 <p>URN (Universal Resource Name，通用資源名稱) 說明 Web 服務提供者用來進行服務查找的 Liberty 服務類型。</p>
 
 <a name="ggovn"></a><h5>使用者記號的憑證</h5>
 <p>此屬性代表使用者名稱/密碼共用密碼，這些密碼由 Web 服務提供者用來驗證來自內送 Web 服務請求的使用者名稱安全性記號。這些憑證會與來自內送 Web 服務請求的使用者名稱安全性記號的憑證進行比較。</p>
-
-<a name="gglhq"></a><h5>私有金鑰類型</h5>
-<p>定義 Web 服務提供者在 Web 服務請求簽名確認過程中使用的金鑰類型。預設值為 <tt>PublicKey</tt>。</p>
 
 <a name="gglfz"></a><h5>SAML 配置</h5>
 <p>下列屬性會配置 Web 服務提供者的安全宣示標記語言 (Security Assertion Markup Language, SAML)：</p>
@@ -139,6 +148,31 @@
 
 <a name="gglmp"></a><h5>Web 服務代理伺服器端點</h5>
 <p>此屬性定義 Web 服務端點，Web 服務用戶端會對此端點發出請求。端點是選擇性的，除非已配置為使用 Web 安全性代理伺服器。</p>
+
+<a name="ghbed"></a><h5>Web 服務端點</h5>
+<p>此屬性定義 Web 服務端點，Web 服務用戶端會對此端點發出請求。</p>
+
+<a name="ghbay"></a><h5>Kerberos 配置</h5>
+<p>Kerberos 是 Web 服務安全所支援的安全性設定檔，可以保護 Web 服務用戶端與 Web 服務提供者之間 Web 服務通訊。在通常情況下，使用者會認證至桌面，並呼叫 Web 服務與
+Web 服務用戶端。這需要 Kerberos 票證，將針對 Web 服務提供者的請求的主體識別為 Keberos 記號，以保護該請求。通常，基於 Kerberos 的 Web 服務安全性用在與
+Kerberos 網域 (範圍) 相同的環境中，這與跨界 (例如 SAML 式的 Web 服務安全性) 相反。不過，Kerberos 卻是最強大的認證機制之一，特別是在 Windows
+網域控制器環境下。</p>
+
+<a name="ghbbv"></a><h5>Kerberos 網域伺服器</h5>
+<p>此屬性指定 Kerberos 發行中心 (網域控制器) 主機名稱。您必須輸入網域控制器的完整網域名稱 (FQDN)。</p>
+
+<a name="ghbdx"></a><h5>Kerberos 網域</h5>
+<p>此屬性指定 Kerberos 發行中心 (網域控制器) 網域名稱。依據您的配置，網域控制器的網域名稱可與 OpenSSO 網域名稱不同。</p>
+
+<a name="ghbcq"></a><h5>Kerberos 服務主體</h5>
+<p>將 Kerberos 主體指定為產生之安全性記號的所有者。</p><p>請使用以下格式：</p><p><tt>HTTP/hostname.domainname@dc_domain_name</tt></p><p><tt>hostname</tt> 與 <tt>domainame</tt> 代表 OpenSSO 實例的主機名稱與網域名稱。<tt>dc_domain_name</tt> 是 Windows Kerberos 伺服器 (網域控制器) 所在的
+Kerberos 網域。Kerberos 伺服器可能與 OpenSSO 實例的網域名稱不同。</p>
+
+<a name="ghbae"></a><h5>Kerberos 金鑰標籤檔案</h5>
+<p>此屬性指定用於發行記號的 Kerberos keytab 檔案。雖然不要求格式，但是請使用以下格式：</p><p><tt>hostname.HTTP.keytab</tt></p><p><tt>hostname</tt> 是 OpenSSO 實例的主機名稱。</p>
+
+<a name="ghbep"></a><h5>驗證 Kerberos 簽名</h5>
+<p>若啟用，此屬性會指定已簽署 Kerberos 記號。</p>
 <br/>
 
 </body>

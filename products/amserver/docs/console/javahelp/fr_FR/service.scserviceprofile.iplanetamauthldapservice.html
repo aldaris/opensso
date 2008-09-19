@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>LDAP - Aide en ligne de la console Sun Federated Access Manager 8.0
+  <title>LDAP - Aide en ligne de la console Sun OpenSSO&#160;8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -55,27 +55,26 @@ les suivants :</p>
 
 <a name="fwazv"></a><h5>Serveur LDAP principal</h5>
 <p>Indique le nom d'h&#244;te et le num&#233;ro de port du serveur LDAP
-principal d&#233;fini lors de l'installation de Federated Access Manager. C'est le premier
-serveur contact&#233; pour l'authentification. Le format est <tt></tt><i>nomh&#244;te:port</i><tt></tt>. Si aucun num&#233;ro de
-port n'est sp&#233;cifi&#233;, le port <tt>389</tt> est utilis&#233; par d&#233;faut.</p><p>Si Federated Access Manager est d&#233;ploy&#233; avec plusieurs domaines, vous pouvez sp&#233;cifier
-la liaison de communication entre des instances sp&#233;cifiques de Federated Access Manager
-et de Directory Server dans le format suivant (les entr&#233;es multiples doivent
-&#234;tre pr&#233;c&#233;d&#233;es du nom du serveur local) :</p><p><tt>nomserveur_local|serveur:port nomserveur_local2|serveur2:port2 ...</tt></p><p>Par exemple, si vous avez d&#233;ploy&#233; deux instances Federated Access Manager dans
-diff&#233;rents emplacements (L1-machine1-IS et L2- machine2-IS) qui communiquent avec diff&#233;rentes instances de
-Directory Server (L1-machine1-DS et L2-machine2-DS), la liaison de communication est la suivante
-:</p><p><tt>L1-machine1-IS.exemple.com|L1-machine1-DS.exemple.com:389 </tt></p><p><tt>L2-machine2-IS.exemple.com|L2-machine2-DS.exemple.com:389 </tt></p>
+principal d&#233;fini lors de l'installation d'OpenSSO. C'est le premier serveur contact&#233; pour
+l'authentification. Le format est <tt></tt><i>nomh&#244;te:port </i><tt></tt>. Si aucun num&#233;ro de port n'est sp&#233;cifi&#233;,
+le port <tt>389</tt> est utilis&#233; par d&#233;faut .</p><p>Si OpenSSO est d&#233;ploy&#233; avec plusieurs domaines, vous pouvez sp&#233;cifier la liaison
+de communication entre des instances sp&#233;cifiques d'OpenSSO et de Directory Server dans
+le format suivant (les entr&#233;es multiples doivent &#234;tre pr&#233;c&#233;d&#233;es du nom du
+serveur local)&#160;:</p><p><tt>nomserveur_local|serveur:port nomserveur_local2|serveur2:port2 ...</tt></p><p>Par exemple, si vous avez d&#233;ploy&#233; deux instances OpenSSO dans diff&#233;rents emplacements
+(L1-machine1-IS et L2- machine2-IS) qui communiquent avec diff&#233;rentes instances de Directory Server
+(L1-machine1-DS et L2-machine2-DS), la liaison de communication est la suivante&#160;:</p><p><tt>L1-machine1-IS.exemple.com|L1-machine1-DS.exemple.com:389 </tt></p><p><tt>L2-machine2-IS.exemple.com|L2-machine2-DS.exemple.com:389 </tt></p>
 
 <a name="fwbac"></a><h5>Serveur LDAP secondaire</h5>
 <p>Sp&#233;cifie le nom d'h&#244;te et le num&#233;ro de port du serveur LDAP
-secondaire disponible pour la plate-forme Federated Access Manager. Si le serveur LDAP
-principal ne r&#233;pond pas &#224; une demande d'authentification, ce serveur sera contact&#233;.
-Si le serveur principal est en fonctionnement, Federated Access Manager rebascule vers
-ce serveur principal. Le format est &#233;galement <tt></tt><i>nomh&#244;te:port</i><tt></tt>. Les entr&#233;es multiples doivent
-&#234;tre pr&#233;c&#233;d&#233;es du nom du serveur local.</p>
+secondaire disponible pour la plate-forme OpenSSO. Si le serveur LDAP principal ne
+r&#233;pond pas &#224; une demande d'authentification, ce serveur sera contact&#233;. Si le
+serveur principal est en fonctionnement, OpenSSO rebascule vers ce serveur principal. Le
+format est &#233;galement <tt></tt><i>nomh&#244;te:port </i><tt></tt>. Les entr&#233;es multiples doivent &#234;tre pr&#233;c&#233;d&#233;es du nom
+du serveur local.</p>
 <hr><p><b>Attention &#8211; </b>Lors de l'authentification d'utilisateurs &#224; partir d'un serveur Directory Server distant par
-rapport &#224; l'entreprise Federated Access Manager, il est important de sp&#233;cifier les
-ports primaires et secondaires LDAP. La valeur d'un seul emplacement de serveur
-Directory Server peut &#234;tre utilis&#233;e pour les deux champs.</p>
+rapport &#224; l'entreprise OpenSSO, il est important de sp&#233;cifier les ports primaires
+et secondaires LDAP. La valeur d'un seul emplacement de serveur Directory Server
+peut &#234;tre utilis&#233;e pour les deux champs.</p>
 <hr>
 
 
@@ -111,16 +110,16 @@ d&#233;faut. Seul le mot de passe LDAP valide de l'administrateur sera reconnu.<
 
 <a name="fwazs"></a><h5>Attribut utilis&#233; pour r&#233;cup&#233;rer le profil utilisateur</h5>
 <p>Indique l'attribut utilis&#233; comme convention de nommage des entr&#233;es utilisateur. Par d&#233;faut,
-Federated Access Manager suppose que les entr&#233;es utilisateur sont identifi&#233;es par l'attribut
-uid. Si votre serveur Directory Server utilise un attribut diff&#233;rent (tel que
-<i>givenname</i>), indiquez son nom dans ce champ.</p>
+OpenSSO suppose que les entr&#233;es utilisateur sont identifi&#233;es par l'attribut uid. Si
+votre serveur Directory Server utilise un attribut diff&#233;rent (tel que <i>givenname</i>), indiquez
+son nom dans ce champ.</p>
 
 <a name="fwazy"></a><h5>Attributs utilis&#233;s pour rechercher un utilisateur &#224; authentifier</h5>
 <p>R&#233;pertorie les attributs du filtre de recherche &#224; utiliser pour authentifier un
 utilisateur, et permet &#224; l'utilisateur de s'authentifier avec plusieurs attributs dans son
 entr&#233;e. Par exemple, si ce champ contient <i>uid</i>, <i>employeenumber</i> et <i>mail</i>, l'utilisateur
 peut s'authentifier avec chacun de ces noms. Ces attributs doivent &#234;tre d&#233;finis
-s&#233;paremment. </p>
+s&#233;par&#233;ment. </p>
 
 <a name="fwazw"></a><h5>Filtre de recherche d'utilisateur</h5>
 <p>Indique l&#8217;attribut &#224; utiliser pour trouver un utilisateur &#224; l'aide du champ
@@ -146,18 +145,17 @@ L'un des choix suivants peut &#234;tre s&#233;lectionn&#233; dans la liste :</p>
 et port LDAP principaux et secondaires. Par d&#233;faut, cette case n'est pas
 coch&#233;e et le protocole SSL n'est pas utilis&#233; pour acc&#233;der &#224; Directory
 Server.</p><p>Si le serveur LDAP fonctionne avec SSL activ&#233; (LDAPS), vous devez vous
-assurer que Federated Access Manager est configur&#233; avec les certificats de confiance
-SSL appropri&#233;s, afin qu'AM puisse se connecter au serveur Directory Server par
-le biais du protocole LDAPS.</p>
+assurer que OpenSSO est configur&#233; avec les certificats de confiance SSL appropri&#233;s,
+afin qu'AM puisse se connecter au serveur Directory Server par le biais
+du protocole LDAPS.</p>
 
 <a name="fwbak"></a><h5>Renvoyer DN utilisateur &#224; authentifier</h5>
-<p>Lorsque le r&#233;pertoire Federated Access Manager est identique &#224; celui configur&#233; pour
-LDAP, cette option peut &#234;tre activ&#233;e. Dans ce cas, elle permet au
-module d'authentification LDAP de renvoyer le DN au lieu de l'ID utilisateur
-et aucune recherche n'est n&#233;cessaire. Normalement, un module d'authentification renvoie uniquement l'ID
-utilisateur et le service d'authentification cherche l'utilisateur dans le LDAP du serveur
-Federated Access Manager local. Si un r&#233;pertoire LDAP externe est utilis&#233;, cette
-option n'est g&#233;n&#233;ralement pas activ&#233;e.</p>
+<p>Lorsque l'annuaire OpenSSO est identique &#224; celui configur&#233; pour LDAP, cette option
+peut &#234;tre activ&#233;e. Dans ce cas, elle permet au module d'authentification LDAP
+de renvoyer le DN au lieu de l'ID utilisateur et aucune recherche
+n'est n&#233;cessaire. Normalement, un module d'authentification renvoie uniquement l'ID utilisateur et le
+service d'authentification cherche l'utilisateur dans le LDAP du serveur OpenSSO local. Si
+un r&#233;pertoire LDAP externe est utilis&#233;, cette option n'est g&#233;n&#233;ralement pas activ&#233;e.</p>
 
 <a name="fwbaf"></a><h5>Intervalle de recherche de serveur LDAP</h5>
 <p>Cet attribut est utilis&#233; pour le r&#233;tablissement du serveur LDAP. Il d&#233;finit

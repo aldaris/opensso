@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>階段作業 - Sun Federated Access Manager 8.0 主控台線上說明
+  <title>階段作業 - Sun OpenSSO 8.0 主控台線上說明
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -43,14 +43,13 @@
 <p>預設值為 10。指定當階段作業建立後且使用者未登入時，從階段作業表格中移除該無效階段作業之前的期限 (以分鐘為單位)。此值應始終大於「認證」模組特性檔中的逾時值。</p>
 
 <a name="ggkaf"></a><h5>階段作業清除延遲</h5>
-<p>預設值為 60。指定清除階段作業操作的延遲時間 (以分鐘為單位)。在階段作業逾時之後，階段作業將在這段延長的時間內繼續位於階段作業伺服器上。用戶端應用程式使用此特性來檢查階段作業是否經由 SSO API 而逾時。這段延長的時間快結束時，階段作業就會被銷毀。如果使用者登出或 Access Manager 元件明確銷毀階段作業，則階段作業不會在這段延長的時間內持續不變。階段作業在這段延長的時間內會處於「無效」狀態。</p>
+<p>預設值為 60。指定清除階段作業操作的延遲時間 (以分鐘為單位)。在階段作業逾時之後，階段作業將在這段延長的時間內繼續位於階段作業伺服器上。用戶端應用程式使用此特性來檢查階段作業是否經由 SSO API 而逾時。這段延長的時間快結束時，階段作業就會被銷毀。如果使用者登出或 OpenSSO 元件明確銷毀階段作業，則階段作業不會在這段延長的時間內持續不變。階段作業在這段延長的時間內會處於「無效」狀態。</p>
 
 <a name="ggkbl"></a><h5>統計</h5>
 <p>下列屬性會設定統計配置：</p>
 
 <a name="ggkbf"></a><h5>記錄間隔</h5>
-<p>預設值為 60。指定兩次統計記錄之間經過的時間 (以分鐘為單位)。最小值為 5 秒，以避免 CPU 飽和。Access Manager 會將任何少於 5 秒的值視為 5
-秒。</p>
+<p>預設值為 60。指定兩次統計記錄之間經過的時間 (以分鐘為單位)。最小值為 5 秒，以避免 CPU 飽和。OpenSSO 會將任何少於 5 秒的值視為 5 秒。</p>
 
 <a name="ggkbn"></a><h5>狀態</h5>
 <p>預設值為「檔案」。指定統計記錄的位置。可能的值包括：</p>
@@ -60,7 +59,7 @@
 
 
 <a name="ggkcf"></a><h5>目錄</h5>
-<p>值會在安裝期間設定。範例：<tt></tt><i>FederatedAccessManager-base </i><tt>/</tt><i>server-URI</i><tt>/stats</tt>。指定建立除錯檔的目錄。</p>
+<p>值會在安裝期間設定。範例：<tt></tt><i>OpenSSO-base </i><tt>/</tt><i>server-URI</i><tt>/stats</tt>。指定建立除錯檔的目錄。</p>
 
 <a name="ggkca"></a><h5>啟用主機查找</h5>
 <p>預設值為 false。啟用或停用在階段作業登入期間執行主機查找。</p>

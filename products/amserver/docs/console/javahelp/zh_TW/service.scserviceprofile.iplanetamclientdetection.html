@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>用戶端偵測 - Sun Federated Access Manager 8.0 主控台線上說明
+  <title>用戶端偵測 - Sun OpenSSO 8.0 主控台線上說明
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,8 +31,8 @@
 
 
 <a name="service.scserviceprofile.iplanetamclientdetection"></a><h4>用戶端偵測</h4>
-<p><a name="indexterm-200"></a>認證程序的起始步驟就是識別發出 HTTP(S) 請求的用戶端類型。此 Federated Access Manager 功能稱為用戶端偵測。URL 資訊用於擷取用戶端的特徵。根據這些特性，會傳回適當的認證頁面。例如，使用 Netscape 瀏覽器請求網頁時，Federated Access Manager
-8.0 會顯示 HTML 登入頁面。一旦使用者通過驗證，用戶端類型 (Netscape 瀏覽器) 會新增至階段作業記號。用戶端偵測服務中定義的屬性為全域屬性。</p>
+<p><a name="indexterm-200"></a>認證程序的起始步驟就是識別發出 HTTP(S) 請求的用戶端類型。此 OpenSSO 功能也稱為用戶端偵測。URL 資訊用於擷取用戶端的特徵。根據這些特性，會傳回適當的認證頁面。例如，使用 Netscape 瀏覽器請求網頁時，OpenSSO 8.0 會顯示 HTML 登入頁面。一旦使用者通過驗證，用戶端類型
+(Netscape 瀏覽器) 會新增至階段作業記號。用戶端偵測服務中定義的屬性為全域屬性。</p>
 <ul><li><p><a href="#fxcei">用戶端類型</a></p></li>
 <li><p><a href="#fxbxh">預設用戶端類型</a></p></li>
 <li><p><a href="#fxccp">用戶端偵測類別</a></p></li>
@@ -40,7 +40,7 @@
 
 
 <a name="fxcei"></a><h5>用戶端類型</h5>
-<p>為了偵測用戶端類型，Federated Access Manager 需要識別它們的識別特徵。這些特徵可識別用戶端資料格式的所有支援類型的內容。此屬性可讓您透過 [用戶端管理員] 介面修改用戶端資料。若要存取 [用戶端管理員]，請按一下 [編輯] 連結。依預設，Federated Access Manager 包含以下用戶端類型：</p>
+<p>為了偵測用戶端類型，OpenSSO 需要識別它們的識別特徵。這些特徵可識別用戶端資料格式的所有支援類型的內容。此屬性可讓您透過 [用戶端管理員] 介面修改用戶端資料。若要存取 [用戶端管理員]，請按一下 [編輯] 連結。OpenSSO 預設包含以下用戶端類型：</p>
 <ul><li><p>HDML</p></li>
 <li><p>HTML</p></li>
 <li><p>JHTML</p></li>
@@ -79,10 +79,10 @@
 <p>此屬性定義從 [用戶端類型] 屬性的用戶端類型清單中導出的預設用戶端類型。預設值為 genericHTML。</p>
 
 <a name="fxccp"></a><h5>用戶端偵測類別</h5>
-<p>此屬性定義路由所有用戶端偵測請求的用戶端偵測類別。此屬性傳回的字串應該與 [用戶端類型] 屬性中列出的某種用戶端類型相符。預設用戶端偵測類別為 <tt>com.sun.mobile.cdm.FEDIClientDetector</tt>。Federated Access Manager 也包含 <tt>com.iplanet.services.cdm.</tt><tt>ClientDetectionDefaultImpl</tt>。</p>
+<p>此屬性定義路由所有用戶端偵測請求的用戶端偵測類別。此屬性傳回的字串應該與 [用戶端類型] 屬性中列出的某種用戶端類型相符。預設用戶端偵測類別為 <tt>com.sun.mobile.cdm.FEDIClientDetector</tt>。OpenSSO 也包含 <tt>com.iplanet.services.cdm.</tt><tt>ClientDetectionDefaultImpl</tt>。</p>
 
 <a name="fxbvy"></a><h5>用戶端偵測</h5>
-<p>啟用用戶端偵測。如果啟用了用戶端偵測 (預設值)，則會透過用戶端偵測類別屬性中指定的類別路由每個請求。依預設，會啟用用戶端偵測功能。如果未選取此屬性，則 Federated Access Manager 假定用戶端是 genericHTML，並可透過 HTML 瀏覽器存取。</p>
+<p>啟用用戶端偵測。如果啟用了用戶端偵測 (預設值)，則會透過用戶端偵測類別屬性中指定的類別路由每個請求。依預設，會啟用用戶端偵測功能。如果未選取此屬性，則 OpenSSO 假定用戶端是 genericHTML，並可透過 HTML 瀏覽器存取。</p>
 <br/>
 
 </body>

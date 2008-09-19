@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Sicherheit - Online-Hilfe zur Sun Federated Access Manager 8.0-Konsole
+  <title>Sicherheit - Online-Hilfe zur Sun OpenSSO 8.0-Konsole
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -60,7 +60,7 @@ sind verf&#252;gbar:: <tt>com.iplanet.am.util.JSSSecureRandomFactoryImpl </tt>, 
 
 <a name="ggkay"></a><h5>Plattform-Low-Level-Comm. Max. Inhaltsl&#228;nge</h5>
 <p>Standardwert: 16384 bzw. 16 k. Gibt die maximale Inhaltsl&#228;nge f&#252;r eine <tt>HttpRequest</tt>
-an, die Federated Access Manager akzeptiert.</p>
+an, die OpenSSO akzeptiert.</p>
 
 <a name="ggkbb"></a><h5>&#220;berpr&#252;fung der Client-IP-Adresse</h5>
 <p>Der Standardwert ist "NO" (NEIN). Gibt an, ob die IP-Adresse des Client
@@ -74,29 +74,29 @@ in allen  <tt>SSOToken</tt>-Erstellungen bzw. -Validierungen &#252;berpr&#252;ft
 verwendet. Der Wert dieses Cookie-Namens dient zum Abrufen der g&#252;ltigen Sitzungsinformationen.</p>
 
 <a name="ggkaw"></a><h5>Sicheres Cookie</h5>
-<p>Erm&#246;glicht die Festlegung des Federated Access Manager-Cookies in einem sicheren Modus, in
-dem der Browser das Cookie nur zur&#252;ckgibt, wenn ein sicheres Protokoll, wie
-beispielsweise <tt>HTTP(s)</tt>, verwendet wird. Der Standardwert lautet "false". </p>
+<p>Erm&#246;glicht die Festlegung des OpenSSO-Cookies in einem sicheren Modus, in dem der
+Browser das Cookie nur zur&#252;ckgibt, wenn ein sicheres Protokoll, wie beispielsweise <tt>HTTP(s)</tt>,
+verwendet wird. Der Standardwert lautet "false". </p>
 
 <a name="ggkbk"></a><h5>Kodierter Cookie-Wert</h5>
-<p>Mit dieser Eigenschaft kann Access Manager den Vorgang <tt>URLencode</tt> f&#252;r den Cookie-Wert
-durchf&#252;hren, wodurch die Zeichen so umgewandelt werden, dass sie von HTTP verstanden
-werden k&#246;nnen.</p>
+<p>Mit dieser Eigenschaft kann OpenSSO den Vorgang <tt>URLencode</tt> f&#252;r den Cookie-Wert durchf&#252;hren,
+wodurch die Zeichen so umgewandelt werden, dass sie von HTTP verstanden werden
+k&#246;nnen.</p>
 
 <a name="ggkbc"></a><h5>Schl&#252;sselspeicher</h5>
 <p>Mit den folgenden Attributen k&#246;nnen Sie Schl&#252;sselspeicherinformationen f&#252;r zus&#228;tzliche Sites und Servers
 konfigurieren, die Sie erstellen:</p>
 
 <a name="ggkbj"></a><h5>Schl&#252;sselspeicher-Datei</h5>
-<p>Der  Wert wird w&#228;hrend der Installation festgelegt. Beispiel: <tt></tt><i>FederatedAccessManager-base </i><tt>/</tt><i>server_URI</i><tt>/keystore.jks</tt>. Gibt den
+<p>Der  Wert wird w&#228;hrend der Installation festgelegt. Beispiel: <tt></tt><i>OpenSSO-base </i><tt>/</tt><i>server_URI</i><tt>/keystore.jks</tt>. Gibt den
 Namen zur Passwortdatei f&#252;r den SAML XML-Schl&#252;sselspeicher an.</p>
 
 <a name="ggkbu"></a><h5>Schl&#252;sselspeicher-Passwortdatei</h5>
-<p>Der  Wert wird w&#228;hrend der Installation festgelegt. Beispiel: <tt></tt><i>FederatedAccessManager-base </i><tt>/</tt><i>server_URI</i><tt>/.storepass</tt>. Gibt den
+<p>Der  Wert wird w&#228;hrend der Installation festgelegt. Beispiel: <tt></tt><i>OpenSSO-base </i><tt>/</tt><i>server_URI</i><tt>/.storepass</tt>. Gibt den
 Namen zur storepass-Datei f&#252;r den SAML XML-Schl&#252;ssel an.</p>
 
 <a name="ggkbs"></a><h5>Passwortdatei f&#252;r privaten Schl&#252;ssel</h5>
-<p>Der  Wert wird w&#228;hrend der Installation festgelegt. Beispiel: <tt></tt><i>FederatedAccessManager-base </i><tt>/</tt><i>server_URI</i><tt>/.keypass</tt> Gibt den
+<p>Der  Wert wird w&#228;hrend der Installation festgelegt. Beispiel: <tt></tt><i>OpenSSO-base </i><tt>/</tt><i>server_URI</i><tt>/.keypass</tt> Gibt den
 Pfad zur Passwortdatei f&#252;r den SAML XML-Schl&#252;ssel an.</p>
 
 <a name="ggkaq"></a><h5>Zertifikat-Alias</h5>
@@ -110,15 +110,15 @@ Grundlage dieser Informationen. </p>
 
 <a name="ggkch"></a><h5>LDAP-Server-Hostname</h5>
 <p>Gibt den Namen des LDAP-Servers an, auf dem die Zertifikate gespeichert sind.
-Der Standardwert ist der bei der Installation von Federated Access Manager angegebene
-Hostname. Es kann der Hostname jedes LDAP-Servers verwendet werden, auf dem die
-Zertifikate gespeichert werden. </p>
+Der Standardwert ist der bei der Installation von OpenSSO angegebene Hostname. Es
+kann der Hostname jedes LDAP-Servers verwendet werden, auf dem die Zertifikate gespeichert
+werden. </p>
 
 <a name="ggkau"></a><h5>LDAP-Server-Anschlussnummer</h5>
 <p>Gibt die Anschlussnummer des LDAP-Servers an, auf dem die Zertifikate gespeichert sind.
-Der Standardwert ist die bei der Installation von Federated Access Manager angegebene
-Anschlussnummer. Es kann die Anschlussnummer jedes LDAP-Servers verwendet werden, auf dem die
-Zertifikate gespeichert werden. </p>
+Der Standardwert ist der bei der Installation von OpenSSO angegebene Anschluss. Es
+kann die Anschlussnummer jedes LDAP-Servers verwendet werden, auf dem die Zertifikate gespeichert
+werden. </p>
 
 <a name="ggkam"></a><h5>SSL aktiviert</h5>
 <p>Legt fest, ob SSL f&#252;r den Zugriff auf den LDAP-Server eingesetzt werden
@@ -135,8 +135,7 @@ wurde, als BIND-Passwort verwendet.</p>
 
 <a name="ggkce"></a><h5>Basis-DN der LDAP-Suche</h5>
 <p>Dieses Attribut legt den vom LDAP-Benutzer-Betreff verwendeten Basis-DN des LDAP-Servers fest, bei
-dem die Suche beginnt. Standardm&#228;&#223;ig ist dies der oberste Bereich der Access
-Manager-Installationsbasis.</p>
+dem die Suche beginnt. Standardm&#228;&#223;ig ist dies der oberste Bereich der OpenSSO-Installationsbasis.</p>
 
 <a name="ggkbp"></a><h5>Such-Attribute</h5>
 <p>Jede beliebige DN-Komponente des <tt>subjectDN</tt> des Ausstellers kann zum Abrufen einer CRL
@@ -145,12 +144,12 @@ mit einem einzigen Wert wie z. B. "cn".  Alle Root CAs
 m&#252;ssen dasselbe Suchattribut verwenden.</p>
 
 <a name="ggkaa"></a><h5>&#220;berpr&#252;fung des Online Certificate Status Protocol</h5>
-<p>Das Online Certificate Status Protocol (OCSP) erm&#246;glicht Federated Access Manager-Diensten, den (Widerruf-)Status
-eines bestimmten Zertifikats zu bestimmen. OCSP kann verwendet werden, um einige der
-Betriebsvoraussetzungen zu erf&#252;llen, die darin bestehen, zeitn&#228;here Widerrufinformationen bereitzustellen, als mit CRLs
-m&#246;glich ist. Au&#223;erdem k&#246;nnen sie zum Abrufen weiterer Statusinformationen verwendet werden. Ein
-OCSP-Client gibt eine Statusanforderung an einen OCSP-Empf&#228;nger aus und wartet mit dem
-Akzeptieren des fraglichen Zertifikats, bis der Empf&#228;nger eine Antwort bereitstellt. </p>
+<p>Das Online Certificate Status Protocol (OCSP) erm&#246;glicht OpenSSO-Diensten, den (Widerruf-)Status eines bestimmten
+Zertifikats zu bestimmen. OCSP kann verwendet werden, um einige der Betriebsvoraussetzungen zu
+erf&#252;llen, die darin bestehen, zeitn&#228;here Widerrufinformationen bereitzustellen, als mit CRLs m&#246;glich ist.
+Au&#223;erdem k&#246;nnen sie zum Abrufen weiterer Statusinformationen verwendet werden. Ein OCSP-Client gibt
+eine Statusanforderung an einen OCSP-Empf&#228;nger aus und wartet mit dem Akzeptieren des
+fraglichen Zertifikats, bis der Empf&#228;nger eine Antwort bereitstellt. </p>
 
 <a name="ggkal"></a><h5>Pr&#252;fung aktiviert</h5>
 <p>Mit diesem Attribut wird die OCSP-Pr&#252;fung aktiviert. Standardm&#228;&#223;ig aktiviert.</p>

@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>SDK - Ayuda en l&#237;nea de la consola de Sun Federated Access Manager 8.0
+  <title>SDK - Ayuda en l&#237;nea de la consola de Sun OpenSSO 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -57,14 +57,14 @@ una instalaci&#243;n en el modo tradicional con el fin de utilizar las
 ACI para el control de acceso. Por lo tanto, la comprobaci&#243;n de
 delegaci&#243;n presentar&#225; errores.  </p><p>En el modo de dominio, este valor debe establecerse en "false" (falso),
 ya que s&#243;lo se utilizan las directivas de delegaci&#243;n para el control
-de acceso. En la versi&#243;n 7.0 y posterior, Access Manager admite cualquier
-tipo de datos en una instalaci&#243;n en el modo de dominio. Por
-lo tanto, adem&#225;s de Directory Server, se pueden utilizar otros servidores para
-almacenar los datos de configuraci&#243;n del servidor. Adem&#225;s, este indicador informar&#225; a
-la funci&#243;n de administraci&#243;n de servicios de que no debe utilizarse el
-proxy del directorio para las operaciones de lectura, escritura o modificaci&#243;n en
-el almacenamiento "back-end". Esto se debe a que algunos almacenes de datos
-como, por ejemplo, Active Directory no admiten los servidores proxy.</p>
+de acceso. En la versi&#243;n 7.0 y posterior, Access Manager u OpenSSO
+admite cualquier tipo de datos en una instalaci&#243;n en el modo de
+dominio. Por lo tanto, adem&#225;s de Directory Server, se pueden utilizar otros
+servidores para almacenar los datos de configuraci&#243;n del servidor. Adem&#225;s, este indicador
+informar&#225; a la funci&#243;n de administraci&#243;n de servicios de que no debe
+utilizarse el proxy del directorio para las operaciones de lectura, escritura o
+modificaci&#243;n en el almacenamiento "back-end". Esto se debe a que algunos almacenes
+de datos como, por ejemplo, Active Directory no admiten los servidores proxy.</p>
 
 <a name="ggkcv"></a><h5>Servicio de eventos</h5>
 <p>Los siguientes atributos definen la notificaci&#243;n del servicio de eventos para el
@@ -102,11 +102,10 @@ las conexiones cuyo tiempo de espera se haya agotado.</p>
 <p>Especifica la conexi&#243;n de eventos que puede deshabilitarse. Los valores (no se
 distingue entre may&#250;sculas y min&#250;sculas) pueden ser: </p>
 <ul><li><p>aci: cambios en el atributo "aci" con la b&#250;squeda utilizando el filtro LDAP (aci=&#42;).</p></li>
-<li><p>sm: cambios en el &#225;rbol de informaci&#243;n de Access Manager (o nodo de administraci&#243;n de servicios), que incluye objetos con la clase de objeto de marcador <tt>sunService </tt> o <tt>sunServiceComponent. </tt> Por ejemplo, puede crear una directiva que defina privilegios de acceso a un recurso protegido o puede modificar las reglas, temas, condiciones o proveedores de respuesta de una directiva existente.</p></li>
+<li><p>sm: cambios en el &#225;rbol de informaci&#243;n de OpenSSO (o nodo de administraci&#243;n de servicios), que incluye objetos con la clase de objeto de marcador <tt>sunService </tt> o <tt>sunServiceComponent.</tt> Por ejemplo, puede crear una directiva que defina privilegios de acceso a un recurso protegido o puede modificar las reglas, temas, condiciones o proveedores de respuesta de una directiva existente.</p></li>
 <li><p>um: cambios en el directorio de usuario (o nodo de administraci&#243;n de usuarios). Por ejemplo, puede cambiar el nombre o la direcci&#243;n del usuario.</p></li></ul>
 <p>Por ejemplo, para deshabilitar las b&#250;squedas persistentes de cambios en el &#225;rbol
-de informaci&#243;n de Access Manager (o nodo de administraci&#243;n de servicios): 
-</p><p><tt>com.sun.am.event.connection.disable.list=sm </tt></p>
+de informaci&#243;n de OpenSSO (o nodo de administraci&#243;n de servicios):  </p><p><tt>com.sun.am.event.connection.disable.list=sm </tt></p>
 <hr><p><b>Precauci&#243;n &#8211; </b>Las b&#250;squedas persistentes causan una sobrecarga en el rendimiento en Directory Server.
 Si cree que el hecho de eliminar parte de esta sobrecarga en
 el rendimiento es muy importante en un entorno de producci&#243;n, puede deshabilitar
@@ -121,11 +120,11 @@ ya que un componente con una b&#250;squeda persistente deshabilitada no recibe n
 de Directory Server. Por lo tanto, los cambios realizados en ese componente
 espec&#237;fico de Directory Server no se notificar&#225;n a la cach&#233; de componentes.
 Por ejemplo, si deshabilita las b&#250;squedas persistentes de cambios en el directorio
-de usuarios (<tt>um</tt>), Access Manager no recibir&#225; notificaciones de Directory Server. Por
-tanto, un agente no recibir&#225; notificaciones de Access Manager para que actualice
-su cach&#233; de usuario local con los nuevos valores de atributo de
-usuario. Si una aplicaci&#243;n solicita al agente los atributos de usuario, puede
-recibir el valor antiguo de ese atributo.  </p><p>Utilice esta propiedad s&#243;lo en circunstancias especiales cuando sea absolutamente necesario. Por
+de usuarios (<tt>um</tt>), OpenSSO no recibir&#225; notificaciones de Directory Server. Por lo
+tanto, un agente no recibir&#225; notificaciones de OpenSSO para que actualice su
+cach&#233; de usuario local con los nuevos valores de atributo de usuario.
+Si una aplicaci&#243;n solicita al agente los atributos de usuario, puede recibir
+el valor antiguo de ese atributo.  </p><p>Utilice esta propiedad s&#243;lo en circunstancias especiales cuando sea absolutamente necesario. Por
 ejemplo, si sabe que los cambios de la configuraci&#243;n del servicio (referente
 a los valores cambiantes de alguno de los servicios como, por ejemplo,
 los servicios de autenticaci&#243;n y el servicio de sesiones) no se producir&#225;n

@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>JDBC - Sun Federated Access Manager 8.0 主控台線上說明
+  <title>JDBC - Sun OpenSSO 8.0 主控台線上說明
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,8 +31,8 @@
 
 
 <a name="service.scserviceprofile.sunamauthjdbcservice"></a><h4>JDBC</h4>
-<p><a name="indexterm-174"></a>Java Database Connectivity (JDBC) 認證模組允許 Federated Access Manager 透過任何提供啟用 JDBC 之驅動程式的結構化查詢語言 (SQL)
-資料庫來認證使用者。SQL 資料庫的連線可以直接透過 JDBC 驅動程式或透過 JNDI 連線池。這些 JDBC 屬性為範圍屬性。這些屬性包括：</p>
+<p><a name="indexterm-174"></a>Java Database Connectivity (JDBC) 認證模組允許 OpenSSO 透過任何提供啟用 JDBC 之驅動程式的結構化查詢語言 (SQL) 資料庫來認證使用者。SQL 資料庫的連線可以直接透過
+JDBC 驅動程式或透過 JNDI 連線池。這些 JDBC 屬性為範圍屬性。這些屬性包括：</p>
 <ul><li><p><a href="#fwajx">連線類型</a></p></li>
 <li><p><a href="#fwafb">連接儲存區 JNDI 名稱</a></p></li>
 <li><p><a href="#fwaap">JDBC 驅動程式</a></p></li>
@@ -53,8 +53,8 @@
 <p>JNDI 連線池利用基礎 Web 容器中的配置。</p>
 
 <a name="fwafb"></a><h5>連接儲存區 JNDI 名稱</h5>
-<p>如果選取 JNDI 連線類型，此欄位將指定連線池名稱。由於 JDBC 認證是使用 Web 容器所提供的 JNDI 連線池，JNDI 連線池的設定可能與其他 Web 容器不一致。請參閱「Federated
-Access Manager 管理指南」以取得範例。</p>
+<p>如果選取 JNDI 連線類型，此欄位將指定連線池名稱。由於 JDBC 認證是使用 Web 容器所提供的 JNDI 連線池，JNDI 連線池的設定可能與其他 Web 容器不一致。如需範例，請參閱「OpenSSO
+管理指南」。</p>
 
 <a name="fwaap"></a><h5>JDBC 驅動程式</h5>
 <p>如果在<a href="#fwajx">連線類型</a>中選取了 JDBC，此欄位將指定 SQL 資料庫所提供的 JDBC 驅動程式。例如，<tt>com.mysql.jdbc.Driver</tt>。</p>

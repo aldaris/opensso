@@ -1,10 +1,10 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <!-- ident   "%Z%%M% %I%   %E% SMI" -->
 <!DOCTYPE index PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version 2.0//EN" "index_1_0.dtd">
 <index version="2.0">
 
  <indexitem target="serviceupdateenabled" text="actualización del servicio"></indexitem>
- <indexitem target="dirmang" text="Administración de directorios"></indexitem>
+ <indexitem target="dirmang" text="Administración de directorio"></indexitem>
  <indexitem text="Administración de identidades">
     <indexitem text="Usuarios">
         <indexitem target="idm.entitymembership" text="Adición a servicios, roles y grupos"></indexitem></indexitem></indexitem>
@@ -68,10 +68,10 @@
     <indexitem target="policy.pmdefaultsessioncondtionadd" text="Sesión"></indexitem>
     <indexitem target="policy.pmdefaulttimeconditionadd" text="Tiempo"></indexitem></indexitem>
  <indexitem target="service.scconfig" text="Configuración">
-    <indexitem target="authattrs" text="Autenticación"></indexitem>
-    <indexitem target="consoleprops" text="Propiedades de la consola"></indexitem>
-    <indexitem target="systemprops" text="Propiedades del sistema"></indexitem>
-    <indexitem target="global" text="Propiedades globales"></indexitem></indexitem>
+    <indexitem target="service.scconfigauth" text="Autenticación"></indexitem>
+    <indexitem target="service.scconfigconsole" text="Propiedades de la consola"></indexitem>
+    <indexitem target="service.scfonfigsystem" text="Propiedades del sistema"></indexitem>
+    <indexitem target="servic.scconfigglobal" text="Propiedades globales"></indexitem></indexitem>
  <indexitem target="supportedlang" text="Configuraciones regionales de idiomas admitidas"></indexitem>
  <indexitem target="supportedcontainers" text="contenedores admitidos"></indexitem>
  <indexitem text="contexto de autenticación">
@@ -79,6 +79,7 @@
  <indexitem target="accesscontrol" text="Control de acceso, Introducción"></indexitem>
  <indexitem target="service.smdiscoverydescriptionadd" text="descripción de servicio, configurar"></indexitem>
  <indexitem target="service.mapcreatedevice" text="Detección de cliente, Para agregar un cliente nuevo"></indexitem>
+ <indexitem target="normalpolicy" text="Directivas, Directivas normales"></indexitem>
  <indexitem target="supporteddirectives" text="directivas admitidas (servicio de detección)"></indexitem>
  <indexitem target="realm.rmrealm" text="Dominios">
     <indexitem target="realm.idrepo" text="Almacenes de datos"></indexitem>
@@ -129,7 +130,6 @@
     <indexitem target="policy.ruleadd" text="Para agregar una regla a"></indexitem>
     <indexitem target="policy.policyreferraladd" text="Para crear una nueva política de referencia"></indexitem>
     <indexitem target="fyfby" text="Políticas de referencia"></indexitem>
-    <indexitem target="normalpolicy" text="Políticas normales"></indexitem>
     <indexitem target="responseprovider" text="Proveedores de respuesta"></indexitem>
     <indexitem target="policy.selectservicetype" text="Reglas"></indexitem></indexitem>
  <indexitem target="fyfby" text="Políticas de referencia"></indexitem>
@@ -147,7 +147,7 @@
     <indexitem target="service.scserviceprofile.iplanetamloggingservice" text="Registro"></indexitem></indexitem>
  <indexitem text="Propiedades globales">
     <indexitem target="service.scpolicy" text="Configuración de políticas"></indexitem>
-    <indexitem target="service.scserviceprofile.iplanetampasswordresetservice" text="Restablecimiento de contraseña"></indexitem>
+    <indexitem target="service.scserviceprofile.iplanetampasswordresetservice" text="Restablecimiento de contraseñas"></indexitem>
     <indexitem target="service.scserviceprofile.amsessionservice" text="Sesión"></indexitem>
     <indexitem target="service.scserviceprofile.iplanetamuserservice" text="Usuario"></indexitem></indexitem>
  <indexitem target="alternateendpoint" text="punto final alternativo"></indexitem>

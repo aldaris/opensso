@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>MSISDN - Aide en ligne de la console Sun Federated Access Manager 8.0
+  <title>MSISDN - Aide en ligne de la console Sun OpenSSO&#160;8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -34,7 +34,7 @@
 <p><a name="indexterm-177"></a>Le module d'authentification MSDISDN (Mobile Station Integrated Services Digital Network) permet de
 s'authentifier &#224; l'aide d'un num&#233;ro ISDN d'abonn&#233; mobile associ&#233; &#224; un p&#233;riph&#233;rique
 comme un t&#233;l&#233;phone cellulaire. C'est un module non interactif. Ce module r&#233;cup&#232;re
-l'ISDN de l'abonn&#233; et le valide par rapport au server Directory Server
+l'ISDN de l'abonn&#233; et le valide par rapport au serveur Directory Server
 pour trouver un utilisateur correspondant &#224; ce nombre. Les attributs d'authentification MSISDN
 sont des attributs de domaine. Les attributs d'authentification MSISDN sont les suivants
 :</p>
@@ -54,11 +54,11 @@ sont des attributs de domaine. Les attributs d'authentification MSISDN sont les 
 
 <a name="fumxe"></a><h5>Adresse IP de la passerelle approuv&#233;e</h5>
 <p>Indique une liste d'adresses IP de clients de confiance pouvant acc&#233;der &#224;
-des modules MSIDSN. You can set the IP addresses of all clients
-allows to access the MSISDN module by entering the address (for example,
-<tt>123.456.123.111</tt>) in the entry field and clicking Add. By default, the list
-is empty. Si l'attribut est laiss&#233; vide, tous les clients sont autoris&#233;s.
-Si vous sp&#233;cifiez none, aucun client n'est autoris&#233;.</p>
+des modules MSIDSN. Vous pouvez d&#233;finir les adresses IP de tous les
+clients autoris&#233;s &#224; acc&#233;der au module MSISDN en tapant l'adresse (par exemple,
+<tt>123.456.123.111</tt>) dans le champ de saisie, puis en cliquant sur Ajouter. Par
+d&#233;faut, la liste est vide. Si l'attribut est laiss&#233; vide, tous les
+clients sont autoris&#233;s. Si vous sp&#233;cifiez none, aucun client n'est autoris&#233;.</p>
 
 <a name="fumxg"></a><h5>Argument de num&#233;ro MSISDN</h5>
 <p>Indique une liste de noms de param&#232;tres identifiant dans l'en-t&#234;te de demande
@@ -70,13 +70,12 @@ recherchent le num&#233;ro MSISDN dans ces param&#232;tres.</p>
 <p>Indique le nom d'h&#244;te et le num&#233;ro de port du serveur Directory
 Server dans lequel s'effectuera la recherche des utilisateurs poss&#233;dant un num&#233;ro MSISDN.
 Le format est <tt></tt><i>nomh&#244;te:port</i><tt></tt>. Si aucun num&#233;ro de port n'est sp&#233;cifi&#233;, le
-port <tt>389</tt> est utilis&#233; par d&#233;faut.</p><p>Si Federated Access Manager est d&#233;ploy&#233; avec plusieurs domaines, vous pouvez sp&#233;cifier
-la liaison de communication entre des instances sp&#233;cifiques de Federated Access Manager
-et de Directory Server dans le format suivant (les entr&#233;es multiples doivent
-&#234;tre pr&#233;c&#233;d&#233;es du nom du serveur local) :</p><p><tt>nomserveur_local|serveur:port nomserveur_local2|serveur2:port2 ...</tt></p><p>Par exemple, si vous avez d&#233;ploy&#233; deux instances Federated Access Manager dans
-diff&#233;rents emplacements (L1-machine1-IS et L2- machine2-IS) qui communiquent avec diff&#233;rentes instances de
-Directory Server (L1-machine1-DS et L2-machine2-DS), la liaison de communication est la suivante
-:</p><p><tt>L1-machine1-IS.exemple.com|L1-machine1-DS.exemple.com:389 </tt></p><p><tt>L2-machine2-IS.exemple.com|L2-machine2-DS.exemple.com:389 </tt></p>
+port <tt>389</tt> est utilis&#233; par d&#233;faut.</p><p>Si OpenSSO est d&#233;ploy&#233; avec plusieurs domaines, vous pouvez sp&#233;cifier la liaison
+de communication entre des instances sp&#233;cifiques d'OpenSSO et de Directory Server dans
+le format suivant (les entr&#233;es multiples doivent &#234;tre pr&#233;c&#233;d&#233;es du nom du
+serveur local)&#160;:</p><p><tt>nomserveur_local|serveur:port nomserveur_local2|serveur2:port2 ...</tt></p><p>Par exemple, si vous avez d&#233;ploy&#233; deux instances OpenSSO dans diff&#233;rents emplacements
+(L1-machine1-IS et L2- machine2-IS) qui communiquent avec diff&#233;rentes instances de Directory Server
+(L1-machine1-DS et L2-machine2-DS), la liaison de communication est la suivante&#160;:</p><p><tt>L1-machine1-IS.exemple.com|L1-machine1-DS.exemple.com:389 </tt></p><p><tt>L2-machine2-IS.exemple.com|L2-machine2-DS.exemple.com:389 </tt></p>
 
 <a name="fumxi"></a><h5>D&#233;marrage recherche de nom de domaine LDAP</h5>
 <p>Sp&#233;cifie le DN du n&#339;ud &#224; partir duquel doit commencer la recherche
@@ -127,12 +126,12 @@ requ&#234;te. Les valeurs prises en charge sont les suivantes :</p><dl><dt>En-t&
 
 
 <a name="fumxr"></a><h5>Renvoyez le DN utilisateur pour authentification.</h5>
-<p>Lorsque l'annuaire Federated Access Manager est identique &#224; celui configur&#233; pour MSDISN,
-cette option peut &#234;tre activ&#233;e. Dans ce cas, elle permet au module
-d'authentification de renvoyer le DN au lieu de l'ID utilisateur, et aucune
-recherche n'est n&#233;cessaire. Normalement, un module d'authentification renvoie uniquement l'ID utilisateur et
-le service d'authentification recherche l'utilisateur dans l'instance locale de Federated Access Manager.
-Si un annuaire externe est utilis&#233;, cette option n'est g&#233;n&#233;ralement pas activ&#233;e.</p>
+<p>Lorsque l'annuaire OpenSSO est identique &#224; celui configur&#233; pour MSDISN, cette option
+peut &#234;tre activ&#233;e. Dans ce cas, elle permet au module d'authentification de
+renvoyer le DN au lieu de l'ID utilisateur, et aucune recherche n'est
+n&#233;cessaire. Normalement, un module d'authentification renvoie uniquement l'ID utilisateur et le service
+d'authentification recherche l'utilisateur dans l'instance locale d'OpenSSO. Si un annuaire externe est
+utilis&#233;, cette option n'est g&#233;n&#233;ralement pas activ&#233;e.</p>
 
 <a name="fumxs"></a><h5>Niveau d'authentification</h5>
 <p>Le niveau d'authentification est d&#233;fini s&#233;par&#233;ment pour chaque m&#233;thode d'authentification. La valeur

@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Configuraci&#243;n del servicio SAMLv2 - Ayuda en l&#237;nea de la consola de Sun Federated Access Manager 8.0
+  <title>Configuraci&#243;n del servicio SAMLv2 - Ayuda en l&#237;nea de la consola de Sun OpenSSO 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -75,12 +75,12 @@ XML. Si, por el contrario, no se habilita, <tt> EncryptedKey</tt> se encuentra e
 el mismo nivel que el elemento <tt>EncryptedData. </tt> Se habilita de forma predeterminada.</p>
 
 <a name="ggoks"></a><h5>Clase de implementaci&#243;n de firma XML</h5>
-<p>Si est&#225; habilitado, el certificado firmante utilizado por el proveedor de identidades
-y el proveedor de servicios se validar&#225; con la lista de revocaci&#243;n
-de certificados (CRL) configurada en la configuraci&#243;n de Seguridad bajo la ficha
-Sitios y Servidores. Si el certificado no se valida y acepta, se
-detendr&#225; y devolver&#225; un error de validaci&#243;n sin efectuar m&#225;s validaci&#243;n de
-la firma XML. </p>
+<p>Si se habilita, el certificado de firma utilizado por el proveedor de
+identidades y el proveedor de servicios se validar&#225; con la lista de
+revocaci&#243;n de certificados (CRL) configurada en la opciones de seguridad de la
+ficha Sitios y servidores. Si el certificado no se valida y acepta,
+se detendr&#225; y devolver&#225; un error de validaci&#243;n sin efectuar m&#225;s validaci&#243;n
+de la firma XML. </p>
 
 <a name="ggokx"></a><h5>Validaci&#243;n del certificado de firma XML</h5>
 <p>Si se habilita, el proveedor de servicios o identidades SAML validar&#225; el
@@ -89,11 +89,11 @@ acepta el certificado, el proveedor validar&#225; la firma. De lo contrario, se
 detendr&#225; y se devolver&#225; un error de validaci&#243;n. </p>
 
 <a name="ggoiv"></a><h5>Validaci&#243;n del certificado de CA</h5>
-<p>Si est&#225; habilitado, el certificado firmante utilizado por el proveedor de identidades
-y el proveedor de servicios se validar&#225;n con la lista de CA
-de confianza. Si el certificado no se valida y acepta, se detendr&#225;
-y devolver&#225; un error de validaci&#243;n sin efectuar m&#225;s validaci&#243;n de la
-firma XML. </p>
+<p>Si se habilita, el certificado de firma utilizado por el proveedor de
+identidades y el proveedor de servicios se validar&#225; con la lista de
+CA de confianza. Si el certificado no se valida y acepta, se
+detendr&#225; y devolver&#225; un error de validaci&#243;n sin efectuar m&#225;s validaci&#243;n de
+la firma XML. </p>
 <br/>
 
 </body>

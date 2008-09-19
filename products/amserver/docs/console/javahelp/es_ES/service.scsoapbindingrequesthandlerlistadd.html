@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Para configurar un administrador de solicitudes - Ayuda en l&#237;nea de la consola de Sun Federated Access Manager 8.0
+  <title>Para configurar un administrador de solicitudes - Ayuda en l&#237;nea de la consola de Sun OpenSSO 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -41,7 +41,7 @@ separated by a pipe as in: <tt>key=disco|class=com.example.identity.liberty.ws.d
 solicitudes o haga clic en un valor de clave configurado para modificar
 los atributos existentes.</b></li>
 <li><b>Proporcione los valores de los atributos seg&#250;n la siguiente informaci&#243;n:</b><dl><dt>key</dt>
-<dd><p>El par&#225;metro requerido es la &#250;ltima parte de la ruta del URI a un punto final de SOAP. El punto final de SOAP en Access Manager es el servlet del receptor de SOAP.  El URI al receptor de SOAP es <tt><b></tt><i>protocol </i><tt>://</tt><i>host</i><tt>:</tt><i>port</i><tt>/</tt><i> deploy-uri</i><tt>/Liberty/</tt><i>key</i><tt></b></tt>. If you define <tt><b>disco</b></tt> as the key, the URI path to the SOAP endpoint for the corresponding Servicio de detecci&#243;n would be: <tt><b></tt><i> protocol</i><tt>://</tt><i>host</i><tt>:</tt><i>port </i><tt>/amserver/Liberty/disco</b></tt>. Distintos clientes de servicios utilizan distintas claves al conectarse al receptor de SOAP.</p></dd>
+<dd><p>El par&#225;metro requerido es la &#250;ltima parte de la ruta del URI a un punto final de SOAP. El punto final de SOAP de OpenSSO es el servlet del receptor SOAP. El URI al receptor de SOAP es <tt><b></tt><i>protocol </i><tt>://</tt><i>host</i><tt>:</tt><i>port</i><tt>/</tt><i> deploy-uri</i><tt>/Liberty/</tt><i>key</i><tt></b></tt>. If you define <tt><b>disco</b></tt> as the key, the URI path to the SOAP endpoint for the corresponding Servicio de detecci&#243;n would be: <tt><b></tt><i> protocol</i><tt>://</tt><i>host</i><tt>:</tt><i>port </i><tt>/amserver/Liberty/disco</b></tt>. Distintos clientes de servicios utilizan distintas claves al conectarse al receptor de SOAP.</p></dd>
 <dt>class</dt>
 <dd><p>El par&#225;metro requerido especifica el nombre de la clase de implementaci&#243;n del administrador de solicitudes para un determinado servicio de identidades. For example: <tt>class=com.example.identity.liberty.ws.disco.DiscoveryService </tt>.</p></dd>
 <dt>Acci&#243;n SOAP</dt>

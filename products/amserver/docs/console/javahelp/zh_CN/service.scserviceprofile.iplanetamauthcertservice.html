@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>证书  - Sun Federated Access Manager 8.0 控制台联机帮助
+  <title>证书  - Sun OpenSSO 8.0 控制台联机帮助
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -74,11 +74,10 @@
 <ul><li><p>如果将该值设置为“真”，并且在<a href="service.servereditsecurity.html#ggkav">响应器 URL</a>属性中设置了 OCSP 响应器，则该属性的值将用作 OCSP 响应器。</p></li>
 <li><p>如果启用了<a href="service.servereditsecurity.html#ggkaa">联机证书状态协议检查</a>并且未设置该属性的值，则会将客户机证书中提供的 OCSP 响应器用作 OCSP 响应器。</p></li>
 <li><p>如果没有启用<a href="service.servereditsecurity.html#ggkaa">联机证书状态协议检查</a>，或者启用了<a href="service.servereditsecurity.html#ggkaa">联机证书状态协议检查</a>但找不到 OCSP 响应器，则不会执行 OCSP 验证。</p></li></ul>
-<p>在启用 OCSP 验证之前，请确保 Federated Access Manager 计算机与 OCSP 响应器计算机的时间尽可能同步。另外，Federated Access Manager 计算机的时间不得晚于
-OCSP 响应器的时间。例如：</p><p><tt>OCSP responder machine - 12:00:00 pm</tt></p><p><tt>Federated Access Manager machine - 12:00:30 pm</tt></p>
+<p>在启用 OCSP 验证之前，请确保 OpenSSO 计算机与 OCSP 响应器计算机的时间尽可能同步。另外，OpenSSO 计算机的时间不得晚于 OCSP 响应器的时间。例如：</p><p><tt>OCSP responder machine - 12:00:00 pm</tt></p><p><tt>OpenSSO machine - 12:00:30 pm</tt></p>
 
 <a name="fwbij"></a><h5>存储证书的 LDAP 服务器</h5>
-<p>指定存储证书的 LDAP 服务器的名称和端口号。默认值是安装 Federated Access Manager 时指定的主机名和端口号。可以使用存储证书的任意 LDAP 服务器的主机名和端口号。格式为 <tt>hostname:port</tt>。</p>
+<p>指定存储证书的 LDAP 服务器的名称和端口号。默认值为安装 OpenSSO 时指定的主机名和端口。可以使用存储证书的任意 LDAP 服务器的主机名和端口号。格式为 <tt>hostname:port</tt>。</p>
 
 <a name="fwbtp"></a><h5>LDAP 起始搜索 DN</h5>
 <p>指定节点的 DN，应从该 DN 开始搜索用户证书。该字段没有默认值。它接受任何有效的 DN。</p><p>如果指定多个条目，条目前面必须带有本地服务器名称。格式如下所示：</p><p><tt>servername|search dn</tt></p><p>对于多个条目：</p><p><tt>servername1|search dn servername2|search dn servername3|search dn...</tt></p><p>如果根组织下存在多个具有相同用户 ID 的条目，则要进行验证，应设置此参数以便仅能搜索或查找到一个条目。例如，当代理 ID 与用户 ID 均位于根组织下，该参数在根组织使用代理 ID 进行验证时应为 <tt>ou=Agents</tt>，根组织使用用户 ID 进行验证时则应为
@@ -116,8 +115,7 @@ OCSP 响应器的时间。例如：</p><p><tt>OCSP responder machine - 12:00:00 
 
 
 <a name="fwbiw"></a><h5>可信赖的远程主机</h5>
-<p>定义可信赖的主机列表，这些主机是可信赖的，可以向 Federated Access Manager 发送证书。Federated Access Manager 必须检验该证书是否由这些主机中的某一台送出。该属性用于 Portal Server 网关、具有 SSL
-终止的负载平衡器以及分布式验证。</p><dl><dt>无</dt>
+<p>定义一系列可信赖的主机，这些主机可向 OpenSSO 发送证书。OpenSSO 必须检验该证书是否由这些主机中的某一台发送。该属性用于 Portal Server 网关、具有 SSL 终止的负载平衡器以及分布式验证。</p><dl><dt>无</dt>
 <dd><p>禁用该属性。这是默认设置。</p></dd>
 <dt>所有</dt>
 <dd><p>接受来自任意客户机 IP 地址的 Portal Server 网关式证书验证。</p></dd>
@@ -127,8 +125,7 @@ OCSP 响应器的时间。例如：</p><p><tt>OCSP responder machine - 12:00:00 
 
 
 <a name="fwbkd"></a><h5>SSL 端口号</h5>
-<p>指定安全套接字层的端口号。目前，该属性只由网关 servlet 使用。在添加或更改 SSL 端口号之前，请参阅 Federated Access Manager Administration Guide 中的“Policy-Based Resource
-Management”一节。</p>
+<p>指定安全套接字层的端口号。目前，该属性只由网关 servlet 使用。在添加或更改 SSL 端口号之前，请参阅“OpenSSO 管理指南”中的“Policy-Based Resource Management”一节。</p>
 
 <a name="gcabp"></a><h5>客户机证书的 HTTP 标头名称</h5>
 <p>仅当“可信赖的远程主机”属性设置为“所有”或拥有已定义的特定主机名时，才使用该属性。管理员必须为负载平衡器或 SRA 所插入的客户机证书指定 http 标头名称。</p>

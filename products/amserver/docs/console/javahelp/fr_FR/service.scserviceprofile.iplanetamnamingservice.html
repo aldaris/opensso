@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Attribution de nom - Aide en ligne de la console Sun Federated Access Manager 8.0
+  <title>Attribution de nom - Aide en ligne de la console Sun OpenSSO&#160;8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -33,14 +33,13 @@
 <a name="service.scserviceprofile.iplanetamnamingservice"></a><h4>Attribution de nom</h4>
 <p><a name="indexterm-204"></a>Le service Attribution de nom permet d'obtenir et de d&#233;finir des URL,
 des plug-ins et des configurations, ainsi que des notifications de demande pour
-divers autres services de Federated Access Manager (session, authentification, journalisation, SAML et
-Federation).</p><p>Ce service permet aux clients de trouver l'URL de service correct si
-la plate-forme ex&#233;cute plusieurs instances de Federated Access Manager. Lorsqu'un URL d'attribution
-de nom est trouv&#233;, le service Attribution de nom d&#233;code la session
-de l'utilisateur et remplace de mani&#232;re dynamique le protocole, l'h&#244;te, le port
-par les param&#232;tres de la session. Ceci garantit que l'URL retourn&#233; par
-la service correspond &#224; l'h&#244;te sur lequel est cr&#233;&#233;e la session utilisateur.
-Les attributs Attribution de nom sont les suivants :</p>
+divers autres services d'OpenSSO (session, authentification, journalisation, SAML et Federation).</p><p>Ce service permet aux clients de trouver l'URL de service correct si
+la plate-forme ex&#233;cute plusieurs instances d'OpenSSO. Lorsqu'un URL d'attribution de nom est
+trouv&#233;, le service Attribution de nom d&#233;code la session de l'utilisateur et
+remplace de mani&#232;re dynamique le protocole, l'h&#244;te, le port par les param&#232;tres
+de la session. Ceci garantit que l'URL retourn&#233; par la service correspond
+&#224; l'h&#244;te sur lequel est cr&#233;&#233;e la session utilisateur. Les attributs Attribution
+de nom sont les suivants :</p>
 <ul><li><p><a href="#fwfgc">URL du service de profil</a></p></li>
 <li><p><a href="#fwfgg">URL du service de session</a></p></li>
 <li><p><a href="#fwfgf">URL du service de journalisation</a></p></li>
@@ -56,7 +55,7 @@ Les attributs Attribution de nom sont les suivants :</p>
 
 
 <a name="fwfgc"></a><h5>URL du service de profil</h5>
-<p>Ce champ accepte une valeur du type :</p><p><tt>%protocol://%host:%port/Server_DEPLOY_URI/profileservice</tt></p><p>Cette syntaxe permet le remplacement dynamique de l'URL de profil sur la
+<p>Ce champ accepte une valeur du type :</p><p><tt>%protocole://%h&#244;te:%port/URI_d&#233;ploiement_serveur/profileservice</tt></p><p>Cette syntaxe permet le remplacement dynamique de l'URL de profil sur la
 base des param&#232;tres de session sp&#233;cifiques.</p>
 
 <a name="fwfgg"></a><h5>URL du service de session</h5>
@@ -64,11 +63,11 @@ base des param&#232;tres de session sp&#233;cifiques.</p>
 base des param&#232;tres de session sp&#233;cifiques.</p>
 
 <a name="fwfgf"></a><h5>URL du service de journalisation</h5>
-<p>Ce champ accepte une valeur du type :</p><p><tt>%protocol://%host:%port/Server_DEPLOY_URI/loggingservice</tt></p><p>Cette syntaxe permet le remplacement dynamique de l'URL de journalisation sur la
+<p>Ce champ accepte une valeur du type :</p><p><tt>%protocole://%h&#244;te:%port/URI_DEPLOIEMENT_Serveur/loggingservice</tt></p><p>Cette syntaxe permet le remplacement dynamique de l'URL de journalisation sur la
 base des param&#232;tres de session sp&#233;cifiques.</p>
 
 <a name="fwfgh"></a><h5>URL du service de modalit&#233;</h5>
-<p>Ce champ accepte une valeur du type :</p><p> <tt>%protocol://%host:%port/Server_DEPLOY_URI/policyservice</tt></p><p>Cette syntaxe permet le remplacement dynamique de l'URL de strat&#233;gie sur la
+<p>Ce champ accepte une valeur du type :</p><p> <tt>%protocole://%h&#244;te:%port/URI_DEPLOIEMENT_Serveur/policyservice</tt></p><p>Cette syntaxe permet le remplacement dynamique de l'URL de strat&#233;gie sur la
 base des param&#232;tres de session sp&#233;cifiques.</p>
 
 <a name="fwfge"></a><h5>URL du service d'authentification</h5>
@@ -92,7 +91,7 @@ SAML sur la base des param&#232;tres de session sp&#233;cifiques. </p>
 d'assertions SAML sur la base des param&#232;tres de session sp&#233;cifiques. </p>
 
 <a name="fwfgn"></a><h5>URL du service du gestionnaire d'assertions de f&#233;d&#233;rations</h5>
-<p>Ce champ accepte une valeur du type :</p><p><tt>%protocol://%host:%port/amserver/FSAssertionManagerServlet/FSAssertionMana gerIF</tt></p><p>Cette syntaxe permet le remplacement dynamique de l'URL du service du gestionnaire
+<p>Ce champ accepte une valeur du type :</p><p><tt>%protocole://%h&#244;te:%port/amserver/FSAssertionManagerServlet/FSAssertionManagerIF</tt></p><p>Cette syntaxe permet le remplacement dynamique de l'URL du service du gestionnaire
 d'assertions de f&#233;d&#233;ration sur la base des param&#232;tres de session sp&#233;cifiques. </p>
 
 <a name="fwfgp"></a><h5>URL du gestionnaire de jeton de s&#233;curit&#233;</h5>
@@ -104,19 +103,19 @@ de s&#233;curit&#233; sur la base des param&#232;tres de session sp&#233;cifique
 base des param&#232;tres de session sp&#233;cifiques.</p>
 
 <a name="gguep"></a><h5>URL d'extr&#233;mit&#233; des services Web bas&#233;s sur l'identit&#233;</h5>
-<p>Ce champ accepte une valeur du type :</p><p><tt>%protocol://%host:%port%uri/identityservices/</tt></p><p>Cette syntaxe permet le remplacement dynamique de l'URL d'extr&#233;mit&#233; des services Web
+<p>Ce champ accepte une valeur du type :</p><p><tt>%protocole://%h&#244;te:%port%uri/identityservices/</tt></p><p>Cette syntaxe permet le remplacement dynamique de l'URL d'extr&#233;mit&#233; des services Web
 d'identit&#233; en fonction des param&#232;tres de session sp&#233;cifiques.</p>
 
 <a name="ggudo"></a><h5>URL d'extr&#233;mit&#233; des services REST bas&#233;s sur l'identit&#233;</h5>
-<p>Ce champ accepte une valeur du type :</p><p><tt>%protocol://%host:%port%uri/identity//</tt></p><p>Cette syntaxe permet le remplacement dynamique de l'URL d'extr&#233;mit&#233; des services REST
+<p>Ce champ accepte une valeur du type :</p><p><tt>%protocole://%h&#244;te:%port%uri/identity//</tt></p><p>Cette syntaxe permet le remplacement dynamique de l'URL d'extr&#233;mit&#233; des services REST
 d'identit&#233; en fonction des param&#232;tres de session sp&#233;cifiques.</p>
 
 <a name="ggueo"></a><h5>URL d'extr&#233;mit&#233; du service de jeton de s&#233;curit&#233;</h5>
-<p>Ce champ accepte une valeur du type :</p><p><tt>%protocol://%host:%port%uri/sts</tt></p><p>Cette syntaxe permet le remplacement dynamique de l'URL d'extr&#233;mit&#233; du service de
+<p>Ce champ accepte une valeur du type :</p><p><tt>%protocole://%h&#244;te:%port%uri/sts</tt></p><p>Cette syntaxe permet le remplacement dynamique de l'URL d'extr&#233;mit&#233; du service de
 jeton de s&#233;curit&#233;, en fonction des param&#232;tres de session sp&#233;cifiques.</p>
 
 <a name="gguff"></a><h5>URL d'extr&#233;mit&#233; MEX du service de jeton de s&#233;curit&#233;</h5>
-<p>Ce champ accepte une valeur du type :</p><p><tt>%protocol://%host:%port%uri/sts/mex</tt></p><p>Cette syntaxe permet le remplacement dynamique de l'URL d'extr&#233;mit&#233; MEX du service
+<p>Ce champ accepte une valeur du type :</p><p><tt>%protocole://%h&#244;te:%port%uri/sts/mex</tt></p><p>Cette syntaxe permet le remplacement dynamique de l'URL d'extr&#233;mit&#233; MEX du service
 de jeton de s&#233;curit&#233;, en fonction des param&#232;tres de session sp&#233;cifiques.</p>
 <br/>
 

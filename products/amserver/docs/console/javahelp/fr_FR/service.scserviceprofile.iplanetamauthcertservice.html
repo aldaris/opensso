@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Certificat - Aide en ligne de la console Sun Federated Access Manager 8.0
+  <title>Certificat - Aide en ligne de la console Sun OpenSSO&#160;8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -106,24 +106,23 @@ sites &#62; S&#233;curit&#233;&#160;:</p>
 <ul><li><p>Si cette valeur est activ&#233;e (true) et que le r&#233;pondeur OCSP est d&#233;fini par l'attribut <a href="service.servereditsecurity.html#ggkav">URL de r&#233;pondeur</a>, la valeur de ce dernier est utilis&#233;e comme r&#233;pondeur OCSP.</p></li>
 <li><p>Si l'attribut <a href="service.servereditsecurity.html#ggkaa">V&#233;rification du protocole OCSP</a> est activ&#233; et si sa valeur n'est pas d&#233;finie, le r&#233;pondeur OCSP affich&#233; dans votre certification client est utilis&#233; comme r&#233;pondeur OCSP. </p></li>
 <li><p>Si l'attribut <a href="service.servereditsecurity.html#ggkaa">V&#233;rification du protocole OCSP</a> n'est pas activ&#233; ou si <a href="service.servereditsecurity.html#ggkaa">V&#233;rification du protocole OCSP</a> est activ&#233; sans qu'aucun r&#233;pondeur OCSP ne soit d&#233;tect&#233;, aucune validation OCSP n'a lieu.</p></li></ul>
-<p>Avant d'activer la validation OCSP, assurez-vous que l'heure de la machine Federated
-Access Manager et celle de la machine r&#233;pondeur OCSP sont aussi synchronis&#233;es
-que possible. Par ailleurs, l'heure de la machine Federated Access Manager ne
-doit en aucun cas &#234;tre post&#233;rieure &#224; celle du r&#233;pondeur OCSP. Par
-exemple :</p><p><tt>Machine r&#233;pondeur OCSP - 12:00:00 pm</tt></p><p><tt>Machine Federated Access Manager - 12:00:30 pm</tt> </p>
+<p>Avant d'activer la validation OCSP, assurez-vous que l'heure de la machine OpenSSO
+et celle de la machine r&#233;pondeur OCSP sont aussi synchronis&#233;es que possible.
+Par ailleurs, l'heure de la machine OpenSSO ne doit en aucun cas
+&#234;tre post&#233;rieure &#224; celle du r&#233;pondeur OCSP. Par exemple :</p><p><tt>Machine r&#233;pondeur OCSP - 12:00:00 pm</tt></p><p><tt>Machine OpenSSO - 12:00:30 pm</tt> </p>
 
 <a name="fwbij"></a><h5>Serveur LDAP o&#249; les certificats sont conserv&#233;s</h5>
 <p>Sp&#233;cifie le nom et le num&#233;ro de port du serveur LDAP sur
 lequel les certificats sont enregistr&#233;s. La valeur par d&#233;faut est le nom
-d'h&#244;te et le port sp&#233;cifi&#233;s lors de l'installation de Federated Access Manager.
-Vous pouvez utiliser le nom d'h&#244;te et le port de tout serveur
-LDAP contenant les certificats. Le format est <tt>nomh&#244;te:port</tt>.</p>
+d'h&#244;te et le port sp&#233;cifi&#233;s lors de l'installation d'OpenSSO. Vous pouvez utiliser
+le nom d'h&#244;te et le port de tout serveur LDAP contenant les
+certificats. Le format est <tt>nomh&#244;te:port</tt>.</p>
 
 <a name="fwbtp"></a><h5>D&#233;marrage recherche de nom de domaine LDAP</h5>
 <p>Sp&#233;cifie le DN du n&#339;ud &#224; partir duquel doit commencer la recherche
 du certificat de l'utilisateur. Il n'y a pas de valeur par d&#233;faut.
 Ce champ accepte tout DN valide.</p><p>Les entr&#233;es multiples doivent &#234;tre pr&#233;c&#233;d&#233;es du nom du serveur local. Le
-format est le suivant :</p><p><tt>servername|search dn</tt> </p><p>Lorsqu'il existe plusieurs entr&#233;es :</p><p><tt>nomserveur1|dn recherche nomserveur2|dn recherche nomserveur3|dn recherche...</tt></p><p>Si plusieurs entr&#233;es ont le m&#234;me ID utilisateur dans l'organisation racine, ce
+format est le suivant :</p><p><tt>nomserveur|recherche dn</tt> </p><p>Lorsqu'il existe plusieurs entr&#233;es :</p><p><tt>nomserveur1|dn recherche nomserveur2|dn recherche nomserveur3|dn recherche...</tt></p><p>Si plusieurs entr&#233;es ont le m&#234;me ID utilisateur dans l'organisation racine, ce
 param&#232;tre doit &#234;tre d&#233;fini de sorte qu'une seule entr&#233;e &#224; authentifier soit
 recherch&#233;e ou d&#233;tect&#233;e. Par exemple, au cas o&#249; l'ID d'agent et l'ID
 d'utilisateur seraient identiques &#224; la racine de l'organisation, ce param&#232;tre doit &#234;tre
@@ -173,7 +172,7 @@ s&#233;lectionn&#233; &#224; partir de la valeur de <i>DN objet</i> pour le cert
 Le service d'authentification recherchera alors le profil utilisateur correspondant &#224; la valeur
 de cet attribut.</p>
 
-<a name="ggumk"></a><h5>Type de valeur SubjectAltNameExt utilis&#233; pour acc&#233;der &#224; l'utilisateur</h5>
+<a name="ggumk"></a><h5>Type de valeur SubjectAltNameExt utilis&#233; pour acc&#233;der au profil utilisateur</h5>
 <p>Si une valeur autre que <tt>none</tt> est s&#233;lectionn&#233;e, cet attribut a priorit&#233;
 sur les attributs <tt>Certificate Field Used to Access User Profile</tt> et <tt>Other Certificate Field Used to Access User Profile</tt>.</p>
 <ul><li><p>RFC822Name</p></li></ul>
@@ -183,12 +182,11 @@ sur les attributs <tt>Certificate Field Used to Access User Profile</tt> et <tt>
 
 <a name="fwbiw"></a><h5>H&#244;tes distants approuv&#233;s</h5>
 <p>D&#233;finit une liste d'h&#244;tes approuv&#233;s pouvant &#234;tre utilis&#233;s pour l'envoi de certificats
-&#224; Federated Access Manager. Federated Access Manager doit v&#233;rifier que le certificat
-&#233;mane bien de l'un de ces h&#244;tes. Cet attribut est utilis&#233; pour
-Portal Server Gateway, pour un &#233;quilibreur de charge avec terminaison SSL et
-pour l'authentification distribu&#233;e. </p><dl><dt>none</dt>
+&#224; OpenSSO. OpenSSO doit v&#233;rifier que le certificat &#233;mane bien de l'un
+de ces h&#244;tes. Cet attribut est utilis&#233; pour Portal Server Gateway, pour
+un &#233;quilibreur de charge avec terminaison SSL et pour l'authentification distribu&#233;e. </p><dl><dt>none</dt>
 <dd><p>D&#233;sactive l'attribut. Ceci est la valeur par d&#233;faut.</p></dd>
-<dt>tous</dt>
+<dt>all</dt>
 <dd><p>Accepte l'authentification de certificat de style Portal Server Gateway de la part de n'importe quelle adresse IP client.</p></dd>
 <dt>IP ADDR</dt>
 <dd><p>R&#233;pertorie les adresses IP &#224; partir desquelles accepter les demandes d'authentification de certificat de style Portal Server Gateway (adresses IP des passerelles). Cet attribut peut &#234;tre configur&#233; pour chaque domaine.</p></dd>
@@ -199,7 +197,7 @@ pour l'authentification distribu&#233;e. </p><dl><dt>none</dt>
 <p>Sp&#233;cifie le num&#233;ro du port pour la fonction SSL (secure socket layer).
 Actuellement, cet attribut n'est utilis&#233; que par le servlet Gateway. Avant d'ajouter
 ou de modifier un num&#233;ro de port SSL, reportez-vous &#224; la section
-"Policy-Based Resource Management" dans le manuel Federated Access Manager Administration Guide.</p>
+"Policy-Based Resource Management" dans le manuel OpenSSO Administration Guide.</p>
 
 <a name="gcabp"></a><h5>Nom d'en-t&#234;te HTTP pour le certificat du client</h5>
 <p>Cet attribut n'est utilis&#233; que lorsque l'attribut H&#244;tes distants approuv&#233;s est d&#233;fini

@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Webdienstclient-Attribute - Online-Hilfe zur Sun Federated Access Manager 8.0-Konsole
+  <title>Webdienstclient-Attribute - Online-Hilfe zur Sun OpenSSO 8.0-Konsole
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -65,6 +65,7 @@ von einem Webdienstanbieter beteiligt ist.</p>
 <p>Legt den Sicherheitsnachweistyp fest, der zur Sicherung der Anforderung f&#252;r den Webdienstclient
 verwendet wird.  Folgende Sicherheitsnachweistypen stehen zur Auswahl:</p>
 <ul><li><p>Anonymous (Anonym) &#8211; Der anonyme Sicherheitsmechanismus enth&#228;lt keine Sicherheitsnachweise.</p></li>
+<li><p>KerberosToken &#8211; Es werden Kerberos-Sicherheitstoken verwendet.</p></li>
 <li><p>LibertyDiscoverySecurity &#8211; Verwendet Liberty-basierte Sicherheitstoken.</p></li>
 <li><p>SAML-HolderOfKey &#8211; Verwendet den SAML 1.1-Behauptungstyp "Holder-Of-Key".</p></li>
 <li><p>SAML-SenderVouches &#8211; Verwendet den SAML 1.1-Behauptungstyp "Sender Vouches".</p></li>
@@ -95,6 +96,11 @@ k&#246;nnen.</p>
 <a name="gglmd"></a><h5>Sicherheits-Header in Nachricht beibehalten</h5>
 <p>Wenn diese Option aktiviert ist, legt sie fest, dass die SOAP-Sicherheits-Header vom
 Webdienstclient zur weiteren Verarbeitung beibehalten werden.</p>
+
+<a name="ghbbp"></a><h5>Pass-Through-Sicherheitstoken verwenden</h5>
+<p>Wenn es aktiviert ist, wird mit diesem Attribut angegeben, dass der Webdienstclient
+das vom Betreff erhaltene Sicherheitstoken durchl&#228;sst. Es wird nicht versucht, das Token
+lokal oder &#252;ber die STS-Kommunikation zu erstellen.</p>
 
 <a name="ggllx"></a><h5>URN des Liberty-Diensttyps</h5>
 <p>Der URN (Universal Resource Name) beschreibt einen Liberty-Diensttyp, den der Webdienstclient f&#252;r
@@ -149,6 +155,39 @@ soll. Folgende Werte m&#252;ssen f&#252;r einen benutzerdefinierten Schl&#252;ss
 <a name="gglmpa"></a><h5>Endpunkt des Webdienst-Proxy</h5>
 <p>Dieses Attribut definiert einen Webdienst-Endpunkt, an den der Webdienstclient eine Anforderung stellt.
 Dieser Endpunkt ist optional, es sei denn, er ist als Websicherheits-Proxy konfiguriert.</p>
+
+<a name="ghbdv"></a><h5>Webdienst-Endpunkt</h5>
+<p>Dieses Attribut definiert einen Webdienst-Endpunkt, an den der Webdienstclient eine Anforderung stellt.</p>
+
+<a name="ghcei"></a><h5>Kerberos-Konfiguration</h5>
+<p>Kerberos ist ein von der Webdienstsicherheit unterst&#252;tztes Sicherheitsprofil zur Sicherung der Webdienstkommunikation
+zwischen einem Webdienstclient und einem Webdienstanbieter. In einem typischen Szenario authentifiziert sich
+ein Benutzer beim Desktop und ruft einen Webdienst und den Webdienstclient auf.
+Hierbei ist ein Kerberos-Ticket zur Sicherung der Anforderung an den Webdienstanbieter durch
+Identifizierung seines Principals als Kerberos-Token erforderlich. Normalerweise wird die Kerberos-basierte Webdienstsicherheit im
+selben Kontext der Kerberos-Dom&#228;ne (Bereich) und nicht &#252;ber Grenzen hinweg wie beispielsweise
+die SAML-basierte Webdienstsicherheit verwendet. Kerberos ist jedoch einer der leistungsst&#228;rksten Authentifizierungsmechanismen, insbesondere
+in Umgebungen mit Windows-Dom&#228;nencontroller.</p>
+
+<a name="ghcfu"></a><h5>Kerberos-Domain-Server</h5>
+<p>Gibt den Hostnamen des Kerberos-Verteilungscenters (Dom&#228;nencontroller) an. Hier ist der vollst&#228;ndig qualifizierte
+Dom&#228;nenname (FQDN) des Dom&#228;nencontrollers erforderlich.</p>
+
+<a name="ghccy"></a><h5>Kerberos-Domain</h5>
+<p>Dieses Attribut gibt den Dom&#228;nennamen des Kerberos-Verteilungscenters (Kerberos Distribution Center, KDC) an.
+Je nach Konfiguration ist der Dom&#228;nenname des Dom&#228;nencontrollers nicht identisch mit dem
+Dom&#228;nennamen von OpenSSO.</p>
+
+<a name="ghcfa"></a><h5>Kerberos-Dienstprincipal</h5>
+<p>Gibt den beim KDC registrierten Webdienst-Principal an. </p><p>Verwenden Sie die folgende Syntax: </p><p><tt>HTTP/hostname.domainname&#64;dc_domain_name</tt> </p><p><tt>hostname</tt> und <tt>domainame</tt> stehen f&#252;r den Hostnamen und den Dom&#228;nennamen der OpenSSO-Instanz.
+<tt>dc_domain_name</tt> is the Kerberos domain in which the Windows Kerberos server (domain
+controller) resides. Der Kerberos-Server unterscheidet sich m&#246;glicherweise vom Dom&#228;nennamen der OpenSSO-Instanz.</p>
+
+<a name="ghcdq"></a><h5>Cache-Verzeichnis f&#252;r Kerberos-Ticket</h5>
+<p>Gibt das Cache-Verzeichnis des Kerberos TGT (Ticket Granting Ticket) an. Wenn der
+Benutzer sich beim Desktop authentifiziert oder eine Initialisierung mit <tt> kinit</tt> (dem zum
+Abrufen des TGT vom KDC verwendeten Befehl) durchf&#252;hrt, wird das TGT wie
+in diesem Attribut definiert im lokalen Cache gespeichert.</p>
 <br/>
 
 </body>

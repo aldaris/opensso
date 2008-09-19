@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>创建新代理 - Sun Federated Access Manager 8.0 控制台联机帮助
+  <title>创建新代理 - Sun OpenSSO 8.0 控制台联机帮助
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,7 +31,7 @@
 
 
 <a name="agentconfig.agentadd"></a><h5>创建新代理</h5>
-<p>创建新代理也称为创建新的代理配置文件。您可以在 Federated Access Manager 管理控制台中执行该任务。某些单独步骤仅适用于 J2EE 和 Web 策略代理类型。</p><ol>
+<p>创建新代理也称为创建新的代理配置文件。您可以在 OpenSSO 管理控制台中执行该任务。某些单独步骤仅适用于 J2EE 和 Web 策略代理类型。</p><ol>
 <li><b>单击“访问控制”选项卡。</b></li>
 <li><b>单击代理所属的领域的名称。</b></li>
 <li><b>单击“代理”选项卡。</b></li>
@@ -41,15 +41,16 @@
 <li><b>Web 服务提供者代理</b></li>
 <li><b>Web 服务客户机代理</b></li>
 <li><b>STS 客户机代理</b><p>“安全令牌服务”客户机代理具有两种可选类型：搜索代理和 STS 代理。有关这些代理类型的详细信息，参见<a href="agentconfig.stsclientedit.html">STS 客户机</a>。</p></li>
-<li><b>2.2 代理</b><p>“2.2 代理”选项卡适用于“策略代理 2.2”软件集中的代理。</p></li></ul></li>
+<li><b>2.2 代理</b><p>“2.2 代理”选项卡适用于“策略代理 2.2”软件集中的代理。</p></li>
+<li><b>代理验证程序</b></li></ul></li>
 <li><b>在“代理”部分中单击“新建”。</b></li>
 <li><b>在“名称”字段中输入新代理配置文件的名称。</b></li>
 <li><b>输入“密码”并确认。</b>
 <hr><p><b>注意 &#8211; </b>此密码必须与您运行 <tt>agentadmin</tt> 程序以安装代理时在指定的代理配置文件密码文件中输入的密码相同。</p>
 <hr>
 <p><b>步骤 8 至 10 仅适用于 Web 代理和 J2EE 策略代理。</b></p></li>
-<li><b>选择适当的配置：“本地”或“集中”。</b><p>选择本地配置时，无法从控制台编辑与该代理相关的属性。在此情况下，代理从代理安装目录中的本地文件 <tt>FAMAgentBootstrap.properties</tt> 和 <tt>FAMAgentConfiguration.properites</tt> 中检索配置信息。对于本地配置的代理，可直接编辑 <tt>FAMAgentConfiguration.properites</tt> 文件来更改属性值。</p></li>
-<li><b>在“服务器 URL”字段中，输入 Federated Access Manager 服务器 URL。</b><p>例如：</p><pre>http://famHost.example.com:8080/fam</pre></li>
+<li><b>选择适当的配置：“本地”或“集中”。</b><p>选择本地配置时，无法从控制台编辑与该代理相关的属性。在此情况下，代理从代理安装目录中的本地文件 <tt>OpenSSOAgentBootstrap.properties</tt> 和 <tt>OpenSSOAgentConfiguration.properites</tt> 中检索配置信息。对于本地配置的代理，可直接编辑 <tt>OpenSSOAgentConfiguration.properites</tt> 文件来更改属性值。</p></li>
+<li><b>在“服务器 URL”字段中，输入 OpenSSO 服务器 URL。</b><p>例如：</p><pre>http://OpenSSO_EnterpriseHost.example.com:8080/OpenSSO</pre></li>
 <li><b>在“代理 URL”字段中，输入代理应用程序 <tt>agentapp</tt> 的 URL。</b><p>例如：</p><dl><dt>Web 代理</dt>
 <dd><p><tt>http://agentHost.example.com:8090</tt></p></dd>
 <dt>J2EE 代理</dt>

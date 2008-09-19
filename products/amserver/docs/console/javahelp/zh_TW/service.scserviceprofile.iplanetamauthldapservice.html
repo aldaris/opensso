@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>LDAP  - Sun Federated Access Manager 8.0 主控台線上說明
+  <title>LDAP  - Sun OpenSSO 8.0 主控台線上說明
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -34,7 +34,7 @@
 <p><a name="indexterm-175"></a>此模組可讓您使用 LDAP 連結來進行認證，此連結是一種 Directory Server 作業，可讓使用者 ID 密碼與特殊的 LDAP 項目產生關聯。您可以為範圍定義多個 LDAP 認證配置。LDAP
 認證屬性為範圍屬性。這些屬性包括：</p>
 <ul><li><p><a href="#fwazv">主 LDAP 伺服器</a></p></li>
-<li><p><a href="#fwbac">次 LDAP 伺服器</a></p></li>
+<li><p><a href="#fwbac">輔助 LDAP 伺服器</a></p></li>
 <li><p><a href="#fwazx">啟動使用者搜尋之 DN</a></p></li>
 <li><p><a href="#fwazz">超級使用者連結之 DN</a></p></li>
 <li><p><a href="#fwazq">超級使用者連結之密碼</a></p></li>
@@ -51,15 +51,13 @@
 
 
 <a name="fwazv"></a><h5>主 LDAP 伺服器</h5>
-<p>指定在 Federated Access Manager 安裝期間所指定之主 LDAP 伺服器的主機名稱及連接埠號。這是認證所連絡的首選伺服器。格式為 <tt></tt><i>hostname:port</i><tt></tt>。如果沒有連接埠號，則假定為 <tt>389</tt>。</p><p>如果您使用多重網域部署 Federated Access Manager，則可按以下格式 (多重項目必須以本機伺服器名稱為字首) 指定 Federated Access Manager 和 Directory Server
-特定實例之間的通訊連結：</p><p><tt>local_servername|server:port local_servername2|server2:port2 ...</tt></p><p>例如，若您有兩個在不同位置部署的 Federated Access Manager 實例 (L1-machine1-IS 及 L2- machine2-IS)，且與不同的 Directory Server 實例
-(L1-machine1-DS 及 L2-machine2-DS) 通訊，它將如下所示：</p><p><tt>L1-machine1-IS.example.com|L1-machine1-DS.example.com:389 </tt></p><p><tt>L2-machine2-IS.example.com|L2-machine2-DS.example.com:389 </tt></p>
+<p>指定在 OpenSSO 安裝期間所指定之主 LDAP 伺服器的主機名稱及連接埠號。這是認證所連絡的首選伺服器。格式為 <tt></tt><i>hostname:port</i><tt></tt>。如果沒有連接埠號，則假定為 <tt>389</tt>。</p><p>如果您使用多重網域部署 OpenSSO，則可按以下格式 (多重項目必須以本機伺服器名稱為字首) 指定 OpenSSO 和 Directory Server 特定實例之間的通訊連結：</p><p><tt>local_servername|server:port local_servername2|server2:port2 ...</tt></p><p>例如，若您有兩個在不同位置部署的 OpenSSO 實例 (L1-machine1-IS 及 L2- machine2-IS)，且與不同的 Directory Server 實例 (L1-machine1-DS 及
+L2-machine2-DS) 通訊，它將如下所示：</p><p><tt>L1-machine1-IS.example.com|L1-machine1-DS.example.com:389 </tt></p><p><tt>L2-machine2-IS.example.com|L2-machine2-DS.example.com:389 </tt></p>
 
-<a name="fwbac"></a><h5>次 LDAP 伺服器</h5>
-<p>指定 Federated Access Manager 平台上可用的輔助 LDAP 伺服器的主機名稱及連接埠號。如果主 LDAP 伺服器未回應認證請求，則連絡此輔助伺服器。如果主伺服器恢復正常，Federated Access Manager 將切回到主伺服器。格式也為
-<tt></tt><i>hostname:port</i><tt></tt>。多重項目必須以本機伺服器名稱為字首。</p>
-<hr><p><b>注意 &#8211; </b>從位於 Federated Access Manager 企業遠端的 Directory Server 認證使用者時，請務必使主要 LDAP 伺服器連接埠及次要 LDAP 伺服器連接埠均有值。兩個欄位可使用一個
-Directory Server 位置的值。</p>
+<a name="fwbac"></a><h5>輔助 LDAP 伺服器</h5>
+<p>指定 OpenSSO 平台上可用的輔助 LDAP 伺服器的主機名稱及連接埠號。如果主 LDAP 伺服器未回應認證請求，則連絡此輔助伺服器。如果主伺服器啟動，OpenSSO 將切換回主伺服器。格式也為 <tt></tt><i>hostname:port</i><tt></tt>。多重項目必須以本機伺服器名稱為字首。</p>
+<hr><p><b>注意 &#8211; </b>當認證來自 OpenSSO 遠端的 Directory Server 的使用者時，主 LDAP 伺服器與輔助 LDAP 伺服器連接埠有值是很重要的。兩個欄位可使用一個 Directory Server
+位置的值。</p>
 <hr>
 
 
@@ -78,7 +76,7 @@ DN。預設值為 <tt>amldapuser</tt>。將能夠識別任何有效的 DN。</p>
 <p>確認密碼。</p>
 
 <a name="fwazs"></a><h5>用於擷取使用者設定檔的屬性</h5>
-<p>指定用於使用者項目命名慣例的屬性。依預設，Federated Access Manager 會假設使用者項目是由 uid 屬性識別。如果您的 Directory Server 使用不同的屬性 (例如 <i>givenname</i>)，請在此欄位中指定屬性名稱。</p>
+<p>指定用於使用者項目命名慣例的屬性。依預設，OpenSSO 會假定透過 uid 屬性來識別使用者項目。如果您的 Directory Server 使用不同的屬性 (例如 <i>givenname</i>)，請在此欄位中指定屬性名稱。</p>
 
 <a name="fwazy"></a><h5>用於搜尋要認證的使用者之屬性</h5>
 <p>列出用於構成搜尋篩選器，以搜尋要認證之使用者的屬性，並允許使用者以使用者項目中的多個屬性進行認證。例如，若此欄位設定為 <i>uid</i>、<i>employeenumber</i> 和 <i>mail</i>，則使用者可以利用其中任一名稱進行認證。這些屬性必須分別設定。</p>
@@ -98,12 +96,12 @@ DN。預設值為 <tt>amldapuser</tt>。將能夠識別任何有效的 DN。</p>
 
 <a name="fwbal"></a><h5>啟用 SSL 以存取 LDAP 伺服器</h5>
 <p>對在 [主/輔助 LDAP 伺服器與連接埠] 欄位中指定的 Directory Server 啟用 SSL 存取。依預設不會核取此方塊，將不使用 SSL 協定存取
-Directory Server。</p><p>如果 LDAP 伺服器執行時也啟用 SSL (LDAPS)，您必須確保 Federated Access Manager 已經配置了正確的 SSL 信任憑證，以便讓 AM
-透過 LDAPS 通訊協定來連接目錄伺服器。</p>
+Directory Server。</p><p>如果 LDAP 伺服器執行時也啟用 SSL (LDAPS)，您必須確保 OpenSSO 已經配置了正確的 SSL 信任憑證，以便讓 AM 透過 LDAPS
+協定來連接目錄伺服器。</p>
 
 <a name="fwbak"></a><h5>傳回認證的使用者 DN</h5>
-<p>當 Federated Access Manager 目錄與為 LDAP 配置的目錄相同時，則可以啟用此選項。如果啟用了此選項，則允許 LDAP 認證模組傳回 DN，而不是使用者 ID，並且不必進行任何搜尋。通常，認證模組僅傳回使用者 ID，而且認證服務會在本機
-Federated Access Manager LDAP 中搜尋使用者。如果使用外部 LDAP 目錄，則通常不啟用此選項。</p>
+<p>當 OpenSSO 目錄與為 LDAP 配置的目錄相同時，則可以啟用此選項。如果啟用了此選項，則允許 LDAP 認證模組傳回 DN，而不是使用者 ID，並且不必進行任何搜尋。通常，認證模組僅傳回使用者 ID，而且認證服務會在本機 OpenSSO LDAP
+中搜尋使用者。如果使用外部 LDAP 目錄，則通常不啟用此選項。</p>
 
 <a name="fwbaf"></a><h5>LDAP 伺服器檢查間隔時間</h5>
 <p>此屬性用於 LDAP 伺服器故障修復。它定義驗證 LDAP 主伺服器是否正在執行前，執行緒將「休息」的分鐘數。</p>
