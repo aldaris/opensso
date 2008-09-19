@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMServiceUtils.java,v 1.5 2008-06-25 05:41:22 qcheng Exp $
+ * $Id: AMServiceUtils.java,v 1.6 2008-09-19 20:44:48 arviranga Exp $
  *
  */
 
@@ -32,6 +32,7 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.AttributeSchema;
+import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceAlreadyExistsException;
@@ -55,7 +56,7 @@ import netscape.ldap.util.DN;
  */
 public class AMServiceUtils {
 
-    private static Debug debug = AMCommonUtils.debug;
+    private static Debug debug = Debug.getInstance("amProfile");
 
     /**
      * Get attribute names for the specified Service and Schema Type
@@ -245,7 +246,7 @@ public class AMServiceUtils {
                     token);
             ServiceConfig sc = scm.getOrganizationConfig(orgDN, null);
             DN theOrgDN = new DN(orgDN);
-            if (theOrgDN.equals(new DN(AMStoreConnection.getAMSdkBaseDN()))
+            if (theOrgDN.equals(new DN(SMSEntry.getAMSdkBaseDN()))
                     && sc != null) {
                 Map avPair = sc.getAttributes();
                 Set subConfigs = sc.getSubConfigNames();

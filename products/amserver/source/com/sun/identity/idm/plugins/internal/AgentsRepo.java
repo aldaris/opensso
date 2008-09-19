@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.39 2008-09-04 21:24:40 goodearth Exp $
+ * $Id: AgentsRepo.java,v 1.40 2008-09-19 20:44:48 arviranga Exp $
  *
  */
 
@@ -434,7 +434,8 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             } catch (SMSException e) {
                 if (debug.warningEnabled()) {
                     debug.warning("AgentsRepo.getAttributes(): Unable to "+
-                        "read/get agent attributes SMSException.", e);
+                        "read/get agent attributes SMSException: " +
+                        e.getMessage());
                 }
                 Object args[] = { NAME };
                 throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "200", 
@@ -442,7 +443,8 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             } catch (IdRepoException idpe) {
                 if (debug.warningEnabled()) {
                     debug.warning("AgentsRepo.getAttributes(): Unable to "+
-                        "read/get agent attributes IdRepoException.", idpe);
+                        "read/get agent attributes IdRepoException: " +
+                        idpe.getMessage());
                 }
                 Object args[] = { NAME };
                 throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "200", 
@@ -1341,7 +1343,8 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         } catch (SSOException ssoe) {
             if (debug.warningEnabled()) {
                 debug.warning("AgentsRepo.authenticate(): "
-                        + "Unable to authenticate SSOException:" + ssoe);
+                        + "Unable to authenticate SSOException: " +
+                        ssoe.getMessage());
             }
         }
         return (answer);
@@ -1430,12 +1433,14 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         } catch (SMSException smse) {
             if (debug.warningEnabled()) {
                 debug.warning("AgentsRepo.getOrgConfig(): "
-                    + "Unable to get Organization Config due to " + smse);
+                    + "Unable to get Organization Config due to " +
+                    smse.getMessage());
             }
         } catch (SSOException ssoe) {
             if (debug.warningEnabled()) {
                 debug.warning("AgentsRepo.getOrgConfig(): "
-                    + "Unable to get Organization Config due to " + ssoe);
+                    + "Unable to get Organization Config due to " +
+                    ssoe.getMessage());
             }
         }
         return (orgConfigCache);
@@ -1466,12 +1471,14 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
         } catch (SMSException smse) {
             if (debug.warningEnabled()) {
                 debug.warning("AgentsRepo.getAgentGroupConfig: "
-                        + "Unable to get Agent Group Config due to " + smse);
+                    + "Unable to get Agent Group Config due to " +
+                    smse.getMessage());
             }
         } catch (SSOException ssoe) {
             if (debug.warningEnabled()) {
                 debug.warning("AgentsRepo.getAgentGroupConfig: "
-                        + "Unable to get Agent Group Config due to " + ssoe);
+                    + "Unable to get Agent Group Config due to " +
+                    ssoe.getMessage());
             }
         }
         return (agentGroupConfigCache);
@@ -1742,14 +1749,14 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                                            debug.warning("AgentsRepo."
                                                + "sendNotificationSet: failed"
                                                + " sending notification to: "
-                                               + url, ne);
+                                               + url + " " + ne.getMessage());
                                        }
                                    }
                                } catch (MalformedURLException e) {
                                    if (debug.warningEnabled()) {
                                        debug.warning("AgentsRepo."
                                            + "sendNotificationSet:(): "
-                                           + " invalid URL: " , e);
+                                           + " invalid URL: " + e.getMessage());
                                    }
                                }
                             }
@@ -1762,8 +1769,8 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                 + "Unable to send notification due to " + idpe);
         } catch (SSOException ssoe) {
             if (debug.warningEnabled()) {
-                debug.warning("AgentsRepo.sendNotificationSet(): "
-                    + "Unable to send notification due to " + ssoe);
+                debug.warning("AgentsRepo.sendNotificationSet(): " +
+                    "Unable to send notification due to " + ssoe.getMessage());
             }
         }
     }

@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: IdRepoJAXRPCObjectImpl.java,v 1.6 2008-09-11 03:50:15 222713 Exp $
+* $Id: IdRepoJAXRPCObjectImpl.java,v 1.7 2008-09-19 20:44:48 arviranga Exp $
 */
 
 package com.sun.identity.idm.server;
@@ -683,7 +683,8 @@ public abstract class IdRepoJAXRPCObjectImpl implements DirectoryManagerIF {
                     idRepoDebug.warning("IdRepoJAXRPCObjectImpl.registerURL "
                         + "cannot add local server: " + url);
                 }
-                throw (new RemoteException("invalid-notification-URL"));
+                // Set the id to be "0'
+                id = "0";
             }
         } catch (MalformedURLException e) {
             if (idRepoDebug.warningEnabled()) {

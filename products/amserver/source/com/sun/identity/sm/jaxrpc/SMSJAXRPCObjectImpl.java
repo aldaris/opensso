@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSJAXRPCObjectImpl.java,v 1.17 2008-07-11 01:46:22 arviranga Exp $
+ * $Id: SMSJAXRPCObjectImpl.java,v 1.18 2008-09-19 20:44:47 arviranga Exp $
  *
  */
 
@@ -530,7 +530,8 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
                     debug.warning("SMSJAXRPCObjectImpl:registerURL "
                             + "cannot add local server: " + url);
                 }
-                throw (new RemoteException("invalid-notification-URL"));
+                // Set the id to be "0'
+                id = "0";
             }
         } catch (MalformedURLException e) {
             if (debug.warningEnabled()) {

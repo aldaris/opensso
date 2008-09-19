@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommandManager.java,v 1.29 2008-08-08 00:40:56 ww203982 Exp $
+ * $Id: CommandManager.java,v 1.30 2008-09-19 20:44:47 arviranga Exp $
  *
  */
 
@@ -108,6 +108,8 @@ public class CommandManager {
         } else {
             try {
                 Bootstrap.load();
+                // Initialize AdminTokenAction
+                AdminTokenAction.getInstance().authenticationInitialized();
             } catch (ConfiguratorException ex) {
                 bBootstrapped = false;
                 if ((argv.length > 0) &&
