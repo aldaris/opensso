@@ -22,13 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMViewBeanBase.java,v 1.9 2008-08-23 02:38:58 babysunil Exp $
+ * $Id: AMViewBeanBase.java,v 1.10 2008-09-19 03:58:04 veiming Exp $
  *
  */
 
 package com.sun.identity.console.base;
 
 import com.iplanet.am.util.BrowserEncoding;
+import com.iplanet.am.util.SystemProperties;
 import com.iplanet.jato.NavigationException;
 import com.iplanet.jato.RequestContext;
 import com.iplanet.jato.model.ModelControlException;
@@ -54,6 +55,7 @@ import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.base.model.AMModelBase;
 import com.sun.identity.console.components.view.html.SerializedField;
 import com.sun.identity.console.delegation.model.DelegationConfig;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.SMSSchema;
 import com.sun.web.ui.model.CCActionTableModelInterface;
@@ -113,6 +115,16 @@ public abstract class AMViewBeanBase
     private boolean pageSessionInSessionStore = false;
     private AMModel dataModel;
     private Set blankTextFields = new HashSet();
+
+    static {
+        String host = SystemProperties.get(Constants.AM_SERVER_HOST);
+        System.setProperty("com.sun.web.console.securehost", host);
+        System.setProperty("com.sun.web.console.unsecurehost", host);
+
+        String port = SystemProperties.get(Constants.AM_SERVER_PORT);
+        System.setProperty("com.sun.web.console.secureport", port);
+        System.setProperty("com.sun.web.console.unsecureport", port);
+    }
 
     /**
      * Creates an instance of base view bean object
