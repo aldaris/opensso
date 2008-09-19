@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: agent_configuration.h,v 1.9 2008-07-15 20:12:38 subbae Exp $
+ * $Id: agent_configuration.h,v 1.10 2008-09-19 01:11:53 robertis Exp $
  *
  */
 
@@ -90,6 +90,7 @@ public:
     unsigned long postcacheentry_life;
     PRBool postdatapreserve_enable;
     const char *postcache_url;
+    const char *url_redirect_param;
     const char *user_id_param;
     const char *authLogType_param;
     const char *dummy_post_url;
@@ -182,6 +183,7 @@ public:
         this->postcache_handle = NULL;
         this->postdatapreserve_enable = AM_TRUE;
         this->postcache_url = NULL;
+        this->url_redirect_param= NULL;
         this->user_id_param = NULL;
         this->authLogType_param = NULL;
         this->dummy_post_url = NULL;

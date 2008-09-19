@@ -832,3 +832,21 @@ com.sun.identity.agents.config.domino.ltpa.org.name =
 # running time syncing service
 # Clock skew in seconds = AgentTime - OpenSSOServerTime
 com.sun.identity.agents.config.policy.clock.skew = 0
+
+
+#
+# GOTO PARAMETER NAME
+#   Used when CDSSO is enabled.Default value should be changed only when the
+#   cdcservlet URL has a landing page specified
+#   Example : com.sun.identity.agents.config.cdsso.cdcservlet.url[0] = #
+#   http://host:port/opensso/cdcservlet?goto=http://agent:port/landing.jsp
+#   The parameter is used by the Agent to append the original request URL to this
+#   cdcservlet URL. This parameter is consumed by the landing page to redirect to the
+#   original URL. (property name: com.sun.identity.agents.config.redirect.param)
+#   If com.sun.identity.agents.config.redirect.param = goto2
+#   The complete URL sent for authentication will be
+#   http://host:port/opensso/cdcservlet?goto=http://agent:port/landing.jsp?goto2=http://agent.port/original.jsp
+#
+# Hot-Swap Enabled: Yes
+#
+com.sun.identity.agents.config.redirect.param = goto

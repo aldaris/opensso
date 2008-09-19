@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.h,v 1.20 2008-09-13 01:11:53 robertis Exp $
+ * $Id: am_web.h,v 1.21 2008-09-19 01:11:54 robertis Exp $
  *
  */
 
@@ -133,6 +133,7 @@ AM_BEGIN_EXTERN_C
 #define AM_WEB_ACCESS_DENIED_URL_PROPERTY AM_COMMON_PROPERTY_PREFIX "access.denied.url"
 #define AM_WEB_ANONYMOUS_USER AM_COMMON_PROPERTY_PREFIX "anonymous.user.id"
 #define AM_WEB_ANON_REMOTE_USER_ENABLE AM_COMMON_PROPERTY_PREFIX "anonymous.user.enable"
+#define AM_WEB_URL_REDIRECT_PARAM AM_COMMON_PROPERTY_PREFIX "redirect.param"
 #define AM_WEB_NOT_ENFORCED_LIST_PROPERTY AM_COMMON_PROPERTY_PREFIX "notenforced.url"
 #define AM_WEB_REVERSE_NOT_ENFORCED_LIST AM_COMMON_PROPERTY_PREFIX "notenforced.url.invert"
 #define AM_WEB_NOT_ENFORCED_IPADDRESS AM_COMMON_PROPERTY_PREFIX "notenforced.ip"

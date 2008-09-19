@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: agent_configuration.cpp,v 1.13 2008-07-15 20:12:38 subbae Exp $
+ * $Id: agent_configuration.cpp,v 1.14 2008-09-19 01:11:53 robertis Exp $
  *
  * Abstract:
  * AgentConfiguration: This class creates/delets the agent configuration 
@@ -106,6 +106,7 @@ am_status_t AgentConfiguration::populateAgentProperties()
     const char *encrypt_passwd = NULL;
     char decrypt_passwd[100] = "";
     int decrypt_status;
+    const char *url_redirect_default = "goto";
     const char *user_id_default = "UserToken";
     const char *authLogType_default = LOG_TYPE_NONE;
     bool urlstatssl = false;
@@ -289,6 +290,13 @@ am_status_t AgentConfiguration::populateAgentProperties()
         }
     }
     
+    /* Get the URL Redirect param  */
+    if (AM_SUCCESS == status) {
+	parameter = AM_WEB_URL_REDIRECT_PARAM;
+	status = am_properties_get_with_default(this->properties, parameter,
+			url_redirect_default, &this->url_redirect_param);
+    }
+
     /* Get the User Id param  */
     // The user_id_param of agent_info is actually not used.
     // but keep it so size of agent_info remains the same for backwards compat.

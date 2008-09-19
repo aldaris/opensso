@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.cpp,v 1.34 2008-09-13 01:11:53 robertis Exp $
+ * $Id: am_web.cpp,v 1.35 2008-09-19 01:11:53 robertis Exp $
  *
  */
 
@@ -149,7 +149,6 @@ static int initialized = AM_FALSE;
 #define COOKIE_INFO_INITIALIZER {NULL, NULL, NULL, NULL, NULL, AM_FALSE}
 #define COOKIE_INFO_LIST_INITIALIZER {0, COOKIE_INFO_PTR_NULL}
 
-#define URL_REDIRECT_PARAM  "goto"
 #define INSTANCE_NAME  "unused"
 
 
@@ -874,8 +873,8 @@ am_bool_t in_not_enforced_list(URL &urlObj,
         if (urlObj.findQueryParameter(sunwErrCode)) {
             urlObj.removeQueryParameter(sunwErrCode);
             urlObj.getURLString(url_str);
-            if (urlObj.findQueryParameter(URL_REDIRECT_PARAM)) {
-             urlObj.removeQueryParameter(URL_REDIRECT_PARAM);
+            if (urlObj.findQueryParameter((*agentConfigPtr)->url_redirect_param)) {
+             urlObj.removeQueryParameter((*agentConfigPtr)->url_redirect_param);
             }
             urlObj.getURLString(urlStr);
             accessUrl = urlStr.c_str();
@@ -2134,7 +2133,11 @@ am_web_check_cookie_in_query(
 		char ** orig_req, char *method,
 		am_status_t (*set_cookie)(const char*, void**),
 		void (*set_method)(void **, char *),
-                void* agent_config) {
+                void* agent_config) 
+{
+
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
     char *recv_token = NULL;
     am_status_t status = AM_FAILURE;
 
@@ -2159,7 +2162,7 @@ am_web_check_cookie_in_query(
 						am_web_get_cookie_name(agent_config),
 						request_url);
 	        status = am_web_remove_parameter_from_query(*request_url,
-						URL_REDIRECT_PARAM,
+						(*agentConfigPtr)->url_redirect_param,
 						request_url);
 	        status = am_web_remove_authnrequest(*request_url, request_url);
 		set_method(args, *orig_req);
@@ -2179,7 +2182,7 @@ am_web_check_cookie_in_query(
 						am_web_get_cookie_name(agent_config),
 						request_url);
 	    status = am_web_remove_parameter_from_query(*request_url,
-						URL_REDIRECT_PARAM,
+						(*agentConfigPtr)->url_redirect_param,
 						request_url);
 	    status = am_web_remove_authnrequest(*request_url, request_url);
 	    strcpy(method, *orig_req);
@@ -2438,8 +2441,24 @@ am_web_get_url_to_redirect(am_status_t status,
 		    }
 		    else {
 			retVal.append(url_info_ptr->url, url_info_ptr->url_len);
-			retVal.append((url_info_ptr->has_parameters) ?"&":"?");
-			retVal.append(URL_REDIRECT_PARAM);
+			
+			// In CDSSO mode, to have the user redirected to a static page that
+			// in turn will redirect to the resource, the goto parameter
+			// with the static page as value must be added to the cdcservlet 
+			// url and the url_redirect_param set to a value other than "goto".
+			// In such a case the "?" character must be added before 
+			// url_redirect_param
+			string temp_url = url_info_ptr->url;
+			string temp_redirect_param = (*agentConfigPtr)->url_redirect_param;
+			if (((*agentConfigPtr)->cdsso_enable == AM_TRUE) && 
+			    (temp_url.find("goto=") != string::npos) && 
+			    (temp_redirect_param.compare("goto") != 0)) {
+				retVal.append("?");
+			} else {
+				retVal.append((url_info_ptr->has_parameters) ?"&":"?");
+			}
+
+			retVal.append((*agentConfigPtr)->url_redirect_param);
 			retVal.append("=");
 			if((*agentConfigPtr)->cdsso_enable == AM_TRUE &&
 				method != NULL) {
@@ -2502,7 +2521,7 @@ am_web_get_url_to_redirect(am_status_t status,
                     std::string encoded_url;
                     encoded_url = PRIVATE_NAMESPACE_NAME::Http::encode(goto_url);
                     redirStr.append("&");
-                    redirStr.append(URL_REDIRECT_PARAM);
+                    redirStr.append((*agentConfigPtr)->url_redirect_param);
                     redirStr.append("=");
                     redirStr.append(encoded_url);
                 }
