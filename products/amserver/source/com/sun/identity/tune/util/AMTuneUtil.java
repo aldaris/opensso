@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneUtil.java,v 1.9 2008-09-18 17:19:04 kanduls Exp $
+ * $Id: AMTuneUtil.java,v 1.10 2008-09-19 23:29:43 ykwon Exp $
  */
 
 package com.sun.identity.tune.util;
@@ -1215,6 +1215,12 @@ import java.util.zip.ZipOutputStream;
                 {"../../../template/windows/bin/amtune/" +
                          "amtune-env.properties.template",
                          zBinWinDir + FILE_SEP + "amtune-env.properties"},
+                {"../../../template/unix/bin/amtune/" +
+                         "amtune-samplepasswordfile.template",
+                         zBinUnxDir + FILE_SEP + "amtune-samplepasswordfile"},
+                {"../../../template/windows/bin/amtune/" +
+                         "amtune-samplepasswordfile.template",
+                         zBinWinDir + FILE_SEP + "amtune-samplepasswordfile"},
             };
             for (int i = 0; i < filesToCopy.length; i++) {
                 File source = new File(filesToCopy[i][0]);
