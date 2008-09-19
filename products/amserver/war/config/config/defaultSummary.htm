@@ -41,12 +41,14 @@
 
     function validateDefaultAdminPasswords() {
         var link = "?actionLink=checkPasswords";
-        var cValue = "&confirm=" + $('defaultAdminConfirm').value;
+        var cValue = "confirm=" + $('defaultAdminConfirm').value;
         var aValue = "&password=" + $('defaultAdminPassword').value;        
 	var oValue = "&otherPassword=" + $('defaultAgentPassword').value;
         var type = "&type=admin";
-        AjaxUtils.call(
-            "$context$path"+link+cValue+aValue+oValue+type, defaultAdminPasswordResponse);
+        ie7fix++;
+        AjaxUtils.doPost(null, "$context$path" + link + "&ie7fix=" + ie7fix,
+            cValue+aValue+oValue+type, defaultAdminPasswordResponse, null,
+            null);
     }
 
     function defaultAgentPasswordResponse(response) {
@@ -63,14 +65,15 @@
        
     function validateDefaultAgentPasswords() {
         var link = "?actionLink=checkPasswords";
-        var cValue = "&confirm=" + $('defaultAgentConfirm').value;
+        var cValue = "confirm=" + $('defaultAgentConfirm').value;
         var aValue = "&password=" + $('defaultAgentPassword').value;
 	var oValue = "&otherPassword=" + $('defaultAdminPassword').value;
         var type = "&type=agent";
-        AjaxUtils.call( 
-            "$context$path"+link+cValue+aValue+oValue+type, defaultAgentPasswordResponse)
+        ie7fix++;
+        AjaxUtils.doPost(null, "$context$path" + link + "&ie7fix=" + ie7fix,
+            cValue + aValue + oValue + type, defaultAgentPasswordResponse,
+            null, null);
     }
-    
     
     function initialize() {
         $('createDefaultConfig').disabled = true;
