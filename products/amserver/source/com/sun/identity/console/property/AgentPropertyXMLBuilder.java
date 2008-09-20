@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentPropertyXMLBuilder.java,v 1.6 2008-06-25 05:43:08 qcheng Exp $
+ * $Id: AgentPropertyXMLBuilder.java,v 1.7 2008-09-20 06:38:47 veiming Exp $
  *
  */
 
@@ -38,6 +38,7 @@ import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceSchemaManager;
 import com.sun.identity.console.agentconfig.AgentsViewBean;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -98,7 +99,7 @@ public class AgentPropertyXMLBuilder
             serviceName, model.getUserSSOToken());
         getServiceResourceBundle();
         if (serviceBundle != null) {
-            getAttributeSchemas(serviceName);
+            getAttributeSchemas(serviceName, olderAgentType);
         }
     }
 
@@ -119,14 +120,14 @@ public class AgentPropertyXMLBuilder
         xml.append(DEFINITION).append(START_TAG);
         AgentTabManager tabMgr = AgentTabManager.getInstance();
         List order = tabMgr.getSectionOrder(agentType, tabName);
-
-        if ((order == null) || order.isEmpty()) {
+        boolean bLocal = (choice != null) && choice.equals("local");
+        
+        if (bLocal || (order == null) || order.isEmpty()) {
             Set attrSchemas = (Set)mapTypeToAttributeSchema.get(DUMMY_SECTION);
-            if (choice != null && choice.equals("local")) {
-                for (Iterator i = attrSchemas.iterator(); i.hasNext(); ) {
-                    AttributeSchema as = (AttributeSchema)i.next();
-                    if ((as.getName().equals(AgentsViewBean.DEVICE_KEY))
-                        || (as.getName().equals(AgentsViewBean.DESCRIPTION))) {          
+            if (bLocal) {
+                for (Iterator i = attrSchemas.iterator(); i.hasNext();) {
+                    AttributeSchema as = (AttributeSchema) i.next();
+                    if ((as.getName().equals(AgentsViewBean.DESCRIPTION))) {
                         i.remove();
                     }
                 }
@@ -158,9 +159,15 @@ public class AgentPropertyXMLBuilder
         }
    }
     
-    private void getAttributeSchemas(String serviceName) 
+    private void getAttributeSchemas(String serviceName, boolean localized) 
         throws SMSException, SSOException {
         mapTypeToAttributeSchema = new HashMap();
+        Set localProperty = null;
+        
+        if (localized && !bGroup) {
+            localProperty= AgentConfiguration.getLocalPropertyNames(agentType);
+        }
+        
         Set attrSchemas = AgentConfiguration.getAgentAttributeSchemas(
             agentType);
         for (Iterator i = attrSchemas.iterator(); i.hasNext(); ) {
@@ -174,14 +181,20 @@ public class AgentPropertyXMLBuilder
                 ) {
                     i.remove();
                 }
+            } else if ((localProperty != null) && 
+                !localProperty.contains(as.getName())) {
+                i.remove();
             }
         }
         
         AgentTabManager mgr = AgentTabManager.getInstance();
-        Map secToAttrNames = (tabName == null) ?
+        Map secToAttrNames = null;
+        
+        if (!localized) {
+            secToAttrNames = (tabName == null) ?
             mgr.getAttributeNames(agentType, -1) :
             mgr.getAttributeNames(agentType, mgr.getTabId(agentType, tabName));
-
+        }
         if ((secToAttrNames == null) || secToAttrNames.isEmpty()) {
             mapTypeToAttributeSchema.put(DUMMY_SECTION, attrSchemas);
         } else {

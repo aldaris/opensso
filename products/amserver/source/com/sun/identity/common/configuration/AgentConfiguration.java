@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.37 2008-08-28 18:00:49 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.38 2008-09-20 06:38:46 veiming Exp $
  *
  */
 
@@ -310,6 +310,41 @@ public class AgentConfiguration {
     }
 
     /**
+     * Creates a localized agent.
+     *
+     * @param ssoToken Single Sign On token that is to be used for creation.
+     * @param realm Realm where agent resides.
+     * @param agentName Name of agent.
+     * @param agentType Type of agent.
+     * @param values Map of attribute name to its values.
+     * @param agentURL Agent URL.
+     * @throws IdRepoException if there are Id Repository related errors.
+     * @throws SSOException if the Single Sign On token is invalid or has
+     *         expired.
+     * @throws SMSException if there are errors in service management layers.
+     * @throws MalformedURLException if server or agent URL is invalid.
+     * @throws ConfigurationException if there are missing information in
+     *         server or agent URL; or invalid agent type.
+     */
+    public static void createAgentLocal(
+        SSOToken ssoToken,
+        String realm,
+        String agentName,
+        String agentType,
+        Map attrValues,
+        String agentURL
+    ) throws IdRepoException, SSOException, SMSException,
+        MalformedURLException, ConfigurationException {
+        if ((agentURL == null) || (agentURL.trim().length() == 0)) {
+            throw new ConfigurationException(
+                "create.agent.invalid.agent.url", null);
+        }
+
+        createAgentEx(ssoToken, realm, agentName, agentType, attrValues,
+            null, new FQDNUrl(agentURL));
+    }
+    
+    /**
      * Creates an agent.
      *
      * @param ssoToken Single Sign On token that is to be used for creation.
@@ -383,8 +418,15 @@ public class AgentConfiguration {
         if (serverURL == null) {
             // need to set an arbitrary number to com.iplanet.am.server.port
             // so that number validator will pass
-            Map map = new HashMap(4);
+            Map map = new HashMap(2);
             map.put("SERVER_PORT", "80");
+            tagswapAttributeValues(attributeValues, map);
+       }
+
+        if (agentURL == null) {
+            // need to set an arbitrary number to com.iplanet.am.server.port
+            // so that number validator will pass
+            Map map = new HashMap(2);
             map.put("AGENT_PORT", "80");
             tagswapAttributeValues(attributeValues, map);
         }

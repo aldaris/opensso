@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsModelImpl.java,v 1.15 2008-07-21 17:00:10 veiming Exp $
+ * $Id: AgentsModelImpl.java,v 1.16 2008-09-20 06:38:46 veiming Exp $
  *
  */
 
@@ -273,6 +273,65 @@ public class AgentsModelImpl
                 type, map);
             logEvent("SUCCEED_CREATE_AGENT", params);
         } catch (ConfigurationException e) {
+            String[] paramsEx = {realmName, name, type, getErrorString(e)};
+            logEvent("EXCEPTION_CREATE_AGENT", paramsEx);
+            debug.warning("AgentsModelImpl.createAgent", e);
+            throw new AMConsoleException(getErrorString(e));
+        } catch (SSOException e) {
+            String[] paramsEx = {realmName, name, type, getErrorString(e)};
+            logEvent("EXCEPTION_CREATE_AGENT", paramsEx);
+            debug.warning("AgentsModelImpl.createAgent", e);
+            throw new AMConsoleException(getErrorString(e));
+        } catch (IdRepoException e) {
+            String[] paramsEx = {realmName, name, type, getErrorString(e)};
+            logEvent("EXCEPTION_CREATE_AGENT", paramsEx);
+            debug.warning("AgentsModelImpl.createAgent", e);
+            throw new AMConsoleException(getErrorString(e));
+        } catch (SMSException e) {
+            String[] paramsEx = {realmName, name, type, getErrorString(e)};
+            logEvent("EXCEPTION_CREATE_AGENT", paramsEx);
+            debug.warning("AgentsModelImpl.createAgent", e);
+            throw new AMConsoleException(getErrorString(e));
+        }
+    }
+    
+    /**
+     * Creates localized agent.
+     *
+     * @param realmName Realm where agent resides.
+     * @param name Name of agent.
+     * @param type Type of agent.
+     * @param password Password of agent.
+     * @param agent Agent URL.
+     * @throws AMConsoleException if agent cannot be created.
+     */
+    public void createAgentLocal(
+        String realmName,
+        String name,
+        String type,
+        String password,
+        String agentURL
+    ) throws AMConsoleException {
+        String[] params = {realmName, name, type};
+
+        try {
+            logEvent("ATTEMPT_CREATE_AGENT", params);
+            Map map = AgentConfiguration.getDefaultValues(type, false);
+            Set set = new HashSet(2);
+            map.put(AgentConfiguration.ATTR_NAME_PWD, set);
+            set.add(password);
+            Set newset = new HashSet(2);
+            newset.add(AgentConfiguration.VAL_CONFIG_REPO_LOCAL);
+            map.put(AgentConfiguration.ATTR_CONFIG_REPO, newset);
+            AgentConfiguration.createAgentLocal(getUserSSOToken(), realmName, 
+                name, type, map, agentURL);
+            logEvent("SUCCEED_CREATE_AGENT", params);
+        } catch (ConfigurationException e) {
+            String[] paramsEx = {realmName, name, type, getErrorString(e)};
+            logEvent("EXCEPTION_CREATE_AGENT", paramsEx);
+            debug.warning("AgentsModelImpl.createAgent", e);
+            throw new AMConsoleException(getErrorString(e));
+        } catch (MalformedURLException e) {
             String[] paramsEx = {realmName, name, type, getErrorString(e)};
             logEvent("EXCEPTION_CREATE_AGENT", paramsEx);
             debug.warning("AgentsModelImpl.createAgent", e);

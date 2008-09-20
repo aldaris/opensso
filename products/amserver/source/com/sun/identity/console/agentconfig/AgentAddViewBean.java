@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentAddViewBean.java,v 1.7 2008-06-25 05:42:44 qcheng Exp $
+ * $Id: AgentAddViewBean.java,v 1.8 2008-09-20 06:38:46 veiming Exp $
  *
  */
 
@@ -179,19 +179,19 @@ public class AgentAddViewBean
                     String curRealm = (String)getPageSessionAttribute(
                         AMAdminConstants.CURRENT_REALM);
                     if (agentType.equals(AgentConfiguration.AGENT_TYPE_J2EE) ||
-                            agentType.equals(AgentConfiguration.AGENT_TYPE_WEB)
-                            ) {
+                        agentType.equals(AgentConfiguration.AGENT_TYPE_WEB)) {
+                        
+                        String agentURL = (String) propertySheetModel.getValue(
+                            TF_AGENT_URL);
+                        agentURL = agentURL.trim();
                         
                         if (choice.equals(AgentsViewBean.PROP_LOCAL)) {
-                            model.createAgent(curRealm, agentName, agentType, 
-                                password, choice);
+                            model.createAgentLocal(curRealm, agentName, 
+                                agentType, password, agentURL);
                         } else {
-                            String serverURL = (String)propertySheetModel.getValue(
-                                    TF_SERVER_URL);
+                            String serverURL = (String)
+                                propertySheetModel.getValue(TF_SERVER_URL);
                             serverURL = serverURL.trim();
-                            String agentURL = (String)propertySheetModel.getValue(
-                                    TF_AGENT_URL);
-                            agentURL = agentURL.trim();
                             model.createAgent(curRealm, agentName, agentType, 
                                 password, serverURL, agentURL);
                         }

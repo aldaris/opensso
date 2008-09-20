@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsModel.java,v 1.9 2008-07-21 17:00:10 veiming Exp $
+ * $Id: AgentsModel.java,v 1.10 2008-09-20 06:38:46 veiming Exp $
  *
  */
 
@@ -76,6 +76,24 @@ public interface AgentsModel
         Set results
     ) throws AMConsoleException;
 
+    /**
+     * Creates localized agent.
+     *
+     * @param realmName Realm where agent resides.
+     * @param name Name of agent.
+     * @param type Type of agent.
+     * @param password Password of agent.
+     * @param agent Agent URL.
+     * @throws AMConsoleException if agent cannot be created.
+     */
+    void createAgentLocal(
+        String realmName,
+        String name,
+        String type,
+        String password,
+        String agentURL
+    ) throws AMConsoleException;
+    
     /**
      * Creates agent.
      *

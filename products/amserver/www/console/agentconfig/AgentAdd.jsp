@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentAdd.jsp,v 1.5 2008-06-25 05:44:34 qcheng Exp $
+   $Id: AgentAdd.jsp,v 1.6 2008-09-20 06:38:47 veiming Exp $
 
 --%>
 
@@ -39,10 +39,20 @@
 <cc:i18nbundle baseName="amConsole" id="amConsole"
     locale="<%=((com.sun.identity.console.base.AMViewBeanBase)viewBean).getUserLocale()%>"/>
 
-<cc:header name="hdrCommon" pageTitle="webconsole.title" bundleID="amConsole" copyrightYear="2007" fireDisplayEvents="true">
+<cc:header name="hdrCommon" pageTitle="webconsole.title" bundleID="amConsole" copyrightYear="2007" fireDisplayEvents="true" onLoad="toggleTextBox()">
 
 <cc:form name="AgentAdd" method="post" defaultCommandChild="/button1">
 <script language="javascript">
+    function toggleTextBox() {
+        var formElement = document.forms["AgentAdd"];
+        var nodeList = formElement.elements['AgentAdd.radioChoice'];
+        for (var i = 0; i < nodeList.length; i++) {
+            if (nodeList.item(i).checked) {
+                SelectLocal(nodeList.item(i));
+            }
+        }
+    }
+
     function confirmLogout() {
         return confirm("<cc:text name="txtLogout" defaultValue="masthead.logoutMessage" bundleID="amConsole"/>");
     }
@@ -50,10 +60,8 @@
        var formElement = document.forms["AgentAdd"];
        if(radio.value=="local") {
            formElement.elements['AgentAdd.tfServerURL'].disabled = true;
-           formElement.elements['AgentAdd.tfAgentURL'].disabled = true;
        } else if (radio.value=="centralized") {
            formElement.elements['AgentAdd.tfServerURL'].disabled = false;
-           formElement.elements['AgentAdd.tfAgentURL'].disabled = false;
        } 
     } 
 </script>

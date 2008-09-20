@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GenericAgentProfileViewBean.java,v 1.13 2008-09-04 23:59:36 veiming Exp $
+ * $Id: GenericAgentProfileViewBean.java,v 1.14 2008-09-20 06:38:46 veiming Exp $
  *
  */
 
@@ -111,7 +111,6 @@ public class GenericAgentProfileViewBean
         
         try {
             if (isLocalConfig(agentType)) {
-                agentType = AgentsViewBean.AGENT_2_2;  
                 blder = new AgentPropertyXMLBuilder(
                     agentType, isGroup, true, tabName, model);
             } else {
@@ -182,7 +181,6 @@ public class GenericAgentProfileViewBean
             names.add(as.getName());
         }
         if (isLocalConfig(agentType)) {
-            names.remove(AgentsViewBean.DEVICE_KEY);
             names.remove(AgentsViewBean.DESCRIPTION);
          }
         return names;        
