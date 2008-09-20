@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: UMUserPasswordResetOptions.jsp,v 1.2 2008-06-25 05:44:55 qcheng Exp $
+   $Id: UMUserPasswordResetOptions.jsp,v 1.3 2008-09-20 07:05:04 babysunil Exp $
 
 --%>
 
@@ -84,6 +84,7 @@
     showSortingRow="false" />
 </jato:content>
 
+<jato:content name="ForceReset">
 <div class="ConFldSetDiv">
     <table border="0" cellpadding="0" cellspacing="0" title="">
 	<tr>
@@ -92,6 +93,7 @@
 	    <td valign="top"><div class="ConTblCl2Div"><cc:checkbox name="cbForceResetPwd" /></div></td></tr>
 </table>
 </div>
+</jato:content>
 
 </cc:form>
 
