@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.9 2008-08-30 05:43:37 ykwon Exp $
+$Id: README,v 1.10 2008-09-20 00:20:34 ykwon Exp $
 
 ------------------------------------------------------------------------------
 
@@ -46,22 +46,22 @@ Linux, but not on AIX, Windows, MacOS or BSD variants.  Also amtune tunes only
 Sun Web Server 7 and Sun Application Server 9.1/Glassfish v2.  
 
 However, amtune enables tuning of OpenSSO parameters - e.g., session/SDK cache
-entries, session cache, logging buffer, notification thread pool/queue and LDAP
-connection pool sizes for service management, global authentication service and
-user data store - when OpenSSO is deployed on supported web containers 
-(Geronimo 2.x, JBoss 4.2.x, Oracle Application Server 10g, Tomcat 5.5.x/6.x, 
-WebLogic 9.2 MP2/10, WebSphere 6.1, in addition to Sun web containers) and 
-supported operating systems (Solaris 9/10, Red Hat Enterprise 4/5, Windows 2003/
-Vista, Ubuntu 8.04 for some containers and AIX 5.3 for only WebSphere 6.1).
+entries, logging buffer, notification thread pool/queue and LDAP connection 
+pool sizes for service management, global authentication service and user data 
+store - when OpenSSO is deployed on supported web containers (Geronimo 2.x, 
+JBoss 4.2.x, Oracle Application Server 10g, Tomcat 5.5.x/6.x, WebLogic 9.2 
+MP2/10, WebSphere 6.1, in addition to Sun web containers) and supported 
+operating systems (Solaris 9/10, Red Hat Enterprise 4/5, Windows 2003/Vista, 
+Ubuntu 8.04 for some containers and AIX 5.3 for only WebSphere 6.1).
 
 For Sun Web Server 7 and Sun Application Server 9.1/Glassfish v2, amtune tunes 
 JVM heap and JVM per-thread stack sizes, JVM garbage collection algorithms, 
 container worker/acceptor threads and queue sizes.
 
 For Sun Directory Server 5.2 and 6.3, amtune tunes its worker threads, database
-cache and entry cache sizes and changes database home directory to RAM disk - i.e,
-/tmp.  Please note that Sun Directory Server 6.2 is not supported for tuning 
-due to its data corruption issues. 
+cache and entry cache sizes and changes database home directory to RAM disk - 
+i.e, /tmp.  Please note that Sun Directory Server 6.2 is not supported for 
+tuning due to its data corruption issues. 
 
 
 %% 2. Setup amtune
@@ -131,12 +131,13 @@ OpenSSO
           WS7), asadmin (admin for AS9.1) or dirmgr (directory manager for Sun 
           DS), which has one or more of the following strings, where passwords 
           follow the strings: SSOADM_PASSWORD=, WADM_PASSWORD=, 
-          ASADMIN_PASSWORD= and DIRMGR_PASSWORD=.  
+          ASADMIN_PASSWORD= and DIRMGR_PASSWORD=.  Please look at the amtune-
+          samplepasswordfile for sample entries.  
 
-          On Solaris/Linux/AIX, the password file must have read-only 
-          permission for the root/superuser - i.e., set "chmod 400" for the 
-          password file.  On Windows, amtune.bat does not check the password 
-	  file's permission.
+          On Solaris/Linux/AIX, the password file must be non-touchable by its
+          non-owners and only readable by its owner - i.e., set "chmod 400" for
+          the password file.  On Windows, amtune.bat does not check the 
+          password file's permission.
 
           Tuning operating system parameters does not require a password
           file.  
@@ -174,10 +175,10 @@ Step 3. Set values for TOOLS_HOME and JAVA_HOME in
 Step 4. Edit amtune-env.properties file with Sun Directory Server information.
 
 Step 5. Execute amtune on Solaris/Linux/AIX with a password file for the Sun  
-        Directory Server's Directory Manager set to read-only permission for 
-        the root/superuser - i.e., set "chmod 400" for the password file.  On 
-        Windows, execute amtune.bat with a password file also, but amtune.bat 
-        does not check its file permission on Windows.
+        Directory Server's Directory Manager, set to be non-touchable by its
+        non-owners and only readable by its owner - i.e., set "chmod 400" for 
+        the password file.  On Windows, execute amtune.bat with a password file
+        also, but amtune.bat does not check its file permission on Windows.
 
 Note: In CHANGE mode, if AMTUNE_TUNE_DS=true, then the amtune script will 
       restart Sun Directory Server instance and if AMTUNE_TUNE_OS=true, then 
