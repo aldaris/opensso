@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginContext.java,v 1.5 2008-06-25 05:41:54 qcheng Exp $
+ * $Id: LoginContext.java,v 1.6 2008-09-22 23:19:42 manish_rustagi Exp $
  *
  */
 
@@ -244,7 +244,10 @@ public class LoginContext {
                         iae.getMessage());
             } catch (InvocationTargetException ite) {
                 if (ite.getTargetException() instanceof java.lang.Error) {
-                    debug.message("Target exception is java.lang.Error.", ite);
+                    if (debug.messageEnabled()){	
+                        debug.message("LoginContext.invoke():" +
+                        "Handling expected java.lang.Error");
+                    }
                     throw (java.lang.Error)ite.getTargetException();
                 }
                 // failure cases
