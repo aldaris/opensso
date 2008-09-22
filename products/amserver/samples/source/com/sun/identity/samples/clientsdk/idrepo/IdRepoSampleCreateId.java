@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoSampleCreateId.java,v 1.13 2008-09-18 00:36:36 goodearth Exp $
+ * $Id: IdRepoSampleCreateId.java,v 1.14 2008-09-22 18:06:13 goodearth Exp $
  *
  */
 
@@ -116,13 +116,6 @@ public class IdRepoSampleCreateId {
                 String tmpS = sampleUtils.getLine(idName + "'s agentType: ");
                 vals.add(tmpS);
                 attrs.put(AGENT_TYPE_ATTR, vals);
-                if (tmpS.equalsIgnoreCase("webagent")) {
-                    tmpS = sampleUtils.getLine(idName +"'s log size(def:10): ");
-                    vals = new HashSet();
-                    vals.add(tmpS);
-                    attrs.put("com.sun.identity.agents.config.local.log.size", 
-                        vals);
-                }
                 tmpS = sampleUtils.getLine(idName + "'s password: ");
                 vals = new HashSet();
                 vals.add(tmpS);
