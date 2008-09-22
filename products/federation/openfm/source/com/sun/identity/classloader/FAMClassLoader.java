@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMClassLoader.java,v 1.14 2008-09-17 03:07:31 mallas Exp $
+ * $Id: FAMClassLoader.java,v 1.15 2008-09-22 21:04:38 mallas Exp $
  *
  */
 
@@ -77,9 +77,14 @@ public class FAMClassLoader {
                 }
 
                 ClassLoader localcc = FAMClassLoader.class.getClassLoader();
+                String[] mPackages = maskedPackages;
+                String version = System.getProperty("java.vm.version");
+                if(version != null && version.startsWith("1.6")) {
+                   mPackages = maskedPackages16;
+                }
 
                 List<String> mask = 
-                    new ArrayList<String>(Arrays.asList(maskedPackages));
+                    new ArrayList<String>(Arrays.asList(mPackages));
                 
                 List<String> maskRes =
                     new ArrayList<String>(Arrays.asList(maskedResouces));
@@ -209,6 +214,42 @@ public class FAMClassLoader {
         "com.sun.identity.wssagents.",
         "com.sun.org.apache.xml.internal.",
         "com/sun/org/apache/xml/internal/",
+        "com.sun.org.apache.xpath.internal.",
+        "com.sun.org.apache.xalan.internal.",
+        "com.sun.org.apache.xerces.internal.",
+        "com.sun.identity.saml.xmlsig.",
+        "com.sun.identity.xmlenc.",
+        "com.sun.xml.stream."
+    };
+    
+    public static String[] maskedPackages16 = new String[]{
+        "com.sun.istack.tools.",
+        "com.sun.tools.jxc.",
+        "com.sun.tools.xjc.",
+        "com.sun.tools.ws.",
+        "com.sun.codemodel.",
+        "com.sun.relaxng.",
+        "com.sun.xml.xsom.",
+        "com.sun.xml.bind.",
+        "com.sun.xml.bind.v2.",
+        "com.sun.xml.messaging.",
+        "com.sun.xml.ws.",
+        "com.sun.xml.ws.addressing.",
+        "com.sun.xml.ws.api.",
+        "com.sun.xml.ws.api.addressing.",
+        "com.sun.xml.ws.server.",
+        "com.sun.xml.ws.transport.",
+        "com.sun.xml.wss.",
+        "com.sun.xml.security.",
+        "com.sun.xml.xwss.",
+        "javax.xml.bind.",
+        "javax.xml.ws.",
+        "javax.jws.",
+        "javax.jws.soap.",
+        "javax.xml.soap.",
+        "com.sun.istack.",
+        "com.sun.identity.wss.",
+        "com.sun.identity.wssagents.",        
         "com.sun.org.apache.xpath.internal.",
         "com.sun.org.apache.xalan.internal.",
         "com.sun.org.apache.xerces.internal.",
