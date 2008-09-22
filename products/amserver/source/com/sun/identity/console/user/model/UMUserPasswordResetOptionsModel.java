@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UMUserPasswordResetOptionsModel.java,v 1.2 2008-06-25 05:43:24 qcheng Exp $
+ * $Id: UMUserPasswordResetOptionsModel.java,v 1.3 2008-09-22 20:17:37 veiming Exp $
  *
  */
 
@@ -126,4 +126,11 @@ public interface UMUserPasswordResetOptionsModel
      * @return true if <code>userId</code> is the same as the logged in user.
      */
     boolean isLoggedInUser(String userId);
+
+    /**
+     * Returns <code>true</code> if current user is an realm administrator.
+     *
+     * @return <code>true</code> if current user is an realm administrator.
+     */
+    boolean isRealmAdmin();
 }

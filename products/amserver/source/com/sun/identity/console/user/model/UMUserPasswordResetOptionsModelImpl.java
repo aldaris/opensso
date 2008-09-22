@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UMUserPasswordResetOptionsModelImpl.java,v 1.2 2008-06-25 05:43:24 qcheng Exp $
+ * $Id: UMUserPasswordResetOptionsModelImpl.java,v 1.3 2008-09-22 20:17:37 veiming Exp $
  *
  */
 
@@ -34,11 +34,15 @@ import com.sun.identity.console.base.model.AMAdminConstants;
 import com.sun.identity.console.base.model.AMAdminUtils;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMModelBase;
+import com.sun.identity.delegation.DelegationEvaluator;
+import com.sun.identity.delegation.DelegationException;
+import com.sun.identity.delegation.DelegationPermission;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.security.DecryptAction;
 import com.sun.identity.security.EncryptAction;
+import com.sun.identity.shared.Constants;
 import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceSchemaManager;
@@ -166,12 +170,11 @@ public class UMUserPasswordResetOptionsModelImpl
             mapData.put(PW_RESET_QUESTION_ANSWER, attribVals);
         }
 
-        //TOFIX: isAdministrator?
-        //if (isAdministrator()) {
+        if (isRealmAdmin()) {
             Set set = new HashSet(2);
             set.add(String.valueOf(forceReset));
             mapData.put(PW_RESET_FORCE_RESET, set);
-        //}
+        }
 
         if (!mapData.isEmpty()) {
             String[] params = {userId, PW_RESET_QUESTION_ANSWER};
@@ -501,5 +504,29 @@ public class UMUserPasswordResetOptionsModelImpl
      */
     public boolean isLoggedInUser(String userId) {
         return userId.equals(getUserName());
+    }
+
+    /**
+     * Returns <code>true</code> if current user is an realm administrator.
+     *
+     * @return <code>true</code> if current user is an realm administrator.
+     */
+    public boolean isRealmAdmin() {
+        SSOToken token = getUserSSOToken();
+        try {
+            Set actionNames = new HashSet();
+            actionNames.add("MODIFY");
+            DelegationEvaluator de = new DelegationEvaluator();
+            DelegationPermission permission =
+                    new DelegationPermission(token.getProperty(
+                    Constants.ORGANIZATION), "sunAMRealmService",
+                    "1.0", "organization", "default", actionNames, null);
+            return de.isAllowed(token, permission, null);
+        } catch (SSOException e) {
+            debug.warning("UserPasswordResetOptionsModelImpl.isRealmAdmin", e);
+        } catch (DelegationException e) {
+            debug.warning("UserPasswordResetOptionsModelImpl.isRealmAdmin", e);
+        }
+        return false;
     }
 }

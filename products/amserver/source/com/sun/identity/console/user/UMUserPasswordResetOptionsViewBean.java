@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UMUserPasswordResetOptionsViewBean.java,v 1.3 2008-09-20 07:06:36 babysunil Exp $
+ * $Id: UMUserPasswordResetOptionsViewBean.java,v 1.4 2008-09-22 20:17:37 veiming Exp $
  *
  */
 
@@ -34,9 +34,6 @@ import com.iplanet.jato.view.View;
 import com.iplanet.jato.view.event.ChildDisplayEvent;
 import com.iplanet.jato.view.event.DisplayEvent;
 import com.iplanet.jato.view.event.RequestInvocationEvent;
-import com.iplanet.sso.SSOException;
-import com.iplanet.sso.SSOToken;
-import com.sun.identity.common.Constants;
 import com.sun.identity.console.base.CloseWindowViewBean;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMModel;
@@ -46,9 +43,6 @@ import com.sun.identity.console.realm.RMRealmViewBeanBase;
 import com.sun.identity.console.user.model.UMUserPasswordResetOptionsData;
 import com.sun.identity.console.user.model.UMUserPasswordResetOptionsModel;
 import com.sun.identity.console.user.model.UMUserPasswordResetOptionsModelImpl;
-import com.sun.identity.delegation.DelegationEvaluator;
-import com.sun.identity.delegation.DelegationException;
-import com.sun.identity.delegation.DelegationPermission;
 import com.sun.web.ui.view.alert.CCAlert;
 import com.sun.web.ui.view.html.CCCheckBox;
 import com.sun.web.ui.view.pagetitle.CCPageTitle;
@@ -56,9 +50,7 @@ import com.sun.web.ui.view.table.CCActionTable;
 import com.sun.web.ui.model.CCActionTableModel;
 import com.sun.web.ui.model.CCPageTitleModel;
 import java.util.Iterator;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 public class UMUserPasswordResetOptionsViewBean
@@ -153,35 +145,9 @@ public class UMUserPasswordResetOptionsViewBean
     }
     
     public boolean beginForceResetDisplay(ChildDisplayEvent event) {        
-        boolean displayForceOption = false;
-        
         UMUserPasswordResetOptionsModel model =
                 (UMUserPasswordResetOptionsModel)getModel();
-        SSOToken token = model.getUserSSOToken();
-        
-        try {
-            Set actionNames = new HashSet();
-            actionNames.add("MODIFY");
-            DelegationEvaluator de = new DelegationEvaluator();
-            DelegationPermission permission =
-                    new DelegationPermission(token.getProperty(
-                    Constants.ORGANIZATION), "sunAMRealmService",
-                    "1.0", "organization", "default", actionNames, null);
-            boolean allowed = de.isAllowed(token, permission, null);
-            if (allowed) {
-                //return true only for admin user
-                displayForceOption =  true;
-            }
-        } catch (SSOException e) {
-            debug.warning(
-                "UMUserPasswordResetOptionsViewBean.beginForceResetDisplay "
-                    +e.getMessage());
-        } catch (DelegationException e) {
-            debug.warning(
-                "UMUserPasswordResetOptionsViewBean.beginForceResetDisplay " 
-                    +e.getMessage());
-        }
-        return displayForceOption;
+        return model.isRealmAdmin();
     }
 
     public boolean beginQuestionsDisplay(ChildDisplayEvent event) {
