@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CopyUtils.java,v 1.2 2008-06-25 05:44:11 qcheng Exp $
+ * $Id: CopyUtils.java,v 1.3 2008-09-22 20:49:28 kevinserwin Exp $
  *
  */
 
@@ -35,6 +35,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.File;
+import java.io.InputStream;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Properties;
@@ -137,4 +138,47 @@ public class CopyUtils {
             }
         }
     }
+    
+    /**
+     * Copies file from source to destination.
+     *
+     * The destination directories will be created if it is not in the system
+     *
+     * @param in The input stream object..
+     * @param destFile The destination file object.
+     * @param overwrite The flat to indicate whether to overwrite.
+     */
+    
+    public static void copyFileFromJar(InputStream in, File destFile,
+        boolean overwrite)
+        throws IOException {
+        
+        if (overwrite || (!destFile.exists())) {
+            if (destFile.exists() && destFile.isFile()) {
+                destFile.delete();
+            }
+            File parent = destFile.getParentFile();
+            if ((parent != null) && (!parent.exists())) {
+                parent.mkdirs();
+            }
+
+            String line = null;
+
+                FileOutputStream out = null;
+                try {
+                    out = new FileOutputStream(destFile);
+                    byte[] buffer = new byte[BUFFER_SIZE];
+                    int count = 0;
+                    while ((count = in.read(buffer, 0, buffer.length)) != -1) {
+                        out.write(buffer, 0, count);
+                    }
+                } finally {
+                    out.close();
+                    in.close();
+                }
+            
+        }
+        
+    }   
+    
 }

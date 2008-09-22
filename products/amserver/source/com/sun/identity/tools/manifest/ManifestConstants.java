@@ -22,18 +22,34 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: ManifestConstants.java,v 1.2 2008-09-04 22:26:12 kevinserwin Exp $
+* $Id: ManifestConstants.java,v 1.3 2008-09-22 20:49:27 kevinserwin Exp $
 */
-
 
 package com.sun.identity.tools.manifest;
 
 public interface ManifestConstants {
-    
+    public static final String MANIFEST_CREATE_FILE = "file.dest.path";
+    public static final String DRYRUN_OPTION = "option.dryrun";
+    public static final String VERBOSE_OPTION = "option.verbose";
+    public static final String DEFAULT_VERBOSE = "false";
+
+    public static final String LATEST_WAR_FILE = "file.war.latest";
+    public static final String PROPERTIES_FILE = "file.properties";   
+    public static final String IDENTIFIER_ENTRY = "entry.identifier";
+    public static final String DEFAULT_IDENTIFIER_ENTRY = "identifier";
+    public static final String MANIFEST_PATTERN = "pattern.manifest";
+    public static final String MANIFEST_FILE_NAME = "filename.manifest";
+    public static final String DEFAULT_MANIFEST_FILE_NAME = "manifest.manifest";
+    public static final String WILDCARD_CHAR = "pattern.wildcard";
+    public static final String DEFAULT_MANIFEST_PATTERN = "*.manifest";
+    public static final String DEFAULT_WILDCARD_CHAR ="*";
+    public static final String DELETE_SUFFIX = "delete";
+    public static final String ALL_SUFFIX = "all";
+    public static final String IDENTIFIER_SEPARATOR = ".";
+    public static final String VERSION_FILE = "file.version";    
     int BUFFER_SIZE = 8192;
     String SHA1 = "SHA1";
     String DEFAULT_RECURSIVE = "true";
-    String DEFAULT_MANIFEST_FILE_NAME = "MANIFEST.MF";
     String EQUAL = "=";
     String FILE_SEPARATOR = "/";
     char DEFAULT_WILD_CARD = '*';
@@ -45,7 +61,6 @@ public interface ManifestConstants {
     String INCLUDE_PATTERN = "file.include";
     String EXCLUDE_PATTERN = "file.exclude";
     String MANIFEST_NAME = "name.manifest";
-    String WILDCARD_CHAR = "char.wildcard";
     String DIGEST_ALG = "digest.alg";
     String DIGEST_HANDLEJAR = "digest.handlejar";
     String DEFAULT_DIGEST_HANDLEJAR = "true";

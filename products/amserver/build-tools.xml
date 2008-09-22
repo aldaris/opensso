@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-tools.xml,v 1.19 2008-09-04 16:40:01 kevinserwin Exp $
+   $Id: build-tools.xml,v 1.20 2008-09-22 20:46:35 kevinserwin Exp $
 
 -->
 
@@ -141,7 +141,7 @@
                 basedir="${patch.classes.dir}">
                 <manifest>
                     <attribute name="Main-Class"
-                        value="com.sun.identity.tools.patch.Main"/>
+                        value="com.sun.identity.tools.patch.Patch"/>
                 </manifest>
             </jar>
     </target>        
@@ -155,7 +155,7 @@
                 basedir="${manifest.classes.dir}">
                 <manifest>
                     <attribute name="Main-Class"
-                        value="com.sun.identity.tools.manifest.Main"/>
+                        value="com.sun.identity.tools.manifest.Manifest"/>
                 </manifest>
             </jar>
     </target>        

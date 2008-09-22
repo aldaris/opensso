@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.39 2008-09-11 17:16:33 kevinserwin Exp $
+   $Id: build.xml,v 1.40 2008-09-22 20:46:04 kevinserwin Exp $
 
 -->
 
@@ -168,6 +168,8 @@
             todir="${openfm.extlib.dir}"  />            
         <copy file="${amserver.tools.dir}/ssomanifest.jar"
             todir="${prd.nightly.dist.dir}/openfm"  />
+        <copy file="${amserver.tools.dir}/ssopatch.jar"
+            todir="${prd.nightly.dist.dir}/openfm"  />            
         <copy file="${amserver.tools.dir}/amserver.jar"
             todir="${openfm.extlib.dir}"  />
         <copy file="${amserver.dist.dir}/opensso-register.jar"
@@ -214,15 +216,13 @@
 
         <java jar="${prd.nightly.dist.dir}/openfm/ssomanifest.jar"
             fork="true">            
-            <classpath>
+            <classpath>             
                  <pathelement path="amserver/built/classes" />
             </classpath>
             <jvmarg value="-jar" />
             <jvmarg value="-Dfile.header.path=${prd.nightly.dist.dir}/version" />
             <jvmarg value="-Dfile.src.path=${prd.nightly.dist.dir}/opensso/opensso/deployable-war/opensso.war" />
             <jvmarg value="-Dfile.dest.path=${prd.nightly.dist.dir}/manifest/META-INF/OpenSSO.manifest" />
-            <jvmarg value="-Ddigest.handlejar=true" />
-            <jvmarg value="-Ddigest.handlewar=true" />
         </java>        
         
         <jar destfile="${prd.nightly.dist.dir}/opensso/opensso/deployable-war/opensso.war" update="true">

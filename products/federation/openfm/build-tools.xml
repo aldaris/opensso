@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-tools.xml,v 1.17 2008-09-04 16:35:27 kevinserwin Exp $
+   $Id: build-tools.xml,v 1.18 2008-09-22 20:50:00 kevinserwin Exp $
 
 -->
 
@@ -58,6 +58,11 @@
             <fileset dir="${openfm.res.i18n.dir}" includes="**/*.properties"/>
             <fileset dir="${library.res.i18n.dir}" includes="**/*.properties"/>         
         </copy>
+        <copy tofile="${tools.temp.dir}/template/unix/bin/ssopatch.template">
+            <fileset file="${openfm.dir}/scripts/bin/ssopatch"/>
+        </copy>
+        <copy file="${openfm.dir}/scripts/bin/ssopatch.bat"
+            tofile="${tools.temp.dir}/template/windows/bin/ssopatch.bat.template" />        
         <copy tofile="${tools.temp.dir}/template/unix/bin/ssoadm.template">
             <fileset file="${openfm.dir}/scripts/bin/ssoadm"/>
         </copy>
