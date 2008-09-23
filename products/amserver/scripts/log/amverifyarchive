@@ -23,7 +23,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: amverifyarchive,v 1.8 2008-07-23 17:14:32 veiming Exp $
+# $Id: amverifyarchive,v 1.9 2008-09-23 00:29:59 veiming Exp $
 #
 
 TOOLS_HOME="@TOOLS_HOME@"
@@ -39,7 +39,7 @@ ${JAVA_HOME}/bin/java -Xms64m -Xmx256m \
     -D"java.version.current=java.vm.version" \
     -D"java.version.expected=1.4+" \
     -D"am.version.current=com.iplanet.am.version" \
-    -D"am.version.expected=8.0" \
+    -D"am.version.expected=@AM_VERSION@" \
     -D"max_conn_pool=10" \
     -D"min_conn_pool=1" \
     -D"s1is.java.util.logging.config.class=com.sun.identity.log.s1is.LogConfigReader" \
