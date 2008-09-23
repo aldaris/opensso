@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: agent_configuration.cpp,v 1.14 2008-09-19 01:11:53 robertis Exp $
+ * $Id: agent_configuration.cpp,v 1.15 2008-09-23 00:29:14 subbae Exp $
  *
  * Abstract:
  * AgentConfiguration: This class creates/delets the agent configuration 
@@ -298,9 +298,6 @@ am_status_t AgentConfiguration::populateAgentProperties()
     }
 
     /* Get the User Id param  */
-    // The user_id_param of agent_info is actually not used.
-    // but keep it so size of agent_info remains the same for backwards compat.
-    // the actual parameter that's used to get user id is done in service.cpp.
     if (AM_SUCCESS == status) {
         parameter = AM_POLICY_USER_ID_PARAM_PROPERTY;
         status = am_properties_get_with_default(this->properties, parameter,

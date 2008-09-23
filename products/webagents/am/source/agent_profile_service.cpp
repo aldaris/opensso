@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: agent_profile_service.cpp,v 1.18 2008-08-26 00:18:36 subbae Exp $
+ * $Id: agent_profile_service.cpp,v 1.19 2008-09-23 00:29:14 subbae Exp $
  *
  */
 
@@ -59,6 +59,8 @@ USING_PRIVATE_NAMESPACE
 #define DEFAULT_AGENT_AUTH_MODULE "Application"
 #define DEFAULT_AGENT_ORG_NAME "/"
 #define ATTRIB_URI "xml/read"
+#define LOCAL_CONFIG "local"
+#define CENTRAL_CONFIG "remote"
 
 const std::string authURLAttribute("iplanet-am-naming-auth-url");
 const std::string restURLAttribute("sun-naming-idsvcs-rest-url");
@@ -94,10 +96,10 @@ AgentProfileService::AgentProfileService(const Properties& config,
 
     boot_info = boot_info_prop;
     if(isRESTServiceAvailable()==AM_REST_SERVICE_NOT_AVAILABLE){
-        setRepoType("local");
+        setRepoType(LOCAL_CONFIG);
     }
     else{
-        setRepoType("remote");
+        setRepoType(CENTRAL_CONFIG);
     }
 } 
 
@@ -318,7 +320,7 @@ void AgentProfileService::fetchAndUpdateAgentConfigCache()
     const Properties& propPtr =
         *reinterpret_cast<Properties *>(boot_info.properties);
 
-    if (getRepoType() == "local") {
+    if (getRepoType() == LOCAL_CONFIG) {
         am_properties_create(&properties);
         status = am_properties_load(properties,agentConfigFile);
         if (status != AM_SUCCESS ) {
@@ -771,6 +773,16 @@ am_status_t AgentProfileService::agentLogin()
 
     // Create Auth context, do login.
     try {
+        // The following is necessary check, which resolves this case:
+        // opensso/am server not running and agent running. When server is up,
+        // then agent will be able to authenticate itself and initializes ok.
+        if(mAuthURL.empty()) {
+            if(isRESTServiceAvailable()==AM_REST_SERVICE_NOT_AVAILABLE){
+                setRepoType(LOCAL_CONFIG);
+            } else{
+                setRepoType(CENTRAL_CONFIG);
+            }
+        }
         std::string certName, namingURLs;   // dummy strings for linux compile.
         AuthContext authC(orgName, certName, namingURLs);
         Log::log(logModule, Log::LOG_DEBUG, 
