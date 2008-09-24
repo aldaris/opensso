@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSignatureProvider.java,v 1.7 2008-07-30 05:06:51 mallas Exp $
+ * $Id: AMSignatureProvider.java,v 1.8 2008-09-24 00:25:17 qcheng Exp $
  *
  */
 
@@ -1541,10 +1541,13 @@ public class AMSignatureProvider implements SignatureProvider {
             Element securityElement = (Element) doc.getDocumentElement().
                 getElementsByTagNameNS(wsseNS, SAMLConstants.TAG_SECURITY).
                 item(0);
+            if (securityElement == null) {
+                return null;
+            }
 
-	    Element nscontext = com.sun.org.apache.xml.internal.security.utils.
+            Element nscontext = com.sun.org.apache.xml.internal.security.utils.
                 XMLUtils.createDSctx(doc,"ds",Constants.SignatureSpecNS);
-	    Element sigElement = (Element) XPathAPI.selectSingleNode(
+            Element sigElement = (Element) XPathAPI.selectSingleNode(
 					securityElement, "ds:Signature[1]",
 					nscontext);
 
