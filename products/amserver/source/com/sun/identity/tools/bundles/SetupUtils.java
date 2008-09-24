@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupUtils.java,v 1.5 2008-06-25 05:44:12 qcheng Exp $
+ * $Id: SetupUtils.java,v 1.6 2008-09-24 23:45:38 ww203982 Exp $
  *
  */
 
@@ -234,7 +234,8 @@ public class SetupUtils implements SetupConstants{
      */
     
     public static String determineOS() {
-        if (OS_ARCH.toLowerCase().indexOf(X86) >= 0) {
+        if ((OS_ARCH.toLowerCase().indexOf(X86) >= 0) || 
+            (OS_ARCH.toLowerCase().indexOf(X64) >= 0)){
             if (OS_NAME.toLowerCase().indexOf(WINDOWS) >= 0) {
                 return WINDOWS;
             } else {

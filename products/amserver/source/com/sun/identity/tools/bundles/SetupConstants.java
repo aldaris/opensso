@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.3 2008-09-18 22:56:31 veiming Exp $
+ * $Id: SetupConstants.java,v 1.4 2008-09-24 23:45:38 ww203982 Exp $
  *
  */
 
@@ -68,6 +68,7 @@ public interface SetupConstants {
     String XML_CONFIG = "xml.config";
     String SUNOS = "sunos";
     String X86 = "86";
+    String X64 = "64";
     String TOOLS_VERSION = "version.tools";
     String AM_VERSION = "com.iplanet.am.version";
     String PRINT_HELP = "help.print";
