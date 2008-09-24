@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoSampleCreateId.java,v 1.14 2008-09-22 18:06:13 goodearth Exp $
+ * $Id: IdRepoSampleCreateId.java,v 1.15 2008-09-24 19:50:10 goodearth Exp $
  *
  */
 
@@ -228,51 +228,54 @@ public class IdRepoSampleCreateId {
                     attrs.put(AGENT_TYPE_ATTR, vals);
                     AMIdentity agroupIdentity = null; 
 
-                    System.out.println("\nChecking membership operations");
-                    IdSearchResults res = 
-                        idRepo.searchIdentities(IdType.AGENTGROUP,
-                            "myagrp", new IdSearchControl());
-                    Set resSet = res.getSearchResults();
-                    if (!resSet.isEmpty()) {
-                        Iterator iter = resSet.iterator();
-                        if (iter.hasNext()) {
-                            agroupIdentity = (AMIdentity) iter.next();
+                    if (!((tmpId.getType()).equals(IdType.AGENTGROUP))) {
+                        System.out.println("\nChecking membership operations");
+                        IdSearchResults res = 
+                            idRepo.searchIdentities(IdType.AGENTGROUP,
+                                "myagrp", new IdSearchControl());
+                        Set resSet = res.getSearchResults();
+                        if (!resSet.isEmpty()) {
+                            Iterator iter = resSet.iterator();
+                            if (iter.hasNext()) {
+                                agroupIdentity = (AMIdentity) iter.next();
+                            }
+                        } else {
+                            agroupIdentity = idRepo.createIdentity(
+                                IdType.AGENTGROUP, "myagrp", attrs);
                         }
-                    } else {
-                        agroupIdentity = 
-                            idRepo.createIdentity(IdType.AGENTGROUP, "myagrp", 
-                                attrs);
+
+                        // Test for getMembers()
+                        System.out.println("Obtained agent group =" + 
+                            agroupIdentity.getName());
+                        System.out.println("\nAdding member to agent group: " + 
+                            tmpId.getName());
+                        agroupIdentity.addMember(tmpId);
+                        System.out.println("\nGetting member from agent "+
+                            "group: " + 
+                            agroupIdentity.getMembers(IdType.AGENTONLY));
+
+                        // Test for getMemberships()
+                        Set agentgroupsOfAgent = 
+                            tmpId.getMemberships(IdType.AGENTGROUP);
+                        System.out.println("Agent's agentGroup memberships = ");
+                        Iterator agiter = agentgroupsOfAgent.iterator();
+                        while (agiter.hasNext() ){
+                            AMIdentity id = (AMIdentity) agiter.next();
+                            System.out.println("AgentGroup of agent = " + 
+                                id.getName());
+                            System.out.println("AgentGroup of agent "+
+                                "isExists: " + id.isExists());
+                        }
+
+                        System.out.println("\nRemoving member from agent "+
+                            "group: " + tmpId.getName());
+                            
+                        agroupIdentity.removeMember(tmpId);
+                        System.out.println("\nAfter removeMember : Getting "+
+                            "member from agent group: " + 
+                            agroupIdentity.getMembers(IdType.AGENTONLY));
+
                     }
-
-                    // Test for getMembers()
-                    System.out.println("Obtained agent group =" + 
-                        agroupIdentity.getName());
-                    System.out.println("\nAdding member to agent group: " + 
-                        tmpId.getName());
-                    agroupIdentity.addMember(tmpId);
-                    System.out.println("\nGetting member from agent group: " + 
-                        agroupIdentity.getMembers(IdType.AGENTONLY));
-
-                    // Test for getMemberships()
-                    Set agentgroupsOfAgent = 
-                        tmpId.getMemberships(IdType.AGENTGROUP);
-                    System.out.println("Agent's agentGroup memberships = ");
-                    Iterator agiter = agentgroupsOfAgent.iterator();
-                    while (agiter.hasNext() ){
-                        AMIdentity id = (AMIdentity) agiter.next();
-                        System.out.println("AgentGroup of agent = " + 
-                            id.getName());
-                        System.out.println("AgentGroup of agent isExists: " + 
-                            id.isExists());
-                    }
-
-                    System.out.println("\nRemoving member from agent group: " + 
-                        tmpId.getName());
-                    agroupIdentity.removeMember(tmpId);
-                    System.out.println("\nAfter removeMember : Getting member " +
-                        "from agent group: " + 
-                        agroupIdentity.getMembers(IdType.AGENTONLY));
-
                 }
                 IdSearchControl WSCcnt = new IdSearchControl();
                 WSCcnt.setAllReturnAttributes(true);
