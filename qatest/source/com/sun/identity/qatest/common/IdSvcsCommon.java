@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSvcsCommon.java,v 1.5 2008-08-27 19:01:33 vimal_67 Exp $
+ * $Id: IdSvcsCommon.java,v 1.6 2008-09-25 22:42:53 vimal_67 Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -268,8 +268,7 @@ public class IdSvcsCommon extends TestCommon {
                         page.getContent());
                 String str = page.getContent();
                 for (int i = 0; i < identities.length; i++) {
-                    identities[i] = identities[i] + "\n";
-                    
+                                        
                     // For Identities exists
                     if (contains) {
                         if (!str.contains(identities[i])) {
@@ -300,7 +299,6 @@ public class IdSvcsCommon extends TestCommon {
                     page = pageURL;
                     log(Level.FINEST, "commonSearchREST", "Page: " +
                             page.getContent());
-                    identities[i] = identities[i] + "\n";
                     String str = page.getContent();
 
                     // For Identities exists

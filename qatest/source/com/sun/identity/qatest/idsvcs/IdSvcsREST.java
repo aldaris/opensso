@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSvcsREST.java,v 1.8 2008-08-14 17:09:38 vimal_67 Exp $
+ * $Id: IdSvcsREST.java,v 1.9 2008-09-25 22:42:07 vimal_67 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -842,7 +842,6 @@ public class IdSvcsREST extends TestCommon {
                     "&attributes_values_objecttype=" + objecttype_agent + 
                     "&admin=" + URLEncoder.encode(s1, "UTF-8"));
             String str = page.getContent();
-            agent = agent + "\n";
             log(Level.FINEST, "testCreateAgentREST", "Page: " +
                     page.getContent());
             if (!str.contains(agent)) {
@@ -897,7 +896,6 @@ public class IdSvcsREST extends TestCommon {
                     "&attributes_values_objectclass=" + objecttype_agent + 
                     "&admin=" + URLEncoder.encode(s1, "UTF-8"));
             String str = page.getContent();
-            agent = agent + "\n";
             log(Level.FINEST, "testAgentDeleteIdentityREST", "Page: " +
                     page.getContent());
             if (str.contains(agent)) {
@@ -951,7 +949,6 @@ public class IdSvcsREST extends TestCommon {
             "&attributes_values_objecttype=" + objecttype_user + "&admin=" +
             URLEncoder.encode(s1, "UTF-8"));
             String str = page.getContent();
-            user = user + "\n";
             log(Level.FINEST, "testCreateUserREST", "Page: " +
                     page.getContent());
             if(!str.contains(user)){
@@ -1003,7 +1000,6 @@ public class IdSvcsREST extends TestCommon {
                     "&attributes_values_objectclass=" + objecttype_user + 
                     "&admin=" + URLEncoder.encode(s1, "UTF-8"));
             String str = page.getContent();
-            user = user + "\n";
             log(Level.FINEST, "testUserDeleteIdentityREST", "Page: " +
                     page.getContent());
             if (str.contains(user)) {
@@ -1057,7 +1053,6 @@ public class IdSvcsREST extends TestCommon {
                     "&attributes_values_objecttype=" + objecttype_group + 
                     "&admin=" + URLEncoder.encode(s1, "UTF-8"));
             String str = page.getContent();
-            group = group + "\n";
             log(Level.FINEST, "testCreateGroupREST", "Page: " +
                     page.getContent());
             if (!str.contains(group)) {
@@ -1110,7 +1105,6 @@ public class IdSvcsREST extends TestCommon {
                     "&attributes_values_objectclass=" + objecttype_group + 
                     "&admin=" + URLEncoder.encode(s1, "UTF-8"));
             String str = page.getContent();
-            group = group + "\n";
             log(Level.FINEST, "testGroupDeleteIdentityREST", "Page: " +
                     page.getContent());
             if (str.contains(group)) {
@@ -1368,8 +1362,7 @@ public class IdSvcsREST extends TestCommon {
                         page.getContent());
                 String str = page.getContent();
                 for (int i = 0; i < identities.length; i++) {
-                    identities[i] = identities[i] + "\n";
-                    
+                                        
                     //  For Identities Created
                     if (contains) {
                         if (!str.contains(identities[i])) {
@@ -1406,7 +1399,6 @@ public class IdSvcsREST extends TestCommon {
                             "&admin=" + URLEncoder.encode(admintoken, "UTF-8"));
                     log(Level.FINEST, "commonSearchREST", "Page: " +
                             page.getContent());
-                    identities[i] = identities[i] + "\n";
                     String str = page.getContent();
 
                     //  For Identities Created
