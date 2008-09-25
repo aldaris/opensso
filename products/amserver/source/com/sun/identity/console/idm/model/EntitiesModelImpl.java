@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitiesModelImpl.java,v 1.12 2008-09-04 23:59:37 veiming Exp $
+ * $Id: EntitiesModelImpl.java,v 1.13 2008-09-25 21:38:59 veiming Exp $
  *
  */
 
@@ -1682,6 +1682,8 @@ public class EntitiesModelImpl
                 Object val = values.get(attrName.toLowerCase());
                 if (val != null) {
                     correctedValues.put(attrName, val);
+                } else {
+                    correctedValues.put(attrName, emptySet);
                 }
             }
         }
