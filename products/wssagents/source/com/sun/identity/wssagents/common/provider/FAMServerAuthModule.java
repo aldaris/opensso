@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMServerAuthModule.java,v 1.7 2008-08-19 19:15:11 veiming Exp $
+ * $Id: FAMServerAuthModule.java,v 1.8 2008-09-25 18:51:51 mallas Exp $
  *
  */
 
@@ -185,7 +185,11 @@ public class FAMServerAuthModule implements ServerAuthModule {
             boolean isTrustMsg = false;
             HeaderList hl = packet.getMessage().getHeaders();
             String action = 
-                hl.getAction(AddressingVersion.W3C, SOAPVersion.SOAP_12);
+                hl.getAction(AddressingVersion.W3C, SOAPVersion.SOAP_12);            
+            if(action == null) {
+               action =  hl.getAction(AddressingVersion.W3C, 
+                       SOAPVersion.SOAP_11);
+            }
             if ((WSTrustConstants.REQUEST_SECURITY_TOKEN_ISSUE_ACTION).equals(
                 action) || (WS_TRUST_13_ACTION.equals(action))) {
                 isTrustMsg = true;
