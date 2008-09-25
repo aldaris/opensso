@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WindowsDesktopSSO.java,v 1.3 2008-06-25 05:42:03 qcheng Exp $
+ * $Id: WindowsDesktopSSO.java,v 1.4 2008-09-25 00:50:13 beomsuk Exp $
  *
  */
 
@@ -31,7 +31,6 @@ package com.sun.identity.authentication.modules.windowsdesktopsso;
 
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.datastruct.CollectionHelper;
-import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.authentication.spi.AMLoginModule;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.util.DerValue;
@@ -448,38 +447,6 @@ public class WindowsDesktopSSO extends AMLoginModule {
         System.setProperty("java.security.auth.login.config", "/dev/null");
 
         try {
-            // put the "Sun" provider the default in order for 
-            // kerberos module to work. 
-            java.security.Provider defProv =  null;
-            boolean  switchProvider = true;
-
-            java.security.Provider[] provList =
-                java.security.Security.getProviders();
-
-            defProv =  provList[0];
-            java.security.Provider sunProv = new sun.security.provider.Sun();
-            if (debug.messageEnabled()) {
-                debug.message("default provider: " + defProv.getName() +
-                ", sun provider: " + sunProv.getName());
-            }
-            if (!defProv.getName().equals(sunProv.getName())){
-                 java.security.Security.removeProvider(sunProv.getName());
-                java.security.Security.insertProviderAt(sunProv,1);
-            } else {
-                switchProvider = false;
-                // expect JSS initialization will not happen during
-                // the service kerberos authentication below.
-            }
-            if (debug.messageEnabled()) {
-                StringBuffer provs = new StringBuffer();
-                provList = java.security.Security.getProviders();
-                for (int i = 0; i < provList.length; i++) {
-                    java.security.Provider Prov =  provList[i];
-                    provs.append("\t" + Prov.getName() + "\n");
-                }
-                debug.message("Current providers = " + provs.toString());
-            }
-
             Configuration config = Configuration.getConfiguration();
             WindowsDesktopSSOConfig wtc = null;
             if (config instanceof WindowsDesktopSSOConfig) {
@@ -499,12 +466,6 @@ public class WindowsDesktopSSO extends AMLoginModule {
 
             serviceSubject = lc.getSubject();
             debug.message("Service login succeeded.");
-            // reset the default provider.
-            if (switchProvider) {
-                java.security.Security.removeProvider(defProv.getName());
-                java.security.Security.insertProviderAt(defProv,1);
-                switchProvider = false;
-            }
         } catch (Exception e) {
             debug.error("Service Login Error: ");
             if (debug.messageEnabled()) {
