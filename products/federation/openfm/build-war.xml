@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.46 2008-08-16 00:00:08 vimarsh Exp $
+   $Id: build-war.xml,v 1.47 2008-09-25 01:27:31 asyhuang Exp $
 
 -->
 
@@ -128,7 +128,13 @@
             <fileset dir="${library.res.i18n.dir}" includes="**/*.properties" />
             <fileset dir="${openfm.res.i18n.dir}" includes="**/*.properties" />
         </copy>
-
+        
+        <copy todir="${war.package.dir}/WEB-INF/classes" flatten="true">
+            <fileset dir="${library.res.i18n.dir}" includes="*.properties" />
+            <fileset dir="${openfm.res.i18n.dir}" includes="*.properties" />
+            <globmapper from="*.properties" to="*_en.properties"/>
+        </copy>
+        
         <copy todir="${war.package.dir}/WEB-INF/classes">
             <fileset dir="${library.res.dir}" includes="*.properties" 
                 excludes="FederationConfig.properties,FederationPerServer.properties" />

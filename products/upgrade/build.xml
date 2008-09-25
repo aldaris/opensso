@@ -22,44 +22,44 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.11 2008-09-19 05:50:29 mahesh_prasad_r Exp $
+   $Id: build.xml,v 1.12 2008-09-25 01:25:52 asyhuang Exp $
 
 -->
 
 <project name="opensso upgrade" default="usage">
-                
+    
     <description>Upgrade Open Web Single Sign-On </description>
-
+    
     <import file="../products.xml" />
     <import file="../federation/library/library.xml" />
     <import file="../federation/openfm/openfm.xml" />
     <import file="../amserver/amserver.xml" />
     <import file="./upgrade.xml" />
-
-
-<taskdef name="foreach" classname="net.sf.antcontrib.logic.ForEach">
-  <classpath>
-    <pathelement location="${extlib.dir}/ant-contrib-1.0b3.jar" />
-  </classpath>
-</taskdef>
-
-     <!-- overridable properties -->
+    
+    
+    <taskdef name="foreach" classname="net.sf.antcontrib.logic.ForEach">
+        <classpath>
+            <pathelement location="${extlib.dir}/ant-contrib-1.0b3.jar" />
+        </classpath>
+    </taskdef>
+    
+    <!-- overridable properties -->
     <property name="build.debug" value="on"/>
     <property name="build.debuglevel" value="lines,vars,source"/>
-
+    
     <path id="build.class.path">
-         <pathelement location="${library.classes.dir}"/>
-         <pathelement location="${openfm.classes.dir}"/>
-         <pathelement location="${sharedlib.classes.dir}"/>
-         <pathelement location="${amserver.classes.dir}"/>
-         <pathelement location="${upgrade.classes.dir}"/>
-         <pathelement location="${legacy.classes.dir}"/>
-         <fileset dir="${extlib.dir}">
+        <pathelement location="${library.classes.dir}"/>
+        <pathelement location="${openfm.classes.dir}"/>
+        <pathelement location="${sharedlib.classes.dir}"/>
+        <pathelement location="${amserver.classes.dir}"/>
+        <pathelement location="${upgrade.classes.dir}"/>
+        <pathelement location="${legacy.classes.dir}"/>
+        <fileset dir="${extlib.dir}">
             <include name="**/*.jar"/>
         </fileset>
-
+        
     </path>
-
+    
     <target name="preparebuild">
         <mkdir dir="${upgrade.built.dir}"/>
         <mkdir dir="${upgrade.dist.dir}"/>
@@ -70,7 +70,7 @@
         <mkdir dir="${upgrade.dist.dir}/upgrade/config"/>
         <mkdir dir="${upgrade.dist.dir}/upgrade/locale"/>
     </target>
-
+    
     <target name="clean">
         <delete dir="${upgrade.classes.dir}"/>
         <delete dir="${upgrade.dist.dir}"/>
@@ -78,137 +78,139 @@
     <target name="legacy-build">
         <ant antfile="${legacy.src.dir}/build.xml" inheritRefs="true" target="build" />
     </target>
-
+    
     <target name="compile" depends="preparebuild">
         <antcall target="legacy-build" />
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-             destdir="${upgrade.classes.dir}" source="1.4" target="1.4"
-             debug="${build.debug}" debuglevel="${build.debuglevel}">
-             <src path="${upgrade.source.dir}"/>
-             <classpath refid="build.class.path"/>
-             <include name="*.java"/>
+               destdir="${upgrade.classes.dir}" source="1.4" target="1.4"
+               debug="${build.debug}" debuglevel="${build.debuglevel}">
+            <src path="${upgrade.source.dir}"/>
+            <classpath refid="build.class.path"/>
+            <include name="*.java"/>
         </javac>
     </target>
-
+    
     <dirset id="upgradeFiles" dir="${upgrade.services.dir}">
-          <include name="**"/>
-          <depth min="1"/>
+        <include name="**"/>
+        <depth min="1"/>
     </dirset>
-
+    
     <target name="upgrade-compile" depends="preparebuild">
-       <foreach target="compile-services" param="fileToWorkon" inheritall="true">
-          <path>
-		<dirset refid="upgradeFiles" />
-	  </path>
-       </foreach>
-     </target>
-
-     <target name="listFiles">
-         <echo>
-	    listing file : ${fileToWorkon}
-         </echo>
-      </target>
-            
+        <foreach target="compile-services" param="fileToWorkon" inheritall="true">
+            <path>
+                <dirset refid="upgradeFiles" />
+            </path>
+        </foreach>
+    </target>
+    
+    <target name="listFiles">
+        <echo>
+            listing file : ${fileToWorkon}
+        </echo>
+    </target>
+    
     <target name="compile-services">
         <javac sourcepath="${fileToWorkon}" memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-             source="1.4" target="1.4"
-             debug="${build.debug}" debuglevel="${build.debuglevel}">
-             <src path="${fileToWorkon}"/> 
-             <classpath refid="build.class.path"/>
-             <include name="*java"/>
+               source="1.4" target="1.4"
+               debug="${build.debug}" debuglevel="${build.debuglevel}">
+            <src path="${fileToWorkon}"/> 
+            <classpath refid="build.class.path"/>
+            <include name="*java"/>
         </javac>
     </target>
-
+    
     <target name="copy-zip">
         <unzip src="${fm.dist.dir}/opensso.zip"
-            dest="${upgrade.dist.dir}/opensso" />
+               dest="${upgrade.dist.dir}/opensso" />
         <copy todir="${upgrade.dist.dir}/opensso/opensso/upgrade">
-             <fileset dir="${upgrade.dist.dir}/upgrade">
-             </fileset>
+            <fileset dir="${upgrade.dist.dir}/upgrade">
+            </fileset>
         </copy>
-       <zip destfile="${upgrade.dist.dir}/opensso.zip"
-            whenempty="create">
+        <zip destfile="${upgrade.dist.dir}/opensso.zip"
+             whenempty="create">
             <zipfileset dir="${upgrade.dist.dir}/opensso">
             </zipfileset>
-	</zip>
+        </zip>
     </target>
-
+    
     <target name="copy-upgrade-dir">
         <move todir="${upgrade.dist.dir}/upgrade/services">
-             <fileset dir="${upgrade.services.dir}">
-                 <include name="**/**/*.class"/>
-                 <exclude name="**/**/*.java"/>
-                 <exclude name="**/**/data/**"/>
-             </fileset>
-	</move>
+            <fileset dir="${upgrade.services.dir}">
+                <include name="**/**/*.class"/>
+                <exclude name="**/**/*.java"/>
+                <exclude name="**/**/data/**"/>
+            </fileset>
+        </move>
         <copy todir="${upgrade.dist.dir}/upgrade/services">
-             <fileset dir="${upgrade.services.dir}">
-                 <exclude name="**/**/*.java"/>
-             </fileset>
+            <fileset dir="${upgrade.services.dir}">
+                <exclude name="**/**/*.java"/>
+            </fileset>
         </copy>
         <copy todir="${upgrade.dist.dir}/upgrade/scripts">
-             <fileset dir="${upgrade.src.dir}/scripts/">
-                 <include name="ssoupgrade*"/>
-                 <include name="ssopre80upgrade*"/>
-             </fileset>
+            <fileset dir="${upgrade.src.dir}/scripts/">
+                <include name="ssoupgrade*"/>
+                <include name="ssopre80upgrade*"/>
+            </fileset>
         </copy>
         <chmod perm="ugo+rx">
             <fileset dir="${upgrade.dist.dir}/upgrade/scripts">
-                 <include name="ssoupgrade*"/>
-                 <include name="ssopre80upgrade*"/>
-             </fileset>
+                <include name="ssoupgrade*"/>
+                <include name="ssopre80upgrade*"/>
+            </fileset>
         </chmod>
-         <copy file="${upgrade.src.dir}/resources/ssoUpgradeConfig.properties"
-            todir="${upgrade.dist.dir}/upgrade/config"  />
-         <copy file="${upgrade.src.dir}/resources/FM_DAI_install.ldif"
-            todir="${upgrade.dist.dir}/upgrade/config"  />
-         <copy file="${upgrade.src.dir}/resources/FM_DAI_ds_remote_schema.ldif"
-            todir="${upgrade.dist.dir}/upgrade/config"  />
-         <copy file="${tools.built.dir}/amadm_setup.jar"
-            todir="${upgrade.dist.dir}/upgrade/lib"  />
-         <copy file="${legacy.src.dir}/resources/locale/amAdminCLI.properties"
-	    todir="${upgrade.dist.dir}/upgrade/locale" />
-         <copy file="${upgrade.src.dir}/resources/locale/ssoUpgrade.properties"
-	    todir="${upgrade.dist.dir}/upgrade/locale" />
-	 <copy file="${upgrade.src.dir}/resources/locale/de_DE/ssoUpgrade_de.properties"
-            todir="${upgrade.dist.dir}/upgrade/locale" />
-	 <copy file="${upgrade.src.dir}/resources/locale/es_ES/ssoUpgrade_es.properties"
-            todir="${upgrade.dist.dir}/upgrade/locale" />
-	 <copy file="${upgrade.src.dir}/resources/locale/fr_FR/ssoUpgrade_fr.properties"
-            todir="${upgrade.dist.dir}/upgrade/locale" />
-	 <copy file="${upgrade.src.dir}/resources/locale/ja_JP/ssoUpgrade_ja.properties"
-            todir="${upgrade.dist.dir}/upgrade/locale" />
-	 <copy file="${upgrade.src.dir}/resources/locale/ko_KR/ssoUpgrade_ko.properties"
-            todir="${upgrade.dist.dir}/upgrade/locale" />
-	 <copy file="${upgrade.src.dir}/resources/locale/zh_CN/ssoUpgrade_zh.properties"
-            todir="${upgrade.dist.dir}/upgrade/locale" />
-	 <copy file="${upgrade.src.dir}/resources/locale/zh_TW/ssoUpgrade_zh_TW.properties"
-            todir="${upgrade.dist.dir}/upgrade/locale" />
-         <copy file="${upgrade.src.dir}/README"
-	    todir="${upgrade.dist.dir}/upgrade/README" />
+        <copy file="${upgrade.src.dir}/resources/ssoUpgradeConfig.properties"
+              todir="${upgrade.dist.dir}/upgrade/config"  />
+        <copy file="${upgrade.src.dir}/resources/FM_DAI_install.ldif"
+              todir="${upgrade.dist.dir}/upgrade/config"  />
+        <copy file="${upgrade.src.dir}/resources/FM_DAI_ds_remote_schema.ldif"
+              todir="${upgrade.dist.dir}/upgrade/config"  />
+        <copy file="${tools.built.dir}/amadm_setup.jar"
+              todir="${upgrade.dist.dir}/upgrade/lib"  />
+        <copy file="${legacy.src.dir}/resources/locale/amAdminCLI.properties"
+              todir="${upgrade.dist.dir}/upgrade/locale" />
+        <copy file="${upgrade.src.dir}/resources/locale/ssoUpgrade.properties"
+              todir="${upgrade.dist.dir}/upgrade/locale" />       
+        <copy file="{upgrade.src.dir}/resources/locale/ssoUpgrade.properties" 
+              tofile="${upgrade.dist.dir}/upgrade/locale/ssoUpgrade_en.properties"/>
+        <copy file="${upgrade.src.dir}/resources/locale/de_DE/ssoUpgrade_de.properties"
+              todir="${upgrade.dist.dir}/upgrade/locale" />
+        <copy file="${upgrade.src.dir}/resources/locale/es_ES/ssoUpgrade_es.properties"
+              todir="${upgrade.dist.dir}/upgrade/locale" />
+        <copy file="${upgrade.src.dir}/resources/locale/fr_FR/ssoUpgrade_fr.properties"
+              todir="${upgrade.dist.dir}/upgrade/locale" />
+        <copy file="${upgrade.src.dir}/resources/locale/ja_JP/ssoUpgrade_ja.properties"
+              todir="${upgrade.dist.dir}/upgrade/locale" />
+        <copy file="${upgrade.src.dir}/resources/locale/ko_KR/ssoUpgrade_ko.properties"
+              todir="${upgrade.dist.dir}/upgrade/locale" />
+        <copy file="${upgrade.src.dir}/resources/locale/zh_CN/ssoUpgrade_zh.properties"
+              todir="${upgrade.dist.dir}/upgrade/locale" />
+        <copy file="${upgrade.src.dir}/resources/locale/zh_TW/ssoUpgrade_zh_TW.properties"
+              todir="${upgrade.dist.dir}/upgrade/locale" />
+        <copy file="${upgrade.src.dir}/README"
+              todir="${upgrade.dist.dir}/upgrade/README" />
     </target>
-
-     <target name="build-jar">
-       <jar destfile="${upgrade.dist.dir}/upgrade/lib/upgrade.jar">
+    
+    <target name="build-jar">
+        <jar destfile="${upgrade.dist.dir}/upgrade/lib/upgrade.jar">
             <zipfileset dir="${upgrade.built.dir}/classes" includes="com/sun/identity/upgrade/**" filemode="755"/>
-       </jar>
-       <jar destfile="${upgrade.dist.dir}/upgrade/lib/legacy.jar">
+        </jar>
+        <jar destfile="${upgrade.dist.dir}/upgrade/lib/legacy.jar">
             <zipfileset dir="${legacy.built.dir}/classes" includes="com/**" />
-       </jar>
+        </jar>
     </target>
-
+    
     <target name="build">
         <antcall target="compile" />
         <antcall target="upgrade-compile" />
         <antcall target="build-jar" />
         <antcall target="copy-upgrade-dir" />
     </target>
-
-     <target name="nightly">
-	<antcall target="build" />
+    
+    <target name="nightly">
+        <antcall target="build" />
         <antcall target="copy-zip" />
     </target>
-
+    
     <target name="usage">
         <echo message=" "/>
         <echo message=" Following targets are available:"/>
@@ -224,5 +226,5 @@
         <echo message=" ant &lt;target-name&gt;"/>
         <echo message=" "/>
     </target>
-
+    
 </project>
