@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-tools.xml,v 1.20 2008-09-22 20:46:35 kevinserwin Exp $
+   $Id: build-tools.xml,v 1.21 2008-09-25 00:53:05 ykwon Exp $
 
 -->
 
@@ -199,13 +199,13 @@
         <copy todir="${amadm.unix.bin.tune.dir}"
               overwrite="yes" flatten="yes" encoding="UTF-8">
             <fileset dir="${amadm.unix.scripts.tune.dir}"
-                includes="amtune-env.properties, README, ${amadm.unix.amtune.file}"/>
+                includes="amtune-env.properties, README, amtune-samplepasswordfile, ${amadm.unix.amtune.file}"/>
             <mapper type="glob" from="*" to="*.template"/>
         </copy>
         <copy todir="${amadm.windows.bin.tune.dir}"
               overwrite="yes" flatten="yes" encoding="UTF-8">
             <fileset dir="${amadm.windows.scripts.tune.dir}"
-                includes="amtune-env.properties, README, ${amadm.windows.amtune.bat.file}"/>
+                includes="amtune-env.properties, README, amtune-samplepasswordfile, ${amadm.windows.amtune.bat.file}"/>
             <mapper type="glob" from="*" to="*.template"/>
         </copy>
         <antcall target="legacy-files" />
