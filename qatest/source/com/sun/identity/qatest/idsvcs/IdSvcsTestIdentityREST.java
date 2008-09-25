@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSvcsTestIdentityREST.java,v 1.6 2008-09-19 21:47:47 vimal_67 Exp $
+ * $Id: IdSvcsTestIdentityREST.java,v 1.7 2008-09-25 22:41:06 vimal_67 Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -208,7 +208,6 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                             // search filter does not contain "*"
                             else {
                                 String str = page.getContent();
-                                filter = filter + "\n";
                                 if (exist.equals("yes")) {
                                     if (!str.contains(filter)) {
                                         log(Level.SEVERE, "testIdSvcsREST", 
@@ -371,8 +370,8 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                             log(Level.FINEST, "testIdSvcsREST",
                                     "Page for " + operationName  + " : " +
                                     page.getContent());
-                            String str = "boolean=true" + "\n";
-                            if (!page.getContent().equals(str)) 
+                            String str = "boolean=true";
+                            if (!page.getContent().contains(str)) 
                                 assert false;
                         } else {
                             log(Level.FINEST, "testIdSvcsREST", 
@@ -402,8 +401,8 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                             log(Level.FINEST, "testIdSvcsREST",
                                     "Page for " + operationName  + " : " +
                                     page.getContent());
-                            String str = "boolean=true" + "\n";
-                            if (!page.getContent().equals(str)) 
+                            String str = "boolean=true";
+                            if (!page.getContent().contains(str)) 
                                 assert false;
                         } else {
                             log(Level.FINEST, "testIdSvcsREST", 
