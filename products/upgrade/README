@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README,v 1.5 2008-08-20 21:10:56 bina Exp $
+   $Id: README,v 1.6 2008-09-25 17:33:19 bina Exp $
 
 -->
 
@@ -76,8 +76,7 @@ i. Pre-Upgrade steps :
         - Backup of customized configuration (eg. customized jsps).
 
    Pre-upgrade steps are explained in detail in the OpenSSO 8.0
-   Upgrade Guide
-   which can be found at : http://docs.sun.com/app/docs/doc/820-3745
+   Upgrade Guide which can be found at: http://docs.sun.com/doc/820-5019
 
 ii. Download the OpenSSO 8.0 zip file (opensso.zip)
 
