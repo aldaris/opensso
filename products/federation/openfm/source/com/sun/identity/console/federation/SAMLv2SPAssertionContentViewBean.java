@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2SPAssertionContentViewBean.java,v 1.4 2008-07-30 21:44:46 babysunil Exp $
+ * $Id: SAMLv2SPAssertionContentViewBean.java,v 1.5 2008-09-25 01:53:13 babysunil Exp $
  *
  */
 
@@ -251,16 +251,20 @@ public class SAMLv2SPAssertionContentViewBean extends SAMLv2Base {
             spExtValues.putAll(new_spExtValues);
  
             //save the standard metadata values for the Idp
-            model.setSPStdAttributeValues(
-                realm, entityName, spStdValues, spExtValues, location);            
+            model.setSPStdAttributeValues(realm, entityName, spStdValues);            
             
             //save the extended metadata values for the Idp
             model.setSPExtAttributeValues(realm, entityName, spExtValues,
                     location);
             
-            if (isHosted()) {
+            if (isHosted()) {                               
                 // update Authentication Contexts
-                model.updateSPAuthenticationContexts(realm, entityName, getAuthenticationContexts());
+                model.updateSPAuthenticationContexts(realm, entityName, 
+                        getAuthenticationContexts());
+                
+                //save the encryption and signing info
+                 model.updateKeyinfo(realm, entityName, spExtValues, 
+                      spStdValues, false); 
             }
             
             setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",

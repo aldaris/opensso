@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2IDPServicesViewBean.java,v 1.3 2008-06-25 05:49:37 qcheng Exp $
+ * $Id: SAMLv2IDPServicesViewBean.java,v 1.4 2008-09-25 01:52:51 babysunil Exp $
  *
  */
 
@@ -106,8 +106,7 @@ public class SAMLv2IDPServicesViewBean extends SAMLv2Base {
                     realm, entityName), false, model);
             
             //save the standard metadata values for the Idp
-            model.setIDPStdAttributeValues(realm, 
-                    entityName, idpStdValues, null, location);
+            model.setIDPStdAttributeValues(realm, entityName, idpStdValues);
                      
             setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
                     "samlv2.idp.property.updated");

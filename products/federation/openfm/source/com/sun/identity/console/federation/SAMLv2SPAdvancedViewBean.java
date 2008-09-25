@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2SPAdvancedViewBean.java,v 1.4 2008-07-30 21:44:32 babysunil Exp $
+ * $Id: SAMLv2SPAdvancedViewBean.java,v 1.5 2008-09-25 01:53:30 babysunil Exp $
  *
  */
 
@@ -98,8 +98,7 @@ public class SAMLv2SPAdvancedViewBean extends SAMLv2Base {
                     realm, entityName), false, model);
             
             //save the standard metadata values for the Idp
-            model.setSPStdAttributeValues(realm, 
-                entityName, spStdValues, null, location);
+            model.setSPStdAttributeValues(realm, entityName, spStdValues);
             
             //retrieve the extended metadata values from the property sheet
             Map spExtValues = getExtendedValues();

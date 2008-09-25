@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Model.java,v 1.27 2008-08-12 17:16:38 babysunil Exp $
+ * $Id: SAMLv2Model.java,v 1.28 2008-09-25 01:53:54 babysunil Exp $
  *
  */
 
@@ -377,16 +377,12 @@ public interface SAMLv2Model
      * @param realm to which the entity belongs.
      * @param entityName is the entity id.
      * @param idpStdValues Map which contains the standard attribute values.
-     * @param idpExtValues Map which contain the extended attribute values.
-     * @param location has the information whether remote or hosted.
      * @throws AMConsoleException if saving of attribute value fails.
      */
     void setIDPStdAttributeValues(
         String realm,
         String entityName,
-        Map idpStdValues,
-        Map idpExtValues,
-        String location
+        Map idpStdValues
         ) throws AMConsoleException;
     
     /**
@@ -411,16 +407,12 @@ public interface SAMLv2Model
      * @param realm to which the entity belongs.
      * @param entityName is the entity id.
      * @param spStdValues Map which contains the standard attribute values.
-     * @param spExtValues Map which contain the extended attribute values.
-     * @param location has the information whether remote or hosted.
      * @throws AMConsoleException if saving of attribute value fails.
      */
     void setSPStdAttributeValues(
         String realm,
         String entityName,
-        Map spStdValues,
-        Map spExtValues,
-        String location
+        Map spStdValues
         ) throws AMConsoleException;
     
     /**
@@ -946,5 +938,23 @@ public interface SAMLv2Model
      *
      */
     public Set getallSPEntities(String realm) throws AMConsoleException;
+    
+    /**
+     * Saves the signing and encryption values for entity.
+     *
+     * @param realm to which the entity belongs.
+     * @param entityName is the entity id.
+     * @param ExtValues Map which contains the extended attribute values.
+     * @param StdValues Map which contains the standard attribute values.
+     * @param isIDP has information whether entity is an idp or sp.
+     * @throws AMConsoleException if saving of attribute value fails.
+     */
+    public void updateKeyinfo(
+        String realm,
+        String entityName,
+        Map extValues,
+        Map stdValues,
+        boolean isIDP
+        ) throws AMConsoleException;
 
 }

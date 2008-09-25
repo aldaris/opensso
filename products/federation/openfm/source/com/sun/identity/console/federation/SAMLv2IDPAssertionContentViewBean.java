@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2IDPAssertionContentViewBean.java,v 1.4 2008-07-30 21:43:56 babysunil Exp $
+ * $Id: SAMLv2IDPAssertionContentViewBean.java,v 1.5 2008-09-25 01:52:20 babysunil Exp $
  *
  */
 package com.sun.identity.console.federation;
@@ -266,22 +266,22 @@ public class SAMLv2IDPAssertionContentViewBean extends SAMLv2Base {
             idpExtValues.putAll(new_idpExtValues);
  
             //save the standard metadata values for the Idp
-              model.setIDPStdAttributeValues(realm, 
-                  entityName, idpStdValues, idpExtValues, location);
-            
+              model.setIDPStdAttributeValues(realm, entityName, idpStdValues);
             
             //save the extended metadata values for the Idp
             model.setIDPExtAttributeValues(realm, entityName, idpExtValues,
                     location);
-            
-            if (isHosted()) {
+           
+           if (isHosted()) {
                 //update Authentication Contexts
-                model.updateIDPAuthenticationContexts(
-                    realm, 
-                    entityName, 
+                model.updateIDPAuthenticationContexts(realm, entityName, 
                     getAuthenticationContexts());
+                
+                //save the encryption and signing info
+                 model.updateKeyinfo(realm, entityName, idpExtValues, 
+                      idpStdValues, true);
             }
-            
+                       
             setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
                     "samlv2.idp.property.updated");
         } catch (AMConsoleException e) {

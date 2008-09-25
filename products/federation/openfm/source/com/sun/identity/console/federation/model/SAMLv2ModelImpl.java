@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ModelImpl.java,v 1.34 2008-08-12 17:17:03 babysunil Exp $
+ * $Id: SAMLv2ModelImpl.java,v 1.35 2008-09-25 01:54:02 babysunil Exp $
  *
  */
 
@@ -909,16 +909,12 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
      * @param realm to which the entity belongs.
      * @param entityName is the entity id.
      * @param idpStdValues Map which contains the standard attribute values.
-     * @param idpExtValues Map which contain the extended attribute values.
-     * @param location has the information whether remote or hosted.
      * @throws AMConsoleException if saving of attribute value fails.
      */
     public void setIDPStdAttributeValues(
             String realm,
             String entityName,
-            Map idpStdValues,
-            Map idpExtValues,
-            String location
+            Map idpStdValues
             )  throws AMConsoleException {
         String[] params = {realm, entityName, "SAMLv2", "IDP-Standard"};
         logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", params);
@@ -1165,26 +1161,6 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                     }
                 }
                 
-                //save key and encryption details if present for hosted
-                if (location.equals("hosted") && 
-                    idpStdValues.keySet().contains(TF_KEY_NAME)) 
-                {
-                    String keysize = getResult(idpStdValues, TF_KEY_NAME);
-                    String algorithm = getResult(idpStdValues, TF_ALGORITHM);      
-                    String e_certAlias = getResult(idpExtValues, 
-                            IDP_ENCRYPT_CERT_ALIAS);
-                    String s_certAlias = getResult(idpExtValues,
-                            IDP_SIGN_CERT_ALIAS);
-                    int keysi = (keysize != null && keysize.length() > 0) ? 
-                        Integer.parseInt(keysize) : 128;
-                    String alg = (algorithm == null || algorithm.length() == 0) ?
-                        "http://www.w3.org/2001/04/xmlenc#aes128-cbc" : algorithm;
-                    SAML2MetaSecurityUtils.updateProviderKeyInfo(realm,
-                      entityName, e_certAlias, false, true, alg, keysi);
-                    SAML2MetaSecurityUtils.updateProviderKeyInfo(realm,
-                      entityName, s_certAlias, true, true, alg, keysi); 
-                }
-                
                 samlManager.setEntityDescriptor(realm, entityDescriptor);
             }
             logEvent("SUCCEED_MODIFY_ENTITY_DESCRIPTOR", params);
@@ -1277,16 +1253,12 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
      * @param realm to which the entity belongs.
      * @param entityName is the entity id.
      * @param spStdValues Map which contains the standard attribute values.
-     * @param spExtValues Map which contain the extended attribute values.
-     * @param location has the information whether remote or hosted.
      * @throws AMConsoleException if saving of attribute value fails.
      */
     public void setSPStdAttributeValues(
             String realm,
             String entityName,
-            Map spStdValues,
-            Map spExtValues,
-            String location
+            Map spStdValues
             ) throws AMConsoleException {
         String[] params = {realm, entityName, "SAMLv2", "SP-Standard"};
         logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", params);
@@ -1501,27 +1473,6 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                     spssoDescriptor.setWantAssertionsSigned(assertValue);
                 }
                 
-                //save key descriptor encryption details if present
-                if (location.equals("hosted") && 
-                    spStdValues.keySet().contains(TF_KEY_NAME))
-                {
-                    String keysize = getResult(spStdValues, TF_KEY_NAME);
-                    String algorithm = getResult(spStdValues, TF_ALGORITHM);      
-                    String e_certAlias = getResult(spExtValues, 
-                            SP_ENCRYPT_CERT_ALIAS);
-                    String s_certAlias = getResult(spExtValues,
-                            SP_SIGN_CERT_ALIAS);
-                    int keysi = (keysize != null && keysize.length() > 0) ? 
-                        Integer.parseInt(keysize) : 128;
-                    String alg = (algorithm == null || algorithm.length() == 0) ?
-                        "http://www.w3.org/2001/04/xmlenc#aes128-cbc" : algorithm;
-                    SAML2MetaSecurityUtils.updateProviderKeyInfo(realm,
-                      entityName, e_certAlias, false, false, alg, keysi);
-                    SAML2MetaSecurityUtils.updateProviderKeyInfo(realm,
-                      entityName, s_certAlias, true, false, alg, keysi);
-
-                }
-                
                 samlManager.setEntityDescriptor(realm, entityDescriptor);
             }
             logEvent("SUCCEED_MODIFY_ENTITY_DESCRIPTOR", params);
@@ -1643,6 +1594,50 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                 }
             }
         }
+    }
+    
+    /**
+     * Saves the signing and encryption values for the entity.
+     *
+     * @param realm to which the entity belongs.
+     * @param entityName is the entity id.
+     * @param ExtValues Map which contains the extended attribute values.
+     * @param StdValues Map which contains the standard attribute values.
+     * @param isIDP has information whether entity is an idp or sp.
+     * @throws AMConsoleException if saving of attribute value fails.
+     */
+    public void  updateKeyinfo(
+            String realm,
+            String entityName,
+            Map extValues,
+            Map stdValues,
+            boolean isIDP
+    ) throws AMConsoleException {
+        
+        String keysize = getResult(stdValues, TF_KEY_NAME);
+        String algorithm = getResult(stdValues, TF_ALGORITHM);
+        String e_certAlias = null;
+        String s_certAlias = null;
+        if (isIDP) {
+            e_certAlias = getResult(extValues, IDP_ENCRYPT_CERT_ALIAS);
+            s_certAlias = getResult(extValues, IDP_SIGN_CERT_ALIAS);
+        } else {
+            e_certAlias = getResult(extValues, SP_ENCRYPT_CERT_ALIAS);
+            s_certAlias = getResult(extValues, SP_SIGN_CERT_ALIAS);
+        }
+        int keysi = (keysize != null && keysize.length() > 0) ?
+                Integer.parseInt(keysize) : 128;
+        String alg = (algorithm == null || algorithm.length() == 0) ?
+                "http://www.w3.org/2001/04/xmlenc#aes128-cbc" : algorithm;
+        try {
+            SAML2MetaSecurityUtils.updateProviderKeyInfo(realm,
+                    entityName, s_certAlias, true, isIDP, alg, keysi);
+            SAML2MetaSecurityUtils.updateProviderKeyInfo(realm,
+                    entityName, e_certAlias, false, isIDP, alg, keysi);
+        } catch (SAML2MetaException e) {
+            debug.warning ("SAMLv2ModelImpl.updateKeyinfo:", e);            
+            throw new AMConsoleException(getErrorString(e));
+        }        
     }
     
     
@@ -2416,7 +2411,6 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         String[] params = {realm, entityName,"SAMLv2",
             "IDP-updateIDPAuthenticationContexts"};
         logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", params);
-        
         try {
             SAML2MetaManager saml2MetaManager = getSAML2MetaManager();
             EntityConfigElement entityConfig =
