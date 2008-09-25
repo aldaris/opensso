@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOFederate.java,v 1.16 2008-08-29 04:57:57 exu Exp $
+ * $Id: IDPSSOFederate.java,v 1.17 2008-09-25 20:40:29 hengming Exp $
  *
  */
 
@@ -300,7 +300,7 @@ public class IDPSSOFederate {
                                 idpSSODescriptor.getSingleSignOnService();
                             String ssoURL =
                                 SPSSOFederate.getSSOURL(ssoServiceList,
-                                SAML2Constants.HTTP_REDIRECT);
+                                binding);
                             if (!SAML2Utils.verifyDestination(
                                 authnReq.getDestination(), ssoURL)) {
                                 SAML2Utils.debug.error(classMethod + "authn " +
