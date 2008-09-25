@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.12 2008-09-25 01:25:52 asyhuang Exp $
+   $Id: build.xml,v 1.13 2008-09-25 20:50:40 asyhuang Exp $
 
 -->
 
@@ -170,7 +170,7 @@
               todir="${upgrade.dist.dir}/upgrade/locale" />
         <copy file="${upgrade.src.dir}/resources/locale/ssoUpgrade.properties"
               todir="${upgrade.dist.dir}/upgrade/locale" />       
-        <copy file="{upgrade.src.dir}/resources/locale/ssoUpgrade.properties" 
+        <copy file="${upgrade.src.dir}/resources/locale/ssoUpgrade.properties" 
               tofile="${upgrade.dist.dir}/upgrade/locale/ssoUpgrade_en.properties"/>
         <copy file="${upgrade.src.dir}/resources/locale/de_DE/ssoUpgrade_de.properties"
               todir="${upgrade.dist.dir}/upgrade/locale" />
