@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-zip.xml,v 1.28 2008-09-18 17:06:57 alanchu Exp $
+   $Id: build-zip.xml,v 1.29 2008-09-25 17:34:27 bina Exp $
 
 -->
 
@@ -206,10 +206,6 @@
         <copy todir="${zip.temp.dir}/libraries/jars">
             <fileset file="${fm.dist.dir}/openssoclientsdk.jar" />
         </copy>
-        
-        <copy file="${openfm.dir}/docs/README.migration"
-            tofile="${zip.temp.dir}/migration/README" />
-  
         <copy file="${openfm.dir}/patches/README"
             tofile="${zip.temp.dir}/patches/README" />
 
