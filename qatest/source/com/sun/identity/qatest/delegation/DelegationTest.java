@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationTest.java,v 1.5 2008-09-18 16:53:23 rmisra Exp $
+ * $Id: DelegationTest.java,v 1.6 2008-09-26 15:42:41 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -658,6 +658,11 @@ public class DelegationTest extends DelegationCommon {
                     if (secIdx != -1) {
                         createIdentity(ssoToken, getParentRealm(realm), 
                                 IdType.REALM, childRealm, new HashMap());
+                                //This sleep required to let the SMS to
+                                //self notify the realm creation and its
+                                //associated components such as services
+                                //and datastores
+                                Thread.sleep(notificationSleepTime);
                     } else {
                         createIdentity(ssoToken, getParentRealm(realm), 
                                 IdType.REALM, childRealm, new HashMap());
@@ -671,6 +676,11 @@ public class DelegationTest extends DelegationCommon {
                         smsc.createDataStore(1, "delegation" + fileseparator +
                                 SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
                                 "-Generated");
+                                //This sleep required to let the SMS to
+                                //self notify the realm creation and its
+                                //associated components such as services
+                                //and datastores
+                                Thread.sleep(notificationSleepTime);
                     }
                 }
             }
