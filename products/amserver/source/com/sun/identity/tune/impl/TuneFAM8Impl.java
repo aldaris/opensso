@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneFAM8Impl.java,v 1.8 2008-08-29 10:25:40 kanduls Exp $
+ * $Id: TuneFAM8Impl.java,v 1.9 2008-09-26 05:41:37 kanduls Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -586,14 +586,15 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
                     fh.getLine(LDAP_CONN_POOL_MAX), PARAM_VAL_DELIM);
             String curMin = AMTuneUtil.getLastToken(
                     fh.getLine(LDAP_CONN_POOL_MIN), PARAM_VAL_DELIM);
-            int curCacheSize = Integer.parseInt(AMTuneUtil.getLastToken(
-                    fh.getLine(LDAP_CONFIG_CACHE_SIZE), PARAM_VAL_DELIM));
             mWriter.writeln(LDAP_CONN_POOL_MIN + "=" + curMin);
             mWriter.writeln(LDAP_CONN_POOL_MAX + "=" + curMax);
             mWriter.writelnLocaleMsg("pt-rec-val");
             mWriter.writeln(LDAP_CONN_POOL_MIN + "=" + poolMin);
             mWriter.writeln(LDAP_CONN_POOL_MAX + "=" + poolMax);
             mWriter.writeln(" ");
+            /*Uncomment after fixing the root cause of the issue 3014
+            int curCacheSize = Integer.parseInt(AMTuneUtil.getLastToken(
+                    fh.getLine(LDAP_CONFIG_CACHE_SIZE), PARAM_VAL_DELIM));
             mWriter.writelnLocaleMsg("pt-max-cache-size-msg");
             mWriter.writeLocaleMsg("pt-cur-val");
             mWriter.writeln(LDAP_CONFIG_CACHE_SIZE + "=" + curCacheSize);
@@ -601,6 +602,9 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
             mWriter.writeln(LDAP_CONFIG_CACHE_SIZE + "=" + newCacheSize);
             if (configInfo.isReviewMode() || curCacheSize == newCacheSize) {
                 return;
+            }*/
+            if (configInfo.isReviewMode()) {
+                return ;
             }
             StringBuffer attrVals = new StringBuffer();
             if (!curMin.equals(poolMin)) {
@@ -615,11 +619,12 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
                 attrVals.append(poolMax);
                 attrVals.append("\n");
             }
+            /* Uncomment after fixing the root cause of the issue 3014
             if (newCacheSize > curCacheSize) {
                 attrVals.append(LDAP_CONFIG_CACHE_SIZE);
                 attrVals.append(PARAM_VAL_DELIM);
                 attrVals.append(newCacheSize);
-            }
+            }*/
             if (attrVals.toString().length() == 0) {
                 pLogger.log(Level.INFO, "tuneRealmDataStoreConfig",
                         "LDAP config values are same as recommended values.");
