@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpgradeUtils.java,v 1.11 2008-08-19 19:15:00 veiming Exp $
+ * $Id: UpgradeUtils.java,v 1.12 2008-09-26 04:56:34 bina Exp $
  *
  */
 package com.sun.identity.upgrade;
@@ -78,9 +78,11 @@ import netscape.ldap.LDAPConstraints;
 import netscape.ldap.LDAPException;
 import netscape.ldap.util.LDIF;
 import com.sun.identity.policy.Policy;
+import com.sun.identity.policy.PolicyException; 
 import com.sun.identity.policy.PolicyManager;
 import com.sun.identity.policy.Rule;
 import com.sun.identity.policy.SubjectTypeManager;
+import com.sun.identity.policy.interfaces.Condition;
 import com.sun.identity.policy.interfaces.Subject;
 import java.io.FileWriter;
 import java.io.BufferedReader;
@@ -3934,4 +3936,49 @@ public class UpgradeUtils {
             throw new UpgradeException(classMethod + "error adding subconfig");
         }
     }
+
+
+     /**
+      * Removes Condition Properties.
+      *
+      * @param policyName Name of Policy.
+      * @param attributeName the name of the attribute whose default values 
+      *        needs to be updated.
+      * @param conditionNameMap Map of condition name to map of property name to
+      *        set of attribute values to be removed.
+      */
+     public static void removeDelegationCondition(String policyName,
+         String attributeName,Map conditionNameMap) {
+         try {
+             PolicyManager pm = new PolicyManager(ssoToken, HIDDEN_REALM);
+             Policy policy = pm.getPolicy(policyName);
+
+             for (Iterator i = conditionNameMap.keySet().iterator();i.hasNext();
+             ) {
+                 String condName = (String)i.next();
+                 Condition cond = policy.getCondition(condName);
+                 if (cond != null) {
+                     Set removeSet = (HashSet)conditionNameMap.get(condName);
+                     Map orig = cond.getProperties();
+
+                     for (Iterator j = removeSet.iterator();
+                         j.hasNext();
+                     ) {
+                         String defaultValue = (String)j.next();
+                         Set origValues = (Set)orig.get(attributeName);
+                         if (origValues != null) {
+                             origValues.removeAll(removeSet);
+                         }
+                     }
+                     cond.setProperties(orig);
+                     policy.replaceCondition(condName, cond);
+                 }
+             }
+             pm.replacePolicy(policy);
+         } catch (PolicyException e) {
+             debug.error("UpgradeUtils.removeDelegationCondition", e);
+         } catch (SSOException e) {
+             debug.error("UpgradeUtils.removeDelegationCondition", e);
+         }
+     }
 }

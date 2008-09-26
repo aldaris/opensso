@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.5 2008-07-18 07:12:35 bina Exp $
+ * $Id: Migrate.java,v 1.6 2008-09-26 04:57:16 bina Exp $
  *
  */
 
@@ -44,9 +44,11 @@ public class Migrate implements MigrateTasks {
     final static String SERVICE_NAME = "sunAMDelegationService";
     final static String SERVICE_DIR = "99_sunAMDelegationService/20_30";
     final static String ATTR_NAME = "SubjectIdTypes";
+    final static String ATTR_NAME_1 = "attributes";
     final static String schemaType = "Global";
     final static String FILTERED_ROLE = "FILTERED_ROLE";
     final static String POLICY_NAME = "AllUserReadableServices";
+    final static String POLICY_NAME_1 = "SelfWriteAttributes";
     final static String AGENTS_READ_WRITE = "AgentsReadWrite";
     final static String AGENT_ADMIN = "AgentAdmin";
     final static String PERMISSION = "Permission";
@@ -57,6 +59,8 @@ public class Migrate implements MigrateTasks {
         "/sunFMCOTConfigService/1.0/OrganizationConfig/*";
     final static String RULE_NAME_4 = "delegation-rule4";
     final static String RULE_NAME_5 = "delegation-rule5";
+    final static String DEFAULT_VAL = 
+        "iplanet-am-user-password-reset-force-reset";
     /**
      * Updates the <code>sunAMDelegationService<code> service schema.
      *
@@ -76,6 +80,14 @@ public class Migrate implements MigrateTasks {
             ruleMap.put(RULE_NAME_4,RESOURCE_SUFFIX1);
             ruleMap.put(RULE_NAME_5,RESOURCE_SUFFIX2);
             UpgradeUtils.addDelegationRule(POLICY_NAME,ruleMap); 
+
+            // remove default value
+            Map removePasswordResetForceChangePwd = new HashMap(2);
+            Set setPwdReset = new HashSet(2);
+            setPwdReset.add(DEFAULT_VAL);
+            removePasswordResetForceChangePwd.put("condition", setPwdReset);
+            UpgradeUtils.removeDelegationCondition(POLICY_NAME_1,
+                 ATTR_NAME_1,removePasswordResetForceChangePwd);
 
             // add AgentsReadWrite Permission
             Map attrValues = new HashMap();
