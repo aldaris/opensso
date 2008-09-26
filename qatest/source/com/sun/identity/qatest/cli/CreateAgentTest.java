@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateAgentTest.java,v 1.1 2008-08-12 21:40:58 nithyas Exp $
+ * $Id: CreateAgentTest.java,v 1.2 2008-09-26 19:56:23 nithyas Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -159,6 +159,7 @@ public class CreateAgentTest extends TestCommon implements CLIExitCodes {
                                         agentType, "");
                             }
                             cli.logCommand("setup");
+                            cli.resetArgList();
                         } else {
                             log(Level.SEVERE, "setup", "The setup agent " + 
                                     setupAgents + 
