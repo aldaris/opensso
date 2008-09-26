@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: service.h,v 1.14 2008-07-15 20:12:40 subbae Exp $
+ * $Id: service.h,v 1.15 2008-09-26 00:02:09 robertis Exp $
  *
  * Abstract:
  *
@@ -126,7 +126,7 @@ class Service {
 
     am_status_t do_agent_auth_logout();
 
-    void initialize(Properties& properties);
+    void initialize();
 
     void update_policy(const SSOToken &, const std::string &,
 		       const std::string &,
@@ -251,7 +251,7 @@ private:
     void construct_advice_string(const KeyValueMap &, std::string &) const;
     void add_attribute_value_pair_xml(const KeyValueMap::const_iterator &entry,
 				      std::string &adviceStr) const;
-    void reinitialize(Properties& properties); 
+    void reinitialize(); 
 
 
 };

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.cpp,v 1.35 2008-09-19 01:11:53 robertis Exp $
+ * $Id: am_web.cpp,v 1.36 2008-09-26 00:02:09 robertis Exp $
  *
  */
 
@@ -709,7 +709,7 @@ am_agent_init(boolean_t* pAgentInitialized)
                             thisfunc, (*agentConfigPtr)->locale);
         } else {
             setlocale(LC_ALL,"");
-            am_web_log_info("am_web_init(): Logging Locale: OS locale");
+            am_web_log_info("am_agent_init(): Logging Locale: OS locale");
         }
 	textdomain(domainname);
 	#endif
@@ -5920,7 +5920,8 @@ am_web_is_owa_enabled_change_protocol(void* agent_config) {
 
 
 /*
- * Method to convert http to https if OWA is deployed on IIS6
+ * Method to retrun the landing page for idle session 
+ * timeouts when OWA is deployed on IIS6
  */
 extern "C" AM_WEB_EXPORT const char *
 am_web_is_owa_enabled_session_timeout_url(void* agent_config) {

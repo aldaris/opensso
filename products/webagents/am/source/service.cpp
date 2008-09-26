@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: service.cpp,v 1.25 2008-09-13 01:11:53 robertis Exp $
+ * $Id: service.cpp,v 1.26 2008-09-26 00:02:09 robertis Exp $
  *
  */
 
@@ -186,6 +186,8 @@ Service::Service(const char *svcName,
 	Log::log(logID, Log::LOG_INFO,
 		 "Service() notification disabled");
     }
+    //call initialize finally
+    initialize();
 }
 
 /*
@@ -200,7 +202,7 @@ Service::Service(const char *svcName,
  *	InternalException upon other errors
  */
 void
-Service::initialize(Properties& properties) {
+Service::initialize() {
     string func("Service::initialize()");
     ScopeLock myLock(lock);
     if(initialized == true) {
@@ -358,19 +360,6 @@ Service::initialize(Properties& properties) {
 	throw InternalException(func, msg, status);
     }
 
-   bool do_sso_only = 
-         properties.getBool(AM_WEB_DO_SSO_ONLY, false);
-   bool fetchProfileAttrs = 
-        isValidAttrsFetchMode(properties.get(AM_POLICY_PROFILE_ATTRS_MODE));
-   bool fetchResponseAttrs = 
-        isValidAttrsFetchMode(properties.get(AM_POLICY_RESPONSE_ATTRS_MODE));
-
-   if (do_sso_only && !fetchProfileAttrs && !fetchResponseAttrs) {
-       Log::log(logID, Log::LOG_INFO,"do_sso_only is set to true, profile and response attributes fetch mode is set to NONE");
-   } else {
-    // Do policy init.
-    string policydata;
-    KeyValueMap env;
     policySvc = new PolicyService(
 		    mPolicyEntry->getSSOToken(),
 		    svcParams,
@@ -401,7 +390,6 @@ Service::initialize(Properties& properties) {
 	serverHandledAdvicesList.insert(serverHandledAdvicesList.begin(),
 				       adviceNames.begin(), adviceNames.end());
     }
-   }
 
     string remoteLogName = svcParams.get(AM_AUDIT_SERVER_LOG_FILE_PROPERTY,
 					 "");
@@ -621,13 +609,21 @@ Service::policy_notify(const string &resName,
  */
 void
 Service::agent_config_change_notify() {
-    if(initialized == false) {
-	Log::log(logID, Log::LOG_WARNING,
-                  "Service::agent_config_change_notify() Service"
-		  " not initalized.Ignoring Agent config change notification.");
-	return;
+    const char *thisfunc = "Service::agent_config_change_notify()";
+    am_status_t status;
+    status = agentProfileService->fetchAndUpdateAgentConfigCache();
+    if(status == AM_REST_ATTRS_SERVICE_FAILURE)
+    {
+        reinitialize();
+        status = agentProfileService->fetchAndUpdateAgentConfigCache();
+        if(status!=AM_SUCCESS)
+        {
+            am_web_log_error("%s:There was an error while fetching "
+                    "REST attributes after agent login Status : %s", 
+                    thisfunc, am_status_to_string(status));
+        }
+
     }
-    agentProfileService->fetchAndUpdateAgentConfigCache();
     return;
 }
 
@@ -1122,7 +1118,7 @@ Service::getPolicyResult(const char *userSSOToken,
     bool mFetchFromRootResource;
 
     if(initialized == false) {
-        initialize(properties);
+        initialize();
     }
 
     rsrcTraits.canonicalize(rName, &c_res);
@@ -1436,7 +1432,7 @@ Service::update_policy(const SSOToken &ssoTok, const string &resName,
     if (status == AM_INVALID_APP_SSOTOKEN) {
         Log::log(logID, Log::LOG_WARNING, 
             "Agent SSOToken reset during getSessionInfo().");
-        reinitialize(properties);
+        reinitialize();
         if (initialized == true) {
             Log::log(logID, Log::LOG_WARNING,
                     "Thread wokeup after successful initialization.");
@@ -1553,7 +1549,7 @@ Service::do_update_policy(const SSOToken &ssoTok, const string &resName,
                 "Agent SSOToken reset during getPolicyDecisions().");
             // If app ssotoken got invalidated,
             // then agent need to reinitialize. 
-            reinitialize(properties);
+            reinitialize();
 
             if (initialized == true) {
                 Log::log(logID, Log::LOG_WARNING,
@@ -1693,7 +1689,7 @@ Service::user_logout(const char *ssoTokenId,
     if (status == AM_INVALID_APP_SSOTOKEN) {
         Log::log(logID, Log::LOG_WARNING, 
             "Agent SSOToken reset during destroySession().");
-        reinitialize(properties);
+        reinitialize();
         if (initialized == true) {
             Log::log(logID, Log::LOG_WARNING,
                     "Thread wokeup after successful reinitialization.");
@@ -1753,7 +1749,7 @@ Service::add_attribute_value_pair_xml(const KeyValueMap::const_iterator &entry,
 * session requests and policy request.
 */
 void
-Service::reinitialize(Properties& properties) {
+Service::reinitialize() {
 
     bool gotPermToCleanup = false; 
     {
@@ -1773,7 +1769,7 @@ Service::reinitialize(Properties& properties) {
         // we cleanup the entire cache.
         Log::log(logID, Log::LOG_WARNING, "Invoking initialize().");
         agentProfileService->agentLogin();
-        initialize(properties);
+        initialize();
     } else {
         int counter = 0;
         // Just a sleep factor.  The init must happen

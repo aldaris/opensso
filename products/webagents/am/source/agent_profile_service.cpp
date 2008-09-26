@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: agent_profile_service.cpp,v 1.19 2008-09-23 00:29:14 subbae Exp $
+ * $Id: agent_profile_service.cpp,v 1.20 2008-09-26 00:02:09 robertis Exp $
  *
  */
 
@@ -301,7 +301,7 @@ load_bootinfo_to_properties(Utils::boot_info_t *boot_ptr, am_properties_t proper
  * AgentConfiguration object. This function is invoked once by the constructor
  * of this class and periodically by the polling and notification thread.
  */
-void AgentProfileService::fetchAndUpdateAgentConfigCache()
+am_status_t AgentProfileService::fetchAndUpdateAgentConfigCache()
 {
     //check for REMOTE/LOCAL, then fetch attributes 
     //set latestConfigkey to the current time and then update AgentConfigCache
@@ -407,7 +407,7 @@ void AgentProfileService::fetchAndUpdateAgentConfigCache()
                     }
                 } else {
                     am_web_log_error("%s:There is an error while fetching"
-                                     " attributes using REST service. "
+                                     " attributes by user %s, using REST service. "
                                      "Status: %s ", thisfunc,
                                      userName.c_str(), 
                                      am_status_to_string(status));
@@ -424,6 +424,8 @@ void AgentProfileService::fetchAndUpdateAgentConfigCache()
                 agentConfig->getProperties());
         agentConfigCache.populateAgentConfigCacheTable(agentConfig);
     }  
+
+    return status;
 }
 
 /*

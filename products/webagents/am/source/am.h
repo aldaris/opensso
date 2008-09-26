@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am.h,v 1.21 2008-08-26 00:18:37 subbae Exp $
+ * $Id: am.h,v 1.22 2008-09-26 00:02:09 robertis Exp $
  *
  */
 
@@ -93,7 +93,7 @@ AM_BEGIN_EXTERN_C
 #define AM_COMMON_FORWARD_PROXY_HOST AM_COMMON_PROPERTY_PREFIX "forward.proxy.host"
 #define AM_COMMON_FORWARD_PROXY_PORT AM_COMMON_PROPERTY_PREFIX "forward.proxy.port"
 #define AM_COMMON_FORWARD_PROXY_USER AM_COMMON_PROPERTY_PREFIX "forward.proxy.user"
-#define AM_COMMON_FORWARD_PROXY_PASSWORD AM_COMMON_PROPERTY_PREFIX "proxy.password"
+#define AM_COMMON_FORWARD_PROXY_PASSWORD AM_COMMON_PROPERTY_PREFIX "forward.proxy.password"
 
 #define AM_COMMON_CONFIG_CHANGE_NOTIFICATION_ENABLE_PROPERTY AM_COMMON_PROPERTY_PREFIX "change.notification.enable"
 

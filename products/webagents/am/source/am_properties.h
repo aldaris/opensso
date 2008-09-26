@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_properties.h,v 1.8 2008-08-19 19:15:04 veiming Exp $
+ * $Id: am_properties.h,v 1.9 2008-09-26 00:02:09 robertis Exp $
  *
  * Abstract:
  *
@@ -197,7 +197,7 @@ AM_EXPORT boolean_t am_properties_is_set(am_properties_t properties,
  *
  *   value_ptr
  *		a pointer to where to store the value associated with
- *		the default value.
+ *		the specified key.
  *
  *   default_value
  *		default value to use if there is no value associated
