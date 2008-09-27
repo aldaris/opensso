@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: utils.cpp,v 1.12 2008-09-13 01:11:53 robertis Exp $
+ * $Id: utils.cpp,v 1.13 2008-09-27 00:20:05 madan_ranganath Exp $
  *
  */ 
 #include <stdexcept>
@@ -375,8 +375,8 @@ compare_sub_pat(const char *r1, const char *r2,
             // tokens and match tokens to the match_patterns algorithm. Also
 	    // perform the similar call for the remainder of the pattern and
 	    // the match string
-            const char *tmp_r1 = NULL;
-            const char *tmp_r2 = NULL;
+            const char *tmp_r1 = r1;
+            const char *tmp_r2 = r2;
             char *pattern = NULL;            
             char *match_str = NULL;
             int pattern_len = 0;
@@ -394,8 +394,8 @@ compare_sub_pat(const char *r1, const char *r2,
 
                 tmp_r2 = strchr(r2, '?');
                 if (tmp_r2 != NULL) {
-                    strncpy(pattern,tmp_r1, tmp_r1 - r1);
-                    strncpy(match_str,tmp_r2, tmp_r2 - r2);
+                    strncpy(pattern, r1, tmp_r1 - r1);
+                    strncpy(match_str, r2, tmp_r2 - r2);
                     
                     if (pattern != NULL && match_str != NULL) {
                         result = match_patterns(pattern, match_str,

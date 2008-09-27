@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: service.cpp,v 1.26 2008-09-26 00:02:09 robertis Exp $
+ * $Id: service.cpp,v 1.27 2008-09-27 00:20:05 madan_ranganath Exp $
  *
  */
 
@@ -612,14 +612,12 @@ Service::agent_config_change_notify() {
     const char *thisfunc = "Service::agent_config_change_notify()";
     am_status_t status;
     status = agentProfileService->fetchAndUpdateAgentConfigCache();
-    if(status == AM_REST_ATTRS_SERVICE_FAILURE)
-    {
+    if (status == AM_REST_ATTRS_SERVICE_FAILURE) {
         reinitialize();
         status = agentProfileService->fetchAndUpdateAgentConfigCache();
-        if(status!=AM_SUCCESS)
-        {
+        if (status!=AM_SUCCESS) {
             am_web_log_error("%s:There was an error while fetching "
-                    "REST attributes after agent login Status : %s", 
+                    "REST attributes after agent login. Status : %s", 
                     thisfunc, am_status_to_string(status));
         }
 
