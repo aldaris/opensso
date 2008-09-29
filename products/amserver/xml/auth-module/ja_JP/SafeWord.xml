@@ -9,14 +9,14 @@
 	"jar://com/sun/identity/authentication/Auth_Module_Properties.dtd">
 
 <ModuleProperties moduleName="SafeWord" version="1.0" >    
-    <Callbacks length="1" order="1" timeout="60" header="This server uses SafeWord Authentication" >
+    <Callbacks length="1" order="1" timeout="60" header="このサーバーは SafeWord 認証を使用します" >
         <NameCallback>            
-            <Prompt> Your User Name: </Prompt>            
+            <Prompt> ユーザー名:  </Prompt>            
         </NameCallback>     
     </Callbacks>
-    <Callbacks length="1" order="2" timeout="60" header="This server uses SafeWord Authentication" >
+    <Callbacks length="1" order="2" timeout="60" header="このサーバーは SafeWord 認証を使用します" >
         <PasswordCallback echoPassword="false" >
-            <Prompt> Your Password: </Prompt>            
+            <Prompt> パスワード:  </Prompt>            
         </PasswordCallback>           
     </Callbacks>
 </ModuleProperties>

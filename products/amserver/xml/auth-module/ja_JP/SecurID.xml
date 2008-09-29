@@ -10,34 +10,34 @@
 
 
 <ModuleProperties moduleName="SecurID" version="1.0" >
-    <Callbacks length="2" order="1" timeout="120" header="This server uses SecurID Authentication" >
+    <Callbacks length="2" order="1" timeout="120" header="このサーバーは SecurID 認証を使用します" >
         <NameCallback>
-            <Prompt> Enter Your UserId </Prompt>
+            <Prompt> ユーザー ID を入力してください </Prompt>
         </NameCallback>
         <PasswordCallback echoPassword="false" >
-            <Prompt> Enter your Passcode </Prompt>
+            <Prompt> パスコードを入力してください </Prompt>
         </PasswordCallback>
     </Callbacks>
-    <Callbacks length="1" order="2" timeout="120" header="New PIN Mode" >
+    <Callbacks length="1" order="2" timeout="120" header="新規 PIN モード" >
 	<!-- TextInputCallback not implemented in UI -->
 	<PasswordCallback echoPassword="false" >
-	    <Prompt> enter new PIN msg </Prompt>
+	    <Prompt> 新しい PIN メッセージを入力してください </Prompt>
 	</PasswordCallback>
     </Callbacks>
-    <Callbacks length="1" order="3" timeout="120" header="Next PASSCODE" >
+    <Callbacks length="1" order="3" timeout="120" header="次のパスコード" >
 	<PasswordCallback echoPassword="false" >
-	    <Prompt> Wait for the code on your token to change, then enter next PASSCODE: </Prompt>
+	    <Prompt> トークンでコードが変更されるまで待ち、次のパスコードを入力します:  </Prompt>
 	</PasswordCallback>
     </Callbacks>
-    <Callbacks length="1" order="4" timeout="120" header="Generating new PIN" >
+    <Callbacks length="1" order="4" timeout="120" header="新規 PIN を生成中" >
 	<!-- TextInputCallback not implemented in UI -->
 	<NameCallback>
-	    <Prompt> Always gets replaced </Prompt>
+	    <Prompt> 常に置換されます </Prompt>
 	</NameCallback>
     </Callbacks>
-    <Callbacks length="1" order="5" timeout="120" header="Next PASSCODE" >
+    <Callbacks length="1" order="5" timeout="120" header="次のパスコード" >
 	<PasswordCallback echoPassword="false" >
-	    <Prompt> wait for token to change msg </Prompt>
+	    <Prompt> トークンがメッセージを変更するのをお待ちください </Prompt>
 	</PasswordCallback>
     </Callbacks>
 </ModuleProperties>
