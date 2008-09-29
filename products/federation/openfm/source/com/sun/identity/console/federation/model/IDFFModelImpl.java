@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFModelImpl.java,v 1.6 2008-08-21 18:31:08 asyhuang Exp $
+ * $Id: IDFFModelImpl.java,v 1.7 2008-09-29 23:48:39 asyhuang Exp $
  *
  */
 package com.sun.identity.console.federation.model;
@@ -50,6 +50,7 @@ import com.sun.identity.liberty.ws.meta.jaxb.IDPDescriptorType;
 import com.sun.identity.liberty.ws.meta.jaxb.SPDescriptorType;
 import com.sun.identity.federation.common.IFSConstants;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -806,9 +807,8 @@ public class IDFFModelImpl
 
             //Protocol Support Enumeration
             pDesc.getProtocolSupportEnumeration().clear();
-            pDesc.getProtocolSupportEnumeration().add(
-                    (String) AMAdminUtils.getValue(
-                    (Set) attrValues.get(ATTR_PROTOCOL_SUPPORT_ENUMERATION)));
+            pDesc.getProtocolSupportEnumeration().addAll(
+                (Collection) attrValues.get(ATTR_PROTOCOL_SUPPORT_ENUMERATION)); 
 
             //communication URLs
             pDesc.setSoapEndpoint(
@@ -1377,7 +1377,7 @@ public class IDFFModelImpl
                     AttributeType atype = objFactory.createAttributeType();
                     String key = (String) iter.next();
                     atype.setName(key);
-                    atype.getValue().addAll((List) extendedMetaMap.get(key));
+                    atype.getValue().addAll(Collections.EMPTY_LIST);
                     baseCfgType.getAttribute().add(atype);
                 }
 
@@ -1386,7 +1386,7 @@ public class IDFFModelImpl
                     AttributeType atype = objFactory.createAttributeType();
                     String key = (String) iter.next();
                     atype.setName(key);
-                    atype.getValue().addAll((List) extendedMetaSpMap.get(key));
+                    atype.getValue().addAll(Collections.EMPTY_LIST);
                     baseCfgType.getAttribute().add(atype);
                 }
                 entityConfig.getSPDescriptorConfig().add(baseCfgType);
@@ -1399,7 +1399,7 @@ public class IDFFModelImpl
                     AttributeType atype = objFactory.createAttributeType();
                     String key = (String) iter.next();
                     atype.setName(key);
-                    atype.getValue().addAll((List) extendedMetaMap.get(key));
+                    atype.getValue().addAll(Collections.EMPTY_LIST);
                     baseCfgType.getAttribute().add(atype);
                 }
 
@@ -1408,7 +1408,7 @@ public class IDFFModelImpl
                     AttributeType atype = objFactory.createAttributeType();
                     String key = (String) iter.next();
                     atype.setName(key);
-                    atype.getValue().addAll((List) extendedMetaIdpMap.get(key));
+                    atype.getValue().addAll(Collections.EMPTY_LIST);
                     baseCfgType.getAttribute().add(atype);
                 }
                 entityConfig.getIDPDescriptorConfig().add(baseCfgType);
