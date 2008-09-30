@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.6 2008-08-30 06:31:30 ericow Exp $
+ * $Id: PolicyEvaluator.java,v 1.7 2008-09-30 20:47:33 goodearth Exp $
  *
  */
 
@@ -79,12 +79,20 @@ public class PolicyEvaluator {
     public static final String EMPTY_RESOURCE_NAME = "";
 
     /**
-     * Constant used for key to pass the requested resource name
+     * Constant used for key to pass the requested resource name canonicalized
      * in the env map, so that Condition(s)/ResponseProvider(s) could use 
      * the requested resource name, if necessary
      */
     public static final String SUN_AM_REQUESTED_RESOURCE 
             = "sun.am.requestedResource";
+
+    /**
+     * Constant used for key to pass the requested resource name uncanonicalized
+     * in the env map, so that Condition(s)/ResponseProvider(s) could use 
+     * the requested resource name, if necessary
+     */
+    public static final String SUN_AM_ORIGINAL_REQUESTED_RESOURCE 
+            = "sun.am.requestedOriginalResource";
 
     /**
      * Constant used for key to pass the requested actions names
@@ -464,6 +472,10 @@ public class PolicyEvaluator {
         if ( (resourceName == null) || (resourceName == "") ) {
             resourceName = Rule.EMPTY_RESOURCE_NAME;
         }
+
+        Set originalResourceNames = new HashSet(1);
+        originalResourceNames.add(resourceName);
+
         resourceName = serviceType.canonicalize(resourceName);
 
         //Add request resourceName and request actionNames to the envParameters
@@ -482,15 +494,17 @@ public class PolicyEvaluator {
             actions.addAll(actionNames);
         }
 
-        if ((envParameters == null) || envParameters.isEmpty()) {
-            envParameters = new HashMap();
-        }
-
         /*
          * We create new HashMap in place of empty map since
          * Collections.EMPTY_MAP can not be modified
          */
+        if ((envParameters == null) || envParameters.isEmpty()) {
+            envParameters = new HashMap();
+        }
+
         envParameters.put(SUN_AM_REQUESTED_RESOURCE, resourceNames);
+        envParameters.put(SUN_AM_ORIGINAL_REQUESTED_RESOURCE, 
+                originalResourceNames);
         envParameters.put(SUN_AM_REQUESTED_ACTIONS, actions);
         envParameters.put(SUN_AM_POLICY_CONFIG, 
                 policyManager.getPolicyConfig());
@@ -1834,6 +1848,9 @@ public class PolicyEvaluator {
     PolicyDecision getPolicyDecisionIgnoreSubjects(String resourceName, 
             Set actionNames, Map env) throws PolicyException, SSOException  {
 
+        Set originalResourceNames = new HashSet(1);
+        originalResourceNames.add(resourceName);
+
         /*
          * Add request resourceName and request actionNames to the envParameters
          * so that Condition(s)/ResponseProvider(s) can use them if necessary
@@ -1859,6 +1876,8 @@ public class PolicyEvaluator {
         }
 
         env.put(SUN_AM_REQUESTED_RESOURCE, resourceNames);
+        env.put(SUN_AM_ORIGINAL_REQUESTED_RESOURCE, 
+                originalResourceNames);
         env.put(SUN_AM_REQUESTED_ACTIONS, actions);
         env.put(SUN_AM_POLICY_CONFIG, 
                 policyManager.getPolicyConfig());
