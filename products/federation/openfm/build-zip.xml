@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-zip.xml,v 1.29 2008-09-25 17:34:27 bina Exp $
+   $Id: build-zip.xml,v 1.30 2008-09-30 23:40:46 pluo Exp $
 
 -->
 
@@ -226,6 +226,10 @@
         <copy todir="${zip.temp.dir}/xml">
             <fileset dir="${openfm.services.xml.dir}" includes="**/*.xml"/>
             <fileset dir="${amserver.services.xml.dir}" includes="**/*.xml"/>
+        </copy>
+
+        <copy todir="${zip.temp.dir}/legal">
+            <fileset dir="${products.basedir}/legal"/>
         </copy>
 
 
