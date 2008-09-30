@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateHostedSPViewBean.java,v 1.6 2008-06-25 05:49:47 qcheng Exp $
+ * $Id: CreateHostedSPViewBean.java,v 1.7 2008-09-30 23:31:20 veiming Exp $
  *
  */
 
@@ -175,7 +175,8 @@ public class CreateHostedSPViewBean
 
                 idx = html.indexOf("radioCOT");
                 idx = html.lastIndexOf("<table ", idx);
-                idx = html.lastIndexOf("<div ", idx);
+                int idx1 = html.lastIndexOf("<fieldset ", idx);
+                idx = (idx1 == -1) ? html.lastIndexOf("<div ", idx) : idx1;
                 html = html.substring(0, idx) + 
                     "<div id=\"cotsection\" style=\"display:none\">" +
                     html.substring(idx);
