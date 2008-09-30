@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticatedSharedAgentsCondition.java,v 1.4 2008-09-16 00:40:35 goodearth Exp $
+ * $Id: AuthenticatedSharedAgentsCondition.java,v 1.5 2008-09-30 20:48:38 goodearth Exp $
  *
  */
 
@@ -51,6 +51,7 @@ import com.sun.identity.policy.PolicyEvaluator;
 import com.sun.identity.common.CaseInsensitiveHashSet;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdConstants;
+import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.security.AdminTokenAction;
@@ -93,7 +94,7 @@ public class AuthenticatedSharedAgentsCondition implements Condition,
 
     //  Constants for constructing resource names
     static final String RESOURCE_PREFIX = "sms://";
-    static final String RESOURCE_NAME =
+    static final String SVC_RESOURCE_NAME =
         "/sunIdentityRepositoryService/1.0/application/";
 
     /** No argument constructor 
@@ -224,7 +225,7 @@ public class AuthenticatedSharedAgentsCondition implements Condition,
                 "getConditionDecision: " +
                 "called with Token: " + token.getPrincipal().getName() +
                 ", requestedResourcename: "
-                + env.get(PolicyEvaluator.SUN_AM_REQUESTED_RESOURCE));
+                + env.get(PolicyEvaluator.SUN_AM_ORIGINAL_REQUESTED_RESOURCE));
         }
         String realmName = null;
         String sharedAgentName = null;
@@ -251,7 +252,7 @@ public class AuthenticatedSharedAgentsCondition implements Condition,
             throw new PolicyException(ide);
         }
         // Get the resource name from the env
-        Object o = env.get(PolicyEvaluator.SUN_AM_REQUESTED_RESOURCE);
+        Object o = env.get(PolicyEvaluator.SUN_AM_ORIGINAL_REQUESTED_RESOURCE);
         if (debug.messageEnabled()) {
             debug.message("AuthenticatedSharedAgentsCondition."
                 +"getConditionDecision:"
@@ -279,20 +280,25 @@ public class AuthenticatedSharedAgentsCondition implements Condition,
 
             try {
                 Set agentsFromEnv = new HashSet();
+                String agentTypeName = IdType.AGENT.getName();
+                String agentOnlyTypeName = IdType.AGENTONLY.getName();
                 SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                     AdminTokenAction.getInstance());
                 ServiceConfig orgConfig = getOrgConfig(adminToken, realmName);
 
                 String[] retVal = split(resourceName);
-                if ((retVal[0].equalsIgnoreCase("agent") &&
-                    retVal[1].equalsIgnoreCase("agent")) ||
-                    (retVal[0].equalsIgnoreCase("agentonly") &&
-                     retVal[1].equalsIgnoreCase("agentonly"))) {
+                         
+                if ((retVal[0].equalsIgnoreCase(agentTypeName) &&
+                    retVal[1].equalsIgnoreCase(agentTypeName)) ||
+                    (retVal[0].equalsIgnoreCase(agentOnlyTypeName) &&
+                     retVal[1].equalsIgnoreCase(agentOnlyTypeName))) {
                     agentsFromEnv.add(retVal[0]);
                 }
 
-                if ((!retVal[0].equalsIgnoreCase("agent")) &&
-                    (!retVal[0].equalsIgnoreCase("agentonly"))) {
+                if ((!retVal[0].equalsIgnoreCase(agentTypeName)) &&
+                    (!retVal[0].equalsIgnoreCase(agentOnlyTypeName))) {
+
+                    retVal[0] = getAgentNameFromEnv(resourceName);
 
                     if (retVal[0].equalsIgnoreCase(sharedAgentName)) {
                         Map envMap = getAttributes(orgConfig, retVal[0]);
@@ -346,6 +352,32 @@ public class AuthenticatedSharedAgentsCondition implements Condition,
         return new ConditionDecision(allowed);
     }
 
+    private String getAgentNameFromEnv(String resName) {
+        String agentName = null;
+        /*
+         * This check is for the resource name like this is constructed 
+         * from the delegation service while getting the permission
+         * requestedResourcename:
+         * [sms://dc=opensso,dc=java,dc=net/sunIdentityRepositoryService
+         * /1.0/application/agentonly/http://quasar.red.iplanet.com:7001/
+         * StockService/StockService]
+         */
+        String rn = resName.toLowerCase();
+        // Get the index after the realm name
+        int ndx = rn.indexOf(SVC_RESOURCE_NAME.toLowerCase());
+        if (ndx != -1) {
+            // Get the substring after the realm, server name, version and 
+            // application.
+            rn = rn.substring(ndx + SVC_RESOURCE_NAME.length());
+            // Find the next index of "/" to bypass the agent type
+            ndx = rn.indexOf('/');
+            if (ndx != -1) {
+                // Get the agent name
+                agentName = rn.substring(ndx + 1);
+            }
+        }
+        return (agentName);
+    }
 
     /**
      * Returns a copy of this object.
@@ -515,8 +547,7 @@ public class AuthenticatedSharedAgentsCondition implements Condition,
             if (agentsToRead != null && !agentsToRead.isEmpty()) {
                 for (Iterator itr = agentsToRead.iterator();itr.hasNext();) {
                     String avName = (String) itr.next();
-                    if ((envValues != null) &&
-                        (envValues.contains(avName))) {
+                    if ((envValues != null) && (envValues.contains(avName))) {
                         allowed = true;
                         if (debug.messageEnabled()) {
                             debug.message("AuthenticatedSharedAgentsCondition."
