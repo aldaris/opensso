@@ -126,7 +126,7 @@ no est&#225; especificado, se generar&#225; un n&#250;mero aleatorio. </p>
 <p>Este atributo asigna las clases de contexto de autenticaci&#243;n definido por SAMLv2
 a m&#233;todos de autenticaci&#243;n disponibles del proveedor de identidades.</p><dl><dt>Asignador</dt>
 <dd><p>Especifica la implementaci&#243;n de la interfaz <tt>IDPAuthnContextMapper </tt> utilizada para crear el contexto de autenticaci&#243;n solicitado. La implementaci&#243;n predeterminada es <tt>com.sun.identity.saml2.plugins.DefaultIDPAttributeMapper </tt>.</p></dd>
-<dt>Contexte d'authentification par d&#233;faut</dt>
+<dt>Contexto de autenticaci&#243;n predeterminado</dt>
 <dd><p>Especifica el tipo de contexto de autenticaci&#243;n predeterminado que utiliza el proveedor de identidades si el proveedor de servicios no env&#237;a una solicitud de contexto de autenticaci&#243;n.</p></dd>
 <dt>Compatible</dt>
 <dd><p>Seleccione la casilla de verificaci&#243;n junto a la clase de contexto de autenticaci&#243;n si el proveedor de identidades es compatible con ella.</p></dd>
@@ -155,12 +155,12 @@ a m&#233;todos de autenticaci&#243;n disponibles del proveedor de identidades.</
 <li><p>AuthenticaionTelephony</p></li>
 <li><p>SecureRemotePassword</p></li>
 <li><p>TLSClient</p></li>
-<li><p>Jeton temps sync</p></li>
+<li><p>Time-Sync-Token (Token de sincronizaci&#243;n de tiempo)</p></li>
 <li><p>Sin especificar</p></li></ul>
 </dd>
-<dt>Cl&#233;</dt>
+<dt>Clave</dt>
 <dd><p>Seleccione el tipo de autenticaci&#243;n de OpenSSO al que se asignar&#225; el contexto.</p></dd>
-<dt>Valeur</dt>
+<dt>Valor</dt>
 <dd><p>Escriba la opci&#243;n de autenticaci&#243;n de OpenSSO.</p></dd>
 <dt>Nivel</dt>
 <dd><p>Recibe como valor un n&#250;mero positivo que se asigna a un nivel de autenticaci&#243;n definido en el marco de autenticaci&#243;n de OpenSSO. El nivel de autenticaci&#243;n indica hasta qu&#233; punto puede confiarse en un m&#233;todo de autenticaci&#243;n.</p><p>En este marco, cada proveedor de identidades se configura con un contexto de autenticaci&#243;n predeterminado (m&#233;todo de autenticaci&#243;n preferido). Sin embargo, el proveedor podr&#237;a querer modificar el contexto de autenticaci&#243;n asignado a uno basado en el nivel de autenticaci&#243;n definido. Por ejemplo, el proveedor B podr&#237;a querer generar una sesi&#243;n local con un nivel de autenticaci&#243;n de 3, de forma que solicita al proveedor de identidades autenticar al usuario con un contexto de autenticaci&#243;n asignado a dicho nivel. El valor de este par&#225;metro de consulta determina el contexto de autenticaci&#243;n que debe utilizar el proveedor de identidades.</p></dd>

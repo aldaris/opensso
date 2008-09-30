@@ -422,7 +422,7 @@
                 <tocitem target="agentconfig.j2eeagentprofile" text="클라이언트 IP 주소 헤더" expand="false"></tocitem>
                 <tocitem target="agentconfig.j2eeagentprofile" text="클라이언트 호스트 이름 헤더" expand="false"></tocitem>
                 <tocitem target="agentconfig.j2eeagentprofile" text="웹 서비스 사용 가능" expand="false"></tocitem>
-                <tocitem target="agentconfig.j2eeagentprofile" text="웹 서비스 엔드포인트" expand="false"></tocitem>
+                <tocitem target="agentconfig.j2eeagentprofile" text="웹 서비스 종단점" expand="false"></tocitem>
                 <tocitem target="agentconfig.j2eeagentprofile" text="웹 서비스 프로세스 GET 사용" expand="false"></tocitem>
                 <tocitem target="agentconfig.j2eeagentprofile" text="웹 서비스 인증자" expand="false"></tocitem>
                 <tocitem target="agentconfig.j2eeagentprofile" text="웹 서비스 내부 오류 컨텐트 파일" expand="false"></tocitem>
@@ -461,9 +461,9 @@
                 <tocitem target="agentconfig.webserviceprovideredit" text="웹 서비스 클라이언트의 공개 키 별칭" expand="false"></tocitem>
                 <tocitem target="agentconfig.webserviceprovideredit" text="개인 키 별칭" expand="false"></tocitem>
                 <tocitem target="agentconfig.webserviceprovideredit" text="키 저장소 사용" expand="false"></tocitem></tocitem>
-            <tocitem target="agentconfig.webserviceprovideredit" text="엔드포인트" expand="false">
-                <tocitem target="agentconfig.webserviceprovideredit" text="웹 서비스 프록시 엔드포인트" expand="false"></tocitem>
-                <tocitem target="agentconfig.webserviceprovideredit" text="웹 서비스 엔드포인트" expand="false"></tocitem></tocitem>
+            <tocitem target="agentconfig.webserviceprovideredit" text="종단점" expand="false">
+                <tocitem target="agentconfig.webserviceprovideredit" text="웹 서비스 프록시 종단점" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceprovideredit" text="웹 서비스 종단점" expand="false"></tocitem></tocitem>
             <tocitem target="agentconfig.webserviceprovideredit" text="커버로스 구성" expand="false">
                 <tocitem target="agentconfig.webserviceprovideredit" text="커버로스 도메인 서버" expand="false"></tocitem>
                 <tocitem target="agentconfig.webserviceprovideredit" text="커버로스 도메인" expand="false"></tocitem>
@@ -496,9 +496,9 @@
                 <tocitem target="agentconfig.webserviceclientedit" text="웹 서비스 공급자의 공개 키 별칭" expand="false"></tocitem>
                 <tocitem target="agentconfig.webserviceclientedit" text="개인 키 별칭" expand="false"></tocitem>
                 <tocitem target="agentconfig.webserviceclientedit" text="키 저장소 사용" expand="false"></tocitem></tocitem>
-            <tocitem target="agentconfig.webserviceclientedit" text="엔드포인트" expand="false">
-                <tocitem target="agentconfig.webserviceclientedit" text="웹 서비스 프록시 엔드포인트" expand="false"></tocitem>
-                <tocitem target="agentconfig.webserviceclientedit" text="웹 서비스 엔드포인트" expand="false"></tocitem></tocitem>
+            <tocitem target="agentconfig.webserviceclientedit" text="종단점" expand="false">
+                <tocitem target="agentconfig.webserviceclientedit" text="웹 서비스 프록시 종단점" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceclientedit" text="웹 서비스 종단점" expand="false"></tocitem></tocitem>
             <tocitem target="agentconfig.webserviceclientedit" text="커버로스 구성" expand="false">
                 <tocitem target="agentconfig.webserviceclientedit" text="커버로스 도메인 서버" expand="false"></tocitem>
                 <tocitem target="agentconfig.webserviceclientedit" text="커버로스 도메인" expand="false"></tocitem>
@@ -512,8 +512,8 @@
             <tocitem target="agentconfig.discoveryagentprofile" text="상태" expand="false"></tocitem>
             <tocitem target="agentconfig.discoveryagentprofile" text="에이전트 구성 저장소 위치" expand="false"></tocitem>
             <tocitem target="agentconfig.discoveryagentprofile" text="개인 키 별칭" expand="false"></tocitem>
-            <tocitem target="agentconfig.discoveryagentprofile" text="검색 서비스 엔드포인트" expand="false"></tocitem>
-            <tocitem target="agentconfig.discoveryagentprofile" text="인증 웹 서비스 엔드포인트" expand="false"></tocitem></tocitem>
+            <tocitem target="agentconfig.discoveryagentprofile" text="검색 서비스 종단점" expand="false"></tocitem>
+            <tocitem target="agentconfig.discoveryagentprofile" text="인증 웹 서비스 종단점" expand="false"></tocitem></tocitem>
         <tocitem target="agentconfig.webservicestsedit" text="보안 토큰 서비스 에이전트 속성" expand="false">
             <tocitem target="agentconfig.webservicestsedit" text="일반" expand="false">
                 <tocitem target="agentconfig.webservicestsedit" text="그룹" expand="false"></tocitem>
@@ -536,9 +536,9 @@
                 <tocitem target="agentconfig.webservicestsedit" text="웹 서비스 공급자의 공개 키 별칭" expand="false"></tocitem>
                 <tocitem target="agentconfig.webservicestsedit" text="개인 키 별칭" expand="false"></tocitem>
                 <tocitem target="agentconfig.webservicestsedit" text="키 저장소 사용" expand="false"></tocitem></tocitem>
-            <tocitem target="agentconfig.webservicestsedit" text="엔드포인트" expand="false">
-                <tocitem target="agentconfig.webservicestsedit" text="보안 토큰 서비스 엔드포인트" expand="false"></tocitem>
-                <tocitem target="agentconfig.webservicestsedit" text="보안 토큰 서비스 MEX 엔드포인트" expand="false"></tocitem></tocitem>
+            <tocitem target="agentconfig.webservicestsedit" text="종단점" expand="false">
+                <tocitem target="agentconfig.webservicestsedit" text="보안 토큰 서비스 종단점" expand="false"></tocitem>
+                <tocitem target="agentconfig.webservicestsedit" text="보안 토큰 서비스 MEX 종단점" expand="false"></tocitem></tocitem>
             <tocitem target="agentconfig.webservicestsedit" text="커버로스 구성" expand="false">
                 <tocitem target="agentconfig.webservicestsedit" text="커버로스 도메인 서버" expand="false"></tocitem>
                 <tocitem target="agentconfig.webservicestsedit" text="커버로스 도메인" expand="false"></tocitem>

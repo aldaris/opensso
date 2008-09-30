@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>JDBC - Sun Federated Access Manager 8.0 コンソールオンラインヘルプ
+  <title>JDBC - Sun OpenSSO 8.0 コンソールオンラインヘルプ
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -31,8 +31,8 @@
 
 
 <a name="service.scserviceprofile.sunamauthjdbcservice"></a><h4>JDBC</h4>
-<p><a name="indexterm-174"></a>Java Database Connectivity (JDBC) 認証モジュールにより、Federated Access Manager が、JDBC 対応ドライバを提供する任意の SQL (Structured Query
-Language) データベースを通じてユーザーを認証できるようになります。SQL データベースへの接続は、JDBC ドライバを通して直接行うか、JNDI 接続プールを通して行います。JDBC 属性はレルム属性です。属性は次のとおりです。</p>
+<p><a name="indexterm-174"></a>Java Database Connectivity (JDBC) 認証モジュールにより、OpenSSO が、JDBC 対応ドライバを提供する任意の SQL (Structured Query Language) データベースを通じてユーザーを認証できるようになります。SQL
+データベースへの接続は、JDBC ドライバを通して直接行うか、JNDI 接続プールを通して行います。JDBC 属性はレルム属性です。属性は次のとおりです。</p>
 <ul><li><p><a href="#fwajx">「接続のタイプ」</a></p></li>
 <li><p><a href="#fwafb">「接続プールの JNDI 名」</a></p></li>
 <li><p><a href="#fwaap">「JDBC ドライバ」</a></p></li>
@@ -53,8 +53,8 @@ Language) データベースを通じてユーザーを認証できるように�
 <p>JNDI 接続プールは、配下の Web コンテナの設定を利用します。</p>
 
 <a name="fwafb"></a><h5>接続プールの JNDI 名</h5>
-<p>「接続タイプ」で JNDI を選択した場合は、このフィールドに接続プール名を指定します。JDBC 認証では Web コンテナから提供される JNDI 接続が使用されるので、ここで設定した JNDI 接続プールがほかの Web コンテナの接続と一致しなくなることがあります。例については『Federated
-Access Manager 管理ガイド』を参照してください。</p>
+<p>「接続タイプ」で JNDI を選択した場合は、このフィールドに接続プール名を指定します。JDBC 認証では Web コンテナから提供される JNDI 接続が使用されるので、ここで設定した JNDI 接続プールがほかの Web コンテナの接続と一致しなくなることがあります。例については、『OpenSSO
+Administration Guide』を参照してください。</p>
 
 <a name="fwaap"></a><h5>JDBC ドライバ</h5>
 <p><a href="#fwajx">「接続のタイプ」</a>で JDBC を選択した場合は、SQL データベースから提供される JDBC ドライバをこのフィールドに指定します。たとえば、<tt>com.mysql.jdbc.Driver</tt> と指定します。</p>

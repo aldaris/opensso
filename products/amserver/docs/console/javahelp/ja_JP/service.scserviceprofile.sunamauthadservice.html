@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Active Directory - Sun Federated Access Manager 8.0 コンソールオンラインヘルプ
+  <title>Active Directory - Sun OpenSSO 8.0 コンソールオンラインヘルプ
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -51,14 +51,12 @@
 
 
 <a name="fwfdx"></a><h5>プライマリ Active Directory サーバー</h5>
-<p>Federated Access Manager のインストール時に指定するプライマリ Active Directory サーバーのホスト名およびポート番号を指定します。これは、Active Directory 認証で最初に通信するサーバーです。形式は <tt></tt><i>hostname:port</i><tt></tt> です。ポート番号がないときは、<tt>389</tt> と想定します。</p><p>Federated Access Manager に複数のドメインが配備されている場合、Federated Access Manager と Directory Server の特定のインスタンス間の通信リンクを次の形式で指定できます。複数のエントリの場合は、ローカルサーバー名を先頭に付ける必要があります。</p><p><tt>local_servername|server:port local_servername2|server2:port2 ...</tt></p><p>たとえば、異なる場所に配備された 2 つの Federated Access Manager インスタンス (L1-machine1-IS および L2- machine2-IS) が、それぞれ別の
-Directory Server インスタンス (L1-machine1-DS および L2-machine2-DS) と通信する場合、次のように指定します。</p><p><tt>L1-machine1-IS.example.com|L1-machine1-DS.example.com:389 </tt></p><p><tt>L2-machine2-IS.example.com|L2-machine2-DS.example.com:389 </tt></p>
+<p>OpenSSO のインストール時に指定するプライマリ Active Directory サーバーのホスト名およびポート番号を指定します。これは、Active Directory 認証で最初に通信するサーバーです。形式は <tt></tt><i>hostname:port</i><tt></tt> です。ポート番号がないときは、<tt>389</tt> と想定します。</p><p>OpenSSO に複数のドメインが配備されている場合、OpenSSO と Directory Server の特定のインスタンス間の通信リンクを次の形式で指定できます。複数のエントリの場合は、ローカルサーバー名を先頭に付ける必要があります。</p><p><tt>local_servername|server:port local_servername2|server2:port2 ...</tt></p><p>たとえば、異なる場所に配備された 2 つの OpenSSO インスタンス (L1-machine1-IS および L2- machine2-IS) が、それぞれ別の Directory Server
+インスタンス (L1-machine1-DS および L2-machine2-DS) と通信する場合、次のように指定します。</p><p><tt>L1-machine1-IS.example.com|L1-machine1-DS.example.com:389 </tt></p><p><tt>L2-machine2-IS.example.com|L2-machine2-DS.example.com:389 </tt></p>
 
 <a name="fwbmo"></a><h5>セカンダリ Active Directory サーバー</h5>
-<p>Federated Access Manager プラットフォームが利用できるセカンダリ Active Directory サーバーのホスト名およびポート番号を指定します。プライマリ Active Directory サーバーが認証要求に応答しない場合は、このサーバーと通信します。プライマリサーバーが稼働している場合は、Federated Access Manager
-はプライマリサーバーに戻ります。この形式も <tt></tt><i>hostname:port</i><tt></tt> です。複数のエントリの場合は、ローカルサーバー名をプレフィックスとして付ける必要があります。</p>
-<hr><p><b>注意 &#8211; </b>Federated Access Manager が稼働しているホストとは別のホストにある Directory Server からユーザーを認証する場合は、プライマリとセカンダリ両方の LDAP サーバーポートに値があることが重要です。1 つの Directory Server
-の場所の値を両方のフィールドに使用できます。</p>
+<p>OpenSSO プラットフォームが利用できるセカンダリ Active Directory サーバーのホスト名およびポート番号を指定します。プライマリ Active Directory サーバーが認証要求に応答しない場合は、このサーバーと通信します。プライマリサーバーが稼働している場合は、OpenSSO はプライマリサーバーに戻ります。この形式も <tt></tt><i>hostname:port</i><tt></tt> です。複数のエントリの場合は、ローカルサーバー名をプレフィックスとして付ける必要があります。</p>
+<hr><p><b>注意 &#8211; </b>OpenSSO が稼働しているホストとは別のホストにある Directory Server からユーザーを認証する場合は、プライマリとセカンダリ両方の LDAP サーバーポートに値があることが重要です。1 つの Directory Server の場所の値を両方のフィールドに使用できます。</p>
 <hr>
 
 
@@ -69,7 +67,7 @@ ID を使用して認証するにはこのパラメータを <tt>ou=People</tt> 
 
 <a name="fwbjl"></a><h5>root ユーザーバインド DN</h5>
 <p>「プライマリ LDAP サーバーおよびポート」フィールドで指定した Directory Server に管理者としてバインドするのに使用するユーザーの DN を指定します。ユーザーログイン ID に基づいて、一致するユーザー DN を検索するためには、認証サービスはこの
-DN でバインドする必要があります。デフォルトは <tt>amldapuser</tt> です。任意の有効な DN が認識されます。</p><p>ログアウトする前に、パスワードが正しいことを確認します。正しくない場合はロックアウトされます。ロックアウトされた場合は、スーパーユーザー DN でログインできます。デフォルトでは、これは <tt>amAdmin</tt> アカウントです。通常のログインと同じアカウントですが、完全な DN を使用します。次に例を示します。</p><p><tt>uid_amAdmin,ou=People,</tt><i>FederatedAccessManager-base </i><tt></tt></p>
+DN でバインドする必要があります。デフォルトは <tt>amldapuser</tt> です。任意の有効な DN が認識されます。</p><p>ログアウトする前に、パスワードが正しいことを確認します。正しくない場合はロックアウトされます。ロックアウトされた場合は、スーパーユーザー DN でログインできます。デフォルトでは、これは <tt>amAdmin</tt> アカウントです。通常のログインと同じアカウントですが、完全な DN を使用します。次に例を示します。</p><p><tt>uid_amAdmin,ou=People,</tt><i>OpenSSO-base</i><tt></tt></p>
 
 <a name="fwbix"></a><h5>root ユーザーバインドパスワード</h5>
 <p>「root ユーザーバインド DN」フィールドで指定される管理者プロファイルのパスワードを指定します。デフォルト値は存在しません。管理者の有効な Active Directory パスワードだけが認識されます。</p>
@@ -78,7 +76,7 @@ DN でバインドする必要があります。デフォルトは <tt>amldapuse
 <p>パスワードを確認します。</p>
 
 <a name="fwblg"></a><h5>ユーザープロファイルの取得に使用する属性</h5>
-<p>ユーザーエントリのネーミング規則に使用する属性を指定します。デフォルトでは、Federated Access Manager はユーザーエントリが uid 属性によって識別されるものと想定します。Directory Server で異なる属性 (<i>givenname</i> など) を使用している場合は、このフィールドにその属性名を指定します。</p>
+<p>ユーザーエントリのネーミング規則に使用する属性を指定します。デフォルトでは、OpenSSO はユーザーエントリが uid 属性によって識別されるものと想定します。Directory Server で異なる属性 (<i>givenname</i> など) を使用している場合は、このフィールドにその属性名を指定します。</p>
 
 <a name="fwbpi"></a><h5>認証するユーザーの検索に使用する属性</h5>
 <p>認証を受けるユーザーの検索フィルタを設定するのに使用する属性を一覧表示します。これにより、ユーザーは 1 つ以上の属性によって認証を受けることができます。たとえば、このフィールドが <i>uid</i>、<i>employeenumber</i>、および <i>mail</i> に設定されている場合、ユーザーはこれらの名前のどれを使用しても認証を受けることができます。</p>
@@ -97,12 +95,12 @@ DN でバインドする必要があります。デフォルトは <tt>amldapuse
 
 
 <a name="fwbmt"></a><h5>Active Directory サーバーへの SSL アクセス</h5>
-<p>プライマリとセカンダリのサーバーおよびポートフィールドで指定される Directory Server への SSL アクセスを有効にします。デフォルトでは、このチェックボックスはオフなので、Directory Server へのアクセスに SSL プロトコルは使用されません。</p><p>Active Directory サーバーが SSL 有効 (LDAPS) で実行中の場合、Federated Access Manager が LDAPS プロトコルで
-Directory Server に接続できるように、適切な SSL 信頼証明書で設定されていることを確認する必要があります。</p>
+<p>プライマリとセカンダリのサーバーおよびポートフィールドで指定される Directory Server への SSL アクセスを有効にします。デフォルトでは、このチェックボックスはオフなので、Directory Server へのアクセスに SSL プロトコルは使用されません。</p><p>Active Directory サーバーが SSL 有効 (LDAPS) で実行中の場合、OpenSSO が LDAPS プロトコルで Directory Server
+に接続できるように、適切な SSL 信頼証明書で設定されていることを確認する必要があります。</p>
 
 <a name="fwbpx"></a><h5>認証するユーザー DN を返す</h5>
-<p>Federated Access Manager ディレクトリが Active Directory 用に設定されたディレクトリと同じ場合、このオプションを有効にすることができます。オプションを有効にすると、このオプションによって Active Directory 認証モジュールインスタンスがユーザー ID ではなく
-DN を返すことができるため、検索が不要になります。通常、認証モジュールインスタンスはユーザー ID だけを返すため、認証サービスはローカルの Federated Access Manager インスタンスでユーザーを検索します。外部の Active Directory が使用された場合、通常このオプションは有効になりません。</p>
+<p>OpenSSO ディレクトリが Active Directory 用に設定されたディレクトリと同じ場合、このオプションを有効にすることができます。オプションを有効にすると、このオプションによって Active Directory 認証モジュールインスタンスがユーザー ID ではなく DN を返すことができるため、検索が不要になります。通常、認証モジュールインスタンスはユーザー
+ID だけを返すため、認証サービスはローカルの OpenSSO インスタンスでユーザーを検索します。外部の Active Directory が使用された場合、通常このオプションは有効になりません。</p>
 
 <a name="fwbjb"></a><h5>Active Directory サーバーのチェック間隔</h5>
 <p>この属性は Active Directory サーバーのフェイルバックに使用されます。Active Directory プライマリサーバーが実行されているかを確認するまでの、スレッドがスリープしている時間を分単位で定義します。</p>

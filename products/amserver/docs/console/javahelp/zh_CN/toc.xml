@@ -452,11 +452,11 @@
                 <tocitem target="agentconfig.webserviceprovideredit" text="SAML 属性名称空间" expand="false"></tocitem>
                 <tocitem target="agentconfig.webserviceprovideredit" text="包含成员资格" expand="false"></tocitem></tocitem>
             <tocitem target="agentconfig.webserviceprovideredit" text="签署和加密" expand="false">
-                <tocitem target="agentconfig.webserviceprovideredit" text="响应是否已签名" expand="false"></tocitem>
-                <tocitem target="agentconfig.webserviceprovideredit" text="响应是否已加密" expand="false"></tocitem>
-                <tocitem target="agentconfig.webserviceprovideredit" text="请求签名是否已验证" expand="false"></tocitem>
-                <tocitem target="agentconfig.webserviceprovideredit" text="请求标头是否已解密" expand="false"></tocitem>
-                <tocitem target="agentconfig.webserviceprovideredit" text="请求是否已解密" expand="false"></tocitem></tocitem>
+                <tocitem target="agentconfig.webserviceprovideredit" text="签署响应" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceprovideredit" text="加密响应" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceprovideredit" text="验证请求签名" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceprovideredit" text="解密请求标头" expand="false"></tocitem>
+                <tocitem target="agentconfig.webserviceprovideredit" text="解密请求" expand="false"></tocitem></tocitem>
             <tocitem target="agentconfig.webserviceprovideredit" text="密钥库" expand="false">
                 <tocitem target="agentconfig.webserviceprovideredit" text="Web 服务客户机的公钥别名" expand="false"></tocitem>
                 <tocitem target="agentconfig.webserviceprovideredit" text="私钥别名" expand="false"></tocitem>
@@ -978,7 +978,7 @@
             <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="预处理语句" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="变换密码语法的类" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.sunamauthjdbcservice" text="验证级别" expand="false"></tocitem>
-            <tocitem target="jdbcexample" text="配置连接池 - 示例" expand="false"></tocitem></tocitem>
+            <tocitem target="jdbcexample" text="配置连接池--示例" expand="false"></tocitem></tocitem>
         <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="LDAP " expand="false">
             <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="主 LDAP 服务器" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamauthldapservice" text="次 LDAP 服务器" expand="false"></tocitem>
@@ -1105,7 +1105,7 @@
         <tocitem target="service.smg11n" text="全局化设置" expand="false">
             <tocitem target="service.smg11n" text="各个语言环境支持的字符集" expand="false"></tocitem>
             <tocitem target="service.smg11n" text="字符集别名" expand="false"></tocitem>
-            <tocitem target="service.smg11n" text="自动生成的通用名称格式" expand="false"></tocitem></tocitem></tocitem>
+            <tocitem target="service.smg11n" text="自动生成的公共名称格式" expand="false"></tocitem></tocitem></tocitem>
     <tocitem target="servic.scconfigglobal" text="全局属性" expand="false">
         <tocitem target="service.scserviceprofile.sunfamfederationcommon" text="通用联合配置" expand="false">
             <tocitem target="service.scserviceprofile.sunfamfederationcommon" text="数据存储库 SPI 实现类" expand="false"></tocitem>
@@ -1238,11 +1238,11 @@
             <tocitem target="service.securitytokenservice" text="安全机制" expand="false"></tocitem>
             <tocitem target="service.securitytokenservice" text="验证链" expand="false"></tocitem>
             <tocitem target="service.securitytokenservice" text="用户证书" expand="false"></tocitem>
-            <tocitem target="service.securitytokenservice" text="请求签名是否已验证" expand="false"></tocitem>
-            <tocitem target="service.securitytokenservice" text="请求标头是否已解密" expand="false"></tocitem>
-            <tocitem target="service.securitytokenservice" text="请求是否已解密" expand="false"></tocitem>
-            <tocitem target="service.securitytokenservice" text="响应是否已签署" expand="false"></tocitem>
-            <tocitem target="service.securitytokenservice" text="响应是否已加密" expand="false"></tocitem>
+            <tocitem target="service.securitytokenservice" text="检验请求签名" expand="false"></tocitem>
+            <tocitem target="service.securitytokenservice" text="解密请求标头" expand="false"></tocitem>
+            <tocitem target="service.securitytokenservice" text="解密请求" expand="false"></tocitem>
+            <tocitem target="service.securitytokenservice" text="签署响应" expand="false"></tocitem>
+            <tocitem target="service.securitytokenservice" text="加密响应" expand="false"></tocitem>
             <tocitem target="service.securitytokenservice" text="签署参考类型" expand="false"></tocitem>
             <tocitem target="service.securitytokenservice" text="加密算法" expand="false"></tocitem>
             <tocitem target="service.securitytokenservice" text="加密强度" expand="false"></tocitem>
@@ -1303,7 +1303,7 @@
             <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="数据库用户密码（确认）" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="数据库驱动程序名" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="可配置日志字段" expand="false"></tocitem>
-            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="日志验证频率" expand="false"></tocitem>
+            <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="日志检验频率" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="日志签名时间" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="安全日志" expand="false"></tocitem>
             <tocitem target="service.scserviceprofile.iplanetamloggingservice" text="安全日志签署算法" expand="false"></tocitem>

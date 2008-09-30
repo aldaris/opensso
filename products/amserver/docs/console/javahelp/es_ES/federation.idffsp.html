@@ -82,7 +82,7 @@ de claves de Java. Cada certificado se asigna a un alias que
 se utiliza para recuperar el certificado.</p>
 
 <a name="ggwsc"></a><h5>Cifrado de identificador de nombre</h5>
-<p>Cochez la case pour activer le chiffrement de l'identificateur de nom.</p>
+<p>Marque la casilla para habilitar el cifrado del identificador de nombres.</p>
 
 <a name="ggwwa"></a><h5>Firmar solicitud de autenticaci&#243;n</h5>
 <p>Si est&#225; habilitado, el proveedor de servicios firmar&#225; todas las solicitudes de
@@ -104,8 +104,8 @@ autenticaci&#243;n.</p>
 
 <a name="ggwrz"></a><h5>Punto final de SOAP</h5>
 <p>Define un URI para el receptor de mensajes SOAP del proveedor de
-servicios.   Cette valeur communique l'emplacement du r&#233;cepteur SOAP lors des
-communications hors navigateur.</p>
+servicios.   Este valor comunica la ubicaci&#243;n del receptor SOAP en
+comunicaciones que no est&#225;n establecidas mediante explorador.</p>
 
 <a name="ggwun"></a><h5>Servicio de cierre de sesi&#243;n &#250;nico </h5>
 <p>Define una URL a la que los proveedores de identidad pueden enviar
@@ -141,12 +141,13 @@ despu&#233;s de establecer una sesi&#243;n de federaci&#243;n.)</p>
 aserciones SAML. </p>
 
 <a name="ggwrh"></a><h5>Id. de URL de servicio de consumidor de aserci&#243;n</h5>
-<p>Si l'attribut commun &#201;num&#233;ration des protocoles pris en charge a la valeur
-<tt>urn:liberty:iff:2003-08</tt>, tapez l'ID n&#233;cessaire.</p>
+<p>Si el atributo com&#250;n Enumeraci&#243;n de compatibilidad de protocolos es <tt>urn:liberty:iff:2003-08</tt>, escriba
+el Id. necesario.</p>
 
 <a name="ggwvi"></a><h5>Establecer URL de servicio de consumidor de aserci&#243;n como predeterminada</h5>
-<p>Cochez cette case pour utiliser l'URL du service consommateur d'assertion comme valeur
-par d&#233;faut si aucun identificateur n'est fourni dans la demande.</p>
+<p>Marque la casilla para utilizar la direcci&#243;n URL del servicio del consumidor
+de aserciones como valor predeterminado si no se especifica ning&#250;n identificador en
+la solicitud.</p>
 
 <a name="ggwrw"></a><h5>Perfiles de comunicaci&#243;n</h5>
 
@@ -183,7 +184,7 @@ de un principal:</p>
 <ul><li><p>Env&#237;o de explorador (especifica un protocolo HTTP POST basado en explorador)</p></li>
 <li><p>Artefacto de explorador (especifica un protocolo basado en SOAP sin explorador)</p></li>
 <li><p>WML (especifica el protocolo Lenguaje de marcado inal&#225;mbrico)</p></li>
-<li><p>LECP (sp&#233;cifie un proxy client compatible Liberty)</p>
+<li><p>LECP, proxy de cliente habilitado para Liberty.</p>
 <hr><p><b>Nota &#8211; </b>OpenSSO puede administrar solicitudes procedentes de un perfil de proxy de cliente habilitado para Liberty, pero requiere configuraci&#243;n adicional que se encuentra fuera del alcance de este manual.</p>
 <hr>
 </li></ul>
@@ -208,14 +209,14 @@ de un principal:</p>
 <a name="ggwuf"></a><h5>Tipo de autenticaci&#243;n</h5>
 <p>Seleccione el proveedor que debe utilizarse para las solicitudes de autenticaci&#243;n procedentes
 de un proveedor alojado localmente:</p>
-<ul><li><p><b>Distant</b> indique que le fournisseur h&#233;berg&#233; localement doit contacter un fournisseur d'identit&#233;s distant &#224; r&#233;ception d'une demande d'authentification.</p></li>
-<li><p><b>Local</b> sp&#233;cifie que le fournisseur h&#233;berg&#233; localement doit contacter un fournisseur d'identit&#233;s local &#224; r&#233;ception d'une demande d'authentification (en g&#233;n&#233;ral, lui-m&#234;me).</p></li></ul>
+<ul><li><p><b>Remoto</b> significa que el proveedor alojado localmente se pondr&#225; en contacto con un proveedor de identidades remoto tras recibir una solicitud de autenticaci&#243;n.</p></li>
+<li><p><b>Local</b> significa que el proveedor alojado localmente se pondr&#225; en contacto con un proveedor de identidades local tras recibir una solicitud de autenticaci&#243;n (b&#225;sicamente, &#233;l mismo).</p></li></ul>
 
 
 <a name="ggwvl"></a><h5>Autenticaci&#243;n forzada del proveedor de identidades</h5>
 <p>Seleccione la casilla de verificaci&#243;n para indicar si el proveedor de identidades
 debe autenticar de nuevo (incluso durante una sesi&#243;n real) cuando se reciba
-una nueva solicitud de autenticaci&#243;n. Par d&#233;faut, cet attribut est activ&#233;.</p>
+una nueva solicitud de autenticaci&#243;n. Este atributo est&#225; habilitado de forma predeterminada.</p>
 
 <a name="ggwrk"></a><h5>Solicitar al proveedor de identidades que sea pasivo</h5>
 <p>Seleccione la casilla de verificaci&#243;n para especificar que el proveedor de identidades
@@ -230,7 +231,7 @@ en el registro de nombres despu&#233;s de que haya sido federado.</p>
 de nombres en el proveedor de identidades. </p>
 
 <a name="ggwvr"></a><h5>Federaci&#243;n de afiliaciones</h5>
-<p>Cochez cette case pour activer la f&#233;d&#233;ration d'affiliation.</p>
+<p>Marque la casilla para habilitar la federaci&#243;n de afiliaci&#243;n.</p>
 
 <a name="ggwwp"></a><h5>Estado del proveedor</h5>
 <p>Define si el proveedor de servicios es activo o inactivo.  Activo,
@@ -340,9 +341,9 @@ este atributo com&#250;n como su valor. </p>
 <a name="ggwrv"></a><h5>Contexto de autenticaci&#243;n</h5>
 <p>Este atributo define la clase de contexto de autenticaci&#243;n predeterminada del proveedor
 de servicios (m&#233;todo de autenticaci&#243;n). Este m&#233;todo se invocar&#225; siempre que el
-proveedor de identidades env&#237;e una solicitud de autenticaci&#243;n. Cette valeur pr&#233;cise &#233;galement
-le contexte d&#8217;authentification utilis&#233; par le fournisseur de services lorsqu&#8217;un utilisateur inconnu
-tente d&#8217;acc&#233;der &#224; des ressources prot&#233;g&#233;es. Les options sont les suivantes :</p><dl><dt>Pris en charge</dt>
+proveedor de identidades env&#237;e una solicitud de autenticaci&#243;n. Este valor especifica tambi&#233;n
+el contexto de autenticaci&#243;n que utiliza el proveedor de servicios cuando un
+usuario desconocido intenta acceder a un recurso protegido. Las opciones son:</p><dl><dt>Compatible</dt>
 <dd><p>Seleccione la casilla de verificaci&#243;n junto a la clase de contexto de autenticaci&#243;n si el proveedor de identidades es compatible con ella.</p></dd>
 <a name="indexterm-74"></a><a name="indexterm-75"></a><a name="indexterm-76"></a><dt>Referencia a contexto</dt>
 <dd><p>Las clases de contexto de autenticaci&#243;n definidas por Liberty son:</p>
@@ -358,7 +359,7 @@ tente d&#8217;acc&#233;der &#224; des ressources prot&#233;g&#233;es. Les option
 <li><p>Time-Sync-Token (Token de sincronizaci&#243;n de tiempo)</p></li></ul>
 </dd>
 <dt>Nivel</dt>
-<dd><p>Choisissez un niveau de priorit&#233; dans le cas de contextes multiples.</p></dd>
+<dd><p>Seleccione el nivel de prioridad para los casos en los que hay varios contextos.</p></dd>
 </dl>
 
 

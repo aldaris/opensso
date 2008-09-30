@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>証明書 - Sun Federated Access Manager 8.0 コンソールオンラインヘルプ
+  <title>証明書 - Sun OpenSSO 8.0 コンソールオンラインヘルプ
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -74,10 +74,10 @@
 <ul><li><p>この値が true に設定され、OCSP レスポンダが <a href="service.servereditsecurity.html#ggkav">「レスポンダ URL」</a> 属性で設定されている場合は、この属性の値が OCSP レスポンダとして使用されます。</p></li>
 <li><p><a href="service.servereditsecurity.html#ggkaa">「オンライン証明書の状態プロトコルの確認」</a>が有効になっていて、この属性の値が設定されていない場合は、クライアント証明書に示されている OCSP レスポンダが OCSP レスポンダとして使用されます。 </p></li>
 <li><p><a href="service.servereditsecurity.html#ggkaa">「オンライン証明書の状態プロトコルの確認」</a>が有効になっていない場合、または <a href="service.servereditsecurity.html#ggkaa">「オンライン証明書の状態プロトコルの確認」</a>が有効になっているのに OCSP レスポンダが見つからない場合は、OCSP 検証が行われません。</p></li></ul>
-<p>OCSP 検証を有効にする前に、Federated Access Manager マシンと OCSP レスポンダマシンの時刻ができるかぎり一致するようにしてください。また、Federated Access Manager マシンの時刻が OCSP レスポンダの時刻より遅れないようにすることが必要です。次に例を示します。</p><p><tt>OCSP レスポンダマシン: 12:00:00 pm</tt></p><p><tt>Federated Access Manager マシン - 12:00:30 pm</tt> </p>
+<p>OCSP 検証を有効にする前に、OpenSSO マシンと OCSP レスポンダマシンの時刻ができるかぎり一致するようにしてください。また、OpenSSO マシンの時刻が OCSP レスポンダの時刻より遅れないようにすることが必要です。次に例を示します。</p><p><tt>OCSP レスポンダマシン: 12:00:00 pm</tt></p><p><tt>OpenSSO マシン: 12:00:30 pm</tt> </p>
 
 <a name="fwbij"></a><h5>証明書が格納されている LDAP サーバー</h5>
-<p>証明書が格納されている LDAP サーバーの名前とポート番号を指定します。デフォルト値は、Federated Access Manager のインストール時に指定したホスト名とポートです。証明書が格納されている LDAP サーバーのホスト名とポートを使用できます。形式は <tt>hostname:port</tt> です。</p>
+<p>証明書が格納されている LDAP サーバーの名前とポート番号を指定します。デフォルト値は、OpenSSO のインストール時に指定したホスト名とポートです。証明書が格納されている LDAP サーバーのホスト名とポートを使用できます。形式は <tt>hostname:port</tt> です。</p>
 
 <a name="fwbtp"></a><h5>LDAP 検索開始 DN</h5>
 <p>ユーザーの証明書に対する検索を開始するノードの DN を指定します。デフォルト値は存在しません。このフィールドは有効な DN をすべて認識します。</p><p>複数のエントリの場合は、ローカルサーバー名をプレフィックスとして付ける必要があります。形式は次のとおりです。</p><p><tt>servername|search dn</tt> </p><p>複数のエントリの場合は、次のようになります。</p><p><tt>servername1|search dn servername2|search dn servername3|search dn...</tt></p><p>ルート組織の下に同じユーザー ID で複数のエントリが存在する場合、認証が正しく行われるためには、1 つのエントリだけを検索または発見できるようにこのパラメータを設定する必要があります。たとえば、ルート組織の下でエージェント ID とユーザー ID が同じである場合、ルート組織でエージェント ID を使用して認証するにはこのパラメータを <tt>ou=Agents</tt> に、ユーザー
@@ -107,7 +107,7 @@ ID を使用して認証するにはこのパラメータを <tt>ou=People</tt> 
 <a name="fwbna"></a><h5>ユーザープロファイルへのアクセスに使用するその他の証明書フィールド</h5>
 <p>「ユーザープロファイルへのアクセスに使用する証明書フィールド」属性の値を「その他」に設定した場合は、このフィールドで、受信した証明書の <i>subjectDN</i> 値から選択する属性を指定します。認証サービスは、その属性の値に一致するユーザープロファイルを検索します。</p>
 
-<a name="ggumk"></a><h5>ユーザーにアクセスする SubjectAltNameExt 値タイプ</h5>
+<a name="ggumk"></a><h5>ユーザープロファイルにアクセスする SubjectAltNameExt 値タイプ</h5>
 <p>「<tt>なし</tt>」以外の値タイプが選択されている場合、この属性は、「<tt>ユーザープロファイルへのアクセスに使用する証明書フィールド</tt>」属性または「<tt>ユーザープロファイルへのアクセスに使用するその他の証明書フィールド</tt>」属性よりも優先します。</p>
 <ul><li><p>RFC822Name</p></li></ul>
 
@@ -115,7 +115,7 @@ ID を使用して認証するにはこのパラメータを <tt>ou=People</tt> 
 
 
 <a name="fwbiw"></a><h5>信頼できるリモートホスト</h5>
-<p>Federated Access Manager に証明書を送信する信頼できるホストのリストを定義します。Federated Access Manager は、証明書がいずれかの信頼できるホストから送信されていることを検証する必要があります。この属性は、Portal Server Gateway、SSL ターミネーション機能を備えたロードバランサ、および分散認証で使用されます。 </p><dl><dt>none</dt>
+<p>OpenSSO に証明書を送信する信頼できるホストのリストを定義します。OpenSSO は、証明書がいずれかの信頼できるホストから送信されていることを検証する必要があります。この属性は、Portal Server Gateway、SSL ターミネーション機能を備えたロードバランサ、および分散認証で使用されます。 </p><dl><dt>none</dt>
 <dd><p>属性が無効になります。この値はデフォルトで設定されます。</p></dd>
 <dt>all</dt>
 <dd><p>任意のクライアント IP アドレスから Portal Server Gateway スタイルの証明書認証を受け入れます。</p></dd>
@@ -125,7 +125,7 @@ ID を使用して認証するにはこのパラメータを <tt>ou=People</tt> 
 
 
 <a name="fwbkd"></a><h5>SSL ポート番号</h5>
-<p>セキュリティー保護されたソケットレイヤのポート番号を指定します。現在、この属性は Gateway サーブレットでのみ使用します。SSL ポート番号の追加または変更を行う前に、『Federated Access Manager 管理ガイド』の「ポリシーベースのリソース管理」を参照してください。</p>
+<p>セキュリティー保護されたソケットレイヤのポート番号を指定します。現在、この属性は Gateway サーブレットでのみ使用します。SSL ポート番号の追加または変更を行う前に、『OpenSSO Administration Guide』の「ポリシーベースのリソース管理」を参照してください。</p>
 
 <a name="gcabp"></a><h5>クライアント証明書のための HTTP ヘッダー名</h5>
 <p>この属性は、「信頼できるリモートホスト」属性が all に設定されているか、定義済みの特定のホスト名を保持している場合にのみ使用されます。管理者は、ロードバランサまたは SRA によって挿入されたクライアント証明書用の HTTP ヘッダー名を指定する必要があります。 </p>

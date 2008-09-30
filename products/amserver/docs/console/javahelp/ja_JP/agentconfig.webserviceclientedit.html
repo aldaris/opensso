@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Web サービスクライアント属性 - Sun Federated Access Manager 8.0 コンソールオンラインヘルプ
+  <title>Web サービスクライアント属性 - Sun OpenSSO 8.0 コンソールオンラインヘルプ
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -57,6 +57,7 @@
 <a name="ggliy"></a><h5>セキュリティーメカニズム</h5>
 <p>Web サービスクライアントの要求をセキュリティー保護するために使用する、セキュリティー証明情報の種類を定義します。次のいずれかのセキュリティー証明情報を選択できます。</p>
 <ul><li><p>Anonymous &#8212; 匿名セキュリティーメカニズムにはセキュリティー証明情報はありません。</p></li>
+<li><p>KerberosToken &#8212; Kerberos セキュリティートークンを使用します。</p></li>
 <li><p>LibertyDiscoverySecurity &#8212; Liberty ベースのセキュリティートークンを使用します。</p></li>
 <li><p>SAML-HolderOfKey &#8212; SAML 1.1 の表明タイプ Holder-Of-Key を使用します。</p></li>
 <li><p>SAML-SenderVouches &#8212; SAML 1.1 の表明タイプ Sender Vouches を使用します。</p></li>
@@ -79,6 +80,9 @@
 
 <a name="gglmd"></a><h5>メッセージにセキュリティーヘッダーを保存する</h5>
 <p>この属性が有効になっている場合、以降の処理で使用できるように SOAP セキュリティーヘッダーを Web サービスクライアントで保持するように定義されます。</p>
+
+<a name="ghbbp"></a><h5>パススルーセキュリティートークンを使用する</h5>
+<p>この属性が有効になっている場合、Web サービスクライアントは対象から受け取ったセキュリティートークンをパススルーします。この場合、トークンをローカルまたは STS 通信で作成しようとしません。</p>
 
 <a name="ggllx"></a><h5>Liberty サービスタイプ URN</h5>
 <p>URN (Universal Resource Name) は、Web サービスクライアントがサービス検索に使用する Liberty サービスタイプを記述します。</p>
@@ -125,6 +129,27 @@
 
 <a name="gglmpa"></a><h5>Web サービスプロキシエンドポイント</h5>
 <p>この属性は、Web サービスクライアントが要求を行う Web サービスエンドポイントを定義します。このエンドポイントは、Web セキュリティープロキシとして設定されないかぎり、省略可能です。</p>
+
+<a name="ghbdv"></a><h5>Web サービスエンドポイント</h5>
+<p>この属性は、Web サービスクライアントが要求を行う Web サービスエンドポイントを定義します。</p>
+
+<a name="ghcei"></a><h5>Kerberos 設定</h5>
+<p>Kerberos は、Web サービスセキュリティーでサポートされるセキュリティープロファイルで、Web サービスクライアントと Web サービスプロバイダの間の Web サービス通信をセキュリティー保護します。一般に、ユーザーはデスクトップに対して認証し、Web サービスおよび Web サービスクライアントを呼び出します。このとき、主体を Kerberos
+トークンとして識別することにより Web サービスプロバイダに対する要求をセキュリティー保護するために、Kerberos チケットが必要です。通常、Kerberos ベースの Web サービスセキュリティーは、SAML ベースの Web サービスセキュリティーのように境界を越えるのではなく、Kerberos ドメイン (レルム)
+と同じコンテキストで使用されます。ただし Kerberos は、特に Windows ドメインコントローラ環境においてはもっとも強力な認証メカニズムの 1 つです。</p>
+
+<a name="ghcfu"></a><h5>Kerberos ドメインサーバー</h5>
+<p>この属性は、Kerberos Distribution Center (ドメインコントローラ) のホスト名を指定します。ドメインコントローラの完全修飾ドメイン名 (FQDN) を入力する必要があります。</p>
+
+<a name="ghccy"></a><h5>Kerberos ドメイン</h5>
+<p>この属性は、Kerberos Distribution Center (KDC) のドメイン名を指定します。設定によっては、ドメインコントローラのドメイン名が OpenSSO のドメイン名とは異なる場合があります。</p>
+
+<a name="ghcfa"></a><h5>Kerberos サービス主体</h5>
+<p>KDC に登録された Web サービス主体を指定します。 </p><p>次の形式を使用します。 </p><p><tt>HTTP/hostname.domainname&#64;dc_domain_name</tt> </p><p><tt>hostname</tt> と <tt>domainame</tt> はそれぞれ、OpenSSO インスタンスのホスト名とドメイン名を表します。<tt>dc_domain_name</tt> は、Windows Kerberos サーバー (ドメインコントローラ) が存在する Kerberos ドメインです。Kerberos
+サーバーを OpenSSO インスタンスのドメイン名と別にすることができます。</p>
+
+<a name="ghcdq"></a><h5>Kerberos チケットキャッシュディレクトリ</h5>
+<p>Kerberos TGT (チケット認可チケット) キャッシュディレクトリを指定します。ユーザーがデスクトップに対して認証を受けるか <tt>kinit</tt> (KDC から TGT を取得するために使用されるコマンド) を使用して初期化される場合、TGT はこの属性で定義されたローカルキャッシュに格納されます。</p>
 <br/>
 
 </body>

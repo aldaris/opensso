@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Cr&#233;ation d'un cercle d'approbation - Ayuda en l&#237;nea de la consola de Sun OpenSSO 8.0
+  <title>Para crear un nuevo c&#237;rculo de confianza - Ayuda en l&#237;nea de la consola de Sun OpenSSO 8.0
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -30,26 +30,34 @@
 
 
 
-<a name="federation.createcot"></a><h4>Cr&#233;ation d'un cercle d'approbation</h4><a name="indexterm-56"></a><p>Proc&#233;dez comme suit pour cr&#233;er un cercle d'approbation. Le point de d&#233;part
-est Nouveau cercle d'approbation sous l'interface F&#233;d&#233;ration.</p><ol>
-<li><b>Cliquez sur Nouveau pour afficher le cercle d'attributs d'approbation.</b><p>La page Nouveau cercle de profil d'approbation s'affiche.</p></li>
-<li><b>Entrez le nom du cercle d'approbation.</b></li>
-<li><b>Entrez la description du cercle d'approbation dans le champ Description.</b></li>
-<li><b>Tapez la valeur de l'URL du service &#233;criture IDFF.</b><p>L'URL du service &#233;criture IDFF indique l'emplacement du servlet qui &#233;crit le
-cookie du domaine commun. Utilice el formato <tt>http://</tt><i> common-domain-host</i><tt> :</tt><i>port</i><tt>/common/idffwriter </tt>.</p></li>
-<li><b>Tapez la valeur de l'URL du service lecture IDFF.</b><p>L'URL du service lecture IDFF indique l'emplacement du servlet qui lit le
-cookie du domaine commun. Utilice el formato <tt>http://</tt><i> common-domain-host</i><tt> :</tt><i>port</i><tt>/common/idffreader </tt>.</p></li>
-<li><b>Tapez la valeur de l'URL du service &#233;criture SAML2.</b><p>Este atributo especifica la ubicaci&#243;n del servicio de escritor de SAML2 que
+<a name="federation.createcot"></a><h4>Para crear un nuevo c&#237;rculo de confianza</h4><a name="indexterm-56"></a><p>Siga este procedimiento para crear un nuevo c&#237;rculo de confianza. El punto
+de partida es Nuevo c&#237;rculo de confianza en la interfaz Federaci&#243;n.</p><ol>
+<li><b>Haga clic en Nuevo para mostrar los atributos del c&#237;rculo de confianza.</b><p>Se muestra la p&#225;gina del perfil del nuevo c&#237;rculo de confianza.</p></li>
+<li><b>Escriba el nombre del c&#237;rculo de confianza.</b></li>
+<li><b>Escriba una descripci&#243;n del c&#237;rculo de confianza en el campo Descripci&#243;n.</b></li>
+<li><b>Escriba un valor para la direcci&#243;n URL del servicio de escritor de
+IDFF.</b><p>La direcci&#243;n URL del servicio de escritor de IDFF especifica la ubicaci&#243;n
+del servlet que escribe la cookie del dominio com&#250;n. Utilice el formato
+<tt>http://</tt><i> common-domain-host</i><tt> :</tt><i>port</i><tt>/common/idffwriter </tt>.</p></li>
+<li><b>Escriba un valor para la direcci&#243;n URL del servicio de lector de
+IDFF.</b><p>La direcci&#243;n URL del servicio de lector de IDFF especifica la ubicaci&#243;n
+del servlet que lee la cookie del dominio com&#250;n. Utilice el formato
+<tt>http://</tt><i> common-domain-host</i><tt> :</tt><i>port</i><tt>/common/idffreader </tt>.</p></li>
+<li><b>Escriba un valor para la direcci&#243;n URL del servicio de escritor de
+SAML2.</b><p>Este atributo especifica la ubicaci&#243;n del servicio de escritor de SAML2 que
 escribe la cookie en el dominio com&#250;n. Utilice el formato <tt>http://</tt><i> common-domain-host</i><tt> :</tt><i>port</i><tt>/common/saml2writer </tt>.</p></li>
-<li><b>Tapez la valeur de l'URL du service lecture SAML2.</b><p>Este atributo especifica la ubicaci&#243;n del servicio de lector de SAML2 que
+<li><b>Escriba un valor para la direcci&#243;n URL del servicio de lector de
+SAML2.</b><p>Este atributo especifica la ubicaci&#243;n del servicio de lector de SAML2 que
 lee la cookie desde el dominio com&#250;n. Utilice el formato <tt>http://</tt><i> common-domain-host</i><tt> :</tt><i>port</i><tt>/common/saml2reader </tt>.</p></li>
 <li><b>Seleccione Activo o Inactivo.</b><p>El estado predeterminado es &#8220;Activo&#8221; (Active). Si selecciona Inactivo, se deshabilita la
 comunicaci&#243;n dentro del dominio de autenticaci&#243;n.</p></li>
-<li><b>S&#233;lectionnez le domaine dans lequel le cercle d'approbation sera cr&#233;&#233;. </b></li>
+<li><b>Seleccione el dominio en el que se crear&#225; el c&#237;rculo de confianza.
+</b></li>
 <li><b>Elija uno o varios de los proveedores disponibles y haga clic en
 la flecha Agregar para seleccionarlos.</b><p>La lista proporcionada contiene los nombres de las entidades creadas y rellenadas
-con proveedores. Pour plus d'informations, voir <a href="federation.fsauthdomainsselectprovider.html">Ajouts de fournisseurs &#224; un cercle d'approbation</a></p></li>
-<li><b>Cliquez sur OK pour terminer la configuration.</b><p>Le nouveau cercle d'approbation s'affiche dans la liste Cercle d'approbation.</p></li></ol>
+con proveedores. Para obtener m&#225;s informaci&#243;n, consulte <a href="federation.fsauthdomainsselectprovider.html">Para agregar proveedores a un c&#237;rculo de confianza</a>.</p></li>
+<li><b>Haga clic en "Aceptar" para completar la configuraci&#243;n.</b><p>El nuevo c&#237;rculo de confianza se muestra en la lista de c&#237;rculos
+de confianza.</p></li></ol>
 <br/>
 
 </body>

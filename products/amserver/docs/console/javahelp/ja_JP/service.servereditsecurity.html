@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>セキュリティー - Sun Federated Access Manager 8.0 コンソールオンラインヘルプ
+  <title>セキュリティー - Sun OpenSSO 8.0 コンソールオンラインヘルプ
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -53,7 +53,7 @@
 <p>検証属性は次のとおりです。</p>
 
 <a name="ggkay"></a><h5>プラットフォームの低レベル通信。最大コンテンツ長</h5>
-<p>デフォルト値は 16384 または 16k です。Federated Access Manager が許容する <tt>HttpRequest</tt> の最大コンテンツ長を指定します。</p>
+<p>デフォルト値は 16384 または 16k です。OpenSSO が許容する <tt>HttpRequest</tt> の最大コンテンツ長を指定します。</p>
 
 <a name="ggkbb"></a><h5>クライアント IP アドレス確認</h5>
 <p>デフォルト値は NO です。すべての <tt>SSOToken</tt> の作成または検証において、クライアントの IP アドレスがチェックされるかどうかを指定します。</p>
@@ -65,23 +65,22 @@
 <p>デフォルト値は <tt>iPlanetDirectoryPro</tt> です。有効なセッションハンドラ ID を設定するために認証サービスで使用する Cookie 名。この Cookie 名の値は、有効なセッション情報を取得するために使用されます。</p>
 
 <a name="ggkaw"></a><h5>セキュリティー保護された Cookie</h5>
-<p>Federated Access Manager Cookie をセキュリティー保護されたモードで設定できるようにし、<tt>HTTP(s)</tt> などのセキュリティー保護されたプロトコルが使用されているときにブラウザが Federated Access Manager Cookie だけを返すようにします。デフォルト値は false
-(いいえ) です。 </p>
+<p>OpenSSO Cookie をセキュリティー保護されたモードで設定できるようにし、<tt>HTTP(s)</tt> などのセキュリティー保護されたプロトコルが使用されているときにブラウザが OpenSSO Cookie だけを返すようにします。デフォルト値は false (いいえ) です。 </p>
 
 <a name="ggkbk"></a><h5>Cookie 値のエンコード</h5>
-<p>このプロパティーにより、Access Manager は Cookie 値を <tt>URLencode</tt> でエンコードできます。URLencode は、文字を HTTP で理解できる形式に変換します。</p>
+<p>このプロパティーにより、OpenSSO は Cookie 値を <tt>URLencode</tt> でエンコードできます。URLencode は、文字を HTTP で理解できる形式に変換します。</p>
 
 <a name="ggkbc"></a><h5>キーストア</h5>
 <p>次の属性を使用して、追加で作成するサイトやサーバーのキーストア情報を設定できます。</p>
 
 <a name="ggkbj"></a><h5>キーストアファイル</h5>
-<p>値はインストールの間に設定されます。次に例を示します。<tt></tt><i>FederatedAccessManager-base</i><tt>/</tt><i>server_URI</i><tt>/keystore.jks</tt>SAML XML キーストアパスワードファイルのパスを指定します。</p>
+<p>値はインストールの間に設定されます。次に例を示します。<tt></tt><i>OpenSSO-base</i><tt>/</tt><i>server_URI</i><tt>/keystore.jks</tt>SAML XML キーストアパスワードファイルのパスを指定します。</p>
 
 <a name="ggkbu"></a><h5>キーストアパスワードファイル</h5>
-<p>値はインストールの間に設定されます。次に例を示します。<tt></tt><i>FederatedAccessManager-base</i><tt>/</tt><i>server_URI</i><tt>/.storepass</tt>SAML XML キーストアパスファイルのパスを指定します。</p>
+<p>値はインストールの間に設定されます。次に例を示します。<tt></tt><i>OpenSSO-base</i><tt>/</tt><i>server_URI</i><tt>/.storepass</tt>SAML XML キーストアパスファイルのパスを指定します。</p>
 
 <a name="ggkbs"></a><h5>非公開鍵パスワードファイル</h5>
-<p>値はインストールの間に設定されます。次に例を示します。<tt></tt><i>FederatedAccessManager-base </i><tt>/</tt><i>server_URI</i><tt>/.keypass</tt> SAML XML キーパスワードファイルのパスを指定します。</p>
+<p>値はインストールの間に設定されます。次に例を示します。<tt></tt><i>OpenSSO-base </i><tt>/</tt><i>server_URI</i><tt>/.keypass</tt> SAML XML キーパスワードファイルのパスを指定します。</p>
 
 <a name="ggkaq"></a><h5>証明書エイリアス</h5>
 <p>デフォルト値は test です。</p>
@@ -90,10 +89,10 @@
 <p>これらの属性は、証明書発行局からの証明書失効リスト (CRL) を保持するために使用する、ローカルの CRL キャッシュリポジトリを定義します。証明書の検証のために CRL を取得する必要があるサービスは、この情報に基づいて CRL を受け取ります。 </p>
 
 <a name="ggkch"></a><h5>LDAP サーバーのホスト名</h5>
-<p>証明書が格納されている LDAP サーバーの名前を指定します。デフォルト値は、Federated Access Manager のインストール時に指定したホスト名です。証明書が格納されている LDAP サーバーのホスト名を使用できます。 </p>
+<p>証明書が格納されている LDAP サーバーの名前を指定します。デフォルト値は、OpenSSO のインストール時に指定したホスト名です。証明書が格納されている LDAP サーバーのホスト名を使用できます。 </p>
 
 <a name="ggkau"></a><h5>LDAP サーバーのポート番号</h5>
-<p>証明書が格納されている LDAP サーバーのポート番号を指定します。デフォルト値は、Federated Access Manager のインストール時に指定したポートです。証明書が格納されている LDAP サーバーのポートを使用できます。 </p>
+<p>証明書が格納されている LDAP サーバーのポート番号を指定します。デフォルト値は、OpenSSO のインストール時に指定したポートです。証明書が格納されている LDAP サーバーのポートを使用できます。 </p>
 
 <a name="ggkam"></a><h5>SSL を有効</h5>
 <p>LDAP サーバーへのアクセスに SSL を使用するかどうかを指定します。デフォルトでは、証明書認証サービスは LDAP アクセスに SSL を使用しません。</p>
@@ -105,14 +104,13 @@
 <p>LDAP サーバーへのバインドに使用するパスワードを定義します。デフォルトでは、インストール時に入力された amldapuser パスワードが、バインドユーザーとして使用されます。</p>
 
 <a name="ggkce"></a><h5>LDAP 検索のベース DN</h5>
-<p>この属性は、LDAP サーバーの LDAP ユーザー対象が使用するベース DN を指定します。そこから検索が開始されます。デフォルトでは、Access Manager インストールベースの最上位レルムです。</p>
+<p>この属性は、LDAP サーバーの LDAP ユーザー対象が使用するベース DN を指定します。そこから検索が開始されます。デフォルトでは、OpenSSO インストールベースの最上位レルムです。</p>
 
 <a name="ggkbp"></a><h5>属性の検索</h5>
 <p>発行者の <tt>subjectDN</tt> の任意の DN コンポーネントを使用して、ローカル LDAP サーバーから CRL を取得できます。これは、「cn」などの単値文字列です。すべてのルート CA で同じ検索属性を使用する必要があります。</p>
 
 <a name="ggkaa"></a><h5>オンライン証明書の状態プロトコルの確認</h5>
-<p>オンライン証明書の状態プロトコル (OCSP) を使用することで、Federated Access Manager サービスは指定された証明書の (失効) 状態を判定できます。OCSP を使用すると、CRL を使用した場合よりもタイムリーに失効情報を提供するという運用要件の一部を満たすことができ、追加の状態情報を取得することもできます。OCSP クライアントは OCSP
-レスポンダに状態要求を発行し、レスポンダが応答を返すまではその証明書の受入れを保留します。 </p>
+<p>オンライン証明書の状態プロトコル (OCSP) を使用することで、OpenSSO サービスは指定された証明書の (失効) 状態を判定できます。OCSP を使用すると、CRL を使用した場合よりもタイムリーに失効情報を提供するという運用要件の一部を満たすことができ、追加の状態情報を取得することもできます。OCSP クライアントは OCSP レスポンダに状態要求を発行し、レスポンダが応答を返すまではその証明書の受入れを保留します。 </p>
 
 <a name="ggkal"></a><h5>確認が有効</h5>
 <p>この属性は OCSP チェックを有効にします。これはデフォルトでは有効になっています。</p>

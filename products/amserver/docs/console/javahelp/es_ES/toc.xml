@@ -62,12 +62,12 @@
         <tocitem target="ghfif" text="Autenticador de agentes" expand="false"></tocitem></tocitem></tocitem>
  <tocitem target="dirmang" text="Administración de directorios" expand="false">
     <tocitem target="dm.home" text="Administración de directorios" expand="false"></tocitem></tocitem>
- <tocitem target="federation.federation" text="Fédération" expand="false">
-    <tocitem target="federation.fsauthdomains" text="Cercle d'approbation" expand="false">
-        <tocitem target="federation.createcot" text="Création d'un cercle d'approbation" expand="false"></tocitem>
-        <tocitem target="federation.fsauthdomainsedit" text="Modification d'un profil de cercle d'approbation" expand="false"></tocitem>
-        <tocitem target="federation.fsauthdomainsselectprovider" text="Ajouts de fournisseurs à un cercle d'approbation" expand="false"></tocitem>
-        <tocitem target="deleteauthdomain" text="Suppression d'un cercle de profil d'approbation" expand="false"></tocitem></tocitem>
+ <tocitem target="federation.federation" text="Federación" expand="false">
+    <tocitem target="federation.fsauthdomains" text="Círculo de confianza." expand="false">
+        <tocitem target="federation.createcot" text="Para crear un nuevo círculo de confianza" expand="false"></tocitem>
+        <tocitem target="federation.fsauthdomainsedit" text="Para modificar un perfil de círculo de confianza" expand="false"></tocitem>
+        <tocitem target="federation.fsauthdomainsselectprovider" text="Para agregar proveedores a un círculo de confianza" expand="false"></tocitem>
+        <tocitem target="deleteauthdomain" text="Para eliminar un perfil de círculo de confianza" expand="false"></tocitem></tocitem>
     <tocitem target="federation.createsaml2metadata" text="Proveedores de identidades" expand="false">
         <tocitem target="ggwxp" text="Entidad de proveedor SAMLv2" expand="false"></tocitem>
         <tocitem target="ggwwz" text="Entidad de proveedor ID-FF " expand="false"></tocitem>

@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>MSISDN - Sun Federated Access Manager 8.0 コンソールオンラインヘルプ
+  <title>MSISDN - Sun OpenSSO 8.0 コンソールオンラインヘルプ
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -54,8 +54,8 @@ Server と照合し、番号に一致するユーザーを見つけます。MSIS
 <p>要求ヘッダーまたは Cookie ヘッダーのどのパラメータで MSISDN 番号を検索するかを指定するために、パラメータ名のリストを指定します。たとえば、<i>x-Cookie-Param</i>、<i>AM_NUMBER</i>、および <i>COOKIE-ID</i> を定義した場合、MSISDN 認証サービスはそれらのパラメータで MSISDN 番号を検索します。</p>
 
 <a name="fumxf"></a><h5>LDAP サーバーおよびポート</h5>
-<p>MSISDN 番号を使用してユーザーの検索を行う Directory Server の、ホスト名とポート番号を指定します。形式は <tt></tt><i>hostname:port</i><tt></tt> です。ポート番号がないときは、<tt>389</tt> と想定します。</p><p>Federated Access Manager に複数のドメインが配備されている場合、Federated Access Manager と Directory Server の特定のインスタンス間の通信リンクを次の形式で指定できます。複数のエントリの場合は、ローカルサーバー名を先頭に付ける必要があります。</p><p><tt>local_servername|server:port local_servername2|server2:port2 ...</tt></p><p>たとえば、異なる場所に配備された 2 つの Federated Access Manager インスタンス (L1-machine1-IS および L2- machine2-IS) が、それぞれ別の
-Directory Server インスタンス (L1-machine1-DS および L2-machine2-DS) と通信する場合、次のように指定します。</p><p><tt>L1-machine1-IS.example.com|L1-machine1-DS.example.com:389 </tt></p><p><tt>L2-machine2-IS.example.com|L2-machine2-DS.example.com:389 </tt></p>
+<p>MSISDN 番号を使用してユーザーの検索を行う Directory Server の、ホスト名とポート番号を指定します。形式は <tt></tt><i>hostname:port</i><tt></tt> です。ポート番号がないときは、<tt>389</tt> と想定します。</p><p>OpenSSO に複数のドメインが配備されている場合、OpenSSO と Directory Server の特定のインスタンス間の通信リンクを次の形式で指定できます。複数のエントリの場合は、ローカルサーバー名を先頭に付ける必要があります。</p><p><tt>local_servername|server:port local_servername2|server2:port2 ...</tt></p><p>たとえば、異なる場所に配備された 2 つの OpenSSO インスタンス (L1-machine1-IS および L2- machine2-IS) が、それぞれ別の Directory Server
+インスタンス (L1-machine1-DS および L2-machine2-DS) と通信する場合、次のように指定します。</p><p><tt>L1-machine1-IS.example.com|L1-machine1-DS.example.com:389 </tt></p><p><tt>L2-machine2-IS.example.com|L2-machine2-DS.example.com:389 </tt></p>
 
 <a name="fumxi"></a><h5>LDAP 検索開始 DN</h5>
 <p>ユーザーの MSISDN 番号に対する検索を開始するノードの DN を指定します。デフォルト値は存在しません。このフィールドは有効な DN をすべて認識します。複数のエントリの場合は、ローカルサーバー名をプレフィックスとして付ける必要があります。形式は <tt></tt><i>servername|search dn</i><tt></tt> です。</p><p>複数のエントリの場合は、次のようになります。</p><p><tt></tt><i>servername1|search dn servername2|search dn servername3|search dn</i><tt>...</tt></p><p>ルート組織の下に同じユーザー ID で複数のエントリが存在する場合、認証が正しく行われるためには、1 つのエントリだけを検索または発見できるようにこのパラメータを設定する必要があります。たとえば、ルート組織の下でエージェント ID とユーザー ID が同じである場合、ルート組織でエージェント ID を使用して認証するにはこのパラメータを <tt>ou=Agents</tt> に、ユーザー
@@ -88,8 +88,7 @@ ID を使用して認証するにはこのパラメータを <tt>ou=People</tt> 
 
 
 <a name="fumxr"></a><h5>認証時のユーザー DN を返す</h5>
-<p>Federated Access Manager ディレクトリが MSDISN 用に設定されたディレクトリと同じ場合、このオプションを有効にすることができます。オプションを有効にすると、このオプションによって認証モジュールがユーザー ID ではなく DN を返すことができるため、検索が不要になります。通常、認証モジュールはユーザー ID だけを返すため、認証サービスはローカルの
-Federated Access Manager でユーザーを検索します。外部のディレクトリが使用された場合、通常このオプションは有効になりません。</p>
+<p>OpenSSO ディレクトリが MSDISN 用に設定されたディレクトリと同じ場合、このオプションを有効にすることができます。オプションを有効にすると、このオプションによって認証モジュールがユーザー ID ではなく DN を返すことができるため、検索が不要になります。通常、認証モジュールはユーザー ID だけを返すため、認証サービスはローカルの OpenSSO でユーザーを検索します。外部のディレクトリが使用された場合、通常このオプションは有効になりません。</p>
 
 <a name="fumxs"></a><h5>認証レベル</h5>
 <p>認証レベルは認証方法ごとに個別に設定します。この値は、認証メカニズムの信頼度を示します。ユーザーが認証を受けると、この値がセッションの SSO トークンに格納されます。ユーザーがアクセスするアプリケーションに SSO トークンが提供されると、そのアプリケーションは格納されている値を使用して、ユーザーにアクセスを許可するのに十分なレベルかどうかを判別します。SSO トークンに格納されている認証レベルが必要な最小値に満たない場合、アプリケーションはユーザーにより高い認証レベルのサービスで認証を再度受けるよう要求することがあります。デフォルト値は 0 です。</p>

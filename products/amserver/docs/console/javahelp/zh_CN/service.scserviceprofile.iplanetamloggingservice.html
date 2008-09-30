@@ -41,7 +41,7 @@
 <li><p><a href="#fxcep">数据库用户密码（确认）</a></p></li>
 <li><p><a href="#fxbvb">数据库驱动程序名</a></p></li>
 <li><p><a href="#fxbsb">可配置日志字段</a></p></li>
-<li><p><a href="#fxccb">日志验证频率</a></p></li>
+<li><p><a href="#fxccb">日志检验频率</a></p></li>
 <li><p><a href="#fxbxe">日志签名时间</a></p></li>
 <li><p><a href="#fxcbz">安全日志</a></p></li>
 <li><p><a href="#fxbxt">最大记录数目</a></p></li>
@@ -99,7 +99,7 @@
 <li><p>MODULENAME</p></li></ul>
 <p>您至少应该记录 CONTEXTID、DOMAIN、HOSTNAME、LOGINID 和 MESSAGEID。</p>
 
-<a name="fxccb"></a><h5>日志验证频率</h5>
+<a name="fxccb"></a><h5>日志检验频率</h5>
 <p>该属性用于设置服务器为检测篡改而检验日志的频率（以秒为单位）。默认时间为 3600 秒。该参数仅适用于安全日志。</p>
 
 <a name="fxbxe"></a><h5>日志签名时间</h5>
@@ -112,7 +112,7 @@
 
 
 <a name="ggdct"></a><h5>安全日志签署算法</h5>
-<p>该属性定义了 RSA 和 DSA（Digital Signature Algorithm，数字签名算法），它们拥有一个用于签署的私钥和用于验证的公钥。可以从以下项中进行选择：</p>
+<p>该属性定义了 RSA 和 DSA（Digital Signature Algorithm，数字签名算法），它们拥有一个用于签署的私钥和用于检验的公钥。可以从以下项中进行选择：</p>
 <ul><li><p>MD2 w/RSA</p></li>
 <li><p>MD5 w/RSA</p></li>
 <li><p>SHA1 w/DSA</p></li>

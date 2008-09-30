@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>ポリシー設定 - Sun Federated Access Manager 8.0 コンソールオンラインヘルプ
+  <title>ポリシー設定 - Sun OpenSSO 8.0 コンソールオンラインヘルプ
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -58,8 +58,8 @@
 <a name="fufnh"></a><h5>拒否決定時の評価継続</h5>
 <p>DENY のポリシー決定が存在する場合でも、ポリシーフレームワークが後続のポリシーの評価を継続するかどうかを指定します。この属性が選択されていない場合 (デフォルト)、ポリシー評価は DENY が認識された後続のポリシーをスキップします。</p>
 
-<a name="fufng"></a><h5>Federated Access Manager により処理可能なアドバイス</h5>
-<p>ポリシー適用ポイント (ポリシーエージェント) がユーザーエージェントを Federated Access Manager にリダイレクトするポリシーアドバイスキーの名前を定義します。エージェントが、あるリソースへのアクセスを許可しないというポリシー決定を受け取っても、アドバイスを間違いなく所有している場合は、この属性に一覧表示されているアドバイスキーを所有しているかどうかを確認します。</p><p>そのようなアドバイスが見つかった場合、ユーザーエージェントは Federated Access Manager にリダイレクトされ、その結果、そのリソースへのアクセスが許可されることもあります。</p>
+<a name="fufng"></a><h5>OpenSSO により処理できるアドバイス</h5>
+<p>ポリシー適用ポイント (ポリシーエージェント) がユーザーエージェントを OpenSSO にリダイレクトするポリシーアドバイスキーの名前を定義します。エージェントが、あるリソースへのアクセスを許可しないというポリシー決定を受け取っても、アドバイスを間違いなく所有している場合は、この属性に一覧表示されているアドバイスキーを所有しているかどうかを確認します。</p><p>そのようなアドバイスが見つかった場合、ユーザーエージェントは OpenSSO にリダイレクトされ、その結果、そのリソースへのアクセスが許可されることもあります。</p>
 
 <a name="gdpdm"></a><h5>組織エイリアス参照</h5>
 <p>この属性を「はい」に設定すると、最上位レルムまたは親レルムから参照ポリシーを作成することなく、サブレルムにポリシーを作成できます。作成できるのは、完全修飾ホスト名がレルムの DNS エイリアスに一致する HTTP リソースまたは HTTPS リソースを保護するポリシーだけです。デフォルトでは、この属性は「いいえ」として定義されています。 </p>
@@ -68,16 +68,16 @@
 <p>LDAP プロパティーは次のとおりです。</p>
 
 <a name="fufmg"></a><h5>プライマリ LDAP サーバー</h5>
-<p>Federated Access Manager インストール時に指定されたプライマリ LDAP サーバーのホスト名とポート番号を指定します。このホスト名とポート番号は、LDAP ユーザー、LDAP ロール、LDAP グループなどのポリシー対象を検索する際に使用します。</p><p>形式は <i>hostname:port</i> です。次に例を示します。<tt>machine1.example.com:389</tt></p><p>複数の LDAP サーバーホストに対してフェイルオーバーを設定する場合は、この値をスペース区切りのホストのリストとすることができます。形式は <i>hostname1:port1 hostname2:port2...</i> です。</p><p>次に例を示します。<tt>machine1.example1.com:389 machine2.example1.com:389</tt></p><p>複数のエントリの場合は、ローカルサーバー名をプレフィックスとして付ける必要があります。これによって、特定の Federated Access Manager を、特定の Directory Server と接続するように設定できます。</p><p>形式は <i>servername|hostname:port</i> です。次に例を示します。</p><p><tt>machine1.example1.com|machine1.example1.com:389</tt></p><p><tt>machine1.example2.com|machine1.example2.com:389</tt></p><p>フェイルオーバー設定の場合は次のようになります。</p><p><tt>AM_Server1.example1.com|machine1.example1.com:389 machine2.example.com1:389 </tt></p><p><tt>AM_Server2.example2.com|machine1.example2.com:389 machine2.example2.com:389 </tt></p>
+<p>OpenSSO インストール時に指定されたプライマリ LDAP サーバーのホスト名とポート番号を指定します。このホスト名とポート番号は、LDAP ユーザー、LDAP ロール、LDAP グループなどのポリシー対象を検索する際に使用します。</p><p>形式は <i>hostname:port</i> です。次に例を示します。<tt>machine1.example.com:389</tt></p><p>複数の LDAP サーバーホストに対してフェイルオーバーを設定する場合は、この値をスペース区切りのホストのリストとすることができます。形式は <i>hostname1:port1 hostname2:port2...</i> です。</p><p>次に例を示します。<tt>machine1.example1.com:389 machine2.example1.com:389</tt></p><p>複数のエントリの場合は、ローカルサーバー名をプレフィックスとして付ける必要があります。これによって、特定の OpenSSO を、特定の Directory Server と接続するように設定できます。</p><p>形式は <i>servername|hostname:port</i> です。次に例を示します。</p><p><tt>machine1.example1.com|machine1.example1.com:389</tt></p><p><tt>machine1.example2.com|machine1.example2.com:389</tt></p><p>フェイルオーバー設定の場合は次のようになります。</p><p><tt>AM_Server1.example1.com|machine1.example1.com:389 machine2.example.com1:389 </tt></p><p><tt>AM_Server2.example2.com|machine1.example2.com:389 machine2.example2.com:389 </tt></p>
 
 <a name="fufmc"></a><h5>LDAP ベース DN</h5>
-<p>検索を開始する LDAP サーバー内のベース DN を指定します。デフォルトでは、Federated Access Manager インストールの最上位レルムです。</p>
+<p>検索を開始する LDAP サーバー内のベース DN を指定します。デフォルトでは、OpenSSO インストールの最上位レルムです。</p>
 
 <a name="fufmd"></a><h5>LDAP ユーザーベース DN</h5>
-<p>この属性は、LDAP サーバーの LDAP ユーザー対象が使用するベース DN を指定します。そこから検索が開始されます。デフォルトでは、Federated Access Manager インストールベースの最上位レルムです。</p>
+<p>この属性は、LDAP サーバーの LDAP ユーザー対象が使用するベース DN を指定します。そこから検索が開始されます。デフォルトでは、OpenSSO インストールベースの最上位レルムです。</p>
 
-<a name="fufmz"></a><h5>Federated Access Manager ロールベース DN</h5>
-<p>Federated Access Manager ロールの値の検索時にベースとして使用するレルムまたは組織の DN を定義します。この属性は <i>AccessManagerRoles</i> ポリシー対象によって使用されます。</p>
+<a name="fufmz"></a><h5>OpenSSO ロールベース DN</h5>
+<p>OpenSSO ロールの値の検索時にベースとして使用するレルムまたは組織の DN を定義します。この属性は <i>AccessManagerRoles</i> ポリシー対象によって使用されます。</p>
 
 <a name="fufme"></a><h5>LDAP バインド DN</h5>
 <p>LDAP サーバー内のバインド DN を指定します。</p>
@@ -125,8 +125,8 @@
 <li><p>SCOPE_SUB (デフォルト)</p></li></ul>
 
 
-<a name="fufmy"></a><h5>Federated Access Manager ロール検索範囲</h5>
-<p>Federated Access Manager ロール対象のエントリ検索範囲を定義します。</p>
+<a name="fufmy"></a><h5>OpenSSO ロール検索範囲</h5>
+<p>OpenSSO ロール対象のエントリ検索範囲を定義します。</p>
 <ul><li><p>SCOPE_BASE</p></li>
 <li><p>SCOPE_ONE</p></li>
 <li><p>SCOPE_SUB (デフォルト)</p></li></ul>
@@ -151,8 +151,8 @@
 <p>検索タイムアウトが発生するまでの時間を指定します。指定した時間を過ぎた場合は、その時点までに検索されたエントリが返されます。</p>
 
 <a name="fufmi"></a><h5>LDAP SSL</h5>
-<p>LDAP サーバーが SSL を実行するかどうかを指定します。選択した場合、SSL は有効になり、選択しない場合 (デフォルト)、SSL は無効になります。</p><p>LDAP サーバーが SSL 有効 (LDAPS) で実行中の場合、Federated Access Manager が LDAPS プロトコルで Directory
-Server に接続できるように、Federated Access Manager が適切な SSL 信頼証明書で設定されていることを確認する必要があります。</p>
+<p>LDAP サーバーが SSL を実行するかどうかを指定します。選択した場合、SSL は有効になり、選択しない場合 (デフォルト)、SSL は無効になります。</p><p>LDAP サーバーが SSL 有効 (LDAPS) で実行中の場合、OpenSSO が LDAPS プロトコルで Directory Server に接続できるように、適切な
+SSL 信頼証明書で設定されていることを確認する必要があります。</p>
 
 <a name="fufmk"></a><h5>LDAP 接続プールの最小サイズ</h5>
 <p>LDAP サーバー属性に指定されたとおり、Directory Server への接続に使用する接続プールの最小サイズを指定します。デフォルトは 1 です。</p>
@@ -174,8 +174,8 @@ Server に接続できるように、Federated Access Manager が適切な SSL �
 に対して同一のポリシーを評価するときには、ポリシーフレームワークは対象インスタンスを再評価せずに、キャッシュされている対象結果を検索します。これにより、ポリシー評価の時間が大幅に短縮されます。</p>
 
 <a name="fufnm"></a><h5>ユーザーエイリアス</h5>
-<p>リモート Directory Server で、リソースの対象メンバーがローカルユーザーのエイリアスの場合、リソースを保護するためにポリシーを作成し、この属性を有効にする必要があります。たとえば、リモート Directory Server で <tt>uid=rmuser</tt> を作成してから、Federated Access Manager で
-(<tt>uid=luser</tt> などの) ローカルユーザーにエイリアスとして <tt>rmuser</tt> を追加する場合、この属性を有効にする必要があります。<tt>rmuser</tt> としてログインすると、ローカルユーザー (<tt>luser</tt>) によってセッションが作成され、ポリシー適用が成功します。</p>
+<p>リモート Directory Server で、リソースの対象メンバーがローカルユーザーのエイリアスの場合、リソースを保護するためにポリシーを作成し、この属性を有効にする必要があります。たとえば、リモート Directory Server で <tt>uid=rmuser</tt> を作成してから、OpenSSO で (<tt>uid=luser</tt> などの)
+ローカルユーザーにエイリアスとして <tt>rmuser</tt> を追加する場合、この属性を有効にする必要があります。<tt>rmuser</tt> としてログインすると、ローカルユーザー (<tt>luser</tt>) によってセッションが作成され、ポリシー適用が成功します。</p>
 
 <a name="fufni"></a><h5>選択した応答プロバイダ</h5>
 <p>そのレルムで有効にされているポリシー応答プロバイダのプラグインを定義します。そのレルムに定義されているポリシーに追加できるのは、この属性で選択された応答プロバイダプラグインのみです。</p>

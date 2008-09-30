@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>Web サービスプロバイダ - Sun Federated Access Manager 8.0 コンソールオンラインヘルプ
+  <title>Web サービスプロバイダ - Sun OpenSSO 8.0 コンソールオンラインヘルプ
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -57,6 +57,7 @@
 <a name="gglhw"></a><h5>セキュリティーメカニズム</h5>
 <p>Web サービス要求を検証するために使用する、セキュリティー証明情報のタイプを定義します。セキュリティーメカニズムのタイプは、Web サービスクライアントからの Web サービス要求に含まれており、Web サービスプロバイダによって受け入れられます。次のタイプから選択します。 </p>
 <ul><li><p>Anonymous &#8212; 匿名セキュリティーメカニズムにはセキュリティー証明情報はありません。</p></li>
+<li><p>KerberosToken &#8212; Kerberos セキュリティートークンを使用します。</p></li>
 <li><p>LibertyBearerToken &#8212; Liberty で定義されたベアラートークンを使用します。</p></li>
 <li><p>LibertySAMLToken &#8212; Liberty で定義された SAML トークンを使用します。</p></li>
 <li><p>LibertyX509Token &#8212; Liberty で定義された X509 証明書を使用します。</p></li>
@@ -70,19 +71,26 @@
 
 
 <a name="gglfy"></a><h5>認証連鎖</h5>
-<p>Federated Access Manager の認証サービスで認証を受けるために使用できる認証連鎖またはサービス名を定義します。認証サービスは、受信した Web サービス要求のセキュリティートークンから得た証明情報を使用して Federated Access Manager の認証済み SSOToken を生成します。</p>
+<p>OpenSSO の認証サービスで認証を受けるために使用できる認証連鎖またはサービス名を定義します。認証サービスは、受信した Web サービス要求のセキュリティートークンから得た証明情報を使用して OpenSSO の認証済み SSOToken を生成します。</p>
+
+<a name="ghbbd"></a><h5>トークン変換タイプ</h5>
+<p>Web サービスプロバイダがセキュリティートークンサービスからのトークン変換を要求したときに変換されるトークンの種類を定義します。トークンは指定された SAML または SSOToken (セッショントークン) に変換されます。アイデンティティーは同じですが、トークンの種類に固有の属性定義になります。この新しいトークンは、Web サービスプロバイダが別の Web サービスプロバイダに対する Web サービス呼び出しを行うために使用できます。定義できるトークンの種類は次のとおりです。</p>
+<ul><li><p>SAML 1.1 トークン</p></li>
+<li><p>SAML2 トークン</p></li>
+<li><p>SSOToken</p></li></ul>
+<p>この属性を使用するには、<a href="#gglhw">「セキュリティーメカニズム」</a>属性で SAML トークンが選択され、<a href="#gglfy">「認証連鎖」</a> が Web サービスプロバイダに対して定義される必要があります。</p>
 
 <a name="ggoum"></a><h5>メッセージにセキュリティーヘッダーを保存する</h5>
 <p>この属性が有効になっている場合、以降の処理で使用できるように SOAP セキュリティーヘッダーを Web サービスプロバイダで保持するように定義されます。</p>
+
+<a name="gglhq"></a><h5>非公開鍵のタイプ</h5>
+<p>Web サービスプロバイダが Web サービス要求の署名を確認する処理で使用する鍵のタイプを定義します。デフォルト値は <tt>PublicKey</tt> です。</p>
 
 <a name="ggovi"></a><h5>Liberty サービスタイプ URN</h5>
 <p>URN (Universal Resource Name) は、Web サービスプロバイダがサービス検索に使用する Liberty サービスタイプを記述します。</p>
 
 <a name="ggovn"></a><h5>ユーザートークンの資格情報</h5>
 <p>この属性は、Web サービスプロバイダが受信した Web サービス要求から得たユーザー名セキュリティートークンを検証するために使用するユーザー名/パスワード共有シークレットを表します。これらの証明情報は、受信した Web サービス要求から得たユーザー名セキュリティートークンから生成した証明情報と比較されます。</p>
-
-<a name="gglhq"></a><h5>非公開鍵のタイプ</h5>
-<p>Web サービスプロバイダが Web サービス要求の署名を確認する処理で使用する鍵のタイプを定義します。デフォルト値は <tt>PublicKey</tt> です。</p>
 
 <a name="gglfz"></a><h5>SAML 設定</h5>
 <p>次の属性は、Web サービスプロバイダの SAML (Security Assertion Markup Language) を設定します。</p>
@@ -112,7 +120,7 @@
 <p>これが有効になっている場合は、Web サービス要求の署名が確認されます。</p>
 
 <a name="ggouw"></a><h5>リクエストヘッダーの復号化が必要</h5>
-<p>これが有効になっている場合は、Web サービスクライアントの要求のセキュリティーヘッダーが暗号化されます。</p>
+<p>これが有効になっている場合は、Web サービスクライアントの要求のセキュリティーヘッダーが復号化されます。</p>
 
 <a name="ggotr"></a><h5>リクエストの復号化が必要</h5>
 <p>これが有効になっている場合は、Web サービスクライアントの要求が復号化されます。</p>
@@ -138,6 +146,30 @@
 
 <a name="gglmp"></a><h5>Web サービスプロキシエンドポイント</h5>
 <p>この属性は、Web サービスクライアントが要求を行う Web サービスエンドポイントを定義します。このエンドポイントは、Web セキュリティープロキシを使用するように設定されないかぎり、省略可能です。 </p>
+
+<a name="ghbed"></a><h5>Web サービスエンドポイント</h5>
+<p>この属性は、Web サービスクライアントが要求を行う Web サービスエンドポイントを定義します。</p>
+
+<a name="ghbay"></a><h5>Kerberos 設定</h5>
+<p>Kerberos は、Web サービスセキュリティーでサポートされるセキュリティープロファイルで、Web サービスクライアントと Web サービスプロバイダの間の Web サービス通信をセキュリティー保護します。一般に、ユーザーはデスクトップに対して認証し、Web サービスおよび Web サービスクライアントを呼び出します。このとき、主体を Kerberos
+トークンとして識別することにより Web サービスプロバイダに対する要求をセキュリティー保護するために、Kerberos チケットが必要です。通常、Kerberos ベースの Web サービスセキュリティーは、SAML ベースの Web サービスセキュリティーのように境界を越えるのではなく、Kerberos ドメイン (レルム)
+と同じコンテキストで使用されます。ただし Kerberos は、特に Windows ドメインコントローラ環境においてはもっとも強力な認証メカニズムの 1 つです。</p>
+
+<a name="ghbbv"></a><h5>Kerberos ドメインサーバー</h5>
+<p>この属性は、Kerberos Distribution Center (ドメインコントローラ) のホスト名を指定します。ドメインコントローラの完全修飾ドメイン名 (FQDN) を入力する必要があります。</p>
+
+<a name="ghbdx"></a><h5>Kerberos ドメイン</h5>
+<p>この属性は、Kerberos Distribution Center (ドメインコントローラ) のドメイン名を指定します。設定によっては、ドメインコントローラのドメイン名が OpenSSO のドメイン名とは異なる場合があります。</p>
+
+<a name="ghbcq"></a><h5>Kerberos サービス主体</h5>
+<p>生成されたセキュリティートークンの所有者として Kerberos 主体を指定します。</p><p>次の形式を使用します。 </p><p><tt>HTTP/hostname.domainname&#64;dc_domain_name</tt> </p><p><tt>hostname</tt> と <tt>domainame</tt> はそれぞれ、OpenSSO インスタンスのホスト名とドメイン名を表します。<tt>dc_domain_name</tt> は、Windows Kerberos サーバー (ドメインコントローラ) が存在する Kerberos ドメインです。Kerberos
+サーバーを OpenSSO インスタンスのドメイン名と別にすることができます。</p>
+
+<a name="ghbae"></a><h5>Kerberos キータブファイル</h5>
+<p>この属性は、トークンの発行に使用される Kerberos keytab ファイルを指定します。次の形式を使用します。この形式は必須ではありません。</p><p><tt>hostname.HTTP.keytab</tt> </p><p><tt>hostname</tt> は、OpenSSO インスタンスのホスト名です。</p>
+
+<a name="ghbep"></a><h5>Kerberos 署名を検証する</h5>
+<p>この属性を有効にすると、Kerberos トークンが署名されていることを指定します。</p>
 <br/>
 
 </body>

@@ -55,8 +55,8 @@
 <p>以下属性定义 Web 服务提供者的安全属性：</p>
 
 <a name="gglhw"></a><h5>安全机制</h5>
-<p>定义用于验证 Web 服务请求的安全证书的类型。安全机制类型是 Web 服务客户机的 Web 服务请求的一部分，并被 Web 服务提供者所接受。可选择以下类型：</p>
-<ul><li><p>匿名 &#8212; 匿名安全机制不包含安全证书。</p></li>
+<p>定义用于验证 Web 服务请求的安全凭证的类型。安全机制类型是 Web 服务客户机的 Web 服务请求的一部分，并被 Web 服务提供者所接受。可选择以下类型：</p>
+<ul><li><p>匿名 &#8212; 匿名安全机制不包含安全凭证。</p></li>
 <li><p>KerberosToken &#8212; 使用 Kerberos 安全令牌。</p></li>
 <li><p>LibertyBearerToken &#8211; 使用 Liberty 定义的 Bearer 令牌。</p></li>
 <li><p>LibertySAMLToken &#8211; 使用 Libery 定义的 SAML 令牌。</p></li>
@@ -90,13 +90,13 @@
 <p>URN（Universal Resource Name，通用资源名称）描述 Web 服务提供者用于服务查找的 Liberty 服务类型。</p>
 
 <a name="ggovn"></a><h5>用户令牌的证书</h5>
-<p>该属性代表用户名/密码共享密钥，Web 服务提供者使用这些密钥来验证收到的 Web 服务请求中的用户名安全令牌。系统会比较这些证书与收到的 Web 服务请求中的用户名安全令牌的证书。</p>
+<p>该属性代表用户名/密码共享密钥，Web 服务提供者使用这些密钥来验证传入的 Web 服务请求中的用户名安全令牌。系统会比较这些证书与传入的 Web 服务请求中的用户名安全令牌的证书。</p>
 
 <a name="gglfz"></a><h5>SAML 配置</h5>
 <p>以下属性配置 Web 服务提供者的安全声明标记语言 (Security Assertion Markup Language, SAML)。</p>
 
 <a name="gglfx"></a><h5>SAML 属性映射</h5>
-<p>该配置代表特定的 SAML 属性，需要在创建 SAML 声明的过程中由 Web 服务提供者的安全令牌服务生成该属性，并将其作为属性语句。格式为 <tt></tt><i>SAML_attr_name</i><tt></tt>=<tt></tt><i> Real_attr_name</i><tt></tt>。</p><p><tt></tt><i>SAML_attr_name</i><tt></tt> 是收到的 Web 服务请求中的 SAML 声明的 SAML 属性名称。<tt></tt><i>Real_attr_name</i><tt></tt> 是通过已验证的 SSOToken 或身份库获取的属性名称。</p>
+<p>该配置代表特定的 SAML 属性，需要在创建 SAML 声明的过程中由 Web 服务提供者的安全令牌服务生成该属性，并将其作为属性语句。格式为 <tt></tt><i>SAML_attr_name</i><tt></tt>=<tt></tt><i> Real_attr_name</i><tt></tt>。</p><p><tt></tt><i>SAML_attr_name</i><tt></tt> 是传入的 Web 服务请求中的 SAML 声明的 SAML 属性名称。<tt></tt><i>Real_attr_name</i><tt></tt> 是通过已验证的 SSOToken 或身份库获取的属性名称。</p>
 
 <a name="gglgf"></a><h5>SAML NameID 映射器插件</h5>
 <p>定义用于 SAML 帐户映射的 NameID 映射器插件类。</p>
@@ -110,19 +110,19 @@
 <a name="ggovx"></a><h5>签署和加密</h5>
 <p>以下属性定义 Web 提供者安全的签署和加密配置：</p>
 
-<a name="ggowr"></a><h5>响应是否已签名</h5>
+<a name="ggowr"></a><h5>签署响应</h5>
 <p>启用后，Web 服务提供者使用其 X509 证书签署响应。</p>
 
-<a name="ggouo"></a><h5>响应是否已加密</h5>
+<a name="ggouo"></a><h5>加密响应</h5>
 <p>启用后，将加密 Web 服务响应。</p>
 
-<a name="ggowz"></a><h5>请求签名是否已验证</h5>
+<a name="ggowz"></a><h5>验证请求签名</h5>
 <p>启用后，会验证 Web 服务请求签名。</p>
 
-<a name="ggouw"></a><h5>请求标头是否已解密</h5>
+<a name="ggouw"></a><h5>解密请求标头</h5>
 <p>启用后，将解密 Web 服务客户机请求的安全标头。</p>
 
-<a name="ggotr"></a><h5>请求是否已解密</h5>
+<a name="ggotr"></a><h5>解密请求</h5>
 <p>启用后，将解密 Web 服务客户机请求。</p>
 
 <a name="gglls"></a><h5>密钥库</h5>

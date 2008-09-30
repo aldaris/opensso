@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>セキュリティートークンサービス属性 - Sun Federated Access Manager 8.0 コンソールオンラインヘルプ
+  <title>セキュリティートークンサービスエージェント属性 - Sun OpenSSO 8.0 コンソールオンラインヘルプ
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -30,7 +30,7 @@
 
 
 
-<a name="agentconfig.webservicestsedit"></a><h4>セキュリティートークンサービス属性</h4>
+<a name="agentconfig.webservicestsedit"></a><h4>セキュリティートークンサービスエージェント属性</h4>
 <p>セキュリティートークンサービスは、セキュリティートークンの発行と管理を提供する Web サービスです。つまり、要求されていない場合でも暗号化されたセットで、セキュリティーステートメントやクレームを頻繁に作成します。これらのステートメントは、信頼できる発行局からセキュリティートークンを直接検証できる証拠の受け取りに基づいています。信頼を表明するために、サービスは STS によって発行された 1 つまたは一連のセキュリティートークンを提供することで、一連のクレームを表明する権利を証明することができます。または、独自の信頼ステートメントを含んだセキュリティートークンを発行することができます。セキュリティートークンの形式によっては、これは単に再発行または共同署名となる場合もあります。これは、信頼の仲介の基礎を形成します。</p>
 
 <a name="ggpce"></a><h5>一般</h5>
@@ -54,18 +54,19 @@
 <a name="ggpfe"></a><h5>セキュリティー</h5>
 <p>次の属性は、セキュリティートークンサービスのセキュリティー属性を定義します。</p>
 
-<a name="ggpdy"></a><h5>セキュリティーメカニズム</h5>
-<p>セキュリティートークンサービスの要求をセキュリティー保護するために使用する、セキュリティー証明情報の種類を定義します。次のセキュリティーの種類を選択できます。</p>
+<a name="ghery"></a><h5>セキュリティーメカニズム</h5>
+<p>STS の要求をセキュリティー保護するために使用する、セキュリティー証明情報の種類を定義します。次のいずれかのセキュリティー証明情報を選択できます。</p>
 <ul><li><p>Anonymous &#8212; 匿名セキュリティーメカニズムにはセキュリティー証明情報はありません。</p></li>
+<li><p>KerberosToken &#8212; Kerberos セキュリティートークンを使用します。</p></li>
 <li><p>LibertyDiscoverySecurity &#8212; Liberty ベースのセキュリティートークンを使用します。</p></li>
 <li><p>SAML-HolderOfKey &#8212; SAML 1.1 の表明タイプ Holder-Of-Key を使用します。</p></li>
 <li><p>SAML-SenderVouches &#8212; SAML 1.1 の表明タイプ Sender Vouches を使用します。</p></li>
 <li><p>SAML2-HolderOfKey &#8212; SAML 2.0 の表明トークンタイプ Holder-Of-Key を使用します。</p></li>
 <li><p>SAML2-SenderVouches &#8212; SAML 2.0 の表明トークンタイプ Sender Vouches を使用します。</p></li>
-<li><p>STSSecurity &#8212; セキュリティートークンサービスエージェントがセキュリティートークンサービスからセキュリティートークンを取得することを定義します。</p></li>
-<li><p>UserNameToken &#8212; ユーザー名トークンを使用してセキュリティートークンサービスの要求をセキュリティー保護します。</p></li>
-<li><p>UserNameToken-Plain &#8212; ユーザー名トークンと平文パスワードを使用してセキュリティートークンサービス要求をセキュリティー保護します。</p></li>
-<li><p>X509Token &#8212; X509 証明書を使用してセキュリティートークンをセキュリティー保護します。</p></li></ul>
+<li><p>STSSecurity &#8212; 特定の Web サービスプロバイダに対するセキュリティートークンサービスによって生成されたセキュリティートークンを使用します。</p></li>
+<li><p>UserNameToken &#8212; ダイジェストパスワード付きのユーザー名トークンを使用します。</p></li>
+<li><p>UserNameToken-Plain &#8212; ユーザー名トークンと平文パスワードを使用して Web サービス要求をセキュリティー保護します。</p></li>
+<li><p>X509Token &#8212; X509 証明書を使用します。</p></li></ul>
 
 
 <a name="ggpdk"></a><h5>STS 設定</h5>
@@ -114,8 +115,29 @@
 <a name="ggpbr"></a><h5>エンドポイント</h5>
 <p>次の属性は、Web サービスエンドポイントを定義します。</p>
 
-<a name="ggpfc"></a><h5>Web サービスエンドポイント</h5>
-<p>この属性は、Web サービスクライアントが要求を行う Web サービスエンドポイントを定義します。</p>
+<a name="ghbab"></a><h5>セキュリティートークンサービスエンドポイント</h5>
+<p>このフィールドには、次の構文を使用して値を指定します。 </p><p><tt>%protocol://%host:%port%uri/sts</tt> </p><p>この構文により、特定のセッションパラメータに基づくセキュリティートークンサービスエンドポイント URL を動的に置き換えることができます。</p>
+
+<a name="ghbcm"></a><h5>セキュリティートークンサービス MEX エンドポイント</h5>
+<p>このフィールドには、次の構文を使用して値を指定します。</p><p><tt>%protocol://%host:%port%uri/sts/mex </tt></p><p>この構文により、特定のセッションパラメータに基づくセキュリティートークンサービス MEX エンドポイント URL を動的に置き換えることができます。</p>
+
+<a name="ghcdb"></a><h5>Kerberos 設定</h5>
+<p>Kerberos は、Web サービスセキュリティーでサポートされるセキュリティープロファイルで、Web サービスクライアントと Web サービスプロバイダの間の Web サービス通信をセキュリティー保護します。一般に、ユーザーはデスクトップに対して認証し、Web サービスおよび Web サービスクライアントを呼び出します。このとき、主体を Kerberos
+トークンとして識別することにより Web サービスプロバイダに対する要求をセキュリティー保護するために、Kerberos チケットが必要です。通常、Kerberos ベースの Web サービスセキュリティーは、SAML ベースの Web サービスセキュリティーのように境界を越えるのではなく、Kerberos ドメイン (レルム)
+と同じコンテキストで使用されます。ただし Kerberos は、特に Windows ドメインコントローラ環境においてはもっとも強力な認証メカニズムの 1 つです。</p>
+
+<a name="ghcgo"></a><h5>Kerberos ドメインサーバー</h5>
+<p>この属性は、Kerberos Distribution Center (ドメインコントローラ) のホスト名を指定します。ドメインコントローラの完全修飾ドメイン名 (FQDN) を入力する必要があります。</p>
+
+<a name="ghceh"></a><h5>Kerberos ドメイン</h5>
+<p>この属性は、Kerberos Distribution Center (KDC) のドメイン名を指定します。設定によっては、ドメインコントローラのドメイン名が OpenSSO のドメイン名とは異なる場合があります。</p>
+
+<a name="ghcgw"></a><h5>Kerberos サービス主体</h5>
+<p>KDC に登録されたセキュリティートークンサービス主体を指定します。 </p><p>次の形式を使用します。 </p><p><tt>HTTP/hostname.domainname&#64;dc_domain_name</tt> </p><p><tt>hostname</tt> と <tt>domainame</tt> はそれぞれ、OpenSSO インスタンスのホスト名とドメイン名を表します。<tt>dc_domain_name</tt> は、Windows Kerberos サーバー (ドメインコントローラ) が存在する Kerberos ドメインです。Kerberos
+サーバーを OpenSSO インスタンスのドメイン名と別にすることができます。</p>
+
+<a name="ghcea"></a><h5>Kerberos チケットキャッシュディレクトリ</h5>
+<p>Kerberos TGT (チケット付与チケット) キャッシュディレクトリを指定します。ユーザーがデスクトップに対して認証を受けるか <tt>kinit</tt> (KDC から TGT を取得するために使用されるコマンド) を使用して初期化される場合、TGT はこの属性で定義されたローカルキャッシュに格納されます。</p>
 <br/>
 
 </body>

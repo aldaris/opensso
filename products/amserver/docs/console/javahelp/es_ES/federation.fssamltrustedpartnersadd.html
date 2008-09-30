@@ -43,7 +43,7 @@ clic en Guardar para cambiar los valores. Haga clic en Guardar en
 la p&#225;gina de perfil SAML para completar la modificaci&#243;n.</p>
 <hr>
 <ol>
-<li><b>Escriba los valores para los atributos de configuraci&#243;n com&#250;n.</b><dl><dt>Nom</dt>
+<li><b>Escriba los valores para los atributos de configuraci&#243;n com&#250;n.</b><dl><dt>Nombre</dt>
 <dd><p>Puede ser cualquier cadena, como por ejemplo el nombre de una organizaci&#243;n.</p></dd>
 <dt>Id. de origen</dt>
 <dd><p>Se trata de una secuencia de 20 bytes (codificada mediante el formato Base64) que proviene del sitio del socio. Normalmente, es el mismo valor que el utilizado para el atributo Id. de sitio al configurar el atributo Identificadores de sitio.</p></dd>
@@ -53,12 +53,12 @@ la p&#225;gina de perfil SAML para completar la modificaci&#243;n.</p>
 <hr>
 </dd>
 <dt>URL de SAML</dt>
-<dd><p> URL pointant vers le servlet qui impl&#233;mente le profil d'art&#233;fact du navigateur Web.</p></dd>
+<dd><p> La URL que se&#241;ala al servlet que implementa el perfil de artefacto del explorador Web.</p></dd>
 <dt>Lista de hosts</dt>
 <dd><p>Una lista de las direcciones IP, el nombre de host DNS o el alias del certificado de autenticaci&#243;n de cliente utilizado por el cliente. Se configura para todos los hosts en el sitio del socio que puede enviar solicitudes a la autoridad. Esta lista permite garantizar que el solicitante es realmente el receptor previsto del artefacto. Si el solicitante se encuentra definido en esta lista, la interacci&#243;n continuar&#225;. Si la informaci&#243;n del solicitante no coincide con ning&#250;n host definido en la lista de hosts, se rechazar&#225; la solicitud.</p></dd>
 <dt>Asignador de atributos de sitio</dt>
-<dd><p>La clase se utiliza para devolver una lista de valores de atributos definidos como elementos <tt>AttributeStatements</tt> en una aserci&#243;n de autenticaci&#243;n. Un asignador de atributos de sitio debe implementarse desde la interfaz <tt>PartnerSiteAttributeMapper</tt>.</p><p>Si aucune classe n'est d&#233;finie, aucun attribut ne sera inclus dans l'assertion.</p></dd>
-<dt>Mappeur d'identificateur de nom</dt>
+<dd><p>La clase se utiliza para devolver una lista de valores de atributos definidos como elementos <tt>AttributeStatements</tt> en una aserci&#243;n de autenticaci&#243;n. Un asignador de atributos de sitio debe implementarse desde la interfaz <tt>PartnerSiteAttributeMapper</tt>.</p><p>Si no se define ninguna clase, no se incluir&#225; ning&#250;n atributo en la aserci&#243;n.</p></dd>
+<dt>Asignador del identificador de nombre</dt>
 <dd><p>La clase que define el modo en que el asunto de una aserci&#243;n se relaciona con una identidad del sitio de destino. An account mapper needs to be implemented from the <tt>com.sun.identity.saml.plugins.PartnerAccountMapper </tt> interface. The default is <tt>com.sun.identity.saml.plugins.DefaultAccountMapper </tt> .</p><p>Si no se define ninguna clase, no se incluir&#225; ning&#250;n atributo en la aserci&#243;n.</p></dd>
 <dt>Versi&#243;n</dt>
 <dd><p>La versi&#243;n de SAML utilizada (<tt>1.0</tt> &#243; <tt> 1.1</tt>) para enviar solicitudes de SAML. Para cambiar la versi&#243;n o el protocolo, haga clic en el bot&#243;n Propiedades del sitio local y cambie los atributos Protocolo y Aserci&#243;n seg&#250;n sea necesario. </p></dd>
@@ -83,7 +83,7 @@ la p&#225;gina de perfil SAML para completar la modificaci&#243;n.</p>
 <dt>Tipo de autenticaci&#243;n</dt>
 <dd><p>Entre los tipos de autenticaci&#243;n que pueden utilizarse con SAML, se incluyen:</p>
 <ul><li><p>Especifique <tt>NOAUTH</tt> si se accede a la URL del receptor SAML SOAP utilizando HTTP y el receptor SAML SOAP no est&#225; protegido por la autenticaci&#243;n b&#225;sica HTTP o SSL.</p></li>
-<li><p>Sp&#233;cifiez <tt>BASICAUTH</tt> si l'URL vers le r&#233;cepteur SOAP SAML est accessible via HTTP, et si le r&#233;cepteur SOAP SAML est prot&#233;g&#233; par une authentification de base HTTP.</p></li>
+<li><p>Especifique <tt>BASICAUTH</tt> si se accede a la URL del receptor SAML SOAP utilizando HTTP y el receptor SAML SOAP no est&#225; protegido por la autenticaci&#243;n b&#225;sica HTTP.</p></li>
 <li><p>Especifique <tt>SSL</tt> si se accede a la URL del receptor SOAP de SAML utilizando HTTP y el receptor SOAP de SAML no est&#225; protegido por la autenticaci&#243;n b&#225;sica HTTP.</p></li>
 <li><p>Especifique <tt>SSLWITHBASICAUTH</tt> si se accede a la URL del receptor SAML SOAP mediante HTTPS, y el receptor SAML SOAP no est&#225; protegido por <tt> BASIC AUTH WITH SSL</tt>.</p></li></ul>
 

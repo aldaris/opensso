@@ -47,11 +47,11 @@
  <indexitem target="ggodb" text="autenticador de servicio web"></indexitem>
  <indexitem target="authorizer" text="autorizador"></indexitem>
  <indexitem target="sessionsearch" text="Buscar"></indexitem>
- <indexitem target="federation.fsauthdomains" text="cercle d'approbation">
-    <indexitem target="federation.fsauthdomainsselectprovider" text="ajout de fournisseurs"></indexitem>
-    <indexitem target="federation.createcot" text="création"></indexitem>
-    <indexitem target="federation.fsauthdomainsedit" text="modification"></indexitem>
-    <indexitem target="deleteauthdomain" text="suppression"></indexitem></indexitem>
+ <indexitem target="federation.fsauthdomains" text="círculo de confianza">
+    <indexitem target="federation.fsauthdomainsselectprovider" text="agregar proveedores"></indexitem>
+    <indexitem target="federation.createcot" text="crear"></indexitem>
+    <indexitem target="deleteauthdomain" text="eliminar"></indexitem>
+    <indexitem target="federation.fsauthdomainsedit" text="modificar"></indexitem></indexitem>
  <indexitem target="encryptnameidentifier" text="cifrar el identificador de nombre en el contexto de sesión para bootstrapping"></indexitem>
  <indexitem target="serviceinstanceupdateclass" text="clase de actualización de Service Instance"></indexitem>
  <indexitem target="entryhandlerpluginclass" text="clase de complemento del administrador de entradas"></indexitem>

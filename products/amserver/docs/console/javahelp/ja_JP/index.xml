@@ -3,145 +3,145 @@
 <!DOCTYPE index PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version 2.0//EN" "index_1_0.dtd">
 <index version="2.0">
 
- <indexitem target="ppldapattributemaplist" text="PPLDAP Â°À­¥Þ¥Ã¥×¥ê¥¹¥È"></indexitem>
+ <indexitem target="ppldapattributemaplist" text="PPLDAP å±žæ€§ãƒžãƒƒãƒ—ãƒªã‚¹ãƒˆ"></indexitem>
  <indexitem target="federation.samlv2spassertioncontent" text="RelayState"></indexitem><indexitem target="federation.wsfedsp" text="RelayState"></indexitem>
  <indexitem target="federation.fssamlservice" text="SAML">
-    <indexitem text="¥µ¥¤¥È ID">
-        <indexitem target="federation.fssamlsiteidadd" text="ÀßÄê"></indexitem></indexitem>
-    <indexitem text="¿®Íê¥Ñ¡¼¥È¥Ê¡¼">
-        <indexitem target="federation.fssamlselecttrustedpartnertype" text="ÀßÄê¤ÎÂè 1 ÃÊ³¬"></indexitem>
-        <indexitem target="federation.fssamltrustedpartnersadd" text="ÀßÄê¤ÎÂè 2 ÃÊ³¬"></indexitem></indexitem>
-    <indexitem target="federation.fssamltargeturlsadd" text="¥¿¡¼¥²¥Ã¥È URL"></indexitem></indexitem>
- <indexitem target="service.scsoapbinding" text="SOAP ¥Ð¥¤¥ó¥É¥µ¡¼¥Ó¥¹">
-    <indexitem target="ggodb" text="Web ¥µ¡¼¥Ó¥¹Ç§¾Ú"></indexitem>
-    <indexitem target="ggodb" text="¥µ¥Ý¡¼¥È¤µ¤ì¤Æ¤¤¤ëÇ§¾Ú¥á¥«¥Ë¥º¥à"></indexitem>
-    <indexitem target="mechanismhandlerslist" text="¥á¥«¥Ë¥º¥à¥Ï¥ó¥É¥é¥ê¥¹¥È"></indexitem><indexitem target="webservices.wsauthnserviceshandlersadd" text="¥á¥«¥Ë¥º¥à¥Ï¥ó¥É¥é¥ê¥¹¥È"></indexitem>
-    <indexitem target="requesthandlerlist" text="Í×µá¥Ï¥ó¥É¥é¥ê¥¹¥È"></indexitem><indexitem target="service.scsoapbindingrequesthandlerlistadd" text="Í×µá¥Ï¥ó¥É¥é¥ê¥¹¥È"></indexitem><indexitem target="service.scsaml2soapbinding" text="Í×µá¥Ï¥ó¥É¥é¥ê¥¹¥È"></indexitem><indexitem target="service.scsaml2soapbindingrequesthandlerlistadd" text="Í×µá¥Ï¥ó¥É¥é¥ê¥¹¥È"></indexitem></indexitem>
- <indexitem target="ggodb" text="Web ¥µ¡¼¥Ó¥¹Ç§¾Ú"></indexitem>
- <indexitem text="¥¢¥¤¥Ç¥ó¥Æ¥£¥Æ¥£¡¼´ÉÍý">
-    <indexitem text="¥æ¡¼¥¶¡¼">
-        <indexitem target="idm.entitymembership" text="¥µ¡¼¥Ó¥¹¡¢¥í¡¼¥ë¡¢¤ª¤è¤Ó¥°¥ë¡¼¥×¤Ø¤ÎÄÉ²Ã"></indexitem></indexitem></indexitem>
- <indexitem target="accesscontrol" text="¥¢¥¯¥»¥¹À©¸æ, ¤Ï¤¸¤á¤Ë"></indexitem>
- <indexitem target="federation.createsaml2metadata" text="¥¢¥Õ¥£¥ê¥¨¥¤¥È¥¨¥ó¥Æ¥£¥Æ¥£¡¼"></indexitem>
- <indexitem target="useimpliedresource" text="°ÅÌÛÅª¥ê¥½¡¼¥¹"></indexitem>
- <indexitem text="¥¨¥ó¥Æ¥£¥Æ¥£¡¼">
-    <indexitem target="federation.createsaml2metadata" text="¥¢¥Õ¥£¥ê¥¨¥¤¥È"></indexitem>
-    <indexitem target="federation.createsaml2metadata" text="¥×¥í¥Ð¥¤¥À"></indexitem></indexitem>
- <indexitem target="entryhandlerpluginclass" text="¥¨¥ó¥È¥ê¥Ï¥ó¥É¥é¥×¥é¥°¥¤¥ó¥¯¥é¥¹"></indexitem>
- <indexitem target="authresponsemessage" text="±þÅú¥á¥Ã¥»¡¼¥¸¤ÎÇ§¾Ú"></indexitem>
- <indexitem target="authorizer" text="¥ª¡¼¥µ¥é¥¤¥¶"></indexitem>
- <indexitem target="authorizerpluginclass" text="¥ª¡¼¥µ¥é¥¤¥¶¥×¥é¥°¥¤¥ó¥¯¥é¥¹"></indexitem>
- <indexitem target="extensioncontainerattributes" text="³ÈÄ¥¥³¥ó¥Æ¥ÊÂ°À­"></indexitem>
- <indexitem target="extensionattributesnamespaceprefix" text="³ÈÄ¥Â°À­¤Î¥Í¡¼¥à¥¹¥Ú¡¼¥¹¥×¥ì¥Õ¥£¥Ã¥¯¥¹"></indexitem>
- <indexitem target="service.mapcreatedevice" text="¥¯¥é¥¤¥¢¥ó¥È¥Ç¥£¥Æ¥¯¥·¥ç¥ó, ¿·¤·¤¤¥¯¥é¥¤¥¢¥ó¥È¤òÄÉ²Ã¤¹¤ë"></indexitem>
- <indexitem target="service.scserviceprofile.iplanetamclientdetection" text="¥¯¥é¥¤¥¢¥ó¥È¥Þ¥Í¡¼¥¸¥ã¡¼"></indexitem>
- <indexitem text="¥°¥í¡¼¥Ð¥ëÂ°À­">
-    <indexitem target="service.scserviceprofile.amsessionservice" text="¥»¥Ã¥·¥ç¥ó"></indexitem>
-    <indexitem target="service.scserviceprofile.iplanetampasswordresetservice" text="¥Ñ¥¹¥ï¡¼¥É¥ê¥»¥Ã¥È"></indexitem>
-    <indexitem target="service.scpolicy" text="¥Ý¥ê¥·¡¼ÀßÄê"></indexitem>
-    <indexitem target="service.scserviceprofile.iplanetamuserservice" text="¥æ¡¼¥¶¡¼"></indexitem></indexitem>
- <indexitem target="delegation.delegation" text="¸¢¸Â"></indexitem><indexitem target="delegation.delegationproperties" text="¸¢¸Â"></indexitem>
- <indexitem target="sessionsearch" text="¸¡º÷"></indexitem>
- <indexitem target="webservices.wspersonalprofileservice" text="¸Ä¿Í¥×¥í¥Õ¥¡¥¤¥ë¥µ¡¼¥Ó¥¹">
-    <indexitem target="ppldapattributemaplist" text="PPLDAP Â°À­¥Þ¥Ã¥×¥ê¥¹¥È"></indexitem>
-    <indexitem target="authorizer" text="¥ª¡¼¥µ¥é¥¤¥¶"></indexitem>
-    <indexitem target="extensioncontainerattributes" text="³ÈÄ¥¥³¥ó¥Æ¥ÊÂ°À­"></indexitem>
-    <indexitem target="extensionattributesnamespaceprefix" text="³ÈÄ¥Â°À­¤Î¥Í¡¼¥à¥¹¥Ú¡¼¥¹¥×¥ì¥Õ¥£¥Ã¥¯¥¹"></indexitem>
-    <indexitem target="serviceinstanceupdateclass" text="¥µ¡¼¥Ó¥¹¥¤¥ó¥¹¥¿¥ó¥¹¹¹¿·¥¯¥é¥¹"></indexitem>
-    <indexitem target="serviceupdateenabled" text="¥µ¡¼¥Ó¥¹¤Î¹¹¿·"></indexitem>
-    <indexitem target="supportedcontainers" text="¥µ¥Ý¡¼¥È¤µ¤ì¤Æ¤¤¤ë¥³¥ó¥Æ¥Ê"></indexitem>
-    <indexitem target="attributemapper" text="Â°À­¥Þ¥Ã¥Ñ¡¼"></indexitem>
-    <indexitem target="alternateendpoint" text="ÂåÂØ¥¨¥ó¥É¥Ý¥¤¥ó¥È"></indexitem>
-    <indexitem target="alternatesecuritymechanisms" text="ÂåÂØ¥»¥­¥å¥ê¥Æ¥£¡¼¥á¥«¥Ë¥º¥à"></indexitem>
-    <indexitem target="namescheme" text="¥Í¡¼¥ß¥ó¥°Êý¼°"></indexitem>
-    <indexitem target="namespaceprefix" text="¥Í¡¼¥à¥¹¥Ú¡¼¥¹¥×¥ì¥Õ¥£¥Ã¥¯¥¹"></indexitem>
-    <indexitem target="ppproviderid" text="¥×¥í¥Ð¥¤¥À ID"></indexitem>
-    <indexitem target="requirequery" text="¥Ý¥ê¥·¡¼É¾²Á¤Î¥¯¥¨¥ê¡¼¤¬É¬Í×"></indexitem>
-    <indexitem target="requiremodify" text="¥Ý¥ê¥·¡¼É¾²Á¤ÎÊÑ¹¹¤¬É¬Í×"></indexitem>
-    <indexitem target="resourceidmapper" text="¥ê¥½¡¼¥¹ ID ¥Þ¥Ã¥Ñ¡¼"></indexitem></indexitem>
- <indexitem text="¥³¥ó¥½¡¼¥ë¥×¥í¥Ñ¥Æ¥£¡¼">
-    <indexitem target="service.scserviceprofile.amadminconsoleservice" text="´ÉÍý"></indexitem>
-    <indexitem target="service.smg11n" text="¹ñºÝ²½ÀßÄê"></indexitem></indexitem>
- <indexitem target="federation.samlv2spassertioncontent" text="¥³¥ó¥Æ¥­¥¹¥È»²¾ÈÂ°À­"></indexitem><indexitem target="federation.samlv2idpassertioncontent" text="¥³¥ó¥Æ¥­¥¹¥È»²¾ÈÂ°À­"></indexitem><indexitem target="federation.idffidp" text="¥³¥ó¥Æ¥­¥¹¥È»²¾ÈÂ°À­"></indexitem><indexitem target="federation.idffsp" text="¥³¥ó¥Æ¥­¥¹¥È»²¾ÈÂ°À­"></indexitem>
- <indexitem target="serviceinstanceupdateclass" text="¥µ¡¼¥Ó¥¹¥¤¥ó¥¹¥¿¥ó¥¹¹¹¿·¥¯¥é¥¹"></indexitem>
- <indexitem target="service.smdiscoverydescriptionadd" text="¥µ¡¼¥Ó¥¹µ­½Ò, ÀßÄê¤¹¤ë"></indexitem>
- <indexitem target="serviceupdateenabled" text="¥µ¡¼¥Ó¥¹¤Î¹¹¿·"></indexitem>
- <indexitem target="federation.fssamlsiteidadd" text="¥µ¥¤¥È ID"></indexitem>
- <indexitem target="supportedlang" text="¥µ¥Ý¡¼¥È¤µ¤ì¤Æ¤¤¤ë¸À¸ì¥í¥±¡¼¥ë"></indexitem>
- <indexitem target="supportedcontainers" text="¥µ¥Ý¡¼¥È¤µ¤ì¤Æ¤¤¤ë¥³¥ó¥Æ¥Ê"></indexitem>
- <indexitem target="supporteddirectives" text="¥µ¥Ý¡¼¥È¤µ¤ì¤Æ¤¤¤ë¥Ç¥£¥ì¥¯¥Æ¥£¥Ö (¥Ç¥£¥¹¥«¥Ð¥ê¥µ¡¼¥Ó¥¹)"></indexitem>
- <indexitem target="ggodb" text="¥µ¥Ý¡¼¥È¤µ¤ì¤Æ¤¤¤ëÇ§¾Ú¥á¥«¥Ë¥º¥à (SOAP ¥Ð¥¤¥ó¥É)"></indexitem>
- <indexitem target="supportedauthmechanisms" text="¥µ¥Ý¡¼¥È¤µ¤ì¤Æ¤¤¤ëÇ§¾Ú¥á¥«¥Ë¥º¥à (¥Ç¥£¥¹¥«¥Ð¥ê¥µ¡¼¥Ó¥¹)"></indexitem>
- <indexitem target="fyfby" text="»²¾È¥Ý¥ê¥·¡¼"></indexitem>
- <indexitem text="¥·¥¹¥Æ¥à¥×¥í¥Ñ¥Æ¥£¡¼">
-    <indexitem target="service.scserviceprofile.iplanetamclientdetection" text="¥¯¥é¥¤¥¢¥ó¥È¥Ç¥£¥Æ¥¯¥·¥ç¥ó"></indexitem>
-    <indexitem target="service.scserviceprofile.iplanetamnamingservice" text="¥Í¡¼¥ß¥ó¥°"></indexitem>
-    <indexitem target="service.scplatform" text="¥×¥é¥Ã¥È¥Õ¥©¡¼¥à"></indexitem>
-    <indexitem target="service.scserviceprofile.iplanetamloggingservice" text="¥í¥°"></indexitem></indexitem>
- <indexitem target="policy.selectcondition" text="¾ò·ï">
-    <indexitem target="policy.pmdefaultipcondition" text="IP ¥¢¥É¥ì¥¹/DNS Ì¾"></indexitem>
-    <indexitem target="policy.conditionadd" text="LDAP ¥Õ¥£¥ë¥¿"></indexitem>
-    <indexitem target="policy.pmdefaulttimeconditionadd" text="»þ´Ö"></indexitem>
-    <indexitem target="policy.pmdefaultsessioncondtionadd" text="¥»¥Ã¥·¥ç¥ó"></indexitem>
-    <indexitem target="policy.sessionpropertyconditionadd" text="¥»¥Ã¥·¥ç¥ó¥×¥í¥Ñ¥Æ¥£¡¼"></indexitem>
-    <indexitem target="policy.pmdefaultauthlevelconditionadd" text="Ç§¾Ú¥ì¥Ù¥ë"></indexitem>
-    <indexitem target="policy.pmdefaultauthschemeconditionadd" text="¥â¥¸¥å¡¼¥ë¥¤¥ó¥¹¥¿¥ó¥¹¤Ë¤è¤ëÇ§¾Ú"></indexitem>
-    <indexitem target="policy.authtoserviceadd" text="¥â¥¸¥å¡¼¥ëÏ¢º¿¤Ë¤è¤ëÇ§¾Ú"></indexitem>
-    <indexitem target="policy.authtorealmadd" text="¥ì¥ë¥à¤Ø¤ÎÇ§¾Ú"></indexitem></indexitem>
- <indexitem target="federation.fssamlselecttrustedpartnertype" text="¿®Íê¥Ñ¡¼¥È¥Ê¡¼"></indexitem>
- <indexitem target="session.smprofile" text="¡Ö¥»¥Ã¥·¥ç¥ó¡×¥¦¥£¥ó¥É¥¦"></indexitem>
- <indexitem target="viewsession" text="¥»¥Ã¥·¥ç¥ó¤ÎÉ½¼¨"></indexitem>
- <indexitem target="invalidatesession" text="¥»¥Ã¥·¥ç¥ó¤ÎÌµ¸ú²½"></indexitem>
- <indexitem target="service.subconfigadd" text="¥»¥Ã¥·¥ç¥ó¥×¥í¥Ñ¥Æ¥£¡¼, ¥µ¥ÖÀßÄê¤òÄÉ²Ã¤¹¤ë"></indexitem>
- <indexitem target="sessions" text="¥»¥Ã¥·¥ç¥ó¥â¥¸¥å¡¼¥ë"></indexitem>
- <indexitem target="service.scconfig" text="ÀßÄê">
-    <indexitem target="global" text="¥°¥í¡¼¥Ð¥ëÂ°À­"></indexitem>
-    <indexitem target="consoleprops" text="¥³¥ó¥½¡¼¥ë¥×¥í¥Ñ¥Æ¥£¡¼"></indexitem>
-    <indexitem target="systemprops" text="¥·¥¹¥Æ¥à¥×¥í¥Ñ¥Æ¥£¡¼"></indexitem>
-    <indexitem target="authattrs" text="Ç§¾Ú"></indexitem></indexitem>
- <indexitem text="Â°À­">
-    <indexitem target="federation.samlv2spassertioncontent" text="¥³¥ó¥Æ¥­¥¹¥È»²¾È"></indexitem><indexitem target="federation.samlv2idpassertioncontent" text="¥³¥ó¥Æ¥­¥¹¥È»²¾È"></indexitem><indexitem target="federation.idffidp" text="¥³¥ó¥Æ¥­¥¹¥È»²¾È"></indexitem><indexitem target="federation.idffsp" text="¥³¥ó¥Æ¥­¥¹¥È»²¾È"></indexitem></indexitem>
- <indexitem target="attributemapper" text="Â°À­¥Þ¥Ã¥Ñ¡¼"></indexitem>
- <indexitem target="federation.fssamltargeturlsadd" text="¥¿¡¼¥²¥Ã¥È URL"></indexitem>
- <indexitem target="policy.selectsubjecttype" text="ÂÐ¾Ý"></indexitem><indexitem target="idm.entities" text="ÂÐ¾Ý">
-    <indexitem target="idm.entitiesgroup" text="¥°¥ë¡¼¥×"></indexitem>
-    <indexitem target="subjectuser" text="¥æ¡¼¥¶¡¼"></indexitem></indexitem>
- <indexitem target="alternateendpoint" text="ÂåÂØ¥¨¥ó¥É¥Ý¥¤¥ó¥È"></indexitem>
- <indexitem target="alternatesecuritymechanisms" text="ÂåÂØ¥»¥­¥å¥ê¥Æ¥£¡¼¥á¥«¥Ë¥º¥à"></indexitem>
- <indexitem target="policyevaldiscolookup" text="¥Ç¥£¥¹¥«¥Ð¥ê¸¡º÷¤Î¥Ý¥ê¥·¡¼É¾²Á"></indexitem>
- <indexitem target="policyevaldiscoupdate" text="¥Ç¥£¥¹¥«¥Ð¥ê¹¹¿·¤Î¥Ý¥ê¥·¡¼É¾²Á"></indexitem>
- <indexitem target="service.smdiscoveryservice" text="¥Ç¥£¥¹¥«¥Ð¥ê¥µ¡¼¥Ó¥¹">
-    <indexitem target="useimpliedresource" text="°ÅÌÛÅª¥ê¥½¡¼¥¹"></indexitem>
-    <indexitem target="entryhandlerpluginclass" text="¥¨¥ó¥È¥ê¥Ï¥ó¥É¥é¥×¥é¥°¥¤¥ó¥¯¥é¥¹"></indexitem>
-    <indexitem target="authresponsemessage" text="±þÅú¥á¥Ã¥»¡¼¥¸¤ÎÇ§¾Ú"></indexitem>
-    <indexitem target="authorizerpluginclass" text="¥ª¡¼¥µ¥é¥¤¥¶¥×¥é¥°¥¤¥ó¥¯¥é¥¹"></indexitem>
-    <indexitem target="service.smdiscoverydescriptionadd" text="¥µ¡¼¥Ó¥¹µ­½Ò"></indexitem>
-    <indexitem target="supporteddirectives" text="¥µ¥Ý¡¼¥È¤µ¤ì¤Æ¤¤¤ë¥Ç¥£¥ì¥¯¥Æ¥£¥Ö"></indexitem>
-    <indexitem target="supportedauthmechanisms" text="¥µ¥Ý¡¼¥È¤µ¤ì¤Æ¤¤¤ëÇ§¾Ú¥á¥«¥Ë¥º¥à"></indexitem>
-    <indexitem target="policyevaldiscolookup" text="¥Ç¥£¥¹¥«¥Ð¥ê¸¡º÷¤Î¥Ý¥ê¥·¡¼É¾²Á"></indexitem>
-    <indexitem target="policyevaldiscoupdate" text="¥Ç¥£¥¹¥«¥Ð¥ê¹¹¿·¤Î¥Ý¥ê¥·¡¼É¾²Á"></indexitem>
-    <indexitem target="generatesessioncontext" text="¥Ö¡¼¥È¥¹¥È¥é¥Ã¥×ÍÑ¤Î¥»¥Ã¥·¥ç¥ó¥³¥ó¥Æ¥­¥¹¥È¥¹¥Æ¡¼¥È¥á¥ó¥È"></indexitem>
-    <indexitem target="encryptnameidentifier" text="¥Ö¡¼¥È¥¹¥È¥é¥Ã¥×ÍÑ¤Î¥»¥Ã¥·¥ç¥ó¥³¥ó¥Æ¥­¥¹¥ÈÆâ¤Ç¤Î NameIdentifier ¤Î°Å¹æ²½"></indexitem>
-    <indexitem target="resourceofferingsbootstrapping" text="¥Ö¡¼¥È¥¹¥È¥é¥Ã¥×ÍÑ¤Î¥ê¥½¡¼¥¹¥ª¥Õ¥¡¥ê¥ó¥°"></indexitem><indexitem target="service.smdiscoverybootstraprefoffadd" text="¥Ö¡¼¥È¥¹¥È¥é¥Ã¥×ÍÑ¤Î¥ê¥½¡¼¥¹¥ª¥Õ¥¡¥ê¥ó¥°"></indexitem>
-    <indexitem target="dsproviderid" text="¥×¥í¥Ð¥¤¥À ID"></indexitem>
-    <indexitem target="resourceidmapperpluginclass" text="¥ê¥½¡¼¥¹ ID ¥Þ¥Ã¥Ñ¡¼¥×¥é¥°¥¤¥óÍÑ¤Î¥¯¥é¥¹"></indexitem></indexitem>
- <indexitem target="dirmang" text="¥Ç¥£¥ì¥¯¥È¥ê´ÉÍý"></indexitem>
- <indexitem target="realm.idrepo" text="¥Ç¡¼¥¿¥¹¥È¥¢">
-    <indexitem target="realm.idrepoeditfamschema" text="Access Manager ¥¹¥­¡¼¥ÞÂ°À­¤ò´Þ¤ó¤À Sun Directory Server"></indexitem>
-    <indexitem target="realm.idrepoeditad" text="Active Directory ¤ÎÂ°À­"></indexitem>
-    <indexitem target="realm.idrepoeditldapv3" text="LDPAv3 ¥ê¥Ý¥¸¥È¥ê¥×¥é¥°¥¤¥óÂ°À­"></indexitem>
-    <indexitem target="realm.idreposelecttype" text="¿·¤·¤¤¥Ç¡¼¥¿¥¹¥È¥¢¤òºîÀ®¤¹¤ë"></indexitem></indexitem>
- <indexitem target="federation.fsauthdomains" text="¥È¥é¥¹¥È¥µ¡¼¥¯¥ë">
-    <indexitem target="deleteauthdomain" text="ºï½ü"></indexitem>
-    <indexitem target="federation.createcot" text="ºîÀ®"></indexitem>
-    <indexitem target="federation.fsauthdomainsselectprovider" text="¥×¥í¥Ð¥¤¥À¤ÎÄÉ²Ã"></indexitem>
-    <indexitem target="federation.fsauthdomainsedit" text="ÊÑ¹¹"></indexitem></indexitem>
- <indexitem target="webservices.wsauthnservices" text="Ç§¾Ú Web ¥µ¡¼¥Ó¥¹"></indexitem>
- <indexitem text="Ç§¾Ú¥³¥ó¥Æ¥­¥¹¥È">
-    <indexitem target="federation.samlv2spassertioncontent" text="Â°À­"></indexitem><indexitem target="federation.samlv2idpassertioncontent" text="Â°À­"></indexitem><indexitem target="federation.idffidp" text="Â°À­"></indexitem><indexitem target="federation.idffsp" text="Â°À­"></indexitem></indexitem>
- <indexitem text="Ç§¾ÚÂ°À­">
+    <indexitem text="ã‚µã‚¤ãƒˆ ID">
+        <indexitem target="federation.fssamlsiteidadd" text="è¨­å®š"></indexitem></indexitem>
+    <indexitem text="ä¿¡é ¼ãƒ‘ãƒ¼ãƒˆãƒŠãƒ¼">
+        <indexitem target="federation.fssamlselecttrustedpartnertype" text="è¨­å®šã®ç¬¬ 1 æ®µéšŽ"></indexitem>
+        <indexitem target="federation.fssamltrustedpartnersadd" text="è¨­å®šã®ç¬¬ 2 æ®µéšŽ"></indexitem></indexitem>
+    <indexitem target="federation.fssamltargeturlsadd" text="ã‚¿ãƒ¼ã‚²ãƒƒãƒˆ URL"></indexitem></indexitem>
+ <indexitem target="service.scsoapbinding" text="SOAP ãƒã‚¤ãƒ³ãƒ‰ã‚µãƒ¼ãƒ“ã‚¹">
+    <indexitem target="ggodb" text="Web ã‚µãƒ¼ãƒ“ã‚¹èªè¨¼"></indexitem>
+    <indexitem target="ggodb" text="ã‚µãƒãƒ¼ãƒˆã•ã‚Œã¦ã„ã‚‹èªè¨¼ãƒ¡ã‚«ãƒ‹ã‚ºãƒ "></indexitem>
+    <indexitem target="mechanismhandlerslist" text="ãƒ¡ã‚«ãƒ‹ã‚ºãƒ ãƒãƒ³ãƒ‰ãƒ©ãƒªã‚¹ãƒˆ"></indexitem><indexitem target="webservices.wsauthnserviceshandlersadd" text="ãƒ¡ã‚«ãƒ‹ã‚ºãƒ ãƒãƒ³ãƒ‰ãƒ©ãƒªã‚¹ãƒˆ"></indexitem>
+    <indexitem target="requesthandlerlist" text="è¦æ±‚ãƒãƒ³ãƒ‰ãƒ©ãƒªã‚¹ãƒˆ"></indexitem><indexitem target="service.scsoapbindingrequesthandlerlistadd" text="è¦æ±‚ãƒãƒ³ãƒ‰ãƒ©ãƒªã‚¹ãƒˆ"></indexitem><indexitem target="service.scsaml2soapbinding" text="è¦æ±‚ãƒãƒ³ãƒ‰ãƒ©ãƒªã‚¹ãƒˆ"></indexitem><indexitem target="service.scsaml2soapbindingrequesthandlerlistadd" text="è¦æ±‚ãƒãƒ³ãƒ‰ãƒ©ãƒªã‚¹ãƒˆ"></indexitem></indexitem>
+ <indexitem target="ggodb" text="Web ã‚µãƒ¼ãƒ“ã‚¹èªè¨¼"></indexitem>
+ <indexitem text="ã‚¢ã‚¤ãƒ‡ãƒ³ãƒ†ã‚£ãƒ†ã‚£ãƒ¼ç®¡ç†">
+    <indexitem text="ãƒ¦ãƒ¼ã‚¶ãƒ¼">
+        <indexitem target="idm.entitymembership" text="ã‚µãƒ¼ãƒ“ã‚¹ã€ãƒ­ãƒ¼ãƒ«ã€ãŠã‚ˆã³ã‚°ãƒ«ãƒ¼ãƒ—ã¸ã®è¿½åŠ "></indexitem></indexitem></indexitem>
+ <indexitem target="accesscontrol" text="ã‚¢ã‚¯ã‚»ã‚¹åˆ¶å¾¡, ã¯ã˜ã‚ã«"></indexitem>
+ <indexitem target="federation.createsaml2metadata" text="ã‚¢ãƒ•ã‚£ãƒªã‚¨ã‚¤ãƒˆã‚¨ãƒ³ãƒ†ã‚£ãƒ†ã‚£ãƒ¼"></indexitem>
+ <indexitem target="useimpliedresource" text="æš—é»™çš„ãƒªã‚½ãƒ¼ã‚¹"></indexitem>
+ <indexitem text="ã‚¨ãƒ³ãƒ†ã‚£ãƒ†ã‚£ãƒ¼">
+    <indexitem target="federation.createsaml2metadata" text="ã‚¢ãƒ•ã‚£ãƒªã‚¨ã‚¤ãƒˆ"></indexitem>
+    <indexitem target="federation.createsaml2metadata" text="ãƒ—ãƒ­ãƒã‚¤ãƒ€"></indexitem></indexitem>
+ <indexitem target="entryhandlerpluginclass" text="ã‚¨ãƒ³ãƒˆãƒªãƒãƒ³ãƒ‰ãƒ©ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚¯ãƒ©ã‚¹"></indexitem>
+ <indexitem target="authresponsemessage" text="å¿œç­”ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®èªè¨¼"></indexitem>
+ <indexitem target="authorizer" text="ã‚ªãƒ¼ã‚µãƒ©ã‚¤ã‚¶"></indexitem>
+ <indexitem target="authorizerpluginclass" text="ã‚ªãƒ¼ã‚µãƒ©ã‚¤ã‚¶ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚¯ãƒ©ã‚¹"></indexitem>
+ <indexitem target="extensioncontainerattributes" text="æ‹¡å¼µã‚³ãƒ³ãƒ†ãƒŠå±žæ€§"></indexitem>
+ <indexitem target="extensionattributesnamespaceprefix" text="æ‹¡å¼µå±žæ€§ã®ãƒãƒ¼ãƒ ã‚¹ãƒšãƒ¼ã‚¹ãƒ—ãƒ¬ãƒ•ã‚£ãƒƒã‚¯ã‚¹"></indexitem>
+ <indexitem target="service.mapcreatedevice" text="ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆãƒ‡ã‚£ãƒ†ã‚¯ã‚·ãƒ§ãƒ³, æ–°ã—ã„ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã‚’è¿½åŠ ã™ã‚‹"></indexitem>
+ <indexitem target="service.scserviceprofile.iplanetamclientdetection" text="ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆãƒžãƒãƒ¼ã‚¸ãƒ£ãƒ¼"></indexitem>
+ <indexitem text="ã‚°ãƒ­ãƒ¼ãƒãƒ«å±žæ€§">
+    <indexitem target="service.scserviceprofile.amsessionservice" text="ã‚»ãƒƒã‚·ãƒ§ãƒ³"></indexitem>
+    <indexitem target="service.scserviceprofile.iplanetampasswordresetservice" text="ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ãƒªã‚»ãƒƒãƒˆ"></indexitem>
+    <indexitem target="service.scpolicy" text="ãƒãƒªã‚·ãƒ¼è¨­å®š"></indexitem>
+    <indexitem target="service.scserviceprofile.iplanetamuserservice" text="ãƒ¦ãƒ¼ã‚¶ãƒ¼"></indexitem></indexitem>
+ <indexitem target="delegation.delegation" text="æ¨©é™"></indexitem><indexitem target="delegation.delegationproperties" text="æ¨©é™"></indexitem>
+ <indexitem target="sessionsearch" text="æ¤œç´¢"></indexitem>
+ <indexitem target="webservices.wspersonalprofileservice" text="å€‹äººãƒ—ãƒ­ãƒ•ã‚¡ã‚¤ãƒ«ã‚µãƒ¼ãƒ“ã‚¹">
+    <indexitem target="ppldapattributemaplist" text="PPLDAP å±žæ€§ãƒžãƒƒãƒ—ãƒªã‚¹ãƒˆ"></indexitem>
+    <indexitem target="authorizer" text="ã‚ªãƒ¼ã‚µãƒ©ã‚¤ã‚¶"></indexitem>
+    <indexitem target="extensioncontainerattributes" text="æ‹¡å¼µã‚³ãƒ³ãƒ†ãƒŠå±žæ€§"></indexitem>
+    <indexitem target="extensionattributesnamespaceprefix" text="æ‹¡å¼µå±žæ€§ã®ãƒãƒ¼ãƒ ã‚¹ãƒšãƒ¼ã‚¹ãƒ—ãƒ¬ãƒ•ã‚£ãƒƒã‚¯ã‚¹"></indexitem>
+    <indexitem target="serviceinstanceupdateclass" text="ã‚µãƒ¼ãƒ“ã‚¹ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹æ›´æ–°ã‚¯ãƒ©ã‚¹"></indexitem>
+    <indexitem target="serviceupdateenabled" text="ã‚µãƒ¼ãƒ“ã‚¹ã®æ›´æ–°"></indexitem>
+    <indexitem target="supportedcontainers" text="ã‚µãƒãƒ¼ãƒˆã•ã‚Œã¦ã„ã‚‹ã‚³ãƒ³ãƒ†ãƒŠ"></indexitem>
+    <indexitem target="attributemapper" text="å±žæ€§ãƒžãƒƒãƒ‘ãƒ¼"></indexitem>
+    <indexitem target="alternateendpoint" text="ä»£æ›¿ã‚¨ãƒ³ãƒ‰ãƒã‚¤ãƒ³ãƒˆ"></indexitem>
+    <indexitem target="alternatesecuritymechanisms" text="ä»£æ›¿ã‚»ã‚­ãƒ¥ãƒªãƒ†ã‚£ãƒ¼ãƒ¡ã‚«ãƒ‹ã‚ºãƒ "></indexitem>
+    <indexitem target="namescheme" text="ãƒãƒ¼ãƒŸãƒ³ã‚°æ–¹å¼"></indexitem>
+    <indexitem target="namespaceprefix" text="ãƒãƒ¼ãƒ ã‚¹ãƒšãƒ¼ã‚¹ãƒ—ãƒ¬ãƒ•ã‚£ãƒƒã‚¯ã‚¹"></indexitem>
+    <indexitem target="ppproviderid" text="ãƒ—ãƒ­ãƒã‚¤ãƒ€ ID"></indexitem>
+    <indexitem target="requirequery" text="ãƒãƒªã‚·ãƒ¼è©•ä¾¡ã®ã‚¯ã‚¨ãƒªãƒ¼ãŒå¿…è¦"></indexitem>
+    <indexitem target="requiremodify" text="ãƒãƒªã‚·ãƒ¼è©•ä¾¡ã®å¤‰æ›´ãŒå¿…è¦"></indexitem>
+    <indexitem target="resourceidmapper" text="ãƒªã‚½ãƒ¼ã‚¹ ID ãƒžãƒƒãƒ‘ãƒ¼"></indexitem></indexitem>
+ <indexitem text="ã‚³ãƒ³ã‚½ãƒ¼ãƒ«ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ãƒ¼">
+    <indexitem target="service.scserviceprofile.amadminconsoleservice" text="ç®¡ç†"></indexitem>
+    <indexitem target="service.smg11n" text="å›½éš›åŒ–è¨­å®š"></indexitem></indexitem>
+ <indexitem target="federation.samlv2spassertioncontent" text="ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆå‚ç…§å±žæ€§"></indexitem><indexitem target="federation.samlv2idpassertioncontent" text="ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆå‚ç…§å±žæ€§"></indexitem><indexitem target="federation.idffidp" text="ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆå‚ç…§å±žæ€§"></indexitem><indexitem target="federation.idffsp" text="ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆå‚ç…§å±žæ€§"></indexitem>
+ <indexitem target="serviceinstanceupdateclass" text="ã‚µãƒ¼ãƒ“ã‚¹ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹æ›´æ–°ã‚¯ãƒ©ã‚¹"></indexitem>
+ <indexitem target="service.smdiscoverydescriptionadd" text="ã‚µãƒ¼ãƒ“ã‚¹è¨˜è¿°, è¨­å®šã™ã‚‹"></indexitem>
+ <indexitem target="serviceupdateenabled" text="ã‚µãƒ¼ãƒ“ã‚¹ã®æ›´æ–°"></indexitem>
+ <indexitem target="federation.fssamlsiteidadd" text="ã‚µã‚¤ãƒˆ ID"></indexitem>
+ <indexitem target="supportedlang" text="ã‚µãƒãƒ¼ãƒˆã•ã‚Œã¦ã„ã‚‹è¨€èªžãƒ­ã‚±ãƒ¼ãƒ«"></indexitem>
+ <indexitem target="supportedcontainers" text="ã‚µãƒãƒ¼ãƒˆã•ã‚Œã¦ã„ã‚‹ã‚³ãƒ³ãƒ†ãƒŠ"></indexitem>
+ <indexitem target="supporteddirectives" text="ã‚µãƒãƒ¼ãƒˆã•ã‚Œã¦ã„ã‚‹ãƒ‡ã‚£ãƒ¬ã‚¯ãƒ†ã‚£ãƒ– (ãƒ‡ã‚£ã‚¹ã‚«ãƒãƒªã‚µãƒ¼ãƒ“ã‚¹)"></indexitem>
+ <indexitem target="ggodb" text="ã‚µãƒãƒ¼ãƒˆã•ã‚Œã¦ã„ã‚‹èªè¨¼ãƒ¡ã‚«ãƒ‹ã‚ºãƒ  (SOAP ãƒã‚¤ãƒ³ãƒ‰)"></indexitem>
+ <indexitem target="supportedauthmechanisms" text="ã‚µãƒãƒ¼ãƒˆã•ã‚Œã¦ã„ã‚‹èªè¨¼ãƒ¡ã‚«ãƒ‹ã‚ºãƒ  (ãƒ‡ã‚£ã‚¹ã‚«ãƒãƒªã‚µãƒ¼ãƒ“ã‚¹)"></indexitem>
+ <indexitem target="fyfby" text="å‚ç…§ãƒãƒªã‚·ãƒ¼"></indexitem>
+ <indexitem text="ã‚·ã‚¹ãƒ†ãƒ ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ãƒ¼">
+    <indexitem target="service.scserviceprofile.iplanetamclientdetection" text="ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆãƒ‡ã‚£ãƒ†ã‚¯ã‚·ãƒ§ãƒ³"></indexitem>
+    <indexitem target="service.scserviceprofile.iplanetamnamingservice" text="ãƒãƒ¼ãƒŸãƒ³ã‚°"></indexitem>
+    <indexitem target="service.scplatform" text="ãƒ—ãƒ©ãƒƒãƒˆãƒ•ã‚©ãƒ¼ãƒ "></indexitem>
+    <indexitem target="service.scserviceprofile.iplanetamloggingservice" text="ãƒ­ã‚°"></indexitem></indexitem>
+ <indexitem target="policy.selectcondition" text="æ¡ä»¶">
+    <indexitem target="policy.pmdefaultipcondition" text="IP ã‚¢ãƒ‰ãƒ¬ã‚¹/DNS å"></indexitem>
+    <indexitem target="policy.conditionadd" text="LDAP ãƒ•ã‚£ãƒ«ã‚¿"></indexitem>
+    <indexitem target="policy.pmdefaulttimeconditionadd" text="æ™‚é–“"></indexitem>
+    <indexitem target="policy.pmdefaultsessioncondtionadd" text="ã‚»ãƒƒã‚·ãƒ§ãƒ³"></indexitem>
+    <indexitem target="policy.sessionpropertyconditionadd" text="ã‚»ãƒƒã‚·ãƒ§ãƒ³ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ãƒ¼"></indexitem>
+    <indexitem target="policy.pmdefaultauthlevelconditionadd" text="èªè¨¼ãƒ¬ãƒ™ãƒ«"></indexitem>
+    <indexitem target="policy.pmdefaultauthschemeconditionadd" text="ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã«ã‚ˆã‚‹èªè¨¼"></indexitem>
+    <indexitem target="policy.authtoserviceadd" text="ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«é€£éŽ–ã«ã‚ˆã‚‹èªè¨¼"></indexitem>
+    <indexitem target="policy.authtorealmadd" text="ãƒ¬ãƒ«ãƒ ã¸ã®èªè¨¼"></indexitem></indexitem>
+ <indexitem target="federation.fssamlselecttrustedpartnertype" text="ä¿¡é ¼ãƒ‘ãƒ¼ãƒˆãƒŠãƒ¼"></indexitem>
+ <indexitem target="session.smprofile" text="ã€Œã‚»ãƒƒã‚·ãƒ§ãƒ³ã€ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦"></indexitem>
+ <indexitem target="viewsession" text="ã‚»ãƒƒã‚·ãƒ§ãƒ³ã®è¡¨ç¤º"></indexitem>
+ <indexitem target="invalidatesession" text="ã‚»ãƒƒã‚·ãƒ§ãƒ³ã®ç„¡åŠ¹åŒ–"></indexitem>
+ <indexitem target="service.subconfigadd" text="ã‚»ãƒƒã‚·ãƒ§ãƒ³ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ãƒ¼, ã‚µãƒ–è¨­å®šã‚’è¿½åŠ ã™ã‚‹"></indexitem>
+ <indexitem target="sessions" text="ã‚»ãƒƒã‚·ãƒ§ãƒ³ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«"></indexitem>
+ <indexitem target="service.scconfig" text="è¨­å®š">
+    <indexitem target="servic.scconfigglobal" text="ã‚°ãƒ­ãƒ¼ãƒãƒ«å±žæ€§"></indexitem>
+    <indexitem target="service.scconfigconsole" text="ã‚³ãƒ³ã‚½ãƒ¼ãƒ«ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ãƒ¼"></indexitem>
+    <indexitem target="service.scfonfigsystem" text="ã‚·ã‚¹ãƒ†ãƒ ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ãƒ¼"></indexitem>
+    <indexitem target="service.scconfigauth" text="èªè¨¼"></indexitem></indexitem>
+ <indexitem text="å±žæ€§">
+    <indexitem target="federation.samlv2spassertioncontent" text="ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆå‚ç…§"></indexitem><indexitem target="federation.samlv2idpassertioncontent" text="ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆå‚ç…§"></indexitem><indexitem target="federation.idffidp" text="ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆå‚ç…§"></indexitem><indexitem target="federation.idffsp" text="ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆå‚ç…§"></indexitem></indexitem>
+ <indexitem target="attributemapper" text="å±žæ€§ãƒžãƒƒãƒ‘ãƒ¼"></indexitem>
+ <indexitem target="federation.fssamltargeturlsadd" text="ã‚¿ãƒ¼ã‚²ãƒƒãƒˆ URL"></indexitem>
+ <indexitem target="policy.selectsubjecttype" text="å¯¾è±¡"></indexitem><indexitem target="idm.entities" text="å¯¾è±¡">
+    <indexitem target="idm.entitiesgroup" text="ã‚°ãƒ«ãƒ¼ãƒ—"></indexitem>
+    <indexitem target="subjectuser" text="ãƒ¦ãƒ¼ã‚¶ãƒ¼"></indexitem></indexitem>
+ <indexitem target="alternateendpoint" text="ä»£æ›¿ã‚¨ãƒ³ãƒ‰ãƒã‚¤ãƒ³ãƒˆ"></indexitem>
+ <indexitem target="alternatesecuritymechanisms" text="ä»£æ›¿ã‚»ã‚­ãƒ¥ãƒªãƒ†ã‚£ãƒ¼ãƒ¡ã‚«ãƒ‹ã‚ºãƒ "></indexitem>
+ <indexitem target="policyevaldiscolookup" text="ãƒ‡ã‚£ã‚¹ã‚«ãƒãƒªæ¤œç´¢ã®ãƒãƒªã‚·ãƒ¼è©•ä¾¡"></indexitem>
+ <indexitem target="policyevaldiscoupdate" text="ãƒ‡ã‚£ã‚¹ã‚«ãƒãƒªæ›´æ–°ã®ãƒãƒªã‚·ãƒ¼è©•ä¾¡"></indexitem>
+ <indexitem target="service.smdiscoveryservice" text="ãƒ‡ã‚£ã‚¹ã‚«ãƒãƒªã‚µãƒ¼ãƒ“ã‚¹">
+    <indexitem target="useimpliedresource" text="æš—é»™çš„ãƒªã‚½ãƒ¼ã‚¹"></indexitem>
+    <indexitem target="entryhandlerpluginclass" text="ã‚¨ãƒ³ãƒˆãƒªãƒãƒ³ãƒ‰ãƒ©ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚¯ãƒ©ã‚¹"></indexitem>
+    <indexitem target="authresponsemessage" text="å¿œç­”ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®èªè¨¼"></indexitem>
+    <indexitem target="authorizerpluginclass" text="ã‚ªãƒ¼ã‚µãƒ©ã‚¤ã‚¶ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚¯ãƒ©ã‚¹"></indexitem>
+    <indexitem target="service.smdiscoverydescriptionadd" text="ã‚µãƒ¼ãƒ“ã‚¹è¨˜è¿°"></indexitem>
+    <indexitem target="supporteddirectives" text="ã‚µãƒãƒ¼ãƒˆã•ã‚Œã¦ã„ã‚‹ãƒ‡ã‚£ãƒ¬ã‚¯ãƒ†ã‚£ãƒ–"></indexitem>
+    <indexitem target="supportedauthmechanisms" text="ã‚µãƒãƒ¼ãƒˆã•ã‚Œã¦ã„ã‚‹èªè¨¼ãƒ¡ã‚«ãƒ‹ã‚ºãƒ "></indexitem>
+    <indexitem target="policyevaldiscolookup" text="ãƒ‡ã‚£ã‚¹ã‚«ãƒãƒªæ¤œç´¢ã®ãƒãƒªã‚·ãƒ¼è©•ä¾¡"></indexitem>
+    <indexitem target="policyevaldiscoupdate" text="ãƒ‡ã‚£ã‚¹ã‚«ãƒãƒªæ›´æ–°ã®ãƒãƒªã‚·ãƒ¼è©•ä¾¡"></indexitem>
+    <indexitem target="generatesessioncontext" text="ãƒ–ãƒ¼ãƒˆã‚¹ãƒˆãƒ©ãƒƒãƒ—ç”¨ã®ã‚»ãƒƒã‚·ãƒ§ãƒ³ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆã‚¹ãƒ†ãƒ¼ãƒˆãƒ¡ãƒ³ãƒˆ"></indexitem>
+    <indexitem target="encryptnameidentifier" text="ãƒ–ãƒ¼ãƒˆã‚¹ãƒˆãƒ©ãƒƒãƒ—ç”¨ã®ã‚»ãƒƒã‚·ãƒ§ãƒ³ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆå†…ã§ã® NameIdentifier ã®æš—å·åŒ–"></indexitem>
+    <indexitem target="resourceofferingsbootstrapping" text="ãƒ–ãƒ¼ãƒˆã‚¹ãƒˆãƒ©ãƒƒãƒ—ç”¨ã®ãƒªã‚½ãƒ¼ã‚¹ã‚ªãƒ•ã‚¡ãƒªãƒ³ã‚°"></indexitem><indexitem target="service.smdiscoverybootstraprefoffadd" text="ãƒ–ãƒ¼ãƒˆã‚¹ãƒˆãƒ©ãƒƒãƒ—ç”¨ã®ãƒªã‚½ãƒ¼ã‚¹ã‚ªãƒ•ã‚¡ãƒªãƒ³ã‚°"></indexitem>
+    <indexitem target="dsproviderid" text="ãƒ—ãƒ­ãƒã‚¤ãƒ€ ID"></indexitem>
+    <indexitem target="resourceidmapperpluginclass" text="ãƒªã‚½ãƒ¼ã‚¹ ID ãƒžãƒƒãƒ‘ãƒ¼ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ç”¨ã®ã‚¯ãƒ©ã‚¹"></indexitem></indexitem>
+ <indexitem target="dirmang" text="ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªç®¡ç†"></indexitem>
+ <indexitem target="realm.idrepo" text="ãƒ‡ãƒ¼ã‚¿ã‚¹ãƒˆã‚¢">
+    <indexitem target="realm.idrepoeditfamschema" text="Access Manager ã‚¹ã‚­ãƒ¼ãƒžå±žæ€§ã‚’å«ã‚“ã  Sun Directory Server"></indexitem>
+    <indexitem target="realm.idrepoeditad" text="Active Directory ã®å±žæ€§"></indexitem>
+    <indexitem target="realm.idrepoeditldapv3" text="LDPAv3 ãƒªãƒã‚¸ãƒˆãƒªãƒ—ãƒ©ã‚°ã‚¤ãƒ³å±žæ€§"></indexitem>
+    <indexitem target="realm.idreposelecttype" text="æ–°ã—ã„ãƒ‡ãƒ¼ã‚¿ã‚¹ãƒˆã‚¢ã‚’ä½œæˆã™ã‚‹"></indexitem></indexitem>
+ <indexitem target="federation.fsauthdomains" text="ãƒˆãƒ©ã‚¹ãƒˆã‚µãƒ¼ã‚¯ãƒ«">
+    <indexitem target="deleteauthdomain" text="å‰Šé™¤"></indexitem>
+    <indexitem target="federation.createcot" text="ä½œæˆ"></indexitem>
+    <indexitem target="federation.fsauthdomainsselectprovider" text="ãƒ—ãƒ­ãƒã‚¤ãƒ€ã®è¿½åŠ "></indexitem>
+    <indexitem target="federation.fsauthdomainsedit" text="å¤‰æ›´"></indexitem></indexitem>
+ <indexitem target="webservices.wsauthnservices" text="èªè¨¼ Web ã‚µãƒ¼ãƒ“ã‚¹"></indexitem>
+ <indexitem text="èªè¨¼ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆ">
+    <indexitem target="federation.samlv2spassertioncontent" text="å±žæ€§"></indexitem><indexitem target="federation.samlv2idpassertioncontent" text="å±žæ€§"></indexitem><indexitem target="federation.idffidp" text="å±žæ€§"></indexitem><indexitem target="federation.idffsp" text="å±žæ€§"></indexitem></indexitem>
+ <indexitem text="èªè¨¼å±žæ€§">
     <indexitem target="service.scserviceprofile.sunamauthadservice" text="Active Directory"></indexitem>
-    <indexitem target="service.scserviceprofile.iplanetamauthhttpbasicservice" text="HTTP ´ðËÜ"></indexitem>
+    <indexitem target="service.scserviceprofile.iplanetamauthhttpbasicservice" text="HTTP åŸºæœ¬"></indexitem>
     <indexitem target="service.scserviceprofile.sunamauthjdbcservice" text="JDBC"></indexitem>
     <indexitem target="service.scserviceprofile.iplanetamauthldapservice" text="LDAP"></indexitem>
     <indexitem target="service.scserviceprofile.sunamauthmsisdnservice" text="MSISDN"></indexitem>
@@ -151,59 +151,59 @@
     <indexitem target="service.scserviceprofile.iplanetamauthsecuridservice" text="SecurID"></indexitem>
     <indexitem target="service.scserviceprofile.iplanetamauthunixservice" text="UNIX"></indexitem>
     <indexitem target="service.scserviceprofile.iplanetamauthntservice" text="Windows NT"></indexitem>
-    <indexitem target="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice" text="Windows ¥Ç¥¹¥¯¥È¥Ã¥× SSO"></indexitem>
-    <indexitem target="service.scserviceprofile.iplanetamauthservice" text="¥³¥¢"></indexitem>
-    <indexitem target="service.scserviceprofile.iplanetamauthcertservice" text="¾ÚÌÀ½ñ"></indexitem>
-    <indexitem target="service.scserviceprofile.sunamauthdatastoreservice" text="¥Ç¡¼¥¿¥¹¥È¥¢"></indexitem>
-    <indexitem target="service.scserviceprofile.iplanetamauthanonymousservice" text="Æ¿Ì¾"></indexitem>
-    <indexitem target="authentication.authconfig" text="Ç§¾ÚÀßÄê"></indexitem>
-    <indexitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="¥á¥ó¥Ð¡¼¥·¥Ã¥×"></indexitem>
-    <indexitem target="ggulh" text="Ï¢·È"></indexitem></indexitem>
- <indexitem target="namescheme" text="¥Í¡¼¥ß¥ó¥°Êý¼°"></indexitem>
- <indexitem target="namespaceprefix" text="¥Í¡¼¥à¥¹¥Ú¡¼¥¹¥×¥ì¥Õ¥£¥Ã¥¯¥¹"></indexitem>
- <indexitem target="generatesessioncontext" text="¥Ö¡¼¥È¥¹¥È¥é¥Ã¥×ÍÑ¤Î¥»¥Ã¥·¥ç¥ó¥³¥ó¥Æ¥­¥¹¥È¥¹¥Æ¡¼¥È¥á¥ó¥È"></indexitem>
- <indexitem target="encryptnameidentifier" text="¥Ö¡¼¥È¥¹¥È¥é¥Ã¥×ÍÑ¤Î¥»¥Ã¥·¥ç¥ó¥³¥ó¥Æ¥­¥¹¥ÈÆâ¤Ç¤Î NameIdentifier ¤Î°Å¹æ²½"></indexitem>
- <indexitem target="resourceofferingsbootstrapping" text="¥Ö¡¼¥È¥¹¥È¥é¥Ã¥×ÍÑ¤Î¥ê¥½¡¼¥¹¥ª¥Õ¥¡¥ê¥ó¥°">
-    <indexitem target="service.smdiscoverybootstraprefoffadd" text="ÀßÄê¤¹¤ë"></indexitem></indexitem>
- <indexitem target="service.scplatformclientcharsetsadd" text="¥×¥é¥Ã¥È¥Õ¥©¡¼¥à, ¿·¤·¤¤Ê¸»ú¥»¥Ã¥È¤òºîÀ®¤¹¤ë"></indexitem>
- <indexitem target="ppproviderid" text="¥×¥í¥Ð¥¤¥À ID"></indexitem>
- <indexitem target="dsproviderid" text="¥×¥í¥Ð¥¤¥À ID (¥Ç¥£¥¹¥«¥Ð¥ê¥µ¡¼¥Ó¥¹)"></indexitem>
- <indexitem target="federation.createsaml2metadata" text="¥×¥í¥Ð¥¤¥À¥¨¥ó¥Æ¥£¥Æ¥£¡¼"></indexitem>
- <indexitem target="policy.policy" text="¥Ý¥ê¥·¡¼">
-    <indexitem target="policy.policyreferraladd" text="¿·¤·¤¤»²¾È¥Ý¥ê¥·¡¼¤ÎºîÀ®"></indexitem>
-    <indexitem target="responseprovider" text="±þÅú¥×¥í¥Ð¥¤¥À"></indexitem>
-    <indexitem target="policy.responseprovideradd" text="±þÅú¥×¥í¥Ð¥¤¥À¤òÄÉ²Ã¤¹¤ë"></indexitem>
-    <indexitem target="policy.selectreferraltype" text="»²¾È¤ÎÄÉ²Ã"></indexitem>
-    <indexitem target="fyfby" text="»²¾È¥Ý¥ê¥·¡¼"></indexitem>
-    <indexitem target="policy.selectcondition" text="¾ò·ï"></indexitem>
-    <indexitem target="policy.selectconditiontype" text="¾ò·ï¤òÄÉ²Ã¤¹¤ë"></indexitem>
-    <indexitem target="policy.selectsubjecttype" text="ÂÐ¾Ý"></indexitem>
-    <indexitem target="policy.subjectadd" text="ÂÐ¾Ý¤òÄÉ²Ã¤¹¤ë"></indexitem>
-    <indexitem target="normalpolicy" text="É¸½à¥Ý¥ê¥·¡¼"></indexitem>
-    <indexitem target="policy.selectservicetype" text="¥ë¡¼¥ë"></indexitem>
-    <indexitem target="policy.ruleadd" text="¥ë¡¼¥ë¤òÄÉ²Ã¤¹¤ë"></indexitem></indexitem>
- <indexitem target="requirequery" text="¥Ý¥ê¥·¡¼É¾²Á¤Î¥¯¥¨¥ê¡¼¤¬É¬Í×"></indexitem>
- <indexitem target="requiremodify" text="¥Ý¥ê¥·¡¼É¾²Á¤ÎÊÑ¹¹¤¬É¬Í×"></indexitem>
- <indexitem target="mechanismhandlerslist" text="¥á¥«¥Ë¥º¥à¥Ï¥ó¥É¥é¥ê¥¹¥È">
-    <indexitem target="webservices.wsauthnserviceshandlersadd" text="ÀßÄê¤¹¤ë"></indexitem></indexitem>
- <indexitem target="idm.entitymembership" text="¥æ¡¼¥¶¡¼, ¥µ¡¼¥Ó¥¹¡¢¥í¡¼¥ë¡¢¤ª¤è¤Ó¥°¥ë¡¼¥×¤Ø¤ÎÄÉ²Ã"></indexitem>
- <indexitem target="dm.home" text="¥æ¡¼¥¶¡¼´ÉÍý"></indexitem>
- <indexitem target="requesthandlerlist" text="Í×µá¥Ï¥ó¥É¥é¥ê¥¹¥È"></indexitem><indexitem target="service.scsaml2soapbinding" text="Í×µá¥Ï¥ó¥É¥é¥ê¥¹¥È">
-    <indexitem target="service.scsoapbindingrequesthandlerlistadd" text="ÀßÄê¤¹¤ë"></indexitem><indexitem target="service.scsaml2soapbindingrequesthandlerlistadd" text="ÀßÄê¤¹¤ë"></indexitem></indexitem>
- <indexitem target="resourceidmapper" text="¥ê¥½¡¼¥¹ ID ¥Þ¥Ã¥Ñ¡¼"></indexitem>
- <indexitem target="resourceidmapperpluginclass" text="¥ê¥½¡¼¥¹ ID ¥Þ¥Ã¥Ñ¡¼¥×¥é¥°¥¤¥óÍÑ¤Î¥¯¥é¥¹"></indexitem>
- <indexitem target="policy.selectservicetype" text="¥ë¡¼¥ë"></indexitem>
- <indexitem target="realm.rmrealm" text="¥ì¥ë¥à">
-    <indexitem target="authentication.newauthinstance" text="¿·¤·¤¤Ç§¾Ú¥â¥¸¥å¡¼¥ë¤òºîÀ®¤¹¤ë"></indexitem>
-    <indexitem target="authentication.newauthconfig" text="¿·¤·¤¤Ç§¾ÚÏ¢º¿¤òºîÀ®¤¹¤ë"></indexitem>
-    <indexitem target="realm.rmrealmadd" text="¿·¤·¤¯ºîÀ®¤¹¤ë"></indexitem>
-    <indexitem target="realm.realmproperties" text="°ìÈÌ¥×¥í¥Ñ¥Æ¥£¡¼"></indexitem>
-    <indexitem target="delegation.delegation" text="¸¢¸Â"></indexitem><indexitem target="delegation.delegationproperties" text="¸¢¸Â"></indexitem>
-    <indexitem target="realm.services" text="¥µ¡¼¥Ó¥¹"></indexitem>
-    <indexitem target="realm.servicesadd" text="¥µ¡¼¥Ó¥¹¤òÄÉ²Ã¤¹¤ë"></indexitem>
-    <indexitem target="idm.entities" text="ÂÐ¾Ý"></indexitem>
-    <indexitem target="realm.idrepo" text="¥Ç¡¼¥¿¥¹¥È¥¢"></indexitem>
-    <indexitem target="authentication.authproperties" text="Ç§¾Ú"></indexitem>
-    <indexitem target="policy.policy" text="¥Ý¥ê¥·¡¼"></indexitem>
+    <indexitem target="service.scserviceprofile.iplanetamauthwindowsdesktopssoservice" text="Windows ãƒ‡ã‚¹ã‚¯ãƒˆãƒƒãƒ— SSO"></indexitem>
+    <indexitem target="service.scserviceprofile.iplanetamauthservice" text="ã‚³ã‚¢"></indexitem>
+    <indexitem target="service.scserviceprofile.iplanetamauthcertservice" text="è¨¼æ˜Žæ›¸"></indexitem>
+    <indexitem target="service.scserviceprofile.sunamauthdatastoreservice" text="ãƒ‡ãƒ¼ã‚¿ã‚¹ãƒˆã‚¢"></indexitem>
+    <indexitem target="service.scserviceprofile.iplanetamauthanonymousservice" text="åŒ¿å"></indexitem>
+    <indexitem target="authentication.authconfig" text="èªè¨¼è¨­å®š"></indexitem>
+    <indexitem target="service.scserviceprofile.iplanetamauthmembershipservice" text="ãƒ¡ãƒ³ãƒãƒ¼ã‚·ãƒƒãƒ—"></indexitem>
+    <indexitem target="ggulh" text="é€£æº"></indexitem></indexitem>
+ <indexitem target="namescheme" text="ãƒãƒ¼ãƒŸãƒ³ã‚°æ–¹å¼"></indexitem>
+ <indexitem target="namespaceprefix" text="ãƒãƒ¼ãƒ ã‚¹ãƒšãƒ¼ã‚¹ãƒ—ãƒ¬ãƒ•ã‚£ãƒƒã‚¯ã‚¹"></indexitem>
+ <indexitem target="generatesessioncontext" text="ãƒ–ãƒ¼ãƒˆã‚¹ãƒˆãƒ©ãƒƒãƒ—ç”¨ã®ã‚»ãƒƒã‚·ãƒ§ãƒ³ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆã‚¹ãƒ†ãƒ¼ãƒˆãƒ¡ãƒ³ãƒˆ"></indexitem>
+ <indexitem target="encryptnameidentifier" text="ãƒ–ãƒ¼ãƒˆã‚¹ãƒˆãƒ©ãƒƒãƒ—ç”¨ã®ã‚»ãƒƒã‚·ãƒ§ãƒ³ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆå†…ã§ã® NameIdentifier ã®æš—å·åŒ–"></indexitem>
+ <indexitem target="resourceofferingsbootstrapping" text="ãƒ–ãƒ¼ãƒˆã‚¹ãƒˆãƒ©ãƒƒãƒ—ç”¨ã®ãƒªã‚½ãƒ¼ã‚¹ã‚ªãƒ•ã‚¡ãƒªãƒ³ã‚°">
+    <indexitem target="service.smdiscoverybootstraprefoffadd" text="è¨­å®šã™ã‚‹"></indexitem></indexitem>
+ <indexitem target="service.scplatformclientcharsetsadd" text="ãƒ—ãƒ©ãƒƒãƒˆãƒ•ã‚©ãƒ¼ãƒ , æ–°ã—ã„æ–‡å­—ã‚»ãƒƒãƒˆã‚’ä½œæˆã™ã‚‹"></indexitem>
+ <indexitem target="ppproviderid" text="ãƒ—ãƒ­ãƒã‚¤ãƒ€ ID"></indexitem>
+ <indexitem target="dsproviderid" text="ãƒ—ãƒ­ãƒã‚¤ãƒ€ ID (ãƒ‡ã‚£ã‚¹ã‚«ãƒãƒªã‚µãƒ¼ãƒ“ã‚¹)"></indexitem>
+ <indexitem target="federation.createsaml2metadata" text="ãƒ—ãƒ­ãƒã‚¤ãƒ€ã‚¨ãƒ³ãƒ†ã‚£ãƒ†ã‚£ãƒ¼"></indexitem>
+ <indexitem target="policy.policy" text="ãƒãƒªã‚·ãƒ¼">
+    <indexitem target="policy.policyreferraladd" text="æ–°ã—ã„å‚ç…§ãƒãƒªã‚·ãƒ¼ã®ä½œæˆ"></indexitem>
+    <indexitem target="responseprovider" text="å¿œç­”ãƒ—ãƒ­ãƒã‚¤ãƒ€"></indexitem>
+    <indexitem target="policy.responseprovideradd" text="å¿œç­”ãƒ—ãƒ­ãƒã‚¤ãƒ€ã‚’è¿½åŠ ã™ã‚‹"></indexitem>
+    <indexitem target="policy.selectreferraltype" text="å‚ç…§ã®è¿½åŠ "></indexitem>
+    <indexitem target="fyfby" text="å‚ç…§ãƒãƒªã‚·ãƒ¼"></indexitem>
+    <indexitem target="policy.selectcondition" text="æ¡ä»¶"></indexitem>
+    <indexitem target="policy.selectconditiontype" text="æ¡ä»¶ã‚’è¿½åŠ ã™ã‚‹"></indexitem>
+    <indexitem target="policy.selectsubjecttype" text="å¯¾è±¡"></indexitem>
+    <indexitem target="policy.subjectadd" text="å¯¾è±¡ã‚’è¿½åŠ ã™ã‚‹"></indexitem>
+    <indexitem target="normalpolicy" text="æ¨™æº–ãƒãƒªã‚·ãƒ¼"></indexitem>
+    <indexitem target="policy.selectservicetype" text="ãƒ«ãƒ¼ãƒ«"></indexitem>
+    <indexitem target="policy.ruleadd" text="ãƒ«ãƒ¼ãƒ«ã‚’è¿½åŠ ã™ã‚‹"></indexitem></indexitem>
+ <indexitem target="requirequery" text="ãƒãƒªã‚·ãƒ¼è©•ä¾¡ã®ã‚¯ã‚¨ãƒªãƒ¼ãŒå¿…è¦"></indexitem>
+ <indexitem target="requiremodify" text="ãƒãƒªã‚·ãƒ¼è©•ä¾¡ã®å¤‰æ›´ãŒå¿…è¦"></indexitem>
+ <indexitem target="mechanismhandlerslist" text="ãƒ¡ã‚«ãƒ‹ã‚ºãƒ ãƒãƒ³ãƒ‰ãƒ©ãƒªã‚¹ãƒˆ">
+    <indexitem target="webservices.wsauthnserviceshandlersadd" text="è¨­å®šã™ã‚‹"></indexitem></indexitem>
+ <indexitem target="idm.entitymembership" text="ãƒ¦ãƒ¼ã‚¶ãƒ¼, ã‚µãƒ¼ãƒ“ã‚¹ã€ãƒ­ãƒ¼ãƒ«ã€ãŠã‚ˆã³ã‚°ãƒ«ãƒ¼ãƒ—ã¸ã®è¿½åŠ "></indexitem>
+ <indexitem target="dm.home" text="ãƒ¦ãƒ¼ã‚¶ãƒ¼ç®¡ç†"></indexitem>
+ <indexitem target="requesthandlerlist" text="è¦æ±‚ãƒãƒ³ãƒ‰ãƒ©ãƒªã‚¹ãƒˆ"></indexitem><indexitem target="service.scsaml2soapbinding" text="è¦æ±‚ãƒãƒ³ãƒ‰ãƒ©ãƒªã‚¹ãƒˆ">
+    <indexitem target="service.scsoapbindingrequesthandlerlistadd" text="è¨­å®šã™ã‚‹"></indexitem><indexitem target="service.scsaml2soapbindingrequesthandlerlistadd" text="è¨­å®šã™ã‚‹"></indexitem></indexitem>
+ <indexitem target="resourceidmapper" text="ãƒªã‚½ãƒ¼ã‚¹ ID ãƒžãƒƒãƒ‘ãƒ¼"></indexitem>
+ <indexitem target="resourceidmapperpluginclass" text="ãƒªã‚½ãƒ¼ã‚¹ ID ãƒžãƒƒãƒ‘ãƒ¼ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ç”¨ã®ã‚¯ãƒ©ã‚¹"></indexitem>
+ <indexitem target="policy.selectservicetype" text="ãƒ«ãƒ¼ãƒ«"></indexitem>
+ <indexitem target="realm.rmrealm" text="ãƒ¬ãƒ«ãƒ ">
+    <indexitem target="authentication.newauthinstance" text="æ–°ã—ã„èªè¨¼ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã‚’ä½œæˆã™ã‚‹"></indexitem>
+    <indexitem target="authentication.newauthconfig" text="æ–°ã—ã„èªè¨¼é€£éŽ–ã‚’ä½œæˆã™ã‚‹"></indexitem>
+    <indexitem target="realm.rmrealmadd" text="æ–°ã—ãä½œæˆã™ã‚‹"></indexitem>
+    <indexitem target="realm.realmproperties" text="ä¸€èˆ¬ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ãƒ¼"></indexitem>
+    <indexitem target="delegation.delegation" text="æ¨©é™"></indexitem><indexitem target="delegation.delegationproperties" text="æ¨©é™"></indexitem>
+    <indexitem target="realm.services" text="ã‚µãƒ¼ãƒ“ã‚¹"></indexitem>
+    <indexitem target="realm.servicesadd" text="ã‚µãƒ¼ãƒ“ã‚¹ã‚’è¿½åŠ ã™ã‚‹"></indexitem>
+    <indexitem target="idm.entities" text="å¯¾è±¡"></indexitem>
+    <indexitem target="realm.idrepo" text="ãƒ‡ãƒ¼ã‚¿ã‚¹ãƒˆã‚¢"></indexitem>
+    <indexitem target="authentication.authproperties" text="èªè¨¼"></indexitem>
+    <indexitem target="policy.policy" text="ãƒãƒªã‚·ãƒ¼"></indexitem>
 </indexitem>
 </index>

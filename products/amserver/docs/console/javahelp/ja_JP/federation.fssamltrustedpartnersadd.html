@@ -11,7 +11,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
   <!-- ident      "%Z%%M% %I%     %E% SMI" -->
 
-  <title>信頼パートナー: 信頼パートナー属性を設定する - Sun Federated Access Manager 8.0 コンソールオンラインヘルプ
+  <title>信頼パートナー: 信頼パートナー属性を設定する - Sun OpenSSO 8.0 コンソールオンラインヘルプ
   </title>
   <script language="JavaScript1.2">
     linktag = window.parent.frames[0].document.getElementsByTagName('link');
@@ -76,10 +76,10 @@
 <dd><p>SAML で使用可能な認証タイプ。次のものがあります。</p>
 <ul><li><p>SAML SOAP Receiver を指す URL へのアクセスに HTTP が使用され、かつ SAML SOAP Receiver が HTTP 基本認証、SSL、またはその両方で保護されない場合は、<tt>なし</tt>を指定します。</p></li>
 <li><p>SAML SOAP Receiver を指す URL へのアクセスに HTTP が使用され、かつ SAML SOAP Receiver が HTTP 基本認証で保護される場合は、<tt>基本</tt>を指定します。</p></li>
-<li><p>SAML SOAP Receiver を指す URL へのアクセスに HTTPS が使用され、かつ SAML SOAP Receiver が HTTP SSL で保護されない場合は、<tt>SSL</tt> を指定します。</p></li>
+<li><p>SAML SOAP 受信者を指す URL へのアクセスに HTTPS が使用され、かつ SAML SOAP 受信者が HTTP SSL で保護されない場合は、<tt>SSL</tt> を指定します。</p></li>
 <li><p>SAML SOAP Receiver を指す URL へのアクセスに HTTPS が使用され、かつ SAML SOAP Receiver が <tt>SSL を使用した基本認証</tt>で保護されない場合は、<tt>SSLWITHBASICAUTH</tt> を指定します。</p></li></ul>
 
-<hr><p><b>注 &#8211; </b>SAML SOAP Receiver の URL を HTTP 基本認証で保護する場合、この保護設定は、Federated Access Manager 設定ではなく Web コンテナ設定で行います。ただし、HTTP 基本認証のユーザー ID とパスワードは Federated Access Manager 設定で指定します。</p>
+<hr><p><b>注 &#8211; </b>SAML SOAP 受信者の URL を HTTP 基本認証で保護する場合、この保護設定は、OpenSSO 設定ではなく Web コンテナ設定で行います。ただし、HTTP 基本認証のユーザー ID とパスワードは OpenSSO 設定で指定します。</p>
 <hr>
 <p>この属性はオプションです。指定されていない場合、デフォルトは「<tt>なし</tt>」です。<tt>基本</tt>または <tt>SSLWITHBASICAUTH</tt> が指定されている場合は、「信頼パートナー」属性が必須となり <tt>HTTPS</tt> にする必要があります。</p></dd>
 <dt>ユーザー</dt>
