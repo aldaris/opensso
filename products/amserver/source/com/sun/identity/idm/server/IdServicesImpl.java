@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: IdServicesImpl.java,v 1.52 2008-09-19 02:38:52 sean_brydon Exp $
+* $Id: IdServicesImpl.java,v 1.53 2008-09-30 19:46:47 goodearth Exp $
 *
 */
 
@@ -295,11 +295,11 @@ public class IdServicesImpl implements IdServices {
                    "not supported by " + idRepo.getClass().getName());
            }
        }
-       if (firstException != null) {
-           throw (firstException);
-       }
        if (authException != null) {
            throw (authException);
+       }
+       if (firstException != null) {
+           throw (firstException);
        }
        return (false);
    }
