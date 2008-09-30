@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.7 2008-09-30 20:47:33 goodearth Exp $
+ * $Id: PolicyEvaluator.java,v 1.8 2008-09-30 21:05:26 goodearth Exp $
  *
  */
 
@@ -405,7 +405,7 @@ public class PolicyEvaluator {
         }
 
         boolean actionAllowed = false;
-        HashSet actionNames = new HashSet(1);
+        HashSet actionNames = new HashSet(2);
         actionNames.add(actionName);
         PolicyDecision policyDecision = getPolicyDecision(token, resourceName,
                                    actionNames, envParameters);
@@ -473,14 +473,14 @@ public class PolicyEvaluator {
             resourceName = Rule.EMPTY_RESOURCE_NAME;
         }
 
-        Set originalResourceNames = new HashSet(1);
+        Set originalResourceNames = new HashSet(2);
         originalResourceNames.add(resourceName);
 
         resourceName = serviceType.canonicalize(resourceName);
 
         //Add request resourceName and request actionNames to the envParameters
         //so that Condition(s)/ResponseProvider(s) can use them if necessary
-        Set resourceNames = new HashSet(1);
+        Set resourceNames = new HashSet(2);
         resourceNames.add(resourceName);
 
         /* compute for all action names if passed in actionNames is
@@ -1848,14 +1848,14 @@ public class PolicyEvaluator {
     PolicyDecision getPolicyDecisionIgnoreSubjects(String resourceName, 
             Set actionNames, Map env) throws PolicyException, SSOException  {
 
-        Set originalResourceNames = new HashSet(1);
+        Set originalResourceNames = new HashSet(2);
         originalResourceNames.add(resourceName);
 
         /*
          * Add request resourceName and request actionNames to the envParameters
          * so that Condition(s)/ResponseProvider(s) can use them if necessary
          */
-        Set resourceNames = new HashSet(1);
+        Set resourceNames = new HashSet(2);
         resourceNames.add(resourceName);
 
         /* compute for all action names if passed in actionNames is
