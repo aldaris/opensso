@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogToDBTest.java,v 1.5 2008-09-05 00:36:58 mrudulahg Exp $
+ * $Id: LogToDBTest.java,v 1.6 2008-10-01 18:55:56 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,8 +27,10 @@ package com.sun.identity.qatest.log;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.qatest.common.IDMCommon;
 import com.sun.identity.qatest.common.LogCommon;
+import java.text.SimpleDateFormat;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -82,14 +84,19 @@ public class LogToDBTest extends LogCommon implements LogTestConstants {
                     testCaseInfoFileName);
             location = dbConfRb.getString(LOGTEST_KEY_LOG_LOCATION);
             int lastIdx = location.lastIndexOf("/");
-            dataBaseName = location.substring(lastIdx + 1);
+            SimpleDateFormat simple = new SimpleDateFormat(
+                    "yyyyMMddhhmmssSS");
+            Date date = new Date();
+            dataBaseName = location.substring(lastIdx + 1) + simple.format(date);
             dbUser = dbConfRb.getString(LOGTEST_KEY_DB_USER);
             dbPassword = dbConfRb.getString(LOGTEST_KEY_DB_PASSWORD);
             driver = dbConfRb.getString(LOGTEST_KEY_DRIVER);
+            log(Level.FINEST, "LogToDBTest", "New dataBaseName :" + 
+                    dataBaseName);                
             if (dbConn == null) {
                 log(Level.FINE, "LogToDBTest", "Getting db connection");
                 dbConn = LogCommon.getConnection(dbUser, dbPassword, driver,
-                        location);
+                        location, dataBaseName);
                 dbInit = true;
             }
         } catch (SQLException sqexp) {
@@ -199,7 +206,8 @@ public class LogToDBTest extends LogCommon implements LogTestConstants {
                     LOGTEST_KEY_RECORD_LEVEL);
             if (modifyServConfig.equals("true")) 
                 assert(writeLog(adminSSOToken, userSSOToken, tableName, "This is dummy msg", 
-                        moduleName, getLevel(loggerLevel), getLevel(recordLevel)));
+                        moduleName, getLevel(loggerLevel), 
+                        getLevel(recordLevel)));
             Thread.sleep(4000);
             Reporter.log("Test Name : " + curTestName);
             Reporter.log("Test Description : " + testCaseInfo.getString(
@@ -241,7 +249,8 @@ public class LogToDBTest extends LogCommon implements LogTestConstants {
                 log(Level.FINEST, "readLog", "Last Rec :" + lastRec);
                 if (lastRec.indexOf(expMsg) == -1) {
                     log(Level.FINEST, "readLog", "Last Rec doesnt match. " +
-                            "Wait for " + notificationSleepTime + " milisecs & read again");
+                            "Wait for " + notificationSleepTime + 
+                            " milisecs & read again");
                     Thread.sleep(notificationSleepTime);
                 } else 
                     break;
@@ -282,7 +291,9 @@ public class LogToDBTest extends LogCommon implements LogTestConstants {
                     updateLogConfig(adminSSOToken, logConfig);
                     destroyToken(adminSSOToken);
                     LogCommon.deleteDB(dbConn, dataBaseName);
-                    LogCommon.releaseConn(location);
+                    int lastIdx = location.lastIndexOf("/");
+                    String reqDBURL= location.substring(0, lastIdx);                        
+                    LogCommon.releaseConn(reqDBURL + "/" + dataBaseName);
                     dbInit = false;
                     configured = false;
                 }
@@ -301,7 +312,9 @@ public class LogToDBTest extends LogCommon implements LogTestConstants {
         try {
             Map cfgMap = new HashMap();
             Set locSet = new HashSet();
-            locSet.add(location);
+            int lastIdx = location.lastIndexOf("/");
+            String reqDBURL= location.substring(0, lastIdx);                        
+            locSet.add(reqDBURL + "/" + dataBaseName);
             cfgMap.put(LOGTEST_KEY_LOG_LOCATION, locSet);
             Set dbUserSet = new HashSet();
             dbUserSet.add(dbUser);

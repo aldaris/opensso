@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogCommon.java,v 1.5 2008-08-15 04:58:28 mrudulahg Exp $
+ * $Id: LogCommon.java,v 1.6 2008-10-01 18:55:46 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -147,8 +147,9 @@ public class LogCommon extends TestCommon {
     }
     
     /**
-     * This method creates a test database and returns connection for this
-     * database.
+     * This method creates a test database with the default name from 
+     * input parameter location
+     * and returns connection for this database.
      * @param dbUserName Database user Name.
      * @param password Database user Password.
      * @param driver Database Driver to be used.
@@ -160,27 +161,9 @@ public class LogCommon extends TestCommon {
     throws Exception, SQLException {
         try {
             int lastIdx = location.lastIndexOf("/");
-            String reqDBURL= location.substring(0, lastIdx);
-            if (!connMap.containsKey(location)) {
-                log (Level.FINE, "getConnection", "Loading driver : " + driver);
-                Class.forName(driver);
-                log (Level.FINE, "getConnection", "Getting connection for : " + 
-                        reqDBURL);
-                Connection con = DriverManager.getConnection(reqDBURL, 
-                        dbUserName, password);
-                String dataBaseName = location.substring(lastIdx + 1);
-                Statement createSt = con.createStatement();
-                log (Level.FINE, "getConnection", "Creating database : " + 
-                        dataBaseName);
-                createSt.execute("CREATE DATABASE " + dataBaseName);
-                con.close();
-                con = DriverManager.getConnection(location, dbUserName, 
-                        password);
-                connMap.put(location, con);
-                return con;
-            } else {
-                return (Connection)connMap.get(location);
-            }
+            String dataBaseName = location.substring(lastIdx + 1);            
+            return getConnection(dbUserName, password, driver, location, 
+                    dataBaseName);
         } catch (Exception ex) {
             log(Level.SEVERE, "getConnection", 
                     "Error creating db connection : " + ex.getMessage());
@@ -297,5 +280,47 @@ public class LogCommon extends TestCommon {
             throw ex;
         }
         return true;
+    }
+    
+    /**
+     * This method creates a test database and returns connection for this
+     * database.
+     * @param dbUserName Database user Name.
+     * @param password Database user Password.
+     * @param driver Database Driver to be used.
+     * @param location Location of the database.
+     * @param dataBaseName Name of the database.
+     * @return connection to the database.
+     */
+    public static Connection getConnection(String dbUserName, String password, 
+            String driver, String location, String dataBaseName) 
+    throws Exception, SQLException {
+        try {
+            int lastIdx = location.lastIndexOf("/");
+            String reqDBURL= location.substring(0, lastIdx);
+            if (!connMap.containsKey(location)) {
+                log (Level.FINE, "getConnection", "Loading driver : " + driver);
+                Class.forName(driver);
+                log (Level.FINE, "getConnection", "Getting connection for : " + 
+                        reqDBURL);
+                Connection con = DriverManager.getConnection(reqDBURL, 
+                        dbUserName, password);
+                Statement createSt = con.createStatement();
+                log (Level.FINE, "getConnection", "Creating database : " + 
+                        dataBaseName);
+                createSt.execute("CREATE DATABASE " + dataBaseName);
+                con.close();
+                con = DriverManager.getConnection(reqDBURL + "/" + dataBaseName,
+                        dbUserName, password);
+                connMap.put(location, con);
+                return con;
+            } else {
+                return (Connection)connMap.get(location);
+            }
+        } catch (Exception ex) {
+            log(Level.SEVERE, "getConnection", 
+                    "Error creating db connection : " + ex.getMessage());
+            throw ex;
+        }
     }
 }
