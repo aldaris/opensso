@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMViewBeanBase.java,v 1.10 2008-09-19 03:58:04 veiming Exp $
+ * $Id: AMViewBeanBase.java,v 1.11 2008-10-01 23:02:10 asyhuang Exp $
  *
  */
 
@@ -59,6 +59,7 @@ import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.SMSSchema;
 import com.sun.web.ui.model.CCActionTableModelInterface;
+import com.sun.web.ui.common.CCPrivateConfiguration;
 import com.sun.web.ui.view.alert.CCAlertInline;
 import com.sun.web.ui.view.html.CCButton;
 import com.sun.web.ui.view.html.CCCheckBox;
@@ -124,6 +125,9 @@ public abstract class AMViewBeanBase
         String port = SystemProperties.get(Constants.AM_SERVER_PORT);
         System.setProperty("com.sun.web.console.secureport", port);
         System.setProperty("com.sun.web.console.unsecureport", port);
+        
+        String protocol = SystemProperties.get(Constants.AM_SERVER_PROTOCOL);
+        CCPrivateConfiguration.setSecureHelp(protocol.equals("https")); 
     }
 
     /**
