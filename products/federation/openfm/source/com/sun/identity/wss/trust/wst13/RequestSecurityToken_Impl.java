@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RequestSecurityToken_Impl.java,v 1.1 2008-09-19 16:00:57 mallas Exp $
+ * $Id: RequestSecurityToken_Impl.java,v 1.2 2008-10-01 23:39:08 mallas Exp $
  *
  */
 package com.sun.identity.wss.trust.wst13;
@@ -111,6 +111,7 @@ public class RequestSecurityToken_Impl extends RequestSecurityToken {
         if(tokenType != null) {
            sb.append("<").append(STSConstants.WST_PREFIX).append(TOKEN_TYPE)
                 .append(">").append(tokenType).append("</")
+                .append(STSConstants.WST_PREFIX)
                 .append(TOKEN_TYPE).append(">"); 
         }
         
