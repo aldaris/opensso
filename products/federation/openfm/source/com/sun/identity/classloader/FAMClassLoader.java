@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMClassLoader.java,v 1.15 2008-09-22 21:04:38 mallas Exp $
+ * $Id: FAMClassLoader.java,v 1.16 2008-10-01 23:38:02 mallas Exp $
  *
  */
 
@@ -78,8 +78,8 @@ public class FAMClassLoader {
 
                 ClassLoader localcc = FAMClassLoader.class.getClassLoader();
                 String[] mPackages = maskedPackages;
-                String version = System.getProperty("java.vm.version");
-                if(version != null && version.startsWith("1.6")) {
+                String version = System.getProperty("java.version");
+                if(version != null && version.startsWith("1.6")) {                   
                    mPackages = maskedPackages16;
                 }
 
