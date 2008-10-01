@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: service.cpp,v 1.27 2008-09-27 00:20:05 madan_ranganath Exp $
+ * $Id: service.cpp,v 1.28 2008-10-01 23:52:38 madan_ranganath Exp $
  *
  */
 
@@ -857,111 +857,23 @@ Service::setRemUserAndAttrs(am_policy_result_t *policy_res,
         properties.get(AM_POLICY_ATTRS_MULTI_VALUE_SEPARATOR,
             ATTR_MULTI_VALUE_SEPARATOR);
     
-    // if remote user id param type was ldap or if fetch ldap attributes
-    // is true, get the ldap attributes and set remote user and
-    // the ldap attribute map in the policy result.
-    // set the ldap attributes if any and set the remote user from
-    // ldap attribute if user id param is an ldap attribute.
-
-    /**
-     * This is an egregious patch work for retriving ldap attributes.
-     * Once the Node object in the tree gets replaced by the Policy
-     * decision object.  This must be done fetched by doing a getParent.
-     * This fix is based on the assumption that we know we query for
-     * root resource always and that the LDAP attributes are returned
-     * as a part of the first policy decision, in our case is the root
-     * resource.
-     */
     if (fetchProfileAttrs || fetchSessionAttrs || fetchResponseAttrs ||
         mUserIdParamType == USER_ID_PARAM_TYPE_LDAP) {
         ResourceName resObj(resName);
         string rootRes;
 
-        if (mFetchFromRootResource == false) {
-            rootRes = resName;
-        }
-        
-        if ((mFetchFromRootResource == true) && 
-            !resObj.getResourceRoot(rsrcTraits, rootRes)) {
-            Log::log(logID, Log::LOG_WARNING,
-                    "%s: Error getting root resource for %s while getting "
-                    "user Id from LDAP attribute %s. "
-                    "Setting to user to null (unknown).", func,
-                    resName.c_str(), mUserIdParam.c_str());
-        } else {
-            PDRefCntPtr rootPolicy = uPolicyEntry->getPolicyDecision(rootRes);
-            const KeyValueMap &attrResp = rootPolicy->getAttributeResponses();
-            if (mUserIdParamType == USER_ID_PARAM_TYPE_LDAP) {
-                KeyValueMap::const_iterator iter = attrResp.find(mUserIdParam);
-                if (iter == attrResp.end() || iter->second.size() <= 0) {
-                    Log::log(logID, Log::LOG_WARNING,
-                             "%s:User Id parameter %s not found in user's LDAP "
-                             "attributes. Setting user Id to null (unknown).",
-                             func, mUserIdParam.c_str());
-            } else {
-                policy_res->remote_user = strdup(iter->second[0].c_str());
-            }
-        }
-
-        // Construct the profile attribute map
-        if (fetchProfileAttrs) {
-            KeyValueMap &profile_attributes_map = *(new KeyValueMap());
-            policy_res->attr_profile_map =
-                   reinterpret_cast<am_map_t>(&profile_attributes_map);
-
-            Properties::const_iterator iter_profile_attr;
-            for (iter_profile_attr = profileAttributesMap.begin(); 
-                iter_profile_attr != profileAttributesMap.end(); 
-                  iter_profile_attr++){
-                std::string profileKey = (*iter_profile_attr).first;
-                std::string profileAttr = (*iter_profile_attr).second;
-                std::string profileValue; 
-                std::string tmpValue; 
-                if (profile_attributes_map.size() > 0) {
-                    KeyValueMap::const_iterator iter = 
-                        profile_attributes_map.find(profileAttr);
-                    if (iter != profile_attributes_map.end() && 
-                        iter->second.size() > 0) {
-                            tmpValue = iter->second[0];
-                            profile_attributes_map.erase(profileAttr);
-                    }
-                }
-                KeyValueMap::const_iterator iter_profile = 
-                                              attrResp.find(profileKey);
-                if (iter_profile != attrResp.end()) {
-                    for (std::size_t i=0;i<iter_profile->second.size();++i) {
-                        profileValue.append(iter_profile->second[i]);
-                        if (i < (iter_profile->second.size()-1)) {
-                              profileValue.append(attrMultiValueSeparator);
-                        }
-                     }
-                }
-                if (tmpValue.size() > 0) {
-                    profileValue =  profileValue + 
-                                    attrMultiValueSeparator + tmpValue;
-                }
-                Log::log(logID, Log::LOG_MAX_DEBUG, 
-                         "Attribute value for %s found in ldap = %s", 
-                         profileKey.c_str(), profileValue.c_str());
-                if (!profileAttr.empty() && !profileValue.empty()) {
-                    profile_attributes_map.insert(profileAttr,
-                                                  profileValue);
-                }
-              }
-            }
-
-            // Set the session attribute map
-            if (fetchSessionAttrs) {
-              KeyValueMap &session_attributes_map = *(new KeyValueMap());
-	      time_t retVal = (time_t)-1;
-              policy_res->attr_session_map =
+        // Set the session attribute map
+        if (fetchSessionAttrs) {
+            KeyValueMap &session_attributes_map = *(new KeyValueMap());
+	    time_t retVal = (time_t)-1;
+            policy_res->attr_session_map =
                           reinterpret_cast<am_map_t>(&session_attributes_map);
 
-              // Next construct the session attribute map
-              Properties::const_iterator iter_session_attr;
-              for (iter_session_attr = sessionAttributesMap.begin(); 
-                   iter_session_attr != sessionAttributesMap.end(); 
-                   iter_session_attr++) {
+             // Next construct the session attribute map
+             Properties::const_iterator iter_session_attr;
+             for (iter_session_attr = sessionAttributesMap.begin(); 
+                  iter_session_attr != sessionAttributesMap.end(); 
+                  iter_session_attr++) {
                      std::string sessionKey = (*iter_session_attr).first;
                      std::string sessionAttr = (*iter_session_attr).second;
                      std::string sessionValue; 
@@ -1008,69 +920,189 @@ Service::setRemUserAndAttrs(am_policy_result_t *policy_res,
                                                        sessionValue);
                      }
                 }
+        }
+
+        if (fetchProfileAttrs || mUserIdParamType == USER_ID_PARAM_TYPE_LDAP) {
+            if (mFetchFromRootResource == false) {
+                rootRes = resName;
             }
-
-            // Set the response attribute map
-            if (fetchResponseAttrs) {
-                KeyValueMap &response_attributes_map = *(new KeyValueMap());
-                policy_res->attr_response_map =
-                          reinterpret_cast<am_map_t>(&response_attributes_map);
-
-                PDRefCntPtr responsePolicy = 
-                                    uPolicyEntry->getPolicyDecision(resName);
-                if (responsePolicy != NULL) {
-                   const KeyValueMap &responseAttrs = 
-                                     responsePolicy->getResponseAttributes();
-                   KeyValueMap::const_iterator iter_response =
-                                               responseAttrs.begin();
-                   for(;(iter_response!=responseAttrs.end());iter_response++) {
-                     const KeyValueMap::key_type &keyRef = iter_response->first;
-                     std::string tmpResponseKey(keyRef.c_str());
-                     std::string responseKey; 
-                     std::string responseValue; 
-                     std::string tmpValue; 
-                     
-                     if (responseAttributesMap.size() > 0) {
-                       try {
-                        responseKey = responseAttributesMap.get(tmpResponseKey);
-                       } catch (invalid_argument& iex) {
-                         responseKey = tmpResponseKey;
-                       }
-                     } else {
-                         responseKey = tmpResponseKey;
-                     }
-                     if (response_attributes_map.size() > 0) {
-                         KeyValueMap::const_iterator iter = 
-                                 response_attributes_map.find(responseKey);
-                         if (iter != response_attributes_map.end() && 
-                             iter->second.size() > 0) {
-                                  tmpValue = iter->second[0];
-                                  response_attributes_map.erase(responseKey);
+        
+            if ((mFetchFromRootResource == true) && 
+                !resObj.getResourceRoot(rsrcTraits, rootRes)) {
+                Log::log(logID, Log::LOG_WARNING,
+                        "%s: Error getting root resource for %s while getting "
+                        "user Id from LDAP attribute %s. "
+                        "Setting to user to null (unknown).", func,
+                        resName.c_str(), mUserIdParam.c_str());
+            } else {
+                PDRefCntPtr rootPolicy = 
+		    uPolicyEntry->getPolicyDecision(rootRes);
+	        if (rootPolicy != NULL) {
+                    const KeyValueMap &attrResp = 
+				  rootPolicy->getAttributeResponses();
+                    if (attrResp.size() > 0) {
+		        if (mUserIdParamType == USER_ID_PARAM_TYPE_LDAP) {
+                            KeyValueMap::const_iterator iter = 
+						attrResp.find(mUserIdParam);
+                            if (iter == attrResp.end() || 
+				iter->second.size()<= 0) {
+                                Log::log(logID, Log::LOG_WARNING,
+                                     "%s:User Id parameter %s not found in "
+                                     "user's LDAP attributes. Setting user Id " 
+                                     "to null (unknown).", func, 
+                                     mUserIdParam.c_str());
+                            } else {
+                                policy_res->remote_user = 
+                                     strdup(iter->second[0].c_str());
                             }
-                     }
-                     const KeyValueMap::mapped_type &valueRef = 
-                                                    iter_response->second;
-                     for(std::size_t i = 0; i < valueRef.size(); ++i) {
-                        responseValue.append(valueRef[i]);
-                        if (i < (valueRef.size()-1)) {
-                           responseValue.append(attrMultiValueSeparator);
                         }
-                     }
-                     if (tmpValue.size() > 0) {
-                          responseValue = responseValue + 
-                                          attrMultiValueSeparator + tmpValue;
-                     }
-                     if (!responseKey.empty() && !responseValue.empty()) {
-                        Log::log(logID, Log::LOG_MAX_DEBUG, "Attribute value "
-                                 "for %s found in response = %s", 
-                                 responseKey.c_str(), responseValue.c_str());
-                        response_attributes_map.insert(responseKey, 
-                                                       responseValue);
-                     }
-                   }
-                 }
-              }
-         }
+
+                        // Construct the profile attribute map
+                        if (fetchProfileAttrs) {
+                            KeyValueMap &profile_attributes_map = 
+					     *(new KeyValueMap());
+                            policy_res->attr_profile_map =
+                            reinterpret_cast<am_map_t>(&profile_attributes_map);
+
+                            Properties::const_iterator iter_profile_attr;
+                            for (iter_profile_attr = 
+				 profileAttributesMap.begin(); 
+                               iter_profile_attr != profileAttributesMap.end(); 
+                               iter_profile_attr++) {
+                                    std::string profileKey = 
+				        (*iter_profile_attr).first;
+                                    std::string profileAttr = 
+				        (*iter_profile_attr).second;
+                                    std::string profileValue; 
+                                    std::string tmpValue; 
+                                    if (profile_attributes_map.size() > 0) {
+                                        KeyValueMap::const_iterator iter = 
+                                            profile_attributes_map.find(
+								  profileAttr);
+                                        if (iter != 
+					    profile_attributes_map.end() && 
+					    iter->second.size() > 0) {
+                                            tmpValue = iter->second[0];
+                                            profile_attributes_map.erase(
+								  profileAttr);
+                                        }
+                                    }
+                                    KeyValueMap::const_iterator iter_profile = 
+                                              attrResp.find(profileKey);
+                                    if (iter_profile != attrResp.end()) {
+                                        for (std::size_t i=0;
+				             i < iter_profile->second.size(); 
+					     ++i) {
+                                            profileValue.append(
+						iter_profile->second[i]);
+                                            if (i < 
+					       (iter_profile->second.size()-1)){
+                                                profileValue.append(
+						    attrMultiValueSeparator);
+                                           }
+                                        }
+                                    }
+                                    if (tmpValue.size() > 0) {
+                                        profileValue =  profileValue + 
+                                                attrMultiValueSeparator + 
+                                                tmpValue;
+                                    }
+                                    if (!profileAttr.empty() && 
+					!profileValue.empty()) {
+                                        Log::log(logID, Log::LOG_MAX_DEBUG, 
+                                        "Attribute value for %s found "
+                                        "in ldap = %s", profileKey.c_str(), 
+                                        profileValue.c_str());
+                                        profile_attributes_map.insert(
+                                                              profileAttr,
+                                                              profileValue);
+                                    }
+                             }
+                        }
+                    } else {
+                        Log::log(logID, Log::LOG_ERROR,
+                                 "%s: Attribute Response set is empty. "
+                                 "No remote user or profile attribute is set"
+                                 "as headers or cookies", func);
+		    }
+                } else {
+                    Log::log(logID, Log::LOG_ERROR, 
+                             " %s: No Profile Attribute or remote user set as " 
+			     "empty policy decision is received", func);
+	        }
+            }
+        }
+
+        // Set the response attribute map
+        if (fetchResponseAttrs) {
+		std::vector<PDRefCntPtr>::const_iterator iter;
+                Properties::const_iterator iter_response_attr;
+                KeyValueMap &response_attributes_map = *(new KeyValueMap());
+
+                policy_res->attr_response_map =
+                   reinterpret_cast<am_map_t>(&response_attributes_map);
+                
+                if (results.size() > 0) {
+                    for (iter=results.begin(); iter!=results.end(); iter++) {
+                        PDRefCntPtr policy = *iter;
+                        const KeyValueMap &responseAttrs = 
+                                     policy->getResponseAttributes();                
+                        if (responseAttrs.size() > 0) {
+                        for (iter_response_attr =responseAttributesMap.begin(); 
+                             iter_response_attr != responseAttributesMap.end(); 
+                             iter_response_attr++) {
+                            std::string responseKey =
+				(*iter_response_attr).first;
+                            std::string responseAttr = 
+                                (*iter_response_attr).second;
+                            std::string responseValue; 
+                            std::string tmpValue; 
+                            if (response_attributes_map.size() > 0) {
+                                KeyValueMap::const_iterator iter = 
+                                    response_attributes_map.find(responseAttr);
+                                if (iter != response_attributes_map.end() && 
+                                    iter->second.size() > 0) {
+                                    tmpValue = iter->second[0];
+                                }
+                            }
+                            KeyValueMap::const_iterator iter_response = 
+                                              responseAttrs.find(responseKey);
+                            if (iter_response != responseAttrs.end()) {
+                                for (std::size_t i=0;
+				     i<iter_response->second.size(); ++i) {
+                                 responseValue.append(iter_response->second[i]);
+                                 if (i < (iter_response->second.size()-1)) {
+                                    responseValue.append(
+                                                  attrMultiValueSeparator);
+                                  }
+                                }
+                            }
+                            if ((!tmpValue.empty() > 0) && 
+                                (!responseValue.empty() > 0)) {
+				// Clear the old value so that we replace
+				// it with the new values
+                                response_attributes_map.erase(responseAttr);
+                                responseValue =  responseValue +
+                                    attrMultiValueSeparator + tmpValue;
+                            }
+                            if (!responseAttr.empty() && 
+                                !responseValue.empty()) {
+                                Log::log(logID, Log::LOG_MAX_DEBUG, 
+                                     "Response Attribute value for %s found "
+                                     "in response = %s", 
+                                responseKey.c_str(), responseValue.c_str());
+                                response_attributes_map.insert(responseAttr,
+                                                               responseValue);
+                            }
+                      }
+                    }
+                  }
+                } else {
+                    Log::log(logID, Log::LOG_ERROR, 
+                             "No Response Attribute set as the policy result "
+                             "is empty");
+                }
+            }
     }
 }
 
@@ -1179,6 +1211,25 @@ Service::getPolicyResult(const char *userSSOToken,
     std::string userIdParamType =
 	   properties.get(
                AM_POLICY_USER_ID_PARAM_TYPE_PROPERTY,"Session");
+
+    if (strcasecmp(userIdParamType.c_str(), "SESSION")==0) {
+        mUserIdParamType = USER_ID_PARAM_TYPE_SESSION;
+    } else if (strcasecmp(userIdParamType.c_str(), "LDAP")==0) {
+        mUserIdParamType = USER_ID_PARAM_TYPE_LDAP;
+    } else {
+        const char *msg = "Invalid value for property "
+                                    AM_POLICY_USER_ID_PARAM_TYPE_PROPERTY;
+	throw std::invalid_argument(msg);
+    }
+    if (mUserIdParamType == USER_ID_PARAM_TYPE_SESSION) {
+        mUserIdParam = 
+            properties.get(AM_POLICY_USER_ID_PARAM_PROPERTY,
+                                      DEFAULT_SESSION_USER_ID_PARAM);
+    } else { // LDAP
+        mUserIdParam = 
+            properties.get(AM_POLICY_USER_ID_PARAM_PROPERTY,
+                                      DEFAULT_LDAP_USER_ID_PARAM);
+    }
 
     mFetchFromRootResource = 
         properties.getBool(

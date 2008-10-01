@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: policy_engine.cpp,v 1.8 2008-09-13 01:11:53 robertis Exp $
+ * $Id: policy_engine.cpp,v 1.9 2008-10-01 23:52:37 madan_ranganath Exp $
  *
  */ 
 
@@ -93,12 +93,6 @@ PolicyEngine::create_service(const char *serviceName,
 			     am_resource_traits_t rsrcTraits,
 			     const Properties& service_params)
 {
-    Log::log(logID, Log::LOG_MAX_DEBUG, "%s:%d %s", __FILE__, __LINE__,
-	    "In createService");
-    Log::log(logID, Log::LOG_INFO, "%s%s", serviceName,
-	    " creation attempted.");
-
-
     am_policy_t hdl = UINT_MAX;
     Service *svc = NULL;
 

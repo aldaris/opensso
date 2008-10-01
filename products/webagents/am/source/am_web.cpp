@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.cpp,v 1.36 2008-09-26 00:02:09 robertis Exp $
+ * $Id: am_web.cpp,v 1.37 2008-10-01 23:52:37 madan_ranganath Exp $
  *
  */
 
@@ -2874,24 +2874,31 @@ am_web_result_attr_map_set(
         for (int i=0; i<3; i++) {
 	      switch (i) {
 		  case 0:
-		       attrMap = result->attr_profile_map;
-		       mode = (*agentConfigPtr)->profileMode;
+		       if (result->attr_profile_map != NULL) {
+		           attrMap = result->attr_profile_map;
+		           mode = (*agentConfigPtr)->profileMode;
+                       }
 		       break;
 		  case 1:
-		       attrMap = result->attr_session_map;
-		       mode = (*agentConfigPtr)->sessionMode;
+		       if (result->attr_session_map != NULL) {
+		           attrMap = result->attr_session_map;
+		           mode = (*agentConfigPtr)->sessionMode;
+                       }
 		       break;
 		  case 2:
-		       attrMap = result->attr_response_map;
-		       mode = (*agentConfigPtr)->responseMode;
+		       if (result->attr_response_map != NULL) {
+		           attrMap = result->attr_response_map;
+		           mode = (*agentConfigPtr)->responseMode;
+                       }
 		       break;
                   default:
 		       break;
               }
 
+	if (attrMap != NULL) {
           try {
              // set attributes as headers
-	     if (!strcasecmp(mode, AM_POLICY_SET_ATTRS_AS_HEADER)) { 
+	     if (!strcasecmp(mode, AM_POLICY_SET_ATTRS_AS_HEADER)) {
                 const KeyValueMap &headerAttrs =
                       *(reinterpret_cast<const KeyValueMap *>
                           (attrMap));
@@ -2977,7 +2984,7 @@ am_web_result_attr_map_set(
                 }
 
 		// set attributes as cookies
-	        if (!strcasecmp(mode, AM_POLICY_SET_ATTRS_AS_COOKIE)) { 
+	        if (!strcasecmp(mode, AM_POLICY_SET_ATTRS_AS_COOKIE)) {
                   const KeyValueMap &cookieAttrs =
                          *(reinterpret_cast<const KeyValueMap *>
                            (attrMap));
@@ -3103,16 +3110,20 @@ am_web_result_attr_map_set(
                                    thisfunc);
                   retVal = AM_FAILURE;
              }
-        }
+          } else {
+              am_web_log_debug("%s: Attribute map set is empty. "
+                               "No attribute set as cookie or header",thisfunc);
+	  }
+       }
 
-             if (retVal == AM_SUCCESS) {
-                Log::log(boot_info.log_module, Log::LOG_DEBUG,
+       if (retVal == AM_SUCCESS) {
+           Log::log(boot_info.log_module, Log::LOG_DEBUG,
                     "%s: Successfully set all attributes.", thisfunc);
-             } else {
-                Log::log(boot_info.log_module, Log::LOG_ERROR,
+       } else {
+           Log::log(boot_info.log_module, Log::LOG_ERROR,
                     "%s: Error while setting attributes: %s",
                     thisfunc, am_status_to_string(retVal));
-             }
+       }
     
     }
     return retVal;
@@ -5181,7 +5192,7 @@ set_user_attributes(am_policy_result_t *result,
             }
 
             // set attributes as cookies
-            if (!strcasecmp(mode, AM_POLICY_SET_ATTRS_AS_COOKIE)) { 
+            if (!strcasecmp(mode, AM_POLICY_SET_ATTRS_AS_COOKIE)) {
                 // set the new values.
                 const KeyValueMap &cookieAttrs =
                       *(reinterpret_cast<const KeyValueMap *>
