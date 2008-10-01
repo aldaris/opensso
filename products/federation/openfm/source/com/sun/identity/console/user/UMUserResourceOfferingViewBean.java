@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UMUserResourceOfferingViewBean.java,v 1.3 2008-06-25 05:49:49 qcheng Exp $
+ * $Id: UMUserResourceOfferingViewBean.java,v 1.4 2008-10-01 16:19:26 babysunil Exp $
  *
  */
 
@@ -69,6 +69,7 @@ public class UMUserResourceOfferingViewBean
     private static final String TBL_DATA_SERVICE_TYPE = "tblDataServiceType";
     private static final String TBL_DATA_ABSTRACT = "tblDataAbstract";
     private static final String TBL_DATA_ACTION_HREF = "tblDataActionHref";
+    public static final int TAB_SERVICES= 1;
 
     private static final String PROPERTY_ATTRIBUTE =
 	"bootstrapRefPropertyAttributes";
@@ -98,8 +99,8 @@ public class UMUserResourceOfferingViewBean
 	ptModel = new CCPageTitleModel(
 	    getClass().getClassLoader().getResourceAsStream(
 		"com/sun/identity/console/twoBtnsPageTitle.xml"));
-	ptModel.setValue("button1", "button.reset");
-	ptModel.setValue("button2", "button.back");
+        ptModel.setValue("button1", "button.finish");
+        ptModel.setValue("button2", "button.back");
     }
 
     protected void createTableModel() {
@@ -180,6 +181,8 @@ public class UMUserResourceOfferingViewBean
     public void beginDisplay(DisplayEvent event)
 	throws ModelControlException {
 	super.beginDisplay(event);
+        setPageSessionAttribute(
+               getTrackingTabIDName(), Integer.toString(TAB_SERVICES));
 	String userId = (String)getPageSessionAttribute(
 	    EntityEditViewBean.UNIVERSAL_ID);
 	UMUserResourceOfferingModel model =
@@ -202,26 +205,44 @@ public class UMUserResourceOfferingViewBean
 	    req, getPageSessionAttributes());
     }
 
+      
     /**
-     * Handles back button request.
+     * Handles finish service request.
      *
-     * @param event Request Invocation Event.
+     * @param event Request invocation event.
      */
-    public void handleButton1Request(RequestInvocationEvent event) {        
-        forwardTo();
-    }
+    public void handleButton1Request(RequestInvocationEvent event) throws ModelControlException {
+       submitCycle = true;
+        UMUserResourceOfferingModel model =
+            (UMUserResourceOfferingModel)getModel();
+	String userId = (String)getPageSessionAttribute(
+	    EntityEditViewBean.UNIVERSAL_ID);
+        DiscoveryDataCache cache = DiscoveryDataCache.getInstance();
+        String cacheID = (String)getPageSessionAttribute(
+            UMUserResourceOfferingViewBean.DATA_ID);
+        SMDiscoveryServiceData smEntry = cache.getData(
+            model.getUserSSOToken(), cacheID);
+        try {
+            model.setUserDiscoEntry(userId, smEntry);
         
+        } catch (AMConsoleException e) {
+            setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
+                e.getMessage());
+        }
+           
+        forwardToServicesViewBean();
+        
+    }
+
     /**
      * Handles back button request.
      *
      * @param event Request Invocation Event.
      */
     public void handleButton2Request(RequestInvocationEvent event) {        
-        EntityServicesViewBean vb = (EntityServicesViewBean)getViewBean(
-            com.sun.identity.console.idm.EntityServicesViewBean.class);
-        passPgSessionMap(vb);
-        vb.forwardTo(getRequestContext());
-    }
+        forwardToServicesViewBean();
+    }  
+
         
     public void handleTblButtonAddRequest(RequestInvocationEvent event) {
 	UMUserResourceOfferingAddViewBean vb = 
@@ -278,4 +299,16 @@ public class UMUserResourceOfferingViewBean
         }
         forwardTo();
     }
+    
+    protected void forwardToServicesViewBean() {
+        removePageSessionAttribute(getTrackingTabIDName());
+        setPageSessionAttribute(
+            getTrackingTabIDName(), Integer.toString(TAB_SERVICES));
+        EntityServicesViewBean vb = (EntityServicesViewBean)getViewBean(
+            EntityServicesViewBean.class);
+        backTrail();
+        passPgSessionMap(vb);
+        vb.forwardTo(getRequestContext());
+    }
+
 }

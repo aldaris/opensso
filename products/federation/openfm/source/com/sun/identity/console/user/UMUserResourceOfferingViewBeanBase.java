@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UMUserResourceOfferingViewBeanBase.java,v 1.2 2008-06-25 05:49:49 qcheng Exp $
+ * $Id: UMUserResourceOfferingViewBeanBase.java,v 1.3 2008-10-01 16:19:42 babysunil Exp $
  *
  */
 
@@ -69,10 +69,12 @@ public abstract class UMUserResourceOfferingViewBeanBase
     protected void createPageTitleModel() {
 	ptModel = new CCPageTitleModel(
 	    getClass().getClassLoader().getResourceAsStream(
-		"com/sun/identity/console/twoBtnsPageTitle.xml"));
+		"com/sun/identity/console/threeBtnsPageTitle.xml"));
 	ptModel.setPageTitleText(getPageTitleText());
-	ptModel.setValue("button1", getButtonlLabel());
-	ptModel.setValue("button2", "button.cancel");
+	ptModel.setValue("button1", getButtonlLabel());	
+        ptModel.setValue("button2", "button.reset");
+        ptModel.setValue("button3", "button.back");
+
     }
 
     protected abstract String getButtonlLabel();
@@ -92,20 +94,29 @@ public abstract class UMUserResourceOfferingViewBeanBase
 	return new UMUserResourceOfferingModelImpl(
 	    req, getPageSessionAttributes());
     }
-
+    
     /**
-     * Handles cancel request.
+     * Handles reset request.
      *
      * @param event Request Invocation Event.
      */
     public void handleButton2Request(RequestInvocationEvent event) {
+	forwardTo();
+    }
+    
+    /**
+     * Handles back request.
+     *
+     * @param event Request Invocation Event.
+     */
+    public void handleButton3Request(RequestInvocationEvent event) {
 	UMUserResourceOfferingViewBean vb = (UMUserResourceOfferingViewBean)
 	    getViewBean(UMUserResourceOfferingViewBean.class);
 	removePageSessionAttribute(ATTR_SECURITY_MECH_ID);
 	passPgSessionMap(vb);
 	vb.forwardTo(getRequestContext());
     }
-
+    
     protected void setValues(SMDiscoEntryData smDisco, AMModel model) {
 	super.setValues(smDisco, model);
 	propertySheetModel.setValue(ATTR_RESOURCE_ID,

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UMUserResourceOfferingAddViewBean.java,v 1.2 2008-06-25 05:49:49 qcheng Exp $
+ * $Id: UMUserResourceOfferingAddViewBean.java,v 1.3 2008-10-01 16:19:05 babysunil Exp $
  *
  */
 
@@ -49,7 +49,7 @@ public class UMUserResourceOfferingAddViewBean
     }
 
     protected String getButtonlLabel() {
-	return "button.ok";
+	return "button.save";
     }
 
     protected String getPageTitleText() {

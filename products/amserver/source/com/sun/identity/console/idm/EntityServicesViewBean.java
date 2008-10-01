@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityServicesViewBean.java,v 1.3 2008-06-25 05:42:59 qcheng Exp $
+ * $Id: EntityServicesViewBean.java,v 1.4 2008-10-01 16:18:00 babysunil Exp $
  *
  */
 
@@ -127,6 +127,8 @@ public class EntityServicesViewBean
 
         ptModel.setValue("button1", 
             getBackButtonLabel("tab.sub.subjects.label"));
+        setPageSessionAttribute(
+               getTrackingTabIDName(), Integer.toString(TAB_SERVICES));
     }
 
     private void createTableModel() {
@@ -279,6 +281,8 @@ public class EntityServicesViewBean
                 String pageTrailID = (String)getPageSessionAttribute(
                     PG_SESSION_PAGE_TRAIL_ID);
 
+                setPageSessionAttribute(
+                   getTrackingTabIDName(), Integer.toString(TAB_SERVICES));
                 propertiesViewBeanURL += "?ServiceName=" + serviceName +
                     "&User=" +
                     Locale.URLEncodeField(universalId, getCharset(model)) +
