@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateFedlet.java,v 1.6 2008-07-31 20:20:46 qcheng Exp $
+ * $Id: CreateFedlet.java,v 1.7 2008-10-02 05:47:26 veiming Exp $
  *
  */
 
@@ -330,7 +330,7 @@ public class CreateFedlet
         String extended = FedletMetaData.createExtendedMetaData(realm,
             entityId, attrMapping);
         
-        ImportSAML2MetaData.importData(null, metadata, extended);
+        ImportSAML2MetaData.importData(realm, metadata, extended);
         if ((cot != null) && (cot.length() > 0)) {
             try {
                 AddProviderToCOT.addToCOT(realm, cot, entityId);
