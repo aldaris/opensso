@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentityRepository.java,v 1.18 2008-08-07 17:22:08 arviranga Exp $
+ * $Id: AMIdentityRepository.java,v 1.19 2008-10-02 16:41:08 veiming Exp $
  *
  */
 
@@ -47,12 +47,10 @@ import com.iplanet.sso.SSOToken;
 import com.sun.identity.common.CaseInsensitiveHashMap;
 import com.sun.identity.common.DNUtils;
 import com.sun.identity.idm.server.IdServicesImpl;
-import com.sun.identity.shared.datastruct.OrderedSet;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.DNMapper;
 import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.SMSException;
-import com.sun.identity.sm.ServiceManager;
 
 /**
  * The class <code> AMIdentityRepository </code> represents an object to access
@@ -72,15 +70,10 @@ import com.sun.identity.sm.ServiceManager;
  */
 public final class AMIdentityRepository {
     private SSOToken token;
-
     private String organizationDN;
-    
     private String idRealmName;
 
-    private IdRepo pluginClass;
-
     public static Debug debug = Debug.getInstance("amIdm");
-
     public static Map listeners = new CaseInsensitiveHashMap();
 
     /**

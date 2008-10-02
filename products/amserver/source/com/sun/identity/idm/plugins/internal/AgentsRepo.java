@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.40 2008-09-19 20:44:48 arviranga Exp $
+ * $Id: AgentsRepo.java,v 1.41 2008-10-02 16:41:08 veiming Exp $
  *
  */
 
@@ -304,7 +304,12 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
                 ServiceConfig orgConfig = getOrgConfig(token);
                 aCfg = orgConfig.getSubConfig(name);
                 if (aCfg != null) {
+                    String agentType = orgConfig.getSubConfig(name).getSchemaID();
+                    boolean isSharedAgent = agentType.equals("SharedAgent");
                     orgConfig.removeSubConfig(name);
+                    if (!isSharedAgent) {
+                        removeIdentityFromAgentAuthenticators(name);
+                    }
                 } else {
                     // Agent not found, throw an exception
                     Object args[] = { name, type.getName() };
@@ -1774,4 +1779,43 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             }
         }
     }
+    
+    private void removeIdentityFromAgentAuthenticators(String name) {
+       SSOToken superAdminToken = (SSOToken) AccessController.doPrivileged(
+           AdminTokenAction.getInstance());
+       try {
+           Map map = new HashMap(2);
+           Set set = new HashSet(2);
+           set.add("SharedAgent");
+           map.put("AgentType", set);
+           RepoSearchResults results = search(
+               superAdminToken, IdType.AGENTONLY, "*", map, false, 0, 0, null);
+           Set res = results.getSearchResults();
+           
+           if ((res != null) && !res.isEmpty()) {
+               for (Iterator i = res.iterator(); i.hasNext();) {
+                   String agentName = (String) i.next();
+                   Map attrValues = getAttributes(superAdminToken,
+                       IdType.AGENTONLY, agentName);
+                   Set agentToReads = (Set) attrValues.get(
+                       "AgentsAllowedToRead");
+
+                   if ((agentToReads != null) && !agentToReads.isEmpty()) {
+                       if (agentToReads.remove(name)) {
+                           Map attrMap = new HashMap(2);
+                           attrMap.put("AgentsAllowedToRead", agentToReads);
+                           setAttributes(superAdminToken, IdType.AGENTONLY,
+                               agentName, attrMap, false);
+                       }
+                   }
+               }
+           }
+       } catch (IdRepoException e) {
+           debug.warning(
+               "AgentRepo.removeIdentityFromAgentAuthenticators", e);
+       } catch (SSOException e) {
+           debug.warning(
+               "AgentRepo.removeIdentityFromAgentAuthenticators", e);
+       }
+    } 
 }
