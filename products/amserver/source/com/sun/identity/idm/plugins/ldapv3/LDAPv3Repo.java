@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.57 2008-09-06 20:56:51 goodearth Exp $
+ * $Id: LDAPv3Repo.java,v 1.58 2008-10-02 23:07:09 goodearth Exp $
  *
  */
 
@@ -1199,6 +1199,7 @@ public class LDAPv3Repo extends IdRepo {
             return false;
         }
         LDAPConnection ld = null;
+        int resultCode = 0;
         try {
             ld = connPool.getConnection();
             enableCache(ld);
@@ -1232,7 +1233,7 @@ public class LDAPv3Repo extends IdRepo {
                 }
                 break;
             }
-            int resultCode = e.getLDAPResultCode();
+            resultCode = e.getLDAPResultCode();
             if ((resultCode == 80) || (resultCode == 81) ||
                 (resultCode == 82)) {
                 String ldapError = Integer.toString(resultCode);
@@ -1245,7 +1246,7 @@ public class LDAPv3Repo extends IdRepo {
             return false;
         } finally {
             if (ld != null) {
-                connPool.close(ld);
+                connPool.close(ld, resultCode);
             }
         }
         return true;
@@ -1262,6 +1263,7 @@ public class LDAPv3Repo extends IdRepo {
       LDAPEntry foundEntry = null;
 
         LDAPConnection ld = null;
+        int resultCode = 0;
         try {
             ld = connPool.getConnection();
             enableCache(ld);
@@ -1296,7 +1298,7 @@ public class LDAPv3Repo extends IdRepo {
                 break;
             }
 
-            int resultCode = e.getLDAPResultCode();
+            resultCode = e.getLDAPResultCode();
             if ((resultCode == 80) || (resultCode == 81) || (resultCode == 82)){
                 String ldapError = Integer.toString(resultCode);
                 Object[] args = {CLASS_NAME, LDAPv3Bundle.getString(ldapError)};
@@ -1308,7 +1310,7 @@ public class LDAPv3Repo extends IdRepo {
             return false;
         } finally {
             if (ld != null) {
-                connPool.close(ld);
+                connPool.close(ld, resultCode);
             }
         }
         return true;
@@ -1835,6 +1837,7 @@ public class LDAPv3Repo extends IdRepo {
         }
         String eDN = getDN(type, name);
         LDAPConnection ld = null;
+        int resultCode = 0;
         Map origAttrMap = null;
         try {
             ld = connPool.getConnection();
@@ -1938,6 +1941,7 @@ public class LDAPv3Repo extends IdRepo {
                 LDAPEntry theEntry = new LDAPEntry(eDN, ldapAttrSet);
                 ld.add(theEntry);
             } catch (LDAPException lde) {
+                resultCode = lde.getLDAPResultCode();
                 debug.error("LDAPv3Repo.create failed. errorCode=" +
                     lde.getLDAPResultCode() + "  " + lde.getLDAPErrorMessage());
                 if (debug.messageEnabled()) {
@@ -1948,7 +1952,7 @@ public class LDAPv3Repo extends IdRepo {
             }
         } finally {
             if (ld != null) {
-                connPool.close(ld);
+                connPool.close(ld, resultCode);
             }
         }
         if (type.equals(IdType.GROUP) && (defaultGrpMem != null)) {
@@ -1965,6 +1969,7 @@ public class LDAPv3Repo extends IdRepo {
                             LDAPv2.SCOPE_BASE);
                     }
                 } catch (LDAPException lde) {
+                    resultCode = lde.getLDAPResultCode();
                     debug.error("LDAPv3Repo.create failed mod user. errorCode="
                         + lde.getLDAPResultCode() + "  " +
                         lde.getLDAPErrorMessage());
@@ -1976,7 +1981,7 @@ public class LDAPv3Repo extends IdRepo {
                     handleLDAPException(lde, eDN);
                 } finally {
                     if (ld != null) {
-                        connPool.close(ld);
+                        connPool.close(ld, resultCode);
                     }
                 }
             }
@@ -2000,12 +2005,13 @@ public class LDAPv3Repo extends IdRepo {
         checkConnPool();
         String eDN = getDN(type, name);
         LDAPConnection ld = null;
+        int resultCode = 0;
         try {
             ld = connPool.getConnection();
             enableCache(ld);
             ld.delete(eDN);
         } catch (LDAPException lde) {
-            int resultCode = lde.getLDAPResultCode();
+            resultCode = lde.getLDAPResultCode();
             String ldeErrMsg = lde.getLDAPErrorMessage();
             if (debug.messageEnabled()) {
                 debug.message("LDAPv3Repo: delete, error: " +
@@ -2014,7 +2020,7 @@ public class LDAPv3Repo extends IdRepo {
             handleLDAPException(lde, eDN);
         } finally {
             if (ld != null) {
-                connPool.close(ld);
+                connPool.close(ld, resultCode);
             }
         }
     }
@@ -2064,6 +2070,7 @@ public class LDAPv3Repo extends IdRepo {
         checkConnPool();
         String dn = getDN(type, name);
         LDAPConnection ld = null;
+        int resultCode = 0;
         try {
             ld = connPool.getConnection();
             enableCache(ld);
@@ -2214,6 +2221,7 @@ public class LDAPv3Repo extends IdRepo {
                 }
             }
         } catch (LDAPException lde) {
+            resultCode = lde.getLDAPResultCode();
             String ldeErrMsg = lde.getLDAPErrorMessage();
             if (debug.warningEnabled()) {
                 debug.warning("LDAPv3Repo.getAttributes failed. errorCode=" +
@@ -2222,7 +2230,7 @@ public class LDAPv3Repo extends IdRepo {
             handleLDAPException(lde, dn);
         } finally {
             if (ld != null) {
-                connPool.close(ld);
+                connPool.close(ld, resultCode);
             }
         }
         if (debug.messageEnabled()) {
@@ -2295,6 +2303,7 @@ public class LDAPv3Repo extends IdRepo {
 
         checkConnPool();
         LDAPConnection ld = null;
+        int resultCode = 0;
         Set groupMemberDNs = null;
         try {
             ld = connPool.getConnection();
@@ -2329,7 +2338,7 @@ public class LDAPv3Repo extends IdRepo {
                 }
             }
         } catch (LDAPException lde) {
-            int resultCode = lde.getLDAPResultCode();
+            resultCode = lde.getLDAPResultCode();
             String ldeErrMsg = lde.getLDAPErrorMessage();
             debug.error("LDAPv3Repo: findDynamicGroupMembersByUrl. "
                 + "ld.search error: " + resultCode);
@@ -2341,7 +2350,7 @@ public class LDAPv3Repo extends IdRepo {
         } finally {
             // release the ldap connection back to the pool
             if (ld != null) {
-                connPool.close(ld);
+                connPool.close(ld, resultCode);
             }
         }
 
@@ -2364,13 +2373,14 @@ public class LDAPv3Repo extends IdRepo {
         }
         LDAPEntry groupEntry = null;
         LDAPConnection ld = null;
+        int resultCode = 0;
         try {
             ld = connPool.getConnection();
             enableCache(ld);
             groupEntry = ld.read(dn);
         } catch (LDAPException e) {
             debug.error("LDAPGroups: invalid group name " + name);
-            int resultCode = e.getLDAPResultCode();
+            resultCode = e.getLDAPResultCode();
             if (debug.messageEnabled()) {
                 debug.message("LDAPGroups: invalid group name " + name, e);
             }
@@ -2386,7 +2396,7 @@ public class LDAPv3Repo extends IdRepo {
             return null;
         } finally {
             if (ld != null) {
-                connPool.close(ld);
+                connPool.close(ld, resultCode);
             }
         }
         LDAPAttribute attribute = groupEntry.getAttribute(uniqueMemberAttr);
@@ -2420,6 +2430,7 @@ public class LDAPv3Repo extends IdRepo {
 
         checkConnPool();
         LDAPConnection ld = null;
+        int resultCode = 0;
         Set roleMemberDNs = null;
         try {
             ld = connPool.getConnection();
@@ -2450,7 +2461,7 @@ public class LDAPv3Repo extends IdRepo {
                     // ignore referrals
                     continue;
                 } catch (LDAPException le) {
-                    int resultCode = le.getLDAPResultCode();
+                    resultCode = le.getLDAPResultCode();
                     // If time or size limit has reached, return the results
                     if (resultCode == LDAPException.TIME_LIMIT_EXCEEDED ||
                         resultCode == LDAPException.LDAP_TIMEOUT ||
@@ -2471,7 +2482,7 @@ public class LDAPv3Repo extends IdRepo {
                 }
             }
         } catch (LDAPException lde) {
-            int resultCode = lde.getLDAPResultCode();
+            resultCode = lde.getLDAPResultCode();
             debug.error("LDAPv3Repo: getManagedRoleMembers, ld.search error"
                 + resultCode);
             if (debug.messageEnabled()) {
@@ -2481,7 +2492,7 @@ public class LDAPv3Repo extends IdRepo {
             handleLDAPException(lde, getDN(type, name));
         } finally {
             if (ld != null) {
-                connPool.close(ld);
+                connPool.close(ld, resultCode);
             }
         }
         if (debug.messageEnabled()) {
@@ -2504,6 +2515,7 @@ public class LDAPv3Repo extends IdRepo {
         checkConnPool();
         Set roleMemberDNs = null;
         LDAPConnection ld = null;
+        int resultCode = 0;
         String dn = null;
         try {
             ld = connPool.getConnection();
@@ -2542,7 +2554,7 @@ public class LDAPv3Repo extends IdRepo {
                         } catch (LDAPReferralException lre) {
                             // ignore referrals
                         } catch (LDAPException le) {
-                            int resultCode = le.getLDAPResultCode();
+                            resultCode = le.getLDAPResultCode();
                             /*
                              * If time or size limit has reached, return
                              * the results.
@@ -2572,7 +2584,7 @@ public class LDAPv3Repo extends IdRepo {
                 } // outer while
             }
         } catch (LDAPException lde) {
-            int resultCode = lde.getLDAPResultCode();
+            resultCode = lde.getLDAPResultCode();
             debug.error("LDAPv3Repo: getFilteredRoleMembers, ld.read"
                 + resultCode);
             if (debug.messageEnabled()) {
@@ -2582,7 +2594,7 @@ public class LDAPv3Repo extends IdRepo {
             handleLDAPException(lde, dn);
         } finally {
             if (ld != null) {
-                connPool.close(ld);
+                connPool.close(ld, resultCode);
             }
         }
         if (debug.messageEnabled()) {
@@ -2663,6 +2675,7 @@ public class LDAPv3Repo extends IdRepo {
 
         checkConnPool();
         LDAPConnection ld = null;
+        int resultCode = 0;
         String dn = null;
         Set groupDNs = null;
         try {
@@ -2689,7 +2702,7 @@ public class LDAPv3Repo extends IdRepo {
                 }
             }
         } catch (LDAPException lde) {
-            int resultCode = lde.getLDAPResultCode();
+            resultCode = lde.getLDAPResultCode();
             debug.error("LDAPv3Repo: getGroupMemberShips. ld.read error: "
                 + resultCode);
             if (debug.messageEnabled()) {
@@ -2699,7 +2712,7 @@ public class LDAPv3Repo extends IdRepo {
             handleLDAPException(lde, dn);
         } finally {
             if (ld != null) {
-                connPool.close(ld);
+                connPool.close(ld, resultCode);
             }
         }
         return  groupDNs;
@@ -2715,6 +2728,7 @@ public class LDAPv3Repo extends IdRepo {
         checkConnPool();
         Set groupDNs = null;
         LDAPConnection ld = null;
+        int ldapResultCode = 0;
         try {
             ld = connPool.getConnection();
             enableCache(ld);
@@ -2753,7 +2767,7 @@ public class LDAPv3Repo extends IdRepo {
                 }
             }
         } catch (LDAPException e) {
-            int ldapResultCode = e.getLDAPResultCode();
+            ldapResultCode = e.getLDAPResultCode();
             if (debug.messageEnabled()) {
                 debug.message("  Search for User error: ", e);
                 debug.message("resultCode: " + ldapResultCode);
@@ -2766,7 +2780,7 @@ public class LDAPv3Repo extends IdRepo {
             throw ide;
         } finally {
             if (ld != null) {
-                connPool.close(ld);
+                connPool.close(ld, ldapResultCode);
             }
         }
 
@@ -2804,6 +2818,7 @@ public class LDAPv3Repo extends IdRepo {
         checkConnPool();
         Set roleDNs = null;
         LDAPConnection ld = null;
+        int resultCode = 0;
         String dn = null;
         try {
             ld = connPool.getConnection();
@@ -2826,7 +2841,7 @@ public class LDAPv3Repo extends IdRepo {
                 }
             }
         } catch (LDAPException lde) {
-            int resultCode = lde.getLDAPResultCode();
+            resultCode = lde.getLDAPResultCode();
             debug.error("LDAPv3Repo: getManagedRoleMemberShips. ld.read error"
                 + resultCode + ";  dn=" + dn);
             if (debug.messageEnabled()) {
@@ -2836,7 +2851,7 @@ public class LDAPv3Repo extends IdRepo {
             handleLDAPException(lde, dn);
         } finally {
             if (ld != null) {
-                connPool.close(ld);
+                connPool.close(ld, resultCode);
             }
         }
         return roleDNs;
@@ -2849,6 +2864,7 @@ public class LDAPv3Repo extends IdRepo {
         checkConnPool();
         Set allRoleDNs = null;
         LDAPConnection ld = null;
+        int resultCode = 0;
         String dn = null;
         try {
             ld = connPool.getConnection();
@@ -2898,7 +2914,7 @@ public class LDAPv3Repo extends IdRepo {
             }
             allRoleDNs = result;
         } catch (LDAPException lde) {
-            int resultCode = lde.getLDAPResultCode();
+            resultCode = lde.getLDAPResultCode();
             if (debug.messageEnabled()) {
                 debug.message("LDAPv3Repo: getFilteredRoleMemberShips: " +
                     "ld.read: error", lde);
@@ -2906,7 +2922,7 @@ public class LDAPv3Repo extends IdRepo {
             handleLDAPException(lde, dn);
         } finally {
             if (ld != null) {
-                connPool.close(ld);
+                connPool.close(ld, resultCode);
             }
         }
         return allRoleDNs;
@@ -2961,6 +2977,7 @@ public class LDAPv3Repo extends IdRepo {
         checkConnPool();
         String groupDN = getDN(type, name);
         LDAPConnection ld = null;
+        int resultCode = 0;
         try {
             ld = connPool.getConnection();
             enableCache(ld);
@@ -3022,7 +3039,7 @@ public class LDAPv3Repo extends IdRepo {
                         ld.modify(userDN, modMemberOf);
                     }
                 } catch (LDAPException lde) {
-                    int resultCode = lde.getLDAPResultCode();
+                    resultCode = lde.getLDAPResultCode();
                     debug.error("LDAPv3Repo: modifyGroupMembership ld.modify: "
                         + resultCode + " groupDN = " + groupDN
                         + " userDN= " + userDN );
@@ -3035,7 +3052,7 @@ public class LDAPv3Repo extends IdRepo {
             }
         } finally {
             if (ld != null) {
-                connPool.close(ld);
+                connPool.close(ld, resultCode);
             }
         }
     }
@@ -3050,6 +3067,7 @@ public class LDAPv3Repo extends IdRepo {
         // is controlled by a filtered.
         String roleDN = getDN(type, name);
         LDAPConnection ld = null;
+        int resultCode = 0;
         try {
             ld = connPool.getConnection();
             enableCache(ld);
@@ -3072,7 +3090,7 @@ public class LDAPv3Repo extends IdRepo {
                         ldapCache.flushEntries(userDN, LDAPv2.SCOPE_BASE);
                     }
                 } catch (LDAPException lde) {
-                    int resultCode = lde.getLDAPResultCode();
+                    resultCode = lde.getLDAPResultCode();
                     debug.error("LDAPv3Repo: modifyRoleMembership ld.modify: "
                         + resultCode + " userDN= " + userDN + " roleDN= " +
                         roleDN);
@@ -3085,7 +3103,7 @@ public class LDAPv3Repo extends IdRepo {
             }
         } finally {
             if (ld != null) {
-                connPool.close(ld);
+                connPool.close(ld, resultCode);
             }
         }
     }
@@ -3197,6 +3215,7 @@ public class LDAPv3Repo extends IdRepo {
                 ldapModSet.add(LDAPModification.REPLACE, theAttr);
             } // while
             LDAPConnection ld = null;
+            int resultCode = 0;
             try {
                 ld = connPool.getConnection();
                 enableCache(ld);
@@ -3205,7 +3224,7 @@ public class LDAPv3Repo extends IdRepo {
                     ldapCache.flushEntries(eDN, LDAPv2.SCOPE_BASE);
                 }
             } catch (LDAPException lde) {
-                int resultCode = lde.getLDAPResultCode();
+                resultCode = lde.getLDAPResultCode();
                 debug.error("LDAPv3Repo: setAttributes, ld.modify error: " +
                     resultCode);
                 if (debug.messageEnabled()) {
@@ -3215,7 +3234,7 @@ public class LDAPv3Repo extends IdRepo {
                 handleLDAPException(lde, eDN);
             } finally {
                 if (ld != null) {
-                    connPool.close(ld);
+                    connPool.close(ld, resultCode);
                 }
             }
         }
@@ -3255,6 +3274,7 @@ public class LDAPv3Repo extends IdRepo {
         }
         boolean attrsOnly = false;
         LDAPConnection ld = null;
+        int ldapErrCode = 0;
         Map allEntryMap = null;
         Set allEntries = null;
         int errorCode;
@@ -3468,7 +3488,7 @@ public class LDAPv3Repo extends IdRepo {
                     }
                 } // while
             } catch (LDAPException e) {
-                int ldapErrCode = e.getLDAPResultCode();
+                ldapErrCode = e.getLDAPResultCode();
                 switch (errorCode) {
                     case LDAPException.TIME_LIMIT_EXCEEDED:
                     case LDAPException.LDAP_TIMEOUT:
@@ -3486,7 +3506,7 @@ public class LDAPv3Repo extends IdRepo {
             }
         } finally {
             if (ld != null) {
-                connPool.close(ld);
+                connPool.close(ld, ldapErrCode);
             }
         }
         if (debug.messageEnabled()) {
@@ -3569,8 +3589,10 @@ public class LDAPv3Repo extends IdRepo {
 
         Map attributesCase =
             new CaseInsensitiveHashMap(attributes);
-        attributesCase = doPasswordEncode(type, name, attributesCase, unicodePwd);
-        attributesCase = doPasswordEncode(type, name, attributesCase, userPassword);
+        attributesCase = doPasswordEncode(type, name, attributesCase, 
+            unicodePwd);
+        attributesCase = doPasswordEncode(type, name, attributesCase, 
+            userPassword);
         appendInetUser(token, type, name, attributesCase, isString);
 
         LDAPModificationSet ldapModSet = new LDAPModificationSet();
@@ -3685,6 +3707,7 @@ public class LDAPv3Repo extends IdRepo {
             }
         }
         LDAPConnection ld = null;
+        int resultCode = 0;
         try {
             ld = connPool.getConnection();
             enableCache(ld);
@@ -3696,7 +3719,7 @@ public class LDAPv3Repo extends IdRepo {
                 ldapCache.flushEntries(eDN, LDAPv2.SCOPE_BASE);
             }
         } catch (LDAPException lde) {
-            int resultCode = lde.getLDAPResultCode();
+            resultCode = lde.getLDAPResultCode();
             if (debug.warningEnabled()) {
                 debug.warning("LDAPv3Repo: setAttributes, ld.modify error: " +
                     resultCode, lde);
@@ -3704,7 +3727,7 @@ public class LDAPv3Repo extends IdRepo {
             handleLDAPException(lde, eDN);
         } finally {
             if (ld != null) {
-                connPool.close(ld);
+                connPool.close(ld, resultCode);
             }
         }
     }
@@ -4278,6 +4301,7 @@ public class LDAPv3Repo extends IdRepo {
 
         checkConnPool();
         LDAPConnection ldc = null;
+        int ldapResultCode = 0;
         try {
             ldc = connPool.getConnection();
             enableCache(ldc);
@@ -4305,7 +4329,7 @@ public class LDAPv3Repo extends IdRepo {
                 }
             } 
         } catch (LDAPException e) {
-            int ldapResultCode = e.getLDAPResultCode();
+            ldapResultCode = e.getLDAPResultCode();
             if (debug.messageEnabled()) {
                 debug.message("Search for User error: ", e);
                 debug.message("resultCode: " + ldapResultCode);
@@ -4318,7 +4342,7 @@ public class LDAPv3Repo extends IdRepo {
             throw ide;
         } finally {
             if (ldc != null) {
-                connPool.close(ldc);
+                connPool.close(ldc, ldapResultCode);
             }
         }
         if (userMatches > 1) {
