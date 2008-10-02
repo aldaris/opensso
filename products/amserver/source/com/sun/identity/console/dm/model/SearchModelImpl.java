@@ -22,15 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SearchModelImpl.java,v 1.3 2008-07-10 23:27:23 veiming Exp $
+ * $Id: SearchModelImpl.java,v 1.4 2008-10-02 16:31:28 veiming Exp $
  *
  */
 
 package com.sun.identity.console.dm.model;
  
-import com.sun.identity.console.property.PropertyTemplate;
-import com.sun.identity.console.base.model.AMAdminUtils;
-import com.sun.identity.console.base.model.AMConsoleException;
 import com.iplanet.am.sdk.AMAssignableDynamicGroup;
 import com.iplanet.am.sdk.AMConstants;
 import com.iplanet.am.sdk.AMDynamicGroup;
@@ -49,8 +46,12 @@ import com.iplanet.am.sdk.AMStaticGroup;
 import com.iplanet.am.sdk.AMStoreConnection;
 import com.iplanet.am.sdk.AMTemplate;
 import com.iplanet.sso.SSOException;
-import com.sun.identity.console.property.PropertyXMLBuilder;
 import com.sun.identity.common.admin.AdminInterfaceUtils;
+import com.sun.identity.console.base.model.AMAdminUtils;
+import com.sun.identity.console.base.model.AMConsoleException;
+import com.sun.identity.console.property.PropertyTemplate;
+import com.sun.identity.console.property.PropertyXMLBuilder;
+import com.sun.identity.console.property.PropertyXMLBuilderBase;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceSchema;
@@ -397,7 +398,7 @@ public class SearchModelImpl extends DMModelBase
             SUB_SCHEMA_GROUP, SchemaType.GLOBAL, false);
 
         StringBuffer buff = new StringBuffer(2000);
-        buff.append(PropertyTemplate.DEFINITION)
+        buff.append(PropertyXMLBuilderBase.getXMLDefinitionHeader())
             .append(PropertyTemplate.START_TAG)
             .append(START_SECTION)
             .append(SEARCH_SCOPE)
@@ -456,7 +457,7 @@ public class SearchModelImpl extends DMModelBase
      */  
     public String getSearchXML() {
         StringBuffer buff = new StringBuffer(2000);
-        buff.append(PropertyTemplate.DEFINITION)
+        buff.append(PropertyXMLBuilderBase.getXMLDefinitionHeader())
             .append(PropertyTemplate.START_TAG)
             .append(START_SECTION)
             .append(getFilterAttributesXML())

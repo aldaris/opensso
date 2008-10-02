@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyPropertyXMLBuilderBase.java,v 1.4 2008-07-10 23:27:24 veiming Exp $
+ * $Id: PolicyPropertyXMLBuilderBase.java,v 1.5 2008-10-02 16:31:29 veiming Exp $
  *
  */
 
@@ -55,7 +55,7 @@ public abstract class PolicyPropertyXMLBuilderBase
      */
     public String getXML(String prefix) {
         StringBuffer xml = new StringBuffer(1000);
-        xml.append(DEFINITION)
+        xml.append(getXMLDefinitionHeader())
             .append(START_TAG)
             .append(prefix);
         List propertyNames = getPropertyNames();

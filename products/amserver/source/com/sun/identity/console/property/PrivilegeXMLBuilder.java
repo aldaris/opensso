@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeXMLBuilder.java,v 1.2 2008-06-25 05:43:09 qcheng Exp $
+ * $Id: PrivilegeXMLBuilder.java,v 1.3 2008-10-02 16:31:29 veiming Exp $
  *
  */
 
@@ -83,7 +83,7 @@ public class PrivilegeXMLBuilder
             Set privileges = mgr.getConfiguredPrivilegeNames();
 
             if ((privileges != null) && !privileges.isEmpty()) {
-                xml.append(DEFINITION)
+                xml.append(PropertyXMLBuilderBase.getXMLDefinitionHeader())
                    .append(START_TAG)
                    .append(PRIVILEGE_SECTION_TAG);
             

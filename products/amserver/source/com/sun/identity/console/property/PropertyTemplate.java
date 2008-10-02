@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PropertyTemplate.java,v 1.4 2008-09-04 23:59:37 veiming Exp $
+ * $Id: PropertyTemplate.java,v 1.5 2008-10-02 16:31:29 veiming Exp $
  *
  */
 
@@ -72,7 +72,7 @@ public interface PropertyTemplate {
                                                                                 
     String PWD_CONFIRM_SUFFIX = "_confirm";
 
-    String DEFINITION = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" + 
+    String DEFINITION = "<?xml version=\"1.0\" encoding=\"{0}\" ?>\n" + 
         "<!DOCTYPE propertysheet SYSTEM \"propertysheet.dtd\">\n";
     String START_TAG = "<propertysheet>\n";
     String END_TAG = "</propertysheet>\n";

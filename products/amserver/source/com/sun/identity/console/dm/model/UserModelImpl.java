@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserModelImpl.java,v 1.5 2008-08-19 19:09:07 veiming Exp $
+ * $Id: UserModelImpl.java,v 1.6 2008-10-02 16:31:28 veiming Exp $
  *
  */
 
@@ -54,6 +54,7 @@ import com.sun.identity.console.base.model.AMSystemConfig;
 import com.sun.identity.console.delegation.model.DelegationConfig;
 import com.sun.identity.console.property.PropertyTemplate;
 import com.sun.identity.console.property.PropertyXMLBuilder;
+import com.sun.identity.console.property.PropertyXMLBuilderBase;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceSchema;
@@ -838,7 +839,7 @@ public class UserModelImpl
 	    Set attributes = getUserAttributes(SchemaType.USER);
 	    String[] show = {"required", "optional"};
 	    PropertyXMLBuilder.filterAttributes(attributes, show);
-	    buff.append(PropertyTemplate.DEFINITION)
+	    buff.append(PropertyXMLBuilderBase.getXMLDefinitionHeader())
 		.append(PropertyTemplate.START_TAG);
 	    getPropertyXML(attributes, buff, false);
 	    buff.append(PropertyTemplate.END_TAG);
@@ -910,7 +911,7 @@ public class UserModelImpl
 
 	    String[] show = {"display", "adminDisplay"};
 	    PropertyXMLBuilder.filterAttributes(attributes, show);
-	    buff.append(PropertyTemplate.DEFINITION)
+	    buff.append(PropertyXMLBuilderBase.getXMLDefinitionHeader())
 		.append(PropertyTemplate.START_TAG);
 	    getPropertyXML(attributes, buff, !canModify);
 

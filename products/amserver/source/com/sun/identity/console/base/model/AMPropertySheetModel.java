@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMPropertySheetModel.java,v 1.8 2008-09-08 14:58:28 veiming Exp $
+ * $Id: AMPropertySheetModel.java,v 1.9 2008-10-02 16:31:27 veiming Exp $
  *
  */
 
@@ -133,18 +133,7 @@ public class AMPropertySheetModel
     }
 
     public AMPropertySheetModel(String name) {
-
-        // Lockhart is using platform's native encoding to construct
-        // an InputStream object from the xml document passed as a string
-        // to this constructor. Fix for processing non-ascii
-        // characters in the xml document using UTF-8.
-        try {
-            setDocument(new ByteArrayInputStream(
-                name.getBytes(UTF_8)));
-        } catch(UnsupportedEncodingException uee) {
-            setDocument(new ByteArrayInputStream(
-                name.getBytes()));
-        }
+            setDocument(new ByteArrayInputStream(name.getBytes()));
     }
 
     public AMPropertySheetModel(ServletContext sc, String file) {
@@ -159,7 +148,7 @@ public class AMPropertySheetModel
         try {
             String strXML = toString(is);
             strXML = extractAddRemoveOptions(strXML);
-            is = new ByteArrayInputStream(strXML.getBytes(UTF_8));
+            is = new ByteArrayInputStream(strXML.getBytes());
         } catch (IOException e) {
             AMModelBase.debug.error("AMPropertySheetModel.setDocument", e);
         }

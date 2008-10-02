@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PropertyXMLBuilderBase.java,v 1.14 2008-09-19 15:55:30 veiming Exp $
+ * $Id: PropertyXMLBuilderBase.java,v 1.15 2008-10-02 16:31:29 veiming Exp $
  *
  */
 
@@ -36,6 +36,9 @@ import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -65,8 +68,10 @@ public abstract class PropertyXMLBuilderBase
     protected static Map mapUITypeToName = new HashMap(8);
     protected static Map mapTypeToName = new HashMap(8);
     protected static Map mapSyntaxToName = new HashMap(20);
+    private static String platformDefaultEncoding;
 
     static {
+        getDefaultEncoding();
         mapSchemaTypeToName.put(SchemaType.GLOBAL, "schemaType.global");
         mapSchemaTypeToName.put(SchemaType.ORGANIZATION,
             "schemaType.organization");
@@ -1019,12 +1024,12 @@ public abstract class PropertyXMLBuilderBase
     ) {
         return (addSection)
             ?
-                PropertyTemplate.DEFINITION + PropertyTemplate.START_TAG +
+                getXMLDefinitionHeader() + PropertyTemplate.START_TAG +
                     PropertyTemplate.SECTION_DUMMY_START_TAG +
                         properties + PropertyTemplate.SECTION_END_TAG +
                             PropertyTemplate.END_TAG
             :
-                PropertyTemplate.DEFINITION + PropertyTemplate.START_TAG +
+                getXMLDefinitionHeader() + PropertyTemplate.START_TAG +
                         properties + PropertyTemplate.END_TAG;
     }
 
@@ -1064,5 +1069,17 @@ public abstract class PropertyXMLBuilderBase
         return hasAnyAttribute(as.getAny(), ANY_REQUIRED) ||
             ((as.getValidator() != null) &&
             as.getValidator().equals("RequiredValueValidator"));
+    }
+
+    private static void getDefaultEncoding() {
+        byte [] byteArray = {'a'};
+        InputStream inputStream = new ByteArrayInputStream(byteArray);
+        InputStreamReader reader = new InputStreamReader(inputStream);
+        platformDefaultEncoding = reader.getEncoding();
+    }
+
+    public static String getXMLDefinitionHeader() {
+        Object[] param = {platformDefaultEncoding};
+        return MessageFormat.format(PropertyTemplate.DEFINITION, param);
     }
 }

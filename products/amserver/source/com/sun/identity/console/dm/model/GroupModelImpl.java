@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GroupModelImpl.java,v 1.4 2008-07-10 23:27:23 veiming Exp $
+ * $Id: GroupModelImpl.java,v 1.5 2008-10-02 16:31:27 veiming Exp $
  *
  */
 
@@ -30,13 +30,14 @@ package com.sun.identity.console.dm.model;
 
 import com.sun.identity.common.DisplayUtils;
 import com.sun.identity.common.admin.AdminInterfaceUtils;
-import com.sun.identity.console.property.PropertyTemplate;
 import com.sun.identity.console.base.model.AMAdminUtils;
 import com.sun.identity.console.base.model.AMAdminConstants;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMFormatUtils;
 import com.sun.identity.console.delegation.model.DelegationConfig;
+import com.sun.identity.console.property.PropertyTemplate;
 import com.sun.identity.console.property.PropertyXMLBuilder;
+import com.sun.identity.console.property.PropertyXMLBuilderBase;
 import com.iplanet.am.sdk.AMAssignableDynamicGroup;
 import com.iplanet.am.sdk.AMConstants;
 import com.iplanet.am.sdk.AMException;
@@ -603,7 +604,7 @@ public class GroupModelImpl extends DMModelBase
             SUB_SCHEMA_GROUP, SchemaType.GLOBAL, false);
 
         StringBuffer buff = new StringBuffer(2000);
-        buff.append(PropertyTemplate.DEFINITION)
+        buff.append(PropertyXMLBuilderBase.getXMLDefinitionHeader())
             .append(PropertyTemplate.START_TAG)
             .append(CREATE_PROPERTIES)
             .append(removeSectionTags(attributes))
@@ -621,7 +622,7 @@ public class GroupModelImpl extends DMModelBase
     public String getCreateDynamicGroupXML() {
 
         StringBuffer buff = new StringBuffer(2000);
-        buff.append(PropertyTemplate.DEFINITION)
+        buff.append(PropertyXMLBuilderBase.getXMLDefinitionHeader())
             .append(PropertyTemplate.START_TAG)
             .append(CREATE_PROPERTIES)
             .append(getFilterAttributesXML())
@@ -649,7 +650,7 @@ public class GroupModelImpl extends DMModelBase
 	    schema = SUB_SCHEMA_FILTERED_GROUP;
 	}
         StringBuffer buff = new StringBuffer(2000);
-        buff.append(PropertyTemplate.DEFINITION)
+        buff.append(PropertyXMLBuilderBase.getXMLDefinitionHeader())
             .append(PropertyTemplate.START_TAG);
         buff.append(getPropertyXML(DMConstants.ENTRY_SPECIFIC_SERVICE,
             schema, SchemaType.GLOBAL, !canModify));

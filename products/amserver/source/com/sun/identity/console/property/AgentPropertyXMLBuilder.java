@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentPropertyXMLBuilder.java,v 1.7 2008-09-20 06:38:47 veiming Exp $
+ * $Id: AgentPropertyXMLBuilder.java,v 1.8 2008-10-02 16:31:28 veiming Exp $
  *
  */
 
@@ -117,7 +117,7 @@ public class AgentPropertyXMLBuilder
         throws SMSException, SSOException, AMConsoleException {
         StringBuffer xml = new StringBuffer(1000);
 
-        xml.append(DEFINITION).append(START_TAG);
+        xml.append(getXMLDefinitionHeader()).append(START_TAG);
         AgentTabManager tabMgr = AgentTabManager.getInstance();
         List order = tabMgr.getSectionOrder(agentType, tabName);
         boolean bLocal = (choice != null) && choice.equals("local");

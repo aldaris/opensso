@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PropertyXMLBuilder.java,v 1.3 2008-06-25 05:43:09 qcheng Exp $
+ * $Id: PropertyXMLBuilder.java,v 1.4 2008-10-02 16:31:29 veiming Exp $
  *
  */
 
@@ -222,7 +222,7 @@ public class PropertyXMLBuilder
         onBeforeBuildingXML(mapTypeToAttributeSchema);
 
         if (bPropertySheetElementNode) {
-            xml.append(DEFINITION).append(START_TAG);
+            xml.append(getXMLDefinitionHeader()).append(START_TAG);
         }
 
         if (supportSubConfig) {

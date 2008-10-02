@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GroupContainerModelImpl.java,v 1.3 2008-07-10 23:27:23 veiming Exp $
+ * $Id: GroupContainerModelImpl.java,v 1.4 2008-10-02 16:31:27 veiming Exp $
  *
  */
 
@@ -30,6 +30,7 @@ package com.sun.identity.console.dm.model;
 
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.property.PropertyTemplate;
+import com.sun.identity.console.property.PropertyXMLBuilderBase;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.SchemaType;
@@ -271,7 +272,7 @@ public class GroupContainerModelImpl extends DMModelBase
      */
     public String getCreateGroupContainerXML() {
         StringBuffer buff = new StringBuffer(2000);
-        buff.append(PropertyTemplate.DEFINITION)
+        buff.append(PropertyXMLBuilderBase.getXMLDefinitionHeader())
             .append(PropertyTemplate.START_TAG)
             .append(CREATE_PROPERTIES);    
         

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UMOrganizationModelImpl.java,v 1.3 2008-07-10 23:27:23 veiming Exp $
+ * $Id: UMOrganizationModelImpl.java,v 1.4 2008-10-02 16:31:28 veiming Exp $
  *
  */
 
@@ -35,8 +35,9 @@ import com.sun.identity.console.base.model.AMFormatUtils;
 import com.sun.identity.console.base.model.AMModelBase;
 import com.sun.identity.console.base.model.AMSystemConfig;
 import com.sun.identity.console.delegation.model.DelegationConfig;
-import com.sun.identity.console.property.PropertyXMLBuilder;
 import com.sun.identity.console.property.PropertyTemplate;
+import com.sun.identity.console.property.PropertyXMLBuilder;
+import com.sun.identity.console.property.PropertyXMLBuilderBase;
 import com.sun.identity.sm.SMSException;
 import com.iplanet.am.sdk.AMConstants;
 import com.iplanet.am.sdk.AMException;
@@ -484,7 +485,7 @@ public class UMOrganizationModelImpl
     public String getCreateOrganizationPropertyXML()
 	throws AMConsoleException {
         StringBuffer buff = new StringBuffer(2000);
-        buff.append(PropertyTemplate.DEFINITION)
+        buff.append(PropertyXMLBuilderBase.getXMLDefinitionHeader())
             .append(PropertyTemplate.START_TAG)
             .append(PROPERTY_SECTION_CREATION_GENERAL);
         getPropertyXML(buff, false);
@@ -507,7 +508,7 @@ public class UMOrganizationModelImpl
 	boolean canModify = dConfig.hasPermission(realmName, null,
 	    AMAdminConstants.PERMISSION_MODIFY, this, viewbeanClassName);
         StringBuffer buff = new StringBuffer(2000);
-        buff.append(PropertyTemplate.DEFINITION)
+        buff.append(PropertyXMLBuilderBase.getXMLDefinitionHeader())
             .append(PropertyTemplate.START_TAG) ;
         getPropertyXML(buff, !canModify);
         buff.append(PropertyTemplate.END_TAG);

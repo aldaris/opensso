@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RMRealmModelImpl.java,v 1.3 2008-06-25 05:43:12 qcheng Exp $
+ * $Id: RMRealmModelImpl.java,v 1.4 2008-10-02 16:31:29 veiming Exp $
  *
  */
 
@@ -37,8 +37,9 @@ import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMFormatUtils;
 import com.sun.identity.console.base.model.AMModelBase;
 import com.sun.identity.console.delegation.model.DelegationConfig;
-import com.sun.identity.console.property.PropertyTemplate;
 import com.sun.identity.console.property.MultiServicesPropertyXMLBuilder;
+import com.sun.identity.console.property.PropertyTemplate;
+import com.sun.identity.console.property.PropertyXMLBuilderBase;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.AttributeSchema.Type;
@@ -84,7 +85,7 @@ public class RMRealmModelImpl
     public String getCreateRealmPropertyXML()
         throws AMConsoleException {
         StringBuffer buff = new StringBuffer(2000);
-        buff.append(PropertyTemplate.DEFINITION)
+        buff.append(PropertyXMLBuilderBase.getXMLDefinitionHeader())
             .append(PropertyTemplate.START_TAG)
             .append(PROPERTY_SECTION_CREATION_GENERAL);
         getPropertyXML(buff, false);
@@ -108,7 +109,7 @@ public class RMRealmModelImpl
         boolean canModify = dConfig.hasPermission(realmName, null,
             AMAdminConstants.PERMISSION_MODIFY, this, viewbeanClassName);
         StringBuffer buff = new StringBuffer(2000);
-        buff.append(PropertyTemplate.DEFINITION)
+        buff.append(PropertyXMLBuilderBase.getXMLDefinitionHeader())
             .append(PropertyTemplate.START_TAG);
         getPropertyXML(buff, !canModify);
         buff.append(PropertyTemplate.END_TAG);

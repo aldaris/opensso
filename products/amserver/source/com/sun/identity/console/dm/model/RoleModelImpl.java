@@ -22,13 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RoleModelImpl.java,v 1.3 2008-07-10 23:27:23 veiming Exp $
+ * $Id: RoleModelImpl.java,v 1.4 2008-10-02 16:31:27 veiming Exp $
  *
  */
 
 package com.sun.identity.console.dm.model;
 
-//import com.iplanet.am.console.settings.RoleSettings;
 import com.iplanet.am.sdk.AMConstants;
 import com.iplanet.am.sdk.AMException;
 import com.iplanet.am.sdk.AMObject;
@@ -49,6 +48,7 @@ import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMFormatUtils;
 import com.sun.identity.console.property.PropertyTemplate;
 import com.sun.identity.console.property.PropertyXMLBuilder;
+import com.sun.identity.console.property.PropertyXMLBuilderBase;
 
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.SMSException;
@@ -322,7 +322,7 @@ public class RoleModelImpl extends DMModelBase
 
     public String getServiceXML(String service) {
         StringBuffer buff = new StringBuffer(2000);
-        buff.append(PropertyTemplate.DEFINITION)
+        buff.append(PropertyXMLBuilderBase.getXMLDefinitionHeader())
             .append(PropertyTemplate.START_TAG);
 
         try {
@@ -357,7 +357,7 @@ public class RoleModelImpl extends DMModelBase
 
     public String getRoleProfileXML(int type) {
         StringBuffer buff = new StringBuffer(2000);
-        buff.append(PropertyTemplate.DEFINITION)
+        buff.append(PropertyXMLBuilderBase.getXMLDefinitionHeader())
             .append(PropertyTemplate.START_TAG)
             .append(START_SECTION)
             .append(PROFILE_PROPERTIES);
@@ -372,7 +372,7 @@ public class RoleModelImpl extends DMModelBase
 
     public String getRoleCreateXML(int type) {
         StringBuffer buff = new StringBuffer(2000);
-        buff.append(PropertyTemplate.DEFINITION)
+        buff.append(PropertyXMLBuilderBase.getXMLDefinitionHeader())
             .append(PropertyTemplate.START_TAG)
             .append(CREATE_PROPERTIES);
 

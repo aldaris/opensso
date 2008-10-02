@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubConfigPropertyXMLBuilder.java,v 1.2 2008-06-25 05:43:09 qcheng Exp $
+ * $Id: SubConfigPropertyXMLBuilder.java,v 1.3 2008-10-02 16:31:29 veiming Exp $
  *
  */
 
@@ -128,7 +128,7 @@ public class SubConfigPropertyXMLBuilder
     public String getXML()
         throws SMSException, SSOException {
         StringBuffer xml = new StringBuffer(1000);
-        xml.append(DEFINITION)
+        xml.append(getXMLDefinitionHeader())
            .append(START_TAG);
 
         if (supportSubConfig) {
