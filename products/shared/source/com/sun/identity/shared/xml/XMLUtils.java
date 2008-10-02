@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XMLUtils.java,v 1.9 2008-09-04 23:49:28 exu Exp $
+ * $Id: XMLUtils.java,v 1.10 2008-10-02 06:55:47 veiming Exp $
  *
  */
 
@@ -576,7 +576,7 @@ public class XMLUtils {
                 text = print(textNode);
             }
             if (text != null) {
-                value.append(text);
+                value.append(unescapeSpecialCharacters(text));
             }
         }
         return value.toString();

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RegisterServices.java,v 1.17 2008-07-18 06:58:19 arviranga Exp $
+ * $Id: RegisterServices.java,v 1.18 2008-10-02 06:55:47 veiming Exp $
  *
  */
 
@@ -30,7 +30,7 @@ package com.sun.identity.setup;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceManager;
 import java.io.BufferedReader;
@@ -112,17 +112,20 @@ public class RegisterServices {
         String xml = getResourceContent(umEmbeddedDS);
 
         xml = xml.replaceAll("@UM_CONFIG_ROOT_SUFFIX@",
-            (String) data.get(SetupConstants.SM_CONFIG_ROOT_SUFFIX));
+            XMLUtils.escapeSpecialCharacters(
+                (String)data.get(SetupConstants.SM_CONFIG_ROOT_SUFFIX)));
         xml = xml.replaceAll("@" + SetupConstants.UM_DIRECTORY_SERVER + "@",
-            (String) data.get(
-            SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_HOST));
+            XMLUtils.escapeSpecialCharacters((String)data.get(
+                SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_HOST)));
         xml = xml.replaceAll("@" + SetupConstants.UM_DIRECTORY_PORT + "@",
-            (String) data.get(
-            SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_PORT));
+            XMLUtils.escapeSpecialCharacters((String) data.get(
+                SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_PORT)));
         xml = xml.replaceAll("@UM_DS_DIRMGRDN@",
-            (String) data.get(SetupConstants.CONFIG_VAR_DS_MGR_DN));
+            XMLUtils.escapeSpecialCharacters((String) data.get(
+                SetupConstants.CONFIG_VAR_DS_MGR_DN)));
         xml = xml.replaceAll("@UM_DS_DIRMGRPASSWD@",
-            (String) data.get(SetupConstants.CONFIG_VAR_DS_MGR_PWD));
+            XMLUtils.escapeSpecialCharacters((String) data.get(
+                SetupConstants.CONFIG_VAR_DS_MGR_PWD)));
 
         registerService(xml, adminSSOToken);
     }
