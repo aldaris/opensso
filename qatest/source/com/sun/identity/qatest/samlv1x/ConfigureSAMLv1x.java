@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureSAMLv1x.java,v 1.2 2008-08-27 23:10:26 sridharev Exp $
+ * $Id: ConfigureSAMLv1x.java,v 1.3 2008-10-02 21:34:59 sridharev Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -128,6 +128,14 @@ public class ConfigureSAMLv1x extends TestCommon {
                 assert (false);
             }
             String idpsiteID = getSiteID(idpattrPage);
+            String spauthtype = "NOAUTH";
+            String idpauthtype = "NOAUTH";
+            if (configMap.get(TestConstants.KEY_SP_PROTOCOL).startsWith("https")){
+                spauthtype = "SSL";
+            }
+            if (configMap.get(TestConstants.KEY_IDP_PROTOCOL).startsWith("https")){
+                idpauthtype = "SSL";
+            }
             // Configure SP SAMLv1x site configuration
             String strSPSiteconf = "iplanet-am-saml-partner-urls=" 
                     + "partnername=" + configMap.get(TestConstants.KEY_IDP_HOST) 
@@ -140,8 +148,8 @@ public class ConfigureSAMLv1x extends TestCommon {
                     + "|posturl=" + idpurl + "/SAMLPOSTProfileServlet" 
                     + "|issuer=" + configMap.get(TestConstants.KEY_IDP_HOST) 
                     + ":" + configMap.get(TestConstants.KEY_IDP_PORT) 
-                    + "|hostlist=" + configMap.get(TestConstants.KEY_IDP_HOST) 
-                    + "|AuthType=NOAUTH";
+                    + "|hostlist=" + configMap.get(TestConstants.KEY_IDP_HOST)
+                    + "|AuthType=" + idpauthtype;
             attributevalues.add(strSPSiteconf);
             if (FederationManager.getExitCode(fmSP.addAttrDefs(spWebClient,
                     servicename, schematype, attributevalues, null)) != 0) {
@@ -160,7 +168,7 @@ public class ConfigureSAMLv1x extends TestCommon {
                     + "|issuer=" + configMap.get(TestConstants.KEY_SP_HOST) 
                     + ":" + configMap.get(TestConstants.KEY_SP_PORT) 
                     + "|hostlist=" + configMap.get(TestConstants.KEY_SP_HOST) 
-                    + "|AuthType=NOAUTH";
+                    + "|AuthType=" + spauthtype;
             attributevalues.add(strIDPSiteconf);
             if (FederationManager.getExitCode(fmIDP.addAttrDefs(idpWebClient,
                     servicename, schematype, attributevalues, null)) != 0) {
