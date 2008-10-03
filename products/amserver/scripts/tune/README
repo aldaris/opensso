@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.10 2008-09-20 00:20:34 ykwon Exp $
+$Id: README,v 1.11 2008-10-03 20:06:18 ykwon Exp $
 
 ------------------------------------------------------------------------------
 
@@ -134,7 +134,7 @@ OpenSSO
           ASADMIN_PASSWORD= and DIRMGR_PASSWORD=.  Please look at the amtune-
           samplepasswordfile for sample entries.  
 
-          On Solaris/Linux/AIX, the password file must be non-touchable by its
+          On Solaris/Linux/AIX, the password file must be inaccessible by its
           non-owners and only readable by its owner - i.e., set "chmod 400" for
           the password file.  On Windows, amtune.bat does not check the 
           password file's permission.
@@ -175,7 +175,7 @@ Step 3. Set values for TOOLS_HOME and JAVA_HOME in
 Step 4. Edit amtune-env.properties file with Sun Directory Server information.
 
 Step 5. Execute amtune on Solaris/Linux/AIX with a password file for the Sun  
-        Directory Server's Directory Manager, set to be non-touchable by its
+        Directory Server's Directory Manager, set to be inaccessible by its
         non-owners and only readable by its owner - i.e., set "chmod 400" for 
         the password file.  On Windows, execute amtune.bat with a password file
         also, but amtune.bat does not check its file permission on Windows.
