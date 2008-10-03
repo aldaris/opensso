@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FMSessionProvider.java,v 1.16 2008-08-19 19:12:22 veiming Exp $
+ * $Id: FMSessionProvider.java,v 1.17 2008-10-03 22:10:43 hengming Exp $
  *
  */
 
@@ -48,9 +48,6 @@ import com.sun.identity.plugin.session.SessionException;
 
 import com.sun.identity.shared.Constants;
 
-import com.iplanet.dpro.session.Session;
-import com.iplanet.dpro.session.service.SessionService;
-
 import com.iplanet.sso.SSOTokenManager;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
@@ -67,6 +64,7 @@ import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.authentication.client.AuthClientUtils;
 import com.sun.identity.authentication.service.AMAuthErrorCode;
 import com.sun.identity.authentication.spi.AuthLoginException;
+import com.sun.identity.federation.common.FSUtils;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
 import com.sun.identity.sm.SMSException;
@@ -301,18 +299,14 @@ public class FMSessionProvider implements SessionProvider {
             } catch (SMSException se) {
                 throw new SessionException(se);
             }
+            setLoadBalancerCookie(response);
             Set cookieDomains = (Set)platformSchema.getAttributeDefaults().
                 get("iplanet-am-platform-cookie-domains");
             String value = ssoToken.getTokenID().toString();
-            Cookie loadBalancerCookie = null;
             if (cookieDomains.size() == 0) {
                 Cookie cookie =
                     CookieUtils.newCookie(cookieName, value, "/");
                 response.addCookie(cookie);
-                loadBalancerCookie = setlbCookie(null);
-                if (loadBalancerCookie != null) {
-                    response.addCookie(loadBalancerCookie);
-                }
             } else {
                 Iterator it = cookieDomains.iterator();
                 Cookie cookie = null;
@@ -328,10 +322,6 @@ public class FMSessionProvider implements SessionProvider {
                         cookieName, value,
                         "/", cookieDomain);
                     response.addCookie(cookie);
-                    loadBalancerCookie = setlbCookie(cookieDomain);
-                    if (loadBalancerCookie != null) {
-                        response.addCookie(loadBalancerCookie);
-                    }
                 }
             }
             if (urlRewriteEnabled && targetApplication != null) {
@@ -369,49 +359,7 @@ public class FMSessionProvider implements SessionProvider {
      */
     public void setLoadBalancerCookie(HttpServletResponse response)
     {
-        Cookie lbCookie = null;
-        Set cookieDomains = AuthClientUtils.getCookieDomains();
-        if (cookieDomains.size() == 0) {
-            lbCookie = setlbCookie(null);
-            if (lbCookie != null) {
-                response.addCookie(lbCookie);
-            }
-        } else {
-            Iterator it = cookieDomains.iterator();
-            while (it.hasNext()) {
-                String cookieDomain = (String) it.next();
-                lbCookie = setlbCookie(cookieDomain);
-                if (lbCookie != null) {
-                    response.addCookie(lbCookie);
-                }
-            }
-        }
-    }
-
-    /**
-     * Sets the load balancer cookie
-     *
-     * @param cookieDomain Cookie domain
-     * @return a load balacer cookie. If the value of
-     * com.iplanet.am.lbcookie.name and/or the value of
-     * com.iplanet.am.lbcookie.value in AMConfig.properties
-     * are not presented or empty, returns null.
-     */
-    private static Cookie setlbCookie(String cookieDomain) {
-        Cookie lbCookie = null;
-        // Assigned locally so that this wont be called during clientsdk.
-        // Also these variables seem to be static and getSessionService 
-        // returns only one instance. 
-        String lbcookieName = Session.lbCookieName;
-        String lbcookieValue = SessionService.getSessionService().
-                               getLocalServerID();
-        if (lbcookieName != null && lbcookieName.length() != 0 &&
-            lbcookieValue != null && lbcookieValue.length() != 0) {
-            lbCookie = CookieUtils.newCookie(lbcookieName,
-                lbcookieValue, "/", cookieDomain);
-            lbCookie.setMaxAge(-1);
-        }
-        return lbCookie;
+        FSUtils.setlbCookie(response);
     }
 
     /**
