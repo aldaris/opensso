@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSUtils.java,v 1.5 2008-08-29 04:57:15 exu Exp $
+ * $Id: FSUtils.java,v 1.6 2008-10-03 22:11:58 hengming Exp $
  *
  */
 
@@ -490,6 +490,15 @@ public class FSUtils {
                 " lbCookie not set.");
         }
 
+        setlbCookie(response);
+
+        // turn off cookie hash redirect by default
+        String tmpStr = SystemPropertiesManager.get(
+            "com.sun.identity.federation.cookieHashRedirectEnabled");
+        if ((tmpStr == null) || (!(tmpStr.equalsIgnoreCase("true")))) {
+            return false;
+        }
+
         String redirected = request.getParameter("redirected");
         if (redirected != null) {
             if (debug.messageEnabled()) {
@@ -498,8 +507,6 @@ public class FSUtils {
             }
             return false;
         }
-
-        FSUtils.setlbCookie(response);
 
         String queryString = request.getQueryString();
         StringBuffer reqURLSB = new StringBuffer();
