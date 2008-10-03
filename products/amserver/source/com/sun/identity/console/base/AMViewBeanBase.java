@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMViewBeanBase.java,v 1.11 2008-10-01 23:02:10 asyhuang Exp $
+ * $Id: AMViewBeanBase.java,v 1.12 2008-10-03 19:26:02 veiming Exp $
  *
  */
 
@@ -118,15 +118,26 @@ public abstract class AMViewBeanBase
     private Set blankTextFields = new HashSet();
 
     static {
-        String host = SystemProperties.get(Constants.AM_SERVER_HOST);
+        String consoleRemote = SystemProperties.get(
+            Constants.AM_CONSOLE_REMOTE);
+        boolean remote = (consoleRemote != null) &&
+            consoleRemote.equalsIgnoreCase("true");
+
+        String host = (remote) ?
+            SystemProperties.get(Constants.AM_CONSOLE_HOST) :
+            SystemProperties.get(Constants.AM_SERVER_HOST);
         System.setProperty("com.sun.web.console.securehost", host);
         System.setProperty("com.sun.web.console.unsecurehost", host);
 
-        String port = SystemProperties.get(Constants.AM_SERVER_PORT);
+        String port = (remote) ?
+            SystemProperties.get(Constants.AM_CONSOLE_PORT) :
+            SystemProperties.get(Constants.AM_SERVER_PORT);
         System.setProperty("com.sun.web.console.secureport", port);
         System.setProperty("com.sun.web.console.unsecureport", port);
         
-        String protocol = SystemProperties.get(Constants.AM_SERVER_PROTOCOL);
+        String protocol = (remote) ?
+            SystemProperties.get(Constants.AM_CONSOLE_PROTOCOL) :
+            SystemProperties.get(Constants.AM_SERVER_PROTOCOL);
         CCPrivateConfiguration.setSecureHelp(protocol.equals("https")); 
     }
 
