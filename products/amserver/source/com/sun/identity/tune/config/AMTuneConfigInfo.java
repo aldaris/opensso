@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneConfigInfo.java,v 1.9 2008-09-18 17:16:02 kanduls Exp $
+ * $Id: AMTuneConfigInfo.java,v 1.10 2008-10-03 06:23:29 kanduls Exp $
  */
 
 package com.sun.identity.tune.config;
@@ -656,13 +656,8 @@ FAMConstants, WebContainerConstants {
                             AMTUNE_MAX_MEMORY_TO_USE_IN_MB_SOLARIS);
                 }
             } else {
-                if (AMTuneUtil.getOSPlatform().indexOf("sparc") == -1) {
-                    setFAMTuneMaxMemoryToUseInMB(
-                            AMTUNE_MAX_MEMORY_TO_USE_IN_MB_X86);
-                } else {
-                    setFAMTuneMaxMemoryToUseInMB(
-                            AMTUNE_MAX_MEMORY_TO_USE_IN_MB_SOLARIS);
-                }
+                setFAMTuneMaxMemoryToUseInMB(
+                        AMTUNE_MAX_MEMORY_TO_USE_IN_MB_SOLARIS);
             }
         } else if (AMTuneUtil.isWindows()) {
             setFAMTuneMaxMemoryToUseInMB(
