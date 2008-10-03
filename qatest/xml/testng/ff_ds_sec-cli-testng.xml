@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ff_ds_sec-cli-testng.xml,v 1.14 2008-09-09 17:38:30 srivenigan Exp $
+ $Id: ff_ds_sec-cli-testng.xml,v 1.15 2008-10-03 13:39:05 cmwesley Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -1259,6 +1259,28 @@
             <class name="com.sun.identity.qatest.cli.RemoveMemberTest"/>
         </classes>
     </test>
+        <test name="CLI_remove-member17">
+        <parameter name="testName" value="removemember-test17"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_remove-member18">
+        <parameter name="testName" value="removemember-test18"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveMemberTest"/>
+        </classes>
+    </test>    
     <test name="CLI_show-members01">
         <parameter name="testName" value="showmembers-test1"/>
         <groups>

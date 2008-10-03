@@ -17,14 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureCLI.java,v 1.4 2008-06-26 20:01:41 rmisra Exp $
+ * $Id: ConfigureCLI.java,v 1.5 2008-10-03 13:37:42 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.cli;
 
-import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.TestConstants;
 import com.sun.identity.qatest.common.cli.CLIUtility;
 import java.io.BufferedWriter;
@@ -59,6 +58,7 @@ public class ConfigureCLI extends CLIUtility {
     throws Exception {
         entering("configureCLI", null);
         try {
+            replaceAuthTags("cli");
             String amconfigHost = 
                     rb_amconfig.getString(TestConstants.KEY_AMC_HOST);
             log(Level.FINEST, "configureCLI", "Value of " + 

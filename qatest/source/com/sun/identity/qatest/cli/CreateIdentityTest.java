@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateIdentityTest.java,v 1.10 2008-08-12 00:12:51 cmwesley Exp $
+ * $Id: CreateIdentityTest.java,v 1.11 2008-10-03 13:37:41 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -107,7 +107,7 @@ public class CreateIdentityTest extends TestCommon implements CLIExitCodes {
         try {
             locTestName = testName;
             rb = ResourceBundle.getBundle("cli" + fileseparator + 
-                    "CreateIdentityTest");
+                    "CreateIdentityTest-Generated");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
             setupIdentities = (String)rb.getString(locTestName + 

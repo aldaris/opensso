@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpdateAuthInstanceTest.java,v 1.4 2008-08-12 00:12:53 cmwesley Exp $
+ * $Id: UpdateAuthInstanceTest.java,v 1.5 2008-10-03 13:37:42 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -124,7 +124,7 @@ public class UpdateAuthInstanceTest extends TestCommon implements CLIExitCodes {
         try {
             locTestName = testName;
             rb = ResourceBundle.getBundle("cli" + fileseparator + 
-                    "UpdateAuthInstanceTest");
+                    "UpdateAuthInstanceTest-Generated");
             setupRealms = (String)rb.getString(locTestName + 
                     "-create-setup-realms");
             setupAuthInstances = (String)rb.getString(locTestName + 
@@ -369,17 +369,6 @@ public class UpdateAuthInstanceTest extends TestCommon implements CLIExitCodes {
            log(Level.SEVERE, "testUpdateAuthInstance", "Unable to set the " + 
                    "auth service attribute " +
                    "iplanet-am-auth-dynamic-profile-creation");
-           assert false;
-       }
-       cli.resetArgList();
-       
-       int aliasStatus = cli.setRealmAttributes(authRealm, 
-               "sunIdentityRepositoryService", "sunOrganizationAliases=" + 
-               authRealm.substring(1), false);
-       cli.logCommand("testUpdateAuthInstance");
-       if (aliasStatus != SUCCESS_STATUS) {
-           log(Level.SEVERE, "testUpdateAuthInstance", "Unable to set the " +
-                   "realm alias for " + authRealm);
            assert false;
        }
        cli.resetArgList();

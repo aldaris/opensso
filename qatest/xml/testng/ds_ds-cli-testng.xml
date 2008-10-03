@@ -20,12 +20,12 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ds_ds-cli-testng.xml,v 1.14 2008-09-09 17:31:15 srivenigan Exp $
+ $Id: ds_ds-cli-testng.xml,v 1.15 2008-10-03 13:39:05 cmwesley Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
-<suite name="ds_ds-cli" verbose="5">
+<suite name="ds_ds-cli" verbose="1">
     <test name="CLI_create-realm01">
         <parameter name="testName" value="createrealm-test1"/>
         <groups>
@@ -1778,6 +1778,28 @@
     </test>
     <test name="CLI_remove-member16">
         <parameter name="testName" value="removemember-test16"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveMemberTest"/>
+        </classes>
+    </test>
+        <test name="CLI_remove-member17">
+        <parameter name="testName" value="removemember-test17"/>
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.RemoveMemberTest"/>
+        </classes>
+    </test>
+    <test name="CLI_remove-member18">
+        <parameter name="testName" value="removemember-test18"/>
         <groups>
             <run>
                 <include name="ds_ds"/>

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.63 2008-09-09 18:21:58 srivenigan Exp $
+ * $Id: TestCommon.java,v 1.64 2008-10-03 13:36:38 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1697,6 +1697,114 @@ public class TestCommon implements TestConstants {
         exiting("replaceRedirectURIs");
     }
 
+    /**
+     * Replace the directory server host, port, and root suffix tags in the
+     * authenticationConfigData.properties file.
+     * @param testModule - the QATest module which will have its properties 
+     * files tag swapped for authentication tags.
+     * @throws java.lang.Exception
+     */
+    public void replaceAuthTags(String testModule)
+    throws Exception {
+        entering("replaceAuthTags", null);
+        ResourceBundle umGlobalBundle = null;
+
+        try {
+            umGlobalBundle = ResourceBundle.getBundle("config" +
+                    fileseparator + "UMGlobalDatastoreConfig");
+        } catch (MissingResourceException mre) {
+            log(Level.SEVERE, "replaceAuthTags", "Unable to retrieve the " +
+                    "UMGlobalDatastoreConfig resource bundle.");
+            assert false;
+            throw mre;
+        }
+
+        log(Level.FINE, "replaceAuthTags", "Retrieving datastore " +
+                "directory server host, port, and root suffix.");
+        String keyPrefix = "UMGlobalDatastoreConfig1";
+        String moduleDir = testModule;
+        if (testModule.equals("samlv2")) {
+            keyPrefix = "UMGlobalDatastoreConfig0";
+            moduleDir = "authentication";
+        }
+
+        String umDirectoryHost = null;
+        String umDirectoryPort = null;
+        String umRootSuffix = null;
+        try {
+           log(Level.FINE, "replaceAuthTags", "Retrieving value for key " +
+                    keyPrefix + ".sun-idrepo-ldapv3-config-ldap-server.0");
+           umDirectoryHost = umGlobalBundle.getString(keyPrefix +
+                    ".sun-idrepo-ldapv3-config-ldap-server.0").trim();
+           log(Level.FINE, "replaceAuthTags", "Retrieving value for key " +
+                    keyPrefix + ".sun-idrepo-ldapv3-config-ldap-port.0");
+
+           umDirectoryPort = umGlobalBundle.getString(keyPrefix +
+                    ".sun-idrepo-ldapv3-config-ldap-port.0").trim();
+           log(Level.FINE, "replaceAuthTags", "Retrieving value for key " +
+                    keyPrefix + ".datastore-root-suffix.0");
+           umRootSuffix = umGlobalBundle.getString(keyPrefix +
+                    ".datastore-root-suffix.0").trim();
+        } catch (MissingResourceException mre2) {
+            log(Level.SEVERE, "replaceAuthTags", "Unable to retrieve values " +
+                    "for one or more datastore keys");
+            assert false;
+            throw mre2;
+        }
+
+        log(Level.FINEST, "replaceAuthTags", "LDAP auth directory server = " +
+                umDirectoryHost + ":" + umDirectoryPort);
+        log(Level.FINEST, "replaceAuthTags", "LDAP auth root suffix = " +
+                umRootSuffix);
+
+        Map replaceVals = new HashMap();
+        replaceVals.put("UM_DS_HOST", umDirectoryHost);
+        replaceVals.put("UM_DS_PORT", umDirectoryPort);
+        replaceVals.put("UM_ROOT_SUFFIX", umRootSuffix);
+        replaceVals.put("SM_SUFFIX", basedn);
+        String directoryName = getTestBase() + moduleDir;
+        log(Level.FINEST, "replaceAuthTags", "Examining files in directory " +
+                    directoryName + "...");
+        File directory = new File(directoryName);
+        if (!directory.exists()) {
+            log(Level.SEVERE, "replaceAuthTags", "Aborting tag replacement the "
+                    + "directory " + directoryName + " does not exist.");
+            assert false;
+        }
+        String[] files = directory.list();
+
+        for (String fileName: files) {
+            if (fileName.endsWith(".properties")) {
+                String absFileName = directoryName + fileseparator + fileName;
+                log(Level.FINE, "replaceRedirectURIs", "Searching the file " +
+                        absFileName + " for UM_DS_HOST, UM_DS_PORT, " +
+                        "UM_ROOT_SUFFIX, and SM_SUFFIX");
+                boolean stringFound = false;
+                Iterator keyIterator = replaceVals.keySet().iterator();
+                while (keyIterator.hasNext()) {
+                    log(Level.FINE, "replaceAuthTags", "Searching the file " + 
+                            fileName + " for tokens to replace.");
+                    String replaceTag = (String)keyIterator.next();
+                    if (searchStringInFile(absFileName, replaceTag)) {
+                        stringFound = true;
+                    }
+                }
+                if (stringFound) {
+                    log(Level.FINE, "replaceAuthTags", "Replacing tokens in " 
+                            + absFileName);
+                    String[] fileNameTokens = fileName.split("\\.");
+                    String generatedFile = directoryName + fileseparator + 
+                            fileNameTokens[0] + "-Generated." + 
+                            fileNameTokens[1];
+                    log(Level.FINEST, "replaceAuthTags", 
+                            "The name of the generated file is " + 
+                            generatedFile);
+                    replaceString(absFileName, replaceVals, generatedFile);
+                }
+            }
+        }        
+        exiting("replaceAuthTags"); 
+    }
     
     /**
      * Converts attrValPair into Map containing attrName as key
