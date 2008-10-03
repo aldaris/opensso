@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceManager.java,v 1.22 2008-08-27 22:05:41 veiming Exp $
+ * $Id: ServiceManager.java,v 1.23 2008-10-03 05:33:32 goodearth Exp $
  *
  */
 
@@ -1114,6 +1114,8 @@ public class ServiceManager {
         try {
             if (!ServiceManager.isRealmEnabled()) {
                 amsdkChecked = true;
+                // If in legacy mode, then amSDK plugin would always be there.
+                isAMSDKEnabled = true;
             } else {
                 ServiceSchemaManager ssm = new ServiceSchemaManager(
                     IdConstants.REPO_SERVICE, adminToken);
