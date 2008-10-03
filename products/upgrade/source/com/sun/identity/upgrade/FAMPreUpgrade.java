@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMPreUpgrade.java,v 1.5 2008-08-20 21:13:06 bina Exp $
+ * $Id: FAMPreUpgrade.java,v 1.6 2008-10-03 06:05:45 bina Exp $
  *
  */
 package com.sun.identity.upgrade;
@@ -290,7 +290,7 @@ public class FAMPreUpgrade {
      * Gets the location of the OpenSSO install directory.
      */
     void getInstallDir() {
-        System.out.print("Enter the OpenSSO Install Directory: ");
+        System.out.print("Enter the Access Manager Install Directory: ");
         String temp = readInput();
         if (temp != null && temp.length() > 0) {
             installDir = temp;
