@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SystemProperties.java,v 1.5 2008-06-25 05:42:42 qcheng Exp $
+ * $Id: SystemProperties.java,v 1.6 2008-10-04 03:32:55 hengming Exp $
  *
  */
 
@@ -63,7 +63,7 @@ public class SystemProperties implements ISystemProperties {
      */
     public Collection getServerList()
         throws Exception {
-        return WebtopNaming.getPlatformServerList();
+        return WebtopNaming.getPlatformServerList(false);
     }
     
     /**
