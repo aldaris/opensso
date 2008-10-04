@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.cpp,v 1.37 2008-10-01 23:52:37 madan_ranganath Exp $
+ * $Id: am_web.cpp,v 1.38 2008-10-04 01:34:27 robertis Exp $
  *
  */
 
@@ -458,6 +458,42 @@ static Utils::url_info_t *find_active_login_server(void* agent_config)
 }
 
 
+static Utils::url_info_t *find_active_logout_server(void* agent_config) 
+{
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+
+    Utils::url_info_t *result = URL_INFO_PTR_NULL;
+    unsigned int i = 0;
+    Utils::url_info_list_t *url_list = NULL;
+
+    if(initialized == AM_TRUE) {
+	PR_Lock((*agentConfigPtr)->lock);
+
+    url_list = &(*agentConfigPtr)->logout_url_list;
+
+	if ((*agentConfigPtr)->ignore_server_check == AM_FALSE) {
+	    for (i = 0; i < url_list->size; ++i) {
+		    am_web_log_max_debug("find_active_logout_server(): "
+		    "Trying server: %s", url_list->list[i].url);
+		    if (is_server_alive(&url_list->list[i], agent_config)) {
+			    result = &url_list->list[i];
+			    break;
+		    }
+	    }
+	} else {
+	    result = &url_list->list[i];
+	}
+
+	PR_Unlock((*agentConfigPtr)->lock);
+    } else {
+	am_web_log_error("find_active_logout_server(): "
+			 "Library not initialized.");
+    }
+
+    return result;
+}
 
 /** 
  * Loads bootstrap file into boot_info structure.
@@ -1587,8 +1623,8 @@ am_web_is_access_allowed(const char *sso_token,
 
     // check if it's the logout URL
     if (status == AM_SUCCESS) {
-	if ((*agentConfigPtr)->logout_url_list.size > 0 &&
-	    am_web_is_logout_url(url, agent_config) == B_TRUE) {
+	if ((*agentConfigPtr)->agent_logout_url_list.size > 0 &&
+	    am_web_is_agent_logout_url(url, agent_config) == B_TRUE) {
 	    isLogoutURL = AM_TRUE;
 	    am_web_log_max_debug("%s: url %s IS logout url.", thisfunc,url);
 	}
@@ -1805,13 +1841,14 @@ am_web_is_access_allowed(const char *sso_token,
 		}
 	    }
 
-	    // invalidate user's sso token if it's the logout URL,
+	    // invalidate user's sso token if it's the agent logout URL,
 	    // ignore the invalidate status.
 	    // Note that this must be done *after* am_policy_evaluate()
 	    // so we can get the user's id and pass it to the web app.
 	    // Can't get the user's id after session's been invalidated.
-	    if (isLogoutURL && sso_token != NULL && sso_token[0] != '\0') {
+	    if (isLogoutURL && sso_token != NULL && sso_token[0] != '\0'){
 		am_web_log_debug("invalidating session %s", sso_token);
+        am_status_t redirLogoutStatus = AM_FAILURE;
 		am_status_t logout_status =
 		    am_policy_user_logout(boot_info.policy_handle,
 						 sso_token,
@@ -1824,7 +1861,11 @@ am_web_is_access_allowed(const char *sso_token,
 		} else {
 		    am_web_log_debug("%s: Logged out session id %s.",
 				     thisfunc, sso_token);
+            redirLogoutStatus = AM_REDIRECT_LOGOUT;
 		}
+       
+        return redirLogoutStatus;
+
 	    }
         }
       }
@@ -2295,7 +2336,7 @@ am_web_get_url_to_redirect(am_status_t status,
 			   const char* method,
 			   void *reserved,
 			   char **redirect_url,
-                           void* agent_config)
+               void* agent_config)
 {
     AgentConfigurationRefCntPtr* agentConfigPtr =
         (AgentConfigurationRefCntPtr*) agent_config;
@@ -4032,6 +4073,70 @@ am_web_is_logout_url(const char *url,
     return found;
 }
 
+extern "C" AM_WEB_EXPORT boolean_t
+am_web_is_agent_logout_url(const char *url,
+                     void* agent_config)
+{
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+    const char *thisfunc = "am_web_is_agent_logout_url";
+    boolean_t found = B_FALSE;
+    if (NULL != url && '\0' != url[0]) {
+	try {
+	    // normalize the given url before comparison.
+	    URL url_obj(url);
+	    // override protocol/host/port if configured.
+	    (void)overrideProtoHostPort(url_obj, agent_config);
+	    std::string url_str;
+	    url_obj.getURLString(url_str);
+	    const char *norm_url = url_str.c_str();
+	    Log::log(boot_info.log_module, Log::LOG_DEBUG,
+		     "%s(%s): normalized URL %s.\n", thisfunc, url, norm_url);
+	    unsigned int i;
+	    for (i = 0;
+		(i < (*agentConfigPtr)->agent_logout_url_list.size) && (B_FALSE == found);
+		 i++) {
+		am_resource_traits_t rsrcTraits;
+		populate_am_resource_traits(rsrcTraits, agent_config);
+		am_resource_match_t match_status;
+		boolean_t usePatterns =
+		    (*agentConfigPtr)->agent_logout_url_list.list[i].has_patterns==AM_TRUE? B_TRUE:B_FALSE;
+		match_status = am_policy_compare_urls(
+		    &rsrcTraits, (*agentConfigPtr)->agent_logout_url_list.list[i].url, norm_url, usePatterns);
+		if (match_status == AM_EXACT_MATCH ||
+		    match_status == AM_EXACT_PATTERN_MATCH) {
+		    Log::log(boot_info.log_module, Log::LOG_DEBUG,
+			"%s(%s): matched '%s' entry in logout url list",
+			thisfunc, url, (*agentConfigPtr)->agent_logout_url_list.list[i].url);
+		    found = B_TRUE;
+		    break;
+		}
+	    }
+	}
+	catch (InternalException& exi) {
+	    am_web_log_error("%s: Internal exception encountered: %s.",
+			     thisfunc, exi.getMessage());
+	    found = B_FALSE;
+	}
+	catch (std::bad_alloc& exb) {
+	    am_web_log_error("%s: Bad Alloc exception encountered: %s.",
+			     thisfunc, exb.what());
+	    found = B_FALSE;
+	}
+	catch (std::exception& exs) {
+	    am_web_log_error("%s: Exception encountered: %s.",
+			     thisfunc, exs.what());
+	    found = B_FALSE;
+	}
+	catch (...) {
+	    am_web_log_error("%s: Unknown exception encountered.",thisfunc);
+	    found = B_FALSE;
+	}
+    }
+    return found;
+}
+
 
 extern "C" AM_WEB_EXPORT const char *
 am_web_method_num_to_str(am_web_req_method_t method)
@@ -5312,7 +5417,7 @@ process_access_success(char *url,
     // everything ok - now do things post access allowed.
     else {
 	// if logout url, reset any logout cookies
-	if (am_web_is_logout_url(url, agent_config)) {
+	if (am_web_is_agent_logout_url(url, agent_config)) {
 	    args[0] = req_func;
 	    sts = am_web_logout_cookies_reset(add_cookie_in_response, args, agent_config);
 	    if (sts != AM_SUCCESS) {
@@ -5979,6 +6084,49 @@ am_web_is_cdsso_enabled(void* agent_config) {
     }
 
     return status;
+}
+
+extern "C" AM_WEB_EXPORT am_status_t
+am_web_get_logout_url(char** logout_url, void* agent_config)
+{
+    const char *thisfunc = "am_web_get_logout_url()";
+    am_status_t ret = AM_FAILURE;
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+    Utils::url_info_t *url_info_ptr;
+    std::string retVal;
+    url_info_ptr = find_active_logout_server(agent_config);
+    if (NULL == url_info_ptr) {
+        am_web_log_warning("%s: unable to find active logout url"
+                "Access Manager Auth server.", thisfunc);
+        ret = AM_FAILURE;
+    }
+    else {
+        retVal.append(url_info_ptr->url, url_info_ptr->url_len);
+        if ((*agentConfigPtr)->agent_logout_url_list.size > 0)
+        {
+            Utils::url_info_list_t *url_list = NULL;
+            url_list = &(*agentConfigPtr)->agent_logout_url_list;
+
+            if(retVal.find("?")!=string::npos){
+                retVal.append("&");
+            }
+            else{
+                retVal.append("?");
+            }
+
+            retVal.append("goto=");
+		    retVal.append(url_list->list[0].url);
+        }
+
+        am_web_log_debug("%s: active logout url= %s",thisfunc, retVal.c_str());
+        ret = AM_SUCCESS;
+    }
+
+    *logout_url=strdup(retVal.c_str());
+
+    return ret;
 }
 
 #if defined(WINNT)

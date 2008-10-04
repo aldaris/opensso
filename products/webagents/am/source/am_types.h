@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_types.h,v 1.9 2008-09-13 01:11:53 robertis Exp $
+ * $Id: am_types.h,v 1.10 2008-10-04 01:34:27 robertis Exp $
  *
  * Abstract:
  *
@@ -124,6 +124,7 @@ typedef enum {
     AM_REST_SERVICE_NOT_AVAILABLE, /* error code 33 */
     AM_REPOSITORY_TYPE_INVALID, /* error code 34, valid values: local, centralized */
     AM_INVALID_APP_SSOTOKEN,
+    AM_REDIRECT_LOGOUT, /* error code 36, used for redirecting to logout page*/
     AM_NUM_ERROR_CODES	/* This should always be the last. */
 } am_status_t;
 

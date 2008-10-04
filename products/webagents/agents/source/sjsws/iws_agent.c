@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: iws_agent.c,v 1.17 2008-08-29 21:32:22 robertis Exp $
+ * $Id: iws_agent.c,v 1.18 2008-10-04 01:34:40 robertis Exp $
  *
  *
  */
@@ -171,6 +171,22 @@ static int do_redirect(Session *sn, Request *rq, am_status_t status,
     }
 
     return retVal;
+}
+
+/**
+ * This function is used for sending a 302 redirect in the browser.
+ */
+static void do_url_redirect(Session *sn, Request *rq, char* redirect_url)
+{
+    /* Set the return code to 302 Redirect */
+    protocol_status(sn, rq, PROTOCOL_REDIRECT, NULL);
+
+    /* set the new URL to redirect */
+    pblock_nvinsert("escape", "no", rq->vars);
+
+    param_free(pblock_remove("Location", rq->srvhdrs));
+    pblock_nvinsert("Location", redirect_url, rq->srvhdrs);
+    protocol_start_response(sn, rq);
 }
 
 static int do_deny(Session *sn, Request *rq, am_status_t status) {
@@ -838,7 +854,8 @@ am_status_t get_request_url(Session *sn, Request *rq, char **request_url,
  * Output: As defined by a SAF
  */
 NSAPI_PUBLIC int
-validate_session_policy(pblock *param, Session *sn, Request *rq) {
+validate_session_policy(pblock *param, Session *sn, Request *rq) 
+{
     char *dpro_cookie = NULL;
     am_status_t status = AM_FAILURE;
     int  requestResult = REQ_ABORTED;
@@ -858,6 +875,7 @@ validate_session_policy(pblock *param, Session *sn, Request *rq) {
     const char *protocol = pblock_findval(REQUEST_PROTOCOL, rq->reqpb); 
     void* agent_config = NULL;
 
+    char* logout_url = NULL;
     // check if agent is initialized.
     // if not initialized, then call agent init function
     // This needs to be synchronized as only one time agent
@@ -1083,6 +1101,20 @@ validate_session_policy(pblock *param, Session *sn, Request *rq) {
 
     case AM_INVALID_ARGUMENT:
     case AM_NO_MEMORY:
+
+    case AM_REDIRECT_LOGOUT:
+        status = am_web_get_logout_url(&logout_url, agent_config);
+        if(status == AM_SUCCESS)
+        {
+            do_url_redirect(sn,rq,logout_url);
+        }
+        else
+        {
+            requestResult = REQ_ABORTED;
+            am_web_log_debug("validate_session_policy(): "
+				"am_web_get_logout_url failed. ");
+        }
+    break;
     default:
 	am_web_log_error("validate_session_policy() status: %s (%d)",
 			am_status_to_string(status), status);
@@ -1094,6 +1126,7 @@ validate_session_policy(pblock *param, Session *sn, Request *rq) {
     am_policy_result_destroy(&result);
     am_web_free_memory(dpro_cookie);
     am_web_free_memory(request_url);
+    am_web_free_memory(logout_url);
 
     am_web_delete_agent_configuration(agent_config);
 

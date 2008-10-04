@@ -184,9 +184,10 @@ SUNW_2.1.1 {
 		am_web_check_cookie_in_query;
 		am_web_check_cookie_in_post;
 		am_web_get_url_to_redirect;
-                am_web_is_logout_url;
-                am_web_logout_cookies_reset;
-                am_web_remove_authnrequest;
+        am_web_is_logout_url;
+        am_web_is_agent_logout_url;
+        am_web_logout_cookies_reset;
+        am_web_remove_authnrequest;
 
 	local:
 		*;

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: agent_profile_service.cpp,v 1.20 2008-09-26 00:02:09 robertis Exp $
+ * $Id: agent_profile_service.cpp,v 1.21 2008-10-04 01:34:27 robertis Exp $
  *
  */
 
@@ -1041,6 +1041,8 @@ bool AgentProfileService::isListMapProperty(const char* propName) {
         AM_WEB_LOGIN_URL_PROPERTY) == 0 || 
        strcasecmp(propName,
         AM_WEB_LOGOUT_URL_PROPERTY) == 0 ||
+       strcasecmp(propName,
+        AM_WEB_AGENT_LOGOUT_URL_PROPERTY) == 0 ||
        strcasecmp(propName,
         AM_WEB_CDC_SERVLET_URL_PROPERTY) == 0 )
     {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: agent_configuration.cpp,v 1.15 2008-09-23 00:29:14 subbae Exp $
+ * $Id: agent_configuration.cpp,v 1.16 2008-10-04 01:34:26 robertis Exp $
  *
  * Abstract:
  * AgentConfiguration: This class creates/delets the agent configuration 
@@ -75,6 +75,7 @@ AgentConfiguration::AgentConfiguration(am_properties_t props)
     initAgentConfiguration();
     initLoginURLList();    
     initLogoutURLList();    
+    initAgentLogoutURLList();    
     initNotEnforcedURLList();    
     initCDSSOURLList();
     initCookieList();
@@ -633,6 +634,26 @@ am_status_t AgentConfiguration::populateAgentProperties()
         }
     }
     
+    /* Get Agent Logout URLs if any */
+    if (AM_SUCCESS == status) {
+        this->agent_logout_url_list.size = 0;
+        parameter = AM_WEB_AGENT_LOGOUT_URL_PROPERTY;
+        status =am_properties_set_list(this->properties, parameter, " ");
+
+        const char *agent_logout_url_str;
+        status = am_properties_get_with_default(this->properties,
+                parameter,
+                NULL,
+                &agent_logout_url_str);
+        if (AM_SUCCESS == status && agent_logout_url_str != NULL) {
+            am_web_log_max_debug("am_web_init(): Agent Logout URL is %s.",
+                    agent_logout_url_str);
+            status = Utils::parse_url_list(agent_logout_url_str, ' ',
+                    &this->agent_logout_url_list, AM_TRUE);
+
+        }
+    }
+
     /* Get Logout Cookie reset list if any */
     if (AM_SUCCESS == status) {
         this->logout_cookie_reset_list.size = 0;
@@ -1151,7 +1172,8 @@ am_status_t AgentConfiguration::populateAgentProperties()
 
     if (AM_SUCCESS != status) {
         cleanup_properties();
-        am_web_log_error("initialization error: %s(%s) failed, error = %s "
+        am_web_log_error("AgentConfiguration::populateAgentProperties():"
+                " initialization error: %s(%s) failed, error = %s "
                       "(%d): exiting...", function_name, parameter,
                       am_status_to_string(status), status);
     }

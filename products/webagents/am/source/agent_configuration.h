@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: agent_configuration.h,v 1.10 2008-09-19 01:11:53 robertis Exp $
+ * $Id: agent_configuration.h,v 1.11 2008-10-04 01:34:27 robertis Exp $
  *
  */
 
@@ -82,6 +82,8 @@ public:
     const char *access_denied_url;
     PRLock *lock;
     Utils::url_info_list_t login_url_list;
+    Utils::url_info_list_t logout_url_list;
+    Utils::url_info_list_t agent_logout_url_list;
     Utils::url_info_list_t cdsso_server_url_list;
     PRBool notification_enable;
     const char *notification_url;
@@ -112,7 +114,6 @@ public:
     Utils::cookie_info_list_t cookie_list;
     const char *cookie_reset_default_domain;
     Utils::url_info_t agent_server_url;
-    Utils::url_info_list_t logout_url_list;
     Utils::cookie_info_list_t logout_cookie_reset_list;
     PRBool getClientHostname;
     unsigned log_access_type;
@@ -243,10 +244,15 @@ public:
         this->login_url_list.size = 0;   
         this->login_url_list.list = ((Utils::url_info_t *) NULL);
     }
-    
+
     void initLogoutURLList() {
         this->logout_url_list.size = 0;
         this->logout_url_list.list = ((Utils::url_info_t *) NULL);
+    }
+
+    void initAgentLogoutURLList() {
+        this->agent_logout_url_list.size = 0;
+        this->agent_logout_url_list.list = ((Utils::url_info_t *) NULL);
     }
     
     void initNotEnforcedURLList() {

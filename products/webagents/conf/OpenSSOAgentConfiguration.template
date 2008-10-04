@@ -590,17 +590,20 @@ com.sun.identity.agents.config.cdsso.cookie.domain[0] =
 
 #
 # LOGOUT PROCESSING
-#   - logout.url: List of Applications's Logout URLs.
+#   - logout.url: List of OpenSSO logout page URLs.
+#   - agent.logout.url: List of Applications's Logout URLs.
 #       These URLs are not enforced by policy. 
 #       if set, agent will intercept this URL and destroy the user's session,
-#       if any. The application's logout URL will be allowed whether or not 
+#       if any. And then it will be redirected to the OpenSSO logout URL.
+#       The application's logout URL will be allowed whether or not 
 #       the session destroy is successful.
 #   - logout.cookie.reset: List of cookies to be reset upon logout;
 #       in the same format as cookie reset list.
 #
 # Hot-Swap Enabled: Yes
 #
-com.sun.identity.agents.config.logout.url[0] = 
+com.sun.identity.agents.config.logout.url[0] = @AM_SERVICES_PROTO@://@AM_SERVICES_HOST@:@AM_SERVICES_PORT@@AM_SERVICES_DEPLOY_URI@/UI/Logout
+com.sun.identity.agents.config.agent.logout.url[0] = 
 com.sun.identity.agents.config.logout.cookie.reset[0] = 
 
 #

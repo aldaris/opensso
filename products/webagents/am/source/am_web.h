@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.h,v 1.21 2008-09-19 01:11:54 robertis Exp $
+ * $Id: am_web.h,v 1.22 2008-10-04 01:34:27 robertis Exp $
  *
  */
 
@@ -154,6 +154,7 @@ AM_BEGIN_EXTERN_C
 #define AM_WEB_COOKIE_RESET_LIST AM_COMMON_PROPERTY_PREFIX "cookie.reset"
 #define AM_WEB_CDSSO_COOKIE_DOMAIN_LIST AM_COMMON_PROPERTY_PREFIX "cdsso.cookie.domain"
 #define AM_WEB_LOGOUT_URL_PROPERTY AM_COMMON_PROPERTY_PREFIX "logout.url"
+#define AM_WEB_AGENT_LOGOUT_URL_PROPERTY AM_COMMON_PROPERTY_PREFIX "agent.logout.url"
 #define AM_WEB_LOGOUT_COOKIE_RESET_PROPERTY AM_COMMON_PROPERTY_PREFIX "logout.cookie.reset"
 #define AM_WEB_GET_CLIENT_HOSTNAME AM_COMMON_PROPERTY_PREFIX "get.client.host.name"
 
@@ -1074,9 +1075,18 @@ am_web_logout_cookies_reset(am_status_t (*setFunc)(const char *, void **),
 
 
 /*
- * Returns true if url is a logout url, false otherwise.
+ * Returns true if url is a opensso logout url, false otherwise.
+ * For example: http://amhost:amport/opensso/UI/Logout
  */
 AM_WEB_EXPORT boolean_t am_web_is_logout_url(const char *url, void* agent_config);
+
+
+/*
+ * Returns true if url is a agent logout url, false otherwise.
+ * When this URL is accessed, the user gets logged out of the OpenSSO session.
+ * For example : http://agenthost:agentport/logout.html
+ */
+AM_WEB_EXPORT boolean_t am_web_is_agent_logout_url(const char *url, void* agent_config);
 
 
 /**
@@ -1214,6 +1224,8 @@ AM_WEB_EXPORT void am_web_clear_attributes_map(am_policy_result_t *result);
 AM_WEB_EXPORT boolean_t am_web_is_owa_enabled(void* agent_config);
 AM_WEB_EXPORT boolean_t am_web_is_owa_enabled_change_protocol(void* agent_config);
 AM_WEB_EXPORT const char * am_web_is_owa_enabled_session_timeout_url(void* agent_config);
+
+AM_WEB_EXPORT am_status_t am_web_get_logout_url(char** logout_url, void* agent_config);
 
 AM_END_EXTERN_C
 

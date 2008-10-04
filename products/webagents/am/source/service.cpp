@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: service.cpp,v 1.28 2008-10-01 23:52:38 madan_ranganath Exp $
+ * $Id: service.cpp,v 1.29 2008-10-04 01:34:27 robertis Exp $
  *
  */
 
@@ -1704,8 +1704,11 @@ Service::invalidate_session(const char *ssoTokenId) {
     const SSOToken ssoToken(cookieEncoded?Http::decode(ssoTokenId):ssoTokenId,
                             cookieEncoded?ssoTokenId:Http::encode(ssoTokenId));
 
-    status = mSSOTokenSvc.destroySession(svcInfo, 
-                                         ssoToken.getString());
+    //the call to destroySession in SSOTokenService is removed as 
+    //we are redirecting to OpenSSO logout page (Issue3724).
+    //Instead we remove the SSOToken table entry.
+    mSSOTokenSvc.removeSSOTokenTableEntry(ssoToken.getString());
+    status = AM_SUCCESS;
 
     PolicyEntryRefCntPtr uPolicyEntry = policyTable.find(ssoToken.getString());
     if (uPolicyEntry) {
