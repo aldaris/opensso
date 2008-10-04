@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.71 2008-09-19 18:58:03 madan_ranganath Exp $
+   $Id: AgentService.xml,v 1.72 2008-10-04 01:29:53 madan_ranganath Exp $
 
 -->
 
@@ -599,6 +599,17 @@
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.logout.url"
+                        type="list"
+                        syntax="string"
+                        uitype="orderedlist"
+                        validator="ListValueValidator"
+                        i18nKey="a254">
+                        <DefaultValues>
+                            <Value>[0]=@SERVER_PROTO@://@SERVER_HOST@:@SERVER_PORT@@AM_SERVICES_DEPLOY_URI@/UI/Logout</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.identity.agents.config.agent.logout.url"
                         type="list"
                         syntax="string"
                         uitype="orderedlist"
