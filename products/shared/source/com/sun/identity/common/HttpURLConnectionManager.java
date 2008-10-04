@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HttpURLConnectionManager.java,v 1.2 2008-06-25 05:52:51 qcheng Exp $
+ * $Id: HttpURLConnectionManager.java,v 1.3 2008-10-04 05:28:48 beomsuk Exp $
  *
  */
 
@@ -33,7 +33,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLStreamHandler;
 import com.sun.identity.protocol.AMURLStreamHandlerFactory;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
@@ -51,7 +50,7 @@ public class HttpURLConnectionManager {
     private static int READTIMEOUT = 30000;
     private static final String URL_READTIMEOUT = 
            "com.sun.identity.url.readTimeout";
-    private static Method method;
+    private static Method method, method_s;
     private static Object[] args;
     private static String prot_handler_string = null;
     private static AMURLStreamHandlerFactory stFactory = 
@@ -80,22 +79,15 @@ public class HttpURLConnectionManager {
             }
 
             try {
-                Method getlocalserver = Class.forName(
-                        "com.iplanet.services.naming.WebtopNaming").
-                        getMethod("getLocalServer", null);
-                
-                String serverURL = (String) getlocalserver.invoke(null, null);
-                if (serverURL != null) {
-                    URL url = new URL(serverURL);
-                    HttpURLConnection conn = 
-                            (HttpURLConnection)url.openConnection();
-                    Class[] param = { Integer.TYPE };
-                    method = conn.getClass().getMethod("setReadTimeout", param);
-                    args = new Object[] { new Integer(READTIMEOUT) };
-                } else if (debug.messageEnabled()) {
-                    debug.message("HttpURLConnectionManager.<init>: " + 
-                        "Server URL is not available");
-                }
+                URL url = new URL("http://opensso.dev.java.net");
+                HttpURLConnection conn = 
+                        (HttpURLConnection)url.openConnection();
+                Class[] param = { Integer.TYPE };
+                method = conn.getClass().getMethod("setReadTimeout", param);
+                url = new URL("https://opensso.dev.java.net");
+                conn = (HttpURLConnection)url.openConnection();
+                method_s = conn.getClass().getMethod("setReadTimeout", param);
+                args = new Object[] { new Integer(READTIMEOUT) };
             } catch (NoSuchMethodException e) {
                 debug.warning("HttpURLConnectionManager.<init>: " +
                     "setReadTimeout is not supported by the JVM", e);
@@ -113,8 +105,9 @@ public class HttpURLConnectionManager {
      * @return A <code>HttpURLConnection</code>.
      */
     public static HttpURLConnection getConnection(URL url) throws IOException {
-        if ((prot_handler_string != null) && 
-                url.getProtocol().equalsIgnoreCase("https")) {
+        String prot = url.getProtocol();
+        
+        if ((prot_handler_string != null) && prot.equalsIgnoreCase("https")) {
             url = new URL(url, url.toExternalForm(), 
                     stFactory.createURLStreamHandler("https"));
         }
@@ -122,16 +115,24 @@ public class HttpURLConnectionManager {
         HttpURLConnection conn = (HttpURLConnection)url.openConnection();
         if (method != null) {
             try {
-                method.invoke(conn, args);
+                if (prot.equalsIgnoreCase("http")) {
+                    method.invoke(conn, args);
+                } else {
+                    method_s.invoke(conn, args);
+                }
                 if (debug.messageEnabled()) {
-                    debug.message("HttpURLConnectionManager.getConnection: set read timeout to " + READTIMEOUT);
+                    debug.message("HttpURLConnectionManager.getConnection: " + 
+                            "set read timeout to " + READTIMEOUT);
                 }
             } catch(IllegalAccessException e) {
-                debug.error("HttpURLConnectionManager.getConnection: Failed to set read timeout", e);
+                debug.error("HttpURLConnectionManager.getConnection: " + 
+                        "Failed to set read timeout", e);
             } catch(IllegalArgumentException e) {
-                debug.error("HttpURLConnectionManager.getConnection: Failed to set read timeout", e);
+                debug.error("HttpURLConnectionManager.getConnection: " + 
+                        "Failed to set read timeout", e);
             } catch(InvocationTargetException e) {
-                debug.error("HttpURLConnectionManager.getConnection: Failed to set read timeout", e);
+                debug.error("HttpURLConnectionManager.getConnection: " + 
+                        "Failed to set read timeout", e);
             }
         }
         return conn;
