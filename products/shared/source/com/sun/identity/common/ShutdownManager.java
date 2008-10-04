@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ShutdownManager.java,v 1.6 2008-08-08 00:40:58 ww203982 Exp $
+ * $Id: ShutdownManager.java,v 1.7 2008-10-04 00:36:44 veiming Exp $
  *
  */
 
@@ -51,6 +51,8 @@ public class ShutdownManager {
     protected int acquireCount;
 
     protected int waitCount;
+
+    private ShutdownListener appSSOTokenDestroyer;
 
     /**
      * Constructor of ShutdownManager.
@@ -228,9 +230,22 @@ public class ShutdownManager {
                     j.remove();
                 }
             }
+            if (appSSOTokenDestroyer != null) {
+                appSSOTokenDestroyer.shutdown();
+                appSSOTokenDestroyer = null;
+            }
         } else {
             throw new IllegalMonitorStateException(
                 "The calling thread is not the owner of the lock!");
         }
+    }
+
+    /**
+     * Adds application single-sign-on token destroyer.
+     *
+     * @param listener Listener object.
+     */
+    public void addApplicationSSOTokenDestoryer(ShutdownListener listener) {
+        appSSOTokenDestroyer = listener;
     }
 } 

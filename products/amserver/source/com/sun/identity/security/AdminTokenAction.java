@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AdminTokenAction.java,v 1.12 2008-08-19 19:09:21 veiming Exp $
+ * $Id: AdminTokenAction.java,v 1.13 2008-10-04 00:36:43 veiming Exp $
  *
  */
 
@@ -31,7 +31,6 @@ package com.sun.identity.security;
 import java.security.PrivilegedAction;
 
 import com.iplanet.am.util.AdminUtils;
-import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.util.Crypt;
 import com.iplanet.sso.SSOException;
@@ -39,6 +38,9 @@ import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.internal.AuthContext;
 import com.sun.identity.authentication.internal.AuthPrincipal;
+import com.sun.identity.common.ShutdownListener;
+import com.sun.identity.common.ShutdownManager;
+import com.sun.identity.shared.debug.Debug;
 
 /**
  * The class is used to perform privileged operations using
@@ -117,6 +119,12 @@ public class AdminTokenAction implements PrivilegedAction {
 	if (tokenManager == null) {
 	    try {
 		tokenManager = SSOTokenManager.getInstance();
+                ShutdownManager.getInstance().addApplicationSSOTokenDestoryer(
+                    new ShutdownListener() {
+                        public void shutdown() {
+                            AdminTokenAction.reset();
+                        }
+                    }); 
 	    } catch (SSOException ssoe) {
 		debug.error("AdminTokenAction::init Unable to get " +
 		    "SSOTokenManager", ssoe);
@@ -147,7 +155,20 @@ public class AdminTokenAction implements PrivilegedAction {
      * Resets cached SSOToken.
      */
     public static void reset() {
-        appSSOToken = internalAppSSOToken = null;
+        if (appSSOToken != null) {
+	    if (tokenManager != null) {
+                try {
+                    tokenManager.destroyToken(appSSOToken);
+                } catch (SSOException e) {
+                    debug.error(
+                        "AdminTokenAction.reset: cannot destroyed appSSOToken.",
+                        e);
+                }
+            }
+            
+            appSSOToken = null;
+        }
+        internalAppSSOToken = null;
     }
 
     /* (non-Javadoc)

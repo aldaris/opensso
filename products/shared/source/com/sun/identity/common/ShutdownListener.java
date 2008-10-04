@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ShutdownListener.java,v 1.2 2008-06-25 05:52:52 qcheng Exp $
+ * $Id: ShutdownListener.java,v 1.3 2008-10-04 00:36:44 veiming Exp $
  *
  */
 
@@ -34,10 +34,8 @@ package com.sun.identity.common;
  */
 
 public interface ShutdownListener {
-
     /**
      * The function to run when the system shutdown.
      */
-    
     public void shutdown();
 }
