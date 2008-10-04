@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ThreadPool.java,v 1.9 2008-08-08 00:40:54 ww203982 Exp $
+ * $Id: ThreadPool.java,v 1.10 2008-10-04 00:11:46 arviranga Exp $
  *
  */
 
@@ -143,6 +143,11 @@ public class ThreadPool {
     {
         WorkerThread t = null;
         synchronized (this) {
+            if (shutdownThePool) {
+                // No more tasks will be accepted
+                throw new ThreadPoolException(poolName +
+                    " thread pool's being shutdown.");
+            }
             if (busyThreadCount == poolSize) {
                 if ((threshold > 0) && (taskList.size() >= threshold)) {
                     throw new ThreadPoolException(poolName + 
@@ -194,6 +199,7 @@ public class ThreadPool {
                 // better knownledge than the web container to stop the threads
                 // in the pool.
                 busyThreadCount--;
+                currentThreadCount--;
                 if(busyThreadCount == 0){
                     notify();
                 }
@@ -210,9 +216,26 @@ public class ThreadPool {
     public synchronized void shutdown() {
         if(!shutdownThePool) {
             shutdownThePool = true;
+            // If daemon thread, discard the remaining tasks
+            // else, wait for all tasks to be completed
+            if (daemon) {
+                taskList.clear();
+            } else {
+                while (!taskList.isEmpty()) {
+                    try {
+                        // wait if there are tasks & threads to be executed
+                        wait();
+                    } catch (Exception ex) {
+                        debug.error("ThreadPool.shutdown Excetion while " +
+                            "waiting for tasks/threads to complete", ex);
+                    }
+                }
+            }
             for(int i = 0; i < currentThreadCount - busyThreadCount; i++) {
                 // terminate the thread from the beginning of the array
-                threads[i].terminate();
+                if (threads[i] != null) {
+                    threads[i].terminate();
+                }
             }
             while(busyThreadCount != 0){
                 try{
