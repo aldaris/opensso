@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedSystemProperties.java,v 1.6 2008-06-25 05:49:32 qcheng Exp $
+ * $Id: FedSystemProperties.java,v 1.7 2008-10-04 03:33:49 hengming Exp $
  *
  */
 
@@ -106,7 +106,7 @@ public class FedSystemProperties extends FedLibSystemProperties {
      */
     public Collection getServerList()
         throws Exception {
-        return WebtopNaming.getPlatformServerList();
+        return WebtopNaming.getPlatformServerList(false);
     }
     
     /**
