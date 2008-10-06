@@ -50,7 +50,7 @@ directory_server=
 directory_port=
 
 # Configuration root suffix. eg: dc=example,dc=com
-config_root_suffix=
+config_root_suffix=dc=opensso,dc=java,dc=net
 
 # Password for user dn used in the property ds_dirmgrdn
 

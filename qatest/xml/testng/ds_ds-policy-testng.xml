@@ -20,23 +20,12 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ds_ds-policy-testng.xml,v 1.9 2007-11-16 22:25:44 rmisra Exp $: 
+ $Id: ds_ds-policy-testng.xml,v 1.10 2008-10-06 01:18:17 inthanga Exp $: 
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
 <suite name="ds_ds-policy" verbose="1">
-    <test name="PolicyTest">
-        <groups>
-            <run>
-                <include name="ds_ds"/>
-            </run>
-        </groups>
-        <classes>
-            <class name="com.sun.identity.qatest.policy.ConfigUnconfig"/>
-            <class name="com.sun.identity.qatest.policy.PolicyEvaluationTestFactory"/>
-        </classes>
-    </test>
     <test name="PolicyTimeTest">
         <groups>
             <run>
@@ -44,6 +33,7 @@
             </run>
         </groups>
         <classes>
+            <class name="com.sun.identity.qatest.policy.ConfigUnconfig"/>
             <class name="com.sun.identity.qatest.policy.PolicyEvaluationTimeTest"/>
         </classes>
     </test>       
@@ -2564,4 +2554,14 @@
             <class name="com.sun.identity.qatest.policy.PolicyTests"/>
         </classes>
     </test> 
+    <test name="PolicyTest">
+        <groups>
+            <run>
+                <include name="ds_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.policy.PolicyEvaluationTestFactory"/>
+        </classes>
+    </test>
 </suite>
