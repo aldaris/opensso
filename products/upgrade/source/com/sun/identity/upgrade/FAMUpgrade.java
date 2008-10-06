@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMUpgrade.java,v 1.9 2008-08-20 21:13:06 bina Exp $
+ * $Id: FAMUpgrade.java,v 1.10 2008-10-06 06:15:13 bina Exp $
  *
  */
 package com.sun.identity.upgrade;
@@ -91,7 +91,7 @@ public class FAMUpgrade {
      */
     public static void main(String args[]) {
         try {
-            System.out.println("Welcome to OpenSSO 8.0 upgrade");
+            System.out.println(UpgradeUtils.bundle.getString("upg-welcome"));
             FAMUpgrade famUpgrade = new FAMUpgrade();
             famUpgrade.bootStrapNow();
             famUpgrade.initVariables();
@@ -113,11 +113,13 @@ public class FAMUpgrade {
             String instanceType = (String)properties.get("INSTANCE_TYPE");
             if ((instanceType != null && instanceType.equalsIgnoreCase("FM")) 
                                       || UpgradeUtils.isRealmMode()) {
-                System.out.println("This is Realm Mode");
+                System.out.println(
+                    UpgradeUtils.bundle.getString("upg-realm-mode"));
                 realmMode = true;
             //invoke migrateToRealm
             } else {
-                System.out.println("This is Legacy Mode");
+                System.out.println(
+                    UpgradeUtils.bundle.getString("upg-legacy-mode"));
                 System.out.print("Enable Realm Mode: [y/n]");
                 enableRealms = new Boolean(readInput()).booleanValue();
                 System.out.println("isRealmEnabled: " + enableRealms);
@@ -360,7 +362,7 @@ public class FAMUpgrade {
      * Upgrades the services schema for different services .
      */
     public void startUpgrade() {
-        System.out.println("Starting Upgrade: ");
+        System.out.println(UpgradeUtils.bundle.getString("upg-start") + " : ");
         String servicesDir = basedir + File.separator 
                 + "upgrade" + File.separator + "services";
         // get file list
@@ -379,7 +381,8 @@ public class FAMUpgrade {
             }
             // serviceName
             System.out.println("*********************************************");
-            System.out.println("Migrating Service Name: " + serviceName);
+            System.out.println(UpgradeUtils.bundle.getString(
+                "upg-migrate-service-name") + " : " + serviceName);
             File fileL = new File(servicesDir + File.separator + value);
             String[] ll = fileL.list();
             List lArray = Arrays.asList(ll);
@@ -411,10 +414,14 @@ public class FAMUpgrade {
             Collections.sort(migrateList);
             boolean isNew = false;
             if (currentVersion != -1) {
-                System.out.println(serviceName + " :Current Service Revision :"+
-                        currentVersion);
+                System.out.println(UpgradeUtils.bundle.getString(
+                    "upg-service-name") + " :"+ 
+                    UpgradeUtils.bundle.getString("upg-rev-number") 
+                   + ":"+ currentVersion);
             } else {
-                System.out.println("New Service : " + serviceName );
+                System.out.println(
+                    UpgradeUtils.bundle.getString("upg-new-service") +
+                            " : " + serviceName );
                 isNew = true;
             }
 
@@ -476,7 +483,8 @@ public class FAMUpgrade {
                     UpgradeUtils.setServiceRevision(serviceName, endVer);
                 }
             } catch (Exception e) {
-                System.out.println("Error :" + e.getMessage());
+                System.out.println(UpgradeUtils.bundle.getString("upg-error") 
+                    + ":" + e.getMessage());
                 e.printStackTrace();
             }
         }

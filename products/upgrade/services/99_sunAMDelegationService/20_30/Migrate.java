@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.6 2008-09-26 04:57:16 bina Exp $
+ * $Id: Migrate.java,v 1.7 2008-10-06 06:15:12 bina Exp $
  *
  */
 
@@ -45,6 +45,8 @@ public class Migrate implements MigrateTasks {
     final static String SERVICE_DIR = "99_sunAMDelegationService/20_30";
     final static String ATTR_NAME = "SubjectIdTypes";
     final static String ATTR_NAME_1 = "attributes";
+    final static String ATTR_NAME_2 = "notAttributes";
+
     final static String schemaType = "Global";
     final static String FILTERED_ROLE = "FILTERED_ROLE";
     final static String POLICY_NAME = "AllUserReadableServices";
@@ -61,6 +63,7 @@ public class Migrate implements MigrateTasks {
     final static String RULE_NAME_5 = "delegation-rule5";
     final static String DEFAULT_VAL = 
         "iplanet-am-user-password-reset-force-reset";
+    final static String CONDITION_NAME = "condition";
     /**
      * Updates the <code>sunAMDelegationService<code> service schema.
      *
@@ -88,6 +91,10 @@ public class Migrate implements MigrateTasks {
             removePasswordResetForceChangePwd.put("condition", setPwdReset);
             UpgradeUtils.removeDelegationCondition(POLICY_NAME_1,
                  ATTR_NAME_1,removePasswordResetForceChangePwd);
+
+            // FOR ISSUE 3548
+            UpgradeUtils.removeDelegationPolicyAttribute(
+                POLICY_NAME_1,ATTR_NAME_2,CONDITION_NAME);
 
             // add AgentsReadWrite Permission
             Map attrValues = new HashMap();

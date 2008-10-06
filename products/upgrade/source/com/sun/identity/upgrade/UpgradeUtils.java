@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpgradeUtils.java,v 1.12 2008-09-26 04:56:34 bina Exp $
+ * $Id: UpgradeUtils.java,v 1.13 2008-10-06 06:15:13 bina Exp $
  *
  */
 package com.sun.identity.upgrade;
@@ -170,7 +170,7 @@ public class UpgradeUtils {
     private static String stagingDir;
     private static String configDir;
     private static String rootSuffix = SMSEntry.getRootSuffix();
-    private static ResourceBundle bundle;
+    public static ResourceBundle bundle;
     static Map entityDescriptors = new HashMap();
     static Map entityConfigs = new HashMap();
     // will be passed on from the main upgrade class
@@ -180,7 +180,7 @@ public class UpgradeUtils {
     // the following value will be passed down from the Main Upgrade program.
     // default dsMnanager dn.
     static String dsManager = "cn=Directory Manager";
-    static String RESOURCE_BUNDLE_NAME = "famUpgrade";
+    static String RESOURCE_BUNDLE_NAME = "ssoUpgrade";
     static String PRINCIPAL = "Principal";
     static String REALM_MODE = "realmMode";
     static String SERVER_DEFAULTS_FILE = "serverdefaults.properties";
@@ -222,7 +222,7 @@ public class UpgradeUtils {
     final static String INSTALL_LDIF = "FM_DAI_install.ldif";
     static Hashtable propertyFileMap = new Hashtable();
     static {
-        //bundle = ResourceBundle.getBundle(RESOURCE_BUNDLE_NAME);
+        bundle = ResourceBundle.getBundle(RESOURCE_BUNDLE_NAME);
         // TODO change this , the properties should be 
         // read from AMConfig.properties. Currently
         // properties from AMConfig.properties are not
@@ -713,8 +713,10 @@ public class UpgradeUtils {
             String revisionNumber) throws UpgradeException {
         String classMethod = "UpgradeUtils:setServiceRevision : ";
         try {
-            System.out.println("Service Name :" + serviceName);
-            System.out.println("revisionNumber :" + revisionNumber);
+            System.out.println(bundle.getString("upg-service-name") + ":"
+                + serviceName);
+            System.out.println(bundle.getString("upg-revision-number")
+                + ":" + revisionNumber);
             if (debug.messageEnabled()) {
                 debug.message("Setting service revision for :" + serviceName
                     + "to : " + revisionNumber);
@@ -990,7 +992,8 @@ public class UpgradeUtils {
     public static void loadLdif(String ldifFileName) {
         String classMethod = "UpgradeUtils:loadLdif : ";
         try {
-            System.out.println("Loading LDIF File :" + ldifFileName);
+            System.out.println(bundle.getString("upg-load-ldif-file") 
+                + " :" + ldifFileName);
             LDIF ldif = new LDIF(ldifFileName);
             ld = getLDAPConnection();
             LDAPUtils.createSchemaFromLDIF(ldif, ld);
@@ -1055,7 +1058,8 @@ public class UpgradeUtils {
     public static void importServiceData(
             String fileName)
             throws UpgradeException {
-        System.out.println("Import Service data : " + fileName);
+        System.out.println(bundle.getString("upg-import-service-data")
+            + ": " + fileName);
         String[] args = new String[8];
         args[0] = "--runasdn";
         args[1] = bindDN;
@@ -1076,7 +1080,8 @@ public class UpgradeUtils {
      */
     public static void importServiceData(
             String[] fileList) throws UpgradeException {
-        System.out.println("Import Service data : " + fileList);
+        System.out.println(bundle.getString("upg-import-service-data")
+                           + fileList);
         int len = fileList.length;
         String[] args = new String[7 + len];
         args[0] = "--runasdn";
@@ -1104,7 +1109,8 @@ public class UpgradeUtils {
         if (debug.messageEnabled()) {
             debug.message(classMethod + "Import Service Data :" + fileList);
         }
-        System.out.println("Import Service data : " + fileList);
+        System.out.println(bundle.getString("upg-import-service-data")
+                           + fileList);
         int len = fileList.size();
         String[] args = new String[7 + len];
         args[0] = "--runasdn";
@@ -2270,9 +2276,12 @@ public class UpgradeUtils {
                 String orgDN = DNMapper.orgNameToDN(realm);
                 String orgID = orgDN.replaceAll(",", "^");
                 if (debug.messageEnabled()) {
-                    System.out.println("OrgName is :" + realm);
-                    System.out.println("OrgDN : " + orgDN);
-                    System.out.println("OrgID : " + orgID);
+                    System.out.println(bundle.getString("upg-org-name") 
+                    + " : " + realm);
+                    System.out.println(bundle.getString("upg-org-dn")
+                         + orgDN);
+                    System.out.println(bundle.getString("upg-org-dn") + ":" 
+                         + orgID);
                 }
                 createRealmAdminPolicy(pm, orgDN, orgID);
                 createPolicyAdminPolicy(pm, orgDN, orgID);
@@ -2658,7 +2667,8 @@ public class UpgradeUtils {
             ServiceConfig providerSC =
                     orgConfig.getSubConfig(subConfigName);
             providerids = providerSC.getSubConfigNames();
-            System.out.println("providerids :" + providerids);
+            System.out.println(bundle.getString("upg-provider-id") + ":" 
+                + providerids);
         } catch (Exception e) {
             UpgradeUtils.debug.error(classMethod +
                     "Error retrieving sub configs", e);
@@ -3753,7 +3763,7 @@ public class UpgradeUtils {
             isValidServer =false;
         }
         if (!isValidServer) {
-            System.out.println("Invalid Directory Server Info!! ");
+            System.out.println(bundle.getString("upg-error-ds-info") + "!! ");
         }
         return isValidServer;
     }
@@ -3780,7 +3790,8 @@ public class UpgradeUtils {
             // do nothing
         }
         if (!isValidAuth) {
-            System.out.println("Invalid Credentials !! ");
+            System.out.println(bundle.getString("upg-error-credentials")
+                + " !! ");
         }
         return isValidAuth;
     }
@@ -3981,4 +3992,46 @@ public class UpgradeUtils {
              debug.error("UpgradeUtils.removeDelegationCondition", e);
          }
      }
+
+     /**
+      * Removes attribute from a condition.
+      *
+      * @param policyName Name of Policy.
+      * @param attributeName the name of the attribute to be removed.
+      * @param conditionName name of the condition
+      */
+    public static void removeDelegationPolicyAttribute(String policyName,
+            String attributeName ,String conditionName) {
+        String classMethod = "UpgradeUtils:removeDelegationPolicyAttribute";
+        try {
+            PolicyManager pm = new PolicyManager(ssoToken,HIDDEN_REALM);
+            Policy policy = pm.getPolicy(policyName);
+
+            Condition cond = policy.getCondition(conditionName);
+            HashMap newMap=new HashMap();
+            if (cond != null) {
+                Map orig = cond.getProperties();
+                Iterator i = (orig.keySet()).iterator();
+                while (i.hasNext()) {
+                    String key = (String)i.next();
+                    if (!key.equals(attributeName)) {
+                        HashSet values = (HashSet)orig.get(key);
+                        newMap.put(key,values);
+                    }
+                 }
+
+                if (debug.messageEnabled()) {
+                    debug.message(classMethod + "attributes :" + newMap);
+                }
+                cond.setProperties(newMap);
+                policy.replaceCondition(conditionName, cond);
+             }
+             pm.replacePolicy(policy);
+         } catch (PolicyException e) {
+             debug.error(classMethod,e);
+         } catch (SSOException e) {
+             debug.error(classMethod,e);
+         }
+    }
+
 }
