@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.56 2008-09-04 16:40:51 kevinserwin Exp $
+   $Id: build.xml,v 1.57 2008-10-07 23:58:50 rajeevangal Exp $
 
 -->
 
@@ -216,8 +216,8 @@
                 <include name="wordlist.txt" />
             </zipfileset>
             <zipfileset dir="${amserver.warbase.dir}/opends/config/upgrade" prefix="WEB-INF/template/opends/config/upgrade">
-                <include name="config.ldif.4337" />
-                <include name="schema.ldif.4337" />
+                <include name="config.ldif.4517" />
+                <include name="schema.ldif.4517" />
             </zipfileset>
             <zipfileset dir="${amserver.warbase.dir}/opends/config/schema" prefix="WEB-INF/template/opends/config/schema">
                 <include name="00-core.ldif" />
