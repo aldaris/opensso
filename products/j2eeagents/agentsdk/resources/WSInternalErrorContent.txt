@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<soap:Envelope xlmns:soap="http://schema.xmlsoap.org/soap/envelope/">
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
    <soap:Body>
       <soap:Fault>
          <soap:faultcode>soap:Server</soap:faultcode>

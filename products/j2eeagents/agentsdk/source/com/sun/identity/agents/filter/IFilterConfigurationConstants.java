@@ -41,7 +41,7 @@
 
  *
 
- * $Id: IFilterConfigurationConstants.java,v 1.13 2008-08-30 01:40:54 huacui Exp $
+ * $Id: IFilterConfigurationConstants.java,v 1.14 2008-10-07 17:32:31 huacui Exp $
 
  *
 
@@ -506,6 +506,9 @@ public interface IFilterConfigurationConstants {
 
         "webservice.authenticator";
 
+
+    public static final String CONFIG_WEBSERVICE_RESPONSEPROCESSOR_IMPL =
+        "webservice.responseprocessor";
 
 
     public static final String CONFIG_WEBSERVICE_INTERNAL_ERROR_FILE =

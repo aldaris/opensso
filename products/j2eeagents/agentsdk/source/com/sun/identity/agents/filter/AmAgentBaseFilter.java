@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmAgentBaseFilter.java,v 1.3 2008-06-25 05:51:42 qcheng Exp $
+ * $Id: AmAgentBaseFilter.java,v 1.4 2008-10-07 17:32:31 huacui Exp $
  *
  */
 
@@ -112,11 +112,38 @@ public abstract class AmAgentBaseFilter implements Filter
         IHttpServletRequestHelper helper = result.getRequestHelper();
         HttpServletRequest outgoingRequest = null;
         if(helper != null) {
-            outgoingRequest = new AmAgentServletRequest(request, helper);
+            outgoingRequest = new AmAgentServletRequest(request, helper);               
         } else {
             outgoingRequest = request;
         }
-        filterChain.doFilter(outgoingRequest, response);
+        boolean needProcessResponse = result.getProcessResponseFlag();
+        if (needProcessResponse) {
+            OpenSSOHttpServletResponse outgoingResponse = 
+                new OpenSSOHttpServletResponse((HttpServletResponse)response);
+            filterChain.doFilter(outgoingRequest, outgoingResponse);
+            processResponse(outgoingRequest, outgoingResponse);
+        } else {
+            filterChain.doFilter(outgoingRequest, response);
+        }
+
+    }
+    
+    private void processResponse(HttpServletRequest request, 
+                                 OpenSSOHttpServletResponse response) 
+    throws IOException, ServletException {
+        ISystemAccess sysAccess = AmFilterManager.getSystemAccess();
+        if (getWsResponseProcessor() != null) {
+            String respContent = response.getContents();
+            sysAccess.logMessage("AmAgentBaseFilter: response content= "
+                            + respContent);
+            String processedRespContent = getWsResponseProcessor().process(
+                        request.getRequestURL().toString(), respContent);
+            PrintWriter out = response.getWriter();
+
+            sysAccess.logMessage("AmAgentBaseFilter: processed response content= "
+                            + processedRespContent);
+            out.println(processedRespContent);
+        }
     }
 
     public void destroy() {
@@ -143,7 +170,15 @@ public abstract class AmAgentBaseFilter implements Filter
         try {
             response.setContentType("text/html");
             out = response.getWriter();
-            out.print(result.getDataToServe());
+            String respContent = result.getDataToServe();
+            boolean needProcessResponse = result.getProcessResponseFlag();
+            if (needProcessResponse) {
+                String processedRespContent = getWsResponseProcessor().process(
+                        result.getRequestURL(), respContent);
+                out.print(processedRespContent);
+            } else {
+                out.print(respContent);
+            }
             out.flush();
             out.close();
         } catch(IOException ex) {
@@ -193,6 +228,10 @@ public abstract class AmAgentBaseFilter implements Filter
     
     protected String getApplicationName() {
     	return _applicationName;
+    }
+    
+    private IWebServiceResponseProcessor getWsResponseProcessor() {
+        return _wsResponseProcessor;
     }
     
     protected boolean isInitialized() {
@@ -262,6 +301,34 @@ public abstract class AmAgentBaseFilter implements Filter
     	           + ((actualMode==null)?"Configured":actualMode.toString()));
     	     
     	        setFilterMode(actualMode);
+                
+                boolean wsEnabled = sysAccess.getConfigurationBoolean(
+                  IFilterConfigurationConstants.CONFIG_WEBSERVICE_ENABLE_FLAG,
+                  IFilterConfigurationConstants.DEFAULT_WEBSERVICE_ENABLE_FLAG);
+                if (wsEnabled) {
+                    IWebServiceResponseProcessor wsResponseProcessor = null;
+                    String wsResponseProcessorImpl = sysAccess.getConfiguration(
+                        IFilterConfigurationConstants.CONFIG_WEBSERVICE_RESPONSEPROCESSOR_IMPL,
+                        AgentConfiguration.getServiceResolver().getDefaultWebServiceResponseProcessorImpl());
+                if (wsResponseProcessorImpl != null
+                    && wsResponseProcessorImpl.trim().length() > 0) {
+                    sysAccess.logMessage("AmAgentFilter: web service response processor="
+                            + wsResponseProcessorImpl);
+                    try {
+                        wsResponseProcessor = (IWebServiceResponseProcessor)
+                            Class.forName(wsResponseProcessorImpl).newInstance();
+                    } catch (Exception e) {
+                        sysAccess.logError("AmAgentFilter: not able to instantiate "
+                                + wsResponseProcessorImpl);
+                    }
+                
+                    setWsResponseProcessor(wsResponseProcessor);
+                
+            } else {
+                throw new AgentException("No WebServiceAuthenticator found");
+            }
+            
+                }
     	        markInitialized();
     	    } else {
     	        throw new AgentException(
@@ -297,8 +364,14 @@ public abstract class AmAgentBaseFilter implements Filter
         _filterMode = filterMode;
     }
     
+    private void setWsResponseProcessor(IWebServiceResponseProcessor 
+            wsResponseProcessor) {
+        _wsResponseProcessor = wsResponseProcessor;
+    }
+    
     private String _applicationName;
     private FilterConfig _config;
     private boolean _initialized;
     private AmFilterMode _filterMode;
+    private IWebServiceResponseProcessor _wsResponseProcessor = null;
 }

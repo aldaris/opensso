@@ -1,7 +1,7 @@
 /**
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright (c) 2008 Sun Microsystems Inc. All Rights Reserved
  *
  * The contents of this file are subject to the terms
  * of the Common Development and Distribution License
@@ -22,22 +22,38 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IWebServiceAuthenticator.java,v 1.3 2008-10-07 17:32:31 huacui Exp $
+ * $Id: OpenSSOHttpServletResponse.java,v 1.1 2008-10-07 17:36:32 huacui Exp $
  *
  */
 
 package com.sun.identity.agents.filter;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
+import javax.servlet.ServletOutputStream;
 
-import com.iplanet.sso.SSOToken;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 
 /**
- * Web Service Authenticator interface
+ * A helper class used to manage the servlet response content. 
  */
-public interface IWebServiceAuthenticator {
-    
-    public SSOToken getUserToken(HttpServletRequest request, String message, 
-            String remoteIP, String remoteHost, AmFilterRequestContext ctx);
+public class OpenSSOHttpServletResponse extends HttpServletResponseWrapper
+{
+    ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
+    public OpenSSOHttpServletResponse(HttpServletResponse response) {
+        super(response);
+    }
+
+    public ServletOutputStream getOutputStream() {
+        return new OpenSSOServletOutputStream(bos);
+    }
+
+    /**
+     * Returns the contents of the response
+     */
+    public String getContents() {
+        return bos.toString();
+    }
 }

@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: OpenSSOAgentConfiguration.template,v 1.5 2008-08-30 01:40:55 huacui Exp $
+# $Id: OpenSSOAgentConfiguration.template,v 1.6 2008-10-07 17:38:06 huacui Exp $
 #
 #
 
@@ -279,6 +279,8 @@ com.sun.identity.agents.config.local.log.size = 52428800
 #     used by the Agent to generate an internal error fault for clients.
 #   - webservice.autherror.content: The name of file that contains content
 #     used by the Agent to generate an authorization error fault for clients.
+#   - webservice.responseprocessor: An implementation class that is used to do
+#     web-service response processing.
 # Hot-Swap Enabled: Yes
 #
 com.sun.identity.agents.config.webservice.enable = false
@@ -287,6 +289,7 @@ com.sun.identity.agents.config.webservice.process.get.enable = true
 com.sun.identity.agents.config.webservice.authenticator =
 com.sun.identity.agents.config.webservice.internalerror.content = WSInternalErrorContent.txt
 com.sun.identity.agents.config.webservice.autherror.content  = WSAuthErrorContent.txt
+com.sun.identity.agents.config.webservice.responseprocessor =
 
 #
 # ACCESS DENIED URI

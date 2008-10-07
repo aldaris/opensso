@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSUsernameTokenAuthenticator.java,v 1.4 2008-07-02 18:27:13 leiming Exp $
+ * $Id: WSSUsernameTokenAuthenticator.java,v 1.5 2008-10-07 17:32:31 huacui Exp $
  *
  */
 
@@ -70,7 +70,8 @@ public class WSSUsernameTokenAuthenticator implements IWebServiceAuthenticator {
     }
 
     public SSOToken getUserToken(HttpServletRequest request, 
-            String requestMessage, String remoteAddress, String remoteHost) 
+            String requestMessage, String remoteAddress, String remoteHost,
+            AmFilterRequestContext ctx) 
     {
         SSOToken result = null;
         

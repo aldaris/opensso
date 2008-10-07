@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmFilterRequestContext.java,v 1.8 2008-08-07 18:04:46 huacui Exp $
+ * $Id: AmFilterRequestContext.java,v 1.9 2008-10-07 17:32:31 huacui Exp $
  *
  */
 package com.sun.identity.agents.filter;
@@ -816,11 +816,11 @@ public class AmFilterRequestContext implements IUtilConstants {
         setPolicyDestinationURL(buff.toString());
     }
 
-    private void setRequest(HttpServletRequest request) {
+    void setRequest(HttpServletRequest request) {
         _request = request;
     }
 
-    private void setResponse(HttpServletResponse response) {
+    void setResponse(HttpServletResponse response) {
         _response = response;
     }
 

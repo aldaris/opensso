@@ -1,7 +1,7 @@
 /**
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright (c) 2008 Sun Microsystems Inc. All Rights Reserved
  *
  * The contents of this file are subject to the terms
  * of the Common Development and Distribution License
@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IWebServiceAuthenticator.java,v 1.3 2008-10-07 17:32:31 huacui Exp $
+ * $Id: IWebServiceResponseProcessor.java,v 1.1 2008-10-07 17:36:31 huacui Exp $
  *
  */
 
@@ -30,14 +30,11 @@ package com.sun.identity.agents.filter;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.iplanet.sso.SSOToken;
-
 /**
- * Web Service Authenticator interface
+ * Web Service Response Processor interface
  */
-public interface IWebServiceAuthenticator {
+public interface IWebServiceResponseProcessor {
     
-    public SSOToken getUserToken(HttpServletRequest request, String message, 
-            String remoteIP, String remoteHost, AmFilterRequestContext ctx);
+    public String process(String providerName, String responseContent);
 
 }

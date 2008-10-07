@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmFilterResult.java,v 1.2 2008-06-25 05:51:43 qcheng Exp $
+ * $Id: AmFilterResult.java,v 1.3 2008-10-07 17:32:31 huacui Exp $
  *
  */
 
@@ -42,6 +42,7 @@ public class AmFilterResult {
         setRedirectURL(redirectURL);
         setData(data);
         setNotEnforcedFlag(false);
+        setProcessResponseFlag(false);
     }
 
     public AmFilterResult(AmFilterResultStatus status, String redirectURL) {
@@ -68,6 +69,10 @@ public class AmFilterResult {
             return _redirectURL;
         }
 
+        public String getRequestURL() {
+            return _requestURL;
+        }
+
         public IHttpServletRequestHelper getRequestHelper() {
             return _requestHelper;
         }
@@ -75,6 +80,10 @@ public class AmFilterResult {
         public SSOValidationResult getSSOValidationResult() {
                 return _ssoValidationResult;
         }
+
+        public boolean getProcessResponseFlag() {
+            return _processResponse;
+        } 
 
         public  void markAsNotEnforced() {
             setNotEnforcedFlag(true);
@@ -95,8 +104,14 @@ public class AmFilterResult {
                  buff.append("\tStatus    \t: ");
                  buff.append(getStatus().toString());
                  buff.append(NEW_LINE);
+                 buff.append("\tProcessResponse    \t: ");
+                 buff.append(getProcessResponseFlag());
+                 buff.append(NEW_LINE);
                  buff.append("\tRedirectURL\t: ");
                  buff.append(getRedirectURL());
+                 buff.append(NEW_LINE);
+                 buff.append("\tRequestURL\t: ");
+                 buff.append(getRequestURL());
                  buff.append(NEW_LINE);
                  buff.append("\tRequestHelper: ");
                  buff.append(NEW_LINE);
@@ -145,18 +160,28 @@ public class AmFilterResult {
             _redirectURL = redirectURL;
         }
 
+        void setRequestURL(String reqURL) {
+            _requestURL = reqURL;
+        }
+
         private void setData(String data) {
             _data = data;
+        }
+
+        public void setProcessResponseFlag(boolean processResponse) {
+            _processResponse = processResponse;
         }
 
         private boolean                   _notEnforced;
         private AmFilterResultStatus      _status;
         private String                    _redirectURL;
+        private String                    _requestURL;
         private String                    _data;
         private IHttpServletRequestHelper _requestHelper;
         private boolean                   _blocked;
-        private SSOValidationResult           _ssoValidationResult;
-        
+        private SSOValidationResult       _ssoValidationResult;
+        private boolean                   _processResponse;        
+
         public static final String NEW_LINE = 
                             System.getProperty("line.separator", "\n");
         

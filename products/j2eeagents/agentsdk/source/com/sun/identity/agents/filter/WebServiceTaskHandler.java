@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceTaskHandler.java,v 1.4 2008-06-25 05:51:49 qcheng Exp $
+ * $Id: WebServiceTaskHandler.java,v 1.5 2008-10-07 17:32:31 huacui Exp $
  *
  */
 
@@ -135,6 +135,9 @@ public class WebServiceTaskHandler extends LocalAuthTaskHandler implements
     throws AgentException {
         AmFilterResult result = null;
         String requestURL = null;
+        if (isLogMessageEnabled()) {
+           logMessage("WebServiceTaskHandler.process: now processing");
+        }
         try {
             if (isActive()) {
                 requestURL = ctx.getDestinationURL();
@@ -161,17 +164,22 @@ public class WebServiceTaskHandler extends LocalAuthTaskHandler implements
                         }
                     } else if (method.equals(HTTP_METHOD_POST)) {
                         result = processWebServiceRequest(ctx, requestURL);
+                        if (result != null) {
+                            result.setProcessResponseFlag(true);
+                        }
                     } else {
                         logError(
                             "WebServiceTaskHandler: Unknown request method: "
                             + method);
                         result = getInternalErrorResult(requestURL);
+                        result.setProcessResponseFlag(true);
                     }
                 }
             }
         } catch (Exception ex) {
             logError("WebServiceTaskHandler: Exception caught", ex);
             result = getInternalErrorResult(requestURL);
+            result.setProcessResponseFlag(true);
         }
         return result;
     }
@@ -196,7 +204,7 @@ public class WebServiceTaskHandler extends LocalAuthTaskHandler implements
         }
         SSOToken ssoToken = getWebServiceAuthenticator().getUserToken(
                 request, requestBody, getClientIPAddress(request),
-                getClientHostName(request));
+                getClientHostName(request), ctx);
         if (ssoToken == null) {
             if (isLogWarningEnabled()) {
                 logWarning("WebServiceTaskHandler: authentication failed for "
@@ -268,8 +276,13 @@ public class WebServiceTaskHandler extends LocalAuthTaskHandler implements
                         }
                     }
                 }
-                
                 if (result == null) {
+                    request = ctx.getHttpServletRequest();
+                    requestBody = getRequestBody(ctx.getHttpServletRequest());  
+                    if (isLogMessageEnabled()) {
+                        logMessage("WebServiceTaskHandler: requestBody=" + 
+                                   requestBody);
+                    }
                     result = getAllowResult(ssoValidationResult,
                             responseAttributes, requestBody,
                             requestURL, request);
@@ -437,6 +450,7 @@ public class WebServiceTaskHandler extends LocalAuthTaskHandler implements
         AmFilterResult result = new AmFilterResult(
                 AmFilterResultStatus.STATUS_SERVE_DATA,
                 null, getAuthErrorContentForURL(requestURL));
+        result.setRequestURL(requestURL);
         result.markBlocked();
         return result;
     }
@@ -446,6 +460,7 @@ public class WebServiceTaskHandler extends LocalAuthTaskHandler implements
         AmFilterResult result = new AmFilterResult(
                 AmFilterResultStatus.STATUS_SERVE_DATA,
                 null,  getInternalErrorContentForURL(requestURL));
+        result.setRequestURL(requestURL);
         result.markBlocked();
         return result;
     }

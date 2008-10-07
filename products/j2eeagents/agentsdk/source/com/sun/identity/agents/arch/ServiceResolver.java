@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceResolver.java,v 1.5 2008-06-25 05:51:37 qcheng Exp $
+ * $Id: ServiceResolver.java,v 1.6 2008-10-07 17:32:30 huacui Exp $
  *
  */
 
@@ -71,7 +71,8 @@ import com.sun.identity.agents.filter.SSOContext;
 import com.sun.identity.agents.filter.SSOTaskHandler;
 import com.sun.identity.agents.filter.SessionAttributeTaskHandler;
 import com.sun.identity.agents.filter.URLPolicyTaskHandler;
-import com.sun.identity.agents.filter.WSSUsernameTokenAuthenticator;
+import com.sun.identity.agents.filter.WebServiceDefaultAuthenticator;
+import com.sun.identity.agents.filter.WebServiceDefaultResponseProcessor;
 import com.sun.identity.agents.filter.WebServiceTaskHandler;
 import com.sun.identity.agents.log.AmAgentLocalLog;
 import com.sun.identity.agents.log.AmAgentLog;
@@ -219,7 +220,11 @@ public abstract class ServiceResolver {
     }
     
     public String getDefaultWebServiceAuthenticatorImpl() {
-        return WSSUsernameTokenAuthenticator.class.getName();
+        return WebServiceDefaultAuthenticator.class.getName();
+    }
+    
+    public String getDefaultWebServiceResponseProcessorImpl() {
+        return WebServiceDefaultResponseProcessor.class.getName();
     }
     
     public String getPortCheckTaskHandlerImpl() {
