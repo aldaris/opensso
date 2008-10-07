@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAuthenticationManager.java,v 1.7 2008-08-28 21:45:51 madan_ranganath Exp $
+ * $Id: AMAuthenticationManager.java,v 1.8 2008-10-07 18:32:54 ww203982 Exp $
  *
  */
 
@@ -114,7 +114,7 @@ public class AMAuthenticationManager {
                 throw new AMConfigurationException(bundleName, "badRealm",
                 new Object[]{realm});
             }
-            if (moduleInstanceTable.get(realm) == null) {
+            synchronized (AMAuthenticationManager.class) {
                 if (moduleInstanceTable.get(realm) == null) {
                            buildModuleInstanceTable(token, realm);
                 }
@@ -288,44 +288,45 @@ public class AMAuthenticationManager {
                     }
                 }
                 realm = com.sun.identity.sm.DNMapper.orgNameToDN(realm);
-                
-                Map moduleMap = (Map)moduleInstanceTable.remove(realm);
-                if (moduleMap != null) {
+                synchronized (moduleInstanceTable) {
+                    Map moduleMap = (Map)moduleInstanceTable.remove(realm);
+                    if (moduleMap != null) {
                     /*
                      * this code is to not manipulate the hashmap that might
                      * be in iteration by other threads
                      */
-                    Map newMap = new HashMap(moduleMap);
-                    newMap.remove(moduleName);
-                    moduleMap = newMap;
-                }
-                Set instanceSet = new HashSet();
-                Map defaultAttrs = null;
-                if (config != null) {
-                    defaultAttrs = config.getAttributesWithoutDefaults();
-                }
-                if (defaultAttrs != null && !defaultAttrs.isEmpty()) {
-                    instanceSet.add(moduleName);
-                }
-                Set instances = null;
-                if (config != null) {
-                    instances = config.getSubConfigNames();
-                }
-                if (instances != null) {
-                    instanceSet.addAll(instances);
-                }
-                if (!instanceSet.isEmpty()){
-                    if (moduleMap == null) {
-                        moduleMap = new HashMap();
+                        Map newMap = new HashMap(moduleMap);
+                        newMap.remove(moduleName);
+                        moduleMap = newMap;
                     }
-                    /*
-                     * this operation is safe as moduleMap is a local object
-                     * now.
-                     */
-                    moduleMap.put(moduleName, instanceSet);
-                }
-                if (moduleMap != null && !moduleMap.isEmpty()) {
-                    moduleInstanceTable.put(realm, moduleMap);
+                    Set instanceSet = new HashSet();
+                    Map defaultAttrs = null;
+                    if (config != null) {
+                        defaultAttrs = config.getAttributesWithoutDefaults();
+                    }
+                    if (defaultAttrs != null && !defaultAttrs.isEmpty()) {
+                        instanceSet.add(moduleName);
+                    }
+                    Set instances = null;
+                    if (config != null) {
+                        instances = config.getSubConfigNames();
+                    }
+                    if (instances != null) {
+                        instanceSet.addAll(instances);
+                    }
+                    if (!instanceSet.isEmpty()){
+                        if (moduleMap == null) {
+                            moduleMap = new HashMap();
+                        }
+                        /*
+                         * this operation is safe as moduleMap is a local object
+                         * now.
+                         */
+                        moduleMap.put(moduleName, instanceSet);
+                    }
+                    if (moduleMap != null && !moduleMap.isEmpty()) {
+                        moduleInstanceTable.put(realm, moduleMap);
+                    }
                 }
             }
         } catch (Exception e) {
