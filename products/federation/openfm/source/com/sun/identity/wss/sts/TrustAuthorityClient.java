@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityClient.java,v 1.21 2008-09-19 16:00:56 mallas Exp $
+ * $Id: TrustAuthorityClient.java,v 1.22 2008-10-08 22:53:58 mallas Exp $
  *
  */
 
@@ -408,7 +408,8 @@ public class TrustAuthorityClient {
                     + " obtained from STS : " + XMLUtils.print(element));
             }
 
-            if (credential != null) {
+            if (credential != null && (credential 
+                    instanceof com.iplanet.sso.SSOToken)) {
                 String[] data = {wspEndPoint,stsEndpoint,stsMexAddress,
                 credential.toString(),keyType,tokenType};
                 LogUtil.access(Level.INFO,

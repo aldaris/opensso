@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README,v 1.4 2008-08-19 19:15:10 veiming Exp $
+   $Id: README,v 1.5 2008-10-08 22:56:29 mallas Exp $
 
 -->
 
@@ -147,6 +147,11 @@ Configuring OpenSSO for passthrough (use case A):
       only. You can also STSSecurity, however, you may need to configure
       STSClient agent profile.
 
+      Note: If you are using "agentAuth" as the application user name,
+      add the LoanRequestorService to the Agent Authenticator list.
+      Go to Access Control -> Default realm -> Agents -> AgentAuthenticator
+      Select the available in the allowed agents to read and save.
+
 3. Create agent profiles for "LoanProcessorService" WSC:
 
       Create "WSC" profile for "LoanProcessorService"
@@ -159,6 +164,11 @@ Configuring OpenSSO for passthrough (use case A):
       Check usePassThroughToken to true (checked).
       Save changes. Use security mechanism as any of the SAML Token profiles
       only.  You should not use STSSecurity for the passthrough use case.
+
+      Note: If you are using "agentAuth" as the application user name,
+      add the LoanProcessorService to the Agent Authenticator list.
+      Go to Access Control -> Default realm -> Agents -> AgentAuthenticator
+      Select the available in the allowed agents to read and save.
 
 
 4. Create agent profiles for "WSP" :

@@ -20,9 +20,9 @@
  * If applicable, add the following below the CDDL Header,
  * with the fields enclosed by brackets [] replaced by
  * your own identifying information:
- * "Portions Copyrighted [year] [name of copyright owner]"
+ * "Portions Copyrighted [year] [name of copyght owner]"
  *
- * $Id: AgentProvider.java,v 1.32 2008-09-11 05:24:14 mallas Exp $
+ * $Id: AgentProvider.java,v 1.33 2008-10-08 22:53:58 mallas Exp $
  *
  */
 
@@ -232,7 +232,7 @@ public class AgentProvider extends ProviderConfig {
         // Obtain the provider from Agent profile based on ProviderName
         try {
             AMIdentity provider = 
-                new AMIdentity(token, providerName, IdType.AGENTONLY, "/", null);
+                new AMIdentity(token, providerName, IdType.AGENT, "/", null);
             if(!provider.isExists()) {
                if(debug.messageEnabled()) {
                   debug.message("AgentProvider.init: provider " + providerName

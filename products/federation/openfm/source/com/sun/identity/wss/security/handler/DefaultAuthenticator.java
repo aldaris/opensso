@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultAuthenticator.java,v 1.14 2008-09-08 21:50:15 mallas Exp $
+ * $Id: DefaultAuthenticator.java,v 1.15 2008-10-08 22:53:58 mallas Exp $
  *
  */
 
@@ -402,6 +402,14 @@ public class DefaultAuthenticator implements MessageAuthenticator {
         String password = usernameToken.getPassword();
         if( (user == null) || (password == null) ) {  
             return false;
+        }
+        String nonce = usernameToken.getNonce();
+        String created = usernameToken.getCreated();
+        String passwordType = usernameToken.getPasswordType().trim();                
+        if(WSSConstants.PASSWORD_DIGEST_TYPE.equals(passwordType)) {
+           password = "PasswordDigest=" + password + ";" +
+                      "Nonce=" + nonce+ ";" +
+                      "Timestamp=" + created;
         }
       
         // Autheticate to LDAP server using Authentication client API

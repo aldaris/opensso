@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.14 2008-08-19 19:11:29 veiming Exp $
+   $Id: build.xml,v 1.15 2008-10-08 22:54:31 mallas Exp $
 
 -->
 
@@ -98,6 +98,9 @@
                 <filename name="META-INF/services/com.sun.xml.ws.api.pipe.TransportPipeFactory"/>    
             </fileset>
             
+             <zipfileset src="${extlib.dir}/webservices-rt.jar"
+                    includes="com/sun/xml/ws/security/Token.class"/>
+
             <manifest>
                <attribute name="Created-On" value="${pstamp}" />
                 <section name="com.sun.identity">
