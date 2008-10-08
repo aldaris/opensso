@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLConstants.java,v 1.12 2008-09-03 22:28:19 weisun2 Exp $
+ * $Id: SAMLConstants.java,v 1.13 2008-10-08 22:53:00 qcheng Exp $
  *
  */
 
@@ -815,6 +815,15 @@ public final class SAMLConstants
      */
     public static final String CLEANUP_INTERVAL_NAME =
                                 "iplanet-am-saml-cleanup-interval";
+    /**
+     * System property name that specifies cleanup interval for internal
+     * cache, such as assertions, artifacts and keystore etc. 
+     * This property is mapped to the CLEANUP_INTERVAL_NAME attribute in 
+     * SAML service on the server side.
+     */
+    public static final String CLEANUP_INTERVAL_PROPERTY =
+                            "com.sun.identity.saml.cleanup.interval";
+
     /**
      * Default server cleanup interval. It is in seconds.
      */

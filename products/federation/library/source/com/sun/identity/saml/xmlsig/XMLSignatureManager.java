@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XMLSignatureManager.java,v 1.8 2008-08-05 22:18:09 weisun2 Exp $
+ * $Id: XMLSignatureManager.java,v 1.9 2008-10-08 22:53:31 qcheng Exp $
  *
  */
 
@@ -36,7 +36,6 @@ import com.sun.identity.common.SystemConfigurationUtil;
 import com.sun.identity.common.TaskRunnable;
 import com.sun.identity.common.TimerPool;
 import com.sun.identity.common.SystemTimerPool;
-import com.sun.identity.saml.common.SAMLServiceManager; 
 
 /**
  * The class <code>XMLSignatureManager</code> provides methods 
@@ -49,12 +48,19 @@ public class XMLSignatureManager {
     protected static XMLSignatureManager instance = null;
     private SignatureProvider sp = null; 
     static {
-        long period = ((Integer) SAMLServiceManager.getAttribute(
-            SAMLConstants.CLEANUP_INTERVAL_NAME)).intValue() * 1000;
-        TaskRunnable refresher = new KeyStoreRefresher(period);   
-        TimerPool timerPool = SystemTimerPool.getTimerPool();
-        timerPool.schedule(refresher, new Date(((System.currentTimeMillis()
-            + period) / 1000) * 1000));
+        String interval =  SystemConfigurationUtil.getProperty(
+            SAMLConstants.CLEANUP_INTERVAL_PROPERTY);
+        if (interval != null) {
+            try {
+                long period = Integer.parseInt(interval) * 1000;
+                TaskRunnable refresher = new KeyStoreRefresher(period);   
+                TimerPool timerPool = SystemTimerPool.getTimerPool();
+                timerPool.schedule(refresher, new Date(((
+                    System.currentTimeMillis() + period) / 1000) * 1000));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        }
     }
     
     /**
