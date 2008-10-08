@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.jsp,v 1.4 2008-08-28 19:39:21 qcheng Exp $
+   $Id: index.jsp,v 1.5 2008-10-08 22:25:02 qcheng Exp $
 
 --%>
 
@@ -61,7 +61,8 @@ public void jspInit() {
         String bootstrapFile = System.getProperty("user.home") +
             File.separator + SetupClientWARSamples.CLIENT_WAR_CONFIG_TOP_DIR +
             File.separator + 
-            SetupClientWARSamples.getNormalizedRealPath(getServletContext()) +
+            SetupClientWARSamples.getNormalizedRealPath(
+            getServletConfig().getServletContext()) +
             "ClientSampleWSC.properties";
         FileInputStream fin = new FileInputStream(bootstrapFile);
         Properties props = new Properties();
@@ -90,7 +91,8 @@ public void jspInit() {
         String bootstrapFile = System.getProperty("user.home") +
             File.separator + SetupClientWARSamples.CLIENT_WAR_CONFIG_TOP_DIR +
             File.separator +
-            SetupClientWARSamples.getNormalizedRealPath(getServletContext()) +
+            SetupClientWARSamples.getNormalizedRealPath(
+            getServletConfig().getServletContext()) +
             "ClientSampleWSC.properties";
         FileInputStream fin = new FileInputStream(bootstrapFile);
         Properties props = new Properties();
@@ -118,7 +120,8 @@ public void jspInit() {
                     File.separator + 
                     SetupClientWARSamples.CLIENT_WAR_CONFIG_TOP_DIR +
                     File.separator +
-                    SetupClientWARSamples.getNormalizedRealPath(getServletContext()) +
+                    SetupClientWARSamples.getNormalizedRealPath(
+                    getServletConfig().getServletContext()) +
                     "RO_" + fnSuffix;
 		PrintWriter pw = new PrintWriter(new FileWriter(fileName));
                 pw.print(offering.toString());

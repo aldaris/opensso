@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: discovery-modify.jsp,v 1.4 2008-08-28 19:39:20 qcheng Exp $
+   $Id: discovery-modify.jsp,v 1.5 2008-10-08 22:25:02 qcheng Exp $
 
 --%>
 
@@ -71,7 +71,8 @@ com.sun.liberty.jaxrpc.LibertyManagerClient"
                 File.separator + 
                 SetupClientWARSamples.CLIENT_WAR_CONFIG_TOP_DIR +
                 File.separator +
-                SetupClientWARSamples.getNormalizedRealPath(getServletContext())
+                SetupClientWARSamples.getNormalizedRealPath(
+                getServletConfig().getServletContext())
                 + "ClientSampleWSC.properties";
             FileInputStream fin = new FileInputStream(bootstrapFile);
             Properties props = new Properties();

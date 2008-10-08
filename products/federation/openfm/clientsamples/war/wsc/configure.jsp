@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configure.jsp,v 1.8 2008-08-28 19:39:20 qcheng Exp $
+   $Id: configure.jsp,v 1.9 2008-10-08 22:25:02 qcheng Exp $
 
 --%>
 
@@ -66,7 +66,8 @@ java.util.Properties"
         SetupClientWARSamples.CLIENT_WAR_CONFIG_TOP_DIR;
 
     File fedConfig = new File(configDir + File.separator +
-        SetupClientWARSamples.getNormalizedRealPath(getServletContext()) +
+        SetupClientWARSamples.getNormalizedRealPath(
+        getServletConfig().getServletContext()) +
         "AMConfig.properties");
     if (!fedConfig.exists()) {
 %>
@@ -85,7 +86,8 @@ Client SDK is not configured. Please click <a class="named" href="../Configurato
         if (submit != null) {
 
             String bootstrapFile = configDir + File.separator +
-                SetupClientWARSamples.getNormalizedRealPath(getServletContext())
+                SetupClientWARSamples.getNormalizedRealPath(
+                getServletConfig().getServletContext())
                 + "ClientSampleWSC.properties";
 
             Properties fcprops = new Properties();
