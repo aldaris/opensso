@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RequestContext.java,v 1.8 2008-07-12 03:22:25 veiming Exp $
+ * $Id: RequestContext.java,v 1.9 2008-10-08 00:22:10 veiming Exp $
  *
  */
 
@@ -149,6 +149,7 @@ public class RequestContext {
     ) throws CLIException {
         if (parentArgv != null) {
             parseParentArgs(commandName, subcmd, parentArgv);
+            mapOptions.remove(IArgument.DATA_FILE);
         }
         parseArgs(commandName, subcmd, argv);
     }
