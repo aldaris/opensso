@@ -22,11 +22,11 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.setup,v 1.14 2008-08-30 05:45:11 ykwon Exp $
+   $Id: README.setup,v 1.15 2008-10-09 23:48:21 ww203982 Exp $
 
 -->
                                                                                
-Sun Java System OpenSSO: ssoAdminTools.zip 
+OpenSSO: ssoAdminTools.zip 
 ====================================================
 
 This file contains information on installing and using ssoAdminTools.zip.
@@ -37,6 +37,8 @@ Table of contents:
 1. Supported versions of Java Runtime
 2. Installing ssoAdminTools.zip
 3. What does this package contain?
+4. Using amtune after setup is run
+5. Executing amtune on a remote Sun Directory Server machine
 
 1. Supported versions of Java Runtime
 -------------------------
