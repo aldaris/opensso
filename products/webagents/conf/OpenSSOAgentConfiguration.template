@@ -599,12 +599,14 @@ com.sun.identity.agents.config.cdsso.cookie.domain[0] =
 #       the session destroy is successful.
 #   - logout.cookie.reset: List of cookies to be reset upon logout;
 #       in the same format as cookie reset list.
+#   - logout.redirect.url: User gets redirected to this URL after logout.
 #
 # Hot-Swap Enabled: Yes
 #
 com.sun.identity.agents.config.logout.url[0] = @AM_SERVICES_PROTO@://@AM_SERVICES_HOST@:@AM_SERVICES_PORT@@AM_SERVICES_DEPLOY_URI@/UI/Logout
 com.sun.identity.agents.config.agent.logout.url[0] = 
 com.sun.identity.agents.config.logout.cookie.reset[0] = 
+com.sun.identity.agents.config.logout.redirect.url = 
 
 #
 # FETCH POLICY DECISIONS FROM ROOT RESOURCE

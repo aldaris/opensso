@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.h,v 1.22 2008-10-04 01:34:27 robertis Exp $
+ * $Id: am_web.h,v 1.23 2008-10-09 21:25:34 robertis Exp $
  *
  */
 
@@ -155,6 +155,7 @@ AM_BEGIN_EXTERN_C
 #define AM_WEB_CDSSO_COOKIE_DOMAIN_LIST AM_COMMON_PROPERTY_PREFIX "cdsso.cookie.domain"
 #define AM_WEB_LOGOUT_URL_PROPERTY AM_COMMON_PROPERTY_PREFIX "logout.url"
 #define AM_WEB_AGENT_LOGOUT_URL_PROPERTY AM_COMMON_PROPERTY_PREFIX "agent.logout.url"
+#define AM_WEB_LOGOUT_REDIRECT_URL_PROPERTY AM_COMMON_PROPERTY_PREFIX "logout.redirect.url"
 #define AM_WEB_LOGOUT_COOKIE_RESET_PROPERTY AM_COMMON_PROPERTY_PREFIX "logout.cookie.reset"
 #define AM_WEB_GET_CLIENT_HOSTNAME AM_COMMON_PROPERTY_PREFIX "get.client.host.name"
 

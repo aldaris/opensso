@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: agent_configuration.h,v 1.11 2008-10-04 01:34:27 robertis Exp $
+ * $Id: agent_configuration.h,v 1.12 2008-10-09 21:25:34 robertis Exp $
  *
  */
 
@@ -80,6 +80,7 @@ public:
     size_t cookie_name_len;
     PRBool is_cookie_secure;
     const char *access_denied_url;
+    const char *logout_redirect_url;
     PRLock *lock;
     Utils::url_info_list_t login_url_list;
     Utils::url_info_list_t logout_url_list;
@@ -176,6 +177,7 @@ public:
         this->cookie_name_len = 0;
         this->is_cookie_secure = AM_FALSE;
         this->access_denied_url = NULL;
+        this->logout_redirect_url = NULL;
         this->lock = (PRLock *) NULL;
         this->notification_enable = AM_FALSE;
         this->notification_url = NULL;

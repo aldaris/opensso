@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.cpp,v 1.38 2008-10-04 01:34:27 robertis Exp $
+ * $Id: am_web.cpp,v 1.39 2008-10-09 21:25:34 robertis Exp $
  *
  */
 
@@ -1634,8 +1634,7 @@ am_web_is_access_allowed(const char *sso_token,
     // not enforced -> setup a special flag
     if (status == AM_SUCCESS) {
 	if ((AM_TRUE == inNotenforceIP) ||
-	    (AM_TRUE == foundInNotEnforcedList) ||
-	    (AM_TRUE == isLogoutURL)) {
+	    (AM_TRUE == foundInNotEnforcedList)){ 
 	    isNotEnforced = AM_TRUE;
 	}
     }
@@ -1846,23 +1845,23 @@ am_web_is_access_allowed(const char *sso_token,
 	    // Note that this must be done *after* am_policy_evaluate()
 	    // so we can get the user's id and pass it to the web app.
 	    // Can't get the user's id after session's been invalidated.
-	    if (isLogoutURL && sso_token != NULL && sso_token[0] != '\0'){
-		am_web_log_debug("invalidating session %s", sso_token);
-        am_status_t redirLogoutStatus = AM_FAILURE;
-		am_status_t logout_status =
-		    am_policy_user_logout(boot_info.policy_handle,
-						 sso_token,
-						 (*agentConfigPtr)->properties);
-		if (AM_SUCCESS != logout_status) {
-		    am_web_log_warning(
-				"%s: Error %s invalidating session %s.",
-				 thisfunc, am_status_to_name(logout_status),
-				 sso_token);
-		} else {
-		    am_web_log_debug("%s: Logged out session id %s.",
+	    if (isLogoutURL && sso_token != NULL && sso_token[0] != '\0'
+                && status != AM_INVALID_SESSION){
+            am_web_log_debug("invalidating session %s", sso_token);
+            am_status_t redirLogoutStatus = AM_FAILURE;
+            am_status_t logout_status =
+                am_policy_user_logout(boot_info.policy_handle,
+						 sso_token,(*agentConfigPtr)->properties);
+            if (AM_SUCCESS != logout_status) {
+                am_web_log_warning(
+                    "%s: Error %s invalidating session %s.",
+                     thisfunc, am_status_to_name(logout_status),
+                     sso_token);
+            } else {
+                am_web_log_debug("%s: Logged out session id %s.",
 				     thisfunc, sso_token);
-            redirLogoutStatus = AM_REDIRECT_LOGOUT;
-		}
+                redirLogoutStatus = AM_REDIRECT_LOGOUT;
+            }
        
         return redirLogoutStatus;
 
@@ -6104,11 +6103,10 @@ am_web_get_logout_url(char** logout_url, void* agent_config)
     }
     else {
         retVal.append(url_info_ptr->url, url_info_ptr->url_len);
-        if ((*agentConfigPtr)->agent_logout_url_list.size > 0)
-        {
-            Utils::url_info_list_t *url_list = NULL;
-            url_list = &(*agentConfigPtr)->agent_logout_url_list;
 
+        //Append the logout redirect url
+        if ((*agentConfigPtr)->logout_redirect_url != NULL )
+        {
             if(retVal.find("?")!=string::npos){
                 retVal.append("&");
             }
@@ -6117,7 +6115,7 @@ am_web_get_logout_url(char** logout_url, void* agent_config)
             }
 
             retVal.append("goto=");
-		    retVal.append(url_list->list[0].url);
+            retVal.append((*agentConfigPtr)->logout_redirect_url);
         }
 
         am_web_log_debug("%s: active logout url= %s",thisfunc, retVal.c_str());

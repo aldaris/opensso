@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: agent_configuration.cpp,v 1.16 2008-10-04 01:34:26 robertis Exp $
+ * $Id: agent_configuration.cpp,v 1.17 2008-10-09 21:25:34 robertis Exp $
  *
  * Abstract:
  * AgentConfiguration: This class creates/delets the agent configuration 
@@ -258,6 +258,27 @@ am_status_t AgentConfiguration::populateAgentProperties()
         }
     }
     
+    /* Get the logout redirect URL.*/
+    if (AM_SUCCESS == status) {
+        parameter = AM_WEB_LOGOUT_REDIRECT_URL_PROPERTY;
+        status = am_properties_get_with_default(this->properties,
+                parameter, NULL,
+                &this->logout_redirect_url);
+        
+        
+        if ((AM_SUCCESS == status &&
+                this->logout_redirect_url != NULL &&
+                '\0' == *this->logout_redirect_url) ) {
+            /*
+             * Treat an empty property value as if the property was not
+             * specified at all.
+             */
+            this->logout_redirect_url = NULL;
+            am_web_log_warning("Setting logout_redirect_url to null");
+        }
+    }
+
+
     /* Get the UnAuthenticated User info */
     if (AM_SUCCESS == status) {
         parameter = AM_WEB_ANONYMOUS_USER;
@@ -1246,6 +1267,7 @@ void AgentConfiguration::cleanup_properties()
     this->cookie_name_len = 0;
     Utils::cleanup_url_info_list(&this->cdsso_server_url_list);
     this->access_denied_url = NULL;
+    this->logout_redirect_url = NULL;
     if (((PRLock *) NULL) != this->lock) {
         PR_DestroyLock(this->lock);
         this->lock = (PRLock *) NULL;
