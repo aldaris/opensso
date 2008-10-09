@@ -122,11 +122,6 @@ Executing the Sample Program
 
 am_policy_test
 
-   Note: You must have a policy defined for the specified resource in 
-   an OpenSSO server before running this program. Also the shared secret 
-   (value of com.sun.am.policy.am.password ) should be in clear text and 
-   not in encrypted form.
-
    Description: am_policy_test evaluates the policy for the given ssoToken, 
    resource name, action.
 
