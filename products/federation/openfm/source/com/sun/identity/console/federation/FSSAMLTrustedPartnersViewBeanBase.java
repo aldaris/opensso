@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSAMLTrustedPartnersViewBeanBase.java,v 1.4 2008-06-25 05:49:35 qcheng Exp $
+ * $Id: FSSAMLTrustedPartnersViewBeanBase.java,v 1.5 2008-10-09 19:08:27 babysunil Exp $
  *
  */
 
@@ -168,7 +168,8 @@ public abstract class FSSAMLTrustedPartnersViewBeanBase
             view = ptModel.createChild(this, name);
         } else if (name.equals(PROPERTY_ATTRIBUTE)) {
             view = new AMPropertySheet(this, propertySheetModel, name);
-        } else if (propertySheetModel.isChildSupported(name)) {
+        } else if ((propertySheetModel != null) &&
+            propertySheetModel.isChildSupported(name)) {
             view = propertySheetModel.createChild(this, name, getModel());
         } else {
             view = super.createChild(name);

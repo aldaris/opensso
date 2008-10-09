@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLPropertyXMLBuilder.java,v 1.4 2008-06-25 05:49:37 qcheng Exp $
+ * $Id: SAMLPropertyXMLBuilder.java,v 1.5 2008-10-09 19:08:53 babysunil Exp $
  *
  */
 
@@ -31,6 +31,7 @@ package com.sun.identity.console.federation;
 import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.console.base.model.AMAdminUtils;
 import com.sun.identity.console.property.PropertyTemplate;
+import com.sun.identity.console.property.PropertyXMLBuilderBase;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -262,7 +263,7 @@ public class SAMLPropertyXMLBuilder
         List attributes = new ArrayList ();
         
         if ((samlProperties != null) && !samlProperties.isEmpty ()) {
-            buff.append (DEFINITION)
+            buff.append (PropertyXMLBuilderBase.getXMLDefinitionHeader())
             .append (START_TAG);
             getAttributes (samlProperties, commonAttributes, attributes);
             
