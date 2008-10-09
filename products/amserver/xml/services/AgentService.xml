@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.72 2008-10-04 01:29:53 madan_ranganath Exp $
+   $Id: AgentService.xml,v 1.73 2008-10-09 21:40:39 madan_ranganath Exp $
 
 -->
 
@@ -629,6 +629,15 @@
                         <DefaultValues>
                             <Value>[0]=</Value>
                         </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                       name="com.sun.identity.agents.config.logout.redirect.url"
+                       type="single"
+                       syntax="string"
+                       i18nKey="a499">
+                       <DefaultValues>
+                            <Value></Value>
+                       </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
                         name="com.sun.identity.agents.config.fetch.from.root.resource"
