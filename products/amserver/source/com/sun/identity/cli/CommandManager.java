@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommandManager.java,v 1.30 2008-09-19 20:44:47 arviranga Exp $
+ * $Id: CommandManager.java,v 1.31 2008-10-09 04:28:57 veiming Exp $
  *
  */
 
@@ -350,6 +350,8 @@ public class CommandManager {
         try {
             Class clazz = Class.forName(className);
             IDefinition defClass = (IDefinition)clazz.newInstance();
+            defClass.init((Locale)environment.get(
+                CLIConstants.ARGUMENT_LOCALE));
             definitionObjects.add(defClass);
             logName = defClass.getLogName();
         } catch (ClassNotFoundException e) {

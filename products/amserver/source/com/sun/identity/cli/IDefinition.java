@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDefinition.java,v 1.5 2008-06-25 05:42:09 qcheng Exp $
+ * $Id: IDefinition.java,v 1.6 2008-10-09 04:28:57 veiming Exp $
  *
  */
 
@@ -30,11 +30,22 @@ package com.sun.identity.cli;
 
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * This interface defines methods for a CLI definition class.
  */
 public interface IDefinition {
+    
+    /**
+     * Initializes the definition class.
+     * 
+     * @param locale Locale of the request.
+     * @throws CLIException if command definition cannot initialized.
+     */
+    void init(Locale locale)
+        throws CLIException;
+    
     /**
      * Returns product name.
      *

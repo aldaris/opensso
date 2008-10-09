@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIDefinitionBase.java,v 1.7 2008-06-25 05:42:08 qcheng Exp $
+ * $Id: CLIDefinitionBase.java,v 1.8 2008-10-09 04:28:56 veiming Exp $
  *
  */
 
@@ -33,6 +33,7 @@ import com.sun.identity.cli.stubs.SubCommandStub;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
@@ -42,6 +43,7 @@ public abstract class CLIDefinitionBase implements IDefinition {
     private List subCommands = new ArrayList();
     private String definitionClass;
     private String logName;
+    private ICLIStub defObject;
     protected ResourceBundle rb;
 
     /**
@@ -52,10 +54,20 @@ public abstract class CLIDefinitionBase implements IDefinition {
     public CLIDefinitionBase(String definitionClass)
         throws CLIException {
         this.definitionClass = definitionClass;
-        ICLIStub defObject = getDefinitionObject();
-        rb = ResourceBundle.getBundle(defObject.getResourceBundleName());
+        defObject = getDefinitionObject();
         logName = defObject.getLogName();
-        getCommands(defObject);
+    }
+    
+    /**
+     * Initializes the definition class.
+     * 
+     * @param locale Locale of the request.
+     * @throws CLIException if command definition cannot initialized.
+     */    
+    public void init(Locale locale) throws CLIException {
+        String rbName = defObject.getResourceBundleName();
+        rb = ResourceBundle.getBundle(rbName, locale);
+        getCommands();
     }
     
     private ICLIStub getDefinitionObject()
@@ -73,7 +85,7 @@ public abstract class CLIDefinitionBase implements IDefinition {
 
     }
 
-    private void getCommands(ICLIStub defObject) 
+    private void getCommands() 
         throws CLIException 
     {
         List subCommandStubs = defObject.getSubCommandStubs();
