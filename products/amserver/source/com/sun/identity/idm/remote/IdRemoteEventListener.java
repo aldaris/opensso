@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: IdRemoteEventListener.java,v 1.4 2008-09-13 00:58:15 veiming Exp $
+* $Id: IdRemoteEventListener.java,v 1.5 2008-10-09 02:40:04 arviranga Exp $
 */
 
 package com.sun.identity.idm.remote;
@@ -44,6 +44,7 @@ import com.iplanet.services.comm.share.Notification;
 import com.iplanet.services.naming.WebtopNaming;
 import com.sun.identity.common.GeneralTaskRunnable;
 import com.sun.identity.common.SystemTimer;
+import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdRepoListener;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
@@ -256,8 +257,18 @@ public class IdRemoteEventListener {
 
             // Construct IdRepoListener and set the realm
             IdRepoListener repoListener = new IdRepoListener();
-            DN entityDN = new DN(entityName);
-            String realm = entityDN.getParent().getParent().toRFCString();
+            String realm = null;
+            if (entityName.toLowerCase().indexOf(",amsdkdn=") != -1) {
+                AMIdentity id = new AMIdentity(null, entityName);
+                realm = id.getRealm();
+            } else {
+                DN entityDN = new DN(entityName);
+                realm = entityDN.getParent().getParent().toRFCString();
+            }
+            if (debug.messageEnabled()) {
+                debug.message("EventListener::sendIdRepoNotification: " +
+                    "modified UUID: " + entityName + " realm: " + realm);
+            }
             Map configMap = new HashMap();
             configMap.put("realm", realm);
             repoListener.setConfigMap(configMap);

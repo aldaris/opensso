@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LocalLdapAuthModule.java,v 1.5 2008-06-25 05:41:54 qcheng Exp $
+ * $Id: LocalLdapAuthModule.java,v 1.6 2008-10-09 02:40:04 arviranga Exp $
  *
  */
 
@@ -302,10 +302,12 @@ public class LocalLdapAuthModule implements LoginModule {
                 // Use orgname only if it a DN, else baseDN
                 orgName = baseDN;
             }
-            namingAttribute = TemplateManager.getTemplateManager()
+            if (com.sun.identity.sm.ServiceManager.isAMSDKConfigured()) {
+                namingAttribute = TemplateManager.getTemplateManager()
                     .getCreationTemplate(TEMPLATE_NAME,
                             (orgName == null) ? null : new Guid(orgName))
                     .getNamingAttribute();
+            }
         } catch (Exception e) {
             // Ignore the exception and use the default naming attribute
         }

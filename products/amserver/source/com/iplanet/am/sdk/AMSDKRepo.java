@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSDKRepo.java,v 1.21 2008-08-30 16:34:55 goodearth Exp $
+ * $Id: AMSDKRepo.java,v 1.22 2008-10-09 02:40:05 arviranga Exp $
  *
  */
 
@@ -1609,7 +1609,10 @@ public class AMSDKRepo extends IdRepo {
         }
         int type = 0;
         try {
-            type = sc.getAMObjectType(normalizedDN);
+            // If entry has been deleted, its type cannot be obtained
+            if (eventType != AMObjectListener.DELETE) {
+                type = sc.getAMObjectType(normalizedDN);
+            }
         } catch (AMException amse) {
             debug.error("AMSDKRepo:notifyObjectChangedEvent Unable "
                 + "to convert name to getAMObjectType.");
@@ -1642,8 +1645,9 @@ public class AMSDKRepo extends IdRepo {
             break;                
         default:
             if (debug.messageEnabled()) {
-                debug.message("AMSDKRepo:notifyObjectChangedEvent."
-                    + " objectChanged not send. no matching type: type=" + type);
+                debug.message("AMSDKRepo:notifyObjectChangedEvent. " +
+                    "unknown matching type: type=" + type +
+                    " Entity: " + normalizedDN + " Eventtype: " + eventType);
             }
             break;
         }
@@ -1655,12 +1659,16 @@ public class AMSDKRepo extends IdRepo {
                 Map configMap = l.getConfigMap();
                 if (idType != null) {
                     l.objectChanged(normalizedDN, idType, eventType, configMap);
+                    if (idType == IdType.USER) {
+                        // agents were treated as users so we have to
+                        // send agent change as well.
+                        l.objectChanged(normalizedDN, IdType.AGENT, eventType,
+                            configMap);
+                    }
+                } else {
+                    // Unknow idType, send notifications for all types
+                    l.objectChanged(normalizedDN, eventType, configMap);
                 }
-                if  (idType == IdType.USER) {
-                     // agents were treated as users so we have to send agent change as well.
-                    l.objectChanged(normalizedDN, IdType.AGENT, eventType, configMap);  
-                }
-                
             }
         }
     }
