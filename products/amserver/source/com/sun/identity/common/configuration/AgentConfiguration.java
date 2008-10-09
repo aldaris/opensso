@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.41 2008-10-09 04:31:15 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.42 2008-10-09 15:56:06 veiming Exp $
  *
  */
 
@@ -933,10 +933,8 @@ public class AgentConfiguration {
                         results = new HashSet();
                     }
                     Set set = (Set)attrValues.get(key);
-                    String v = ((set != null) && !set.isEmpty()) ? 
-                        (String)set.iterator().next() : "";
-                    if (v.length() > 0) {
-                        results.add(v);
+                    if ((set != null) && !set.isEmpty()) { 
+                        results.addAll(set);
                     }
                     keysToDelete.add(key);
                 } else if (key.startsWith(attrName + "[")) {
