@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PropertyXMLBuilderBase.java,v 1.15 2008-10-02 16:31:29 veiming Exp $
+ * $Id: PropertyXMLBuilderBase.java,v 1.16 2008-10-09 05:56:12 mahesh_prasad_r Exp $
  *
  */
 
@@ -1072,10 +1072,7 @@ public abstract class PropertyXMLBuilderBase
     }
 
     private static void getDefaultEncoding() {
-        byte [] byteArray = {'a'};
-        InputStream inputStream = new ByteArrayInputStream(byteArray);
-        InputStreamReader reader = new InputStreamReader(inputStream);
-        platformDefaultEncoding = reader.getEncoding();
+	platformDefaultEncoding = java.nio.charset.Charset.defaultCharset().toString();
     }
 
     public static String getXMLDefinitionHeader() {
