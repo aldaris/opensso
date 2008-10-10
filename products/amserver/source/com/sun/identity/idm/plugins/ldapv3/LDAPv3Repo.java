@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.58 2008-10-02 23:07:09 goodearth Exp $
+ * $Id: LDAPv3Repo.java,v 1.59 2008-10-10 00:21:48 goodearth Exp $
  *
  */
 
@@ -2286,9 +2286,9 @@ public class LDAPv3Repo extends IdRepo {
 
         if (debug.messageEnabled()) {
             debug.message("setBinaryAttributes: type:" + type + "; name="
-                    + name + "; attributes=" + attributes + "; isAdd:" + isAdd);
+                + name + "; attributes=" + attributes + "; isAdd:" + isAdd);
         }
-        setAttributes(token, type, name, attributes, isAdd, false);
+        setAttributes(token, type, name, attributes, isAdd, false, false);
     }
 
     /**
@@ -3546,7 +3546,7 @@ public class LDAPv3Repo extends IdRepo {
     public void setAttributes(SSOToken token, IdType type, String name,
             Map attributes, boolean isAdd)
     throws IdRepoException, SSOException {
-        setAttributes(token, type, name, attributes, isAdd, true);
+        setAttributes(token, type, name, attributes, isAdd, true, false);
     }
 
     /*
@@ -3555,9 +3555,10 @@ public class LDAPv3Repo extends IdRepo {
      * @see com.iplanet.am.sdk.IdRepo#setAttributes(com.iplanet.sso.SSOToken,
      *      com.iplanet.am.sdk.IdType, java.lang.String, java.util.Map, boolean)
      */
-    public void setAttributes(SSOToken token, IdType type, String name,
-            Map attributes, boolean isAdd, boolean isString)
-            throws IdRepoException, SSOException {
+    private void setAttributes(SSOToken token, IdType type, String name,
+        Map attributes, boolean isAdd, boolean isString, 
+        boolean dontChangeOCs)
+        throws IdRepoException, SSOException {
 
         if (debug.messageEnabled()) {
             debug.message("LDAPv3Repo: setAttributes called: " + type + ": "
@@ -3659,7 +3660,7 @@ public class LDAPv3Repo extends IdRepo {
 
         // For user objects, need to check if all objectclasses are present
         // If not, they must be added (for account lockout atleast)
-        if (type.equals(IdType.USER)) {
+        if (type.equals(IdType.USER) && !dontChangeOCs) {
             Set ocsToBeAdded = new CaseInsensitiveHashSet();
             Set ocAttrName = new HashSet();
             ocAttrName.add(LDAP_OBJECT_CLASS);
@@ -3697,7 +3698,38 @@ public class LDAPv3Repo extends IdRepo {
                         ocsToBeAdded.remove(ocname);
                     }
                 }
-
+                // For all the OCs in the ocsToBeAdded Set, compare the 
+                // attributes with the incoming attributes to be set and
+                // then if present, consider the OC to be added. This is 
+                // to avoid unnecessary adding of all OCs inspite of any
+                // operation.
+                Set tmpOCSet = new HashSet(2);
+                try {
+                    Iterator iterAttr = ocsToBeAdded.iterator();
+                    while (iterAttr.hasNext()) {
+                        String attrOC = (String) iterAttr.next();
+                        Set OCAttrs = new HashSet(getOCAttributes(attrOC));
+                        for (Iterator OCitems = OCAttrs.iterator();
+                            OCitems.hasNext();) {
+                            String ocName = (String) OCitems.next();
+                            for (Iterator aKey = attributesCase.keySet().
+                                iterator(); aKey.hasNext();) {
+                                String aName = (String) aKey.next();
+                                if (aName.startsWith(ocName)) {
+                                    tmpOCSet.add(attrOC);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                } catch (LDAPException ldx) {
+                    int resCode = ldx.getLDAPResultCode();
+                    if (debug.warningEnabled()) {
+                        debug.warning("LDAPv3Repo: setAttributes : " +
+                            resCode, ldx);
+                    }
+                }
+                ocsToBeAdded = tmpOCSet;
                 // Add to ldapModSet
                 if (!ocsToBeAdded.isEmpty()) {
                     ldapModSet.add(LDAPModification.ADD, new LDAPAttribute(
@@ -3732,6 +3764,11 @@ public class LDAPv3Repo extends IdRepo {
         }
     }
 
+   /**
+    * Called by assignService() and modifyService(). Apart from
+    * seting mixed types of attributes (string & binary), it does not
+    * modify the objectclasses.
+    */
     private void setMixAttributes(SSOToken token, IdType type, String name,
         Map attrMap, boolean isAdd) throws IdRepoException, SSOException{
 
@@ -3755,10 +3792,11 @@ public class LDAPv3Repo extends IdRepo {
             }
         }
         if (foundBin) {
-            setAttributes(token, type, name, strAttrMap, false);
-            setBinaryAttributes(token, type, name, binAttrMap, false);
+            setAttributes(token, type, name, strAttrMap, false, true, true);
+            // Set the binary attributes
+            setAttributes(token, type, name, binAttrMap, false, false, true);
         } else {
-            setAttributes(token, type, name, attrMap, false);
+            setAttributes(token, type, name, attrMap, false, true, true);
         }
     }
 
@@ -3925,13 +3963,48 @@ public class LDAPv3Repo extends IdRepo {
                                             + attrName);
                         }
                     } // catch
-                } // if
+                } else {
+                   /*
+                    * Basically, when the service is unassigned, it should 
+                    * remove the service related attributes first and the OCs.
+                    * While getting all objectclasses that is for services and 
+                    * the relevant user attributes that are associated with 
+                    * the service to remove, somehow getOCAttributes() api 
+                    * returns the following eventhough there is no string 
+                    * manipulation in that api.
+                    * removeAttrs [iplanet-am-user-federation-info-key, 
+                    * sunidentityserverdiscoentrie, 
+                    * iplanet-am-user-federation-info]
+                    * But the attrName is like
+                    * attrName sunidentityserverdiscoentries 
+                    * So added this startsWith check here.
+                    */
+                    for (Iterator OCitems = removeAttrs.iterator();
+                        OCitems.hasNext();) {
+                        String ocName = (String) OCitems.next();
+                        if (attrName.startsWith(ocName)) {
+                            try {
+                                Map tmpMap = new AMHashMap();
+                                tmpMap.put(attrName, Collections.EMPTY_SET);
+                                setAttributes(token, type, name, tmpMap, 
+                                    false);
+                            } catch (Exception ex) {
+                                if (debug.messageEnabled()) {
+                                    debug.message("unassignService failed. "+
+                                        "else part: error " +
+                                        "occurred while removing attribute: "
+                                            + attrName);
+                                }
+                            } // catch
+                        }
+                    }
+                }
             } // while
 
             // Now update the object class attribute
             Map tmpMap = new AMHashMap();
             tmpMap.put("objectclass", OCValues);
-            setAttributes(token, type, name, tmpMap, false);
+            setAttributes(token, type, name, tmpMap, false, true, true);
         } else {
             Object args[] = { this.getClass().getName() };
             throw new IdRepoUnsupportedOpException(IdRepoBundle.BUNDLE_NAME,
