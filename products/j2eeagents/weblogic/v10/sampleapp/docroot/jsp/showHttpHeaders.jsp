@@ -27,7 +27,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: showHttpHeaders.jsp,v 1.11 2008-08-19 19:14:52 veiming Exp $
+   $Id: showHttpHeaders.jsp,v 1.12 2008-10-10 20:08:53 huacui Exp $
 
 -->        
         
@@ -187,7 +187,7 @@ a:hover{text-decoration:underline}
                                          *  the table.
                                          */
                                         out.println("<tr>\n" +
-                                                "<th>Request Attribute Name</th><th>Atribute Value</th>" +
+                                                "<th>Request Attribute Name</th><th>Attribute Value</th>" +
                                                 "</tr>\n");
                                         Enumeration attrNames = request.getAttributeNames();
                                         while(attrNames.hasMoreElements()) {
