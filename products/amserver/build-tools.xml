@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-tools.xml,v 1.21 2008-09-25 00:53:05 ykwon Exp $
+   $Id: build-tools.xml,v 1.22 2008-10-10 18:46:25 kevinserwin Exp $
 
 -->
 
@@ -180,6 +180,11 @@
             <fileset dir="${amadm.tools.scripts.dir}"
                 includes="setup, setup.bat, README.setup"/>
         </copy>
+        <copy todir="${amadm.tools.dir}" overwrite="yes" flatten="yes"
+            encoding="UTF-8">
+            <fileset dir="${amserver.script.bin.dir}"
+                includes="ssopatch, ssopatch.bat, README.patch"/>
+        </copy>        
         <copy todir="${amadm.windows.bin.dir}"
             overwrite="yes" flatten="yes" encoding="UTF-8">
             <fileset dir="${amadm.windows.scripts.dir}"
@@ -224,7 +229,7 @@
             <mapper type="glob" from="*" to="*.template"/>
         </copy>
     </target>
-    <target name="createZipFile" depends="copyNeededFiles">
+    <target name="createZipFile" depends="createPatchZip">
         <zip destfile="${amserver.dist.dir}/amAdminTools.zip"
             whenempty="create">
             <zipfileset dir="${amadm.tools.dir}"
@@ -235,7 +240,10 @@
                 <include name="README.setup"/>
             </zipfileset>
             <zipfileset dir="${amadm.tools.dir}" filemode="755">
-                <include name="lib/**/*"/>
+                <exclude name="lib/ssopatch.jar" />
+                <exclude name="lib/ssomanifest.jar" />
+                <exclude name="resources/ssoPatch**/*" />                
+                <include name="lib/**/*"/>               
                 <include name="resources/**/*"/>
                 <include name="template/**/*"/>
             </zipfileset>
@@ -243,4 +251,19 @@
         <checksum file="${amserver.dist.dir}/amAdminTools.zip"
             algorithm="SHA" fileext=".sha" />
     </target>
+    <target name="createPatchZip" depends="copyNeededFiles">
+        <zip destfile="${amserver.dist.dir}/ssoPatchTools.zip"
+            whenempty="create">
+            <zipfileset dir="${amadm.tools.dir}" filemode="755">
+                <include name="lib/ssopatch.jar"/>
+                <include name="lib/ssomanifest.jar"/>
+                <include name="lib/amadm_setup.jar"/>                
+                <include name="resources/ssoPatch*"/>
+                <include name="ssopatch"/>
+                <include name="ssopatch.bat" />
+                <include name="README.patch" />
+
+            </zipfileset>
+        </zip>    
+     </target>
 </project>

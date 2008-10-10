@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-zip.xml,v 1.30 2008-09-30 23:40:46 pluo Exp $
+   $Id: build-zip.xml,v 1.31 2008-10-10 18:44:20 kevinserwin Exp $
 
 -->
 
@@ -37,11 +37,12 @@
             <not><isset property="openfm.built.dir"/></not>
         </condition>
     </fail>
-
+    
     <property name="zip.temp.dir1" value="${openfm.built.dir}/.zip" />
     <property name="zip.temp.dir" value="${zip.temp.dir1}/opensso" />
 
-    <target name="all" depends="consoleonlywebxml, noconsolewebxml, unixhelper">
+    <target name="all" depends="consoleonlywebxml, noconsolewebxml, unixhelper,
+            patchtools">
         <copy file="${openfm.dir}/license.txt"
             tofile="${zip.temp.dir}/license.txt" />
         <copy file="${openfm.dir}/docs/README.famzip"
@@ -245,6 +246,13 @@
         <checksum file="${fm.dist.dir}/opensso.zip"
             algorithm="SHA" fileext=".sha" />
         <delete dir="${zip.temp.dir}" />            
+    </target>
+    
+    <target name="patchtools" if="enterprise.authmodules.present">
+        <mkdir dir="${zip.temp.dir}/tools" />
+        <copy todir="${zip.temp.dir}/tools" >
+            <fileset file="${amserver.dist.dir}/ssoPatchTools.zip" />
+        </copy>
     </target>
 
     <target name="unixhelper" if="enterprise.authmodules.present">
