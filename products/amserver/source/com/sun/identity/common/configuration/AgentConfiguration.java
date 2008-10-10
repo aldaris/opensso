@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.42 2008-10-09 15:56:06 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.43 2008-10-10 18:18:56 veiming Exp $
  *
  */
 
@@ -1006,11 +1006,17 @@ public class AgentConfiguration {
                         if (asListType.contains(name)) {
                             for (Iterator j = values.iterator(); j.hasNext();) {
                                 String val = (String) j.next();
-                                int idx = val.indexOf("]=");
-
+                                int idx = val.indexOf("]");
+                                int idx1 = -1;
+                                
                                 if (idx != -1) {
+                                    idx1 = val.indexOf("=", idx+1);
+                                }
+
+                                if ((idx != -1) && (idx < idx1) &&
+                                    onlySpacesInBetween(val, idx, idx1)) {
                                     Set set = new HashSet(2);
-                                    set.add(val.substring(idx + 2));
+                                    set.add(val.substring(idx1 + 1));
                                     String indice = val.substring(0, idx + 1);
                                     indice = indice.replaceAll("=", "\\\\=");
                                     result.put(name + indice, set);
@@ -1033,6 +1039,14 @@ public class AgentConfiguration {
         }
         
         return result;
+    }
+
+    private static boolean onlySpacesInBetween(String s, int start, int end) {
+        boolean onlySpaces = true;
+        for (int i = start+1; (i < end) && onlySpaces; i++) {
+            onlySpaces = (s.charAt(i) == ' ');
+        }
+        return onlySpaces;
     }
 
     private static void handleFreeFormAttrValues(Set values, Map result) {
