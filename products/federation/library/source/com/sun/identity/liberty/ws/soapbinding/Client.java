@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Client.java,v 1.5 2008-06-25 05:47:22 qcheng Exp $
+ * $Id: Client.java,v 1.6 2008-10-10 00:15:09 hengming Exp $
  *
  */
 
@@ -48,6 +48,8 @@ import java.security.cert.X509Certificate;
 import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
 import java.security.KeyStoreException;
+import java.security.Provider;
+import java.security.Security;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManager;
@@ -300,9 +302,11 @@ public class Client {
      */
     private static void initializeJSSE() throws Exception {
         // put SunJSSE at fisrt place, so that JSSE will work
-        java.security.Security.removeProvider("SunJSSE");
-        java.security.Security.insertProviderAt(
-                new com.sun.net.ssl.internal.ssl.Provider(), 1);
+        Provider provider = Security.getProvider("SunJSSE");
+        if (provider != null) {
+            Security.removeProvider("SunJSSE");
+            Security.insertProviderAt(provider, 1);
+        }
         
         String algorithm =  SystemPropertiesManager.get(
                 SOAP_TRUST_SECMNGR_ALGO_PROP);
