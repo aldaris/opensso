@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: PatchGeneratorConstants.java,v 1.3 2008-09-22 20:49:27 kevinserwin Exp $
+* $Id: PatchGeneratorConstants.java,v 1.4 2008-10-10 18:50:36 kevinserwin Exp $
 */
 
 package com.sun.identity.tools.patch;
@@ -33,7 +33,10 @@ public interface PatchGeneratorConstants {
     String SRC2_FILE_PATH = "file.src2.path";    
     String RESOURCE_BUNDLE_NAME = "ssoPatch";
     String HEADER_FILE_PATH = "file.header.path";
-     
+    String STAGING_FILE_PATH = "file.staging.path";
+    String OPTION_OVERWRITE = "option.overwrite";
+    String DEFAULT_OVERWRITE = "false";
+    
     public static final String MANIFEST_CREATE_FILE = "file.create.manifest";
     public static final String DEFAULT_MANIFEST_FILE = "META-INF/OpenSSO.manifest";
     public static final String PROPERTIES_FILE = "file.properties";

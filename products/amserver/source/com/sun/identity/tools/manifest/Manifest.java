@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: Manifest.java,v 1.1 2008-09-22 20:49:28 kevinserwin Exp $
+* $Id: Manifest.java,v 1.2 2008-10-10 18:50:36 kevinserwin Exp $
 */
 
 package com.sun.identity.tools.manifest;
@@ -42,8 +42,8 @@ import java.text.SimpleDateFormat;
 
 public class Manifest implements ManifestConstants{
     String manifestName;    
-    File srcFile;
-    File destFile;
+    public File srcFile;
+    public File destFile;
     static boolean verbose;
     FilesDigester digester;
     Properties digestResult;
@@ -73,7 +73,7 @@ public class Manifest implements ManifestConstants{
         wildCard = DEFAULT_WILD_CARD;       
     }
     
-
+  
     private void getProperties() {
 
          headerFilePath = System.getProperty(HEADER_FILE_PATH);
@@ -155,7 +155,7 @@ public class Manifest implements ManifestConstants{
             System.out.println("Source file not specified!");
             return false;
         }        
-              
+        this.srcFilePath = srcFilePath;      
         srcFile = new File(srcFilePath);
         if (! srcFile.exists()) {
             System.out.println("Source file not found!");
@@ -248,13 +248,13 @@ public class Manifest implements ManifestConstants{
             intoWar);
     }
 
-    public void createManifest(String srcFilePath, String destFilePath,
+    public boolean createManifest(String srcFilePath, String destFilePath,
             String headerFilePath, boolean intoJar, boolean intoWar) {
         this.intoJar = intoJar;
         this.intoWar = intoWar;
                 
         if (setSourceFile(srcFilePath) == false) {
-            printUsage(System.out);
+            return false;
         }
 
         if (verbose) {
@@ -268,6 +268,7 @@ public class Manifest implements ManifestConstants{
         createManifest();
 
         if (destFilePath != null) {
+            this.destFilePath = destFilePath;
             writeDestFile();
         } else {
             long currentTimeInMillis = System.currentTimeMillis();
@@ -281,6 +282,7 @@ public class Manifest implements ManifestConstants{
             
             digestResult.setProperty("identifier","generated-"+sdf.format(date));
         }
+        return true;
     }
     
     public static void main(String[] args) {     
