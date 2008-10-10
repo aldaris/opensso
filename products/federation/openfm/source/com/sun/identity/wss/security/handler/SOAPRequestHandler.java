@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.29 2008-09-17 03:07:31 mallas Exp $
+ * $Id: SOAPRequestHandler.java,v 1.30 2008-10-10 23:40:13 mallas Exp $
  *
  */
 
@@ -294,8 +294,8 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
                 config, secureMsg, false);
 
         if(uri.equals(SecurityMechanism.WSS_NULL_KERBEROS_TOKEN_URI) &&
-                (config.isValidateKerberosSignature() ||
-                 stsConfig.isValidateKerberosSignature())) {
+                (config.isValidateKerberosSignature())){
+                
            java.security.Key secretKey = null;
            Iterator iter = subject.getPublicCredentials().iterator();
            while(iter.hasNext()) {

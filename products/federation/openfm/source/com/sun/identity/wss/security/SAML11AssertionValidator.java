@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML11AssertionValidator.java,v 1.4 2008-07-21 17:18:32 mallas Exp $
+ * $Id: SAML11AssertionValidator.java,v 1.5 2008-10-10 23:40:13 mallas Exp $
  *
  */
 
@@ -131,7 +131,10 @@ public class SAML11AssertionValidator {
         }        
         subjectName = subject.getNameIdentifier().getName();
         SubjectLocality subjectLocality = authnStatement.getSubjectLocality();
-        String ipAddress = subjectLocality.getIPAddress();
+        String ipAddress = null;
+        if(subjectLocality != null) {
+           ipAddress = subjectLocality.getIPAddress();
+        }
         if(ipAddress != null) {
             /* TODO check for the valid IP addresses.
            if(!config.getTrustedIPAddresses().contains(ipAddress)) {

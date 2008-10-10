@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BinarySecurityToken.java,v 1.6 2008-06-25 05:50:06 qcheng Exp $
+ * $Id: BinarySecurityToken.java,v 1.7 2008-10-10 23:40:13 mallas Exp $
  *
  */
 
@@ -354,8 +354,7 @@ public class BinarySecurityToken implements SecurityToken {
         String kdcServer = kbSpec.getKDCServer();
                
         System.setProperty("java.security.krb5.realm", kdcRealm);
-        System.setProperty("java.security.krb5.kdc", kdcServer);
-        System.setProperty("java.security.auth.login.config", "/dev/null");
+        System.setProperty("java.security.krb5.kdc", kdcServer);        
         Configuration config = Configuration.getConfiguration();
         KerberosConfiguration kc = null;
         if (config instanceof KerberosConfiguration) {
