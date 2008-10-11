@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step3.java,v 1.30 2008-09-04 00:34:00 rajeevangal Exp $
+ * $Id: Step3.java,v 1.31 2008-10-11 00:58:58 hengming Exp $
  *
  */
 package com.sun.identity.config.wizard;
@@ -264,7 +264,7 @@ public class Step3 extends LDAPStoreWizardPage {
                         (String)data.get(BootstrapData.DS_ISEMBEDDED);
                     addObject(sb, "embedded", embedded);           
                     String host = (String)data.get(BootstrapData.DS_HOST);
-                    
+
                     if (embedded.equals("true")) {
                         getContext().setSessionAttribute(
                             "configStoreHost", getHostName());
@@ -304,6 +304,14 @@ public class Step3 extends LDAPStoreWizardPage {
                         getContext().setSessionAttribute(
                             "configStoreHost", host);   
                         addObject(sb, "configStoreHost", host);
+
+                        String dsprot = (String)data.get(
+                            BootstrapData.DS_PROTOCOL);
+                        String dsSSL = ("ldaps".equals(dsprot)) ?
+                           "SSL" : "SIMPLE";
+                        getContext().setSessionAttribute("configStoreSSL",
+                            dsSSL);
+                        addObject(sb, "configStoreSSL", dsSSL);
                     }
 
                     // set the replication ports pulled from the remote
