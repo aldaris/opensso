@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMPreUpgrade.java,v 1.6 2008-10-03 06:05:45 bina Exp $
+ * $Id: FAMPreUpgrade.java,v 1.7 2008-10-11 05:05:53 bina Exp $
  *
  */
 package com.sun.identity.upgrade;
@@ -46,6 +46,8 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
+import java.util.ResourceBundle;
+
 
 /**
  * This class contains methods to start the preupgrade process.
@@ -74,12 +76,14 @@ public class FAMPreUpgrade {
     static String famUpgradeConfigDir = null;
     boolean isAM = true;
     String instanceType = "AM"; //default value
+    public static ResourceBundle bundle;
 
     String DEBUG_PROPERTY = "com.iplanet.services.debug.directory";
     String WIN_UPGRADE_FILE = "ssopre80upgrade.bat";
     String WIN_FAM_UPGRADE_FILE = "ssoupgrade.bat";
     String AMCONFIG_FILE = "AMConfig.properties";
     String SERVERCONFIG_FILE = "serverconfig.xml";
+    static String RESOURCE_BUNDLE_NAME = "ssoUpgrade";
     final static int AUTH_SUCCESS =
             com.sun.identity.authentication.internal.AuthContext.AUTH_SUCCESS;
     final static String AMADMIN_USER_PROPERTY =
@@ -89,6 +93,10 @@ public class FAMPreUpgrade {
     final static String LOG_FILE = "ssopre80upgrade.log";
     static BufferedWriter writer = null;
     Properties amConfigProperties = null;
+
+    static {
+        bundle = ResourceBundle.getBundle(RESOURCE_BUNDLE_NAME);
+    }
 
     /**
      * Start of OpenSSO 8.0 preupgrade 
@@ -100,16 +108,15 @@ public class FAMPreUpgrade {
             famPreUpgrade.getBaseDir();
             String logLoc = basedir + File.separator + LOG_FILE;
             writer = new BufferedWriter(new FileWriter(logLoc));
-            log("OpenSSO 8.0 Pre-Upgrade");
-            log("Upgrade Base Directory: " + basedir);
+            log(bundle.getString("preupg-msg"));
+            log(bundle.getString("upg-base-dir") + " : " + basedir);
             famPreUpgrade.initVariables();
             famPreUpgrade.copyConfigFiles();
             famPreUpgrade.backupLogs();
             famPreUpgrade.backupDebugs();
-            log("OpenSSO Pre-Upgrade Log File: " + logLoc, true);
-            log("The system is ready for OpenSSO 8.0", true);
-            log("Please follow the OpenSSO 8.0 Upgrade " +
-                    "Guide to continue upgrade", true);
+            log(bundle.getString("preupg-log-file") + ": " + logLoc, true);
+            log(bundle.getString("preupg-done"), true);
+            log(bundle.getString("preupg-info"),true);
             writer.close();
         } catch (Exception e) {
             log("Error : " + e.getMessage());
@@ -268,7 +275,7 @@ public class FAMPreUpgrade {
      * does not exist.
      */
     void getBackupDir() {
-        System.out.print("Enter the backup directory : ");
+        System.out.print(bundle.getString("preupg-info-backup-dir") + " :" );
         String temp = readInput();
         if (temp != null && temp.length() > 0) {
             backupDir = temp;
@@ -290,7 +297,7 @@ public class FAMPreUpgrade {
      * Gets the location of the OpenSSO install directory.
      */
     void getInstallDir() {
-        System.out.print("Enter the Access Manager Install Directory: ");
+        System.out.print(bundle.getString("preupg-info-am-install-dir") + " :");
         String temp = readInput();
         if (temp != null && temp.length() > 0) {
             installDir = temp;
@@ -305,7 +312,7 @@ public class FAMPreUpgrade {
     boolean isAMInstance() {
         String classMethod = "FAMPreUpgrade:isAMInstance : ";
         instanceType = "AM";
-        System.out.print("Is this an AM or FM  instance (AM/FM) " +
+        System.out.print(bundle.getString("preupg-info-instance-type") +
                 " : [" + instanceType + "] : ");
         String temp = readInput();
         if (temp != null && temp.length() > 0) {
@@ -320,7 +327,7 @@ public class FAMPreUpgrade {
      */
     void getFMStagingDir() {
         String classMethod = "FAMPreUpgrade:getFMStagingDir : ";
-        System.out.print("Enter the Federation Manager Staging Directory: ");
+        System.out.print(bundle.getString("preupg-info-fm-staging-dir") + ": ");
         String temp = readInput();
         if (temp != null && temp.length() > 0) {
             fmStagingDir = temp;
@@ -445,7 +452,7 @@ public class FAMPreUpgrade {
     void getDSInfo() {
         String classMethod = "FAMPreUpgrade:getDSInfo : ";
         dsHost = (String) amConfigProperties.get(DS_HOST_PROPERTY);
-        System.out.print("Directory Server fully-qualified hostname [");
+        System.out.print(bundle.getString("preupg-info-directory-host") + "[");
         System.out.print(dsHost);
         System.out.print("] :");
         String temp = readInput();
@@ -453,7 +460,7 @@ public class FAMPreUpgrade {
             dsHost = temp;
         }
         dsPort = (String) amConfigProperties.get(DS_PORT_PROPERTY);
-        System.out.print("Directory Server port [");
+        System.out.print(bundle.getString("preupg-info-directory-port") + "[");
         System.out.print(dsPort);
         System.out.print("] : ");
         temp = readInput();
@@ -469,7 +476,8 @@ public class FAMPreUpgrade {
      */
     private void getDirManagerInfo() {
         String classMethod = "FAMPreUpgrade:getDirManagerInfo : ";
-        System.out.print("Directory Manager DN [");
+        System.out.print(bundle.getString("preupg-info-directory-manager-dn") 
+            + " [");
         System.out.print(dirMgrDN);
         System.out.print("] : ");
         String temp = dirMgrDN;
@@ -479,7 +487,9 @@ public class FAMPreUpgrade {
         }
         try {
             char[] dirMgrPassChar =
-                    getPassword(System.in, "Directory Manager Password : ");
+                    getPassword(System.in, 
+                        bundle.getString("preupg-info-directory-manager-pass") 
+                       + ": ");
             dirMgrPass = String.valueOf(dirMgrPassChar);
         } catch (IOException ioe) {
             log(classMethod + "Error " + ioe.getMessage());
@@ -493,7 +503,7 @@ public class FAMPreUpgrade {
     private void getAMAdminInfo() {
         String classMethod = "FAMUpgrade:getAMAdminInfo :";
         amAdminUser = (String) amConfigProperties.get(AMADMIN_USER_PROPERTY);
-        System.out.print("Enter OpenSSO Admin User DN [");
+        System.out.print(bundle.getString("upg-info-admin-user-dn") + "[");
         System.out.print(amAdminUser);
         System.out.print("] :");
         String temp = readInput();
@@ -502,7 +512,8 @@ public class FAMPreUpgrade {
         }
         try {
             char[] amAdminPassChar =
-                    getPassword(System.in, "Enter OpenSSO Admin User Password : ");
+                    getPassword(System.in, 
+                      bundle.getString("upg-info-admin-user-dn") + " : ");
             amAdminPass = String.valueOf(amAdminPassChar);
         } catch (IOException ioe) {
             log(classMethod + "Error : " + ioe.getMessage());
@@ -522,7 +533,6 @@ public class FAMPreUpgrade {
                 .append(File.separator).append("classes").toString();
         } else {
             amConfigDir = new StringBuffer().append(installDir)
-                .append(File.separator).append("identity")
                 .append(File.separator).append("config").toString();
         }
         amConfigFileLocation = new StringBuffer().append(amConfigDir)
@@ -544,7 +554,6 @@ public class FAMPreUpgrade {
                     .append(SERVERCONFIG_FILE).toString();
         } else {
             serverConfigLocation = new StringBuffer().append(installDir)
-                    .append(File.separator).append("identity")
                     .append(File.separator).append("config")
                     .append(File.separator)
                     .append(SERVERCONFIG_FILE).toString();

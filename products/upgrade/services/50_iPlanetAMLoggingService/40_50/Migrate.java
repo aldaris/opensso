@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Migrate.java,v 1.3 2008-06-25 05:53:40 qcheng Exp $
+ * $Id: Migrate.java,v 1.4 2008-10-11 05:05:53 bina Exp $
  *
  */
 
@@ -48,6 +48,14 @@ public class Migrate implements MigrateTasks {
     final static String LOG_ATTR_NAME = "iplanet-am-logging-logfields";
     final static String LOG_ALL_FIELDS_ATTR_NAME =
             "iplanet-am-logging-allfields";
+    final static String LOG_HIST_NUM_ATTR_NAME =
+         "iplanet-am-logging-num-hist-file";
+    final static String LOG_MAX_FILE_SIZE_ATTR_NAME = 
+         "iplanet-am-logging-max-file-size";
+    final static String DEFAULT_HIST_NUM = "3";
+    final static String DEFAULT_LOG_SIZE = "1000000";
+    final static String NEW_DEFAULT_HIST_NUM = "1";
+    final static String NEW_DEFAULT_LOG_SIZE = "100000000";
     final static String LOG_STATUS_ATTR = "logstatus";
     final static String RESOLVE_HOSTNAME_ATTR = "resolveHostName";
     final static String schemaType = "Global";
@@ -100,6 +108,27 @@ public class Migrate implements MigrateTasks {
             UpgradeUtils.setAttributeDefaultValues(
                     SERVICE_NAME, null, schemaType,
                     RESOLVE_HOSTNAME_ATTR, defaultValues);
+            String histNumFile = 
+                UpgradeUtils.getAttributeValueString(SERVICE_NAME,
+                       LOG_HIST_NUM_ATTR_NAME,schemaType);
+            if (histNumFile!=null && histNumFile.equals(DEFAULT_HIST_NUM)) {
+                defaultValues.clear();
+                defaultValues.add(NEW_DEFAULT_HIST_NUM);
+                UpgradeUtils.setAttributeDefaultValues(
+                    SERVICE_NAME, null, schemaType,
+                    LOG_HIST_NUM_ATTR_NAME, defaultValues);
+            }
+
+            String maxLogSize =
+                UpgradeUtils.getAttributeValueString(SERVICE_NAME,
+                     LOG_MAX_FILE_SIZE_ATTR_NAME,schemaType);
+            if (maxLogSize != null && maxLogSize.equals(DEFAULT_LOG_SIZE)) {
+                defaultValues.clear();
+                defaultValues.add(NEW_DEFAULT_LOG_SIZE);
+                UpgradeUtils.setAttributeDefaultValues(
+                    SERVICE_NAME, null, schemaType,
+                    LOG_MAX_FILE_SIZE_ATTR_NAME,defaultValues);
+            }
             isSuccess = true;
         } catch (UpgradeException e) {
             UpgradeUtils.debug.error("Error loading data:" + SERVICE_NAME, e);

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMUpgrade.java,v 1.10 2008-10-06 06:15:13 bina Exp $
+ * $Id: FAMUpgrade.java,v 1.11 2008-10-11 05:05:54 bina Exp $
  *
  */
 package com.sun.identity.upgrade;
@@ -120,9 +120,12 @@ public class FAMUpgrade {
             } else {
                 System.out.println(
                     UpgradeUtils.bundle.getString("upg-legacy-mode"));
-                System.out.print("Enable Realm Mode: [y/n]");
+                System.out.print(UpgradeUtils.bundle.getString(
+                    "upg-info-enable-realm-mode"));
                 enableRealms = new Boolean(readInput()).booleanValue();
-                System.out.println("isRealmEnabled: " + enableRealms);
+                if (debug.messageEnabled()) {
+                    debug.message("isRealmEnabled: " + enableRealms);
+                }
             }
             updateProperties(properties);
             UpgradeUtils.setProperties(properties);
@@ -164,7 +167,7 @@ public class FAMUpgrade {
                 + ".serverconfig.xml");
             sConfig.renameTo(sConfigbak);
         } catch (Exception e) {
-            System.out.println("Error in main: " + e);
+            debug.error("Error in main: " + e);
         }
         System.exit(0);
     }
@@ -225,7 +228,8 @@ public class FAMUpgrade {
      */
     void getConfigDir() {
         do {
-            System.out.print("Enter the OpenSSO config directory : ");
+            System.out.print(UpgradeUtils.bundle.getString(
+                                "upg-info-config-dir") + " : ");
             String temp = readInput();
             if (temp != null && temp.length() > 0) {
                 configDir = temp;
@@ -239,7 +243,8 @@ public class FAMUpgrade {
      */
     void getBaseDir() {
         do {
-            System.out.print("Enter the Upgrade Base Directory : ");
+            System.out.print(UpgradeUtils.bundle.getString(
+                          "upg-info-upgrade-base-dir") + " : ");
             String temp = readInput();
             if (temp != null && temp.length() > 0) {
                 basedir = temp;
@@ -254,7 +259,9 @@ public class FAMUpgrade {
             if (f.exists()) {
                 isValid = true;
             } else {
-                System.out.println("Invalid Directory !!");
+                System.out.println(
+                    UpgradeUtils.bundle.getString("upg-error-invalid-dir") 
+                    + " !!");
             }
         } catch (Exception e) {
             // do nothing
@@ -270,7 +277,9 @@ public class FAMUpgrade {
                 .append(File.separator).append("lib")
                 .append(File.separator).append("amserver.jar").toString();
         do {
-            System.out.print("Enter the OpenSSO staging directory : ");
+            System.out.print(
+                UpgradeUtils.bundle.getString("upg-info-opensso-staging-dir") 
+                                  + "  : ");
             String temp = readInput();
             if (temp != null && temp.length() > 0) {
                 stagingDir = temp;
@@ -287,7 +296,8 @@ public class FAMUpgrade {
             if (dsHost == null) {
                 dsHost = "";
             }
-            System.out.print("Directory Server fully-qualified hostname [");
+            System.out.print(UpgradeUtils.bundle.getString(
+                               "preupg-info-directory-host")+ "[");
             System.out.print(dsHost);
             System.out.print("] :");
             String temp = readInput();
@@ -298,7 +308,8 @@ public class FAMUpgrade {
             if (dsPort == null) {
                 dsPort = "";
             }
-            System.out.print("Directory Server port [");
+            System.out.print(UpgradeUtils.bundle.getString(
+                "preupg-info-directory-port") + "[");
             System.out.print(dsPort);
             System.out.print("] :");
             temp = readInput();
@@ -313,7 +324,8 @@ public class FAMUpgrade {
      */
     private void getDirManagerInfo() {
         do {
-            System.out.print("Directory Manager DN [");
+            System.out.print(UpgradeUtils.bundle.getString(
+                            "preupg-info-directory-manager-dn") + " [");
             System.out.print(dirMgrDN);
             System.out.print("] : ");
             String temp = dirMgrDN;
@@ -323,10 +335,11 @@ public class FAMUpgrade {
             }
             try {
                 char[] dirMgrPassChar =
-                        getPassword(System.in, "Directory Manager Password : ");
+                        getPassword(System.in, UpgradeUtils.bundle.getString(
+                              "preupg-info-directory-manager-pass") + " : ");
                 dirMgrPass = String.valueOf(dirMgrPassChar);
             } catch (IOException ioe) {
-                System.out.println("Error " + ioe.getMessage());
+                UpgradeUtils.debug.error("Error " + ioe.getMessage());
             }
         } while (!UpgradeUtils.isValidCredentials(
                 dsHost,dsPort,dirMgrDN,dirMgrPass));
@@ -339,7 +352,8 @@ public class FAMUpgrade {
         String classMethod = "FAMUpgrade:getAMAdminInfo :";
         amAdminUser = SystemProperties.get(AMADMIN_USER_PROPERTY);
         do {
-            System.out.print("Enter OpenSSO Admin User DN [");
+            System.out.print(UpgradeUtils.bundle.getString(
+                "upg-info-admin-user-dn") +  "[");
             System.out.print(amAdminUser);
             System.out.print("] :");
             String temp = readInput();
@@ -498,8 +512,8 @@ public class FAMUpgrade {
         try {
             input = inbr.readLine();
         } catch (IOException ioe) {
-            System.out.print("Error while reading input IOException :" +
-                    ioe.getMessage());
+            System.out.print(UpgradeUtils.bundle.getString(
+                     "upg-invalid-input") + " :" + ioe.getMessage());
         }
         return input;
     }//End of readInput method

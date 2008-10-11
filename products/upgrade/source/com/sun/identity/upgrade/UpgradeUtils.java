@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpgradeUtils.java,v 1.13 2008-10-06 06:15:13 bina Exp $
+ * $Id: UpgradeUtils.java,v 1.14 2008-10-11 05:05:54 bina Exp $
  *
  */
 package com.sun.identity.upgrade;
@@ -1521,7 +1521,7 @@ public class UpgradeUtils {
         }
         String deployURI = (String) configTags.get("DEPLOY_URI");
         if (serverName !=null && !serverName.endsWith(deployURI)){
-            return serverName + File.separator + deployURI;
+            return serverName + "/" + deployURI;
         } else {
             return serverName;
         }
@@ -4033,5 +4033,4 @@ public class UpgradeUtils {
              debug.error(classMethod,e);
          }
     }
-
 }
