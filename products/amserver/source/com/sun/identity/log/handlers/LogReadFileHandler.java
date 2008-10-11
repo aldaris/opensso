@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogReadFileHandler.java,v 1.4 2008-06-25 05:43:36 qcheng Exp $
+ * $Id: LogReadFileHandler.java,v 1.5 2008-10-11 06:21:54 bigfatrat Exp $
  *
  */
 
@@ -39,6 +39,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import com.sun.identity.log.LogQuery;
+import com.sun.identity.log.LogReader;
 import com.sun.identity.log.QueryElement;
 import com.sun.identity.log.spi.Debug;
 import com.sun.identity.log.util.LogRecordSorter;
@@ -410,6 +411,9 @@ public class LogReadFileHandler implements LogReadHandler  {
             BufferedReader(new FileReader(logFileName));
             while((bufferedStr = flRead.readLine()) != null) {
                 if (bufferedStr.trim().length() <= 0) {
+		    if (LogReader.isLogSecure()) {
+			throw new Exception ("Blank line in secure log");
+		    }
                     continue; // no field value, so ignore
                 }
                 if (bufferedStr.startsWith(version) == true) {
@@ -732,8 +736,8 @@ public class LogReadFileHandler implements LogReadHandler  {
                         quotedFieldAdded = true;
                         break;
                     }
-                    if ((sub_str.charAt(current_sub_position+1) != quote) ||
-                    (sub_str.charAt(current_sub_position+1) != new_line) ||
+                    if ((sub_str.charAt(current_sub_position+1) != quote) &&
+                    (sub_str.charAt(current_sub_position+1) != new_line) &&
                     (sub_str.charAt(current_sub_position+1) != cr_return)) {
                         if (source == false) {
                             buffer += ch;
