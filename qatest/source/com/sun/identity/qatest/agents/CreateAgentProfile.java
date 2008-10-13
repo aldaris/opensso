@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateAgentProfile.java,v 1.5 2008-07-31 21:30:56 nithyas Exp $
+ * $Id: CreateAgentProfile.java,v 1.6 2008-10-13 16:23:34 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -968,7 +968,7 @@ public class CreateAgentProfile extends TestCommon {
                 map.put("com.sun.identity.agents.config.locale", set);            
 
                 set = new HashSet();
-                set.add("false");
+                set.add("true");
                 map.put("com.sun.identity.agents.config.get.client.host." + 
                         "name", set);            
 
@@ -998,6 +998,15 @@ public class CreateAgentProfile extends TestCommon {
                 set.add("LtpaToken");
                 map.put("com.sun.identity.agents.config.domino.ltpa." + 
                         "cookie.name", set);            
+
+                set = new HashSet();
+                set.add("10000000");
+                map.put("com.sun.identity.agents.config.debug.file.size", set);            
+
+                set = new HashSet();
+                set.add("5");
+                map.put("com.sun.identity.agents.config.remote.log.interval",
+                        set);            
             }
             amid = idmc.getFirstAMIdentity(admintoken, agentId, 
                     idmc.getIdType("agentonly"), "/");
