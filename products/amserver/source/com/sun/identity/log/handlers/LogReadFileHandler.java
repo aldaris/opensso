@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogReadFileHandler.java,v 1.5 2008-10-11 06:21:54 bigfatrat Exp $
+ * $Id: LogReadFileHandler.java,v 1.6 2008-10-13 05:17:15 bigfatrat Exp $
  *
  */
 
@@ -39,7 +39,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import com.sun.identity.log.LogQuery;
-import com.sun.identity.log.LogReader;
 import com.sun.identity.log.QueryElement;
 import com.sun.identity.log.spi.Debug;
 import com.sun.identity.log.util.LogRecordSorter;
@@ -411,9 +410,6 @@ public class LogReadFileHandler implements LogReadHandler  {
             BufferedReader(new FileReader(logFileName));
             while((bufferedStr = flRead.readLine()) != null) {
                 if (bufferedStr.trim().length() <= 0) {
-		    if (LogReader.isLogSecure()) {
-			throw new Exception ("Blank line in secure log");
-		    }
                     continue; // no field value, so ignore
                 }
                 if (bufferedStr.startsWith(version) == true) {

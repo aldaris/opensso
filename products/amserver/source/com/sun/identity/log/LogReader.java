@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogReader.java,v 1.5 2008-10-11 08:52:37 bigfatrat Exp $
+ * $Id: LogReader.java,v 1.6 2008-10-13 05:17:51 bigfatrat Exp $
  *
  */
 
@@ -836,9 +836,5 @@ public class LogReader {
         this.queryResult = null;
         this.currentHandler = null;
         return;
-    }
-
-    public static boolean isLogSecure() {
-	return (logSecurity.equalsIgnoreCase("ON"));
     }
 }
