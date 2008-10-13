@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddAMSDKIdRepoPlugin.java,v 1.3 2008-09-10 19:57:46 arviranga Exp $
+ * $Id: AddAMSDKIdRepoPlugin.java,v 1.4 2008-10-13 15:44:21 goodearth Exp $
  *
  */
 
@@ -320,7 +320,7 @@ public class AddAMSDKIdRepoPlugin extends AuthenticatedCommand {
             int index = namingURL.toLowerCase().indexOf(
                 "/namingservice");
             if (index != -1) {
-                serverURL = namingURL.substring(0, index).toLowerCase();
+                serverURL = namingURL.substring(0, index);
             } else {
                 serverURL = "";
             }
@@ -328,8 +328,6 @@ public class AddAMSDKIdRepoPlugin extends AuthenticatedCommand {
             serverURL = SystemProperties.getServerInstanceName();
             if (serverURL == null) {
                 serverURL = "";
-            } else {
-                serverURL = serverURL.toLowerCase();
             }
         }
         return (serverURL + "/ssoadm.jsp?cmd=add-amsdk-idrepo-plugin&submit=");
