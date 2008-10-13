@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpgradeUtils.java,v 1.14 2008-10-11 05:05:54 bina Exp $
+ * $Id: UpgradeUtils.java,v 1.15 2008-10-13 03:58:38 bina Exp $
  *
  */
 package com.sun.identity.upgrade;
@@ -3726,15 +3726,16 @@ public class UpgradeUtils {
         removeService(APPLICATION_SERVICE);
     }
 
+
     /**
      * Removes service schema from the config store.
      * 
      * @param serviceName name of the SMS service to be deleted.
      */
-    public static void removeService(String serviceName) {
+    public static void removeService(String serviceName,String version) {
         try {
             ServiceManager scm = getServiceManager();
-            scm.removeService(serviceName,"1.0");
+            scm.removeService(serviceName,version);
         } catch (SSOException e) {
             debug.error("invalid sso token" , e);
         } catch (SMSException sme) {
@@ -3742,6 +3743,14 @@ public class UpgradeUtils {
         } catch (Exception me) {
             debug.error("invalid service name " , me);
         }
+     }
+    /**
+     * Removes service schema from the config store.
+     * 
+     * @param serviceName name of the SMS service to be deleted.
+     */
+    public static void removeService(String serviceName) {
+        removeService(serviceName,"1.0");
      }
 
     /**

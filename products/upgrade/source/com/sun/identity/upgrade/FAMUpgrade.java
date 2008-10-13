@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMUpgrade.java,v 1.11 2008-10-11 05:05:54 bina Exp $
+ * $Id: FAMUpgrade.java,v 1.12 2008-10-13 03:58:39 bina Exp $
  *
  */
 package com.sun.identity.upgrade;
@@ -66,6 +66,10 @@ public class FAMUpgrade {
     final static String DEFAULT_VERSION = "10";
     final static String CONFIG_DIR = "configDir";
     final static String BOOTSTRAP_FILE = "bootstrap";
+    final static String UNASSIGN_SERVICE_LDIF = "unAssignService.ldif";
+    final static String PROVIDER_CONFIG_SVC = "iPlanetAMProviderConfigService";
+    final static String AUTH_DOMAIN_SVC = 
+        "iPlanetAMAuthenticationDomainConfigService";
     static BufferedReader inbr = null;
     static String dsHost = "";
     static String dsPort = "";
@@ -139,6 +143,12 @@ public class FAMUpgrade {
             }
             famUpgrade.startUpgrade();
             // Migrate to realms
+            String ldifFile = new StringBuffer().append(getLdifDir())
+                .append(File.separator)
+                .append(UNASSIGN_SERVICE_LDIF).toString();
+            UpgradeUtils.loadLdif(ldifFile);
+            UpgradeUtils.removeService(PROVIDER_CONFIG_SVC,"1.1");
+            UpgradeUtils.removeService(AUTH_DOMAIN_SVC);
             if (enableRealms) {
                 // migrate to realm mode
                 UpgradeUtils.doMigration70();
