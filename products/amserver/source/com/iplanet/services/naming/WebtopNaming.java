@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebtopNaming.java,v 1.24 2008-08-19 19:08:45 veiming Exp $
+ * $Id: WebtopNaming.java,v 1.25 2008-10-13 18:32:41 beomsuk Exp $
  *
  */
 
@@ -572,6 +572,12 @@ public class WebtopNaming {
             }
 
             String serverWithoutURI = protocol + ":" + "//" + host + ":" + port;
+            
+            if (uri != null) {
+                StringTokenizer tok = new StringTokenizer(uri, "/");
+                uri = "/" + tok.nextToken();
+            }
+            
             String server = (uri != null) ?
                 protocol + ":" + "//" + host + ":" + port + uri : 
                 serverWithoutURI;
