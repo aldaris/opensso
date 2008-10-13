@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.13 2008-09-25 20:50:40 asyhuang Exp $
+   $Id: build.xml,v 1.14 2008-10-13 05:30:05 bina Exp $
 
 -->
 
@@ -164,6 +164,8 @@
               todir="${upgrade.dist.dir}/upgrade/config"  />
         <copy file="${upgrade.src.dir}/resources/FM_DAI_ds_remote_schema.ldif"
               todir="${upgrade.dist.dir}/upgrade/config"  />
+        <copy file="${upgrade.src.dir}/resources/unAssignService.ldif"
+            todir="${upgrade.dist.dir}/upgrade/config"  />
         <copy file="${tools.built.dir}/amadm_setup.jar"
               todir="${upgrade.dist.dir}/upgrade/lib"  />
         <copy file="${legacy.src.dir}/resources/locale/amAdminCLI.properties"
