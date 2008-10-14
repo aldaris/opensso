@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-configurator.xml,v 1.1 2008-08-31 06:57:28 hengming Exp $
+   $Id: build-configurator.xml,v 1.2 2008-10-14 16:23:04 mahesh_prasad_r Exp $
 
 -->
 
@@ -54,6 +54,20 @@
             <zipfileset dir="${amserver.built.dir}/classes" includes="com/sun/identity/setup/OpenSSOConfigurator*" />
             <fileset dir="${amserver.res.dir}/locale"
                 includes="OpenSSOConfigurator.properties"/>
+            <fileset dir="${amserver.res.dir}/locale/de_DE"
+                includes="OpenSSOConfigurator_de.properties"/>
+            <fileset dir="${amserver.res.dir}/locale/es_ES"
+                includes="OpenSSOConfigurator_es.properties"/>
+            <fileset dir="${amserver.res.dir}/locale/fr_FR"
+                includes="OpenSSOConfigurator_fr.properties"/>
+            <fileset dir="${amserver.res.dir}/locale/ja_JP"
+                includes="OpenSSOConfigurator_ja.properties"/>
+            <fileset dir="${amserver.res.dir}/locale/ko_KR"
+                includes="OpenSSOConfigurator_ko.properties"/>
+            <fileset dir="${amserver.res.dir}/locale/zh_CN"
+                includes="OpenSSOConfigurator_zh.properties"/>
+            <fileset dir="${amserver.res.dir}/locale/zh_TW"
+                includes="OpenSSOConfigurator_zh_TW.properties"/>
         </jar>
     </target>
 
