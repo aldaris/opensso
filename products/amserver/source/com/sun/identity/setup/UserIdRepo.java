@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserIdRepo.java,v 1.11 2008-08-22 22:50:01 veiming Exp $
+ * $Id: UserIdRepo.java,v 1.12 2008-10-14 23:01:58 veiming Exp $
  *
  */
 
@@ -33,6 +33,7 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.common.LDAPUtils;
 import com.sun.identity.idm.IdConstants;
+import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.SMSException;
@@ -121,17 +122,19 @@ class UserIdRepo {
         if (xml != null) {
             Map data = ServicesDefaultValues.getDefaultValues();
             xml = xml.replaceAll("@SM_CONFIG_ROOT_SUFFIX@",
-                (String)data.get(SetupConstants.SM_CONFIG_ROOT_SUFFIX));
+                XMLUtils.escapeSpecialCharacters((String)data.get(
+                    SetupConstants.SM_CONFIG_ROOT_SUFFIX)));
             xml = xml.replaceAll("@UM_CONFIG_ROOT_SUFFIX@",
-                (String) userRepo.get(
-                SetupConstants.USER_STORE_ROOT_SUFFIX));
+                XMLUtils.escapeSpecialCharacters((String) userRepo.get(
+                    SetupConstants.USER_STORE_ROOT_SUFFIX)));
             xml = xml.replaceAll("@" + SetupConstants.UM_DIRECTORY_SERVER + "@",
-                getHost(userRepo));
+                XMLUtils.escapeSpecialCharacters(getHost(userRepo)));
             xml = xml.replaceAll("@" + SetupConstants.UM_DIRECTORY_PORT + "@",
-                getPort(userRepo));
-            xml = xml.replaceAll("@UM_DS_DIRMGRDN@", getBindDN(userRepo));
+                XMLUtils.escapeSpecialCharacters(getPort(userRepo)));
+            xml = xml.replaceAll("@UM_DS_DIRMGRDN@", 
+                XMLUtils.escapeSpecialCharacters(getBindDN(userRepo)));
             xml = xml.replaceAll("@UM_DS_DIRMGRPASSWD@",
-                getBindPassword(userRepo));
+                XMLUtils.escapeSpecialCharacters(getBindPassword(userRepo)));
 
             String s = (String) userRepo.get(SetupConstants.USER_STORE_SSL);
             String ssl = ((s != null) && s.equals("SSL")) ? "true" : "false";
