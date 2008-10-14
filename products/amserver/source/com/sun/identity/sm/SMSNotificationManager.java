@@ -22,19 +22,22 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSNotificationManager.java,v 1.11 2008-09-11 16:47:56 goodearth Exp $
+ * $Id: SMSNotificationManager.java,v 1.12 2008-10-14 04:57:20 arviranga Exp $
  *
  */
 package com.sun.identity.sm;
 
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.naming.WebtopNaming;
+import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.jaxrpc.SOAPClient;
 import com.sun.identity.sm.jaxrpc.SMSJAXRPCObject;
 import java.net.URL;
+import java.security.AccessController;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -290,6 +293,18 @@ public class SMSNotificationManager implements SMSObjectListener {
         // Called by one of the following
         // SMSLdapObject, SMSJAXRPCObjectImpl or LocalChangeNotifications
         // which are all called by individual threads
+        try {
+            // Clear all caches first
+            (new ServiceManager((SSOToken) AccessController.
+            doPrivileged(AdminTokenAction.getInstance()))).clearCache();
+        } catch (SSOException ex) {
+            debug.error("SMSNotificationManager.allObjectsChanged " +
+                "Invalid AdminSSOToken: ", ex);
+        } catch (SMSException ex) {
+            debug.error("SMSNotificationManager.allObjectsChanged " +
+                "SMSException in clearing cache: ", ex);
+        }
+        
         // Iterate over changeListeners and send notifications
         Set listenerIds = (Set) changeListeners.keySet();
         Set nlists = new HashSet();

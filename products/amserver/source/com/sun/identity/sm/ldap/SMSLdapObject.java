@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSLdapObject.java,v 1.20 2008-08-21 04:30:24 veiming Exp $
+ * $Id: SMSLdapObject.java,v 1.21 2008-10-14 04:57:20 arviranga Exp $
  *
  */
 
@@ -266,7 +266,7 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
 
         LDAPEntry ldapEntry = null;
         int retry = 0;
-        while (retry < connNumRetry) {
+        while (retry <= connNumRetry) {
             if (debug.messageEnabled()) {
                 debug.message("SMSLdapObject.read() retry: " + retry);
             }
@@ -366,7 +366,7 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
     private static void create(Principal p, String dn, Map attrs)
             throws SMSException, SSOException {
         int retry = 0;
-        while (retry < connNumRetry) {
+        while (retry <= connNumRetry) {
             if (debug.messageEnabled()) {
                 debug.message("SMSLdapObject.create() retry: " + retry);
             }
@@ -384,18 +384,14 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
                 break;
             } catch (LDAPException e) {
                 errorCode = e.getLDAPResultCode();
-                if (errorCode == LDAPException.ENTRY_ALREADY_EXISTS) {
-                    // During install time, this error gets throws
-                    // due to unknown issue. Issue: 
-                    // Hence mask it during install time only
-                    String installTime = SystemProperties.get(
-                        Constants.SYS_PROPERTY_INSTALL_TIME, "false");
-                    if (installTime.equalsIgnoreCase("true")) {
-                        debug.warning("SMSLdapObject.create() Entry " +
-                            "Already Exists Error during install time for DN" +
-                            dn);
-                        break;
-                    }
+                if ((errorCode == LDAPException.ENTRY_ALREADY_EXISTS) &&
+                    (retry > 0)) {
+                    // During install time and other times,
+                    // this error gets throws due to unknown issue. Issue: 
+                    // Hence mask it.
+                    debug.warning("SMSLdapObject.create() Entry " +
+                        "Already Exists Error for DN" + dn);
+                    break;
                 }
 
                 if (!retryErrorCodes.contains(Integer.toString(errorCode)) ||
@@ -552,13 +548,22 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
     public Set subEntries(SSOToken token, String dn, String filter,
             int numOfEntries, boolean sortResults, boolean ascendingOrder)
             throws SMSException, SSOException {
+        if (filter == null) {
+            filter = "*";
+        }
+        
         if (debug.messageEnabled()) {
             debug.message("SMSLdapObject: SubEntries search: " + dn);
         }
 
         // Construct the filter
-        String[] objs = { filter };
-        String sfilter = MessageFormat.format(getSearchFilter(),(Object[])objs);
+        String sfilter = "(objectClass=*)";
+        if (!filter.equals("*")) {
+            // This is a workaround for Issue 3823, where DS returns an
+            // empty set if restarted during OpenSSO operation
+            String[] objs = { filter };
+            sfilter = MessageFormat.format(getSearchFilter(),(Object[])objs);
+        }
         Set answer = getSubEntries(token, dn, sfilter, numOfEntries,
                 sortResults, ascendingOrder);
         return (answer);
@@ -570,7 +575,7 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
         LDAPSearchResults results = null;
         int retry = 0;
 
-        while (retry < connNumRetry) {
+        while (retry <= connNumRetry) {
             if (debug.messageEnabled()) {
                 debug.message("SMSLdapObject.subEntries() retry: " + retry);
             }
@@ -631,6 +636,12 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
             while (results.hasMoreElements()) {
                 try {
                     LDAPEntry entry = results.next();
+                    // Check if the attribute starts with "ou="
+                    // Workaround for 3823, where (objectClass=*) is used
+                    String edn = entry.getDN();
+                    if (!edn.toLowerCase().startsWith("ou=")) {
+                        continue;
+                    }
                     String temp = LDAPDN.explodeDN(entry.getDN(), true)[0]; 
                     answer.add(getDenormalizedName(token, temp));
                 } catch (LDAPException e) {
@@ -737,7 +748,7 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
         LDAPSearchResults results = null;
         int retry = 0;
 
-        while (retry < connNumRetry) {
+        while (retry <= connNumRetry) {
             if (debug.messageEnabled()) {
                 debug.message("SMSLdapObject.search() retry: " + retry);
             }
@@ -1007,7 +1018,7 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
             LDAPConnection.SCOPE_ONE;
         int retry = 0;
 
-        while (retry < connNumRetry) {
+        while (retry <= connNumRetry) {
             if (debug.messageEnabled()) {
                 debug.message(
                     "SMSLdapObject.searchSubOrganizationNames() retry: " +
@@ -1184,7 +1195,7 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
         LDAPSearchResults results = null;
         int retry = 0;
 
-        while (retry < connNumRetry) {
+        while (retry <= connNumRetry) {
             if (debug.messageEnabled()) {
                 debug.message("SMSLdapObject.getOrgNames() retry: "+ retry);
             }

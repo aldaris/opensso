@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EventService.java,v 1.15 2008-08-08 00:40:55 ww203982 Exp $
+ * $Id: EventService.java,v 1.16 2008-10-14 04:57:19 arviranga Exp $
  *
  */
 
@@ -736,15 +736,13 @@ public class EventService implements Runnable {
         for (Iterator iter = reqList.iterator(); iter.hasNext();) {
             Request req = (Request) iter.next();
             _requestList.remove(req.getRequestID());
-            if (clearCaches) {
-                req.getListener().allEntriesChanged();
-            }
         }
         _numRetries = getPropertyIntValue(EVENT_CONNECTION_NUM_RETRIES,
             _numRetries);
         _retryInterval = getPropertyIntValue(EVENT_CONNECTION_RETRY_INTERVAL,
             _retryInterval);
         RetryTask task = new RetryTask(tmpReqList, _numRetries);
+        task.clearCache(clearCaches);
         SystemTimer.getTimer().schedule(task, new Date(((
             System.currentTimeMillis() + _retryInterval) / 1000) * 1000));
     }
@@ -1141,6 +1139,7 @@ public class EventService implements Runnable {
         private Map requests;
         private int numOfRetries;
         private int retry;
+        private boolean clearCaches;
         
         public RetryTask(Map requests, int numOfRetries) {
             
@@ -1149,6 +1148,10 @@ public class EventService implements Runnable {
             this.requests = requests;
             this.numOfRetries = numOfRetries;
             this.retry = 1;
+        }
+        
+        public void clearCache(boolean cc) {
+            clearCaches = cc;
         }
         
         public void run() {
@@ -1166,6 +1169,11 @@ public class EventService implements Runnable {
                             req.getFilter(), req.getOperations());
                     }
                     removeListener(req);
+                    if (clearCaches) {
+                        // Send all entries changed notifications
+                        // only after successful establishment of psearch
+                        req.getListener().allEntriesChanged();
+                    }
                     iter.remove();
                 } catch (Exception e) {
                     // Ignore exception and retry as we are in the process of

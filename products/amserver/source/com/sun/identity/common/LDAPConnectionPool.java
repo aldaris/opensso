@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPConnectionPool.java,v 1.14 2008-09-18 22:56:57 ericow Exp $
+ * $Id: LDAPConnectionPool.java,v 1.15 2008-10-14 04:57:20 arviranga Exp $
  *
  */
 
@@ -91,7 +91,7 @@ import netscape.ldap.LDAPSearchConstraints;
  **/
 public class LDAPConnectionPool {
 
-    private static ArrayList hostArrList = new ArrayList();
+    private ArrayList hostArrList = new ArrayList();
     private static Debug debug;  // Debug object
     private static HashSet retryErrorCodes = new HashSet();
     private static final String LDAP_CONNECTION_ERROR_CODES =
@@ -1045,6 +1045,7 @@ public class LDAPConnectionPool {
                     break;
                 }
             }
+            newConn = null;
         }
         if (newConn == null) {
             return false;

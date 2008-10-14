@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfigImpl.java,v 1.14 2008-08-19 06:47:07 manish_rustagi Exp $
+ * $Id: ServiceConfigImpl.java,v 1.15 2008-10-14 04:57:20 arviranga Exp $
  *
  */
 
@@ -174,6 +174,9 @@ class ServiceConfigImpl implements ServiceListener {
             SSOException {
         if (subEntries == null) {
             subEntries = CachedSubEntries.getInstance(t, smsEntry.getDN());
+        }
+        if (pattern.equals("*")) {
+            return (getSubConfigNames(t));
         }
         return (subEntries.getSubEntries(t, pattern));
     }
