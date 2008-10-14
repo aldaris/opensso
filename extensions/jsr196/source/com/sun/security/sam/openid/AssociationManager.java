@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssociationManager.java,v 1.1 2008-08-20 17:53:15 monzillo Exp $
+ * $Id: AssociationManager.java,v 1.2 2008-10-14 19:35:29 monzillo Exp $
  */
 package com.sun.security.sam.openid;
 
@@ -87,6 +87,7 @@ public class AssociationManager {
     private static Map<String, AssociationManager> managerCache =
             new HashMap<String, AssociationManager>();
     private static ArrayList<String> sessionTypeArray = new ArrayList();
+    
 
     static {
         sessionTypeArray.add((String) "DH-SHA1");
@@ -239,6 +240,30 @@ public class AssociationManager {
         return idpURL.toString();
     }
 
+    static String getTokenName(String token) {
+        if (token.startsWith("openid.")) {
+            StringTokenizer tokenizer = new StringTokenizer(token, "=");
+            int tokenCount = tokenizer.countTokens();
+            if (tokenCount > 0) {
+                return tokenizer.nextToken();
+            }
+        }
+        return null;
+    }
+
+    static String getTokenValue(String token) {
+        if (token.startsWith("openid.")) {
+            StringTokenizer tokenizer = new StringTokenizer(token, "=");
+            for (int i = 0; tokenizer.hasMoreTokens(); i++) {
+                String value = tokenizer.nextToken();
+                if (i == 1) {
+                    return URLDecoder.decode(value);
+                }
+            }
+        }
+        return null;
+    }
+    
     public static Map getToken(String query) {
 
         HashMap map = null;
@@ -254,12 +279,15 @@ public class AssociationManager {
                 String token = tokenizer.nextToken();
                 String value = null;
 
+                boolean standardParam = false;
+
                 for (int i = 0; value == null && i < openIDParams.length; i++) {
 
                     String name = openIDParams[i];
 
                     if (token.startsWith(name)) {
 
+                        standardParam = true;
                         value = URLDecoder.decode(token.substring(name.length() + 1));
 
                         if (map == null) {
@@ -274,11 +302,23 @@ public class AssociationManager {
 
                     }
                 }
+
+                if (!standardParam) {
+                    String tokenName = getTokenName(token);
+                    if (tokenName != null) {
+                        String tokenValue = getTokenValue(token);
+                        if (map == null) {
+                            map = new HashMap();
+                        }
+                        map.put(tokenName, tokenValue);
+                    }
+                }
             }
             if (hasMode = false) {
                 map = null;
             }
         }
+
         return map;
     }
 
@@ -801,8 +841,7 @@ public class AssociationManager {
 
                     KeyFactory factory = KeyFactory.getInstance("DH");
 
-                    DHPublicKey pubKey = (DHPublicKey) 
-                            factory.generatePublic(new DHPublicKeySpec(y, p, defaultDHParameterSpec.getG()));
+                    DHPublicKey pubKey = (DHPublicKey) factory.generatePublic(new DHPublicKeySpec(y, p, defaultDHParameterSpec.getG()));
                     DHPrivateKey privKey = (DHPrivateKey) kPair.getPrivate();
 
                     BigInteger xa = privKey.getX();
