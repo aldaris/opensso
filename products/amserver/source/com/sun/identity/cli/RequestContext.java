@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RequestContext.java,v 1.9 2008-10-08 00:22:10 veiming Exp $
+ * $Id: RequestContext.java,v 1.10 2008-10-14 04:20:12 veiming Exp $
  *
  */
 
@@ -253,7 +253,8 @@ public class RequestContext {
     private int skipGlobalOption(String option) {
         int skip = -1;
         if (option.equals(CLIConstants.ARGUMENT_DEBUG) ||
-            option.equals(CLIConstants.ARGUMENT_VERBOSE)
+            option.equals(CLIConstants.ARGUMENT_VERBOSE) ||
+            option.equals(CLIConstants.ARGUMENT_NOLOG)
         ) {
             skip = 0;
         } else if (option.equals(CLIConstants.ARGUMENT_LOCALE)) {
@@ -265,7 +266,8 @@ public class RequestContext {
     private int skipGlobalShortOption(String option) {
         int skip = -1;
         if (option.equals(CLIConstants.SHORT_ARGUMENT_DEBUG) ||
-            option.equals(CLIConstants.SHORT_ARGUMENT_VERBOSE)
+            option.equals(CLIConstants.SHORT_ARGUMENT_VERBOSE) ||
+            option.equals(CLIConstants.SHORT_ARGUMENT_NOLOG)
         ) {
             skip = 0;
         } else if (option.equals(CLIConstants.SHORT_ARGUMENT_LOCALE)) {
