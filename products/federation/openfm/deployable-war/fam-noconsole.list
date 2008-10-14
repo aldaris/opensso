@@ -1316,8 +1316,8 @@
 ./WEB-INF/template/opends/config/schema/03-rfc3712.ldif
 ./WEB-INF/template/opends/config/schema/03-uddiv3.ldif
 ./WEB-INF/template/opends/config/schema/04-rfc2307bis.ldif
-./WEB-INF/template/opends/config/upgrade/config.ldif.4337
-./WEB-INF/template/opends/config/upgrade/schema.ldif.4337
+./WEB-INF/template/opends/config/upgrade/config.ldif.4517
+./WEB-INF/template/opends/config/upgrade/schema.ldif.4517
 ./WEB-INF/template/opends/config/admin-backend.ldif
 ./WEB-INF/template/opends/config/config.ldif
 ./WEB-INF/template/opends/config/famsuffix.ldif
