@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebtopNaming.java,v 1.25 2008-10-13 18:32:41 beomsuk Exp $
+ * $Id: WebtopNaming.java,v 1.26 2008-10-15 00:52:24 beomsuk Exp $
  *
  */
 
@@ -122,6 +122,11 @@ public class WebtopNaming {
 
     private static SiteMonitor monitorThread = null;
 
+    private static String IGNORE_NAMING_SERVICE =
+        "com.iplanet.am.naming.ignoreNamingService";
+    
+    private static boolean ignoreNaming = false;
+
     static {
         serverMode = Boolean.valueOf(
                 System.getProperty(Constants.SERVER_MODE, SystemProperties.get(
@@ -205,6 +210,8 @@ public class WebtopNaming {
     }
 
     private static void initializeNamingService() {
+        ignoreNaming = Boolean.valueOf(SystemProperties.get(
+             IGNORE_NAMING_SERVICE, "false")).booleanValue() & !isServerMode();
         try {
             // Initilaize the list of naming URLs
             getNamingServiceURL();
@@ -321,6 +328,12 @@ public class WebtopNaming {
             ) {
                 throw new Exception(NamingBundle.getString("noServiceURL")
                         + service);
+            }
+            
+            if (ignoreNaming) {
+                protocol = amServerProtocol;
+                host = amServer;
+                port = amServerPort;
             }
 
             if (namingTable == null) {
@@ -573,7 +586,7 @@ public class WebtopNaming {
 
             String serverWithoutURI = protocol + ":" + "//" + host + ":" + port;
             
-            if (uri != null) {
+            if ((uri != null) && (uri.length() > 0)) {
                 StringTokenizer tok = new StringTokenizer(uri, "/");
                 uri = "/" + tok.nextToken();
             }
