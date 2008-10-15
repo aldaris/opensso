@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BootstrapData.java,v 1.12 2008-08-07 17:22:06 arviranga Exp $
+ * $Id: BootstrapData.java,v 1.13 2008-10-15 21:30:13 veiming Exp $
  *
  */
 
@@ -32,6 +32,7 @@ import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.ldap.DSConfigMgr;
 import com.iplanet.services.ldap.LDAPServiceException;
 import com.iplanet.services.util.Crypt;
+import com.sun.identity.shared.xml.XMLUtils;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -330,13 +331,19 @@ public class BootstrapData {
                 DS_PROTO_LDAP);
         }
 
-        template = template.replaceAll("@" + DS_HOST + "@", dshost);
+        template = template.replaceAll("@" + DS_HOST + "@", 
+            XMLUtils.escapeSpecialCharacters(dshost));
         template = template.replaceAll("@" + DS_PORT + "@", dsport);
-        template = template.replaceAll("@" + DS_MGR + "@", dsmgr);
-        template = template.replaceAll("@" + USER + "@", dsameUser);
-        template = template.replaceAll("@" + DS_PWD + "@", dspwd);
-        template = template.replaceAll("@" + PWD + "@", pwd);
-        template = template.replaceAll("@" + DS_BASE_DN + "@", dsuserbasedn);
+        template = template.replaceAll("@" + DS_MGR + "@", 
+            XMLUtils.escapeSpecialCharacters(dsmgr));
+        template = template.replaceAll("@" + USER + "@", 
+            XMLUtils.escapeSpecialCharacters(dsameUser));
+        template = template.replaceAll("@" + DS_PWD + "@", 
+            XMLUtils.escapeSpecialCharacters(dspwd));
+        template = template.replaceAll("@" + PWD + "@", 
+            XMLUtils.escapeSpecialCharacters(pwd));
+        template = template.replaceAll("@" + DS_BASE_DN + "@", 
+            XMLUtils.escapeSpecialCharacters(dsuserbasedn));
         return template;    
     }
     
@@ -384,12 +391,17 @@ public class BootstrapData {
                 DS_PROTO_LDAP);
         }
 
-        template = template.replaceAll("@" + DS_HOST + "@", dshost);
+        template = template.replaceAll("@" + DS_HOST + "@", 
+            XMLUtils.escapeSpecialCharacters(dshost));
         template = template.replaceAll("@" + DS_PORT + "@", dsport);
-        template = template.replaceAll("@" + DS_MGR + "@", dsmgr);
-        template = template.replaceAll("@" + DS_BASE_DN + "@", dsbasedn);
-        template = template.replaceAll("@" + DS_PWD + "@", dspwd);
-        template = template.replaceAll("@" + PWD + "@", pwd);
+        template = template.replaceAll("@" + DS_MGR + "@", 
+            XMLUtils.escapeSpecialCharacters(dsmgr));
+        template = template.replaceAll("@" + DS_BASE_DN + "@", 
+            XMLUtils.escapeSpecialCharacters(dsbasedn));
+        template = template.replaceAll("@" + DS_PWD + "@", 
+            XMLUtils.escapeSpecialCharacters(dspwd));
+        template = template.replaceAll("@" + PWD + "@", 
+            XMLUtils.escapeSpecialCharacters(pwd));
         return template;    
     }
 
