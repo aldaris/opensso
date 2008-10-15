@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.73 2008-10-09 21:40:39 madan_ranganath Exp $
+   $Id: AgentService.xml,v 1.74 2008-10-15 01:25:05 huacui Exp $
 
 -->
 
@@ -1358,6 +1358,15 @@
                         i18nKey="a136">
                         <DefaultValues>
                             <Value>WSAuthErrorContent.txt</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
+                    <AttributeSchema
+                        name="com.sun.identity.agents.config.webservice.responseprocessor"
+                        type="single"
+                        syntax="string"
+                        i18nKey="a134a">
+                        <DefaultValues>
+                            <Value></Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema
