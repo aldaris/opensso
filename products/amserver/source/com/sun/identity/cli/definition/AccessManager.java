@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.91 2008-09-10 19:57:46 arviranga Exp $
+ * $Id: AccessManager.java,v 1.92 2008-10-16 17:06:37 veiming Exp $
  *
  */
 
@@ -1805,9 +1805,7 @@ public class AccessManager {
             "xmlfile|X|m|XML file that contains configuration."},
         optionAliases={},
         macro="authentication",
-        optionalOptions={
-            "outfile|o|s|File name where serverconfig XML is written."
-        },
+        optionalOptions={},
         resourceStrings={
             "set-serverconfig-xml-succeeded=Server Configuration XML was set."
         }
