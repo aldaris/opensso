@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupProduct.java,v 1.18 2008-08-22 23:09:05 nithyas Exp $
+ * $Id: SetupProduct.java,v 1.19 2008-10-16 04:04:53 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -875,7 +875,26 @@ public class SetupProduct extends TestCommon {
                         " failed");
                 assert false;
             }
-            if (getHtmlPageStringIndex(
+            LDAPCommon ldc = null;
+	    ldc = new LDAPCommon(ldapServer,
+                    ldapPort, adminId, dsAdminPassword,
+                    orgName);
+            ResourceBundle smsGblCfg = ResourceBundle.
+                    getBundle("config" + fileseparator + "default" +
+                    fileseparator + "UMGlobalConfig");
+            String schemaString = (String)smsGblCfg.
+                    getString(SMSConstants.UM_SCHEMNA_LIST
+                    + "." +
+                    SMSConstants.UM_DATASTORE_SCHEMA_TYPE_AMDS);
+            String schemaAttributes = (String)smsGblCfg.
+                    getString(SMSConstants.UM_SCHEMNA_ATTR
+                    + "." +
+                    SMSConstants.UM_DATASTORE_SCHEMA_TYPE_AMDS);
+            ldc.loadAMUserSchema(schemaString,
+                    schemaAttributes);
+            ldc.disconnectDServer();
+	    Thread.sleep(5000);
+	    if (getHtmlPageStringIndex(
                     page, dsName) == -1)
                 if (FederationManager.getExitCode(famadm.createDatastore(
                 webClient, dsRealm, dsName, dsType, list)) != 0) {
@@ -899,24 +918,7 @@ public class SetupProduct extends TestCommon {
                  assert false;
             }
             dsCreated = true;
-            list.clear();
-            LDAPCommon ldc = new LDAPCommon(ldapServer,
-                    ldapPort, adminId, dsAdminPassword,
-                    orgName);
-            ResourceBundle smsGblCfg = ResourceBundle.
-                    getBundle("config" + fileseparator + "default" +
-                    fileseparator + "UMGlobalConfig");
-            String schemaString = (String)smsGblCfg.
-                    getString(SMSConstants.UM_SCHEMNA_LIST
-                    + "." +
-                    SMSConstants.UM_DATASTORE_SCHEMA_TYPE_AMDS);
-            String schemaAttributes = (String)smsGblCfg.
-                    getString(SMSConstants.UM_SCHEMNA_ATTR
-                    + "." +
-                    SMSConstants.UM_DATASTORE_SCHEMA_TYPE_AMDS);
-            ldc.loadAMUserSchema(schemaString,
-                    schemaAttributes);
-            ldc.disconnectDServer();
+	    list.clear();
         }
         return (dsCreated);
     }

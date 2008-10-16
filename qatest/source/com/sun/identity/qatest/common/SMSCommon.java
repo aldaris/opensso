@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSCommon.java,v 1.18 2008-08-19 21:34:12 rmisra Exp $
+ * $Id: SMSCommon.java,v 1.19 2008-10-16 04:04:38 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -478,6 +478,7 @@ public class SMSCommon extends TestCommon {
     private void createDataStoreImpl(Map cdsiMap)
     throws Exception {
         entering("createDataStoreImpl", null);
+        LDAPCommon ldc = null;
         try {
             String realmName = (String)cdsiMap.
                     get(SMSConstants.UM_DATASTORE_REALM);
@@ -508,7 +509,7 @@ public class SMSCommon extends TestCommon {
                     if (sslmode.equals("true"))
                         keystore = (String)cdsiMap.
                                 get(SMSConstants.UM_DATASTORE_KEYSTORE);
-                    LDAPCommon ldc = new LDAPCommon(dsHost, dsPort,
+                    ldc = new LDAPCommon(dsHost, dsPort,
                             dsDirmgrdn, dsDirmgrpwd, dsRootSuffix, keystore);
                     String schemaString = (String)globalCfgMap.
                             get(SMSConstants.UM_SCHEMNA_LIST + "." + dsType);
@@ -520,6 +521,7 @@ public class SMSCommon extends TestCommon {
                             " attributes to check whether schema is  already" +
                             "loaded: " + schemaAttributes);                    
                     ldc.loadAMUserSchema(schemaString, schemaAttributes);
+                    ldc.disconnectDServer();
                 }
                 log(Level.FINE, "createDataStoreImpl", "Creating datastore " +
                         dsName +  "...");
@@ -543,6 +545,9 @@ public class SMSCommon extends TestCommon {
         } catch (Exception e) {
             log(Level.SEVERE, "createDataStoreImpl", e.getMessage());
             e.printStackTrace();
+	    if (ldc != null) {
+		ldc.disconnectDServer();
+	    }
             throw e;
         }
         exiting("createDataStoreImpl");
