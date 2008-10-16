@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMPropertySheetModel.java,v 1.9 2008-10-02 16:31:27 veiming Exp $
+ * $Id: AMPropertySheetModel.java,v 1.10 2008-10-16 19:14:37 veiming Exp $
  *
  */
 
@@ -32,7 +32,6 @@ import com.iplanet.jato.view.ContainerView;
 import com.iplanet.jato.view.ContainerViewBase;
 import com.iplanet.jato.view.View;
 import com.iplanet.jato.view.DisplayFieldImpl;
-import com.iplanet.jato.view.html.Option;
 import com.iplanet.jato.view.html.OptionList;
 import com.sun.identity.console.property.PropertyTemplate;
 import com.sun.identity.console.ui.model.CCMapListModel;
@@ -42,7 +41,6 @@ import com.sun.identity.console.ui.view.CCGlobalMapList;
 import com.sun.identity.console.ui.view.CCMapList;
 import com.sun.identity.console.ui.view.CCOrderedList;
 import com.sun.identity.console.ui.view.CCUnOrderedList;
-import com.sun.identity.shared.encode.Base64;
 import com.sun.web.ui.common.CCDescriptor;
 import com.sun.web.ui.common.CCTagClass;
 import com.sun.web.ui.model.CCActionTableModel;
@@ -53,12 +51,9 @@ import com.sun.web.ui.view.addremove.CCAddRemove;
 import com.sun.web.ui.view.editablelist.CCEditableList;
 import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -111,18 +106,8 @@ public class AMPropertySheetModel
         "com.sun.identity.console.ui.taglib.CCGlobalMapListTag";
     public static final String ADDREMOVE_LIST =
         "com.sun.web.ui.taglib.addremove.CCAddRemoveTag";
-    public static String passwordRandom;
-
-    static {
-        try {
-            byte[] bytes = new byte[24];
-            SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
-            random.nextBytes(bytes);
-            passwordRandom = Base64.encode(bytes).trim();
-        } catch (NoSuchAlgorithmException e) {
-            passwordRandom = "KmhUnWR1MYWDYW4xuqdF5nbm+CXIyOVt";
-        }
-    }
+    public static final String passwordRandom =
+        "KmhUnWR1MYWDYW4xuqdF5nbm+CXIyOVt";
 
     public AMPropertySheetModel() {
         super();
