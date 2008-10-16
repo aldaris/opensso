@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XMLUtils.java,v 1.10 2008-10-02 06:55:47 veiming Exp $
+ * $Id: XMLUtils.java,v 1.11 2008-10-16 02:00:04 arviranga Exp $
  *
  */
 
@@ -533,11 +533,20 @@ public class XMLUtils {
         }
         return value.getNodeValue();
     }
-
+    
     /**
      * Method to get Values within AttributeValuePair as a java.util.Set
      */
     public static Set getAttributeValuePair(Node node) {
+        return (getAttributeValuePair(node, true));
+    }
+
+    /**
+     * Method to get Values within AttributeValuePair as a java.util.Set
+     * If <class>unescape<class> is set to false, xml escaped chars will not
+     * be unescaped.
+     */
+    public static Set getAttributeValuePair(Node node, boolean unescape) {
         if (!node.getNodeName().equals(ATTR_VALUE_PAIR_NODE)) {
             return (null);
         }
@@ -547,23 +556,41 @@ public class XMLUtils {
         for (int i = 0; i < children.getLength(); i++) {
             Node n = children.item(i);
             if (n.getNodeName().equalsIgnoreCase(VALUE_NODE)) {
-                retVal.add(getValueOfValueNode(n));
+                retVal.add(getValueOfValueNode(n, unescape));
             }
         }
         return (retVal);
     }
-
+    
     /**
      * Method to get the value of "Value" node
      */
     public static String getValueOfValueNode(Node n) {
-        return getValueOfValueNodeNoTrim(n).trim();
+        return (getValueOfValueNode(n, true));
     }
 
     /**
      * Method to get the value of "Value" node
+     * If <class>unescape<class> is set to false, xml escaped chars will not
+     * be unescaped.
+     */
+    public static String getValueOfValueNode(Node n, boolean unescape) {
+        return getValueOfValueNodeNoTrim(n, unescape).trim();
+    }
+    
+    /**
+     * Method to get the value of "Value" node
      */
     public static String getValueOfValueNodeNoTrim(Node n) {
+        return (getValueOfValueNodeNoTrim(n, true));
+    }
+
+    /**
+     * Method to get the value of "Value" node
+     * If <class>unescape<class> is set to false, xml escaped chars will not
+     * be unescaped.
+     */
+    public static String getValueOfValueNodeNoTrim(Node n, boolean unescape) {
         NodeList textNodes = n.getChildNodes();
         Node textNode;
         StringBuffer value = new StringBuffer("");
@@ -575,8 +602,10 @@ public class XMLUtils {
             } else if (textNode.getNodeType() == Node.ELEMENT_NODE) {
                 text = print(textNode);
             }
-            if (text != null) {
+            if (text != null && unescape) {
                 value.append(unescapeSpecialCharacters(text));
+            } else {
+                value.append(text);
             }
         }
         return value.toString();

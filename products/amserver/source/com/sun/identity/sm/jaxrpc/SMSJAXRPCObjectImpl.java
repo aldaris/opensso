@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSJAXRPCObjectImpl.java,v 1.18 2008-09-19 20:44:47 arviranga Exp $
+ * $Id: SMSJAXRPCObjectImpl.java,v 1.19 2008-10-16 02:00:04 arviranga Exp $
  *
  */
 
@@ -621,10 +621,10 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
                                 .getChildNode(node, "Attribute");
                         String attrName = XMLUtils.getNodeAttributeValue(
                                 attrNode, "name");
-                        Set values = XMLUtils.getAttributeValuePair(node);
+                        Set vals = XMLUtils.getAttributeValuePair(node, false);
                         // Construct ModificationItem
                         BasicAttribute attr = new BasicAttribute(attrName);
-                        for (Iterator it = values.iterator(); it.hasNext();)
+                        for (Iterator it = vals.iterator(); it.hasNext();)
                             attr.add(it.next());
                         answer[i] = new ModificationItem(event, attr);
                     }
