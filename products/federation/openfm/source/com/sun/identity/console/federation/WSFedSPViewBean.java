@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]
  *
- * $Id: WSFedSPViewBean.java,v 1.5 2008-06-25 05:49:38 qcheng Exp $
+ * $Id: WSFedSPViewBean.java,v 1.6 2008-10-16 20:43:36 babysunil Exp $
  *
  */
 
@@ -91,6 +91,17 @@ public class WSFedSPViewBean extends WSFedGeneralBase {
             //retrieve all the extended metadata values from the property sheet
             Map spExtValues =
                 ps.getAttributeValues(model.getSPEXDataMap(), false, model);
+            
+            // should retain the value of the displayname from General page
+            Set entries = getExtendedValues().entrySet();
+            Iterator iterator = entries.iterator();
+             while (iterator.hasNext()) {
+                Map.Entry entry = (Map.Entry)iterator.next();
+                if (entry.getKey().equals("displayName")) {
+                    spExtValues.put((String)entry.getKey(),
+                        returnEmptySetIfValueIsNull((Set)entry.getValue()));
+                }
+            } 
             
             //save the extended metadata values for the SP
             model.setSPExtAttributeValues(realm, entityName, 

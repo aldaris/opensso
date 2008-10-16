@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]
  *
- * $Id: WSFedIDPViewBean.java,v 1.7 2008-06-25 05:49:38 qcheng Exp $
+ * $Id: WSFedIDPViewBean.java,v 1.8 2008-10-16 20:43:00 babysunil Exp $
  *
  */
 
@@ -96,6 +96,17 @@ public class WSFedIDPViewBean extends WSFedGeneralBase {
             //retrieve all the extended metadata values from the property sheet
             Map idpExtValues =
                 ps.getAttributeValues(model.getIDPEXDataMap(), false, model);
+            
+            // should retain the value of the displayname from General page
+            Set entries = getExtendedValues().entrySet();
+            Iterator iterator = entries.iterator();
+             while (iterator.hasNext()) {
+                Map.Entry entry = (Map.Entry)iterator.next();
+                if (entry.getKey().equals("displayName")) {
+                    idpExtValues.put((String)entry.getKey(),
+                        returnEmptySetIfValueIsNull((Set)entry.getValue()));
+                }
+            } 
 
             //retrieve all the standard metadata values from the property sheet
             Map idpStdValues =

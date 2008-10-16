@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]
  *
- * $Id: WSFedPropertiesModelImpl.java,v 1.11 2008-08-30 01:23:40 babysunil Exp $
+ * $Id: WSFedPropertiesModelImpl.java,v 1.12 2008-10-16 20:44:33 babysunil Exp $
  *
  */
 
@@ -64,9 +64,9 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
 {
     private static Map GEN_DATA_MAP = new HashMap(6);
     private static Map GEN_DUAL_DATA_MAP = new HashMap(8);
-    private static Map SPEX_DATA_MAP = new HashMap(26);
+    private static Map SPEX_DATA_MAP = new HashMap(28);
     private static Map IDPSTD_DATA_MAP = new HashMap(2);
-    private static Map IDPEX_DATA_MAP = new HashMap(30);
+    private static Map IDPEX_DATA_MAP = new HashMap(32);
     
     static {
         GEN_DATA_MAP.put(TF_DISPNAME, Collections.EMPTY_SET);
@@ -82,6 +82,7 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
     }
     
     static {
+        SPEX_DATA_MAP.put(TF_DISPNAME, Collections.EMPTY_SET);
         SPEX_DATA_MAP.put(TFSPAUTOFED_ENABLED, Collections.EMPTY_SET);
         SPEX_DATA_MAP.put(TFASSERT_SIGNED, Collections.EMPTY_SET);
         SPEX_DATA_MAP.put(TFSPAUTOFED_ATTR, Collections.EMPTY_SET);
@@ -101,6 +102,7 @@ public class WSFedPropertiesModelImpl extends EntityModelImpl
     }
     
     static {
+        IDPEX_DATA_MAP.put(TF_DISPNAME, Collections.EMPTY_SET);
         IDPEX_DATA_MAP.put(TFSIGNCERT_ALIAS, Collections.EMPTY_SET);
         IDPEX_DATA_MAP.put(TFAUTOFED_ENABLED, Collections.EMPTY_SET);
         IDPEX_DATA_MAP.put(TFIDPAUTOFED_ATTR, Collections.EMPTY_SET);
