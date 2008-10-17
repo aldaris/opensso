@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SystemProperties.java,v 1.16 2008-08-19 19:08:37 veiming Exp $
+ * $Id: SystemProperties.java,v 1.17 2008-10-17 22:37:28 veiming Exp $
  *
  */
 
@@ -135,12 +135,11 @@ public class SystemProperties {
      * anything else starts.
      */
     static {
-        mapTagswap.put("%SERVER_PORT%", "com.iplanet.am.server.port");
-        mapTagswap.put("%SERVER_URI%",
-            "com.iplanet.am.services.deploymentDescriptor");
-        mapTagswap.put("%SERVER_HOST%", "com.iplanet.am.server.host");
-        mapTagswap.put("%SERVER_PROTO%", 
-            "com.iplanet.am.server.protocol");
+        mapTagswap.put("%SERVER_PORT%", Constants.AM_SERVER_PORT);
+        mapTagswap.put("%SERVER_URI%", 
+            Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
+        mapTagswap.put("%SERVER_HOST%", Constants.AM_SERVER_HOST);
+        mapTagswap.put("%SERVER_PROTO%", Constants.AM_SERVER_PROTOCOL);
         mapTagswap.put("%BASE_DIR%", CONFIG_PATH);
         
         try {
@@ -268,7 +267,22 @@ public class SystemProperties {
                 for (Iterator i = set.iterator(); i.hasNext(); ) {
                     String k = (String)i.next();
                     String val = (String)tagswapValues.get(k);
-                    answer = answer.replaceAll(k, val);
+                    
+                    if (k.equals("%SERVER_URI%")) {
+                        if (val != null) {
+                            if (val.charAt(0) == '/') {
+                                answer = answer.replaceAll("/%SERVER_URI%", 
+                                    val);
+                                String lessSlash = val.substring(1);
+                                answer = answer.replaceAll("%SERVER_URI%", 
+                                    lessSlash);
+                            } else {
+                                answer = answer.replaceAll(k, val);
+                            }
+                        }
+                    } else {
+                        answer = answer.replaceAll(k, val);
+                    }
                 }
 
                 if (answer.indexOf("%ROOT_SUFFIX%") != -1) {
