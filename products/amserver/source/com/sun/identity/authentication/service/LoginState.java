@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.38 2008-09-15 18:22:24 manish_rustagi Exp $
+ * $Id: LoginState.java,v 1.39 2008-10-17 20:12:51 dillidorai Exp $
  *
  */
 
@@ -72,6 +72,7 @@ import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.ServiceConfig;
+import com.sun.identity.sm.ServiceManager;
 import java.net.InetAddress;
 import java.security.AccessController;
 import java.security.Principal;
@@ -351,6 +352,8 @@ public class LoginState {
     boolean postProcessInSession = false;
     boolean modulesInSession = false;
     
+    private static Set internalUsers = new HashSet();
+
     static {
         
         userAttributes.add(ISAuthConstants.LOGIN_SUCCESS_URL);
@@ -382,6 +385,15 @@ public class LoginState {
             port = SystemProperties.get(Constants.AM_SERVER_PORT);
         }
         serverURL = proto + "://" + host + ":" + port;
+
+        /* Define internal users
+         * For these users we would allow authentication only at root realm
+         * and only for DataStore module
+         */
+        internalUsers.add("amadmin");
+        internalUsers.add("dsameuser");
+        internalUsers.add("amservice-urlaccessagent");
+        
     }
     
     
@@ -6161,4 +6173,59 @@ public class LoginState {
 
         return finalAuthConfigName;
     }
+
+    boolean isAuthValidForInternalUser() {
+        boolean authValid = true;
+        if (session == null) {
+            debug.warning(
+                "LoginState.isValidAuthForInternalUser():session is null");
+            return false;
+        }
+        getTokenFromPrincipal(subject);
+        String userId = token;
+        if (userId == null) {
+            debug.warning(
+                "LoginState.isValidAuthForInternalUser():userId is null");
+            return false;
+        }
+        if (internalUsers.contains(userId.toLowerCase())) {
+            String authRealm = orgDN;
+            String authModule = "";
+            if (!successModuleSet.isEmpty()) {
+                authModule = (String)(successModuleSet.iterator().next());
+            }
+            if (authRealm == null) {
+                debug.warning(
+                    "LoginState.isValidAuthForInternalUser():authRealm is null");
+                return false;
+            }
+            if (authModule == null) {
+                if (debug.warningEnabled()) {
+                    debug.warning("LoginState.isValidAuthForInternalUser():"
+                            + "authModule is null");
+                }
+                return false;
+            }
+            if (debug.messageEnabled()) {
+                debug.message("LoginState.isValidAuthForInternalUser():"
+                        + "Attempt to login as:" + userId
+                        + ", to module:" + authModule
+                        + ", at realm:" + authRealm);
+            }
+            if (!authRealm.equals(ServiceManager.getBaseDN())  
+                        || (!authModule.equals("DataStore") 
+                            && !authModule.equals("Application"))) {
+                authValid = false;
+                if (debug.warningEnabled()) {
+                    debug.warning("LoginState.isValidAuthForInternalUser():"
+                            + "Attempt to login as:" + userId
+                            + ", to module:" + authModule
+                            + ", at realm:" + authRealm
+                            + ", denied due to internal users restriction ");
+                }
+            }
+        }
+        return authValid;
+    }
+
 }

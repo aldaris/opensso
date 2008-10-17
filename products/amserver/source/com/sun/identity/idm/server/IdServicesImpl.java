@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: IdServicesImpl.java,v 1.53 2008-09-30 19:46:47 goodearth Exp $
+* $Id: IdServicesImpl.java,v 1.54 2008-10-17 20:12:51 dillidorai Exp $
 *
 */
 
@@ -81,6 +81,7 @@ import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
 import java.security.AccessController;
+import javax.security.auth.callback.NameCallback;
 
 public class IdServicesImpl implements IdServices {
 
@@ -259,6 +260,55 @@ public class IdServicesImpl implements IdServices {
            }
            return (false);
        }
+       
+       // Check for internal user. If internal user, use SpecialRepo only
+       String name = null;
+       for (int i = 0; i < credentials.length; i++) {
+           if (credentials[i] instanceof NameCallback) {
+               name = ((NameCallback) credentials[i]).getName();
+               if (DN.isDN(name)) {
+                   // Obtain the firsr RDN
+                   name = LDAPDN.explodeDN(name, true)[0];
+               }
+               break;
+           }
+       }
+       SSOToken token = (SSOToken) AccessController.doPrivileged(
+           AdminTokenAction.getInstance());
+       try {
+           if ((name != null) &&
+               isSpecialIdentity(token, name, IdType.USER, orgName)) {
+               for (Iterator tis = cPlugins.iterator(); tis.hasNext();) {
+                   IdRepo idRepo = (IdRepo) tis.next();
+                   if (idRepo.getClass().getName().equals(
+                       IdConstants.SPECIAL_PLUGIN)) {
+                       if (idRepo.authenticate(credentials)) {
+                           if (debug.messageEnabled()) {
+                               debug.message("IdServicesImpl.authenticate: " +
+                                   "AuthN success using special repo " +
+                                   idRepo.getClass().getName() +
+                                   " user: " + name);
+                           }
+                           return (true);
+                       } else {
+                           // Invalid password used for internal user
+                           debug.error("IdServicesImpl.authenticate: " +
+                               "AuthN failed using special repo " +
+                               idRepo.getClass().getName() +
+                               " user: " + name);
+                           return (false);
+                       }
+
+                   }
+               }
+           }
+       } catch (SSOException ssoe) {
+           // Ignore the exception
+           debug.error("IdServicesImpl.authenticate: AuthN failed " +
+               "checking for special users", ssoe);
+           return (false);
+       }
+       
        for (Iterator items = cPlugins.iterator(); items.hasNext();) {
            IdRepo idRepo = (IdRepo) items.next();
            if (idRepo.supportsAuthentication()) {

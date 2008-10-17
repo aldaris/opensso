@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginContext.java,v 1.15 2008-08-22 20:35:28 ericow Exp $
+ * $Id: AMLoginContext.java,v 1.16 2008-10-17 20:12:51 dillidorai Exp $
  *
  */
 
@@ -51,6 +51,7 @@ import com.sun.identity.shared.locale.AMResourceBundleCache;
 import java.security.Principal;
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.ResourceBundle;
@@ -82,6 +83,7 @@ import javax.servlet.http.HttpServletRequest;
  *
  */
 public class AMLoginContext {
+
     static final String LIST_DELIMITER = "|";
     /**
      * AuthThreadManager associated with this AMLoginContext
@@ -123,6 +125,7 @@ public class AMLoginContext {
      */
     ResourceBundle bundle ;
     
+
     static {
         // set the auth configuration programmatically.
         Configuration defaultConfig = null;
@@ -147,6 +150,7 @@ public class AMLoginContext {
             }
         }
         debug.message("Reset the auth Configuration !");
+
     }
 
     /**
@@ -436,8 +440,24 @@ public class AMLoginContext {
                 jlc.login();
                 subject = jlc.getSubject();
             }
-            debug.message("user authenication successful");
+
             loginState.setSubject(subject);
+
+            if (!loginState.isAuthValidForInternalUser()) {
+                if (debug.warningEnabled()) {
+                    debug.warning(
+                        "AMLoginContext.runLogin():auth failed, "
+                        +  "using invalid auth module for internal user");
+                }
+                logFailedMessage = AuthUtils.getErrorVal(
+                        AMAuthErrorCode.AUTH_MODULE_DENIED, 
+                        AuthUtils.ERROR_MESSAGE);
+                logFailedError = "AUTH_MODULE_DENIED";
+                throw new AuthException(
+                        AMAuthErrorCode.AUTH_MODULE_DENIED, null);
+            }
+
+            debug.message("user authenication successful");
             
             // retrieve authenticated user's profile or create
             // a user profile if dynamic profile creation is
