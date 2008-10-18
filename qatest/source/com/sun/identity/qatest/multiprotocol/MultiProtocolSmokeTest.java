@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MultiProtocolSmokeTest.java,v 1.5 2008-06-26 20:15:21 rmisra Exp $
+ * $Id: MultiProtocolSmokeTest.java,v 1.6 2008-10-18 00:03:45 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,6 +33,7 @@ import com.sun.identity.qatest.common.MultiProtocolCommon;
 import com.sun.identity.qatest.common.SAMLv2Common;
 import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.TestConstants;
+import com.sun.identity.qatest.common.WSFedCommon;
 import com.sun.identity.qatest.common.webtest.DefaultTaskHandler;
 import java.net.URL;
 import java.util.ArrayList;
@@ -81,7 +82,7 @@ public class MultiProtocolSmokeTest extends TestCommon {
     /**
      * This setup method creates required users.
      */
-    @BeforeClass(groups={"ds_ds_sec", "ff_ds_sec"})
+    @BeforeClass(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"})
     public void setup()
     throws Exception {
         ArrayList list;
@@ -134,6 +135,10 @@ public class MultiProtocolSmokeTest extends TestCommon {
                     "://" + wsfedConfigMap.get(TestConstants.KEY_SP_HOST) +
                     ":" + wsfedConfigMap.get(TestConstants.KEY_SP_PORT) +
                     wsfedConfigMap.get(TestConstants.KEY_SP_DEPLOYMENT_URI);
+            idpurl = idffConfigMap.get(TestConstants.KEY_IDP_PROTOCOL) +
+                    "://" + idffConfigMap.get(TestConstants.KEY_IDP_HOST) +
+                    ":" + idffConfigMap.get(TestConstants.KEY_IDP_PORT) +
+                    idffConfigMap.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);
             getWebClient();
             
             //Create user on IDFF SP.
@@ -250,10 +255,6 @@ public class MultiProtocolSmokeTest extends TestCommon {
             }
             
             // Create idp users
-            idpurl = idffConfigMap.get(TestConstants.KEY_IDP_PROTOCOL) +
-                    "://" + idffConfigMap.get(TestConstants.KEY_IDP_HOST) +
-                    ":" + idffConfigMap.get(TestConstants.KEY_IDP_PORT) +
-                    idffConfigMap.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);
             consoleLogin(webClient, idpurl + "/UI/Login",
                     idffConfigMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
                     idffConfigMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
@@ -293,7 +294,7 @@ public class MultiProtocolSmokeTest extends TestCommon {
     /**
      * Federate SAMLv2 users for multiprotocol testing.
      */
-    @BeforeClass(groups={"ds_ds_sec", "ff_ds_sec"}, dependsOnMethods={"setup"})
+    @BeforeClass(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"}, dependsOnMethods={"setup"})
     public void federateSAMLv2Users()
     throws Exception {
         entering("federateSAMLv2Users", null);
@@ -312,6 +313,7 @@ public class MultiProtocolSmokeTest extends TestCommon {
         } catch (Exception e) {
             log(Level.SEVERE, "federateSAMLv2Users", e.getMessage());
             e.printStackTrace();
+            cleanup();
             throw e;
         } finally {
             consoleLogout(webClient, samlv2spurl + "/UI/Logout");
@@ -323,7 +325,7 @@ public class MultiProtocolSmokeTest extends TestCommon {
     /**
      * Federate IDFF users.
      */
-    @BeforeClass(groups={"ds_ds_sec", "ff_ds_sec"},
+    @BeforeClass(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"},
     dependsOnMethods={"federateSAMLv2Users"})
     public void federateIDFFUsers()
     throws Exception {
@@ -343,6 +345,7 @@ public class MultiProtocolSmokeTest extends TestCommon {
         } catch (Exception e) {
             log(Level.SEVERE, "federateIDFFUsers", e.getMessage());
             e.printStackTrace();
+            cleanup();
             throw e;
         } finally {
             consoleLogout(webClient, idffspurl + "/UI/Logout");
@@ -370,7 +373,7 @@ public class MultiProtocolSmokeTest extends TestCommon {
      * Multiprotocol SSO : First SAMLv2, SP initiated SSO,
      * then check for IDFF & WSFed SSO without SP or IDP login
      */
-    @Test(groups={"ds_ds_sec", "ff_ds_sec"})
+    @Test(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"})
     public void MultiProtocolSPSSOSAMLv2Init()
     throws Exception {
         entering("MultiProtocolSPSSOSAMLv2Init", null);
@@ -419,7 +422,7 @@ public class MultiProtocolSmokeTest extends TestCommon {
      * Multiprotocol SLO : First SAMLv2, SP initiated SLO,
      * then check to see SAMLv2, IDFF & WSfed SP sessions are terminated or not.
      */
-    @Test(groups={"ds_ds_sec", "ff_ds_sec"},
+    @Test(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"},
     dependsOnMethods={"MultiProtocolSPSSOSAMLv2Init"})
     public void MultiProtocolSPSLOSAMLv2Init()
     throws Exception {
@@ -446,17 +449,32 @@ public class MultiProtocolSmokeTest extends TestCommon {
                     "page is " + page.getWebResponse().getContentAsString());            
 
             Thread.sleep(5000);
-            HtmlPage idpPage = (HtmlPage)webClient.getPage(idpurl);
-            if (idpPage.getTitleText().contains("(Login)")) {
-                log(Level.FINEST, "MultiProtocolSPSLOSAMLv2Init", "IDP " +
+
+            page = (HtmlPage)webClient.getPage(idffspurl + "/UI/Login");
+            if (page.getTitleText().contains("(Login)")) {
+                log(Level.FINEST, "MultiProtocolSPSLOSAMLv2Init", "IDFF " +
                         "session is destroyed. Login page is returned.");
             } else {
-                log(Level.SEVERE, "MultiProtocolSPSLOSAMLv2Init", "IDP " +
+                log(Level.SEVERE, "MultiProtocolSPSLOSAMLv2Init", "IDFF " +
                         "session is NOT destroyed.");
                 log(Level.FINEST, "MultiProtocolSPSLOSAMLv2Init",
                         page.getWebResponse().getContentAsString());
                 assert false;
             }
+            
+            Thread.sleep(5000);
+            page = (HtmlPage)webClient.getPage(wsfedspurl+ "/UI/Login");
+            if (page.getTitleText().contains("(Login)")) {
+                log(Level.FINEST, "MultiProtocolSPSLOSAMLv2Init", "WSFed " +
+                        "session is destroyed. Login page is returned.");
+            } else {
+                log(Level.SEVERE, "MultiProtocolSPSLOSAMLv2Init", "WSFed " +
+                        "session is NOT destroyed.");
+                log(Level.FINEST, "MultiProtocolSPSLOSAMLv2Init",
+                        page.getWebResponse().getContentAsString());
+                assert false;
+            }
+
             log(Level.FINEST, "MultiProtocolSPSLOSAMLv2Init", "SAMLv2 " +
                         "SP url is " + samlv2spurl);
             page = (HtmlPage)webClient.getPage(samlv2spurl + "/UI/Login");
@@ -471,24 +489,12 @@ public class MultiProtocolSmokeTest extends TestCommon {
                 assert false;
             }
             
-            page = (HtmlPage)webClient.getPage(idffspurl + "/UI/Login");
-            if (page.getTitleText().contains("(Login)")) {
-                log(Level.FINEST, "MultiProtocolSPSLOSAMLv2Init", "IDFF " +
+            HtmlPage idpPage = (HtmlPage)webClient.getPage(idpurl);
+            if (idpPage.getTitleText().contains("(Login)")) {
+                log(Level.FINEST, "MultiProtocolSPSLOSAMLv2Init", "IDP " +
                         "session is destroyed. Login page is returned.");
             } else {
-                log(Level.SEVERE, "MultiProtocolSPSLOSAMLv2Init", "IDFF " +
-                        "session is NOT destroyed.");
-                log(Level.FINEST, "MultiProtocolSPSLOSAMLv2Init",
-                        page.getWebResponse().getContentAsString());
-                assert false;
-            }
-            
-            page = (HtmlPage)webClient.getPage(wsfedspurl+ "/UI/Login");
-            if (page.getTitleText().contains("(Login)")) {
-                log(Level.FINEST, "MultiProtocolSPSLOSAMLv2Init", "WSFed " +
-                        "session is destroyed. Login page is returned.");
-            } else {
-                log(Level.SEVERE, "MultiProtocolSPSLOSAMLv2Init", "WSFed " +
+                log(Level.SEVERE, "MultiProtocolSPSLOSAMLv2Init", "IDP " +
                         "session is NOT destroyed.");
                 log(Level.FINEST, "MultiProtocolSPSLOSAMLv2Init",
                         page.getWebResponse().getContentAsString());
@@ -502,10 +508,275 @@ public class MultiProtocolSmokeTest extends TestCommon {
         exiting("MultiProtocolSPSLOSAMLv2Init");
     }
     
+       /**
+     * Multiprotocol SSO : First IDFF, SP initiated SSO,
+     * then check for SAMLv2 & WSFed SSO without SP or IDP login
+     */
+    @Test(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"}, 
+    dependsOnMethods={"MultiProtocolSPSLOSAMLv2Init"})
+    public void MultiProtocolSPSSOIDFFInit()
+    throws Exception {
+        entering("MultiProtocolSPSSOIDFFInit", null);
+        try {
+            log(Level.FINE, "MultiProtocolSPSSOIDFFInit",
+                    "Running: MultiProtocolSPSSOIDFFInit");
+            
+            getWebClient();
+            log(Level.FINE, "MultiProtocolSPSSOIDFFInit", "Run IDFF SSO " +
+                    "Init first");
+            Reporter.log("Test Description: MultiProtocolSPSSOIDFFInit test" +
+                    " executes IDFF, SP initiated SSO,  then check for " +
+                    "SAMLv2 & WSFed SSO without SP or IDP login");
+            consoleLogin(webClient, idpurl + "/UI/Login", 
+                    idffConfigMap.get(TestConstants.KEY_IDP_USER),
+                    idffConfigMap.get(TestConstants.KEY_IDP_USER_PASSWORD));
+            xmlfile = baseDir +
+                    "MultiProtocolSPSSOIDFFInit_IDFFSPSSOInit.xml";
+            IDFFCommon.getxmlSPIDFFSSO(xmlfile, idffConfigMap);
+            log(Level.FINE, "MultiProtocolSPSSOIDFFInit", "Run " + xmlfile);
+            task = new DefaultTaskHandler(xmlfile);
+            page = task.execute(webClient);
+            
+            log(Level.FINE, "MultiProtocolSPSSOIDFFInit", "After IDFF " +
+                    "SSO now run SAMLv2 SSO");
+            xmlfile = baseDir +
+                    "MultiProtocolSPSSOIDFFInit_SAMLv2SPSSOInit.xml";
+            MultiProtocolCommon.getxmlSAMLv2SPInitSSO(xmlfile, samlv2ConfigMap, 
+                    "artifact");
+            log(Level.FINE, "MultiProtocolSPSSOIDFFInit", "Run " + xmlfile);
+            task = new DefaultTaskHandler(xmlfile);
+            page = task.execute(webClient);
+            
+            log(Level.FINE, "MultiProtocolSPSSOIDFFInit", "After SAMLv2, " +
+                    "IDFF SSO now run WSfed SSO");
+            xmlfile = baseDir +
+                    "MultiProtocolSPSSOIDFFInit_WSFedSPSSOInit.xml";
+            MultiProtocolCommon.getxmlWSFedSPInitSSO(xmlfile, wsfedConfigMap);
+            log(Level.FINE, "MultiProtocolSPSSOIDFFInit", "Run " + xmlfile);
+            task = new DefaultTaskHandler(xmlfile);
+            page = task.execute(webClient);
+        } catch (Exception e) {
+            log(Level.SEVERE, "MultiProtocolSPSSOIDFFInit", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        exiting("MultiProtocolSPSSOIDFFInit");
+    }
+    
+    /**
+     * Multiprotocol SLO : First IDFF, SP initiated SLO,
+     * then check to see SAMLv2, IDFF & WSfed SP sessions are terminated or not.
+     */
+    @Test(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"},
+    dependsOnMethods={"MultiProtocolSPSSOIDFFInit"})
+    public void MultiProtocolSPSLOIDFFInit()
+    throws Exception {
+        entering("MultiProtocolSPSLOIDFFInit", null);
+        try {
+            log(Level.FINE, "MultiProtocolSPSLOIDFFInit", "Run IDFF SLO " +
+                    "first");
+            Reporter.log("Test Description: MultiProtocolSPSLOIDFFInit test" +
+                    " executes IDFF, SP initiated SLO, then check to see " +
+                    "SAMLv2, IDFF & WSfed SP sessions are terminated or not.");
+            
+            String idffSLOurl = idffConfigMap.get(TestConstants.
+                    KEY_SP_PROTOCOL) +"://" + idffConfigMap.get(TestConstants.
+                    KEY_SP_HOST) + ":" + idffConfigMap.get(TestConstants.
+                    KEY_SP_PORT) + idffConfigMap.get(TestConstants.
+                    KEY_SP_DEPLOYMENT_URI) + "/liberty-logout?metaAlias=" + 
+                    idffConfigMap.get(TestConstants.KEY_SP_METAALIAS);
+            log(Level.FINEST, "MultiProtocolSPSLOIDFFInit", "IDFF SLO url " +
+                    idffSLOurl);
+
+            page = (HtmlPage)webClient.getPage(idffSLOurl);
+            log(Level.FINEST, "MultiProtocolSPSLOIDFFInit", "IDFF SLO output" +
+                    page.getWebResponse().getContentAsString());
+            
+            Thread.sleep(5000);
+            page = (HtmlPage)webClient.getPage(samlv2spurl + "/UI/Login");
+            if (page.getTitleText().contains("(Login)")) {
+                log(Level.FINEST, "MultiProtocolSPSLOIDFFInit", "SAMLv2 " +
+                        "session is destroyed. Login page is returned.");
+            } else {
+                log(Level.SEVERE, "MultiProtocolSPSLOIDFFInit", "SAMLv2 " +
+                        "session is NOT destroyed.");
+                log(Level.FINEST, "MultiProtocolSPSLOIDFFInit",
+                        page.getWebResponse().getContentAsString());
+                assert false;
+            }
+            
+            page = (HtmlPage)webClient.getPage(wsfedspurl+ "/UI/Login");
+            if (page.getTitleText().contains("(Login)")) {
+                log(Level.FINEST, "MultiProtocolSPSLOIDFFInit", "WSFed " +
+                        "session is destroyed. Login page is returned.");
+            } else {
+                log(Level.SEVERE, "MultiProtocolSPSLOIDFFInit", "WSFed " +
+                        "session is NOT destroyed.");
+                log(Level.FINEST, "MultiProtocolSPSLOIDFFInit",
+                        page.getWebResponse().getContentAsString());
+                assert false;
+            }
+
+            Thread.sleep(5000);
+            page = (HtmlPage)webClient.getPage(idffspurl + "/UI/Login");
+            if (page.getTitleText().contains("(Login)")) {
+                log(Level.FINEST, "MultiProtocolSPSLOIDFFInit", "IDFF " +
+                        "session is destroyed. Login page is returned.");
+            } else {
+                log(Level.SEVERE, "MultiProtocolSPSLOIDFFInit", "IDFF " +
+                        "session is NOT destroyed.");
+                log(Level.FINEST, "MultiProtocolSPSLOIDFFInit",
+                        page.getWebResponse().getContentAsString());
+                assert false;
+            }
+            
+            HtmlPage idpPage = (HtmlPage)webClient.getPage(idpurl);
+            if (idpPage.getTitleText().contains("(Login)")) {
+                log(Level.FINEST, "MultiProtocolSPSLOIDFFInit", "IDP " +
+                        "session is destroyed. Login page is returned.");
+            } else {
+                log(Level.SEVERE, "MultiProtocolSPSLOIDFFInit", "IDP " +
+                        "session is NOT destroyed.");
+                log(Level.FINEST, "MultiProtocolSPSLOIDFFInit",
+                        page.getWebResponse().getContentAsString());
+                assert false;
+            }
+        } catch (Exception e) {
+            log(Level.SEVERE, "MultiProtocolSPSLOIDFFInit", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        exiting("MultiProtocolSPSLOIDFFInit");
+    }
+
+    /**
+     * Multiprotocol SSO : First WSFed, SP initiated SSO,
+     * then check for IDFF & SAMLv2 SSO without SP or IDP login
+     */
+    @Test(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"}, 
+    dependsOnMethods={"MultiProtocolSPSLOIDFFInit"})
+    public void MultiProtocolSPSSOWSFedInit()
+    throws Exception {
+        entering("MultiProtocolSPSSOWSFedInit", null);
+        try {
+            log(Level.FINE, "MultiProtocolSPSSOWSFedInit",
+                    "Running: MultiProtocolSPSSOWSFedInit");
+            Reporter.log("Test Description: MultiProtocolSPSSOWSFedInit test" +
+                    " executes WSFed, SP initiated SSO,  then check for " +
+                    "SAMLv2 & IDFF SSO without SP or IDP login");
+            
+            getWebClient();
+            log(Level.FINE, "MultiProtocolSPSSOWSFedInit", "Run WSFed SSO " +
+                    "Init first");
+            xmlfile = baseDir +
+                    "MultiProtocolSPSSOWSFedInit_WSFedSPSSOInit.xml";
+            WSFedCommon.getxmlSPInitSSO(xmlfile, wsfedConfigMap);
+            log(Level.FINE, "MultiProtocolSPSSOWSFedInit", "Run " + xmlfile);
+            task = new DefaultTaskHandler(xmlfile);
+            page = task.execute(webClient);
+            
+            log(Level.FINE, "MultiProtocolSPSSOWSFedInit", "After WSFed " +
+                    "SSO now run SAMLv2 SSO");
+            xmlfile = baseDir +
+                    "MultiProtocolSPSSOWSFedInit_SAMLv2SPSSOInit.xml";
+            MultiProtocolCommon.getxmlSAMLv2SPInitSSO(xmlfile, samlv2ConfigMap, 
+                    "artifact");
+            log(Level.FINE, "MultiProtocolSPSSOWSFedInit", "Run " + xmlfile);
+            task = new DefaultTaskHandler(xmlfile);
+            page = task.execute(webClient);
+            
+            log(Level.FINE, "MultiProtocolSPSSOWSFedInit", "After SAMLv2, " +
+                    "IDFF SSO now run IDFF SSO");
+            xmlfile = baseDir +
+                    "MultiProtocolSPSSOSAMLv2Init_IDFFSPSSOInit.xml";
+            MultiProtocolCommon.getxmlIDFFSPInitSSO(xmlfile, idffConfigMap);
+            log(Level.FINE, "MultiProtocolSPSSOSAMLv2Init", "Run " + xmlfile);
+            task = new DefaultTaskHandler(xmlfile);
+            page = task.execute(webClient);
+        } catch (Exception e) {
+            log(Level.SEVERE, "MultiProtocolSPSSOWSFedInit", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        exiting("MultiProtocolSPSSOWSFedInit");
+    }
+    
+    /**
+     * Multiprotocol SLO : First WSFed, SP initiated SLO,
+     * then check to see SAMLv2, IDFF & WSfed SP sessions are terminated or not.
+     */
+    @Test(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"},
+    dependsOnMethods={"MultiProtocolSPSSOWSFedInit"})
+    public void MultiProtocolSPSLOWSFedInit()
+    throws Exception {
+        entering("MultiProtocolSPSLOWSFedInit", null);
+        try {
+            log(Level.FINE, "MultiProtocolSPSLOWSFedInit", "Run WSFed SLO " +
+                    "first");
+            Reporter.log("Test Description: MultiProtocolSPSLOWSFedInit test" +
+                    " executes WSFed, SP initiated SLO, then check to see " +
+                    "SAMLv2, IDFF & WSfed SP sessions are terminated or not.");
+            String wsfedSLOurl = wsfedConfigMap.get(TestConstants.
+                    KEY_SP_PROTOCOL) +"://" + wsfedConfigMap.get(TestConstants.
+                    KEY_SP_HOST) + ":" + wsfedConfigMap.get(TestConstants.
+                    KEY_SP_PORT) + wsfedConfigMap.get(TestConstants.
+                    KEY_SP_DEPLOYMENT_URI) + "/WSFederationServlet/metaAlias" + 
+                    wsfedConfigMap.get(TestConstants.KEY_SP_METAALIAS) + 
+                    "?wa=wsignout1.0";
+            log(Level.FINE, "MultiProtocolSPSLOWSFedInit", "WSFed SLO url " +
+                    wsfedSLOurl);
+
+            page = (HtmlPage)webClient.getPage(wsfedSLOurl);
+            log(Level.FINEST, "MultiProtocolSPSLOWSFedInit", "WSFed SLO output" +
+                    page.getWebResponse().getContentAsString());
+            
+            page = (HtmlPage)webClient.getPage(idffspurl + "/UI/Login");
+            if (page.getTitleText().contains("(Login)")) {
+                log(Level.FINEST, "MultiProtocolSPSLOWSFedInit", "IDFF " +
+                        "session is destroyed. Login page is returned.");
+            } else {
+                log(Level.SEVERE, "MultiProtocolSPSLOWSFedInit", "IDFF " +
+                        "session is NOT destroyed.");
+                log(Level.FINEST, "MultiProtocolSPSLOWSFedInit",
+                        page.getWebResponse().getContentAsString());
+                assert false;
+            }
+            
+            page = (HtmlPage)webClient.getPage(samlv2spurl + "/UI/Login");
+            if (page.getTitleText().contains("(Login)")) {
+                log(Level.FINEST, "MultiProtocolSPSLOWSFedInit", "SAMLv2 " +
+                        "session is destroyed. Login page is returned.");
+            } else {
+                log(Level.SEVERE, "MultiProtocolSPSLOWSFedInit", "SAMLv2 " +
+                        "session is NOT destroyed.");
+                log(Level.FINEST, "MultiProtocolSPSLOWSFedInit",
+                        page.getWebResponse().getContentAsString());
+                assert false;
+            }
+            
+            page = (HtmlPage)webClient.getPage(wsfedspurl+ "/UI/Login");
+            if (page.getTitleText().contains("(Login)")) {
+                log(Level.FINEST, "MultiProtocolSPSLOWSFedInit", "WSFed " +
+                        "session is destroyed. Login page is returned.");
+            } else {
+                log(Level.SEVERE, "MultiProtocolSPSLOWSFedInit", "WSFed " +
+                        "session is NOT destroyed.");
+                log(Level.FINEST, "MultiProtocolSPSLOWSFedInit",
+                        page.getWebResponse().getContentAsString());
+                assert false;
+            }
+        } catch (Exception e) {
+            log(Level.SEVERE, "MultiProtocolSPSLOWSFedInit", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        exiting("MultiProtocolSPSLOWSFedInit");
+    }
+
     /**
      * This methods deletes all the users as part of cleanup
      */
-    @AfterClass(groups={"ds_ds_sec", "ff_ds_sec"})
+    @AfterClass(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);
