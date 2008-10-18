@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OAMPrincipal.java,v 1.2 2008-06-25 05:48:55 qcheng Exp $
+ * $Id: OblixPrincipal.java,v 1.2 2008-10-18 00:37:54 mallas Exp $
  *
  */
 
@@ -32,10 +32,10 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.security.Principal;
 
-public class OAMPrincipal implements Principal, Serializable {
+public class OblixPrincipal implements Principal, Serializable {
     private String name;
 
-    public OAMPrincipal (String name) {
+    public OblixPrincipal (String name) {
         if (name == null) {
             throw new NullPointerException("illegal null input");
         }
@@ -43,34 +43,34 @@ public class OAMPrincipal implements Principal, Serializable {
     }
 
     /**
-     * Returns the user name for this <code>OAMPrincipal</code>.
+     * Returns the user name for this <code>OblixPrincipal</code>.
      *
-     * @return the user name for this <code>OAMPrincipal</code>.
+     * @return the user name for this <code>OblixPrincipal</code>.
      */
     public String getName() {
         return name;
     }
 
     /**
-     * Returns a string representation of this <code>OAMPrincipal</code>.
+     * Returns a string representation of this <code>OblixPrincipal</code>.
      *
-     * @return a string representation of this <code>OAMPrincipal</code>.
+     * @return a string representation of this <code>OblixPrincipal</code>.
      */
     public String toString() {
-        return("OAMPrincipal:  " + name);
+        return("OblixPrincipal:  " + name);
     }
 
     /**
-     * Compares the specified Object with this <code>OAMPrincipal</code>
+     * Compares the specified Object with this <code>OblixPrincipal</code>
      * for equality.  Returns <code>true</code> if the given object is also a
-     * <code>OAMPrincipal</code> and the two <code>OAMPrincipal</code>s
+     * <code>OblixPrincipal</code> and the two <code>OblixPrincipal</code>s
      * have the same user name.
      *
      * @param o Object to be compared for equality with this
-     *        <code>OAMPrincipal</code>.
+     *        <code>OblixPrincipal</code>.
      *
      * @return <code>true</code> if the specified Object is equal equal to this
-     *         <code>OAMPrincipal</code>.
+     *         <code>OblixPrincipal</code>.
      */
     public boolean equals(Object o) {
         if (o == null) {
@@ -81,18 +81,18 @@ public class OAMPrincipal implements Principal, Serializable {
             return true;
         }
  
-        if (!(o instanceof OAMPrincipal)) {
+        if (!(o instanceof OblixPrincipal)) {
             return false;
         }
 
-        OAMPrincipal that = (OAMPrincipal)o;
+        OblixPrincipal that = (OblixPrincipal)o;
         return this.getName().equals(that.getName());
     }
  
     /**
-     * Returns a hash code for this <code>OAMPrincipal</code>.
+     * Returns a hash code for this <code>OblixPrincipal</code>.
      *
-     * @return a hash code for this <code>OAMPrincipal</code>.
+     * @return a hash code for this <code>OblixPrincipal</code>.
      */
     public int hashCode() {
         return name.hashCode();

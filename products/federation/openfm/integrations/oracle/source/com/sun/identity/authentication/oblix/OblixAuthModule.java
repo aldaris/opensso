@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OAMAuthModule.java,v 1.5 2008-08-19 19:11:38 veiming Exp $
+ * $Id: OblixAuthModule.java,v 1.2 2008-10-18 00:37:54 mallas Exp $
  *
  */
 
@@ -45,11 +45,11 @@ import javax.servlet.http.HttpServletRequest;
 import com.oblix.access.*;
 
 /**
- * Custom authentication module for validating siteminder user session
- * to enable SSO integration between OpenSSO and
- * Siteminder access server.
+ * Custom authentication module for validating oracle Acess Manager(Oblix)
+ *  user session  to enable SSO integration between OpenSSO and
+ * Oracle access manager.
  */
-public class OAMAuthModule extends AMLoginModule {
+public class OblixAuthModule extends AMLoginModule {
 
     private static final String COOKIE_NAME = "OblixCookieName"; 
     private static final String OAM_SDK_INSTALL_DIR = "OblixSDKInstallDir";
@@ -65,15 +65,15 @@ public class OAMAuthModule extends AMLoginModule {
     private String remoteUserHeader = "REMOTE_USER";
     private ObConfig obconfig = null;
 
-    public OAMAuthModule() throws LoginException{
-	System.out.println("OAMAuthModule()");
+    public OblixAuthModule() throws LoginException{
+	System.out.println("OblixAuthModule()");
     }
 
     /**
      * Initialize the authentication module with it's configuration
      */
     public void init(Subject subject, Map sharedState, Map options) {
-	System.out.println("OAMAuthModule initialization" + options);
+	System.out.println("OblixAuthModule initialization" + options);
 
         oamCookieName = CollectionHelper.getMapAttr(options, 
                        COOKIE_NAME, "ObSSOCookie");
@@ -96,8 +96,8 @@ public class OAMAuthModule extends AMLoginModule {
     /**
      * This method process the login procedure for this authentication
      * module. In this auth module, if the user chooses to just validate
-     * the HTTP headers set by the siteminder agent, this will not further
-     * validate the SMSESSION by the siteminder SDK since the same thing
+     * the HTTP headers set by the oracle webgent, this will not further
+     * validate the OblixSesson by the Oracle AM SDK since the same thing
      * might have already been validated by the agent.
      */
     public int process(Callback[] callbacks, int state) 
@@ -167,7 +167,7 @@ public class OAMAuthModule extends AMLoginModule {
         if (userPrincipal != null) {
             return userPrincipal;
         } else if (userId != null) {
-            userPrincipal = new OAMPrincipal(userId);
+            userPrincipal = new OblixPrincipal(userId);
             return userPrincipal;
         } else {
             return null;
