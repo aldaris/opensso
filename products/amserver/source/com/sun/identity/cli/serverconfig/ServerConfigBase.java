@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerConfigBase.java,v 1.1 2008-09-19 23:37:14 beomsuk Exp $
+ * $Id: ServerConfigBase.java,v 1.2 2008-10-20 23:30:13 veiming Exp $
  *
  */
 
@@ -30,8 +30,11 @@ package com.sun.identity.cli.serverconfig;
 
 import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
+import com.sun.identity.cli.ExitCodes;
 import com.sun.identity.cli.IArgument;
 import com.sun.identity.cli.RequestContext;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class ServerConfigBase extends AuthenticatedCommand {
     /**
@@ -45,6 +48,24 @@ public class ServerConfigBase extends AuthenticatedCommand {
         super.handleRequest(rc);
         String serverName = getStringOptionValue(IArgument.SERVER_NAME);
         if ((serverName != null) && (serverName.trim().length() > 0)) {
+            try {
+                URL url = new URL(serverName);
+                if (url.getPort() == -1) {
+                    throw new CLIException(
+                        getResourceString("server-config-port-missing"),
+                        ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+                }
+                if (url.getPath().length() == 0) {
+                    throw new CLIException(
+                        getResourceString("server-config-uri-missing"),
+                        ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+                }
+
+            } catch (MalformedURLException e) {
+                throw new CLIException(e,
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+            }
+
             System.setProperty("com.sun.identity.jaxrpc.url",
                 serverName + "/jaxrpc");
         }
