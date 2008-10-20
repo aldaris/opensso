@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMDiscoveryDescriptionViewBeanBase.java,v 1.2 2008-06-25 05:49:45 qcheng Exp $
+ * $Id: SMDiscoveryDescriptionViewBeanBase.java,v 1.3 2008-10-20 23:40:01 babysunil Exp $
  *
  */
  
@@ -236,7 +236,10 @@ public abstract class SMDiscoveryDescriptionViewBeanBase
      * @param event Request Invocation Event.
      */
     public void handleButton3Request(RequestInvocationEvent event) {
-        handleButton2Request(event);
+        AMViewBeanBase vb = getReturnToViewBean();
+        backTrail();
+        passPgSessionMap(vb);
+        vb.forwardTo(getRequestContext());
     }
 
     protected AMViewBeanBase getReturnToViewBean() {
