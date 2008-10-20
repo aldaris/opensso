@@ -23,14 +23,56 @@
 : your own identifying information:
 : "Portions Copyrighted [year] [name of copyright owner]"
 :
-: $Id: setup.bat,v 1.7 2008-06-30 16:59:50 qcheng Exp $
+: $Id: setup.bat,v 1.8 2008-10-20 18:03:33 manish_rustagi Exp $
 :
 
+if not "%JAVA_HOME%" == "" goto checkJavaHome
+echo Please define JAVA_HOME environment variable before running this program
+echo setup program will use the JVM defined in JAVA_HOME for all the CLI tools
+goto exit
+
+:checkJavaHome
+if not exist "%JAVA_HOME%\bin\java.exe" goto invalidJavaHome
+goto validJavaHome
+
+:invalidJavaHome
+echo The defined JAVA_HOME environment variable is not correct
+echo setup program will use the JVM defined in JAVA_HOME for all the CLI tools
+goto exit
+
+:validJavaHome
 SETLOCAL
+CALL %JAVA_HOME%\bin\java.exe -version 2>&1|more > java_version.txt
+SET /P java_version=< java_version.txt
+DEL java_version.txt
+CALL :GET_VERSION_NUM %java_version:"1.= %
+CALL :GET_MID_VERSION_NUM %java_version:.= %
+IF "%java_version%" == "0" goto invalidJavaVersion
+IF "%java_version%" == "1" goto invalidJavaVersion
+IF "%java_version%" == "2" goto invalidJavaVersion
+IF "%java_version%" == "3" goto invalidJavaVersion
+goto runSetup
+
+:invalidJavaVersion
+echo This program is designed to work with 1.4 or newer JRE.
+goto exit
+
+:GET_VERSION_NUM
+SET java_version=%3
+goto exit
+
+:GET_MID_VERSION_NUM
+SET java_version=%1
+goto exit
+
+:runSetup
 IF "%1" == "-h" SET help_print=yes
 IF "%1" == "--help" SET help_print=yes
 IF "%1" == "-p" SET path_dest=%~2
 IF "%1" == "--path" SET path_dest=%~2
 
-"%JAVA_HOME%/bin/java.exe" -version:"1.4+" -D"help.print=%help_print%" -D"path.dest=%path_dest%" -jar "lib/am_session_setup.jar"
-SETLOCAL
+"%JAVA_HOME%/bin/java.exe" -D"help.print=%help_print%" -D"path.dest=%path_dest%" -jar "lib/am_session_setup.jar"
+ENDLOCAL
+
+:exit
+exit /b 1
