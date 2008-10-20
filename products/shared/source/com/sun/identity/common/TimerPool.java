@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TimerPool.java,v 1.5 2008-06-25 05:52:52 qcheng Exp $
+ * $Id: TimerPool.java,v 1.6 2008-10-20 22:00:05 ww203982 Exp $
  *
  */
 
@@ -539,6 +539,7 @@ public class TimerPool implements Triggerable {
 	        } finally {
                     localHeadTask = null;
                     localTask = null;
+                    runTask = null;
                     // the thread may has returned already if shutdown is
                     // called.
                     if (needReturn) {
