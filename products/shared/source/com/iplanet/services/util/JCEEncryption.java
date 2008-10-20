@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JCEEncryption.java,v 1.2 2008-06-25 05:52:47 qcheng Exp $
+ * $Id: JCEEncryption.java,v 1.3 2008-10-20 17:24:43 beomsuk Exp $
  *
  */
 
@@ -138,54 +138,6 @@ public class JCEEncryption implements AMEncryption, ConfigurableKey {
     }
 
     /**
-     * This method attempts to dynamically register the SunJCE provider when
-     * needed. This is a work-around for a known problem with WebLogic 7.0 sp2
-     * server which does not allow static registration of Sun JCE provider.
-     */
-    private static void registerSunJCEProvider() {
-        String sunJCEProviderClassName = "com.sun.crypto.provider.SunJCE";
-        Provider[] providers = Security.getProviders();
-        boolean providerRegistered = false;
-        if (providers != null && providers.length > 0) {
-            for (int i = 0; i < providers.length; i++) {
-                if (providers[i].getClass().getName().equals(
-                        sunJCEProviderClassName)) {
-                    providerRegistered = true;
-                    break;
-                }
-            }
-        }
-        if (!providerRegistered) {
-            Debug debug = Debug.getInstance("amSDK");
-            if (debug != null && debug.warningEnabled()) {
-                debug.warning("JCEEncryption: SunJCE provider not " +
-                        "registered. Attempting to register...");
-            }
-            Provider sunJCEProvider = null;
-            try {
-                Class sunJCEProviderClass = Class
-                        .forName(sunJCEProviderClassName);
-                sunJCEProvider = (Provider) sunJCEProviderClass.newInstance();
-                Security.addProvider(sunJCEProvider);
-                if (debug != null && debug.messageEnabled()) {
-                    debug.message("JCEEncryption: registered SunJCE provider");
-                }
-            } catch (Exception ex) {
-                if (debug != null) {
-                    debug.error("JCEEncryption: exception while " +
-                            "registering provider", ex);
-                }
-            }
-        } else {
-            Debug debug = Debug.getInstance("amSDK");
-            if (debug != null && debug.messageEnabled()) {
-                debug.message("JCEEncryption: SunJCE provider is already " +
-                    "registered.");
-            }
-        }
-    }
-
-    /**
      * Method declaration
      * 
      * @param clearText
@@ -215,7 +167,6 @@ public class JCEEncryption implements AMEncryption, ConfigurableKey {
                         if (debug != null) {
                             debug.error("JCEEncryption:pbeEncrypt", ex);
                         }
-                        registerSunJCEProvider();
                         pbeCipher = Cipher.getInstance(CRYPTO_DESCRIPTOR);
                     } else {
                         throw ex;
@@ -313,7 +264,6 @@ public class JCEEncryption implements AMEncryption, ConfigurableKey {
                         if (debug != null) {
                             debug.error("JCEEncryption:pbeDecrypt", ex);
                         }
-                        registerSunJCEProvider();
                         pbeCipher = Cipher.getInstance(CRYPTO_DESCRIPTOR);
                     } else {
                         throw ex;
