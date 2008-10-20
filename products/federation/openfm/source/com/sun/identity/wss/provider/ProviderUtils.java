@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderUtils.java,v 1.9 2008-08-05 04:10:59 mallas Exp $
+ * $Id: ProviderUtils.java,v 1.10 2008-10-20 19:06:00 arviranga Exp $
  *
  */
 
@@ -87,7 +87,7 @@ public class ProviderUtils {
 
              control.setSearchModifiers(IdSearchOpModifier.OR, kvPairMap);
 
-             IdSearchResults results = idRepo.searchIdentities(IdType.AGENTONLY,
+             IdSearchResults results = idRepo.searchIdentities(IdType.AGENT,
                 "*", control);
              Set agents = results.getSearchResults();                          
              Iterator iter = agents.iterator();
@@ -125,7 +125,7 @@ public class ProviderUtils {
 
              control.setSearchModifiers(IdSearchOpModifier.OR, kvPairMap);
 
-             IdSearchResults results = idRepo.searchIdentities(IdType.AGENTONLY,
+             IdSearchResults results = idRepo.searchIdentities(IdType.AGENT,
                  "*", control);
              Set agents = results.getSearchResults();
              Iterator iter = agents.iterator();

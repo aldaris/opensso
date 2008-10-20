@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DiscoveryAgent.java,v 1.13 2008-10-08 22:53:58 mallas Exp $
+ * $Id: DiscoveryAgent.java,v 1.14 2008-10-20 19:05:59 arviranga Exp $
  *
  */
 package com.sun.identity.wss.provider.plugins; 
@@ -221,7 +221,7 @@ public class DiscoveryAgent extends DiscoveryConfig {
                 attributes.remove(AGENT_TYPE_ATTR);
                 // Construct AMIdentity object and save
                 AMIdentity id = new AMIdentity(token,
-                    name, IdType.AGENTONLY, "/", null);
+                    name, IdType.AGENT, "/", null);
                 if (debug.messageEnabled()) {
                     debug.message("Attributes to be stored: " + attributes);
                 }
@@ -232,7 +232,7 @@ public class DiscoveryAgent extends DiscoveryConfig {
                 if (idRepo == null) {
                     idRepo = new AMIdentityRepository(token, "/");
                 }
-                idRepo.createIdentity(IdType.AGENTONLY, name, attributes);
+                idRepo.createIdentity(IdType.AGENT, name, attributes);
             }
         } catch (Exception e) {
             debug.error("DiscoveryAgent.store: Unable to get idRepo", e);
@@ -252,7 +252,7 @@ public class DiscoveryAgent extends DiscoveryConfig {
             }
             // Construct AMIdentity object to delete
             AMIdentity id = new AMIdentity(token, name,
-                            IdType.AGENTONLY, "/", null);
+                            IdType.AGENT, "/", null);
             Set identities = new HashSet();
             identities.add(id);
             idRepo.deleteIdentities(identities);

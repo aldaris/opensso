@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSAgent.java,v 1.17 2008-10-08 22:53:58 mallas Exp $
+ * $Id: STSAgent.java,v 1.18 2008-10-20 19:05:59 arviranga Exp $
  *
  */
 
@@ -308,7 +308,7 @@ public class STSAgent extends STSConfig {
             }
             // Construct AMIdentity object to delete
             AMIdentity id = new AMIdentity(token, name,
-                            IdType.AGENTONLY, "/", null);
+                            IdType.AGENT, "/", null);
             Set identities = new HashSet();
             identities.add(id);
             idRepo.deleteIdentities(identities);
@@ -434,7 +434,7 @@ public class STSAgent extends STSConfig {
                 attributes.remove(AGENT_TYPE_ATTR);
                 // Construct AMIdentity object and save
                 AMIdentity id = new AMIdentity(token,
-                    name, IdType.AGENTONLY, "/", null);
+                    name, IdType.AGENT, "/", null);
                 if (debug.messageEnabled()) {
                     debug.message("Attributes to be stored: " + attributes);
                 }
@@ -445,7 +445,7 @@ public class STSAgent extends STSConfig {
                 if (idRepo == null) {
                     idRepo = new AMIdentityRepository(token, "/");
                 }
-                idRepo.createIdentity(IdType.AGENTONLY, name, attributes);
+                idRepo.createIdentity(IdType.AGENT, name, attributes);
             }
         } catch (Exception e) {
             debug.error("STSAgent.store: Unable to get idRepo", e);

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyght owner]"
  *
- * $Id: AgentProvider.java,v 1.33 2008-10-08 22:53:58 mallas Exp $
+ * $Id: AgentProvider.java,v 1.34 2008-10-20 19:05:59 arviranga Exp $
  *
  */
 
@@ -202,7 +202,7 @@ public class AgentProvider extends ProviderConfig {
                 control.setSearchModifiers(IdSearchOpModifier.OR, kvPairMap);
 
                 IdSearchResults results = 
-                    idRepo.searchIdentities(IdType.AGENTONLY,
+                    idRepo.searchIdentities(IdType.AGENT,
                     "*", control);
                 Set agents = results.getSearchResults();
                 if (!agents.isEmpty()) {
@@ -664,7 +664,7 @@ public class AgentProvider extends ProviderConfig {
                 attributes.remove(AGENT_TYPE_ATTR);
                 // Construct AMIdentity object and save
                 AMIdentity id = new AMIdentity(token,
-                    providerName, IdType.AGENTONLY, "/", null);
+                    providerName, IdType.AGENT, "/", null);
                 if (debug.messageEnabled()) {
                     debug.message("Attributes to be stored: " + attributes);
                 }
@@ -679,7 +679,7 @@ public class AgentProvider extends ProviderConfig {
                     debug.message("New provider - Attributes to be stored: " 
                         + attributes);
                 }
-                idRepo.createIdentity(IdType.AGENTONLY,
+                idRepo.createIdentity(IdType.AGENT,
                     providerName, attributes);
             }
         } catch (Exception e) {
@@ -700,7 +700,7 @@ public class AgentProvider extends ProviderConfig {
             }
             // Construct AMIdentity object to delete
             AMIdentity id = new AMIdentity(token,
-                providerName, IdType.AGENTONLY, "/", null);
+                providerName, IdType.AGENT, "/", null);
             Set identities = new HashSet();
             identities.add(id);
             idRepo.deleteIdentities(identities);
