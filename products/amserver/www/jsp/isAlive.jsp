@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: isAlive.jsp,v 1.8 2008-09-15 16:41:56 veiming Exp $
+   $Id: isAlive.jsp,v 1.9 2008-10-20 23:32:44 veiming Exp $
   
 --%>
 
@@ -53,7 +53,8 @@
     // Check if the configuration data store is up
     Object attributes = null;
     try {
-        attributes = SMSEntry.getSMSObject().read(token, name);
+        SMSEntry entry = new SMSEntry(token, name);
+        attributes = entry.getAttributes();
     } catch (Exception e) {
         attributes = null;
     }
