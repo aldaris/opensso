@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.92 2008-10-16 17:06:37 veiming Exp $
+ * $Id: AccessManager.java,v 1.93 2008-10-20 23:29:00 veiming Exp $
  *
  */
 
@@ -1790,6 +1790,8 @@ public class AccessManager {
             "outfile|o|s|File name where serverconfig XML is written."
         },
         resourceStrings={
+             "server-config-port-missing=Port number in server name is required.",
+            "server-config-uri-missing=URI in server name is required.",
             "get-server-config-xml-no-result-no-results=Could not locate server configuration XML for this server.",
             "get-serverconfig-xml-succeeded=Server Configuration XML was returned."
         }
