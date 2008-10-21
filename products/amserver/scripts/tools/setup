@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: setup,v 1.9 2008-09-18 22:56:30 veiming Exp $
+# $Id: setup,v 1.10 2008-10-21 03:10:16 veiming Exp $
 #
 
 if [ -z "${JAVA_HOME}" ]; then
@@ -37,7 +37,13 @@ if [ ! -x "$JAVA_HOME"/bin/java ]; then
   exit 1
 fi
 
-JAVA_VER=`${JAVA_HOME}/bin/java -version 2>&1 | /bin/awk -F'"' '{print $2}'`
+AWK=`which awk`
+if [ -z $AWK ]; then
+    echo "setup fails because awk is not found"
+    exit 1
+fi
+
+JAVA_VER=`${JAVA_HOME}/bin/java -version 2>&1 | $AWK -F'"' '{print $2}'`
 
 case $JAVA_VER in
 1.0* | 1.1* | 1.2* | 1.3*)
