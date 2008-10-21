@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubCommand.java,v 1.10 2008-06-25 05:42:09 qcheng Exp $
+ * $Id: SubCommand.java,v 1.11 2008-10-21 03:14:31 veiming Exp $
  *
  */
 
@@ -61,6 +61,7 @@ public class SubCommand {
     private Set singleOptionNames = new HashSet();
     private Set multipleOptionNames = new HashSet();
     private Set textAreaUI = new HashSet();
+    private Set textBoxUI = new HashSet();
     private Set checkboxUI = new HashSet();
 
     private static Set reservedLongOptionNames = new HashSet();
@@ -525,6 +526,8 @@ public class SubCommand {
                 String webUI = t.nextToken();
                 if (webUI.equals(CLIConstants.FLAG_WEB_UI_TEXTAREA)) {
                     textAreaUI.add(name);
+                } else if (webUI.equals(CLIConstants.FLAG_WEB_UI_TEXT)) {
+                    textBoxUI.add(name);
                 } else if (webUI.equals(CLIConstants.FLAG_WEB_UI_CHECKBOX)) {
                     checkboxUI.add(name);
                 } 
@@ -639,8 +642,9 @@ public class SubCommand {
      */
     public boolean textareaUI(String opt) {
         String shortName = getShortOptionName(opt);
-        return !shortName.equals(shortName.toLowerCase()) ||
-            textAreaUI.contains(opt);
+        return !textBoxUI.contains(opt) &&
+            (!shortName.equals(shortName.toLowerCase()) ||
+                textAreaUI.contains(opt));
     }
 
     /**

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIConstants.java,v 1.10 2008-06-25 05:42:08 qcheng Exp $
+ * $Id: CLIConstants.java,v 1.11 2008-10-21 03:14:31 veiming Exp $
  *
  */
 
@@ -115,6 +115,12 @@ public interface CLIConstants {
      * textarea in web based CLI.
      */
     String FLAG_WEB_UI_TEXTAREA = "t";
+
+    /**
+     * Flag to indicate that an argument/option is to be displayed as
+     * text box in web based CLI.
+     */
+    String FLAG_WEB_UI_TEXT = "i";
 
     /**
      * Flag to indicate that an argument/option is to be displayed as

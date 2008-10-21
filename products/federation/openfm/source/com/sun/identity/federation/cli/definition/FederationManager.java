@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.33 2008-08-19 19:12:21 veiming Exp $
+ * $Id: FederationManager.java,v 1.34 2008-10-21 03:14:31 veiming Exp $
  *
  */
 
@@ -67,28 +67,28 @@ public class FederationManager {
             "extended-data-file|x|s|c|Specify file name for the extended metadata to be created.",
             "serviceprovider|s|s|Specify metaAlias for hosted service provider to be created. The format must be <realm name>/<identifier>.",
             "identityprovider|i|s|Specify metaAlias for hosted identity provider to be created. The format must be <realm name>/<identifier>.",
-            "attrqueryprovider|S|s|Specify metaAlias for hosted attribute query provider to be created. The format must be <realm name>/<identifier>.",
-            "attrauthority|I|s|Specify metaAlias for hosted attribute authority to be created. The format must be <realm name>/<identifier>.",
-            "authnauthority|C|s|Specify metaAlias for hosted authentication authority to be created. The format must be <realm name>/<identifier>.",
+            "attrqueryprovider|S|s|i|Specify metaAlias for hosted attribute query provider to be created. The format must be <realm name>/<identifier>.",
+            "attrauthority|I|s|i|Specify metaAlias for hosted attribute authority to be created. The format must be <realm name>/<identifier>.",
+            "authnauthority|C|s|i|Specify metaAlias for hosted authentication authority to be created. The format must be <realm name>/<identifier>.",
             "xacmlpep|e|s|Specify metaAlias for policy enforcement point to be created. The format must be <realm name>/<identifier>.",
             "xacmlpdp|p|s|Specify metaAlias for policy decision point to be created. The format must be <realm name>/<identifier>.",
-            "affiliation|F|s|Specify metaAlias for hosted affiliation. to be created. The format must be <realm name>/<identifier>",
-            "affiownerid|N|m|Affiliation Owner ID", 
+            "affiliation|F|s|i|Specify metaAlias for hosted affiliation. to be created. The format must be <realm name>/<identifier>",
+            "affiownerid|N|m|i|Affiliation Owner ID", 
             "affimembers|M|m|Affiliation members",
             "spscertalias|a|s|Service provider signing certificate alias",
             "idpscertalias|b|s|Identity provider signing certificate alias",
-            "attrqscertalias|A|s|Attribute query provider signing certificate alias",
-            "attrascertalias|B|s|Attribute authority signing certificate alias",
-            "authnascertalias|D|s|Authentication authority signing certificate alias",
-            "affiscertalias|J|s|Affiliation signing certificate alias",
+            "attrqscertalias|A|s|i|Attribute query provider signing certificate alias",
+            "attrascertalias|B|s|i|Attribute authority signing certificate alias",
+            "authnascertalias|D|s|i|Authentication authority signing certificate alias",
+            "affiscertalias|J|s|i|Affiliation signing certificate alias",
             "xacmlpdpscertalias|t|s|Policy decision point signing certificate alias",
             "xacmlpepscertalias|k|s|Policy enforcement point signing certificate alias",
             "specertalias|r|s|Service provider encryption certificate alias",
             "idpecertalias|g|s|Identity provider encryption certificate alias.",
-            "attrqecertalias|R|s|Attribute query provider encryption certificate alias",
-            "attraecertalias|G|s|Attribute authority encryption certificate alias.",
-            "authnaecertalias|E|s|Authentication authority encryption certificate alias.",
-            "affiecertalias|K|s|Affiliation encryption certificate alias",
+            "attrqecertalias|R|s|i|Attribute query provider encryption certificate alias",
+            "attraecertalias|G|s|i|Attribute authority encryption certificate alias.",
+            "authnaecertalias|E|s|i|Authentication authority encryption certificate alias.",
+            "affiecertalias|K|s|i|Affiliation encryption certificate alias",
             "xacmlpdpecertalias|j|s|Policy decision point encryption certificate alias",
             "xacmlpepecertalias|z|s|Policy enforcement point encryption certificate alias",
             "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
