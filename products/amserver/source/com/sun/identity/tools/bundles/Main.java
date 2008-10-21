@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Main.java,v 1.9 2008-09-18 22:56:31 veiming Exp $
+ * $Id: Main.java,v 1.10 2008-10-21 03:12:58 veiming Exp $
  *
  */
 
@@ -84,6 +84,11 @@ public class Main implements SetupConstants{
                             "message.error.dir.absolute"));
                         System.exit(1);
                     }
+                        if (!isWriteable(debugPath)) {
+                        System.out.println(bundle.getString(
+                            "message.error.debug.dir.not.writable"));
+                        System.exit(1);                        
+                    }
 
                     if ((logPath == null) || (logPath.length() == 0)) {
                         logPath = SetupUtils.getUserInput(bundle.getString(
@@ -93,6 +98,11 @@ public class Main implements SetupConstants{
                         System.out.println(bundle.getString(
                             "message.error.dir.absolute"));
                             System.exit(1);
+                    }
+                    if (!isWriteable(logPath)) {
+                        System.out.println(bundle.getString(
+                            "message.error.log.dir.not.writable"));
+                        System.exit(1);                        
                     }
                 } else {
                     String toolsHome = new File(".").getCanonicalPath();
@@ -155,5 +165,24 @@ public class Main implements SetupConstants{
         }
         System.exit(0);
     }
+   
+    private static boolean isWriteable(String file) {
+        boolean exist = false;
+        boolean writable = false;
+
+        while ((file != null) && !exist) {
+            File f = new File(file);
+            exist = f.exists();
+            if (!exist) {
+                file = f.getParent();
+            }
+        }
+
+        if (file != null) {
+            File f = new File(file);
+            writable = f.canWrite();
+        }
+        return writable;
+    }   
 }
 
