@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: IdRepoJAXRPCObjectImpl.java,v 1.7 2008-09-19 20:44:48 arviranga Exp $
+* $Id: IdRepoJAXRPCObjectImpl.java,v 1.8 2008-10-22 19:23:14 goodearth Exp $
 */
 
 package com.sun.identity.idm.server;
@@ -65,6 +65,7 @@ import com.sun.identity.session.util.RestrictedTokenAction;
 import com.sun.identity.session.util.RestrictedTokenContext;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.sm.SMSUtils;
 import com.sun.identity.sm.SchemaType;
 
@@ -717,12 +718,13 @@ public abstract class IdRepoJAXRPCObjectImpl implements DirectoryManagerIF {
         
          // Construct the XML document for the event change
         StringBuffer sb = new StringBuffer(100);
-        sb.append("<EventNotification><AttributeValuePair>").append(
-            "<Attribute name=\"method\" /><Value>").append(method).append(
-            "</Value></AttributeValuePair>").append(
-            "<AttributeValuePair><Attribute name=\"entityName\" />")
-            .append("<Value>").append(name).append(
-            "</Value></AttributeValuePair>");
+        sb.append("<EventNotification><AttributeValuePair>")
+            .append("<Attribute name=\"method\" /><Value>").append(method)
+            .append("</Value></AttributeValuePair>")
+            .append("<AttributeValuePair><Attribute name=\"entityName\" />")
+            .append("<Value>").append(XMLUtils.escapeSpecialCharacters(name))
+            .append("</Value></AttributeValuePair>");
+            
         if (method.equalsIgnoreCase("objectChanged") ||
             method.equalsIgnoreCase("objectsChanged")) {
             sb.append("<AttributeValuePair><Attribute name=\"eventType\" />")
