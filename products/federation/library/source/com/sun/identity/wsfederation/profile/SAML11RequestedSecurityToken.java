@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: SAML11RequestedSecurityToken.java,v 1.4 2008-08-28 04:55:06 superpat7 Exp $
+ * $Id: SAML11RequestedSecurityToken.java,v 1.5 2008-10-22 22:59:54 superpat7 Exp $
  * 
  */
 
@@ -67,6 +67,9 @@ import org.w3c.dom.Node;
  * one containing a SAML 1.1 assertion.
  */
 public class SAML11RequestedSecurityToken implements RequestedSecurityToken {
+    // Just get this system property once - it should never change!
+    private static boolean removeCarriageReturns = 
+        System.getProperty("line.separator").equals("\r\n");
     private static Debug debug = WSFederationUtils.debug;
     protected Assertion assertion = null;
     protected String xmlString = null;
@@ -283,13 +286,29 @@ public class SAML11RequestedSecurityToken implements RequestedSecurityToken {
     public String toString()
     {
         StringBuffer buffer = new StringBuffer();
-        
+
         // Pass (true,true) to assertion.toString so we get namespace
+        String assertionString = assertion.toString(true,true);
+        if ( removeCarriageReturns )
+        {
+            // Xalan uses the line.separator system property when creating
+            // output - i.e. on Windows, uses \r\n
+            // We ALWAYS want \n, or signatures break in ADFS - issue # 3927
+            //
+            // NOTE - transformer.setOutputProperty(
+            //     "{http://xml.apache.org/xalan}line-separator","\n");
+            // DOESN'T WORK WITH com.sun.org.apache.xalan.internal
+            //
+            // Doing this here rather than in XMLUtils.print(Node, String)
+            // minimizes the scope of the change.
+            assertionString = assertionString.replaceAll("\r\n", "\n");
+        }        
+
         buffer.append("<wst:RequestedSecurityToken>")
-        .append(assertion.toString(true,true))
-        .append("</wst:RequestedSecurityToken>");
-        
-        return buffer.toString();
+            .append(assertionString)
+            .append("</wst:RequestedSecurityToken>");
+
+        return buffer.toString();                
     }
     
     /**
