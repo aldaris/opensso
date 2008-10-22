@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: IdRemoteEventListener.java,v 1.5 2008-10-09 02:40:04 arviranga Exp $
+* $Id: IdRemoteEventListener.java,v 1.6 2008-10-22 19:20:22 goodearth Exp $
 */
 
 package com.sun.identity.idm.remote;
@@ -229,8 +229,12 @@ public class IdRemoteEventListener {
         StringBuffer sb = new StringBuffer(nItem.length() + 50);
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>").append(nItem);
         try {
+            // The second argument is set to false so that the xml escaped 
+            // chars done by server code/IdRepoJAXRPCObjectImpl will not be 
+            // unescaped.
             Map attrs = CreateServiceConfig.getAttributeValuePairs(SMSSchema
-                    .getXMLDocument(sb.toString(), false).getDocumentElement());
+                .getXMLDocument(sb.toString(), false).getDocumentElement(), 
+                    false);
             if (attrs == null || attrs.isEmpty()) {
                 if (debug.warningEnabled()) {
                     debug.warning("EventListener::sendIdRepoNotification: "
