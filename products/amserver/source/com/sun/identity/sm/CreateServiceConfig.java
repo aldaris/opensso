@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateServiceConfig.java,v 1.12 2008-08-06 16:43:24 veiming Exp $
+ * $Id: CreateServiceConfig.java,v 1.13 2008-10-22 19:10:16 goodearth Exp $
  *
  */
 
@@ -499,6 +499,35 @@ public class CreateServiceConfig {
             String attrName = XMLUtils.getNodeAttributeValue(attrNode,
                     SMSUtils.NAME);
             Set values = XMLUtils.getAttributeValuePair(attrValuePair);
+            if (answer == null) {
+                answer = new HashMap();
+            }
+            answer.put(attrName, values);
+        }
+        return (answer);
+    }
+
+    // Returns a map that contains attribute value pairs
+    // If 'unescape' is set to false, xml escaped chars will not
+    // be unescaped.
+    public static Map getAttributeValuePairs(Node n, boolean unescape) {
+        if (n == null) {
+            return (null);
+        }
+        Map answer = null;
+        Iterator attrNodes = XMLUtils.getChildNodes(n,
+                SMSUtils.ATTRIBUTE_VALUE_PAIR).iterator();
+        while (attrNodes.hasNext()) {
+            Node attrValuePair = (Node) attrNodes.next();
+            Node attrNode = XMLUtils.getChildNode(attrValuePair,
+                    SMSUtils.ATTRIBUTE);
+            if (attrNode == null) {
+                continue;
+            }
+            String attrName = XMLUtils.getNodeAttributeValue(attrNode,
+                    SMSUtils.NAME);
+            Set values = 
+                XMLUtils.getAttributeValuePair(attrValuePair, unescape);
             if (answer == null) {
                 answer = new HashMap();
             }
