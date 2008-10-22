@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DSConfigMgr.java,v 1.15 2008-08-08 00:40:55 ww203982 Exp $
+ * $Id: DSConfigMgr.java,v 1.16 2008-10-22 23:44:40 goodearth Exp $
  *
  */
 
@@ -496,6 +496,10 @@ public class DSConfigMgr implements IDSConfigMgr {
                         debugger.warning(
                             "Connection to LDAP server threw exception:", e);
                     }
+                   try {
+                       conn.disconnect();
+                   } catch (Exception ignored) {
+                   }
                     throw new LDAPServiceException(
                             getString(IUMSConstants.DSCFG_CONNECTFAIL), e);
                 }
