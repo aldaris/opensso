@@ -22,10 +22,11 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: Debug.jsp,v 1.13 2008-09-15 16:41:56 veiming Exp $
+   $Id: Debug.jsp,v 1.14 2008-10-23 11:35:08 mahesh_prasad_r Exp $
   
 --%>
 
+<%@ page pageEncoding="UTF-8" %>
 <%@ page 
     import="
         com.iplanet.sso.SSOException,
@@ -59,7 +60,7 @@
     boolean performAction = Boolean.valueOf(request.getParameter("do")).
         booleanValue();
 
-    ResourceBundle resourceBundle = ResourceBundle.getBundle("debug");
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("debug", request.getLocale());
     ResourceBundle rbFiles = ResourceBundle.getBundle("debugfiles");
     Map categories = new HashMap();
     Set adminUserSet = new HashSet();
