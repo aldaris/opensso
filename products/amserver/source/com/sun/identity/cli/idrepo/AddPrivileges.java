@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddPrivileges.java,v 1.7 2008-08-12 05:13:33 veiming Exp $
+ * $Id: AddPrivileges.java,v 1.8 2008-10-23 17:15:50 veiming Exp $
  *
  */
 
@@ -41,7 +41,6 @@ import com.sun.identity.delegation.DelegationException;
 import com.sun.identity.delegation.DelegationManager;
 import com.sun.identity.delegation.DelegationPrivilege;
 import com.sun.identity.idm.AMIdentity;
-import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
 import java.text.MessageFormat;
 import java.util.HashSet;
@@ -83,12 +82,6 @@ public class AddPrivileges extends IdentityCommand {
 
             AMIdentity amid = new AMIdentity(
                 adminSSOToken, idName, idType, realm, null); 
-            if (!amid.isExists())  {
-                Object[] p = {idName, type};
-                throw new CLIException(MessageFormat.format(
-                    getResourceString("idrepo-add-privileges-do-not-exist"),
-                    p), ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
-            }
             String uid = amid.getUniversalId();
 
             DelegationPrivilege newDp = null;
@@ -124,12 +117,6 @@ public class AddPrivileges extends IdentityCommand {
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "SUCCEED_IDREPO_ADD_PRIVILEGES", params);
         } catch (DelegationException e) {
-            String[] args = {realm, type, idName, e.getMessage()};
-            debugError("AddPrivileges.handleRequest", e);
-            writeLog(LogWriter.LOG_ERROR, Level.INFO,
-                "FAILED_IDREPO_ADD_PRIVILEGES", args);
-            throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
-        } catch (IdRepoException e) {
             String[] args = {realm, type, idName, e.getMessage()};
             debugError("AddPrivileges.handleRequest", e);
             writeLog(LogWriter.LOG_ERROR, Level.INFO,
