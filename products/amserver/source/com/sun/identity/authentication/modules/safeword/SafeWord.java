@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SafeWord.java,v 1.2 2008-09-04 23:37:04 bigfatrat Exp $
+ * $Id: SafeWord.java,v 1.3 2008-10-23 22:38:46 bigfatrat Exp $
  *
  */
 
@@ -32,7 +32,7 @@ import java.io.*;
 import java.util.*;
 import java.net.*;
 
-import com.iplanet.am.util.Debug;
+import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.Misc;
 import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.common.Constants;

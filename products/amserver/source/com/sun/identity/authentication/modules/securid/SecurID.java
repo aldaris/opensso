@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecurID.java,v 1.2 2008-09-04 23:36:24 bigfatrat Exp $
+ * $Id: SecurID.java,v 1.3 2008-10-23 22:37:42 bigfatrat Exp $
  *
  */
 
@@ -37,18 +37,19 @@ import javax.security.auth.callback.*;
 import javax.security.auth.login.*;
 import javax.security.auth.spi.*;
 
-import com.iplanet.am.util.*;
-
 import com.rsa.authagent.authapi.AuthAgentException;
 import com.rsa.authagent.authapi.AuthSession;
 import com.rsa.authagent.authapi.AuthSessionFactory;
 import com.rsa.authagent.authapi.PinData;
+
+import com.iplanet.am.util.Misc;
 
 import com.sun.identity.authentication.spi.*;
 import com.sun.identity.authentication.spi.InvalidPasswordException;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.common.Constants;
+import com.sun.identity.shared.debug.Debug;
 
 import java.security.Principal;
 

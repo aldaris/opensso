@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Unix.java,v 1.2 2008-09-04 23:35:43 bigfatrat Exp $
+ * $Id: Unix.java,v 1.3 2008-10-23 22:41:06 bigfatrat Exp $
  *
  */
 
@@ -31,19 +31,20 @@ package com.sun.identity.authentication.modules.unix;
 import java.util.*;
 import java.io.*;
 import java.net.*;
-import com.iplanet.am.util.*;
-
 
 import javax.security.auth.*;
 import javax.security.auth.callback.*;
 import javax.security.auth.login.*;
 import javax.security.auth.spi.*;
 
+import com.iplanet.am.util.Misc;
+
 import com.sun.identity.authentication.spi.AuthenticationException;
 import com.sun.identity.authentication.spi.AMLoginModule;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.spi.InvalidPasswordException;
 import com.sun.identity.authentication.util.ISAuthConstants;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.security.auth.UnixPrincipal;
 import java.security.Principal;
 import javax.servlet.http.HttpServletRequest;
@@ -53,7 +54,7 @@ public class Unix extends AMLoginModule {
     private static int helper_config_done = 0;
     private static java.util.Locale locale = null;
     private static String amAuthUnix = "amAuthUnix";
-    private static com.iplanet.am.util.Debug debug = null;
+    private static Debug debug = null;
 
     private static int UNIX_HELPER_PORT;
     private static final String DEFAULT_UNIX_HELPER_PORT = "57946";
@@ -78,22 +79,22 @@ public class Unix extends AMLoginModule {
     private boolean needInit = true;
 
     private static String PAM_SERVICE_ATTR = 
-	"iplanet-am-auth-unix-pam-service-name";
+        "iplanet-am-auth-unix-pam-service-name";
     private static String CONFIG_PORT_ATTR = 
-	"iplanet-am-auth-unix-config-port";
+        "iplanet-am-auth-unix-config-port";
     private static String HELPER_PORT_ATTR = 
-	"iplanet-am-auth-unix-helper-port";
+        "iplanet-am-auth-unix-helper-port";
     private static String HELPER_TIMEOUT_ATTR = 
-	"iplanet-am-auth-unix-helper-timeout";
+        "iplanet-am-auth-unix-helper-timeout";
     private static String HELPER_THREADS_ATTR = 
-	"iplanet-am-auth-unix-helper-threads";
+        "iplanet-am-auth-unix-helper-threads";
     private static String AUTH_LEVEL_ATTR = 
-	"iplanet-am-auth-unix-auth-level";
+        "iplanet-am-auth-unix-auth-level";
 
 
     public Unix() throws AuthLoginException{
         try {
-            debug = com.iplanet.am.util.Debug.getInstance(amAuthUnix);
+            debug = Debug.getInstance(amAuthUnix);
             debug.message("Unix constructor called");
         } catch (Exception e) {
             debug.error("this is an error ", e);
@@ -119,17 +120,17 @@ public class Unix extends AMLoginModule {
             if (ires != 0) {
                 debug.message("Unable to contact helper to re-initialize(1).");
                 throw new AuthLoginException(amAuthUnix, 
-		    "UnixconfigHelper", null);
+                    "UnixconfigHelper", null);
             }
             Thread.sleep (1000);
         } catch (AuthLoginException lex) {
             debug.message ("Unable to contact helper to re-initialize(2).");
             throw new AuthLoginException(amAuthUnix, "UnixInitializeLex", 
-		null, lex);
+                null, lex);
         } catch (Exception ex) {
             debug.message ("Unable to contact helper to re-initialize(3).");
             throw new AuthLoginException (amAuthUnix, "UnixInitializeEx", 
-		null, ex);
+                null, ex);
         }
     }
 
@@ -138,18 +139,18 @@ public class Unix extends AMLoginModule {
 
         try {
             debug.message("in init ...");
-	    java.util.Locale locale = getLoginLocale();
-	    bundle = amCache.getResBundle(amAuthUnix, locale);
-	    if (debug.messageEnabled()) {
-		debug.message("Unix resource bundle locale="+locale);
-	    }
+            java.util.Locale locale = getLoginLocale();
+            bundle = amCache.getResBundle(amAuthUnix, locale);
+            if (debug.messageEnabled()) {
+                debug.message("Unix resource bundle locale="+locale);
+            }
             this.options = options;
-	    serviceModule= Misc.getMapAttr(options, PAM_SERVICE_ATTR);
+            serviceModule= Misc.getMapAttr(options, PAM_SERVICE_ATTR);
 
-	    if (debug.messageEnabled()) {
-	        debug.message("serviceModule is : " + serviceModule);
-	    }
-	    this.sharedState = sharedState;
+            if (debug.messageEnabled()) {
+                debug.message("serviceModule is : " + serviceModule);
+            }
+            this.sharedState = sharedState;
 
             String authLevel = Misc.getMapAttr(options, AUTH_LEVEL_ATTR);
             if (authLevel != null) {
@@ -165,55 +166,55 @@ public class Unix extends AMLoginModule {
     }
 
     public int process(Callback[] callbacks, int state) 
-	throws AuthLoginException{
+        throws AuthLoginException{
 
-	if (needInit) {
+        if (needInit) {
             initialize_helper();
             debug.message("initialized helper");
-	}
-	HttpServletRequest servletRequest = getHttpServletRequest();
-	if (servletRequest != null) {
-	    clientIPAddr = getHttpServletRequest().getRemoteAddr();
-	    if (debug.messageEnabled()) {
-	        debug.message("Unix client IPAddr = " + clientIPAddr);
-	    }
-	}
-	
+        }
+        HttpServletRequest servletRequest = getHttpServletRequest();
+        if (servletRequest != null) {
+            clientIPAddr = getHttpServletRequest().getRemoteAddr();
+            if (debug.messageEnabled()) {
+                debug.message("Unix client IPAddr = " + clientIPAddr);
+            }
+        }
+        
         // there is only one state defined in Unix Login module
         if (state != 1) {
             debug.message("Inavlid login state");
             throw new AuthLoginException(amAuthUnix, "UnixInvalidState",
-		 new Object[]{new Integer(state)});
+                 new Object[]{new Integer(state)});
         }
         // there are three Callbacks in this state:
         // Callback[0] is for user name,
         // Callback[1] is for user password
-        if (callbacks !=null && callbacks.length == 0) {		
-	    user = (String) sharedState.get(getUserKey());
-	    password = (String) sharedState.get(getPwdKey());
-	    if (user == null || password == null) {
-	        return ISAuthConstants.LOGIN_START;
-	    }
-	    getCredentialsFromSharedState = true;
-	} else {
+        if (callbacks !=null && callbacks.length == 0) {                
+            user = (String) sharedState.get(getUserKey());
+            password = (String) sharedState.get(getPwdKey());
+            if (user == null || password == null) {
+                return ISAuthConstants.LOGIN_START;
+            }
+            getCredentialsFromSharedState = true;
+        } else {
             user = ((NameCallback)callbacks[0]).getName();
             if (debug.messageEnabled()) {
                 debug.message("user is.. " + user);
             }
-	    if (callbacks.length > 1) {
+            if (callbacks.length > 1) {
                 char[] tmpPassword = 
-		    ((PasswordCallback)callbacks[1]).getPassword();
+                    ((PasswordCallback)callbacks[1]).getPassword();
                 if (tmpPassword == null) {
                     // treat a NULL password as an empty password
                     tmpPassword = new char[0];
-		}
+                }
                 password = new String(tmpPassword);
                 ((PasswordCallback)callbacks[1]).clearPassword();
             }
         }
 
-	// store username, password both success and failure cases
-	storeUsernamePasswd(user, password);
+        // store username, password both success and failure cases
+        storeUsernamePasswd(user, password);
 
         if (user == null || user.length() == 0) {
             debug.message("user id empty....");
@@ -222,18 +223,18 @@ public class Unix extends AMLoginModule {
         try {
             if (!user.equals(new String(user.getBytes("ASCII"), "ASCII"))) {
                 debug.message("enter ascii for user");
-		setFailureID(user);
+                setFailureID(user);
                 throw new AuthLoginException(amAuthUnix, "UnixUseridNotASCII",
-		    null);
+                    null);
             }
         } catch (UnsupportedEncodingException ueex) {
-	    if (getCredentialsFromSharedState && !isUseFirstPassEnabled()) {
-		getCredentialsFromSharedState = false;
-		return ISAuthConstants.LOGIN_START;
-	    }
+            if (getCredentialsFromSharedState && !isUseFirstPassEnabled()) {
+                getCredentialsFromSharedState = false;
+                return ISAuthConstants.LOGIN_START;
+            }
             debug.message("unsupported encodidng..");
             throw new AuthLoginException(amAuthUnix, 
-		"UnixInputEncodingException", null);
+                "UnixInputEncodingException", null);
         }
 
         // null passwd may be ok, make sure it is an empty string
@@ -247,13 +248,13 @@ public class Unix extends AMLoginModule {
                         "UnixPasswordNotASCII", null);
                 }
             } catch (UnsupportedEncodingException ueex) {
-	        if (getCredentialsFromSharedState && !isUseFirstPassEnabled()) {
-		    getCredentialsFromSharedState = false;
-		    return ISAuthConstants.LOGIN_START;
-	        }
-		setFailureID(user);
+                if (getCredentialsFromSharedState && !isUseFirstPassEnabled()) {
+                    getCredentialsFromSharedState = false;
+                    return ISAuthConstants.LOGIN_START;
+                }
+                setFailureID(user);
                 throw new AuthLoginException(amAuthUnix, 
-		    "UnixInputEncodingException", null);
+                    "UnixInputEncodingException", null);
             }
         }
         
@@ -264,38 +265,38 @@ public class Unix extends AMLoginModule {
                 debug.message("unixClient is... " + unixClient);
             }
             ires = unixClient.authenticate(user, password, 
-		serviceModule, clientIPAddr, bundle); 
+                serviceModule, clientIPAddr, bundle); 
             unixClient.destroy(bundle);
         } catch (Exception e) {
             debug.error("Exception unixClient... :"+ e.getMessage());
-	    if (debug.messageEnabled()) {
-		debug.message("Stack: ", e);
-	    }
+            if (debug.messageEnabled()) {
+                debug.message("Stack: ", e);
+            }
         }
         if (debug.messageEnabled()) {
             debug.message("ires...... is... " + ires);
         }
         
         if (ires != 0) {
-	    if (getCredentialsFromSharedState && !isUseFirstPassEnabled()) {
-		getCredentialsFromSharedState = false;
-	        return ISAuthConstants.LOGIN_START;
-	    }
-	    setFailureID(user);
-	    if (ires == -1) {
-	        if (debug.messageEnabled()) {
-		    debug.message("Auth failed for user " + user);
-	        }
+            if (getCredentialsFromSharedState && !isUseFirstPassEnabled()) {
+                getCredentialsFromSharedState = false;
+                return ISAuthConstants.LOGIN_START;
+            }
+            setFailureID(user);
+            if (ires == -1) {
+                if (debug.messageEnabled()) {
+                    debug.message("Auth failed for user " + user);
+                }
                 throw new InvalidPasswordException(amAuthUnix, 
-		    "UnixLoginFailed", new Object[]{user}, user, null);
-	    } else if (ires == 2) {
+                    "UnixLoginFailed", new Object[]{user}, user, null);
+            } else if (ires == 2) {
                 if (debug.messageEnabled()) {
                     debug.message("Auth failed for user " + user + 
-		 	". Password expired.");
+                         ". Password expired.");
                 }
-	        return ISAuthConstants.LOGIN_CHALLENGE;
-	    }
-	} else {
+                return ISAuthConstants.LOGIN_CHALLENGE;
+            }
+        } else {
             userTokenId = user;
         }
         if (debug.messageEnabled()) {
@@ -317,7 +318,7 @@ public class Unix extends AMLoginModule {
     }
 
     public void destroyModuleState() {
-	userTokenId = null;
+        userTokenId = null;
         userPrincipal = null;
     }
 
@@ -327,8 +328,8 @@ public class Unix extends AMLoginModule {
         str_UNIX_HELPER_PORT = null;
         str_UNIX_TIMEOUT = null;
         str_UNIX_THREADS = null;
-	user = null;
-	password = null;
+        user = null;
+        password = null;
         serviceModule = null;
         clientIPAddr = null;
         password = null;
@@ -343,33 +344,33 @@ public class Unix extends AMLoginModule {
         str_UNIX_THREADS = Misc.getMapAttr(options, HELPER_THREADS_ATTR);
 
         //  get the helper daemon config port. use the default value if 
-	//  it is not set.
-	if (config_port != null) {
+        //  it is not set.
+        if (config_port != null) {
             try {
                 UNIX_CONFIG_PORT = Integer.parseInt(config_port);
             } catch (NumberFormatException nex) {
-		//ignore;
+                //ignore;
             }
-	}
+        }
 
-	if (str_UNIX_HELPER_PORT == null || 
-	    str_UNIX_HELPER_PORT.length() == 0) {
-	    str_UNIX_HELPER_PORT = DEFAULT_UNIX_HELPER_PORT;
-	}
-	    
+        if (str_UNIX_HELPER_PORT == null || 
+            str_UNIX_HELPER_PORT.length() == 0) {
+            str_UNIX_HELPER_PORT = DEFAULT_UNIX_HELPER_PORT;
+        }
+            
         try {
             UNIX_HELPER_PORT = Integer.parseInt (str_UNIX_HELPER_PORT);
         } catch (NumberFormatException nex) {
-	    // this should not happen, guaranteed by the input from console.
+            // this should not happen, guaranteed by the input from console.
         }
 
-	if (str_UNIX_TIMEOUT == null || str_UNIX_TIMEOUT.length() == 0) {
+        if (str_UNIX_TIMEOUT == null || str_UNIX_TIMEOUT.length() == 0) {
             str_UNIX_TIMEOUT = DEFAULT_UNIX_TIMEOUT;
-	}
+        }
 
-	if (str_UNIX_THREADS == null || str_UNIX_THREADS.length() == 0) {
+        if (str_UNIX_THREADS == null || str_UNIX_THREADS.length() == 0) {
             str_UNIX_THREADS = DEFAULT_UNIX_THREADS;
-	}
+        }
     }
 
 
@@ -378,9 +379,9 @@ public class Unix extends AMLoginModule {
 
         getDaemonParams();
         if (helper_config_done == 0) {
-	    init_helper();
+            init_helper();
             helper_config_done = 1;
-	    
+            
         }
 
         try {
@@ -390,8 +391,8 @@ public class Unix extends AMLoginModule {
             //  port has changed.
             debug.message("Unable to connect to auth port; Try init again.");
             try {
-		// grab changes in parameters.
-		getDaemonParams();
+                // grab changes in parameters.
+                getDaemonParams();
                 init_helper();
                 debug.message("Successfully re-initialized helper.");
                 try {
@@ -410,6 +411,6 @@ public class Unix extends AMLoginModule {
             debug.error("Exception... ", ex);
             throw new AuthLoginException (amAuthUnix, "UnixInitEx", null);
         }
-	needInit = false;
+        needInit = false;
     }
 }
