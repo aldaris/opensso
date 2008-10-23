@@ -22,12 +22,13 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: nowritewarning.jsp,v 1.6 2008-08-19 19:09:39 veiming Exp $
+   $Id: nowritewarning.jsp,v 1.7 2008-10-23 06:21:06 mahesh_prasad_r Exp $
 
 --%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<%@ page pageEncoding="UTF-8"%>
 <%@ page import="com.sun.identity.setup.AMSetupServlet"%>
 <%@ page import="com.sun.identity.setup.SetupConstants"%>
 <%@ page import="java.text.MessageFormat"%>
@@ -60,7 +61,7 @@
         }
     }
 
-    ResourceBundle rb = ResourceBundle.getBundle("amConfigurator");
+    ResourceBundle rb = ResourceBundle.getBundle("amConfigurator", request.getLocale());
 %>
   <table border="0" cellpadding="0" cellspacing="0" align="center" title="">
     <tr>
