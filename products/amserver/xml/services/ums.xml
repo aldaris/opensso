@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: ums.xml,v 1.4 2008-06-25 05:46:13 qcheng Exp $
+   $Id: ums.xml,v 1.5 2008-10-23 23:33:07 goodearth Exp $
 
 
 -->
@@ -603,6 +603,7 @@
                             <Value>iplanet-am-role-any-options</Value>
                             <Value>iplanet-am-role-managed-container-dn</Value>
 			    <Value>iplanet-am-role-display-options</Value>
+			    <Value>description</Value>
                         </AttributeValuePair>
                         <AttributeValuePair> <Attribute name="namingattribute" />
                             <Value>cn</Value>
