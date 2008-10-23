@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GlobalRealmSessionConstraints.java,v 1.7 2008-08-14 21:11:01 srivenigan Exp $
+ * $Id: GlobalRealmSessionConstraints.java,v 1.8 2008-10-23 17:16:02 srivenigan Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,7 +33,6 @@ import com.sun.identity.qatest.common.TestCommon;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
@@ -66,6 +65,7 @@ public class GlobalRealmSessionConstraints extends TestCommon {
     private boolean dynSrvcRealmAssigned = false;
     private boolean cleanedUp = false;
     private String adminRole = "Top-level Admin Role";
+    private boolean adminRoleCreated = false;
     
     /**
     * SessionConstraints Constructor
@@ -129,8 +129,14 @@ public class GlobalRealmSessionConstraints extends TestCommon {
                     "exhausted is set to: " + resultBehavior);
             idmc.createDummyUser(admintoken, realm, "", testAdminUser);
             Map nullmap = new HashMap();
-            idmc.createIdentity(admintoken, realm, IdType.ROLE, 
-                    adminRole, nullmap);
+            if (!idmc.doesIdentityExists(adminRole, IdType.ROLE, 
+                    admintoken, realm)) {
+                log(Level.FINE, "setup", "Top-level Admin Role doesn't " +
+                        "exist..Creating \"Top-level Admin Role\" ");
+                idmc.createIdentity(admintoken, realm, IdType.ROLE, 
+                        adminRole, nullmap);
+                adminRoleCreated = true;
+            }
             idmc.addUserMember(admintoken, testAdminUser,
                     adminRole , IdType.ROLE);
             set = idmc.getMembers(admintoken, adminRole, IdType.ROLE, 
@@ -222,8 +228,8 @@ public class GlobalRealmSessionConstraints extends TestCommon {
                         "attributes: " + realmActiveSessions);
             } 
         } catch(Exception e) {
-            cleanup();
             log(Level.SEVERE, "setup", e.getMessage());
+            cleanup();
             e.printStackTrace();
             throw e;
         } 
@@ -828,7 +834,9 @@ public class GlobalRealmSessionConstraints extends TestCommon {
                     + testAdminUser);
             idmc.removeUserMember(admintoken, testAdminUser,
                     "Top-level Admin Role" , IdType.ROLE, realm);
-            idmc.deleteIdentity(admintoken, realm, IdType.ROLE, adminRole);
+            if (adminRoleCreated) { 
+                idmc.deleteIdentity(admintoken, realm, IdType.ROLE, adminRole);
+            }
             idmc.deleteIdentity(admintoken, realm, IdType.USER, testAdminUser);
             log(Level.FINEST, "cleanup", "Cleaning User: " + testUser);
             idmc.deleteIdentity(admintoken, realm, IdType.USER,
