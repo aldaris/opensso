@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SavedHttpServletRequest.java,v 1.1 2008-08-20 17:53:15 monzillo Exp $
+ * $Id: SavedHttpServletRequest.java,v 1.2 2008-10-23 09:33:10 rsoika Exp $
  */
 package com.sun.security.sam;
 
@@ -160,7 +160,7 @@ public class SavedHttpServletRequest extends HttpServletRequestWrapper {
         parameters = new Hashtable();
         Enumeration pNames = request.getParameterNames();
         while (pNames.hasMoreElements()) {
-            String name = (String) aNames.nextElement();
+            String name = (String) pNames.nextElement();
             parameters.put(name, request.getParameterValues(name));
         }
 
