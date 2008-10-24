@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFIDPViewBean.java,v 1.11 2008-08-21 18:31:08 asyhuang Exp $
+ * $Id: IDFFIDPViewBean.java,v 1.12 2008-10-24 00:11:56 asyhuang Exp $
  *
  */
 package com.sun.identity.console.federation;
@@ -282,16 +282,20 @@ public class IDFFIDPViewBean
                     model.getAllIDPExtendedMetaMap(),
                     false,
                     model);
-
+            Map idpAllExtValues = model.getIDPEntityConfig(
+                    realm, 
+                    entityName, 
+                    ENTITY_LOCATION);
+            idpAllExtValues.putAll(extValues);
             model.updateEntityIDPDescriptor(realm,
                     entityName,
                     stdValues,
-                    extValues,
-                    isHosted());
+                    idpAllExtValues,
+                    isHosted());                     
             model.updateIDPEntityConfig(
                     realm,
                     entityName,
-                    extValues);
+                    idpAllExtValues);
 
             if (isHosted()) {
                 //update Authentication Contexts
@@ -309,5 +313,5 @@ public class IDFFIDPViewBean
                     e.getMessage());
         }
         forwardTo();
-    }
+    }         
 }

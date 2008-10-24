@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2PEPViewBean.java,v 1.3 2008-06-25 05:49:37 qcheng Exp $
+ * $Id: SAMLv2PEPViewBean.java,v 1.4 2008-10-24 00:12:05 asyhuang Exp $
  *
  */
 
@@ -34,12 +34,9 @@ import com.iplanet.jato.view.event.DisplayEvent;
 import com.sun.identity.console.base.AMPropertySheet;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
-import com.sun.identity.console.federation.model.EntityModel;
 import com.sun.identity.console.federation.model.SAMLv2Model;
-import com.sun.identity.console.federation.model.SAMLv2ModelImpl;
 import com.sun.web.ui.view.alert.CCAlert;
 import java.util.Map;
-import javax.xml.bind.JAXBException;
 
 public class SAMLv2PEPViewBean extends SAMLv2Base {
     
@@ -108,8 +105,12 @@ public class SAMLv2PEPViewBean extends SAMLv2Base {
             //update extended metadata
             Map origExtMeta = 
                 model.getPEPConfig(realm, entityName, location);
-            Map extValues = ps.getAttributeValues(origExtMeta, false, model);
-            model.updatePEPConfig(realm, entityName, location, extValues);
+            Map extValues = ps.getAttributeValues(
+                    model.getXacmlPEPExtendedMetaMap(), 
+                    false, 
+                    model);
+            origExtMeta.putAll(extValues);
+            model.updatePEPConfig(realm, entityName, location, origExtMeta);
             
             setInlineAlertMessage(CCAlert.TYPE_INFO,
                 "message.information",

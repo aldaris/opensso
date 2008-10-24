@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ModelImpl.java,v 1.35 2008-09-25 01:54:02 babysunil Exp $
+ * $Id: SAMLv2ModelImpl.java,v 1.36 2008-10-24 00:12:15 asyhuang Exp $
  *
  */
 
@@ -338,43 +338,43 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
     
     static {
         xacmlPDPExtendedMeta.put(ATTR_WANT_ASSERTION_SIGNED,
-                Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         xacmlPDPExtendedMeta.put(ATTR_SIGNING_CERT_ALIAS,
-                Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         xacmlPDPExtendedMeta.put(ATTR_ENCRYPTION_CERT_ALIAS,
-                Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         xacmlPDPExtendedMeta.put(ATTR_BASIC_AUTH_ON,
-                Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         xacmlPDPExtendedMeta.put(ATTR_BASIC_AUTH_USER,
-                Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         xacmlPDPExtendedMeta.put(ATTR_BASIC_AUTH_PASSWORD,
-                Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         xacmlPDPExtendedMeta.put(ATTR_WANT_XACML_AUTHZ_DECISION_QUERY_SIGNED,
-                Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         xacmlPDPExtendedMeta.put(ATTR_WANT_ASSERTION_ENCRYPTED,
-                Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         xacmlPDPExtendedMeta.put(ATTR_COTLIST,
-                Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
     }
     static {
         xacmlPEPExtendedMeta.put(ATTR_WANT_ASSERTION_SIGNED,
-                Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         xacmlPEPExtendedMeta.put(ATTR_SIGNING_CERT_ALIAS,
-                Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         xacmlPEPExtendedMeta.put(ATTR_ENCRYPTION_CERT_ALIAS,
-                Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         xacmlPEPExtendedMeta.put(ATTR_BASIC_AUTH_ON,
-                Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         xacmlPEPExtendedMeta.put(ATTR_BASIC_AUTH_USER,
-                Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         xacmlPEPExtendedMeta.put(ATTR_BASIC_AUTH_PASSWORD,
-                Collections.EMPTY_LIST);
-        xacmlPEPExtendedMeta.put(ATTR_WANT_XACML_AUTHZ_DECISION_QUERY_SIGNED,
-                Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
+        xacmlPEPExtendedMeta.put(ATTR_WANT_XACML_AUTHZ_DECISION_RESPONSE_SIGNED,
+                Collections.EMPTY_SET);
         xacmlPEPExtendedMeta.put(ATTR_WANT_ASSERTION_ENCRYPTED,
-                Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
         xacmlPEPExtendedMeta.put(ATTR_COTLIST,
-                Collections.EMPTY_LIST);
+                Collections.EMPTY_SET);
     }
     
     //attributes for attribute authority
@@ -1582,7 +1582,16 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
             attrList.clear();
             baseConfig = addAttributeType(extendedMetaSpMap, baseConfig);
             attrList = baseConfig.getAttribute();
+        } else if (role.equals(EntityModel.POLICY_ENFORCEMENT_POINT_DESCRIPTOR)) {
+            attrList.clear();
+            baseConfig = addAttributeType(xacmlPEPExtendedMeta, baseConfig);
+            attrList = baseConfig.getAttribute();
+        } else if (role.equals(EntityModel.POLICY_DECISION_POINT_DESCRIPTOR)) {
+            attrList.clear();
+            baseConfig = addAttributeType(xacmlPDPExtendedMeta,baseConfig);
+            attrList = baseConfig.getAttribute();
         }
+
         for (Iterator it = attrList.iterator(); it.hasNext(); ) {
             AttributeElement avpnew = (AttributeElement)it.next();
             String name = avpnew.getName();
@@ -3760,5 +3769,11 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
     public Map getattrQueryEXDataMap() {
         return extattrQueryMap;
     }    
-    
+
+    public Map getXacmlPEPExtendedMetaMap() {
+        return xacmlPEPExtendedMeta;
+    }    
+    public Map getXacmlPDPExtendedMetaMap() {
+        return xacmlPDPExtendedMeta;
+    }    
 }

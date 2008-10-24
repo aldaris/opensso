@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Model.java,v 1.28 2008-09-25 01:53:54 babysunil Exp $
+ * $Id: SAMLv2Model.java,v 1.29 2008-10-24 00:12:12 asyhuang Exp $
  *
  */
 
@@ -311,6 +311,8 @@ public interface SAMLv2Model
     public static final String ATTR_BASIC_AUTH_PASSWORD = "basicAuthPassword";
     public static final String ATTR_WANT_XACML_AUTHZ_DECISION_QUERY_SIGNED =
         "wantXACMLAuthzDecisionQuerySigned";
+    public static final String ATTR_WANT_XACML_AUTHZ_DECISION_RESPONSE_SIGNED =
+        "wantXACMLAuthzDecisionResponseSigned";
     public static final String ATTR_WANT_ASSERTION_ENCRYPTED =
         "wantAssertionEncrypted";
     public static final String ATTR_COTLIST = "cotlist";
@@ -500,7 +502,22 @@ public interface SAMLv2Model
      * @return SAMLv2 Extended Identity Provider attribute values for Advanced.
      */
     Map getIDPEXAdDataMap();
-    
+         
+    /**
+     * Returns SAMLv2 Xacml PEP ExtendedMeta
+     *
+     * @return SAMLv2 Xacml PEP Extended Meta.
+     */
+  
+    public Map getXacmlPEPExtendedMetaMap();
+   
+     /**
+     * Returns SAMLv2 Xacml PDP ExtendedMeta
+     *
+     * @return SAMLv2 Xacml PDP Extended Meta.
+     */
+    public Map getXacmlPDPExtendedMetaMap();
+  
     /**
      * Returns a Map of PEP descriptor data.(Standard Metadata)
      *
