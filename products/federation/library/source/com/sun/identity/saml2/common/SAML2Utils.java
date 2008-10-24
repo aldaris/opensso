@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.39 2008-08-29 04:57:57 exu Exp $
+ * $Id: SAML2Utils.java,v 1.40 2008-10-24 23:35:29 qcheng Exp $
  *
  */
 
@@ -549,7 +549,6 @@ public class SAML2Utils extends SAML2SDKUtils {
                 
                 boolean foundAssertion = false; 
                 if ((SPCache.assertionByIDCache != null) && 
-                    (SPCache.assertionByIDCache.isEmpty()) &&
                     (SPCache.assertionByIDCache.containsKey(assertionID))) {
                     foundAssertion = true; 
                 } 
