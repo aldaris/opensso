@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionID.java,v 1.6 2008-06-25 05:41:29 qcheng Exp $
+ * $Id: SessionID.java,v 1.7 2008-10-24 02:25:30 dillidorai Exp $
  *
  */
 
@@ -111,6 +111,10 @@ public class SessionID implements Serializable {
      */
     public SessionID(HttpServletRequest request) {
         String cookieValue = null;
+
+        if (cookieName == null) {
+            cookieName = SystemProperties.get("com.iplanet.am.cookie.name");
+        }
 
         if (cookieName != null) {
             cookieValue = CookieUtils
