@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: amAccessControl.xml,v 1.18 2008-09-09 17:17:10 babysunil Exp $
+   $Id: amAccessControl.xml,v 1.19 2008-10-24 22:36:07 babysunil Exp $
 
 -->
 
@@ -344,6 +344,11 @@
     <neednodealwith classname="com.sun.identity.console.dm.NewRoleViewBean" />
     <neednodealwith classname="com.sun.identity.console.dm.GroupContainerGeneralViewBean" />
     <neednodealwith classname="com.sun.identity.console.dm.PeopleContainerGeneralViewBean" />
+    <neednodealwith classname="com.sun.identity.console.realm.RealmResourceOfferingAddViewBean" />
+    <neednodealwith classname="com.sun.identity.console.realm.RealmResourceOfferingEditViewBean" />
+    <neednodealwith classname="com.sun.identity.console.realm.RealmResourceOfferingViewBean" />
+    <neednodealwith classname="com.sun.identity.console.realm.RealmDiscoveryDescriptionAddViewBean" />
+    <neednodealwith classname="com.sun.identity.console.realm.RealmDiscoveryDescriptionEditViewBean" />
     <neednodealwith classname="com.sun.identity.console.realm.RMRealmAddViewBean" />
     <neednodealwith classname="com.sun.identity.console.realm.IDRepoAddViewBean" />
     <neednodealwith classname="com.sun.identity.console.realm.IDRepoSelectTypeViewBean" />
