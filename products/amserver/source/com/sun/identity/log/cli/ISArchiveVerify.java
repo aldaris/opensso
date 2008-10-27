@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISArchiveVerify.java,v 1.10 2008-06-25 05:43:36 qcheng Exp $
+ * $Id: ISArchiveVerify.java,v 1.11 2008-10-27 18:14:12 bigfatrat Exp $
  *
  */
 
@@ -59,8 +59,6 @@ import java.util.Locale;
  * secure log file.
  */
 public class ISArchiveVerify{
-    private static String USAGE =
-       "Usage: amverifyarchive -l <logName> -p <path> -u <uname> -w <password>";
     private static String PREFIX = "_secure.";
     private String curMAC = null;
     private String prevSignature = null;
@@ -68,7 +66,9 @@ public class ISArchiveVerify{
     private SecureLogHelper helper;
     private AMPassword verPassword;
     
-    private static ResourceBundle bundle = null;
+    private static ResourceBundle bundle =
+	com.sun.identity.shared.locale.Locale.getInstallResourceBundle(
+	    "amLogging");
     static final int INVALID = 0;
     static final int LOGNAME = 1;
     static final int PATH = 2;
@@ -78,8 +78,6 @@ public class ISArchiveVerify{
     static Map OPTIONS = new HashMap();
     
     static {
-        bundle = com.sun.identity.shared.locale.Locale.getInstallResourceBundle(
-            "amLogging");
         OPTIONS.put("-l", new Integer(LOGNAME));
         OPTIONS.put("-p", new Integer(PATH));
         OPTIONS.put("-u", new Integer(USERNAME));
@@ -102,7 +100,7 @@ public class ISArchiveVerify{
      */
     public static void main(String[] args) throws Exception {
         if ((args.length == 0) || (args.length != 8)) {
-            System.err.println(USAGE);
+            System.err.println(bundle.getString("amverifyarchive-usage"));
             System.exit(1);
         }
 
@@ -162,7 +160,7 @@ public class ISArchiveVerify{
             }
 
             e.printStackTrace();
-            System.err.println(USAGE);
+            System.err.println(bundle.getString("amverifyarchive-usage"));
             System.exit(1);
         }
 
