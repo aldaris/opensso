@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoteHandler.java,v 1.15 2008-08-19 19:09:12 veiming Exp $
+ * $Id: RemoteHandler.java,v 1.16 2008-10-27 18:31:31 bigfatrat Exp $
  *
  */
 
@@ -111,8 +111,10 @@ public class RemoteHandler extends Handler {
         try {
             logServURL = new URL(urlString);
         } catch (MalformedURLException mue) {
-            Debug.error("RemoteHandler.getLogHostURL(): '" +
-                urlString + "' is malformed. " + mue.getMessage());
+            if (Debug.warningEnabled()) {
+                Debug.warning("RemoteHandler.getLogHostURL(): '" +
+                    urlString + "' is malformed. " + mue.getMessage());
+            }
         }
     }
     
