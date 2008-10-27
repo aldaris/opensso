@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebtopNaming.java,v 1.26 2008-10-15 00:52:24 beomsuk Exp $
+ * $Id: WebtopNaming.java,v 1.27 2008-10-27 17:00:21 veiming Exp $
  *
  */
 
@@ -42,7 +42,6 @@ import java.util.Vector;
 
 import com.sun.identity.common.GeneralTaskRunnable;
 import com.sun.identity.common.SystemTimer;
-import com.sun.identity.common.TimerPool;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.comm.client.PLLClient;
 import com.iplanet.services.comm.client.SendRequestException;
@@ -55,6 +54,8 @@ import com.iplanet.services.naming.share.NamingRequest;
 import com.iplanet.services.naming.share.NamingResponse;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -122,15 +123,30 @@ public class WebtopNaming {
 
     private static SiteMonitor monitorThread = null;
 
-    private static String IGNORE_NAMING_SERVICE =
-        "com.iplanet.am.naming.ignoreNamingService";
+    private static String MAP_SITE_TO_SERVER =
+        "com.iplanet.am.naming.map.site.to.server";
     
-    private static boolean ignoreNaming = false;
+    private static Map mapSiteToServer = new HashMap();
 
     static {
         serverMode = Boolean.valueOf(
                 System.getProperty(Constants.SERVER_MODE, SystemProperties.get(
                         Constants.SERVER_MODE, "false"))).booleanValue();
+        
+        if (!serverMode) {
+            String v = SystemProperties.get(MAP_SITE_TO_SERVER);
+            if ((v != null) && (v.length() > 0)) {
+                StringTokenizer st = new StringTokenizer(v, ",");
+                while (st.hasMoreTokens()) {
+                    String s = st.nextToken();
+                    int idx = s.indexOf('=');
+                    if (idx != -1) {
+                        addToMapSiteToServer(s.substring(0, idx),
+                            s.substring(idx+1));
+                    }
+                }
+            }
+        } 
         try {
             getAMServer();
             debug = Debug.getInstance("amNaming");
@@ -138,6 +154,16 @@ public class WebtopNaming {
             debug.error("Failed to initialize server properties", ex);
         }
     }
+
+    private static void addToMapSiteToServer(String u1, String u2) {
+        try {
+            URL url1 = new URL(u1);
+            URL url2 = new URL(u2);
+            mapSiteToServer.put(url1, url2);
+        } catch (MalformedURLException e) {
+            debug.error("WebtopNaming.addToMapSiteToServer", e);
+        }
+    } 
 
     /**
      * Determines whether WebtopNaming code runs in the core server mode
@@ -210,8 +236,6 @@ public class WebtopNaming {
     }
 
     private static void initializeNamingService() {
-        ignoreNaming = Boolean.valueOf(SystemProperties.get(
-             IGNORE_NAMING_SERVICE, "false")).booleanValue() & !isServerMode();
         try {
             // Initilaize the list of naming URLs
             getNamingServiceURL();
@@ -295,6 +319,23 @@ public class WebtopNaming {
         
     }
     
+    public static URL mapSiteToServer(
+        String protocol,
+        String host,
+        String port,
+        String uri
+    ) throws URLNotFoundException {
+        if (!mapSiteToServer.isEmpty()) {
+            try {
+                URL url = new URL(protocol + "://" + host + ":" + port + uri);
+                return (URL) mapSiteToServer.get(url);
+            } catch (MalformedURLException e) {
+                throw new URLNotFoundException(e.getMessage());
+            }
+        }
+        return null;
+    }
+    
     /**
      * Returns the URL of the specified service on the specified host.
      * 
@@ -330,24 +371,25 @@ public class WebtopNaming {
                         + service);
             }
             
-            if (ignoreNaming) {
-                protocol = amServerProtocol;
-                host = amServer;
-                port = amServerPort;
+            URL mappedURL = mapSiteToServer(protocol, host, port, uri);
+            if (mappedURL != null) {
+                protocol = mappedURL.getProtocol();
+                host = mappedURL.getHost();
+                port = Integer.toString(mappedURL.getPort());
+                uri = mappedURL.getPath();
             }
-
             if (namingTable == null) {
                 getNamingProfile(false);
             }
-
             String url = null;
+
             String name = AM_NAMING_PREFIX + service.toLowerCase() + "-url";
-            url = (String)namingTable.get(name);
+            url = (String) namingTable.get(name);
             if (url == null) {
                 name = FAM_NAMING_PREFIX + service.toLowerCase() + "-url";
-                url = (String)namingTable.get(name);
+                url = (String) namingTable.get(name);
             }
-
+            
             if (url != null) {
                 // If replacement is required, the protocol, host, and port
                 // validation is needed against the server list

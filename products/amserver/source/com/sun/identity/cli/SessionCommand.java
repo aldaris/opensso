@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionCommand.java,v 1.5 2008-06-25 05:42:09 qcheng Exp $
+ * $Id: SessionCommand.java,v 1.6 2008-10-27 17:00:21 veiming Exp $
  *
  */
 
@@ -306,9 +306,7 @@ public class SessionCommand extends AuthenticatedCommand {
                 }
             }
         } catch (SessionException se) {
-            throw new CLIException(
-                getResourceString("session-invalid-host-name"),
-                ExitCodes.INVALID_OPTION_VALUE);
+            throw new CLIException(se, ExitCodes.INVALID_OPTION_VALUE);
         }
 
         return list;
