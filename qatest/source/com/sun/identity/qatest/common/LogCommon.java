@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogCommon.java,v 1.6 2008-10-01 18:55:46 nithyas Exp $
+ * $Id: LogCommon.java,v 1.7 2008-10-28 23:49:12 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -85,7 +85,8 @@ public class LogCommon extends TestCommon {
     throws Exception {
         try {
             SMSCommon sm = new SMSCommon(adminToken);
-            log(Level.FINE, "updateLogConfig", "Modifying service conf ");
+            log(Level.FINE, "updateLogConfig", "Modifying service conf " + 
+                    attrValMap);
             return sm.updateSvcSchemaAttribute(logServiceName, attrValMap, 
                     "Global");
         } catch (Exception ex) {
@@ -313,6 +314,8 @@ public class LogCommon extends TestCommon {
                 con = DriverManager.getConnection(reqDBURL + "/" + dataBaseName,
                         dbUserName, password);
                 connMap.put(location, con);
+                log (Level.FINE, "getConnection", "Added connection to " +
+                        "connMap: " + location);
                 return con;
             } else {
                 return (Connection)connMap.get(location);

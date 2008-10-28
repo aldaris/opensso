@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogToDBTest.java,v 1.6 2008-10-01 18:55:56 nithyas Exp $
+ * $Id: LogToDBTest.java,v 1.7 2008-10-28 23:48:59 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -52,7 +52,7 @@ public class LogToDBTest extends LogCommon implements LogTestConstants {
     private String userId;
     private Map logConfig;
     private String location;
-    private String dataBaseName;
+    private static String dataBaseName = "";
     private String dbUser;
     private String dbPassword;
     private String driver;
@@ -84,19 +84,23 @@ public class LogToDBTest extends LogCommon implements LogTestConstants {
                     testCaseInfoFileName);
             location = dbConfRb.getString(LOGTEST_KEY_LOG_LOCATION);
             int lastIdx = location.lastIndexOf("/");
+            String reqDBURL= location.substring(0, lastIdx);                        
             SimpleDateFormat simple = new SimpleDateFormat(
                     "yyyyMMddhhmmssSS");
             Date date = new Date();
-            dataBaseName = location.substring(lastIdx + 1) + simple.format(date);
+            if (dataBaseName.equals("")) {
+                dataBaseName = location.substring(lastIdx + 1) + 
+                        simple.format(date);
+                log(Level.FINEST, "LogToDBTest", "New dataBaseName :" + 
+                        dataBaseName);                
+            }
             dbUser = dbConfRb.getString(LOGTEST_KEY_DB_USER);
             dbPassword = dbConfRb.getString(LOGTEST_KEY_DB_PASSWORD);
             driver = dbConfRb.getString(LOGTEST_KEY_DRIVER);
-            log(Level.FINEST, "LogToDBTest", "New dataBaseName :" + 
-                    dataBaseName);                
             if (dbConn == null) {
                 log(Level.FINE, "LogToDBTest", "Getting db connection");
                 dbConn = LogCommon.getConnection(dbUser, dbPassword, driver,
-                        location, dataBaseName);
+                        reqDBURL + "/" + dataBaseName, dataBaseName);
                 dbInit = true;
             }
         } catch (SQLException sqexp) {
@@ -293,7 +297,9 @@ public class LogToDBTest extends LogCommon implements LogTestConstants {
                     LogCommon.deleteDB(dbConn, dataBaseName);
                     int lastIdx = location.lastIndexOf("/");
                     String reqDBURL= location.substring(0, lastIdx);                        
-                    LogCommon.releaseConn(reqDBURL + "/" + dataBaseName);
+                    if (dbConn != null) {
+                        LogCommon.releaseConn(reqDBURL + "/" + dataBaseName);
+                    }
                     dbInit = false;
                     configured = false;
                 }
