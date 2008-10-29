@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.94 2008-10-29 00:01:10 veiming Exp $
+ * $Id: AccessManager.java,v 1.95 2008-10-29 03:14:04 veiming Exp $
  *
  */
 
@@ -1553,8 +1553,8 @@ public class AccessManager {
         optionAliases={},
         macro="authentication",
         optionalOptions={
-            "entries|a|m|formatted authentication configuration entries in this format name&#124;flag&#124;options. option can be REQUIRED, OPTIONAL, SUFFICIENT, REQUISITE. e.g. myauthmodule&#124;REQUIRED&#124;my options.",
-            "datafile|D|s|Name of file that contains formatted authentication configuration entries in this format name&#124;flag&#124;options. option can be REQUIRED, OPTIONAL, SUFFICIENT, REQUISITE. e.g. myauthmodule&#124;REQUIRED&#124;my options."},
+            "entries|a|m|formatted authentication configuration entries in this format name&pipe;flag&pipe;options. option can be REQUIRED, OPTIONAL, SUFFICIENT, REQUISITE. e.g. myauthmodule&pipe;REQUIRED&pipe;my options.",
+            "datafile|D|s|Name of file that contains formatted authentication configuration entries in this format name&pipe;flag&pipe;options. option can be REQUIRED, OPTIONAL, SUFFICIENT, REQUISITE. e.g. myauthmodule&pipe;REQUIRED&pipe;my options."},
         resourceStrings={
             "authentication-set-auth-config-entries-succeeded=Authentication Configuration's entries were updated",
             "authentication-set-auth-config-entries-not-found=Authentication Configuration was not found.",
