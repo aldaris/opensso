@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOTokenSampleServlet.java,v 1.3 2008-06-25 05:41:09 qcheng Exp $
+ * $Id: SSOTokenSampleServlet.java,v 1.4 2008-10-29 03:16:04 veiming Exp $
  *
  */
 
@@ -128,6 +128,7 @@ public class SSOTokenSampleServlet extends HttpServlet {
                 token.addSSOTokenListener(myListener);
             } catch (SSOException e) {
                 out.println("SSO Exception: " + e);
+                out.println("<p>Authenticate to OpenSSO server before visiting this page.</p>");
                 e.printStackTrace();
             } catch (IdRepoException e) {
                 out.println("IdRepo Exception: " + e);
