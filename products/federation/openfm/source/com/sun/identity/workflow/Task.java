@@ -22,14 +22,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Task.java,v 1.9 2008-06-25 05:50:03 qcheng Exp $
+ * $Id: Task.java,v 1.10 2008-10-29 00:02:39 veiming Exp $
  *
  */
 
 package com.sun.identity.workflow;
 
+import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
+import com.sun.identity.shared.Constants;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -217,11 +219,19 @@ public abstract class Task
     }
 
     protected String getRequestURL(Map map) {
-        HttpServletRequest req = (HttpServletRequest) map.get(REQ_OBJ);
-        String uri = req.getRequestURI().toString();
-        int idx = uri.indexOf('/', 1);
-        uri = uri.substring(0, idx);
-        return req.getScheme() + "://" + req.getServerName() +
-            ":" + req.getServerPort() + uri;
+        boolean isConsoleRemote = Boolean.valueOf(
+            SystemProperties.get(Constants.AM_CONSOLE_REMOTE)).booleanValue();
+
+        if (isConsoleRemote) {
+            return SystemProperties.getServerInstanceName();
+        } else {
+            HttpServletRequest req = (HttpServletRequest) map.get(REQ_OBJ);
+            String uri = req.getRequestURI().toString();
+            int idx = uri.indexOf('/', 1);
+            uri = uri.substring(0, idx);
+            return req.getScheme() + "://" + req.getServerName() +
+                ":" + req.getServerPort() + uri;
+        }
+
     }
 }

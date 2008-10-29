@@ -22,14 +22,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataModelImpl.java,v 1.3 2008-06-25 05:49:39 qcheng Exp $
+ * $Id: CreateMetaDataModelImpl.java,v 1.4 2008-10-29 00:02:38 veiming Exp $
  *
  */
 
 package com.sun.identity.console.federation.model;
 
+import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.console.base.model.AMModelBase;
 import com.sun.identity.console.base.model.AMConsoleException;
+import com.sun.identity.console.base.model.AMSystemConfig;
 import com.sun.identity.federation.jaxb.entityconfig.EntityConfigElement;
 import com.sun.identity.federation.meta.IDFFMetaException;
 import com.sun.identity.federation.meta.IDFFMetaManager;
@@ -67,8 +69,12 @@ public class CreateMetaDataModelImpl extends AMModelBase
         String uri = req.getRequestURI().toString();
         int idx = uri.indexOf('/', 1);
         uri = uri.substring(0, idx);
-        requestURL = req.getScheme() + "://" + req.getServerName() +
-            ":" + req.getServerPort() + uri;
+        if (AMSystemConfig.isConsoleRemote) {
+            requestURL = SystemProperties.getServerInstanceName();
+        } else {
+            requestURL = req.getScheme() + "://" + req.getServerName() +
+                ":" + req.getServerPort() + uri;
+        }
     }
 
     /**

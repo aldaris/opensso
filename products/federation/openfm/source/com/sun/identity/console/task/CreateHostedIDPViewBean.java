@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateHostedIDPViewBean.java,v 1.8 2008-07-24 18:16:55 veiming Exp $
+ * $Id: CreateHostedIDPViewBean.java,v 1.9 2008-10-29 00:02:39 veiming Exp $
  *
  */
 
 package com.sun.identity.console.task;
 
+import com.iplanet.am.util.SystemProperties;
 import com.iplanet.jato.view.View;
 import com.iplanet.jato.view.event.ChildContentDisplayEvent;
 import com.iplanet.jato.view.event.DisplayEvent;
@@ -38,6 +39,7 @@ import com.sun.identity.console.base.model.AMAdminUtils;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
+import com.sun.identity.console.base.model.AMSystemConfig;
 import com.sun.identity.console.task.model.TaskModel;
 import com.sun.identity.console.task.model.TaskModelImpl;
 import com.sun.web.ui.model.CCActionTableModel;
@@ -257,7 +259,8 @@ public class CreateHostedIDPViewBean
             setDisplayFieldValue(RADIO_META, "file");
         }
         
-        setDisplayFieldValue(ENTITY_ID, getRequestURL());
+        setDisplayFieldValue(ENTITY_ID, (AMSystemConfig.isConsoleRemote) ?
+            SystemProperties.getServerInstanceName() : getRequestURL());
         populateTableModel();
         
         Set userAttrNames = AMAdminUtils.getUserAttributeNames();
