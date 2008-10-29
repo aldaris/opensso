@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: logout.jsp,v 1.7 2008-08-19 19:11:19 veiming Exp $
+   $Id: logout.jsp,v 1.8 2008-10-29 03:11:53 veiming Exp $
 
 --%>
 
@@ -46,7 +46,7 @@
 %>
 <html>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>Signing Out</title>
         <script language="JavaScript">
   <%

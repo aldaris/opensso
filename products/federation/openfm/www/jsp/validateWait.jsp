@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: validateWait.jsp,v 1.3 2008-08-15 01:05:37 veiming Exp $
+   $Id: validateWait.jsp,v 1.4 2008-10-29 03:11:54 veiming Exp $
 
 --%>
 
@@ -34,8 +34,9 @@
         Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
     String message = request.getParameter("m");
 %>
+<html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <link rel="stylesheet" type="text/css" href="<%= deployuri %>/com_sun_web_ui/css/css_ns6up.css" />
 <link rel="shortcut icon" href="<%= deployuri %>/com_sun_web_ui/images/favicon/favicon.ico" type="image/x-icon"></link>
 <link rel="stylesheet" type="text/css" href="<%= deployuri %>/console/css/opensso.css" />
@@ -43,7 +44,6 @@
 <script language="JavaScript">
 </script>
 
-<html>
 </head>
 <body class="DefBdy">
 

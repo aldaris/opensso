@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Configurator.jsp,v 1.8 2008-09-09 18:15:41 veiming Exp $
+   $Id: Configurator.jsp,v 1.9 2008-10-29 03:11:53 veiming Exp $
 
 --%>
 
@@ -30,7 +30,7 @@
 <html>
 <head>
 <title>Configure OpenSSO Administration Console WAR</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <link rel="stylesheet" type="text/css" href="com_sun_web_ui/css/css_ns6up.css" />
 
 

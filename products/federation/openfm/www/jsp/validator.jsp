@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: validator.jsp,v 1.3 2008-06-25 05:51:00 qcheng Exp $
+   $Id: validator.jsp,v 1.4 2008-10-29 03:11:54 veiming Exp $
 
 --%>
 
@@ -37,7 +37,7 @@
 
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 
 <%
     String deployuri = SystemConfigurationUtil.getProperty(

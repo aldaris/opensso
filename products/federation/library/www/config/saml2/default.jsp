@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: default.jsp,v 1.2 2008-06-25 05:48:35 qcheng Exp $
+   $Id: default.jsp,v 1.3 2008-10-29 03:11:52 veiming Exp $
 
 --%>
 
@@ -39,7 +39,7 @@ com.sun.identity.saml2.common.SAML2Utils
 <html>
 <head>
     <title>SAML2 Plugin Default Page</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 </head>
 
 <body>

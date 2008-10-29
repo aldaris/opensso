@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: saeerror.jsp,v 1.2 2008-06-25 05:48:37 qcheng Exp $
+   $Id: saeerror.jsp,v 1.3 2008-10-29 03:11:52 veiming Exp $
 
 --%>
 
@@ -31,7 +31,7 @@
 <html>
 <head>
     <title>SAML2 SAE Error Page</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 </head>
 
 <body>
