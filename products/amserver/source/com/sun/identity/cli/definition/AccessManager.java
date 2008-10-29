@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.93 2008-10-20 23:29:00 veiming Exp $
+ * $Id: AccessManager.java,v 1.94 2008-10-29 00:01:10 veiming Exp $
  *
  */
 
@@ -1827,7 +1827,7 @@ public class AccessManager {
         optionAliases={},
         macro="authentication",
         optionalOptions={
-            "attributevalues|a|m|properties e.g. homeaddress=here.",
+            "attributevalues|a|m|Properties e.g. homeaddress=here.",
             "datafile|D|s|Name of file that contains properties."},
         resourceStrings={
             "does-not-support-agent-creation={0} did not support agent creation.",
@@ -1864,7 +1864,7 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={
             "set|s|u|Set this flag to overwrite properties values.",
-            "attributevalues|a|m|properties e.g. homeaddress=here.",
+            "attributevalues|a|m|Properties e.g. homeaddress=here.",
             "datafile|D|s|Name of file that contains properties."},
         resourceStrings={
             "update-agent-succeeded=Agent configuration was updated."
@@ -1971,7 +1971,7 @@ public class AccessManager {
         optionAliases={},
         macro="authentication",
         optionalOptions={
-            "attributevalues|a|m|properties e.g. homeaddress=here.",
+            "attributevalues|a|m|Properties e.g. homeaddress=here.",
             "datafile|D|s|Name of file that contains properties."},
         resourceStrings={
             "does-not-support-agent-group-creation={0} did not support agent group creation.",
@@ -2100,7 +2100,7 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={
             "set|s|u|Set this flag to overwrite properties values.",
-            "attributevalues|a|m|properties e.g. homeaddress=here.",
+            "attributevalues|a|m|Properties e.g. homeaddress=here.",
             "datafile|D|s|Name of file that contains properties."},
         resourceStrings={
             "update-agent-group-succeeded=Agent group configuration was updated."
