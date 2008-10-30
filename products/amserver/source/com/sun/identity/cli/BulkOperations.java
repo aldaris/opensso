@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BulkOperations.java,v 1.6 2008-06-25 05:42:08 qcheng Exp $
+ * $Id: BulkOperations.java,v 1.7 2008-10-30 18:23:18 veiming Exp $
  *
  */
 
@@ -79,6 +79,7 @@ public class BulkOperations extends AuthenticatedCommand {
         throws CLIException
     {
         argv = argv.trim();
+        argv = argv.replace('\t', ' '); 
         List options = new ArrayList();
         char[] array = argv.toCharArray();
         int len = array.length;
