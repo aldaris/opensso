@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.5 2008-08-19 19:11:22 veiming Exp $
+$Id: README,v 1.6 2008-10-30 19:12:18 bigfatrat Exp $
 ------------------------------------------------------------------------------
 
 
@@ -32,7 +32,7 @@ This README file provides brief instructions on running OpenSSO
 client sdk samples  that would run in a stand alone JVM, outside of any
 container.
 
-1. Unzip the opensso-client.zip. You would find a directory clientsamples/sdk. 
+1. Unzip the opensso-client.zip. You would find a directory samples/sdk. 
    This directory has all that is required to try out OpenSSO 
    client sdk samples.
 
