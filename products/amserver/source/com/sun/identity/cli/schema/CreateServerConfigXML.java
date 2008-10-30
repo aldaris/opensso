@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateServerConfigXML.java,v 1.4 2008-06-25 05:42:17 qcheng Exp $
+ * $Id: CreateServerConfigXML.java,v 1.5 2008-10-30 18:25:03 veiming Exp $
  *
  */
 
@@ -98,7 +98,8 @@ public class CreateServerConfigXML extends AuthenticatedCommand {
         if ((dsPasswordFile == null) || (dsPasswordFile.length() == 0)) {
             dsPassword = "11111111";
         } else {
-            dsPassword = CLIUtil.getFileContent(dsPasswordFile);
+            dsPassword = CLIUtil.getFileContent(getCommandManager(),
+                dsPasswordFile);
         }
         if ((basedn == null) || (basedn.length() == 0)) {
             basedn = "dc=opensso,dc=java,dc=net";
@@ -169,8 +170,9 @@ public class CreateServerConfigXML extends AuthenticatedCommand {
     
     private String modifyXML(String xml)
         throws CLIException {
-        String amadminPwds = CLIUtil.getFileContent(getStringOptionValue(
-            AccessManagerConstants.ARGUMENT_PASSWORD_FILE), true);
+        String amadminPwds = CLIUtil.getFileContent(getCommandManager(),
+            getStringOptionValue(AccessManagerConstants.ARGUMENT_PASSWORD_FILE),
+            true);
         amadminPwds = (String)AccessController.doPrivileged(
             new EncodeAction(amadminPwds));
         String canRootSuffix = canonicalize(basedn);

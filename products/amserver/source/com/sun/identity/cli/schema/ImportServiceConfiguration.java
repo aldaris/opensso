@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportServiceConfiguration.java,v 1.6 2008-08-06 21:19:39 veiming Exp $
+ * $Id: ImportServiceConfiguration.java,v 1.7 2008-10-30 18:25:03 veiming Exp $
  *
  */
 
@@ -373,7 +373,7 @@ public class ImportServiceConfiguration extends AuthenticatedCommand {
 
     private void validateEncryptSecret(String xmlFile, String encryptSecret)
         throws CLIException {
-        String xml = CLIUtil.getFileContent(xmlFile);
+        String xml = CLIUtil.getFileContent(getCommandManager(), xmlFile);
         int start = xml.lastIndexOf("<!-- ");
         if (start == -1) {
             throw new CLIException(

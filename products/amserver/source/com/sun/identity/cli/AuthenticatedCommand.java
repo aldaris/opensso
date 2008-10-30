@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticatedCommand.java,v 1.6 2008-07-31 21:54:55 veiming Exp $
+ * $Id: AuthenticatedCommand.java,v 1.7 2008-10-30 18:25:01 veiming Exp $
  *
  */
 
@@ -93,7 +93,8 @@ public abstract class AuthenticatedCommand extends CLICommandBase {
     {
         String fileName = getStringOptionValue(
             AccessManagerConstants.ARGUMENT_PASSWORD_FILE);
-        String password = CLIUtil.getFileContent(fileName, true);
+        String password = CLIUtil.getFileContent(getCommandManager(),
+            fileName, true);
         validatePwdFilePermissions(fileName);
         return password;
     }

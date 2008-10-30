@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIUtil.java,v 1.7 2008-06-25 05:42:08 qcheng Exp $
+ * $Id: CLIUtil.java,v 1.8 2008-10-30 18:25:02 veiming Exp $
  *
  */
 
@@ -39,10 +39,12 @@ import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.security.AccessController;
+import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -57,27 +59,39 @@ public class CLIUtil {
     /**
      * Returns content of a file.
      *
+     * @param mgr Command Line Manager.
      * @param fileName Name of file.
      * @return content of a file.
      * @throws CLIException if file content cannot be returned.
      */
-    public static String getFileContent(String fileName)
+    public static String getFileContent(CommandManager mgr, String fileName)
         throws CLIException
     {
-        return getFileContent(fileName, false);
+        return getFileContent(mgr, fileName, false);
     }
 
     /**
      * Returns content of a file.
      *
+     * @param mgr Command Line Manager.
      * @param fileName Name of file.
      * @param singleLine <code>true</code> to only read one line from the file.
      * @return content of a file.
      * @throws CLIException if file content cannot be returned.
      */
-    public static String getFileContent(String fileName, boolean singleLine)
-        throws CLIException
-    {
+    public static String getFileContent(
+        CommandManager mgr,
+        String fileName,
+        boolean singleLine
+    ) throws CLIException {
+        File test = new File(fileName);
+        if (!test.exists()) {
+            Object[] param = {fileName};
+            throw new CLIException(MessageFormat.format(
+                mgr.getResourceBundle().getString(
+                    "error-message-file-does-not-exist"), param),
+                ExitCodes.CANNOT_READ_FILE);
+        }
         StringBuffer buff = new StringBuffer();
         BufferedReader in = null;
         try {

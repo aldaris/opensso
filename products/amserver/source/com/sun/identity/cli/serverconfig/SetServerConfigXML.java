@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetServerConfigXML.java,v 1.5 2008-09-19 23:37:14 beomsuk Exp $
+ * $Id: SetServerConfigXML.java,v 1.6 2008-10-30 18:25:03 veiming Exp $
  *
  */
 
@@ -75,7 +75,7 @@ public class SetServerConfigXML extends ServerConfigBase {
             String xml = xmlFile;
             boolean isWebEnabled = getCommandManager().webEnabled();
             if (!isWebEnabled) {
-                xml = CLIUtil.getFileContent(xmlFile);
+                xml = CLIUtil.getFileContent(getCommandManager(), xmlFile);
             }
             ServerConfiguration.setServerConfigXML(
                 adminSSOToken, serverName, xml);

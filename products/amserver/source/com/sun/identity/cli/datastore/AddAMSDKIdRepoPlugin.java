@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddAMSDKIdRepoPlugin.java,v 1.4 2008-10-13 15:44:21 goodearth Exp $
+ * $Id: AddAMSDKIdRepoPlugin.java,v 1.5 2008-10-30 18:25:02 veiming Exp $
  *
  */
 
@@ -90,12 +90,12 @@ public class AddAMSDKIdRepoPlugin extends AuthenticatedCommand {
         boolean isWebEnabled = getCommandManager().webEnabled();
         String dUserPwd = (isWebEnabled) ? getStringOptionValue(
             "dsame-password-file") :
-            CLIUtil.getFileContent(getStringOptionValue(
-                 "dsame-password-file"), true);
+            CLIUtil.getFileContent(getCommandManager(),
+                getStringOptionValue("dsame-password-file"), true);
         String pUserPwd = (isWebEnabled) ? getStringOptionValue(
             "puser-password-file") :
-            CLIUtil.getFileContent(getStringOptionValue(
-            "puser-password-file"), true);
+            CLIUtil.getFileContent(getCommandManager(),
+                getStringOptionValue("puser-password-file"), true);
         String namingAttr = "uid";
         String orgAttr = "o";
         String attr = getStringOptionValue("user");

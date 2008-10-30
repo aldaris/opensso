@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommandManager.java,v 1.31 2008-10-09 04:28:57 veiming Exp $
+ * $Id: CommandManager.java,v 1.32 2008-10-30 18:25:02 veiming Exp $
  *
  */
 
@@ -174,9 +174,7 @@ public class CommandManager {
                 remainReq = MessageFormat.format(rbMessages.getString(
                     "remaining-unprocessed-requests"), (Object[])arg);
             }
-            String msg = (e instanceof L10NMessage) ?
-                ((L10NMessage)e).getL10NMessage(getLocale()) :
-                e.getMessage();
+            String msg = e.getL10NMessage(getLocale());
 
             if (outputWriter != null) {
                 outputWriter.printlnError(msg);

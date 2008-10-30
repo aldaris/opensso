@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIRequest.java,v 1.14 2008-08-01 00:32:15 veiming Exp $
+ * $Id: CLIRequest.java,v 1.15 2008-10-30 18:25:01 veiming Exp $
  *
  */
 
@@ -234,7 +234,7 @@ public class CLIRequest {
         throws CLIException {
         IOutput outputWriter = mgr.getOutputWriter();
         String basedir = System.getProperty(Bootstrap.JVM_OPT_BOOTSTRAP);
-        String version = CLIUtil.getFileContent(basedir + "/.version");
+        String version = CLIUtil.getFileContent(mgr, basedir + "/.version");
         outputWriter.printlnMessage("");
         outputWriter.printlnMessage(mgr.getProductName() + " " + version);
         outputWriter.printlnMessage("");

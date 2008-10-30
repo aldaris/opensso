@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateServer.java,v 1.3 2008-09-19 23:36:42 beomsuk Exp $
+ * $Id: CreateServer.java,v 1.4 2008-10-30 18:25:03 veiming Exp $
  *
  */
 
@@ -80,8 +80,8 @@ public class CreateServer extends ServerConfigBase {
         Map attributeValues = AttributeValues.parse(
             getCommandManager(), datafile, attrValues);
         
-        String serverconfigxml = CLIUtil.getFileContent(getStringOptionValue(
-            SERVER_CONFIG_XML_FILE));
+        String serverconfigxml = CLIUtil.getFileContent(
+            getCommandManager(), getStringOptionValue(SERVER_CONFIG_XML_FILE));
         String[] params = {serverName};
 
         try {

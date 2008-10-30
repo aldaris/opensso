@@ -22,12 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIException.java,v 1.2 2008-06-25 05:42:08 qcheng Exp $
+ * $Id: CLIException.java,v 1.3 2008-10-30 18:25:01 veiming Exp $
  *
  */
 
 package com.sun.identity.cli;
 
+import com.sun.identity.shared.locale.L10NMessage;
+import java.util.Locale;
 
 /**
  * Commandline Interface Exception.
@@ -103,5 +105,18 @@ public class CLIException extends Exception {
      */
     public String getSubcommandName() {
         return subcommandName;
+    }
+
+    /**
+     * Returns localized message.
+     *
+     * @param locale Locale.
+     * @return localized message.
+     */
+    public String getL10NMessage(Locale locale) {
+        if ((root != null) && (root instanceof L10NMessage)) {
+            return ((L10NMessage)root).getL10NMessage(locale);
+        }
+        return getMessage();
     }
 }
