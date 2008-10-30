@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationPlugin.java,v 1.7 2008-06-25 05:50:00 qcheng Exp $
+ * $Id: FederationPlugin.java,v 1.8 2008-10-30 18:24:04 mallas Exp $
  *
  */
                                                                                 
@@ -133,6 +133,9 @@ public class FederationPlugin implements ConfiguratorPlugin {
                "com.sun.identity.authentication.modules.federation.Federation");
             modules.add(
                "com.sun.identity.authentication.modules.sae.SAE");
+            modules.add(
+               "com.sun.identity.authentication.modules.wss.WSSAuthModule");
+            
             ss.setAttributeDefaults(values);
         } catch (SSOException e) {
             e.printStackTrace();

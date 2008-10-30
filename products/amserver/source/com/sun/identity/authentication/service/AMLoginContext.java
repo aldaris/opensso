@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginContext.java,v 1.16 2008-10-17 20:12:51 dillidorai Exp $
+ * $Id: AMLoginContext.java,v 1.17 2008-10-30 18:24:02 mallas Exp $
  *
  */
 
@@ -623,7 +623,7 @@ public class AMLoginContext {
             bundleName, "loginFailed", null, e));
         } catch (java.lang.Error er) {
             debug.message(
-                "Caught java.lang.Error returned from DSAMEHandler");
+                "Caught java.lang.Error returned from DSAMEHandler", er);
             return;
         }
         debug.message("Came to before if Failed loop");
