@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogReadFileHandler.java,v 1.6 2008-10-13 05:17:15 bigfatrat Exp $
+ * $Id: LogReadFileHandler.java,v 1.7 2008-10-30 04:11:41 bigfatrat Exp $
  *
  */
 
@@ -38,7 +38,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import com.sun.identity.log.LogConstants;
 import com.sun.identity.log.LogQuery;
+import com.sun.identity.log.LogReader;
 import com.sun.identity.log.QueryElement;
 import com.sun.identity.log.spi.Debug;
 import com.sun.identity.log.util.LogRecordSorter;
@@ -405,12 +407,32 @@ public class LogReadFileHandler implements LogReadHandler  {
     private boolean getRecords(boolean isSourceData)
     throws IOException, RuntimeException {
         String bufferedStr;
+        String dummyStr = null;
+        StringBuffer dummySbuf = new StringBuffer(" ");
+        int dcnt = 0;
+
+        if (columnIndices != null) {
+            dcnt = columnIndices.size();
+        } else {
+            dcnt = LogConstants.MAX_FIELDS + 2; // max cols for secure record
+        }
+        for (int i = 1; i < dcnt; i++) {
+            dummySbuf.append("\t ");
+        }
+        dummyStr = dummySbuf.toString();
+
         try {
             BufferedReader flRead = new
             BufferedReader(new FileReader(logFileName));
             while((bufferedStr = flRead.readLine()) != null) {
                 if (bufferedStr.trim().length() <= 0) {
-                    continue; // no field value, so ignore
+                    if (LogReader.isLogSecure()) {
+                        Debug.error("LogReadFileHandler.getRecords: " +
+                            "Blank line in secure log");
+                        bufferedStr = dummyStr;
+                    } else {
+                        continue; // no field value, so ignore
+                    }
                 }
                 if (bufferedStr.startsWith(version) == true) {
                     continue; // line contains version of the elf file
@@ -421,8 +443,8 @@ public class LogReadFileHandler implements LogReadHandler  {
                 // temporary field holder
                 ArrayList listOfFields = new ArrayList();
                 listOfFields = this.getFields(bufferedStr,isSourceData);
-                String [] spltStrArr = null;
 
+                String [] spltStrArr = null;
                 if (columnIndices != null) {
                     spltStrArr = new String [columnIndices.size()];
                 } else {
