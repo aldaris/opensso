@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPConnectionPool.java,v 1.15 2008-10-14 04:57:20 arviranga Exp $
+ * $Id: LDAPConnectionPool.java,v 1.16 2008-10-30 22:13:16 subashvarma Exp $
  *
  */
 
@@ -597,6 +597,9 @@ public class LDAPConnectionPool {
                  * If using a template, then reconnect
                  * to create a separate physical connection
                  */
+                // NPCTE fix for bugId esc 1-15977888, March-2006
+                newConn.cloneConnectionManager();
+                 // end NPCTE
                 newConn.reconnect();
                 if (debug.messageEnabled()) {
                     debug.message("LDAPConnectionPool: "+
