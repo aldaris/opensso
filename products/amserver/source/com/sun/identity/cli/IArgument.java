@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IArgument.java,v 1.9 2008-09-04 00:33:58 rajeevangal Exp $
+ * $Id: IArgument.java,v 1.10 2008-10-31 16:18:36 veiming Exp $
  *
  */
 
@@ -217,4 +217,9 @@ public interface IArgument {
      * Embedded store password
      */
     String EMBEDDED_PASSWORD = "password";
+
+    /**
+     * File option name.
+     */
+    String FILE = "file";
 }

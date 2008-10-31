@@ -22,15 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RealmDeletePolicy.java,v 1.3 2008-06-25 05:42:16 qcheng Exp $
- *
+ * $Id: RealmDeletePolicy.java,v 1.4 2008-10-31 16:18:39 veiming Exp $
  */
 
 package com.sun.identity.cli.realm;
 
-
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.cli.AttributeValues;
 import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
@@ -41,6 +40,7 @@ import com.sun.identity.cli.RequestContext;
 import com.sun.identity.policy.PolicyException;
 import com.sun.identity.policy.PolicyManager;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -63,6 +63,20 @@ public class RealmDeletePolicy extends AuthenticatedCommand {
         SSOToken adminSSOToken = getAdminSSOToken();
         String realm = getStringOptionValue(IArgument.REALM_NAME);
         List policyNames = (List)rc.getOption(ARGUMENT_POLICY_NAMES);
+        String file = getStringOptionValue(IArgument.FILE);
+        if (policyNames == null) {
+            policyNames = new ArrayList();
+        }
+ 
+        if (file != null) {
+            policyNames.addAll(AttributeValues.parseValues(file));
+        }
+ 
+        if (policyNames.isEmpty()) {
+            throw new CLIException(getResourceString("missing-policy-names"),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        }
+
         IOutput outputWriter = getOutputWriter();
         String currentPolicyName = null;
 

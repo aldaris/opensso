@@ -22,15 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteIdentities.java,v 1.7 2008-06-25 05:42:15 qcheng Exp $
- *
+ * $Id: DeleteIdentities.java,v 1.8 2008-10-31 16:18:38 veiming Exp $
  */
 
 package com.sun.identity.cli.idrepo;
 
-
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
+import com.sun.identity.cli.AttributeValues;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
 import com.sun.identity.cli.IArgument;
@@ -44,6 +43,7 @@ import com.sun.identity.idm.IdType;
 import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.SMSException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -66,8 +66,22 @@ public class DeleteIdentities extends IdentityCommand {
 
         SSOToken adminSSOToken = getAdminSSOToken();
         String realm = getStringOptionValue(IArgument.REALM_NAME);
-        List idNames = (List)rc.getOption(ARGUMENT_ID_NAMES);
         String type = getStringOptionValue(ARGUMENT_ID_TYPE);
+
+        List idNames = (List)rc.getOption(ARGUMENT_ID_NAMES);
+        String file = getStringOptionValue(IArgument.FILE);
+        if (idNames == null) {
+            idNames = new ArrayList();
+        }
+ 
+        if (file != null) {
+            idNames.addAll(AttributeValues.parseValues(file));
+        }
+ 
+        if (idNames.isEmpty()) {
+            throw new CLIException(getResourceString("missing-identity-names"),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        }
 
         String displayableIdNames = tokenize(idNames);
         String[] params = {realm, type, displayableIdNames};

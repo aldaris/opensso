@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.95 2008-10-29 03:14:04 veiming Exp $
+ * $Id: AccessManager.java,v 1.96 2008-10-31 16:18:38 veiming Exp $
  *
  */
 
@@ -486,13 +486,14 @@ public class AccessManager {
         implClassName="com.sun.identity.cli.realm.RealmDeletePolicy",
         description="Delete policies from a realm.",
         webSupport="true",
-        mandatoryOptions={
-            "realm|e|s|Name of realm.",
-            "policynames|p|m|Names of policy to be deleted."},
+        mandatoryOptions={"realm|e|s|Name of realm."},
         optionAliases={},
         macro="authentication",
-        optionalOptions={},
+        optionalOptions={
+            "policynames|p|m|Names of policy to be deleted.",
+            "file|D|s|Name of file that contains the policy names to be deleted."},
         resourceStrings={
+            "missing-policy-names=Policy names need to be provided either with --policynames or --file option",
             "delete-policy-in-realm-succeed=Policies were deleted under realm, {0}."})
     private String delete_policies;
 
@@ -1044,12 +1045,14 @@ public class AccessManager {
         webSupport="true",
         mandatoryOptions={
             "realm|e|s|Name of realm.",
-            "idnames|i|m|Names of identites.",
             "idtype|t|s|Type of Identity such as User, Role and Group."},
         optionAliases={},
         macro="authentication",
-        optionalOptions={},
+        optionalOptions={
+            "idnames|i|m|Names of identites.",
+            "file|D|s|Name of file that contains the identity names to be deleted."},
         resourceStrings={
+            "missing-identity-names=Identity names need to be provided either with --idnames or --file option.",
             "delete-identity-succeed=The following {1} was deleted from {0}.",
             "delete-identities-succeed=The following {1}s were deleted from {0}."})
     private String delete_identities;
@@ -1841,13 +1844,14 @@ public class AccessManager {
         implClassName="com.sun.identity.cli.agentconfig.DeleteAgents",
         description="Delete agent configurations.",
         webSupport="true",
-        mandatoryOptions={
-            "realm|e|s|Name of realm.",
-            "agentnames|s|m|Names of agent."},
+        mandatoryOptions={"realm|e|s|Name of realm."},
         optionAliases={},
         macro="authentication",
-        optionalOptions={},
+        optionalOptions={
+            "agentnames|s|m|Names of agent.",
+            "file|D|s|Name of file that contains the agent names to be deleted."},
         resourceStrings={
+            "missing-agent-names=Agent names need to be provided either with --agentnames or --file option.",
             "delete-agent-succeeded=The following agents were deleted."
         }
     )
@@ -1984,13 +1988,14 @@ public class AccessManager {
         implClassName="com.sun.identity.cli.agentconfig.DeleteAgentGroups",
         description="Delete agent groups.",
         webSupport="true",
-        mandatoryOptions={
-            "realm|e|s|Name of realm.",
-            "agentgroupnames|s|m|Names of agent group."},
+        mandatoryOptions={"realm|e|s|Name of realm."},
         optionAliases={},
         macro="authentication",
-        optionalOptions={},
+        optionalOptions={
+            "agentgroupnames|s|m|Names of agent group.",
+            "file|D|s|Name of file that contains the agent group names to be deleted."},
         resourceStrings={
+            "missing-agent-group-names=Agent group names need to be provided either with --agentgroupnames or --file option.",
             "delete-agent-group-succeeded=The following agent groups were deleted."
         }
     )

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteAgentGroups.java,v 1.4 2008-07-14 21:33:15 veiming Exp $
+ * $Id: DeleteAgentGroups.java,v 1.5 2008-10-31 16:18:37 veiming Exp $
  *
  */
 
@@ -30,6 +30,7 @@ package com.sun.identity.cli.agentconfig;
 
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
+import com.sun.identity.cli.AttributeValues;
 import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
@@ -42,6 +43,7 @@ import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.sm.SMSException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -66,6 +68,20 @@ public class DeleteAgentGroups extends AuthenticatedCommand {
         SSOToken adminSSOToken = getAdminSSOToken();
         String realm = getStringOptionValue(IArgument.REALM_NAME);
         List names = (List)rc.getOption(IArgument.AGENT_GROUP_NAMES);
+        String file = getStringOptionValue(IArgument.FILE);
+        if (names == null) {
+            names = new ArrayList();
+        }
+
+        if (file != null) {
+            names.addAll(AttributeValues.parseValues(file));
+        }
+ 
+         if (names.isEmpty()) {
+            throw new CLIException(getResourceString(
+                "missing-agent-group-names"),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        }
 
         String displayableNames = tokenize(names);
         String[] params = {realm, displayableNames};
