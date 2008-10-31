@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.31 2008-08-22 20:40:42 hengming Exp $
+ * $Id: SPACSUtils.java,v 1.32 2008-10-31 15:24:01 qcheng Exp $
  *
  */
 
@@ -1494,63 +1494,65 @@ public class SPACSUtils {
             throw new SAML2Exception(sessE);
         }
         String tokenID = sessionProvider.getSessionID(session);
-        List fedSessions = (List)
-            SPCache.fedSessionListsByNameIDInfoKey.get(infoKeyString);
-        if (fedSessions == null) {
-            synchronized (SPCache.fedSessionListsByNameIDInfoKey) {
-                fedSessions = (List)
+        if (!SPCache.isFedlet) {
+            List fedSessions = (List)
                 SPCache.fedSessionListsByNameIDInfoKey.get(infoKeyString);
-                if (fedSessions == null) {
-                    fedSessions = new ArrayList();
-                }
-            }  
-            synchronized (fedSessions) {
-                fedSessions.add(new SPFedSession(sessionIndex, tokenID,
-                    info));
-                SPCache.fedSessionListsByNameIDInfoKey.put(
-                    infoKeyString, fedSessions);
-            }
-            if (isIDPProxy) {
-                //IDP Proxy 
-                IDPSession idpSess = (IDPSession)
-                    IDPCache.idpSessionsBySessionID.get(
-                    tokenID);
-                if (idpSess == null) {
-                    idpSess = new IDPSession(session);
-                    IDPCache.idpSessionsBySessionID.put(
-                        tokenID, idpSess);
-                }
-                if (SAML2Utils.debug.messageEnabled()) {
-                    SAML2Utils.debug.message("Add Session Partner: " +
-                        info.getRemoteEntityID());
-                } 
-                idpSess.addSessionPartner(new SAML2SessionPartner(
-                    info.getRemoteEntityID(), true));
-                 // end of IDP Proxy        
-            }
-        } else {
-            synchronized (fedSessions) {
-                Iterator iter = fedSessions.iterator();
-                boolean found = false;
-                while (iter.hasNext()) {
-                    SPFedSession temp = (SPFedSession) iter.next();
-                    if (temp.idpSessionIndex.equals(sessionIndex)) {
-                        temp.spTokenID = tokenID;
-                        temp.info = info;
-                        found = true;
-                        break;
+            if (fedSessions == null) {
+                synchronized (SPCache.fedSessionListsByNameIDInfoKey) {
+                    fedSessions = (List)
+                    SPCache.fedSessionListsByNameIDInfoKey.get(infoKeyString);
+                    if (fedSessions == null) {
+                        fedSessions = new ArrayList();
                     }
-                }    
-                if (!found) {
-                    fedSessions.add(
-                        new SPFedSession(sessionIndex, tokenID, info));
+                }  
+                synchronized (fedSessions) {
+                    fedSessions.add(new SPFedSession(sessionIndex, tokenID,
+                        info));
                     SPCache.fedSessionListsByNameIDInfoKey.put(
                         infoKeyString, fedSessions);
                 }
-           }    
-        }
-        SPCache.fedSessionListsByNameIDInfoKey.put(infoKeyString,
+                if (isIDPProxy) {
+                    //IDP Proxy 
+                    IDPSession idpSess = (IDPSession)
+                        IDPCache.idpSessionsBySessionID.get(
+                        tokenID);
+                    if (idpSess == null) {
+                        idpSess = new IDPSession(session);
+                        IDPCache.idpSessionsBySessionID.put(
+                            tokenID, idpSess);
+                    }
+                    if (SAML2Utils.debug.messageEnabled()) {
+                        SAML2Utils.debug.message("Add Session Partner: " +
+                            info.getRemoteEntityID());
+                    } 
+                    idpSess.addSessionPartner(new SAML2SessionPartner(
+                        info.getRemoteEntityID(), true));
+                    // end of IDP Proxy        
+                }
+            } else {
+                synchronized (fedSessions) {
+                    Iterator iter = fedSessions.iterator();
+                    boolean found = false;
+                    while (iter.hasNext()) {
+                        SPFedSession temp = (SPFedSession) iter.next();
+                        if (temp.idpSessionIndex.equals(sessionIndex)) {
+                            temp.spTokenID = tokenID;
+                            temp.info = info;
+                            found = true;
+                            break;
+                        }
+                    }    
+                    if (!found) {
+                        fedSessions.add(
+                            new SPFedSession(sessionIndex, tokenID, info));
+                        SPCache.fedSessionListsByNameIDInfoKey.put(
+                            infoKeyString, fedSessions);
+                    }
+               }    
+            }
+            SPCache.fedSessionListsByNameIDInfoKey.put(infoKeyString,
                                                    fedSessions);
+        }
         try {
             sessionProvider.addListener(
                 session, new SPSessionListener(infoKeyString, tokenID));

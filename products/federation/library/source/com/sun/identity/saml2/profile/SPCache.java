@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPCache.java,v 1.14 2008-07-16 21:07:27 weisun2 Exp $
+ * $Id: SPCache.java,v 1.15 2008-10-31 15:24:02 qcheng Exp $
  *
  */
 
@@ -50,6 +50,7 @@ import netscape.ldap.util.DN;
 public class SPCache {
 
     public static int interval = SAML2Constants.CACHE_CLEANUP_INTERVAL_DEFAULT;
+    public static boolean isFedlet = false; 
     
     static {
         String intervalStr = SystemPropertiesManager.get(
@@ -68,6 +69,16 @@ public class SPCache {
                     + "invalid cleanup interval. Using default.");
             }
         }
+        // use the configuration implementation class to determine
+        // if this is Fedlet, this could be done using a dedicate property
+        // in the future 
+        String configClass = SystemPropertiesManager.get(
+            "com.sun.identity.plugin.configuration.class");
+        if ((configClass != null) && (configClass.trim().equals(
+        "com.sun.identity.plugin.configuration.impl.FedletConfigurationImpl"))){
+            //this is a Fedlet
+            isFedlet = true;
+        } 
     }
     
     private SPCache() {
