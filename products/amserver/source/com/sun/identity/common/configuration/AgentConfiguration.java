@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.43 2008-10-10 18:18:56 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.44 2008-11-01 03:07:15 veiming Exp $
  *
  */
 
@@ -438,7 +438,7 @@ public class AgentConfiguration {
         amir.createIdentity(IdType.AGENTONLY, agentName, inheritedValues);
     }
 
-    private static void tagswapAttributeValues(
+    public static void tagswapAttributeValues(
         Map attributeValues,
         String agentType,
         FQDNUrl serverURL,

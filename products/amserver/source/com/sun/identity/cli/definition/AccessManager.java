@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.96 2008-10-31 16:18:38 veiming Exp $
+ * $Id: AccessManager.java,v 1.97 2008-11-01 03:07:15 veiming Exp $
  *
  */
 
@@ -1830,9 +1830,17 @@ public class AccessManager {
         optionAliases={},
         macro="authentication",
         optionalOptions={
+            "serverurl|s|s|Server URL. e.g. http://www.example.com:58080/opensso. This option is valid for J2EEAgent and WebAgent.",
+            "agenturl|g|s|Agent URL. e.g. http://www.agent.com:8080/agent. WebAgent does not take URL with path. e.g. http://www.agent.com:8080. This option is valid for J2EEAgent and WebAgent.",
             "attributevalues|a|m|Properties e.g. homeaddress=here.",
             "datafile|D|s|Name of file that contains properties."},
         resourceStrings={
+            "server-url-missing=Server URL is needed.",
+            "agent-url-missing=Agent URL is needed.",
+            "does-not-support-server-url=Server URL was supported for J2EEAgent and WebAgent only.",
+            "does-not-support-agent-url=Agent URL was supported for J2EEAgent and WebAgent only.",
+            "server-url-invalid=Server URL is invalid.",
+            "agent-url-invalid=Agent URL is invalid.",
             "does-not-support-agent-creation={0} did not support agent creation.",
             "agent-creation-pwd-needed=Password for agent is required for creating agent. datafile or attributevalues needs to have value for userpassword.",
             "create-agent-succeeded=Agent configuration was created."
@@ -1975,6 +1983,7 @@ public class AccessManager {
         optionAliases={},
         macro="authentication",
         optionalOptions={
+            "serverurl|s|s|Server URL. e.g. http://www.example.com:58080/opensso. This option is valid for J2EEAgent and WebAgent.",
             "attributevalues|a|m|Properties e.g. homeaddress=here.",
             "datafile|D|s|Name of file that contains properties."},
         resourceStrings={

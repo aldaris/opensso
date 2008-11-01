@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateAgentGroup.java,v 1.6 2008-06-25 05:42:10 qcheng Exp $
+ * $Id: CreateAgentGroup.java,v 1.7 2008-11-01 03:07:15 veiming Exp $
  *
  */
 
@@ -43,7 +43,9 @@ import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdOperation;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
+import com.sun.identity.shared.FQDNUrl;
 import com.sun.identity.sm.SMSException;
+import java.net.MalformedURLException;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
@@ -80,6 +82,16 @@ public class CreateAgentGroup extends AuthenticatedCommand {
                 datafile, attrValues);        
         }
 
+        String serverURL = getStringOptionValue(IArgument.SERVER_URL);
+        boolean webJ2EEAgent = agentType.equals("WebAgent") ||
+            agentType.equals("J2EEAgent");
+
+        if (!webJ2EEAgent && (serverURL != null)) {
+            throw new CLIException(
+                getResourceString("does-not-support-server-url"),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        }
+
         String[] params = {realm, agentType, groupName};
         writeLog(LogWriter.LOG_ACCESS, Level.INFO, "ATTEMPT_CREATE_AGENT_GROUP",
             params);
@@ -95,8 +107,34 @@ public class CreateAgentGroup extends AuthenticatedCommand {
                     ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
             }
 
-            AgentConfiguration.createAgentGroup(adminSSOToken, realm, groupName,
-                agentType, attributeValues);
+            if (webJ2EEAgent) {
+                FQDNUrl fqdnServerURL = null;
+                try {
+                    if (serverURL != null) {
+                        fqdnServerURL = new FQDNUrl(serverURL);
+                    }
+                } catch (MalformedURLException e) {
+                    throw new CLIException(getResourceString(
+                        "server-url-invalid"),
+                        ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+                }
+ 
+                if (fqdnServerURL != null) {
+                    Map map = AgentConfiguration.getDefaultValues(
+                        agentType, true);
+                    map.putAll(attributeValues);
+                    AgentConfiguration.tagswapAttributeValues(map, agentType,
+                        fqdnServerURL, null);
+                    AgentConfiguration.createAgentGroup(adminSSOToken, realm,
+                        groupName, agentType, map);
+                } else {
+                    AgentConfiguration.createAgentGroup(adminSSOToken, realm,
+                        groupName, agentType, attributeValues);
+                }
+            } else {
+                AgentConfiguration.createAgentGroup(adminSSOToken, realm,
+                    groupName, agentType, attributeValues);
+            }
             getOutputWriter().printlnMessage(MessageFormat.format(
                 getResourceString("create-agent-group-succeeded"),
                 (Object[])params));

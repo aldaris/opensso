@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateAgent.java,v 1.8 2008-06-25 05:42:09 qcheng Exp $
+ * $Id: CreateAgent.java,v 1.9 2008-11-01 03:07:14 veiming Exp $
  *
  */
 
@@ -44,7 +44,9 @@ import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdOperation;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
+import com.sun.identity.shared.FQDNUrl;
 import com.sun.identity.sm.SMSException;
+import java.net.MalformedURLException;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.Iterator;
@@ -58,6 +60,8 @@ import java.util.logging.Level;
  * This command creates agent.
  */
 public class CreateAgent extends AuthenticatedCommand {
+    private static final String AGENT_URL = "agenturl";
+
     /**
      * Services a Commandline Request.
      *
@@ -86,6 +90,35 @@ public class CreateAgent extends AuthenticatedCommand {
         if ((attributeValues == null) || attributeValues.isEmpty()) {
             throw new CLIException(
                 getResourceString("agent-creation-pwd-needed"),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        }
+
+        String serverURL = getStringOptionValue(IArgument.SERVER_URL);
+        String agentURL = getStringOptionValue(AGENT_URL);
+        boolean webJ2EEAgent = agentType.equals("WebAgent") ||
+            agentType.equals("J2EEAgent");
+
+        if (!webJ2EEAgent) {
+            if (serverURL != null) {
+                throw new CLIException(
+                    getResourceString("does-not-support-server-url"),
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+            }
+            if (agentURL != null) {
+                throw new CLIException(
+                    getResourceString("does-not-support-agent-url"),
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+            }
+        }
+
+        if ((serverURL == null) && (agentURL != null)) {
+            throw new CLIException(
+                getResourceString("server-url-missing"),
+                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        }
+        if ((serverURL != null) && (agentURL == null)) {
+            throw new CLIException(
+                getResourceString("agent-url-missing"),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }
 
@@ -123,9 +156,43 @@ public class CreateAgent extends AuthenticatedCommand {
                     (Object[])args),
                     ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
             }
-            
-            AgentConfiguration.createAgent(adminSSOToken, realm, agentName, 
-                agentType, attributeValues);
+
+            if (webJ2EEAgent) {
+                if (serverURL != null) {
+                    FQDNUrl fqdnServerURL = null;
+                    try {
+                        fqdnServerURL = new FQDNUrl(serverURL);
+                    } catch (MalformedURLException e) {
+                        throw new CLIException(getResourceString(
+                            "server-url-invalid"),
+                            ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+                    }
+
+                    FQDNUrl fqdnAgentURL = null;
+                    try {
+                        fqdnAgentURL = new FQDNUrl(agentURL);
+                    } catch (MalformedURLException e) {
+                        throw new CLIException(getResourceString(
+                            "agent-url-invalid"),
+                            ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+                    }
+
+                    Map map = AgentConfiguration.getDefaultValues(
+                        agentType, false);
+                    map.putAll(attributeValues);
+                    AgentConfiguration.tagswapAttributeValues(map, agentType,
+                        fqdnServerURL, fqdnAgentURL);
+                    AgentConfiguration.createAgent(adminSSOToken, realm,
+                        agentName, agentType, map);
+                } else {
+                    AgentConfiguration.createAgent(adminSSOToken, realm,
+                        agentName, agentType, attributeValues);
+                }
+            } else {
+                AgentConfiguration.createAgent(adminSSOToken, realm, agentName, 
+                    agentType, attributeValues);
+            }
+
             getOutputWriter().printlnMessage(MessageFormat.format(
                 getResourceString("create-agent-succeeded"),
                 (Object[])params));
