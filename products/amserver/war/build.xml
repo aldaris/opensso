@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.57 2008-10-07 23:58:50 rajeevangal Exp $
+   $Id: build.xml,v 1.58 2008-11-03 08:00:01 mahesh_prasad_r Exp $
 
 -->
 
@@ -324,7 +324,17 @@
             <zipfileset dir="${javahelp.dir}/css" prefix="html/ko/help/css" />
             <zipfileset dir="${javahelp.dir}/ents" prefix="html/ko/help/ents" />
             <zipfileset dir="${javahelp.dir}/graphics" prefix="html/ko/help/graphics" />
-            
+
+            <zipfileset dir="${amserver.docs.dir}/console/javahelp" prefix="html/zh/help">
+                <include name="app.hs" />
+                <include name="map.jhm" />
+                <include name="version.html" />
+            </zipfileset>
+            <zipfileset dir="${amserver.docs.dir}/console/javahelp/zh" prefix="html/zh/help" />
+            <zipfileset dir="${javahelp.dir}/css" prefix="html/zh/help/css" />
+            <zipfileset dir="${javahelp.dir}/ents" prefix="html/zh/help/ents" />
+            <zipfileset dir="${javahelp.dir}/graphics" prefix="html/zh/help/graphics" />
+
             <zipfileset dir="${amserver.docs.dir}/console/javahelp" prefix="html/zh_CN/help">
                 <include name="app.hs" />
                 <include name="map.jhm" />
@@ -344,7 +354,7 @@
             <zipfileset dir="${javahelp.dir}/css" prefix="html/zh_TW/help/css" />
             <zipfileset dir="${javahelp.dir}/ents" prefix="html/zh_TW/help/ents" />
             <zipfileset dir="${javahelp.dir}/graphics" prefix="html/zh_TW/help/graphics" />        
-         
+
             <zipfileset dir="${amserver.passwordreset.dir}/html" prefix="password">
                 <include name="index.html" />
             </zipfileset>
