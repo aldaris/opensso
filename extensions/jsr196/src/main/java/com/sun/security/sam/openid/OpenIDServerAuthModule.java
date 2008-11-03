@@ -22,14 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenIDServerAuthModule.java,v 1.1 2008-10-27 14:17:22 monzillo Exp $
+ * $Id: OpenIDServerAuthModule.java,v 1.2 2008-11-03 20:51:32 monzillo Exp $
  */
 
 package com.sun.security.sam.openid;
 
 import java.util.logging.Level;
 
-import java.io.InputStream;
 import java.io.PrintWriter;
 
 import java.net.URL;
@@ -64,14 +63,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
-
 import com.sun.security.sam.ServletAuthModule;
+import java.util.Properties;
 
 /**
  *
@@ -93,7 +86,7 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
     private static final int DEBUG_CHECKID = 16;
     private static final int DEBUG_TRUST = 32;
     private static final HashMap debugStagesMap = new HashMap();
-
+    
     static {
         debugStagesMap.put("all", DEBUG_TRACE +
                 DEBUG_LOGIN_FORM +
@@ -111,18 +104,6 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
     private int debugStagesMask;
     private ArrayList trustedProviders;
     private String[] trustedGroups;
-    private static ElementQuery[] idQueries = new ElementQuery[]{
-        new ElementQuery("link",
-        new KeyValuePair[]{
-            new KeyValuePair("rel", "openid.server"),
-            new KeyValuePair("href", null)
-        }),
-        new ElementQuery("link",
-            new KeyValuePair[]{
-            new KeyValuePair("rel", "openid.delegate"),
-            new KeyValuePair("href", null)  
-        })
-    };
     private HostnameVerifier hostnameVerifier;
     private static AssociationManager assocManager;
     private static String OPENID_SESSION_TYPE_OPTIONS_KEY =
@@ -135,9 +116,13 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
             "trusted.server";
     private static String ASSIGN_GROUPS_TRUSTED_OPTIONS_KEY =
             "assign.groups.trusted";
+    private static String IDPAGE_CONTENT_TYPE_OPTIONS_KEY =
+            "openid.content.type";
 
     // DH-SHA1 or blank - defines encrption mode used on association to provider
     private String sessionType;
+    // Defines content type set in Accept header on fetch of identity page
+    private String IDPageContentType;
     private boolean checkSetup;
 
     public boolean checkLogCriteria(int criteria) {
@@ -210,6 +195,18 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
         return bitMap;
     }
 
+    private String parseIDPageContentType(Map options) {
+
+        String rvalue = null;
+        if (options != null) {
+            rvalue = (String) options.get(IDPAGE_CONTENT_TYPE_OPTIONS_KEY);
+        }
+        if (rvalue == null) {
+            rvalue = "text/html";
+        }
+        return rvalue;
+    }
+
     private ArrayList parseTrustedProviderOption(Map options) {
 
         ArrayList providers = null;
@@ -225,9 +222,6 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
                 if (token != null) {
 
                     X500Principal provider = new X500Principal(token);
-
-                    logInfo(DEBUG_TRUST, "openid.trusted_provider",
-                            key + "=" + provider.getName());
 
                     if (providers == null) {
                         providers = new ArrayList();
@@ -248,10 +242,10 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
     /* 
      * this is only called when trusted providers are configured; in which case 
      * trusted (assigned) groups must also be configured.
-     */  
-    private String[] parseAssignGroupsTrustedOption(Map options) 
-        throws AuthException {
-        
+     */
+    private String[] parseAssignGroupsTrustedOption(Map options)
+            throws AuthException {
+
         String[] groupNames = new String[0];
         String groupList = (String) options.get(ASSIGN_GROUPS_TRUSTED_OPTIONS_KEY);
         if (groupList != null) {
@@ -262,8 +256,7 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
                 String name = tokenizer.nextToken();
                 if (groupSet == null) {
                     groupSet = new HashSet<String>();
-                } 
-                logInfo(DEBUG_TRUST, "openid.trusted.group",name);
+                }
                 groupSet.add(name);
             }
             if (groupSet != null && !groupSet.isEmpty()) {
@@ -275,11 +268,14 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
         }
         return groupNames;
     }
-    
+
     /**
      * Module specific options as configured in options Map
      * 
      * openid.session_type=sessionType
+     * 
+     * openid.content.type = contenttype value set in Accept header of identity page
+     *      request.
      *
      * trusted.providerX=providerName (where X starts at 0, and increments X+1)
      *      each providerName is an X500 name, as established by SSL, of a
@@ -321,7 +317,7 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
 
         super.initialize(requestPolicy, responsePolicy, handler, options);
 
-        debugStagesMask = parseDebugStagesOption(options);
+        IDPageContentType = parseIDPageContentType(options);
 
         sessionType = parseSessionTypeOption(options);
 
@@ -478,13 +474,18 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
 
         debugRequest(request);
 
-        if (loginURI.equals(getRequestURIMinusContextPath(request))) {
+        if (getRequestURIMinusContextPath(request).endsWith(loginURI)) {
 
             logInfo(DEBUG_TRACE, "openid.received_login_form");
 
             // get query to send to identity provider
 
             String idpURL = getIdentityProviderURL(request);
+
+            if (idpURL == null) {
+                logInfo(DEBUG_TRACE, "openid.empty_login_form");
+                respondWithLoginForm(request, response);
+            }
 
             // send query to identity provider
 
@@ -511,7 +512,7 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
                 } else {
 
                     // send query to identity provider
-                    
+
                     logInfo(DEBUG_CHECKID, "openid.redirecting_to_idp");
 
                     redirect(idpURL, response);
@@ -555,7 +556,7 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
                     logInfo(DEBUG_CHECKID, "openid.redirecting_to_idp");
 
                     // send query to identity provider
-                    
+
                     redirect(idpURL, response);
                 }
             }
@@ -633,9 +634,13 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
         logInfo(DEBUG_LOGIN_FORM, "openid.query_parameter:",
                 "openid_url" + "=" + uri);
 
-        URL identityURL = completeIdentityURL(uri);
+        // empty value for openid_url
+        if (uri == null || uri.length() == 0) {
+            return null;
+        }
 
-        String server = null;
+        URL identityURL = completeIdentityURL(uri);
+        Properties properties;
 
         try {
 
@@ -656,12 +661,14 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
 
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Content-type", "application/x-www-form-urlencoded");
+            connection.setRequestProperty("Accept", IDPageContentType);
             connection.connect();
 
             logInfo(DEBUG_ID_PAGE, "openid.parsing_page_from_server",
                     identityURL.toString());
 
-            parseOpenIDPage(connection.getInputStream(), idQueries);
+            properties = OpenIDPageParser.parse(connection,
+                    logger, checkLogCriteria(DEBUG_ID_PAGE));
 
             connection.disconnect();
 
@@ -674,7 +681,7 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
             throw ae;
         }
 
-        String idP = idQueries[0].getAttributeValue("href");
+        String idP = properties.getProperty("openid.server");
 
         logInfo(DEBUG_ID_PAGE, "openid.identity_form_value",
                 "openid.server" + "=" + idP);
@@ -696,7 +703,7 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
             throw ae;
         }
 
-        String delegate = idQueries[1].getAttributeValue("href");
+        String delegate = properties.getProperty("openid.delegate");
 
         logInfo(DEBUG_ID_PAGE, "openid.identity_form_value",
                 "openid.delegate" + "=" + delegate);
@@ -815,11 +822,11 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
                 String token = tokenizer.nextToken();
 
                 if (token.startsWith(parameter)) {
-
-                    rvalue = URLDecoder.decode(token.substring(parameter.length() + 1));
-
+                    rvalue = token.substring(parameter.length() + 1);
+                    if (rvalue.length() > 0) {
+                        rvalue = URLDecoder.decode(rvalue);
+                    }
                     break;
-
                 }
             }
         }
@@ -923,7 +930,6 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
      * @param response
      * @throws javax.security.auth.message.AuthException
      */
-
     void respondWithLoginForm(HttpServletRequest request,
             HttpServletResponse response)
             throws AuthException {
@@ -979,115 +985,4 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
             throw ae;
         }
     }
-
-    static class ElementQuery {
-
-        String eName;
-        KeyValuePair[] keyPairs;
-        HashMap attributes;
-
-        ElementQuery(String eName, KeyValuePair[] keyPairs) {
-            this.eName = eName;
-            this.keyPairs = keyPairs;
-            this.attributes = null;
-        }
-
-        String getAttributeValue(String key) {
-            String rvalue = null;
-            if (attributes != null) {
-                rvalue = (String) attributes.get(key);
-            }
-
-            return rvalue;
-        }
-    }
-
-    static class KeyValuePair {
-
-        String key;
-        String value;
-
-        KeyValuePair(String key, String value) {
-            this.key = key;
-            this.value = value;
-        }
-    }
-
-    static class ParserHandler extends DefaultHandler {
-
-        ElementQuery[] queries;
-
-        ParserHandler(ElementQuery[] queries) {
-            this.queries = queries;
-        }
-
-        @Override
-        public void startElement(String nameSpaceURI, String localName,
-                String qName, Attributes atts) throws SAXException {
-
-            for (ElementQuery query : queries) {
-
-                if (query.attributes == null) {
-
-                    if (qName.equals(query.eName)) {
-
-                        for (int i = 0; i < query.keyPairs.length; i++) {
-
-                            String value = atts.getValue(query.keyPairs[i].key);
-
-                            if (value != null) {
-
-                                String keyValue = query.keyPairs[i].value;
-
-                                if (keyValue != null &&
-                                        !keyValue.equals(value)) {
-
-                                    return;
-
-                                }
-
-                            } else {
-                                return;
-                            }
-                        }
-
-                        query.attributes = new HashMap();
-                        for (int i = 0; i < atts.getLength(); i++) {
-                            query.attributes.put(atts.getQName(i), atts.getValue(i));
-                        }
-                    }
-                }
-            }
-        }
-    }
-/**
- * Parses the doc (i.e., the users openid page, to
- * obtain the values identified in the queries argument.
- * returns values within the queries arguument.
- * @param doc
- * @param queries
- * @throws javax.security.auth.message.AuthException
- */
-    private void parseOpenIDPage(InputStream doc,
-            ElementQuery[] queries)
-            throws AuthException {
-
-        for (ElementQuery query : queries) {
-            query.attributes = null;
-
-        }
-
-        SAXParserFactory factory = SAXParserFactory.newInstance();
-        try {
-            SAXParser parser = factory.newSAXParser();
-            parser.parse(doc, new ParserHandler(queries));
-        } catch (Throwable t) {
-            String msg = "openid.failed_parsing_id_page";
-            logger.log(Level.WARNING, msg, t);
-            AuthException ae = new AuthException(msg);
-            ae.initCause(t);
-            throw ae;
-        }
-    }
-
 }
