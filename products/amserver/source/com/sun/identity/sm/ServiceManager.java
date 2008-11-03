@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceManager.java,v 1.23 2008-10-03 05:33:32 goodearth Exp $
+ * $Id: ServiceManager.java,v 1.24 2008-11-03 19:29:54 goodearth Exp $
  *
  */
 
@@ -79,6 +79,9 @@ public class ServiceManager {
 
     // For realms and co-existance support
     protected static final String COEXISTENCE_ATTR_NAME = "coexistenceMode";
+
+    protected static HashMap serviceNameDefaultVersion =
+        new CaseInsensitiveHashMap();
 
     protected static final String REALM_ATTR_NAME = "realmMode";
 
@@ -271,9 +274,22 @@ public class ServiceManager {
                     while (it.hasNext()) {
                         try {
                             String service = (String) it.next();
-                            ServiceSchemaManagerImpl ssm = 
-                                ServiceSchemaManagerImpl.getInstance(
+                            ServiceSchemaManagerImpl ssm;
+                            if (isCoexistenceMode()) {
+                                // For backward compatibility, get the
+                                // version from the service.
+                                // no hardcoding to '1.0', even if it
+                                // improves performance in OpenSSO.
+                                // Otherwise, it breaks for services like
+                                // iplanetAMProviderConfigService with
+                                // '1.1' as version.
+                                ssm = ServiceSchemaManagerImpl.getInstance(
+                                    token, service, serviceDefaultVersion(
+                                    token, service));
+                            } else {
+                                ssm = ServiceSchemaManagerImpl.getInstance(
                                         token, service, "1.0");
+                            }
                             if (ssm != null) {
                                 // Check if service has schemaType
                                 if (schemaType != null &&
@@ -693,6 +709,7 @@ public class ServiceManager {
         // Clear the local caches
         serviceNameAndOCs = new CaseInsensitiveHashMap();
         serviceVersions = new CaseInsensitiveHashMap();
+        serviceNameDefaultVersion = new CaseInsensitiveHashMap();
         accessManagerServers = null;
         amsdkChecked = false;
 
@@ -952,6 +969,25 @@ public class ServiceManager {
         // Reset the schema types and service names
         // Reset the service names
         serviceNames = null;
+    }
+
+    protected static String serviceDefaultVersion(SSOToken token,
+    String serviceName) throws SMSException, SSOException {
+        String version = (String) serviceNameDefaultVersion.get(serviceName);
+        if (version == null) {
+            Iterator iter = getVersions(token, serviceName).iterator();
+            if (iter.hasNext()) {
+                version = (String) iter.next();
+            } else {
+                String msgs[] = { serviceName };
+                throw (new ServiceNotFoundException(
+                    IUMSConstants.UMS_BUNDLE_NAME,
+                    IUMSConstants.SMS_service_does_not_exist,
+                    msgs));
+            }
+            serviceNameDefaultVersion.put(serviceName, version);
+        }
+        return (version);
     }
 
     /**

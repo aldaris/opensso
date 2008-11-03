@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrganizationConfigManagerImpl.java,v 1.9 2008-07-11 01:46:21 arviranga Exp $
+ * $Id: OrganizationConfigManagerImpl.java,v 1.10 2008-11-03 19:29:53 goodearth Exp $
  *
  */
 
@@ -112,8 +112,20 @@ class OrganizationConfigManagerImpl implements SMSObjectListener {
             for (Iterator names = se.getSubEntries(token).iterator(); names
                     .hasNext();) {
                 String serviceName = (String) names.next();
-                ServiceConfigManagerImpl scmi = ServiceConfigManagerImpl
+                ServiceConfigManagerImpl scmi;
+                if (ServiceManager.isCoexistenceMode()) {
+                    // For backward compatibility, get the version from the
+                    // service. no hardcoding to '1.0', even if it improves
+                    // performance in OpenSSO. Otherwise, it breaks for
+                    // services like iplanetAMProviderConfigService with
+                    // '1.1' as version.
+                    scmi = ServiceConfigManagerImpl
+                       .getInstance(token, serviceName, ServiceManager
+                       .serviceDefaultVersion(token, serviceName));
+                } else {
+                    scmi = ServiceConfigManagerImpl
                         .getInstance(token, serviceName, "1.0");
+                }
                 try {
                     ServiceConfigImpl sci = scmi.getOrganizationConfig(token,
                             orgDN, null);
