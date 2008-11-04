@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: README.txt,v 1.2 2008-07-01 06:27:49 veiming Exp $
+# $Id: README.txt,v 1.3 2008-11-04 06:04:44 veiming Exp $
 #
 
 TODO: Where to get openssowssproviders.jar
@@ -101,10 +101,11 @@ Look at opensso/products/README for instruction on how to obtain
 download the latest openssoclientsdk.jar from
 https://opensso.dev.java.net/public/use/index.html
 
+All the jars need to be placed in extlib sub directory.
 
 
 %%2.2 Server Configuration
-Enter server configuration information in resources/clientDefault.properties.
+Enter server configuration information in resources/setupValues.properties.
 
 %%2.3 Build Web ARchive, wssproxy.war
 type ant build
@@ -118,30 +119,78 @@ its server is up and running.
 ________________________________________________________________________________
 %%4. Simple Test
 
-Use NetBean to create a Hello World Web Service Provider. And deploy the WAR.
-Let it is http://www.wspsample.com:8080/WSP
+%%4.1 Deploy opensso.war and configure it (choose default option). Check that
+      you are able to login to Administrator console. Choose Configuration ->
+      Servers and Sites tab.
+      Select the server instance in Servers tab. In the server instance
+      profile page, select Security tab and note the value of Password
+      Encryption Key.
 
-Login to OpenSSO server.
-Create a WSSProxy for the Hello World Web Service Provider. Let it is be
-wspProxy.
-Select UserNameToken as one of the supported Security Mechanisms.
-Enter http://www.wspsample.com:8080/WSP as the Web Service Security Proxy End
-Point.
+%%4.2 cd <your workspace>/opensso/extensions/wssproxy.
+      edit resources/setupValues.properties, these values have to be changed
+      a. BASEDIR
+      b. APPLICATION_PASSWORD
+      c. SERVER_PROTOCOL
+      d. SERVER_HOST
+      e. SERVER_PORT
+      f. DEPLOY_URI
+      g. ENCRYPTION_KEY (you got the value in %%4.1)
 
-Create a WSSProxy for the Web Service Client.  Let it is be wscProxy.
-Select UserNameToken as the Security Mechanism.
-Enter http://www.wspproxy.com:8080/wssproxy/SecurityProxy/wspProxy as the
-Web Service Security Proxy End Point.
-   where
-       http://www.wssproxy.com:8080/wspproxy/SecurityProxy is the WSSProxy
-       servlet that you have setup in step %%3.
-       wspProxy is name of the corresponding Hello World Web Service
-       Provider's WSSProxy.
+%%4.3 cd <your workspace>/opensso/extensions/wssproxy
+      ant clean; ant build
 
-Use NetBean to create a Web Service Client. Create a web service client. Enter
-http://www.wssproxy.com:8080/wscproxy/SecurityProxy/wscProxy to fetch WSDL.
-In the index.jsp, generate code to call the Web Service Operation.
-Deploy the WAR. let it is http://www.wscsample.com:8080/WSC
+%%4.4 Use NetBean to create a Hello World Web Service Provider. And deploy the
+      WAR. Let it is http://www.wspsample.com:8080/WSP. This web service can be
+      as simple as printing "Hello World".
+
+%%4.5 deploy <your workspace>/opensso/extensions/wssproxy/built/dist/wssproxy.war 
+      in the same web container as the Hello World Web Service Provider. Let
+      its deployment URI be /wspproxy. To check if it is deployed correct. 
+      Visit http://www.wspsample.com:8080/wspproxy and you will see
+      "Web Service Security Proxy" printed.
+
+%%4.6 Login to OpenSSO server (as you have done in %%4.1). Choose Access
+      Control tab. Select / (Top Level Realm) and then Agent tab -> Web
+      Service Provider tab. Create a new agent for the wspproxy. Let its name
+      be "wspproxy". Select UserNameToken as one of the supported Security
+      Mechanisms. Enter http://www.wspsample.com:8080/WSP as the
+      Web Service Security Proxy End Point.
+
+Up to this point, we have setup the Web Service Provider ends.
+                                   
+             +-----------+    +-------------+
+             |           |    |             |
+             |           |    |             |
+             | WSS Proxy |    | Web Service |
+             | (wspproxy)|<---|  Provider   |
+             |           |    |             |
+             +-----------+    +-------------+
+                    |
+                    |
+                    |
+      +-------------------------+
+      |                         |
+      |    OpenSSO Server       |
+      |                         |
+      +-------------------------+
+
+%%4.7 deploy <your workspace>/opensso/extensions/wssproxy/built/dist/wssproxy.war 
+      in the same web container as the Web Service Client which is going to be
+      deploy later (see %%4.9). Let its deployment URI be /wscproxy. To check
+      if it is deployed correct.  Visit http://www.wscsample.com:8080/wscproxy
+      and you will see "Web Service Security Proxy" printed.
+
+%%4.8 Login to OpenSSO server (as you have done in %%4.1). Choose Access
+      Control tab. Select / (Top Level Realm) and then Agent tab -> Web
+      Service Client tab. Create a new agent for the wscproxy. Let its name
+      be "wscproxy".  Select UserNameToken as the Security Mechanism.
+      Enter http://www.wspsample.com:8080/wspproxy/SecurityProxy/wspproxy as
+      the Web Service Security Proxy End Point.
+
+%%4.9 Use NetBean to create a Web Service Client. Create a web service client.
+      Enter http://www.wscproxy.com:8080/wscproxy/SecurityProxy/wscproxy to
+      fetch WSDL. In the index.jsp, generate code to call the Web Service
+      Operation. Deploy the WAR. let it is http://www.wscsample.com:8080/WSC
 
 Point your browser to http://www.wscsample.com:8080/WSC and index.jsp will be
 invoked and Hello world message will be printed accordingly.

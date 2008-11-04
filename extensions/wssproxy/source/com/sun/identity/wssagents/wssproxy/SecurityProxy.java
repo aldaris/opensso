@@ -130,9 +130,7 @@ public class SecurityProxy extends HttpServlet {
         SOAPRequestHandler handler = new SOAPRequestHandler();
         HashMap params = new HashMap();
 
-        //TOFIX: Malla, we need to fix the trailing WSP and WSC in agent name
-        String id = agentId.substring(0, (agentId.length() -3));
-        params.put("providername", id);
+        params.put("providername", agentId);
         handler.init(params);
         return handler;
     }
@@ -161,7 +159,7 @@ public class SecurityProxy extends HttpServlet {
             null, null);
         return soapToString(message);
     }
-
+    
     private String validateResponse(String agentId, String soapMessage)
         throws IOException, SOAPException, SecurityException {
         SOAPMessage message = getSOAPMessage(soapMessage);
