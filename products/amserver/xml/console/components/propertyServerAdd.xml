@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyServerAdd.xml,v 1.2 2008-06-25 05:45:15 qcheng Exp $
+   $Id: propertyServerAdd.xml,v 1.3 2008-11-04 22:29:26 asyhuang Exp $
 
 -->
 
@@ -37,6 +37,7 @@
             <attribute name="localizeDisplayFieldValue" value="false" />
 	    <attribute name="size" value="75" />
 	</cc>
+ <fieldhelp name="helpServerURL" defaultValue="serverconfig.server.attribute.label.name.helpserverurl" />
     </property>
     </section>
 </propertysheet>
