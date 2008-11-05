@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentity.java,v 1.29 2008-08-15 01:07:17 veiming Exp $
+ * $Id: AMIdentity.java,v 1.30 2008-11-05 07:10:29 veiming Exp $
  *
  */
 
@@ -164,8 +164,7 @@ public final class AMIdentity {
             // Not a valid UUID since it should have the 
             // name, type and realm components
             Object args[] = { universalId };
-            throw (new IdRepoException(IdRepoBundle.getString(
-                "215", args), "215", args));
+            throw new IdRepoException(IdRepoBundle.BUNDLE_NAME, "215", args);
         }
         
         // Valid UUID, construct rest of the parameters
