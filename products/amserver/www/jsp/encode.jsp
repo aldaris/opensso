@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: encode.jsp,v 1.11 2008-09-15 16:41:56 veiming Exp $
+   $Id: encode.jsp,v 1.12 2008-11-05 07:09:35 veiming Exp $
 --%>
 
 <%@ page contentType="text/html; charset=UTF-8" %> 
@@ -71,7 +71,7 @@
             ResourceBundle.getBundle("encode", Locale.getLocale(ssoPropLocale)):
             ResourceBundle.getBundle("encode");
 
-        if (ssoToken.getPrincipal().getName().equals(
+        if (ssoToken.getPrincipal().getName().equalsIgnoreCase(
             "id=amadmin,ou=user," + SMSEntry.getRootSuffix())
         ) {
             String strPwd = request.getParameter("password");
