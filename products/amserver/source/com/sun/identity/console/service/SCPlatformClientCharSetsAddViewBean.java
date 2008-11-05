@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SCPlatformClientCharSetsAddViewBean.java,v 1.3 2008-06-25 05:43:15 qcheng Exp $
+ * $Id: SCPlatformClientCharSetsAddViewBean.java,v 1.4 2008-11-05 22:02:40 asyhuang Exp $
  *
  */
 
@@ -31,6 +31,7 @@ package com.sun.identity.console.service;
 import com.sun.identity.console.base.AMViewBeanBase;
 import com.sun.identity.console.service.model.SCPlatformModelImpl;
 import com.sun.identity.shared.datastruct.OrderedSet;
+import com.sun.web.ui.view.alert.CCAlert;
 import java.util.Map;
 import java.util.Set;
 
@@ -68,12 +69,18 @@ public class SCPlatformClientCharSetsAddViewBean
 
         String val = (String)values.get(ATTR_CLIENT_TYPE) + "|" +
             (String)values.get(ATTR_CHARSET);
-        clientCharSets.add(val);
-        setPageSessionAttribute(SCPlatformViewBean.PAGE_MODIFIED, "1");
-        backTrail();
-        unlockPageTrailForSwapping();
-        passPgSessionMap(vb);
-        vb.forwardTo(getRequestContext());
+        if (clientCharSets.contains(val)){
+            setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
+                "platform.service.clientCharSets.create.page.existing");
+            forwardTo();
+        } else {
+            clientCharSets.add(val);
+            setPageSessionAttribute(SCPlatformViewBean.PAGE_MODIFIED, "1");
+            backTrail();
+            unlockPageTrailForSwapping();
+            passPgSessionMap(vb);
+            vb.forwardTo(getRequestContext());
+        }
     }
 
     protected String getBreadCrumbDisplayName() {

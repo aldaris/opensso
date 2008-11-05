@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: G11NCharsetAliasAddViewBean.java,v 1.3 2008-06-25 05:43:14 qcheng Exp $
+ * $Id: G11NCharsetAliasAddViewBean.java,v 1.4 2008-11-05 22:02:36 asyhuang Exp $
  *
  */
 
@@ -31,6 +31,7 @@ package com.sun.identity.console.service;
 import com.sun.identity.console.service.model.CharsetAliasEntry;
 import com.sun.identity.console.service.model.SMG11NModelImpl;
 import com.sun.identity.shared.datastruct.OrderedSet;
+import com.sun.web.ui.view.alert.CCAlert;
 import java.util.Map;
 import java.util.Set;
 
@@ -65,12 +66,20 @@ public class G11NCharsetAliasAddViewBean
             attrValues.put(SMG11NModelImpl.ATTRIBUTE_NAME_CHARSET_ALIAS,
                 (OrderedSet)charsets);
         }
-
-        charsets.add(CharsetAliasEntry.toString(
+        String newCharsetsString = CharsetAliasEntry.toString(
             (String)values.get(ATTR_MIMENAME),
-            (String)values.get(ATTR_JAVANAME)));
-        setPageSessionAttribute(SMG11NViewBean.PAGE_MODIFIED, "1");
-        passPgSessionMap(vb);
-        vb.forwardTo(getRequestContext());
+            (String)values.get(ATTR_JAVANAME));
+        if (charsets.contains(newCharsetsString)){
+            setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
+                "globalization.service.CharsetAlias.create.page.existing");
+            forwardTo();
+        } else {
+            charsets.add(CharsetAliasEntry.toString(
+                (String)values.get(ATTR_MIMENAME),
+                (String)values.get(ATTR_JAVANAME)));
+            setPageSessionAttribute(SMG11NViewBean.PAGE_MODIFIED, "1");        
+            passPgSessionMap(vb);
+            vb.forwardTo(getRequestContext());
+        }
     }
 }
