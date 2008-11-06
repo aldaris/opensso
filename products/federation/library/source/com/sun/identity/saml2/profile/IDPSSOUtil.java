@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.40 2008-09-18 00:30:33 hengming Exp $
+ * $Id: IDPSSOUtil.java,v 1.41 2008-11-06 18:45:58 qcheng Exp $
  *
  */
 
@@ -1551,7 +1551,7 @@ public class IDPSSOUtil {
             acsBinding = request.getParameter(SAML2Constants.BINDING);
         }
     
-        if ((acsBinding != null) &&
+        if ((acsBinding != null) && (acsBinding.trim().length() != 0) &&
             (!acsBinding.startsWith(SAML2Constants.BINDING_PREFIX))) {
             // convert short format binding to long format
             acsBinding = SAML2Constants.BINDING_PREFIX + acsBinding;
