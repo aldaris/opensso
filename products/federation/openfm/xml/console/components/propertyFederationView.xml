@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyFederationView.xml,v 1.4 2008-06-25 05:51:04 qcheng Exp $
+   $Id: propertyFederationView.xml,v 1.5 2008-11-06 05:32:04 veiming Exp $
 
 -->
 <!DOCTYPE propertysheet SYSTEM "propertysheet.dtd">
@@ -75,7 +75,7 @@
             </property>
         </subsection>  
     </section>
-    <section name="samlProperties" defaultValue="SAML1.x Configuration" >
+    <section name="samlProperties" defaultValue="saml1x.configuration.section" >
         <property span="true">
             <label name="samlHelpMessage" 
                    defaultValue="saml.table.help.message" 
