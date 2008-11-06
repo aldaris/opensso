@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.37 2008-09-18 20:58:57 bigfatrat Exp $
+ * $Id: SetupConstants.java,v 1.38 2008-11-06 05:31:02 veiming Exp $
  *
  */
 
@@ -299,6 +299,12 @@ public interface SetupConstants {
      * Configuration Variable for directory server administrator password.
      */
     String CONFIG_VAR_DS_MGR_PWD = "DS_DIRMGRPASSWD";
+
+    /**
+     * Configuration Variable for encrypted directory server administrator
+     * password.
+     */
+    String ENCRYPTED_SM_DS_PWD = "ENCDSDIRMGRPASSWD";
 
     /**
      * Configuration Variable for directory server administrator DN.

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServicesDefaultValues.java,v 1.36 2008-08-29 21:51:25 veiming Exp $
+ * $Id: ServicesDefaultValues.java,v 1.37 2008-11-06 05:31:02 veiming Exp $
  *
  */
 
@@ -421,16 +421,19 @@ public class ServicesDefaultValues {
         if (dbSunDS || dbMsAD) {
             String dsMgrPwd = ((String)map.get(
                 SetupConstants.CONFIG_VAR_DS_MGR_PWD)).trim();
-            if (!embedded || embedded && dsMgrPwd.length() != 0 ) {
-                // Quick install : if embedded make passwd same as admin passwd
-                adminPwd = dsMgrPwd ; 
-            } else {
-                map.put( SetupConstants.CONFIG_VAR_DS_MGR_PWD, adminPwd );
+            
+            if (embedded) {
+                if (dsMgrPwd.length() == 0) {
+                    map.put(SetupConstants.CONFIG_VAR_DS_MGR_PWD, adminPwd);
+                }
             }
-            if (adminPwd != null) {
-                map.put(SetupConstants.CONFIG_VAR_ADMIN_PWD, adminPwd);
-            }
-        }        
+        }
+
+        String dsMgrPwd = ((String)map.get(
+            SetupConstants.CONFIG_VAR_DS_MGR_PWD));
+        map.put(SetupConstants.ENCRYPTED_SM_DS_PWD,
+            (String)Crypt.encrypt(dsMgrPwd));
+
         String ldapUserPwd = (String)map.get(SetupConstants.LDAP_USER_PWD);
         if (ldapUserPwd != null) {
             ldapUserPwd.trim();        
