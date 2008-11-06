@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyWebServiceClientEdit.xml,v 1.12 2008-07-30 22:10:31 veiming Exp $
+   $Id: propertyWebServiceClientEdit.xml,v 1.13 2008-11-06 05:27:40 veiming Exp $
 
 -->
 
@@ -243,7 +243,7 @@
     </property>
     <property>
         <label name="lblencryptionstrength"
-            defaultValue="a359"
+            defaultValue="a360"
             labelFor="encryptionstrength" />
         <cc name="encryptionstrength"
             tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag">
