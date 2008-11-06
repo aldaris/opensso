@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitiesModelImpl.java,v 1.13 2008-09-25 21:38:59 veiming Exp $
+ * $Id: EntitiesModelImpl.java,v 1.14 2008-11-06 01:24:33 veiming Exp $
  *
  */
 
@@ -47,6 +47,7 @@ import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdConstants;
 import com.sun.identity.idm.IdOperation;
 import com.sun.identity.idm.IdRepoException;
+import com.sun.identity.idm.IdRepoFatalException;
 import com.sun.identity.idm.IdSearchResults;
 import com.sun.identity.idm.IdSearchControl;
 import com.sun.identity.idm.IdSearchOpModifier;
@@ -95,6 +96,7 @@ public class EntitiesModelImpl
     private Map requiredAttributeNames = new HashMap();
 
     private String type = null;
+    private boolean isServicesSupported = true;
 
     static {
         try {
@@ -1315,6 +1317,19 @@ public class EntitiesModelImpl
             logEvent("SSO_EXCEPTION_READ_IDENTITY_ASSIGNED_SERVICE", paramsEx);
             debug.warning("EntitiesModelImpl.getAssignedServiceNames", e);
             throw new AMConsoleException(getErrorString(e));
+        } catch (IdRepoFatalException e) {
+            String[] paramsEx = {universalId, getErrorString(e)};
+            logEvent("IDM_EXCEPTION_READ_IDENTITY_ASSIGNED_SERVICE", paramsEx);
+            debug.warning("EntitiesModelImpl.getAssignedServiceNames", e);
+            // special casing this, because exception message from this 
+            // exception is too cryptic
+            if (e.getErrorCode().equals("305")) {
+                isServicesSupported = false;
+                throw new AMConsoleException(
+                    getLocalizedString("idrepo.sevices.not.supported"));
+            } else {
+                throw new AMConsoleException(getErrorString(e));
+            }
         } catch (IdRepoException e) {
             String[] paramsEx = {universalId, getErrorString(e)};
             logEvent("IDM_EXCEPTION_READ_IDENTITY_ASSIGNED_SERVICE", paramsEx);
@@ -1798,5 +1813,14 @@ public class EntitiesModelImpl
         } catch (SMSException e) {
             throw new AMConsoleException(getErrorString(e));
         }
+    }
+    
+    /**
+     * Returns <code>true</code> if services is supported for the identity.
+     * 
+     * @return <code>true</code> if services is supported for the identity.
+     */
+    public boolean isServicesSupported() {
+        return isServicesSupported;
     }
 }

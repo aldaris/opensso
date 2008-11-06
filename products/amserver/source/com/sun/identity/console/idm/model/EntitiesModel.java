@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitiesModel.java,v 1.5 2008-09-04 23:59:37 veiming Exp $
+ * $Id: EntitiesModel.java,v 1.6 2008-11-06 01:24:33 veiming Exp $
  *
  */
 
@@ -426,4 +426,11 @@ public interface EntitiesModel
      */
     Set getAuthenticationChains(String realm)
         throws AMConsoleException;
+
+    /**
+     * Returns <code>true</code> if services is supported for the identity.
+     * 
+     * @return <code>true</code> if services is supported for the identity.
+     */
+    boolean isServicesSupported();
 }
