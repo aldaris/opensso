@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RegisterServices.java,v 1.18 2008-10-02 06:55:47 veiming Exp $
+ * $Id: RegisterServices.java,v 1.19 2008-11-07 00:13:36 veiming Exp $
  *
  */
 
@@ -158,7 +158,7 @@ public class RegisterServices {
             String line = null;
 
             while ((line = rawReader.readLine()) != null) {
-                buff.append(line);
+                buff.append(line).append("\n");
             }
 
             rawReader.close();
