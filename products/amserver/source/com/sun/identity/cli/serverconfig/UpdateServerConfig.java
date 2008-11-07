@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpdateServerConfig.java,v 1.4 2008-09-19 23:37:15 beomsuk Exp $
+ * $Id: UpdateServerConfig.java,v 1.5 2008-11-07 20:27:05 veiming Exp $
  *
  */
 
@@ -87,23 +87,38 @@ public class UpdateServerConfig extends ServerConfigBase {
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "ATTEMPT_UPDATE_SERVER_CONFIG", params);
 
-            if (ServerConfiguration.isServerInstanceExist(
-                adminSSOToken, serverName)) {
+            if (serverName.equals(DEFAULT_SVR_CONFIG)) {
                 try {
-                    ServerConfiguration.setServerInstance(
-                        adminSSOToken, serverName, attributeValues);
-                } catch (UnknownPropertyNameException ex) {
-                    outputWriter.printlnMessage(
-                        ex.getL10NMessage(getCommandManager().getLocale()));
-                    outputWriter.printlnMessage("");
-                }
-                outputWriter.printlnMessage(MessageFormat.format(
-                    getResourceString("update-server-config-succeeded"),
-                    (Object[])params));
+                    ServerConfiguration.setServerInstance(adminSSOToken, 
+                        ServerConfiguration.DEFAULT_SERVER_CONFIG, 
+                        attributeValues);
+                    } catch (UnknownPropertyNameException ex) {
+                        outputWriter.printlnMessage(
+                            ex.getL10NMessage(getCommandManager().getLocale()));
+                        outputWriter.printlnMessage("");
+                    }
+                    outputWriter.printlnMessage(MessageFormat.format(
+                        getResourceString("update-server-config-succeeded"),
+                        (Object[])params));
             } else {
-                outputWriter.printlnMessage(MessageFormat.format(
-                    getResourceString("update-server-config-does-not-exists"),
-                    (Object[])params));
+                if (ServerConfiguration.isServerInstanceExist(
+                    adminSSOToken, serverName)) {
+                    try {
+                        ServerConfiguration.setServerInstance(
+                            adminSSOToken, serverName, attributeValues);
+                    } catch (UnknownPropertyNameException ex) {
+                        outputWriter.printlnMessage(
+                            ex.getL10NMessage(getCommandManager().getLocale()));
+                        outputWriter.printlnMessage("");
+                    }
+                    outputWriter.printlnMessage(MessageFormat.format(
+                        getResourceString("update-server-config-succeeded"),
+                        (Object[])params));
+                } else {
+                    outputWriter.printlnMessage(MessageFormat.format(
+                        getResourceString("update-server-config-does-not-exists"),
+                        (Object[])params));
+                }
             }
             
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,

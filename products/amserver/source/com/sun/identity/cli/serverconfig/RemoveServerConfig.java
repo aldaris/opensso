@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoveServerConfig.java,v 1.3 2008-09-19 23:37:14 beomsuk Exp $
+ * $Id: RemoveServerConfig.java,v 1.4 2008-11-07 20:27:05 veiming Exp $
  *
  */
 
@@ -60,7 +60,6 @@ public class RemoveServerConfig extends ServerConfigBase {
         SSOToken adminSSOToken = getAdminSSOToken();
         IOutput outputWriter = getOutputWriter();
         String serverName = getStringOptionValue(IArgument.SERVER_NAME);
-        String datafile = getStringOptionValue(IArgument.DATA_FILE);
         List propertyNames = rc.getOption(IArgument.PROPERTY_NAMES);
         
         try {
@@ -73,19 +72,26 @@ public class RemoveServerConfig extends ServerConfigBase {
             String[] params = {serverName};
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "ATTEMPT_REMOVE_SERVER_CONFIG", params);
-            if (ServerConfiguration.isServerInstanceExist(
-                adminSSOToken, serverName)) {
-                ServerConfiguration.removeServerConfiguration(
-                    adminSSOToken, serverName, propertyNames);
-                outputWriter.printlnMessage(MessageFormat.format(
-                    getResourceString("remove-server-config-succeeded"),
-                    (Object[])params));
-            } else {
-                outputWriter.printlnMessage(MessageFormat.format(
-                    getResourceString("remove-server-config-does-not-exists"),
-                    (Object[])params));
-            }
             
+            if (serverName.equals(DEFAULT_SVR_CONFIG)) {
+                ServerConfiguration.removeServerConfiguration(
+                    adminSSOToken, ServerConfiguration.DEFAULT_SERVER_CONFIG,
+                    propertyNames);
+            } else {
+                if (ServerConfiguration.isServerInstanceExist(
+                    adminSSOToken, serverName)) {
+                    ServerConfiguration.removeServerConfiguration(
+                        adminSSOToken, serverName, propertyNames);
+                    outputWriter.printlnMessage(MessageFormat.format(
+                        getResourceString("remove-server-config-succeeded"),
+                        (Object[]) params));
+                } else {
+                    outputWriter.printlnMessage(MessageFormat.format(
+                        getResourceString("remove-server-config-does-not-exists"),
+                        (Object[]) params));
+                }
+            }
+
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "SUCCEED_REMOVE_SERVER_CONFIG", params);
         } catch (IOException e) {

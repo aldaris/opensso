@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerConfigBase.java,v 1.2 2008-10-20 23:30:13 veiming Exp $
+ * $Id: ServerConfigBase.java,v 1.3 2008-11-07 20:27:05 veiming Exp $
  *
  */
 
@@ -37,6 +37,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class ServerConfigBase extends AuthenticatedCommand {
+    protected static final String DEFAULT_SVR_CONFIG = "default";
+    
     /**
      * Services a Commandline Request.
      *
@@ -47,7 +49,8 @@ public class ServerConfigBase extends AuthenticatedCommand {
         throws CLIException {
         super.handleRequest(rc);
         String serverName = getStringOptionValue(IArgument.SERVER_NAME);
-        if ((serverName != null) && (serverName.trim().length() > 0)) {
+        if ((serverName != null) && (serverName.trim().length() > 0) &&
+            !serverName.equals(DEFAULT_SVR_CONFIG)) {
             try {
                 URL url = new URL(serverName);
                 if (url.getPort() == -1) {
@@ -65,9 +68,6 @@ public class ServerConfigBase extends AuthenticatedCommand {
                 throw new CLIException(e,
                     ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
             }
-
-            System.setProperty("com.sun.identity.jaxrpc.url",
-                serverName + "/jaxrpc");
         }
     }
 }

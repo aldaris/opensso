@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListServerConfig.java,v 1.5 2008-09-19 23:37:14 beomsuk Exp $
+ * $Id: ListServerConfig.java,v 1.6 2008-11-07 20:27:04 veiming Exp $
  *
  */
 
@@ -40,7 +40,6 @@ import com.sun.identity.cli.RequestContext;
 import com.sun.identity.common.configuration.ServerConfiguration;
 import com.sun.identity.sm.SMSException;
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.Properties;
 import java.util.logging.Level;
 
@@ -74,20 +73,26 @@ public class ListServerConfig extends ServerConfigBase {
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "ATTEMPT_LIST_SERVER_CONFIG", params);
 
-            Properties prop = ServerConfiguration.getServerInstance(
-                adminSSOToken, serverName);
-            if ((prop != null) && !prop.isEmpty()) {
-                if (isOptionSet(OPTION_WITH_DEFAULTS)) {
-                    Properties defProp = ServerConfiguration.getDefaults(
-                        adminSSOToken);
-                    defProp.putAll(prop);
-                    prop = defProp;
-                }
+            if (serverName.equals(DEFAULT_SVR_CONFIG)) {
+                Properties prop = ServerConfiguration.getDefaults(adminSSOToken);
                 outputWriter.printlnMessage(
                     FormatUtils.formatProperties(prop));
             } else {
-                outputWriter.printlnMessage(getResourceString(
-                    "list-server-config-no-results"));
+                Properties prop = ServerConfiguration.getServerInstance(
+                    adminSSOToken, serverName);
+                if ((prop != null) && !prop.isEmpty()) {
+                    if (isOptionSet(OPTION_WITH_DEFAULTS)) {
+                        Properties defProp = ServerConfiguration.getDefaults(
+                            adminSSOToken);
+                        defProp.putAll(prop);
+                        prop = defProp;
+                    }
+                    outputWriter.printlnMessage(
+                        FormatUtils.formatProperties(prop));
+                } else {
+                    outputWriter.printlnMessage(getResourceString(
+                        "list-server-config-no-results"));
+                }
             }
             
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,

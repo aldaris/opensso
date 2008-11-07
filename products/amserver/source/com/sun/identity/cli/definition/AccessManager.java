@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.97 2008-11-01 03:07:15 veiming Exp $
+ * $Id: AccessManager.java,v 1.98 2008-11-07 20:27:04 veiming Exp $
  *
  */
 
@@ -2128,7 +2128,7 @@ public class AccessManager {
         description="List server configuration.",
         webSupport="true",
         mandatoryOptions={
-            "servername|s|s|Server name, e.g. http://www.example.com:8080/fam"
+            "servername|s|s|Server name, e.g. http://www.example.com:8080/fam or enter default to list default server configuration."
         },
         optionAliases={},
         macro="authentication",
@@ -2146,7 +2146,7 @@ public class AccessManager {
         description="Update server configuration.",
         webSupport="true",
         mandatoryOptions={
-            "servername|s|s|Server name, e.g. http://www.example.com:8080/fam"
+            "servername|s|s|Server name, e.g. http://www.example.com:8080/fam or enter default to update default server configuration."
         },
         optionAliases={},
         macro="authentication",
@@ -2165,7 +2165,7 @@ public class AccessManager {
         description="Remove server configuration.",
         webSupport="true",
         mandatoryOptions={
-            "servername|s|s|Server name, e.g. http://www.example.com:8080/fam",
+            "servername|s|s|Server name, e.g. http://www.example.com:8080/fam or enter default to remove default server configuration.",
             "propertynames|a|m|Name of properties to be removed."},
         optionAliases={},
         macro="authentication",
