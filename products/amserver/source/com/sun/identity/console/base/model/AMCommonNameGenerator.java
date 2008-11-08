@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMCommonNameGenerator.java,v 1.3 2008-06-25 05:42:49 qcheng Exp $
+ * $Id: AMCommonNameGenerator.java,v 1.4 2008-11-08 08:20:41 veiming Exp $
  *
  */
 
@@ -63,8 +63,7 @@ public class AMCommonNameGenerator
     private static SSOToken adminSSOToken =
         AMAdminUtils.getSuperAdminSSOToken();
 
-    private static final String DEFAULT_FORMAT =
-        "{givenname} {initials} {sn}";
+    private static final String DEFAULT_FORMAT = "{cn}";
 
     private static Debug debug = Debug.getInstance(CONSOLE_DEBUG_FILENAME);
     private static AMCommonNameGenerator instance
