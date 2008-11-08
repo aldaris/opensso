@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step3.java,v 1.31 2008-10-11 00:58:58 hengming Exp $
+ * $Id: Step3.java,v 1.32 2008-11-08 08:22:29 veiming Exp $
  *
  */
 package com.sun.identity.config.wizard;
@@ -38,6 +38,7 @@ import net.sf.click.control.ActionLink;
 import net.sf.click.Context;
 import netscape.ldap.LDAPConnection;
 import netscape.ldap.LDAPException;
+import netscape.ldap.util.DN;
 
 /**
  * Step 3 is for selecting the embedded or external configuration store 
@@ -160,10 +161,13 @@ public class Step3 extends LDAPStoreWizardPage {
     public boolean validateRootSuffix() {
         String rootsuffix = toString("rootSuffix");
         
-        if (rootsuffix == null) {
+        if ((rootsuffix == null) || (rootsuffix.trim().length() == 0)) {
             writeToResponse(getLocalizedString("missing.required.field"));
+        } else if (!DN.isDN(rootsuffix)) {
+            writeToResponse(getLocalizedString("invalid.dn"));
         } else {
             writeToResponse("true");
+            getContext().setSessionAttribute("rootSuffix", rootsuffix);
         }
         setPath(null);
         return false;    

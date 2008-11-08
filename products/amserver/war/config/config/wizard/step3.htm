@@ -102,9 +102,12 @@
 
     function validateRootSuffix() {
         $('nextTabButton').disabled = true;
+        ie7fix++;
 	field = "rootSuffix";
+        var callUrl = "$context$path?actionLink=validateRootSuffix&ie7fix=" +
+            ie7fix + "&rootSuffix=" +  escape($(field).value);
         setTimeout("enableNextButton()", 500);
- 	validate();
+        AjaxUtils.call(callUrl, fieldValidated);
     }
 
     function validateServerURL(response) {        

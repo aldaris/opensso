@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step4.java,v 1.14 2008-08-26 04:36:31 veiming Exp $
+ * $Id: Step4.java,v 1.15 2008-11-08 08:22:29 veiming Exp $
  *
  */
 package com.sun.identity.config.wizard;
@@ -36,6 +36,8 @@ import net.sf.click.Context;
 import netscape.ldap.LDAPConnection;
 import netscape.ldap.LDAPException;
 import netscape.ldap.LDAPSearchResults;
+import netscape.ldap.util.DN;
+
 /**
  * Step 4 is the input of the remote user data store properties.
  */
@@ -243,9 +245,14 @@ public class Step4 extends AjaxPage {
     
     public boolean setRootSuffix() {
         String rootsuffix = toString("rootsuffix");
+
         if ((rootsuffix != null) && rootsuffix.length() > 0) {
-            getContext().setSessionAttribute(
-                SetupConstants.USER_STORE_ROOT_SUFFIX, rootsuffix);
+            if (DN.isDN(rootsuffix)) {
+                getContext().setSessionAttribute(
+                    SetupConstants.USER_STORE_ROOT_SUFFIX, rootsuffix);
+            } else {
+                responseString = "invalid.dn";            
+            }
         } else {
             responseString = "missing.root.suffix";            
         }
