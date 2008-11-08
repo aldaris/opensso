@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step3.java,v 1.32 2008-11-08 08:22:29 veiming Exp $
+ * $Id: Step3.java,v 1.33 2008-11-08 08:25:28 veiming Exp $
  *
  */
 package com.sun.identity.config.wizard;
 
 import com.iplanet.am.util.SSLSocketFactoryManager;
+import com.iplanet.services.util.Crypt;
 import com.sun.identity.common.configuration.ConfigurationException;
 import com.sun.identity.setup.AMSetupServlet;
 import com.sun.identity.setup.BootstrapData;
@@ -302,6 +303,10 @@ public class Step3 extends LDAPStoreWizardPage {
                             "existingserverid", existingServerid);
                         addObject(sb, "existingserverid", existingServerid);
 
+                        // dsmgr password is same as amadmin for embedded
+                        getContext().setSessionAttribute(
+                            "configStorePassword", password);     
+
                     } else {
                         getContext().setSessionAttribute("configStorePort", 
                             (String) data.get(BootstrapData.DS_PORT));
@@ -316,6 +321,12 @@ public class Step3 extends LDAPStoreWizardPage {
                         getContext().setSessionAttribute("configStoreSSL",
                             dsSSL);
                         addObject(sb, "configStoreSSL", dsSSL);
+                        
+                        String dspwd = (String)data.get(BootstrapData.DS_PWD);
+                        getContext().setSessionAttribute(
+                            "configStorePassword", 
+                            Crypt.decode(dspwd, Crypt.getHardcodedKeyEncryptor()
+                            ));
                     }
 
                     // set the replication ports pulled from the remote
@@ -341,10 +352,6 @@ public class Step3 extends LDAPStoreWizardPage {
                     // set the configuration store port
                     getContext().setSessionAttribute(
                         "localRepPort", localRepPort);
-
-                    // dsmgr password is same as amadmin for embedded
-                    getContext().setSessionAttribute(
-                        "configStorePassword", password);     
                 }
             } catch (ConfigurationException c) {
                 String code = c.getErrorCode();
