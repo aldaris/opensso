@@ -22,16 +22,23 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSystemConfig.java,v 1.5 2008-06-25 05:42:50 qcheng Exp $
+ * $Id: AMSystemConfig.java,v 1.6 2008-11-10 23:05:56 veiming Exp $
  *
  */
 
 package com.sun.identity.console.base.model;
 
 import com.iplanet.am.util.SystemProperties;
+import com.sun.identity.common.HttpURLConnectionManager;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.sm.SMSEntry;
-
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import netscape.ldap.LDAPDN;
 import netscape.ldap.util.DN;
 import netscape.ldap.util.RDN;
@@ -94,8 +101,57 @@ public class AMSystemConfig
     /** 
      * version 
      */
-    public static String version =
-        normalizeString(SystemProperties.get(Constants.AM_VERSION));
+    public static String version = "";
+    
+    static {
+        if (!isConsoleRemote) {
+            version = SystemProperties.get(Constants.AM_VERSION);
+        } else {
+            HttpURLConnection connection = null;
+            try {
+                URL url = new URL(serverProtocol + "://" + serverHost + ":" +
+                    serverPort + serverDeploymentURI +
+                    "/SMSServlet?method=version");
+                connection = HttpURLConnectionManager.getConnection(url);
+                int responseCode = connection.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    version = getContent(connection);
+                }
+            } catch (MalformedURLException e) {
+                AMModelBase.debug.error(
+                    "AMSystemConfig.<init>, get version from server", e);
+            } catch (IOException e) {
+                AMModelBase.debug.error(
+                    "AMSystemConfig.<init>, get version from server", e);
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
+            }
+        }
+    }
+
+    private static String getContent(HttpURLConnection connection) {
+        InputStream in_buf = null;
+        String result = null;
+        try {
+            in_buf = connection.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(
+                in_buf, "UTF-8"));
+            result = reader.readLine();
+        } catch (IOException e) {
+            AMModelBase.debug.error("AMSystemConfig.getContent", e);
+        } finally {
+            if (in_buf != null) {
+                try {
+                    in_buf.close();
+                } catch (IOException e) {
+                    //ignore
+                }
+            }
+        }
+        return (result == null) ? "" : result;
+    }
 
     public static String normalizeString(String tmp) {
         if (tmp != null) {
