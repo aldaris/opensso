@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: service.cpp,v 1.29 2008-10-04 01:34:27 robertis Exp $
+ * $Id: service.cpp,v 1.30 2008-11-10 22:56:37 madan_ranganath Exp $
  *
  */
 
@@ -631,7 +631,7 @@ Service::agent_config_change_notify() {
  *	XMLTree::ParseException upon XML Parsing error.
  */
 void
-Service::process_policy_response(PolicyEntryRefCntPtr policyEntry,
+Service::process_policy_response(PolicyEntryRefCntPtr &policyEntry,
 				 const KeyValueMap &env,
 				 const string &xmlData)
 {
@@ -771,7 +771,7 @@ Service::~Service() {
 
 void 
 Service::setRemUserAndAttrs(am_policy_result_t *policy_res,
-                            PolicyEntryRefCntPtr uPolicyEntry,
+                            PolicyEntryRefCntPtr &uPolicyEntry,
                             const SessionInfo sessionInfo,
                             std::string& resName,
                             const std::vector<PDRefCntPtr>& results,

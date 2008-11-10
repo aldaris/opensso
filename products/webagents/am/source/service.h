@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: service.h,v 1.15 2008-09-26 00:02:09 robertis Exp $
+ * $Id: service.h,v 1.16 2008-11-10 22:56:37 madan_ranganath Exp $
  *
  * Abstract:
  *
@@ -154,7 +154,7 @@ class Service {
                             const std::list<std::string> &,
                             Properties &);
 
-    void process_policy_response(PolicyEntryRefCntPtr,
+    void process_policy_response(PolicyEntryRefCntPtr &,
 				 const KeyValueMap &,
 				 const std::string &);
 
@@ -228,7 +228,7 @@ class Service {
     void flushPolicyEntry(const SSOToken&);
 
     void setRemUserAndAttrs(am_policy_result_t *policy_res,
-                            PolicyEntryRefCntPtr uPolicyEntry,
+                            PolicyEntryRefCntPtr &uPolicyEntry,
                             const SessionInfo sessionInfo,
                             std::string& resName,
                             const std::vector<PDRefCntPtr>& results,

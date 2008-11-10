@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: agent_profile_service.h,v 1.11 2008-09-26 00:02:09 robertis Exp $
+ * $Id: agent_profile_service.h,v 1.12 2008-11-10 22:56:37 madan_ranganath Exp $
  *
  */
 
@@ -85,9 +85,10 @@ public:
     std::string getEncodedAgentSSOToken() {
         return encodedAgentSSOToken;
     }
-    
-    //void fetchAndUpdateAgentConfigCache();
+
     am_status_t fetchAndUpdateAgentConfigCache();
+    am_status_t fetchAndUpdateAgentConfigCacheInternal(
+                                     AgentConfigurationRefCntPtr& agentConfig);
     void deleteOldAgentConfigInstances();
     AgentConfigurationRefCntPtr getAgentConfigInstance();
 

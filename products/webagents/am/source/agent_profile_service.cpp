@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: agent_profile_service.cpp,v 1.21 2008-10-04 01:34:27 robertis Exp $
+ * $Id: agent_profile_service.cpp,v 1.22 2008-11-10 22:56:36 madan_ranganath Exp $
  *
  */
 
@@ -113,7 +113,18 @@ AgentProfileService::~AgentProfileService()
  */
 AgentConfigurationRefCntPtr AgentProfileService::getAgentConfigInstance()
 {
-    return agentConfigCache.getLatestAgentConfigInstance();
+    AgentConfigurationRefCntPtr agentConfig = 
+                                agentConfigCache.getLatestAgentConfigInstance();
+
+    if (agentConfig == NULL) {
+        // Need to refetch the agent configuration, because by the time 
+        // we get the latestConfigKey and try to fetch the agent config object
+        // associated with this key (before the find_cac() call, the ref_cnt
+        // will be zero), the agent config cache cleanup might have
+        // already removed this entry.   
+        fetchAndUpdateAgentConfigCacheInternal(agentConfig);
+    }     
+    return agentConfig;
 }
 
 /*
@@ -303,6 +314,19 @@ load_bootinfo_to_properties(Utils::boot_info_t *boot_ptr, am_properties_t proper
  */
 am_status_t AgentProfileService::fetchAndUpdateAgentConfigCache()
 {
+    AgentConfigurationRefCntPtr agentConfig;
+    return fetchAndUpdateAgentConfigCacheInternal(agentConfig);
+}
+
+/*
+ * This function does the actual job of retrieving the agent configuration data
+ * if the repository type is local or issuing the REST call to Opensso server
+ * to get the latest agent configuration data if the repository type is
+ * centralized
+ */
+am_status_t AgentProfileService::fetchAndUpdateAgentConfigCacheInternal
+                           (AgentConfigurationRefCntPtr& agentConfig)
+{
     //check for REMOTE/LOCAL, then fetch attributes 
     //set latestConfigkey to the current time and then update AgentConfigCache
     //with a new entry that has the latestConfigKey as the key and agentConfig
@@ -418,13 +442,12 @@ am_status_t AgentProfileService::fetchAndUpdateAgentConfigCache()
     //Insert the AMAgentConfiguration object in the hast table with the current
     //time stamp as its key.
     if (status == AM_SUCCESS ) {
-        AgentConfigurationRefCntPtr agentConfig;
+        // AgentConfigurationRefCntPtr agentConfig;
         agentConfig = new AgentConfiguration(properties);
         status = load_bootinfo_to_properties(&boot_info, 
                 agentConfig->getProperties());
         agentConfigCache.populateAgentConfigCacheTable(agentConfig);
-    }  
-
+    }
     return status;
 }
 

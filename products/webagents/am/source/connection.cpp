@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: connection.cpp,v 1.8 2008-09-10 21:31:06 madan_ranganath Exp $
+ * $Id: connection.cpp,v 1.9 2008-11-10 22:56:37 madan_ranganath Exp $
  *
  */
 #include <stdexcept>
@@ -161,11 +161,14 @@ am_status_t Connection::initialize(const Properties& properties)
 	}
 
 	if(secStatus != SECSuccess) {
-	    Log::log(Log::ALL_MODULES, Log::LOG_ERROR,
-		     "Connection::initialize() unable to initialize SSL "
-		     "libraries: %s returned %d", nssMethodName,
-		     PR_GetError());
-	    status = AM_NSPR_ERROR;
+	    secStatus = NSS_NoDB_Init(NULL);
+	    if (secStatus != SECSuccess) {
+	        Log::log(Log::ALL_MODULES, Log::LOG_ERROR,
+		         "Connection::initialize() unable to initialize SSL "
+		         "libraries: %s returned %d", nssMethodName,
+		         PR_GetError());
+	        status = AM_NSPR_ERROR;
+            }
 	}
     }
 
