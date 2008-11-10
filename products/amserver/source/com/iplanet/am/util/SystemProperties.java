@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SystemProperties.java,v 1.17 2008-10-17 22:37:28 veiming Exp $
+ * $Id: SystemProperties.java,v 1.18 2008-11-10 17:51:19 manish_rustagi Exp $
  *
  */
 
@@ -269,7 +269,7 @@ public class SystemProperties {
                     String val = (String)tagswapValues.get(k);
                     
                     if (k.equals("%SERVER_URI%")) {
-                        if (val != null) {
+                        if ((val != null) && (val.length() > 0)) {
                             if (val.charAt(0) == '/') {
                                 answer = answer.replaceAll("/%SERVER_URI%", 
                                     val);
