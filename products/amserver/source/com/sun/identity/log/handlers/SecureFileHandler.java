@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureFileHandler.java,v 1.8 2008-06-25 05:43:37 qcheng Exp $
+ * $Id: SecureFileHandler.java,v 1.9 2008-11-10 22:56:56 veiming Exp $
  *
  */
 
@@ -593,8 +593,9 @@ public class SecureFileHandler extends java.util.logging.Handler {
     }
     
     /**
-     * Set verifier password
-     * @param logPass the verifier password
+     * Sets verifier password.
+     *
+     * @param verPass the verifier password.
      * @param token AM token
      */
     public static void setVerPassword(AMPassword verPass, Object token) {

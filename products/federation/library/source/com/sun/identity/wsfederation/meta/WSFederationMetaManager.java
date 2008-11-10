@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationMetaManager.java,v 1.5 2008-06-25 05:48:05 qcheng Exp $
+ * $Id: WSFederationMetaManager.java,v 1.6 2008-11-10 22:57:04 veiming Exp $
  *
  */
 
@@ -193,7 +193,7 @@ public class WSFederationMetaManager {
      * Sets the standard metadata entity descriptor under the realm.
      * 
      * @param realm The realm under which the entity resides.
-     * @param descriptor The standard entity descriptor object to be set.
+     * @param federation Federation object.
      * @throws WSFederationMetaException if unable to set the entity descriptor.
      */
     public static void setFederation(String realm, FederationElement federation) 
@@ -242,9 +242,9 @@ public class WSFederationMetaManager {
      * 
      * @param realm The realm under which the entity descriptor will be
      *              created.
-     * @param descriptor The standard entity descriptor object to be created.
+     * @param federation The standard entity descriptor object to be created.
      * @throws WSFederationMetaException if unable to create the entity 
-     * descriptor.
+     *         descriptor.
      */
     public static void createFederation(String realm, 
         FederationElement federation)

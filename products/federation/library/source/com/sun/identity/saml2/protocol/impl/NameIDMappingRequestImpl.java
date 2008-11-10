@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NameIDMappingRequestImpl.java,v 1.2 2008-06-25 05:48:00 qcheng Exp $
+ * $Id: NameIDMappingRequestImpl.java,v 1.3 2008-11-10 22:57:03 veiming Exp $
  *
  */
 
@@ -197,7 +197,7 @@ public class NameIDMappingRequestImpl extends RequestAbstractImpl
      * Returns the value of the baseID property.
      *
      * @return the value of the baseID property
-     * @see #setbaseID(baseID)
+     * @see #setbaseID(BaseID)
      */
     public BaseID getBaseID() {
         return baseID;
@@ -208,7 +208,7 @@ public class NameIDMappingRequestImpl extends RequestAbstractImpl
      *
      * @param value the value of the baseID property to be set
      * @throws SAML2Exception if the object is immutable
-     * @see #getbaseID
+     * @see #getBaseID()
      */
     public void setBaseID(BaseID value) throws SAML2Exception {
         if (isMutable) {

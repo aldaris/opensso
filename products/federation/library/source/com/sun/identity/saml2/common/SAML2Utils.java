@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.40 2008-10-24 23:35:29 qcheng Exp $
+ * $Id: SAML2Utils.java,v 1.41 2008-11-10 22:57:01 veiming Exp $
  *
  */
 
@@ -3385,14 +3385,18 @@ public class SAML2Utils extends SAML2SDKUtils {
     /**
      * Writes  a log record in SAML2 access log.
      * (fmSAML2.access)
-     * @param level indicating log level
+     *
+     * @param lvl indicating log level
      * @param msgid Message id
      * @param data string array of dynamic data only known during run time
      * @param tok Session of authenticated user
+     * @param ipaddr IP Address.
+     * @param userid User Id.
+     * @param org Organization.
+     * @param module Module Name.
      * @param props log record columns - used if tok is not available
      *        to specify log record columns such as ip address, realm, etc
      */
-
     public static void logAccess(Level lvl, String msgid,
                    String[] data, Object tok,
                    String ipaddr, String userid,
@@ -3406,21 +3410,27 @@ public class SAML2Utils extends SAML2SDKUtils {
     /**
      * Writes error occurred in SAML2 component into a log
      * (fmSAML2.error)
-     * @param level indicating log level
+     * @param lvl indicating log level
      * @param msgid Message id
      * @param data string array of dynamic data only known during run time
      * @param tok Session of authenticated user
+     * @param ipaddr IP Address
+     * @param userid User Id
+     * @param org Organization
+     * @parma module Module Name
      * @param props log record columns - used if tok is not available
      *        to specify log record columns such as ip address, realm, etc
      */
-    public static void logError(Level lvl, String msgid,
-                   String[] data,
-                   Object tok,
-                   String ipaddr,
-                   String userid,
-                   String org,
-                   String module,
-                   Map props)
+    public static void logError(
+        Level lvl,
+        String msgid,
+        String[] data,
+        Object tok,
+        String ipaddr,
+        String userid,
+        String org,
+        String module,
+        Map props)
     {
         Map accProps = accumulateLogProps(
             ipaddr, userid, org, module, props);
@@ -3456,20 +3466,23 @@ public class SAML2Utils extends SAML2SDKUtils {
      * Returns the value of attribute from entity configuration.
      *
      * @param realm the realm of the entity.
-     * @param entityrole  role of the entity (PEP or PDP).
+     * @param entityRole  role of the entity (PEP or PDP).
      * @param entityID identity of the entity.
-     * @param attrName  name of attribute whose value is to be retreived.
+     * @param attrName name of attribute whose value is to be retreived.
      * @return value of the attribute.
      */
-
     public static String getAttributeValueFromXACMLConfig(
-            String realm,String entityRole,String entityID,String attrName) {
-      String method = "SAML2Utils:getAttributeValueFromXACMLConfig : ";
-      if (debug.messageEnabled()) {
-            debug.message(method + "realm - " + realm);
-            debug.message(method + "EntityId - " +entityID);
-            debug.message(method + "entityRole - " + entityRole);
-            debug.message(method + "attrName - " + attrName);
+        String realm,
+        String entityRole,
+        String entityID,
+        String attrName
+    ) {
+        String method = "SAML2Utils:getAttributeValueFromXACMLConfig : ";
+        if (debug.messageEnabled()) {
+                debug.message(method + "realm - " + realm);
+                debug.message(method + "EntityId - " +entityID);
+                debug.message(method + "entityRole - " + entityRole);
+                debug.message(method + "attrName - " + attrName);
         }
         String result = null;
         try {
@@ -3510,7 +3523,7 @@ public class SAML2Utils extends SAML2SDKUtils {
      * Returns true if wantArtifactResponseSigned has <code>String</code> true.
      *
      * @param realm realm of hosted entity.
-     * @param hostEntityId name of hosted entity.
+     * @param entityID name of hosted entity.
      * @param entityRole role of hosted entity.
      * @return true if wantArtifactResponseSigned has <code>String</code> true.
      */
@@ -3535,7 +3548,7 @@ public class SAML2Utils extends SAML2SDKUtils {
 
     /**
      * Checks certificate validity with configured CRL 
-     * @param x509 certificate 
+     * @param cert x509 certificate 
      * @return <code>true</code> if the certificate is not in CRL, 
      *         otherwise, return <code>false</code> 
      */
@@ -3784,7 +3797,7 @@ public class SAML2Utils extends SAML2SDKUtils {
      * Returns true if the specified AuthnContextClassRef matches a list of
      * requested AuthnContextClassRef.
      *
-     * @param authnRequest a list of requested AuthnContextClassRef's
+     * @param requestedACClassRefs a list of requested AuthnContextClassRef's
      * @param acClassRef AuthnContextClassRef
      * @param comparison the type of comparison
      * @param acClassRefLevelMap a AuthnContextClassRef to AuthLevel map. Key

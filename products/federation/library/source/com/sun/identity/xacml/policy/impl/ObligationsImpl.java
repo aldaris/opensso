@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ObligationsImpl.java,v 1.2 2008-06-25 05:48:14 qcheng Exp $
+ * $Id: ObligationsImpl.java,v 1.3 2008-11-10 22:57:06 veiming Exp $
  *
  */
 
@@ -78,7 +78,7 @@ public class ObligationsImpl implements Obligations {
      * Constructs an <code>ObligationsImpl</code> object from an XML string
      *
      * @param xml string representing an <code>ObligationsImpl</code> object
-     * @throws SAMLException if the XML string could not be processed
+     * @throws XACMLException if the XML string could not be processed
      */
     public ObligationsImpl(String xml) throws XACMLException {
         Document document = XMLUtils.toDOMDocument(xml, XACMLSDKUtils.debug);
@@ -88,15 +88,16 @@ public class ObligationsImpl implements Obligations {
         } else {
             XACMLSDKUtils.debug.error(
                 "ResponseImpl.processElement(): invalid XML input");
-            throw new XACMLException(XACMLSDKUtils.xacmlResourceBundle.getString(
+            throw new XACMLException(
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "errorObtainingElement"));
         }
     }
     /** 
      * Constructs an <code>ObligationsImpl</code> object from an XML DOM element
      *
-     * @param element XML DOM element representing a <code>ObligationsImpl</code> 
-     * object
+     * @param element XML DOM element representing a
+     *        <code>ObligationsImpl</code>  object.
      *
      * @throws SAMLException if the DOM element could not be processed
      */
@@ -119,8 +120,10 @@ public class ObligationsImpl implements Obligations {
     /**
      * Sets the <code>Obligation</code> objects of this
      * <code>Obligations</code>
-     * @param the <code>Obligation</code> objects to set in this
+     *
+     * @param obligations the <code>Obligation</code> objects to set in this
      * <code>Obligations</code>
+     * @throws XACMLException if the object is immutable.
      */
     public void setObligations(List obligations) throws XACMLException {
         if (!mutable) {
@@ -140,11 +143,10 @@ public class ObligationsImpl implements Obligations {
     }
 
     /**
-     * Adds an <code>Obligation</code> to this object
+     * Adds an <code>Obligation</code> to this object.
      *
-     * @param result the <code>Obligation</code> to add
-     *
-     * @exception XACMLException if the object is immutable
+     * @param obligation the <code>Obligation</code> to add.
+     * @throws XACMLException if the object is immutable.
      */
     public void addObligation(Obligation obligation) throws XACMLException {
         if (!mutable) {
@@ -224,30 +226,32 @@ public class ObligationsImpl implements Obligations {
     /** 
      * Initializes a <code>ObligationsImpl</code> object from an XML DOM element
      *
-     * @param element XML DOM element representing a <code>ObligationsImpl</code> 
-     * object
+     * @param element XML DOM element representing a
+     *        <code>ObligationsImpl</code> object
      *
-     * @throws SAMLException if the DOM element could not be processed
+     * @throws XACMLException if the DOM element could not be processed
      */
     private void processElement(Element element) throws XACMLException {
         if (element == null) {
             XACMLSDKUtils.debug.error(
                 "ResponseImpl.processElement(): invalid root element");
-            throw new XACMLException(XACMLSDKUtils.xacmlResourceBundle.getString(
-                "invalid_element"));
+            throw new XACMLException(
+                XACMLSDKUtils.xacmlResourceBundle.getString("invalid_element"));
         }
         String elemName = element.getLocalName();
         if (elemName == null) {
             XACMLSDKUtils.debug.error(
                 "ResponseImpl.processElement(): local name missing");
-            throw new XACMLException(XACMLSDKUtils.xacmlResourceBundle.getString(
+            throw new XACMLException(
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "missing_local_name"));
         }
 
         if (!elemName.equals(XACMLConstants.OBLIGATIONS)) {
             XACMLSDKUtils.debug.error(
-                "ResponseImpl.processElement(): invalid local name " + elemName);
-            throw new XACMLException(XACMLSDKUtils.xacmlResourceBundle.getString(
+                "ResponseImpl.processElement: invalid local name " + elemName);
+            throw new XACMLException(
+                XACMLSDKUtils.xacmlResourceBundle.getString(
                 "invalid_local_name"));
         }
 

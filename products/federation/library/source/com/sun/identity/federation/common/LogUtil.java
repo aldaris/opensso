@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogUtil.java,v 1.2 2008-06-25 05:46:41 qcheng Exp $
+ * $Id: LogUtil.java,v 1.3 2008-11-10 22:56:56 veiming Exp $
  *
  */
 
@@ -620,7 +620,6 @@ public class LogUtil {
      *          </ul>
      * @param msgid the message or a message identifier.
      * @param data string array of dynamic data to be replaced in the message.
-     * @param session the User's session object
      */
     public static void access(Level level, String msgid, String data[]) {
         access(level, msgid, data, null);
@@ -672,9 +671,8 @@ public class LogUtil {
      *          <li>FINER <br>
      *          <li>FINEST (lowest value) <br>
      *          </ul>
-     * @param messageId the message or a message identifier.
+     * @param msgid the message or a message identifier.
      * @param data string array of dynamic data to be replaced in the message.
-     * @param session the User's Session object.
      */
      public static void error(Level level, String msgid, String data[]) {
          error(level,msgid,data,null);
@@ -695,7 +693,7 @@ public class LogUtil {
      *          <li>FINER <br>
      *          <li>FINEST (lowest value) <br>
      *          </ul>
-     * @param messageId the message or a message identifier.
+     * @param msgid the message or a message identifier.
      * @param data string array of dynamic data to be replaced in the message.
      * @param session the User's Session object.
       */

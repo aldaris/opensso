@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAssertionManagerImpl.java,v 1.4 2008-06-25 05:46:51 qcheng Exp $
+ * $Id: FSAssertionManagerImpl.java,v 1.5 2008-11-10 22:56:58 veiming Exp $
  *
  */
 
@@ -124,7 +124,7 @@ public class FSAssertionManagerImpl implements FSAssertionManagerIF {
     /**
      * Checks if the user exists.
      * @param userDN user ID
-     * @param hostedEntityId hosted provider's entity ID
+     * @param metaAlias provider's Meta Alias.
      * @return <code>true</code> if the user exists; <code>false</code>
      *  otherwise.
      * @exception FSRemoteException,RemoteException if error occurred.

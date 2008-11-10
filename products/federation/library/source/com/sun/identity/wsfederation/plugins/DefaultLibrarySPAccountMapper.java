@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultLibrarySPAccountMapper.java,v 1.4 2008-06-25 05:48:06 qcheng Exp $
+ * $Id: DefaultLibrarySPAccountMapper.java,v 1.5 2008-11-10 22:57:04 veiming Exp $
  *
  */
 
@@ -82,8 +82,7 @@ public class DefaultLibrarySPAccountMapper extends DefaultAccountMapper
      * information. The implementation of this method checks for
      * the user for the corresponding name identifier in the assertion.
      *
-     * @param assertion <code>SAML</code> <code>Assertion</code> that needs
-     *        to be mapped to the user.
+     * @param rstr Request Security Token Response.
      * @param hostEntityID <code>EntityID</code> of the hosted provider.
      * @param realm realm or the organization name that may be used to find
      *        the user information.

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSPAuthenticationContextInfo.java,v 1.2 2008-06-25 05:46:56 qcheng Exp $
+ * $Id: FSSPAuthenticationContextInfo.java,v 1.3 2008-11-10 22:56:58 veiming Exp $
  *
  */
 
@@ -166,7 +166,8 @@ public class FSSPAuthenticationContextInfo {
     
     /**
      * Sets authentication level.
-     * @param authenticaionLevel Authentication Level.
+     *
+     * @param authenticationLevel Authentication Level.
      * @throws FSException if <code>authenticationLevel</code>
      *         is negative.
      */
@@ -183,7 +184,7 @@ public class FSSPAuthenticationContextInfo {
     /**
      * Sets authentication level.
      *
-     * @param authenticaionLevel Authentication Level.
+     * @param authenticationLevel Authentication Level.
      * @throws FSException if <code>authenticationLevel</code>
      *         is negative.
      */

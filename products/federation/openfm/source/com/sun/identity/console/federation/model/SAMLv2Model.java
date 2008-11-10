@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Model.java,v 1.29 2008-10-24 00:12:12 asyhuang Exp $
+ * $Id: SAMLv2Model.java,v 1.30 2008-11-10 22:57:07 veiming Exp $
  *
  */
 
@@ -961,8 +961,8 @@ public interface SAMLv2Model
      *
      * @param realm to which the entity belongs.
      * @param entityName is the entity id.
-     * @param ExtValues Map which contains the extended attribute values.
-     * @param StdValues Map which contains the standard attribute values.
+     * @param extValues Map which contains the extended attribute values.
+     * @param stdValues Map which contains the standard attribute values.
      * @param isIDP has information whether entity is an idp or sp.
      * @throws AMConsoleException if saving of attribute value fails.
      */

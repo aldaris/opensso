@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthnSvcUtils.java,v 1.3 2008-08-06 17:28:07 exu Exp $
+ * $Id: AuthnSvcUtils.java,v 1.4 2008-11-10 22:56:59 veiming Exp $
  *
  */
 
@@ -74,8 +74,9 @@ public class AuthnSvcUtils {
     public static Debug debug = Debug.getInstance("libIDWSF");
 
     /**
-     * Gets localized string from resource bundle.
-     * @param key a key to a resource bundle
+     * Returns localized string from resource bundle.
+     *
+     * @param key a key to a resource bundle.
      * @return a localized string
      */
     public static String getString(String key) {
@@ -88,8 +89,6 @@ public class AuthnSvcUtils {
      * @return a byte array of decoded value
      */
     public static byte[] decodeDataElement(Element dataE) {
-    //    throws AuthnSvcException {
-
         if (dataE == null) {
             return null;
         }
@@ -107,8 +106,8 @@ public class AuthnSvcUtils {
      * provided sso token.
      * @param saslResp a SASL response
      * @param message a SOAP message containing a SASL request
-     * @param token a sso token
-     * @return true if it sets correctly
+     * @param userDN Distinguished Name of the User.
+     * @return <code>true</code> if it sets correctly
      */
     public static boolean setResourceOfferingAndCredentials(
         SASLResponse saslResp, Message message, String userDN)

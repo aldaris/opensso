@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionIDRequestUtil.java,v 1.4 2008-08-01 22:22:10 hengming Exp $
+ * $Id: AssertionIDRequestUtil.java,v 1.5 2008-11-10 22:57:03 veiming Exp $
  *
  */
 
@@ -355,13 +355,12 @@ public class AssertionIDRequestUtil {
      * This method processes the <code>AssertionIDRequest</code> coming
      * from a requester.
      *
-     * @param attrQuery the <code>AssertionIDRequest</code> object
+     * @param assertionIDRequest the <code>AssertionIDRequest</code> object
      * @param request the <code>HttpServletRequest</code> object
      * @param response the <code>HttpServletResponse</code> object
      * @param samlAuthorityEntityID entity ID of SAML authority
      * @param role the role of SAML authority
      * @param realm the realm of SAML authority
-     *
      * @return the <code>Response</code> object
      * @exception SAML2Exception if the operation is not successful
      */

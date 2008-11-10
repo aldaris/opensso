@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Utils.java,v 1.8 2008-08-06 17:28:12 exu Exp $
+ * $Id: Utils.java,v 1.9 2008-11-10 22:56:59 veiming Exp $
  *
  */
 
@@ -259,11 +259,11 @@ public class Utils {
 
     /**
      * Converts Document to SOAPMessage
-     * @param the source Document
      *
+     * @param doc the source Document
      * @return SOAPMessage
      * @throws SOAPBindingException if an error occurs while converting
-     *                                 the document
+     *         the document
      * @supported.api
      */
     public static SOAPMessage DocumentToSOAPMessage(Document doc)

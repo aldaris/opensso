@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLUtilsCommon.java,v 1.3 2008-06-25 05:47:35 qcheng Exp $
+ * $Id: SAMLUtilsCommon.java,v 1.4 2008-11-10 22:57:00 veiming Exp $
  *
  */
 
@@ -227,7 +227,7 @@ public class SAMLUtilsCommon {
      * will be returned unless the decoder class is not defined, or cannot
      * be located. In that case, the original value will be returned.
      *
-     * @param original password
+     * @param password original password.
      * @return decoded password.
      */
     public static String decodePassword(String password)  {

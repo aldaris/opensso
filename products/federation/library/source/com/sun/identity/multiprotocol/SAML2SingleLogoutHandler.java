@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2SingleLogoutHandler.java,v 1.5 2008-06-25 05:47:25 qcheng Exp $
+ * $Id: SAML2SingleLogoutHandler.java,v 1.6 2008-11-10 22:57:00 veiming Exp $
  *
  */
 
@@ -110,7 +110,7 @@ public class SAML2SingleLogoutHandler implements SingleLogoutHandler {
      * @param relayState A state information to be relayed back in response.
      * @param singleLogoutRequestXML Original single logout request in XML
      *      string.
-     * @param singleLoogutResponseXML Logout response to be sent back to SP.
+     * @param singleLogoutResponseXML Logout response to be sent back to SP.
      *      This only apply to the case of SP initiated Single Logout, it will
      *      be null in case of IDP initiated single logout.
      * @param currentStatus Current logout status, this is the accumulative

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSDefaultAttributePlugin.java,v 1.3 2008-06-25 05:46:53 qcheng Exp $
+ * $Id: FSDefaultAttributePlugin.java,v 1.4 2008-11-10 22:56:58 veiming Exp $
  *
  */
 
@@ -72,7 +72,7 @@ public class FSDefaultAttributePlugin implements FSAttributePlugin {
      * @param token user's session.
      * @return list of SAML <code>AttributeStatement<code>s.
      * @deprecated This method is deprecated.
-     * @see #getAttributeStatement(String,String,String,FSSubject,Object)
+     * @see #getAttributeStatements(String,String,String,FSSubject,Object)
      */
     public List getAttributeStatements(
            String hostEntityId,

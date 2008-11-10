@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ModelImpl.java,v 1.36 2008-10-24 00:12:15 asyhuang Exp $
+ * $Id: SAMLv2ModelImpl.java,v 1.37 2008-11-10 22:57:07 veiming Exp $
  *
  */
 
@@ -1610,17 +1610,17 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
      *
      * @param realm to which the entity belongs.
      * @param entityName is the entity id.
-     * @param ExtValues Map which contains the extended attribute values.
-     * @param StdValues Map which contains the standard attribute values.
+     * @param extValues Map which contains the extended attribute values.
+     * @param stdValues Map which contains the standard attribute values.
      * @param isIDP has information whether entity is an idp or sp.
      * @throws AMConsoleException if saving of attribute value fails.
      */
-    public void  updateKeyinfo(
-            String realm,
-            String entityName,
-            Map extValues,
-            Map stdValues,
-            boolean isIDP
+    public void updateKeyinfo(
+        String realm,
+        String entityName,
+        Map extValues,
+        Map stdValues,
+        boolean isIDP
     ) throws AMConsoleException {
         
         String keysize = getResult(stdValues, TF_KEY_NAME);
@@ -2428,7 +2428,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                 throw new AMConsoleException("invalid.entity.name");
             }
             
-            IDPSSOConfigElement	idpDecConfigElement =
+            IDPSSOConfigElement idpDecConfigElement =
                     saml2MetaManager.getIDPSSOConfig(realm, entityName);
             if (idpDecConfigElement == null) {
                 throw new AMConsoleException("invalid.config.element");

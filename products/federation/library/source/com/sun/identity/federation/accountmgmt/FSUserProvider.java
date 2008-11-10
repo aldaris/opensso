@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSUserProvider.java,v 1.2 2008-06-25 05:46:40 qcheng Exp $
+ * $Id: FSUserProvider.java,v 1.3 2008-11-10 22:56:56 veiming Exp $
  *
  */
 
@@ -36,8 +36,9 @@ import java.util.Map;
 public interface FSUserProvider {
     /**
      * Initializes the provider.
+     *
      * @param hostedProviderId provider id of hosted provider
-     * @throw FSAccountMgmtException if an error occured during initialization.
+     * @throws FSAccountMgmtException if an error occured during initialization.
      */
     public void init(String hostedProviderId)
         throws FSAccountMgmtException;

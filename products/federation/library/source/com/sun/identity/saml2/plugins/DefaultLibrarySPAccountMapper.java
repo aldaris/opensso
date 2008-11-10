@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultLibrarySPAccountMapper.java,v 1.9 2008-08-09 00:38:15 qcheng Exp $
+ * $Id: DefaultLibrarySPAccountMapper.java,v 1.10 2008-11-10 22:57:02 veiming Exp $
  *
  */
 
@@ -191,7 +191,7 @@ public class DefaultLibrarySPAccountMapper extends DefaultAccountMapper
      *
      * @param realm realm name.
      * @param entityID hosted <code>EntityID</code>.
-     * @param <code>Assertion</code> from the identity provider.
+     * @param assertion <code>Assertion</code> from the identity provider.
      * @return auto federation mapped user from the assertion
      *         auto federation <code>AttributeStatement</code>.
      *         null if the statement does not have the auto federation 

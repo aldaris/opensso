@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSServiceUtils.java,v 1.10 2008-08-29 04:57:17 exu Exp $
+ * $Id: FSServiceUtils.java,v 1.11 2008-11-10 22:56:59 veiming Exp $
  *
  */
 
@@ -884,9 +884,9 @@ public class FSServiceUtils {
 
     /**
      * Returns do federate page URL.
+     *
      * @param request <code>HttpServletRequest</code> object
      * @param hostedConfig hosted provider's extended meta
-     * @param metaAlias hosted provider's meta alias
      * @return do federate page URL.
      */
     public static String getDoFederatePageURL(HttpServletRequest request,
@@ -904,7 +904,7 @@ public class FSServiceUtils {
     /**
      * Returns default page URL.
      *
-     * @param HttpServletRequest HTTP Servlet Request.
+     * @param request HTTP Servlet Request.
      * @param pageName the page name whose url to be retrieved
      * @return String the Page URL.
      */

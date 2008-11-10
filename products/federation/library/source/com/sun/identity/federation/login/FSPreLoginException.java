@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSPreLoginException.java,v 1.2 2008-06-25 05:46:42 qcheng Exp $
+ * $Id: FSPreLoginException.java,v 1.3 2008-11-10 22:56:57 veiming Exp $
  *
  */
 
@@ -60,7 +60,7 @@ public class FSPreLoginException extends FSException {
      * Creates <code>FSPreLoginException</code> object.
      *
      * @param t Root cause of this exception.
-     * @param message English message for this exception.
+     * @param msg English message for this exception.
      */
     public FSPreLoginException(Throwable t, String msg) {
         super(t, msg);

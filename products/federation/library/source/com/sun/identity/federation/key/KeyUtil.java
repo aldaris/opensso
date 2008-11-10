@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: KeyUtil.java,v 1.3 2008-06-25 05:46:42 qcheng Exp $
+ * $Id: KeyUtil.java,v 1.4 2008-11-10 22:56:57 veiming Exp $
  *
  */
 
@@ -149,7 +149,7 @@ public class KeyUtil {
 
     /**
      * Returns the partner entity's signature verification certificate.
-     * @param pdproviderDescriptor <code>ProviderDescriptorType</code> for
+     * @param providerDescriptor <code>ProviderDescriptorType</code> for
      *     the partner entity
      * @param entityID partner entity's ID
      * @param isIDP whether partner entity's role is IDP or SP 

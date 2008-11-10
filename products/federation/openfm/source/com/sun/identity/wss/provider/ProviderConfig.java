@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderConfig.java,v 1.26 2008-09-08 21:50:14 mallas Exp $
+ * $Id: ProviderConfig.java,v 1.27 2008-11-10 22:57:07 veiming Exp $
  *
  */
 package com.sun.identity.wss.provider; 
@@ -918,7 +918,7 @@ public abstract class ProviderConfig {
      * Returns the provider configuration for a given provider name.     
      * @param providerName the provider name.    
      * @param providerType the provider type.
-     * @param initalize if set to false the provider configuration will not
+     * @param initialize if set to false the provider configuration will not
      *        be retrieved from the persistent store and returns just the
      *        memory image of the provider configuration. Also if set to
      *        false the provider configuration can not be saved persistently

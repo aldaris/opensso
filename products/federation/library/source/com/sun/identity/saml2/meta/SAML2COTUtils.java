@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2COTUtils.java,v 1.5 2008-07-08 01:08:42 exu Exp $
+ * $Id: SAML2COTUtils.java,v 1.6 2008-11-10 22:57:02 veiming Exp $
  *
  */
 
@@ -74,13 +74,12 @@ public class SAML2COTUtils {
      *
      * @param realm the realm name where the entity configuration is.
      * @param name the circle of trust name.
-     * @entityId the name of the Entity identifier.
+     * @param entityId the name of the Entity identifier.
      * @throws SAML2MetaException if there is a configuration error when
      *         updating the configuration.
      * @throws JAXBException is there is an error updating the entity
      *          configuration.
      */
-    
     public void updateEntityConfig(String realm, String name, String entityId)
     throws SAML2MetaException, JAXBException {
         String classMethod = "SAML2COTUtils.updateEntityConfig: ";

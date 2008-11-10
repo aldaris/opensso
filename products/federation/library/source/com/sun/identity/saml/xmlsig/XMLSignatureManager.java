@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XMLSignatureManager.java,v 1.9 2008-10-08 22:53:31 qcheng Exp $
+ * $Id: XMLSignatureManager.java,v 1.10 2008-11-10 22:57:01 veiming Exp $
  *
  */
 
@@ -93,19 +93,19 @@ public class XMLSignatureManager {
      * @return <code>XMLSignatureManager</code>
      */ 
     public static XMLSignatureManager getInstance() {
-	if (instance == null) {
-	    synchronized (XMLSignatureManager.class) {
-		if (instance == null) {
-		    if (SAMLUtilsCommon.debug.messageEnabled() ) {
-			SAMLUtilsCommon.debug.message(
+        if (instance == null) {
+            synchronized (XMLSignatureManager.class) {
+                if (instance == null) {
+                    if (SAMLUtilsCommon.debug.messageEnabled() ) {
+                        SAMLUtilsCommon.debug.message(
                             "Constructing a new instance"
-		            + " of XMLSignatureManager");
-		    }
-		    instance = new XMLSignatureManager();
-		}
-	    }
-	}
-	return (instance);
+                            + " of XMLSignatureManager");
+                    }
+                    instance = new XMLSignatureManager();
+                }
+            }
+        }
+        return (instance);
     }
 
     /**
@@ -271,7 +271,7 @@ public class XMLSignatureManager {
                                        boolean includeCert)
         throws XMLSignatureException {
     
-    	return sp.signXML(xmlString, certAlias, algorithm, idAttrName,  id, includeCert);
+            return sp.signXML(xmlString, certAlias, algorithm, idAttrName,  id, includeCert);
     }
         
      /**
@@ -296,7 +296,7 @@ public class XMLSignatureManager {
                                        java.lang.String idAttrName,
                                        java.lang.String id,
                                        boolean includeCert,
-				       java.lang.String xpath) 
+                                       java.lang.String xpath) 
         throws XMLSignatureException {
             return sp.signXML(doc, certAlias, algorithm, 
                               idAttrName, id, includeCert, xpath);
@@ -390,16 +390,14 @@ public class XMLSignatureManager {
      * @throws XMLSignatureException if the document could not be signed
      */
     public org.w3c.dom.Element signWithWSSSAMLTokenProfile(
-				   org.w3c.dom.Document doc,
-				   java.security.cert.Certificate cert,
-				   java.lang.String assertionID,
+                                   org.w3c.dom.Document doc,
+                                   java.security.cert.Certificate cert,
+                                   java.lang.String assertionID,
                                    java.lang.String algorithm,
                                    java.util.List ids)
         throws XMLSignatureException {
-
         return sp.signWithWSSSAMLTokenProfile(doc, cert, assertionID,
-						algorithm, ids);
-
+            algorithm, ids);
     }
 
     /**
@@ -410,7 +408,7 @@ public class XMLSignatureManager {
      * @param assertionID assertion ID for the SAML Security Token
      * @param algorithm XML signature algorithm
      * @param ids list of id attribute values of nodes to be signed
-     * @param the web services framework that should be used.
+     * @param wsfVersion the web services framework that should be used.
      *     For WSF1.1, the version must be "1.1" and for WSF1.0,
      *     it must be "1.0"
      * @return SAML Security Token  signature
@@ -437,15 +435,14 @@ public class XMLSignatureManager {
      * @throws XMLSignatureException if the document could not be signed
      */
     public org.w3c.dom.Element signWithSAMLToken(
-				   org.w3c.dom.Document doc,
-				   java.security.cert.Certificate cert,
-				   java.lang.String assertionID,
-                                   java.lang.String algorithm,
-                                   java.util.List ids)
+        org.w3c.dom.Document doc,
+        java.security.cert.Certificate cert,
+        java.lang.String assertionID,
+        java.lang.String algorithm,
+        java.util.List ids)
         throws XMLSignatureException {
 
         return sp.signWithSAMLToken(doc, cert, assertionID, algorithm, ids);
-
     }
     
     public org.w3c.dom.Element signWithKerberosToken(
@@ -523,7 +520,7 @@ public class XMLSignatureManager {
      * @param cert Signer's certificate
      * @param algorithm XML signature algorithm
      * @param ids list of id attribute values of nodes to be signed
-     * @param the web services framework that should be used.
+     * @param wsfVersion the web services framework that should be used.
      *     For WSF1.1, it should be "1.1" and for WSF1.0,
      *     it should be "1.0"
      * @return X509 Security Token  signature
@@ -576,8 +573,7 @@ public class XMLSignatureManager {
     public boolean verifyXMLSignature(org.w3c.dom.Document document,
                                       java.security.cert.Certificate cert)
         throws XMLSignatureException {
-
-	return sp.verifyXMLSignature(document, cert);
+        return sp.verifyXMLSignature(document, cert);
     }
 
     /**

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthServiceListener.java,v 1.3 2008-08-29 20:02:24 dillidorai Exp $
+ * $Id: AuthServiceListener.java,v 1.4 2008-11-10 22:56:55 veiming Exp $
  *
  */
 
@@ -165,7 +165,7 @@ public class AuthServiceListener implements ServiceListener{
      *		  version of the service.
      * @param orgName
      *            Name of the organization.
-     * @param groupName
+     * @param goupName
      *		  name of the configuration grouping.
      * @param serviceComponent
      *		  name of the service components that changed.

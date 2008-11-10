@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSSOAndFedHandler.java,v 1.9 2008-08-20 01:07:05 exu Exp $ 
+ * $Id: FSSSOAndFedHandler.java,v 1.10 2008-11-10 22:56:58 veiming Exp $ 
  *
  */
 
@@ -1327,9 +1327,9 @@ public abstract class FSSSOAndFedHandler {
     }
     
     /**
-     * Gets remote <code>SP</code> provider descriptor.
+     * Returns remote <code>SP</code> provider descriptor.
+     *
      * @return remote <code>SP</code> provider descriptor
-     * @see #setProviderDescriptor(SPDescriptorType)
      */
     public SPDescriptorType getProvider() {
         return spDescriptor;

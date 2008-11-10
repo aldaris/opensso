@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResponseImpl.java,v 1.3 2008-06-25 05:48:13 qcheng Exp $
+ * $Id: ResponseImpl.java,v 1.4 2008-11-10 22:57:05 veiming Exp $
  *
  */
 
@@ -121,9 +121,8 @@ public class ResponseImpl implements Response {
     /**
      * Sets the <code>Result</code>s of this object
      *
-     * @param results the <code>Result</code>s of this object
-     *
-     * @exception XACMLException if the object is immutable
+     * @param values the <code>Result</code>s of this object.
+     * @throws XACMLException if the object is immutable.
      */
     public void setResults(List values) throws XACMLException {
         if (!mutable) {
@@ -148,8 +147,7 @@ public class ResponseImpl implements Response {
      * Adds a <code>Result</code> to this object
      *
      * @param result the <code>Result</code> to add
-     *
-     * @exception XACMLException if the object is immutable
+     * @throws XACMLException if the object is immutable
      */
     public void addResult(Result result) throws XACMLException {
         if (!mutable) {

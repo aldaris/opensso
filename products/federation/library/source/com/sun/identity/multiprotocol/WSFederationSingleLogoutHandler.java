@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFederationSingleLogoutHandler.java,v 1.2 2008-06-25 05:47:25 qcheng Exp $
+ * $Id: WSFederationSingleLogoutHandler.java,v 1.3 2008-11-10 22:57:00 veiming Exp $
  *
  */
 
@@ -101,7 +101,7 @@ public class WSFederationSingleLogoutHandler implements SingleLogoutHandler {
      * @param relayState A state information to be relayed back in response.
      * @param singleLogoutRequestXML Original single logout request in XML
      *      string.
-     * @param singleLoogutResponseXML Logout response to be sent back to SP.
+     * @param singleLogoutResponseXML Logout response to be sent back to SP.
      *      This only apply to the case of SP initiated Single Logout, it will
      *      be null in case of IDP initiated single logout.
      * @param currentStatus Current logout status, this is the accumulative

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSNameRegistrationHandler.java,v 1.5 2008-06-25 05:47:02 qcheng Exp $
+ * $Id: FSNameRegistrationHandler.java,v 1.6 2008-11-10 22:56:58 veiming Exp $
  *
  */
 
@@ -186,7 +186,8 @@ public class FSNameRegistrationHandler {
 
     /**
      * Sets realm.
-     * @param relam The realm under which the entity resides.
+     *
+     * @param realm The realm under which the entity resides.
      */
     public void setRealm(String realm) {
         this.realm = realm;

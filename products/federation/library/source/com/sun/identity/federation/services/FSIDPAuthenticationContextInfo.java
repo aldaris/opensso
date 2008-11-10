@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSIDPAuthenticationContextInfo.java,v 1.2 2008-06-25 05:46:53 qcheng Exp $
+ * $Id: FSIDPAuthenticationContextInfo.java,v 1.3 2008-11-10 22:56:58 veiming Exp $
  *
  */
 
@@ -233,7 +233,7 @@ public class FSIDPAuthenticationContextInfo
     /**
      * Sets module indicator key.
      *
-     * @param key module indicator key.
+     * @param moduleIndicatorKey module indicator key.
      */
     public void setModuleIndicatorKey(String moduleIndicatorKey) {
         this.moduleIndicatorKey = moduleIndicatorKey;

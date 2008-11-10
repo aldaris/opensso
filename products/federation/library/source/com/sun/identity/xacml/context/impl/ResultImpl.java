@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResultImpl.java,v 1.3 2008-06-25 05:48:13 qcheng Exp $
+ * $Id: ResultImpl.java,v 1.4 2008-11-10 22:57:05 veiming Exp $
  *
  */
 
@@ -126,7 +126,7 @@ public class ResultImpl implements Result {
 
     /**
      * Sets <code>resourceId</code> of this object
-     * @param  <code>resourceId</code> of this object
+     * @param resourceId <code>resourceId</code> of this object
      * @exception XACMLException if the object is immutable
      */
     public void setResourceId(String resourceId) throws XACMLException {

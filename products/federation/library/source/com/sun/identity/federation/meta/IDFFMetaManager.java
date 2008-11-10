@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFMetaManager.java,v 1.6 2008-06-25 05:46:48 qcheng Exp $
+ * $Id: IDFFMetaManager.java,v 1.7 2008-11-10 22:56:57 veiming Exp $
  *
  */
 
@@ -290,7 +290,7 @@ public class IDFFMetaManager {
      * @param entityDescriptor The standard entity descriptor object to be set.
      * @throws IDFFMetaException if there is an error setting the entity
      *         descriptor.
-     * @see createEntityDescriptor(EntityDescriptorElement)
+     * @see #createEntityDescriptor(String, EntityDescriptorElement)
      */
     public void setEntityDescriptor(
         String realm, EntityDescriptorElement entityDescriptor)
@@ -649,7 +649,6 @@ public class IDFFMetaManager {
      * @param realm The realm under which the entity resides in
      * @param entityConfig The extended entity configuration object to be set.
      * @throws IDFFMetaException if unable to set the entity configuration.
-     * @see #createEntityConfig(EntityConfigElement)
      */
     public void setEntityConfig(String realm, EntityConfigElement entityConfig)
     throws IDFFMetaException {

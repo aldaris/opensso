@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ObligationImpl.java,v 1.2 2008-06-25 05:48:14 qcheng Exp $
+ * $Id: ObligationImpl.java,v 1.3 2008-11-10 22:57:06 veiming Exp $
  *
  */
 
@@ -220,7 +220,8 @@ public class ObligationImpl implements Obligation {
 
     /**
      * Sets the FullFillOn effect type of this obligation
-     * @param fullfillOn FullFillOn effect type of this obligation
+     *
+     * @param fulfillOn FullFillOn effect type of this obligation
      */
     public void setFulfillOn(String fulfillOn) 
             throws XACMLException {

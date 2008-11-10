@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSingleLogoutHandler.java,v 1.12 2008-08-20 01:07:05 exu Exp $
+ * $Id: FSSingleLogoutHandler.java,v 1.13 2008-11-10 22:56:58 veiming Exp $
  *
  */
 
@@ -1495,7 +1495,7 @@ public class FSSingleLogoutHandler {
      * @param reqLogout the logout request
      * @param currentSessionProvider initial provider with whom to broadcast
      * @param userID who is presently logging out
-     * @param sourceProviderId remote provider id
+     * @param sourceEntityId remote provider id
      * @param sessionIndex to be sent as part of logout message
      * @param isWMLAgent determines if response to be sent to AML agent
      * @param isSourceIDP determines the role of the provider

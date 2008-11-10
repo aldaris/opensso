@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Utils.java,v 1.3 2008-06-25 05:47:29 qcheng Exp $
+ * $Id: Utils.java,v 1.4 2008-11-10 22:57:00 veiming Exp $
  *
  */
 
@@ -52,15 +52,16 @@ public class Utils
     public static final String GET = "GET";
 
     /**
-      *  Redirects to <code>redirectUrl</code> as a GET or a POST
-      *  based on <code>action</code> parameter provided.
-      *  in case of POST all params need to be specified in <code>pmap</code>
-      *  parameter.
-      *    @param hres HttpSevletResponse to be used for the redirect
-      *    @param redirecUrl URL to redirect to.
-      *    @param pmap  http parameters to be sent as part of the redirect
-      *    @param action http action to be executed : GET or POST
-      */
+     * Redirects to <code>redirectUrl</code> as a GET or a POST
+     *  based on <code>action</code> parameter provided.
+     *  in case of POST all params need to be specified in <code>pmap</code>
+     *  parameter.
+     *
+     *  @param hres HttpSevletResponse to be used for the redirect
+     *  @param redirectUrl URL to redirect to.
+     *  @param pmap  http parameters to be sent as part of the redirect
+     *  @param action http action to be executed : GET or POST
+     */
     public static void redirect(HttpServletResponse hres, String redirectUrl, 
            Map pmap, String action)
        throws Exception
@@ -133,7 +134,7 @@ public class Utils
       * Generates a html hidden form to acccomplish a auto POST from the browser
       * Form is assigned an id=saeform
       * @param redirectUrl URL to post teh form to.
-      * @param pMap parameters to be sent in the POST
+      * @param pmap parameters to be sent in the POST
       * @param addAutoSubmit adds html and javascript to autosubmit form
       * @return html code
       */  

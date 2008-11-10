@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSOAPService.java,v 1.3 2008-06-25 05:46:56 qcheng Exp $
+ * $Id: FSSOAPService.java,v 1.4 2008-11-10 22:56:58 veiming Exp $
  *
  */
 
@@ -585,7 +585,8 @@ public class FSSOAPService {
     
     /**
      * Forms a SOAP Fault and puts it in the SOAP Message's Body.
-     * @param faultCode fault code to be set in SOAPMEssage
+     *
+     * @param faultcode fault code to be set in SOAPMEssage
      * @param faultString fault string
      * @param detail the details of the fault condition
      * @return <code>SOAPMessage</code> containing the SOAP fault

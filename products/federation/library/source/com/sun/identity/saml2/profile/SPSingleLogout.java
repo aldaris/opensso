@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSingleLogout.java,v 1.20 2008-08-29 04:57:57 exu Exp $
+ * $Id: SPSingleLogout.java,v 1.21 2008-11-10 22:57:03 veiming Exp $
  *
  */
 
@@ -816,7 +816,7 @@ public class SPSingleLogout {
      * @param spEntityID name of host entity ID.
      * @param realm name of host entity.
      * @param request HTTP servlet request.
-     * @param request HTTP servlet response.
+     * @param response HTTP servlet response.
      * @param isLBReq true if the request is for load balancing.
      * @param binding value of <code>SAML2Constants.HTTP_REDIRECT</code> or
      *        <code>SAML2Constants.SOAP</code>.

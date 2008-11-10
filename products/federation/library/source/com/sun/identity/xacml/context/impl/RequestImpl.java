@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RequestImpl.java,v 1.3 2008-06-25 05:48:13 qcheng Exp $
+ * $Id: RequestImpl.java,v 1.4 2008-11-10 22:57:05 veiming Exp $
  *
  */
 
@@ -397,12 +397,11 @@ public class RequestImpl implements Request {
     /**
      * Sets the instance of the <code>Environment</code>
      *
-     * @param env instance of <code>Environment</code>.
-     *
-     * @exception XACMLException if the object is immutable
-     * An object is considered <code>immutable</code> if <code>
-     * makeImmutable()</code> has been invoked on it. It can
-     * be determined by calling <code>isMutable</code> on the object.
+     * @param argEnv instance of <code>Environment</code>.
+     * @throws XACMLException if the object is immutable
+     *         An object is considered <code>immutable</code> if <code>
+     *         makeImmutable()</code> has been invoked on it. It can
+     *         be determined by calling <code>isMutable</code> on the object.
      */
     public void setEnvironment(Environment argEnv) throws XACMLException {
         if (!isMutable) {

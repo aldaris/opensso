@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFMetaUtils.java,v 1.4 2008-08-06 17:26:13 exu Exp $
+ * $Id: IDFFMetaUtils.java,v 1.5 2008-11-10 22:56:57 veiming Exp $
  *
  */
 
@@ -435,7 +435,7 @@ public class IDFFMetaUtils {
     /**
      * Obtains provider's meta alias.
      * @param realm the realm in which the provider resides
-     * @param poviderID provider's entity ID
+     * @param providerID provider's entity ID
      * @param providerRole provider's role
      * @param session user session object
      * @return service provider's meta alias; or <code>null</code> if an error
@@ -464,7 +464,7 @@ public class IDFFMetaUtils {
     /**
      * Obtains provider's extended meta.
      * @param realm the realm in which the provider resides
-     * @param poviderID provider's entity ID
+     * @param providerId provider's entity ID
      * @param providerRole provider's role
      * @param metaManager <code>IDFFMetaManager</code> instance.
      * @return provider's extended meta; or <code>null</code> if an error

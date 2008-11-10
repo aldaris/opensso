@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CacheCleanUpRunnable.java,v 1.1 2008-08-01 22:22:10 hengming Exp $
+ * $Id: CacheCleanUpRunnable.java,v 1.2 2008-11-10 22:57:03 veiming Exp $
  */
 
 
@@ -45,8 +45,8 @@ public class CacheCleanUpRunnable extends GeneralTaskRunnable {
     
     /**
      * Constructor.
+     *
      * @param runPeriod The period for the clean up to run.
-     * @param map the <code>Map</code> to be cleaned up.
      */
     public CacheCleanUpRunnable(long runPeriod) {
         this.runPeriod = runPeriod;

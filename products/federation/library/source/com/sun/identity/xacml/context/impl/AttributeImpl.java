@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeImpl.java,v 1.3 2008-06-25 05:48:12 qcheng Exp $
+ * $Id: AttributeImpl.java,v 1.4 2008-11-10 22:57:05 veiming Exp $
  *
  */
 
@@ -337,13 +337,12 @@ public class AttributeImpl implements Attribute {
     /**
      * Sets the attribute values for this object
      *
-     * @param values a <code>List</code> containing <code>String<code> values
-     * of this object.
-     *
-     * @exception XACMLException if the object is immutable
-     * An object is considered <code>immutable</code> if <code>
-     * makeImmutable()</code> has been invoked on it. It can
-     * be determined by calling <code>isMutable</code> on the object.
+     * @param stringValues a <code>List</code> containing
+     *        <code>String<code> values of this object.
+     * @throws XACMLException if the object is immutable
+     *         An object is considered <code>immutable</code> if <code>
+     *         makeImmutable()</code> has been invoked on it. It can
+     *         be determined by calling <code>isMutable</code> on the object.
      */
     public void setAttributeStringValues(List stringValues) 
             throws XACMLException {

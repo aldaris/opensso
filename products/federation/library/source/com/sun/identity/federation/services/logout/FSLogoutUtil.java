@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSLogoutUtil.java,v 1.11 2008-08-20 01:07:05 exu Exp $
+ * $Id: FSLogoutUtil.java,v 1.12 2008-11-10 22:56:58 veiming Exp $
  *
  */
 
@@ -80,17 +80,19 @@ public class FSLogoutUtil {
      * 1. Destroy the Federation Session cookie (eg. iPlanetDirectoryPro)
      * 2. Clean the Session manager (FSSessionManager related API call)
      * @param userID the principal whose session needs to be destroyed
-     * @param hostedEntityId the hostedProvider doing the cleanup
+     * @param metaAlias the hostedProvider's meta alias.
      * @param sessionIndex Session Index of the user session.
+     * @param request HTTP Request Object.
+     * @param response HTTP Response Object.
      * @return <code>true</code> if session cleanup was successful;
      *  <code>false</code> otherwise.
      */
     protected static boolean destroyPrincipalSession(
-                String userID, 
-                String metaAlias,
-                String sessionIndex,
-                HttpServletRequest request,
-                HttpServletResponse response)
+        String userID, 
+        String metaAlias,
+        String sessionIndex,
+        HttpServletRequest request,
+        HttpServletResponse response)
     {
         if (FSUtils.debug.messageEnabled()) {
             FSUtils.debug.message("Entered destroyPrincipalSession" +
@@ -378,7 +380,7 @@ public class FSLogoutUtil {
      * Returns the <code>FSAccountFedInfo</code> object for the given 
      * principal and provider Id.
      * @param userID principal whose working account we want to retrieve
-     * @param entityId the provider Id to whom logout notification needs to 
+     * @param entityID the provider Id to whom logout notification needs to 
      *  be sent
      * @param metaAlias hosted provider's meta alias
      * @return account object for the given user, provider
@@ -1084,9 +1086,10 @@ public class FSLogoutUtil {
 
     /**
      * Removes current session partner from the session partner list.
+     *
      * @param metaAlias meta alias of the hosted provider
      * @param remoteEntityId id of the remote provider
-     * @param ssoTOken session object of the principal who presently login
+     * @param ssoToken session object of the principal who presently login
      * @param userID id of the principal
      */
     public static void removeCurrentSessionPartner(

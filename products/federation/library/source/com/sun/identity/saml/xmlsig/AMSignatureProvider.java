@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSignatureProvider.java,v 1.8 2008-09-24 00:25:17 qcheng Exp $
+ * $Id: AMSignatureProvider.java,v 1.9 2008-11-10 22:57:00 veiming Exp $
  *
  */
 
@@ -357,7 +357,8 @@ public class AMSignatureProvider implements SignatureProvider {
      * @param doc XML dom object
      * @param certAlias Signer's certificate alias name
      * @param algorithm XML signature algorithm
-     * @param id attribute name for the id attribute of the node to be signed
+     * @param idAttrName attribute name for the id attribute of the node to
+     *        be signed
      * @param id id attribute value of the node to be signed
      * @param includeCert if true, include the signing certificate in KeyInfo.
      *                    if false, does not include the signing certificate.
@@ -382,7 +383,8 @@ public class AMSignatureProvider implements SignatureProvider {
      * @param xmlString a string representing XML dom object
      * @param certAlias Signer's certificate alias name
      * @param algorithm XML signature algorithm
-     * @param id attribute name for the id attribute of the node to be signed
+     * @param idAttrName attribute name for the id attribute of the node to be
+     *        signed.
      * @param id id attribute value of the node to be signed
      * @param includeCert if true, include the signing certificate in KeyInfo.
      *                    if false, does not include the signing certificate.
@@ -419,7 +421,8 @@ public class AMSignatureProvider implements SignatureProvider {
      * @param doc XML dom object
      * @param certAlias Signer's certificate alias name
      * @param algorithm XML signature algorithm
-     * @param id attribute name for the id attribute of the node to be signed
+     * @param idAttrName attribute name for the id attribute of the node to
+     *        be signed
      * @param id id attribute value of the node to be signed
      * @param includeCert if true, include the signing certificate in KeyInfo.
      *                    if false, does not include the signing certificate.
@@ -659,7 +662,7 @@ public class AMSignatureProvider implements SignatureProvider {
      *
      * Sign part of the xml document referered by the supplied a list
      * of id attributes of nodes
-     * @param doc XML dom object
+     * @param xmlString XML.
      * @param certAlias Signer's certificate alias name
      * @param algorithm XML signature algorithm
      * @param ids list of id attribute values of nodes to be signed
@@ -1180,8 +1183,9 @@ public class AMSignatureProvider implements SignatureProvider {
     }
     
     /**
-     * Verify the signature of the xml document 
-     * @param doc XML dom document whose signature to be verified 
+     * Verify the signature of the xml element.
+     *
+     * @param element XML dom element whose signature to be verified 
      * @return true if the xml signature is verified, false otherwise
      * @throws XMLSignatureException if problem occurs during verification
      */
@@ -1766,9 +1770,10 @@ public class AMSignatureProvider implements SignatureProvider {
     }
     
     /**
-     * Get the public key from the certificate embedded in the KeyInfo 
-     * @param keyinfo KeyInfo 
-     * @return a PublicKey
+     * Returns the public key from the certificate embedded in the KeyInfo.
+     *
+     * @param cert X509 Certificate
+     * @return a public key from the certificate embedded in the KeyInfo.
      */
     protected PublicKey getPublicKey(X509Certificate cert) {
         PublicKey pk = null;
@@ -1896,7 +1901,7 @@ public class AMSignatureProvider implements SignatureProvider {
      * @param cert Signer's certificate
      * @param algorithm XML signature algorithm
      * @param ids list of id attribute values of nodes to be signed
-     * @param refenceType signed element reference type
+     * @param referenceType signed element reference type
      * @return X509 Security Token  signature
      * @throws XMLSignatureException if the document could not be signed
      */

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Obligations.java,v 1.2 2008-06-25 05:48:14 qcheng Exp $
+ * $Id: Obligations.java,v 1.3 2008-11-10 22:57:05 veiming Exp $
  *
  */
 
@@ -63,7 +63,7 @@ public interface Obligations {
     /**
      * Sets the <code>Obligation</code> objects of this
      * <code>Obligations</code>
-     * @param the <code>Obligation</code> objects to set in this
+     * @param obligations the <code>Obligation</code> objects to set in this
      * <code>Obligations</code>
      */
     public void setObligations(List obligations) throws XACMLException;

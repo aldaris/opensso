@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SignatureProvider.java,v 1.8 2008-07-30 05:06:51 mallas Exp $
+ * $Id: SignatureProvider.java,v 1.9 2008-11-10 22:57:01 veiming Exp $
  *
  */
 
@@ -192,12 +192,12 @@ public interface SignatureProvider {
      * @throws XMLSignatureException if the document could not be signed
      */
     public org.w3c.dom.Element signXML(org.w3c.dom.Document doc,
-                                       java.lang.String certAlias,
-                                       java.lang.String algorithm,
-                                       java.lang.String idAttrName,
-                                       java.lang.String id,
-                                       boolean includeCert,
-				       java.lang.String xpath)
+        java.lang.String certAlias,
+        java.lang.String algorithm,
+        java.lang.String idAttrName,
+        java.lang.String id,
+        boolean includeCert,
+        java.lang.String xpath)
         throws XMLSignatureException;
 
     /**                                                                    
@@ -298,7 +298,7 @@ public interface SignatureProvider {
      * @param assertionID assertion ID for the SAML Security Token
      * @param algorithm XML signature algorithm
      * @param ids list of id attribute values of nodes to be signed
-     * @param the web services framework that should be used.
+     * @param wsfVersion the web services framework that should be used.
      *     For WSF1.1, the version must be "1.1" and for WSF1.0,
      *     it must be "1.0"
      * @return SAML Security Token  signature
@@ -321,11 +321,11 @@ public interface SignatureProvider {
      * @throws XMLSignatureException if the document could not be signed
      */
     public org.w3c.dom.Element signWithSAMLToken(
-				   org.w3c.dom.Document doc,
-				   java.security.cert.Certificate cert,
-				   java.lang.String assertionID,
-                                   java.lang.String algorithm,
-                                   java.util.List ids)
+        org.w3c.dom.Document doc,
+        java.security.cert.Certificate cert,
+        java.lang.String assertionID,
+        java.lang.String algorithm,
+        java.util.List ids)
         throws XMLSignatureException;
 
     /**
@@ -351,7 +351,7 @@ public interface SignatureProvider {
      * Sign part of the XML document wth kerberos security token using
      * referred by the supplied a list of id attributes of nodes.
      * @param doc the XML <code>DOM</code> document.
-     * @param cert Signer's certificate
+     * @param key Security Key.
      * @param algorithm XML signature algorithm
      * @param ids list of id attribute values of nodes to be signed
      * @return Kerberos Security Token  signature
@@ -404,7 +404,7 @@ public interface SignatureProvider {
      * @param cert Signer's certificate
      * @param algorithm XML signature algorithm
      * @param ids list of id attribute values of nodes to be signed
-     * @param the web services framework that should be used.
+     * @param wsfVersion the web services framework that should be used.
      *     For WSF1.1, it should be "1.1" and for WSF1.0,
      *     it should be "1.0"
      * @return X509 Security Token  signature
@@ -519,7 +519,7 @@ public interface SignatureProvider {
 
     /**
      * Verify all the signatures of the XML document
-     * @param the web services framework that should be used.
+     * @param wsfVersion the web services framework that should be used.
      *     For WSF1.1, it should be "1.1" and for WSF1.0, it should be "1.0"
      * @param certAlias alias for Signer's certificate, this is used to search
      *     signer's public certificate if it is not presented in
@@ -528,8 +528,11 @@ public interface SignatureProvider {
      * @return true if the XML signature is verified, false otherwise
      * @exception XMLSignatureException if problem occurs during verification
      */
-    public boolean verifyXMLSignature(String wsfVersion,String certAlias,
-        org.w3c.dom.Document document) throws XMLSignatureException;
+    public boolean verifyXMLSignature(
+        String wsfVersion,
+        String certAlias,
+        org.w3c.dom.Document document
+    ) throws XMLSignatureException;
     
     /**
      * Verify all the signatures of the XML document for the

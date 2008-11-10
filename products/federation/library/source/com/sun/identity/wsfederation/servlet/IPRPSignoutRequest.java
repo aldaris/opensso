@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPRPSignoutRequest.java,v 1.5 2008-08-28 20:49:22 superpat7 Exp $
+ * $Id: IPRPSignoutRequest.java,v 1.6 2008-11-10 22:57:04 veiming Exp $
  *
  */
 
@@ -57,10 +57,11 @@ public class IPRPSignoutRequest extends WSFederationAction {
     private String wreply;
 
     /**
-     * Creates a new instance of RPSigninRequest
+     * Creates a new instance of <code>RPSigninRequest</code>.
+     *
      * @param request HTTPServletRequest for this interaction
      * @param response HTTPServletResponse for this interaction
-     * @param String wreply Reply URL, to which control is to be transferred
+     * @param wreply Reply URL, to which control is to be transferred
      * on successful completion of sign-out. May be null, in which case, control
      * stays with the provider.
      */

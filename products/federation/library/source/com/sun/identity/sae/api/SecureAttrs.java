@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureAttrs.java,v 1.8 2008-08-29 06:28:22 rajeevangal Exp $
+ * $Id: SecureAttrs.java,v 1.9 2008-11-10 22:57:00 veiming Exp $
  *
  */
 
@@ -304,7 +304,7 @@ public class SecureAttrs
      *                     values.
      * @throws Exception rethrows underlying exception.
      * @supported.api
-     * @deprecate. For backward compatability with older releases of this api.
+     * @deprecated For backward compatability with older releases of this api.
      *     Replaced by {@link #init(String,String,Properties)}
      */
     synchronized public static void init(Properties properties) throws Exception

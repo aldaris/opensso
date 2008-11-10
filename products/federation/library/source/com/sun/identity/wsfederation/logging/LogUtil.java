@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogUtil.java,v 1.5 2008-08-28 20:49:23 superpat7 Exp $
+ * $Id: LogUtil.java,v 1.6 2008-11-10 22:57:03 veiming Exp $
  *
  */
 
@@ -170,7 +170,6 @@ public abstract class LogUtil {
      *          </ul>
      * @param msgid the message or a message identifier.
      * @param data string array of dynamic data to be replaced in the message.
-     * @param session the User's session object
      */
     public static void access(Level level, String msgid, String data[]) {
         access(level, msgid, data, null);
@@ -222,9 +221,8 @@ public abstract class LogUtil {
      *          <li>FINER <br>
      *          <li>FINEST (lowest value) <br>
      *          </ul>
-     * @param messageId the message or a message identifier.
+     * @param msgid the message or a message identifier.
      * @param data string array of dynamic data to be replaced in the message.
-     * @param session the User's Session object.
      */
      public static void error(Level level, String msgid, String data[]) {
          error(level,msgid,data,null);
@@ -245,7 +243,7 @@ public abstract class LogUtil {
      *          <li>FINER <br>
      *          <li>FINEST (lowest value) <br>
      *          </ul>
-     * @param messageId the message or a message identifier.
+     * @param msgid the message or a message identifier.
      * @param data string array of dynamic data to be replaced in the message.
      * @param session the User's Session object.
       */
@@ -262,9 +260,9 @@ public abstract class LogUtil {
     }
 
     /**
-     * Checks if the logging is enabled.
+     * Returns <code>true</code> if the logging is enabled.
      *
-     * @return true if logging is enabled.
+     * @return <code>true</code> if the logging is enabled.
      */
     public boolean isLogEnabled() {
         if (logger == null) {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: KeyUtil.java,v 1.7 2008-08-08 18:00:08 qcheng Exp $
+ * $Id: KeyUtil.java,v 1.8 2008-11-10 22:57:01 veiming Exp $
  *
  */
 
@@ -209,7 +209,6 @@ public class KeyUtil {
      * encrypting messages intended for the partner entity.
      * @param roled <code>RoleDescriptor</code> for the partner entity
      * @param entityID partner entity's ID
-     * @param isIDP whether partner entity's role is IDP or SP 
      * @param role entity's role
      * @return <code>EncInfo</code> which includes partner entity's
      * public key for wrapping the secret key, data encryption algorithm,

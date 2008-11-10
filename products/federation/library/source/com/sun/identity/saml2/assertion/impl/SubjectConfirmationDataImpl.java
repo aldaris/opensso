@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectConfirmationDataImpl.java,v 1.4 2008-06-25 05:47:44 qcheng Exp $
+ * $Id: SubjectConfirmationDataImpl.java,v 1.5 2008-11-10 22:57:01 veiming Exp $
  *
  */
 
@@ -389,21 +389,18 @@ public class SubjectConfirmationDataImpl implements SubjectConfirmationData {
     }
     
     /**
-     *  Sets the content type attribute     
+     *  Sets the content type attribute.
      *
      *  @param attribute attribute type value for the content that will be 
      *         added
-     *  @exception SAML2Exception if the object is immutable
-     *  @see #getAnyAttribute
+     *  @throws SAML2Exception if the object is immutable
      */
-    public void setContentType(String attribute) throws SAML2Exception
-    {
+    public void setContentType(String attribute) throws SAML2Exception {
         if (!mutable) {
            throw new SAML2Exception(
                     SAML2SDKUtils.bundle.getString("objectImmutable"));
         }
-
-        contentType = attribute;                
+        contentType = attribute;
     }
 
     /**

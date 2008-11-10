@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLAuthzDecisionStatementImpl.java,v 1.3 2008-06-25 05:48:15 qcheng Exp $
+ * $Id: XACMLAuthzDecisionStatementImpl.java,v 1.4 2008-11-10 22:57:06 veiming Exp $
  *
  */
 
@@ -145,10 +145,11 @@ public class XACMLAuthzDecisionStatementImpl
 
     /**
      * Sets <code>Response</code> element of this object
-     * @parameter response XACML context <code>Response</code> element to be 
-     * set in this object
      *
-     * @exception XACMLException if the object is immutable
+     * @param response XACML context <code>Response</code> element to be 
+     *        set in this object.
+     * @throws XACMLException if the object is immutable and response is
+     *         null.
      */
    public void setResponse(Response response) 
         throws XACMLException {
@@ -176,11 +177,11 @@ public class XACMLAuthzDecisionStatementImpl
    }
 
     /**
-     * Sets <code>Request</code> element of this object
-     * @parameter request XACML context <code>Request</code> element to be 
-     * set in this object
+     * Sets <code>Request</code> element of this object.
      *
-     * @exception XACMLException if the object is immutable
+     * @param request XACML context <code>Request</code> element to be 
+     *        set in this object.
+     * @throws XACMLException if the object is immutable.
      */
    public void setRequest(Request request) 
         throws XACMLException {

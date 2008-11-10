@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultIDPAccountMapper.java,v 1.5 2008-06-25 05:48:06 qcheng Exp $
+ * $Id: DefaultIDPAccountMapper.java,v 1.6 2008-11-10 22:57:04 veiming Exp $
  *
  */
 
@@ -70,7 +70,8 @@ public class DefaultIDPAccountMapper extends DefaultAccountMapper
      * Returns the user's <code>NameID</code>information that contains
      * account federation with the corresponding remote and local entities.
      *
-     * @param ssoToken Single Sign On Token of the user.
+     * @param session Session object.
+     * @param realm Realm where user resides.
      * @param hostEntityID <code>EntityID</code> of the hosted provider.
      * @param remoteEntityID <code>EntityID</code> of the remote provider.
      * @return the <code>NameID</code> corresponding to the authenticated user.

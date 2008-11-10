@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultSPAuthnContextMapper.java,v 1.8 2008-09-17 21:41:12 exu Exp $
+ * $Id: DefaultSPAuthnContextMapper.java,v 1.9 2008-11-10 22:57:02 veiming Exp $
  *
  */
 
@@ -368,7 +368,7 @@ public class DefaultSPAuthnContextMapper implements SPAuthnContextMapper {
      * Returns true if the specified AuthnContextClassRef matches a list of
      * requested AuthnContextClassRef.
      *
-     * @param authnRequest a list of requested AuthnContextClassRef's
+     * @param requestedACClassRefs a list of requested AuthnContextClassRef's
      * @param acClassRef AuthnContextClassRef
      * @param comparison the type of comparison
      * @param realm  Realm or Organization of the Service Provider.

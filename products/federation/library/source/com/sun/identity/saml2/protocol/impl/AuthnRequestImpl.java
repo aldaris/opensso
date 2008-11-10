@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthnRequestImpl.java,v 1.6 2008-08-31 05:49:48 bina Exp $
+ * $Id: AuthnRequestImpl.java,v 1.7 2008-11-10 22:57:03 veiming Exp $
  *
  */
 
@@ -336,7 +336,7 @@ public class AuthnRequestImpl extends RequestAbstractImpl
      * @param url the value of <code>AssertionConsumerServiceURL</code> 
      *        attribute.
      * @throws SAML2Exception if the object is immutable.
-     * @see #getAssertionConsumingServiceURL
+     * @see #getAssertionConsumerServiceURL()
      */
     public void setAssertionConsumerServiceURL(String url) 
 	    throws SAML2Exception {
@@ -353,7 +353,7 @@ public class AuthnRequestImpl extends RequestAbstractImpl
      *
      * @return value of the <code>AssertionConsumerServiceIndex<code> 
      *         attribute.
-     * @see #setAssertionConsumingServiceIndex(Integer)
+     * @see #setAssertionConsumerServiceIndex(Integer)
      */
     public Integer getAssertionConsumerServiceIndex() {
         return assertionConsumerSvcIndex;

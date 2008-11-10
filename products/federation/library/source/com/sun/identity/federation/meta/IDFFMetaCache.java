@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFMetaCache.java,v 1.3 2008-06-25 05:46:48 qcheng Exp $
+ * $Id: IDFFMetaCache.java,v 1.4 2008-11-10 22:56:57 veiming Exp $
  *
  */
 
@@ -132,8 +132,7 @@ public class IDFFMetaCache {
      * Updates the the Entity Configuration Cache with Entity Config.
      * @param realm The realm under which the entity resides.
      * @param entityID ID of the entity to be retrieved.
-     * @return <code>EntityConfigElement</code> object for the entity or null
-     *         if not found.
+     * @param entityConfig Entity Configuration Object.
      */
     public static void setEntityConfig(String realm, String entityID,
             EntityConfigElement entityConfig) {

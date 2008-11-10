@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPProxyUtil.java,v 1.12 2008-07-30 19:55:32 weisun2 Exp $
+ * $Id: IDPProxyUtil.java,v 1.13 2008-11-10 22:57:03 veiming Exp $
  *
  */
 
@@ -140,7 +140,7 @@ public class IDPProxyUtil {
      * Sends a new AuthnRequest to the authenticating provider. 
      * @param authnRequest original AuthnRequest sent by the service provider.
      * @param preferredIDP IDP to be proxied. 
-     * @param pSSODescriptor SPSSO Descriptor Element
+     * @param spSSODescriptor SPSSO Descriptor Element
      * @param hostedEntityId hosted provider ID 
      * @param request HttpServletRequest 
      * @param response HttpServletResponse
