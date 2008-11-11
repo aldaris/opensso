@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupClientWARSamples.java,v 1.10 2008-08-28 19:39:46 qcheng Exp $
+ * $Id: SetupClientWARSamples.java,v 1.11 2008-11-11 07:05:08 veiming Exp $
  *
  */
 
@@ -94,9 +94,13 @@ public class SetupClientWARSamples {
             String keystoreLocation = (url.toString()).substring(5);
             int index = keystoreLocation.indexOf("WEB-INF");
             keystoreLocation = keystoreLocation.substring(0, index-1);
-            content = 
-                content.replaceAll("@" + "BASE_DIR" + "@", keystoreLocation);
-        
+            content = content.replaceAll("@BASE_DIR@", keystoreLocation);
+        }
+
+        String configDir = (String)properties.get("CONFIG_DIR");
+        if ((configDir != null) && (configDir.trim().length() > 0)) {
+            content += "\n" + SystemProperties.CONFIG_PATH + "=" + configDir +
+                "\n";
         }
         
         // create parent directory if does not exists

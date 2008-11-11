@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Configurator.jsp,v 1.9 2008-10-29 03:11:53 veiming Exp $
+   $Id: Configurator.jsp,v 1.10 2008-11-11 07:05:08 veiming Exp $
 
 --%>
 
@@ -142,6 +142,9 @@ java.util.Properties"
                     "com.sun.identity.plugin.configuration.impl.ConfigurationInstanceImpl");
                 props.setProperty("DATASTORE_PROVIDER_CLASS", 
                     "com.sun.identity.plugin.datastore.impl.IdRepoDataStoreProvider");
+                props.setProperty("CONFIG_DIR",
+                    System.getProperty("user.home"));
+
                 try {
                     SetupClientWARSamples configurator = 
                         new SetupClientWARSamples(
