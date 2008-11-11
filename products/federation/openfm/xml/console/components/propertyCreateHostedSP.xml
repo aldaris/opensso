@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyCreateHostedSP.xml,v 1.7 2008-07-24 18:16:56 veiming Exp $
+   $Id: propertyCreateHostedSP.xml,v 1.8 2008-11-11 19:53:24 babysunil Exp $
 
 -->
 
@@ -150,7 +150,7 @@
     <section name="cot" defaultValue="configure.provider.section.cot">
     <property span="true">
         <cc name="txtCotDesc" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag">
-            <attribute name="defaultValue" value="configure.provider.help.cot" />
+            <attribute name="defaultValue" value="configure.provider.help.sp.cot" />
         </cc>
     </property>
     <property>
