@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupClientWARSamples.java,v 1.11 2008-11-11 07:05:08 veiming Exp $
+ * $Id: SetupClientWARSamples.java,v 1.12 2008-11-11 21:52:12 veiming Exp $
  *
  */
 
@@ -101,6 +101,12 @@ public class SetupClientWARSamples {
         if ((configDir != null) && (configDir.trim().length() > 0)) {
             content += "\n" + SystemProperties.CONFIG_PATH + "=" + configDir +
                 "\n";
+        }
+
+        String consoleRemote = (String)properties.get("CONSOLE_REMOTE");
+        if ((consoleRemote != null) && consoleRemote.equals("true")) {
+            content = content.replaceAll("com.iplanet.am.sdk.remote",
+                "com.iplanet.am.sdk.ldap");
         }
         
         // create parent directory if does not exists
