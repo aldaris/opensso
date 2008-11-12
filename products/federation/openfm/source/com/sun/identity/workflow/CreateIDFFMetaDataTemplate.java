@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateIDFFMetaDataTemplate.java,v 1.7 2008-11-12 01:13:21 asyhuang Exp $
+ * $Id: CreateIDFFMetaDataTemplate.java,v 1.8 2008-11-12 19:33:43 asyhuang Exp $
  *
  */
 
@@ -336,6 +336,13 @@ public class CreateIDFFMetaDataTemplate {
         String idpECertAlias = (String)mapParams.get(
             MetaTemplateParameters.P_IDP_E_CERT);
 
+        if (idpSCertAlias == null) {
+             idpSCertAlias = "";
+         }
+         if (idpECertAlias == null) {
+             idpECertAlias = "";
+         }
+        
         buff.append("    <IDPDescriptorConfig metaAlias=\"")
             .append(idpAlias)
             .append("\">\n")
@@ -503,6 +510,12 @@ public class CreateIDFFMetaDataTemplate {
             MetaTemplateParameters.P_SP_S_CERT);
         String spECertAlias = (String)mapParams.get(
             MetaTemplateParameters.P_SP_E_CERT);
+         if (spSCertAlias == null) {
+             spSCertAlias = "";
+         }
+         if (spECertAlias == null) {
+             spECertAlias = "";
+         }
 
         buff.append("    <SPDescriptorConfig metaAlias=\"")
             .append(spAlias)
