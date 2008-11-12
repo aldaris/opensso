@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.22 2008-08-19 19:13:04 veiming Exp $
+   $Id: build.xml,v 1.23 2008-11-12 22:26:15 huacui Exp $
 
 -->
 
@@ -97,18 +97,12 @@
 
     <target name="prenightly">
         <copy todir="${j2eeagents.basedir}/appserver/v9/extlib" >
-            <fileset dir="${prd.nightly.dist.dir}/openfm">
-                <include name="openssoclientsdk.jar" />
-            </fileset>
             <fileset dir="${installtools.dist.dir}">
                 <include name="opensso-installtools.jar" />
                 <include name="opensso-installtools-launcher.jar" />
             </fileset>
         </copy>
         <copy todir="${j2eeagents.basedir}/weblogic/v10/extlib" >
-            <fileset dir="${prd.nightly.dist.dir}/openfm">
-                <include name="openssoclientsdk.jar" />
-            </fileset>
             <fileset dir="${installtools.dist.dir}">
                 <include name="opensso-installtools.jar" />
                 <include name="opensso-installtools-launcher.jar" />
