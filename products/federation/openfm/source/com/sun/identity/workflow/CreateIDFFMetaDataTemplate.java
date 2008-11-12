@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateIDFFMetaDataTemplate.java,v 1.6 2008-06-25 05:50:01 qcheng Exp $
+ * $Id: CreateIDFFMetaDataTemplate.java,v 1.7 2008-11-12 01:13:21 asyhuang Exp $
  *
  */
 
@@ -730,7 +730,45 @@ public class CreateIDFFMetaDataTemplate {
             buff.append(
                 "        <AffiliateMember>" + affiMember + "</AffiliateMember>\n");
         }
-
+       
+        String affiSCertAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_AFFI_S_CERT);              
+        String affiSX509Cert = IDFFMetaSecurityUtils.buildX509Certificate(
+                affiSCertAlias);
+        if (affiSX509Cert != null) {
+            buff.append("        <KeyDescriptor use=\"signing\">\n")
+                .append("            <KeyInfo xmlns=\"")
+                .append(IDFFMetaSecurityUtils.NS_XMLSIG)
+                .append("\">\n")
+                .append("                <X509Data>\n")
+                .append("                    <X509Certificate>\n")
+                .append(affiSX509Cert)
+                .append("                    </X509Certificate>\n")
+                .append("                </X509Data>\n")
+                .append("            </KeyInfo>\n")
+                .append( "        </KeyDescriptor>\n");
+        }
+                            
+        String affiECertAlias = (String)mapParams.get(
+            MetaTemplateParameters.P_AFFI_E_CERT);
+        String affiEX509Cert = IDFFMetaSecurityUtils.buildX509Certificate(
+            affiECertAlias);
+        if (affiEX509Cert != null) {
+            buff.append("        <KeyDescriptor use=\"encryption\">\n")
+                .append("            <EncryptionMethod>http://www.w3.org/2001/04/xmlenc#aes128-cbc</EncryptionMethod>\n")
+                .append("            <KeySize>128</KeySize>\n")
+                .append("            <KeyInfo xmlns=\"")
+                .append(IDFFMetaSecurityUtils.NS_XMLSIG)
+                .append("\">\n")
+                .append("                <X509Data>\n")
+                .append("                    <X509Certificate>\n")
+                .append(affiEX509Cert)
+                .append("                    </X509Certificate>\n")
+                .append("                </X509Data>\n")
+                .append("            </KeyInfo>\n")
+                .append("        </KeyDescriptor>\n");
+        }
+        
         buff.append("    </AffiliationDescriptor>\n");
     }
     

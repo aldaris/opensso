@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateSAML2MetaDataViewBean.java,v 1.4 2008-08-27 17:50:15 babysunil Exp $
+ * $Id: CreateSAML2MetaDataViewBean.java,v 1.5 2008-11-12 01:16:59 asyhuang Exp $
  *
  */
 
@@ -193,8 +193,8 @@ public class CreateSAML2MetaDataViewBean
     public void handleButton1Request(RequestInvocationEvent event)
         throws ModelControlException
     {
-	setPageSessionAttribute(getTrackingTabIDName(),
-	    AMAdminConstants.FED_TAB_ID);
+	       setPageSessionAttribute(getTrackingTabIDName(),
+	           AMAdminConstants.FED_TAB_ID);
         setPageSessionAttribute(AMAdminConstants.PREVIOUS_TAB_ID,
             getTrackingTabIDName());
         CreateMetaDataModel model = (CreateMetaDataModel)getModel();
@@ -325,7 +325,39 @@ public class CreateSAML2MetaDataViewBean
                     "samlv2.create.provider.missing.affiliation.members"));
             }
 
+        } else if (protocol.equals(PROTO_IDFF)) {
+            boolean bAffiliation = addStringToMap(map,
+                MetaTemplateParameters.P_AFFILIATION, "tfaffiliation", realm);
+            hasRole |= bAffiliation;
+
+            addStringToMap(map, MetaTemplateParameters.P_AFFI_S_CERT,
+                "tfaffiscertalias");
+            addStringToMap(map, MetaTemplateParameters.P_AFFI_E_CERT,
+                "tfaffiecertalias");
+            String owner = this.getDisplayFieldStringValue(MetaTemplateParameters.P_AFFI_OWNERID);
+            if (owner != null && owner.length() > 0) {
+                addStringToMap(map, MetaTemplateParameters.P_AFFI_OWNERID,
+                        "affiOwnerID");
+            } else if (bAffiliation) {
+                throw new AMConsoleException(
+                        model.getLocalizedString(
+                        "samlv2.create.provider.missing.affiliation.owner"));
+            }
+
+            CCEditableList eList = (CCEditableList) getChild(AFFI_MEMBERS);
+            eList.restoreStateData();
+            Set affiMembers = getValues(eList.getModel().getOptionList());
+            if ((affiMembers != null) && !affiMembers.isEmpty()) {
+                List list = new ArrayList();
+                list.addAll(affiMembers);
+                map.put(MetaTemplateParameters.P_AFFI_MEMBERS, list);
+            } else if (bAffiliation) {
+                throw new AMConsoleException(
+                    model.getLocalizedString(
+                    "samlv2.create.provider.missing.affiliation.members"));
+            }
         }
+        
         if (!hasRole) {
             throw new AMConsoleException(
                 model.getLocalizedString(
