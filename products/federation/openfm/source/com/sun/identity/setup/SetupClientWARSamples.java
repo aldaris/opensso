@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupClientWARSamples.java,v 1.12 2008-11-11 21:52:12 veiming Exp $
+ * $Id: SetupClientWARSamples.java,v 1.13 2008-11-12 22:16:07 veiming Exp $
  *
  */
 
@@ -76,6 +76,17 @@ public class SetupClientWARSamples {
     public void createAMConfigProperties(String configFile, 
         String templateFile, Properties properties) throws IOException {
         String content = getFileContent(templateFile);
+
+        // Due with extra / before deployment URI
+        String uriWithSlash = (String)properties.get("DEPLOY_URI");
+        if ((uriWithSlash != null) && (uriWithSlash.length() > 0)) {
+            if (uriWithSlash.charAt(0) != '/') {
+                uriWithSlash = "/" + uriWithSlash;
+                properties.put("DEPLOY_URI", uriWithSlash);
+            }
+            content = content.replaceAll("/@DEPLOY_URI@", uriWithSlash);
+        }
+
         for (Iterator i = properties.keySet().iterator(); i.hasNext(); ) {
             String tag = (String)i.next();
             content = content.replaceAll("@" + tag + "@",
