@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NamingResponse.java,v 1.5 2008-08-27 22:08:37 veiming Exp $
+ * $Id: NamingResponse.java,v 1.6 2008-11-12 08:56:52 mchlbgs Exp $
  *
  */
 
@@ -30,6 +30,7 @@ package com.iplanet.services.naming.share;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
+
 
 /**
  * This <code>NamingResponse</code> class represents a NamingResponse XML
@@ -216,7 +217,10 @@ public class NamingResponse {
                     // do serverId lookup without the uri.
                     try {
                         Integer.parseInt(name);
-                        value = value.replaceAll(uri, "");
+                        int li = value.lastIndexOf(uri);
+                        if (li != -1 && value.endsWith(uri)) { 
+                             value = value.substring(0,li);
+                        }
                     } catch (NumberFormatException ex) {
                         //ignore
                     }
