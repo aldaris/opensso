@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsModelImpl.java,v 1.16 2008-09-20 06:38:46 veiming Exp $
+ * $Id: AgentsModelImpl.java,v 1.17 2008-11-12 05:30:47 veiming Exp $
  *
  */
 
@@ -59,6 +59,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 
 /* - LOG COMPLETE - */
@@ -1079,5 +1081,33 @@ public class AgentsModelImpl
         }
         return (choices == null) ? Collections.EMPTY_LIST : choices;
     }
-
+    
+    /**
+     * Returns <code>true</code> if repository is centralized.
+     * 
+     * @param uid Agent's universal ID.
+     * @return <code>true</code> if repository is centralized.
+     */
+    public boolean isCentralized(String uid) {
+        boolean centralized = false;
+        try {
+            AMIdentity amid = new AMIdentity(getUserSSOToken(), uid);
+            String type = getAgentType(amid);
+            if (type.equals(AgentConfiguration.AGENT_TYPE_J2EE) ||
+                type.equals(AgentConfiguration.AGENT_TYPE_WEB)
+            ) {
+                Set set = amid.getAttribute(
+                    AgentConfiguration.ATTR_CONFIG_REPO);
+                centralized = (set != null) && !set.isEmpty() &&
+                    ((String) set.iterator().next()).equals("centralized");
+            }
+        } catch (AMConsoleException e) {
+            debug.error("AgentsModelImpl.isCentralized", e);
+        } catch (IdRepoException e) {
+            debug.error("AgentsModelImpl.isCentralized", e);
+        } catch (SSOException e) {
+            debug.error("AgentsModelImpl.isCentralized", e);
+        }
+        return centralized;
+    }
 }

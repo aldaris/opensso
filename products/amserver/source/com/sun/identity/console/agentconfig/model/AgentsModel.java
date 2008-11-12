@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsModel.java,v 1.10 2008-09-20 06:38:46 veiming Exp $
+ * $Id: AgentsModel.java,v 1.11 2008-11-12 05:30:47 veiming Exp $
  *
  */
 
@@ -367,4 +367,12 @@ public interface AgentsModel
      * @return Token Conversion Types.
      */
     List getTokenConversionTypes();
+    
+    /**
+     * Returns <code>true</code> if repository is centralized.
+     * 
+     * @param uid Agent's universal ID.
+     * @return <code>true</code> if repository is centralized.
+     */
+    boolean isCentralized(String uid);
 }

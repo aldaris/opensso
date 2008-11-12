@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsViewBean.java,v 1.13 2008-09-04 23:18:43 veiming Exp $
+ * $Id: AgentsViewBean.java,v 1.14 2008-11-12 05:30:47 veiming Exp $
  *
  */
 
@@ -46,7 +46,6 @@ import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.components.view.html.SerializedField;
 import com.sun.identity.console.realm.HasEntitiesTabs;
 import com.sun.identity.idm.AMIdentity;
-import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdSearchResults;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.sm.SMSSchema;
@@ -127,6 +126,8 @@ public class AgentsViewBean
     private static final String TBL_DATA_ACTION_HREF = "tblDataActionHref";
     private static final String TBL_COL_TYPE = "tblColType";
     private static final String TBL_DATA_TYPE = "tblDataType";
+    private static final String TBL_COL_LOCAL = "tblColLocal";
+    private static final String TBL_DATA_LOCAL = "tblDataLocal";
 
     private static final String TBL_COL_NAME_GROUP = "tblColGroupName";
     private static final String TBL_DATA_NAME_GROUP = "tblDataGroupName";
@@ -159,6 +160,7 @@ public class AgentsViewBean
     private CCNavNode selectedNode;
     private static Map agentViewBeans = new HashMap();
     public boolean combinedType;
+    private boolean centralizable;
     public Set supportedTypes = new TreeSet();
     
     static {
@@ -419,10 +421,19 @@ public class AgentsViewBean
         String agentType = getDisplayIDType();
         AMViewConfig viewCfg = AMViewConfig.getInstance();
         combinedType = viewCfg.isCombineAgentType(agentType); 
+        centralizable = 
+            agentType.equals(AgentConfiguration.AGENT_TYPE_J2EE) ||
+            agentType.equals(AgentConfiguration.AGENT_TYPE_WEB);
         
-        String xml = (!combinedType) ?
-            "com/sun/identity/console/tblAgents.xml" :
-            "com/sun/identity/console/tblAgentsCombined.xml";
+        String xml = null;
+        if (centralizable) {
+            xml = "com/sun/identity/console/tblAgentsJ2EEWebAgent.xml";
+        } else if (combinedType) {
+            xml = "com/sun/identity/console/tblAgentsCombined.xml";
+        } else {
+            xml = "com/sun/identity/console/tblAgents.xml";
+        }
+        
         tblModel = new CCActionTableModel(
             getClass().getClassLoader().getResourceAsStream(xml));
         tblModel.setTitleLabel("label.items");
@@ -430,6 +441,7 @@ public class AgentsViewBean
         tblModel.setActionValue(TBL_BUTTON_DELETE,
             "table.agents.button.delete");
         tblModel.setActionValue(TBL_COL_NAME, "table.agents.name.column.name");
+        tblModel.setActionValue(TBL_COL_LOCAL, "table.agents.name.column.repo");
         
         if (combinedType) {
             tblModel.setActionValue(TBL_COL_TYPE, 
@@ -623,8 +635,15 @@ public class AgentsViewBean
                     tblModel.setValue(TBL_DATA_UNIVERSALNAME, universalId);
                     tblModel.setValue(TBL_DATA_ACTION_HREF, 
                         stringToHex(universalId));
-                    
-                    if (combinedType) {
+                    if (centralizable) {
+                        if (model.isCentralized(universalId)) {
+                            tblModel.setValue(TBL_DATA_LOCAL, 
+                                "table.agents.data.repo.centralized");
+                        } else {
+                            tblModel.setValue(TBL_DATA_LOCAL, 
+                                "table.agents.data.repo.localized");
+                        }
+                    } else if (combinedType) {
                         try {
                             tblModel.setValue(TBL_DATA_TYPE, model.getAgentType(
                                 entity));
