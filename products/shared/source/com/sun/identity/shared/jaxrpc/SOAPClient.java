@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPClient.java,v 1.14 2008-09-19 22:50:06 arviranga Exp $
+ * $Id: SOAPClient.java,v 1.15 2008-11-13 23:28:01 veiming Exp $
  *
  */
 
@@ -45,7 +45,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.TreeSet;
 import java.util.Iterator;
@@ -683,7 +682,7 @@ public class SOAPClient {
                 // Check for ArrayOfanyType and reset the set
                 if (localName.equals(ARRAY_OF_ANY_TYPE)|| 
                         localName.equalsIgnoreCase(ARRAY_OF_STRING_TYPE)) {
-                    messageArgs = new HashSet();
+                    messageArgs = new OrderedSet();
                 }
             }
             
