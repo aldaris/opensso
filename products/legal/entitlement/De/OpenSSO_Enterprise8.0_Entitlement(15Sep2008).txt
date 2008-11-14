@@ -1,6 +1,6 @@
-DIESER LEISTUNGSANSPRUCH UND DIE DAZUGEHÖRIGE(N) RECHNUNG(EN) SIND DER BELEG FÜR DEN KAUF VON LIZENZRECHTEN FÜR DIE HIER AUFGEFÜHRTE SUN-SOFTWARE GEMÄSS DEN BEDINGUNGEN DER SOFTWARE-LIZENZVEREINBARUNG ("SLV").
+DIESER LEISTUNGSANSPRUCH UND DIE DAZUGEHÃ–RIGE(N) RECHNUNG(EN) SIND DER BELEG FÃœR DEN KAUF VON LIZENZRECHTEN FÃœR DIE HIER AUFGEFÃœHRTE SUN-SOFTWARE GEMÃ„SS DEN BEDINGUNGEN DER SOFTWARE-LIZENZVEREINBARUNG ("SLV").
 
-Datum des Inkrafttretens:  Rechnungsdatum plus 5 Geschäftstage.
+Datum des Inkrafttretens:  Rechnungsdatum plus 5 GeschÃ¤ftstage.
 
 Name von Lizenznehmer/Firma:  Entsprechend den jeweiligen Rechnungen.
 
@@ -8,50 +8,51 @@ Software: OpenSSO Enterprise 8.
 
 Bestellnummer(n):  OPS1A-LCO-B929, OPS2A-LCO-9929, OPS3A-LCO-9929, OPS4A-LCO-9929, OPS5A-LCO-9929, OPS6A-LCO-9929, OPS1A-LCO-B929
 
-Lizenzdauer: Unbegrenzt (unterliegt Beendigungsbestimmungen gemäß SLV).
+Lizenzdauer: Unbegrenzt (unterliegt Beendigungsbestimmungen gemÃ¤ÃŸ SLV).
 
-Lizenzierte Einheit: Die lizenzierte Einheit für die Software gilt pro Benutzer, wobei "Benutzer" für eine Einzelperson (keine Gesellschaft oder andere Rechtssubjekte) steht, die zum Zugriff auf die Software gemäß den von der Software aufgezeichneten Berechtigungsnachweisen berechtigt ist.
+Lizenzierte Einheit: Die lizenzierte Einheit fÃ¼r die Software gilt pro Benutzer, wobei "Benutzer" fÃ¼r eine Einzelperson (keine Gesellschaft oder andere Rechtssubjekte) steht, die zum Zugriff auf die Software gemÃ¤ÃŸ den von der Software aufgezeichneten Berechtigungsnachweisen berechtigt ist.
 
 Anzahl der lizenzierten Einheiten:  Entsprechend den jeweiligen Rechnungen.
 
-Genehmigte Verwendung: Sie sind berechtigt, die Software unter Einhaltung der nachfolgend aufgeführten zusätzlichen Vertragsbedingungen für eigene kommerzielle, Forschungs- und Lehr-Zwecke oder zum Anbieten von Diensten zu nutzen. 
+Genehmigte Verwendung: Sie sind berechtigt, die Software unter Einhaltung der nachfolgend aufgefÃ¼hrten zusÃ¤tzlichen Vertragsbedingungen fÃ¼r eigene kommerzielle, Forschungs- und Lehr-Zwecke oder zum Anbieten von Diensten zu nutzen. 
 
-Zusätzliche Bedingungen: 
+ZusÃ¤tzliche Bedingungen: 
 
-(1) Sun gewährt Ihnen eine Lizenz zur Nutzung von OpenSSO in Übereinstimmung mit der Common Development and Distribution License Version 1.0 ("CDDL"). Ihre Verwendung von OpenSSO unterliegt ausschließlich der CDDL, und diese Lizenzvereinbarung und der Leistungsanspruch oder etwaige sonstige maßgebliche Bestimmungen, denen Sie zugestimmt haben, sind nicht gültig. Den Wortlaut der CDDL finden Sie unter http://www.sun.com/cddl/cddl.html. 
+(1) Sun gewÃ¤hrt Ihnen eine Lizenz zur Nutzung von OpenSSO in Ãœbereinstimmung mit der Common Development and Distribution License Version 1.0 ("CDDL"). Ihre Verwendung von OpenSSO unterliegt ausschlieÃŸlich der CDDL, und diese Lizenzvereinbarung und der Leistungsanspruch oder etwaige sonstige maÃŸgebliche Bestimmungen, denen Sie zugestimmt haben, sind nicht gÃ¼ltig. Den Wortlaut der CDDL finden Sie unter http://www.sun.com/cddl/cddl.html. 
 
-(2) Sie können einen Support-Plan erwerben, der sowohl die Software als auch OpenSSO gemäß der Definition in der Service-Liste unter http://www.sun.com/service/servicelist/ abdeckt. 
+(2) Sie kÃ¶nnen einen Support-Plan erwerben, der sowohl die Software als auch OpenSSO gemÃ¤ÃŸ der Definition in der Service-Liste unter http://www.sun.com/service/servicelist/ abdeckt. 
 
-(3) Sie dürfen keine Dienste für verbundene Unternehmen betreuen, es sei denn, deren Mitarbeiter sind in Ihrer Anzahl an lizenzierten Einheiten enthalten. "Verbundene Unternehmen" sind juristische Personen, über die Sie eine Führungskontrolle ausüben, oder die mit Ihnen einer gemeinsamen Kontrolle unterliegen, oder die eine Führungskontrolle über Sie ausüben.
+(3) Sie dÃ¼rfen keine Dienste fÃ¼r verbundene Unternehmen betreuen, es sei denn, deren Mitarbeiter sind in Ihrer Anzahl an lizenzierten Einheiten enthalten. "Verbundene Unternehmen" sind juristische Personen, Ã¼ber die Sie eine FÃ¼hrungskontrolle ausÃ¼ben, oder die mit Ihnen einer gemeinsamen Kontrolle unterliegen, oder die eine FÃ¼hrungskontrolle Ã¼ber Sie ausÃ¼ben.
 
 (4) Regierungseinheiten sind nicht zur Dienstanbieter-Verwendung berechtigt.
 
-(5) Sie dürfen die Sample-Java-Klassen, Header-Dateien, Klassenbibliotheken, Quelldateien und Datendateien, die in der Software enthalten sind (ganz oder Teile daraus, den "Entwicklungscode") ausschließlich zur Erstellung und Verteilung von Programmen als Schnittstelle für die APIs, SPIs und SDKs der Software verwenden.  Sie dürfen den Entwicklungscode nicht verändern.
+(5) Sie dÃ¼rfen die Sample-Java-Klassen, Header-Dateien, Klassenbibliotheken, Quelldateien und Datendateien, die in der Software enthalten sind (ganz oder Teile daraus, den "Entwicklungscode") ausschlieÃŸlich zur Erstellung und Verteilung von Programmen als Schnittstelle fÃ¼r die APIs, SPIs und SDKs der Software verwenden.  Sie dÃ¼rfen den Entwicklungscode nicht verÃ¤ndern.
 
-(6) Sie dürfen die Vorlagen-Java Server Pages der Administrationskonsole, die Vorlagen-Java Server Pages der Authentifizierungs-Benutzeroberfläche sowie die in der Software enthaltenen XML-Dateien (alle oder einen Teil der "Dateien der grafischen Oberfläche") ausschließlich zur Erstellung von Anpassungen verwenden, die für die Zusammenarbeit mit der Software und Erweiterung der beabsichtigten Umgebung zur Verwendung der Software konzipiert sind. 
+(6) Sie dÃ¼rfen die Vorlagen-Java Server Pages der Administrationskonsole, die Vorlagen-Java Server Pages der Authentifizierungs-BenutzeroberflÃ¤che sowie die in der Software enthaltenen XML-Dateien (alle oder einen Teil der "Dateien der grafischen OberflÃ¤che") ausschlieÃŸlich zur Erstellung von Anpassungen verwenden, die fÃ¼r die Zusammenarbeit mit der Software und Erweiterung der beabsichtigten Umgebung zur Verwendung der Software konzipiert sind. 
 
-(7) Sie verpflichten sich dazu, Sun sowie seine Lizenzgeber gegenüber Forderungen nach einer Schadensbehebung oder Entschädigungen aus Forderungen schadlos zu halten, die aus der Ausübung Ihrer Rechte gemäß der Zusätzlichen Bedingungen 5 und 6 oben entstanden sind, einschließlich aber nicht beschränkt auf Forderungen infolge eines Ausfalls der Leistung oder Funktionsfähigkeit der Software in Fällen, in denen ein solcher Ausfall mit der Ausübung dieser Rechte verbunden ist.
+(7) Sie verpflichten sich dazu, Sun sowie seine Lizenzgeber gegenÃ¼ber Forderungen nach einer Schadensbehebung oder EntschÃ¤digungen aus Forderungen schadlos zu halten, die aus der AusÃ¼bung Ihrer Rechte gemÃ¤ÃŸ der ZusÃ¤tzlichen Bedingungen 5 und 6 oben entstanden sind, einschlieÃŸlich aber nicht beschrÃ¤nkt auf Forderungen infolge eines Ausfalls der Leistung oder FunktionsfÃ¤higkeit der Software in FÃ¤llen, in denen ein solcher Ausfall mit der AusÃ¼bung dieser Rechte verbunden ist.
 
-(8) Sie dürfen die Software unter folgenden Bedingungen vervielfältigen und an Dienstanbieter verteilen, die bei Ihnen unter Vertrag stehen und Dienstleistungen für Sie und Ihre Benutzer (jeweils ein "Dienstanbieter") erbringen:
+(8) Sie dÃ¼rfen die Software unter folgenden Bedingungen vervielfÃ¤ltigen und an Dienstanbieter verteilen, die bei Ihnen unter Vertrag stehen und Dienstleistungen fÃ¼r Sie und Ihre Benutzer (jeweils ein "Dienstanbieter") erbringen:
 
-(a) Sie verteilen die Software ausschließlich zu dem Zweck, Sicherheitsbestätigungen mit den Dienstanbietern auszutauschen,
+(a) Sie verteilen die Software ausschlieÃŸlich zu dem Zweck, SicherheitsbestÃ¤tigungen mit den Dienstanbietern auszutauschen,
 
-(b) Sie verteilen die Software vollständig und unverändert an solche Dienstanbieter,
+(b) Sie verteilen die Software vollstÃ¤ndig und unverÃ¤ndert an solche Dienstanbieter,
 
-(c) Sie vertreiben keine zusätzliche Software, die irgendwelche Komponente(n) der Software ersetzen soll,
+(c) Sie vertreiben keine zusÃ¤tzliche Software, die irgendwelche Komponente(n) der Software ersetzen soll,
 
-(d) Sie entfernen oder ändern keine in oder auf der Software enthaltenen eigentumsrechtlichen Hinweise oder Anmerkungen,
+(d) Sie entfernen oder Ã¤ndern keine in oder auf der Software enthaltenen eigentumsrechtlichen Hinweise oder Anmerkungen,
 
-(e) Sie vertreiben die Software nur vorbehaltlich eines Lizenzvertrags, der die Interessen von Sun in Übereinstimmung mit den Bestimmungen dieser Softwarelizenzvereinbarung schützt, und
+(e) Sie vertreiben die Software nur vorbehaltlich eines Lizenzvertrags, der die Interessen von Sun in Ãœbereinstimmung mit den Bestimmungen dieser Softwarelizenzvereinbarung schÃ¼tzt, und
 
-(f) Sie verpflichten sich, Sun und seine Lizenzgeber in Bezug auf Schadensersatz, Kosten, Verbindlichkeiten, Vergleichssummen und/oder Ausgaben (einschließlich Rechtsanwaltshonorare) zu verteidigen und freizustellen, die sich in Verbindung mit etwaigen Forderungen, Rechtsstreitigkeiten oder Klagen Dritter auf Grund der Verwendung oder des Vertriebs der Software ergeben bzw. daraus erfolgen.
+(f) Sie verpflichten sich, Sun und seine Lizenzgeber in Bezug auf Schadensersatz, Kosten, Verbindlichkeiten, Vergleichssummen und/oder Ausgaben (einschlieÃŸlich Rechtsanwaltshonorare) zu verteidigen und freizustellen, die sich in Verbindung mit etwaigen Forderungen, Rechtsstreitigkeiten oder Klagen Dritter auf Grund der Verwendung oder des Vertriebs der Software ergeben bzw. daraus erfolgen.
 
-(9) Gemäß dieser Vereinbarung dürfen Sie Sun Java System Directory Server Enterprise Edition ("DSEE") und OpenDS Standard Edition ("OpenDS") verwenden zum Speichern von:  
+(9) GemÃ¤ÃŸ dieser Vereinbarung dÃ¼rfen Sie Sun Java System Directory Server Enterprise Edition ("DSEE") und OpenDS Standard Edition ("OpenDS") verwenden zum Speichern von:  
 
-(a) maximal eintausend (1.000) Einträgen, ausschließlich zum Speichern von Benutzernamen, Passwörtern und Gruppen-IDs, auf die durch die Funktionen der Software zur Benutzerauthentifizierung und Autorisierung zugegriffen wird; 
+(a) maximal eintausend (1.000) EintrÃ¤gen, ausschlieÃŸlich zum Speichern von Benutzernamen, PasswÃ¶rtern und Gruppen-IDs, auf die durch die Funktionen der Software zur Benutzerauthentifizierung und Autorisierung zugegriffen wird; 
 
-(b) maximal eintausend (1.000) Einträgen zum Speichern der für die Software erforderlichen Konfigurationsinformationen.  
+(b) maximal eintausend (1.000) EintrÃ¤gen zum Speichern der fÃ¼r die Software erforderlichen Konfigurationsinformationen.  
 
-Die Speicherung von Informationen (einschließlich und ohne Einschränkung Kontaktinformationen und Benutzereinstellungen), sofern nicht anderweitig ausdrücklich in dieser Vereinbarung vorgesehen, oder der Zugriff auf DSEE oder OpenDS über andere Softwareprodukte auf eigenständiger Basis erfordern den Erwerb eines angemessenen Leistungsanspruchs für DSEE oder OpenDS.
+Die Speicherung von Informationen (einschlieÃŸlich und ohne EinschrÃ¤nkung Kontaktinformationen und Benutzereinstellungen), sofern nicht anderweitig ausdrÃ¼cklich in dieser Vereinbarung vorgesehen, oder der Zugriff auf DSEE oder OpenDS Ã¼ber andere Softwareprodukte auf eigenstÃ¤ndiger Basis erfordern den Erwerb eines angemessenen Leistungsanspruchs fÃ¼r DSEE oder OpenDS.
 
-(10) Für die in der Zusätzlichen Bedingung 9 vorgesehenen Zwecke sind unter "Einträge" jeweils ein einzelner Distinguished Name (DN) und die mit diesem verbundenen Attribute zu verstehen.
+(10) FÃ¼r die in der ZusÃ¤tzlichen Bedingung 9 vorgesehenen Zwecke sind unter "EintrÃ¤ge" jeweils ein einzelner Distinguished Name (DN) und die mit diesem verbundenen Attribute zu verstehen.
+
