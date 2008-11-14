@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPClient.java,v 1.15 2008-11-13 23:28:01 veiming Exp $
+ * $Id: SOAPClient.java,v 1.16 2008-11-14 00:09:54 veiming Exp $
  *
  */
 
@@ -45,6 +45,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.TreeSet;
 import java.util.Iterator;
