@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.98 2008-11-07 20:27:04 veiming Exp $
+ * $Id: AccessManager.java,v 1.99 2008-11-17 18:27:38 veiming Exp $
  *
  */
 
@@ -1614,7 +1614,7 @@ public class AccessManager {
             "user|a|s|User objects naming attribute (defaults to 'uid')",
             "org|o|s|Organization objects naming attribute (defaults to 'o')"},
         resourceStrings={
-            "datastore-add-amsdk-idrepo-plugin-succeeded=AMSDK Plugin creaded successfully.",
+            "datastore-add-amsdk-idrepo-plugin-succeeded=AMSDK Plugin created successfully.",
             "datastore-add-amsdk-idrepo-plugin-failed=AMSDK Plugin creation failed",
             "datastore-add-amsdk-idrepo-plugin-policies-failed=Adding Delegation policies failed"
         }
