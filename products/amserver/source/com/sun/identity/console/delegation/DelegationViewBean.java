@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationViewBean.java,v 1.2 2008-06-25 05:42:51 qcheng Exp $
+ * $Id: DelegationViewBean.java,v 1.3 2008-11-17 21:21:13 veiming Exp $
  *
  */
 
@@ -220,7 +220,7 @@ public class DelegationViewBean
                         model, entity);
                     tblModel.setValue(TBL_DATA_NAME, name);
                     tblModel.setValue(TBL_DATA_UNIVERSALNAME, id);
-                    tblModel.setValue(TBL_DATA_ACTION_HREF, id);
+                    tblModel.setValue(TBL_DATA_ACTION_HREF, stringToHex(id));
 
                     cache.add(id);
                 } catch (IdRepoException e) {
@@ -248,7 +248,8 @@ public class DelegationViewBean
      * @param event Request Invocation Event.
      */
     public void handleTblDataActionHrefRequest(RequestInvocationEvent event) {
-        String name = (String)getDisplayFieldValue(TBL_DATA_ACTION_HREF);
+        String name = hexToString(
+            (String)getDisplayFieldValue(TBL_DATA_ACTION_HREF));
         setPageSessionAttribute(
             DelegationPropertiesViewBean.CURRENT_IDENTITY, name);
         DelegationPropertiesViewBean vb = (DelegationPropertiesViewBean)
