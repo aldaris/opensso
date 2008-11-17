@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: web.xml,v 1.5 2008-06-25 05:51:15 qcheng Exp $
+   $Id: web.xml,v 1.6 2008-11-17 23:59:09 mallas Exp $
 
 -->
 
@@ -49,6 +49,16 @@
 <servlet-mapping>
       <servlet-name>sts</servlet-name>
       <url-pattern>/sts/mex</url-pattern>
+</servlet-mapping>
+
+<servlet-mapping>
+    <servlet-name>sts</servlet-name>
+    <url-pattern>/sts/soap11</url-pattern>
+</servlet-mapping>
+
+<servlet-mapping>
+      <servlet-name>sts</servlet-name>
+      <url-pattern>/sts/mexsoap11</url-pattern>
 </servlet-mapping>
 
 <session-config>

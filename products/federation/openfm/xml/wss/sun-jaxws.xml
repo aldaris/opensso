@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: sun-jaxws.xml,v 1.3 2008-06-25 05:51:14 qcheng Exp $
+   $Id: sun-jaxws.xml,v 1.4 2008-11-17 23:59:09 mallas Exp $
 
 -->
 
@@ -46,5 +46,14 @@
         implementation="com.sun.xml.ws.mex.server.MEXEndpoint"
         binding="http://www.w3.org/2003/05/soap/bindings/HTTP/"
         url-pattern="/sts/mex" />
+    <endpoint
+         name="stssoap11"
+         interface="com.sun.identity.wss.sts.ISecurityTokenService"
+         implementation="com.sun.identity.wss.sts.FAMSTSImpl"
+         wsdl="WEB-INF/wsdl/famsts.wsdl"
+         service="{http://localhost:8080/openfm/SecurityTokenService/}SecurityTokenService"
+         port="{http://localhost:8080/openfm/SecurityTokenService/}ISecurityTokenService_PortSoap11"
+         binding="http://schemas.xmlsoap.org/wsdl/soap/http"
+         url-pattern="/sts/soap11" />
 
 </endpoints>
