@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdentityServicesImpl.java,v 1.13 2008-08-07 17:22:08 arviranga Exp $
+ * $Id: IdentityServicesImpl.java,v 1.14 2008-11-17 21:10:48 veiming Exp $
  *
  */
 
@@ -96,6 +96,7 @@ import java.security.AccessController;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.StringTokenizer;
 import netscape.ldap.util.DN;
 
 /**
@@ -125,19 +126,48 @@ public class IdentityServicesImpl
         throws UserNotFound, InvalidPassword, NeedMoreCredentials,
         InvalidCredentials, GeneralFailure, RemoteException {
         
+
         assert username != null && password != null;
         Token ret = null;
         try {
-            // Parse the URL to get realm, module, level, etc
-            String realm = "/";
-            String module = null;
-            String level = null;
+            // Parse the URL to get realm, module, service, etc
+            String realm = null;
+            AuthContext.IndexType authIndexType = null;
+            String authIndexValue = null;
+            
             if (uri != null) {
-                // Parse the uri parameters for realm, module, etc
-                // TODO
+                StringTokenizer st = new StringTokenizer(uri, "&");
+                while (st.hasMoreTokens()) {
+                    String s = st.nextToken();
+                    int idx = s.indexOf("=");
+                    if ((idx != -1) && (idx != (s.length() -1))) {
+                        String k = s.substring(0, idx);
+                        String v = s.substring(idx+1);
+                        if (k.equals("realm") && (realm == null)) {
+                            realm = v;
+                        } else if (k.equals("module") &&
+                            (authIndexType == null)) {
+                            authIndexType = 
+                                AuthContext.IndexType.MODULE_INSTANCE;
+                            authIndexValue = v;
+                        } else if (k.equals("service") && 
+                            (authIndexType == null)) {
+                            authIndexType = AuthContext.IndexType.SERVICE;
+                            authIndexValue = v;
+                        }
+                    }
+                }
             }
+            if (realm == null) {
+                realm = "/";
+            }
+            
             AuthContext lc = new AuthContext(realm);
-            lc.login();
+            if (authIndexType != null) {
+                lc.login(authIndexType, authIndexValue);
+            } else {
+                lc.login();
+            }
             while (lc.hasMoreRequirements()) {
                 Callback[] callbacks = lc.getRequirements();
                 ArrayList missing = new ArrayList();
