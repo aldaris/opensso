@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSSignatureProvider.java,v 1.9 2008-08-22 04:07:58 mallas Exp $
+ * $Id: WSSSignatureProvider.java,v 1.10 2008-11-17 23:57:03 mallas Exp $
  *
  */
 
@@ -470,6 +470,7 @@ public class WSSSignatureProvider extends AMSignatureProvider {
                     WSSConstants.DIRECT_REFERENCE)) {
                Element reference = doc.createElementNS(WSSConstants.WSSE_NS,
                         SAMLConstants.TAG_REFERENCE);
+               reference.setPrefix(WSSConstants.WSSE_TAG);
                securityTokenRef.appendChild(reference);                            
                Element bsf = (Element)root.getElementsByTagNameNS(
                       WSSConstants.WSSE_NS,tokenType).item(0);

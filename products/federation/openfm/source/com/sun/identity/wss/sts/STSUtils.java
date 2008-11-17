@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSUtils.java,v 1.9 2008-09-19 16:00:56 mallas Exp $
+ * $Id: STSUtils.java,v 1.10 2008-11-17 23:57:03 mallas Exp $
  *
  */
 
@@ -192,6 +192,7 @@ public class STSUtils {
             if(header == null) {
                header = soapMessage.getSOAPPart().getEnvelope().addHeader();
             }
+            header.setAttribute("xmlns:wsa", STSConstants.WSA_NS);
             SOAPPart soapPart = soapMessage.getSOAPPart();
             Element to = soapPart.createElementNS(
                           STSConstants.WSA_NS, 
