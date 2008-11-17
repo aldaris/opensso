@@ -22,7 +22,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: CLILogMessageIDs.xml,v 1.30 2008-09-04 00:34:02 rajeevangal Exp $
+    $Id: CLILogMessageIDs.xml,v 1.31 2008-11-17 18:17:03 veiming Exp $
 
 -->
 
@@ -5906,7 +5906,7 @@
         </triggers>
         <actions />
     </logmessage>
-    <logmessage name="SUCCEEDED_ADD_AMSDK_PLUGIN" id="5101"
+    <logmessage name="SUCCEED_ADD_AMSDK_PLUGIN" id="5101"
         loglevel="LL_INFO"
         description="AMSDK plugin is added.">
         <datainfo>
