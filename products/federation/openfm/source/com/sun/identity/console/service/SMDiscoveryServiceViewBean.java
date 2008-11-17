@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMDiscoveryServiceViewBean.java,v 1.6 2008-07-07 20:39:21 veiming Exp $
+ * $Id: SMDiscoveryServiceViewBean.java,v 1.7 2008-11-17 21:18:07 veiming Exp $
  *
  */
 
@@ -131,7 +131,7 @@ public class SMDiscoveryServiceViewBean
             String user = req.getParameter("User");
 
             if ((user != null) && (user.trim().length() > 0)) {
-                handleUserOperationRequest(location, user, rc);
+                handleUserOperationRequest(location, hexToString(user), rc);
             } else {
                 super.forwardTo(rc);
             }

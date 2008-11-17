@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityServicesViewBean.java,v 1.5 2008-11-06 01:24:33 veiming Exp $
+ * $Id: EntityServicesViewBean.java,v 1.6 2008-11-17 21:18:07 veiming Exp $
  *
  */
 
@@ -287,7 +287,8 @@ public class EntityServicesViewBean
                    getTrackingTabIDName(), Integer.toString(TAB_SERVICES));
                 propertiesViewBeanURL += "?ServiceName=" + serviceName +
                     "&User=" +
-                    Locale.URLEncodeField(universalId, getCharset(model)) +
+                    Locale.URLEncodeField(stringToHex(universalId), 
+                        getCharset(model)) +
                     "&Op=" + AMAdminConstants.OPERATION_EDIT +
                     "&realm=" +
                     Locale.URLEncodeField(realm, getCharset(model)) +
