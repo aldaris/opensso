@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMCRLStore.java,v 1.5 2008-06-25 05:52:57 qcheng Exp $
+ * $Id: AMCRLStore.java,v 1.6 2008-11-17 20:33:33 beomsuk Exp $
  *
  */
 
@@ -136,21 +136,8 @@ public class AMCRLStore extends AMCertStore {
 		crlEntry = getLdapEntry(ldc);
 		crl = getCRLFromEntry(crlEntry);
 	    }
-        } catch (Exception e) {
-            debug.error("AMCRLStore.getCRL: Error in getting CRL " + 
-                        "from Configured Directory : ", e);
-        } finally {
-            if ((ldc != null) && (ldc.isConnected())) {
-                try {
-                    ldc.disconnect();
-                } catch (LDAPException ex) {
-                    //ignored
-                }
-            }
-        }
 
-        try {
-	    if (needCRLUpdate(crl)) {
+            if (needCRLUpdate(crl)) {
 	        if (debug.messageEnabled()) {
                     debug.message("AMCRLStore.getCRL: need CRL update");
                 }
@@ -200,6 +187,14 @@ public class AMCRLStore extends AMCertStore {
 	    updateCRLCache(certificate, crl);
         } catch (Exception e) {
             debug.error("AMCRLStore.getCRL: Error in getting CRL : ", e);
+        } finally {
+            if ((ldc != null) && (ldc.isConnected())) {
+                try {
+                    ldc.disconnect();
+                } catch (LDAPException ex) {
+                    //ignored
+                }
+            }
         }
         	
         return crl;
