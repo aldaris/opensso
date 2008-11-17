@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.38 2008-09-16 18:14:57 bhavnab Exp $
+ * $Id: Constants.java,v 1.39 2008-11-17 20:35:14 beomsuk Exp $
  *
  */
 
@@ -797,7 +797,7 @@ public interface Constants {
      * LDAP Server search base dn for saml2 crl cache
      */
     String CRL_CACHE_DIR_SEARCH_LOC =
-        "com.sun.identity.crl.cache.directory.searchloc";
+        "com.sun.identity.crl.cache.directory.searchlocs";
 
     /**
      * LDAP attribute name for searching crl entry
