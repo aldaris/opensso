@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: famsts.wsdl,v 1.7 2008-06-25 05:50:20 qcheng Exp $
+   $Id: famsts.wsdl,v 1.8 2008-11-18 00:00:02 mallas Exp $
 
 -->
 <wsdl:definitions name="SecurityTokenService" targetNamespace="http://localhost:8080/openfm/SecurityTokenService/" 
@@ -169,9 +169,27 @@
                         </wsdl:output>
                 </wsdl:operation>
         </wsdl:binding>
+        <wsdl:binding name="ISecurityTokenService_BindingSoap11" type="tns:ISecurityTokenService">
+                 <wsp:PolicyReference URI="#ISecurityTokenService_policy"/>
+                 <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+                 <wsdl:operation name="IssueToken">
+                         <soap:operation soapAction="http://schemas.xmlsoap.org/ws/2005/02/trust/RST/Issue" style="document"/>
+                         <wsdl:input>
+                                 <wsp:PolicyReference URI="#ISecurityTokenService_IssueToken_Input_policy"/>
+                                 <soap:body use="literal"/>
+                         </wsdl:input>
+                         <wsdl:output>
+                                 <wsp:PolicyReference URI="#ISecurityTokenService_IssueToken_Output_policy"/>
+                                 <soap:body use="literal"/>
+                         </wsdl:output>
+                 </wsdl:operation>
+        </wsdl:binding>
 	<wsdl:service name="SecurityTokenService">
                 <wsdl:port name="ISecurityTokenService_Port" binding="tns:ISecurityTokenService_Binding">
                         <soap12:address location="http://localhost:8080/fam/sts"/>
                 </wsdl:port>
+                <wsdl:port name="ISecurityTokenService_PortSoap11" binding="tns:ISecurityTokenService_BindingSoap11">
+                        <soap:address location="http://localhost:8080/opensso/sts/soap11"/>
+                 </wsdl:port>
         </wsdl:service>
 </wsdl:definitions>
