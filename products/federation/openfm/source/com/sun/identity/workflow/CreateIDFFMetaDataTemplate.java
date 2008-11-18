@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateIDFFMetaDataTemplate.java,v 1.8 2008-11-12 19:33:43 asyhuang Exp $
+ * $Id: CreateIDFFMetaDataTemplate.java,v 1.9 2008-11-18 22:38:19 asyhuang Exp $
  *
  */
 
@@ -803,7 +803,26 @@ public class CreateIDFFMetaDataTemplate {
         
         buff.append("    <AffiliationDescriptorConfig metaAlias=\"")
             .append(affiAlias)
+            .append("\">\n")            
+            .append("        <Attribute name=\"")
+            .append(IFSConstants.PROVIDER_DESCRIPTION)
             .append("\">\n")
+            .append("            <Value></Value>\n")
+            .append("        </Attribute>\n")
+            .append("        <Attribute name=\"")
+            .append(IFSConstants.SIGNING_CERT_ALIAS)
+            .append("\">\n")
+            .append("            <Value>")
+            .append(affiSCertAlias)
+            .append("</Value>\n")
+            .append("        </Attribute>\n")
+            .append("        <Attribute name=\"")
+            .append(IFSConstants.ENCRYPTION_CERT_ALIAS)
+            .append("\">\n")
+            .append("            <Value>")
+            .append(affiECertAlias)
+            .append("</Value>\n")
+            .append("        </Attribute>\n")
             .append("    </AffiliationDescriptorConfig>\n");
         
     }

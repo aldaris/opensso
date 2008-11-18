@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFModelImpl.java,v 1.7 2008-09-29 23:48:39 asyhuang Exp $
+ * $Id: IDFFModelImpl.java,v 1.8 2008-11-18 22:39:45 asyhuang Exp $
  *
  */
 package com.sun.identity.console.federation.model;
@@ -808,7 +808,7 @@ public class IDFFModelImpl
             //Protocol Support Enumeration
             pDesc.getProtocolSupportEnumeration().clear();
             pDesc.getProtocolSupportEnumeration().addAll(
-                (Collection) attrValues.get(ATTR_PROTOCOL_SUPPORT_ENUMERATION)); 
+                    (Collection) attrValues.get(ATTR_PROTOCOL_SUPPORT_ENUMERATION));
 
             //communication URLs
             pDesc.setSoapEndpoint(
@@ -1496,9 +1496,34 @@ public class IDFFModelImpl
                         returnEmptySetIfValueIsNull(aDesc.getAffiliationID()));
 
                 values.put(ATTR_AFFILIATE_OWNER_ID,
-                        returnEmptySetIfValueIsNull(aDesc.getAffiliationOwnerID()));
+                        returnEmptySetIfValueIsNull(aDesc.getAffiliationOwnerID()));                               
 
+                BaseConfigType affiliationConfig =
+                        idffManager.getAffiliationDescriptorConfig(
+                        realm, 
+                        entityName);
 
+                if (affiliationConfig != null) {
+                    Map map = IDFFMetaUtils.getAttributes(affiliationConfig);                                       
+                    if (map.containsKey(ATTR_AFFILIATE_SIGNING_CERT_ALIAS)) {                      
+                        values.put(ATTR_AFFILIATE_SIGNING_CERT_ALIAS,                                              
+                            returnEmptySetIfValueIsNull(
+                            convertListToSet((List) map.get(
+                            ATTR_AFFILIATE_SIGNING_CERT_ALIAS))));
+                    } else {    
+                        values.put(ATTR_AFFILIATE_SIGNING_CERT_ALIAS,
+                                Collections.EMPTY_SET);
+                    }
+                    if (map.containsKey(ATTR_AFFILIATE_ENCRYPTION_CERT_ALIAS)) {                       
+                        values.put(ATTR_AFFILIATE_ENCRYPTION_CERT_ALIAS, 
+                            returnEmptySetIfValueIsNull(
+                            convertListToSet((List) map.get(
+                            ATTR_AFFILIATE_ENCRYPTION_CERT_ALIAS))));
+                    } else {
+                        values.put(ATTR_AFFILIATE_ENCRYPTION_CERT_ALIAS,
+                                Collections.EMPTY_SET);
+                    }
+                }
             } else {
                 values.put(ATTR_AFFILIATE_ID, Collections.EMPTY_SET);
                 values.put(ATTR_AFFILIATE_OWNER_ID, Collections.EMPTY_SET);
@@ -1511,7 +1536,7 @@ public class IDFFModelImpl
                         Collections.EMPTY_SET);
                 values.put(ATTR_AFFILIATE_ENCRYPTION_KEY_SIZE,
                         Collections.EMPTY_SET);
-                values.put(ATTR_AFFILIATE_ENCRYPTION_KEY_METHOD,
+                values.put(ATTR_AFFILIATE_ENCRYPTION_KEY_ALGORITHM,
                         Collections.EMPTY_SET);
             }
             logEvent("SUCCEED_GET_AFFILIATE_ENTITY_DESCRIPTOR_ATTR_VALUES",
@@ -1549,25 +1574,22 @@ public class IDFFModelImpl
                     idffManager.getEntityDescriptor(realm, entityName);
             AffiliationDescriptorType aDesc =
                     entityDescriptor.getAffiliationDescriptor();
-
-            aDesc.setAffiliationID(
-                    (String) AMAdminUtils.getValue((Set) values.get(
-                    ATTR_AFFILIATE_ID)));
-
+           
             aDesc.setAffiliationOwnerID(
                     (String) AMAdminUtils.getValue((Set) values.get(
                     ATTR_AFFILIATE_OWNER_ID)));
 
             //TBD : common attributes which may be added here later
-            /*ATTR_AFFILIATE_VALID_UNTIL,
-            ATTR_AFFILIATE_CACHE_DURATION
-            ATTR_AFFILIATE_SIGNING_KEY_ALIAS
-            ATTR_AFFILIATE_ENCRYPTION_KEY_ALIAS
-            ATTR_AFFILIATE_ENCRYPTION_KEY_SIZE
-            ATTR_AFFILIATE_ENCRYPTION_KEY_METHOD
+            /* ATTR_AFFILIATE_VALID_UNTIL,
+             * ATTR_AFFILIATE_CACHE_DURATION 
+             * ATTR_ENCRYPTION_KEY_SIZE 
+             * ATTR_AFFILIATE_ENCRYPTION_KEY_ALGORITHM
+             * ATTR_AFFILIATE_ENCRYPTION_CERT_ALIAS
+             * ATTR_AFFILIATE_SIGNING_CERT_ALIAS
              */
-
+                
             // add affilliate members
+            aDesc.getAffiliateMember().clear();
             Iterator it = members.iterator();
             while (it.hasNext()) {
                 String newMember = (String) it.next();

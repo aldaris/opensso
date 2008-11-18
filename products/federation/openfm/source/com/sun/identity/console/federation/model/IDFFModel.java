@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFModel.java,v 1.6 2008-08-21 18:31:08 asyhuang Exp $
+ * $Id: IDFFModel.java,v 1.7 2008-11-18 22:39:42 asyhuang Exp $
  *
  */
 package com.sun.identity.console.federation.model;
@@ -220,8 +220,8 @@ public interface IDFFModel
     public static final String ATTR_AFFILIATE_ENCRYPTION_KEY_SIZE =
             "encryptionKeySize";
     /* Attribute name of Encryption Key's Key Method.  */
-    public static final String ATTR_AFFILIATE_ENCRYPTION_KEY_METHOD =
-            "encryptionMethod";
+    public static final String ATTR_AFFILIATE_ENCRYPTION_KEY_ALGORITHM =
+            "encryptionAlgorithm";
     /* Attribute name of Affiliate Members. */
     public static final String ATTR_AFFILIATE_MEMBERS =
             "arlistAffiliateMembers";
