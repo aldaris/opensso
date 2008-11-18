@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSJAXRPCObjectImpl.java,v 1.19 2008-10-16 02:00:04 arviranga Exp $
+ * $Id: SMSJAXRPCObjectImpl.java,v 1.20 2008-11-18 23:42:56 arviranga Exp $
  *
  */
 
@@ -425,7 +425,6 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
     // Implementation to receive requests from clients
     // Returns changes in the past <i>time</i> minutes
     public synchronized Set objectsChanged(int time) throws RemoteException {
-        initialize();
         if (debug.messageEnabled()) {
             debug.message("SMSJAXRPCObjectImpl::objectsChanged: " + time);
         }

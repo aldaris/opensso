@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CachedSMSEntry.java,v 1.11 2008-07-30 00:50:14 arviranga Exp $
+ * $Id: CachedSMSEntry.java,v 1.12 2008-11-18 23:42:56 arviranga Exp $
  *
  */
 
@@ -399,9 +399,12 @@ public class CachedSMSEntry {
             if (cacheTime != null) {
                 try {
                     ttl = Long.parseLong(cacheTime);
+                    // Convert minutes to milliseconds
+                    ttl = ttl * 60* 1000;
                 } catch (NumberFormatException nfe) {
                     SMSEntry.debug.error("CachedSMSEntry:init Invalid time " +
                         "for SMS Cache TTL: " + cacheTime);
+                    ttl = 1800000; // 30 minutes, default
                 }
             }
         }
@@ -467,6 +470,7 @@ public class CachedSMSEntry {
                 "com.sun.identity.sm.CachedSMSEntry");
             UPDATE_FUNC = CACHED_SMSENTRY.getDeclaredMethod(
                 UPDATE_METHOD, (Class[]) null);
+            initializeProperties();
         } catch (Exception e) {
             // Should not happen, ignore
         }

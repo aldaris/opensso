@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.44 2008-09-10 19:57:45 arviranga Exp $
+ * $Id: SMSEntry.java,v 1.45 2008-11-18 23:42:57 arviranga Exp $
  *
  */
 
@@ -230,11 +230,12 @@ public class SMSEntry implements Cloneable {
             Constants.SDK_GLOBAL_CACHE_PROPERTY, "true");
         if (cacheEnabled.equalsIgnoreCase("true")) {
             cacheSMSEntries = true;
-        } else { // Global Property - set to false. Check component property
+            } else { // Global Property - set to false. Check component property
             cacheEnabled = SystemProperties.get(Constants.SMS_CACHE_PROPERTY);
             cacheSMSEntries = (cacheEnabled != null) &&
                 cacheEnabled.equalsIgnoreCase("true");
         }
+        CachedSMSEntry.initializeProperties();
         if (debug.messageEnabled()) {
             debug.message("SMSEntry: cache enabled: " + cacheSMSEntries);
         }
