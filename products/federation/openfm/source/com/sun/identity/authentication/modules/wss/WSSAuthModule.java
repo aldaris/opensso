@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSAuthModule.java,v 1.1 2008-10-30 18:24:03 mallas Exp $
+ * $Id: WSSAuthModule.java,v 1.2 2008-11-18 00:02:25 mallas Exp $
  *
  */
 
@@ -57,6 +57,8 @@ import com.sun.identity.idm.IdSearchResults;
 import com.sun.identity.shared.datastruct.CollectionHelper;
 import com.sun.identity.wss.security.UserNameToken;
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.authentication.spi.InvalidPasswordException;
+
 
 /**
  * Authentication module for web services user name token profile.
@@ -124,7 +126,7 @@ public class WSSAuthModule extends AMLoginModule {
         String passwdCallback = charToString(((PasswordCallback)
                     callbacks[1]).getPassword(), callbacks[1]);
         if((passwdCallback == null) || (passwdCallback.length() == 0)) {
-            throw new AuthLoginException(
+            throw new InvalidPasswordException(
                     bundle.getString("invalidPassword"));
         }
         
@@ -211,11 +213,11 @@ public class WSSAuthModule extends AMLoginModule {
                           bundle.getString("authenticationFailed"));
               }                                            
            } else {
-              throw new AuthLoginException (
+              throw new InvalidPasswordException (
                       bundle.getString("noUserFound"));
            }
         }
-        throw new AuthLoginException(
+        throw new InvalidPasswordException(
                           bundle.getString("authenticationFailed"));
         
 
@@ -264,7 +266,8 @@ public class WSSAuthModule extends AMLoginModule {
                   debug.message("WSSAuthModule. No user found with "
                           + attrValue);
                }
-               throw new AuthLoginException(bundle.getString("noUsersFound"));
+               throw new InvalidPasswordException(
+                       bundle.getString("noUsersFound"));
             }
             return (AMIdentity)users.iterator().next();       
         } catch (Exception ex) {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSUserPrincipal.java,v 1.1 2008-10-30 18:24:04 mallas Exp $
+ * $Id: WSSUserPrincipal.java,v 1.2 2008-11-18 00:02:26 mallas Exp $
  *
  */
 
