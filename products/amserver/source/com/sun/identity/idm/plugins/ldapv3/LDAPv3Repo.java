@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.59 2008-10-10 00:21:48 goodearth Exp $
+ * $Id: LDAPv3Repo.java,v 1.60 2008-11-19 17:08:27 goodearth Exp $
  *
  */
 
@@ -5591,6 +5591,16 @@ public class LDAPv3Repo extends IdRepo {
         if ((resultCode == 80) || (resultCode == 81) || (resultCode == 82)) {
             IdRepoFatalException ide = new IdRepoFatalException(
                     IdRepoBundle.BUNDLE_NAME, "311", args);
+            ide.setLDAPErrorCode(ldapError);
+            throw ide;
+        } else if (resultCode == LDAPException.CONSTRAINT_VIOLATION) {
+            // Throw Fatal exception for errCode 19 (Password too short)
+            // as it breaks password policy for password length.
+            args[0] = CLASS_NAME;
+            args[1] = ldapError;
+            args[2] = errorMessage;
+            IdRepoFatalException ide = new IdRepoFatalException(
+                    IdRepoBundle.BUNDLE_NAME, "313", args);
             ide.setLDAPErrorCode(ldapError);
             throw ide;
         } else if (errorMessage !=null && errorMessage.length() > 0 ) {

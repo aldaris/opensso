@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSDKRepo.java,v 1.22 2008-10-09 02:40:05 arviranga Exp $
+ * $Id: AMSDKRepo.java,v 1.23 2008-11-19 17:09:10 goodearth Exp $
  *
  */
 
@@ -45,6 +45,7 @@ import com.sun.identity.idm.IdOperation;
 import com.sun.identity.idm.IdRepo;
 import com.sun.identity.idm.IdRepoBundle;
 import com.sun.identity.idm.IdRepoException;
+import com.sun.identity.idm.IdRepoFatalException;
 import com.sun.identity.idm.IdRepoListener;
 import com.sun.identity.idm.IdRepoUnsupportedOpException;
 import com.sun.identity.idm.IdType;
@@ -70,6 +71,7 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import netscape.ldap.LDAPDN;
+import netscape.ldap.LDAPException;
 import netscape.ldap.util.DN;
 
 public class AMSDKRepo extends IdRepo {
@@ -1039,7 +1041,21 @@ public class AMSDKRepo extends IdRepo {
         } catch (AMException ame) {
             debug.error("AMSDKRepo.setAttributes: Unable to set attributes",
                     ame);
-            throw IdUtils.convertAMException(ame);
+            String ldapError = ame.getLDAPErrorCode();
+            String errorMessage = ame.getMessage();
+            int errCode = Integer.parseInt(ldapError);
+            if (errCode == LDAPException.CONSTRAINT_VIOLATION) {
+                Object args[] = 
+                    { this.getClass().getName(), ldapError, errorMessage };
+                //Throw Fatal exception for errCode 19(eg.,Password too short)
+                //as it breaks password policy for password length.
+                IdRepoFatalException ide = new IdRepoFatalException(
+                   IdRepoBundle.BUNDLE_NAME, "313", args);
+                ide.setLDAPErrorCode(ldapError);
+                throw ide;
+            } else {
+                throw IdUtils.convertAMException(ame);
+            }
         }
 
     }
