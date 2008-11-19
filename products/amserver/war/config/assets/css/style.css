@@ -65,7 +65,6 @@ a:visited {
 
 a:hover, a:active {
     text-decoration: underline;
-    white-space: nowrap;
 }
 
 .panel {
