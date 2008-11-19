@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserIdRepo.java,v 1.12 2008-10-14 23:01:58 veiming Exp $
+ * $Id: UserIdRepo.java,v 1.13 2008-11-19 17:22:27 veiming Exp $
  *
  */
 
@@ -49,7 +49,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
@@ -58,12 +57,8 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
 import javax.servlet.ServletContext;
-import netscape.ldap.LDAPAttribute;
-import netscape.ldap.LDAPAttributeSet;
 import netscape.ldap.LDAPConnection;
-import netscape.ldap.LDAPEntry;
 import netscape.ldap.LDAPException;
-import netscape.ldap.LDAPSearchResults;
 
 /**
  * This class does Directory Server related tasks for 
@@ -319,29 +314,8 @@ class UserIdRepo {
 
     private String getDBName(Map userRepo, LDAPConnection ld)
         throws LDAPException {
-        String dbName = null;
         String suffix = (String) userRepo.get(
             SetupConstants.USER_STORE_ROOT_SUFFIX);
-        String filter = "cn=" + suffix; 
-
-        LDAPSearchResults results = ld.search("cn=mapping tree,cn=config",
-            LDAPConnection.SCOPE_SUB, filter, null, false);
-        while (results.hasMoreElements()) {
-            LDAPEntry entry = results.next();
-            String dn = entry.getDN();
-            LDAPAttributeSet set = entry.getAttributeSet();
-            Enumeration e = set.getAttributes();
-            while (e.hasMoreElements() && (dbName == null)) {
-                LDAPAttribute attr = (LDAPAttribute) e.nextElement();
-                String name = attr.getName();
-                if (name.equals("nsslapd-backend")) {
-                    String[] value = attr.getStringValueArray();
-                    if (value.length > 0) {
-                        dbName = value[0];
-                    }
-                }
-            }
-        }
-        return (dbName != null) ? dbName : "userRoot";
+        return LDAPUtils.getDBName(suffix, ld);
     }
 }

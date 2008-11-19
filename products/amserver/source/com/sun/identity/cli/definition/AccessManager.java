@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.99 2008-11-17 18:27:38 veiming Exp $
+ * $Id: AccessManager.java,v 1.100 2008-11-19 17:22:26 veiming Exp $
  *
  */
 
@@ -1605,6 +1605,8 @@ public class AccessManager {
         webSupport="true",
         mandatoryOptions={
             "directory-servers|s|m|directory servers <protocol>://<hostname>:<port>. Can have multiple entries.",
+            "binddn|e|s|Directory Server bind distinguished name.",
+            "bind-password-file|m|s|File that contains password of bind password.",
             "basedn|b|s|Directory Server base distinguished name.",
             "dsame-password-file|x|s|File that contains password of the dsameuser",
             "puser-password-file|p|s|File that contains password of the puser"},

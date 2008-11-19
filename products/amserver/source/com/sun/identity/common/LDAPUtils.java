@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPUtils.java,v 1.4 2008-06-25 05:42:26 qcheng Exp $
+ * $Id: LDAPUtils.java,v 1.5 2008-11-19 17:22:26 veiming Exp $
  *
  */
 
@@ -30,6 +30,7 @@ package com.sun.identity.common;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.Enumeration;
 import netscape.ldap.LDAPAttribute;
 import netscape.ldap.LDAPAttributeSet;
 import netscape.ldap.LDAPConnection;
@@ -37,6 +38,7 @@ import netscape.ldap.LDAPEntry;
 import netscape.ldap.LDAPException;
 import netscape.ldap.LDAPModification;
 import netscape.ldap.LDAPModificationSet;
+import netscape.ldap.LDAPSearchResults;
 import netscape.ldap.util.LDIF;
 import netscape.ldap.util.LDIFAddContent;
 import netscape.ldap.util.LDIFAttributeContent;
@@ -117,11 +119,6 @@ public class LDAPUtils {
                 
             } catch (LDAPException e) {
                 switch (e.getLDAPResultCode()) {
-                    case LDAPException.ATTRIBUTE_OR_VALUE_EXISTS:
-                        break;
-                    case LDAPException.NO_SUCH_ATTRIBUTE:
-		        // Ignore some attributes need to be deleted if present
-                        break; 
                     case LDAPException.ENTRY_ALREADY_EXISTS:
                         LDAPModificationSet modSet =
                             new LDAPModificationSet();
@@ -144,5 +141,31 @@ public class LDAPUtils {
                 }
             }
         }
+    }
+    
+    public static String getDBName(String suffix, LDAPConnection ld)
+        throws LDAPException {
+        String dbName = null;
+        String filter = "cn=" + suffix; 
+
+        LDAPSearchResults results = ld.search("cn=mapping tree,cn=config",
+            LDAPConnection.SCOPE_SUB, filter, null, false);
+        while (results.hasMoreElements()) {
+            LDAPEntry entry = results.next();
+            String dn = entry.getDN();
+            LDAPAttributeSet set = entry.getAttributeSet();
+            Enumeration e = set.getAttributes();
+            while (e.hasMoreElements() && (dbName == null)) {
+                LDAPAttribute attr = (LDAPAttribute) e.nextElement();
+                String name = attr.getName();
+                if (name.equals("nsslapd-backend")) {
+                    String[] value = attr.getStringValueArray();
+                    if (value.length > 0) {
+                        dbName = value[0];
+                    }
+                }
+            }
+        }
+        return (dbName != null) ? dbName : "userRoot";
     }
 }
