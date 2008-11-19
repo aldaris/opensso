@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryServicesImpl.java,v 1.9 2008-09-16 21:47:50 222713 Exp $
+ * $Id: DirectoryServicesImpl.java,v 1.10 2008-11-19 17:10:25 goodearth Exp $
  *
  */
 
@@ -309,8 +309,8 @@ public class DirectoryServicesImpl implements AMConstants, IDirectoryServices {
                 // Check for specific error conditions
                 switch (errorCode) {
                 case LDAPException.CONSTRAINT_VIOLATION: // LDAP Constraint
-                    // Voilated
-                    throw new AMException(token, "19", ue);
+                    // Violated
+                    throw new AMException(ue.getMessage(), "19", ue);
                 case LDAPException.TIME_LIMIT_EXCEEDED:
                     throw new AMException(token, "3", ue);
                 case LDAPException.SIZE_LIMIT_EXCEEDED:
