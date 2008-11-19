@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitiesModelImpl.java,v 1.14 2008-11-06 01:24:33 veiming Exp $
+ * $Id: EntitiesModelImpl.java,v 1.15 2008-11-19 17:26:14 veiming Exp $
  *
  */
 
@@ -1700,6 +1700,15 @@ public class EntitiesModelImpl
                 } else {
                     correctedValues.put(attrName, emptySet);
                 }
+            }
+        }
+
+        if (amid.getType().equals(IdType.ROLE)) {
+            Object val = values.get(AMIdentity.COS_PRIORITY);
+            if (val != null) {
+                correctedValues.put(AMIdentity.COS_PRIORITY, val);
+            } else {
+                correctedValues.put(AMIdentity.COS_PRIORITY, emptySet);
             }
         }
 
