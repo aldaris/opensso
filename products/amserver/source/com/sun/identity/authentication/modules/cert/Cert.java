@@ -22,22 +22,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Cert.java,v 1.11 2008-08-18 23:06:19 beomsuk Exp $
+ * $Id: Cert.java,v 1.12 2008-11-20 18:40:17 beomsuk Exp $
  *
  */
 
 package com.sun.identity.authentication.modules.cert;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateFactory;
-import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
-import java.security.Security;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
@@ -54,9 +49,9 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.x500.X500Principal;
 import javax.servlet.http.HttpServletRequest;
 
-import netscape.ldap.LDAPConnection;
-import netscape.ldap.LDAPException;
 import netscape.ldap.LDAPUrl;
+import org.mozilla.jss.CryptoManager;
+
 import sun.security.x509.X509CertInfo;
 import sun.security.x509.X509CertImpl;
 import sun.security.x509.CertificateExtensions;
@@ -70,9 +65,9 @@ import sun.security.util.ObjectIdentifier;
 import sun.security.util.DerValue;
 
 import com.sun.identity.shared.datastruct.CollectionHelper;
+import com.iplanet.am.util.JSSInit;
 import com.iplanet.am.util.SSLSocketFactoryManager;
-import com.sun.identity.security.cert.CRLValidator;
-import com.sun.identity.security.cert.OCSPValidator;
+import com.iplanet.am.util.SystemProperties;
 import com.iplanet.security.x509.X500Name;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.authentication.spi.X509CertificateCallback;
@@ -135,6 +130,7 @@ public class Cert extends AMLoginModule {
     // HTTP Header name to have clien certificate in servlet request.
     private String certParamName = null;
     private boolean ocspEnabled = false;
+    private boolean crlEnabled = false;
     private AMLDAPCertStoreParameters ldapParam = null;
 
     // configurations
@@ -148,6 +144,16 @@ public class Cert extends AMLoginModule {
     private static com.sun.identity.shared.debug.Debug debug = null;
 
     static String UPNOID = "1.3.6.1.4.1.311.20.2.3";
+    static boolean usingJSSEHandler = false;
+    
+    static {
+        String handler = SystemProperties.get(Constants.PROTOCOL_HANDLER,
+            Constants.JSSE_HANDLER);
+        usingJSSEHandler = handler.equals(Constants.JSSE_HANDLER);
+        if (!usingJSSEHandler) {
+            JSSInit.initialize();
+        }
+    }
 
     /**
      * Default module constructor does nothing
@@ -217,6 +223,7 @@ public class Cert extends AMLoginModule {
                     amAuthCert_chkAttrCRL.equals("")) {
                     throw new AuthLoginException(amAuthCert, "noCRLAttr", null);
                 }
+                crlEnabled = true;
             }
             amAuthCert_validateCA = CollectionHelper.getMapAttr(
                 options, "sunAMValidateCACert"); 
@@ -390,7 +397,7 @@ public class Cert extends AMLoginModule {
             }
 
             if (thecert == null) {
-                debug.message(">>>>>>>>>>>>>> Certificate: no cert passed in.");
+                debug.message("Certificate: no cert passed in.");
                 throw new AuthLoginException(amAuthCert, "noCert", null);
             }
 
@@ -451,27 +458,88 @@ public class Cert extends AMLoginModule {
         return ISAuthConstants.LOGIN_SUCCEED;
     }
 
-    private int doRevocationValidation(X509Certificate cert) {
-        boolean crlEnabled = amAuthCert_chkCRL.equalsIgnoreCase("true");
+    private int doRevocationValidation(X509Certificate cert) 
+        throws AuthLoginException {
         boolean validateCA = amAuthCert_validateCA.equalsIgnoreCase("true");
 
 	int ret = ISAuthConstants.LOGIN_IGNORE;
+	
+        if (usingJSSEHandler) {
+            ret = doJCERevocationValidation(cert);
+        } else {
+            ret = doJSSRevocationValidation(cert);
+        }
+        
+        if ((ret == ISAuthConstants.LOGIN_SUCCEED) 
+            && (crlEnabled || ocspEnabled)
+            && validateCA
+            && !AMCertStore.isRootCA(cert)) {
+            ret = doRevocationValidation(
+                AMCertStore.getIssuerCertificate(
+                    ldapParam, cert, amAuthCert_chkAttrCertInLDAP));
+        }
+
+        return ret;
+    }
+    
+    private int doJSSRevocationValidation(X509Certificate cert) {
+        int ret = ISAuthConstants.LOGIN_IGNORE;
+
+        X509CRL crl = null;
+        
+        if (crlEnabled) {
+            crl = AMCRLStore.getCRL(ldapParam, cert, amAuthCert_chkAttrCRL);
+        
+            if ((crl != null) && (!crl.isRevoked(cert))) {
+                ret = ISAuthConstants.LOGIN_SUCCEED;
+            }
+        }
+
+        /**
+         * OCSP validation, this will use the CryptoManager.isCertvalid()
+         * method to validate certificate, OCSP is one of the steps in
+         * this process. Here is the algorith to find OCSP responder:
+         * 1. use global OCSP responder if set
+         * 2. use the OCSP responder in user's certificate if presents
+         * 3. no OCSP responder
+         * The isCertValid() WON'T perform OCSP validation if no OCSP responder
+         * found in above process.
+         */
+        if (ocspEnabled) {
+            try {
+                CryptoManager cm = CryptoManager.getInstance();
+                if (cm.isCertValid(cert.getEncoded(), true,
+                    CryptoManager.CertUsage.SSLClient) == true) {
+                    debug.message("cert is valid");
+                    ret = ISAuthConstants.LOGIN_SUCCEED;
+                } else {
+                    ret = ISAuthConstants.LOGIN_IGNORE;
+                }
+            } catch (Exception e) {
+                debug.message("certValidation failed with exception",e);
+            }
+        }
+
+        return ret;
+    }
+
+    private int doJCERevocationValidation(X509Certificate cert) 
+        throws AuthLoginException {
+    	int ret = ISAuthConstants.LOGIN_IGNORE;
 		
     	try {
             Vector crls = new Vector();
-            if (crlEnabled) {
-                X509CRL crl = 
-                   AMCRLStore.getCRL(ldapParam, cert, amAuthCert_chkAttrCRL);
-                
-                if (crl != null) {
-                    crls.add(crl);
-                }
-                if (debug.messageEnabled()) {
-                    debug.message("Cert.doRevocationValidation: crls size = " +
-                              crls.size());
-                    if (crls.size() > 0) {
-                        debug.message("CRL = " + crls.toString());
-                    }
+            X509CRL crl = 
+               AMCRLStore.getCRL(ldapParam, cert, amAuthCert_chkAttrCRL);
+
+            if (crl != null) {
+                crls.add(crl);
+            }
+            if (debug.messageEnabled()) {
+                debug.message("Cert.doRevocationValidation: crls size = " +
+                          crls.size());
+                if (crls.size() > 0) {
+                    debug.message("CRL = " + crls.toString());
                 }
             }
 
@@ -488,21 +556,11 @@ public class Cert extends AMLoginModule {
             ret = ISAuthConstants.LOGIN_SUCCEED;
     	}catch (Exception e) {
             debug.error("Cert.doRevocationValidation: verify failed.", e);
-            return ret;
     	}
-
-        if ((ret == ISAuthConstants.LOGIN_SUCCEED) 
-            && crlEnabled
-            && validateCA
-            && !AMCertStore.isRootCA(cert)) {
-            ret = doRevocationValidation(
-                AMCertStore.getIssuerCertificate(
-                    ldapParam, cert, amAuthCert_chkAttrCertInLDAP));
-        }
-
+        
         return ret;
     }
-    
+
     private void setLdapStoreParam() throws AuthLoginException {
     /*
      * Setup the LDAP certificate directory service context for
