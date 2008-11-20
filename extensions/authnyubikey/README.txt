@@ -46,3 +46,5 @@ console, rather than in the code.
 
 Allow the admin to select whether or not users will be prompted for their
 username as well as the Yubikey output.
+
+Verify hash from server to allow use of non-SSL authentication service URLs.
