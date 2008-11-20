@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.10 2008-06-25 05:44:15 qcheng Exp $
+   $Id: build.xml,v 1.11 2008-11-20 17:53:01 veiming Exp $
 
 -->
 
@@ -93,8 +93,15 @@
         <copy todir="${test.package.dir}/classes">
             <fileset dir="${sharedlib.classes.dir}" />
             <fileset dir="${amserver.classes.dir}" />
+        </copy>
+
+        <copy todir="${test.package.dir}/classes" 
+            file="${amserver.base.dir}/resources/config/bootstrapConfig.properties" />
+
+        <copy todir="${test.package.dir}/classes" flatten="true">
             <fileset dir="${amserver.res.i18n.dir}" />
         </copy>
+
         <concat destfile="${test.package.dir}/classes/amSDK.properties">
              <fileset dir="${test.package.dir}/classes">
                 <include name="Services.properties"/>

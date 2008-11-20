@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Test.java,v 1.8 2008-06-25 05:50:17 qcheng Exp $
+ * $Id: SAML2Test.java,v 1.9 2008-11-20 17:53:03 veiming Exp $
  *
  */
 
@@ -33,6 +33,7 @@ import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.CLIRequest;
 import com.sun.identity.cli.CommandManager;
 import com.sun.identity.cli.DevNullOutputWriter;
+import com.sun.identity.cli.IArgument;
 import com.sun.identity.cot.CircleOfTrustManager;
 import com.sun.identity.cot.CircleOfTrustDescriptor;
 import com.sun.identity.cot.COTException;
@@ -222,8 +223,8 @@ public class SAML2Test extends TestBase {
                 FedCLIConstants.ARGUMENT_COT,
             NAME_COT,
             CLIConstants.PREFIX_ARGUMENT_LONG +
-                FedCLIConstants.SPECIFICATION_VERSION,
-            FedCLIConstants.SAML2_SPECIFICATION
+                IArgument.REALM_NAME,
+            "/"
         };
 
         CLIRequest req = new CLIRequest(null, args, getAdminSSOToken());
@@ -240,8 +241,8 @@ public class SAML2Test extends TestBase {
         String[] args = {
             "list-cots",
             CLIConstants.PREFIX_ARGUMENT_LONG +
-                FedCLIConstants.SPECIFICATION_VERSION,
-            FedCLIConstants.SAML2_SPECIFICATION
+                IArgument.REALM_NAME,
+            "/"
         };
 
         CLIRequest req = new CLIRequest(null, args, getAdminSSOToken());

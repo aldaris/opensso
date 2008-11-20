@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.13 2008-08-08 22:37:52 qcheng Exp $
+   $Id: build.xml,v 1.14 2008-11-20 17:53:02 veiming Exp $
 
 -->
 
@@ -54,7 +54,6 @@
     </target>
 
     <target name="all" depends="build">
-        <delete dir="${test.package.dir}" />
         <mkdir dir="${test.package.dir}/classes" />
         <mkdir dir="${test.package.dir}test/classes" />
         <mkdir dir="${test.package.dir}/lib" />
@@ -69,6 +68,8 @@
         <copy todir="${test.package.dir}/test/classes">
             <fileset dir="${test.classes.dir}" />
         </copy>
+        <copy todir="${test.package.dir}/test/classes"
+            file="${amserver.base.dir}/resources/config/bootstrapConfig.properties" />
 
         <copy todir="${test.package.dir}/lib">
             <fileset dir="${extlib.dir}" includes="jaxrpc-api.jar, jaxrpc-impl.jar, jaxrpc-spi.jar, j2ee.jar, ldapjdk.jar, mail.jar, relaxngDatatype.jar, webservices-api.jar, webservices-rt.jar, webservices-tools.jar, webservices-extra-api.jar, webservices-extra.jar, testng-5.1-jdk15.jar, xsdlib.jar"/>
@@ -94,20 +95,22 @@
             <fileset dir="${openfm.unittest.dir}/www/css" />
         </copy>
 
+        <copy todir="${test.package.dir}/mock">
+            <fileset dir="${openfm.unittest.dir}/mock" />
+        </copy>
+
         <zip destfile="${fm.dist.dir}/opensso-server-test.zip"
             basedir="${test.package.dir}" />
         <checksum file="${fm.dist.dir}/opensso-server-test.zip" algorithm="SHA" fileext=".sha" /> 
     </target>
 
     <target name="preparebuild">
+        <delete dir="${test.package.dir}" />
+        <delete file="${fm.dist.dir}/opensso-server-test.zip" />
         <mkdir dir="${test.package.dir}"/>
         <mkdir dir="${test.package.dir}/mock" />
         <mkdir dir="${fm.dist.dir}"/>
         <mkdir dir="${test.classes.dir}"/>
-
-        <copy todir="${test.package.dir}/mock">
-            <fileset dir="${openfm.unittest.dir}/mock" />
-        </copy>
     </target>
 
     <target name="clean">

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: README,v 1.5 2008-08-19 19:09:32 veiming Exp $
+   $Id: README,v 1.6 2008-11-20 17:53:00 veiming Exp $
                                                                                 
 -->
 
@@ -38,6 +38,6 @@ Steps:
      - type
        ant -D""bootstrap.dir=<base dir of your OpenSSO Server installation>"
        e.g.
-       ant -D"bootstrap.dir=/opt/fam"
+       ant -D"bootstrap.dir=/opensso"
        to run all test suites; or to selectively run individually
        test suite, invoke the specific target in the ant build XML.

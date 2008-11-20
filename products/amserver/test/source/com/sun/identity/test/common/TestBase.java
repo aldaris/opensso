@@ -22,14 +22,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestBase.java,v 1.4 2008-06-25 05:44:23 qcheng Exp $
+ * $Id: TestBase.java,v 1.5 2008-11-20 17:53:01 veiming Exp $
  *
  */
 
 package com.sun.identity.test.common;
 
+import com.iplanet.services.util.Crypt;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.setup.Bootstrap;
+import com.sun.identity.setup.ConfiguratorException;
 import com.sun.identity.shared.test.UnitTestBase;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -40,6 +43,24 @@ import java.security.PrivilegedAction;
  * to support more methods in future.
  */
 public abstract class TestBase extends UnitTestBase {
+    static {
+        bootstrap();
+    }
+
+    private static void bootstrap() {
+        try {
+            Bootstrap.load();
+            AdminTokenAction.getInstance().authenticationInitialized();
+            Crypt.checkCaller();
+        } catch (ConfiguratorException e) {
+            e.printStackTrace();
+            System.exit(1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+
     protected TestBase(String componentName) {
         super(componentName);
     }

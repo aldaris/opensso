@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: README,v 1.5 2008-08-19 19:12:28 veiming Exp $
+   $Id: README,v 1.6 2008-11-20 17:53:02 veiming Exp $
                                                                                 
 -->
 
@@ -34,8 +34,10 @@ Steps:
  2. Setup the test
      - unzip openfm/built/test/dist/opensso-server-test.zip to a directory
        in the same machine where fam.war is deployed.
-     - copy the AMConfig.properties and FederationConfig.properties that was
-       generated in Step One to the test <directory>/classes directory
  3. Run the test
-     - type "ant" to run all test suites; or to selectively run individually
+     - type 
+       ant -D""bootstrap.dir=<base dir of your OpenSSO Server installation>"
+       e.g.
+       ant -D"bootstrap.dir=/opensso"
+       to run all test suites; or to selectively run individually
        test suite, invoke the specific target in the ant build XML.
