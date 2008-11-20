@@ -22,17 +22,22 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: validatorFooter.jsp,v 1.4 2008-10-29 03:11:55 veiming Exp $
+   $Id: validatorFooter.jsp,v 1.5 2008-11-20 17:18:03 babysunil Exp $
 
 --%>
 
 <%@ page import="com.sun.identity.common.SystemConfigurationUtil" %>
+<%@ page import="com.sun.identity.console.base.model.AMAdminConstants" %>
 <%@ page import="com.sun.identity.shared.Constants" %>
+<%@ page import="java.util.ResourceBundle" %>
 
 <%
     String deployuri = SystemConfigurationUtil.getProperty(
         Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
     String msg = request.getParameter("m");
+    
+     ResourceBundle rb = ResourceBundle.getBundle(AMAdminConstants.DEFAULT_RB,
+         request.getLocale());
 %>
 <html>
 <head>
@@ -54,7 +59,7 @@
 %>
 </td>
 <td align="right" nowrap="nowrap" valign="bottom">
-<div class="TtlBtnDiv"> <input name="btnCancel" type="submit" class="Btn1" value="Cancel" onmouseover="javascript: this.className='Btn1Hov'" onmouseout="javascript: this.className='Btn1'" onblur="javascript: this.className='Btn1'" onfocus="javascript: this.className='Btn1Hov'" onClick="top.cancelOp();return false;"/>
+<div class="TtlBtnDiv"> <input name="btnBacktoLogin" type="submit" class="Btn1" value="<%= rb.getString("button.backtoLogin")%>" onmouseover="javascript: this.className='Btn1Hov'" onmouseout="javascript: this.className='Btn1'" onblur="javascript: this.className='Btn1'" onfocus="javascript: this.className='Btn1Hov'" onClick="top.cancelOp();return false;"/>
 </div>
 </td>
 <td width="10"></td>
