@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SavedHttpServletRequest.java,v 1.2 2008-11-17 17:26:47 rsoika Exp $
+ * $Id: SavedHttpServletRequest.java,v 1.3 2008-11-20 08:43:40 rsoika Exp $
  */
 package com.sun.security.sam;
 
@@ -653,9 +653,12 @@ public class SavedHttpServletRequest extends HttpServletRequestWrapper {
                 }
             }
 
-            if (contentLength==-1 && i != -1) {
-                throw new IOException("content length too large");
-            }
+            if (contentLength <= 0 && i != -1) {
+        		// try to read one more byte ...
+        		byte[] overflow = new byte[1];
+        		if (requestStream.readLine(overflow, 0, 1) > 0)
+        			throw new IOException("content too large");
+        	}
 
             lineLengths = new int[lengths.size()];
 
