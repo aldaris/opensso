@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAdminFrameViewBean.java,v 1.2 2008-06-25 05:42:47 qcheng Exp $
+ * $Id: AMAdminFrameViewBean.java,v 1.3 2008-11-20 22:22:08 babysunil Exp $
  *
  */
 
@@ -71,8 +71,7 @@ public class AMAdminFrameViewBean
              * We couldn't retrieve the default view to display.
              * This may be due to permission problems, or a configuration
              * issue. If the users profile is set to ignore, display
-             * the "Authenticated View". Otherwise redirect to the old
-             * interface.
+             * the "Authenticated View". 
              */
             AMModel model = getModel();
             if (model.ignoreUserProfile()) {
@@ -82,17 +81,8 @@ public class AMAdminFrameViewBean
                 vb.forwardTo(rc);
             }
 
-            if (!ServiceManager.isRealmEnabled()) {
-                if (debug.messageEnabled()) {
-                    debug.message("AMAdminFrame.beginDisplay\n\t" +
-                        "NULL default viewbean URL, redirect to old console");
-                }
-                setDisplayFieldValue(VIEWBEAN_URL,
-                    "../.." + AMSystemConfig.consoleDeploymentURI +
-                    "/base/AMAdminFrame");
-            } else {
-                setDisplayFieldValue(VIEWBEAN_URL, "../idm/EndUser");
-            }
+            //set the non admin end user view
+            setDisplayFieldValue(VIEWBEAN_URL, "../idm/EndUser");
         }
     }
 
