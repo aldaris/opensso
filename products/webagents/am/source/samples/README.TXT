@@ -103,6 +103,9 @@ Building Sample Program on Windows
    On Windows platform, the sample programs can be built using 
    Microsoft Visual Studio 7.0.  Be sure to do the following: 
        - Define WINNT in the compile flags.
+       - Run vcvars32.bat which will set the all the required path,include
+         libraries required to compile the samples
+       - Add ../bin as an additional path. 
        - Add ../include as an additional include path. 
        - Add ../lib as an additional lib path. 
        - Link with all libraries in the ../lib directory. 
@@ -244,8 +247,11 @@ am_log_test
    OpenSSO server using the given sso token.  
 
    Usage: 
-      am_log_test -n log_name -u logged_by_token_id -u user_token_id -m message 
-		    [-d log_module] [-f bootstrap_properties_file]
+       ./am_log_test -u <user_token_id> -n <log_name> -l <logged_by_token_id> -m <log_message> [-d <log_module>] [-f <bootstrap_properties_file>]
+
+   <user_token_id> 
+      SSO token ID of a user for the log. Can be the logged_by_token_id 
+      or something else. 
 
    <log_name> 
       Name of Log file on OpenSSO server.
@@ -253,11 +259,7 @@ am_log_test
    <logged_by_token_id> 
       SSO token ID with access the Logging Service on OpenSSO server.
 
-   <user_token_id> 
-      SSO token ID of a user for the log. Can be the logged_by_token_id 
-      or something else. 
-
-   <message> 
+   <log_message> 
       The log message.
 
    <log_module> 
