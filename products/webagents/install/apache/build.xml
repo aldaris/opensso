@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.5 2008-06-25 05:54:33 qcheng Exp $
+   $Id: build.xml,v 1.6 2008-11-21 08:39:09 soumendra Exp $
 
 -->
 
@@ -99,9 +99,12 @@
         <antcall target="copy-${build.os}-library"/>
 
         <!-- Generate Apache agent install archive -->
-        <zip destfile="${webagents.dist.dir}/${containername}_v20_${build.os}_agent.zip"
-             basedir="${webagents.container.scratch.dir}"/>
-        <checksum file="${webagents.dist.dir}/${containername}_v20_${build.os}_agent.zip"
+        <zip destfile="${webagents.dist.dir}/${containername}_v20_${build.os}${build.type.suffix}_agent_${agentversion}.zip">
+             <fileset dir="${webagents.container.scratch.dir}" excludes="**/bin/**"/>
+             <zipfileset dir="${container.web_agent.bin.dir}" filemode="755"
+                         prefix="web_agents/apache_agent/bin"/>
+        </zip>
+        <checksum file="${webagents.dist.dir}/${containername}_v20_${build.os}${build.type.suffix}_agent_${agentversion}.zip"
             algorithm="SHA" fileext=".sha" />
 
     </target>
@@ -114,7 +117,7 @@
         </copy>
     </target>
 
-    <target name="copy-SunOS-library">
+    <target name="copy-SunOS_sparc-library">
         <copy todir="${container.web_agent.lib.dir}">
             <fileset dir="${webagents.apache.src.dir}">
                     <include name="libamapc2.so"/>
