@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.2 2008-11-21 22:31:01 leiming Exp $
+   $Id: build.xml,v 1.3 2008-11-21 22:32:08 leiming Exp $
 
 -->
 
@@ -31,7 +31,7 @@
     
     <target name="init">
         <!-- Replace APPSERV_LIB_DIR with the directory where j2ee.jar is located -->  
-        <property name="appserv.lib.dir" value="C:\leiming\agents\opensso.trunk\opensso\products\j2eeagents\websphere\v61\extlib"/> 
+        <property name="appserv.lib.dir" value="APPSERV_LIB_DIR"/> 
         <property name="docroot.dir" value="docroot"/>
         <property name="src.dir" value="src"/>   
         <property name="servlet.src.dir" value="${src.dir}/servlet"/>   
