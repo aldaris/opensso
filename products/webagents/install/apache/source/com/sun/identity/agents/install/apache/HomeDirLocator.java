@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HomeDirLocator.java,v 1.4 2008-06-25 05:54:34 qcheng Exp $
+ * $Id: HomeDirLocator.java,v 1.5 2008-11-21 08:29:02 soumendra Exp $
  *
  */
 
@@ -62,8 +62,6 @@ public class HomeDirLocator implements IServerHomeDirLocator,
         if ((apacheConfigDir != null) && (apacheConfigDir.length() > 0)) {
             String apcHttpdFile = apacheConfigDir + FILE_SEP +
                                             STR_APC_HTTPD_FILE;
-            String apcHomeDir = (new File(apcHttpdFile)).
-                                           getParentFile().getParent();
             // Apache home dir
             String apcHomeDir = (String)state.get(STR_KEY_APC_HOME_DIR);
             if ((apcHomeDir != null) && (apcHomeDir.length() > 0)) {
