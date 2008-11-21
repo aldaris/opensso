@@ -50,13 +50,21 @@ typedef void (*sighandler_t)(int);
 #include <apr.h>
 #include <apr_strings.h>
 #include <apr_compat.h>
+//#include <apr_pools.h>
 #endif
+
 #include "am_web.h"
 
-#define  DSAME   "DSAME"
+#define  OpenSSO   "OpenSSO"
+
+boolean_t agentInitialized = B_FALSE;
+
+/* Mutex variable */
+static apr_thread_mutex_t *init_mutex = NULL;
 
 typedef struct {
     char *properties_file;
+    char *bootstrap_file;
 } agent_config_rec_t;
 
 #if defined(APACHE2)
@@ -68,24 +76,34 @@ extern module dsame_module;
 static const char *set_properties_file(
      cmd_parms *, agent_config_rec_t *, const char *);
 
+static const char *set_bootstrap_file(
+     cmd_parms *, agent_config_rec_t *, const char *);
+
 static agent_config_rec_t agent_config;
 
 static const command_rec dsame_auth_cmds[]=
 #if defined(APACHE2)
 {
     AP_INIT_TAKE1("Agent_Config_File", set_properties_file, NULL, RSRC_CONF,
-				  "Full path of the Agent configuration file"),
+                    "Full path of the Agent configuration file"),
+    // Tag directive Agent_Bootstrap_File should be set in the dsame.conf file
+    // -- For this appropriate changes need to be done in the apache install 
+    // webagents/install/apache/source/com/sun/identity/agents/install/apache
+    // files (java files) particularly ConfigureDsameFileTask.java file and
+    // and any other related files.
+    AP_INIT_TAKE1("Agent_Bootstrap_File", set_bootstrap_file, NULL, RSRC_CONF,
+                    "Full path of the Agent bootstrap file"),
     {NULL}
 };
 #else
 {
     {
-	"Agent_Config_File",
-	set_properties_file, NULL, RSRC_CONF, TAKE1,
-	"Full path of the Agent configuration file"
+        "Agent_Config_File",
+        set_properties_file, NULL, RSRC_CONF, TAKE1,
+        "Full path of the Agent configuration file"
     },
     {
-	NULL
+        NULL
     }
 };
 #endif
@@ -96,12 +114,20 @@ static const command_rec dsame_auth_cmds[]=
  * needed by the DSAME agent are stored during module configuration.
  */
 static const char *set_properties_file(cmd_parms *cmd,
-				       agent_config_rec_t *config_rec_ptr,
-				       const char *arg)
+                       agent_config_rec_t *config_rec_ptr,
+                       const char *arg)
 {
     config_rec_ptr->properties_file = ap_pstrdup(cmd->pool, arg);
     return NULL;
 }
+static const char *set_bootstrap_file(cmd_parms *cmd,
+                       agent_config_rec_t *config_rec_ptr,
+                       const char *arg)
+{
+    config_rec_ptr->bootstrap_file = ap_pstrdup(cmd->pool, arg);
+    return NULL;
+}
+
 #if defined(APACHE2)
 static void *create_agent_config_rec(apr_pool_t *pool_ptr, char *dir_name)
 #else
@@ -128,7 +154,8 @@ static int init_dsame(apr_pool_t *pconf, apr_pool_t *plog,
 static void init_dsame(server_rec *server_ptr, pool *pool_ptr)
 #endif
 {
-	void *lib_handle;
+    void *lib_handle;
+    int  requestResult = HTTP_FORBIDDEN;
 #if defined(APACHE2)
     int ret = OK;
 #endif
@@ -143,40 +170,32 @@ static void init_dsame(server_rec *server_ptr, pool *pool_ptr)
 
 #if defined(LINUX) && defined(APACHE2)
     lib_handle = dlopen("libamapc2.so", RTLD_LAZY);
-	if (!lib_handle) {
-		fprintf(stderr, "Error during dlopen(): %s\n", dlerror());
-		exit(1);
-	}
-#endif
-
-    status = am_web_init(agent_config.properties_file);
-    if(status == AM_SUCCESS) {
-	am_web_log_debug("Process initialization result:%s",
-			 am_status_to_string(status));
-    } else {
-	am_web_log_error("Process initialization failure:%s",
-			 am_status_to_string(status));
-#if defined(APACHE2)
-        ap_log_error(__FILE__, __LINE__, APLOG_ALERT, 0, server_ptr,
-                     "Policy web agent configuration failed: %s",
-                     am_status_to_string(status));
-#else
-        ap_log_error(__FILE__, __LINE__, APLOG_ALERT, server_ptr,
-                     "Policy web agent configuration failed: %s",
-                     am_status_to_string(status));
-#endif
+    if (!lib_handle) {
+        fprintf(stderr, "Error during dlopen(): %s\n", dlerror());
+        exit(1);
     }
+#endif
 
+    status = am_web_init(agent_config.bootstrap_file, agent_config.properties_file);
+    if(status == AM_SUCCESS) {
+        am_web_log_debug("Process initialization result:%s",
+        am_status_to_string(status));
+        if ((apr_thread_mutex_create(&init_mutex, APR_THREAD_MUTEX_UNNESTED,
+                                        pconf)) != APR_SUCCESS) {
 #if defined(APACHE2)
-    if (status != AM_SUCCESS) {
-        // anything besides OK or DECLINED is an error
-        ret = HTTP_BAD_REQUEST;
+            ap_log_error(__FILE__, __LINE__, APLOG_ALERT, 0, server_ptr,
+                         "Policy web agent configuration failed: %s",
+                         am_status_to_string(status));
+#else
+            ap_log_error(__FILE__, __LINE__, APLOG_ALERT, server_ptr,
+                         "Policy web agent configuration failed: %s",
+                         am_status_to_string(status));
+#endif
+            ret = HTTP_BAD_REQUEST;
+        }
     }
     return ret;
-
-#endif
 }
-
 
 #if defined(APACHE2)
 static apr_status_t dummy_cleanup_func(void *data)
@@ -212,6 +231,12 @@ static void cleanup_dsame(server_rec *server_ptr, pool *pool_ptr)
     sighandler_t prev_handler = signal(SIGTERM, sigterm_handler);
 
     am_web_log_info("Cleaning up web agent..");
+    if (init_mutex) {
+        apr_thread_mutex_destroy(init_mutex);
+        am_web_log_info("Destroyed mutex...");
+        init_mutex = NULL;
+    }
+
     (void)am_web_cleanup();
 
     // release SIGTERM
@@ -248,7 +273,7 @@ static void apache2_child_init(apr_pool_t *pool_ptr, server_rec *server_ptr)
      * apache crashes on the null pointer.
      */
     apr_pool_cleanup_register(pool_ptr, server_ptr,
-			      cleanup_dsame, dummy_cleanup_func);
+                                cleanup_dsame, dummy_cleanup_func);
 }
 #endif
 
@@ -260,68 +285,65 @@ render_result(void **args, am_web_result_t http_result, char *data)
     int *apache_ret = NULL;
     am_status_t sts = AM_SUCCESS;
     core_dir_config *conf;
-	int len = 0;
+    int len = 0;
 
-    char *am_rev_number = am_web_get_am_revision_number();
     if (args == NULL || (r = (request_rec *)args[0]) == NULL,
-	(apache_ret = (int *)args[1]) == NULL ||
-	((http_result == AM_WEB_RESULT_OK_DONE ||
-	    http_result == AM_WEB_RESULT_REDIRECT) &&
-		(data == NULL || *data == '\0'))) {
-	am_web_log_error("%s: invalid arguments received.", thisfunc);
-	sts = AM_INVALID_ARGUMENT;
-    }
-    else {
-	// only redirect and OK-DONE need special handling.
-	// ok, forbidden and internal error can just set in the result.
-	switch (http_result) {
-	case AM_WEB_RESULT_OK:
-	    *apache_ret = OK;
-	    break;
-	case AM_WEB_RESULT_OK_DONE:
-	    if ((am_rev_number != NULL) && (!strcmp(am_rev_number, "7.0")) && data && ((len = strlen(data)) > 0))
-	    if (data && ((len = strlen(data)) > 0))
-		{
-#if defined(APACHE2)
-                        ap_set_content_type(r, "text/html");
-#else
-                        r->content_type="text/html";
-                        ap_send_http_header(r);
-#endif
-                        ap_set_content_length(r, len);
-			ap_rwrite(data, len, r);
-            ap_rflush(r);
-            *apache_ret = HTTP_FORBIDDEN;
-        } else {
+    (apache_ret = (int *)args[1]) == NULL ||
+    ((http_result == AM_WEB_RESULT_OK_DONE ||
+        http_result == AM_WEB_RESULT_REDIRECT) &&
+        (data == NULL || *data == '\0'))) {
+            am_web_log_error("%s: invalid arguments received.", thisfunc);
+            sts = AM_INVALID_ARGUMENT;
+    } else {
+    // only redirect and OK-DONE need special handling.
+    // ok, forbidden and internal error can just set in the result.
+    switch (http_result) {
+        case AM_WEB_RESULT_OK:
             *apache_ret = OK;
-        }
-	    break;
-	case AM_WEB_RESULT_REDIRECT:
-	    // The following lines are added to work around the problem for
-	    // Apache Bug 8334 for older apache versions (< 1.3.20).
-	    // See http://bugs.apache.org/index.cgi/full/8334 for details
-	    if ((conf = ap_get_module_config(
-			    r->per_dir_config, &core_module)) != NULL) {
-		conf->response_code_strings = NULL;
-		ap_set_module_config(r->per_dir_config,
-					&core_module, conf);
-	    }
-	    ap_custom_response(r, HTTP_MOVED_TEMPORARILY, data);
-	    *apache_ret = HTTP_MOVED_TEMPORARILY;
-	    break;
-	case AM_WEB_RESULT_FORBIDDEN:
-	    *apache_ret = HTTP_FORBIDDEN;
-	    break;
-	case AM_WEB_RESULT_ERROR:
-	    *apache_ret = HTTP_INTERNAL_SERVER_ERROR;
-	    break;
-	default:
-	    am_web_log_error("%s: Unrecognized process result %d.",
-			     thisfunc, http_result);
-	    *apache_ret = HTTP_INTERNAL_SERVER_ERROR;
-	    break;
-	}
-	sts = AM_SUCCESS;
+            break;
+        case AM_WEB_RESULT_OK_DONE:
+            if (data && ((len = strlen(data)) > 0))
+            {
+#if defined(APACHE2)
+                ap_set_content_type(r, "text/html");
+#else
+                r->content_type="text/html";
+                ap_send_http_header(r);
+#endif
+                ap_set_content_length(r, len);
+                ap_rwrite(data, len, r);
+                ap_rflush(r);
+                *apache_ret = HTTP_FORBIDDEN;
+            } else {
+                *apache_ret = OK;
+            }
+            break;
+        case AM_WEB_RESULT_REDIRECT:
+            // The following lines are added to work around the problem for
+            // Apache Bug 8334 for older apache versions (< 1.3.20).
+            // See http://bugs.apache.org/index.cgi/full/8334 for details
+            if ((conf = ap_get_module_config(
+                    r->per_dir_config, &core_module)) != NULL) {
+            conf->response_code_strings = NULL;
+            ap_set_module_config(r->per_dir_config,
+                    &core_module, conf);
+            }
+            ap_custom_response(r, HTTP_MOVED_TEMPORARILY, data);
+            *apache_ret = HTTP_MOVED_TEMPORARILY;
+            break;
+        case AM_WEB_RESULT_FORBIDDEN:
+            *apache_ret = HTTP_FORBIDDEN;
+            break;
+        case AM_WEB_RESULT_ERROR:
+            *apache_ret = HTTP_INTERNAL_SERVER_ERROR;
+            break;
+        default:
+            am_web_log_error("%s: Unrecognized process result %d.",
+                            thisfunc, http_result);
+            *apache_ret = HTTP_INTERNAL_SERVER_ERROR;
+            break;
+    }
+    sts = AM_SUCCESS;
     }
     return sts;
 }
@@ -421,38 +443,38 @@ content_read(void **args, char **rbuf)
     const char *new_clen_val = NULL;
 
     if (args == NULL || (r = (request_rec *)args[0]) == NULL || rbuf == NULL) {
-	am_web_log_error("%s: invalid arguments passed.", thisfunc);
-	sts = AM_INVALID_ARGUMENT;
+        am_web_log_error("%s: invalid arguments passed.", thisfunc);
+        sts = AM_INVALID_ARGUMENT;
     }
     else if ((rc = ap_setup_client_block(r, REQUEST_CHUNKED_ERROR)) != OK) {
-	am_web_log_error("%s: error setup client block: %d", thisfunc, rc);
-	sts = AM_FAILURE;
+        am_web_log_error("%s: error setup client block: %d", thisfunc, rc);
+        sts = AM_FAILURE;
     }
     else if (ap_should_client_block(r)) {
-	char argsbuffer[HUGE_STRING_LEN];
-	long length = r->remaining;
-	*rbuf = ap_pcalloc(r->pool, length+1);
+        char argsbuffer[HUGE_STRING_LEN];
+        long length = r->remaining;
+        *rbuf = ap_pcalloc(r->pool, length+1);
 #if !defined(APACHE2)
-	ap_hard_timeout("content_read", r);
+        ap_hard_timeout("content_read", r);
 #endif
-	while ((len_read = ap_get_client_block(r, argsbuffer,
-	    sizeof(argsbuffer))) > 0)
-	{
+        while ((len_read = ap_get_client_block(r, argsbuffer,
+            sizeof(argsbuffer))) > 0)
+        {
 #if !defined(APACHE2)
-	    ap_reset_timeout(r);
+            ap_reset_timeout(r);
 #endif
-	    if ((rpos + len_read) > length) {
-		rsize = length -rpos;
-	    } else {
-		rsize = len_read;
-	    }
-	    memcpy((char*) *rbuf + rpos, argsbuffer, rsize);
-	    rpos = rpos + rsize;
-	}
-	am_web_log_debug("%s: Read %d bytes", thisfunc, rpos);
-	sts = AM_SUCCESS;
+            if ((rpos + len_read) > length) {
+                rsize = length -rpos;
+            } else {
+                rsize = len_read;
+            }
+            memcpy((char*) *rbuf + rpos, argsbuffer, rsize);
+            rpos = rpos + rsize;
+        }
+        am_web_log_debug("%s: Read %d bytes", thisfunc, rpos);
+        sts = AM_SUCCESS;
 #if !defined(APACHE2)
-	ap_kill_timeout(r);
+        ap_kill_timeout(r);
 #endif
     }
 
@@ -460,12 +482,12 @@ content_read(void **args, char **rbuf)
     // If the content length is not reset, servlet containers think
     // the request is a POST.
     if(sts == AM_SUCCESS) {
-	r->clength = 0;
-	ap_table_unset(r->headers_in, "Content-Length");
-	new_clen_val = ap_table_get(r->headers_in, "Content-Length");
-	am_web_log_max_debug("content_read(): New value "
-			     "of content length after reset: %s",
-			     new_clen_val?"(NULL)":new_clen_val);
+        r->clength = 0;
+        ap_table_unset(r->headers_in, "Content-Length");
+        new_clen_val = ap_table_get(r->headers_in, "Content-Length");
+        am_web_log_max_debug("content_read(): New value "
+                             "of content length after reset: %s",
+                             new_clen_val?"(NULL)":new_clen_val);
     }
     return sts;
 }
@@ -526,12 +548,12 @@ set_method(void **args, am_web_req_method_t method)
 	switch (method) {
 	case AM_WEB_REQUEST_GET:
 	    r->method_number = M_GET;
-	    r->method = FORM_METHOD_GET;
+	    r->method = REQUEST_METHOD_GET;
 	    sts = AM_SUCCESS;
 	    break;
 	case AM_WEB_REQUEST_POST:
 	    r->method_number = M_POST;
-	    r->method = FORM_METHOD_POST;
+	    r->method = REQUEST_METHOD_POST;
 	    sts = AM_SUCCESS;
 	    break;
 	default:
@@ -561,10 +583,10 @@ set_user(void **args, const char *user)
 	}
 #if defined(APACHE2)
 	r->user = ap_pstrdup(r->pool, user);
-	r->ap_auth_type = ap_pstrdup(r->pool, DSAME);
+	r->ap_auth_type = ap_pstrdup(r->pool, OpenSSO);
 #else
 	r->connection->user = ap_pstrdup(r->pool, user);
-	r->connection->ap_auth_type = ap_pstrdup(r->pool, DSAME);
+	r->connection->ap_auth_type = ap_pstrdup(r->pool, OpenSSO);
 #endif
 	am_web_log_debug("%s: user set to %s", thisfunc, user);
 	sts = AM_SUCCESS;
@@ -634,102 +656,161 @@ get_method_num(request_rec *r)
     }
     if (r->method_number == AM_WEB_REQUEST_UNKNOWN) {
 	if (r->method != NULL && *(r->method) != '\0') {
-	    if (!strcmp(r->method, FORM_METHOD_GET)) {
+	    if (!strcmp(r->method, REQUEST_METHOD_GET)) {
 		method_num = AM_WEB_REQUEST_GET;
 		r->method_number = M_GET;	// fix it so it's consistent.
 		am_web_log_warning("%s: Apache request method number did not "
 				   "match method string. Setting "
 				   "method number to match method string %s.",
-				    thisfunc, FORM_METHOD_GET);
+				    thisfunc, REQUEST_METHOD_GET);
 	    }
-	    else if (!strcmp(r->method, FORM_METHOD_POST)) {
+	    else if (!strcmp(r->method, REQUEST_METHOD_POST)) {
 		method_num = AM_WEB_REQUEST_POST;
 		r->method_number = M_POST;	// fix it so it's consistent.
 		am_web_log_warning("%s: Apache request method number did not "
 				   "match method string. Setting "
 				   "method number to match method string %s.",
-				    thisfunc, FORM_METHOD_POST);
+				    thisfunc, REQUEST_METHOD_POST);
 	    }
 	}
     }
     // fix it and warn if the apache method number and string didn't match.
     else if (r->method_number == AM_WEB_REQUEST_GET &&
-	     strcasecmp(r->method, FORM_METHOD_GET)) {
-	r->method = FORM_METHOD_GET;
+	     strcasecmp(r->method, REQUEST_METHOD_GET)) {
+	r->method = REQUEST_METHOD_GET;
 	am_web_log_warning("%s: Apache request method number did not match "
 			   "method string. Setting method string to match "
-			   "method number %s.", thisfunc, FORM_METHOD_GET);
+			   "method number %s.", thisfunc, REQUEST_METHOD_GET);
     }
     else if (r->method_number == AM_WEB_REQUEST_POST &&
-	     strcasecmp(r->method, FORM_METHOD_POST)) {
-	r->method = FORM_METHOD_POST;
+	     strcasecmp(r->method, REQUEST_METHOD_POST)) {
+	r->method = REQUEST_METHOD_POST;
 	am_web_log_warning("%s: Apache request method number did not match "
 			   "method string. Setting method string to match "
-			   "method number %s.", thisfunc, FORM_METHOD_GET);
+			   "method number %s.", thisfunc, REQUEST_METHOD_POST);
     }
     return method_num;
 }
 
+/**
+ * This function is invoked to initialize the agent
+ * during the first request.
+ */
+void init_at_request()
+{
+    am_status_t status;
+    status = am_agent_init(&agentInitialized);
+    if (status != AM_SUCCESS) {
+        am_web_log_debug("Initialization of the agent failed: "
+            "status = %s (%d)", am_status_to_string(status), status);
+    }
+}
 
 /**
- * determines to grant access
+ * Deny the access in case the agent is found uninitialized
+ */
+static int do_deny(request_rec *r, am_status_t status) {
+    int retVal = HTTP_FORBIDDEN;
+    /* Set the return code 403 Forbidden */
+    r->content_type = "text/plain"; 
+    ap_custom_response(r, HTTP_FORBIDDEN,
+                       "Access denied as Agent profile not"
+                       " found in Access Manager.");
+    am_web_log_info("do_deny() Status code= %s.",
+        am_status_to_string(status));
+    return retVal;
+}
+
+/**
+ * Grant access depending on policy and session evaluation
  */
 int dsame_check_access(request_rec *r)
 {
     const char *thisfunc = "dsame_check_access()";
-    int  ret = OK;
     char *url = get_request_url(r);
-    am_web_req_method_t method = get_method_num(r);
+    char *content;
+    am_status_t status = AM_FAILURE;
+    int  ret = OK;
+    const char *ruser = NULL;
+    int  requestResult = HTTP_FORBIDDEN;
+    am_map_t env_parameter_map = NULL;
     void *args[] = { (void *)r, (void *)&ret };
+    void* agent_config = NULL;
 
+    am_web_req_method_t method = get_method_num(r); 
     am_web_request_params_t req_params;
     am_web_request_func_t req_func;
     am_status_t render_sts = AM_FAILURE;
 
     memset((void *)&req_params, 0, sizeof(req_params));
     memset((void *)&req_func, 0, sizeof(req_func));
+    
+    /**
+     * Initialize the agent during first request
+     * Should not be repeated during subsequest requests.
+     */
+
+    if(agentInitialized != B_TRUE){
+        apr_thread_mutex_lock(init_mutex);
+        am_web_log_info("%s: Locked initialization section.", thisfunc);
+        if(agentInitialized != B_TRUE){
+            (void)init_at_request();
+            if(agentInitialized != B_TRUE){
+                requestResult =  do_deny(r, status);
+                return requestResult;
+            }  else {
+            }
+        }
+        apr_thread_mutex_unlock(init_mutex);
+        am_web_log_info("%s: Unlocked initialization section.", thisfunc);
+    }
+
+    agent_config = am_web_get_agent_configuration();
 
     if (r == NULL) {
-	am_web_log_error("%s: Request to http server is NULL!", thisfunc);
-	ret = HTTP_INTERNAL_SERVER_ERROR;
+        am_web_log_error("%s: Request to http server is NULL!", thisfunc);
+        ret = HTTP_INTERNAL_SERVER_ERROR;
     }
     else if (url == NULL || *url == '\0' || method == AM_WEB_REQUEST_UNKNOWN ||
-	     r->connection == NULL || r->connection->remote_ip == NULL ||
-	     *(r->connection->remote_ip) == '\0') {
-	am_web_log_error("%s: Request to http server had invalid url, "
-			 "request method, or client IP.", thisfunc);
-	ret = HTTP_INTERNAL_SERVER_ERROR;
+         r->connection == NULL || r->connection->remote_ip == NULL ||
+         *(r->connection->remote_ip) == '\0') {
+        am_web_log_error("%s: Request to http server had invalid url, "
+                        "request method, or client IP.", thisfunc);
+        ret = HTTP_INTERNAL_SERVER_ERROR;
     }
     else {
-	req_params.url = url;
-	req_params.query = r->args;
-	req_params.method = method;
-	req_params.path_info = r->path_info;
-	req_params.client_ip = (char *)r->connection->remote_ip;
-	req_params.cookie_header_val =
-		    (char *)ap_table_get(r->headers_in, "Cookie");
+        req_params.url = url;
+        req_params.query = r->args;
+        req_params.method = method;
+        req_params.path_info = r->path_info;
+        req_params.client_ip = (char *)r->connection->remote_ip;
+        req_params.cookie_header_val =
+                    (char *)ap_table_get(r->headers_in, "Cookie");
 
-	req_func.get_post_data.func = content_read;
-	req_func.get_post_data.args = args;
-	// no free_post_data
-	req_func.set_user.func = set_user;
-	req_func.set_user.args = args;
-	req_func.set_method.func = set_method;
-	req_func.set_method.args = args;
-	req_func.set_header_in_request.func = set_header_in_request;
-	req_func.set_header_in_request.args = args;
-	req_func.add_header_in_response.func = add_header_in_response;
-	req_func.add_header_in_response.args = args;
-	req_func.render_result.func = render_result;
-	req_func.render_result.args = args;
+        req_func.get_post_data.func = content_read;
+        req_func.get_post_data.args = args;
+        // no free_post_data
+        req_func.set_user.func = set_user;
+        req_func.set_user.args = args;
+        req_func.set_method.func = set_method;
+        req_func.set_method.args = args;
+        req_func.set_header_in_request.func = set_header_in_request;
+        req_func.set_header_in_request.args = args;
+        req_func.add_header_in_response.func = add_header_in_response;
+        req_func.add_header_in_response.args = args;
+        req_func.render_result.func = render_result;
+        req_func.render_result.args = args;
 
-	(void)am_web_process_request(&req_params, &req_func, &render_sts);
-	if (render_sts != AM_SUCCESS) {
-	    am_web_log_error("%s: Error encountered rendering result %d.",
-			     thisfunc, ret);
-	    ret = HTTP_INTERNAL_SERVER_ERROR;
-	}
+        (void)am_web_process_request(&req_params, &req_func, &render_sts, agent_config);
+        if (render_sts != AM_SUCCESS) {
+            am_web_log_error("%s: Error encountered rendering result %d.",
+                                thisfunc, ret);
+            ret = HTTP_INTERNAL_SERVER_ERROR;
+        }
     }
+
+    am_web_delete_agent_configuration(agent_config);
+
     return ret;
 }
 
