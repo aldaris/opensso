@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.jsp,v 1.8 2008-08-15 01:05:32 veiming Exp $
+   $Id: index.jsp,v 1.9 2008-11-22 00:50:52 qcheng Exp $
 
 --%>
 
@@ -167,7 +167,7 @@
             File file = new File(fedletHomeDir + File.separator + 
                 "FederationConfig.properties");
             if (!dir.exists() || !dir.isDirectory()) {
-                out.println("<p><br><b>Fedlet configuration home directory does not exists.</b>");
+                out.println("<p><br><b>Fedlet configuration home directory does not exist.</b>");
                 if (confExist) {
                     out.println("<br><br>Click <a href=\"index.jsp?CreateConfig=true\">here</a> to create Fedlet configuration automatically.");
                     out.println("<br>Or manually extract your fedlet.war and copy all files under \"conf\" directory to \"" + fedletHomeDir + "\" directory, then restart your web container.");
