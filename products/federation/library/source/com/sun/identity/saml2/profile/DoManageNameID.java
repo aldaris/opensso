@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DoManageNameID.java,v 1.16 2008-07-15 00:24:40 qcheng Exp $
+ * $Id: DoManageNameID.java,v 1.17 2008-11-22 01:56:38 hengming Exp $
  *
  */
 
@@ -434,10 +434,9 @@ public class DoManageNameID {
     }
 
     private static boolean verifyMNIRequest(ManageNameIDRequest mniRequest, 
-        String realm, String remoteEntity, 
-        String hostEntity, String hostEntityRole,
-        String destination)
-        throws SAML2Exception, SessionException {
+        String realm, String remoteEntity, String hostEntity,
+        String hostEntityRole, String destination) throws SAML2Exception {
+
         String method = "verifyMNIRequest : ";
         if (debug.messageEnabled()) {
             debug.message(method + "realm is : "+ realm);
@@ -742,14 +741,12 @@ public class DoManageNameID {
      * @throws SAML2Exception if error occurred while processing the request.
      * @throws IOException if error generation DOM from input stream.
      * @throws SOAPException if error generating soap message.
-     * @throws SessionException if session is invalid.
      * @throws ServletException if request length is invalid.
      */
     public static void processSOAPRequest(HttpServletRequest request,
-                                 HttpServletResponse response,
-                                 Map paramsMap) 
-        throws SAML2Exception, IOException, SOAPException, 
-               SessionException, ServletException {
+        HttpServletResponse response, Map paramsMap) 
+        throws SAML2Exception, IOException, SOAPException, ServletException {
+
         String method = "processSOAPRequest: ";
         String metaAlias = null;
         String remoteEntityID = null;

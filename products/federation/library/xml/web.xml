@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: web.xml,v 1.18 2008-08-27 19:00:06 superpat7 Exp $
+   $Id: web.xml,v 1.19 2008-11-22 01:56:10 hengming Exp $
                                                                                 
 -->
 
@@ -170,7 +170,7 @@
         </servlet>
         <servlet>
             <servlet-name>ArtifactResolver</servlet-name>
-            <jsp-file>/saml2/jsp/idpArtifactResolution.jsp</jsp-file>
+            <servlet-class>com.sun.identity.saml2.servlet.IDPArtifactResolutionServiceSOAP</servlet-class>
         </servlet>
         <servlet>
             <servlet-name>IDPSloInit</servlet-name>
@@ -198,7 +198,7 @@
         </servlet>
         <servlet>
             <servlet-name>IDPMniSoap</servlet-name>
-            <jsp-file>/saml2/jsp/idpMNISOAP.jsp</jsp-file>
+            <servlet-class>com.sun.identity.saml2.servlet.IDPManageNameIDServiceSOAP</servlet-class>
         </servlet>
         <servlet>
             <servlet-name>IDPMniInit</servlet-name>
@@ -270,7 +270,7 @@
         </servlet>
         <servlet>
             <servlet-name>SPMniSoap</servlet-name>
-            <jsp-file>/saml2/jsp/spMNISOAP.jsp</jsp-file>
+            <servlet-class>com.sun.identity.saml2.servlet.SPManageNameIDServiceSOAP</servlet-class>
         </servlet>
         <servlet>
             <servlet-name>SPMniInit</servlet-name>
