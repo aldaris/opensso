@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateFedletZip.java,v 1.5 2008-07-31 20:20:45 qcheng Exp $
+ * $Id: CreateFedletZip.java,v 1.6 2008-11-22 00:54:33 qcheng Exp $
  *
  */
 
@@ -408,7 +408,8 @@ public class CreateFedletZip {
             for (Iterator i = files.iterator(); i.hasNext();) {
                 String fname = (String) i.next();
                 FileInputStream in = new FileInputStream(fname);
-                out.putNextEntry(new JarEntry(fname.substring(lenWorkDir)));
+                out.putNextEntry(new JarEntry(normalizeFileName(
+                    fname.substring(lenWorkDir))));
                 int len;
                 while ((len = in.read(buf)) > 0) {
                     out.write(buf, 0, len);
@@ -443,7 +444,8 @@ public class CreateFedletZip {
             for (Iterator i = files.iterator(); i.hasNext(); )  {
                 String fname = (String) i.next();
                 FileInputStream in = new FileInputStream(fname);
-                out.putNextEntry(new ZipEntry(fname.substring(lenWorkDir)));
+                out.putNextEntry(new ZipEntry(normalizeFileName(
+                    fname.substring(lenWorkDir))));
                 int len;
                 while ((len = in.read(buf)) > 0) {
                     out.write(buf, 0, len);
@@ -505,6 +507,20 @@ public class CreateFedletZip {
         return list;
     }
     
+
+    /**
+     * Normalizes file name, replaces file separater '\\' with '/' in file name
+     * under Windows environment. This is to avoid '\' in file name when
+     * creating Jar/Zip file under Windows systems, i.e. Fedlet war created
+     * under Windows could not be deployed under Unix system. 
+     */ 
+    private static String normalizeFileName(String fileName) {
+        if (File.separatorChar == '\\') {
+            fileName = fileName.replace('\\', '/');
+        }
+        return fileName; 
+    } 
+
     /**
      * Main program to create Fedlet ZIP
      * The program takes following parameters in order:

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateFedlet.java,v 1.7 2008-10-02 05:47:26 veiming Exp $
+ * $Id: CreateFedlet.java,v 1.8 2008-11-22 00:54:34 qcheng Exp $
  *
  */
 
@@ -473,7 +473,12 @@ public class CreateFedlet
             for (Iterator i = files.iterator(); i.hasNext();) {
                 String fname = (String) i.next();
                 FileInputStream in = new FileInputStream(fname);
-                out.putNextEntry(new JarEntry(fname.substring(lenWorkDir)));
+                String jarEntryName = fname.substring(lenWorkDir);
+                // use forward slash in jar path to avoid windows issue
+                if (File.separatorChar == '\\') {
+                    jarEntryName = jarEntryName.replace('\\', '/');
+                }
+                out.putNextEntry(new JarEntry(jarEntryName));
                 int len;
                 while ((len = in.read(buf)) > 0) {
                     out.write(buf, 0, len);
