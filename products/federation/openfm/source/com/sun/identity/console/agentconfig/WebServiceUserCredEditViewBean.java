@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceUserCredEditViewBean.java,v 1.2 2008-06-25 05:49:33 qcheng Exp $
+ * $Id: WebServiceUserCredEditViewBean.java,v 1.3 2008-11-24 21:36:49 farble1670 Exp $
  *
  */
 
@@ -166,6 +166,7 @@ public class WebServiceUserCredEditViewBean
                 }
                 setPageSessionAttribute(WebServiceEditViewBean.TRACKER_ATTR,
                     (Serializable)map);
+                setPageSessionAttribute(AgentProfileViewBean.MODIFIED_PROFILE, "true");                
                 backTrail();
                 WebServiceProviderEditViewBean vb =
                     (WebServiceProviderEditViewBean)

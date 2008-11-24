@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceProviderEditViewBean.java,v 1.6 2008-07-21 17:00:10 veiming Exp $
+ * $Id: WebServiceProviderEditViewBean.java,v 1.7 2008-11-24 21:36:49 farble1670 Exp $
  *
  */
 
@@ -441,8 +441,8 @@ public class WebServiceProviderEditViewBean
             WebServiceEditViewBean.removeUserCredTokenAttr(tokens, map);
             populateTableModel(getUserCredentials(map));
             setPageSessionAttribute(TRACKER_ATTR, (Serializable)map);
-            setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
-                "web.services.profile.click-to-save");
+            setInlineAlertMessage(CCAlert.TYPE_INFO, "message.warning",
+                "message.profile.modified");
         } catch (AMConsoleException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
                 e.getMessage());

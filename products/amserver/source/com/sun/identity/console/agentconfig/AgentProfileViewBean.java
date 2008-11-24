@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProfileViewBean.java,v 1.11 2008-09-04 23:59:36 veiming Exp $
+ * $Id: AgentProfileViewBean.java,v 1.12 2008-11-24 21:36:49 farble1670 Exp $
  *
  */
 
@@ -69,6 +69,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 public abstract class AgentProfileViewBean
         extends AMPrimaryMastHeadViewBean {
+    
+    public static final String MODIFIED_PROFILE = "modifiedProfile";
     
     protected static final String PROPERTY_ATTRIBUTE = "propertyAttributes";
     private static final String PGTITLE_TWO_BTNS = "pgtitleTwoBtns";
@@ -243,6 +245,12 @@ public abstract class AgentProfileViewBean
         if ((updated != null) && updated.equals("true")) {
             setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
                 "message.updated");
+        }
+
+        String modified = (String)removePageSessionAttribute(MODIFIED_PROFILE);
+        if ((modified != null) && modified.equals("true")) {
+            setInlineAlertMessage(CCAlert.TYPE_WARNING, "message.warning",
+                "message.profile.modified");
         }
     }
     
