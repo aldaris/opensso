@@ -99,7 +99,7 @@ public class AssertionGen {
         String SPBaseUrl = lparser.getSPbaseUrl();
 
         try {
-            assertion.setID(IDPEntityID);
+            assertion.setID(SAML2Utils.generateID());
             assertion.setVersion(SAML2Constants.VERSION_2_0);
             assertion.setIssueInstant(new Date());
             

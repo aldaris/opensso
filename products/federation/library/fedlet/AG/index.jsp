@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.jsp,v 1.3 2008-10-29 03:11:52 veiming Exp $
+   $Id: index.jsp,v 1.4 2008-11-24 18:52:08 alanchu Exp $
 
 --%>
 
@@ -190,7 +190,7 @@ height="55" width="31" /></td></tr></tbody></table>
     }
 %>
                 
-<%if(request.getMethod() =="POST")
+<%if(request.getMethod().equals("POST"))
     {%>
     <jsp:useBean id="newpackage" class="com.sun.identity.fedlet.ag.UserData" scope="session"/>
     <jsp:setProperty name="newpackage" property="*"/> 
@@ -272,7 +272,7 @@ height="55" width="31" /></td></tr></tbody></table>
 <BR>
 <TABLE BORDER="1">
     
-    <form name="MainForm"method="POST" action="index.jsp">
+    <form name="MainForm" method="POST" action="index.jsp">
         <TR>
             <TD>Enter RelayState</TD> 
             <TD COLSPAN="0">
