@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.100 2008-11-19 17:22:26 veiming Exp $
+ * $Id: AccessManager.java,v 1.101 2008-11-25 18:14:50 veiming Exp $
  *
  */
 
@@ -160,6 +160,7 @@ public class AccessManager {
         optionalOptions={
             "continue|c|u|Continue adding service if one or more previous service cannot be added."},
         resourceStrings={
+            "subcmd-create-svc-__web__-xmlfile=Service Schema XML",
             "one-or-more-services-not-added=One or more services were not added.",
             "schema-added=Service was added.",
             "schema-failed=Service was not added."})
@@ -196,6 +197,7 @@ public class AccessManager {
         optionalOptions={
             "continue|c|u|Continue updating service if one or more previous services cannot be updated."},
         resourceStrings={
+            "subcmd-update-svc-__web__-xmlfile=Service Schema XML",
             "service-updated=Schema was updated.",
             "service-updated-failed=Schema was not updated."})
     private String update_svc;
@@ -213,6 +215,7 @@ public class AccessManager {
         optionalOptions={
             "subschemaname|c|s|Name of sub schema."},
         resourceStrings={
+            "subcmd-add-attrs-__web__-attributeschemafile=Attribute Schema XML",
             "attribute-schema-added=Attribute schema was added.",
             "add-attribute-schema-failed=Attribute schema was not added."})
     private String add_attrs;
@@ -479,6 +482,7 @@ public class AccessManager {
         macro="authentication",
         optionalOptions={},
         resourceStrings={
+            "subcmd-create-policies-__web__-xmlfile=Policy XML",
             "create-policy-in-realm-succeed=Policies were created under realm, {0}."})
     private String create_policies;
 
@@ -951,6 +955,7 @@ public class AccessManager {
         optionalOptions={
             "subschemaname|c|s|Name of sub schema."},
         resourceStrings={
+            "subcmd-add-sub-schema-__web__-filename=Service Schema XML",
             "add-subschema-succeed=Sub Schema, {2} of type, {1} was added to service {0}."})
     private String add_sub_schema;
 

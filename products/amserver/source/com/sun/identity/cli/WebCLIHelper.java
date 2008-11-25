@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebCLIHelper.java,v 1.10 2008-06-25 05:42:09 qcheng Exp $
+ * $Id: WebCLIHelper.java,v 1.11 2008-11-25 18:14:49 veiming Exp $
  *
  */
 
@@ -212,18 +212,16 @@ public class WebCLIHelper {
         if (!cmd.isOptionAlias(opt) && !isAuthField(opt) &&
             !isIgnored(cmd, opt)
         ) {
-            String label = opt;
-            if (opt.equals("xmlfile")) {
-                label = "xml";
-            } else if (opt.equals("attributeschemafile")) {
-                label = "attributeschemaxml";
+            String desc = cmd.getOptionDescription(opt, true);
+            if (desc.endsWith(".")) {
+                desc = desc.substring(0, desc.length() -1);
             }
             buff.append("<tr><td valign=\"top\">")
-                .append(label);
+                .append(desc);
             if (mandatory) {
                 buff.append("<font color=\"red\">*</font>");
             }
-            buff.append("</td>");
+            buff.append(":</td>");
 
             if (cmd.textareaUI(opt)) {
                 buff.append("<td><textarea cols=75 rows=30 name=\"")
@@ -269,9 +267,7 @@ public class WebCLIHelper {
                     .append("';")
                     .append("</script>");
             }
-            buff.append("<br />")
-                .append(cmd.getOptionDescription(opt, true))
-                .append("<br /><br />")
+            buff.append("<br /><br />")
                 .append("</td></tr>");
         }
     }
