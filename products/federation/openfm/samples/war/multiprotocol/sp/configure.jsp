@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configure.jsp,v 1.5 2008-08-19 19:12:15 veiming Exp $
+   $Id: configure.jsp,v 1.6 2008-11-25 23:50:42 exu Exp $
 
 --%>
 
@@ -36,7 +36,7 @@
     String errorMsg = null;
 %>
 
-<%@ include file="../util.jsp"%>
+<%@ include file="../util.jspf"%>
 <%@ page
     import="com.sun.identity.federation.meta.IDFFMetaManager,
         com.sun.identity.multiprotocol.SingleLogoutManager,

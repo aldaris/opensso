@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: saeIDPApp.jsp,v 1.9 2008-09-04 23:50:30 exu Exp $
+   $Id: saeIDPApp.jsp,v 1.10 2008-11-25 23:50:42 exu Exp $
 
 --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
@@ -50,7 +50,7 @@ public void jspInit()
 <link rel="stylesheet" type="text/css" href="<%= deployuri %>/com_sun_web_ui/css/css_ns6up.css" />
 </head>
 <body>
-<%@ include file="header.jsp" %>
+<%@ include file="header.jspf" %>
 <br><b>Secure Attributes Exchange IDP APP SAMPLE</b><br>
 <% 
     request.setCharacterEncoding("UTF-8");

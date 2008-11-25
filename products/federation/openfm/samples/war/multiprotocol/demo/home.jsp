@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: home.jsp,v 1.5 2008-08-15 01:05:35 veiming Exp $
+   $Id: home.jsp,v 1.6 2008-11-25 23:50:41 exu Exp $
 
 --%>
 
@@ -274,7 +274,7 @@
 </head>
 <body>
 
-<%@ include file="header.jsp" %>
+<%@ include file="header.jspf" %>
 
 <p>&nbsp;</p>
 &lt; <a href="Readme.html">Multi-Federation Protocol Sample Page</a>

@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: reserveCar.jsp,v 1.4 2008-08-15 01:05:37 veiming Exp $
+   $Id: reserveCar.jsp,v 1.5 2008-11-25 23:50:43 exu Exp $
 
 -->
 
@@ -44,7 +44,7 @@
 
 <body>
 
-<%@ include file="header.jsp" %>
+<%@ include file="header.jspf" %>
 
 <h3 align="center"> <%= myTitle %> appreciates your business, <%= userLabel %> </h3>
 
