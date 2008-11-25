@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: showServerConfig.jsp,v 1.10 2008-09-15 16:41:56 veiming Exp $
+   $Id: showServerConfig.jsp,v 1.11 2008-11-25 18:16:57 veiming Exp $
 
 --%>
 
@@ -327,6 +327,18 @@
                   <td>
               <%
                   out.println(System.getProperty("sun.arch.data.model") + " bit");
+              %>
+                  </td>
+                  </tr>
+                  <tr>
+                  <td>
+              <%
+                  out.println("<B>System Locale</B>");
+              %>
+                  </td>
+                  <td>
+              <%
+                  out.println(System.getProperty("user.language"));
               %>
                   </td>
                   </tr>
