@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.32 2008-10-31 15:24:01 qcheng Exp $
+ * $Id: SPACSUtils.java,v 1.33 2008-11-25 23:50:44 hengming Exp $
  *
  */
 
@@ -1057,17 +1057,21 @@ public class SPACSUtils {
             throw se;
         }
         String nameIDFormat = nameId.getFormat();
-        if ((nameIDFormat != null) &&
-            (!spDesc.getNameIDFormat().contains(nameIDFormat))) {
+        if (nameIDFormat != null) {
+            List spNameIDFormatList = spDesc.getNameIDFormat();
 
-            Object[] args = { nameIDFormat };
-            SAML2Exception se = new SAML2Exception(SAML2Utils.BUNDLE_NAME,
-                "unsupportedNameIDFormatSP", args);
+            if ((spNameIDFormatList != null) && (!spNameIDFormatList.isEmpty())
+                && (!spNameIDFormatList.contains(nameIDFormat))) {
 
-            invokeSPAdapterForSSOFailure(hostEntityId, realm, request,
-                response, smap, respInfo,
-                SAML2ServiceProviderAdapter.INVALID_RESPONSE, se);
-            throw se;
+                Object[] args = { nameIDFormat };
+                SAML2Exception se = new SAML2Exception(SAML2Utils.BUNDLE_NAME,
+                    "unsupportedNameIDFormatSP", args);
+
+                invokeSPAdapterForSSOFailure(hostEntityId, realm, request,
+                    response, smap, respInfo,
+                    SAML2ServiceProviderAdapter.INVALID_RESPONSE, se);
+                throw se;
+            }
         }
 
         String existUserName = null;

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.41 2008-11-10 22:57:01 veiming Exp $
+ * $Id: SAML2Utils.java,v 1.42 2008-11-25 23:50:44 hengming Exp $
  *
  */
 
@@ -3719,47 +3719,45 @@ public class SAML2Utils extends SAML2SDKUtils {
         throws SAML2Exception {
 
         List spNameIDFormatList = spsso.getNameIDFormat();
-        if (spNameIDFormatList.isEmpty()) {
-            if (debug.messageEnabled()) {
-                debug.message("SAML2Utils.verifyNameIDFormat: " +
-                    "NameIDFormat not supported by SP: " + nameIDFormat);
-            }
-            Object[] args = { nameIDFormat };
-            throw new SAML2Exception(BUNDLE_NAME, "unsupportedNameIDFormatSP",
-                args);
-        }
 
         List idpNameIDFormatList = null;
         // idpsso is null for ECP case
         if (idpsso != null) {
             idpNameIDFormatList = idpsso.getNameIDFormat();
-            if (idpNameIDFormatList.isEmpty()) {
-                if (debug.messageEnabled()) {
-                    debug.message("SAML2Utils.verifyNameIDFormat: " +
-                        "NameIDFormat not supported by IDP: " + nameIDFormat);
-                }
-                Object[] args = { nameIDFormat };
-                throw new SAML2Exception(BUNDLE_NAME,
-                    "unsupportedNameIDFormatIDP", args);
-            }
         }
 
         if ((nameIDFormat == null) || (nameIDFormat.length() == 0)) {
 
-            if (idpNameIDFormatList == null) {
-                return (String)spNameIDFormatList.get(0);
-            }
-            nameIDFormat = null;
-            for(Iterator iter = spNameIDFormatList.iterator();iter.hasNext();){
-                String spNameIDFormat = (String)iter.next();
-                if (idpNameIDFormatList.contains(spNameIDFormat)) {
-                    nameIDFormat = spNameIDFormat;
-                    break;
+            if ((idpNameIDFormatList == null) ||
+                (idpNameIDFormatList.isEmpty())){
+
+                if ((spNameIDFormatList == null) ||
+                    (spNameIDFormatList.isEmpty())) {
+
+                    return SAML2Constants.PERSISTENT;
+                } else {
+                    return (String)spNameIDFormatList.get(0);
                 }
-            }
-            if (nameIDFormat == null) {
-                throw new SAML2Exception(bundle.getString(
-                    "unsupportedNameIDFormatIDPSP"));
+            } else {
+                if ((spNameIDFormatList == null) ||
+                    (spNameIDFormatList.isEmpty())) {
+
+                    return (String)idpNameIDFormatList.get(0);
+                } else {
+                    nameIDFormat = null;
+                    for(Iterator iter = spNameIDFormatList.iterator();
+                        iter.hasNext();){
+                        String spNameIDFormat = (String)iter.next();
+                        if (idpNameIDFormatList.contains(spNameIDFormat)) {
+                            nameIDFormat = spNameIDFormat;
+                            break;
+                        }
+                    }
+                    if (nameIDFormat == null) {
+                        throw new SAML2Exception(bundle.getString(
+                            "unsupportedNameIDFormatIDPSP"));
+                    }
+                }
             }
         } else {
             if (nameIDFormat.equals("persistent") ||
@@ -3767,7 +3765,10 @@ public class SAML2Utils extends SAML2SDKUtils {
                 nameIDFormat = SAML2Constants.NAMEID_FORMAT_NAMESPACE +
                     nameIDFormat;
             }
-            if  (!spNameIDFormatList.contains(nameIDFormat)) {
+
+            if ((spNameIDFormatList != null) && (!spNameIDFormatList.isEmpty())
+                && (!spNameIDFormatList.contains(nameIDFormat))) {
+
                 if (debug.messageEnabled()) {
                     debug.message("SAML2Utils.verifyNameIDFormat: " +
                         "NameIDFormat not supported by SP: " + nameIDFormat);
@@ -3778,7 +3779,8 @@ public class SAML2Utils extends SAML2SDKUtils {
             }
 
             if ((idpNameIDFormatList != null) &&
-               (!idpNameIDFormatList.contains(nameIDFormat))) {
+                (!idpNameIDFormatList.isEmpty()) &&
+                (!idpNameIDFormatList.contains(nameIDFormat))) {
 
                 if (debug.messageEnabled()) {
                     debug.message("SAML2Utils.verifyNameIDFormat: " +
