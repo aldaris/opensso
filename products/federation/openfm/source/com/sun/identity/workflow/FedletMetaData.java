@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedletMetaData.java,v 1.5 2008-09-24 22:27:51 veiming Exp $
+ * $Id: FedletMetaData.java,v 1.6 2008-11-25 18:26:08 qcheng Exp $
  *
  */
 
@@ -103,5 +103,5 @@ public class FedletMetaData {
     private static final String TAG_ASSSERT_CONSUMER_URL = "@ASSSERT_CONSUMER_URL@";
 
     private static final String STANDARD_METADATA = 
-        "<EntityDescriptor entityID=\"@ENTITY_ID@\" xmlns=\"urn:oasis:names:tc:SAML:2.0:metadata\"><SPSSODescriptor AuthnRequestsSigned=\"false\" WantAssertionsSigned=\"false\" protocolSupportEnumeration=\"urn:oasis:names:tc:SAML:2.0:protocol\"><NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat><AssertionConsumerService index=\"1\" Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\" Location=\"@ASSSERT_CONSUMER_URL@\"/></SPSSODescriptor></EntityDescriptor>";
+        "<EntityDescriptor entityID=\"@ENTITY_ID@\" xmlns=\"urn:oasis:names:tc:SAML:2.0:metadata\"><SPSSODescriptor AuthnRequestsSigned=\"false\" WantAssertionsSigned=\"false\" protocolSupportEnumeration=\"urn:oasis:names:tc:SAML:2.0:protocol\"><NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat><AssertionConsumerService isDefault=\"true\" index=\"0\" Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\" Location=\"@ASSSERT_CONSUMER_URL@\"/><AssertionConsumerService index=\"1\" Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact\" Location=\"@ASSSERT_CONSUMER_URL@\"/></SPSSODescriptor></EntityDescriptor>";
 }

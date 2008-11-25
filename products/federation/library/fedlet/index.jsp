@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.jsp,v 1.9 2008-11-22 00:50:52 qcheng Exp $
+   $Id: index.jsp,v 1.10 2008-11-25 18:25:58 qcheng Exp $
 
 --%>
 
@@ -317,7 +317,10 @@
       <td colspan="2"> </td>
     </tr>
     <tr>
-      <td colspan="2"><a href="<%= fedletBaseUrl %>/saml2/jsp/fedletSSOInit.jsp?metaAlias=<%= spMetaAlias %>&idpEntityID=<%= idpEntityID%>">Run Fedlet (SP) initiated Single Sign-On</a></td>
+      <td colspan="2"><a href="<%= fedletBaseUrl %>/saml2/jsp/fedletSSOInit.jsp?metaAlias=<%= spMetaAlias %>&idpEntityID=<%= idpEntityID%>&binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST">Run Fedlet (SP) initiated Single Sign-On using HTTP POST binding</a></td>
+    </tr>
+    <tr>
+      <td colspan="2"><a href="<%= fedletBaseUrl %>/saml2/jsp/fedletSSOInit.jsp?metaAlias=<%= spMetaAlias %>&idpEntityID=<%= idpEntityID %>&binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact">Run Fedlet (SP) initiated Single Sign-On using HTTP Artifact binding</a></td>
     </tr>
 <%
                     if ((idpMetaAlias != null) && (idpMetaAlias.length() != 0)){
@@ -327,7 +330,10 @@
       <td colspan="2"> </td>
     </tr>
      <tr>
-       <td colspan="2"><a href="<%= idpBaseUrl %>/idpssoinit?NameIDFormat=urn:oasis:names:tc:SAML:2.0:nameid-format:transient&metaAlias=<%= idpMetaAlias %>&spEntityID=<%=spEntityID %>&binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST">Run Identity Provider initiated Single Sign-On</a></td>
+       <td colspan="2"><a href="<%= idpBaseUrl %>/idpssoinit?NameIDFormat=urn:oasis:names:tc:SAML:2.0:nameid-format:transient&metaAlias=<%= idpMetaAlias %>&spEntityID=<%=spEntityID %>&binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST">Run Identity Provider initiated Single Sign-On using HTTP POST binding</a></td>
+     </tr>
+     <tr>
+       <td colspan="2"><a href="<%= idpBaseUrl %>/idpssoinit?NameIDFormat=urn:oasis:names:tc:SAML:2.0:nameid-format:transient&metaAlias=<%= idpMetaAlias %>&spEntityID=<%=spEntityID %>&binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact">Run Identity Provider initiated Single Sign-On using HTTP Artifact binding</a></td>
      </tr>
 <%
                     }       
