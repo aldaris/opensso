@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MiscUtils.java,v 1.3 2008-06-25 05:41:24 qcheng Exp $
+ * $Id: MiscUtils.java,v 1.4 2008-11-26 05:48:08 kanduls Exp $
  *
  */
 
@@ -237,7 +237,7 @@ public class MiscUtils {
      * @return a Set representing the String array
      */
     public static Set stringArrayToSet(String[] strs) {
-        int count = strs.length;
+        int count = (strs != null) ? count = strs.length : 0;
         Set set = ((count > 0) ? new HashSet(count) : new HashSet());
 
         for (int i = 0; i < count; i++) {
