@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DBHandler.java,v 1.12 2008-06-25 05:43:36 qcheng Exp $
+ * $Id: DBHandler.java,v 1.13 2008-11-26 23:57:48 bigfatrat Exp $
  *
  */
 
@@ -320,7 +320,7 @@ public class DBHandler extends Handler {
                     sqe.getErrorCode() + "): " + sqe.getMessage());
             } catch (ConnectionException ce) {
                 Debug.error(tableName +
-                    ":DBHandler: Could not connect to database" +
+                    ":DBHandler: Could not connect to database:" +
                     ce.getMessage());
             } catch (DriverLoadException dle) {
                 Debug.error(tableName +
@@ -794,7 +794,12 @@ public class DBHandler extends Handler {
      * Flush any buffered messages and close the current output stream.
      */
     public void close() {
-        flush();
+        try {
+            flush();
+        } catch (AMLogException ale) {
+            Debug.error(tableName + ":DBHandler:close/flush error: " +
+                ale.getMessage());
+        }
         if(conn != null) {
             try {
                 conn.close();
@@ -1109,7 +1114,6 @@ public class DBHandler extends Handler {
         public long getRunPeriod() {
             return runPeriod;
         }
-        
     }
     
     private void startTimeBufferingThread() {
@@ -1124,7 +1128,7 @@ public class DBHandler extends Handler {
         if(bufferTask == null){
             bufferTask = new TimeBufferingTask(interval);
             try {
-                SystemTimer.getTimer().schedule(new TimeBufferingTask(interval),
+                SystemTimer.getTimer().schedule(bufferTask,
                     new Date(((System.currentTimeMillis() + interval) / 1000) *
                     1000));
             } catch (IllegalArgumentException e) {

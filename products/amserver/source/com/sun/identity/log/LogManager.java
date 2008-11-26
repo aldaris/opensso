@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogManager.java,v 1.9 2008-08-14 16:41:31 bigfatrat Exp $
+ * $Id: LogManager.java,v 1.10 2008-11-26 23:56:29 bigfatrat Exp $
  *
  */
 
@@ -386,6 +386,11 @@ public class LogManager extends java.util.logging.LogManager {
                          * this logger
                          */
                         Logger l = (Logger)Logger.getLogger(curEl);
+                        Handler[] handlers = l.getHandlers();
+                        for (int i = 0; i < handlers.length; i++) {
+                            handlers[i].close();
+                            l.removeHandler(handlers[i]);
+                        }
 
                         String handlerClass = LogManager.HANDLER;
                         Class clz = null;
