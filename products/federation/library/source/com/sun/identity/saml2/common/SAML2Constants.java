@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Constants.java,v 1.36 2008-08-01 20:53:09 bina Exp $
+ * $Id: SAML2Constants.java,v 1.37 2008-11-26 01:42:03 qcheng Exp $
  *
  */
 
@@ -695,6 +695,11 @@ public interface SAML2Constants {
      */
     public String SP_ACCOUNT_MAPPER = 
                         "spAccountMapper";
+
+    /**
+     * Use NameID value as local user ID in service provider account mapper.
+     */ 
+    public String USE_NAMEID_AS_SP_USERID = "useNameIDAsSPUserID";
 
     /**
      * Service provider attribute mapper.

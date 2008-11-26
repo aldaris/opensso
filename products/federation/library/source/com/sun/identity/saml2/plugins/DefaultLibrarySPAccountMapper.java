@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultLibrarySPAccountMapper.java,v 1.10 2008-11-10 22:57:02 veiming Exp $
+ * $Id: DefaultLibrarySPAccountMapper.java,v 1.11 2008-11-26 01:42:26 qcheng Exp $
  *
  */
 
@@ -145,31 +145,46 @@ public class DefaultLibrarySPAccountMapper extends DefaultAccountMapper
         }
         
         if(!transientFormat) {
-           String remoteEntityID = assertion.getIssuer().getValue();
-           if(debug.messageEnabled()) {
-                debug.message(
+            String remoteEntityID = assertion.getIssuer().getValue();
+            if (debug.messageEnabled()) {
+                 debug.message(
                     "DefaultLibrarySPAccountMapper.getIdentity(Assertion):" +
                     " realm = " + realm + " hostEntityID = " + hostEntityID);  
-           }
+            }
   
-           try {
-               userID = dsProvider.getUserID(realm, SAML2Utils.getNameIDKeyMap(
-                   nameID, hostEntityID, remoteEntityID, realm, role));
+            try {
+                userID = dsProvider.getUserID(realm, SAML2Utils.getNameIDKeyMap(
+                    nameID, hostEntityID, remoteEntityID, realm, role));
 
-           } catch(DataStoreProviderException dse) {
-               debug.error(
-                   "DefaultLibrarySPAccountMapper.getIdentity(Assertion): " +
-                   "DataStoreProviderException", dse);
-               throw new SAML2Exception(dse.getMessage());
-           }
-           if(userID != null) {
-              return userID;
-           }
+            } catch(DataStoreProviderException dse) {
+                debug.error(
+                    "DefaultLibrarySPAccountMapper.getIdentity(Assertion): " +
+                    "DataStoreProviderException", dse);
+                throw new SAML2Exception(dse.getMessage());
+            }
+            if (userID != null) {
+                return userID;
+            }
         }
 
-        //Check if this is an auto federation case.
-        return getAutoFedUser(realm, hostEntityID, assertion);
-
+        // Check if this is an auto federation case.
+        userID = getAutoFedUser(realm, hostEntityID, assertion);
+        if ((userID != null) && (userID.length() != 0)) {
+            return userID;
+        } else {
+            // check if we need to use value of Name ID as SP user account
+            String useNameID = getAttribute(realm, hostEntityID, 
+                SAML2Constants.USE_NAMEID_AS_SP_USERID);
+            if ((useNameID != null) && useNameID.equalsIgnoreCase("true")) {
+                if (debug.messageEnabled()) {
+                     debug.message("DefaultLibrarySPAccountMapper.getIdentity:"
+                         + " use NameID value as userID: " + nameID.getValue());
+                }
+                return nameID.getValue();
+            } else {
+                return null;
+            }
+        }
     }
 
     /**
