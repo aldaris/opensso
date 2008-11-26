@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSAuthHandlerEntry.java,v 1.2 2008-06-25 05:49:51 qcheng Exp $
+ * $Id: WSAuthHandlerEntry.java,v 1.3 2008-11-26 18:21:43 farble1670 Exp $
  *
  */
 
@@ -36,6 +36,11 @@ public class WSAuthHandlerEntry {
     public String strKey;
     public String strClass;
 
+    public WSAuthHandlerEntry(String strKey, String strClass) {
+        this.strKey = strKey;
+        this.strClass = strClass;
+    }
+    
     public WSAuthHandlerEntry(String formatedStr) {
 	StringTokenizer st = new StringTokenizer(formatedStr, "|");
 

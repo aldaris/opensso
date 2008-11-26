@@ -22,13 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSAuthNServicesHandlersAddViewBean.java,v 1.2 2008-06-25 05:49:49 qcheng Exp $
+ * $Id: WSAuthNServicesHandlersAddViewBean.java,v 1.3 2008-11-26 18:21:43 farble1670 Exp $
  *
  */
 
 package com.sun.identity.console.webservices;
 
 import com.iplanet.jato.view.event.RequestInvocationEvent;
+import com.sun.web.ui.view.alert.CCAlert;
 import com.sun.identity.console.webservices.model.WSAuthNServicesModelImpl;
 import com.sun.identity.console.webservices.model.WSAuthHandlerEntry;
 import com.sun.identity.shared.datastruct.OrderedSet;
@@ -72,16 +73,24 @@ public class WSAuthNServicesHandlersAddViewBean
 		(OrderedSet)handlers);
 	}
 
-	handlers.add(WSAuthHandlerEntry.toString(
-	    (String)values.get(ATTR_KEY),
-	    (String)values.get(ATTR_CLASS)));
+        String key = (String)values.get(ATTR_KEY);
+        String val = (String)values.get(ATTR_CLASS);
+        WSAuthHandlerEntry e = new WSAuthHandlerEntry(key, val);
+        
+        if (handlerExists(handlers, e)) {
+            setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error", "webservices.authentication.service.handlers.duplicates");
+            forwardTo(getRequestContext());
+            return;
+        }
+        
+	handlers.add(e.toString());
 	setPageSessionAttribute(WSAuthNServicesViewBean.PAGE_MODIFIED, "1");
 	backTrail();
 	unlockPageTrailForSwapping();
 	passPgSessionMap(vb);
 	vb.forwardTo(getRequestContext());
     }
-
+    
     /**
      * Handles cancel request.
      *

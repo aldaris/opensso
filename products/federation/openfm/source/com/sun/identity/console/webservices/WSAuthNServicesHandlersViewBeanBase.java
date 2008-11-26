@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSAuthNServicesHandlersViewBeanBase.java,v 1.2 2008-06-25 05:49:50 qcheng Exp $
+ * $Id: WSAuthNServicesHandlersViewBeanBase.java,v 1.3 2008-11-26 18:21:43 farble1670 Exp $
  *
  */
 
@@ -44,6 +44,8 @@ import com.sun.web.ui.view.alert.CCAlert;
 import com.sun.web.ui.view.pagetitle.CCPageTitle;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Iterator;
+import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 public abstract class WSAuthNServicesHandlersViewBeanBase
@@ -177,7 +179,19 @@ public abstract class WSAuthNServicesHandlersViewBeanBase
 	    handleButton1Request(values);
 	}
     }
-
+    
+    protected static boolean handlerExists(Set<String> handlers, WSAuthHandlerEntry entry) {
+        // validate that we aren't adding a dup key
+        for (String s: handlers) {
+            WSAuthHandlerEntry e = new WSAuthHandlerEntry(s);
+            if (e.strKey.equals(entry.strKey)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
     protected abstract void createPageTitleModel();
     protected abstract void handleButton1Request(Map values);
 }
