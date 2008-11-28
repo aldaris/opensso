@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.23 2008-11-12 22:26:15 huacui Exp $
+   $Id: build.xml,v 1.24 2008-11-28 12:47:08 saueree Exp $
 
 -->
 
@@ -65,8 +65,13 @@
         <property name="containerversion" value="v10"/>
         <ant antfile="${j2eeagents.basedir}/build_agent.xml" target="clean" inheritRefs="true"/>
     </target>
+    <target name="clean_tomcat_v6">
+    	<property name="containername" value="tomcat"/>
+        <property name="containerversion" value="v6"/>
+        <ant antfile="${j2eeagents.basedir}/build_agent.xml" target="clean" inheritRefs="true"/>
+    </target>
 
-    <target name="clean" depends="clean_appserver_v9, clean_weblogic_v10">
+    <target name="clean" depends="clean_appserver_v9, clean_weblogic_v10, clean_tomcat_v6">
         <delete dir="${j2eeagents.dist.dir}"/>
         <delete dir="${j2eeagents.built.dir}"/>
     </target>
@@ -74,6 +79,7 @@
     <target name="all">
         <antcall target="appserver_v9" />
         <antcall target="weblogic_v10" />
+        <antcall target="tomcat_v6" />
     </target>
 
     <target name="appserver_v9" depends="preparebuild">
@@ -87,6 +93,12 @@
         <echo message="Dispatch to weblogic_v10"/>
         <property name="containername" value="weblogic"/>
         <property name="containerversion" value="v10"/>
+        <ant antfile="${j2eeagents.basedir}/build_agent.xml" target="all" inheritRefs="true"/>
+    </target>
+    <target name="tomcat_v6" depends="preparebuild">
+        <echo message="Dispatch to tomcat_v6"/>
+        <property name="containername" value="tomcat"/>
+        <property name="containerversion" value="v6"/>
         <ant antfile="${j2eeagents.basedir}/build_agent.xml" target="all" inheritRefs="true"/>
     </target>
 
@@ -108,6 +120,12 @@
                 <include name="opensso-installtools-launcher.jar" />
             </fileset>
         </copy>
+        <copy todir="${j2eeagents.basedir}/tomcat/v6/extlib" >
+	     <fileset dir="${installtools.dist.dir}">
+	        <include name="opensso-installtools.jar" />
+	        <include name="opensso-installtools-launcher.jar" />
+	     </fileset>
+        </copy>
     </target>
         
     <target name="postnightly">
@@ -125,6 +143,8 @@
         <echo message=" appserver_v9        : builds the Sun Appserver 8.1/8.2/9.0/9.1 agent"/>
         <echo message=" clean_appserver_v9  : deletes the generated files for appserver_v9 agent"/>
         <echo message=" weblogic_v10        : builds the BEA WebLogic 10.0 agent"/>
+        <echo message=" tomcat_v6           : builds the Tomcat 6.0 agent"/>
+        <echo message=" clean_tomcat_v6     : deletes the generated files for tomcat_v6 agent"/>
         <echo message=" clean_weblogic_v10  : deletes the generated files for weblogic_v10 agent"/>
         <echo message=" usage               : displays this usage message"/>
         <echo message=" "/>
