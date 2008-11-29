@@ -8,7 +8,7 @@ Instructions
 2) Build project, either in NetBeans or from command line ant; authnyubikey.jar
 should be created in authnyubikey/dist/
 
-3) Copy authnyubikey/YubikeyLoginModule.xml to <OPENSSO_DEPLOY_DIR>/auth/default
+3) Copy authnyubikey/YubikeyLoginModule.xml to <OPENSSO_DEPLOY_DIR>/config/auth/default
 
 4) Copy authnyubikey/dist/authnyubikey.jar to <OPENSSO_DEPLOY_DIR>/WEB-INF/lib
 
