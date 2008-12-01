@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySAMLv2SPAssertionProcessingHosted.xml,v 1.5 2008-07-30 21:46:53 babysunil Exp $
+   $Id: propertySAMLv2SPAssertionProcessingHosted.xml,v 1.6 2008-12-01 22:20:16 babysunil Exp $
 
 -->
 
@@ -101,7 +101,15 @@
                 <attribute name="localizeDisplayFieldValue" value="false" />
             </cc>
             <fieldhelp name="helpSPAccountMapper" defaultValue="samlv2sp.attribute.help.SPAccountMapper" />
-        </property>           
+        </property>
+        <property>
+                    <label name="lbluseNameIDAsSPUserID"
+                           defaultValue="samlv2sp.attribute.label.spuseNameidasspUserID"
+                           labelFor="useNameIDAsSPUserID" />
+                    <cc name="useNameIDAsSPUserID"
+                        tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag" />
+                    <fieldhelp name="helpSPuseNameIDAsSPUserID" defaultValue="samlv2sp.attribute.help.SPuseNameIDAsSPUserID" />
+        </property>
     </section>
     <section name="ArtMsgEncoding" defaultValue="samlv2sp.attribute.label.spArtMsgEncoding" >
          <property>

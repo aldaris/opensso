@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Model.java,v 1.30 2008-11-10 22:57:07 veiming Exp $
+ * $Id: SAMLv2Model.java,v 1.31 2008-12-01 22:22:24 babysunil Exp $
  *
  */
 
@@ -207,6 +207,7 @@ public interface SAMLv2Model
     public static final String SP_MNI_RESP_SIGN = "wantMNIResponseSigned";
     public static final String TRANSIENT_USER = "transientUser";
     public static final String SP_ACCT_MAPPER = "spAccountMapper";
+    public static final String SP_USE_NAMEID = "useNameIDAsSPUserID";
     public static final String SP_AUTHN_CONTEXT_MAPPER = "spAuthncontextMapper";
     public static final String SP_ATTR_MAPPER = "spAttributeMapper";
     public static final String SP_AUTHN_CONTEXT_CLASS_REF_MAPPING_DEFAULT=

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ModelImpl.java,v 1.37 2008-11-10 22:57:07 veiming Exp $
+ * $Id: SAMLv2ModelImpl.java,v 1.38 2008-12-01 22:22:59 babysunil Exp $
  *
  */
 
@@ -92,9 +92,9 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
     private static Map extendedAPMetaIdpMap = new HashMap(14);
     private static Map extendedSMetaIdpMap = new HashMap(2);
     private static Map extendedAdMetaIdpMap = new HashMap(6);
-    private static Map extendedMetaSpMap = new HashMap(62);
+    private static Map extendedMetaSpMap = new HashMap(64);
     private static Map extendedACMetaSpMap = new HashMap(36);
-    private static Map extendedAPMetaSpMap = new HashMap(28);
+    private static Map extendedAPMetaSpMap = new HashMap(30);
     private static Map extendedSMetaSpMap = new HashMap(2);
     private static Map extendedAdMetaSpMap = new HashMap(20);
     private static Map xacmlPDPExtendedMeta = new HashMap(18);
@@ -166,6 +166,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         
         extendedMetaSpMap.put(TRANSIENT_USER, Collections.EMPTY_SET);
         extendedMetaSpMap.put(SP_ACCT_MAPPER, Collections.EMPTY_SET);
+        extendedMetaSpMap.put(SP_USE_NAMEID, Collections.EMPTY_SET);
         extendedMetaSpMap.put(SP_AUTHN_CONTEXT_MAPPER, Collections.EMPTY_SET);
         extendedMetaSpMap.put(SP_ATTR_MAPPER, Collections.EMPTY_SET);
         extendedMetaSpMap.put(SP_AUTHN_CONTEXT_CLASS_REF_MAPPING,
@@ -297,6 +298,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
        extendedAPMetaSpMap.put(SP_AUTO_FED_ENABLED, Collections.EMPTY_SET);
        extendedAPMetaSpMap.put(SP_AUTO_FED_ATTR, Collections.EMPTY_SET);
        extendedAPMetaSpMap.put(SP_ACCT_MAPPER, Collections.EMPTY_SET);
+       extendedAPMetaSpMap.put(SP_USE_NAMEID, Collections.EMPTY_SET);
        extendedAPMetaSpMap.put(TRANSIENT_USER, Collections.EMPTY_SET);
        extendedAPMetaSpMap.put(LOCAL_AUTH_URL, Collections.EMPTY_SET);
        extendedAPMetaSpMap.put(APP_LOGOUT_URL, Collections.EMPTY_SET);
