@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.23 2008-08-30 00:47:18 qcheng Exp $
+   $Id: build.xml,v 1.24 2008-12-01 22:16:01 veiming Exp $
 
 -->
 
@@ -110,6 +110,7 @@
                  excludes="index.html" />
         </copy>
         <copy file="${clientsamples.packages.temp.dir}/war/index.html" tofile="${clientsamples.war.packages.dir}/am-samples.html" />
+        <move file="${clientsamples.war.packages.dir}/index.html.1.4" tofile="${clientsamples.war.packages.dir}/index.html" />
 
         <delete dir="META-INF" />
 	<mkdir dir="${clientsamples.packages.temp.dir}" />
@@ -183,6 +184,7 @@
                  excludes="index.html" />
         </copy>
         <copy file="${clientsamples.packages.temp.dir}/war/index.html" tofile="${clientsamples.war.packages.dir}/am-samples.html" />
+        <delete file="${clientsamples.war.packages.dir}/index.html.1.4" />
 
         <delete dir="META-INF" />
 	<delete dir="${clientsamples.packages.temp.dir}" />
