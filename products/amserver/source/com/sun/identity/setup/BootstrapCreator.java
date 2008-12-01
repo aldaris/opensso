@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BootstrapCreator.java,v 1.10 2008-08-07 17:22:06 arviranga Exp $
+ * $Id: BootstrapCreator.java,v 1.11 2008-12-01 23:52:06 veiming Exp $
  *
  */
 
@@ -103,11 +103,14 @@ public class BootstrapCreator {
             String file = baseDir + "/" + BootstrapData.BOOTSTRAP;
             if (isUnix) {
                 Runtime.getRuntime().exec("/bin/chmod 600 " + file);
+                Thread.sleep(3000);
             }            
             AMSetupServlet.writeToFile(file, bootstrapString);
             if (isUnix) {
                 Runtime.getRuntime().exec("/bin/chmod 400 " + file);
             }
+        } catch (InterruptedException e) {
+            throw new ConfigurationException(e.getMessage());
         } catch (IOException e) {
             throw new ConfigurationException(e.getMessage());
         }
