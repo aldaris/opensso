@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.16 2008-11-12 22:26:14 huacui Exp $
+$Id: README,v 1.17 2008-12-02 23:32:11 leiming Exp $
 
 ------------------------------------------------------------------------------
 
@@ -39,6 +39,7 @@ $Id: README,v 1.16 2008-11-12 22:26:14 huacui Exp $
         %% 3.3 usage target
         %% 3.4 appserver_v9 target
         %% 3.5 weblogic_v10 target
+        %% 3.6 websphere_v61 target
 
 
 %% 1. Build requirements
@@ -102,7 +103,7 @@ Common installer workspace into extlib directory of the specific J2EE Container
 directory in this workspace. For Sun Application Server 8.1/8.2/9.0/9.1, the directory is 
 opensso/products/j2eeagents/appserver/v9/extlib. 
 For BEA WebLogic 10 agent, the directory is opensso/products/j2eeagents/weblogic/v10/extlib.
-
+For IBM WebSphere 6.1 agent, the directory is opensso/products/j2eeagents/websphere/v61/extlib.
 
 %% 2.2 Obtaining J2EE container specific libraries
 The J2EE Container specific libraries can be obtained from the J2EE 
@@ -123,14 +124,23 @@ directory of this workspace.
 
 2.2.2 Obtaining libraries for WebLogic 10.0 
 Follow these steps to obtain the libraries for BEA WebLogic 10.0:
-2.2.2.1 Install BEA 10.0 server 
-2.2.2.2 If you are building OpenSSO J2EE Agent on BEA WebLogic 10.0 Server, 
-copy weblogic.jar and api.jar both from the lib directory of the server 
+2.2.2.1 Install BEA WebLogic 10.0 server 
+2.2.2.2 Copy weblogic.jar and api.jar both from the lib directory of the server 
 installation(for example from /bea/wlserver_10.0/server/lib) into 
 the opensso/products/j2eeagents/weblogic/v10/extlib directory of this workspace 
 2.2.2.3 Copy the com.bea.core.weblogic.security_2.0.0.0.jar from the 
 modules directory of the server installation(for example from /bea/modules) 
 into the opensso/products/j2eeagents/weblogic/v10/extlib directory of this workspace.
+
+2.2.3 Obtaining libraries for WebSphere 6.1 
+Follow these steps to obtain the libraries for IBM WebSphere 6.1:
+2.2.3.1 Install IBM WebSphere 6.1 server 
+2.2.3.2 Copy j2ee.jar from the lib directory of the server installation
+(for example from /opt/IBM/WebSphere6.1/AppServer/lib) into 
+the opensso/products/j2eeagents/websphere/v61/extlib directory of this workspace 
+2.2.3.3 Copy the com.ibm.ws.runtime_6.1.0.jar from the plugins directory of 
+the server installation(for example from /opt/IBM/WebSphere6.1/AppServer/plugins) 
+into the opensso/products/j2eeagents/websphere/v61/extlib directory of this workspace.
 
 
 %% 3. Building the workspace
@@ -146,6 +156,7 @@ targets available in the workspace are:
      - usage         : displays this usage message
      - appserver_v9  : build the Sun Appserver 8.1/8.2/9.0/9.1 agent
      - weblogic_v10  : build the WebLogic 10.0 agent
+     - websphere_v61 : build the Websphere 6.1 agent
 
 %% 3.1 all target
 
@@ -167,7 +178,7 @@ each available target for quick reference.
 The appserver_v9 target first invokes the build target and then 
 delegates the further processing to the build.xml files present under 
 the appserver and appserver/v9 directories.  Upon successful execution,
-a zip file appserver_v9_agent_3.zip will be created under built/appserver_v9/dist 
+a zip file appserver_v9_agent_3.zip will be created under built/dist 
 directory, and it can be used later to install the agent.
 
 %% 3.5 weblogic_v10 target
@@ -175,7 +186,15 @@ directory, and it can be used later to install the agent.
 The weblogic_v10 target first invokes the build target and then 
 delegates the further processing to the build.xml files present under 
 the weblogic and weblogic/v10 directories.  Upon successful execution,
-a zip file weblogic_v10_agent_3.zip will be created under built/weblogic_v10/dist 
+a zip file weblogic_v10_agent_3.zip will be created under built/dist 
+directory, and it can be used later to install the agent.
+
+%% 3.6 websphere_v61 target
+
+The websphere_v61 target first invokes the build target and then 
+delegates the further processing to the build.xml files present under 
+the websphere and websphere/v61 directories.  Upon successful execution,
+a zip file websphere_v61_agent_3.zip will be created under built/dist 
 directory, and it can be used later to install the agent.
 
 
