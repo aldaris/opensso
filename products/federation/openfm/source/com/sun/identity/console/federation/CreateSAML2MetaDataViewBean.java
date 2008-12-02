@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateSAML2MetaDataViewBean.java,v 1.5 2008-11-12 01:16:59 asyhuang Exp $
+ * $Id: CreateSAML2MetaDataViewBean.java,v 1.6 2008-12-02 22:20:13 asyhuang Exp $
  *
  */
 
@@ -157,10 +157,15 @@ public class CreateSAML2MetaDataViewBean
     private void createPropertyModel() {
         if (protocol == null) {
             protocol = (String)getPageSessionAttribute("protocol");
+        }        
+        String xml;
+        if (protocol.equals(PROTO_SAMLv2)) {
+            xml =  "com/sun/identity/console/propertyCreateSAML2Entity.xml";
+        } else if(protocol.equals(PROTO_IDFF)) {
+            xml =  "com/sun/identity/console/propertyCreateIDFFEntity.xml";
+        } else {
+            xml =  "com/sun/identity/console/propertyCreateWSFedEntity.xml";
         }
-        String xml = (protocol.equals(PROTO_SAMLv2)) ?
-            "com/sun/identity/console/propertyCreateSAML2Entity.xml" :
-            "com/sun/identity/console/propertyCreateIDFFEntity.xml";
         psModel = new AMPropertySheetModel(
             getClass().getClassLoader().getResourceAsStream(xml));
         psModel.setModel(AFFI_MEMBERS, new CCEditableListModel());
