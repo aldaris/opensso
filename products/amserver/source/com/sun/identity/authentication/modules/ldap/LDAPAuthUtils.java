@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPAuthUtils.java,v 1.15 2008-08-22 20:36:26 ericow Exp $
+ * $Id: LDAPAuthUtils.java,v 1.16 2008-12-03 01:00:44 veiming Exp $
  *
  */
 
@@ -211,7 +211,7 @@ public class LDAPAuthUtils {
         serverPort = port;
         ldapSSL = ssl;
         this.debug = debug;
-        if (serverHost.length() < 1) {
+        if ((serverHost == null) || (serverHost.length() < 1)) {
             debug.message("Invalid host name");
             throw new LDAPUtilException("HostInvalid", (Object[])null);
         }

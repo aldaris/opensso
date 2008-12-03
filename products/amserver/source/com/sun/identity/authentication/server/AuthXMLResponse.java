@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLResponse.java,v 1.9 2008-06-25 05:42:03 qcheng Exp $
+ * $Id: AuthXMLResponse.java,v 1.10 2008-12-03 01:00:44 veiming Exp $
  *
  */
 
@@ -48,6 +48,7 @@ import com.sun.identity.authentication.service.AuthUtils;
 import com.sun.identity.authentication.share.AuthXMLTags;
 import com.sun.identity.authentication.share.AuthXMLUtils;
 import com.sun.identity.authentication.util.ISAuthConstants;
+import com.sun.identity.shared.xml.XMLUtils;
 
 /**
  * AuthXMLResponse constructs the response XML string to return
@@ -166,11 +167,11 @@ public class AuthXMLResponse {
 
         if (authErrorMessage != null) {
             errorXMLString.append(AuthXMLTags.MESSAGE)
-                          .append(AuthXMLTags.EQUAL)
-                          .append(AuthXMLTags.QUOTE)
-                          .append(authErrorMessage)
-                          .append(AuthXMLTags.QUOTE)
-                          .append(AuthXMLTags.SPACE);
+                .append(AuthXMLTags.EQUAL)
+                .append(AuthXMLTags.QUOTE)
+                .append(XMLUtils.escapeSpecialCharacters(authErrorMessage))
+                .append(AuthXMLTags.QUOTE)
+                .append(AuthXMLTags.SPACE);
         }
         if (tokenId != null) {
             errorXMLString.append(AuthXMLTags.TOKEN_ID)

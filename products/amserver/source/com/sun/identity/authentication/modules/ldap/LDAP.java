@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAP.java,v 1.12 2008-08-22 20:36:25 ericow Exp $
+ * $Id: LDAP.java,v 1.13 2008-12-03 01:00:43 veiming Exp $
  *
  */
 
@@ -525,7 +525,8 @@ public class LDAP extends AMLoginModule {
                 getCredentialsFromSharedState = false;
                 return ISAuthConstants.LOGIN_START;
             }
-            setFailureID(ldapUtil.getUserId(userName));
+            setFailureID((ldapUtil != null) ? 
+                ldapUtil.getUserId(userName) : userName);
             switch (ex.getLDAPResultCode()) {
                 case LDAPUtilException.NO_SUCH_OBJECT:
                     debug.message("The specified user does not exist.");
