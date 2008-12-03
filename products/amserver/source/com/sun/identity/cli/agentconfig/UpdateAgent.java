@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpdateAgent.java,v 1.6 2008-06-25 05:42:10 qcheng Exp $
+ * $Id: UpdateAgent.java,v 1.7 2008-12-03 06:34:05 veiming Exp $
  *
  */
 
@@ -40,8 +40,11 @@ import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
 import com.sun.identity.common.configuration.AgentConfiguration;
 import com.sun.identity.common.configuration.ConfigurationException;
+import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdRepoException;
+import com.sun.identity.idm.IdType;
 import com.sun.identity.sm.SMSException;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -82,6 +85,20 @@ public class UpdateAgent extends AuthenticatedCommand {
         try {
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "ATTEMPT_UPDATE_AGENT", params);
+
+            AMIdentity amid = new AMIdentity(adminSSOToken, agentName,
+                IdType.AGENTONLY, realm, null);
+            if (!amid.isExists()) {
+                String[] args = {realm, agentName, "agent did not exist"};
+                writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                    "FAILED_UPDATE_AGENT", args);
+                Object[] p = {agentName};
+                String msg = MessageFormat.format(
+                    getResourceString("update-agent-does-not-exist"), p);
+                throw new CLIException(msg,
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+            }
+
             AgentConfiguration.updateAgent(adminSSOToken, realm, agentName, 
                 attributeValues, bSet);
             outputWriter.printlnMessage(getResourceString(

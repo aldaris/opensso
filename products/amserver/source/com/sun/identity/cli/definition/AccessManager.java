@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.101 2008-11-25 18:14:50 veiming Exp $
+ * $Id: AccessManager.java,v 1.102 2008-12-03 06:34:06 veiming Exp $
  *
  */
 
@@ -1886,6 +1886,7 @@ public class AccessManager {
             "attributevalues|a|m|Properties e.g. homeaddress=here.",
             "datafile|D|s|Name of file that contains properties."},
         resourceStrings={
+            "update-agent-does-not-exist=Agent {0} did not exist.",
             "update-agent-succeeded=Agent configuration was updated."
         }
     )
@@ -2124,6 +2125,7 @@ public class AccessManager {
             "attributevalues|a|m|Properties e.g. homeaddress=here.",
             "datafile|D|s|Name of file that contains properties."},
         resourceStrings={
+            "update-agent-group-does-not-exist=Agent group {0} did not exist.",
             "update-agent-group-succeeded=Agent group configuration was updated."
         }
     )
