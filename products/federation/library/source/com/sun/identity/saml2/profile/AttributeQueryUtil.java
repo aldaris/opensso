@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeQueryUtil.java,v 1.8 2008-08-22 20:40:42 hengming Exp $
+ * $Id: AttributeQueryUtil.java,v 1.9 2008-12-03 00:32:31 hengming Exp $
  *
  */
 
@@ -88,6 +88,8 @@ import com.sun.identity.saml2.xmlenc.EncManager;
 
 /**
  * This class provides methods to send or processs <code>AttributeQuery</code>.
+ *
+ * @supported.api
  */
 
 public class AttributeQueryUtil {
@@ -116,10 +118,14 @@ public class AttributeQueryUtil {
      * @param attrQuery the <code>AttributeQuery</code> object
      * @param attrAuthorityEntityID entity ID of attribute authority
      * @param realm the realm of hosted entity
+     * @param attrQueryProfile the attribute query profile or null to ignore
      * @param attrProfile the attribute profile
+     * @param binding the binding
      *
      * @return the <code>Response</code> object
      * @exception SAML2Exception if the operation is not successful
+     *
+     * @supported.api
      */
     public static Response sendAttributeQuery(AttributeQuery attrQuery,
         String attrAuthorityEntityID, String realm, String attrQueryProfile,

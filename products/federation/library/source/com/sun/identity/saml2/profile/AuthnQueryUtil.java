@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthnQueryUtil.java,v 1.7 2008-09-18 00:30:33 hengming Exp $
+ * $Id: AuthnQueryUtil.java,v 1.8 2008-12-03 00:32:31 hengming Exp $
  *
  */
 
@@ -81,6 +81,8 @@ import com.sun.identity.saml2.protocol.StatusCode;
 
 /**
  * This class provides methods to send or processs <code>AuthnQuery</code>.
+ *
+ * @supported.api
  */
 
 public class AuthnQueryUtil {
@@ -103,6 +105,8 @@ public class AuthnQueryUtil {
      *
      * @return the <code>Response</code> object
      * @exception SAML2Exception if the operation is not successful
+     *
+     * @supported.api
      */
     public static Response sendAuthnQuery(AuthnQuery authnQuery,
         String authnAuthorityEntityID, String realm, String binding)

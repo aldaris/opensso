@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPECPSessionMapper.java,v 1.2 2008-06-25 05:47:51 qcheng Exp $
+ * $Id: IDPECPSessionMapper.java,v 1.3 2008-12-03 00:34:10 hengming Exp $
  *
  */
 
@@ -35,6 +35,8 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * This interface <code>IDPECPSessionMapper</code> is used to find a valid
  * session from HTTP servlet request on IDP with ECP profile.
+ *
+ * @supported.all.api
  */ 
 public interface IDPECPSessionMapper {
 

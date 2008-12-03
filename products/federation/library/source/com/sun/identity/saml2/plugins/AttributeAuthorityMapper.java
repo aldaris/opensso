@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeAuthorityMapper.java,v 1.2 2008-06-25 05:47:50 qcheng Exp $
+ * $Id: AttributeAuthorityMapper.java,v 1.3 2008-12-03 00:34:10 hengming Exp $
  *
  */
 
@@ -38,6 +38,8 @@ import com.sun.identity.saml2.protocol.AttributeQuery;
 /**
  * This interface <code>AttributeAuthorityMapper</code> is used by attribute
  * authority to process attribute query.
+ *
+ * @supported.all.api
  */ 
 public interface AttributeAuthorityMapper {
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionIDRequestUtil.java,v 1.5 2008-11-10 22:57:03 veiming Exp $
+ * $Id: AssertionIDRequestUtil.java,v 1.6 2008-12-03 00:32:31 hengming Exp $
  *
  */
 
@@ -89,6 +89,8 @@ import com.sun.identity.saml2.protocol.StatusCode;
 /**
  * This class provides methods to send or processs
  * <code>AssertionIDRequest</code>.
+ *
+ * @supported.api
  */
 public class AssertionIDRequestUtil {
 
@@ -107,12 +109,17 @@ public class AssertionIDRequestUtil {
      *
      * @param assertionIDRequest the <code>AssertionIDRequest</code> object
      * @param samlAuthorityEntityID entity ID of SAML authority
-     * @param role SAML authority role
+     * @param role SAML authority role, for example,
+     * <code>SAML2Constants.ATTR_AUTH_ROLE</code>, 
+     * <code>SAML2Constants.AUTHN_AUTH_ROLE</code> or
+     * <code>SAML2Constants.IDP_ROLE</code>
      * @param realm the realm of hosted entity
      * @param binding the binding
      *
      * @return the <code>Response</code> object
      * @exception SAML2Exception if the operation is not successful
+     *
+     * @supported.api
      */
     public static Response sendAssertionIDRequest(
         AssertionIDRequest assertionIDRequest, String samlAuthorityEntityID,
@@ -139,11 +146,16 @@ public class AssertionIDRequestUtil {
      *
      * @param assertionID the asssertionID</code> object
      * @param samlAuthorityEntityID entity ID of SAML authority
-     * @param role SAML authority role
+     * @param role SAML authority role, for example,
+     * <code>SAML2Constants.ATTR_AUTH_ROLE</code>, 
+     * <code>SAML2Constants.AUTHN_AUTH_ROLE</code> or
+     * <code>SAML2Constants.IDP_ROLE</code>
      * @param realm the realm of hosted entity
      *
      * @return the <code>Assertion</code> object
      * @exception SAML2Exception if the operation is not successful
+     *
+     * @supported.api
      */
     public static Assertion sendAssertionIDRequestURI(
         String assertionID, String samlAuthorityEntityID,

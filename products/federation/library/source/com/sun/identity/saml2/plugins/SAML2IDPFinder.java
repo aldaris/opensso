@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2IDPFinder.java,v 1.2 2008-06-25 05:47:51 qcheng Exp $
+ * $Id: SAML2IDPFinder.java,v 1.3 2008-12-03 00:34:10 hengming Exp $
  *
  */
 
@@ -38,6 +38,8 @@ import javax.servlet.http.HttpServletResponse;
  * This interface <code>SAML2IDPFinder</code> is used to find a list of 
  * preferred Identity Authenticating providers to service the authentication
  * request.
+ *
+ * @supported.all.api
  */ 
 public interface SAML2IDPFinder {
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionIDRequestMapper.java,v 1.2 2008-06-25 05:47:50 qcheng Exp $
+ * $Id: AssertionIDRequestMapper.java,v 1.3 2008-12-03 00:34:10 hengming Exp $
  *
  */
 
@@ -48,7 +48,10 @@ public interface AssertionIDRequestMapper {
      * @param request HttpServletRequest
      * @param response HttpServletResponse
      * @param samlAuthorityEntityID entity ID of SAML authority
-     * @param role SAML authority role
+     * @param role SAML authority role, for example,
+     * <code>SAML2Constants.ATTR_AUTH_ROLE</code>, 
+     * <code>SAML2Constants.AUTHN_AUTH_ROLE</code> or
+     * <code>SAML2Constants.IDP_ROLE</code>
      * @param realm the realm of hosted entity
      *
      * @exception SAML2Exception if the request is not valid. 

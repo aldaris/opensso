@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NameIDMapping.java,v 1.4 2008-06-27 00:45:55 hengming Exp $
+ * $Id: NameIDMapping.java,v 1.5 2008-12-03 00:32:31 hengming Exp $
  *
  */
 
@@ -72,9 +72,10 @@ import com.sun.identity.saml2.protocol.ProtocolFactory;
 import com.sun.identity.saml2.protocol.Status;
 
 /**
- * This class reads the query parameters and the required processing logic
- * for sending NameIDMappingRequest
- * from SP to IDP.
+ * This class provides methods to send or processs
+ * <code>NameIDMappingRequest</code>.
+ *
+ * @supported.api
  */
 
 public class NameIDMapping {
@@ -112,6 +113,8 @@ public class NameIDMapping {
      *
      * @return the <code>NameIDMappingResponse</code>
      * @throws SAML2Exception if error initiating request to remote entity.
+     *
+     * @supported.api
      */
     public static NameIDMappingResponse initiateNameIDMappingRequest(
         Object session, String realm, String spEntityID, String idpEntityID,
