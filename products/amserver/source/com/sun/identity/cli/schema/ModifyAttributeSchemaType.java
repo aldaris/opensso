@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ModifyAttributeSchemaType.java,v 1.2 2008-06-25 05:42:18 qcheng Exp $
+ * $Id: ModifyAttributeSchemaType.java,v 1.3 2008-12-04 06:32:06 veiming Exp $
  *
  */
 
@@ -76,6 +76,15 @@ public class ModifyAttributeSchemaType extends SchemaCommand {
                 "ATTEMPT_MODIFY_ATTRIBUTE_SCHEMA_TYPE", params);
             AttributeSchema attrSchema = ss.getAttributeSchema(
                 attributeSchemaName);
+
+            if (attrSchema == null) {
+                String[] args = {serviceName, schemaType, subSchemaName,
+                    attributeSchemaName, type,
+                    "attribute schema does not exist"};
+                attributeSchemaNoExist(attributeSchemaName,
+                    "FAILED_MODIFY_ATTRIBUTE_SCHEMA_TYPE", args);
+            }
+
             attrSchema.setType(type);
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "SUCCEED_MODIFY_ATTRIBUTE_SCHEMA_TYPE", params);

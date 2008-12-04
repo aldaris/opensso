@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoveAttributeSchemaChoiceValues.java,v 1.2 2008-06-25 05:42:18 qcheng Exp $
+ * $Id: RemoveAttributeSchemaChoiceValues.java,v 1.3 2008-12-04 06:32:07 veiming Exp $
  *
  */
 
@@ -75,7 +75,15 @@ public class RemoveAttributeSchemaChoiceValues extends SchemaCommand {
             "ATTEMPT_REMOVE_ATTRIBUTE_SCHEMA_CHOICE_VALUE", params);
 
         try {
-           AttributeSchema attrSchema = ss.getAttributeSchema(attributeName);
+            AttributeSchema attrSchema = ss.getAttributeSchema(attributeName);
+
+            if (attrSchema == null) {
+                String[] args = {serviceName, schemaType, subSchemaName,
+                    attributeName, "attribute schema does not exist"};
+                attributeSchemaNoExist(attributeName,
+                    "FAILED_REMOVE_ATTRIBUTE_SCHEMA_CHOICE_VALUE", args);
+            }
+
             for (Iterator i = choiceValues.iterator(); i.hasNext(); ) {
                 String choiceValue = (String)i.next();
                 attrSchema.removeChoiceValue(choiceValue);

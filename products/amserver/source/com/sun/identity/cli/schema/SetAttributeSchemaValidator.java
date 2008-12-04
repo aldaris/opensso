@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetAttributeSchemaValidator.java,v 1.2 2008-06-25 05:42:19 qcheng Exp $
+ * $Id: SetAttributeSchemaValidator.java,v 1.3 2008-12-04 06:32:08 veiming Exp $
  *
  */
 
@@ -76,6 +76,15 @@ public class SetAttributeSchemaValidator extends SchemaCommand {
                 "ATTEMPT_SET_ATTRIBUTE_SCHEMA_VALIDATOR", params);
             AttributeSchema attrSchema = ss.getAttributeSchema(
                 attributeSchemaName);
+
+            if (attrSchema == null) {
+                String[] args = {serviceName, schemaType, subSchemaName,
+                    attributeSchemaName, validator,
+                    "attribute schema does not exist"};
+                attributeSchemaNoExist(attributeSchemaName,
+                    "FAILED_SET_ATTRIBUTE_SCHEMA_VALIDATOR", args);
+            }
+
             attrSchema.setValidator(validator);
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                 "SUCCEED_SET_ATTRIBUTE_SCHEMA_VALIDATOR", params);

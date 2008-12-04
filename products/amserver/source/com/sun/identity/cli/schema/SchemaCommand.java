@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SchemaCommand.java,v 1.3 2008-06-25 05:42:18 qcheng Exp $
+ * $Id: SchemaCommand.java,v 1.4 2008-12-04 06:32:07 veiming Exp $
  *
  */
 
@@ -35,12 +35,15 @@ import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
 import com.sun.identity.cli.IArgument;
+import com.sun.identity.cli.LogWriter;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
 import java.text.MessageFormat;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+
 
 /**
  * Base class for schema commands.
@@ -151,5 +154,17 @@ public class SchemaCommand extends AuthenticatedCommand {
             schemaType = SchemaType.POLICY;
         }
         return schemaType;
+    }
+
+    protected void attributeSchemaNoExist(
+        String attributeSchemaName,
+        String logID,
+        String[] logArgs
+    ) throws CLIException {
+        writeLog(LogWriter.LOG_ERROR, Level.INFO, logID, logArgs);
+        Object[] p = {attributeSchemaName};
+        String msg = MessageFormat.format(
+            getResourceString("attribute-schema-not-exist"), p);
+        throw new CLIException(msg, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
     }
 }

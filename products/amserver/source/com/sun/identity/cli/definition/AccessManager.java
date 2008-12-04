@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.103 2008-12-04 00:26:00 veiming Exp $
+ * $Id: AccessManager.java,v 1.104 2008-12-04 06:33:36 veiming Exp $
  *
  */
 
@@ -46,6 +46,7 @@ public class AccessManager {
             "realm-does-not-exist=Could not process the request because realm {0} did not exist.",
         "missing-attributevalues=attributevalues and datafile options are missing.",
         "missing-choicevalues=choicevalues and datafile options are missing.",
+        "attribute-schema-not-exist=Attribute schema {0} did not exist.",
         "serverconfig-no-supported=This sub command is not supported because platform service is not upgraded."}
     )
     private String resourcestrings;

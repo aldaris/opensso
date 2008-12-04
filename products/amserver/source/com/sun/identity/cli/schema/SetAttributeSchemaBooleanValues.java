@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetAttributeSchemaBooleanValues.java,v 1.3 2008-06-25 05:42:18 qcheng Exp $
+ * $Id: SetAttributeSchemaBooleanValues.java,v 1.4 2008-12-04 06:32:07 veiming Exp $
  *
  */
 
@@ -87,6 +87,14 @@ public class SetAttributeSchemaBooleanValues extends SchemaCommand {
         try {
             AttributeSchema attrSchema = ss.getAttributeSchema(
                 attributeName);
+
+            if (attrSchema == null) {
+                String[] args = {serviceName, schemaType, subSchemaName,
+                    attributeName, "attribute schema does not exist"};
+                attributeSchemaNoExist(attributeName,
+                    "FAILED_SET_ATTRIBUTE_SCHEMA_BOOLEAN_VALUES", args);
+            }
+
             attrSchema.setBooleanValues(trueValue, trueI18nKey, falseValue, 
                 falseI18nKey);
             writeLog(LogWriter.LOG_ACCESS, Level.INFO,

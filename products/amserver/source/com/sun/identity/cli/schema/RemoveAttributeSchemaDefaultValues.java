@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoveAttributeSchemaDefaultValues.java,v 1.2 2008-06-25 05:42:18 qcheng Exp $
+ * $Id: RemoveAttributeSchemaDefaultValues.java,v 1.3 2008-12-04 06:32:07 veiming Exp $
  *
  */
 
@@ -79,6 +79,15 @@ public class RemoveAttributeSchemaDefaultValues extends SchemaCommand {
                     "ATTEMPT_REMOVE_ATTRIBUTE_SCHEMA_DEFAULT_VALUE", params);
                 AttributeSchema attrSchema = ss.getAttributeSchema(
                     attributeSchemaName);
+
+                if (attrSchema == null) {
+                    String[] args = {serviceName, schemaType, subSchemaName,
+                        attributeSchemaName, defaultValue,
+                        "attribute schema does not exist"};
+                    attributeSchemaNoExist(attributeSchemaName,
+                        "FAILED_REMOVE_ATTRIBUTE_SCHEMA_DEFAULT_VALUE", args);
+                }
+
                 attrSchema.removeDefaultValue(defaultValue);
                 writeLog(LogWriter.LOG_ACCESS, Level.INFO,
                     "SUCCEED_REMOVE_ATTRIBUTE_SCHEMA_DEFAULT_VALUE", params);

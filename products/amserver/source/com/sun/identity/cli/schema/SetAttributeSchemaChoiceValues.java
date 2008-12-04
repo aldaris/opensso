@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetAttributeSchemaChoiceValues.java,v 1.3 2008-06-25 05:42:18 qcheng Exp $
+ * $Id: SetAttributeSchemaChoiceValues.java,v 1.4 2008-12-04 06:32:07 veiming Exp $
  *
  */
 
@@ -96,6 +96,15 @@ public class SetAttributeSchemaChoiceValues extends SchemaCommand {
         try {
             AttributeSchema attrSchema = ss.getAttributeSchema(
                 attributeName);
+
+            if (attrSchema == null) {
+                String[] args = {serviceName, schemaType, subSchemaName,
+                    attributeName, "attribute schema does not exist"};
+                attributeSchemaNoExist(attributeName,
+                    (toAdd) ? "FAILED_ADD_ATTRIBUTE_SCHEMA_CHOICE_VALUES" 
+                    : "FAILED_SET_ATTRIBUTE_SCHEMA_CHOICE_VALUES", args);
+            }
+
             if (toAdd) {
                 addChoiceValues(attrSchema, attributeValues);
                 writeLog(LogWriter.LOG_ACCESS, Level.INFO,
