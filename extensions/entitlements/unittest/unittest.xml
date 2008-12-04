@@ -1,0 +1,4 @@
+<project name="unittest">
+    <dirname property="unittest.basedir" file="${ant.file.unittest}"/>
+    <property file="${unittest.basedir}/unittest.properties"/>
+</project>

@@ -1,0 +1,87 @@
+<!--
+   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+  
+   Copyright (c) 2008 Sun Microsystems Inc. All Rights Reserved
+  
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: build.xml,v 1.1 2008-12-04 21:12:18 veiming Exp $
+
+-->
+
+<project name="opensso-entitlements" default="build">
+    
+    <description>Open Web Single Sign-On</description>
+    <import file="entitlements.xml" />
+    <import file="unittest/unittest.xml" />
+    
+    <!-- overridable properties -->
+    <property name="build.debug" value="on"/>
+    <property name="build.debuglevel" value="lines,vars,source"/>
+
+    <path id="build.class.path">
+        <fileset dir="${entitlements.extlib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+    
+    <target name="build" depends="preparebuild">        
+        <!-- javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
+               destdir="${unittest.classes.dir}" source="1.5" target="1.5"
+               debug="${build.debug}" debuglevel="${build.debuglevel}">
+            <src path="${unittest.src.dir}"/>
+            <classpath refid="build.class.path"/>
+        </javac -->
+        <unjar src="${entitlements.extlib.dir}/opensso.war"
+            dest="${war.package.dir}" />
+        <antcall target="unittest" />
+
+        <mkdir dir="${war.packageweb.dir}" />
+        <move file="${war.package.dir}/WEB-INF/web.xml" tofile="${war.packageweb.dir}/web.xml" />
+        <war destfile="${entitlements.dist.dir}/opensso.war" webxml="${war.packageweb.dir}/web.xml">
+            <zipfileset dir="${war.package.dir}" />
+        </war>
+        <move file="${war.packageweb.dir}/web.xml"
+            tofile="${war.package.dir}/WEB-INF/web.xml" />
+        <delete dir="${war.packageweb.dir}" />
+    </target>
+
+    <target name="unittest">
+        <ant antfile="${unittest.basedir}/build.xml" inheritRefs="true"
+            target="build" />
+        <copy todir="${war.package.dir}/WEB-INF/lib">
+            <fileset file="${unittest.dist.dir}/unittest.jar" />
+        </copy>
+        <mkdir dir="${war.package.dir}/unittest" />
+        <copy todir="${war.package.dir}/unittest">
+            <fileset dir="${unittest.basedir}/www/jsp" includes="**/*.jsp" />
+        </copy>
+    </target>
+
+    <target name="preparebuild">
+        <mkdir dir="${entitlements.dist.dir}" />
+    </target>
+    
+    <target name="clean">
+        <ant antfile="${unittest.basedir}/build.xml" inheritRefs="true"
+            target="clean" />
+        <delete dir="${entitlements.built.dir}"/>
+    </target>
+</project>

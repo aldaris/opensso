@@ -1,0 +1,4 @@
+<project name="entitlements">
+    <dirname property="entitlements.basedir" file="${ant.file.entitlements}"/>
+    <property file="${entitlements.basedir}/entitlements.properties"/>
+</project>
