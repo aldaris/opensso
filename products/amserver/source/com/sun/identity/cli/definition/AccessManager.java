@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.102 2008-12-03 06:34:06 veiming Exp $
+ * $Id: AccessManager.java,v 1.103 2008-12-04 00:26:00 veiming Exp $
  *
  */
 
@@ -1744,29 +1744,6 @@ public class AccessManager {
     )
     private String import_svc_cfg;
 
-    @SubCommandInfo(
-        implClassName="com.sun.identity.cli.schema.GenerateBootstrapURL",
-        description="Create a bootstrap URL which can be used to bootsrap the product web application.",
-        webSupport="false",
-        mandatoryOptions={
-            "dshost|t|s|Directory Server host name",
-            "dsport|p|s|Directory Server port number",
-            "basedn|b|s|Directory Server base distinguished name.",
-            "dsadmin|a|s|Directory Server administrator distinguished name",
-            "dspassword-file|x|s|File that contains Directory Server administrator password"
-        },
-        optionAliases={},
-        macro="authentication",
-        optionalOptions={
-            "ssl|s|u|Set this flag for LDAPS."
-        },
-        resourceStrings={
-            "create-bootstrap-url-succeeded=Bootstrap URL is."
-        }
-    )
-    private String create_boot_url;
-
-    
     @SubCommandInfo(
         implClassName="com.sun.identity.cli.schema.CreateServerConfigXML",
         description="Create serverconfig.xml file. No options are required for flat file configuration data store.",

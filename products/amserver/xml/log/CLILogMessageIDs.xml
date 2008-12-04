@@ -22,7 +22,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: CLILogMessageIDs.xml,v 1.31 2008-11-17 18:17:03 veiming Exp $
+    $Id: CLILogMessageIDs.xml,v 1.32 2008-12-04 00:25:59 veiming Exp $
 
 -->
 
@@ -5775,38 +5775,6 @@
         </datainfo>
         <triggers>
             <item>Execute list supported datastore types Commandline interface.</item>
-        </triggers>
-        <actions>
-            <item>Look under debug file for more information.</item>
-        </actions>
-    </logmessage>
-
-    <logmessage name="ATTEMPT_GEN_BOOTSTRAP_URL" id="5000"
-        loglevel="LL_INFO"
-        description="Attempt to create bootstrap URL.">
-        <datainfo />
-        <triggers>
-            <item>Execute generate bootstrap URL Commandline interface.</item>
-        </triggers>
-        <actions />
-    </logmessage>
-    <logmessage name="SUCCEEDED_GEN_BOOTSTRAP_URL" id="5001"
-        loglevel="LL_INFO"
-        description="Generate bootstrap URL succeeded.">
-        <datainfo />
-        <triggers>
-            <item>Execute generate bootstrap URL Commandline interface.</item>
-        </triggers>
-        <actions />
-    </logmessage>
-    <logmessage name="FAILED_GEN_BOOTSTRAP_URL" id="5002"
-        loglevel="LL_INFO"
-        description="Failed to generate bootstrap URL.">
-        <datainfo>
-            <item>error message</item>
-        </datainfo>
-        <triggers>
-            <item>Execute generate bootstrap URL Commandline interface.</item>
         </triggers>
         <actions>
             <item>Look under debug file for more information.</item>
