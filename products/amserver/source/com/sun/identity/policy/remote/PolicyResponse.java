@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyResponse.java,v 1.7 2008-08-19 19:09:20 veiming Exp $
+ * $Id: PolicyResponse.java,v 1.8 2008-12-04 00:38:52 dillidorai Exp $
  *
  */
 
@@ -93,6 +93,12 @@ public class PolicyResponse {
      * Policy Advices Handleable by OpenSSO Response Id.
      */
     public static final int POLICY_ADVICES_HANDLEABLE_BY_AM_RESPONSE = 5;
+
+    /**
+     * Exception message if Application SSO Token is ivalid
+     */
+    public static final String APP_SSO_TOKEN_INVALID 
+            = "Application sso token is invalid";
 
     static final String POLICY_RESPONSE = PolicyService.POLICY_RESPONSE;
     static final String REQUEST_ID = "requestId";

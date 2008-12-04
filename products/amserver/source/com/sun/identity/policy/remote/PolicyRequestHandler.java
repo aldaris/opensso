@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyRequestHandler.java,v 1.7 2008-06-25 05:43:53 qcheng Exp $
+ * $Id: PolicyRequestHandler.java,v 1.8 2008-12-04 00:38:52 dillidorai Exp $
  *
  */
 
@@ -120,6 +120,11 @@ public class PolicyRequestHandler implements RequestHandler {
             try {
                 res = processRequest(req);
             } catch (PolicyEvaluationException pe) {
+                if (debug.messageEnabled()) {
+                    debug.message("PolicyRequesthandler.process"
+                            + " caught PolicyEvaluationException:",
+                            pe);
+                }
                 PolicyService ps = new PolicyService();
                 try {
                     String rev = getPolicyServiceRevision(); 
@@ -260,8 +265,8 @@ public class PolicyRequestHandler implements RequestHandler {
                 debug.warning("PolicyRequestHandler: Invalid app sso token, " +
                     appSSOTokenIDStr);
             }
-            throw new PolicyEvaluationException(ResBundleUtils.rbName,
-                "app_sso_token_invalid", null, null, requestId);
+            throw new PolicyEvaluationException(
+                    PolicyResponse.APP_SSO_TOKEN_INVALID, requestId);
         }
 
         if (req.getMethodID() == 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceResultCache.java,v 1.12 2008-08-30 02:34:21 lakshman_abburi Exp $
+ * $Id: ResourceResultCache.java,v 1.13 2008-12-04 00:38:52 dillidorai Exp $
  *
  */
 
@@ -615,8 +615,8 @@ class ResourceResultCache implements SSOTokenListener {
                 PolicyResponse pr = ps.getPolicyResponse();
                 String exceptionMessage = pr.getExceptionMsg();
                 if (exceptionMessage != null) {
-                    if(exceptionMessage.indexOf(ResBundleUtils.getString(
-                            "app_sso_token_invalid")) >= 0) {
+                    if(exceptionMessage.indexOf(
+                                PolicyResponse.APP_SSO_TOKEN_INVALID) >= 0) {
                         if (debug.warningEnabled()) {
                             debug.warning("ResourceResultCache."
                                 + "getResultsFromServer():"
