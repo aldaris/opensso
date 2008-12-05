@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: saeCreateSPAppDataFile.jsp,v 1.2 2008-08-15 01:05:42 veiming Exp $
+   $Id: saeCreateSPAppDataFile.jsp,v 1.3 2008-12-05 19:37:38 rmisra Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -46,7 +46,7 @@ public void jspInit()
 <link rel="stylesheet" type="text/css" href="<%= deployuri %>/com_sun_web_ui/css/css_ns6up.css" />
 </head>
 <body>
-<%@ include file="header.jsp" %>
+<%@ include file="header.jspf" %>
 <br><b>Secure Attributes Exchange SP APP SAMPLE DATA FILE CONFIGURATION</b><br>
 <% 
     // Crypto type to be used with local FAM-IDP
