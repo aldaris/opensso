@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DiscoveryService.java,v 1.4 2008-06-25 05:47:10 qcheng Exp $
+ * $Id: DiscoveryService.java,v 1.5 2008-12-05 00:18:30 exu Exp $
  *
  */
 
@@ -194,7 +194,7 @@ public final class DiscoveryService implements RequestHandler {
         DiscoEntryHandler entryHandler = null;
         String userDN = null;
         boolean isB2E = false;
-        if(resourceID != null &&
+        if(resourceID == null ||
                resourceID.equals(DiscoConstants.IMPLIED_RESOURCE)) {
            // B2E case           
            DiscoUtils.debug.message("DiscoveryService.lookup: in B2E case");
@@ -343,7 +343,7 @@ public final class DiscoveryService implements RequestHandler {
         String userDN = null;
         boolean isB2E = false;
         String logMsg = null;
-        if(resourceID != null &&
+        if(resourceID == null ||
                resourceID.equals(DiscoConstants.IMPLIED_RESOURCE)) {
            // B2E case           
            DiscoUtils.debug.message("DiscoveryService.lookup: in B2E case");

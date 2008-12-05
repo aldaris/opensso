@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DiscoveryBootstrap.java,v 1.3 2008-06-25 05:47:53 qcheng Exp $
+ * $Id: DiscoveryBootstrap.java,v 1.4 2008-12-05 00:18:31 exu Exp $
  *
  */
 
@@ -37,6 +37,7 @@ import com.sun.identity.federation.common.IFSConstants;
 import com.sun.identity.federation.message.common.AuthnContext;
 import com.sun.identity.federation.message.common.EncryptedNameIdentifier;
 import com.sun.identity.federation.message.common.IDPProvidedNameIdentifier;
+import com.sun.identity.liberty.ws.disco.common.DiscoConstants;
 import com.sun.identity.liberty.ws.disco.common.DiscoServiceManager;
 import com.sun.identity.liberty.ws.disco.common.DiscoUtils;
 import com.sun.identity.liberty.ws.disco.jaxb.ObjectFactory;
@@ -184,6 +185,12 @@ public class DiscoveryBootstrap {
                         "ResourceID Value:" + resourceIDValue);
                 }
                 resourceID.setValue(resourceIDValue);
+                offering.setResourceID(resourceID);
+            } else {
+                ObjectFactory fac =
+                    new com.sun.identity.liberty.ws.disco.jaxb.ObjectFactory();
+                ResourceIDType resourceID = fac.createResourceIDType();
+                resourceID.setValue(DiscoConstants.IMPLIED_RESOURCE);
                 offering.setResourceID(resourceID);
             }
 

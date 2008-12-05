@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSDiscoveryBootStrap.java,v 1.3 2008-06-25 05:46:53 qcheng Exp $
+ * $Id: FSDiscoveryBootStrap.java,v 1.4 2008-12-05 00:18:00 exu Exp $
  *
  */
 
@@ -160,6 +160,12 @@ public class FSDiscoveryBootStrap {
                         "Offering: ResourceID Value:" + resourceIDValue);
                 }
                 resourceID.setValue(resourceIDValue);
+                offering.setResourceID(resourceID);
+            } else {
+                ObjectFactory fac =
+                    new com.sun.identity.liberty.ws.disco.jaxb.ObjectFactory();
+                ResourceIDType resourceID = fac.createResourceIDType();
+                resourceID.setValue(DiscoConstants.IMPLIED_RESOURCE);
                 offering.setResourceID(resourceID);
             }
 

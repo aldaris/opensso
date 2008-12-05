@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthnSvcUtils.java,v 1.4 2008-11-10 22:56:59 veiming Exp $
+ * $Id: AuthnSvcUtils.java,v 1.5 2008-12-05 00:18:02 exu Exp $
  *
  */
 
@@ -44,6 +44,7 @@ import com.sun.identity.shared.encode.Base64;
 
 import com.sun.identity.shared.Constants;
 import com.sun.identity.liberty.ws.authnsvc.protocol.SASLResponse;
+import com.sun.identity.liberty.ws.disco.common.DiscoConstants;
 import com.sun.identity.liberty.ws.disco.common.DiscoServiceManager;
 import com.sun.identity.liberty.ws.disco.common.DiscoUtils;
 import com.sun.identity.liberty.ws.disco.jaxb.ObjectFactory;
@@ -138,6 +139,12 @@ public class AuthnSvcUtils {
                         "Offering: ResourceID Value:" + resourceIDValue);
                 }
                 resourceID.setValue(resourceIDValue);
+                offering.setResourceID(resourceID);
+            } else {
+                ObjectFactory fac =
+                    new com.sun.identity.liberty.ws.disco.jaxb.ObjectFactory();
+                ResourceIDType resourceID = fac.createResourceIDType();
+                resourceID.setValue(DiscoConstants.IMPLIED_RESOURCE);
                 offering.setResourceID(resourceID);
             }
 
