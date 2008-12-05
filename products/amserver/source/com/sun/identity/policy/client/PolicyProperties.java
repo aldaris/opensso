@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyProperties.java,v 1.6 2008-06-25 05:43:46 qcheng Exp $
+ * $Id: PolicyProperties.java,v 1.7 2008-12-05 01:48:49 dillidorai Exp $
  *
  */
 
@@ -159,8 +159,12 @@ class PolicyProperties {
      */
 
     PolicyProperties() throws PolicyException {
+
+        // ignore the case of property name while looking up for value
+        boolean ignoreCase = true;
+
         //initialize logName 
-	logName = SystemProperties.get(SERVER_LOG);
+	logName = getSystemProperty(SERVER_LOG, ignoreCase);
 	if ((logName == null) || (logName.length() == 0)) {
             logName = DEFAULT_SERVER_LOG;
             if (debug.messageEnabled()) {
@@ -176,7 +180,7 @@ class PolicyProperties {
         }
 
         //initialize cacheTtl and cleanupInterval
-	String interval = SystemProperties.get(CACHE_TTL);
+	String interval = getSystemProperty(CACHE_TTL, ignoreCase);
 	if ((interval == null) || (interval.length() == 0)) {
 	    throw new PolicyException(ResBundleUtils.rbName,
 		"invalid_cache_ttl", null, null);
@@ -212,7 +216,7 @@ class PolicyProperties {
         previousNotificationURL = notificationURL;
 
         //initialize notification status
-	String isEnabled = SystemProperties.get(NOTIFICATION_ENABLED);
+	String isEnabled = getSystemProperty(NOTIFICATION_ENABLED, ignoreCase);
 	if ((isEnabled == null) || (isEnabled.length() == 0)) {
             if (debug.warningEnabled()) {
                 debug.warning("PolicyProperties:invalid value for poperty:"
@@ -247,7 +251,7 @@ class PolicyProperties {
 	}
 
         //initialize cahceMode:subtree | self| strict-subtree
-        cacheMode = SystemProperties.get(CACHE_MODE);
+        cacheMode = getSystemProperty(CACHE_MODE, ignoreCase);
         if ((cacheMode == null) || !((cacheMode.equals(SUBTREE)
                     || cacheMode.equals(SELF)))) {
             if (debug.warningEnabled()) {
@@ -264,7 +268,7 @@ class PolicyProperties {
         }
 
         //initialize logging status
-        String status = SystemProperties.get(LOGGING_LEVEL);
+        String status = getSystemProperty(LOGGING_LEVEL, ignoreCase);
         if ((status == null) || (status.length() == 0)) {
             status = DEFAULT_LOGGING_LEVEL;
             if (debug.messageEnabled()) {
@@ -292,8 +296,8 @@ class PolicyProperties {
 	}
 
         //intialize boolean action values
-        String booleanActionValuesString  = SystemProperties.get(
-                BOOLEAN_ACTION_VALUES);
+        String booleanActionValuesString  = getSystemProperty(
+                BOOLEAN_ACTION_VALUES, ignoreCase);
         if (booleanActionValuesString != null) {
             StringTokenizer st1 = new StringTokenizer(
                     booleanActionValuesString, COLON);
@@ -327,7 +331,8 @@ class PolicyProperties {
 
         //intialize pre2.2 booleanValues
 	String usePre22BooleanValuesString 
-                = SystemProperties.get(USE_PRE22_BOOLEAN_VALUES, 
+                = getSystemProperty(USE_PRE22_BOOLEAN_VALUES, 
+                ignoreCase,
                 USE_PRE22_BOOLEAN_VALUES_DEFAULT);
         usePre22BooleanValues 
                 = Boolean.valueOf(usePre22BooleanValuesString).booleanValue();
@@ -337,8 +342,9 @@ class PolicyProperties {
         }
         if (usePre22BooleanValues) {
             pre22TrueValue 
-                    = SystemProperties.get(
+                    = getSystemProperty(
                     "com.sun.identity.agents.true.value",
+                    ignoreCase,
                     PRE22_TRUE_VALUE_DEFAULT);
 
             if (debug.messageEnabled()) {
@@ -352,8 +358,8 @@ class PolicyProperties {
         }
 
         //initialize resourceComparators
-        String resourceComparatorsString  = SystemProperties.get(
-                RESOURCE_COMPARATORS);
+        String resourceComparatorsString  = getSystemProperty(
+                RESOURCE_COMPARATORS, ignoreCase);
         if (resourceComparatorsString != null) {
             StringTokenizer st1 
                     = new StringTokenizer(resourceComparatorsString,
@@ -370,7 +376,7 @@ class PolicyProperties {
         }
 
         //initialize responseAttribtue names
-	String attrs = SystemProperties.get(HEADER_ATTRIBUTES);
+	String attrs = getSystemProperty(HEADER_ATTRIBUTES, ignoreCase);
 	if ((attrs != null) && (attrs.length() > 0)) {
 	    StringTokenizer st = new StringTokenizer(attrs, PIPE);
 	    responseAttributeNames = new HashSet(st.countTokens());
@@ -381,7 +387,7 @@ class PolicyProperties {
 
         //initialize clientClockSkew
         String clientClockSkewString 
-                = SystemProperties.get(CLIENT_CLOCK_SKEW);
+                = getSystemProperty(CLIENT_CLOCK_SKEW, ignoreCase);
         if (clientClockSkewString == null) {
             if (debug.messageEnabled()) {
                 debug.message("PolicyProperties.getClientClockSkew():"
@@ -758,6 +764,49 @@ class PolicyProperties {
             }
             resourceComparators.put(serviceName, resourceComparator);
         }
+    }
+
+    /**
+     * Gets system property
+     * @param name name of the property
+     * @return value of the system property
+     */
+    private String getSystemProperty(String name) {
+        return getSystemProperty(name, false, null);
+    }
+
+    /**
+     * Gets system property
+     * @param name name of the property
+     * @param ignoreCase flag to indicate whether case of the name shoule be
+     * ignored
+     * properties
+     * @return value of the system property
+     */
+    private String getSystemProperty(String name, boolean ignoreCase) {
+        return getSystemProperty(name, ignoreCase, null);
+    }
+
+    /**
+     * Gets system property
+     * @param name name of the property
+     * @param ignoreCase flag to indicate whether case of the name shoule be
+     * ignored
+     * @param defaultValue default value if the value is not defined in system
+     * properties
+     * @return value of the system property
+     */
+    private String getSystemProperty(String name, boolean ignoreCase, 
+            String defaultValue) {
+        if (name == null) {
+            return null;
+        }
+        String value = SystemProperties.get(name);
+        if ((value == null) && (ignoreCase)) {
+            value = SystemProperties.get(name.toLowerCase());
+        }
+        value = (value != null) ? value : defaultValue;
+        return value;
     }
 
 }
