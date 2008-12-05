@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionCommand.java,v 1.6 2008-10-27 17:00:21 veiming Exp $
+ * $Id: SessionCommand.java,v 1.7 2008-12-05 17:55:19 veiming Exp $
  *
  */
 
@@ -64,10 +64,7 @@ public class SessionCommand extends AuthenticatedCommand {
         throws CLIException {
         super.handleRequest(rc);
         Authenticator auth = Authenticator.getInstance();
-        String bindUser = getAdminUserID();
-        if (bindUser == null) {
-            bindUser = getAdminID();
-        }
+        String bindUser = getAdminID();
         AuthContext lc = auth.sessionBasedLogin(
             getCommandManager(), bindUser, getAdminPassword());
         try {

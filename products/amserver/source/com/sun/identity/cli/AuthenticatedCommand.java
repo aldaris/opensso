@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticatedCommand.java,v 1.7 2008-10-30 18:25:01 veiming Exp $
+ * $Id: AuthenticatedCommand.java,v 1.8 2008-12-05 17:55:19 veiming Exp $
  *
  */
 
@@ -44,7 +44,6 @@ import java.util.logging.Level;
  * authenticated in order to execute a command.
  */
 public abstract class AuthenticatedCommand extends CLICommandBase {
-    private String adminUserID;
     private String adminID;
     private String adminPassword;
     private SSOToken ssoToken;
@@ -65,27 +64,10 @@ public abstract class AuthenticatedCommand extends CLICommandBase {
         ssoToken = rc.getCLIRequest().getSSOToken();
         
         if (ssoToken == null) {
-            adminUserID = getUserID();
+            adminID = getStringOptionValue(
+                AccessManagerConstants.ARGUMENT_ADMIN_ID);
             adminPassword = getPassword();
         }
-    }
-
-    private String getUserID() {
-        String userId = null;
-        adminID = getStringOptionValue(
-            AccessManagerConstants.ARGUMENT_ADMIN_ID);
-        StringTokenizer st = new StringTokenizer(adminID, ",");
-        if (st.hasMoreTokens()) {
-            String strUID = st.nextToken();
-            int idx = strUID.indexOf('=');
-            if (idx != -1) {
-                String namingAttr = strUID.substring(0, idx);
-                if (namingAttr.equals("uid")) {
-                    userId = strUID.substring(idx+1);
-                }
-            }
-        }
-        return userId;
     }
 
     private String getPassword()
@@ -131,10 +113,6 @@ public abstract class AuthenticatedCommand extends CLICommandBase {
         }
     }
 
-    protected String getAdminUserID() {
-        return adminUserID;
-    }
-
     protected String getAdminPassword() {
         return adminPassword;
     }
@@ -152,10 +130,7 @@ public abstract class AuthenticatedCommand extends CLICommandBase {
     {
         if (ssoToken == null) {
             Authenticator auth = Authenticator.getInstance();
-            String bindUser = getAdminUserID();
-            if (bindUser == null) {
-                bindUser = getAdminID();
-            }
+            String bindUser = getAdminID();
             ssoToken = auth.ldapLogin(getCommandManager(), bindUser,
                 getAdminPassword());
         } else {
