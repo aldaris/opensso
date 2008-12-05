@@ -22,10 +22,10 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: encode.jsp,v 1.12 2008-11-05 07:09:35 veiming Exp $
+   $Id: encode.jsp,v 1.13 2008-12-05 17:53:39 veiming Exp $
 --%>
 
-<%@ page contentType="text/html; charset=UTF-8" %> 
+<%@page contentType="text/html; charset=UTF-8" %> 
 <html>
 <head>
     <title>OpenSSO</title>
@@ -33,14 +33,14 @@
     <link rel="shortcut icon" href="com_sun_web_ui/images/favicon/favicon.ico" type="image/x-icon" />
 </head>
 
-<%@ page import="com.iplanet.sso.SSOException" %>
-<%@ page import="com.iplanet.sso.SSOToken" %>
-<%@ page import="com.iplanet.sso.SSOTokenManager" %>
-<%@ page import="com.sun.identity.security.EncodeAction" %>
-<%@ page import="com.sun.identity.shared.locale.Locale" %>
-<%@ page import="com.sun.identity.sm.SMSEntry" %>
-<%@ page import="java.security.AccessController" %>
-<%@ page import="java.util.ResourceBundle" %>
+<%@page import="com.iplanet.sso.SSOException" %>
+<%@page import="com.iplanet.sso.SSOToken" %>
+<%@page import="com.iplanet.sso.SSOTokenManager" %>
+<%@page import="com.sun.identity.security.EncodeAction" %>
+<%@page import="com.sun.identity.shared.locale.Locale" %>
+<%@page import="com.sun.identity.sm.SMSEntry" %>
+<%@page import="java.security.AccessController" %>
+<%@page import="java.util.ResourceBundle" %>
 
 
 <body class="DefBdy">
@@ -61,6 +61,7 @@
 
 <%
     try {
+        request.setCharacterEncoding("UTF-8");
         SSOTokenManager manager = SSOTokenManager.getInstance();
         SSOToken ssoToken = manager.createSSOToken(request);
         manager.validateToken(ssoToken);
