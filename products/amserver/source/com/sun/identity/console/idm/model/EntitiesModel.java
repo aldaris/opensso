@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitiesModel.java,v 1.6 2008-11-06 01:24:33 veiming Exp $
+ * $Id: EntitiesModel.java,v 1.7 2008-12-05 20:00:50 farble1670 Exp $
  *
  */
 
@@ -433,4 +433,7 @@ public interface EntitiesModel
      * @return <code>true</code> if services is supported for the identity.
      */
     boolean isServicesSupported();
+
+    public boolean repoExists(String realmName);
+
 }

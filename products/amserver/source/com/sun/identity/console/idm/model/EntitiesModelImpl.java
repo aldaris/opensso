@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitiesModelImpl.java,v 1.15 2008-11-19 17:26:14 veiming Exp $
+ * $Id: EntitiesModelImpl.java,v 1.16 2008-12-05 20:00:50 farble1670 Exp $
  *
  */
 
@@ -59,6 +59,8 @@ import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
 import com.sun.identity.sm.ServiceManager;
+import com.sun.identity.sm.ServiceConfigManager;
+import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.SMSException;
 import java.text.MessageFormat;
 import java.lang.reflect.InvocationTargetException;
@@ -1831,5 +1833,30 @@ public class EntitiesModelImpl
      */
     public boolean isServicesSupported() {
         return isServicesSupported;
+    }
+
+    public boolean repoExists(String realmName) {
+        try {
+            ServiceConfigManager svcCfgMgr = new ServiceConfigManager(IdConstants.REPO_SERVICE, getUserSSOToken());
+            ServiceConfig cfg = svcCfgMgr.getOrganizationConfig(realmName, null);
+            if (cfg == null) {
+                return false;
+            }
+            Set names = cfg.getSubConfigNames();
+            if (names == null || names.size() == 0) {
+                return false;
+            }
+            return true;
+        } catch (SMSException e) {
+            String strError = getErrorString(e);
+            String[] paramsEx = {realmName, strError};
+            logEvent("SMS_EXCEPTION_GET_ID_REPO_NAMES", paramsEx);
+            return false;
+        } catch (SSOException e) {
+            String strError = getErrorString(e);
+            String[] paramsEx = {realmName, strError};
+            logEvent("SSO_EXCEPTION_GET_ID_REPO_NAMES", paramsEx);
+            return false;
+        }
     }
 }

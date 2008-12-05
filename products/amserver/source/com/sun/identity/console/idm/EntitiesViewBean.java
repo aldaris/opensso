@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitiesViewBean.java,v 1.6 2008-07-07 20:39:19 veiming Exp $
+ * $Id: EntitiesViewBean.java,v 1.7 2008-12-05 20:00:50 farble1670 Exp $
  *
  */
 
@@ -149,7 +149,7 @@ public class EntitiesViewBean
         if (name.equals(TBL_SEARCH)) {
             populateTableModelEx();
             view = new CCActionTable(this, tblModel, name);
-        } else if (name.equals(PAGETITLE)) {
+       } else if (name.equals(PAGETITLE)) {
             view = new CCPageTitle(this, ptModel, name);
         } else if (tblModel.isChildSupported(name)) {
             view = tblModel.createChild(this, name);
@@ -166,7 +166,16 @@ public class EntitiesViewBean
         throws ModelControlException {
         super.beginDisplay(event, false);
         resetButtonState(TBL_BUTTON_DELETE);
+
         EntitiesModel model = (EntitiesModel)getModel();
+
+        CCButton b = (CCButton)getChild(TBL_BUTTON_ADD);
+        String curRealm = (String)getPageSessionAttribute(AMAdminConstants.CURRENT_REALM);
+        if (model.repoExists(curRealm)) {
+            b.setDisabled(false);
+        } else {
+            b.setDisabled(true);
+        }
 
         String[] param = {getDisplayIDType()};
         ptModel.setPageTitleText(MessageFormat.format(
