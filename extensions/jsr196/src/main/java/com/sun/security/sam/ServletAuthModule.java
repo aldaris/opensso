@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServletAuthModule.java,v 1.1 2008-10-27 14:17:22 monzillo Exp $
+ * $Id: ServletAuthModule.java,v 1.2 2008-12-08 17:52:31 rsoika Exp $
  */
 package com.sun.security.sam;
 
@@ -123,19 +123,19 @@ public abstract class ServletAuthModule implements ServerAuthModule {
         this.options = options;
 
         if (options != null) {
-            for (String key : (Set<String>) options.keySet()) {
-                logger.info("key" + key + " value " + options.get(key));
-            }
-
-            debug = options.containsKey(DEBUG_OPTIONS_KEY);
+            debug = (options.containsKey(DEBUG_OPTIONS_KEY));
+            if (debug)
+                for (String key : (Set<String>) options.keySet()) {
+                    logger.info("key" + key + " value " + options.get(key));
+                }
             policyContextID = (String) options.get(POLICY_CONTEXT_OPTIONS_KEY);
         } else {
             debug = false;
             policyContextID = null;
         }
-
-        logger.info("jmac.debug_is_set_to " + debug);
-
+        if (debug)
+            logger.info("jmac.debug_is_set_to " + debug); 
+        
         assignedGroups = parseAssignGroupsOption(options);
 
         debugLevel = (logger.isLoggable(Level.FINE) && !debug) ? Level.FINE : Level.INFO;
