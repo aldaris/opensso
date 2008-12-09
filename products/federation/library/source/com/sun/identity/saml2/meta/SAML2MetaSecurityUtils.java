@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2MetaSecurityUtils.java,v 1.4 2008-06-25 05:47:49 qcheng Exp $
+ * $Id: SAML2MetaSecurityUtils.java,v 1.5 2008-12-09 02:18:51 qcheng Exp $
  *
  */
 
@@ -311,7 +311,7 @@ public final class SAML2MetaSecurityUtils {
                     if (node != null) {
                         Element kd = (Element)node;
                         String use = kd.getAttributeNS(null, ATTR_USE);
-                        if (use.equals("signing")) {
+                        if ((use.length() == 0) || use.equals("signing")) {
                             NodeList nl = kd.getChildNodes();
                             for(int j=0; j<nl.getLength(); j++) {
                                 Node child = nl.item(j);
@@ -564,7 +564,8 @@ public final class SAML2MetaSecurityUtils {
         List keys = desp.getKeyDescriptor();
         for (Iterator iter = keys.iterator(); iter.hasNext();) {
             KeyDescriptorElement key = (KeyDescriptorElement) iter.next();
-            if (key.getUse().equalsIgnoreCase(newKey.getUse())) {
+            if ((key.getUse() != null) && 
+                key.getUse().equalsIgnoreCase(newKey.getUse())) {
                 iter.remove();
             }
         }
@@ -580,7 +581,8 @@ public final class SAML2MetaSecurityUtils {
             if (isSigningUse) {
                 keyUse = "signing";
             }
-            if (key.getUse().equalsIgnoreCase(keyUse)) {
+            if ((key.getUse() != null) && 
+                key.getUse().equalsIgnoreCase(keyUse)) {
                 iter.remove();
             }
         }

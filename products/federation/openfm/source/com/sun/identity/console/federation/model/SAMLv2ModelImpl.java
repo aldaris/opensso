@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ModelImpl.java,v 1.38 2008-12-01 22:22:59 babysunil Exp $
+ * $Id: SAMLv2ModelImpl.java,v 1.39 2008-12-09 02:19:03 qcheng Exp $
  *
  */
 
@@ -1712,7 +1712,8 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                     KeyDescriptorElement keyOne =
                             (KeyDescriptorElement)keyList.get(i);
                     String type = keyOne.getUse();
-                    if (type.equals("encryption")) {
+                    if ((type == null) || (type.length() == 0) || 
+                        type.equals("encryption")) {
                         List encryptMethod = keyOne.getEncryptionMethod();
                         if (!encryptMethod.isEmpty()) {
                             EncryptionMethodElement encrptElement = 
