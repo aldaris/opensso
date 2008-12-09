@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: idRepoService.xml,v 1.28 2008-09-20 01:51:34 ykwon Exp $
+   $Id: idRepoService.xml,v 1.29 2008-12-09 01:42:36 goodearth Exp $
   
 -->
 
@@ -1648,7 +1648,7 @@
                         syntax="boolean"
                         i18nKey="a2012">
                         <DefaultValues>
-                            <Value>true</Value>
+                            <Value>false</Value>
                         </DefaultValues>
                     </AttributeSchema>
 
