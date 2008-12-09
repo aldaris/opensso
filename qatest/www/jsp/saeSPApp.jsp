@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: saeSPApp.jsp,v 1.2 2008-08-15 01:05:42 veiming Exp $
+   $Id: saeSPApp.jsp,v 1.3 2008-12-09 00:20:06 nithyas Exp $
 
    Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -47,7 +47,7 @@ public void jspInit()
 <link rel="stylesheet" type="text/css" href="<%= deployuri %>/com_sun_web_ui/css/css_ns6up.css" />
 </head>
 <body>
-<%@ include file="header.jsp" %>
+<%@ include file="header.jspf" %>
 <br><b>SAE SP APP SAMPLE</b><br>
 <br>
 <% 
