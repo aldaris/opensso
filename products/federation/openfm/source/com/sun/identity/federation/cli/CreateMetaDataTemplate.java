@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataTemplate.java,v 1.34 2008-08-26 05:05:39 qcheng Exp $
+ * $Id: CreateMetaDataTemplate.java,v 1.35 2008-12-09 02:09:22 veiming Exp $
  *
  */
 
@@ -93,7 +93,6 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     private String host;
     private String port;
     private String deploymentURI;
-    private String realm;
     private boolean isWebBased;
 
     /**
@@ -282,7 +281,7 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             pepAlias = "/" + pepAlias;
         }
         if (entityID == null) {
-            entityID = host + realm;
+            entityID = host;
         }
         if (idpSCertAlias == null) {
             idpSCertAlias = "";
@@ -461,7 +460,9 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     throws CLIException {
         Writer pw = null;
         try {
-            if (!isWebBased && (metadata != null) && (metadata.length() > 0)) {
+            boolean writeToFile = !isWebBased && (metadata != null) &&
+                (metadata.length() > 0);
+            if (writeToFile) {
                 pw = new PrintWriter(new FileWriter(metadata));
             } else {
                 pw = new StringWriter();
@@ -473,8 +474,8 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                     protocol + "://" + host + ":" + port + deploymentURI);
             pw.write(xml);
             
-            if (!isWebBased) {
-                Object[] objs = { metadata, realm };
+            if (writeToFile) {
+                Object[] objs = { metadata };
                 getOutputWriter().printlnMessage(MessageFormat.format(
                     getResourceString(
                     "create-meta-template-created-descriptor-template"), objs));
@@ -505,9 +506,10 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         throws CLIException {
         Writer pw = null;
         try {
-            if (!isWebBased && (extendedData != null) &&
-                (extendedData.length() > 0)
-            ) {
+            boolean writeToFile = !isWebBased && (extendedData != null) &&
+                (extendedData.length() > 0);
+
+            if (writeToFile) {
                 pw = new PrintWriter(new FileWriter(extendedData));
             } else {
                 pw = new StringWriter();
@@ -519,8 +521,8 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 protocol + "://" + host + ":" + port + deploymentURI);
             pw.write(xml);
             
-            if (!isWebBased) {
-                Object[] objs = {extendedData, realm};
+            if (writeToFile) {
+                Object[] objs = {extendedData};
                 getOutputWriter().printlnMessage(MessageFormat.format(
                     getResourceString(
                     "create-meta-template-created-configuration-template"),
@@ -545,9 +547,10 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     throws CLIException {
         Writer pw = null;
         try {
-            if (!isWebBased && (extendedData != null) && 
-                (extendedData.length() > 0)
-            ) {
+            boolean writeToFile = !isWebBased && (extendedData != null) && 
+                (extendedData.length() > 0);
+
+            if (writeToFile) {
                 pw = new PrintWriter(new FileWriter(extendedData));
             } else {
                 pw = new StringWriter();
@@ -556,8 +559,9 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             String xml = CreateIDFFMetaDataTemplate.createExtendedMetaTemplate(
                 entityID, getWorkflowParamMap());
             pw.write(xml);
-            if (!isWebBased) {
-                Object[] objs = {extendedData, realm};
+
+            if (writeToFile) {
+                Object[] objs = {extendedData};
                 getOutputWriter().printlnMessage(MessageFormat.format(
                     getResourceString(
                     "create-meta-template-created-configuration-template"),
@@ -582,7 +586,10 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         throws CLIException {
         Writer pw = null;
         try {
-            if (!isWebBased && (metadata != null) && (metadata.length() > 0)) {
+            boolean writeToFile = !isWebBased && (metadata != null) &&
+                (metadata.length() > 0);
+
+            if (writeToFile) {
                 pw = new PrintWriter(new FileWriter(metadata));
             } else {
                 pw = new StringWriter();
@@ -593,8 +600,8 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 protocol + "://" + host + ":" + port + deploymentURI);
             pw.write(xml);
             
-            if (!isWebBased) {
-                Object[] objs = { metadata, realm };
+            if (writeToFile) {
+                Object[] objs = { metadata};
                 getOutputWriter().printlnMessage(MessageFormat.format(
                     getResourceString(
                     "create-meta-template-created-descriptor-template"), objs));
@@ -621,7 +628,10 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     throws CLIException {
         Writer pw = null;
         try {
-            if (!isWebBased && (metadata != null) && (metadata.length() > 0)) {
+            boolean writeToFile = !isWebBased && (metadata != null) &&
+                (metadata.length() > 0);
+
+            if (writeToFile) {
                 pw = new PrintWriter(new FileWriter(metadata));
             } else {
                 pw = new StringWriter();
@@ -632,8 +642,8 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
                 protocol + "://" + host + ":" + port + deploymentURI);
             pw.write(xml);
             
-            if (!isWebBased) {
-                Object[] objs = { metadata, realm };
+            if (writeToFile) {
+                Object[] objs = {metadata};
                 getOutputWriter().printlnMessage(MessageFormat.format(
                     getResourceString(
                     "create-meta-template-created-descriptor-template"), objs));
@@ -663,9 +673,10 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
     throws CLIException {
         Writer pw = null;
         try {
-            if (!isWebBased && (extendedData != null) &&
-                (extendedData.length() > 0)
-            ) {
+            boolean writeToFile = !isWebBased && (extendedData != null) &&
+                (extendedData.length() > 0);
+
+            if (writeToFile) {
                 pw = new PrintWriter(new FileWriter(extendedData));
             } else {
                 pw = new StringWriter();
@@ -674,8 +685,9 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
             String xml = CreateWSFedMetaDataTemplate.createExtendedMetaTemplate(
                 entityID, this.getWorkflowParamMap());
             pw.write(xml);
-            if (!isWebBased) {
-                Object[] objs = {extendedData, realm};
+
+            if (writeToFile) {
+                Object[] objs = {extendedData};
                 getOutputWriter().printlnMessage(MessageFormat.format(
                     getResourceString(
                     "create-meta-template-created-configuration-template"),

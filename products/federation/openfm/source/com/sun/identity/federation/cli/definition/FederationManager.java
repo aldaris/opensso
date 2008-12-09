@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.34 2008-10-21 03:14:31 veiming Exp $
+ * $Id: FederationManager.java,v 1.35 2008-12-09 02:09:23 veiming Exp $
  *
  */
 
@@ -63,8 +63,8 @@ public class FederationManager {
         optionAliases={},
         macro="authentication",
         optionalOptions={
-            "meta-data-file|m|s|c|Specify file name for the standard metadata to be created.",
-            "extended-data-file|x|s|c|Specify file name for the extended metadata to be created.",
+            "meta-data-file|m|s|c|Specify file name for the standard metadata to be created. XML will be displayed on terminal if this file name is not provided.",
+            "extended-data-file|x|s|c|Specify file name for the extended metadata to be created. XML will be displayed on terminal if this file name is not provided.",
             "serviceprovider|s|s|Specify metaAlias for hosted service provider to be created. The format must be <realm name>/<identifier>.",
             "identityprovider|i|s|Specify metaAlias for hosted identity provider to be created. The format must be <realm name>/<identifier>.",
             "attrqueryprovider|S|s|i|Specify metaAlias for hosted attribute query provider to be created. The format must be <realm name>/<identifier>.",
@@ -109,8 +109,8 @@ public class FederationManager {
             "create-meta-template-exception-host-not-found=Host was not found in configuration file.",
             "create-meta-template-exception-port-not-found=Port was not found in configuration file.",
             "create-meta-template-exception-deploymentURI-not-found=Deployment URI was not found in configuration file.",
-            "create-meta-template-created-descriptor-template=Hosted entity descriptor for realm, {1} was written to file, {0}.",
-            "create-meta-template-created-configuration-template=Hosted entity configuration for realm, {1} was written to file, {0}."})
+            "create-meta-template-created-descriptor-template=Hosted entity descriptor was written to {0}.",
+            "create-meta-template-created-configuration-template=Hosted entity configuration was written to {0}."})
     private String create_metadata_templ;
 
     @SubCommandInfo(
