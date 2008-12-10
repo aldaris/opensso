@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateRemoteSP.jsp,v 1.10 2008-07-24 18:16:56 veiming Exp $
+   $Id: CreateRemoteSP.jsp,v 1.11 2008-12-10 21:27:35 asyhuang Exp $
 
 --%>
 
@@ -150,8 +150,8 @@
 
     var msgConfiguring = "<cc:text name="txtConfiguring" defaultValue="configure.provider.waiting" bundleID="amConsole" escape="false" />";
 
-    var msgConfigured = '<p>&nbsp;</p><input name="btnOK" type="submit" class="Btn1" value="<cc:text name="txtOKBtn" defaultValue="ajax.ok.button" bundleID="amConsole" />" onClick="document.location.replace(\'../task/Home\');return false;" /></div></p>';
-    var closeBtn = '<p>&nbsp;</p><p><div class="TtlBtnDiv"><input name="btnClose" type="submit" class="Btn1" value="<cc:text name="txtCloseBtn" defaultValue="ajax.close.button" bundleID="amConsole" escape="false" />" onClick="focusMain();return false;" /></div></p>';
+    var msgConfigured = "<p>&nbsp;</p><input name=\"btnOK\" type=\"submit\" class=\"Btn1\" value=\"<cc:text name="txtOKBtn" defaultValue="ajax.ok.button" bundleID="amConsole" />\" onClick=\"document.location.replace(\'../task/Home\');return false;\" /></div></p>";
+    var closeBtn = "<p>&nbsp;</p><p><div class=\"TtlBtnDiv\"><input name=\"btnClose\" type=\"submit\" class=\"Btn1\" value=\"<cc:text name="txtCloseBtn" defaultValue="ajax.close.button" bundleID="amConsole" escape="false" />\" onClick=\"focusMain();return false;\" /></div></p>";
 
 var msgMissingAttrMappingValues = "<cc:text name="txtMissingAttrValues" defaultValue="configure.provider.missing.attribute.mapping.values" bundleID="amConsole" escape="false" />" + "<p>" + closeBtn + "</p>";
 

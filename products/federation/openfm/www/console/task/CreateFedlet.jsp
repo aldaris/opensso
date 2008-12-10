@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateFedlet.jsp,v 1.7 2008-07-24 18:16:56 veiming Exp $
+   $Id: CreateFedlet.jsp,v 1.8 2008-12-10 21:27:35 asyhuang Exp $
 
 --%>
 
@@ -151,8 +151,8 @@
 
     var msgCreating = "<p><img src=\"../console/images/processing.gif\" width=\"66\" height\"66\"/></p><cc:text name="txtConfiguring" defaultValue="creating.fedlet.waiting" bundleID="amConsole" escape="false" />";
     var ttlCreated = "<h3><cc:text name="txtTtlCreated" defaultValue="fedlet.created.title" escape="false" bundleID="amConsole" /></h3>";
-    var msgCreated = '<p>&nbsp;</p><input name="btnOK" type="submit" class="Btn1" value="<cc:text name="txtOKBtn" defaultValue="ajax.ok.button" bundleID="amConsole" />" onClick="document.location.replace(\'../task/Home\');return false;" /></div></p>';
-    var closeBtn = '<p>&nbsp;</p><p><div class="TtlBtnDiv"><input name="btnClose" type="submit" class="Btn1" value="<cc:text name="txtCloseBtn" defaultValue="ajax.close.button" bundleID="amConsole" />" onClick="focusMain();return false;" /></div></p>';
+    var msgCreated = "<p>&nbsp;</p><input name=\"btnOK\" type=\"submit\" class=\"Btn1\" value=\"<cc:text name="txtOKBtn" defaultValue="ajax.ok.button" bundleID="amConsole" />\" onClick=\"document.location.replace(\'../task/Home\');return false;\" /></div></p>";
+    var closeBtn = "<p>&nbsp;</p><p><div class=\"TtlBtnDiv\"><input name=\"btnClose\" type=\"submit\" class=\"Btn1\" value=\"<cc:text name="txtCloseBtn" defaultValue="ajax.close.button" bundleID="amConsole" />\" onClick=\"focusMain();return false;\" /></div></p>";
 
 var msgMissingAttrMappingValues = "<cc:text name="txtMissingAttrValues" defaultValue="configure.provider.missing.attribute.mapping.values" bundleID="amConsole" escape="false" />" + "<p>" + closeBtn + "</p>";
 

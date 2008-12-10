@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: ValidateSAML2Setup.jsp,v 1.5 2008-07-24 18:16:56 veiming Exp $
+   $Id: ValidateSAML2Setup.jsp,v 1.6 2008-12-10 21:27:35 asyhuang Exp $
 
 --%>
 
@@ -104,8 +104,8 @@
 
 <script language="javascript">
     var msgGetEntities = "<cc:text name="txtGetEntities" defaultValue="validate.entities.get.entities" bundleID="amConsole" escape="false" />";
-    var closeBtn = '<p>&nbsp;</p><p><div class="TtlBtnDiv"><input name="btnClose" type="submit" class="Btn1" value="<cc:text name="txtCloseBtn" defaultValue="ajax.close.button" bundleID="amConsole" />" onClick="focusMain();return false;" /></div></p>';
-    var okBtn = '<p>&nbsp;</p><p><div class="TtlBtnDiv"><input name="btnOk" type="submit" class="Btn1" value="<cc:text name="txtOkBtn" defaultValue="button.ok" bundleID="amConsole" />" onClick="validate();return false;" /></div></p>';
+    var closeBtn = "<p>&nbsp;</p><p><div class=\"TtlBtnDiv\"><input name=\"btnClose\" type=\"submit\" class=\"Btn1\" value=\"<cc:text name="txtCloseBtn" defaultValue="ajax.close.button" bundleID="amConsole" />\" onClick=\"focusMain();return false;\" /></div></p>";
+    var okBtn = "<p>&nbsp;</p><p><div class=\"TtlBtnDiv\"><input name=\"btnOk\" type=\"submit\" class=\"Btn1\" value=\"<cc:text name="txtOkBtn" defaultValue="button.ok" bundleID="amConsole" />\" onClick=\"validate();return false;\" /></div></p>";
     var readyValidate = "<cc:text name="txtReadyForTest" defaultValue="validate.ready.for.test" bundleID="amConsole" escape="false" />";
     var loggingout = "<p><center><img src=\"../console/images/processing.gif\" /></center></p><cc:text name="txtloggingout" defaultValue="validate.logout" bundleID="amConsole" escape="false" />";
 

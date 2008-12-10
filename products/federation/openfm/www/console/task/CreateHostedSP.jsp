@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateHostedSP.jsp,v 1.10 2008-07-24 18:16:56 veiming Exp $
+   $Id: CreateHostedSP.jsp,v 1.11 2008-12-10 21:27:35 asyhuang Exp $
 
 --%>
 
@@ -203,9 +203,9 @@
 
     var msgConfiguring = "<cc:text name="txtConfiguring" defaultValue="configure.provider.waiting" bundleID="amConsole" escape="false" />";
 
-    var msgConfigured = '<p>&nbsp;</p><cc:text name="txtConfigured" defaultValue="configure.sp.done" bundleID="amConsole" escape="false" /><p><div class="TtlBtnDiv"><input name="yesSp" type="submit" class="Btn1" value="<cc:text name="txtYesBtn" defaultValue="ajax.yes.button" bundleID="amConsole" escape="false" />" onClick="createRemoteIDP();return false;" /> <input name="noSp" type="submit" class="Btn1" value="<cc:text name="txtCloseBtn" defaultValue="ajax.no.button" bundleID="amConsole" escape="false" />" onClick="document.location.replace(\'../task/Home\');return false;" /></div></p>';
-
-    var closeBtn = '<p>&nbsp;</p><p><div class="TtlBtnDiv"><input name="btnClose" type="submit" class="Btn1" value="<cc:text name="txtCloseBtn" defaultValue="ajax.close.button" bundleID="amConsole" escape="false" />" onClick="focusMain();return false;" /></div></p>';
+    var msgConfigured = "<p>&nbsp;</p><cc:text name="txtConfigured" defaultValue="configure.sp.done" bundleID="amConsole" escape="false" /><p><div class=\"TtlBtnDiv\"><input name=\"yesSp\" type=\"submit\" class=\"Btn1\" value=\"<cc:text name="txtYesBtn" defaultValue="ajax.yes.button" bundleID="amConsole" escape="false" />\" onClick=\"createRemoteIDP();return false;\" /> <input name=\"noSp\" type=\"submit\" class=\"Btn1\" value=\"<cc:text name="txtCloseBtn" defaultValue="ajax.no.button" bundleID="amConsole" escape="false" />\" onClick=\"document.location.replace('../task/Home');return false;\" /></div></p>";
+    
+    var closeBtn = "<p>&nbsp;</p><p><div class=\"TtlBtnDiv\"><input name=\"btnClose\" type=\"submit\" class=\"Btn1\" value=\"<cc:text name="txtCloseBtn" defaultValue="ajax.close.button" bundleID="amConsole" escape="false" />\" onClick=\"focusMain();return false;\" /></div></p>";
 
     var msgGetCOTs = "<cc:text name="txtConfigured" defaultValue="configure.provider.get.cots" bundleID="amConsole" escape="false" />";
 
