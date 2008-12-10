@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DSConfigMgr.java,v 1.16 2008-10-22 23:44:40 goodearth Exp $
+ * $Id: DSConfigMgr.java,v 1.17 2008-12-10 07:31:59 veiming Exp $
  *
  */
 
@@ -143,18 +143,22 @@ public class DSConfigMgr implements IDSConfigMgr {
                     // For Backward compatibility obtain from runtime flag
                     path = System.getProperty(RUN_TIME_CONFIG_PATH);
                 }
+                if (path == null) {
+                    throw new LDAPServiceException(
+                        LDAPServiceException.FILE_NOT_FOUND,
+                        "server configuration XML file is not found. " +
+                        "This instance is likely to be running in client mode");
+                }
                 String configFile = path
                         + System.getProperty("file.separator")
                         + SystemProperties.CONFIG_FILE_NAME;
                 is = new FileInputStream(configFile);
             } catch (IOException ex) {                
-                
                 if (debugger.warningEnabled()) {
                     debugger.warning("DSConfigMgr.getDSConfigMgr: " 
                             + "serverconfig.xml probably missing. May be " 
                             + "running in client mode  ", ex);
                 }
-                
                 throw new LDAPServiceException(
                         LDAPServiceException.FILE_NOT_FOUND, ex.getMessage());
             }
