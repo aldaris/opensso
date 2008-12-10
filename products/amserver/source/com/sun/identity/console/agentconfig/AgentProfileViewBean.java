@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentProfileViewBean.java,v 1.12 2008-11-24 21:36:49 farble1670 Exp $
+ * $Id: AgentProfileViewBean.java,v 1.13 2008-12-10 18:25:14 farble1670 Exp $
  *
  */
 
@@ -82,6 +82,7 @@ public abstract class AgentProfileViewBean
     static final String PROPERTY_UUID = "tfUUID";
     static final String CHILD_AGENT_GROUP = "agentgroup";
     static final String BTN_INHERIT = "btnInherit";
+    static final String BTN_DUMP = "btnDump";
     
     protected CCPageTitleModel ptModel;
     protected AMPropertySheetModel propertySheetModel;
@@ -188,6 +189,7 @@ public abstract class AgentProfileViewBean
         }
         registerChild(PGTITLE_TWO_BTNS, CCPageTitle.class);
         registerChild(BTN_INHERIT, CCButton.class);
+        registerChild(BTN_DUMP, CCButton.class);
         registerChild(TAB_COMMON, CCTabs.class);
         if (propertySheetModel != null) {
             registerChild(PROPERTY_ATTRIBUTE, AMPropertySheet.class);
@@ -448,6 +450,13 @@ public abstract class AgentProfileViewBean
         }
         return !isGroup;
     }
+
+    public boolean beginBtnDumpDisplay(ChildDisplayEvent event) {
+        AgentsModel model = (AgentsModel)getModel();
+        String universalId = (String)getPageSessionAttribute(UNIVERSAL_ID);
+        disableButton(BTN_DUMP, false);
+        return true;
+    }
     
     /**
      * Handles inheritance setting button click.
@@ -468,7 +477,15 @@ public abstract class AgentProfileViewBean
         passPgSessionMap(vb);
         vb.forwardTo(getRequestContext());
     }
-    
+
+    public void handleBtnDumpRequest(RequestInvocationEvent event) throws ModelControlException {        
+        AgentDumpViewBean vb =(AgentDumpViewBean)getViewBean(AgentDumpViewBean.class);
+        getViewBean(AgentDumpViewBean.class);
+        vb.setPageSessionAttribute(AgentDumpViewBean.PG_ATTR_CONFIG_PAGE, getClass().getName());
+        passPgSessionMap(vb);
+        vb.forwardTo(getRequestContext());
+    }
+
     /**
      * Handles reset button click.
      *

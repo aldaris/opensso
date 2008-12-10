@@ -1,7 +1,7 @@
 <%--
    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
   
-   Copyright (c) 2007 Sun Microsystems Inc. All Rights Reserved
+   Copyright (c) 2008 Sun Microsystems Inc. All Rights Reserved
   
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
@@ -22,15 +22,15 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: GenericAgentProfile.jsp,v 1.4 2008-12-10 18:25:15 farble1670 Exp $
+   $Id: AgentDump.jsp,v 1.1 2008-12-10 18:25:15 farble1670 Exp $
 
 --%>
 
-<%@ page info="GenericAgentProfile" language="java" %>
+<%@ page info="AgentConfigInherit" language="java" %>
 <%@taglib uri="/WEB-INF/jato.tld" prefix="jato" %>
 <%@taglib uri="/WEB-INF/cc.tld" prefix="cc" %>
-<jato:useViewBean
-    className="com.sun.identity.console.agentconfig.GenericAgentProfileViewBean"
+    <jato:useViewBean
+    className="com.sun.identity.console.agentconfig.AgentDumpViewBean"
     fireChildDisplayEvents="true" >
 
 <cc:i18nbundle baseName="amConsole" id="amConsole"
@@ -38,16 +38,14 @@
 
 <cc:header name="hdrCommon" pageTitle="webconsole.title" bundleID="amConsole" copyrightYear="2007" fireDisplayEvents="true">
 
-<script language="javascript" src="../console/js/am.js"></script>
-
-<cc:form name="GenericAgentProfile" method="post">
+<cc:form name="AgentDump" method="post" defaultCommandChild="/button1">
 <script language="javascript">
     function confirmLogout() {
         return confirm("<cc:text name="txtLogout" defaultValue="masthead.logoutMessage" bundleID="amConsole"/>");
     }
 </script>
 <cc:primarymasthead name="mhCommon" bundleID="amConsole"  logoutOnClick="return confirmLogout();" locale="<%=((com.sun.identity.console.base.AMViewBeanBase)viewBean).getUserLocale()%>"/>
-<cc:tabs name="tabCommon" bundleID="amConsole" submitFormData="true" />
+<jato:hidden name="szCache" />
 
 <table border="0" cellpadding="10" cellspacing="0" width="100%">
     <tr>
@@ -58,30 +56,15 @@
 </table>
 
 <%-- PAGE CONTENT --------------------------------------------------------- --%>
-<cc:pagetitle name="pgtitleTwoBtns" bundleID="amConsole" pageTitleText="" showPageTitleSeparator="true" viewMenuLabel="" pageTitleHelpMessage="" showPageButtonsTop="true" showPageButtonsBottom="false" />
+<cc:pagetitle name="pgtitleOneBtn" bundleID="amConsole" pageTitleText="page.title.agent.dump" showPageTitleSeparator="true" viewMenuLabel="" pageTitleHelpMessage="" showPageButtonsTop="true" showPageButtonsBottom="false" />
 
-<table border="0" cellpadding="10" cellspacing="0">
-    <tr>
-        <td>
-            <cc:button
-                name="btnInherit"
-                bundleID="amConsole"
-                defaultValue="agentconfig.button.inherit"
-                type="primary" />
-        </td>
-        <td>
-            <cc:button
-                name="btnDump"
-                bundleID="amConsole"
-                defaultValue="agentconfig.button.dump"
-                type="primary" />
-        </td>
-    </tr>
-</table>
+<cc:spacer name="spacer" height="10" newline="true" />
 
-
-<cc:propertysheet name="propertyAttributes" bundleID="amConsole" showJumpLinks="true"/>
+<pre>
+<cc:text name="txtValues"/>
+</pre>
 
 </cc:form>
+
 </cc:header>
 </jato:useViewBean>

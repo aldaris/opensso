@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: WebServiceProviderEdit.jsp,v 1.7 2008-08-06 20:30:57 veiming Exp $
+   $Id: WebServiceProviderEdit.jsp,v 1.8 2008-12-10 18:25:15 farble1670 Exp $
 
 --%>
 
@@ -113,10 +113,23 @@
 <%-- PAGE CONTENT --------------------------------------------------------- --%>
 <cc:pagetitle name="pgtitleTwoBtns" bundleID="amConsole" pageTitleText="page.title.entities.create" showPageTitleSeparator="true" viewMenuLabel="" pageTitleHelpMessage="" showPageButtonsTop="true" showPageButtonsBottom="false" />
 
-<table border="0" cellpadding="10" cellspacing="0" width="100%">
-    <tr><td>
-<cc:button name="btnInherit" bundleID="amConsole" defaultValue="agentconfig.button.inherit" type="primary" />
-    </td></tr>
+<table border="0" cellpadding="10" cellspacing="0">
+    <tr>
+        <td>
+            <cc:button
+                name="btnInherit"
+                bundleID="amConsole"
+                defaultValue="agentconfig.button.inherit"
+                type="primary" />
+        </td>
+        <td>
+            <cc:button
+                name="btnDump"
+                bundleID="amConsole"
+                defaultValue="agentconfig.button.dump"
+                type="primary" />
+        </td>
+    </tr>
 </table>
 
 <cc:propertysheet name="propertyAttributes" bundleID="agentService" showJumpLinks="true"/>
