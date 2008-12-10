@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLUtils.java,v 1.9 2008-08-07 21:41:35 hengming Exp $
+ * $Id: SAMLUtils.java,v 1.10 2008-12-10 20:14:19 hengming Exp $
  *
  */
 
@@ -1540,6 +1540,9 @@ public class SAMLUtils  extends SAMLUtilsCommon {
                 sessionInfoMap, request, response, null);
             setAttrMapInSession(sessionProvider, attrMap, session);
         } catch (SessionException se) {
+            if (debug.messageEnabled()) {
+                debug.message("SAMLUtils.generateSession:", se);
+            }
             throw new SAMLException(se);
         }
         return session;

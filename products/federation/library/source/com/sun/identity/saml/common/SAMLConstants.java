@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLConstants.java,v 1.13 2008-10-08 22:53:00 qcheng Exp $
+ * $Id: SAMLConstants.java,v 1.14 2008-12-10 20:14:19 hengming Exp $
  *
  */
 
@@ -541,6 +541,12 @@ public final class SAMLConstants
     public static final String ARTIFACT_NAME = "iplanet-am-saml-artifact-name";
 
     /**
+     * SAML service attribute that specifies the name id format attribute map.
+     */
+    public static final String NAME_ID_FORMAT_MAP =
+            "iplanet-am-saml-name-id-format-attr-map";
+
+    /**
      * Default SAML artifact name.
      *
      * @supported.api
@@ -905,6 +911,12 @@ public final class SAMLConstants
      * @supported.api
      */
     public static final String SSL = "SSL"; 
+
+    /**
+     * Parameter for Name Identifier format used in SAML web browser post
+     * profile and SAML web browser artifact profile.
+     */
+    public static final String NAME_ID_FORMAT="NameIDFormat";
 
     /**
      * Constant for servlet which does SAML web browser artifact profile.

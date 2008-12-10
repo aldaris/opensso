@@ -22,18 +22,26 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultNameIdentifierMapper.java,v 1.2 2008-06-25 05:47:35 qcheng Exp $
+ * $Id: DefaultNameIdentifierMapper.java,v 1.3 2008-12-10 20:13:48 hengming Exp $
  *
  */
 
 package com.sun.identity.saml.plugins;
 
+import java.util.Map;
+import java.util.Set;
+
 import com.sun.identity.shared.xml.XMLUtils;
+import com.sun.identity.plugin.datastore.DataStoreProvider;
+import com.sun.identity.plugin.datastore.DataStoreProviderException;
+import com.sun.identity.plugin.datastore.DataStoreProviderManager;
 import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionException;
 
 import com.sun.identity.saml.assertion.NameIdentifier;
+import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.saml.common.SAMLException;
+import com.sun.identity.saml.common.SAMLServiceManager;
 import com.sun.identity.saml.common.SAMLUtils;
 
 
@@ -64,13 +72,70 @@ public class DefaultNameIdentifierMapper implements NameIdentifierMapper {
                 destID);
         }
 
+        String nameIDFormat = null;
+        try {
+            String[] nameIDFormats = SessionManager.getProvider().getProperty(
+                session, SAMLConstants.NAME_ID_FORMAT);
+            if ((nameIDFormats != null) && (nameIDFormats.length > 0)) {
+                nameIDFormat = nameIDFormats[0];
+            }
+        } catch (SessionException sx) {
+            if (SAMLUtils.debug.warningEnabled()) {
+                SAMLUtils.debug.warning("DefaultNameIdentifierMapper." +
+                    "getNameIdentifier:", sx);
+            }
+        }
+
+
+        if (SAMLUtils.debug.messageEnabled()) {
+            SAMLUtils.debug.message("DefaultNameIdentifierMapper." +
+                "getNameIdentifier: nameIDFormat = " + nameIDFormat);
+        }
+
+
         try {
             String nameQualifier = XMLUtils.escapeSpecialCharacters(
                 (SessionManager.getProvider()
                                .getProperty(session,"Organization")[0]));
-            String name = XMLUtils.escapeSpecialCharacters(
-                SessionManager.getProvider().getPrincipalName(session));
-            return new NameIdentifier(name, nameQualifier);
+            String userID = SessionManager.getProvider().getPrincipalName(
+                session);
+
+            String name = null;
+            if (nameIDFormat != null) {
+
+                Map nameIDFormatAttrMap = (Map)SAMLServiceManager.getAttribute(
+                    SAMLConstants.NAME_ID_FORMAT_MAP);
+
+                if ((nameIDFormatAttrMap != null) &&
+                    (!nameIDFormatAttrMap.isEmpty()) &&
+                    (nameIDFormatAttrMap.keySet().contains(nameIDFormat))) {
+
+                    String attrName =
+                        (String)nameIDFormatAttrMap.get(nameIDFormat);
+                    try {
+                        DataStoreProvider dsProvider = 
+                            DataStoreProviderManager.getInstance().
+                            getDataStoreProvider(SAMLConstants.SAML);
+                        Set attrValues = dsProvider.getAttribute(userID,
+                            attrName);
+                        if ((attrValues != null) && (!attrValues.isEmpty())) {
+                            name = (String)attrValues.iterator().next();
+                        }
+                    } catch (DataStoreProviderException dspe) {
+                        if (SAMLUtils.debug.warningEnabled()) {
+                            SAMLUtils.debug.warning(
+                                "DefaultNameIdentifierMapper." +
+                                "getNameIdentifier:", dspe);
+                        }
+                    }
+                }
+            }
+            if (name == null) {
+                name = XMLUtils.escapeSpecialCharacters(userID);
+            } else {
+                name = XMLUtils.escapeSpecialCharacters(name);
+            }
+            return new NameIdentifier(name, nameQualifier, nameIDFormat);
         } catch (SessionException sx) {
             SAMLUtils.debug.error("DefaultNameIdentifierMapper." +
                 "getNameIdentifier: Invalid Session ", sx);

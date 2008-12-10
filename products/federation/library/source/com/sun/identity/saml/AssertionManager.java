@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionManager.java,v 1.9 2008-08-19 19:11:10 veiming Exp $
+ * $Id: AssertionManager.java,v 1.10 2008-12-10 20:13:47 hengming Exp $
  *
  */
 
@@ -341,7 +341,7 @@ public final class AssertionManager {
         }
         String id = sessionProvider.getSessionID(token);
         return createAssertion(id, null, null, attributes, 
-             confirmationMethod, minorVersion);
+             confirmationMethod, minorVersion, null);
     }
 
     /**
@@ -635,25 +635,29 @@ public final class AssertionManager {
             }
         }
    
+        String nameIDFormat = request.getParameter(
+            SAMLConstants.NAME_ID_FORMAT);
         if (artifact == null) {
             // SAML post profile 
             if (version.equals(SAMLConstants.ASSERTION_VERSION_1_1)) {
                 // set minor version to 1
                 return createAssertion(id, artifact, destID, attributes,
-                     SAMLConstants.CONFIRMATION_METHOD_BEARER, 1);
+                     SAMLConstants.CONFIRMATION_METHOD_BEARER, 1, nameIDFormat);
             } else {
                 // set minor version to 0 
                 return createAssertion(id, artifact, destID, attributes,
-                     SAMLConstants.CONFIRMATION_METHOD_BEARER, 0);
+                     SAMLConstants.CONFIRMATION_METHOD_BEARER, 0, nameIDFormat);
             }
         } else {
             if(version == null || version.equals(
                 SAMLConstants.ASSERTION_VERSION_1_0)) {
                 return createAssertion(id, artifact, destID, attributes, 
-                    SAMLConstants.DEPRECATED_CONFIRMATION_METHOD_ARTIFACT, 0); 
+                    SAMLConstants.DEPRECATED_CONFIRMATION_METHOD_ARTIFACT, 0,
+                    nameIDFormat); 
             } else if (version.equals(SAMLConstants.ASSERTION_VERSION_1_1)) { 
                 return createAssertion(id, artifact, destID, attributes, 
-                    SAMLConstants.CONFIRMATION_METHOD_ARTIFACT, 1);
+                    SAMLConstants.CONFIRMATION_METHOD_ARTIFACT, 1,
+                    nameIDFormat);
             } else {
                 SAMLUtils.debug.error("Input version " + version + 
                                        " is not supported.");
@@ -663,8 +667,8 @@ public final class AssertionManager {
     }
 
     private Assertion createAssertion(String id, AssertionArtifact artifact,
-        String destID, List attributes,
-        String confirmationMethod, int minorVersion) throws SAMLException 
+        String destID, List attributes, String confirmationMethod,
+        int minorVersion, String nameIDFormat) throws SAMLException 
     {
         // check input
         if ((id == null) || (id.length() == 0)) {
@@ -731,6 +735,18 @@ public final class AssertionManager {
         String srcID =
             (String)SAMLServiceManager.getAttribute(SAMLConstants.SITE_ID);
 
+        if ((nameIDFormat != null) && (nameIDFormat.length() > 0)) {
+            String[] nameIDFormats = { nameIDFormat };
+            try {
+                sessionProvider.setProperty(token, SAMLConstants.NAME_ID_FORMAT,
+                    nameIDFormats);
+            } catch (SessionException ex) {
+                if (SAMLUtils.debug.warningEnabled()) {
+                    SAMLUtils.debug.warning(
+                        "AssertionManager.createAssertion:", ex);
+                }
+            }
+        }
         NameIdentifier ni = niMapper.getNameIdentifier(token, srcID, destID);
         if (ni == null) {
             SAMLUtils.debug.error("AssertionManager.createAssertion(id): " +

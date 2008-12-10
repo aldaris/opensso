@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLServiceManager.java,v 1.8 2008-06-25 05:47:34 qcheng Exp $
+ * $Id: SAMLServiceManager.java,v 1.9 2008-12-10 20:14:19 hengming Exp $
  *
  */
 
@@ -660,6 +660,31 @@ public class SAMLServiceManager implements ConfigurationListener {
                     attrs, SAMLConstants.ARTIFACT_NAME,
                     SAMLConstants.ARTIFACT_NAME_DEFAULT); 
                 newMap.put(SAMLConstants.ARTIFACT_NAME, artifactName);
+
+                values = (Set)attrs.get(SAMLConstants.NAME_ID_FORMAT_MAP);
+                Map nameIDFormatAttrMap = null;
+                if ((values != null) && (!values.isEmpty())) {
+                    for(Iterator iter = values.iterator(); iter.hasNext(); ) {
+                        String str = (String)iter.next();
+                        int index = str.indexOf("=");
+                        if (index != -1) {
+                            String nameIDFormat =
+                                str.substring(0, index).trim();
+                            String attrName = str.substring(index + 1).trim();
+                            if ((nameIDFormat.length() != 0) && 
+                                (attrName.length() != 0)) {
+
+                                if (nameIDFormatAttrMap == null) {
+                                    nameIDFormatAttrMap = new HashMap();
+                                }
+                                nameIDFormatAttrMap.put(nameIDFormat, attrName);
+                            }
+                        }
+                    }
+                    newMap.put(SAMLConstants.NAME_ID_FORMAT_MAP,
+                        nameIDFormatAttrMap);
+                }
+
                 // get the targets which accept POST
                 Set targets = (Set)attrs.get(SAMLConstants.POST_TO_TARGET_URLS);
                 if ((targets == null) || (targets.size() == 0)) {

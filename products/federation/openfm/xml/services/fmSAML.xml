@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: fmSAML.xml,v 1.4 2008-06-25 05:51:14 qcheng Exp $
+   $Id: fmSAML.xml,v 1.5 2008-12-10 20:12:19 hengming Exp $
                                                                                 
 -->
 
@@ -37,7 +37,7 @@
         <Schema
             serviceHierarchy="/DSAMEConfig/iPlanetAMSAMLService"
             i18nFileName="fmSAMLConfiguration"
-            revisionNumber="20"
+            revisionNumber="30"
             i18nKey="iplanet-am-saml-service-description">
             <Global>
                 <AttributeSchema name="serviceObjectClasses"
@@ -184,6 +184,11 @@
                     type="list"
                     syntax="string"
                     i18nKey="a125">
+                </AttributeSchema>
+                <AttributeSchema name="iplanet-am-saml-name-id-format-attr-map"
+                    type="list"
+                    syntax="string"
+                    i18nKey="a126">
                 </AttributeSchema>
             </Global>
 
