@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2008-12-04 21:12:18 veiming Exp $
+   $Id: build.xml,v 1.2 2008-12-11 17:08:29 veiming Exp $
 
 -->
 
@@ -43,12 +43,12 @@
     </path>
     
     <target name="build" depends="preparebuild">        
-        <!-- javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
-               destdir="${unittest.classes.dir}" source="1.5" target="1.5"
+        <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
+               destdir="${entitlements.classes.dir}" source="1.5" target="1.5"
                debug="${build.debug}" debuglevel="${build.debuglevel}">
-            <src path="${unittest.src.dir}"/>
+            <src path="${entitlements.src.dir}"/>
             <classpath refid="build.class.path"/>
-        </javac -->
+        </javac>
         <unjar src="${entitlements.extlib.dir}/opensso.war"
             dest="${war.package.dir}" />
         <antcall target="unittest" />
@@ -77,6 +77,7 @@
 
     <target name="preparebuild">
         <mkdir dir="${entitlements.dist.dir}" />
+        <mkdir dir="${entitlements.classes.dir}" />
     </target>
     
     <target name="clean">
