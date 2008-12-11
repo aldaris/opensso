@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CircleOfTrustManager.java,v 1.11 2008-07-08 01:07:31 exu Exp $
+ * $Id: CircleOfTrustManager.java,v 1.12 2008-12-11 22:36:29 veiming Exp $
  *
  */
 package com.sun.identity.cot;
@@ -44,6 +44,7 @@ import com.sun.identity.plugin.configuration.ConfigurationException;
 import com.sun.identity.saml2.meta.SAML2COTUtils;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -391,6 +392,8 @@ public class CircleOfTrustManager {
             }
         } else if (protocolType.equalsIgnoreCase(COTConstants.WS_FED)) {
             try {
+                checkIfWSFedEntityExists(realm, entityID);
+
                 Class clazz = Class.forName(
                     "com.sun.identity.wsfederation.meta.WSFederationCOTUtils");
                 Class[] formalParams = {String.class, String.class,
@@ -411,6 +414,33 @@ public class CircleOfTrustManager {
         } else {
             String[] args = { protocolType };
             throw new COTException("invalidProtocolType",args);
+        }
+    }
+    
+    private void checkIfWSFedEntityExists(String realm, String entityID) 
+        throws COTException {
+        try {
+            Class clazz = Class.forName(
+                "com.sun.identity.wsfederation.meta.WSFederationMetaManager");
+            Class[] formalParams = {String.class, String.class};
+            Method method = clazz.getDeclaredMethod(
+                "getEntityDescriptor", formalParams);
+            Object[] params = {realm, entityID};
+            Object result = method.invoke(null, params);
+            if (result == null) {
+                String[] args = {entityID};
+                throw new COTException("invalidEntityID", args);
+            }
+        } catch (NoSuchMethodException e) {
+            throw new COTException(e);
+        } catch (IllegalArgumentException e) {
+            throw new COTException(e);
+        } catch (IllegalAccessException e) {
+            throw new COTException(e);
+        } catch (InvocationTargetException e) {
+            throw new COTException(e);
+        } catch (ClassNotFoundException e) {
+            throw new COTException(e);
         }
     }
     

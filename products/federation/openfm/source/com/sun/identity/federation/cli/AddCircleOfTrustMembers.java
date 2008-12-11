@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddCircleOfTrustMembers.java,v 1.3 2008-06-25 05:49:51 qcheng Exp $
+ * $Id: AddCircleOfTrustMembers.java,v 1.4 2008-12-11 22:36:28 veiming Exp $
  *
  */
 
@@ -36,6 +36,7 @@ import com.sun.identity.cli.RequestContext;
 import com.sun.identity.cot.COTException;
 import com.sun.identity.cot.CircleOfTrustManager;
 import com.sun.identity.cot.COTUtils;
+import com.sun.identity.shared.locale.L10NMessage;
 import java.text.MessageFormat;
 
 /**
@@ -74,8 +75,16 @@ public class AddCircleOfTrustMembers extends AuthenticatedCommand {
                     objs));
         } catch (COTException e) {
             debug.warning("AddCircleOfTrustMembers.handleRequest", e);
-            throw new CLIException(e.getMessage(),
+            if (e instanceof L10NMessage) {
+                throw new CLIException(
+                    ((L10NMessage)e).getL10NMessage(
+                        getCommandManager().getLocale()),
                     ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+
+            } else {
+                throw new CLIException(e.getMessage(),
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+            }
         }
     }
 }
