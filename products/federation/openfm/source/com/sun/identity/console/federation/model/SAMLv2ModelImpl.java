@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ModelImpl.java,v 1.39 2008-12-09 02:19:03 qcheng Exp $
+ * $Id: SAMLv2ModelImpl.java,v 1.40 2008-12-11 18:52:55 babysunil Exp $
  *
  */
 
@@ -789,59 +789,6 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                     }
                 }
                 
-                //retrieve AssertionConsumerService                
-                map.put(HTTP_ARTI_ASSRT_CONS_SERVICE_DEFAULT,
-                                returnEmptySetIfValueIsNull(false));
-                map.put(HTTP_ARTI_ASSRT_CONS_SERVICE_INDEX,
-                            Collections.EMPTY_SET);
-                map.put(HTTP_ARTI_ASSRT_CONS_SERVICE_LOCATION,
-                            Collections.EMPTY_SET);
-                map.put(POST_ASSRT_CONS_SERVICE_DEFAULT,
-                                returnEmptySetIfValueIsNull(false));
-                map.put(HTTP_POST_ASSRT_CONS_SERVICE_INDEX,
-                            Collections.EMPTY_SET);
-                map.put(HTTP_POST_ASSRT_CONS_SERVICE_LOCATION,
-                        Collections.EMPTY_SET);
-                map.put(PAOS_ASSRT_CONS_SERVICE_DEFAULT,
-                                returnEmptySetIfValueIsNull(false));
-                map.put(PAOS_ASSRT_CONS_SERVICE_INDEX,
-                        Collections.EMPTY_SET);
-                map.put(PAOS_ASSRT_CONS_SERVICE_LOCATION,
-                        Collections.EMPTY_SET);
-                List asconsServiceList =
-                        spssoDescriptor.getAssertionConsumerService();
-                
-                for (int i=0; i<asconsServiceList.size(); i++) {
-                    AssertionConsumerServiceElement acsElem = 
-                    (AssertionConsumerServiceElement) asconsServiceList.get(i);
-                    String tmp = acsElem.getBinding();                    
-                    if (tmp.contains(artifact)) {
-                        map.put(HTTP_ARTI_ASSRT_CONS_SERVICE_DEFAULT,
-                            returnEmptySetIfValueIsNull(acsElem.isIsDefault()));
-                        map.put(HTTP_ARTI_ASSRT_CONS_SERVICE_INDEX,
-                                returnEmptySetIfValueIsNull(
-                                Integer.toString(acsElem.getIndex())));
-                        map.put(HTTP_ARTI_ASSRT_CONS_SERVICE_LOCATION,
-                            returnEmptySetIfValueIsNull(acsElem.getLocation()));
-                    } else if (tmp.contains(post)) {
-                        map.put(POST_ASSRT_CONS_SERVICE_DEFAULT, 
-                            returnEmptySetIfValueIsNull(acsElem.isIsDefault()));
-                        map.put(HTTP_POST_ASSRT_CONS_SERVICE_INDEX,
-                                returnEmptySetIfValueIsNull(
-                                Integer.toString(acsElem.getIndex())));
-                        map.put(HTTP_POST_ASSRT_CONS_SERVICE_LOCATION,
-                            returnEmptySetIfValueIsNull(acsElem.getLocation()));
-                    } else if (tmp.contains(paos)) {
-                        map.put(PAOS_ASSRT_CONS_SERVICE_DEFAULT, 
-                            returnEmptySetIfValueIsNull(acsElem.isIsDefault()));
-                        map.put(PAOS_ASSRT_CONS_SERVICE_INDEX,
-                                returnEmptySetIfValueIsNull(
-                                Integer.toString(acsElem.getIndex())));
-                        map.put(PAOS_ASSRT_CONS_SERVICE_LOCATION,
-                            returnEmptySetIfValueIsNull(acsElem.getLocation()));
-                    }
-                }
-                
                 //retrieve nameid format               
                  map.put(NAMEID_FORMAT, (OrderedSet) convertListToSet(
                          spssoDescriptor.getNameIDFormat()));
@@ -866,6 +813,62 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
         }
         return map;
     }
+    
+    /**
+     * Returns a List with Assertion Consumer Service attributes and values.
+     *
+     * @param realm to which the entity belongs.
+     * @param entityName is the entity id.
+     * @return List with Assertion Consumer values of Service Provider.
+     * @throws AMConsoleException if unable to retrieve the Service Provider
+     *     Assertion Consumer values based on the realm and entityName passed.
+     */    
+    public List getAssertionConsumerServices(
+            String realm,
+            String entityName
+            ) throws AMConsoleException {
+        List asconsServiceList = null;
+        SPSSODescriptorElement spssoDescriptor = null;
+        
+        try {
+            SAML2MetaManager samlManager = new SAML2MetaManager();
+            spssoDescriptor = samlManager.getSPSSODescriptor(realm,entityName);
+            if (spssoDescriptor != null) {
+                asconsServiceList =
+                        spssoDescriptor.getAssertionConsumerService();
+                
+            }
+        } catch (SAML2MetaException e) {
+            if (debug.warningEnabled()) {
+                debug.warning("SAMLv2ModelImpl.getAssertionConsumerService", e);
+            }
+            throw new AMConsoleException(getErrorString(e));
+        }
+        return asconsServiceList;
+    }
+    
+    /*
+     *Creates and returns a new AssertionConsumerServiceElement.
+     *
+     * @throws AMConsoleException if unable to retrieve.
+     */
+     public AssertionConsumerServiceElement getAscObject()
+     throws AMConsoleException {
+         com.sun.identity.saml2.jaxb.metadata.ObjectFactory objFact = new
+                 com.sun.identity.saml2.jaxb.metadata.ObjectFactory();
+         AssertionConsumerServiceElement acsElem = null;
+         try {
+             acsElem = objFact.createAssertionConsumerServiceElement();
+             
+         } catch (JAXBException e) {
+             if (debug.warningEnabled()) {
+                 debug.warning("SAMLv2ModelImpl.getAscObject:", e);
+             }
+             throw new AMConsoleException(getErrorString(e));
+         }
+         
+         return acsElem;
+     }
     
     /**
      * Returns a map with extended service provider attributes and values.
@@ -1255,12 +1258,14 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
      * @param realm to which the entity belongs.
      * @param entityName is the entity id.
      * @param spStdValues Map which contains the standard attribute values.
+     * @param assertionConsumer List with assertion consumer service values.
      * @throws AMConsoleException if saving of attribute value fails.
      */
     public void setSPStdAttributeValues(
             String realm,
             String entityName,
-            Map spStdValues
+            Map spStdValues,
+            List assertionConsumer
             ) throws AMConsoleException {
         String[] params = {realm, entityName, "SAMLv2", "SP-Standard"};
         logEvent("ATTEMPT_MODIFY_ENTITY_DESCRIPTOR", params);
@@ -1392,69 +1397,16 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                 }
                 
                 //save for artifact, post and paos Assertion Consumer Service
-                if (spStdValues.keySet().contains(
-                        HTTP_ARTI_ASSRT_CONS_SERVICE_DEFAULT)) {
-                    boolean isassertDefault = setToBoolean(
-                            spStdValues, HTTP_ARTI_ASSRT_CONS_SERVICE_DEFAULT);
-                    boolean isPostDefault = setToBoolean(
-                            spStdValues, POST_ASSRT_CONS_SERVICE_DEFAULT);
-                    boolean isPaosDefault = setToBoolean(
-                            spStdValues, PAOS_ASSRT_CONS_SERVICE_DEFAULT);
-                    
-                    String httpIndex = getResult(
-                            spStdValues, HTTP_ARTI_ASSRT_CONS_SERVICE_INDEX);
-                    String httpLocation = getResult(
-                            spStdValues, HTTP_ARTI_ASSRT_CONS_SERVICE_LOCATION);
-                    
-                    String paosIndex = getResult(
-                            spStdValues, PAOS_ASSRT_CONS_SERVICE_INDEX);
-                    String paosLocation = getResult(
-                            spStdValues, PAOS_ASSRT_CONS_SERVICE_LOCATION);
-                    
-                    String postIndex =  getResult(
-                            spStdValues, HTTP_POST_ASSRT_CONS_SERVICE_INDEX);
-                    String postLocation = getResult(
-                            spStdValues, HTTP_POST_ASSRT_CONS_SERVICE_LOCATION);
-                    
+                if (!assertionConsumer.isEmpty() &&  
+                        assertionConsumer.size() > 0) {
                     List asconsServiceList =
                             spssoDescriptor.getAssertionConsumerService();
                     
                     if (!asconsServiceList.isEmpty()) {
                         asconsServiceList.clear();
                     }
-                    
-                    AssertionConsumerServiceElement acsElemArti = null;
-                    AssertionConsumerServiceElement acsElemPost = null;
-                    AssertionConsumerServiceElement acsElemPaos = null;
-                    
-                    if (httpLocation != null && httpLocation.length() > 0 ) {
-                        acsElemArti =
-                                objFact.createAssertionConsumerServiceElement();
-                        acsElemArti.setBinding(httpartifactBinding);
-                        acsElemArti.setIsDefault(isassertDefault);
-                        acsElemArti.setIndex(Integer.parseInt(httpIndex));
-                        acsElemArti.setLocation(httpLocation);
-                        asconsServiceList.add(acsElemArti);
+                    asconsServiceList.addAll(assertionConsumer);
                     }
-                    if (postIndex != null && postIndex.length() > 0 ) {
-                        acsElemPost =
-                                objFact.createAssertionConsumerServiceElement();
-                        acsElemPost.setBinding(httpPostBinding);
-                        acsElemPost.setIsDefault(isPostDefault);
-                        acsElemPost.setIndex(Integer.parseInt(postIndex));
-                        acsElemPost.setLocation(postLocation);
-                        asconsServiceList.add(acsElemPost);
-                    }
-                    if (paosLocation != null && paosLocation.length() > 0 ) {
-                        acsElemPaos =
-                                objFact.createAssertionConsumerServiceElement();
-                        acsElemPaos.setBinding(paosBinding);
-                        acsElemPaos.setIsDefault(isPaosDefault);
-                        acsElemPaos.setIndex(Integer.parseInt(paosIndex));
-                        acsElemPaos.setLocation(paosLocation);
-                        asconsServiceList.add(acsElemPaos);
-                    }
-                }
                 
                 //save nameid format
                 if (spStdValues.keySet().contains(NAMEID_FORMAT)) {
@@ -1713,7 +1665,7 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                             (KeyDescriptorElement)keyList.get(i);
                     String type = keyOne.getUse();
                     if ((type == null) || (type.length() == 0) || 
-                        type.equals("encryption")) {
+                        type.equals("encryption")) { 
                         List encryptMethod = keyOne.getEncryptionMethod();
                         if (!encryptMethod.isEmpty()) {
                             EncryptionMethodElement encrptElement = 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2SPAssertionContentViewBean.java,v 1.5 2008-09-25 01:53:13 babysunil Exp $
+ * $Id: SAMLv2SPAssertionContentViewBean.java,v 1.6 2008-12-11 18:52:06 babysunil Exp $
  *
  */
 
@@ -35,19 +35,19 @@ import com.iplanet.jato.view.event.DisplayEvent;
 import com.iplanet.jato.view.View;
 import com.sun.identity.console.base.AMPropertySheet; 
 import com.sun.identity.console.base.AMTableTiledView;
+import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
 import com.sun.identity.console.federation.model.SAMLv2Model;
 import com.sun.identity.console.federation.SAMLv2AuthContexts;
 import com.sun.web.ui.model.CCActionTableModel;
 import com.sun.web.ui.view.alert.CCAlert;
 import com.sun.web.ui.view.table.CCActionTable;
-import com.sun.identity.console.base.model.AMConsoleException;
-import java.util.Map;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
 import java.util.Iterator;
-
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class SAMLv2SPAssertionContentViewBean extends SAMLv2Base {
     public static final String DEFAULT_DISPLAY_URL =
@@ -251,7 +251,9 @@ public class SAMLv2SPAssertionContentViewBean extends SAMLv2Base {
             spExtValues.putAll(new_spExtValues);
  
             //save the standard metadata values for the Idp
-            model.setSPStdAttributeValues(realm, entityName, spStdValues);            
+            List acsList = new ArrayList();
+            model.setSPStdAttributeValues(realm, entityName, spStdValues,
+                    acsList);            
             
             //save the extended metadata values for the Idp
             model.setSPExtAttributeValues(realm, entityName, spExtValues,

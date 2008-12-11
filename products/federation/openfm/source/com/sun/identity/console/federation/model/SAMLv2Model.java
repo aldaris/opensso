@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2Model.java,v 1.31 2008-12-01 22:22:24 babysunil Exp $
+ * $Id: SAMLv2Model.java,v 1.32 2008-12-11 18:52:38 babysunil Exp $
  *
  */
 
@@ -30,6 +30,8 @@ package com.sun.identity.console.federation.model;
 
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.federation.SAMLv2AuthContexts;
+import com.sun.identity.saml2.jaxb.metadata.AssertionConsumerServiceElement;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -117,28 +119,10 @@ public interface SAMLv2Model
         "mnisoapLocation";
     public static final String SP_MANAGE_NAMEID_SOAP_RESP_LOCATION =
         "mnisoapResponseLocation";
-    public static final String HTTP_ARTI_ASSRT_CONS_SERVICE_DEFAULT =
-        "isDefault";
-    public static final String POST_ASSRT_CONS_SERVICE_DEFAULT =
-        "isDefaultPost";
-    public static final String PAOS_ASSRT_CONS_SERVICE_DEFAULT =
-        "isDefaultPaos";
-    public static final String HTTP_ARTI_ASSRT_CONS_SERVICE_INDEX =
-        "httpArtifactIndex";
-    public static final String HTTP_ARTI_ASSRT_CONS_SERVICE_LOCATION =
-        "httpArtifactLocation";
-    public static final String HTTP_POST_ASSRT_CONS_SERVICE_INDEX =
-        "httpPostIndex";
-    public static final String HTTP_POST_ASSRT_CONS_SERVICE_LOCATION =
-        "httpPostLocation";
     public static final String SP_SLO_POST_LOC = "slopostLocation";
     public static final String SP_SLO_POST_RESPLOC = "slopostResponseLocation";
     public static final String SP_MNI_POST_LOC = "mnipostLocation";
     public static final String SP_MNI_POST_RESPLOC = "mnipostResponseLocation";
-    public static final String PAOS_ASSRT_CONS_SERVICE_INDEX =
-        "PaosIndex";
-    public static final String PAOS_ASSRT_CONS_SERVICE_LOCATION =
-        "PaosLocation";
     public static final String SP_LOGOUT_DEFAULT =
         "isDefaultSLO";
     public static final String SP_MNI_DEFAULT =
@@ -359,6 +343,28 @@ public interface SAMLv2Model
         String realm,
         String entityName
         ) throws AMConsoleException;
+
+    /**
+     * Returns a List with Assertion Consumer Service attributes and values.
+     *
+     * @param realm to which the entity belongs.
+     * @param entityName is the entity id.
+     * @return List with Assertion Consumer values of Service Provider.
+     * @throws AMConsoleException if unable to retrieve the Service Provider
+     *     Assertion Consumer values based on the realm and entityName passed.
+     */
+    
+    public List getAssertionConsumerServices(
+        String realm,
+        String entityName
+        ) throws AMConsoleException;
+
+    /*
+     *Returns a new AssertionConsumerServiceElement.
+     *
+     * @throws AMConsoleException if unable to retrieve. 
+     */
+    AssertionConsumerServiceElement getAscObject() throws AMConsoleException;
     
     /**
      * Returns a map with extended service provider attributes and values.
@@ -410,12 +416,14 @@ public interface SAMLv2Model
      * @param realm to which the entity belongs.
      * @param entityName is the entity id.
      * @param spStdValues Map which contains the standard attribute values.
+     * @param assertionConsumer List with assertion consumer service values.
      * @throws AMConsoleException if saving of attribute value fails.
      */
     void setSPStdAttributeValues(
         String realm,
         String entityName,
-        Map spStdValues
+        Map spStdValues,
+        List assertionConsumer
         ) throws AMConsoleException;
     
     /**

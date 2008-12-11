@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySAMLv2SPServicesRemote.xml,v 1.5 2008-07-28 17:00:41 babysunil Exp $
+   $Id: propertySAMLv2SPServicesRemote.xml,v 1.6 2008-12-11 18:50:41 babysunil Exp $
 
 -->
 
@@ -213,102 +213,21 @@
         <property>
             <label name="lblArtifactAssertConsumerService" defaultValue="samlv2idp.attribute.label.artifactassertconsumerservice" />
             <ccgroup>
-                <property>
-                    <label name="lblHttpArtifactAssertConsumerService" defaultValue="samlv2sp.attribute.label.httpartifactassertconsumerservice" />
-                    <ccgroup>
-                        <property>
-                            <label name="lblHttpArtifactAssertConsumerServiceLocation" defaultValue="samlv2sp.attribute.label.httpartifactassertconsumerservicelocation"
-                                   labelFor="httpArtifactLocation" />
-                            <cc name="httpArtifactLocation" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                                <attribute name="size" value="85" />
-                                <attribute name="autoSubmit" value="false" />
-                                <attribute name="localizeDisplayFieldValue" value="false" />
-                            </cc>
-                            <fieldhelp name="helpArtiLocation" defaultValue="samlv2sp.attribute.help.SPArtiLocation" />
-                        </property>
-                        <property>
-                            <label name="lblHttpArtifactAssertConsumerServiceIndex" defaultValue="samlv2sp.attribute.label.httpartifactassertconsumerserviceindex"
-                                   labelFor="httpArtifactIndex" />
-                            <cc name="httpArtifactIndex" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                                <attribute name="size" value="2" />
-                                <attribute name="autoSubmit" value="false" />
-                                <attribute name="localizeDisplayFieldValue" value="false" />
-                            </cc>
-                            <fieldhelp name="helpArtiIndex" defaultValue="samlv2sp.attribute.help.SPArtiIndex" />
-                        </property>
-                         <property>
-                            <label name="lblHttpArtifactAssertConsumerDefault" defaultValue="samlv2sp.attribute.label.httpartifactassertconsumerservicedefault" 
-                                   labelFor="isDefault" />
-                            <cc name="isDefault" tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
-                            </cc>
-                        </property>
-                    </ccgroup>
-                </property>
-                <property>
-                    <label name="lblHttpPostAssertConsumerService" defaultValue="samlv2sp.attribute.label.httppostassertconsumerservice" />
-                    <ccgroup>
-                        <property>
-                            <label name="lblHttpPostAssertConsumerServiceLocation" defaultValue="samlv2sp.attribute.label.httppostassertconsumerservicelocation" 
-                                   labelFor="httpPostLocation" />
-                            <cc name="httpPostLocation" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                                <attribute name="size" value="85" />
-                                <attribute name="autoSubmit" value="false" />
-                                <attribute name="localizeDisplayFieldValue" value="false" />
-                            </cc>
-                            <fieldhelp name="helpPostLocation" defaultValue="samlv2sp.attribute.help.SPPostLocation" />
-                        </property>
-                        <property>
-                            <label name="lblHttpPostAssertConsumerServiceIndex" defaultValue="samlv2sp.attribute.label.httppostassertconsumerserviceindex" 
-                                   labelFor="httpPostIndex" />                          
-                            <cc name="httpPostIndex" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                                <attribute name="size" value="2" />
-                                <attribute name="autoSubmit" value="false" />
-                                <attribute name="localizeDisplayFieldValue" value="false" />
-                            </cc>
-                            <fieldhelp name="helpPostIndex" defaultValue="samlv2sp.attribute.help.SPPostIndex" />
-                        </property>
-                        <property>
-                            <label name="lblHttpArtifactAssertConsumerDefault" defaultValue="samlv2sp.attribute.label.httpartifactassertconsumerservicedefault" 
-                                   labelFor="isDefaultPost" />
-                            <cc name="isDefaultPost" tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
-                            </cc>
-                        </property>
-                    </ccgroup>
-                </property>
-                
-                
-        <property>
-            <label name="lblPaosAssertConsumerService" defaultValue="samlv2sp.attribute.label.paosassertconsumerservice" />
-            <ccgroup>
-                <property>
-                    <label name="lblPaosAssertConsumerServiceLocation" defaultValue="samlv2sp.attribute.label.paosassertconsumerservicelocation" 
-                           labelFor="PaosLocation" />
-                    <cc name="PaosLocation" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                        <attribute name="size" value="85" />
-                        <attribute name="autoSubmit" value="false" />
-                        <attribute name="localizeDisplayFieldValue" value="false" />
-                    </cc>
-                    <fieldhelp name="helpPaosLocation" defaultValue="samlv2sp.attribute.help.SPECPPaosLocation" />
-                </property>
-                <property>
-                    <label name="lblPaosAssertConsumerServiceIndex" defaultValue="samlv2sp.attribute.label.paosassertconsumerserviceindex" 
-                           labelFor="PaosIndex" />                    
-                    <cc name="PaosIndex" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
-                        <attribute name="size" value="2" />
-                        <attribute name="autoSubmit" value="false" />
-                        <attribute name="localizeDisplayFieldValue" value="false" />
-                    </cc>
-                    <fieldhelp name="helpPaosIndex" defaultValue="samlv2sp.attribute.help.SPECPPaosIndex" />
-                </property>
-                <property>
-                <label name="lblHttpArtifactAssertConsumerDefault" defaultValue="samlv2sp.attribute.label.httpartifactassertconsumerservicedefault" 
-                       labelFor="isDefaultPaos" />
-                <cc name="isDefaultPaos" tagclass="com.sun.web.ui.taglib.html.CCCheckBoxTag">
-                </cc>
-            </property>
-            </ccgroup>
-        </property>                
-        </ccgroup>   
+                <property span="true">
+            <cc name="tblAssertionConsumerService" tagclass="com.sun.web.ui.taglib.table.CCActionTableTag" >
+                <attribute name="title" value="samlv2.sp.provider.table.title.assertionconsumerservice" />
+                <attribute name="showPaginationControls" value="false" />
+                <attribute name="showAdvancedSortingIcon" value="false" />
+                <attribute name="showLowerActions" value="false" />
+                <attribute name="showPaginationControls" value="false" />
+                <attribute name="showPaginationIcon" value="false" />
+                <attribute name="showSelectionIcons" value="false" />
+                <attribute name="showSelectionSortIcon" value="false" />
+                <attribute name="showSortingRow" value="false" />
+            </cc>
+            <fieldhelp name="helpIdpAuthncontextMapper" defaultValue="samlv2.sppacse.help.SpAssertionConsumerService" />
         </property>
+    </ccgroup>
+   </property>
     </section>
 </propertysheet>
