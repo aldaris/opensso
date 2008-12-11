@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: service.cpp,v 1.30 2008-11-10 22:56:37 madan_ranganath Exp $
+ * $Id: service.cpp,v 1.31 2008-12-11 23:40:40 madan_ranganath Exp $
  *
  */
 
@@ -1146,6 +1146,7 @@ Service::getPolicyResult(const char *userSSOToken,
     int mUserIdParamType = 0;
     std::string mUserIdParam;
     bool mFetchFromRootResource;
+    int policyRequestCount = 0;
 
     if(initialized == false) {
         initialize();
@@ -1253,7 +1254,6 @@ Service::getPolicyResult(const char *userSSOToken,
     update_policy(ssoToken, resName, actionName, env, uSessionInfo,
 	          mFetchFromRootResource==true?SCOPE_SUBTREE:SCOPE_SELF,
                   false, uPolicyEntry, attrList, properties);
-    
 
     policy_res->remote_user = NULL;
     policy_res->remote_user_passwd = NULL;
@@ -1265,6 +1265,9 @@ Service::getPolicyResult(const char *userSSOToken,
 	justUpdated = false;
 	resources.resize(0);
 	results.resize(0);
+        // Increment the policy request count to indicate the number of
+        // trips done to the policy service
+        policyRequestCount++;
 
    	// Assign the user's passwd to the remote user passwd field
         if (policy_res->remote_user_passwd == NULL) {
@@ -1348,7 +1351,13 @@ Service::getPolicyResult(const char *userSSOToken,
                 continue;
             } else break;
 	}
-    } while(justUpdated);
+    } while ((justUpdated) && (policyRequestCount < 3));
+
+    if (policyRequestCount == 3) {
+	string msg("Time on the Agent machine and the Server machine are "
+                   "not synchronized");
+	throw InternalException(func, msg, AM_NO_POLICY);
+    }
 
     // now set remote user and ldap attributes if any.
     setRemUserAndAttrs(policy_res, uPolicyEntry, uSessionInfo,
@@ -1622,8 +1631,7 @@ Service::do_update_policy(const SSOToken &ssoTok, const string &resName,
 	    throw InternalException(func, "Policy query failed.", status);
 	}
     } else {
-  	    // Log:INFO
-	    process_policy_response(policyEntry, env, xmlData);
+	process_policy_response(policyEntry, env, xmlData);
     }
   
     Log::log(logID, Log::LOG_INFO, "Successful return from do_update_policy().");
