@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentity.java,v 1.30 2008-11-05 07:10:29 veiming Exp $
+ * $Id: AMIdentity.java,v 1.31 2008-12-11 22:35:10 veiming Exp $
  *
  */
 
@@ -33,7 +33,6 @@ import com.iplanet.am.sdk.AMCrypt;
 import com.iplanet.am.sdk.AMHashMap;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.common.DNUtils;
 import com.sun.identity.common.CaseInsensitiveHashMap;
 import com.sun.identity.common.CaseInsensitiveHashSet;
 import com.sun.identity.shared.Constants;
@@ -639,8 +638,14 @@ public final class AMIdentity {
             ServiceSchema ss = ssm.getSchema(type.getName());
 
             if (ss != null) {
+                // Check if attrMap has cos priority attribute
+                // If present, remove it for validating the attributes
+                Set cosPriority = (Set)attributes.remove(COS_PRIORITY);
                 attributes = ss.validateAndInheritDefaults(attributes, orgName,
                         true);
+                if (cosPriority != null) {
+                    attributes.put(COS_PRIORITY, cosPriority);
+                }
                 attributes = AMCommonUtils.removeEmptyValues(attributes);
                 stype = ss.getServiceType();
             } else {
