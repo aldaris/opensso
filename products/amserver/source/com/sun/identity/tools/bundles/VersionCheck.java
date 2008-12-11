@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: VersionCheck.java,v 1.8 2008-06-25 05:44:12 qcheng Exp $
+ * $Id: VersionCheck.java,v 1.9 2008-12-11 18:26:37 veiming Exp $
  *
  */
 
@@ -61,14 +61,25 @@ public class VersionCheck implements SetupConstants {
         String javaExpectedVersion = System.getProperty(JAVA_VERSION_EXPECTED);
         String amExpectedVersion = System.getProperty(AM_VERSION_EXPECTED);
         String configVersion = SystemProperties.get(System.getProperty(
-            AM_VERSION_CURRENT));
+            AM_VERSION_CURRENT)).trim();
+        
         if (!versionCompatible(System.getProperty(JAVA_VERSION_CURRENT),
             javaExpectedVersion)) {
             System.out.println(bundle.getString("message.error.version.jvm") +
                 " " + javaExpectedVersion + " .");
             return 1;
         }
-        if (!versionCompatible(configVersion.trim(), amExpectedVersion)) {
+        
+        // checking case like this, server version is 
+        // OpenSSO Express Build 6a(2008-December-9 02:22) but
+        // ssoadm version is (2008-December-10 01:19)
+        if (configVersion.length() != amExpectedVersion.length()) {
+            System.out.println(bundle.getString("message.error.version.am") +
+                " " + amExpectedVersion + " .");
+            return 1;
+        }
+        
+        if (!versionCompatible(configVersion, amExpectedVersion)) {
             System.out.println(bundle.getString("message.error.version.am") +
                 " " + amExpectedVersion + " .");
             return 1;
