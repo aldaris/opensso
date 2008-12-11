@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.25 2008-12-02 01:15:35 leiming Exp $
+   $Id: build.xml,v 1.26 2008-12-11 15:09:12 naghaon Exp $
 
 -->
 
@@ -60,6 +60,12 @@
         <ant antfile="${j2eeagents.basedir}/build_agent.xml" target="clean" inheritRefs="true"/>
     </target>
     
+    <target name="clean_jboss_v42">
+        <property name="containername" value="jboss"/>
+        <property name="containerversion" value="v42"/>
+        <ant antfile="${j2eeagents.basedir}/build_agent.xml" target="clean" inheritRefs="true"/>
+    </target>
+    
     <target name="clean_weblogic_v10">
         <property name="containername" value="weblogic"/>
         <property name="containerversion" value="v10"/>
@@ -78,7 +84,7 @@
         <ant antfile="${j2eeagents.basedir}/build_agent.xml" target="clean" inheritRefs="true"/>
     </target>
 
-    <target name="clean" depends="clean_appserver_v9, clean_weblogic_v10, clean_websphere_v61, clean_tomcat_v6">
+    <target name="clean" depends="clean_appserver_v9, clean_weblogic_v10, clean_websphere_v61, clean_tomcat_v6, clean_jboss_v42">
         <delete dir="${j2eeagents.dist.dir}"/>
         <delete dir="${j2eeagents.built.dir}"/>
     </target>
@@ -88,6 +94,7 @@
         <antcall target="weblogic_v10" />
         <antcall target="websphere_v61" />
         <antcall target="tomcat_v6" />
+        <antcall target="jboss_v42" />
     </target>
 
     <target name="appserver_v9" depends="preparebuild">
@@ -114,6 +121,13 @@
         <echo message="Dispatch to websphere_v61"/>
         <property name="containername" value="websphere"/>
         <property name="containerversion" value="v61"/>
+        <ant antfile="${j2eeagents.basedir}/build_agent.xml" target="all" inheritRefs="true"/>
+    </target>
+    
+    <target name="jboss_v42" depends="preparebuild">
+        <echo message="Dispatch to jboss_v42"/>
+        <property name="containername" value="jboss"/>
+        <property name="containerversion" value="v42"/>
         <ant antfile="${j2eeagents.basedir}/build_agent.xml" target="all" inheritRefs="true"/>
     </target>
     
@@ -147,6 +161,12 @@
 	        <include name="opensso-installtools-launcher.jar" />
 	     </fileset>
         </copy>
+        <copy todir="${j2eeagents.basedir}/jboss/v42/extlib" >
+            <fileset dir="${installtools.dist.dir}">
+                <include name="opensso-installtools.jar" />
+                <include name="opensso-installtools-launcher.jar" />
+            </fileset>
+        </copy>
     </target>
         
     <target name="postnightly">
@@ -169,6 +189,8 @@
         <echo message=" clean_tomcat_v6     : deletes the generated files for tomcat_v6 agent"/>
         <echo message=" websphere_v61       : builds the IBM Websphere 6.1 agent"/>
         <echo message=" clean_websphere_v61 : deletes the generated files for websphere_v61 agent"/>
+        <echo message=" jboss_v42           : builds the jboss 4.2.x  agent"/>
+        <echo message=" clean_jboss_v42     : deletes the generated files for jboss_v42 4.2.x agent"/>
         <echo message=" usage               : displays this usage message"/>
         <echo message=" "/>
         <echo message=" To run a target, issue the following command:"/>
