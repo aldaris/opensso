@@ -22,13 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Evaluator.java,v 1.1 2008-12-11 17:13:41 veiming Exp $
+ * $Id: Evaluator.java,v 1.2 2008-12-12 07:41:36 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
@@ -60,106 +59,37 @@ public class Evaluator {
     }
 
     /**
-     * Returns <code>true</code> if a subject is allowed to perform an
-     * action on a resource. 
+     * Returns <code>true</code> if the subject is granted to an
+     * entitlement.
      *
      * @param subject Subject who is under evaluation.
-     * @param resource Resource the subject is trying to access.
-     * @param actionName Action to be perform by the subject on the resource
-     *
-     * @return <code>true</code> if a subject is allowed to perform an
-     *         action on a resource. 
+     * @param e Entitlement object which describes the resource name and 
+     *          actions.
+     * @return <code>true</code> if the subject is granted to an
+     *         entitlement.
      * @throws EntitlementException if the result cannot be determined.
+     */
+    public boolean hasEntitlement(Subject subject, Entitlement e) 
+        throws EntitlementException {
+        return false;
+    }
+
+    /**
+     * Returns a set of entitlements for a given subject, resource name
+     * and environment.
      * 
-     */
-    public boolean isAllowed(
-        Subject subject,
-        String resource,
-        String actionName
-    ) throws EntitlementException {
-        return isAllowed(subject, resource, actionName, Collections.EMPTY_MAP);
-    }
-
-    /**
-     * Returns <code>true</code> if a subject is allowed to perform an
-     * action on a resource. 
-     *
      * @param subject Subject who is under evaluation.
-     * @param resource Resource the subject is trying to access.
-     * @param actionName Action to be perform by the subject on the resource
-     * @param environment The environment of which evaluation is perform under.
-     *
-     * @return <code>true</code> if a subject is allowed to perform an
-     *         action on a resource. 
-     * @throws EntitlementException if the result cannot be determined.
-     */
-    public boolean isAllowed(
-        Subject subject,
-        String resource,
-        String actionName,
-        Map<String, Set<String>> environment
-    ) throws EntitlementException {
-        return false;
-    }
-
-    /**
-     * Returns <code>true</code> if a subject is allowed to perform an
-     * action on a resource. 
-     *
-     * @param subject Subject who is under evaluation.
-     * @param resources Set of resources the subject is trying to access.
-     * @param actionNames Set of action to be perform by the subject on the
-     *                   resource
-     * @param environment The environment of which evaluation is perform under.
-     *
-     * @return <code>true</code> if a subject is allowed to perform an
-     *         action on a resource. 
-     * @throws EntitlementException if the result cannot be determined.
-     */
-    public boolean isAllowed(
-        Subject subject,
-        Set<String> resource,
-        Set<String> actionName,
-        Map<String, Set<String>> environment
-    ) throws EntitlementException {
-        return false;
-    }
-
-    /**
-     * Returns entitlements.
-     *
-     * @param subject Subject who is under evaluation.
-     * @param resource Resource the subject is trying to access.
-     * @param actionName Action to be perform by the subject on the resource
-     * @param environment The environment of which evaluation is perform under.
-     * @return entitlements.
+     * @param resourceName Resource name.
+     * @param environment Environment parameters.
+     * @param recursive <code>true</code> to perform evaluation on sub resources
+     *        from the given resource name.
+     * @return a set of entitlements for a given subject, resource name
+     *         and environment.
      * @throws EntitlementException if the result cannot be determined.
      */
     public Set<Entitlement> getEntitlements(
         Subject subject,
-        String resource,
-        String actionName,
-        Map<String, Set<String>> environment
-    ) throws EntitlementException {
-        return Collections.EMPTY_SET;
-    }
-
-    /**
-     * Returns entitlements.
-     *
-     * @param subject Subject who is under evaluation.
-     * @param resource Resource the subject is trying to access.
-     * @param actionName Action to be perform by the subject on the resource
-     * @param environment The environment of which evaluation is perform under.
-     * @param recursive <code>true</code> to return entitlements for
-     *        descendent resources.
-     * @return entitlements.
-     * @throws EntitlementException if the result cannot be determined.
-     */
-    public Set<Entitlement> getEntitlements(
-        Subject subject,
-        Set<String> resource,
-        Set<String> actionName,
+        String resourceName,
         Map<String, Set<String>> environment,
         boolean recursive
     ) throws EntitlementException {
