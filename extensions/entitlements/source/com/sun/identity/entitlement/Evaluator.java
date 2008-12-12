@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Evaluator.java,v 1.2 2008-12-12 07:41:36 veiming Exp $
+ * $Id: Evaluator.java,v 1.3 2008-12-12 18:51:08 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
@@ -75,7 +76,7 @@ public class Evaluator {
     }
 
     /**
-     * Returns a set of entitlements for a given subject, resource name
+     * Returns a list of entitlements for a given subject, resource name
      * and environment.
      * 
      * @param subject Subject who is under evaluation.
@@ -83,17 +84,17 @@ public class Evaluator {
      * @param environment Environment parameters.
      * @param recursive <code>true</code> to perform evaluation on sub resources
      *        from the given resource name.
-     * @return a set of entitlements for a given subject, resource name
+     * @return a list of entitlements for a given subject, resource name
      *         and environment.
      * @throws EntitlementException if the result cannot be determined.
      */
-    public Set<Entitlement> getEntitlements(
+    public List<Entitlement> getEntitlements(
         Subject subject,
         String resourceName,
         Map<String, Set<String>> environment,
         boolean recursive
     ) throws EntitlementException {
-        return Collections.EMPTY_SET;
+        return Collections.EMPTY_LIST;
     }
 }
 
