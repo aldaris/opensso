@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build_agent.xml,v 1.10 2008-11-12 22:26:15 huacui Exp $
+   $Id: build_agent.xml,v 1.11 2008-12-12 23:24:00 huacui Exp $
 
 -->
 
@@ -32,7 +32,7 @@
 
     <!-- top level directory structure -->
     <property name="j2eeagents.extlib.dir" location="${j2eeagents.basedir}/extlib"/>
-    <property name="j2eeagents.container.extlib.dir" location="${j2eeagents.basedir}/${containername}/${containerversion}/extlib"/>
+    <property name="j2eeagents.container.extlib.dir" location="${j2eeagents.extlib.dir}/${containername}/${containerversion}"/>
    
     <!-- container agent directory structure -->
     <property name="j2eeagents.container.built.dir" location="${j2eeagents.built.dir}/${containername}_${containerversion}"/>   

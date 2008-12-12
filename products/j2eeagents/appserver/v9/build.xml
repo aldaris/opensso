@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.19 2008-11-12 22:26:15 huacui Exp $
+   $Id: build.xml,v 1.20 2008-12-12 23:24:01 huacui Exp $
 
 -->
 
@@ -90,8 +90,6 @@
         <copy todir="${container.j2ee_agent.lib.dir}">
             <fileset dir="${j2eeagents.extlib.dir}">
                 <include name="openssoclientsdk.jar"/>
-            </fileset>
-            <fileset dir="${j2eeagents.basedir}/${containername}/${containerversion}/extlib">
                 <include name="opensso-installtools-launcher.jar"/>
                 <include name="opensso-installtools.jar"/>
             </fileset>

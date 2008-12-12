@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.26 2008-12-11 15:09:12 naghaon Exp $
+   $Id: build.xml,v 1.27 2008-12-12 23:24:00 huacui Exp $
 
 -->
 
@@ -137,31 +137,7 @@
     </target>
 
     <target name="prenightly">
-        <copy todir="${j2eeagents.basedir}/appserver/v9/extlib" >
-            <fileset dir="${installtools.dist.dir}">
-                <include name="opensso-installtools.jar" />
-                <include name="opensso-installtools-launcher.jar" />
-            </fileset>
-        </copy>
-        <copy todir="${j2eeagents.basedir}/weblogic/v10/extlib" >
-            <fileset dir="${installtools.dist.dir}">
-                <include name="opensso-installtools.jar" />
-                <include name="opensso-installtools-launcher.jar" />
-            </fileset>
-        </copy>
-        <copy todir="${j2eeagents.basedir}/websphere/v61/extlib" >
-            <fileset dir="${installtools.dist.dir}">
-                <include name="opensso-installtools.jar" />
-                <include name="opensso-installtools-launcher.jar" />
-            </fileset>
-        </copy>
-        <copy todir="${j2eeagents.basedir}/tomcat/v6/extlib" >
-	     <fileset dir="${installtools.dist.dir}">
-	        <include name="opensso-installtools.jar" />
-	        <include name="opensso-installtools-launcher.jar" />
-	     </fileset>
-        </copy>
-        <copy todir="${j2eeagents.basedir}/jboss/v42/extlib" >
+        <copy todir="${j2eeagents.basedir}/extlib" >
             <fileset dir="${installtools.dist.dir}">
                 <include name="opensso-installtools.jar" />
                 <include name="opensso-installtools-launcher.jar" />

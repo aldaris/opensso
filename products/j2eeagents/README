@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.17 2008-12-02 23:32:11 leiming Exp $
+$Id: README,v 1.18 2008-12-12 23:24:00 huacui Exp $
 
 ------------------------------------------------------------------------------
 
@@ -98,12 +98,9 @@ Follow these steps to obtain the libraries:
 2.1.2 Set JAVA_HOME to the location of JDK 1.5.
 2.1.3 At the root of the workspace, at opensso/products/installtools/, run: ant
 2.1.4 Copy the libraries opensso-installtools.jar, and opensso-installtools-launcher.jar 
-from the dist directory(opensso/products/installtools/built/dist) of the OpenSSO Agents 
-Common installer workspace into extlib directory of the specific J2EE Container 
-directory in this workspace. For Sun Application Server 8.1/8.2/9.0/9.1, the directory is 
-opensso/products/j2eeagents/appserver/v9/extlib. 
-For BEA WebLogic 10 agent, the directory is opensso/products/j2eeagents/weblogic/v10/extlib.
-For IBM WebSphere 6.1 agent, the directory is opensso/products/j2eeagents/websphere/v61/extlib.
+from the dist directory (opensso/products/installtools/built/dist) of the 
+OpenSSO Agents Common installer workspace into extlib directory in this 
+workspace (opensso/products/j2eeagents/extlib). 
 
 %% 2.2 Obtaining J2EE container specific libraries
 The J2EE Container specific libraries can be obtained from the J2EE 
@@ -114,12 +111,12 @@ Follow these steps to obtain the libraries for Sun Application Server 8.1 or 8.2
 2.2.1.1 Install Sun Application Server 8.1 or 8.2 or 9.0 or 9.1
 2.2.1.2 If you are installing OpenSSO J2EE Agent on Sun Application Server 
 8.1 or 8.2, copy j2ee.jar from the lib directory of the server installation 
-into the opensso/products/j2eeagents/appserver/v9/extlib 
+into the opensso/products/j2eeagents/extlib/appserver/v9
 2.2.1.3 If you are installing OpenSSO J2EE Agent on Sun Application Server 
 9.0 or 9.1, copy javaee.jar from the lib directory of the server installation 
-into the opensso/products/j2eeagents/appserver/v9/extlib 
-2.2.1.4 Copy the appserv-ext.jar and appserv-rt.jar from the 
-lib directory of the server installation into the opensso/products/j2eeagents/appserver/v9/extlib 
+into the opensso/products/j2eeagents/extlib/appserver/v9
+2.2.1.4 Copy the appserv-ext.jar and appserv-rt.jar from the lib directory of the 
+server installation into the opensso/products/j2eeagents/extlib/appserver/v9
 directory of this workspace.
 
 2.2.2 Obtaining libraries for WebLogic 10.0 
@@ -127,20 +124,20 @@ Follow these steps to obtain the libraries for BEA WebLogic 10.0:
 2.2.2.1 Install BEA WebLogic 10.0 server 
 2.2.2.2 Copy weblogic.jar and api.jar both from the lib directory of the server 
 installation(for example from /bea/wlserver_10.0/server/lib) into 
-the opensso/products/j2eeagents/weblogic/v10/extlib directory of this workspace 
+the opensso/products/j2eeagents/extlib/weblogic/v10 directory of this workspace 
 2.2.2.3 Copy the com.bea.core.weblogic.security_2.0.0.0.jar from the 
 modules directory of the server installation(for example from /bea/modules) 
-into the opensso/products/j2eeagents/weblogic/v10/extlib directory of this workspace.
+into the opensso/products/j2eeagents/extlib/weblogic/v10 directory of this workspace.
 
 2.2.3 Obtaining libraries for WebSphere 6.1 
 Follow these steps to obtain the libraries for IBM WebSphere 6.1:
 2.2.3.1 Install IBM WebSphere 6.1 server 
 2.2.3.2 Copy j2ee.jar from the lib directory of the server installation
 (for example from /opt/IBM/WebSphere6.1/AppServer/lib) into 
-the opensso/products/j2eeagents/websphere/v61/extlib directory of this workspace 
+the opensso/products/j2eeagents/extlib/websphere/v61 directory of this workspace 
 2.2.3.3 Copy the com.ibm.ws.runtime_6.1.0.jar from the plugins directory of 
 the server installation(for example from /opt/IBM/WebSphere6.1/AppServer/plugins) 
-into the opensso/products/j2eeagents/websphere/v61/extlib directory of this workspace.
+into the opensso/products/j2eeagents/extlib/websphere/v61 directory of this workspace.
 
 
 %% 3. Building the workspace

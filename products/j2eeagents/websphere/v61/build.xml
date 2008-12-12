@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2008-11-21 22:21:46 leiming Exp $
+   $Id: build.xml,v 1.2 2008-12-12 23:24:02 huacui Exp $
 
 -->
 <project name="open-source-j2ee-agents-websphere-v61" default="build">
@@ -89,8 +89,6 @@ basedir="${j2eeagents.container.classes.dir}"/>
         <copy todir="${container.j2ee_agent.lib.dir}">
             <fileset dir="${j2eeagents.extlib.dir}">
                 <include name="openssoclientsdk.jar"/>
-            </fileset> 
-            <fileset dir="${j2eeagents.basedir}/${containername}/${containerversion}/extlib">
                 <include name="opensso-installtools-launcher.jar"/>
                 <include name="opensso-installtools.jar"/>
             </fileset>
