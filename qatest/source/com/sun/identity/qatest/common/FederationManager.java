@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.14 2008-07-30 22:17:17 inthanga Exp $
+ * $Id: FederationManager.java,v 1.15 2008-12-12 20:22:21 vimal_67 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -4948,18 +4948,18 @@ public class FederationManager extends TestCommon {
         }
 
         if (attrqueryprovider != null) {
-            HtmlTextArea taattrqueryprovider = (HtmlTextArea)form.getTextAreasByName("attrqueryprovider").get(0);
-            taattrqueryprovider.setText(attrqueryprovider);
+            HtmlTextInput taattrqueryprovider = (HtmlTextInput)form.getInputByName("attrqueryprovider");
+            taattrqueryprovider.setValueAttribute(attrqueryprovider);
         }
 
         if (attrauthority != null) {
-            HtmlTextArea taattrauthority = (HtmlTextArea)form.getTextAreasByName("attrauthority").get(0);
-            taattrauthority.setText(attrauthority);
+            HtmlTextInput taattrauthority = (HtmlTextInput)form.getInputByName("attrauthority");
+            taattrauthority.setValueAttribute(attrauthority);
         }
 
         if (authnauthority != null) {
-            HtmlTextArea taauthnauthority = (HtmlTextArea)form.getTextAreasByName("authnauthority").get(0);
-            taauthnauthority.setText(authnauthority);
+            HtmlTextInput taauthnauthority = (HtmlTextInput)form.getInputByName("authnauthority");
+            taauthnauthority.setValueAttribute(authnauthority);
         }
 
         if (xacmlpep != null) {
@@ -4973,8 +4973,8 @@ public class FederationManager extends TestCommon {
         }
 
         if (affiliation != null) {
-            HtmlTextArea taaffiliation = (HtmlTextArea)form.getTextAreasByName("affiliation").get(0);
-            taaffiliation.setText(affiliation);
+            HtmlTextInput taaffiliation = (HtmlTextInput)form.getInputByName("affiliation");
+            taaffiliation.setValueAttribute(affiliation);
         }
 
         if (affimembers != null) {
@@ -4993,23 +4993,23 @@ public class FederationManager extends TestCommon {
         }
 
         if (attrqscertalias != null) {
-            HtmlTextArea taattrqscertalias = (HtmlTextArea)form.getTextAreasByName("attrqscertalias").get(0);
-            taattrqscertalias.setText(attrqscertalias);
+            HtmlTextInput taattrqscertalias = (HtmlTextInput)form.getInputByName("attrqscertalias");
+            taattrqscertalias.setValueAttribute(attrqscertalias);
         }
 
         if (attrascertalias != null) {
-            HtmlTextArea taattrascertalias = (HtmlTextArea)form.getTextAreasByName("attrascertalias").get(0);
-            taattrascertalias.setText(attrascertalias);
+            HtmlTextInput taattrascertalias = (HtmlTextInput)form.getInputByName("attrascertalias");
+            taattrascertalias.setValueAttribute(attrascertalias);
         }
 
         if (authnascertalias != null) {
-            HtmlTextArea taauthnascertalias = (HtmlTextArea)form.getTextAreasByName("authnascertalias").get(0);
-            taauthnascertalias.setText(authnascertalias);
+            HtmlTextInput taauthnascertalias = (HtmlTextInput)form.getInputByName("authnascertalias");
+            taauthnascertalias.setValueAttribute(authnascertalias);
         }
 
         if (affiscertalias != null) {
-            HtmlTextArea taaffiscertalias = (HtmlTextArea)form.getTextAreasByName("affiscertalias").get(0);
-            taaffiscertalias.setText(affiscertalias);
+            HtmlTextInput taaffiscertalias = (HtmlTextInput)form.getInputByName("affiscertalias");
+            taaffiscertalias.setValueAttribute(affiscertalias);
         }
 
         if (xacmlpdpscertalias != null) {
@@ -5033,23 +5033,23 @@ public class FederationManager extends TestCommon {
         }
 
         if (attrqecertalias != null) {
-            HtmlTextArea taattrqecertalias = (HtmlTextArea)form.getTextAreasByName("attrqecertalias").get(0);
-            taattrqecertalias.setText(attrqecertalias);
+            HtmlTextInput taattrqecertalias = (HtmlTextInput)form.getInputByName("attrqecertalias");
+            taattrqecertalias.setValueAttribute(attrqecertalias);
         }
 
         if (attraecertalias != null) {
-            HtmlTextArea taattraecertalias = (HtmlTextArea)form.getTextAreasByName("attraecertalias").get(0);
-            taattraecertalias.setText(attraecertalias);
+            HtmlTextInput taattraecertalias = (HtmlTextInput)form.getInputByName("attraecertalias");
+            taattraecertalias.setValueAttribute(attraecertalias);
         }
 
         if (authnaecertalias != null) {
-            HtmlTextArea taauthnaecertalias = (HtmlTextArea)form.getTextAreasByName("authnaecertalias").get(0);
-            taauthnaecertalias.setText(authnaecertalias);
+            HtmlTextInput taauthnaecertalias = (HtmlTextInput)form.getInputByName("authnaecertalias");
+            taauthnaecertalias.setValueAttribute(authnaecertalias);
         }
 
         if (affiecertalias != null) {
-            HtmlTextArea taaffiecertalias = (HtmlTextArea)form.getTextAreasByName("affiecertalias").get(0);
-            taaffiecertalias.setText(affiecertalias);
+            HtmlTextInput taaffiecertalias = (HtmlTextInput)form.getInputByName("affiecertalias");
+            taaffiecertalias.setValueAttribute(affiecertalias);
         }
 
         if (xacmlpdpecertalias != null) {
