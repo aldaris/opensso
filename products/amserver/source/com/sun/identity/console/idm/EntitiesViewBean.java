@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitiesViewBean.java,v 1.7 2008-12-05 20:00:50 farble1670 Exp $
+ * $Id: EntitiesViewBean.java,v 1.8 2008-12-12 20:05:42 farble1670 Exp $
  *
  */
 
@@ -403,10 +403,6 @@ public class EntitiesViewBean
             setPageSessionAttribute(EntityOpViewBeanBase.ENTITY_NAME,
                 amid.getName());
             setPageSessionAttribute(EntityOpViewBeanBase.ENTITY_TYPE, idType);
-            // store the current selected tab in the page session
-            setPageSessionAttribute(AMAdminConstants.PREVIOUS_TAB_ID, 
-                (String)getPageSessionAttribute(PG_SESSION_TAB_ID));
-
             unlockPageTrail();
             passPgSessionMap(vb);
             vb.forwardTo(getRequestContext());
