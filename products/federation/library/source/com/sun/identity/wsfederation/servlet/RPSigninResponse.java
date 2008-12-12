@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RPSigninResponse.java,v 1.5 2008-06-25 05:48:09 qcheng Exp $
+ * $Id: RPSigninResponse.java,v 1.6 2008-12-12 01:51:41 superpat7 Exp $
  *
  */
 
@@ -229,16 +229,14 @@ public class RPSigninResponse extends WSFederationAction {
                 SAML2Constants.DEFAULT_RELAY_STATE);
         }
         
-        String[] data = {wctx, LogUtil.isErrorLoggable(Level.FINER)? wresult : 
-                rstr.getRequestedSecurityToken().getTokenId(), 
-                realm,
-                userName,
-                authLevel,
-                target};
-        LogUtil.access(Level.INFO,
-                LogUtil.SSO_SUCCESSFUL,
-                data,
-                session);
+        String[] data = {wctx, 
+            LogUtil.isErrorLoggable(Level.FINER)? wresult :
+                rstr.getRequestedSecurityToken().getTokenId(),
+            realm,
+            userName,
+            authLevel,
+            target};
+        LogUtil.access(Level.INFO, LogUtil.SSO_SUCCESSFUL, data, session);
 
         if ( target == null )
         {

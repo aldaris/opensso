@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: WSFederationLogMessageIDs.xml,v 1.6 2008-08-28 20:49:23 superpat7 Exp $
+   $Id: WSFederationLogMessageIDs.xml,v 1.7 2008-12-12 01:51:41 superpat7 Exp $
 
 -->
 
@@ -230,6 +230,7 @@
         loglevel="LL_INFO"
         description="Single sign-on completed successfully.">
         <datainfo>
+            <item>wctx</item>
             <item>Assertion or assertion ID</item>
             <item>Realm or organization name</item>
             <item>User ID</item>
