@@ -24,7 +24,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amAuthLDAP.xml,v 1.6 2008-08-22 22:50:01 veiming Exp $
+    $Id: amAuthLDAP.xml,v 1.7 2008-12-13 01:40:08 veiming Exp $
 
 -->
 
@@ -118,7 +118,7 @@
                         <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
                     </BooleanValues>
                     <DefaultValues>
-                        <Value>false</Value>
+                        <Value>@UM_SSL@</Value>
                     </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="iplanet-am-auth-ldap-return-user-dn"
@@ -240,7 +240,7 @@
                             <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
                         </BooleanValues>
                         <DefaultValues>
-                            <Value>false</Value>
+                            <Value>@UM_SSL@</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema name="iplanet-am-auth-ldap-return-user-dn"
