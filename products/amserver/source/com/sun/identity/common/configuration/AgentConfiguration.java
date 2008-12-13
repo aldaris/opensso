@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.44 2008-11-01 03:07:15 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.45 2008-12-13 07:16:09 veiming Exp $
  *
  */
 
@@ -1147,6 +1147,23 @@ public class AgentConfiguration {
         return results;
     }
 
+    /**
+     * Returns resource bundle name of agent service.
+     * 
+     * @returnresource bundle name of agent service.
+     * @throws SMSException if Service Schema cannot be located.
+     * @throws SSOException if admin single sign on token has expired.
+     */
+    public static String getResourceBundleName()
+        throws SMSException, SSOException {
+        ServiceSchema ss = null;
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        ServiceSchemaManager ssm = new ServiceSchemaManager(
+            IdConstants.AGENT_SERVICE, adminToken);
+        return (ssm != null) ? ssm.getI18NFileName() : "";
+    }
+    
     private static ServiceSchema getOrganizationSchema()
         throws SMSException, SSOException {
         ServiceSchema ss = null;

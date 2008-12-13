@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfiguredSTSConfig.java,v 1.3 2008-06-25 05:50:04 qcheng Exp $
+ * $Id: ConfiguredSTSConfig.java,v 1.4 2008-12-13 07:16:09 veiming Exp $
  *
  */
 
@@ -77,7 +77,7 @@ public class ConfiguredSTSConfig extends ChoiceValues {
             }
         }
 
-        answer.put("[Empty]", "[Empty]");
+        answer.put("[Empty]", "label.Empty");
 
         //return the choice values map
         return (answer);

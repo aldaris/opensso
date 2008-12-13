@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsModel.java,v 1.11 2008-11-12 05:30:47 veiming Exp $
+ * $Id: AgentsModel.java,v 1.12 2008-12-13 07:16:09 veiming Exp $
  *
  */
 
@@ -270,13 +270,13 @@ public interface AgentsModel
     Map getSecurityMechanisms(String agentType);
 
     /**
-     * Returns set of secure token service configurations.
+     * Returns map of secure token service configurations.
      *
-     * @return set of secure token service configurations.
+     * @return map of secure token service configurations.
      * @throws AMConsoleException if sercure token service configurations cannot 
      *         be returned.
      */
-    Set getSTSConfigurations();
+    Map getSTSConfigurations();
     
     /**
      * Returns set of discovery configurations.
@@ -284,7 +284,7 @@ public interface AgentsModel
      * @return set of discovery configurations.
      * @throws AMConsoleException if discovery configurations cannot be returned.
      */
-    Set getDiscoveryConfigurations();
+    Map getDiscoveryConfigurations();
     
     /**
      * Returns display name of an agent/group.

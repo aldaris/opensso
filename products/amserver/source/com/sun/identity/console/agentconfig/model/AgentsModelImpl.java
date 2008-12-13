@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsModelImpl.java,v 1.17 2008-11-12 05:30:47 veiming Exp $
+ * $Id: AgentsModelImpl.java,v 1.18 2008-12-13 07:16:09 veiming Exp $
  *
  */
 
@@ -45,6 +45,7 @@ import com.sun.identity.idm.IdSearchResults;
 import com.sun.identity.idm.IdSearchControl;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
+import com.sun.identity.shared.locale.Locale;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SchemaType;
@@ -53,14 +54,14 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 
 /* - LOG COMPLETE - */
@@ -72,6 +73,21 @@ public class AgentsModelImpl
     extends AMModelBase
     implements AgentsModel
 {
+    private static ResourceBundle rbAgent;
+    
+    static {
+        try {
+            rbAgent = ResourceBundle.getBundle(
+                AgentConfiguration.getResourceBundleName());
+        } catch (SMSException e) {
+            debug.error("AgentsModelImpl.<init>", e);
+            rbAgent = null;
+        } catch (SSOException e) {
+            debug.error("AgentsModelImpl.<init>", e);
+            rbAgent = null;
+        }
+    }
+    
     /**
      * Creates an instance of this model implementation class.
      *
@@ -861,46 +877,68 @@ public class AgentsModelImpl
     }
     
     /**
-     * Returns set of secure token service configurations.
+     * Returns map of secure token service configurations.
      *
-     * @return set of secure token service configurations.
+     * @return map of secure token service configurations.
      * @throws AMConsoleException if secure token service configurations cannot
      *         be returned.
      */
-    public Set getSTSConfigurations() {
+    public Map getSTSConfigurations() {
         try {
             Map map = AgentConfiguration.getChoiceValues(
                 "STS", "WSCAgent");
             if ((map != null) && !map.isEmpty()) {
-                return map.keySet();
+                if (rbAgent != null) {
+                    Map localizedMap = new HashMap();
+                
+                    for (Iterator i = map.keySet().iterator(); i.hasNext(); ) {
+                        String k = (String)i.next();
+                        localizedMap.put((String)map.get(k),
+                            Locale.getString(rbAgent, k));
+                    }
+                    return localizedMap;
+                } else {
+                    return map;
+                }
             }
         } catch (SSOException e) {
             debug.error("AgentModelImpl.getSTSConfigurations", e);
         } catch (SMSException e) {
             debug.error("AgentModelImpl.getSTSConfigurations", e);
         }
-        return Collections.EMPTY_SET;
+        return Collections.EMPTY_MAP;
     }
     
     /**
-     * Returns set of discovery configurations.
+     * Returns map of discovery configurations.
      *
-     * @return set of discovery configurations.
+     * @return map of discovery configurations.
      * @throws AMConsoleException if discovery configurations cannot be returned.
      */
-    public Set getDiscoveryConfigurations() {
+    public Map getDiscoveryConfigurations() {
         try {
             Map map = AgentConfiguration.getChoiceValues(
                 "Discovery", "WSCAgent");
             if ((map != null) && !map.isEmpty()) {
-                return map.keySet();
+                if (rbAgent != null) {
+                    Map localizedMap = new HashMap();
+                
+                    for (Iterator i = map.keySet().iterator(); i.hasNext(); ) {
+                        String k = (String)i.next();
+                        localizedMap.put((String)map.get(k),
+                            Locale.getString(rbAgent, k));
+                    }
+                    return localizedMap;
+                } else {
+                    return map;
+                }
             }
         } catch (SSOException e) {
             debug.error("AgentModelImpl.getDiscoveryConfigurations", e);
         } catch (SMSException e) {
             debug.error("AgentModelImpl.getDiscoveryConfigurations", e);
         }
-        return Collections.EMPTY_SET;
+        return Collections.EMPTY_MAP;
     }    
     
     /**
