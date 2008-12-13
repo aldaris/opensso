@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DiscoveryClient.java,v 1.3 2008-06-25 05:47:10 qcheng Exp $
+ * $Id: DiscoveryClient.java,v 1.4 2008-12-13 01:11:23 exu Exp $
  *
  */
 
@@ -43,6 +43,7 @@ import com.sun.identity.liberty.ws.soapbinding.SOAPBindingException;
 import com.sun.identity.liberty.ws.soapbinding.Utils;
 import com.sun.identity.liberty.ws.disco.common.*;
 import com.sun.identity.liberty.ws.security.*;
+import com.sun.identity.shared.configuration.SystemPropertiesManager;
 
 /**
  * The class <code>DiscoveryClient</code> provides methods to send  
@@ -220,6 +221,10 @@ public class DiscoveryClient {
                     try {
                         SecurityTokenManagerClient stm =
                             new SecurityTokenManagerClient(session);
+                        if (certAlias == null) {
+                            certAlias = SystemPropertiesManager.get(
+                                "com.sun.identity.liberty.ws.wsc.certalias");
+                        }
                         stm.setCertAlias(certAlias);
                         token = stm.getX509CertificateToken();
                         token.setWSFVersion(wsfVersion);

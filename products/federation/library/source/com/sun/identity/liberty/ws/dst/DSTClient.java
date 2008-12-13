@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DSTClient.java,v 1.3 2008-06-25 05:47:12 qcheng Exp $
+ * $Id: DSTClient.java,v 1.4 2008-12-13 01:11:45 exu Exp $
  *
  */
 
@@ -51,6 +51,7 @@ import com.sun.identity.liberty.ws.interaction.InteractionManager;
 import com.sun.identity.liberty.ws.soapbinding.ServiceInstanceUpdateHeader;
 import com.sun.identity.liberty.ws.soapbinding.SOAPBindingConstants;
 import com.sun.identity.liberty.ws.soapbinding.Utils;
+import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -451,6 +452,11 @@ public class DSTClient {
         try {
             SecurityTokenManagerClient manager =
                 new SecurityTokenManagerClient(credential);
+            if (certAlias == null) {
+                certAlias = SystemPropertiesManager.get(
+                    "com.sun.identity.liberty.ws.wsc.certalias");
+            }
+            manager.setCertAlias(certAlias);
             token =  manager.getX509CertificateToken();
             token.setWSFVersion(wsfVersion);
         } catch (Exception e) {
