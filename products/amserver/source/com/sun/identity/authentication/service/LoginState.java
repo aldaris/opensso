@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.39 2008-10-17 20:12:51 dillidorai Exp $
+ * $Id: LoginState.java,v 1.40 2008-12-13 02:29:32 manish_rustagi Exp $
  *
  */
 
@@ -4971,6 +4971,13 @@ public class LoginState {
     void executePostProcessSPI(AMPostAuthProcessInterface postProcessInstance, 
         int type) {
         
+        if (requestMap.isEmpty() && (servletRequest != null)) {
+            Map map = servletRequest.getParameterMap();
+            for (Iterator i = map.entrySet().iterator(); i.hasNext();){
+                Map.Entry e = (Map.Entry)i.next();
+                requestMap.put(e.getKey(),((Object[])e.getValue())[0]);
+            }
+        }
         /* execute the post process spi */
         try{
             switch (type) { 
