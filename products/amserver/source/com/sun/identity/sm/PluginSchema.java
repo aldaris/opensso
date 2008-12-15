@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PluginSchema.java,v 1.6 2008-07-11 01:46:20 arviranga Exp $
+ * $Id: PluginSchema.java,v 1.7 2008-12-15 21:30:43 goodearth Exp $
  *
  */
 
@@ -164,6 +164,13 @@ public class PluginSchema {
 
         Document pluginDoc = getDocumentCopy();
         Node pNode = XMLUtils.getRootNode(pluginDoc, SMSUtils.PLUGIN_SCHEMA);
+        if (pNode == null) {
+            SMSEntry.debug.error("PluginSchema:setPropertiesViewBeanURL "+
+                "Invalid plugin interface name. (or/and) \n"+
+                "Invalid plugin schema name. " + pNode); 
+            throw (new SMSException(IUMSConstants.UMS_BUNDLE_NAME,
+                "sms-invalid-plugin-interfaceschema-name", null));
+        }
         ((Element) pNode).setAttribute(SMSUtils.PROPERTIES_VIEW_BEAN_URL, url);
         pluginDoc.importNode(pNode, true);
 
@@ -243,7 +250,7 @@ public class PluginSchema {
     protected void validatePluginSchema() throws SMSException {
         if (!psi.isValid()) {
             throw (new SMSException("plugin-schema: " + pluginName +
-                " No loger valid. Cache has been cleared. Recreate from" +
+                " No longer valid. Cache has been cleared. Recreate from" +
                 "ServiceSchemaManager"));
         }
     }
