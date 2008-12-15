@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrefixResourceName.java,v 1.3 2008-06-25 05:43:52 qcheng Exp $
+ * $Id: PrefixResourceName.java,v 1.4 2008-12-15 20:53:41 dillidorai Exp $
  *
  */
 
@@ -56,24 +56,24 @@ public class PrefixResourceName implements ResourceName {
      * String indicating default wild card pattern.
      */
     protected String wildcard = "*";
+    protected int wildcardLength = 1;
     /**
      * String indicating default one level wild card pattern.
      */
     protected String oneLevelWildcard = "-*-";
+    protected int oneLevelWildcardLength = 3;
     /**
      * boolean indicating if the wild card pattern is embedded
      * in the one level wild card pattern eg. wildcard is "*"
      * while one level wild card pattern is "-*-".
      */
-    protected boolean wildcardEmbedded = false;
+    protected boolean wildcardEmbedded = true;
     /**
      * boolean indicating if the one level wild card pattern is embedded
      * in the wild card pattern eg. one level wildcard is "*"
      * while wild card pattern is "-*-".
      */
     protected boolean oneLevelWildcardEmbedded = false;
-    protected int oneLevelWildcardLength;
-    protected int wildcardLength;
     
     private Debug debug = Debug.getInstance(PolicyManager.POLICY_DEBUG_NAME);
     private static String PROTO_DELIMITER = "://";
@@ -138,9 +138,13 @@ public class PrefixResourceName implements ResourceName {
         wildcardLength = wildcard.length();
         if (oneLevelWildcard.indexOf(wildcard) != -1) {
             wildcardEmbedded = true;
+        } else {
+            wildcardEmbedded = false;
         }
         if (wildcard.indexOf(oneLevelWildcard) != -1) {
             oneLevelWildcardEmbedded = true;
+        } else {
+            oneLevelWildcardEmbedded = false;
         }
         if (debug.messageEnabled()) {
             debug.message("wildcardEmbedded,oneLevelWildcardEmbedded"+
