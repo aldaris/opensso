@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyFSSAMLProfile.xml,v 1.4 2008-06-25 05:51:04 qcheng Exp $
+   $Id: propertyFSSAMLProfile.xml,v 1.5 2008-12-15 23:32:35 farble1670 Exp $
 
 -->
 
@@ -192,6 +192,25 @@
                 </property>
             </ccgroup>
         </property>
-    </section> 
+    </section>
+
+    <section name="AttributeMap" defaultValue="saml.profile.attribute.map.header">
+        <property>
+            <label name="lblAttributeListForAttributeMap"
+                   defaultValue="saml.profile.attribute.map.label"
+                   labelFor="lblAttributeListForAttributeMap" />
+            <fieldhelp name="helpAttributeListForAttributeMap" defaultValue="samlv2idp.attribute.help.nameidmap" />
+            <ccgroup>
+                <property>
+                    <cc name="iplanet-am-saml-name-id-format-attr-map"
+                        tagclass="com.sun.web.ui.taglib.editablelist.CCEditableListTag" >
+                        <attribute name="name" value="list" />
+                        <attribute name="listboxLabel" value="label.current.value" />
+                        <attribute name="textboxLabel" value="label.new.value" />
+                    </cc>
+                </property>
+            </ccgroup>
+        </property>
+    </section>
     
 </propertysheet>
