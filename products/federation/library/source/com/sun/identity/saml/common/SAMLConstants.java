@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLConstants.java,v 1.14 2008-12-10 20:14:19 hengming Exp $
+ * $Id: SAMLConstants.java,v 1.15 2008-12-15 23:02:19 hengming Exp $
  *
  */
 
@@ -545,6 +545,12 @@ public final class SAMLConstants
      */
     public static final String NAME_ID_FORMAT_MAP =
             "iplanet-am-saml-name-id-format-attr-map";
+
+    /**
+     * SAML service attribute that specifies the attribute map.
+     */
+    public static final String ATTRIBUTE_MAP =
+            "iplanet-am-saml-attr-map";
 
     /**
      * Default SAML artifact name.

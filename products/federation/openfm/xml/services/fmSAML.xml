@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: fmSAML.xml,v 1.5 2008-12-10 20:12:19 hengming Exp $
+   $Id: fmSAML.xml,v 1.6 2008-12-15 23:03:29 hengming Exp $
                                                                                 
 -->
 
@@ -189,6 +189,11 @@
                     type="list"
                     syntax="string"
                     i18nKey="a126">
+                </AttributeSchema>
+                <AttributeSchema name="iplanet-am-saml-attr-map"
+                    type="list"
+                    syntax="string"
+                    i18nKey="a127">
                 </AttributeSchema>
             </Global>
 

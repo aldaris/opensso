@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLServiceManager.java,v 1.9 2008-12-10 20:14:19 hengming Exp $
+ * $Id: SAMLServiceManager.java,v 1.10 2008-12-15 23:02:19 hengming Exp $
  *
  */
 
@@ -683,6 +683,29 @@ public class SAMLServiceManager implements ConfigurationListener {
                     }
                     newMap.put(SAMLConstants.NAME_ID_FORMAT_MAP,
                         nameIDFormatAttrMap);
+                }
+
+                values = (Set)attrs.get(SAMLConstants.ATTRIBUTE_MAP);
+                Map attrMap = null;
+                if ((values != null) && (!values.isEmpty())) {
+                    for(Iterator iter = values.iterator(); iter.hasNext(); ) {
+                        String str = (String)iter.next();
+                        int index = str.indexOf("=");
+                        if (index != -1) {
+                            String samlAttr =
+                                str.substring(0, index).trim();
+                            String localAttr = str.substring(index + 1).trim();
+                            if ((samlAttr.length() != 0) && 
+                                (localAttr.length() != 0)) {
+
+                                if (attrMap == null) {
+                                    attrMap = new HashMap();
+                                }
+                                attrMap.put(samlAttr, localAttr);
+                            }
+                        }
+                    }
+                    newMap.put(SAMLConstants.ATTRIBUTE_MAP, attrMap);
                 }
 
                 // get the targets which accept POST
