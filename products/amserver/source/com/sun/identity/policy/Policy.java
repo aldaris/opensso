@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Policy.java,v 1.4 2008-06-25 05:43:44 qcheng Exp $
+ * $Id: Policy.java,v 1.5 2008-12-15 20:52:19 dillidorai Exp $
  *
  */
 
@@ -108,9 +108,6 @@ public class Policy implements Cloneable {
     private final static int MATCHED_REFERRAL_RULES_CACHE_SIZE = 100;
     private Cache matchRulesResultsCache 
             = new Cache(MATCHED_RULE_RESULTS_CACHE_SIZE);
-    private Cache matchReferralRulesCache 
-            = new Cache(MATCHED_REFERRAL_RULES_CACHE_SIZE);
-
     private String subjectRealm;
 
     /**
@@ -293,7 +290,7 @@ public class Policy implements Cloneable {
             while (items.hasNext()) {
                 Node ruleNode = (Node) items.next();
                 Rule rule = new Rule(ruleNode);
-                rules.put(rule.getName(), rule);
+                addRule(rule);
             }
         }
 
