@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-zip.xml,v 1.31 2008-10-10 18:44:20 kevinserwin Exp $
+   $Id: build-zip.xml,v 1.32 2008-12-15 21:40:32 bigfatrat Exp $
 
 -->
 
@@ -157,11 +157,6 @@
         <copy file="${amserver.base.dir}/xml/services/amAuth.xml"
             todir="${zip.temp.dir}/deployable-war/noconsole/WEB-INF/classes" />
         <replace file="${zip.temp.dir}/deployable-war/noconsole/WEB-INF/classes/amAuth.xml"
-           token="&lt;Value&gt;/@SERVER_URI@/console&lt;/Value&gt;" 
-           value="&lt;Value/&gt;"/>
-        <copy file="${amserver.base.dir}/xml/services/amAuth-NT.xml"
-            todir="${zip.temp.dir}/deployable-war/noconsole/WEB-INF/classes" />
-        <replace file="${zip.temp.dir}/deployable-war/noconsole/WEB-INF/classes/amAuth-NT.xml"
            token="&lt;Value&gt;/@SERVER_URI@/console&lt;/Value&gt;" 
            value="&lt;Value/&gt;"/>
         <copy todir="${zip.temp.dir}/deployable-war/noconsole/click">
