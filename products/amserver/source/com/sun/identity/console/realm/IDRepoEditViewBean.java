@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDRepoEditViewBean.java,v 1.2 2008-06-25 05:43:11 qcheng Exp $
+ * $Id: IDRepoEditViewBean.java,v 1.3 2008-12-15 17:25:30 goodearth Exp $
  *
  */
 
@@ -36,13 +36,12 @@ import com.sun.identity.console.base.AMPropertySheet;
 import com.sun.identity.console.base.model.AMAdminConstants;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.realm.model.IDRepoModel;
+import com.sun.identity.idm.IdConstants;
 import com.sun.web.ui.model.CCPageTitleModel;
 import com.sun.web.ui.view.alert.CCAlert;
 import com.sun.web.ui.view.pagetitle.CCPageTitle;
 import java.text.MessageFormat;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 public class IDRepoEditViewBean
     extends IDRepoOpViewBeanBase
@@ -144,6 +143,7 @@ public class IDRepoEditViewBean
                 Map values = prop.getAttributeValues(defaultValues.keySet());
                 String realmName = (String)getPageSessionAttribute(
                     AMAdminConstants.CURRENT_REALM);
+                values.remove(IdConstants.SERVICE_ATTRS);
                 model.editIDRepo(realmName, idRepoName, values);
                 setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
                     "message.updated");
