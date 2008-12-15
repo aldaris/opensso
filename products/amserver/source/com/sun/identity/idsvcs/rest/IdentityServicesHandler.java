@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdentityServicesHandler.java,v 1.6 2008-08-07 17:22:05 arviranga Exp $
+ * $Id: IdentityServicesHandler.java,v 1.7 2008-12-15 19:50:21 arviranga Exp $
  *
  */
 
@@ -562,15 +562,16 @@ public class IdentityServicesHandler extends HttpServlet {
             throws ServletException, IOException {
             
             // find the security method from the path..
+            response.setCharacterEncoding("UTF-8");
             Writer wrt = response.getWriter();
             StringWriter sw = null;
             String path = request.getPathInfo();
             MarshallerFactory mar = getMarshaller(path);
             // Set the respone content type
             if (mar.getProtocol().equalsIgnoreCase("XML")) {
-                response.setHeader("content-type", "text/xml");
+                response.setContentType("text/xml");
             } else {
-                response.setHeader("content-type", "text/plain");
+                response.setContentType("text/plain");
             }
             path = path.substring(path.lastIndexOf('/') + 1).toUpperCase();
             SecurityMethod method = null;
@@ -616,7 +617,7 @@ public class IdentityServicesHandler extends HttpServlet {
                 if (method.type != Void.class && value != null) {
                     mar.newInstance(method.type).marshall(wrt, value);
                 } else {
-                    response.setHeader("content-type", "text/plain");
+                    response.setContentType("text/plain");
                     if (value == null) {
                         wrt.write("NULL");
                     }
