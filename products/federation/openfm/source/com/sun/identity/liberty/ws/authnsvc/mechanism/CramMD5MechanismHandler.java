@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CramMD5MechanismHandler.java,v 1.7 2008-08-06 17:29:24 exu Exp $
+ * $Id: CramMD5MechanismHandler.java,v 1.8 2008-12-16 20:54:03 hengming Exp $
  *
  */
 
@@ -116,13 +116,8 @@ public class CramMD5MechanismHandler implements MechanismHandler {
     
     private static Map challengeMap = new PeriodicCleanUpMap(
         (long) challenge_cleanup_interval, (long) stale_time_limit);
-    private static SSOToken adminToken = null;
 
     static {
-
-        adminToken = (SSOToken)AccessController.doPrivileged(
-		AdminTokenAction.getInstance());
-
         String tmpstr =
             SystemPropertiesManager.get(CHALLENGE_CLEANUP_INTERVAL_PROP);
         if (tmpstr != null) {
@@ -408,6 +403,9 @@ public class CramMD5MechanismHandler implements MechanismHandler {
     private static String getUserPassword(String userName) {
 
         try {
+
+            SSOToken adminToken = (SSOToken)AccessController.doPrivileged(
+		AdminTokenAction.getInstance());
 	    AMIdentityRepository idRepo = new AMIdentityRepository(adminToken,
                 SMSEntry.getRootSuffix());
 	    IdSearchControl searchControl = new IdSearchControl();
@@ -454,11 +452,6 @@ public class CramMD5MechanismHandler implements MechanismHandler {
             String password = (String)passwords.iterator().next();
             if (password.startsWith("{CLEAR}")) {
                 password = password.substring(7);
-            }
-            if (debug.messageEnabled()) {
-                debug.message(
-                    "CramMD5MechanismHandler.getUserPassword: " +
-                    "password = " + password);
             }
             return password;
         } catch (Exception ex) {
