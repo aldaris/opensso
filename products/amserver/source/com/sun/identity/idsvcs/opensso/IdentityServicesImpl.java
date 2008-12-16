@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdentityServicesImpl.java,v 1.14 2008-11-17 21:10:48 veiming Exp $
+ * $Id: IdentityServicesImpl.java,v 1.15 2008-12-16 00:48:25 veiming Exp $
  *
  */
 
@@ -700,11 +700,13 @@ public class IdentityServicesImpl
                 if (objectIdType.equals(IdType.USER)) {
                     String[] roleNames = identity.getRoles();
 
-                    if (roleNames != null) {
+                    if ((roleNames != null) && (roleNames.length > 0)) {
                         if (!isOperationSupported(repo, IdType.ROLE,
                             IdOperation.EDIT)) {
-                            // TODO: Add message to exception
-                            throw new NeedMoreCredentials("");
+                            // TODO: localize message
+                            throw new UnsupportedOperationException(
+                                "Unsupported: " + "Type: " + IdType.ROLE + 
+                                " Operation: EDIT");
                         }
 
                         for (int i = 0; i < roleNames.length; i++) {
@@ -720,11 +722,13 @@ public class IdentityServicesImpl
 
                     String[] groupNames = identity.getGroups();
 
-                    if (groupNames != null) {
+                    if ((groupNames != null) && (groupNames.length > 0)) {
                         if (!isOperationSupported(repo, IdType.GROUP,
                             IdOperation.EDIT)) {
-                            // TODO: Add message to exception
-                            throw new NeedMoreCredentials("");
+                            // TODO: localize message
+                            throw new UnsupportedOperationException(
+                                "Unsupported: " + "Type: " + IdType.GROUP + 
+                                " Operation: EDIT");
                         }
 
                         for (int i = 0; i < groupNames.length; i++) {
