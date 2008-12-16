@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.16 2008-08-30 05:57:32 manish_rustagi Exp $
+ * $Id: LoginViewBean.java,v 1.17 2008-12-16 00:38:45 manish_rustagi Exp $
  *
  */
 
@@ -649,6 +649,7 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                    !AuthClientUtils.newSessionArgExists(reqDataHash)) {
                 loginDebug.message("Session is Valid / already authenticated");
                 bValidSession = true;
+                LoginSuccess = true;
 
                 /*
                  * redirect to 'goto' parameter or SPI hook or default
