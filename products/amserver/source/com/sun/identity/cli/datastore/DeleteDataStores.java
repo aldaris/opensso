@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteDataStores.java,v 1.2 2008-06-25 05:42:12 qcheng Exp $
+ * $Id: DeleteDataStores.java,v 1.3 2008-12-16 06:47:05 veiming Exp $
  *
  */
 
@@ -92,12 +92,12 @@ public class DeleteDataStores extends AuthenticatedCommand {
                 "SUCCEEDED_DELETE_DATASTORES", params);
         } catch (SMSException e) {
             debugError("DeleteDataStores.handleRequest", e);
-            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_DELETE_DATASTORES", params);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (SSOException e) {
             debugError("DeleteDataStores.handleRequest", e);
-            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_DELETE_DATASTORES", params);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }

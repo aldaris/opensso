@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddAuthConfigurationEntry.java,v 1.2 2008-06-25 05:42:11 qcheng Exp $
+ * $Id: AddAuthConfigurationEntry.java,v 1.3 2008-12-16 06:46:59 veiming Exp $
  *
  */
 
@@ -132,19 +132,19 @@ public class AddAuthConfigurationEntry extends AuthenticatedCommand {
         } catch (AMConfigurationException e) {
             debugError("GetAuthConfigurationEntries.handleRequest", e);
             String[] p = {realm, configName, moduleName, e.getMessage()};
-            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_ADD_AUTH_CONFIG_ENTRY", p);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (SMSException e) {
             debugError("GetAuthConfigurationEntries.handleRequest", e);
             String[] p = {realm, configName, moduleName, e.getMessage()};
-            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_ADD_AUTH_CONFIG_ENTRY", p);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (SSOException e) {
             debugError("GetAuthConfigurationEntries.handleRequest", e);
             String[] p = {realm, configName, moduleName, e.getMessage()};
-            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_ADD_AUTH_CONFIG_ENTRY", p);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }

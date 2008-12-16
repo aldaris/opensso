@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListAuthConfigurations.java,v 1.2 2008-06-25 05:42:12 qcheng Exp $
+ * $Id: ListAuthConfigurations.java,v 1.3 2008-12-16 06:47:01 veiming Exp $
  *
  */
 
@@ -82,12 +82,12 @@ public class ListAuthConfigurations extends AuthenticatedCommand {
                 "SUCCEEDED_LIST_AUTH_CONFIGURATIONS", params);
         } catch (SMSException e) {
             debugError("ListAuthConfigurations.handleRequest", e);
-            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_LIST_AUTH_CONFIGURATIONS", params);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (SSOException e) {
             debugError("ListAuthConfigurations.handleRequest", e);
-            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_LIST_AUTH_CONFIGURATIONS", params);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }

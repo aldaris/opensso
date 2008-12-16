@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateAuthInstance.java,v 1.2 2008-06-25 05:42:12 qcheng Exp $
+ * $Id: CreateAuthInstance.java,v 1.3 2008-12-16 06:47:00 veiming Exp $
  *
  */
 
@@ -72,7 +72,7 @@ public class CreateAuthInstance extends AuthenticatedCommand {
                 "SUCCEEDED_CREATE_AUTH_INSTANCE", params);
         } catch (AMConfigurationException e) {
             debugError("CreateAuthInstance.handleRequest", e);
-            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_CREATE_AUTH_INSTANCE", params);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }

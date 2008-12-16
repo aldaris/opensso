@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ShowDataStore.java,v 1.2 2008-06-25 05:42:12 qcheng Exp $
+ * $Id: ShowDataStore.java,v 1.3 2008-12-16 06:47:06 veiming Exp $
  *
  */
 
@@ -100,13 +100,13 @@ public class ShowDataStore extends AuthenticatedCommand {
         } catch (SMSException e) {
             String[] p = {realm, name, e.getMessage()};
             debugError("ShowDataStore.handleRequest", e);
-            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_SHOW_DATASTORE", p);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (SSOException e) {
             String[] p = {realm, name, e.getMessage()};
             debugError("ShowDataStore.handleRequest", e);
-            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_SHOW_DATASTORE", p);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }

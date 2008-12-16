@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpdateAuthConfigurationEntries.java,v 1.3 2008-06-25 05:42:12 qcheng Exp $
+ * $Id: UpdateAuthConfigurationEntries.java,v 1.4 2008-12-16 06:47:01 veiming Exp $
  *
  */
 
@@ -107,17 +107,17 @@ public class UpdateAuthConfigurationEntries extends AuthenticatedCommand {
                     "SUCCEEDED_SET_AUTH_CONFIG_ENTRIES", params);
         } catch (AMConfigurationException e) {
             debugError("GetAuthConfigurationEntries.handleRequest", e);
-            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_SET_AUTH_CONFIG_ENTRIES", params);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (SMSException e) {
             debugError("GetAuthConfigurationEntries.handleRequest", e);
-            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_SET_AUTH_CONFIG_ENTRIES", params);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (SSOException e) {
             debugError("GetAuthConfigurationEntries.handleRequest", e);
-            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_SET_AUTH_CONFIG_ENTRIES", params);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }
@@ -166,7 +166,7 @@ public class UpdateAuthConfigurationEntries extends AuthenticatedCommand {
             }
         } catch (AMConfigurationException e) {
             debugError("ListAuthInstances.handleRequest", e);
-            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_SET_AUTH_CONFIG_ENTRIES", params);
             throw new CLIException(e,
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);

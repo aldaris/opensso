@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteAuthConfigurations.java,v 1.2 2008-06-25 05:42:12 qcheng Exp $
+ * $Id: DeleteAuthConfigurations.java,v 1.3 2008-12-16 06:47:00 veiming Exp $
  *
  */
 
@@ -82,17 +82,17 @@ public class DeleteAuthConfigurations extends AuthenticatedCommand {
                 "SUCCEEDED_DELETE_AUTH_CONFIGURATIONS", params);
         } catch (AMConfigurationException e) {
             debugError("DeleteAuthConfiguraton.handleRequest", e);
-            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_DELETE_AUTH_CONFIGURATIONS", params);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (SMSException e) {
             debugError("DeleteAuthConfiguraton.handleRequest", e);
-            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_DELETE_AUTH_CONFIGURATIONS", params);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (SSOException e) {
             debugError("DeleteAuthConfiguraton.handleRequest", e);
-            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_DELETE_AUTH_CONFIGURATIONS", params);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }

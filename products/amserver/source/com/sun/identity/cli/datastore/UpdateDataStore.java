@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpdateDataStore.java,v 1.3 2008-06-25 05:42:13 qcheng Exp $
+ * $Id: UpdateDataStore.java,v 1.4 2008-12-16 06:47:06 veiming Exp $
  *
  */
 
@@ -105,13 +105,13 @@ public class UpdateDataStore extends AuthenticatedCommand {
         } catch (SMSException e) {
             String[] p = {realm, name, e.getMessage()};
             debugError("UpdateDataStore.handleRequest", e);
-            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_UPDATE_DATASTORE", p);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (SSOException e) {
             String[] p = {realm, name, e.getMessage()};
             debugError("UpdateDataStore.handleRequest", e);
-            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_UPDATE_DATASTORE", p);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }

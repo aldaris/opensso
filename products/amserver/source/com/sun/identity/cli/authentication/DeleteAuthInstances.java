@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteAuthInstances.java,v 1.2 2008-06-25 05:42:12 qcheng Exp $
+ * $Id: DeleteAuthInstances.java,v 1.3 2008-12-16 06:47:00 veiming Exp $
  *
  */
 
@@ -83,7 +83,7 @@ public class DeleteAuthInstances extends AuthenticatedCommand {
                 "SUCCEEDED_DELETE_AUTH_INSTANCES", params);
         } catch (AMConfigurationException e) {
             debugError("DeleteAuthInstances,handleRequest", e);
-            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_DELETE_AUTH_INSTANCES", params);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }

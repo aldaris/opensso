@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateDataStore.java,v 1.2 2008-06-25 05:42:12 qcheng Exp $
+ * $Id: CreateDataStore.java,v 1.3 2008-12-16 06:47:02 veiming Exp $
  *
  */
 
@@ -107,12 +107,12 @@ public class CreateDataStore extends AuthenticatedCommand {
                 "SUCCEEDED_CREATE_DATASTORE", params);
         } catch (SMSException e) {
             debugError("CreateDataStore.handleRequest", e);
-            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_CREATE_DATASTORE", params);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         } catch (SSOException e) {
             debugError("CreateDataStore.handleRequest", e);
-            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
                 "FAILED_CREATE_DATASTORE", params);
             throw new CLIException(e, ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }
