@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.ssodtool,v 1.1 2008-11-22 02:52:21 ak138937 Exp $
+   $Id: README.ssodtool,v 1.2 2008-12-16 22:34:16 ak138937 Exp $
 
 -->
 
@@ -39,7 +39,7 @@ Table of contents:
 3. Architecture
 4. Contents of this package
 5. Adding new services  
-6. Compilitation of the sample code 
+6. Compilation of the sample code 
 7. Invoking the diagnostic tool 
 
 1. About Diagnostic Tool
@@ -92,7 +92,7 @@ The directory layout would look something as :
 	| 
 	|----services (All the services implemented should be under this 
         |     |        directory, including service descriptor files 
-        |     |        i.e service.xml, jar files, resource files etc)        
+        |     |        i.e. service.xml, jar files, resource files etc)        
 	|     |
 	|     |----resources (Properties file, images etc required by the 
 	|     |               services)
@@ -163,11 +163,11 @@ The directory layout would look something as :
 	| 	 | 
 	|     |----webcontainer 
 	|    	 |                    
-	|     	 |---- service.xml (Defines the service related to webcontainer 
+	|     	 |---- service.xml (Defines the service related to web container 
         |        |                  service.)
 	| 	 | 
 	| 	 |---- config (Any configuration related files required by the 
-        |        |            webcontainer service. This is handled by the 
+        |        |            web container service. This is handled by the 
         |        |            implementation of the service)
 	| 	 | 
 	|     |----system 
@@ -191,7 +191,7 @@ In order to add a new feature to an existing service domain, the service
 descriptor file of that service needs to be updated with the corresponding 
 entry. 
 
-6. Compilitation of the sample code 
+6. Compilation of the sample code 
 -----------------------------------
 The sample java source code under <ZIP_ROOT>/services/sample can be compiled as
 follows:
@@ -201,7 +201,7 @@ follows:
 7. Invoking the diagnostic tool 
 --------------------------------
 Diagnostic Tool can be invoked in two modes i.e. CLI or GUI. The default 
-behaviour is GUI mode and can be overriden as shown in step 7b and 7c. 
+behavior is GUI mode and can be overridden as shown in step 7b and 7c. 
 
 a. Invoking the diagnostic tool in GUI mode.
    %cd <ZIP_ROOT>  
@@ -221,10 +221,10 @@ b. Invoking the diagnostic tool in CLI mode using the "--console" option.
    For Windows platforms:
    >ssodtool.bat --console
 
-c. Invoking the diagnostic tool in CLI mode using the configuraiton 
+c. Invoking the diagnostic tool in CLI mode using the configuration 
    property. 
  
-   The default behaviour can be changed to CLI mode by editing the 
+   The default behavior can be changed to CLI mode by editing the 
    configuration file (DTConfig.properties) under 
    <ZIP_ROOT>/config directory.
 
