@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMConfiguration.java,v 1.6 2008-08-19 19:08:51 veiming Exp $
+ * $Id: AMConfiguration.java,v 1.7 2008-12-16 01:09:18 madan_ranganath Exp $
  *
  */
 
@@ -349,22 +349,26 @@ public class AMConfiguration extends Configuration {
         String config,
         String name
     ) throws SMSException, SSOException {
+	AppConfigurationEntry[] entries = null;
         String configName = config.trim();
         if (configName == null || configName.length() == 0 ||
         configName.equals(ISAuthConstants.BLANK)) {
             return null;
         }
-        if (configName.indexOf(' ') != -1) {
+
+        if (configName.indexOf("<") != -1) {
             if (debug.messageEnabled()) {
                 debug.message("Old DIT with chain config");
             }
-            return parseXMLConfig(configName, name);
-        } else {
+            entries = parseXMLConfig(configName, name);
+        }
+	if ((entries == null) || (entries != null && entries.length == 0)) {
             if (debug.messageEnabled()) {
                 debug.message("New DIT with named service config");
             }
-            return getServiceBasedConfig(orgDN, configName, name);
+            entries = getServiceBasedConfig(orgDN, configName, name);
         }
+        return entries;
     }
     
     private AppConfigurationEntry[] parseXMLConfig(
