@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DiscoveryClient.java,v 1.4 2008-12-13 01:11:23 exu Exp $
+ * $Id: DiscoveryClient.java,v 1.5 2008-12-16 01:48:31 exu Exp $
  *
  */
 
@@ -216,6 +216,8 @@ public class DiscoveryClient {
                         mech.equals(Message.TLS_X509) ||
                         mech.equals(Message.CLIENT_TLS_X509)) {
                         wsfVersion = SOAPBindingConstants.WSF_10_VERSION;
+                    } else {
+                        wsfVersion = SOAPBindingConstants.WSF_11_VERSION;
                     }
                     DiscoSDKUtils.debug.message("DiscoClient: x509");
                     try {
@@ -251,6 +253,8 @@ public class DiscoveryClient {
                         mech.equals(Message.TLS_SAML) ||
                         mech.equals(Message.CLIENT_TLS_SAML)) {
                         wsfVersion = SOAPBindingConstants.WSF_10_VERSION;
+                    } else {
+                        wsfVersion = SOAPBindingConstants.WSF_11_VERSION;
                     }
                     DiscoSDKUtils.debug.message("DiscoClient: saml token");
                     List credRefs = desc.getCredentialRef();
@@ -296,6 +300,8 @@ public class DiscoveryClient {
                         mech.equals(Message.TLS_BEARER) ||
                         mech.equals(Message.CLIENT_TLS_BEARER)) {
                         wsfVersion = SOAPBindingConstants.WSF_10_VERSION;
+                    } else {
+                        wsfVersion = SOAPBindingConstants.WSF_11_VERSION;
                     }
                     DiscoSDKUtils.debug.message("DiscoClient: bearer token");
                     List credRefs = desc.getCredentialRef();

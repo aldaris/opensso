@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DSTClient.java,v 1.4 2008-12-13 01:11:45 exu Exp $
+ * $Id: DSTClient.java,v 1.5 2008-12-16 01:48:32 exu Exp $
  *
  */
 
@@ -371,6 +371,8 @@ public class DSTClient {
                       secProfile.equals(Message.TLS_X509) ||
                       secProfile.equals(Message.CLIENT_TLS_X509)) {
                       wsfVersion = SOAPBindingConstants.WSF_10_VERSION;
+                  } else {
+                      wsfVersion = SOAPBindingConstants.WSF_11_VERSION;
                   }
 
                   securityProfile = Message.X509_TOKEN;
@@ -393,6 +395,8 @@ public class DSTClient {
                       secProfile.equals(Message.TLS_SAML) ||
                       secProfile.equals(Message.CLIENT_TLS_SAML)) {
                       wsfVersion = SOAPBindingConstants.WSF_10_VERSION;
+                  } else {
+                      wsfVersion = SOAPBindingConstants.WSF_11_VERSION;
                   }
                   if (secProfile.equals(Message.CLIENT_TLS_SAML) ||
                       secProfile.equals(Message.CLIENT_TLS_SAML_WSF11)) {
@@ -412,6 +416,8 @@ public class DSTClient {
                       secProfile.equals(Message.TLS_BEARER) ||
                       secProfile.equals(Message.CLIENT_TLS_BEARER)) {
                       wsfVersion = SOAPBindingConstants.WSF_10_VERSION;
+                  } else {
+                      wsfVersion = SOAPBindingConstants.WSF_11_VERSION;
                   }
 
                   if (secProfile.equals(Message.CLIENT_TLS_BEARER) ||
