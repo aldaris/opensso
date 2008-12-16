@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConsoleServletBase.java,v 1.5 2008-07-12 03:20:44 veiming Exp $
+ * $Id: ConsoleServletBase.java,v 1.6 2008-12-16 18:15:06 veiming Exp $
  *
  */
 
@@ -66,42 +66,6 @@ public abstract class ConsoleServletBase
     static final String URL_ADMIN_FRAME = "/base/AMAdminFrame";
     static final String LOGIN_PARAM = "?service=adminconsoleservice&goto=";
 
-    // The deployment uri for the server, set at install time.
-    protected static String serverURI = 
-        SystemProperties.get(Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
-
-    protected static String serverProtocol = 
-        SystemProperties.get(Constants.AM_SERVER_PROTOCOL);
-    protected static String serverPort = 
-        SystemProperties.get(Constants.AM_SERVER_PORT);
-    protected static String serverHost = 
-        SystemProperties.get(Constants.AM_SERVER_HOST);
-    protected static String consoleProtocol = 
-        SystemProperties.get(Constants.AM_CONSOLE_PROTOCOL);
-    protected static String consolePort = 
-        SystemProperties.get(Constants.AM_CONSOLE_PORT);
-    protected static String consoleHost = 
-        SystemProperties.get(Constants.AM_CONSOLE_HOST);
-    // server URL
-    protected static String serverURL =
-        serverProtocol + "://" + serverHost + ":" + serverPort;
-    
-    // The deployment uri for the admin console, set at install time.
-    protected static String consoleURI = 
-        SystemProperties.get(Constants.AM_CONSOLE_DEPLOYMENT_DESCRIPTOR);
-
-    // Console URL
-    protected static String consoleURL = 
-        consoleProtocol + "://"  + consoleHost + ":" + consolePort;
-    
-    protected static Debug debug = Debug.getInstance(
-        AMAdminConstants.CONSOLE_DEBUG_FILENAME); 
-
-    //boolean variable to determine Console is remote/local
-    protected static boolean isConsoleRemote =
-       Boolean.valueOf(
-          SystemProperties.get(Constants.AM_CONSOLE_REMOTE)).booleanValue();
-
     public ConsoleServletBase() {
         // Disable the "strict session timeouts" warnings
         // in the server container log.
@@ -126,7 +90,7 @@ public abstract class ConsoleServletBase
              * This case will not happen, unless the user agent does not set
              * this header while making this connection.
              */
-            host = consoleHost;
+            host = getConsoleHost();
         } else {
             String validHost = validateHost(host);
             if (validHost != null) {
@@ -134,7 +98,7 @@ public abstract class ConsoleServletBase
                     requestContext.getResponse().sendRedirect(
                         replaceHostNameInUrl(req, validHost));
                 } catch (IOException ioe) {
-                    debug.error("ConsoleServletBase.onBeforeRequest, " +
+                    getDebug().error("ConsoleServletBase.onBeforeRequest, " +
                         "failed to redirect to fully qualified host");
                 }
                 throw new CompleteRequestException();
@@ -184,7 +148,7 @@ public abstract class ConsoleServletBase
                 String jCharset = BrowserEncoding.mapHttp2JavaCharset(enc);
                 req.setCharacterEncoding(jCharset);
             } catch (UnsupportedEncodingException ex) {
-                debug.error("ConsoleServletBase.validateSSOToken " +
+                getDebug().error("ConsoleServletBase.validateSSOToken " +
                     "Unsupported encoding", ex);
             }
          } catch (SSOException soe) {
@@ -198,8 +162,8 @@ public abstract class ConsoleServletBase
         ViewBeanManager mgr = requestContext.getViewBeanManager();
         AMLoginViewBean vb = (AMLoginViewBean)mgr.getViewBean(
             AMLoginViewBean.class);
-        if (debug.messageEnabled()) {
-            debug.message("ConsoleServletBase.browserRedirect " +
+        if (getDebug().messageEnabled()) {
+            getDebug().message("ConsoleServletBase.browserRedirect " +
                 "redirecting unauthenticated user to " + url);
         }
         vb.setLoginURL(url);
@@ -266,7 +230,7 @@ public abstract class ConsoleServletBase
         Exception e)
         throws ServletException, IOException
     {
-        debug.error("ConsoleServletBase.onUncaughtException", e);
+        getDebug().error("ConsoleServletBase.onUncaughtException", e);
         requestContext.getResponse().sendRedirect(
             "../base/AMUncaughtException");
     }
@@ -299,13 +263,13 @@ public abstract class ConsoleServletBase
         String host = request.getHeader("Host");
 
         if (host == null) {
-            debug.message(
+            getDebug().message(
                 "ConsoleServletBase.formGotoURL Host header is null.");
             /*
              * This case will not happen, unless the user agent does not
              * set this header while making this connection.
              */
-            host = consoleHost; 
+            host = getConsoleHost();
         }
 
         String loginURL = SystemProperties.get(Constants.LOGIN_URL);
@@ -313,9 +277,9 @@ public abstract class ConsoleServletBase
         if ((loginURL != null) && (loginURL.trim().length() > 0)) {
             redirectURL.append(loginURL);
         } else {
-            if (isConsoleRemote) {
-                redirectURL.append(serverURL)
-                    .append(serverURI)
+            if (isConsoleRemote()) {
+                redirectURL.append(getServerURL())
+                    .append(getServerURI())
                     .append(AMAdminConstants.URL_LOGIN);
             } else {
                 String protocol = RequestUtils.getRedirectProtocol(
@@ -323,15 +287,15 @@ public abstract class ConsoleServletBase
                 redirectURL.append(protocol)
                     .append("://")
                     .append(host)
-                    .append(serverURI)
+                    .append(getServerURI())
                     .append(AMAdminConstants.URL_LOGIN);
             }
         }
 
         redirectURL.append(LOGIN_PARAM);
 
-        if (isConsoleRemote) {
-            redirectURL.append(consoleURL);
+        if (isConsoleRemote()) {
+            redirectURL.append(getConsoleURL());
         } else {
             String protocol = RequestUtils.getRedirectProtocol(
                 request.getScheme(), host);
@@ -340,7 +304,7 @@ public abstract class ConsoleServletBase
                 .append(host);
         }
 
-        redirectURL.append(consoleURI)
+        redirectURL.append(getConsoleURI())
             .append(URL_ADMIN_FRAME);
 
         /*
@@ -381,7 +345,7 @@ public abstract class ConsoleServletBase
             hostname = host;
         }
 
-        if (!hostname.equalsIgnoreCase(consoleHost)) {
+        if (!hostname.equalsIgnoreCase(getConsoleHost())) {
             hostname = FQDNUtils.getInstance().getFullyQualifiedHostName(
                 hostname);
 
@@ -391,8 +355,8 @@ public abstract class ConsoleServletBase
                  * server host. for the case of remote console 
                  * installation, default should be console host.
                 */
-                if (isConsoleRemote && (hostname.equals(serverHost))) {
-                    hostname = consoleHost;
+                if (isConsoleRemote() && (hostname.equals(getServerHost()))) {
+                    hostname = getConsoleHost();
                 }
 
                 validHostname = (port != null) ?
@@ -432,5 +396,53 @@ public abstract class ConsoleServletBase
         }
 
         return (queryString != null) ? queryString : "";
+    }
+    
+    private static String getConsoleHost() {
+        return SystemProperties.get(Constants.AM_CONSOLE_HOST);
+    }
+    
+    private static String getServerHost() {
+        return SystemProperties.get(Constants.AM_SERVER_HOST);
+    }
+    
+    private static String getConsoleURI() {
+        String uri = SystemProperties.get(
+            Constants.AM_CONSOLE_DEPLOYMENT_DESCRIPTOR);
+        if ((uri != null) && !uri.startsWith("/")) {
+            uri = "/" + uri;
+        }
+        return uri;
+    }
+
+     private static String getServerURI() {
+        String uri = SystemProperties.get(
+            Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
+        if ((uri != null) && !uri.startsWith("/")) {
+            uri = "/" + uri;
+        }
+        return uri;
+    }
+
+    private static String getConsoleURL() {
+        return SystemProperties.get(Constants.AM_CONSOLE_PROTOCOL) + "//:" +
+            getConsoleHost() + ":" + 
+            SystemProperties.get(Constants.AM_CONSOLE_PORT);
+    }
+
+    private static String getServerURL() {
+        return SystemProperties.get(Constants.AM_SERVER_PROTOCOL) + "//:" +
+            getConsoleHost() + ":" + 
+            SystemProperties.get(Constants.AM_SERVER_PORT);
+    }
+
+    
+    private static boolean isConsoleRemote() {
+        return Boolean.valueOf(
+          SystemProperties.get(Constants.AM_CONSOLE_REMOTE)).booleanValue();
+    }
+    
+    private static Debug getDebug() {
+        return Debug.getInstance(AMAdminConstants.CONSOLE_DEBUG_FILENAME);
     }
 }
