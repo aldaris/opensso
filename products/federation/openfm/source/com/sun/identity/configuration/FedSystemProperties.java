@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FedSystemProperties.java,v 1.7 2008-10-04 03:33:49 hengming Exp $
+ * $Id: FedSystemProperties.java,v 1.8 2008-12-16 01:47:47 exu Exp $
  *
  */
 
@@ -75,14 +75,16 @@ public class FedSystemProperties extends FedLibSystemProperties {
      * @param key Key to the properties.
      */
     public String get(String key) {
-        AttributeStruct ast = (AttributeStruct)attributeMap.get(key);
-        String value = null;
+        String value = getPropertyValue(key);
+        if (value == null) {
+            AttributeStruct ast = (AttributeStruct)attributeMap.get(key);
         
-        if (ast != null) {
-            value = PropertiesFinder.getProperty(key, ast);
+            if (ast != null) {
+                value = PropertiesFinder.getProperty(key, ast);
+            }
         }
         
-        return (value != null) ? value : getPropertyValue(key);
+        return value;
     }
     
     private String getPropertyValue(String key) {
