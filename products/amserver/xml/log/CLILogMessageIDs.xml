@@ -22,7 +22,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: CLILogMessageIDs.xml,v 1.32 2008-12-04 00:25:59 veiming Exp $
+    $Id: CLILogMessageIDs.xml,v 1.33 2008-12-16 01:49:03 qcheng Exp $
 
 -->
 
@@ -5969,6 +5969,636 @@
         </datainfo>
         <triggers>
             <item>Execute Embedded Status Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_ADD_COT_MEMBER" id="5106"
+        loglevel="LL_INFO"
+        description="Attempt to add a member to a Circle of Trust.">
+        <datainfo>
+            <item>realm</item>
+            <item>entity ID</item>
+            <item>circle of trust</item>
+            <item>protocol specification</item>
+        </datainfo>
+        <triggers>
+            <item>Execute add a member to a Circle of Trust Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_ADD_COT_MEMBER" id="5107"
+        loglevel="LL_INFO"
+        description="Adding a member to a Circle of Trust succeeded.">
+        <datainfo>
+            <item>realm</item>
+            <item>entity ID</item>
+            <item>circle of trust</item>
+            <item>protocol specification</item>
+        </datainfo>
+        <triggers>
+            <item>Execute add a member to a Circle of Trust Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_ADD_COT_MEMBER" id="5108"
+        loglevel="LL_INFO"
+        description="Failed to add a member to a circle of trust.">
+        <datainfo>
+            <item>realm</item>
+            <item>entity ID</item>
+            <item>circle of trust</item>
+            <item>protocol specification</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute add a member to a Circle of Trust Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_DO_BULK_FEDERATION" id="5109"
+        loglevel="LL_INFO"
+        description="Attempt to do bulk federation.">
+        <datainfo>
+            <item>metaAlias for local provider</item>
+            <item>Remote entity Id</item>
+            <item>File name of local to remote user Id mapping</item>
+            <item>Name of file that will be created by this sub command</item>
+            <item>protocol specification</item> 
+        </datainfo>
+        <triggers>
+            <item>Execute Do Bulk Federation Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_DO_BULK_FEDERATION" id="5110"
+        loglevel="LL_INFO"
+        description="Bulk Federation succeeded.">
+        <datainfo>
+            <item>metaAlias for local provider</item>
+            <item>Remote entity Id</item>
+            <item>File name of local to remote user Id mapping</item>
+            <item>Name of file that will be created by this sub command</item>
+            <item>protocol specification</item> 
+        </datainfo>
+        <triggers>
+            <item>Execute Do Bulk Federation Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_DO_BULK_FEDERATION" id="5111"
+        loglevel="LL_INFO"
+        description="Failed to do bulk federation.">
+        <datainfo>
+            <item>metaAlias for local provider</item>
+            <item>Remote entity Id</item>
+            <item>File name of local to remote user Id mapping</item>
+            <item>Name of file that will be created by this sub command</item>
+            <item>protocol specification</item> 
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute Do Bulk Federation Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_CREATE_COT" id="5112"
+        loglevel="LL_INFO"
+        description="Attempt to create Circle of Trust.">
+        <datainfo>
+            <item>Realm</item>
+            <item>Circle of Trust</item>
+            <item>Trusted Providers</item>
+            <item>Prefix URL for idp discovery reader and writer URL</item>
+        </datainfo>
+        <triggers>
+            <item>Execute Create Circle of Trust Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_CREATE_COT" id="5113"
+        loglevel="LL_INFO"
+        description="Creating Circle of Trust succeeded.">
+        <datainfo>
+            <item>Realm</item>
+            <item>Circle of Trust</item>
+            <item>Trusted Providers</item>
+            <item>Prefix URL for idp discovery reader and writer URL</item>
+        </datainfo>
+        <triggers>
+            <item>Execute Create Circle of Trust Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_CREATE_COT" id="5114"
+        loglevel="LL_INFO"
+        description="Failed to create Circle of Trust.">
+        <datainfo>
+            <item>Realm</item>
+            <item>Circle of Trust</item>
+            <item>Trusted Providers</item>
+            <item>Prefix URL for idp discovery reader and writer URL</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute Create Circle of Trust Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_CREATE_METADATA_TEMPL" id="5115"
+        loglevel="LL_INFO"
+        description="Attempt to create metadata template.">
+        <datainfo>
+            <item>Entity ID</item>
+            <item>file name for the standard metadata to be created</item>
+            <item>file name for the extended metadata to be created</item>
+            <item>metaAlias for hosted identity provider to be created</item>
+            <item>metaAlias for hosted service provider to be created</item>
+            <item>metaAlias for hosted attribute authority to be created</item>
+            <item>metaAlias for hosted attribute query provider to be created</item>
+            <item>metaAlias for hosted authentication authority to be created</item>
+            <item>metaAlias for policy decision point to be created</item>
+            <item>metaAlias for policy enforcement point to be created</item>
+            <item>metaAlias for hosted affiliation</item>
+            <item>protocol specification</item>
+        </datainfo>
+        <triggers>
+            <item>Execute Create MetaData Template Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_CREATE_METADATA_TEMPL" id="5116"
+        loglevel="LL_INFO"
+        description="Creating MetaData Template succeeded.">
+        <datainfo>
+            <item>Entity ID</item>
+            <item>file name for the standard metadata to be created</item>
+            <item>file name for the extended metadata to be created</item>
+            <item>metaAlias for hosted identity provider to be created</item>
+            <item>metaAlias for hosted service provider to be created</item>
+            <item>metaAlias for hosted attribute authority to be created</item>
+            <item>metaAlias for hosted attribute query provider to be created</item>
+            <item>metaAlias for hosted authentication authority to be created</item>
+            <item>metaAlias for policy decision point to be created</item>
+            <item>metaAlias for policy enforcement point to be created</item>
+            <item>metaAlias for hosted affiliation</item>
+            <item>protocol specification</item>
+        </datainfo>
+        <triggers>
+            <item>Execute Create MetaData Template Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_CREATE_METADATA_TEMPL" id="5117"
+        loglevel="LL_INFO"
+        description="Failed to create metaData template.">
+        <datainfo>
+            <item>Entity ID</item>
+            <item>protocol specification</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute Create MetaData Template Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_DELETE_COT" id="5118"
+        loglevel="LL_INFO"
+        description="Attempt to delete Circle of Trust.">
+        <datainfo>
+            <item>Realm</item>
+            <item>Circle of Trust</item>
+        </datainfo>
+        <triggers>
+            <item>Execute Delete Circle of Trust Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_DELETE_COT" id="5119"
+        loglevel="LL_INFO"
+        description="Deleting Circle of Trust succeeded.">
+        <datainfo>
+            <item>Realm</item>
+            <item>Circle of Trust</item>
+        </datainfo>
+        <triggers>
+            <item>Execute Delete Circle of Trust Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_DELETE_COT" id="5120"
+        loglevel="LL_INFO"
+        description="Failed to delete Circle of Trust.">
+        <datainfo>
+            <item>Realm</item>
+            <item>Circle of Trust</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute Delete Circle of Trust Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_DELETE_ENTITY" id="5121"
+        loglevel="LL_INFO"
+        description="Attempt to delete metadata.">
+        <datainfo>
+            <item>Realm</item>
+            <item>Entity ID</item>
+            <item>protocol specification</item>
+        </datainfo>
+        <triggers>
+            <item>Execute Delete Metadata Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_DELETE_ENTITY" id="5122"
+        loglevel="LL_INFO"
+        description="Deleting Metadata succeeded.">
+        <datainfo>
+            <item>Realm</item>
+            <item>Entity ID</item>
+            <item>protocol specification</item>
+        </datainfo>
+        <triggers>
+            <item>Execute Delete Metadata Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_DELETE_ENTITY" id="5123"
+        loglevel="LL_INFO"
+        description="Failed to delete metadata.">
+        <datainfo>
+            <item>Realm</item>
+            <item>Entity ID</item>
+            <item>protocol specification</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute Delete Metadata Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_EXPORT_ENTITY" id="5124"
+        loglevel="LL_INFO"
+        description="Attempt to export entity.">
+        <datainfo>
+            <item>Realm</item>
+            <item>Entity ID</item>
+            <item>Name of file to save the standard metadata XML</item>
+            <item>Name of file to save the extended metadata XML</item>
+            <item>protocol specification</item>
+        </datainfo>
+        <triggers>
+            <item>Execute export entity Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_EXPORT_ENTITY" id="5125"
+        loglevel="LL_INFO"
+        description="Exporting entity succeeded.">
+        <datainfo>
+            <item>Realm</item>
+            <item>Entity ID</item>
+            <item>Name of file to save the standard metadata XML</item>
+            <item>Name of file to save the extended metadata XML</item>
+            <item>protocol specification</item>
+        </datainfo>
+        <triggers>
+            <item>Execute export entity Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_EXPORT_ENTITY" id="5126"
+        loglevel="LL_INFO"
+        description="Failed to export entity.">
+        <datainfo>
+            <item>Realm</item>
+            <item>Entity ID</item>
+            <item>Name of file to save the standard metadata XML</item>
+            <item>Name of file to save the extended metadata XML</item>
+            <item>protocol specification</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute export entity Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_IMPORT_BULK_FED_DATA" id="5127"
+        loglevel="LL_INFO"
+        description="Attempt to import bulk federation data.">
+        <datainfo>
+            <item>metaAlias for local provider</item>
+            <item>File name of  bulk federation data which is generated by this command</item>
+            <item>protocol specification</item>
+        </datainfo>
+        <triggers>
+            <item>Execute import bulk federation data Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_IMPORT_BULK_FED_DATA" id="5128"
+        loglevel="LL_INFO"
+        description="Importing bulk federation data succeeded.">
+        <datainfo>
+            <item>metaAlias for local provider</item>
+            <item>File name of  bulk federation data which is generated by this command</item>
+            <item>protocol specification</item>
+        </datainfo>
+        <triggers>
+            <item>Execute import bulk federation data Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_IMPORT_BULK_FED_DATA" id="5129"
+        loglevel="LL_INFO"
+        description="Failed to import bulk federation data.">
+        <datainfo>
+            <item>metaAlias for local provider</item>
+            <item>File name of  bulk federation data which is generated by this command</item>
+            <item>protocol specification</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute import bulk federation data Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_IMPORT_ENTITY" id="5130"
+        loglevel="LL_INFO"
+        description="Attempt to import entity.">
+        <datainfo>
+            <item>Realm where entity resides</item>
+            <item>file name for the standard metadata to be imported</item>
+            <item>file name for the extended entity configuration to be imported</item>
+            <item>name of the Circle of Trust this entity belongs</item>
+            <item>protocol specification</item>
+        </datainfo>
+        <triggers>
+            <item>Execute import entity Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_IMPORT_ENTITY" id="5131"
+        loglevel="LL_INFO"
+        description="Importing entity succeeded.">
+        <datainfo>
+            <item>Realm where entity resides</item>
+            <item>file name for the standard metadata to be imported</item>
+            <item>file name for the extended entity configuration to be imported</item>
+            <item>name of the Circle of Trust this entity belongs</item>
+            <item>protocol specification</item>
+        </datainfo>
+        <triggers>
+            <item>Execute import entity Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_IMPORT_ENTITY" id="5132"
+        loglevel="LL_INFO"
+        description="Failed to import entity.">
+        <datainfo>
+            <item>Realm where entity resides</item>
+            <item>file name for the standard metadata to be imported</item>
+            <item>file name for the extended entity configuration to be imported</item>
+            <item>name of the Circle of Trust this entity belongs</item>
+            <item>protocol specification</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute import entity Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_LIST_COT_MEMBERS" id="5133"
+        loglevel="LL_INFO"
+        description="Attempt to list members in a circle of trust.">
+        <datainfo>
+            <item>Realm</item>
+            <item>Circle of trust</item>
+            <item>protocol specification</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list members in a circle of trust Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_LIST_COT_MEMBERS" id="5134"
+        loglevel="LL_INFO"
+        description="Listing members in a circle of trust succeeded.">
+        <datainfo>
+            <item>Realm</item>
+            <item>Circle of trust</item>
+            <item>protocol specification</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list members in a circle of trust Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_LIST_COT_MEMBERS" id="5135"
+        loglevel="LL_INFO"
+        description="Failed to list members in a circle of trust.">
+        <datainfo>
+            <item>Realm</item>
+            <item>Circle of trust</item>
+            <item>protocol specification</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list members in a circle of trust Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_LIST_COTS" id="5136"
+        loglevel="LL_INFO"
+        description="Attempt to list circles of trust.">
+        <datainfo>
+            <item>realm</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list circles of trust Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_LIST_COTS" id="5137"
+        loglevel="LL_INFO"
+        description="Listing circles of trust succeeded.">
+        <datainfo>
+            <item>realm</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list circles of trust Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_LIST_COTS" id="5138"
+        loglevel="LL_INFO"
+        description="Failed to list circles of trust.">
+        <datainfo>
+            <item>realm</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list circles of trust Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_LIST_ENTITIES" id="5139"
+        loglevel="LL_INFO"
+        description="Attempt to list entities under a realm.">
+        <datainfo>
+            <item>realm</item>
+            <item>protocol specification</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list entities under a realm Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_LIST_ENTITIES" id="5140"
+        loglevel="LL_INFO"
+        description="Listing entities under a realm succeeded.">
+        <datainfo>
+            <item>realm</item>
+            <item>protocol specification</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list entities under a realm Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_LIST_ENTITIES" id="5141"
+        loglevel="LL_INFO"
+        description="Failed to list entities under a realm.">
+        <datainfo>
+            <item>realm</item>
+            <item>protocol specification</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute list entities under a realm Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_REMOVE_COT_MEMBER" id="5142"
+        loglevel="LL_INFO"
+        description="Attempt to remove a member from a circle of trust.">
+        <datainfo>
+            <item>Realm where circle of trust resides</item>
+            <item>Circle of trust</item>
+            <item>Entity ID</item>
+            <item>protocol specification</item>
+        </datainfo>
+        <triggers>
+            <item>Execute remove a member from a circle of trust Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_REMOVE_COT_MEMBER" id="5143"
+        loglevel="LL_INFO"
+        description="Removing a member from a circle of trust successful.">
+        <datainfo>
+            <item>Realm where circle of trust resides</item>
+            <item>Circle of trust</item>
+            <item>Entity ID</item>
+            <item>protocol specification</item>
+        </datainfo>
+        <triggers>
+            <item>Execute remove a member from a circle of trust Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_REMOVE_COT_MEMBER" id="5144"
+        loglevel="LL_INFO"
+        description="Failed to remove a member from a circle of trust.">
+        <datainfo>
+            <item>Realm where circle of trust resides</item>
+            <item>Circle of trust</item>
+            <item>Entity ID</item>
+            <item>protocol specification</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute remove a member from a circle of trust Commandline interface.</item>
+        </triggers>
+        <actions>
+            <item>Look under debug file for more information.</item>
+        </actions>
+    </logmessage>
+    <logmessage name="ATTEMPT_UPDATE_ENTITY_KEYINFO" id="5145"
+        loglevel="LL_INFO"
+        description="Attempt to update XML signing and encryption key information in hosted entity metadata.">
+        <datainfo>
+            <item>Realm</item>
+            <item>Entity ID</item>
+            <item>Service provider signing certificate alias</item>
+            <item>Identity provider signing certificate alias</item>
+            <item>Service provider encryption certificate alias</item>
+            <item>Identity provider encryption certificate alias</item>
+            <item>protocol specification</item>
+        </datainfo>
+        <triggers>
+            <item>Execute  Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SUCCEEDED_UPDATE_ENTITY_KEYINFO" id="5146"
+        loglevel="LL_INFO"
+        description="Updating XML signing and encryption key information in hosted entity metadata succeeded.">
+        <datainfo>
+            <item>Realm</item>
+            <item>Entity ID</item>
+            <item>Service provider signing certificate alias</item>
+            <item>Identity provider signing certificate alias</item>
+            <item>Service provider encryption certificate alias</item>
+            <item>Identity provider encryption certificate alias</item>
+        </datainfo>
+        <triggers>
+            <item>Execute update XML signing and encryption key information in hosted entity metadata Commandline interface.</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="FAILED_UPDATE_ENTITY_KEYINFO" id="5147"
+        loglevel="LL_INFO"
+        description="Failed to update XML signing and encryption key information in hosted entity metadata.">
+        <datainfo>
+            <item>Realm</item>
+            <item>Entity ID</item>
+            <item>Service provider signing certificate alias</item>
+            <item>Identity provider signing certificate alias</item>
+            <item>Service provider encryption certificate alias</item>
+            <item>Identity provider encryption certificate alias</item>
+            <item>error message</item>
+        </datainfo>
+        <triggers>
+            <item>Execute update XML signing and encryption key information in hosted entity metadata Commandline interface.</item>
         </triggers>
         <actions>
             <item>Look under debug file for more information.</item>
