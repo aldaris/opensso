@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddCircleOfTrustMembers.java,v 1.4 2008-12-11 22:36:28 veiming Exp $
+ * $Id: AddCircleOfTrustMembers.java,v 1.5 2008-12-16 01:49:36 qcheng Exp $
  *
  */
 
@@ -32,12 +32,14 @@ import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
+import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
 import com.sun.identity.cot.COTException;
 import com.sun.identity.cot.CircleOfTrustManager;
 import com.sun.identity.cot.COTUtils;
 import com.sun.identity.shared.locale.L10NMessage;
 import java.text.MessageFormat;
+import java.util.logging.Level;
 
 /**
  * Add member to a Circle of Trust.
@@ -64,6 +66,10 @@ public class AddCircleOfTrustMembers extends AuthenticatedCommand {
         spec=FederationManager.getIDFFSubCommandSpecification(rc);
         
         entityID = getStringOptionValue(FedCLIConstants.ARGUMENT_ENTITY_ID);
+
+        String[] params = {realm, entityID, cot, spec};
+        writeLog(LogWriter.LOG_ACCESS, Level.INFO, 
+            "ATTEMPT_ADD_COT_MEMBER", params);
         
         try {
             CircleOfTrustManager cotManager= new CircleOfTrustManager();
@@ -73,15 +79,25 @@ public class AddCircleOfTrustMembers extends AuthenticatedCommand {
             getOutputWriter().printlnMessage(MessageFormat.format(
                     getResourceString("add-circle-of-trust-member-succeeded"),
                     objs));
+            writeLog(LogWriter.LOG_ACCESS, Level.INFO, 
+                "SUCCEEDED_ADD_COT_MEMBER", params);
         } catch (COTException e) {
             debug.warning("AddCircleOfTrustMembers.handleRequest", e);
             if (e instanceof L10NMessage) {
+                String[] args = {realm, entityID, cot, spec, 
+                    ((L10NMessage)e).getL10NMessage(
+                    getCommandManager().getLocale())};
+                writeLog(LogWriter.LOG_ERROR, Level.INFO, 
+                    "FAILED_ADD_COT_MEMBER", args);
                 throw new CLIException(
                     ((L10NMessage)e).getL10NMessage(
                         getCommandManager().getLocale()),
                     ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
 
             } else {
+                String[] args = {realm, entityID, cot, spec, e.getMessage()};
+                writeLog(LogWriter.LOG_ERROR, Level.INFO, 
+                    "FAILED_ADD_COT_MEMBER", args);
                 throw new CLIException(e.getMessage(),
                     ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
             }

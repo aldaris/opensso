@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportBulkFederationData.java,v 1.3 2008-06-25 05:49:53 qcheng Exp $
+ * $Id: ImportBulkFederationData.java,v 1.4 2008-12-16 01:49:37 qcheng Exp $
  *
  */
 
@@ -34,6 +34,7 @@ import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
 import com.sun.identity.cli.IOutput;
+import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
 import com.sun.identity.federation.accountmgmt.FSAccountFedInfo;
 import com.sun.identity.federation.accountmgmt.FSAccountFedInfoKey;
@@ -59,6 +60,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.logging.Level;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -93,21 +95,36 @@ public class ImportBulkFederationData extends AuthenticatedCommand {
         metaAlias = getStringOptionValue(ARGUMENT_METADATA);
         bulkFedData = getStringOptionValue(ARGUMENT_BULK_DATA);
         spec = FederationManager.getIDFFSubCommandSpecification(rc);
+
+        String[] params = {metaAlias, bulkFedData, spec};
+        writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            "ATTEMPT_IMPORT_BULK_FED_DATA", params);
         
-        if (spec.equals(FederationManager.DEFAULT_SPECIFICATION)) {
-            saml2GetRoleAndEntityId();
-            Map nameIds = new HashMap();
-            validateFile(nameIds);
-            handleSAML2Request(nameIds);
-        } else if (spec.equals(FedCLIConstants.IDFF_SPECIFICATION)) {
-            idffGetRoleAndEntityId();
-            Map nameIds = new HashMap();
-            validateFile(nameIds);
-            handleIDFFRequest(nameIds);
-        } else {
-            throw new CLIException(
-                getResourceString("unsupported-specification"),
-                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        try { 
+            if (spec.equals(FederationManager.DEFAULT_SPECIFICATION)) {
+                saml2GetRoleAndEntityId();
+                Map nameIds = new HashMap();
+                validateFile(nameIds);
+                handleSAML2Request(nameIds);
+                writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                    "SUCCEEDED_IMPORT_BULK_FED_DATA", params);
+            } else if (spec.equals(FedCLIConstants.IDFF_SPECIFICATION)) {
+                idffGetRoleAndEntityId();
+                Map nameIds = new HashMap();
+                validateFile(nameIds);
+                handleIDFFRequest(nameIds);
+                writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                    "SUCCEEDED_IMPORT_BULK_FED_DATA", params);
+            } else {
+                throw new CLIException(
+                    getResourceString("unsupported-specification"),
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+            }
+        } catch (CLIException e) {
+            String[] args = {metaAlias, bulkFedData, spec, e.getMessage()};
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                "FAILED_IMPORT_BULK_FED_DATA", args);
+            throw e;
         }
     }
     

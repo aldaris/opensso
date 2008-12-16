@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpdateMetadataKeyInfo.java,v 1.2 2008-06-25 05:49:53 qcheng Exp $
+ * $Id: UpdateMetadataKeyInfo.java,v 1.3 2008-12-16 01:49:37 qcheng Exp $
  *
  */
 
@@ -33,6 +33,7 @@ import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
+import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
 import com.sun.identity.federation.meta.IDFFMetaException;
 import com.sun.identity.federation.meta.IDFFMetaManager;
@@ -50,6 +51,7 @@ import com.sun.identity.wsfederation.meta.WSFederationMetaSecurityUtils;
 import com.sun.identity.wsfederation.meta.WSFederationMetaException;
 import com.sun.org.apache.xml.internal.security.encryption.XMLCipher;
 import java.text.MessageFormat;
+import java.util.logging.Level;
 import javax.xml.bind.JAXBException;
 
 /**
@@ -135,17 +137,36 @@ public class UpdateMetadataKeyInfo extends AuthenticatedCommand {
         isWebBase = (webURL != null) && (webURL.trim().length() > 0);
 
         String spec = FederationManager.getIDFFSubCommandSpecification(rc);
-        if (spec.equals(FederationManager.DEFAULT_SPECIFICATION)) {
-            handleSAML2Request(rc);
-        } else if (spec.equals(FedCLIConstants.IDFF_SPECIFICATION)) {
-            handleIDFFRequest(rc);
-        } else if (spec.equals(FedCLIConstants.WSFED_SPECIFICATION)) {
-            handleWSFedRequest(rc);
-        } else {
-            // TODO : need to support PEP/PDP/AuthnA/AttrQ/AttrA later
-            throw new CLIException(
-                getResourceString("unsupported-specification"),
-                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        String[] params = {realm, entityID, spSigningAlias, idpSigningAlias,
+            spEncryptionAlias, idpEncryptionAlias, spec};
+        writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            "ATTEMPT_UPDATE_ENTITY_KEYINFO", params);
+
+        try {
+            if (spec.equals(FederationManager.DEFAULT_SPECIFICATION)) {
+                handleSAML2Request(rc);
+                writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                    "SUCCEEDED_UPDATE_ENTITY_KEYINFO", params);
+            } else if (spec.equals(FedCLIConstants.IDFF_SPECIFICATION)) {
+                handleIDFFRequest(rc);
+                writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                    "SUCCEEDED_UPDATE_ENTITY_KEYINFO", params);
+            } else if (spec.equals(FedCLIConstants.WSFED_SPECIFICATION)) {
+                handleWSFedRequest(rc);
+                writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                    "SUCCEEDED_UPDATE_ENTITY_KEYINFO", params);
+            } else {
+                // TODO : need to support PEP/PDP/AuthnA/AttrQ/AttrA later
+                throw new CLIException(
+                    getResourceString("unsupported-specification"),
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+            }
+        } catch (CLIException e) {
+            String[] args = {realm, entityID, spSigningAlias, idpSigningAlias,
+                spEncryptionAlias, idpEncryptionAlias, spec, e.getMessage()};
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                "FAILED_UPDATE_ENTITY_KEYINFO", args);
+            throw e;
         }
     }
 

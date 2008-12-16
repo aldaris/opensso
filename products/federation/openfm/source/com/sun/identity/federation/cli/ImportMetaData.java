@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportMetaData.java,v 1.11 2008-07-08 01:11:35 exu Exp $
+ * $Id: ImportMetaData.java,v 1.12 2008-12-16 01:49:37 qcheng Exp $
  *
  */
 
@@ -34,6 +34,7 @@ import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.CommandManager;
 import com.sun.identity.cli.ExitCodes;
+import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
 import com.sun.identity.federation.meta.IDFFMetaException;
 import com.sun.identity.federation.meta.IDFFMetaManager;
@@ -63,6 +64,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.logging.Level;
 import javax.xml.bind.JAXBException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -97,7 +99,16 @@ public class ImportMetaData extends AuthenticatedCommand {
             FedCLIConstants.ARGUMENT_EXTENDED_DATA);
         cot = getStringOptionValue(FedCLIConstants.ARGUMENT_COT);
 
+        spec = FederationManager.getIDFFSubCommandSpecification(rc);
+        String[] params = {realm, metadata, extendedData, cot, spec};
+        writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            "ATTEMPT_IMPORT_ENTITY", params);
+
         if ((metadata == null) && (extendedData == null)) {
+            String[] args = {realm, metadata, extendedData, cot,
+                spec, getResourceString("import-entity-exception-no-datafile")};
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                "FAILED_IMPORT_ENTITY", args);
             throw new CLIException(
                 getResourceString("import-entity-exception-no-datafile"),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
@@ -106,18 +117,31 @@ public class ImportMetaData extends AuthenticatedCommand {
         CommandManager mgr = getCommandManager();
         String url = mgr.getWebEnabledURL();
         webAccess = (url != null) && (url.length() > 0);
-        
-        spec = FederationManager.getIDFFSubCommandSpecification(rc);
-        if (spec.equals(FederationManager.DEFAULT_SPECIFICATION)) {
-            handleSAML2Request(rc);
-        } else if (spec.equals(FedCLIConstants.IDFF_SPECIFICATION)) {
-            handleIDFFRequest(rc);
-        } else if (spec.equals(FedCLIConstants.WSFED_SPECIFICATION)) {
-            handleWSFedRequest(rc);
-        } else {
-            throw new CLIException(
-                getResourceString("unsupported-specification"),
-                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+
+        try {
+            if (spec.equals(FederationManager.DEFAULT_SPECIFICATION)) {
+                handleSAML2Request(rc);
+                writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                    "SUCCEEDED_IMPORT_ENTITY", params);
+            } else if (spec.equals(FedCLIConstants.IDFF_SPECIFICATION)) {
+                handleIDFFRequest(rc);
+                writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                    "SUCCEEDED_IMPORT_ENTITY", params);
+            } else if (spec.equals(FedCLIConstants.WSFED_SPECIFICATION)) {
+                handleWSFedRequest(rc);
+                writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                    "SUCCEEDED_IMPORT_ENTITY", params);
+            } else {
+                throw new CLIException(
+                    getResourceString("unsupported-specification"),
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+            }
+        } catch (CLIException e) {
+            String[] args = {realm, metadata, extendedData, cot,
+                spec, e.getMessage()};
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                "FAILED_IMPORT_ENTITY", args);
+            throw e;
         }
     }
     

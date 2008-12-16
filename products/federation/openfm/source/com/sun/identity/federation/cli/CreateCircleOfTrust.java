@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateCircleOfTrust.java,v 1.5 2008-06-25 05:49:52 qcheng Exp $
+ * $Id: CreateCircleOfTrust.java,v 1.6 2008-12-16 01:49:36 qcheng Exp $
  *
  */
 
@@ -32,6 +32,7 @@ import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
+import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
 import com.sun.identity.cot.CircleOfTrustDescriptor;
 import com.sun.identity.cot.COTConstants;
@@ -42,6 +43,7 @@ import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 
 /**
  * Create Circle of Trust.
@@ -74,7 +76,11 @@ public class CreateCircleOfTrust extends AuthenticatedCommand {
         if (trustedProviders != null) {
             providers.addAll(trustedProviders);
         }
-        
+       
+        String[] params = {realm, cot, providers.toString(), prefix};
+        writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            "ATTEMPT_CREATE_COT", params);
+
         try {
             CircleOfTrustDescriptor descriptor =
                     ((prefix == null) || (prefix.trim().length() == 0)) ?
@@ -95,8 +101,14 @@ public class CreateCircleOfTrust extends AuthenticatedCommand {
             getOutputWriter().printlnMessage(MessageFormat.format(
                     getResourceString("create-circle-of-trust-succeeded"),
                     objs));
+            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                "SUCCEEDED_CREATE_COT", params);
         } catch (COTException e) {
             debug.warning("CreateCircleOfTrust.handleRequest", e);
+            String[] args = {realm, cot, providers.toString(), 
+                prefix, e.getMessage()};
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                "FAILED_CREATE_COT", args);
             throw new CLIException(e.getMessage(),
                     ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }

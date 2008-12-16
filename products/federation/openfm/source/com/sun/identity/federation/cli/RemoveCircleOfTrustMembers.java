@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoveCircleOfTrustMembers.java,v 1.3 2008-06-25 05:49:53 qcheng Exp $
+ * $Id: RemoveCircleOfTrustMembers.java,v 1.4 2008-12-16 01:49:37 qcheng Exp $
  *
  */
 
@@ -32,11 +32,13 @@ import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
+import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
 import com.sun.identity.cot.CircleOfTrustManager;
 import com.sun.identity.cot.COTException;
 import com.sun.identity.cot.COTUtils;
 import java.text.MessageFormat;
+import java.util.logging.Level;
 
 /**
  * Remove member from a Circle of Trust.
@@ -63,6 +65,10 @@ public class RemoveCircleOfTrustMembers extends AuthenticatedCommand {
         cot = getStringOptionValue(FedCLIConstants.ARGUMENT_COT);
         entityID = getStringOptionValue(FedCLIConstants.ARGUMENT_ENTITY_ID);
         spec = FederationManager.getIDFFSubCommandSpecification(rc);
+
+        String[] params = {realm, cot, entityID, spec};
+        writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            "ATTEMPT_REMOVE_COT_MEMBER", params);
         
         try {
             CircleOfTrustManager cotManager = new CircleOfTrustManager();
@@ -72,8 +78,13 @@ public class RemoveCircleOfTrustMembers extends AuthenticatedCommand {
             getOutputWriter().printlnMessage(MessageFormat.format(
                 getResourceString("remove-circle-of-trust-member-succeeded"),
                 objs));
+            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                "SUCCEEDED_REMOVE_COT_MEMBER", params);
         } catch (COTException e) {
             debug.warning("RemoveCircleOfTrustMembers.handleRequest", e);
+            String[] args = {realm, cot, entityID, spec, e.getMessage()};
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                "FAILED_REMOVE_COT_MEMBER", args);
             throw new CLIException(e.getMessage(),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }

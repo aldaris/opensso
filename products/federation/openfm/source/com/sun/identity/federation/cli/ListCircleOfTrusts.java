@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListCircleOfTrusts.java,v 1.5 2008-06-25 05:49:53 qcheng Exp $
+ * $Id: ListCircleOfTrusts.java,v 1.6 2008-12-16 01:49:37 qcheng Exp $
  *
  */
 
@@ -33,6 +33,7 @@ import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
 import com.sun.identity.cli.IOutput;
+import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
 import com.sun.identity.cot.CircleOfTrustManager;
 import com.sun.identity.cot.COTException;
@@ -40,6 +41,7 @@ import com.sun.identity.cot.COTUtils;
 import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.logging.Level;
 
 /**
  * List Circle of Trusts.
@@ -61,6 +63,10 @@ public class ListCircleOfTrusts extends AuthenticatedCommand {
         ldapLogin();
         realm = getStringOptionValue(FedCLIConstants.ARGUMENT_REALM, "/");
         IOutput outputWriter = getOutputWriter();
+
+        String[] params = {realm};
+        writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            "ATTEMPT_LIST_COTS", params);
         
         try {
             CircleOfTrustManager cotManager = new CircleOfTrustManager();
@@ -81,8 +87,13 @@ public class ListCircleOfTrusts extends AuthenticatedCommand {
                      outputWriter.printlnMessage("  " + cot);
                 }
             }
+            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                "SUCCEEDED_LIST_COTS", params);
         } catch (COTException e) {
             debug.warning("ListCircleOfTrusts.handleRequest", e);
+            String[] args = {realm, e.getMessage()}; 
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                "FAILED_LIST_COTS", args);
             throw new CLIException(e.getMessage(),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BulkFederation.java,v 1.2 2008-06-25 05:49:52 qcheng Exp $
+ * $Id: BulkFederation.java,v 1.3 2008-12-16 01:49:36 qcheng Exp $
  *
  */
 
@@ -33,6 +33,7 @@ import com.iplanet.sso.SSOToken;
 import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
+import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.IOutput;
 import com.sun.identity.cli.RequestContext;
 import com.sun.identity.federation.accountmgmt.FSAccountFedInfo;
@@ -69,6 +70,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 
 /**
  * Do bulk federation. This is the first step of the 2 step process.
@@ -123,21 +125,36 @@ public class BulkFederation extends AuthenticatedCommand {
         outFile = getStringOptionValue(ARGUMENT_NAME_ID_MAPPING);
         spec = FederationManager.getIDFFSubCommandSpecification(rc);
         BufferedWriter out = null;
+
+        String[] params = {metaAlias, remoteEntityId, userIdMappingFileName,
+             outFile, spec};
+        writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            "ATTEMPT_DO_BULK_FEDERATION", params);
         
         try {
             if (spec.equals(FederationManager.DEFAULT_SPECIFICATION)) {
                 getEntityRoleAndIdSAML2();
                 out = validateFiles();
                 handleSAML2Request(out);
+                writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                    "SUCCEEDED_DO_BULK_FEDERATION", params);
             } else if (spec.equals(FedCLIConstants.IDFF_SPECIFICATION)) {
                 getEntityRoleAndIdIDFF();
                 out = validateFiles();
                 handleIDFFRequest(out);
+                writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                    "SUCCEEDED_DO_BULK_FEDERATION", params);
             } else {
                 throw new CLIException(
                     getResourceString("unsupported-specification"),
                     ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
             }
+        } catch (CLIException e) {
+            String[] args = {metaAlias, remoteEntityId, 
+                userIdMappingFileName, outFile, spec, e.getMessage()};
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                "FAILED_DO_BULK_FEDERATION", args);
+            throw e;
         } finally {
             if (out != null) {
                 try {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ExportMetaData.java,v 1.7 2008-06-25 05:49:52 qcheng Exp $
+ * $Id: ExportMetaData.java,v 1.8 2008-12-16 01:49:37 qcheng Exp $
  *
  */
 
@@ -33,6 +33,7 @@ import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
+import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
 import com.sun.identity.federation.jaxb.entityconfig.IDPDescriptorConfigElement;
 import com.sun.identity.federation.jaxb.entityconfig.SPDescriptorConfigElement;
@@ -64,6 +65,7 @@ import java.io.PrintWriter;
 import java.text.MessageFormat;
 import javax.xml.bind.JAXBException;
 import org.w3c.dom.Document;
+import java.util.logging.Level;
 
 /**
  * Export Meta Data.
@@ -97,23 +99,45 @@ public class ExportMetaData extends AuthenticatedCommand {
         String webURL = getCommandManager().getWebEnabledURL();
         isWebBase = (webURL != null) && (webURL.trim().length() > 0);
 
+        String spec = FederationManager.getIDFFSubCommandSpecification(rc);
+        String[] params = {realm, entityID, metadata, extendedData, spec};
+        writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            "ATTEMPT_EXPORT_ENTITY", params);
+
         if ((metadata == null) && (extendedData == null)) {
+            String[] args = {realm, entityID, metadata, extendedData,
+                spec, getResourceString("export-entity-exception-no-datafile")};
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                "FAILED_EXPORT_ENTITY", args);
             throw new CLIException(
                 getResourceString("export-entity-exception-no-datafile"),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }
-        
-        String spec = FederationManager.getIDFFSubCommandSpecification(rc);
-        if (spec.equals(FederationManager.DEFAULT_SPECIFICATION)) {
-            handleSAML2Request(rc);
-        } else if (spec.equals(FedCLIConstants.IDFF_SPECIFICATION)) {
-            handleIDFFRequest(rc);
-        } else if (spec.equals(FedCLIConstants.WSFED_SPECIFICATION)) {
-            handleWSFedRequest(rc);
-        } else {
-            throw new CLIException(
-                getResourceString("unsupported-specification"),
-                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+
+        try {
+            if (spec.equals(FederationManager.DEFAULT_SPECIFICATION)) {
+                handleSAML2Request(rc);
+                writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                    "SUCCEEDED_EXPORT_ENTITY", params);
+            } else if (spec.equals(FedCLIConstants.IDFF_SPECIFICATION)) {
+                handleIDFFRequest(rc);
+                writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                    "SUCCEEDED_EXPORT_ENTITY", params);
+            } else if (spec.equals(FedCLIConstants.WSFED_SPECIFICATION)) {
+                handleWSFedRequest(rc);
+                writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                    "SUCCEEDED_EXPORT_ENTITY", params);
+            } else {
+                throw new CLIException(
+                    getResourceString("unsupported-specification"),
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+            }
+        } catch (CLIException e) {
+            String[] args = {realm, entityID, metadata, extendedData,
+                spec, e.getMessage()};
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                "FAILED_EXPORT_ENTITY", args);
+            throw e;
         }
     }
     

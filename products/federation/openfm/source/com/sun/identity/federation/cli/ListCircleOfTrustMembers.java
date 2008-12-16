@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListCircleOfTrustMembers.java,v 1.5 2008-06-25 05:49:53 qcheng Exp $
+ * $Id: ListCircleOfTrustMembers.java,v 1.6 2008-12-16 01:49:37 qcheng Exp $
  *
  */
 
@@ -33,6 +33,7 @@ import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
 import com.sun.identity.cli.IOutput;
+import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
 import com.sun.identity.cot.CircleOfTrustManager;
 import com.sun.identity.cot.COTException;
@@ -40,6 +41,7 @@ import com.sun.identity.cot.COTUtils;
 import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.logging.Level;
 
 /**
  * List members in a Circle of Trust.
@@ -65,12 +67,21 @@ public class ListCircleOfTrustMembers extends AuthenticatedCommand {
         cot = getStringOptionValue(FedCLIConstants.ARGUMENT_COT);
         IOutput outputWriter = getOutputWriter();
         spec=FederationManager.getIDFFSubCommandSpecification(rc);
-        
+
+        String[] params = {realm, cot, spec};
+        writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            "ATTEMPT_LIST_COT_MEMBERS", params);        
+
         try {
             CircleOfTrustManager cotManager = new CircleOfTrustManager();
             Set circleOfTrusts = cotManager.getAllCirclesOfTrust(realm);
             if (!circleOfTrusts.contains(cot)){
                 Object[] obj = {cot};
+                String[] args = {realm, cot, spec, MessageFormat.format(
+                    getResourceString(
+                    "list-circle-of-trust-members-cot-does-not-exists"), obj)};
+                writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                    "FAILED_LIST_COT_MEMBERS", args);
                 throw new CLIException(MessageFormat.format(
                     getResourceString(
                     "list-circle-of-trust-members-cot-does-not-exists"), obj),
@@ -95,8 +106,13 @@ public class ListCircleOfTrustMembers extends AuthenticatedCommand {
                      outputWriter.printlnMessage("  " + entityId);
                 }
             }
+            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                "SUCCEEDED_LIST_COT_MEMBERS", params);
         } catch (COTException e) {
             debug.warning("ListCircleOfTrustMembers.handleRequest", e);
+            String[] args = {realm, cot, spec, e.getMessage()};
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                "FAILED_LIST_COT_MEMBERS", args);
             throw new CLIException(e.getMessage(),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }

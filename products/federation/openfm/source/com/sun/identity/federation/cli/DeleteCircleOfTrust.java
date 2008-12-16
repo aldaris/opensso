@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteCircleOfTrust.java,v 1.4 2008-06-25 05:49:52 qcheng Exp $
+ * $Id: DeleteCircleOfTrust.java,v 1.5 2008-12-16 01:49:37 qcheng Exp $
  *
  */
 
@@ -32,11 +32,13 @@ import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
+import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
 import com.sun.identity.cot.CircleOfTrustManager;
 import com.sun.identity.cot.COTException;
 import com.sun.identity.cot.COTUtils;
 import java.text.MessageFormat;
+import java.util.logging.Level;
 
 /**
  * Delete a Circle of Trust.
@@ -59,6 +61,10 @@ public class DeleteCircleOfTrust extends AuthenticatedCommand {
         ldapLogin();
         realm = getStringOptionValue(FedCLIConstants.ARGUMENT_REALM, "/");
         cot = getStringOptionValue(FedCLIConstants.ARGUMENT_COT);
+
+        String[] params = {realm, cot};
+        writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            "ATTEMPT_DELETE_COT", params);
         
         try {
             CircleOfTrustManager cotManager = new CircleOfTrustManager();
@@ -67,8 +73,13 @@ public class DeleteCircleOfTrust extends AuthenticatedCommand {
             Object[] obj = {cot};
             getOutputWriter().printlnMessage(MessageFormat.format(
                 getResourceString("delete-circle-of-trust-succeeded"), obj));
+            writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                "SUCCEEDED_DELETE_COT", params);
         } catch (COTException e) {
             debug.warning("DeleteCircleOfTrust.handleRequest", e);
+            String[] args = {realm, cot, e.getMessage()};
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                "FAILED_DELETE_COT", args);
             throw new CLIException(e.getMessage(),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteMetaData.java,v 1.6 2008-06-25 05:49:52 qcheng Exp $
+ * $Id: DeleteMetaData.java,v 1.7 2008-12-16 01:49:37 qcheng Exp $
  *
  */
 
@@ -32,6 +32,7 @@ import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
+import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
 import com.sun.identity.federation.meta.IDFFMetaException;
 import com.sun.identity.federation.meta.IDFFMetaManager;
@@ -42,6 +43,7 @@ import com.sun.identity.wsfederation.meta.WSFederationMetaManager;
 import com.sun.identity.wsfederation.meta.WSFederationMetaException;
 import com.sun.identity.wsfederation.meta.WSFederationMetaUtils;
 import java.text.MessageFormat;
+import java.util.logging.Level;
 
 /**
  * Delete a configuration and/or descriptor.
@@ -70,17 +72,34 @@ public class DeleteMetaData extends AuthenticatedCommand {
         realm = getStringOptionValue(FedCLIConstants.ARGUMENT_REALM);
         entityID = getStringOptionValue(FedCLIConstants.ARGUMENT_ENTITY_ID);
         String spec = FederationManager.getIDFFSubCommandSpecification(rc);
+
+        String[] params = {realm, entityID, spec};
+        writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            "ATTEMPT_DELETE_ENTITY", params);
         
-        if (spec.equals(FederationManager.DEFAULT_SPECIFICATION)) {
-            handleSAML2Request(rc);
-        } else if (spec.equals(FedCLIConstants.IDFF_SPECIFICATION)) {
-            handleIDFFRequest(rc);
-        } else if (spec.equals(FedCLIConstants.WSFED_SPECIFICATION)) {
-            handleWSFedRequest(rc);
-        } else {
-            throw new CLIException(
-                getResourceString("unsupported-specification"),
-                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+        try {
+            if (spec.equals(FederationManager.DEFAULT_SPECIFICATION)) {
+                handleSAML2Request(rc);
+                writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                    "SUCCEEDED_DELETE_ENTITY", params);
+            } else if (spec.equals(FedCLIConstants.IDFF_SPECIFICATION)) {
+                handleIDFFRequest(rc);
+                writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                    "SUCCEEDED_DELETE_ENTITY", params);
+            } else if (spec.equals(FedCLIConstants.WSFED_SPECIFICATION)) {
+                handleWSFedRequest(rc);
+                writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                    "SUCCEEDED_DELETE_ENTITY", params);
+            } else {
+                throw new CLIException(
+                    getResourceString("unsupported-specification"),
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+            }
+        } catch (CLIException e) {
+            String[] args = {realm, entityID, spec, e.getMessage()};
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                "FAILED_DELETE_ENTITY", args);
+            throw e;
         }
     }
     

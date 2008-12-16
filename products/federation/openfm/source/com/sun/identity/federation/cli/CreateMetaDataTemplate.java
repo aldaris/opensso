@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateMetaDataTemplate.java,v 1.35 2008-12-09 02:09:22 veiming Exp $
+ * $Id: CreateMetaDataTemplate.java,v 1.36 2008-12-16 01:49:37 qcheng Exp $
  *
  */
 
@@ -32,6 +32,7 @@ import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
+import com.sun.identity.cli.LogWriter;
 import com.sun.identity.cli.RequestContext;
 import com.sun.identity.federation.meta.IDFFMetaException;
 import com.sun.identity.shared.Constants;
@@ -46,6 +47,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.logging.Level;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.cert.CertificateEncodingException;
@@ -110,18 +112,35 @@ public class CreateMetaDataTemplate extends AuthenticatedCommand {
         normalizeOptions();
         
         String spec = FederationManager.getIDFFSubCommandSpecification(rc);
-        if (spec.equals(FederationManager.DEFAULT_SPECIFICATION)) {
-            handleSAML2Request(rc);
-        } else if (spec.equals(FedCLIConstants.IDFF_SPECIFICATION)) {
-            handleIDFFRequest(rc);
-        } else if (spec.equals(FedCLIConstants.WSFED_SPECIFICATION)) {
-            handleWSFedRequest(rc);
-        } else {
-            throw new CLIException(
-                getResourceString("unsupported-specification"),
-                ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
-        }
-        
+        String[] params = {entityID, metadata,extendedData,
+             idpAlias, spAlias, attraAlias, attrqAlias, authnaAlias, pdpAlias,
+             pepAlias, affiAlias, spec};
+        writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+            "ATTEMPT_CREATE_METADATA_TEMPL", params);
+        try {
+            if (spec.equals(FederationManager.DEFAULT_SPECIFICATION)) {
+                handleSAML2Request(rc);
+                writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                    "SUCCEEDED_CREATE_METADATA_TEMPL", params);
+            } else if (spec.equals(FedCLIConstants.IDFF_SPECIFICATION)) {
+                handleIDFFRequest(rc);
+                writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                    "SUCCEEDED_CREATE_METADATA_TEMPL", params);
+            } else if (spec.equals(FedCLIConstants.WSFED_SPECIFICATION)) {
+                handleWSFedRequest(rc);
+                writeLog(LogWriter.LOG_ACCESS, Level.INFO,
+                    "SUCCEEDED_CREATE_METADATA_TEMPL", params);
+            } else {
+                throw new CLIException(
+                    getResourceString("unsupported-specification"),
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+            }
+        } catch (CLIException e) {
+            String[] args = {entityID, spec, e.getMessage()};
+            writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                "FAILED_CREATE_METADATA_TEMPL", args);
+            throw e; 
+        } 
     }
     
     private void handleSAML2Request(RequestContext rc)
