@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerXMLBase.java,v 1.2 2008-11-21 22:21:44 leiming Exp $
+ * $Id: ServerXMLBase.java,v 1.3 2008-12-16 00:15:34 leiming Exp $
  *
  */
 
@@ -387,9 +387,20 @@ public abstract class ServerXMLBase implements IConfigKeys, IConstants {
         
         return entries;
     }
-    
+
     /*
-     * add IBM encryption JVM options
+     * get new JVM options
+     */
+    private String getJVMOptions() {
+        return  STR_IBM_ENC_JVM_OPTIONS_VALUE +
+                STR_LOG_COMPATMODE_OPTION +
+                STR_LOG_CONFIG_FILE_OPTION_PREFIX +
+                ConfigUtil.getConfigDirPath() + STR_FILE_SEP +
+                STR_LOG_CONFIG_FILENAME;
+    }
+
+    /*
+     * add IBM JVM options
      */
     public boolean configureJVMOptions(XMLDocument doc, XMLElement jvmOptions,
             IStateAccess stateAccess) {
@@ -399,11 +410,12 @@ public abstract class ServerXMLBase implements IConfigKeys, IConstants {
         try {
             String preJVMOptionsValue =
                     jvmOptions.getAttributeValue(STR_JVM_OPTIONS_NAME);
-            String newJVMOptionsValue = STR_IBM_ENC_JVM_OPTIONS_VALUE;
+            String newJVMOptionsValue = getJVMOptions();
+
             if (preJVMOptionsValue != null && preJVMOptionsValue.length() > 0) {
                 if (preJVMOptionsValue.indexOf(newJVMOptionsValue) >= 0) {
                     Debug.log("ServerXMLBase.configureJVMOptions() - "
-                            + " IBM encryption JVM options already exist, "
+                            + " IBM JVM options already exist, "
                             + " skip adding them.");
                     return true;
                 }
@@ -419,7 +431,7 @@ public abstract class ServerXMLBase implements IConfigKeys, IConstants {
             jvmOptions
                     .updateAttribute(STR_JVM_OPTIONS_NAME, newJVMOptionsValue);
             Debug.log("ServerXMLBase.configureJVMOptions() - "
-                    + "added IBM encryption JVM options.");
+                    + "added IBM JVM options.");
             
         } catch (Exception ex) {
             Debug.log("ServerXMLBase.configureJVMOptions() - "
@@ -431,7 +443,7 @@ public abstract class ServerXMLBase implements IConfigKeys, IConstants {
     }
     
     /*
-     * remove IBM encryption JVM options
+     * remove IBM JVM options
      */
     public boolean unConfigureJVMOptions(XMLDocument doc,
             XMLElement jvmOptions, IStateAccess stateAccess) {
@@ -441,12 +453,12 @@ public abstract class ServerXMLBase implements IConfigKeys, IConstants {
         try {
             String preJVMOptionsValue =
                     jvmOptions.getAttributeValue(STR_JVM_OPTIONS_NAME);
-            String newJVMOptionsValue = STR_IBM_ENC_JVM_OPTIONS_VALUE;
+            String newJVMOptionsValue = getJVMOptions();
             
             if (preJVMOptionsValue == null || preJVMOptionsValue.length() == 0
                     || preJVMOptionsValue.indexOf(newJVMOptionsValue) < 0) {
                 Debug.log("ServerXMLBase.unConfigureJVMOptions() - "
-                        + " IBM encryption JVM options do not exist, "
+                        + " IBM JVM options do not exist, "
                         + " skip removing them.");
                 return true;
             }
@@ -461,7 +473,7 @@ public abstract class ServerXMLBase implements IConfigKeys, IConstants {
             jvmOptions
                     .updateAttribute(STR_JVM_OPTIONS_NAME, newJVMOptionsValue);
             Debug.log("ServerXMLBase.unConfigureJVMOptions() - "
-                    + "removed IBM encryption JVM options.");
+                    + "removed IBM JVM options.");
         } catch (Exception ex) {
             Debug.log("ServerXMLBase.unConfigureJVMOptions() - "
                     + " failed to remove JVM options with exception : ", ex);
@@ -478,6 +490,11 @@ public abstract class ServerXMLBase implements IConfigKeys, IConstants {
     public static final String STR_IBM_ENC_JVM_OPTIONS_VALUE =
             "-DamKeyGenDescriptor.provider=IBMJCE "
             + "-DamCryptoDescriptor.provider=IBMJCE "
-            + "-DamRandomGenProvider=IBMJCE";
-    
+            + "-DamRandomGenProvider=IBMJCE ";
+    public static final String STR_LOG_COMPATMODE_OPTION =
+            "-DLOG_COMPATMODE=Off ";
+    public static final String STR_LOG_CONFIG_FILE_OPTION_PREFIX =
+            "-Djava.util.logging.config.file=";
+    public static final String STR_LOG_CONFIG_FILENAME =
+            "OpenSSOAgentLogConfig.properties";
 }
