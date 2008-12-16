@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConstants.java,v 1.1 2008-11-22 02:41:19 ak138937 Exp $
+ * $Id: ServiceConstants.java,v 1.2 2008-12-16 17:54:07 ak138937 Exp $
  *
  */
 
@@ -59,6 +59,8 @@ public interface ServiceConstants extends Constants {
     String LOCATION = "location";
     String BOOTSTRAP = "bootstrap";
     String BOOTPATH = "path";
+    String BASE_DIR_PATTERN = "%BASE_DIR%";
+    String DEP_URI_PATTERN = "%SERVER_URI%";
     
     /**
      * Session failover related properties to be checked in Server 
@@ -80,13 +82,18 @@ public interface ServiceConstants extends Constants {
     final String MAX_POOL_SIZE =
         "iplanet-am-session-max-pool-size";
 
-   /**
-    * Single line format string 
-    */
-    final String SMALL_LINE_SEP_1 = "---------------------------------------";
+    /**
+     * General Server  related properties
+     */
+    final String CONFIG_PATH = "com.iplanet.services.configpath";
 
-   /**
-    * Double line format string 
-    */
-    final String PARA_SEP_1 = "==============================";
+    /**
+     * Single line format string 
+     */
+     final String SMALL_LINE_SEP_1 = "---------------------------------------";
+
+    /**
+     * Double line format string 
+     */
+     final String PARA_SEP_1 = "==============================";
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLConfigValidator.java,v 1.1 2008-11-22 02:41:22 ak138937 Exp $
+ * $Id: SAMLConfigValidator.java,v 1.2 2008-12-16 17:56:44 ak138937 Exp $
  *
  */
 
@@ -50,6 +50,7 @@ import java.util.StringTokenizer;
 
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.common.configuration.ServerConfiguration;
+import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.diagnostic.base.core.log.IToolOutput;
 import com.sun.identity.security.DecodeAction;
 import com.sun.identity.shared.debug.Debug;
@@ -159,10 +160,23 @@ public class SAMLConfigValidator extends ServerConfigBase {
         boolean valid = false;
         String privateKeyPass = null;
         String keystorePass = null;
+        String fName = null;
+        String cfgPath = SystemProperties.get(CONFIG_PATH);
+        String deployURI = SystemProperties.get(
+            AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
+        deployURI = deployURI.replaceAll("/", "");
+
         toolOutWriter.printMessage("saml-validate-cfg-prop");
         if (samlMap.containsKey(SAML_XMLSIG_STORE_PASS)) {
-            String fName = samlMap.get(SAML_XMLSIG_STORE_PASS);
+            fName = samlMap.get(SAML_XMLSIG_STORE_PASS);
+        } else {
+            fName = defProp.get(SAML_XMLSIG_STORE_PASS);
+        }
+        if (fName != null) {
             try {
+                fName = fName.replaceAll(BASE_DIR_PATTERN, cfgPath).replaceAll(
+                    DEP_URI_PATTERN, deployURI);
+                toolOutWriter.printMessage("saml-file-loc" , new String[]{fName});
                 File storePassFile = new File(fName);
                 if (!storePassFile.exists()) {
                     toolOutWriter.printError(
@@ -185,8 +199,15 @@ public class SAMLConfigValidator extends ServerConfigBase {
         valid = false;
         
         if (samlMap.containsKey(SAML_XMLSIG_KEYPASS)) {
-            String fName = samlMap.get(SAML_XMLSIG_KEYPASS);
+            fName = samlMap.get(SAML_XMLSIG_KEYPASS);
+        } else {
+            fName = defProp.get(SAML_XMLSIG_KEYPASS);
+        }
+        if (fName != null) {
             try {
+                fName = fName.replaceAll(BASE_DIR_PATTERN, cfgPath).replaceAll(
+                    DEP_URI_PATTERN, deployURI);
+                toolOutWriter.printMessage("saml-file-loc" , new String[]{fName});
                 File keyPassFile = new File(fName);
                 if (!keyPassFile.exists())  {
                     toolOutWriter.printError("saml-keypwd-file-not-exist",
@@ -209,8 +230,15 @@ public class SAMLConfigValidator extends ServerConfigBase {
         valid = false;
         
         if (samlMap.containsKey(SAML_XMLSIG_KEYSTORE)) {
-            String fName = samlMap.get(SAML_XMLSIG_KEYSTORE);
+            fName = samlMap.get(SAML_XMLSIG_KEYSTORE);
+        } else {
+            fName = defProp.get(SAML_XMLSIG_KEYSTORE);
+        }
+        if (fName != null) {
             try {
+                fName = fName.replaceAll(BASE_DIR_PATTERN, cfgPath).replaceAll(
+                    DEP_URI_PATTERN, deployURI);
+                toolOutWriter.printMessage("saml-file-loc" , new String[]{fName});
                 File keystoreFile = new File(fName);
                 if (!keystoreFile.exists()) {
                     toolOutWriter.printError(
@@ -223,6 +251,10 @@ public class SAMLConfigValidator extends ServerConfigBase {
                                 toolOutWriter.printStatusMsg(true,
                                     "saml-loading-keystore");
                                 validateKeyAlg(kstore, samlMap);
+                                if (!samlMap.containsKey(SAML_XMLSIG_CERT_ALIAS)){
+                                    samlMap.put(SAML_XMLSIG_CERT_ALIAS,  
+                                        defProp.get(SAML_XMLSIG_CERT_ALIAS));
+                                }
                                 if (!isValidPrivateKey(kstore, privateKeyPass,
                                     samlMap.get(SAML_XMLSIG_CERT_ALIAS))){
                                     toolOutWriter.printError(
