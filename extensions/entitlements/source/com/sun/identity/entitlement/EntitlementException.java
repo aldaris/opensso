@@ -1,7 +1,7 @@
 /**
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright (c) 2008 Sun Microsystems Inc. All Rights Reserved
  *
  * The contents of this file are subject to the terms
  * of the Common Development and Distribution License
@@ -22,11 +22,36 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementException.java,v 1.1 2008-12-11 17:13:41 veiming Exp $
+ * $Id: EntitlementException.java,v 1.2 2008-12-17 07:06:19 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
+/**
+ * Entitlement related exception. * 
+ */
 public class EntitlementException extends Exception {
+    
+    private int errorCode;
+    
+    /**
+     * Creates an entitlement exception.
+     * 
+     * @param msg Exception message.
+     * @param errorCode Error code.
+     */
+    public EntitlementException(String msg, int errorCode) {
+        super(msg);
+        this.errorCode = errorCode;
+    }
+    
+    /**
+     * Returns error code.
+     * 
+     * @return error code.
+     */
+    public int getErrorCode() {
+        return errorCode;
+    }
 }
 

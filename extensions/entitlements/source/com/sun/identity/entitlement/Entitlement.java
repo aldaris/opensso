@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.3 2008-12-12 18:51:07 veiming Exp $
+ * $Id: Entitlement.java,v 1.4 2008-12-17 07:06:19 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -37,11 +37,11 @@ import java.util.Set;
  * <p>
  * Example of how to use this class
  * <pre>
- *     Entitlement e = new Entitlement();
- *     e.setResourceName("http://www.sun.com/example");
- *     e.setActionName("GET");
- *     Evaluator evaluator = new Evaluator();
- *     boolean isAllowed = evaluator.hasEntitlement(subject, e, 
+ *     Set set = new HashSet();
+ *     set.add("GET");
+ *     Evaluator evaluator = new Evaluator(adminToken);
+ *     boolean isAllowed = evaluator.hasEntitlement(subject, 
+ *         new Entitlement("http://www.sun.com/example", set), 
  *         Collections.EMPTY_MAP);
  * </pre>
  * Or do a sub tree search like this.
@@ -72,12 +72,62 @@ public class Entitlement {
     /**
      * Creates an entitlement object.
      *
-     * @param serviceName Service Name.
+     * @param resourceName Resource name.
+     * @param actions Set of action names.
      */
-    public Entitlement(String serviceName) {
-        this.serviceName = serviceName;       
+    public Entitlement(String resourceName,  Set<String> actions) {
+        setResourceName(resourceName);
+        setActionNames(actions);
     }
 
+    /**
+     * Creates an entitlement object.
+     *
+     * @param serviceName Service name.
+     * @param resourceName Resource name.
+     * @param actions Set of action names.
+     */
+    public Entitlement(
+        String serviceName, 
+        String resourceName, 
+        Set<String> actions
+    ) {
+        this.serviceName = serviceName;   
+        setResourceName(resourceName);
+        setActionNames(actions);
+    }
+
+    /**
+     * Creates an entitlement object.
+     *
+     * @param resourceName Resource name.
+     * @param actionValues Map of action name to set of values.
+     */
+    public Entitlement(
+        String resourceName,  
+        Map<String, Object> actionValues
+    ) {
+        setResourceName(resourceName);
+        setActionValues(actionValues);
+    }
+
+    /**
+     * Creates an entitlement object.
+     *
+     * @param serviceName Service name.
+     * @param resourceName Resource name.
+     * @param actionValues Map of action name to set of values.
+     */
+    public Entitlement(
+        String serviceName, 
+        String resourceName,  
+        Map<String, Object> actionValues
+    ) {
+        this.serviceName = serviceName;   
+        setResourceName(resourceName);
+        setActionValues(actionValues);
+    }
+    
     /**
      * Sets resource name.
      *
@@ -120,7 +170,7 @@ public class Entitlement {
      *
      * @param actionNames Set of action names.
      */
-    public void setActionName(Set<String> actionNames) {
+    public void setActionNames(Set<String> actionNames) {
         actionValues = new HashMap<String, Object>();
         for (String i : actionNames) {
             actionValues.put(i, Boolean.TRUE);
@@ -132,7 +182,19 @@ public class Entitlement {
      *
      * @param actionValues Action values.
      */
-    public void setActionValuesMap(Map<String, Object> actionValues) {
+    public void setActionValues(Map<String, Object> actionValues) {
+        this.actionValues = new HashMap<String, Object>();
+        for (String key : actionValues.keySet()) {
+            Object val = actionValues.get(key);
+            
+            if (val instanceof Set) {
+                Set copyOf = new HashSet<Object>((Set<Object>)val);
+                this.actionValues.put(key, copyOf);
+            } else {
+                this.actionValues.put(key, val);
+            }
+        }
+        
         this.actionValues = actionValues;
     }
 

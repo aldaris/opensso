@@ -1,7 +1,7 @@
 /**
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2006 Sun Microsystems Inc. All Rights Reserved
+ * Copyright (c) 2008 Sun Microsystems Inc. All Rights Reserved
  *
  * The contents of this file are subject to the terms
  * of the Common Development and Distribution License
@@ -22,12 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Evaluator.java,v 1.3 2008-12-12 18:51:08 veiming Exp $
+ * $Id: Evaluator.java,v 1.4 2008-12-17 07:06:19 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,18 +44,31 @@ public class Evaluator {
      *
      * @throws EntitlementException if any other abnormal condition occ.
      */
-    public Evaluator()
+    private Evaluator()
         throws EntitlementException {
     }
 
     /**
      * Constructor to create an evaluator given the service type.
      *
+     * @param subject Subject who credential is used for performing the 
+     *        evaluation.
      * @param serviceTypeName the name of the service type for 
      *        which this evaluator can be used.
      * @throws EntitlementException if any other abnormal condition occured.
      */
-    public Evaluator(String serviceTypeName)
+    public Evaluator(Subject subject, String serviceTypeName)
+        throws EntitlementException {
+    }
+
+    /**
+     * Constructor to create an evaluator the default service type.
+     *
+     * @param subject Subject who credential is used for performing the 
+     *        evaluation.
+     * @throws EntitlementException if any other abnormal condition occured.
+     */
+    public Evaluator(Subject subject)
         throws EntitlementException {
     }
 
@@ -94,7 +107,7 @@ public class Evaluator {
         Map<String, Set<String>> environment,
         boolean recursive
     ) throws EntitlementException {
-        return Collections.EMPTY_LIST;
+        return new ArrayList<Entitlement>();
     }
 }
 
