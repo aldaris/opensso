@@ -110,8 +110,9 @@ DS_DIRMGRPASSWD=11111111
 ### USERSTORE_TYPE is the type of user data store. Valid values are
 ### 'LDAPv3ForAMDS' - LDAP with OpenSSO Schema
 ### 'LDAPv3' - Generic LDAP (no OpenSSO Schema)
-### '' - use configuration data store as user data store. DATA_STORE needs to
-### be 'embedded'. The remaining user data store propreties will be ignored.
+### If DATA_STORE is 'embedded', this property can be commented out or can be
+### with no value. In this case, the configuration data store will be used as
+### user data store. The remaining user data store propreties will be ignored.
 ###
 ### USERSTORE_SSL specifies if the user data store is using SSL.
 ### Valid values are
