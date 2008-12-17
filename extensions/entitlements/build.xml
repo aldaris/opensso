@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.3 2008-12-12 07:41:36 veiming Exp $
+   $Id: build.xml,v 1.4 2008-12-17 07:01:13 veiming Exp $
 
 -->
 
@@ -42,7 +42,7 @@
         </fileset>
     </path>
     
-    <target name="build" depends="preparebuild">        
+    <target name="build" depends="preparebuild,amserverjar,openssosharedlibjar">
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
                destdir="${entitlements.classes.dir}" source="1.5" target="1.5"
                debug="${build.debug}" debuglevel="${build.debuglevel}">
@@ -53,8 +53,10 @@
         <antcall target="unittest" />
 
         <mkdir dir="${war.packageweb.dir}" />
-        <move file="${war.package.dir}/WEB-INF/web.xml" tofile="${war.packageweb.dir}/web.xml" />
-        <war destfile="${entitlements.dist.dir}/opensso.war" webxml="${war.packageweb.dir}/web.xml">
+        <move file="${war.package.dir}/WEB-INF/web.xml"
+            tofile="${war.packageweb.dir}/web.xml" />
+        <war destfile="${entitlements.dist.dir}/opensso.war" 
+            webxml="${war.packageweb.dir}/web.xml">
             <zipfileset dir="${war.package.dir}" />
         </war>
         <move file="${war.packageweb.dir}/web.xml"
@@ -74,9 +76,34 @@
         </copy>
     </target>
 
+    <target name="amserverjar" unless="amserver.jar.exists">
+        <unjar src="${entitlements.extlib.dir}/opensso.war"
+            dest="${entitlements.extlib.dir}">
+            <patternset>
+                <include name="WEB-INF/lib/amserver.jar"/>
+            </patternset>
+            <mapper type="flatten" />
+        </unjar>
+    </target>
+    
+    <target name="openssosharedlibjar" unless="openssosharedlib.jar.exists">
+        <unjar src="${entitlements.extlib.dir}/opensso.war"
+            dest="${entitlements.extlib.dir}">
+            <patternset>
+                <include name="WEB-INF/lib/opensso-sharedlib.jar"/>
+            </patternset>
+            <mapper type="flatten" />
+        </unjar>
+    </target>
+
     <target name="preparebuild">
         <mkdir dir="${entitlements.dist.dir}" />
         <mkdir dir="${entitlements.classes.dir}" />
+
+        <available file="${entitlements.extlib.dir}/amserver.jar"
+            property="amserver.jar.exists" value="true" />
+        <available file="${entitlements.extlib.dir}/opensso-sharedlib.jar"
+            property="openssosharedlib.jar.exists" value="true" />
     </target>
     
     <target name="clean">
