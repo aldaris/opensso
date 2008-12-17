@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMDiscoveryServiceViewBean.java,v 1.7 2008-11-17 21:18:07 veiming Exp $
+ * $Id: SMDiscoveryServiceViewBean.java,v 1.8 2008-12-17 07:30:34 veiming Exp $
  *
  */
 
@@ -161,7 +161,8 @@ public class SMDiscoveryServiceViewBean
                 req.getParameter(PG_SESSION_PAGE_TRAIL_ID));
             setPageSessionAttribute(EntityEditViewBean.UNIVERSAL_ID, univId);
             setPageSessionAttribute(AMAdminConstants.CURRENT_REALM, realm);
-
+            setPageSessionAttribute(EntityEditViewBean.ENTITY_TYPE,
+                rc.getRequest().getParameter("type"));
             EntityResourceOfferingModel entityModel = new
                 EntityResourceOfferingModelImpl(
                     req, getPageSessionAttributes());
@@ -246,7 +247,8 @@ public class SMDiscoveryServiceViewBean
                     req.getParameter(PG_SESSION_PAGE_TRAIL_ID));
                 vb.forwardTo(rc);
             } else {
-                handleEntityOperationRequest(realm, univId, rc);
+                handleEntityOperationRequest(req.getParameter("realm"), 
+                    univId, rc);
             }
         } catch (IdRepoException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServicesSelectViewBean.java,v 1.2 2008-06-25 05:42:59 qcheng Exp $
+ * $Id: ServicesSelectViewBean.java,v 1.3 2008-12-17 07:30:33 veiming Exp $
  *
  */
 
@@ -218,7 +218,13 @@ public class ServicesSelectViewBean
     ) {
         SCUtils utils = new SCUtils(serviceName, model);
         String propertiesViewBeanURL = utils.getServiceDisplayURL();
-
+        String type = (String)getPageSessionAttribute(
+            EntityEditViewBean.ENTITY_TYPE);
+        String realm = (String)getPageSessionAttribute(
+            AMAdminConstants.CURRENT_REALM);
+        if (realm == null) {
+            realm = "/";
+        }
         // Work around for not showing auth config service custom view. 
         // This is not needed in 7.0, but is still used by old 6.3 console.
         if (serviceName.equals(AMAdminConstants.AUTH_CONFIG_SERVICE)) {
@@ -229,9 +235,12 @@ public class ServicesSelectViewBean
             (propertiesViewBeanURL.trim().length() > 0)
         ) {
             try {
+                String charset = getCharset(model);
                 propertiesViewBeanURL += "?ServiceName=" + serviceName +
+                    "&type=" + Locale.URLEncodeField(type, charset) +
+                    "&realm=" + Locale.URLEncodeField(realm, charset) +
                     "&User=" +
-                    Locale.URLEncodeField(universalId, getCharset(model)) +
+                    Locale.URLEncodeField(universalId, charset) +
                     "&Op=" + AMAdminConstants.OPERATION_ADD;
                 HttpServletResponse response =
                     getRequestContext().getResponse();
