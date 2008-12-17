@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLUtils.java,v 1.10 2008-12-10 20:14:19 hengming Exp $
+ * $Id: SAMLUtils.java,v 1.11 2008-12-17 23:31:10 hengming Exp $
  *
  */
 
@@ -625,30 +625,45 @@ public class SAMLUtils  extends SAMLUtilsCommon {
                             continue;
                         }
                         attrName = attribute.getAttributeName();
-                        // must have one value
-                        attrValue = (Element) attrValues.get(0);
-                        if ((attrValues.size() == 1) &&
-                        (!XMLUtils.hasElementChild(attrValue))) {
-                            attrValueString =
-                            XMLUtils.getElementValue(attrValue);
-                            try {
-                                if (debug.messageEnabled()) {
-                                    debug.message(
+                        List attrValueList = null;
+
+                        for(Iterator avIter = attrValues.iterator();
+                            avIter.hasNext(); ) {
+
+                            attrValue = (Element) avIter.next();
+                            if (!XMLUtils.hasElementChild(attrValue)) {
+                                attrValueString =
+                                    XMLUtils.getElementValue(attrValue);
+                                if (attrValueList == null) {
+                                    attrValueList = new ArrayList();
+                                }
+                                attrValueList.add(attrValueString);
+                            }
+                        }
+                        if (attrValueList != null) {
+                            if (debug.messageEnabled()) {
+                                debug.message(
                                     "SAMLUtils.addEnvParamsFromAssertion:" +
                                     " attrName = " + attrName +
-                                    " attrValue = " + attrValueString);
-                                }
-                                envParameters.put(attrName, attrValueString);
-                            } catch (Exception e) {
-                                // no need to throw exception
-                                continue;
+                                    " attrValue = " + attrValueList);
                             }
-                        } else {
+                            String[] attrValueStrs = (String[])attrValueList.
+                                toArray(new String[attrValueList.size()]);
                             try {
-                                envParameters.put(attrName, attrValues);
-                            } catch (Exception e) {
-                                // no need to throw exception
-                                continue;
+                                envParameters.put(attrName, attrValueStrs);
+                            } catch (Exception ex) {
+                                if (debug.messageEnabled()) {
+                                    debug.message(
+                                        "SAMLUtils.addEnvParamsFromAssertion:",
+                                        ex);
+                                }
+                            }
+                        } else if (debug.messageEnabled()) {
+                            if (debug.messageEnabled()) {
+                                debug.message(
+                                    "SAMLUtils.addEnvParamsFromAssertion:" +
+                                    " attrName = " + attrName +
+                                    " has no value");
                             }
                         }
                     }
@@ -1619,16 +1634,18 @@ public class SAMLUtils  extends SAMLUtilsCommon {
             for(Iterator iter = entrySet.iterator(); iter.hasNext();) {
                 Map.Entry entry = (Map.Entry)iter.next();
                 String attrName = (String)entry.getKey();
-                String attrValues = (String)entry.getValue();
-                if (!attrName.equals("") && !attrValues.equals("")) {
-                   String[] attrValueArray = {attrValues};   
-                   sessionProvider.setProperty(
-                       session, attrName, attrValueArray);
-                   if (debug.messageEnabled()) {
-                       debug.message(
-                           "SAMLUtils.setAttrMapInSessioin: AttrMap:" +
-                           attrName + " , " + attrValues);
-                   }
+                String[] attrValues;
+                if (attrName.equals(SAMLConstants.USER_NAME)) {
+                    String attrValue = (String)entry.getValue();
+                    attrValues = new String[1];
+                    attrValues[0] = attrValue;
+                } else {
+                    attrValues = (String[])entry.getValue();
+                }
+                sessionProvider.setProperty(session, attrName, attrValues);
+                if (debug.messageEnabled()) {
+                    debug.message("SAMLUtils.setAttrMapInSessioin: attrName ="+
+                        attrName);
                 }
             }
         } 
