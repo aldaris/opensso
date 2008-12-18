@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupProduct.java,v 1.19 2008-10-16 04:04:53 nithyas Exp $
+ * $Id: SetupProduct.java,v 1.20 2008-12-18 17:06:27 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -709,6 +709,7 @@ public class SetupProduct extends TestCommon {
         String ldapServer;
         String ldapPort;
         String dsAdminPassword;
+        String dsAuthPassword;
         String orgName;
         String sslEnabled;
         String authId;
@@ -751,6 +752,11 @@ public class SetupProduct extends TestCommon {
                     UM_DATASTORE_PARAMS_PREFIX + index + "." +
                     SMSConstants.UM_DATASTORE_ADMINPW +
                     "." + i);
+            dsAuthPassword = cfgData.getString(
+                    SMSConstants.
+                    UM_DATASTORE_PARAMS_PREFIX + index + "." +
+                    SMSConstants.UM_LDAPv3_AUTHPW +
+                    "." + i);
             orgName = cfgData.getString(SMSConstants.
                     UM_DATASTORE_PARAMS_PREFIX + index + "." +
                     SMSConstants.
@@ -792,7 +798,7 @@ public class SetupProduct extends TestCommon {
                     ldapServer + ":" + ldapPort);
             list.add(SMSConstants.
                     UM_LDAPv3_AUTHPW + "=" +
-                    dsAdminPassword);
+                    dsAuthPassword);
             list.add(SMSConstants.
                     UM_LDAPv3_ORGANIZATION_NAME + "=" +
                     orgName);
@@ -938,6 +944,7 @@ public class SetupProduct extends TestCommon {
         String ldapServer;
         String ldapPort;
         String dsAdminPassword;
+        String dsAuthPassword;
         String orgName;
         String sslEnabled;
         String authId;
@@ -968,6 +975,10 @@ public class SetupProduct extends TestCommon {
                         SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
                         mIdx + "." + SMSConstants.UM_DATASTORE_ADMINPW +
                         "." + dIdx);
+                dsAuthPassword = cfgData.getString(
+                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                        mIdx + "." + SMSConstants.UM_LDAPv3_AUTHPW +
+                        "." + dIdx);
                 orgName = cfgData.getString(SMSConstants.
                         UM_DATASTORE_PARAMS_PREFIX + mIdx + "." +
                         SMSConstants.UM_LDAPv3_ORGANIZATION_NAME + "." + dIdx);
@@ -992,7 +1003,7 @@ public class SetupProduct extends TestCommon {
                         put("iplanet-am-policy-config-ldap-server",
                         newPolicyAttrValues);
                 newPolicyAttrValues = new HashSet();
-                newPolicyAttrValues.add(dsAdminPassword);
+                newPolicyAttrValues.add(dsAuthPassword);
                 newPolicyAttrValuesMap.
                         put("iplanet-am-policy-config-ldap-bind-password",
                         newPolicyAttrValues);
