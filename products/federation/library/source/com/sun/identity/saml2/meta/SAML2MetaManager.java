@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2MetaManager.java,v 1.15 2008-07-08 01:08:43 exu Exp $
+ * $Id: SAML2MetaManager.java,v 1.16 2008-12-18 20:08:09 qcheng Exp $
  *
  */
 
@@ -1148,9 +1148,28 @@ public class SAML2MetaManager {
     private void removeFromCircleOfTrust(String realm, String entityId) {
         try {
             EntityConfigElement eConfig = getEntityConfig(realm, entityId);
+            boolean isAffiliation = false;
+            if (getAffiliationDescriptor(realm, entityId) != null) {
+                isAffiliation = true;
+            }
+            if (debug.messageEnabled()) {
+                debug.message("SAML2MetaManager.removeFromCircleOfTrust is " 
+                    + entityId + " in realm " + realm 
+                    + " an affiliation? " + isAffiliation);
+            }
+
             if (eConfig != null) {
-                List elist = eConfig.
-                    getIDPSSOConfigOrSPSSOConfigOrAuthnAuthorityConfig();
+                List elist = null; 
+                if (isAffiliation) {
+                    AffiliationConfigElement affiliationCfgElm =
+                        getAffiliationConfig(realm, entityId);
+                    elist = new ArrayList();
+                    elist.add(affiliationCfgElm);
+                } else {
+                    elist = eConfig.
+                        getIDPSSOConfigOrSPSSOConfigOrAuthnAuthorityConfig();
+                }
+
                 // use first one to delete the entity from COT
                 BaseConfigType config = (BaseConfigType)elist.iterator().next();
                 Map attr = SAML2MetaUtils.getAttributes(config);

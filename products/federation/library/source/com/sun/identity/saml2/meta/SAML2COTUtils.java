@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2COTUtils.java,v 1.6 2008-11-10 22:57:02 veiming Exp $
+ * $Id: SAML2COTUtils.java,v 1.7 2008-12-18 20:08:08 qcheng Exp $
  *
  */
 
@@ -39,17 +39,20 @@ import java.util.logging.Level;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.saml2.logging.LogUtil;
 import com.sun.identity.saml2.common.SAML2Constants;
+import com.sun.identity.saml2.jaxb.entityconfig.AffiliationConfigElement;
 import com.sun.identity.saml2.jaxb.entityconfig.AttributeType;
 import com.sun.identity.saml2.jaxb.entityconfig.BaseConfigType;
 import com.sun.identity.saml2.jaxb.entityconfig.ObjectFactory;
 import com.sun.identity.saml2.jaxb.entityconfig.EntityConfigElement;
-import com.sun.identity.saml2.jaxb.metadata.AttributeAuthorityDescriptorElement;import com.sun.identity.saml2.jaxb.metadata.AuthnAuthorityDescriptorElement;
+import com.sun.identity.saml2.jaxb.metadata.AttributeAuthorityDescriptorElement;
+import com.sun.identity.saml2.jaxb.metadata.AuthnAuthorityDescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.IDPSSODescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.SPSSODescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.XACMLPDPDescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.XACMLAuthzDecisionQueryDescriptorElement;
 import com.sun.identity.saml2.jaxb.metadataextquery.AttributeQueryDescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement;
+import java.util.ArrayList;
 
 /**
  * The <code>SAML2COTUtils</code> provides utility methods to update
@@ -93,63 +96,88 @@ public class SAML2COTUtils {
             String[] data = {realm, entityId};
             throw new SAML2MetaException("entityid_invalid", data);
         }
+        boolean isAffiliation = false;
+        if (metaManager.getAffiliationDescriptor(realm, entityId) != null) {
+            isAffiliation = true;
+        }
+        if (debug.messageEnabled()) {
+            debug.message(classMethod + "is " + entityId + " in realm " 
+                + realm + " an affiliation? " + isAffiliation);
+        }
+
         EntityConfigElement eConfig = metaManager.getEntityConfig(
-                realm, entityId);
+            realm, entityId);
         if (eConfig == null) {
             BaseConfigType bctype = null;
             AttributeType atype = objFactory.createAttributeType();
             atype.setName(SAML2Constants.COT_LIST);
             atype.getValue().add(name);
             // add to eConfig
-            EntityConfigElement ele = objFactory.createEntityConfigElement();
+            EntityConfigElement ele =objFactory.createEntityConfigElement();
             ele.setEntityID(entityId);
             ele.setHosted(false);
-            List ll =
+            if (isAffiliation) {
+                // handle affiliation case
+                bctype = objFactory.createAffiliationConfigElement();
+                bctype.getAttribute().add(atype);
+                ele.setAffiliationConfig(bctype);
+            } else {
+                List ll =
                     ele.getIDPSSOConfigOrSPSSOConfigOrAuthnAuthorityConfig();
-            // Decide which role EntityDescriptorElement includes
-            List list =
-                edes.getRoleDescriptorOrIDPSSODescriptorOrSPSSODescriptor();
+                // Decide which role EntityDescriptorElement includes
+                List list =
+                    edes.getRoleDescriptorOrIDPSSODescriptorOrSPSSODescriptor();
 
-            for(Iterator iter = list.iterator(); iter.hasNext();) {
-                Object obj = iter.next();
-                if (obj instanceof SPSSODescriptorElement) {
-                    bctype = objFactory.createSPSSOConfigElement();
-                    bctype.getAttribute().add(atype);
-                    ll.add(bctype);
-                } else if (obj instanceof IDPSSODescriptorElement) {
-                    bctype = objFactory.createIDPSSOConfigElement();
-                    bctype.getAttribute().add(atype);
-                    ll.add(bctype);
-                } else if (obj instanceof XACMLPDPDescriptorElement) {
-                    bctype = objFactory.createXACMLPDPConfigElement();
-                    bctype.getAttribute().add(atype);
-                    ll.add(bctype);
-                } else if (obj instanceof 
-                    XACMLAuthzDecisionQueryDescriptorElement) 
-                {
-                    bctype =
+                for(Iterator iter = list.iterator(); iter.hasNext();) {
+                    Object obj = iter.next();
+                    if (obj instanceof SPSSODescriptorElement) {
+                        bctype = objFactory.createSPSSOConfigElement();
+                        bctype.getAttribute().add(atype);
+                        ll.add(bctype);
+                    } else if (obj instanceof IDPSSODescriptorElement) {
+                        bctype = objFactory.createIDPSSOConfigElement();
+                        bctype.getAttribute().add(atype);
+                        ll.add(bctype);
+                    } else if (obj instanceof XACMLPDPDescriptorElement) {
+                        bctype = objFactory.createXACMLPDPConfigElement();
+                        bctype.getAttribute().add(atype);
+                        ll.add(bctype);
+                    } else if (obj instanceof 
+                        XACMLAuthzDecisionQueryDescriptorElement) 
+                    {
+                        bctype =
                         objFactory.createXACMLAuthzDecisionQueryConfigElement();
-                    bctype.getAttribute().add(atype);
-                    ll.add(bctype);
-                } else if (obj instanceof AttributeAuthorityDescriptorElement) {
-                    bctype = objFactory.createAttributeAuthorityConfigElement();
-                    bctype.getAttribute().add(atype);
-                    ll.add(bctype);
-                } else if (obj instanceof  AttributeQueryDescriptorElement) {
-                    bctype = objFactory.createAttributeQueryConfigElement();
-                    bctype.getAttribute().add(atype);
-                    ll.add(bctype);
-                } else if (obj instanceof AuthnAuthorityDescriptorElement) {
-                    bctype = objFactory.createAuthnAuthorityConfigElement();
-                    bctype.getAttribute().add(atype);
-                    ll.add(bctype);
+                        bctype.getAttribute().add(atype);
+                        ll.add(bctype);
+                    } else if (obj instanceof AttributeAuthorityDescriptorElement) {
+                        bctype = 
+                            objFactory.createAttributeAuthorityConfigElement();
+                        bctype.getAttribute().add(atype);
+                        ll.add(bctype);
+                    } else if (obj instanceof  AttributeQueryDescriptorElement){
+                        bctype = objFactory.createAttributeQueryConfigElement();
+                        bctype.getAttribute().add(atype);
+                        ll.add(bctype);
+                    } else if (obj instanceof AuthnAuthorityDescriptorElement) {
+                        bctype = objFactory.createAuthnAuthorityConfigElement();
+                        bctype.getAttribute().add(atype);
+                        ll.add(bctype);
+                    }
                 }
             }
             metaManager.setEntityConfig(realm,ele);
         } else {
             boolean needToSave = true;
-            List elist = eConfig.
+            List elist = null; 
+            if (isAffiliation) {
+                AffiliationConfigElement affiliationCfgElm =
+                    metaManager.getAffiliationConfig(realm, entityId);
+                elist = new ArrayList();
+                elist.add(affiliationCfgElm);
+            } else {
+                elist = eConfig.
                     getIDPSSOConfigOrSPSSOConfigOrAuthnAuthorityConfig();
+            }
             for (Iterator iter = elist.iterator(); iter.hasNext();) {
                 boolean foundCOT = false;
                 BaseConfigType bConfig = (BaseConfigType)iter.next();
@@ -217,9 +245,28 @@ public class SAML2COTUtils {
         }
         EntityConfigElement eConfig = metaManager.getEntityConfig(
                 realm, entityId);
+
+        boolean isAffiliation = false;
+        if (metaManager.getAffiliationDescriptor(realm, entityId) != null) {
+            isAffiliation = true;
+        }
+        if (debug.messageEnabled()) {
+            debug.message(classMethod + "is " + entityId + " in realm " 
+                + realm + " an affiliation? " + isAffiliation);
+        }
+
         if (eConfig != null) {
-            List elist = eConfig.
+            List elist = null; 
+            if (isAffiliation) {
+                AffiliationConfigElement affiliationCfgElm =
+                    metaManager.getAffiliationConfig(realm, entityId);
+                elist = new ArrayList();
+                elist.add(affiliationCfgElm);
+            } else {
+               elist = eConfig.
                     getIDPSSOConfigOrSPSSOConfigOrAuthnAuthorityConfig();
+            }
+
             boolean needToSave = false;
             for (Iterator iter = elist.iterator(); iter.hasNext();) {
                 BaseConfigType bConfig = (BaseConfigType)iter.next();

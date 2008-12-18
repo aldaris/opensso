@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFMetaManager.java,v 1.7 2008-11-10 22:56:57 veiming Exp $
+ * $Id: IDFFMetaManager.java,v 1.8 2008-12-18 20:08:52 qcheng Exp $
  *
  */
 
@@ -1378,8 +1378,8 @@ public class IDFFMetaManager {
                 }
             }
         } catch (Exception e) {
-            debug.error(classMethod + "Error while adding entity"
-                    + entityId + "to COT.",e);
+            debug.error(classMethod + "Error while adding entity "
+                    + entityId + " to COT.",e);
         }
     }
     
@@ -1420,7 +1420,7 @@ public class IDFFMetaManager {
             }
         } catch (Exception e) {
             debug.error("IDFFMetaManager.removeFromCircleOfTrust:" +
-                    "Error while removing entity" + entityId + "from COT.",e);
+                "Error while removing entity " + entityId + " from COT.",e);
         }
     }
     
@@ -1467,6 +1467,12 @@ public class IDFFMetaManager {
             realm, entityID);
         if (spConfig != null) {
             removeFromCircleOfTrust(spConfig, realm, entityID);
+        }
+
+        AffiliationDescriptorConfigElement affiConfig = 
+            getAffiliationDescriptorConfig(realm, entityID);
+        if (affiConfig != null) {
+            removeFromCircleOfTrust(affiConfig, realm, entityID);
         }
     }
 }

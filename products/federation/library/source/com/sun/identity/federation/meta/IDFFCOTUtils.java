@@ -22,19 +22,21 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFCOTUtils.java,v 1.4 2008-06-25 05:46:48 qcheng Exp $
+ * $Id: IDFFCOTUtils.java,v 1.5 2008-12-18 20:08:52 qcheng Exp $
  *
  */
 package com.sun.identity.federation.meta;
 
 import javax.xml.bind.JAXBException;
 import com.sun.identity.cot.COTConstants;
+import com.sun.identity.federation.jaxb.entityconfig.AffiliationDescriptorConfigElement;
 import com.sun.identity.federation.jaxb.entityconfig.AttributeType;
 import com.sun.identity.federation.jaxb.entityconfig.BaseConfigType;
 import com.sun.identity.federation.jaxb.entityconfig.EntityConfigElement;
 import com.sun.identity.federation.jaxb.entityconfig.ObjectFactory;
 import com.sun.identity.liberty.ws.meta.jaxb.EntityDescriptorElement;
 import com.sun.identity.shared.debug.Debug;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -105,6 +107,12 @@ public class IDFFCOTUtils {
                 IDFFCOTUtils.getAttribute().add(atype);
                 entityConfig.getIDPDescriptorConfig().add(IDFFCOTUtils);
             }
+            if (entityDesc.getAffiliationDescriptor() != null) {
+                IDFFCOTUtils = 
+                    objFactory.createAffiliationDescriptorConfigElement();
+                IDFFCOTUtils.getAttribute().add(atype);
+                entityConfig.setAffiliationDescriptorConfig(IDFFCOTUtils);
+            }
             idffMetaMgr.setEntityConfig(realm, entityConfig);
         } else {
             // update the sp and idp entity config
@@ -115,6 +123,14 @@ public class IDFFCOTUtils {
             updateCOTAttrInConfig(
                 realm, idpConfigList,cotName,entityConfig,objFactory,
                 idffMetaMgr);
+            BaseConfigType affiConfig = 
+                entityConfig.getAffiliationDescriptorConfig();
+            if (affiConfig != null) {
+                List affiConfigList = new ArrayList();
+                affiConfigList.add(affiConfig);
+                updateCOTAttrInConfig(realm, affiConfigList, cotName,
+                    entityConfig, objFactory, idffMetaMgr);
+            }
         }
     }
     
@@ -132,7 +148,7 @@ public class IDFFCOTUtils {
      */
     public void removeFromEntityConfig(
         String realm, String cotName,String entityID)
-    throws IDFFMetaException, JAXBException {
+        throws IDFFMetaException, JAXBException {
         String classMethod = "IDFFCOTUtils.removeFromEntityConfig: ";
         IDFFMetaManager idffMetaMgr = new IDFFMetaManager(null);
         // Check whether the entity id existed in the DS
@@ -152,6 +168,14 @@ public class IDFFCOTUtils {
                     entityConfig,idffMetaMgr);
             removeCOTNameFromConfig(realm, idpConfigList,cotName,
                     entityConfig,idffMetaMgr);
+            BaseConfigType affiConfig = 
+                entityConfig.getAffiliationDescriptorConfig();
+            if (affiConfig != null) {
+                List affiConfigList = new ArrayList();
+                affiConfigList.add(affiConfig);
+                removeCOTNameFromConfig(realm, affiConfigList,cotName,
+                    entityConfig,idffMetaMgr);
+            }
         }
     }
     
