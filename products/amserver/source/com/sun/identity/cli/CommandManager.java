@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommandManager.java,v 1.32 2008-10-30 18:25:02 veiming Exp $
+ * $Id: CommandManager.java,v 1.33 2008-12-18 22:15:16 bigfatrat Exp $
  *
  */
 
@@ -36,6 +36,7 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.common.ShutdownManager;
+import com.sun.identity.log.Logger;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.setup.Bootstrap;
 import com.sun.identity.setup.ConfiguratorException;
@@ -761,6 +762,7 @@ public class CommandManager {
      */
     public void registerSSOToken(SSOToken ssoToken) {
         ssoTokens.add(ssoToken);
+	Logger.token.set(ssoToken);
     }
 
     private void destroySSOTokens() {
@@ -770,6 +772,7 @@ public class CommandManager {
                 SSOToken token = (SSOToken)i.next();
                 mgr.destroyToken(token);
             }
+	    Logger.token.set(null);
         } catch (SSOException e) {
             Debugger.error(this, "CommandManager.destroySSOTokens", e);
         }
