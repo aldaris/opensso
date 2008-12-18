@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RuleNoResourceAddViewBean.java,v 1.2 2008-06-25 05:43:05 qcheng Exp $
+ * $Id: RuleNoResourceAddViewBean.java,v 1.3 2008-12-18 20:49:32 veiming Exp $
  *
  */
 
@@ -43,7 +43,7 @@ public class RuleNoResourceAddViewBean
 
     protected String getPropertyXMLFileName(boolean readonly) {
         return (isReferralPolicy()) ?
-            "com/sun/identity/console/propertyPMRuleNoResourceAdd.xml" :
-            "com/sun/identity/console/propertyPMRuleNoResourceAddNoAction.xml";
+            "com/sun/identity/console/propertyPMRuleNoResourceAddNoAction.xml":
+            "com/sun/identity/console/propertyPMRuleNoResourceAdd.xml";
     }
 }

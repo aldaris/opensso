@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyOpViewBeanBase.java,v 1.4 2008-07-10 00:27:57 veiming Exp $
+ * $Id: PolicyOpViewBeanBase.java,v 1.5 2008-12-18 20:49:32 veiming Exp $
  *
  */
 
@@ -666,8 +666,8 @@ public abstract class PolicyOpViewBeanBase
             Policy policy = cachedPolicy.getPolicy();
             Rule rule = policy.getRule(name);
             RuleEditViewBean vb = null;
-
-            if (rule.getResourceName() == null) {
+            String resName = rule.getResourceName();
+            if ((resName == null) || (resName.length() == 0)) {
                 vb = (RuleNoResourceEditViewBean)getViewBean(
                     RuleNoResourceEditViewBean.class);
                 setPageSessionAttribute(RuleOpViewBeanBase.WITH_RESOURCE,
