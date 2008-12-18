@@ -193,7 +193,8 @@
                             <input id="userStoreHost" name="userStoreHost" type="text" 
                                    class="text" style="width:150px"  
                                    value="$userStoreHost"
-                                   onkeyup="APP.callDelayed(this, validateUserStoreHost)"/>
+                                   onkeyup="APP.callDelayed(this, validateUserStoreHost)"
+                                   onchange="APP.callDelayed(this, validateUserStoreHost)"/>
                             <span id="userStoreHostStatus"></span>                       
                         </td>
                     </tr>
@@ -203,7 +204,8 @@
                             <input id="userStorePort" name="userStorePort" 
                                    type="text" class="text" size="5" maxLength="5" 
                                    value="$userStorePort"
-                                   onkeyup="APP.callDelayed(this, validateUserStorePort)"/>
+                                   onkeyup="APP.callDelayed(this, validateUserStorePort)"
+                                   onchange="APP.callDelayed(this, validateUserStorePort)"/>
                             <span id="userStorePortStatus"></span>         
                         </td>
                     </tr>  
@@ -213,7 +215,8 @@
                             <input id="userStoreRootSuffix" name="userStoreRootSuffix" 
                                    type="text" class="text" style="width:200px"  
                                    value="$userStoreRootSuffix"
-                                   onkeyup="APP.callDelayed(this, validateUserStoreRootSuffix)"/>
+                                   onkeyup="APP.callDelayed(this, validateUserStoreRootSuffix)"
+                                   onchange="APP.callDelayed(this, validateUserStoreRootSuffix)"/>
                             <span id="userStoreRootSuffixStatus"></span>    
                         </td>
                     </tr>
@@ -223,7 +226,8 @@
                             <input id="userStoreLoginId" name="userStoreLoginId" 
                                    type="text" class="text" style="width:150px" 
                                    value="$userStoreLoginId"
-                                   onkeyup="APP.callDelayed(this, validateUserStoreLoginId)"/>
+                                   onkeyup="APP.callDelayed(this, validateUserStoreLoginId)"
+                                   onchange="APP.callDelayed(this, validateUserStoreLoginId)"/>
                             <span id="userStoreLoginIdStatus"></span>                             
                         </td>
                     </tr>
@@ -232,7 +236,8 @@
                         <td>
                             <input id="userStorePassword" name="userStorePassword" 
                                    type="password" class="text" style="width:100px" 
-                                   onkeyup="APP.callDelayed(this, validateUserStorePassword )"/>        
+                                   onkeyup="APP.callDelayed(this, validateUserStorePassword )"
+                                   onchange="APP.callDelayed(this, validateUserStorePassword )" />        
                              <span id="userStorePasswordStatus"></span>
                         </td>
                     </tr>

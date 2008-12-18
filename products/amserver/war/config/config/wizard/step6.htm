@@ -51,7 +51,8 @@
                         <td>
                             <input id="agentPassword" name="agentPassword" 
                                    type="password" value="" class="text"
-                                   onkeyup="APP.callDelayed(this,validateAgentPasswords)">                            
+                                   onkeyup="APP.callDelayed(this,validateAgentPasswords)"
+                                   onchange="APP.callDelayed(this,validateAgentPasswords)">                            
                             <span id="agentPasswordStatus"></span>
                         </td>
                     </tr>
@@ -62,7 +63,8 @@
                         <td>
                             <input id="agentConfirm" name="agentConfirm" 
                                    type="password" value="" class="text" 
-                                   onkeyup="APP.callDelayed(this,validateAgentPasswords)"/>                            
+                                   onkeyup="APP.callDelayed(this,validateAgentPasswords)"
+                                   onchange="APP.callDelayed(this,validateAgentPasswords)"/>                            
                         </td>
                     </tr>
                 </table> 

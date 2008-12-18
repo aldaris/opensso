@@ -107,14 +107,22 @@
                     <tr>
                         <td><label for="loadBalancerHostName"><em>*&nbsp;</em>$page.getLocalizedString("site.name.label")</label></td>
                         <td>
-                            <input id="loadBalancerHostName" name="loadBalancerHostName" type="text" value="#if($host)$host#{end}" class="text" style="width:150px" onkeyup="APP.callDelayed(this, validateSiteName)"/>
+                            <input id="loadBalancerHostName" name="loadBalancerHostName" 
+                            type="text" value="#if($host)$host#{end}" class="text" 
+                            style="width:150px" 
+                            onkeyup="APP.callDelayed(this, validateSiteName)"    
+                            onchange="APP.callDelayed(this, validateSiteName)"/>
                             <span id="siteNameStatus"></span>                    
                         </td>
                     </tr>
                     <tr>
                         <td><label for="loadBalancerPort"><em>*&nbsp;</em>$page.getLocalizedString("primary.url.label")</label></td>
                         <td>
-                            <input id="loadBalancerPort" name="loadBalancerPort" type="text" value="#if($port)$port#{end}" class="text" style="width:150px" onkeyup="APP.callDelayed(this, validatePrimaryURL)"/>
+                            <input id="loadBalancerPort" name="loadBalancerPort" 
+                            type="text" value="#if($port)$port#{end}" class="text" 
+                            style="width:150px" 
+                            onkeyup="APP.callDelayed(this, validatePrimaryURL)"    
+                            onchange="APP.callDelayed(this, validatePrimaryURL)"/>
                             <span id="loadBalancerStatus"></span>                  
                         </td>
                     </tr>

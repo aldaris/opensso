@@ -50,7 +50,8 @@
                             <input id="adminPassword" name="adminPassword" 
                                    type="password" value="" 
                                    width="40" class="text"
-                                   onkeyup="APP.callDelayed(this,validateAdminPasswords)">
+                                   onkeyup="APP.callDelayed(this,validateAdminPasswords)"
+                                   onchange="APP.callDelayed(this,validateAdminPasswords)" >
                             <span id="adminPasswordStatus"></span>
                         </td>
                     </tr>
@@ -60,7 +61,8 @@
                             <input id="adminConfirm" name="adminConfirm" 
                                    type="password" value="" 
                                    width="40" class="text" 
-                                   onkeyup="APP.callDelayed(this,validateAdminPasswords)">                            
+                                   onkeyup="APP.callDelayed(this,validateAdminPasswords)"
+                                   onchange="APP.callDelayed(this,validateAdminPasswords)">                            
                         </td>
                     </tr>
                 </table>   

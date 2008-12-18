@@ -395,7 +395,8 @@
                             <input id="configStoreHost" name="configStoreHost" 
                                type="text" class="text" style="width:150px" 
                                value="$configStoreHost"
-                               onkeyup="APP.callDelayed(this, validateConfigStoreHost)"/>
+                               onkeyup="APP.callDelayed(this, validateConfigStoreHost)"
+                               onchange="APP.callDelayed(this, validateConfigStoreHost)"/>
                             <span id="configStoreHostStatus"></span>
                             <span id="configStoreHostStatusEx"></span>
                         </td>
@@ -407,7 +408,8 @@
                             <input id="configStorePort" name="configStorePort" 
                                    type="text" size="5" maxLength="5" 
                                    value="$configStorePort" 
-                                   onkeyup="APP.callDelayed(this, validatePort)"/>
+                                   onkeyup="APP.callDelayed(this, validatePort)"
+                                   onchange="APP.callDelayed(this, validatePort)"/>
                             <span id="configStorePortStatus"></span></td>
                     </tr>
                     <tr>                    
@@ -417,7 +419,8 @@
                             <input id="encryptionKey" name="encryptionKey" 
                                 type="text" class="text" style="width:200px" 
                                 value="$encryptionKey" 
-                                onkeyup="APP.callDelayed(this, validateEncKey)"/>
+                                onkeyup="APP.callDelayed(this, validateEncKey)"
+                                onchange="APP.callDelayed(this, validateEncKey)"/>
                             <span id="encryptionKeyStatus"></span></td>
                     </tr>   
                     <tr>
@@ -427,7 +430,8 @@
                             <input id="rootSuffix" name="rootSuffix" 
                                    type="text" class="text" style="width:200px" 
                                    value="$rootSuffix" 
-                                   onkeyup="APP.callDelayed(this, validateRootSuffix)"/>
+                                   onkeyup="APP.callDelayed(this, validateRootSuffix)"
+                                   onchange="APP.callDelayed(this, validateRootSuffix)"/>
                             <span id="rootSuffixStatus"></span>                       
                         </td>
                     </tr>
@@ -439,7 +443,8 @@
                             <input id="configStoreLoginId" name="configStoreLoginId" 
                                type="text" class="text" style="width:150px" 
                                value="$configStoreLoginId"
-                               onkeyup="APP.callDelayed(this, validateConfigStoreLoginId )"/>
+                               onkeyup="APP.callDelayed(this, validateConfigStoreLoginId )"
+                               onchange="APP.callDelayed(this, validateConfigStoreLoginId )"/>
                             <span id="configStoreLoginIdStatus"></span>
                         </td>
                     </tr>
@@ -451,7 +456,8 @@
                                name="configStorePassword" 
                                type="password" class="text" style="width:100px" 
                                value="#if($store.password)$store.password#{end}" 
-                               onkeyup="APP.callDelayed(this, validateConfigStorePassword )"/>
+                               onkeyup="APP.callDelayed(this, validateConfigStorePassword )"
+                               onchange="APP.callDelayed(this, validateConfigStorePassword )"/>
                             <span id="configStorePasswordStatus"></span></td>
                     </tr>  
                 </table>
@@ -466,7 +472,8 @@
                         <td>
                             <input id="existingHost" name="existingHost" type="text" 
                                    class="text" size="60"
-                                   onkeyup="APP.callDelayed(this, validateHostName)"/>
+                                   onkeyup="APP.callDelayed(this, validateHostName)"
+                                   onchange="APP.callDelayed(this, validateHostName)"/>
                             <span id="existingHostStatus"></span>                        
                         </td>
                     </tr>  
@@ -490,7 +497,8 @@
                             <input id="localConfigPort" name="localConfigPort" 
                                    type="text" class="text" size="5" maxLength="5" 
                                    value="$localConfigPort" 
-                                   onkeyup="APP.callDelayed(this, validateLocalConfigPort)"/>
+                                   onkeyup="APP.callDelayed(this, validateLocalConfigPort)"
+                                   onchange="APP.callDelayed(this, validateLocalConfigPort)"/>
                             <span id="localConfigPortStatus"></span>                       
                         </td>
                     </tr> 
@@ -501,7 +509,8 @@
                             <input id="localRepPort" name="localRepPort" 
                                    type="text" class="text" size="5" maxLength="5" 
                                    value="$localRepPort" 
-                                   onkeyup="APP.callDelayed(this, validateLocalRepPort)"/>
+                                   onkeyup="APP.callDelayed(this, validateLocalRepPort)"
+                                   onchange="APP.callDelayed(this, validateLocalRepPort)"/>
                             <span id="localRepPortStatus"></span>                       
                         </td>
                     </tr>  
@@ -516,7 +525,8 @@
                             <input id="existingPort" name="existingPort" type="text" 
                                    class="text" size="5" maxLength="5" 
                                    value="$existingPort" 
-                                   onkeyup="APP.callDelayed(this, validateExistingPort)"/>
+                                   onkeyup="APP.callDelayed(this, validateExistingPort)"
+                                   onchange="APP.callDelayed(this, validateExistingPort)"/>
                             <span id="existingPortStatus"></span>                        
                         </td>
                     </tr>      
@@ -527,7 +537,8 @@
                             <input id="existingRepPort" name="existingRepPort" 
                                    type="text" class="text" size="5" maxLength="5"
                                    value="$existingRepPort" 
-                                   onkeyup="APP.callDelayed(this, validateExistingRepPort)"/>
+                                   onkeyup="APP.callDelayed(this, validateExistingRepPort)"
+                                   onchange="APP.callDelayed(this, validateExistingRepPort)"/>
                             <span id="existingRepPortStatus"></span>
                         </td>
                     </tr>   
@@ -543,7 +554,8 @@
                         <td><input id="existingStoreHost" name="existingStoreHost" type="text"
                                    class="text" size="60" style="width:150px"
                                    value="$existingStoreHost" 
-                                   onkeyup="APP.callDelayed(this, validateHostName)"/>
+                                   onkeyup="APP.callDelayed(this, validateHostName)"
+                                   onchange="APP.callDelayed(this, validateHostName)"/>
                             <span id="existingStoreHostStatus"></span>
                         </td>
                     </tr>      
@@ -554,7 +566,8 @@
                             <input id="existingStorePort" name="existingStorePort"
                                    type="text" size="5" maxLength="5"
                                    value="$existingStorePort"
-                                   onkeyup="APP.callDelayed(this, validatePort)"/>
+                                   onkeyup="APP.callDelayed(this, validatePort)"
+                                   onchange="APP.callDelayed(this, validatePort)"/>
                             <span id="existingStorePortStatus"></span>
                         </td>
                     </tr>                
