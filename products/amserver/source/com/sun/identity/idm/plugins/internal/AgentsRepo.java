@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsRepo.java,v 1.41 2008-10-02 16:41:08 veiming Exp $
+ * $Id: AgentsRepo.java,v 1.42 2008-12-18 21:32:19 goodearth Exp $
  *
  */
 
@@ -1457,8 +1457,7 @@ public class AgentsRepo extends IdRepo implements ServiceListener {
             debug.message("AgentsRepo.getAgentGroupConfig() called. ");
         }
         try {
-            if ((agentGroupConfigCache == null) ||
-                !agentGroupConfigCache.isValid()) {
+            if (agentGroupConfigCache == null) {
                 if (scm == null) {
                     scm = new ServiceConfigManager(token, agentserviceName, 
                         version);
