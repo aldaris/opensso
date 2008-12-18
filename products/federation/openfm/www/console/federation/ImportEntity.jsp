@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: ImportEntity.jsp,v 1.3 2008-06-25 05:50:23 qcheng Exp $
+   $Id: ImportEntity.jsp,v 1.4 2008-12-18 18:02:36 veiming Exp $
    
 --%>
 
@@ -37,7 +37,7 @@
     locale="<%=((com.sun.identity.console.base.AMViewBeanBase)viewBean).getUserLocale()%>"/>
 
 
-<cc:header name="hdrCommon" pageTitle="webconsole.title" bundleID="amConsole" copyrightYear="2007" fireDisplayEvents="true">
+<cc:header name="hdrCommon" pageTitle="webconsole.title" bundleID="amConsole" copyrightYear="2007" fireDisplayEvents="true" onLoad="onload()">
 
 <link rel="stylesheet" type="text/css" href="../console/css/opensso.css" />
 <script language="javascript" src="../console/js/am.js"></script>
@@ -85,6 +85,22 @@
         }
     }
 
+    function onload() {
+        var frm = document.forms['ImportEntity'];
+        var rdo = frm.elements['ImportEntity.radioMeta'].item(0);
+        if (!rdo.checked) {
+            rdo = frm.elements['ImportEntity.radioMeta'].item(1);
+        }
+        metaOptionSelect(rdo);
+
+        rdo = frm.elements['ImportEntity.radioExtended'].item(0);
+        if (!rdo.checked) {
+            rdo = frm.elements['ImportEntity.radioExtended'].item(1);
+        }
+        extendedOptionSelect(rdo);
+    }
+
+
 </script>
 
 <cc:primarymasthead name="mhCommon" bundleID="amConsole"  logoutOnClick="return confirmLogout();" 
@@ -127,11 +143,5 @@
 <%-- END CONTENT --%>
 
 </cc:header>
-
-<script language="javascript">
-    var frm = document.forms['ImportEntity'];
-    frm.elements['ImportEntity.btnMetadata'].style.display = 'none'; 
-    frm.elements['ImportEntity.btnExtendeddata'].style.display = 'none'; 
-</script>
 
 </jato:useViewBean>
