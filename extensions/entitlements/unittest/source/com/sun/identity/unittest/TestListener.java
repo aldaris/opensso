@@ -22,27 +22,31 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestListener.java,v 1.1 2008-12-19 08:47:52 veiming Exp $
+ * $Id: TestListener.java,v 1.2 2008-12-19 19:47:57 veiming Exp $
  */
 
 package com.sun.identity.unittest;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 
 
 public class TestListener implements ITestListener {
-    
+   
     public void onTestStart(ITestResult result) {
-        UnittestLog.logMessage("Started " + result.getTestClass().getName() + "." +
-            result.getMethod().getMethodName());
+        UnittestLog.logMessage("Started " + result.getTestClass().getName() + 
+            "." + result.getMethod().getMethodName());
     }
     
     public void onTestSuccess(ITestResult result) {
+        long timeTaken = result.getEndMillis() - result.getStartMillis();
         UnittestLog.logMessage("Completed " + 
             result.getTestClass().getName() + "." +
-            result.getMethod().getMethodName());
+            result.getMethod().getMethodName() + " " + timeTaken + 
+            " (millisec)");
     }
    
     public void onTestFailure(ITestResult result) {
