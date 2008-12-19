@@ -11,20 +11,20 @@
             <properties/>
             <folders>
                 <source-folder>
+                    <label>opensso-entitlements</label>
+                    <location>.</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
                     <label>source</label>
                     <type>java</type>
                     <location>source</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>unittest</label>
+                    <label>unittest/source</label>
                     <type>java</type>
-                    <location>unittest</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>opensso-entitlements</label>
-                    <location>.</location>
+                    <location>unittest/source</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
             </folders>
@@ -50,8 +50,8 @@
                         <location>source</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>unittest</label>
-                        <location>unittest</location>
+                        <label>unittest/source</label>
+                        <location>unittest/source</location>
                     </source-folder>
                     <source-file>
                         <location>build.xml</location>
@@ -64,16 +64,13 @@
                     <ide-action name="test"/>
                 </context-menu>
             </view>
+            <subprojects/>
         </general-data>
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
             <compilation-unit>
                 <package-root>source</package-root>
-                <classpath mode="compile">extlib/amserver.jar:extlib/j2ee.jar:extlib/opensso-sharedlib.jar:built/classes</classpath>
-                <source-level>1.5</source-level>
-            </compilation-unit>
-            <compilation-unit>
-                <package-root>unittest</package-root>
-                <unit-tests/>
+                <package-root>unittest/source</package-root>
+                <classpath mode="compile">extlib/amserver.jar:extlib/j2ee.jar:extlib/opensso-sharedlib.jar:built/classes:extlib/testng-5.1-jdk15.jar:unittest/built/classes</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>

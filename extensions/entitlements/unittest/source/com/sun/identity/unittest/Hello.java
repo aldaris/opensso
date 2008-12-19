@@ -22,26 +22,18 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Hello.java,v 1.1 2008-12-04 21:12:20 veiming Exp $
+ * $Id: Hello.java,v 1.2 2008-12-19 08:47:52 veiming Exp $
  */
 
 package com.sun.identity.unittest;
 
-public class Hello extends UnittestBase {
+import org.testng.annotations.Test;
+
+public class Hello {
     
-    @Override
-    public void setup() {
-    }
-    
+    @Test
     public boolean run() throws Throwable {
         return (true);
     }
     
-    public void cleanup() {
-    }
-    
-    @Override
-    public String getName() {
-        return "Hello";
-    }
 }

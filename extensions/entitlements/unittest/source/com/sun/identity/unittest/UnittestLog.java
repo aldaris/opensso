@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnittestLog.java,v 1.1 2008-12-04 21:12:20 veiming Exp $
+ * $Id: UnittestLog.java,v 1.2 2008-12-19 08:47:53 veiming Exp $
  */
 
 package com.sun.identity.unittest;
@@ -92,16 +92,6 @@ public class UnittestLog {
 
     public static synchronized void logError(String err, Throwable e) {
         buffer.add("ERROR: "  + err + " exception: " + e.getMessage());
-    }
-
-    public static synchronized void logMessage(UnittestBase test, String msg) {
-        buffer.add("MESSAGE: " + test.getName() + ": " + msg);
-    }
-
-    public static synchronized void logError(UnittestBase test, String err,
-        Throwable e) {
-        buffer.add("ERROR: " +  test.getName() + ": " + err +
-            " exception: " + e.getMessage());
     }
 }
 

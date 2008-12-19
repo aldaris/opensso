@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestHarness.java,v 1.1 2008-12-04 21:12:20 veiming Exp $
+ * $Id: TestHarness.java,v 1.2 2008-12-19 08:47:52 veiming Exp $
  */
 
 package com.sun.identity.unittest;
@@ -47,6 +47,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
+import org.testng.TestNG;
 
 /**
  * Test Harness instantiates the test classes and executes them.
@@ -58,13 +59,32 @@ public final class TestHarness {
    
     public void execute(HttpServletResponse res, String tests) {
         List<String> classes = getTestClasses(tests);
-        for (String strClass : classes) {
-            if (strClass.endsWith(".jsp")) {
-                executeJSP(strClass);
-            } else {
-                executeClass(strClass);
+        List<Class> javaClasses = new ArrayList<Class>();
+        try {
+            for (String strClass : classes) {
+                if (strClass.endsWith(".jsp")) {
+                    executeJSP(strClass);
+                } else {
+                    javaClasses.add(Class.forName(strClass));
+                }
             }
+        } catch (ClassNotFoundException e) {
+            UnittestLog.logError("TestHarness.execute", e);
         }
+
+        if (!javaClasses.isEmpty()) {
+            Class[] testngClasses = new Class[javaClasses.size()];
+            int i = 0;
+            for (Class c : javaClasses) {
+                testngClasses[i++] = c;
+            }
+            
+            TestNG testng = new TestNG();
+            testng.addListener(new TestListener());
+            testng.setTestClasses(testngClasses);
+            testng.run();
+        }
+
         UnittestLog.logMessage("TestHarness:DONE");
     }
     
@@ -100,44 +120,6 @@ public final class TestHarness {
         UnittestLog.logMessage("Executed JSP, " + jsp);
     }
     
-    private void executeClass(String strClass) {
-        try {
-            Class clazz = Class.forName(strClass);
-            UnittestBase instance = (UnittestBase) clazz.newInstance();
-
-            UnittestLog.logMessage(instance, "Started initializing...");
-            instance.init();
-            UnittestLog.logMessage(instance, "Done with initialize");
-
-            UnittestLog.logMessage(instance, "Started setup");
-            instance.setup();
-            UnittestLog.logMessage(instance, "Done with setup");
-
-            long startTime = System.currentTimeMillis();
-            UnittestLog.logMessage(instance, "Started run");
-            instance.run();
-            long timeTaken = System.currentTimeMillis() - startTime;
-            UnittestLog.logMessage(instance,
-                "Done with run (time taken = " + timeTaken + " msec)");
-
-            UnittestLog.logMessage(instance, "Started cleanup");
-            instance.cleanup();
-            UnittestLog.logMessage(instance, "Done with cleanup");
-        } catch (ClassNotFoundException e) {
-            UnittestLog.logError(
-                "TestHarness.executeClass: execute method failed", e);
-        } catch (InstantiationException e) {
-            UnittestLog.logError(
-                "TestHarness.executeClass: execute method failed", e);
-        } catch (IllegalAccessException e) {
-            UnittestLog.logError(
-                "TestHarness.executeClass: execute method failed", e);
-        } catch (Throwable e) {
-            UnittestLog.logError(
-                "TestHarness.executeClass: execute method failed", e);
-        }
-    }
-    
     private static List<String> getTestClasses(String tests) {
         List classes = new ArrayList();
         StringTokenizer st = new StringTokenizer(tests, ",");
@@ -167,37 +149,21 @@ public final class TestHarness {
                     name = name.replaceAll("/", ".");
                     int idx = name.lastIndexOf('.');
                     name = name.substring(0, idx);
+                    idx = name.lastIndexOf('.');
+                    String pkgName = name.substring(0, idx);
 
-                    Class clazz = Class.forName(name);
-                    UnittestBase instance = isSubClassOfUnittestBase(clazz);
-
-                    if (instance != null) {
-                        idx = name.lastIndexOf('.');
-                        String pkgName = name.substring(0, idx);
+                    if (!pkgName.equals("com.sun.identity.unittests")) {
                         Set set = (Set)map.get(pkgName);
                         if (set == null) {
                             set = new TreeSet();
                             map.put(pkgName, set);
                         }
-
-                        String s = name.substring(idx+1) + " - " +
-                            instance.getName();
-                        Set issues = instance.getIssues();
-                        if ((issues != null) && !issues.isEmpty()) {
-                            s += " (Issue: " + issues.toString() + ")";
-                        }
-                        Set iTested = instance.getInterfacesTested();
-                        if ((iTested != null) && !iTested.isEmpty()) {
-                            s += " (Interfaces: " + iTested.toString() + ")";
-                        }
-                        set.add(s);
+                        set.add(name);
                     }
                 }
                 jarEntry = in.getNextJarEntry();
             }
         } catch (IOException e) {
-            UnittestLog.logError("TestHarness.getTestClasses: failed", e);
-        } catch (ClassNotFoundException e) {
             UnittestLog.logError("TestHarness.getTestClasses: failed", e);
         } finally {
             if (in != null) {
@@ -240,23 +206,6 @@ public final class TestHarness {
                 
             }
         }
-    }
-    
-    private static UnittestBase isSubClassOfUnittestBase(Class clazz) {
-        Class superClass = clazz.getSuperclass();
-        while (superClass != null) {
-            if (superClass.equals(UnittestBase.class)) {
-                try {
-                    return (UnittestBase)clazz.newInstance();
-                } catch (IllegalAccessException e) {
-                    return null;
-                } catch (InstantiationException e) {
-                    return null;
-                }
-            }
-            superClass = superClass.getSuperclass();
-        }
-        return null;
     }
 }
 

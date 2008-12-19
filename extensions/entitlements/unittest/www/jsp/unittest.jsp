@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: unittest.jsp,v 1.1 2008-12-04 21:12:22 veiming Exp $
+   $Id: unittest.jsp,v 1.2 2008-12-19 08:47:53 veiming Exp $
   
 --%>
 
@@ -149,9 +149,8 @@
         Set tests = (Set)mapPkgNameToClasses.get(pkgname);
         for (Iterator j = tests.iterator(); j.hasNext(); ) {
             String testname = (String)j.next();
-            String realname = testname.substring(0, testname.indexOf(" - "));
 %>
-            <li><input class="test" name="<%= pkgname %>.<%= realname %>" type="checkbox"  title="Select/unselect this test to run" /> <%= testname %></li>
+            <li><input class="test" name="<%= testname %>" type="checkbox"  title="Select/unselect this test to run" /> <%= testname %></li>
 <%
         }
 %>
