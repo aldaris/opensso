@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: IDFFLogMessageIDs.xml,v 1.6 2008-08-19 19:13:01 veiming Exp $
+   $Id: IDFFLogMessageIDs.xml,v 1.7 2008-12-19 06:53:11 exu Exp $
 
 -->
 
@@ -431,7 +431,7 @@
         <actions />
     </logmessage>
     <logmessage name="TERMINATION_SUCCESS" id="50"
-        loglevel="LL_FINER"
+        loglevel="LL_INFO"
         description="Federation Termination succeeded.">
         <datainfo>
             <item>userDN</item>
@@ -1020,5 +1020,28 @@
             <item>Check if the data repository exists and is accessible.</item>
             <item>Check if the IDFF Meta Data Service exists in the data repository.</item>
         </actions>       
+    </logmessage>
+    <logmessage name="CREATE_AUTHN_RESPONSE" id="101"
+        loglevel="LL_INFO"
+        description="Created Authn Response">
+        <datainfo>
+            <item>saml response or response ID and InResponseTo ID</item>
+        </datainfo>
+        <triggers>
+            <item>Created SAML Response</item>
+        </triggers>
+        <actions />
+    </logmessage>
+    <logmessage name="SENT_AUTHN_RESPONSE" id="102"
+        loglevel="LL_INFO"
+        description="Sent Authn Response">
+        <datainfo>
+            <item>Service provider's assertion consumer service URL</item>
+            <item>response ID and InResponseTo ID</item>
+        </datainfo>
+        <triggers>
+            <item>Sent Authn Response</item>
+        </triggers>
+        <actions />
     </logmessage>
 </logmessages>
