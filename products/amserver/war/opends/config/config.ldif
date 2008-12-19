@@ -1595,7 +1595,7 @@ objectClass: ds-cfg-plugin
 objectClass: ds-cfg-referential-integrity-plugin
 cn: Referential Integrity
 ds-cfg-java-class: org.opends.server.plugins.ReferentialIntegrityPlugin
-ds-cfg-enabled: false
+ds-cfg-enabled: true
 ds-cfg-plugin-type: postOperationDelete
 ds-cfg-plugin-type: postOperationModifyDN
 ds-cfg-plugin-type: subordinateModifyDN
