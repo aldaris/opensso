@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configure.jsp,v 1.9 2008-10-08 22:25:02 qcheng Exp $
+   $Id: configure.jsp,v 1.10 2008-12-19 19:23:30 hengming Exp $
 
 --%>
 
@@ -107,14 +107,8 @@ Client SDK is not configured. Please click <a class="named" href="../Configurato
             props.setProperty("idpHost", idpHost);
             props.setProperty("idpPort", idpPort);
             props.setProperty("idpDeploymenturi", idpDeploymenturi);
-            props.setProperty("configDir", configDir);
             FileOutputStream fo = null;
             try {
-                // check if configDir exist before creating
-                File configDirFile = new File(configDir);
-                if (!configDirFile.exists()) {
-                    configDirFile.mkdirs();
-                }
                 fo = new FileOutputStream(bootstrapFile);
                 props.store(fo, null);
                 configured = true;

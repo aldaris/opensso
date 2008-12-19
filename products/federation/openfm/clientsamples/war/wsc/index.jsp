@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.jsp,v 1.5 2008-10-08 22:25:02 qcheng Exp $
+   $Id: index.jsp,v 1.6 2008-12-19 19:23:30 hengming Exp $
 
 --%>
 
@@ -58,29 +58,19 @@ com.sun.liberty.jaxrpc.LibertyManagerClient"
 
 public void jspInit() {
     try {
-        String bootstrapFile = System.getProperty("user.home") +
+        FileInputStream fin = new FileInputStream(
+            System.getProperty("user.home") +
             File.separator + SetupClientWARSamples.CLIENT_WAR_CONFIG_TOP_DIR +
-            File.separator + 
-            SetupClientWARSamples.getNormalizedRealPath(
-            getServletConfig().getServletContext()) +
-            "ClientSampleWSC.properties";
-        FileInputStream fin = new FileInputStream(bootstrapFile);
+            File.separator + SetupClientWARSamples.getNormalizedRealPath(
+            getServletConfig().getServletContext()) + "AMConfig.properties");
         Properties props = new Properties();
         props.load(fin);
+        props.setProperty(Constants.SERVER_MODE, "false");
+        props.setProperty("com.sun.identity.sm.sms_object_class_name",
+            "com.sun.identity.sm.jaxrpc.SMSJAXRPCObject");
+        props.setProperty(Constants.AM_LOGSTATUS, "INACTIVE");
+        SystemProperties.initializeProperties(props);
         fin.close();
-
-        String configDir = props.getProperty("configDir");
-        if (configDir != null) {
-            fin = new FileInputStream(configDir + "/AMConfig.properties");
-            props = new Properties();
-            props.load(fin);
-            props.setProperty(Constants.SERVER_MODE, "false");
-            props.setProperty("com.sun.identity.sm.sms_object_class_name",
-                "com.sun.identity.sm.jaxrpc.SMSJAXRPCObject");
-            props.setProperty(Constants.AM_LOGSTATUS, "INACTIVE");
-            SystemProperties.initializeProperties(props);
-            fin.close();
-        }
     } catch (Exception ex) {
         ex.printStackTrace();
     }
