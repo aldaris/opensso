@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSNameRegistrationHandler.java,v 1.6 2008-11-10 22:56:58 veiming Exp $
+ * $Id: FSNameRegistrationHandler.java,v 1.7 2008-12-19 06:50:47 exu Exp $
  *
  */
 
@@ -1952,7 +1952,7 @@ public class FSNameRegistrationHandler {
             String[] data = { FSUtils.bundle.getString(
                 IFSConstants.REGISTRATION_FAILED_SP_NAME_IDENTIFIER)};
             LogUtil.error(Level.INFO,"REGISTRATION_FAILED_SP_NAME_IDENTIFIER",
-                data);
+                data, ssoToken);
             return null;
         }
     }

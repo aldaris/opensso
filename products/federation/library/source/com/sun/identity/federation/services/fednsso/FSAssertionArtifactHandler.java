@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAssertionArtifactHandler.java,v 1.12 2008-06-25 05:46:57 qcheng Exp $
+ * $Id: FSAssertionArtifactHandler.java,v 1.13 2008-12-19 06:50:46 exu Exp $
  *
  */
 
@@ -362,7 +362,8 @@ public class FSAssertionArtifactHandler {
             if (authnResponse == null) {
                 String[] data = 
                     { FSUtils.bundle.getString("missingAuthnResponse") };
-                LogUtil.error(Level.INFO,LogUtil.MISSING_AUTHN_RESPONSE,data);
+                LogUtil.error(Level.INFO,LogUtil.MISSING_AUTHN_RESPONSE,data,
+                    ssoToken);
                 FSUtils.debug.error("FSAssertionArtifactHandler."
                     + "processAuthnResponse: " 
                     + FSUtils.bundle.getString("missingAuthnResponse")
@@ -386,7 +387,8 @@ public class FSAssertionArtifactHandler {
                 sessionManager.removeAuthnRequest(inResponseTo);
                 String[] data = 
                     { authnResponse.toXMLString() };
-                LogUtil.error(Level.INFO,LogUtil.INVALID_AUTHN_RESPONSE,data);
+                LogUtil.error(Level.INFO,LogUtil.INVALID_AUTHN_RESPONSE,data,
+                    ssoToken);
                 FSUtils.debug.warning("FSAssertionArtifactHandler."
                     + " processAuthnResponse: "
                     + FSUtils.bundle.getString("invalidResponse")
@@ -407,7 +409,8 @@ public class FSAssertionArtifactHandler {
             FSSubject validSubject =(FSSubject)validateAssertions(assertions);
             if (validSubject == null) {
                 String[] data = { FSUtils.bundle.getString("invalidAssertion")};
-                LogUtil.error(Level.INFO,LogUtil.INVALID_ASSERTION,data);
+                LogUtil.error(Level.INFO,LogUtil.INVALID_ASSERTION,data,
+                    ssoToken);
                 FSUtils.debug.error("FSAssertionArtifactHandler."
                     + "processAuthnResponse: " 
                     + FSUtils.bundle.getString("InvalidResponse")
@@ -452,7 +455,8 @@ public class FSAssertionArtifactHandler {
                             "AccountFederationFailed")};
                         LogUtil.error(Level.INFO,
                                     LogUtil.ACCOUNT_FEDERATION_FAILED,
-                                    data);
+                                    data,
+                                    ssoToken);
                         FSUtils.debug.error("FSAssertionArtifactHandler."
                             + "processAuthnResponse: " + 
                             FSUtils.bundle.getString("AccountFederationFailed")
@@ -492,7 +496,8 @@ public class FSAssertionArtifactHandler {
                     String[] data =
                         { FSUtils.bundle.getString("invalidResponse")};
                     LogUtil.error(
-                        Level.INFO,LogUtil.INVALID_AUTHN_RESPONSE, data);
+                        Level.INFO,LogUtil.INVALID_AUTHN_RESPONSE, data,
+                        ssoToken);
                     FSUtils.debug.error("FSAssertionArtifactHandler."
                         + " processAuthnResponse: "
                         + FSUtils.bundle.getString("invalidResponse")
@@ -509,7 +514,8 @@ public class FSAssertionArtifactHandler {
                     String[] data = 
                         { FSUtils.bundle.getString("invalidResponse")};
                     LogUtil.error(
-                        Level.INFO,LogUtil.INVALID_AUTHN_RESPONSE,data);
+                        Level.INFO,LogUtil.INVALID_AUTHN_RESPONSE,data,
+                        ssoToken);
                     FSUtils.debug.error("FSAssertionArtifactHandler."
                         + "processAuthnResponse: "
                         + FSUtils.bundle.getString("invalidResponse")
@@ -544,7 +550,8 @@ public class FSAssertionArtifactHandler {
                     }
                     String[] data = {this.relayState};
                     LogUtil.access(
-                        Level.INFO,LogUtil.ACCESS_GRANTED_REDIRECT_TO, data); 
+                        Level.INFO,LogUtil.ACCESS_GRANTED_REDIRECT_TO, data,
+                        ssoToken); 
                     FSUtils.debug.message(
                         "ArtifactHandler.notfederated, postSSO");
                     if (spAdapter != null) {
@@ -571,7 +578,8 @@ public class FSAssertionArtifactHandler {
                     return;
                 } else {
                     String[] data = { FSUtils.bundle.getString("SSOfailed") };
-                    LogUtil.error(Level.INFO,LogUtil.SINGLE_SIGNON_FAILED,data);
+                    LogUtil.error(Level.INFO,LogUtil.SINGLE_SIGNON_FAILED,data,
+                        ssoToken);
                     FSUtils.debug.error("FSAssertionArtifactHandler."
                         + "processAuthnResponse: "
                         + FSUtils.bundle.getString("invalidResponse")
@@ -1424,7 +1432,8 @@ public class FSAssertionArtifactHandler {
         if (returnCode != FederationSPAdapter.SUCCESS) {
             String[] data = 
                 { FSUtils.bundle.getString("failGenerateSSOToken") };
-            LogUtil.error(Level.INFO,LogUtil.FAILED_SSO_TOKEN_GENERATION, data);
+            LogUtil.error(Level.INFO,LogUtil.FAILED_SSO_TOKEN_GENERATION, data,
+                ssoToken);
         }
             
         return returnCode;
@@ -1672,7 +1681,8 @@ public class FSAssertionArtifactHandler {
             return FederationSPAdapter.FEDERATION_FAILED_WRITING_ACCOUNT_INFO;
         }
         String[] data = {this.relayState} ;
-        LogUtil.access(Level.INFO,LogUtil.ACCESS_GRANTED_REDIRECT_TO,data); 
+        LogUtil.access(Level.INFO,LogUtil.ACCESS_GRANTED_REDIRECT_TO,data,
+            ssoToken); 
         //Set fed cookie
         if (nameIDPolicy == null ||
             !nameIDPolicy.equals(IFSConstants.NAME_ID_POLICY_ONETIME)) 

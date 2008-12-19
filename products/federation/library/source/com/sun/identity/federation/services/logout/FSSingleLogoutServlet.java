@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSingleLogoutServlet.java,v 1.4 2008-06-25 05:47:01 qcheng Exp $
+ * $Id: FSSingleLogoutServlet.java,v 1.5 2008-12-19 06:50:47 exu Exp $
  *
  */
 
@@ -39,7 +39,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.sun.identity.federation.common.FSUtils;
 import com.sun.identity.federation.common.IFSConstants;
 import com.sun.identity.federation.services.util.FSServiceUtils;
-import com.sun.identity.federation.common.LogUtil;
 import java.util.logging.Level;
 
 /**

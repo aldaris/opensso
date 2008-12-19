@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogUtil.java,v 1.3 2008-11-10 22:56:56 veiming Exp $
+ * $Id: LogUtil.java,v 1.4 2008-12-19 06:50:45 exu Exp $
  *
  */
 
@@ -592,6 +592,16 @@ public class LogUtil {
      */
     public static final String IS_AFFILIATE_MEMBER_SUCCEEDED = 
         "IS_AFFILIATE_MEMBER_SUCCEEDED";
+
+    /**
+     * Created Authn Response.
+     */
+    public static final String CREATE_AUTHN_RESPONSE = "CREATE_AUTHN_RESPONSE";
+
+    /**
+     * Sent Authn Response.
+     */
+    public static final String SENT_AUTHN_RESPONSE = "SENT_AUTHN_RESPONSE";
 
     private static Logger logger = null;
 

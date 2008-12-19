@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSSOBrowserPostProfileHandler.java,v 1.2 2008-06-25 05:46:59 qcheng Exp $
+ * $Id: FSSSOBrowserPostProfileHandler.java,v 1.3 2008-12-19 06:50:46 exu Exp $
  *
  */
 
@@ -32,6 +32,7 @@ import com.sun.identity.common.SystemConfigurationUtil;
 import com.sun.identity.federation.common.FSUtils;
 import com.sun.identity.federation.common.IFSConstants;
 import com.sun.identity.federation.common.FSException;
+import com.sun.identity.federation.common.LogUtil;
 import com.sun.identity.federation.jaxb.entityconfig.BaseConfigType;
 import com.sun.identity.federation.message.FSAuthnRequest;
 import com.sun.identity.federation.message.FSAssertion;
@@ -53,6 +54,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.w3c.dom.Document;
 
 import java.util.List;
+import java.util.logging.Level;
 import java.util.Iterator;
 
 /**
@@ -176,6 +178,20 @@ public class FSSSOBrowserPostProfileHandler extends FSSSOAndFedHandler {
                 FSUtils.debug.message("FSSSOBrowserPostProfileHandler."
                     + "sendAuthnResponse: Signed AuthnResponse: " +  respStr);
             }
+             if (LogUtil.isAccessLoggable(Level.FINER)) {
+                String[] data = { respStr };
+                LogUtil.access(
+                    Level.FINER,LogUtil.CREATE_AUTHN_RESPONSE,data,ssoToken);
+            } else {
+                String[] data = {
+                        FSUtils.bundle.getString("responseID") + "=" +
+                        authnResponse.getResponseID() + "," +
+                        FSUtils.bundle.getString("inResponseTo") + "=" +
+                        authnResponse.getInResponseTo()};
+                LogUtil.access(
+                    Level.INFO,LogUtil.CREATE_AUTHN_RESPONSE,data,ssoToken);
+            }
+
             String b64Resp = Base64.encode(respStr.getBytes());
             String targetURL = FSServiceUtils.getAssertionConsumerServiceURL(
                 spDescriptor, authnRequest.getAssertionConsumerServiceID());
@@ -196,6 +212,15 @@ public class FSSSOBrowserPostProfileHandler extends FSSSOAndFedHandler {
                     "AuthnResponse: AuthnResponse sent successfully to: " +
                     targetURL);
             }
+            String[] data = {
+                    targetURL,
+                    FSUtils.bundle.getString("responseID") + "=" +
+                    authnResponse.getResponseID() + "," +
+                    FSUtils.bundle.getString("inResponseTo") + "=" +
+                    authnResponse.getInResponseTo()};
+            LogUtil.access(
+                Level.INFO,LogUtil.SENT_AUTHN_RESPONSE,data,ssoToken);
+
             return;
         } catch(Exception ex){
             FSUtils.debug.error ("FSSSOBrowserPostProfileHandler:sendAuthn" +
@@ -212,6 +237,7 @@ public class FSSSOBrowserPostProfileHandler extends FSSSOAndFedHandler {
     {
         FSUtils.debug.message(
             "FSSSOBrowserPostProfileHandler.doSingleSignOn: Called");
+        this.ssoToken = ssoToken;
         FSAuthnResponse authnResponse = createAuthnResponse(
             ssoToken, inResponseTo, spHandle, idpHandle);
         try {

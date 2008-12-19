@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSReturnLogoutServlet.java,v 1.5 2008-06-25 05:47:01 qcheng Exp $
+ * $Id: FSReturnLogoutServlet.java,v 1.6 2008-12-19 06:50:47 exu Exp $
  *
  */
 
@@ -294,7 +294,7 @@ public class FSReturnLogoutServlet extends HttpServlet {
                     "FSReturnLogoutServlet, failed logout response " + 
                     logoutStatus);
                 String[] data = { univId };
-                LogUtil.error(Level.INFO, LogUtil.LOGOUT_FAILED, data);
+                LogUtil.error(Level.INFO, LogUtil.LOGOUT_FAILED, data,ssoToken);
                 FSLogoutUtil.sendErrorPage(request, response, providerAlias);
                 return;
             }
@@ -304,7 +304,7 @@ public class FSReturnLogoutServlet extends HttpServlet {
                 "Signature on logout response is invalid" +
                 "Cannot proceed logout");
             String[] data = { univId };
-            LogUtil.error(Level.INFO,LogUtil.INVALID_SIGNATURE,data);
+            LogUtil.error(Level.INFO,LogUtil.INVALID_SIGNATURE,data,ssoToken);
             FSServiceUtils.showErrorPage(
                 response,
                 COMMON_ERROR_PAGE,

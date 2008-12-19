@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSProcessLogoutServlet.java,v 1.6 2008-06-25 05:47:01 qcheng Exp $
+ * $Id: FSProcessLogoutServlet.java,v 1.7 2008-12-19 06:50:47 exu Exp $
  *
  */
 
@@ -320,7 +320,8 @@ public class FSProcessLogoutServlet extends HttpServlet {
                 providerAlias,
                 logoutObj,
                 commonErrorPage,
-                userID);
+                userID,
+                ssoToken);
         }
         return;
     }
@@ -368,6 +369,7 @@ public class FSProcessLogoutServlet extends HttpServlet {
      * @param reqLogout the single logout request
      * @param commonErrorPage where to go if an error occurred
      * @param userID user id
+     * @param ssoToken user session object
      */
     private void doRequestProcessing(
         HttpServletRequest request,
@@ -380,7 +382,8 @@ public class FSProcessLogoutServlet extends HttpServlet {
         String metaAlias,
         FSLogoutNotification reqLogout,
         String commonErrorPage,
-        String userID)
+        String userID,
+        Object ssoToken)
     {
         FSUtils.debug.message(
             "Entered FSProcessLogoutServlet::doRequestProcessing");
@@ -407,7 +410,7 @@ public class FSProcessLogoutServlet extends HttpServlet {
         } catch(IDFFMetaException e) {
             FSUtils.debug.error("Remote provider metadata not found.");
             String[] data = { remoteEntityId, realm };
-            LogUtil.error(Level.INFO,LogUtil.INVALID_PROVIDER,data);
+            LogUtil.error(Level.INFO,LogUtil.INVALID_PROVIDER,data, ssoToken);
             FSLogoutUtil.returnToSource(response, 
                 remoteDesc,
                 IFSConstants.SAML_RESPONDER, commonErrorPage,
@@ -427,7 +430,8 @@ public class FSProcessLogoutServlet extends HttpServlet {
                     "Signature on Logout request is invalid" +
                     "Cannot proceed federation Logout");
                 String[] data = { userID };
-                LogUtil.error(Level.INFO, LogUtil.INVALID_SIGNATURE,data);
+                LogUtil.error(Level.INFO, LogUtil.INVALID_SIGNATURE,data,
+                    ssoToken);
                 FSLogoutUtil.returnToSource(response, remoteDesc, 
                     IFSConstants.SAML_REQUESTER, commonErrorPage,
                     minorVersion, hostedConfig, hostedEntityId, userID);
@@ -438,7 +442,8 @@ public class FSProcessLogoutServlet extends HttpServlet {
                     "Signature on Logout request is invalid" +
                     "Cannot proceed federation Logout");
                 String[] data = { userID };
-                LogUtil.error(Level.INFO, LogUtil.INVALID_SIGNATURE,data);
+                LogUtil.error(Level.INFO, LogUtil.INVALID_SIGNATURE,data,
+                    ssoToken);
                 FSLogoutUtil.returnToSource(response, remoteDesc,
                     IFSConstants.SAML_REQUESTER, commonErrorPage,
                     minorVersion, hostedConfig, hostedEntityId, userID);
@@ -451,7 +456,7 @@ public class FSProcessLogoutServlet extends HttpServlet {
             if (metaManager.isTrustedProvider(
                 realm, hostedEntityId,remoteEntityId)) 
             {
-                Object ssoToken = getValidToken(request);
+                //Object ssoToken = getValidToken(request);
                 if (ssoToken != null) {
                     // session is valid, start single logout
                     // Invoke Messaging APIs to get providerid from request
@@ -491,7 +496,7 @@ public class FSProcessLogoutServlet extends HttpServlet {
                         }
                         String[] data = { userID };
                         LogUtil.error(
-                            Level.INFO,LogUtil.LOGOUT_FAILED, data);
+                            Level.INFO,LogUtil.LOGOUT_FAILED, data, ssoToken);
                         FSLogoutUtil.returnToSource(
                             response,
                             remoteDesc, 
@@ -539,7 +544,7 @@ public class FSProcessLogoutServlet extends HttpServlet {
                 "Signature on Logout request is invalid" +
                 "Cannot proceed federation Logout");
             String[] data = { userID };
-            LogUtil.error(Level.INFO,LogUtil.INVALID_SIGNATURE, data);
+            LogUtil.error(Level.INFO,LogUtil.INVALID_SIGNATURE, data, ssoToken);
             errorStatus = IFSConstants.SAML_REQUESTER;
         }
         FSLogoutUtil.returnToSource(
@@ -608,7 +613,7 @@ public class FSProcessLogoutServlet extends HttpServlet {
                     "FSPreLogoutHandler is null.Cannot continue logout");
                 String[] data = { logoutDoneURL };
                 LogUtil.error(Level.INFO,
-                        LogUtil.LOGOUT_FAILED_INVALID_HANDLER,data);
+                        LogUtil.LOGOUT_FAILED_INVALID_HANDLER,data,ssoToken);
             }
         } else {
             FSUtils.debug.message(

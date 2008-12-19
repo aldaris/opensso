@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSTerminationReturnServlet.java,v 1.3 2008-06-25 05:47:04 qcheng Exp $
+ * $Id: FSTerminationReturnServlet.java,v 1.4 2008-12-19 06:50:48 exu Exp $
  *
  */
 
@@ -36,7 +36,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.logging.Level;
-import com.sun.identity.federation.common.LogUtil;
 import com.sun.identity.federation.common.FSUtils;
 import com.sun.identity.federation.common.IFSConstants;
 import com.sun.identity.federation.jaxb.entityconfig.BaseConfigType;

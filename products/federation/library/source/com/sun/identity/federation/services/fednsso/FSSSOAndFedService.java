@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSSOAndFedService.java,v 1.6 2008-08-29 04:57:16 exu Exp $
+ * $Id: FSSSOAndFedService.java,v 1.7 2008-12-19 06:50:46 exu Exp $
  *
  */
 
@@ -577,9 +577,10 @@ public class FSSSOAndFedService  extends HttpServlet {
         BaseConfigType hostedConfig)
     {
         FSUtils.debug.message("FSSSOAndFedService.handleAuthnRequest: Called");
+        Object session = null;
         try {
             SessionProvider provider = SessionManager.getProvider();
-            Object session = provider.getSession(request);
+            session = provider.getSession(request);
             if ((session != null) && (provider.isValid(session))) {
                 MultiProtocolUtils.addFederationProtocol(session, 
                     SingleLogoutManager.IDFF);
@@ -630,7 +631,8 @@ public class FSSSOAndFedService  extends HttpServlet {
                 String[] data = {
                         FSUtils.bundle.getString("requestProcessingFailed") };
                 LogUtil.error(
-                    Level.INFO,LogUtil.AUTHN_REQUEST_PROCESSING_FAILED, data);  
+                    Level.INFO,LogUtil.AUTHN_REQUEST_PROCESSING_FAILED, data,
+                    session);  
                 response.sendError(response.SC_INTERNAL_SERVER_ERROR,
                     FSUtils.bundle.getString("requestProcessingFailed"));
                 return;

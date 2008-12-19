@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSRegistrationInitiationServlet.java,v 1.6 2008-08-29 04:57:16 exu Exp $
+ * $Id: FSRegistrationInitiationServlet.java,v 1.7 2008-12-19 06:50:47 exu Exp $
  *
  */
 
@@ -38,7 +38,6 @@ import javax.servlet.http.HttpServlet;
 import com.sun.identity.federation.accountmgmt.FSAccountFedInfo;
 import com.sun.identity.federation.common.IFSConstants;
 import com.sun.identity.federation.common.FSUtils;
-import com.sun.identity.federation.common.LogUtil;
 import com.sun.identity.federation.jaxb.entityconfig.BaseConfigType;
 import com.sun.identity.federation.meta.IDFFMetaException;
 import com.sun.identity.federation.meta.IDFFMetaManager;

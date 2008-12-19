@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSSOBrowserArtifactProfileHandler.java,v 1.5 2008-06-25 05:46:59 qcheng Exp $
+ * $Id: FSSSOBrowserArtifactProfileHandler.java,v 1.6 2008-12-19 06:50:46 exu Exp $
  *
  */
 
@@ -184,7 +184,8 @@ public class FSSSOBrowserArtifactProfileHandler extends FSSSOAndFedHandler {
                         };
                     LogUtil.error(Level.INFO,
                         LogUtil.AUTHN_REQUEST_PROCESSING_FAILED,
-                        data);
+                        data,
+                        ssoToken);
                     sendSAMLArtifacts(null);
                     return;
                 }
@@ -211,7 +212,8 @@ public class FSSSOBrowserArtifactProfileHandler extends FSSSOAndFedHandler {
                                             "signatureVerificationFailed") };
                             LogUtil.error(Level.INFO,
                                         LogUtil.SIGNATURE_VERIFICATION_FAILED,
-                                        data);
+                                        data,
+                                        ssoToken);
                             sendSAMLArtifacts(null);
                             return;
                         } else {
@@ -244,7 +246,8 @@ public class FSSSOBrowserArtifactProfileHandler extends FSSSOAndFedHandler {
                         };
                     LogUtil.error(Level.INFO, 
                         LogUtil.AUTHN_REQUEST_PROCESSING_FAILED,
-                        data);
+                        data,
+                        ssoToken);
                     sendSAMLArtifacts(null);
                     return;
                 }
@@ -806,6 +809,7 @@ public class FSSSOBrowserArtifactProfileHandler extends FSSSOAndFedHandler {
     {
         FSUtils.debug.message(
             "FSSSOBrowserArtifactProfileHandler.doSingleSignOn: Called");
+        this.ssoToken = ssoToken;
         List artList = createSAMLAssertionArtifact(ssoToken, 
                                                   inResponseTo, 
                                                   opaqueHandle,
@@ -917,7 +921,7 @@ public class FSSSOBrowserArtifactProfileHandler extends FSSSOAndFedHandler {
                     + "sendSAMLArtifacts: Sending artifacts to: " + redirecto);
             }
             String[] data =  { redirecto };
-            LogUtil.access(Level.FINER,LogUtil.REDIRECT_TO, data);
+            LogUtil.access(Level.FINER,LogUtil.REDIRECT_TO, data, ssoToken);
             response.sendRedirect(redirecto);
         } catch(Exception ex){
             FSUtils.debug.error("FSSSOBrowserArtifactProfileHandler."

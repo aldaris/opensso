@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSingleLogoutHandler.java,v 1.13 2008-11-10 22:56:58 veiming Exp $
+ * $Id: FSSingleLogoutHandler.java,v 1.14 2008-12-19 06:50:47 exu Exp $
  *
  */
 
@@ -250,7 +250,8 @@ public class FSSingleLogoutHandler {
                     " be processed. Verify profile in metadata");
             }
             String[] data = { strProfile };
-            LogUtil.error(Level.INFO,LogUtil.LOGOUT_PROFILE_NOT_SUPPORTED,data);
+            LogUtil.error(Level.INFO,LogUtil.LOGOUT_PROFILE_NOT_SUPPORTED,data,
+                ssoToken);
             FSServiceUtils.returnLocallyAfterOperation(
                 response, LOGOUT_DONE_URL,false,
                 IFSConstants.LOGOUT_SUCCESS, IFSConstants.LOGOUT_FAILURE);
@@ -329,7 +330,7 @@ public class FSSingleLogoutHandler {
                         }
                         String[] data = { IFSConstants.LOGOUT_IDP_SOAP_PROFILE};
                         LogUtil.error(Level.INFO,
-                                LogUtil.LOGOUT_PROFILE_NOT_SUPPORTED,data);
+                            LogUtil.LOGOUT_PROFILE_NOT_SUPPORTED,data,ssoToken);
                         return;
                     }
                     FSUtils.debug.message("FSSLOHandler, SOAP in case 2");
@@ -699,11 +700,13 @@ public class FSSingleLogoutHandler {
             }
             String[] data =
               { FSUtils.bundle.getString(IFSConstants.LOGOUT_REDIRECT_FAILED) };
-            LogUtil.error(Level.INFO,LogUtil.LOGOUT_REDIRECT_FAILED,data);
+            LogUtil.error(Level.INFO,LogUtil.LOGOUT_REDIRECT_FAILED,data,
+                ssoToken);
         } catch (Exception ex){
             String[] data =
               { FSUtils.bundle.getString(IFSConstants.LOGOUT_REDIRECT_FAILED) };
-            LogUtil.error(Level.INFO,LogUtil.LOGOUT_REDIRECT_FAILED,data);
+            LogUtil.error(Level.INFO,LogUtil.LOGOUT_REDIRECT_FAILED,data,
+                ssoToken);
         }
     }
     
@@ -1362,6 +1365,7 @@ public class FSSingleLogoutHandler {
      * @param reqLogout the logout request
      * @param currentSessionProvider initial provider with whom to broadcast
      * @param userID who is presently logging out
+     * @param ssoToken user session
      * @param sourceEntityId source provider's entity id
      * @param sessionIndex to be sent as part of logout message
      * @param isWMLAgent determines if response to be sent to AML agent
@@ -1375,6 +1379,7 @@ public class FSSingleLogoutHandler {
         FSLogoutNotification reqLogout,
         FSSessionPartner currentSessionProvider,
         String userID,
+        Object ssoToken,
         String sourceEntityId,
         String sessionIndex,
         boolean isWMLAgent,
@@ -1397,6 +1402,7 @@ public class FSSingleLogoutHandler {
            setRemoteDescriptor(getRemoteDescriptor(remoteEntityId));
         }
         this.userID = userID;
+        this.ssoToken = ssoToken;
         this.sessionIndex = sessionIndex;
         this.isWMLAgent = isWMLAgent;
 
@@ -1482,7 +1488,7 @@ public class FSSingleLogoutHandler {
         } else {
             String[] data = { userID };
             LogUtil.error(Level.INFO,LogUtil.LOGOUT_FAILED_REQUEST_IMPROPER,
-                          data);
+                          data, ssoToken);
             FSUtils.debug.message(
                 "Request not proper. Cannot proceed with single logout");
             returnAfterCompletion();

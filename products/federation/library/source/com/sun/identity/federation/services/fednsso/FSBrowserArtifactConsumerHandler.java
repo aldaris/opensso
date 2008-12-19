@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSBrowserArtifactConsumerHandler.java,v 1.7 2008-06-25 05:46:57 qcheng Exp $
+ * $Id: FSBrowserArtifactConsumerHandler.java,v 1.8 2008-12-19 06:50:46 exu Exp $
  *
  */
 package com.sun.identity.federation.services.fednsso;
@@ -527,7 +527,8 @@ public class FSBrowserArtifactConsumerHandler extends FSAssertionArtifactHandler
                         String[] data = { this.relayState };
                         LogUtil.access(Level.INFO,
                                     LogUtil.ACCESS_GRANTED_REDIRECT_TO,
-                                    data);
+                                    data,
+                                    ssoToken);
                         // Call SP Adapter
                         if (spAdapter != null) {
                             FSUtils.debug.message("Invoke spAdapter");

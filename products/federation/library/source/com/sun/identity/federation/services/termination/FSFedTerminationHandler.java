@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSFedTerminationHandler.java,v 1.5 2008-06-25 05:47:03 qcheng Exp $
+ * $Id: FSFedTerminationHandler.java,v 1.6 2008-12-19 06:50:47 exu Exp $
  *
  */
 
@@ -336,7 +336,7 @@ public class FSFedTerminationHandler {
                     + "account");
             }
             String[] data = { userID };
-            LogUtil.error(Level.INFO,LogUtil.TERMINATION_FAILED,data);
+            LogUtil.error(Level.INFO,LogUtil.TERMINATION_FAILED,data, ssoToken);
             FSServiceUtils.returnLocallyAfterOperation(
                 response, termination_done_url, false,
                 IFSConstants.TERMINATION_SUCCESS,
@@ -345,7 +345,7 @@ public class FSFedTerminationHandler {
         }
         FSUtils.debug.message("Status of local update true");
         String[] data = { userID };
-        LogUtil.access(Level.FINER,LogUtil.TERMINATION_SUCCESS,data);
+        LogUtil.access(Level.INFO,LogUtil.TERMINATION_SUCCESS,data, ssoToken);
         resetFederateCookie();
         boolean bRemoteStatus = doFederationTermination(
             request, response, acctInfo);
@@ -405,7 +405,7 @@ public class FSFedTerminationHandler {
                 FSUtils.bundle.getString(
                     IFSConstants.TERMINATION_LOCAL_FAILED));
             String[] data = { userID };
-            LogUtil.error(Level.INFO,LogUtil.TERMINATION_FAILED,data);
+            LogUtil.error(Level.INFO,LogUtil.TERMINATION_FAILED,data, ssoToken);
             return false;
         }
         // Clean SessionMap off the partner to be done here.
@@ -462,14 +462,14 @@ public class FSFedTerminationHandler {
             FSUtils.debug.message("Termination request processing failed");
             String[] data = { FSUtils.bundle.getString(
                 IFSConstants.TERMINATION_REQUEST_PROCESSING_FAILED) };
-            LogUtil.error(Level.INFO,LogUtil.TERMINATION_FAILED,data);
+            LogUtil.error(Level.INFO,LogUtil.TERMINATION_FAILED,data, ssoToken);
             returnToSource();
             return;
         }
         FSUtils.debug.message("User sucessfully defederated");
         String[] data = { FSUtils.bundle.getString(
             IFSConstants.TERMINATION_SUCCEEDED) };
-        LogUtil.access(Level.FINER,LogUtil.TERMINATION_SUCCESS,data);
+        LogUtil.access(Level.INFO,LogUtil.TERMINATION_SUCCESS,data, ssoToken);
         // Call SP Adaper for remote IDP initiated HTTP profile
         if (hostedProviderRole != null &&
             hostedProviderRole.equalsIgnoreCase(IFSConstants.SP))

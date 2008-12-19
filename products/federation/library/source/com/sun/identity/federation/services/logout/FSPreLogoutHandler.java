@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSPreLogoutHandler.java,v 1.10 2008-08-20 01:07:05 exu Exp $
+ * $Id: FSPreLogoutHandler.java,v 1.11 2008-12-19 06:50:47 exu Exp $
  *
  */
 
@@ -487,7 +487,7 @@ public  class FSPreLogoutHandler {
         //handlerObj.setRemoteEntityId(remoteEntityID);
         return handlerObj.processHttpSingleLogoutRequest(
             response, request, reqLogout,
-            sessionPartner, userID, remoteEntityID, sessionIndex, 
+            sessionPartner, userID, ssoToken, remoteEntityID, sessionIndex, 
             isWMLAgent, relayState, 
             (hostedRole.equals(IFSConstants.SP) ? 
                 IFSConstants.IDP : IFSConstants.SP));
@@ -756,7 +756,8 @@ public  class FSPreLogoutHandler {
         if (error) {
             String[] data =
                 {FSUtils.bundle.getString(IFSConstants.LOGOUT_REDIRECT_FAILED)};
-            LogUtil.error(Level.INFO,LogUtil.LOGOUT_REDIRECT_FAILED,data);
+            LogUtil.error(Level.INFO,LogUtil.LOGOUT_REDIRECT_FAILED,data,
+                ssoToken);
             logoutSuccess = false;
         }
         // call multi-federation protocol processing

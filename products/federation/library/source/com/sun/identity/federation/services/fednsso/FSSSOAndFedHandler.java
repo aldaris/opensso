@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSSOAndFedHandler.java,v 1.10 2008-11-10 22:56:58 veiming Exp $ 
+ * $Id: FSSSOAndFedHandler.java,v 1.11 2008-12-19 06:50:46 exu Exp $ 
  *
  */
 
@@ -953,7 +953,7 @@ public abstract class FSSSOAndFedHandler {
                 String[] data = { userID };
                 LogUtil.error(Level.INFO,
                     LogUtil.USER_ACCOUNT_FEDERATION_INFO_NOT_FOUND, 
-                    data);
+                    data, ssoToken);
                 return false;
             }
 
@@ -1222,7 +1222,7 @@ public abstract class FSSSOAndFedHandler {
                             String[] data = { message };
                             LogUtil.error(Level.INFO,
                                 LogUtil.SIGNATURE_VERIFICATION_FAILED,
-                                data);
+                                data, ssoToken);
                             status = new Status(
                                 new StatusCode("samlp:Responder",
                                     new StatusCode(
@@ -1264,7 +1264,7 @@ public abstract class FSSSOAndFedHandler {
                         "AuthnRequestProcessingFailed") };
                     LogUtil.error(Level.INFO,
                         LogUtil.AUTHN_REQUEST_PROCESSING_FAILED,
-                        data);
+                        data, ssoToken);
                     message = FSUtils.bundle.getString(
                         "AuthnRequestProcessingFailed");
                     status = new Status(

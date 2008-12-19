@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSAssertionManager.java,v 1.9 2008-06-25 05:46:51 qcheng Exp $
+ * $Id: FSAssertionManager.java,v 1.10 2008-12-19 06:50:46 exu Exp $
  *
  */
 
@@ -842,10 +842,10 @@ public final class FSAssertionManager {
         }
         if (LogUtil.isAccessLoggable(Level.FINER)) {
             String[] data = { assertion.toString() };
-            LogUtil.access(Level.FINER,LogUtil.CREATE_ASSERTION,data);
+            LogUtil.access(Level.FINER,LogUtil.CREATE_ASSERTION,data, token);
         } else {
             String[] data = { assertion.getAssertionID() } ;
-            LogUtil.access(Level.INFO,LogUtil.CREATE_ASSERTION,data);
+            LogUtil.access(Level.INFO,LogUtil.CREATE_ASSERTION,data, token);
         }
         if (artString != null) {
             try {
