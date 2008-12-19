@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionService.java,v 1.27 2008-08-29 15:00:20 subashvarma Exp $
+ * $Id: SessionService.java,v 1.28 2008-12-19 18:43:57 subashvarma Exp $
  *
  */
 
@@ -2219,18 +2219,19 @@ public class SessionService {
                         String url = (String) entry.getKey();
                         // ONLY SEND ONCE TO ONE LOCATION
                         try {
-                            SessionID sid = (SessionID) entry.getValue();
-                            SessionInfo info = makeSessionInfo(session, sid);
-                            SessionNotification sn = new SessionNotification(
-                                    info, eventType, System.currentTimeMillis());
-                            Notification not = new Notification(sn
-                                    .toXMLString());
-                            NotificationSet set = new NotificationSet(
-                                    SESSION_SERVICE);
-                            set.addNotification(not);
-
                             URL parsedUrl = new URL(url);
-                            PLLServer.send(parsedUrl, set);
+                            if(!sessionService.isLocalSessionService(parsedUrl)) {
+                                SessionID sid = (SessionID) entry.getValue();
+                                SessionInfo info = makeSessionInfo(session, sid);
+                                SessionNotification sn = new SessionNotification(
+                                       info, eventType, System.currentTimeMillis());
+                                Notification not = new Notification(sn
+                                        .toXMLString());
+                                NotificationSet set = new NotificationSet(
+                                        SESSION_SERVICE);
+                                set.addNotification(not);
+                                PLLServer.send(parsedUrl, set);
+                            }
                         } catch (Exception e) {
                             sessionService.sessionDebug.error(
                                 "Remote Individual notification to " + url, e);
