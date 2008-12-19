@@ -22,13 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestListener.java,v 1.2 2008-12-19 19:47:57 veiming Exp $
+ * $Id: TestListener.java,v 1.3 2008-12-19 19:50:48 veiming Exp $
  */
 
 package com.sun.identity.unittest;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
