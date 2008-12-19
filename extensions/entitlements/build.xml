@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.5 2008-12-19 08:47:52 veiming Exp $
+   $Id: build.xml,v 1.6 2008-12-19 09:37:00 veiming Exp $
 
 -->
 
@@ -51,6 +51,9 @@
         <unjar src="${entitlements.extlib.dir}/opensso.war"
             dest="${war.package.dir}" />
         <antcall target="unittest" />
+        <copy todir="${war.package.dir}/WEB-INF/classes">
+            <fileset dir="${entitlements.classes.dir}" includes="**/*.class" />
+        </copy>
         <copy todir="${war.package.dir}/WEB-INF/lib"
             file="${entitlements.extlib.dir}/testng-5.1-jdk15.jar" />
 

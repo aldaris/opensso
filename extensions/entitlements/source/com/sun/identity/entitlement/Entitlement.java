@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.4 2008-12-17 07:06:19 veiming Exp $
+ * $Id: Entitlement.java,v 1.5 2008-12-19 09:37:00 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -46,7 +46,7 @@ import java.util.Set;
  * </pre>
  * Or do a sub tree search like this.
  * <pre>
- *     Evaluator evaluator = new Evaluator();
+ *     Evaluator evaluator = new Evaluator(adminToken);
  *     List&lt;Entitlement> entitlements = evaluator.getEntitlements(
  *         subject, "http://www.sun.com", Collections.EMPTY_MAP, true);
  *     for (Entitlement e : entitlements) {

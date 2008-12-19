@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestHarness.java,v 1.2 2008-12-19 08:47:52 veiming Exp $
+ * $Id: TestHarness.java,v 1.3 2008-12-19 09:37:01 veiming Exp $
  */
 
 package com.sun.identity.unittest;
@@ -152,7 +152,7 @@ public final class TestHarness {
                     idx = name.lastIndexOf('.');
                     String pkgName = name.substring(0, idx);
 
-                    if (!pkgName.equals("com.sun.identity.unittests")) {
+                    if (!pkgName.equals("com.sun.identity.unittest")) {
                         Set set = (Set)map.get(pkgName);
                         if (set == null) {
                             set = new TreeSet();

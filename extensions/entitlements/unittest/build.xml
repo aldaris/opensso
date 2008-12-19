@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2008-12-04 21:12:18 veiming Exp $
+   $Id: build.xml,v 1.2 2008-12-19 09:37:00 veiming Exp $
 
 -->
 
@@ -40,6 +40,7 @@
         <fileset dir="${entitlements.extlib.dir}">
             <include name="**/*.jar"/>
         </fileset>
+        <pathelement location="${entitlements.classes.dir}"/>
     </path>
     
     <target name="build" depends="preparebuild">        
