@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.ssodtool,v 1.2 2008-12-16 22:34:16 ak138937 Exp $
+   $Id: README.ssodtool,v 1.3 2008-12-19 00:28:24 ak138937 Exp $
 
 -->
 
@@ -54,6 +54,8 @@ run-time. The tool does not address the dynamic issues.
 2. Supported versions of Java Runtime
 -------------------------------------
 J2SE 1.5 or higher.
+
+Note: Embedded quotes in JAVA_HOME environment variable are not supported.
 
 3. Architecture
 ---------------

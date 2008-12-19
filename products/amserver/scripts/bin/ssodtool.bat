@@ -1,3 +1,4 @@
+@echo off
 :: DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
 ::
 :: Copyright (c) 2008 Sun Microsystems Inc. All Rights Reserved
@@ -21,15 +22,22 @@
 :: your own identifying information:
 :: "Portions Copyrighted [year] [name of copyright owner]"
 ::
-:: $Id: ssodtool.bat,v 1.1 2008-11-22 02:51:48 ak138937 Exp $
+:: $Id: ssodtool.bat,v 1.2 2008-12-19 00:31:57 ak138937 Exp $
 ::
 
-if not "%JAVA_HOME%" == "" goto checkJavaHome
+set _JAVA_CMD=java
+set _TRIMMED_JAVA_HOME=%JAVA_HOME%
+for /f "useback tokens=*" %%a in ('%_TRIMMED_JAVA_HOME%') do set _TRIMMED_JAVA_HOME=%%~a
+if not "%_TRIMMED_JAVA_HOME%"=="" (
+    set _JAVA_CMD="%JAVA_HOME:"=%\bin\java"
+)
+
+if not %_JAVA_CMD% == "" goto checkJavaHome
 echo Please define JAVA_HOME environment variable before running this program
 goto exit
 
 :checkJavaHome
-if not exist "%JAVA_HOME%\bin\java.exe" goto invalidJavaHome
+if not exist %JAVA_HOME%\bin\java.exe goto invalidJavaHome
 goto validJavaHome
 
 :invalidJavaHome
@@ -38,7 +46,7 @@ goto exit
 
 :validJavaHome
 SETLOCAL
-CALL %JAVA_HOME%\bin\java.exe -version 2>&1|more > java_version.txt
+CALL "%_TRIMMED_JAVA_HOME%\bin\java.exe" -version 2>&1|more > java_version.txt
 SET /P java_version=< java_version.txt
 DEL java_version.txt
 CALL :GET_VERSION_NUM %java_version:"1.= %
@@ -66,7 +74,7 @@ goto exit
 
 SET DEBUG_FLAGS="-Xdebug -Xrunjdwp:transport=dt_socket,address=8888,server=y,suspend=n"
 
-%JAVA_HOME%/bin/java -cp .;config;lib/locale.jar;lib/opensso-sharedlib.jar;lib/amserver.jar;lib/ldapjdk.jar;lib/OpenDS.jar;lib/jaxb-impl.jar;lib/jaxb-api.jar;lib/xsdlib.jar;lib/toolbase.jar;lib/webservices-rt.jar com.sun.identity.diagnostic.base.core.DiagnosticToolMain %*
+"%_TRIMMED_JAVA_HOME%\bin\java" -cp .;config;lib\locale.jar;lib\opensso-sharedlib.jar;lib\amserver.jar;lib\ldapjdk.jar;lib\OpenDS.jar;lib\jaxb-impl.jar;lib\jaxb-api.jar;lib\xsdlib.jar;lib\toolbase.jar;lib\webservices-rt.jar com.sun.identity.diagnostic.base.core.DiagnosticToolMain %*
 ENDLOCAL
 
 :exit
