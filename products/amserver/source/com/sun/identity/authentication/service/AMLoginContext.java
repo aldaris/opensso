@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginContext.java,v 1.17 2008-10-30 18:24:02 mallas Exp $
+ * $Id: AMLoginContext.java,v 1.18 2008-12-19 19:04:14 bigfatrat Exp $
  *
  */
 
@@ -457,7 +457,7 @@ public class AMLoginContext {
                         AMAuthErrorCode.AUTH_MODULE_DENIED, null);
             }
 
-            debug.message("user authenication successful");
+            debug.message("user authentication successful");
             
             // retrieve authenticated user's profile or create
             // a user profile if dynamic profile creation is
@@ -559,6 +559,11 @@ public class AMLoginContext {
             logFailedError = "INVALIDPASSWORD";
             if (accountLocked) {
                 loginState.setErrorCode(AMAuthErrorCode.AUTH_USER_INACTIVE);
+                if (failedUserId != null) {
+                    loginState.logFailed(failedUserId, "LOCKEDOUT");
+                } else {
+                    loginState.logFailed("LOCKEDOUT");
+                }
             } else {
                 loginState.setErrorCode(AMAuthErrorCode.AUTH_INVALID_PASSWORD);
             }
@@ -1640,7 +1645,7 @@ public class AMLoginContext {
                     String orgParam = AuthUtils.getOrgParam(requestHash);
                     String queryOrg = AuthUtils.getQueryOrgName(hreq, orgParam);
                     String newOrgDN = DNUtils.normalizeDN(
-				AuthUtils.getOrganizationDN(queryOrg,true,hreq));
+                            AuthUtils.getOrganizationDN(queryOrg,true,hreq));
                     if (debug.messageEnabled()){
                         debug.message("orgDN from existing auth context: " +
                         orgDN + ", orgDN from query string: " + newOrgDN);
