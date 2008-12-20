@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogClientHandler.java,v 1.2 2008-06-25 05:54:44 qcheng Exp $
+ * $Id: LogClientHandler.java,v 1.3 2008-12-20 01:30:46 mallas Exp $
  *
  */
 package com.samples;
@@ -38,28 +38,46 @@ import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
+import javax.servlet.ServletContext;
+import java.util.Map;
 
 public class LogClientHandler implements SOAPHandler<SOAPMessageContext> {
     
     PrintStream out;
     
     public boolean handleMessage(SOAPMessageContext smc) {
+
+        java.net.URL u = this.getClass().getClassLoader().getResource(
+                   "com/samples/LogClientHandler.class");
+        String url = null;
+        if(u != null) {
+           url = u.getFile(); 
+           String osName = System.getProperty("os.name"); 
+           if(osName != null && osName.toLowerCase().startsWith("windows")) {
+              url = url.substring(1);
+           }
+           url = url.substring(0, url.indexOf("/WEB-INF"));
+           System.out.println("URL: " + url);
+        }
+        String fileName = null; 
         Boolean outboundProperty = (Boolean)
         smc.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
         if (!outboundProperty.booleanValue()) {
-            String fileName = System.getProperty("user.home") +
-                "/AccessManager/response";
-            SOAPMessage msg = smc.getMessage();
-            SOAPMessage message = smc.getMessage();
-            try {
-                out = new PrintStream(new FileOutputStream(fileName, false));
-                message.writeTo(out);
-                out.close();
-            } catch (SOAPException ex) {
-                ex.printStackTrace();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
+            fileName = url + "/response";
+        } else {
+            fileName = url + "/request";
+        }
+        SOAPMessage message = smc.getMessage();
+        try {
+            out = new PrintStream(new FileOutputStream(fileName, false));
+            message.writeTo(out);
+            out.close();
+        } catch (SOAPException ex) {
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
         return true;
     }

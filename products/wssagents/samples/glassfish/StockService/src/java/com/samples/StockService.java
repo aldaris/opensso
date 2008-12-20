@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StockService.java,v 1.3 2008-06-25 05:54:45 qcheng Exp $
+ * $Id: StockService.java,v 1.4 2008-12-20 01:30:46 mallas Exp $
  *
  */
 package com.samples;
@@ -35,24 +35,66 @@ import javax.jws.WebService;
 import java.util.*;
 import java.net.*;
 import java.io.*;
+import javax.security.auth.Subject;
+import java.security.Principal;
+import java.security.AccessController;
+import javax.xml.ws.WebServiceContext;
+import javax.annotation.Resource;
 
 @WebService(serviceName = "StockService", portName = "StockQuotePortTypePort", endpointInterface = "com.sun.stockquote.StockQuotePortType", targetNamespace = "http://sun.com/stockquote.wsdl", wsdlLocation = "WEB-INF/wsdl/StockService/stockservice.wsdl")
 @HandlerChain( file="handlers.xml", name="" )
 public class StockService implements com.sun.stockquote.StockQuotePortType {
+
+    @Resource
+    protected WebServiceContext wscontext;
     
     /** Creates a new instance of StockService */
     public StockService() {
     }
 
     public QuoteResponseType getStockQuote(QuoteRequestType body) {
-        com.sun.stockquote.QuoteResponseType retVal = new com.sun.stockquote.QuoteResponseType();
+        com.sun.stockquote.QuoteResponseType retVal = 
+               new com.sun.stockquote.QuoteResponseType();
         try {
+            boolean userAuthenticated = false;
+            String userName = null;
+            String authMethod = null;
+            Subject sub = (Subject)wscontext.getMessageContext().get(
+                  "javax.security.auth.Subject");
+            if(sub == null) {
+               System.out.println(" Can not find the subject");
+            } else {
+               Iterator iter =  sub.getPrincipals().iterator();
+               while(iter.hasNext()) {
+                  Principal p = (Principal)iter.next();
+                  userName = p.getName();
+               }
+
+               Iterator iter2 = sub.getPublicCredentials().iterator();
+               while(iter2.hasNext()) {
+                  Object obj = iter2.next();
+                  if(obj instanceof Map) {
+                     Map attrs = (Map)obj;
+                     authMethod = (String)attrs.get("AuthMethod");
+                  }
+               }
+            }
+
+            if(userName != null) {
+               System.out.println(" Authenticated user: " + userName);
+               userAuthenticated = true;
+            }
+
+            String msg = "Principal: " + userName + " Authentication method: "+
+                         authMethod;
+
             String symbol = body.getSymbol().trim();
             Map data = getYahooQuote(symbol);
-           if (data == null) {
+            if (data == null) {
             // Unable to obtain from Yahoo! Get from local cache
              data = getCachedQuote(symbol);
             }
+            data.put("message", msg);
             
             // Convert from Map to QuoteResponseType            
             retVal.setSymbol((String) data.get("symbol"));
@@ -81,6 +123,7 @@ public class StockService implements com.sun.stockquote.StockQuotePortType {
             String change = (String)data.get("change");
             retVal.setChange(change);
         } catch (Exception e) {
+             e.printStackTrace();
             // Handle exception
         }
         return retVal;    
@@ -157,7 +200,8 @@ public class StockService implements com.sun.stockquote.StockQuotePortType {
         stockValues.put("dayLow","7.12");
         stockValues.put("yearRange", "N/A");
         stockValues.put("marketCap", "N/A");
-        stockValues.put("message", "Quote AUTO Generated");
+        stockValues.put("message", "User not authenticated." +
+                   " Quote AUTO Generated");
         stockValues.put("time", getTime());
         stockData.put("JAVA", stockValues);
         
@@ -171,7 +215,8 @@ public class StockService implements com.sun.stockquote.StockQuotePortType {
         stockValues.put("dayLow","16.31");
         stockValues.put("yearRange", "N/A");
         stockValues.put("marketCap", "N/A");
-        stockValues.put("message", "Quote AUTO Generated");
+        stockValues.put("message", "User not authenticated." +
+                   " Quote AUTO Generated");
         stockValues.put("time", getTime());
         stockData.put("ORCL", stockValues);
     }

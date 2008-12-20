@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogHandler.java,v 1.2 2008-06-25 05:54:45 qcheng Exp $
+ * $Id: LogHandler.java,v 1.3 2008-12-20 01:30:46 mallas Exp $
  *
  */
 package com.samples;
@@ -38,6 +38,7 @@ import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
+import javax.servlet.ServletContext;
 
 public class LogHandler implements SOAPHandler<SOAPMessageContext> {
     
@@ -47,8 +48,10 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
         Boolean outboundProperty = (Boolean)
             smc.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
         if (!outboundProperty.booleanValue()) {
-            String fileName = System.getProperty("user.home") +
-                "/AccessManager/request";
+            ServletContext servletContext = (ServletContext)smc.get(
+                MessageContext.SERVLET_CONTEXT);
+            String realPath = servletContext.getRealPath("/");
+            String fileName = realPath + "/request";
             SOAPMessage msg = smc.getMessage();
             SOAPMessage message = smc.getMessage();
             try {

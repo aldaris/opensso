@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.4 2008-08-29 21:21:05 arunav Exp $
+   $Id: build.xml,v 1.5 2008-12-20 01:30:46 mallas Exp $
 
 -->
 
@@ -53,7 +53,7 @@
         <copy file="src/java/handlers.xml" todir="web/WEB-INF/classes"/>
     </target>
     <target name="compile" depends="-pre-compile">
-       <javac fork="true" destdir="build/classes" srcdir="src/java">
+       <javac fork="true"  debug="true" destdir="build/classes" srcdir="src/java">
            <classpath refid="build.class.path" />
        </javac>
     </target>

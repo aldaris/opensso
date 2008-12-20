@@ -22,17 +22,26 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPMessage.java,v 1.2 2008-06-25 05:54:44 qcheng Exp $
+ * $Id: SOAPMessage.java,v 1.3 2008-12-20 01:30:46 mallas Exp $
  *
  */
 package com.samples;
 
 import java.io.*;
+import java.net.URL;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 
 public class SOAPMessage extends HttpServlet {
+
+     private static String requrl = 
+              "http://localhost:8080/StockService/request";
+     private ServletContext servletContext;
+
+     public void init(ServletConfig config) {
+         servletContext = config.getServletContext();
+     }
     
     /** Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request
@@ -46,11 +55,22 @@ public class SOAPMessage extends HttpServlet {
         if (file == null || file.length() == 0) {
             file = "request";
         }
-        String fileName = System.getProperty("user.home") +
-            "/AccessManager/" + file;
-        // Open the file and return the message
+        InputStream is = null;
+        if(!file.equals("request")) {
+           String fileName = servletContext.getRealPath("/") + "/" + file;
+            // Open the file and return the message
+           is = new FileInputStream(fileName);
+        } else {
+           try {
+               URL url = new URL(requrl);
+               is = url.openConnection().getInputStream(); 
+           } catch (Exception ex) {
+               ex.printStackTrace();
+               return;
+           }
+        }
         BufferedReader br = new BufferedReader(
-            new InputStreamReader(new FileInputStream(fileName)));
+            new InputStreamReader(is));
         out.println("<?xml version='1.0' encoding=\"ISO-8859-1\"?>\n\n");
         String line;
         while ((line = br.readLine()) != null) {

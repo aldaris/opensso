@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README,v 1.12 2008-10-08 22:56:28 mallas Exp $
+   $Id: README,v 1.13 2008-12-20 01:30:45 mallas Exp $
 
 -->
 
@@ -67,17 +67,32 @@ I. Deploy the samples
    and web service respectively. Also, it has a file name called as 
    glassfish.properties. 
 
-   1. Open glassfish.properties and set the correct path for glassfish.home
+   1. Open glassfish.properties and edit for properties
+       glassfish.home = <Glassfish installation directory>
+       glassfish.host = <Host where glassfish is installed>
+       glasfish.passwordfile = <Password file for the glassfish adminpassword>
+       The properties build.class.path and jaxws.endorsed.dir are not
+       used for the stock samples, but for advanced samples.
+       
 
    2. Make sure that JAVA_HOME is set to JDK1.5 installation and similarly
-      make sure java and javac are in the PATH you are executing it.
+      make sure java and javac are in the PATH before executing the samples.
 
-   3. Use "ant" from <ApplicationServer-install>/lib/ant/bin/ant
+   3. Use the ant command from <ApplicationServer-install>/lib/ant/bin/ant
 
-   4. cd StockQuoteClient and run "ant -f build.xml". This will build
+   4. cd StockService and run "ant -f build.xml". This will build
+      and deploy the StockService onto glassfish container.
+
+   5. The StockQuoteClient Sample assumes the web service (StockService)
+      is deployed on localhost and port 8080. However, if they are different
+      edit and replace localhost and 8080 in the following files: 
+      StockQuoteClient/src/java/com/samples/GetQuote.java
+      StockQuoteClient/src/java/com/samples/SOAPMessage.java
+
+   6. cd StockQuoteClient and run "ant -f build.xml". This will build
       and deploy the StockQuoteClient onto glassfish container.
 
-   5. cd StockService and run "ant -f build.xml". This will build
+   7. cd StockService and run "ant -f build.xml". This will build
       and deploy the StockService onto glassfish container.
 
 
@@ -87,28 +102,49 @@ II. Configure the web services client for "StockService".
 
     openssoserver_protocol://openssoserver_host:openssoserver_port/openssoserver_deploy_uri
 
-    Note: If you have logged in as any other user, click Logout on the console page and Login again and make sure that you access the OpenSSO Console.
+    Note: If you have logged in as any other user, click Logout on the
+    console page and Login again and make sure that you access the OpenSSO
+    Console.
 
-    Create agent profiles for "StockService" WSC :
+    Create agent profiles for "StockService" WSC : 
+    The "StockService" is the client profile name. This name should match with
+    the service name in the WSDL file. For e.g. if we have CalendarService,
+    the name should match with whatever is there in the WSDL.
 
-      Go to Access Control -> Default realm -> Agents ->
+    Go to Access Control -> Default realm -> Agents ->
 
         a) Create "WSC" profile for "StockService"
-        Select Web Service Client -> under Agent, click "new" -> enter name as "StockService" and other required fields -> Save.
-        Click on above saved profile to edit -> Select required Security Mechanism, "Preserve Security Headers in Message" as
+        Select Web Service Client -> under Agent, click "new" -> 
+        enter name as "StockService" and other required fields -> Save.
+        Click on above saved profile to edit -> Select required Security 
+        Mechanism, "Preserve Security Headers in Message" as
         true (checked) and "Is Request Signed" as true (checked).
         Save changes.
-        Note : If the required or selected Security Mechanism is “STSSecurity”, then 
-        select STS Configuration as “SecurityTokenService" and Web Service End Point as “default”. 
+
+        The security mechanism could be "STSSecurity" and what it means is
+        that the WSC is requesting STS (WS-Trust) Service to generate the token
+        so that it can secure the request to the WSP.
+
+        If the required or selected Security Mechanism is STSSecurity,
+        then select STS Configuration as "SecurityTokenService" and 
+        Web Service End Point as "default". Ideally, this endpoint
+        should match with how the WSP registers with STS preferably
+        an endpoint of the Web Service Provider. However, out of the box
+        it is just "default" since we dont know the endpoint.
+
+        The following is required to allow the WSC to read it's configuration
+        from OpenSSO.
         Add the "StockService" agent profile to the AgentAuthenticator by
         going into AgentAuthenticator->agentAuth->Add the StockService to
         Agent Profiles allowed to Read and save the configuration.
        
 
         b) Create "WSP" profile (if not already created)
-        Select Web Service Provider -> under Agent, click "new" -> enter name as "wsp" and other required fields -> Save.
+        Select Web Service Provider -> under Agent, 
+        click "new" -> enter name as "wsp" and other required fields -> Save.
         Click on above saved profile to edit -> Select all Security Mechanisms.
-        Select Web Service End Point as “default” and "Is Request Signature Verified" as true (checked).
+        Select Web Service End Point as default and 
+        "Is Request Signature Verified" as true (checked).
         Save changes.
 
 2.  Logout of OpenSSO Administration console.
@@ -117,18 +153,20 @@ III. Run the samples
 
   a) Web Service Client sample :
 
-    For StockQuoteClient to honor the "User Authentication Required" flag / configuration at wsc ("StockService" agent here), 
-    you need to add following configuration at HTTP provider in GF :
+    For StockQuoteClient to honor the "User Authentication Required" 
+    configuration at wsc ("StockService" agent here), 
+    you need to add following configuration at HTTP provider in Glassfish :
 
-    GF admin console - Expand Configuration -> Security -> Click on Message Security 
-    -> HttpSevlet -> Providers tab -> click on FAMHttpProvider
+    GF admin console - Expand Configuration -> Security -> Click on 
+    Message Security -> HttpSevlet -> Providers tab -> click on FAMHttpProvider
     click on "Add Property" -> give name as "providername" and 
     value as "StockService" (since we are using "StockService" agent profile here). 
     Save changes and logout.
 
-    I) With this when "User Authentication Required" flag is checked at "StockService" agent profile, 
-    SAML token with end user's identity/token will be generated and 
-    you can use either SAML 1.1 or SAML 2.0 SenderVouches at "wsp" profile. 
+    I) With this when "User Authentication Required" flag is checked at 
+      "StockService" agent profile, SAML token with end user's identity/token
+    will be generated and you can use either SAML 1.1 or SAML 2.0 SenderVouches 
+    at "wsp" profile. 
     
     Here, the flow will be as follows :
 
@@ -145,7 +183,8 @@ III. Run the samples
 
     4. If successful, this will display the stock values.
 
-    II) When "User Authentication Required" flag is not checked at "StockService" agent profile, 
+    II) When "User Authentication Required" flag is not checked at 
+       "StockService" agent profile, 
     SAML token with WSC's identity (WSC's cert) will be generated and 
     you can use either SAML 1.1 or SAML 2.0 HolderOfKey at "wsp" profile.
  
@@ -161,16 +200,21 @@ III. Run the samples
 
   b) Standalone Client sample :
 
+  The standlone client demonstrates running the plain SOAP based web service
+  client that can use the OpenSSO ClientSDK API to secure the web service requests.
+
     1. Login into the OpenSSO Console with user amadmin and <amadmin password>
 
     openssoserver_protocol://openssoserver_host:openssoserver_port/openssoserver_deploy_uri
 
-    Note: If you have logged in as any other user, click Logout on the console page and Login again and make sure that you access the OpenSSO Console.
+    Note: If you have logged in as any other user, click Logout on the console page and Login
+    again and make sure that you access the OpenSSO Console.
 
       Go to Access Control -> Default realm -> Agents ->
 
         a) Create "WSP" profile 
-        Select Web Service Provider -> under Agent, click "new" -> enter name as "StockServiceWSP" and other required fields -> Save.
+        Select Web Service Provider -> under Agent, click "new" -> 
+        enter name as "StockServiceWSP" and other required fields -> Save.
         Click on above saved profile to edit -> Select all Security Mechanisms.
         Select Web Service End Point as the actual StockService end point url 
         (default is "http://localhost:8080/StockService/StockService") and 
@@ -182,8 +226,8 @@ III. Run the samples
         Enter Web Service End Point as the actual StockService end point url 
         (default is "http://localhost:8080/StockService/StockService").
         Save changes.
-        Note : If the required or selected Security Mechanism is “STSSecurity”, then 
-        select STS Configuration as “SecurityTokenService".
+        Note : If the required or selected Security Mechanism is "STSSecurity",
+        then select STS Configuration as "SecurityTokenService".
 
     2. cd StandAloneStockClient directory
 
