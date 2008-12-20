@@ -21,12 +21,13 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.2 2008-12-17 07:01:13 veiming Exp $
+$Id: README,v 1.3 2008-12-20 00:17:18 veiming Exp $
 
 --------------------------------------------------------------------------------
 Need these binaries in extlib directory
 
 1. opensso.war - for unwar to include entitlements.jar and resources
 2. j2ee.jar - compilation of source code
+3. testng-5.1-jdk15.jar - for unittest
 
 
