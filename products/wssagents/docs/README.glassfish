@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.glassfish,v 1.15 2008-08-31 15:50:03 mrudul_uchil Exp $
+   $Id: README.glassfish,v 1.16 2008-12-22 21:59:01 mallas Exp $
 
 -->
 
@@ -213,13 +213,13 @@ VIII. Configure the web services client and the web services provider for Web se
         Select Web Service Client -> under Agent, click "new" -> enter name as "wsc" and other required fields -> Save.
         Click on above saved profile to edit -> Select required Security Mechanism and "Is Request Signed" as true (checked).
         Save changes.
-        Note : If the required or selected Security Mechanism is ???STSSecurity???, then 
-        select STS Configuration as ???SecurityTokenService" and Web Service End Point as ???default???.
+        Note : If the required or selected Security Mechanism is "STSSecurity", then 
+        select STS Configuration as "SecurityTokenService" and Web Service End Point as "default".
 
         b) Create "WSP" profile
         Select Web Service Provider -> under Agent, click "new" -> enter name as "wsp" and other required fields -> Save.
         Click on above saved profile to edit -> Select all Security Mechanisms.
-        Select Web Service End Point as ???default??? and "Is Request Signature Verified" as true (checked).
+        Select Web Service End Point as "default" and "Is Request Signature Verified" as true (checked).
         Save changes.
 
 2.  Logout of OpenSSO Administration console.
