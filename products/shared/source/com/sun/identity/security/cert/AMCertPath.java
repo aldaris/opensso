@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMCertPath.java,v 1.3 2008-06-25 05:52:57 qcheng Exp $
+ * $Id: AMCertPath.java,v 1.4 2008-12-22 19:08:04 beomsuk Exp $
  *
  */
 
@@ -134,8 +134,13 @@ public class AMCertPath {
             if (debug.messageEnabled()) {
                 debug.message("AMCertPath.verify: PASS" + cpvResult.toString());
             }
-        }
-        catch (Throwable t) {
+        } catch (java.security.cert.CertPathValidatorException e) {
+            debug.error("AMCertPath.verify: FAILED - " + e.getMessage());
+            if (debug.messageEnabled()) {
+                debug.message("AMCertPath.verify: FAILED", e);
+            }
+            return false;
+        } catch (Throwable t) {
             debug.error("AMCertPath.verify: FAILED", t);
             return false;
         }
