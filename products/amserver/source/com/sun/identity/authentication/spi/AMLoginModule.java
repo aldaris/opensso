@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginModule.java,v 1.14 2008-09-08 05:15:46 bhavnab Exp $
+ * $Id: AMLoginModule.java,v 1.15 2008-12-23 21:27:03 ericow Exp $
  *
  */
 
@@ -281,8 +281,14 @@ public abstract class AMLoginModule implements LoginModule {
         // if it is an external Callback, add to the extCallback list
         for (int i = 0; i < len; i++) {
             if (original[i] instanceof NameCallback) {
-                copy[i] = new NameCallback(
-                ((NameCallback) original[i]).getPrompt());
+                String dftName = ((NameCallback)original[i]).getDefaultName();
+                if (dftName != null && dftName.length() != 0) {
+                    copy[i] = new NameCallback(
+                            ((NameCallback)original[i]).getPrompt(), dftName);
+                } else {
+                    copy[i] = new NameCallback(
+                            ((NameCallback)original[i]).getPrompt());
+                }
                 extCallbacks.add(copy[i]);
                 if (debug.messageEnabled()) {
                     debug.message("clone #" + i + " is NameCallback");

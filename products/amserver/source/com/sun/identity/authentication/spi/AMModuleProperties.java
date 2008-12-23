@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMModuleProperties.java,v 1.6 2008-08-12 18:23:30 pawand Exp $
+ * $Id: AMModuleProperties.java,v 1.7 2008-12-23 21:27:03 ericow Exp $
  *
  */
 
@@ -211,9 +211,19 @@ class AMModuleProperties {
 
                 } else if (nodeName.equals("NameCallback")) {
                         sub = node.getFirstChild();
-                        sub = sub.getNextSibling().getFirstChild();
-                        String prompt = sub.getNodeValue();
-                        callbacks[p] = new NameCallback(prompt);
+                        sub = sub.getNextSibling();
+                        String prompt = sub.getFirstChild().getNodeValue();
+
+                        String dftName = null;
+                        sub = sub.getNextSibling().getNextSibling();
+                        if (sub != null) {
+                            sub = sub.getFirstChild();
+                            dftName = sub.getNodeValue();
+                            callbacks[p] = new NameCallback(prompt, dftName);
+                        } else {
+                            callbacks[p] = new NameCallback(prompt);
+                        }
+
                         tmp = getAttribute(node, "isRequired");
                         if (tmp != null) {
                             if (tmp.equals("true")) {

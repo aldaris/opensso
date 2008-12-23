@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CallBackTiledView.java,v 1.3 2008-06-25 05:41:49 qcheng Exp $
+ * $Id: CallBackTiledView.java,v 1.4 2008-12-23 21:26:17 ericow Exp $
  *
  */
 
@@ -189,6 +189,7 @@ public class CallBackTiledView
     private void setNameCallbackInfo(NameCallback nc) {
         setDisplayFieldValue(TXT_PROMPT, nc.getPrompt());
         setDisplayFieldValue(TXT_VALUE, nc.getName());
+        setDisplayFieldValue(TXT_VALUE, nc.getDefaultName());
 
         CallBackChoiceTiledView tView =
             (CallBackChoiceTiledView) getChild(TILED_CHOICE);

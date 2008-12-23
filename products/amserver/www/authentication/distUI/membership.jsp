@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: membership.jsp,v 1.7 2008-08-15 01:05:31 veiming Exp $
+   $Id: membership.jsp,v 1.8 2008-12-23 21:25:17 ericow Exp $
                                                                                 
 --%>
 
@@ -165,7 +165,7 @@ if (((gotoURL != null) && (gotoURL.length() != 0)) ||
         <td><div class="logInp">
             <input type="text" name="IDToken<jato:text name="txtIndex" />"
                 id="IDToken<jato:text name="txtIndex" />"
-                value="" class="TxtFld"></div>
+                value="<jato:text name="txtValue" />" class="TxtFld"></div>
         </td>
         </form>
         </tr>        
