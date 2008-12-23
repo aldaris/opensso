@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.18 2008-12-23 22:04:55 manish_rustagi Exp $
+ * $Id: LoginViewBean.java,v 1.19 2008-12-23 22:10:47 ericow Exp $
  *
  */
 
@@ -49,6 +49,7 @@ import com.sun.identity.authentication.client.AuthClientUtils;
 import com.sun.identity.authentication.service.AMAuthErrorCode;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.spi.PagePropertiesCallback;
+import com.sun.identity.authentication.spi.RedirectCallback;
 import com.sun.identity.authentication.spi.X509CertificateCallback;
 import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.common.DNUtils;
@@ -651,7 +652,6 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                    !AuthClientUtils.newSessionArgExists(reqDataHash)) {
                 loginDebug.message("Session is Valid / already authenticated");
                 bValidSession = true;
-                LoginSuccess = true;
 
                 /*
                  * redirect to 'goto' parameter or SPI hook or default
@@ -1097,6 +1097,13 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                             }
                         }
                     }
+                } else if (callbacks[i] instanceof RedirectCallback) {
+                    RedirectCallback rc = (RedirectCallback) callbacks[i];
+                    String status =
+                            request.getParameter(rc.getStatusParameter());
+                    clearCookie(rc.getRedirectBackUrlCookieName());
+                    loginDebug.message("Redirect callback : set status");
+                    rc.setStatus(status);
                 }
             }
             
@@ -1259,6 +1266,8 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                 onePageLogin = true;
                 processLoginDisplay();
                 break;
+            } else if (callbacks[i] instanceof RedirectCallback) {
+                processRedirectCallback((RedirectCallback)callbacks[i]);
             }
         }
         
@@ -1319,7 +1328,46 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
             indexName = (String)reqDataHash.get(Constants.COMPOSITE_ADVICE);
         }
     }
-    
+
+    // Process 'RedirectCallback' initiated by Authentication module
+    private void processRedirectCallback(RedirectCallback rc) throws Exception {
+        if (loginDebug.messageEnabled()) {
+            loginDebug.message("Redirect to external web site...");
+            loginDebug.message("RedirectUrl : " + rc.getRedirectUrl() +
+                    ", RedirectMethod : " + rc.getMethod() +
+                    ", RedirectData : " + rc.getRedirectData());
+        }            
+        forward = false;
+        
+        String requestURL = request.getRequestURL().toString();
+        String requestURI = request.getRequestURI();
+        int index = requestURL.indexOf(requestURI);
+        String redirectBackServerCookieValue = null;
+        if (index != -1) {
+            redirectBackServerCookieValue = requestURL.substring(0, index)
+                    + loginURL;
+        }
+
+        try {
+            AuthClientUtils.setRedirectBackServerCookie(
+                    rc.getRedirectBackUrlCookieName(), 
+                    redirectBackServerCookieValue, response);
+        } catch (Exception e) {
+            if (loginDebug.messageEnabled()){
+                loginDebug.message("Cound not set RedirectBackUrlCookie!" 
+                        + e.toString());
+            }
+        }
+
+        String qString = AuthClientUtils.getQueryStrFromParameters(
+                rc.getRedirectData());
+        StringBuffer redirectUrl = new StringBuffer(rc.getRedirectUrl());
+        if (qString != null && qString.length() != 0) {
+            redirectUrl.append(qString);
+        }
+        response.sendRedirect(redirectUrl.toString());
+    }
+
     // Method to check if this is Session Upgrade
     private boolean checkNewOrg(SSOToken ssoToken) {
         loginDebug.message("Check New Organization!");
