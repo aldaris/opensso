@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestConstants.java,v 1.26 2008-08-22 23:08:37 nithyas Exp $
+ * $Id: TestConstants.java,v 1.27 2008-12-23 20:19:05 vimal_67 Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -511,6 +511,15 @@ public interface TestConstants {
      */
     String KEY_IDP_USER_MSISDN = "idp_sunIdentityMSISDNNumber";
     
+    /**
+     * SAMLv1 NameIDFormat key for <code>nameidformatkey</code>
+     */
+    String KEY_NAMEIDFORMAT_KEY = "nameidformatkey";
+    
+    /**
+     * SAMLv1 NameIDFormat keyvalue for <code>nameidformatkeyvalue</code>
+     */
+    String KEY_NAMEIDFORMAT_KEYVALUE = "nameidformatkeyvalue";
     
     /**
      * SAMLv2, IDFF Property key for <code>attrqprovider</code>

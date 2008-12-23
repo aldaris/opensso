@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv1xProfileTests.java,v 1.2 2008-09-18 17:43:19 sridharev Exp $
+ * $Id: SAMLv1xProfileTests.java,v 1.3 2008-12-23 20:18:05 vimal_67 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -26,7 +26,11 @@ package com.sun.identity.qatest.samlv1x;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.iplanet.sso.SSOToken;
+import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.idm.IdType;
 import com.sun.identity.qatest.common.FederationManager;
+import com.sun.identity.qatest.common.IDMCommon;
 import com.sun.identity.qatest.common.SAMLv1Common;
 import com.sun.identity.qatest.common.SAMLv2Common;
 import com.sun.identity.qatest.common.TestCommon;
@@ -34,9 +38,11 @@ import com.sun.identity.qatest.common.TestConstants;
 import com.sun.identity.qatest.common.webtest.DefaultTaskHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.logging.Level;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.logging.Level;
 import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -44,48 +50,57 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 /**
- * This class to test the new SAMLv1x Profiles
+ * This class tests the SAMLv1x Artifact and Post Profiles with and with not
+ * attributes
  */
 public class SAMLv1xProfileTests extends TestCommon {
 
-    private WebClient spWebClient;
-    private WebClient idpWebClient;
+    AMIdentity amid;
     private Map<String, String> configMap;
     private String baseDir;
     private String xmlfile;
+    SSOToken token;    
     private DefaultTaskHandler task1;
     private HtmlPage wpage;
     private FederationManager fmSP;
     private FederationManager fmIDP;
+    public WebClient spwebClient;
+    public WebClient idpwebClient;
     public WebClient webClient;
     private String spurl;
     private String idpurl;
     private String testName;
     private String testType;
     private String testInit;
+    private String testIndex;
     private String spmetaAliasname;
-    private String idpmetaAliasname;
-
+    private String idpmetaAliasname;       
+    private String strUniversalid = ""; 
+    private IDMCommon idmc;
+    
     /**
-     * Constructor SAMLV2AttributeQueryTests
+     * Constructor SAMLv1xProfileTests
      */
     public SAMLv1xProfileTests() {
         super("SAMLv1xProfileTests");
     }
 
     /**
-     * Configures the SP and IDP load meta for the SAMLV2AttributeQueryTests 
+     * Configures the SP and IDP load meta for the SAMLv1xProfileTests 
      * tests to execute
      */
-    @Parameters({"ptestName", "ptestType", "ptestInit"})
+    @Parameters({"ptestName", "ptestType", "ptestInit", "nameidformatIndex"})
     @BeforeClass(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
-    public void setup(String ptestName, String ptestType, String ptestInit)
+    public void setup(String ptestName, String ptestType, String ptestInit, 
+            String nameidformatIndex)
             throws Exception {
         ArrayList list;
         try {
             testName = ptestName;
             testType = ptestType;
             testInit = ptestInit;
+            testIndex = nameidformatIndex; 
+            idmc = new IDMCommon();
             ResourceBundle rb_amconfig = ResourceBundle.getBundle(
                     TestConstants.TEST_PROPERTY_AMCONFIG);
             baseDir = getBaseDir() + SAMLv2Common.fileseparator 
@@ -104,37 +119,63 @@ public class SAMLv1xProfileTests extends TestCommon {
                     "://" + configMap.get(TestConstants.KEY_SP_HOST) + ":" +
                     configMap.get(TestConstants.KEY_SP_PORT) +
                     configMap.get(TestConstants.KEY_SP_DEPLOYMENT_URI);
+            idpurl = configMap.get(TestConstants.KEY_IDP_PROTOCOL) +
+                    "://" + configMap.get(TestConstants.KEY_IDP_HOST) + ":" +
+                    configMap.get(TestConstants.KEY_IDP_PORT) +
+                    configMap.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);    
             spmetaAliasname = configMap.get(TestConstants.KEY_SP_METAALIAS);
             idpmetaAliasname = configMap.get(TestConstants.KEY_IDP_METAALIAS);
             getWebClient();
+            
             // Create sp users
-            consoleLogin(spWebClient, spurl + "/UI/Login",
+            consoleLogin(spwebClient, spurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
             fmSP = new FederationManager(spurl);
             list = new ArrayList();
+            list.add("mail=" + configMap.get(TestConstants.KEY_SP_USER) +
+                    "@" + spmetaAliasname);            
             list.add("sn=" + configMap.get(TestConstants.KEY_SP_USER));
             list.add("cn=" + configMap.get(TestConstants.KEY_SP_USER));
             list.add("userpassword=" +
                     configMap.get(TestConstants.KEY_SP_USER_PASSWORD));
-            list.add("inetuserstatus=Active");
-            list.add("mail=" + configMap.get(TestConstants.KEY_SP_USER) + "@" 
-                    + spmetaAliasname);
-            if (FederationManager.getExitCode(fmSP.createIdentity(spWebClient,
+            list.add("inetuserstatus=Active");                
+            if (FederationManager.getExitCode(fmSP.createIdentity(spwebClient,
                     configMap.get(TestConstants.KEY_SP_EXECUTION_REALM),
                     configMap.get(TestConstants.KEY_SP_USER), 
                     "User", list)) != 0) {
                 log(Level.SEVERE, "setup", "createIdentity famadm command" +
-                        " failed");
+                            " failed");
                 assert false;
-            }
-            // Create idp users
-            idpurl = configMap.get(TestConstants.KEY_IDP_PROTOCOL) +
-                    "://" + configMap.get(TestConstants.KEY_IDP_HOST) + ":" +
-                    configMap.get(TestConstants.KEY_IDP_PORT) +
-                    configMap.get(TestConstants.KEY_IDP_DEPLOYMENT_URI);
-
-            consoleLogin(idpWebClient, idpurl + "/UI/Login",
+             }       
+                        
+            // retrieving the univesalid of a sp user and 
+            // modifying the attribute  
+            if (!testIndex.equals("0")) {
+                token = getToken(configMap.get(TestConstants.KEY_SP_USER), 
+                    configMap.get(TestConstants.KEY_SP_USER_PASSWORD), realm);
+                strUniversalid = token.getProperty("sun.am." +
+                        "UniversalIdentifier");     
+                log(Level.SEVERE, "setup", "Universalid: " + strUniversalid);
+                if (validateToken(token)) 
+                    destroyToken(token);  
+                token = getToken(adminUser, adminPassword, realm);
+                amid = idmc.getFirstAMIdentity(token, 
+                        configMap.get(TestConstants.KEY_SP_USER), IdType.USER,
+                        realm);
+                Map mapAttr = new HashMap();
+                Set setAttrVal = new HashSet();
+                setAttrVal.add(strUniversalid);
+                mapAttr.put(configMap.get(
+                        TestConstants.KEY_NAMEIDFORMAT_KEYVALUE + testIndex),
+                        setAttrVal);
+                idmc.modifyIdentity(amid, mapAttr);   
+                if (validateToken(token)) 
+                    destroyToken(token);
+            }            
+                         
+            // Create idp users          
+            consoleLogin(idpwebClient, idpurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             fmIDP = new FederationManager(idpurl);
@@ -144,9 +185,14 @@ public class SAMLv1xProfileTests extends TestCommon {
             list.add("userpassword=" +
                     configMap.get(TestConstants.KEY_IDP_USER_PASSWORD));
             list.add("inetuserstatus=Active");
-            list.add("mail=" + configMap.get(TestConstants.KEY_IDP_USER) + "@" 
-                    + idpmetaAliasname);
-            if (FederationManager.getExitCode(fmIDP.createIdentity(idpWebClient,
+            if (!testIndex.equals("0")) {
+                list.add(configMap.get(TestConstants.KEY_NAMEIDFORMAT_KEYVALUE +
+                        testIndex) + "=" + strUniversalid);     
+            } else {
+                list.add("mail=" + configMap.get(TestConstants.KEY_IDP_USER) +
+                        "@" + idpmetaAliasname);
+            }                   
+            if (FederationManager.getExitCode(fmIDP.createIdentity(idpwebClient,
                     configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM),
                     configMap.get(TestConstants.KEY_IDP_USER), 
                     "User", list)) != 0) {
@@ -154,49 +200,80 @@ public class SAMLv1xProfileTests extends TestCommon {
                         "failed for IDP");
                 assert false;
             }
+            
+            // adding nameidformat attribute to the SAML service
+            if (!testIndex.equals("0")) {
+                list.clear();
+                list.add("iplanet-am-saml-name-id-format-attr-map=" +                           
+                    configMap.get(TestConstants.KEY_NAMEIDFORMAT_KEY +
+                    testIndex) + "=" + configMap.get(TestConstants.
+                    KEY_NAMEIDFORMAT_KEYVALUE + testIndex));          
+                fmSP.addAttrDefs(spwebClient, "iPlanetAMSAMLService", 
+                    "Global", list, null);
+                fmIDP.addAttrDefs(idpwebClient, "iPlanetAMSAMLService",
+                    "Global", list, null);           
+            }            
         } catch (Exception e) {
             log(Level.SEVERE, "setup", e.getMessage());
             e.printStackTrace();
             throw e;
-        } finally {
-            consoleLogout(spWebClient, spurl + "/UI/Logout");
-            consoleLogout(idpWebClient, idpurl + "/UI/Logout");
+        } finally {          
+            consoleLogout(spwebClient, spurl + "/UI/Logout");
+            consoleLogout(idpwebClient, idpurl + "/UI/Logout");            
         }
         exiting("setup");
     }
 
     /**
-     * Execute the AssertionQuery tests
+     * Executes the tests of Artifact and Post Profiles. 
+     * It also tests the mapping of a nameidformat to the 
+     * user profile attributes.
      */
     @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void samlv1xTest()
             throws Exception {
         try {
             String result = null;
-            Reporter.log("Test Description: This test  " + testName +
+            String attr = "";
+            if (!testIndex.equals("0")) {
+                Reporter.log("Test Description: This test  " + testName +
+                    " makes sure the nameidformat is mapped to user profile" + 
+                    " attribute. This is " + testInit + " Initiated " +
+                    testType + " Profile");                    
+            } else {
+                Reporter.log("Test Description: This test  " + testName +
                     " will run to make sure " +
                     " with test Type : " + testType +
-                    " for  : " + testInit + "" +
-                    " will work fine");
-            if (testInit.equalsIgnoreCase("sp")) {
-                result = configMap.get(TestConstants.KEY_IDP_USER) + "@" 
-                        + idpmetaAliasname;
-            } else {
-                result = configMap.get(TestConstants.KEY_SP_USER) + "@" 
-                        + spmetaAliasname;
+                    " for  : " + testInit + " will work fine");
             }
+            
+            if (!testIndex.equals("0")) {
+                result = strUniversalid;       
+                attr = configMap.get(TestConstants.KEY_NAMEIDFORMAT_KEY +
+                        testIndex); 
+                log(Level.FINEST, "samlv1xTest", "Result: " + result);      
+                log(Level.FINEST, "samlv1xTest", "Attr: " + attr);           
+            } else {
+                if (testInit.equalsIgnoreCase("sp")) {
+                result = configMap.get(TestConstants.KEY_IDP_USER) + "@"
+                        + idpmetaAliasname;
+                } else {
+                result = configMap.get(TestConstants.KEY_SP_USER) + "@"
+                        + spmetaAliasname;
+                }              
+            }    
             Thread.sleep(5000);
             xmlfile = baseDir + testName + ".xml";
             configMap.put(TestConstants.KEY_SSO_RESULT, result);
-            SAMLv1Common.getxmlSSO(xmlfile, configMap, testType, testInit);
+            SAMLv1Common.getxmlSSO(xmlfile, configMap, testType,
+                    testInit, attr);                      
             Thread.sleep(5000);
             log(Level.FINEST, "samlv1xTest", "Run " + xmlfile);
             task1 = new DefaultTaskHandler(xmlfile);
             wpage = task1.execute(webClient);
-            Thread.sleep(5000);
+            Thread.sleep(5000);            
             if (!wpage.getWebResponse().getContentAsString().contains(result)) {
-                log(Level.SEVERE, "samlv1xTest", "Couldn't " +
-                        "signon users");
+                log(Level.SEVERE, "samlv1xTest", "Couldn't signon users");
                 assert false;
             }
         } catch (Exception e) {
@@ -204,11 +281,11 @@ public class SAMLv1xProfileTests extends TestCommon {
             e.printStackTrace();
             throw e;
         } finally {
-            consoleLogout(spWebClient, spurl + "/UI/Logout");
-            consoleLogout(idpWebClient, idpurl + "/UI/Logout");
+            consoleLogout(spwebClient, spurl + "/UI/Logout");
+            consoleLogout(idpwebClient, idpurl + "/UI/Logout");
         }
     }
-
+        
     /**
      * Create the webClient which will be used for the rest of the tests.
      */
@@ -217,8 +294,8 @@ public class SAMLv1xProfileTests extends TestCommon {
             throws Exception {
         try {
             webClient = new WebClient(BrowserVersion.MOZILLA_1_0);
-            spWebClient = new WebClient(BrowserVersion.MOZILLA_1_0);
-            idpWebClient = new WebClient(BrowserVersion.MOZILLA_1_0);
+            spwebClient = new WebClient(BrowserVersion.MOZILLA_1_0);
+            idpwebClient = new WebClient(BrowserVersion.MOZILLA_1_0);
         } catch (Exception e) {
             log(Level.SEVERE, "getWebClient", e.getMessage());
             e.printStackTrace();
@@ -227,48 +304,65 @@ public class SAMLv1xProfileTests extends TestCommon {
     }
 
     /**
-     * Clean up and deleted the created users for this test
+     * Deletes the users created for this test, removes the attributes values
+     * added to the SAML service
      */
-    @AfterClass(groups = {"ds_ds_sec", "ff_ds_sec"})
+    @AfterClass(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void cleanup()
             throws Exception {
         entering("cleanup", null);
         ArrayList list;
-        WebClient webcClient = new WebClient();
         try {
-            consoleLogin(spWebClient, spurl + "/UI/Login",
+            list = new ArrayList();
+            consoleLogin(spwebClient, spurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
             fmSP = new FederationManager(spurl);
-            list = new ArrayList();
+            consoleLogin(idpwebClient, idpurl + "/UI/Login",
+                    configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
+                    configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
+            fmIDP = new FederationManager(idpurl);
+            
+            // removing nameid attribute from the SAML service
+            if (!testIndex.equals("0")) {
+                list.clear();
+                list.add("iplanet-am-saml-name-id-format-attr-map=" +                           
+                    configMap.get(TestConstants.KEY_NAMEIDFORMAT_KEY +
+                    testIndex) + "=" + configMap.get(TestConstants.
+                    KEY_NAMEIDFORMAT_KEYVALUE + testIndex));          
+                fmSP.removeAttrDefs(spwebClient, "iPlanetAMSAMLService", 
+                        "Global", list, null);                    
+                fmIDP.removeAttrDefs(idpwebClient, "iPlanetAMSAMLService",
+                        "Global", list, null);           
+            }          
+            
+            list.clear();
             list.add(configMap.get(TestConstants.KEY_SP_USER));
-            if (FederationManager.getExitCode(fmSP.deleteIdentities(spWebClient,
+            if (FederationManager.getExitCode(fmSP.deleteIdentities(spwebClient,
                     configMap.get(TestConstants.KEY_SP_EXECUTION_REALM),
                     list, "User")) != 0) {
                 log(Level.SEVERE, "setup", "deleteIdentity famadm command" +
                         " failed");
                 assert false;
             }
-            consoleLogin(idpWebClient, idpurl + "/UI/Login",
-                    configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
-                    configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
-            fmIDP = new FederationManager(idpurl);
+           
             list.clear();
             list.add(configMap.get(TestConstants.KEY_IDP_USER));
-            if (FederationManager.getExitCode(fmIDP.deleteIdentities(idpWebClient,
-                    configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM),
-                    list, "User")) != 0) {
+            if (FederationManager.getExitCode(fmIDP.deleteIdentities(
+                    idpwebClient, configMap.get(TestConstants.
+                    KEY_IDP_EXECUTION_REALM), list, "User")) != 0) {
                 log(Level.SEVERE, "setup", "deleteIdentity famadm command " +
                         "failed");
                 assert false;
-            }
+            }            
+            
         } catch (Exception e) {
             log(Level.SEVERE, "cleanup", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
-            consoleLogout(webcClient, spurl + "/UI/Logout");
-            consoleLogout(webcClient, idpurl + "/UI/Logout");
+            consoleLogout(spwebClient, spurl + "/UI/Logout");
+            consoleLogout(idpwebClient, idpurl + "/UI/Logout");
         }
     }
 }

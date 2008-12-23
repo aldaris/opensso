@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv1Common.java,v 1.1 2008-08-26 23:41:49 sridharev Exp $
+ * $Id: SAMLv1Common.java,v 1.2 2008-12-23 20:18:37 vimal_67 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,9 +51,10 @@ public class SAMLv1Common extends TestCommon {
      * @param Map m contains all the data for xml generation
      * @param bindingType can be artifact or post
      * @param testInitiate is either SP or IDP
+     * @param attr is the nameidformat attribute 
      */
     public static void getxmlSSO(String xmlFileName, Map m,
-            String bindingType, String testInitiate)
+            String bindingType, String testInitiate, String attr)
             throws Exception {
         String servURL = null;
         if(bindingType.equalsIgnoreCase("Artifact")){
@@ -76,19 +77,36 @@ public class SAMLv1Common extends TestCommon {
         String idp_user = (String)m.get(TestConstants.KEY_IDP_USER);
         String idp_userpw = (String)m.get(TestConstants.KEY_IDP_USER_PASSWORD);
         String strResult = (String)m.get(TestConstants.KEY_SSO_RESULT);
-        System.out.println("Expected results in Common is >>>" + strResult);
-        if(testInitiate.equalsIgnoreCase("SP")) {
-            out.write("<url href=\"" + sp_proto +"://" + sp_host + ":"
-                    + sp_port + sp_deployment_uri
-                    + servURL 
-                    + idp_proto + "://" + idp_host + ":"
-                    + idp_port + idp_deployment_uri);
+        if (attr.equals("")) {
+            if (testInitiate.equalsIgnoreCase("SP")) {
+                out.write("<url href=\"" + sp_proto +"://" + sp_host + ":"
+                        + sp_port + sp_deployment_uri
+                        + servURL 
+                        + idp_proto + "://" + idp_host + ":"
+                        + idp_port + idp_deployment_uri);
+            } else {
+                out.write("<url href=\"" + idp_proto +"://" + idp_host + ":"
+                        + idp_port + idp_deployment_uri
+                        + servURL 
+                        + sp_proto + "://" + sp_host + ":"
+                        + sp_port + sp_deployment_uri);
+            }            
         } else {
-            out.write("<url href=\"" + idp_proto +"://" + idp_host + ":"
-                    + idp_port + idp_deployment_uri
-                    + servURL 
-                    + sp_proto + "://" + sp_host + ":"
-                    + sp_port + sp_deployment_uri);
+            if (testInitiate.equalsIgnoreCase("SP")) {
+                out.write("<url href=\"" + sp_proto +"://" + sp_host + ":"
+                        + sp_port + sp_deployment_uri
+                        + servURL 
+                        + idp_proto + "://" + idp_host + ":"
+                        + idp_port + idp_deployment_uri
+                        + "&amp;NameIDFormat=" + attr);                                
+            } else {
+                out.write("<url href=\"" + idp_proto +"://" + idp_host + ":"
+                        + idp_port + idp_deployment_uri
+                        + servURL 
+                        + sp_proto + "://" + sp_host + ":"
+                        + sp_port + sp_deployment_uri
+                        + "&amp;NameIDFormat=" + attr);
+            }              
         }
         out.write("\">");
         out.write(newline);
