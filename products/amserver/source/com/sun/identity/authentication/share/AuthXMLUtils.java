@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLUtils.java,v 1.5 2008-06-25 05:42:05 qcheng Exp $
+ * $Id: AuthXMLUtils.java,v 1.6 2008-12-23 22:17:42 ericow Exp $
  *
  */
 
@@ -707,7 +707,7 @@ public class AuthXMLUtils {
         StringBuffer xmlString = new StringBuffer();
         xmlString.append(AuthXMLTags.NAME_CALLBACK_BEGIN)
             .append(AuthXMLTags.PROMPT_BEGIN)
-            .append(nameCallback.getPrompt())
+            .append(XMLUtils.escapeSpecialCharacters(nameCallback.getPrompt()))
             .append(AuthXMLTags.PROMPT_END);
         
         String defaultName = nameCallback.getDefaultName();
@@ -747,7 +747,8 @@ public class AuthXMLUtils {
         xmlString.append(AuthXMLTags.QUOTE)
             .append(AuthXMLTags.ELEMENT_END)
             .append(AuthXMLTags.PROMPT_BEGIN)
-            .append(passwordCallback.getPrompt())
+            .append(XMLUtils.escapeSpecialCharacters(
+            passwordCallback.getPrompt()))
             .append(AuthXMLTags.PROMPT_END);
         
         if (passwordCallback.getPassword() != null) {
@@ -779,7 +780,8 @@ public class AuthXMLUtils {
         xmlString.append(AuthXMLTags.QUOTE)
             .append(AuthXMLTags.ELEMENT_END)
             .append(AuthXMLTags.PROMPT_BEGIN)
-            .append(choiceCallback.getPrompt())
+            .append(XMLUtils.escapeSpecialCharacters(
+            choiceCallback.getPrompt()))
             .append(AuthXMLTags.PROMPT_END);
         
         String[] choices = choiceCallback.getChoices();
@@ -798,7 +800,7 @@ public class AuthXMLUtils {
                 }
                 xmlString.append(AuthXMLTags.ELEMENT_END)
                     .append(AuthXMLTags.VALUE_BEGIN)
-                    .append(choices[j])
+                    .append(XMLUtils.escapeSpecialCharacters(choices[j]))
                     .append(AuthXMLTags.VALUE_END)
                     .append(AuthXMLTags.CHOICE_VALUE_END);
             }
@@ -864,7 +866,8 @@ public class AuthXMLUtils {
         
         if (conCallback.getPrompt() != null ) {
             xmlString.append(AuthXMLTags.PROMPT_BEGIN)
-                .append(conCallback.getPrompt())
+                .append(XMLUtils.escapeSpecialCharacters(
+                conCallback.getPrompt()))
                 .append(AuthXMLTags.PROMPT_END);
         }
         
@@ -874,7 +877,7 @@ public class AuthXMLUtils {
             for (int j=0; j<options.length; j++) {
                 xmlString.append(AuthXMLTags.OPTION_VALUE_BEGIN)
                     .append(AuthXMLTags.VALUE_BEGIN)
-                    .append(options[j])
+                    .append(XMLUtils.escapeSpecialCharacters(options[j]))
                     .append(AuthXMLTags.VALUE_END)
                     .append(AuthXMLTags.OPTION_VALUE_END);
             }
@@ -904,7 +907,8 @@ public class AuthXMLUtils {
         
         xmlString.append(AuthXMLTags.TEXTINPUT_CALLBACK_BEGIN)
             .append(AuthXMLTags.PROMPT_BEGIN)
-            .append(textInputCallback.getPrompt())
+            .append(XMLUtils.escapeSpecialCharacters(
+            textInputCallback.getPrompt()))
             .append(AuthXMLTags.PROMPT_END);
         
         String defaultText = textInputCallback.getDefaultText();
@@ -979,7 +983,7 @@ public class AuthXMLUtils {
             .append(pagePCallback.getModuleName())
             .append(AuthXMLTags.MODULE_NAME_END)
             .append(AuthXMLTags.HEADER_VALUE_BEGIN)
-            .append(pagePCallback.getHeader())
+            .append(XMLUtils.escapeSpecialCharacters(pagePCallback.getHeader()))
             .append(AuthXMLTags.HEADER_VALUE_END)
             .append(AuthXMLTags.IMAGE_NAME_BEGIN)
             .append(pagePCallback.getImage())
@@ -1012,7 +1016,7 @@ public class AuthXMLUtils {
         .append(AuthXMLTags.ELEMENT_END);
 
         xmlString.append(AuthXMLTags.PROMPT_BEGIN)
-        .append(certCallback.getPrompt())
+        .append(XMLUtils.escapeSpecialCharacters(certCallback.getPrompt()))
         .append(AuthXMLTags.PROMPT_END);
 
         X509Certificate cert = certCallback.getCertificate();
