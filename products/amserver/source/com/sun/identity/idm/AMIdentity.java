@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentity.java,v 1.31 2008-12-11 22:35:10 veiming Exp $
+ * $Id: AMIdentity.java,v 1.32 2008-12-23 19:58:09 veiming Exp $
  *
  */
 
@@ -640,7 +640,8 @@ public final class AMIdentity {
             if (ss != null) {
                 // Check if attrMap has cos priority attribute
                 // If present, remove it for validating the attributes
-                Set cosPriority = (Set)attributes.remove(COS_PRIORITY);
+                Set cosPriority = (attributes != null) ?
+                    (Set)attributes.remove(COS_PRIORITY) : null;
                 attributes = ss.validateAndInheritDefaults(attributes, orgName,
                         true);
                 if (cosPriority != null) {
