@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLTags.java,v 1.8 2008-06-25 05:42:05 qcheng Exp $
+ * $Id: AuthXMLTags.java,v 1.9 2008-12-23 22:05:43 ericow Exp $
  *
  */
 
@@ -126,10 +126,33 @@ public interface AuthXMLTags {
     public static final String REDIRECT_CALLBACK = "RedirectCallback";
     public static final String REDIRECT_URL = "RedirectUrl";
     public static final String REDIRECT_DATA = "RedirectData";
+    public static final String REDIRECT_STATUS = "Status";
     public static final String REDIRECT_STATUS_PARAM = "RedirectStatusParam";
     public static final String REDIRECT_BACK_URL_COOKIE =
         "RedirectBackUrlCookie";
     public static final String REDIRECT_METHOD = "method";
+    public static final String REDIRECT_NAME = "Name";
+    public static final String REDIRECT_VALUE = "Value";
+    public static final String REDIRECT_CALLBACK_BEGIN = "<RedirectCallback";
+    public static final String REDIRECT_CALLBACK_END = "</RedirectCallback>";
+    public static final String REDIRECT_URL_BEGIN = "<RedirectUrl>";
+    public static final String REDIRECT_URL_END = "</RedirectUrl>";
+    public static final String REDIRECT_DATA_BEGIN = "<RedirectData>";
+    public static final String REDIRECT_DATA_END = "</RedirectData>";
+    public static final String REDIRECT_STATUS_BEGIN = "<Status>";
+    public static final String REDIRECT_STATUS_END = "</Status>";
+    public static final String REDIRECT_STATUS_PARAM_BEGIN =
+        "<RedirectStatusParam>";
+    public static final String REDIRECT_STATUS_PARAM_END =
+        "</RedirectStatusParam>";
+    public static final String REDIRECT_BACK_URL_COOKIE_BEGIN =
+        "<RedirectBackUrlCookie>";
+    public static final String REDIRECT_BACK_URL_COOKIE_END =
+        "</RedirectBackUrlCookie>";
+    public static final String REDIRECT_NAME_BEGIN = "<Name>";
+    public static final String REDIRECT_NAME_END = "</Name>";
+    public static final String REDIRECT_VALUE_BEGIN = "<Value>";
+    public static final String REDIRECT_VALUE_END = "</Value>";
     
     /**
      * Predefined xml tags and statements.
