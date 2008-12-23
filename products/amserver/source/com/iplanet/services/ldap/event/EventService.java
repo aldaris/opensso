@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EventService.java,v 1.16 2008-10-14 04:57:19 arviranga Exp $
+ * $Id: EventService.java,v 1.17 2008-12-23 21:22:08 ericow Exp $
  *
  */
 
@@ -148,6 +148,12 @@ public class EventService implements Runnable {
     private static int _numRetries = 3;
 
     private static int _retryInterval = 3000;
+
+    private static int _retryMaxInterval = 720000; // 12 minutes
+
+    private static int _retryCount = 1;
+
+    private static long _lastResetTime = 0;
 
     protected static HashSet _retryErrorCodes;
 
@@ -632,6 +638,29 @@ public class EventService implements Runnable {
         }
     }
 
+    protected boolean retryManager(boolean clearCaches) {
+        long now = System.currentTimeMillis();
+        // reset _retryCount to 1 after 12 hours
+        if ((now - _lastResetTime) > 43200000) {
+            _retryCount = 1;
+            _lastResetTime = now;
+        }
+
+        int i = _retryCount * _retryInterval;
+        if (i > _retryMaxInterval) {
+            i = _retryMaxInterval;
+        } else {
+            _retryCount *= 2;
+        }
+
+        if (debugger.messageEnabled()) {
+            debugger.message("EventService.retryManager() - wait " +
+                    (i / 1000) +" seconds before calling resetAllSearches");
+        }
+        sleepRetryInterval(i);
+        return resetAllSearches(clearCaches);
+    }
+
     /**
      * Method which process the Response received from the DS.
      * 
@@ -643,11 +672,8 @@ public class EventService implements Runnable {
         if ((message == null) && (!_requestList.isEmpty())) {
             // Some problem with the message queue. We should
             // try to reset it.
-            debugger.warning("EventService.processResponse() - Received a "
-                    + "NULL Response. Attempting to re-start persistent "
-                    + "searches");
-            resetErrorSearches(false);
-            return true;
+            debugger.error("EventService.processResponse() - Received a NULL Response, call retryManager");
+            return retryManager(false);
         }
         
         if (debugger.messageEnabled()) {
@@ -950,6 +976,13 @@ public class EventService implements Runnable {
         }
     }
 
+    protected void sleepRetryInterval(int interval) {
+        try {
+            Thread.sleep(interval);
+        } catch (InterruptedException ie) { // ignore
+        }
+    }
+
     /**
      * get a handle to the Directory Server Configuration Manager sets the value
      */    
@@ -1007,7 +1040,8 @@ public class EventService implements Runnable {
         Request request) {
         _retryErrorCodes = getPropertyRetryErrorCodes(
             EVENT_CONNECTION_ERROR_CODES);
-        if (_retryErrorCodes.contains("" + rsp.getResultCode())) {
+        int resultCode = rsp.getResultCode();
+        if (_retryErrorCodes.contains("" + resultCode)) {
             if (debugger.messageEnabled()) {
                 debugger.message("EventService.processResponseMessage() - "
                         + "received LDAP Response for requestID: "
@@ -1015,9 +1049,13 @@ public class EventService implements Runnable {
                         + request.getListener() + "Need restarting");
             }
             resetErrorSearches(false);
-        } else if (rsp.getResultCode() != 0
-                || rsp.getResultCode() != LDAPException.REFERRAL) { 
+        } else if (resultCode != 0
+                || resultCode != LDAPException.REFERRAL) { 
             // If not neither of the cases then
+            if (resultCode == LDAPException.BUSY) {
+                debugger.error("EventService.processResponseMessage() - received error BUSY, call retryManager");
+                return retryManager(false);
+            }
             LDAPException ex = new LDAPException("Error result", rsp
                     .getResultCode(), rsp.getErrorMessage(), 
                     rsp.getMatchedDN());

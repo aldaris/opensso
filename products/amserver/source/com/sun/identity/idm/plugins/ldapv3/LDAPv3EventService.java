@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3EventService.java,v 1.15 2008-07-18 22:41:40 kenwho Exp $
+ * $Id: LDAPv3EventService.java,v 1.16 2008-12-23 21:17:36 ericow Exp $
  *
  */
 
@@ -167,6 +167,10 @@ public class LDAPv3EventService implements Runnable {
     private int _numRetries = 3;
 
     private int _retryInterval = 3000;
+
+    private static int _retryMaxInterval = 720000; // 12 minutes	 
+    private static int _retryCount = 1;	 
+    private static long _lastResetTime = 0;
 
     protected HashSet _retryErrorCodes;
 
@@ -392,12 +396,34 @@ public class LDAPv3EventService implements Runnable {
         Request myRequest = findRequst(psIdKey);
         if (myRequest != null) {
             myRequest.setStopStatus(true);
-            _requestList.remove(myRequest);
             removeListener(myRequest);
             dispatchEventAllChanged(myRequest);
         }
     }
     
+    protected boolean retryManager(boolean clearCaches) {
+            long now = System.currentTimeMillis();
+        // reset _retryCount to 0 after 12 hours
+        if ((now - _lastResetTime) > 43200000) {
+            _retryCount = 1;
+            _lastResetTime = now;
+        }
+
+        int i = _retryCount * _retryInterval;
+        if (i > _retryMaxInterval) {
+            i = _retryMaxInterval;
+        } else {
+            _retryCount *= 2;
+        }
+
+        if (debugger.messageEnabled()) {
+            debugger.message("LDAPv3EventService.retryManager() - wait " +
+                    (i / 1000) +" seconds before calling resetAllSearches");
+        }
+        sleepRetryInterval(i);
+        return resetAllSearches(clearCaches);
+    }
+
     /**
      * Adds a listener to the directory.
      *
@@ -649,11 +675,8 @@ public class LDAPv3EventService implements Runnable {
         if ((message == null) && (!_requestList.isEmpty())) {
             // Some problem with the message queue. We should
             // try to reset it.
-            debugger.warning("EventService.processResponse() - Received a "
-                    + "NULL Response. Attempting to re-start persistent "
-                    + "searches");
-            resetErrorSearches(false);
-            return true;
+            debugger.error("LDAPv3EventService.processResponse() - Received a NULL Response, call retryManager");
+            return retryManager(false);
         }
         
         if (debugger.messageEnabled()) {
@@ -869,6 +892,13 @@ public class LDAPv3EventService implements Runnable {
         }
     }
 
+    protected void sleepRetryInterval(int interval) {
+        try {
+            Thread.sleep(interval);
+        } catch (InterruptedException ie) { // ignore
+        }
+    }
+
     private void dispatchException(Exception e, Request request) {
         if (debugger.messageEnabled()) {
             debugger.message("LDAPv3EventService.dispatchException() - " 
@@ -933,7 +963,8 @@ public class LDAPv3EventService implements Runnable {
                             + "request=" + request + " rsp=" + rsp);
         }
         boolean successState = true;
-        if (_retryErrorCodes.contains("" + rsp.getResultCode())) {
+        int resultCode = rsp.getResultCode();
+        if (_retryErrorCodes.contains("" + resultCode)) {
             if (debugger.messageEnabled()) {
                 debugger.message(
                         "LDAPv3EventService.processResponseMessage() - "
@@ -949,8 +980,12 @@ public class LDAPv3EventService implements Runnable {
             }
             resetErrorSearches(false);
         } else if (rsp.getResultCode() != 0
-                || rsp.getResultCode() != LDAPException.REFERRAL) {
+                || resultCode != LDAPException.REFERRAL) {
             // If not neither of the cases then
+            if (resultCode == LDAPException.BUSY) {
+                debugger.error("LDAPv3EventService.processResponseMessage() - received error BUSY, call retryManager");
+                return retryManager(false);
+            }
             LDAPException ex = new LDAPException("Error result", rsp
                     .getResultCode(), rsp.getErrorMessage(), 
                                             rsp.getMatchedDN());
