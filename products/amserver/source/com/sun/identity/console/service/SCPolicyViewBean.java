@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SCPolicyViewBean.java,v 1.3 2008-06-25 05:43:16 qcheng Exp $
+ * $Id: SCPolicyViewBean.java,v 1.4 2008-12-23 23:17:02 ericow Exp $
  *
  */
 
@@ -219,6 +219,19 @@ public class SCPolicyViewBean extends SCServiceProfileViewBean
     }
 
     protected boolean onBeforeSaveProfile(Map attrValues) {
+        String flag = (String)getPageSessionAttribute(PAGE_MODIFIED);
+        if ((flag != null) && flag.equals("1")) {
+            Set resourceComp = (Set)getPageSessionAttribute(
+                SCPolicyModel.ATTRIBUTE_NAME_RESOURCE_COMPARATOR);
+            if ((resourceComp != null) && !resourceComp.isEmpty()) {
+                attrValues.put(SCPolicyModel.ATTRIBUTE_NAME_RESOURCE_COMPARATOR,
+                    resourceComp);
+            }
+        }
+        return true;
+    }
+
+    protected boolean onBeforeDisplayProfile(Map attrValues) {
         Set resourceComp = (Set)getPageSessionAttribute(
             SCPolicyModel.ATTRIBUTE_NAME_RESOURCE_COMPARATOR);
         if ((resourceComp != null) && !resourceComp.isEmpty()) {
@@ -283,7 +296,7 @@ public class SCPolicyViewBean extends SCServiceProfileViewBean
     ) throws ModelControlException {
         try {
             Map values = getAllValues();
-            onBeforeSaveProfile(values);
+            onBeforeDisplayProfile(values);
             setPageSessionAttribute(PROPERTY_ATTRIBUTE, (HashMap)values);
             SCPolicyResourceComparatorAddViewBean vb =
                 (SCPolicyResourceComparatorAddViewBean)getViewBean(
@@ -323,7 +336,7 @@ public class SCPolicyViewBean extends SCServiceProfileViewBean
     ) throws ModelControlException {
         AMServiceProfileModel model = (AMServiceProfileModel)getModel();
         Map values = model.getAttributeValues();
-        onBeforeSaveProfile(values);
+        onBeforeDisplayProfile(values);
         setPageSessionAttribute(PROPERTY_ATTRIBUTE, (HashMap)values);
         SCPolicyResourceComparatorEditViewBean vb =
             (SCPolicyResourceComparatorEditViewBean)getViewBean(
