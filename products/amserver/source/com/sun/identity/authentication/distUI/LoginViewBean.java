@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.17 2008-12-16 00:38:45 manish_rustagi Exp $
+ * $Id: LoginViewBean.java,v 1.18 2008-12-23 22:04:55 manish_rustagi Exp $
  *
  */
 
@@ -351,6 +351,8 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                     (authCookieValue.length() == 0))) ||
                     (authCookieValue != null && 
                      authCookieValue.equalsIgnoreCase("LOGOUT")) ||
+                    (authCookieValue != null && 
+                     isOrgChanged()) ||                     
                     (!isOrgSame()) || 
                      AuthClientUtils.newSessionArgExists(reqDataHash)) {
             	if (loginDebug.messageEnabled()) {
@@ -1626,6 +1628,21 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
             return true;
         }
     }
+    
+    // Checks whether the subsequent request invokation is for the same Org as 
+    // the previous request
+    private boolean isOrgChanged() {    
+        // this method will only be used when AuthCookie is not null
+        String tmpOrgName = "";
+        if (session != null) {
+            tmpOrgName = (String) session.getAttribute("OrgName");
+        }
+        if (tmpOrgName != null && !tmpOrgName.equals(orgName) && !isPost) {
+            return true;
+        } else {
+            return false;
+        }
+    }    
     
     // Returns the new LoginURL from the new request or 
     // from existing HttpSession 
