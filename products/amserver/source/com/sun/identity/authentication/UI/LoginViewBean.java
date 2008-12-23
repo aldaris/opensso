@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.16 2008-09-04 09:22:59 bhavnab Exp $
+ * $Id: LoginViewBean.java,v 1.17 2008-12-23 23:22:35 ericow Exp $
  *
  */
 
@@ -409,6 +409,14 @@ public class LoginViewBean extends AuthViewBeanBase {
                 loginDebug.message("loginURL : " + loginURL);
             }*/
             
+            // Check whether need to detect the cookie support in the browser
+            String cookieless =
+                    (String)request.getAttribute("displayCookieError");
+            if (cookieless != null && cookieless.equals("true")) {
+                ErrorMessage = rb.getString("nocookiesupport");
+                errorTemplate = "Message.jsp";
+            }
+
             if (AuthUtils.isNewRequest(ac)) {
                 loginDebug.message("New AuthContext created");
                 if (AuthUtils.isCookieSupported(ac)) {

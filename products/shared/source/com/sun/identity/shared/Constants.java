@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.40 2008-12-23 21:45:52 ericow Exp $
+ * $Id: Constants.java,v 1.41 2008-12-23 23:18:49 ericow Exp $
  *
  */
 
@@ -500,6 +500,12 @@ public interface Constants {
      * Property for Login URL.
      */
     String LOGIN_URL = "com.sun.identity.loginurl";
+
+    /**
+     * Property for checking the cookie support / cookie enabled in the browser
+     */
+    public static final String AM_COOKIE_CHECK =
+        "com.sun.identity.am.cookie.check";
 
     /**
      * System property name that is a list of package name prefixes is used to

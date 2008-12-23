@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginServlet.java,v 1.7 2008-06-25 05:41:49 qcheng Exp $
+ * $Id: LoginServlet.java,v 1.8 2008-12-23 23:22:36 ericow Exp $
  *
  */
 
@@ -83,7 +83,13 @@ extends com.sun.identity.authentication.UI.AuthenticationServletBase {
         
         HttpServletRequest request = requestContext.getRequest();
         HttpServletResponse response = requestContext.getResponse();
-        
+
+        // Check whether to detect the browser capability to support cookies
+        // by redirecting the response with dummy cookie.
+        if (checkForCookiesInBrowser(request, response, debug)) {
+            throw new CompleteRequestException();
+        }
+
         // Check content length
         try {
             RequestUtils.checkContentLength(request);
@@ -279,6 +285,66 @@ extends com.sun.identity.authentication.UI.AuthenticationServletBase {
         }
     }    
     
+    // Checks whether the browser supports or has enabled cookie
+    // Returns "true" if browser has no cookies and need to redirect to
+    // the Login URL with dummy cookie in order to detect the browser
+    // capability to support cookies.
+    // Returns "false" if there is no redirection required, which could be
+    // to generate the error page to the end user to warn him/her to
+    // enable cookies in the browser or to proceed with normal Login process.
+    private boolean checkForCookiesInBrowser(HttpServletRequest request,
+            HttpServletResponse response, Debug debug) {
+        String agentOrder = null;
+        if (amCookieCheck != null && amCookieCheck.equalsIgnoreCase("false")) {
+            // this is another way of enable cookie check, send this 
+            // parameter from agent/client
+            agentOrder = request.getParameter("amagentcookiecheck");
+        }
+
+        if (debug.messageEnabled()) {
+            debug.message("LoginServlet:checkForCookiesInBrowser " +
+                    " amCookieCheck: " + amCookieCheck +
+                    " agentOrder: " + agentOrder);
+        }
+
+        if ((amCookieCheck != null && amCookieCheck.equalsIgnoreCase("true")) ||
+                (agentOrder != null && agentOrder.equalsIgnoreCase("true"))) {
+            String redirectFlag = request.getParameter("AMTESTCOOKIE");
+            String requestURL = request.getRequestURL().toString();
+            Cookie[] allCookies = request.getCookies();
+            int numCookies = 0;
+            if (allCookies != null) {
+                numCookies = allCookies.length;
+            }
+
+            if (numCookies == 0 && redirectFlag == null) {
+                Cookie dummyCookie = new Cookie("AMTESTCOOKIE", "amtestcookie");
+                response.addCookie(dummyCookie);
+                String queryStr = request.getQueryString();
+                try {
+                    if (queryStr == null || queryStr.length() == 0) {
+                        response.sendRedirect(requestURL+
+                        "?AMTESTCOOKIE=amtestcookie");
+                    } else {
+                        response.sendRedirect(requestURL+
+                        "?"+queryStr+"&AMTESTCOOKIE=amtestcookie");
+                    }
+                } catch (Exception e) {
+                    debug.message("LoginServlet:checkForCookiesInBrowser " +
+                            " error in Request Routing : " + e.toString());
+                }
+                return true;
+            }
+
+            if (redirectFlag != null && numCookies == 0) {
+                debug.message("LoginServlet:checkForCookiesInBrowser " +
+                        "This browser does not support cookie");
+                request.setAttribute("displayCookieError", "true");
+            }
+        }
+        return false;
+    }
+
     /**
      * Returns url for auth module.
      * @return url for auth module.
@@ -310,6 +376,9 @@ extends com.sun.identity.authentication.UI.AuthenticationServletBase {
     // Class variables
     ////////////////////////////////////////////////////////////////////////////
     
+    private final String amCookieCheck =
+            SystemProperties.get(Constants.AM_COOKIE_CHECK, "false");
+
     /** Default module uri. */
     public static final String DEFAULT_MODULE_URL="../UI";
     /** Confiured page name for configured servlet */
