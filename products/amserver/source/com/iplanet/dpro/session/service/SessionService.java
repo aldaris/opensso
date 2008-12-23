@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionService.java,v 1.28 2008-12-19 18:43:57 subashvarma Exp $
+ * $Id: SessionService.java,v 1.29 2008-12-23 21:37:22 ericow Exp $
  *
  */
 
@@ -991,7 +991,7 @@ public class SessionService {
                 InternalSession sess = (InternalSession) enumerator
                         .nextElement();
                 if (sess.getState() == Session.VALID) {
-                    if (sess.willExpire() || returnAppSession) {
+                    if (sess.isAppSession() || returnAppSession) {
                         sessions.addElement(sess);
                     }
                 }
@@ -1025,9 +1025,9 @@ public class SessionService {
                         .nextElement();
 
                 if (!matchAll) {
-                    // For non-expiring (app) sessions, the client ID
+                    // For application sessions, the client ID
                     // will not be in the DN format but just uid.
-                    String clientID = (sess.willExpire()) ? 
+                    String clientID = (sess.isAppSession()) ? 
                         DNUtils.DNtoName(sess.getClientID()) :
                         sess.getClientID();
 

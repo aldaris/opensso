@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InternalSession.java,v 1.18 2008-09-05 00:51:01 ww203982 Exp $
+ * $Id: InternalSession.java,v 1.19 2008-12-23 21:37:22 ericow Exp $
  *
  */
 
@@ -976,7 +976,7 @@ public class InternalSession implements TaskRunnable, Serializable {
         SessionService.getSessionService();
         
         if (SessionService.getSessionService().
-                isSuperUser(getUUID()) || (!willExpire())) {
+                isSuperUser(getUUID()) || (isAppSession())) {
             ignore = true;
         } else {
             // Need to check if the user has the top-level admin role
@@ -1250,6 +1250,13 @@ public class InternalSession implements TaskRunnable, Serializable {
      */
     boolean willExpire() {
         return willExpireFlag;
+    }
+
+    /** 
+     * Determine whether it is an application session
+     */
+    boolean isAppSession() {
+        return (sessionType == Session.APPLICATION_SESSION || !willExpireFlag);
     }
 
     /**
