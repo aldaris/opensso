@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLUtils.java,v 1.6 2008-12-23 22:17:42 ericow Exp $
+ * $Id: AuthXMLUtils.java,v 1.7 2008-12-23 22:22:50 ericow Exp $
  *
  */
 
@@ -34,6 +34,7 @@ import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.authentication.spi.DSAMECallbackInterface;
 import com.sun.identity.authentication.spi.PagePropertiesCallback;
+import com.sun.identity.authentication.spi.RedirectCallback;
 import com.sun.identity.authentication.spi.X509CertificateCallback;
 import com.sun.identity.security.DecodeAction;
 import com.sun.identity.security.EncodeAction;
@@ -269,6 +270,17 @@ public class AuthXMLUtils {
                 } else {
                     callbackList.add(createCustomCallback(childNode,null));
                 }
+            } else if (childNodeName.equals(AuthXMLTags.REDIRECT_CALLBACK)) {
+                 if (callbacks != null) {
+                     diIndex = getRedirectCallbackIndex(callbacks,ppIndex);
+                     if ( diIndex >= 0) {
+                         callbackList.add(createRedirectCallback(childNode,
+                         callbacks[diIndex]));
+                     }
+                     diIndex = diIndex + 1;
+                 } else {
+                     callbackList.add(createRedirectCallback(childNode,null));
+                }
             }
         }
         
@@ -332,6 +344,10 @@ public class AuthXMLUtils {
                 DSAMECallbackInterface dsameCallback =
                 (DSAMECallbackInterface) callbacks[i];
                 xmlString.append(getCustomCallbackXML(dsameCallback));
+            } else if (callbacks[i] instanceof RedirectCallback) {
+                RedirectCallback redirectCallback =
+                         (RedirectCallback) callbacks[i];
+                xmlString.append(getRedirectCallbackXML(redirectCallback));
             } else {
                 AuthenticationCallbackXMLHelper callbackXMLHelper =
                 AuthenticationCallbackXMLHelperFactory.getCallbackXMLHelper();
@@ -344,7 +360,6 @@ public class AuthXMLUtils {
         }
         
         xmlString.append(AuthXMLTags.CALLBACKS_END);
-        
         return (xmlString.toString());
     }
     
@@ -703,6 +718,113 @@ public class AuthXMLUtils {
         return certCallback;
     }
 
+    static RedirectCallback createRedirectCallback(Node childNode,
+            Callback callback) {      
+
+        RedirectCallback redirectCallback = null;
+
+        if (callback != null) {
+            if (callback instanceof RedirectCallback) {
+                redirectCallback = (RedirectCallback) callback;
+            }
+        }
+
+        if (redirectCallback == null) {
+            String redirectURL = getRedirectURL(childNode);
+            String redirectMethod = XMLUtils.getNodeAttributeValue(
+                    childNode, AuthXMLTags.REDIRECT_METHOD);
+
+            Map redirectData = getRedirectData(childNode);
+            String statusParam = getRedirectStatusParam(childNode);
+            String redirectBackUrlCookie = getRedirectBackUrlCookie(childNode);
+
+            if (debug.messageEnabled()) {
+                debug.message("Created Redirect Callback: redirectURL=" +
+                        redirectURL +
+                        " redirectMethod=" + redirectMethod + 
+                        " redirectData=" + redirectData +
+                        " statusParam=" + statusParam +
+                        " redirectBackUrlCookie = " + redirectBackUrlCookie);
+            }
+
+            redirectCallback = new RedirectCallback(redirectURL,redirectData,
+                        redirectMethod, statusParam, redirectBackUrlCookie);
+        }
+
+        String redirectStatus = getRedirectStatus(childNode);
+        if (redirectStatus != null && redirectStatus.length() > 0) {
+            redirectCallback.setStatus(redirectStatus);
+        }
+        return redirectCallback;
+    }
+
+    protected static String getRedirectURL(Node node) {
+        Node pNode = XMLUtils.getChildNode(node, AuthXMLTags.REDIRECT_URL);
+        if (pNode != null) {
+            return (XMLUtils.getValueOfValueNode(pNode));
+        }
+        return (null);
+    }
+
+    protected static Map getRedirectData(Node node) {
+        Map nameValuePairs = new HashMap();
+        Set redirectDataNodes =
+            XMLUtils.getChildNodes(node, AuthXMLTags.REDIRECT_DATA);
+        Iterator dataNodesIterator = redirectDataNodes.iterator();
+        
+        while (dataNodesIterator.hasNext()) {
+            Node dataNode = (Node) dataNodesIterator.next();
+            String dataName = getDataName(dataNode);
+            String dataValue = getDataValue(dataNode);
+            nameValuePairs.put(dataName, dataValue);
+        }
+
+        return nameValuePairs;
+    }
+
+    protected static String getDataName(Node node) {
+        Node pNode = XMLUtils.getChildNode(node, AuthXMLTags.REDIRECT_NAME);
+        if (pNode != null) {
+            return (XMLUtils.getValueOfValueNode(pNode));
+        }
+        return (null);
+    }
+
+    protected static String getDataValue(Node node) {
+        Node pNode = XMLUtils.getChildNode(node, AuthXMLTags.REDIRECT_VALUE);
+        if (pNode != null) {
+            return (XMLUtils.getValueOfValueNode(pNode));
+        }
+        return (null);
+    }
+
+    protected static String getRedirectStatus(Node node) {
+        Node pNode = XMLUtils.getChildNode(node,
+                AuthXMLTags.REDIRECT_STATUS);
+        if (pNode != null) {
+            return (XMLUtils.getValueOfValueNode(pNode));
+        }
+        return (null);
+    }
+
+    protected static String getRedirectStatusParam(Node node) {
+        Node pNode = XMLUtils.getChildNode(node,
+                AuthXMLTags.REDIRECT_STATUS_PARAM);
+        if (pNode != null) {
+            return (XMLUtils.getValueOfValueNode(pNode));
+        }
+        return (null);
+    }
+
+    protected static String getRedirectBackUrlCookie(Node node) {
+        Node pNode = XMLUtils.getChildNode(node,
+                AuthXMLTags.REDIRECT_BACK_URL_COOKIE);
+        if (pNode != null) {
+            return (XMLUtils.getValueOfValueNode(pNode));
+        }
+        return (null);
+    }
+
     static String getNameCallbackXML(NameCallback nameCallback) {
         StringBuffer xmlString = new StringBuffer();
         xmlString.append(AuthXMLTags.NAME_CALLBACK_BEGIN)
@@ -1034,7 +1156,87 @@ public class AuthXMLUtils {
 
         return xmlString.toString();
     }
-    
+
+    static String getRedirectCallbackXML(
+        RedirectCallback redirectCallback) {
+        StringBuffer xmlString = new StringBuffer();
+        String redirectMethod = redirectCallback.getMethod();
+
+        // <RedirectCallback>
+        xmlString.append(AuthXMLTags.REDIRECT_CALLBACK_BEGIN);
+
+        if (redirectMethod != null) {
+            xmlString.append(AuthXMLTags.SPACE)
+                    .append(AuthXMLTags.REDIRECT_METHOD)
+                    .append(AuthXMLTags.EQUAL)
+                    .append(AuthXMLTags.QUOTE)
+                    .append(redirectMethod)
+                    .append(AuthXMLTags.QUOTE)
+                    .append(AuthXMLTags.ELEMENT_END);
+        } else {
+            xmlString.append(AuthXMLTags.ELEMENT_END);
+        }
+
+        // <RedirectUrl>
+        String redirectUrl = (redirectCallback.getRedirectUrl() != null) ?
+                redirectCallback.getRedirectUrl() : "";
+
+        xmlString.append(AuthXMLTags.REDIRECT_URL_BEGIN)
+                .append(redirectUrl)
+                .append(AuthXMLTags.REDIRECT_URL_END);
+
+        // <RedirectData>
+        Map redirectData = redirectCallback.getRedirectData();
+        Iterator nameSet = redirectData.keySet().iterator();
+        
+        while (nameSet.hasNext()) {
+            String name = (String) nameSet.next();
+            String value = (String) redirectData.get(name);
+            name = (name != null) ? name : "";
+            value = (value != null) ? value : "";
+            xmlString.append(AuthXMLTags.REDIRECT_DATA_BEGIN)
+                    .append(AuthXMLTags.REDIRECT_NAME_BEGIN)
+                    .append(name)
+                    .append(AuthXMLTags.REDIRECT_NAME_END)
+                    .append(AuthXMLTags.REDIRECT_VALUE_BEGIN)
+                    .append(value)
+                    .append(AuthXMLTags.REDIRECT_VALUE_END)
+                    .append(AuthXMLTags.REDIRECT_DATA_END);
+        }
+
+        // <RedirectStatusParam>
+        String redirectParam = redirectCallback.getStatusParameter();
+
+        if (redirectParam != null) {
+            xmlString.append(AuthXMLTags.REDIRECT_STATUS_PARAM_BEGIN)
+                    .append(redirectParam)
+                    .append(AuthXMLTags.REDIRECT_STATUS_PARAM_END);
+        }
+
+        // <RedirectBackUrlCookie>
+        String redirectBackUrlCookie = redirectCallback.getRedirectBackUrlCookieName();
+        if (redirectBackUrlCookie != null) {
+            xmlString.append(AuthXMLTags.REDIRECT_BACK_URL_COOKIE_BEGIN)
+                    .append(redirectBackUrlCookie)
+                    .append(AuthXMLTags.REDIRECT_BACK_URL_COOKIE_END);
+        }
+
+        // <Status>
+        String redirectStatus = redirectCallback.getStatus();
+        if (redirectStatus != null && redirectStatus.length() > 0) {
+            xmlString.append(AuthXMLTags.REDIRECT_STATUS_BEGIN)
+                    .append(redirectStatus)
+                    .append(AuthXMLTags.REDIRECT_STATUS_END);
+        }
+
+        xmlString.append(AuthXMLTags.REDIRECT_CALLBACK_END);
+        if (debug.messageEnabled()) {
+            debug.message("created callback " + xmlString.toString());
+        }
+
+        return xmlString.toString();
+    }
+
     protected static String getPrompt(Node node) {
         Node pNode = XMLUtils.getChildNode(node, AuthXMLTags.PROMPT);
         if (pNode != null) {
@@ -1383,6 +1585,16 @@ public class AuthXMLUtils {
         return -1;
     }
     
+    static int getRedirectCallbackIndex(Callback[] callbacks,int startIndex) {
+        int i = 0;
+        for (i = startIndex; i < callbacks.length; i++) {
+            if (callbacks[i] instanceof RedirectCallback) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     static LanguageCallback createLanguageCallback(
         Node childNode,
         Callback callback) {
