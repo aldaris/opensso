@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.39 2008-11-17 20:35:14 beomsuk Exp $
+ * $Id: Constants.java,v 1.40 2008-12-23 21:45:52 ericow Exp $
  *
  */
 
@@ -489,6 +489,12 @@ public interface Constants {
      */
     String PROTECTED_PROPERTIES_LIST = 
         "com.iplanet.am.session.protectedPropertiesList";
+
+    /**
+     * Property string to set max idle timeout for agent sessions
+     */
+    String AGENT_SESSION_IDLE_TIME =
+        "com.iplanet.am.session.agentSessionIdleTime";
 
     /**
      * Property for Login URL.

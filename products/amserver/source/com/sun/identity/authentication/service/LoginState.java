@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.40 2008-12-13 02:29:32 manish_rustagi Exp $
+ * $Id: LoginState.java,v 1.41 2008-12-23 21:42:35 ericow Exp $
  *
  */
 
@@ -337,6 +337,8 @@ public class LoginState {
     AMIdentityRepository amIdRepo = null;
     private static boolean messageEnabled;
     private static String serverURL = null;
+    private static long agentSessionIdleTime;
+    private static long minAgentSessionIdleTime = 30;
 
     int compositeAdviceType;
     String compositeAdvice;
@@ -385,6 +387,20 @@ public class LoginState {
             port = SystemProperties.get(Constants.AM_SERVER_PORT);
         }
         serverURL = proto + "://" + host + ":" + port;
+
+        // App session timeout is default to 0 => non-expiring 
+        String asitStr = SystemProperties.get(
+                Constants.AGENT_SESSION_IDLE_TIME);
+        if (asitStr != null && asitStr.length() > 0) {
+            try {
+                agentSessionIdleTime = Long.parseLong(asitStr);
+                // inappropriate to set to a too small number
+                if ((agentSessionIdleTime > 0) &&
+                        (agentSessionIdleTime < minAgentSessionIdleTime)) {
+                    agentSessionIdleTime = minAgentSessionIdleTime;
+                }
+            } catch (Exception le) { }
+        }
 
         /* Define internal users
          * For these users we would allow authentication only at root realm
@@ -1294,11 +1310,24 @@ public class LoginState {
         try {
             if ((isApplicationModule(authMethName) && 
                 ad.isSpecialUser(userDN)) || isAgent(amIdentityUser)) {
-                debug.message(
-                    "setSessionProperties for non-expiring session");
+
                 session.setClientID(token);
-                session.setExpire(false);
                 session.setType(Session.APPLICATION_SESSION);
+                if (isAgent(amIdentityUser) && agentSessionIdleTime > 0) {
+                    if (ad.debug.messageEnabled()) {
+                        ad.debug.message("setSessionProperties for agent " +
+                                userDN + " with idletimeout to " +
+                                agentSessionIdleTime);
+                    }
+                    session.setMaxSessionTime(Long.MAX_VALUE/60);
+                    session.setMaxIdleTime(agentSessionIdleTime);
+                    session.setMaxCachingTime(agentSessionIdleTime);
+                } else {
+                    if (ad.debug.messageEnabled()) {
+                        ad.debug.message("setSessionProperties for non-expiring session");
+                    }
+                    session.setExpire(false);
+                }
             } else {
                 debug.message("request: in putProperty stuff");
                 session.setClientID(userDN);
@@ -4970,14 +4999,14 @@ public class LoginState {
      */
     void executePostProcessSPI(AMPostAuthProcessInterface postProcessInstance, 
         int type) {
-        
+
         if (requestMap.isEmpty() && (servletRequest != null)) {
             Map map = servletRequest.getParameterMap();
             for (Iterator i = map.entrySet().iterator(); i.hasNext();){
                 Map.Entry e = (Map.Entry)i.next();
                 requestMap.put(e.getKey(),((Object[])e.getValue())[0]);
             }
-        }
+        }        
         /* execute the post process spi */
         try{
             switch (type) { 
