@@ -1,7 +1,7 @@
 /**
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2005 Sun Microsystems Inc. All Rights Reserved
+ * Copyright (c) 2008 Sun Microsystems Inc. All Rights Reserved
  *
  * The contents of this file are subject to the terms
  * of the Common Development and Distribution License
@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Unix.java,v 1.3 2008-10-23 22:41:06 bigfatrat Exp $
+ * $Id: Unix.java,v 1.4 2008-12-23 21:57:26 manish_rustagi Exp $
  *
  */
 
@@ -45,7 +45,6 @@ import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.authentication.spi.InvalidPasswordException;
 import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.shared.debug.Debug;
-import com.sun.security.auth.UnixPrincipal;
 import java.security.Principal;
 import javax.servlet.http.HttpServletRequest;
 
@@ -310,7 +309,7 @@ public class Unix extends AMLoginModule {
         if (userPrincipal != null) {
             return userPrincipal;
         } else if (userTokenId != null) {
-            userPrincipal = new UnixPrincipal(userTokenId);
+            userPrincipal = new com.sun.identity.authentication.modules.unix.UnixPrincipal(userTokenId);
             return userPrincipal;
         } else {
             return null;
