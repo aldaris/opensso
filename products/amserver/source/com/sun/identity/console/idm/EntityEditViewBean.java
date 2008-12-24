@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityEditViewBean.java,v 1.9 2008-12-24 00:43:19 babysunil Exp $
+ * $Id: EntityEditViewBean.java,v 1.10 2008-12-24 20:53:17 babysunil Exp $
  *
  */ 
         
@@ -57,7 +57,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.servlet.http.HttpServletRequest; 
+import javax.servlet.http.HttpServletRequest;
+import netscape.ldap.LDAPDN; 
 
 public class EntityEditViewBean
     extends EntityOpViewBeanBase
@@ -399,9 +400,9 @@ public class EntityEditViewBean
                 String tmp = null;
                 for (Iterator it = lookup.keySet().iterator(); it.hasNext(); ) {
                    id = (String)it.next();
-                   int index = id.indexOf(",", 1); 
                    if (lookup.get(id).equals(name)) {
-                       tmp = name+""+"("+id.substring(0, index)+")"; 
+                       String[] comps = LDAPDN.explodeDN(id, true);
+                       tmp = name + "(" + comps[0] + ")"; 
                        optList.add(tmp, id);
                 }
             }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitiesViewBean.java,v 1.11 2008-12-24 04:04:36 babysunil Exp $
+ * $Id: EntitiesViewBean.java,v 1.12 2008-12-24 20:52:26 babysunil Exp $
  *
  */
 
@@ -34,6 +34,7 @@ import com.iplanet.jato.model.ModelControlException;
 import com.iplanet.jato.view.View;
 import com.iplanet.jato.view.event.DisplayEvent;
 import com.iplanet.jato.view.event.RequestInvocationEvent;
+import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.console.base.AMViewBeanBase;
 import com.sun.identity.console.base.AMViewConfig;
@@ -67,8 +68,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
-
-import com.iplanet.sso.SSOException;
+import netscape.ldap.LDAPDN;
 
 public class EntitiesViewBean
     extends RealmPropertiesBase
@@ -349,9 +349,9 @@ public class EntitiesViewBean
                 tblModel.setSelectionVisible(counter++, hide);
 
                 String universalId = IdUtils.getUniversalId(entity);
-                int index = universalId.indexOf(",", 1);
                 tblModel.setValue(TBL_DATA_NAME, name);
-                tblModel.setValue(TBL_DATA_ID, universalId.substring(3, index));
+                String[] comps = LDAPDN.explodeDN(universalId, true);
+                tblModel.setValue(TBL_DATA_ID, comps[0]);
                 tblModel.setValue(TBL_DATA_UNIVERSALNAME, universalId);
                 tblModel.setValue(TBL_DATA_ACTION_HREF,
                     stringToHex(universalId));
