@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCommon.java,v 1.16 2008-06-26 20:10:39 rmisra Exp $
+ * $Id: PolicyCommon.java,v 1.17 2008-12-24 22:42:56 arunav Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -774,6 +774,7 @@ public class PolicyCommon extends TestCommon {
                     "Policy Response Attributes: " +  respAttrMap);
             boolean expectedResult = new Boolean(expResult).booleanValue();
             assert (pResult == expectedResult);
+            
         } catch (Exception e) {
             log(Level.SEVERE, "evaluatePolicyThroughAPI", e.getMessage());
             e.printStackTrace();
@@ -973,6 +974,112 @@ public class PolicyCommon extends TestCommon {
                 out.write(newline);
             }
             
+            out.write("</Policy>");
+            out.write(newline);
+        }
+        out.write("</Policies>");
+        out.write(newline);
+        out.close();
+    }
+
+    /**
+     * Create referral policy xml file.
+     */
+    public void createPeerReferralPolicyXML(String strGlbRB, String strRefRB,
+            String strLocRB, int policyIdx, String policyFile, String peerRef)
+    throws Exception {
+        String strResource;
+        String subRealmPrefix = null;
+        String subRealmSuffix = null;
+
+        ResourceBundle rbr = ResourceBundle.getBundle(strRefRB);
+        ResourceBundle rbg = ResourceBundle.getBundle(strGlbRB);
+        String locPolIdx = strLocRB.substring(strLocRB.indexOf(fileseparator) +
+                1, strLocRB.length()) + policyIdx + "." + peerRef + "." + "refpolicy";
+        String refPolIdx = strLocRB.substring(strLocRB.indexOf(fileseparator) +
+                1, strLocRB.length()) + policyIdx + ".";
+
+        int noOfRefPolicies = new Integer(rbr.getString(refPolIdx + peerRef + "." +
+                "noOfRefPolicies")).intValue();
+        subRealmPrefix = rbg.getString(strGlbRB.substring(
+                strGlbRB.indexOf(fileseparator) + 1, strGlbRB.length()) +
+                ".uuid.prefix."
+                + "subRealm");
+        subRealmSuffix = rbg.getString(strGlbRB.substring(
+                strGlbRB.indexOf(fileseparator) + 1, strGlbRB.length()) +
+                ".uuid.suffix."
+                + "subRealm");
+        FileWriter fstream = new FileWriter(baseDir + policyFile);
+        BufferedWriter out = new BufferedWriter(fstream);
+
+        writeHeader(out);
+        out.write("<Policies>");
+        out.write(newline);
+
+        for (int i = 0; i < noOfRefPolicies; i++) {
+         out.write("<Policy name=\"" + rbr.getString(locPolIdx + i +
+                    ".name") + "\" referralPolicy=\"" +
+                    rbr.getString(locPolIdx + i + ".referral") +
+                    "\" active=\"" + rbr.getString(locPolIdx + i +
+                    ".active") + "\">");
+            out.write(newline);
+
+            int noOfRules = new Integer(rbr.getString(locPolIdx + i +
+                    ".noOfRules")).intValue();
+            if (noOfRules != 0) {
+                for (int j = 0; j < noOfRules; j++) {
+                    out.write("<Rule name=\"" + rbr.getString(locPolIdx + i +
+                            ".rule" + j + ".name") + "\">" );
+                    out.write(newline);
+                    out.write("<ServiceName name=\"" +
+                            rbr.getString(locPolIdx + i + ".rule" + j +
+                            ".serviceName") + "\"/>" );
+                    out.write(newline);
+                    strResource = rbr.getString(locPolIdx + i + ".rule" + j +
+                            ".resource");
+                    out.write("<ResourceName name=\"" +
+                            rbg.getString(strResource) + "\"/>" );
+                    out.write("</Rule>");
+                    out.write(newline);
+                }
+
+            }
+          int noOfReferrals = new Integer(rbr.getString(locPolIdx + i +
+                    ".noOfReferrals")).intValue();
+            if (noOfReferrals != 0) {
+                out.write("<Referrals name=\"" + "Referral" +
+                        "\" description=\"" + "desc\">");
+                out.write(newline);
+                String type;
+                String referredOrg;
+
+                for (int j = 0; j < noOfReferrals; j++) {
+                    type = rbr.getString(locPolIdx + i + ".referral" + j +
+                            ".type");
+                    referredOrg = rbr.getString(locPolIdx + i + ".referral" +
+                            j + ".referredOrg");
+                    out.write("<Referral name=\"" + rbr.getString(locPolIdx +
+                            i + ".referral" + j + ".name") +  "\"" + "  type="
+                            + "\"" + type + "\"" + ">" );
+                    out.write(newline);
+                    out.write("<AttributeValuePair>");
+                    out.write(newline);
+                    out.write("<Attribute name=" + "\"" + "Values" + "\"" +
+                            "/>" );
+                    out.write("<Value>");
+                    out.write(subRealmPrefix + "=" + referredOrg + "," +
+                            subRealmSuffix + "," + basedn);
+                    out.write("</Value>");
+                    out.write(newline);
+                    out.write("</AttributeValuePair>");
+                    out.write(newline);
+                    out.write("</Referral>");
+                    out.write(newline);
+                }
+                out.write("</Referrals>");
+                out.write(newline);
+            }
+
             out.write("</Policy>");
             out.write(newline);
         }
