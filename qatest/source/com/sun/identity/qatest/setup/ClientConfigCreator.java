@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientConfigCreator.java,v 1.22 2008-08-27 04:47:52 mrudulahg Exp $
+ * $Id: ClientConfigCreator.java,v 1.23 2008-12-24 23:07:40 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -648,8 +648,10 @@ public class ClientConfigCreator {
         int defaultPort = -1;
         int start = 44444;
         int incr = 1000;
+        InetAddress inetAdd = InetAddress.getLocalHost();
+        
         for (int i = start; i < 65500 && (defaultPort == -1);i += incr) {
-            if (canUseAsPort("localhost", i))
+            if (canUseAsPort(inetAdd.getHostAddress(), i))
             {
                 defaultPort = i;
             }

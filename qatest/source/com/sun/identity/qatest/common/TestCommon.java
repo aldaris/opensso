@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.64 2008-10-03 13:36:38 cmwesley Exp $
+ * $Id: TestCommon.java,v 1.65 2008-12-24 23:07:01 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,6 +53,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.ConnectException;
+import java.net.InetAddresss;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -997,6 +1001,7 @@ public class TestCommon implements TestConstants {
                 URL url = new URL(server);
                 String strHost = url.getHost();
                 String strURI = uri;
+                try {
                 String strFilName = url.getProtocol() + "_" +
                         strHost.replace(".", "_") + "_" + url.getPort() +
                         "_" + strURI.replace("/", "");
@@ -1007,6 +1012,11 @@ public class TestCommon implements TestConstants {
                         strFilName + ".html"));
                 out.write(page.asXml());
                 out.close();
+                 } catch(Exception e)
+                 {
+                    log(Level.SEVERE, "configureProduct", ",showServer" +
+                    "Config.jsp is not available Check server " + "instance");
+                 }
     }
     
     /**
@@ -1488,12 +1498,79 @@ public class TestCommon implements TestConstants {
     }
     
     /**
+      * Returns a unused port on a given host.
+      *    @return available port num if found. -1 of not found.
+      */
+    private int getUnusedPort()
+        throws Exception
+    {
+        int defaultPort = -1;
+        int start = 44444;
+        int incr = 1000;
+        InetAddress inetAdd = InetAddress.getLocalHost();
+
+        for (int i = start; i < 65500 && (defaultPort == -1); i+=incr) {
+            if (canUseAsPort(inetAdd.getHostAddress(), i)) {
+                defaultPort = i;
+            }
+        }
+        return defaultPort;
+    }
+
+     /**
+      * Checks whether the given host:port is currenly under use.
+      *    @param hostname (eg localhost)
+      *    @param incr : port number.
+      *    @return  true if not in use, false if in use.
+      */
+     public boolean canUseAsPort(String hostname, int port) 
+             throws Exception {
+        boolean canUseAsPort = false;
+        ServerSocket serverSocket = null;
+        try {
+            InetSocketAddress socketAddress =
+                new InetSocketAddress(hostname, port);
+            serverSocket = new ServerSocket();
+            serverSocket.bind(socketAddress);
+            canUseAsPort = true;
+     
+            serverSocket.close();
+       
+            Socket s = null;
+            try {
+              s = new Socket();
+              System.out.println("canUseAsPort connecting");
+              s.connect(socketAddress, 1000);
+              canUseAsPort = false;
+            } catch (Throwable t) {
+            }
+            finally {
+              if (s != null) {
+                try {
+                  s.close();
+                } catch (Throwable t) { }
+              }
+            }
+        } catch (IOException ex) {
+          canUseAsPort = false;
+        } finally {
+            try {
+                if (serverSocket != null) {
+                    serverSocket.close();
+                }
+            } catch (Exception ex) { }
+        }
+     
+        return canUseAsPort;
+    }
+
+    /**
      * Start the notification (jetty) server for getting notifications from the
      * server.
      */
     protected Map startNotificationServer()
     throws Exception {
-        Map map = new HashMap();
+                Map map = new HashMap();
         String strNotURL = rb_amconfig.getString(
                 TestConstants.KEY_AMC_NOTIFICATION_URL);
         log(Level.FINEST, "startNotificationServer", "Notification URI: " +
@@ -1503,12 +1580,12 @@ public class TestCommon implements TestConstants {
         String  strPort = (String)notificationURLMap.get("port");
         String  strURI = (String)notificationURLMap.get("uri");
 
-        log(Level.FINEST, "startNotificationServer", "Notification Port: " +
+       log(Level.FINEST, "startNotificationServer", "Notification Port: " +
                 strPort + ", uri is " + strURI);
 
         int deployPort  = new Integer(strPort).intValue();
         server = new Server(deployPort);
-        log(Level.FINE, "startNotificationServer", "Starting the notification" +
+	log(Level.FINE, "startNotificationServer", "Starting the notification" +
                 " (jetty) server");
 
         String deployURI = rb_amconfig.getString(TestConstants.
