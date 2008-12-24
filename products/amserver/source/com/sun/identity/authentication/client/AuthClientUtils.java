@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthClientUtils.java,v 1.22 2008-09-04 16:16:34 dillidorai Exp $
+ * $Id: AuthClientUtils.java,v 1.23 2008-12-24 01:43:04 ericow Exp $
  *
  */
 
@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.Collections;
@@ -155,6 +156,7 @@ public class AuthClientUtils {
         SystemProperties.get(Constants.AM_LB_COOKIE_VALUE);
     private static String serviceURI = SystemProperties.get(
         Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR) + "/UI/Login";
+    private static boolean setCookieToAllDomains = true;
 
     private static String serverURL = null;
     static Debug utilDebug = Debug.getInstance("amAuthClientUtils");
@@ -191,6 +193,16 @@ public class AuthClientUtils {
             port = SystemProperties.get(Constants.AM_SERVER_PORT);
         }
         serverURL = proto + "://" + host + ":" + port;
+
+        String str = SystemProperties.get(
+                com.sun.identity.shared.Constants.SET_COOKIE_TO_ALL_DOMAINS);
+        if (str != null && str.toLowerCase().equals("false")) {
+            setCookieToAllDomains = false;
+        }
+        if (utilDebug.messageEnabled()) {
+            utilDebug.message("AuthClientUtils: setCookieToAllDomains = "+
+                    setCookieToAllDomains);
+        }
     }
 
     /*
@@ -353,11 +365,11 @@ public class AuthClientUtils {
         }
     }
 
-    public static void setlbCookie(
-        HttpServletResponse response) throws AuthException {
+    public static void setlbCookie(HttpServletRequest request,
+            HttpServletResponse response) throws AuthException {
         String cookieName = getlbCookieName();
         if (cookieName != null && cookieName.length() != 0) {
-            Set domains = getCookieDomains();
+            Set domains = getCookieDomainsForReq(request);
             if (!domains.isEmpty()) {
                 for (Iterator it = domains.iterator(); it.hasNext(); ) {
                     String domain = (String)it.next();
@@ -408,10 +420,11 @@ public class AuthClientUtils {
         return (cookie);
     }    
 
-    public static void clearlbCookie(HttpServletResponse response){
+    public static void clearlbCookie(HttpServletRequest request,
+            HttpServletResponse response) {
         String cookieName = getlbCookieName();
         if (cookieName != null && cookieName.length() != 0) {
-            Set domains = getCookieDomains();
+            Set domains = getCookieDomainsForReq(request);
             if (!domains.isEmpty()) {
                 for (Iterator it = domains.iterator(); it.hasNext(); ) {
                     String domain = (String)it.next();
@@ -1096,6 +1109,38 @@ public class AuthClientUtils {
             }
         }
         return (cookieDomains);
+    }
+
+    /**
+     * Find the cookie domains from the cookie domain list based on
+     * the hostname of the incoming request
+     * @param HttpServletRequest request
+     * @return Set a set of the cookie domains
+     */
+    public static Set getCookieDomainsForReq(HttpServletRequest request) {
+        String host = request.getServerName();
+        Set allDomains = getCookieDomains();
+        if (setCookieToAllDomains) {
+            return allDomains;
+        }
+
+        Set domains = new HashSet();
+        String domain = null;
+
+        if (!allDomains.isEmpty()) {
+            for (Iterator it = allDomains.iterator(); it.hasNext(); ) {
+                domain = (String)it.next();
+                if (host.indexOf(domain) > 0) {
+                    domains.add(domain);
+                }
+            }
+        }
+
+        if (utilDebug.messageEnabled()) {
+            utilDebug.message("AuthClientUtils:getCookieDomainsForReq returns "
+                    + domains); 
+        }
+        return domains;
     }
 
     /* This method returns the organization DN.
@@ -2026,7 +2071,7 @@ public class AuthClientUtils {
 
             // retrieves cookies from the response
             Map headers = conn.getHeaderFields();
-            processCookies(headers, response);
+            processCookies(headers, request, response);
 
             out.flush();
 
@@ -2070,7 +2115,8 @@ public class AuthClientUtils {
 
     // parses the cookies from the response header and adds them in
     // the HTTP response.
-    private static void processCookies(Map headers, HttpServletResponse response) {
+    private static void processCookies(Map headers,
+            HttpServletRequest request, HttpServletResponse response) {
         if (utilDebug.messageEnabled()) {
             utilDebug.message("processCookies : headers : " + headers);
         }
@@ -2119,7 +2165,7 @@ public class AuthClientUtils {
                             }
                         }
 
-                        Set domains = getCookieDomains();
+                        Set domains = getCookieDomainsForReq(request);
                         if (!domains.isEmpty()) {
                             for (Iterator itcd = 
                                  domains.iterator(); itcd.hasNext(); ) {
@@ -2172,13 +2218,13 @@ public class AuthClientUtils {
     * @param response <code>true</code> if it is persistent
     * @throws AuthException if it fails to create pcookie
     */
-
-    public static void setServerCookie(Cookie aCookie, HttpServletResponse response)
-    throws AuthException {
+    public static void setServerCookie(Cookie aCookie,
+            HttpServletRequest request, HttpServletResponse response)
+            throws AuthException {
         String cookieName = aCookie.getName();
         String cookieValue = aCookie.getValue();
         if (cookieName != null && cookieName.length() != 0) {
-            Set domains = getCookieDomains();
+            Set domains = getCookieDomainsForReq(request);
             if (!domains.isEmpty()) {
                 for (Iterator it = domains.iterator(); it.hasNext(); ) {
                     String domain = (String)it.next();
@@ -2202,11 +2248,11 @@ public class AuthClientUtils {
      * @throws AuthException if it fails to create this cookie
      */
     public static void setRedirectBackServerCookie(String cookieName, 
-        String cookieValue, HttpServletResponse response) 
-        throws AuthException {
+            String cookieValue, HttpServletRequest request,
+            HttpServletResponse response) throws AuthException {
 
         if (cookieName != null && cookieName.length() != 0) {
-            Set domains = getCookieDomains();
+            Set domains = getCookieDomainsForReq(request);
             if (!domains.isEmpty()) {
                 for (Iterator it = domains.iterator(); it.hasNext(); ) {
                     String domain = (String)it.next();
@@ -2226,14 +2272,13 @@ public class AuthClientUtils {
      * @param cookieName Cookie Name.
      * @param response HTTP Servlet Response.
      */
-    public static void clearServerCookie(
-        String cookieName,
-        HttpServletResponse response) {
+    public static void clearServerCookie(String cookieName,
+            HttpServletRequest request, HttpServletResponse response) {
         if (utilDebug.messageEnabled()) {
             utilDebug.message("In clear server Cookie = " +  cookieName);
         }
         if (cookieName != null && cookieName.length() != 0) {
-            Set domains = getCookieDomains();
+            Set domains = getCookieDomainsForReq(request);
             if (!domains.isEmpty()) {
                 for (Iterator it = domains.iterator(); it.hasNext(); ) {
                     String domain = (String)it.next();

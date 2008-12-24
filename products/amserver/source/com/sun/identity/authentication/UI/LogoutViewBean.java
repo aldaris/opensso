@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogoutViewBean.java,v 1.11 2008-08-21 22:45:40 pawand Exp $
+ * $Id: LogoutViewBean.java,v 1.12 2008-12-24 01:41:51 ericow Exp $
  *
  */
 
@@ -60,6 +60,7 @@ import com.iplanet.sso.SSOTokenManager;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.common.ISLocaleContext;
 import com.sun.identity.authentication.AuthContext;
+import com.sun.identity.authentication.client.AuthClientUtils;
 import com.sun.identity.authentication.service.AuthD;
 import com.sun.identity.authentication.service.AuthUtils;
 import com.sun.identity.authentication.spi.AMPostAuthProcessInterface;
@@ -404,7 +405,7 @@ public class LogoutViewBean extends AuthViewBeanBase {
     }
     
     private void clearAllCookies(SessionID sid) {
-        Set cookieDomainSet =  AuthUtils.getCookieDomains();
+        Set cookieDomainSet =  AuthClientUtils.getCookieDomainsForReq(request);
         if (cookieDomainSet.isEmpty()) { //No cookie domain specified in profile
             clearAllCookiesByDomain(sid, null);
         } else {
@@ -413,7 +414,7 @@ public class LogoutViewBean extends AuthViewBeanBase {
                 clearAllCookiesByDomain(sid, (String)iter.next());
             }
         }
-        AuthUtils.clearlbCookie(response);
+        AuthUtils.clearlbCookie(request, response);
         clearHostUrlCookie(response);
     }
     

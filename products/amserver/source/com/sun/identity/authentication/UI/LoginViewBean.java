@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.17 2008-12-23 23:22:35 ericow Exp $
+ * $Id: LoginViewBean.java,v 1.18 2008-12-24 01:41:51 ericow Exp $
  *
  */
 
@@ -45,6 +45,7 @@ import com.sun.identity.shared.encode.CookieUtils;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.AuthContext;
+import com.sun.identity.authentication.client.AuthClientUtils;
 import com.sun.identity.authentication.server.AuthContextLocal;
 import com.sun.identity.authentication.service.AuthD;
 import com.sun.identity.authentication.service.AMAuthErrorCode;
@@ -1065,7 +1066,7 @@ public class LoginViewBean extends AuthViewBeanBase {
                 AuthUtils.setRedirectBackServerCookie(
                     rc.getRedirectBackUrlCookieName(), 
                     redirectBackServerCookieValue, 
-                    response);
+                    request, response);
             } catch (Exception e) {
                 if (loginDebug.messageEnabled()){
                     loginDebug.message("Cound not set RedirectBackUrlCookie!" 
@@ -1564,7 +1565,7 @@ public class LoginViewBean extends AuthViewBeanBase {
                         param = queryOrg;
                         clearCookie(AuthUtils.getCookieName());
                         clearHostUrlCookie(response);
-                        AuthUtils.clearlbCookie(response);
+                        AuthUtils.clearlbCookie(request, response);
                         SSOTokenManager.getInstance().destroyToken(ssot);
                     } else if (!(strButton.trim().equals(rb.getString("No")
                         .trim()))
@@ -1594,7 +1595,7 @@ public class LoginViewBean extends AuthViewBeanBase {
     private void setCookie() {
         loginDebug.message("Set Auth or AM cookie");
         String cookieDomain = null;
-        Set cookieDomainSet = AuthUtils.getCookieDomains();
+        Set cookieDomainSet = AuthClientUtils.getCookieDomainsForReq(request);
         if (cookieDomainSet.isEmpty()) { //No cookie domain specified in profile
             try {
                 cookie = AuthUtils.getCookieString(ac, null);
@@ -1652,7 +1653,7 @@ public class LoginViewBean extends AuthViewBeanBase {
 
     private void setlbCookie(){
         try {
-            AuthUtils.setlbCookie(ac, response);
+            AuthUtils.setlbCookie(ac, request, response);
         } catch (Exception e) {
             loginDebug.message("Cound not set LB Cookie!");
         }
@@ -1664,7 +1665,7 @@ public class LoginViewBean extends AuthViewBeanBase {
         if (AuthUtils.isCookieSupported(ac)) {
             clearCookie(AuthUtils.getCookieName());
             clearHostUrlCookie(response);
-            AuthUtils.clearlbCookie(response);
+            AuthUtils.clearlbCookie(request, response);
         }
     }
     
@@ -1675,7 +1676,7 @@ public class LoginViewBean extends AuthViewBeanBase {
      */
     private void clearCookie(String cookieName) {
         String cookieDomain = null;
-        Set cookieDomainSet = AuthUtils.getCookieDomains();
+        Set cookieDomainSet = AuthClientUtils.getCookieDomainsForReq(request);
         if (cookieDomainSet.isEmpty()) {// No cookie domain specified in profile
             cookie = AuthUtils.createCookie(cookieName,LOGOUTCOOKIEVALUE, null);
             cookie.setMaxAge(0);
@@ -1728,7 +1729,8 @@ public class LoginViewBean extends AuthViewBeanBase {
                     }
                 } catch (Exception e) {  // clear the invalid PCookie
                     String cookieDomain = null;
-                    Set cookieDomainSet = AuthUtils.getCookieDomains();
+                    Set cookieDomainSet =
+                            AuthClientUtils.getCookieDomainsForReq(request);
 
                     // No cookie domain specified in profile
                     if (cookieDomainSet.isEmpty()) {
@@ -1736,10 +1738,10 @@ public class LoginViewBean extends AuthViewBeanBase {
                             cookie = AuthUtils.clearPersistentCookie(null, ac);
                             response.addCookie(cookie);
                         } catch (Exception ee) {
-                            loginDebug.message("Cound not set DSAME Cookie!");
+                            loginDebug.message("Could not set Persistent Cookie!");
                         }
                     } else {
-                        Iterator iter = AuthUtils.getCookieDomains().iterator();
+                        Iterator iter = cookieDomainSet.iterator();
                         while (iter.hasNext()) {
                             cookieDomain = (String)iter.next();
                             Cookie cookie = AuthUtils.clearPersistentCookie(
@@ -1759,7 +1761,7 @@ public class LoginViewBean extends AuthViewBeanBase {
     // Method to add persistent cookie
     private void addPersistentCookie() {
         String cookieDomain = null;
-        Set cookieDomainSet = AuthUtils.getCookieDomains();
+        Set cookieDomainSet = AuthClientUtils.getCookieDomainsForReq(request);
         if (cookieDomainSet.isEmpty()) { //No cookie domain specified in profile
             try {
                 cookie = AuthUtils.createPersistentCookie(ac, null);
@@ -1770,7 +1772,7 @@ public class LoginViewBean extends AuthViewBeanBase {
                 }
                 response.addCookie(cookie);
             } catch (Exception e) {
-                loginDebug.message("Cound not set DSAME Cookie!");
+                loginDebug.message("Could not set Persistent Cookie!");
             }
         } else {
             Iterator iter = cookieDomainSet.iterator();

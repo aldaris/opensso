@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.41 2008-12-23 23:18:49 ericow Exp $
+ * $Id: Constants.java,v 1.42 2008-12-24 01:44:59 ericow Exp $
  *
  */
 
@@ -734,6 +734,13 @@ public interface Constants {
      */
     String AM_PROTECTED_PROPERTY_PREFIX =
         "am.protected";
+
+    /**
+     * Property string to determine whether to set auth cookies to all
+     * domains in the domain list.
+     */
+    public static final String SET_COOKIE_TO_ALL_DOMAINS =
+            "com.sun.identity.authentication.setCookieToAllDomains";
 
     /**
      * Property Name for cache polling interval.

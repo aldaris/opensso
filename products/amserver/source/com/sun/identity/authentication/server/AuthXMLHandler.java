@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLHandler.java,v 1.16 2008-08-21 22:46:33 pawand Exp $
+ * $Id: AuthXMLHandler.java,v 1.17 2008-12-24 01:43:06 ericow Exp $
  *
  */
 
@@ -694,7 +694,7 @@ public class AuthXMLHandler implements RequestHandler {
         authResponse.setOldSession(oldSession);
                     
         authResponse.setLoginStatus(AuthContext.Status.IN_PROGRESS);
-        AuthUtils.setlbCookie(authContext, servletResponse);
+        AuthUtils.setlbCookie(authContext, servletRequest, servletResponse);
     }
 
     /*

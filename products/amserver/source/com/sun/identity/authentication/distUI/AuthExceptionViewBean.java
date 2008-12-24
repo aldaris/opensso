@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthExceptionViewBean.java,v 1.7 2008-06-25 05:41:52 qcheng Exp $
+ * $Id: AuthExceptionViewBean.java,v 1.8 2008-12-24 01:42:25 ericow Exp $
  *
  */
 
@@ -199,7 +199,8 @@ public class AuthExceptionViewBean extends
         SessionID sessionID = AuthClientUtils.getSessionIDFromRequest(request);
         try {
             String cookieDomain = null;
-            Set cookieDomainSet = AuthClientUtils.getCookieDomains();
+            Set cookieDomainSet = 
+                    AuthClientUtils.getCookieDomainsForReq(request);
             Cookie cookie;
             setPageEncoding(request,response);
 
@@ -215,7 +216,7 @@ public class AuthExceptionViewBean extends
                     response.addCookie(cookie);
                 }
             }
-            AuthClientUtils.clearlbCookie(response);
+            AuthClientUtils.clearlbCookie(request, response);
             ResultVal = rb.getString("uncaught_exception");
             
         }catch (Exception e) {

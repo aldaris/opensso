@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthUtils.java,v 1.22 2008-08-21 17:10:04 pawand Exp $
+ * $Id: AuthUtils.java,v 1.23 2008-12-24 01:43:06 ericow Exp $
  *
  */
 
@@ -672,10 +672,11 @@ public class AuthUtils extends AuthClientUtils {
     }
     
     public static void setlbCookie(AuthContextLocal authContext,
-    HttpServletResponse response) throws AuthException {
+            HttpServletRequest request, HttpServletResponse response)
+            throws AuthException {
         String cookieName = getlbCookieName();
         if (cookieName != null && cookieName.length() != 0) {
-            Set domains = getCookieDomains();
+            Set domains = getCookieDomainsForReq(request);
             if (!domains.isEmpty()) {
                 for (Iterator it = domains.iterator(); it.hasNext(); ) {
                     String domain = (String)it.next();

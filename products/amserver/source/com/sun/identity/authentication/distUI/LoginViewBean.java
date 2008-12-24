@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.19 2008-12-23 22:10:47 ericow Exp $
+ * $Id: LoginViewBean.java,v 1.20 2008-12-24 01:42:24 ericow Exp $
  *
  */
 
@@ -1351,7 +1351,7 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
         try {
             AuthClientUtils.setRedirectBackServerCookie(
                     rc.getRedirectBackUrlCookieName(), 
-                    redirectBackServerCookieValue, response);
+                    redirectBackServerCookieValue, request, response);
         } catch (Exception e) {
             if (loginDebug.messageEnabled()){
                 loginDebug.message("Cound not set RedirectBackUrlCookie!" 
@@ -1502,7 +1502,8 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
                     it.hasNext();){
                     Cookie cookie = (Cookie)it.next();
                     if (!cookie.getName().equals("JSESSIONID")){
-                        AuthClientUtils.setServerCookie(cookie, response);
+                        AuthClientUtils.setServerCookie(cookie, request,
+                                response);
                         String cookieName = cookie.getName();
                         if (!storeCookies.contains(cookieName)) {
                             storeCookies.add(cookieName);
@@ -1521,12 +1522,13 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
         if (cookieSupported) {
             clearCookie(AuthClientUtils.getCookieName());
             clearHostUrlCookie(response);
-            AuthClientUtils.clearlbCookie(response);
+            AuthClientUtils.clearlbCookie(request, response);
             if (storeCookies != null && !storeCookies.isEmpty()) {
                 for (Iterator it = storeCookies.iterator();
                     it.hasNext();){
                     String cookieName = (String)it.next();
-                    AuthClientUtils.clearServerCookie(cookieName, response);
+                    AuthClientUtils.clearServerCookie(cookieName, request,
+                            response);
                 }
             }
         }
@@ -1563,7 +1565,7 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
     
     private void setlbCookie(){
         try {
-            AuthClientUtils.setlbCookie(response);
+            AuthClientUtils.setlbCookie(request, response);
         } catch (Exception e) {
             loginDebug.message("Cound not set LB Cookie!");
         }
