@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitiesViewBean.java,v 1.8 2008-12-12 20:05:42 farble1670 Exp $
+ * $Id: EntitiesViewBean.java,v 1.9 2008-12-24 00:43:55 babysunil Exp $
  *
  */
 
@@ -89,6 +89,8 @@ public class EntitiesViewBean
     private static final String TBL_DATA_NAME = "tblDataName";
     private static final String TBL_DATA_UNIVERSALNAME = "tblDataUniversalName";
     private static final String TBL_DATA_ACTION_HREF = "tblDataActionHref";
+    private static final String TBL_COL_ID = "tblColId";
+    private static final String TBL_DATA_ID = "tblDataId;
 
     private static final String PAGETITLE = "pgtitle";
     private static final String DEFAULT_ID_TYPE = "user";
@@ -224,6 +226,8 @@ public class EntitiesViewBean
             "table.entities.button.delete");
         tblModel.setActionValue(TBL_COL_NAME,
             "table.entities.name.column.name");
+        tblModel.setActionValue(TBL_COL_ID,
+            "table.entities.name.column.id"); 
     }
 
     private void getEntityNames() {
@@ -345,7 +349,9 @@ public class EntitiesViewBean
                 tblModel.setSelectionVisible(counter++, hide);
 
                 String universalId = IdUtils.getUniversalId(entity);
+                int index = universalId.indexOf(",", 1);
                 tblModel.setValue(TBL_DATA_NAME, name);
+                tblModel.setValue(TBL_DATA_ID, universalId);
                 tblModel.setValue(TBL_DATA_UNIVERSALNAME, universalId);
                 tblModel.setValue(TBL_DATA_ACTION_HREF,
                     stringToHex(universalId));

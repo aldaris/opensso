@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityEditViewBean.java,v 1.8 2008-09-04 23:59:37 veiming Exp $
+ * $Id: EntityEditViewBean.java,v 1.9 2008-12-24 00:43:19 babysunil Exp $
  *
  */ 
         
@@ -387,7 +387,7 @@ public class EntityEditViewBean
                 String name = AMFormatUtils.getIdentityDisplayName(
                     model, entity);
                 String universalId = IdUtils.getUniversalId(entity);
-                lookup.put(name, universalId);
+                lookup.put(universalId, name);
                 unsorted.add(name);
             }
 
@@ -395,10 +395,18 @@ public class EntityEditViewBean
                 unsorted, model.getUserLocale());
             for (Iterator iter = list.iterator(); iter.hasNext(); ) {
                 String name = (String)iter.next();
-                String id = (String)lookup.get(name);
-                optList.add(name, id);
+                String id= null;
+                String tmp = null;
+                for (Iterator it = lookup.keySet().iterator(); it.hasNext(); ) {
+                   id = (String)it.next();
+                   int index = id.indexOf(",", 1); 
+                   if (lookup.get(id).equals(name)) {
+                       tmp = name+""+"("+id.substring(0, index)+")"; 
+                       optList.add(tmp, id);
+                }
             }
         }
+      }
 
         return optList;
     }
