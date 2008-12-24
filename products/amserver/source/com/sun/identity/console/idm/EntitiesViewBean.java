@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitiesViewBean.java,v 1.9 2008-12-24 00:43:55 babysunil Exp $
+ * $Id: EntitiesViewBean.java,v 1.10 2008-12-24 01:41:51 babysunil Exp $
  *
  */
 
@@ -90,7 +90,7 @@ public class EntitiesViewBean
     private static final String TBL_DATA_UNIVERSALNAME = "tblDataUniversalName";
     private static final String TBL_DATA_ACTION_HREF = "tblDataActionHref";
     private static final String TBL_COL_ID = "tblColId";
-    private static final String TBL_DATA_ID = "tblDataId;
+    private static final String TBL_DATA_ID = "tblDataId";
 
     private static final String PAGETITLE = "pgtitle";
     private static final String DEFAULT_ID_TYPE = "user";
@@ -351,7 +351,7 @@ public class EntitiesViewBean
                 String universalId = IdUtils.getUniversalId(entity);
                 int index = universalId.indexOf(",", 1);
                 tblModel.setValue(TBL_DATA_NAME, name);
-                tblModel.setValue(TBL_DATA_ID, universalId);
+                tblModel.setValue(TBL_DATA_ID, universalId.substring(0, index));
                 tblModel.setValue(TBL_DATA_UNIVERSALNAME, universalId);
                 tblModel.setValue(TBL_DATA_ACTION_HREF,
                     stringToHex(universalId));
