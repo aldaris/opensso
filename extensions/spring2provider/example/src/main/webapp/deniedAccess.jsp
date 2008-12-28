@@ -22,20 +22,21 @@
    your own identifying information:
    "Portions Copyrighted 2008 Miguel Angel Alonso Negro <miguelangel.alonso@gmail.com>"
 
-   $Id: loginfailure.jsp,v 1.1 2008-12-03 00:34:23 superpat7 Exp $
+   $Id: deniedAccess.jsp,v 1.1 2008-12-28 21:40:26 malonso Exp $
 
 --%>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
    "http://www.w3.org/TR/html4/loose.dtd">
+
 <%@ taglib prefix="f" uri="http://java.sun.com/jsf/core"%>
-<%@ taglib prefix="webuijsf" uri="http://www.sun.com/webui/webuijsf"%>
+<%@ taglib prefix="h" uri="http://java.sun.com/jsf/html"%>
 
 <html>
     <body>
         <f:view>
-            <h1>Usuario o contraseña incorrecta</h1>
-            <webuijsf:hyperlink text="Login" url="/faces/main.jsp"/>
+            <h2>You don't have privileges to access to this feature</h2>
+            <h:outputLink value="../main.jsp">Main menu</h:outputLink>
         </f:view>
     </body>
 </html>

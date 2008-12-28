@@ -23,7 +23,7 @@
  * 
  * "Portions Copyrighted 2008 Robert Dale <robdale@gmail.com>"
  *
- * $Id: OpenSsoAuthenticationProvider.java,v 1.1 2008-12-03 00:34:24 superpat7 Exp $
+ * $Id: OpenSsoAuthenticationProvider.java,v 1.2 2008-12-28 21:40:27 malonso Exp $
  *
  */
 package com.sun.identity.provider.springsecurity;
@@ -34,6 +34,9 @@ import org.springframework.security.providers.AuthenticationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @see AuthenticationProvider
+ */
 public class OpenSsoAuthenticationProvider implements AuthenticationProvider {
 
 	private final Logger log = LoggerFactory.getLogger(OpenSsoAuthenticationProvider.class);

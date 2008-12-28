@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted 2008 Miguel Angel Alonso Negro <miguelangel.alonso@gmail.com>"
 
-   $Id: logoutSuccess.jsp,v 1.2 2008-12-28 21:40:26 malonso Exp $
+   $Id: main.jsp,v 1.1 2008-12-28 21:40:26 malonso Exp $
 
 --%>
 
@@ -32,14 +32,12 @@
 <%@ taglib prefix="h" uri="http://java.sun.com/jsf/html"%>
 
 <html>
-    <body>
-        <f:view>
-
-                <div align="left"><h2>Logout</h2></div>
-                <p>Thanks for using the application</p>
-                <hr/>
-                <h:outputLink value="main.jsp">Login</h:outputLink>
-
-        </f:view>
-    </body>
+<f:view>
+<body>  
+    <div align="left"><h2>Protected Area</h2></div>
+    <ul>
+        <li><h:outputLink value="../main.jsp">Main menu</h:outputLink></li>
+    </ul>
+</body>
+</f:view>
 </html>

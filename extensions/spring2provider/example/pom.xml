@@ -23,21 +23,20 @@
    your own identifying information:
    "Portions Copyrighted 2008 Miguel Angel Alonso Negro <miguelangel.alonso@gmail.com>"
 
-   $Id: pom.xml,v 1.1 2008-12-03 00:34:28 superpat7 Exp $
+   $Id: pom.xml,v 1.2 2008-12-28 21:40:25 malonso Exp $
 
 -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.sun.identity.provider.example</groupId>
+    <groupId>com.sun.identity.provider.springsecurity</groupId>
     <artifactId>examplewar</artifactId>
     <packaging>war</packaging>
     <version>0.1</version>
-    <name>examplewar</name>
- 
+    <name>OpenSSO - Spring Security example web application</name>
+
 	<properties>
 		<springframework.version>2.5.4</springframework.version>
-		<woodstock.version>4.3-SNAPSHOT</woodstock.version>
 	</properties>
 
     <dependencies>
@@ -78,13 +77,6 @@
 
         <!-- jsf -->
         <dependency>
-            <groupId>com.sun.woodstock</groupId>
-            <artifactId>webui-jsf-suntheme</artifactId>
-            <version>${woodstock.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
             <groupId>javax.faces</groupId>
             <artifactId>jsf-api</artifactId>
             <version>1.2</version>
@@ -111,14 +103,14 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- seguridad -->
+        <!-- security -->
         <dependency>
             <groupId>com.sun.identity.provider</groupId>
-            <artifactId>springsecurity</artifactId>
+            <artifactId>opensso-springsecurity</artifactId>
             <version>0.1</version>
         </dependency>
 
-        <!-- Adicionales -->
+        <!-- Additionals -->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
@@ -136,13 +128,6 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>jcl104-over-slf4j</artifactId>
 			<version>1.4.2</version>
-            <scope>runtime</scope>
-		</dependency>
-        
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.13</version>
             <scope>runtime</scope>
 		</dependency>
         
@@ -174,7 +159,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <executable>${glassfish.home}\bin\asadmin</executable>
+                    <executable>${glassfish.home}/bin/asadmin</executable>
                     <arguments>
                         <argument>deploy</argument>
                         <argument>target/${artifactId}-${version}.${packaging}</argument>

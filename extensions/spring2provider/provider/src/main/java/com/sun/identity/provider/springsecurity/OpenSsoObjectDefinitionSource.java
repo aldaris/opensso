@@ -23,7 +23,7 @@
  * 
  * "Portions Copyrighted 2008 Miguel Angel Alonso Negro <miguelangel.alonso@gmail.com>"
  *
- * $Id: OpenSsoObjectDefinitionSource.java,v 1.1 2008-12-03 00:34:24 superpat7 Exp $
+ * $Id: OpenSsoObjectDefinitionSource.java,v 1.2 2008-12-28 21:40:27 malonso Exp $
  *
  */
  package com.sun.identity.provider.springsecurity;
@@ -49,23 +49,41 @@ import org.springframework.security.util.AntUrlPathMatcher;
 import org.springframework.security.util.UrlMatcher;
 
 /**
- *
- * @author miguelangel.alonso
+ * It is in charge of getting the security policies, <code>PolicyDecision</code>, 
+ * defined for a resource and an user by web service of opensso.war application.
  */
 public class OpenSsoObjectDefinitionSource implements FilterInvocationDefinitionSource, InitializingBean {
 
     private static final Logger logger = LoggerFactory.getLogger(OpenSsoObjectDefinitionSource.class);
-    
-    private Map envParams = new HashMap();
-    private UrlMatcher urlMatcher = new AntUrlPathMatcher();
-    private Collection anonymousPatterns;
 
+    /**
+     * Environment params. Not used
+     */
+    private Map envParams = new HashMap();
+    /**
+     * Matcher to compile URL patterns
+     */
+    private UrlMatcher urlMatcher = new AntUrlPathMatcher();
+    /**
+     * compiled patterns of URLs which are out of authentication policies
+     */
+    private Collection anonymousPatterns;
+    /**
+     * URL patterns defined in spring configuration which are out of authentication policies
+     */
     private Collection<String> anonymousUrls = new ArrayList();
 
+    /**
+     * Set the URLs defined in spring configuration which are out of authentication policies
+     * @param anonymousUrls anonymous URLs
+     */
     public void setAnonymousUrls(Collection<String> anonymousUrls) {
         this.anonymousUrls = anonymousUrls;
     }
 
+    /**
+     * @inheritDoc
+     */
     public void afterPropertiesSet() throws Exception {
         anonymousPatterns = new ArrayList(anonymousUrls.size());
         for (Iterator<String> it = anonymousUrls.iterator(); it.hasNext();) {
@@ -74,6 +92,9 @@ public class OpenSsoObjectDefinitionSource implements FilterInvocationDefinition
         }
     }
     
+    /**
+     * @inheritDoc
+     */
     public ConfigAttributeDefinition getAttributes(Object object) throws IllegalArgumentException {
         FilterInvocation filterInvocation = (FilterInvocation) object;
         if(isAnonymousUrl(filterInvocation.getRequestUrl())){
@@ -108,12 +129,17 @@ public class OpenSsoObjectDefinitionSource implements FilterInvocationDefinition
         }
     }
 
-    
+    /**
+     * @inheritDoc
+     * There are not validations
+     */
     public Collection getConfigAttributeDefinitions() {
-        // No se realiza ninguna validación
         return null;
     }
 
+    /**
+     * @inheritDoc
+     */
     public boolean supports(Class clazz) {
         return FilterInvocation.class.isAssignableFrom(clazz);
     }

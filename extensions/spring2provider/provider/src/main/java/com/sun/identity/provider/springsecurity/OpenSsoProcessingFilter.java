@@ -23,7 +23,7 @@
  * 
  * "Portions Copyrighted 2008 Robert Dale <robdale@gmail.com>"
  *
- * $Id: OpenSsoProcessingFilter.java,v 1.1 2008-12-03 00:34:24 superpat7 Exp $
+ * $Id: OpenSsoProcessingFilter.java,v 1.2 2008-12-28 21:40:27 malonso Exp $
  *
  */
 package com.sun.identity.provider.springsecurity;
@@ -33,8 +33,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.security.Authentication;
 import org.springframework.security.AuthenticationException;
 import org.springframework.security.BadCredentialsException;
-import org.springframework.security.GrantedAuthority;
-import org.springframework.security.GrantedAuthorityImpl;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
 import org.springframework.security.ui.AbstractProcessingFilter;
 import org.springframework.security.ui.FilterChainOrder;
@@ -45,6 +43,10 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 
+/**
+ * Implementation of filter which is responsible for processing authentication requests.
+ * @see AbstractProcessingFilter
+ */
 public class OpenSsoProcessingFilter extends AbstractProcessingFilter {
 
 	private static final Logger log = LoggerFactory.getLogger(OpenSsoProcessingFilter.class);

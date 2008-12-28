@@ -23,7 +23,7 @@
  * 
  * "Portions Copyrighted 2008 Robert Dale <robdale@gmail.com>"
  *
- * $Id: OpenSsoLogoutHandler.java,v 1.1 2008-12-03 00:34:24 superpat7 Exp $
+ * $Id: OpenSsoLogoutHandler.java,v 1.2 2008-12-28 21:40:27 malonso Exp $
  *
  */
 package com.sun.identity.provider.springsecurity;
@@ -40,6 +40,11 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 
+/**
+ * It is in charge of doing the logout in the application and in every application
+ * where the user logged via Single sign-on.
+ * @see LogoutHandler
+ */
 public class OpenSsoLogoutHandler implements LogoutHandler {
 
 	private final Logger log = LoggerFactory.getLogger(OpenSsoLogoutHandler.class);

@@ -23,7 +23,7 @@
  * 
  * "Portions Copyrighted 2008 Miguel Angel Alonso Negro <miguelangel.alonso@gmail.com>"
  *
- * $Id: OpenSsoVoter.java,v 1.1 2008-12-03 00:34:24 superpat7 Exp $
+ * $Id: OpenSsoVoter.java,v 1.2 2008-12-28 21:40:27 malonso Exp $
  *
  */
  package com.sun.identity.provider.springsecurity;
@@ -35,22 +35,33 @@ import org.springframework.security.ConfigAttributeDefinition;
 import org.springframework.security.vote.AccessDecisionVoter;
 
 /**
- *
- * @author miguelangel.alonso
+ * It translate the action decisions to votes
  */
 public class OpenSsoVoter implements AccessDecisionVoter {
 
+    /**
+     * Possible values of action decisions
+     */
     public static final String OPENSSO_ALLOW = "allow";
     public static final String OPENSSO_DENY = "deny";
-    
+
+    /**
+     * @inheritDoc
+     */
     public boolean supports(ConfigAttribute attribute) {
         return true;
     }
 
+    /**
+     * @inheritDoc
+     */
     public boolean supports(Class clazz) {
         return true;
     }
 
+    /**
+     * @inheritDoc
+     */
     public int vote(Authentication authentication, Object object, ConfigAttributeDefinition config) {
         for (Iterator it = config.getConfigAttributes().iterator(); it.hasNext();) {
             ConfigAttribute configAttribute = (ConfigAttribute)it.next();

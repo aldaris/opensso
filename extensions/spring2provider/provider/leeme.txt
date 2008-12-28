@@ -24,8 +24,8 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted 2008 Miguel Angel Alonso Negro <miguelangel.alonso@gmail.com>"
 
-$Id: leeme.txt,v 1.1 2008-12-03 00:34:29 superpat7 Exp $
+$Id: leeme.txt,v 1.2 2008-12-28 21:40:27 malonso Exp $
 
 ------------------------------------------------------------------------------
 
-Implementación del modelo de seguridad de OpenSSO bajo Spring Security
+ImplementaciÃ³n del modelo de seguridad de OpenSSO bajo Spring Security

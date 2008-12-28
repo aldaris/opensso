@@ -24,8 +24,233 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted 2008 Miguel Angel Alonso Negro <miguelangel.alonso@gmail.com>"
 
-$Id: readme.txt,v 1.1 2008-12-03 00:34:28 superpat7 Exp $
+$Id: readme.txt,v 1.2 2008-12-28 21:40:25 malonso Exp $
 
 ------------------------------------------------------------------------------
 
 Example of web application with OpenSSO and Spring Security
+===========================================================
+
+Overview
+--------
+
+This is a maven project with a web application which uses the spring security 
+provider found in the subversion URL:
+
+https://opensso.dev.java.net/source/browse/opensso/extensions/spring2provider/provider/
+
+The application has several pages to explain how is used the spring security 
+provider of OpenSSO. The features are:
+
+    - Single sign-on: we will see two web applications in the same browser with 
+    the OpenSSO configuration need an unique authetication. And if the user 
+    log out from one, then the another application has the session expired too.
+    
+    - Authoritation management.- It is defined in OpenSSO manager application for 
+    every application which is in the security realm.
+    
+Layout
+------
+
+The main file is src/main/webapp/WEB-INF/web.xml where is defined the JEE configuration.
+The components are:
+    - Java Serve Faces
+    - Spring Framework
+    - Spring Security
+
+But the main configuration is defined in Spring Framewok, in the main file:
+
+src/main/webapp/WEB-INF/applicationContext.xml
+
+This files has only an imported file which has the security configuration. (In a
+more complex application would be persistence, web service, ... configuration. See
+details in http://static.springframework.org/spring/docs/2.5.x/reference/index.html).
+ac-security.xml is the most important file of the example, see below.
+
+The file src/main/webapp/WEB-INF/faces-config.xml has the Java Server Faces 
+configuration. In this example it is empty and it has only the integration with 
+Spring Framework.
+
+The file src/main/resources/AMConfig.properties has the OpenSSO configuration. 
+And It is assumed the Open SSO administration application URL is:
+
+http://localhost:8080/opensso
+
+And the admin user has this credentials:
+
+com.sun.identity.agents.app.username=amadmin
+com.iplanet.am.service.password=adminadmin
+
+(Change AMConfig.properties according to your settings.)
+
+If you don't have installed OpenSSO see:
+
+http://developers.sun.com/identity/reference/techart/opensso-glassfish.html
+
+You will need a directory service, I advise to use OpenDS (https://opends.dev.java.net/),
+and, specifically, I advise from version 1.1. And, after installing OpenDS and
+OpenSSO, you will ought to access to opensso web, select Access Control -> Realm 
+-> Data Stores -> generic ldapv3. Then, remove "memberOf" in member group attribute 
+and select "SCOPE_SUB" in "LDAPv3 Plug-in Search Scope" field of LDAP user configuration.
+
+
+ac-security.xml
+---------------
+
+This file is the most important of the example. It shows how the application must 
+be configured using Spring Security with the implementation of the OpenSSO provider.
+
+In Spring Security 2.0 the configuration is simpler than in Acegi for Spring Framework
+(see documentation: http://static.springframework.org/spring-security/site/reference/html/springsecurity.html) 
+for an application with default configuration. But, with the opensso provider whe 
+have a particular configuration. Then we must configure Spring Security as old way.  
+
+This file has the following beans:
+
+    - filterChainProxy.- This is the main bean. It defines every security filter which
+    goes to receive the request. The order of each filter is very importante. In XML
+    comments I explain the order of the filters and the order of all possible filter
+    defined in Spring Security framework.
+    
+    - httpSessionContextIntegrationFilter.- It is responsible for storing a security 
+    context between HTTP requests.
+    
+    - logoutFilter.- It is in charge of doing the logout in the application and in 
+    every application where the user logged via Single sign-on.
+    
+    - openssoFilter.- It is responsible for processing authentications.
+    
+    - exceptionTranslationFilter.- It manages the requests which are rejected by the 
+    rest of the filters. That requests do not have a authenticated session or have 
+    denied access
+    
+    - filterInvocationInterceptor.- It is the last filter. It manages the authencation 
+    and authoritation of each request.
+
+    - authenticationManager.- Authentication manager used by filterInvocationInterceptor.
+    
+    - authenticationEntryPoint.- It defines the login page and the authentication URL
+    
+    - accessDecisionManager.- Authoritation manager used by filterInvocationInterceptor
+
+    
+Code
+----
+
+The class com.sun.identity.shared.encode.CookieUtils is the unique code of the project. 
+For this example, it is not necessary code. But this class is because it belongs to 
+openssoclientsdk. It is a patch to get working in any servlet container without OpenSSO 
+agent.
+
+
+Building & deploy
+-----------------
+
+The building is very simple with the infrastructure of maven (see http://maven.apache.org/). 
+First, it is necessary to install the OpenSSO provider in the maven repository 
+(see the explained steps in readme.txt file located in https://opensso.dev.java.net/source/browse/opensso/extensions/spring2provider/providers). 
+The next step is very simple:
+
+    $ mvn package
+
+To deploy the application in Tomcat you must execute:
+
+    $ mvn tomcat:deploy
+
+when tomcat is running. But first you must configure the file {user home}/.m2/settins.xml 
+(See documentation http://mojo.codehaus.org/tomcat-maven-plugin/)
+
+To deploy the application in Glassfish you must execute:
+
+    $ mvn org.codehaus.mojo:exec-maven-plugin:exec
+
+But first the property glassfish.home must be defined un the file {user home}/.m2/settins.xml 
+(See details in http://mojo.codehaus.org/exec-maven-plugin/java-mojo.html)
+
+
+Execution
+---------
+
+If you want to execute the application in a servlet container without OpenSSO agent, 
+you must define the system properties "com.iplanet.am.cookie.name" and 
+"com.sun.identity.federation.fedCookieName".
+
+For example in Tomcat, you must write in a command shell:
+
+    $ export CATALINA_OPTS=-Dcom.iplanet.am.cookie.name=iPlanetDirectoryPro -Dcom.sun.identity.federation.fedCookieName=fedCookie $CATALINA_OPTS
+
+or in windows:
+    > set CATALINA_OPTS=-Dcom.iplanet.am.cookie.name=iPlanetDirectoryPro -Dcom.sun.identity.federation.fedCookieName=fedCookie %CATALINA_OPTS%
+
+
+Single sign-on
+--------------
+
+To test Single sign-on is very simple. Open two tabs in the same browser. In the first
+tab open the example application, in the second tab open another OpenSSO application, 
+for example, OpenSSO manager. And execute the following scenarios:
+
+- Scenario 1
+1.- Login in the example application with a LDAP user (amadmin, for example)
+2.- Reload Opensso application page and see you are already login 
+3.- Logout of example application
+4.- Reload Opensso application page and see you are already logout 
+
+- Scenario 2
+1.- Login in the Opensso application with a LDAP user
+2.- Reload example application page and see you are already login 
+3.- Logout of Opensso application
+4.- Reload example application page and see you are already logout 
+
+
+Authoritation
+-------------
+
+To test authoritation through OpenSSO configuration we must to define the
+realm policies in OpenSSO manager web. But first web need a user group to 
+assign it. Then we select Access Control -> Realm -> Subjects -> Group -> 
+"New ...". We write a name, for example, "Staff". And in the "User" tab, 
+we add several users.
+
+Now, we can create the police, select Policies -> "New Policy" and assign it
+a name, for example, "Protected Info". 
+
+In the Rules section we create one "URL Policy Agent" with the following data:
+    Name: Protected Info
+    Resource Name: /faces/protected*
+    Actions:
+        GET     Deny
+        POST    Deny
+    
+In the Subjects section we create one "OpenSSO Identity Subject":
+    Name: Staff
+    Filter: Group. And press "Search"
+        Add Staff group
+
+Click Ok and the policy is already defined. Every user who is in the group "Staff"
+cannot access to the pages with the pattern "/faces/protected*". 
+
+The last step is to test it. Login as a no staff user and try to access to "Protected
+Area". After that, login as a staff user and try to access to "Protected Area". 
+And that is all. 
+
+
+Conclusion
+----------
+
+We can see the configuration for Single Sign-On is very simple. And we have got to 
+centralize the security policy definition in an unique place.
+
+The integration of OpenSSO with Spring Security gives additional features. For example, 
+Spring AOP is very useful to associate policies to business objects without write it 
+in the code. So the security configuration of the business objects is independient of
+what application is using it. Therefore, it is very usefull for distributed application
+within a security realm.
+
+Besides, this provider can be used in others J2EE modules as an EJB which is accessed
+by RMI.
+
+If you are interested in how it is possible to defined new rule types, see the article 
+http://developers.sun.com/identity/reference/techart/secureapps.html.
+
+

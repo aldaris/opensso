@@ -23,7 +23,7 @@
  * 
  * "Portions Copyrighted 2008 Robert Dale <robdale@gmail.com>"
  *
- * $Id: OpenSsoProcessingFilterEntryPoint.java,v 1.1 2008-12-03 00:34:24 superpat7 Exp $
+ * $Id: OpenSsoProcessingFilterEntryPoint.java,v 1.2 2008-12-28 21:40:27 malonso Exp $
  *
  */
 package com.sun.identity.provider.springsecurity;
@@ -41,6 +41,10 @@ import org.springframework.security.ui.AuthenticationEntryPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ *  It is in charge of validating the cookie which says if the user is logged in and
+    getting its credentials. This class is the basis of Single-Sign On implementation
+ */
 public class OpenSsoProcessingFilterEntryPoint implements AuthenticationEntryPoint {
 
 	private final Logger log = LoggerFactory.getLogger(OpenSsoProcessingFilterEntryPoint.class);

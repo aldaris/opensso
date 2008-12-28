@@ -23,14 +23,14 @@
    your own identifying information:
    "Portions Copyrighted 2008 Miguel Angel Alonso Negro <miguelangel.alonso@gmail.com>"
 
-   $Id: pom.xml,v 1.1 2008-12-03 00:34:29 superpat7 Exp $
+   $Id: pom.xml,v 1.2 2008-12-28 21:40:27 malonso Exp $
 
 -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.sun.identity.provider</groupId>
-    <artifactId>springsecurity</artifactId>
+    <artifactId>opensso-springsecurity</artifactId>
     <packaging>jar</packaging>
     <version>0.1</version>
     <name>OpenSSO provider springsecurity</name>
@@ -125,6 +125,7 @@
                 <configuration>
                     <links>
                         <link>http://java.sun.com/j2se/1.5/docs/api</link>
+                        <link>http://static.springsource.org/spring-security/site/apidocs</link>
                     </links>
                 </configuration>
             </plugin>

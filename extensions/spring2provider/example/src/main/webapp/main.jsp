@@ -22,22 +22,23 @@
    your own identifying information:
    "Portions Copyrighted 2008 Miguel Angel Alonso Negro <miguelangel.alonso@gmail.com>"
 
-   $Id: main.jsp,v 1.1 2008-12-03 00:34:24 superpat7 Exp $
+   $Id: main.jsp,v 1.2 2008-12-28 21:40:26 malonso Exp $
 
 --%>
 
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <%@ taglib prefix="f" uri="http://java.sun.com/jsf/core"%>
-<%@ taglib prefix="webuijsf" uri="http://www.sun.com/webui/webuijsf"%>
+<%@ taglib prefix="h" uri="http://java.sun.com/jsf/html"%>
 
 <html>
-    <body>
-        <f:view>
-            <div align="left"><h2>Acciones posibles</h2></div>
-            <hr/>
-            TO DO
-            <hr/>
-        </f:view>
-    </body>
+<f:view>
+<body>  
+    <div align="left"><h2>Possible actions</h2></div>
+    <ul>
+        <li><h:outputLink value="protected/main.jsp">Protected Area</h:outputLink></li>
+        <li><h:outputLink value="logout.jsp">Logout</h:outputLink></li>
+    </ul>
+</body>
+</f:view>
 </html>
