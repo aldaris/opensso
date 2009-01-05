@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.6 2008-11-21 08:39:09 soumendra Exp $
+   $Id: build.xml,v 1.7 2009-01-05 19:54:32 subbae Exp $
 
 -->
 
@@ -120,7 +120,7 @@
     <target name="copy-SunOS_sparc-library">
         <copy todir="${container.web_agent.lib.dir}">
             <fileset dir="${webagents.apache.src.dir}">
-                    <include name="libamapc2.so"/>
+                    <include name="libamapc2*.so"/>
             </fileset>
         </copy>
     </target>
@@ -128,7 +128,7 @@
     <target name="copy-SunOS_x86-library">
         <copy todir="${container.web_agent.lib.dir}">
             <fileset dir="${webagents.apache.src.dir}">
-                    <include name="libamapc2.so"/>
+                    <include name="libamapc2*.so"/>
             </fileset>
         </copy>
     </target>

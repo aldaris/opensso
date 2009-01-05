@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: Makefile,v 1.5 2008-06-25 05:54:12 qcheng Exp $
+# $Id: Makefile,v 1.6 2009-01-05 19:54:31 subbae Exp $
 #
 #
 # Makefile for building the Apache Policy Agent.
@@ -79,7 +79,6 @@ ifeq ($(OS_ARCH), Linux)
    endif
 endif
 
-
 APACHE2_CFLAGS += -DAPACHE2 -DEAPI -DMOD_PERL -DUSE_EXPAT -DXP_UNIX $(PIC_FLAG) -DCORE_PRIVATE $(APACHE2_INCLUDE_FLAGS) -I$(APACHE_DIR)/include
 
 LDFLAGS += $(LD_COMMON_ORIGIN_FLAG) $(LD_ORIGIN_FLAG)
@@ -109,6 +108,28 @@ EXPORTED_LIBS := $(APACHE2_LIB)
 
 $(APACHE2_LIB): $(APACHE2_OBJS) libamapc.mapfile
 	$(MAKE_SHARED_LIB)
+
+# Apache with largefile support
+ifeq ($(OS_ARCH), SunOS)
+ifneq ($(BUILD_TYPE), 64)
+
+APACHE2_LARGEFILE_LIB_NAME := libamapc2.largefile
+APACHE2_LARGEFILE_LIB := $(APACHE2_LARGEFILE_LIB_NAME)$(SO_EXT)
+APACHE2_LARGEFILE_CFLAGS := $(APACHE2_CFLAGS) -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+APACHE2_LARGEFILE_OBJS := $(patsubst %.c, $(APACHE2_LARGEFILE_LIB_NAME).o, $(SRCS))
+
+OBJS += $(APACHE2_LARGEFILE_OBJS)
+EXPORTED_LIBS += $(APACHE2_LARGEFILE_LIB)
+
+$(APACHE2_LARGEFILE_LIB_NAME).o: apache_agent.c
+	$(COMPILE.c) $(APACHE2_LARGEFILE_CFLAGS) $< $(OUTPUT_OPTION)
+
+$(APACHE2_LARGEFILE_LIB): $(APACHE2_LARGEFILE_OBJS) libamapc.mapfile
+	$(MAKE_SHARED_LIB)
+
+endif
+endif
+# end of largefile support
  
 all: export_libs
 
