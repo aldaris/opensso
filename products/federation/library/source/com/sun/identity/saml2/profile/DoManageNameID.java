@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DoManageNameID.java,v 1.17 2008-11-22 01:56:38 hengming Exp $
+ * $Id: DoManageNameID.java,v 1.18 2009-01-05 22:45:49 qcheng Exp $
  *
  */
 
@@ -1976,18 +1976,21 @@ public class DoManageNameID {
             if (idpSession != null) {
                 List nameIDSPlist = idpSession.getNameIDandSPpairs();
                 if (nameIDSPlist != null) {
-                    Iterator iter = nameIDSPlist.listIterator();
-                    while (iter.hasNext()) {
-                        nameIDPair = (NameIDandSPpair)iter.next();
-                        String spID = nameIDPair.getSPEntityID();
-                        if (spID.equalsIgnoreCase(spEntity) &&
-                            nameIDPair.getNameID().getValue().equals(nameID)) {
-                            nameIDSPlist.remove(nameIDPair);
-                            if (debug.messageEnabled()) {
-                                debug.message(method + " removed entity=" + spID
-                                    + ", nameID=" + nameID);
+                    // synchronize to avoid con-current modification
+                    synchronized (nameIDSPlist) {
+                        Iterator iter = nameIDSPlist.listIterator();
+                        while (iter.hasNext()) {
+                            nameIDPair = (NameIDandSPpair) iter.next();
+                            String spID = nameIDPair.getSPEntityID();
+                            if (spID.equalsIgnoreCase(spEntity) && nameIDPair.
+                                getNameID().getValue().equals(nameID)) {
+                                iter.remove();
+                                if (debug.messageEnabled()) {
+                                    debug.message(method + " removed entity="
+                                        + spID + ", nameID=" + nameID);
+                                }
+                                return idpSession;
                             }
-                            return idpSession; 
                         }
                     }
                 }
