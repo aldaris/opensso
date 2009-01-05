@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateHostedSP.jsp,v 1.11 2008-12-10 21:27:35 asyhuang Exp $
+   $Id: CreateHostedSP.jsp,v 1.12 2009-01-05 20:52:19 farble1670 Exp $
 
 --%>
 
@@ -225,7 +225,7 @@
     function submitPage() {
         document.getElementById('dlg').style.top = '300px';
         fade();
-        if (document.getElementById('cotsection').style.display != 'block') {
+        if (document.getElementById('cotsection').style.display != '') {
             var extended = getExtendedData();
             if (extended.length > 0) {
                 if (hasMetaData) {
