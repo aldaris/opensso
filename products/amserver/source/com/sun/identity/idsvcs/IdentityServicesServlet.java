@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdentityServicesServlet.java,v 1.2 2008-06-25 05:43:33 qcheng Exp $
+ * $Id: IdentityServicesServlet.java,v 1.3 2009-01-05 23:53:38 veiming Exp $
  *
  */
 
@@ -99,6 +99,7 @@ public class IdentityServicesServlet extends JAXRPCServlet {
                 // Debug and return null
             }
         } else {
+            response.setCharacterEncoding("UTF-8");
             super.doGet(request, response);
         }
     } 
