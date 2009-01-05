@@ -22,28 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step1.java,v 1.8 2008-07-07 20:33:01 veiming Exp $
+ * $Id: Step1.java,v 1.9 2009-01-05 23:17:10 veiming Exp $
  *
  */
 package com.sun.identity.config.wizard;
 
+import com.sun.identity.config.SessionAttributeNames;
 import com.sun.identity.config.util.AjaxPage;
-import com.sun.identity.setup.SetupConstants;
 import net.sf.click.control.ActionLink;
-import net.sf.click.Context;
-import net.sf.click.control.Form;
-import net.sf.click.control.HiddenField;
-import net.sf.click.control.FieldSet;
-import net.sf.click.control.Label;
-import net.sf.click.control.PasswordField;
-
-
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import java.io.UnsupportedEncodingException;
-import com.iplanet.am.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 /**
  * This is the first step in the advanced configuration flow.
@@ -72,7 +58,7 @@ public class Step1 extends AjaxPage {
             } else {
                 writeValid("OK");
                 getContext().setSessionAttribute(
-                    SetupConstants.CONFIG_VAR_ADMIN_PWD, adminPassword);                
+                    SessionAttributeNames.CONFIG_VAR_ADMIN_PWD, adminPassword);
             }         
         }
         setPath(null);
@@ -83,7 +69,7 @@ public class Step1 extends AjaxPage {
         String agentPassword = toString("agent");
         String agentConfirm = toString("agentConfirm");
         String tmpadmin = (String)getContext().getSessionAttribute(
-            SetupConstants.CONFIG_VAR_ADMIN_PWD);
+            SessionAttributeNames.CONFIG_VAR_ADMIN_PWD);
          
         if (agentPassword == null || agentConfirm == null) {        
             writeInvalid(getLocalizedString("missing.required.field"));
@@ -96,7 +82,8 @@ public class Step1 extends AjaxPage {
         } else {
             writeValid("OK");
             getContext().setSessionAttribute(
-                SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD, agentPassword);              
+                SessionAttributeNames.CONFIG_VAR_AMLDAPUSERPASSWD,
+                agentPassword);              
         }
         setPath(null);
         return false;

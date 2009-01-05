@@ -22,13 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step5.java,v 1.8 2008-06-25 05:42:42 qcheng Exp $
+ * $Id: Step5.java,v 1.9 2009-01-05 23:17:10 veiming Exp $
  *
  */
 package com.sun.identity.config.wizard;
 
+import com.sun.identity.config.SessionAttributeNames;
 import com.sun.identity.config.util.AjaxPage;
-import com.sun.identity.setup.AMSetupServlet;
 import com.sun.identity.setup.SetupConstants;
 import net.sf.click.control.ActionLink;
 import java.net.URL;
@@ -47,9 +47,9 @@ public class Step5 extends AjaxPage {
 
     public void onInit() {
         String host = (String)getContext().getSessionAttribute(
-            SetupConstants.LB_SITE_NAME);
+            SessionAttributeNames.LB_SITE_NAME);
         String port = (String)getContext().getSessionAttribute(
-            SetupConstants.LB_PRIMARY_URL); 
+            SessionAttributeNames.LB_PRIMARY_URL); 
         
         if (host != null) {
             addModel("host", host);
@@ -79,7 +79,7 @@ public class Step5 extends AjaxPage {
             try {
                 URL hostURL =  new URL(primaryURL);
                 getContext().setSessionAttribute( 
-                    SetupConstants.LB_PRIMARY_URL, primaryURL);
+                    SessionAttributeNames.LB_PRIMARY_URL, primaryURL);
                 writeToResponse("ok");
             } catch (MalformedURLException m) {
                 writeToResponse(getLocalizedString("primary.url.is.invalid"));
@@ -98,7 +98,7 @@ public class Step5 extends AjaxPage {
             returnVal = false;
         } else {
             getContext().setSessionAttribute( 
-                SetupConstants.LB_SITE_NAME, siteName);
+                SessionAttributeNames.LB_SITE_NAME, siteName);
             writeValid(getLocalizedString("ok.label"));
         }
 

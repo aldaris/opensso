@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TemplatedPage.java,v 1.9 2008-06-25 05:42:42 qcheng Exp $
+ * $Id: TemplatedPage.java,v 1.10 2009-01-05 23:17:10 veiming Exp $
  *
  */
 package com.sun.identity.config.util;
@@ -55,7 +55,8 @@ public abstract class TemplatedPage extends AjaxPage {
 
 
     protected List getStatusMessageCodes() {
-        return (List)getContext().getSessionAttribute(STATUS_MESSAGE_CODES_SESSION_KEY);
+        return (List)getContext().getSessionAttribute(
+            STATUS_MESSAGE_CODES_SESSION_KEY);
     }
 
     protected void addStatusMessageCode(String statusMessageCode) {

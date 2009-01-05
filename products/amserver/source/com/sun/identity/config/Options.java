@@ -22,19 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Options.java,v 1.6 2008-06-25 05:42:32 qcheng Exp $
+ * $Id: Options.java,v 1.7 2009-01-05 23:17:09 veiming Exp $
  *
  */
 package com.sun.identity.config;
 
 import com.sun.identity.config.util.TemplatedPage;
 import net.sf.click.control.ActionLink;
-import com.iplanet.am.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.UnsupportedEncodingException;
 
 public class Options extends TemplatedPage {
 
@@ -53,8 +47,8 @@ public class Options extends TemplatedPage {
 
     public void doInit() {
         passwordUpdateRequired = getConfigurator().isPasswordUpdateRequired();
-        addModel("passwordUpdateRequired", Boolean.valueOf( passwordUpdateRequired ) );
-
+        addModel("passwordUpdateRequired",
+            Boolean.valueOf( passwordUpdateRequired ) );
         upgrade = !getConfigurator().isNewInstall();
         addModel( "upgrade", Boolean.valueOf( upgrade ) );
     }

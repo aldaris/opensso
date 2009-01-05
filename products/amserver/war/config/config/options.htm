@@ -166,17 +166,23 @@
         renderWizard();
         YAHOO.sun.identity.config.options.wizard.show();
     }
+
     function renderWizard() {
         YAHOO.sun.identity.config.options.wizard = new YAHOO.widget.Panel("wizard", { fixedcenter: false, modal: true, close: true, visible:false, constraintoviewport:true });
         YAHOO.sun.identity.config.options.wizard.render();
         YAHOO.sun.identity.config.options.wizard.center();
     }
     
-    function setOption( inOption ) {
+    function setOption(inOption) {
         configOption = inOption;
-        if (inOption == 1) {
+        AjaxUtils.call( "$context$path?actionLink=resetSessionAttributes",
+            onSetOption);
+    }
+
+    function onSetOption(response) {
+        if (configOption == 1) {
             YAHOO.sun.identity.config.options.defaultSummary.show();
-        } else if (inOption == 2) {
+        } else if (configOption == 2) {
             YAHOO.sun.identity.config.options.wizard.show();            
         } else {
             alert("Not Implemented Yet");

@@ -22,20 +22,18 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step4.java,v 1.15 2008-11-08 08:22:29 veiming Exp $
+ * $Id: Step4.java,v 1.16 2009-01-05 23:17:10 veiming Exp $
  *
  */
 package com.sun.identity.config.wizard;
 import com.iplanet.am.util.SSLSocketFactoryManager;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.sun.identity.config.SessionAttributeNames;
 import net.sf.click.control.ActionLink;
 import com.sun.identity.config.util.AjaxPage;
 import com.sun.identity.setup.SetupConstants;
 import net.sf.click.Context;
 import netscape.ldap.LDAPConnection;
 import netscape.ldap.LDAPException;
-import netscape.ldap.LDAPSearchResults;
 import netscape.ldap.util.DN;
 
 /**
@@ -73,47 +71,57 @@ public class Step4 extends AjaxPage {
         super.onInit();
         Context ctx = getContext();
         
-        if (ctx.getSessionAttribute(SetupConstants.USER_STORE_HOST) == null) {
+        if (ctx.getSessionAttribute(SessionAttributeNames.USER_STORE_HOST)
+            == null) {
             String val = getAttribute(SetupConstants.CONFIG_VAR_DATA_STORE,
                 SetupConstants.SMS_EMBED_DATASTORE);
+
             if (!val.equals(SetupConstants.SMS_EMBED_DATASTORE)) {
 
                 val = getAttribute("configStoreSSL", "SIMPLE");
-                ctx.setSessionAttribute(SetupConstants.USER_STORE_SSL, val);
+                ctx.setSessionAttribute(SessionAttributeNames.USER_STORE_SSL,
+                    val);
 
                 val = getAttribute("configStoreHost", getHostName());
-                ctx.setSessionAttribute(SetupConstants.USER_STORE_HOST, val);
+                ctx.setSessionAttribute(SessionAttributeNames.USER_STORE_HOST,
+                    val);
 
                 val = getAttribute("configStorePort", "389");
-                ctx.setSessionAttribute(SetupConstants.USER_STORE_PORT, val);
+                ctx.setSessionAttribute(SessionAttributeNames.USER_STORE_PORT,
+                    val);
 
                 val = getAttribute("configStoreLoginId",Wizard.defaultUserName);
-                ctx.setSessionAttribute(SetupConstants.USER_STORE_LOGIN_ID,val);
+                ctx.setSessionAttribute(
+                    SessionAttributeNames.USER_STORE_LOGIN_ID, val);
 
                 val = getAttribute("rootSuffix", Wizard.defaultRootSuffix);
-                ctx.setSessionAttribute(SetupConstants.USER_STORE_ROOT_SUFFIX,
-                    val);
+                ctx.setSessionAttribute(
+                    SessionAttributeNames.USER_STORE_ROOT_SUFFIX, val);
             }
-            ctx.setSessionAttribute("EXT_DATA_STORE", "true");
-            ctx.setSessionAttribute(SetupConstants.USER_STORE_TYPE,
+
+            ctx.setSessionAttribute(SessionAttributeNames.EXT_DATA_STORE,
+                "true");
+            ctx.setSessionAttribute(SessionAttributeNames.USER_STORE_TYPE,
                 "LDAPv3ForAMDS");
         }
 
         String smsType = getAttribute(SetupConstants.CONFIG_VAR_DATA_STORE,
             "embedded");
+
         if (!smsType.equals("embedded")) {
-            ctx.setSessionAttribute("EXT_DATA_STORE", "true");
+            ctx.setSessionAttribute(
+                SessionAttributeNames.EXT_DATA_STORE, "true");
             addModel("radioDataTypeDisabled", "disabled");
         } else {
             addModel("radioDataTypeDisabled", "");
         }
 
         String val = getAttribute(SetupConstants.USER_STORE_HOST,getHostName());
-        ctx.setSessionAttribute(SetupConstants.USER_STORE_HOST, val);
+        ctx.setSessionAttribute(SessionAttributeNames.USER_STORE_HOST, val);
         addModel("userStoreHost", val);
         
         val = getAttribute(SetupConstants.USER_STORE_SSL, "SIMPLE");
-        ctx.setSessionAttribute(SetupConstants.USER_STORE_SSL, val);
+        ctx.setSessionAttribute(SessionAttributeNames.USER_STORE_SSL, val);
         if (val.equals("SSL")) {
             addModel("selectUserStoreSSL", "checked=\"checked\"");
         } else {
@@ -121,17 +129,18 @@ public class Step4 extends AjaxPage {
         }
 
         val = getAttribute(SetupConstants.USER_STORE_PORT, "389");
-        ctx.setSessionAttribute(SetupConstants.USER_STORE_PORT, val);
+        ctx.setSessionAttribute(SessionAttributeNames.USER_STORE_PORT, val);
         addModel("userStorePort", val);
 
         val = getAttribute(SetupConstants.USER_STORE_LOGIN_ID,
             Wizard.defaultUserName);
-        ctx.setSessionAttribute(SetupConstants.USER_STORE_LOGIN_ID, val);
+        ctx.setSessionAttribute(SessionAttributeNames.USER_STORE_LOGIN_ID, val);
         addModel("userStoreLoginId", val);
 
         val = getAttribute(SetupConstants.USER_STORE_ROOT_SUFFIX, 
             Wizard.defaultRootSuffix);
-        ctx.setSessionAttribute(SetupConstants.USER_STORE_ROOT_SUFFIX, val);
+        ctx.setSessionAttribute(SessionAttributeNames.USER_STORE_ROOT_SUFFIX,
+            val);
         addModel("userStoreRootSuffix", val);
 
         val = getAttribute(SetupConstants.USER_STORE_TYPE, "LDAPv3ForAMDS");
@@ -163,10 +172,10 @@ public class Step4 extends AjaxPage {
         String ssl = toString("ssl");
         if ((ssl != null) && ssl.length() > 0) {
             getContext().setSessionAttribute(
-                SetupConstants.USER_STORE_SSL, ssl);
+                SessionAttributeNames.USER_STORE_SSL, ssl);
         } else {
             getContext().setSessionAttribute(
-                SetupConstants.USER_STORE_SSL, "SIMPLE");
+                SessionAttributeNames.USER_STORE_SSL, "SIMPLE");
         }
         writeToResponse(getLocalizedString(responseString));
         setPath(null);
@@ -177,7 +186,7 @@ public class Step4 extends AjaxPage {
         String host = toString("host");
         if ((host != null) && host.length() > 0) {
             getContext().setSessionAttribute(
-                SetupConstants.USER_STORE_HOST, host);
+                SessionAttributeNames.USER_STORE_HOST, host);
         } else {
             responseString = "missing.host.name";            
         }
@@ -187,13 +196,15 @@ public class Step4 extends AjaxPage {
     }
 
     public boolean setUMEmbedded() {
-        getContext().setSessionAttribute("EXT_DATA_STORE", "false");
+        getContext().setSessionAttribute(SessionAttributeNames.EXT_DATA_STORE,
+            "false");
         setPath(null);
         return false;
     }
 
     public boolean resetUMEmbedded() {
-        getContext().setSessionAttribute("EXT_DATA_STORE", "true");
+        getContext().setSessionAttribute(SessionAttributeNames.EXT_DATA_STORE,
+            "true");
         setPath(null);
         return false;
     }
@@ -205,7 +216,7 @@ public class Step4 extends AjaxPage {
             int intValue = Integer.parseInt(port);
             if ((intValue > 0) && (intValue < 65535)) {
                 getContext().setSessionAttribute(
-                    SetupConstants.USER_STORE_PORT, port);
+                    SessionAttributeNames.USER_STORE_PORT, port);
             } else {
                 responseString = "invalid.port.number";
             }
@@ -221,7 +232,7 @@ public class Step4 extends AjaxPage {
         String dn = toString("dn");
         if ((dn != null) && dn.length() > 0) {
             getContext().setSessionAttribute(
-                SetupConstants.USER_STORE_LOGIN_ID, dn);
+                SessionAttributeNames.USER_STORE_LOGIN_ID, dn);
         } else {
             responseString = "missing.login.id";            
         }
@@ -234,7 +245,7 @@ public class Step4 extends AjaxPage {
         String pwd = toString("password");
         if ((pwd != null) && pwd.length() > 0) {
             getContext().setSessionAttribute(
-                SetupConstants.USER_STORE_LOGIN_PWD, pwd);
+                SessionAttributeNames.USER_STORE_LOGIN_PWD, pwd);
         } else {
             responseString = "missing.password";            
         }
@@ -249,7 +260,7 @@ public class Step4 extends AjaxPage {
         if ((rootsuffix != null) && rootsuffix.length() > 0) {
             if (DN.isDN(rootsuffix)) {
                 getContext().setSessionAttribute(
-                    SetupConstants.USER_STORE_ROOT_SUFFIX, rootsuffix);
+                    SessionAttributeNames.USER_STORE_ROOT_SUFFIX, rootsuffix);
             } else {
                 responseString = "invalid.dn";            
             }
@@ -265,7 +276,7 @@ public class Step4 extends AjaxPage {
         String type = toString("type");
         if ((type != null) && type.length() > 0) {
             getContext().setSessionAttribute(
-                SetupConstants.USER_STORE_TYPE, type);
+                SessionAttributeNames.USER_STORE_TYPE, type);
         } 
         writeToResponse(responseString);
         setPath(null);
@@ -275,20 +286,20 @@ public class Step4 extends AjaxPage {
     public boolean validateUMHost() {
         Context ctx = getContext();
         String strSSL = (String)ctx.getSessionAttribute(
-            SetupConstants.USER_STORE_SSL);
+            SessionAttributeNames.USER_STORE_SSL);
         boolean ssl = (strSSL != null) && (strSSL.equals("SSL"));
              
         String host = (String)ctx.getSessionAttribute(
-            SetupConstants.USER_STORE_HOST);
+            SessionAttributeNames.USER_STORE_HOST);
         String strPort = (String)ctx.getSessionAttribute(
-            SetupConstants.USER_STORE_PORT);
+            SessionAttributeNames.USER_STORE_PORT);
         int port = Integer.parseInt(strPort);
         String bindDN = (String)ctx.getSessionAttribute(
-            SetupConstants.USER_STORE_LOGIN_ID);
+            SessionAttributeNames.USER_STORE_LOGIN_ID);
         String rootSuffix = (String)ctx.getSessionAttribute(
-            SetupConstants.USER_STORE_ROOT_SUFFIX);
+            SessionAttributeNames.USER_STORE_ROOT_SUFFIX);
         String bindPwd = (String)ctx.getSessionAttribute(
-            SetupConstants.USER_STORE_LOGIN_PWD);
+            SessionAttributeNames.USER_STORE_LOGIN_PWD);
         
         LDAPConnection ld = null;
         try {

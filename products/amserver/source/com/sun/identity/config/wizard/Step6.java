@@ -22,15 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step6.java,v 1.12 2008-06-25 05:42:42 qcheng Exp $
+ * $Id: Step6.java,v 1.13 2009-01-05 23:17:10 veiming Exp $
  *
  */
 package com.sun.identity.config.wizard;
 
+import com.sun.identity.config.SessionAttributeNames;
 import com.sun.identity.config.util.AjaxPage;
-import com.sun.identity.setup.SetupConstants;
 import net.sf.click.control.ActionLink;
-import net.sf.click.Context;
 
 /**
  * This is the first step in the advanced configuration flow.
@@ -45,13 +44,13 @@ public class Step6 extends AjaxPage {
     
     public void onInit() {     
         String agentPwd = (String)getContext().getSessionAttribute(
-            SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD);
+            SessionAttributeNames.CONFIG_VAR_AMLDAPUSERPASSWD);
         if (agentPwd != null) {
             addModel("agentPassword",agentPwd);
         }
         
         String confirmPwd = (String)getContext().getSessionAttribute(
-            SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD_CONFIRM);
+            SessionAttributeNames.CONFIG_VAR_AMLDAPUSERPASSWD_CONFIRM);
         if (confirmPwd != null) {
             addModel("agentConfirm", confirmPwd);
         }
@@ -63,7 +62,7 @@ public class Step6 extends AjaxPage {
         String agentPassword = toString("agent");
         String agentConfirm = toString("agentConfirm");
         String tmpadmin = (String)getContext().getSessionAttribute(
-            SetupConstants.CONFIG_VAR_ADMIN_PWD);
+            SessionAttributeNames.CONFIG_VAR_ADMIN_PWD);
          
         if (agentPassword == null || agentConfirm == null) {        
             writeInvalid(getLocalizedString("missing.required.field"));
@@ -76,7 +75,8 @@ public class Step6 extends AjaxPage {
         } else {
             writeValid("OK");
             getContext().setSessionAttribute(
-                SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD, agentPassword);              
+                SessionAttributeNames.CONFIG_VAR_AMLDAPUSERPASSWD,
+                agentPassword);
         }
         setPath(null);
         return false;

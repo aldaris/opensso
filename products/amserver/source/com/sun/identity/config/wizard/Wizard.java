@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Wizard.java,v 1.25 2008-09-04 00:34:00 rajeevangal Exp $
+ * $Id: Wizard.java,v 1.26 2009-01-05 23:17:10 veiming Exp $
  *
  */
 package com.sun.identity.config.wizard;
 
+import com.sun.identity.config.SessionAttributeNames;
 import com.sun.identity.config.util.AjaxPage;
 import com.sun.identity.setup.AMSetupServlet;
 import com.sun.identity.setup.ConfiguratorException;
@@ -78,7 +79,7 @@ public class Wizard extends AjaxPage {
          * value because they were validated in the input screen
          */
         String adminPassword = (String)getContext().getSessionAttribute(
-            SetupConstants.CONFIG_VAR_ADMIN_PWD);        
+            SessionAttributeNames.CONFIG_VAR_ADMIN_PWD);
         request.addParameter(
             SetupConstants.CONFIG_VAR_ADMIN_PWD, adminPassword);
         request.addParameter(
@@ -89,7 +90,7 @@ public class Wizard extends AjaxPage {
          * because they were validated in the input screen.
          */
         String agentPassword = (String)getContext().getSessionAttribute(
-            SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD);
+            SessionAttributeNames.CONFIG_VAR_AMLDAPUSERPASSWD);
         request.addParameter(
             SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD, agentPassword);
         request.addParameter(
@@ -166,31 +167,33 @@ public class Wizard extends AjaxPage {
             SetupConstants.CONFIG_VAR_DS_MGR_PWD, tmp);
                 
         // user store repository
-        tmp = (String)getContext().getSessionAttribute("EXT_DATA_STORE");
+        tmp = (String)getContext().getSessionAttribute(
+            SessionAttributeNames.EXT_DATA_STORE);
+
         if ((tmp != null) && tmp.equals("true")) {                       
             Map store = new HashMap(12);  
             tmp = (String)getContext().getSessionAttribute(
-                SetupConstants.USER_STORE_HOST);        
+                SessionAttributeNames.USER_STORE_HOST);        
             store.put(SetupConstants.USER_STORE_HOST, tmp);
             
             tmp = (String)getContext().getSessionAttribute(
-                SetupConstants.USER_STORE_SSL);        
+                SessionAttributeNames.USER_STORE_SSL);        
             store.put(SetupConstants.USER_STORE_SSL, tmp);            
 
             tmp = (String)getContext().getSessionAttribute(
-                SetupConstants.USER_STORE_PORT);
+                SessionAttributeNames.USER_STORE_PORT);
             store.put(SetupConstants.USER_STORE_PORT, tmp);
             tmp = (String)getContext().getSessionAttribute(
-                SetupConstants.USER_STORE_ROOT_SUFFIX);
+                SessionAttributeNames.USER_STORE_ROOT_SUFFIX);
             store.put(SetupConstants.USER_STORE_ROOT_SUFFIX, tmp);
             tmp = (String)getContext().getSessionAttribute(
-                SetupConstants.USER_STORE_LOGIN_ID);
+                SessionAttributeNames.USER_STORE_LOGIN_ID);
             store.put(SetupConstants.USER_STORE_LOGIN_ID, tmp);      
             tmp = (String)getContext().getSessionAttribute(
-                SetupConstants.USER_STORE_LOGIN_PWD);
+                SessionAttributeNames.USER_STORE_LOGIN_PWD);
             store.put(SetupConstants.USER_STORE_LOGIN_PWD, tmp);      
             tmp = (String)getContext().getSessionAttribute(
-                SetupConstants.USER_STORE_TYPE);
+                SessionAttributeNames.USER_STORE_TYPE);
             store.put(SetupConstants.USER_STORE_TYPE, tmp);
 
             request.addParameter("UserStore", store);
@@ -199,9 +202,9 @@ public class Wizard extends AjaxPage {
         // site configuration is passed as a map of the site information 
         Map siteConfig = new HashMap(5);
         String loadBalancerHost = (String)getContext().getSessionAttribute( 
-            SetupConstants.LB_SITE_NAME);
+            SessionAttributeNames.LB_SITE_NAME);
         String primaryURL = (String)getContext().getSessionAttribute(
-            SetupConstants.LB_PRIMARY_URL);
+            SessionAttributeNames.LB_PRIMARY_URL);
         if (loadBalancerHost != null) {
             siteConfig.put(SetupConstants.LB_SITE_NAME, loadBalancerHost);
             siteConfig.put(SetupConstants.LB_PRIMARY_URL, primaryURL);
@@ -221,34 +224,36 @@ public class Wizard extends AjaxPage {
             SetupConstants.CONFIG_VAR_SERVER_URL, 
             getAttribute("serverURL", req.getRequestURL().toString()));        
 
-        tmp = (String)getContext().getSessionAttribute("encryptionKey");
+        tmp = (String)getContext().getSessionAttribute(
+            SessionAttributeNames.ENCRYPTION_KEY);
         if (tmp == null) {
             tmp = AMSetupServlet.getRandomString();
         }
         request.addParameter(
             SetupConstants.CONFIG_VAR_ENCRYPTION_KEY, tmp);
-        tmp = (String)getContext().getSessionAttribute("ENCLDAPUSERPASSWD");
+        tmp = (String)getContext().getSessionAttribute(
+            SessionAttributeNames.ENCLDAPUSERPASSWD);
         if (tmp != null) {
             request.addParameter(
                 SetupConstants.ENCRYPTED_LDAP_USER_PWD, tmp);
         }
 
-        String cookie = 
-            (String)getContext().getSessionAttribute("cookieDomain");
+        String cookie = (String)getContext().getSessionAttribute(
+            SessionAttributeNames.COOKIE_DOMAIN);
         if (cookie == null) {
             cookie = getCookieDomain();
         }
         request.addParameter(SetupConstants.CONFIG_VAR_COOKIE_DOMAIN, cookie);       
         
-        String locale = 
-            (String)getContext().getSessionAttribute("platformLocale");
+        String locale = (String)getContext().getSessionAttribute(
+            SessionAttributeNames.PLATFORM_LOCALE);
         if (locale == null) {
             locale = SetupConstants.DEFAULT_PLATFORM_LOCALE;
         }
         request.addParameter(SetupConstants.CONFIG_VAR_PLATFORM_LOCALE, locale);
 
-        String base = 
-            (String)getContext().getSessionAttribute("configDirectory");
+        String base = (String)getContext().getSessionAttribute(
+            SessionAttributeNames.CONFIG_DIR);
         if (base == null) {
             base = getBaseDir(getContext().getRequest());
         }

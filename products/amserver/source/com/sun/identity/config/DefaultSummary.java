@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultSummary.java,v 1.12 2008-07-07 20:33:01 veiming Exp $
+ * $Id: DefaultSummary.java,v 1.13 2009-01-05 23:17:09 veiming Exp $
  *
  */
 package com.sun.identity.config;
@@ -52,14 +52,14 @@ public class DefaultSummary extends AjaxPage {
             new HttpServletResponseWrapper(getContext().getResponse());        
         
         String adminPassword = (String)getContext().getSessionAttribute(
-            SetupConstants.CONFIG_VAR_ADMIN_PWD);        
+            SessionAttributeNames.CONFIG_VAR_ADMIN_PWD);
         request.addParameter(
             SetupConstants.CONFIG_VAR_ADMIN_PWD, adminPassword);
         request.addParameter(
             SetupConstants.CONFIG_VAR_CONFIRM_ADMIN_PWD, adminPassword);
 
         String agentPassword = (String)getContext().getSessionAttribute(
-            SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD);
+            SessionAttributeNames.CONFIG_VAR_AMLDAPUSERPASSWD);
         request.addParameter(
             SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD, agentPassword);
         request.addParameter(

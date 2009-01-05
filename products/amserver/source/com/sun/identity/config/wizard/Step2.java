@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step2.java,v 1.12 2008-06-25 05:42:42 qcheng Exp $
+ * $Id: Step2.java,v 1.13 2009-01-05 23:17:10 veiming Exp $
  *
  */
 package com.sun.identity.config.wizard;
 
+import com.sun.identity.config.SessionAttributeNames;
 import com.sun.identity.config.util.AjaxPage;
 import com.sun.identity.setup.AMSetupServlet;
 import com.sun.identity.setup.SetupConstants;
@@ -41,19 +42,22 @@ public class Step2 extends AjaxPage {
     }
     
     public void onInit() {
-        String val = (String)getContext().getSessionAttribute("serverURL");
+        String val = (String)getContext().getSessionAttribute(
+            SessionAttributeNames.SERVER_URL);
         if (val == null) {
             val = getServerURL();
         }
         add("serverURL", val);
 
-        val = (String)getContext().getSessionAttribute("cookieDomain");
+        val = (String)getContext().getSessionAttribute(
+            SessionAttributeNames.COOKIE_DOMAIN);
         if (val == null) {
             val = getCookieDomain();
         }
         add("cookieDomain", val);
 
-        val = (String)getContext().getSessionAttribute("platformLocale");
+        val = (String)getContext().getSessionAttribute(
+            SessionAttributeNames.PLATFORM_LOCALE);
         if (val == null) {
             val = SetupConstants.DEFAULT_PLATFORM_LOCALE;
         }
@@ -64,7 +68,8 @@ public class Step2 extends AjaxPage {
         if ((presetDir == null) || (presetDir.trim().length() == 0)) {
             add("fixDir",
                 "onkeyup=\"APP.callDelayed(this, validateConfigDir)\"");
-            val = (String)getContext().getSessionAttribute("configDirectory");
+            val = (String)getContext().getSessionAttribute(
+                SessionAttributeNames.CONFIG_DIR);
             if (val == null) {
                 val = getBaseDir(getContext().getRequest());
             }
@@ -103,7 +108,8 @@ public class Step2 extends AjaxPage {
             writeToResponse(getLocalizedString(
                 "configuration.wizard.step2.no.write.permission.to.basedir"));
         } else {
-            getContext().setSessionAttribute("configDirectory", configDir);
+            getContext().setSessionAttribute(
+                SessionAttributeNames.CONFIG_DIR, configDir);
             writeToResponse("true");
         }
         setPath(null);        

@@ -22,13 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AjaxPage.java,v 1.22 2009-01-05 23:11:02 veiming Exp $
+ * $Id: AjaxPage.java,v 1.23 2009-01-05 23:17:10 veiming Exp $
  *
  */
 package com.sun.identity.config.util;
 
 import com.sun.identity.config.Configurator;
 import com.sun.identity.config.DummyConfigurator;
+import com.sun.identity.config.SessionAttributeNames;
 import com.sun.identity.setup.AMSetupServlet;
 import com.sun.identity.setup.SetupConstants;
 import com.sun.identity.shared.debug.Debug;
@@ -36,6 +37,7 @@ import com.sun.identity.shared.locale.Locale;
 import java.io.IOException;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import javax.servlet.http.HttpServletRequest;
@@ -51,7 +53,11 @@ public abstract class AjaxPage extends Page {
     
     public ActionLink validateInputLink =
         new ActionLink("validateInput", this, "validateInput" );
-
+    
+    public ActionLink resetSessionAttributesLink =
+        new ActionLink("resetSessionAttributes", this,
+        "resetSessionAttributes");
+    
     public static final String RESPONSE_TEMPLATE = "{\"valid\":\"${valid}\", \"body\":\"${body}\"}";
     public static final String OLD_RESPONSE_TEMPLATE = "{\"isValid\":${isValid}, \"errorMessage\":\"${errorMessage}\"}";
    
@@ -267,6 +273,24 @@ public abstract class AjaxPage extends Page {
         return false;
     }
     
+    public boolean resetSessionAttributes() {
+        try {
+            Field[] fields = SessionAttributeNames.class.getDeclaredFields();
+            for (int i = 0; i < fields.length; i++) {
+                try {
+                    getContext().removeSessionAttribute(
+                        (String)fields[i].get(null));
+                } catch (IllegalAccessException e) {
+                    //ingore
+                }
+            }
+        } catch (SecurityException e) {
+            writeToResponse(e.getMessage());
+        }
+        setPath(null);
+        return false;
+    }
+    
     public String getAttribute(String attr, String defaultValue) {
         String value = (String)getContext().getSessionAttribute(attr);
         return (value != null) ? value : defaultValue;
@@ -297,7 +321,7 @@ public abstract class AjaxPage extends Page {
             responseString = getLocalizedString("agent.admin.password.same");
         } else {            
             if (type.equals("agent")) {
-                type = SetupConstants.CONFIG_VAR_AMLDAPUSERPASSWD;               
+                type = SessionAttributeNames.CONFIG_VAR_AMLDAPUSERPASSWD;
             } else {
                 type = SetupConstants.CONFIG_VAR_ADMIN_PWD;
             }

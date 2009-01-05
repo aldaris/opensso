@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step3.java,v 1.34 2009-01-05 22:49:05 veiming Exp $
+ * $Id: Step3.java,v 1.35 2009-01-05 23:17:10 veiming Exp $
  *
  */
 package com.sun.identity.config.wizard;
@@ -30,6 +30,7 @@ package com.sun.identity.config.wizard;
 import com.iplanet.am.util.SSLSocketFactoryManager;
 import com.iplanet.services.util.Crypt;
 import com.sun.identity.common.configuration.ConfigurationException;
+import com.sun.identity.config.SessionAttributeNames;
 import com.sun.identity.setup.AMSetupServlet;
 import com.sun.identity.setup.BootstrapData;
 import com.sun.identity.setup.ConfiguratorException;
@@ -145,7 +146,7 @@ public class Step3 extends LDAPStoreWizardPage {
             type = SetupConstants.SMS_EMBED_DATASTORE;
         } 
         getContext().setSessionAttribute( 
-            SetupConstants.CONFIG_VAR_DATA_STORE, type);
+            SessionAttributeNames.CONFIG_VAR_DATA_STORE, type);
         return true;
     }
 
@@ -155,7 +156,7 @@ public class Step3 extends LDAPStoreWizardPage {
             type = SetupConstants.DS_EMP_REPL_FLAG_VAL;
         } 
         getContext().setSessionAttribute(
-            SetupConstants.DS_EMB_REPL_FLAG, type);
+            SessionAttributeNames.DS_EMB_REPL_FLAG, type);
         return true;
     }
 
@@ -168,7 +169,8 @@ public class Step3 extends LDAPStoreWizardPage {
             writeToResponse(getLocalizedString("invalid.dn"));
         } else {
             writeToResponse("true");
-            getContext().setSessionAttribute("rootSuffix", rootsuffix);
+            getContext().setSessionAttribute(
+                SessionAttributeNames.CONFIG_STORE_ROOT_SUFFIX, rootsuffix);
         }
         setPath(null);
         return false;    
@@ -186,7 +188,8 @@ public class Step3 extends LDAPStoreWizardPage {
                 if (val < 1 || val > 65535 ) {
                     writeToResponse(getLocalizedString("invalid.port.number"));
                 } else {
-                    getContext().setSessionAttribute("configStorePort", port);
+                    getContext().setSessionAttribute(
+                        SessionAttributeNames.CONFIG_STORE_PORT, port);
                     writeToResponse("ok");
                 }
             } catch (NumberFormatException e) {
@@ -207,7 +210,8 @@ public class Step3 extends LDAPStoreWizardPage {
         if (key == null) {
             writeToResponse(getLocalizedString("missing.required.field"));
         } else {
-            getContext().setSessionAttribute("encryptionKey", key);
+            getContext().setSessionAttribute(
+                SessionAttributeNames.ENCRYPTION_KEY, key);
             if (key.length() < 10) {
                 writeToResponse(getLocalizedString("enc.key.need.10.chars"));
             } else {
@@ -244,7 +248,7 @@ public class Step3 extends LDAPStoreWizardPage {
             // try to retrieve the remote OpenSSO information
             String admin = "amadmin";
             String password = (String)getContext().getSessionAttribute(
-                SetupConstants.CONFIG_VAR_ADMIN_PWD);
+                SessionAttributeNames.CONFIG_VAR_ADMIN_PWD);
             
             try { 
                 String dsType;
@@ -259,10 +263,12 @@ public class Step3 extends LDAPStoreWizardPage {
                     setupDSParams(data);
                     
                     String key = (String)data.get("enckey");
-                    getContext().setSessionAttribute("encryptionKey",key);
+                    getContext().setSessionAttribute(
+                        SessionAttributeNames.ENCRYPTION_KEY, key);
 
-                    getContext().setSessionAttribute("ENCLDAPUSERPASSWD",
-                         (String)data.get("ENCLDAPUSERPASSWD"));
+                    getContext().setSessionAttribute(
+                        SessionAttributeNames.ENCLDAPUSERPASSWD,
+                        (String)data.get("ENCLDAPUSERPASSWD"));
                     
                     // true for embedded, false for sunds
                     String embedded = 
@@ -272,16 +278,17 @@ public class Step3 extends LDAPStoreWizardPage {
 
                     if (embedded.equals("true")) {
                         getContext().setSessionAttribute(
-                            "configStoreHost", getHostName());
+                            SessionAttributeNames.CONFIG_STORE_HOST,
+                            getHostName());
                         addObject(sb, "configStoreHost", "localhost");
 
                         // set the multi embedded flag 
                         getContext().setSessionAttribute(
-                            SetupConstants.CONFIG_VAR_DATA_STORE, 
+                            SessionAttributeNames.CONFIG_VAR_DATA_STORE, 
                             SetupConstants.SMS_EMBED_DATASTORE); 
                         
                         getContext().setSessionAttribute(
-                            SetupConstants.DS_EMB_REPL_FLAG,
+                            SessionAttributeNames.DS_EMB_REPL_FLAG,
                             SetupConstants.DS_EMP_REPL_FLAG_VAL); 
       
                         // get the existing replication ports if any
@@ -294,37 +301,39 @@ public class Step3 extends LDAPStoreWizardPage {
                         String existingRep = (String)data.get(
                             BootstrapData.DS_REPLICATIONPORT);
                         getContext().setSessionAttribute(
-                            "existingRepPort", existingRep);
+                            SessionAttributeNames.EXISTING_REPL_PORT,
+                            existingRep);
                         addObject(sb, "replicationPort", existingRep);
 
                         String existingServerid = (String)data.get(
                             "existingserverid");
                         getContext().setSessionAttribute(
-                            "existingserverid", existingServerid);
+                            SessionAttributeNames.EXISTING_SERVER_ID,
+                            existingServerid);
                         addObject(sb, "existingserverid", existingServerid);
 
                         // dsmgr password is same as amadmin for embedded
                         getContext().setSessionAttribute(
-                            "configStorePassword", password);     
-
+                            SessionAttributeNames.CONFIG_STORE_PWD, password);
                     } else {
-                        getContext().setSessionAttribute("configStorePort", 
-                            (String) data.get(BootstrapData.DS_PORT));
                         getContext().setSessionAttribute(
-                            "configStoreHost", host);   
+                            SessionAttributeNames.CONFIG_STORE_PORT, 
+                            (String)data.get(BootstrapData.DS_PORT));
+                        getContext().setSessionAttribute(
+                            SessionAttributeNames.CONFIG_STORE_HOST, host);   
                         addObject(sb, "configStoreHost", host);
 
                         String dsprot = (String)data.get(
                             BootstrapData.DS_PROTOCOL);
                         String dsSSL = ("ldaps".equals(dsprot)) ?
                            "SSL" : "SIMPLE";
-                        getContext().setSessionAttribute("configStoreSSL",
-                            dsSSL);
+                        getContext().setSessionAttribute(
+                            SessionAttributeNames.CONFIG_STORE_SSL, dsSSL);
                         addObject(sb, "configStoreSSL", dsSSL);
                         
                         String dspwd = (String)data.get(BootstrapData.DS_PWD);
                         getContext().setSessionAttribute(
-                            "configStorePassword", 
+                            SessionAttributeNames.CONFIG_STORE_PWD,
                             Crypt.decode(dspwd, Crypt.getHardcodedKeyEncryptor()
                             ));
                     }
@@ -334,24 +343,25 @@ public class Step3 extends LDAPStoreWizardPage {
                     String existing = (String)data.get(
                         BootstrapData.DS_PORT);
                     getContext().setSessionAttribute(
-                        "existingPort", existing);
+                        SessionAttributeNames.EXISTING_PORT, existing);
                     addObject(sb, "existingPort", existing);
 
                     // set the configuration store port
                     getContext().setSessionAttribute(
-                        "existingStorePort", existing);   
+                        SessionAttributeNames.EXISTING_STORE_PORT, existing);   
                     addObject(sb, "existingStorePort", existing);
                     
-                    getContext().setSessionAttribute("existingHost",host);
+                    getContext().setSessionAttribute(
+                        SessionAttributeNames.EXISTING_HOST, host);
 
                     // set the configuration store host
                     getContext().setSessionAttribute(
-                        "existingStoreHost", host);   
+                        SessionAttributeNames.EXISTING_STORE_HOST, host);
                     addObject(sb, "existingStoreHost", host);
 
                     // set the configuration store port
                     getContext().setSessionAttribute(
-                        "localRepPort", localRepPort);
+                        SessionAttributeNames.LOCAL_REPL_PORT, localRepPort);
                 }
             } catch (ConfigurationException c) {
                 String code = c.getErrorCode();
@@ -401,38 +411,48 @@ public class Step3 extends LDAPStoreWizardPage {
      */
     private void setupDSParams(Map data) {             
         String tmp = (String)data.get(BootstrapData.DS_BASE_DN);
-        getContext().setSessionAttribute("rootSuffix", tmp);        
+        getContext().setSessionAttribute(
+            SessionAttributeNames.CONFIG_STORE_ROOT_SUFFIX, tmp);
         
         tmp = (String)data.get(BootstrapData.DS_MGR);
-        getContext().setSessionAttribute("configStoreLoginId", tmp);        
+        getContext().setSessionAttribute(
+            SessionAttributeNames.CONFIG_STORE_LOGIN_ID, tmp);
         
         tmp = (String)data.get(BootstrapData.DS_PWD);
-        getContext().setSessionAttribute("configStorePassword", tmp);
+        getContext().setSessionAttribute(
+            SessionAttributeNames.CONFIG_STORE_PWD, tmp);
        
         getContext().setSessionAttribute(
-            SetupConstants.CONFIG_VAR_DATA_STORE, 
+            SessionAttributeNames.CONFIG_VAR_DATA_STORE, 
             SetupConstants.SMS_DS_DATASTORE);    
     }
 
     public boolean validateSMHost() {
         Context ctx = getContext();
-        String strSSL = (String)ctx.getSessionAttribute("configStoreSSL");
+        String strSSL = (String)ctx.getSessionAttribute(
+            SessionAttributeNames.CONFIG_STORE_SSL);
         boolean ssl = (strSSL != null) && (strSSL.equals("SSL"));
 
-        String host = (String)ctx.getSessionAttribute("configStoreHost");
+        String host = (String)ctx.getSessionAttribute(
+            SessionAttributeNames.CONFIG_STORE_HOST);
         if (host == null) {
             host = "localhost";
         }
 
-        String strPort = (String)ctx.getSessionAttribute("configStorePort");
+        String strPort = (String)ctx.getSessionAttribute(
+            SessionAttributeNames.CONFIG_STORE_PORT);
         if (strPort == null) {
             strPort = getAvailablePort(50389);
         }
 
         int port = Integer.parseInt(strPort);
-        String bindDN = (String)ctx.getSessionAttribute("configStoreLoginId");
-        String rootSuffix = (String)ctx.getSessionAttribute("rootSuffix");
-        String bindPwd = (String)ctx.getSessionAttribute("configStorePassword");
+
+        String bindDN = (String)ctx.getSessionAttribute(
+            SessionAttributeNames.CONFIG_STORE_LOGIN_ID);
+        String rootSuffix = (String)ctx.getSessionAttribute(
+            SessionAttributeNames.CONFIG_STORE_ROOT_SUFFIX);
+        String bindPwd = (String)ctx.getSessionAttribute(
+            SessionAttributeNames.CONFIG_STORE_PWD);
 
         if (bindDN == null) {
             bindDN = "cn=Directory Manager";
