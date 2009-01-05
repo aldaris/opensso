@@ -141,8 +141,9 @@
     }
 
     function renderDefaultSummary() {
-        YAHOO.sun.identity.config.options.defaultSummary = new YAHOO.widget.Panel("defaultSummary", { width:"450px", fixedcenter: true, modal: true, close: true, visible:false, constraintoviewport:true });
+        YAHOO.sun.identity.config.options.defaultSummary = new YAHOO.widget.Panel("defaultSummary", { width:"450px", fixedcenter: false, modal: true, close: true, visible:false, constraintoviewport:false });
         YAHOO.sun.identity.config.options.defaultSummary.render();
+        YAHOO.sun.identity.config.options.defaultSummary.center();
     }
     
     
@@ -166,8 +167,9 @@
         YAHOO.sun.identity.config.options.wizard.show();
     }
     function renderWizard() {
-        YAHOO.sun.identity.config.options.wizard = new YAHOO.widget.Panel("wizard", { fixedcenter: true, modal: true, close: true, visible:false, constraintoviewport:true });
+        YAHOO.sun.identity.config.options.wizard = new YAHOO.widget.Panel("wizard", { fixedcenter: false, modal: true, close: true, visible:false, constraintoviewport:true });
         YAHOO.sun.identity.config.options.wizard.render();
+        YAHOO.sun.identity.config.options.wizard.center();
     }
     
     function setOption( inOption ) {
@@ -210,11 +212,13 @@
     }   
 
     function init() {
-        YAHOO.sun.identity.config.options.inProgress = new YAHOO.widget.Panel("inProgress", { width:"700px", fixedcenter: true, modal:true, close: false, visible:false, constraintoviewport:true });
+        YAHOO.sun.identity.config.options.inProgress = new YAHOO.widget.Panel("inProgress", { width:"700px", fixedcenter: false, modal:true, close: false, visible:false, constraintoviewport:true });
         YAHOO.sun.identity.config.options.inProgress.render();
+        YAHOO.sun.identity.config.options.inProgress.center();
         
-        YAHOO.sun.identity.config.options.confComplete = new YAHOO.widget.Panel("confComplete", { fixedcenter: true, modal:true, close: false, visible:false, constraintoviewport:true });
+        YAHOO.sun.identity.config.options.confComplete = new YAHOO.widget.Panel("confComplete", { fixedcenter: false, modal:true, close: false, visible:false, constraintoviewport:true });
         YAHOO.sun.identity.config.options.confComplete.render();
+        YAHOO.sun.identity.config.options.confComplete.center();
         /* #if ( $upgrade )
          */
         YAHOO.sun.identity.config.options.confirmUpgrade = new YAHOO.widget.Panel("confirmUpgrade", { fixedcenter: true, modal: true, close: false, visible:false, constraintoviewport:true });
