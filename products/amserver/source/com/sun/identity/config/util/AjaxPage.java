@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AjaxPage.java,v 1.21 2008-07-15 21:40:21 veiming Exp $
+ * $Id: AjaxPage.java,v 1.22 2009-01-05 23:11:02 veiming Exp $
  *
  */
 package com.sun.identity.config.util;
@@ -154,12 +154,7 @@ public abstract class AjaxPage extends Page {
             (HttpServletResponse)getContext().getResponse();
 
         setLocale(req);
-        try {
-            req.setCharacterEncoding("UTF-8");
-            res.setContentType("text/html; charset=UTF-8");
-        } catch (UnsupportedEncodingException uee) {
-            //Do nothing.
-        }
+        res.setContentType("text/html; charset=UTF-8");
     }
 
     private void setLocale (HttpServletRequest request) {

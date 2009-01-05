@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<click-app>
+<click-app charset="UTF-8">
     <pages package="com.sun.identity">
         <!-- the following are all the URL patterns that exist in the OpenSSO
              .war, but are NOT handled by click.  They are, for all intents and
