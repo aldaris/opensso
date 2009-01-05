@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: validatorMain.jsp,v 1.4 2008-10-29 03:11:55 veiming Exp $
+   $Id: validatorMain.jsp,v 1.5 2009-01-05 23:23:25 veiming Exp $
 
 --%>
 
@@ -30,17 +30,19 @@
 <%@ page import="com.sun.identity.shared.Constants" %>
 <%@ page import="com.sun.identity.workflow.ValidateSAML2" %>
 <%@ page import="java.net.URLEncoder" %>
+<%@ page contentType="text/html; charset=utf-8" language="java" %>
 
 <%
     String deployuri = SystemConfigurationUtil.getProperty(
         Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
 
-    String pageTitle = ValidateSAML2.getMessage("federation.connectivity.test");
-    String cancelButton = ValidateSAML2.getMessage("button.cancel");
+    String locale = request.getParameter("locale");
+    String pageTitle = ValidateSAML2.getMessage(
+        "federation.connectivity.test", locale);
+    String cancelButton = ValidateSAML2.getMessage("button.cancel", locale);
 %>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <link rel="stylesheet" type="text/css" href="<%= deployuri %>/com_sun_web_ui/css/css_ns6up.css" />
 <link rel="shortcut icon" href="<%= deployuri %>/com_sun_web_ui/images/favicon/favicon.ico" type="image/x-icon"></link>
 <link rel="stylesheet" type="text/css" href="<%= deployuri %>/console/css/opensso.css" />
@@ -86,7 +88,7 @@
 </center>
 <div><img src="<%= deployuri %>/com_sun_web_ui/images/other/dot.gif" alt="" border="0" height="10" width="1" /></div>
 
-<iframe src ="validatorFooter.jsp" width="100%" height="40" name="footer" frameborder=0></iframe>
+<iframe src ="validatorFooter.jsp?m=" width="100%" height="40" name="footer" frameborder=0></iframe>
 
 <script language="Javascript">
 var accLinkTimer;
@@ -114,9 +116,8 @@ function onLoad() {
     String cot = request.getParameter("cot");
     String idp = request.getParameter("idp");
     String sp = request.getParameter("sp");
-    String msgInitializing = ValidateSAML2.getMessage("validate.initializing");
-    out.println("frames['worker'].location = 'validateWait.jsp?m=" +
-        URLEncoder.encode(msgInitializing) + "';");
+    out.println("frames['worker'].location = 'validateWait.jsp?locale=" +
+        locale + "&m=" + URLEncoder.encode("validate.initializing") + "';");
 %>
     startTest();
 }
@@ -133,6 +134,7 @@ function startTest() {
 <%
     out.println("frames['controller'].location = 'validator.jsp?" +
         "realm=" + URLEncoder.encode(realm) +
+        "&locale=" + locale +
         "&cot=" + URLEncoder.encode(cot) +
         "&idp=" + URLEncoder.encode(idp) +
         "&sp=" + URLEncoder.encode(sp) + "';");

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: validator.jsp,v 1.4 2008-10-29 03:11:54 veiming Exp $
+   $Id: validator.jsp,v 1.5 2009-01-05 23:23:25 veiming Exp $
 
 --%>
 
@@ -34,10 +34,10 @@
 <%@ page import="java.text.MessageFormat" %>
 <%@ page import="java.util.Locale" %>
 <%@ page import="java.util.ResourceBundle" %>
+<%@ page contentType="text/html; charset=utf-8" language="java" %>
 
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 
 <%
     String deployuri = SystemConfigurationUtil.getProperty(
@@ -55,51 +55,54 @@
     String cot = request.getParameter("cot");
     String idp = request.getParameter("idp");
     String sp = request.getParameter("sp");
+    String locale = request.getParameter("locale");
     String setupFailedTitle = "";
     String setupError = "";
 
     String authIDPTitle = "";
     String authIDPPassed = ValidateSAML2.getMessage(
-        "validate.help.auth.idp.passed");
+        "validate.help.auth.idp.passed", locale);
     String authIDPFailed = ValidateSAML2.getMessage(
-        "validate.help.auth.idp.failed");
-    String authIDPAgain = ValidateSAML2.getMessage("validate.auth.idp.again");
+        "validate.help.auth.idp.failed", locale);
+    String authIDPAgain = ValidateSAML2.getMessage(
+        "validate.auth.idp.again", locale);
 
     String authSPTitle = "";
     String authSPPassed = ValidateSAML2.getMessage(
-        "validate.help.auth.sp.passed");
+        "validate.help.auth.sp.passed", locale);
     String authSPFailed = ValidateSAML2.getMessage(
-        "validate.help.auth.sp.failed");
-    String authSPAgain = ValidateSAML2.getMessage("validate.auth.sp.again");
+        "validate.help.auth.sp.failed", locale);
+    String authSPAgain = ValidateSAML2.getMessage(
+        "validate.auth.sp.again", locale);
 
     String accLinkTitle = ValidateSAML2.getMessage(
-        "validate.title.account.linking");
+        "validate.title.account.linking", locale);
     String accLinkPassed = ValidateSAML2.getMessage(
-        "validate.help.account.linking.passed");
+        "validate.help.account.linking.passed", locale);
     String accLinkFailed = ValidateSAML2.getMessage(
-        "validate.help.account.linking.failed");
+        "validate.help.account.linking.failed", locale);
 
     String sloTitle = ValidateSAML2.getMessage(
-        "validate.title.single.logout");
+        "validate.title.single.logout", locale);
     String sloPassed = ValidateSAML2.getMessage(
-        "validate.help.single.logout.passed");
+        "validate.help.single.logout.passed", locale);
     String sloFailed = ValidateSAML2.getMessage(
-        "validate.help.single.logout.failed");
+        "validate.help.single.logout.failed", locale);
 
     String ssoTitle = "";
     String ssoPassed = ValidateSAML2.getMessage(
-        "validate.help.single.login.passed");
+        "validate.help.single.login.passed", locale);
     String ssoFailed = ValidateSAML2.getMessage(
-        "validate.help.single.login.failed");
+        "validate.help.single.login.failed", locale);
     String ssoAgain = ValidateSAML2.getMessage(
-        "validate.help.single.login.again");
+        "validate.help.single.login.again", locale);
 
     String accTermTitle = ValidateSAML2.getMessage(
-        "validate.title.account.termination");
+        "validate.title.account.termination", locale);
     String accTermPassed = ValidateSAML2.getMessage(
-        "validate.help.account.termination.passed");
+        "validate.help.account.termination.passed", locale);
     String accTermFailed = ValidateSAML2.getMessage(
-        "validate.help.account.termination.failed");
+        "validate.help.account.termination.failed", locale);
 
     ValidateSAML2 validator = null;
 
@@ -108,25 +111,25 @@
         {
             Object[] param = {validator.getIDPEntityId()};
             authIDPTitle = MessageFormat.format(validator.getMessage(
-                "validate.title.auth.idp"), param);
+                "validate.title.auth.idp", locale), param);
         }
         {
             Object[] param = {validator.getSPEntityId()};
             authSPTitle = MessageFormat.format(validator.getMessage(
-                "validate.title.auth.sp"), param);
+                "validate.title.auth.sp", locale), param);
         }
         if (validator.isIDPHosted()) {
             Object[] param = {validator.getIDPEntityId()};
             ssoTitle = MessageFormat.format(validator.getMessage(
-                "validate.title.single.login_hosted"), param);
+                "validate.title.single.login_hosted", locale), param);
         } else {
             Object[] param = {validator.getSPEntityId()};
             ssoTitle = MessageFormat.format(validator.getMessage(
-                "validate.title.single.login_remote"), param);
+                "validate.title.single.login_remote", locale), param);
         }
     } catch (WorkflowException e) {
         setupFailedTitle = ValidateSAML2.getMessage(
-            "validate.title.setup.failed");
+            "validate.title.setup.failed", locale);
         setupError = e.getL10NMessage(Locale.getDefault());
     }
 %>
@@ -187,8 +190,7 @@ function authIdp() {
             "/validatorStatus.jsp?s=idpauth&v=1") +
             "&gotoOnFail=" + URLEncoder.encode(serverURL +
             "/validatorStatus.jsp?s=idpauth&v=-1") + "');");
-        out.println("top.showFooter(\"" + ValidateSAML2.getMessage(
-            "validate.footer.auth.idp") + "\");");
+        out.println("top.showFooter('validate.footer.auth.idp');");
     }
 %>
     window.scrollTo(0, 0);
@@ -223,8 +225,7 @@ function authSp() {
             "/validatorStatus.jsp?s=spauth&v=1") +
             "&gotoOnFail=" + URLEncoder.encode(serverURL +
             "/validatorStatus.jsp?s=spauth&v=-1") + "');");
-        out.println("top.showFooter(\"" + ValidateSAML2.getMessage(
-            "validate.footer.auth.sp") + "\");");
+        out.println("top.showFooter('validate.footer.auth.sp');");
     }
 %>
     window.scrollTo(0, 50);
@@ -252,15 +253,13 @@ function accountLinking() {
     document.getElementById('accLinkProcessing').style.display = '';
 <%
     if ((validator != null) && !validator.isFedlet()) {
-        out.println("top.gotoURL('validateWait.jsp?m=" +
-            URLEncoder.encode(
-                ValidateSAML2.getMessage("validate.wait.account.linking"))
-            + "');");
+        out.println("top.gotoURL('validateWait.jsp?locale=" + locale + "&m=" +
+            URLEncoder.encode("validate.wait.account.linking") +
+            "');");
         out.println("top.gotoHiddenFrame1('" + validator.getSSOURL() +
             "&RelayState=" + URLEncoder.encode(serverURL +
             "/validatorStatus.jsp?s=acclink&v=1") + "');");
-        out.println("top.showFooter(\"" + ValidateSAML2.getMessage(
-            "validate.footer.account.linking") + "\");");
+        out.println("top.showFooter('validate.footer.account.linking');");
     }
 %>
     window.scrollTo(0, 150);
@@ -290,15 +289,12 @@ function singleLogout() {
     document.getElementById('sloProcessing').style.display = '';
 <%
     if ((validator != null) && !validator.isFedlet()) {
-        out.println("top.gotoURL('validateWait.jsp?m=" +
-            URLEncoder.encode(
-                ValidateSAML2.getMessage("validate.wait.single.logout"))
-            + "');");
+        out.println("top.gotoURL('validateWait.jsp?locale=" + locale + "&m=" +
+            URLEncoder.encode("validate.wait.single.logout") + "');");
         out.println("top.gotoHiddenFrame1('" + validator.getSLOURL() +
             "&RelayState=" + URLEncoder.encode(serverURL +
             "/validatorStatus.jsp?s=slo&v=1") + "');");
-        out.println("top.showFooter(\"" + ValidateSAML2.getMessage(
-            "validate.footer.single.logout") + "\");");
+        out.println("top.showFooter('validate.footer.single.logout');");
     }
 %>
     window.scrollTo(0, 200);
@@ -332,8 +328,7 @@ function singleLogin() {
         out.println("top.gotoURL('" + validator.getSSOURL() +
             "&RelayState=" + URLEncoder.encode(serverURL +
             "/validatorStatus.jsp?s=sso&v=1&sendRedirectForValidationNow=true") + "');");
-        out.println("top.showFooter(\"" + ValidateSAML2.getMessage(
-            "validate.footer.single.login") + "\");");
+        out.println("top.showFooter('validate.footer.single.login');");
     }
 %>
     window.scrollTo(0, 250);
@@ -373,6 +368,8 @@ function getReport() {
         url += '&accterm=' + statusAccTerm;
     }
 
+    url += "&locale=<%= locale %>";
+
     top.gotoURL(url);
 }
 
@@ -399,7 +396,7 @@ function ssoFailed() {
     document.getElementById('ssoFailed').style.display = '';
     top.showFooter('');
     statusSSO = 0;
-    top.gotoURL("validatorAuthFail.jsp?m=sso");
+    top.gotoURL("validatorAuthFail.jsp?m=sso&locale=<%= locale %>");
 }
 
 function accTermPassed() {
@@ -424,16 +421,13 @@ function accTermination() {
     document.getElementById('accTermProcessing').style.display = '';
 <%
     if (validator != null) {
-        out.println("top.gotoURL('validateWait.jsp?m=" +
-            URLEncoder.encode(
-                ValidateSAML2.getMessage("validate.wait.account.termination"))
-            + "');");
+        out.println("top.gotoURL('validateWait.jsp?locale=" + locale + "&m=" +
+            URLEncoder.encode("validate.wait.account.termination") + "');");
         out.println("top.gotoHiddenFrame1('" +
             validator.getAccountTerminationURL() +
             "&RelayState=" + URLEncoder.encode(serverURL +
                 "/validatorStatus.jsp?s=accTerm&v=1") + "');");
-        out.println("top.showFooter(\"" + ValidateSAML2.getMessage(
-            "validate.footer.account.termination") + "\");");
+        out.println("top.showFooter('validate.footer.account.termination');");
     }
 %>
     window.scrollTo(0, 250);

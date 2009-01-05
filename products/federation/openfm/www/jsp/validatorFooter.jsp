@@ -22,28 +22,28 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: validatorFooter.jsp,v 1.5 2008-11-20 17:18:03 babysunil Exp $
+   $Id: validatorFooter.jsp,v 1.6 2009-01-05 23:23:25 veiming Exp $
 
 --%>
 
 <%@ page import="com.sun.identity.common.SystemConfigurationUtil" %>
-<%@ page import="com.sun.identity.console.base.model.AMAdminConstants" %>
 <%@ page import="com.sun.identity.shared.Constants" %>
-<%@ page import="java.util.ResourceBundle" %>
+<%@ page import="com.sun.identity.workflow.ValidateSAML2" %>
+<%@ page contentType="text/html; charset=utf-8" language="java" %>
 
 <%
     String deployuri = SystemConfigurationUtil.getProperty(
         Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
     String msg = request.getParameter("m");
-    
-     ResourceBundle rb = ResourceBundle.getBundle(AMAdminConstants.DEFAULT_RB,
-         request.getLocale());
+    String locale = request.getParameter("locale");
+    String backLoginBtnLabel = ValidateSAML2.getMessage(
+        "button.backtoLogin", locale);
+    String message = ((msg != null) && (msg.length() > 0)) ?
+        ValidateSAML2.getMessage(msg, locale) : null;
 %>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <link rel="stylesheet" type="text/css" href="<%= deployuri %>/com_sun_web_ui/css/css_ns6up.css" />
-<link rel="shortcut icon" href="<%= deployuri %>/com_sun_web_ui/images/favicon/favicon.ico" type="image/x-icon"></link>
 <link rel="stylesheet" type="text/css" href="<%= deployuri %>/console/css/opensso.css" />
 </head>
 <body class="DefBdy">
@@ -53,13 +53,13 @@
 <td width="10"></td>
 <td align="left">
 <%
-    if (msg != null) {
-        out.println(msg);
+    if (message != null) {
+        out.println(message);
     }
 %>
 </td>
 <td align="right" nowrap="nowrap" valign="bottom">
-<div class="TtlBtnDiv"> <input name="btnBacktoLogin" type="submit" class="Btn1" value="<%= rb.getString("button.backtoLogin")%>" onmouseover="javascript: this.className='Btn1Hov'" onmouseout="javascript: this.className='Btn1'" onblur="javascript: this.className='Btn1'" onfocus="javascript: this.className='Btn1Hov'" onClick="top.cancelOp();return false;"/>
+<div class="TtlBtnDiv"> <input name="btnBacktoLogin" type="submit" class="Btn1" value="<%= backLoginBtnLabel %>" onmouseover="javascript: this.className='Btn1Hov'" onmouseout="javascript: this.className='Btn1'" onblur="javascript: this.className='Btn1'" onfocus="javascript: this.className='Btn1Hov'" onClick="top.cancelOp();return false;"/>
 </div>
 </td>
 <td width="10"></td>

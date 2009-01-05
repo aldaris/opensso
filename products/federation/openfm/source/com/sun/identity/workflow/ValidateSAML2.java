@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ValidateSAML2.java,v 1.2 2008-06-25 05:50:03 qcheng Exp $
+ * $Id: ValidateSAML2.java,v 1.3 2009-01-05 23:23:24 veiming Exp $
  *
  */
 
@@ -37,6 +37,7 @@ import com.sun.identity.saml2.jaxb.metadata.SingleLogoutServiceElement;
 import com.sun.identity.saml2.jaxb.metadata.SingleSignOnServiceElement;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
+import com.sun.identity.shared.locale.Locale;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -61,8 +62,6 @@ public class ValidateSAML2 {
     private String spBaseURL;
 
     private boolean bFedlet = false;
-    private static ResourceBundle rb = ResourceBundle.getBundle(
-        "workflowMessages");
     
     public ValidateSAML2(String realm, String idp, String sp) 
         throws WorkflowException {
@@ -238,8 +237,10 @@ public class ValidateSAML2 {
         }
     }
 
-    public static String getMessage(String key) {
+    public static String getMessage(String key, String locale) {
         try {
+            ResourceBundle rb = ResourceBundle.getBundle(
+                "workflowMessages", Locale.getLocale(locale));
             return rb.getString(key);
         } catch (MissingResourceException e) {
             return key;

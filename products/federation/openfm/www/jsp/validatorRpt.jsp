@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: validatorRpt.jsp,v 1.3 2008-10-29 03:11:55 veiming Exp $
+   $Id: validatorRpt.jsp,v 1.4 2009-01-05 23:23:25 veiming Exp $
 
 --%>
 
@@ -32,10 +32,10 @@
 <%@ page import="com.sun.identity.workflow.WorkflowException" %>
 <%@ page import="java.net.URLEncoder" %>
 <%@ page import="java.text.MessageFormat" %>
+<%@ page contentType="text/html; charset=utf-8" language="java" %>
 
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 
 <%
     String deployuri = SystemConfigurationUtil.getProperty(
@@ -68,6 +68,8 @@
     String accterm = request.getParameter("accterm");
     boolean bAccTerm = (accterm != null) && (accterm.length() > 0);
     boolean bAccTermPassed = bAccTerm && accterm.equals("1");
+
+    String locale = request.getParameter("locale");
 %>
 
 <link rel="stylesheet" type="text/css" href="<%= deployuri %>/com_sun_web_ui/css/css_ns6up.css" />
@@ -86,7 +88,7 @@
 <td bgcolor="#949ea5">
 <%
     out.print("<div class=\"ConFldSetLgdDiv\" style=\"color:#FFFFFF\">&#160;");
-    out.print(ValidateSAML2.getMessage("validate.report.title"));
+    out.print(ValidateSAML2.getMessage("validate.report.title", locale));
     out.print("</div>");
 %>
 </td>
@@ -108,7 +110,8 @@
         <tr>
         <td width="1%" nowrap><b>
         <%
-            out.println(ValidateSAML2.getMessage("validate.report.task.label.idp"));
+            out.println(ValidateSAML2.getMessage(
+                "validate.report.task.label.idp", locale));
         %>
         :</b></td>
 
@@ -119,10 +122,10 @@
         <%
             if (bFedlet) {
                 out.print("<b>" + ValidateSAML2.getMessage(
-                    "validate.report.task.label.fedlet") + ":</b>");
+                    "validate.report.task.label.fedlet", locale) + ":</b>");
             } else {
                 out.print("<b>" + ValidateSAML2.getMessage(
-                    "validate.report.task.label.sp") + ":</b>");
+                    "validate.report.task.label.sp", locale) + ":</b>");
             }
         %>
         </td>
@@ -152,70 +155,70 @@
         <tr style="background-color:#e9ecee">
 <%
         out.println("<th width=\"1%\">" +
-            ValidateSAML2.getMessage("validate.report.tbl.hdr.test") +
+            ValidateSAML2.getMessage("validate.report.tbl.hdr.test", locale) +
             "</th>");
         out.println("<th width=\"99%\">" +
-            ValidateSAML2.getMessage("validate.report.tbl.hdr.result") +
+            ValidateSAML2.getMessage("validate.report.tbl.hdr.result", locale) +
             "</th>");
         out.println("</tr>");
 
     if (!bFedlet) {
         out.println("<tr style=\"background-color:#FFFFFF\">");
         out.println("<td nowrap=\"true\">" +
-            ValidateSAML2.getMessage("validate.report.task.auth.idp") +
+            ValidateSAML2.getMessage("validate.report.task.auth.idp", locale) +
             "</td>");
         if (bAuthidp) {
             if (bAuthidpPassed) {
-                out.println("<td>" + ValidateSAML2.getMessage("validator.report.auth.idp.passed") + "</td>");
+                out.println("<td>" + ValidateSAML2.getMessage("validator.report.auth.idp.passed", locale) + "</td>");
             } else {
-                out.println("<td>" + ValidateSAML2.getMessage("validator.report.auth.idp.failed") + "</td>");
+                out.println("<td>" + ValidateSAML2.getMessage("validator.report.auth.idp.failed", locale) + "</td>");
             }
         } else {
-            out.println("<td>" + ValidateSAML2.getMessage("validator.report.auth.idp.not.tested") + "</td>");
+            out.println("<td>" + ValidateSAML2.getMessage("validator.report.auth.idp.not.tested", locale) + "</td>");
         }
         out.println("</tr>");
 
         out.println("<tr style=\"background-color:#FFFFFF\">");
         out.println("<td nowrap=\"true\">" +
-            ValidateSAML2.getMessage("validate.report.task.auth.sp") + "</td>");
+            ValidateSAML2.getMessage("validate.report.task.auth.sp", locale) + "</td>");
         if (bAuthsp) {
             if (bAuthspPassed) {
-                out.println("<td>" + ValidateSAML2.getMessage("validator.report.auth.sp.passed") + "</td>");
+                out.println("<td>" + ValidateSAML2.getMessage("validator.report.auth.sp.passed", locale) + "</td>");
             } else {
-                out.println("<td>" + ValidateSAML2.getMessage("validator.report.auth.sp.failed") + "</td>");
+                out.println("<td>" + ValidateSAML2.getMessage("validator.report.auth.sp.failed", locale) + "</td>");
             }
         } else {
-            out.println("<td>" + ValidateSAML2.getMessage("validator.report.auth.sp.not.tested") + "</td>");
+            out.println("<td>" + ValidateSAML2.getMessage("validator.report.auth.sp.not.tested", locale) + "</td>");
         }
 
         out.println("</tr>");
         out.println("<tr style=\"background-color:#FFFFFF\">");
         out.println("<td nowrap=\"true\">" +
-            ValidateSAML2.getMessage("validate.report.task.account.linking") +
+            ValidateSAML2.getMessage("validate.report.task.account.linking", locale) +
             "</td>");
         if (bAcclink) {
             if (bAcclinkPassed) {
-                out.println("<td>" + ValidateSAML2.getMessage("validator.report.account.linking.passed") + "</td>");
+                out.println("<td>" + ValidateSAML2.getMessage("validator.report.account.linking.passed", locale) + "</td>");
             } else {
-                out.println("<td>" + ValidateSAML2.getMessage("validator.report.account.linking.failed") + "</td>");
+                out.println("<td>" + ValidateSAML2.getMessage("validator.report.account.linking.failed", locale) + "</td>");
             }
         } else {
-            out.println("<td>" + ValidateSAML2.getMessage("validator.report.account.linking.not.tested") + "</td>");
+            out.println("<td>" + ValidateSAML2.getMessage("validator.report.account.linking.not.tested", locale) + "</td>");
         }
         out.println("</tr>");
 
         out.println("<tr style=\"background-color:#FFFFFF\">");
         out.println("<td nowrap=\"true\">" +
-            ValidateSAML2.getMessage("validate.report.task.single.logout") +
+            ValidateSAML2.getMessage("validate.report.task.single.logout", locale) +
             "</td>");
         if (bSLO) {
             if (bSLOPassed) {
-                out.println("<td>" + ValidateSAML2.getMessage("validator.report.single.logout.passed") + "</td>");
+                out.println("<td>" + ValidateSAML2.getMessage("validator.report.single.logout.passed", locale) + "</td>");
             } else {
-                out.println("<td>" + ValidateSAML2.getMessage("validator.report.single.logout.failed") + "</td>");
+                out.println("<td>" + ValidateSAML2.getMessage("validator.report.single.logout.failed", locale) + "</td>");
             }
         } else {
-            out.println("<td>" + ValidateSAML2.getMessage("validator.report.single.logout.not.tested") + "</td>");
+            out.println("<td>" + ValidateSAML2.getMessage("validator.report.single.logout.not.tested", locale) + "</td>");
         }
         out.println("</tr>");
     }
@@ -223,16 +226,16 @@
         <tr style="background-color:#FFFFFF">
 <%
         out.println("<td nowrap=\"true\">" +
-            ValidateSAML2.getMessage("validate.report.task.single.login") +
+            ValidateSAML2.getMessage("validate.report.task.single.login", locale) +
             "</td>");
         if (bSSO) {
             if (bSSOPassed) {
-                out.println("<td>" + ValidateSAML2.getMessage("validator.report.single.login.passed") + "</td>");
+                out.println("<td>" + ValidateSAML2.getMessage("validator.report.single.login.passed", locale) + "</td>");
             } else {
-                out.println("<td>" + ValidateSAML2.getMessage("validator.report.single.login.failed") + "</td>");
+                out.println("<td>" + ValidateSAML2.getMessage("validator.report.single.login.failed", locale) + "</td>");
             }
         } else {
-            out.println("<td>" + ValidateSAML2.getMessage("validator.report.single.login.not.tested") + "</td>");
+            out.println("<td>" + ValidateSAML2.getMessage("validator.report.single.login.not.tested", locale) + "</td>");
         }
 %>
         </tr>
@@ -240,15 +243,15 @@
 <%
     if (!bFedlet) {
         out.println("<tr style=\"background-color:#FFFFFF\">");
-        out.println("<td nowrap=\"true\">" + ValidateSAML2.getMessage("validate.report.task.account.termination") + "</td>");
+        out.println("<td nowrap=\"true\">" + ValidateSAML2.getMessage("validate.report.task.account.termination", locale) + "</td>");
         if (bAccTerm) {
             if (bAccTermPassed) {
-                out.println("<td>" + ValidateSAML2.getMessage("validator.report.account.termination.passed") + "</td>");
+                out.println("<td>" + ValidateSAML2.getMessage("validator.report.account.termination.passed", locale) + "</td>");
             } else {
-                out.println("<td>" + ValidateSAML2.getMessage("validator.report.account.termination.failed") + "</td>");
+                out.println("<td>" + ValidateSAML2.getMessage("validator.report.account.termination.failed", locale) + "</td>");
             }
         } else {
-                out.println("<td>" + ValidateSAML2.getMessage("validator.report.account.termination.not.tested") + "</td>");
+                out.println("<td>" + ValidateSAML2.getMessage("validator.report.account.termination.not.tested", locale) + "</td>");
         }
         out.println("</tr>");
     }

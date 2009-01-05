@@ -22,9 +22,11 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: validatorStatus.jsp,v 1.2 2008-06-25 05:51:01 qcheng Exp $
+   $Id: validatorStatus.jsp,v 1.3 2009-01-05 23:23:25 veiming Exp $
 
 --%>
+
+<%@ page contentType="text/html; charset=utf-8" language="java" %>
 
 <html>
 <head>

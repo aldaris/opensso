@@ -22,22 +22,23 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: validatorAuthFail.jsp,v 1.3 2008-10-29 03:11:54 veiming Exp $
+   $Id: validatorAuthFail.jsp,v 1.4 2009-01-05 23:23:25 veiming Exp $
 
 --%>
 
 <%@ page import="com.sun.identity.common.SystemConfigurationUtil" %>
 <%@ page import="com.sun.identity.shared.Constants" %>
 <%@ page import="com.sun.identity.workflow.ValidateSAML2" %>
+<%@ page contentType="text/html; charset=utf-8" language="java" %>
 
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 
 <%
     String deployuri = SystemConfigurationUtil.getProperty(
         Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
     String m = request.getParameter("m");
+    String locale = request.getParameter("locale");
     if (m == null) {
         m = "";
     }
@@ -58,13 +59,13 @@
         <td align=center><img width=28 height=26 src="<%= deployuri %>/console/images/progressfailed.gif" />
         <img src="<%= deployuri %>/com_sun_web_ui/images/other/dot.gif" alt="" border="0" height="10" width="1" /></br /><b>
         <%
-            out.println(ValidateSAML2.getMessage("validator.title.auth.failed"));
+            out.println(ValidateSAML2.getMessage("validator.title.auth.failed", locale));
         %>
         </b></td></tr>
         <tr>
         <td>
         <%
-            out.println(ValidateSAML2.getMessage("validator.message.auth.failed"));
+            out.println(ValidateSAML2.getMessage("validator.message.auth.failed", locale));
         %>
         <tr>
         <td align="right">
@@ -80,7 +81,7 @@
                 out.print("<a href=\"#\">");
             }
 
-            out.print(ValidateSAML2.getMessage("validator.link.auth.failed"));
+            out.print(ValidateSAML2.getMessage("validator.link.auth.failed", locale));
             out.print("</a>");
         %>
         </td></tr>

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: ValidateSAML2Setup.jsp,v 1.6 2008-12-10 21:27:35 asyhuang Exp $
+   $Id: ValidateSAML2Setup.jsp,v 1.7 2009-01-05 23:23:24 veiming Exp $
 
 --%>
 
@@ -155,7 +155,8 @@
         var url = "../validatorMain.jsp?realm=" + escapeEx(realm) +
             "&cot=" + escapeEx(cotName) +
             "&idp=" + escapeEx(idp) +
-            "&sp=" + escapeEx(sp);
+            "&sp=" + escapeEx(sp) +
+            "&locale=<%=((com.sun.identity.console.base.AMViewBeanBase)viewBean).getUserLocale()%>"
         top.location.replace(url);
     }
 
