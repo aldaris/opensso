@@ -38,7 +38,6 @@
 ./WEB-INF/lib/ldapjdk.jar
 ./WEB-INF/auth.tld
 ./WEB-INF/jato.tld
-./WEB-INF/web.xml
 ./css/css_ie5win.css
 ./css/css_ie6up.css
 ./css/css_ns4sol.css

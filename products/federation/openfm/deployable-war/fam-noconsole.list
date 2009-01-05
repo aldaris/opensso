@@ -114,9 +114,7 @@
 ./WEB-INF/classes/amAgent_ko.properties
 ./WEB-INF/classes/amAgent_zh.properties
 ./WEB-INF/classes/amAgent_zh_TW.properties
-./WEB-INF/classes/amAuth-NT.xml
 ./WEB-INF/classes/amAuth.properties
-./WEB-INF/classes/amAuth.xml
 ./WEB-INF/classes/amAuthAD.properties
 ./WEB-INF/classes/amAuthAD.xml
 ./WEB-INF/classes/amAuthAD_de.properties
@@ -1366,7 +1364,6 @@
 ./WEB-INF/sms.dtd
 ./WEB-INF/smsflatfile.dtd
 ./WEB-INF/sun-jaxws.xml
-./WEB-INF/web.xml
 ./assets/css/Specific/adminRealm.css
 ./assets/css/Specific/confUserStore.css
 ./assets/css/Specific/identityService.css
@@ -1636,8 +1633,6 @@
 ./assets/lib/yui/yuitest/yuitest-beta-min.js
 ./assets/lib/yui/yuitest/yuitest-beta.js
 ./assets/templates/main.html
-./click/error.htm
-./click/not-found.htm
 ./com_sun_web_ui/css/css_ie5win.css
 ./com_sun_web_ui/css/css_ie6up.css
 ./com_sun_web_ui/css/css_ns4sol.css
@@ -2279,11 +2274,9 @@
 ./saml2/jsp/exportmetadata.jsp
 ./saml2/jsp/fedletSSOInit.jsp
 ./saml2/jsp/fedletSampleApp.jsp
-./saml2/jsp/idpArtifactResolution.jsp
 ./saml2/jsp/idpMNIPOST.jsp
 ./saml2/jsp/idpMNIRedirect.jsp
 ./saml2/jsp/idpMNIRequestInit.jsp
-./saml2/jsp/idpMNISOAP.jsp
 ./saml2/jsp/idpSSOFederate.jsp
 ./saml2/jsp/idpSSOInit.jsp
 ./saml2/jsp/idpSingleLogoutInit.jsp
@@ -2294,7 +2287,6 @@
 ./saml2/jsp/spMNIPOST.jsp
 ./saml2/jsp/spMNIRedirect.jsp
 ./saml2/jsp/spMNIRequestInit.jsp
-./saml2/jsp/spMNISOAP.jsp
 ./saml2/jsp/spSSOInit.jsp
 ./saml2/jsp/spSingleLogoutInit.jsp
 ./saml2/jsp/spSingleLogoutPOST.jsp

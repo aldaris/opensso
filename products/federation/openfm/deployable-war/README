@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README,v 1.8 2008-08-19 19:11:30 veiming Exp $
+   $Id: README,v 1.9 2009-01-05 23:51:29 veiming Exp $
 
 -->
 
@@ -43,11 +43,15 @@ Contents of this directory:
    |- opensso                   (parent directory)
      |- deployable-war          (current directory)
        |- README                (this README file)
+       |- createwar.sh          (shell script to create WAR files)
+       |- createwar.bat         (bat file to create WAR files)
        |- opensso.war           (OpenSSO Server WAR with samples)
        |- fam-idpdiscovery.list (files list for IDP Discovery WAR)
        |- fam-distauth.list     (files list for Distributed Authentication WAR)
        |- fam-console.list      (files list for Console Only WAR)
        |- fam-noconsole.list    (files list for Server without console WAR)
+       |- classes               (contains resources and classes for executing
+       |                         createwar.sh and createwar.bat)
        |- idpdiscovery          (directory containing additional files for
        |                         IDP discovery WAR)
        |- distauth              (directory containing additional files for
@@ -66,15 +70,11 @@ Steps to create a specialized WAR file:
    % cd <server war staging area>
    % jar xvf <zip staging area>/opensso/deployable-war/opensso.war
 
-2. Creates the specialized WAR file using the specific file list. 
-   For example, to create Console only WAR:
-   % cd <server war staging area>
-   % jar cvf <zip staging area>/opensso/deployable-war/fam-console.war @<zip staging area>/opensso/deployable-war/fam-console.list
-
-3. Updates the WAR created in previous step with additional files for the 
-   specific WAR.  For example, to update the Console only WAR: 
-   % cd <zip staging area>/opensso/deployable-war/console
-   % jar uvf <zip staging area>/opensso/deployable-war/fam-console.war *
+2. Creates the specialized WAR file using createwar.sh or createwar.bat. 
+   (Please remember that createwar.sh and createwar.bat needs to be executed in
+    its current directory)
+   For example, to create Console WAR:
+   % ./createwar.sh -s /tmp/staging -t console -w /tmp/console.war
 
 Now the specialized WAR is ready to be deployed into your web container.
 

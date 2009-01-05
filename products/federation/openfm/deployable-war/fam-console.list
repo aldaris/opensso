@@ -1572,14 +1572,12 @@
 ./console/federation/SAMLv2AttrQuery.jsp
 ./console/federation/SAMLv2AuthnAuthority.jsp
 ./console/federation/SAMLv2General.jsp
-./console/federation/SAMLv2IDP.jsp
 ./console/federation/SAMLv2IDPAdvanced.jsp
 ./console/federation/SAMLv2IDPAssertionContent.jsp
 ./console/federation/SAMLv2IDPAssertionProcessing.jsp
 ./console/federation/SAMLv2IDPServices.jsp
 ./console/federation/SAMLv2PDP.jsp
 ./console/federation/SAMLv2PEP.jsp
-./console/federation/SAMLv2SP.jsp
 ./console/federation/SAMLv2SPAdvanced.jsp
 ./console/federation/SAMLv2SPAssertionContent.jsp
 ./console/federation/SAMLv2SPAssertionProcessing.jsp

@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-zip.xml,v 1.32 2008-12-15 21:40:32 bigfatrat Exp $
+   $Id: build-zip.xml,v 1.33 2009-01-05 23:51:32 veiming Exp $
 
 -->
 
@@ -49,8 +49,18 @@
             tofile="${zip.temp.dir}/README" />
             
         <copy todir="${zip.temp.dir}/deployable-war">
-             <fileset dir="${openfm.dir}/deployable-war" includes="**/*"/>
+             <fileset dir="${openfm.dir}/deployable-war" includes="**/*" />
         </copy>
+        <mkdir dir="${zip.temp.dir}/deployable-war/classes/com/sun/identity/tools/deployablewar" />
+        <copy todir="${zip.temp.dir}/deployable-war/classes/com/sun/identity/tools/deployablewar">
+             <fileset dir="${openfm.classes.dir}/com/sun/identity/tools/deployablewar" includes="*.class"/>
+        </copy>
+        <copy todir="${zip.temp.dir}/deployable-war/classes" flatten="true">
+             <fileset dir="${openfm.res.i18n.dir}" includes="**/deployablewar*.properties" />
+        </copy>
+        <copy tofile="${zip.temp.dir}/deployable-war/classes/deployablewar_en.properties" file="${openfm.res.i18n.dir}/deployablewar.properties" />
+
+
         <copy todir="${zip.temp.dir}/integrations">
              <fileset dir="${openfm.dir}/integrations" includes="**/*"/>
         </copy>
@@ -228,13 +238,12 @@
             <fileset dir="${products.basedir}/legal"/>
         </copy>
 
-
         <zip destfile="${fm.dist.dir}/opensso.zip" whenempty="create">
             <zipfileset dir="${zip.temp.dir1}" filemode="755">
-                <include name="setup"/>
+                <include name="opensso/deployable-war/create.sh"/>
             </zipfileset>
             <zipfileset dir="${zip.temp.dir1}">
-                <exclude name="setup"/>
+                <exclude name="opensso/deployable-war/create.sh"/>
             </zipfileset>
         </zip>
 

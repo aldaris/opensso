@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.49 2008-09-18 17:06:57 alanchu Exp $
+   $Id: build.xml,v 1.50 2009-01-05 23:51:33 veiming Exp $
 
 -->
 
@@ -194,6 +194,7 @@
             <fileset dir="${openfm.services.xml.dir}" includes="*.xml" />
             <zipfileset dir="${openfm.classes.dir}"
                 excludes="com/sun/identity/console/**, 
+                com/sun/identity/tools/deployablewar/**,
                 com/sun/identity/fedlet/**" />
         </jar>
 
