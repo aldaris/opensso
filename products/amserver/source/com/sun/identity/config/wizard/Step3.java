@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step3.java,v 1.33 2008-11-08 08:25:28 veiming Exp $
+ * $Id: Step3.java,v 1.34 2009-01-05 22:49:05 veiming Exp $
  *
  */
 package com.sun.identity.config.wizard;
@@ -420,7 +420,15 @@ public class Step3 extends LDAPStoreWizardPage {
         boolean ssl = (strSSL != null) && (strSSL.equals("SSL"));
 
         String host = (String)ctx.getSessionAttribute("configStoreHost");
+        if (host == null) {
+            host = "localhost";
+        }
+
         String strPort = (String)ctx.getSessionAttribute("configStorePort");
+        if (strPort == null) {
+            strPort = getAvailablePort(50389);
+        }
+
         int port = Integer.parseInt(strPort);
         String bindDN = (String)ctx.getSessionAttribute("configStoreLoginId");
         String rootSuffix = (String)ctx.getSessionAttribute("rootSuffix");
