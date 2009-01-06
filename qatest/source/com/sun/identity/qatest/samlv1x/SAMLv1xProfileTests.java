@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv1xProfileTests.java,v 1.3 2008-12-23 20:18:05 vimal_67 Exp $
+ * $Id: SAMLv1xProfileTests.java,v 1.4 2009-01-06 01:11:44 vimal_67 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -212,7 +212,22 @@ public class SAMLv1xProfileTests extends TestCommon {
                     "Global", list, null);
                 fmIDP.addAttrDefs(idpwebClient, "iPlanetAMSAMLService",
                     "Global", list, null);           
-            }            
+            }
+            
+            // adding saml attribute map for mail and telephone number
+            list.clear();
+            list.add("iplanet-am-saml-attr-map=" +                           
+                    configMap.get(TestConstants.KEY_ATTRMAP_TELEPHONE_KEY) +
+                    "=" + configMap.get(TestConstants.
+                    KEY_ATTRMAP_TELEPHONE_KEYVALUE));   
+            list.add("iplanet-am-saml-attr-map=" +                           
+                    configMap.get(TestConstants.KEY_ATTRMAP_MAIL_KEY) +
+                    "=" + configMap.get(TestConstants.
+                    KEY_ATTRMAP_MAIL_KEYVALUE));   
+            fmSP.addAttrDefs(spwebClient, "iPlanetAMSAMLService", 
+                    "Global", list, null);
+            fmIDP.addAttrDefs(idpwebClient, "iPlanetAMSAMLService",
+                    "Global", list, null);
         } catch (Exception e) {
             log(Level.SEVERE, "setup", e.getMessage());
             e.printStackTrace();
@@ -235,6 +250,7 @@ public class SAMLv1xProfileTests extends TestCommon {
         try {
             String result = null;
             String attr = "";
+            getWebClient();
             if (!testIndex.equals("0")) {
                 Reporter.log("Test Description: This test  " + testName +
                     " makes sure the nameidformat is mapped to user profile" + 
@@ -249,8 +265,8 @@ public class SAMLv1xProfileTests extends TestCommon {
             
             if (!testIndex.equals("0")) {
                 result = strUniversalid;       
-                attr = configMap.get(TestConstants.KEY_NAMEIDFORMAT_KEY +
-                        testIndex); 
+                attr = "&amp;NameIDFormat=" + configMap.get(
+                        TestConstants.KEY_NAMEIDFORMAT_KEY + testIndex); 
                 log(Level.FINEST, "samlv1xTest", "Result: " + result);      
                 log(Level.FINEST, "samlv1xTest", "Attr: " + attr);           
             } else {
@@ -263,7 +279,7 @@ public class SAMLv1xProfileTests extends TestCommon {
                 }              
             }    
             Thread.sleep(5000);
-            xmlfile = baseDir + testName + ".xml";
+            xmlfile = baseDir + testName + "samlv1xTest" + ".xml";
             configMap.put(TestConstants.KEY_SSO_RESULT, result);
             SAMLv1Common.getxmlSSO(xmlfile, configMap, testType,
                     testInit, attr);                      
@@ -278,6 +294,60 @@ public class SAMLv1xProfileTests extends TestCommon {
             }
         } catch (Exception e) {
             log(Level.SEVERE, "samlv1xTest", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        } finally {
+            consoleLogout(spwebClient, spurl + "/UI/Logout");
+            consoleLogout(idpwebClient, idpurl + "/UI/Logout");
+        }
+    }
+    
+    /**
+     * Executes the tests of Artifact and Post Profiles. 
+     * It tests the mapping of attributes such as mail and 
+     * telephone number that are included in SAML assertion.
+     */
+    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    public void samlv1xAttrMapTest()
+            throws Exception {
+        try {
+            String result = null;
+            String attr = "";
+            Reporter.log("Test Description: This test  " + testName +
+                    " makes sure the mapping of attributes in SAML assertion." + 
+                    " This is " + testInit + " Initiated " +
+                    testType + " Profile"); 
+            attr = "/session.jsp";
+            if (!testIndex.equals("0")) {
+                result = strUniversalid;                       
+                log(Level.FINEST, "samlv1xAttrMapTest", "Result: " + result);      
+                log(Level.FINEST, "samlv1xAttrMapTest", "Attr: " + attr);           
+            } else {
+                if (testInit.equalsIgnoreCase("idp")) {
+                result = configMap.get(TestConstants.KEY_IDP_USER) + "@"
+                        + idpmetaAliasname;
+                } else {
+                result = configMap.get(TestConstants.KEY_SP_USER) + "@"
+                        + spmetaAliasname;
+                }              
+            }    
+            Thread.sleep(5000);            
+            xmlfile = baseDir + testName + "samlv1xAttrMapTest" + ".xml";
+            configMap.put(TestConstants.KEY_SSO_RESULT, result);
+            SAMLv1Common.getxmlSSO(xmlfile, configMap, testType,
+                    testInit, attr);                      
+            Thread.sleep(5000);
+            log(Level.FINEST, "samlv1xAttrMapTest", "Run " + xmlfile);
+            task1 = new DefaultTaskHandler(xmlfile);
+            wpage = task1.execute(webClient);
+            Thread.sleep(5000);            
+            if (!wpage.getWebResponse().getContentAsString().contains(result)) {
+                log(Level.SEVERE, "samlv1xAttrMapTest", 
+                        "Couldn't signon users");
+                assert false;
+            }
+        } catch (Exception e) {
+            log(Level.SEVERE, "samlv1xAttrMapTest", e.getMessage());
             e.printStackTrace();
             throw e;
         } finally {
@@ -335,6 +405,21 @@ public class SAMLv1xProfileTests extends TestCommon {
                 fmIDP.removeAttrDefs(idpwebClient, "iPlanetAMSAMLService",
                         "Global", list, null);           
             }          
+            
+            // removing SAML attribute map for mail and telephone number
+            list.clear();
+            list.add("iplanet-am-saml-attr-map=" +                           
+                    configMap.get(TestConstants.KEY_ATTRMAP_TELEPHONE_KEY) +
+                    "=" + configMap.get(TestConstants.
+                    KEY_ATTRMAP_TELEPHONE_KEYVALUE));   
+            list.add("iplanet-am-saml-attr-map=" +                           
+                    configMap.get(TestConstants.KEY_ATTRMAP_MAIL_KEY) +
+                    "=" + configMap.get(TestConstants.
+                    KEY_ATTRMAP_MAIL_KEYVALUE));   
+            fmSP.removeAttrDefs(spwebClient, "iPlanetAMSAMLService", 
+                    "Global", list, null);
+            fmIDP.removeAttrDefs(idpwebClient, "iPlanetAMSAMLService",
+                    "Global", list, null);
             
             list.clear();
             list.add(configMap.get(TestConstants.KEY_SP_USER));

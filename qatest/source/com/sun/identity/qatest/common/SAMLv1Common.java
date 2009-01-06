@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv1Common.java,v 1.2 2008-12-23 20:18:37 vimal_67 Exp $
+ * $Id: SAMLv1Common.java,v 1.3 2009-01-06 01:12:46 vimal_67 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -97,15 +97,13 @@ public class SAMLv1Common extends TestCommon {
                         + sp_port + sp_deployment_uri
                         + servURL 
                         + idp_proto + "://" + idp_host + ":"
-                        + idp_port + idp_deployment_uri
-                        + "&amp;NameIDFormat=" + attr);                                
+                        + idp_port + idp_deployment_uri + attr);                                
             } else {
                 out.write("<url href=\"" + idp_proto +"://" + idp_host + ":"
                         + idp_port + idp_deployment_uri
                         + servURL 
                         + sp_proto + "://" + sp_host + ":"
-                        + sp_port + sp_deployment_uri
-                        + "&amp;NameIDFormat=" + attr);
+                        + sp_port + sp_deployment_uri + attr);
             }              
         }
         out.write("\">");

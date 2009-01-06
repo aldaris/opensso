@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureSAMLv1x.java,v 1.3 2008-10-02 21:34:59 sridharev Exp $
+ * $Id: ConfigureSAMLv1x.java,v 1.4 2009-01-06 01:10:44 vimal_67 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -149,7 +149,9 @@ public class ConfigureSAMLv1x extends TestCommon {
                     + "|issuer=" + configMap.get(TestConstants.KEY_IDP_HOST) 
                     + ":" + configMap.get(TestConstants.KEY_IDP_PORT) 
                     + "|hostlist=" + configMap.get(TestConstants.KEY_IDP_HOST)
-                    + "|AuthType=" + idpauthtype;
+                    + "|AuthType=" + idpauthtype
+                    + "|siteattributemapper=" +
+                    "com.sun.identity.saml.plugins.DefaultSiteAttributeMapper";           
             attributevalues.add(strSPSiteconf);
             if (FederationManager.getExitCode(fmSP.addAttrDefs(spWebClient,
                     servicename, schematype, attributevalues, null)) != 0) {
@@ -168,7 +170,9 @@ public class ConfigureSAMLv1x extends TestCommon {
                     + "|issuer=" + configMap.get(TestConstants.KEY_SP_HOST) 
                     + ":" + configMap.get(TestConstants.KEY_SP_PORT) 
                     + "|hostlist=" + configMap.get(TestConstants.KEY_SP_HOST) 
-                    + "|AuthType=" + spauthtype;
+                    + "|AuthType=" + spauthtype
+                    + "|siteattributemapper=" +
+                    "com.sun.identity.saml.plugins.DefaultSiteAttributeMapper";
             attributevalues.add(strIDPSiteconf);
             if (FederationManager.getExitCode(fmIDP.addAttrDefs(idpWebClient,
                     servicename, schematype, attributevalues, null)) != 0) {
