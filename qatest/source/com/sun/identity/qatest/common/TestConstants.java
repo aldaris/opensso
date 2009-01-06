@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestConstants.java,v 1.27 2008-12-23 20:19:05 vimal_67 Exp $
+ * $Id: TestConstants.java,v 1.28 2009-01-06 01:14:47 vimal_67 Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -521,6 +521,26 @@ public interface TestConstants {
      */
     String KEY_NAMEIDFORMAT_KEYVALUE = "nameidformatkeyvalue";
     
+    /**
+     * SAMLv1 attribute map for telephone number key for <code>nameidformatkeyvalue</code>
+     */
+    String KEY_ATTRMAP_TELEPHONE_KEY = "attrmap_telephonekey";
+    
+    /**
+     * SAMLv1 attribute map for mail key for <code>nameidformatkeyvalue</code>
+     */
+    String KEY_ATTRMAP_MAIL_KEY = "attrmap_mailkey";
+    
+    /**
+     * SAMLv1 attribute map for telephone number keyvalue for <code>nameidformatkeyvalue</code>
+     */
+    String KEY_ATTRMAP_TELEPHONE_KEYVALUE = "attrmap_telephonekeyvalue";
+    
+    /**
+     * SAMLv1 attribute map for mail keyvalue for <code>nameidformatkeyvalue</code>
+     */
+    String KEY_ATTRMAP_MAIL_KEYVALUE = "attrmap_mailkeyvalue";
+        
     /**
      * SAMLv2, IDFF Property key for <code>attrqprovider</code>
      */
