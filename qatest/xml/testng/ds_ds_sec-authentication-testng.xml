@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ds_ds_sec-authentication-testng.xml,v 1.13 2008-09-19 22:01:49 cmwesley Exp $
+ $Id: ds_ds_sec-authentication-testng.xml,v 1.14 2009-01-06 16:37:46 cmwesley Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -619,7 +619,103 @@
         <classes>
             <class name="com.sun.identity.qatest.authentication.RedirectTest"/>
         </classes>
-    </test>  
+    </test>
+    <test name="RedirectTestDataStoreRootRealm">
+        <parameter name="testModule" value="datastore"/>
+        <parameter name="testRealm" value="/"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.RedirectTest"/>
+        </classes>
+    </test>
+     <test name="RedirectTestDataStoreSubRealm">
+        <parameter name="testModule" value="datastore"/>
+        <parameter name="testRealm" value="blue"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.RedirectTest"/>
+        </classes>
+    </test>
+    <test name="RedirectTestRadiusRootRealm">
+        <parameter name="testModule" value="radius"/>
+        <parameter name="testRealm" value="/"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.RedirectTest"/>
+        </classes>
+    </test>
+     <test name="RedirectTestRadiusSubRealm">
+        <parameter name="testModule" value="radius"/>
+        <parameter name="testRealm" value="blue"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.RedirectTest"/>
+        </classes>
+    </test>
+    <test name="RedirectTestMembershipRootRealm">
+        <parameter name="testModule" value="membership"/>
+        <parameter name="testRealm" value="/"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.RedirectTest"/>
+        </classes>
+    </test>
+     <test name="RedirectTestMembershipSubRealm">
+        <parameter name="testModule" value="membership"/>
+        <parameter name="testRealm" value="blue"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.RedirectTest"/>
+        </classes>
+    </test>
+    <test name="RedirectTestUnixRootRealm">
+        <parameter name="testModule" value="unix"/>
+        <parameter name="testRealm" value="/"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.RedirectTest"/>
+        </classes>
+    </test>
+     <test name="RedirectTestUnixSubRealm">
+        <parameter name="testModule" value="unix"/>
+        <parameter name="testRealm" value="blue"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.RedirectTest"/>
+        </classes>
+    </test>
     <test name="AccountLockoutTest">
         <groups>
             <run>

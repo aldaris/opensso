@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RedirectTest.java,v 1.10 2008-08-11 20:56:46 cmwesley Exp $
+ * $Id: RedirectTest.java,v 1.11 2009-01-06 16:37:46 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,6 +51,17 @@ import org.testng.annotations.Test;
  * - Create users to Login if required to create.
  * - Validates for module based authentication pass and failure case
  * - Validates for the goto and gotoOnFail URL for this instance.
+ *
+ * RedirectTest automates the following test cases:
+ * OpenSSO_AuthModule(LDAP)_30a-d, OpenSSO_AuthModule(LDAP)_31a-d,
+ * OpenSSO_AuthModule(NT)_9a-d, OpenSSO_AuthModule(NT)_10a-d,
+ * OpenSSO_AuthModule(JDBC)_9a-d, OpenSSO_AuthModule(JDBC)_10a-d
+ * OpenSSO_AuthModule(ActiveDirectory)_15a-d,
+ * OpenSSO_AuthModule(ActiveDirectory)_16a-d,
+ * OpenSSO_AuthModule(DataStore)_7a-d, OpenSSO_AuthModule(DataStore)_8a-d,
+ * OpenSSO_AuthModule(RADIUS)_10a-d, OpenSSO_AuthModule(RADIUS)_11a-d,
+ * OpenSSO_AuthModule(Membership)_17a-d, OpenSSO_AuthModule(Membership)_18a-d,
+ * OpenSSO_AuthModule(Unix)_11a-d, and OpenSSO_AuthModule(Unix)_12a-d.
  */
 public class RedirectTest extends TestCommon {
     
