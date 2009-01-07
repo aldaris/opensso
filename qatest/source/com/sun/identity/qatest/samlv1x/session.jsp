@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: session.jsp,v 1.1 2009-01-07 18:51:12 vimal_67 Exp $
+   $Id: session.jsp,v 1.2 2009-01-07 20:01:22 inthanga Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
