@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeValidator.java,v 1.8 2008-09-13 00:58:15 veiming Exp $
+ * $Id: AttributeValidator.java,v 1.9 2009-01-07 22:28:51 lakshman_abburi Exp $
  *
  */
 
@@ -115,7 +115,17 @@ class AttributeValidator {
         if (syntax.equals(AttributeSchema.Syntax.EMAIL)) {
             Iterator it = values.iterator();
             while (it.hasNext()) {
-                if (!mailValidator.validate((String) it.next())) {
+                String val = ((String) it.next()).trim();
+                /**
+                 * This condition is required because console is
+                 * passing a set of empty string. Without this check, 
+                 * mailValidator will validate empty string for email 
+                 * address and fail
+                 */
+                if ( (values.size() == 1) && (val.length() == 0) ) {
+                    break;
+                }
+                if (!mailValidator.validate(val)) {
                     return (false);
                 }
             }
