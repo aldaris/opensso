@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PropertyXMLBuilderBase.java,v 1.17 2008-12-17 23:59:14 babysunil Exp $
+ * $Id: PropertyXMLBuilderBase.java,v 1.18 2009-01-07 22:31:03 lakshman_abburi Exp $
  *
  */
 
@@ -755,7 +755,7 @@ public abstract class PropertyXMLBuilderBase
     ) {
         Map map = new HashMap();
         Set sorted = getSortedChoiceValues(as, map, serviceBundle);
-        String name = as.getName();
+        String name = getAttributeNameForPropertyXML(as);
         Object[] nameArg = {name};
         xml.append(MessageFormat.format(DYN_GUI_MULTIPLE_LIST_MARKER_XML,
             nameArg));
