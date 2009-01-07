@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionService.java,v 1.29 2008-12-23 21:37:22 ericow Exp $
+ * $Id: SessionService.java,v 1.30 2009-01-07 17:50:24 ericow Exp $
  *
  */
 
@@ -82,7 +82,6 @@ import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.shared.encode.URLEncDec;
 import com.sun.identity.shared.stats.Stats;
-import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfigManager;
 import com.sun.identity.sm.ServiceSchema;
@@ -991,7 +990,7 @@ public class SessionService {
                 InternalSession sess = (InternalSession) enumerator
                         .nextElement();
                 if (sess.getState() == Session.VALID) {
-                    if (sess.isAppSession() || returnAppSession) {
+                    if (!sess.isAppSession() || returnAppSession) {
                         sessions.addElement(sess);
                     }
                 }
