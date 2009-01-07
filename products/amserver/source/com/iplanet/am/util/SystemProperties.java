@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SystemProperties.java,v 1.18 2008-11-10 17:51:19 manish_rustagi Exp $
+ * $Id: SystemProperties.java,v 1.19 2009-01-07 21:51:28 veiming Exp $
  *
  */
 
@@ -75,6 +75,8 @@ public class SystemProperties {
     private static String instanceName;
     
     private static Map attributeMap = new HashMap();
+    private static boolean isSSOAdm = Boolean.parseBoolean(
+        System.getProperty("ssoadm", "false"));
     
     static {
         initAttributeMapping();
@@ -250,7 +252,7 @@ public class SystemProperties {
         String answer = null;
 
         // look up values in SMS services only if in server mode.
-        if (isServerMode()) {
+        if (isServerMode() || isSSOAdm) {
             AttributeStruct ast = (AttributeStruct)attributeMap.get(key);
             if (ast != null) {
                 answer = PropertiesFinder.getProperty(key, ast);

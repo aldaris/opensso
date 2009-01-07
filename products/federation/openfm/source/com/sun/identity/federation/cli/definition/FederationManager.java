@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManager.java,v 1.35 2008-12-09 02:09:23 veiming Exp $
+ * $Id: FederationManager.java,v 1.36 2009-01-07 21:51:29 veiming Exp $
  *
  */
 
@@ -148,6 +148,7 @@ public class FederationManager {
             "cot|t|s|Specify name of the Circle of Trust this entity belongs.",
             "spec|c|s|Specify metadata specification, either idff or saml2, defaults to saml2"},
         resourceStrings={
+            "import-entity-exception-cot-no-exist=Circle of Trust did not exist.",
             "import-entity-exception-no-datafile=metadata or extended data file is required.",
             "import-entity-exception-invalid-descriptor-file=Entity descriptor in file, {0} had invalid syntax.",
             "import-entity-succeeded=Import file, {0}.",

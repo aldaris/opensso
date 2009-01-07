@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportMetaData.java,v 1.12 2008-12-16 01:49:37 qcheng Exp $
+ * $Id: ImportMetaData.java,v 1.13 2009-01-07 21:51:29 veiming Exp $
  *
  */
 
@@ -113,7 +113,9 @@ public class ImportMetaData extends AuthenticatedCommand {
                 getResourceString("import-entity-exception-no-datafile"),
                 ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
         }
-
+        
+        validateCOT();
+        
         CommandManager mgr = getCommandManager();
         String url = mgr.getWebEnabledURL();
         webAccess = (url != null) && (url.length() > 0);
@@ -145,6 +147,32 @@ public class ImportMetaData extends AuthenticatedCommand {
         }
     }
     
+        
+    private void validateCOT() 
+        throws CLIException {
+        if ((cot != null) && (cot.length() > 0))  {
+            try {
+                CircleOfTrustManager cotManager = new CircleOfTrustManager();
+                if (!cotManager.getAllCirclesOfTrust(realm).contains(cot)) {
+                    String[] args = {realm, metadata, extendedData, cot,
+                        spec,
+                        getResourceString(
+                        "import-entity-exception-cot-no-exist")
+                    };
+                    writeLog(LogWriter.LOG_ERROR, Level.INFO,
+                        "FAILED_IMPORT_ENTITY", args);
+                    throw new CLIException(
+                        getResourceString(
+                        "import-entity-exception-cot-no-exist"),
+                        ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+                }
+            } catch (COTException e) {
+                throw new CLIException(e.getMessage(),
+                    ExitCodes.REQUEST_CANNOT_BE_PROCESSED);
+            }
+        }
+    }
+
     private void handleSAML2Request(RequestContext rc)
         throws CLIException {
         try {
@@ -201,7 +229,10 @@ public class ImportMetaData extends AuthenticatedCommand {
             if ((cot != null) && (cot.length() > 0) &&
                 (entityID != null) && (entityID.length() > 0)) {
                 CircleOfTrustManager cotManager = new CircleOfTrustManager();
-                cotManager.addCircleOfTrustMember(realm, cot, spec, entityID);
+                if (!cotManager.isInCircleOfTrust(realm, cot, spec, entityID)) {
+                    cotManager.addCircleOfTrustMember(
+                        realm, cot, spec, entityID);
+                }
             }
         } catch (COTException e) {
             throw new CLIException(e.getMessage(),
@@ -259,7 +290,10 @@ public class ImportMetaData extends AuthenticatedCommand {
             if ((cot != null) && (cot.length() > 0) &&
                 (entityID != null) && (entityID.length() > 0)) {
                 CircleOfTrustManager cotManager = new CircleOfTrustManager();
-                cotManager.addCircleOfTrustMember(realm, cot, spec,entityID);
+                if (!cotManager.isInCircleOfTrust(realm, cot, spec, entityID)) {
+                    cotManager.addCircleOfTrustMember(realm, cot, spec,
+                        entityID);
+                }
             }
         } catch (IDFFMetaException e) {
             throw new CLIException(e.getMessage(),
@@ -313,8 +347,12 @@ public class ImportMetaData extends AuthenticatedCommand {
             if ((cot != null) && (cot.length() > 0) &&
                 (federationID != null)) {
                 CircleOfTrustManager cotManager = new CircleOfTrustManager();
-                cotManager.addCircleOfTrustMember(realm, cot, spec, 
-                    federationID);
+                if (!cotManager.isInCircleOfTrust(realm, cot, spec, 
+                    federationID)
+                ) {
+                    cotManager.addCircleOfTrustMember(realm, cot, spec, 
+                        federationID);
+                }
             }
         } catch (COTException e) {
             throw new CLIException(e.getMessage(),
