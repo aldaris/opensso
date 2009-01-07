@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GenericAgentProfileViewBean.java,v 1.14 2008-09-20 06:38:46 veiming Exp $
+ * $Id: GenericAgentProfileViewBean.java,v 1.15 2009-01-07 16:03:06 veiming Exp $
  *
  */
 
@@ -33,6 +33,7 @@ import com.iplanet.jato.model.ModelControlException;
 import com.iplanet.jato.view.event.ChildDisplayEvent;
 import com.iplanet.jato.view.event.RequestInvocationEvent;
 import com.iplanet.sso.SSOException;
+import com.sun.identity.common.configuration.AgentConfiguration;
 import com.sun.identity.console.base.AMPropertySheet;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
@@ -62,7 +63,6 @@ public class GenericAgentProfileViewBean
     static final String TAB_PREFIX = "4600";
     static final int TAB_GENERAL_ID = 4600;
     static final int TAB_GROUP_ID = 4601;
-    private static final String AGENT_ROOT_URL = "agentRootURL=";
 
     private Set attributeSchemas;
     
@@ -313,17 +313,18 @@ public class GenericAgentProfileViewBean
             return;
         }
         
-        Set values = (Set)map.get(AgentsViewBean.DEVICE_KEY);
+        Set values = (Set)map.get(AgentConfiguration.DEVICE_KEY);
         if ((values != null) && !values.isEmpty()) {
             Set newValues = new HashSet();
             for (Iterator i = values.iterator(); i.hasNext(); )  {
                 String val = (String)i.next();
-                if (val.startsWith(AGENT_ROOT_URL)) {
-                    val = val.substring(AGENT_ROOT_URL.length());
+                if (val.startsWith(AgentConfiguration.AGENT_ROOT_URL)) {
+                    val = val.substring(
+                        AgentConfiguration.AGENT_ROOT_URL.length());
                 }
                 newValues.add(val);
             }
-            map.put(AgentsViewBean.DEVICE_KEY, newValues);
+            map.put(AgentConfiguration.DEVICE_KEY, newValues);
         }
     }
 
@@ -333,14 +334,15 @@ public class GenericAgentProfileViewBean
             return;
         }
 
-        Set values = (Set)map.get(AgentsViewBean.DEVICE_KEY);
+        Set values = (Set)map.get(AgentConfiguration.DEVICE_KEY);
         if ((values != null) && !values.isEmpty()) {
             Set newValues = new HashSet();
             for (Iterator i = values.iterator(); i.hasNext(); )  {
-                String val = AGENT_ROOT_URL + (String)i.next();
+                String val = AgentConfiguration.AGENT_ROOT_URL + 
+                    (String)i.next();
                 newValues.add(val);
             }
-            map.put(AgentsViewBean.DEVICE_KEY, newValues);
+            map.put(AgentConfiguration.DEVICE_KEY, newValues);
         }
     }
 

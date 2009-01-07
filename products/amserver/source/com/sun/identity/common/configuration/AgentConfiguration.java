@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.45 2008-12-13 07:16:09 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.46 2009-01-07 16:03:06 veiming Exp $
  *
  */
 
@@ -74,6 +74,8 @@ public class AgentConfiguration {
     public final static String ATTR_CONFIG_REPO =
         "com.sun.identity.agents.config.repository.location";
     public final static String VAL_CONFIG_REPO_LOCAL = "local";
+    public final static String AGENT_ROOT_URL = "agentRootURL=";
+    public static String DEVICE_KEY = "sunIdentityServerDeviceKeyValue";
 
     private static final String AGENT_LOCAL_PROPERTIES = "agentlocaleprop";
     private static Map localAgentProperties;
@@ -435,7 +437,25 @@ public class AgentConfiguration {
             tagswapAttributeValues(inheritedValues, agentType, serverURL,
                 agentURL);
         }
+
         amir.createIdentity(IdType.AGENTONLY, agentName, inheritedValues);
+    }
+
+    private static void addAgentRootURLKey(String agentType, Map map) {
+        if (agentType.equals(AGENT_TYPE_J2EE) ||
+            agentType.equals(AGENT_TYPE_WEB) ||
+            agentType.equals(AGENT_TYPE_AGENT_AUTHENTICATOR)
+        ) {
+            Set values = (Set)map.get(DEVICE_KEY);
+            if ((values != null) && !values.isEmpty()) {
+                Set newValues = new HashSet();
+                for (Iterator i = values.iterator(); i.hasNext(); )  {
+                    String val = AGENT_ROOT_URL + (String)i.next();
+                    newValues.add(val);
+                }
+                map.put(DEVICE_KEY, newValues);
+            }
+        }
     }
 
     public static void tagswapAttributeValues(
@@ -518,6 +538,7 @@ public class AgentConfiguration {
             }
         }
         tagswapAttributeValues(attributeValues, map);
+        addAgentRootURLKey(agentType, attributeValues);
     }
     
     private static void tagswapAttributeValues(

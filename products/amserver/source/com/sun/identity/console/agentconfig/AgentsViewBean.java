@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsViewBean.java,v 1.14 2008-11-12 05:30:47 veiming Exp $
+ * $Id: AgentsViewBean.java,v 1.15 2009-01-07 16:03:06 veiming Exp $
  *
  */
 
@@ -143,7 +143,6 @@ public class AgentsViewBean
     public static final String DEFAULT_ID_TYPE = "J2EEAgent";
     static final String ATTR_NAME_AGENT_TYPE = "Type=";
     
-    public static String DEVICE_KEY = "sunIdentityServerDeviceKeyValue";
     public static String DESCRIPTION = "description";
     public static final String LOCAL_OR_NOT = "localornot";
     final static String ATTR_CONFIG_REPO =
