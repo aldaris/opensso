@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PropertyXMLBuilderBase.java,v 1.18 2009-01-07 22:31:03 lakshman_abburi Exp $
+ * $Id: PropertyXMLBuilderBase.java,v 1.19 2009-01-08 06:21:21 veiming Exp $
  *
  */
 
@@ -644,8 +644,8 @@ public abstract class PropertyXMLBuilderBase
     ) {
         String name = getAttributeNameForPropertyXML(as);
         Object[] params = {name,
-            com.sun.identity.shared.locale.Locale.getString(
-                serviceBundle, as.getI18NKey(), debug),
+            escapeSpecialChars(com.sun.identity.shared.locale.Locale.getString(
+                serviceBundle, as.getI18NKey(), debug)),
             name};
         xml.append(MessageFormat.format(LABEL_TAG, params));
     }
@@ -658,8 +658,8 @@ public abstract class PropertyXMLBuilderBase
     ) {
         String name = as.getName();
         Object[] labelParam = {
-            com.sun.identity.shared.locale.Locale.getString(
-                serviceBundle, as.getI18NKey(), debug)
+            escapeSpecialChars(com.sun.identity.shared.locale.Locale.getString(
+                serviceBundle, as.getI18NKey(), debug))
         };
         String label = MessageFormat.format(model.getLocalizedString(
             "password.confirm.label"), labelParam);
