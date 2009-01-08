@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.cpp,v 1.39 2008-10-09 21:25:34 robertis Exp $
+ * $Id: am_web.cpp,v 1.40 2009-01-08 01:11:58 robertis Exp $
  *
  */
 
@@ -1467,6 +1467,148 @@ log_access(am_status_t access_status,
     return status;
 }
 
+am_bool_t
+is_url_not_enforced(const char *url, const char *client_ip, std::string pInfo, 
+        void* agent_config)
+{
+    const char *thisfunc = "is_url_enforced()";
+    am_status_t status = AM_SUCCESS;
+    am_bool_t foundInNotEnforcedList = AM_FALSE;
+    am_bool_t inNotenforceIP = AM_FALSE;
+    am_bool_t isNotEnforced = AM_FALSE;
+    am_bool_t isLogoutURL = AM_FALSE;    
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+    
+    // Check all required arguments.
+    if (url == NULL || *url == '\0' || 
+            (AM_TRUE == (*agentConfigPtr)->check_client_ip &&
+            NULL == client_ip || *client_ip == '\0')) {
+        status = AM_INVALID_ARGUMENT;
+    }
+
+    if (status == AM_SUCCESS) {
+        try {
+            // See if it client ip is in the not enforced client ip list.
+            if ((*agentConfigPtr)->not_enforce_IPAddr != NULL) {
+                if ((*agentConfigPtr)->not_enforce_IPAddr->find(client_ip) !=
+                         (*agentConfigPtr)->not_enforce_IPAddr->end()) {
+                    inNotenforceIP = AM_TRUE;
+                    am_web_log_debug("%s: client_ip %s is not enforced",
+                                thisfunc, client_ip);
+                } else {
+                    am_web_log_debug("%s: client_ip %s not found in "
+                           "client ip not enforced list",
+                           thisfunc, client_ip);
+                }
+            }
+            // Do the not enforced list check only if the client ip check
+            // fails; no need otherwise 
+            if (AM_FALSE == inNotenforceIP) {
+                URL url_again(url, pInfo);
+                foundInNotEnforcedList = in_not_enforced_list(url_again, agent_config);
+            }
+        } catch (std::bad_alloc& exb) {
+            status = AM_NO_MEMORY;
+        } catch (InternalException& exi) {
+            status = exi.getStatusCode();
+        } catch (std::exception& exs) {
+            am_web_log_error("%s: Exception (%s) caught while checking "
+                        "if client IP is in not enfourced list.",
+                        thisfunc, exs.what());
+            status = AM_FAILURE;
+        } catch (...) {
+            am_web_log_error("%s: Unknown Exception while checking if "
+                        "client IP is in not enforced list.", thisfunc);
+            status = AM_FAILURE;
+        }
+    }
+    // check if it's the logout URL
+    if (status == AM_SUCCESS) {
+        if ((*agentConfigPtr)->logout_url_list.size > 0 &&
+            am_web_is_logout_url(url, agent_config) == B_TRUE) {
+            isLogoutURL = AM_TRUE;
+        }
+    }
+    // If one of the above tests succeeded, the request is
+    // not enforced -> setup a special flag
+    if (status == AM_SUCCESS) {
+        if ((AM_TRUE == inNotenforceIP) ||
+                (AM_TRUE == foundInNotEnforcedList) ||
+                (AM_TRUE == isLogoutURL)) {
+            isNotEnforced = AM_TRUE;
+            am_web_log_max_debug("%s: URL %s is not enforced.", thisfunc, url);
+        } else {
+            am_web_log_max_debug("%s: URL %s is enforced.", thisfunc, url);
+        }
+    }
+
+    return isNotEnforced;
+}
+
+am_status_t
+get_normalized_url(const char *url_str, 
+                   const char *path_info,
+                   std::string &normalizedURL, 
+                   std::string &pInfo,
+                   void* agent_config)
+{
+    const char *thisfunc = "get_normalized_url()";
+    am_status_t status = AM_SUCCESS;
+    am_bool_t isNotEnforced = AM_FALSE;
+    std::string new_url_str;
+    AgentConfigurationRefCntPtr* agentConfigPtr =
+        (AgentConfigurationRefCntPtr*) agent_config;
+
+    // Check argument
+    if (url_str == NULL || *url_str == '\0') {
+        status = AM_INVALID_ARGUMENT;
+    }
+    
+    if (status == AM_SUCCESS) {
+        // Parse & canonicalize URL
+        try {
+            if(path_info != NULL && strlen(path_info) > 0) {
+                Log::log(boot_info.log_module, Log::LOG_DEBUG,
+                    "%s: url '%s' path_info '%s'.",
+                    thisfunc, url_str, path_info);
+
+                if (AM_TRUE == (*agentConfigPtr)->ignore_path_info) {
+                    Log::log(boot_info.log_module, Log::LOG_DEBUG,
+                               "%s:: ignoring path info %s.", thisfunc, path_info);
+                    string tmp_url_str(url_str);
+                    string tmp_path_info(path_info);
+                    string::size_type loc = tmp_url_str.find(tmp_path_info,0);
+                    if (loc != string::npos) {
+                        new_url_str = tmp_url_str.substr(0,loc);
+                        URL urlObject(new_url_str.c_str(), pInfo);
+                        (void)overrideProtoHostPort(urlObject, agent_config);
+                        urlObject.getURLString(normalizedURL);
+                    }
+                } else {
+                    pInfo=path_info;
+                }
+            }
+            if (normalizedURL.length() == 0) {
+                URL urlObject(url_str, pInfo);
+                (void)overrideProtoHostPort(urlObject, agent_config);
+                urlObject.getURLString(normalizedURL);
+            }
+        } catch(InternalException &iex) {
+            Log::log(boot_info.log_module, Log::LOG_ERROR, iex);
+            status = iex.getStatusCode();
+        } catch(std::exception &ex) {
+            Log::log(boot_info.log_module, Log::LOG_ERROR, ex);
+            status = AM_FAILURE;
+        } catch(...) {
+            Log::log(boot_info.log_module, Log::LOG_ERROR,
+            "%s: Unknown exception during URL canonicalization.", thisfunc);
+            status = AM_FAILURE;
+        }
+    }
+    return status;
+}
+
 /**
  * Method to evaluate boolean policies for a resource
  */
@@ -1486,8 +1628,6 @@ am_web_is_access_allowed(const char *sso_token,
 
     const char *thisfunc = "am_web_is_access_allowed()";
     am_status_t status = AM_SUCCESS;
-    am_bool_t foundInNotEnforcedList = AM_FALSE;
-    am_bool_t inNotenforceIP = AM_FALSE;
     char fmtStr[MSG_MAX_LEN];
     const char *rmtUsr = NULL;
     std::string queryToken;
@@ -1496,6 +1636,7 @@ am_web_is_access_allowed(const char *sso_token,
     const char *url = NULL;
     std::string normalizedURL;
     std::string pInfo;
+    std::string test;
     am_bool_t isLogoutURL = AM_FALSE;
     am_status_t log_status = AM_SUCCESS;
     char * encodedUrl = NULL;
@@ -1519,43 +1660,18 @@ am_web_is_access_allowed(const char *sso_token,
 	    NULL == client_ip || *client_ip == '\0')) {
 	status = AM_INVALID_ARGUMENT;
     }
-    else {
-	// parse & canonicalize URL
-	try {
-	    if(path_info != NULL) {
-	        Log::log(boot_info.log_module, Log::LOG_DEBUG,
-			 "%s: url '%s' path_info '%s'.",
-			 thisfunc, url_str, path_info);
 
-		if (AM_TRUE == (*agentConfigPtr)->ignore_path_info) {
-		  Log::log(boot_info.log_module, Log::LOG_DEBUG, 
-          "am_web_is_access_allowed(): ignoring path info %s.", path_info);
-		} else {
-			pInfo=path_info;
-		}
-	    }
-
-		URL urlObject(url_str, pInfo);
-	    (void)overrideProtoHostPort(urlObject, agent_config);
-	    urlObject.getURLString(normalizedURL);
-	    url = normalizedURL.c_str();
-	    am_web_log_max_debug("am_web_is_access_allowed(): "
-				 "processing url %s.", url);
-	    // checked parsed/canonicalized URL
-	    if (url == NULL || *url == '\0') {
-		status = AM_INVALID_ARGUMENT;
-	    }
-	} catch(InternalException &iex) {
-	    Log::log(boot_info.log_module, Log::LOG_ERROR, iex);
-	    status = iex.getStatusCode();
-	} catch(std::exception &ex) {
-	    Log::log(boot_info.log_module, Log::LOG_ERROR, ex);
-	    status = AM_FAILURE;
-	} catch(...) {
-	    Log::log(boot_info.log_module, Log::LOG_ERROR,
-		     "%s: Unknown exception during URL canonicalization.");
-	    status = AM_FAILURE;
-	}
+    // parse & canonicalize URL
+    if (status == AM_SUCCESS) {
+        status = get_normalized_url(url_str, path_info, normalizedURL, pInfo, agent_config);
+    }
+    if (status == AM_SUCCESS) {
+            url = normalizedURL.c_str();
+            if (url == NULL || *url == '\0') {
+                status = AM_INVALID_ARGUMENT;
+            } else {
+                am_web_log_max_debug("%s: Processing url %s.", thisfunc, url);
+            }
     }
 
     // check FQDN access
@@ -1579,65 +1695,18 @@ am_web_is_access_allowed(const char *sso_token,
 
     // check if client ip is in not enforced list
     if (status == AM_SUCCESS) {
-	try {
-	    /* see if it client ip is in the not enforced client ip list. */
-	    if ((*agentConfigPtr)->not_enforce_IPAddr != NULL) {
-	        if ((*agentConfigPtr)->not_enforce_IPAddr->find(client_ip) !=
-				(*agentConfigPtr)->not_enforce_IPAddr->end()) {
-		    inNotenforceIP = AM_TRUE;
-		    am_web_log_debug("%s: client_ip %s is not enforced",
-				     thisfunc, client_ip);
-		}
-		else {
-		    am_web_log_debug("%s: client_ip %s not found in "
-				     "client ip not enforced list",
-				     thisfunc, client_ip);
-		}
-	    }
-	    /* Do the not enforced list check only if the client ip check
-	     * fails; no need otherwise */
-	    if (AM_FALSE == inNotenforceIP) {
-		URL url_again(url, pInfo);
-		foundInNotEnforcedList = in_not_enforced_list(url_again,
-                                             agent_config);
-	    }
-	}
-	catch (std::bad_alloc& exb) {
-	    status = AM_NO_MEMORY;
-	}
-	catch (InternalException& exi) {
-	    status = exi.getStatusCode();
-	}
-	catch (std::exception& exs) {
-	    am_web_log_error("%s: Exception (%s) caught while checking "
-			     "if client IP is in not enfourced list.",
-			     thisfunc, exs.what());
-	    status = AM_FAILURE;
-	}
-	catch (...) {
-	    am_web_log_error("%s: Unknown Exception while checking if "
-			     "client IP is in not enforced list.", thisfunc);
-	    status = AM_FAILURE;
-	}
+        // Check if the url is enforced
+        isNotEnforced = is_url_not_enforced(url, client_ip, pInfo, agent_config);
+
+        // check if it's the logout URL
+        if ((*agentConfigPtr)->agent_logout_url_list.size > 0 &&
+            am_web_is_agent_logout_url(url, agent_config) == B_TRUE) {
+            isLogoutURL = AM_TRUE;
+            am_web_log_max_debug("%s: url %s IS logout url.", thisfunc,url);
+        }
     }
 
-    // check if it's the logout URL
-    if (status == AM_SUCCESS) {
-	if ((*agentConfigPtr)->agent_logout_url_list.size > 0 &&
-	    am_web_is_agent_logout_url(url, agent_config) == B_TRUE) {
-	    isLogoutURL = AM_TRUE;
-	    am_web_log_max_debug("%s: url %s IS logout url.", thisfunc,url);
-	}
-    }
 
-    // if one of the above tests succeeded, the request is
-    // not enforced -> setup a special flag
-    if (status == AM_SUCCESS) {
-	if ((AM_TRUE == inNotenforceIP) ||
-	    (AM_TRUE == foundInNotEnforcedList)){ 
-	    isNotEnforced = AM_TRUE;
-	}
-    }
 
     //Check whether agent is operating in cookieless mode.
     //If yes, extract sso token from the url. The modified url after
@@ -2775,6 +2844,41 @@ am_web_logout_cookies_reset(am_status_t (*setFunc)(const char *, void **),
 }
 
 
+extern "C" AM_WEB_EXPORT boolean_t
+am_web_is_url_enforced(const char *url_str,
+                       const char *path_info,
+                       const char *client_ip,
+                       void* agent_config)
+{
+    const char *thisfunc = "am_web_is_url_enforced()";
+    am_status_t status = AM_SUCCESS;
+    am_bool_t isNotEnforced = AM_FALSE;
+    boolean_t isEnforced = B_TRUE;
+    const char *url = NULL;
+    std::string normalizedURL;
+    std::string pInfo;
+    
+    // Normalized the url
+    status = get_normalized_url(url_str, path_info,
+                                normalizedURL, pInfo, agent_config);
+    if (status == AM_SUCCESS) {
+        url = normalizedURL.c_str();
+        if (url == NULL || *url == '\0') {
+            am_web_log_warning("%s: Normalized url is null (original url=%s)",
+                                thisfunc, url_str);
+        } else {
+            // Check if the url is enforced
+            isNotEnforced = is_url_not_enforced(url, client_ip, pInfo, agent_config);
+            if (isNotEnforced == AM_TRUE) {
+                isEnforced = B_FALSE;
+            }
+        }
+    } else {
+        am_web_log_warning("%s: get_normalized_url() failed for url %s",
+                            thisfunc, url_str);
+    }
+    return isEnforced;
+}
 /*
  * This function sets the iPlanetDirectoryPro cookie for each domain
  * configured in the com.sun.am.policy.agents.cookieDomainList property.

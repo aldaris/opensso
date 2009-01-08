@@ -201,3 +201,4 @@ EXPORTS
 	am_web_build_advice_response;
 	am_web_get_request_url;
 
+    am_web_is_url_enforced;

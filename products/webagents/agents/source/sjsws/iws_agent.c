@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: iws_agent.c,v 1.18 2008-10-04 01:34:40 robertis Exp $
+ * $Id: iws_agent.c,v 1.19 2009-01-08 01:12:15 robertis Exp $
  *
  *
  */
@@ -912,7 +912,8 @@ validate_session_policy(pblock *param, Session *sn, Request *rq)
 	system_free(header_str);
     }
 
-    path_info = pblock_findval(PATH_INFO, rq->headers);
+    path_info = pblock_findval(PATH_INFO, rq->vars);
+    am_web_log_debug("%s: path_info=%s", "validate_session_policy()", path_info);
     method = pblock_findval(REQUEST_METHOD, rq->reqpb);
     
     agent_config = am_web_get_agent_configuration();
@@ -943,8 +944,9 @@ validate_session_policy(pblock *param, Session *sn, Request *rq)
         am_web_log_debug("validate_session_policy(): Cookie Not Found in "
                          " request headers.");
 
-    if (dpro_cookie == NULL &&
-        am_web_is_cdsso_enabled(agent_config) == B_TRUE ) {
+    if (dpro_cookie == NULL && (am_web_is_cdsso_enabled(agent_config) == B_TRUE)
+       && (am_web_is_url_enforced(request_url, path_info, 
+               pblock_findval(REQUEST_IP_ADDR, sn->client), agent_config) == B_TRUE)){
         if (strcmp(method, REQUEST_METHOD_POST) == 0) {
             response = get_post_assertion_data(sn, rq, request_url);
             // Set the original request method to GET always

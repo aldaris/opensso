@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.h,v 1.23 2008-10-09 21:25:34 robertis Exp $
+ * $Id: am_web.h,v 1.24 2009-01-08 01:11:59 robertis Exp $
  *
  */
 
@@ -1215,6 +1215,12 @@ am_web_get_request_url(const char *host_hdr, const char *protocol,
  */
 AM_WEB_EXPORT boolean_t am_web_is_proxy_override_host_port_set(void* agent_config);
 
+
+/*
+ * Method to determine if a url is enforced
+ */
+AM_WEB_EXPORT boolean_t
+am_web_is_url_enforced(const char *url_str,const char *path_info,const char *client_ip, void* agent_config);
 
 /*
  * Method to get the value of user id param

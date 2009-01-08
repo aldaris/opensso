@@ -209,8 +209,9 @@ SUNW_2.2 {
 	global:
 		am_web_build_advice_response;
 		am_web_get_request_url;
-                am_web_get_agent_configuration;
-                am_web_delete_agent_configuration;
+        am_web_get_agent_configuration;
+        am_web_delete_agent_configuration;
+		am_web_is_url_enforced;
 
 
 	local:
