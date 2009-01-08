@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginModule.java,v 1.15 2008-12-23 21:27:03 ericow Exp $
+ * $Id: AMLoginModule.java,v 1.16 2009-01-08 18:44:24 ericow Exp $
  *
  */
 
@@ -238,6 +238,11 @@ public abstract class AMLoginModule implements LoginModule {
     private boolean isSharedState = false;
     private boolean isStore = true;
     private String sharedStateBehaviorPattern = "";
+
+    // variable used in replaceHeader()
+    private String headerWithReplaceTag;
+    private boolean alreadyReplaced = false;
+    private int lastState = 0;
     
     /**
      * Holds handle to ResourceBundleCache to quickly get ResourceBundle for
@@ -576,6 +581,12 @@ public abstract class AMLoginModule implements LoginModule {
             debug.message("ReplaceHeader : state=" + state + ", header=" +
             header);
         }
+
+        if (lastState != state) {
+            alreadyReplaced = false;
+        }
+        lastState = state;
+
         // check state length
         if (state > stateLength) {
             throw new AuthLoginException(bundleName, "invalidState",
@@ -592,16 +603,19 @@ public abstract class AMLoginModule implements LoginModule {
         if ((header!=null)&&(header.length() != 0)) {
             PagePropertiesCallback pc =
             (PagePropertiesCallback)((Callback[]) internal.get(state-1))[0];
-            // retrieve the original header
-            String origHeader = pc.getHeader();
+            // retrieve header with REPLACE tag
+            if ( !(alreadyReplaced) ) {
+                headerWithReplaceTag = pc.getHeader();
+            }
             // replace string
-            int idx = origHeader.indexOf("#REPLACE#");
+            int idx = headerWithReplaceTag.indexOf("#REPLACE#");
             if (idx != -1) {
-                String newHeader = origHeader.substring(0, idx) + header;
+                String newHeader = headerWithReplaceTag.substring(0, idx) + header;
                 pc.setHeader(newHeader);
+                alreadyReplaced = true;
             }else{
-                String newHeader = origHeader.substring(0, 
-                    origHeader.indexOf("<BR></BR>")) + "<BR></BR>" + header;
+                String newHeader = headerWithReplaceTag.substring(0, 
+                    headerWithReplaceTag.indexOf("<BR></BR>")) + "<BR></BR>" + header;
                 pc.setHeader(newHeader);            	
             }
         }
