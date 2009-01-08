@@ -1,3 +1,4 @@
+./META-INF/MANIFEST.MF
 ./WEB-INF/classes/AccessManagerCLI.properties
 ./WEB-INF/classes/AccessManagerCLI_de.properties
 ./WEB-INF/classes/AccessManagerCLI_en.properties

@@ -1,3 +1,4 @@
+./META-INF/MANIFEST.MF
 ./WEB-INF/classes/META-INF/services/com.sun.xml.ws.api.security.trust.STSAttributeProvider
 ./WEB-INF/classes/META-INF/services/com.sun.xml.ws.api.security.trust.STSAuthorizationProvider
 ./WEB-INF/classes/META-INF/services/com.sun.xml.ws.api.security.trust.STSTokenProvider

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.24 2008-12-01 22:16:01 veiming Exp $
+   $Id: build.xml,v 1.25 2009-01-08 22:38:49 veiming Exp $
 
 -->
 
@@ -116,6 +116,10 @@
 	<mkdir dir="${clientsamples.packages.temp.dir}" />
 	<move file="${clientsamples.war.packages.dir}/WEB-INF/web.xml" tofile="${clientsamples.packages.temp.dir}/web.xml" />
         <war destfile="${fm.dist.dir}/opensso-client-jdk14.war" webxml="${clientsamples.packages.temp.dir}/web.xml">
+            <manifest>
+                <attribute name="Version" value="${openfm.version}"/>
+                <attribute name="Create-On" value="${touch.time}"/>
+            </manifest>
             <zipfileset dir="${clientsamples.war.packages.dir}" />
         </war>
 	<move file="${clientsamples.packages.temp.dir}/web.xml" tofile="${clientsamples.war.packages.dir}/WEB-INF/web.xml" />
@@ -191,6 +195,10 @@
 	<mkdir dir="${clientsamples.packages.temp.dir}" />
 	<move file="${clientsamples.war.packages.dir}/WEB-INF/web.xml" tofile="${clientsamples.packages.temp.dir}/web.xml" />
         <war destfile="${fm.dist.dir}/opensso-client-jdk15.war" webxml="${clientsamples.packages.temp.dir}/web.xml">
+            <manifest>
+                <attribute name="Version" value="${openfm.version}"/>
+                <attribute name="Create-On" value="${touch.time}"/>
+            </manifest>
             <zipfileset dir="${clientsamples.war.packages.dir}" />
         </war>
 	<move file="${clientsamples.packages.temp.dir}/web.xml" tofile="${clientsamples.war.packages.dir}/WEB-INF/web.xml" />

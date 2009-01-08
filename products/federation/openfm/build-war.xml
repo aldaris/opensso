@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.47 2008-09-25 01:27:31 asyhuang Exp $
+   $Id: build-war.xml,v 1.48 2009-01-08 22:38:49 veiming Exp $
 
 -->
 
@@ -432,6 +432,10 @@
         </copy>
 
         <war destfile="${fm.dist.dir}/opensso.war" webxml="${war.packageweb.dir}/web.xml">
+            <manifest>
+                <attribute name="Version" value="${openfm.version}"/>
+                <attribute name="Create-On" value="${touch.time}"/>
+            </manifest>
             <zipfileset dir="${war.package.dir}" />
         </war>
         <move file="${war.packageweb.dir}/web.xml" tofile="${war.package.dir}/WEB-INF/web.xml" />

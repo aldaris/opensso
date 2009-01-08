@@ -1,3 +1,4 @@
+./META-INF/MANIFEST.MF
 ./WEB-INF/classes/amAuth.properties
 ./WEB-INF/classes/amAuth_de.properties
 ./WEB-INF/classes/amAuth_en.properties
