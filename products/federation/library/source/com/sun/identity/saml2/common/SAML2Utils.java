@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.42 2008-11-25 23:50:44 hengming Exp $
+ * $Id: SAML2Utils.java,v 1.43 2009-01-08 00:21:02 qcheng Exp $
  *
  */
 
@@ -252,7 +252,9 @@ public class SAML2Utils extends SAML2SDKUtils {
         } catch (COTException sme) {
             debug.error("Error retreiving COT ",sme);
         }
-        if (SystemConfigurationUtil.isServerMode()) {
+        // run the scheduler in case of server or Fedlet
+        if (SystemConfigurationUtil.isServerMode() ||
+            SPCache.isFedlet) {
             CacheCleanUpScheduler.doSchedule();
         }
     }
