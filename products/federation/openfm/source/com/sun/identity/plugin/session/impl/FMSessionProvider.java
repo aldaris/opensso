@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FMSessionProvider.java,v 1.17 2008-10-03 22:10:43 hengming Exp $
+ * $Id: FMSessionProvider.java,v 1.18 2009-01-08 00:57:19 exu Exp $
  *
  */
 
@@ -340,6 +340,9 @@ public class FMSessionProvider implements SessionProvider {
             Iterator it = info.keySet().iterator();
             while (it.hasNext()) {
                 String keyName = (String) it.next();
+                if (keyName.equals(AUTH_LEVEL)) {
+                    continue;
+                }
                 String keyVal = (String) info.get(keyName);
                 ssoToken.setProperty(keyName, keyVal);
             }
