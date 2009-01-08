@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultSiteAttributeMapper.java,v 1.1 2008-12-15 23:04:54 hengming Exp $
+ * $Id: DefaultSiteAttributeMapper.java,v 1.2 2009-01-08 04:29:00 hengming Exp $
  *
  */
 
@@ -116,7 +116,10 @@ public class DefaultSiteAttributeMapper implements ConsumerSiteAttributeMapper {
             String attrNamespace = null;
 
             StringTokenizer tokenizer = new StringTokenizer(samlAttrName, "|");
-            if (tokenizer.countTokens() == 2) {
+            int tokenCount = tokenizer.countTokens();
+            if (tokenCount == 1) {
+                attrNamespace = SAMLConstants.assertionSAMLNameSpaceURI;
+            } else if (tokenCount == 2) {
                 attrNamespace = tokenizer.nextToken();
                 samlAttrName = tokenizer.nextToken();
             } else {
