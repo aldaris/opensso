@@ -58,7 +58,7 @@ public class ValidateURL extends ValidatorBase {
             IStateAccess state) {
            
         // delegate this function to its proxy with timeout.
-        return new URLValidatorProxy(url, props, state).isServerURLValid();
+        return new URLValidatorProxy(url, props, state, true).isURLValid();
     }
     
     /*
@@ -68,7 +68,7 @@ public class ValidateURL extends ValidatorBase {
      * 
      * @return ValidationResult
      */
-    private ValidationResult isServerURLValidIntenal(String url, Map props,
+    private ValidationResult isServerURLValidInternal(String url, Map props,
             IStateAccess state) {
 
         LocalizedMessage returnMessage = null;
@@ -155,7 +155,7 @@ public class ValidateURL extends ValidatorBase {
     }
 
     /*
-     * Checks if agent url is valid
+     * Checks if agent URL is valid and agent container is stopped
      * 
      * @param url @param props @param state
      * 
@@ -163,9 +163,24 @@ public class ValidateURL extends ValidatorBase {
      */
     public ValidationResult isAgentURLValid(String url, Map props,
             IStateAccess state) {
+           
+        // delegate this function to its proxy with timeout.
+        return new URLValidatorProxy(url, props, state, false).isURLValid();
+    }
+    
+    /*
+     * Checks if agent URL is valid and agent container is stopped
+     * 
+     * @param url @param props @param state
+     * 
+     * @return ValidationResult
+     */
+    private ValidationResult isAgentURLValidInternal(String url, Map props,
+            IStateAccess state) {
 
         ValidationResultStatus validRes = ValidationResultStatus.STATUS_FAILED;
         LocalizedMessage returnMessage = null;
+        boolean agentContainerRunning = false;
         boolean invalidDeploymentURI = false;
 
         try {
@@ -188,35 +203,64 @@ public class ValidateURL extends ValidatorBase {
             tokens.put("AGENT_PREF_PROTO", protocol);
             tokens.put("AGENT_HOST", hostName);
             tokens.put("AGENT_PREF_PORT", sPortNum);     
+          
+            /* 
+             * Construct the agent container URL and test if the 
+             * container is running. If so, ask the user to shut it 
+             * down before continuing with the agent installation.
+             */ 
+            StringBuffer bf = new StringBuffer(); 
+            bf.append(protocol);
+            bf.append("://");
+            bf.append(hostName);
+            bf.append(":");
+            bf.append(sPortNum);
+            String containerURL = bf.toString();
+            URLConnection connection = null;
+            try {
+                connection = (new URL(containerURL)).openConnection();
+                connection.connect();
+                agentContainerRunning = true;
+                returnMessage = LocalizedMessage.get(
+                                LOC_VA_MSG_AGENT_CONTAINER_RUNNING,
+                                new Object[] { containerURL });
+                Debug.log("ValidateURL.isAgentURLValid: " + 
+                          "The agent container is running.");
+            } catch (IOException ex) {
+                Debug.log("ValidateURL.isAgentURLValid: " + 
+                          "The agent container is not running.");
+            } 
             
-	    String agentType = (String) props.get(STR_AGENT_TYPE);
-	    if (agentType != null && agentType.equals("webagent")) {
-                state.putData(tokens);
-                validRes = ValidationResultStatus.STATUS_SUCCESS;
-	    } else {
-                String deploymentURI = agentUrl.getPath();           
-                Debug.log("deploymentURI ==> " + deploymentURI);
-                if (deploymentURI.length() > 1) {
-                    tokens.put("AGENT_APP_URI", deploymentURI);
-                
+            if (!agentContainerRunning) { 
+    	        String agentType = (String) props.get(STR_AGENT_TYPE);
+    	        if (agentType != null && agentType.equals("webagent")) {
                     state.putData(tokens);
                     validRes = ValidationResultStatus.STATUS_SUCCESS;
-                } else {
-                    invalidDeploymentURI = true;
-                    validRes = ValidationResultStatus.STATUS_FAILED;
-                    returnMessage = LocalizedMessage.get(
+    	        } else {
+                    String deploymentURI = agentUrl.getPath();           
+                    Debug.log("deploymentURI ==> " + deploymentURI);
+                    if (deploymentURI.length() > 1) {
+                        tokens.put("AGENT_APP_URI", deploymentURI);
+                    
+                        state.putData(tokens);
+                        validRes = ValidationResultStatus.STATUS_SUCCESS;
+                    } else {
+                        invalidDeploymentURI = true;
+                        validRes = ValidationResultStatus.STATUS_FAILED;
+                        returnMessage = LocalizedMessage.get(
                                     LOC_VA_MSG_IN_VAL_DEPLOYMENT_URI,
                                     new Object[] { url });
+                    }
                 }
             }
          } catch (MalformedURLException mfe) {
-                Debug.log("ValidateURL.isAgentUrlValid threw exception :",
-                                mfe);
+             Debug.log("ValidateURL.isAgentURLValid threw exception :",
+                       mfe);
          }
         
-         if (validRes.getIntValue() == ValidationResultStatus.INT_STATUS_FAILED)
-	 {
-             if (!invalidDeploymentURI) {
+         if (validRes.getIntValue() == 
+              ValidationResultStatus.INT_STATUS_FAILED) {
+             if (!invalidDeploymentURI && !agentContainerRunning) {
                  returnMessage = LocalizedMessage.get(
                                  LOC_VA_WRN_IN_VAL_AGENT_URL,
                                  new Object[] { url });
@@ -265,23 +309,18 @@ public class ValidateURL extends ValidatorBase {
         private Map props = null;
         private IStateAccess state = null;
         private ValidationResult result = null;
+        boolean isServer = false;
         
         public URLValidatorProxy(String url, Map props,
-                IStateAccess state) {
+                IStateAccess state, boolean isServer) {
             this.url = url;
             this.props = props;
             this.state = state;
-            
-            ValidationResultStatus validRes = 
-                    ValidationResultStatus.STATUS_WARNING;
-            LocalizedMessage returnMessage = LocalizedMessage.get(
-                                LOC_VA_WRN_UN_REACHABLE_SERVER_URL,
-                                new Object[] { url });
-            this.result = new ValidationResult(validRes, null, returnMessage);
+            this.isServer = isServer;
         }
         
-        public ValidationResult isServerURLValid() {
-            
+        public ValidationResult isURLValid() {
+           
             try {
                 long timeout = 10000;
                 Thread thread = new Thread(this);
@@ -293,7 +332,7 @@ public class ValidateURL extends ValidatorBase {
                 }
                 
             } catch (InterruptedException ex) {
-                Debug.log("ValidateURL$URLValidatorProxy.isServerURLValid(): " +
+                Debug.log("ValidateURL$URLValidatorProxy.isURLValid(): " +
                         "the url " + url + " is not available", ex);
             }
             
@@ -301,8 +340,20 @@ public class ValidateURL extends ValidatorBase {
         }
         
         public void run() {
-            result = ValidateURL.this.isServerURLValidIntenal(url, props,
-                    state);
+            LocalizedMessage returnMessage = LocalizedMessage.get(
+                                LOC_VA_WRN_UN_REACHABLE_SERVER_URL,
+                                new Object[] { url });
+            if (isServer) {
+                // set the result in the case of the thread getting interrupted
+                result = new ValidationResult(
+                    ValidationResultStatus.STATUS_WARNING, null, returnMessage);
+                result = isServerURLValidInternal(url, props, state);
+            } else {
+                // set the result in the case of the thread getting interrupted
+                result = new ValidationResult(
+                    ValidationResultStatus.STATUS_FAILED, null, returnMessage);
+                result = isAgentURLValidInternal(url, props, state);
+            } 
         }
         
     } // end of URLValidatorProxy class
@@ -325,4 +376,6 @@ public class ValidateURL extends ValidatorBase {
                                             "VA_WRN_UN_REACHABLE_AGENT_URL";
     public static String LOC_VA_MSG_IN_VAL_DEPLOYMENT_URI  = 
                                             "VA_MSG_IN_VAL_DEPLOYMENT_URI";
+    public static String LOC_VA_MSG_AGENT_CONTAINER_RUNNING = 
+                                      "VA_MSG_AGENT_CONTAINER_RUNNING";
 }
