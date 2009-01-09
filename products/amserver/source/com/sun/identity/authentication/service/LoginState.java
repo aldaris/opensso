@@ -1,3 +1,4 @@
+
 /**
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
@@ -22,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.41 2008-12-23 21:42:35 ericow Exp $
+ * $Id: LoginState.java,v 1.42 2009-01-09 06:52:18 manish_rustagi Exp $
  *
  */
 
@@ -1169,16 +1170,18 @@ public class LoginState {
         String oldUserDN = null;
         AMIdentity oldAMIdentity = null;
         if (oldSession != null) {
-            newAMIdentity = 
-                ad.getIdentity(IdType.USER,userDN,getOrgDN());        	
             oldUserDN = oldSession.getProperty(ISAuthConstants.PRINCIPAL);
-            oldAMIdentity = 
-                ad.getIdentity(IdType.USER,oldUserDN,getOrgDN());
-            if (messageEnabled) {
-                debug.message("LoginState.setSessionProperties()" + 
+            if(!ignoreUserProfile){
+                newAMIdentity = 
+                    ad.getIdentity(IdType.USER,userDN,getOrgDN());          
+                oldAMIdentity = 
+                    ad.getIdentity(IdType.USER,oldUserDN,getOrgDN());
+                if (messageEnabled) {
+                    debug.message("LoginState.setSessionProperties()" + 
                               " newAMIdentity is: " + newAMIdentity);
-                debug.message("LoginState.setSessionProperties()" + 
+                    debug.message("LoginState.setSessionProperties()" + 
                               " oldAMIdentity is: " + oldAMIdentity);        	
+                }
             }
         }
         
@@ -1190,6 +1193,34 @@ public class LoginState {
             debug.message("LoginState.setSessionProperties()" +
                           " sessionUpgrade is: " + sessionUpgrade);            
         }
+        
+        if (sessionUpgrade){
+            if(!ignoreUserProfile){
+                if((oldAMIdentity != null) && 
+                        oldAMIdentity.equals(newAMIdentity)){
+                    sessionUpgrade();
+                }
+            } else {
+                if((oldUserDN != null) && 
+                        (DNUtils.normalizeDN(userDN)).equals(
+                            DNUtils.normalizeDN(oldUserDN))){
+                    sessionUpgrade();
+                } else {
+                    if (messageEnabled) {
+                        debug.message("LoginState.setSessionProperties()" +
+                        "Resetting session upgrade to false " +
+                        "since Old UserDN and New UserDN doesn't match");
+                    }
+                    sessionUpgrade = false;
+                }
+            }
+        }else {
+            sessionUpgrade = false;
+        }
+        
+        if (forceAuth && sessionUpgrade) {
+            session = oldSession;
+        }        
 
         Date authInstantDate = new Date();
         String authInstant = DateUtils.toUTCDateFormat(authInstantDate);
@@ -1235,16 +1266,6 @@ public class LoginState {
                         "+").append(authTime);
                 }
             }
-        }
-        
-        if ((sessionUpgrade) && ((oldAMIdentity != null)
-        && (oldAMIdentity.equals(newAMIdentity)))) {
-            sessionUpgrade();
-        } else {
-            sessionUpgrade = false;
-        }
-        if (forceAuth && sessionUpgrade) {
-            session = oldSession;
         }
         
         //Sets the User profile option used, in session.
@@ -4903,7 +4924,7 @@ public class LoginState {
         StringTokenizer st = new StringTokenizer(oldProperty,"|");
         while (st.hasMoreTokens()) {
             String s = (String)st.nextToken();
-            if (newProperty.indexOf(s) == -1) {
+            if (!newProperty.equals(s)) {
                 sb.append("|").append(s);
             }
         }
