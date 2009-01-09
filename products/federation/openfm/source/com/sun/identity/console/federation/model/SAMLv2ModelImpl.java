@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2ModelImpl.java,v 1.40 2008-12-11 18:52:55 babysunil Exp $
+ * $Id: SAMLv2ModelImpl.java,v 1.41 2009-01-09 20:55:46 babysunil Exp $
  *
  */
 
@@ -1674,12 +1674,19 @@ public class SAMLv2ModelImpl extends EntityModelImpl implements SAMLv2Model {
                             String size = null;
                             List keySizeList = encrptElement.getContent();
                             if (!keySizeList.isEmpty()) {
-                                EncryptionMethodType.KeySize keysizeElem =
-                                   (EncryptionMethodType.KeySize)
-                                   keySizeList.get(0);
-                                BigInteger keysize = keysizeElem.getValue();
-                                size = Integer.toString(keysize.intValue());
-                            }                    
+                                for (Iterator itt = keySizeList.listIterator(); 
+                                    itt.hasNext(); ) { 
+                                    Object encrptType = (Object)itt.next();
+                                    if (encrptType.getClass().getName().
+                                        contains("KeySizeImpl")) {
+                                        EncryptionMethodType.KeySize keysizeElem =
+                                            (EncryptionMethodType.KeySize)
+                                                keySizeList.get(0);
+                                        BigInteger keysize = keysizeElem.getValue();
+                                        size = Integer.toString(keysize.intValue());
+                                    }
+                                }
+                            }           
 
                             map.put(TF_KEY_NAME, 
                                 returnEmptySetIfValueIsNull(size));
