@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthClientUtils.java,v 1.23 2008-12-24 01:43:04 ericow Exp $
+ * $Id: AuthClientUtils.java,v 1.24 2009-01-09 07:31:11 bhavnab Exp $
  *
  */
 
@@ -33,6 +33,7 @@ import java.io.PrintWriter;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.io.IOException;
 
 import java.util.List;
@@ -160,6 +161,9 @@ public class AuthClientUtils {
 
     private static String serverURL = null;
     static Debug utilDebug = Debug.getInstance("amAuthClientUtils");
+    private static String[] ignoreList = {
+        "IDtoken0", "IDtoken1", "IDtoken2", "IDButton", "AMAuthCookie"
+    };
     private static boolean useCache = Boolean.getBoolean(SystemProperties.get(
         com.sun.identity.shared.Constants.URL_CONNECTION_USE_CACHE, "false"));
 
@@ -1411,12 +1415,46 @@ public class AuthClientUtils {
         return (urlString);
     }
 
+    private static boolean ignoreParameter(String parameter) {
+        boolean ignore = false;
+        for (int i = 0; i < ignoreList.length; i++) {
+        if (parameter.equalsIgnoreCase(ignoreList[i])) {
+                ignore = true;
+                break;
+            }
+        }
+       return ignore;
+    }
+
     public static String constructLoginURL(HttpServletRequest request) {
         StringBuffer loginURL = new StringBuffer(serviceURI);
-        String qString = request.getQueryString();
-        if ((qString != null) && (qString.length() != 0)) {
+        String queryString = "";
+        Enumeration parameters = request.getParameterNames();
+        for ( ; parameters.hasMoreElements() ;) {
+            String parameter = (String)parameters.nextElement();
+            if(!ignoreParameter(parameter)){
+                if (parameter.equalsIgnoreCase("SunQueryParamsString")) {
+                    String queryParams = getBase64DecodedValue(
+                        request.getParameter(parameter));
+                    queryString = queryString + queryParams;
+                } else { // if goto may be empty, so check value is not null
+                    String value = request.getParameter(parameter);
+                    if(( value != null) && !value.equals("")) {
+                        queryString = queryString + parameter + "=" + value;
+                    }
+                }
+                if (parameters.hasMoreElements()) {
+                    queryString = queryString + "&";
+                }
+            }
+        }
+        if(!queryString.equals("")){
             loginURL.append("?");
-            loginURL.append(qString);
+            loginURL.append(queryString);
+        }
+        if (utilDebug.messageEnabled()) {
+            utilDebug.message("AuthClientUtils.constructLoginURL() " +
+                              "returning login url : " + loginURL.toString());
         }
         return(loginURL.toString());
     }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthViewBeanBase.java,v 1.10 2008-08-19 19:08:48 veiming Exp $
+ * $Id: AuthViewBeanBase.java,v 1.11 2009-01-09 07:31:10 bhavnab Exp $
  *
  */
 
@@ -44,6 +44,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.Enumeration;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -56,6 +57,10 @@ import java.io.UnsupportedEncodingException;
  * This class is a default implementation of <code>ViewBean</code> auth UI.
  */
 public abstract class AuthViewBeanBase extends ViewBeanBase {
+    private static String[] ignoreList = {
+        "goto", "encoded", "IDtoken0", "IDtoken1", "IDtoken2", "IDButton", "AMAuthCookie"
+    };
+
     private  java.util.Locale accLocale ;
     static Debug loginDebug = Debug.getInstance("amLoginViewBean");
     
@@ -159,6 +164,62 @@ public abstract class AuthViewBeanBase extends ViewBeanBase {
     }
 
     /** 
+     * Returns the validated and Base64 ecoded query params value.
+     * @param request from which query parameters have to be extracted.
+     * @return a String the validated and Base64 ecoded query params String
+     */
+    public String getEncodedQueryParams(HttpServletRequest request)
+    {
+        String returnQueryParams = "";
+        StringBuffer queryParams = new StringBuffer();
+        queryParams.append("");
+        Enumeration parameters = request.getParameterNames();
+        for ( ; parameters.hasMoreElements() ;) {
+            boolean ignore = false;
+            String parameter = (String)parameters.nextElement();
+            for (int i = 0; i < ignoreList.length; i++) {
+                if (parameter.equalsIgnoreCase(ignoreList[i])) {
+                    ignore = true;
+                    break;
+                }
+            }
+            if  (loginDebug.messageEnabled()) {
+                loginDebug.message("getEncodedQueryParams: parameter  is:"+
+                    parameter);
+            }
+            if(!ignore) {
+                queryParams.append(parameter);
+                String value = request.getParameter(parameter);
+                queryParams.append('=');
+                if  (loginDebug.messageEnabled()) {
+                    loginDebug.message("getEncodedQueryParams: parameter  "+
+                        "value:"+ value);
+                }
+                queryParams.append(value);
+                if (parameters.hasMoreElements()) {
+                    queryParams.append('&');
+                }
+            }
+        }
+        String queryParamsString = queryParams.toString();
+        if  (loginDebug.messageEnabled()) {
+            loginDebug.message("getEncodedQueryParams: SunQueryParamsString is"
+                +":"+ queryParamsString);
+        }
+        if ((queryParamsString != null) &&
+            (queryParamsString.length() != 0))
+        {
+            returnQueryParams = getEncodedInputValue(queryParamsString);
+        }
+
+        if (loginDebug.messageEnabled()) {
+            loginDebug.message("getEncodedQueryParams:returnQueryParams : "
+                + returnQueryParams);
+        }
+        return returnQueryParams;
+    }
+
+    /**
      * Returns the validated and Base64 ecoded URL value.
      * @param inputURL input URL string value 
      * @param encoded value of "encoded" parameter to tell wheather 
