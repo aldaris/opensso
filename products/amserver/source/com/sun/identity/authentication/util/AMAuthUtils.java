@@ -22,29 +22,41 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAuthUtils.java,v 1.7 2008-06-25 05:42:07 qcheng Exp $
+ * $Id: AMAuthUtils.java,v 1.8 2009-01-09 02:24:56 madan_ranganath Exp $
  *
  */
 
 
 package com.sun.identity.authentication.util;
 
-import com.sun.identity.shared.debug.Debug;
+
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenID;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.AuthContext;
+import com.sun.identity.authentication.config.AMAuthenticationManager;
+import com.sun.identity.authentication.config.AMConfigurationException;
 import com.sun.identity.authentication.service.AuthUtils;
 import com.sun.identity.common.DateUtils;
+import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.DNMapper;
+import com.sun.identity.sm.SMSEntry;
+import java.security.AccessController;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+
+
 
 /**
  * This class provides utility methods to Policy and Administration console
@@ -412,5 +424,42 @@ public class AMAuthUtils {
             }
         }
         return retTime;
+    }
+
+    /**
+     * Returns the list of configured module instances that could be
+     * used by HTTP Basic
+     * @param realmName  Realm Name
+     * @return the list of configured module instances that could be
+     * used by HTTP Basic
+     */
+    public static List getModuleInstancesForHttpBasic(String realmName) {
+       
+        List moduleInstances = new ArrayList();
+
+        addModInstanceNames(realmName,"DataStore", moduleInstances);
+        addModInstanceNames(realmName,"LDAP", moduleInstances);
+        addModInstanceNames(realmName,"AD", moduleInstances);
+        addModInstanceNames(realmName,"JDBC", moduleInstances);
+        
+        //return the choice values map
+        return (moduleInstances);
+    }
+
+    private static void addModInstanceNames(String realmName,
+                                            String moduleType,
+                                            List modInstances) {
+        try {
+            SSOToken adminToken = (SSOToken)AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+            AMAuthenticationManager amAM = new
+                AMAuthenticationManager(adminToken, realmName);
+            Set instanceNames = amAM.getModuleInstanceNames(moduleType);
+            modInstances.addAll(instanceNames);
+           } catch (AMConfigurationException exp) {
+            utilDebug.error("AMAuthUtils.addModInstanceNames: Error while"
+                            + " trying to get auth module instance names " +
+                            "for auth type" + moduleType);
+        }
     }
 }
