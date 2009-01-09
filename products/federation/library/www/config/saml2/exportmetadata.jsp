@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: exportmetadata.jsp,v 1.3 2008-06-25 05:48:35 qcheng Exp $
+   $Id: exportmetadata.jsp,v 1.4 2009-01-09 18:27:32 veiming Exp $
 
 
    NOTE : remove this JSP from the OpenSSO WAR if you don't want to 
@@ -107,6 +107,7 @@ ERROR : <%= errorMsg %>
     } else {
         response.setContentType("text/xml");
         response.setHeader("Pragma", "no-cache");
+        response.setContentType("text/xml; charset=utf-8");
         response.getWriter().print(metaXML);
     }
 %>
