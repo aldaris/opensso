@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdUtils.java,v 1.27 2008-08-27 22:05:41 veiming Exp $
+ * $Id: IdUtils.java,v 1.28 2009-01-09 06:14:42 goodearth Exp $
  *
  */
 
@@ -562,6 +562,24 @@ public final class IdUtils {
                 Set orgAliases = sm.searchOrganizationNames(
                     IdConstants.REPO_SERVICE,
                     IdConstants.ORGANIZATION_ALIAS_ATTR, vals);
+                // This is to re-initialize persistent search for DS.
+                // This is for the scenerio/issue where persistent search 
+                // is not reinitialized once DS is restarted.
+                if ((orgAliases == null) || orgAliases.isEmpty()) {
+                    try {
+                        ocm.addAttributeValues(IdConstants.REPO_SERVICE, 
+                            IdConstants.ORGANIZATION_ALIAS_ATTR, vals);
+                    } catch (SMSException s) {
+                        if (debug.messageEnabled()) {
+                            debug.message("IdUtils.getOrganization "+
+                                "Attribute or value already exists. : "+
+                                s.getMessage());
+                        }
+                    }
+                    orgAliases = sm.searchOrganizationNames(
+                    IdConstants.REPO_SERVICE,
+                    IdConstants.ORGANIZATION_ALIAS_ATTR, vals);
+                }
                 if (!foundOrg &&
                     ((orgAliases == null) || orgAliases.isEmpty())) {
                     if (debug.warningEnabled()) {
