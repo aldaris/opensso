@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetIDPSPPairingInCOT.java,v 1.2 2008-06-25 05:50:02 qcheng Exp $
+ * $Id: GetIDPSPPairingInCOT.java,v 1.3 2009-01-09 17:42:55 veiming Exp $
  *
  */
 
@@ -38,6 +38,8 @@ import com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -135,7 +137,11 @@ public class GetIDPSPPairingInCOT
             } else {
                 first = false;
             }
-            buff.append(e);
+            try {
+                buff.append(URLEncoder.encode(e, "UTF-8"));
+            } catch (UnsupportedEncodingException ex) {
+                buff.append(e);
+            }
         }
         buff.append("}");
         return buff.toString();

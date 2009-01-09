@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: validatorMain.jsp,v 1.5 2009-01-05 23:23:25 veiming Exp $
+   $Id: validatorMain.jsp,v 1.6 2009-01-09 17:42:57 veiming Exp $
 
 --%>
 
@@ -33,6 +33,7 @@
 <%@ page contentType="text/html; charset=utf-8" language="java" %>
 
 <%
+    request.setCharacterEncoding("UTF-8");
     String deployuri = SystemConfigurationUtil.getProperty(
         Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
 
@@ -87,6 +88,14 @@
 <iframe src ="" width="95%" height="50%" name="worker" frameborder=1></iframe>
 </center>
 <div><img src="<%= deployuri %>/com_sun_web_ui/images/other/dot.gif" alt="" border="0" height="10" width="1" /></div>
+<form name="validatorForm" target="controller" method="POST"
+    action="validator.jsp">
+    <input type="hidden" name="realm" />
+    <input type="hidden" name="locale" />
+    <input type="hidden" name="cot" />
+    <input type="hidden" name="idp" />
+    <input type="hidden" name="sp" />
+</form>
 
 <iframe src ="validatorFooter.jsp?m=" width="100%" height="40" name="footer" frameborder=0></iframe>
 
@@ -131,14 +140,13 @@ function gotoHiddenFrame2(url) {
 }
 
 function startTest() {
-<%
-    out.println("frames['controller'].location = 'validator.jsp?" +
-        "realm=" + URLEncoder.encode(realm) +
-        "&locale=" + locale +
-        "&cot=" + URLEncoder.encode(cot) +
-        "&idp=" + URLEncoder.encode(idp) +
-        "&sp=" + URLEncoder.encode(sp) + "';");
-%>
+    var f = document.forms['validatorForm'];
+    f.elements['realm'].value = '<%= realm %>';
+    f.elements['locale'].value = '<%= locale %>';
+    f.elements['cot'].value = '<%= cot %>';
+    f.elements['idp'].value = '<%= idp %>';
+    f.elements['sp'].value = '<%= sp %>';
+    f.submit();
 }
 
 function gotoURL(url) {
@@ -146,7 +154,7 @@ function gotoURL(url) {
 }
 
 function showFooter(msg) {
-    frames['footer'].location = 'validatorFooter.jsp?m=' + msg;
+    frames['footer'].location = 'validatorFooter.jsp?locale=<%= locale %>&m=' + msg;
 }
 
 function authIdpPassed() {

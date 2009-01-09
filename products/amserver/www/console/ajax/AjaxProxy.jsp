@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AjaxProxy.jsp,v 1.4 2008-06-25 05:44:35 qcheng Exp $
+   $Id: AjaxProxy.jsp,v 1.5 2009-01-09 17:42:54 veiming Exp $
 
 --%>
 
@@ -31,6 +31,7 @@
 <%@page import="java.util.*" %>
 
 <%
+    request.setCharacterEncoding("UTF-8");
     String locale = request.getParameter("locale");
     Locale resLocale = null;
     if ((locale != null) && (locale.length() > 0)) {

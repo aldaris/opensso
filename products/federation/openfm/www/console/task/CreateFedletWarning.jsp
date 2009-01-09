@@ -22,13 +22,16 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateFedletWarning.jsp,v 1.2 2008-06-25 05:50:57 qcheng Exp $
+   $Id: CreateFedletWarning.jsp,v 1.3 2009-01-09 17:42:56 veiming Exp $
 
 --%>
 
 <%@ page info="CreateFedletWarning" language="java" %>
 <%@taglib uri="/WEB-INF/jato.tld" prefix="jato" %>
 <%@taglib uri="/WEB-INF/cc.tld" prefix="cc" %>
+<%
+    request.setCharacterEncoding("UTF-8");
+%>
 <jato:useViewBean
     className="com.sun.identity.console.task.CreateFedletWarningViewBean"
     fireChildDisplayEvents="true" >

@@ -22,13 +22,17 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: ValidateSAML2Setup.jsp,v 1.7 2009-01-05 23:23:24 veiming Exp $
+   $Id: ValidateSAML2Setup.jsp,v 1.8 2009-01-09 17:42:56 veiming Exp $
 
 --%>
 
 <%@ page info="ValidateSAML2Setup" language="java" %>
 <%@taglib uri="/WEB-INF/jato.tld" prefix="jato" %>
 <%@taglib uri="/WEB-INF/cc.tld" prefix="cc" %>
+<%
+    request.setCharacterEncoding("UTF-8");
+    response.setContentType("text/html; charset=utf-8");
+%>
 <jato:useViewBean
     className="com.sun.identity.console.task.ValidateSAML2SetupViewBean"
     fireChildDisplayEvents="true" >
@@ -97,6 +101,14 @@
 <cc:propertysheet name="propertyAttributes" bundleID="amConsole" showJumpLinks="false"/>
 
 </cc:form>
+<form name="hidden" action="../validatorMain.jsp" method="POST">
+<input type="hidden" name="realm" />
+<input type="hidden" name="cot" />
+<input type="hidden" name="idp" />
+<input type="hidden" name="sp" />
+<input type="hidden" name="locale" />
+</form>
+
 <div id="cannotValidateDiv" class="bubble"><cc:text name="txtCannotValidateDiv" defaultValue="validate.cannot.validate.div" bundleID="amConsole" escape="false" /></div>
 </div>
 <iframe id="hiddenframe" style="display:none"></iframe>
@@ -152,12 +164,13 @@
         var idp = frm.elements['ValidateSAML2Setup.tfIDP'].value;
         var sp = frm.elements['ValidateSAML2Setup.tfSP'].value;
 
-        var url = "../validatorMain.jsp?realm=" + escapeEx(realm) +
-            "&cot=" + escapeEx(cotName) +
-            "&idp=" + escapeEx(idp) +
-            "&sp=" + escapeEx(sp) +
-            "&locale=<%=((com.sun.identity.console.base.AMViewBeanBase)viewBean).getUserLocale()%>"
-        top.location.replace(url);
+        var hiddenFrm = document.forms['hidden'];
+        hiddenFrm.elements['realm'].value = realm;
+        hiddenFrm.elements['cot'].value = cotName;
+        hiddenFrm.elements['idp'].value = idp;
+        hiddenFrm.elements['sp'].value = sp;
+        hiddenFrm.elements['locale'].value = '<%=((com.sun.identity.console.base.AMViewBeanBase)viewBean).getUserLocale()%>';
+        hiddenFrm.submit();
     }
 
     function validateNow() {
@@ -203,19 +216,23 @@
 
                 if (hostedidp.length > 0) {
                     for (var i = 0; i < hostedidp.length; i++) {
-                        addOption(frm, 'ValidateSAML2Setup.tfIDP', hostedidp[i]);
+                        addOption(frm, 'ValidateSAML2Setup.tfIDP', 
+                            decodeURIComponent(hostedidp[i]));
                     }
                     for (var i = 0; i < remotesp.length; i++) {
-                        addOption(frm, 'ValidateSAML2Setup.tfSP', remotesp[i]);
+                        addOption(frm, 'ValidateSAML2Setup.tfSP',
+                            decodeURIComponent(remotesp[i]));
                     }
                 } else {
                     for (var i = 0; i < hostedsp.length; i++) {
-                        addOption(frm, 'ValidateSAML2Setup.tfSP', hostedsp[i]);
+                        addOption(frm, 'ValidateSAML2Setup.tfSP',
+                            decodeURIComponent(hostedsp[i]));
                     }
                 }
 
                 for (var i = 0; i < remoteidp.length; i++) {
-                    addOption(frm, 'ValidateSAML2Setup.tfIDP', remoteidp[i]);
+                    addOption(frm, 'ValidateSAML2Setup.tfIDP',
+                        decodeURIComponent(remoteidp[i]));
                 }
                     
                 focusMain();
@@ -247,7 +264,8 @@
         clearOptions(frm, 'ValidateSAML2Setup.tfSP');
         if (idp.indexOf("(") != -1) {
             for (var i = 0; i < remotesp.length; i++) {
-                addOption(frm, 'ValidateSAML2Setup.tfSP', remotesp[i]);
+                addOption(frm, 'ValidateSAML2Setup.tfSP',
+                    decodeURIComponent(remotesp[i]));
             }
         } else {
             for (var i = 0; i < hostedsp.length; i++) {

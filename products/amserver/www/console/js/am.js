@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am.js,v 1.8 2008-06-25 05:44:41 qcheng Exp $
+ * $Id: am.js,v 1.9 2009-01-09 17:42:55 veiming Exp $
  *
  */
 
@@ -284,7 +284,7 @@ function disableButton(frm, btnName, bDisable) {
 
 
 function escapeEx(d) {
-    var escaped = escape(d);
+    var escaped = encodeURIComponent(d);
     return escaped.replace(/\+/g, "%2B");
 }
 

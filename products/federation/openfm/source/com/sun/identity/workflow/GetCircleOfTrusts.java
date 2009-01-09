@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetCircleOfTrusts.java,v 1.3 2008-06-25 05:50:02 qcheng Exp $
+ * $Id: GetCircleOfTrusts.java,v 1.4 2009-01-09 17:42:55 veiming Exp $
  *
  */
 
@@ -33,6 +33,8 @@ import com.sun.identity.cot.COTException;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
 import com.sun.identity.saml2.jaxb.entityconfig.BaseConfigType;
 import com.sun.identity.saml2.jaxb.entityconfig.EntityConfigElement;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -82,7 +84,11 @@ public class GetCircleOfTrusts
                     } else {
                         buff.append("|");
                     }
-                    buff.append(c);
+                    try {
+                        buff.append(URLEncoder.encode(c, "UTF-8"));
+                    } catch (UnsupportedEncodingException e) {
+                        buff.append(c);
+                    }
                 }
             }
 

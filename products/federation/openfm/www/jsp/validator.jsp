@@ -22,10 +22,11 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: validator.jsp,v 1.5 2009-01-05 23:23:25 veiming Exp $
+   $Id: validator.jsp,v 1.6 2009-01-09 17:42:57 veiming Exp $
 
 --%>
 
+<%@ page pageEncoding="UTF-8"%>
 <%@ page import="com.sun.identity.common.SystemConfigurationUtil" %>
 <%@ page import="com.sun.identity.shared.Constants" %>
 <%@ page import="com.sun.identity.workflow.ValidateSAML2" %>
@@ -34,11 +35,9 @@
 <%@ page import="java.text.MessageFormat" %>
 <%@ page import="java.util.Locale" %>
 <%@ page import="java.util.ResourceBundle" %>
-<%@ page contentType="text/html; charset=utf-8" language="java" %>
 
 <html>
 <head>
-
 <%
     String deployuri = SystemConfigurationUtil.getProperty(
         Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
@@ -51,6 +50,7 @@
     String serverURL = serverProtocol + "://" + serverHost + ":" +
         serverPort + deployuri;
 
+    request.setCharacterEncoding("UTF-8");
     String realm = request.getParameter("realm");
     String cot = request.getParameter("cot");
     String idp = request.getParameter("idp");
@@ -210,7 +210,7 @@ function authIdpFailed() {
     document.getElementById('authIdpFailed').style.display = '';
     top.showFooter('');
     statusAuthIdp = 0;
-    top.gotoURL("validatorAuthFail.jsp?m=idp");
+    top.gotoURL("validatorAuthFail.jsp?m=idp&locale=<%= locale %>");
 }
 
 function authSp() {

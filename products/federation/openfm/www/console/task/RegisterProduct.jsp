@@ -22,13 +22,16 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: RegisterProduct.jsp,v 1.3 2008-06-25 05:50:58 qcheng Exp $
+   $Id: RegisterProduct.jsp,v 1.4 2009-01-09 17:42:56 veiming Exp $
 
 --%>
 
 <%@ page info="RegisterProduct" language="java" %>
 <%@taglib uri="/WEB-INF/jato.tld" prefix="jato" %>
 <%@taglib uri="/WEB-INF/cc.tld" prefix="cc" %>
+<%
+    request.setCharacterEncoding("UTF-8");
+%>
 <jato:useViewBean
     className="com.sun.identity.console.task.RegisterProductViewBean"
     fireChildDisplayEvents="true" >

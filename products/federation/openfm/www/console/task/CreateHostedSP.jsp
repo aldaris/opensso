@@ -22,13 +22,16 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateHostedSP.jsp,v 1.12 2009-01-05 20:52:19 farble1670 Exp $
+   $Id: CreateHostedSP.jsp,v 1.13 2009-01-09 17:42:56 veiming Exp $
 
 --%>
 
 <%@ page info="CreateHostedSP" language="java" %>
 <%@taglib uri="/WEB-INF/jato.tld" prefix="jato" %>
 <%@taglib uri="/WEB-INF/cc.tld" prefix="cc" %>
+<%
+    request.setCharacterEncoding("UTF-8");
+%>
 <jato:useViewBean
     className="com.sun.identity.console.task.CreateHostedSPViewBean"
     fireChildDisplayEvents="true" >
@@ -328,7 +331,9 @@
                     var cots = result.split('|');
                     var choiceCOT = frm.elements['CreateHostedSP.choiceCOT'];
                     for (var i = 0; i < cots.length; i++) {
-                        choiceCOT.options[i] = new Option(cots[i], cots[i]);
+                        var decodedCOT = decodeURIComponent(cots[i]);
+                        choiceCOT.options[i] = new Option(decodedCOT,
+                            decodedCOT);
                     }
                     document.getElementById('cotq').style.display = '';
                     document.getElementById('cotchoice').style.display = '';
