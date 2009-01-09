@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SCServiceProfileViewBean.java,v 1.6 2008-06-25 05:43:16 qcheng Exp $
+ * $Id: SCServiceProfileViewBean.java,v 1.7 2009-01-09 22:35:19 asyhuang Exp $
  *
  */
 
@@ -35,6 +35,7 @@ import com.iplanet.jato.model.ModelControlException;
 import com.iplanet.jato.view.View;
 import com.iplanet.jato.view.event.DisplayEvent;
 import com.iplanet.jato.view.event.RequestInvocationEvent;
+import com.sun.identity.authentication.util.AMAuthUtils;
 import com.sun.identity.console.base.AMServiceProfile;
 import com.sun.identity.console.base.AMServiceProfileViewBeanBase;
 import com.sun.identity.console.base.model.AMConsoleException;
@@ -59,6 +60,8 @@ import javax.servlet.http.HttpServletRequest;
 import com.sun.identity.console.base.model.AMAdminConstants; 
 import com.sun.identity.console.service.model.SubConfigModel;
 import com.sun.identity.console.service.model.SubConfigModelImpl;
+import com.sun.identity.sm.SMSEntry;
+import com.sun.web.ui.view.html.CCRadioButton;
 
 public class SCServiceProfileViewBean extends AMServiceProfileViewBeanBase {
     public static final String DEFAULT_DISPLAY_URL =
@@ -180,8 +183,24 @@ public class SCServiceProfileViewBean extends AMServiceProfileViewBeanBase {
                     }
                 }
                 disableButton(AMPropertySheetModel.TBL_SUB_CONFIG_BUTTON_ADD,
-                    !canCreate);
+                    !canCreate);              
             }
+        }
+        if(serviceName.equals("iPlanetAMAuthHTTPBasicService")){
+             CCRadioButton radio = (CCRadioButton)getChild(
+                            "iplanet-am-auth-http-basic-module-configured");             
+            if((radio.getValue()==null) || (radio.getValue().equals(""))){
+                String defaultModule = new String();                               
+                String realmName = SMSEntry.getRootSuffix();
+                if (realmName != null) {
+                    List moduleList = 
+                        AMAuthUtils.getModuleInstancesForHttpBasic(realmName);                 
+                if(moduleList.size()!=0){
+                    defaultModule =  (String) moduleList.get(0);                   
+                    radio.setValue(defaultModule);
+                }
+                }
+             }
         }
     }
 
