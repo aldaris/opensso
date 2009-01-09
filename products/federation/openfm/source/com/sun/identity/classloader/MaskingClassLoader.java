@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MaskingClassLoader.java,v 1.8 2008-07-23 17:44:58 veiming Exp $
+ * $Id: MaskingClassLoader.java,v 1.9 2009-01-09 22:45:51 mrudul_uchil Exp $
  *
  */
 
@@ -62,6 +62,8 @@ public class MaskingClassLoader extends ClassLoader {
         "META-INF/services/javax.xml.parsers.SAXParserFactory";
     private final String resourceDocumentBuilderFactory =
         "META-INF/services/javax.xml.parsers.DocumentBuilderFactory";
+    private final String resourceTubelineAssembler = 
+        "META-INF/services/com.sun.xml.ws.api.pipe.TubelineAssemblerFactory";
 
     /*public MaskingClassLoader(String[] masks) {
         this.masks = masks;
@@ -159,6 +161,17 @@ public class MaskingClassLoader extends ClassLoader {
                 // Continue
             }
         }
+        if(name.startsWith(resourceTubelineAssembler)) {
+            // Read the "resourceTubelineAssembler" from webservices-rt.jar
+            try {
+                URL jarURL =
+                    new URL("jar:" + (urls[1]).toString() + "!/" + 
+                    resourceTubelineAssembler);
+                return jarURL;
+            } catch (MalformedURLException mue) {
+                // Continue
+            }
+        }
         for (String mask : maskResources) {
             if(name.startsWith(mask)) {
                 return null;
@@ -188,6 +201,15 @@ public class MaskingClassLoader extends ClassLoader {
             // Read the "resource2" from webservices-rt.jar
             URL jarURL = 
                 new URL("jar:" + (urls[1]).toString() + "!/" + resource2);
+            vec.add(jarURL);
+            tmp[0] = vec.elements();
+            return new CompoundEnumeration(tmp);
+        }
+        if(name.startsWith(resourceTubelineAssembler)) {
+            Vector vec = new Vector(1);
+            // Read the "resourceTubelineAssembler" from webservices-rt.jar
+            URL jarURL = 
+                new URL("jar:" + (urls[1]).toString() + "!/" + resourceTubelineAssembler);
             vec.add(jarURL);
             tmp[0] = vec.elements();
             return new CompoundEnumeration(tmp);
