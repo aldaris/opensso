@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: Login.jsp,v 1.10 2008-12-23 21:24:32 ericow Exp $
+   $Id: Login.jsp,v 1.11 2009-01-09 07:13:21 bhavnab Exp $
                                                                                 
 --%>
 
@@ -47,6 +47,7 @@ String ServiceURI = (String) viewBean.getDisplayFieldValue(viewBean.SERVICE_URI)
 String encoded = "false";
 String gotoURL = (String) viewBean.getValidatedInputURL(
     request.getParameter("goto"), request.getParameter("encoded"), request);
+String encodedQueryParams = (String) viewBean.getEncodedQueryParams(request);
 if ((gotoURL != null) && (gotoURL.length() != 0)) {
     encoded = "true";
 }
@@ -369,6 +370,7 @@ if ((gotoURL != null) && (gotoURL.length() != 0)) {
     }
 </script>
 <input type="hidden" name="goto" value="<%= gotoURL %>">
+<input type="hidden" name="SunQueryParamsString" value="<%= encodedQueryParams %>">
 <input type="hidden" name="encoded" value="<%= encoded %>">
 </auth:form>
 </jato:content>
