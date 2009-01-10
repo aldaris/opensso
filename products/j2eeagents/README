@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.18 2008-12-12 23:24:00 huacui Exp $
+$Id: README,v 1.19 2009-01-10 08:24:28 naghaon Exp $
 
 ------------------------------------------------------------------------------
 
@@ -40,6 +40,9 @@ $Id: README,v 1.18 2008-12-12 23:24:00 huacui Exp $
         %% 3.4 appserver_v9 target
         %% 3.5 weblogic_v10 target
         %% 3.6 websphere_v61 target
+        %% 3.7 jboss_v42 target
+	%% 3.8 tomcat_v6 target
+
 
 
 %% 1. Build requirements
@@ -139,6 +142,22 @@ the opensso/products/j2eeagents/extlib/websphere/v61 directory of this workspace
 the server installation(for example from /opt/IBM/WebSphere6.1/AppServer/plugins) 
 into the opensso/products/j2eeagents/extlib/websphere/v61 directory of this workspace.
 
+2.2.4 Obtaining libraries for JBoss Application Server 4.0.x/4.2.x 
+Follow these steps to obtain the libraries for JBoss Application Server 4.0.x/4.2.x :
+2.2.4.1 Install JBoss Application Server 4.0.x/4.2.x
+2.2.4.2 If you are installing OpenSSO J2EE Agent on JBoss Application Server 4.0.5/4.2.x copy jboss-j2ee.jar,servlet-api.jar,jboss-saaj.jar and jbosssx.jar from the lib directory of the JBoss4.2.x server installation 
+and jbossweb-service.jar from the <JBoss server installation directory>\server\default\deploy\jboss-web.deployer
+into the opensso/products/j2eeagents/extlib/jboss/v42.
+
+2.2.5 Obtaining libraries for Tomcat Server 6.0 
+Follow these steps to obtain the libraries for  Tomcat Server 6.0  :
+2.2.5.1 Install  Tomcat Server 6.0 
+2.2.5.2 If you are installing OpenSSO J2EE Agent on  Tomcat Server 6.0 , copy j2ee.jar  from the Glassfish
+installation and copy catalina.jar and servlet-api.jar from the lib directory of the server installation 
+into the opensso/products/j2eeagents/extlib/tomcat/v6.
+
+
+
 
 %% 3. Building the workspace
 
@@ -154,6 +173,9 @@ targets available in the workspace are:
      - appserver_v9  : build the Sun Appserver 8.1/8.2/9.0/9.1 agent
      - weblogic_v10  : build the WebLogic 10.0 agent
      - websphere_v61 : build the Websphere 6.1 agent
+     - jboss_v42         :  build the JBoss 4.0.x and 4.2.x agent
+     - tomcat_v6        :  build the Tomcat 6.0 agent
+
 
 %% 3.1 all target
 
@@ -192,6 +214,22 @@ The websphere_v61 target first invokes the build target and then
 delegates the further processing to the build.xml files present under 
 the websphere and websphere/v61 directories.  Upon successful execution,
 a zip file websphere_v61_agent_3.zip will be created under built/dist 
+directory, and it can be used later to install the agent.
+
+%% 3.7 jboss_v42 target
+
+The jboss_v42 target first invokes the build target and then 
+delegates the further processing to the build.xml files present under 
+the jboss and jboss/v42 directories.  Upon successful execution,
+a zip file jboss_v42_agent_3.zip will be created under built/dist 
+directory, and it can be used later to install the agent.
+
+%% 3.8 tomcat_v6 target
+
+The tomcat_v6 target first invokes the build target and then 
+delegates the further processing to the build.xml files present under 
+the tomcat and tomcat/v6 directories.  Upon successful execution,
+a zip file tomcat_v6_agent_3.zip will be created under built/dist 
 directory, and it can be used later to install the agent.
 
 

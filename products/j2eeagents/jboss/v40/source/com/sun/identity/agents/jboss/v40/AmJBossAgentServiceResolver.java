@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmJBossAgentServiceResolver.java,v 1.1 2008-12-11 15:01:02 naghaon Exp $
+ * $Id: AmJBossAgentServiceResolver.java,v 1.2 2009-01-10 08:14:55 naghaon Exp $
  *
  */
 
@@ -32,6 +32,7 @@ import com.sun.identity.agents.filter.J2EEAuthenticationHandler;
 import com.sun.identity.agents.arch.ServiceResolver;
 import com.sun.identity.agents.filter.GenericJ2EELogoutHandler;
 import com.sun.identity.agents.realm.GenericExternalVerificationHandler;
+import com.sun.identity.agents.realm.AmRealmManager;
 
 /**
  * This class overrides the default service resolvers J2EE auth handler to
@@ -42,8 +43,16 @@ public class AmJBossAgentServiceResolver extends ServiceResolver {
     /* (non-Javadoc)
      * @see ServiceResolver#getGlobalJ2EEAuthHandlerImpl()
      */
+          
     public String getGlobalJ2EEAuthHandlerImpl() {
-        return J2EEAuthenticationHandler.class.getName();
+        boolean webauth = false; 
+        webauth = new Boolean(AmRealmManager.getSystemAccess().getManager().getConfiguration("jboss.webauth.available")).booleanValue();
+            if (webauth == true){
+                return AmJBossJ2EEAuthHandler.class.getName();
+            }            
+            else {
+                return J2EEAuthenticationHandler.class.getName();
+            }
     }
     
     /* (non-Javadoc)

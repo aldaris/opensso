@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: readme.txt,v 1.1 2008-12-11 14:48:51 naghaon Exp $
+   $Id: readme.txt,v 1.2 2009-01-10 08:20:06 naghaon Exp $
 
 -->
 
@@ -106,7 +106,7 @@ On OpenSSO admin console, do the following configuration.
                 + http://<hostname>:<port>/agentsample/invokerservlet
                 + http://<hostname>:<port>/agentsample/protectedservlet
                 + http://<hostname>:<port>/agentsample/securityawareservlet
-                + http://<hostname>:<port>/agentsample/unprotectedservlet
+                + http://<hostname>:<port>/agentsample/protectedejbservlet
           o Subject: all authenticated users.                     
     * Policy 2:
           o allow:
@@ -136,7 +136,14 @@ Configure the agent properties
           /agentsample/
           /agentsample
        and SAVE the change. 
-
+   
+   6). If the JBoss 3.0 agent is installed on the JBoss-4.0.5.GA, in console, under 
+         J2EE Agents -> Advanced Tab -> JBoss Aplication Server section set
+         com.sun.identity.agents.config.jboss.webauth.available=false , and SAVE the change.
+   7). If the JBoss 3.0 agent is installed on the JBoss-4.2.x.GA, in console, under 
+         J2EE Agents -> Advanced Tab -> JBoss Aplication Server section set
+       com.sun.identity.agents.config.jboss.webauth.available=true , and SAVE the change.
+  
    If the agent configuration is local, then edit the local agent configuration
    file OpenSSOAgentConfiguration.properties located at the directory 
    <agent_install_root>/Agent_<instance_number>/config with following changes: 
@@ -153,6 +160,12 @@ Configure the agent properties
       com.sun.identity.agents.config.access.denied.uri[agentsample] = /agentsample/authentication/accessdenied.html
     * Form List:
       com.sun.identity.agents.config.login.form[0] = /agentsample/authentication/login.html
+
+     * WebAuthentication :
+      If the JBoss 3.0 agent is installed on the JBoss-4.0.5.GA, set the property
+      com.sun.identity.agents.config.jboss.webauth.available=false 
+      If the JBoss 3.0 agent is installed on the JBoss-4.2.x.GA, set the property
+      com.sun.identity.agents.config.jboss.webauth.available=true in the OpenSSOAgentConfiguration.properties.
 
 
    Optionally, you can try out the fetch mode features that allow the agent to

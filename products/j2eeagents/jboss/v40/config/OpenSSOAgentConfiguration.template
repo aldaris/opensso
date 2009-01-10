@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: OpenSSOAgentConfiguration.template,v 1.1 2008-12-11 14:40:32 naghaon Exp $
+# $Id: OpenSSOAgentConfiguration.template,v 1.2 2009-01-10 08:17:08 naghaon Exp $
 #
 #
 
@@ -918,3 +918,9 @@ com.iplanet.services.debug.level=@DEBUG_LEVEL@
 #
 com.sun.identity.agents.config.ignore.path.info = false
 
+#
+# WEBAUTHENTICATION AVAILABLE PROPERTY
+# This property need to be set to true when the Agent is installed on JBoss-4.2.x.GA 
+# and it should be set to false when the Agent is installed on JBoss-4.0.5.GA
+#
+com.sun.identity.agents.config.jboss.webauth.available=false
