@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpdateAuthInstanceTest.java,v 1.5 2008-10-03 13:37:42 cmwesley Exp $
+ * $Id: UpdateAuthInstanceTest.java,v 1.6 2009-01-12 17:24:46 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -356,7 +356,7 @@ public class UpdateAuthInstanceTest extends TestCommon implements CLIExitCodes {
        username = (String) rb.getString(locTestName + "-auth-username");
        password = (String) rb.getString(locTestName + "-auth-password");
 
-       log(Level.FINE, "testUpdateAuthInstance", "Set the attribute " +
+       log(Level.FINE, "performRemoteAuth", "Set the attribute " +
                "iplanet-am-auth-dynamic-profile-creation in auth " + 
                "service");
        int attrStatus = cli.setServiceAttributes(authRealm, 
@@ -364,9 +364,9 @@ public class UpdateAuthInstanceTest extends TestCommon implements CLIExitCodes {
                "iplanet-am-auth-dynamic-profile-creation=ignore;" +
                "sunEnableModuleBasedAuth=true", 
                false);
-       cli.logCommand("testUpdateAuthInstance");
+       cli.logCommand("performRemoteAuth");
        if (attrStatus != SUCCESS_STATUS) {
-           log(Level.SEVERE, "testUpdateAuthInstance", "Unable to set the " + 
+           log(Level.SEVERE, "performRemoteAuth", "Unable to set the " +
                    "auth service attribute " +
                    "iplanet-am-auth-dynamic-profile-creation");
            assert false;
@@ -385,8 +385,8 @@ public class UpdateAuthInstanceTest extends TestCommon implements CLIExitCodes {
                    username, "User", attrBuffer.toString());
            cli.logCommand("testUpdateAuthInstance");
            if (userCreationStatus != SUCCESS_STATUS) {
-               log(Level.SEVERE, "testUpdateAuthInstance", 
-                       "Failed to create " + username + " for remote auth");
+               log(Level.SEVERE, "performRemoteAuth", "Failed to create " +
+                       username + " for remote auth");
                assert false;
            }
        }
@@ -397,8 +397,8 @@ public class UpdateAuthInstanceTest extends TestCommon implements CLIExitCodes {
                    AuthContext.IndexType.MODULE_INSTANCE;
            loginContext.login(indexType, name);
        } catch (AuthLoginException ale) {
-           log(Level.SEVERE, "testAuthInstanceCreation", 
-                   username + " failed to login.");
+           log(Level.SEVERE, "performRemoteAuth", username +
+                   " failed to login.");
            assert false;
        }
 
@@ -422,9 +422,8 @@ public class UpdateAuthInstanceTest extends TestCommon implements CLIExitCodes {
                    }
                    loginContext.submitRequirements(callbacks);
                } catch (Exception e) {
-                   log(Level.SEVERE, "testAuthInstanceCreation",
-                           username + " login resulted in an " + 
-                           "exception.");
+                   log(Level.SEVERE, "performRemoteAuth", username +
+                           " login resulted in an exception.");
                    assert false;
                }
            }      
