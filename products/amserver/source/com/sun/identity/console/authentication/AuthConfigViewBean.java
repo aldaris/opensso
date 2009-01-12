@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthConfigViewBean.java,v 1.4 2008-07-10 23:27:22 veiming Exp $
+ * $Id: AuthConfigViewBean.java,v 1.5 2009-01-12 19:26:08 asyhuang Exp $
  *
  */
 
@@ -267,7 +267,7 @@ public class AuthConfigViewBean
     }
 
     private Map getValues(AuthConfigurationModel model) {
-        Map values = (Map)getPageSessionAttribute(
+        Map values =(Map)getPageSessionAttribute(
             ReorderAuthChainsViewBean.PG_SESSION_TRACKING);
 
         if (values == null) {
@@ -276,7 +276,7 @@ public class AuthConfigViewBean
             } catch (AMConsoleException a) {
                 setInlineAlertMessage(CCAlert.TYPE_WARNING, 
                     "message.warning", "noproperties.message");
-            }
+            } 
         }
         return (values == null) ? Collections.EMPTY_MAP : values;
     }
@@ -347,6 +347,8 @@ public class AuthConfigViewBean
         acModel.reset(getRealmName(), getConfigName());
         tablePopulated = false;
         removePageSessionAttribute(ENTRY_LIST);
+        removePageSessionAttribute(
+                ReorderAuthChainsViewBean.PG_SESSION_TRACKING);
         forwardTo();
     }
 
@@ -360,6 +362,8 @@ public class AuthConfigViewBean
         AuthPropertiesViewBean vb = (AuthPropertiesViewBean)
             getViewBean(AuthPropertiesViewBean.class);
         removePageSessionAttribute(ENTRY_LIST);
+        removePageSessionAttribute(
+                ReorderAuthChainsViewBean.PG_SESSION_TRACKING);
         passPgSessionMap(vb);
         vb.forwardTo(getRequestContext());
     }
@@ -451,9 +455,12 @@ public class AuthConfigViewBean
         try {
             Map original = acModel.getValues();
             AMPropertySheet ps = (AMPropertySheet)getChild(PROPERTY_ATTRIBUTE);
+            Map changedValues = 
+                    (Map) ps.getAttributeValues(original, true, acModel);
+            original.putAll(changedValues);
             setPageSessionAttribute(
-                ReorderAuthChainsViewBean.PG_SESSION_TRACKING,
-                    (HashMap)ps.getAttributeValues(original, true, acModel));
+                    ReorderAuthChainsViewBean.PG_SESSION_TRACKING,
+                    (HashMap)changedValues);            
         } catch (AMConsoleException e) {
             setInlineAlertMessage(CCAlert.TYPE_ERROR, "message.error",
                 e.getMessage());
