@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CDCClientServlet.java,v 1.5 2008-09-16 18:14:57 bhavnab Exp $
+ * $Id: CDCClientServlet.java,v 1.6 2009-01-12 18:57:12 madan_ranganath Exp $
  *
  */
 
@@ -408,10 +408,6 @@ extends HttpServlet {
             for (int nCookie = 0; nCookie < cookies.length; nCookie++) {
                 String cookieName = cookies[nCookie].getName();
                 String cookieVal = cookies[nCookie].getValue();
-                //encode dpro cookie to send over the connection
-                if (cookieName.equals(CookieUtils.getAmCookieName())) {
-                    cookieVal = URLEncDec.encode(cookieVal);
-                }
                 if (debug.messageEnabled()) {
                     debug.message("CDCClientServlet.getCookiesFromRequest:"
                         +"Cookie name = " + cookieName);
