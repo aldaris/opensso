@@ -26,7 +26,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: components.mk,v 1.11 2008-09-13 01:10:44 robertis Exp $
+# $Id: components.mk,v 1.12 2009-01-12 09:44:45 ranajitgh Exp $
 # 
 #
 
@@ -64,6 +64,13 @@ APACHE_LIB_DIR = $(APACHE_DIR)/lib
 SJSWS_DIR = $(EXTERNAL_DIR)/sjsws
 SJSWS_INC_DIR = $(SJSWS_DIR)/include
 SJSWS_LIB_DIR = $(SJSWS_DIR)/lib
+
+##########################################
+# PROXY40  defines
+##########################################
+PROXY40_DIR = $(EXTERNAL_DIR)/proxy40
+PROXY40_INC_DIR = $(PROXY40_DIR)/include
+PROXY40_LIB_DIR = $(PROXY40_DIR)/lib
 
 ##########################################
 # Apache 2.2 defines

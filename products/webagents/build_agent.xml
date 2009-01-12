@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build_agent.xml,v 1.14 2008-08-04 19:22:10 huacui Exp $
+   $Id: build_agent.xml,v 1.15 2009-01-12 09:44:44 ranajitgh Exp $
 
 -->
 
@@ -37,6 +37,8 @@
         location="${webagents.basedir}/agents/source/apache"/>
     <property name="webagents.sjsws.src.dir" 
         location="${webagents.basedir}/agents/source/sjsws"/>
+    <property name="webagents.proxy40.src.dir"
+        location="${webagents.basedir}/agents/source/proxy40"/>
     <property name="webagents.apache22.src.dir" 
         location="${webagents.basedir}/agents/source/apache22"/>
     <property name="webagents.iis6.src.dir"

@@ -31,11 +31,11 @@ README file for OpenSSO Policy Agents 3.0
 
 **********************************************************************************
 
-NOTE: Currently only Webserver 7.0 Agent has Agent 3.0 features enabled. 
-Also this is the only agent that users can build and install 
-(supported platforms are Solaris sparc, Solaris x86 and RHAS Linux 4.0, 5.0 and 
-Windows 2003)
-Rest of the Agents for other containers viz. Apache, IIS are yet to have the 
+NOTE: Currently only Webserver 7.0 and Proxyserver 4.0 Agent has Agent 3.0
+features enabled. Also this is the only agent that users can build and install
+(Webserver 7.0 agent is supported platforms are Solaris sparc, Solaris x86 and
+RHAS Linux 4.0, 5.0 and Windows 2003 and Proxyserver 4.0 Agent is supported onlyonly on Solaris sparc)
+Rest of the Agents for other containers viz. Apache, IIS are yet to have the
 Agent 3.0 features enabled. They will be done in a timely manner.
 
 If you would like to build any other agent, please use 2.2 agents 
@@ -72,6 +72,12 @@ opensso/products/webagents/docs/SunOS/sjsws/README.txt
 
 Sun Java System Web Server Agent Install instructions:
 opensso/products/webagents/docs/SunOS/sjsws/INSTALL.txt
+
+Sun Java System Proxy Server Agent Build instructions:
+opensso/products/webagents/docs/SunOS/proxy40/README.txt
+
+Sun Java System Proxy Server Agent Install instructions:
+opensso/products/webagents/docs/SunOS/proxy40/INSTALL.txt
 
 %% 1.2 Solaris x86
 
