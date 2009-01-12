@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ExportSAML2MetaData.java,v 1.2 2008-06-25 05:50:02 qcheng Exp $
+ * $Id: ExportSAML2MetaData.java,v 1.3 2009-01-12 05:33:45 hengming Exp $
  *
  */
 
@@ -30,15 +30,19 @@ package com.sun.identity.workflow;
 
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.jaxb.entityconfig.EntityConfigElement;
+import com.sun.identity.saml2.jaxb.entityconfig.IDPSSOConfigElement;
+import com.sun.identity.saml2.jaxb.entityconfig.SPSSOConfigElement;
 import com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement;
 import com.sun.identity.saml2.meta.SAML2MetaConstants;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaSecurityUtils;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
+import com.sun.identity.shared.xml.XMLUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import javax.xml.bind.JAXBException;
+import org.w3c.dom.Document;
 
 /**
  * Export SAML2 Metadata.
@@ -48,26 +52,43 @@ public class ExportSAML2MetaData {
     private ExportSAML2MetaData() {
     }
 
-    public static String exportStandardMeta(String realm, String entityID) 
+    public static String exportStandardMeta(String realm, String entityID,
+        boolean sign) 
         throws WorkflowException {
-        String result = null;
+
         try {
             SAML2MetaManager metaManager = new SAML2MetaManager();
             EntityDescriptorElement descriptor =
                 metaManager.getEntityDescriptor(realm, entityID);
-            
-            if (descriptor != null) {
-                String xmlstr = SAML2MetaUtils.convertJAXBToString(descriptor);
-                xmlstr = workaroundAbstractRoleDescriptor(xmlstr);
-                result = SAML2MetaSecurityUtils.formatBase64BinaryElement(
+
+            String xmlstr = null;
+            if (descriptor == null) {
+                return null;
+            }
+
+            if (sign) {
+                SPSSOConfigElement spConfig = metaManager.getSPSSOConfig(
+                    realm, entityID);
+                IDPSSOConfigElement idpConfig = metaManager.getIDPSSOConfig(
+                    realm, entityID);
+                Document doc = SAML2MetaSecurityUtils.sign(descriptor,
+                    spConfig, idpConfig);
+                if (doc != null) {
+                    xmlstr = XMLUtils.print(doc);
+                }
+            }
+            if (xmlstr == null) {
+                xmlstr = SAML2MetaUtils.convertJAXBToString(descriptor);
+                xmlstr = SAML2MetaSecurityUtils.formatBase64BinaryElement(
                     xmlstr);
             }
+            xmlstr = workaroundAbstractRoleDescriptor(xmlstr);
+            return xmlstr;
         } catch (SAML2MetaException e) {
             throw new WorkflowException(e.getMessage());
         } catch (JAXBException e) {
             throw new WorkflowException(e.getMessage());
         }
-        return result;
     }
     
     public static String exportExtendedMeta(String realm, String entityID) 
