@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <!--
    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.75 2009-01-08 23:10:56 subbae Exp $
+   $Id: AgentService.xml,v 1.76 2009-01-13 06:50:17 mahesh_prasad_r Exp $
 
 -->
 
@@ -44,7 +44,7 @@
                         validator="RequiredValueValidator"
                         i18nKey="a100">
                         <DefaultValues>
-                            <Value>&#160;</Value>
+                            <Value>&#x00A0;</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema name="sunIdentityServerDeviceKeyValue"
@@ -1062,7 +1062,7 @@
                          validator="RequiredValueValidator"
                          i18nKey="a100">
                          <DefaultValues>
-                             <Value>&#160;</Value>
+                             <Value>&#x00A0;</Value>
                          </DefaultValues>
                      </AttributeSchema>
                      <AttributeSchema name="sunIdentityServerDeviceKeyValue"
@@ -2489,7 +2489,7 @@
                          validator="RequiredValueValidator"
                          i18nKey="a100">
                          <DefaultValues>
-                             <Value>&#160;</Value>
+                             <Value>&#x00A0;</Value>
                          </DefaultValues>
                      </AttributeSchema>
                      <AttributeSchema name="sunIdentityServerDeviceStatus"
@@ -2814,7 +2814,7 @@
                          validator="RequiredValueValidator"
                          i18nKey="a100">
                          <DefaultValues>
-                             <Value>&#160;</Value>
+                             <Value>&#x00A0;</Value>
                          </DefaultValues>
                      </AttributeSchema>
                      <AttributeSchema name="sunIdentityServerDeviceStatus"
@@ -3169,7 +3169,7 @@
                          validator="RequiredValueValidator"
                          i18nKey="a100">
                          <DefaultValues>
-                             <Value>&#160;</Value>
+                             <Value>&#x00A0;</Value>
                          </DefaultValues>
                      </AttributeSchema>
                      <AttributeSchema name="sunIdentityServerDeviceStatus"
@@ -3468,7 +3468,7 @@
                          validator="RequiredValueValidator"
                          i18nKey="a100">
                          <DefaultValues>
-                             <Value>&#160;</Value>
+                             <Value>&#x00A0;</Value>
                          </DefaultValues>
                      </AttributeSchema>
                      <AttributeSchema name="sunIdentityServerDeviceStatus"
@@ -3520,7 +3520,7 @@
                         validator="RequiredValueValidator"
                         i18nKey="a100">
                         <DefaultValues>
-                            <Value>&#160;</Value>
+                            <Value>&#x00A0;</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema name="description"
@@ -3561,7 +3561,7 @@
                         validator="RequiredValueValidator"
                         i18nKey="a100">
                         <DefaultValues>
-                            <Value>&#160;</Value>
+                            <Value>&#x00A0;</Value>
                         </DefaultValues>
                     </AttributeSchema>
                     <AttributeSchema name="sunIdentityServerDeviceKeyValue"

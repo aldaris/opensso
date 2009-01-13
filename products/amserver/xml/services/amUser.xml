@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding="ISO-8859-1"?> 
+<?xml version='1.0' encoding="UTF-8"?> 
 
 <!--
    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: amUser.xml,v 1.4 2008-06-25 05:46:13 qcheng Exp $
+   $Id: amUser.xml,v 1.5 2009-01-13 06:50:17 mahesh_prasad_r Exp $
   
 -->
 
@@ -102,7 +102,7 @@
 		    validator="RequiredValueValidator"
                     i18nKey="u101">
 		    <DefaultValues>
-			<Value>&#160;</Value>
+			<Value>&#x00A0;</Value>
 		    </DefaultValues>
 		</AttributeSchema>
                 <AttributeSchema name="givenname"
@@ -118,7 +118,7 @@
 		    validator="RequiredValueValidator"
                     i18nKey="u103">
 		    <DefaultValues>
-			<Value>&#160;</Value>
+			<Value>&#x00A0;</Value>
 		    </DefaultValues>
 		</AttributeSchema>
 	        <AttributeSchema name="cn"
@@ -128,7 +128,7 @@
                     syntax="string"
                     i18nKey="u104">
 		    <DefaultValues>
-			<Value>&#160;</Value>
+			<Value>&#x00A0;</Value>
 		    </DefaultValues>
 		</AttributeSchema>
                 <AttributeSchema name="userpassword"
@@ -138,7 +138,7 @@
 		    validator="RequiredValueValidator"
                     i18nKey="u105">
 		    <DefaultValues>
-			<Value>&#160;</Value>
+			<Value>&#x00A0;</Value>
 		    </DefaultValues>
                 </AttributeSchema>
                 <AttributeSchema name="ChangePassword"
