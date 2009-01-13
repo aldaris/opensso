@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.94 2008-11-19 17:22:27 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.95 2009-01-13 19:16:50 veiming Exp $
  *
  */
 
@@ -69,14 +69,12 @@ import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfigManager;
 import com.sun.identity.sm.ServiceSchema;
-import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
 import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.CachedSMSEntry;
-import com.sun.identity.setup.HttpServletRequestWrapper;
-
+import com.sun.identity.shared.StringUtils;
 import com.sun.identity.sm.SMSPropertiesObserver;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -110,7 +108,6 @@ import java.util.StringTokenizer;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-
 import java.security.AccessController;
 import java.security.SecureRandom;
 import java.util.Enumeration;
@@ -910,7 +907,7 @@ public class AMSetupServlet extends HttpServlet {
             if ((configDir != null) && (configDir.length() > 0)) {
                 String realPath = getNormalizedRealPath(servletCtx);
                 if (realPath != null) {
-                    configDir = configDir.replaceAll(
+                    configDir = StringUtils.strReplaceAll(configDir,
                         SetupConstants.TAG_REALPATH, realPath);
                 } else {
                     throw new ConfiguratorException(
@@ -1676,8 +1673,8 @@ public class AMSetupServlet extends HttpServlet {
         
         // Update famsts.wsdl with Keystore location.
         String contentWSDL = getFileContent("/WEB-INF/wsdl/famsts.wsdl");
-        contentWSDL = contentWSDL.replaceAll("@KEYSTORE_LOCATION@",
-            basedir + deployuri);
+        contentWSDL = StringUtils.strReplaceAll(contentWSDL,
+            "@KEYSTORE_LOCATION@", basedir + deployuri);
         BufferedWriter outWSDL = 
             new BufferedWriter(new FileWriter(webAppLocation +
             "/WEB-INF/wsdl/famsts.wsdl"));

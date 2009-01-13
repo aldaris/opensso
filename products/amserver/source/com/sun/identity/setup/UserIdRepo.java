@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserIdRepo.java,v 1.13 2008-11-19 17:22:27 veiming Exp $
+ * $Id: UserIdRepo.java,v 1.14 2009-01-13 19:16:50 veiming Exp $
  *
  */
 
@@ -33,6 +33,7 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.common.LDAPUtils;
 import com.sun.identity.idm.IdConstants;
+import com.sun.identity.shared.StringUtils;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.OrganizationConfigManager;
@@ -116,24 +117,26 @@ class UserIdRepo {
 
         if (xml != null) {
             Map data = ServicesDefaultValues.getDefaultValues();
-            xml = xml.replaceAll("@SM_CONFIG_ROOT_SUFFIX@",
+            xml = StringUtils.strReplaceAll(xml, "@SM_CONFIG_ROOT_SUFFIX@",
                 XMLUtils.escapeSpecialCharacters((String)data.get(
                     SetupConstants.SM_CONFIG_ROOT_SUFFIX)));
-            xml = xml.replaceAll("@UM_CONFIG_ROOT_SUFFIX@",
+            xml = StringUtils.strReplaceAll(xml, "@UM_CONFIG_ROOT_SUFFIX@",
                 XMLUtils.escapeSpecialCharacters((String) userRepo.get(
                     SetupConstants.USER_STORE_ROOT_SUFFIX)));
-            xml = xml.replaceAll("@" + SetupConstants.UM_DIRECTORY_SERVER + "@",
+            xml = StringUtils.strReplaceAll(xml,
+                "@" + SetupConstants.UM_DIRECTORY_SERVER + "@",
                 XMLUtils.escapeSpecialCharacters(getHost(userRepo)));
-            xml = xml.replaceAll("@" + SetupConstants.UM_DIRECTORY_PORT + "@",
+            xml = StringUtils.strReplaceAll(xml,
+                "@" + SetupConstants.UM_DIRECTORY_PORT + "@",
                 XMLUtils.escapeSpecialCharacters(getPort(userRepo)));
-            xml = xml.replaceAll("@UM_DS_DIRMGRDN@", 
+            xml = StringUtils.strReplaceAll(xml, "@UM_DS_DIRMGRDN@", 
                 XMLUtils.escapeSpecialCharacters(getBindDN(userRepo)));
-            xml = xml.replaceAll("@UM_DS_DIRMGRPASSWD@",
+            xml = StringUtils.strReplaceAll(xml, "@UM_DS_DIRMGRPASSWD@",
                 XMLUtils.escapeSpecialCharacters(getBindPassword(userRepo)));
 
             String s = (String) userRepo.get(SetupConstants.USER_STORE_SSL);
             String ssl = ((s != null) && s.equals("SSL")) ? "true" : "false";
-            xml = xml.replaceAll("@UM_SSL@", ssl);
+            xml = StringUtils.strReplaceAll(xml, "@UM_SSL@", ssl);
             registerService(xml, adminToken);
         }
     }
@@ -240,7 +243,7 @@ class UserIdRepo {
                 String outfile = basedir + "/" + absFile;
                 fout = new FileWriter(outfile);
                 String inpStr = sbuf.toString();
-                inpStr = inpStr.replaceAll("@DB_NAME@", dbName);
+                inpStr = StringUtils.strReplaceAll(inpStr, "@DB_NAME@", dbName);
                 fout.write(ServicesDefaultValues.tagSwap(inpStr));
                 files.add(outfile);
             } finally {

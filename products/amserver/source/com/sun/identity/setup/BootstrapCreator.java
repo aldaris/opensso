@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BootstrapCreator.java,v 1.11 2008-12-01 23:52:06 veiming Exp $
+ * $Id: BootstrapCreator.java,v 1.12 2009-01-13 19:16:50 veiming Exp $
  *
  */
 
@@ -41,6 +41,7 @@ import com.iplanet.services.util.Crypt;
 import com.iplanet.services.util.XMLException;
 import com.iplanet.sso.SSOException;
 import com.sun.identity.common.configuration.ConfigurationException;
+import com.sun.identity.shared.StringUtils;
 import com.sun.identity.sm.SMSException;
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -158,23 +159,24 @@ public class BootstrapCreator {
                 Server.Type connType = serverObj.getConnectionType();
                 String proto = (connType.equals(Server.Type.CONN_SIMPLE)) ?
                     "ldap" : "ldaps";
-                String url = template.replaceAll("@DS_PROTO@", proto);
+                String url = StringUtils.strReplaceAll(template,
+                    "@DS_PROTO@", proto);
 
                 String host = serverObj.getServerName() + ":" +
                     serverObj.getPort();
-                url = url.replaceAll("@DS_HOST@", host);
-                url = url.replaceAll("@INSTANCE_NAME@",
+                url = StringUtils.strReplaceAll(url, "@DS_HOST@", host);
+                url = StringUtils.strReplaceAll(url, "@INSTANCE_NAME@",
                     URLEncoder.encode(SystemProperties.getServerInstanceName(),
                     "UTF-8"));
-                url = url.replaceAll("@DSAMEUSER_NAME@",
+                url = StringUtils.strReplaceAll(url, "@DSAMEUSER_NAME@",
                     URLEncoder.encode(dsameUserName, "UTF-8"));
-                url = url.replaceAll("@DSAMEUSER_PWD@",
+                url = StringUtils.strReplaceAll(url, "@DSAMEUSER_PWD@",
                     URLEncoder.encode(dsameUserPwd, "UTF-8"));
-                url = url.replaceAll("@BASE_DN@",
+                url = StringUtils.strReplaceAll(url, "@BASE_DN@",
                     URLEncoder.encode(rootSuffix, "UTF-8"));
-                url = url.replaceAll("@BIND_DN@",
+                url = StringUtils.strReplaceAll(url, "@BIND_DN@",
                     URLEncoder.encode(connDN, "UTF-8"));
-                url = url.replaceAll("@BIND_PWD@",
+                url = StringUtils.strReplaceAll(url, "@BIND_PWD@",
                     URLEncoder.encode(connPwd, "UTF-8"));
                 bootstrap.append(url).append("\n");
             }

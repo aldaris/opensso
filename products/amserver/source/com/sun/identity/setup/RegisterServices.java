@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RegisterServices.java,v 1.19 2008-11-07 00:13:36 veiming Exp $
+ * $Id: RegisterServices.java,v 1.20 2009-01-13 19:16:50 veiming Exp $
  *
  */
 
@@ -30,6 +30,7 @@ package com.sun.identity.setup;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.shared.StringUtils;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceManager;
@@ -111,19 +112,21 @@ public class RegisterServices {
         Map data = ServicesDefaultValues.getDefaultValues();
         String xml = getResourceContent(umEmbeddedDS);
 
-        xml = xml.replaceAll("@UM_CONFIG_ROOT_SUFFIX@",
+        xml = StringUtils.strReplaceAll(xml, "@UM_CONFIG_ROOT_SUFFIX@",
             XMLUtils.escapeSpecialCharacters(
                 (String)data.get(SetupConstants.SM_CONFIG_ROOT_SUFFIX)));
-        xml = xml.replaceAll("@" + SetupConstants.UM_DIRECTORY_SERVER + "@",
+        xml = StringUtils.strReplaceAll(xml,
+            "@" + SetupConstants.UM_DIRECTORY_SERVER + "@",
             XMLUtils.escapeSpecialCharacters((String)data.get(
                 SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_HOST)));
-        xml = xml.replaceAll("@" + SetupConstants.UM_DIRECTORY_PORT + "@",
+        xml = StringUtils.strReplaceAll(xml,
+            "@" + SetupConstants.UM_DIRECTORY_PORT + "@",
             XMLUtils.escapeSpecialCharacters((String) data.get(
                 SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_PORT)));
-        xml = xml.replaceAll("@UM_DS_DIRMGRDN@",
+        xml = StringUtils.strReplaceAll(xml, "@UM_DS_DIRMGRDN@",
             XMLUtils.escapeSpecialCharacters((String) data.get(
                 SetupConstants.CONFIG_VAR_DS_MGR_DN)));
-        xml = xml.replaceAll("@UM_DS_DIRMGRPASSWD@",
+        xml = StringUtils.strReplaceAll(xml, "@UM_DS_DIRMGRPASSWD@",
             XMLUtils.escapeSpecialCharacters((String) data.get(
                 SetupConstants.CONFIG_VAR_DS_MGR_PWD)));
 
@@ -174,7 +177,7 @@ public class RegisterServices {
     
     private String manipulateServiceXML(String serviceFileName, String strXML){
         if (serviceFileName.equals("idRepoService.xml")) {
-            strXML = strXML.replaceAll(IDREPO_SUB_CONFIG_MARKER,
+            strXML = StringUtils.strReplaceAll(strXML, IDREPO_SUB_CONFIG_MARKER,
                 IDREPO_SUB_CONFIG);
         }
 

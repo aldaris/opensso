@@ -22,16 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureData.java,v 1.8 2008-06-25 05:44:02 qcheng Exp $
+ * $Id: ConfigureData.java,v 1.9 2009-01-13 19:16:50 veiming Exp $
  *
  */
 package com.sun.identity.setup;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.idm.AMIdentity;
-import com.sun.identity.idm.IdRepoException;
-import com.sun.identity.idm.IdType;
 import com.sun.identity.policy.PolicyException;
 import com.sun.identity.policy.PolicyManager;
 import com.sun.identity.policy.PolicyUtils;

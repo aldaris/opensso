@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BootstrapData.java,v 1.13 2008-10-15 21:30:13 veiming Exp $
+ * $Id: BootstrapData.java,v 1.14 2009-01-13 19:16:50 veiming Exp $
  *
  */
 
@@ -32,6 +32,7 @@ import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.ldap.DSConfigMgr;
 import com.iplanet.services.ldap.LDAPServiceException;
 import com.iplanet.services.util.Crypt;
+import com.sun.identity.shared.StringUtils;
 import com.sun.identity.shared.xml.XMLUtils;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -190,9 +191,11 @@ public class BootstrapData {
             for (Enumeration e = prop.propertyNames(); e.hasMoreElements(); ) {
                 String name = (String)e.nextElement();
                 String property = prop.getProperty(name);
-                property = property.replaceAll("@DS_BASE_DN@", dsbasedn);
+                property = StringUtils.strReplaceAll(property, "@DS_BASE_DN@",
+                    dsbasedn);
                 // Replace DSAMEUSER
-                property = property.replaceAll("@DSAMEUSER@", dsameUser);
+                property = StringUtils.strReplaceAll(property, "@DSAMEUSER@",
+                    dsameUser);
                 prop.setProperty(name, property);
             }
         } catch (IOException e) {
@@ -273,7 +276,7 @@ public class BootstrapData {
             serverBuff.append(getServerEntryXMLBlob(url, ldaps, counter++));
         }
 
-        String servers = serverBlob.replaceAll("@SERVER_ENTRY@",
+        String servers = StringUtils.strReplaceAll(serverBlob, "@SERVER_ENTRY@",
             serverBuff.toString());
 
         buff.append(servers);
@@ -324,27 +327,29 @@ public class BootstrapData {
         String template= BOOTSTRAP_SERVER_CONFIG_USER;
 
         if (ldaps) {
-            template = template.replaceAll("@" + DS_PROTO_TYPE + "@",
-                DS_PROTO_LDAPS);
+            template = StringUtils.strReplaceAll(template,
+                "@" + DS_PROTO_TYPE + "@", DS_PROTO_LDAPS);
         } else {
-            template = template.replaceAll("@" + DS_PROTO_TYPE + "@",
-                DS_PROTO_LDAP);
+            template = StringUtils.strReplaceAll(template,
+                "@" + DS_PROTO_TYPE + "@", DS_PROTO_LDAP);
         }
 
-        template = template.replaceAll("@" + DS_HOST + "@", 
-            XMLUtils.escapeSpecialCharacters(dshost));
-        template = template.replaceAll("@" + DS_PORT + "@", dsport);
-        template = template.replaceAll("@" + DS_MGR + "@", 
-            XMLUtils.escapeSpecialCharacters(dsmgr));
-        template = template.replaceAll("@" + USER + "@", 
-            XMLUtils.escapeSpecialCharacters(dsameUser));
-        template = template.replaceAll("@" + DS_PWD + "@", 
-            XMLUtils.escapeSpecialCharacters(dspwd));
-        template = template.replaceAll("@" + PWD + "@", 
-            XMLUtils.escapeSpecialCharacters(pwd));
-        template = template.replaceAll("@" + DS_BASE_DN + "@", 
+        template = StringUtils.strReplaceAll(template,
+            "@" + DS_HOST + "@", XMLUtils.escapeSpecialCharacters(dshost));
+        template = StringUtils.strReplaceAll(template,
+            "@" + DS_PORT + "@", dsport);
+        template = StringUtils.strReplaceAll(template,
+            "@" + DS_MGR + "@", XMLUtils.escapeSpecialCharacters(dsmgr));
+        template = StringUtils.strReplaceAll(template,
+            "@" + USER + "@", XMLUtils.escapeSpecialCharacters(dsameUser));
+        template = StringUtils.strReplaceAll(template,
+            "@" + DS_PWD + "@", XMLUtils.escapeSpecialCharacters(dspwd));
+        template = StringUtils.strReplaceAll(template,
+            "@" + PWD + "@", XMLUtils.escapeSpecialCharacters(pwd));
+        template = StringUtils.strReplaceAll(template,
+            "@" + DS_BASE_DN + "@", 
             XMLUtils.escapeSpecialCharacters(dsuserbasedn));
-        return template;    
+        return template;
     }
     
     public static Map queryStringToMap(String str)
@@ -384,23 +389,24 @@ public class BootstrapData {
         }
 
         if (ldaps) {
-            template = template.replaceAll("@" + DS_PROTO_TYPE + "@",
-                DS_PROTO_LDAPS);
+            template = StringUtils.strReplaceAll(template,
+                "@" + DS_PROTO_TYPE + "@", DS_PROTO_LDAPS);
         } else {
-            template = template.replaceAll("@" + DS_PROTO_TYPE + "@",
-                DS_PROTO_LDAP);
+            template = StringUtils.strReplaceAll(template,
+                "@" + DS_PROTO_TYPE + "@", DS_PROTO_LDAP);
         }
 
-        template = template.replaceAll("@" + DS_HOST + "@", 
+        template = StringUtils.strReplaceAll(template, "@" + DS_HOST + "@", 
             XMLUtils.escapeSpecialCharacters(dshost));
-        template = template.replaceAll("@" + DS_PORT + "@", dsport);
-        template = template.replaceAll("@" + DS_MGR + "@", 
+        template = StringUtils.strReplaceAll(template, "@" + DS_PORT + "@",
+            dsport);
+        template = StringUtils.strReplaceAll(template, "@" + DS_MGR + "@", 
             XMLUtils.escapeSpecialCharacters(dsmgr));
-        template = template.replaceAll("@" + DS_BASE_DN + "@", 
+        template = StringUtils.strReplaceAll(template, "@" + DS_BASE_DN + "@", 
             XMLUtils.escapeSpecialCharacters(dsbasedn));
-        template = template.replaceAll("@" + DS_PWD + "@", 
-            XMLUtils.escapeSpecialCharacters(dspwd));
-        template = template.replaceAll("@" + PWD + "@", 
+        template = StringUtils.strReplaceAll(template,
+            "@" + DS_PWD + "@", XMLUtils.escapeSpecialCharacters(dspwd));
+        template = StringUtils.strReplaceAll(template, "@" + PWD + "@", 
             XMLUtils.escapeSpecialCharacters(pwd));
         return template;    
     }
@@ -413,15 +419,18 @@ public class BootstrapData {
 
         String template = BOOTSTRAP_SERVER_CONFIG_LDAP_SVR_ENTRY;
         if (ldaps) {
-            template = template.replaceAll("@" + DS_PROTO_TYPE + "@",
-                DS_PROTO_LDAPS);
+            template = StringUtils.strReplaceAll(template,
+                "@" + DS_PROTO_TYPE + "@", DS_PROTO_LDAPS);
         } else {
-            template = template.replaceAll("@" + DS_PROTO_TYPE + "@",
-                DS_PROTO_LDAP);
+            template = StringUtils.strReplaceAll(template,
+                "@" + DS_PROTO_TYPE + "@", DS_PROTO_LDAP);
         } 
-        template = template.replaceAll("@" + DS_HOST + "@", dshost);
-        template = template.replaceAll("@" + DS_PORT + "@", dsport);
-        template = template.replaceAll("@counter@", Integer.toString(counter));
+        template = StringUtils.strReplaceAll(template, "@" + DS_HOST + "@",
+            dshost);
+        template = StringUtils.strReplaceAll(template, "@" + DS_PORT + "@",
+            dsport);
+        template = StringUtils.strReplaceAll(template, "@counter@",
+            Integer.toString(counter));
         return template;
     }
 
@@ -454,20 +463,20 @@ public class BootstrapData {
             SERVER_INSTANCE);
 
         String url = BootstrapCreator.template;
-        url = url.replaceAll("@DS_PROTO@", protocol);
+        url = StringUtils.strReplaceAll(url, "@DS_PROTO@", protocol);
 
         String dsHost = (String)configuration.get(DS_HOST) + ":" +
             (String)configuration.get(DS_PORT);
-        url = url.replaceAll("@DS_HOST@", dsHost);
-        url = url.replaceAll("@INSTANCE_NAME@",
+        url = StringUtils.strReplaceAll(url, "@DS_HOST@", dsHost);
+        url = StringUtils.strReplaceAll(url, "@INSTANCE_NAME@",
             URLEncoder.encode(serverInstance, "UTF-8"));
-        url = url.replaceAll("@DSAMEUSER_PWD@",
+        url = StringUtils.strReplaceAll(url, "@DSAMEUSER_PWD@",
             URLEncoder.encode(pwd, "UTF-8"));
-        url = url.replaceAll("@BASE_DN@",
+        url = StringUtils.strReplaceAll(url, "@BASE_DN@",
             URLEncoder.encode((String)configuration.get(DS_BASE_DN), "UTF-8"));
-        url = url.replaceAll("@BIND_DN@",
+        url = StringUtils.strReplaceAll(url, "@BIND_DN@",
             URLEncoder.encode((String)configuration.get(DS_MGR), "UTF-8")); 
-        url = url.replaceAll("@BIND_PWD@",
+        url = StringUtils.strReplaceAll(url, "@BIND_PWD@",
             URLEncoder.encode(Crypt.encode((String)configuration.get(DS_PWD),
                 Crypt.getHardcodedKeyEncryptor()), "UTF-8")); 
         return url;

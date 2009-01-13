@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InsertContent.java,v 1.2 2008-06-25 05:44:02 qcheng Exp $
+ * $Id: InsertContent.java,v 1.3 2009-01-13 19:16:50 veiming Exp $
  *
  */
 
 package com.sun.identity.setup;
 
+import com.sun.identity.shared.StringUtils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -66,7 +67,7 @@ public class InsertContent {
         if (content.length() > 0) {
             content += "\n" + tag;
             String orig = getFileContent(origFileName);
-            orig = orig.replaceAll(tag, content);
+            orig = StringUtils.strReplaceAll(orig, tag, content);
             writeToFile(origFileName, orig);
         }
     }
