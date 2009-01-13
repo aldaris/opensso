@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestConstants.java,v 1.28 2009-01-06 01:14:47 vimal_67 Exp $
+ * $Id: TestConstants.java,v 1.29 2009-01-13 07:13:27 vimal_67 Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -519,27 +519,22 @@ public interface TestConstants {
     /**
      * SAMLv1 NameIDFormat keyvalue for <code>nameidformatkeyvalue</code>
      */
-    String KEY_NAMEIDFORMAT_KEYVALUE = "nameidformatkeyvalue";
+    String KEY_NAMEIDFORMAT_KEYVALUE = "nameidformatkeyvalue";   
     
     /**
-     * SAMLv1 attribute map for telephone number key for <code>nameidformatkeyvalue</code>
+     * SAMLv1 attribute map for <code>attrmap</code>
      */
-    String KEY_ATTRMAP_TELEPHONE_KEY = "attrmap_telephonekey";
+    String KEY_ATTRMAP = "attrmap";    
     
     /**
-     * SAMLv1 attribute map for mail key for <code>nameidformatkeyvalue</code>
+     * SAMLv1 attribute map for sp user multivalue attribute for <code>sp_user_attribute</code>
      */
-    String KEY_ATTRMAP_MAIL_KEY = "attrmap_mailkey";
+    String KEY_SP_USER_MULTIVALUE_ATTRIBUTE = "sp_user_attribute";
     
     /**
-     * SAMLv1 attribute map for telephone number keyvalue for <code>nameidformatkeyvalue</code>
+     * SAMLv1 attribute map for idp user multivalue attribute for <code>idp_user_attribute</code>
      */
-    String KEY_ATTRMAP_TELEPHONE_KEYVALUE = "attrmap_telephonekeyvalue";
-    
-    /**
-     * SAMLv1 attribute map for mail keyvalue for <code>nameidformatkeyvalue</code>
-     */
-    String KEY_ATTRMAP_MAIL_KEYVALUE = "attrmap_mailkeyvalue";
+    String KEY_IDP_USER_MULTIVALUE_ATTRIBUTE = "idp_user_attribute";
         
     /**
      * SAMLv2, IDFF Property key for <code>attrqprovider</code>

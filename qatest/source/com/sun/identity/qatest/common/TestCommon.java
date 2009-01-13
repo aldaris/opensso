@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.66 2008-12-25 23:59:48 nithyas Exp $
+ * $Id: TestCommon.java,v 1.67 2009-01-13 07:12:05 vimal_67 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1228,6 +1228,49 @@ public class TestCommon implements TestConstants {
         exiting("parseStringToMap");
         return map;
     }
+    
+    /**
+     * Returns a list of String from a formatted string.
+     * @param str. The format of the string is key1=val1,val2,val3;..;key2=val1,
+     * val2,val3,;..
+     * @return List containing key-value pairs
+     * @throws java.lang.Exception
+     */
+    protected List parseStringToList(String str)
+    throws Exception {
+        return (parseStringToList(str, ";", ","));
+    }
+    
+    /**
+     * Returns a list of String from a formatted string.
+     * @param str. The format of the string is key1=val1 sTok val2 sTok val3
+     * mTok and so on
+     * @param mTok. Seperator for single key-value pair
+     * @param sTok. Seperator for values withing values string
+     * @return List containing key-value pairs
+     * @throws java.lang.Exception
+     */
+    protected List parseStringToList(String str, String mTok,
+            String sTok)
+    throws Exception {   
+        ArrayList list = new ArrayList();
+        StringTokenizer st = new StringTokenizer(str, mTok);
+        while (st.hasMoreTokens()) {
+            String token = st.nextToken();
+            int idx = token.indexOf("=");
+            if (idx != -1) {
+                String attrName = token.substring(0, idx).trim();     
+                StringTokenizer st1 = new StringTokenizer(
+                        token.substring(idx+1), sTok);
+                while (st1.hasMoreTokens()) {
+                    String attrValue = st1.nextToken().trim();
+                    String attr = attrName + "=" + attrValue;
+                    list.add(attr);
+                }
+            }
+        }        
+        return list;
+    }        
     
     /**
      * Returns set of string. This is a convenient method for adding a set of
