@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSSchema.java,v 1.9 2008-08-08 17:34:46 bina Exp $
+ * $Id: SMSSchema.java,v 1.10 2009-01-13 06:56:08 mahesh_prasad_r Exp $
  *
  */
 
@@ -57,7 +57,7 @@ public class SMSSchema {
     private static final String SLASH_ESC_SEQ = "&#47;";
 
     static final String XML_ENC = 
-        "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n";
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
     static final String XML_ENC_UTF8 = "encoding=\"utf-8\"";
 

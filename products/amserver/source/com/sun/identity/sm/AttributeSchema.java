@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttributeSchema.java,v 1.12 2008-09-04 23:59:38 veiming Exp $
+ * $Id: AttributeSchema.java,v 1.13 2009-01-13 06:56:08 mahesh_prasad_r Exp $
  *
  */
 
@@ -1305,7 +1305,7 @@ public class AttributeSchema {
     }
 
     private static final String XML_PREFIX = 
-        "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n";
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
     private static final String DEFAULT_VALUES_BEGIN = "<"
             + SMSUtils.ATTRIBUTE_DEFAULT_ELEMENT + ">";
