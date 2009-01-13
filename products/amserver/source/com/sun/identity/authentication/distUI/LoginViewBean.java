@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.20 2008-12-24 01:42:24 ericow Exp $
+ * $Id: LoginViewBean.java,v 1.21 2009-01-13 21:44:33 lakshman_abburi Exp $
  *
  */
 
@@ -416,6 +416,7 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
             
             fallbackLocale = locale;
             rb =  rbCache.getResBundle(bundleName, locale);
+            ac.setLocale(locale);
             
             if ((errorTemplate==null)||(errorTemplate.length() == 0)) {            
                 processLogin();

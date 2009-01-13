@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLRequestParser.java,v 1.9 2008-06-25 05:42:03 qcheng Exp $
+ * $Id: AuthXMLRequestParser.java,v 1.10 2009-01-13 21:47:52 lakshman_abburi Exp $
  *
  */
 
@@ -44,6 +44,7 @@ import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.authentication.service.AuthException;
 import com.sun.identity.authentication.service.AuthUtils;
+import com.sun.identity.authentication.service.LoginState;
 import com.sun.identity.authentication.share.AuthXMLTags;
 import com.sun.identity.authentication.share.AuthXMLUtils;
 
@@ -185,7 +186,12 @@ public class AuthXMLRequestParser {
                         parseNodeAttributes(loginNode,"hostName");
                     if (hostName != null) {
                         authXMLRequest.setHostName(hostName);
-                    }  
+                    }
+                    String localeAttr =
+                        parseNodeAttributes(loginNode,AuthXMLTags.LOCALE);
+                    if (localeAttr != null) {
+                        authXMLRequest.setLocale(localeAttr);
+                    }
                     String forceAuth = 
                         parseNodeAttributes(loginNode,"forceAuth");
                     if (forceAuth != null) {
@@ -206,7 +212,11 @@ public class AuthXMLRequestParser {
                             servletReq, indexTypeParam,
                             authXMLRequest,forceAuthBool);
                     authXMLRequest.setAuthContext(authContext);
-                }        
+                    if (localeAttr != null) {
+                        LoginState loginState = authContext.getLoginState();
+                        loginState.setRemoteLocale(localeAttr);
+                    }
+                }
 
                 // get submit requirements node
                 Node submitReqNode = XMLUtils.getChildNode(

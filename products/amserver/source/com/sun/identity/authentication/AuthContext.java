@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContext.java,v 1.16 2008-08-19 19:08:47 veiming Exp $
+ * $Id: AuthContext.java,v 1.17 2009-01-13 21:49:01 lakshman_abburi Exp $
  *
  */
 
@@ -98,6 +98,9 @@ import org.w3c.dom.NodeList;
  * @supported.api
  */
 public class AuthContext extends Object implements java.io.Serializable {
+
+    private java.util.Locale clientLocale = null;
+    
     private String server_proto =
         SystemProperties.get(Constants.AM_SERVER_PROTOCOL);
     private String server_host  =
@@ -124,7 +127,7 @@ public class AuthContext extends Object implements java.io.Serializable {
     // Debug & I18N class
     protected static Debug authDebug = Debug.getInstance(amAuthContext);
     protected static ResourceBundle bundle =
-        Locale.getInstallResourceBundle(amAuthContext);
+        com.iplanet.am.util.Locale.getInstallResourceBundle(amAuthContext);
     
     Status loginStatus = Status.IN_PROGRESS;
     String organizationName = "";
@@ -518,7 +521,12 @@ public class AuthContext extends Object implements java.io.Serializable {
         String[] params,
         boolean pCookie
     ) throws AuthLoginException {
-        login(indexType, indexName, params, false, null);
+        if (clientLocale == null) {
+            login(indexType, indexName, params, false, null);
+        } else {
+            String localeStr = clientLocale.toString();
+            login(indexType, indexName, params, false, localeStr);
+        }
     }
 
     private void login(
@@ -760,6 +768,14 @@ public class AuthContext extends Object implements java.io.Serializable {
                     .append(AuthXMLTags.QUOTE)
                     .append(XMLUtils.escapeSpecialCharacters(hostName))
                     .append(AuthXMLTags.QUOTE);
+                }
+                if ((locale != null) && (locale.length() > 0)) {
+                        request.append(AuthXMLTags.SPACE)
+                        .append(AuthXMLTags.LOCALE)
+                        .append(AuthXMLTags.EQUAL)
+                        .append(AuthXMLTags.QUOTE)
+                        .append(XMLUtils.escapeSpecialCharacters(locale))
+                        .append(AuthXMLTags.QUOTE);
                 }
                 if (forceAuth) {
                     request.append(AuthXMLTags.SPACE)
@@ -1494,7 +1510,25 @@ public class AuthContext extends Object implements java.io.Serializable {
     public String getClientHostName() {
         return (hostName);
     }
+
+    /**
+     * Sets locale based on user locale preferemce.
+     * @param locale - locale preference of user
+     *
+     */
     
+    public void setLocale (java.util.Locale loc) {
+        clientLocale = loc;
+    }
+
+    /**
+     * Returns locale preference set in AuthConext
+     * @return - user prefered locale.
+     */
+
+    public java.util.Locale getLocale () {
+        return clientLocale;
+    }
     
     private AuthLoginException checkException(){
         AuthLoginException exception = null;
