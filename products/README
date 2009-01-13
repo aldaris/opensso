@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.24 2008-06-25 05:40:23 qcheng Exp $
+$Id: README,v 1.25 2009-01-13 21:30:53 exu Exp $
 
 ------------------------------------------------------------------------------
 
@@ -43,7 +43,7 @@ $Id: README,v 1.24 2008-06-25 05:40:23 qcheng Exp $
         %% 2.3 Obtaining ldapjdk.jar
         %% 2.4 Obtaining db.jar
         %% 2.5 Obtaining testng-5.1-jdk15.jar
-        %% 2.6 Obtaining fmsae.dll and agent-csdk
+        %% 2.6 Obtaining fmsae.dll, fmsae64.dll and agent-csdk
         %% 2.7 Obtaining Open Message Queue binaries, imq.jar and jms.jar
         %% 2.8 Obtaining click.jar and click-extras.jar
         %% 2.9 Obtaining ant-contrib-1.0b3.jar
@@ -90,7 +90,7 @@ The libraries needed for compiling OpenSSO sources are:
    - Mozilla LDAP JDK version 4.17: ldapjdk.jar
    - SleepyCat Berkeley DB version 4.2.52: db.jar 
    - TestNG version 5.1 : testng-5.1-jdk15.jar
-   - Secure Attribute Exchange API: fmsae.dll
+   - Secure Attribute Exchange API: fmsae.dll and fmsae64.dll
    - Open Message Queue: mq4_1-binary-Linux_X86-20070816.jar, 
      mq4_1-binary-SunOS_X86-20070816.jar, mq4_1-binary-SunOS-20070816.jar,
      mq4_1-binary-WINNT-20070816.jar, imq.jar and jms.jar
@@ -218,11 +218,11 @@ under the db-4.2.52.NC/build_unix directory.
 Download testng-5.1.zip from http://testng.org/testng-5.1.zip; unzip it and 
 testng-5.1-jdk15.jar in the base directory.
 
-%% 2.6 Obtaining fmsae.dll and agent-cdsk
+%% 2.6 Obtaining fmsae.dll, fmsae64.dll and agent-cdsk
 
 Download opensso.zip from 
 http://download.java.net/general/opensso/nightly/latest/opensso/opensso.zip
-Save the zip file locally, unzip it, then get fmsae.dll  from 
+Save the zip file locally, unzip it, then get fmsae.dll and fmsae64.dll  from 
 libraries/native/dll and copy it into the opensso/products/extlib directory
 in your workspace. Copy the agent-csdk subdirectory, and contents from 
 libraries/native to opensso/products/extlib.

@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-zip.xml,v 1.33 2009-01-05 23:51:32 veiming Exp $
+   $Id: build-zip.xml,v 1.34 2009-01-13 21:30:53 exu Exp $
 
 -->
 
@@ -207,6 +207,8 @@
              tofile="${zip.temp.dir}/libraries/native/agent-csdk/agent-csdk.zip" />
         <copy file="${extlib.dir}/fmsae.dll"
              tofile="${zip.temp.dir}/libraries/native/dll/fmsae.dll" /> 
+        <copy file="${extlib.dir}/fmsae64.dll"
+             tofile="${zip.temp.dir}/libraries/native/dll/fmsae64.dll" /> 
         <copy file="${openfm.dir}/docs/README.jars"
             tofile="${zip.temp.dir}/libraries/jars/README" />
         <copy todir="${zip.temp.dir}/libraries/jars">
