@@ -18,7 +18,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: session.jsp,v 1.2 2009-01-07 20:01:22 inthanga Exp $
+   $Id: session.jsp,v 1.3 2009-01-13 07:20:54 vimal_67 Exp $
 
    Copyright 2006 Sun Microsystems Inc. All Rights Reserved
 --%>
@@ -30,15 +30,18 @@
 <%@ page import="com.sun.identity.plugin.session.SessionProvider" %>
 <%@ page import="com.sun.identity.saml.common.SAMLConstants" %>
 <%@ page import="com.sun.identity.saml.common.SAMLUtils" %>
-
+<%@ page import="java.util.StringTokenizer" %>
 
 <head>
 <title>Session</title>
 </head>
 <body bgcolor="#FFFFFF" text="#000000">
 <%
+    String attrStr = "";
+    String attrName = "";
     try {
         Object sessionObj = null;
+        attrStr = request.getParameter("attrStr");
         try {
             sessionObj = SessionManager.getProvider().getSession(request);
         } catch (Exception ex) {
@@ -77,41 +80,33 @@ userName = <%= values[0] %>
 
 <%
         }
-
-        values = SessionManager.getProvider().getProperty(
-            sessionObj, "mail");
-        if ((values != null) && (values.length > 0)) {
-            for(int i=0; i< values.length; i++) {
+        
+        StringTokenizer st = new StringTokenizer(attrStr, "|");
+        while (st.hasMoreTokens()) {
+            attrName = st.nextToken();            
+            values = SessionManager.getProvider().getProperty(
+                sessionObj, attrName);
+        
+            if ((values != null) && (values.length > 0)) {
+                for(int i=0; i< values.length; i++) {
+                 
 %>
-mail = <%= values[i] %>
+<%= attrName %> = <%= values[i] %>
+<br>
+
+<%
+                }
+            } else {
+%>
+no
+
+<%= attrName %>
+ 
+attribute
 <br>
 
 <%
             }
-        } else {
-%>
-no mail attribute
-<br>
-
-<%
-        }
-
-        values = SessionManager.getProvider().getProperty(sessionObj,
-            "telephoneNumber");
-        if ((values != null) && (values.length > 0)) {
-            for(int i=0; i< values.length; i++) {
-%>
-telephoneNumber = <%= values[i] %>
-<br>
-
-<%
-            }
-        } else {
-%>
-no telephoneNumber attribute
-<br>
-
-<%
         }
     } catch (Exception ex) {
 	SAMLUtils.debug.error("Unable to retrieve session attributes " , ex);
