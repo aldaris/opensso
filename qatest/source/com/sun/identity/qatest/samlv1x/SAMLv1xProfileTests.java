@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv1xProfileTests.java,v 1.4 2009-01-06 01:11:44 vimal_67 Exp $
+ * $Id: SAMLv1xProfileTests.java,v 1.5 2009-01-13 06:59:35 vimal_67 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -39,6 +39,7 @@ import com.sun.identity.qatest.common.webtest.DefaultTaskHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -56,6 +57,9 @@ import org.testng.annotations.Test;
 public class SAMLv1xProfileTests extends TestCommon {
 
     AMIdentity amid;
+    private ArrayList spattrmultiVal;
+    private ArrayList idpattrmultiVal;
+    private Set sesQrySet;    
     private Map<String, String> configMap;
     private String baseDir;
     private String xmlfile;
@@ -75,7 +79,7 @@ public class SAMLv1xProfileTests extends TestCommon {
     private String testIndex;
     private String spmetaAliasname;
     private String idpmetaAliasname;       
-    private String strUniversalid = ""; 
+    private String strUniversalid = "";     
     private IDMCommon idmc;
     
     /**
@@ -101,6 +105,7 @@ public class SAMLv1xProfileTests extends TestCommon {
             testInit = ptestInit;
             testIndex = nameidformatIndex; 
             idmc = new IDMCommon();
+            sesQrySet = new HashSet();            
             ResourceBundle rb_amconfig = ResourceBundle.getBundle(
                     TestConstants.TEST_PROPERTY_AMCONFIG);
             baseDir = getBaseDir() + SAMLv2Common.fileseparator 
@@ -126,20 +131,45 @@ public class SAMLv1xProfileTests extends TestCommon {
             spmetaAliasname = configMap.get(TestConstants.KEY_SP_METAALIAS);
             idpmetaAliasname = configMap.get(TestConstants.KEY_IDP_METAALIAS);
             getWebClient();
-            
+          
             // Create sp users
             consoleLogin(spwebClient, spurl + "/UI/Login",
                     configMap.get(TestConstants.KEY_SP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
             fmSP = new FederationManager(spurl);
-            list = new ArrayList();
+            list = new ArrayList();     
+                                    
+            // grabbing multivalues attribute of a sp user            
+            spattrmultiVal = new ArrayList();   
+            if (!testIndex.equals("0")) {
+                list = (ArrayList) parseStringToList(configMap.get(
+                        TestConstants.KEY_SP_USER_MULTIVALUE_ATTRIBUTE), 
+                        ",", "&");
+            }
+            Iterator iter = list.iterator();
+            while (iter.hasNext()) {
+                String str = (String) iter.next();
+                int index = str.indexOf("=");                
+                if (index != -1) {      
+                    String attrName = str.substring(0, index).trim();
+                    if (!attrName.equalsIgnoreCase(configMap.get(TestConstants.
+                            KEY_NAMEIDFORMAT_KEYVALUE + testIndex))) {                    
+                        String strVal = str.substring(index+1).trim(); 
+                        // session query parameter set
+                        sesQrySet.add(attrName);
+                        // sp attribute multivalues list
+                        spattrmultiVal.add(strVal);                
+                    }  
+                }
+            }       
+            
             list.add("mail=" + configMap.get(TestConstants.KEY_SP_USER) +
-                    "@" + spmetaAliasname);            
+                    "@" + spmetaAliasname);             
             list.add("sn=" + configMap.get(TestConstants.KEY_SP_USER));
             list.add("cn=" + configMap.get(TestConstants.KEY_SP_USER));
             list.add("userpassword=" +
                     configMap.get(TestConstants.KEY_SP_USER_PASSWORD));
-            list.add("inetuserstatus=Active");                
+            list.add("inetuserstatus=Active");            
             if (FederationManager.getExitCode(fmSP.createIdentity(spwebClient,
                     configMap.get(TestConstants.KEY_SP_EXECUTION_REALM),
                     configMap.get(TestConstants.KEY_SP_USER), 
@@ -147,7 +177,7 @@ public class SAMLv1xProfileTests extends TestCommon {
                 log(Level.SEVERE, "setup", "createIdentity famadm command" +
                             " failed");
                 assert false;
-             }       
+             }      
                         
             // retrieving the univesalid of a sp user and 
             // modifying the attribute  
@@ -163,16 +193,19 @@ public class SAMLv1xProfileTests extends TestCommon {
                 amid = idmc.getFirstAMIdentity(token, 
                         configMap.get(TestConstants.KEY_SP_USER), IdType.USER,
                         realm);
-                Map mapAttr = new HashMap();
+                Map mapAttr = new HashMap();       
                 Set setAttrVal = new HashSet();
-                setAttrVal.add(strUniversalid);
+                setAttrVal.add(strUniversalid);                
                 mapAttr.put(configMap.get(
                         TestConstants.KEY_NAMEIDFORMAT_KEYVALUE + testIndex),
-                        setAttrVal);
+                        setAttrVal);    
+                // session query parameter set
+                sesQrySet.add(configMap.get(
+                        TestConstants.KEY_NAMEIDFORMAT_KEYVALUE + testIndex));
                 idmc.modifyIdentity(amid, mapAttr);   
                 if (validateToken(token)) 
                     destroyToken(token);
-            }            
+            }             
                          
             // Create idp users          
             consoleLogin(idpwebClient, idpurl + "/UI/Login",
@@ -180,14 +213,45 @@ public class SAMLv1xProfileTests extends TestCommon {
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             fmIDP = new FederationManager(idpurl);
             list.clear();
+            
+            // grabbing multivalues attribute of a idp user
+            // and removes the namedidformat attribute from the list if present
+            idpattrmultiVal = new ArrayList();
+            if (!testIndex.equals("0")) {
+                list = (ArrayList) parseStringToList(configMap.get(
+                        TestConstants.KEY_IDP_USER_MULTIVALUE_ATTRIBUTE), 
+                        ",", "&");
+            }
+            Iterator idpiter = list.iterator();
+            while (idpiter.hasNext()) {
+                String strg = (String) idpiter.next();
+                int inx = strg.indexOf("=");                
+                if (inx != -1) {
+                    String attrName = strg.substring(0, inx).trim();
+                    String strVal = strg.substring(inx+1).trim(); 
+                    if (attrName.equalsIgnoreCase(configMap.get(TestConstants.
+                            KEY_NAMEIDFORMAT_KEYVALUE + testIndex))) {
+                        idpiter.remove();
+                    } else {                           
+                        // session query parameter set
+                        sesQrySet.add(attrName);
+                        // idp attribute multivalues list
+                        idpattrmultiVal.add(strVal);  
+                    }
+                }                
+            }      
+            
             list.add("sn=" + configMap.get(TestConstants.KEY_IDP_USER));
             list.add("cn=" + configMap.get(TestConstants.KEY_IDP_USER));
             list.add("userpassword=" +
                     configMap.get(TestConstants.KEY_IDP_USER_PASSWORD));
-            list.add("inetuserstatus=Active");
+            list.add("inetuserstatus=Active");              
             if (!testIndex.equals("0")) {
                 list.add(configMap.get(TestConstants.KEY_NAMEIDFORMAT_KEYVALUE +
-                        testIndex) + "=" + strUniversalid);     
+                        testIndex) + "=" + strUniversalid); 
+                // session query parameter set
+                sesQrySet.add(configMap.get(TestConstants.
+                        KEY_NAMEIDFORMAT_KEYVALUE + testIndex));
             } else {
                 list.add("mail=" + configMap.get(TestConstants.KEY_IDP_USER) +
                         "@" + idpmetaAliasname);
@@ -214,16 +278,10 @@ public class SAMLv1xProfileTests extends TestCommon {
                     "Global", list, null);           
             }
             
-            // adding saml attribute map for mail and telephone number
+            // adding saml attribute map
             list.clear();
-            list.add("iplanet-am-saml-attr-map=" +                           
-                    configMap.get(TestConstants.KEY_ATTRMAP_TELEPHONE_KEY) +
-                    "=" + configMap.get(TestConstants.
-                    KEY_ATTRMAP_TELEPHONE_KEYVALUE));   
-            list.add("iplanet-am-saml-attr-map=" +                           
-                    configMap.get(TestConstants.KEY_ATTRMAP_MAIL_KEY) +
-                    "=" + configMap.get(TestConstants.
-                    KEY_ATTRMAP_MAIL_KEYVALUE));   
+            list = (ArrayList) parseStringToList(configMap.get(TestConstants.
+                    KEY_ATTRMAP), ",", "");                  
             fmSP.addAttrDefs(spwebClient, "iPlanetAMSAMLService", 
                     "Global", list, null);
             fmIDP.addAttrDefs(idpwebClient, "iPlanetAMSAMLService",
@@ -250,6 +308,7 @@ public class SAMLv1xProfileTests extends TestCommon {
         try {
             String result = null;
             String attr = "";
+            Boolean bool = false;
             getWebClient();
             if (!testIndex.equals("0")) {
                 Reporter.log("Test Description: This test  " + testName +
@@ -270,7 +329,7 @@ public class SAMLv1xProfileTests extends TestCommon {
                 log(Level.FINEST, "samlv1xTest", "Result: " + result);      
                 log(Level.FINEST, "samlv1xTest", "Attr: " + attr);           
             } else {
-                if (testInit.equalsIgnoreCase("sp")) {
+                if (testInit.equalsIgnoreCase("sp")) {                    
                 result = configMap.get(TestConstants.KEY_IDP_USER) + "@"
                         + idpmetaAliasname;
                 } else {
@@ -288,8 +347,38 @@ public class SAMLv1xProfileTests extends TestCommon {
             task1 = new DefaultTaskHandler(xmlfile);
             wpage = task1.execute(webClient);
             Thread.sleep(5000);            
-            if (!wpage.getWebResponse().getContentAsString().contains(result)) {
-                log(Level.SEVERE, "samlv1xTest", "Couldn't signon users");
+            if (wpage.getWebResponse().getContentAsString().contains(result)) {
+                log(Level.SEVERE, "samlv1xTest", "Found the right " +
+                        "value of a attribute");                
+                bool = true;
+            } else {
+                if (testInit.equalsIgnoreCase("sp")) {
+                    Iterator iter = idpattrmultiVal.iterator();
+                    while (iter.hasNext()) {
+                        String multiVal = (String) iter.next();
+                        if (wpage.getWebResponse().getContentAsString().
+                                contains(multiVal)) {
+                            log(Level.SEVERE, "samlv1xAttrMapTest", 
+                                " Found the value of a attribute " +
+                                multiVal); 
+                            bool = true;
+                        }             
+                    }
+                } else {
+                    Iterator iter = spattrmultiVal.iterator();
+                    while (iter.hasNext()) {
+                        String multiVal = (String) iter.next();
+                        if (wpage.getWebResponse().getContentAsString().
+                                contains(multiVal)) {
+                            log(Level.SEVERE, "samlv1xAttrMapTest", 
+                                " Found the value of a attribute " +
+                                multiVal);
+                            bool = true;
+                        }             
+                    }                
+                }
+            }
+            if (!bool) {
                 assert false;
             }
         } catch (Exception e) {
@@ -304,31 +393,58 @@ public class SAMLv1xProfileTests extends TestCommon {
     
     /**
      * Executes the tests of Artifact and Post Profiles. 
-     * It tests the mapping of attributes such as mail and 
-     * telephone number that are included in SAML assertion.
+     * It tests the mapping of attributes that are included in SAML assertion.
      */
     @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
     public void samlv1xAttrMapTest()
             throws Exception {
         try {
             String result = null;
-            String attr = "";
+            String attr = ""; 
             Reporter.log("Test Description: This test  " + testName +
                     " makes sure the mapping of attributes in SAML assertion." + 
                     " This is " + testInit + " Initiated " +
-                    testType + " Profile"); 
-            attr = "/session.jsp";
+                    testType + " Profile");             
+            
+            // setting the session.jsp query parameter values in the form
+            // of a single string where attrStr is a single query parameter
+            // attr1|attr2|attr3..|attrn is the value of that parameter
+            // Ex: /session.jsp?attrStr=mail|telephoneNumber|cn
+            Iterator iterses = sesQrySet.iterator();            
+            String sesQryStr = "";
+            if (!testIndex.equals("0")) {
+                while (iterses.hasNext()) {
+                    String st = (String) iterses.next();
+                    log(Level.FINEST, "samlv1xAttrMapTest", "session query " +
+                            "parameter: " + st);
+                    sesQryStr = sesQryStr + "|" + st;
+                }
+                int idx = sesQryStr.indexOf("|");            
+                if (idx != -1) {
+                    sesQryStr = sesQryStr.substring(idx+1).trim();
+                    log(Level.FINEST, "samlv1xAttrMapTest", "session query " +
+                            "string: " + sesQryStr);  
+                }              
+            } else {
+                sesQryStr = "mail";
+            }            
+            attr = "/session.jsp?attrStr=" + sesQryStr;                         
+            
             if (!testIndex.equals("0")) {
                 result = strUniversalid;                       
                 log(Level.FINEST, "samlv1xAttrMapTest", "Result: " + result);      
                 log(Level.FINEST, "samlv1xAttrMapTest", "Attr: " + attr);           
             } else {
                 if (testInit.equalsIgnoreCase("idp")) {
-                result = configMap.get(TestConstants.KEY_IDP_USER) + "@"
-                        + idpmetaAliasname;
+                    result = configMap.get(TestConstants.KEY_IDP_USER) + "@"
+                            + idpmetaAliasname;
+                    log(Level.FINEST, "samlv1xAttrMapTest", "Result: " + 
+                            result);      
                 } else {
-                result = configMap.get(TestConstants.KEY_SP_USER) + "@"
-                        + spmetaAliasname;
+                    result = configMap.get(TestConstants.KEY_SP_USER) + "@"
+                            + spmetaAliasname;
+                    log(Level.FINEST, "samlv1xAttrMapTest", "Result: " + 
+                            result);      
                 }              
             }    
             Thread.sleep(5000);            
@@ -344,8 +460,38 @@ public class SAMLv1xProfileTests extends TestCommon {
             if (!wpage.getWebResponse().getContentAsString().contains(result)) {
                 log(Level.SEVERE, "samlv1xAttrMapTest", 
                         "Couldn't signon users");
-                assert false;
+                assert false;                
+            } 
+            
+            // checking multivalues attribute
+            if (!testIndex.equals("0")) {
+                if (testInit.equalsIgnoreCase("idp")) {
+                    Iterator iter = idpattrmultiVal.iterator();
+                    while (iter.hasNext()) {
+                        String multiVal = (String) iter.next();
+                        if (!wpage.getWebResponse().getContentAsString().
+                                contains(multiVal)) {
+                            log(Level.SEVERE, "samlv1xAttrMapTest", 
+                                "Couldn't find attribute with multivalue " +
+                                multiVal);
+                            assert false;
+                        }             
+                    }
+                } else {
+                    Iterator iter = spattrmultiVal.iterator();
+                    while (iter.hasNext()) {
+                        String multiVal = (String) iter.next();
+                        if (!wpage.getWebResponse().getContentAsString().
+                                contains(multiVal)) {
+                            log(Level.SEVERE, "samlv1xAttrMapTest", 
+                                "Couldn't find attribute with multivalue " +
+                                multiVal);
+                            assert false;
+                        }             
+                    }                
+                }
             }
+                
         } catch (Exception e) {
             log(Level.SEVERE, "samlv1xAttrMapTest", e.getMessage());
             e.printStackTrace();
@@ -406,16 +552,10 @@ public class SAMLv1xProfileTests extends TestCommon {
                         "Global", list, null);           
             }          
             
-            // removing SAML attribute map for mail and telephone number
+            // removing SAML attribute map 
             list.clear();
-            list.add("iplanet-am-saml-attr-map=" +                           
-                    configMap.get(TestConstants.KEY_ATTRMAP_TELEPHONE_KEY) +
-                    "=" + configMap.get(TestConstants.
-                    KEY_ATTRMAP_TELEPHONE_KEYVALUE));   
-            list.add("iplanet-am-saml-attr-map=" +                           
-                    configMap.get(TestConstants.KEY_ATTRMAP_MAIL_KEY) +
-                    "=" + configMap.get(TestConstants.
-                    KEY_ATTRMAP_MAIL_KEYVALUE));   
+            list = (ArrayList) parseStringToList(configMap.get(TestConstants.
+                    KEY_ATTRMAP), ",", "");                  
             fmSP.removeAttrDefs(spwebClient, "iPlanetAMSAMLService", 
                     "Global", list, null);
             fmIDP.removeAttrDefs(idpwebClient, "iPlanetAMSAMLService",
@@ -449,5 +589,5 @@ public class SAMLv1xProfileTests extends TestCommon {
             consoleLogout(spwebClient, spurl + "/UI/Logout");
             consoleLogout(idpwebClient, idpurl + "/UI/Logout");
         }
-    }
+    }   
 }
