@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSvcsTestIdentityREST.java,v 1.7 2008-09-25 22:41:06 vimal_67 Exp $
+ * $Id: IdSvcsTestIdentityREST.java,v 1.8 2009-01-13 00:35:07 vimal_67 Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -341,13 +341,22 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                             Reporter.log("isTokenvalid: " + paramName);
                             if (userType.equals("normaluser")) {
                                 if (paramName.equals("tokenid")) { 
-                                    pmap.put("tokenid", 
+                                    if (!userToken.contains("%")) { 
+                                        pmap.put("tokenid", 
                                             URLEncoder.encode(userToken, 
                                             "UTF-8"));
+                                    } else {
+                                        pmap.put("tokenid", userToken);
+                                    }                                  
                                 } else {
-                                    pmap.put("iPlanetDirectoryPro", 
+                                    if (!userToken.contains("%")) { 
+                                        pmap.put("iPlanetDirectoryPro", 
                                             URLEncoder.encode(userToken, 
                                             "UTF-8"));
+                                    } else {
+                                        pmap.put("iPlanetDirectoryPro", 
+                                            userToken);
+                                    }                                    
                                 }
                                 page = idsvcsc.commonURLREST(operationName, 
                                         pmap, anmap, userToken);
@@ -356,13 +365,22 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                                 idsvcsc.commonLogOutREST(userToken);
                             } else {
                                 if (paramName.equals("tokenid")) { 
-                                    pmap.put("tokenid", 
+                                    if (!admToken.contains("%")) { 
+                                        pmap.put("tokenid", 
                                             URLEncoder.encode(admToken, 
                                             "UTF-8"));
+                                    } else {
+                                        pmap.put("tokenid", admToken);
+                                    }                                    
                                 } else {
-                                    pmap.put("iPlanetDirectoryPro",
+                                    if (!admToken.contains("%")) { 
+                                        pmap.put("iPlanetDirectoryPro", 
                                             URLEncoder.encode(admToken, 
                                             "UTF-8"));
+                                    } else {
+                                        pmap.put("iPlanetDirectoryPro", 
+                                            admToken);
+                                    }         
                                 }
                                 page = idsvcsc.commonURLREST(operationName, 
                                         pmap, anmap, admToken);
