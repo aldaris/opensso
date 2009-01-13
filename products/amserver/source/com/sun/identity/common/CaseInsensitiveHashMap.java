@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CaseInsensitiveHashMap.java,v 1.3 2008-06-25 05:42:25 qcheng Exp $
+ * $Id: CaseInsensitiveHashMap.java,v 1.4 2009-01-13 18:08:54 leiming Exp $
  *
  */
 
@@ -115,6 +115,16 @@ public class CaseInsensitiveHashMap extends HashMap {
             retval = super.put(key, value);
         }
         return retval;
+    }
+
+    public void putAll(Map map) {
+        if (map == null || map.size() == 0) {
+            return;
+        }
+        for (Iterator iter = map.entrySet().iterator(); iter.hasNext();) {
+            Map.Entry entry = (Map.Entry)iter.next();
+            put(entry.getKey(), entry.getValue());
+        }
     }
 
     public Object remove(Object key) {
