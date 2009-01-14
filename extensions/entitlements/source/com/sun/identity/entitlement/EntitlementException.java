@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementException.java,v 1.2 2008-12-17 07:06:19 veiming Exp $
+ * $Id: EntitlementException.java,v 1.3 2009-01-14 23:47:27 dillidorai Exp $
  */
 
 package com.sun.identity.entitlement;
