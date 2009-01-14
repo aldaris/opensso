@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: exportmetadata.jsp,v 1.4 2009-01-09 18:27:32 veiming Exp $
+   $Id: exportmetadata.jsp,v 1.5 2009-01-14 07:52:54 hengming Exp $
 
 
    NOTE : remove this JSP from the OpenSSO WAR if you don't want to 
@@ -30,9 +30,8 @@
      workflows will not work anymore 
 --%><%@ page 
     import="com.sun.identity.saml2.common.SAML2Constants, 
-            com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement,
             com.sun.identity.saml2.meta.SAML2MetaManager,
-            com.sun.identity.saml2.meta.SAML2MetaUtils,
+            com.sun.identity.workflow.ExportSAML2MetaData,
             java.util.List"
 %><%
     // This JSP is used to export standard entity metadata, 
@@ -40,6 +39,7 @@
     //    * role     -- role of the entity: sp, idp or any
     //    * realm    -- realm of the entity 
     //    * entityid -- ID of the entity to be exported
+    //    * sign     -- sign the metadata if the value is "true"
     // If none of the query parameter is specified, it will try to export
     // the first hosted SP metadata under root realm. If there is no hosted 
     // SP under the root realm, the first hosted IDP under root realm will
@@ -59,6 +59,7 @@
             realm = "/";
         }
         String entityID = request.getParameter("entityid");
+        boolean sign = "true".equalsIgnoreCase(request.getParameter("sign"));
         SAML2MetaManager manager = new SAML2MetaManager();
         if ((entityID == null) || (entityID.length() == 0)) {
             // find first available one
@@ -87,13 +88,11 @@
         if ((entityID == null) || (entityID.length() == 0)) {
             errorMsg = "No matching entity metadata found.";
         } else {
-            EntityDescriptorElement desp = manager.getEntityDescriptor(
-                realm, entityID);
-            if (desp == null) {
+            metaXML = ExportSAML2MetaData.exportStandardMeta(realm, entityID,
+                sign);
+            if (metaXML == null) {
                 errorMsg = "No metadata for entity \"" + entityID +
                     "\" under realm \"" + realm + "\" found.";
-            } else {
-                metaXML = SAML2MetaUtils.convertJAXBToString(desp);
             }
         }
     } catch (Exception e) {
