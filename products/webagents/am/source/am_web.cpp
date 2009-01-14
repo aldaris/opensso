@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.cpp,v 1.40 2009-01-08 01:11:58 robertis Exp $
+ * $Id: am_web.cpp,v 1.41 2009-01-14 23:31:56 madan_ranganath Exp $
  *
  */
 
@@ -59,6 +59,7 @@
 #include "policy_engine.h"
 #include "auth_context.h"
 #include "am_sso.h"
+#include "am_utils.h"
 
 #include <locale.h>
 
@@ -1118,6 +1119,7 @@ am_web_get_token_from_assertion(char * enc_assertion,
     char *tmp1 = NULL;
     char *tmp2 = NULL;
     char * dec_assertion = NULL;
+    char buf[1024] = {'\0'};
 
     dec_assertion = am_web_http_decode(enc_assertion, strlen(enc_assertion));
     tmp1 = strchr(dec_assertion, '=');
@@ -1155,7 +1157,9 @@ am_web_get_token_from_assertion(char * enc_assertion,
 			    if(subElem.getValue(elemValue)) {
 				    am_web_log_debug("Value found(elemVal)=%s",
 						     elemValue.c_str());
-				    *token = strdup(elemValue.c_str());
+                                    am_http_cookie_decode(elemValue.c_str(),
+                                                          buf, 1024);
+				    *token = strdup(buf);
 				    if(*token == NULL) {
 					status = AM_NO_MEMORY;
 				    }
