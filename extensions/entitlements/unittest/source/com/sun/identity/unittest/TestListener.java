@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestListener.java,v 1.3 2008-12-19 19:50:48 veiming Exp $
+ * $Id: TestListener.java,v 1.4 2009-01-15 01:59:02 veiming Exp $
  */
 
 package com.sun.identity.unittest;
@@ -43,8 +43,8 @@ public class TestListener implements ITestListener {
         long timeTaken = result.getEndMillis() - result.getStartMillis();
         UnittestLog.logMessage("Completed " + 
             result.getTestClass().getName() + "." +
-            result.getMethod().getMethodName() + " " + timeTaken + 
-            " (millisec)");
+            result.getMethod().getMethodName() + " (" + timeTaken + 
+            " millisec)");
     }
    
     public void onTestFailure(ITestResult result) {
