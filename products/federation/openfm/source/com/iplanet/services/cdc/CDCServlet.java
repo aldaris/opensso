@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CDCServlet.java,v 1.8 2008-09-17 21:31:13 ericow Exp $
+ * $Id: CDCServlet.java,v 1.9 2009-01-15 06:29:12 ericow Exp $
  *
  */
 
@@ -174,6 +174,10 @@ public class CDCServlet extends HttpServlet {
         "<FORM NAME=\"Response\" METHOD=\"POST\" ACTION=\"{0}\">" +
         "<INPUT TYPE=\"HIDDEN\" NAME=\"" +
             IFSConstants.POST_AUTHN_RESPONSE_PARAM + "\" " + "VALUE=\"{1}\"/>" +
+        "<NOSCRIPT><CENTER>" +
+        "<INPUT TYPE=\"SUBMIT\" VALUE=\"" +
+            FSUtils.bundle.getString("laresPostCustomKey") +
+            "\"/></CENTER></NOSCRIPT>" +
         "</FORM></BODY></HTML>";
     
     private SSOTokenManager tokenManager;
