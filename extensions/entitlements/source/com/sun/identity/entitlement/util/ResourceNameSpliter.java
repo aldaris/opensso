@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceNameSpilter.java,v 1.1 2009-01-14 19:09:26 veiming Exp $
+ * $Id: ResourceNameSpliter.java,v 1.1 2009-01-15 00:13:26 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
@@ -41,8 +41,8 @@ import java.util.StringTokenizer;
  * This class splits resource name (URL) to different parts so that they
  * can be used for resource name comparison.
  */
-public class ResourceNameSpilter {
-    private ResourceNameSpilter() {
+public class ResourceNameSpliter {
+    private ResourceNameSpliter() {
     }
 
     /**
@@ -56,23 +56,18 @@ public class ResourceNameSpilter {
         String protocol = url.getProtocol();
         String host = url.getHost();
 
-        int port = url.getPort();
-        if (port == -1) {
-            port = protocol.equals("http") ? 80 : 443;
-        }
-
         protocol += "://";
 
-        results.add(protocol + ":" + port);
-        results.add(protocol + host + ":" + port);
+        results.add(protocol);
+        results.add(protocol + host);
 
         List<String> dns = getDNS(host);
         String buff = "";
         for (String s : dns) {
             if (buff.length() > 0) {
-                results.add(protocol + "." + s + buff + ":" + port);
+                results.add(protocol + "." + s + buff);
             } else {
-                results.add(protocol + "." + s + ":" + port);
+                results.add(protocol + "." + s);
             }
 
             buff += "." + s;
