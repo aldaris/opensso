@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmRealmUserRegistry.java,v 1.2 2008-11-21 22:21:45 leiming Exp $
+ * $Id: AmRealmUserRegistry.java,v 1.3 2009-01-15 00:00:33 leiming Exp $
  *
  */
 
@@ -46,11 +46,11 @@ import com.sun.identity.agents.arch.AgentException;
 import com.sun.identity.agents.arch.Manager;
 import com.sun.identity.agents.common.CommonFactory;
 import com.sun.identity.agents.common.IApplicationSSOTokenProvider;
-import com.sun.identity.agents.realm.AmRealmAuthenticationResult;
 import com.sun.identity.agents.realm.AmRealmManager;
 import com.sun.identity.agents.realm.IAmRealm;
 import com.sun.identity.agents.realm.IRealmConfigurationConstants;
 import com.sun.identity.agents.util.IUtilConstants;
+import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdSearchControl;
@@ -58,6 +58,10 @@ import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdSearchResults;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.idm.IdRepoException;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
+import javax.security.auth.callback.UnsupportedCallbackException;
 
 /**
  * This class delegates User Registry to Acess Manager realm's user repository.
@@ -101,18 +105,14 @@ public class AmRealmUserRegistry extends AgentBase
                         AgentConfiguration.getApplicationPassword())) {
                     result = userName;
                     if (isLogMessageEnabled()) {
-                        logMessage("AmRealmUserRegistry: application auth " +
-                                "granted for: " + userName);
+                        logMessage("AmRealmUserRegistry.checkCredentials(): " +
+                                "application auth granted for: " +
+                                userName);
                     }
                 }
             } else {
-                // User Login
-                logMessage("DBG-c: AmRealmUserRegistry: userName: " + 
-                    AgentConfiguration.getApplicationUser());
-                
-                AmRealmAuthenticationResult realmResult =
-                        getAmRealm().authenticate(userName, password);
-                if (realmResult != null && realmResult.isValid()) {
+                boolean loginResult = authenticate(userName, password);
+                if (loginResult) {
                     result = userName;
                     if (isLogMessageEnabled()) {
                         logMessage("AmRealmUserRegistry: user auth " +
@@ -123,6 +123,59 @@ public class AmRealmUserRegistry extends AgentBase
         }
         
         return result;
+    }
+
+    private boolean authenticate(String userName, String password) {
+
+        boolean result = false;
+        try {
+            AuthContext authContext =
+                    new AuthContext(AgentConfiguration.getOrganizationName());
+            authContext.login();
+            if (authContext.hasMoreRequirements()) {
+                Callback[] callbacks = authContext.getRequirements();
+                if (callbacks != null) {
+                    addLoginCallbackMessage(callbacks,
+                            userName, password);
+                    authContext.submitRequirements(callbacks);
+                }
+            }
+            if (authContext.getStatus() == AuthContext.Status.SUCCESS) {
+                result = true;
+            }
+        } catch (Exception ex) {
+            logWarning("AmRealmUserRegistry.authenticate(): " +
+                    "Failed to authenticate with user: " + userName,
+                    ex);
+        }
+
+        if (result == true) {
+            if (isLogMessageEnabled()) {
+                logMessage("AmRealmUserRegistry.authenticate(): " +
+                        "Authenticate successfully with user:" +
+                        userName);
+            }
+        }
+
+        return result;
+    }
+
+    private void addLoginCallbackMessage(
+            Callback[] callbacks, String appUserName, String password)
+            throws UnsupportedCallbackException {
+
+        for (int i = 0; i < callbacks.length; i++) {
+            if (callbacks[i] instanceof NameCallback) {
+                NameCallback nameCallback = (NameCallback) callbacks[i];
+
+                nameCallback.setName(appUserName);
+            } else if (callbacks[i] instanceof PasswordCallback) {
+                PasswordCallback pwdCallback =
+                        (PasswordCallback) callbacks[i];
+
+                pwdCallback.setPassword(password.toCharArray());
+            }
+        }
     }
     
     public String getUserName(X509Certificate[] certs) throws AgentException {
@@ -319,9 +372,9 @@ public class AmRealmUserRegistry extends AgentBase
                             Set memberships = user.getMemberships(types[i]);
                             if (isLogMessageEnabled()) {
                                 logMessage(
-                                        "AmRealmUserRegistry: " +
-                                        "memberships returned from AM=" + 
-                                        members);
+                                        "AmRealmUserRegistry: (" + types[i] +
+                                        ") memberships returned from AM=" +
+                                        memberships);
                             }
                             if (memberships != null && memberships.size() > 0) {
                                 Iterator mIt = memberships.iterator();
@@ -351,7 +404,7 @@ public class AmRealmUserRegistry extends AgentBase
                         + userName, ide);
                 throw new AgentException(ide);
             }
-        }
+        } 
         
         if ((members != null) && (members.size() > 0)) {
             result.addAll(members);
