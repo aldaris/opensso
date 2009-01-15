@@ -22,15 +22,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.5 2008-12-19 09:37:00 veiming Exp $
+ * $Id: Entitlement.java,v 1.6 2009-01-15 01:29:30 dillidorai Exp $
  */
 
 package com.sun.identity.entitlement;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.security.auth.Subject;
 
 /**
  * This class encapsulates entitlement of a subject.
@@ -59,6 +61,7 @@ import java.util.Set;
 public class Entitlement {
     private String serviceName;
     private String resourceName;
+    private Set<String> excludedResourceNames; //TODO - add methods
     private Map<String, Object> actionValues;
     private Map<String, String> advices;
     private Map<String, Set<String>> attributes;
@@ -260,4 +263,5 @@ public class Entitlement {
     public Map<String, Set<String>> getAttributes() {
         return attributes;
     }
+    
 }

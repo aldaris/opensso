@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConditionFilter.java,v 1.1 2009-01-12 22:08:38 dillidorai Exp $
+ * $Id: ConditionFilter.java,v 1.2 2009-01-15 01:30:01 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -40,11 +40,11 @@ public interface ConditionFilter {
      * @param subject Subject who is under evaluation.
      * @param resourceName Resource name.
      * @param environment Environment parameters.
-     * @return <code>true</code> if the request satisfies the 
-     * <code>ConditionFilter</code>, otherwise <code>false</code>
-     * @throws com.sun.identity.entitlement.EntitlementException
+     * @return resulting condition decision
+     * @throws com.sun.identity.entitlement.EntitlementException 
+     * if can not get condition decision
      */
-    public boolean evaluate(
+    public ConditionDecision evaluate(
             Subject subject,
             String resourceName,
             Map<String, Set<String>> environment)

@@ -22,18 +22,24 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilige.java,v 1.1 2009-01-12 22:08:38 dillidorai Exp $
+ * $Id: Privilige.java,v 1.2 2009-01-15 01:29:30 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.security.auth.Subject;
 
 /**
  * Class representing entitlement privilige
  */
 public class Privilige {
 
+    private Entitlement entitlement;
+    private SubjectFilter subjectFilter;
+    private ConditionFilter conditionFilter;
     private Map<String, String> advices;
     private Map<String, Set<String>> attributes;
 
@@ -42,6 +48,49 @@ public class Privilige {
      * @param name name of the privilige
      * @param cf condition filter for the privilige
      */
-    public Privilige(String name, ConditionFilter cf) {
+    public Privilige(
+            String name,
+            Entitlement entitlement,
+            SubjectFilter subjectFilter,
+            ConditionFilter cf) {
     }
+
+    /**
+     * Returns <code>true</code> if the subject is granted to an
+     * entitlement.
+     *
+     * @param subject Subject who is under evaluation.
+     * @param e Entitlement object which describes the resource name and 
+     *          actions.
+     * @return <code>true</code> if the subject is granted to an
+     *         entitlement.
+     * @throws EntitlementException if the result cannot be determined.
+     */
+    boolean hasEntitlement(Subject subject, Entitlement e)
+            throws EntitlementException {
+        return false;
+    }
+    
+       /**
+     * Returns a list of entitlements for a given subject, resource name
+     * and environment.
+     * 
+     * @param subject Subject who is under evaluation.
+     * @param resourceName Resource name.
+     * @param environment Environment parameters.
+     * @param recursive <code>true</code> to perform evaluation on sub resources
+     *        from the given resource name.
+     * @return a list of entitlements for a given subject, resource name
+     *         and environment.
+     * @throws EntitlementException if the result cannot be determined.
+     */
+    public List<Entitlement> getEntitlements(
+        Subject subject,
+        String resourceName,
+        Map<String, Set<String>> environment,
+        boolean recursive
+    ) throws EntitlementException {
+        return new ArrayList<Entitlement>();
+    }
+    
 }
