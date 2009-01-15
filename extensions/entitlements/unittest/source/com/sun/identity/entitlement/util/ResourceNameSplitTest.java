@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceNameSplitTest.java,v 1.1 2009-01-15 01:06:32 veiming Exp $
+ * $Id: ResourceNameSplitTest.java,v 1.2 2009-01-15 02:00:14 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
@@ -30,7 +30,9 @@ package com.sun.identity.entitlement.util;
 import com.sun.identity.unittest.UnittestLog;
 import java.net.URL;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -43,17 +45,9 @@ public class ResourceNameSplitTest {
     @Test
     public boolean testHost() 
         throws Exception {
-        ResourceBundle rb = ResourceBundle.getBundle("resourceNameSplitHost");
-        for (Enumeration e = rb.getKeys(); e.hasMoreElements(); ) {
-            String k = (String)e.nextElement();
-            String val = rb.getString(k);
-            Set<String> set = new HashSet<String>();
-            
-            for (StringTokenizer st = new StringTokenizer(val, ",");
-                st.hasMoreElements(); ) {
-                set.add(st.nextToken());
-            }
-            
+        Map<String, Set<String>> map = parseResource("resourceNameSplitHost");
+        for (String k : map.keySet()) {
+            Set<String> set = map.get(k);
             Set<String> results = ResourceNameSpliter.splitHost(new URL(k));
             if (!results.equals(set)) {
                 String msg = "ResourceNameSplitTest.testHost: " + k + 
@@ -65,4 +59,42 @@ public class ResourceNameSplitTest {
         
         return true;
     }
+
+    @Test
+    public boolean testPath() 
+        throws Exception {
+        Map<String, Set<String>> map = parseResource("resourceNameSplitURI");
+        for (String k : map.keySet()) {
+            Set<String> set = map.get(k);
+            
+            Set<String> results = ResourceNameSpliter.splitPath(new URL(k));
+            if (!results.equals(set)) {
+                String msg = "ResourceNameSplitTest.testHost: " + k + 
+                    " failed.";
+                UnittestLog.logError(msg);
+                throw new Exception(msg);
+            }
+        }
+        
+        return true;
+    }
+    
+    private Map<String, Set<String>> parseResource(String rbName) {
+        Map<String, Set<String>> results = new HashMap<String, Set<String>>();
+        ResourceBundle rb = ResourceBundle.getBundle(rbName);
+        for (Enumeration e = rb.getKeys(); e.hasMoreElements(); ) {
+            String k = (String)e.nextElement();
+            String val = rb.getString(k);
+            Set<String> set = new HashSet<String>();
+            
+            for (StringTokenizer st = new StringTokenizer(val, ",");
+                st.hasMoreElements(); ) {
+                set.add(st.nextToken().trim());
+            }
+            
+            results.put(k, set);
+        }
+        return results;
+    }
+
 }
