@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdUtils.java,v 1.28 2009-01-09 06:14:42 goodearth Exp $
+ * $Id: IdUtils.java,v 1.29 2009-01-15 01:47:16 goodearth Exp $
  *
  */
 
@@ -565,7 +565,10 @@ public final class IdUtils {
                 // This is to re-initialize persistent search for DS.
                 // This is for the scenerio/issue where persistent search 
                 // is not reinitialized once DS is restarted.
-                if ((orgAliases == null) || orgAliases.isEmpty()) {
+                // Then look for the aliases again. If nothing is found
+                // then it is a valid negative case and throw error.
+                if (!foundOrg &&
+                    ((orgAliases == null) || orgAliases.isEmpty())) {
                     try {
                         ocm.addAttributeValues(IdConstants.REPO_SERVICE, 
                             IdConstants.ORGANIZATION_ALIAS_ATTR, vals);
