@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceNameSpliter.java,v 1.1 2009-01-15 00:13:26 veiming Exp $
+ * $Id: ResourceNameSpliter.java,v 1.2 2009-01-15 01:59:49 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
@@ -95,13 +95,12 @@ public class ResourceNameSpliter {
         Set<String> results = new HashSet<String>();
         String path = url.getPath();
         Set<String> queries = normalizeQuery(url.getQuery());
+        results.add("/");
+        for (String q : queries) {
+            results.add("/?" + q);
+        }
         
-        if ((path.length() == 0) || path.equals("/")) {
-            results.add("/");
-            for (String q : queries) {
-                results.add("/?" + q);
-            }
-        } else {
+        if ((path.length() > 0) && !path.equals("/")) {
             String prefix = "";
             StringTokenizer st = new StringTokenizer(path, "/");
             while (st.hasMoreTokens()) {
