@@ -20,16 +20,76 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ff_ds-session-testng.xml,v 1.4 2008-09-04 16:34:41 rmisra Exp $: 
+ $Id: ff_ds-session-testng.xml,v 1.5 2009-01-15 01:24:00 srivenigan Exp $: 
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
 <suite name="ff_ds-session" verbose="1">
+   <test name="AMSDK_Session_Tests1">
+       <parameter name="testName" value="amsdksessionattributetests.test1"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name=
+            "com.sun.identity.qatest.session.AMSDKSessionAttributeTests"/>
+        </classes>
+    </test>
+   <test name="AMSDK_Session_Tests2">
+       <parameter name="testName" value="amsdksessionattributetests.test2"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name=
+            "com.sun.identity.qatest.session.AMSDKSessionAttributeTests"/>
+        </classes>
+    </test>
+   <test name="AMSDK_Session_Tests3">
+       <parameter name="testName" value="amsdksessionattributetests.test3"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name=
+            "com.sun.identity.qatest.session.AMSDKSessionAttributeTests"/>
+        </classes>
+    </test>
+   <test name="AMSDK_Session_Tests4">
+       <parameter name="testName" value="amsdksessionattributetests.test4"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name=
+            "com.sun.identity.qatest.session.AMSDKSessionAttributeTests"/>
+        </classes>
+    </test>   
+   <test name="AMSDK_Session_Tests5">
+       <parameter name="testName" value="amsdksessionattributetests.test5"/>
+        <groups>
+            <run>
+                <include name="ff_ds"/>
+            </run>
+        </groups>
+        <classes>
+            <class name=
+            "com.sun.identity.qatest.session.AMSDKSessionAttributeTests"/>
+        </classes>
+    </test>     
     <test name="Session Property Change Notification">
         <groups>
             <run>
-                <include name="ds_ds"/>
+                <include name="ff_ds"/>
             </run>
         </groups>
         <classes>
@@ -90,7 +150,7 @@
         </groups>
         <classes>
             <class name=
-            "com.sun.identity.qatest.session.SessionServerTimeConstraintsTest"/>
+                   "com.sun.identity.qatest.session.SessionServerTimeConstraintsTest"/>
         </classes>
-    </test>      
+    </test>
 </suite>
