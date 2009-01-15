@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmSubjectAsserter.java,v 1.2 2008-11-21 22:21:45 leiming Exp $
+ * $Id: AmSubjectAsserter.java,v 1.3 2009-01-15 22:33:42 leiming Exp $
  *
  */
 
@@ -53,19 +53,8 @@ public class AmSubjectAsserter extends AmIdentityAsserterBase {
             HttpServletRequest request, HttpServletResponse response,
             SSOValidationResult ssoValidationResult)
             throws Exception {
-        Subject subject = new Subject();
         String userName = ssoValidationResult.getUserId();
         
-        Hashtable credentials = new Hashtable();
-        credentials.put(AttributeNameConstants.WSCREDENTIAL_UNIQUEID, userName);
-        credentials.put(AttributeNameConstants.WSCREDENTIAL_SECURITYNAME,
-                userName);
-        
-        List groupList = getUserMemberships(ssoValidationResult);
-        credentials.put(AttributeNameConstants.WSCREDENTIAL_GROUPS, groupList);
-        credentials.put(AttributeNameConstants.WSCREDENTIAL_CACHE_KEY,
-                this.getClass().getName() + "-" + userName + "-cache-key");
-        
-        return TAIResult.create(HttpServletResponse.SC_OK, userName, subject);
+        return TAIResult.create(HttpServletResponse.SC_OK, userName);
     }
 }

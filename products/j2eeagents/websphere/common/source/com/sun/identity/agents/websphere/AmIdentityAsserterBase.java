@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmIdentityAsserterBase.java,v 1.2 2008-11-21 22:21:45 leiming Exp $
+ * $Id: AmIdentityAsserterBase.java,v 1.3 2009-01-15 22:33:42 leiming Exp $
  *
  */
 
@@ -223,20 +223,6 @@ public abstract class AmIdentityAsserterBase extends AgentBase
             HttpServletRequest request, HttpServletResponse response,
             SSOValidationResult ssoValidationResult)
             throws Exception;
-    
-    protected List getUserMemberships(SSOValidationResult ssoValidationResult)
-    throws Exception {
-        ArrayList memberships = new ArrayList();
-        if (ssoValidationResult.isValid()) {
-            AmRealmAuthenticationResult result =
-                    getAmRealm().authenticate(ssoValidationResult);
-            
-            if (result != null && result.getAttributes() != null) {
-                memberships.addAll(result.getAttributes());
-            }
-        }
-        return memberships;
-    }
     
     private TAIResult getAnonymousResult(HttpServletRequest request,
             HttpServletResponse response)
