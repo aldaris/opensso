@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: unittestrun.jsp,v 1.1 2008-12-04 21:12:22 veiming Exp $
+   $Id: unittestrun.jsp,v 1.2 2009-01-15 00:11:10 veiming Exp $
   
 --%>
 
@@ -31,7 +31,6 @@
 
 <%
     TestHarness harness = new TestHarness();
-    out.println( request.getParameter("tests"));
     harness.execute(response, request.getParameter("tests"));
 %>
 
