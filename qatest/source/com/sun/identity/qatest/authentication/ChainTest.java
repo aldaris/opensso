@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ChainTest.java,v 1.9 2008-08-11 20:56:46 cmwesley Exp $
+ * $Id: ChainTest.java,v 1.10 2009-01-15 15:12:13 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -188,7 +188,7 @@ public class ChainTest extends TestCommon {
         executeMap = new HashMap();
         executeMap.put("Chainname", testChainName);
         executeMap.put("passmessage", testResources.getString("am-auth-test-" +
-                testChainName + "-passmg"));
+                testChainName + "-passmsg"));
         executeMap.put("failmessage", testResources.getString("am-auth-test-" + 
                 testChainName + "-failmsg"));
         String testUsers = testResources.getString("am-auth-test-" +
@@ -233,7 +233,7 @@ public class ChainTest extends TestCommon {
         executeMap = new HashMap();
         executeMap.put("Chainname",testChainName);
         executeMap.put("passmessage", testResources.getString("am-auth-test-" +
-                testChainName + "-passmg"));
+                testChainName + "-passmsg"));
         executeMap.put("failmessage", testResources.getString("am-auth-test-" + 
                 testChainName + "-failmsg"));
         executeMap.put("users", testResources.getString("am-auth-test-" +
