@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceNameSplitTest.java,v 1.2 2009-01-15 02:00:14 veiming Exp $
+ * $Id: ResourceNameSplitTest.java,v 1.3 2009-01-16 01:52:03 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
@@ -69,7 +69,7 @@ public class ResourceNameSplitTest {
             
             Set<String> results = ResourceNameSpliter.splitPath(new URL(k));
             if (!results.equals(set)) {
-                String msg = "ResourceNameSplitTest.testHost: " + k + 
+                String msg = "ResourceNameSplitTest.testPath: " + k + 
                     " failed.";
                 UnittestLog.logError(msg);
                 throw new Exception(msg);
@@ -96,5 +96,4 @@ public class ResourceNameSplitTest {
         }
         return results;
     }
-
 }

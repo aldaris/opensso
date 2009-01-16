@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceNameSpliter.java,v 1.2 2009-01-15 01:59:49 veiming Exp $
+ * $Id: ResourceNameSpliter.java,v 1.3 2009-01-16 01:52:02 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
@@ -53,8 +53,8 @@ public class ResourceNameSpliter {
      */
     public static Set<String> splitHost(URL url) {
         Set<String> results = new HashSet<String>();
-        String protocol = url.getProtocol();
-        String host = url.getHost();
+        String protocol = url.getProtocol().toLowerCase();
+        String host = url.getHost().toLowerCase();
 
         protocol += "://";
 
@@ -91,9 +91,15 @@ public class ResourceNameSpliter {
         return result;
     }
     
+    /**
+     * Returns a list of sub parts of path of an URL.
+     *
+     * @param url URL.
+     * @param a list of sub parts of path of an URL.
+     */
     public static Set<String> splitPath(URL url) {
         Set<String> results = new HashSet<String>();
-        String path = url.getPath();
+        String path = url.getPath().toLowerCase();
         Set<String> queries = normalizeQuery(url.getQuery());
         results.add("/");
         for (String q : queries) {
@@ -121,6 +127,7 @@ public class ResourceNameSpliter {
             return results;
         }
 
+        path = path.toLowerCase();
         List<List<String>> possibleCombinations = new ArrayList<List<String>>();        
         List<String> list = new ArrayList<String>();
         
@@ -168,7 +175,7 @@ public class ResourceNameSpliter {
         return results;
     }
     
-    private static String queryToString(List<String> query) {
+    static String queryToString(List<String> query) {
         StringBuffer buff = new StringBuffer();
         Collections.sort(query);
         boolean first = true;
