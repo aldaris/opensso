@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticationCommon.java,v 1.9 2008-09-15 18:19:53 cmwesley Exp $
+ * $Id: AuthenticationCommon.java,v 1.10 2009-01-16 20:58:50 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -54,6 +54,14 @@ public class AuthenticationCommon extends TestCommon {
     /**
      * Tests zero page login for given mode. This is a positive test. If the
      * login is  unsuccessfull, an error is thrown.
+     * @param wc - the web client simulating the user's browser.
+     * @param user - the user ID that will be authenticated.
+     * @param password - the password for "user".
+     * @param mode - the type of authentication being used (e.g. module, user,
+     * authlevel, role, service, etc.)
+     * @param modeValue - the value for the authentication type being used.
+     * @param passMsg - the message which should appear in the resulting browser
+     * page when successful.
      */
     public void testZeroPageLoginPositive(WebClient wc, String user, 
             String password, String mode,  String modeValue, String passMsg)
@@ -92,6 +100,14 @@ public class AuthenticationCommon extends TestCommon {
     /**
      * Tests zero page login for a module. This is a negative test. If the
      * login is  successfull, an error is thrown.
+     * @param wc - the web client simulating the user's browser.
+     * @param user - the user ID that will be authenticated.
+     * @param password - the password for "user".
+     * @param mode - the type of authentication being used (e.g. module, user,
+     * authlevel, role, service, etc.)
+     * @param modeValue - the value for the authentication type being used.
+     * @param passMsg - the message which should appear in the resulting browser
+     * page when successful.
      */
     public void testZeroPageLoginNegative(WebClient wc, String user, 
             String password, String mode, String modeValue, String failMsg)
@@ -130,6 +146,14 @@ public class AuthenticationCommon extends TestCommon {
     /**
      * Tests zero page login for given mode. This is a test for a valid user
      * but the user session has expired.
+     * @param wc - the web client simulating the user's browser.
+     * @param user - the user ID that will be authenticated.
+     * @param password - the password for "user".
+     * @param mode - the type of authentication being used (e.g. module, user,
+     * authlevel, role, service, etc.)
+     * @param modeValue - the value for the authentication type being used.
+     * @param passMsg - the message which should appear in the resulting browser
+     * page when successful.
      */
     public void testZeroPageLoginFailure(WebClient wc, String user, 
             String password, String mode, String modeValue, String passMsg)
@@ -166,10 +190,18 @@ public class AuthenticationCommon extends TestCommon {
     
     /**
      * Tests zero page login for a anonymous user. This is a poitive test. If
-     * the login is unsuccessfull, an error is thrown.
+     * the login is unsuccessful, an error is thrown.
+     * @param wc - the web client simulating the user's browser.
+     * @param user - the user ID that will be authenticated.
+     * @param password - the password for "user".
+     * @param mode - the type of authentication being used (e.g. module, user,
+     * authlevel, role, service, etc.)
+     * @param modeValue - the value for the authentication type being used.
+     * @param passMsg - the message which should appear in the resulting browser
+     * page when successful.
      */
     public void testZeroPageLoginAnonymousPositive(WebClient wc, String user, 
-            String password,String mode, String modeValue, String passMsg)
+            String password, String mode, String modeValue, String passMsg)
     throws Exception {
         Object[] params = {user, password, mode, modeValue, passMsg};
         entering("testZeroPageLoginAnonymousPositive", params);
@@ -207,6 +239,14 @@ public class AuthenticationCommon extends TestCommon {
     /**
      * Tests zero page login for a anonymous user. This is a negative test. If
      * the login is successfull, an error is thrown.
+     * @param wc - the web client simulating the user's browser.
+     * @param user - the user ID that will be authenticated.
+     * @param password - the password for "user".
+     * @param mode - the type of authentication being used (e.g. module, user,
+     * authlevel, role, service, etc.)
+     * @param modeValue - the value for the authentication type being used.
+     * @param passMsg - the message which should appear in the resulting browser
+     * page when successful.
      */
     public void testZeroPageLoginAnonymousNegative(WebClient wc, String user, 
             String password, String mode, String modeValue, String failMsg)
@@ -250,5 +290,22 @@ public class AuthenticationCommon extends TestCommon {
      */
     public SMSCommon getSMSCommon() { return smsCommon; }
     
-    
+    /**
+     * Returns the profile attribute based on the profile test performed
+     * @param profile - the value which indicates how the profile creation
+     * should be set.
+     * @return a String containing the profile creation attribute name/value
+     * pair to update in the authentication service.
+     */
+    public String getProfileAttribute(String profile){
+        String profileAttribute = null;
+        if (profile.equals("dynamic")) {
+            profileAttribute = "true";
+        } else if(profile.equals("required")) {
+            profileAttribute = "false";
+        } else {
+            profileAttribute = "ignore";
+        }
+        return profileAttribute;
+    }
 }

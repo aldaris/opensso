@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ds_ds_sec-authentication-testng.xml,v 1.15 2009-01-16 15:24:25 cmwesley Exp $
+ $Id: ds_ds_sec-authentication-testng.xml,v 1.16 2009-01-16 21:00:25 cmwesley Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -1110,10 +1110,12 @@
         </classes>
     </test>
     <test name="SessionUpgradeTest">
-        <parameter name="forceClientAuth" value="false"/>
+        <parameter name="forceAuth" value="false"/>
         <parameter name="testRealm" value="/"/>
         <parameter name="testMode" value="module"/>
         <parameter name="useDifferentModules" value="true"/>
+        <parameter name="createUserProfile" value="required"/>
+        <parameter name="useSanityMode" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -1123,11 +1125,13 @@
             <class name="com.sun.identity.qatest.authentication.SessionUpgrade"/>
         </classes>
     </test>
-    <test name="SessionUpgradeTestForceClientAuth">
-        <parameter name="forceClientAuth" value="true"/>
-        <parameter name="testRealm" value="/"/>   
+    <test name="SessionUpgradeIgnoreTest">
+        <parameter name="forceAuth" value="false"/>
+        <parameter name="testRealm" value="/"/>
         <parameter name="testMode" value="module"/>
-        <parameter name="useDifferentModules" value="true"/>        
+        <parameter name="useDifferentModules" value="true"/>
+        <parameter name="createUserProfile" value="ignore"/>
+        <parameter name="useSanityMode" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -1137,11 +1141,93 @@
             <class name="com.sun.identity.qatest.authentication.SessionUpgrade"/>
         </classes>
     </test>
+    <test name="SessionUpgradeSanityTest">
+        <parameter name="forceAuth" value="false"/>
+        <parameter name="testRealm" value="/"/>
+        <parameter name="testMode" value="module"/>
+        <parameter name="useDifferentModules" value="true"/>
+        <parameter name="createUserProfile" value="required"/>
+        <parameter name="useSanityMode" value="true"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.SessionUpgrade"/>
+        </classes>
+    </test>
+    <test name="SessionUpgradeTestForceAuth">
+        <parameter name="forceAuth" value="true"/>
+        <parameter name="testRealm" value="/"/>
+        <parameter name="testMode" value="module"/>
+        <parameter name="useDifferentModules" value="true"/>
+        <parameter name="createUserProfile" value="required"/>
+        <parameter name="useSanityMode" value="false"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.SessionUpgrade"/>
+        </classes>
+    </test>
+    <test name="SessionUpgradeTestIgnoreforceAuth">
+        <parameter name="forceAuth" value="true"/>
+        <parameter name="testRealm" value="/"/>
+        <parameter name="testMode" value="module"/>
+        <parameter name="useDifferentModules" value="true"/>
+        <parameter name="createUserProfile" value="ignore"/>
+        <parameter name="useSanityMode" value="false"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.SessionUpgrade"/>
+        </classes>
+    </test>
+    <test name="SessionUpgradeSanityTestForceAuth">
+        <parameter name="forceAuth" value="true"/>
+        <parameter name="testRealm" value="/"/>
+        <parameter name="testMode" value="module"/>
+        <parameter name="useDifferentModules" value="true"/>
+        <parameter name="createUserProfile" value="required"/>
+        <parameter name="useSanityMode" value="true"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.SessionUpgrade"/>
+        </classes>
+   </test>
    <test name="SessionUpgradeTestSubRealm">
-        <parameter name="forceClientAuth" value="false"/>
+        <parameter name="forceAuth" value="false"/>
         <parameter name="testRealm" value="upgradeRealm"/>
         <parameter name="testMode" value="module"/>
-        <parameter name="useDifferentModules" value="true"/>        
+        <parameter name="useDifferentModules" value="true"/>
+        <parameter name="createUserProfile" value="required"/>
+        <parameter name="useSanityMode" value="false"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.SessionUpgrade"/>
+        </classes>
+   </test>
+   <test name="SessionUpgradeTestIgnoreSubRealm">
+        <parameter name="forceAuth" value="false"/>
+        <parameter name="testRealm" value="upgradeRealm"/>
+        <parameter name="testMode" value="module"/>
+        <parameter name="useDifferentModules" value="true"/>
+        <parameter name="createUserProfile" value="ignore"/>
+        <parameter name="useSanityMode" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -1151,11 +1237,61 @@
             <class name="com.sun.identity.qatest.authentication.SessionUpgrade"/>
         </classes>
     </test>
-    <test name="SessionUpgradeTestForceClientAuthSubRealm">
-        <parameter name="forceClientAuth" value="true"/>
+   <test name="SessionUpgradeSanityTestSubRealm">
+        <parameter name="forceAuth" value="false"/>
         <parameter name="testRealm" value="upgradeRealm"/>
         <parameter name="testMode" value="module"/>
-        <parameter name="useDifferentModules" value="true"/>        
+        <parameter name="useDifferentModules" value="true"/>
+        <parameter name="createUserProfile" value="required"/>
+        <parameter name="useSanityMode" value="true"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.SessionUpgrade"/>
+        </classes>
+    </test>
+    <test name="SessionUpgradeTestForceAuthSubRealm">
+        <parameter name="forceAuth" value="true"/>
+        <parameter name="testRealm" value="upgradeRealm"/>
+        <parameter name="testMode" value="module"/>
+        <parameter name="useDifferentModules" value="true"/>
+        <parameter name="createUserProfile" value="required"/>
+        <parameter name="useSanityMode" value="false"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.SessionUpgrade"/>
+        </classes>
+    </test>
+    <test name="SessionUpgradeTestIgnoreforceAuthSubRealm">
+        <parameter name="forceAuth" value="true"/>
+        <parameter name="testRealm" value="upgradeRealm"/>
+        <parameter name="testMode" value="module"/>
+        <parameter name="useDifferentModules" value="true"/>
+        <parameter name="createUserProfile" value="ignore"/>
+        <parameter name="useSanityMode" value="false"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.SessionUpgrade"/>
+        </classes>
+    </test>
+    <test name="SessionUpgradeSanityTestForceAuthSubRealm">
+        <parameter name="forceAuth" value="true"/>
+        <parameter name="testRealm" value="upgradeRealm"/>
+        <parameter name="testMode" value="module"/>
+        <parameter name="useDifferentModules" value="true"/>
+        <parameter name="createUserProfile" value="required"/>
+        <parameter name="useSanityMode" value="true"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -1166,10 +1302,12 @@
         </classes>
     </test>
     <test name="SessionUpgradeLevelTest">
-        <parameter name="forceClientAuth" value="false"/>
+        <parameter name="forceAuth" value="false"/>
         <parameter name="testRealm" value="/"/>
         <parameter name="testMode" value="level"/>
-        <parameter name="useDifferentModules" value="true"/>        
+        <parameter name="useDifferentModules" value="true"/>
+        <parameter name="createUserProfile" value="required"/>
+        <parameter name="useSanityMode" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -1179,11 +1317,13 @@
             <class name="com.sun.identity.qatest.authentication.SessionUpgrade"/>
         </classes>
     </test>
-    <test name="SessionUpgradeLevelTestForceClientAuth">
-        <parameter name="forceClientAuth" value="true"/>
-        <parameter name="testRealm" value="/"/>   
+    <test name="SessionUpgradeLevelIgnoreTest">
+        <parameter name="forceAuth" value="false"/>
+        <parameter name="testRealm" value="/"/>
         <parameter name="testMode" value="level"/>
-        <parameter name="useDifferentModules" value="true"/>        
+        <parameter name="useDifferentModules" value="true"/>
+        <parameter name="createUserProfile" value="ignore"/>
+        <parameter name="useSanityMode" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -1193,11 +1333,77 @@
             <class name="com.sun.identity.qatest.authentication.SessionUpgrade"/>
         </classes>
     </test>
+    <test name="SessionUpgradeLevelSanityTest">
+        <parameter name="forceAuth" value="false"/>
+        <parameter name="testRealm" value="/"/>
+        <parameter name="testMode" value="level"/>
+        <parameter name="useDifferentModules" value="true"/>
+        <parameter name="createUserProfile" value="required"/>
+        <parameter name="useSanityMode" value="true"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.SessionUpgrade"/>
+        </classes>
+    </test>
+    <test name="SessionUpgradeLevelTestForceAuth">
+        <parameter name="forceAuth" value="true"/>
+        <parameter name="testRealm" value="/"/>
+        <parameter name="testMode" value="level"/>
+        <parameter name="useDifferentModules" value="true"/>
+        <parameter name="createUserProfile" value="required"/>
+        <parameter name="useSanityMode" value="false"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.SessionUpgrade"/>
+        </classes>
+    </test>
+    <test name="SessionUpgradeLevelIgnoreTestForceAuth">
+        <parameter name="forceAuth" value="true"/>
+        <parameter name="testRealm" value="/"/>
+        <parameter name="testMode" value="level"/>
+        <parameter name="useDifferentModules" value="true"/>
+        <parameter name="createUserProfile" value="ignore"/>
+        <parameter name="useSanityMode" value="false"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.SessionUpgrade"/>
+        </classes>
+    </test>
+    <test name="SessionUpgradeLevelSanityTestForceAuth">
+        <parameter name="forceAuth" value="true"/>
+        <parameter name="testRealm" value="/"/>
+        <parameter name="testMode" value="level"/>
+        <parameter name="useDifferentModules" value="true"/>
+        <parameter name="createUserProfile" value="required"/>
+        <parameter name="useSanityMode" value="true"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.SessionUpgrade"/>
+        </classes>
+   </test>
    <test name="SessionUpgradeLevelTestSubRealm">
-        <parameter name="forceClientAuth" value="false"/>
+        <parameter name="forceAuth" value="false"/>
         <parameter name="testRealm" value="upgradeRealm"/>
         <parameter name="testMode" value="level"/>
-        <parameter name="useDifferentModules" value="true"/>        
+        <parameter name="useDifferentModules" value="true"/>
+        <parameter name="createUserProfile" value="required"/>
+        <parameter name="useSanityMode" value="false"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -1207,11 +1413,77 @@
             <class name="com.sun.identity.qatest.authentication.SessionUpgrade"/>
         </classes>
     </test>
-    <test name="SessionUpgradeLevelTestForceClientAuthSubRealm">
-        <parameter name="forceClientAuth" value="true"/>
+   <test name="SessionUpgradeLevelIgnoreTestSubRealm">
+        <parameter name="forceAuth" value="false"/>
         <parameter name="testRealm" value="upgradeRealm"/>
         <parameter name="testMode" value="level"/>
-        <parameter name="useDifferentModules" value="true"/>        
+        <parameter name="useDifferentModules" value="true"/>
+        <parameter name="createUserProfile" value="ignore"/>
+        <parameter name="useSanityMode" value="false"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.SessionUpgrade"/>
+        </classes>
+    </test>
+   <test name="SessionUpgradeLevelSanityTestSubRealm">
+        <parameter name="forceAuth" value="false"/>
+        <parameter name="testRealm" value="upgradeRealm"/>
+        <parameter name="testMode" value="level"/>
+        <parameter name="useDifferentModules" value="true"/>
+        <parameter name="createUserProfile" value="required"/>
+        <parameter name="useSanityMode" value="true"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.SessionUpgrade"/>
+        </classes>
+    </test>
+    <test name="SessionUpgradeLevelTestForceAuthSubRealm">
+        <parameter name="forceAuth" value="true"/>
+        <parameter name="testRealm" value="upgradeRealm"/>
+        <parameter name="testMode" value="level"/>
+        <parameter name="useDifferentModules" value="true"/>
+        <parameter name="createUserProfile" value="required"/>
+        <parameter name="useSanityMode" value="false"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.SessionUpgrade"/>
+        </classes>
+    </test>
+    <test name="SessionUpgradeLevelTestIgnoreforceAuthSubRealm">
+        <parameter name="forceAuth" value="true"/>
+        <parameter name="testRealm" value="upgradeRealm"/>
+        <parameter name="testMode" value="level"/>
+        <parameter name="useDifferentModules" value="true"/>
+        <parameter name="createUserProfile" value="ignore"/>
+        <parameter name="useSanityMode" value="false"/>
+        <groups>
+            <run>
+                <include name="ds_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.SessionUpgrade"/>
+        </classes>
+    </test>
+    <test name="SessionUpgradeLevelSanityTestForceAuthSubRealm">
+        <parameter name="forceAuth" value="true"/>
+        <parameter name="testRealm" value="upgradeRealm"/>
+        <parameter name="testMode" value="level"/>
+        <parameter name="useDifferentModules" value="true"/>
+        <parameter name="createUserProfile" value="required"/>
+        <parameter name="useSanityMode" value="true"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -1222,10 +1494,12 @@
         </classes>
     </test>
     <test name="SessionUpgradeTestSameModule">
-        <parameter name="forceClientAuth" value="false"/>
+        <parameter name="forceAuth" value="false"/>
         <parameter name="testRealm" value="/"/>
         <parameter name="testMode" value="module"/>
         <parameter name="useDifferentModules" value="false"/>
+        <parameter name="createUserProfile" value="required"/>
+        <parameter name="useSanityMode" value="true"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -1235,11 +1509,13 @@
             <class name="com.sun.identity.qatest.authentication.SessionUpgrade"/>
         </classes>
     </test>
-    <test name="SessionUpgradeTestForceClientAuthSameModule">
-        <parameter name="forceClientAuth" value="true"/>
-        <parameter name="testRealm" value="/"/>   
+    <test name="SessionUpgradeTestForceAuthSameModule">
+        <parameter name="forceAuth" value="true"/>
+        <parameter name="testRealm" value="/"/>
         <parameter name="testMode" value="module"/>
-        <parameter name="useDifferentModules" value="false"/>        
+        <parameter name="useDifferentModules" value="false"/>
+        <parameter name="createUserProfile" value="required"/>
+        <parameter name="useSanityMode" value="true"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -1250,10 +1526,12 @@
         </classes>
     </test>
    <test name="SessionUpgradeTestSubRealmSameModule">
-        <parameter name="forceClientAuth" value="false"/>
+        <parameter name="forceAuth" value="false"/>
         <parameter name="testRealm" value="upgradeRealm"/>
         <parameter name="testMode" value="module"/>
-        <parameter name="useDifferentModules" value="false"/>        
+        <parameter name="useDifferentModules" value="false"/>
+        <parameter name="createUserProfile" value="required"/>
+        <parameter name="useSanityMode" value="true"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -1263,11 +1541,13 @@
             <class name="com.sun.identity.qatest.authentication.SessionUpgrade"/>
         </classes>
     </test>
-    <test name="SessionUpgradeTestForceClientAuthSubRealmSameModule">
-        <parameter name="forceClientAuth" value="true"/>
+    <test name="SessionUpgradeTestForceAuthSubRealmSameModule">
+        <parameter name="forceAuth" value="true"/>
         <parameter name="testRealm" value="upgradeRealm"/>
         <parameter name="testMode" value="module"/>
-        <parameter name="useDifferentModules" value="false"/>        
+        <parameter name="useDifferentModules" value="false"/>
+        <parameter name="createUserProfile" value="required"/>
+        <parameter name="useSanityMode" value="true"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -1278,10 +1558,12 @@
         </classes>
     </test>
     <test name="SessionUpgradeLevelTestSameModule">
-        <parameter name="forceClientAuth" value="false"/>
+        <parameter name="forceAuth" value="false"/>
         <parameter name="testRealm" value="/"/>
         <parameter name="testMode" value="level"/>
-        <parameter name="useDifferentModules" value="false"/>          
+        <parameter name="useDifferentModules" value="false"/>
+        <parameter name="createUserProfile" value="required"/>
+        <parameter name="useSanityMode" value="true"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -1291,11 +1573,13 @@
             <class name="com.sun.identity.qatest.authentication.SessionUpgrade"/>
         </classes>
     </test>
-    <test name="SessionUpgradeLevelTestForceClientAuthSameModule">
-        <parameter name="forceClientAuth" value="true"/>
-        <parameter name="testRealm" value="/"/>   
+    <test name="SessionUpgradeLevelTestForceAuthSameModule">
+        <parameter name="forceAuth" value="true"/>
+        <parameter name="testRealm" value="/"/>
         <parameter name="testMode" value="level"/>
-        <parameter name="useDifferentModules" value="false"/>        
+        <parameter name="useDifferentModules" value="false"/>
+        <parameter name="createUserProfile" value="required"/>
+        <parameter name="useSanityMode" value="true"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -1306,10 +1590,12 @@
         </classes>
     </test>
    <test name="SessionUpgradeLevelTestSubRealmSameModule">
-        <parameter name="forceClientAuth" value="false"/>
+        <parameter name="forceAuth" value="false"/>
         <parameter name="testRealm" value="upgradeRealm"/>
         <parameter name="testMode" value="level"/>
-        <parameter name="useDifferentModules" value="false"/>          
+        <parameter name="useDifferentModules" value="false"/>
+        <parameter name="createUserProfile" value="required"/>
+        <parameter name="useSanityMode" value="true"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -1319,11 +1605,13 @@
             <class name="com.sun.identity.qatest.authentication.SessionUpgrade"/>
         </classes>
     </test>
-    <test name="SessionUpgradeLevelTestForceClientAuthSubRealmSameModule">
-        <parameter name="forceClientAuth" value="true"/>
+    <test name="SessionUpgradeLevelTestForceAuthSubRealmSameModule">
+        <parameter name="forceAuth" value="true"/>
         <parameter name="testRealm" value="upgradeRealm"/>
         <parameter name="testMode" value="level"/>
-        <parameter name="useDifferentModules" value="false"/>          
+        <parameter name="useDifferentModules" value="false"/>
+        <parameter name="createUserProfile" value="required"/>
+        <parameter name="useSanityMode" value="true"/>
         <groups>
             <run>
                 <include name="ds_ds_sec"/>
@@ -1332,7 +1620,7 @@
         <classes>
             <class name="com.sun.identity.qatest.authentication.SessionUpgrade"/>
         </classes>
-    </test>        
+    </test>
     <test name="MapUserAttrToSSOTokenRootRealm">
         <parameter name="testModule" value="ldap"/>
         <parameter name="testRealm" value="/"/>
