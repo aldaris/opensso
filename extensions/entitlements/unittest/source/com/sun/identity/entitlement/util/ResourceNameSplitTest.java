@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceNameSplitTest.java,v 1.3 2009-01-16 01:52:03 veiming Exp $
+ * $Id: ResourceNameSplitTest.java,v 1.4 2009-01-16 17:30:37 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
@@ -48,7 +48,7 @@ public class ResourceNameSplitTest {
         Map<String, Set<String>> map = parseResource("resourceNameSplitHost");
         for (String k : map.keySet()) {
             Set<String> set = map.get(k);
-            Set<String> results = ResourceNameSpliter.splitHost(new URL(k));
+            Set<String> results = ResourceNameSplitter.splitHost(new URL(k));
             if (!results.equals(set)) {
                 String msg = "ResourceNameSplitTest.testHost: " + k + 
                     " failed.";
@@ -67,7 +67,7 @@ public class ResourceNameSplitTest {
         for (String k : map.keySet()) {
             Set<String> set = map.get(k);
             
-            Set<String> results = ResourceNameSpliter.splitPath(new URL(k));
+            Set<String> results = ResourceNameSplitter.splitPath(new URL(k));
             if (!results.equals(set)) {
                 String msg = "ResourceNameSplitTest.testPath: " + k + 
                     " failed.";
