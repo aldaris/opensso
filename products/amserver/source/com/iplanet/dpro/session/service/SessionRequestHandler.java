@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionRequestHandler.java,v 1.6 2008-08-19 19:08:40 veiming Exp $
+ * $Id: SessionRequestHandler.java,v 1.7 2009-01-16 06:16:31 lakshman_abburi Exp $
  *
  */
 
@@ -39,6 +39,7 @@ import com.iplanet.services.comm.server.RequestHandler;
 import com.iplanet.services.comm.share.Request;
 import com.iplanet.services.comm.share.Response;
 import com.iplanet.services.comm.share.ResponseSet;
+import com.iplanet.sso.SSOToken;
 import com.sun.identity.session.util.RestrictedTokenAction;
 import com.sun.identity.session.util.RestrictedTokenContext;
 import com.sun.identity.session.util.SessionUtils;
@@ -62,6 +63,8 @@ public class SessionRequestHandler implements RequestHandler {
      */
     private static Boolean enableAddListenerOnAllSessions = null;
 
+    private SSOToken clientToken = null;
+    
     public SessionRequestHandler() {
         sessionService = SessionService.getSessionService();
     }
@@ -98,10 +101,14 @@ public class SessionRequestHandler implements RequestHandler {
 
             // use remote client IP as default RestrictedToken context
             Object context = SessionUtils.getClientAddress(servletRequest);
+            this.clientToken = null;
             if (SessionUtils.isTrustedSource(remoteClient)) {
                 String requester = sreq.getRequester();
                 if (requester != null) {
                     context = RestrictedTokenContext.unmarshal(requester);
+                    if (context instanceof SSOToken) {
+                        this.clientToken = (SSOToken)context;
+                    }
                 }
             }
 
@@ -196,8 +203,32 @@ public class SessionRequestHandler implements RequestHandler {
                         return res;
                     }
                     sid = new SessionID(req.getDestroySessionID());
-                }            
+                } else if (req.getMethodID() == SessionRequest.SetProperty) {
+                    /*
+                     * This fix is to avoid clients sneaking in to set
+                     * protected properties in server-2 or so through
+                     * server-1. Short circuit this operation without
+                     * forwrading it further.
+                     */
+					try {
+						SessionUtils.checkPermissionToSetProperty(
+							this.clientToken, req.getPropertyName(),
+							req.getPropertyValue());
+					} catch (SessionException se) {
+                        if (SessionService.sessionDebug.warningEnabled()) {
+                            SessionService.sessionDebug.warning(
+                                "SessionRequestHandler.processRequest:"
+                                + "Client does not have permission to set"
+                                + " - property key = " + req.getPropertyName()
+                                + " : property value = " + req.getPropertyValue());
+                        }
 
+						res.setException(
+							sid + " " + SessionBundle.getString("noPrivilege"));
+						return res;
+					}
+				}
+                
                 if (!sessionService.isSessionFailoverEnabled()) {
                     // TODO check how this behaves in non-session failover case
                     URL originService = Session.getSessionServiceURL(sid);
@@ -371,8 +402,8 @@ public class SessionRequestHandler implements RequestHandler {
                 break;
 
             case SessionRequest.SetProperty:
-                sessionService.setExternalProperty(sid, req.getPropertyName(),
-                        req.getPropertyValue());
+                sessionService.setExternalProperty(this.clientToken, sid,
+                        req.getPropertyName(), req.getPropertyValue());
                 break;
 
             case SessionRequest.GetSessionCount:

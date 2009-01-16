@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InternalSession.java,v 1.19 2008-12-23 21:37:22 ericow Exp $
+ * $Id: InternalSession.java,v 1.20 2009-01-16 06:14:17 lakshman_abburi Exp $
  *
  */
 
@@ -37,6 +37,7 @@ import com.iplanet.dpro.session.TokenRestriction;
 import com.iplanet.dpro.session.share.SessionBundle;
 import com.iplanet.dpro.session.share.SessionEncodeURL;
 import com.iplanet.dpro.session.share.SessionInfo;
+import com.iplanet.sso.SSOToken;
 import com.sun.identity.common.HeadTaskRunnable;
 import com.sun.identity.common.SystemTimerPool;
 import com.sun.identity.common.TaskRunnable;
@@ -820,15 +821,33 @@ public class InternalSession implements TaskRunnable, Serializable {
     }
 
     /**
+     * Helper method to check if a property is protected or not.
+     * @param key
+     *          property name.
+     * @return true if property is protected else false.
+     */
+    public static boolean isProtectedProperty(String key) {
+        if (protectedProperties.contains(key) ||
+            key.toLowerCase().startsWith(
+                Constants.AM_PROTECTED_PROPERTY_PREFIX)) {
+            return true;
+         }
+         return false;
+    }
+
+    /**
      * Sets the key-value pair in the InternalSession property table if it is
-     * not protected. This method is to be used in conjuction with
+     * not protected. If it is protected client should have permission to set
+     * it. This method is to be used in conjuction with
      * SessionRequestHandler/SessionService invocation path If the property is
      * protected, an attempt to remotely set a protected property is logged and
      * the method throws an Exception. Otherwise invocation is delegated to
      * internalPutProperty()
-     * 
+     *
      * Note that package default access is being used
-     * 
+     *
+     * @param SSOToken
+     *            Token of the client setting external property.
      * @param key
      *            Property key
      * @param value
@@ -836,20 +855,20 @@ public class InternalSession implements TaskRunnable, Serializable {
      * @exception SessionException is thrown if the key is protected property.
      *
      */
-    void putExternalProperty(String key, String value) throws SessionException {
-        if (protectedProperties.contains(key) ||
-            key.toLowerCase().startsWith(
-            Constants.AM_PROTECTED_PROPERTY_PREFIX)) {
-            SessionService.sessionDebug
-                    .warning("InternalSession.putExternalProperty: Attempt"+
-                    "to set protected property [" + key + "=" + value + "]");
-            SessionService.getSessionService().logIt(this,
-                    "SESSION_PROTECTED_PROPERTY_ERROR");
-            throw new SessionException(SessionBundle
-                    .getString("protectedProperty")
-                    + " " + key);
+    void putExternalProperty(SSOToken clientToken, String key, String value)
+        throws SessionException {
+		try {
+        	SessionUtils.checkPermissionToSetProperty(clientToken, key, value);
+		} catch (SessionException se) {
+			SessionService.getSessionService().logIt(
+				this, "SESSION_PROTECTED_PROPERTY_ERROR");
+			throw se;
+		}
+        internalPutProperty(key,value);
+        if (SessionService.sessionDebug.messageEnabled()) {
+            SessionService.sessionDebug.message("Updated protected property"
+                + " after validating client identity and permissions");
         }
-        internalPutProperty(key, value);
     }
 
     /**

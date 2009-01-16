@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionUtils.java,v 1.7 2008-08-19 19:09:23 veiming Exp $
+ * $Id: SessionUtils.java,v 1.8 2009-01-16 06:07:04 lakshman_abburi Exp $
  *
  */
 
@@ -49,13 +49,19 @@ import com.iplanet.am.util.SystemProperties;
 import com.iplanet.dpro.session.Session;
 import com.iplanet.dpro.session.SessionException;
 import com.iplanet.dpro.session.SessionID;
+import com.iplanet.dpro.session.service.InternalSession;
+import com.iplanet.dpro.session.service.SessionService;
 import com.iplanet.dpro.session.share.SessionBundle;
 import com.iplanet.services.naming.WebtopNaming;
 import com.iplanet.services.util.Crypt;
+import com.iplanet.services.util.I18n;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenID;
+import com.iplanet.sso.SSOTokenManager;
+import com.iplanet.ums.IUMSConstants;
 import com.sun.identity.shared.Constants;
+import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.security.EncodeAction;
 
 /**
@@ -367,5 +373,157 @@ public class SessionUtils {
         }
         return sKey;
     }
+
+
+    /**
+     * Helper method to get admin token. This is not amadmin user
+     * but the user configured in serverconfig.xml as super user.
+     *
+     * @return SSOToken of super admin.
+     */
+    public static SSOToken getAdminToken() throws SSOException{
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        if (adminToken == null) {
+            I18n i18n = I18n.getInstance(IUMSConstants.UMS_PKG);
+            String rbName = i18n.getResBundleName();
+            throw new SSOException(rbName, IUMSConstants.NULL_TOKEN, null);
+        }
+        return (adminToken);
+    }
+
+    /**
+     * Helper method to compare if the user token passed is same as admin
+     * token. It does not check if user token or admin token is valid.
+     *
+     * @param: admToken
+     *            Admin SSOToken
+     * @param: usrToken
+     *            User SSOToken to compare against admin SSOToken
+     * @return true if they both are same else false.
+     */
+    public static boolean isAdmin(SSOToken admToken, SSOToken usrToken) {
+        if (usrToken == null) {
+            debug.error("SessionUtils.isAdmin(): user token is null");
+            return false;
+        }
+
+       if (admToken == null) {
+            debug.error("SessionUtils.isAdmin(): admin token is null");
+            return false;
+        }
+
+        boolean result = false;
+
+        String usrName = null;
+        String admName = null;
+
+        try {
+            usrName = usrToken.getPrincipal().getName();
+        } catch (SSOException ssoEx) {
+            debug.error("SessionUtils.isAdmin(): user token fails"
+                        + "to get principal");
+            return false;
+        }
+
+        try {
+            admName = admToken.getPrincipal().getName();
+        } catch (SSOException ssoEx) {
+            debug.error("SessionUtils.isAdmin(): admin token fails "
+                        + "to get principal");
+            return false;
+        }
+
+        if (usrName.equalsIgnoreCase(admName)) {
+            result = true;
+        }
+
+        if (debug.messageEnabled()) {
+            debug.message("SessionUtils.isAdmin(): returns " + result +
+               " for user principal: " + usrName +
+               " against admin principal: " + admName);
+        }
+
+        return result;
+    }
+
+
+    /**
+     * Helper method to check if client has taken permission to
+     * set value to it. If
+     * @param SSOToken
+     *            Token of the client setting protected property.
+     * @param key
+     *            Property key
+     * @exception SessionException is thrown if the key is protected property.
+     *
+     */
+    public static void checkPermissionToSetProperty(SSOToken clientToken,
+        String key, String value) throws SessionException {
+        if (InternalSession.isProtectedProperty(key)) {
+            if (clientToken == null) {
+                // Throw Ex. Client should identify itself.
+                if (SessionService.sessionDebug.warningEnabled()) {
+                    SessionService.sessionDebug.warning(
+						"SessionUtils.checkPermissionToSetProperty(): "
+                        + "Attempt to set protected property without client "
+                        + "token [" + key + "=" + value + "]");
+                }
+                throw new SessionException(
+                    SessionBundle.getString("protectedPropertyNoClientToken")
+                    + " " + key);
+            }
+
+            SSOTokenManager ssoTokenManager = null;
+            try {
+                ssoTokenManager = SSOTokenManager.getInstance();
+            } catch (SSOException ssoEx) {
+                // Throw Ex. Not able to get SSOTokenManager instance.
+                SessionService.sessionDebug.error(
+					"SessionUtils.checkPermissionToSetProperty(): "
+                    + "Cannot get instance of SSOTokenManager.");
+                throw new SessionException(
+                    SessionBundle.getString(
+                        "protectedPropertyNoSSOTokenMgrInstance")+ " " + key);
+            }
+
+            if (!ssoTokenManager.isValidToken(clientToken)) {
+                // Throw Ex. Client should identify itself.
+                if (SessionService.sessionDebug.warningEnabled()) {
+                    SessionService.sessionDebug.warning(
+						"SessionUtils.checkPermissionToSetProperty(): "
+                        + "Attempt to set protected property with invalid client"
+                        + " token [" + key + "=" + value + "]");
+                }
+                throw new SessionException(
+                    SessionBundle.getString(
+                    "protectedPropertyInvalidClientToken") + " " + key);
+            }
+
+            SSOToken admToken = null;
+            try {
+                admToken = SessionUtils.getAdminToken();
+            } catch (SSOException ssoEx) {
+                // Throw Ex. Server not able to get Admin Token.
+                SessionService.sessionDebug.error(
+					"SessionUtils.checkPermissionToSetProperty(): "
+                    + "Cannot get Admin Token for validation to set protected "
+                    + "property [" + key + "=" + value + "]");
+                throw new SessionException(
+                    SessionBundle.getString("protectedPropertyNoAdminToken")
+                    + " " + key);
+            }
+            if (!SessionUtils.isAdmin(admToken, clientToken)) {
+                // Throw Ex. Client not authorized to set this property.
+                SessionService.sessionDebug.error(
+					"SessionUtils.checkPermissionToSetProperty(): "
+                    + "Client does not have permission to set protected "
+                    + "property" + key + "=" + value + "]");
+                throw new SessionException(
+                    SessionBundle.getString("protectedPropertyNoPermission")
+                    + " " + key);
+            }
+        }
+	}
 
 }

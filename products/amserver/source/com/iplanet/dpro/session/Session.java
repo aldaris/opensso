@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Session.java,v 1.18 2008-08-30 06:43:59 manish_rustagi Exp $
+ * $Id: Session.java,v 1.19 2009-01-16 06:11:33 lakshman_abburi Exp $
  *
  */
 
@@ -32,6 +32,7 @@ import com.iplanet.am.util.SystemProperties;
 import com.iplanet.am.util.ThreadPool;
 import com.iplanet.am.util.ThreadPoolException;
 import com.iplanet.dpro.session.service.SessionService;
+import com.iplanet.dpro.session.service.InternalSession;
 import com.iplanet.dpro.session.share.SessionBundle;
 import com.iplanet.dpro.session.share.SessionEncodeURL;
 import com.iplanet.dpro.session.share.SessionInfo;
@@ -42,6 +43,7 @@ import com.iplanet.services.comm.share.Request;
 import com.iplanet.services.comm.share.RequestSet;
 import com.iplanet.services.comm.share.Response;
 import com.iplanet.services.naming.WebtopNaming;
+import com.iplanet.sso.SSOToken;
 import com.sun.identity.common.GeneralTaskRunnable;
 import com.sun.identity.common.SearchResults;
 import com.sun.identity.common.ShutdownListener;
@@ -801,6 +803,15 @@ public class Session extends GeneralTaskRunnable {
                        SessionRequest.SetProperty, sessionID.toString(), false);
                 sreq.setPropertyName(name);
                 sreq.setPropertyValue(value);
+                if ( isServerMode() && InternalSession.isProtectedProperty(name) ) {
+                    SSOToken admSSOToken = SessionUtils.getAdminToken();
+                    sreq.setRequester(RestrictedTokenContext.marshal(admSSOToken));
+                    if (sessionDebug.messageEnabled()) {
+                        sessionDebug.message("Session.setProperty: "
+                            + "added admSSOToken in sreq to set "
+                            + "externalProtectedProperty in remote server");
+                    }
+                }
                 getSessionResponse(getSessionServiceURL(), sreq);
             }
             sessionProperties.put(name, value);
@@ -808,7 +819,7 @@ public class Session extends GeneralTaskRunnable {
             throw new SessionException(e);
         }
     }
-
+    
     /**
      * Used to find out if the maximum caching time has reached or not.
      */

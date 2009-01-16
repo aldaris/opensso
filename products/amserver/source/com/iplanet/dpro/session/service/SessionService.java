@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionService.java,v 1.30 2009-01-07 17:50:24 ericow Exp $
+ * $Id: SessionService.java,v 1.31 2009-01-16 06:17:53 lakshman_abburi Exp $
  *
  */
 
@@ -1425,17 +1425,19 @@ public class SessionService {
     /**
      * Sets external property in the Internal Session as long as it is not
      * protected
-     * 
+     *
      * @exception SessionException
+     * @param clientToken - Token of the client setting external property.
      * @param sid
      * @param name
      * @param value
      */
-    public void setExternalProperty(SessionID sid, String name, String value)
+    public void setExternalProperty(SSOToken clientToken, SessionID sid,
+            String name, String value)
             throws SessionException {
-        locateSession(sid).putExternalProperty(name, value);
+        locateSession(sid).putExternalProperty(clientToken, name, value);
     }
-
+    
     /**
      * Sends the Internal Session event to the SessionNotificationSender.
      * 
