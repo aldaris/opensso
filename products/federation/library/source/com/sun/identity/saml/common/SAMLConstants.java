@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLConstants.java,v 1.15 2008-12-15 23:02:19 hengming Exp $
+ * $Id: SAMLConstants.java,v 1.16 2009-01-16 19:28:00 asyhuang Exp $
  *
  */
 
@@ -698,7 +698,9 @@ public final class SAMLConstants
      * @supported.api
      */
     public static final String SITEATTRIBUTEMAPPER = "siteattributemapper";
-
+    public static final String SITEATTRIBUTEMAPPERDEFAULT =
+            "com.sun.identity.saml.plugins.DefaultSiteAttributeMapper";
+    
     /**
      * A SAML service attribute parameter that specifies the class with the
      * path where the partnerSiteAttributeMapper is located. Applications can

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyFSSAMLProfile.xml,v 1.5 2008-12-15 23:32:35 farble1670 Exp $
+   $Id: propertyFSSAMLProfile.xml,v 1.6 2009-01-16 19:29:10 asyhuang Exp $
 
 -->
 
@@ -194,12 +194,12 @@
         </property>
     </section>
 
-    <section name="AttributeMap" defaultValue="saml.profile.attribute.map.header">
+    <section name="NameIdAttributeMap" defaultValue="saml.profile.name.id.attribute.map.header">
         <property>
-            <label name="lblAttributeListForAttributeMap"
-                   defaultValue="saml.profile.attribute.map.label"
-                   labelFor="lblAttributeListForAttributeMap" />
-            <fieldhelp name="helpAttributeListForAttributeMap" defaultValue="samlv2idp.attribute.help.nameidmap" />
+            <label name="lblAttributeListForNameIdAttributeMap"
+                   defaultValue="saml.profile.name.id.attribute.map.label"
+                   labelFor="lblAttributeListForNameIdAttributeMap" />
+            <fieldhelp name="helpAttributeListForNameIdAttributeMap" defaultValue="saml.profile.name.id.attribute.map.inlinehelp" />
             <ccgroup>
                 <property>
                     <cc name="iplanet-am-saml-name-id-format-attr-map"
@@ -213,4 +213,22 @@
         </property>
     </section>
     
+    <section name="AttributeMap" defaultValue="saml.profile.attribute.map.header">
+        <property>
+            <label name="lblAttributeListForAttributeMap"
+                   defaultValue="saml.profile.attribute.map.label"
+                   labelFor="lblAttributeListForAttributeMap" />
+            <fieldhelp name="helpAttributeListForAttributeMap" defaultValue="saml.profile.attribute.map.inlinehelp" />
+            <ccgroup>
+                <property>
+                    <cc name="iplanet-am-saml-attr-map"
+                        tagclass="com.sun.web.ui.taglib.editablelist.CCEditableListTag" >
+                        <attribute name="name" value="list" />
+                        <attribute name="listboxLabel" value="label.current.value" />
+                        <attribute name="textboxLabel" value="label.new.value" />
+                    </cc>
+                </property>
+            </ccgroup>
+        </property>
+    </section>
 </propertysheet>

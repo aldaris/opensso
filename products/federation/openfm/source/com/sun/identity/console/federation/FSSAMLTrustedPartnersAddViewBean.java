@@ -22,18 +22,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSAMLTrustedPartnersAddViewBean.java,v 1.2 2008-06-25 05:49:35 qcheng Exp $
+ * $Id: FSSAMLTrustedPartnersAddViewBean.java,v 1.3 2009-01-16 19:30:00 asyhuang Exp $
  *
  */
 
 package com.sun.identity.console.federation;
 
 import com.iplanet.jato.model.ModelControlException;
+import com.iplanet.jato.view.event.DisplayEvent;
 import com.iplanet.jato.view.event.RequestInvocationEvent;
 import com.sun.identity.console.base.AMPipeDelimitAttrTokenizer;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.federation.model.FSSAMLServiceModel;
-import com.sun.identity.console.federation.model.FSSAMLServiceModelImpl;
+import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.web.ui.model.CCPageTitleModel;
 import java.util.Iterator;
 import java.util.HashMap;
@@ -57,6 +58,20 @@ public class FSSAMLTrustedPartnersAddViewBean
     
     public FSSAMLTrustedPartnersAddViewBean () {
         super ("FSSAMLTrustedPartnersAdd", DEFAULT_DISPLAY_URL);
+    }
+    
+    public void beginDisplay(DisplayEvent event)
+    throws ModelControlException {
+        super.beginDisplay(event);    
+         Set attributeNames = getAttributeNames();
+        if (attributeNames.contains(SAMLConstants.SITEATTRIBUTEMAPPER)) {            
+            String siteAttrMapper = (String)getDisplayFieldValue(
+                SAMLConstants.SITEATTRIBUTEMAPPER);
+            if ((siteAttrMapper == null) || (siteAttrMapper.length() == 0)) {                      
+                setDisplayFieldValue(SAMLConstants.SITEATTRIBUTEMAPPER,
+                    SAMLConstants.SITEATTRIBUTEMAPPERDEFAULT);
+            }
+        }        
     }
     
     protected void createPageTitleModel () {

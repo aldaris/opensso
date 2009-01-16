@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSSAMLTrustedPartnersViewBeanBase.java,v 1.5 2008-10-09 19:08:27 babysunil Exp $
+ * $Id: FSSAMLTrustedPartnersViewBeanBase.java,v 1.6 2009-01-16 19:30:24 asyhuang Exp $
  *
  */
 
@@ -41,9 +41,6 @@ import com.sun.identity.console.base.model.AMModel;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
 import com.sun.identity.console.federation.model.FSSAMLServiceModel;
 import com.sun.identity.console.federation.model.FSSAMLServiceModelImpl;
-import com.sun.identity.console.federation.SAMLProperty;
-import com.sun.identity.console.federation.SAMLPropertyXMLBuilder;
-import com.sun.identity.console.federation.SAMLPropertyTemplate;
 import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.security.DecodeAction;
 import com.sun.identity.security.EncryptAction;
@@ -405,7 +402,7 @@ public abstract class FSSAMLTrustedPartnersViewBeanBase
         vb.forwardTo(getRequestContext());
     }
     
-    private Set getAttributeNames() {
+    protected Set getAttributeNames() {
         List profiles = (List)getPageSessionAttribute(PROFILES);
         SAMLPropertyXMLBuilder builder = SAMLPropertyXMLBuilder.getInstance();
         return builder.getAttributeNames(profiles);
