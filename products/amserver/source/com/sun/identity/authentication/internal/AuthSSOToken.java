@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthSSOToken.java,v 1.3 2008-06-25 05:41:53 qcheng Exp $
+ * $Id: AuthSSOToken.java,v 1.4 2009-01-16 10:49:02 manish_rustagi Exp $
  *
  */
 
@@ -172,6 +172,11 @@ public class AuthSSOToken implements SSOToken {
     }
 
     public String getProperty(String name) throws SSOException {
+        return ((String) session.get(name));
+    }
+
+    public String getProperty(String name, boolean ignoreState)
+        throws SSOException {
         return ((String) session.get(name));
     }
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOToken.java,v 1.3 2008-06-25 05:41:42 qcheng Exp $
+ * $Id: SSOToken.java,v 1.4 2009-01-16 10:43:14 manish_rustagi Exp $
  *
  */
 
@@ -167,6 +167,24 @@ public interface SSOToken {
      */
     public java.lang.String getProperty(java.lang.String name)
             throws SSOException;
+
+    /**
+     * Gets the property stored in this token. When ignoreState is set to true,
+     * it will return the session property value without refreshing the session
+     * even if the session state is invalid but it should be running in the 
+     * server mode
+     * 
+     * @param name
+     *            The property name.
+     * @param ignoreState
+     *            The ignoreState flag.
+     * @return The property value in string format.
+     * @exception SSOException
+     *                if the SSOToken is not VALID and if
+     *                ignoreState is set to false.
+     */
+    public java.lang.String getProperty(java.lang.String name,
+                boolean ignoreState ) throws SSOException;
 
     /**
      * Adds an SSO token listener for the token change events.

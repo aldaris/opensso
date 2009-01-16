@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Session.java,v 1.19 2009-01-16 06:11:33 lakshman_abburi Exp $
+ * $Id: Session.java,v 1.20 2009-01-16 10:46:47 manish_rustagi Exp $
  *
  */
 
@@ -783,6 +783,20 @@ public class Session extends GeneralTaskRunnable {
             }
         }    
         return (String) sessionProperties.get(name);
+    }
+
+    /**
+     * Gets the property stored in this session.
+     * 
+     * @param name The property name.
+     * @return The property value in String format only
+     *         when run in the server mode else return null  
+     */
+    public String getPropertyWithoutValidation(String name) {
+        if (isServerMode()) {
+            return (String) sessionProperties.get(name);
+        }
+        return null;
     }
 
     /**

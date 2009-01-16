@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOTokenImpl.java,v 1.4 2008-06-25 05:41:43 qcheng Exp $
+ * $Id: SSOTokenImpl.java,v 1.5 2009-01-16 10:45:01 manish_rustagi Exp $
  *
  */
 
@@ -390,6 +390,48 @@ class SSOTokenImpl implements SSOToken {
                     SSOProviderImpl.debug.error("Can't get property: " + name);
                     throw new SSOException(e);
                 }
+            }
+        }
+        return property;
+    }
+
+    /**
+     * Returns the property stored in this token.
+     * 
+     * @param name
+     *            The property name.
+     * @param ignoreState 
+	 *            ignoreState flag.
+     * @return The property value in String format.
+     * @throws SSOException if the SSOToken is not VALID and if
+     *         ignoreState is set to false.
+     */
+    public String getProperty(String name,boolean ignoreState)
+            throws SSOException {
+
+        String property = null;
+		try {
+            if (SSOProviderImpl.debug.messageEnabled()) {
+                SSOProviderImpl.debug.message("SSOTokenImpl.getProperty():" +
+                        " Calling getProperty(name)");
+            }
+            property = getProperty(name);
+	    } catch (SSOException e) {
+            if(ignoreState) {
+                if (SSOProviderImpl.debug.messageEnabled()) {
+                    SSOProviderImpl.debug.message("SSOTokenImpl.getProperty():"
+                        + " getProperty(name) failed because of:" + 
+                            e.getMessage());
+                    SSOProviderImpl.debug.message("SSOTokenImpl.getProperty():"
+                        + " Falling back to getPropertyWithoutValidation()");
+                }
+                property = SSOSession.getPropertyWithoutValidation(name);
+                if (SSOProviderImpl.debug.messageEnabled()) {
+                    SSOProviderImpl.debug.message("SSOTokenImpl.getProperty():"
+                        + " Value of " + name + " is: " + property);
+                }
+            } else {
+                throw e; 
             }
         }
         return property;
