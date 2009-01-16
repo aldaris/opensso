@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.43 2009-01-13 21:49:59 lakshman_abburi Exp $
+ * $Id: LoginState.java,v 1.44 2009-01-16 23:36:26 higapa Exp $
  *
  */
 
@@ -3518,14 +3518,16 @@ public class LoginState {
      * @return success login URL.
      */
     public String getSuccessLoginURL() {
-        String post_process_goto = null;
-        if (session != null) {
-           post_process_goto = session.getProperty(
-               ISAuthConstants.POST_PROCESS_SUCCESS_URL);
-        }
-        if ((post_process_goto != null) &&
-            (post_process_goto.length() > 0)) {
-            return post_process_goto;
+        String postProcessGoto = AuthUtils.getPostProcessURL(servletRequest,
+                AMPostAuthProcessInterface.POST_PROCESS_LOGIN_SUCCESS_URL);
+        //check from postAuthModule URL is set
+        //if not try to retrive it from session property
+        //Success URL from Post Auth takes pracedence
+        if ((postProcessGoto == null) && (session != null))
+                postProcessGoto =
+                    session.getProperty(ISAuthConstants.POST_PROCESS_SUCCESS_URL);
+        if ((postProcessGoto != null) && (postProcessGoto.length() > 0)) {
+             return postProcessGoto;
         }
         String currentGoto = (servletRequest == null)?
         null: servletRequest.getParameter("goto");
@@ -4088,6 +4090,11 @@ public class LoginState {
      * @return failure login URL.
      */
     public String getFailureLoginURL() {
+        String postProcessURL = AuthUtils.getPostProcessURL(servletRequest,
+            AMPostAuthProcessInterface.POST_PROCESS_LOGIN_FAILURE_URL);
+        if (postProcessURL != null) {
+            return postProcessURL;
+        }
         /* this method for UI called from AuthUtils */
         if ((fqdnFailureLoginURL == null) || (fqdnFailureLoginURL.length() == 0)
         ) {
@@ -4095,7 +4102,15 @@ public class LoginState {
         }
         return fqdnFailureLoginURL;
     }
-    
+
+    public String getLogoutURL() {
+
+        String postProcessURL = AuthUtils.getPostProcessURL(servletRequest,
+        AMPostAuthProcessInterface.POST_PROCESS_LOGOUT_URL);
+
+        return postProcessURL;
+    }
+
     /**
      * Returns the role login url attribute value.
      * @param roleAttrMap map object has login url attribute
@@ -5020,6 +5035,9 @@ public class LoginState {
      */
     void executePostProcessSPI(AMPostAuthProcessInterface postProcessInstance, 
         int type) {
+        /* Reset Post Process URLs in servletRequest so
+        * that plugin can set new values (just a safety measure) */
+        AuthUtils.resetPostProcessURLs(servletRequest);
 
         if (requestMap.isEmpty() && (servletRequest != null)) {
             Map map = servletRequest.getParameterMap();
@@ -5027,7 +5045,7 @@ public class LoginState {
                 Map.Entry e = (Map.Entry)i.next();
                 requestMap.put(e.getKey(),((Object[])e.getValue())[0]);
             }
-        }        
+        }
         /* execute the post process spi */
         try{
             switch (type) { 

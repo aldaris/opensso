@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMPostAuthProcessInterface.java,v 1.4 2008-08-19 19:08:55 veiming Exp $
+ * $Id: AMPostAuthProcessInterface.java,v 1.5 2009-01-16 23:31:34 higapa Exp $
  *
  */
 
@@ -37,12 +37,12 @@ import javax.servlet.http.HttpServletResponse;
 import com.iplanet.sso.SSOToken;
 
 /**
- * The <code>AMPostAuthProcessInterface</code> interface needs to 
- * be implemented by services and applications to do post 
- * authentication processing. 
+ * The <code>AMPostAuthProcessInterface</code> interface needs to
+ * be implemented by services and applications to do post
+ * authentication processing.
  * <p>
  * This interface is invoked by OpenSSO Authentication
- * service on a successful authentication , failed authentication 
+ * service on a successful authentication , failed authentication
  * or during logout.
  * <p>
  * This interface has three methods <code>onLoginSuccess</code>,
@@ -51,12 +51,71 @@ import com.iplanet.sso.SSOToken;
  * is successful. The <code>onFailure</code> will be invoked on failed
  * authentication. The <code>onLogout</code> is invoked during a logout.
  * <p>
- * The post processing class implementation can be configured per ORGANIZATION 
- * or SERVICE or ROLE 
+ * The post processing class implementation can be configured per ORGANIZATION
+ * or SERVICE or ROLE
  *
  * @supported.all.api
  */
 public interface AMPostAuthProcessInterface {
+
+    /**
+     * Constant to represent SPI redirect URL on login success.
+     * Following sample code explains how to use this onLoginSuccess.
+     * <code>
+     *   public void onLoginSuccess(Map requestParamsMap,HttpServletRequest request,
+     *      HttpServletResponse response,SSOToken ssoToken)throws AuthenticationException
+     *   {
+     *     // Set redirect URL on login success, User will be redirected to this URL on success.
+     *     if (request != null)
+     *          request.setAttribute(
+     *              AMPostAuthProcessInterface.POST_PROCESS_LOGIN_SUCCESS_URL,
+     *              "http://www.sun.com");
+     *   }
+     *</code>
+     * Note: Setting this property will take precendence over a session proeprty
+     * <code> POST_PROCESS_SUCCESS_URL </code>, which can also be configured to
+     * redirect users after successful authentication.
+     */
+
+    public static final String POST_PROCESS_LOGIN_SUCCESS_URL =
+        "PostProcessLoginSuccessURL";
+
+    /**
+     * Constant to represent SPI redirect URL on login failure.
+     * Following sample code explains how to use this onLoginFailure.
+     * <code>
+     *   public void onLoginFailure(Map requestParamsMap,HttpServletRequest request,
+     *      HttpServletResponse response,SSOToken ssoToken)throws AuthenticationException
+     *   {
+     *     // Set redirect URL on login failure, User will be redirected to this URL on failure.
+     *     if (request != null)
+     *          request.setAttribute(
+     *              AMPostAuthProcessInterface.POST_PROCESS_LOGIN_FAILURE_URL,
+     *              "http://www.example.com");
+     *   }
+     *</code>
+     */
+    public static final String POST_PROCESS_LOGIN_FAILURE_URL =
+        "PostProcessLoginFailureURL";
+
+    /**
+     * Constant to represent SPI redirect URL on logout.
+     * Following sample code explains how to use this onLogout.
+     * <code>
+     *   public void onLoginFailure(Map requestParamsMap,HttpServletRequest request,
+     *      HttpServletResponse response,SSOToken ssoToken)throws AuthenticationException
+     *   {
+     *     // Set redirect URL on logout, User will be redirected to this URL on logout.
+     *     if (request != null)
+     *          request.setAttribute(
+     *              AMPostAuthProcessInterface.POST_PROCESS_LOGOUT_URL,
+     *              "http://opensso.dev.java.net");
+     *   }
+     *</code>
+     */
+    public static final String POST_PROCESS_LOGOUT_URL =
+        "PostProcessLogoutURL";
+
     /**
      * Post processing on successful authentication.
      *
@@ -88,7 +147,7 @@ public interface AMPostAuthProcessInterface {
         HttpServletRequest request,
         HttpServletResponse response
     ) throws AuthenticationException;
- 
+
     /**
      * Post processing on Logout.
      *
