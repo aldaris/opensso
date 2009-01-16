@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthClientUtils.java,v 1.24 2009-01-09 07:31:11 bhavnab Exp $
+ * $Id: AuthClientUtils.java,v 1.25 2009-01-16 06:29:41 hengming Exp $
  *
  */
 
@@ -166,6 +166,14 @@ public class AuthClientUtils {
     };
     private static boolean useCache = Boolean.getBoolean(SystemProperties.get(
         com.sun.identity.shared.Constants.URL_CONNECTION_USE_CACHE, "false"));
+    private static boolean isSessionHijackingEnabled =
+        Boolean.valueOf(SystemProperties.get(
+        Constants.IS_ENABLE_UNIQUE_COOKIE, "false")).booleanValue();
+    private static String hostUrlCookieName =
+        SystemProperties.get(Constants.AUTH_UNIQUE_COOKIE_NAME,
+        "sunIdentityServerAuthNServer");
+    private static String hostUrlCookieDomain =
+        SystemProperties.get(Constants.AUTH_UNIQUE_COOKIE_DOMAIN);
 
     static {
         // Initialzing variables
@@ -2497,4 +2505,47 @@ public class AuthClientUtils {
         return urlEncoded;
     }
 
+
+    public static void setHostUrlCookie(HttpServletResponse response) {
+        if (isSessionHijackingEnabled) {
+            String authServerProtocol = SystemProperties.get(
+                Constants.AM_SERVER_PROTOCOL);
+            String authServer = SystemProperties.get(Constants.AM_SERVER_HOST);
+            String authServerPort = SystemProperties.get(
+                Constants.AM_SERVER_PORT);
+            
+            String hostUrlCookieValue   = authServerProtocol + "://" +
+                authServer + ":" + authServerPort;
+            
+            if (utilDebug.messageEnabled()) {
+                utilDebug.message("AuthClientUtils.setHostUrlCookie: " +
+                    "hostUrlCookieName = " + hostUrlCookieName +
+                    ", hostUrlCookieDomain = " + hostUrlCookieDomain +
+                    ", hostUrlCookieValue = " + hostUrlCookieValue);
+            }
+            
+            // Create Cookie
+            try {
+                Cookie cookie = createCookie(hostUrlCookieName,
+                hostUrlCookieValue, hostUrlCookieDomain);
+                response.addCookie(cookie);
+            } catch (Exception e) {
+                utilDebug.message("AuthClientUtils.setHostUrlCookie:", e);
+            }
+        }
+    }
+
+    public static void clearHostUrlCookie(HttpServletResponse response) {
+        if (isSessionHijackingEnabled) {
+            // Create Cookie
+            try {
+                Cookie cookie = createCookie(hostUrlCookieName,
+                "LOGOUT", hostUrlCookieDomain);
+                cookie.setMaxAge(0);
+                response.addCookie(cookie);
+            } catch (Exception e) {
+                utilDebug.message("AuthClientUtils.clearHostUrlCookie:", e);
+            }
+        }
+    }
 }

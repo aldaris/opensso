@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.18 2008-12-24 01:41:51 ericow Exp $
+ * $Id: LoginViewBean.java,v 1.19 2009-01-16 06:29:39 hengming Exp $
  *
  */
 
@@ -1564,7 +1564,7 @@ public class LoginViewBean extends AuthViewBeanBase {
                         loginDebug.message("Submit with YES. Destroy session.");
                         param = queryOrg;
                         clearCookie(AuthUtils.getCookieName());
-                        clearHostUrlCookie(response);
+                        AuthUtils.clearHostUrlCookie(response);
                         AuthUtils.clearlbCookie(request, response);
                         SSOTokenManager.getInstance().destroyToken(ssot);
                     } else if (!(strButton.trim().equals(rb.getString("No")
@@ -1614,7 +1614,7 @@ public class LoginViewBean extends AuthViewBeanBase {
 		}
                 response.addCookie(cookie);
                 if ((cookie.getName()).equals(AuthUtils.getCookieName())) {
-                    setHostUrlCookie(response);
+                    AuthUtils.setHostUrlCookie(response);
                 }
             } catch (Exception e) {
                 loginDebug.message("Cound not set Auth or AM Cookie!");
@@ -1645,7 +1645,7 @@ public class LoginViewBean extends AuthViewBeanBase {
                 }
                 response.addCookie(cookie);
                 if ((cookie.getName()).equals(AuthUtils.getCookieName())) {
-                    setHostUrlCookie(response);
+                    AuthUtils.setHostUrlCookie(response);
                 }
             }
         }
@@ -1664,7 +1664,7 @@ public class LoginViewBean extends AuthViewBeanBase {
     private void clearCookie(AuthContextLocal ac) {
         if (AuthUtils.isCookieSupported(ac)) {
             clearCookie(AuthUtils.getCookieName());
-            clearHostUrlCookie(response);
+            AuthUtils.clearHostUrlCookie(response);
             AuthUtils.clearlbCookie(request, response);
         }
     }

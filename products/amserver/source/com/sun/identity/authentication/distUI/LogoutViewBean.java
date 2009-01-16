@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogoutViewBean.java,v 1.9 2008-12-24 01:42:25 ericow Exp $
+ * $Id: LogoutViewBean.java,v 1.10 2009-01-16 06:30:13 hengming Exp $
  *
  */
 
@@ -225,7 +225,7 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
             }
         }
         AuthClientUtils.clearlbCookie(request, response);
-        clearHostUrlCookie(response);
+        AuthClientUtils.clearHostUrlCookie(response);
         Map serverCookieMap = null;
         if (storeCookies != null &&
             !storeCookies.isEmpty()) {

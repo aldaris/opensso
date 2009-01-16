@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogoutViewBean.java,v 1.12 2008-12-24 01:41:51 ericow Exp $
+ * $Id: LogoutViewBean.java,v 1.13 2009-01-16 06:29:40 hengming Exp $
  *
  */
 
@@ -60,7 +60,6 @@ import com.iplanet.sso.SSOTokenManager;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.common.ISLocaleContext;
 import com.sun.identity.authentication.AuthContext;
-import com.sun.identity.authentication.client.AuthClientUtils;
 import com.sun.identity.authentication.service.AuthD;
 import com.sun.identity.authentication.service.AuthUtils;
 import com.sun.identity.authentication.spi.AMPostAuthProcessInterface;
@@ -170,7 +169,7 @@ public class LogoutViewBean extends AuthViewBeanBase {
         }
         if (cookieSupported) {
             logoutDebug.message("Cookie is supported");
-            clearAllCookies(sessionID);
+            AuthUtils.clearAllCookies(request, response);
         } else {
             logoutDebug.message("Cookie is not supported");
             if ( (sessionID != null) && (sessionID.toString().length() != 0)) {
@@ -402,38 +401,6 @@ public class LogoutViewBean extends AuthViewBeanBase {
         }
         
         return relativeFileName;
-    }
-    
-    private void clearAllCookies(SessionID sid) {
-        Set cookieDomainSet =  AuthClientUtils.getCookieDomainsForReq(request);
-        if (cookieDomainSet.isEmpty()) { //No cookie domain specified in profile
-            clearAllCookiesByDomain(sid, null);
-        } else {
-            Iterator iter = cookieDomainSet.iterator();
-            while (iter.hasNext()) {
-                clearAllCookiesByDomain(sid, (String)iter.next());
-            }
-        }
-        AuthUtils.clearlbCookie(request, response);
-        clearHostUrlCookie(response);
-    }
-    
-    private void clearAllCookiesByDomain(SessionID sid, String cookieDomain) {
-        Cookie cookie = AuthUtils.getLogoutCookie(sid, cookieDomain);
-        response.addCookie(cookie);
-        String pCookieName = AuthUtils.getPersistentCookieName();
-        String cookieValue = CookieUtils.getCookieValueFromReq(
-            request, pCookieName);
-        if (cookieValue != null) {
-            // clear Persistent Cookie
-            cookie = AuthUtils.clearPersistentCookie(cookieDomain, null);
-            if (logoutDebug.messageEnabled()) {
-                logoutDebug.message("LogoutViewBean.clearAllCookiesByDomain"
-                    + "Clearing persistent cookie: " + cookieDomain);
-                logoutDebug.message("Persistent cookie: " + cookie);
-            }
-            response.addCookie(cookie);
-        }
     }
     
     /**

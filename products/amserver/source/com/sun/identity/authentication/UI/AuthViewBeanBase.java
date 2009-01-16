@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthViewBeanBase.java,v 1.11 2009-01-09 07:31:10 bhavnab Exp $
+ * $Id: AuthViewBeanBase.java,v 1.12 2009-01-16 06:29:39 hengming Exp $
  *
  */
 
@@ -112,55 +112,6 @@ public abstract class AuthViewBeanBase extends ViewBeanBase {
             loginDebug.message("In setPageEncoding - JCharset : " + jCharset);
         }
         setDisplayFieldValue(PAGE_ENCODING, jCharset);
-    }
-    
-    // Method to set OpenSSO cookie (HostUrl) in
-    // Session / Cookie hijacking mode.
-    protected void setHostUrlCookie(HttpServletResponse response) {
-        if (isSessionHijackingEnabled) {
-            String authServerProtocol =
-            SystemProperties.get(Constants.AM_SERVER_PROTOCOL);
-            String authServer =
-            SystemProperties.get(Constants.AM_SERVER_HOST);
-            String authServerPort =
-            SystemProperties.get(Constants.AM_SERVER_PORT);
-            
-            String hostUrlCookieValue   = authServerProtocol + "://"
-            + authServer + ":" + authServerPort;
-            
-            if (loginDebug.messageEnabled()) {
-                loginDebug.message("hostUrlCookieName : " + hostUrlCookieName);
-                loginDebug.message(
-                    "hostUrlCookieDomain : " + hostUrlCookieDomain);
-                loginDebug.message(
-                    "hostUrlCookieValue : " + hostUrlCookieValue);
-            }
-            
-            // Create Cookie
-            try {
-                Cookie cookie = AuthClientUtils.createCookie(hostUrlCookieName,
-                hostUrlCookieValue, hostUrlCookieDomain);
-                response.addCookie(cookie);
-            } catch (Exception e) {
-                loginDebug.message("Cound not set HostUrl Cookie!", e);
-            }
-        }
-    }
-    
-    // Method to clear OpenSSO cookie (HostUrl) in
-    // Session / Cookie hijacking mode.
-    protected void clearHostUrlCookie(HttpServletResponse response) {
-        if (isSessionHijackingEnabled) {
-            // Create Cookie
-            try {
-                Cookie cookie = AuthClientUtils.createCookie(hostUrlCookieName,
-                LOGOUTCOOKIEVAULE, hostUrlCookieDomain);
-                cookie.setMaxAge(0);
-                response.addCookie(cookie);
-            } catch (Exception e) {
-                loginDebug.message("Cound not clear HostUrl Cookie!", e);
-            }
-        }
     }
 
     /** 
@@ -379,17 +330,5 @@ public abstract class AuthViewBeanBase extends ViewBeanBase {
      * Resource bundle with <code>Locale</code>
      */
     public ResourceBundle rb = null;
-
-    
-    private static boolean isSessionHijackingEnabled =
-    Boolean.valueOf(SystemProperties.get(
-    Constants.IS_ENABLE_UNIQUE_COOKIE, "false")).booleanValue();
-    private static String hostUrlCookieName =
-    SystemProperties.get(Constants.AUTH_UNIQUE_COOKIE_NAME,
-    "sunIdentityServerAuthNServer");
-    private static String hostUrlCookieDomain =
-    SystemProperties.get(Constants.AUTH_UNIQUE_COOKIE_DOMAIN);
-    private static final String LOGOUTCOOKIEVAULE = "LOGOUT";
-    
 }
 

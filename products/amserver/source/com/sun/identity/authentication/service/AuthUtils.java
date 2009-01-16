@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthUtils.java,v 1.23 2008-12-24 01:43:06 ericow Exp $
+ * $Id: AuthUtils.java,v 1.24 2009-01-16 06:30:13 hengming Exp $
  *
  */
 
@@ -1842,4 +1842,43 @@ public class AuthUtils extends AuthClientUtils {
          return attrs;
      }
      
+    public static void clearAllCookies(HttpServletRequest request, 
+        HttpServletResponse response) {
+
+        SessionID sid = new SessionID(request);
+        Set cookieDomainSet = getCookieDomainsForReq(request);
+        if (cookieDomainSet.isEmpty()) {
+            clearAllCookiesByDomain(sid, null, request, response);
+        } else {
+            Iterator iter = cookieDomainSet.iterator();
+            while (iter.hasNext()) {
+                clearAllCookiesByDomain(sid, (String)iter.next(), request,
+                    response);
+            }
+        }
+        clearlbCookie(request, response);
+        clearHostUrlCookie(response);
+    }
+    
+    public static void clearAllCookiesByDomain(SessionID sid,
+        String cookieDomain, HttpServletRequest request,
+        HttpServletResponse response) {
+
+        Cookie cookie = getLogoutCookie(sid, cookieDomain);
+        response.addCookie(cookie);
+        String pCookieName = getPersistentCookieName();
+        String cookieValue = CookieUtils.getCookieValueFromReq(request,
+            pCookieName);
+        if (cookieValue != null) {
+            // clear Persistent Cookie
+            cookie = clearPersistentCookie(cookieDomain, null);
+            if (utilDebug.messageEnabled()) {
+                utilDebug.message("AuthUtils.clearAllCookiesByDomain: " +
+                    "Clearing persistent cookie = " + cookie + ", domain = " +
+                    cookieDomain);
+            }
+            response.addCookie(cookie);
+        }
+    }
+
 }
