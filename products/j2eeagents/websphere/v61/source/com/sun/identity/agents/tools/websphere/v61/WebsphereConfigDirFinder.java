@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebsphereConfigDirFinder.java,v 1.1 2008-11-21 22:21:55 leiming Exp $
+ * $Id: WebsphereConfigDirFinder.java,v 1.2 2009-01-16 23:56:01 leiming Exp $
  *
  */
 
@@ -69,11 +69,11 @@ public class WebsphereConfigDirFinder implements IDefaultValueFinder,IConstants{
         
         if (osName.toLowerCase().startsWith(STR_WINDOWS)) {
             result = "C:\\Program Files\\IBM\\WebSphere\\AppServer\\"
-                    + "profiles\\wp_profile\\config\\cells\\"
-                    + "cell01\\nodes\\node01\\servers\\server1";
+                    + "profiles\\AppSrv01\\config\\cells\\"
+                    + "<hostname>Node01Cell\\nodes\\<hostname>Node01\\servers\\server1";
         } else {
-            result = "/opt/IBM/WebSphere/AppServer/profiles/wp_profile/" +
-                    "config/cells/cell01/nodes/node01/servers/server1";
+            result = "/opt/IBM/WebSphere/AppServer/profiles/AppSrv01/" +
+                    "config/cells/<hostname>Node01Cell/nodes/<hostname>Node01/servers/server1";
         }
         
         return result;

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: readme.txt,v 1.1 2008-11-21 22:21:49 leiming Exp $
+   $Id: readme.txt,v 1.2 2009-01-16 23:56:00 leiming Exp $
 -->
 
 ------------------------------------
@@ -30,7 +30,7 @@ J2EE Policy Agent Sample Application
 ------------------------------------
 
 This document describes how to use the agent sample application in conjunction 
-with the Websphere 6 Application Server and the J2EE Agent. Please note that 
+with the Websphere Application Server 6.1/7.0 and the J2EE Agent. Please note that 
 the agent needs to be installed first before deploying this sample application.
 
     * Overview
@@ -59,7 +59,7 @@ sampleapp/dist/agentsample.ear.
 
 Note, the instructions here assume that you have installed the agent 
 successfully and have followed the steps outlined in the OpenSSO 
-Policy Agent 3.0 Guide for IBM Websphere Server 6, including the 
+Policy Agent 3.0 Guide for IBM Websphere Server 6.1/7.0, including the 
 post-installation steps.
 
 
@@ -229,4 +229,4 @@ If you encounter problems when running the application, review the log files to
 learn what exactly went wrong. J2EE Agent logs can be found at 
 <agent_install_root>/Agent_<instance_number>/logs/debug directory.
 
-Also, see the OpenSSO Policy Agent 3.0 Guide for IBM Websphere Server 6.
+Also, see the OpenSSO Policy Agent 3.0 Guide for IBM Websphere Server 6.1/7.0.
