@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ff_ds_sec-authentication-testng.xml,v 1.13 2009-01-06 16:37:46 cmwesley Exp $
+ $Id: ff_ds_sec-authentication-testng.xml,v 1.14 2009-01-16 15:24:25 cmwesley Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -515,6 +515,61 @@
     </test>
     <test name="ChainTestSufficientFails">
         <parameter name="testChainName" value="chain7"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.ChainTest"/>
+        </classes>
+    </test>
+    <test name="SanityChainTestRequired">
+        <parameter name="testChainName" value="chain8"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.ChainTest"/>
+        </classes>
+    </test>
+    <test name="SanityChainTestRequisite">
+        <parameter name="testChainName" value="chain9"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.ChainTest"/>
+        </classes>
+    </test>
+    <test name="SanityChainTestOneUsernamePassword">
+        <parameter name="testChainName" value="chain10"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.ChainTest"/>
+        </classes>
+    </test>
+    <test name="SanityChainTestOptional">
+        <parameter name="testChainName" value="chain11"/>
+        <groups>
+            <run>
+                <include name="ff_ds_sec"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.ChainTest"/>
+        </classes>
+    </test>
+    <test name="SanityChainTestSufficient">
+        <parameter name="testChainName" value="chain12"/>
         <groups>
             <run>
                 <include name="ff_ds_sec"/>
