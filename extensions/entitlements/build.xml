@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.6 2008-12-19 09:37:00 veiming Exp $
+   $Id: build.xml,v 1.7 2009-01-16 02:10:49 veiming Exp $
 
 -->
 
@@ -46,14 +46,38 @@
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
                destdir="${entitlements.classes.dir}" source="1.5" target="1.5"
                debug="${build.debug}" debuglevel="${build.debuglevel}">
-            <src path="${entitlements.src.dir}"/>
+            <src path="${entitlements.src.dir}/com/sun/identity/entitlement"/>
         </javac>
+        <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
+               destdir="${entitlements.classes.dir}" source="1.5" target="1.5"
+               debug="${build.debug}" debuglevel="${build.debuglevel}">
+            <src path="${entitlements.src.dir}/com/sun/identity/sm"/>
+            <classpath refid="build.class.path"/>
+        </javac>
+
         <unjar src="${entitlements.extlib.dir}/opensso.war"
             dest="${war.package.dir}" />
         <antcall target="unittest" />
+
         <copy todir="${war.package.dir}/WEB-INF/classes">
             <fileset dir="${entitlements.classes.dir}" includes="**/*.class" />
+            <fileset dir="${entitlements.classes.dir}" includes="**/*.class" />
+            <fileset dir="${entitlements.res.dir}/config" includes="*.properties" />
+            <fileset dir="${entitlements.xml.svc.dir}" includes="*.xml" />
         </copy>
+
+        <java classname="com.sun.identity.setup.MergeProperties" fork="true">
+            <classpath refid="build.class.path"/>
+            <classpath>
+                <pathelement path="${war.package.dir}/WEB-INF/classes"/>
+            </classpath>
+            <arg value="serviceNames" />
+            <arg value="entitlementsServiceNames" />
+            <arg value="${war.package.dir}/WEB-INF/classes/serviceNames.properties" />
+        </java>
+
+        <delete file="${war.package.dir}/WEB-INF/classes/entitlementsServiceNames.properties" />
+
         <copy todir="${war.package.dir}/WEB-INF/lib"
             file="${entitlements.extlib.dir}/testng-5.1-jdk15.jar" />
 
