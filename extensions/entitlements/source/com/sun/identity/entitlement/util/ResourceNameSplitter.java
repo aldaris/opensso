@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceNameSpliter.java,v 1.3 2009-01-16 01:52:02 veiming Exp $
+ * $Id: ResourceNameSplitter.java,v 1.1 2009-01-16 17:28:43 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
@@ -41,8 +41,8 @@ import java.util.StringTokenizer;
  * This class splits resource name (URL) to different parts so that they
  * can be used for resource name comparison.
  */
-public class ResourceNameSpliter {
-    private ResourceNameSpliter() {
+public class ResourceNameSplitter {
+    private ResourceNameSplitter() {
     }
 
     /**
