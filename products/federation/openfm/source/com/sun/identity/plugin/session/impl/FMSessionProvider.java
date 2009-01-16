@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FMSessionProvider.java,v 1.18 2009-01-08 00:57:19 exu Exp $
+ * $Id: FMSessionProvider.java,v 1.19 2009-01-16 06:32:12 hengming Exp $
  *
  */
 
@@ -61,8 +61,8 @@ import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.authentication.AuthContext;
-import com.sun.identity.authentication.client.AuthClientUtils;
 import com.sun.identity.authentication.service.AMAuthErrorCode;
+import com.sun.identity.authentication.service.AuthUtils;
 import com.sun.identity.authentication.spi.AuthLoginException;
 import com.sun.identity.federation.common.FSUtils;
 import com.sun.identity.sm.ServiceSchema;
@@ -422,6 +422,9 @@ public class FMSessionProvider implements SessionProvider {
     ) throws SessionException {
         try {
             SSOTokenManager.getInstance().destroyToken((SSOToken)session);
+            if ((request != null) && (response != null)) {
+                AuthUtils.clearAllCookies(request, response);
+            }
         } catch (SSOException se) {
             throw new SessionException(se);
         }
