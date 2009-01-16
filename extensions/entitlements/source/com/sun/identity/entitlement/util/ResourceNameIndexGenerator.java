@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceNameIndexGenerator.java,v 1.1 2009-01-16 01:51:06 veiming Exp $
+ * $Id: ResourceNameIndexGenerator.java,v 1.2 2009-01-16 02:05:05 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
@@ -78,6 +78,7 @@ public class ResourceNameIndexGenerator {
         if (idx != -1) {
             int slashIdx = path.lastIndexOf('/', idx);
             path = path.substring(0, slashIdx+1);
+            query = "";
         }
         
         if (query.length() > 0) {
