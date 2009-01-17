@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FMSessionProvider.java,v 1.19 2009-01-16 06:32:12 hengming Exp $
+ * $Id: FMSessionProvider.java,v 1.20 2009-01-17 01:02:50 qcheng Exp $
  *
  */
 
@@ -54,6 +54,7 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOTokenEvent;
 import com.iplanet.sso.SSOTokenListener;
 
+import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.shared.locale.Locale;
 import com.sun.identity.shared.encode.CookieUtils;
 import com.sun.identity.shared.debug.Debug;
@@ -534,7 +535,14 @@ public class FMSessionProvider implements SessionProvider {
         }
         String values = null;
         try {
-            values = ((SSOToken)session).getProperty(name);
+            if (SAML2Constants.IDP_SESSION_INDEX.equals(name)) {
+                // get session property by ignoring session state
+                // this propperty could be retrieve when session idle timed out
+                // need to be able to get value without exception
+                values = ((SSOToken)session).getProperty(name, true);
+            } else {
+                values = ((SSOToken)session).getProperty(name);
+            }
         } catch (SSOException se) {
             throw new SessionException(se);
         }
