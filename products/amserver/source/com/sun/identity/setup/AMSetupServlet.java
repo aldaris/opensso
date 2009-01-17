@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.95 2009-01-13 19:16:50 veiming Exp $
+ * $Id: AMSetupServlet.java,v 1.96 2009-01-17 02:04:55 kevinserwin Exp $
  *
  */
 
@@ -1405,6 +1405,8 @@ public class AMSetupServlet extends HttpServlet {
      
         } catch (IOException ex) {
           canUseAsPort = false;
+        } catch (NullPointerException ne) {      
+           canUseAsPort = false;  
         } finally {
             try {
                 if (serverSocket != null) {

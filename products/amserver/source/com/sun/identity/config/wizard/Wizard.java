@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Wizard.java,v 1.26 2009-01-05 23:17:10 veiming Exp $
+ * $Id: Wizard.java,v 1.27 2009-01-17 02:05:35 kevinserwin Exp $
  *
  */
 package com.sun.identity.config.wizard;
@@ -104,10 +104,16 @@ public class Wizard extends AjaxPage {
             SetupConstants.SMS_EMBED_DATASTORE);
         request.addParameter(SetupConstants.CONFIG_VAR_DATA_STORE, tmp);
 
-        boolean isEmbedded = false;
+        boolean isEmbedded = false; 
         if (tmp.equals(SetupConstants.SMS_EMBED_DATASTORE)) {
+            tmp = getAttribute("configStoreHost", hostName);
+            request.addParameter(
+                SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_HOST, tmp);
+            request.addParameter(
+                SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_SSL, "SIMPLE");   
+            
             tmp = getAttribute(SetupConstants.DS_EMB_REPL_FLAG, "false");
-
+            
             /*
              * set the embedded replication information for local host port
              * and remote host port
@@ -143,13 +149,7 @@ public class Wizard extends AjaxPage {
         tmp = getAttribute("rootSuffix", defaultRootSuffix);
         request.addParameter(SetupConstants.CONFIG_VAR_ROOT_SUFFIX, tmp);
        
-        if (isEmbedded) {
-            tmp = getAttribute("configStoreHost", hostName);
-            request.addParameter(
-                SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_HOST, tmp);
-            request.addParameter(
-                SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_SSL, "SIMPLE");
-        } else {
+        if (!isEmbedded) {
             tmp = getAttribute("configStoreHost", hostName);
             request.addParameter(
                 SetupConstants.CONFIG_VAR_DIRECTORY_SERVER_HOST, tmp);

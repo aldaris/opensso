@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step2.java,v 1.13 2009-01-05 23:17:10 veiming Exp $
+ * $Id: Step2.java,v 1.14 2009-01-17 02:05:35 kevinserwin Exp $
  *
  */
 package com.sun.identity.config.wizard;
@@ -66,7 +66,7 @@ public class Step2 extends AjaxPage {
         String baseDir = null;
         String presetDir = AMSetupServlet.getPresetConfigDir();
         if ((presetDir == null) || (presetDir.trim().length() == 0)) {
-            add("fixDir",
+            add("fixDir",            
                 "onkeyup=\"APP.callDelayed(this, validateConfigDir)\"");
             val = (String)getContext().getSessionAttribute(
                 SessionAttributeNames.CONFIG_DIR);

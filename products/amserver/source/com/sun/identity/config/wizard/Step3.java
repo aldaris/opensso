@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step3.java,v 1.35 2009-01-05 23:17:10 veiming Exp $
+ * $Id: Step3.java,v 1.36 2009-01-17 02:09:19 kevinserwin Exp $
  *
  */
 package com.sun.identity.config.wizard;
@@ -36,6 +36,9 @@ import com.sun.identity.setup.BootstrapData;
 import com.sun.identity.setup.ConfiguratorException;
 import com.sun.identity.setup.SetupConstants;
 import java.util.Map;
+import java.net.InetAddress;
+import java.io.IOException;
+import java.net.UnknownHostException;
 import net.sf.click.control.ActionLink;
 import net.sf.click.Context;
 import netscape.ldap.LDAPConnection;
@@ -58,6 +61,8 @@ public class Step3 extends LDAPStoreWizardPage {
         new ActionLink("setReplication", this, "setReplication");
     public ActionLink validateHostNameLink = 
         new ActionLink("validateHostName", this, "validateHostName");
+    public ActionLink validateConfigStoreHost =
+        new ActionLink("validateConfigStoreHost", this, "validateConfigStoreHost");    
     public ActionLink setConfigType = 
         new ActionLink("setConfigType", this, "setConfigType");
     public ActionLink validateLocalPortLink = 
@@ -106,7 +111,7 @@ public class Step3 extends LDAPStoreWizardPage {
             SetupConstants.CONFIG_VAR_DATA_STORE, 
             SetupConstants.SMS_EMBED_DATASTORE);
         addModel(SetupConstants.CONFIG_VAR_DATA_STORE, val);
-
+               
         if (val.equals(SetupConstants.SMS_EMBED_DATASTORE)) {
             addModel("selectEmbedded", "checked=\"checked\"");
             addModel("selectExternal", "");
@@ -144,7 +149,9 @@ public class Step3 extends LDAPStoreWizardPage {
             type = SetupConstants.SMS_DS_DATASTORE;
         } else {
             type = SetupConstants.SMS_EMBED_DATASTORE;
-        } 
+            getContext().setSessionAttribute(
+                    SessionAttributeNames.CONFIG_STORE_HOST, "localhost");
+        }
         getContext().setSessionAttribute( 
             SessionAttributeNames.CONFIG_VAR_DATA_STORE, type);
         return true;
@@ -185,15 +192,38 @@ public class Step3 extends LDAPStoreWizardPage {
         } else {
             try {
                 int val = Integer.parseInt(port);
-                if (val < 1 || val > 65535 ) {
+                if (val < 1 || val > 65535) {
                     writeToResponse(getLocalizedString("invalid.port.number"));
                 } else {
-                    getContext().setSessionAttribute(
-                        SessionAttributeNames.CONFIG_STORE_PORT, port);
-                    writeToResponse("ok");
+                    boolean ok = false;
+                    String type = (String) getContext().getSessionAttribute(
+                            SetupConstants.CONFIG_VAR_DATA_STORE);
+
+                    if ((type == null) || type.equals(
+                            SetupConstants.SMS_EMBED_DATASTORE)) {
+                        String host = (String) getContext().getSessionAttribute(
+                                "configStoreHost");
+                        if (host == null) {
+                            host = "localhost";
+                        }
+                        if (AMSetupServlet.canUseAsPort(host, val)) {
+                            ok = true;
+                        } else {
+                            writeToResponse(getLocalizedString("invalid.port.used"));
+                        }
+                    } else {
+                        ok = true;
+                    }
+                    if (ok) {
+                        getContext().setSessionAttribute("configStorePort", port);
+                        writeToResponse("ok");
+                    }
                 }
+
             } catch (NumberFormatException e) {
                  writeToResponse(getLocalizedString("invalid.port.number"));
+            } catch (NullPointerException ne) {
+                writeToResponse(getLocalizedString("invalid.port.number"));
             }
         }
         setPath(null);        
@@ -222,6 +252,36 @@ public class Step3 extends LDAPStoreWizardPage {
         return false;
     } 
 
+    
+   public boolean validateConfigStoreHost() {
+       String host = toString("configStoreHost");
+
+       if (host == null) {
+           writeToResponse("missing.required.field");
+       } else {
+           getContext().setSessionAttribute(
+               "configStoreHost", host);
+       }
+
+       try {
+           InetAddress address = InetAddress.getByName(host);
+           if (address.isReachable(300)) {
+               writeToResponse("ok");
+           } else {
+               writeToResponse(getLocalizedString("contact.host.failed"));
+           }
+       } catch (UnknownHostException uhe) {
+           writeToResponse(getLocalizedString("contact.host.unknown"));
+       } catch (IOException ioe) {
+           writeToResponse(getLocalizedString("contact.host.unreachable"));
+       } catch (NullPointerException ne) {
+           writeToResponse(getLocalizedString("contact.host.failed"));           
+       }
+       setPath(null);
+       return false;
+   }
+   
+   
     /*
      * a call is made to the OpenSSO url entered in the browser. If
      * the OpenSSO server
@@ -278,10 +338,9 @@ public class Step3 extends LDAPStoreWizardPage {
 
                     if (embedded.equals("true")) {
                         getContext().setSessionAttribute(
-                            SessionAttributeNames.CONFIG_STORE_HOST,
-                            getHostName());
+                            SessionAttributeNames.CONFIG_STORE_HOST, "localhost");
                         addObject(sb, "configStoreHost", "localhost");
-
+                        
                         // set the multi embedded flag 
                         getContext().setSessionAttribute(
                             SessionAttributeNames.CONFIG_VAR_DATA_STORE, 

@@ -79,13 +79,16 @@
     }
 
     function validateConfigStoreHost() {
+        var call = "$context$path?actionLink=validateConfigStoreHost";
+        var hostname = "&configStoreHost=" + $('configStoreHost').value;        
         $('nextTabButton').disabled = true;
 	field = "configStoreHost";
-	remoteDSHost = document.getElementById("configStoreHost").value;
-        setTimeout("enableNextButton()", 500);
- 	validate();
-    }
-
+        
+        ie7fix++;
+        call = call + "&ie7fix=" + ie7fix;
+        AjaxUtils.call(call+hostname, validateSMHost);        
+    }        
+    
     function validateConfigStoreLoginId() {
         $('nextTabButton').disabled = true;
 	field = "configStoreLoginId";
