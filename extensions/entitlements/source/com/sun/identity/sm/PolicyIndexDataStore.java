@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexDataStore.java,v 1.2 2009-01-17 02:08:47 veiming Exp $
+ * $Id: PolicyIndexDataStore.java,v 1.3 2009-01-17 02:34:08 veiming Exp $
  */
 
 package com.sun.identity.sm;
@@ -61,8 +61,8 @@ public class PolicyIndexDataStore implements  IPolicyIndexDataStore {
     private static final String SERIALIZABLE_INDEX_KEY = "serializable";
 
     private static final String FILTER_TEMPLATE = 
-        "(|(" + SMSEntry.ATTR_XML_KEYVAL + "=\"" + HOST_INDEX_KEY + "={0}\")" +
-          "(" + SMSEntry.ATTR_XML_KEYVAL + "=\"" + PATH_INDEX_KEY + "={1}\")" +
+        "(|(" + SMSEntry.ATTR_XML_KEYVAL + "=" + HOST_INDEX_KEY + "={0})" +
+          "(" + SMSEntry.ATTR_XML_KEYVAL + "=" + PATH_INDEX_KEY + "={1})" +
         ")";
 
     /**
@@ -214,8 +214,10 @@ public class PolicyIndexDataStore implements  IPolicyIndexDataStore {
             for (String dn : setDN) {
                 SMSEntry s = new SMSEntry(adminToken, dn);
                 Map<String, Set<String>> map = s.getAttributes();
-                Set<String> set = map.get(SERIALIZABLE_INDEX_KEY);
-                results.add(deserializeObject(set.iterator().next()));
+                Set<String> set = map.get(SMSEntry.ATTR_KEYVAL);
+                String ser = set.iterator().next();
+                ser = ser.substring(SERIALIZABLE_INDEX_KEY.length());
+                results.add(deserializeObject(ser));
             }
 
             return results;
