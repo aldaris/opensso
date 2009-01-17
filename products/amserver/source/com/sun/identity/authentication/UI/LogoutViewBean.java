@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogoutViewBean.java,v 1.13 2009-01-16 06:29:40 hengming Exp $
+ * $Id: LogoutViewBean.java,v 1.14 2009-01-17 00:44:51 higapa Exp $
  *
  */
 
@@ -270,7 +270,20 @@ public class LogoutViewBean extends AuthViewBeanBase {
                                     Thread.currentThread().
                                     getContextClassLoader().
                                     loadClass(pli).newInstance();
+                             //Call utils method to clean up what exists in the request.
+                             //Just to make sure after any other redirects no residual values in
+                             //these redirect URL values in the request (safety check only)
+                             AuthUtils.resetPostProcessURLs(request);
                             postProcess.onLogout(request, response, token);
+
+                             String postProcessURL =
+                                 AuthUtils.getPostProcessURL(request,
+                                 AMPostAuthProcessInterface.POST_PROCESS_LOGOUT_URL);
+
+                             if (postProcessURL != null) {
+                                 gotoUrl = postProcessURL;
+                             }
+
                         } catch (Exception e) {
                             logoutDebug.error("Failed in post logout process of " + pli, e);
                         }
