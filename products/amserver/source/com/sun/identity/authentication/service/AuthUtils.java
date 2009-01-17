@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthUtils.java,v 1.24 2009-01-16 06:30:13 hengming Exp $
+ * $Id: AuthUtils.java,v 1.25 2009-01-17 02:08:50 higapa Exp $
  *
  */
 
@@ -90,6 +90,8 @@ import com.sun.identity.policy.plugins.AuthLevelCondition;
 import com.sun.identity.policy.plugins.AuthSchemeCondition;
 import com.sun.identity.policy.plugins.AuthenticateToServiceCondition;
 import com.sun.identity.policy.plugins.AuthenticateToRealmCondition;
+
+import com.sun.identity.authentication.spi.AMPostAuthProcessInterface;
 
 public class AuthUtils extends AuthClientUtils {
     
@@ -437,6 +439,35 @@ public class AuthUtils extends AuthClientUtils {
         return logoutCookie;
     }
     
+     /*
+     * Return logout url from LoginState object.
+     * Caller should check for possible null value returned.
+     */
+    public String getLogoutURL(AuthContextLocal authContext) {
+
+        try {
+            LoginState loginState = getLoginState(authContext);
+            if (loginState == null) {
+                // No default URL in case of logout. Taken care by LogoutBean.
+                return null;
+            }
+
+            String logoutURL = loginState.getLogoutURL();
+
+            if (utilDebug.messageEnabled()) {
+                if (logoutURL != null)
+                    utilDebug.message("AuthUtils: getLogoutURL : " + logoutURL);
+                else
+                    utilDebug.message("AuthUtils: getLogoutURL : null");
+            }
+
+            return logoutURL;
+
+        } catch (Exception e) {
+            utilDebug.message("Exception " , e);
+            return null;
+        }
+    }
     // returns true if request is new else false.    
     public static boolean isNewRequest(AuthContextLocal ac) {
         
@@ -1878,6 +1909,58 @@ public class AuthUtils extends AuthClientUtils {
                     cookieDomain);
             }
             response.addCookie(cookie);
+        }
+    }
+
+             /*
+     * Get URL set by Post Process Plugin in HttpServletRequest.
+     * Caller should check for null return value.
+     */
+    public static String getPostProcessURL(HttpServletRequest servletRequest, String attrName)
+    {
+        if (attrName == null) {
+            if (utilDebug.messageEnabled()) {
+                utilDebug.message("URL name is null");
+            }
+            return null;
+        }
+
+        String url = null;
+
+        if (servletRequest != null) {
+            url = (String) servletRequest.getAttribute(attrName);
+        }
+
+        if (utilDebug.messageEnabled()) {
+            if ( (url != null) && (url.length() > 0) ) {
+                utilDebug.message("URL name : " + attrName +
+                    " Value : " + url);
+            }
+            else {
+               utilDebug.message("URL name : " + attrName +
+                    " Value : Not set - null or empty string");
+            }
+        }
+
+        if ( (url != null) && (url.length() <= 0) )
+           url = null;
+
+        return url;
+    }
+
+    /* Helper method to reset HttpServletRequest object before it is sent to
+     * Post Process Plugin so that it can set new values.
+     */
+
+    public static void resetPostProcessURLs(HttpServletRequest servletRequest)
+    {
+        if (servletRequest != null) {
+            servletRequest.removeAttribute(
+               AMPostAuthProcessInterface.POST_PROCESS_LOGIN_SUCCESS_URL);
+            servletRequest.removeAttribute(
+               AMPostAuthProcessInterface.POST_PROCESS_LOGIN_FAILURE_URL);
+            servletRequest.removeAttribute(
+               AMPostAuthProcessInterface.POST_PROCESS_LOGOUT_URL);
         }
     }
 
