@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLHandler.java,v 1.17 2008-12-24 01:43:06 ericow Exp $
+ * $Id: AuthXMLHandler.java,v 1.18 2009-01-17 01:15:12 manish_rustagi Exp $
  *
  */
 
@@ -57,6 +57,7 @@ import com.sun.identity.common.ISLocaleContext;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.locale.AMResourceBundleCache;
 import com.sun.identity.shared.locale.L10NMessage;
 
 import java.net.URL;
@@ -654,6 +655,15 @@ public class AuthXMLHandler implements RequestHandler {
         }
         
         if (loginStatus == AuthContext.Status.FAILED) {
+            if((authContext.getErrorMessage() != null) &&
+                (authContext.getErrorMessage().equals(
+                AMResourceBundleCache.getInstance().
+                getResBundle("amAuthLDAP",
+                com.sun.identity.shared.locale.Locale.getLocale(
+                loginState.getLocale())).
+                getString(ISAuthConstants.EXCEED_RETRY_LIMIT)))){
+                    loginState.setErrorCode(AMAuthErrorCode.AUTH_LOGIN_FAILED);
+            }
             if ((authContext.getErrorCode() != null) &&
             ((authContext.getErrorCode()).length() > 0 )) {
                 authResponse.setErrorCode(authContext.getErrorCode());
@@ -664,8 +674,9 @@ public class AuthXMLHandler implements RequestHandler {
                 authResponse.setErrorTemplate(authContext.getErrorTemplate());
             }
             //Account Lockout Warning Check
-            if(authContext.getErrorCode().equals(
-                AMAuthErrorCode.AUTH_INVALID_PASSWORD)){
+            if((authContext.getErrorCode() != null) &&
+                (authContext.getErrorCode().equals(
+                AMAuthErrorCode.AUTH_INVALID_PASSWORD))){
                 String lockWarning = authContext.getLockoutMsg();
                 if((lockWarning != null) && (lockWarning.length() > 0)){
                     authResponse.setErrorMessage(lockWarning);
