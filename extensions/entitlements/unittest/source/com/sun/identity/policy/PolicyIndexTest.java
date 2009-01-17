@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexTest.java,v 1.1 2009-01-17 02:08:47 veiming Exp $
+ * $Id: PolicyIndexTest.java,v 1.2 2009-01-17 18:26:26 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -49,7 +49,7 @@ public class PolicyIndexTest {
         
     @Test
     public void storeAndRetrieve() 
-        throws SSOException, PolicyException, EntitlementException {
+        throws SSOException, PolicyException, EntitlementException, Exception {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
         PolicyManager pm = new PolicyManager(adminToken, "/");
@@ -62,12 +62,13 @@ public class PolicyIndexTest {
         policy = pm.getPolicy("policyTest1");
         PolicyIndexer.store(policy);
         
-        IPolicyIndexDataStore datastore = 
-            PolicyIndexDataStoreFactory.getInstance().getDataStore();
-        
-        Set<Object> result = datastore.search("http://www.sun.com", "/private");
+        Set<Policy> result = PolicyIndexer.search(
+            pm, "http://www.sun.com", "/private");
         Policy resultPolicy = (Policy)result.iterator().next();
-        
+        Rule rule = resultPolicy.getRule("rule1");
+        if (!rule.getResourceName().equals(URL_RESOURCE)) {
+            throw new Exception("incorrect deserialized policy");
+        }
         PolicyIndexer.delete(policy);
         pm.removePolicy("policyTest1");
         

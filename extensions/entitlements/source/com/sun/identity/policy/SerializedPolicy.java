@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: SerializedPolicy.java,v 1.2 2009-01-17 02:08:46 veiming Exp $
+ * $Id: SerializedPolicy.java,v 1.3 2009-01-17 18:26:25 veiming Exp $
  * 
  */
 
@@ -175,6 +175,9 @@ public class SerializedPolicy implements Serializable {
         SerializedPolicy serPolicy
     ) {
         try {
+            if (serPolicy.originalName == null) {
+                serPolicy.originalName = serPolicy.policyName;
+            }
             Policy policy = new Policy(serPolicy.originalName, 
                 serPolicy.description, serPolicy.referralPolicy, 
                 serPolicy.active);
