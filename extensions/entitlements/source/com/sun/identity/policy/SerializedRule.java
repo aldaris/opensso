@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: SerializedRule.java,v 1.1 2009-01-16 21:02:20 veiming Exp $
+ * $Id: SerializedRule.java,v 1.2 2009-01-17 02:08:46 veiming Exp $
  * 
  */
 
@@ -62,5 +62,14 @@ public class SerializedRule implements Serializable {
         }
         
         return serRule;
+    }
+    
+    public static Rule deserialize(PolicyManager pm, SerializedRule serRule) {
+        try {
+            return new Rule(serRule.ruleName, serRule.serviceTypeName, 
+                serRule.resourceName, serRule.actions);
+        } catch (PolicyException ex) {
+            return null;
+        }
     }
 }

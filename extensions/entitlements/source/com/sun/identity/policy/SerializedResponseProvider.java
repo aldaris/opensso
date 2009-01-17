@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: SerializedResponseProvider.java,v 1.1 2009-01-16 21:02:20 veiming Exp $
+ * $Id: SerializedResponseProvider.java,v 1.2 2009-01-17 02:08:46 veiming Exp $
  * 
  */
 
@@ -38,7 +38,7 @@ import java.util.Set;
  * This class serializes and deserializes Policy's Response Provider object.
  */
 public class SerializedResponseProvider implements Serializable {
-    private String responseProviderType;
+    private String type;
     private Map<String, Set<String>> map;
     
     private static final long serialVersionUID = -403250971215465050L;
@@ -48,7 +48,7 @@ public class SerializedResponseProvider implements Serializable {
     ) {
         SerializedResponseProvider serResProvider = 
             new SerializedResponseProvider();
-        serResProvider.responseProviderType = 
+        serResProvider.type = 
             ResponseProviderTypeManager.responseProviderTypeName(
             responseProvider);
         Map properties = responseProvider.getProperties();
@@ -57,5 +57,20 @@ public class SerializedResponseProvider implements Serializable {
             serResProvider.map.putAll(properties);
         }
         return serResProvider;
+    }
+    
+    public static ResponseProvider deserialize(
+        PolicyManager pm,
+        SerializedResponseProvider serResponseProvider) {
+        try {
+            ResponseProviderTypeManager mgr = 
+                pm.getResponseProviderTypeManager();
+            ResponseProvider rp  = mgr.getResponseProvider(
+                serResponseProvider.type);
+            rp.setProperties(serResponseProvider.map);
+            return rp;
+        } catch (PolicyException ex) {
+            return null;
+        }
     }
 }

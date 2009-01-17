@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.7 2009-01-16 02:10:49 veiming Exp $
+   $Id: build.xml,v 1.8 2009-01-17 02:08:44 veiming Exp $
 
 -->
 
@@ -52,6 +52,12 @@
                destdir="${entitlements.classes.dir}" source="1.5" target="1.5"
                debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${entitlements.src.dir}/com/sun/identity/sm"/>
+            <classpath refid="build.class.path"/>
+        </javac>
+        <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
+               destdir="${entitlements.classes.dir}" source="1.5" target="1.5"
+               debug="${build.debug}" debuglevel="${build.debuglevel}">
+            <src path="${entitlements.src.dir}/com/sun/identity/policy"/>
             <classpath refid="build.class.path"/>
         </javac>
 

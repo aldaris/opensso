@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPolicyIndexDataStore.java,v 1.1 2009-01-16 02:10:50 veiming Exp $
+ * $Id: IPolicyIndexDataStore.java,v 1.2 2009-01-17 02:08:45 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -46,8 +46,8 @@ public interface IPolicyIndexDataStore {
      */
     void add(
         String name, 
-        String hostIndex, 
-        String pathIndex, 
+        Set<String> hostIndex, 
+        Set<String> pathIndex, 
         Serializable policy
     ) throws EntitlementException;
     

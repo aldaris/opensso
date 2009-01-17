@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: SerializedReferral.java,v 1.1 2009-01-16 21:02:20 veiming Exp $
+ * $Id: SerializedReferral.java,v 1.2 2009-01-17 02:08:46 veiming Exp $
  * 
  */
 
@@ -32,6 +32,8 @@ import com.sun.identity.policy.interfaces.Referral;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This class serializes and deserializes Policy's Condition object.
@@ -53,5 +55,18 @@ public class SerializedReferral implements Serializable {
         }
         
         return serReferral;
+    }
+    
+    public static Referral deserialize(
+        PolicyManager pm,
+        SerializedReferral serReferral) {
+        try {
+            ReferralTypeManager mgr = pm.getReferralTypeManager();
+            Referral referral = mgr.getReferral(serReferral.type);
+            referral.setValues(serReferral.values);
+            return referral;
+        } catch (PolicyException ex) {
+            return null;
+        }
     }
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * 
- * $Id: SerializedUser.java,v 1.1 2009-01-16 21:02:20 veiming Exp $
+ * $Id: SerializedUser.java,v 1.2 2009-01-17 02:08:47 veiming Exp $
  * 
  */
 
@@ -38,9 +38,9 @@ import java.util.Set;
  */
 
 public class SerializedUser implements Serializable {
-    private boolean isExclusive;
-    private boolean isRealmSubject;
-    private String subjectType;
+    boolean isExclusive;
+    boolean isRealmSubject;
+    private String type;
     private Set<String> values;
     
     private static final long serialVersionUID = -403250971215465050L;
@@ -55,11 +55,22 @@ public class SerializedUser implements Serializable {
         serUser.isRealmSubject = isRealmSubject;
         
         if (!isRealmSubject) {
-            serUser.subjectType= SubjectTypeManager.subjectTypeName(subject);
+            serUser.type= SubjectTypeManager.subjectTypeName(subject);
             serUser.values = new HashSet<String>();
             serUser.values.addAll(subject.getValues());
         }
         
         return serUser;
+    }
+    
+    public static Subject deserialize(PolicyManager pm, SerializedUser serUser){
+        try {
+            SubjectTypeManager mgr = pm.getSubjectTypeManager();
+            Subject user  = mgr.getSubject(serUser.type);
+            user.setValues(serUser.values);
+            return user;
+        } catch (PolicyException ex) {
+            return null;
+        }
     }
 }
