@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: readme.txt,v 1.2 2009-01-16 23:56:00 leiming Exp $
+   $Id: readme.txt,v 1.3 2009-01-17 01:38:45 leiming Exp $
 -->
 
 ------------------------------------
@@ -105,7 +105,7 @@ On OpenSSO admin console, do the following configuration.
                 + http://<hostname>:<port>/agentsample/invokerservlet
                 + http://<hostname>:<port>/agentsample/protectedservlet
                 + http://<hostname>:<port>/agentsample/securityawareservlet
-                + http://<hostname>:<port>/agentsample/unprotectedservlet
+                + http://<hostname>:<port>/agentsample/protectedcallerservlet
           o Subject: all authenticated users.                     
     * Policy 2:
           o allow:
