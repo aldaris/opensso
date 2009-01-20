@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOFederate.java,v 1.17 2008-09-25 20:40:29 hengming Exp $
+ * $Id: IDPSSOFederate.java,v 1.18 2009-01-20 18:54:08 weisun2 Exp $
  *
  */
 
@@ -67,6 +67,8 @@ import java.util.logging.Level;
 import java.util.Iterator;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -121,10 +123,51 @@ public class IDPSSOFederate {
         if (FSUtils.needSetLBCookieAndRedirect(request, response, true)) {
             return;
         }
-
+        String preferredIDP = null; 
+        Map paramsMap = new HashMap(); 
+        //IDP Proxy with introduction cookie case. 
+        //After reading the introduction cookie, it redirects to here. 
+        String requestID = request.getParameter("requestID");
         Object session = null;
         SPSSODescriptorElement spSSODescriptor = null;
         try { 
+            if (requestID != null) {
+                //get the preferred idp
+                preferredIDP = SAML2Utils.getPreferredIDP(request);
+                paramsMap = (Map)SPCache.reqParamHash.get(requestID);
+                if (preferredIDP != null) {
+                    if (SAML2Utils.debug.messageEnabled()) {
+                        SAML2Utils.debug.message(classMethod +
+                            "IDP to be proxied " +  preferredIDP);              
+                    }
+                    try {
+                        IDPProxyUtil.sendProxyAuthnRequest(
+                            (AuthnRequest) paramsMap.get("authnReq"),
+                            preferredIDP,
+                            (SPSSODescriptorElement) paramsMap.get(
+                            "spSSODescriptor"),
+                            (String) paramsMap.get("idpEntityID"),
+                            request,
+                            response,
+                            (String) paramsMap.get("realm"),
+                            (String) paramsMap.get("relayState"),
+                            (String) paramsMap.get("binding"));  
+                            SPCache.reqParamHash.remove(requestID);
+                            return;     
+                    } catch (SAML2Exception re) {
+                        if (SAML2Utils.debug.messageEnabled()) {
+                            SAML2Utils.debug.message(classMethod +
+                                "Redirecting for the proxy handling error:"
+                                 + re.getMessage());
+                        }
+                        sendError(response, SAML2Constants.SERVER_FAULT,
+                            "UnableToRedirectToPreferredIDP",
+                            re.getMessage(), isFromECP);
+                        return;
+                   }
+               } 
+            } // end of IDP Proxy case 
+ 
             String idpMetaAlias = request.getParameter(
                 SAML2MetaManager.NAME_META_ALIAS_IN_URI);
             if ((idpMetaAlias == null) || (idpMetaAlias.trim().length() == 0)) {
@@ -410,8 +453,6 @@ public class IDPSSOFederate {
                     }
                     return;
                 }
-
-
                 // need to check if the forceAuth is true. if so, do auth 
                 if ((Boolean.TRUE.equals(authnReq.isForceAuthn())) &&
                     (!Boolean.TRUE.equals(authnReq.isPassive())))
@@ -449,26 +490,45 @@ public class IDPSSOFederate {
                         IDPCache.relayStateCache.put(reqID, relayState);
                     }
      
-                    //Initiate proxying
+                    //IDP Proxy: Initiate proxying
                     try {
                         boolean isProxy = IDPProxyUtil.isIDPProxyEnabled(
                             authnReq, realm);
-                        if (isProxy) { 
-                            String preferredIDP = IDPProxyUtil.getPreferredIDP(
-                                authnReq,idpEntityID, realm, request, response);
+                        if (isProxy) {    
+                            preferredIDP = IDPProxyUtil.getPreferredIDP(
+                                authnReq,idpEntityID, realm, request, 
+                                response);
                             if (preferredIDP != null) {
-                                if (SAML2Utils.debug.messageEnabled()) {
-                                    SAML2Utils.debug.message(classMethod +
-                                        "IDP to be proxied" +  preferredIDP);
-                                }
-                                IDPProxyUtil.sendProxyAuthnRequest(
-                                    authnReq, preferredIDP, spSSODescriptor,
-                                    idpEntityID, request, response, realm,
-                                    relayState, binding);
-                                return;
-                            }
-                        }
-                        //else continue for the local authentication.    
+                                if ((SPCache.reqParamHash != null) &&
+                                   (!(SPCache.reqParamHash.containsKey(preferredIDP)))) {
+                                   // IDP Proxy with configured proxy list 
+                                   if (SAML2Utils.debug.messageEnabled()) {
+                                       SAML2Utils.debug.message(classMethod +
+                                           "IDP to be proxied" +  preferredIDP);
+                                   } 
+                                   IDPProxyUtil.sendProxyAuthnRequest(
+                                       authnReq, preferredIDP, spSSODescriptor,
+                                       idpEntityID, request, response, realm,
+                                       relayState, binding);
+                                   return;
+                                } else { 
+                                     // IDP proxy with introduction cookie  
+                                     paramsMap = (Map) 
+                                         SPCache.reqParamHash.get(preferredIDP);
+                                     paramsMap.put("authnReq", authnReq);
+                                     paramsMap.put("spSSODescriptor",
+                                         spSSODescriptor); 
+                                     paramsMap.put("idpEntityID", idpEntityID); 
+                                     paramsMap.put("realm", realm); 
+                                     paramsMap.put("relayState", relayState); 
+                                     paramsMap.put("binding", binding);   
+                                     SPCache.reqParamHash.put(preferredIDP,
+                                         paramsMap);
+                                     return;    
+                               }
+                           }              
+                       }  
+                       //else continue for the local authentication.    
                     } catch (SAML2Exception re) {
                         if (SAML2Utils.debug.messageEnabled()) {
                             SAML2Utils.debug.message(classMethod +

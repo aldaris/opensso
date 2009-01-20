@@ -22,11 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2IDPProxyImpl.java,v 1.3 2008-06-25 05:47:51 qcheng Exp $
+ * $Id: SAML2IDPProxyImpl.java,v 1.4 2009-01-20 18:53:54 weisun2 Exp $
  */
 
 package com.sun.identity.saml2.plugins;
 
+import com.sun.identity.cot.CircleOfTrustManager;
+import com.sun.identity.cot.CircleOfTrustDescriptor;
+import com.sun.identity.cot.COTException;
 import com.sun.identity.saml2.common.SAML2Exception;
 import com.sun.identity.saml2.common.SAML2Utils;
 import com.sun.identity.saml2.common.SAML2Constants;
@@ -35,12 +38,14 @@ import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.profile.SPSSOFederate;
+import com.sun.identity.saml2.profile.SPCache;
 import com.sun.identity.saml2.protocol.AuthnRequest;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap; 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * This class <code>SAML2IDPProxyImpl</code> is used to find a preferred Identity
@@ -72,7 +77,10 @@ public class SAML2IDPProxyImpl implements SAML2IDPFinder {
           HttpServletResponse response
     ) throws SAML2Exception
     {       
-        SAML2Utils.debug.message("SAML2IDPProxyImpl.getPreferredIDP:Init");
+        String classMethod = "SAML2IDPProxyImpl.getPreferredIDP:"; 
+        if (SAML2Utils.debug.messageEnabled()) {
+            SAML2Utils.debug.message(classMethod + "Init.");
+        }
         try {
             SAML2MetaManager sm = new SAML2MetaManager();
             // Retreive MetaData
@@ -89,7 +97,7 @@ public class SAML2IDPProxyImpl implements SAML2IDPFinder {
             String useIntroductionForProxying = 
                 SPSSOFederate.getParameter(spConfigAttrsMap,
                     SAML2Constants.USE_INTRODUCTION_FOR_IDP_PROXY);
-
+            List providerIDs = new ArrayList();
             if (useIntroductionForProxying == null ||
                 !useIntroductionForProxying.equals("true")) 
             {
@@ -100,34 +108,53 @@ public class SAML2IDPProxyImpl implements SAML2IDPFinder {
                         "Preferred IDPs are null.");
                     return null;
                 }
-                List providerIDs = new ArrayList();
+               
                 providerIDs.add(proxyIDPs.iterator().next());
                 return providerIDs;
             } else {
-                /* TODO: test introduction cookie case*/
-                /*
-                StringBuffer redirectURL = new StringBuffer(100);
-                String baseURL = FSServiceUtils.getBaseURL(request);
-                redirectURL.append(baseURL).append(SAML2Constants.IDP_FINDER_URL)
-                        .append("?").append("RequestID=")
-                        .append(authnRequest.getRequestID())
-                        .append("&").append("ProviderID=")
-                        .append(hostEntityID);
-                SAML2Utils.forwardRequest(
-                    request, response, redirectURL.toString());
-                throw new FSRedirectException(SAML2Utils.bundle.getString(
-                    "Redirection_Happened"));
-                */  
-                return null;    
-            }
+                /* IDP Proxy with introduction cookie case*/
+                String idpEntityID = null;
+                List cotList = (List) spConfigAttrsMap.get("cotlist");
+                String cotListStr = (String) cotList.iterator().next();
+                CircleOfTrustManager cotManager = new CircleOfTrustManager();
+                CircleOfTrustDescriptor cotDesc =
+                    cotManager.getCircleOfTrust(realm,cotListStr);
+                String readerURL = cotDesc.getSAML2ReaderServiceURL();
+                if (SAML2Utils.debug.messageEnabled()) {
+                    SAML2Utils.debug.message(classMethod + "SAMLv2 idp" + 
+                        "discovery reader URL = " + readerURL);
+                }    
+                if (readerURL != null && (!readerURL.equals(""))) {
+                    String rID = SAML2Utils.generateID();
+                    String redirectURL = 
+ 	                SAML2Utils.getRedirectURL(readerURL, rID, request);
+ 	            if (SAML2Utils.debug.messageEnabled()) {
+                        SAML2Utils.debug.error(classMethod + 
+                            "Redirect url = " + redirectURL); 
+                    }        
+		    if (redirectURL != null) {
+		        response.sendRedirect(redirectURL); 
+		        Map aMap = new HashMap(); 
+		        SPCache.reqParamHash.put(rID, aMap);
+		        providerIDs.add(rID); 
+                        return providerIDs;
+		    }
+		}
+	    }
+	    return null;    
         } catch (SAML2MetaException ex) {
-            SAML2Utils.debug.error("SAML2IDPProxyImpl.getPreferredIDP: " +
+            SAML2Utils.debug.error(classMethod +
                 "meta Exception in retrieving the preferred IDP", ex);
             return null;
+        } catch (COTException sme) {
+            SAML2Utils.debug.error(classMethod + 
+                "Error retreiving COT ",sme);
+            return null;
         } catch (Exception e) {
-            SAML2Utils.debug.error("SAML2IDPProxyImpl.getPreferredIDP: " +
+            SAML2Utils.debug.error(classMethod +
                 "Exception in retrieving the preferred IDP", e);
             return null;
         }
-    }
+    }   
+    
 }
