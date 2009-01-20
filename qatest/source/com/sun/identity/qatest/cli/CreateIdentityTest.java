@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateIdentityTest.java,v 1.11 2008-10-03 13:37:41 cmwesley Exp $
+ * $Id: CreateIdentityTest.java,v 1.12 2009-01-20 14:20:53 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -319,6 +319,8 @@ public class CreateIdentityTest extends TestCommon implements CLIExitCodes {
     public void cleanup() 
     throws Exception {
         int cleanupExitStatus = -1;
+        FederationManagerCLI idCli = null;
+        FederationManagerCLI cleanupCli = null;
 
         entering("cleanup", null);
         try {            
@@ -334,8 +336,7 @@ public class CreateIdentityTest extends TestCommon implements CLIExitCodes {
                 log(logLevel, "cleanup", "identityToDelete: "  + 
                         idNameToCreate);
                 Reporter.log("IdentityNameToDelete: " + idNameToCreate);
-                FederationManagerCLI idCli = 
-                                    new FederationManagerCLI(useDebugOption, 
+                idCli = new FederationManagerCLI(useDebugOption, 
                                     useVerboseOption, useLongOptions);
                 idCli.deleteIdentities(realmForId, idNameToCreate, 
                         idTypeToCreate);
@@ -361,30 +362,38 @@ public class CreateIdentityTest extends TestCommon implements CLIExitCodes {
                             Reporter.log("IdRealm: " + idRealm);
                             Reporter.log("IdNameToRemove: " + idName);
                             Reporter.log("IdentityTypeToRemove: " + idType);
-                            
-                            FederationManagerCLI cleanupCli = 
-                                    new FederationManagerCLI(useDebugOption, 
-                                    useVerboseOption, useLongOptions);
-                            cleanupExitStatus = 
-                                    cleanupCli.deleteIdentities(idRealm, idName, 
-                                    idType);
-                            cleanupCli.resetArgList();
-                            if (cleanupExitStatus != SUCCESS_STATUS) {
-                                log(Level.SEVERE, "cleanup", 
-                                        "The deletion of " + idType + 
-                                        " identity " + idName + 
-                                        " returned the failed exit status " +
-                                        cleanupExitStatus + ".");
-                                assert false;
-                            }
-                            if (cli.findIdentities(idRealm, "*", idType, 
+
+                            idCli.resetArgList();
+                            if (idCli.findIdentities(idRealm, "*", idType,
                                     idName)) {
-                                log(Level.SEVERE, "cleanup", "The " + idType + 
-                                        "identity " + idName + 
-                                        " was not deleted.");
-                                assert false;
+                                cleanupCli =
+                                        new FederationManagerCLI(useDebugOption,
+                                        useVerboseOption, useLongOptions);
+                                cleanupExitStatus =
+                                        cleanupCli.deleteIdentities(idRealm,
+                                        idName, idType);
+                                cleanupCli.resetArgList();
+                                if (cleanupExitStatus != SUCCESS_STATUS) {
+                                    log(Level.SEVERE, "cleanup",
+                                            "The deletion of " + idType +
+                                            " identity " + idName +
+                                            " returned the failed exit status "
+                                            + cleanupExitStatus + ".");
+                                    assert false;
+                                }
+                                if (cli.findIdentities(idRealm, "*", idType,
+                                        idName)) {
+                                    log(Level.SEVERE, "cleanup", "The " +
+                                            idType + "identity " + idName +
+                                            " was not deleted.");
+                                    assert false;
+                                }
+                                cli.resetArgList();
+                            } else {
+                               log(Level.FINEST, "cleanup", "The " + idType +
+                                       " identity " + idName +
+                                       " was not found.");
                             }
-                            cli.resetArgList();
                         } else {
                             log(Level.SEVERE, "cleanup", "The setup identity " + 
                                     setupIdentities + " must have a realm, " +
@@ -402,7 +411,6 @@ public class CreateIdentityTest extends TestCommon implements CLIExitCodes {
                     Reporter.log("SetupRealmToDelete: " + realms[i]);
                     cleanupExitStatus = cli.deleteRealm(realms[i], true); 
                     cli.logCommand("cleanup");
-                    cli.resetArgList();
                     if (cleanupExitStatus != SUCCESS_STATUS) {
                         assert false;
                     }
@@ -413,6 +421,16 @@ public class CreateIdentityTest extends TestCommon implements CLIExitCodes {
             log(Level.SEVERE, "cleanup", e.getMessage(), null);
             e.printStackTrace();
             throw e;
-        } 
+        } finally {
+            if (idCli != null) {
+                idCli.resetArgList();
+            }
+            if (cleanupCli != null) {
+                cleanupCli.resetArgList();
+            }
+            if (cli != null) {
+                cli.resetArgList();
+            }
+        }
     }
 }
