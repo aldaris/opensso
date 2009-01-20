@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.6 2009-01-15 01:29:30 dillidorai Exp $
+ * $Id: Entitlement.java,v 1.7 2009-01-20 21:21:14 dillidorai Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -149,6 +149,24 @@ public class Entitlement {
         return resourceName;
     }
 
+     /**
+     * Sets excluded resource names.
+     *
+     * @param excludedResourceNames excluded resource names.
+     */
+    public void setExcludedResourceNames(
+            Set<String> excludedResourceNames) {
+        this.excludedResourceNames = excludedResourceNames;
+    }
+
+    /**
+     * Returns excluded resource names.
+     *
+     * @return excluded resource names.
+     */
+    public Set<String> getExcludedResourceNames() {
+        return excludedResourceNames;
+    }
     /**
      * Returns service name.
      *
@@ -263,5 +281,23 @@ public class Entitlement {
     public Map<String, Set<String>> getAttributes() {
         return attributes;
     }
+
     
+    /**
+     * Checks whether the request satisfies the <code>Entitlement</code>
+     * @param subject Subject who is under evaluation.
+     * @param resourceName Resource name.
+     * @param environment Environment parameters.
+     * @return <code>true</code> if the request satisfies the 
+     * <code>SubjectFilter</code>, otherwise <code>false</code>
+     * @throws com.sun.identity.entitlement.EntitlementException
+     */
+    public boolean evaluate(
+            Subject subject,
+            String resourceName,
+            Map<String, Set<String>> environment)
+            throws EntitlementException {
+		return false;
+	}
+	
 }
