@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexTest.java,v 1.2 2009-01-17 18:26:26 veiming Exp $
+ * $Id: PolicyIndexTest.java,v 1.3 2009-01-20 18:49:01 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -31,12 +31,8 @@ package com.sun.identity.policy;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.entitlement.EntitlementException;
-import com.sun.identity.entitlement.IPolicyIndexDataStore;
-import com.sun.identity.entitlement.PolicyIndexDataStoreFactory;
-import com.sun.identity.entitlement.util.ResourceNameSplitter;
 import com.sun.identity.policy.interfaces.Subject;
 import com.sun.identity.security.AdminTokenAction;
-import java.net.URL;
 import java.security.AccessController;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -44,6 +40,10 @@ import java.util.Map;
 import java.util.Set;
 import org.testng.annotations.Test;
 
+/**
+ * Test the policy indexing. store and retrieving of policy object.
+ * @author dennis
+ */
 public class PolicyIndexTest {
     private static String URL_RESOURCE = "http://www.sun.com:8080/private";
         
@@ -71,7 +71,6 @@ public class PolicyIndexTest {
         }
         PolicyIndexer.delete(policy);
         pm.removePolicy("policyTest1");
-        
     }
     
     private Rule createRule() throws PolicyException {

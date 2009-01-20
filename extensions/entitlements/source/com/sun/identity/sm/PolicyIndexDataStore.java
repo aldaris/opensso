@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexDataStore.java,v 1.4 2009-01-17 02:39:19 veiming Exp $
+ * $Id: PolicyIndexDataStore.java,v 1.5 2009-01-20 18:49:00 veiming Exp $
  */
 
 package com.sun.identity.sm;
@@ -43,7 +43,6 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.security.AccessController;
 import java.text.MessageFormat;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;

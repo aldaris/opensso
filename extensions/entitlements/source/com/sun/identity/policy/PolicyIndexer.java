@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexer.java,v 1.2 2009-01-17 18:26:25 veiming Exp $
+ * $Id: PolicyIndexer.java,v 1.3 2009-01-20 18:47:58 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -35,8 +35,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -46,6 +44,13 @@ public class PolicyIndexer {
     private PolicyIndexer() {
     }
     
+    /**
+     * Stores the serializable policy in datastore its indexes.
+     * 
+     * @param policy Policy object.
+     * @throws PolicyException if errors getting the rules.
+     * @throws EntitlementException if indexes cannot be created.
+     */
     public static void store(Policy policy) 
         throws PolicyException, EntitlementException
     {
@@ -72,6 +77,11 @@ public class PolicyIndexer {
         datastore.add(policyName, hostIndexes, pathIndexes, serPolicy);
     }
     
+    /**
+     * Deletes the serializable policy and its indexes in datastore.
+     * 
+     * @param policy Policy object.
+     */
     public static void delete(Policy policy) {
         IPolicyIndexDataStore datastore = 
             PolicyIndexDataStoreFactory.getInstance().getDataStore();
@@ -84,6 +94,14 @@ public class PolicyIndexer {
         }
     }
     
+    /**
+     * Searches for a policy objects with given indexes.
+     * 
+     * @param pm Policy Manager.
+     * @param hostIndex Host Index.
+     * @param pathIndex Path Index.
+     * @return Set of policy objects.
+     */
     public static Set<Policy> search(
         PolicyManager pm, String hostIndex, String pathIndex) {
         Set<Policy> policies = new HashSet<Policy>();
@@ -100,6 +118,5 @@ public class PolicyIndexer {
             PolicyManager.debug.error("PolicyIndexer.store", e);
         }
         return policies;
-        
     }
 }
