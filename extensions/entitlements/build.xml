@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.10 2009-01-21 02:12:12 farble1670 Exp $
+   $Id: build.xml,v 1.11 2009-01-21 21:21:47 farble1670 Exp $
 
 -->
 
@@ -36,39 +36,39 @@
     <property name="build.debug" value="on"/>
     <property name="build.debuglevel" value="lines,vars,source"/>
 
-    <path id="build.class.path">
-        <fileset dir="${entitlements.extlib.dir}">
-            <include name="**/*.jar"/>
-        </fileset>
-    </path>
-
-    <fileset id="war.libs" dir="${entitlements.extlib.dir}">
-        <include name="backport-util-concurrent-2.2.jar"/>
-        <include name="icefaces-${icefaces.version}.jar"/>
-        <include name="icefaces-comps-${icefaces.version}.jar"/>
-        <include name="icefaces-facelets-${icefaces.version}.jar"/>
-        <include name="commons-beanutils-1.6.jar"/>
-        <include name="commons-collections-3.2.jar"/>
-        <include name="commons-digester-1.8.jar"/>
-        <include name="commons-fileupload-1.2.jar"/>
-        <include name="commons-logging-1.1.1.jar"/>
-        <include name="commons-logging-api-1.1.jar"/>
-        <include name="el-api-1.0.jar"/>
-        <include name="el-ri-1.0.jar"/>
-        <include name="jsf-api-1.2_02.jar"/>
-        <include name="jsf-impl-1.2-b19.jar"/>
-    </fileset>
-
     <target name="build" depends="merge"/>
     
-    <target name="init">
+    <target name="init" depends="amserver-jar,sharedlib-jar">
         <mkdir dir="${entitlements.dist.dir}" />
         <mkdir dir="${entitlements.classes.dir}" />
 
         <available file="${entitlements.extlib.dir}/amserver.jar"
             property="amserver.jar.exists" value="true" />
         <available file="${entitlements.extlib.dir}/opensso-sharedlib.jar"
-            property="openssosharedlib.jar.exists" value="true" />
+            property="sharedlib.jar.exists" value="true" />
+
+		    <path id="build.class.path">
+		        <fileset dir="${entitlements.extlib.dir}">
+		            <include name="**/*.jar"/>
+		        </fileset>
+		    </path>
+
+		    <fileset id="war.libs" dir="${entitlements.extlib.dir}">
+		        <include name="backport-util-concurrent-2.2.jar"/>
+		        <include name="icefaces-${icefaces.version}.jar"/>
+		        <include name="icefaces-comps-${icefaces.version}.jar"/>
+		        <include name="icefaces-facelets-${icefaces.version}.jar"/>
+		        <include name="commons-beanutils-1.6.jar"/>
+		        <include name="commons-collections-3.2.jar"/>
+		        <include name="commons-digester-1.8.jar"/>
+		        <include name="commons-fileupload-1.2.jar"/>
+		        <include name="commons-logging-1.1.1.jar"/>
+		        <include name="commons-logging-api-1.1.jar"/>
+		        <include name="el-api-1.0.jar"/>
+		        <include name="el-ri-1.0.jar"/>
+		        <include name="jsf-api-1.2_02.jar"/>
+		        <include name="jsf-impl-1.2-b19.jar"/>
+		    </fileset>
     </target>
 
     <target name="src-ent" depends="init">
@@ -108,7 +108,7 @@
         </war>
     </target>
     
-    <target name="merge" depends="war,amserverjar,openssosharedlibjar">
+    <target name="merge" depends="war">
         <unjar src="${entitlements.extlib.dir}/opensso.war"
             dest="${war.package.dir}" />
         <antcall target="unittest" />
@@ -159,7 +159,7 @@
         </copy>
     </target>
 
-    <target name="amserverjar" unless="amserver.jar.exists">
+    <target name="amserver-jar" unless="amserver.jar.exists">
         <unjar src="${entitlements.extlib.dir}/opensso.war"
             dest="${entitlements.extlib.dir}">
             <patternset>
@@ -169,7 +169,7 @@
         </unjar>
     </target>
     
-    <target name="openssosharedlibjar" unless="openssosharedlib.jar.exists">
+    <target name="sharedlib-jar" unless="sharedlib.jar.exists">
         <unjar src="${entitlements.extlib.dir}/opensso.war"
             dest="${entitlements.extlib.dir}">
             <patternset>
