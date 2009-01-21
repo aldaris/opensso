@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.7 2009-01-20 21:21:14 dillidorai Exp $
+ * $Id: Entitlement.java,v 1.8 2009-01-21 17:52:16 dillidorai Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -284,7 +284,7 @@ public class Entitlement {
 
     
     /**
-     * Checks whether the request satisfies the <code>Entitlement</code>
+     * Returns <code>true</code> if the request satisfies the request
      * @param subject Subject who is under evaluation.
      * @param resourceName Resource name.
      * @param environment Environment parameters.
