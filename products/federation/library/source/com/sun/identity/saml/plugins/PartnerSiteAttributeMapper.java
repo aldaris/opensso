@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PartnerSiteAttributeMapper.java,v 1.2 2008-06-25 05:47:36 qcheng Exp $
+ * $Id: PartnerSiteAttributeMapper.java,v 1.3 2009-01-21 19:04:34 weisun2 Exp $
  *
  */
 
@@ -43,6 +43,10 @@ import java.util.List;
  * of the interface. The mappings between the partner source ID and 
  * the implementation class are configured at the <code>Partner URLs</code> 
  * field in SAML service.
+ *
+ * @deprecated This class has been deprecated. Please use
+ *      <code>ConsumerSiteAttributeMapper</code> instead.
+ * @see ConsumerSiteAttributeMapper
  *
  * @supported.all.api
  */
