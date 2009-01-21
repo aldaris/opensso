@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.19 2009-01-10 08:24:28 naghaon Exp $
+$Id: README,v 1.20 2009-01-21 19:04:24 kanduls Exp $
 
 ------------------------------------------------------------------------------
 
@@ -42,6 +42,7 @@ $Id: README,v 1.19 2009-01-10 08:24:28 naghaon Exp $
         %% 3.6 websphere_v61 target
         %% 3.7 jboss_v42 target
 	%% 3.8 tomcat_v6 target
+        %% 3.9 jetty_v61 target
 
 
 
@@ -156,7 +157,13 @@ Follow these steps to obtain the libraries for  Tomcat Server 6.0  :
 installation and copy catalina.jar and servlet-api.jar from the lib directory of the server installation 
 into the opensso/products/j2eeagents/extlib/tomcat/v6.
 
-
+2.2.6 Obtaining libraries for Jetty Server 6.1.x
+Follow these steps to obtain the libraries for Jetty Server 6.1.x :
+2.2.6.1 Install Jetty Server 6.1.x
+2.2.6.2 Copy j2ee.jar from Glassfish installation and copy jetty-6.1.14.jar
+and servlet-api-2.5-6.1.14.jar from <jetty-install-dir>/lib and copy 
+jetty-plus-6.1.14.jar from <jetty-install-dir>/lib/plus to 
+opensso/products/j2eeagents/extlib/jetty/v61.
 
 
 %% 3. Building the workspace
@@ -175,7 +182,7 @@ targets available in the workspace are:
      - websphere_v61 : build the Websphere 6.1 agent
      - jboss_v42         :  build the JBoss 4.0.x and 4.2.x agent
      - tomcat_v6        :  build the Tomcat 6.0 agent
-
+     - jetty_v61     : build the Jetty Server 6.1.x agent.
 
 %% 3.1 all target
 
@@ -230,6 +237,14 @@ The tomcat_v6 target first invokes the build target and then
 delegates the further processing to the build.xml files present under 
 the tomcat and tomcat/v6 directories.  Upon successful execution,
 a zip file tomcat_v6_agent_3.zip will be created under built/dist 
+directory, and it can be used later to install the agent.
+
+%% 3.9 jetty_v61 target
+
+The jetty_v61 target first invokes the build target and then 
+delegates the further processing to the build.xml files present under
+the jetty and jetty/v61 directories.  Upon successful execution,
+a zip file jetty_v61_agent_3.zip will be created under built/dist
 directory, and it can be used later to install the agent.
 
 
