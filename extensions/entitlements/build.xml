@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.9 2009-01-21 01:05:03 farble1670 Exp $
+   $Id: build.xml,v 1.10 2009-01-21 02:12:12 farble1670 Exp $
 
 -->
 
@@ -42,6 +42,23 @@
         </fileset>
     </path>
 
+    <fileset id="war.libs" dir="${entitlements.extlib.dir}">
+        <include name="backport-util-concurrent-2.2.jar"/>
+        <include name="icefaces-${icefaces.version}.jar"/>
+        <include name="icefaces-comps-${icefaces.version}.jar"/>
+        <include name="icefaces-facelets-${icefaces.version}.jar"/>
+        <include name="commons-beanutils-1.6.jar"/>
+        <include name="commons-collections-3.2.jar"/>
+        <include name="commons-digester-1.8.jar"/>
+        <include name="commons-fileupload-1.2.jar"/>
+        <include name="commons-logging-1.1.1.jar"/>
+        <include name="commons-logging-api-1.1.jar"/>
+        <include name="el-api-1.0.jar"/>
+        <include name="el-ri-1.0.jar"/>
+        <include name="jsf-api-1.2_02.jar"/>
+        <include name="jsf-impl-1.2-b19.jar"/>
+    </fileset>
+
     <target name="build" depends="merge"/>
     
     <target name="init">
@@ -59,7 +76,7 @@
                destdir="${entitlements.classes.dir}" source="1.5" target="1.5"
                debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${entitlements.src.dir}/com/sun/identity/entitlement"/>
-        </javac>        
+        </javac>
     </target>
     
     <target name="src-sm" depends="init">
@@ -77,16 +94,17 @@
                debug="${build.debug}" debuglevel="${build.debuglevel}">
             <src path="${entitlements.src.dir}/com/sun/identity/policy"/>
             <classpath refid="build.class.path"/>
-        </javac>        
+        </javac>
     </target>
 
     <target name="src" depends="src-ent,src-sm,src-policy"/>
     
     <target name="war" depends="src">
-        <war 
+        <war
             destfile="${entitlements.dist.dir}/ent.war" 
             basedir="${entitlements.web.dir}">
-            <classes dir="${entitlements.classes.dir}" /> 
+            <classes dir="${entitlements.classes.dir}" />
+            <lib refid="war.libs"/>
         </war>
     </target>
     
