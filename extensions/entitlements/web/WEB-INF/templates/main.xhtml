@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ice="http://www.icesoft.com/icefaces/component">
+
+    <ice:outputDeclaration doctypeRoot="HTML"
+                           doctypePublic="-//W3C//DTD XHTML 1.0 Strict//EN"
+                           doctypeSystem="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" />
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <title>title</title>
+        <ice:outputStyle href="./xmlhttp/css/xp/xp.css"/>
+        <ice:outputStyle href="console.css"/>
+    </head>
+    <body>
+        <div id="page">
+            <ice:form>
+                <div id="header">
+                    <div id="logo"/>
+                </div>
+                <div id="content">
+                    <ui:insert name="content">!CONTENT!</ui:insert>
+                </div>
+                <div id="footer">
+                    <ui:insert name="footer">!FOOTER!</ui:insert>
+                </div>
+            </ice:form>
+        </div>
+    </body>
+</html>
