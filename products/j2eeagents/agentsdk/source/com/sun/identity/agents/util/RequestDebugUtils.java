@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RequestDebugUtils.java,v 1.2 2008-06-25 05:51:59 qcheng Exp $
+ * $Id: RequestDebugUtils.java,v 1.3 2009-01-21 18:57:44 kanduls Exp $
  *
  */
 
@@ -47,7 +47,7 @@ public class RequestDebugUtils implements IUtilConstants {
 
         writeln(buff);
         writeln(buff, SEPARATOR);
-        writeln(buff, CLASS, request);
+        writeln(buff, CLASS, request.getClass().getName());
         writeln(buff);
         writeln(buff, CHAR_ENC, request.getCharacterEncoding());
         writeln(buff, CONTENT_LEN,
