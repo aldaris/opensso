@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HttpServletRequestHelper.java,v 1.2 2008-06-25 05:51:39 qcheng Exp $
+ * $Id: HttpServletRequestHelper.java,v 1.3 2009-01-21 19:00:04 kanduls Exp $
  *
  */
 
@@ -230,7 +230,7 @@ public class HttpServletRequestHelper extends SurrogateBase
      * @return
      *
      */
-    private String getDateFormatString() {
+    protected String getDateFormatString() {
         return _dateFormatString;
     }
     
