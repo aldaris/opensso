@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.34 2008-09-10 00:19:40 huacui Exp $
+ * $Id: AgentConfiguration.java,v 1.35 2009-01-21 18:55:50 kanduls Exp $
  *
  */
 
@@ -439,11 +439,20 @@ public class AgentConfiguration implements
                 throw new RuntimeException(
                     "Failed to get configuration file:" + CONFIG_FILE_NAME);
             }
-            result = resUrl.getPath();                     
+            result = resUrl.getPath();
+            try {
+                if (System.getProperty("file.separator").equals("\\") && 
+                        result.startsWith("/")) {
+                    result = resUrl.toURI().getPath().substring(1);
+                }
+            } catch (Exception ex) {
+               throw new RuntimeException(
+                    "Failed to get absolute file path:" + CONFIG_FILE_NAME);
+            }
             if (result == null) {
                 throw new RuntimeException(
                     "Failed to get configuration file:" + CONFIG_FILE_NAME);
-            }
+            }            
             setConfigFilePath(result);
             int index = result.lastIndexOf(CONFIG_FILE_NAME);
             if (index < 0) {
