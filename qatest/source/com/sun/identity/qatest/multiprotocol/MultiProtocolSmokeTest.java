@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MultiProtocolSmokeTest.java,v 1.6 2008-10-18 00:03:45 mrudulahg Exp $
+ * $Id: MultiProtocolSmokeTest.java,v 1.7 2009-01-22 22:04:46 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -448,30 +448,30 @@ public class MultiProtocolSmokeTest extends TestCommon {
             log(Level.FINEST, "MultiProtocolSPSLOSAMLv2Init", "SAMLv2 SLO " +
                     "page is " + page.getWebResponse().getContentAsString());            
 
-            Thread.sleep(5000);
+            Thread.sleep(10000);
 
-            page = (HtmlPage)webClient.getPage(idffspurl + "/UI/Login");
-            if (page.getTitleText().contains("(Login)")) {
+            HtmlPage idffpage = (HtmlPage)webClient.getPage(idffspurl + "/UI/Login");
+            if (idffpage.getTitleText().contains("(Login)")) {
                 log(Level.FINEST, "MultiProtocolSPSLOSAMLv2Init", "IDFF " +
                         "session is destroyed. Login page is returned.");
             } else {
                 log(Level.SEVERE, "MultiProtocolSPSLOSAMLv2Init", "IDFF " +
                         "session is NOT destroyed.");
                 log(Level.FINEST, "MultiProtocolSPSLOSAMLv2Init",
-                        page.getWebResponse().getContentAsString());
+                        idffpage.getWebResponse().getContentAsString());
                 assert false;
             }
             
-            Thread.sleep(5000);
-            page = (HtmlPage)webClient.getPage(wsfedspurl+ "/UI/Login");
-            if (page.getTitleText().contains("(Login)")) {
+            //Thread.sleep(5000);
+            HtmlPage wsfedpage = (HtmlPage)webClient.getPage(wsfedspurl+ "/UI/Login");
+            if (wsfedpage.getTitleText().contains("(Login)")) {
                 log(Level.FINEST, "MultiProtocolSPSLOSAMLv2Init", "WSFed " +
                         "session is destroyed. Login page is returned.");
             } else {
                 log(Level.SEVERE, "MultiProtocolSPSLOSAMLv2Init", "WSFed " +
                         "session is NOT destroyed.");
                 log(Level.FINEST, "MultiProtocolSPSLOSAMLv2Init",
-                        page.getWebResponse().getContentAsString());
+                        wsfedpage.getWebResponse().getContentAsString());
                 assert false;
             }
 
@@ -592,7 +592,7 @@ public class MultiProtocolSmokeTest extends TestCommon {
             log(Level.FINEST, "MultiProtocolSPSLOIDFFInit", "IDFF SLO output" +
                     page.getWebResponse().getContentAsString());
             
-            Thread.sleep(5000);
+            Thread.sleep(10000);
             page = (HtmlPage)webClient.getPage(samlv2spurl + "/UI/Login");
             if (page.getTitleText().contains("(Login)")) {
                 log(Level.FINEST, "MultiProtocolSPSLOIDFFInit", "SAMLv2 " +
@@ -729,7 +729,8 @@ public class MultiProtocolSmokeTest extends TestCommon {
             page = (HtmlPage)webClient.getPage(wsfedSLOurl);
             log(Level.FINEST, "MultiProtocolSPSLOWSFedInit", "WSFed SLO output" +
                     page.getWebResponse().getContentAsString());
-            
+           
+            Thread.sleep(10000); 
             page = (HtmlPage)webClient.getPage(idffspurl + "/UI/Login");
             if (page.getTitleText().contains("(Login)")) {
                 log(Level.FINEST, "MultiProtocolSPSLOWSFedInit", "IDFF " +
