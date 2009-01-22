@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.9 2009-01-22 07:54:45 veiming Exp $
+ * $Id: Entitlement.java,v 1.10 2009-01-22 20:03:11 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -75,11 +75,11 @@ public class Entitlement {
      * Creates an entitlement object.
      *
      * @param resourceName Resource name.
-     * @param actions Set of action names.
+     * @param actionNames Set of action names.
      */
-    public Entitlement(String resourceName,  Set<String> actions) {
+    public Entitlement(String resourceName,  Set<String> actionNames) {
         setResourceName(resourceName);
-        setActionNames(actions);
+        setActionNames(actionNames);
     }
 
     /**
@@ -87,16 +87,16 @@ public class Entitlement {
      *
      * @param serviceName Service name.
      * @param resourceName Resource name.
-     * @param actions Set of action names.
+     * @param actionNames Set of action names.
      */
     public Entitlement(
         String serviceName, 
         String resourceName, 
-        Set<String> actions
+        Set<String> actionNames
     ) {
         this.serviceName = serviceName;   
         setResourceName(resourceName);
-        setActionNames(actions);
+        setActionNames(actionNames);
     }
 
     /**
