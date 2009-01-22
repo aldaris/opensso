@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmRealmUserRegistry.java,v 1.3 2009-01-15 00:00:33 leiming Exp $
+ * $Id: AmRealmUserRegistry.java,v 1.4 2009-01-22 21:00:41 leiming Exp $
  *
  */
 
@@ -248,7 +248,7 @@ public class AmRealmUserRegistry extends AgentBase
             SSOToken token = getAppSSOToken();
             if (token == null) {
                 // have problem getting app sso token, no search can be done
-                logError("AmRealmUserRegistry.getUsers: " +
+                logError("AmRealmUserRegistry.getGroups: " +
                         "application auth failed.");
                 return groups;
             }
@@ -261,15 +261,23 @@ public class AmRealmUserRegistry extends AgentBase
             ctrl.setTimeOut(-1);
             IdType[] types = getPrivilegedAttributeTypes();
             for (int i = 0; i < types.length; i++) {
-                IdSearchResults idsr =
-                        idRepo.searchIdentities(types[i], pattern, ctrl);
-                Set searchRes = idsr.getSearchResults();
-                Iterator iter = searchRes.iterator();
-                while (iter.hasNext()) {
-                    AMIdentity group = (AMIdentity)iter.next();
-                    String universalId = getUniquePartOfUuid(
-                            IdUtils.getUniversalId(group));
-                    groups.add(universalId);
+                try {
+                    IdSearchResults idsr =
+                            idRepo.searchIdentities(types[i], pattern, ctrl);
+                    Set searchRes = idsr.getSearchResults();
+                    Iterator iter = searchRes.iterator();
+                    while (iter.hasNext()) {
+                        AMIdentity group = (AMIdentity)iter.next();
+                        String universalId = getUniquePartOfUuid(
+                                IdUtils.getUniversalId(group));
+                        groups.add(universalId);
+                    }
+                } catch (IdRepoException ide) {
+                    if (isLogWarningEnabled()) {
+                        logWarning("AmRealmUserRegistry.getGroups: " +
+                            "failed to get " + types[i],
+                            ide);
+                    }
                 }
             }
         } catch (SSOException ssoe) {
@@ -277,8 +285,8 @@ public class AmRealmUserRegistry extends AgentBase
             throw new AgentException(ssoe);
         } catch (IdRepoException ide) {
             logError(
-                "AmRealmUserRegistry.getGroups: failed to get roles/groups",
-                ide);
+                "AmRealmUserRegistry.getGroups: failed to create Identity " +
+                "Repository", ide);
             throw new AgentException(ide);
         }
         if (isLogMessageEnabled()) {
