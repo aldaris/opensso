@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLUtils.java,v 1.11 2008-12-17 23:31:10 hengming Exp $
+ * $Id: SAMLUtils.java,v 1.12 2009-01-22 21:43:51 weisun2 Exp $
  *
  */
 
@@ -543,7 +543,7 @@ public class SAMLUtils  extends SAMLUtilsCommon {
             remoteUrl + ", thisUrl=" + thisUrl);
         }
         if ((remoteUrl == null) || (thisUrl == null) ||
-        (remoteUrl.equals(thisUrl))) {
+        (remoteUrl.equalsIgnoreCase(thisUrl))) {
             return null;
         } else {
             return remoteUrl;
