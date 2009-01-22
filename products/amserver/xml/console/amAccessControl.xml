@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: amAccessControl.xml,v 1.19 2008-10-24 22:36:07 babysunil Exp $
+   $Id: amAccessControl.xml,v 1.20 2009-01-22 01:04:36 asyhuang Exp $
 
 -->
 
@@ -457,6 +457,7 @@
     <neednodealwith classname="com.sun.identity.console.federation.FSSAMLServiceViewBean" />
     <neednodealwith classname="com.sun.identity.console.federation.FSSAMLSelectTrustedPartnerTypeViewBean" />
     <neednodealwith classname="com.sun.identity.console.federation.FSSAMLTrustedPartnersAddViewBean" />
+    <neednodealwith classname="com.sun.identity.console.federation.FSSAMLTrustedPartnersEditViewBean" />
 
     <neednodealwith classname="com.sun.identity.console.service.ServerAddViewBean" />
     <neednodealwith classname="com.sun.identity.console.service.ServerCloneViewBean" />
