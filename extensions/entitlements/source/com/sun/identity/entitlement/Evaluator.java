@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Evaluator.java,v 1.4 2008-12-17 07:06:19 veiming Exp $
+ * $Id: Evaluator.java,v 1.5 2009-01-22 07:54:45 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -38,7 +38,9 @@ import javax.security.auth.Subject;
  * @supported.api
  */
 public class Evaluator {
-
+    private Subject adminSubject;
+    private String serviceTypeName; //TOFIX: need a default for this.
+    
     /**
      * Constructor to create an evaluator of default service type.
      *
@@ -59,6 +61,8 @@ public class Evaluator {
      */
     public Evaluator(Subject subject, String serviceTypeName)
         throws EntitlementException {
+        adminSubject = subject;
+        this.serviceTypeName = serviceTypeName;
     }
 
     /**
@@ -70,6 +74,7 @@ public class Evaluator {
      */
     public Evaluator(Subject subject)
         throws EntitlementException {
+        adminSubject = subject;
     }
 
     /**
@@ -85,7 +90,11 @@ public class Evaluator {
      */
     public boolean hasEntitlement(Subject subject, Entitlement e) 
         throws EntitlementException {
-        return false;
+        //TOFIX: need a swtich choosing opensso or XACML 
+        IPolicyEvaluator evaluator = 
+            PolicyEvaluatorFactory.getInstance().getEvaluator();
+        
+        return evaluator.isAllowed(adminSubject, subject, serviceTypeName, e);
     }
 
     /**

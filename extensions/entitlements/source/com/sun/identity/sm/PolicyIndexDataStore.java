@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexDataStore.java,v 1.5 2009-01-20 18:49:00 veiming Exp $
+ * $Id: PolicyIndexDataStore.java,v 1.6 2009-01-22 07:54:46 veiming Exp $
  */
 
 package com.sun.identity.sm;
@@ -59,10 +59,10 @@ public class PolicyIndexDataStore implements  IPolicyIndexDataStore {
     private static final String PATH_INDEX_KEY = "pathindex";
     private static final String SERIALIZABLE_INDEX_KEY = "serializable";
 
-    private static final String FILTER_TEMPLATE = 
-        "(|(" + SMSEntry.ATTR_XML_KEYVAL + "=" + HOST_INDEX_KEY + "={0})" +
-          "(" + SMSEntry.ATTR_XML_KEYVAL + "=" + PATH_INDEX_KEY + "={1})" +
-        ")";
+    private static final String HOST_FILTER_TEMPLATE = 
+        "(" + SMSEntry.ATTR_XML_KEYVAL + "=" + HOST_INDEX_KEY + "={0})";
+    private static final String PATH_FILTER_TEMPLATE =
+        "(" + SMSEntry.ATTR_XML_KEYVAL + "=" + PATH_INDEX_KEY + "={1})";
 
     /**
      * Adds an index entry.
@@ -191,24 +191,39 @@ public class PolicyIndexDataStore implements  IPolicyIndexDataStore {
     /**
      * Searches for policy objects.
      * 
-     * @param hostIndex Host index.
-     * @param pathIndex Path index.
+     * @param hostIndexes Set of Host indexes.
+     * @param pathIndexes Set of Path indexes.
      * @return a set of matching policy objects.
      * @throws EntitlementException if search operation fails.
      */
-    public Set<Object> search(String hostIndex, String pathIndex)
-        throws EntitlementException {
+    public Set<Object> search(
+        Set<String> hostIndexes,
+        Set<String> pathIndexes
+    ) throws EntitlementException {
         Set<Object> results = new HashSet<Object>();
 
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
         Object[] params = {SMSEntry.getRootSuffix()};
         String startDN = MessageFormat.format(START_DN_TEMPLATE, params);
-        Object[] p = {hostIndex, pathIndex};
-        String filter = MessageFormat.format(FILTER_TEMPLATE, p);
+        
+        StringBuffer filter = new StringBuffer();
+        filter.append("(|");
+        
+        for (String h : hostIndexes) {
+            Object[] o = {h};
+            filter.append(MessageFormat.format(HOST_FILTER_TEMPLATE, o));
+        }
+        for (String p : pathIndexes) {
+            Object[] o = {p};
+            filter.append(MessageFormat.format(PATH_FILTER_TEMPLATE, o));
+        }
+
+        filter.append(")");
         
         try {
-            Set<String> setDN = SMSEntry.search(adminToken, startDN, filter);
+            Set<String> setDN = SMSEntry.search(adminToken, startDN, 
+                filter.toString());
             
             for (String dn : setDN) {
                 SMSEntry s = new SMSEntry(adminToken, dn);

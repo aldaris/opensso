@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexTest.java,v 1.3 2009-01-20 18:49:01 veiming Exp $
+ * $Id: PolicyIndexTest.java,v 1.4 2009-01-22 07:54:46 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -62,8 +62,11 @@ public class PolicyIndexTest {
         policy = pm.getPolicy("policyTest1");
         PolicyIndexer.store(policy);
         
-        Set<Policy> result = PolicyIndexer.search(
-            pm, "http://www.sun.com", "/private");
+        Set<String> hostIndexes = new HashSet<String>();
+        Set<String> pathIndexes = new HashSet<String>();
+        hostIndexes.add("http://www.sun.com");
+        pathIndexes.add("/private");
+        Set<Policy> result = PolicyIndexer.search(pm, hostIndexes, pathIndexes);
         Policy resultPolicy = (Policy)result.iterator().next();
         Rule rule = resultPolicy.getRule("rule1");
         if (!rule.getResourceName().equals(URL_RESOURCE)) {

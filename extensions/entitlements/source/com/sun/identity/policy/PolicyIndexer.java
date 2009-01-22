@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexer.java,v 1.3 2009-01-20 18:47:58 veiming Exp $
+ * $Id: PolicyIndexer.java,v 1.4 2009-01-22 07:54:46 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -98,16 +98,20 @@ public class PolicyIndexer {
      * Searches for a policy objects with given indexes.
      * 
      * @param pm Policy Manager.
-     * @param hostIndex Host Index.
-     * @param pathIndex Path Index.
+     * @param hostIndexes Set of Host Indexes.
+     * @param pathIndexes Set of Path Indexes.
      * @return Set of policy objects.
      */
     public static Set<Policy> search(
-        PolicyManager pm, String hostIndex, String pathIndex) {
+        PolicyManager pm, 
+        Set<String> hostIndexes, 
+        Set<String> pathIndexes
+    ) {
         Set<Policy> policies = new HashSet<Policy>();
         try {
-            IPolicyIndexDataStore datastore = PolicyIndexDataStoreFactory.getInstance().getDataStore();
-            Set<Object> results = datastore.search(hostIndex, pathIndex);
+            IPolicyIndexDataStore datastore = 
+                PolicyIndexDataStoreFactory.getInstance().getDataStore();
+            Set<Object> results = datastore.search(hostIndexes, pathIndexes);
             if ((results != null) && !results.isEmpty()) {
                 for (Object o : results) {
                     policies.add(SerializedPolicy.deserialize(pm, 
