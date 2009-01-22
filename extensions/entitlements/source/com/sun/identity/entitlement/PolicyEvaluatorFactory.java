@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorFactory.java,v 1.1 2009-01-22 07:54:45 veiming Exp $
+ * $Id: PolicyEvaluatorFactory.java,v 1.2 2009-01-22 23:59:34 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -38,11 +38,11 @@ public final class PolicyEvaluatorFactory {
                 "com.sun.identity.policy.PolicyEvaluatorAdaptor");
             defaultImpl = (IPolicyEvaluator) clazz.newInstance();
         } catch (ClassNotFoundException e) {
-            //TODO
+            e.printStackTrace();
         } catch (InstantiationException e) {
-            //TODO
+            e.printStackTrace();
         } catch (IllegalAccessException e) {
-            //TODO
+            e.printStackTrace();
         }
     }
     

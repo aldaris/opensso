@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorAdaptor.java,v 1.1 2009-01-22 07:54:46 veiming Exp $
+ * $Id: PolicyEvaluatorAdaptor.java,v 1.2 2009-01-22 23:59:35 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -32,17 +32,18 @@ import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementException;
+import com.sun.identity.entitlement.IPolicyEvaluator;
 import com.sun.identity.entitlement.util.ResourceNameSplitter;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.Principal;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
 
-public final class PolicyEvaluatorAdaptor {
+public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
+
     private Set<Policy> search(Subject adminSubject, String resourceName)
         throws SSOException, PolicyException {
         PolicyManager pm = new PolicyManager(getSSOToken(adminSubject), "/");
@@ -99,9 +100,8 @@ public final class PolicyEvaluatorAdaptor {
                         serviceType, pd, target);
                 }
             }
-            Map decisionsMap = target.getActionDecisions();
-            return (decisionsMap == null) ? false : 
-                decisionsMap.equals(actionValues);
+            
+            return doesActionDecisionMatch(target, actionValues);
         } catch (SSOException e) {
             throw new EntitlementException(e.getMessage(), -1);
         } catch (PolicyException e) {
@@ -109,13 +109,41 @@ public final class PolicyEvaluatorAdaptor {
         }
     }
     
+    private boolean doesActionDecisionMatch(
+        PolicyDecision pd, 
+        Map<String, Object> actionValues
+    ) {
+        Map decisionsMap = pd.getActionDecisions();
+        if (decisionsMap != null) {
+            for (String actionName : actionValues.keySet()) {
+                Object expected = actionValues.get(actionName);
+                ActionDecision decision = (ActionDecision)decisionsMap.get(
+                    actionName);
+                if (decision == null) {
+                    return false;
+                }
+                Set values = decision.getValues();
+                if ((values == null) || !values.equals(expected)) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
     private SSOToken getSSOToken(Subject subject)
         throws SSOException {
-        Set<Principal> principals = subject.getPrincipals();
+        Set principals = subject.getPrincipals();
         if (!principals.isEmpty()) {
-            Principal principal = principals.iterator().next();
+            try {
+            String tokenId = (String)principals.iterator().next();
             SSOTokenManager mgr = SSOTokenManager.getInstance();
-            return mgr.createSSOToken(principal.getName());
+            return mgr.createSSOToken(tokenId);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
