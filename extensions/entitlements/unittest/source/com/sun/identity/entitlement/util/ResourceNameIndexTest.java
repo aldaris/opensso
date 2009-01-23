@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceNameIndexTest.java,v 1.1 2009-01-16 01:51:07 veiming Exp $
+ * $Id: ResourceNameIndexTest.java,v 1.2 2009-01-23 07:41:40 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
@@ -47,7 +47,7 @@ public class ResourceNameIndexTest {
         Map<String, String> map = parseResource("resourceNameIndexHost");
         for (String k : map.keySet()) {
             String expectedResult = map.get(k);
-            String result = ResourceNameIndexGenerator.getHostIndex(new URL(k));
+            String result = ResourceNameIndexGenerator.getHostIndex(k);
             if (!result.equals(expectedResult)) {
                 String msg = "ResourceNameIndexTest.testHost: " + k + 
                     " failed.";
@@ -65,7 +65,7 @@ public class ResourceNameIndexTest {
         Map<String, String> map = parseResource("resourceNameIndexURI");
         for (String k : map.keySet()) {
             String expectedResult = map.get(k);
-            String result = ResourceNameIndexGenerator.getPathIndex(new URL(k));
+            String result = ResourceNameIndexGenerator.getPathIndex(k);
             if (!result.equals(expectedResult)) {
                 String msg = "ResourceNameIndexTest.testHost: " + k + 
                     " failed.";

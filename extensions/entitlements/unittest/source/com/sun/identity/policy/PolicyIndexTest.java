@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexTest.java,v 1.4 2009-01-22 07:54:46 veiming Exp $
+ * $Id: PolicyIndexTest.java,v 1.5 2009-01-23 07:41:40 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -60,7 +60,6 @@ public class PolicyIndexTest {
         pm.addPolicy(policy);
         
         policy = pm.getPolicy("policyTest1");
-        PolicyIndexer.store(policy);
         
         Set<String> hostIndexes = new HashSet<String>();
         Set<String> pathIndexes = new HashSet<String>();
@@ -72,7 +71,6 @@ public class PolicyIndexTest {
         if (!rule.getResourceName().equals(URL_RESOURCE)) {
             throw new Exception("incorrect deserialized policy");
         }
-        PolicyIndexer.delete(policy);
         pm.removePolicy("policyTest1");
     }
     

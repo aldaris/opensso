@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorAdaptor.java,v 1.2 2009-01-22 23:59:35 veiming Exp $
+ * $Id: PolicyEvaluatorAdaptor.java,v 1.3 2009-01-23 07:41:39 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -34,8 +34,6 @@ import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.IPolicyEvaluator;
 import com.sun.identity.entitlement.util.ResourceNameSplitter;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
@@ -47,17 +45,9 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
     private Set<Policy> search(Subject adminSubject, String resourceName)
         throws SSOException, PolicyException {
         PolicyManager pm = new PolicyManager(getSSOToken(adminSubject), "/");
-
-        try {
-            URL url = new URL(resourceName);
-            return PolicyIndexer.search(pm,
-                ResourceNameSplitter.splitHost(url),
-                ResourceNameSplitter.splitPath(url));
-        } catch (MalformedURLException e) {
-            Set<String> set = new HashSet<String>();
-            set.add(resourceName);
-            return PolicyIndexer.search(pm, set, Collections.EMPTY_SET);
-        }
+        return PolicyIndexer.search(pm,
+            ResourceNameSplitter.splitHost(resourceName),
+            ResourceNameSplitter.splitPath(resourceName));
     }
 
     public boolean isAllowed(

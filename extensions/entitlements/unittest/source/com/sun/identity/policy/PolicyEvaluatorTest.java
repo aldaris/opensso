@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorTest.java,v 1.1 2009-01-22 23:59:35 veiming Exp $
+ * $Id: PolicyEvaluatorTest.java,v 1.2 2009-01-23 07:41:40 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -56,7 +56,6 @@ public class PolicyEvaluatorTest {
         pm.addPolicy(policy);
         
         policy = pm.getPolicy("policyTest1");
-        PolicyIndexer.store(policy);
 
         PolicyEvaluator pe = new PolicyEvaluator("iPlanetAMWebAgentService");
         if (!pe.isAllowed(adminToken, "http://www.sun.com:8080/private", "GET")){
@@ -70,7 +69,6 @@ public class PolicyEvaluatorTest {
                 "http://www.sun.com:8080/public evaluation failed");
         }
         
-        PolicyIndexer.delete(policy);
         pm.removePolicy("policyTest1");
     }
     private Rule createRule() throws PolicyException {

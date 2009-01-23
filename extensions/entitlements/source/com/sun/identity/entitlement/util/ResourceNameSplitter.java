@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceNameSplitter.java,v 1.1 2009-01-16 17:28:43 veiming Exp $
+ * $Id: ResourceNameSplitter.java,v 1.2 2009-01-23 07:41:39 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,31 +47,35 @@ public class ResourceNameSplitter {
     }
 
     /**
-     * Returns a list of sub parts of host of an URL.
+     * Returns a list of sub parts of host of a resource name.
      *
-     * @param url URL.
-     * @param a list of sub parts of host of an URL.
+     * @param resName Resource name.
+     * @param a list of sub parts of host of a resource name.
      */
-    public static Set<String> splitHost(URL url) {
+    public static Set<String> splitHost(String resName) {
         Set<String> results = new HashSet<String>();
-        String protocol = url.getProtocol().toLowerCase();
-        String host = url.getHost().toLowerCase();
+        try {
+            URL url = new URL(resName);
+            String protocol = url.getProtocol().toLowerCase();
+            String host = url.getHost().toLowerCase();
+            protocol += "://";
 
-        protocol += "://";
+            results.add(protocol);
+            results.add(protocol + host);
 
-        results.add(protocol);
-        results.add(protocol + host);
+            List<String> dns = getDNS(host);
+            String buff = "";
+            for (String s : dns) {
+                if (buff.length() > 0) {
+                    results.add(protocol + "." + s + buff);
+                } else {
+                    results.add(protocol + "." + s);
+                }
 
-        List<String> dns = getDNS(host);
-        String buff = "";
-        for (String s : dns) {
-            if (buff.length() > 0) {
-                results.add(protocol + "." + s + buff);
-            } else {
-                results.add(protocol + "." + s);
+                buff += "." + s;
             }
-
-            buff += "." + s;
+        } catch (MalformedURLException e) {
+            results.add(resName);
         }
         
         return results;
@@ -92,32 +97,40 @@ public class ResourceNameSplitter {
     }
     
     /**
-     * Returns a list of sub parts of path of an URL.
+     * Returns a list of sub parts of path of a resource name.
      *
-     * @param url URL.
-     * @param a list of sub parts of path of an URL.
+     * @param resName Resource name.
+     * @param a list of sub parts of path of a resource name.
      */
-    public static Set<String> splitPath(URL url) {
+    public static Set<String> splitPath(String resName) {
         Set<String> results = new HashSet<String>();
-        String path = url.getPath().toLowerCase();
-        Set<String> queries = normalizeQuery(url.getQuery());
-        results.add("/");
-        for (String q : queries) {
-            results.add("/?" + q);
-        }
         
-        if ((path.length() > 0) && !path.equals("/")) {
-            String prefix = "";
-            StringTokenizer st = new StringTokenizer(path, "/");
-            while (st.hasMoreTokens()) {
-                String s = st.nextToken();
-                prefix += "/" + s;
-                results.add(prefix);
-                for (String q : queries) {
-                    results.add(prefix + "?" + q);
+        try {
+            URL url = new URL(resName);
+
+            String path = url.getPath().toLowerCase();
+            Set<String> queries = normalizeQuery(url.getQuery());
+            results.add("/");
+            for (String q : queries) {
+                results.add("/?" + q);
+            }
+
+            if ((path.length() > 0) && !path.equals("/")) {
+                String prefix = "";
+                StringTokenizer st = new StringTokenizer(path, "/");
+                while (st.hasMoreTokens()) {
+                    String s = st.nextToken();
+                    prefix += "/" + s;
+                    results.add(prefix);
+                    for (String q : queries) {
+                        results.add(prefix + "?" + q);
+                    }
                 }
             }
+        } catch (MalformedURLException e) {
+            // do nothing.
         }
+
         return results;
     }
     

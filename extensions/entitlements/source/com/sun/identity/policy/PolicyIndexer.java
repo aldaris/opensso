@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexer.java,v 1.4 2009-01-22 07:54:46 veiming Exp $
+ * $Id: PolicyIndexer.java,v 1.5 2009-01-23 07:41:39 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -31,8 +31,6 @@ import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.IPolicyIndexDataStore;
 import com.sun.identity.entitlement.PolicyIndexDataStoreFactory;
 import com.sun.identity.entitlement.util.ResourceNameIndexGenerator;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -64,16 +62,14 @@ public class PolicyIndexer {
         Set<String> pathIndexes = new HashSet<String>();
         
         for (String ruleName : ruleNames) {
-            try {
-                Rule rule = policy.getRule(ruleName);
-                URL url = new URL(rule.getResourceName());
-                hostIndexes.add(ResourceNameIndexGenerator.getHostIndex(url));
-                pathIndexes.add(ResourceNameIndexGenerator.getPathIndex(url));
-            } catch (MalformedURLException e) {
-                throw new PolicyException(e.getMessage());
-            }
+            Rule rule = policy.getRule(ruleName);
+            String resName = rule.getResourceName();
+            hostIndexes.add(
+                ResourceNameIndexGenerator.getHostIndex(resName));
+            pathIndexes.add(
+                ResourceNameIndexGenerator.getPathIndex(resName));
         }
-        
+
         datastore.add(policyName, hostIndexes, pathIndexes, serPolicy);
     }
     
