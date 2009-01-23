@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JSSProxy.java,v 1.4 2008-08-08 00:40:55 ww203982 Exp $
+ * $Id: JSSProxy.java,v 1.5 2009-01-23 22:03:28 beomsuk Exp $
  *
  */
 package com.iplanet.services.comm.https;
@@ -161,12 +161,6 @@ public class JSSProxy implements Runnable {
                 JSSProxy.JSSProxySessionRunnable p =
                             new JSSProxySessionRunnable(inconnection);
                 threadPool.run(p);
-            } catch (SocketTimeoutException ex) {
-                debug.error("JSSProxy: SocketTimeoutException:", ex);
-            } catch (SocketException ex) {
-                if (isShutdownCalled) {
-                    break;
-                }
             } catch (IOException ex) {
                 debug.error("JSSProxy: IOException:", ex);
             } catch (SecurityException ex) {
@@ -177,6 +171,12 @@ public class JSSProxy implements Runnable {
             } catch (Exception ex) {
                 // don't need to rethrow
                 debug.error("JSSProxy: Exception:", ex);
+                if (isShutdownCalled) {
+                    if (ex.getClass().getName().equals(
+                        SocketException.class.getName())) {
+                        break;
+                    }
+                }
             } catch (Throwable e) {
                 debug.error("JSSProxy: Uncaught exception:", e);
                 // decide what to log here
