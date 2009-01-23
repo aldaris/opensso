@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NamingService.java,v 1.11 2008-07-11 01:46:22 arviranga Exp $
+ * $Id: NamingService.java,v 1.12 2009-01-23 22:08:36 beomsuk Exp $
  *
  */
 
@@ -31,6 +31,7 @@ package com.iplanet.services.naming.service;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.dpro.session.Session;
 import com.iplanet.dpro.session.SessionID;
+import com.iplanet.dpro.session.service.SessionService;
 import com.iplanet.services.comm.server.RequestHandler;
 import com.iplanet.services.comm.share.Request;
 import com.iplanet.services.comm.share.Response;
@@ -94,9 +95,13 @@ public class NamingService implements RequestHandler, ServiceListener {
 
     private static SSOToken sso = null;
 
-    private static ServiceSchemaManager scmNaming = null;
+    private static ServiceSchemaManager ssmNaming = null;
 
-    private static ServiceSchemaManager scmPlatform = null;
+    private static ServiceSchemaManager ssmPlatform = null;
+
+    private static ServiceConfigManager scmNaming = null;
+
+    private static ServiceConfigManager scmPlatform = null;
 
     private static ServiceConfig sessionServiceConfig = null;
 
@@ -126,10 +131,13 @@ public class NamingService implements RequestHandler, ServiceListener {
             String adminPassword = (String) AccessController
                     .doPrivileged(new AdminPasswordAction());
             sso = mgr.createSSOToken(new AuthPrincipal(adminDN), adminPassword);
-            scmNaming = new ServiceSchemaManager("iPlanetAMNamingService", sso);
-            scmPlatform = new ServiceSchemaManager("iPlanetAMPlatformService",
+            ssmNaming = new ServiceSchemaManager("iPlanetAMNamingService", sso);
+            ssmPlatform = new ServiceSchemaManager("iPlanetAMPlatformService",
                     sso);
-            serviceRevNumber = scmPlatform.getRevisionNumber();
+            scmNaming = new ServiceConfigManager("iPlanetAMNamingService", sso);
+            scmPlatform = new ServiceConfigManager("iPlanetAMPlatformService",
+                    sso);
+            serviceRevNumber = ssmPlatform.getRevisionNumber();
             if (serviceRevNumber < SERVICE_REV_NUMBER_70) {
                 ServiceConfigManager scm = new ServiceConfigManager(
                         "iPlanetAMSessionService", sso);
@@ -137,7 +145,13 @@ public class NamingService implements RequestHandler, ServiceListener {
                 sessionConfig = sessionServiceConfig.getSubConfigNames();
             }
 
-            // Add Listener to the platform service
+            // Add Listener to the platform and naming service 
+            // for schema changes 
+            ssmNaming.addListener(new NamingService());
+            ssmPlatform.addListener(new NamingService());
+            // Add Listener to the platform and naming service
+            // for config changes
+            scmNaming.addListener(new NamingService());
             scmPlatform.addListener(new NamingService());
         } catch (Exception ne) {
             namingDebug.error("Naming Initialization failed.", ne);
@@ -189,9 +203,9 @@ public class NamingService implements RequestHandler, ServiceListener {
         Hashtable nametable = null;
 
         try {
-            ServiceSchema sc = scmNaming.getGlobalSchema();
+            ServiceSchema sc = ssmNaming.getGlobalSchema();
             Map namingAttrs = sc.getAttributeDefaults();
-            sc = scmPlatform.getGlobalSchema();
+            sc = ssmPlatform.getGlobalSchema();
             Map platformAttrs = sc.getAttributeDefaults();
             Set sites = getSites(platformAttrs);
             Set servers = getServers(platformAttrs, sites);
@@ -506,9 +520,11 @@ public class NamingService implements RequestHandler, ServiceListener {
     public void schemaChanged(String serviceName, String version) {
         // Do not update if the servieName is not "iPlanetAMPlatformService"
         if ((serviceName == null)
-                || (!serviceName.equals("iPlanetAMPlatformService"))) {
+            || (!serviceName.equals("iPlanetAMPlatformService") && 
+            !serviceName.equals("iPlanetAMNamingService"))) {
             return;
         }
+
         try {
             updateNamingTable();
         } catch (SMSException ex) {
@@ -523,7 +539,20 @@ public class NamingService implements RequestHandler, ServiceListener {
 
     public void globalConfigChanged(String serviceName, String version,
             String groupName, String serviceComponent, int type) {
-        // Do nothing
+        if ((serviceName == null)
+                || (!serviceName.equals("iPlanetAMPlatformService") && 
+                    !serviceName.equals("iPlanetAMNamingService"))) {
+            return;
+        }
+        try {
+            updateNamingTable();
+            SessionService ss = SessionService.getSessionService();
+            if ((ss != null) && ss.isSessionFailoverEnabled()) {
+                ss.ReInitClusterMemberMap();
+            }
+        } catch (Exception ex) {
+            namingDebug.error("Error occured in updating naming table", ex);
+        }
     }
 
     public void organizationConfigChanged(String serviceName, String version,

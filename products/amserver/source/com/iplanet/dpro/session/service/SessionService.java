@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionService.java,v 1.31 2009-01-16 06:17:53 lakshman_abburi Exp $
+ * $Id: SessionService.java,v 1.32 2009-01-23 22:09:30 beomsuk Exp $
  *
  */
 
@@ -2078,6 +2078,23 @@ public class SessionService {
         }
     }
 
+    /**
+     * Initialize the cluster server map given the server IDs in Set.
+     * Invoked by NamingService whenever any global confg changes happen.
+     */
+    public void ReInitClusterMemberMap() throws Exception {
+        Set serverIDs = null;
+
+        if (isSessionFailoverEnabled()) {
+            serverIDs = WebtopNaming.getSiteNodes(sessionServerID);
+            initClusterMemberMap(serverIDs);
+        }
+        
+        if (sessionDebug.messageEnabled()) {
+            sessionDebug.message("clusterServerList=" + getClusterServerList());
+        }
+    }
+    
     /**
      * A convenience method to get the cluster server list in delimiter
      * separated String format. This is currently used in message debug log.
