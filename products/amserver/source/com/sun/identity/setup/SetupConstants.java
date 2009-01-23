@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.38 2008-11-06 05:31:02 veiming Exp $
+ * $Id: SetupConstants.java,v 1.39 2009-01-23 00:16:14 kevinserwin Exp $
  *
  */
 
@@ -592,6 +592,7 @@ public interface SetupConstants {
      * PC-based architecture
      */
     String X86 = "86";
+    String AMD = "amd";
 
     /**
      * User Management Datastore SSL tag.
