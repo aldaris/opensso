@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JSSEncryption.java,v 1.2 2008-06-25 05:52:47 qcheng Exp $
+ * $Id: JSSEncryption.java,v 1.3 2009-01-23 22:16:26 beomsuk Exp $
  *
  */
 
@@ -100,15 +100,33 @@ import com.sun.identity.shared.debug.Debug;
  * 3. A watchdog may be needed to auto restart the server.
  *
  * @author mzhao
- * @version $Revision: 1.2 $, $Date: 2008-06-25 05:52:47 $
+ * @version $Revision: 1.3 $, $Date: 2009-01-23 22:16:26 $
  **/
 public class JSSEncryption implements AMEncryption, ConfigurableKey {
 
     private static final byte VERSION = 1;
 
-    private static final String DEFAULT_KEYGEN_ALG = "PBE_MD5_DES_CBC"; 
-    private static final String DEFAULT_ENCYPTION_ALG = "DES_CBC_PAD";
+    private static String DEFAULT_KEYGEN_ALG = "PBE_MD5_DES_CBC"; 
+    private static String DEFAULT_ENCYPTION_ALG = "DES_CBC_PAD";
+    private static Debug debug = Debug.getInstance("amJSS");
+    static String method = "JSSEncryption.initialize";
 
+    static {
+        JSSInit.initialize();
+        try {
+            CryptoManager cm = CryptoManager.getInstance();
+
+            /* if FIPS is enabled, configure only FIPS ciphersuites */
+            if (cm.FIPSEnabled()) {
+                DEFAULT_KEYGEN_ALG = "PBE_SHA1_DES3_CBC"; 
+                DEFAULT_ENCYPTION_ALG = "DES3_CBC_PAD";
+            }
+        } catch (Exception e) {
+            if (debug != null) {
+                debug.error("Crypt: Initialize JSS ", e);
+            }
+        }                
+    }
 
     private static final String[] KEYGEN_ALGS = {
         "PBE_SHA1_DES3_CBC",
@@ -135,8 +153,6 @@ public class JSSEncryption implements AMEncryption, ConfigurableKey {
     private SymmetricKey sKeys[] = null;
     private IVParameterSpec ivParamSpecs[] = null;
     private static CryptoToken mToken = null;
-    private static Debug debug = Debug.getInstance("amJSS");
-    static String method = "JSSEncryption.initialize";
 
     static {
         try {
