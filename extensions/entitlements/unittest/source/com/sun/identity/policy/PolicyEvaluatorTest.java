@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorTest.java,v 1.2 2009-01-23 07:41:40 veiming Exp $
+ * $Id: PolicyEvaluatorTest.java,v 1.3 2009-01-23 20:27:46 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -68,6 +68,11 @@ public class PolicyEvaluatorTest {
             throw new Exception(
                 "http://www.sun.com:8080/public evaluation failed");
         }
+        
+        Set<String> actionNames = new HashSet<String>();
+        actionNames.add("GET");
+        PolicyDecision dp = pe.getPolicyDecision(adminToken, 
+            "http://www.sun.com:8080/private", actionNames);
         
         pm.removePolicy("policyTest1");
     }

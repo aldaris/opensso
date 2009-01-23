@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Evaluator.java,v 1.5 2009-01-22 07:54:45 veiming Exp $
+ * $Id: Evaluator.java,v 1.6 2009-01-23 20:27:45 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -76,7 +77,6 @@ public class Evaluator {
         throws EntitlementException {
         adminSubject = subject;
     }
-
     /**
      * Returns <code>true</code> if the subject is granted to an
      * entitlement.
@@ -91,10 +91,31 @@ public class Evaluator {
     public boolean hasEntitlement(Subject subject, Entitlement e) 
         throws EntitlementException {
         //TOFIX: need a swtich choosing opensso or XACML 
+        return hasEntitlement(subject, e, Collections.EMPTY_MAP);
+    }
+    
+    /**
+     * Returns <code>true</code> if the subject is granted to an
+     * entitlement.
+     *
+     * @param subject Subject who is under evaluation.
+     * @param e Entitlement object which describes the resource name and 
+     *          actions.
+     * @param envParameters Map of environment parameters.
+     * @return <code>true</code> if the subject is granted to an
+     *         entitlement.
+     * @throws EntitlementException if the result cannot be determined.
+     */
+    public boolean hasEntitlement(
+        Subject subject, 
+        Entitlement e,
+        Map<String, Set<String>> envParameters
+    ) throws EntitlementException {
+        //TOFIX: need a swtich choosing opensso or XACML 
         IPolicyEvaluator evaluator = 
             PolicyEvaluatorFactory.getInstance().getEvaluator();
-        
-        return evaluator.isAllowed(adminSubject, subject, serviceTypeName, e);
+        return evaluator.hasEntitlement(
+            adminSubject, subject, serviceTypeName, e, envParameters);
     }
 
     /**
@@ -116,7 +137,11 @@ public class Evaluator {
         Map<String, Set<String>> environment,
         boolean recursive
     ) throws EntitlementException {
-        return new ArrayList<Entitlement>();
+        //TOFIX: need a swtich choosing opensso or XACML 
+        IPolicyEvaluator evaluator = 
+            PolicyEvaluatorFactory.getInstance().getEvaluator();
+        return evaluator.getEntitlements(adminSubject, subject, serviceTypeName,
+            resourceName, environment, recursive);
     }
 }
 

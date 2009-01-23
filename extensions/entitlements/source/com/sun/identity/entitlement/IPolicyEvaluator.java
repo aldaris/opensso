@@ -22,19 +22,60 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPolicyEvaluator.java,v 1.1 2009-01-22 07:54:45 veiming Exp $
+ * $Id: IPolicyEvaluator.java,v 1.2 2009-01-23 20:27:46 veiming Exp $
  *
  */
 
 package com.sun.identity.entitlement;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.security.auth.Subject;
 
 public interface IPolicyEvaluator {
-    boolean isAllowed(
+    /**
+     * Returns <code>true</code> if the subject is granted to an
+     * entitlement.
+     *
+     * @param adminubject Subject for performing the evaluation.
+     * @param subject Subject who is under evaluation.
+     * @param serviceTypeName Application type.
+     * @param entitlement Entitlement object which describes the resource name 
+     *        and actions.
+     * @param envParameters Map of environment parameters.
+     * @return <code>true</code> if the subject is granted to an
+     *         entitlement.
+     * @throws EntitlementException if the result cannot be determined.
+     */
+    boolean hasEntitlement(
         Subject adminSubject,
         Subject subject,
         String serviceTypeName,
-        Entitlement entitlement
+        Entitlement entitlement,
+        Map<String, Set<String>> envParameters
+    ) throws EntitlementException;
+
+    /**
+     * Returns list of entitlements granted to a subject.
+     *
+     * @param adminubject Subject for performing the evaluation.
+     * @param subject Subject who is under evaluation.
+     * @param serviceTypeName Application type.
+     * @param entitlement Entitlement object which describes the resource name 
+     *        and actions.
+     * @param envParameters Map of environment parameters.
+     * @param recursive <code>true</code> to perform evaluation on sub resources
+     *        from the given resource name.
+     * @return list of entitlements granted to a subject.
+     * @throws EntitlementException if the result cannot be determined.
+     */
+    List<Entitlement> getEntitlements(
+        Subject adminSubject,
+        Subject subject,
+        String serviceTypeName,
+        String resourceName,
+        Map<String, Set<String>> envParameters,
+        boolean recursive
     ) throws EntitlementException;
 }
