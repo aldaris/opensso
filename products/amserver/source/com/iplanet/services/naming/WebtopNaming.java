@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebtopNaming.java,v 1.27 2008-10-27 17:00:21 veiming Exp $
+ * $Id: WebtopNaming.java,v 1.28 2009-01-23 22:05:35 beomsuk Exp $
  *
  */
 
@@ -147,6 +147,7 @@ public class WebtopNaming {
                 }
             }
         } 
+        
         try {
             getAMServer();
             debug = Debug.getInstance("amNaming");
@@ -239,7 +240,7 @@ public class WebtopNaming {
         try {
             // Initilaize the list of naming URLs
             getNamingServiceURL();
-            if (!serverMode && (namingServiceURL.length > 1)) {
+            if (!serverMode) {
                 startSiteMonitor(namingServiceURL);
             }
         } catch (Exception ex) {
@@ -1283,17 +1284,10 @@ public class WebtopNaming {
             return;
         }
 
-        // Start naming service monitor if more than 1 naming URLs are found
-        if (urlList.length > 1) {
-            monitorThread = new SiteMonitor(urlList);
-            SystemTimer.getTimer().schedule(monitorThread, new Date(
-                System.currentTimeMillis() / 1000 * 1000));
-        } else {
-            if (debug.messageEnabled()) {
-                debug.message("Only one naming service URL specified."
-                    + " NamingServiceMonitor will be disabled.");
-            }
-        }
+        // Start naming service monitor
+        monitorThread = new SiteMonitor(urlList);
+        SystemTimer.getTimer().schedule(monitorThread, new Date(
+            System.currentTimeMillis() / 1000 * 1000));
     }
 
     /**
