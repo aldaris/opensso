@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginModule.java,v 1.16 2009-01-08 18:44:24 ericow Exp $
+ * $Id: AMLoginModule.java,v 1.17 2009-01-24 00:36:19 lakshman_abburi Exp $
  *
  */
 
@@ -233,6 +233,8 @@ public abstract class AMLoginModule implements LoginModule {
     private Principal principal = null;
     // the authentication status
     private boolean succeeded = false;
+
+    private boolean forceCallbacksRead = false;
     
     //use Shared state by default disabled
     private boolean isSharedState = false;
@@ -481,30 +483,19 @@ public abstract class AMLoginModule implements LoginModule {
         // This method will be called by customer module, so it will
         // return Callback[] from external callback List
         // check if there is no callbacks defined for this module
-        if (noCallbacks || isSharedState) {
+        if (noCallbacks || ( (isSharedState) && (!forceCallbacksRead) )) {
             return EMPTY_CALLBACK;
         }
         
         if ((internal == null) || ( fetchOrig )) {
-            // get the callbacks for this class;
-            origList = AMModuleProperties.getModuleProperties(fileName);
+            forceCallbacksInit();
             if (origList == null || origList.isEmpty()) {
-                // we got file whose size is zero, this is the case for
-                // Cert/Anonymous based authentication
-                noCallbacks = true;
                 return EMPTY_CALLBACK;
             }
-            // instantiate internal/external according to module callback size
-            stateLength = origList.size();
-            internal = new ArrayList();
-            external = new ArrayList();
+
             if (debug.messageEnabled()) {
                 debug.message("callback size for state " + index + "=" +
                 stateLength);
-            }
-            for (int i = 0; i < stateLength; i++) {
-                internal.add(null);
-                external.add(null);
             }
         }
         
@@ -527,7 +518,30 @@ public abstract class AMLoginModule implements LoginModule {
         // we need to create clone copy here
         return cloneCallbacks(index-1, (Callback[]) origList.get(index-1));
     }
-    
+
+    protected void forceCallbacksInit () throws AuthLoginException {
+        if (internal == null) {
+            // get the callbacks for this class;
+            origList = AMModuleProperties.getModuleProperties(fileName);
+            if (origList == null || origList.isEmpty()) {
+                // we got file whose size is zero, this is the case for
+                // Cert/Anonymous based authentication
+                noCallbacks = true;
+                return;
+            }
+            // instantiate internal/external according to module callback size
+            stateLength = origList.size();
+            internal = new ArrayList();
+            external = new ArrayList();
+            if (debug.messageEnabled()) {
+                debug.message("callback stateLength in file = " + stateLength);
+            }
+            for (int i = 0; i < stateLength; i++) {
+                internal.add(null);
+                external.add(null);
+            }
+        }
+    }
     
     /**
      * Replace Callback object for a specific state.
@@ -2105,6 +2119,14 @@ public abstract class AMLoginModule implements LoginModule {
      */
     public boolean isSharedStateEnabled() {
         return isSharedState;
+    }
+
+    /**
+     * Sets flag to force read call backs in auth chain process.
+     * @param val - value to force reading call backs
+     */
+    public void setForceCallbacksRead(boolean val) {
+        forceCallbacksRead = val;
     }
 
     /**

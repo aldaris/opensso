@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAP.java,v 1.13 2008-12-03 01:00:43 veiming Exp $
+ * $Id: LDAP.java,v 1.14 2009-01-24 00:37:52 lakshman_abburi Exp $
  *
  */
 
@@ -608,17 +608,34 @@ public class LDAP extends AMLoginModule {
                     validatedUserID = ldapUtil.getUserId();
                     createProfile();
                     currentState = ISAuthConstants.LOGIN_SUCCEED;
+                    setForceCallbacksRead(false);
                     break;
                 case LDAPAuthUtils.PASSWORD_EXPIRING:
                     String fmtMsg = bundle.getString("PasswordExp");
                     String msg = com.sun.identity.shared.locale.Locale.
                         formatMessage(fmtMsg, ldapUtil.getExpTime());
+                    /**
+                     * In case of sharedstate if the chain breaks in ldap
+                     * because of abnormal condition like pwd expiring
+                     * then the callbacks has to be read fresh so that new
+                     * screen appears for the user.
+                     */
+                    setForceCallbacksRead(true);
+                    forceCallbacksInit();
                     replaceHeader(PASSWORD_CHANGE, msg);
                     currentState = PASSWORD_CHANGE;
                     break;
                 case LDAPAuthUtils.PASSWORD_RESET_STATE:
                     isReset = true;
                     String resetMsg = bundle.getString("PasswordReset");
+                    /**
+                     * In case of sharedstate if the chain breaks in ldap
+                     * because of abnormal condition like pwd reset
+                     * then the callbacks has to be read fresh so that new
+                     * screen appears for the user.
+                     */
+                    setForceCallbacksRead(true);
+                    forceCallbacksInit();
                     replaceHeader(PASSWORD_CHANGE, resetMsg);
                     currentState = PASSWORD_CHANGE;
                     break;
