@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: AgentService.xml,v 1.76 2009-01-13 06:50:17 mahesh_prasad_r Exp $
+   $Id: AgentService.xml,v 1.77 2009-01-24 01:33:34 mallas Exp $
 
 -->
 
@@ -3158,6 +3158,19 @@
                          </DefaultValues>
                     </AttributeSchema>
 
+                    <AttributeSchema
+                        name="DetectUserTokenReplay"
+                        type="single"
+                        syntax="boolean"
+                        i18nKey="a362">
+                        <BooleanValues>
+                            <BooleanTrueValue i18nKey="a105">true</BooleanTrueValue>
+                            <BooleanFalseValue i18nKey="a106">false</BooleanFalseValue>
+                        </BooleanValues>
+                        <DefaultValues>
+                            <Value>true</Value>
+                        </DefaultValues>
+                    </AttributeSchema>
 
                 </SubSchema>
                 
