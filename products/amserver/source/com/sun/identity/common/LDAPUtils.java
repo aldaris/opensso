@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPUtils.java,v 1.5 2008-11-19 17:22:26 veiming Exp $
+ * $Id: LDAPUtils.java,v 1.6 2009-01-24 00:50:57 goodearth Exp $
  *
  */
 
@@ -89,6 +89,7 @@ public class LDAPUtils {
         LDIF ldif,
         LDAPConnection ld
     ) throws IOException, LDAPException {
+        String filter = "cn=referential integrity postoperation";
         for(LDIFRecord rec = ldif.nextRecord(); rec != null; 
             rec = ldif.nextRecord()
         ) {
@@ -98,6 +99,17 @@ public class LDAPUtils {
             try {
                 content = rec.getContent();
                 DN = rec.getDN();
+                // This is to avoid overwriting the referential integrity
+                // plugin data with the default entry from plugin.ldif.
+                // Use case : Configuring user store against existing DIT.
+                if (DN.startsWith(filter)) {
+                    LDAPSearchResults results = ld.search(
+                    filter + ", cn=plugins, cn=config", 
+                        LDAPConnection.SCOPE_SUB, filter, null, false);
+                    if (results.hasMoreElements()) {
+                        break;
+                    }
+                }
 
                 if (content instanceof LDIFModifyContent) {
                     ld.modify(DN, 
