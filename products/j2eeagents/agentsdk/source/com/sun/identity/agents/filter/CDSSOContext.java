@@ -28,6 +28,7 @@
 package com.sun.identity.agents.filter;
 
 import java.net.URLEncoder;
+import java.net.URLDecoder;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -227,6 +228,7 @@ public class CDSSOContext extends SSOContext implements ICDSSOContext {
         sb.append("|").append(authnRequestID);
         String value = getCryptUtil().encrypt(sb.toString());
 
+        value = URLEncoder.encode(value);
         Cookie cookie = new Cookie(getCDSSOCookieName(), value);
         cookie.setPath(IUtilConstants.DEFAULT_COOKIE_PATH);
 
@@ -243,6 +245,7 @@ public class CDSSOContext extends SSOContext implements ICDSSOContext {
     public String[] parseCDSSOCookieValue(String cdssoCookie)
         throws AgentException
     {
+        cdssoCookie = URLDecoder.decode(cdssoCookie);
         String cdssoTokens[] = null;
         StringTokenizer st =
             new StringTokenizer(getCryptUtil().decrypt(cdssoCookie), "|");
