@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorAdaptor.java,v 1.4 2009-01-23 20:27:46 veiming Exp $
+ * $Id: PolicyEvaluatorAdaptor.java,v 1.5 2009-01-24 02:19:53 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -34,6 +34,7 @@ import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.IPolicyEvaluator;
 import com.sun.identity.entitlement.util.ResourceNameSplitter;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -89,6 +90,7 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
                     ssoToken, serviceTypeName, resourceName, 
                     actionValues.keySet(), envParameters);
                 if (pd != null) {
+                    //TOFIX: Check can return if false
                     policyDecisions.add(pd);
                 }
             }
@@ -134,12 +136,13 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
     
     private SSOToken getSSOToken(Subject subject)
         throws SSOException {
-        Set principals = subject.getPrincipals();
+        Set<Principal> principals = subject.getPrincipals();
         if (!principals.isEmpty()) {
             try {
-            String tokenId = (String)principals.iterator().next();
-            SSOTokenManager mgr = SSOTokenManager.getInstance();
-            return mgr.createSSOToken(tokenId);
+                Principal p = principals.iterator().next();
+                String tokenId = p.getName();
+                SSOTokenManager mgr = SSOTokenManager.getInstance();
+                return mgr.createSSOToken(tokenId);
             } catch (Exception e) {
                 e.printStackTrace();
             }
