@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSConstants.java,v 1.11 2008-09-08 21:50:14 mallas Exp $
+ * $Id: WSSConstants.java,v 1.12 2009-01-24 01:31:25 mallas Exp $
  *
  */
 
@@ -194,6 +194,15 @@ public class WSSConstants {
             "urn:oasis:names:tc:SAML:2.0:ac:classes:Software-PKI";
     
     public static final String AUTH_METHOD = "AuthMethod";
+    
+    /**
+     * The cache clean up interval in seconds for wss cache.
+     */
+    public static final int CACHE_CLEANUP_INTERVAL_DEFAULT = 300;
+    
+    public static final String CACHE_CLEANUP_INTERVAL = 
+                  "com.sun.identity.wss.security.cache.interval";
+    
 
 }
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMSTSConfiguration.java,v 1.9 2008-08-07 23:21:05 mallas Exp $
+ * $Id: FAMSTSConfiguration.java,v 1.10 2009-01-24 01:31:26 mallas Exp $
  *
  */
 
@@ -87,7 +87,8 @@ public class FAMSTSConfiguration implements
     private static String encryptionAlgorithm = null;
     private static int encryptionStrength = 0;
     private static String signingRefType = null;
-    private static String authChain = null;
+    private static String authChain = null;    
+    private static boolean detectUserTokenReplay = true;
     
     private CallbackHandler callbackHandler;
     
@@ -135,7 +136,8 @@ public class FAMSTSConfiguration implements
     static final String ENCRYPTION_ALGORITHM = "EncryptionAlgorithm";
     static final String ENCRYPTION_STRENGTH = "EncryptionStrength";
     static final String SIGNING_REF_TYPE = "SigningRefType";
-    static final String AUTHENTICATION_CHAIN = "AuthenticationChain";
+    static final String AUTHENTICATION_CHAIN = "AuthenticationChain";    
+    static final String USER_TOKEN_DETECT_REPLAY = "DetectUserTokenReplay";                         
 
     private static Debug debug = STSUtils.debug;
     static ConfigurationInstance ci = null;
@@ -407,6 +409,12 @@ public class FAMSTSConfiguration implements
             if(!tmp.equals("[Empty]")) {
                authChain = (String)values.iterator().next();
             }
+        }                        
+        values = (Set)attrMap.get(USER_TOKEN_DETECT_REPLAY);
+        if (values != null && !values.isEmpty()) {
+            detectUserTokenReplay = 
+                Boolean.valueOf((String)values.iterator().next())
+                .booleanValue();
         }
     }
     
@@ -888,5 +896,21 @@ public class FAMSTSConfiguration implements
      */
     public void setAuthenticationChain(String authChain) {
         this.authChain = authChain;
+    }
+
+    /**
+     * Returns true if the user name token replay is enabled.
+     * @return true if the user name token replay is enabled.
+     */
+    public boolean isUserTokenDetectReplayEnabled() {
+        return detectUserTokenReplay;    
+    }
+    
+    /**
+     * Enable or disable the detection of user token replay
+     * @param enable true if the detection of user token replay is enabled.
+     */
+    public void setDetectUserTokenReplay(boolean enable) {
+        this.detectUserTokenReplay = enable;
     }
 }

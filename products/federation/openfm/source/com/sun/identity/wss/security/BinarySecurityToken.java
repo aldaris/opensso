@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BinarySecurityToken.java,v 1.7 2008-10-10 23:40:13 mallas Exp $
+ * $Id: BinarySecurityToken.java,v 1.8 2009-01-24 01:31:25 mallas Exp $
  *
  */
 
@@ -485,6 +485,14 @@ public class BinarySecurityToken implements SecurityToken {
      */ 
     public String[] getSubjectCertAlias() {
         return this.certAlias;
+    }
+    
+    /**
+     * Returns the signing id for binary security token.
+     * @return the signing id for the binary security token.
+     */
+    public String getSigningId() {
+        return id;
     }
 
     /**

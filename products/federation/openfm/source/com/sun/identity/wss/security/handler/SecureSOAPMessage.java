@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureSOAPMessage.java,v 1.21 2008-09-08 21:50:15 mallas Exp $
+ * $Id: SecureSOAPMessage.java,v 1.22 2009-01-24 01:31:26 mallas Exp $
  *
  */
 
@@ -87,6 +87,8 @@ import com.sun.identity.shared.Constants;
 import com.sun.identity.xmlenc.XMLEncryptionManager;
 import com.sun.identity.xmlenc.EncryptionConstants;
 import com.sun.identity.xmlenc.EncryptionException;
+import com.sun.identity.shared.DateUtils;
+import java.text.ParseException;
 
 
 /**
@@ -111,6 +113,7 @@ public class SecureSOAPMessage {
      SystemConfigurationUtil.getProperty(Constants.AM_SERVER_HOST);
      private String server_port  =
      SystemConfigurationUtil.getProperty(Constants.AM_SERVER_PORT);
+     private List signingIds = new ArrayList();
 
      /**
       * Constructor to create secure SOAP message. 
@@ -353,7 +356,12 @@ public class SecureSOAPMessage {
                         securityMechanism = 
                                 SecurityMechanism.WSS_NULL_X509_TOKEN; 
                      }
-                     
+                 } else if((WSSConstants.TIME_STAMP.equals(localName)) ||
+                         (WSSConstants.WSSE_NS.equals(nameSpace))) {
+                     if(!validateTimestamp((Element)currentNode)) {
+                        throw new SecurityException(
+                                bundle.getString("invalidTimestamp")); 
+                     }
                  } else {
                      if(debug.messageEnabled()) {
                          debug.message("SecureSOAPMessage.parseSecurityHeader: "
@@ -402,6 +410,15 @@ public class SecureSOAPMessage {
                  bundle.getString("securityHeaderNotFound"));
          }
          this.securityToken = token;
+         String tokenType = securityToken.getTokenType();
+         if(SecurityToken.WSS_USERNAME_TOKEN.equals(tokenType)) {
+            UserNameToken userNameToken = (UserNameToken)securityToken;
+            signingIds.add(userNameToken.getSigningId());
+         } else if(SecurityToken.WSS_X509_TOKEN.equals(tokenType)) {
+            BinarySecurityToken binaryToken = 
+                    (BinarySecurityToken)securityToken;
+            signingIds.add(binaryToken.getSigningId());
+         }
          Element tokenE = token.toDocumentElement();
          Node tokenNode = soapMessage.getSOAPPart().importNode(tokenE, true);
          WSSUtils.prependChildElement(wsseHeader, (Element)tokenNode, true, 
@@ -489,6 +506,11 @@ public class SecureSOAPMessage {
                           WSSConstants.WSU_NS, 
                           WSSConstants.WSU_TAG + ":" +
                           WSSConstants.TIME_STAMP);
+             String tsId = SAMLUtils.generateID();
+             if(signingIds != null) {
+                signingIds.add(tsId);
+             }
+             timeStamp.setAttribute(WSSConstants.WSU_ID, tsId);
              wsseHeader.appendChild(timeStamp);
              Element created = soapMessage.getSOAPPart().createElementNS(
                           WSSConstants.WSU_NS,
@@ -804,11 +826,13 @@ public class SecureSOAPMessage {
       * Returns the list of signing ids.
       */
      private List getSigningIds() throws Exception {
-        List ids = new ArrayList();
+        if(signingIds == null) {
+           signingIds = new ArrayList();
+        }
         SOAPBody body = soapMessage.getSOAPPart().getEnvelope().getBody();
         String id  = body.getAttribute(WSSConstants.WSU_ID); 
-        ids.add(id);
-        return ids;
+        signingIds.add(id);
+        return signingIds;
      }
 
      /**
@@ -1260,6 +1284,55 @@ public class SecureSOAPMessage {
              }
          }
          return tokenNode;
+     }
+     
+     private boolean validateTimestamp(Element tsElement) {
+         
+         String created = null;
+         String expires = null;
+         NodeList nl = tsElement.getChildNodes();
+         for (int i=0; i < nl.getLength(); i++) {
+             Node child = nl.item(i);
+             if(child.getNodeType() != Node.ELEMENT_NODE) {
+                continue; 
+             }
+             
+             String childName = child.getLocalName();
+             if(WSSConstants.CREATED.equals(childName)) {                 
+                created = XMLUtils.getElementValue((Element)child);
+             } else if(WSSConstants.EXPIRES.equals(childName)) {
+                expires = XMLUtils.getElementValue((Element)child); 
+             }
+         }
+         try {
+             long createdTS = DateUtils.stringToDate(created).getTime();
+             // Add a time skew for the createdTS for 5 sec.
+             createdTS = createdTS - 5000;
+             long expiresTS = DateUtils.stringToDate(expires).getTime();
+             long now = new Date().getTime();
+             if (created == null ) {
+                 if (expires == null) {
+                     return false;
+                 } else {
+                    if (now < expiresTS) {
+                        return true;
+                    }
+                 }
+             } else if (expires == null ) {
+                 if (now >= createdTS) {
+                     return true;
+                 }
+             } else if ((now >= createdTS) && 
+                  (now < expiresTS)) {       
+                 return true; 
+             }
+             return false;
+         } catch (java.text.ParseException pe) {
+             WSSUtils.debug.error("SecureSOAPMessage.validateTimestamp: " +
+                    "parsing exception", pe);
+             return false; 
+         }
+         
      }
 
 }

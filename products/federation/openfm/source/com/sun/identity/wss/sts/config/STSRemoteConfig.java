@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSRemoteConfig.java,v 1.1 2008-08-30 01:25:02 mallas Exp $
+ * $Id: STSRemoteConfig.java,v 1.2 2009-01-24 01:31:26 mallas Exp $
  */
 
 package com.sun.identity.wss.sts.config;
@@ -71,7 +71,8 @@ public class STSRemoteConfig {
     private String encryptionAlgorithm = null;
     private int encryptionStrength = 0;
     private String signingRefType = null;
-    private String authChain = null;
+    private String authChain = null;    
+    private boolean detectUserTokenReplay = true;
     
     static final String ISSUER = "stsIssuer";
     static final String SERVICE_NAME = "sunFAMSTSService";
@@ -96,7 +97,8 @@ public class STSRemoteConfig {
     static final String ENCRYPTION_ALGORITHM = "EncryptionAlgorithm";
     static final String ENCRYPTION_STRENGTH = "EncryptionStrength";
     static final String SIGNING_REF_TYPE = "SigningRefType";
-    static final String AUTHENTICATION_CHAIN = "AuthenticationChain";
+    static final String AUTHENTICATION_CHAIN = "AuthenticationChain";    
+    static final String USER_TOKEN_DETECT_REPLAY = "DetectUserTokenReplay";
     
     public STSRemoteConfig() {
         
@@ -286,6 +288,12 @@ public class STSRemoteConfig {
             if(!tmp.equals("[Empty]")) {
                authChain = (String)values.iterator().next();
             }
+        }                        
+        values = (Set)attrMap.get(USER_TOKEN_DETECT_REPLAY);
+        if (values != null && !values.isEmpty()) {
+            detectUserTokenReplay = 
+                Boolean.valueOf((String)values.iterator().next())
+                .booleanValue();
         }
     }    
     
@@ -636,5 +644,20 @@ public class STSRemoteConfig {
      */
     public void setAuthenticationChain(String authChain) {
         this.authChain = authChain;
+    }           
+    /**
+     * Returns true if the user name token replay is enabled.
+     * @return true if the user name token replay is enabled.
+     */
+    public boolean isUserTokenDetectReplayEnabled() {
+        return detectUserTokenReplay;    
+    }
+    
+    /**
+     * Enable or disable the detection of user token replay
+     * @param enable true if the detection of user token replay is enabled.
+     */
+    public void setDetectUserTokenReplay(boolean enable) {
+        this.detectUserTokenReplay = enable;
     }
 }

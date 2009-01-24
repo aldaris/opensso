@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyght owner]"
  *
- * $Id: AgentProvider.java,v 1.35 2008-11-17 23:57:02 mallas Exp $
+ * $Id: AgentProvider.java,v 1.36 2009-01-24 01:31:25 mallas Exp $
  *
  */
 
@@ -119,7 +119,9 @@ public class AgentProvider extends ProviderConfig {
      private static final String ENCRYPTION_ALG = "EncryptionAlgorithm";
      private static final String ENCRYPTION_STRENGTH = "EncryptionStrength";
      private static final String SIGNING_REF_TYPE = "SigningRefType";
-
+     
+     private static final String USER_TOKEN_DETECT_REPLAY = 
+             "DetectUserTokenReplay";
      private AMIdentityRepository idRepo;
      private static Set agentConfigAttribute;
      private static Debug debug = ProviderUtils.debug;
@@ -165,7 +167,8 @@ public class AgentProvider extends ProviderConfig {
          attrNames.add(TOKEN_CONVERSION_TYPE);
          attrNames.add(ENCRYPTION_ALG);
          attrNames.add(ENCRYPTION_STRENGTH);
-         attrNames.add(SIGNING_REF_TYPE);
+         attrNames.add(SIGNING_REF_TYPE);         
+         attrNames.add(USER_TOKEN_DETECT_REPLAY);
      }
 
      public void init (String providerName, 
@@ -458,6 +461,11 @@ public class AgentProvider extends ProviderConfig {
         } else if (attr.equals(ENCRYPTION_STRENGTH)) {
             if(value != null && value.length() != 0) {
                this.encryptionStrength = Integer.parseInt(value);
+            }       
+        } else if(attr.equals(USER_TOKEN_DETECT_REPLAY)) {
+            if ((value != null) && (value.length() != 0)) {
+                this.detectUserTokenReplay = 
+                        Boolean.valueOf(value).booleanValue();
             }
         } else {
            if(ProviderUtils.debug.messageEnabled()) {
@@ -596,11 +604,9 @@ public class AgentProvider extends ProviderConfig {
            config.put(INCLUDE_MEMBERSHIPS,
                        Boolean.toString(includeMemberships));
         }
-        
-        if(verifyKrbSignature) {
-           config.put(VERIFY_KRB_SIGNATURE,
-                       Boolean.toString(verifyKrbSignature));            
-        }
+                
+        config.put(VERIFY_KRB_SIGNATURE,
+                       Boolean.toString(verifyKrbSignature));                    
         
         if(kdcServer != null) {
            config.put(KDC_SERVER, kdcServer); 
@@ -621,12 +627,10 @@ public class AgentProvider extends ProviderConfig {
         if(keytabFile != null) {
            config.put(KRB_KEYTAB_FILE, keytabFile);  
         }
-        
-        if(usePassThroughToken) {
-           config.put(USE_PASSTHROUGH_TOKEN, 
+                
+        config.put(USE_PASSTHROUGH_TOKEN, 
                 Boolean.toString(usePassThroughToken));
-        }
-        
+                
         if(tokenConversionType != null) {
            config.put(TOKEN_CONVERSION_TYPE, tokenConversionType); 
         }
@@ -641,6 +645,9 @@ public class AgentProvider extends ProviderConfig {
         
         config.put(ENCRYPTION_STRENGTH, 
                 new Integer(encryptionStrength).toString());
+        
+        config.put(USER_TOKEN_DETECT_REPLAY, 
+                Boolean.toString(detectUserTokenReplay));                 
         // Save the entry in Agent's profile
         try {
             Map attributes = new HashMap();

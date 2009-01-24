@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserNameToken.java,v 1.7 2008-08-22 04:07:57 mallas Exp $
+ * $Id: UserNameToken.java,v 1.8 2009-01-24 01:31:25 mallas Exp $
  *
  */
 
@@ -247,6 +247,14 @@ public class UserNameToken implements SecurityToken {
      */
     public String getCreated() {
         return created;
+    }
+    
+    /**
+     * Returns the signing id for username token.
+     * @return the signing id for the username token.
+     */
+    public String getSigningId() {
+        return id;
     }
 
     /**

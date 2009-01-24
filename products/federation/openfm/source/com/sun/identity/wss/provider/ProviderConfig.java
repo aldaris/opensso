@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderConfig.java,v 1.27 2008-11-10 22:57:07 veiming Exp $
+ * $Id: ProviderConfig.java,v 1.28 2009-01-24 01:31:24 mallas Exp $
  *
  */
 package com.sun.identity.wss.provider; 
@@ -127,7 +127,8 @@ public abstract class ProviderConfig {
      protected int encryptionStrength = 0;
      protected String signingRefType = "DirectReference";
      protected static SSOToken customAdminToken = null;
-
+    
+     protected boolean detectUserTokenReplay = true;
      private static Class adapterClass;
 
     /**
@@ -247,6 +248,22 @@ public abstract class ProviderConfig {
      */
     public List getUsers() {
         return usercredentials;
+    }
+            
+    /**
+     * Returns true if the user name token replay is enabled.
+     * @return true if the user name token replay is enabled.
+     */
+    public boolean isUserTokenDetectReplayEnabled() {
+        return detectUserTokenReplay;    
+    }
+    
+    /**
+     * Enable or disable the detection of user token replay
+     * @param enable true if the detection of user token replay is enabled.
+     */
+    public void setDetectUserTokenReplay(boolean enable) {
+        this.detectUserTokenReplay = enable;
     }
 
     /**

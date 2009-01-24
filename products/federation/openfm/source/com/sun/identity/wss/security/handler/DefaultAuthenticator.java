@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultAuthenticator.java,v 1.15 2008-10-08 22:53:58 mallas Exp $
+ * $Id: DefaultAuthenticator.java,v 1.16 2009-01-24 01:31:25 mallas Exp $
  *
  */
 
@@ -113,19 +113,25 @@ import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.wss.sts.STSConstants;
 import com.iplanet.security.x509.CertUtils;
 import com.sun.identity.wss.logging.LogUtil;
+import com.sun.identity.shared.DateUtils;
+import java.text.ParseException;
+import java.util.Date;
 
 /**
  * This class provides a default implementation for authenticating the
  * webservices clients using various security mechanisms.
  */ 
 public class DefaultAuthenticator implements MessageAuthenticator {
-
+        
     private ProviderConfig config = null;
     //private Subject subject = null;
     private static ResourceBundle bundle = WSSUtils.bundle;
     private static Debug debug = WSSUtils.debug;
+    public static final String WSS_CACHE_PLUGIN =
+                               "com.sun.identity.wss.security.cache.plugin";
     private String kerberosPrincipal = null;
-
+    private static Class cacheClass;
+            
     /**
      * Authenticates the web services client.
      * @param subject the JAAS subject that may be used during authentication.
@@ -371,12 +377,19 @@ public class DefaultAuthenticator implements MessageAuthenticator {
            (passwordType.equals(WSSConstants.PASSWORD_DIGEST_TYPE)) ) {
            String nonce = usernameToken.getNonce();
            String created = usernameToken.getCreated();
+           if(!validateUserTokenTime(created)) {
+              return false; 
+           }
            String digest = UserNameToken.getPasswordDigest(
                  configuredPassword, nonce, created);
            if(!(digest.equals(password)) || !(configuredUser.equals(user))) {
                debug.error("DefaultAuthenticator.validateUser:: Password " +
                "does not match");
                return false;
+           }
+           
+           if(config.isUserTokenDetectReplayEnabled()) {
+              cacheNonce(created, nonce);
            }
         } else if(!(configuredPassword.equals(password)) || 
                    !(configuredUser.equals(user))) { 
@@ -405,6 +418,9 @@ public class DefaultAuthenticator implements MessageAuthenticator {
         }
         String nonce = usernameToken.getNonce();
         String created = usernameToken.getCreated();
+        if(!validateUserTokenTime(created)) {
+           return false; 
+        }
         String passwordType = usernameToken.getPasswordType().trim();                
         if(WSSConstants.PASSWORD_DIGEST_TYPE.equals(passwordType)) {
            password = "PasswordDigest=" + password + ";" +
@@ -463,6 +479,9 @@ public class DefaultAuthenticator implements MessageAuthenticator {
             return false;
 	}
         
+        if(config.isUserTokenDetectReplayEnabled()) {
+           cacheNonce(created, nonce);
+        }
         subject = addPrincipal(user, subject);
         WSSUtils.setRoles(subject, user);
         addSSOToken(ssotoken, subject);
@@ -857,4 +876,92 @@ public class DefaultAuthenticator implements MessageAuthenticator {
         }       
         
     }
+    
+    private boolean validateUserTokenTime(String created) {
+        long tokentime = 0;
+        try {
+            tokentime = DateUtils.stringToDate(created).getTime();
+        } catch (java.text.ParseException pe) {
+            WSSUtils.debug.error("DefaultAuthenticator.validateUserToken"
+                    + "Time: parse error", pe);
+            return false;
+        }
+        //5sec for time skew
+        long now = (new Date()).getTime() + 5000;       
+        if(now - tokentime >= 0) {
+            return true; 
+        }
+        return false;
+    }
+    
+    /**
+     * Cache the nonce to avoid the replay attacks.
+     * @param timestamp the timestamp of the user name token
+     * @param nonce nonce of the user name token.
+     * @throws com.sun.identity.wss.security.SecurityException
+     */
+    private void cacheNonce (String timeStamp, String nonce) 
+             throws SecurityException {
+        
+        Set nonces = (Set)WSSCache.nonceCache.get(timeStamp);
+        WSSCacheRepository cacheRepo = getWSSCacheRepository();
+        if(nonces == null || nonces.isEmpty()) {
+           if(cacheRepo != null) {
+              nonces = cacheRepo.retrieveUserTokenNonce(timeStamp);
+           }
+        }       
+        
+        if(nonces == null || nonces.isEmpty()) {
+              nonces = new HashSet();
+              nonces.add(nonce);
+              WSSCache.nonceCache.put(timeStamp, nonces);
+              if(cacheRepo != null) { 
+                 cacheRepo.saveUserTokenNonce(timeStamp, nonces);
+              }
+        } else {
+              if(nonces.contains(nonce)) {
+                 throw new SecurityException(WSSUtils.bundle.getString(
+                         "replayAttackDetected")); 
+              }
+                          
+              nonces.add(nonce);
+              WSSCache.nonceCache.put(timeStamp, nonces);
+              if(cacheRepo != null) {
+                 cacheRepo.saveUserTokenNonce(timeStamp, nonces);
+              }
+        }
+        
+    }
+    
+    private static WSSCacheRepository getWSSCacheRepository() 
+            throws SecurityException {
+        
+        if (cacheClass == null) {
+            String adapterName =   SystemConfigurationUtil.getProperty(
+                                    WSS_CACHE_PLUGIN);
+            if(adapterName == null || adapterName.length() == 0) {
+               return null;
+            }
+               
+            try {
+                cacheClass = (Thread.currentThread().getContextClassLoader())
+                        .loadClass(adapterName);                      
+            } catch (Exception ex) {
+                 WSSUtils.debug.error("DefaultAuthenticator." +
+                         "getWSSCacheRepository: " +
+                     "Failed in obtaining class", ex);
+                 throw new SecurityException(
+                     WSSUtils.bundle.getString("initializationFailed"));
+            }
+        }
+        try {
+            return ((WSSCacheRepository) cacheClass.newInstance());
+        } catch (Exception ex) {
+             WSSUtils.debug.error("DefaultAuthenticator.getWSSCacheRepository:"+
+                 "Failed in initialization", ex);
+             throw new SecurityException(
+                 WSSUtils.bundle.getString("initializationFailed"));
+        }
+    }
+
 }
