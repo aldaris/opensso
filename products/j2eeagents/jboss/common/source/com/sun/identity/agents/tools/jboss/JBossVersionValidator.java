@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JBossVersionValidator.java,v 1.1 2008-12-11 14:36:06 naghaon Exp $
+ * $Id: JBossVersionValidator.java,v 1.2 2009-01-25 05:57:27 naghaon Exp $
  *
  */
 
@@ -48,7 +48,7 @@ public class JBossVersionValidator extends ValidatorBase
     	"VA_MSG_JB_VAL_VERSION";
     private static String LOC_VA_WRN_JB_IN_VAL_VERSION = 
     	"VA_WRN_JB_IN_VAL_VERSION";
-
+   
     /** Hashmap of Validator names and integers */
     Map validMap = new HashMap();
 
@@ -138,8 +138,9 @@ public class JBossVersionValidator extends ValidatorBase
         boolean version32 = false;
         boolean version40 = false;
         boolean version42 = false;
+        boolean version50 = false;
         boolean validVersion = false;
-
+   
         try {
             String jbossJarPath = (String) stateAccess.get(
                     STR_KEY_JB_RUN_JAR_FILE);
@@ -209,7 +210,10 @@ public class JBossVersionValidator extends ValidatorBase
                 } else if ((majorVersion == JB_VER_42_MAJOR) && 
                         (minorVersion >= JB_VER_42_MINOR)) {
                     version42 = true;
-                }
+                } else if ((majorVersion == JB_VER_50_MAJOR) && 
+                        (minorVersion >= JB_VER_50_MINOR)) {
+                    version50 = true;
+                } 
 
                 Debug.log(
                     "JBossVersionValidator.getJBossVersion()-Major version "
@@ -224,7 +228,8 @@ public class JBossVersionValidator extends ValidatorBase
                 ex);
         }
 
-        if (version32 || version40) {
+               
+        if (version32 || version40 || version50) {
             validVersion = true;
         } else {
             Debug.log(

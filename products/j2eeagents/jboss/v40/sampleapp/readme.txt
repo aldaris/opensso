@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: readme.txt,v 1.2 2009-01-10 08:20:06 naghaon Exp $
+   $Id: readme.txt,v 1.3 2009-01-25 05:59:31 naghaon Exp $
 
 -->
 
@@ -191,8 +191,11 @@ To rebuild the entire application from scratch, follow these steps:
    1. Set your JAVA_HOME and CLASSPATH to JDK1.4 or above.
    2. Replace 'JBOSS_SERVER_LIB_DIR' in build.xml with the directory where jboss-j2ee.jar or servlet-api.jar is located.
       For example: replace JBOSS_LIB_DIR with /opt/jboss-4.2.3/server/default/lib
-      Note: Replace the javax-servlet.jar in the build.xml with the servlet-api.jar 
-      before building sample app for JBoss 4.2.x.
+      Note:a)If you are installing the agent on JBoss-5.0.0.GA Replace 'JBOSS_SERVER_LIB_DIR' in build.xml
+      with the directory where jboss-javaee.jar is located.(eg.JBoss-5.0.0.GA/common/lib)
+      and Replace all the occurrences of jboss-j2ee.jar with the jboss-javaee.jar in the build.xml
+      b)Replace the javax-servlet.jar in the build.xml with the servlet-api.jar 
+      before building sample app for JBoss 4.2.x and JBoss 5.0.x.
    3. Change the Universal User Id (UUID) 
       By default, the JBoss server specific deployment descriptors assume 
       that the OpenSSO Server product was installed under default Org/Realm 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IConstants.java,v 1.1 2008-12-11 14:36:06 naghaon Exp $
+ * $Id: IConstants.java,v 1.2 2009-01-25 05:57:48 naghaon Exp $
  *
  */
 
@@ -107,6 +107,8 @@ public interface IConstants {
     public static final int JB_VER_40_MINOR = 0;
     public static final int JB_VER_42_MAJOR = 4;
     public static final int JB_VER_42_MINOR = 3;
+    public static final int JB_VER_50_MAJOR = 5;
+    public static final int JB_VER_50_MINOR = 0;
     public static final int JB_VER_32_MAJOR = 3;
     public static final int JB_VER_32_MINOR = 2;
     public static final int JB_VER_32_SECOND_MINOR = 5;
