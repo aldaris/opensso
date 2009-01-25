@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexer.java,v 1.6 2009-01-23 20:27:46 veiming Exp $
+ * $Id: PolicyIndexer.java,v 1.7 2009-01-25 09:39:26 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -30,6 +30,7 @@ package com.sun.identity.policy;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.IPolicyIndexDataStore;
 import com.sun.identity.entitlement.PolicyIndexDataStoreFactory;
+import com.sun.identity.entitlement.util.ResourceIndex;
 import com.sun.identity.entitlement.util.ResourceNameIndexGenerator;
 import java.util.HashSet;
 import java.util.Set;
@@ -60,17 +61,20 @@ public class PolicyIndexer {
         Set<String> ruleNames = policy.getRuleNames();
         Set<String> hostIndexes = new HashSet<String>();
         Set<String> pathIndexes = new HashSet<String>();
+        Set<String> pathParentIndexes = new HashSet<String>();
         
         for (String ruleName : ruleNames) {
             Rule rule = policy.getRule(ruleName);
             String resName = rule.getResourceName();
-            hostIndexes.add(
-                ResourceNameIndexGenerator.getHostIndex(resName));
-            pathIndexes.add(
-                ResourceNameIndexGenerator.getPathIndex(resName));
+            ResourceIndex resIdx = ResourceNameIndexGenerator.getResourceIndex(
+                resName);
+            hostIndexes.add(resIdx.getHostIndex());
+            pathIndexes.add(resIdx.getPathIndex());
+            pathParentIndexes.addAll(resIdx.getPathParentIndex());
         }
 
-        datastore.add(policyName, hostIndexes, pathIndexes, serPolicy);
+        datastore.add(policyName, hostIndexes, pathIndexes,
+            pathParentIndexes, serPolicy);
     }
     
     /**

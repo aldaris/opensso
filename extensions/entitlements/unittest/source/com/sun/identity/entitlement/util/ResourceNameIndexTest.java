@@ -22,18 +22,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceNameIndexTest.java,v 1.2 2009-01-23 07:41:40 veiming Exp $
+ * $Id: ResourceNameIndexTest.java,v 1.3 2009-01-25 09:39:26 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
 
 import com.sun.identity.unittest.UnittestLog;
-import java.net.URL;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.StringTokenizer;
 import org.testng.annotations.Test;
 
 
@@ -42,41 +44,57 @@ import org.testng.annotations.Test;
  */
 public class ResourceNameIndexTest {
     @Test
-    public boolean testHost() 
+    public void testHost() 
         throws Exception {
         Map<String, String> map = parseResource("resourceNameIndexHost");
         for (String k : map.keySet()) {
             String expectedResult = map.get(k);
-            String result = ResourceNameIndexGenerator.getHostIndex(k);
-            if (!result.equals(expectedResult)) {
+            ResourceIndex result = ResourceNameIndexGenerator.getResourceIndex(
+                k);
+            if (!result.getHostIndex().equals(expectedResult)) {
                 String msg = "ResourceNameIndexTest.testHost: " + k + 
                     " failed.";
                 UnittestLog.logError(msg);
                 throw new Exception(msg);
             }
         }
-        
-        return true;
     }
 
     @Test
-    public boolean testPath() 
+    public void testPath() 
         throws Exception {
         Map<String, String> map = parseResource("resourceNameIndexURI");
         for (String k : map.keySet()) {
             String expectedResult = map.get(k);
-            String result = ResourceNameIndexGenerator.getPathIndex(k);
-            if (!result.equals(expectedResult)) {
-                String msg = "ResourceNameIndexTest.testHost: " + k + 
+            ResourceIndex result = ResourceNameIndexGenerator.getResourceIndex(
+                k);
+            if (!result.getPathIndex().equals(expectedResult)) {
+                String msg = "ResourceNameIndexTest.testPath: " + k + 
                     " failed.";
                 UnittestLog.logError(msg);
                 throw new Exception(msg);
             }
         }
-        
-        return true;
     }
     
+    @Test
+    public void testPathParent() 
+        throws Exception {
+        Map<String, Set<String>> map = parseResources(
+            "resourceNameIndexPathParent");
+        for (String k : map.keySet()) {
+            Set<String> expectedResult = map.get(k);
+            ResourceIndex result = ResourceNameIndexGenerator.getResourceIndex(
+                k);
+            if (!result.getPathParentIndex().equals(expectedResult)) {
+                String msg = "ResourceNameIndexTest.testPathParent: " + k + 
+                    " failed.";
+                UnittestLog.logError(msg);
+                throw new Exception(msg);
+            }
+        }
+    }
+
     private Map<String, String> parseResource(String rbName) {
         Map<String, String> results = new HashMap<String, String>();
         ResourceBundle rb = ResourceBundle.getBundle(rbName);
@@ -84,6 +102,25 @@ public class ResourceNameIndexTest {
             String k = (String)e.nextElement();
             String val = rb.getString(k).trim();
             results.put(k, val);
+        }
+        return results;
+    }
+
+    private Map<String, Set<String>> parseResources(String rbName) {
+        Map<String, Set<String>> results = new HashMap<String, Set<String>>();
+        ResourceBundle rb = ResourceBundle.getBundle(rbName);
+        for (Enumeration e = rb.getKeys(); e.hasMoreElements(); ) {
+            String k = (String)e.nextElement();
+            String val = rb.getString(k).trim();
+            if (val.length() > 0) {
+                Set<String> set = new HashSet<String>();
+                StringTokenizer st = new StringTokenizer(val, ",");
+                while (st.hasMoreElements()) {
+                    set.add(st.nextToken());
+                }
+            } else {
+                results.put(k, Collections.EMPTY_SET);
+            }
         }
         return results;
     }

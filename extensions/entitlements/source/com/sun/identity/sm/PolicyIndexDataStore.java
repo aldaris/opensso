@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexDataStore.java,v 1.6 2009-01-22 07:54:46 veiming Exp $
+ * $Id: PolicyIndexDataStore.java,v 1.7 2009-01-25 09:39:26 veiming Exp $
  */
 
 package com.sun.identity.sm;
@@ -57,6 +57,7 @@ public class PolicyIndexDataStore implements  IPolicyIndexDataStore {
     private static final String DN_TEMPLATE = "ou={1}," + START_DN_TEMPLATE;
     private static final String HOST_INDEX_KEY = "hostindex";
     private static final String PATH_INDEX_KEY = "pathindex";
+    private static final String PATH_PARENT_INDEX_KEY = "pathparentindex";
     private static final String SERIALIZABLE_INDEX_KEY = "serializable";
 
     private static final String HOST_FILTER_TEMPLATE = 
@@ -70,6 +71,7 @@ public class PolicyIndexDataStore implements  IPolicyIndexDataStore {
      * @param name Name of the entry to be added.
      * @param hostIndex Host index.
      * @param pathIndex Path index.
+     * @param pathParentIndex Path parent indexes.
      * @param policy Policy Object.
      * @throws EntitlementException if the entry already exists.
      */
@@ -77,6 +79,7 @@ public class PolicyIndexDataStore implements  IPolicyIndexDataStore {
         String name, 
         Set<String> hostIndexes,
         Set<String> pathIndexes,
+        Set<String> pathParentIndexes,
         Serializable policy
     ) throws EntitlementException {
         Object[] params = {SMSEntry.getRootSuffix(), name};
@@ -96,6 +99,9 @@ public class PolicyIndexDataStore implements  IPolicyIndexDataStore {
             }
             for (String i : pathIndexes) {
                 searchable.add(PATH_INDEX_KEY + "=" + i);
+            }
+            for (String i : pathParentIndexes) {
+                searchable.add(PATH_PARENT_INDEX_KEY + "=" + i);
             }
             
             Set<String> set = new HashSet<String>(2);

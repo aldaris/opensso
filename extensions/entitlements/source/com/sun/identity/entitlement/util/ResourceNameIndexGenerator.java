@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceNameIndexGenerator.java,v 1.4 2009-01-23 07:41:39 veiming Exp $
+ * $Id: ResourceNameIndexGenerator.java,v 1.5 2009-01-25 09:39:25 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
@@ -30,6 +30,7 @@ package com.sun.identity.entitlement.util;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -46,102 +47,130 @@ public class ResourceNameIndexGenerator {
     }
 
     /**
-     * Returns the host name index.
-     * @param resName Resource name.
-     * @return the host name index.
-     */
-    public static String getHostIndex(String resName) {
-        try {
-            URL url = new URL(resName);
-            String host = url.getHost().toLowerCase();
-            int idx = host.lastIndexOf("*");
-            if (idx != -1) {
-                int dotIdx = host.indexOf('.', idx);
-                host = (dotIdx != -1) ? host.substring(dotIdx) : "";
-            }
-            return url.getProtocol().toLowerCase() + "://" + host;
-        } catch (MalformedURLException e) {
-            return resName;
-        }
-    }
-    
-    /**
-     * Returns the path index.
+     * Returns resource index of a given resource name.
      * 
      * @param resName Resource name.
-     * @return the path index.
+     * @return resource index of a given resource name.
      */
-    public static String getPathIndex(String resName) {
+    public static ResourceIndex getResourceIndex(String resName) {
         try {
-        URL url = new URL(resName);
-            String path = url.getPath().toLowerCase();
-            String query = url.getQuery();
-            if (query == null) {
+            URL url = new URL(resName);
+            String hostIndex = getHostIndex(url);
+            String pathIndex = getPathIndex(url);
+            Set<String> pathParentIndexes = getPathParentIndexes(pathIndex);
+            return new ResourceIndex(hostIndex, pathIndex, pathParentIndexes);
+        } catch (MalformedURLException e) {
+            return new ResourceIndex(resName, "", Collections.EMPTY_SET);
+        }
+    
+    }
+    
+    private static String getHostIndex(URL url) {
+        String host = url.getHost().toLowerCase();
+        int idx = host.lastIndexOf("*");
+        if (idx != -1) {
+            int dotIdx = host.indexOf('.', idx);
+            host = (dotIdx != -1) ? host.substring(dotIdx) : "";
+        }
+        return url.getProtocol().toLowerCase() + "://" + host;
+    }
+    
+    private static String getPathIndex(URL url) {
+        String path = url.getPath().toLowerCase();
+        String query = url.getQuery();
+        if (query == null) {
+            query = "";
+        } else {
+            query = query.toLowerCase();
+        }
+
+        int idx = path.indexOf("*");
+        if (idx != -1) {
+            int slashIdx = path.lastIndexOf('/', idx);
+            path = path.substring(0, slashIdx + 1);
+            query = "";
+        }
+
+        if (query.length() > 0) {
+            Map<String, Set<String>> map =
+                new HashMap<String, Set<String>>();
+            StringTokenizer st = new StringTokenizer(query, "&");
+            while (st.hasMoreTokens()) {
+                String tok = st.nextToken();
+                int i = tok.indexOf("=");
+                String key = (i != -1) ? tok.substring(0, i) : tok;
+                String val = (i != -1) ? tok.substring(i + 1) : "";
+
+                Set<String> set = map.get(key);
+                if (set == null) {
+                    set = new HashSet<String>();
+                    map.put(key, set);
+                }
+                set.add(val);
+            }
+
+            boolean queryHasWildCard = false;
+            for (Iterator i = map.keySet().iterator();
+                i.hasNext() && !queryHasWildCard;) {
+                String s = (String) i.next();
+                queryHasWildCard = (s.indexOf('*') != -1);
+            }
+
+            if (queryHasWildCard) {
                 query = "";
             } else {
-                query = query.toLowerCase();
-            }
+                List<String> list = new ArrayList<String>();
+                for (String key : map.keySet()) {
+                    Set<String> val = map.get(key);
 
-            int idx = path.indexOf("*");
-            if (idx != -1) {
-                int slashIdx = path.lastIndexOf('/', idx);
-                path = path.substring(0, slashIdx + 1);
-                query = "";
-            }
-
-            if (query.length() > 0) {
-                Map<String, Set<String>> map = 
-                    new HashMap<String, Set<String>>();
-                StringTokenizer st = new StringTokenizer(query, "&");
-                while (st.hasMoreTokens()) {
-                    String tok = st.nextToken();
-                    int i = tok.indexOf("=");
-                    String key = (i != -1) ? tok.substring(0, i) : tok;
-                    String val = (i != -1) ? tok.substring(i + 1) : "";
-
-                    Set<String> set = map.get(key);
-                    if (set == null) {
-                        set = new HashSet<String>();
-                        map.put(key, set);
+                    boolean wildcard = false;
+                    for (Iterator i = val.iterator(); i.hasNext() && !wildcard;)
+                    {
+                        String s = (String) i.next();
+                        wildcard = (s.indexOf('*') != -1);
                     }
-                    set.add(val);
-                }
 
-                boolean queryHasWildCard = false;
-                for (Iterator i = map.keySet().iterator();
-                    i.hasNext() && !queryHasWildCard;) {
-                    String s = (String) i.next();
-                    queryHasWildCard = (s.indexOf('*') != -1);
-                }
-
-                if (queryHasWildCard) {
-                    query = "";
-                } else {
-                    List<String> list = new ArrayList<String>();
-                    for (String key : map.keySet()) {
-                        Set<String> val = map.get(key);
-
-                        boolean wildcard = false;
-                        for (Iterator i = val.iterator(); i.hasNext() && !wildcard;) {
-                            String s = (String) i.next();
-                            wildcard = (s.indexOf('*') != -1);
-                        }
-
-                        if (wildcard) {
-                            list.add(key + "=");
-                        } else {
-                            for (String s : val) {
-                                list.add(key + "=" + s);
-                            }
+                    if (wildcard) {
+                        list.add(key + "=");
+                    } else {
+                        for (String s : val) {
+                            list.add(key + "=" + s);
                         }
                     }
-                    query = ResourceNameSplitter.queryToString(list);
                 }
+                query = ResourceNameSplitter.queryToString(list);
             }
-
-            return (query.length() > 0) ? path + "?" + query : path;
-        } catch (MalformedURLException e) {
-            return "";
         }
+
+        return (query.length() > 0) ? path + "?" + query : path;
+    }
+    
+    private static Set<String> getPathParentIndexes(String pathIndex) {
+        Set<String> parents = new HashSet<String>();
+        int idx = pathIndex.indexOf("?");
+        
+        /*
+         * add a dummy so that the last path will be included. e.g.
+         * /a/b/c?q=1, we want /a/b/c to be include too.
+         * but if there are no query parameter, e.g. /a/b/c. we only want
+         * /a/b
+         */
+        String str = (idx != -1) ? pathIndex.substring(0, idx) + "/dummy" 
+            : pathIndex;
+        
+        StringTokenizer st = new StringTokenizer(str, "/");
+        StringBuffer tracker = new StringBuffer();
+        tracker.append("/");
+        while (st.hasMoreElements()) {
+            String s = st.nextToken();
+            // drop the last token
+            if (st.hasMoreElements()) {
+                tracker.append(s);
+                parents.add(tracker.toString());
+                tracker.append("/");
+            }
+        }
+        
+        return parents;
     }
 }

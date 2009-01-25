@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexTest.java,v 1.5 2009-01-23 07:41:40 veiming Exp $
+ * $Id: PolicyIndexTest.java,v 1.6 2009-01-25 09:39:27 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -38,6 +38,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
@@ -45,21 +47,37 @@ import org.testng.annotations.Test;
  * @author dennis
  */
 public class PolicyIndexTest {
-    private static String URL_RESOURCE = "http://www.sun.com:8080/private";
-        
+    private static final String URL_RESOURCE = "http://www.sun.com:8080/private";
+    private static final String POLICY_NAME = "policyIndexTest";
+    
+    @BeforeClass
+    public void setup() 
+        throws SSOException, PolicyException {
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        PolicyManager pm = new PolicyManager(adminToken, "/");
+        Policy policy = new Policy(POLICY_NAME, "test - discard",
+            false, true);
+        policy.addRule(createRule());
+        policy.addSubject("group", createSubject(pm));
+        pm.addPolicy(policy);
+    }
+    
+    @AfterClass
+    public void cleanup() 
+        throws SSOException, PolicyException {
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        PolicyManager pm = new PolicyManager(adminToken, "/");
+        pm.removePolicy(POLICY_NAME);
+    }
+    
     @Test
     public void storeAndRetrieve() 
         throws SSOException, PolicyException, EntitlementException, Exception {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
         PolicyManager pm = new PolicyManager(adminToken, "/");
-        Policy policy = new Policy("policyTest1", "test - discard",
-            false, true);
-        policy.addRule(createRule());
-        policy.addSubject("group", createSubject(pm));
-        pm.addPolicy(policy);
-        
-        policy = pm.getPolicy("policyTest1");
         
         Set<String> hostIndexes = new HashSet<String>();
         Set<String> pathIndexes = new HashSet<String>();
@@ -71,7 +89,6 @@ public class PolicyIndexTest {
         if (!rule.getResourceName().equals(URL_RESOURCE)) {
             throw new Exception("incorrect deserialized policy");
         }
-        pm.removePolicy("policyTest1");
     }
     
     private Rule createRule() throws PolicyException {
