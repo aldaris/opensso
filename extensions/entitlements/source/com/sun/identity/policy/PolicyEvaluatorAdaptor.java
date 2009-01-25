@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorAdaptor.java,v 1.5 2009-01-24 02:19:53 veiming Exp $
+ * $Id: PolicyEvaluatorAdaptor.java,v 1.6 2009-01-25 08:35:42 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -225,7 +225,9 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
             
             PolicyDecision pd = mergePolicyDecisions(policyDecisions, 
                 serviceType);
-            return getEntitlement(serviceTypeName, resourceName, pd);
+            List<Entitlement> result = new ArrayList<Entitlement>();
+            result.add(getEntitlement(serviceType, resourceName, pd));
+            return result;
         } catch (SSOException e) {
             throw new EntitlementException(e.getMessage(), -1);
         } catch (PolicyException e) {
@@ -233,25 +235,51 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
         }            
     }
     
-    static List<Entitlement> getEntitlement(
-        String serviceTypeName,
+    private static Entitlement getEntitlement(
+        ServiceType serviceType,
         String resourceName, 
         PolicyDecision pd
-    ) {
-        List<Entitlement> entitlements = new ArrayList<Entitlement>(); 
+    ) throws PolicyException {
+        Set<String> actionNames = serviceType.getActionNames();
+        String falseValue = null;
+        for (String name : actionNames) {
+            ActionSchema as = serviceType.getActionSchema(name);
+            falseValue = as.getTrueValue();
+        }
+        
+        Map actionValues = new HashMap();
+        Map<String, String> advices = new HashMap<String, String>();
+        
         Map<String, ActionDecision> actionDecisions = pd.getActionDecisions();
-            
         for (String name : actionDecisions.keySet()) {
             ActionDecision ad = actionDecisions.get(name);
-            Map<String, Object> actionValues = new HashMap<String, Object>();
-            actionValues.put(ad.getActionName(), ad.getValues());
-            long timeToLove = ad.getTimeToLive(); // TOFIX
-            Entitlement entitlement = new Entitlement(serviceTypeName, 
-                resourceName, actionValues);
-            entitlement.setAdvices(ad.getAdvices());
-            entitlements.add(entitlement);
+            String actionName = ad.getActionName();
+            Set<String> values = ad.getValues();
+            
+            // false value takes precedence
+            Set curValueSet = (Set)actionValues.get(actionName);
+            if (curValueSet == null) {
+                Set<String> copyOfValues = new HashSet<String>();
+                copyOfValues.addAll(values);
+                actionValues.put(actionName, copyOfValues);
+            } else if (falseValue != null) {
+                // this results in non deterministic result if
+                // false value is null
+                if (!curValueSet.contains(falseValue)) {
+                    Set<String> copyOfValues = new HashSet<String>();
+                    copyOfValues.addAll(values);
+                    actionValues.put(actionName, copyOfValues);
+                }
+            }
+            
+            advices.putAll(ad.getAdvices());            
         }
-        return entitlements;        
+        
+        Entitlement entitlement = new Entitlement(serviceType.getName(), 
+            resourceName, actionValues);
+        entitlement.setAdvices(advices);
+        entitlement.setAttributes(pd.getResponseAttributes());
+        return entitlement;
     }
     
     static PolicyDecision mergePolicyDecisions(

@@ -22,20 +22,24 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorTest.java,v 1.3 2009-01-23 20:27:46 veiming Exp $
+ * $Id: PolicyEvaluatorTest.java,v 1.4 2009-01-25 08:35:44 veiming Exp $
  */
 
 package com.sun.identity.policy;
 
+import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.policy.interfaces.Subject;
 import com.sun.identity.security.AdminTokenAction;
 import java.security.AccessController;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
+import org.testng.annotations.BeforeClass;
 
 /**
  *
@@ -44,8 +48,8 @@ import org.testng.annotations.Test;
 public class PolicyEvaluatorTest {
     private static String URL_RESOURCE = "http://www.*.com:8080/private";
     
-    @Test
-    public void test() throws Exception {
+    @BeforeClass
+    public void setup() throws PolicyException, SSOException {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
         PolicyManager pm = new PolicyManager(adminToken, "/");
@@ -54,28 +58,58 @@ public class PolicyEvaluatorTest {
         policy.addRule(createRule());
         policy.addSubject("group", createSubject(pm));
         pm.addPolicy(policy);
-        
-        policy = pm.getPolicy("policyTest1");
+    }
+    
+    @AfterClass
+    public void cleanup() throws PolicyException, SSOException {
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        PolicyManager pm = new PolicyManager(adminToken, "/");
+        pm.removePolicy("policyTest1");
+    }
+    
+    @Test
+    public void testIsAllowed() throws Exception {
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
 
         PolicyEvaluator pe = new PolicyEvaluator("iPlanetAMWebAgentService");
         if (!pe.isAllowed(adminToken, "http://www.sun.com:8080/private", "GET")){
-            throw new Exception(
+            throw new Exception("testIsAllowed" +
                 "http://www.sun.com:8080/private evaluation failed");
         }
         
         //negative test
         if (pe.isAllowed(adminToken, "http://www.sun.com:8080/public", "GET")){
-            throw new Exception(
+            throw new Exception("testIsAllowed" +
                 "http://www.sun.com:8080/public evaluation failed");
         }
-        
-        Set<String> actionNames = new HashSet<String>();
-        actionNames.add("GET");
-        PolicyDecision dp = pe.getPolicyDecision(adminToken, 
-            "http://www.sun.com:8080/private", actionNames);
-        
-        pm.removePolicy("policyTest1");
     }
+    
+    @Test
+    public void testResourceSelf() throws Exception {
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+
+        PolicyEvaluator pe = new PolicyEvaluator("iPlanetAMWebAgentService");
+        Set<ResourceResult> resResults = pe.getResourceResults(adminToken, 
+            "http://www.sun.com:8080/private",
+            ResourceResult.SELF_SCOPE, Collections.EMPTY_MAP);
+        ResourceResult resResult = resResults.iterator().next();
+        PolicyDecision pd = resResult.getPolicyDecision();
+        Map<String, ActionDecision> decisions = pd.getActionDecisions();
+        ActionDecision ad = decisions.get("GET");
+        if (!ad.getValues().contains("allow")) {
+            throw new Exception("testResourceSelf: " +
+                "http://www.sun.com:8080/private evaluation failed");
+        }
+        ad = decisions.get("POST");
+        if (!ad.getValues().contains("deny")) {
+            throw new Exception("testResourceSelf: " +
+                "http://www.sun.com:8080/private evaluation failed");
+        }
+    }
+    
     private Rule createRule() throws PolicyException {
         Map<String, Set<String>> actionValues = 
             new HashMap<String, Set<String>>();
@@ -86,7 +120,7 @@ public class PolicyEvaluatorTest {
         }
         {
             Set<String> set = new HashSet<String>();
-            set.add("allow");
+            set.add("deny");
             actionValues.put("POST", set);
         }
         
