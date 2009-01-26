@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsViewBean.java,v 1.15 2009-01-07 16:03:06 veiming Exp $
+ * $Id: AgentsViewBean.java,v 1.16 2009-01-26 22:53:03 babysunil Exp $
  *
  */
 
@@ -291,8 +291,10 @@ public class AgentsViewBean
         String agentType = getDisplayIDType();
         
         Object[] param = {agentType};
-        ptModel.setPageTitleText(model.getLocalizedString("agenttype." + 
+        ptModel.setPageTitleText(model.getLocalizedString("agenttype." +
             agentType));
+        ptModel.setPageTitleHelpMessage(model.getLocalizedString(
+                "agenttype."+agentType+".help")); 
         tblModel.setTitle(MessageFormat.format(
             model.getLocalizedString("table.agents.title.name"), param));
         tblModel.setTitleLabel(MessageFormat.format(

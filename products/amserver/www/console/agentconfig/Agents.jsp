@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Agents.jsp,v 1.10 2008-09-04 23:59:38 veiming Exp $
+   $Id: Agents.jsp,v 1.11 2009-01-26 22:50:01 babysunil Exp $
 
 --%>
 
@@ -92,7 +92,7 @@
     showPageButtonsTop="true" 
     showPageButtonsBottom="false" />
 
-<cc:spacer name="spacer" height="10" newline="true" />
+<cc:spacer name="spacer" height="20" newline="true" />
 
 
 <table border="0" cellpadding="0" cellspacing="0">
