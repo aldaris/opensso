@@ -22,14 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebServiceDefaultAuthenticator.java,v 1.1 2008-10-07 17:36:32 huacui Exp $
+ * $Id: WebServiceDefaultAuthenticator.java,v 1.2 2009-01-26 22:42:33 leiming Exp $
  *
  */
 
 package com.sun.identity.agents.filter;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -38,6 +37,7 @@ import java.util.Set;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.agents.arch.AgentException;
 import com.sun.identity.agents.arch.ISystemAccess;
+import com.sun.identity.wss.security.WSSUtils;
 import com.sun.identity.wss.security.handler.SOAPRequestHandler;
 
 import javax.servlet.http.HttpServletRequest;
@@ -114,9 +114,7 @@ public class WebServiceDefaultAuthenticator implements IWebServiceAuthenticator 
                     }
                 }
             }
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            soapMessage.writeTo(baos);
-            String requestString = baos.toString();
+            String requestString = WSSUtils.print(soapMessage.getSOAPPart()); 
             if (getSystemAccess().isLogMessageEnabled()) {
                 getSystemAccess().logMessage(
                 "WebServiceDefaultAuthenticator.getUserToken: "+ 
