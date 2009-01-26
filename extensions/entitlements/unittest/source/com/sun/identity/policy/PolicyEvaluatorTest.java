@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorTest.java,v 1.4 2009-01-25 08:35:44 veiming Exp $
+ * $Id: PolicyEvaluatorTest.java,v 1.5 2009-01-26 17:29:05 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -46,17 +46,27 @@ import org.testng.annotations.BeforeClass;
  * @author dennis
  */
 public class PolicyEvaluatorTest {
-    private static String URL_RESOURCE = "http://www.*.com:8080/private";
+    private static String POLICY_NAME1 = "PolicyEvaluatorTestP1";
+    private static String POLICY_NAME2 = "PolicyEvaluatorTestP2";
+
+    private static String URL_RESOURCE1 = "http://www.*.com:8080/private";
+    private static String URL_RESOURCE2 = "http://www.sun.com:8080/private";
     
     @BeforeClass
     public void setup() throws PolicyException, SSOException {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
         PolicyManager pm = new PolicyManager(adminToken, "/");
-        Policy policy = new Policy("policyTest1", "test - discard",
+        Policy policy = new Policy(POLICY_NAME1, "test1 - discard",
             false, true);
-        policy.addRule(createRule());
+        policy.addRule(createRule1());
         policy.addSubject("group", createSubject(pm));
+        pm.addPolicy(policy);
+
+        policy = new Policy(POLICY_NAME2, "test2 - discard",
+            false, true);
+        policy.addRule(createRule2());
+        policy.addSubject("group2", createSubject(pm));
         pm.addPolicy(policy);
     }
     
@@ -65,7 +75,7 @@ public class PolicyEvaluatorTest {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
         PolicyManager pm = new PolicyManager(adminToken, "/");
-        pm.removePolicy("policyTest1");
+        pm.removePolicy(POLICY_NAME1);
     }
     
     @Test
@@ -110,7 +120,7 @@ public class PolicyEvaluatorTest {
         }
     }
     
-    private Rule createRule() throws PolicyException {
+    private Rule createRule1() throws PolicyException {
         Map<String, Set<String>> actionValues = 
             new HashMap<String, Set<String>>();
         {
@@ -125,7 +135,18 @@ public class PolicyEvaluatorTest {
         }
         
         return new Rule("rule1", "iPlanetAMWebAgentService",
-            URL_RESOURCE, actionValues);
+            URL_RESOURCE1, actionValues);
+    }
+    
+    private Rule createRule2() throws PolicyException {
+        Map<String, Set<String>> actionValues = 
+            new HashMap<String, Set<String>>();
+        Set<String> set = new HashSet<String>();
+            set.add("allow");
+        actionValues.put("POST", set);
+        
+        return new Rule("rule2", "iPlanetAMWebAgentService",
+            URL_RESOURCE2, actionValues);
     }
     
     private Subject createSubject(PolicyManager pm) throws PolicyException {

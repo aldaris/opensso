@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorAdaptor.java,v 1.6 2009-01-25 08:35:42 veiming Exp $
+ * $Id: PolicyEvaluatorAdaptor.java,v 1.7 2009-01-26 17:29:04 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -244,7 +244,7 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
         String falseValue = null;
         for (String name : actionNames) {
             ActionSchema as = serviceType.getActionSchema(name);
-            falseValue = as.getTrueValue();
+            falseValue = as.getFalseValue();
         }
         
         Map actionValues = new HashMap();
