@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyght owner]"
  *
- * $Id: AgentProvider.java,v 1.36 2009-01-24 01:31:25 mallas Exp $
+ * $Id: AgentProvider.java,v 1.37 2009-01-26 19:24:22 mallas Exp $
  *
  */
 
@@ -605,8 +605,10 @@ public class AgentProvider extends ProviderConfig {
                        Boolean.toString(includeMemberships));
         }
                 
-        config.put(VERIFY_KRB_SIGNATURE,
+        if(verifyKrbSignature) {
+           config.put(VERIFY_KRB_SIGNATURE,
                        Boolean.toString(verifyKrbSignature));                    
+         }
         
         if(kdcServer != null) {
            config.put(KDC_SERVER, kdcServer); 
@@ -628,8 +630,10 @@ public class AgentProvider extends ProviderConfig {
            config.put(KRB_KEYTAB_FILE, keytabFile);  
         }
                 
-        config.put(USE_PASSTHROUGH_TOKEN, 
+        if(usePassThroughToken) {
+           config.put(USE_PASSTHROUGH_TOKEN, 
                 Boolean.toString(usePassThroughToken));
+        }
                 
         if(tokenConversionType != null) {
            config.put(TOKEN_CONVERSION_TYPE, tokenConversionType); 
@@ -646,8 +650,10 @@ public class AgentProvider extends ProviderConfig {
         config.put(ENCRYPTION_STRENGTH, 
                 new Integer(encryptionStrength).toString());
         
-        config.put(USER_TOKEN_DETECT_REPLAY, 
+        if(providerType.equals(WSP)) {
+           config.put(USER_TOKEN_DETECT_REPLAY, 
                 Boolean.toString(detectUserTokenReplay));                 
+        }
         // Save the entry in Agent's profile
         try {
             Map attributes = new HashMap();
