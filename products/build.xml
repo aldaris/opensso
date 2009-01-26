@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.41 2008-11-04 21:53:55 kevinserwin Exp $
+   $Id: build.xml,v 1.42 2009-01-26 19:37:15 kevinserwin Exp $
 
 -->
 
@@ -233,7 +233,13 @@
        <zip destfile="${prd.nightly.dist.dir}/openfm/opensso_${zipname.set}.zip"
             whenempty="create">
             <zipfileset dir="${prd.nightly.dist.dir}/opensso">
+               <exclude name="**/**/ssoupgrade*"/>
+               <exclude name="**/**/ssopre80upgrade*"/>                
             </zipfileset>
+            <zipfileset dir="${prd.nightly.dist.dir}/opensso" filemode="755">
+                <include name="**/**/ssoupgrade*"/>
+                <include name="**/**/ssopre80upgrade*"/>
+            </zipfileset>                 
 	</zip>        
         <filter token="ZIPNAME" value="${zipname.set}" />
         
