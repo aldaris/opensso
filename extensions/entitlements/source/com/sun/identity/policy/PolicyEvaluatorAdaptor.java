@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorAdaptor.java,v 1.7 2009-01-26 17:29:04 veiming Exp $
+ * $Id: PolicyEvaluatorAdaptor.java,v 1.8 2009-01-26 20:58:07 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -77,30 +77,17 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
     ) throws EntitlementException {
         try {
             String resourceName = entitlement.getResourceName();
-            Set<Policy> policies = search(adminSubject, resourceName);
-            if ((policies == null) || policies.isEmpty()) {
-                return false;
-            }
-
-            Map<String, Object> actionValues = entitlement.getActionValues();
-            SSOToken ssoToken = getSSOToken(subject);
-            Set<PolicyDecision> policyDecisions = new HashSet<PolicyDecision>();
-            for (Policy p : policies) {
-                PolicyDecision pd =  p.getPolicyDecision(
-                    ssoToken, serviceTypeName, resourceName, 
-                    actionValues.keySet(), envParameters);
-                if (pd != null) {
-                    //TOFIX: Check can return if false
-                    policyDecisions.add(pd);
-                }
-            }
-            
+            Set<PolicyDecision> policyDecisions = getPolicyDecisions(
+                adminSubject, subject, serviceTypeName, resourceName, 
+                envParameters);
             if ((policyDecisions == null) || policyDecisions.isEmpty()) {
                 return false;
             }
             
-            ServiceTypeManager stm = ServiceTypeManager.getServiceTypeManager();
-            ServiceType serviceType = stm.getServiceType(serviceTypeName);
+            ServiceType serviceType = 
+                ServiceTypeManager.getServiceTypeManager().getServiceType(
+                serviceTypeName);
+            Map<String, Object> actionValues = entitlement.getActionValues();
             PolicyDecision pd = mergePolicyDecisions(
                 policyDecisions, serviceType);
             return doesActionDecisionMatch(pd, actionValues);
@@ -199,30 +186,16 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
         Map<String, Set<String>> envParameters
     ) throws EntitlementException {  
         try {
-            Set<Policy> policies = search(adminSubject, resourceName);
-            if ((policies == null) || policies.isEmpty()) {
-                return Collections.EMPTY_LIST;
-            }
-            
-            ServiceType serviceType = 
-                ServiceTypeManager.getServiceTypeManager().getServiceType(
-                    serviceTypeName);
-            Set<String> actionNames = serviceType.getActionNames();
-            SSOToken ssoToken = getSSOToken(subject);
-            Set<PolicyDecision> policyDecisions = new HashSet<PolicyDecision>();
-            for (Policy p : policies) {
-                PolicyDecision pd =  p.getPolicyDecision(
-                    ssoToken, serviceTypeName, resourceName, 
-                    actionNames, envParameters);
-                if (pd != null) {
-                    policyDecisions.add(pd);
-                }
-            }
-            
+            Set<PolicyDecision> policyDecisions = getPolicyDecisions(
+                adminSubject, subject, serviceTypeName, resourceName, 
+                envParameters);
             if ((policyDecisions == null) || policyDecisions.isEmpty()) {
                 return Collections.EMPTY_LIST;
             }
-            
+            ServiceType serviceType =
+                ServiceTypeManager.getServiceTypeManager().getServiceType(
+                serviceTypeName);
+
             PolicyDecision pd = mergePolicyDecisions(policyDecisions, 
                 serviceType);
             List<Entitlement> result = new ArrayList<Entitlement>();
@@ -282,10 +255,10 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
         return entitlement;
     }
     
-    static PolicyDecision mergePolicyDecisions(
+    private static PolicyDecision mergePolicyDecisions(
         Set<PolicyDecision> policyDecisions,
         ServiceType serviceType
-  ) {
+    ) {
         PolicyDecision result = null;
         for (PolicyDecision pd : policyDecisions) {
             if (result == null) {
@@ -297,4 +270,36 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
         }
         return result;
     }
+    
+    private Set<PolicyDecision> getPolicyDecisions(
+        Subject adminSubject,
+        Subject subject,
+        String serviceTypeName,
+        String resourceName,
+        Map<String, Set<String>> envParameters
+    ) throws SSOException, PolicyException {
+        Set<Policy> policies = search(adminSubject, resourceName);
+        if ((policies == null) || policies.isEmpty()) {
+            return Collections.EMPTY_SET;
+        }
+
+        ServiceType serviceType =
+            ServiceTypeManager.getServiceTypeManager().getServiceType(
+            serviceTypeName);
+        Set<String> actionNames = serviceType.getActionNames();
+        SSOToken ssoToken = getSSOToken(subject);
+        Set<PolicyDecision> policyDecisions = new HashSet<PolicyDecision>();
+        for (Policy p : policies) {
+            PolicyDecision pd = p.getPolicyDecision(
+                ssoToken, serviceTypeName, resourceName,
+                actionNames, envParameters);
+            if (pd != null) {
+                policyDecisions.add(pd);
+            }
+        }
+
+        return (policyDecisions != null) ? policyDecisions : 
+            Collections.EMPTY_SET;
+    }
+    
 }

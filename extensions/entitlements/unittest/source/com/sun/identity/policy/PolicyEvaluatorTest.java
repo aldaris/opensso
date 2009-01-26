@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorTest.java,v 1.5 2009-01-26 17:29:05 veiming Exp $
+ * $Id: PolicyEvaluatorTest.java,v 1.6 2009-01-26 20:58:08 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -76,6 +76,7 @@ public class PolicyEvaluatorTest {
             AdminTokenAction.getInstance());
         PolicyManager pm = new PolicyManager(adminToken, "/");
         pm.removePolicy(POLICY_NAME1);
+        pm.removePolicy(POLICY_NAME2);
     }
     
     @Test
