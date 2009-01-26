@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginContext.java,v 1.18 2008-12-19 19:04:14 bigfatrat Exp $
+ * $Id: AMLoginContext.java,v 1.19 2009-01-26 18:46:55 lakshman_abburi Exp $
  *
  */
 
@@ -601,6 +601,8 @@ public class AMLoginContext {
             } else if (ISAuthConstants.EXCEED_RETRY_LIMIT.
                     equals(le.getErrorCode())) {
                 loginState.setErrorMessage(exceedRetryLimit);
+                loginState.setErrorCode(
+                        AMAuthErrorCode.AUTH_USER_LOCKED_IN_DS);
             } else {
                 loginState.setErrorCode(AMAuthErrorCode.AUTH_LOGIN_FAILED);
             }

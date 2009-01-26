@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAuthErrorCode.java,v 1.3 2008-06-25 05:42:04 qcheng Exp $
+ * $Id: AMAuthErrorCode.java,v 1.4 2009-01-26 18:47:29 lakshman_abburi Exp $
  *
  */
 
@@ -148,4 +148,7 @@ public class AMAuthErrorCode {
      *  Invalid SSO Token presented by remote Auth
      */
     public static final String REMOTE_AUTH_INVALID_SSO_TOKEN = "122";
+
+    /* locked at DS level - Constraint Violation */
+    public static final String AUTH_USER_LOCKED_IN_DS = "123";
 }
