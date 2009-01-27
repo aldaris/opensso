@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenIDPageParser.java,v 1.1 2008-11-03 20:51:32 monzillo Exp $
+ * $Id: OpenIDPageParser.java,v 1.2 2009-01-27 22:58:45 rsoika Exp $
  */
 package com.sun.security.sam.openid;
 
@@ -35,13 +35,18 @@ import java.util.HashMap;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.security.auth.message.AuthException;
+import javax.swing.text.ChangedCharSetException;
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.parser.ParserDelegator;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -142,39 +147,78 @@ public class OpenIDPageParser {
         return properties;
     }
 
-    /**
-     * 
-     * @param stream
-     * @param queries
-     * @param logger
-     * @param debug
-     * @return
-     * @throws javax.security.auth.message.AuthException
-     */
-    private static Properties parseHTMLPage(InputStream stream,
-            ElementQuery[] queries, Logger logger, boolean debug) throws AuthException {
+	/**
+	 * 
+	 * @param stream
+	 * @param queries
+	 * @param logger
+	 * @param debug
+	 * @return
+	 * @throws javax.security.auth.message.AuthException
+	 */
+	private static Properties parseHTMLPage(InputStream stream,
+			ElementQuery[] queries, Logger logger, boolean debug)
+			throws AuthException {
 
-        if (debug) {
-            String msg = "openid.parsing_html_id_page";
-            logger.info(msg);
-        }
+		if (debug) {
+			String msg = "openid.parsing_html_id_page";
+			logger.info(msg);
+		}
 
-        HTMLParserCallback callback = new HTMLParserCallback(queries, logger, debug);
-        try {
-            new ParserDelegator().parse(new InputStreamReader(stream), callback, false);
-        } catch (Throwable t) {
-            String msg = "openid.failed_parsing_id_page";
-            logger.log(Level.WARNING, msg, t);
-            AuthException ae = new AuthException(msg);
-            ae.initCause(t);
-            throw ae;
-        }
+		HTMLParserCallback callback = new HTMLParserCallback(queries, logger,
+				debug);
+		try {
+			// Create an InputStreamReader to read the HTML document.
+			// The reader uses the default character set for decoding bytes into characters.
+			
+			InputStreamReader reader = new InputStreamReader(stream);
 
-        Properties rvalue = null;
-        rvalue = addProperty(rvalue, "openid.server", queries[0].getAttributeValue("href"));
-        rvalue = addProperty(rvalue, "openid.delegate", queries[1].getAttributeValue("href"));
-        return rvalue;
-    }
+			try {
+				// use the reader to create a parser and parse the document
+
+				new ParserDelegator().parse(reader, callback, false);
+				
+			} catch (ChangedCharSetException e) {
+				// parser throws a ChangedCharSetException if it encounters a <meta>
+				// tag with a charset attribute that specifies a character set other
+				// than the default.
+
+				// Extract the new character set name from the exception.
+
+				String csspec = e.getCharSetSpec();
+				Pattern p = Pattern.compile("charset=\"?(.+)\"?\\s*;?",
+						Pattern.CASE_INSENSITIVE);
+				Matcher m = p.matcher(csspec);
+				String charset = m.find() ? m.group(1) : "ISO-8859-1";
+
+				// Create a new reader that uses the new charset
+
+				reader = new InputStreamReader(stream, charset);
+
+				// use the reader to create a parser and reparse the document.
+				// pass true for the ignoreCharSet parameter, to cause the
+				// parser to ignore the <meta>tag with its charset attribute.
+
+				new ParserDelegator().parse(reader, callback, true);
+				
+			} finally {
+				reader.close();
+			}
+		} catch (Throwable t) {
+			String msg = "openid.failed_parsing_id_page";
+			logger.log(Level.WARNING, msg, t);
+			AuthException ae = new AuthException(msg);
+			ae.initCause(t);
+			throw ae;
+		}
+
+		Properties rvalue = null;
+		rvalue = addProperty(rvalue, "openid.server", queries[0]
+				.getAttributeValue("href"));
+		rvalue = addProperty(rvalue, "openid.delegate", queries[1]
+				.getAttributeValue("href"));
+		return rvalue;
+	}
 
     /**
      * 
