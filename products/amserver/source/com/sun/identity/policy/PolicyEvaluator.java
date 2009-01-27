@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.8 2008-09-30 21:05:26 goodearth Exp $
+ * $Id: PolicyEvaluator.java,v 1.9 2009-01-27 19:08:12 dillidorai Exp $
  *
  */
 
@@ -41,6 +41,7 @@ import com.iplanet.am.sdk.AMStoreConnection;
 import com.iplanet.am.sdk.AMUser;
 import com.iplanet.am.sdk.AMException;
 import com.iplanet.am.util.Cache;
+import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.stats.Stats;
 import com.iplanet.sso.SSOToken;
@@ -111,6 +112,13 @@ public class PolicyEvaluator {
      *
      */
     public static final String SUN_AM_POLICY_CONFIG = "sun.am.policyConfig";
+
+    public static final String RESULTS_CACHE_MAX_SIZE 
+            = "com.sun.identity.policy.resultsCacheMaxSize";
+
+    public static int DEFAULT_RESULTS_CACHE_MAX_SIZE = 10000;
+
+    public static int resultsCacheMaxSize = DEFAULT_RESULTS_CACHE_MAX_SIZE;
 
     private static final Debug DEBUG = PolicyManager.debug;
     private static final boolean USE_POLICY_CACHE = true;
@@ -319,6 +327,36 @@ public class PolicyEvaluator {
         this.orgNames.add(policyManager.getOrganizationDN());
         this.serviceTypeNames.add(serviceTypeName);
         resourceIndexManager = policyManager.getResourceIndexManager();
+
+        String resultsCacheMaxSizeString 
+                = SystemProperties.get(RESULTS_CACHE_MAX_SIZE);
+        if (resultsCacheMaxSizeString != null) {
+            try {
+                resultsCacheMaxSize 
+                        = Integer.parseInt(resultsCacheMaxSizeString);
+            } catch (NumberFormatException nfe) {
+                if (PolicyManager.debug.warningEnabled()) {
+                    PolicyManager.debug.warning("PolicyEvaluator:"
+                            + "number format exception: "
+                            + "defaulting resultsCacheMaxSize to "
+                            + DEFAULT_RESULTS_CACHE_MAX_SIZE);
+                }
+                resultsCacheMaxSize = DEFAULT_RESULTS_CACHE_MAX_SIZE;
+            }
+        } else {
+            if (PolicyManager.debug.warningEnabled()) {
+                PolicyManager.debug.warning("PolicyEvaluator:"
+                        + "resultsCacheMaxSize not specified, "
+                        + "defaulting resultsCacheMaxSize to "
+                        + DEFAULT_RESULTS_CACHE_MAX_SIZE);
+            }
+            resultsCacheMaxSize = DEFAULT_RESULTS_CACHE_MAX_SIZE;
+        }
+        if (PolicyManager.debug.messageEnabled()) {
+            PolicyManager.debug.message("PolicyEvaluator:"
+                    + "resultsCacheMaxSize=" + resultsCacheMaxSize);
+        }
+
     }        
     
     /**
@@ -1211,10 +1249,14 @@ public class PolicyEvaluator {
 
 
         // check if we already have the result in the cache
+        // policyResultsCache: 
+        // serviceType -> resource -> sessionId -> scope -> result
         synchronized(policyResultsCache) {
+            // rscCache: resource -> sessionId -> scope -> result
             Map rscCache = (HashMap)policyResultsCache.get(serviceTypeName);
             if (rscCache != null) {
-                Map resultsCache = (HashMap)rscCache.get(resourceName);
+                // resultCache: sessionId -> scope -> resourceResult
+                Cache resultsCache = (Cache)rscCache.get(resourceName);
                 if (resultsCache != null) {
                     Map results = (HashMap)resultsCache.get(userSSOTokenIDStr);
                     if (results != null) {
@@ -1327,30 +1369,62 @@ public class PolicyEvaluator {
             resourceResult.setEnvMap(clientEnv);
             // add the evaluation result to the result cache
             Map scopeElem = null;
-            Map cacheElem = null;
+            //cacheElem: sessionId -> scope -> resourceResult
+            Cache cacheElem = null;
             Map rscElem = null;
+            // serviceType -> resourceName -> sessionId -> scope -> resourceResult
             synchronized(policyResultsCache) { 
+                // rscElem: resourceName -> sessionId -> scope -> resourceResult
                 rscElem = (HashMap)policyResultsCache.get(
                                                 serviceTypeName);
-                if (rscElem != null) {
-                    cacheElem = (HashMap)rscElem.get(resourceName);
-                    if (cacheElem != null) {
+                if (rscElem != null) { // serviceType has been seen earlier
+                    //cacheElem: sessionId -> scope -> resourceResult
+                    cacheElem = (Cache)rscElem.get(resourceName);
+                    if (cacheElem != null) { // resource seen earlier
                         scopeElem = (HashMap)cacheElem.get(
                                                 userSSOTokenIDStr);
-                        if (scopeElem == null) {
+                        if (scopeElem == null) { // seeing sessionId first time
                             scopeElem = new HashMap();
                         }
-                    } else {
-                        cacheElem = new HashMap();
+                    } else { // seeing the resource first time
+                        if (PolicyManager.debug.messageEnabled()) {
+                            PolicyManager.debug.message(
+                                "PolicyEvaluator.getResourceResultTree()"
+                                + " Create Cache for:" 
+                                + ", resourceName=" + resourceName
+                                + ", sessionId=" + userSSOTokenIDStr
+                                + ", scope=" + scope);
+                        }
+                        cacheElem = new Cache(resultsCacheMaxSize); 
                         scopeElem = new HashMap();
                     }
-                } else {
+                } else { // seeing service for first time
+                    // rscElem: resourceName -> sessionId -> scope -> resourceResult
                     rscElem = new HashMap();
-                    cacheElem = new HashMap();
+                    //cacheElem: sessionId -> scope -> resourceResult
+                    if (PolicyManager.debug.messageEnabled()) {
+                            PolicyManager.debug.message(
+                                "PolicyEvaluator.getResourceResultTree()"
+                                + " Create Cache for:" 
+                                + ", resourceName=" + resourceName
+                                + ", sessionId=" + userSSOTokenIDStr
+                                + ", scope=" + scope
+                                + ", serviceType=" + serviceTypeName);
+                    }
+                    cacheElem = new Cache(resultsCacheMaxSize);
                     scopeElem = new HashMap();
                 }
                 scopeElem.put(scope, resourceResult);
                 cacheElem.put(userSSOTokenIDStr, scopeElem);
+                if (PolicyManager.debug.messageEnabled()) {
+                        PolicyManager.debug.message(
+                            "PolicyEvaluator.getResourceResultTree()"
+                            + " Create Cache for:" 
+                            + ", resourceName=" + resourceName
+                            + ", sessionId=" + userSSOTokenIDStr
+                            + ", scope=" + scope
+                            + ", cacheSize=" + cacheElem.size());
+                }
                 rscElem.put(resourceName, cacheElem);
                 policyResultsCache.put(serviceTypeName, rscElem);
             } 
