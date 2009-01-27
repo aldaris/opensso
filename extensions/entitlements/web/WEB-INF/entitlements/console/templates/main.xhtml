@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ice:outputHtml
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ice="http://www.icesoft.com/icefaces/component">
+
+    <ice:outputHead>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <title>OpenSSO</title>
+        <ice:outputStyle href="/xmlhttp/css/rime/rime.css"/>
+        <ice:outputStyle href="console.css"/>
+    </ice:outputHead>
+    <ice:outputBody>
+        <div id="page">
+            <ice:form id="form">
+                <div id="header">
+                    <div id="banner"></div>
+                    <div id="logo"></div>
+                    <div id="java-logo"></div>
+                </div>
+                <div id="tabs">
+                    <ui:include src="/WEB-INF/entitlements/console/templates/tabs.xhtml"/>
+                </div>
+                <div id="footer">
+                    <ui:insert name="footer">!FOOTER!</ui:insert>
+                </div>
+            </ice:form>
+        </div>
+    </ice:outputBody>
+</ice:outputHtml>

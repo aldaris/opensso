@@ -1,0 +1,41 @@
+body {
+    font: 80% arial, helvetica, sans-serif;
+    margin: 0;
+}
+
+#header {
+	height: 150px;
+	background: transparent url(images/curve_right.png) no-repeat;
+}
+
+#logo {
+    height: 60px;
+    width: 240px;
+    position: absolute;
+    left: 90px;
+    top: 50px;
+    z-index: 10;
+    background: transparent url(images/logo.png) no-repeat;
+}
+
+#java-logo {
+    height: 80px;
+    width: 55px;
+    position: relative;
+    float: right;
+    padding: 10px 10px 10px 10px;
+    z-index: 10;
+    background: transparent url(images/java_logo_rgb.png) no-repeat;
+}
+
+#form {
+    width: 100%;
+}
+
+#tabs {
+    margin: 1px;
+}
+
+
+#footer {
+}
