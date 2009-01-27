@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProfileAttributesTest.java,v 1.10 2008-09-16 17:30:11 cmwesley Exp $
+ * $Id: ProfileAttributesTest.java,v 1.11 2009-01-26 23:47:48 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -94,7 +94,8 @@ public class ProfileAttributesTest extends TestCommon {
      * - Create Users , If needed
      */
     @Parameters({"testProfile"})
-    @BeforeClass(groups={"ds_ds","ds_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String testProfile)
     throws Exception {
         Object[] params = {testProfile};
@@ -163,7 +164,8 @@ public class ProfileAttributesTest extends TestCommon {
     /*
      * Validate the profile tests
      */
-    @Test(groups={"ds_ds","ds_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testProfile()
     throws Exception {
         entering("testProfile", null);
@@ -188,7 +190,8 @@ public class ProfileAttributesTest extends TestCommon {
     /**
      * performs cleanup after tests are done.
      */
-    @AfterClass(groups={"ds_ds","ds_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

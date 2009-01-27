@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddMemberTest.java,v 1.7 2008-08-12 00:12:51 cmwesley Exp $
+ * $Id: AddMemberTest.java,v 1.8 2009-01-26 23:48:52 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -88,7 +88,8 @@ public class AddMemberTest extends TestCommon implements CLIExitCodes {
      * AddMemberTest.properties.
      */
     @Parameters({"testName"})
-    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String testName) 
     throws Exception {
         Object[] params = {testName};
@@ -244,7 +245,8 @@ public class AddMemberTest extends TestCommon implements CLIExitCodes {
      * This method is used to execute tests involving "ssoadm create-identities"
      * using input data from the AddMemberTest.properties file.
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testMemberAddition() 
     throws Exception {
         entering("testMemberAddition", null);
@@ -390,7 +392,8 @@ public class AddMemberTest extends TestCommon implements CLIExitCodes {
      * "ssoadm remove-member", "ssoadm delete-realm" and 
      * "ssoadm delete-identities".
      */
-    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup() 
     throws Exception {
         int exitStatus = -1;

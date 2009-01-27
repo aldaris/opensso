@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2AutoFedDynUserCreationTests.java,v 1.10 2008-08-15 21:09:32 sridharev Exp $
+ * $Id: SAMLv2AutoFedDynUserCreationTests.java,v 1.11 2009-01-27 00:14:08 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -99,7 +99,7 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
     /**
      * Create the webClient which should be run before each test.
      */
-    @BeforeMethod(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @BeforeMethod(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     private void getWebClient() 
     throws Exception {
         try {
@@ -114,7 +114,8 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
     /**
      * This is setup method. It creates required users for test
      */
-    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup() 
     throws Exception {
         List<String> list;
@@ -186,7 +187,8 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
      * This is setup method. It enables auto federation. 
      * It also sets Dynamic user creation to true in iplanetAMAuthService.
      */
-    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void autoFedDynamicUserCreationSetup()
     throws Exception {
         entering("autoFedDynamicUserCreationSetup", null);
@@ -345,7 +347,8 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
      * @DocTest: SAML2| SP initiated SSO with Dynamic user creation.
      * TestCase ID: SAMLv2_usecase_8_1
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void SSOWithDynUserSPInit()
     throws Exception {
         entering("SSOWithDynUserSPInit", null);
@@ -386,7 +389,8 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
      * @DocTest: SAML2| IDP initiated SSO with Dynamic user creation at SP.
      * TestCase ID: SAMLv2_usecase_8_2
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void SSOWithDynUserIDPInit()
     throws Exception {
         entering("SSOWithDynUserIDPInit", null);
@@ -433,7 +437,7 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
      * Profile
      * TestCase ID: SAMLv2_usecase_8_3
      */
-    @Test(groups={"ds_ds_sec","ff_ds_sec"})
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
     public void SSOWithDynUserSPInitPost()
     throws Exception {
         entering("SSOWithDynUserSPInitPost", null);
@@ -477,7 +481,7 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
      * Post/SOAP Profile.
      * TestCase ID: SAMLv2_usecase_8_4
      */
-    @Test(groups={"ds_ds_sec","ff_ds_sec"})
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
     public void SSOWithDynUserIDPInitPost()
     throws Exception {
         entering("SSOWithDynUserIDPInitPost", null);
@@ -519,7 +523,8 @@ public class SAMLv2AutoFedDynUserCreationTests extends TestCommon {
     /**
      * This methods deletes all the users as part of cleanup
      */
-    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

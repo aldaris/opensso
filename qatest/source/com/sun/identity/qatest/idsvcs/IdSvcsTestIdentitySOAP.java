@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSvcsTestIdentitySOAP.java,v 1.5 2008-09-19 21:48:28 vimal_67 Exp $
+ * $Id: IdSvcsTestIdentitySOAP.java,v 1.6 2009-01-27 00:06:32 nithyas Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -87,7 +87,8 @@ public class IdSvcsTestIdentitySOAP extends TestCommon {
      * objects
      */
     @Parameters({"testNumber", "setup", "cleanup"})
-    @BeforeClass(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String testNumber, String setup, 
             String cleanup) throws Exception {
         Object[] params = {testNumber, setup, cleanup};
@@ -117,7 +118,8 @@ public class IdSvcsTestIdentitySOAP extends TestCommon {
      * Service Implementation class. Each operation takes arguments from the 
      * parameters defined in the properties file
      */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testIdSvcsSOAP()
             throws Exception {
         entering("testIdSvcsSOAP", null);
@@ -492,7 +494,8 @@ public class IdSvcsTestIdentitySOAP extends TestCommon {
      * (a) Delete users
      * (b) Deletes policies
      */
-    @AfterClass(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
             throws Exception {
         entering("cleanup", null);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PropertyChangeNotification.java,v 1.1 2008-09-04 16:33:36 rmisra Exp $
+ * $Id: PropertyChangeNotification.java,v 1.2 2009-01-27 00:16:37 nithyas Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -80,7 +80,8 @@ public class PropertyChangeNotification extends TestCommon implements
 
      * @throws java.lang.Exception
      */
-    @BeforeClass(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup()
     throws Exception {
         entering("setup", null);
@@ -104,7 +105,8 @@ public class PropertyChangeNotification extends TestCommon implements
      * Test property change notification in an sso token for a protected
      * property
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testProtectedPropertyChange()
     throws Exception {
         entering("testProtectedPropertyChange", null);
@@ -164,7 +166,8 @@ public class PropertyChangeNotification extends TestCommon implements
      * Test property change notification in an sso token for a custom
      * property
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testCustomPropertyChange()
     throws Exception {
         entering("testCustomPropertyChange", null);
@@ -232,7 +235,8 @@ public class PropertyChangeNotification extends TestCommon implements
      *
      * @throws java.lang.Exception
      */
-    @AfterClass(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

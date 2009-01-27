@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2IDPProxyRelayStateTests.java,v 1.2 2008-06-26 20:26:22 rmisra Exp $
+ * $Id: SAMLv2IDPProxyRelayStateTests.java,v 1.3 2009-01-27 00:15:33 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -90,7 +90,7 @@ public class SAMLv2IDPProxyRelayStateTests extends TestCommon {
     /**
      * Create the webClient which should be run before each test.
      */
-    @BeforeMethod(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeMethod(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     private void getWebClient()
     throws Exception {
         try {
@@ -106,7 +106,8 @@ public class SAMLv2IDPProxyRelayStateTests extends TestCommon {
      * This is setup method. It creates required users for test
      */
     @Parameters({"ssoprofile", "sloprofile"})
-    @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String strSSOProfile, String strSLOProfile)
     throws Exception {
         List<String> list;
@@ -244,7 +245,8 @@ public class SAMLv2IDPProxyRelayStateTests extends TestCommon {
     /**
      * @DocTest: SAML2|SP Init SSO with RelayState set
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void samlv2SPInitSSORS()
     throws Exception {
         entering("samlv2IDPProxySPInitSSORS", null);
@@ -302,7 +304,8 @@ public class SAMLv2IDPProxyRelayStateTests extends TestCommon {
     /**
      * @DocTest: SAML2|SP Init SLO with RelayState set
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void samlv2IDPProxySPInitSLORS()
     throws Exception {
         entering("samlv2IDPProxySPInitSLORS", null);
@@ -360,7 +363,8 @@ public class SAMLv2IDPProxyRelayStateTests extends TestCommon {
     /**
      * @DocTest: SAML2|SP Init SSO/SLO with diff RelayState set
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void samlv2IDPProxySPInitSSOSLORS()
     throws Exception {
         entering("samlv2IDPProxySPInitSSOSLORS", null);
@@ -425,7 +429,8 @@ public class SAMLv2IDPProxyRelayStateTests extends TestCommon {
     /**
      * This methods deletes all the users as part of cleanup
      */
-    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

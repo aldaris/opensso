@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ShowMembershipsTest.java,v 1.6 2008-08-12 00:12:53 cmwesley Exp $
+ * $Id: ShowMembershipsTest.java,v 1.7 2009-01-26 23:49:39 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -86,7 +86,8 @@ public class ShowMembershipsTest extends TestCommon implements CLIExitCodes {
      * members in the setup-members in the ShowMembershipsTest.properties file.
      */
     @Parameters({"testName"})
-    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String testName) 
     throws Exception {
         Object[] params = {testName};
@@ -252,7 +253,8 @@ public class ShowMembershipsTest extends TestCommon implements CLIExitCodes {
      * This method is used to execute tests involving "ssoadm show-memberships"
      * using input data from the ShowMembershipsTest.properties file.
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testMembershipSearch() 
     throws Exception {
         entering("testMembershipSearch", null);
@@ -421,7 +423,8 @@ public class ShowMembershipsTest extends TestCommon implements CLIExitCodes {
      * "ssoadm remove-members", "ssoadm delete-identities", and 
      * "ssoadm delete-realm".
      */
-    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup() 
     throws Exception {
         int exitStatus = -1;

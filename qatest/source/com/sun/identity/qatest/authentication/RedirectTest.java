@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RedirectTest.java,v 1.11 2009-01-06 16:37:46 cmwesley Exp $
+ * $Id: RedirectTest.java,v 1.12 2009-01-26 23:47:48 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -106,7 +106,8 @@ public class RedirectTest extends TestCommon {
      * - Create Users , If needed
      */
     @Parameters({"testModule", "testRealm"})    
-    @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String testModule, String testRealm) 
     throws Exception {
         Object[] params = {testModule, testRealm};
@@ -201,7 +202,8 @@ public class RedirectTest extends TestCommon {
      * under test for correct user and password behaviour
      */
     @Parameters({"testModule", "testRealm"})    
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void validateModuleTestsPositive(String testModule, String testRealm)
     throws Exception {
         Object[] params = {testModule, testRealm};        
@@ -229,7 +231,8 @@ public class RedirectTest extends TestCommon {
      * under test for incorrect user and password behaviour
      */
     @Parameters({"testModule", "testRealm"})        
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void validateModuleTestsNegative(String testModule, String testRealm)
     throws Exception {
         Object[] params = {testModule, testRealm};
@@ -257,7 +260,8 @@ public class RedirectTest extends TestCommon {
      * under test for "goto" param when auth success behaviour
      */
     @Parameters({"testModule", "testRealm"})        
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void validateGotoTests(String testModule, String testRealm)
     throws Exception {
         Object params[] = {testModule, testRealm};
@@ -288,7 +292,8 @@ public class RedirectTest extends TestCommon {
      * behaviour
      */
     @Parameters({"testModule", "testRealm"})       
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void validateGotoOnFailTests(String testModule, String testRealm)
     throws Exception {
         Object[] params = {testModule, testRealm};
@@ -324,7 +329,8 @@ public class RedirectTest extends TestCommon {
      * 3. Delete the users involved/created for this test if any.
      */
     @Parameters({"testModule", "testRealm"})        
-    @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup(String testModule, String testRealm)
     throws Exception {
         Object[] params = {testModule, testRealm};

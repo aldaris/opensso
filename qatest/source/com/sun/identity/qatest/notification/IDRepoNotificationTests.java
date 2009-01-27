@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDRepoNotificationTests.java,v 1.6 2008-05-15 22:10:33 mrudulahg Exp $
+ * $Id: IDRepoNotificationTests.java,v 1.7 2009-01-27 00:08:40 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -75,7 +75,8 @@ public class IDRepoNotificationTests extends TestCommon implements
      * This is setup method. It registers the listener
      */
     @Parameters({"idtype"})
-    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String Idtype)
     throws Exception {
         Object[] params = {Idtype};
@@ -112,7 +113,8 @@ public class IDRepoNotificationTests extends TestCommon implements
     /**
      * It tests notification generation for identity creation event
      */
-    @Test(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void identityCreationTest()
     throws Exception {
         result = false;
@@ -245,7 +247,8 @@ public class IDRepoNotificationTests extends TestCommon implements
     /**
      * It tests notification generation for identity modification event
      */
-    @Test(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods="identityCreationTest")
     public void identityModificationTest()
     throws Exception {
@@ -309,7 +312,8 @@ public class IDRepoNotificationTests extends TestCommon implements
     /**
      * It tests notification generation for identity deletion event
      */
-    @Test(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods="identityModificationTest")
     public void identityDeletionTest()
     throws Exception {
@@ -334,7 +338,8 @@ public class IDRepoNotificationTests extends TestCommon implements
     /**
      * Removes the Event listener & destroys the token. 
      */
-    @AfterClass(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
     throws Exception {
         try {

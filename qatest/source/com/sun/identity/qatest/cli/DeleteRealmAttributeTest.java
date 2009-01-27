@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteRealmAttributeTest.java,v 1.3 2008-08-12 00:12:52 cmwesley Exp $
+ * $Id: DeleteRealmAttributeTest.java,v 1.4 2009-01-26 23:49:00 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -89,7 +89,8 @@ implements CLIExitCodes {
      * DeleteRealmAttributeTest.properties file.
      */
     @Parameters({"testName"})
-    @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String testName) 
     throws Exception {
         Object[] params = {testName};
@@ -178,7 +179,8 @@ implements CLIExitCodes {
      * "ssoadm delete-realm-attribute" using input data from the 
      * DeleteRealmAttributeTest.properties file.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testRealmAttributeDeletion() 
     throws Exception {
         entering("testRealmAttributeDeletion", null);
@@ -328,7 +330,8 @@ implements CLIExitCodes {
      * This method remove any realms that were created during the setup and 
      * testRealmAttributeDeletion methods using "ssoadm delete-realm".
      */
-    @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup() 
     throws Exception {
         int exitStatus = -1;

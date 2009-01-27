@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFSmokeTest.java,v 1.10 2008-06-26 20:13:07 rmisra Exp $
+ * $Id: IDFFSmokeTest.java,v 1.11 2009-01-27 00:04:02 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -98,7 +98,8 @@ public class IDFFSmokeTest extends IDFFCommon {
      */
     @Parameters({"ssoprofile", "sloprofile", "terminationprofile", 
     "registrationprofile"})
-    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String strSSOProfile, String strSLOProfile, 
             String strTermProfile, String strRegProfile)
     throws Exception {
@@ -304,7 +305,8 @@ public class IDFFSmokeTest extends IDFFCommon {
     /**
      * @DocTest: IDFF|Perform SP initiated federation.
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testSPInitFederation()
     throws Exception {
         entering("testSPInitFederation", null);
@@ -333,7 +335,8 @@ public class IDFFSmokeTest extends IDFFCommon {
     /**
      * @DocTest: IDFF|Perform SP initiated SLO.
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"testSPInitFederation"})
     public void testSPInitSLO()
     throws Exception {
@@ -356,7 +359,8 @@ public class IDFFSmokeTest extends IDFFCommon {
     /**
      * @DocTest: IDFF|Perform SP initiated SSO.
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"testSPInitSLO"})
     public void testSPInitSSO()
     throws Exception {
@@ -384,7 +388,8 @@ public class IDFFSmokeTest extends IDFFCommon {
     /**
      * @DocTest: IDFF|Perform SP initiated Name registration.
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"testSPInitSSO"})
     public void testSPInitNameReg()
     throws Exception {
@@ -407,7 +412,8 @@ public class IDFFSmokeTest extends IDFFCommon {
     /**
      * @DocTest: IDFF|Perform SP initiated Termination.
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"testSPInitNameReg"})
     public void testSPInitTerminate()
     throws Exception {
@@ -434,7 +440,8 @@ public class IDFFSmokeTest extends IDFFCommon {
     /**
      * @DocTest: IDFF|Perform IDP initiated SLO.
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"testSPInitTerminate"})
     public void testIDPInitSLO()
     throws Exception {
@@ -466,7 +473,8 @@ public class IDFFSmokeTest extends IDFFCommon {
     /**
      * @DocTest: IDFF|Perform IDP initiated Name registration.
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"testIDPInitSLO"})
     public void testIDPInitNameReg()
     throws Exception {
@@ -493,7 +501,8 @@ public class IDFFSmokeTest extends IDFFCommon {
     /**
      * @DocTest: IDFF|Perform IDP initiated Termination.
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"testIDPInitNameReg"})
     public void testIDPInitTerminate()
     throws Exception {
@@ -522,7 +531,8 @@ public class IDFFSmokeTest extends IDFFCommon {
      */
     @Parameters({"ssoprofile", "sloprofile", "terminationprofile", 
     "registrationprofile"})
-    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup(String strSSOProfile, String strSLOProfile, 
             String strTermProfile, String strRegProfile)
     throws Exception {

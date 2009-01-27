@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSvcsREST.java,v 1.9 2008-09-25 22:42:07 vimal_67 Exp $
+ * $Id: IdSvcsREST.java,v 1.10 2009-01-27 00:06:31 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -102,7 +102,8 @@ public class IdSvcsREST extends TestCommon {
     /**
      *  Creates required users and policy.
      */
-    @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup()
     throws Exception {
         entering("setup", null);
@@ -141,7 +142,8 @@ public class IdSvcsREST extends TestCommon {
      * This test validates the authentication REST interface for super admin
      * user
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testSuperAdminAuthenticateREST()
     throws Exception {
         entering("testSuperAdminAuthenticateREST", null);
@@ -178,7 +180,8 @@ public class IdSvcsREST extends TestCommon {
     /**
      * This test validates the authentication REST interface for a normal user
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testNormalUserAuthenticateREST()
     throws Exception {
         entering("testNormalUserAuthenticateREST", null);
@@ -216,7 +219,8 @@ public class IdSvcsREST extends TestCommon {
      * where policy resource has allow for both GET and POST request. The
      * action under test is GET.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testNormalUserPolAAGetREST()
     throws Exception {
         entering("testNormalUserPolAAGetREST", null);
@@ -260,7 +264,8 @@ public class IdSvcsREST extends TestCommon {
      * where policy resource has allow for both GET and POST request. The
      * action under test is POST.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testNormalUserPolAAPostREST()
     throws Exception {
         entering("testNormalUserPolAAPostREST", null);
@@ -304,7 +309,8 @@ public class IdSvcsREST extends TestCommon {
      * where policy resource has allow for GET and deny for POST request. The
      * action under test is GET.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testNormalUserPolADGetREST()
     throws Exception {
         entering("testNormalUserPolADGetREST", null);
@@ -348,7 +354,8 @@ public class IdSvcsREST extends TestCommon {
      * where policy resource has allow for GET and deny for POST request. The
      * action under test is POST.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testNormalUserPolADPostREST()
     throws Exception {
         entering("testNormalUserPolADPostREST", null);
@@ -392,7 +399,8 @@ public class IdSvcsREST extends TestCommon {
      * where policy resource has deny for GET and allow for POST request. The
      * action under test is GET.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testNormalUserPolDAGetREST()
     throws Exception {
         entering("testNormalUserPolDAGetREST", null);
@@ -436,7 +444,8 @@ public class IdSvcsREST extends TestCommon {
      * where policy resource has deny for GET and allow for POST request. The
      * action under test is POST.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testNormalUserPolDAPostREST()
     throws Exception {
         entering("testNormalUserPolDAPostREST", null);
@@ -480,7 +489,8 @@ public class IdSvcsREST extends TestCommon {
      * where policy resource has deny for both GET and POST request. The
      * action under test are both GET.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testNormalUserPolDDGetREST()
     throws Exception {
         entering("testNormalUserPolDDGetREST", null);
@@ -524,7 +534,8 @@ public class IdSvcsREST extends TestCommon {
      * where policy resource has deny for both GET and POST request. The action
      * under test is POST.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testNormalUserPolDDPostREST()
     throws Exception {
         entering("testNormalUserPolDDPostREST", null);
@@ -568,7 +579,8 @@ public class IdSvcsREST extends TestCommon {
      * current tests validates the retrival of multivalued attribute
      * iplanet-am-user-alias-list.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testNormalUserAttributesREST()
     throws Exception {
         entering("testNormalUserAttributesREST", null);
@@ -610,7 +622,8 @@ public class IdSvcsREST extends TestCommon {
     /**
      * This function tests the search interface for the J2EE agents
      */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testSearchAgentsREST()
             throws Exception {
         entering("testSearchAgentsREST", null);
@@ -679,7 +692,8 @@ public class IdSvcsREST extends TestCommon {
     /** 
      * This function tests the search interface for the user
      */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testSearchUsersREST()
             throws Exception {
         entering("testSearchUsersREST", null);
@@ -744,7 +758,8 @@ public class IdSvcsREST extends TestCommon {
     /**
      * This function tests the search interface for the group 
      */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testSearchGroupREST()
             throws Exception {
         entering("testSearchGroupREST", null);
@@ -809,7 +824,8 @@ public class IdSvcsREST extends TestCommon {
     /** 
      * Create an J2EE Agent type
      */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testCreateAgentREST()
             throws Exception {
         entering("testCreateAgentREST", null);
@@ -866,7 +882,8 @@ public class IdSvcsREST extends TestCommon {
     /**
      * Delete the agent Identity
      */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods = {"testCreateAgentREST"})
     public void testAgentDeleteIdentityREST()
             throws Exception {
@@ -919,7 +936,8 @@ public class IdSvcsREST extends TestCommon {
     /**
      * Create a User
      */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testCreateUserREST()
             throws Exception {
         entering("testCreateUserREST", null);
@@ -972,7 +990,8 @@ public class IdSvcsREST extends TestCommon {
     /**
      * Delete the user Identity
      */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods = {"testCreateUserREST"})
     public void testUserDeleteIdentityREST()
             throws Exception {
@@ -1023,7 +1042,8 @@ public class IdSvcsREST extends TestCommon {
     /** 
      * Create a Group
      */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testCreateGroupREST()
             throws Exception {
         entering("testCreateGroupREST", null);
@@ -1076,7 +1096,8 @@ public class IdSvcsREST extends TestCommon {
     /**
      * Delete the Group Identity
      */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods = {"testCreateGroupREST"})
     public void testGroupDeleteIdentityREST()
             throws Exception {
@@ -1130,7 +1151,8 @@ public class IdSvcsREST extends TestCommon {
      * (a) Delete users
      * (b) Deletes policies
      */
-    @AfterClass(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
             throws Exception {
         entering("cleanup", null);

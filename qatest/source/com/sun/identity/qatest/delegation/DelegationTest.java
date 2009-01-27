@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationTest.java,v 1.6 2008-09-26 15:42:41 rmisra Exp $
+ * $Id: DelegationTest.java,v 1.7 2009-01-27 00:03:01 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -146,7 +146,8 @@ public class DelegationTest extends DelegationCommon {
      * @param testNum Test Number to be executed.
      * @param testName Name of the test.
      */
-    @BeforeTest(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeTest(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+         "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     @Parameters({"testNum", "testName"})
     public void setup(String testNum, String testName)
     throws Exception {
@@ -187,7 +188,8 @@ public class DelegationTest extends DelegationCommon {
      * This method executes the test cases of create, update, delete,
      * add member, remove member, create policy, login and logout
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testDelegation()
     throws Exception {
         entering("testDelegation", null);
@@ -234,6 +236,13 @@ public class DelegationTest extends DelegationCommon {
                         getParams(DelegationConstants.ATTR_VALUE_PAIR, i);
                 String schema_type = getParams(DelegationConstants.SCHEMA_TYPE,
                         i);
+                testIdName = ((testIdName!= null) && 
+                        (testIdName.equalsIgnoreCase("@amadmin@")))?
+                        adminUser:testIdName;
+                testIdPassword = ((testIdPassword != null) && 
+                        (testIdPassword.equalsIgnoreCase(
+                        "@amadminPassword@")))?
+                        adminPassword:testIdPassword;
                 log(Level.FINEST, "testDelegation", "Action = " + testAction);
                 log(Level.FINEST, "testDelegation", "ID Name = " + testIdName);
                 log(Level.FINEST, "testDelegation", "ID Type = " + testIdType);
@@ -245,7 +254,7 @@ public class DelegationTest extends DelegationCommon {
                 Reporter.log("TestMemberName : " + testMemberName);
                 if (testAction.equals("create")) {
                     try {
-                        status = createID(testIdName, testIdType, testIdAttr,
+                      status = createID(testIdName, testIdType, testIdAttr,
                                 ssoToken, delegationRealm);
                     } catch (IdRepoException idre) {
                         log(Level.SEVERE, "testDelegation", "Create error " +
@@ -397,6 +406,12 @@ public class DelegationTest extends DelegationCommon {
                         String subOrg = delegationRealm.substring(
                                 delegationRealm.lastIndexOf("/") + 1);
                         String subOrgLoginUrl = loginURL + "?org=" + subOrg;
+                        //testIdName
+                        testIdName = (testIdName.equalsIgnoreCase("@amadmin@"))?
+                                adminUser:testIdName;
+                        testIdPassword = (testIdPassword.equalsIgnoreCase(
+                                "@amadminPassword@"))?
+                                adminPassword:testIdPassword;
                         status = mpc.createPolicy(strLocRB + ".xml", realmName,
                                 subOrgLoginUrl, testIdName, testIdPassword);
                     } catch (Exception ex) {
@@ -599,7 +614,8 @@ public class DelegationTest extends DelegationCommon {
      * This method remove all identites that are created during the test
      * execution and are not cleaned up due to test failure or exception
      */
-    @AfterSuite(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterSuite(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+         "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void deleteRealms()
     throws Exception {
         entering("deleteRealms", null);

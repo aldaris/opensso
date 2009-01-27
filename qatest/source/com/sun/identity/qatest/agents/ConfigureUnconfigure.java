@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureUnconfigure.java,v 1.12 2008-08-29 20:37:30 nithyas Exp $
+ * $Id: ConfigureUnconfigure.java,v 1.13 2009-01-26 23:45:48 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -74,7 +74,7 @@ public class ConfigureUnconfigure extends TestCommon {
     /**
      * Creates agent profile for the agent and start the notification server.
      */
-    @BeforeSuite(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeSuite(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void createAgentProfile()
     throws Exception {
         entering("createAgentProfile", null);
@@ -145,7 +145,7 @@ public class ConfigureUnconfigure extends TestCommon {
     /**
      * Deletes agent profile for the agent and stops the notification server.
      */
-    @AfterSuite(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+   // @AfterSuite(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void deleteAgentProfile()
     throws Exception {
         entering("deleteAgentProfile", null);

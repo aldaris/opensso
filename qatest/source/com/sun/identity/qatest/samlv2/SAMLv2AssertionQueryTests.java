@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2AssertionQueryTests.java,v 1.1 2008-08-26 22:33:23 sridharev Exp $
+ * $Id: SAMLv2AssertionQueryTests.java,v 1.2 2009-01-27 00:14:07 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -94,7 +94,8 @@ public class  SAMLv2AssertionQueryTests extends TestCommon {
      * Configures the SP and IDP load meta for the SAMLV2AttributeQueryTests
      * tests to execute
      */
-    @BeforeClass(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup()
     throws Exception {
         HtmlPage page;
@@ -189,7 +190,8 @@ public class  SAMLv2AssertionQueryTests extends TestCommon {
     /**
      * Enable Assertion cache
      */
-    @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void assertionCacheSetup()
     throws Exception {
         entering("assertionCacheSetup", null);
@@ -308,7 +310,8 @@ public class  SAMLv2AssertionQueryTests extends TestCommon {
     /**
      * Create the webClient which will be used for the rest of the tests.
      */
-    @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void getWebClient()
     throws Exception {
         try {
@@ -325,7 +328,8 @@ public class  SAMLv2AssertionQueryTests extends TestCommon {
     /**
      * Execute the AssertionQuery tests
      */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void assertionQueryTest()
     throws Exception {
         
@@ -396,7 +400,8 @@ public class  SAMLv2AssertionQueryTests extends TestCommon {
     /**
      * Clean up and deleted the created users for this test
      */
-    @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: HeaderAttributeTests.java,v 1.11 2008-07-31 21:34:08 nithyas Exp $
+ * $Id: HeaderAttributeTests.java,v 1.12 2009-01-26 23:45:49 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -121,7 +121,8 @@ public class HeaderAttributeTests extends TestCommon {
      * Sets up policy and creates users required by the policy
      */
     @Parameters({"policyIdx", "resourceIdx"})
-    @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String policyIdx, String resourceIdx)
     throws Exception {
         Object[] params = {policyIdx, resourceIdx};
@@ -182,7 +183,8 @@ public class HeaderAttributeTests extends TestCommon {
      * Evaluates newly created response attribute which holds a single static
      * value
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void evaluateNewSingleValuedStaticResponseAttribute()
     throws Exception {
         entering("evaluateNewSingleValuedStaticResponseAttribute", null);
@@ -213,7 +215,8 @@ public class HeaderAttributeTests extends TestCommon {
      * Evaluates newly created response attribute which holds multiple static
      * value
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"evaluateNewSingleValuedStaticResponseAttribute"})
     public void evaluateNewMultiValuedStaticResponseAttribute()
     throws Exception {
@@ -244,7 +247,8 @@ public class HeaderAttributeTests extends TestCommon {
      * Evaluates newly created response attribute which holds a single dynamic
      * value
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"evaluateNewMultiValuedStaticResponseAttribute"})
     public void evaluateDynamicResponseAttribute()
     throws Exception {
@@ -273,8 +277,9 @@ public class HeaderAttributeTests extends TestCommon {
     /**
      * Evaluates updated response attribute which holds a single dynamic value
      */
-    //@Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
-    //dependsOnMethods={"evaluateDynamicResponseAttribute"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+        "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},dependsOnMethods={
+        "evaluateDynamicResponseAttribute"})
         public void evaluateUpdatedDynamicResponseAttribute()
     throws Exception {
         entering("evaluateUpdatedDynamicResponseAttribute", null);
@@ -327,7 +332,8 @@ public class HeaderAttributeTests extends TestCommon {
     /**
      * Evaluates a standard session attribute
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void evaluateUniversalIdSessionAttribute()
     throws Exception {
         entering("evaluateUniversalIdSessionAttribute", null);
@@ -361,7 +367,8 @@ public class HeaderAttributeTests extends TestCommon {
     /**
      * Evaluates newly created and updated custom session attribute
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"evaluateUniversalIdSessionAttribute"})
     public void evaluateCustomSessionAttribute()
     throws Exception {
@@ -460,7 +467,8 @@ public class HeaderAttributeTests extends TestCommon {
     /**
      * Evaluates newly created static single valued profile attribute
      */
-    @Test(groups={"ds_ds", "ds_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void evaluateNewSingleValuedProfileAttribute()
     throws Exception {
         entering("evaluateNewSingleValuedProfileAttribute", null);
@@ -501,7 +509,8 @@ public class HeaderAttributeTests extends TestCommon {
     /**
      * Evaluates newly created static multi valued profile attribute
      */
-    @Test(groups={"ds_ds", "ds_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"evaluateNewSingleValuedProfileAttribute"})
     public void evaluateNewMultiValuedProfileAttribute()
     throws Exception {
@@ -531,7 +540,8 @@ public class HeaderAttributeTests extends TestCommon {
      * Evaluates newly created dynamic multi valued profile attribute related
      * to static roles
      */
-    @Test(groups={"ds_ds", "ds_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"evaluateNewMultiValuedProfileAttribute"})
     public void evaluateNewNsRoleProfileAttribute()
     throws Exception {
@@ -568,7 +578,8 @@ public class HeaderAttributeTests extends TestCommon {
      * Evaluates newly created dynamic multi valued profile attribute related
      * to dynamic roles
      */
-    @Test(groups={"ds_ds", "ds_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"evaluateNewNsRoleProfileAttribute"})
     public void evaluateNewFilteredRoleProfileAttribute()
     throws Exception {
@@ -605,7 +616,8 @@ public class HeaderAttributeTests extends TestCommon {
     /**
      * Evaluates updated static single valued profile attribute
      */
-    @Test(groups={"ds_ds", "ds_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"evaluateNewNsRoleProfileAttribute"})
     public void evaluateUpdatedSingleValuedProfileAttribute()
     throws Exception {
@@ -659,7 +671,8 @@ public class HeaderAttributeTests extends TestCommon {
     /**
      * Evaluates updated static multi valued profile attribute
      */
-    @Test(groups={"ds_ds", "ds_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"evaluateUpdatedSingleValuedProfileAttribute"})
     public void evaluateUpdatedMultiValuedProfileAttribute()
     throws Exception {
@@ -705,7 +718,8 @@ public class HeaderAttributeTests extends TestCommon {
      * Evaluates updated dynamic multi valued profile attribute related to
      * static roles
      */
-    @Test(groups={"ds_ds", "ds_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"evaluateUpdatedMultiValuedProfileAttribute"})
     public void evaluateUpdatedNsRoleProfileAttribute()
     throws Exception {
@@ -760,7 +774,8 @@ public class HeaderAttributeTests extends TestCommon {
      * Evaluates updated dynamic multi valued profile attribute related to
      * dynamic roles
      */
-    @Test(groups={"ds_ds","ds_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"evaluateUpdatedNsRoleProfileAttribute"})
     public void evaluateUpdatedFilteredRoleProfileAttribute()
     throws Exception {
@@ -809,7 +824,8 @@ public class HeaderAttributeTests extends TestCommon {
      * Deletes policies, identities and updates service attributes to default
      * values.
      */
-    @AfterClass(groups={"ff_ds", "ff_ds_sec", "ds_ds", "ds_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);
@@ -862,7 +878,8 @@ public class HeaderAttributeTests extends TestCommon {
      * Deletes filtered roles. This is only valid for datastores supporting the
      * filtered roles.
      */
-    @AfterClass(groups={"ds_ds", "ds_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanupForDS()
     throws Exception {
         entering("cleanupForDS", null);

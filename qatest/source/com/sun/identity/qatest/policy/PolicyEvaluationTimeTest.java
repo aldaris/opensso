@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluationTimeTest.java,v 1.5 2008-06-26 20:16:33 rmisra Exp $:
+ * $Id: PolicyEvaluationTimeTest.java,v 1.6 2009-01-27 00:10:44 nithyas Exp $:
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -84,7 +84,8 @@ public class PolicyEvaluationTimeTest extends TestCommon {
      * Creates Identities for policy evaluation
      * @param none
      */
-    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup() 
     throws Exception {
         entering("setup", null);
@@ -111,7 +112,8 @@ public class PolicyEvaluationTimeTest extends TestCommon {
      * Condition2: auth scheme = ldap
      * Result: The user should be allowed
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void evaluatePolicyDayPositive()
     throws Exception {
         entering("evaluatePolicyDayPositive", null);
@@ -165,7 +167,8 @@ public class PolicyEvaluationTimeTest extends TestCommon {
      * Condition2: auth scheme = ldap
      * Result: The user should be denied
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void evaluatePolicyDayNegative()
     throws Exception {
         entering("evaluatePolicyDayNegative", null);
@@ -215,7 +218,8 @@ public class PolicyEvaluationTimeTest extends TestCommon {
      * Condition2: auth scheme = ldap
      * Result: The user should be allowed
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void evaluatePolicyDayRange()
     throws Exception {
         entering("evaluatePolicyDayRange", null);
@@ -267,7 +271,8 @@ public class PolicyEvaluationTimeTest extends TestCommon {
      * Condition2: auth scheme = ldap
      * Result: The user should be denied
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void evaluatePolicyDayRangeNegative()
     throws Exception {
         entering("evaluatePolicyDayRangeNegative", null);
@@ -321,7 +326,8 @@ public class PolicyEvaluationTimeTest extends TestCommon {
      * Condition2: auth scheme = ldap
      * Result: The user should be allowed
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void evaluatePolicyDatePositiveRange()
     throws Exception {
         entering("evaluatePolicyDatePositiveRange", null);
@@ -373,7 +379,8 @@ public class PolicyEvaluationTimeTest extends TestCommon {
      * Condition2: auth scheme = ldap
      * Result: The user should be denied
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void evaluatePolicyDateNegativeRange()
     throws Exception {
         entering("evaluatePolicyDateNegativeRange", null);
@@ -427,7 +434,8 @@ public class PolicyEvaluationTimeTest extends TestCommon {
      * Condition2: auth scheme = ldap
      * Result: The user should be allowed
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void evaluatePolicyDatePositive()
     throws Exception {
         entering("evaluatePolicyDatePositive", null);
@@ -477,7 +485,8 @@ public class PolicyEvaluationTimeTest extends TestCommon {
      * Condition2: auth scheme = ldap
      * Result: The user should be denied
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void evaluatePolicyDateNegative()
     throws Exception {
         entering("evaluatePolicyDateNegative", null);
@@ -529,7 +538,8 @@ public class PolicyEvaluationTimeTest extends TestCommon {
      * Condition2: auth scheme = ldap
      * Result: The user should be denied
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void evaluatePolicyTimeNegative()
     throws Exception {
         entering("evaluatePolicyTimeNegative", null);
@@ -594,7 +604,8 @@ public class PolicyEvaluationTimeTest extends TestCommon {
      * Condition2: auth scheme = ldap
      * Result: The user should be allowed
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void evaluatePolicyTimePositive()
     throws Exception {
         entering("evaluatePolicyTimePositive", null);
@@ -657,7 +668,8 @@ public class PolicyEvaluationTimeTest extends TestCommon {
      * Condition2: auth scheme = ldap
      * Result: The user should be allowed
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void evaluatePolicyMultiTime()
     throws Exception {
         entering("evaluatePolicyMultiTime", null);
@@ -797,7 +809,8 @@ public class PolicyEvaluationTimeTest extends TestCommon {
      * Deletes the Identities
      * @param map (loaded with Identities to be deleted)
      */
-    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2IDPProxySmokeTest.java,v 1.4 2008-06-26 20:26:22 rmisra Exp $
+ * $Id: SAMLv2IDPProxySmokeTest.java,v 1.5 2009-01-27 00:15:33 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -77,7 +77,8 @@ public class SAMLv2IDPProxySmokeTest extends TestCommon {
      * This setup method creates required users.
      */
     @Parameters({"ssoprofile", "sloprofile"})
-    @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String strSSOProfile, String strSLOProfile) 
     throws Exception {
         ArrayList list;
@@ -211,7 +212,8 @@ public class SAMLv2IDPProxySmokeTest extends TestCommon {
     /**
      * Create the webClient which will be used for the rest of the tests.
      */
-    @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void getWebClient() 
     throws Exception {
         try {
@@ -227,7 +229,8 @@ public class SAMLv2IDPProxySmokeTest extends TestCommon {
      * Run saml2 SSO in IDP Proxy scenario.
      * @DocTest: SAML2|Perform SP initiated sso.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void SPInitSSO()
     throws Exception {
         entering("SPInitSSO", null);
@@ -267,7 +270,8 @@ public class SAMLv2IDPProxySmokeTest extends TestCommon {
      * Run saml2 slo
      * @DocTest: SAML2|Perform SP initiated slo.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"SPInitSSO"})
     public void SPInitSLO()
     throws Exception {
@@ -293,7 +297,8 @@ public class SAMLv2IDPProxySmokeTest extends TestCommon {
      * Run saml2 transient SSO in IDP Proxy scenario.
      * @DocTest: SAML2|Perform SP initiated sso with transient federation.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"}, 
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"}, 
     dependsOnMethods={"SPInitSLO"})
     public void SPInitSSOTransient()
     throws Exception {
@@ -337,7 +342,8 @@ public class SAMLv2IDPProxySmokeTest extends TestCommon {
      * Run saml2 slo
      * @DocTest: SAML2|Perform SP initiated slo.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"SPInitSSOTransient"})
     public void SPInitSLOTransient()
     throws Exception {
@@ -363,7 +369,8 @@ public class SAMLv2IDPProxySmokeTest extends TestCommon {
     /**
      * Cleanup methods deletes all the users which were created in setup
      */
-    @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

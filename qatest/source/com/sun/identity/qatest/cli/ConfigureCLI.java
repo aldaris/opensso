@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureCLI.java,v 1.5 2008-10-03 13:37:42 cmwesley Exp $
+ * $Id: ConfigureCLI.java,v 1.6 2009-01-26 23:48:55 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -53,7 +53,7 @@ public class ConfigureCLI extends CLIUtility {
      * is same as the one mentioned in AMConfig.properties file. If
      * same, continue the execution else abort. 
      */
-    @BeforeSuite(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"})
+    @BeforeSuite(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void configureCLI()
     throws Exception {
         entering("configureCLI", null);

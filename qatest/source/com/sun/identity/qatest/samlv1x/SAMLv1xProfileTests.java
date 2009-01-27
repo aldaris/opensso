@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv1xProfileTests.java,v 1.5 2009-01-13 06:59:35 vimal_67 Exp $
+ * $Id: SAMLv1xProfileTests.java,v 1.6 2009-01-27 00:12:48 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -94,7 +94,8 @@ public class SAMLv1xProfileTests extends TestCommon {
      * tests to execute
      */
     @Parameters({"ptestName", "ptestType", "ptestInit", "nameidformatIndex"})
-    @BeforeClass(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String ptestName, String ptestType, String ptestInit, 
             String nameidformatIndex)
             throws Exception {
@@ -302,7 +303,8 @@ public class SAMLv1xProfileTests extends TestCommon {
      * It also tests the mapping of a nameidformat to the 
      * user profile attributes.
      */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void samlv1xTest()
             throws Exception {
         try {
@@ -395,7 +397,8 @@ public class SAMLv1xProfileTests extends TestCommon {
      * Executes the tests of Artifact and Post Profiles. 
      * It tests the mapping of attributes that are included in SAML assertion.
      */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void samlv1xAttrMapTest()
             throws Exception {
         try {
@@ -505,7 +508,8 @@ public class SAMLv1xProfileTests extends TestCommon {
     /**
      * Create the webClient which will be used for the rest of the tests.
      */
-    @BeforeClass(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void getWebClient()
             throws Exception {
         try {
@@ -523,7 +527,8 @@ public class SAMLv1xProfileTests extends TestCommon {
      * Deletes the users created for this test, removes the attributes values
      * added to the SAML service
      */
-    @AfterClass(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
             throws Exception {
         entering("cleanup", null);

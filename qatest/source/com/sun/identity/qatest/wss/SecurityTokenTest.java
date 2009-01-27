@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [ of copyright owner]"
  *
- * $Id: SecurityTokenTest.java,v 1.5 2008-08-20 22:25:33 arunav Exp $
+ * $Id: SecurityTokenTest.java,v 1.6 2009-01-27 00:18:56 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -106,7 +106,7 @@ public class SecurityTokenTest extends TestCommon {
      * Updates bootstrap security mechanism in Discovery service to null:X509
      * and creates users.
      */
-    @BeforeSuite(groups={"ff_ds_sec", "ds_ds_sec"})
+    @BeforeSuite(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
     public void createUser()
     throws Exception {
         try {
@@ -140,7 +140,7 @@ public class SecurityTokenTest extends TestCommon {
     /**
      * Changes the runtime application user from UrlAccessAgent to amadmin
      */
-    @BeforeSuite(groups={"ff_ds_sec", "ds_ds_sec"})
+    @BeforeSuite(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
     public void changeRunTimeUser() throws
             Exception{
         
@@ -178,7 +178,7 @@ public class SecurityTokenTest extends TestCommon {
      * Creates agent profiles for web service providers and web service clients.
      */
     @Parameters({"testIdx"})
-    @BeforeClass(groups={"ff_ds_sec", "ds_ds_sec"})
+    @BeforeClass(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
     public void setup(String testIdx)
     throws Exception {
         Object[] params = {testIdx};
@@ -215,7 +215,7 @@ public class SecurityTokenTest extends TestCommon {
     /**
      * Creates and makes the actual web service call.
      */
-    @Test(groups={"ff_ds_sec", "ds_ds_sec"})
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
     public void evaluateSecurityToken()
     throws Exception {
         entering("evaluateSecurityToken", null);
@@ -268,7 +268,7 @@ public class SecurityTokenTest extends TestCommon {
     /**
      * Deletest the agent profiles for webservice clients and providers.
      */
-    @AfterClass(groups={"ff_ds_sec", "ds_ds_sec"})
+    @AfterClass(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);
@@ -290,7 +290,7 @@ public class SecurityTokenTest extends TestCommon {
      * Deletes users and resets bootstrap security mechanism in Discovery
      * service to null:null.
      */
-    @AfterSuite(groups={"ff_ds_sec", "ds_ds_sec"})
+    @AfterSuite(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
     public void deleteUser()
     throws Exception {
         idmc.deleteIdentity(token, realm, IdType.USER, strUser);

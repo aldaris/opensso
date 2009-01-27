@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GeneralAgentTests.java,v 1.9 2008-08-29 20:21:14 nithyas Exp $
+ * $Id: GeneralAgentTests.java,v 1.10 2009-01-26 23:45:48 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -100,7 +100,8 @@ public class GeneralAgentTests extends TestCommon {
      */
     @Parameters({"policyIdx", "resourcePIdx", "resourceNPIdx",
     "resourceCaseIdx"})
-    @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String policyIdx, String resourcePIdx,
             String resourceNPIdx, String resourceCaseIdx)
     throws Exception {
@@ -151,7 +152,8 @@ public class GeneralAgentTests extends TestCommon {
     /**
      * Validates the value of REMOTE_USER for authenticated user.
      */ 
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void evaluateRemoteUser()
     throws Exception {
         entering("evaluetRemoteUser", null);
@@ -180,7 +182,8 @@ public class GeneralAgentTests extends TestCommon {
      * Checks if the Agent Being tested, supports Anonymous Users, i.e. Agent 
      * is a 2.2 Web Agent
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     private void isAnonymousSupported()
         throws Exception {
             try {
@@ -200,7 +203,8 @@ public class GeneralAgentTests extends TestCommon {
     /**
      * Validates the value of REMOTE_USER for anonymous user.
      */ 
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"isAnonymousSupported"})
     public void evaluateAnonymous()
     throws Exception {
@@ -232,7 +236,8 @@ public class GeneralAgentTests extends TestCommon {
     /**
      * Validates a not enforced resources.
      */
-    //@Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void evaluateNotEnforced()
     throws Exception {
         entering("evaluateNotEnforced", null);
@@ -257,7 +262,8 @@ public class GeneralAgentTests extends TestCommon {
     /**
      * Validates case sensitivity for resource name.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void evaluateCaseSensitive()
     throws Exception {
         entering("evaluateCaseSensitive", null);
@@ -293,7 +299,8 @@ public class GeneralAgentTests extends TestCommon {
      * Validates that agent gets notification if user session is 
      * terminated on the server.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void evaluateSessionTermination()
     throws Exception {
         entering("evaluateSessionTermination", null);
@@ -329,7 +336,8 @@ public class GeneralAgentTests extends TestCommon {
      * Validates that agent gets notification if user logs out 
      * from the server.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void evaluateSessionLogout()
     throws Exception {
         entering("evaluateSessionLogout", null);
@@ -364,7 +372,8 @@ public class GeneralAgentTests extends TestCommon {
     /**
      * Deletes policies, user identities and destroys amadmin token.
      */
-    @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

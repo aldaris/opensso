@@ -1,3 +1,4 @@
+
 /* The contents of this file are subject to the terms
  * of the Common Development and Distribution License
  * (the License). You may not use this file except in
@@ -17,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnconfigureSAE.java,v 1.4 2008-07-15 19:57:52 rmisra Exp $
+ * $Id: UnconfigureSAE.java,v 1.5 2009-01-27 00:11:58 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -69,7 +70,7 @@ public class UnconfigureSAE extends TestCommon {
      * Configure sp & idp
      * @DocTest: SAE|Unconfigure SP & IDP by deleting entities & COT's 
      */
-    @AfterSuite (groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterSuite (groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void UnconfigureSAE()
     throws Exception {
         entering ("UnconfigureSAE", null);

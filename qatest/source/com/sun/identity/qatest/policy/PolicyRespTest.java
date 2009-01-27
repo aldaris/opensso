@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyRespTest.java,v 1.6 2008-06-26 20:16:33 rmisra Exp $
+ * $Id: PolicyRespTest.java,v 1.7 2009-01-27 00:10:44 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -81,7 +81,8 @@ public class PolicyRespTest extends TestCommon {
      */
     @Parameters({"policyIdx","evaluationIdx","setup","cleanup", "peAtOrg",
     "dynamic"})
-    @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String policyIdx, String evaluationIdx, String setup
             , String cleanup, String peAtOrg, String dynamic)
     throws Exception {
@@ -149,7 +150,8 @@ public class PolicyRespTest extends TestCommon {
      *
      */
     @Parameters({ "peAtOrg", "evalIdx"})
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void evaluatePolicyWithRespTest(String peAtOrg)
     throws Exception {
         Object[] params = {peAtOrg, evalIdx};
@@ -206,7 +208,8 @@ public class PolicyRespTest extends TestCommon {
      *
      */
     @Parameters({"peAtOrg", "dynamic"})
-    @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup(String peAtOrg, String dynamic)
     throws Exception {
         Object[] params = {peAtOrg, dynamic};

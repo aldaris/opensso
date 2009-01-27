@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- *$Id: AccountLockoutTest.java,v 1.7 2008-08-12 20:29:19 cmwesley Exp $*
+ *$Id: AccountLockoutTest.java,v 1.8 2009-01-26 23:47:43 nithyas Exp $*
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 package com.sun.identity.qatest.authentication;
@@ -114,7 +114,8 @@ public class AccountLockoutTest extends TestCommon {
      * - Sets the lockout attributes
      * - Create Users , If needed
      */
-    @BeforeClass(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup() 
     throws Exception {
         SSOToken serviceToken = null;  
@@ -244,7 +245,8 @@ public class AccountLockoutTest extends TestCommon {
     /**
      * Validate the Account Lockout tests
      */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void validateAccountLockTest() 
     throws Exception {
         entering("validateAccountLockTest", null);
@@ -276,7 +278,8 @@ public class AccountLockoutTest extends TestCommon {
     /**
      * Validate the warning tests
      */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void validateWarningTest() 
     throws Exception {
         entering("validateWarningTest", null);
@@ -308,7 +311,8 @@ public class AccountLockoutTest extends TestCommon {
     /**
      * Validate the inetuserstatus attribute value after the lockout
      */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void validateAccountLockUserStatusTest()
     throws Exception {
         entering("validateAccountLockUserStatusTest", null);
@@ -342,7 +346,8 @@ public class AccountLockoutTest extends TestCommon {
     /**
      * Validate the Custom attribute value change after the lockout
      */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void validateAccountLockUserAttrTest()
     throws Exception {
         entering("validateAccountLockUserAttrTest", null);
@@ -389,7 +394,8 @@ public class AccountLockoutTest extends TestCommon {
      * Validate the nsaccountlock attribute will not change the value after 
      * lock out
      */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void validateNsAccountLockTest()
     throws Exception {
         entering("validateNsAccountLockTest", null);
@@ -422,7 +428,8 @@ public class AccountLockoutTest extends TestCommon {
     /**
      * performs cleanup after tests are done.
      */
-    @AfterClass(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup() 
     throws Exception {
         SSOToken serviceToken = null;

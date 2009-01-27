@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMNotificationTests.java,v 1.3 2007-11-30 18:46:51 rmisra Exp $
+ * $Id: SMNotificationTests.java,v 1.4 2009-01-27 00:08:40 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -64,7 +64,8 @@ public class SMNotificationTests extends TestCommon implements ServiceListener {
         super("SMNotificationTests");
     }
     
-    @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup()
             throws Exception {
         entering("setup", null);
@@ -82,7 +83,8 @@ public class SMNotificationTests extends TestCommon implements ServiceListener {
     /**
      * It tests notification generation for identity modification event
      */
-    @Test(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void PlatformServiceModificationTest()
     throws Exception {
         result = false;
@@ -139,7 +141,8 @@ public class SMNotificationTests extends TestCommon implements ServiceListener {
     /**
      * It tests notification for logging service.
      */
-    @Test(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void LoggingServiceModificationTest()
     throws Exception {
         result = false;
@@ -195,7 +198,8 @@ public class SMNotificationTests extends TestCommon implements ServiceListener {
     /**
      * It tests notification for Authentication service update at the org level.
      */
-    @Test(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void AuthServiceOrgModificationTest()
     throws Exception {
         result = false;
@@ -257,7 +261,8 @@ public class SMNotificationTests extends TestCommon implements ServiceListener {
     /**
      * It tests notification for Authentication service update at global level.
      */
-    @Test(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void AuthServiceGlobalModificationTest()
     throws Exception {
         result = false;
@@ -320,7 +325,8 @@ public class SMNotificationTests extends TestCommon implements ServiceListener {
     /**
      * It tests notification for Session service update at the global level.
      */
-    @Test(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void SessionServiceGlobalModificationTest()
     throws Exception {
         result = false;
@@ -376,7 +382,8 @@ public class SMNotificationTests extends TestCommon implements ServiceListener {
     /**
      * Removes the Event listener & destroys the token. 
      */
-    @AfterClass(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
     throws Exception {
         try {

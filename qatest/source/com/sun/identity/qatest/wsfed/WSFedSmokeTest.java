@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSFedSmokeTest.java,v 1.5 2008-08-26 05:00:39 mrudulahg Exp $
+ * $Id: WSFedSmokeTest.java,v 1.6 2009-01-27 00:18:21 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -68,7 +68,7 @@ public class WSFedSmokeTest extends WSFedCommon {
     /**
      * This setup method creates required users.
      */
-    @BeforeClass(groups={"ds_ds_sec", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3_sec",  "s1ds_sec", "ad_sec",  "amsdk_sec"})
     public void setup()
     throws Exception {
         ArrayList list;
@@ -153,7 +153,7 @@ public class WSFedSmokeTest extends WSFedCommon {
     /**
      * Create the webClient which will be used for the rest of the tests.
      */
-    @BeforeClass(groups={"ds_ds_sec", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3_sec",  "s1ds_sec", "ad_sec",  "amsdk_sec"})
     public void getWebClient()
     throws Exception {
         try {
@@ -168,7 +168,7 @@ public class WSFedSmokeTest extends WSFedCommon {
     /**
      * Run WSFed SP initiated SSO.
      */
-    @Test(groups={"ds_ds_sec", "ff_ds_sec"})
+    @Test(groups={"ldapv3_sec",  "s1ds_sec", "ad_sec",  "amsdk_sec"})
     public void wsfedSPSSOInit()
     throws Exception {
         entering("wsfedSPSSOInit", null);
@@ -196,7 +196,7 @@ public class WSFedSmokeTest extends WSFedCommon {
     /**
      * Run WSFed SP initiated SLO.
      */
-    @Test(groups={"ds_ds_sec", "ff_ds_sec"}, 
+    @Test(groups={"ldapv3_sec",  "s1ds_sec", "ad_sec",  "amsdk_sec"}, 
     dependsOnMethods={"wsfedSPSSOInit"})
     public void wsfedSPSLOInit()
     throws Exception {
@@ -265,7 +265,7 @@ public class WSFedSmokeTest extends WSFedCommon {
     /**
      * Run wsfed IDP init SLO
      */
-    @Test(groups={"ds_ds_sec", "ff_ds_sec"}, 
+    @Test(groups={"ldapv3_sec",  "s1ds_sec", "ad_sec",  "amsdk_sec"}, 
     dependsOnMethods={"wsfedSPSLOInit"})
     public void wsfedIDPSLOInit()
     throws Exception {
@@ -338,7 +338,7 @@ public class WSFedSmokeTest extends WSFedCommon {
     /**
      * This methods deletes all the users as part of cleanup
      */
-    @AfterClass(groups={"ds_ds_sec", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3_sec",  "s1ds_sec", "ad_sec",  "amsdk_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GenericCLITest.java,v 1.5 2008-08-12 00:12:52 cmwesley Exp $
+ * $Id: GenericCLITest.java,v 1.6 2009-01-26 23:49:32 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -86,7 +86,8 @@ public class GenericCLITest extends TestCommon implements CLIExitCodes {
      * Creates a <code>FederationManagerCLI</code> object. 
      */
     @Parameters({"testName", "propFile"})
-    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String testName, String propFile) 
     throws Exception {
         Object[] params = {testName, propFile};
@@ -126,7 +127,8 @@ public class GenericCLITest extends TestCommon implements CLIExitCodes {
      * This method is used to execute tests with the subcommand and arguments
      * from the GenericCLITest_*.properties file.
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testGenericCLICommand() 
     throws Exception {
         entering("testGenericCLICommand", null);
@@ -208,7 +210,8 @@ public class GenericCLITest extends TestCommon implements CLIExitCodes {
     /**
      * This method is a placeholder.  Does not perform any cleanup activities.
      */
-    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup() {
         entering("cleanup", null);
         exiting("cleanup");

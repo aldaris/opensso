@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureIDFFProtocols.java,v 1.6 2008-06-26 20:13:07 rmisra Exp $
+ * $Id: ConfigureIDFFProtocols.java,v 1.7 2009-01-27 00:04:01 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -79,7 +79,7 @@ public class ConfigureIDFFProtocols extends IDFFCommon {
      */
     @Parameters({"ssoprofile", "sloprofile", "terminationprofile", 
     "registrationprofile"})
-    @BeforeTest(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @BeforeTest(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void ConfigureIDFFProtocol(String strSSOProfile,
             String strSLOProfile, String strTermProfile, String strRegProfile)
     throws Exception {
@@ -200,7 +200,7 @@ public class ConfigureIDFFProtocols extends IDFFCommon {
      */
     @Parameters({"ssoprofile", "sloprofile", "terminationprofile", 
     "registrationprofile"})
-    @AfterTest(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @AfterTest(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void UnconfigureIDFFProtocol(String strSSOProfile,
             String strSLOProfile, String strTermProfile, String strRegProfile)
     throws Exception {

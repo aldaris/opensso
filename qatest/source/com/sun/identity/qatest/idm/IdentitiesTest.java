@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdentitiesTest.java,v 1.6 2008-06-26 20:13:45 rmisra Exp $
+ * $Id: IdentitiesTest.java,v 1.7 2009-01-27 00:05:42 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -82,7 +82,7 @@ public class IdentitiesTest extends IDMCommon {
      * @param testNum   test case number in propperties file
      * @param testName  test case name
      */
-    @BeforeTest(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @BeforeTest(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     @Parameters({"testNum", "testName"})
     public void setup(String testNum, String testName)
     throws Exception {
@@ -119,7 +119,8 @@ public class IdentitiesTest extends IDMCommon {
      * This method executes the test cases of create, update, delete, search,
      * add member, remove member for all identities
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testIdentities()
     throws Exception {
         entering("testIdentities", null);
@@ -308,7 +309,7 @@ public class IdentitiesTest extends IDMCommon {
      * This method remove all identites that are created during the test
      * execution and are not cleaned up due to test failure or exception
      */
-    @AfterTest(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @AfterTest(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

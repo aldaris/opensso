@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2RelayStateTests.java,v 1.8 2008-06-26 20:24:17 rmisra Exp $
+ * $Id: SAMLv2RelayStateTests.java,v 1.9 2009-01-27 00:14:09 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -81,7 +81,7 @@ public class SAMLv2RelayStateTests extends TestCommon {
     /**
      * Create the webClient which should be run before each test.
      */
-    @BeforeMethod(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @BeforeMethod(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     private void getWebClient()
     throws Exception {
         try {
@@ -96,7 +96,8 @@ public class SAMLv2RelayStateTests extends TestCommon {
     /**
      * This is setup method. It creates required users for test
      */
-    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup()
     throws Exception {
         List<String> list;
@@ -197,7 +198,8 @@ public class SAMLv2RelayStateTests extends TestCommon {
     /**
      * @DocTest: SAML2|SP Init SSO with RelayState set
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void samlv2SPInitArtSSORS()
     throws Exception {
         entering("samlv2SPInitArtSSORS", null);
@@ -250,7 +252,7 @@ public class SAMLv2RelayStateTests extends TestCommon {
     /**
      * @DocTest: SAML2|SP Init SSO with RelayState with post/soap binding
      */
-    @Test(groups={"ds_ds_sec","ff_ds_sec"})
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
     public void samlv2SPInitPostSSORS()
     throws Exception {
         entering("samlv2SPInitPostSSORS", null);
@@ -303,7 +305,8 @@ public class SAMLv2RelayStateTests extends TestCommon {
     /**
      * @DocTest: SAML2|IDP initiated SSO RelayState set.
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void samlv2IDPInitSSORS()
     throws Exception {
         entering("samlv2IDPInitSSORS", null);
@@ -359,7 +362,7 @@ public class SAMLv2RelayStateTests extends TestCommon {
     /**
      * @DocTest: SAML2|IDP Init SSO with RelayState set with POST/SOAP binding
      */
-    @Test(groups={"ds_ds_sec","ff_ds_sec"})
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
     public void samlv2IDPInitPostSSORS()
     throws Exception {
         entering("samlv2IDPInitPostSSORS", null);
@@ -415,7 +418,8 @@ public class SAMLv2RelayStateTests extends TestCommon {
     /**
      * @DocTest: SAML2|SP Init SLO with RelayState set
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void samlv2SPInitHTTPSLORS()
     throws Exception {
         entering("samlv2SPInitHTTPSLORS", null);
@@ -468,7 +472,7 @@ public class SAMLv2RelayStateTests extends TestCommon {
     /**
      * @DocTest: SAML2|SP Init SLO with RelayState with post/soap binding
      */
-    @Test(groups={"ds_ds_sec","ff_ds_sec"})
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
     public void samlv2SPInitSOAPSLORS()
     throws Exception {
         entering("samlv2SPInitSOAPSLORS", null);
@@ -522,7 +526,8 @@ public class SAMLv2RelayStateTests extends TestCommon {
     /**
      * @DocTest: SAML2|IDP initiated SLO with RelayState set.
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void samlv2IDPInitHTTPSLORS()
     throws Exception {
         entering("samlv2IDPInitHTTPSLORS", null);
@@ -578,7 +583,7 @@ public class SAMLv2RelayStateTests extends TestCommon {
     /**
      * @DocTest: SAML2|IDP Init SLO with Relay state POST/SOAP binding
      */
-    @Test(groups={"ds_ds_sec","ff_ds_sec"})
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
     public void samlv2IDPInitSOAPSLORS()
     throws Exception {
         entering("samlv2IDPInitSOAPSLORS", null);
@@ -634,7 +639,8 @@ public class SAMLv2RelayStateTests extends TestCommon {
     /**
      * @DocTest: SAML2|SP Init SSO/SLO with diff RelayState set
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void samlv2SPInitArtHTTPSSOSLORS()
     throws Exception {
         entering("samlv2SPInitArtHTTPSSOSLORS", null);
@@ -694,7 +700,7 @@ public class SAMLv2RelayStateTests extends TestCommon {
      * @DocTest: SAML2|SP Init SSO/SLO with diff RelayState set POST/SOAP
      * binding
      */
-    @Test(groups={"ds_ds_sec","ff_ds_sec"})
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
     public void samlv2SPInitPostSOAPSSOSLORS()
     throws Exception {
         entering("samlv2SPInitPostSOAPSSOSLORS", null);
@@ -753,7 +759,8 @@ public class SAMLv2RelayStateTests extends TestCommon {
     /**
      * @DocTest: SAML2|IDP initiated SSO/SLO with diff RelayState set.
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void samlv2IDPInitArtSOAPSSOSLORS()
     throws Exception {
         entering("samlv2IDPInitArtSOAPSSOSLORS", null);
@@ -816,7 +823,7 @@ public class SAMLv2RelayStateTests extends TestCommon {
      * @DocTest: SAML2|IDP initiated SSO/SLO with diff RelayState set
      * with POST/SOAP binding.
      */
-    @Test(groups={"ds_ds_sec","ff_ds_sec"})
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
     public void samlv2IDPInitPostSOAPSSOSLORS()
     throws Exception {
         entering("samlv2IDPInitPostSOAPSSOSLORS", null);
@@ -879,7 +886,8 @@ public class SAMLv2RelayStateTests extends TestCommon {
     /**
      * This methods deletes all the users as part of cleanup
      */
-    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

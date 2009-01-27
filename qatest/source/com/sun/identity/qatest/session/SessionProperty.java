@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionProperty.java,v 1.2 2008-07-01 00:38:26 rmisra Exp $
+ * $Id: SessionProperty.java,v 1.3 2009-01-27 00:16:37 nithyas Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -55,7 +55,8 @@ public class SessionProperty extends TestCommon {
     /**
      * Test setting fixed property in an sso token.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testFixedPropertyChange()
     throws Exception {
         entering("testFixedPropertyChange", null);
@@ -87,7 +88,8 @@ public class SessionProperty extends TestCommon {
     /**
      * Test setting protected property in an sso token.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testProtectedPropertyChange()
     throws Exception {
         entering("testProtectedPropertyChange", null);
@@ -120,7 +122,8 @@ public class SessionProperty extends TestCommon {
     /**
      * Test setting and updating a custom property in an sso token.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testCustomProperty()
     throws Exception {
         entering("testCustomProperty", null);

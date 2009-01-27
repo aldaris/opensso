@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateAgentTest.java,v 1.2 2008-09-26 19:56:23 nithyas Exp $
+ * $Id: CreateAgentTest.java,v 1.3 2009-01-26 23:48:55 nithyas Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -93,7 +93,8 @@ public class CreateAgentTest extends TestCommon implements CLIExitCodes {
      * CreateAgentTest.properties.
      */
     @Parameters({"testName"})
-    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String testName) 
     throws Exception {
         Object[] params = {testName};
@@ -182,7 +183,8 @@ public class CreateAgentTest extends TestCommon implements CLIExitCodes {
      * This method is used to execute tests involving "ssoadm create-agent"
      * using input data from the CreateAgentTest.properties file.
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testAgentCreation() 
     throws Exception {
         entering("testAgentCreation", null);
@@ -312,7 +314,8 @@ public class CreateAgentTest extends TestCommon implements CLIExitCodes {
      * the setup and testAgentCreation methods using "ssoadm delete-realm" 
      * and "ssoadm delete-agents".
      */
-    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup() 
     throws Exception {
         int cleanupExitStatus = -1;

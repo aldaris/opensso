@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogToFileTest.java,v 1.4 2008-08-27 05:46:19 mrudulahg Exp $
+ * $Id: LogToFileTest.java,v 1.5 2009-01-27 00:07:20 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -77,7 +77,8 @@ public class LogToFileTest extends LogCommon implements LogTestConstants {
     /**
      * This function creates the test user.
      */
-    @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     @Parameters({"testName", "createUser", "restore", "modifyServConfig"})
     public void setup(String testName, String createUser, String restore, 
             String modifyServConfig)
@@ -111,7 +112,8 @@ public class LogToFileTest extends LogCommon implements LogTestConstants {
     /**
      * This method modifys the log service configuration.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void modifyLogConfig() 
     throws Exception {
         entering("modifyLogConfig", null);
@@ -144,7 +146,8 @@ public class LogToFileTest extends LogCommon implements LogTestConstants {
     /**
      * This method tests writing messages to the log files.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"modifyLogConfig"})
     public void logMessage()
     throws Exception {
@@ -183,7 +186,8 @@ public class LogToFileTest extends LogCommon implements LogTestConstants {
      * This method deletes the created user and if retore is set to true
      * restores the log configuration service.
      */
-    @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanUp() 
     throws Exception {
         entering("cleanUp", null);

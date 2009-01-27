@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureSAMLv1x.java,v 1.4 2009-01-06 01:10:44 vimal_67 Exp $
+ * $Id: ConfigureSAMLv1x.java,v 1.5 2009-01-27 00:12:48 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -69,7 +69,7 @@ public class ConfigureSAMLv1x extends TestCommon {
      * (3) Configure SAMLv1x with required configuration to perform POST and
      *  artifact profiles
      */
-    @BeforeSuite(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeSuite(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup()
             throws Exception {
         HtmlPage page;

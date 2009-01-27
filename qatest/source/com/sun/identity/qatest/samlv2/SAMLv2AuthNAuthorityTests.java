@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2AuthNAuthorityTests.java,v 1.2 2008-09-10 01:07:09 sridharev Exp $
+ * $Id: SAMLv2AuthNAuthorityTests.java,v 1.3 2009-01-27 00:14:08 nithyas Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -113,7 +113,7 @@ public class SAMLv2AuthNAuthorityTests extends TestCommon {
      */
     @Parameters({"ptestName", "ptestType", "pAttribute", "ptestModule",
         "pACClassType", "pACCompareType"})
-    @BeforeClass(groups = {"ds_ds_sec", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
     public void setup(String ptestName, String ptestType, String pAttribute,
             String ptestModule, String pACClassType, String pACCompareType)
             throws Exception {
@@ -221,7 +221,7 @@ public class SAMLv2AuthNAuthorityTests extends TestCommon {
     /**
      * Enable AuthNAuthority setup
      */
-    @BeforeClass(groups = {"ds_ds_sec", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
     public void authNAuthorityMapSetup()
             throws Exception {
         entering("authNAuthorityMapSetup", null);
@@ -338,7 +338,8 @@ public class SAMLv2AuthNAuthorityTests extends TestCommon {
     /**
      * Create the webClient which will be used for the rest of the tests.
      */
-    @BeforeClass(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void getWebClient()
             throws Exception {
         try {
@@ -355,7 +356,7 @@ public class SAMLv2AuthNAuthorityTests extends TestCommon {
     /**
      * Execute the authNAuthorityQuery tests
      */
-    @Test(groups = {"ds_ds_sec", "ff_ds_sec"})
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
     public void authNAuthorityQueryTest()
             throws Exception {
         String authnQueryURL = null;
@@ -437,7 +438,7 @@ public class SAMLv2AuthNAuthorityTests extends TestCommon {
     /**
      * Clean up and deleted the created users and module instances for this test
      */
-    @AfterClass(groups = {"ds_ds_sec", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
     public void cleanup()
             throws Exception {
         entering("cleanup", null);

@@ -13,11 +13,11 @@
  * Header Notice in each file and include the License file
  * at opensso/legal/CDDLv1.0.txt.
  * If applicable, add the following below the CDDL Header,
- * with the fields enclosed by brackets [] replaced by
+ * with the fields enclosed by brackets [] replaced by224
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyTests.java,v 1.9 2008-06-26 20:16:33 rmisra Exp $
+ * $Id: PolicyTests.java,v 1.10 2009-01-27 00:10:44 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -77,7 +77,8 @@ public class PolicyTests extends TestCommon {
      */
     @Parameters({"policyIdx","evaluationIdx","setup","cleanup", "peAtOrg",
     "dynamic"})
-    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String policyIdx, String evaluationIdx, String setup
             , String cleanup, String peAtOrg, String dynamic)
     throws Exception {
@@ -145,7 +146,8 @@ public class PolicyTests extends TestCommon {
      * alm, Combination policies, policy response attributes
      */
     @Parameters({ "peAtOrg"})
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void evaluatePolicyAPI(String peAtOrg)
     throws Exception {
         Object[] params = {peAtOrg};
@@ -184,7 +186,8 @@ public class PolicyTests extends TestCommon {
      * This method cleans all the identities and policies  that were setup
      */
     @Parameters({"peAtOrg", "dynamic"})
-    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup(String peAtOrg, String dynamic)
     throws Exception {
         Object[] params = {peAtOrg, dynamic};

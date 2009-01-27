@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2AttributeQueryTests.java,v 1.4 2008-08-15 21:08:33 sridharev Exp $
+ * $Id: SAMLv2AttributeQueryTests.java,v 1.5 2009-01-27 00:14:08 nithyas Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -137,7 +137,7 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
      * tests to execute
      */
     @Parameters({"ptestName", "ptestType", "pAttribute"})
-    @BeforeClass(groups = {"ds_ds_sec", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
     public void setup(String ptestName, String ptestType, String pAttribute)
     throws Exception {
         HtmlPage page;
@@ -255,7 +255,7 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
     /**
      * Enable Attribute Query
      */
-    @BeforeClass(groups={"ds_ds_sec", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
     public void attributeQueryMapSetup()
     throws Exception {
         entering("attributeQueryMapSetup", null);
@@ -379,7 +379,8 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
     /**
      * Create the webClient which will be used for the rest of the tests.
      */
-    @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void getWebClient()
     throws Exception {
         try {
@@ -396,7 +397,7 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
     /**
      * Execute the AttributeQuery tests
      */
-    @Test(groups = {"ds_ds_sec", "ff_ds_sec"})
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
     public void attributeQueryTest()
     throws Exception {
         String attrQueryURL = null;
@@ -485,7 +486,7 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
     /**
      * Clean up and deleted the created users for this test
      */
-    @AfterClass(groups={"ds_ds_sec", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

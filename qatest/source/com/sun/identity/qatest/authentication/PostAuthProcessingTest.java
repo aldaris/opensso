@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PostAuthProcessingTest.java,v 1.4 2008-06-26 19:58:32 rmisra Exp $
+ * $Id: PostAuthProcessingTest.java,v 1.5 2009-01-26 23:47:47 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -94,7 +94,8 @@ public class PostAuthProcessingTest extends TestCommon {
      * Create module instance and create users with required attributes.
      */
     @Parameters({"testModule", "testRealm"})
-    @BeforeClass(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String testModule, String testRealm) 
     throws Exception {
         Object[] params = {testModule, testRealm};
@@ -241,7 +242,8 @@ public class PostAuthProcessingTest extends TestCommon {
      * different account management attributes.
      */
     @Parameters({"testModule", "testRealm"})
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testUserProfileMapping(String testModule, String testRealm) 
     throws Exception {
         boolean userPropsFound = true;
@@ -324,7 +326,8 @@ public class PostAuthProcessingTest extends TestCommon {
      * the <code>SSOToken</code>.
      */
     @Parameters({"testModule", "testRealm"})
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testSessionAttrModification(String testModule, String testRealm) 
     throws Exception {
         boolean propertyUnchanged = false;
@@ -398,7 +401,8 @@ public class PostAuthProcessingTest extends TestCommon {
      * performs cleanup after tests are done.
      */
     @Parameters({"testModule", "testRealm"})
-    @AfterClass(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup(String testModule, String testRealm) 
     throws Exception {
         Object[] params = {testModule, testRealm};

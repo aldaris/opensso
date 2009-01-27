@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnconfigureSAMLv1x.java,v 1.1 2008-08-26 23:42:15 sridharev Exp $
+ * $Id: UnconfigureSAMLv1x.java,v 1.2 2009-01-27 00:12:48 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -66,7 +66,7 @@ public class  UnconfigureSAMLv1x extends TestCommon {
     /**
      * Unonfigures SAMLv1x 
      */
-    @AfterSuite(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterSuite(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void UnconfigureSAMLv1x()
     throws Exception {
         ArrayList list;

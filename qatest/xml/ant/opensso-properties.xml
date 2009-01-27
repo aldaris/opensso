@@ -18,14 +18,15 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: opensso-properties.xml,v 1.6 2008-06-26 19:08:03 rmisra Exp $
+ $Id: opensso-properties.xml,v 1.7 2009-01-26 23:39:54 nithyas Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
 
 <project>
     <property environment="env"/>
-
+    <property name="single_modules" value="idm,delegation,policy,session,authentication,xacml,notification,idsvcs" />
+   
     <target name="init-common"
         depends="setTimeStamp,setOSVariables">
     </target>
@@ -46,6 +47,14 @@
 	    </fileset>
         </path>
         <property name="client.cp" refid="client.classpath"/>
+
+        <path id="module.directories">
+            <pathelement location="${.}"/>
+            <fileset dir="./resources">
+                <include name="**"/>
+            </fileset>
+        </path>
+        <property name="modules" refid="module.directories"/>
     </target>
 
     <exec executable="hostname" outputproperty="hostname"/>

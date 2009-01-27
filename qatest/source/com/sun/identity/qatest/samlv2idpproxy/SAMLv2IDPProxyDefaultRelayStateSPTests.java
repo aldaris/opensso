@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2IDPProxyDefaultRelayStateSPTests.java,v 1.2 2008-06-26 20:26:22 rmisra Exp $
+ * $Id: SAMLv2IDPProxyDefaultRelayStateSPTests.java,v 1.3 2009-01-27 00:15:32 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -89,7 +89,8 @@ public class SAMLv2IDPProxyDefaultRelayStateSPTests extends TestCommon {
      * This setup method creates required users.
      */
     @Parameters({"ssoprofile", "sloprofile"})
-    @BeforeClass(groups={"ds_ds", "ff_ds", "ff_ds_sec", "ds_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String strSSOProfile, String strSLOProfile)
     throws Exception {
         ArrayList list;
@@ -322,7 +323,8 @@ public class SAMLv2IDPProxyDefaultRelayStateSPTests extends TestCommon {
      * @DocTest: SAML2|Perform SP initiated sso with defaultRelayState.
      * Testcase ID: SAMLv2_usecase_30_1
      */
-    @Test(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void SPSSOInitdefaultRS()
     throws Exception {
         entering("SPSSOInitdefaultRS", null);
@@ -354,7 +356,8 @@ public class SAMLv2IDPProxyDefaultRelayStateSPTests extends TestCommon {
      * @DocTest: SAML2|Perform SP initiated SLO with defaultRelayState.
      * Testcase ID: SAMLv2_usecase_30_9
      */
-   @Test(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"},
+   @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"SPSSOInitdefaultRS"})
     public void SPSLOdefaultRS()
     throws Exception {
@@ -383,7 +386,8 @@ public class SAMLv2IDPProxyDefaultRelayStateSPTests extends TestCommon {
      * @DocTest: SAML2|Perform SP initiated sso with RelayState specified in URL
      * Testcase ID: SAMLv2_usecase_30_5
      */
-    @Test(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"SPSLOdefaultRS"})
     public void SPSSOInitRSdefaultRS()
     throws Exception {
@@ -423,7 +427,8 @@ public class SAMLv2IDPProxyDefaultRelayStateSPTests extends TestCommon {
      * @DocTest: SAML2|Perform SP initiated slo.
      * Testcase ID: SAMLv2_usecase_30_13
      */
-    @Test(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"SPSSOInitRSdefaultRS"})
     public void SPSLORSdefaultRS()
     throws Exception {
@@ -454,7 +459,8 @@ public class SAMLv2IDPProxyDefaultRelayStateSPTests extends TestCommon {
     /**
      * Cleanup methods deletes all the users which were created in setup
      */
-    @AfterClass(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

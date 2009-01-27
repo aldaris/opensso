@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnconfigureWSFed.java,v 1.8 2008-08-15 22:09:02 mrudulahg Exp $
+ * $Id: UnconfigureWSFed.java,v 1.9 2009-01-27 00:18:21 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -70,7 +70,7 @@ public class UnconfigureWSFed extends TestCommon {
      * Configure sp & idp
      * @DocTest: IDFF|Unconfigure SP & IDP by deleting entities & COT's 
      */
-    @AfterSuite(groups={"ds_ds_sec", "ff_ds_sec"})
+    @AfterSuite(groups={"ldapv3_sec",  "s1ds_sec", "ad_sec",  "amsdk_sec"})
     public void UnconfigureWSFed()
     throws Exception {
         entering("UnconfigureWSFed", null);

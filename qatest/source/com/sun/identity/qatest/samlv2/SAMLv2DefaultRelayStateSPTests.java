@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2DefaultRelayStateSPTests.java,v 1.7 2008-06-26 20:24:17 rmisra Exp $
+ * $Id: SAMLv2DefaultRelayStateSPTests.java,v 1.8 2009-01-27 00:14:08 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -82,7 +82,8 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
     /**
      * This setup method creates required users.
      */
-    @BeforeClass(groups={"ds_ds", "ff_ds", "ff_ds_sec", "ds_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup()
     throws Exception {
         ArrayList list;
@@ -283,7 +284,8 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
      * @DocTest: SAML2|Perform SP initiated sso with defaultRelayState.
      * Testcase ID: SAMLv2_usecase_30_1
      */
-    @Test(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void SPSSOInitArtdefaultRS()
     throws Exception {
         entering("SPSSOInitArtdefaultRS", null);
@@ -312,7 +314,8 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
      * @DocTest: SAML2|Perform SP initiated SLO with defaultRelayState.
      * Testcase ID: SAMLv2_usecase_30_9
      */
-    @Test(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"SPSSOInitArtdefaultRS"})
     public void SPSLOHTTPdefaultRS()
     throws Exception {
@@ -338,7 +341,8 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
      * @DocTest: SAML2|Perform SP initiated termination
      * Testcase ID: SAMLv2_usecase_30_17
      */
-    @Test(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"SPSLOHTTPdefaultRS"})
     public void SPTerminateHTTPdefaultRS()
     throws Exception {
@@ -367,7 +371,8 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
      * @DocTest: SAML2|Perform SP initiated sso with RelayState specified in URL
      * Testcase ID: SAMLv2_usecase_30_5
      */
-    @Test(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"SPTerminateHTTPdefaultRS"})
     public void SPSSOInitArtRSdefaultRS()
     throws Exception {
@@ -403,7 +408,8 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
      * @DocTest: SAML2|Perform SP initiated slo.
      * Testcase ID: SAMLv2_usecase_30_13
      */
-    @Test(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"SPSSOInitArtRSdefaultRS"})
     public void SPSLOHTTPRSdefaultRS()
     throws Exception {
@@ -432,7 +438,8 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
      * @DocTest: SAML2|Perform SP initiated termination
      * Testcase ID: SAMLv2_usecase_30_21
      */
-    @Test(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"SPSLOHTTPRSdefaultRS"})
     public void SPTerminateHTTPRSdefaultRS()
     throws Exception {
@@ -464,7 +471,7 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
      * @DocTest: SAML2|Perform SP initiated sso with post profile.
      * Testcase ID: SAMLv2_usecase_30_3
      */
-    @Test(groups={"ds_ds_sec", "ff_ds_sec"},
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"},
     dependsOnMethods={"SPTerminateHTTPRSdefaultRS"})
     public void SPSSOInitPostdefaultRS()
     throws Exception {
@@ -502,7 +509,7 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
      * @DocTest: SAML2|Perform SP initiated slo with soap profile.
      * Testcase ID: SAMLv2_usecase_30_11
      */
-    @Test(groups={"ds_ds_sec", "ff_ds_sec"},
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"},
     dependsOnMethods={"SPSSOInitPostdefaultRS"})
     public void SPSLOSOAPdefaultRS()
     throws Exception {
@@ -528,7 +535,7 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
      * @DocTest: SAML2|Perform SP initiated termination with soap profile
      * Testcase ID: SAMLv2_usecase_30_19
      */
-    @Test(groups={"ds_ds_sec", "ff_ds_sec"},
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"},
     dependsOnMethods={"SPSLOSOAPdefaultRS"})
     public void SPTerminateSOAPdefaultRS()
     throws Exception {
@@ -557,7 +564,7 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
      * @DocTest: SAML2|Perform SP initiated sso with post profile.
      * Testcase ID: SAMLv2_usecase_30_7
      */
-    @Test(groups={"ds_ds_sec", "ff_ds_sec"},
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"},
     dependsOnMethods={"SPTerminateSOAPdefaultRS"})
     public void SPSSOInitPostRSdefaultRS()
     throws Exception {
@@ -594,7 +601,7 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
      * @DocTest: SAML2|Perform SP initiated slo with soap profile.
      * Testcase ID: SAMLv2_usecase_30_15
      */
-    @Test(groups={"ds_ds_sec", "ff_ds_sec"},
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"},
     dependsOnMethods={"SPSSOInitPostRSdefaultRS"})
     public void SPSLOSOAPRSdefaultRS()
     throws Exception {
@@ -623,7 +630,7 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
      * @DocTest: SAML2|Perform SP initiated termination with soap profile
      * Testcase ID: SAMLv2_usecase_30_23
      */
-    @Test(groups={"ds_ds_sec", "ff_ds_sec"},
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"},
     dependsOnMethods={"SPSLOSOAPRSdefaultRS"})
     public void SPTerminateSOAPRSdefaultRS()
     throws Exception {
@@ -653,7 +660,8 @@ public class SAMLv2DefaultRelayStateSPTests extends TestCommon {
     /**
      * Cleanup methods deletes all the users which were created in setup
      */
-    @AfterClass(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GlobalRealmSessionConstraints.java,v 1.8 2008-10-23 17:16:02 srivenigan Exp $
+ * $Id: GlobalRealmSessionConstraints.java,v 1.9 2009-01-27 00:16:37 nithyas Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,12 +27,15 @@ package com.sun.identity.qatest.session;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdType;
+import com.sun.identity.qatest.common.DelegationCommon;
 import com.sun.identity.qatest.common.IDMCommon;
 import com.sun.identity.qatest.common.SMSCommon;
 import com.sun.identity.qatest.common.TestCommon;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
@@ -56,6 +59,7 @@ public class GlobalRealmSessionConstraints extends TestCommon {
     private SSOToken admintoken;
     private IDMCommon idmc;
     private SMSCommon smsc;
+    private DelegationCommon dc;
     private String defActiveSessions = "5";
     private String testUser = "sessConsTest";
     private String testAdminUser = "sessConsAdminTest";    
@@ -64,8 +68,8 @@ public class GlobalRealmSessionConstraints extends TestCommon {
     private boolean consTurnedOn = false;
     private boolean dynSrvcRealmAssigned = false;
     private boolean cleanedUp = false;
-    private String adminRole = "Top-level Admin Role";
-    private boolean adminRoleCreated = false;
+    private String adminGroup = "AdminGroup";
+    private boolean adminGroupCreated = false;
     
     /**
     * SessionConstraints Constructor
@@ -78,6 +82,7 @@ public class GlobalRealmSessionConstraints extends TestCommon {
         admintoken = getToken(adminUser, adminPassword, basedn);
         idmc = new IDMCommon();  
         smsc = new SMSCommon(admintoken);
+        dc = new DelegationCommon("GlobalRealmSessionConstraints");
     }
 
     /**
@@ -90,7 +95,9 @@ public class GlobalRealmSessionConstraints extends TestCommon {
      * @throws java.lang.Exception
      */
     @Parameters({"inheritancelevel"})
-    @BeforeClass(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      
+        "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String inheritancelevel)
     throws Exception {
         entering("setup", null);
@@ -129,29 +136,33 @@ public class GlobalRealmSessionConstraints extends TestCommon {
                     "exhausted is set to: " + resultBehavior);
             idmc.createDummyUser(admintoken, realm, "", testAdminUser);
             Map nullmap = new HashMap();
-            if (!idmc.doesIdentityExists(adminRole, IdType.ROLE, 
+            if (!idmc.doesIdentityExists(adminGroup, IdType.GROUP, 
                     admintoken, realm)) {
-                log(Level.FINE, "setup", "Top-level Admin Role doesn't " +
-                        "exist..Creating \"Top-level Admin Role\" ");
-                idmc.createIdentity(admintoken, realm, IdType.ROLE, 
-                        adminRole, nullmap);
-                adminRoleCreated = true;
+                log(Level.FINE, "setup", "AdminGroup doesn't " +
+                        "exist..Creating \"AdminGroup\" ");
+                idmc.createIdentity(admintoken, realm, IdType.GROUP, 
+                        adminGroup, nullmap);
+                List privileges = new ArrayList();
+                privileges.add("RealmAdmin");
+                dc.addPrivileges(admintoken, adminGroup, IdType.GROUP, realm, 
+                        privileges);
+                adminGroupCreated = true;
             }
             idmc.addUserMember(admintoken, testAdminUser,
-                    adminRole , IdType.ROLE);
-            set = idmc.getMembers(admintoken, adminRole, IdType.ROLE, 
+                    adminGroup , IdType.GROUP);
+            set = idmc.getMembers(admintoken, adminGroup, IdType.GROUP, 
                     IdType.USER, realm);
             Iterator it = set.iterator();
             while (it.hasNext()) {
                 AMIdentity identity = (AMIdentity)it.next();
                 if (!identity.getName().equals(testAdminUser)) {
                     log(Level.SEVERE, "setup", "Test admin user not assigned " +
-                            "to top-level admin role");
+                            "to AdminGroup");
                     assert false;                    
                 }
             }
             log(Level.FINE, "setup", "Created user " + testAdminUser +
-                    " identity and added Top-level Admin role to this user");
+                    " identity and added AdminGroup to this user");
 
             idmc.createDummyUser(admintoken, realm, "", testUser);
             log(Level.FINE, "setup", "Created user " + 
@@ -247,7 +258,9 @@ public class GlobalRealmSessionConstraints extends TestCommon {
      *     
      * @throws java.lang.Exception
      */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      
+        "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testMaxSessionQuotaGlobalRealmYDAAmAdmin()
     throws Exception {
         entering("testMaxSessionQuotaGlobalRealmYDADOSAmAdmin", null);
@@ -309,7 +322,9 @@ public class GlobalRealmSessionConstraints extends TestCommon {
      *     
      * @throws java.lang.Exception
      */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      
+        "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testMaxSessionQuotaGlobalRealmYDADOSAdmin()
     throws Exception {
         entering("testMaxSessionQuotaGlobalRealmYDADOSAdmin", null);
@@ -373,7 +388,9 @@ public class GlobalRealmSessionConstraints extends TestCommon {
      * 
      * @throws java.lang.Exception
      */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"}, 
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      
+        "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"}, 
     dependsOnMethods = {"testMaxSessionQuotaGlobalRealmYDADOSAdmin"})
     public void testMaxSessionQuotaGlobalRealmNDOSAdmin()
     throws Exception {
@@ -440,7 +457,9 @@ public class GlobalRealmSessionConstraints extends TestCommon {
      * 
      * @throws java.lang.Exception
      */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"}) 
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      
+        "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"}) 
     //dependsOnMethods = {"testMaxSessionQuotaGlobalRealmYDADOSAdmin"})
     public void testMaxSessionQuotaGlobalRealmNDAAdmin()
     throws Exception {
@@ -519,7 +538,8 @@ public class GlobalRealmSessionConstraints extends TestCommon {
      * (e) Validates that only one session can be created for user and old
      *     session is destroyed when a new session is created
      */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"}, 
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"}, 
     dependsOnMethods = {"testMaxSessionQuotaGlobalRealmYDADOSAdmin"})
     public void testMaxSessionQuotaGlobalRealmYDOSUser()
     throws Exception {
@@ -589,7 +609,9 @@ public class GlobalRealmSessionConstraints extends TestCommon {
      *     
      * @throws java.lang.Exception
      */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"}, 
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      
+        "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"}, 
     dependsOnMethods = {"testMaxSessionQuotaGlobalRealmYDADOSAdmin"})
     public void testMaxSessionQuotaGlobalRealmNDOSUser()
     throws Exception {
@@ -658,7 +680,9 @@ public class GlobalRealmSessionConstraints extends TestCommon {
      *     
      * @throws java.lang.Exception
      */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"}, 
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      
+        "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"}, 
     dependsOnMethods = {"testMaxSessionQuotaGlobalRealmYDADOSAdmin"})
     public void testMaxSessionQuotaGlobalRealmNDAUser()
     throws Exception {
@@ -739,7 +763,9 @@ public class GlobalRealmSessionConstraints extends TestCommon {
      *     
      * @throws java.lang.Exception
      */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"}, 
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      
+        "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"}, 
     dependsOnMethods = {"testMaxSessionQuotaGlobalRealmYDADOSAdmin"})
     public void testMaxSessionQuotaGlobalRealmYDAUser()
     throws Exception {
@@ -813,7 +839,9 @@ public class GlobalRealmSessionConstraints extends TestCommon {
      * 
      * @throws java.lang.Exception
      */
-    @AfterClass(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      
+        "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);
@@ -833,9 +861,9 @@ public class GlobalRealmSessionConstraints extends TestCommon {
             log(Level.FINEST, "cleanup", "Cleaning TestAdminUser: " 
                     + testAdminUser);
             idmc.removeUserMember(admintoken, testAdminUser,
-                    "Top-level Admin Role" , IdType.ROLE, realm);
-            if (adminRoleCreated) { 
-                idmc.deleteIdentity(admintoken, realm, IdType.ROLE, adminRole);
+                    adminGroup , IdType.GROUP, realm);
+            if (adminGroupCreated) { 
+                idmc.deleteIdentity(admintoken,realm,IdType.GROUP, adminGroup);
             }
             idmc.deleteIdentity(admintoken, realm, IdType.USER, testAdminUser);
             log(Level.FINEST, "cleanup", "Cleaning User: " + testUser);

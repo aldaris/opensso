@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateIdentityTest.java,v 1.12 2009-01-20 14:20:53 cmwesley Exp $
+ * $Id: CreateIdentityTest.java,v 1.13 2009-01-26 23:48:57 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -99,7 +99,7 @@ public class CreateIdentityTest extends TestCommon implements CLIExitCodes {
      * CreateIdentityTest.properties.
      */
     @Parameters({"testName"})
-    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String testName) 
     throws Exception {
         Object[] params = {testName};
@@ -186,7 +186,7 @@ public class CreateIdentityTest extends TestCommon implements CLIExitCodes {
      * This method is used to execute tests involving "ssoadm create-identities"
      * using input data from the CreateIdentityTest.properties file.
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testIdentityCreation() 
     throws Exception {
         entering("testIdentityCreation", null);
@@ -315,7 +315,7 @@ public class CreateIdentityTest extends TestCommon implements CLIExitCodes {
      * the setup and testIdentityCreation methods using "ssoadm delete-realm" 
      * and "ssoadm delete-identities".
      */
-    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup() 
     throws Exception {
         int cleanupExitStatus = -1;

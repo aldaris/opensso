@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionUpgrade.java,v 1.10 2009-01-16 20:58:49 cmwesley Exp $
+ * $Id: SessionUpgrade.java,v 1.11 2009-01-26 23:47:49 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -120,7 +120,8 @@ public class SessionUpgrade extends TestCommon {
      */
     @Parameters({"forceAuth", "testRealm", "useDifferentModules",
             "createUserProfile", "useSanityMode"})
-    @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad",
+            "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String forceAuth, String testRealm,
             String useDifferentModules, String createUserProfile,
             String useSanityMode)
@@ -309,7 +310,8 @@ public class SessionUpgrade extends TestCommon {
      */
     @Parameters({"forceAuth", "testRealm", "testMode",
             "useDifferentModules", "createUserProfile"})
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
+    "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testSessionUpgrade(String forceAuth, String testRealm,
             String testMode, String useDifferentModules,
             String createUserProfile)
@@ -532,7 +534,8 @@ public class SessionUpgrade extends TestCommon {
      */
     @Parameters({"forceAuth", "testRealm", "testMode",
         "useDifferentModules", "createUserProfile"})
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
+    "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testSessionUpgradeNegative(String forceAuth,
             String testRealm, String testMode, String useDifferentModules,
             String createUserProfile)
@@ -755,7 +758,8 @@ public class SessionUpgrade extends TestCommon {
      * by this test scenario
      */
     @Parameters({"testRealm"})
-    @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad",
+    "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup(String testRealm)
     throws Exception {
         Object[] params = {testRealm};

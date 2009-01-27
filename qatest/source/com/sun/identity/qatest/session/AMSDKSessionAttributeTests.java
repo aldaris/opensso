@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSDKSessionAttributeTests.java,v 1.1 2009-01-15 01:13:02 srivenigan Exp $
+ * $Id: AMSDKSessionAttributeTests.java,v 1.2 2009-01-27 00:16:37 nithyas Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -88,7 +88,7 @@ public class AMSDKSessionAttributeTests extends TestCommon {
      * (e) Skips tests if AMSDK plugin is not configured.
      */
     @Parameters({"testName"})
-    @BeforeClass(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups = {"amsdk","amsdk_sec"})
     public void setup(String testName)
             throws Exception {
         Object[] params = {testName};
@@ -200,7 +200,7 @@ public class AMSDKSessionAttributeTests extends TestCommon {
     *     is the one having the highest 'cospriority' value. In case if the 
     *     cospriorities are equal the order of role is taken into account.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"amsdk","amsdk_sec"})
     public void testAMSDKInhertianceRole()
     throws Exception {
         entering("testAMSDKInhertianceRole", null);
@@ -270,7 +270,7 @@ public class AMSDKSessionAttributeTests extends TestCommon {
      * (a) Delete user
      * (b) Delete roles from the realm.
      */
-    @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups={"amsdk","amsdk_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAESmokeTests.java,v 1.7 2008-09-16 02:28:24 rmisra Exp $
+ * $Id: SAESmokeTests.java,v 1.8 2009-01-27 00:11:58 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -130,7 +130,8 @@ public class SAESmokeTests extends TestCommon {
      * metadata at IDP and SP.
      */
     @Parameters({"secMode"})
-    @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String secMode)
     throws Exception {
         Object[] params = {secMode};
@@ -411,7 +412,7 @@ public class SAESmokeTests extends TestCommon {
      * transfer is through symmetric keys.
      * @throws java.lang.Exception
      */
-    @Test(groups={"ds_ds", "ff_ds"})
+    @Test(groups={"ldapv3", "s1ds", "ad", "amsdk"})
     public void symmetricSSOWithProfileIgnoredPOST()
     throws Exception {
         entering("symmetricSSOWithProfileIgnoredPOST", null);
@@ -440,7 +441,7 @@ public class SAESmokeTests extends TestCommon {
      * transfer is through symmetric keys.
      * @throws java.lang.Exception
      */
-    @Test(groups={"ds_ds", "ff_ds"},
+    @Test(groups={"ldapv3", "s1ds", "ad", "amsdk"},
     dependsOnMethods={"symmetricSSOWithProfileIgnoredPOST"})
     public void symmetricSLOWithProfileIgnoredPOST()
     throws Exception {
@@ -465,7 +466,7 @@ public class SAESmokeTests extends TestCommon {
      * transfer is through symmetric keys.
      * @throws java.lang.Exception
      */
-    @Test(groups={"ds_ds", "ff_ds"},
+    @Test(groups={"ldapv3", "s1ds", "ad", "amsdk"},
     dependsOnMethods={"symmetricSLOWithProfileIgnoredPOST"})
     public void symmetricSSOWithProfileIgnored()
     throws Exception {
@@ -491,7 +492,7 @@ public class SAESmokeTests extends TestCommon {
      * transfer is through symmetric keys.
      * @throws java.lang.Exception
      */
-    @Test(groups={"ds_ds", "ff_ds"},
+    @Test(groups={"ldapv3", "s1ds", "ad", "amsdk"},
     dependsOnMethods={"symmetricSSOWithProfileIgnored"})
     public void symmetricSLOWithProfileIgnored()
     throws Exception {
@@ -515,7 +516,7 @@ public class SAESmokeTests extends TestCommon {
      * transfer is through symmetric keys.
      * @throws java.lang.Exception
      */    
-    @Test(groups={"ds_ds", "ff_ds"},
+    @Test(groups={"ldapv3", "s1ds", "ad", "amsdk"},
     dependsOnMethods={"symmetricSLOWithProfileIgnored"})
     public void symmetricSSOWithProfileRequiredPOST()
     throws Exception {
@@ -552,7 +553,7 @@ public class SAESmokeTests extends TestCommon {
      * transfer is through symmetric keys.
      * @throws java.lang.Exception
      */
-    @Test(groups={"ds_ds", "ff_ds"},
+    @Test(groups={"ldapv3", "s1ds", "ad", "amsdk"},
     dependsOnMethods={"symmetricSSOWithProfileRequiredPOST"})
     public void symmetricSLOWithProfileRequiredPOST()
     throws Exception {
@@ -578,7 +579,7 @@ public class SAESmokeTests extends TestCommon {
      * transfer is through symmetric keys.
      * @throws java.lang.Exception
      */       
-    @Test(groups={"ds_ds", "ff_ds"},
+    @Test(groups={"ldapv3", "s1ds", "ad", "amsdk"},
     dependsOnMethods={"symmetricSLOWithProfileRequiredPOST"})
     public void symmetricSSOWithProfileRequired()
     throws Exception {
@@ -613,7 +614,7 @@ public class SAESmokeTests extends TestCommon {
      * attribute transfer is through symmetric keys.
      * @throws java.lang.Exception
      */    
-    @Test(groups={"ds_ds", "ff_ds"},
+    @Test(groups={"ldapv3", "s1ds", "ad", "amsdk"},
     dependsOnMethods={"symmetricSSOWithProfileRequired"})
     public void symmetricSLOWithProfileRequired()
     throws Exception {
@@ -638,7 +639,7 @@ public class SAESmokeTests extends TestCommon {
      * transfer is through asymmetric keys.
      * @throws java.lang.Exception
      */    
-    @Test(groups={"ds_ds_sec", "ff_ds_sec"})
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
     public void asymmetricSSOWithProfileIgnoredPOST()
     throws Exception {
         entering("asymmetricSSOWithProfileIgnoredPOST", null);
@@ -668,7 +669,7 @@ public class SAESmokeTests extends TestCommon {
      * transfer is through asymmetric keys.
      * @throws java.lang.Exception
      */    
-    @Test(groups={"ds_ds_sec", "ff_ds_sec"},
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"},
     dependsOnMethods={"asymmetricSSOWithProfileIgnoredPOST"})
     public void asymmetricSLOWithProfileIgnoredPOST()
     throws Exception {
@@ -693,7 +694,7 @@ public class SAESmokeTests extends TestCommon {
      * transfer is through asymmetric keys.
      * @throws java.lang.Exception
      */    
-    @Test(groups={"ds_ds_sec", "ff_ds_sec"},
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"},
     dependsOnMethods={"asymmetricSLOWithProfileIgnoredPOST"})
     public void asymmetricSSOWithProfileIgnored()
     throws Exception {
@@ -720,7 +721,7 @@ public class SAESmokeTests extends TestCommon {
      * transfer is through asymmetric keys.
      * @throws java.lang.Exception
      */    
-    @Test(groups={"ds_ds_sec", "ff_ds_sec"},
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"},
     dependsOnMethods={"asymmetricSSOWithProfileIgnored"})
     public void asymmetricSLOWithProfileIgnored()
     throws Exception {
@@ -745,7 +746,7 @@ public class SAESmokeTests extends TestCommon {
      * transfer is through asymmetric keys.
      * @throws java.lang.Exception
      */      
-    @Test(groups={"ds_ds_sec", "ff_ds_sec"},
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"},
     dependsOnMethods={"asymmetricSLOWithProfileIgnored"})
     public void asymmetricSSOWithProfileRequiredPOST()
     throws Exception {
@@ -782,7 +783,7 @@ public class SAESmokeTests extends TestCommon {
      * attribute transfer is through asymmetric keys.
      * @throws java.lang.Exception
      */        
-    @Test(groups={"ds_ds_sec", "ff_ds_sec"},
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"},
     dependsOnMethods={"asymmetricSSOWithProfileRequiredPOST"})
     public void asymmetricSLOWithProfileRequiredPOST()
     throws Exception {
@@ -807,7 +808,7 @@ public class SAESmokeTests extends TestCommon {
      * transfer is through asymmetric keys.
      * @throws java.lang.Exception
      */    
-    @Test(groups={"ds_ds_sec", "ff_ds_sec"},
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"},
     dependsOnMethods={"asymmetricSLOWithProfileRequiredPOST"})
     public void asymmetricSSOWithProfileRequired()
     throws Exception {
@@ -842,7 +843,7 @@ public class SAESmokeTests extends TestCommon {
      * attribute transfer is through asymmetric keys.
      * @throws java.lang.Exception
      */        
-    @Test(groups={"ds_ds_sec", "ff_ds_sec"},
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"},
     dependsOnMethods={"asymmetricSSOWithProfileRequired"})
     public void asymmetricSLOWithProfileRequired()
     throws Exception {
@@ -865,7 +866,8 @@ public class SAESmokeTests extends TestCommon {
      * This methods deletes the users and sets the default authentication
      * profile at SP and IDP as Required.
      */
-    @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

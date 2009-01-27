@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2IDPProxyAutoFederationTests.java,v 1.3 2008-06-26 20:26:22 rmisra Exp $
+ * $Id: SAMLv2IDPProxyAutoFederationTests.java,v 1.4 2009-01-27 00:15:32 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -125,7 +125,7 @@ public class SAMLv2IDPProxyAutoFederationTests extends TestCommon {
     /**
      * Create the webClient which should be run before each test.
      */
-    @BeforeMethod(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeMethod(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     private void getWebClient() 
     throws Exception {
         try {
@@ -141,7 +141,8 @@ public class SAMLv2IDPProxyAutoFederationTests extends TestCommon {
      * This is setup method. It creates required users for test
      */
     @Parameters({"ssoprofile", "sloprofile"})
-    @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String strSSOProfile, String strSLOProfile) 
     throws Exception {
         List<String> list;
@@ -329,7 +330,8 @@ public class SAMLv2IDPProxyAutoFederationTests extends TestCommon {
      * Run SP initiated auto federation in SAMLv2 IDP Proxy setup
      * The auto federation is turned on end to end.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void autoFedSPInit1()
     throws Exception {
         entering("autoFedSPInit1", null);
@@ -403,7 +405,8 @@ public class SAMLv2IDPProxyAutoFederationTests extends TestCommon {
      * Auto federation is turned only between IDP Proxy & IDP.
      * In this case SP & IDP credentials will be asked.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"autoFedSPInit1"})
     public void autoFedSPInit2()
     throws Exception {
@@ -485,7 +488,8 @@ public class SAMLv2IDPProxyAutoFederationTests extends TestCommon {
      * Auto federation is turned between IDP Proxy & IDP and SP & IDP Proxy.
      * In this case IDP credentials will be asked.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"autoFedSPInit2"})
     public void autoFedSPInitTransient()
     throws Exception {
@@ -563,7 +567,8 @@ public class SAMLv2IDPProxyAutoFederationTests extends TestCommon {
      * After auto federation is succeeded new user will be created at the SP.
      * In this case IDP credentials will be asked.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"autoFedSPInitTransient"})
     public void autoFedSPInitDynamicUserCreation()
     throws Exception {
@@ -647,7 +652,8 @@ public class SAMLv2IDPProxyAutoFederationTests extends TestCommon {
      * we as at the IDP Proxy.
      * In this case IDP credentials will be asked.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"autoFedSPInitDynamicUserCreation"})
     public void autoFedSPInitDynamicUserCreationAtProxy()
     throws Exception {
@@ -768,7 +774,8 @@ public class SAMLv2IDPProxyAutoFederationTests extends TestCommon {
      * This methods deletes all the users, restores original metadata
      * as part of cleanup
      */
-    @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

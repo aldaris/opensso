@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteIdentitiesTest.java,v 1.7 2008-08-12 00:12:52 cmwesley Exp $
+ * $Id: DeleteIdentitiesTest.java,v 1.8 2009-01-26 23:48:59 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -99,7 +99,8 @@ public class DeleteIdentitiesTest extends TestCommon implements CLIExitCodes {
      * DeleteIdentitiesTest.properties.
      */
     @Parameters({"testName"})
-    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String testName) 
     throws Exception {
         Object[] params = {testName};
@@ -200,7 +201,8 @@ public class DeleteIdentitiesTest extends TestCommon implements CLIExitCodes {
      * This method is used to execute tests involving "ssoadm delete-identities"
      * using input data from the DeleteIdentitiesTest.properties file.
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testIdentityDeletion() 
     throws Exception {
         entering("testIdentityDeletion", null);
@@ -362,7 +364,8 @@ public class DeleteIdentitiesTest extends TestCommon implements CLIExitCodes {
      * the setup and testIdentityDeletion methods using 
      * "ssoadm delete-realm" and "ssoadm delete-identities".
      */
-    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup() 
     throws Exception {
         entering("cleanup", null);

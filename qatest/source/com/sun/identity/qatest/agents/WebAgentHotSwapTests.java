@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebAgentHotSwapTests.java,v 1.4 2008-06-26 19:41:29 rmisra Exp $
+ * $Id: WebAgentHotSwapTests.java,v 1.5 2009-01-26 23:45:50 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -111,7 +111,8 @@ public class WebAgentHotSwapTests extends TestCommon {
      */
     @Parameters({"policyIdx", "resourceIdx", "agentType", "evaluationIdx", 
     "testIdx"})
-    @BeforeTest(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeTest(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+    "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String policyIdx, String resourceIdx, String TCforAgent,
             String evaluationIdx, String tstIdx)
     throws Exception {
@@ -195,7 +196,8 @@ public class WebAgentHotSwapTests extends TestCommon {
      * Gets the Respose Attribute's fetch mode from server, swaps the vlaues
      * and instantiates the ResponseAttributeTests object
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void getResponseAttrFetchMode()
     throws Exception {
         String strPropName = rbp.getString(strHotSwapRB + testIdx + 
@@ -210,7 +212,8 @@ public class WebAgentHotSwapTests extends TestCommon {
      * Evaluates newly created response attribute which holds a single static
      * value
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"getResponseAttrFetchMode"})
     public void evaluateNewSingleValuedStaticResponseAttribute()
     throws Exception {
@@ -221,7 +224,8 @@ public class WebAgentHotSwapTests extends TestCommon {
      * Evaluates newly created response attribute which holds multiple static
      * value
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"evaluateNewSingleValuedStaticResponseAttribute"})
     public void evaluateNewMultiValuedStaticResponseAttribute()
     throws Exception {
@@ -233,7 +237,8 @@ public class WebAgentHotSwapTests extends TestCommon {
      * Evaluates newly created response attribute which holds a single dynamic
      * value
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"evaluateNewMultiValuedStaticResponseAttribute"})
     public void evaluateDynamicResponseAttribute()
     throws Exception {
@@ -243,7 +248,8 @@ public class WebAgentHotSwapTests extends TestCommon {
     /**
      * Evaluates updated response attribute which holds a single dynamic value
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"evaluateDynamicResponseAttribute"})
     public void evaluateUpdatedDynamicResponseAttribute()
     throws Exception {
@@ -255,7 +261,8 @@ public class WebAgentHotSwapTests extends TestCommon {
      * Gets the Session Attribute's fetch mode from server, swaps the values
      * and instantiates the SessionAttributeTests object
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void getSessionAttrFetchMode()
     throws Exception {
         String strPropName = rbp.getString(strHotSwapRB + testIdx + 
@@ -269,7 +276,8 @@ public class WebAgentHotSwapTests extends TestCommon {
     /**
      * Evaluates a standard session attribute
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"getSessionAttrFetchMode"})
     public void evaluateUniversalIdSessionAttribute()
     throws Exception {
@@ -280,7 +288,8 @@ public class WebAgentHotSwapTests extends TestCommon {
     /**
      * Evaluates newly created and updated custom session attribute
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"evaluateUniversalIdSessionAttribute"})
     public void evaluateCustomSessionAttribute()
     throws Exception {
@@ -291,7 +300,8 @@ public class WebAgentHotSwapTests extends TestCommon {
      * Gets the Profile Attribute's fetch mode from server, swaps the va;ues
      * and instantiates the ProfileAttributeTests object
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void getProfileAttrFetchMode()
     throws Exception {
         String strPropName = rbp.getString(strHotSwapRB + testIdx + 
@@ -305,7 +315,8 @@ public class WebAgentHotSwapTests extends TestCommon {
      /**
      * Evaluates newly created single valued profile attribute
      */
-    @Test(groups={"ds_ds", "ds_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"getProfileAttrFetchMode"})
     public void evaluateNewSingleValuedProfileAttribute()
     throws Exception {
@@ -315,7 +326,8 @@ public class WebAgentHotSwapTests extends TestCommon {
     /**
      * Evaluates newly created multi valued profile attribute
      */
-    @Test(groups={"ds_ds", "ds_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"evaluateNewSingleValuedProfileAttribute"})
     public void evaluateNewMultiValuedProfileAttribute()
     throws Exception {
@@ -326,7 +338,8 @@ public class WebAgentHotSwapTests extends TestCommon {
      * Evaluates newly created dynamic multi valued profile attribute related
      * to static roles
      */
-    @Test(groups={"ds_ds", "ds_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"evaluateNewMultiValuedProfileAttribute"})
     public void evaluateNewNsRoleProfileAttribute()
     throws Exception {
@@ -337,7 +350,8 @@ public class WebAgentHotSwapTests extends TestCommon {
      * Evaluates newly created dynamic multi valued profile attribute related
      * to dynamic roles
      */
-    @Test(groups={"ds_ds", "ds_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"evaluateNewNsRoleProfileAttribute"})
     public void evaluateNewFilteredRoleProfileAttribute()
     throws Exception {
@@ -347,7 +361,8 @@ public class WebAgentHotSwapTests extends TestCommon {
     /**
      * Evaluates updated single valued profile attribute
      */
-    @Test(groups={"ds_ds", "ds_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"evaluateNewNsRoleProfileAttribute"})
     public void evaluateUpdatedSingleValuedProfileAttribute()
     throws Exception {
@@ -357,7 +372,8 @@ public class WebAgentHotSwapTests extends TestCommon {
     /**
      * Evaluates updated multi valued profile attribute
      */
-    @Test(groups={"ds_ds", "ds_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"evaluateUpdatedSingleValuedProfileAttribute"})
     public void evaluateUpdatedMultiValuedProfileAttribute()
     throws Exception {
@@ -368,7 +384,8 @@ public class WebAgentHotSwapTests extends TestCommon {
      * Evaluates updated dynamic multi valued profile attribute related to
      * static roles
      */
-    @Test(groups={"ds_ds", "ds_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"evaluateUpdatedMultiValuedProfileAttribute"})
     public void evaluateUpdatedNsRoleProfileAttribute()
     throws Exception {
@@ -379,7 +396,8 @@ public class WebAgentHotSwapTests extends TestCommon {
      * Evaluates updated dynamic multi valued profile attribute related to
      * dynamic roles
      */
-    @Test(groups={"ds_ds","ds_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"evaluateUpdatedNsRoleProfileAttribute"})
     public void evaluateUpdatedFilteredRoleProfileAttribute()
     throws Exception {
@@ -390,7 +408,8 @@ public class WebAgentHotSwapTests extends TestCommon {
     /**
      * Evaluates accessDeniedURL Swap 
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void evalAccessDeniedURL()
     throws Exception {
         entering("accessDeniedURL",null);
@@ -446,7 +465,8 @@ public class WebAgentHotSwapTests extends TestCommon {
     /**
      * Evaluates evalNotEnfURL Swap 
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"evalAccessDeniedURL"})
     public void evalNotEnfURL()
     throws Exception {
@@ -504,7 +524,7 @@ public class WebAgentHotSwapTests extends TestCommon {
      * Deletes policies, identities and updates service attributes to default
      * values.
      */
-    @AfterTest(groups={"ff_ds", "ff_ds_sec", "ds_ds", "ds_ds_sec"})
+    @AfterTest(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

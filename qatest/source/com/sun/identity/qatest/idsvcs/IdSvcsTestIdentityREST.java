@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSvcsTestIdentityREST.java,v 1.8 2009-01-13 00:35:07 vimal_67 Exp $
+ * $Id: IdSvcsTestIdentityREST.java,v 1.9 2009-01-27 00:06:32 nithyas Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -84,7 +84,8 @@ public class IdSvcsTestIdentityREST extends TestCommon {
      * Creates required setup
      */
     @Parameters({"testNumber", "setup", "cleanup"})
-    @BeforeClass(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups = {"s1ds", "ldapv3", "ad", "jdbc", "amsdk", "s1ds_sec",
+    "ldapv3_sec", "ad_sec", "jdbc_sec", "amsdk_sec"})
     public void setup(String testNumber, String setup, 
             String cleanup) throws Exception {
         Object[] params = {testNumber, setup, cleanup};
@@ -108,7 +109,8 @@ public class IdSvcsTestIdentityREST extends TestCommon {
     /**
      * Calling Identity REST Operations through common URL method
      */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups = {"s1ds", "ldapv3", "ad", "jdbc", "amsdk", "s1ds_sec", 
+    "ldapv3_sec", "ad_sec", "jdbc_sec", "amsdk_sec"})
     public void testIdSvcsREST()
             throws Exception {
         entering("testIdSvcsREST", null);
@@ -476,7 +478,8 @@ public class IdSvcsTestIdentityREST extends TestCommon {
      * (a) Delete users
      * (b) Deletes policies
      */
-    @AfterClass(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups = {"s1ds", "ldapv3", "ad", "jdbc", "amsdk", "s1ds_sec", 
+    "ldapv3_sec", "ad_sec", "jdbc_sec", "amsdk_sec"})
     public void cleanup()
             throws Exception {
         entering("cleanup", null);

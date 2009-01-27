@@ -82,7 +82,8 @@ public class SessionServerTimeConstraintsTest extends TestCommon {
      * (a) Creates a user
      * (b) Sets default session attributes as global variables
      */
-    @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup()
     throws Exception {
         entering("setup", null);
@@ -137,7 +138,8 @@ public class SessionServerTimeConstraintsTest extends TestCommon {
     /**
      * Validates max session time set in global session service through a user.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testMaxSessionTimeGlobal()
     throws Exception {
         entering("testMaxSessionTimeGlobal", null);
@@ -194,7 +196,8 @@ public class SessionServerTimeConstraintsTest extends TestCommon {
     /**
      * Validates max idle time set in global session service through a user.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"testMaxSessionTimeGlobal"})
     public void testMaxIdleTimeGlobal()
     throws Exception {
@@ -229,7 +232,8 @@ public class SessionServerTimeConstraintsTest extends TestCommon {
     /**
      * Validates max idle time set in global session service through a user.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"testMaxIdleTimeGlobal"})
     public void testInhertianceRealm()
     throws Exception {
@@ -263,7 +267,8 @@ public class SessionServerTimeConstraintsTest extends TestCommon {
      * Validates max session time set in session service in a realm through a
      * user. Also validates conflict resolution between global/realm level.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"testInhertianceRealm"})
     public void testMaxSessionTimeRealm()
     throws Exception {
@@ -315,7 +320,8 @@ public class SessionServerTimeConstraintsTest extends TestCommon {
      * Validates max idle time set in session service in a realm through a 
      * user. Also validates conflict resolution between global/realm level.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"testMaxSessionTimeRealm"})
     public void testMaxIdleTimeRealm()
     throws Exception {
@@ -350,7 +356,8 @@ public class SessionServerTimeConstraintsTest extends TestCommon {
      * (b) Delete sessions service from realm.
      * (c) Reset global session service attributes to default values
      */
-    @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

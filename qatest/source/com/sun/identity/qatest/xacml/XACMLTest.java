@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLTest.java,v 1.3 2008-06-26 21:25:14 rmisra Exp $
+ * $Id: XACMLTest.java,v 1.4 2009-01-27 00:19:23 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -118,7 +118,8 @@ public class XACMLTest extends TestCommon {
      * @param actionmethos GET or POST can be action methods for xacml
      */
     @Parameters({"actionmethod"})
-    @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String actionmethod)
     throws Exception {
         Object[] params = {actionmethod};
@@ -264,7 +265,8 @@ public class XACMLTest extends TestCommon {
      * Validates for the XACML Decision for the Permit
      *
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testPermitXACML()
     throws Exception {
         try {
@@ -290,7 +292,8 @@ public class XACMLTest extends TestCommon {
     /**
      * Validates for the XACML Decision for the Deny
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testDenyXACML()
     throws Exception {
         try {
@@ -316,7 +319,8 @@ public class XACMLTest extends TestCommon {
     /**
      * Validates for the XACML Decision for the Indeterminate
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testIndeterminateXACML()
     throws Exception {
         try {
@@ -347,7 +351,8 @@ public class XACMLTest extends TestCommon {
      * (3) Delete Policies
      * (4) Delete COTs
      */
-    @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteServiceTest.java,v 1.1 2008-09-09 18:29:01 srivenigan Exp $
+ * $Id: DeleteServiceTest.java,v 1.2 2009-01-26 23:49:31 nithyas Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -84,7 +84,8 @@ public class DeleteServiceTest extends TestCommon implements CLIExitCodes {
      * DeleteServiceTest.properties.
      */
     @Parameters({"testName"})
-    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String testName) 
     throws Exception {
         Object[] params = {testName};
@@ -154,7 +155,8 @@ public class DeleteServiceTest extends TestCommon implements CLIExitCodes {
      * This method is used to execute tests involving "ssoadm delete-service"
      * using input data from the DeleteServiceTest.properties file.
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testServiceDeletion() 
     throws Exception {
         entering("testServiceDeletion", null);
@@ -278,7 +280,8 @@ public class DeleteServiceTest extends TestCommon implements CLIExitCodes {
      * This method remove any Services that were created during the setup and
      * testServiceDeletion methods using "ssoadm delete-Service".
      */
-    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup() 
     throws Exception {
         entering("cleanup", null);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2IDPProxySigningEncryptionTests.java,v 1.2 2008-06-26 20:26:22 rmisra Exp $
+ * $Id: SAMLv2IDPProxySigningEncryptionTests.java,v 1.3 2009-01-27 00:15:33 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -174,7 +174,7 @@ public class SAMLv2IDPProxySigningEncryptionTests extends TestCommon {
     /**
      * Create the webClient which should be run before each test.
      */
-    @BeforeMethod(groups={"ds_ds_sec", "ff_ds_sec"})
+    @BeforeMethod(groups={"ldapv3_sec",  "s1ds_sec", "ad_sec",  "amsdk_sec"})
     private void getWebClient()
     throws Exception {
         try {
@@ -191,7 +191,7 @@ public class SAMLv2IDPProxySigningEncryptionTests extends TestCommon {
      * It also changes the metadata attribute based on the passed parameter
      */
     @Parameters({"ssoprofile", "sloprofile", "attribute", "metadata"})
-    @BeforeClass(groups={"ds_ds_sec", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3_sec",  "s1ds_sec", "ad_sec",  "amsdk_sec"})
     public void setup(String strSSOProfile, String strSLOProfile, String 
             strAttribute, String strMetadata)
     throws Exception {
@@ -325,7 +325,7 @@ public class SAMLv2IDPProxySigningEncryptionTests extends TestCommon {
      * Run SP init SSO, SLO
      * @DocTest: SAML2IDPProxy|Perform SP initiated SSO, SLO 
      */
-    @Test(groups={"ds_ds_sec", "ff_ds_sec"})
+    @Test(groups={"ldapv3_sec",  "s1ds_sec", "ad_sec",  "amsdk_sec"})
     public void SAMLv2IDPProxySignEncryptSPSSOSLO()
     throws Exception {
         entering("SAMLv2IDPProxySignEncryptSPSSOSLO", null);
@@ -379,7 +379,7 @@ public class SAMLv2IDPProxySigningEncryptionTests extends TestCommon {
     /**
      * This methods deletes all the users as part of cleanup
      */
-    @AfterClass(groups={"ds_ds_sec", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3_sec",  "s1ds_sec", "ad_sec",  "amsdk_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

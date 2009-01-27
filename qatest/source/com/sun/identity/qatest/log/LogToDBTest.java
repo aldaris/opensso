@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogToDBTest.java,v 1.7 2008-10-28 23:48:59 nithyas Exp $
+ * $Id: LogToDBTest.java,v 1.8 2009-01-27 00:07:20 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -118,7 +118,8 @@ public class LogToDBTest extends LogCommon implements LogTestConstants {
      * This method configures the log service to user "DB" and configures the
      * database.
      */
-    @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     @Parameters({"testName", "createUser", "restore", "modifyServConfig"})
     public void setup(String testName, String createUser, String restore, 
             String modifyServConfig)
@@ -162,7 +163,8 @@ public class LogToDBTest extends LogCommon implements LogTestConstants {
     /**
      * This method modifys the log service configuration.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void modifyLogConfig() 
     throws Exception {
         entering("modifyLogConfig", null);
@@ -192,7 +194,8 @@ public class LogToDBTest extends LogCommon implements LogTestConstants {
     /**
      * This method tests writing messages to the db.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"modifyLogConfig"})
     public void logMessageToDB()
     throws Exception {
@@ -236,7 +239,8 @@ public class LogToDBTest extends LogCommon implements LogTestConstants {
     /**
      * This method tests reading messages from db.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"logMessageToDB"})
     public void readLog() 
     throws Exception {
@@ -280,7 +284,8 @@ public class LogToDBTest extends LogCommon implements LogTestConstants {
      * retores the log service configuration to the backup version and releases
      * the connection.
      */
-    @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanUp() 
     throws Exception {
         try {

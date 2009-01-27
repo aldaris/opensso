@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContextLogout.java,v 1.2 2008-08-28 13:17:44 cmwesley Exp $
+ * $Id: AuthContextLogout.java,v 1.3 2009-01-26 23:47:44 nithyas Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -96,7 +96,8 @@ public class AuthContextLogout extends TestCommon {
      * 
      */
     @Parameters({"testRealm"}) 
-    @BeforeClass(groups={"ds_ds", "ds_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String testRealm) 
     throws Exception {
         Object[] params = {testRealm};
@@ -176,7 +177,8 @@ public class AuthContextLogout extends TestCommon {
      * testRealm - the realm in which the logout test will take place
      */
     @Parameters({"testRealm"}) 
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testAuthContextLogout(String testRealm)
     throws Exception {
         Object[] params = {testRealm};
@@ -291,7 +293,8 @@ public class AuthContextLogout extends TestCommon {
      * testRealm - the realm which will be deleted 
      */
     @Parameters({"testRealm"})
-    @AfterClass(groups={"ds_ds", "ds_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup(String testRealm)
     throws Exception {
         Object[] params = {testRealm};

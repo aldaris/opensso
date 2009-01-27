@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MultiProtocolSmokeTest.java,v 1.7 2009-01-22 22:04:46 mrudulahg Exp $
+ * $Id: MultiProtocolSmokeTest.java,v 1.8 2009-01-27 00:07:56 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -82,7 +82,7 @@ public class MultiProtocolSmokeTest extends TestCommon {
     /**
      * This setup method creates required users.
      */
-    @BeforeClass(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup()
     throws Exception {
         ArrayList list;
@@ -294,7 +294,7 @@ public class MultiProtocolSmokeTest extends TestCommon {
     /**
      * Federate SAMLv2 users for multiprotocol testing.
      */
-    @BeforeClass(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"}, dependsOnMethods={"setup"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"}, dependsOnMethods={"setup"})
     public void federateSAMLv2Users()
     throws Exception {
         entering("federateSAMLv2Users", null);
@@ -325,7 +325,7 @@ public class MultiProtocolSmokeTest extends TestCommon {
     /**
      * Federate IDFF users.
      */
-    @BeforeClass(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"},
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"federateSAMLv2Users"})
     public void federateIDFFUsers()
     throws Exception {
@@ -373,7 +373,7 @@ public class MultiProtocolSmokeTest extends TestCommon {
      * Multiprotocol SSO : First SAMLv2, SP initiated SSO,
      * then check for IDFF & WSFed SSO without SP or IDP login
      */
-    @Test(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void MultiProtocolSPSSOSAMLv2Init()
     throws Exception {
         entering("MultiProtocolSPSSOSAMLv2Init", null);
@@ -422,7 +422,7 @@ public class MultiProtocolSmokeTest extends TestCommon {
      * Multiprotocol SLO : First SAMLv2, SP initiated SLO,
      * then check to see SAMLv2, IDFF & WSfed SP sessions are terminated or not.
      */
-    @Test(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"MultiProtocolSPSSOSAMLv2Init"})
     public void MultiProtocolSPSLOSAMLv2Init()
     throws Exception {
@@ -512,7 +512,7 @@ public class MultiProtocolSmokeTest extends TestCommon {
      * Multiprotocol SSO : First IDFF, SP initiated SSO,
      * then check for SAMLv2 & WSFed SSO without SP or IDP login
      */
-    @Test(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"}, 
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"}, 
     dependsOnMethods={"MultiProtocolSPSLOSAMLv2Init"})
     public void MultiProtocolSPSSOIDFFInit()
     throws Exception {
@@ -567,7 +567,7 @@ public class MultiProtocolSmokeTest extends TestCommon {
      * Multiprotocol SLO : First IDFF, SP initiated SLO,
      * then check to see SAMLv2, IDFF & WSfed SP sessions are terminated or not.
      */
-    @Test(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"MultiProtocolSPSSOIDFFInit"})
     public void MultiProtocolSPSLOIDFFInit()
     throws Exception {
@@ -653,7 +653,7 @@ public class MultiProtocolSmokeTest extends TestCommon {
      * Multiprotocol SSO : First WSFed, SP initiated SSO,
      * then check for IDFF & SAMLv2 SSO without SP or IDP login
      */
-    @Test(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"}, 
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"}, 
     dependsOnMethods={"MultiProtocolSPSLOIDFFInit"})
     public void MultiProtocolSPSSOWSFedInit()
     throws Exception {
@@ -705,7 +705,7 @@ public class MultiProtocolSmokeTest extends TestCommon {
      * Multiprotocol SLO : First WSFed, SP initiated SLO,
      * then check to see SAMLv2, IDFF & WSfed SP sessions are terminated or not.
      */
-    @Test(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"MultiProtocolSPSSOWSFedInit"})
     public void MultiProtocolSPSLOWSFedInit()
     throws Exception {
@@ -777,7 +777,7 @@ public class MultiProtocolSmokeTest extends TestCommon {
     /**
      * This methods deletes all the users as part of cleanup
      */
-    @AfterClass(groups={"ds_ds", "ff_ds", "ds_ds_sec", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

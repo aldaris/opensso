@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFDefaultURLsTests.java,v 1.5 2008-06-26 20:13:07 rmisra Exp $
+ * $Id: IDFFDefaultURLsTests.java,v 1.6 2009-01-27 00:04:01 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -108,7 +108,8 @@ public class IDFFDefaultURLsTests extends IDFFCommon {
     /**
      * This is setup method. It creates required users for test
      */
-    @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup()
     throws Exception {
         entering("setup", null);
@@ -298,7 +299,8 @@ public class IDFFDefaultURLsTests extends IDFFCommon {
     /**
      * @DocTest: IDFF|Perform SP initiated federation.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void DefaultURLSPInitFederation()
     throws Exception {
         entering("DefaultURLSPInitFederation", null);
@@ -327,7 +329,8 @@ public class IDFFDefaultURLsTests extends IDFFCommon {
     /**
      * @DocTest: IDFF|Perform SP initiated SLO.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"DefaultURLSPInitFederation"})
     public void DefaultURLSPInitSLO()
     throws Exception {
@@ -351,7 +354,8 @@ public class IDFFDefaultURLsTests extends IDFFCommon {
     /**
      * @DocTest: IDFF|Perform SP initiated SSO.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"DefaultURLSPInitSLO"})
     public void DefaultURLSPInitSSO()
     throws Exception {
@@ -380,7 +384,8 @@ public class IDFFDefaultURLsTests extends IDFFCommon {
     /**
      * @DocTest: IDFF|Perform SP initiated Name registration.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"DefaultURLSPInitSSO"})
     public void DefaultURLSPInitNameReg()
     throws Exception {
@@ -404,7 +409,8 @@ public class IDFFDefaultURLsTests extends IDFFCommon {
     /**
      * @DocTest: IDFF|Perform SP initiated Termination.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"DefaultURLSPInitNameReg"})
     public void DefaultURLSPInitTerminate()
     throws Exception {
@@ -431,7 +437,8 @@ public class IDFFDefaultURLsTests extends IDFFCommon {
     /**
      * @DocTest: IDFF|Perform IDP initiated SLO.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"DefaultURLSPInitTerminate"})
     public void DefaultURLIDPInitSLO()
     throws Exception {
@@ -464,7 +471,8 @@ public class IDFFDefaultURLsTests extends IDFFCommon {
     /**
      * @DocTest: IDFF|Perform IDP initiated Name registration.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"DefaultURLIDPInitSLO"})
     public void DefaultURLIDPInitNameReg()
     throws Exception {
@@ -491,7 +499,8 @@ public class IDFFDefaultURLsTests extends IDFFCommon {
     /**
      * @DocTest: IDFF|Perform IDP initiated Termination.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"DefaultURLIDPInitNameReg"})
     public void DefaultURLIDPInitTerminate()
     throws Exception {
@@ -519,7 +528,8 @@ public class IDFFDefaultURLsTests extends IDFFCommon {
      * This methods deletes all the users & loads original SP & IDP metadata 
      * as part of cleanup
      */
-    @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

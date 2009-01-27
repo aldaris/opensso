@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigUnconfig.java,v 1.5 2008-06-26 20:16:33 rmisra Exp $
+ * $Id: ConfigUnconfig.java,v 1.6 2009-01-27 00:11:05 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,7 +51,7 @@ public class ConfigUnconfig extends TestCommon {
      * Start the notification (jetty) server for getting notifications from the
      * server.
      */
-    @BeforeSuite(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeSuite(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void startServer()
     throws Exception {
         entering("startServer", null);
@@ -63,7 +63,7 @@ public class ConfigUnconfig extends TestCommon {
      * Replaces the dn in the Policy xml files under the directory
      * <QATESTHOME>/xml/policy
      */
-    @BeforeSuite(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeSuite(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void replaceDn()
     throws Exception {
         entering("replaceDn", null);
@@ -102,7 +102,7 @@ public class ConfigUnconfig extends TestCommon {
      * Stop the notification (jetty) server for getting notifications from the
      * server.
      */
-    @AfterSuite(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterSuite(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void stopServer()
     throws Exception {
         entering("stopServer", null);

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserSessionConstraints.java,v 1.6 2008-06-09 23:24:54 srivenigan Exp $
+ * $Id: UserSessionConstraints.java,v 1.7 2009-01-27 00:16:38 nithyas Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -84,7 +84,8 @@ public class UserSessionConstraints extends TestCommon {
      * 
      * @throws java.lang.Exception
      */
-    @BeforeClass(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup()
     throws Exception {
         entering("setup", null);
@@ -147,7 +148,8 @@ public class UserSessionConstraints extends TestCommon {
      * 
      * @throws java.lang.Exception
      */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testQuotaDAWithSessionSrvcAtGlobal()
     throws Exception {
         entering("testQuotaDAWithSessionSrvcAtGlobal", null);
@@ -251,7 +253,8 @@ public class UserSessionConstraints extends TestCommon {
      * 
      * @throws java.lang.Exception
      */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"}, 
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"}, 
     dependsOnMethods = {"testQuotaDAWithSessionSrvcAtGlobal"})
     public void testQuotaDOSWithSessionSrvcAtGlobal()
     throws Exception {
@@ -319,7 +322,8 @@ public class UserSessionConstraints extends TestCommon {
      * 
      * @throws java.lang.Exception
      */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testQuotaDAWithSessionSrvcAtRealm()
     throws Exception {
         entering("testQuotaDAWithSessionSrvcAtRealm", null);
@@ -416,7 +420,8 @@ public class UserSessionConstraints extends TestCommon {
      * 
      * @throws java.lang.Exception
      */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"}, 
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"}, 
     dependsOnMethods = {"testQuotaDAWithSessionSrvcAtRealm"})
     public void testQuotaDOSWithSessionSrvcAtRealm()
     throws Exception {
@@ -477,7 +482,8 @@ public class UserSessionConstraints extends TestCommon {
      * 
      * @throws java.lang.Exception
      */
-    @AfterClass(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

@@ -1,0 +1,38 @@
+
+    <test name="AuthTestLDAPRole">
+        <parameter name="testModule" value="ldap"/>
+        <parameter name="testMode" value="role"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
+        </classes>
+    </test>
+    <test name="AuthTestAnonymousRole">
+        <parameter name="testModule" value="anonymous"/>
+        <parameter name="testMode" value="role"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
+        </classes>
+    </test>
+    <test name="AuthTestDataStoreRole">
+        <parameter name="testModule" value="datastore"/>
+        <parameter name="testMode" value="role"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
+        </classes>
+    </test>
+    

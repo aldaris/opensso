@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyPeerRealmReferral.java,v 1.1 2008-12-24 22:39:29 arunav Exp $
+ * $Id: PolicyPeerRealmReferral.java,v 1.2 2009-01-27 00:10:44 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -78,7 +78,8 @@ public class PolicyPeerRealmReferral extends TestCommon {
      */
     @Parameters({"policyIdx", "evaluationIdx", "setup", "cleanup", "peAtOrg", 
     "referringPeerOrg", "dynamic"})
-    @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String policyIdx, String evaluationIdx, String setup, 
             String cleanup, String peAtOrg, String referringPeerOrg, 
             String dynamic)
@@ -159,7 +160,8 @@ public class PolicyPeerRealmReferral extends TestCommon {
      * alm, Combination policies, policy response attributes
      */
     @Parameters({ "peAtOrg"})
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void evaluatePolicyAPI(String peAtOrg)
     throws Exception {
         Object[] params = {peAtOrg};
@@ -198,7 +200,8 @@ public class PolicyPeerRealmReferral extends TestCommon {
      * This method cleans all the identities and policies  that were setup
      */
     @Parameters({"peAtOrg", "referringPeerOrg", "dynamic"})
-    @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup(String peAtOrg, String referringPeerOrg, String dynamic)
     throws Exception {
         Object[] params = {peAtOrg, referringPeerOrg, dynamic};

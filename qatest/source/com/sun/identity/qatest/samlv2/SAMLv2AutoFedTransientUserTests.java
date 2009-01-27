@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2AutoFedTransientUserTests.java,v 1.8 2008-07-30 22:16:05 sridharev Exp $
+ * $Id: SAMLv2AutoFedTransientUserTests.java,v 1.9 2009-01-27 00:14:08 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -103,7 +103,7 @@ public class SAMLv2AutoFedTransientUserTests extends TestCommon {
     /**
      * Create the webClient which should be run before each test.
      */
-    @BeforeMethod(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @BeforeMethod(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     private void getWebClient() 
     throws Exception {
         try {
@@ -118,7 +118,8 @@ public class SAMLv2AutoFedTransientUserTests extends TestCommon {
     /**
      * This is setup method. It creates required users for test
      */
-    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup() 
     throws Exception {
         List<String> list;
@@ -198,7 +199,8 @@ public class SAMLv2AutoFedTransientUserTests extends TestCommon {
      * also enables auto federation. This will achieve the SSO without database
      * writes
      */
-    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void autoFedTransientUserSetup()
     throws Exception {
         entering("autoFedTransientUserSetup", null);
@@ -329,7 +331,8 @@ public class SAMLv2AutoFedTransientUserTests extends TestCommon {
      * Run SP initiated auto federation
      * @DocTest: SAML2| SP initiated SSO with no DB writes.
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void SSOWithNoDBWritesSPInit()
     throws Exception {
         entering("SSOWithNoDBWritesSPInit", null);
@@ -370,7 +373,8 @@ public class SAMLv2AutoFedTransientUserTests extends TestCommon {
      * Run IDP initiated auto federation
      * @DocTest: SAML2| IDP initiated SSO with no DB writes.
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void SSOWithNoDBWritesIDPInit()
     throws Exception {
         entering("SSOWithNoDBWritesIDPInit", null);
@@ -415,7 +419,7 @@ public class SAMLv2AutoFedTransientUserTests extends TestCommon {
      * Run SP initiated auto federation
      * @DocTest: SAML2| SP initiated SSO with no DB writes Post/SOAP Profile
      */
-    @Test(groups={"ds_ds_sec","ff_ds_sec"})
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
     public void SSOWithNoDBWritesSPInitPost()
     throws Exception {
         entering("SSOWithNoDBWritesSPInitPost", null);
@@ -458,7 +462,7 @@ public class SAMLv2AutoFedTransientUserTests extends TestCommon {
      * Run IDP initiated auto federation
      * @DocTest: SAML2| IDP initiated Autofederation.
      */
-    @Test(groups={"ds_ds_sec","ff_ds_sec"})
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
     public void SSOWithNoDBWritesIDPInitPost()
     throws Exception {
         entering("SSOWithNoDBWritesIDPInitPost", null);
@@ -502,7 +506,8 @@ public class SAMLv2AutoFedTransientUserTests extends TestCommon {
     /**
      * This methods deletes all the users as part of cleanup
      */
-    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

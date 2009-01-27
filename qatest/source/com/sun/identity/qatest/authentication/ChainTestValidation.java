@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ChainTestValidation.java,v 1.7 2008-02-28 04:06:31 inthanga Exp $
+ * $Id: ChainTestValidation.java,v 1.8 2009-01-26 23:47:46 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -69,7 +69,8 @@ public class ChainTestValidation extends TestCommon {
    /**
     * Performs Positive Service based service Login
     */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"}) 
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"}) 
     public void testServicebasedPositive(){
        try{
            boolean isNegative = false;
@@ -90,7 +91,8 @@ public class ChainTestValidation extends TestCommon {
    /**
     * Performs Negative Service based service Login
     */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testServicebasedNegative(){
         try{
             boolean isNegative = true;

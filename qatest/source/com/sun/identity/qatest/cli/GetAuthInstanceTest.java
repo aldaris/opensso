@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetAuthInstanceTest.java,v 1.4 2008-08-12 00:12:52 cmwesley Exp $
+ * $Id: GetAuthInstanceTest.java,v 1.5 2009-01-26 23:49:32 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -88,7 +88,8 @@ public class GetAuthInstanceTest extends TestCommon implements CLIExitCodes {
      * GetAuthInstanceTest.properties.
      */
     @Parameters({"testName"})
-    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String testName) 
     throws Exception {
         Object[] params = {testName};
@@ -168,7 +169,8 @@ public class GetAuthInstanceTest extends TestCommon implements CLIExitCodes {
      * "ssoadm get-auth-instance" using input data from the 
      * GetAuthInstanceTest.properties file.
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testGetAuthInstance() 
     throws Exception {
         entering("testGetAuthInstance", null);
@@ -300,7 +302,8 @@ public class GetAuthInstanceTest extends TestCommon implements CLIExitCodes {
      * during the setup and testGetAuthInstance methods using 
      * "ssoadm delete-auth-instances" and "ssoadm delete-realm".
      */
-    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup() 
     throws Exception {
         int cleanupExitStatus = -1;

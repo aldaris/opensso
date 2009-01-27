@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSamples.java,v 1.10 2008-08-29 19:28:46 nithyas Exp $
+ * $Id: AMSamples.java,v 1.11 2009-01-26 23:53:00 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -112,7 +112,8 @@ public class AMSamples extends TestCommon {
     /**
      *  Creates required users and policy.
      */
-    @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup()
     throws Exception {
         entering("setup", null);
@@ -203,7 +204,8 @@ public class AMSamples extends TestCommon {
     /**
      * This test validates the user attributes for a super admin user.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testUserProfileAdminUser()
     throws Exception {
         entering("testUserProfileAdminUser", null);
@@ -232,7 +234,8 @@ public class AMSamples extends TestCommon {
      * This test validates the user attributes for a user with no admin
      * privilages
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testUserProfileNonadminUser()
     throws Exception {
         entering("testUserProfileNonadminUser", null);
@@ -259,7 +262,8 @@ public class AMSamples extends TestCommon {
     /**
      * This test validates the user attributes for a non existing user.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testUserProfileNonExistingUser()
     throws Exception {
         entering("testUserProfileNonExistingUser", null);
@@ -286,7 +290,8 @@ public class AMSamples extends TestCommon {
      * This test validates the user attributes for a user with incorrect
      * credentials (incorrect password).
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testUserProfileInvalidUserCredential()
     throws Exception {
         entering("testUserProfileInvalidUserCredential", null);
@@ -314,7 +319,8 @@ public class AMSamples extends TestCommon {
      * This test validates the service configuration for
      * iplanetAMPlatformService service for configuration type set to Schema.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testServiceConfigPlatformSvcSchema()
     throws Exception {
         entering("testServiceConfigPlatformSvcSchema", null);
@@ -343,7 +349,8 @@ public class AMSamples extends TestCommon {
      * This test validates the service configuration for
      * iplanetAMPlatformService service for configuration type set to Config.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testServiceConfigPlatformSvcConfig()
     throws Exception {
         entering("testServiceConfigPlatformSvcConfig", null);
@@ -372,7 +379,8 @@ public class AMSamples extends TestCommon {
      * This test validates the service configuration for not existing service
      * for configuration type set to Schema.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testServiceConfigSvcNotExistSchema()
     throws Exception {
         entering("testServiceConfigSvcNotExistSchema", null);
@@ -401,7 +409,8 @@ public class AMSamples extends TestCommon {
      * This test validates the service configuration for not existing service
      * for configuration type set to Config.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testServiceConfigSvcNotExistConfig()
     throws Exception {
         entering("testServiceConfigSvcNotExistConfig", null);
@@ -430,7 +439,8 @@ public class AMSamples extends TestCommon {
      * This test validates valid authorization (allow access) to a policy
      * resource for a super admin user.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testPolicyEvalPassAdminUser()
     throws Exception {
         entering("testPolicyEvalPassAdminUser", null);
@@ -457,7 +467,8 @@ public class AMSamples extends TestCommon {
     /** his test validates valid authorization(deny access) to a policy
      * resource for a super admin user.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testPolicyEvalFailAdminUser()
     throws Exception {
         entering("testPolicyEvalFailAdminUser", null);
@@ -489,7 +500,8 @@ public class AMSamples extends TestCommon {
      * This test validates valid authorization (allow access) to a policy
      * resource for a user with no admin privilages.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testPolicyEvalPassTestUser()
     throws Exception {
         entering("testPolicyEvalPassTestUser", null);
@@ -517,7 +529,8 @@ public class AMSamples extends TestCommon {
      * This test validates valid authorization (deny access) to a policy
      * resource for a user with no admin privilage.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testPolicyEvalFailTestUser()
     throws Exception {
         entering("testPolicyEvalFailTestUser", null);
@@ -548,7 +561,8 @@ public class AMSamples extends TestCommon {
     /**
      * This test validates SSO Token for a super admin user.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testSSOVerificationServletAdminUser()
     throws Exception {
         entering("testSSOVerificationServletAdminUser", null);
@@ -579,7 +593,8 @@ public class AMSamples extends TestCommon {
     /**
      * This test validates SSO Token for a user with no admin privilages.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testSSOVerificationServletTestUser()
     throws Exception {
         entering("testSSOVerificationServletTestUser", null);
@@ -610,7 +625,8 @@ public class AMSamples extends TestCommon {
     /**
      * This test validates SSO Token failure when no user token is available.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testSSOVerificationServletError()
     throws Exception {
         entering("testSSOVerificationServletError", null);
@@ -635,7 +651,8 @@ public class AMSamples extends TestCommon {
     /**
      * This test validates STS Token for a super admin user.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testSTSClientAdminUser()
     throws Exception {
         entering("testSTSClientAdminUser", null);
@@ -670,7 +687,8 @@ public class AMSamples extends TestCommon {
     /**
      * This test validates STS Token for a normal user.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testSTSClientNormalUser()
     throws Exception {
         entering("testSTSClientNormalUser", null);
@@ -705,7 +723,8 @@ public class AMSamples extends TestCommon {
      * This test validates STS Token for a normal user with SAML attribute
      * mapper. It also verifies the Memberships for the user
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testSTSClientUserSAMLAttribute()
     throws Exception {
         entering("testSTSClientUserSAMLAttribute", null);
@@ -801,7 +820,8 @@ public class AMSamples extends TestCommon {
     /**
      * This test validates STS Token for WSC of type SAMLv2
      */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testSTSwscSAMLv2Token()
     throws Exception {
         entering("testSTSwscSAMLv2Token", null);
@@ -901,7 +921,8 @@ public class AMSamples extends TestCommon {
     /**
      * This test validates STS Token for WSC of type SAMLv1.
      */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods = {"testSTSwscSAMLv2Token"})
     public void testSTSwscSAMLv1Token()
     throws Exception {
@@ -972,7 +993,8 @@ public class AMSamples extends TestCommon {
      * (a) Delete users
      * (b) Deletes policies
      */
-    @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

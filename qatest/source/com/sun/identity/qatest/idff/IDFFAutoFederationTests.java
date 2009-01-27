@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDFFAutoFederationTests.java,v 1.7 2008-06-26 20:13:07 rmisra Exp $
+ * $Id: IDFFAutoFederationTests.java,v 1.8 2009-01-27 00:04:01 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -119,7 +119,7 @@ public class IDFFAutoFederationTests extends IDFFCommon {
     /**
      * Create the webClient which should be run before each test.
      */
-    @BeforeMethod(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @BeforeMethod(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     private void getWebClient() 
     throws Exception {
         try {
@@ -134,7 +134,8 @@ public class IDFFAutoFederationTests extends IDFFCommon {
     /**
      * This is setup method. It creates required users for test
      */
-    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup() 
     throws Exception {
         List<String> list;
@@ -318,7 +319,8 @@ public class IDFFAutoFederationTests extends IDFFCommon {
      * @DocTest: IDFF | SP initiated Autofederation with NameIDPolicy set to 
      * federated.
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void IDFFautoFedSPInitFederated()
     throws Exception {
         entering("IDFFautoFedSPInitFederated", null);
@@ -375,7 +377,8 @@ public class IDFFAutoFederationTests extends IDFFCommon {
      * @DocTest: SAML2| IDP initiated Autofederation with NameIDPolicy set to 
      * onetime.
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void IDFFautoFedSPInitOneTime()
     throws Exception {
         entering("IDFFautoFedSPInitOneTime", null);
@@ -428,7 +431,8 @@ public class IDFFAutoFederationTests extends IDFFCommon {
      * This methods deletes all the users as part of cleanup
      * It also restores the original metadata. 
      */
-    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

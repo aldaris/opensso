@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnconfigureSAMLv2IDPProxy.java,v 1.3 2008-08-15 22:09:27 mrudulahg Exp $
+ * $Id: UnconfigureSAMLv2IDPProxy.java,v 1.4 2009-01-27 00:15:33 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -72,7 +72,7 @@ public class UnconfigureSAMLv2IDPProxy extends TestCommon {
      * @DocTest: SAML2|Unconfigure SP, IDP & IDP Proxy by deleting entities 
      * & COT's 
      */
-    @AfterSuite(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @AfterSuite(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void UnconfigureSAMLv2IDPProxy()
     throws Exception {
         entering("UnconfigureSAMLv2IDPProxy", null);

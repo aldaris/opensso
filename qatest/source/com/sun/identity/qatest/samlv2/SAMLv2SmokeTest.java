@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2SmokeTest.java,v 1.10 2008-06-26 20:24:18 rmisra Exp $
+ * $Id: SAMLv2SmokeTest.java,v 1.11 2009-01-27 00:14:09 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -68,7 +68,8 @@ public class SAMLv2SmokeTest extends TestCommon {
     /**
      * This setup method creates required users.
      */
-    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup() 
     throws Exception {
         URL url;
@@ -155,7 +156,8 @@ public class SAMLv2SmokeTest extends TestCommon {
     /**
      * Create the webClient which will be used for the rest of the tests.
      */
-    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void getWebClient() 
     throws Exception {
         try {
@@ -171,7 +173,8 @@ public class SAMLv2SmokeTest extends TestCommon {
      * Run saml2 profile testcase 1.
      * @DocTest: SAML2|Perform SP initiated sso.
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testSPSSOInit()
     throws Exception {
         entering("testSPSSOInit", null);
@@ -196,7 +199,8 @@ public class SAMLv2SmokeTest extends TestCommon {
      * Run saml2 slo
      * @DocTest: SAML2|Perform SP initiated slo.
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"testSPSSOInit"})
     public void testSPSLO()
     throws Exception {
@@ -220,7 +224,8 @@ public class SAMLv2SmokeTest extends TestCommon {
      * Run saml2 termination
      * @DocTest: SAML2|Perform SP initiated termination
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"testSPSLO"})
     public void testSPTerminate()
     throws Exception {
@@ -244,7 +249,8 @@ public class SAMLv2SmokeTest extends TestCommon {
      * Run saml2 profile .
      * @DocTest: SAML2|Perform idp initiated sso.
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"testSPTerminate"})
     public void testIDPSSO()
     throws Exception {
@@ -275,7 +281,8 @@ public class SAMLv2SmokeTest extends TestCommon {
      * Run saml2 slo
      * @DocTest: SAML2|Perform idp initiated slo.
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"testIDPSSO"})
     public void testIDPSLO()
     throws Exception {
@@ -299,7 +306,8 @@ public class SAMLv2SmokeTest extends TestCommon {
      * Run saml2 termination
      * @DocTest: SAML2|Perform  idp initiated termination
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"},
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
     dependsOnMethods={"testIDPSLO"})
     public void testIDPTerminate()
     throws Exception {
@@ -323,7 +331,7 @@ public class SAMLv2SmokeTest extends TestCommon {
      * Run saml2 profile testcase 4.
      * @DocTest: SAML2|Perform SP initiated sso with post profile.
      */
-    @Test(groups={"ds_ds_sec","ff_ds_sec"},
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"},
     dependsOnMethods={"testIDPTerminate"})
     public void testSPSSOInitPost()
     throws Exception {
@@ -349,7 +357,7 @@ public class SAMLv2SmokeTest extends TestCommon {
      * Run saml2 slo
      * @DocTest: SAML2|Perform SP initiated slo with soap profile.
      */
-    @Test(groups={"ds_ds_sec","ff_ds_sec"},
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"},
     dependsOnMethods={"testSPSSOInitPost"})
     public void testSPSLOSOAP()
     throws Exception {
@@ -373,7 +381,7 @@ public class SAMLv2SmokeTest extends TestCommon {
      * Run saml2 termination
      * @DocTest: SAML2|Perform SP initiated termination with soap profile
      */
-    @Test(groups={"ds_ds_sec","ff_ds_sec"},
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"},
     dependsOnMethods={"testSPSLOSOAP"})
     public void testSPTerminateSOAP()
     throws Exception {
@@ -399,7 +407,7 @@ public class SAMLv2SmokeTest extends TestCommon {
      * Run saml2 profile testcase 1.
      * @DocTest: SAML2|Perform  idp initiated sso with post profile.
      */
-    @Test(groups={"ds_ds_sec","ff_ds_sec"},
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"},
     dependsOnMethods={"testSPTerminateSOAP"})
     public void testIDPSSOInitPost()
     throws Exception {
@@ -430,7 +438,7 @@ public class SAMLv2SmokeTest extends TestCommon {
      * Run saml2 slo
      * @DocTest: SAML2|Perform  idp initiated slo with soap profile .
      */
-    @Test(groups={"ds_ds_sec","ff_ds_sec"},
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"},
     dependsOnMethods={"testIDPSSOInitPost"})
     public void testIDPSLOSOAP()
     throws Exception {
@@ -455,7 +463,7 @@ public class SAMLv2SmokeTest extends TestCommon {
      * Run saml2 termination
      * @DocTest: SAML2|Perform  idp initiated termination with soap profile
      */
-    @Test(groups={"ds_ds_sec","ff_ds_sec"},
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"},
     dependsOnMethods={"testIDPSLOSOAP"})
     public void testIDPTerminateSOAP()
     throws Exception {
@@ -479,7 +487,8 @@ public class SAMLv2SmokeTest extends TestCommon {
     /**
      * Cleanup methods deletes all the users which were created in setup
      */
-    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

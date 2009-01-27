@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureWSFed.java,v 1.6 2008-06-26 20:27:37 rmisra Exp $
+ * $Id: ConfigureWSFed.java,v 1.7 2009-01-27 00:18:21 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -75,7 +75,7 @@ public class ConfigureWSFed extends WSFedCommon {
      * @DocTest: WSFed|Configure SP & IDP by loading metadata on both sides.
      */
     @Parameters({"groupName"})
-    @BeforeSuite(groups={"ds_ds_sec", "ff_ds_sec"})
+    @BeforeSuite(groups={"ldapv3_sec",  "s1ds_sec", "ad_sec",  "amsdk_sec"})
     public void ConfigureWSFed(String strGroupName)
     throws Exception {
         Object[] params = {strGroupName};

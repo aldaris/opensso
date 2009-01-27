@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserAuthAttributeTest.java,v 1.4 2008-08-11 20:56:46 cmwesley Exp $
+ * $Id: UserAuthAttributeTest.java,v 1.5 2009-01-26 23:47:50 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -99,7 +99,8 @@ public class UserAuthAttributeTest extends TestCommon {
      * - Create module instance and create users wutg required attributes
      */
     @Parameters({"testcaseName"})
-    @BeforeClass(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String testcaseName) 
     throws Exception {
         Object[] params = {testcaseName};
@@ -175,7 +176,8 @@ public class UserAuthAttributeTest extends TestCommon {
      * This test verifies the account login status for the users with 
      * different account management attributes.
      */
-    @Test(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void runTest() 
     throws Exception {
         entering("runTest", null);
@@ -207,7 +209,8 @@ public class UserAuthAttributeTest extends TestCommon {
     /**
      * performs cleanup after tests are done.
      */
-    @AfterClass(groups = {"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup() 
     throws Exception {
         entering("cleanup", null);

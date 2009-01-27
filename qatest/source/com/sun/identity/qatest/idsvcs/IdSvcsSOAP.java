@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSvcsSOAP.java,v 1.3 2008-06-26 20:14:20 rmisra Exp $
+ * $Id: IdSvcsSOAP.java,v 1.4 2009-01-27 00:06:32 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -92,7 +92,8 @@ public class IdSvcsSOAP extends TestCommon {
     /**
      *  Creates required users and policy.
      */
-    @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup()
     throws Exception {
         entering("setup", null);
@@ -135,7 +136,8 @@ public class IdSvcsSOAP extends TestCommon {
      * This test validates the authentication SOAP interface for super admin
      * user
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testSuperAdminAuthenticateSOAP()
     throws Exception {
         entering("testSuperAdminAuthenticateSOAP", null);
@@ -167,7 +169,8 @@ public class IdSvcsSOAP extends TestCommon {
     /**
      * This test validates the authentication SOAP interface for a normal user
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testNormalUserAuthenticateSOAP()
     throws Exception {
         entering("testNormalUserAuthenticateSOAP", null);
@@ -201,7 +204,8 @@ public class IdSvcsSOAP extends TestCommon {
      * where policy resource has allow for both GET and POST request. The
      * action under test is GET.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testNormalUserPolAAGetSOAP()
     throws Exception {
         entering("testNormalUserPolAAGetSOAP", null);
@@ -240,7 +244,8 @@ public class IdSvcsSOAP extends TestCommon {
      * where policy resource has allow for both GET and POST request. The
      * action under test is POST.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testNormalUserPolAAPostSOAP()
     throws Exception {
         entering("testNormalUserPolAAPostSOAP", null);
@@ -279,7 +284,8 @@ public class IdSvcsSOAP extends TestCommon {
      * where policy resource has allow for GET and deny for POST request. The
      * action under test is GET.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testNormalUserPolADGetSOAP()
     throws Exception {
         entering("testNormalUserPolADGetSOAP", null);
@@ -318,7 +324,8 @@ public class IdSvcsSOAP extends TestCommon {
      * where policy resource has allow for GET and deny for POST request. The
      * action under test is POST.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testNormalUserPolADPostSOAP()
     throws Exception {
         entering("testNormalUserPolADPostSOAP", null);
@@ -357,7 +364,8 @@ public class IdSvcsSOAP extends TestCommon {
      * where policy resource has deny for GET and allow for POST request. The
      * action under test is GET.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testNormalUserPolDAGetSOAP()
     throws Exception {
         entering("testNormalUserPolDAGetSOAP", null);
@@ -396,7 +404,8 @@ public class IdSvcsSOAP extends TestCommon {
      * where policy resource has deny for GET and allow for POST request. The
      * action under test is POST.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testNormalUserPolDAPostSOAP()
     throws Exception {
         entering("testNormalUserPolDAPostSOAP", null);
@@ -435,7 +444,8 @@ public class IdSvcsSOAP extends TestCommon {
      * where policy resource has deny for both GET and POST request. The
      * action under test are both GET.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testNormalUserPolDDGetSOAP()
     throws Exception {
         entering("testNormalUserPolDDGetSOAP", null);
@@ -474,7 +484,8 @@ public class IdSvcsSOAP extends TestCommon {
      * where policy resource has deny for both GET and POST request. The action
      * under test is POST.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testNormalUserPolDDPostSOAP()
     throws Exception {
         entering("testNormalUserPolDDPostSOAP", null);
@@ -513,7 +524,8 @@ public class IdSvcsSOAP extends TestCommon {
      * current tests validates the retrival of multivalued attribute
      * iplanet-am-user-alias-list.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testNormalUserAttributesSOAP()
     throws Exception {
         entering("testNormalUserAttributesSOAP", null);
@@ -558,7 +570,8 @@ public class IdSvcsSOAP extends TestCommon {
      * (a) Delete users
      * (b) Deletes policies
      */
-    @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

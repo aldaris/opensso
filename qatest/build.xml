@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: build.xml,v 1.3 2008-05-30 05:51:59 inthanga Exp $
+ $Id: build.xml,v 1.4 2009-01-26 23:38:04 nithyas Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -37,61 +37,13 @@
         </not>
       </condition> 
     </fail>
-    <target name="all">
-        <condition property="SERVER_DIR" value="${SERVER_NAME1}_${SERVER_NAME2}" else="${SERVER_NAME1}">
-            <and>
-                <isset property="SERVER_NAME1"/>
-                <isset property="SERVER_NAME2"/>
-            </and>
-        </condition>
-
-        <property name="test.env.outfile" value="./${SERVER_DIR}/test_env.txt"/>
-
-        <echo message="Creating SERVER_DIR ${SERVER_DIR}"/>
-
-        <mkdir dir="${SERVER_DIR}"/>
-	<record name="${SERVER_DIR}/${EXECUTION_MODE}.output" action="start"/>
-        <echo message="So you are using ${SERVER_DIR}/${EXECUTION_MODE} install"/>
-        <echo message="So you are executing all modules"/>
-	<antcall target="print-test-env-start"/>
-	<antcall target="execute-all" />
-	<antcall target="print-test-env-end"/>
-	<antcall target="moveDebugFiles"/>
-	<antcall target="report"/>
-	<record name="${SERVER_DIR}/${EXECUTION_MODE}.output" action="stop"/>
-    </target>
-
-    <target name="module">
-        <condition property="SERVER_DIR" value="${SERVER_NAME1}_${SERVER_NAME2}" else="${SERVER_NAME1}">
-            <and>
-                <isset property="SERVER_NAME1"/>
-                <isset property="SERVER_NAME2"/>
-            </and>
-        </condition>
-
-        <property name="test.env.outfile" value="./${SERVER_DIR}/test_env.txt"/>
-
-        <echo message="Creating SERVER_DIR ${SERVER_DIR}"/>
-
-        <mkdir dir="${SERVER_DIR}"/>
-        <record name="${SERVER_DIR}/${TEST_MODULE}.output" action="start"/>
-        <echo message="So you are using ${SERVER_DIR}/${EXECUTION_MODE} install"/>
-        <echo message="So you are executing module ${TEST_MODULE}"/>
-        <antcall target="print-test-env-start"/>
-        <antcall target="execute-module"/>
-        <antcall target="print-test-env-end"/>
-	<antcall target="moveDebugFiles"/>
-	<antcall target="report"/>
-        <record name="${SERVER_DIR}/${TEST_MODULE}.output" action="stop"/>
-    </target>
-
     <target name="usage">
         <echo message=" "/>
         <echo message=" Following targets are available:"/>
         <echo message=" "/>
-        <echo message=" all    : Executes all tests depending upon the"/>
-        <echo message="          execution mode"/>
-        <echo message=" module : Executes tests for a module"/>
+        <echo message=" run    : Executes all tests depending upon the"/>
+        <echo message="          execution mode and module set in the"/>
+        <echo message="          build.properties file"/>
         <echo message=" doc    : Generates java docs in the directory javadoc"/>
         <echo message="        : under &lt;install dir&gt;"/>
         <echo message=" usage  : Displays this usage message"/>
@@ -100,27 +52,72 @@
         <echo message=" note   : Ensure all properties are set in"/>
         <echo message="          build.properties"/>
         <echo message=" note   : Ensure all properties are set in resources/"/>
-        <echo message="          Configurator-&lt;server-name&gt;.properties"/>
+        <echo message="          Configurator-&lt;server-name1&gt;.properties,"/>
+        <echo message="          resources/Configurator-&lt;server-name2,"/>
         <echo message="          for single server mode"/>
         <echo message=" note   : Ensure all properties are set in resources/"/>
-        <echo message="          Configurator-&lt;server-name1&gt;.properties"/>
-        <echo message="          and resources/Configurator-&lt;server-name2"/>
-        <echo message="          &gt;.properties for dual server mode"/>
-        <echo message=" note    : When the target is set as module, ensure"/>
-        <echo message="           that TEST_MOUDLE is set to the correct"/>
-        <echo message="           value in build.properties file"/>
+        <echo message="          Configurator-&lt;server-name1&gt;.properties,"/>
+        <echo message="          resources/Configurator-&lt;server-name2,"/>
+        <echo message="          resources/Configurator-&lt;server-name3 (not mandatory),"/>
+        <echo message="          and resources/Configurator-&lt;server-name4 (not mandatory)"/>
+        <echo message="          &gt;.properties for multi server mode (depending upon chosen module)"/>
+        <echo message=" note   : To sanity test opensso,  (valid tests for stand alone non networked system) opensso,"/>
+        <echo message="          set TEST_MODULE to sanity"/>
+        <echo message="          and EXECUTION_MODE to ldapv3"/>
+        <echo message="          value in build.properties file"/>
+        <echo message=" note   : To test agents, specify TEST_MODULE as"/>
+        <echo message="          2.2WebAgent or 2.2J2EEAgent or 3.0WebAgent or 3.0WebAgent."/>
+        <echo message="          You can run only ONE agent at a time"/>
+        <echo message=" note   : ANT version needed is 1.7.1 and above"/>
         <echo message=" "/>
         <echo message=" To run a target for single server mode, issue the"/>
         <echo message=" following command:"/>
         <echo message=" "/>
-        <echo message=" ant -DSERVER_NAME1=&lt;server-name&gt; &lt;"/>
-        <echo message=" target-name&gt;"/>
+        <echo message=" ant -lib &lt;location of ant-contrib-1.0b3.jar&gt; -DSERVER_NAME1=&lt;server-name&gt; run"/>
         <echo message=" "/>
-        <echo message=" To run a target for dual server mode, issue the"/>
+        <echo message=" To run a target for multi server mode, issue the"/>
         <echo message=" following command:"/>
         <echo message=" "/>
-        <echo message=" ant -DSERVER_NAME1=&lt;server-name1&gt;"/>
-        <echo message=" -DSERVER_NAME2=&lt;server-name2&gt; module"/>
+        <echo message=" ant -lib &lt;location of ant-contrib-1.0b3.jar&gt; -DSERVER_NAME1=&lt;server-name1&gt;"/>
+        <echo message=" -DSERVER_NAME2=&lt;server-name2&gt; run"/>
         <echo message=" "/>
     </target>
-</project>
+
+    <target name="run">
+      <condition property="SERVER_DIR" value="${SERVER_NAME1}_${SERVER_NAME2}" else="${SERVER_NAME1}">
+            <and>
+                <isset property="SERVER_NAME1"/>
+                <isset property="SERVER_NAME2"/>
+            </and>
+        </condition>
+        <condition property="multimodule" else="false">
+           <or>
+               <equals arg1="${TEST_MODULE}" arg2="sanity" casesensitive="No"/>
+               <equals arg1="${TEST_MODULE}" arg2="all" casesensitive="No"/>
+           </or>
+       </condition>
+       <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+       <if>
+            <equals arg1="${multimodule}" arg2="true"/>
+            <then>
+                <property name="test.output.file" value="multi_module"/>
+            </then>
+            <elseif>
+                <contains string="${TEST_MODULE}" substring="Agent" casesensitive="No"/>
+		<then>       
+                    <property name="test.output.file" value="agents"/>
+		</then>
+            </elseif>
+            <else>
+                <property name="test.output.file" value="${TEST_MODULE}"/>
+            </else>
+       </if>
+       <property name="test.env.outfile" value="./${SERVER_DIR}/test_env.txt"/>
+       <property name="moduleName" value="./${TEST_MODULE}"/>
+       <echo message="Creating SERVER_DIR ${SERVER_DIR}"/>
+       <mkdir dir="${SERVER_DIR}"/>
+       <record name="${SERVER_DIR}/${test.output.file}.output" action="start"/>
+       <antcall target="execute-module"/>
+       <record name="${SERVER_DIR}/${test.output.file}.output" action="stop"/>
+  </target>
+</project>            

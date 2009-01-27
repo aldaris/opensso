@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateAuthInstanceTest.java,v 1.5 2008-08-12 00:12:51 cmwesley Exp $
+ * $Id: CreateAuthInstanceTest.java,v 1.6 2009-01-26 23:48:56 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -90,7 +90,8 @@ public class CreateAuthInstanceTest extends TestCommon implements CLIExitCodes {
      * CreateAuthInstanceTest.properties.
      */
     @Parameters({"testName"})
-    @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String testName) 
     throws Exception {
         Object[] params = {testName};
@@ -143,7 +144,8 @@ public class CreateAuthInstanceTest extends TestCommon implements CLIExitCodes {
      * "ssoadm create-auth-instance" using input data from the 
      * CreateAuthInstanceTest.properties file.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testAuthInstanceCreation() 
     throws Exception {
         entering("testAuthInstanceCreation", null);
@@ -269,7 +271,8 @@ public class CreateAuthInstanceTest extends TestCommon implements CLIExitCodes {
      * during the setup and testAuthInstanceCreation methods using 
      * "ssoadm delete-auth-insatances" and "ssoadm delete-realm".
      */
-    @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup() 
     throws Exception {
         int cleanupExitStatus = -1;

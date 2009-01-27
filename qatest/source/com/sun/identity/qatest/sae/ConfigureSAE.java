@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureSAE.java,v 1.7 2008-07-15 19:57:52 rmisra Exp $
+ * $Id: ConfigureSAE.java,v 1.8 2009-01-27 00:11:58 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -76,7 +76,7 @@ public class ConfigureSAE extends TestCommon {
      * @DocTest: SAE|Configure SP & IDP by loading metadata on both sides.
      */
     @Parameters({"groupName"})
-    @BeforeSuite(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeSuite(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void configureSAE(String strGroupName)
     throws Exception {
         Object[] params = {strGroupName};

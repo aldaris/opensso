@@ -1,0 +1,62 @@
+
+    <test name="AuthTestADRole">
+        <parameter name="testModule" value="ad"/>
+        <parameter name="testMode" value="role"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
+        </classes>
+    </test>
+    <test name="AuthTestNTRole">
+        <parameter name="testModule" value="nt"/>
+        <parameter name="testMode" value="role"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
+        </classes>
+    </test>
+    <test name="AuthTestJDBCRole">
+        <parameter name="testModule" value="jdbc"/>
+        <parameter name="testMode" value="role"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
+        </classes>
+    </test>
+    <test name="AuthTestRadiusRole">
+        <parameter name="testModule" value="radius"/>
+        <parameter name="testMode" value="role"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
+        </classes>
+    </test>
+    <test name="AuthTestUnixRole">
+        <parameter name="testModule" value="unix"/>
+        <parameter name="testMode" value="role"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
+        </classes>
+    </test>
+

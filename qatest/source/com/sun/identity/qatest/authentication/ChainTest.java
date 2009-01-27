@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ChainTest.java,v 1.10 2009-01-15 15:12:13 cmwesley Exp $
+ * $Id: ChainTest.java,v 1.11 2009-01-26 23:47:45 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -95,7 +95,8 @@ public class ChainTest extends TestCommon {
      * before performing the tests.
      */
     @Parameters({"testChainName"})
-    @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad",
+       "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String testChainName)
     throws Exception {
         Object[] params = {testChainName};
@@ -179,7 +180,8 @@ public class ChainTest extends TestCommon {
      * <code>ChainTestValidation</code> and its appropriate method.
      */
     @Parameters({"testChainName"})
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
+        "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void validatePositiveTests(String testChainName) 
     throws Exception {
         Object[] params = {testChainName};
@@ -224,7 +226,8 @@ public class ChainTest extends TestCommon {
      * <code>ChainTestValidation</code> and its appropriate method.
      */
     @Parameters({"testChainName"})
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
+        "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void validateNegativeTests(String testChainName) 
     throws Exception {
         Object[] params = {testChainName};
@@ -260,7 +263,8 @@ public class ChainTest extends TestCommon {
      * 3. Delete the users involved/create for this chain.
      */
     @Parameters({"testChainName"})
-    @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad",
+        "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup(String testChainName)
         throws Exception {
         Object[] params = {testChainName};
@@ -409,9 +413,9 @@ public class ChainTest extends TestCommon {
      * @param ChainName
      **/
     private void createUsers(Map testUsers, String testChain){
-        List<String> userList = new ArrayList<String>();
         for (Iterator iter = testUsers.entrySet().iterator(); iter.hasNext(); )
         {
+            List<String> userList = new ArrayList<String>();
             Map.Entry entry = (Map.Entry)iter.next();
             String newUser = (String)entry.getKey();
             newUser.trim();

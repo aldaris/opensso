@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupProduct.java,v 1.20 2008-12-18 17:06:27 nithyas Exp $
+ * $Id: SetupProduct.java,v 1.21 2009-01-27 00:17:32 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -27,6 +27,7 @@ package com.sun.identity.qatest.setup;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.common.configuration.ServerConfiguration;
 import com.sun.identity.qatest.common.FederationManager;
 import com.sun.identity.qatest.common.LDAPCommon;
 import com.sun.identity.qatest.common.SMSCommon;
@@ -35,14 +36,39 @@ import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.TestConstants;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceConfigManager;
+import com.sun.identity.sm.ServiceManager;
+import com.sun.identity.sm.ServiceSchema;
+import com.sun.identity.sm.ServiceSchemaManager;
+import com.sun.identity.sm.SMSException;
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * This class configures the product. This means calling the configurator to
@@ -58,6 +84,8 @@ public class SetupProduct extends TestCommon {
     private Map properties = new HashMap();
     private SSOToken admintoken;
     List list;
+    private static final Map EMPTY_MAP = Collections
+            .unmodifiableMap(new HashMap());
     
     /**
      * This method configures the deployed war and datastores for different
@@ -1051,9 +1079,416 @@ public class SetupProduct extends TestCommon {
         exiting("modifyPolicyService");
     }
 
+    /**
+     * This method is only called when running sanity module.
+     * Configures the deployed war and datastore for the server as the Config
+     * Directory
+     */
+    public SetupProduct(String serverName0, String serverName1, 
+            String strModuleName)
+    throws Exception {
+        super("SetupProduct");
+        
+        try {
+            boolean bserver1 = false;
+
+            String namingProtocol = "";
+            String namingHost = "";
+            String namingPort = "";
+            String namingURI = "";
+
+            ResourceBundle cfg1 = null;
+            Map<String, String> umDatastoreTypes = new HashMap<String,
+                    String>();
+            ResourceBundle gblCfgData = ResourceBundle.getBundle("config" +
+                    fileseparator + "default" + fileseparator +
+                    "UMGlobalConfig");
+            SMSCommon smscGbl = new SMSCommon("config" + fileseparator +
+                    "default" + fileseparator + "UMGlobalConfig");
+            
+            // Checks if both SERVER_NAME1 and SERVER_NAME2 are specified while
+            // executing ant command for qatest. This loop is executed only if
+            // both entries are sepcified.
+            if (strModuleName.equalsIgnoreCase("sanity")) {
+                if ((serverName0.indexOf("SERVER_NAME1") == -1) &&
+                        (serverName1.indexOf("SERVER_NAME2") == -1)) {
+                    log(Level.SEVERE, "SetupProduct", "Sanity module supports" +
+                            "only single server execution.");
+                    assert false;
+                // Checks if both SERVER_NAME1 and SERVER_NAME2 are specified while
+                // executing ant command for qatest. This loop is executed only if
+                // SERVER_NAME1 is sepcified. This setup refers to single server 
+                // tests only.
+                } else if ((serverName0.indexOf("SERVER_NAME1") == -1) &&
+                        (serverName1.indexOf("SERVER_NAME2") != -1)) {
+                    log(Level.FINEST, "SetupProduct", "Sanity module, " +
+                            "SetupProduct - UMDS with defaulted " +
+                            "to ConfigStore");
+                    Map<String, String> configMapServer1 = new HashMap<String,
+                        String>();
+                    configMapServer1 = getMapFromResourceBundle(
+                        "config" + fileseparator + "default" + fileseparator +
+                        "ConfiguratorCommon");
+                    configMapServer1.putAll(getMapFromResourceBundle(
+                        "Configurator-" + serverName0));
+                    createFileFromMap(configMapServer1, serverName + 
+                        fileseparator + "built" + fileseparator + "classes" + 
+                        fileseparator + "Configurator-" + serverName0 +
+                        "-Generated.properties");
+                    cfg1 = ResourceBundle.getBundle("Configurator-" +
+                        serverName0 + "-Generated");
+                    String namingURL = cfg1.getString(KEY_AMC_NAMING_URL);
+                    Map namingURLMap = getURLComponents(namingURL);
+
+                    namingProtocol = (String) namingURLMap.get("protocol");
+                    namingHost = (String) namingURLMap.get("host");
+                    namingPort = (String) namingURLMap.get("port");
+                    namingURI = (String) namingURLMap.get("uri");
+                    String url = namingProtocol + "://" + namingHost + ":" + 
+                            namingPort + namingURI ;
+                    String loginURL = url + "/UI/Login";
+                    log(Level.FINE, "SetupProduct", "Initiating setup for " +
+                            serverName0);
+                    bserver1 = configureProduct(
+                            getConfigurationMap("Configurator-" + serverName0 +
+                            "-Generated"), "1");
+                    if (!bserver1) {
+                        log(Level.FINE, "SetupProduct", "Configuration failed" +
+                                " for " + serverName0);
+                        assert false;
+                    } else {
+                            umDatastoreTypes.put("1", serverName0);
+                            String strUMDSFileName = getBaseDir() + 
+                                    fileseparator + serverName + fileseparator +
+                                    "built" + fileseparator + "classes" + 
+                                    fileseparator + "config" + fileseparator + 
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX + 
+                                    ".properties";
+                            Map globalMap = getMapFromProperties(
+                                    strUMDSFileName);
+
+                            //Getting using SM details from server apis
+                            admintoken = getToken(adminUser, adminPassword, 
+                                    basedn);
+                            ServiceConfigManager scm = new ServiceConfigManager(
+                                    "iPlanetAMPlatformService", admintoken);
+                            ServiceConfig globalSvcConfig = scm.getGlobalConfig(
+                                    null);
+                            ServiceConfig all = (globalSvcConfig != null) ?
+                                    globalSvcConfig.getSubConfig(
+                                    "com-sun-identity-servers") : null;
+                            ServiceConfig cfg = (all != null) ?
+                                    all.getSubConfig(url) : null;
+                            Properties prop = getPropertiesFromXML((Set)
+                                    (cfg.getAttributes()).get("serverconfigxml")
+                                    );
+                            String strServerXML = prop.toString();
+                            int StartIndx = strServerXML.indexOf("{");
+                            strServerXML = strServerXML.substring(StartIndx + 1, 
+                                    strServerXML.indexOf("}"));
+                            StartIndx = strServerXML.indexOf("<!--");
+                            strServerXML = strServerXML.substring(0, StartIndx) 
+                                    + strServerXML.substring(
+                                    strServerXML.indexOf("-->") + 3, 
+                                    strServerXML.length());
+                            StartIndx = strServerXML.indexOf("<!--");
+                            strServerXML = strServerXML.substring(0, StartIndx) 
+                                    + strServerXML.substring(
+                                    strServerXML.indexOf("-->") + 3, 
+                                    strServerXML.length());
+                            SMSCommon smsc = new SMSCommon(admintoken, "config" +
+                                    fileseparator + "default" + fileseparator +
+                                    "UMGlobalConfig");
+                            Map serverconfigMap = getConfigServerDetails(
+                                    strServerXML);
+                            serverconfigMap.put(
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "1." + SMSConstants.UM_DATASTORE_COUNT , "1");
+                            WebClient webclient = new WebClient();
+                            consoleLogin(webclient, loginURL, adminUser,
+                                            adminPassword);
+                            HtmlPage page = (HtmlPage)webclient.getPage(url 
+                                    + "/showServerConfig.jsp");
+                            String pageAsString = page.getWebResponse().
+                                        getContentAsString();
+                            log(Level.FINEST, "SetupProduct", "showServer" +
+                                    "Config \n" + pageAsString);
+
+                            if (!pageAsString.contains("Embedded")) {
+                            //Config Server is remote. Getting adminpw from 
+                            //ServerName.properties file
+                                serverconfigMap.put(
+                                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX 
+                                        + "1." + SMSConstants.
+                                        UM_DATASTORE_ADMINPW + ".0", (
+                                        cfg1.getString(
+                                        TestConstants.KEY_ATT_DS_DIRMGRPASSWD)));
+                                serverconfigMap.remove(
+                                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX 
+                                        + "1." + SMSConstants.UM_LDAPv3_AUTHID 
+                                        + ".0");
+
+                            } else {
+                            //Config Server is embedded. 
+                                serverconfigMap.put(
+                                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX 
+                                        + "1." + SMSConstants.UM_DATASTORE_TYPE 
+                                        + ".0", SMSConstants.
+                                        UM_DATASTORE_SCHEMA_TYPE_OPENDS);
+                                serverconfigMap.put(
+                                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX 
+                                        + "1." + SMSConstants.UM_DATASTORE_REALM 
+                                        + ".0", "/");
+                                serverconfigMap.put(
+                                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX 
+                                        + "1." + SMSConstants.UM_LDAPv3_AUTHPW + 
+                                        ".0", adminPassword);
+                                serverconfigMap.put(
+                                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX 
+                                        + "1." + SMSConstants.
+                                        UM_DATASTORE_ADMINPW + ".0", 
+                                        adminPassword);
+                            }
+                            globalMap.putAll(serverconfigMap);
+                            createFileFromMap(globalMap, getBaseDir() + 
+                                    fileseparator + serverName + fileseparator + 
+                                    "built" + fileseparator + "classes" + 
+                                    fileseparator + "config" + fileseparator +
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    ".properties");
+                            createGlobalDatastoreFile(umDatastoreTypes,
+                                    SMSConstants.QATEST_EXEC_MODE_SINGLE);
+                            smsc.createDataStore(smsc.getDataStoreConfigByIndex
+                                    (1, "config" + fileseparator +
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "-Generated"));
+                            if ((gblCfgData.getString("UMGlobalConfig." +
+                                    "deleteExistingDatastores")).equals("true"))
+                            {
+                                smsc.deleteAllDataStores(realm, 1);
+                            }
+                            modifyPolicyService(smsc, serverName0, 1, 0);
+                            modifyAuthConfigproperties(serverconfigMap);
+                       }
+                    } else if ((serverName0.indexOf("SERVER_NAME1") != -1) &&
+                        (serverName1.indexOf("SERVER_NAME2") == -1)) {
+                        log(Level.FINE, "SetupProduct", "Unsupported " +
+                                "configuration." + " Cannot have SERVER_NAME2 " 
+                                + "specified without SERVER_NAME1.");
+                        assert false;
+                    }
+                } else {
+                    log(Level.SEVERE, "SetupProduct", "This part of the code " +
+                            "should never be reached.Contact QA administrator");
+              }
+         } catch (Exception e) {
+            log(Level.SEVERE, "SetupProduct", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+        exiting("SetupProduct");
+}
+
+    /**
+     * This method parses the ServerConfigXML
+     * @param Set set containing the ServerConfigXML
+     * @return set of properties
+     */
+    public Map getConfigServerDetails(String strXMLFile) 
+    throws Exception {
+        try {
+            DocumentBuilderFactory factory =
+            DocumentBuilderFactory.newInstance();
+            factory.setValidating(false);
+            factory.setNamespaceAware(false);
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document document = builder.parse(new InputSource(
+                    new StringReader(strXMLFile)));
+            Element topElement = document.getDocumentElement();
+            Map map = parseServerConfigXML(
+                (Node)topElement);
+            return map;
+        } catch (Exception e) {
+            log(Level.SEVERE, "getConfigServerDetails", e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+    }
+    
+    /**
+     * This method parses the ServerConfigXML
+     * @param Set set containing the ServerConfigXML
+     * @return set of properties
+     */
+    public static Properties getPropertiesFromXML(Set set)
+          throws IOException {
+        Properties prop = new Properties();
+        for (Iterator i = set.iterator(); i.hasNext(); ) {
+            String str = (String)i.next();
+            int idx = str.indexOf('=');
+            if (idx != -1) {
+                prop.setProperty(str.substring(0, idx), str.substring(idx+1));
+            }
+        }
+        return prop;
+    }
+
+    /**
+     * This method parses the ServerConfigXML
+     * @param Node parentNode of the ServerConfigXML
+     * @return map
+     */
+    public static Map parseServerConfigXML(Node parentNode) {
+
+        Set smSet = new HashSet();
+        NodeList avList = parentNode.getChildNodes();
+        Map map = new HashMap();
+        int numAVPairs = avList.getLength();
+
+        if (numAVPairs <= 0) {
+            return EMPTY_MAP;
+        }
+
+        for (int l = 0; l < numAVPairs; l++) {
+            Node avPair = avList.item(l);
+            // now reset values to prepare for the next AV pair.
+            if ((avPair.getNodeType() == Node.ELEMENT_NODE) &&
+                avPair.getNodeName().equals("ServerGroup")
+            ) {
+                NamedNodeMap nnmap = avPair.getAttributes();
+                if (((nnmap.getNamedItem("name")).getNodeValue()).
+                        contains("sms")) {
+                    NodeList smsList = avPair.getChildNodes();
+                    for (int j = 0; j < smsList.getLength(); j++) {
+                        Node smsNode = smsList.item(j);
+                        if (smsNode.getNodeName().equals("Server")) {
+                            NamedNodeMap mappy = smsNode.getAttributes();
+                            map.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                "1." + SMSConstants.UM_LDAPv3_LDAP_SERVER + 
+                                ".0", (mappy.getNamedItem("host")).
+                                getNodeValue());
+                            map.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                "1." + SMSConstants.UM_LDAPv3_LDAP_PORT + ".0", 
+                                    (mappy.getNamedItem("port")).
+                                    getNodeValue());
+                            if (((mappy.getNamedItem("type")).getNodeValue()).
+                                    contains("@")) {
+                                map.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX 
+                                    + "1." + 
+                                    SMSConstants.UM_LDAPv3_LDAP_SSL_ENABLED + 
+                                    ".0", "false");
+                            } else {
+                                 map.put(
+                                    SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                    "1." + 
+                                    SMSConstants.UM_LDAPv3_LDAP_SSL_ENABLED 
+                                    + ".0", "false");                                
+                            }
+                        }
+                        if (smsNode.getNodeName().equals("User")) {
+                            NodeList userList = smsNode.getChildNodes();
+                            for (int m = 0; m < userList.getLength(); m ++){
+                                Node userNode = userList.item(m);
+                                if ((userNode.getNodeName()).equals("DirDN")) {
+                                    map.put(
+                                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX 
+                                        + "1." + SMSConstants.UM_LDAPv3_AUTHID + 
+                                        ".0", userNode.getTextContent());
+                                    map.put(
+                                        SMSConstants.UM_DATASTORE_PARAMS_PREFIX 
+                                        + "1." + 
+                                        SMSConstants.UM_DATASTORE_ADMINID + ".0"
+                                        , userNode.getTextContent());
+                                }
+                            }
+                        }
+                        if (smsNode.getNodeName().equals("BaseDN")) {
+                            map.put(SMSConstants.UM_DATASTORE_PARAMS_PREFIX +
+                                "1." + SMSConstants.UM_LDAPv3_ORGANIZATION_NAME 
+                                + ".0", smsNode.getTextContent());
+                        }
+                    }
+                }
+            }
+         }
+        return (map == null) ? EMPTY_MAP : map;
+    }
+    
+    /**
+     * This method modifies the generated 
+     * authenticationConfigData.properties file with the details of the embedded
+     * directory server
+     */
+    private void modifyAuthConfigproperties(Map<String, String> serverconfigMap) 
+            throws Exception { 
+        Map<String, String> authConfigMap;
+        StringBuffer buff;
+        StringBuffer buffer;
+        
+        try{
+            String strAuthConfigFileName = getBaseDir() + fileseparator +
+                serverName + fileseparator + "built" + 
+                fileseparator + "classes" + fileseparator + 
+                "authentication" + fileseparator + 
+                "authenticationConfigData.properties";
+            authConfigMap = getMapFromProperties(strAuthConfigFileName);
+            buff = new StringBuffer();
+            buffer = new StringBuffer();
+            buff.append(SMSConstants.UM_DATASTORE_PARAMS_PREFIX)
+                    .append("1.")
+                    .append(SMSConstants.UM_LDAPv3_LDAP_SERVER)
+                    .append(".0");
+            buffer.append(serverconfigMap.get(buff.toString()));
+            buff.setLength(0);
+            buff.append(SMSConstants.UM_DATASTORE_PARAMS_PREFIX)
+                    .append("1.")
+                    .append(SMSConstants.UM_LDAPv3_LDAP_PORT)
+                    .append(".0");
+            buffer.append(":")
+                    .append(serverconfigMap.get(buff.toString()));
+            authConfigMap.put("ldap.iplanet-am-auth-ldap-server", 
+                    buffer.toString());
+            buffer.setLength(0);
+            buff.setLength(0);
+            buff.append(SMSConstants.UM_DATASTORE_PARAMS_PREFIX)
+                    .append("1.")
+                    .append(SMSConstants.UM_LDAPv3_ORGANIZATION_NAME)
+                    .append(".0");
+            authConfigMap.put("ldap.iplanet-am-auth-ldap-base-dn", 
+                    serverconfigMap.get(buff.toString()));
+            buffer.append(SMSConstants.UM_DATASTORE_PARAMS_PREFIX)
+                    .append("1.")
+                    .append(SMSConstants.UM_DATASTORE_ADMINID)
+                    .append(".0");
+            authConfigMap.put("ldap.iplanet-am-auth-ldap-bind-dn", 
+                    serverconfigMap.get(buffer.toString()));
+            buff.setLength(0);
+            buff.append(SMSConstants.UM_DATASTORE_PARAMS_PREFIX)
+                    .append("1.")
+                    .append(SMSConstants.UM_DATASTORE_ADMINPW)
+                    .append(".0");
+            authConfigMap.put("ldap.iplanet-am-auth-ldap-bind-passwd", 
+                    serverconfigMap.get(buff.toString()));
+            log(Level.FINEST, "modifyAuthConfigproperties", "authConfigMap :" +
+                    " \n" + authConfigMap);
+            createFileFromMap(authConfigMap, serverName + fileseparator +
+                        "built" + fileseparator + "classes" + fileseparator +
+                        "authentication" + fileseparator +
+                        "authenticationConfigData.properties");
+        }catch (Exception e) {
+            log(Level.SEVERE, "modifyAuthConfigproperties", "Exception when " +
+                    "changing AuthConfig properties");
+            e.printStackTrace();
+        }
+    }
+        
     public static void main(String args[]) {
         try {
-            SetupProduct cp = new SetupProduct(args[0], args[1]);
+            if (args.length == 3) {
+                SetupProduct cp = new SetupProduct(args[0], args[1], args[2]);
+            } else {
+                SetupProduct cp = new SetupProduct(args[0], args[1]);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

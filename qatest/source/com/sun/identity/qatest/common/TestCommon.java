@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.67 2009-01-13 07:12:05 vimal_67 Exp $
+ * $Id: TestCommon.java,v 1.68 2009-01-27 00:00:53 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1151,7 +1151,7 @@ public class TestCommon implements TestConstants {
                 }
             } else {
                 if (str != null) {
-                    if (key.indexOf(str) != -1)
+                    if (key.indexOf(str + ".") != -1)
                         map.put(key, value);
                 } else
                     map.put(key, value);
@@ -1539,12 +1539,12 @@ public class TestCommon implements TestConstants {
         exiting("getUserToken");
         return (stok);
     }
-    
+
     /**
       * Returns a unused port on a given host.
       *    @return available port num if found. -1 of not found.
       */
-    private int getUnusedPort()
+    public int getUnusedPort()
         throws Exception
     {
         int defaultPort = -1;
@@ -1566,7 +1566,7 @@ public class TestCommon implements TestConstants {
       *    @param incr : port number.
       *    @return  true if not in use, false if in use.
       */
-     public boolean canUseAsPort(String hostname, int port) 
+     private boolean canUseAsPort(String hostname, int port) 
              throws Exception {
         boolean canUseAsPort = false;
         ServerSocket serverSocket = null;
@@ -1582,7 +1582,6 @@ public class TestCommon implements TestConstants {
             Socket s = null;
             try {
               s = new Socket();
-              System.out.println("canUseAsPort connecting");
               s.connect(socketAddress, 1000);
               canUseAsPort = false;
             } catch (Throwable t) {
@@ -1607,7 +1606,7 @@ public class TestCommon implements TestConstants {
         return canUseAsPort;
     }
 
-    /**
+     /**
      * Start the notification (jetty) server for getting notifications from the
      * server.
      */
@@ -1623,7 +1622,7 @@ public class TestCommon implements TestConstants {
         String  strPort = (String)notificationURLMap.get("port");
         String  strURI = (String)notificationURLMap.get("uri");
 
-       log(Level.FINEST, "startNotificationServer", "Notification Port: " +
+        log(Level.FINEST, "startNotificationServer", "Notification Port: " +
                 strPort + ", uri is " + strURI);
 
         int deployPort  = new Integer(strPort).intValue();
@@ -2334,4 +2333,51 @@ public class TestCommon implements TestConstants {
         exiting("searchStringInFile");
         return false;
     }    
+    /**
+     * Reads data from a Properties object and creates a Map containing all
+     * the attribute keys and values. It also takes in a Set of attribute key
+     * names, which if specified, are not put into the Map. This is to ensure
+     * selective selection of attribute key and value pairs. One can further
+     * specify to search for a key containig a specific string (str).
+     */
+    protected Map getMapFromProperties(String propName, String str, Set set)
+    throws Exception {
+        entering("getMapFromProperties", null);
+        Map map = new HashMap();
+        FileInputStream fis = new FileInputStream(propName);
+        Properties prop = new Properties();
+        prop.load(fis);
+        for (Enumeration e = prop.keys(); e.hasMoreElements(); ) {
+            String key = (String)e.nextElement();
+            String value = (String)prop.get(key);
+            if (set != null) {
+                if (!set.contains(key)) {
+                    if (str != null) { 
+                       if (key.indexOf(str) != -1)
+                            map.put(key, value);
+                    } else
+                        map.put(key, value);
+                }
+            } else {
+                if (str != null) {
+                    if (key.indexOf(str + ".") != -1)
+                        map.put(key, value);
+                } else
+                    map.put(key, value);
+            }
+        }
+        exiting("getMapFromProperties");
+        return (map);
+    }
+
+    /**
+     * Reads data from a Properties object and creates a Map containing all
+     * the attribute keys and values.
+     * @param resourcebundle name
+     */
+    protected Map getMapFromProperties(String propName)
+    throws Exception {
+        return (getMapFromProperties(propName, null, null));
+    }
+    
 }

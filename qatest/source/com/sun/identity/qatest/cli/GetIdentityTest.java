@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetIdentityTest.java,v 1.5 2008-08-12 00:12:52 cmwesley Exp $
+ * $Id: GetIdentityTest.java,v 1.6 2009-01-26 23:49:33 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -83,7 +83,8 @@ public class GetIdentityTest extends TestCommon implements CLIExitCodes {
      * GetIdentityTest.properties file.
      */
     @Parameters({"testName"})
-    @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String testName) 
     throws Exception {
         Object[] params = {testName};
@@ -152,7 +153,8 @@ public class GetIdentityTest extends TestCommon implements CLIExitCodes {
      * "ssoadm get-identity" using input data from the 
      * GetIdentityTest.properties file.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testGetIdentityAttributes() 
     throws Exception {
         entering("testGetIdentityAttributes", null);
@@ -346,7 +348,8 @@ public class GetIdentityTest extends TestCommon implements CLIExitCodes {
      * the setup and testGetIdentityAttributes methods using 
      * "ssoadm delete-identities" and "ssoadm delete-realm".
      */
-    @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup() 
     throws Exception {
         int exitStatus = -1;

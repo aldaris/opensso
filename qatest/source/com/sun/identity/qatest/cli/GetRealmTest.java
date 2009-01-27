@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GetRealmTest.java,v 1.4 2008-08-12 00:12:52 cmwesley Exp $
+ * $Id: GetRealmTest.java,v 1.5 2009-01-26 23:49:34 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -83,7 +83,8 @@ public class GetRealmTest extends TestCommon implements CLIExitCodes {
      * GetRealmTest.properties file.
      */
     @Parameters({"testName"})
-    @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String testName) 
     throws Exception {
         Object[] params = {testName};
@@ -171,7 +172,8 @@ public class GetRealmTest extends TestCommon implements CLIExitCodes {
      * "ssoadm get-realm" using input data from the 
      * GetRealmTest.properties file.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testRealmGetAttributeValues() 
     throws Exception {
         entering("testRealmGetAttributeValues", null);
@@ -327,7 +329,8 @@ public class GetRealmTest extends TestCommon implements CLIExitCodes {
      * the setup and testRealmGetAttributeValues methods using 
      * ssoadm delete-realm".
      */
-    @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup() 
     throws Exception {
         int exitStatus = -1;

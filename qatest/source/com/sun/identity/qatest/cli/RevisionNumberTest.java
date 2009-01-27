@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RevisionNumberTest.java,v 1.2 2008-08-21 20:40:46 srivenigan Exp $
+ * $Id: RevisionNumberTest.java,v 1.3 2009-01-26 23:49:38 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -68,7 +68,8 @@ public class RevisionNumberTest extends TestCommon implements CLIExitCodes {
      * RevisionNumberTest.properties.
      */
     @Parameters({"testName"})
-    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String testName) 
     throws Exception {
         Object[] params = {testName};
@@ -122,7 +123,8 @@ public class RevisionNumberTest extends TestCommon implements CLIExitCodes {
      * number" and "ssoadm set-revision-number"
      * using input data from the RevisionNumberTest.properties file.
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testRevisionNumber() 
     throws Exception {
         entering("testGetRevisionNumber", null);
@@ -309,7 +311,8 @@ public class RevisionNumberTest extends TestCommon implements CLIExitCodes {
      * This method removes services that were created during the setup 
      * using "ssoadm delete-svc".
      */
-    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup() 
     throws Exception {
         entering("cleanup", null);

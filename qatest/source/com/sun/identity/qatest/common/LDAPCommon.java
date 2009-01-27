@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPCommon.java,v 1.7 2008-09-04 20:55:02 nithyas Exp $
+ * $Id: LDAPCommon.java,v 1.8 2009-01-26 23:54:48 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -40,6 +40,8 @@ import netscape.ldap.util.LDIFAttributeContent;
 import netscape.ldap.util.LDIFContent;
 import netscape.ldap.util.LDIFModifyContent;
 import netscape.ldap.util.LDIFRecord;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.security.Security;
 import java.util.HashMap;
@@ -144,6 +146,24 @@ public class LDAPCommon extends TestCommon {
                         "Server is down. Cannot proceed.");
                 assert false;
             } else {
+                String fam_qatest_identity = getQatestLDIF();
+                log(Level.FINEST, "loadAMUserSchema",
+                            "fam_qatest_identity =  " + fam_qatest_identity);
+                String fam_qatest_identity_FileName = basedir + fileseparator + 
+                        serverName + fileseparator + "built" + fileseparator + 
+                        "classes" + fileseparator + "config"  + fileseparator + 
+                        "default"  + fileseparator + "fam_qatest_identity.ldif";
+                BufferedWriter out = new BufferedWriter(new FileWriter(
+                        fam_qatest_identity_FileName));
+                String[] result = fam_qatest_identity.split("\\n");
+                for (int i=0 ; i < result.length ; i++) {
+                    log(Level.FINEST, "loadAMUserSchema", result[i]);
+                    out.write(result[i]);
+                    out.newLine();
+                }
+                out.close();
+                
+                schemaList = schemaList + ";" + fam_qatest_identity_FileName;
                 List schemaFilesList = getAttributeList(schemaList, ";");
                 List schemaAttrsList = getAttributeList(schemaAttr, ";");
                 log(Level.FINEST, "loadAMUserSchema",
@@ -381,5 +401,55 @@ public class LDAPCommon extends TestCommon {
             }
         }
         return ld;
+    }
+    
+    private String getQatestLDIF() 
+    throws Exception {
+    
+        StringBuffer buff = new StringBuffer();
+        buff.append("dn: ou=people, @ROOT_SUFFIX@\n")
+            .append("objectClass: top\n")
+            .append("objectClass: organizationalUnit\n\n")
+
+            .append("dn: ou=agents, @ROOT_SUFFIX@\n")
+            .append("objectClass: top\n")
+            .append("objectClass: organizationalUnit\n\n")
+
+            .append("dn: ou=groups, @ROOT_SUFFIX@\n")
+            .append("objectClass: top\n")
+            .append("objectClass: organizationalUnit\n\n")
+
+            .append("dn: ou=dsame users, @ROOT_SUFFIX@\n")
+            .append("objectClass: top\n")
+            .append("objectClass: organizationalUnit\n\n")
+
+            .append("dn: cn=dsameuser,ou=DSAME Users, @ROOT_SUFFIX@\n")
+            .append("objectclass: inetuser\n")
+            .append("objectclass: organizationalperson\n")
+            .append("objectclass: person\n")
+            .append("objectclass: top\n")
+            .append("cn: dsameuser\n")
+            .append("sn: dsameuser\n")
+            .append("userPassword: amsecret12\n\n")
+
+            .append("dn: cn=amldapuser,ou=DSAME Users, @ROOT_SUFFIX@\n")
+            .append("objectclass: inetuser\n")
+            .append("objectclass: organizationalperson\n")
+            .append("objectclass: person\n")
+            .append("objectclass: top\n")
+            .append("cn: amldapuser\n")
+            .append("sn: amldapuser\n")
+            .append("userPassword: amsecret123\n\n")
+
+            .append("dn: @ROOT_SUFFIX@\n")
+            .append("changetype:modify\n")
+            .append("add:aci\n")
+            .append("aci: (target=\"ldap:///@ROOT_SUFFIX@\")(targetattr=\"*\")(version 3.0; acl \"S1IS special dsame user rights for all under the root suffix\"; allow (all) userdn = \"ldap:///cn=dsameuser,ou=DSAME Users, @ROOT_SUFFIX@\"; )\n\n")
+
+            .append("dn:@ROOT_SUFFIX@\n")
+            .append("changetype:modify\n")
+            .append("add:aci\n")
+            .append("aci: (target=\"ldap:///@ROOT_SUFFIX@\")(targetattr=\"*\")(version 3.0; acl \"S1IS special ldap auth user rights\"; allow (read,search) userdn = \"ldap:///cn=amldapuser,ou=DSAME Users, @ROOT_SUFFIX@\"; );\n\n");        
+        return buff.toString();
     }
 }

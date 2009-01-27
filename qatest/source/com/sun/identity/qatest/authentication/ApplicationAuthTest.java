@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationAuthTest.java,v 1.5 2008-06-26 19:58:31 rmisra Exp $
+ * $Id: ApplicationAuthTest.java,v 1.6 2009-01-26 23:47:43 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -84,7 +84,8 @@ public class ApplicationAuthTest extends TestCommon {
     /**
      * Create Agent Profile to perform the application/agent authentiation tests
      */
-    @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void createAgentProfile() 
     throws Exception {
         entering("createAgentProfile", null);
@@ -133,7 +134,8 @@ public class ApplicationAuthTest extends TestCommon {
     /**
      * Login as application auth and check if the token is non-expiring
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testApplicationAuthPositive()
     throws Exception {
         try {
@@ -176,7 +178,8 @@ public class ApplicationAuthTest extends TestCommon {
     /**
      * Negative test Application Auth Login should fail with invalid credentials
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testApplicationAuthNegative()
     throws Exception {
         try {
@@ -209,7 +212,8 @@ public class ApplicationAuthTest extends TestCommon {
     /**
      * Clean up the system to its original state
      */
-    @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void deleteAgentProfile()
     throws Exception {
         entering("deleteAgentProfile", null);

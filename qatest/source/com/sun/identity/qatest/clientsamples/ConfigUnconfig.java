@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigUnconfig.java,v 1.6 2008-09-12 01:04:46 nithyas Exp $
+ * $Id: ConfigUnconfig.java,v 1.7 2009-01-26 23:53:00 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -79,7 +79,8 @@ public class ConfigUnconfig extends TestCommon {
      * Deploy the client sampels war on jetty server and start the jetty
      * server.
      */
-    @BeforeSuite(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeSuite(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+         "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void startServer()
     throws Exception {
         entering("startServer", null);
@@ -148,7 +149,8 @@ public class ConfigUnconfig extends TestCommon {
     /**
      * Stop the jetty server. This basically undeploys the war.
      */
-    @AfterSuite(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterSuite(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+         "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void stopServer()
     throws Exception {
         entering("stopServer", null);

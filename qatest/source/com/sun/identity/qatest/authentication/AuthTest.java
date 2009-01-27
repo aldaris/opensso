@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthTest.java,v 1.16 2008-08-11 20:56:46 cmwesley Exp $
+ * $Id: AuthTest.java,v 1.17 2009-01-26 23:47:45 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -98,7 +98,8 @@ public class AuthTest extends TestCommon {
      * This is called only once per auth module.
      */
     @Parameters({"testModule","testMode"})
-    @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String testModule, String testMode)
     throws Exception {
         Object[] params = {testModule, testMode};
@@ -280,7 +281,8 @@ public class AuthTest extends TestCommon {
      * credentials
      */
     @Parameters({"testModule"})
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testLoginPositive(String testModule)
     throws Exception {
         Object[] params = {testModule};
@@ -325,7 +327,8 @@ public class AuthTest extends TestCommon {
      * credentials
      */
     @Parameters({"testModule"})    
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testLoginNegative(String testModule)
     throws Exception {
         Object[] params = {testModule};
@@ -370,7 +373,8 @@ public class AuthTest extends TestCommon {
      * This is called only once per auth module.
      */
     @Parameters({"testModule"})
-    @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup(String testModule)
     throws Exception {
         Object[] params = {testModule};

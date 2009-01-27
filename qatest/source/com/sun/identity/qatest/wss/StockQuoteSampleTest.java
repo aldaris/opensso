@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [ of copyright owner]"
  *
- * $Id: StockQuoteSampleTest.java,v 1.1 2008-09-04 07:09:25 arunav Exp $
+ * $Id: StockQuoteSampleTest.java,v 1.2 2009-01-27 00:18:56 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -113,7 +113,7 @@ public class StockQuoteSampleTest extends TestCommon {
      * Updates bootstrap security mechanism in Discovery service to null:X509
      * and creates users.
      */
-    @BeforeClass(groups={"ff_ds_sec", "ds_ds_sec"})
+    @BeforeClass(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
     public void createUser()
     throws Exception {
         try {
@@ -147,7 +147,7 @@ public class StockQuoteSampleTest extends TestCommon {
     /**
      * Changes the runtime application user from UrlAccessAgent to amadmin
      */
-    @BeforeSuite(groups={"ff_ds_sec", "ds_ds_sec"})
+    @BeforeSuite(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
     public void changeRunTimeUser() throws
             Exception{
         try {
@@ -184,7 +184,7 @@ public class StockQuoteSampleTest extends TestCommon {
      * Creates agent profiles for web service providers and web service clients.
      */
     @Parameters({"testIdx", "STSSecurity", "UserAuth", "EvaluateClient"})
-    @BeforeClass(groups={"ff_ds_sec", "ds_ds_sec"})
+    @BeforeClass(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
     public void setup(String testIdx, String STSSecurity, String UserAuth,
             String EvaluateClient)
             throws Exception {
@@ -235,7 +235,7 @@ public class StockQuoteSampleTest extends TestCommon {
      * Accesses the StockQuoteClient and submits the request and verifies the
      * expected result
      */
-    @Test(groups={"ff_ds_sec", "ds_ds_sec"})
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
     public void evaluateStockQuoteClient()
     throws Exception {
         entering("evaluateStockQuoteClient", null);
@@ -290,7 +290,7 @@ public class StockQuoteSampleTest extends TestCommon {
      * accesses the StockQuoteClient and submits the request and verifies the
      * expected result
      */
-    @Test(groups={"ff_ds_sec", "ds_ds_sec"},
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"},
     dependsOnMethods = {"evaluateStockQuoteClient"})
     public void evaluateStockQuoteClientWithEndUser()
     throws Exception {
@@ -351,7 +351,7 @@ public class StockQuoteSampleTest extends TestCommon {
     /**
      * Deletes the agent profiles for webservice clients and providers.
      */
-    @AfterClass(groups={"ff_ds_sec", "ds_ds_sec"})
+    @AfterClass(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);
@@ -373,7 +373,7 @@ public class StockQuoteSampleTest extends TestCommon {
      * Deletes users and resets bootstrap security mechanism in Discovery
      * service to null:null.
      */
-    @AfterClass(groups={"ff_ds_sec", "ds_ds_sec"})
+    @AfterClass(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
     public void deleteUser()
     throws Exception {
         idmc.deleteIdentity(token, realm, IdType.USER, strUser);

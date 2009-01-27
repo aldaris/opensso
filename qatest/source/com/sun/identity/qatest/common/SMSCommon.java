@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSCommon.java,v 1.19 2008-10-16 04:04:38 nithyas Exp $
+ * $Id: SMSCommon.java,v 1.20 2009-01-26 23:58:11 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -522,9 +522,14 @@ public class SMSCommon extends TestCommon {
                             "loaded: " + schemaAttributes);                    
                     ldc.loadAMUserSchema(schemaString, schemaAttributes);
                     ldc.disconnectDServer();
+                } else if (dsType.equalsIgnoreCase(
+                        SMSConstants.UM_DATASTORE_SCHEMA_TYPE_OPENDS)) {
+                    cdsiMap.put(SMSConstants.UM_DATASTORE_TYPE,(String) 
+                            SMSConstants.UM_DATASTORE_SCHEMA_TYPE_LDAP);
+                    dsType = SMSConstants.UM_DATASTORE_SCHEMA_TYPE_LDAP;
                 }
                 log(Level.FINE, "createDataStoreImpl", "Creating datastore " +
-                        dsName +  "...");
+                        dsName +  "..." + cdsiMap);
                 ServiceConfig cfg = getServiceConfig(admintoken, realmName,
                         true);
                 cfg.addSubConfig(dsName,
@@ -879,7 +884,10 @@ public class SMSCommon extends TestCommon {
             log(Level.FINE, "getDataStoreConfigByIndex",
                     "Retrieving datastore with index " + gdscbiIndex +
                     " from property file " + cfgFileName);
-            fileMap = getMapFromResourceBundle(cfgFileName);
+            fileMap = getMapFromProperties(getBaseDir() + fileseparator +
+                                serverName + fileseparator + "built" + 
+                                fileseparator + "classes" + fileseparator + 
+                                cfgFileName + ".properties");
             Set keys = fileMap.keySet();
             Iterator keyIter = keys.iterator();
             String key;
@@ -971,8 +979,8 @@ public class SMSCommon extends TestCommon {
         Map globalMap = null;
         Map finalMap = null;
 
-        globalMap = getMapFromResourceBundle("config" + fileseparator +
-                fileName);
+            globalMap = getMapFromResourceBundle("config" + fileseparator +
+                    fileName);
         log(Level.FINEST, "createUMDatastoreGlobalMap", "Map containing end" +
                 "user specified values: " + globalMap.toString());
         log(Level.FINEST, "createUMDatastoreGlobalMap", "Mode in which qatest" +

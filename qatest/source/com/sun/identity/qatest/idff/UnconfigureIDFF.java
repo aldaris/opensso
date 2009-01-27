@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnconfigureIDFF.java,v 1.12 2008-08-15 22:08:38 mrudulahg Exp $
+ * $Id: UnconfigureIDFF.java,v 1.13 2009-01-27 00:04:02 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -74,7 +74,7 @@ public class UnconfigureIDFF extends TestCommon {
      * @DocTest: IDFF|Unconfigure SP & IDP by deleting entities & COT's 
      */
     @Parameters({"groupName"})
-    @AfterSuite(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterSuite(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void UnconfigureIDFF(String strGroupName)
     throws Exception {
         Object[] params = {strGroupName};

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsTests.java,v 1.5 2008-06-26 19:41:29 rmisra Exp $
+ * $Id: AgentsTests.java,v 1.6 2009-01-26 23:45:46 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -73,7 +73,8 @@ public class AgentsTests extends TestCommon {
      * Creates the policy on the server.
      */
     @Parameters({"policyIdx","evaluationIdx","setup","cleanup"})
-    @BeforeClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String policyIdx, String evaluationIdx, String setup
             , String cleanup)
     throws Exception {
@@ -106,7 +107,8 @@ public class AgentsTests extends TestCommon {
     /**
      * Evaluates policy through the agent.
      */
-    @Test(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void evaluatePolicyAgents()
     throws Exception {
         entering("evaluatePolicyAgents", null);
@@ -135,7 +137,8 @@ public class AgentsTests extends TestCommon {
     /**
      * Deletes policies and users.
      */
-    @AfterClass(groups={"ds_ds", "ds_ds_sec", "ff_ds", "ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

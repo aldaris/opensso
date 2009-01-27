@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateAgentProfile.java,v 1.6 2008-10-13 16:23:34 nithyas Exp $
+ * $Id: CreateAgentProfile.java,v 1.7 2009-01-26 23:45:48 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -321,7 +321,7 @@ public class CreateAgentProfile extends TestCommon {
                         "get.enable", set);            
 
                 set = new HashSet();
-                set.add("180");
+                set.add("30");
                 map.put("com.iplanet.am.session.client.polling.period", set);            
 
                 set = new HashSet();
@@ -793,7 +793,7 @@ public class CreateAgentProfile extends TestCommon {
                 map.put("com.sun.identity.agents.config.ignore.path.info", set);            
 
                 set = new HashSet();
-                set.add("true");
+                set.add("false");
                 map.put("com.sun.identity.agents.config.change.notification." +
                         "enable", set);            
 
@@ -912,7 +912,7 @@ public class CreateAgentProfile extends TestCommon {
                         set);            
 
                 set = new HashSet();
-                set.add("3");
+                set.add("1");
                 map.put("com.sun.identity.agents.config.sso.cache.polling." + 
                         "interval", set);            
 

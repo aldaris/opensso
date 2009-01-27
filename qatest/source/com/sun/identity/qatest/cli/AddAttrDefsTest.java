@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddAttrDefsTest.java,v 1.1 2008-09-09 18:25:33 srivenigan Exp $
+ * $Id: AddAttrDefsTest.java,v 1.2 2009-01-26 23:48:52 nithyas Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -90,7 +90,8 @@ public class AddAttrDefsTest extends TestCommon implements CLIExitCodes {
      * setup loads the properties in AddAttrDefsTest.properties.
      */
     @Parameters({"testName"})
-    @BeforeClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String testName)
     throws Exception {
         Object[] params = {testName};
@@ -175,7 +176,8 @@ public class AddAttrDefsTest extends TestCommon implements CLIExitCodes {
      * using input data from the AddAttrDefsTest.properties file and verifies
      * attributeservice creation using "ssoadm add-attr-defs".
      */
-    @Test(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void testAddAttrDefs()
     throws Exception {
         entering("testAddAttrDefs", null);
@@ -291,7 +293,8 @@ public class AddAttrDefsTest extends TestCommon implements CLIExitCodes {
      * This method remove any Services that were created during the setup and
      * testAddAttrDefs methods using "ssoadm set-attr-defs".
      */
-    @AfterClass(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
+      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);

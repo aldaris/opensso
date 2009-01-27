@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDMTestConfig.java,v 1.4 2008-06-26 20:13:45 rmisra Exp $
+ * $Id: IDMTestConfig.java,v 1.5 2009-01-27 00:05:42 nithyas Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -76,7 +76,7 @@ public class IDMTestConfig extends IDMCommon {
      * @param dsindex index in the properties file to be created
      * @param setupds true to create a datastore
      */
-    @BeforeSuite(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @BeforeSuite(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     @Parameters({"dsindex","setupidm"})
     public void setupIdmTest(String dsindex, boolean setupidm)
     throws Exception {
@@ -134,7 +134,7 @@ public class IDMTestConfig extends IDMCommon {
      * properties file by index number.
      * @param setupds true to create a datastore
      */
-    @AfterSuite(groups={"ds_ds","ds_ds_sec","ff_ds","ff_ds_sec"})
+    @AfterSuite(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     @Parameters({"cleanupidm"})
     public void cleanupIdmTest(boolean cleanupidm)
     throws Exception {
