@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-tools.xml,v 1.22 2008-10-10 18:46:25 kevinserwin Exp $
+   $Id: build-tools.xml,v 1.23 2009-01-27 22:04:08 ericow Exp $
 
 -->
 
@@ -184,7 +184,12 @@
             encoding="UTF-8">
             <fileset dir="${amserver.script.bin.dir}"
                 includes="ssopatch, ssopatch.bat, README.patch"/>
-        </copy>        
+        </copy>
+        <copy todir="${amadm.tools.dir}/patch" overwrite="yes" flatten="yes"
+            encoding="UTF-8">
+            <fileset dir="${amserver.script.dir}/patch"
+                includes="*"/>
+            </copy>
         <copy todir="${amadm.windows.bin.dir}"
             overwrite="yes" flatten="yes" encoding="UTF-8">
             <fileset dir="${amadm.windows.scripts.dir}"
@@ -262,7 +267,7 @@
                 <include name="ssopatch"/>
                 <include name="ssopatch.bat" />
                 <include name="README.patch" />
-
+                <include name="patch/*" />
             </zipfileset>
         </zip>    
      </target>
