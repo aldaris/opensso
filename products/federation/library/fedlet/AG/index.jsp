@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.jsp,v 1.4 2008-11-24 18:52:08 alanchu Exp $
+   $Id: index.jsp,v 1.5 2009-01-27 18:02:53 weisun2 Exp $
 
 --%>
 
@@ -147,7 +147,7 @@ height="55" width="31" /></td></tr></tbody></table>
                 
     File dir = new File(fedletHomeDir);
             
-    ServletContext servletCtx = getServletContext();
+    ServletContext servletCtx = getServletConfig().getServletContext();
     for (int i = 0; i < files.length; i++) {
         String source = "/conf/" + files[i];
         String dest =  dir.getPath() + File.separator + files[i];

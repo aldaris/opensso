@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: dumpcookies.jsp,v 1.4 2008-11-25 23:50:42 exu Exp $
+   $Id: dumpcookies.jsp,v 1.5 2009-01-27 18:01:07 weisun2 Exp $
 
 --%>
 
@@ -35,7 +35,7 @@
 public void jspInit()
 {
     System.out.println("dumpcookies.jsp : JSPINIT CALLED...." + 
-        getServletContext());
+        getServletConfig().getServletContext());
 }
 %>
 <%

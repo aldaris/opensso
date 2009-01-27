@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.jsp,v 1.10 2008-11-25 18:25:58 qcheng Exp $
+   $Id: index.jsp,v 1.11 2009-01-27 18:02:52 weisun2 Exp $
 
 --%>
 
@@ -117,7 +117,7 @@
                     fedletHomeDir + " is a pre-existing file. <br>Please " +
                     "remove the file and try again."); 
             } 
-            ServletContext servletCtx = getServletContext();
+            ServletContext servletCtx = getServletConfig().getServletContext();
             for (int i = 0; i < files.length; i++) {
                 String source = "/conf/" + files[i];
                 String dest =  dir.getPath() + File.separator + files[i];
@@ -157,8 +157,8 @@
         } else {
             // check if this WAR contain Fedlet configuration
             boolean confExist = false;
-            InputStream src = getServletContext().getResourceAsStream(
-                "/conf/FederationConfig.properties");
+            InputStream src = getServletConfig().getServletContext().
+                getResourceAsStream("/conf/FederationConfig.properties");
             if (src != null) {
                 confExist = true;
             }
