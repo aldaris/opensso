@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.14 2009-01-28 04:24:54 veiming Exp $
+   $Id: build.xml,v 1.15 2009-01-28 20:54:34 farble1670 Exp $
 
 -->
 
@@ -36,26 +36,32 @@
     <property name="build.debug" value="on"/>
     <property name="build.debuglevel" value="lines,vars,source"/>
 
+    <available file="${entitlements.war.lib.local.dir}"
+            property="war.lib.local.exists" value="true" />
+    <available file="${entitlements.extlib.dir}/amserver.jar"
+            property="amserver.jar.exists" value="true" />
+    <available file="${entitlements.extlib.dir}/opensso-sharedlib.jar"
+            property="sharedlib.jar.exists" value="true" />
+
     <target name="build" depends="package-war"/>
     
-    <target name="init" depends="amserver-jar,sharedlib-jar">
+    <target name="init" depends="amserver-jar,sharedlib-jar,war-lib">
         <mkdir dir="${entitlements.dist.dir}" />
         <mkdir dir="${entitlements.classes.dir}" />
 
-        <available file="${entitlements.extlib.dir}/amserver.jar"
-            property="amserver.jar.exists" value="true" />
-        <available file="${entitlements.extlib.dir}/opensso-sharedlib.jar"
-            property="sharedlib.jar.exists" value="true" />
-
         <path id="build.class.path">
             <fileset dir="${entitlements.extlib.dir}">
-                <include name="**/*.jar"/>
+                <include name="*.jar"/>
             </fileset>
+            <fileset dir="${entitlements.war.lib.local.dir}" includes="*.jar" />
         </path>
+    </target>
 
-        <fileset id="war.libs" dir="${entitlements.war.lib.dir}">
-            <include name="*.jar"/>
-        </fileset>
+    <target name="war-lib" unless="war.lib.local.exists">
+        <mkdir dir="${entitlements.war.lib.local.dir}"/>
+        <copy todir="${entitlements.war.lib.local.dir}">
+            <fileset dir="${entitlements.war.lib.dir}" includes="*.jar" />
+        </copy>
     </target>
 
     <target name="src-ent" depends="init">
@@ -64,6 +70,7 @@
                debug="${build.debug}" debuglevel="${build.debuglevel}"
                excludes = "policy/**,context/**" >
             <src path="${entitlements.src.dir}/com/sun/identity/entitlement"/>
+            <classpath refid="build.class.path"/>
         </javac>
     </target>
     
@@ -130,10 +137,10 @@
         </copy>
     </target>
 
-    <target name="merge-libs" depends="unwar">
-        <!-- copy todir="${war.package.dir}/WEB-INF/lib">
-            <fileset dir="${entitlements.war.libs.dir}" includes="*.jar" />
-        </copy -->
+    <target name="merge-libs" depends="unwar,war-lib">
+        <copy todir="${war.package.dir}/WEB-INF/lib">
+            <fileset dir="${entitlements.war.lib.local.dir}" includes="*.jar" />
+        </copy>
     </target>
 
     <target name="merge-classes" depends="src,unwar">
