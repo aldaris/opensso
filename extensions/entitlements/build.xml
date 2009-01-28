@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.12 2009-01-23 01:43:07 dillidorai Exp $
+   $Id: build.xml,v 1.13 2009-01-28 01:26:03 farble1670 Exp $
 
 -->
 
@@ -36,7 +36,7 @@
     <property name="build.debug" value="on"/>
     <property name="build.debuglevel" value="lines,vars,source"/>
 
-    <target name="build" depends="merge"/>
+    <target name="build" depends="package-war"/>
     
     <target name="init" depends="amserver-jar,sharedlib-jar">
         <mkdir dir="${entitlements.dist.dir}" />
@@ -47,28 +47,15 @@
         <available file="${entitlements.extlib.dir}/opensso-sharedlib.jar"
             property="sharedlib.jar.exists" value="true" />
 
-		    <path id="build.class.path">
-		        <fileset dir="${entitlements.extlib.dir}">
-		            <include name="**/*.jar"/>
-		        </fileset>
-		    </path>
+        <path id="build.class.path">
+            <fileset dir="${entitlements.extlib.dir}">
+                <include name="**/*.jar"/>
+            </fileset>
+        </path>
 
-		    <fileset id="war.libs" dir="${entitlements.extlib.dir}">
-		        <include name="backport-util-concurrent-2.2.jar"/>
-		        <include name="icefaces-${icefaces.version}.jar"/>
-		        <include name="icefaces-comps-${icefaces.version}.jar"/>
-		        <include name="icefaces-facelets-${icefaces.version}.jar"/>
-		        <include name="commons-beanutils-1.6.jar"/>
-		        <include name="commons-collections-3.2.jar"/>
-		        <include name="commons-digester-1.8.jar"/>
-		        <include name="commons-fileupload-1.2.jar"/>
-		        <include name="commons-logging-1.1.1.jar"/>
-		        <include name="commons-logging-api-1.1.jar"/>
-		        <include name="el-api-1.0.jar"/>
-		        <include name="el-ri-1.0.jar"/>
-		        <include name="jsf-api-1.2_02.jar"/>
-		        <include name="jsf-impl-1.2-b19.jar"/>
-		    </fileset>
+        <fileset id="war.libs" dir="${entitlements.war.lib.dir}">
+            <include name="*.jar"/>
+        </fileset>
     </target>
 
     <target name="src-ent" depends="init">
@@ -100,27 +87,65 @@
 
     <target name="src" depends="src-ent,src-sm,src-policy"/>
     
-    <target name="war" depends="src">
-        <war
-            destfile="${entitlements.dist.dir}/ent.war" 
-            basedir="${entitlements.web.dir}">
-            <classes dir="${entitlements.classes.dir}" />
-            <lib refid="war.libs"/>
-        </war>
-    </target>
-    
-    <target name="merge" depends="war">
-        <unjar src="${entitlements.extlib.dir}/opensso.war"
+    <target name="unwar" depends="init">
+        <unjar
+            src="${entitlements.extlib.dir}/opensso.war"
             dest="${war.package.dir}" />
-        <antcall target="unittest" />
+    </target>
 
+    <target name="merge-webxml" depends="unwar">
+        <java classname="com.sun.identity.setup.InsertContent" fork="true">
+            <classpath refid="build.class.path"/>
+            <arg value="&lt;!-- context-param --&gt;.+?&lt;!-- /context-param --&gt;" />
+            <arg value="${entitlements.basedir}/web/WEB-INF//web.xml" />
+            <arg value="${war.package.dir}/WEB-INF/web.xml" />
+            <arg value="&lt;!-- context param --&gt;" />
+        </java>
+        <java classname="com.sun.identity.setup.InsertContent" fork="true">
+            <classpath refid="build.class.path"/>
+            <arg value="&lt;servlet&gt;.+?&lt;/servlet&gt;" />
+            <arg value="${entitlements.basedir}/web/WEB-INF//web.xml" />
+            <arg value="${war.package.dir}/WEB-INF/web.xml" />
+            <arg value="&lt;!-- servlet declaration --&gt;" />
+        </java>
+        <java classname="com.sun.identity.setup.InsertContent" fork="true">
+            <classpath refid="build.class.path"/>
+            <arg value="&lt;servlet-mapping&gt;.+?&lt;/servlet-mapping&gt;" />
+            <arg value="${entitlements.basedir}/web/WEB-INF//web.xml" />
+            <arg value="${war.package.dir}/WEB-INF/web.xml" />
+            <arg value="&lt;!-- servlet mapping --&gt;" />
+        </java>
+        <java classname="com.sun.identity.setup.InsertContent" fork="true">
+            <classpath refid="build.class.path"/>
+            <arg value="&lt;session-config&gt;.+?&lt;/session-config&gt;" />
+            <arg value="${entitlements.basedir}/web/WEB-INF//web.xml" />
+            <arg value="${war.package.dir}/WEB-INF/web.xml" />
+            <arg value="&lt;!-- taglib definition --&gt;" />
+        </java>
+    </target>
+
+    <target name="merge-web" depends="unwar,merge-webxml">
+        <copy todir="${war.package.dir}">
+            <fileset dir="${entitlements.web.dir}" includes="**" />
+        </copy>
+    </target>
+
+    <target name="merge-libs" depends="unwar">
+        <copy todir="${war.package.dir}/WEB-INF/lib">
+            <fileset dir="${entitlements.war.libs.dir}" includes="*.jar" />
+        </copy>
+    </target>
+
+    <target name="merge-classes" depends="src,unwar">
         <copy todir="${war.package.dir}/WEB-INF/classes">
-            <fileset dir="${entitlements.classes.dir}" includes="**/*.class" />
             <fileset dir="${entitlements.classes.dir}" includes="**/*.class" />
             <fileset dir="${entitlements.res.dir}/config" includes="*.properties" />
             <fileset dir="${entitlements.xml.svc.dir}" includes="*.xml" />
+            <fileset dir="${entitlements.web.dir}" includes="*.xml" />
         </copy>
+    </target>
 
+    <target name="merge-properties" depends="unwar">
         <java classname="com.sun.identity.setup.MergeProperties" fork="true">
             <classpath refid="build.class.path"/>
             <classpath>
@@ -130,25 +155,21 @@
             <arg value="entitlementsServiceNames" />
             <arg value="${war.package.dir}/WEB-INF/classes/serviceNames.properties" />
         </java>
-
-        <delete file="${war.package.dir}/WEB-INF/classes/entitlementsServiceNames.properties" />
-
-        <copy todir="${war.package.dir}/WEB-INF/lib"
-            file="${entitlements.extlib.dir}/testng-5.1-jdk15.jar" />
-
-        <mkdir dir="${war.packageweb.dir}" />
-        <move file="${war.package.dir}/WEB-INF/web.xml"
-            tofile="${war.packageweb.dir}/web.xml" />
-        <war destfile="${entitlements.dist.dir}/opensso.war"
-            webxml="${war.packageweb.dir}/web.xml">
-            <zipfileset dir="${war.package.dir}" />
-        </war>
-        <move file="${war.packageweb.dir}/web.xml"
-            tofile="${war.package.dir}/WEB-INF/web.xml" />
-        <delete dir="${war.packageweb.dir}" />
     </target>
 
-    <target name="unittest">
+    <target
+        name="merge"
+        depends="prepare-unittest,merge-web,merge-classes,merge-properties,merge-libs"/>
+
+    <target name="package-war" depends="src,merge">
+        <war
+            destfile="${entitlements.dist.dir}/opensso.war"
+            webxml="${war.package.dir}/WEB-INF/web.xml">
+            <zipfileset dir="${war.package.dir}" />
+        </war>
+    </target>
+
+    <target name="prepare-unittest" depends="unwar">
         <ant antfile="${unittest.basedir}/build.xml" inheritRefs="true"
             target="build" />
         <copy todir="${war.package.dir}/WEB-INF/lib">
@@ -158,6 +179,8 @@
         <copy todir="${war.package.dir}/unittest">
             <fileset dir="${unittest.basedir}/www/jsp" includes="**/*.jsp" />
         </copy>
+        <copy todir="${war.package.dir}/WEB-INF/lib"
+            file="${entitlements.extlib.dir}/testng-5.1-jdk15.jar" />
     </target>
 
     <target name="amserver-jar" unless="amserver.jar.exists">
