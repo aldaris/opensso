@@ -22,13 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Request.java,v 1.3 2008-07-30 00:50:15 arviranga Exp $
+ * $Id: Request.java,v 1.4 2009-01-28 05:34:50 ww203982 Exp $
  *
  */
 
 package com.iplanet.services.ldap.event;
 
-import netscape.ldap.LDAPConnection;
+import com.sun.identity.shared.ldap.LDAPConnection;
 
 import com.iplanet.sso.SSOToken;
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPCache.java,v 1.3 2008-06-25 05:48:08 qcheng Exp $
+ * $Id: SPCache.java,v 1.4 2009-01-28 05:35:07 ww203982 Exp $
  *
  */
 
@@ -35,7 +35,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.HashSet;
 import java.util.Set;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 
 
 /**

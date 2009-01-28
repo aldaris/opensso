@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMClientCapData.java,v 1.6 2008-08-19 19:08:43 veiming Exp $
+ * $Id: AMClientCapData.java,v 1.7 2009-01-28 05:34:49 ww203982 Exp $
  *
  */
 
@@ -53,9 +53,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-import netscape.ldap.LDAPConnection;
-import netscape.ldap.controls.LDAPPersistSearchControl;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.LDAPConnection;
+import com.sun.identity.shared.ldap.controls.LDAPPersistSearchControl;
+import com.sun.identity.shared.ldap.util.DN;
 
 /**
  * The abstraction to get/set the clients stored in the DSAME. The Client is

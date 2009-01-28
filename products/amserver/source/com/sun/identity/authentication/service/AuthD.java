@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthD.java,v 1.20 2008-08-30 05:47:52 dillidorai Exp $
+ * $Id: AuthD.java,v 1.21 2009-01-28 05:34:54 ww203982 Exp $
  *
  */
 
@@ -82,7 +82,7 @@ import java.util.Vector;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 
 
 /**

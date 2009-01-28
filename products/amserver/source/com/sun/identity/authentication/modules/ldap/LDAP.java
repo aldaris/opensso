@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAP.java,v 1.14 2009-01-24 00:37:52 lakshman_abburi Exp $
+ * $Id: LDAP.java,v 1.15 2009-01-28 05:34:53 ww203982 Exp $
  *
  */
 
@@ -62,9 +62,9 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.ConfirmationCallback;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
-import netscape.ldap.util.ConnectionPool;
-import netscape.ldap.LDAPConnection;
-import netscape.ldap.LDAPException;
+import com.sun.identity.shared.ldap.util.ConnectionPool;
+import com.sun.identity.shared.ldap.LDAPConnection;
+import com.sun.identity.shared.ldap.LDAPException;
 
 public class LDAP extends AMLoginModule {
     // static variables

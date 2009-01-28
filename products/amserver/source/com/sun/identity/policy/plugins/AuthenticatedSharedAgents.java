@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticatedSharedAgents.java,v 1.1 2008-08-26 23:52:06 goodearth Exp $
+ * $Id: AuthenticatedSharedAgents.java,v 1.2 2009-01-28 05:35:01 ww203982 Exp $
  *
  */
 
@@ -60,8 +60,8 @@ import com.sun.identity.sm.ServiceConfigManager;
 import com.sun.identity.sm.ServiceConfig;
 import com.sun.identity.sm.ServiceListener;
 
-import netscape.ldap.LDAPDN;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.LDAPDN;
+import com.sun.identity.shared.ldap.util.DN;
 
 /**
  * This subject applies to all users/agents with valid <code>SSOToken</code>.

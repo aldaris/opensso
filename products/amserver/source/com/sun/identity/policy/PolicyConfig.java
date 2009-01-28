@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyConfig.java,v 1.9 2008-08-19 19:09:14 veiming Exp $
+ * $Id: PolicyConfig.java,v 1.10 2009-01-28 05:35:01 ww203982 Exp $
  *
  */
 
@@ -41,7 +41,7 @@ import com.sun.identity.sm.*;
 import com.iplanet.sso.*;
 import com.sun.identity.shared.datastruct.CollectionHelper;
 
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 
 /**
  * The <code>PolicyConfig</code> class manages policy configuration for 

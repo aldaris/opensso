@@ -22,7 +22,7 @@
 : your own identifying information:
 : "Portions Copyrighted [year] [name of copyright owner]"
 :
-: $Id: CommandLineIdrepo.bat,v 1.6 2008-08-07 17:46:25 goodearth Exp $
+: $Id: CommandLineIdrepo.bat,v 1.7 2009-01-28 05:34:45 ww203982 Exp $
 :
-java -cp classes;resources;lib/openssoclientsdk.jar;lib/j2ee.jar;lib/ldapjdk.jar com.sun.identity.samples.clientsdk.idrepo.IdRepoSample
+java -cp classes;resources;lib/openssoclientsdk.jar;lib/j2ee.jar;lib/opensso-sharedlib.jar com.sun.identity.samples.clientsdk.idrepo.IdRepoSample
 

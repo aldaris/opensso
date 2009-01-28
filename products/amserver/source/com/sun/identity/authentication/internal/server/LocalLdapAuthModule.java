@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LocalLdapAuthModule.java,v 1.6 2008-10-09 02:40:04 arviranga Exp $
+ * $Id: LocalLdapAuthModule.java,v 1.7 2009-01-28 05:34:52 ww203982 Exp $
  *
  */
 
@@ -53,14 +53,14 @@ import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.LoginException;
-import netscape.ldap.LDAPConnection;
-import netscape.ldap.LDAPEntry;
-import netscape.ldap.LDAPException;
-import netscape.ldap.LDAPSearchResults;
-import netscape.ldap.LDAPv2;
-import netscape.ldap.factory.JSSESocketFactory;
-import netscape.ldap.util.ConnectionPool;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.LDAPConnection;
+import com.sun.identity.shared.ldap.LDAPEntry;
+import com.sun.identity.shared.ldap.LDAPException;
+import com.sun.identity.shared.ldap.LDAPSearchResults;
+import com.sun.identity.shared.ldap.LDAPv2;
+import com.sun.identity.shared.ldap.factory.JSSESocketFactory;
+import com.sun.identity.shared.ldap.util.ConnectionPool;
+import com.sun.identity.shared.ldap.util.DN;
 
 public class LocalLdapAuthModule implements LoginModule {
 

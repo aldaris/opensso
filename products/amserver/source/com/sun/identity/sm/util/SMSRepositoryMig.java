@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSRepositoryMig.java,v 1.3 2008-06-25 05:44:11 qcheng Exp $
+ * $Id: SMSRepositoryMig.java,v 1.4 2009-01-28 05:35:04 ww203982 Exp $
  *
  */
 
@@ -32,14 +32,14 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import netscape.ldap.LDAPAttribute;
-import netscape.ldap.LDAPAttributeSet;
-import netscape.ldap.LDAPConnection;
-import netscape.ldap.LDAPEntry;
-import netscape.ldap.LDAPException;
-import netscape.ldap.LDAPReferralException;
-import netscape.ldap.LDAPSearchResults;
-import netscape.ldap.LDAPv2;
+import com.sun.identity.shared.ldap.LDAPAttribute;
+import com.sun.identity.shared.ldap.LDAPAttributeSet;
+import com.sun.identity.shared.ldap.LDAPConnection;
+import com.sun.identity.shared.ldap.LDAPEntry;
+import com.sun.identity.shared.ldap.LDAPException;
+import com.sun.identity.shared.ldap.LDAPReferralException;
+import com.sun.identity.shared.ldap.LDAPSearchResults;
+import com.sun.identity.shared.ldap.LDAPv2;
 
 import com.sun.identity.sm.ServiceAlreadyExistsException;
 import com.sun.identity.sm.flatfile.SMSFlatFileObject;

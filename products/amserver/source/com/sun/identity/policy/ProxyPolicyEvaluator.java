@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProxyPolicyEvaluator.java,v 1.3 2008-09-08 06:46:05 bhavnab Exp $
+ * $Id: ProxyPolicyEvaluator.java,v 1.4 2009-01-28 05:35:01 ww203982 Exp $
  *
  */
 
@@ -49,7 +49,7 @@ import java.util.Set;
 import java.util.HashSet;
 import javax.security.auth.login.LoginException;
 
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 
 /**
  * Class that lets a priviliged user to compute policy results for 

@@ -22,13 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPSocketFactory.java,v 1.2 2008-06-25 05:43:54 qcheng Exp $
+ * $Id: LDAPSocketFactory.java,v 1.3 2009-01-28 05:35:02 ww203982 Exp $
  *
  */
 
 package com.sun.identity.protocol;
 
-import netscape.ldap.factory.JSSESocketFactory;
+import com.sun.identity.shared.ldap.factory.JSSESocketFactory;
 import javax.net.ssl.SSLSocketFactory;
 
 import com.sun.identity.shared.debug.Debug;
@@ -39,7 +39,7 @@ import com.sun.identity.protocol.SSLSocketFactoryManager;
  * Generate SSLContext can be used to create an SSL socket connection 
  * to ldap server. 
  * It is using the JSSE package and extends 
- * the <CODE>netscape.ldap.factory.JSSESocketFactory</CODE> class.
+ * the <CODE>com.sun.identity.shared.ldap.factory.JSSESocketFactory</CODE> class.
  */
 
 public class LDAPSocketFactory extends JSSESocketFactory

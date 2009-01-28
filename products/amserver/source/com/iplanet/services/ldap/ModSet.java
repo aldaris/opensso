@@ -22,14 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ModSet.java,v 1.3 2008-06-25 05:41:36 qcheng Exp $
+ * $Id: ModSet.java,v 1.4 2009-01-28 05:34:49 ww203982 Exp $
  *
  */
 
 package com.iplanet.services.ldap;
 
-import netscape.ldap.LDAPModification;
-import netscape.ldap.LDAPModificationSet;
+import com.sun.identity.shared.ldap.LDAPModification;
+import com.sun.identity.shared.ldap.LDAPModificationSet;
 
 /**
  * Represents a set of modification on attributes

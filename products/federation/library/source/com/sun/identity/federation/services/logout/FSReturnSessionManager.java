@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSReturnSessionManager.java,v 1.3 2008-06-25 05:47:01 qcheng Exp $
+ * $Id: FSReturnSessionManager.java,v 1.4 2009-01-28 05:35:07 ww203982 Exp $
  *
  */
 
@@ -33,7 +33,7 @@ import com.sun.identity.federation.common.IFSConstants;
 import com.sun.identity.federation.common.FSUtils;
 import java.util.HashMap;
 import java.util.Map;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 
 /**
  * Contains session information for logout.

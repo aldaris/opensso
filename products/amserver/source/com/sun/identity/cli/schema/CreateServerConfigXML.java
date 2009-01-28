@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateServerConfigXML.java,v 1.5 2008-10-30 18:25:03 veiming Exp $
+ * $Id: CreateServerConfigXML.java,v 1.6 2009-01-28 05:34:55 ww203982 Exp $
  *
  */
 
@@ -46,9 +46,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.security.AccessController;
 import java.util.Vector;
-import netscape.ldap.LDAPDN;
-import netscape.ldap.util.DN;
-import netscape.ldap.util.RDN;
+import com.sun.identity.shared.ldap.LDAPDN;
+import com.sun.identity.shared.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.RDN;
 
 public class CreateServerConfigXML extends AuthenticatedCommand {
     static final String DS_HOST = "dshost";

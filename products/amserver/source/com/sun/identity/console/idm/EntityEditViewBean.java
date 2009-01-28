@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntityEditViewBean.java,v 1.10 2008-12-24 20:53:17 babysunil Exp $
+ * $Id: EntityEditViewBean.java,v 1.11 2009-01-28 05:34:57 ww203982 Exp $
  *
  */ 
         
@@ -58,7 +58,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
-import netscape.ldap.LDAPDN; 
+import com.sun.identity.shared.ldap.LDAPDN; 
 
 public class EntityEditViewBean
     extends EntityOpViewBeanBase

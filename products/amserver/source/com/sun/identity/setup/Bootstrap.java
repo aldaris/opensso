@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Bootstrap.java,v 1.15 2008-08-07 17:22:06 arviranga Exp $
+ * $Id: Bootstrap.java,v 1.16 2009-01-28 05:35:02 ww203982 Exp $
  *
  */
 
@@ -58,7 +58,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import javax.security.auth.login.LoginException;
-import netscape.ldap.LDAPConnection;
+import com.sun.identity.shared.ldap.LDAPConnection;
 
 /**
  * This class is responsible for bootstrapping the WAR.

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EmailNotificationHelper.java,v 1.4 2008-06-25 05:41:25 qcheng Exp $
+ * $Id: EmailNotificationHelper.java,v 1.5 2009-01-28 05:34:48 ww203982 Exp $
  *
  */
 
@@ -49,7 +49,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import javax.mail.MessagingException;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 
 /**
  * This class has the functionality to send email notifications to the users

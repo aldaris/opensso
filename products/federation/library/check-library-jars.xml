@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: check-library-jars.xml,v 1.5 2008-08-08 22:36:30 qcheng Exp $
+   $Id: check-library-jars.xml,v 1.6 2009-01-28 05:35:06 ww203982 Exp $
 
 -->
 
@@ -58,8 +58,6 @@
         property="jaxrpc.impl.jar.present"/>
     <available file="${extlib.dir}/jaxrpc-spi.jar" type="file" 
         property="jaxrpc.spi.jar.present"/>
-    <available file="${extlib.dir}/ldapjdk.jar" type="file" 
-        property="ldapjdk.jar.present"/>
     <available file="${extlib.dir}/mail.jar" type="file" 
         property="mail.jar.present"/>
     <available file="${extlib.dir}/relaxngDatatype.jar" type="file" 
@@ -103,7 +101,6 @@
             <isset property="jaxrpc.api.jar.present" />
             <isset property="jaxrpc.impl.jar.present" />
             <isset property="jaxrpc.spi.jar.present" />
-            <isset property="ldapjdk.jar.present" />
             <isset property="mail.jar.present" />
             <isset property="relaxng.jar.present" />
             <isset property="saaj.api.jar.present" />
@@ -151,11 +148,6 @@
         <fail message="*** missing  ${extlib.dir}/jaxrpc-spi.jar ***">
             <condition>
                 <not><isset property="jaxrpc.spi.jar.present" /></not>
-            </condition>
-        </fail>
-        <fail message="*** missing  ${extlib.dir}/ldapjdk.jar ***">
-            <condition>
-                <not><isset property="ldapjdk.jar.present" /></not>
             </condition>
         </fail>
         <fail message="*** missing  ${extlib.dir}/mail.jar ***">

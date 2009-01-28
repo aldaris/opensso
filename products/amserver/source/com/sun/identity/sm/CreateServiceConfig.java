@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateServiceConfig.java,v 1.13 2008-10-22 19:10:16 goodearth Exp $
+ * $Id: CreateServiceConfig.java,v 1.14 2009-01-28 05:35:03 ww203982 Exp $
  *
  */
 
@@ -41,8 +41,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import netscape.ldap.LDAPDN;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.LDAPDN;
+import com.sun.identity.shared.ldap.util.DN;
 import org.w3c.dom.Node;
 
 public class CreateServiceConfig {

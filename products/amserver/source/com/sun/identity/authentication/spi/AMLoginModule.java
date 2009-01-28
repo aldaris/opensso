@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginModule.java,v 1.17 2009-01-24 00:36:19 lakshman_abburi Exp $
+ * $Id: AMLoginModule.java,v 1.18 2009-01-28 05:34:54 ww203982 Exp $
  *
  */
 
@@ -85,7 +85,7 @@ import com.sun.identity.common.AccountLockoutInfo;
 import com.sun.identity.sm.OrganizationConfigManager;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 
 /**
  * An abstract class which implements JAAS LoginModule, it provides

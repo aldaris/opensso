@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ImportServiceConfiguration.java,v 1.7 2008-10-30 18:25:03 veiming Exp $
+ * $Id: ImportServiceConfiguration.java,v 1.8 2009-01-28 05:34:55 ww203982 Exp $
  *
  */
 
@@ -68,9 +68,9 @@ import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.Set;
 import javax.security.auth.login.LoginException;
-import netscape.ldap.LDAPConnection;
-import netscape.ldap.LDAPException;
-import netscape.ldap.util.LDIF;
+import com.sun.identity.shared.ldap.LDAPConnection;
+import com.sun.identity.shared.ldap.LDAPException;
+import com.sun.identity.shared.ldap.util.LDIF;
 
 /**
  * Import service configuration data.

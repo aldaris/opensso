@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.25 2009-01-08 22:38:49 veiming Exp $
+   $Id: build.xml,v 1.26 2009-01-28 05:35:09 ww203982 Exp $
 
 -->
 
@@ -85,7 +85,7 @@
         <copy todir="${clientsamples.war.packages.dir}/WEB-INF/lib"
               file="${fm.dist.dir}/openssoclientsdk.jar"/>
         <copy todir="${clientsamples.war.packages.dir}/WEB-INF/lib">
-            <fileset dir="${extlib.dir}" includes="ldapjdk.jar jaxb-api.jar,jaxb-impl.jar,jaxb-libs.jar,jaxb-xjc.jar,mail.jar,relaxngDatatype.jar,saaj-api.jar,saaj-impl.jar,webservices-rt.jar,xsdlib.jar" />
+            <fileset dir="${extlib.dir}" includes="jaxb-api.jar,jaxb-impl.jar,jaxb-libs.jar,jaxb-xjc.jar,mail.jar,relaxngDatatype.jar,saaj-api.jar,saaj-impl.jar,webservices-rt.jar,xsdlib.jar" />
         </copy>
         <copy todir="${clientsamples.war.packages.dir}">
             <fileset dir="${openfm.clientsamples.dir}/war"
@@ -221,7 +221,7 @@
         <copy todir="${clientsamples.sdk.packages.dir}/lib"
               file="${fm.dist.dir}/openssoclientsdk.jar"/>
         <copy todir="${clientsamples.sdk.packages.dir}/lib">
-            <fileset dir="${extlib.dir}" includes="ldapjdk.jar j2ee.jar,jaxb-api.jar,jaxb-impl.jar,jaxb-libs.jar,jaxb-xjc.jar,mail.jar,relaxngDatatype.jar,saaj-api.jar,saaj-impl.jar,xsdlib.jar,webservices-rt.jar,webservices-api.jar,webservices-tools.jar,webservices-extra.jar,webservices-extra-api.jar,xercesImpl.jar" />
+            <fileset dir="${extlib.dir}" includes="j2ee.jar,jaxb-api.jar,jaxb-impl.jar,jaxb-libs.jar,jaxb-xjc.jar,mail.jar,relaxngDatatype.jar,saaj-api.jar,saaj-impl.jar,xsdlib.jar,webservices-rt.jar,webservices-api.jar,webservices-tools.jar,webservices-extra.jar,webservices-extra-api.jar,xercesImpl.jar" />
         </copy>
         <copy todir="${clientsamples.sdk.packages.dir}/resources"
               file="${clientsamples.packages.temp2.dir}/AMConfig.properties.template"/>

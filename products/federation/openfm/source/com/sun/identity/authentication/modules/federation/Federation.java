@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Federation.java,v 1.2 2008-06-25 05:49:31 qcheng Exp $
+ * $Id: Federation.java,v 1.3 2009-01-28 05:35:10 ww203982 Exp $
  *
  */
 
@@ -55,7 +55,7 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
-// import netscape.ldap.util.DN;
+// import com.sun.identity.shared.ldap.util.DN;
 
 public class Federation extends AMLoginModule {
     

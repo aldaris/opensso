@@ -23,7 +23,7 @@
 : your own identifying information:
 : "Portions Copyrighted [year] [name of copyright owner]"
 :
-: $Id: setup.bat,v 1.12 2008-09-18 22:56:30 veiming Exp $
+: $Id: setup.bat,v 1.13 2009-01-28 05:34:46 ww203982 Exp $
 :
 
 if not "%JAVA_HOME%" == "" goto checkJavaHome
@@ -87,7 +87,7 @@ IF "%5" == "--debug" SET path_debug=%~6
 IF "%5" == "-p" SET path_AMConfig=%~6
 IF "%5" == "--path" SET path_AMConfig=%~6
 
-"%JAVA_HOME%/bin/java.exe" -D"load.config=yes" -D"help.print=%help_print%" -D"path.AMConfig=%path_AMConfig%" -D"path.log=%path_log%" -D"path.debug=%path_debug%" -cp "lib/amserver.jar;lib/amadm_setup.jar;lib/opensso-sharedlib.jar;lib/ldapjdk.jar;lib/OpenDS.jar;resources" com.sun.identity.tools.bundles.Main
+"%JAVA_HOME%/bin/java.exe" -D"load.config=yes" -D"help.print=%help_print%" -D"path.AMConfig=%path_AMConfig%" -D"path.log=%path_log%" -D"path.debug=%path_debug%" -cp "lib/amserver.jar;lib/amadm_setup.jar;lib/opensso-sharedlib.jar;lib/OpenDS.jar;resources" com.sun.identity.tools.bundles.Main
 ENDLOCAL
 
 :exit

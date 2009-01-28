@@ -22,13 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpgradeUtils.java,v 1.15 2008-10-13 03:58:38 bina Exp $
+ * $Id: UpgradeUtils.java,v 1.16 2009-01-28 05:35:21 ww203982 Exp $
  *
  */
 package com.sun.identity.upgrade;
 
 import com.sun.identity.federation.jaxb.entityconfig.AttributeType;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 import com.iplanet.am.admin.cli.Main;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.util.Crypt;
@@ -73,10 +73,10 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.Properties;
 import javax.security.auth.login.LoginException;
-import netscape.ldap.LDAPConnection;
-import netscape.ldap.LDAPConstraints;
-import netscape.ldap.LDAPException;
-import netscape.ldap.util.LDIF;
+import com.sun.identity.shared.ldap.LDAPConnection;
+import com.sun.identity.shared.ldap.LDAPConstraints;
+import com.sun.identity.shared.ldap.LDAPException;
+import com.sun.identity.shared.ldap.util.LDIF;
 import com.sun.identity.policy.Policy;
 import com.sun.identity.policy.PolicyException; 
 import com.sun.identity.policy.PolicyManager;
@@ -94,16 +94,16 @@ import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.StringTokenizer;
-import netscape.ldap.LDAPAttribute;
-import netscape.ldap.LDAPAttributeSet;
-import netscape.ldap.LDAPDN;
-import netscape.ldap.LDAPEntry;
-import netscape.ldap.LDAPModification;
-import netscape.ldap.LDAPModificationSet;
-import netscape.ldap.LDAPSearchResults;
-import netscape.ldap.LDAPSearchConstraints;
-import netscape.ldap.LDAPv2;
-import netscape.ldap.LDAPv3;
+import com.sun.identity.shared.ldap.LDAPAttribute;
+import com.sun.identity.shared.ldap.LDAPAttributeSet;
+import com.sun.identity.shared.ldap.LDAPDN;
+import com.sun.identity.shared.ldap.LDAPEntry;
+import com.sun.identity.shared.ldap.LDAPModification;
+import com.sun.identity.shared.ldap.LDAPModificationSet;
+import com.sun.identity.shared.ldap.LDAPSearchResults;
+import com.sun.identity.shared.ldap.LDAPSearchConstraints;
+import com.sun.identity.shared.ldap.LDAPv2;
+import com.sun.identity.shared.ldap.LDAPv3;
 
 /**
  * This class contains utilities to upgrade the service schema

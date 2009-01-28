@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCache.java,v 1.4 2008-06-25 05:43:44 qcheng Exp $
+ * $Id: PolicyCache.java,v 1.5 2009-01-28 05:35:00 ww203982 Exp $
  *
  */
 
@@ -39,7 +39,7 @@ import com.sun.identity.shared.stats.Stats;
 import com.sun.identity.shared.stats.StatsListener;
 import java.util.*;
 
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 
 /**
  * The class <code>PolicyCache</code> manages policy cache 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContext.java,v 1.9 2008-06-25 05:41:53 qcheng Exp $
+ * $Id: AuthContext.java,v 1.10 2009-01-28 05:34:52 ww203982 Exp $
  *
  */
 
@@ -47,8 +47,8 @@ import javax.security.auth.callback.TextInputCallback;
 import javax.security.auth.callback.TextOutputCallback;
 import javax.security.auth.login.LoginException;
 
-import netscape.ldap.util.DN;
-import netscape.ldap.LDAPDN;
+import com.sun.identity.shared.ldap.util.DN;
+import com.sun.identity.shared.ldap.LDAPDN;
 
 import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.SecureRandomManager;

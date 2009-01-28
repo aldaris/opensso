@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdUtils.java,v 1.29 2009-01-15 01:47:16 goodearth Exp $
+ * $Id: IdUtils.java,v 1.30 2009-01-28 05:34:59 ww203982 Exp $
  *
  */
 
@@ -63,8 +63,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import netscape.ldap.LDAPDN;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.LDAPDN;
+import com.sun.identity.shared.ldap.util.DN;
 
 
 /**

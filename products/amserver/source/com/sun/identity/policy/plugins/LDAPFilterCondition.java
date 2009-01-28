@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPFilterCondition.java,v 1.6 2008-06-25 05:43:51 qcheng Exp $
+ * $Id: LDAPFilterCondition.java,v 1.7 2009-01-28 05:35:01 ww203982 Exp $
  *
  */
 
@@ -37,13 +37,13 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
 
-import netscape.ldap.LDAPv2;
-import netscape.ldap.LDAPConnection;
-import netscape.ldap.LDAPException;
-import netscape.ldap.LDAPSearchConstraints;
-import netscape.ldap.LDAPSearchResults;
-import netscape.ldap.util.ConnectionPool;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.LDAPv2;
+import com.sun.identity.shared.ldap.LDAPConnection;
+import com.sun.identity.shared.ldap.LDAPException;
+import com.sun.identity.shared.ldap.LDAPSearchConstraints;
+import com.sun.identity.shared.ldap.LDAPSearchResults;
+import com.sun.identity.shared.ldap.util.ConnectionPool;
+import com.sun.identity.shared.ldap.util.DN;
 
 import com.sun.identity.common.LDAPConnectionPool;
 import com.sun.identity.policy.interfaces.Condition;

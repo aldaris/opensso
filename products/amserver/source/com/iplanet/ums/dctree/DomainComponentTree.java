@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DomainComponentTree.java,v 1.4 2008-06-25 05:41:47 qcheng Exp $
+ * $Id: DomainComponentTree.java,v 1.5 2009-01-28 05:34:51 ww203982 Exp $
  *
  */
 
@@ -31,7 +31,7 @@ package com.iplanet.ums.dctree;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
-import netscape.ldap.LDAPDN;
+import com.sun.identity.shared.ldap.LDAPDN;
 
 import com.iplanet.services.util.I18n;
 import com.iplanet.sso.SSOException;

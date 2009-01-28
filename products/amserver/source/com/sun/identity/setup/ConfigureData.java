@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureData.java,v 1.9 2009-01-13 19:16:50 veiming Exp $
+ * $Id: ConfigureData.java,v 1.10 2009-01-28 05:35:02 ww203982 Exp $
  *
  */
 package com.sun.identity.setup;
@@ -48,8 +48,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import javax.servlet.ServletContext;
-import netscape.ldap.LDAPDN;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.LDAPDN;
+import com.sun.identity.shared.ldap.util.DN;
 
 /**
  * Configures product bootstrap data.

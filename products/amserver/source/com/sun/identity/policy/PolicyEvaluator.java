@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.9 2009-01-27 19:08:12 dillidorai Exp $
+ * $Id: PolicyEvaluator.java,v 1.10 2009-01-28 05:35:01 ww203982 Exp $
  *
  */
 
@@ -50,7 +50,7 @@ import com.iplanet.sso.SSOException;
 import com.sun.identity.policy.interfaces.PolicyListener;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.ServiceManager;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 
 /**
  * The class <code>PolicyEvaluator</code> evaluates policies

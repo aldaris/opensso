@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPConnectionPools.java,v 1.6 2008-08-08 00:40:57 ww203982 Exp $
+ * $Id: LDAPConnectionPools.java,v 1.7 2009-01-28 05:35:01 ww203982 Exp $
  *
  */
 
@@ -30,11 +30,11 @@
 
 package com.sun.identity.policy.plugins;
 
-import netscape.ldap.*; 
-import netscape.ldap.controls.*; 
-import netscape.ldap.util.*;
+import com.sun.identity.shared.ldap.*; 
+import com.sun.identity.shared.ldap.controls.*; 
+import com.sun.identity.shared.ldap.util.*;
 import com.sun.identity.shared.debug.Debug;    
-import netscape.ldap.factory.JSSESocketFactory;
+import com.sun.identity.shared.ldap.factory.JSSESocketFactory;
 import com.sun.identity.common.LDAPConnectionPool;
 import com.sun.identity.common.ShutdownListener;
 import com.sun.identity.common.ShutdownManager;

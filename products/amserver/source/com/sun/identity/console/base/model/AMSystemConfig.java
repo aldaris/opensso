@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSystemConfig.java,v 1.6 2008-11-10 23:05:56 veiming Exp $
+ * $Id: AMSystemConfig.java,v 1.7 2009-01-28 05:34:56 ww203982 Exp $
  *
  */
 
@@ -39,9 +39,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import netscape.ldap.LDAPDN;
-import netscape.ldap.util.DN;
-import netscape.ldap.util.RDN;
+import com.sun.identity.shared.ldap.LDAPDN;
+import com.sun.identity.shared.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.RDN;
 
 /* - NEED NOT LOG - */
 

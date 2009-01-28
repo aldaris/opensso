@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FSUtils.java,v 1.6 2008-10-03 22:11:58 hengming Exp $
+ * $Id: FSUtils.java,v 1.7 2009-01-28 05:35:06 ww203982 Exp $
  *
  */
 
@@ -61,8 +61,8 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import netscape.ldap.util.DN;
-import netscape.ldap.util.RDN;
+import com.sun.identity.shared.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.RDN;
 
 /**
  * This class contain constants used in the SDK.

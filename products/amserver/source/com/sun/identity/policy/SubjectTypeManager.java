@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubjectTypeManager.java,v 1.4 2008-06-25 05:43:45 qcheng Exp $
+ * $Id: SubjectTypeManager.java,v 1.5 2009-01-28 05:35:01 ww203982 Exp $
  *
  */
 
@@ -41,7 +41,7 @@ import com.sun.identity.shared.locale.AMResourceBundleCache;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.locale.Locale;
 
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 
 /**
  * The class <code>SubjectTypeManager</code> provides

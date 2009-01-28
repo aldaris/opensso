@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MiscUtils.java,v 1.4 2008-11-26 05:48:08 kanduls Exp $
+ * $Id: MiscUtils.java,v 1.5 2009-01-28 05:34:47 ww203982 Exp $
  *
  */
 
@@ -44,7 +44,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 
 public class MiscUtils {
     // Constants

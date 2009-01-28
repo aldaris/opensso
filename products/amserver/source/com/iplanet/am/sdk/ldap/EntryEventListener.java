@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntryEventListener.java,v 1.3 2008-06-25 05:41:25 qcheng Exp $
+ * $Id: EntryEventListener.java,v 1.4 2009-01-28 05:34:48 ww203982 Exp $
  *
  */
 
@@ -47,8 +47,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import netscape.ldap.controls.LDAPPersistSearchControl;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.controls.LDAPPersistSearchControl;
+import com.sun.identity.shared.ldap.util.DN;
 
 /**
  * The <code>AMEntryEventListener</code> handles all the events that are

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Validation.java,v 1.3 2008-06-25 05:41:48 qcheng Exp $
+ * $Id: Validation.java,v 1.4 2009-01-28 05:34:52 ww203982 Exp $
  *
  */
 
@@ -30,7 +30,7 @@ package com.iplanet.ums.validation;
 
 import java.util.Enumeration;
 
-import netscape.ldap.LDAPModification;
+import com.sun.identity.shared.ldap.LDAPModification;
 
 import com.iplanet.services.ldap.Attr;
 import com.iplanet.services.ldap.AttrSet;

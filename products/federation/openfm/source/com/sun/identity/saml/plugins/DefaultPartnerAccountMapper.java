@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultPartnerAccountMapper.java,v 1.5 2008-08-19 19:12:24 veiming Exp $
+ * $Id: DefaultPartnerAccountMapper.java,v 1.6 2009-01-28 05:35:10 ww203982 Exp $
  *
  */
 
@@ -50,7 +50,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import netscape.ldap.util.DN; 
+import com.sun.identity.shared.ldap.util.DN; 
 
 /**
  * The class <code>DefaultPartnerAccountMapper</code> provide a default

@@ -22,13 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLDAPCertStoreParameters.java,v 1.2 2008-06-25 05:52:58 qcheng Exp $
+ * $Id: AMLDAPCertStoreParameters.java,v 1.3 2009-01-28 05:35:12 ww203982 Exp $
  *
  */
 
 package com.sun.identity.security.cert;
 
-import netscape.ldap.LDAPSocketFactory;
+import com.sun.identity.shared.ldap.LDAPSocketFactory;
 
 /**
  * Parameters used to access ldap cert store

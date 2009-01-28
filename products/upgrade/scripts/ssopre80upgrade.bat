@@ -23,7 +23,7 @@
 : your own identifying information:
 : "Portions Copyrighted [year] [name of copyright owner]"
 :
-: $Id: ssopre80upgrade.bat,v 1.2 2008-10-03 06:04:28 bina Exp $
+: $Id: ssopre80upgrade.bat,v 1.3 2009-01-28 05:35:20 ww203982 Exp $
 :
 
 setlocal
@@ -39,7 +39,7 @@ set /p STAGING_DIR=Enter the OpenSSO 8.0 staging directory :
 echo.
 set /p CONFIG_DIR=Enter the OpenSSO 8.0 configuration directory :
 
-"%JAVA_HOME%/bin/java.exe" -Xms64m -Xmx256m -cp "%CONFIG_DIR%;%STAGING_DIR%\WEB-INF\lib\ldapjdk.jar;%STAGING_DIR%\WEB-INF\lib\opensso-sharedlib.jar;%UPGRADE_DIR%\upgrade\lib\upgrade.jar;%STAGING_DIR%\WEB-INF\lib\amserver.jar" -D"basedir=%UPGRADE_DIR%" -D"stagingDir=%STAGING_DIR%" -D"configDir=%CONFIG_DIR%" com.sun.identity.upgrade.FAMPreUpgrade %*
+"%JAVA_HOME%/bin/java.exe" -Xms64m -Xmx256m -cp "%CONFIG_DIR%;%STAGING_DIR%\WEB-INF\lib\opensso-sharedlib.jar;%UPGRADE_DIR%\upgrade\lib\upgrade.jar;%STAGING_DIR%\WEB-INF\lib\amserver.jar" -D"basedir=%UPGRADE_DIR%" -D"stagingDir=%STAGING_DIR%" -D"configDir=%CONFIG_DIR%" com.sun.identity.upgrade.FAMPreUpgrade %*
 endlocal
 :END
 echo.

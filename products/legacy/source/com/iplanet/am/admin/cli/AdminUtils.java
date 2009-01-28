@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AdminUtils.java,v 1.2 2008-06-25 05:52:24 qcheng Exp $
+ * $Id: AdminUtils.java,v 1.3 2009-01-28 05:35:11 ww203982 Exp $
  *
  */
 
@@ -57,8 +57,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-import netscape.ldap.LDAPDN;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.LDAPDN;
+import com.sun.identity.shared.ldap.util.DN;
 
 
 /**

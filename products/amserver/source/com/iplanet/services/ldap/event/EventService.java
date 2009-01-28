@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EventService.java,v 1.17 2008-12-23 21:22:08 ericow Exp $
+ * $Id: EventService.java,v 1.18 2009-01-28 05:34:50 ww203982 Exp $
  *
  */
 
@@ -40,19 +40,19 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import netscape.ldap.LDAPConnection;
-import netscape.ldap.LDAPControl;
-import netscape.ldap.LDAPEntry;
-import netscape.ldap.LDAPException;
-import netscape.ldap.LDAPInterruptedException;
-import netscape.ldap.LDAPMessage;
-import netscape.ldap.LDAPResponse;
-import netscape.ldap.LDAPSearchConstraints;
-import netscape.ldap.LDAPSearchListener;
-import netscape.ldap.LDAPSearchResult;
-import netscape.ldap.LDAPSearchResultReference;
-import netscape.ldap.controls.LDAPEntryChangeControl;
-import netscape.ldap.controls.LDAPPersistSearchControl;
+import com.sun.identity.shared.ldap.LDAPConnection;
+import com.sun.identity.shared.ldap.LDAPControl;
+import com.sun.identity.shared.ldap.LDAPEntry;
+import com.sun.identity.shared.ldap.LDAPException;
+import com.sun.identity.shared.ldap.LDAPInterruptedException;
+import com.sun.identity.shared.ldap.LDAPMessage;
+import com.sun.identity.shared.ldap.LDAPResponse;
+import com.sun.identity.shared.ldap.LDAPSearchConstraints;
+import com.sun.identity.shared.ldap.LDAPSearchListener;
+import com.sun.identity.shared.ldap.LDAPSearchResult;
+import com.sun.identity.shared.ldap.LDAPSearchResultReference;
+import com.sun.identity.shared.ldap.controls.LDAPEntryChangeControl;
+import com.sun.identity.shared.ldap.controls.LDAPPersistSearchControl;
 
 import com.sun.identity.common.GeneralTaskRunnable;
 import com.sun.identity.common.ShutdownListener;
@@ -695,15 +695,18 @@ public class EventService implements Runnable {
                         + "ldap message with unknown id = "
                         + message.getMessageID());
             }
-        } else if (message instanceof LDAPSearchResult) {
+        } else if (message.getMessageType() ==
+            LDAPMessage.LDAP_SEARCH_RESULT_MESSAGE) {
             // then must be a LDAPSearchResult carrying change control
             processSearchResultMessage((LDAPSearchResult) message, request);
             request.setLastUpdatedTime(System.currentTimeMillis());
-        } else if (message instanceof LDAPResponse) {
+        } else if (message.getMessageType() ==
+            LDAPMessage.LDAP_RESPONSE_MESSAGE) {
             // Check for error message ...
             LDAPResponse rsp = (LDAPResponse) message;
             successState = processResponseMessage(rsp, request);
-        } else if (message instanceof LDAPSearchResultReference) { // Referral
+        } else if (message.getMessageType() ==
+            LDAPMessage.LDAP_SEARCH_RESULT_REFERENCE_MESSAGE) { // Referral
             processSearchResultRef(
                     (LDAPSearchResultReference) message, request);
         }
@@ -1089,7 +1092,8 @@ public class EventService implements Runnable {
             for (int i = 0; i < ctrls.length; i++) {
                 LDAPEntryChangeControl changeCtrl = null;
 
-                if (ctrls[i] instanceof LDAPEntryChangeControl) {
+                if (ctrls[i].getType() ==
+                    LDAPControl.LDAP_ENTRY_CHANGE_CONTROL) {
                     changeCtrl = (LDAPEntryChangeControl) ctrls[i];
                     if (debugger.messageEnabled()) {
                         debugger.message("EventService."

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMUserImpl.java,v 1.5 2008-06-25 05:41:23 qcheng Exp $
+ * $Id: AMUserImpl.java,v 1.6 2009-01-28 05:34:47 ww203982 Exp $
  *
  */
 
@@ -34,8 +34,8 @@ import java.util.Iterator;
 import java.util.Set;
 import java.security.AccessController;
 
-import netscape.ldap.util.DN;
-import netscape.ldap.util.RDN;
+import com.sun.identity.shared.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.RDN;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;

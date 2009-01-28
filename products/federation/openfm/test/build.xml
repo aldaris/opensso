@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.14 2008-11-20 17:53:02 veiming Exp $
+   $Id: build.xml,v 1.15 2009-01-28 05:35:10 ww203982 Exp $
 
 -->
 
@@ -72,7 +72,7 @@
             file="${amserver.base.dir}/resources/config/bootstrapConfig.properties" />
 
         <copy todir="${test.package.dir}/lib">
-            <fileset dir="${extlib.dir}" includes="jaxrpc-api.jar, jaxrpc-impl.jar, jaxrpc-spi.jar, j2ee.jar, ldapjdk.jar, mail.jar, relaxngDatatype.jar, webservices-api.jar, webservices-rt.jar, webservices-tools.jar, webservices-extra-api.jar, webservices-extra.jar, testng-5.1-jdk15.jar, xsdlib.jar"/>
+            <fileset dir="${extlib.dir}" includes="jaxrpc-api.jar, jaxrpc-impl.jar, jaxrpc-spi.jar, j2ee.jar, mail.jar, relaxngDatatype.jar, webservices-api.jar, webservices-rt.jar, webservices-tools.jar, webservices-extra-api.jar, webservices-extra.jar, testng-5.1-jdk15.jar, xsdlib.jar"/>
             <fileset dir="${library.extlib.dir}" />
             <fileset dir="${openfm.extlib.dir}" />
         </copy>

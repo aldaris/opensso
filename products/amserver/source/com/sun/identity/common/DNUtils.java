@@ -22,14 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DNUtils.java,v 1.4 2008-06-25 05:42:25 qcheng Exp $
+ * $Id: DNUtils.java,v 1.5 2009-01-28 05:34:56 ww203982 Exp $
  *
  */
 
 package com.sun.identity.common;
 
-import netscape.ldap.util.DN;
-import netscape.ldap.LDAPDN;
+import com.sun.identity.shared.ldap.util.DN;
+import com.sun.identity.shared.ldap.LDAPDN;
 
 public class DNUtils {
     /**

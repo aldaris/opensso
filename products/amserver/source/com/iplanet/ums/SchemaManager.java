@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SchemaManager.java,v 1.3 2008-06-25 05:41:46 qcheng Exp $
+ * $Id: SchemaManager.java,v 1.4 2009-01-28 05:34:50 ww203982 Exp $
  *
  */
 
@@ -33,15 +33,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 
-import netscape.ldap.LDAPAttribute;
-import netscape.ldap.LDAPAttributeSchema;
-import netscape.ldap.LDAPModification;
-import netscape.ldap.LDAPObjectClassSchema;
-import netscape.ldap.LDAPSchema;
-import netscape.ldap.util.LDIF;
-import netscape.ldap.util.LDIFContent;
-import netscape.ldap.util.LDIFModifyContent;
-import netscape.ldap.util.LDIFRecord;
+import com.sun.identity.shared.ldap.LDAPAttribute;
+import com.sun.identity.shared.ldap.LDAPAttributeSchema;
+import com.sun.identity.shared.ldap.LDAPModification;
+import com.sun.identity.shared.ldap.LDAPObjectClassSchema;
+import com.sun.identity.shared.ldap.LDAPSchema;
+import com.sun.identity.shared.ldap.util.LDIF;
+import com.sun.identity.shared.ldap.util.LDIFContent;
+import com.sun.identity.shared.ldap.util.LDIFModifyContent;
+import com.sun.identity.shared.ldap.util.LDIFRecord;
 
 import com.iplanet.services.util.I18n;
 import com.iplanet.sso.SSOException;

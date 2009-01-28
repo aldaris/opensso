@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMCertStore.java,v 1.4 2008-06-25 05:52:58 qcheng Exp $
+ * $Id: AMCertStore.java,v 1.5 2009-01-28 05:35:12 ww203982 Exp $
  *
  */
 
@@ -43,12 +43,12 @@ import java.security.cert.X509Certificate;
 import java.util.Enumeration;
 import javax.security.auth.x500.X500Principal;
 
-import netscape.ldap.LDAPAttribute;
-import netscape.ldap.LDAPAttributeSet;
-import netscape.ldap.LDAPConnection;
-import netscape.ldap.LDAPEntry;
-import netscape.ldap.LDAPException;
-import netscape.ldap.LDAPSearchResults;
+import com.sun.identity.shared.ldap.LDAPAttribute;
+import com.sun.identity.shared.ldap.LDAPAttributeSet;
+import com.sun.identity.shared.ldap.LDAPConnection;
+import com.sun.identity.shared.ldap.LDAPEntry;
+import com.sun.identity.shared.ldap.LDAPException;
+import com.sun.identity.shared.ldap.LDAPSearchResults;
 
 import com.iplanet.security.x509.X500Name;
 import com.sun.identity.security.SecurityDebug;

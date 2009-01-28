@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Main.java,v 1.8 2008-08-08 00:40:58 ww203982 Exp $
+ * $Id: Main.java,v 1.9 2009-01-28 05:35:11 ww203982 Exp $
  *
  */
 
@@ -75,7 +75,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
-import netscape.ldap.LDAPException;
+import com.sun.identity.shared.ldap.LDAPException;
 
 /**
  * The <code>Main </code> class provides methods to parse the

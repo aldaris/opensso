@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSearchFilterManager.java,v 1.6 2008-06-25 05:41:22 qcheng Exp $
+ * $Id: AMSearchFilterManager.java,v 1.7 2009-01-28 05:34:47 ww203982 Exp $
  *
  */
 
@@ -33,7 +33,7 @@ import com.iplanet.am.util.Cache;
 import com.sun.identity.shared.debug.Debug;
 import java.util.HashMap;
 import java.util.Map;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 
 /**
  * A Class which manages the search filters correponding to each of the AMObject

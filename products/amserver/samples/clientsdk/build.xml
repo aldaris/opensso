@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.6 2008-06-25 05:41:09 qcheng Exp $
+   $Id: build.xml,v 1.7 2009-01-28 05:34:44 ww203982 Exp $
 
 -->
 
@@ -84,7 +84,6 @@
 
         <copy todir="${samples.package.dir}/war/WEB-INF/lib">
             <fileset dir="${extlib.dir}">
-                <include name="ldapjdk.jar" />
                 <include name="jaxb-api.jar" />
                 <include name="mail.jar" />
                 <include name="jaxrpc-api.jar" />
@@ -95,6 +94,7 @@
             </fileset>
             <fileset dir="${amserver.dist.dir}">
                 <include name="amclientsdk.jar" />
+                <include name="opensso-sharedlib.jar" />
             </fileset>
         </copy>
     </target>

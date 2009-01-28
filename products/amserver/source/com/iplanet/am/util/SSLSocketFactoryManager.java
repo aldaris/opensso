@@ -22,13 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSLSocketFactoryManager.java,v 1.2 2008-06-25 05:41:28 qcheng Exp $
+ * $Id: SSLSocketFactoryManager.java,v 1.3 2009-01-28 05:34:48 ww203982 Exp $
  *
  */
 
 package com.iplanet.am.util;
 
-import netscape.ldap.LDAPSocketFactory;
+import com.sun.identity.shared.ldap.LDAPSocketFactory;
 
 public class SSLSocketFactoryManager {
 
@@ -47,8 +47,8 @@ public class SSLSocketFactoryManager {
                     LDAP_SOCKET_FACTORY_DEFAULT_IMPL);
 
             if (socketFactoryImplClass
-                    .equals("netscape.ldap.factory.JSSESocketFactory")) {
-                socketFactory = new netscape.ldap.factory.JSSESocketFactory(
+                    .equals("com.sun.identity.shared.ldap.factory.JSSESocketFactory")) {
+                socketFactory = new com.sun.identity.shared.ldap.factory.JSSESocketFactory(
                         null);
             } else {
                 socketFactory = (LDAPSocketFactory) Class.forName(

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLUtils.java,v 1.12 2009-01-22 21:43:51 weisun2 Exp $
+ * $Id: SAMLUtils.java,v 1.13 2009-01-28 05:35:07 ww203982 Exp $
  *
  */
 
@@ -56,8 +56,8 @@ import java.net.MalformedURLException;
 
 import org.w3c.dom.*;
 
-import netscape.ldap.util.DN;
-import netscape.ldap.util.RDN;
+import com.sun.identity.shared.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.RDN;
 import com.sun.identity.common.PeriodicGroupRunnable;
 import com.sun.identity.common.ScheduleableGroupAction;
 import com.sun.identity.common.SystemConfigurationUtil;

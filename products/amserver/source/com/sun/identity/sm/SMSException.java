@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSException.java,v 1.6 2008-09-10 19:57:45 arviranga Exp $
+ * $Id: SMSException.java,v 1.7 2009-01-28 05:35:03 ww203982 Exp $
  *
  */
 
@@ -43,7 +43,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
-import netscape.ldap.LDAPException;
+import com.sun.identity.shared.ldap.LDAPException;
 
 /**
  * The exception class whose instance is thrown if there is any error during the

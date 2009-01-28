@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrgRegisterServicesReq.java,v 1.2 2008-06-25 05:52:30 qcheng Exp $
+ * $Id: OrgRegisterServicesReq.java,v 1.3 2009-01-28 05:35:11 ww203982 Exp $
  *
  */
 
@@ -39,7 +39,7 @@ import java.io.StringWriter;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 
 class OrgRegisterServicesReq extends AdminReq {
 

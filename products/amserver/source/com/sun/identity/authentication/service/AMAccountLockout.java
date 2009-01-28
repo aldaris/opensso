@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAccountLockout.java,v 1.7 2008-06-25 05:42:03 qcheng Exp $
+ * $Id: AMAccountLockout.java,v 1.8 2009-01-28 05:34:54 ww203982 Exp $
  *
  */
 
@@ -40,7 +40,7 @@ import com.sun.identity.shared.debug.Debug;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 
 /**
  * <code>AMAccountLockout</code> contains the utility methods to retrieve and

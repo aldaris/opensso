@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-war.xml,v 1.48 2009-01-08 22:38:49 veiming Exp $
+   $Id: build-war.xml,v 1.49 2009-01-28 05:35:09 ww203982 Exp $
 
 -->
 
@@ -121,7 +121,7 @@
         </copy>
 
         <copy todir="${war.package.dir}/WEB-INF/lib">
-            <fileset dir="${extlib.dir}" includes="FastInfoset.jar, jaxrpc-api.jar, jaxrpc-impl.jar, jaxrpc-spi.jar, jsr173_api.jar, ldapjdk.jar, mail.jar, relaxngDatatype.jar, webservices-rt.jar, xsdlib.jar" />
+            <fileset dir="${extlib.dir}" includes="FastInfoset.jar, jaxrpc-api.jar, jaxrpc-impl.jar, jaxrpc-spi.jar, jsr173_api.jar, mail.jar, relaxngDatatype.jar, webservices-rt.jar, xsdlib.jar" />
         </copy>
         
         <copy todir="${war.package.dir}/WEB-INF/classes" flatten="true">

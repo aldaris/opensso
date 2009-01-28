@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DSConnectValidation.java,v 1.1 2008-11-22 02:41:20 ak138937 Exp $
+ * $Id: DSConnectValidation.java,v 1.2 2009-01-28 05:34:58 ww203982 Exp $
  *
  */
 
@@ -33,7 +33,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-import netscape.ldap.LDAPConnection;
+import com.sun.identity.shared.ldap.LDAPConnection;
 
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.diagnostic.base.core.log.IToolOutput;

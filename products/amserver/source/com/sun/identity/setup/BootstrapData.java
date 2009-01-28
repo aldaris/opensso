@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BootstrapData.java,v 1.14 2009-01-13 19:16:50 veiming Exp $
+ * $Id: BootstrapData.java,v 1.15 2009-01-28 05:35:02 ww203982 Exp $
  *
  */
 
@@ -52,7 +52,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 
 public class BootstrapData {
     private List data = new ArrayList();

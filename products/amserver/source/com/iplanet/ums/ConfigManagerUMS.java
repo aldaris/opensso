@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigManagerUMS.java,v 1.5 2008-08-23 17:02:54 ericow Exp $
+ * $Id: ConfigManagerUMS.java,v 1.6 2009-01-28 05:34:50 ww203982 Exp $
  *
  */
 
@@ -55,7 +55,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 
 /**
  * Configuration Manager is responsible for getting configuration parameters for

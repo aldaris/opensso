@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SearchResults.java,v 1.6 2008-06-25 05:41:46 qcheng Exp $
+ * $Id: SearchResults.java,v 1.7 2009-01-28 05:34:51 ww203982 Exp $
  *
  */
 
@@ -35,12 +35,12 @@ import com.sun.identity.shared.debug.Debug;
 import java.security.Principal;
 import java.util.Hashtable;
 import java.util.NoSuchElementException;
-import netscape.ldap.LDAPConnection;
-import netscape.ldap.LDAPControl;
-import netscape.ldap.LDAPEntry;
-import netscape.ldap.LDAPException;
-import netscape.ldap.LDAPSearchResults;
-import netscape.ldap.controls.LDAPVirtualListResponse;
+import com.sun.identity.shared.ldap.LDAPConnection;
+import com.sun.identity.shared.ldap.LDAPControl;
+import com.sun.identity.shared.ldap.LDAPEntry;
+import com.sun.identity.shared.ldap.LDAPException;
+import com.sun.identity.shared.ldap.LDAPSearchResults;
+import com.sun.identity.shared.ldap.controls.LDAPVirtualListResponse;
 
 /**
  * Represents search results. Each search result is a PersistentObject
@@ -378,7 +378,8 @@ public class SearchResults implements java.io.Serializable {
         // Find the VLV response control recorded in SearchResults
         //
         for (int i = 0; i < ctrls.length; i++) {
-            if (ctrls[i] instanceof LDAPVirtualListResponse) {
+            if (ctrls[i].getType() ==
+                LDAPControl.LDAP_VIRTUAL_LIST_RESPONSE_CONTROL) {
                 vlvResponse = (LDAPVirtualListResponse) ctrls[i];
             }
         }

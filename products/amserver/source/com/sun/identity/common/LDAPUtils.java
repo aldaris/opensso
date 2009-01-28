@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPUtils.java,v 1.6 2009-01-24 00:50:57 goodearth Exp $
+ * $Id: LDAPUtils.java,v 1.7 2009-01-28 05:34:56 ww203982 Exp $
  *
  */
 
@@ -31,20 +31,20 @@ package com.sun.identity.common;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.Enumeration;
-import netscape.ldap.LDAPAttribute;
-import netscape.ldap.LDAPAttributeSet;
-import netscape.ldap.LDAPConnection;
-import netscape.ldap.LDAPEntry;
-import netscape.ldap.LDAPException;
-import netscape.ldap.LDAPModification;
-import netscape.ldap.LDAPModificationSet;
-import netscape.ldap.LDAPSearchResults;
-import netscape.ldap.util.LDIF;
-import netscape.ldap.util.LDIFAddContent;
-import netscape.ldap.util.LDIFAttributeContent;
-import netscape.ldap.util.LDIFContent;
-import netscape.ldap.util.LDIFModifyContent;
-import netscape.ldap.util.LDIFRecord;
+import com.sun.identity.shared.ldap.LDAPAttribute;
+import com.sun.identity.shared.ldap.LDAPAttributeSet;
+import com.sun.identity.shared.ldap.LDAPConnection;
+import com.sun.identity.shared.ldap.LDAPEntry;
+import com.sun.identity.shared.ldap.LDAPException;
+import com.sun.identity.shared.ldap.LDAPModification;
+import com.sun.identity.shared.ldap.LDAPModificationSet;
+import com.sun.identity.shared.ldap.LDAPSearchResults;
+import com.sun.identity.shared.ldap.util.LDIF;
+import com.sun.identity.shared.ldap.util.LDIFAddContent;
+import com.sun.identity.shared.ldap.util.LDIFAttributeContent;
+import com.sun.identity.shared.ldap.util.LDIFContent;
+import com.sun.identity.shared.ldap.util.LDIFModifyContent;
+import com.sun.identity.shared.ldap.util.LDIFRecord;
 
 public class LDAPUtils {
     

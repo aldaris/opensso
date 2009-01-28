@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMDynamicGroupImpl.java,v 1.4 2008-06-25 05:41:20 qcheng Exp $
+ * $Id: AMDynamicGroupImpl.java,v 1.5 2009-01-28 05:34:47 ww203982 Exp $
  *
  */
 
@@ -33,7 +33,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;

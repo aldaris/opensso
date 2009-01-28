@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PluginConfig.java,v 1.4 2008-07-11 01:46:21 arviranga Exp $
+ * $Id: PluginConfig.java,v 1.5 2009-01-28 05:35:03 ww203982 Exp $
  *
  */
 
@@ -34,7 +34,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;

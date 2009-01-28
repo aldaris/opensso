@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FallBackManager.java,v 1.4 2008-07-30 00:50:16 arviranga Exp $
+ * $Id: FallBackManager.java,v 1.5 2009-01-28 05:34:56 ww203982 Exp $
  *
  */
 
@@ -31,8 +31,8 @@ package com.sun.identity.common;
 import java.util.*;
 import com.sun.identity.shared.Constants;
 import com.iplanet.am.util.Debug;
-import netscape.ldap.LDAPConnection;
-import netscape.ldap.LDAPException;
+import com.sun.identity.shared.ldap.LDAPConnection;
+import com.sun.identity.shared.ldap.LDAPException;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.ldap.event.EventService;
 

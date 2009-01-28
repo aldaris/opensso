@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerConfigMgr.java,v 1.12 2008-08-08 00:40:55 ww203982 Exp $
+ * $Id: ServerConfigMgr.java,v 1.13 2009-01-28 05:34:49 ww203982 Exp $
  *
  */
 
@@ -85,7 +85,7 @@ import java.util.Set;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 
 /**
  * The class <code>ServiceConfigMgr</code> provides interfaces to set the

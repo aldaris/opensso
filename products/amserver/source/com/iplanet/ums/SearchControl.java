@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SearchControl.java,v 1.4 2008-06-25 05:41:46 qcheng Exp $
+ * $Id: SearchControl.java,v 1.5 2009-01-28 05:34:51 ww203982 Exp $
  *
  */
 
@@ -30,7 +30,7 @@ package com.iplanet.ums;
 
 import java.util.Hashtable;
 
-import netscape.ldap.LDAPv2;
+import com.sun.identity.shared.ldap.LDAPv2;
 
 /**
  * This class provides a way to customize Search behaviors. Common behaviors are

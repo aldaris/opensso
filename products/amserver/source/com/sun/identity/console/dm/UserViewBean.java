@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserViewBean.java,v 1.2 2008-06-25 05:42:55 qcheng Exp $
+ * $Id: UserViewBean.java,v 1.3 2009-01-28 05:34:57 ww203982 Exp $
  *
  */
 
@@ -42,7 +42,7 @@ import com.sun.web.ui.model.CCActionTableModel;
 import java.util.Iterator;
 import java.util.Set;
 import java.io.Serializable;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 
 public class UserViewBean
     extends DMTypeBase

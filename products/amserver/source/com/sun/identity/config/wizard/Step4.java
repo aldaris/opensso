@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step4.java,v 1.16 2009-01-05 23:17:10 veiming Exp $
+ * $Id: Step4.java,v 1.17 2009-01-28 05:34:56 ww203982 Exp $
  *
  */
 package com.sun.identity.config.wizard;
@@ -32,9 +32,9 @@ import net.sf.click.control.ActionLink;
 import com.sun.identity.config.util.AjaxPage;
 import com.sun.identity.setup.SetupConstants;
 import net.sf.click.Context;
-import netscape.ldap.LDAPConnection;
-import netscape.ldap.LDAPException;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.LDAPConnection;
+import com.sun.identity.shared.ldap.LDAPException;
+import com.sun.identity.shared.ldap.util.DN;
 
 /**
  * Step 4 is the input of the remote user data store properties.

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupDSConfig.java,v 1.18 2008-08-19 19:09:23 veiming Exp $
+ * $Id: AMSetupDSConfig.java,v 1.19 2009-01-28 05:35:02 ww203982 Exp $
  *
  */
 
@@ -39,12 +39,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.io.IOException;
-import netscape.ldap.LDAPConnection;
-import netscape.ldap.LDAPDN;
-import netscape.ldap.LDAPException;
-import netscape.ldap.LDAPSearchResults;
-import netscape.ldap.util.DN;
-import netscape.ldap.util.RDN;
+import com.sun.identity.shared.ldap.LDAPConnection;
+import com.sun.identity.shared.ldap.LDAPDN;
+import com.sun.identity.shared.ldap.LDAPException;
+import com.sun.identity.shared.ldap.LDAPSearchResults;
+import com.sun.identity.shared.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.RDN;
 
 /**
  * This class does Directory Server related tasks for 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DSAMERole.java,v 1.3 2008-06-25 05:43:51 qcheng Exp $
+ * $Id: DSAMERole.java,v 1.4 2009-01-28 05:35:01 ww203982 Exp $
  *
  */
 
@@ -39,8 +39,8 @@ import com.iplanet.am.sdk.*;
 import com.sun.identity.policy.*;
 import com.sun.identity.policy.interfaces.Subject;
 
-import netscape.ldap.util.DN;
-import netscape.ldap.LDAPException;
+import com.sun.identity.shared.ldap.util.DN;
+import com.sun.identity.shared.ldap.LDAPException;
 
 /**
  * DSAME Role plugin lets policy admins specify the DSAME roles as a subject.

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMFormatUtils.java,v 1.4 2008-08-23 02:39:24 babysunil Exp $
+ * $Id: AMFormatUtils.java,v 1.5 2009-01-28 05:34:56 ww203982 Exp $
  *
  */
 
@@ -45,9 +45,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import netscape.ldap.util.DN;
-import netscape.ldap.util.RDN;
-import netscape.ldap.LDAPDN;
+import com.sun.identity.shared.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.RDN;
+import com.sun.identity.shared.ldap.LDAPDN;
 
 /**
  * <code>AMFormatUtils</code> provides a set of formating methods

@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.44 2009-01-16 23:36:26 higapa Exp $
+ * $Id: LoginState.java,v 1.45 2009-01-28 05:34:54 ww203982 Exp $
  *
  */
 
@@ -97,7 +97,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 
 /**
  * This class maintains the User's login state information from the time user 

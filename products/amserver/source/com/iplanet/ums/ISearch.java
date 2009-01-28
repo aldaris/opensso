@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISearch.java,v 1.5 2008-06-25 05:41:45 qcheng Exp $
+ * $Id: ISearch.java,v 1.6 2009-01-28 05:34:50 ww203982 Exp $
  *
  */
 
@@ -66,7 +66,7 @@ package com.iplanet.ums;
  *           searchControl.setVLVRange(startPos,  0, pageSize);
  *           searchControl.setSortAttributeNames( { &quot;cn&quot; } );
  *               SearchResults searchResults = 
- *                 organization.search(&quot;(department=netscape)&quot;,
+ *                 organization.search(&quot;(department=sun)&quot;,
  *                        { &quot;cn&quot;, &quot;sn&quot;, &quot;uid&quot; }, 
  *                              searchControl);
  *           while (searchResults.hasMoreElements() == true) {

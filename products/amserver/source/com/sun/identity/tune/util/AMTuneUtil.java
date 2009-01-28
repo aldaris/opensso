@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneUtil.java,v 1.10 2008-09-19 23:29:43 ykwon Exp $
+ * $Id: AMTuneUtil.java,v 1.11 2009-01-28 05:35:05 ww203982 Exp $
  */
 
 package com.sun.identity.tune.util;
@@ -1203,8 +1203,8 @@ import java.util.zip.ZipOutputStream;
             }
             String filesToCopy[][] = { 
                 {"../../../lib/amtune.jar", zLibDir + FILE_SEP + "amtune.jar"},
-                {"../../../lib/ldapjdk.jar", zLibDir + FILE_SEP + 
-                         "ldapjdk.jar"},
+                {"../../../lib/opensso-sharedlib.jar", zLibDir + FILE_SEP +
+                         "opensso-sharedlib.jar"},
                 {"../../../template/unix/bin/amtune/amtune.template",
                          zBinUnxDir + FILE_SEP + "amtune"},
                 {"../../../template/windows/bin/amtune/amtune.bat.template",

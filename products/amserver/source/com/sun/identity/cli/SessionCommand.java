@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionCommand.java,v 1.7 2008-12-05 17:55:19 veiming Exp $
+ * $Id: SessionCommand.java,v 1.8 2009-01-28 05:34:54 ww203982 Exp $
  *
  */
 
@@ -47,8 +47,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
-import netscape.ldap.LDAPDN;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.LDAPDN;
+import com.sun.identity.shared.ldap.util.DN;
 
 /**
  * Displays active sessions.

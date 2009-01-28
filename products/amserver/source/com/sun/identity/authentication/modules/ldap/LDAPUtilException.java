@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPUtilException.java,v 1.3 2008-06-25 05:41:58 qcheng Exp $
+ * $Id: LDAPUtilException.java,v 1.4 2009-01-28 05:34:53 ww203982 Exp $
  *
  */
 
@@ -40,7 +40,7 @@ import java.util.ResourceBundle;
  * Exception that is thrown when the user  
  * fail the LDAP  authentication.
  */
-public class LDAPUtilException extends netscape.ldap.LDAPException 
+public class LDAPUtilException extends com.sun.identity.shared.ldap.LDAPException 
     implements L10NMessage {
 
     private String msgID;

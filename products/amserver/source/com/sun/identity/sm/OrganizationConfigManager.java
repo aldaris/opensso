@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrganizationConfigManager.java,v 1.24 2008-08-19 19:09:25 veiming Exp $
+ * $Id: OrganizationConfigManager.java,v 1.25 2009-01-28 05:35:03 ww203982 Exp $
  *
  */
 
@@ -38,7 +38,7 @@ import java.util.regex.Pattern;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;

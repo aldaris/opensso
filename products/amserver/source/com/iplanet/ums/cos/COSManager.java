@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: COSManager.java,v 1.4 2008-06-25 05:41:46 qcheng Exp $
+ * $Id: COSManager.java,v 1.5 2009-01-28 05:34:51 ww203982 Exp $
  *
  */
 
@@ -35,8 +35,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.StringTokenizer;
 
-import netscape.ldap.LDAPException;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.LDAPException;
+import com.sun.identity.shared.ldap.util.DN;
 
 import com.iplanet.services.ldap.Attr;
 import com.iplanet.services.ldap.AttrSet;

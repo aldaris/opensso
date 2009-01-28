@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DMModelBase.java,v 1.3 2008-07-10 23:27:23 veiming Exp $
+ * $Id: DMModelBase.java,v 1.4 2009-01-28 05:34:57 ww203982 Exp $
  *
  */
 
@@ -84,9 +84,9 @@ import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.util.MissingResourceException;
 import javax.servlet.http.HttpServletRequest;
-import netscape.ldap.LDAPDN;
-import netscape.ldap.util.DN;
-import netscape.ldap.util.RDN;
+import com.sun.identity.shared.ldap.LDAPDN;
+import com.sun.identity.shared.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.RDN;
 
 /* - LOG COMPLETE - */
 

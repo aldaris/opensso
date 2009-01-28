@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NameIDPartnerAccountMapper.java,v 1.2 2008-06-25 05:49:59 qcheng Exp $
+ * $Id: NameIDPartnerAccountMapper.java,v 1.3 2009-01-28 05:35:10 ww203982 Exp $
  *
  */
 
@@ -34,7 +34,7 @@ import com.sun.identity.saml.assertion.Subject;
 import com.sun.identity.saml.common.SAMLUtils;
 import com.sun.identity.sm.SMSEntry;
 import java.util.Map;
-import netscape.ldap.util.DN; 
+import com.sun.identity.shared.ldap.util.DN; 
 
 /**
  * The class <code>NameIDPartnerAccountMapper</code> provide an 

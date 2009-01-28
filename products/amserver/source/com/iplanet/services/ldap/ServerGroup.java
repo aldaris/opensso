@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerGroup.java,v 1.4 2008-06-25 05:41:36 qcheng Exp $
+ * $Id: ServerGroup.java,v 1.5 2009-01-28 05:34:49 ww203982 Exp $
  *
  */
 
@@ -39,8 +39,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Vector;
-import netscape.ldap.LDAPDN;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.LDAPDN;
+import com.sun.identity.shared.ldap.util.DN;
 
 public class ServerGroup implements ParseOutput {
     /**

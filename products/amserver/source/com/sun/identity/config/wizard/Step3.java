@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step3.java,v 1.36 2009-01-17 02:09:19 kevinserwin Exp $
+ * $Id: Step3.java,v 1.37 2009-01-28 05:34:56 ww203982 Exp $
  *
  */
 package com.sun.identity.config.wizard;
@@ -41,9 +41,9 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import net.sf.click.control.ActionLink;
 import net.sf.click.Context;
-import netscape.ldap.LDAPConnection;
-import netscape.ldap.LDAPException;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.LDAPConnection;
+import com.sun.identity.shared.ldap.LDAPException;
+import com.sun.identity.shared.ldap.util.DN;
 
 /**
  * Step 3 is for selecting the embedded or external configuration store 

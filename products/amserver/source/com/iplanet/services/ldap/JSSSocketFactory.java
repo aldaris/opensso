@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JSSSocketFactory.java,v 1.2 2008-06-25 05:41:36 qcheng Exp $
+ * $Id: JSSSocketFactory.java,v 1.3 2009-01-28 05:34:49 ww203982 Exp $
  *
  */
 package com.iplanet.services.ldap;
@@ -31,8 +31,8 @@ import java.io.Serializable;
 import java.net.Socket;
 import java.net.InetAddress;
 
-import netscape.ldap.LDAPException;
-import netscape.ldap.LDAPSocketFactory;
+import com.sun.identity.shared.ldap.LDAPException;
+import com.sun.identity.shared.ldap.LDAPSocketFactory;
 
 import org.mozilla.jss.ssl.SSLSocket;
 
@@ -62,7 +62,7 @@ import com.sun.identity.shared.debug.Debug;
  * </PRE>
  * @version iPlanet with JSS3.1
  * @see LDAPSocketFactory
- * @see LDAPConnection#LDAPConnection(netscape.ldap.LDAPSocketFactory)
+ * @see LDAPConnection#LDAPConnection(com.sun.identity.shared.ldap.LDAPSocketFactory)
  */
 
 public class JSSSocketFactory implements Serializable,

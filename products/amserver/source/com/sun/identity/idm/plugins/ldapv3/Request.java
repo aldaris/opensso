@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Request.java,v 1.4 2008-06-25 05:43:31 qcheng Exp $
+ * $Id: Request.java,v 1.5 2009-01-28 05:34:59 ww203982 Exp $
  *
  */
 
@@ -30,7 +30,7 @@ package com.sun.identity.idm.plugins.ldapv3;
 
 import java.util.Map;
 
-import netscape.ldap.LDAPConnection;
+import com.sun.identity.shared.ldap.LDAPConnection;
 
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.idm.IdRepoListener;

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSJAXRPCObject.java,v 1.17 2008-07-06 05:48:30 arviranga Exp $
+ * $Id: SMSJAXRPCObject.java,v 1.18 2009-01-28 05:35:03 ww203982 Exp $
  *
  */
 
@@ -40,7 +40,7 @@ import javax.naming.directory.Attribute;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.ModificationItem;
 
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.dpro.session.Session;

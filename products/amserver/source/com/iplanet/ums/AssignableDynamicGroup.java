@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssignableDynamicGroup.java,v 1.5 2008-06-25 05:41:44 qcheng Exp $
+ * $Id: AssignableDynamicGroup.java,v 1.6 2009-01-28 05:34:50 ww203982 Exp $
  *
  */
 
@@ -33,9 +33,9 @@ import com.iplanet.services.ldap.AttrSet;
 import com.iplanet.services.ldap.ModSet;
 import com.iplanet.services.util.I18n;
 import com.sun.identity.shared.debug.Debug;
-import netscape.ldap.LDAPUrl;
-import netscape.ldap.LDAPv2;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.LDAPUrl;
+import com.sun.identity.shared.ldap.LDAPv2;
+import com.sun.identity.shared.ldap.util.DN;
 
 /**
  * Represents a dynamic group entry that uses memberOf as its filter. It checks

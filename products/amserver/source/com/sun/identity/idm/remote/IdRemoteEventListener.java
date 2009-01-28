@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: IdRemoteEventListener.java,v 1.6 2008-10-22 19:20:22 goodearth Exp $
+* $Id: IdRemoteEventListener.java,v 1.7 2009-01-28 05:35:00 ww203982 Exp $
 */
 
 package com.sun.identity.idm.remote;
@@ -35,7 +35,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.comm.client.NotificationHandler;

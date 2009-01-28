@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServicesDefaultValues.java,v 1.37 2008-11-06 05:31:02 veiming Exp $
+ * $Id: ServicesDefaultValues.java,v 1.38 2009-01-28 05:35:02 ww203982 Exp $
  *
  */
 
@@ -45,8 +45,8 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
-import netscape.ldap.LDAPDN;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.LDAPDN;
+import com.sun.identity.shared.ldap.util.DN;
 
 /**
  * This class holds the default values of service schema.

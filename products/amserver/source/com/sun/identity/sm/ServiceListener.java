@@ -22,13 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceListener.java,v 1.4 2008-06-25 05:44:05 qcheng Exp $
+ * $Id: ServiceListener.java,v 1.5 2009-01-28 05:35:03 ww203982 Exp $
  *
  */
 
 package com.sun.identity.sm;
 
-import netscape.ldap.controls.LDAPPersistSearchControl;
+import com.sun.identity.shared.ldap.controls.LDAPPersistSearchControl;
 
 /**
  * The interface <code>ServiceListener</code> needs to be implemented by

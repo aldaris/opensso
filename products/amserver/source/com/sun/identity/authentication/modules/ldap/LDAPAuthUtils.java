@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPAuthUtils.java,v 1.16 2008-12-03 01:00:44 veiming Exp $
+ * $Id: LDAPAuthUtils.java,v 1.17 2009-01-28 05:34:53 ww203982 Exp $
  *
  */
 
@@ -51,21 +51,21 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
-import netscape.ldap.LDAPAttribute;
-import netscape.ldap.LDAPConnection;
-import netscape.ldap.LDAPControl;
-import netscape.ldap.LDAPEntry;
-import netscape.ldap.LDAPException;
-import netscape.ldap.LDAPModification;
-import netscape.ldap.LDAPModificationSet;
-import netscape.ldap.LDAPRebind;
-import netscape.ldap.LDAPRebindAuth;
-import netscape.ldap.LDAPReferralException;
-import netscape.ldap.LDAPSearchResults;
-import netscape.ldap.LDAPSearchConstraints;
-import netscape.ldap.controls.LDAPPasswordExpiredControl;
-import netscape.ldap.controls.LDAPPasswordExpiringControl;
-import netscape.ldap.factory.JSSESocketFactory;
+import com.sun.identity.shared.ldap.LDAPAttribute;
+import com.sun.identity.shared.ldap.LDAPConnection;
+import com.sun.identity.shared.ldap.LDAPControl;
+import com.sun.identity.shared.ldap.LDAPEntry;
+import com.sun.identity.shared.ldap.LDAPException;
+import com.sun.identity.shared.ldap.LDAPModification;
+import com.sun.identity.shared.ldap.LDAPModificationSet;
+import com.sun.identity.shared.ldap.LDAPRebind;
+import com.sun.identity.shared.ldap.LDAPRebindAuth;
+import com.sun.identity.shared.ldap.LDAPReferralException;
+import com.sun.identity.shared.ldap.LDAPSearchResults;
+import com.sun.identity.shared.ldap.LDAPSearchConstraints;
+import com.sun.identity.shared.ldap.controls.LDAPPasswordExpiredControl;
+import com.sun.identity.shared.ldap.controls.LDAPPasswordExpiringControl;
+import com.sun.identity.shared.ldap.factory.JSSESocketFactory;
 
 public class LDAPAuthUtils {
     private boolean returnUserDN;
@@ -854,10 +854,12 @@ public class LDAPAuthUtils {
         if ((controls != null) && (controls.length >= 1)) {
             LDAPPasswordExpiringControl expgControl = null;
             for (int i = 0; i < controls.length; i++) {
-                if (controls[i] instanceof LDAPPasswordExpiredControl) {
+                if (controls[i].getType() ==
+                    LDAPControl.LDAP_PASSWORD_EXPIRED_CONTROL) {
                     return PASSWORD_EXPIRED;
                 }
-                if (controls[i] instanceof LDAPPasswordExpiringControl) {
+                if (controls[i].getType() ==
+                    LDAPControl.LDAP_PASSWORD_EXPIRING_CONTROL) {
                     expgControl = (LDAPPasswordExpiringControl)controls[i];
                 }
             }

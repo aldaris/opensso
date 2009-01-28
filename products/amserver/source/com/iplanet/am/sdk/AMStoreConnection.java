@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMStoreConnection.java,v 1.12 2008-09-03 07:04:50 lakshman_abburi Exp $
+ * $Id: AMStoreConnection.java,v 1.13 2009-01-28 05:34:47 ww203982 Exp $
  *
  */
 
@@ -53,8 +53,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-import netscape.ldap.LDAPDN;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.LDAPDN;
+import com.sun.identity.shared.ldap.util.DN;
 
 
 /**
@@ -1125,7 +1125,7 @@ public final class AMStoreConnection implements AMConstants {
      */
     public boolean isValidEntry(String dn) throws SSOException {
         // First check if DN syntax is valid. Avoid making iDS call
-        if (!netscape.ldap.util.DN.isDN(dn)) { // May be a exception thrown
+        if (!com.sun.identity.shared.ldap.util.DN.isDN(dn)) { // May be a exception thrown
 
             return false; // would be better here.
         }

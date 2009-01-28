@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMCommonUtils.java,v 1.6 2008-06-25 05:41:19 qcheng Exp $
+ * $Id: AMCommonUtils.java,v 1.7 2009-01-28 05:34:46 ww203982 Exp $
  *
  */
 
@@ -46,7 +46,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 
 /**
  * This class contains all the miscellaneous utility methods used in the

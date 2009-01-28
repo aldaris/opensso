@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PeopleContainer.java,v 1.3 2008-06-25 05:41:46 qcheng Exp $
+ * $Id: PeopleContainer.java,v 1.4 2009-01-28 05:34:50 ww203982 Exp $
  *
  */
 
@@ -30,7 +30,7 @@ package com.iplanet.ums;
 
 import java.security.Principal;
 
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 
 import com.iplanet.services.ldap.Attr;
 import com.iplanet.services.ldap.AttrSet;

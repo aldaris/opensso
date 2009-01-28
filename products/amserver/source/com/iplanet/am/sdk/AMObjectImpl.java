@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMObjectImpl.java,v 1.12 2008-09-16 21:52:46 222713 Exp $
+ * $Id: AMObjectImpl.java,v 1.13 2009-01-28 05:34:47 ww203982 Exp $
  *
  */
 
@@ -38,9 +38,9 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
-import netscape.ldap.LDAPUrl;
-import netscape.ldap.util.DN;
-import netscape.ldap.util.RDN;
+import com.sun.identity.shared.ldap.LDAPUrl;
+import com.sun.identity.shared.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.RDN;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;

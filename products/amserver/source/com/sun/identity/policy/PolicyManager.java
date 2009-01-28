@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManager.java,v 1.7 2008-06-25 05:43:44 qcheng Exp $
+ * $Id: PolicyManager.java,v 1.8 2009-01-28 05:35:01 ww203982 Exp $
  *
  */
 
@@ -55,7 +55,7 @@ import com.sun.identity.idm.IdRepoException;
 
 import com.sun.identity.policy.interfaces.Subject;
 
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 
 /**
  * The <code>PolicyManager</code> class manages policies

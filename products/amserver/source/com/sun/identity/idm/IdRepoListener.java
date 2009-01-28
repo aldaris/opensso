@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRepoListener.java,v 1.15 2008-08-29 01:34:55 arviranga Exp $
+ * $Id: IdRepoListener.java,v 1.16 2009-01-28 05:34:59 ww203982 Exp $
  *
  */
 
@@ -43,9 +43,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import netscape.ldap.LDAPDN;
-import netscape.ldap.controls.LDAPPersistSearchControl;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.LDAPDN;
+import com.sun.identity.shared.ldap.controls.LDAPPersistSearchControl;
+import com.sun.identity.shared.ldap.util.DN;
 
 /**
  * Provides methods that can be called by IdRepo plugins to notify change

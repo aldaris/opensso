@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdentityServicesImpl.java,v 1.15 2008-12-16 00:48:25 veiming Exp $
+ * $Id: IdentityServicesImpl.java,v 1.16 2009-01-28 05:35:00 ww203982 Exp $
  *
  */
 
@@ -97,7 +97,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.StringTokenizer;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 
 /**
  * Web Service to provide security based on authentication and authorization

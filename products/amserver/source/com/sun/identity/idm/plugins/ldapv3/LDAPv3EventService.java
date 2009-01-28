@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3EventService.java,v 1.16 2008-12-23 21:17:36 ericow Exp $
+ * $Id: LDAPv3EventService.java,v 1.17 2009-01-28 05:34:59 ww203982 Exp $
  *
  */
 
@@ -39,26 +39,26 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import netscape.ldap.LDAPAttribute;
-import netscape.ldap.LDAPAttributeSet;
-import netscape.ldap.LDAPConnection;
-import netscape.ldap.LDAPControl;
-import netscape.ldap.LDAPEntry;
-import netscape.ldap.LDAPException;
-import netscape.ldap.LDAPInterruptedException;
-import netscape.ldap.LDAPMessage;
-import netscape.ldap.LDAPResponse;
-import netscape.ldap.LDAPSearchConstraints;
-import netscape.ldap.LDAPSearchListener;
-import netscape.ldap.LDAPSearchResult;
-import netscape.ldap.LDAPSearchResultReference;
-import netscape.ldap.LDAPSearchResults;
-import netscape.ldap.LDAPv2;
-import netscape.ldap.LDAPv3;
-import netscape.ldap.controls.LDAPEntryChangeControl;
-import netscape.ldap.controls.LDAPPersistSearchControl;
-import netscape.ldap.controls.LDAPProxiedAuthControl;
-import netscape.ldap.factory.JSSESocketFactory;
+import com.sun.identity.shared.ldap.LDAPAttribute;
+import com.sun.identity.shared.ldap.LDAPAttributeSet;
+import com.sun.identity.shared.ldap.LDAPConnection;
+import com.sun.identity.shared.ldap.LDAPControl;
+import com.sun.identity.shared.ldap.LDAPEntry;
+import com.sun.identity.shared.ldap.LDAPException;
+import com.sun.identity.shared.ldap.LDAPInterruptedException;
+import com.sun.identity.shared.ldap.LDAPMessage;
+import com.sun.identity.shared.ldap.LDAPResponse;
+import com.sun.identity.shared.ldap.LDAPSearchConstraints;
+import com.sun.identity.shared.ldap.LDAPSearchListener;
+import com.sun.identity.shared.ldap.LDAPSearchResult;
+import com.sun.identity.shared.ldap.LDAPSearchResultReference;
+import com.sun.identity.shared.ldap.LDAPSearchResults;
+import com.sun.identity.shared.ldap.LDAPv2;
+import com.sun.identity.shared.ldap.LDAPv3;
+import com.sun.identity.shared.ldap.controls.LDAPEntryChangeControl;
+import com.sun.identity.shared.ldap.controls.LDAPPersistSearchControl;
+import com.sun.identity.shared.ldap.controls.LDAPProxiedAuthControl;
+import com.sun.identity.shared.ldap.factory.JSSESocketFactory;
 
 import com.sun.identity.common.GeneralTaskRunnable;
 import com.sun.identity.common.SystemTimer;
@@ -700,15 +700,18 @@ public class LDAPv3EventService implements Runnable {
                         "ldap message with unknown id = " + 
                         message.getMessageID() + " randomID=" + randomID);
             }
-        } else if (message instanceof LDAPSearchResult) {
+        } else if (message.getMessageType() ==
+            LDAPMessage.LDAP_SEARCH_RESULT_MESSAGE) {
             // then must be a LDAPSearchResult carrying change control
             processSearchResultMessage((LDAPSearchResult) message, request);
             request.setLastUpdatedTime(System.currentTimeMillis());
-        } else if (message instanceof LDAPResponse) {
+        } else if (message.getMessageType() ==
+            LDAPMessage.LDAP_RESPONSE_MESSAGE) {
             // Check for error message ...
             LDAPResponse rsp = (LDAPResponse) message;
             successState = processResponseMessage(rsp, request);
-        } else if (message instanceof LDAPSearchResultReference) { // Referral
+        } else if (message.getMessageType() ==
+            LDAPMessage.LDAP_SEARCH_RESULT_REFERENCE_MESSAGE) { // Referral
             processSearchResultRef(
                     (LDAPSearchResultReference) message, request);
         }
@@ -1048,7 +1051,8 @@ public class LDAPv3EventService implements Runnable {
                 for (int i = 0; i < ctrls.length; i++) {
                     LDAPEntryChangeControl changeCtrl = null;
 
-                    if (ctrls[i] instanceof LDAPEntryChangeControl) {
+                    if (ctrls[i].getType() ==
+                        LDAPControl.LDAP_ENTRY_CHANGE_CONTROL) {
                         changeCtrl = (LDAPEntryChangeControl) ctrls[i];
                         if (debugger.messageEnabled()) {
                             debugger.message(

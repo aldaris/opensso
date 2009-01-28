@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMServiceUtils.java,v 1.6 2008-09-19 20:44:48 arviranga Exp $
+ * $Id: AMServiceUtils.java,v 1.7 2009-01-28 05:34:47 ww203982 Exp $
  *
  */
 
@@ -46,7 +46,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 
 /**
  * This class has some of the most commonly used Service Management

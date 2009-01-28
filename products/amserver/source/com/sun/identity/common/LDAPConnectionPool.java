@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPConnectionPool.java,v 1.16 2008-10-30 22:13:16 subashvarma Exp $
+ * $Id: LDAPConnectionPool.java,v 1.17 2009-01-28 05:34:56 ww203982 Exp $
  *
  */
 
@@ -46,9 +46,9 @@ import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.ldap.DSConfigMgr;
 import com.sun.identity.common.FallBackManager;
 import com.sun.identity.shared.debug.Debug;
-import netscape.ldap.LDAPConnection;
-import netscape.ldap.LDAPException;
-import netscape.ldap.LDAPSearchConstraints;
+import com.sun.identity.shared.ldap.LDAPConnection;
+import com.sun.identity.shared.ldap.LDAPException;
+import com.sun.identity.shared.ldap.LDAPSearchConstraints;
 
 /**
  * Class to maintain a pool of individual connections to the

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Policy.java,v 1.5 2008-12-15 20:52:19 dillidorai Exp $
+ * $Id: Policy.java,v 1.6 2009-01-28 05:35:00 ww203982 Exp $
  *
  */
 
@@ -35,7 +35,7 @@ import com.sun.identity.policy.interfaces.ResponseProvider;
 import com.sun.identity.policy.interfaces.Referral;
 
 import java.util.*;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 
 import org.w3c.dom.*;
 

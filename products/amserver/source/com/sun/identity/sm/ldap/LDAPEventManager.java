@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPEventManager.java,v 1.7 2008-08-06 16:43:25 veiming Exp $
+ * $Id: LDAPEventManager.java,v 1.8 2009-01-28 05:35:04 ww203982 Exp $
  *
  */
 
@@ -35,9 +35,9 @@ import com.iplanet.services.ldap.ServerInstance;
 import com.iplanet.services.ldap.event.EventException;
 import java.util.Map;
 
-import netscape.ldap.LDAPConnection;
-import netscape.ldap.LDAPException;
-import netscape.ldap.controls.LDAPPersistSearchControl;
+import com.sun.identity.shared.ldap.LDAPConnection;
+import com.sun.identity.shared.ldap.LDAPException;
+import com.sun.identity.shared.ldap.controls.LDAPPersistSearchControl;
 
 import com.sun.identity.shared.debug.Debug;
 import com.iplanet.services.ldap.event.DSEvent;

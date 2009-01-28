@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FilteredRole.java,v 1.3 2008-06-25 05:41:45 qcheng Exp $
+ * $Id: FilteredRole.java,v 1.4 2009-01-28 05:34:50 ww203982 Exp $
  *
  */
 
@@ -30,7 +30,7 @@ package com.iplanet.ums;
 
 import java.security.Principal;
 
-import netscape.ldap.LDAPv2;
+import com.sun.identity.shared.ldap.LDAPv2;
 
 import com.iplanet.services.ldap.Attr;
 import com.iplanet.services.ldap.AttrSet;

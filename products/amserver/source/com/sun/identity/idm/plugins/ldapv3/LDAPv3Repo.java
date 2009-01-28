@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3Repo.java,v 1.60 2008-11-19 17:08:27 goodearth Exp $
+ * $Id: LDAPv3Repo.java,v 1.61 2009-01-28 05:34:59 ww203982 Exp $
  *
  */
 
@@ -46,30 +46,30 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 
-import netscape.ldap.LDAPAttribute;
-import netscape.ldap.LDAPAttributeSet;
-import netscape.ldap.LDAPCache;
-import netscape.ldap.LDAPConnection;
-import netscape.ldap.LDAPControl;
-import netscape.ldap.LDAPEntry;
-import netscape.ldap.LDAPException;
-import netscape.ldap.LDAPModification;
-import netscape.ldap.LDAPModificationSet;
-import netscape.ldap.LDAPObjectClassSchema;
-import netscape.ldap.LDAPRebind;
-import netscape.ldap.LDAPRebindAuth;
-import netscape.ldap.LDAPReferralException;
-import netscape.ldap.LDAPSchema;
-import netscape.ldap.LDAPSearchConstraints;
-import netscape.ldap.LDAPSearchResults;
-import netscape.ldap.LDAPUrl;
-import netscape.ldap.LDAPv2;
-import netscape.ldap.LDAPv3;
-import netscape.ldap.controls.LDAPPasswordExpiredControl;
-import netscape.ldap.controls.LDAPPasswordExpiringControl;
-import netscape.ldap.controls.LDAPPersistSearchControl;
-import netscape.ldap.factory.JSSESocketFactory;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.LDAPAttribute;
+import com.sun.identity.shared.ldap.LDAPAttributeSet;
+import com.sun.identity.shared.ldap.LDAPCache;
+import com.sun.identity.shared.ldap.LDAPConnection;
+import com.sun.identity.shared.ldap.LDAPControl;
+import com.sun.identity.shared.ldap.LDAPEntry;
+import com.sun.identity.shared.ldap.LDAPException;
+import com.sun.identity.shared.ldap.LDAPModification;
+import com.sun.identity.shared.ldap.LDAPModificationSet;
+import com.sun.identity.shared.ldap.LDAPObjectClassSchema;
+import com.sun.identity.shared.ldap.LDAPRebind;
+import com.sun.identity.shared.ldap.LDAPRebindAuth;
+import com.sun.identity.shared.ldap.LDAPReferralException;
+import com.sun.identity.shared.ldap.LDAPSchema;
+import com.sun.identity.shared.ldap.LDAPSearchConstraints;
+import com.sun.identity.shared.ldap.LDAPSearchResults;
+import com.sun.identity.shared.ldap.LDAPUrl;
+import com.sun.identity.shared.ldap.LDAPv2;
+import com.sun.identity.shared.ldap.LDAPv3;
+import com.sun.identity.shared.ldap.controls.LDAPPasswordExpiredControl;
+import com.sun.identity.shared.ldap.controls.LDAPPasswordExpiringControl;
+import com.sun.identity.shared.ldap.controls.LDAPPersistSearchControl;
+import com.sun.identity.shared.ldap.factory.JSSESocketFactory;
+import com.sun.identity.shared.ldap.util.DN;
 
 import com.iplanet.am.sdk.AMCommonUtils;
 import com.iplanet.am.sdk.AMHashMap;
@@ -491,7 +491,7 @@ public class LDAPv3Repo extends IdRepo {
     private static SSOToken internalToken = null;
 
     private static final String SCHEMA_BUG_PROPERTY = 
-        "com.netscape.ldap.schema.quoting";
+        "com.sun.identity.shared.ldap.schema.quoting";
 
     private static final String VAL_STANDARD = "standard";
 
@@ -4860,10 +4860,12 @@ public class LDAPv3Repo extends IdRepo {
         if ((controls != null) && (controls.length >= 1)) {
             LDAPPasswordExpiringControl expgControl = null;
             for (int i = 0; i < controls.length; i++) {
-                if (controls[i] instanceof LDAPPasswordExpiredControl) {
+                if (controls[i].getType() ==
+                    LDAPControl.LDAP_PASSWORD_EXPIRED_CONTROL) {
                     return PASSWORD_EXPIRED;
                 }
-                if (controls[i] instanceof LDAPPasswordExpiringControl) {
+                if (controls[i].getType() ==
+                    LDAPControl.LDAP_PASSWORD_EXPIRING_CONTROL) {
                     expgControl = (LDAPPasswordExpiringControl)controls[i];
                 }
             }

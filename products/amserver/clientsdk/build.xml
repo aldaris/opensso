@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.10 2008-09-04 16:37:21 kevinserwin Exp $
+   $Id: build.xml,v 1.11 2009-01-28 05:34:44 ww203982 Exp $
 
 -->
 
@@ -87,7 +87,7 @@
 
         <jar destfile="${amserver.dist.dir}/amclientsdk.jar"
              filesetmanifest="merge">
-                <zipfileset src="${extlib.dir}/ldapjdk.jar" includes="netscape/ldap/LDAPDN.class,netscape/ldap/util/DN.class,netscape/ldap/LDAPException.class,netscape/ldap/util/RDN.class,netscape/ldap/LDAPMessage.class,netscape/ldap/LDAPSearchResult.class,netscape/ldap/LDAPConstraints.class,netscape/ldap/LDAPSearchConstraints.class"/>
+                <zipfileset src="${sharedlib.dist.dir}/opensso-sharedlib.jar" includes="com/sun/identity/shared/ldap/LDAPDN.class,com/sun/identity/shared/ldap/util/DN.class,com/sun/identity/shared/ldap/LDAPException.class,com/sun/identity/shared/ldap/util/RDN.class,com/sun/identity/shared/ldap/LDAPMessage.class,com/sun/identity/shared/ldap/LDAPSearchResult.class,com/sun/identity/shared/ldap/LDAPConstraints.class,com/sun/identity/shared/ldap/LDAPSearchConstraints.class"/>
                 <zipfileset src="${amserver.dist.dir}/.amclientsdk.jar"/>
         </jar>
 

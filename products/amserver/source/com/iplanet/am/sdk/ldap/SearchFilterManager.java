@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SearchFilterManager.java,v 1.5 2008-08-07 17:22:03 arviranga Exp $
+ * $Id: SearchFilterManager.java,v 1.6 2009-01-28 05:34:48 ww203982 Exp $
  *
  */
 
@@ -40,7 +40,7 @@ import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.SMSEntry;
 import java.util.HashMap;
 import java.util.Map;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 
 /**
  * A Class which manages the search filters correponding to each of the AMObject

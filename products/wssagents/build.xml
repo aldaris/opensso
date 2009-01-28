@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.16 2008-08-29 21:09:05 arunav Exp $
+   $Id: build.xml,v 1.17 2009-01-28 05:35:21 ww203982 Exp $
 
 -->
 
@@ -138,11 +138,12 @@
         </copy>
 
         <copy todir="${zip.temp.dir}/lib">
+            <fileset file="${amserver.dist.dir}/opensso-sharedlib.jar" />
             <fileset file="${fm.dist.dir}/openssoclientsdk.jar" />
             <fileset file="${wssagents.dist.dir}/openssowssproviders.jar" />
         </copy>
         <copy todir="${zip.temp.dir}/lib">
-            <fileset dir="${extlib.dir}" includes="webservices-api.jar,webservices-rt.jar,webservices-tools.jar,webservices-extra.jar,webservices-extra-api.jar,xercesImpl.jar,xalan.jar,ldapjdk.jar,j2ee.jar" />
+            <fileset dir="${extlib.dir}" includes="webservices-api.jar,webservices-rt.jar,webservices-tools.jar,webservices-extra.jar,webservices-extra-api.jar,xercesImpl.jar,xalan.jar,j2ee.jar" />
         </copy>
         <copy todir="${zip.temp.dir}/samples">
             <fileset file="${wssagents.samples.dir}/**" />

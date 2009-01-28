@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMIdentity.java,v 1.32 2008-12-23 19:58:09 veiming Exp $
+ * $Id: AMIdentity.java,v 1.33 2009-01-28 05:34:58 ww203982 Exp $
  *
  */
 
@@ -49,8 +49,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import netscape.ldap.LDAPDN;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.LDAPDN;
+import com.sun.identity.shared.ldap.util.DN;
 
 /**
  * This class represents an Identity which needs to be managed by Access

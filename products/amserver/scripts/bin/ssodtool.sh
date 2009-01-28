@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: ssodtool.sh,v 1.1 2008-11-22 02:51:48 ak138937 Exp $
+# $Id: ssodtool.sh,v 1.2 2009-01-28 05:34:45 ww203982 Exp $
 #
 
 if [ -z "${JAVA_HOME}" ]; then
@@ -55,4 +55,4 @@ TOOLS_HOME="`dirname ${HOME}`"
 
 DEBUG_FLAGS="-Xdebug -Xrunjdwp:transport=dt_socket,address=8888,server=y,suspend=n"
 
-${JAVA_HOME}/bin/java -cp ${TOOLS_HOME}:${TOOLS_HOME}/config:${TOOLS_HOME}/lib/locale.jar:${TOOLS_HOME}/lib/opensso-sharedlib.jar:${TOOLS_HOME}/lib/amserver.jar:${TOOLS_HOME}/lib/ldapjdk.jar:${TOOLS_HOME}/lib/OpenDS.jar:${TOOLS_HOME}/lib/jaxb-impl.jar:${TOOLS_HOME}/lib/jaxb-api.jar:${TOOLS_HOME}/lib/xsdlib.jar:${TOOLS_HOME}/lib/toolbase.jar:${TOOLS_HOME}/lib/webservices-rt.jar com.sun.identity.diagnostic.base.core.DiagnosticToolMain "$@"
+${JAVA_HOME}/bin/java -cp ${TOOLS_HOME}:${TOOLS_HOME}/config:${TOOLS_HOME}/lib/locale.jar:${TOOLS_HOME}/lib/opensso-sharedlib.jar:${TOOLS_HOME}/lib/amserver.jar:${TOOLS_HOME}/lib/OpenDS.jar:${TOOLS_HOME}/lib/jaxb-impl.jar:${TOOLS_HOME}/lib/jaxb-api.jar:${TOOLS_HOME}/lib/xsdlib.jar:${TOOLS_HOME}/lib/toolbase.jar:${TOOLS_HOME}/lib/webservices-rt.jar com.sun.identity.diagnostic.base.core.DiagnosticToolMain "$@"

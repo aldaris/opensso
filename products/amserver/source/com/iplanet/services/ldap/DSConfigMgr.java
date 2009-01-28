@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DSConfigMgr.java,v 1.17 2008-12-10 07:31:59 veiming Exp $
+ * $Id: DSConfigMgr.java,v 1.18 2009-01-28 05:34:49 ww203982 Exp $
  *
  */
 
@@ -49,10 +49,10 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.StringTokenizer;
-import netscape.ldap.LDAPConnection;
-import netscape.ldap.LDAPException;
-import netscape.ldap.LDAPv2;
-import netscape.ldap.LDAPv3;
+import com.sun.identity.shared.ldap.LDAPConnection;
+import com.sun.identity.shared.ldap.LDAPException;
+import com.sun.identity.shared.ldap.LDAPv2;
+import com.sun.identity.shared.ldap.LDAPv3;
 
 /**
  * This object is the manager of all connection information. The server
@@ -683,7 +683,7 @@ public class DSConfigMgr implements IDSConfigMgr {
     private static I18n i18n = null;
 
     public static final String SCHEMA_BUG_PROPERTY = 
-        "com.netscape.ldap.schema.quoting";
+        "com.sun.identity.shared.ldap.schema.quoting";
 
     public static final String VAL_STANDARD = "standard";
 

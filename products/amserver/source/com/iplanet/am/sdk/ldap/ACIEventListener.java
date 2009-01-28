@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ACIEventListener.java,v 1.4 2008-06-25 05:41:24 qcheng Exp $
+ * $Id: ACIEventListener.java,v 1.5 2009-01-28 05:34:48 ww203982 Exp $
  *
  */
 
@@ -40,7 +40,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import netscape.ldap.controls.LDAPPersistSearchControl;
+import com.sun.identity.shared.ldap.controls.LDAPPersistSearchControl;
 
 /**
  * The <code>ACIEventListener</code> handles all the events that are generated

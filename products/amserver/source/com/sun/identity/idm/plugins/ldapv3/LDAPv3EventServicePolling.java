@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPv3EventServicePolling.java,v 1.5 2008-06-25 05:43:31 qcheng Exp $
+ * $Id: LDAPv3EventServicePolling.java,v 1.6 2009-01-28 05:34:59 ww203982 Exp $
  *
  */
 
@@ -35,11 +35,11 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import netscape.ldap.LDAPException;
-import netscape.ldap.LDAPMessage;
-import netscape.ldap.LDAPResponse;
-import netscape.ldap.LDAPSearchResult;
-import netscape.ldap.LDAPSearchResultReference;
+import com.sun.identity.shared.ldap.LDAPException;
+import com.sun.identity.shared.ldap.LDAPMessage;
+import com.sun.identity.shared.ldap.LDAPResponse;
+import com.sun.identity.shared.ldap.LDAPSearchResult;
+import com.sun.identity.shared.ldap.LDAPSearchResultReference;
 
 import com.sun.identity.common.PeriodicGroupMap;
 import com.sun.identity.common.ScheduleableGroupAction;
@@ -203,18 +203,21 @@ public class LDAPv3EventServicePolling extends LDAPv3EventService {
                         "ldap message with unknown id = " + 
                         message.getMessageID() + " randomID=" + randomID);
             }
-        } else if (message instanceof LDAPSearchResult) {
+        } else if (message.getMessageType() ==
+            LDAPMessage.LDAP_SEARCH_RESULT_MESSAGE) {
             // then must be a LDAPSearchResult carrying change control
             processSearchResultMessage((LDAPSearchResult) message, request);
             TaskRunnable taskList = (TaskRunnable) _requestList;
             taskList.removeElement(request.getRequestID());
             taskList.addElement(request.getRequestID());
             request.setLastUpdatedTime(System.currentTimeMillis());
-        } else if (message instanceof LDAPResponse) {
+        } else if (message.getMessageType() ==
+            LDAPMessage.LDAP_RESPONSE_MESSAGE) {
             // Check for error message ...
             LDAPResponse rsp = (LDAPResponse) message;
             successState = processResponseMessage(rsp, request);
-        } else if (message instanceof LDAPSearchResultReference) { // Referral
+        } else if (message.getMessageType() ==
+            LDAPMessage.LDAP_SEARCH_RESULT_REFERENCE_MESSAGE) { // Referral
             processSearchResultRef(
                     (LDAPSearchResultReference) message, request);
         }

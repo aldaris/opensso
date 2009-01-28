@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationPolicyImpl.java,v 1.9 2008-08-19 19:09:08 veiming Exp $
+ * $Id: DelegationPolicyImpl.java,v 1.10 2009-01-28 05:34:58 ww203982 Exp $
  *
  */
 package com.sun.identity.delegation.plugins;
@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.StringTokenizer;
 import java.security.AccessController;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenID;

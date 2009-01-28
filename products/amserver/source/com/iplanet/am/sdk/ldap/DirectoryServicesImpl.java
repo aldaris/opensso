@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryServicesImpl.java,v 1.10 2008-11-19 17:10:25 goodearth Exp $
+ * $Id: DirectoryServicesImpl.java,v 1.11 2009-01-28 05:34:48 ww203982 Exp $
  *
  */
 
@@ -43,11 +43,11 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import netscape.ldap.LDAPDN;
-import netscape.ldap.LDAPException;
-import netscape.ldap.LDAPUrl;
-import netscape.ldap.util.DN;
-import netscape.ldap.util.RDN;
+import com.sun.identity.shared.ldap.LDAPDN;
+import com.sun.identity.shared.ldap.LDAPException;
+import com.sun.identity.shared.ldap.LDAPUrl;
+import com.sun.identity.shared.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.RDN;
 
 import com.iplanet.am.sdk.AMConstants;
 import com.iplanet.am.sdk.AMEntryExistsException;
@@ -1342,7 +1342,7 @@ public class DirectoryServicesImpl implements AMConstants, IDirectoryServices {
         AssignableDynamicGroup adgroup = new AssignableDynamicGroup(
                 creationTemp, attrSet);
         adgroup.setSearchFilter("(memberof=" + entryDN + ")");
-        adgroup.setSearchScope(netscape.ldap.LDAPv2.SCOPE_SUB);
+        adgroup.setSearchScope(com.sun.identity.shared.ldap.LDAPv2.SCOPE_SUB);
         adgroup.setSearchBase(new Guid(orgDN));
         parentObj.addChild(adgroup);
 
@@ -1379,7 +1379,7 @@ public class DirectoryServicesImpl implements AMConstants, IDirectoryServices {
             dgroup.setSearchFilter(SearchFilterManager.getSearchFilter(
                     AMObject.USER, orgDN));
         }
-        dgroup.setSearchScope(netscape.ldap.LDAPv2.SCOPE_SUB);
+        dgroup.setSearchScope(com.sun.identity.shared.ldap.LDAPv2.SCOPE_SUB);
         dgroup.setSearchBase(new Guid(orgDN));
         parentObj.addChild(dgroup);
 

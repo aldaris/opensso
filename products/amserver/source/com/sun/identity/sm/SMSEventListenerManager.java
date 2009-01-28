@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEventListenerManager.java,v 1.11 2008-07-11 01:46:21 arviranga Exp $
+ * $Id: SMSEventListenerManager.java,v 1.12 2009-01-28 05:35:03 ww203982 Exp $
  *
  */
 package com.sun.identity.sm;
@@ -34,8 +34,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import netscape.ldap.LDAPDN;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.LDAPDN;
+import com.sun.identity.shared.ldap.util.DN;
 
 import com.sun.identity.shared.debug.Debug;
 import com.iplanet.sso.SSOToken;

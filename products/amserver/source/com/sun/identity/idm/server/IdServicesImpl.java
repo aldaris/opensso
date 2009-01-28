@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: IdServicesImpl.java,v 1.54 2008-10-17 20:12:51 dillidorai Exp $
+* $Id: IdServicesImpl.java,v 1.55 2009-01-28 05:35:00 ww203982 Exp $
 *
 */
 
@@ -37,8 +37,8 @@ import java.util.Set;
 
 import javax.security.auth.callback.Callback;
 
-import netscape.ldap.LDAPDN;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.LDAPDN;
+import com.sun.identity.shared.ldap.util.DN;
 
 import com.iplanet.am.sdk.AMHashMap;
 import com.iplanet.sso.SSOException;

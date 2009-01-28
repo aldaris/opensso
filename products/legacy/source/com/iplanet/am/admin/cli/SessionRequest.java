@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionRequest.java,v 1.2 2008-06-25 05:52:34 qcheng Exp $
+ * $Id: SessionRequest.java,v 1.3 2009-01-28 05:35:11 ww203982 Exp $
  *
  */
 
@@ -46,8 +46,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
-import netscape.ldap.LDAPDN;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.LDAPDN;
+import com.sun.identity.shared.ldap.util.DN;
 
 /**
  * This class handles Session command line request.

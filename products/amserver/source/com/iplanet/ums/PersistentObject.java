@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PersistentObject.java,v 1.6 2008-08-07 17:22:04 arviranga Exp $
+ * $Id: PersistentObject.java,v 1.7 2009-01-28 05:34:50 ww203982 Exp $
  *
  */
 
@@ -39,10 +39,10 @@ import java.util.Locale;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import netscape.ldap.LDAPAttribute;
-import netscape.ldap.LDAPModification;
-import netscape.ldap.util.DN;
-import netscape.ldap.util.RDN;
+import com.sun.identity.shared.ldap.LDAPAttribute;
+import com.sun.identity.shared.ldap.LDAPModification;
+import com.sun.identity.shared.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.RDN;
 
 import com.sun.identity.shared.debug.Debug;
 import com.iplanet.services.ldap.Attr;

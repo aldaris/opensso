@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: StaticGroup.java,v 1.3 2008-06-25 05:41:46 qcheng Exp $
+ * $Id: StaticGroup.java,v 1.4 2009-01-28 05:34:51 ww203982 Exp $
  *
  */
 
@@ -31,8 +31,8 @@ package com.iplanet.ums;
 import java.security.Principal;
 import java.util.Enumeration;
 
-import netscape.ldap.LDAPAttribute;
-import netscape.ldap.LDAPDN;
+import com.sun.identity.shared.ldap.LDAPAttribute;
+import com.sun.identity.shared.ldap.LDAPDN;
 
 import com.iplanet.services.ldap.Attr;
 import com.iplanet.services.ldap.AttrSet;

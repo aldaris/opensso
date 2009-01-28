@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSDKRepo.java,v 1.23 2008-11-19 17:09:10 goodearth Exp $
+ * $Id: AMSDKRepo.java,v 1.24 2009-01-28 05:34:47 ww203982 Exp $
  *
  */
 
@@ -70,9 +70,9 @@ import java.util.Set;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
-import netscape.ldap.LDAPDN;
-import netscape.ldap.LDAPException;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.LDAPDN;
+import com.sun.identity.shared.ldap.LDAPException;
+import com.sun.identity.shared.ldap.util.DN;
 
 public class AMSDKRepo extends IdRepo {
 

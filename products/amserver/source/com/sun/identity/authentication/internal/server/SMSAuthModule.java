@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSAuthModule.java,v 1.6 2008-08-07 17:22:09 arviranga Exp $
+ * $Id: SMSAuthModule.java,v 1.7 2009-01-28 05:34:53 ww203982 Exp $
  *
  */
 
@@ -59,7 +59,7 @@ import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.LoginException;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 
 /**
  * AM's internal user's authentication module
@@ -208,7 +208,7 @@ public class SMSAuthModule implements LoginModule {
                 debug.message("SMSAuthModule::login() For authentication: "
                         + "Username: " + username + " Password: <present>");
             }
-            if (netscape.ldap.util.DN.isDN(username)) {
+            if (com.sun.identity.shared.ldap.util.DN.isDN(username)) {
                 userDN = username;
                 username = (new DN(userDN)).explodeDN(true)[0];
             } else {

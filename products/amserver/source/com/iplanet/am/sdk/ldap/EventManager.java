@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EventManager.java,v 1.6 2008-07-30 00:50:16 arviranga Exp $
+ * $Id: EventManager.java,v 1.7 2009-01-28 05:34:48 ww203982 Exp $
  *
  */
 
@@ -30,7 +30,7 @@ package com.iplanet.am.sdk.ldap;
 
 import java.util.Map;
 
-import netscape.ldap.LDAPv2;
+import com.sun.identity.shared.ldap.LDAPv2;
 
 import com.iplanet.services.ldap.event.EventService;
 import com.iplanet.services.ldap.event.IDSEventListener;

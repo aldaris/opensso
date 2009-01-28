@@ -22,13 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GuidUtils.java,v 1.2 2008-06-25 05:41:47 qcheng Exp $
+ * $Id: GuidUtils.java,v 1.3 2009-01-28 05:34:51 ww203982 Exp $
  *
  */
 
 package com.iplanet.ums.util;
 
-import netscape.ldap.LDAPDN;
+import com.sun.identity.shared.ldap.LDAPDN;
 
 import com.iplanet.ums.Guid;
 import com.sun.identity.sm.ServiceManager;

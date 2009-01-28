@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfig.java,v 1.17 2008-08-19 06:47:07 manish_rustagi Exp $
+ * $Id: ServiceConfig.java,v 1.18 2009-01-28 05:35:03 ww203982 Exp $
  *
  */
 
@@ -37,7 +37,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 
 /**
  * The class <code>ServiceConfig</code> provides interfaces to manage the

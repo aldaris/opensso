@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.8 2008-06-25 05:41:08 qcheng Exp $
+   $Id: build.xml,v 1.9 2009-01-28 05:34:44 ww203982 Exp $
 
 -->
 
@@ -87,10 +87,10 @@
         <copy todir="${samples.package.dir}/lib">
             <fileset dir="${extlib.dir}">
                 <include name="j2ee.jar" />
-                <include name="ldapjdk.jar" />
             </fileset>
             <fileset dir="${amserver.dist.dir}">
                 <include name="amclientsdk.jar" />
+                <include name="opensso-sharedlib.jar" />
             </fileset>
         </copy>
 

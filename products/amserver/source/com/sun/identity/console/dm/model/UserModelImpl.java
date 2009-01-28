@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserModelImpl.java,v 1.6 2008-10-02 16:31:28 veiming Exp $
+ * $Id: UserModelImpl.java,v 1.7 2009-01-28 05:34:57 ww203982 Exp $
  *
  */
 
@@ -76,8 +76,8 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
 
-import netscape.ldap.util.DN;
-import netscape.ldap.util.RDN;
+import com.sun.identity.shared.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.RDN;
 
 /**
  * This model is used by organization related views.

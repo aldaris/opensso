@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMDataLayer.java,v 1.15 2008-08-28 19:08:21 arviranga Exp $
+ * $Id: SMDataLayer.java,v 1.16 2009-01-28 05:35:04 ww203982 Exp $
  *
  */
 
@@ -30,10 +30,10 @@ package com.sun.identity.sm.ldap;
 
 import com.iplanet.am.util.SystemProperties;
 import java.util.HashMap;
-import netscape.ldap.LDAPBind;
-import netscape.ldap.LDAPConnection;
-import netscape.ldap.LDAPException;
-import netscape.ldap.LDAPSearchConstraints;
+import com.sun.identity.shared.ldap.LDAPBind;
+import com.sun.identity.shared.ldap.LDAPConnection;
+import com.sun.identity.shared.ldap.LDAPException;
+import com.sun.identity.shared.ldap.LDAPSearchConstraints;
 import com.sun.identity.common.ShutdownListener;
 import com.sun.identity.common.ShutdownManager;
 import com.sun.identity.shared.debug.Debug;

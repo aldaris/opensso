@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPGroups.java,v 1.6 2008-06-25 05:43:51 qcheng Exp $
+ * $Id: LDAPGroups.java,v 1.7 2009-01-28 05:35:01 ww203982 Exp $
  *
  */
 
@@ -32,8 +32,8 @@
 package com.sun.identity.policy.plugins;
 
 import java.util.*;
-import netscape.ldap.*;
-import netscape.ldap.util.*;
+import com.sun.identity.shared.ldap.*;
+import com.sun.identity.shared.ldap.util.*;
 
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;

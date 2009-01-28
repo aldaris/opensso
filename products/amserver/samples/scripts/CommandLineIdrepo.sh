@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: CommandLineIdrepo.sh,v 1.5 2008-07-02 18:33:10 veiming Exp $
+# $Id: CommandLineIdrepo.sh,v 1.6 2009-01-28 05:34:45 ww203982 Exp $
 #
-java -cp classes:resources:lib/openssoclientsdk.jar:lib/j2ee.jar:lib/ldapjdk.jar  com.sun.identity.samples.clientsdk.idrepo.IdRepoSample
+java -cp classes:resources:lib/openssoclientsdk.jar:lib/j2ee.jar:lib/opensso-sharedlib.jar  com.sun.identity.samples.clientsdk.idrepo.IdRepoSample
 

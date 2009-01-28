@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AttrSet.java,v 1.3 2008-06-25 05:41:36 qcheng Exp $
+ * $Id: AttrSet.java,v 1.4 2009-01-28 05:34:49 ww203982 Exp $
  *
  */
 
@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 
-import netscape.ldap.LDAPAttributeSet;
+import com.sun.identity.shared.ldap.LDAPAttributeSet;
 
 /**
  * Represents a set of attributes

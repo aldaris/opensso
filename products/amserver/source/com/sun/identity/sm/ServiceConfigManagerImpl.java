@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceConfigManagerImpl.java,v 1.12 2008-08-28 18:36:30 arviranga Exp $
+ * $Id: ServiceConfigManagerImpl.java,v 1.13 2009-01-28 05:35:03 ww203982 Exp $
  *
  */
 
@@ -42,8 +42,8 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.naming.event.NamingEvent;
-import netscape.ldap.LDAPDN;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.LDAPDN;
+import com.sun.identity.shared.ldap.util.DN;
 
 /**
  * The class <code>ServiceConfigurationManagerImpl</code> provides interfaces
@@ -411,7 +411,7 @@ class ServiceConfigManagerImpl implements SMSObjectListener {
             }
         }
 
-        // Convert changeType from JNDI to netscape.ldap
+        // Convert changeType from JNDI to com.sun.identity.shared.ldap
         switch (type) {
         case NamingEvent.OBJECT_ADDED:
             type = ServiceListener.ADDED;

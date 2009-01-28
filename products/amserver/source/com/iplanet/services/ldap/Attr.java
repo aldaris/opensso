@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Attr.java,v 1.3 2008-06-25 05:41:36 qcheng Exp $
+ * $Id: Attr.java,v 1.4 2009-01-28 05:34:49 ww203982 Exp $
  *
  */
 
@@ -31,7 +31,7 @@ package com.iplanet.services.ldap;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import netscape.ldap.LDAPAttribute;
+import com.sun.identity.shared.ldap.LDAPAttribute;
 
 /**
  * Represents an attribute value pair in UMS. The value of an attribute can be

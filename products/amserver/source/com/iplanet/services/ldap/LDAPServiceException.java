@@ -22,13 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPServiceException.java,v 1.2 2008-06-25 05:41:36 qcheng Exp $
+ * $Id: LDAPServiceException.java,v 1.3 2009-01-28 05:34:49 ww203982 Exp $
  *
  */
 
 package com.iplanet.services.ldap;
 
-import netscape.ldap.LDAPException;
+import com.sun.identity.shared.ldap.LDAPException;
 
 /**
  * This exception class captures expcetions that occurs in the

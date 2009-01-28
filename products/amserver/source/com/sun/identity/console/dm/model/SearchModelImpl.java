@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SearchModelImpl.java,v 1.4 2008-10-02 16:31:28 veiming Exp $
+ * $Id: SearchModelImpl.java,v 1.5 2009-01-28 05:34:57 ww203982 Exp $
  *
  */
 
@@ -67,7 +67,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 
 /* - NEED NOT LOG - */
  

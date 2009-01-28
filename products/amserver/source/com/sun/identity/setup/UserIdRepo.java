@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserIdRepo.java,v 1.14 2009-01-13 19:16:50 veiming Exp $
+ * $Id: UserIdRepo.java,v 1.15 2009-01-28 05:35:02 ww203982 Exp $
  *
  */
 
@@ -58,8 +58,8 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
 import javax.servlet.ServletContext;
-import netscape.ldap.LDAPConnection;
-import netscape.ldap.LDAPException;
+import com.sun.identity.shared.ldap.LDAPConnection;
+import com.sun.identity.shared.ldap.LDAPException;
 
 /**
  * This class does Directory Server related tasks for 

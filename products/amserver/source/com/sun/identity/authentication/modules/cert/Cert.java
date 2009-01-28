@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Cert.java,v 1.12 2008-11-20 18:40:17 beomsuk Exp $
+ * $Id: Cert.java,v 1.13 2009-01-28 05:34:53 ww203982 Exp $
  *
  */
 
@@ -49,7 +49,7 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.x500.X500Principal;
 import javax.servlet.http.HttpServletRequest;
 
-import netscape.ldap.LDAPUrl;
+import com.sun.identity.shared.ldap.LDAPUrl;
 import org.mozilla.jss.CryptoManager;
 
 import sun.security.x509.X509CertInfo;

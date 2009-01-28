@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMConstants.java,v 1.5 2008-06-25 05:41:19 qcheng Exp $
+ * $Id: AMConstants.java,v 1.6 2009-01-28 05:34:47 ww203982 Exp $
  *
  */
 
@@ -44,17 +44,17 @@ public interface AMConstants {
     /**
      * Specifies search scope to be just for the object specified
      */
-    public static final int SCOPE_BASE = netscape.ldap.LDAPv2.SCOPE_BASE;
+    public static final int SCOPE_BASE = com.sun.identity.shared.ldap.LDAPv2.SCOPE_BASE;
 
     /**
      * Specifies search scope to be a one level search.
      */
-    public static final int SCOPE_ONE = netscape.ldap.LDAPv2.SCOPE_ONE;
+    public static final int SCOPE_ONE = com.sun.identity.shared.ldap.LDAPv2.SCOPE_ONE;
 
     /**
      * Specifies search scope to be a sub tree search.
      */
-    public static final int SCOPE_SUB = netscape.ldap.LDAPv2.SCOPE_SUB;
+    public static final int SCOPE_SUB = com.sun.identity.shared.ldap.LDAPv2.SCOPE_SUB;
 
     /*
      * The above constants SCOPE_BASE, SCOPE_ONE, and SCOPE_SUB should be kept

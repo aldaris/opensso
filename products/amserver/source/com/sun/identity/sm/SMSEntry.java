@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.45 2008-11-18 23:42:57 arviranga Exp $
+ * $Id: SMSEntry.java,v 1.46 2009-01-28 05:35:03 ww203982 Exp $
  *
  */
 
@@ -60,9 +60,9 @@ import java.util.StringTokenizer;
 import javax.naming.directory.BasicAttribute;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.ModificationItem;
-import netscape.ldap.LDAPDN;
-import netscape.ldap.LDAPException;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.LDAPDN;
+import com.sun.identity.shared.ldap.LDAPException;
+import com.sun.identity.shared.ldap.util.DN;
 
 /**
  * This object represents a SMS entry in datastore, similar to UMS's equivalent

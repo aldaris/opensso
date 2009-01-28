@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMCRLStore.java,v 1.6 2008-11-17 20:33:33 beomsuk Exp $
+ * $Id: AMCRLStore.java,v 1.7 2009-01-28 05:35:12 ww203982 Exp $
  *
  */
 
@@ -45,14 +45,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import netscape.ldap.LDAPAttribute;
-import netscape.ldap.LDAPAttributeSet;
-import netscape.ldap.LDAPConnection;
-import netscape.ldap.LDAPEntry;
-import netscape.ldap.LDAPException;
-import netscape.ldap.LDAPModification;
-import netscape.ldap.LDAPSearchResults;
-import netscape.ldap.LDAPUrl;
+import com.sun.identity.shared.ldap.LDAPAttribute;
+import com.sun.identity.shared.ldap.LDAPAttributeSet;
+import com.sun.identity.shared.ldap.LDAPConnection;
+import com.sun.identity.shared.ldap.LDAPEntry;
+import com.sun.identity.shared.ldap.LDAPException;
+import com.sun.identity.shared.ldap.LDAPModification;
+import com.sun.identity.shared.ldap.LDAPSearchResults;
+import com.sun.identity.shared.ldap.LDAPUrl;
 import sun.security.x509.CertificateExtensions;
 import sun.security.x509.Extension;
 import sun.security.x509.GeneralNames;

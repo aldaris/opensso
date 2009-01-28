@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceBase.java,v 1.1 2008-11-22 02:41:19 ak138937 Exp $
+ * $Id: ServiceBase.java,v 1.2 2009-01-28 05:34:58 ww203982 Exp $
  *
  */
 
@@ -49,9 +49,9 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import javax.net.ssl.HttpsURLConnection;
-import netscape.ldap.LDAPConnection;
-import netscape.ldap.LDAPException;
-import netscape.ldap.LDAPSearchResults;
+import com.sun.identity.shared.ldap.LDAPConnection;
+import com.sun.identity.shared.ldap.LDAPException;
+import com.sun.identity.shared.ldap.LDAPSearchResults;
 
 
 import com.iplanet.am.util.SSLSocketFactoryManager;

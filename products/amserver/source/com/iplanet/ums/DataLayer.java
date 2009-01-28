@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataLayer.java,v 1.16 2008-08-21 04:30:24 veiming Exp $
+ * $Id: DataLayer.java,v 1.17 2009-01-28 05:34:50 ww203982 Exp $
  *
  */
 
@@ -51,22 +51,22 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.StringTokenizer;
-import netscape.ldap.LDAPAttribute;
-import netscape.ldap.LDAPAttributeSet;
-import netscape.ldap.LDAPBind;
-import netscape.ldap.LDAPConnection;
-import netscape.ldap.LDAPControl;
-import netscape.ldap.LDAPEntry;
-import netscape.ldap.LDAPException;
-import netscape.ldap.LDAPModification;
-import netscape.ldap.LDAPSchema;
-import netscape.ldap.LDAPSchemaElement;
-import netscape.ldap.LDAPSearchConstraints;
-import netscape.ldap.LDAPSearchResults;
-import netscape.ldap.LDAPSortKey;
-import netscape.ldap.controls.LDAPProxiedAuthControl;
-import netscape.ldap.controls.LDAPSortControl;
-import netscape.ldap.controls.LDAPVirtualListControl;
+import com.sun.identity.shared.ldap.LDAPAttribute;
+import com.sun.identity.shared.ldap.LDAPAttributeSet;
+import com.sun.identity.shared.ldap.LDAPBind;
+import com.sun.identity.shared.ldap.LDAPConnection;
+import com.sun.identity.shared.ldap.LDAPControl;
+import com.sun.identity.shared.ldap.LDAPEntry;
+import com.sun.identity.shared.ldap.LDAPException;
+import com.sun.identity.shared.ldap.LDAPModification;
+import com.sun.identity.shared.ldap.LDAPSchema;
+import com.sun.identity.shared.ldap.LDAPSchemaElement;
+import com.sun.identity.shared.ldap.LDAPSearchConstraints;
+import com.sun.identity.shared.ldap.LDAPSearchResults;
+import com.sun.identity.shared.ldap.LDAPSortKey;
+import com.sun.identity.shared.ldap.controls.LDAPProxiedAuthControl;
+import com.sun.identity.shared.ldap.controls.LDAPSortControl;
+import com.sun.identity.shared.ldap.controls.LDAPVirtualListControl;
 
 /**
  * DataLayer (A PACKAGE SCOPE CLASS) to access LDAP or other database
@@ -1182,7 +1182,8 @@ public class DataLayer implements java.io.Serializable {
             conn = getConnection(principal);
             // disable the checking of attribute syntax quoting and the
             // read on ""
-            conn.setProperty("com.netscape.ldap.schema.quoting", "standard");
+            conn.setProperty("com.sun.identity.shared.ldap.schema.quoting",
+                "standard");
             schemaElement.add(conn, "cn=schema");
         } catch (LDAPException e) {
             debug.error("Exception in DataLayer.addSchema: ", e);
@@ -1222,7 +1223,8 @@ public class DataLayer implements java.io.Serializable {
             conn = getConnection(principal);
             // disable the checking of attribute syntax quoting and the
             // read on ""
-            conn.setProperty("com.netscape.ldap.schema.quoting", "standard");
+            conn.setProperty("com.sun.identity.shared.ldap.schema.quoting",
+                "standard");
             schemaElement.remove(conn, "cn=schema");
 
         } catch (LDAPException e) {

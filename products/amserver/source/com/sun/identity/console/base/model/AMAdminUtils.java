@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
-* $Id: AMAdminUtils.java,v 1.7 2008-07-21 17:00:10 veiming Exp $
+* $Id: AMAdminUtils.java,v 1.8 2009-01-28 05:34:56 ww203982 Exp $
  *
  */
 
@@ -59,7 +59,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.security.AccessController;
 import java.util.TreeSet;
-import netscape.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.DN;
 
 /* - NEED NOT LOG - */
 

@@ -23,7 +23,7 @@
 : your own identifying information:
 : "Portions Copyrighted [year] [name of copyright owner]"
 :
-: $Id: amtune.bat,v 1.3 2008-08-29 09:50:48 kanduls Exp $
+: $Id: amtune.bat,v 1.4 2009-01-28 05:34:46 ww203982 Exp $
 
 SETLOCAL
 
@@ -54,7 +54,7 @@ goto exit
 
 :validJavaHome
 
-"%JAVA_HOME%/bin/java.exe" -cp "%TOOLS_HOME%/resources;%TOOLS_HOME%/lib/ldapjdk.jar;%TOOLS_HOME%/lib/amtune.jar;./;" com.sun.identity.tune.AMTune %*
+"%JAVA_HOME%/bin/java.exe" -cp "%TOOLS_HOME%/resources;%TOOLS_HOME%/lib/opensso-sharedlib.jar;%TOOLS_HOME%/lib/amtune.jar;./;" com.sun.identity.tune.AMTune %*
 ENDLOCAL
 
 :exit

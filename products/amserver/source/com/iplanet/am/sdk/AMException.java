@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMException.java,v 1.6 2008-06-25 05:41:20 qcheng Exp $
+ * $Id: AMException.java,v 1.7 2009-01-28 05:34:47 ww203982 Exp $
  *
  */
 
@@ -34,7 +34,7 @@ import com.sun.identity.shared.locale.L10NMessage;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import netscape.ldap.LDAPException;
+import com.sun.identity.shared.ldap.LDAPException;
 
 /**
  * The <code>AMException</code> is thrown whenever an error is is encountered

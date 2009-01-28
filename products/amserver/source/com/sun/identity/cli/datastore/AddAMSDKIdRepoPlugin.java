@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AddAMSDKIdRepoPlugin.java,v 1.6 2008-11-19 17:22:25 veiming Exp $
+ * $Id: AddAMSDKIdRepoPlugin.java,v 1.7 2009-01-28 05:34:55 ww203982 Exp $
  *
  */
 
@@ -67,9 +67,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-import netscape.ldap.LDAPConnection;
-import netscape.ldap.LDAPDN;
-import netscape.ldap.LDAPException;
+import com.sun.identity.shared.ldap.LDAPConnection;
+import com.sun.identity.shared.ldap.LDAPDN;
+import com.sun.identity.shared.ldap.LDAPException;
 
 /**
  * This command creates identity.

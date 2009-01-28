@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: Debug.jsp,v 1.14 2008-10-23 11:35:08 mahesh_prasad_r Exp $
+   $Id: Debug.jsp,v 1.15 2009-01-28 05:35:06 ww203982 Exp $
   
 --%>
 
@@ -51,7 +51,7 @@
         java.util.ResourceBundle,
         java.util.Set,
         java.util.StringTokenizer,
-        netscape.ldap.util.DN"
+        com.sun.identity.shared.ldap.util.DN"
 %>
 
 <% 

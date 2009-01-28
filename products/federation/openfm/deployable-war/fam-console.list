@@ -1192,7 +1192,6 @@
 ./WEB-INF/lib/idpdiscovery.jar
 ./WEB-INF/lib/jato.jar
 ./WEB-INF/lib/jhall.jar
-./WEB-INF/lib/ldapjdk.jar
 ./WEB-INF/lib/log4j-1.2.8.jar
 ./WEB-INF/lib/mail.jar
 ./WEB-INF/lib/openfedlib.jar

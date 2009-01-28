@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrgConfigViaAMSDK.java,v 1.12 2008-08-27 22:05:41 veiming Exp $
+ * $Id: OrgConfigViaAMSDK.java,v 1.13 2009-01-28 05:35:03 ww203982 Exp $
  *
  */
 
@@ -54,8 +54,8 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.Vector;
-import netscape.ldap.util.DN;
-import netscape.ldap.util.RDN;
+import com.sun.identity.shared.ldap.util.DN;
+import com.sun.identity.shared.ldap.util.RDN;
 
 // This class provides support for OrganizationConfigManager
 // in coexistence mode. This class interfaces with AMSDK

@@ -23,7 +23,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: project.xml,v 1.4 2008-07-23 17:58:15 veiming Exp $
+    $Id: project.xml,v 1.5 2009-01-28 05:35:12 ww203982 Exp $
 
 -->
 <project xmlns="http://www.netbeans.org/ns/project/1">
@@ -136,7 +136,7 @@
                 <package-root>federation/library/source</package-root>
                 <package-root>federation/openfm/source</package-root>
                 <package-root>shared/source</package-root>
-                <classpath mode="compile">extlib/activation.jar:extlib/ant-contrib-1.0b3.jar:extlib/click-extras.jar:extlib/click.jar:extlib/db.jar:extlib/FastInfoset.jar:extlib/imq.jar:extlib/j2ee.jar:extlib/jaxb-api.jar:extlib/jaxb-impl.jar:extlib/jaxb-libs.jar:extlib/jaxb-xjc.jar:extlib/jaxrpc-api.jar:extlib/jaxrpc-impl.jar:extlib/jaxrpc-spi.jar:extlib/je.jar:extlib/jms.jar:extlib/jsr173_api.jar:extlib/jss4.jar:extlib/ldapjdk.jar:extlib/mail.jar:extlib/mfwk_instrum_tk-2.0.jar:extlib/OpenDS.jar:extlib/relaxngDatatype.jar:extlib/saaj-api.jar:extlib/saaj-impl.jar:extlib/testng-5.1-jdk15.jar:extlib/webservices-api.jar:extlib/webservices-extra-api.jar:extlib/webservices-extra.jar:extlib/webservices-rt.jar:extlib/webservices-tools.jar:extlib/xalan.jar:extlib/xercesImpl.jar:extlib/xmlsec.jar:extlib/xsdlib.jar:../resources/jato/jato.jar:../resources/lockhart/lib/cc.jar:amserver/built/dist/amserver.jar</classpath>
+                <classpath mode="compile">extlib/activation.jar:extlib/ant-contrib-1.0b3.jar:extlib/click-extras.jar:extlib/click.jar:extlib/db.jar:extlib/FastInfoset.jar:extlib/imq.jar:extlib/j2ee.jar:extlib/jaxb-api.jar:extlib/jaxb-impl.jar:extlib/jaxb-libs.jar:extlib/jaxb-xjc.jar:extlib/jaxrpc-api.jar:extlib/jaxrpc-impl.jar:extlib/jaxrpc-spi.jar:extlib/je.jar:extlib/jms.jar:extlib/jsr173_api.jar:extlib/jss4.jar:extlib/mail.jar:extlib/mfwk_instrum_tk-2.0.jar:extlib/OpenDS.jar:extlib/relaxngDatatype.jar:extlib/saaj-api.jar:extlib/saaj-impl.jar:extlib/testng-5.1-jdk15.jar:extlib/webservices-api.jar:extlib/webservices-extra-api.jar:extlib/webservices-extra.jar:extlib/webservices-rt.jar:extlib/webservices-tools.jar:extlib/xalan.jar:extlib/xercesImpl.jar:extlib/xmlsec.jar:extlib/xsdlib.jar:../resources/jato/jato.jar:../resources/lockhart/lib/cc.jar:amserver/built/dist/amserver.jar</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>

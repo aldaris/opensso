@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMEvent.java,v 1.7 2008-06-25 05:41:20 qcheng Exp $
+ * $Id: AMEvent.java,v 1.8 2009-01-28 05:34:47 ww203982 Exp $
  *
  */
 
@@ -30,7 +30,7 @@ package com.iplanet.am.sdk;
 
 import java.util.EventObject;
 
-import netscape.ldap.controls.LDAPPersistSearchControl;
+import com.sun.identity.shared.ldap.controls.LDAPPersistSearchControl;
 
 import com.iplanet.services.ldap.event.DSEvent;
 
