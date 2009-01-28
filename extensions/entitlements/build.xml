@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.13 2009-01-28 01:26:03 farble1670 Exp $
+   $Id: build.xml,v 1.14 2009-01-28 04:24:54 veiming Exp $
 
 -->
 
@@ -131,9 +131,9 @@
     </target>
 
     <target name="merge-libs" depends="unwar">
-        <copy todir="${war.package.dir}/WEB-INF/lib">
+        <!-- copy todir="${war.package.dir}/WEB-INF/lib">
             <fileset dir="${entitlements.war.libs.dir}" includes="*.jar" />
-        </copy>
+        </copy -->
     </target>
 
     <target name="merge-classes" depends="src,unwar">
