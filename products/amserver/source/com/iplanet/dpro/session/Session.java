@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Session.java,v 1.20 2009-01-16 10:46:47 manish_rustagi Exp $
+ * $Id: Session.java,v 1.21 2009-01-29 18:18:47 beomsuk Exp $
  *
  */
 
@@ -294,8 +294,6 @@ public class Session extends GeneralTaskRunnable {
      */
     private volatile boolean isPolling = false;
 
-    private static String serverID = null;
-    
     private static TimerPool timerPool = null;
     
     static private ThreadPool threadPool = null;
@@ -309,12 +307,6 @@ public class Session extends GeneralTaskRunnable {
     private SessionPollerSender sender = null;    
 
     static {
-        try {
-            serverID = WebtopNaming.getAMServerID();
-        } catch (Exception le) {
-            serverID = null;
-        }
-        
         String purgeDelayProperty = SystemProperties.get(
                 "com.iplanet.am.session.purgedelay", "120");
         try {
@@ -328,6 +320,18 @@ public class Session extends GeneralTaskRunnable {
         }        
     }
 
+    static private String getAMServerID() {
+        String serverid = null;
+        
+        try {
+            serverid = WebtopNaming.getAMServerID();
+        } catch (Exception le) {
+            serverid = null;
+        }
+        
+        return serverid;
+    }
+    
     /**
      * Enables the Session Polling
      * @param b if <code>true</code> polling is enabled, disabled otherwise
@@ -1195,6 +1199,8 @@ public class Session extends GeneralTaskRunnable {
             if (primary_id != null) {
                 String secondarysites = WebtopNaming
                         .getSecondarySites(primary_id);
+
+                String serverID = getAMServerID();
                 if ((secondarysites != null) && (serverID != null)) {
                     if (secondarysites.indexOf(serverID) != -1) {
                         return getSessionServiceURL(serverID);
