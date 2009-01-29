@@ -18,7 +18,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: opensso-common.xml,v 1.15 2009-01-26 23:39:44 nithyas Exp $
+ $Id: opensso-common.xml,v 1.16 2009-01-29 00:36:26 nithyas Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -645,7 +645,10 @@
         <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
         <if>
             <not>
+               <and>
                 <equals arg1="${ModuleToExecute}" arg2="sae"/>
+                <contains string="${EXECUTION_MODE}" substring="_sec"/>
+               </and>
             </not>
                 <then>
                 <if>
