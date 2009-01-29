@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.17 2009-01-29 20:13:17 veiming Exp $
+   $Id: build.xml,v 1.18 2009-01-29 21:28:33 farble1670 Exp $
 
 -->
 
@@ -36,7 +36,7 @@
     <property name="build.debug" value="on"/>
     <property name="build.debuglevel" value="lines,vars,source"/>
 
-    <available file="${entitlements.extlib.dir}"
+    <available file="${entitlements.war.lib.local.dir}"
             property="war.lib.local.exists" value="true" />
     <available file="${entitlements.build.lib.local.dir}"
             property="build.lib.local.exists" value="true" />
@@ -83,7 +83,7 @@
     </target>
 
     <target name="war-lib" unless="war.lib.local.exists">
-        <mkdir dir="${entitlements.extlib.dir}"/>
+        <mkdir dir="${entitlements.war.lib.local.dir}"/>
         <copy todir="${entitlements.war.lib.local.dir}">
 			<fileset dir="${entitlements.war.lib.dir}">
 				<include name="*.jar"/>
@@ -139,7 +139,7 @@
     <target name="merge-webxml" depends="unwar">
         <java classname="com.sun.identity.setup.InsertContent" fork="true">
             <classpath refid="build.class.path"/>
-            <arg value="&lt;!-- context-param --&gt;.+?&lt;!-- /context-param --&gt;" />
+            <arg value="&lt;context-param&gt;.+?&lt;/context-param&gt;" />
             <arg value="${entitlements.basedir}/web/WEB-INF//web.xml" />
             <arg value="${war.package.dir}/WEB-INF/web.xml" />
             <arg value="&lt;!-- context param --&gt;" />
@@ -153,10 +153,24 @@
         </java>
         <java classname="com.sun.identity.setup.InsertContent" fork="true">
             <classpath refid="build.class.path"/>
+            <arg value="&lt;filter&gt;.+?&lt;/filter&gt;" />
+            <arg value="${entitlements.basedir}/web/WEB-INF//web.xml" />
+            <arg value="${war.package.dir}/WEB-INF/web.xml" />
+            <arg value="&lt;!-- filter declaration --&gt;" />
+        </java>
+        <java classname="com.sun.identity.setup.InsertContent" fork="true">
+            <classpath refid="build.class.path"/>
             <arg value="&lt;servlet-mapping&gt;.+?&lt;/servlet-mapping&gt;" />
             <arg value="${entitlements.basedir}/web/WEB-INF//web.xml" />
             <arg value="${war.package.dir}/WEB-INF/web.xml" />
             <arg value="&lt;!-- servlet mapping --&gt;" />
+        </java>
+        <java classname="com.sun.identity.setup.InsertContent" fork="true">
+            <classpath refid="build.class.path"/>
+            <arg value="&lt;filter-mapping&gt;.+?&lt;/filter-mapping&gt;" />
+            <arg value="${entitlements.basedir}/web/WEB-INF//web.xml" />
+            <arg value="${war.package.dir}/WEB-INF/web.xml" />
+            <arg value="&lt;!-- filter mapping --&gt;" />
         </java>
         <java classname="com.sun.identity.setup.InsertContent" fork="true">
             <classpath refid="build.class.path"/>
