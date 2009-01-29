@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.43 2009-01-29 14:40:34 kevinserwin Exp $
+   $Id: build.xml,v 1.44 2009-01-29 18:16:42 veiming Exp $
 
 -->
 
@@ -71,6 +71,7 @@
         <antcall target="fedlibrary-nightly" />
         <antcall target="openfm-nightly" />
         <antcall target="upgrade-nightly" />
+        <antcall target="remove-amserver-bits" />
         <antcall target="create-manifest" />
         <antcall target="create-checksum" />
     </target>
