@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.16 2009-01-29 19:59:11 farble1670 Exp $
+   $Id: build.xml,v 1.17 2009-01-29 20:13:17 veiming Exp $
 
 -->
 
@@ -36,7 +36,7 @@
     <property name="build.debug" value="on"/>
     <property name="build.debuglevel" value="lines,vars,source"/>
 
-    <available file="${entitlements.war.lib.local.dir}"
+    <available file="${entitlements.extlib.dir}"
             property="war.lib.local.exists" value="true" />
     <available file="${entitlements.build.lib.local.dir}"
             property="build.lib.local.exists" value="true" />
@@ -83,7 +83,7 @@
     </target>
 
     <target name="war-lib" unless="war.lib.local.exists">
-        <mkdir dir="${entitlements.war.lib.local.dir}"/>
+        <mkdir dir="${entitlements.extlib.dir}"/>
         <copy todir="${entitlements.war.lib.local.dir}">
 			<fileset dir="${entitlements.war.lib.dir}">
 				<include name="*.jar"/>

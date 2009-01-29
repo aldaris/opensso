@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorAdaptor.java,v 1.9 2009-01-29 02:04:03 veiming Exp $
+ * $Id: PolicyEvaluatorAdaptor.java,v 1.10 2009-01-29 20:13:17 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -223,7 +223,7 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
         }            
     }
     
-    private static Entitlement getEntitlement(
+    static Entitlement getEntitlement(
         ServiceType serviceType,
         String resourceName, 
         PolicyDecision pd
