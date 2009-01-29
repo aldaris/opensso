@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.15 2009-01-28 20:54:34 farble1670 Exp $
+   $Id: build.xml,v 1.16 2009-01-29 19:59:11 farble1670 Exp $
 
 -->
 
@@ -38,6 +38,8 @@
 
     <available file="${entitlements.war.lib.local.dir}"
             property="war.lib.local.exists" value="true" />
+    <available file="${entitlements.build.lib.local.dir}"
+            property="build.lib.local.exists" value="true" />
     <available file="${entitlements.extlib.dir}/amserver.jar"
             property="amserver.jar.exists" value="true" />
     <available file="${entitlements.extlib.dir}/opensso-sharedlib.jar"
@@ -45,22 +47,56 @@
 
     <target name="build" depends="package-war"/>
     
-    <target name="init" depends="amserver-jar,sharedlib-jar,war-lib">
+    <target name="init" depends="amserver-jar,sharedlib-jar,build-lib,war-lib">
         <mkdir dir="${entitlements.dist.dir}" />
         <mkdir dir="${entitlements.classes.dir}" />
 
+		<path id="war.lib.path">
+			<fileset dir="${entitlements.war.lib.local.dir}">
+				<include name="*.jar"/>
+			</fileset>
+		</path>
+
+		<path id="build.lib.path">
+			<fileset dir="${entitlements.build.lib.local.dir}">
+				<include name="*.jar"/>
+			</fileset>
+		</path>
+		
         <path id="build.class.path">
             <fileset dir="${entitlements.extlib.dir}">
                 <include name="*.jar"/>
             </fileset>
-            <fileset dir="${entitlements.war.lib.local.dir}" includes="*.jar" />
+			<path refid="war.lib.path"/>
+			<path refid="build.lib.path"/>
         </path>
+
+		<property name="war.lib" refid="war.lib.path"/>
+		<property name="build.lib" refid="build.lib.path"/>
+		<property name="build.class" refid="build.class.path"/>
+		
+		<!--
+		<echo>war.lib=${war.lib}</echo>
+		<echo>build.lib=${build.lib}</echo>
+		<echo>build.class=${build.class}</echo>
+		-->
     </target>
 
     <target name="war-lib" unless="war.lib.local.exists">
         <mkdir dir="${entitlements.war.lib.local.dir}"/>
         <copy todir="${entitlements.war.lib.local.dir}">
-            <fileset dir="${entitlements.war.lib.dir}" includes="*.jar" />
+			<fileset dir="${entitlements.war.lib.dir}">
+				<include name="*.jar"/>
+			</fileset>
+        </copy>
+    </target>
+
+    <target name="build-lib" unless="build.lib.local.exists">
+        <mkdir dir="${entitlements.build.lib.local.dir}"/>
+        <copy todir="${entitlements.build.lib.local.dir}">
+			<fileset dir="${entitlements.build.lib.dir}">
+				<include name="*.jar"/>
+			</fileset>
         </copy>
     </target>
 
@@ -210,6 +246,11 @@
         </unjar>
     </target>
     
+	<target name="clean-lib">
+		<delete dir="${entitlements.war.lib.local.dir}"/>
+		<delete dir="${entitlements.build.lib.local.dir}"/>
+	</target>
+	
     <target name="clean">
         <ant antfile="${unittest.basedir}/build.xml" inheritRefs="true"
             target="clean" />

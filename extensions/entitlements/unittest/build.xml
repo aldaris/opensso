@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.2 2008-12-19 09:37:00 veiming Exp $
+   $Id: build.xml,v 1.3 2009-01-29 19:59:11 farble1670 Exp $
 
 -->
 
@@ -38,7 +38,13 @@
 
     <path id="build.class.path">
         <fileset dir="${entitlements.extlib.dir}">
-            <include name="**/*.jar"/>
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${entitlements.war.lib.local.dir}">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${entitlements.build.lib.local.dir}">
+            <include name="*.jar"/>
         </fileset>
         <pathelement location="${entitlements.classes.dir}"/>
     </path>
