@@ -22,17 +22,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexer.java,v 1.7 2009-01-25 09:39:26 veiming Exp $
+ * $Id: PolicyIndexer.java,v 1.8 2009-01-29 02:04:03 veiming Exp $
  */
 
 package com.sun.identity.policy;
 
+import com.sun.identity.entitlement.DataStoreEntry;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.IPolicyIndexDataStore;
 import com.sun.identity.entitlement.PolicyIndexDataStoreFactory;
 import com.sun.identity.entitlement.util.ResourceIndex;
 import com.sun.identity.entitlement.util.ResourceNameIndexGenerator;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -126,4 +129,44 @@ public class PolicyIndexer {
         }
         return policies;
     }
+
+    /**
+     * Searches for matching entries.
+     * 
+     * @param hostIndexes Set of Host indexes.
+     * @param pathIndexes Set of Path indexes.
+     * @param pathParentIndex Path ParentIndex
+     * @return a set of datastore entry object.
+     * @throws EntitlementException if search operation fails.
+     */
+    public static Set<DataStoreEntry> search(
+        PolicyManager pm, 
+        Set<String> hostIndexes, 
+        Set<String> pathIndexes,
+        String pathParent
+    ) {
+        Set<DataStoreEntry> results = null;
+        try {
+            IPolicyIndexDataStore datastore = 
+                PolicyIndexDataStoreFactory.getInstance().getDataStore();
+            results = datastore.search(hostIndexes, pathIndexes, pathParent);
+            
+            if ((results != null) && !results.isEmpty()) {
+                for (Iterator i = results.iterator(); i.hasNext(); ) {
+                    DataStoreEntry entry = (DataStoreEntry)i.next();
+                    Policy policy = SerializedPolicy.deserialize(
+                        pm, (SerializedPolicy)entry.getPolicy());
+                    if (!policy.isActive()) {
+                        i.remove();
+                    } else {
+                        entry.setPolicy(policy);
+                    }
+                }
+            }
+        } catch (EntitlementException e) {
+            PolicyManager.debug.error("PolicyIndexer.store", e);
+        }
+        return (results != null) ? results : Collections.EMPTY_SET;
+    }
+
 }

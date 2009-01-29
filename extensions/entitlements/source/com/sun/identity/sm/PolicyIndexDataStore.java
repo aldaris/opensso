@@ -23,11 +23,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexDataStore.java,v 1.7 2009-01-25 09:39:26 veiming Exp $
+ * $Id: PolicyIndexDataStore.java,v 1.8 2009-01-29 02:04:03 veiming Exp $
  */
 
 package com.sun.identity.sm;
 
+import com.sun.identity.entitlement.DataStoreEntry;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.entitlement.EntitlementException;
@@ -63,7 +64,9 @@ public class PolicyIndexDataStore implements  IPolicyIndexDataStore {
     private static final String HOST_FILTER_TEMPLATE = 
         "(" + SMSEntry.ATTR_XML_KEYVAL + "=" + HOST_INDEX_KEY + "={0})";
     private static final String PATH_FILTER_TEMPLATE =
-        "(" + SMSEntry.ATTR_XML_KEYVAL + "=" + PATH_INDEX_KEY + "={1})";
+        "(" + SMSEntry.ATTR_XML_KEYVAL + "=" + PATH_INDEX_KEY + "={0})";
+    private static final String PATH_PARENT_FILTER_TEMPLATE =
+        "(" + SMSEntry.ATTR_XML_KEYVAL + "=" + PATH_PARENT_INDEX_KEY + "={0})";
 
     /**
      * Adds an index entry.
@@ -210,27 +213,10 @@ public class PolicyIndexDataStore implements  IPolicyIndexDataStore {
 
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
-        Object[] params = {SMSEntry.getRootSuffix()};
-        String startDN = MessageFormat.format(START_DN_TEMPLATE, params);
-        
-        StringBuffer filter = new StringBuffer();
-        filter.append("(|");
-        
-        for (String h : hostIndexes) {
-            Object[] o = {h};
-            filter.append(MessageFormat.format(HOST_FILTER_TEMPLATE, o));
-        }
-        for (String p : pathIndexes) {
-            Object[] o = {p};
-            filter.append(MessageFormat.format(PATH_FILTER_TEMPLATE, o));
-        }
-
-        filter.append(")");
         
         try {
-            Set<String> setDN = SMSEntry.search(adminToken, startDN, 
-                filter.toString());
-            
+            Set<String> setDN = getMatchingDNs(adminToken, hostIndexes,
+                pathIndexes, null);
             for (String dn : setDN) {
                 SMSEntry s = new SMSEntry(adminToken, dn);
                 Map<String, Set<String>> map = s.getAttributes();
@@ -247,5 +233,109 @@ public class PolicyIndexDataStore implements  IPolicyIndexDataStore {
         } catch (SSOException e) {
             throw new EntitlementException(e.getMessage(), -1);
         }
+    }
+    
+    private Set<String> getMatchingDNs(
+        SSOToken adminToken,
+        Set<String> hostIndexes,
+        Set<String> pathIndexes,
+        String pathParent
+    ) throws SSOException, SMSException {
+        Object[] params = {SMSEntry.getRootSuffix()};
+        String startDN = MessageFormat.format(START_DN_TEMPLATE, params);
+        return SMSEntry.search(adminToken, startDN, 
+            getFilter(hostIndexes, pathIndexes, pathParent));
+    }
+    
+    private String getFilter(
+        Set<String> hostIndexes, 
+        Set<String> pathIndexes,
+        String pathParent
+    ) {
+        StringBuffer filter = new StringBuffer();
+        filter.append("(|");
+        
+        for (String h : hostIndexes) {
+            Object[] o = {h};
+            filter.append(MessageFormat.format(HOST_FILTER_TEMPLATE, o));
+        }
+        for (String p : pathIndexes) {
+            Object[] o = {p};
+            filter.append(MessageFormat.format(PATH_FILTER_TEMPLATE, o));
+        }
+        
+        if (pathParent != null) {
+            Object[] o = {pathParent};
+            filter.append(MessageFormat.format(PATH_PARENT_FILTER_TEMPLATE, o));
+        }
+
+        filter.append(")");
+        return filter.toString();
+    }
+    
+
+    /**
+     * Searches for matching entries.
+     * 
+     * @param hostIndexes Set of Host indexes.
+     * @param pathIndexes Set of Path indexes.
+     * @param pathParentIndex Path ParentIndex
+     * @return a set of datastore entry object.
+     * @throws EntitlementException if search operation fails.
+     */
+    public Set<DataStoreEntry> search(
+        Set<String> hostIndexes,
+        Set<String> pathIndexes,
+        String pathParent
+    ) throws EntitlementException {
+        Set<DataStoreEntry> results = new HashSet<DataStoreEntry>();
+
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        
+        try {
+            Set<String> setDN = getMatchingDNs(adminToken, hostIndexes,
+                pathIndexes, null);
+            for (String dn : setDN) {
+                SMSEntry s = new SMSEntry(adminToken, dn);
+                Map<String, Set<String>> map = s.getAttributes();
+                
+                Set<String> setSearchable = map.get(SMSEntry.ATTR_XML_KEYVAL);
+                
+                Set<String> set = map.get(SMSEntry.ATTR_KEYVAL);
+                String ser = set.iterator().next();
+                ser = ser.substring(SERIALIZABLE_INDEX_KEY.length()+1);
+                
+                Set setPathParent = getAttributes(
+                    setSearchable, PATH_PARENT_INDEX_KEY);
+                
+                
+                results.add(new DataStoreEntry(
+                    getAttributes(setSearchable, HOST_INDEX_KEY),
+                    getAttributes(setSearchable, PATH_INDEX_KEY),
+                    (String)setPathParent.iterator().next(),
+                    deserializeObject(ser)));
+            }
+
+            return results;
+        } catch (SMSException e) {
+            throw new EntitlementException(e.getMessage(),
+                e.getExceptionCode());
+        } catch (SSOException e) {
+            throw new EntitlementException(e.getMessage(), -1);
+        }
+    }
+
+    private Set<String> getAttributes(Set<String> set, String key) {
+        Set<String> results = new HashSet<String>();
+        String search = key + "=";
+        
+        for (String s : set) {
+            if (s.startsWith(search)) {
+                results.add(s.substring(search.length()));
+            }
+        }
+        
+        return results;
     }
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorAdaptor.java,v 1.8 2009-01-26 20:58:07 veiming Exp $
+ * $Id: PolicyEvaluatorAdaptor.java,v 1.9 2009-01-29 02:04:03 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -30,9 +30,11 @@ package com.sun.identity.policy;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
+import com.sun.identity.entitlement.DataStoreEntry;
 import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.IPolicyEvaluator;
+import com.sun.identity.entitlement.util.ResourceComp;
 import com.sun.identity.entitlement.util.ResourceNameSplitter;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -49,11 +51,22 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
     private Set<Policy> search(Subject adminSubject, String resourceName)
         throws SSOException, PolicyException {
         PolicyManager pm = new PolicyManager(getSSOToken(adminSubject), "/");
-        return PolicyIndexer.search(pm,
-            ResourceNameSplitter.splitHost(resourceName),
-            ResourceNameSplitter.splitPath(resourceName));
+        ResourceComp comp = ResourceNameSplitter.split(resourceName);
+        return PolicyIndexer.search(pm, comp.getHostIndexes(),
+            comp.getPathIndexes());
     }
-    
+
+    private Set<DataStoreEntry> recursiveSearch(
+        Subject adminSubject, 
+        String resourceName
+    )
+        throws SSOException, PolicyException {
+        PolicyManager pm = new PolicyManager(getSSOToken(adminSubject), "/");
+        ResourceComp comp = ResourceNameSplitter.split(resourceName);
+        return PolicyIndexer.search(pm, comp.getHostIndexes(),
+            comp.getPathIndexes(), comp.getPath());
+    }
+
     /**
      * Returns <code>true</code> if the subject is granted to an
      * entitlement.
@@ -162,8 +175,10 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
         if (!recursive) {
             return getEntitlements(adminSubject, subject, serviceTypeName,
                 resourceName, envParameters);
+        } else {
+            return getSubTreeEntitlements(adminSubject, subject, 
+                serviceTypeName, resourceName, envParameters);
         }
-        return Collections.EMPTY_LIST;
     }
         
     /**
@@ -255,7 +270,7 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
         return entitlement;
     }
     
-    private static PolicyDecision mergePolicyDecisions(
+    static PolicyDecision mergePolicyDecisions(
         Set<PolicyDecision> policyDecisions,
         ServiceType serviceType
     ) {
@@ -301,5 +316,28 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
         return (policyDecisions != null) ? policyDecisions : 
             Collections.EMPTY_SET;
     }
-    
+
+     public List<Entitlement> getSubTreeEntitlements(
+        Subject adminSubject,
+        Subject subject,
+        String serviceTypeName,
+        String resourceName,
+        Map<String, Set<String>> envParameters
+    ) throws EntitlementException {  
+        try {
+            Set<DataStoreEntry> entries = recursiveSearch(
+                adminSubject, resourceName);
+            ServiceType serviceType =
+                ServiceTypeManager.getServiceTypeManager().getServiceType(
+                serviceTypeName);
+            Set<String> actionNames = serviceType.getActionNames();
+            SubResources subResources = new SubResources();
+            return subResources.evaluate(getSSOToken(subject), serviceType,
+                resourceName, actionNames, envParameters, entries);
+        } catch (SSOException e) {
+            throw new EntitlementException(e.getMessage(), -1);
+        } catch (PolicyException e) {
+            throw new EntitlementException(e.getMessage(), -1);
+        }            
+     }
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceNameSplitter.java,v 1.2 2009-01-23 07:41:39 veiming Exp $
+ * $Id: ResourceNameSplitter.java,v 1.3 2009-01-29 02:04:02 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
@@ -47,35 +47,54 @@ public class ResourceNameSplitter {
     }
 
     /**
+     * Returns the different components on a resource that can be
+     * used to search for policies.
+     * 
+     * @param resName Resource name.
+     * @return the different components on a resource.
+     */
+    public static ResourceComp split(String resName) {
+        try {
+            URL url = new URL(resName);
+            Set<String> hostIndexes = splitHost(url);
+            Set<String> pathIndexes = splitHost(url);
+            String path = url.getPath();
+            if (path.length() == 0) {
+                path ="/";
+            }
+            return new ResourceComp(hostIndexes, pathIndexes, path);
+        } catch (MalformedURLException e) {
+            Set<String> set = new HashSet<String>();
+            set.add(resName);
+            return new ResourceComp(set, Collections.EMPTY_SET, "");
+        }
+    }
+    
+    /**
      * Returns a list of sub parts of host of a resource name.
      *
      * @param resName Resource name.
-     * @param a list of sub parts of host of a resource name.
+     * @return a list of sub parts of host of a resource name.
      */
-    public static Set<String> splitHost(String resName) {
+    public static Set<String> splitHost(URL url) {
         Set<String> results = new HashSet<String>();
-        try {
-            URL url = new URL(resName);
-            String protocol = url.getProtocol().toLowerCase();
-            String host = url.getHost().toLowerCase();
-            protocol += "://";
+        String protocol = url.getProtocol().toLowerCase();
+        String host = url.getHost().toLowerCase();
+        protocol += "://";
 
-            results.add(protocol);
-            results.add(protocol + host);
+        results.add(protocol);
+        results.add(protocol + host);
 
-            List<String> dns = getDNS(host);
-            String buff = "";
-            for (String s : dns) {
-                if (buff.length() > 0) {
-                    results.add(protocol + "." + s + buff);
-                } else {
-                    results.add(protocol + "." + s);
-                }
-
-                buff += "." + s;
+        List<String> dns = getDNS(host);
+        String buff = "";
+        for (String s : dns) {
+            if (buff.length() > 0) {
+                results.add(protocol + "." + s + buff);
+            } else {
+                results.add(protocol + "." + s);
             }
-        } catch (MalformedURLException e) {
-            results.add(resName);
+
+            buff += "." + s;
         }
         
         return results;
@@ -102,7 +121,7 @@ public class ResourceNameSplitter {
      * @param resName Resource name.
      * @param a list of sub parts of path of a resource name.
      */
-    public static Set<String> splitPath(String resName) {
+    private static Set<String> splitPath(String resName) {
         Set<String> results = new HashSet<String>();
         
         try {
