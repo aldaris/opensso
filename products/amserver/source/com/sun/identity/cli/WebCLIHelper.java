@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebCLIHelper.java,v 1.11 2008-11-25 18:14:49 veiming Exp $
+ * $Id: WebCLIHelper.java,v 1.12 2009-01-29 09:00:09 mahesh_prasad_r Exp $
  *
  */
 
@@ -197,8 +197,12 @@ public class WebCLIHelper {
         }
 
         buff.append("<tr><td colspan=2 align=\"center\">")
-            .append("<input type=\"submit\" value=\"submit\"/>&nbsp;")
-            .append("<input type=\"reset\" value=\"reset\"/></td></tr>");
+            .append("<input type=\"submit\" value=\"")
+            .append(rb.getString("web-interface-button-submit"))
+            .append("\"/>&nbsp;")
+            .append("<input type=\"reset\" value=\"")
+            .append(rb.getString("web-interface-button-reset"))
+            .append("\"/></td></tr>");
         buff.append("</table></form>");
         return buff.toString();
     }
@@ -209,6 +213,8 @@ public class WebCLIHelper {
         boolean mandatory,
         StringBuffer buff
     ) {
+        ResourceBundle rb = cmdMgr.getResourceBundle();
+        
         if (!cmd.isOptionAlias(opt) && !isAuthField(opt) &&
             !isIgnored(cmd, opt)
         ) {
@@ -247,7 +253,9 @@ public class WebCLIHelper {
                     .append(opt)
                     .append("\" size=\"10\" style=\"width:200\" ")
                     .append("width=\"200\" multiple=\"true\">")
-                    .append("<td><input type=\"button\" value=\"Remove\"")
+                    .append("<td><input type=\"button\" value=\"")
+                    .append(rb.getString("web-interface-button-remove"))
+                    .append("\"")
                     .append(" onClick=\"removeSelFromList('")
                     .append(opt)
                     .append("'); return false;\" />")
@@ -256,7 +264,9 @@ public class WebCLIHelper {
                     .append(opt)
                     .append("lblb")
                     .append("\" size=\"30\"/>&nbsp;")
-                    .append("<input type=\"button\" value=\"Add\"")
+                    .append("<input type=\"button\" value=\"")
+                    .append(rb.getString("web-interface-button-add"))
+                    .append("\"")
                     .append(" onClick=\"addOption('")
                     .append(opt)
                     .append("'); return false;\" />")
