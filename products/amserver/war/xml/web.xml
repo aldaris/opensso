@@ -10,14 +10,20 @@
         <filter-name>amSetupFilter</filter-name>
         <filter-class>com.sun.identity.setup.AMSetupFilter</filter-class>
     </filter>
+
+    <!-- filter declaration -->
+
     <filter-mapping>
         <filter-name>amSetupFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
     
+    <!-- filter mapping -->
+
     <listener>
         <listener-class>com.sun.identity.common.ShutdownServletContextListener</listener-class>
     </listener>
+
     <!-- listener declaration -->
 
     <servlet>
