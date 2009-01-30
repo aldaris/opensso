@@ -17,29 +17,29 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPCommon.java,v 1.8 2009-01-26 23:54:48 nithyas Exp $
+ * $Id: LDAPCommon.java,v 1.9 2009-01-30 01:38:40 inthanga Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.common;
 
-import netscape.ldap.factory.JSSESocketFactory;
-import netscape.ldap.LDAPAttribute;
-import netscape.ldap.LDAPAttributeSchema;
-import netscape.ldap.LDAPAttributeSet;
-import netscape.ldap.LDAPConnection;
-import netscape.ldap.LDAPEntry;
-import netscape.ldap.LDAPException;
-import netscape.ldap.LDAPModification;
-import netscape.ldap.LDAPModificationSet;
-import netscape.ldap.LDAPSchema;
-import netscape.ldap.util.LDIF;
-import netscape.ldap.util.LDIFAddContent;
-import netscape.ldap.util.LDIFAttributeContent;
-import netscape.ldap.util.LDIFContent;
-import netscape.ldap.util.LDIFModifyContent;
-import netscape.ldap.util.LDIFRecord;
+import com.sun.identity.shared.ldap.factory.JSSESocketFactory;
+import com.sun.identity.shared.ldap.LDAPAttribute;
+import com.sun.identity.shared.ldap.LDAPAttributeSchema;
+import com.sun.identity.shared.ldap.LDAPAttributeSet;
+import com.sun.identity.shared.ldap.LDAPConnection;
+import com.sun.identity.shared.ldap.LDAPEntry;
+import com.sun.identity.shared.ldap.LDAPException;
+import com.sun.identity.shared.ldap.LDAPModification;
+import com.sun.identity.shared.ldap.LDAPModificationSet;
+import com.sun.identity.shared.ldap.LDAPSchema;
+import com.sun.identity.shared.ldap.util.LDIF;
+import com.sun.identity.shared.ldap.util.LDIFAddContent;
+import com.sun.identity.shared.ldap.util.LDIFAttributeContent;
+import com.sun.identity.shared.ldap.util.LDIFContent;
+import com.sun.identity.shared.ldap.util.LDIFModifyContent;
+import com.sun.identity.shared.ldap.util.LDIFRecord;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
