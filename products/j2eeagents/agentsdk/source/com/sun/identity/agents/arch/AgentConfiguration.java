@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.35 2009-01-21 18:55:50 kanduls Exp $
+ * $Id: AgentConfiguration.java,v 1.36 2009-01-30 11:50:17 kalpanakm Exp $
  *
  */
 
@@ -166,6 +166,23 @@ public class AgentConfiguration implements
     public static String getOrganizationName() {
         return _organizationName;
     }    
+
+    public static String getServerHost() {
+	 return getProperty("com.iplanet.am.server.host");
+    }
+
+    public static String getServerPort() {
+	 return getProperty("com.iplanet.am.server.port");
+    }
+    public static String getServerProtocol() {
+	 return getProperty("com.iplanet.am.server.protocol");
+    }
+
+
+    public static String getPolicyAdmLocation() {
+	 return _policyAdminLoc;
+    }
+
     
    /**
     * Returns a boolean indicating if the notifications for Policy changes
@@ -652,6 +669,7 @@ public class AgentConfiguration implements
                 setServiceResolver();
                 setApplicationUser();
                 setApplicationPassword();               
+		setPolicyAdminLoc();
                 setAppSSOToken();
                 setLockConfig();
                 setProfileName();
@@ -918,6 +936,22 @@ public class AgentConfiguration implements
             }
         }
     }
+
+    private static synchronized void setPolicyAdminLoc() {
+	if (!isInitialized()) {
+            _policyAdminLoc = getProperty("com.sun.identity.agent.policyadmin.location");
+            if (_policyAdminLoc == null || _policyAdminLoc.trim().length()==0)
+            {
+             	throw new RuntimeException(
+			"Invalid application user specified");
+            }
+            if (isLogMessageEnabled()) {
+		logMessage("AgentConfiguration: Policy Admin Location: "
+			+ _policyAdminLoc);
+            }
+	}
+    }
+
     
     private static synchronized void setApplicationUser() {
         if (!isInitialized()) {
@@ -1489,6 +1523,7 @@ public class AgentConfiguration implements
     private static String _ssoTokenCookieName;
     private static String _applicationUser;
     private static String _applicationPassword;
+    private static String _policyAdminLoc;
     private static String _userIdPropertyName;
     private static AuditLogMode _auditLogMode = AuditLogMode.MODE_BOTH;
     private static String _clientNotificationURL;

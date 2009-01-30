@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmAgentBaseFilter.java,v 1.4 2008-10-07 17:32:31 huacui Exp $
+ * $Id: AmAgentBaseFilter.java,v 1.5 2009-01-30 11:50:17 kalpanakm Exp $
  *
  */
 
@@ -344,7 +344,7 @@ public abstract class AmAgentBaseFilter implements Filter
         return AmFilterMode.get(globalModeString);
     }
     
-    private IAmFilter getAmFilterInstance(HttpServletRequest request) 
+    protected IAmFilter getAmFilterInstance(HttpServletRequest request) 
     throws AgentException {
         if (!isInitialized()) {
             initializeFilter(request);

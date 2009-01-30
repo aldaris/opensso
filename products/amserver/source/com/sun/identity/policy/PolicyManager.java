@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManager.java,v 1.8 2009-01-28 05:35:01 ww203982 Exp $
+ * $Id: PolicyManager.java,v 1.9 2009-01-30 11:46:58 kalpanakm Exp $
  *
  */
 
@@ -234,8 +234,8 @@ public final class PolicyManager {
             debug.message("Policy Manager constructed with SSO token " +
                 " for organization: " + org);
         }
-        policyCache = PolicyCache.getInstance();
-        svtm = ServiceTypeManager.getServiceTypeManager();
+        policyCache = PolicyCache.getInstance(token);
+	svtm = new ServiceTypeManager(token);
         rim = new ResourceIndexManager(rm);
 
     }
