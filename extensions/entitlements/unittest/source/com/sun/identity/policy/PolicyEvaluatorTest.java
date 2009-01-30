@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorTest.java,v 1.6 2009-01-26 20:58:08 veiming Exp $
+ * $Id: PolicyEvaluatorTest.java,v 1.7 2009-01-30 01:17:52 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -118,6 +118,20 @@ public class PolicyEvaluatorTest {
         if (!ad.getValues().contains("deny")) {
             throw new Exception("testResourceSelf: " +
                 "http://www.sun.com:8080/private evaluation failed");
+        }
+    }
+    
+    @Test
+    public void testResourceSubTree() throws Exception {
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+
+        PolicyEvaluator pe = new PolicyEvaluator("iPlanetAMWebAgentService");
+        Set<ResourceResult> resResults = pe.getResourceResults(adminToken, 
+            "http://www.sun.com:8080/private",
+            ResourceResult.SUBTREE_SCOPE, Collections.EMPTY_MAP);
+        for (ResourceResult r : resResults) {
+            r.toString();
         }
     }
     

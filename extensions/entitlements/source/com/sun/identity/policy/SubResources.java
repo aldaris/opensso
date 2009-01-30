@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubResources.java,v 1.2 2009-01-29 20:13:17 veiming Exp $
+ * $Id: SubResources.java,v 1.3 2009-01-30 01:17:52 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -84,15 +84,15 @@ public class SubResources {
         
         tasksCount = policyEvalTasks.size();
         
-        for (PolicyDecisionTask.Task task : policyEvalTasks) {
-            Evaluator eval = new Evaluator(this, task, token, serviceType, 
-                actionNames, envParameters);
-            SMSThreadPool.scheduleTask(eval);
-        }
-        
-        synchronized (lock) {
+        synchronized (this) {
+            for (PolicyDecisionTask.Task task : policyEvalTasks) {
+                Evaluator eval = new Evaluator(this, task, token, serviceType, 
+                    actionNames, envParameters);
+                SMSThreadPool.scheduleTask(eval);
+            }
+
             if (tasksCount == 0) {
-                mergePolicyDecisions(serviceType);
+                return mergePolicyDecisions(serviceType);
             } else {
                 try {
                     this.wait();
@@ -232,13 +232,13 @@ public class SubResources {
         ) {
             this.parent = parent;
             this.token = token;
+            this.task = task;
             this.serviceType = serviceType;
             this.actionNames = actionNames;
             this.envParameters = envParameters;
         }
         
         public void run() {
-            PolicyDecision pd = null;
             try {
                 task.policyDecision = task.policy.getPolicyDecision(
                     token, serviceType.getName(), task.resource,
@@ -249,7 +249,10 @@ public class SubResources {
                 // TOFIX
             }
             parent.tasksCount--;
-            parent.notify();
+            
+            synchronized(parent) {
+                parent.notify();
+            }
         }
         
     }
