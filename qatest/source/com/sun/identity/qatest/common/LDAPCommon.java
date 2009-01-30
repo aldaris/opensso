@@ -17,13 +17,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LDAPCommon.java,v 1.9 2009-01-30 01:38:40 inthanga Exp $
+ * $Id: LDAPCommon.java,v 1.10 2009-01-30 01:42:45 inthanga Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.common;
-
+/**
+ * Following import are done due to ldapjdk pkg name change 
+ */
 import com.sun.identity.shared.ldap.factory.JSSESocketFactory;
 import com.sun.identity.shared.ldap.LDAPAttribute;
 import com.sun.identity.shared.ldap.LDAPAttributeSchema;
