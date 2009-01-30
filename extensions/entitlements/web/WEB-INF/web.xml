@@ -38,7 +38,7 @@
     </context-param>
     <filter>
         <filter-name>ConsoleAuthFilter</filter-name>
-        <filter-class>com.sun.identity.entitlement.console.AuthFilter</filter-class>
+        <filter-class>com.sun.identity.console.entitlement.AuthFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>ConsoleAuthFilter</filter-name>
@@ -80,9 +80,4 @@
         <servlet-name>uploadServlet</servlet-name>
         <url-pattern>/uploadHtml</url-pattern>
     </servlet-mapping>
-    <session-config>
-        <session-timeout>
-            30
-        </session-timeout>
-    </session-config>
 </web-app>

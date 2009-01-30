@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.18 2009-01-29 21:28:33 farble1670 Exp $
+   $Id: build.xml,v 1.19 2009-01-30 23:21:05 farble1670 Exp $
 
 -->
 
@@ -109,6 +109,15 @@
             <classpath refid="build.class.path"/>
         </javac>
     </target>
+
+    <target name="src-console" depends="init">
+        <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
+               destdir="${entitlements.classes.dir}" source="1.5" target="1.5"
+               debug="${build.debug}" debuglevel="${build.debuglevel}">
+            <src path="${entitlements.src.dir}/com/sun/identity/console"/>
+            <classpath refid="build.class.path"/>
+        </javac>
+    </target>
     
     <target name="src-sm" depends="init">
         <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
@@ -128,7 +137,7 @@
         </javac>
     </target>
 
-    <target name="src" depends="src-ent,src-sm,src-policy"/>
+    <target name="src" depends="src-ent,src-sm,src-policy,src-console"/>
     
     <target name="unwar" depends="init">
         <unjar
