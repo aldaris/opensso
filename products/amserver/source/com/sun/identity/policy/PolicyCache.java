@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCache.java,v 1.5 2009-01-28 05:35:00 ww203982 Exp $
+ * $Id: PolicyCache.java,v 1.6 2009-01-30 11:48:39 kalpanakm Exp $
  *
  */
 
@@ -124,6 +124,55 @@ class PolicyCache implements ServiceListener {
         }
         return policyCache;
     }
+
+	/**
+         * Gets the singleton instance of PolicyCache.
+	 * It takes into consideration of the SSOToken passed 
+	 * to this method as a parameter
+ 	 */	
+
+
+    synchronized static PolicyCache getInstance(SSOToken tok) throws PolicyException {
+	if (policyCache == null) {
+		if ( DEBUG.messageEnabled() ) {
+			DEBUG.message("Creating singleton policy cache");
+		}
+		policyCache = new PolicyCache();
+		try {
+			policyCache.token = tok;
+			policyCache.scm = new ServiceConfigManager(
+				PolicyManager.POLICY_SERVICE_NAME,
+				policyCache.token);
+			policyCache.scm.addListener(policyCache);
+		} catch (SMSException smse) {
+			DEBUG.error(ResBundleUtils.getString(
+				"can_not_create_policy_cache"), smse);
+			throw new PolicyException(ResBundleUtils.rbName,
+				"can_not_create_policy_cache", null, smse);
+		} catch (SSOException ssoe) {
+			DEBUG.error(ResBundleUtils.getString(
+				"can_not_create_policy_cache"), ssoe);
+			throw new PolicyException(ResBundleUtils.rbName,
+				"can_not_create_policy_cache", null, ssoe);
+		}
+
+		//Register policyStatsListener
+		Stats policyStats = Stats.getInstance(POLICY_STATS);
+		if (policyStats.isEnabled()) {
+			StatsListener policyStatsListener
+				= new PolicyStatsListener(policyStats);
+			policyStats.addStatsListener(policyStatsListener);
+			if ( DEBUG.messageEnabled() ) {
+				DEBUG.message("PolicyCache.getInstance():"
+				+ " Registered PolicyStatsListener with "
+				+ " Stats service");
+			}
+		}
+
+	}
+	return policyCache;
+    }
+
 
     /** No argument constructor 
      */

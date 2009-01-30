@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceTypeManager.java,v 1.3 2008-06-25 05:43:45 qcheng Exp $
+ * $Id: ServiceTypeManager.java,v 1.4 2009-01-30 11:49:03 kalpanakm Exp $
  *
  */
 
@@ -55,7 +55,7 @@ public class ServiceTypeManager {
 
     private static ServiceTypeManager svtm = null;
 
-    private SSOToken token;
+    private static SSOToken token;
     private Map serviceTypes = Collections.synchronizedMap(new HashMap());
 
     // static variables
@@ -197,6 +197,9 @@ public class ServiceTypeManager {
      * configured in serverconfig.xml 
      */
     static SSOToken getSSOToken() throws SSOException{
+	if (token != null)
+		return token;
+
 	SSOToken token = (SSOToken) AccessController.doPrivileged(
 	    AdminTokenAction.getInstance());
 	if (token == null) {
