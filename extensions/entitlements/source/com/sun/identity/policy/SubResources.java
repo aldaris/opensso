@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubResources.java,v 1.3 2009-01-30 01:17:52 veiming Exp $
+ * $Id: SubResources.java,v 1.4 2009-01-30 09:46:56 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -83,6 +83,7 @@ public class SubResources {
         }
         
         tasksCount = policyEvalTasks.size();
+        List<Entitlement> results = null;
         
         synchronized (this) {
             for (PolicyDecisionTask.Task task : policyEvalTasks) {
@@ -91,9 +92,7 @@ public class SubResources {
                 SMSThreadPool.scheduleTask(eval);
             }
 
-            if (tasksCount == 0) {
-                return mergePolicyDecisions(serviceType);
-            } else {
+            while (tasksCount > 0) {
                 try {
                     this.wait();
                 } catch (InterruptedException ex) {
@@ -101,7 +100,7 @@ public class SubResources {
                 }
             }
         }
-        return null;
+        return mergePolicyDecisions(serviceType);
     }
     
     private void createHostIndexMap(Set<DataStoreEntry> entries) {
