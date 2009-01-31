@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSFlatFileObjectBase.java,v 1.10 2008-06-25 05:44:09 qcheng Exp $
+ * $Id: SMSFlatFileObjectBase.java,v 1.11 2009-01-31 01:51:58 veiming Exp $
  *
  */
 
@@ -51,9 +51,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.text.ParseException;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import javax.naming.directory.Attribute;
@@ -559,7 +561,28 @@ public abstract class SMSFlatFileObjectBase extends SMSObjectDB {
      * service name and version in the filter in a ldap filter format. 
      * So return entries matching service name and version in the filter.
      * 
-     * @return a Set of entries (dn's) that match the given filter.
+     * @param token Ignored argument. Access check is assumed to have 
+     * occurred before reaching this method. 
+     * @param objName Name of the configuration object to begin search. Name is 
+     * expected to be a dn.
+     * @param filter Filter of service name and version. Expected to be in 
+     * SMSEntry.FILTER_PATTERN_SERVICE format.
+     * @return a Map of entries (dn's) that match the given filter.
+     *
+     * @throws IllegalArgumentException if objName or filter is null or empty, 
+     * or if filter is not in the expected format.
+     */
+    public Map searchEx(SSOToken token, String objName, String filter)
+        throws SSOException, SMSException {
+        return Collections.EMPTY_MAP; //TOFIX
+    }
+
+
+    /**
+     * Search for a config object with the given filter.
+     * Do some cheating here - callers of this method only pass 
+     * service name and version in the filter in a ldap filter format. 
+     * So return entries matching service name and version in the filter.
      * 
      * @param token Ignored argument. Access check is assumed to have 
      * occurred before reaching this method. 
@@ -567,6 +590,7 @@ public abstract class SMSFlatFileObjectBase extends SMSObjectDB {
      * expected to be a dn.
      * @param filter Filter of service name and version. Expected to be in 
      * SMSEntry.FILTER_PATTERN_SERVICE format.
+     * @return a Set of entries (dn's) that match the given filter.
      *
      * @throws IllegalArgumentException if objName or filter is null or empty, 
      * or if filter is not in the expected format.

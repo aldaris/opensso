@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSLdapObject.java,v 1.22 2009-01-28 05:35:04 ww203982 Exp $
+ * $Id: SMSLdapObject.java,v 1.23 2009-01-31 01:51:59 veiming Exp $
  *
  */
 
@@ -739,12 +739,69 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
      * Returns LDAP entries that match the filter, using the start DN provided
      * in method
      */
+    public Map searchEx(SSOToken token, String startDN, String filter)
+        throws SSOException, SMSException {
+        LDAPSearchResults results = searchObjects(token, startDN, filter);
+
+        // Convert LDAP results to DNs
+        Map answer = new HashMap();
+        while ((results != null) && results.hasMoreElements()) {
+            try {
+                LDAPEntry entry = results.next();
+                answer.put(entry.getDN(), convertLDAPAttributeSetToMap(
+                    entry.getAttributeSet()));
+            } catch (LDAPException ldape) {
+                if (debug.warningEnabled()) {
+                    debug.warning(
+                        "SMSLdapObject.search(): Error in searching for " +
+                        "filter match: " + filter, ldape);
+                }
+                throw new SMSException(ldape, "sms-error-in-searching");
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * Returns LDAP entries that match the filter, using the start DN provided
+     * in method
+     */
     public Set search(SSOToken token, String startDN, String filter)
             throws SSOException, SMSException {
         if (debug.messageEnabled()) {
             debug.message("SMSLdapObject: search filter: " + filter);
         }
 
+        LDAPSearchResults results = searchObjects(token, startDN, filter);
+
+        // Convert LDAP results to DNs
+        Set answer = new OrderedSet();
+        while ((results != null) && results.hasMoreElements()) {
+            try {
+                LDAPEntry entry = results.next();
+                answer.add(entry.getDN());
+            } catch (LDAPException ldape) {
+                if (debug.warningEnabled()) {
+                    debug.warning(
+                        "SMSLdapObject.search(): Error in searching for " +
+                        "filter match: " + filter, ldape);
+                }
+                throw new SMSException(ldape, "sms-error-in-searching");
+            }
+        }
+        if (debug.messageEnabled()) {
+            debug.message("SMSLdapObject.search() returned successfully: "
+                    + filter + "\n\tObjects: " + answer);
+        }
+        return answer;
+    }
+
+
+    private LDAPSearchResults searchObjects(
+        SSOToken token,
+        String startDN,
+        String filter
+    ) throws SSOException, SMSException {
         LDAPSearchResults results = null;
         int retry = 0;
 
@@ -787,27 +844,7 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
                 }
             }
         }
-
-        // Convert LDAP results to DNs
-        Set answer = new OrderedSet();
-        while ((results != null) && results.hasMoreElements()) {
-            try {
-                LDAPEntry entry = results.next();
-                answer.add(entry.getDN());
-            } catch (LDAPException ldape) {
-                if (debug.warningEnabled()) {
-                    debug.warning(
-                        "SMSLdapObject.search(): Error in searching for " +
-                        "filter match: " + filter, ldape);
-                }
-                throw new SMSException(ldape, "sms-error-in-searching");
-            }
-        }
-        if (debug.messageEnabled()) {
-            debug.message("SMSLdapObject.search() returned successfully: "
-                    + filter + "\n\tObjects: " + answer);
-        }
-        return answer;
+        return results;
     }
 
     /**

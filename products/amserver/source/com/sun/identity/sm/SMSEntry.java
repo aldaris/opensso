@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.46 2009-01-28 05:35:03 ww203982 Exp $
+ * $Id: SMSEntry.java,v 1.47 2009-01-31 01:51:57 veiming Exp $
  *
  */
 
@@ -1009,6 +1009,10 @@ public class SMSEntry implements Cloneable {
     /**
      * Returns the DNs that match the filter. The search is performed from the
      * root suffix ie., DN. It searchs for SMS objects only.
+     *
+     * @param token Single-Sign On token.
+     * @param dn Base DN
+     * @param filter Search Filter.
      */
     public static Set search(SSOToken token, String dn, String filter) 
         throws SMSException {
@@ -1020,7 +1024,27 @@ public class SMSEntry implements Cloneable {
                     ssoe, "sms-error-in-searching");
         }
     }
-        
+
+    /**
+     * Returns the DNs and its attribute values that match the filter. The
+     * search is performed from the root suffix ie., DN. It searchs for SMS
+     * objects only.
+     *
+     * @param token Single-Sign On token.
+     * @param dn Base DN
+     * @param filter Search Filter.
+     */
+    public static Map searchEx(SSOToken token, String dn, String filter)
+        throws SMSException {
+        try {
+            return smsObject.searchEx(token, dn, filter);
+        } catch (SSOException ssoe) {
+            debug.error("SMSEntry: Search ERROR: " + filter, ssoe);
+            throw new SMSException(bundle.getString("sms-error-in-searching"),
+                    ssoe, "sms-error-in-searching");
+        }
+    }
+
     /**
      * Returns the DNs that match the filter. The search is performed from the
      * root suffix ie., DN. It searchs for SMS objects only.
