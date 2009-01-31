@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestConstants.java,v 1.29 2009-01-13 07:13:27 vimal_67 Exp $
+ * $Id: TestConstants.java,v 1.30 2009-01-31 00:35:13 mrudulahg Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -267,6 +267,21 @@ public interface TestConstants {
      * Property key for <code>internal.webapp.uri</code>.
      */
     String KEY_INTERNAL_WEBAPP_URI = "internal.webapp.uri";
+
+    /**
+     * Property key for <code>debug_dir</code>.
+     */
+    String KEY_DEBUG_DIR = "debug_dir";
+
+    /**
+     * Property key for <code>config_result</code>.
+     */
+    String KEY_CONFIG_RESULT = "config_result";
+
+    /**
+     * Property key for <code>client_txt</code>.
+     */
+    String KEY_CLIENT_TXT = "client_txt";
 
     /**
      * SAMLv2, IDFF SP related constants
@@ -1002,7 +1017,7 @@ public interface TestConstants {
     /**
      * list-cot-members message for no entites present in the COT
      */
-    String KEY_LIST_COT_NO_ENTITIES = "There are no trusted entites in the " +
+    String KEY_LIST_COT_NO_ENTITIES = "There are no trusted entities in the " +
             "circle of trust";
     
     /**
@@ -1015,5 +1030,33 @@ public interface TestConstants {
      * <code>dist_auth_notification_service</code>
      */
     String KEY_DIST_AUTH_NOTIFICATION_SVC = "dist_auth_notification_service";
-    
+
+    /**
+     * ID-WSF key for
+     * <code>attribute_container</code>
+     */
+    String KEY_ATTRIBUTE_CONTAINER = "attribute_container";
+
+    /**
+     * ID-WSF key for
+     * <code>attribute_name</code>
+     */
+    String KEY_ATTRIBUTE_NAME = "attribute_name";
+
+    /**
+     * ID-WSF key for
+     * <code>attribute_value</code>
+     */
+    String KEY_ATTRIBUTE_VALUE = "attribute_value";
+
+    /**
+     * ID-WSF PP Modify success result text
+     */
+    String KEY_PP_MODIFY_RESULT = "pp:OK";
+
+    /**
+     * ID-WSF Sample configuration successful message. 
+     */
+    String KEY_WSC_CONFIG_SUCCESS_RESULT = "WSC Sample is configured";
+
 }
