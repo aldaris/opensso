@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AccessManager.java,v 1.104 2008-12-04 06:33:36 veiming Exp $
+ * $Id: AccessManager.java,v 1.105 2009-01-31 04:43:11 veiming Exp $
  *
  */
 
@@ -2141,6 +2141,7 @@ public class AccessManager {
             "attributevalues|a|m|Attribute values e.g. homeaddress=here.",
             "datafile|D|s|Name of file that contains attribute values data."},
         resourceStrings={
+            "update-server-config-unknown=Update succeeded with unknown property values.",
             "update-server-config-succeeded=The configuration of {0} was updated.",
             "update-server-config-does-not-exists={0} did not exist."
         }

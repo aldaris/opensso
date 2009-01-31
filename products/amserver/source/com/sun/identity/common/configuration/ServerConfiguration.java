@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerConfiguration.java,v 1.12 2008-07-29 20:11:29 veiming Exp $
+ * $Id: ServerConfiguration.java,v 1.13 2009-01-31 04:43:12 veiming Exp $
  *
  */
 
@@ -493,8 +493,8 @@ public class ServerConfiguration extends ConfigurationBase {
                 "com.sun.identity.common.configuration.ServerPropertyValidator",
                 properties)
                 ) {
-                    throw new ConfigurationException("invalid.properties",
-                        null);
+                    throw new UnknownPropertyNameException(
+                        "invalid.properties", null);
                 }
             } catch (SMSException e) {
                 throw new ConfigurationException("unable.to.connect.to.server",

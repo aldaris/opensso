@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UpdateServerConfig.java,v 1.5 2008-11-07 20:27:05 veiming Exp $
+ * $Id: UpdateServerConfig.java,v 1.6 2009-01-31 04:43:12 veiming Exp $
  *
  */
 
@@ -108,7 +108,7 @@ public class UpdateServerConfig extends ServerConfigBase {
                             adminSSOToken, serverName, attributeValues);
                     } catch (UnknownPropertyNameException ex) {
                         outputWriter.printlnMessage(
-                            ex.getL10NMessage(getCommandManager().getLocale()));
+                            getResourceString("update-server-config-unknown"));
                         outputWriter.printlnMessage("");
                     }
                     outputWriter.printlnMessage(MessageFormat.format(
