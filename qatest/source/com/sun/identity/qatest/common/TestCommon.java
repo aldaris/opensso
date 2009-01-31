@@ -17,25 +17,22 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.68 2009-01-27 00:00:53 nithyas Exp $
+ * $Id: TestCommon.java,v 1.69 2009-01-31 00:34:11 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.common;
 
-import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlHiddenInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
-import com.gargoylesoftware.htmlunit.html.HtmlRadioButtonInput;
-import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.jaxrpc.JAXRPCUtil;
+import com.sun.identity.qatest.common.webtest.DefaultTaskHandler;
 import com.sun.identity.shared.jaxrpc.SOAPClient;
 import java.io.BufferedWriter;
 import java.io.BufferedReader;
@@ -50,7 +47,6 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.ConnectException;
 import java.net.InetAddress;
@@ -81,6 +77,8 @@ import org.mortbay.jetty.Server;
 import org.mortbay.jetty.webapp.WebAppContext;
 import org.testng.Reporter;
 import java.net.URLEncoder;
+import org.mortbay.jetty.Connector;
+import org.mortbay.jetty.nio.SelectChannelConnector;
 
 /**
  * This class is the base for all <code>OpenSSO</code> QA testcases.
@@ -105,7 +103,7 @@ public class TestCommon implements TestConstants {
     static protected boolean distAuthEnabled = false;
     static private Logger logger;
     static private String logEntryTemplate;
-    static private Server server;
+    static protected Server server;
     private String productSetupResult;
     static private String uriseparator = "/";
  
@@ -118,7 +116,8 @@ public class TestCommon implements TestConstants {
     protected static String serverPort;
     protected static String serverUri;
     protected static String keyAlias;
-    
+    protected static String clientURL;
+
     static {
         try {
             rb_amconfig = ResourceBundle.getBundle(
@@ -1739,6 +1738,151 @@ public class TestCommon implements TestConstants {
         log(Level.FINE, "deregisterNotificationServerURL", "Completed " +
                 "deregistering the notification url's");
     }
+
+    /**
+     * This method deploys client sdk war on jetty server, if the war file type
+     * is set to internal else it will point to the external url.
+     * @param rb_client
+     * @return client sdk url
+     * @throws Exception
+     */
+    protected String deployClientSDKWar(ResourceBundle rb_client)
+    throws Exception {
+        String strWarType = rb_client.getString("warfile_type");
+        String strClientDomain = rb_client.getString("client_domain_name");
+        String warFile = rb_client.getString("war_file");
+        if (strWarType.equals("internal")) {
+            server = new Server();
+            Connector connector = new SelectChannelConnector();
+
+            int deployPort = getUnusedPort();
+            log(Level.FINE, "deployClientSDKWar", "Deploy port: " + deployPort);
+            connector.setPort(deployPort);
+
+            InetAddress addr = InetAddress.getLocalHost();
+            String hostname = addr.getCanonicalHostName();
+
+            log(Level.FINE, "deployClientSDKWar", "Deploy host: " + hostname +
+                    strClientDomain);
+            connector.setHost(hostname);
+            server.addConnector(connector);
+
+            WebAppContext wac = new WebAppContext();
+
+            String deployURI = rb_client.getString("deploy_uri");
+            log(Level.FINE, "deployClientSDKWar", "Deploy URI: " + deployURI);
+            wac.setContextPath(deployURI);
+
+            clientURL = protocol + "://" + hostname + strClientDomain + ":" +
+                    deployPort + deployURI;
+            log(Level.FINE, "deployClientSDKWar", "Client URL: " + clientURL);
+            if (new File(warFile).exists()) {
+                log(Level.FINE, "deployClientSDKWar", "WAR File: " + warFile);
+                wac.setWar(warFile);
+
+                server.setHandler(wac);
+                server.setStopAtShutdown(true);
+
+                log(Level.FINE, "deployClientSDKWar",
+                        "Deploying war and starting jetty server");
+                server.start();
+                log(Level.FINE, "deployClientSDKWar", "Deployed war and " +
+                        "started jetty server");
+            } else {
+                log(Level.SEVERE, "deployClientSDKWar", "The client war file"
+                        + warFile + " does not exist.  Please verify the " +
+                        "value of the war_file property");
+                assert false;
+            }
+        } else {
+            log(Level.FINE, "deployClientSDKWar", "Configuring an external " +
+                    "war");
+            clientURL = warFile;
+            log(Level.FINE, "deployClientSDKWar", "Client URL: " + clientURL);
+            try {
+                WebClient webClient = new WebClient();
+                HtmlPage page = (HtmlPage)webClient.getPage(clientURL
+                        + "/index.html");
+            } catch(com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException
+                    e) {
+                log(Level.SEVERE, "deployClientSDKWar", clientURL + " cannot " +
+                        "be reached.");
+                assert false;
+            }
+        }
+        configureWAR(clientURL, rb_client);
+        exiting("deployClientSDKWar");
+        return clientURL;
+    }
+
+    /**
+     * This method configures the war using the client samples configurator page
+     */
+    private void configureWAR(String clientURL, ResourceBundle rb_client)
+    throws Exception {
+        WebClient webClient = new WebClient();
+        HtmlPage page = (HtmlPage)webClient.getPage(clientURL +
+                "/Configurator.jsp");
+        if (getHtmlPageStringIndex(page, rb_client.getString(TestConstants.
+                KEY_CLIENT_TXT)) == -1) {
+            log(Level.FINE, "configureWAR", "WAR file is not configured." +
+                    " Configuring the deployed war.");
+        FileWriter fstream = new FileWriter(getBaseDir() +
+                "sampleconfigurator.xml");
+        BufferedWriter out = new BufferedWriter(fstream);
+
+        String debugDir = rb_client.getString(TestConstants.KEY_DEBUG_DIR);
+        String appUser = rb_amconfig.getString(
+                TestConstants.KEY_AMC_AGENTS_APP_USERNAME);
+        String appPassword = rb_amconfig.getString(
+                TestConstants.KEY_AMC_SERVICE_PASSWORD);
+        String configResult = rb_client.getString(TestConstants.
+                KEY_CONFIG_RESULT);
+
+        log(Level.FINEST, "configureWAR", "Debug dir: " + debugDir);
+        log(Level.FINEST, "configureWAR", "App username: " + appUser);
+        log(Level.FINEST, "configureWAR", "App password: " + appPassword);
+        log(Level.FINEST, "configureWAR", "Config result: " +
+                configResult);
+        log(Level.FINEST, "configureWAR", "Server protocol: " + protocol);
+        log(Level.FINEST, "configureWAR", "Server host: " + host);
+        log(Level.FINEST, "configureWAR", "Server port: " + port);
+        log(Level.FINEST, "configureWAR", "Server URI: " + uri);
+
+        out.write("<url href=\"" + clientURL + "/Configurator.jsp");
+        out.write("\">");
+        out.write(newline);
+        out.write("<form name=\"clientsampleconfigurator\"");
+        out.write(" buttonName=\"submit\">");
+        out.write(newline);
+        out.write("<input name=\"famProt\" value=\"" + protocol + "\"/>");
+        out.write(newline);
+            out.write("<input name=\"famHost\" value=\"" + host + "\"/>");
+            out.write(newline);
+            out.write("<input name=\"famPort\" value=\"" + port + "\"/>");
+            out.write(newline);
+            out.write("<input name=\"famDeploymenturi\" value=\"" + uri + "\"/>");
+            out.write(newline);
+            out.write("<input name=\"debugDir\" value=\"" + debugDir + "\"/>");
+            out.write(newline);
+            out.write("<input name=\"appUser\" value=\"" + appUser + "\"/>");
+            out.write(newline);
+            out.write("<input name=\"appPassword\" value=\"" + appPassword);
+            out.write("\"/>");
+            out.write(newline);
+            out.write("<result text=\"" + configResult + "\"/>");
+            out.write(newline);
+            out.write("</form>");
+            out.write(newline);
+            out.write("</url>");
+            out.write(newline);
+            out.close();
+            DefaultTaskHandler task = new DefaultTaskHandler(getBaseDir() +
+                    "sampleconfigurator.xml");
+            page = task.execute(webClient);
+        } else
+            log(Level.FINE, "configureWAR", "WAR file is already configured.");
+   }
 
     /**
      * Replaces the Redirect uri & the search strings in the authentication
