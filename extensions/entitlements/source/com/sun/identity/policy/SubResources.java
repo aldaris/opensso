@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubResources.java,v 1.4 2009-01-30 09:46:56 veiming Exp $
+ * $Id: SubResources.java,v 1.5 2009-01-31 02:03:53 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -55,8 +55,7 @@ public class SubResources {
     private PolicyDecisionTask tasks;
     private Set<PolicyDecisionTask.Task> policyEvalTasks;
     private Map<String, Set<PolicyDecisionTask.Task>> resToTasks;
-    private int tasksCount = 0;
-    private Object lock = new Object();
+    int tasksCount = 0;
     
     public List<Entitlement> evaluate(
         SSOToken token,
@@ -83,12 +82,11 @@ public class SubResources {
         }
         
         tasksCount = policyEvalTasks.size();
-        List<Entitlement> results = null;
-        
+       
         synchronized (this) {
             for (PolicyDecisionTask.Task task : policyEvalTasks) {
-                Evaluator eval = new Evaluator(this, task, token, serviceType, 
-                    actionNames, envParameters);
+                EvaluatorThread eval = new EvaluatorThread(
+                    this, task, token, serviceType, actionNames, envParameters);
                 SMSThreadPool.scheduleTask(eval);
             }
 
@@ -212,8 +210,7 @@ public class SubResources {
         return results;
     }
     
-    
-    private class Evaluator implements Runnable {
+    private class EvaluatorThread implements Runnable {
         private SubResources parent;
         private PolicyDecisionTask.Task task;
         private SSOToken token;
@@ -221,14 +218,13 @@ public class SubResources {
         private Set<String> actionNames;
         private Map<String, Set<String>> envParameters;
 
-        private Evaluator(
+        private EvaluatorThread(
             SubResources parent,
             PolicyDecisionTask.Task task,
             SSOToken token,
             ServiceType serviceType,
             Set<String> actionNames,
-            Map<String, Set<String>> envParameters
-        ) {
+            Map<String, Set<String>> envParameters) {
             this.parent = parent;
             this.token = token;
             this.task = task;
@@ -236,7 +232,7 @@ public class SubResources {
             this.actionNames = actionNames;
             this.envParameters = envParameters;
         }
-        
+
         public void run() {
             try {
                 task.policyDecision = task.policy.getPolicyDecision(
@@ -248,11 +244,10 @@ public class SubResources {
                 // TOFIX
             }
             parent.tasksCount--;
-            
-            synchronized(parent) {
+
+            synchronized (parent) {
                 parent.notify();
             }
         }
-        
     }
 }

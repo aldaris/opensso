@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexDataStore.java,v 1.9 2009-01-30 01:17:52 veiming Exp $
+ * $Id: PolicyIndexDataStore.java,v 1.10 2009-01-31 02:03:54 veiming Exp $
  */
 
 package com.sun.identity.sm;
@@ -215,11 +215,10 @@ public class PolicyIndexDataStore implements  IPolicyIndexDataStore {
             AdminTokenAction.getInstance());
         
         try {
-            Set<String> setDN = getMatchingDNs(adminToken, hostIndexes,
-                pathIndexes, null);
-            for (String dn : setDN) {
-                SMSEntry s = new SMSEntry(adminToken, dn);
-                Map<String, Set<String>> map = s.getAttributes();
+            Map<String, Map<String, Set<String>>> matched = getMatchingDNs(
+                adminToken, hostIndexes, pathIndexes, null);
+            for (String dn : matched.keySet()) {
+                Map<String, Set<String>> map = matched.get(dn);
                 Set<String> set = map.get(SMSEntry.ATTR_KEYVAL);
                 String ser = set.iterator().next();
                 ser = ser.substring(SERIALIZABLE_INDEX_KEY.length()+1);
@@ -235,7 +234,7 @@ public class PolicyIndexDataStore implements  IPolicyIndexDataStore {
         }
     }
     
-    private Set<String> getMatchingDNs(
+    private Map<String, Map<String, Set<String>>> getMatchingDNs(
         SSOToken adminToken,
         Set<String> hostIndexes,
         Set<String> pathIndexes,
@@ -243,7 +242,7 @@ public class PolicyIndexDataStore implements  IPolicyIndexDataStore {
     ) throws SSOException, SMSException {
         Object[] params = {SMSEntry.getRootSuffix()};
         String startDN = MessageFormat.format(START_DN_TEMPLATE, params);
-        return SMSEntry.search(adminToken, startDN, 
+        return SMSEntry.searchEx(adminToken, startDN, 
             getFilter(hostIndexes, pathIndexes, pathParent));
     }
     
@@ -294,21 +293,18 @@ public class PolicyIndexDataStore implements  IPolicyIndexDataStore {
             AdminTokenAction.getInstance());
         
         try {
-            Set<String> setDN = getMatchingDNs(adminToken, hostIndexes,
-                pathIndexes, pathParent);
-            for (String dn : setDN) {
-                SMSEntry s = new SMSEntry(adminToken, dn);
-                Map<String, Set<String>> map = s.getAttributes();
-                
+            Map<String, Map<String, Set<String>>> matched = getMatchingDNs(
+                adminToken, hostIndexes, pathIndexes, pathParent);
+            for (String dn : matched.keySet()) {
+                Map<String, Set<String>> map = matched.get(dn);
                 Set<String> setSearchable = map.get(SMSEntry.ATTR_XML_KEYVAL);
                 
                 Set<String> set = map.get(SMSEntry.ATTR_KEYVAL);
                 String ser = set.iterator().next();
                 ser = ser.substring(SERIALIZABLE_INDEX_KEY.length()+1);
-                
+                  
                 Set setPathParent = getAttributes(
                     setSearchable, PATH_PARENT_INDEX_KEY);
-                
                 
                 results.add(new DataStoreEntry(
                     getAttributes(setSearchable, HOST_INDEX_KEY),
@@ -325,17 +321,17 @@ public class PolicyIndexDataStore implements  IPolicyIndexDataStore {
             throw new EntitlementException(e.getMessage(), -1);
         }
     }
-
+    
     private Set<String> getAttributes(Set<String> set, String key) {
         Set<String> results = new HashSet<String>();
         String search = key + "=";
-        
+
         for (String s : set) {
             if (s.startsWith(search)) {
                 results.add(s.substring(search.length()));
             }
         }
-        
+
         return results;
     }
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorAdaptor.java,v 1.10 2009-01-29 20:13:17 veiming Exp $
+ * $Id: PolicyEvaluatorAdaptor.java,v 1.11 2009-01-31 02:03:53 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -36,6 +36,8 @@ import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.IPolicyEvaluator;
 import com.sun.identity.entitlement.util.ResourceComp;
 import com.sun.identity.entitlement.util.ResourceNameSplitter;
+import com.sun.identity.policy.interfaces.ResourceName;
+import com.sun.identity.sm.SMSThreadPool;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,7 +49,13 @@ import java.util.Set;
 import javax.security.auth.Subject;
 
 public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
-
+    private PolicyDecisionTask tasks;
+    private int tasksCount;
+    
+    public PolicyEvaluatorAdaptor() {
+        tasks = new PolicyDecisionTask();
+    }
+    
     private Set<Policy> search(Subject adminSubject, String resourceName)
         throws SSOException, PolicyException {
         PolicyManager pm = new PolicyManager(getSSOToken(adminSubject), "/");
@@ -301,22 +309,46 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
         ServiceType serviceType =
             ServiceTypeManager.getServiceTypeManager().getServiceType(
             serviceTypeName);
+        ResourceName resComparator = serviceType.getResourceNameComparator();
         Set<String> actionNames = serviceType.getActionNames();
-        SSOToken ssoToken = getSSOToken(subject);
-        Set<PolicyDecision> policyDecisions = new HashSet<PolicyDecision>();
+        SSOToken token = getSSOToken(subject);
+        
+        Set<PolicyDecisionTask.Task> policyEvalTasks = 
+            new HashSet<PolicyDecisionTask.Task>();
+        
         for (Policy p : policies) {
-            PolicyDecision pd = p.getPolicyDecision(
-                ssoToken, serviceTypeName, resourceName,
-                actionNames, envParameters);
+            PolicyDecisionTask.Task task = tasks.addTask(
+                resComparator, p, resourceName);
+            policyEvalTasks.add(task);
+        }
+
+        synchronized (this) {
+            for (PolicyDecisionTask.Task task : policyEvalTasks) {
+                EvaluatorThread eval = new EvaluatorThread(
+                    this, task, token, serviceType, actionNames, envParameters);
+                SMSThreadPool.scheduleTask(eval);
+            }
+
+            while (tasksCount > 0) {
+                try {
+                    this.wait();
+                } catch (InterruptedException ex) {
+                    //TOFIX
+                }
+            }
+        }
+        
+        Set<PolicyDecision> policyDecisions = new HashSet<PolicyDecision>();
+        for (PolicyDecisionTask.Task t : policyEvalTasks) {
+            PolicyDecision pd = t.policyDecision;
             if (pd != null) {
                 policyDecisions.add(pd);
             }
         }
 
-        return (policyDecisions != null) ? policyDecisions : 
-            Collections.EMPTY_SET;
+        return policyDecisions;
     }
-
+    
      public List<Entitlement> getSubTreeEntitlements(
         Subject adminSubject,
         Subject subject,
@@ -340,4 +372,46 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
             throw new EntitlementException(e.getMessage(), -1);
         }            
      }
+
+
+   private class EvaluatorThread implements Runnable {
+        private PolicyEvaluatorAdaptor parent;
+        private PolicyDecisionTask.Task task;
+        private SSOToken token;
+        private ServiceType serviceType;
+        private Set<String> actionNames;
+        private Map<String, Set<String>> envParameters;
+
+        private EvaluatorThread(
+            PolicyEvaluatorAdaptor parent,
+            PolicyDecisionTask.Task task,
+            SSOToken token,
+            ServiceType serviceType,
+            Set<String> actionNames,
+            Map<String, Set<String>> envParameters) {
+            this.parent = parent;
+            this.token = token;
+            this.task = task;
+            this.serviceType = serviceType;
+            this.actionNames = actionNames;
+            this.envParameters = envParameters;
+        }
+
+        public void run() {
+            try {
+                task.policyDecision = task.policy.getPolicyDecision(
+                    token, serviceType.getName(), task.resource,
+                    actionNames, envParameters);
+            } catch (SSOException e) {
+                // TOFIX
+            } catch (PolicyException e) {
+                // TOFIX
+            }
+            parent.tasksCount--;
+
+            synchronized (parent) {
+                parent.notify();
+            }
+        }
+    }
 }
