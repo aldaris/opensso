@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebUtils.java,v 1.2 2007-10-05 18:24:20 mrudulahg Exp $
+ * $Id: WebUtils.java,v 1.3 2009-01-31 00:38:24 mrudulahg Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,15 +33,17 @@ import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlTextArea;
+import com.sun.identity.qatest.common.TestCommon;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * Utility class for web interaction.
  */
-public class WebUtils {
+public class WebUtils extends TestCommon {
     static String XML_DIR = "built/classes";
     private static final String NULL_FORMNAME = "_none_";
     
@@ -49,6 +51,7 @@ public class WebUtils {
      * Creates a new instance of <code>WebUtils</code>
      */
     private WebUtils() {
+        super("WebUtils");
     }
     
     public static Page postForm(
@@ -99,6 +102,7 @@ public class WebUtils {
         DataEntry data,
         String formName
     ) throws Exception {
+        try {
         HtmlForm form;
         if (formName.equals(NULL_FORMNAME)) {
             form = (HtmlForm)page.getForms().get(0);
@@ -146,6 +150,11 @@ public class WebUtils {
 
         data.validate(result);
         return result;
+        } catch (Exception e) {
+            log(Level.SEVERE, "submitForm", "Got Exception while working on " +
+                    "page : " + page.getWebResponse().getContentAsString());
+            throw e;
+        }
     }
     
     public static String getDataPropertiesFileName(Object obj) {
