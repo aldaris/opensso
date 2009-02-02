@@ -4,8 +4,8 @@ body {
 }
 
 #header {
-	height: 150px;
-	background: transparent url(images/curve_right.png) no-repeat;
+    height: 150px;
+    background: transparent url(images/curve_right.png) no-repeat;
 }
 
 #logo {
@@ -19,13 +19,13 @@ body {
 }
 
 #java-logo {
-    height: 80px;
-    width: 55px;
+    height: 74px;
+    width: 40px;
     position: relative;
     float: right;
-    padding: 10px 10px 10px 10px;
+    margin: 4px;
     z-index: 10;
-    background: transparent url(images/java_logo_rgb.png) no-repeat;
+    background: transparent url(images/java_logo.png) no-repeat;
 }
 
 #form {

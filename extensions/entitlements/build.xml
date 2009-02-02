@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.19 2009-01-30 23:21:05 farble1670 Exp $
+   $Id: build.xml,v 1.20 2009-02-02 21:27:02 farble1670 Exp $
 
 -->
 
@@ -51,29 +51,29 @@
         <mkdir dir="${entitlements.dist.dir}" />
         <mkdir dir="${entitlements.classes.dir}" />
 
-		<path id="war.lib.path">
-			<fileset dir="${entitlements.war.lib.local.dir}">
-				<include name="*.jar"/>
-			</fileset>
-		</path>
+        <path id="war.lib.path">
+            <fileset dir="${entitlements.war.lib.local.dir}">
+                <include name="*.jar"/>
+            </fileset>
+        </path>
 
-		<path id="build.lib.path">
-			<fileset dir="${entitlements.build.lib.local.dir}">
-				<include name="*.jar"/>
-			</fileset>
-		</path>
+        <path id="build.lib.path">
+            <fileset dir="${entitlements.build.lib.local.dir}">
+                <include name="*.jar"/>
+            </fileset>
+        </path>
 		
         <path id="build.class.path">
             <fileset dir="${entitlements.extlib.dir}">
                 <include name="*.jar"/>
             </fileset>
-			<path refid="war.lib.path"/>
-			<path refid="build.lib.path"/>
+            <path refid="war.lib.path"/>
+            <path refid="build.lib.path"/>
         </path>
 
-		<property name="war.lib" refid="war.lib.path"/>
-		<property name="build.lib" refid="build.lib.path"/>
-		<property name="build.class" refid="build.class.path"/>
+        <property name="war.lib" refid="war.lib.path"/>
+        <property name="build.lib" refid="build.lib.path"/>
+        <property name="build.class" refid="build.class.path"/>
 		
 		<!--
 		<echo>war.lib=${war.lib}</echo>
@@ -85,18 +85,18 @@
     <target name="war-lib" unless="war.lib.local.exists">
         <mkdir dir="${entitlements.war.lib.local.dir}"/>
         <copy todir="${entitlements.war.lib.local.dir}">
-			<fileset dir="${entitlements.war.lib.dir}">
-				<include name="*.jar"/>
-			</fileset>
+            <fileset dir="${entitlements.war.lib.dir}">
+                <include name="*.jar"/>
+            </fileset>
         </copy>
     </target>
 
     <target name="build-lib" unless="build.lib.local.exists">
         <mkdir dir="${entitlements.build.lib.local.dir}"/>
         <copy todir="${entitlements.build.lib.local.dir}">
-			<fileset dir="${entitlements.build.lib.dir}">
-				<include name="*.jar"/>
-			</fileset>
+            <fileset dir="${entitlements.build.lib.dir}">
+                <include name="*.jar"/>
+            </fileset>
         </copy>
     </target>
 
@@ -196,6 +196,13 @@
         </copy>
     </target>
 
+    <target name="merge-resources" depends="unwar">
+        <mkdir dir="${war.package.dir}/WEB-INF/classes"/>
+        <copy todir="${war.package.dir}/WEB-INF/classes">
+            <fileset dir="${entitlements.res.dir}/locale" includes="**" />
+        </copy>
+    </target>
+
     <target name="merge-libs" depends="unwar,war-lib">
         <copy todir="${war.package.dir}/WEB-INF/lib">
             <fileset dir="${entitlements.war.lib.local.dir}" includes="*.jar" />
@@ -225,7 +232,12 @@
 
     <target
         name="merge"
-        depends="prepare-unittest,merge-web,merge-classes,merge-properties,merge-libs"/>
+        depends="prepare-unittest,
+                 merge-web,
+                 merge-classes,
+                 merge-properties,
+                 merge-libs,
+                 merge-resources"/>
 
     <target name="package-war" depends="src,merge">
         <war
@@ -269,10 +281,10 @@
         </unjar>
     </target>
     
-	<target name="clean-lib">
-		<delete dir="${entitlements.war.lib.local.dir}"/>
-		<delete dir="${entitlements.build.lib.local.dir}"/>
-	</target>
+    <target name="clean-lib">
+        <delete dir="${entitlements.war.lib.local.dir}"/>
+        <delete dir="${entitlements.build.lib.local.dir}"/>
+    </target>
 	
     <target name="clean">
         <ant antfile="${unittest.basedir}/build.xml" inheritRefs="true"

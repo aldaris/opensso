@@ -8,7 +8,12 @@
                 com.icesoft.faces.facelets.D2DFaceletViewHandler
         </view-handler>
         <locale-config>
-            <default-locale>en_US</default-locale>
+            <default-locale>en</default-locale>
+            <supported-locale>en</supported-locale>
+            <supported-locale>en_US</supported-locale>
         </locale-config>
+        <message-bundle>
+            com.sun.identity.console.entitlement.Messages
+        </message-bundle>
     </application>
 </faces-config>
