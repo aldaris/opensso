@@ -23,7 +23,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: ssopre80upgrade,v 1.1 2008-08-20 21:11:54 bina Exp $
+# $Id: ssopre80upgrade,v 1.2 2009-02-02 18:39:32 goodearth Exp $
 #
 #
 
@@ -205,6 +205,7 @@ get_AMConfig_info() {
 #  get directory server hostname and port number
 #
 get_directory_server_info() {
+    $ECHO ""
     eval $ECHO "`$gettext 'Directory Server fully-qualified hostname ${OPEN} $DS_HOST ${CLOSE}: ${OMIT}'`"
     read tmp
     if [ "$tmp" != "" ]
@@ -253,13 +254,16 @@ get_base_dir() {
 #
 #
 get_admin_password() {
-    eval $ECHO "`$gettext 'Top-Level Administrator ${OPEN} $AMADMIN_DN ${CLOSE} password: ${OMIT}'`"
-    stty -echo
-    read ADMINPASSWD
-    stty echo
-    ADMINPASSWD=`$ECHO "$ADMINPASSWD" | $SED -e 's/ *$//'`
-    $NECHO
-    
+    $ECHO ""
+    while [ "$ADMINPASSWD" = "" ]; do
+        $NECHO "Enter Top-Level Administrator password."
+        eval $ECHO "`$gettext '${OPEN} $AMADMIN_DN ${CLOSE} password: ${OMIT}'`"
+        stty -echo
+        read ADMINPASSWD
+        stty echo
+        ADMINPASSWD=`$ECHO "$ADMINPASSWD" | $SED -e 's/ *$//'`
+        $NECHO
+    done
 }
 
 ##############################################################
@@ -701,6 +705,12 @@ get_am_version() {
 #
 get_staging_dir() {
 
+    $ECHO ""
+    $NECHO "OpenSSO 8.0 Staging Directory is the directory where the "
+    $NECHO "opensso.war is extracted. 'opensso/deployable_war/opensso.war'"
+    $NECHO "eg., if extracted in /tmp then Staging Directory is /tmp"
+    $ECHO ""
+
     eval $ECHO "`$gettext 'OpenSSO 8.0 Staging Directory : ${OMIT} '`"
     tmp=""
     while [ "$tmp" = "" ]; do
@@ -725,6 +735,13 @@ get_staging_dir() {
 #
 get_upgrade_dir() {
 
+    $ECHO ""
+    $NECHO "OpenSSO 8.0 Upgrade Directory is the directory where the "
+    $NECHO "upgrade/scripts/ is (extracted from opensso.war)."
+    $NECHO "eg., if extracted in /tmp then Upgrade Directory is /tmp/opensso"
+    $ECHO ""
+    $NECHO "Upgrade Directory would be the <staging_dir>/opensso."
+    $ECHO ""
     eval $ECHO "`$gettext 'Enter the OpenSSO 8.0 Upgrade Directory : ${OMIT} '`"
     tmp=""
     while [ "$tmp" = "" ]; do
@@ -749,21 +766,26 @@ get_upgrade_dir() {
 #
 get_config_dir() {
 
-    eval $ECHO "`$gettext 'OpenSSO 8.0 Configuration Directory : ${OMIT} '`"
+    $ECHO ""
+    $NECHO "Access Manager Configuration Directory is the directory where "
+    $NECHO "the existing configuration files reside."
+    $NECHO "eg., /etc/opt/SUNWam/config/"
+    $ECHO ""
+    eval $ECHO "`$gettext 'Enter Access Manager Configuration Directory: ${OMIT} '`"
     while [ "$tmp" = "" ]; do
         read tmp
         file=`find $tmp -name AMConfig.properties -print`  >> $LOG_DIR 2>&1
         if [ x = x${file} ]; then
             tmp=""
             eval $ECHO "`gettext 'Incorrect config directory specified. Re-enter the correct value'${OMIT}` "
-            eval $ECHO "`$gettext 'OpenSSO 8.0 Configuration Directory : ${OMIT} '`"
+            eval $ECHO "`$gettext 'Enter Access Manager Configuration Directory: ${OMIT} '`"
         fi
     done
     if [ "$tmp" != "" ]
     then
         FAM_CONFIG_DIR="$tmp"
     fi
-    $NECHO "getUpgradeDir: CONFIG_DIR= $FAM_CONFIG_DIR" >> $LOG
+    $NECHO "getAMConfigDir: CONFIG_DIR= $FAM_CONFIG_DIR" >> $LOG
 }
 
 ##############################################################################
@@ -783,6 +805,7 @@ check_instance() {
     if [ "$?" -eq "1" ]; then
          isFM="true"
     fi
+    $ECHO ""
     $NECHO "check_instance isFM is : ${isFM}"
 }
 
@@ -1010,9 +1033,7 @@ backup_files
 UPGRADE_DIR="$FAM_UPGRADE_DIR/upgrade"
 replaceTag "$UPGRADE_DIR/scripts/ssoupgrade" "$UPGRADE_DIR" "FAM_UPGRADE_DIR"
 replaceTag "$UPGRADE_DIR/scripts/ssoupgrade" "$STAGING_DIR/WEB-INF" "STAGING_DIR"
-replaceTag "$UPGRADE_DIR/scripts/ssoupgrade" "$FAM_CONFIG_DIR" "FAM_CONFIG_DIR"
-
-replaceTag  "$UPGRADE_DIR/config/ssoUpgradeConfig.properties" "$INSTANCE_TYPE" "FAM_INSTANCE_TYPE"
+replaceTag  "$UPGRADE_DIR/config/ssoUpgradeConfig.properties" "$INSTANCE_TYPE" "SSO_INSTANCE_TYPE"
 
       
 if [ "$isFM" = "true" ]; then
