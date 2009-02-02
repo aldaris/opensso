@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenIDServerAuthModule.java,v 1.2 2008-11-03 20:51:32 monzillo Exp $
+ * $Id: OpenIDServerAuthModule.java,v 1.3 2009-02-02 18:43:47 monzillo Exp $
  */
 
 package com.sun.security.sam.openid;
@@ -487,11 +487,12 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
                 respondWithLoginForm(request, response);
             }
 
-            // send query to identity provider
+	    else {
+		// send query to identity provider
+		logInfo(DEBUG_CHECKID, "openid.redirecting_to_idp");
 
-            logInfo(DEBUG_CHECKID, "openid.redirecting_to_idp");
-
-            redirect(idpURL, response);
+		redirect(idpURL, response);
+	    }
 
         } else {
 
