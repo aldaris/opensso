@@ -11,11 +11,6 @@
             <properties/>
             <folders>
                 <source-folder>
-                    <label>opensso-entitlements</label>
-                    <location>.</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
                     <label>source</label>
                     <type>java</type>
                     <location>source</location>
@@ -27,6 +22,21 @@
                     <location>unittest/source</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
+                <source-folder>
+                    <label>opensso-entitlements</label>
+                    <location>.</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>web</label>
+                    <type>doc_root</type>
+                    <location>web</location>
+                </source-folder>
+                <source-folder>
+                    <label>WEB-INF</label>
+                    <type>web_inf</type>
+                    <location>web/WEB-INF</location>
+                </source-folder>
             </folders>
             <ide-actions>
                 <action name="build">
@@ -35,9 +45,6 @@
                 <action name="clean">
                     <target>clean</target>
                 </action>
-                <action name="test">
-                    <target>unittest</target>
-                </action>
                 <action name="rebuild">
                     <target>clean</target>
                     <target>build</target>
@@ -45,6 +52,14 @@
             </ide-actions>
             <view>
                 <items>
+                    <source-folder style="tree">
+                        <label>Web Pages</label>
+                        <location>web</location>
+                    </source-folder>
+                    <source-folder style="tree">
+                        <label>WEB-INF Content</label>
+                        <location>web/WEB-INF</location>
+                    </source-folder>
                     <source-folder style="packages">
                         <label>source</label>
                         <location>source</location>
@@ -61,18 +76,27 @@
                     <ide-action name="build"/>
                     <ide-action name="rebuild"/>
                     <ide-action name="clean"/>
-                    <ide-action name="test"/>
                 </context-menu>
             </view>
-            <subprojects/>
         </general-data>
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
             <compilation-unit>
                 <package-root>source</package-root>
+                <source-level>1.5</source-level>
+            </compilation-unit>
+            <compilation-unit>
                 <package-root>unittest/source</package-root>
-                <classpath mode="compile">extlib/amserver.jar:extlib/j2ee.jar:extlib/opensso-sharedlib.jar:built/classes:extlib/testng-5.1-jdk15.jar:unittest/built/classes</classpath>
+                <unit-tests/>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>
+        <web-data xmlns="http://www.netbeans.org/ns/freeform-project-web/1">
+            <web-module>
+                <doc-root>web</doc-root>
+                <classpath/>
+                <context-path/>
+                <j2ee-spec-level>1.5</j2ee-spec-level>
+            </web-module>
+        </web-data>
     </configuration>
 </project>
