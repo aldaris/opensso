@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOContext.java,v 1.5 2008-07-02 18:27:12 leiming Exp $
+ * $Id: SSOContext.java,v 1.6 2009-02-03 08:33:21 bakka Exp $
  *
  */
 
@@ -149,6 +149,11 @@ public class SSOContext extends AgentBase
         if (domains != null && domains.length > 0) {
             nbDomains = domains.length;
         }
+        
+        if (tokenValue.indexOf("%") < 0){
+            tokenValue = URLEncoder.encode(tokenValue);         
+        }        
+        
         if (nbDomains == 0) {
             cookies = new Cookie[1];
             cookies[0] = new Cookie(AgentConfiguration.getSSOTokenName(),
@@ -167,7 +172,7 @@ public class SSOContext extends AgentBase
         }
         return cookies;
     }
-
+    
     public Cookie getRemoveSSOTokenCookie() {
         Cookie cookie = new Cookie(AgentConfiguration.getSSOTokenName(),
                 IUtilConstants.COOKIE_RESET_STRING);
