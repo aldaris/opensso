@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: URLEncDec.java,v 1.3 2009-02-03 00:42:10 ericow Exp $
+ * $Id: URLEncDec.java,v 1.4 2009-02-03 17:29:52 veiming Exp $
  *
  */
 
@@ -32,6 +32,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.BitSet;
