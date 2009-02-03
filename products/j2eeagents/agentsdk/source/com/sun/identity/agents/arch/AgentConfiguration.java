@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.36 2009-01-30 11:50:17 kalpanakm Exp $
+ * $Id: AgentConfiguration.java,v 1.37 2009-02-03 10:46:30 kalpanakm Exp $
  *
  */
 
@@ -940,11 +940,6 @@ public class AgentConfiguration implements
     private static synchronized void setPolicyAdminLoc() {
 	if (!isInitialized()) {
             _policyAdminLoc = getProperty("com.sun.identity.agent.policyadmin.location");
-            if (_policyAdminLoc == null || _policyAdminLoc.trim().length()==0)
-            {
-             	throw new RuntimeException(
-			"Invalid application user specified");
-            }
             if (isLogMessageEnabled()) {
 		logMessage("AgentConfiguration: Policy Admin Location: "
 			+ _policyAdminLoc);
