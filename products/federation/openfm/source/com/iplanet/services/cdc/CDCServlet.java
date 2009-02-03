@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CDCServlet.java,v 1.9 2009-01-15 06:29:12 ericow Exp $
+ * $Id: CDCServlet.java,v 1.10 2009-02-03 00:44:07 ericow Exp $
  *
  */
 
@@ -58,6 +58,7 @@ import com.sun.identity.saml.assertion.SubjectLocality;
 import com.sun.identity.saml.common.SAMLException;
 import com.sun.identity.saml.protocol.Status;
 import com.sun.identity.saml.protocol.StatusCode;
+import com.sun.identity.shared.encode.URLEncDec;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.DateUtils;
 import com.sun.identity.shared.debug.Debug;
@@ -69,8 +70,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.MessageFormat;
@@ -361,16 +360,9 @@ public class CDCServlet extends HttpServlet {
 
         // Special characters in the path or the query need to be encoded
         try {
-            URL gotoUrl = new URL(gotoURL);
-            URI gotoUri = new URI(gotoUrl.getProtocol(), null,
-                    gotoUrl.getHost(), gotoUrl.getPort(), gotoUrl.getPath(),
-                    gotoUrl.getQuery(), null);
-            gotoURL = gotoUri.toString();
+            gotoURL = URLEncDec.encodeUrlPath(gotoURL);
         } catch (MalformedURLException mue) {
             debug.error("CDCServlet.redirectWithAuthNResponse:MalformedURLException occured",mue);
-            showError(response);
-        } catch (URISyntaxException use) {
-            debug.error("CDCServlet.redirectWithAuthNResponse:URISyntaxException occured",use);
             showError(response);
         }
         if (debug.messageEnabled()) {
