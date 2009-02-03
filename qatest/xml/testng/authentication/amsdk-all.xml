@@ -35,4 +35,15 @@
             <class name="com.sun.identity.qatest.authentication.AuthTest"/>
         </classes>
     </test>
-    
+    <test name="AuthTestMembershipRole">
+        <parameter name="testModule" value="membership"/>
+        <parameter name="testMode" value="role"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
+        </classes>
+    </test>

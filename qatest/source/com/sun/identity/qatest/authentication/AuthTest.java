@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthTest.java,v 1.17 2009-01-26 23:47:45 nithyas Exp $
+ * $Id: AuthTest.java,v 1.18 2009-02-03 19:54:20 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -56,18 +56,16 @@ public class AuthTest extends TestCommon {
 
     private AuthenticationCommon ac;
     private ResourceBundle rb;
-    private String module_servicename;
-    private String module_subconfigname;
-    private String module_subconfigid;
-    private String service_servicename;
-    private String service_subconfigname;
-    private String service_subconfigid;
+    private String moduleServiceName;
+    private String moduleSubConfigName;
+    private String moduleSubConfigId;
+    private String serviceName;
+    private String serviceSubConfigName;
+    private String serviceSubConfigId;
     private String rolename;
     private String user;
     private String password;
     private String svcName;
-    private String locTestModule;
-    private String locTestMode;
     private String loginURL;
     private String logoutURL;
     private String amadmURL;
@@ -97,9 +95,9 @@ public class AuthTest extends TestCommon {
      * (5) Assign the auth service and the user to that role
      * This is called only once per auth module.
      */
-    @Parameters({"testModule","testMode"})
-    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
-      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
+    @Parameters({"testModule", "testMode"})
+    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad",
+        "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void setup(String testModule, String testMode)
     throws Exception {
         Object[] params = {testModule, testMode};
@@ -108,55 +106,53 @@ public class AuthTest extends TestCommon {
         try {
             isValidTest = moduleConfigData.isValidModuleTest(testModule);
             if (isValidTest) {
-                locTestModule = testModule;
-                locTestMode = testMode;
                 rb = ResourceBundle.getBundle("authentication" + fileseparator +
                         "AuthTest");
-                list = moduleConfigData.getModuleDataAsList(locTestModule);
-                module_servicename = (String)rb.getString(locTestModule +
+                list = moduleConfigData.getModuleDataAsList(testModule);
+                moduleServiceName = (String)rb.getString(testModule +
                         ".module_servicename");
-                module_subconfigname = (String)rb.getString(locTestModule +
+                moduleSubConfigName = (String)rb.getString(testModule +
                         ".module_subconfigname");
-                module_subconfigid = (String)rb.getString(locTestModule +
+                moduleSubConfigId = (String)rb.getString(testModule +
                         ".module_subconfigid");
 
-                service_servicename = (String)rb.getString(locTestModule +
+                serviceName = (String)rb.getString(testModule +
                         ".service_servicename");
-                service_subconfigname = (String)rb.getString(locTestModule +
+                serviceSubConfigName = (String)rb.getString(testModule +
                         ".service_subconfigname");
-                service_subconfigid = (String)rb.getString(locTestModule +
+                serviceSubConfigId = (String)rb.getString(testModule +
                         ".service_subconfigid");
 
-                rolename = (String)rb.getString(locTestModule + ".rolename");
-                user = (String)rb.getString(locTestModule + ".user");
-                password = (String)rb.getString(locTestModule + ".password");
+                rolename = (String)rb.getString(testModule + ".rolename");
+                user = (String)rb.getString(testModule + ".user");
+                password = (String)rb.getString(testModule + ".password");
 
-                log(Level.FINEST, "setup", "module_servicename: " +
-                            module_servicename);
-                log(Level.FINEST, "setup", "module_subconfigname: " +
-                            module_subconfigname);
-                log(Level.FINEST, "setup", "module_subconfigid: " +
-                            module_subconfigid);
+                log(Level.FINEST, "setup", "moduleServiceName: " +
+                            moduleServiceName);
+                log(Level.FINEST, "setup", "moduleSubConfigName: " +
+                            moduleSubConfigName);
+                log(Level.FINEST, "setup", "moduleSubConfigId: " +
+                            moduleSubConfigId);
 
-                log(Level.FINEST, "setup", "service_servicename: " +
-                            service_servicename);
-                log(Level.FINEST, "setup", "service_subconfigname: " +
-                            service_subconfigname);
-                log(Level.FINEST, "setup", "service_subconfigid: " +
-                            service_subconfigid);
+                log(Level.FINEST, "setup", "serviceName: " +
+                            serviceName);
+                log(Level.FINEST, "setup", "serviceSubConfigName: " +
+                            serviceSubConfigName);
+                log(Level.FINEST, "setup", "serviceSubConfigId: " +
+                            serviceSubConfigId);
                 log(Level.FINEST, "setup", "module_subconfig_list: " + list);
 
                 log(Level.FINEST, "setup", "rolename: " + rolename);
                 log(Level.FINEST, "setup", "username: " + user);
                 log(Level.FINEST, "setup", "userpassword: " + password);
 
-                Reporter.log("ModuleServiceName: " + module_servicename);
-                Reporter.log("ModuleSubConfigName: " + module_subconfigname);
-                Reporter.log("ModuleSubConfigId: " + module_subconfigid);
+                Reporter.log("ModuleServiceName: " + moduleServiceName);
+                Reporter.log("ModuleSubConfigName: " + moduleSubConfigName);
+                Reporter.log("ModuleSubConfigId: " + moduleSubConfigId);
 
-                Reporter.log("ServiceServiceName: " + service_servicename);
-                Reporter.log("ServiceSubConfigName: " + service_subconfigname);
-                Reporter.log("ServiceSubConfigId: " + service_subconfigid);
+                Reporter.log("ServiceServiceName: " + serviceName);
+                Reporter.log("ServiceSubConfigName: " + serviceSubConfigName);
+                Reporter.log("ServiceSubConfigId: " + serviceSubConfigId);
 
                 Reporter.log("ModuleSubConfigList: " + list);
 
@@ -170,15 +166,15 @@ public class AuthTest extends TestCommon {
                 log(Level.FINEST, "setup", loginURL);
                 log(Level.FINEST, "setup", logoutURL);
                 log(Level.FINEST, "setup", amadmURL);
-                if (module_servicename.equals("iPlanetAMAuthAnonymousService"))
+                if (moduleServiceName.equals("iPlanetAMAuthAnonymousService"))
                     list.add("iplanet-am-auth-anonymous-users-list=" + user);
                 FederationManager am = new FederationManager(amadmURL);
                 consoleLogin(webClient, loginURL, adminUser, adminPassword);
                 log(Level.FINE, "setup", "Creating module sub-configuration " + 
-                        module_subconfigname + "...");
+                        moduleSubConfigName + "...");
                 if (FederationManager.getExitCode(am.createSubCfg(webClient, 
-                        module_servicename, module_subconfigname, list, realm, 
-                        module_subconfigid, "0")) != 0) {
+                        moduleServiceName, moduleSubConfigName, list, realm,
+                        moduleSubConfigId, "0")) != 0) {
                     log(Level.SEVERE, "setup", 
                             "createSubCfg (module) ssoadm command failed");
                     assert false;
@@ -186,23 +182,23 @@ public class AuthTest extends TestCommon {
 
                 list.clear();
                 String svcData = "iplanet-am-auth-configuration=" + 
-                        "<AttributeValuePair><Value>" + module_subconfigname +
+                        "<AttributeValuePair><Value>" + moduleSubConfigName +
                         " REQUIRED</Value></AttributeValuePair>";
                 log(Level.FINEST, "setup", "ServiceData: " + svcData);
                 list.add(svcData);
                 log(Level.FINE, "setup", "Creating service sub-configuration " + 
-                        service_subconfigname + "...");            
+                        serviceSubConfigName + "...");
                 if (FederationManager.getExitCode(am.createSubCfg(webClient, 
-                        service_servicename, service_subconfigname, list, realm,
-                        service_subconfigid, "0")) != 0) {
+                        serviceName, serviceSubConfigName, list, realm,
+                        serviceSubConfigId, "0")) != 0) {
                     log(Level.SEVERE, "setup", 
                             "createSubCfg (service) ssoadm command failed");
                     assert false;
                 }
 
-                int iIdx = service_subconfigname.indexOf("/");
-                svcName = service_subconfigname.substring(iIdx+1,
-                            service_subconfigname.length());
+                int iIdx = serviceSubConfigName.indexOf("/");
+                svcName = serviceSubConfigName.substring(iIdx+1,
+                            serviceSubConfigName.length());
                 log(Level.FINEST, "setup", "svcName:" + svcName);
 
                 list.clear();
@@ -240,11 +236,11 @@ public class AuthTest extends TestCommon {
                     list.clear();
                     list.add("iplanet-am-auth-configuration=" + svcName);
                     log(Level.FINE, "setup", "Assigning the service " + 
-                            service_servicename + " to the role " + 
+                            serviceName + " to the role " +
                             rolename + "...");
                     if (FederationManager.getExitCode(am.addSvcIdentity(
                             webClient, realm, rolename, "Role", 
-                            service_servicename, list)) != 0) {
+                            serviceName, list)) != 0) {
                         log(Level.SEVERE, "setup", 
                                 "addSvcIdentity ssoadm command failed");
                         assert false;
@@ -280,10 +276,10 @@ public class AuthTest extends TestCommon {
      * Tests for successful login into the system using correct
      * credentials
      */
-    @Parameters({"testModule"})
-    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
-      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
-    public void testLoginPositive(String testModule)
+    @Parameters({"testModule", "testMode"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
+        "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
+    public void testLoginPositive(String testModule, String testMode)
     throws Exception {
         Object[] params = {testModule};
         entering("testLoginPositive", params);
@@ -291,21 +287,20 @@ public class AuthTest extends TestCommon {
         if (isValidTest) {
             webClient = new WebClient();
             try {
-                String loginUser = (String)rb.getString(locTestModule + ".user");
-                String loginPassword = (String)rb.getString(locTestModule + 
+                String loginUser = (String)rb.getString(testModule + ".user");
+                String loginPassword = (String)rb.getString(testModule +
                         ".password");
-                String mode = locTestMode;
-                String modevalue = (String)rb.getString(locTestModule +
-                        ".modevalue." + locTestMode);
-                String msg = (String)rb.getString(locTestModule + ".passmsg");
+                String modevalue = (String)rb.getString(testModule +
+                        ".modevalue." + testMode);
+                String msg = (String)rb.getString(testModule + ".passmsg");
 
-                if (module_servicename.equals(
+                if (moduleServiceName.equals(
                         "iPlanetAMAuthAnonymousService")) {
-                    ac.testZeroPageLoginAnonymousPositive(webClient, loginUser,
-                            loginPassword, mode, modevalue, msg);
+                    ac.testZeroPageLogin(webClient, loginUser, testMode,
+                            modevalue, msg);
                 } else {
-                    ac.testZeroPageLoginPositive(webClient, loginUser, 
-                            loginPassword, mode, modevalue, msg);
+                    ac.testZeroPageLogin(webClient, loginUser, loginPassword,
+                            testMode, modevalue, msg);
                 }
 
             } catch (Exception e) {
@@ -326,30 +321,29 @@ public class AuthTest extends TestCommon {
      * Tests for unsuccessful login into the system using incorrect
      * credentials
      */
-    @Parameters({"testModule"})    
-    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
-      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
-    public void testLoginNegative(String testModule)
+    @Parameters({"testModule", "testMode"})
+    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec",
+        "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
+    public void testLoginNegative(String testModule, String testMode)
     throws Exception {
         Object[] params = {testModule};
         entering("testLoginNegative", params);
         webClient = new WebClient();        
         if (isValidTest) {
             try {
-                String loginUser = (String)rb.getString(locTestModule + ".user");
-                String loginPassword = (String)rb.getString(locTestModule + 
+                String loginUser = (String)rb.getString(testModule + ".user");
+                String loginPassword = (String)rb.getString(testModule +
                         ".password");
-                String mode = locTestMode;
-                String modevalue = (String)rb.getString(locTestModule +
-                        ".modevalue." + locTestMode);
-                String msg = (String)rb.getString(locTestModule + ".failmsg");
-                if (module_servicename.equals("iPlanetAMAuthAnonymousService")) 
+                String modevalue = (String)rb.getString(testModule +
+                        ".modevalue." + testMode);
+                String msg = (String)rb.getString(testModule + ".failmsg");
+                if (!moduleServiceName.equals("iPlanetAMAuthAnonymousService")) 
                 {
-                    ac.testZeroPageLoginAnonymousNegative(webClient, loginUser, 
-                            loginPassword, mode, modevalue, msg);
+                    ac.testZeroPageLogin(webClient, loginUser, "not" +
+                            loginPassword, testMode, modevalue, msg);
                 } else {
-                    ac.testZeroPageLoginNegative(webClient, loginUser, 
-                            loginPassword, mode, modevalue, msg);
+                    ac.testZeroPageLogin(webClient, loginUser + "negative",
+                            testMode, modevalue, msg);
                 }
             } catch (Exception e) {
                 log(Level.SEVERE, "testLoginNegative", e.getMessage());
@@ -373,8 +367,8 @@ public class AuthTest extends TestCommon {
      * This is called only once per auth module.
      */
     @Parameters({"testModule"})
-    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
-      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
+    @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad",
+        "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup(String testModule)
     throws Exception {
         Object[] params = {testModule};
@@ -382,31 +376,14 @@ public class AuthTest extends TestCommon {
         webClient = new WebClient();
         if (isValidTest) {
             try {
-                user = (String)rb.getString(locTestModule + ".user");
-                rolename = (String)rb.getString(locTestModule + ".rolename");
-                service_servicename =
-                        (String)rb.getString(locTestModule +
-                        ".service_servicename");
-                service_subconfigname =
-                        (String)rb.getString(locTestModule +
-                        ".service_subconfigname");
-                module_subconfigname =
-                        (String)rb.getString(locTestModule +
-                        ".module_subconfigname");
+                user = (String)rb.getString(testModule + ".user");
+                rolename = (String)rb.getString(testModule + ".rolename");
 
                 log(Level.FINEST, "cleanup", "UserName:" + user);
                 log(Level.FINEST, "cleanup", "RoleName:" + rolename);
-                log(Level.FINEST, "cleanup", "service_servicename:" +
-                        service_servicename);
-                log(Level.FINEST, "cleanup", "module_subconfigname:" +
-                        module_subconfigname);
-                log(Level.FINEST, "cleanup", "svcName:" + svcName);
 
                 Reporter.log("UserName:" + user);
                 Reporter.log("RoleName:" + rolename);
-                Reporter.log("service_servicename:" + service_servicename);
-                Reporter.log("module_subconfigname:" + module_subconfigname);
-                Reporter.log("service_subconfigname:" + service_subconfigname);
 
                 FederationManager am = new FederationManager(amadmURL);
                 consoleLogin(webClient, loginURL, adminUser, adminPassword);
@@ -435,15 +412,15 @@ public class AuthTest extends TestCommon {
 
                 log(Level.FINE, "cleanup", 
                         "Deleting service sub-configuration " + 
-                        service_subconfigname + " ...");            
+                        serviceSubConfigName + " ...");
                 if (FederationManager.getExitCode(am.deleteSubCfg(webClient, 
-                        service_servicename, service_subconfigname, realm)) 
+                        serviceName, serviceSubConfigName, realm))
                         != 0 ) {
                     log(Level.SEVERE, "cleanup", 
                             "deleteSubCfg (Service) ssoadm command failed");
                 }
                 list.clear();
-                list.add(module_subconfigname);
+                list.add(moduleSubConfigName);
 
                 log(Level.FINE, "cleanup", "Deleting module instance(s) " + 
                         list + " ...");               

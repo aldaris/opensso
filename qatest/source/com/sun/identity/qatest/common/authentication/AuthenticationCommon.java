@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthenticationCommon.java,v 1.10 2009-01-16 20:58:50 cmwesley Exp $
+ * $Id: AuthenticationCommon.java,v 1.11 2009-02-03 19:54:20 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -50,10 +50,25 @@ public class AuthenticationCommon extends TestCommon {
             e.getStackTrace();
         }
     }
-    
+
+   /**
+     * Tests zero page login for anonymous authentication for given mode.
+     * @param wc - the web client simulating the user's browser.
+     * @param user - the user ID that will be authenticated.
+     * @param mode - the type of authentication being used (e.g. module, user,
+     * authlevel, role, service, etc.)
+     * @param modeValue - the value for the authentication type being used.
+     * @param passMsg - the message which should appear in the resulting browser
+     * page when successful.
+     */
+    public void testZeroPageLogin(WebClient wc, String user, String mode,
+            String modeValue, String passMsg)
+    throws Exception {
+        testZeroPageLogin(wc, user, null, mode, modeValue, passMsg);
+    }
+
     /**
-     * Tests zero page login for given mode. This is a positive test. If the
-     * login is  unsuccessfull, an error is thrown.
+     * Tests zero page login for given mode. 
      * @param wc - the web client simulating the user's browser.
      * @param user - the user ID that will be authenticated.
      * @param password - the password for "user".
@@ -63,227 +78,50 @@ public class AuthenticationCommon extends TestCommon {
      * @param passMsg - the message which should appear in the resulting browser
      * page when successful.
      */
-    public void testZeroPageLoginPositive(WebClient wc, String user, 
-            String password, String mode,  String modeValue, String passMsg)
+    public void testZeroPageLogin(WebClient wc, String user, String password, 
+            String mode, String modeValue, String passMsg)
     throws Exception {
         Object[] params = {user, password, mode, modeValue, passMsg};
-        entering("testZeroPageLoginPositive", params);
-        String strTest = null;
+        entering("testZeroPageLogin", params);
+        String baseLoginString = null;        
+        String loginString = null;
+        
         try {
-            strTest = protocol + ":" + "//" + host + ":" + port + uri +
-                    "/UI/Login?" + mode + "=" + modeValue + "&IDToken1=" +
-                    user + "&IDToken2=" + password;
-            log(Level.FINEST, "testZeroPageLoginPositive", strTest);
-            URL url = new URL(strTest);
-            HtmlPage page = (HtmlPage)wc.getPage( url );
+            baseLoginString = protocol + ":" + "//" + host + ":" + port + uri +
+                    "/UI/Login?";
+            StringBuffer loginBuffer = new StringBuffer(baseLoginString);
+            loginBuffer.append(mode).append("=").append(modeValue).
+                    append("&IDToken1=").append(user);
             
-            log(Level.FINEST, "testZeroPageLoginPositive", page.getTitleText());
+            if (password != null) {
+                loginBuffer.append("&IDToken2=").append(password);
+            }
+
+            loginString = loginBuffer.toString();             
+            log(Level.FINEST, "testZeroPageLogin", loginString);
+            URL url = new URL(loginString);
+            HtmlPage page = (HtmlPage)wc.getPage(url);
+            
+            log(Level.FINEST, "testZeroPageLogin", "Title of resulting page = "
+                    + page.getTitleText());
             // Tests for everything if mode is not set to "role" or the 
             // configured plugin is of type amsdk. 
             if (!mode.equalsIgnoreCase("role") || 
                     smsCommon.isPluginConfigured(ssoToken,
                     SMSConstants.UM_DATASTORE_SCHEMA_TYPE_AMSDK, realm )) {             
-                assert page.getTitleText().equals(passMsg);
+                assert this.getHtmlPageStringIndex(page, passMsg) != -1;
             } else {
-                log(Level.FINEST, "testZeroPageLoginPositive", 
+                log(Level.FINEST, "testZeroPageLogin", 
                         "Role based test is skipped for non amsdk plugin ...");
             }   
         } catch (Exception e) {
-            log(Level.SEVERE, "testZeroPageLoginPositive", e.getMessage(),
-                    params);
+            log(Level.SEVERE, "testZeroPageLogin", e.getMessage(), params);
             e.printStackTrace();
             throw e;
         }
-        exiting("testZeroPageLoginPositive");
+        exiting("testZeroPageLogin");
     }
-    
-    /**
-     * Tests zero page login for a module. This is a negative test. If the
-     * login is  successfull, an error is thrown.
-     * @param wc - the web client simulating the user's browser.
-     * @param user - the user ID that will be authenticated.
-     * @param password - the password for "user".
-     * @param mode - the type of authentication being used (e.g. module, user,
-     * authlevel, role, service, etc.)
-     * @param modeValue - the value for the authentication type being used.
-     * @param passMsg - the message which should appear in the resulting browser
-     * page when successful.
-     */
-    public void testZeroPageLoginNegative(WebClient wc, String user, 
-            String password, String mode, String modeValue, String failMsg)
-    throws Exception {
-        Object[] params = {user, password, mode, modeValue, failMsg};
-        entering("testZeroPageLoginNegative", params);
-        String strTest = null;
-        try {
-            strTest = protocol + ":"  + "//" + host + ":" + port + uri +
-                    "/UI/Login?" + mode + "=" + modeValue + "&IDToken1=" +
-                    user + "&IDToken2=not" + password;
-            log(Level.FINEST, "testZeroPageLoginNegative", strTest);
-            URL url = new URL(strTest);
-            HtmlPage page = (HtmlPage)wc.getPage( url );
-            log(Level.FINEST, "testZeroPageLoginNegative", page.getTitleText());
-            
-            // Tests for everything if mode is not set to "role" or the 
-            // configured plugin is of type amsdk. 
-            if (!mode.equalsIgnoreCase("role") || 
-                    smsCommon.isPluginConfigured(ssoToken,
-                    SMSConstants.UM_DATASTORE_SCHEMA_TYPE_AMSDK, realm )) {             
-                assert page.getTitleText().equals(failMsg);
-            } else {
-                log(Level.FINEST, "testZeroPageLoginNegative", 
-                        "Role based test is skipped for non amsdk plugin ...");
-            } 
-        } catch (Exception e) {
-            log(Level.SEVERE, "testZeroPageLoginNegative", e.getMessage(),
-                    params);
-            e.printStackTrace();
-            throw e;
-        }
-        exiting("testZeroPageLoginNegative");
-    }
-    
-    /**
-     * Tests zero page login for given mode. This is a test for a valid user
-     * but the user session has expired.
-     * @param wc - the web client simulating the user's browser.
-     * @param user - the user ID that will be authenticated.
-     * @param password - the password for "user".
-     * @param mode - the type of authentication being used (e.g. module, user,
-     * authlevel, role, service, etc.)
-     * @param modeValue - the value for the authentication type being used.
-     * @param passMsg - the message which should appear in the resulting browser
-     * page when successful.
-     */
-    public void testZeroPageLoginFailure(WebClient wc, String user, 
-            String password, String mode, String modeValue, String passMsg)
-    throws Exception {
-        Object[] params = {user, password, mode, modeValue, passMsg};
-        entering("testZeroPageLoginFailure", params);
-        try {
-            String strTest = protocol + ":" + "//" + host + ":" + port + uri +
-                    "/UI/Login?" + mode + "=" + modeValue + "&IDToken1=" +
-                    user + "&IDToken2=" + password;
-            log(Level.FINEST, "testZeroPageLoginFailure", strTest);
-            URL url = new URL(strTest);
-            HtmlPage page = (HtmlPage)wc.getPage( url );
-            log(Level.FINEST, "testZeroPageLoginFailure", page.getTitleText());
-            
-            // Tests for everything if mode is not set to "role" or the 
-            // configured plugin is of type amsdk. 
-            if (!mode.equalsIgnoreCase("role") || 
-                    smsCommon.isPluginConfigured(ssoToken,
-                    SMSConstants.UM_DATASTORE_SCHEMA_TYPE_AMSDK, realm )) {             
-                assert page.getTitleText().equals(passMsg);
-            } else {
-                log(Level.FINEST, "testZeroPageLoginFailure", 
-                        "Role based test is skipped for non amsdk plugin ...");
-            } 
-        } catch (Exception e) {
-            log(Level.SEVERE, "testZeroPageLoginFailure", e.getMessage(),
-                    params);
-            e.printStackTrace();
-            throw e;
-        }
-        exiting("testZeroPageLoginFailure");
-    }
-    
-    /**
-     * Tests zero page login for a anonymous user. This is a poitive test. If
-     * the login is unsuccessful, an error is thrown.
-     * @param wc - the web client simulating the user's browser.
-     * @param user - the user ID that will be authenticated.
-     * @param password - the password for "user".
-     * @param mode - the type of authentication being used (e.g. module, user,
-     * authlevel, role, service, etc.)
-     * @param modeValue - the value for the authentication type being used.
-     * @param passMsg - the message which should appear in the resulting browser
-     * page when successful.
-     */
-    public void testZeroPageLoginAnonymousPositive(WebClient wc, String user, 
-            String password, String mode, String modeValue, String passMsg)
-    throws Exception {
-        Object[] params = {user, password, mode, modeValue, passMsg};
-        entering("testZeroPageLoginAnonymousPositive", params);
-        String strTest = null;
-        try {
-            strTest = protocol + ":"  + "//" + host + ":" + port + uri +
-                    "/UI/Login?" + mode + "=" + modeValue + "&IDToken1=" +
-                    user;
-            log(Level.FINEST, "testZeroPageLoginAnonymousPositive", strTest);
-            URL url = new URL(strTest);
-            HtmlPage page = (HtmlPage)wc.getPage( url );
-            log(Level.FINEST, "testZeroPageLoginAnonymousPositive",
-                    page.getTitleText());
-            
-            // Tests for everything if mode is not set to "role" or the 
-            // configured plugin is of type amsdk. 
-            if (!mode.equalsIgnoreCase("role") || 
-                    smsCommon.isPluginConfigured(ssoToken,
-                    SMSConstants.UM_DATASTORE_SCHEMA_TYPE_AMSDK, realm )) {             
-                assert page.getTitleText().equals(passMsg);
-            } else {
-                log(Level.FINEST, "testZeroPageLoginAnonymousPositive", 
-                        "Role based test is skipped for non amsdk plugin ...");
-            } 
-        } catch (Exception e) {
-            log(Level.SEVERE, "testZeroPageLoginAnonymousPositive",
-                    e.getMessage(),
-                    params);
-            e.printStackTrace();
-            throw e;
-        }
-        exiting("testZeroPageLoginAnonymousPositive");
-    }
-    
-    /**
-     * Tests zero page login for a anonymous user. This is a negative test. If
-     * the login is successfull, an error is thrown.
-     * @param wc - the web client simulating the user's browser.
-     * @param user - the user ID that will be authenticated.
-     * @param password - the password for "user".
-     * @param mode - the type of authentication being used (e.g. module, user,
-     * authlevel, role, service, etc.)
-     * @param modeValue - the value for the authentication type being used.
-     * @param passMsg - the message which should appear in the resulting browser
-     * page when successful.
-     */
-    public void testZeroPageLoginAnonymousNegative(WebClient wc, String user, 
-            String password, String mode, String modeValue, String failMsg)
-    throws Exception {
-        Object[] params = {user, password, mode, modeValue, failMsg};
-        entering("testZeroPageLoginAnonymousNegative", params);
-        String strTest = null;
-        try {
-            strTest = protocol + ":"  + "//" + host + ":" + port + uri +
-                    "/UI/Login?" + mode + "=" + modeValue + "&IDToken1=" +
-                    user + "negative";
-            log(Level.FINEST, "testZeroPageLoginAnonymousNegative", strTest);
-            URL url = new URL(strTest);
-            HtmlPage page = (HtmlPage)wc.getPage( url );
-            log(Level.FINEST, "testZeroPageLoginAnonymousNegative",
-                    page.getTitleText());
-            
-            // Tests for everything if mode is not set to "role" or the 
-            // configured plugin is of type amsdk. 
-            if (!mode.equalsIgnoreCase("role") || 
-                    smsCommon.isPluginConfigured(ssoToken,
-                    SMSConstants.UM_DATASTORE_SCHEMA_TYPE_AMSDK, realm )) {             
-                assert page.getTitleText().equals(failMsg);
-            } else {
-                log(Level.FINEST, "testZeroPageLoginAnonymousPositive", 
-                        "Role based test is skipped for non amsdk plugin ...");
-            } 
-        } catch (Exception e) {
-            log(Level.SEVERE, "testZeroPageLoginAnonymousNegative",
-                    e.getMessage(),
-                    params);
-            e.printStackTrace();
-            throw e;
-        }
-        exiting("testZeroPageLoginAnonymousNegative");
-    }
-    
+
     /**
      * Retrieve the SMSCommon instance.
      * @return <code>SMSCommon</code>

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.69 2009-01-31 00:34:11 mrudulahg Exp $
+ * $Id: TestCommon.java,v 1.70 2009-02-03 19:54:21 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -1932,7 +1932,8 @@ public class TestCommon implements TestConstants {
             for (int j = 0; j < 6; j++) {
                 replaceVals.put("REDIRECT_URI" + j, clientURL + "/" +
                         redirecturi[j]);
-              replaceVals.put("REDIRECT_URI_SEARCH_STRING" + j, redirecturi[j]);
+              replaceVals.put("REDIRECT_URI_SEARCH_STRING" + j, "This is " +
+                      redirecturi[j]);
             }
             log(Level.FINEST, "replaceRedirectURIs", "replaceVals: " +
                     replaceVals.toString());

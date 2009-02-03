@@ -108,6 +108,42 @@
             <class name="com.sun.identity.qatest.authentication.AuthTest"/>
         </classes>
     </test>
+    <test name="AuthTestMembershipModule">
+        <parameter name="testModule" value="membership"/>
+        <parameter name="testMode" value="module"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
+        </classes>
+    </test>
+    <test name="AuthTestMembershipService">
+        <parameter name="testModule" value="membership"/>
+        <parameter name="testMode" value="service"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
+        </classes>
+    </test>
+    <test name="AuthTestMembershipAuthLevel">
+        <parameter name="testModule" value="membership"/>
+        <parameter name="testMode" value="authlevel"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthTest"/>
+        </classes>
+    </test>
     <test name="SanityChainTestOneUsernamePassword">
         <parameter name="testChainName" value="chain10"/>
         <groups>
@@ -397,6 +433,44 @@
         </classes>
     </test>
     <test name="ApplicationAuthTest">
+        <parameter name="testRealm" value="/"/>
+        <parameter name="negativeTest" value="false"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.ApplicationAuthTest"/>
+        </classes>
+    </test>
+    <test name="ApplicationAuthTestNegative">
+        <parameter name="testRealm" value="/"/>
+        <parameter name="negativeTest" value="true"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.ApplicationAuthTest"/>
+        </classes>
+    </test>
+    <test name="ApplicationAuthTestSubRealm">
+        <parameter name="testRealm" value="apprealm"/>
+        <parameter name="negativeTest" value="false"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.ApplicationAuthTest"/>
+        </classes>
+    </test>
+    <test name="ApplicationAuthTestSubRealmNegative">
+        <parameter name="testRealm" value="apprealm"/>
+        <parameter name="negativeTest" value="true"/>
         <groups>
             <run>
                 <include name="@mode@"/>
@@ -417,3 +491,51 @@
             <class name="com.sun.identity.qatest.authentication.AuthContextLogout"/>
         </classes>
     </test>    
+    <test name="NewSessionArgTest">
+        <parameter name="testRealm" value="/"/>
+        <parameter name="testModule" value="datastore"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthContextLogout"/>
+        </classes>
+    </test>
+    <test name="NewSessionArgTestSubRealm">
+        <parameter name="testRealm" value="nssubrealm"/>
+        <parameter name="testModule" value="datastore"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthContextLogout"/>
+        </classes>
+    </test>
+    <test name="NewSessionArgAnonymousTest">
+        <parameter name="testRealm" value="/"/>
+        <parameter name="testModule" value="anonymous"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthContextLogout"/>
+        </classes>
+    </test>
+    <test name="NewSessionArgTestSubRealm">
+        <parameter name="testRealm" value="nssubrealm"/>
+        <parameter name="testModule" value="anonymous"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.authentication.AuthContextLogout"/>
+        </classes>
+    </test>
