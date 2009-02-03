@@ -1,6 +1,19 @@
+* {
+        margin: 0;
+        padding: 0;
+        border: 0;
+}
+
 body {
     font: 80% arial, helvetica, sans-serif;
-    margin: 0;
+}
+
+h1 {
+    font-size: 18px;
+}
+
+#page {
+    max-width: 1024px;
 }
 
 #header {
@@ -36,6 +49,36 @@ body {
     margin: 1px;
 }
 
+
+#homeTabContent {
+    width: 100%;
+}
+
+#homeTabHeader {
+    border: 1px solid #DDDDDD;
+    padding: 8px;
+}
+
+#homeTabMenu {
+    float: left;
+    width: 200px;
+    border: 1px solid #DDDDDD;
+    padding: 8px;
+    margin-top: 8px;
+}
+
+#homeTabMenuContent {
+}
+
+#homeTabDetail {
+    border: 1px solid #DDDDDD;
+    margin-left: 226px;
+    padding: 8px;
+    margin-top: 8px;
+}
+
+#homeTabDetailContent {
+}
 
 #footer {
 }

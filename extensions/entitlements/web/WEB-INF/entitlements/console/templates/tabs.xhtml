@@ -5,12 +5,18 @@
       xmlns:ice="http://www.icesoft.com/icefaces/component">
     <ice:panelTabSet>
         <ice:panelTab id="homeTab" label="${msg.homeTabLabel}">
-            <ice:outputText value="tab1 content"/>
+            <ui:insert name="homeTabContent">!HOME TAB CONTENT!</ui:insert>
         </ice:panelTab>
         <ice:panelTab id="managePolicesTab" label="${msg.managePoliciesTabLabel}">
             <ice:outputText value="tab2 content"/>
         </ice:panelTab>
         <ice:panelTab id="manageResourcesTab" label="${msg.manageResourcesTabLabel}">
+            <ice:outputText value="tab3 content"/>
+        </ice:panelTab>
+        <ice:panelTab id="auditorTab" label="${msg.auditorTabLabel}">
+            <ice:outputText value="tab3 content"/>
+        </ice:panelTab>
+        <ice:panelTab id="delegatedAdminTab" label="${msg.delegationTabLabel}">
             <ice:outputText value="tab3 content"/>
         </ice:panelTab>
     </ice:panelTabSet>
