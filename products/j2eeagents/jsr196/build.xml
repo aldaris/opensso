@@ -1,7 +1,7 @@
 <!--
    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
   
-   Copyright (c) 2006 Sun Microsystems Inc. All Rights Reserved
+   Copyright (c) 2008 Sun Microsystems Inc. All Rights Reserved
   
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2009-01-30 11:51:44 kalpanakm Exp $
+   $Id: build.xml,v 1.2 2009-02-03 17:47:48 kalpanakm Exp $
 
 -->
 
@@ -39,92 +39,10 @@
         </condition>
     </fail>
 
-    <property name="j2eeagents.jsr196.src.dir" location="${j2eeagents.basedir}/${containername}/${containerversion}/source"/>
-    <property name="j2eeagents.jsr196.cp.dir" location="${j2eeagents.basedir}/${containername}/${containerversion}/extlib"/>
-    
-    <path id="build.class.path">
-            <pathelement location="${j2eeagents.container.classes.dir}"/>
-            <fileset dir="${j2eeagents.jsr196.cp.dir}">
-                <include name="**/*.jar"/>
-            </fileset>
-    </path>
-    
    
     <target name="build">
-        <javac destdir="${j2eeagents.container.classes.dir}" source="1.5" target="1.5"
-               debug="${build.debug}" debuglevel="${build.debuglevel}" verbose="yes" >
-            <src path="${j2eeagents.jsr196.src.dir}"/>
-            <classpath refid="build.class.path"/>
-        </javac>
-
-        <copy todir="${j2eeagents.container.classes.dir}">
-            <fileset dir="${j2eeagents.basedir}/${containername}">
-                <include name=".version"/>
-            </fileset>
-        </copy>
-
-        <concat destfile="${j2eeagents.container.classes.dir}/.version" append="true">Build Date: ${nightly.date}&#10;&#10;</concat>
-
-        <jar destfile="${j2eeagents.container.archive.dir}/agent.jar" basedir="${j2eeagents.container.classes.dir}"/>
-        <copy todir="${j2eeagents.container.lib.dir}">
-            <fileset dir="${j2eeagents.container.extlib.dir}">
-                <include name="**/*.jar"/>
-            </fileset>
-        </copy>
-
-
-        <copy todir="${container.j2ee_agent.config.dir}">
-            <fileset dir="${j2eeagents.basedir}/${containername}/${containerversion}/config">
-                <include name="OpenSSOAgentBootstrap.template"/>
-                <include name="OpenSSOAgentConfiguration.template"/>
-                <include name="OpenSSOInstallerConfig.properties"/>
-                <include name="OpenSSOAgentLogConfig.properties"/>
-                <include name="PolicyAdmin.template"/>
-            </fileset>
-            <fileset dir="${j2eeagents.basedir}/${containername}/${containerversion}/xml">
-                <include name="configure.xml"/>
-            </fileset>
-        </copy>
-
-        <copy todir="${container.j2ee_agent.locale.dir}">
-            <fileset dir="${j2eeagents.basedir}/${containername}/${containerversion}/resources">
-                <include name="asTools.properties"/>
-                <include name="as81Tools.properties"/>
-            </fileset>
-        </copy>
-
-        <copy todir="${container.j2ee_agent.etc.dir}">
-            <fileset dir="${j2eeagents.basedir}/${containername}/${containerversion}/etc">
-                <include name="agentapp.war"/>
-            </fileset>
-        </copy>
-        
-        <copy todir="${container.j2ee_agent.lib.dir}">
-            <fileset dir="${j2eeagents.basedir}/${containername}/${containerversion}/extlib">
-                <include name="openssoclientsdk.jar"/>
-                <include name="opensso-installtools-launcher.jar"/>
-                <include name="opensso-installtools.jar"/>
-            </fileset>
-            <fileset dir="${j2eeagents.container.archive.dir}">
-                <include name="agent.jar"/>
-            </fileset>
-        </copy>
-
-
-        <copy todir="${container.j2ee_agent.sampleapp.dir}">
-            <fileset dir="${j2eeagents.basedir}/${containername}/${containerversion}/sampleapp">
-                <include name="**/*"/>
-            </fileset>
-        </copy>
-
-                
-      
-        <zip destfile="${j2eeagents.dist.dir}/${containername}_${containerversion}_agent_${agentversion}.zip"
-             basedir="${j2eeagents.container.scratch.dir}"
-        /> 
-        <checksum file="${j2eeagents.dist.dir}/${containername}_${containerversion}_agent_${agentversion}.zip"
-            algorithm="SHA" fileext=".sha" />
-
+         <echo message="***********Now calling JSR196/JSR115 Agent build ********"/>
+        <ant antfile="${j2eeagents.basedir}/${containername}/${containerversion}/build.xml" inheritRefs="true"/>
     </target>
 
 </project>
