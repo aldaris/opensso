@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EvaluatorThread.java,v 1.1 2009-02-04 18:40:58 veiming Exp $
+ * $Id: EvaluatorThread.java,v 1.2 2009-02-04 22:06:21 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -37,7 +37,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- *  TOFIX
+ * This class get policy decision of a single resource. Since there can be
+ * multiple policy evaluations, they are done is different threads.
  */
 public class EvaluatorThread implements Runnable {
     private PolicyEvaluatorAdaptor parent;
@@ -85,8 +86,11 @@ public class EvaluatorThread implements Runnable {
                 resComparator, p, resourceName);
             policyEvalTasks.add(task);
         }
-        counter = this.policies.size();
+        counter = policies.size();
+
         if (counter > 0) {
+            boolean interrupted = false;
+
             synchronized (this) {
                 for (PolicyDecisionTask.Task task : policyEvalTasks) {
                     Runner eval = new Runner(this,
@@ -99,16 +103,20 @@ public class EvaluatorThread implements Runnable {
                     try {
                         this.wait();
                     } catch (InterruptedException ex) {
-                        //TOFIX
+                        policyDecisions = Collections.EMPTY_SET;
+                        counter = 0;
+                        interrupted = true;
                     }
                 }
             }
 
-            policyDecisions = new HashSet<PolicyDecision>();
-            for (PolicyDecisionTask.Task t : policyEvalTasks) {
-                PolicyDecision pd = t.policyDecision;
-                if (pd != null) {
-                    policyDecisions.add(pd);
+            if (!interrupted) {
+                policyDecisions = new HashSet<PolicyDecision>();
+                for (PolicyDecisionTask.Task t : policyEvalTasks) {
+                    PolicyDecision pd = t.policyDecision;
+                    if (pd != null) {
+                        policyDecisions.add(pd);
+                    }
                 }
             }
         } else {

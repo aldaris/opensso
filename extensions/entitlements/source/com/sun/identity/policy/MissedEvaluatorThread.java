@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MissedEvaluatorThread.java,v 1.1 2009-02-04 18:40:58 veiming Exp $
+ * $Id: MissedEvaluatorThread.java,v 1.2 2009-02-04 22:06:21 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -34,8 +34,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- *
- * TOFIX
+ * This class does what Evaluator Thread is doing. Except that it does
+ * a search for policies prior to doing policy evaluation.
  */
 public class MissedEvaluatorThread extends EvaluatorThread {
     private SSOToken adminSSOToken;
@@ -54,7 +54,7 @@ public class MissedEvaluatorThread extends EvaluatorThread {
         hitPolicies = hits;
     }
 
-    public void setSearchParameter(
+    void setSearchParameter(
         SSOToken adminSSOToken,
         Map<String, Set<String>> misses
     ) {
@@ -72,7 +72,6 @@ public class MissedEvaluatorThread extends EvaluatorThread {
                     policies.add(policy);
                 }
             }
-
             super.run();
         } catch (SSOException ex) {
             exception = ex;

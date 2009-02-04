@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubResources.java,v 1.8 2009-02-04 18:40:58 veiming Exp $
+ * $Id: SubResources.java,v 1.9 2009-02-04 22:06:21 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -40,8 +40,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- *
- * @author dennis
+ * This class gets policy decisions for a set of resources in a resource
+ * tree.
  */
 public class SubResources implements Runnable {
     private Set<String> resources;
@@ -60,7 +60,7 @@ public class SubResources implements Runnable {
     private Map<String, PolicyDecision> results = null;
     protected Exception exception;
     
-    public SubResources(
+    SubResources(
         Object parent,
         SSOToken token,
         ServiceType serviceType,
@@ -78,11 +78,11 @@ public class SubResources implements Runnable {
         this.policies = policies;
     }
 
-    public Exception getException() {
+    Exception getException() {
         return exception;
     }
 
-    public Map<String, PolicyDecision> getResults() {
+    Map<String, PolicyDecision> getResults() {
         return results;
     }
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MissedSubResources.java,v 1.2 2009-02-04 10:04:21 veiming Exp $
+ * $Id: MissedSubResources.java,v 1.3 2009-02-04 22:06:21 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -34,8 +34,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- *
- * @author dennis
+ * This class does what <code>SubResources</code> class is doing except
+ * it does a search for policies before doing policy evaluation.
  */
 public class MissedSubResources extends SubResources {
     private SSOToken adminSSOToken;
@@ -59,7 +59,7 @@ public class MissedSubResources extends SubResources {
         }
     }
 
-    public void setSearchParameter(
+    void setSearchParameter(
         SSOToken adminSSOToken,
         Map<String, Set<String>> misses
     ) {

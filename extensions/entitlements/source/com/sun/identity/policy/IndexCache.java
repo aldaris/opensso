@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IndexCache.java,v 1.1 2009-02-04 10:03:51 veiming Exp $
+ * $Id: IndexCache.java,v 1.2 2009-02-04 22:06:21 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -35,6 +35,7 @@ import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceConfigManager;
 import com.sun.identity.sm.ServiceListener;
 import java.security.AccessController;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -42,10 +43,11 @@ import java.util.Set;
  */
 public class IndexCache implements ServiceListener {
     private static IndexCache instance = new IndexCache();
+    private static int DEFAULT_CACHE_SIZE = 100000; //TOFIX
 
-    private Cache hostIndexCache = new Cache(100000); // TOFIX
-    private Cache pathIndexCache = new Cache(100000); // TOFIX
-    private Cache pathParentIndexCache = new Cache(100000); // TOFIX
+    private Cache hostIndexCache = new Cache(DEFAULT_CACHE_SIZE);
+    private Cache pathIndexCache = new Cache(DEFAULT_CACHE_SIZE);
+    private Cache pathParentIndexCache = new Cache(DEFAULT_CACHE_SIZE);
 
     static {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
@@ -64,56 +66,97 @@ public class IndexCache implements ServiceListener {
     private IndexCache() {
     }
 
+    /**
+     * Returns an instance.
+     *
+     * @return an instance.
+     */
     public static IndexCache getInstance() {
         return instance;
     }
 
-    public synchronized void cacheHostIndex(String idx, Set<Policy> objects) {
+    /**
+     * Caches host index.
+     *
+     * @param idx host index
+     * @param objects Set of policies associated with this index.
+     */
+    public synchronized void cacheHostIndex(String idx, Set<Policy> policies) {
         Set<Policy> set = (Set<Policy>)hostIndexCache.get(idx);
-        if ((set == null) || set.isEmpty()) {
-            hostIndexCache.put(idx, objects);
-        } else {
-            set.addAll(objects);
+        if (set == null) {
+            set = new HashSet<Policy>();
+            hostIndexCache.put(idx, set);
         }
+        set.addAll(policies);
     }
 
+    /**
+     * Returns policies associated with a host index.
+     *
+     * @param idx host index
+     * @return Set of policies associated with this index.
+     */
     public Set<Policy> getHostIndex(String idx) {
         return (Set<Policy>)hostIndexCache.get(idx);
     }
 
-    public synchronized void cachePathIndex(String idx, Set<Policy> objects) {
+    /**
+     * Caches path index.
+     *
+     * @param idx path index
+     * @param objects Set of policies associated with this index.
+     */
+    public synchronized void cachePathIndex(String idx, Set<Policy> policies) {
         Set<Policy> set = (Set<Policy>)pathIndexCache.get(idx);
-        if ((set == null) || set.isEmpty()) {
-            pathIndexCache.put(idx, objects);
-        } else {
-            set.addAll(objects);
+        if (set == null) {
+            set = new HashSet<Policy>();
+            pathIndexCache.put(idx, set);
         }
+        set.addAll(policies);
     }
 
+    /**
+     * Returns policies associated with a path index.
+     *
+     * @param idx path index
+     * @return Set of policies associated with this index.
+     */
     public Set<Policy> getPathIndex(String idx) {
         return (Set<Policy>)pathIndexCache.get(idx);
     }
 
+    /**
+     * Caches path parent index.
+     *
+     * @param idx path parent  index
+     * @param objects Set of policies associated with this index.
+     */
     public synchronized void cachePathParentIndex(
         String idx,
-        Set<Policy> objects
+        Set<Policy> policies
     ) {
         Set<Policy> set = (Set<Policy>)pathParentIndexCache.get(idx);
-        if ((set == null) || set.isEmpty()) {
-            pathParentIndexCache.put(idx, objects);
-        } else {
-            set.addAll(objects);
+        if (set == null) {
+            set = new HashSet<Policy>();
+            pathParentIndexCache.put(idx, set);
         }
+        set.addAll(policies);
     }
 
+    /**
+     * Returns policies associated with a path parent index.
+     *
+     * @param idx path parent index
+     * @return Set of policies associated with this index.
+     */
     public Set<Policy> getPathParentIndex(String idx) {
         return (Set<Policy>)pathParentIndexCache.get(idx);
     }
 
     private synchronized void clearCaches() {
-        hostIndexCache = new Cache(100000); // TOFIX
-        pathIndexCache = new Cache(100000); // TOFIX
-        pathParentIndexCache = new Cache(100000); // TOFIX
+        hostIndexCache = new Cache(DEFAULT_CACHE_SIZE);
+        pathIndexCache = new Cache(DEFAULT_CACHE_SIZE);
+        pathParentIndexCache = new Cache(DEFAULT_CACHE_SIZE);
     }
 
     public void globalConfigChanged(
@@ -141,4 +184,3 @@ public class IndexCache implements ServiceListener {
         //no-op
     }
 }
-
