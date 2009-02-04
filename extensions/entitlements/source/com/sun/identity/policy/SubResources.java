@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubResources.java,v 1.6 2009-02-04 07:41:21 veiming Exp $
+ * $Id: SubResources.java,v 1.7 2009-02-04 10:04:23 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -45,8 +45,6 @@ import java.util.Set;
  * @author dennis
  */
 public class SubResources implements Runnable {
-    private Map<String, Policy> hostIndexToPolicy;
-    private Map<String, Policy> pathIndexToPolicy;
     private Set<String> resources;
     private PolicyDecisionTask tasks;
     private Set<PolicyDecisionTask.Task> policyEvalTasks;
@@ -59,7 +57,7 @@ public class SubResources implements Runnable {
     private String rootResource;
     private Set<String> actionNames;
     private Map<String, Set<String>> envParameters;
-    protected Map<Policy, Map<String, Set<String>>> entries;
+    protected Set<Policy> policies;
     private Map<String, PolicyDecision> results = null;
     protected Exception exception;
     
@@ -70,7 +68,7 @@ public class SubResources implements Runnable {
         String rootResource,
         Set<String> actionNames,
         Map<String, Set<String>> envParameters,
-        Map<Policy, Map<String, Set<String>>> entries
+        Set<Policy> policies
     ) {
         this.parent = parent;
         this.token = token;
@@ -78,7 +76,7 @@ public class SubResources implements Runnable {
         this.rootResource = rootResource;
         this.actionNames = actionNames;
         this.envParameters = envParameters;
-        this.entries = entries;
+        this.policies = policies;
     }
 
     public Exception getException() {
@@ -93,9 +91,8 @@ public class SubResources implements Runnable {
         policyEvalTasks = new HashSet<PolicyDecisionTask.Task>();
         tasks = new PolicyDecisionTask();
         resToTasks = new HashMap<String, Set<PolicyDecisionTask.Task>>();
-        createIndexMap(entries);
         ResourceName resComparator = serviceType.getResourceNameComparator();
-        createResourceSet(rootResource, resComparator, entries);
+        createResourceSet(rootResource, resComparator);
         
         for (String r : resources) {
             evaluateResource(resComparator, r);
@@ -133,40 +130,11 @@ public class SubResources implements Runnable {
         }
     }
     
-    private void createIndexMap(
-        Map<Policy, Map<String, Set<String>>> entries
-    ) {
-        hostIndexToPolicy = new HashMap<String, Policy>();
-        pathIndexToPolicy = new HashMap<String, Policy>();
-        for (Policy policy : entries.keySet()) {
-            Map<String, Set<String>> map = entries.get(policy);
-            if (map != null) {
-                Set<String> hosts = map.get(
-                    PolicyEvaluatorAdaptor.LBL_HOST_IDX);
-                if (hosts != null) {
-                    for (String s : hosts) {
-                        hostIndexToPolicy.put(s, policy);
-                    }
-                }
-                Set<String> paths = map.get(
-                    PolicyEvaluatorAdaptor.LBL_PATH_IDX);
-                if (paths != null) {
-                    for (String s : paths) {
-                        pathIndexToPolicy.put(s, policy);
-                    }
-                }
-
-            }
-        }
-    }
-
-    
     private void createResourceSet(
         String rootResource,
-        ResourceName resComparator,
-        Map<Policy, Map<String, Set<String>>> entries) {
+        ResourceName resComparator) {
         resources = new HashSet<String>();
-        for (Policy policy : entries.keySet()) {
+        for (Policy policy : policies) {
             Set<String> ruleNames = policy.getRuleNames();
             for (String ruleName : ruleNames) {
                 try {
@@ -186,21 +154,22 @@ public class SubResources implements Runnable {
         }
     }
     
-    private Set<Policy> search(Set<String> hostIndexes, Set<String>pathIndexes) {
-        Set<Policy> policies  = new HashSet<Policy>();
+    private Set<Policy> search(Set<String> hostIndexes, Set<String>pathIndexes){
+        Set<Policy> searchResults  = new HashSet<Policy>();
+        IndexCache cache = IndexCache.getInstance();
         for (String s : hostIndexes) {
-            Policy p = hostIndexToPolicy.get(s);
-            if (p != null) {
-                policies.add(p);
+            Set<Policy> set = cache.getHostIndex(s);
+            if (set != null) {
+                searchResults.addAll(set);
             }
         }
         for (String s : pathIndexes) {
-            Policy p = pathIndexToPolicy.get(s);
-            if (p != null) {
-                policies.add(p);
+            Set<Policy> set = cache.getPathIndex(s);
+            if (set != null) {
+                searchResults.addAll(set);
             }
         }
-        return policies;
+        return searchResults;
     }
 
     private void evaluateResource(
@@ -208,12 +177,12 @@ public class SubResources implements Runnable {
         String resource
     ) {
         ResourceComp comp = ResourceNameSplitter.split(resource);
-        Set<Policy> policies = search(
+        Set<Policy> searchResult = search(
             comp.getHostIndexes(), comp.getPathIndexes());
-        if (!policies.isEmpty()) {
+        if (!searchResult.isEmpty()) {
             Set<PolicyDecisionTask.Task> set = new HashSet();
 
-            for (Policy p : policies) {
+            for (Policy p : searchResult) {
                 PolicyDecisionTask.Task task = tasks.addTask(
                     resComparator, p, resource);
                 set.add(task);

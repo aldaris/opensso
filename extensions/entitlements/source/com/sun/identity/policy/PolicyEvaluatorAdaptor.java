@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorAdaptor.java,v 1.12 2009-02-04 07:41:20 veiming Exp $
+ * $Id: PolicyEvaluatorAdaptor.java,v 1.13 2009-02-04 10:04:22 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -30,11 +30,9 @@ package com.sun.identity.policy;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
-import com.sun.identity.entitlement.DataStoreEntry;
 import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.IPolicyEvaluator;
-import com.sun.identity.entitlement.util.IndexCache;
 import com.sun.identity.entitlement.util.ResourceComp;
 import com.sun.identity.entitlement.util.ResourceNameSplitter;
 import com.sun.identity.policy.interfaces.ResourceName;
@@ -65,10 +63,10 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
         PolicyManager pm = new PolicyManager(getSSOToken(adminSubject), "/");
         ResourceComp comp = ResourceNameSplitter.split(resourceName);
         return PolicyIndexer.search(pm, comp.getHostIndexes(),
-            comp.getPathIndexes());
+            comp.getPathIndexes(), null);
     }
 
-    static Set<DataStoreEntry> recursiveSearch(
+    static Set<Policy> recursiveSearch(
         SSOToken token,
         Map<String, Set<String>> misses
     ) throws SSOException, PolicyException {
@@ -372,8 +370,7 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
             Set<String> actionNames = serviceType.getActionNames();
 
             ResourceComp comp = ResourceNameSplitter.split(resourceName);
-            Map<Policy, Map<String, Set<String>>> hits = new
-                HashMap<Policy, Map<String, Set<String>>>();
+            Set<Policy> hits = new HashSet<Policy>();
             Map<String, Set<String>> misses = lookupCache(comp, hits);
             MissedSubResources missedThread = null;
             SubResources hitThread = null;
@@ -381,7 +378,7 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
             if (!misses.isEmpty()) {
                 missedThread = new MissedSubResources(this,
                     getSSOToken(subject), serviceType,resourceName,
-                    actionNames, envParameters, hits.keySet());
+                    actionNames, envParameters, hits);
                 missedThread.setSearchParameter(getSSOToken(adminSubject),
                     misses);
             }
@@ -477,7 +474,7 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
 
     private Map<String, Set<String>> lookupCache(
         ResourceComp comp,
-        Map<Policy, Map<String, Set<String>>> map
+        Set<Policy> map
     ) {
         Map<String, Set<String>> misses = new HashMap<String, Set<String>>();
         lookupCache(LBL_HOST_IDX, comp.getHostIndexes(), map, misses);
@@ -491,13 +488,13 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
     private void lookupCache(
         String index,
         Set<String> lookupSet,
-        Map<Policy, Map<String, Set<String>>> hits,
+        Set<Policy> hits,
         Map<String, Set<String>> misses
     ) {
         IndexCache cache = IndexCache.getInstance();
 
         for (String resIndex : lookupSet) {
-            Set<Object> setCached = null;
+            Set<Policy> setCached = null;
 
             if (index.equals(LBL_HOST_IDX)) {
                 setCached = cache.getHostIndex(resIndex);
@@ -508,23 +505,7 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
             }
 
             if (setCached != null) {
-                for (Object policy : setCached) {
-                    Map<String, Set<String>> indexes = hits.get(policy);
-                    if (indexes == null) {
-                        indexes = new HashMap<String, Set<String>>();
-                        hits.put((Policy)policy, indexes);
-                        Set<String> set = set = new HashSet<String>();
-                        indexes.put(index, set);
-                        set.add(resIndex);
-                    } else {
-                        Set<String> set = indexes.get(index);
-                        if (set == null) {
-                            set = new HashSet<String>();
-                            indexes.put(index, set);
-                        }
-                        set.add(resIndex);
-                    }
-                }
+                hits.addAll(setCached);
             } else {
                 Set<String> set = misses.get(index);
                 if (set == null) {

@@ -22,15 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MissedSubResources.java,v 1.1 2009-02-04 07:41:20 veiming Exp $
+ * $Id: MissedSubResources.java,v 1.2 2009-02-04 10:04:21 veiming Exp $
  */
 
 package com.sun.identity.policy;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.entitlement.DataStoreEntry;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -71,36 +69,12 @@ public class MissedSubResources extends SubResources {
 
     public void run() {
         try {
-            Set<DataStoreEntry> searchResults = 
+            Set<Policy> searchResults =
                 PolicyEvaluatorAdaptor.recursiveSearch(adminSSOToken, misses);
-            entries = new HashMap<Policy, Map<String, Set<String>>>();
-            for (DataStoreEntry d : searchResults) {
-                Policy policy = (Policy)d.getPolicy();
+            policies = new HashSet<Policy>();
+            for (Policy policy : searchResults) {
                 if (!hitPolicies.contains(policy)) {
-                    Set<String> hostIdx = d.getHostIndexes();
-                    Set<String> pathIdx = d.getPathIndexes();
-                    String pathParent = d.getPathParent();
-                    Set<String> setPathParent = new HashSet<String>();
-                    if (pathParent == null) {
-                        setPathParent.add(pathParent);
-                    }
-
-                    Map<String, Set<String>> map = entries.get(policy);
-                    if (map == null) {
-                        map = new HashMap<String, Set<String>>();
-                        entries.put(policy, map);
-                        map.put(PolicyEvaluatorAdaptor.LBL_HOST_IDX, hostIdx);
-                        map.put(PolicyEvaluatorAdaptor.LBL_PATH_IDX, pathIdx);
-                        map.put(PolicyEvaluatorAdaptor.LBL_PATH_PARENT_IDX,
-                            setPathParent);
-                    } else {
-                        map.get(PolicyEvaluatorAdaptor.LBL_HOST_IDX).addAll(
-                            hostIdx);
-                        map.get(PolicyEvaluatorAdaptor.LBL_PATH_IDX).addAll(
-                            pathIdx);
-                        map.get(PolicyEvaluatorAdaptor.LBL_PATH_PARENT_IDX).
-                            addAll(setPathParent);
-                    }
+                    policies.add(policy);
                 }
             }
 

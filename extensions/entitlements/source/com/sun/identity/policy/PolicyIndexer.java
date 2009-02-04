@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexer.java,v 1.8 2009-01-29 02:04:03 veiming Exp $
+ * $Id: PolicyIndexer.java,v 1.9 2009-02-04 10:04:22 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -33,9 +33,9 @@ import com.sun.identity.entitlement.IPolicyIndexDataStore;
 import com.sun.identity.entitlement.PolicyIndexDataStoreFactory;
 import com.sun.identity.entitlement.util.ResourceIndex;
 import com.sun.identity.entitlement.util.ResourceNameIndexGenerator;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -103,70 +103,97 @@ public class PolicyIndexer {
      * @param pm Policy Manager.
      * @param hostIndexes Set of Host Indexes.
      * @param pathIndexes Set of Path Indexes.
+     * @param pathParentIndex Path ParentIndex
      * @return Set of policy objects.
      */
     public static Set<Policy> search(
         PolicyManager pm, 
         Set<String> hostIndexes, 
-        Set<String> pathIndexes
+        Set<String> pathIndexes,
+        String pathParentIndex
     ) {
         Set<Policy> policies = new HashSet<Policy>();
         try {
             IPolicyIndexDataStore datastore = 
                 PolicyIndexDataStoreFactory.getInstance().getDataStore();
-            Set<Object> results = datastore.search(hostIndexes, pathIndexes);
+            Set<DataStoreEntry> results = datastore.search(hostIndexes,
+                pathIndexes, pathParentIndex);
+            Map<String, Set<Policy>> mapHostIndexes = createCacheMap(
+                hostIndexes);
+            Map<String, Set<Policy>> mapPathIndexes = createCacheMap(
+                pathIndexes);
+
+            Map<String, Set<Policy>> mapPathParentIndexes = null;
+            if (pathParentIndex != null) {
+                mapPathParentIndexes = new HashMap<String, Set<Policy>>();
+                mapPathParentIndexes.put(pathParentIndex,
+                    new HashSet<Policy>());
+            }
+
+            IndexCache cache = IndexCache.getInstance();
+
             if ((results != null) && !results.isEmpty()) {
-                for (Object o : results) {
+                for (DataStoreEntry d : results) {
                     Policy policy = SerializedPolicy.deserialize(
-                        pm, (SerializedPolicy)o);
+                        pm, (SerializedPolicy)d.getPolicy());
                     if (policy.isActive()) {
                         policies.add(policy);
+                        for (String r : d.getHostIndexes()) {
+                            addToCacheMap(mapHostIndexes, r, policy);
+                        }
+                        for (String r : d.getPathIndexes()) {
+                            addToCacheMap(mapPathIndexes, r, policy);
+                        }
+                        if (mapPathParentIndexes != null) {
+                            String pp = d.getPathParent();
+                            if (pp != null) {
+                                addToCacheMap(mapPathParentIndexes, pp, policy);
+                            }
+                        }
                     }
                 }
             }
+
+            for (String r : mapHostIndexes.keySet()) {
+                Set<Policy> p = mapHostIndexes.get(r);
+                cache.cacheHostIndex(r, p);
+            }
+            for (String r : mapPathIndexes.keySet()) {
+                Set<Policy> p = mapPathIndexes.get(r);
+                cache.cachePathIndex(r, p);
+            }
+            if (mapPathParentIndexes != null) {
+                for (String r : mapPathParentIndexes.keySet()) {
+                    Set<Policy> p = mapPathParentIndexes.get(r);
+                    cache.cachePathParentIndex(r, p);
+                }
+            }
+
+
         } catch (EntitlementException e) {
             PolicyManager.debug.error("PolicyIndexer.store", e);
         }
         return policies;
     }
 
-    /**
-     * Searches for matching entries.
-     * 
-     * @param hostIndexes Set of Host indexes.
-     * @param pathIndexes Set of Path indexes.
-     * @param pathParentIndex Path ParentIndex
-     * @return a set of datastore entry object.
-     * @throws EntitlementException if search operation fails.
-     */
-    public static Set<DataStoreEntry> search(
-        PolicyManager pm, 
-        Set<String> hostIndexes, 
-        Set<String> pathIndexes,
-        String pathParent
-    ) {
-        Set<DataStoreEntry> results = null;
-        try {
-            IPolicyIndexDataStore datastore = 
-                PolicyIndexDataStoreFactory.getInstance().getDataStore();
-            results = datastore.search(hostIndexes, pathIndexes, pathParent);
-            
-            if ((results != null) && !results.isEmpty()) {
-                for (Iterator i = results.iterator(); i.hasNext(); ) {
-                    DataStoreEntry entry = (DataStoreEntry)i.next();
-                    Policy policy = SerializedPolicy.deserialize(
-                        pm, (SerializedPolicy)entry.getPolicy());
-                    if (!policy.isActive()) {
-                        i.remove();
-                    } else {
-                        entry.setPolicy(policy);
-                    }
-                }
+    private static Map<String, Set<Policy>> createCacheMap(Set<String> set) {
+        Map<String, Set<Policy>> map = new HashMap<String, Set<Policy>>();
+        if (set != null) {
+            for (String s : set) {
+                map.put(s, new HashSet<Policy>());
             }
-        } catch (EntitlementException e) {
-            PolicyManager.debug.error("PolicyIndexer.store", e);
         }
-        return (results != null) ? results : Collections.EMPTY_SET;
+        return map;
     }
 
+    private static void addToCacheMap(
+        Map<String, Set<Policy>> map,
+        String idx,
+        Policy policy
+    ) {
+        Set<Policy> set = map.get(idx);
+        if (set != null) {
+            set.add(policy);
+        }
+    }
 }

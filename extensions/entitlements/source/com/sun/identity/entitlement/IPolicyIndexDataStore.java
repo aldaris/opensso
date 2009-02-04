@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPolicyIndexDataStore.java,v 1.5 2009-01-29 02:04:02 veiming Exp $
+ * $Id: IPolicyIndexDataStore.java,v 1.6 2009-02-04 10:03:49 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -67,24 +67,11 @@ public interface IPolicyIndexDataStore {
      * 
      * @param hostIndexes Set of Host indexes.
      * @param pathIndexes Set of Path indexes.
+     * @param pathParent Path parent index.
      * @return a set of matching policy objects.
      * @throws EntitlementException if search operation fails.
      */
-    Set<Object> search(Set<String> hostIndexes, Set<String> pathIndexes)
+    Set<DataStoreEntry> search(Set<String> hostIndexes, Set<String> pathIndexes,
+        String pathParent)
         throws EntitlementException;
-
-    /**
-     * Searches for matching entries.
-     * 
-     * @param hostIndexes Set of Host indexes.
-     * @param pathIndexes Set of Path indexes.
-     * @param pathParentIndex Path ParentIndex
-     * @return a set of datastore entry object.
-     * @throws EntitlementException if search operation fails.
-     */
-    Set<DataStoreEntry> search(
-        Set<String> hostIndexes,
-        Set<String> pathIndexes,
-        String pathParent
-    ) throws EntitlementException;
 }

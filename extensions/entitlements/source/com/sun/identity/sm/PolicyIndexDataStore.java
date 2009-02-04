@@ -23,14 +23,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexDataStore.java,v 1.11 2009-02-04 07:41:21 veiming Exp $
+ * $Id: PolicyIndexDataStore.java,v 1.12 2009-02-04 10:04:54 veiming Exp $
  */
 
 package com.sun.identity.sm;
 
-import com.sun.identity.entitlement.DataStoreEntry;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.entitlement.DataStoreEntry;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.IPolicyIndexDataStore;
 import com.sun.identity.security.AdminTokenAction;
@@ -198,44 +198,7 @@ public class PolicyIndexDataStore implements  IPolicyIndexDataStore {
         }
     }
 
-    /**
-     * Searches for policy objects.
-     * 
-     * @param hostIndexes Set of Host indexes.
-     * @param pathIndexes Set of Path indexes.
-     * @return a set of matching policy objects.
-     * @throws EntitlementException if search operation fails.
-     */
-    public Set<Object> search(
-        Set<String> hostIndexes,
-        Set<String> pathIndexes
-    ) throws EntitlementException {
-        Set<Object> results = new HashSet<Object>();
-
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
-        
-        try {
-            Map<String, Map<String, Set<String>>> matched = getMatchingDNs(
-                adminToken, hostIndexes, pathIndexes, null);
-            for (String dn : matched.keySet()) {
-                Map<String, Set<String>> map = matched.get(dn);
-                Set<String> set = map.get(SMSEntry.ATTR_KEYVAL);
-                String ser = set.iterator().next();
-                ser = ser.substring(SERIALIZABLE_INDEX_KEY.length()+1);
-                results.add(deserializeObject(ser));
-            }
-
-            return results;
-        } catch (SMSException e) {
-            throw new EntitlementException(e.getMessage(),
-                e.getExceptionCode());
-        } catch (SSOException e) {
-            throw new EntitlementException(e.getMessage(), -1);
-        }
-    }
-    
-    private Map<String, Map<String, Set<String>>> getMatchingDNs(
+      private Map<String, Map<String, Set<String>>> getMatchingDNs(
         SSOToken adminToken,
         Set<String> hostIndexes,
         Set<String> pathIndexes,
@@ -314,12 +277,14 @@ public class PolicyIndexDataStore implements  IPolicyIndexDataStore {
                   
                 Set setPathParent = getAttributes(
                     setSearchable, PATH_PARENT_INDEX_KEY);
+                String pp = ((setPathParent != null) &&
+                    !setPathParent.isEmpty()) ?
+                    (String)setPathParent.iterator().next() : null;
                 
                 results.add(new DataStoreEntry(
                     getAttributes(setSearchable, HOST_INDEX_KEY),
                     getAttributes(setSearchable, PATH_INDEX_KEY),
-                    (String)setPathParent.iterator().next(),
-                    deserializeObject(ser)));
+                    pp, deserializeObject(ser)));
             }
 
             return results;
