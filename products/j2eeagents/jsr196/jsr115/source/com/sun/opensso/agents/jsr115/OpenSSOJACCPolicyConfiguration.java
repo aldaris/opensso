@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenSSOJACCPolicyConfiguration.java,v 1.1 2009-01-30 12:09:40 kalpanakm Exp $
+ * $Id: OpenSSOJACCPolicyConfiguration.java,v 1.2 2009-02-04 06:06:18 kalpanakm Exp $
  *
  */
 
@@ -1038,7 +1038,6 @@ public class OpenSSOJACCPolicyConfiguration implements PolicyConfiguration {
         try {
             URL isURL = new URL(WebtopNaming.getLocalServer());
             String url = WebtopNaming.getLocalServer();
-            System.out.println("KALPANA1... + " + url);
             lc = null;
             lc = new AuthContext(isOrganizationDN,isURL);
             lc.login();
