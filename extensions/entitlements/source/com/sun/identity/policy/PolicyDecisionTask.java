@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDecisionTask.java,v 1.1 2009-01-29 20:13:17 veiming Exp $
+ * $Id: PolicyDecisionTask.java,v 1.2 2009-02-04 22:17:45 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -32,7 +32,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * TOFIX
+ * This class maintains a set of tasks i.e. policy evaluations.
+ * And make sure that policy evaluation will not be performed
+ * on the same resource twice.
  */
 public class PolicyDecisionTask {
     Map<Policy, Map<String, Task>> repo = new 
