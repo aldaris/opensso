@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorAdaptor.java,v 1.13 2009-02-04 10:04:22 veiming Exp $
+ * $Id: PolicyEvaluatorAdaptor.java,v 1.14 2009-02-04 18:40:58 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -35,7 +35,6 @@ import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.IPolicyEvaluator;
 import com.sun.identity.entitlement.util.ResourceComp;
 import com.sun.identity.entitlement.util.ResourceNameSplitter;
-import com.sun.identity.policy.interfaces.ResourceName;
 import com.sun.identity.sm.SMSThreadPool;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -48,24 +47,14 @@ import java.util.Set;
 import javax.security.auth.Subject;
 
 public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
-    private PolicyDecisionTask tasks;
-    private int tasksCount;
+    int tasksCount;
     static final String LBL_HOST_IDX = "host";
     static final String LBL_PATH_IDX = "path";
     static final String LBL_PATH_PARENT_IDX = "pathparent";
     
     public PolicyEvaluatorAdaptor() {
-        tasks = new PolicyDecisionTask();
     }
     
-    private Set<Policy> search(Subject adminSubject, String resourceName)
-        throws SSOException, PolicyException {
-        PolicyManager pm = new PolicyManager(getSSOToken(adminSubject), "/");
-        ResourceComp comp = ResourceNameSplitter.split(resourceName);
-        return PolicyIndexer.search(pm, comp.getHostIndexes(),
-            comp.getPathIndexes(), null);
-    }
-
     static Set<Policy> recursiveSearch(
         SSOToken token,
         Map<String, Set<String>> misses
@@ -78,7 +67,6 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
         String pathParent = ((pathParentIndexes != null) &&
             !pathParentIndexes.isEmpty()) ? pathParentIndexes.iterator().next():
                 null;
-
         return PolicyIndexer.search(pm, hostIndexes, pathIndexes, pathParent);
     }
 
@@ -307,51 +295,79 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
         String serviceTypeName,
         String resourceName,
         Map<String, Set<String>> envParameters
-    ) throws SSOException, PolicyException {
-        Set<Policy> policies = search(adminSubject, resourceName);
-        if ((policies == null) || policies.isEmpty()) {
-            return Collections.EMPTY_SET;
-        }
-
+    ) throws SSOException, PolicyException, EntitlementException {
+        Set<PolicyDecision> policyDecisions = new HashSet<PolicyDecision>();
         ServiceType serviceType =
             ServiceTypeManager.getServiceTypeManager().getServiceType(
             serviceTypeName);
-        ResourceName resComparator = serviceType.getResourceNameComparator();
-        Set<String> actionNames = serviceType.getActionNames();
         SSOToken token = getSSOToken(subject);
-        
-        Set<PolicyDecisionTask.Task> policyEvalTasks = 
-            new HashSet<PolicyDecisionTask.Task>();
-        
-        for (Policy p : policies) {
-            PolicyDecisionTask.Task task = tasks.addTask(
-                resComparator, p, resourceName);
-            policyEvalTasks.add(task);
+
+        ResourceComp comp = ResourceNameSplitter.split(resourceName);
+        Set<Policy> hits = new HashSet<Policy>();
+        Map<String, Set<String>> misses = lookupCache(comp, hits);
+
+        MissedEvaluatorThread missedThread = null;
+        EvaluatorThread hitThread = null;
+
+        if (!misses.isEmpty()) {
+            missedThread = new MissedEvaluatorThread(this,
+                token, serviceType, resourceName, envParameters, hits);
+            missedThread.setSearchParameter(getSSOToken(adminSubject),
+                misses);
+        }
+        if (!hits.isEmpty()) {
+            hitThread = new EvaluatorThread(
+                this, hits, token, serviceType, resourceName, envParameters);
         }
 
-        synchronized (this) {
-            for (PolicyDecisionTask.Task task : policyEvalTasks) {
-                EvaluatorThread eval = new EvaluatorThread(
-                    this, task, token, serviceType, actionNames, envParameters);
-                SMSThreadPool.scheduleTask(eval);
+        Exception exception = null;
+        Set<PolicyDecision> hitResults = null;
+        Set<PolicyDecision> missedResults = null;
+
+        synchronized(this) {
+            if (hitThread != null) {
+                SMSThreadPool.scheduleTask(hitThread);
+            } else {
+                hitResults = Collections.EMPTY_SET;
+            }
+            if (missedThread != null) {
+                SMSThreadPool.scheduleTask(missedThread);
+            } else {
+                missedResults = Collections.EMPTY_SET;
             }
 
-            while (tasksCount > 0) {
+            while (true) {
+                if (hitThread != null) {
+                    exception = hitThread.getException();
+                    hitResults = hitThread.getPolicyDecisions();
+                }
+                if (missedThread != null) {
+                    if (exception == null) {
+                        exception = missedThread.getException();
+                    }
+                    missedResults = missedThread.getPolicyDecisions();
+                }
+
+                if (exception != null) {
+                    break;
+                }
+                if ((hitResults != null) && (missedResults != null)) {
+                    break;
+                }
+
                 try {
-                    this.wait();
+                    wait();
                 } catch (InterruptedException ex) {
                     //TOFIX
                 }
             }
         }
-        
-        Set<PolicyDecision> policyDecisions = new HashSet<PolicyDecision>();
-        for (PolicyDecisionTask.Task t : policyEvalTasks) {
-            PolicyDecision pd = t.policyDecision;
-            if (pd != null) {
-                policyDecisions.add(pd);
-            }
+        if (exception != null) {
+            throw new EntitlementException(exception.getMessage(), -1);
         }
+
+        policyDecisions.addAll(hitResults);
+        policyDecisions.addAll(missedResults);
 
         return policyDecisions;
     }
@@ -517,46 +533,5 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
         }
     }
 
-    private class EvaluatorThread implements Runnable {
 
-        private PolicyEvaluatorAdaptor parent;
-        private PolicyDecisionTask.Task task;
-        private SSOToken token;
-        private ServiceType serviceType;
-        private Set<String> actionNames;
-        private Map<String, Set<String>> envParameters;
-
-        private EvaluatorThread(
-            PolicyEvaluatorAdaptor parent,
-            PolicyDecisionTask.Task task,
-            SSOToken token,
-            ServiceType serviceType,
-            Set<String> actionNames,
-            Map<String, Set<String>> envParameters
-        ) {
-            this.parent = parent;
-            this.token = token;
-            this.task = task;
-            this.serviceType = serviceType;
-            this.actionNames = actionNames;
-            this.envParameters = envParameters;
-        }
-
-        public void run() {
-            try {
-                task.policyDecision = task.policy.getPolicyDecision(
-                    token, serviceType.getName(), task.resource,
-                    actionNames, envParameters);
-            } catch (SSOException e) {
-                // TOFIX
-            } catch (PolicyException e) {
-                // TOFIX
-            }
-            parent.tasksCount--;
-
-            synchronized (parent) {
-                parent.notify();
-            }
-        }
-    }
 }

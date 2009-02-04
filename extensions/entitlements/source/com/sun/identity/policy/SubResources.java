@@ -1,5 +1,4 @@
-/*
- * 
+/** 
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
  * Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
@@ -23,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubResources.java,v 1.7 2009-02-04 10:04:23 veiming Exp $
+ * $Id: SubResources.java,v 1.8 2009-02-04 18:40:58 veiming Exp $
  */
 
 package com.sun.identity.policy;
