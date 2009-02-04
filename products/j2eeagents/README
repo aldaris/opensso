@@ -24,7 +24,7 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.21 2009-01-25 06:09:23 naghaon Exp $
+$Id: README,v 1.22 2009-02-04 11:37:00 kalpanakm Exp $
 
 ------------------------------------------------------------------------------
 
@@ -43,6 +43,7 @@ $Id: README,v 1.21 2009-01-25 06:09:23 naghaon Exp $
         %% 3.7 jboss_v42 target
 	%% 3.8 tomcat_v6 target
         %% 3.9 jetty_v61 target
+        %% 4.0 jsr196_jsr115 target
 
 
 
@@ -172,6 +173,12 @@ and servlet-api-2.5-6.1.14.jar from <jetty-install-dir>/lib and copy
 jetty-plus-6.1.14.jar from <jetty-install-dir>/lib/plus to 
 opensso/products/j2eeagents/extlib/jetty/v61.
 
+2.2.7 Obtaining libraries for JSR196/JSR115 Agent
+Follow these steps to obtain the libraries for JSR196/JSR115 agent:
+2.2.7.1 Install Glassfish 2.1
+2.2.7.2 Copy javaee.jar, appserv-rt.jar and jmac-api.jar from
+<glassfish-install>/lib to opensso/products/j2eeagents/extlib/jsr196/jsr115
+
 
 %% 3. Building the workspace
 
@@ -254,4 +261,10 @@ the jetty and jetty/v61 directories.  Upon successful execution,
 a zip file jetty_v61_agent_3.zip will be created under built/dist
 directory, and it can be used later to install the agent.
 
+%% 3.10 jsr196_jsr115 target
 
+The jsr196_jsr115 target first invokes the build target and then
+delegates the further processing to the build.xml files present under
+the jsr196 and jsr196/jsr115 directories. Upon successful execution,
+a zip file jsr196_jsr115_agent_3.zip will be created under built/dist
+directory, and it can be used later to install the agent.
