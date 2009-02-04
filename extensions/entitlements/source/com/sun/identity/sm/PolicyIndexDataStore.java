@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexDataStore.java,v 1.10 2009-01-31 02:03:54 veiming Exp $
+ * $Id: PolicyIndexDataStore.java,v 1.11 2009-02-04 07:41:21 veiming Exp $
  */
 
 package com.sun.identity.sm;
@@ -44,6 +44,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.security.AccessController;
 import java.text.MessageFormat;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -240,10 +241,14 @@ public class PolicyIndexDataStore implements  IPolicyIndexDataStore {
         Set<String> pathIndexes,
         String pathParent
     ) throws SSOException, SMSException {
+        String filter = getFilter(hostIndexes, pathIndexes, pathParent);
+        if (filter == null) {
+            return Collections.EMPTY_MAP;
+        }
         Object[] params = {SMSEntry.getRootSuffix()};
         String startDN = MessageFormat.format(START_DN_TEMPLATE, params);
-        return SMSEntry.searchEx(adminToken, startDN, 
-            getFilter(hostIndexes, pathIndexes, pathParent));
+        return SMSEntry.searchEx(adminToken, startDN, filter);
+            
     }
     
     private String getFilter(
@@ -252,24 +257,28 @@ public class PolicyIndexDataStore implements  IPolicyIndexDataStore {
         String pathParent
     ) {
         StringBuffer filter = new StringBuffer();
-        filter.append("(|");
-        
-        for (String h : hostIndexes) {
-            Object[] o = {h};
-            filter.append(MessageFormat.format(HOST_FILTER_TEMPLATE, o));
+
+        if (hostIndexes != null) {
+            for (String h : hostIndexes) {
+                Object[] o = {h};
+                filter.append(MessageFormat.format(HOST_FILTER_TEMPLATE, o));
+            }
         }
-        for (String p : pathIndexes) {
-            Object[] o = {p};
-            filter.append(MessageFormat.format(PATH_FILTER_TEMPLATE, o));
+
+        if (pathIndexes != null) {
+            for (String p : pathIndexes) {
+                Object[] o = {p};
+                filter.append(MessageFormat.format(PATH_FILTER_TEMPLATE, o));
+            }
         }
-        
+
         if (pathParent != null) {
             Object[] o = {pathParent};
             filter.append(MessageFormat.format(PATH_PARENT_FILTER_TEMPLATE, o));
         }
 
-        filter.append(")");
-        return filter.toString();
+        String result = filter.toString();
+        return (result.length() > 0) ? "(|" + result + ")" : null;
     }
     
 

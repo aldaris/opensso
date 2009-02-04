@@ -23,24 +23,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubResources.java,v 1.5 2009-01-31 02:03:53 veiming Exp $
+ * $Id: SubResources.java,v 1.6 2009-02-04 07:41:21 veiming Exp $
  */
 
 package com.sun.identity.policy;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.entitlement.DataStoreEntry;
-import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.util.ResourceComp;
 import com.sun.identity.entitlement.util.ResourceNameSplitter;
 import com.sun.identity.policy.interfaces.ResourceName;
 import com.sun.identity.sm.SMSThreadPool;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -48,7 +44,7 @@ import java.util.Set;
  *
  * @author dennis
  */
-public class SubResources {
+public class SubResources implements Runnable {
     private Map<String, Policy> hostIndexToPolicy;
     private Map<String, Policy> pathIndexToPolicy;
     private Set<String> resources;
@@ -56,20 +52,48 @@ public class SubResources {
     private Set<PolicyDecisionTask.Task> policyEvalTasks;
     private Map<String, Set<PolicyDecisionTask.Task>> resToTasks;
     int tasksCount = 0;
+
+    private Object parent;
+    private SSOToken token;
+    private ServiceType serviceType;
+    private String rootResource;
+    private Set<String> actionNames;
+    private Map<String, Set<String>> envParameters;
+    protected Map<Policy, Map<String, Set<String>>> entries;
+    private Map<String, PolicyDecision> results = null;
+    protected Exception exception;
     
-    public List<Entitlement> evaluate(
+    public SubResources(
+        Object parent,
         SSOToken token,
         ServiceType serviceType,
         String rootResource,
         Set<String> actionNames,
         Map<String, Set<String>> envParameters,
-        Set<DataStoreEntry> entries
+        Map<Policy, Map<String, Set<String>>> entries
     ) {
+        this.parent = parent;
+        this.token = token;
+        this.serviceType = serviceType;
+        this.rootResource = rootResource;
+        this.actionNames = actionNames;
+        this.envParameters = envParameters;
+        this.entries = entries;
+    }
+
+    public Exception getException() {
+        return exception;
+    }
+
+    public Map<String, PolicyDecision> getResults() {
+        return results;
+    }
+
+    public void run() {
         policyEvalTasks = new HashSet<PolicyDecisionTask.Task>();
         tasks = new PolicyDecisionTask();
         resToTasks = new HashMap<String, Set<PolicyDecisionTask.Task>>();
-        createHostIndexMap(entries);
-        createPathIndexMap(entries);
+        createIndexMap(entries);
         ResourceName resComparator = serviceType.getResourceNameComparator();
         createResourceSet(rootResource, resComparator, entries);
         
@@ -78,60 +102,75 @@ public class SubResources {
         }
         
         if (resToTasks.isEmpty()) {
-            return Collections.EMPTY_LIST;
-        }
-        
-        tasksCount = policyEvalTasks.size();
-       
-        synchronized (this) {
-            for (PolicyDecisionTask.Task task : policyEvalTasks) {
-                EvaluatorThread eval = new EvaluatorThread(
-                    this, task, token, serviceType, actionNames, envParameters);
-                SMSThreadPool.scheduleTask(eval);
-            }
+            results = Collections.EMPTY_MAP;
+        } else {
+            tasksCount = policyEvalTasks.size();
 
-            while (tasksCount > 0) {
-                try {
-                    this.wait();
-                } catch (InterruptedException ex) {
-                    //TOFIX
+            synchronized (this) {
+                for (PolicyDecisionTask.Task task : policyEvalTasks) {
+                    EvaluatorThread eval = new EvaluatorThread(
+                        this, task, token, serviceType, actionNames,
+                        envParameters);
+                    SMSThreadPool.scheduleTask(eval);
+                }
+
+                while (tasksCount > 0) {
+                    try {
+                        this.wait();
+                    } catch (InterruptedException ex) {
+                        exception = ex;
+                        tasksCount = 0;
+                    }
                 }
             }
+
+            if (exception == null) {
+                results = mergePolicyDecisions(serviceType);
+            }
         }
-        return mergePolicyDecisions(serviceType);
+        synchronized(parent) {
+            parent.notify();
+        }
     }
     
-    private void createHostIndexMap(Set<DataStoreEntry> entries) {
+    private void createIndexMap(
+        Map<Policy, Map<String, Set<String>>> entries
+    ) {
         hostIndexToPolicy = new HashMap<String, Policy>();
-        for (DataStoreEntry entry : entries) {
-            Policy p = (Policy)entry.getPolicy();
-            for (String s : entry.getHostIndexes()) {
-                hostIndexToPolicy.put(s, p);
+        pathIndexToPolicy = new HashMap<String, Policy>();
+        for (Policy policy : entries.keySet()) {
+            Map<String, Set<String>> map = entries.get(policy);
+            if (map != null) {
+                Set<String> hosts = map.get(
+                    PolicyEvaluatorAdaptor.LBL_HOST_IDX);
+                if (hosts != null) {
+                    for (String s : hosts) {
+                        hostIndexToPolicy.put(s, policy);
+                    }
+                }
+                Set<String> paths = map.get(
+                    PolicyEvaluatorAdaptor.LBL_PATH_IDX);
+                if (paths != null) {
+                    for (String s : paths) {
+                        pathIndexToPolicy.put(s, policy);
+                    }
+                }
+
             }
         }
     }
 
-    private void createPathIndexMap(Set<DataStoreEntry> entries) {
-        pathIndexToPolicy = new HashMap<String, Policy>();
-        for (DataStoreEntry entry : entries) {
-            Policy p = (Policy)entry.getPolicy();
-            for (String s : entry.getPathIndexes()) {
-                pathIndexToPolicy.put(s, p);
-            }
-        }
-    }
     
     private void createResourceSet(
         String rootResource,
         ResourceName resComparator,
-        Set<DataStoreEntry> entries) {
+        Map<Policy, Map<String, Set<String>>> entries) {
         resources = new HashSet<String>();
-        for (DataStoreEntry entry : entries) {
-            Policy p = (Policy)entry.getPolicy();
-            Set<String> ruleNames = p.getRuleNames();
+        for (Policy policy : entries.keySet()) {
+            Set<String> ruleNames = policy.getRuleNames();
             for (String ruleName : ruleNames) {
                 try {
-                    Rule rule = p.getRule(ruleName);
+                    Rule rule = policy.getRule(ruleName);
                     String res = rule.getResourceName();
                     ResourceMatch match = resComparator.compare(
                         rootResource, res, true);
@@ -187,8 +226,11 @@ public class SubResources {
         }
     }
     
-    private List<Entitlement> mergePolicyDecisions(ServiceType serviceType) {
-        List<Entitlement> results = new ArrayList<Entitlement>();
+    private Map<String, PolicyDecision> mergePolicyDecisions(
+        ServiceType serviceType
+    ) {
+        Map<String, PolicyDecision> merged = new
+            HashMap<String, PolicyDecision>();
         for (String res : resToTasks.keySet()) {
             Set<PolicyDecision> decisions = new HashSet<PolicyDecision>();
             for (PolicyDecisionTask.Task task : resToTasks.get(res)) {
@@ -199,15 +241,10 @@ public class SubResources {
             PolicyDecision result = PolicyEvaluatorAdaptor.mergePolicyDecisions(
                 decisions, serviceType);
             if (result != null) {
-                try {
-                    results.add(PolicyEvaluatorAdaptor.getEntitlement(
-                        serviceType, res, result));
-                } catch (PolicyException ex) {
-                    //TOFIX
-                }
+                merged.put(res, result);
             }
         }
-        return results;
+        return merged;
     }
     
     private class EvaluatorThread implements Runnable {

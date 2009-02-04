@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorAdaptor.java,v 1.11 2009-01-31 02:03:53 veiming Exp $
+ * $Id: PolicyEvaluatorAdaptor.java,v 1.12 2009-02-04 07:41:20 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -34,6 +34,7 @@ import com.sun.identity.entitlement.DataStoreEntry;
 import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.IPolicyEvaluator;
+import com.sun.identity.entitlement.util.IndexCache;
 import com.sun.identity.entitlement.util.ResourceComp;
 import com.sun.identity.entitlement.util.ResourceNameSplitter;
 import com.sun.identity.policy.interfaces.ResourceName;
@@ -51,6 +52,9 @@ import javax.security.auth.Subject;
 public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
     private PolicyDecisionTask tasks;
     private int tasksCount;
+    static final String LBL_HOST_IDX = "host";
+    static final String LBL_PATH_IDX = "path";
+    static final String LBL_PATH_PARENT_IDX = "pathparent";
     
     public PolicyEvaluatorAdaptor() {
         tasks = new PolicyDecisionTask();
@@ -64,15 +68,20 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
             comp.getPathIndexes());
     }
 
-    private Set<DataStoreEntry> recursiveSearch(
-        Subject adminSubject, 
-        String resourceName
-    )
-        throws SSOException, PolicyException {
-        PolicyManager pm = new PolicyManager(getSSOToken(adminSubject), "/");
-        ResourceComp comp = ResourceNameSplitter.split(resourceName);
-        return PolicyIndexer.search(pm, comp.getHostIndexes(),
-            comp.getPathIndexes(), comp.getPath());
+    static Set<DataStoreEntry> recursiveSearch(
+        SSOToken token,
+        Map<String, Set<String>> misses
+    ) throws SSOException, PolicyException {
+        PolicyManager pm = new PolicyManager(token, "/");
+        Set<String> hostIndexes = misses.get(LBL_HOST_IDX);
+        Set<String> pathIndexes = misses.get(LBL_PATH_IDX);
+        Set<String> pathParentIndexes = misses.get(LBL_PATH_PARENT_IDX);
+
+        String pathParent = ((pathParentIndexes != null) &&
+            !pathParentIndexes.isEmpty()) ? pathParentIndexes.iterator().next():
+                null;
+
+        return PolicyIndexer.search(pm, hostIndexes, pathIndexes, pathParent);
     }
 
     /**
@@ -357,24 +366,178 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
         Map<String, Set<String>> envParameters
     ) throws EntitlementException {  
         try {
-            Set<DataStoreEntry> entries = recursiveSearch(
-                adminSubject, resourceName);
             ServiceType serviceType =
                 ServiceTypeManager.getServiceTypeManager().getServiceType(
                 serviceTypeName);
             Set<String> actionNames = serviceType.getActionNames();
-            SubResources subResources = new SubResources();
-            return subResources.evaluate(getSSOToken(subject), serviceType,
-                resourceName, actionNames, envParameters, entries);
+
+            ResourceComp comp = ResourceNameSplitter.split(resourceName);
+            Map<Policy, Map<String, Set<String>>> hits = new
+                HashMap<Policy, Map<String, Set<String>>>();
+            Map<String, Set<String>> misses = lookupCache(comp, hits);
+            MissedSubResources missedThread = null;
+            SubResources hitThread = null;
+
+            if (!misses.isEmpty()) {
+                missedThread = new MissedSubResources(this,
+                    getSSOToken(subject), serviceType,resourceName,
+                    actionNames, envParameters, hits.keySet());
+                missedThread.setSearchParameter(getSSOToken(adminSubject),
+                    misses);
+            }
+
+            if (!hits.isEmpty()) {
+                hitThread = new SubResources(this,
+                    getSSOToken(subject), serviceType, resourceName,
+                    actionNames, envParameters, hits);
+            }
+            Exception exception = null;
+            Map<String, PolicyDecision> hitResults = null;
+            Map<String, PolicyDecision> missedResults = null;
+
+            synchronized(this) {
+                if (hitThread != null) {
+                    SMSThreadPool.scheduleTask(hitThread);
+                } else {
+                    hitResults = Collections.EMPTY_MAP;
+                }
+                if (missedThread != null) {
+                    SMSThreadPool.scheduleTask(missedThread);
+                } else {
+                    missedResults = Collections.EMPTY_MAP;
+                }
+
+                while (true) {
+                    if (hitThread != null) {
+                        exception = hitThread.getException();
+                        hitResults = hitThread.getResults();
+                    }
+                    if (missedThread != null) {
+                        if (exception == null) {
+                            exception = missedThread.getException();
+                        }
+                        missedResults = missedThread.getResults();
+                    }
+
+                    if (exception != null) {
+                        break;
+                    }
+                    if ((hitResults != null) && (missedResults != null)) {
+                        break;
+                    }
+
+                    try {
+                        wait();
+                    } catch (InterruptedException ex) {
+                        //TOFIX
+                    }
+                }
+            }
+
+            if (exception != null) {
+                throw new EntitlementException(exception.getMessage(), -1);
+            }
+
+            Map<String, PolicyDecision> mergedDecisions = mergePolicyDecisions(
+                serviceType, hitResults, missedResults);
+            List<Entitlement> results = new ArrayList<Entitlement>();
+            for (String res : mergedDecisions.keySet()) {
+                results.add(getEntitlement(serviceType, res,
+                    mergedDecisions.get(res)));
+            }
+            return results;
         } catch (SSOException e) {
             throw new EntitlementException(e.getMessage(), -1);
         } catch (PolicyException e) {
             throw new EntitlementException(e.getMessage(), -1);
-        }            
-     }
+        }
+    }
 
+    private Map<String, PolicyDecision> mergePolicyDecisions(
+        ServiceType serviceType,
+        Map<String, PolicyDecision> m1,
+        Map<String, PolicyDecision> m2
+    ) {
+        Map<String, PolicyDecision> result = new
+            HashMap<String, PolicyDecision>();
+        result.putAll(m1);
 
-   private class EvaluatorThread implements Runnable {
+        for (String r : m2.keySet()) {
+            PolicyDecision pd = result.get(r);
+            if (pd == null) {
+                result.put(r, m2.get(r));
+            } else {
+                result.put(r, PolicyEvaluator.mergePolicyDecisions(
+                    serviceType, pd, m2.get(r)));
+            }
+        }
+        
+        return result;
+    }
+
+    private Map<String, Set<String>> lookupCache(
+        ResourceComp comp,
+        Map<Policy, Map<String, Set<String>>> map
+    ) {
+        Map<String, Set<String>> misses = new HashMap<String, Set<String>>();
+        lookupCache(LBL_HOST_IDX, comp.getHostIndexes(), map, misses);
+        lookupCache(LBL_PATH_IDX, comp.getPathIndexes(), map, misses);
+        Set<String> set = new HashSet<String>();
+        set.add(comp.getPath());
+        lookupCache(LBL_PATH_PARENT_IDX, set, map, misses);
+        return misses;
+    }
+
+    private void lookupCache(
+        String index,
+        Set<String> lookupSet,
+        Map<Policy, Map<String, Set<String>>> hits,
+        Map<String, Set<String>> misses
+    ) {
+        IndexCache cache = IndexCache.getInstance();
+
+        for (String resIndex : lookupSet) {
+            Set<Object> setCached = null;
+
+            if (index.equals(LBL_HOST_IDX)) {
+                setCached = cache.getHostIndex(resIndex);
+            } else if (index.equals(LBL_PATH_IDX)) {
+                setCached = cache.getPathIndex(resIndex);
+            } else {
+                setCached = cache.getPathParentIndex(resIndex);
+            }
+
+            if (setCached != null) {
+                for (Object policy : setCached) {
+                    Map<String, Set<String>> indexes = hits.get(policy);
+                    if (indexes == null) {
+                        indexes = new HashMap<String, Set<String>>();
+                        hits.put((Policy)policy, indexes);
+                        Set<String> set = set = new HashSet<String>();
+                        indexes.put(index, set);
+                        set.add(resIndex);
+                    } else {
+                        Set<String> set = indexes.get(index);
+                        if (set == null) {
+                            set = new HashSet<String>();
+                            indexes.put(index, set);
+                        }
+                        set.add(resIndex);
+                    }
+                }
+            } else {
+                Set<String> set = misses.get(index);
+                if (set == null) {
+                    set = new HashSet<String>();
+                    misses.put(index, set);
+                }
+                set.add(resIndex);
+            }
+        }
+    }
+
+    private class EvaluatorThread implements Runnable {
+
         private PolicyEvaluatorAdaptor parent;
         private PolicyDecisionTask.Task task;
         private SSOToken token;
@@ -388,7 +551,8 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
             SSOToken token,
             ServiceType serviceType,
             Set<String> actionNames,
-            Map<String, Set<String>> envParameters) {
+            Map<String, Set<String>> envParameters
+        ) {
             this.parent = parent;
             this.token = token;
             this.task = task;
