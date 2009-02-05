@@ -841,3 +841,169 @@
             <class name="com.sun.identity.qatest.cli.GetIdentityTest"/>
         </classes>
     </test>
+    <test name="CLI_create-datastore01">
+        <parameter name="testName" value="createdatastore-test1"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateDatastoreTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-datastore02">
+        <parameter name="testName" value="createdatastore-test2"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateDatastoreTest"/>
+        </classes>
+    </test>
+    <test name="CLI_create-datastore05">
+        <parameter name="testName" value="createdatastore-test5"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateDatastoreTest"/>
+        </classes>
+    </test>    
+    <test name="CLI_create-datastore06">
+        <parameter name="testName" value="createdatastore-test6"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateDatastoreTest"/>
+        </classes>
+    </test>    
+    <test name="CLI_create-datastore07">
+        <parameter name="testName" value="createdatastore-test7"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateDatastoreTest"/>
+        </classes>
+    </test>    
+    <test name="CLI_create-datastore08">
+        <parameter name="testName" value="createdatastore-test8"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateDatastoreTest"/>
+        </classes>
+    </test>    
+    <test name="CLI_create-datastore09">
+        <parameter name="testName" value="createdatastore-test9"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateDatastoreTest"/>
+        </classes>
+    </test>    
+    <test name="CLI_create-datastore10">
+        <parameter name="testName" value="createdatastore-test10"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.CreateDatastoreTest"/>
+        </classes>
+    </test>    
+    <test name="CLI_delete-datastores03">
+        <parameter name="testName" value="deletedatastores-test3"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteDatastoresTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-datastores04">
+        <parameter name="testName" value="deletedatastores-test4"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteDatastoresTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-datastores05">
+        <parameter name="testName" value="deletedatastores-test5"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteDatastoresTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-datastores06">
+        <parameter name="testName" value="deletedatastores-test6"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteDatastoresTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-datastores07">
+        <parameter name="testName" value="deletedatastores-test7"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteDatastoresTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-datastores08">
+        <parameter name="testName" value="deletedatastores-test8"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteDatastoresTest"/>
+        </classes>
+    </test>
+    <test name="CLI_delete-datastores09">
+        <parameter name="testName" value="deletedatastores-test9"/>
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.cli.DeleteDatastoresTest"/>
+        </classes>
+    </test>
+    
