@@ -16,4 +16,31 @@
             com.sun.identity.console.entitlement.Messages
         </message-bundle>
     </application>
+
+    <navigation-rule>
+        <navigation-case>
+            <from-outcome>policy</from-outcome>
+            <to-view-id>/admin/facelet/policy.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>federation</from-outcome>
+            <to-view-id>/admin/facelet/federation.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>monitoring</from-outcome>
+            <to-view-id>/admin/facelet/monitoring.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>policy-create</from-outcome>
+            <to-view-id>/admin/facelet/policy-create.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>policy-manage</from-outcome>
+            <to-view-id>/admin/facelet/policy-manage.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>resource-manage</from-outcome>
+            <to-view-id>/admin/facelet/resource-manage.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
 </faces-config>

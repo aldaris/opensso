@@ -1,4 +1,4 @@
-package com.sun.identity.console.entitlement;
+package com.sun.identity.admin;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -18,7 +18,7 @@ import com.iplanet.sso.SSOTokenManager;
 
 public class AuthFilter implements Filter {
     private static String LOGIN_PATH = "/UI/Login";
-    private static String CONSOLE_PATH = "/entitlements/console";
+    private static String CONSOLE_PATH = "/admin";
 
     private FilterConfig filterConfig = null;
 
