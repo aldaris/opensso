@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManagerCLIConstants.java,v 1.12 2008-09-09 18:16:45 srivenigan Exp $
+ * $Id: FederationManagerCLIConstants.java,v 1.13 2009-02-05 01:26:25 srivenigan Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -305,12 +305,58 @@ public interface FederationManagerCLIConstants {
      */
     String SHORT_SUB_SCHEMA_NAME_ARGUMENT = "c";
     
+    /**
+     * Datastore name argument/option 
+     */
     String DATASTORE_NAME_ARG = "name";
     
+    /**
+     * Datastore name(s) argument/option
+     */
+    String DATASTORE_NAMES_ARG = "names";
+    
+    /**
+     * Short datastore name argument/option
+     */
     String SHORT_DATASTORE_NAME_ARG = "m";
     
+    /**
+     * Datastore type argument/option
+     */
     String DATASTORE_TYPE_ARG = "datatype";
     
+    /**
+     * Short datastore type argument/option
+     */
     String SHORT_DATASTORE_TYPE_ARG = "t";
-
+    
+    /**
+     * Circle of trust argument/option
+     */
+    String COT_ARGUMENT = "--cot";
+    
+    /**
+     * Short circle of trust argument/option
+     */
+    String SHORT_COT_ARGUMENT = "-t";
+    
+    /**
+     * Trusted providers argument/option
+     */
+    String TRUSTEDPROVIDERS_ARGUMENT = "--trustedproviders";
+    
+    /**
+     * Short trusted provider argument/option
+     */
+    String SHORT_TRUSTEDPROVIDERS_ARGUMENT = "-k";
+    
+    /**
+     * Prefix argument/option
+     */
+    String PREFIX_ARGUMENT = "--prefix";
+    
+    /**
+     * Short prefix argument/option
+     */
+    String SHORT_PREFIX_ARGUMENT = "-p";
 }
