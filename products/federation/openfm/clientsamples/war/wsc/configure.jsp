@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configure.jsp,v 1.10 2008-12-19 19:23:30 hengming Exp $
+   $Id: configure.jsp,v 1.11 2009-02-05 00:46:38 mrudulahg Exp $
 
 --%>
 
@@ -76,19 +76,24 @@ Client SDK is not configured. Please click <a class="named" href="../Configurato
 <%
     } else {
 
+        String bootstrapFile = configDir + File.separator +
+            SetupClientWARSamples.getNormalizedRealPath(
+            getServletConfig().getServletContext())
+            + "ClientSampleWSC.properties";
+        File bootstrapConfig = new File(bootstrapFile);
         boolean configured = false;
+        if (bootstrapConfig.exists()) {
+            configured = true;
+        }  
+
         String errorMsg = null;
         String idpProt = request.getParameter("idpProt");
         String idpHost = request.getParameter("idpHost");
         String idpPort = request.getParameter("idpPort");
         String idpDeploymenturi = request.getParameter("idpDeploymenturi");
+        String spProviderIDinput = request.getParameter("spProviderIDinput");
         String submit = request.getParameter("submit");
         if (submit != null) {
-
-            String bootstrapFile = configDir + File.separator +
-                SetupClientWARSamples.getNormalizedRealPath(
-                getServletConfig().getServletContext())
-                + "ClientSampleWSC.properties";
 
             Properties fcprops = new Properties();
             fcprops.load(new FileInputStream(fedConfig));
@@ -98,9 +103,13 @@ Client SDK is not configured. Please click <a class="named" href="../Configurato
             String spPort = fcprops.getProperty("com.iplanet.am.server.port");
             String spDeployUri = fcprops.getProperty(
                 "com.iplanet.am.services.deploymentDescriptor");
-
-            String spProviderID = spProt + "://" + spHost + ":" + spPort +
-                spDeployUri;
+            String spProviderID;
+            if (spProviderIDinput != null) {
+                spProviderID = spProviderIDinput;
+            } else {
+                spProviderID = spProt + "://" + spHost + ":" + spPort +
+                    spDeployUri;
+            }
             Properties props = new Properties();
             props.setProperty("spProviderID", spProviderID);
             props.setProperty("idpProt", idpProt);
@@ -127,7 +136,7 @@ Client SDK is not configured. Please click <a class="named" href="../Configurato
 
 <h3>Configuring WSC Sample</h3>
 
-<form action="configure.jsp" method="GET">
+<form action="configure.jsp" name="configure" method="GET">
     Please provide the Identity Provider Information.
     <p>&nbsp;</p>    
 
@@ -147,6 +156,10 @@ Client SDK is not configured. Please click <a class="named" href="../Configurato
 %>
 
 
+    <tr>
+    <td>SP Provider ID:</td>
+    <td><input name="spProviderIDinput" type="text" size="6" value="<%= spProviderIDinput == null ? "" : spProviderIDinput %>" /></td>
+    </tr>
     <tr>
     <td>IDP Protocol:</td>
     <td><input name="idpProt" type="text" size="6" value="<%= idpProt == null ? "" : idpProt %>" /></td>

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: id-sis-pp-query.jsp,v 1.2 2008-06-25 05:48:50 qcheng Exp $
+   $Id: id-sis-pp-query.jsp,v 1.3 2009-02-05 00:46:40 mrudulahg Exp $
 
 --%>
 
@@ -106,7 +106,7 @@ com.sun.identity.shared.xml.XMLUtils"
             }
 
             %>
-            <form method="POST">
+            <form name="ppquery" method="POST">
 		<input type='hidden' name='resOffFN' value=<%=resOffFN %>
             <table>
                 <tr>

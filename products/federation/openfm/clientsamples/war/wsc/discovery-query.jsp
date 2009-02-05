@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: discovery-query.jsp,v 1.5 2008-10-08 22:25:02 qcheng Exp $
+   $Id: discovery-query.jsp,v 1.6 2009-02-05 00:46:39 mrudulahg Exp $
 
 --%>
 
@@ -71,7 +71,7 @@ com.sun.liberty.jaxrpc.LibertyManagerClient"
                 providerID = props.getProperty("spProviderID");
             }
 %>
-            <form method="POST">
+            <form method="POST" name="discoquery">
                 <table>
                     <tr>
                         <td>ResourceOffering (for discovery service itself)</td>                        <td>
@@ -195,7 +195,7 @@ com.sun.liberty.jaxrpc.LibertyManagerClient"
 
                         %>
 <pre><%= SAMLUtils.displayXML(offer.toString()) %></pre>
-<form method="GET" action="id-sis-pp-query.jsp">
+<form name="ppquerycall" method="GET" action="id-sis-pp-query.jsp">
 <input type='hidden' name='providerID' value='<%= providerID %>'>
 <input type='hidden' name='resOffFN' value='<%=resOffFN %>'>
 <input type='hidden' name='secAssertion' value='<%=secAssertion %>'>
@@ -204,7 +204,7 @@ com.sun.liberty.jaxrpc.LibertyManagerClient"
 
 <p>
 
-<form method="GET" action="id-sis-pp-modify.jsp">
+<form name="ppmodifycall" method="GET" action="id-sis-pp-modify.jsp">
 <input type='hidden' name='providerID' value='<%= providerID %>'>
 <input type='hidden' name='resOffFN' value='<%=resOffFN %>'>
 <input type='hidden' name='secAssertion' value='<%=secAssertion %>'>
@@ -213,7 +213,7 @@ com.sun.liberty.jaxrpc.LibertyManagerClient"
 
 <p>
 
-<form method="GET" action="discovery-modify.jsp">
+<form name="discomodifycall" method="GET" action="discovery-modify.jsp">
 <input type='hidden' name='providerID' value='<%= providerID %>'>
 <input type='hidden' name='discoveryResourceOffering'
     value='<%= resourceXMLfile %>'>

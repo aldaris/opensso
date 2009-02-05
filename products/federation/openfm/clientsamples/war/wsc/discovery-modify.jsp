@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: discovery-modify.jsp,v 1.5 2008-10-08 22:25:02 qcheng Exp $
+   $Id: discovery-modify.jsp,v 1.6 2009-02-05 00:46:38 mrudulahg Exp $
 
 --%>
 
@@ -65,6 +65,8 @@ com.sun.liberty.jaxrpc.LibertyManagerClient"
         String providerID = request.getParameter("providerID");
         String newPPRO = "";
         String submit = request.getParameter("Submit");
+        String actiontaken = request.getParameter("actiontaken");
+        submit = actiontaken;
         if ((submit != null) && submit.equals("Add PP Resource Offering")) {
 
             String bootstrapFile = System.getProperty("user.home") +
@@ -110,7 +112,7 @@ com.sun.liberty.jaxrpc.LibertyManagerClient"
                 + "</ResourceOffering>";
         }
 %>
-<form method="POST">
+<form method="POST" name="discomodify">
 <table>
 <tr>
 <td>ResourceOffering (for discovery service itself)</td>
@@ -193,7 +195,7 @@ com.sun.liberty.jaxrpc.LibertyManagerClient"
 			List inserts = new ArrayList();
 			inserts.add(insert);
 			mod.setInsertEntry(inserts);
-		    }
+                    }
 		    if ((entryID != null) && !(entryID.equals(""))) {
                         RemoveEntry remove = new RemoveEntry(
                             XMLUtils.escapeSpecialCharacters(entryID));

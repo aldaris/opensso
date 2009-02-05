@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.jsp,v 1.6 2008-12-19 19:23:30 hengming Exp $
+   $Id: index.jsp,v 1.7 2009-02-05 00:46:40 mrudulahg Exp $
 
 --%>
 
@@ -78,6 +78,7 @@ public void jspInit() {
 %>
 <%
     try {
+
         String bootstrapFile = System.getProperty("user.home") +
             File.separator + SetupClientWARSamples.CLIENT_WAR_CONFIG_TOP_DIR +
             File.separator +
@@ -91,9 +92,9 @@ public void jspInit() {
 
         // WSC-SP Provider ID
         String providerID = props.getProperty("spProviderID");
-
         SessionProvider sessionProvider = SessionManager.getProvider();
         Object sessionObj = sessionProvider.getSession(request);
+
         if(sessionObj != null && sessionProvider.isValid(sessionObj)) {
             LibertyManagerClient lmc = new LibertyManagerClient();
             ResourceOffering offering = lmc.getDiscoveryResourceOffering(
@@ -118,9 +119,10 @@ public void jspInit() {
                 pw.close();
                 // get reourceID
                     %>
-<form method="GET" action="discovery-query.jsp">
+<form method="GET" action="discovery-query.jsp" name="discoquerycall">
 <input type='hidden' name='providerID' value='<%= providerID %>'>
 <input type='hidden' name='discoveryResourceOffering' value='<%= fileName %>'>
+<input type='hidden' name='actiontaken' value='Send Discovery Lookup'>
 <input type="submit" name="Submit" value="Send Discovery Lookup" />
 </form>
 <p>
@@ -130,7 +132,8 @@ IDP User DN (IDP user whose has single-sign-on. For example id=idpuser,ou=user,d
 <br><br>
 <input type='hidden' name='providerID' value='<%= providerID %>'>
 <input type='hidden' name='discoveryResourceOffering' value='<%= fileName %>'>
-<input type="submit" name="Submit" value="Add PP Resource Offering" />
+<input type='hidden' name='actiontaken' value="Add PP Resource Offering" />
+<input type="submit" name='Submit' value="Add PP Resource Offering" />
 </form>
 <pre><%= SAMLUtils.displayXML(offering.toString()) %></pre>
                     <%

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: id-sis-pp-modify.jsp,v 1.2 2008-06-25 05:48:50 qcheng Exp $
+   $Id: id-sis-pp-modify.jsp,v 1.3 2009-02-05 00:46:39 mrudulahg Exp $
 
 --%>
 
@@ -96,7 +96,7 @@ com.sun.identity.shared.xml.XMLUtils"
                  ex.printStackTrace();
             }
             %>
-            <form method="POST">
+            <form name="ppmodify" method="POST">
                 <table>
                     <tr>
                         <td>Authentication Mechanism</td>
@@ -134,6 +134,7 @@ com.sun.identity.shared.xml.XMLUtils"
             }
     } else {
         String queryString = request.getParameter("queryStr");
+        String attrToModify = queryString.substring(queryString.lastIndexOf("/") + 1, queryString.length());
         String valueString = request.getParameter("valueStr");
         String providerID = request.getParameter("providerID");
         String resOffFN = request.getParameter("resOffFN");
@@ -182,9 +183,9 @@ com.sun.identity.shared.xml.XMLUtils"
                     item.setOverrideAllowed(true);
                     item.setId("modify-item-#1");
                     if ((valueString != null) && !(valueString.equals(""))) {
-                         String xml = "<FN xmlns =\"" + 
+                         String xml = "<" + attrToModify + " xmlns =\"" + 
                                 DSTConstants.IDPP_SERVICE_TYPE + "\">" +
-                                valueString + "</FN>";
+                                valueString + "</" + attrToModify + ">";
                         List values = new ArrayList();
                         values.add(DSTUtils.parseXML(xml));
                         item.setNewDataValue(values);
