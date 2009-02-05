@@ -18,7 +18,7 @@ h1 {
 
 #header {
     height: 150px;
-    background: transparent url(images/curve_right.png) no-repeat;
+    background: transparent url(../image/curve_right.png) no-repeat;
 }
 
 #logo {
@@ -28,7 +28,7 @@ h1 {
     left: 90px;
     top: 50px;
     z-index: 10;
-    background: transparent url(images/logo.png) no-repeat;
+    background: transparent url(../image/logo.png) no-repeat;
 }
 
 #java-logo {
@@ -38,7 +38,7 @@ h1 {
     float: right;
     margin: 4px;
     z-index: 10;
-    background: transparent url(images/java_logo.png) no-repeat;
+    background: transparent url(../image/java_logo.png) no-repeat;
 }
 
 #form {
@@ -46,11 +46,14 @@ h1 {
 }
 
 #menu {
-    margin: 1px;
+    margin-left: 1px;
 }
 
 #panel {
-    margin: 1px 0 0 0;
+}
+
+#menu-separator {
+    width: 100%;
     border-top: 1px solid #DDDDDD;
 }
 
