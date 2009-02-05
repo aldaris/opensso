@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IndexCache.java,v 1.2 2009-02-04 22:06:21 veiming Exp $
+ * $Id: IndexCache.java,v 1.3 2009-02-05 23:16:50 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -45,11 +45,13 @@ public class IndexCache implements ServiceListener {
     private static IndexCache instance = new IndexCache();
     private static int DEFAULT_CACHE_SIZE = 100000; //TOFIX
 
-    private Cache hostIndexCache = new Cache(DEFAULT_CACHE_SIZE);
-    private Cache pathIndexCache = new Cache(DEFAULT_CACHE_SIZE);
-    private Cache pathParentIndexCache = new Cache(DEFAULT_CACHE_SIZE);
+    private Cache hostIndexCache;
+    private Cache pathIndexCache;
+    private Cache pathParentIndexCache;
 
     static {
+        instance.clearCaches();
+
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
         try {
