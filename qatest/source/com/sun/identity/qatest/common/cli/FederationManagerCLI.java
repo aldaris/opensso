@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationManagerCLI.java,v 1.18 2008-09-09 18:10:31 srivenigan Exp $
+ * $Id: FederationManagerCLI.java,v 1.19 2009-02-05 01:34:25 srivenigan Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -280,7 +280,109 @@ public class FederationManagerCLI extends CLIUtility
         
         addArgument(attFile);
     }
-
+    
+    /**
+     * Adds the "--cot" argument and cot value to the argument list
+     * @param cot - name of circle of trust to add to argument list
+     */
+    public void addCotArguments(String cot) {
+        String cotArg;
+        if (useLongOptions) {
+            cotArg = PREFIX_ARGUMENT_LONG + COT_ARGUMENT;
+        } else {
+            cotArg = PREFIX_ARGUMENT_SHORT + SHORT_COT_ARGUMENT;
+        }      
+        addArgument(cotArg);
+        addArgument(cot);
+    }
+    
+    /**
+     * Adds the "--prefix" argument and prefix value to argument list
+     * @param prefix - prefix string.
+     */
+    public void addPrefixArguments(String prefix) {
+        String prefixArg;
+        if (useLongOptions) {
+            prefixArg = PREFIX_ARGUMENT_LONG + PREFIX_ARGUMENT;
+        } else {
+            prefixArg = PREFIX_ARGUMENT_SHORT + SHORT_PREFIX_ARGUMENT;
+        }      
+        addArgument(prefixArg);
+        addArgument(prefix);        
+    }
+    
+    /**
+     * Adds the "--trustedproviders" argument and trusted providers arguments to
+     * the argument list
+     * @param trustedproviders - a semi-colon delimited list of trustedproviders
+     */
+    public void addTrustedProvidersArguments(String trustedproviders) {
+        String trustedprovidersArg;
+        if (useLongOptions) {
+            trustedprovidersArg = PREFIX_ARGUMENT_LONG + 
+                    TRUSTEDPROVIDERS_ARGUMENT;
+        } else {
+            trustedprovidersArg = PREFIX_ARGUMENT_SHORT + 
+                    SHORT_TRUSTEDPROVIDERS_ARGUMENT;
+        }      
+        addArgument(trustedprovidersArg);
+        String[] providerList = trustedproviders.split(";");
+        for (int i=0; i < providerList.length; i++) {
+            addArgument(trustedproviders);
+        }
+    }
+    
+    /**
+     * Creates circle of trust.
+     * @param cot - Name of circle of trust.
+     * @param realm - Name of realm.
+     * @param trustedproviders - Name(s) of trusted providers.
+     * @param prefix - Prefix URL for idp discovery reader and writer URL.
+     * @return int - command status 
+     * @throws java.lang.Exception
+     */
+    public int createCot(String cot, String realm, String trustedproviders,
+            String prefix) throws Exception {
+        setSubcommand(CREATE_COT);
+        addCotArguments(cot);
+        addRealmArguments(realm);
+        addTrustedProvidersArguments(trustedproviders);
+        addPrefixArguments(prefix);
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));
+    }
+    
+    /**
+     * Deletes circle of trust.
+     * 
+     * @param cot - Name of circle of trust.
+     * @param realm - Name of realm.
+     * @return int - command status.
+     * @throws java.lang.Exception
+     */
+    public int deleteCot(String cot, String realm) 
+            throws Exception {
+        setSubcommand(DELETE_COT);
+        addCotArguments(cot);
+        addRealmArguments(realm);
+        addGlobalOptions();
+        return (executeCommand(commandTimeout));
+    }
+    
+    /**
+     * Lists circle of trust.
+     * 
+     * @param realm - Name of realm.
+     * @return int - command status.
+     * @throws java.lang.Exception
+     */
+    public int listCots(String realm) 
+            throws Exception {
+        setSubcommand(LIST_COTS);
+        addRealmArguments(realm);
+        return (executeCommand(commandTimeout));
+    }    
+    
     /**
      * Deletes the service with a given service name.
      * @param serviceName - Name of the service to be deleted.
@@ -2634,6 +2736,164 @@ public class FederationManagerCLI extends CLIUtility
         addSubSchemaNameArguments(subSchema);
         addGlobalOptions();
         return executeCommand(commandTimeout);
+    }
+    
+    /**
+     * Creates datastore in a realm given the realm name, datastore name,
+     * datastore type and attribute values.
+     * 
+     * @param realmName - name of the realm
+     * @param datastoreName - name of the datastore
+     * @param datastoreType - type of the datastore
+     * @param attrValues - attribute values
+     * @param useDataFile - flag to specify whether to use data file or not
+     * @return exit status of "create-datastore" subcommand
+     * @throws java.lang.Exception
+     */
+    public int createDatastore(String realmName, String datastoreName, 
+            String datastoreType, String attrValues, boolean useDataFile)
+    throws Exception {
+        String[] attrs = attrValues.split(";");
+        List argList = Arrays.asList(attrs);
+        setSubcommand(CREATE_DATASTORE_SUBCOMMAND);
+        addRealmArguments(realmName);
+        addDataStoreNameArguments(datastoreName);
+        addDataStoreTypeArguments(datastoreType);
+        if (useDataFile) {
+            addDatafileArguments(argList, "attrVals", "txt");
+        } else {
+            addAttributevaluesArguments(argList);
+        }
+        addGlobalOptions();
+        return executeCommand(commandTimeout);
+    }
+    
+    /**
+     * Adds the "--datatype" or (-t) and datastore type arguments 
+     * to argument list.
+     * @param datastoreType  - tyep of datastore added to argument list.
+     */
+    public void addDataStoreNameArguments(String datastoreType) {
+    	String datastoreTypeArg;
+    	if (useLongOptions) {
+            datastoreTypeArg = PREFIX_ARGUMENT_LONG + DATASTORE_NAME_ARG;
+    	} else {
+            datastoreTypeArg = PREFIX_ARGUMENT_SHORT + SHORT_DATASTORE_NAME_ARG;
+    	}
+    	addArgument(datastoreTypeArg);
+    	addArgument(datastoreType);
+    }
+
+    /**
+     * Adds the "--names" or (-m) and datastore name arguments to argument list.
+     * @param datastoreNames  - names of datastores added to argument list.
+     */
+    public void addDataStoreNamesArguments(String datastoreNames) {
+    	String datastoreNamesArg;
+    	if (useLongOptions) {
+    		datastoreNamesArg = PREFIX_ARGUMENT_LONG + DATASTORE_NAMES_ARG;
+    	} else {
+    		datastoreNamesArg = PREFIX_ARGUMENT_SHORT + 
+                        SHORT_DATASTORE_NAME_ARG;
+    	}
+    	addArgument(datastoreNamesArg);
+        String[] datastoreStrings = datastoreNames.split(",");
+        for(int i=0; i < datastoreStrings.length; i++) {
+            addArgument(datastoreStrings[i]);
+        }
+    }    
+    
+    /**
+     * Adds the "--datatype" or (-t) and datastore type arguments to 
+     * argument list.
+     * @param datastoreType - type of datastore added to argument list.
+     */
+    public void addDataStoreTypeArguments(String datastoreType) {
+    	String datastoreTypeArg;
+    	if (useLongOptions) {
+            datastoreTypeArg = PREFIX_ARGUMENT_LONG + DATASTORE_TYPE_ARG;
+    	} else {
+    	    datastoreTypeArg = PREFIX_ARGUMENT_SHORT + SHORT_DATASTORE_TYPE_ARG;
+    	}
+    	addArgument(datastoreTypeArg);
+    	addArgument(datastoreType);
+    }
+    
+    /**
+     * Deletes datastore(s) in realm given realm name and datastore name(s).
+     * 
+     * @param realmName - name of the realm
+     * @param datastoreNames - name(s) of the datastores
+     * @return exit status of "delete-datastores" subcommand
+     * @throws java.lang.Exception
+     */
+    public int deleteDatastores(String realmName, String datastoreNames)
+    throws Exception {
+        setSubcommand(DELETE_DATASTORE_SUBCOMMAND);
+        addRealmArguments(realmName);
+        addDataStoreNamesArguments(datastoreNames);
+        addGlobalOptions();        
+        return executeCommand(commandTimeout);
+    }
+
+    /**
+     * Updates datastore in a realm given the realm name, datastore name 
+     * and attribute values.
+     * 
+     * @param realmName - name of the realm
+     * @param datastoreName - name of the datastore
+     * @param attrValues - attribute values
+     * @param useDataFile - flag to specify whether to use data file or not
+     * @return exit status of "create-datastore" subcommand
+     * @throws java.lang.Exception
+     */
+    public int updateDatastore(String realmName, String datastoreName, 
+            String attrValues, boolean useDataFile )
+    throws Exception {
+        String[] attrs = attrValues.split(";");
+        List argList = Arrays.asList(attrs);
+        setSubcommand(UPDATE_DATASTORE_SUBCOMMAND);
+        addRealmArguments(realmName);
+        addDataStoreNameArguments(datastoreName);
+        if (useDataFile) {
+            addDatafileArguments(argList, "attrVals", "txt");
+        } else {
+            addAttributevaluesArguments(argList);
+        }
+        addGlobalOptions();        
+        return executeCommand(commandTimeout);
+    }
+    
+    /**
+     * Lists the datastores in a realm.
+     * 
+     * @param realmName - name of the realm in which datastores are listed.
+     * @return - exit status of "list-datastores" subcommand.
+     * @throws java.lang.Exception
+     */
+    public int listDatastores(String realmName) 
+    throws Exception {
+        setSubcommand(LIST_DATASTORE_SUBCOMMAND);
+        addRealmArguments(realmName);
+        addGlobalOptions();        
+        return executeCommand(commandTimeout);
+    }
+    
+    /**
+     * Shows the datastore profile.
+     * 
+     * @param realmName - name of the realm in which datastores are listed.
+     * @param datastoreName - name of the datastore
+     * @return - exit status of "show-datastore" subcommand.
+     * @throws java.lang.Exception
+     */
+    public int showDatastore(String realmName, String datastoreName)
+    throws Exception {
+    	setSubcommand(SHOW_DATASTORE_SUBCOMMAND);
+        addRealmArguments(realmName);
+        addDataStoreNameArguments(datastoreName);
+        addGlobalOptions();        
+        return executeCommand(commandTimeout);    	
     }
 }
 
