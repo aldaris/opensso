@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthXMLHandler.java,v 1.18 2009-01-17 01:15:12 manish_rustagi Exp $
+ * $Id: AuthXMLHandler.java,v 1.19 2009-02-05 06:28:29 lakshman_abburi Exp $
  *
  */
 
@@ -395,6 +395,7 @@ public class AuthXMLHandler implements RequestHandler {
                     }
                     loginState.setClient(clientHost);
                     authContext.login();
+                    setServletRequest(servletRequest,authContext);
                     processRequirements(authContext,authResponse, params,
                         servletRequest);
                     postProcess(loginState, authResponse);
@@ -441,6 +442,7 @@ public class AuthXMLHandler implements RequestHandler {
                     } else {
                         authContext.login(indexType,indexName);
                     }
+                    setServletRequest(servletRequest,authContext);
                     processRequirements(authContext,authResponse, params,
                         servletRequest);
                     postProcess(loginState, authResponse);
@@ -457,6 +459,7 @@ public class AuthXMLHandler implements RequestHandler {
                 try {
                     Subject subject = authXMLRequest.getSubject();
                     authContext.login(subject);
+                    setServletRequest(servletRequest,authContext);
                     processRequirements(authContext,authResponse, params,
                         servletRequest);
                     postProcess(loginState, authResponse);
@@ -471,6 +474,7 @@ public class AuthXMLHandler implements RequestHandler {
                 break;
             case AuthXMLRequest.SubmitRequirements:
                 try {
+                    setServletRequest(servletRequest,authContext);
                     Callback[] submittedCallbacks =
                     authXMLRequest.getSubmittedCallbacks();
                     authContext.submitRequirements(submittedCallbacks);
@@ -518,6 +522,7 @@ public class AuthXMLHandler implements RequestHandler {
                 InternalSession intSess = null;
                 SSOToken token = null;
                 boolean logoutCalled = false;
+                setServletRequest(servletRequest,authContext);
                 if (sessionID != null && !sessionID.equals("0")) {
                     intSess = AuthD.getSession(sessionID);
                     try {
@@ -876,6 +881,15 @@ public class AuthXMLHandler implements RequestHandler {
             errorCode = le.getMessage();
         }
         return errorCode;
+    }
+
+    private void setServletRequest(HttpServletRequest servletRequest, 
+            AuthContextLocal authContext) {
+        LoginState theLoginState = AuthUtils.getLoginState(authContext);
+        theLoginState.setHttpServletRequest(servletRequest);
+        if (debug.messageEnabled()) {
+            debug.message("AuthXMLHandler.setServletRequest(): Setting servlet request.");
+        }
     }
     
 } // end class
