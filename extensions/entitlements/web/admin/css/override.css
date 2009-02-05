@@ -1,0 +1,8 @@
+.iceMnuBarItem a,
+.iceMnuBarItem span,
+.iceMnuBarItem a:hover,
+.iceMnuBarVrtItem a,
+.iceMnuBarVrtItem span,
+.iceMnuBarVrtItem a:hover {
+    display:inline;
+}
