@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIConstants.java,v 1.10 2008-09-09 18:14:53 srivenigan Exp $
+ * $Id: CLIConstants.java,v 1.11 2009-02-05 01:23:44 srivenigan Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,7 +33,21 @@ public interface CLIConstants {
      * String for the "create-realm" sub-command
      */
     public static final String CREATE_REALM_SUBCOMMAND = "create-realm";
-    
+
+    /**
+     * String for the "create-cot" sub-command
+     */
+    public static final String CREATE_COT = "create-cot";
+
+    /**
+     * String for the "delete-cot" sub-command
+     */
+    public static final String DELETE_COT = "delete-cot";
+
+    /**
+     * String for the "list-cots" sub-command
+     */
+    public static final String LIST_COTS = "list-cots";
     /**
      * String for the "list-realms" sub-command
      */
@@ -327,4 +341,24 @@ public interface CLIConstants {
      * String for the "remove-attr-defs" subcommand
      */
     public static final String REMOVE_ATTR_DEFS_SUBCOMMAND = "remove-attr-defs";
+   
+    /**
+     * String for the "delete-datastores" subcommand
+     */
+    public static final String DELETE_DATASTORE_SUBCOMMAND = "delete-datastores";
+    
+    /**
+     * String for the "update-datastore" subcommand
+     */
+    public static final String UPDATE_DATASTORE_SUBCOMMAND = "update-datastore";
+    
+    /**
+     * String for the "list-datastores" subcommand
+     */    
+    public static final String LIST_DATASTORE_SUBCOMMAND = "list-datastores";
+    
+    /**
+     * String for the "show-datastore" subcommand
+     */    
+    public static final String SHOW_DATASTORE_SUBCOMMAND = "show-datastore";
 }
