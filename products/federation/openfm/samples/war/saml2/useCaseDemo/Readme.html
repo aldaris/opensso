@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Readme.html,v 1.4 2008-08-28 22:41:59 bina Exp $
+   $Id: Readme.html,v 1.5 2009-02-05 23:48:34 huacui Exp $
 
 -->
 
@@ -79,9 +79,9 @@ in sample pages).<br>
 <h2>Trying sample use cases</h2>
 <br>
 This document assumes Open Federation SAMLv2 Identity Provider is configured&nbsp; at
-http://idp-host/openfmsamples/
+http://idp-host:idp-port/idp-deploy-uri
 and Service Provider is configured at&nbsp;
-http://sp-host/openfmsamples.
+http://sp-host:sp-port/sp-deploy-uri.
 Please correct the URLs used in the following text to reflect
 your&nbsp;
 installation URLs.&nbsp; 
@@ -91,7 +91,7 @@ installation URLs.&nbsp;
 <br>
 <ul>
   <li>Point your browser at
-<a class="named" href="home.jsp">http://idp-host/openfmsamples/saml2/useCaseDemo/home.jsp</a>
+<a class="named" href="home.jsp">http://idp-host:idp-port/idp-deploy-uri/samples/saml2/useCaseDemo/home.jsp</a>
 (useCaseDemo home page at IDP).</li>
   <li>Click on link&nbsp; " Reserve Car with our associate,
 BestCars".&nbsp; You would be prompted by IDP to login.</li>
@@ -119,7 +119,7 @@ IDP and you would be shown a protected application page by SP.&nbsp;
 This completes IDP initiated Single Sign On and Federation.</li>
   <li>Click on&nbsp; the link&nbsp; "BestCars(SP: &lt;sp1&gt;)
 Home".&nbsp; You would be taken to
-http://sp-host/openfmsamples/saml2/useCaseDemo/home.jsp&nbsp;
+http://sp-host:sp-port/sp-deploy-uri/samples/saml2/useCaseDemo/home.jsp&nbsp;
 (useCaseDemo&nbsp; home page at SP). You would see links allowing you
 to
 Logout,&nbsp; Defederate and a link to take you to home page of
@@ -140,7 +140,7 @@ The pages would show you "Login" link.</li>
 <br>
 <ul>
   <li>Point your browser at
-<a class="named" href="home.jsp">http://sp-host/openfmsamples/saml2/useCaseDemo/home.jsp</a>
+<a class="named" href="home.jsp">http://sp-host:sp-port/sp-deploy-uri/samples/saml2/useCaseDemo/home.jsp</a>
 &nbsp;
 (useCaseDemo&nbsp; home page at SP).</li>
   <li>Click on link&nbsp; "Reserve Car with us". The link&nbsp; is for
@@ -157,7 +157,7 @@ IDP and you would be shown the protected application page by SP.</li>
   <li>This completes SP initiated Single Sign On and Federation.</li>
   <li>Click on&nbsp; the link&nbsp; "BestCars(SP: &lt;sp1&gt;)
 Home".&nbsp; You would be taken to
-http://sp-host/openfmsamples/samples/saml2/useCaseDemo/home.jsp&nbsp;
+http://sp-host:sp-port/sp-deploy-uri/samples/saml2/useCaseDemo/home.jsp&nbsp;
 (useCaseDemo&nbsp; home page at SP).</li>
   <li>You would see links allowing you to Logout,&nbsp; Defederate and
 a
@@ -175,7 +175,7 @@ The pages would show you "Login" link.</li>
 <br>
 <ul>
   <li>Point your browser at
-<a class="named" href="home.jsp">http://idp-host/openfmsamples/saml2/useCaseDemo/home.jsp</a>
+<a class="named" href="home.jsp">http://idp-host:idp-port/idp-deploy-uri/samples/saml2/useCaseDemo/home.jsp</a>
 (useCaseDemo&nbsp; home page at IDP).</li>
   <li>Click on link&nbsp; Login. IDP would prompt you for local login.
 On&nbsp;
@@ -193,7 +193,7 @@ defederated by visiting useCaseDemo&nbsp; home page at SP.&nbsp; SP
 should
 also&nbsp; would show you the link Federate with GreatAir.</li>
   <li>Point your browser at
-<a class="named" href="home.jsp">http://idp-host/openfmsamples/saml2/useCaseDemo/home.jsp</a>
+<a class="named" href="home.jsp">http://idp-host:idp-port/idp-deploy-uri/samples/saml2/useCaseDemo/home.jsp</a>
 (useCaseDemo&nbsp; home page at IDP).</li>
   <li>Click on&nbsp; link " Federate with BestCars"</li>
   <li>IDP would initiate Single Sign On and Federate request. On
@@ -213,7 +213,7 @@ useCaseDemo sample home page would be shown again.</li>
 <h3>SP Initiated Federation and Defederation</h3>
 <ul>
   <li>Point your browser at
-<a class="named" href="home.jsp">http://sp-host/openfmsamples/saml2/useCaseDemo/home.jsp</a>
+<a class="named" href="home.jsp">http://sp-host:sp-port/sp-deploy-uri/samples/saml2/useCaseDemo/home.jsp</a>
 (useCaseDemo sample home page at SP).</li>
   <li>Click on link&nbsp; " Login, secure service provided by GreatAir"
   </li>
@@ -232,7 +232,7 @@ defederated by visiting useCaseDemo sample home page at IDP. IDP&nbsp;
 would
 show you Federate with BestCars.</li>
   <li>Point your browser at
-<a class="named" href="home.jsp">http://sp-host/openfmsamples/saml2/useCaseDemo/home.jsp</a>
+<a class="named" href="home.jsp">http://sp-host:sp-port/sp-deploy-uri/samples/saml2/useCaseDemo/home.jsp</a>
 (useCaseDemo&nbsp; home page at SP).</li>
   <li>Click on link "Federate with GreatAir".</li>
   <li>SP would initiate Single Sign On and Federate request. On
