@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureSAMLv2.java,v 1.18 2009-01-27 00:14:07 nithyas Exp $
+ * $Id: ConfigureSAMLv2.java,v 1.19 2009-02-05 01:46:06 vimal_67 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,7 +36,6 @@ import com.sun.identity.qatest.common.TestConstants;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.logging.Level;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Parameters;
@@ -80,7 +79,8 @@ public class ConfigureSAMLv2 extends TestCommon {
      * @DocTest: SAML2|Configure SP & IDP by loading metadata on both sides.
      */
     @Parameters({"groupName"})
-    @BeforeSuite(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
+    @BeforeSuite(groups = {"s1ds", "ldapv3", "ad", "jdbc", "amsdk", "s1ds_sec",
+    "ldapv3_sec", "ad_sec", "jdbc_sec", "amsdk_sec"})
     public void configureSAMLv2(String strGroupName)
     throws Exception {
         Object[] params = {strGroupName};
@@ -181,22 +181,29 @@ public class ConfigureSAMLv2 extends TestCommon {
                             "SP");
                     assert false;
                 }
+            } 
+            // Export to get the metadata.
+            HtmlPage spExportEntityPage;
+            if (strGroupName.contains("sec")) {
+                spExportEntityPage = spfm.exportEntity(spWebClient,
+                    configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
+                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), 
+                    true, true, true, "saml2");
             } else {
-                //If entity exists, export to get the metadata.
-                HtmlPage spExportEntityPage = spfm.exportEntity(spWebClient,
-                        configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
-                        configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), false, true,
-                        true, "saml2");
-                if (FederationManager.getExitCode(spExportEntityPage) != 0) {
-                    log(Level.SEVERE, "configureSAMLv2", "exportEntity famadm" +
-                            " command failed");
-                    assert false;
-                }
-                spMetadata[0] = SAMLv2Common.getMetadataFromPage(
-                        spExportEntityPage);
-                spMetadata[1] = SAMLv2Common.getExtMetadataFromPage(
-                        spExportEntityPage);
+                spExportEntityPage = spfm.exportEntity(spWebClient,
+                    configMap.get(TestConstants.KEY_SP_ENTITY_NAME),
+                    configMap.get(TestConstants.KEY_SP_EXECUTION_REALM), 
+                    false, true, true, "saml2");
+            }                
+            if (FederationManager.getExitCode(spExportEntityPage) != 0) {
+                log(Level.SEVERE, "configureSAMLv2", "exportEntity famadm" +
+                        " command failed");
+                assert false;
             }
+            spMetadata[0] = SAMLv2Common.getMetadataFromPage(
+                    spExportEntityPage);
+            spMetadata[1] = SAMLv2Common.getExtMetadataFromPage(
+                    spExportEntityPage);            
             spMetadata[1] = spMetadata[1].replaceAll(
                     configMap.get(TestConstants.KEY_SP_COT), "");
             log(Level.FINEST, "configureSAMLv2", "sp metadata" + spMetadata[0]);
@@ -267,22 +274,31 @@ public class ConfigureSAMLv2 extends TestCommon {
                             "IDP");
                     assert false;
                 }
+            } 
+            // Export to get the metadata.
+            HtmlPage idpExportEntityPage;
+            if (strGroupName.contains("sec")) {
+                idpExportEntityPage = idpfm.exportEntity(idpWebClient,
+                        configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
+                        configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM),
+                        true, true, true, "saml2");
             } else {
-                //If entity exists, export to get the metadata.
-                HtmlPage idpExportEntityPage = idpfm.exportEntity(idpWebClient,
+                idpExportEntityPage = idpfm.exportEntity(idpWebClient,
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME),
                         configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM),
                         false, true, true, "saml2");
-                if (FederationManager.getExitCode(idpExportEntityPage) != 0) {
-                    log(Level.SEVERE, "configureSAMLv2", "exportEntity famadm" +
-                            " command failed");
-                    assert false;
-                }
-                idpMetadata[0] = SAMLv2Common.getMetadataFromPage(
-                        idpExportEntityPage);
-                idpMetadata[1] = SAMLv2Common.getExtMetadataFromPage(
-                        idpExportEntityPage);
+            }               
+                
+            if (FederationManager.getExitCode(idpExportEntityPage) != 0) {
+                log(Level.SEVERE, "configureSAMLv2", "exportEntity famadm" +
+                        " command failed");
+                assert false;
             }
+            idpMetadata[0] = SAMLv2Common.getMetadataFromPage(
+                    idpExportEntityPage);
+            idpMetadata[1] = SAMLv2Common.getExtMetadataFromPage(
+                    idpExportEntityPage);
+            
             idpMetadata[1] = idpMetadata[1].replaceAll(
                     configMap.get(TestConstants.KEY_IDP_COT), "");
             log(Level.FINEST, "configureSAMLv2", "idp metadata" +
