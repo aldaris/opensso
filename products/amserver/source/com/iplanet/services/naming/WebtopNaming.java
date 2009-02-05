@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WebtopNaming.java,v 1.28 2009-01-23 22:05:35 beomsuk Exp $
+ * $Id: WebtopNaming.java,v 1.29 2009-02-05 23:52:05 beomsuk Exp $
  *
  */
 
@@ -113,6 +113,8 @@ public class WebtopNaming {
 
     private static boolean serverMode;
 
+    private static boolean ssoadm;
+
     private static String amServerProtocol = null;
 
     private static String amServer = null;
@@ -132,6 +134,8 @@ public class WebtopNaming {
         serverMode = Boolean.valueOf(
                 System.getProperty(Constants.SERVER_MODE, SystemProperties.get(
                         Constants.SERVER_MODE, "false"))).booleanValue();
+        ssoadm = Boolean.valueOf(
+                System.getProperty("ssoadm", "false")).booleanValue();
         
         if (!serverMode) {
             String v = SystemProperties.get(MAP_SITE_TO_SERVER);
@@ -240,7 +244,7 @@ public class WebtopNaming {
         try {
             // Initilaize the list of naming URLs
             getNamingServiceURL();
-            if (!serverMode) {
+            if (!serverMode && !ssoadm) {
                 startSiteMonitor(namingServiceURL);
             }
         } catch (Exception ex) {
