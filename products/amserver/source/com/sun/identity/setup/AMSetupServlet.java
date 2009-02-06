@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.97 2009-01-23 00:16:14 kevinserwin Exp $
+ * $Id: AMSetupServlet.java,v 1.98 2009-02-06 21:35:01 veiming Exp $
  *
  */
 
@@ -898,25 +898,30 @@ public class AMSetupServlet extends HttpServlet {
 
     public static String getPresetConfigDir() 
         throws ConfiguratorException {
-        String configDir = null;
-        try {
-            ResourceBundle rb = ResourceBundle.getBundle(
-                SetupConstants.BOOTSTRAP_PROPERTIES_FILE);
-            configDir = rb.getString(SetupConstants.PRESET_CONFIG_DIR);
-            
-            if ((configDir != null) && (configDir.length() > 0)) {
-                String realPath = getNormalizedRealPath(servletCtx);
-                if (realPath != null) {
-                    configDir = StringUtils.strReplaceAll(configDir,
-                        SetupConstants.TAG_REALPATH, realPath);
-                } else {
-                    throw new ConfiguratorException(
-                        "cannot get configuration path");
-                }
+        String configDir = System.getProperty(
+            SetupConstants.JVM_PROP_PRESET_CONFIG_DIR);
+
+        if ((configDir == null) || (configDir.length() == 0)) {
+            try {
+                ResourceBundle rb = ResourceBundle.getBundle(
+                    SetupConstants.BOOTSTRAP_PROPERTIES_FILE);
+                configDir = rb.getString(SetupConstants.PRESET_CONFIG_DIR);
+            } catch (MissingResourceException e) {
+                //ignored because bootstrap properties file maybe absent.
             }
-        } catch (MissingResourceException e) {
-            //ignored because bootstrap properties file maybe absent.
         }
+            
+        if ((configDir != null) && (configDir.length() > 0)) {
+            String realPath = getNormalizedRealPath(servletCtx);
+            if (realPath != null) {
+                configDir = StringUtils.strReplaceAll(configDir,
+                    SetupConstants.TAG_REALPATH, realPath);
+            } else {
+                throw new ConfiguratorException(
+                   "cannot get configuration path");
+            }
+        }
+
         return configDir;
     }
 

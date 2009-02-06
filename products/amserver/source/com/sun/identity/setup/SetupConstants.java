@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SetupConstants.java,v 1.39 2009-01-23 00:16:14 kevinserwin Exp $
+ * $Id: SetupConstants.java,v 1.40 2009-02-06 21:35:01 veiming Exp $
  *
  */
 
@@ -449,6 +449,12 @@ public interface SetupConstants {
      * Property to set the root of configuration directory.
      */
     String PRESET_CONFIG_DIR = "configuration.dir";
+
+    /**
+     * JVM System Property to set the root of configuration directory.
+     */
+    String JVM_PROP_PRESET_CONFIG_DIR =
+        "com.sun.identity.configuration.directory";
     
     /**
      * Tag in bootstrap file for real path substitution.
