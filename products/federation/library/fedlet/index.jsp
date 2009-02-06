@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: index.jsp,v 1.11 2009-01-27 18:02:52 weisun2 Exp $
+   $Id: index.jsp,v 1.12 2009-02-06 23:39:49 exu Exp $
 
 --%>
 
@@ -31,6 +31,8 @@
 
 <%@ page import="com.sun.identity.saml2.common.SAML2Exception" %>
 <%@ page import="com.sun.identity.saml2.jaxb.metadata.IDPSSODescriptorElement" %>
+<%@ page import="com.sun.identity.saml2.jaxb.metadata.SPSSODescriptorElement" %>
+<%@ page import="com.sun.identity.saml2.jaxb.metadata.AssertionConsumerServiceElement" %>
 <%@ page import="com.sun.identity.saml2.jaxb.metadata.SingleSignOnServiceElement" %>
 <%@ page import="com.sun.identity.saml2.meta.SAML2MetaException" %>
 <%@ page import="com.sun.identity.saml2.meta.SAML2MetaManager" %>
@@ -278,9 +280,28 @@
                             }
                         }
                     }
-                    String fedletBaseUrl = request.getScheme() + "://" +
-                        request.getServerName() + ":" + 
-                        request.getServerPort() + deployuri;
+                    String fedletBaseUrl = null;
+                    SPSSODescriptorElement sp =
+                        manager.getSPSSODescriptor("/", spEntityID);
+                    List acsList = sp.getAssertionConsumerService();
+                    if ((acsList != null) && (!acsList.isEmpty())) {
+                        Iterator j = acsList.iterator();
+                        while (j.hasNext()) {
+                            AssertionConsumerServiceElement acs =
+                                (AssertionConsumerServiceElement) j.next();
+                            if ((acs != null) && (acs.getBinding() != null)) {
+                               String acsURL = acs.getLocation();
+                                int loc = acsURL.indexOf(deployuri);
+                                if (loc == -1) {
+                                    continue;
+                                } else {
+                                    fedletBaseUrl = acsURL.substring(
+                                        0, loc + deployuri.length());
+                                    break;
+                                }
+                            }
+                        }
+                    }
 %>
     <h2>Validate Fedlet Setup</h2>
     <p><br>
