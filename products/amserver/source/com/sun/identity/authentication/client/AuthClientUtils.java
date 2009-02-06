@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthClientUtils.java,v 1.25 2009-01-16 06:29:41 hengming Exp $
+ * $Id: AuthClientUtils.java,v 1.26 2009-02-06 02:17:51 ericow Exp $
  *
  */
 
@@ -77,6 +77,7 @@ import com.iplanet.services.cdm.AuthClient;
 import com.iplanet.services.cdm.ClientsManager;
 import com.iplanet.services.util.Crypt;
 import com.iplanet.services.util.CookieUtils;
+import com.iplanet.services.naming.ServerEntryNotFoundException;
 import com.iplanet.services.naming.WebtopNaming;
 import com.iplanet.services.util.Base64;
 
@@ -2508,14 +2509,30 @@ public class AuthClientUtils {
 
     public static void setHostUrlCookie(HttpServletResponse response) {
         if (isSessionHijackingEnabled) {
-            String authServerProtocol = SystemProperties.get(
-                Constants.AM_SERVER_PROTOCOL);
-            String authServer = SystemProperties.get(Constants.AM_SERVER_HOST);
-            String authServerPort = SystemProperties.get(
-                Constants.AM_SERVER_PORT);
-            
-            String hostUrlCookieValue   = authServerProtocol + "://" +
-                authServer + ":" + authServerPort;
+            String hostUrlCookieValue = null;
+            try {
+                String siteID = WebtopNaming.getSiteID(
+                        WebtopNaming.getAMServerID());
+                hostUrlCookieValue = WebtopNaming.getServerFromID(siteID);
+                String uri = SystemProperties.get(
+                        Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
+                hostUrlCookieValue = hostUrlCookieValue.substring(0, 
+                        hostUrlCookieValue.indexOf(uri));
+            } catch(ServerEntryNotFoundException e) { 
+                utilDebug.message("AuthClientUtils.setHostUrlCookie:", e);
+            }
+
+            if (hostUrlCookieValue == null ||
+                    hostUrlCookieValue.length() == 0) {
+                String authServerProtocol = SystemProperties.get(
+                        Constants.AM_SERVER_PROTOCOL);
+                String authServer = SystemProperties.get(
+                        Constants.AM_SERVER_HOST);
+                String authServerPort = SystemProperties.get(
+                        Constants.AM_SERVER_PORT);
+                hostUrlCookieValue   = authServerProtocol + "://" +
+                        authServer + ":" + authServerPort;
+            }
             
             if (utilDebug.messageEnabled()) {
                 utilDebug.message("AuthClientUtils.setHostUrlCookie: " +
