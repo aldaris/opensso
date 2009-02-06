@@ -45,6 +45,11 @@
         <url-pattern>/admin/facelet/*</url-pattern>
     </filter-mapping>
     <servlet>
+        <servlet-name>Faces Servlet</servlet-name>
+        <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet>
         <servlet-name>Persistent Faces Servlet</servlet-name>
         <servlet-class>com.icesoft.faces.webapp.xmlhttp.PersistentFacesServlet</servlet-class>
         <load-on-startup>1</load-on-startup>

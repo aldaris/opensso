@@ -21,9 +21,11 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted [year] [name of copyright owner]"
 
-$Id: README,v 1.4 2009-01-29 20:07:32 farble1670 Exp $
+$Id: README,v 1.5 2009-02-06 01:13:44 farble1670 Exp $
 
 --------------------------------------------------------------------------------
+Ant 1.7.0+ is required.
+
 Need these binaries in extlib directory
 
 1. opensso.war - for unwar to include entitlements.jar and resources
@@ -33,3 +35,4 @@ The first time the workspace is built, you must be on SWAN and have access to
 /net/policy. The directories .../war-lib and .../build-lib will be populated.
 After this, /net/policy connectivity is not required.
 
+Test on Glassfish v2, Tomcat 6. Does not work on Tomcat 5.5.
