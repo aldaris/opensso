@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateFedlet.java,v 1.9 2009-01-12 05:33:44 hengming Exp $
+ * $Id: CreateFedlet.java,v 1.10 2009-02-06 22:34:48 babysunil Exp $
  *
  */
 
@@ -48,6 +48,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -132,9 +134,11 @@ public class CreateFedlet
         throws WorkflowException {
         validateParameters(params);
         String entityId = getString(params, ParameterKeys.P_ENTITY_ID);
-        entityId = entityId.replaceAll("/", "%2F");
+        Pattern patern = Pattern.compile("[/:\\.?|*]");
+        Matcher match = patern.matcher(entityId);
+        String folderName = match.replaceAll("");
         String workDir = SystemProperties.get(SystemProperties.CONFIG_PATH) +
-            "/myfedlets/" + entityId;
+            "/myfedlets/" + folderName;
         File dir = new File(workDir);
         if (dir.exists()) {
             Object[] param = {workDir};
