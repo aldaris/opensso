@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Session.java,v 1.21 2009-01-29 18:18:47 beomsuk Exp $
+ * $Id: Session.java,v 1.22 2009-02-06 23:31:08 ww203982 Exp $
  *
  */
 
@@ -303,6 +303,8 @@ public class Session extends GeneralTaskRunnable {
             SystemProperties
                     .get("com.iplanet.am.session.client.polling.cacheBased",
                             "false")).booleanValue();
+
+    private static long appSSOTokenRefreshTime;
     
     private SessionPollerSender sender = null;    
 
@@ -314,7 +316,14 @@ public class Session extends GeneralTaskRunnable {
         } catch (Exception le) {
             purgeDelay = 120;
         }        
-      
+        String appSSOTokenRefreshTimeProperty = SystemProperties.get(
+            "com.iplanet.am.client.appssotoken.refreshtime", "3");
+        try {
+            appSSOTokenRefreshTime = Long.parseLong(
+                appSSOTokenRefreshTimeProperty);
+        } catch (Exception le) {
+            appSSOTokenRefreshTime = 3;
+        }
         if (pollingEnabled || sessionCleanupEnabled){
             timerPool = SystemTimerPool.getTimerPool();
         }        
@@ -463,6 +472,9 @@ public class Session extends GeneralTaskRunnable {
                                 (latestRefreshTime + (maxCachingTime * 60))
                                 * 1000);
                         }
+                    } else {
+                        expectedTime = (latestRefreshTime + 
+                            (appSSOTokenRefreshTime * 60)) * 1000;
                     }
                     if (expectedTime > scheduledExecutionTime()) {
                         timerPool.schedule(this, new Date(expectedTime));
