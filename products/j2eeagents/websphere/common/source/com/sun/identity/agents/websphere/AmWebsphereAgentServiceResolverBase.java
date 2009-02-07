@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmWebsphereAgentServiceResolverBase.java,v 1.2 2008-11-21 22:21:45 leiming Exp $
+ * $Id: AmWebsphereAgentServiceResolverBase.java,v 1.3 2009-02-07 01:31:57 leiming Exp $
  *
  */
 
@@ -53,10 +53,6 @@ extends ServiceResolver {
 
 	public String getGlobalJ2EEAuthHandlerImpl() {
 		return J2EEAuthenticationHandler.class.getName();
-	}
-
-	public boolean getSessionBindingFlag() {
-		return false;
 	}
 
 	public String getGlobalJ2EELogoutHandlerImpl() {

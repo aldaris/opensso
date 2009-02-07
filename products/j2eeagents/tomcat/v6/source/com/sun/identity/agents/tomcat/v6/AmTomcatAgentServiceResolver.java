@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmTomcatAgentServiceResolver.java,v 1.2 2008-11-28 12:35:31 saueree Exp $
+ * $Id: AmTomcatAgentServiceResolver.java,v 1.3 2009-02-07 01:31:20 leiming Exp $
  */
 
 package com.sun.identity.agents.tomcat.v6;
@@ -54,15 +54,6 @@ public class AmTomcatAgentServiceResolver extends ServiceResolver {
      */
     public String getCDSSOTaskHandlerImpl() {
         return AmTomcatCDSSOTaskHandler.class.getName();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see ServiceResolver#getSessionBindingFlag()
-     */
-    public boolean getSessionBindingFlag() {
-        return false;
     }
 
     /*

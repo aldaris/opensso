@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmJBossAgentServiceResolver.java,v 1.2 2009-01-10 08:14:55 naghaon Exp $
+ * $Id: AmJBossAgentServiceResolver.java,v 1.3 2009-02-07 01:31:40 leiming Exp $
  *
  */
 
@@ -53,13 +53,6 @@ public class AmJBossAgentServiceResolver extends ServiceResolver {
             else {
                 return J2EEAuthenticationHandler.class.getName();
             }
-    }
-    
-    /* (non-Javadoc)
-     * @see ServiceResolver#getSessionBindingFlag()
-     */
-    public boolean getSessionBindingFlag() {
-        return false;
     }
     
     /* (non-Javadoc)
