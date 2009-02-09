@@ -13,9 +13,25 @@
             <supported-locale>en_US</supported-locale>
         </locale-config>
         <message-bundle>
-            com.sun.identity.console.entitlement.Messages
+            com.sun.identity.admin.Messages
         </message-bundle>
     </application>
+
+   <managed-bean>
+        <managed-bean-name>policyCreateWizardBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.WizardBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+   <managed-bean>
+        <managed-bean-name>policyCreateWizardHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.WizardHandler</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>wizardBean</property-name>
+            <value>#{policyCreateWizardBean}</value>
+        </managed-property>
+    </managed-bean>
 
     <navigation-rule>
         <navigation-case>

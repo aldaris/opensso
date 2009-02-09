@@ -11,35 +11,41 @@
         <ice:outputText value="${msg.policyCreatePanelDetails}" />
     </ui:define>
     <ui:define name="panel-body">
-        <ice:panelCollapsible expanded="#{false}">
+        <ice:panelCollapsible
+            expanded="#{policyCreateWizardBean.active[0]}"
+            actionListener="#{policyCreateWizardHandler.toggle}">
+            <f:attribute id="step" name="" value="0"/>
             <f:facet name="header">
                 <ice:panelGroup>
                     <ice:outputText value="Step 1: Getting started"/>
                 </ice:panelGroup>
             </f:facet>
         </ice:panelCollapsible>
-        <ice:panelCollapsible expanded="#{false}">
+        <ice:panelCollapsible 
+            expanded="#{policyCreateWizardBean.active[1]}"
+            actionListener="#{policyCreateWizardHandler.toggle}">
+            <f:attribute id="step" name="" value="1"/>
             <f:facet name="header">
                 <ice:panelGroup>
                     <ice:outputText value="Step 2: Select or add a resource to protect"/>
                 </ice:panelGroup>
             </f:facet>
         </ice:panelCollapsible>
-        <ice:panelCollapsible expanded="#{false}">
+        <ice:panelCollapsible expanded="#{policyCreateWizardBean.active[2]}">
             <f:facet name="header">
                 <ice:panelGroup>
                     <ice:outputText value="Step 3: Select or add the users that this policy applies to"/>
                 </ice:panelGroup>
             </f:facet>
         </ice:panelCollapsible>
-        <ice:panelCollapsible expanded="#{false}">
+        <ice:panelCollapsible expanded="#{policyCreateWizardBean.active[3]}">
             <f:facet name="header">
                 <ice:panelGroup>
                     <ice:outputText value="Step 4: Advanced settings"/>
                 </ice:panelGroup>
             </f:facet>
         </ice:panelCollapsible>
-        <ice:panelCollapsible expanded="#{false}">
+        <ice:panelCollapsible expanded="#{policyCreateWizardBean.active[4]}">
             <f:facet name="header">
                 <ice:panelGroup>
                     <ice:outputText value="Step 5: Review and complete"/>
