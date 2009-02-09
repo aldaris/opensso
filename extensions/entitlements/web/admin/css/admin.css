@@ -50,6 +50,19 @@ h1 {
 }
 
 #panel {
+    margin: 8px;
+    padding: 8px;
+    border: 1px solid #DDDDDD;
+}
+
+#panel-title {
+}
+
+#panel-details {
+    margin-bottom: 8px;
+}
+
+#panel-body {
 }
 
 #menu-separator {

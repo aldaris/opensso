@@ -4,16 +4,34 @@
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:ice="http://www.icesoft.com/icefaces/component">
     <ice:menuBar orientation="horizontal">
-        <ice:menuItem value="Policy" action="policy" icon="../image/policy.png">
-        <ice:menuItem value="Create Policy" action="policy-create" icon="../image/new.png"/>
-        <ice:menuItem value="Manage Policies" action="policy-manage" icon="../image/manage.png"/>
-        <ice:menuItem value="Manage Resources" action="resource-manage" icon="../image/resource.png"/>
+        <ice:menuItem
+            value="${msg.policyMenuItemValue}"
+            action="policy"
+            icon="../image/policy.png">
+        <ice:menuItem
+            value="${msg.policyCreateMenuItemValue}"
+            action="policyCreate"
+            icon="../image/new.png"/>
+        <ice:menuItem
+            value="${msg.policyManageMenuItemValue}"
+            action="policyManage"
+            icon="../image/manage.png"/>
+        <ice:menuItem
+            value="${msg.resourceManageMenuItemValue}"
+            action="resourceManage"
+            icon="../image/resource.png"/>
         </ice:menuItem>
 
-        <ice:menuItem value="Federation" action="federation" icon="../image/federation.png">
+        <ice:menuItem
+            value="Federation"
+            action="federation"
+            icon="../image/federation.png">
         </ice:menuItem>
 
-        <ice:menuItem value="Monitoring" action="monitoring" icon="../image/monitor.png">
+        <ice:menuItem
+            value="${msg.monitoringMenuItemValue}"
+            action="monitoring"
+            icon="../image/monitor.png">
         </ice:menuItem>
     </ice:menuBar>
 </span>

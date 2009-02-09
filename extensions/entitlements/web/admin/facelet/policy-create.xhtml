@@ -4,7 +4,47 @@
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:ice="http://www.icesoft.com/icefaces/component">
-    <ui:define name="panel">
-        <ice:outputText value="Create Policy Page" />
+    <ui:define name="panel-title">
+        <ice:outputText value="${msg.policyCreatePanelTitle}" />
+    </ui:define>
+    <ui:define name="panel-details">
+        <ice:outputText value="${msg.policyCreatePanelDetails}" />
+    </ui:define>
+    <ui:define name="panel-body">
+        <ice:panelCollapsible expanded="#{false}">
+            <f:facet name="header">
+                <ice:panelGroup>
+                    <ice:outputText value="Step 1: Getting started"/>
+                </ice:panelGroup>
+            </f:facet>
+        </ice:panelCollapsible>
+        <ice:panelCollapsible expanded="#{false}">
+            <f:facet name="header">
+                <ice:panelGroup>
+                    <ice:outputText value="Step 2: Select or add a resource to protect"/>
+                </ice:panelGroup>
+            </f:facet>
+        </ice:panelCollapsible>
+        <ice:panelCollapsible expanded="#{false}">
+            <f:facet name="header">
+                <ice:panelGroup>
+                    <ice:outputText value="Step 3: Select or add the users that this policy applies to"/>
+                </ice:panelGroup>
+            </f:facet>
+        </ice:panelCollapsible>
+        <ice:panelCollapsible expanded="#{false}">
+            <f:facet name="header">
+                <ice:panelGroup>
+                    <ice:outputText value="Step 4: Advanced settings"/>
+                </ice:panelGroup>
+            </f:facet>
+        </ice:panelCollapsible>
+        <ice:panelCollapsible expanded="#{false}">
+            <f:facet name="header">
+                <ice:panelGroup>
+                    <ice:outputText value="Step 5: Review and complete"/>
+                </ice:panelGroup>
+            </f:facet>
+        </ice:panelCollapsible>
     </ui:define>
 </ui:composition>
