@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestConstants.java,v 1.30 2009-01-31 00:35:13 mrudulahg Exp $
+ * $Id: TestConstants.java,v 1.31 2009-02-10 23:15:58 vimal_67 Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -517,6 +517,16 @@ public interface TestConstants {
     String KEY_IDP_USER_PAGER = "idp_pager";
     
     /**
+     * SAMLv2, IDFF Property key for <code>idp_multiattributes</code>
+     */
+    String KEY_IDP_USER_MULTIATTRIBUTES = "idp_multiattributes";
+    
+    /**
+     * SAMLv2, IDFF Property key for <code>idp_nsrole</code>
+     */
+    String KEY_IDP_USER_NSROLE = "idp_nsrole";
+    
+    /**
      * SAMLv2, IDFF Property key for <code>idp_secretary</code>
      */
     String KEY_IDP_USER_SECRETARY = "idp_secretary";
@@ -919,7 +929,7 @@ public interface TestConstants {
     /**
      * SAMLv2, IDFF Property key for <code>loginresult</code>
      */
-    String KEY_LOGIN_RESULT = "loginresult";
+    String KEY_LOGIN_RESULT = "loginresult";     
     
     /**
      * IDFF Property key for <code>nameregresult</code>
