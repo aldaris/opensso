@@ -21,13 +21,17 @@
             action="resourceManage"
             icon="../image/resource.png"/>
         </ice:menuItem>
-
+        
         <ice:menuItem
-            value="Federation"
+            value="${msg.federationMenuItemValue}"
             action="federation"
             icon="../image/federation.png">
+        <ice:menuItem 
+            value="${msg.federationSamlv2WorkflowMenuItemValue}"
+            action="samlv2Workflow" 
+            icon="../image/new.png"/> 
         </ice:menuItem>
-
+        
         <ice:menuItem
             value="${msg.monitoringMenuItemValue}"
             action="monitoring"

@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition template="template/page.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ice="http://www.icesoft.com/icefaces/component">
+    <ui:define name="panel-body">
+        <ice:outputText value="SAMLv2 Workflow Launch Page" />
+        
+        <ice:panelTabSet>            
+        
+            <ice:panelTab id="tab1" label="Tab1">
+                <ice:inputTextarea >
+                Create Hosted Identity Provider
+                </ice:inputTextarea>
+            </ice:panelTab>
+            
+            <ice:panelTab id="tab2"  label="Tab2">
+                <ice:inputTextarea >
+                 Create Hosted Service Provider
+                </ice:inputTextarea>
+            </ice:panelTab>
+            
+            <ice:panelTab id="tab3" label="Tab3">
+                <ice:inputTextarea >                    
+                    Register Remote Identity Provider
+                </ice:inputTextarea>
+            </ice:panelTab>
+            
+            <ice:panelTab id="tab4" label="Tab4">
+                <ice:inputTextarea >
+                     Register Remote Service Provider}
+                </ice:inputTextarea>
+            </ice:panelTab>
+            
+        </ice:panelTabSet>
+        
+         <!-- This text is not part of a panelTab and therefore will be displayed on every tab -->
+        <ice:outputText value="Displayed on every tab"/>
+
+    </ui:define>
+</ui:composition>
