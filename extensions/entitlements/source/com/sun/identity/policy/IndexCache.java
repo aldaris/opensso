@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IndexCache.java,v 1.3 2009-02-05 23:16:50 veiming Exp $
+ * $Id: IndexCache.java,v 1.4 2009-02-10 19:31:03 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -41,7 +41,7 @@ import java.util.Set;
 /**
  * Caches the indexes which are stored in Directory Server.
  */
-public class IndexCache implements ServiceListener {
+public class IndexCache implements ServiceListener, IIndexCache {
     private static IndexCache instance = new IndexCache();
     private static int DEFAULT_CACHE_SIZE = 100000; //TOFIX
 

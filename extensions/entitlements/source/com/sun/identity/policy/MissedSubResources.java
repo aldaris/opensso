@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MissedSubResources.java,v 1.3 2009-02-04 22:06:21 veiming Exp $
+ * $Id: MissedSubResources.java,v 1.4 2009-02-10 19:31:03 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -43,7 +43,7 @@ public class MissedSubResources extends SubResources {
     private Set<Policy> hitPolicies;
 
     public MissedSubResources(
-        Object parent,
+        PolicyEvaluatorAdaptor parent,
         SSOToken token,
         ServiceType serviceType,
         String rootResource,
@@ -70,7 +70,7 @@ public class MissedSubResources extends SubResources {
     public void run() {
         try {
             Set<Policy> searchResults =
-                PolicyEvaluatorAdaptor.recursiveSearch(adminSSOToken, misses);
+                parent.recursiveSearch(adminSSOToken, misses);
             policies = new HashSet<Policy>();
             for (Policy policy : searchResults) {
                 if (!hitPolicies.contains(policy)) {

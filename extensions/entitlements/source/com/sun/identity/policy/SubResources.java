@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubResources.java,v 1.9 2009-02-04 22:06:21 veiming Exp $
+ * $Id: SubResources.java,v 1.10 2009-02-10 19:31:03 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -50,18 +50,17 @@ public class SubResources implements Runnable {
     private Map<String, Set<PolicyDecisionTask.Task>> resToTasks;
     int tasksCount = 0;
 
-    private Object parent;
+    protected PolicyEvaluatorAdaptor parent;
     private SSOToken token;
     private ServiceType serviceType;
     private String rootResource;
     private Set<String> actionNames;
     private Map<String, Set<String>> envParameters;
     protected Set<Policy> policies;
-    private Map<String, PolicyDecision> results = null;
     protected Exception exception;
     
     SubResources(
-        Object parent,
+        PolicyEvaluatorAdaptor parent,
         SSOToken token,
         ServiceType serviceType,
         String rootResource,
@@ -82,8 +81,8 @@ public class SubResources implements Runnable {
         return exception;
     }
 
-    Map<String, PolicyDecision> getResults() {
-        return results;
+    Set<PolicyDecisionTask.Task> getResults() {
+        return policyEvalTasks;
     }
 
     public void run() {
@@ -97,9 +96,7 @@ public class SubResources implements Runnable {
             evaluateResource(resComparator, r);
         }
         
-        if (resToTasks.isEmpty()) {
-            results = Collections.EMPTY_MAP;
-        } else {
+        if (!resToTasks.isEmpty()) {
             tasksCount = policyEvalTasks.size();
 
             synchronized (this) {
@@ -118,10 +115,6 @@ public class SubResources implements Runnable {
                         tasksCount = 0;
                     }
                 }
-            }
-
-            if (exception == null) {
-                results = mergePolicyDecisions(serviceType);
             }
         }
         synchronized(parent) {
@@ -155,7 +148,7 @@ public class SubResources implements Runnable {
     
     private Set<Policy> search(Set<String> hostIndexes, Set<String>pathIndexes){
         Set<Policy> searchResults  = new HashSet<Policy>();
-        IndexCache cache = IndexCache.getInstance();
+        IIndexCache cache = parent.getIndexCache();
         for (String s : hostIndexes) {
             Set<Policy> set = cache.getHostIndex(s);
             if (set != null) {
@@ -192,27 +185,6 @@ public class SubResources implements Runnable {
                 resToTasks.put(resource, set);
             }
         }
-    }
-    
-    private Map<String, PolicyDecision> mergePolicyDecisions(
-        ServiceType serviceType
-    ) {
-        Map<String, PolicyDecision> merged = new
-            HashMap<String, PolicyDecision>();
-        for (String res : resToTasks.keySet()) {
-            Set<PolicyDecision> decisions = new HashSet<PolicyDecision>();
-            for (PolicyDecisionTask.Task task : resToTasks.get(res)) {
-                if (task.policyDecision != null) {
-                    decisions.add(task.policyDecision);
-                }
-            }
-            PolicyDecision result = PolicyEvaluatorAdaptor.mergePolicyDecisions(
-                decisions, serviceType);
-            if (result != null) {
-                merged.put(res, result);
-            }
-        }
-        return merged;
     }
     
     private class EvaluatorThread implements Runnable {

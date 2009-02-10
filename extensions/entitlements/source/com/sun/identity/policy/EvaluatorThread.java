@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EvaluatorThread.java,v 1.2 2009-02-04 22:06:21 veiming Exp $
+ * $Id: EvaluatorThread.java,v 1.3 2009-02-10 19:31:03 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -41,7 +41,7 @@ import java.util.Set;
  * multiple policy evaluations, they are done is different threads.
  */
 public class EvaluatorThread implements Runnable {
-    private PolicyEvaluatorAdaptor parent;
+    protected PolicyEvaluatorAdaptor parent;
     private PolicyDecisionTask tasks;
     private int counter;
     private SSOToken token;
@@ -50,9 +50,9 @@ public class EvaluatorThread implements Runnable {
     private Set<String> actionNames;
     private Map<String, Set<String>> envParameters;
     private ResourceName resComparator;
-    private Set<PolicyDecision> policyDecisions;
     protected Set<Policy> policies;
     protected Exception exception;
+    private Set<PolicyDecisionTask.Task> policyEvalTasks;
 
     EvaluatorThread(
         PolicyEvaluatorAdaptor parent,
@@ -78,8 +78,7 @@ public class EvaluatorThread implements Runnable {
     }
 
     public void run() {
-        Set<PolicyDecisionTask.Task> policyEvalTasks =
-            new HashSet<PolicyDecisionTask.Task>();
+        policyEvalTasks = new HashSet<PolicyDecisionTask.Task>();
 
         for (Policy p : policies) {
             PolicyDecisionTask.Task task = tasks.addTask(
@@ -89,8 +88,6 @@ public class EvaluatorThread implements Runnable {
         counter = policies.size();
 
         if (counter > 0) {
-            boolean interrupted = false;
-
             synchronized (this) {
                 for (PolicyDecisionTask.Task task : policyEvalTasks) {
                     Runner eval = new Runner(this,
@@ -103,24 +100,10 @@ public class EvaluatorThread implements Runnable {
                     try {
                         this.wait();
                     } catch (InterruptedException ex) {
-                        policyDecisions = Collections.EMPTY_SET;
                         counter = 0;
-                        interrupted = true;
                     }
                 }
             }
-
-            if (!interrupted) {
-                policyDecisions = new HashSet<PolicyDecision>();
-                for (PolicyDecisionTask.Task t : policyEvalTasks) {
-                    PolicyDecision pd = t.policyDecision;
-                    if (pd != null) {
-                        policyDecisions.add(pd);
-                    }
-                }
-            }
-        } else {
-            policyDecisions = Collections.EMPTY_SET;
         }
         
         synchronized (parent) {
@@ -132,8 +115,8 @@ public class EvaluatorThread implements Runnable {
         return exception;
     }
 
-    Set<PolicyDecision> getPolicyDecisions() {
-        return policyDecisions;
+    Set<PolicyDecisionTask.Task> getPolicyDecisions() {
+        return policyEvalTasks;
     }
 
     private class Runner implements Runnable {

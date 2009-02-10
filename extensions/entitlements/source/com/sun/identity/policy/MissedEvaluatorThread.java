@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MissedEvaluatorThread.java,v 1.2 2009-02-04 22:06:21 veiming Exp $
+ * $Id: MissedEvaluatorThread.java,v 1.3 2009-02-10 19:31:03 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -65,7 +65,7 @@ public class MissedEvaluatorThread extends EvaluatorThread {
     public void run() {
         try {
             Set<Policy> searchResults =
-                PolicyEvaluatorAdaptor.recursiveSearch(adminSSOToken, misses);
+                parent.recursiveSearch(adminSSOToken, misses);
             policies = new HashSet<Policy>();
             for (Policy policy : searchResults) {
                 if (!hitPolicies.contains(policy)) {

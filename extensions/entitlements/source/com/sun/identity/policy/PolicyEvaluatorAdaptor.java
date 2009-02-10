@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorAdaptor.java,v 1.15 2009-02-04 22:06:21 veiming Exp $
+ * $Id: PolicyEvaluatorAdaptor.java,v 1.16 2009-02-10 19:31:03 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -54,8 +54,8 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
     
     public PolicyEvaluatorAdaptor() {
     }
-    
-    static Set<Policy> recursiveSearch(
+
+    Set<Policy> recursiveSearch(
         SSOToken token,
         Map<String, Set<String>> misses
     ) throws SSOException, PolicyException {
@@ -273,7 +273,7 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
         return entitlement;
     }
     
-    static PolicyDecision mergePolicyDecisions(
+    private static PolicyDecision mergePolicyDecisions(
         Set<PolicyDecision> policyDecisions,
         ServiceType serviceType
     ) {
@@ -288,7 +288,7 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
         }
         return result;
     }
-    
+
     private Set<PolicyDecision> getPolicyDecisions(
         Subject adminSubject,
         Subject subject,
@@ -297,6 +297,24 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
         Map<String, Set<String>> envParameters
     ) throws SSOException, PolicyException, EntitlementException {
         Set<PolicyDecision> policyDecisions = new HashSet<PolicyDecision>();
+        Set<PolicyDecisionTask.Task> results = performPolicyEvaluation(
+            adminSubject, subject, serviceTypeName, resourceName, envParameters
+            );
+        for (PolicyDecisionTask.Task t : results) {
+            policyDecisions.add(t.policyDecision);
+        }
+        return policyDecisions;
+    }
+
+    protected Set<PolicyDecisionTask.Task> performPolicyEvaluation(
+        Subject adminSubject,
+        Subject subject,
+        String serviceTypeName,
+        String resourceName,
+        Map<String, Set<String>> envParameters
+    ) throws SSOException, PolicyException, EntitlementException {
+        Set<PolicyDecisionTask.Task> results = new
+            HashSet<PolicyDecisionTask.Task>();
         ServiceType serviceType =
             ServiceTypeManager.getServiceTypeManager().getServiceType(
             serviceTypeName);
@@ -321,8 +339,8 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
         }
 
         Exception exception = null;
-        Set<PolicyDecision> hitResults = null;
-        Set<PolicyDecision> missedResults = null;
+        Set<PolicyDecisionTask.Task> hitResults = null;
+        Set<PolicyDecisionTask.Task> missedResults = null;
 
         synchronized(this) {
             if (hitThread != null) {
@@ -366,13 +384,41 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
             throw new EntitlementException(exception.getMessage(), -1);
         }
 
-        policyDecisions.addAll(hitResults);
-        policyDecisions.addAll(missedResults);
-
-        return policyDecisions;
+        results.addAll(hitResults);
+        results.addAll(missedResults);
+        return results;
     }
     
     private List<Entitlement> getSubTreeEntitlements(
+        Subject adminSubject,
+        Subject subject,
+        String serviceTypeName,
+        String resourceName,
+        Map<String, Set<String>> envParameters
+    ) throws EntitlementException {
+        try {
+            Set<PolicyDecisionTask.Task> tasks = performSubTreeEvaluation(
+                adminSubject, subject, serviceTypeName, resourceName,
+                envParameters);
+            ServiceType serviceType =
+                ServiceTypeManager.getServiceTypeManager().getServiceType(
+                serviceTypeName);
+            Map<String, PolicyDecision> mergedDecisions = mergePolicyDecisions(
+                serviceType, tasks);
+            List<Entitlement> results = new ArrayList<Entitlement>();
+            for (String res : mergedDecisions.keySet()) {
+                results.add(getEntitlement(serviceType, res,
+                    mergedDecisions.get(res)));
+            }
+            return results;
+         } catch (SSOException e) {
+            throw new EntitlementException(e.getMessage(), -1);
+        } catch (PolicyException e) {
+            throw new EntitlementException(e.getMessage(), -1);
+        }
+    }
+
+    protected Set<PolicyDecisionTask.Task> performSubTreeEvaluation(
         Subject adminSubject,
         Subject subject,
         String serviceTypeName,
@@ -405,19 +451,19 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
                     actionNames, envParameters, hits);
             }
             Exception exception = null;
-            Map<String, PolicyDecision> hitResults = null;
-            Map<String, PolicyDecision> missedResults = null;
+            Set<PolicyDecisionTask.Task> hitResults = null;
+            Set<PolicyDecisionTask.Task> missedResults = null;
 
             synchronized(this) {
                 if (hitThread != null) {
                     SMSThreadPool.scheduleTask(hitThread);
                 } else {
-                    hitResults = Collections.EMPTY_MAP;
+                    hitResults = Collections.EMPTY_SET;
                 }
                 if (missedThread != null) {
                     SMSThreadPool.scheduleTask(missedThread);
                 } else {
-                    missedResults = Collections.EMPTY_MAP;
+                    missedResults = Collections.EMPTY_SET;
                 }
 
                 while (true) {
@@ -451,13 +497,10 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
                 throw new EntitlementException(exception.getMessage(), -1);
             }
 
-            Map<String, PolicyDecision> mergedDecisions = mergePolicyDecisions(
-                serviceType, hitResults, missedResults);
-            List<Entitlement> results = new ArrayList<Entitlement>();
-            for (String res : mergedDecisions.keySet()) {
-                results.add(getEntitlement(serviceType, res,
-                    mergedDecisions.get(res)));
-            }
+            Set<PolicyDecisionTask.Task> results = new
+                HashSet<PolicyDecisionTask.Task>();
+            results.addAll(hitResults);
+            results.addAll(missedResults);
             return results;
         } catch (SSOException e) {
             throw new EntitlementException(e.getMessage(), -1);
@@ -468,20 +511,18 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
 
     private Map<String, PolicyDecision> mergePolicyDecisions(
         ServiceType serviceType,
-        Map<String, PolicyDecision> m1,
-        Map<String, PolicyDecision> m2
+        Set<PolicyDecisionTask.Task> tasks
     ) {
         Map<String, PolicyDecision> result = new
             HashMap<String, PolicyDecision>();
-        result.putAll(m1);
-
-        for (String r : m2.keySet()) {
-            PolicyDecision pd = result.get(r);
+        for (PolicyDecisionTask.Task t : tasks) {
+            String res = t.resource;
+            PolicyDecision pd = result.get(res);
             if (pd == null) {
-                result.put(r, m2.get(r));
+                result.put(res, t.policyDecision);
             } else {
-                result.put(r, PolicyEvaluator.mergePolicyDecisions(
-                    serviceType, pd, m2.get(r)));
+                result.put(res, PolicyEvaluator.mergePolicyDecisions(
+                    serviceType, pd, t.policyDecision));
             }
         }
         
@@ -507,7 +548,7 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
         Set<Policy> hits,
         Map<String, Set<String>> misses
     ) {
-        IndexCache cache = IndexCache.getInstance();
+        IIndexCache cache = getIndexCache();
 
         for (String resIndex : lookupSet) {
             Set<Policy> setCached = null;
@@ -531,5 +572,9 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
                 set.add(resIndex);
             }
         }
+    }
+
+    IIndexCache getIndexCache() {
+        return IndexCache.getInstance();
     }
 }
