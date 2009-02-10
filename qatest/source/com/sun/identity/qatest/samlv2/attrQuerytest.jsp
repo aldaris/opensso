@@ -18,7 +18,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
  
-  $Id: attrQuerytest.jsp,v 1.2 2008-08-15 21:08:33 sridharev Exp $
+  $Id: attrQuerytest.jsp,v 1.3 2009-02-10 22:10:07 vimal_67 Exp $
  
   Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  
@@ -227,7 +227,11 @@ SAML Response = <%= SAMLUtils.displayXML(samlResp.toXMLString(true, true)) %>
         attr.setName(requestAttrName);
         attr.setNameFormat(SAML2Constants.BASIC_NAME_FORMAT);
         List values = new ArrayList();
-        values.add(requestAttrValue);
+        StringTokenizer st = new StringTokenizer(requestAttrValue, "|");
+        while (st.hasMoreTokens()) {
+            String attrValue = st.nextToken();
+            values.add(attrValue);
+        }        
         attr.setAttributeValueString(values);
         attrs.add(attr);
        
