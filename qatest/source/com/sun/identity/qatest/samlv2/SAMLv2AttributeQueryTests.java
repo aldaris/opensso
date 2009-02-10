@@ -17,12 +17,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2AttributeQueryTests.java,v 1.5 2009-01-27 00:14:08 nithyas Exp $
+ * $Id: SAMLv2AttributeQueryTests.java,v 1.6 2009-02-10 22:08:30 vimal_67 Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
 package com.sun.identity.qatest.samlv2;
-
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -34,6 +33,7 @@ import com.sun.identity.qatest.common.TestCommon;
 import com.sun.identity.qatest.common.TestConstants;
 import com.sun.identity.qatest.common.webtest.DefaultTaskHandler;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
@@ -59,7 +59,13 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
     
     private WebClient spWebClient;
     private WebClient idpWebClient;
-    private Map<String, String> configMap;
+    private Map<String, String> configMap;       
+    private ArrayList idpattrmultiVal;    
+    private ArrayList idpfroles;    
+    private ArrayList idproles;    
+    private Boolean idpboolfr;    
+    private Boolean idpboolr;
+    private Boolean idpexistbool;
     private String baseDir ;
     private String xmlfile;
     private DefaultTaskHandler task1;
@@ -75,6 +81,8 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
     private String testName;
     private String testType;
     private String testAttribute;
+    private String testNSRoleType;
+    private String testNSRoleExist;
     private String metaAliasname;
     private String ATTRIB_MAP_DEFAULT = "<Attribute name=\""
             + "attributeMap\"/>\n";
@@ -98,6 +106,7 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
             + "            <Value>postofficebox=postofficebox</Value>\n"
             + "            <Value>secretary=secretary</Value>\n"
             + "            <Value>street=street</Value>\n"
+            + "            <Value>nsrole=nsrole</Value>\n"
             + "        </Attribute>";
     private String ATTRIB_X509_DEFAULT = "<Attribute name=\""
             + "x509SubjectDataStoreAttrName\">\n"
@@ -123,6 +132,7 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
             + "            <Value>postofficebox=postofficebox</Value>\n"
             + "            <Value>secretary=secretary</Value>\n"
             + "            <Value>street=street</Value>\n"
+            + "            <Value>nsrole=nsrole</Value>\n"
             + "        </Attribute>";
     
     /**
@@ -136,16 +146,26 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
      * Configures the SP and IDP load meta for the SAMLV2AttributeQueryTests
      * tests to execute
      */
-    @Parameters({"ptestName", "ptestType", "pAttribute"})
-    @BeforeClass(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
-    public void setup(String ptestName, String ptestType, String pAttribute)
+    @Parameters({"ptestName", "ptestType", "pAttribute", "pnsRoleType", 
+    "pnsRoleexist"})
+    @BeforeClass(groups={"ldapv3_sec", "s1ds_sec", "ad_sec",                           
+    "amsdk_sec", "jdbc_sec"})
+    public void setup(String ptestName, String ptestType, String pAttribute, 
+            String pnsRoleType, String pnsRoleexist)
     throws Exception {
         HtmlPage page;
         ArrayList list;
         try {
             testName = ptestName;
             testType = ptestType;
-            testAttribute = pAttribute;
+            testAttribute = pAttribute;   
+            testNSRoleType = pnsRoleType;
+            testNSRoleExist = pnsRoleexist;
+            idpfroles = new ArrayList();            
+            idpboolfr = false;            
+            idproles = new ArrayList();
+            idpboolr = false;
+            idpexistbool = false;
             ResourceBundle rb_amconfig = ResourceBundle.getBundle(
                     TestConstants.TEST_PROPERTY_AMCONFIG);
             baseDir = getBaseDir() + SAMLv2Common.fileseparator
@@ -159,7 +179,7 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
             SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator 
                     + "samlv2TestConfigData", configMap);
             SAMLv2Common.getEntriesFromResourceBundle("samlv2" + fileseparator 
-                    + "SAMLv2AttributeQueryTests", configMap);
+                    + "SAMLv2AttributeQueryTests", configMap);            
             configMap.put(TestConstants.KEY_SP_USER, "sp" + testName);
             configMap.put(TestConstants.KEY_SP_USER_PASSWORD, "sp" + testName);
             configMap.put(TestConstants.KEY_IDP_USER, "idp" + testName);
@@ -199,9 +219,13 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_USER),
                     configMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
             fmIDP = new FederationManager(idpurl);
+            idpattrmultiVal = new ArrayList(); 
             list.clear();
-            list.add("sn=" + configMap.get(TestConstants.KEY_IDP_USER));
-            list.add("cn=" + configMap.get(TestConstants.KEY_IDP_USER));
+            String idpuserMultiAttr = configMap.get(
+                    TestConstants.KEY_IDP_USER_MULTIATTRIBUTES);
+            list = (ArrayList) parseStringToList(idpuserMultiAttr, ",", "&");
+            list.add("sn=" + configMap.get(TestConstants.KEY_IDP_USER));            
+            list.add("cn=" + configMap.get(TestConstants.KEY_IDP_USER));            
             list.add("userpassword=" +
                     configMap.get(TestConstants.KEY_IDP_USER_PASSWORD));
             list.add("inetuserstatus=Active");
@@ -212,7 +236,7 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
                     configMap.get(KEY_IDP_USER_EMPLOYEE));
             list.add("postaladdress=" + 
                     configMap.get(KEY_IDP_USER_POSTAL));
-            list.add("telephonenumber=" + 
+            list.add("telephoneNumber=" + 
                     configMap.get(TestConstants.KEY_IDP_USER_TELE));
             list.add("homePhone=" + 
                     configMap.get(TestConstants.KEY_IDP_USER_HOMEPHONE));
@@ -228,6 +252,69 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
                     configMap.get(TestConstants.KEY_IDP_USER_SECRETARY));
             list.add("sunIdentityMSISDNNumber=" + 
                     configMap.get(TestConstants.KEY_IDP_USER_MSISDN));
+            list.add("nsrole=" + 
+                    configMap.get(TestConstants.KEY_IDP_USER_NSROLE));
+            // For nsrole attribute: 
+            // if the exist is Yes, then the nsrole attribute of a spuser or
+            // idpuser is checked after the filteredroles or roles are created
+            // if the exist is No, then the nsrole attribute of a spuser or 
+            // idpuser is checked after the filteredroles or roles are deleted
+            
+            // grabbing idp attribute multivalues list
+            Iterator iter = list.iterator();            
+            while(iter.hasNext()) {
+                String str = (String) iter.next();             
+                int index = str.indexOf("=");
+                if (index != -1) {
+                    String attrName = str.substring(0, index).trim();                    
+                    String strVal = str.substring(index + 1).trim();   
+                    // checking nsrole attribute
+                    if (attrName.equalsIgnoreCase("nsrole")) {                           
+                        if (testNSRoleType.equalsIgnoreCase("filteredrole")) {
+                            int id = strVal.indexOf("=");
+                            if (id != -1) {
+                                String frVal = strVal.substring(id + 1).trim();
+                                log(Level.FINEST, "setup", "idp filtered" +
+                                        "roles: " + frVal);
+                                idpfroles.add(frVal);                                                     
+                            }                                    
+                            idpboolfr = true;
+                        } else {
+                            int id = strVal.indexOf("=");
+                            if (id != -1) {
+                                String rVal = strVal.substring(id + 1).trim();
+                                log(Level.FINEST, "setup", "idp roles:" + rVal);
+                                idproles.add(rVal);                         
+                            }                
+                            idpboolr = true;
+                        }
+                    }           
+                    // adding multivalues to list                   
+                    if (attrName.equalsIgnoreCase(testAttribute)) {
+                        idpattrmultiVal.add(strVal);
+                    }                      
+                }                
+            }            
+            // create filteredroles if nsrole attribute is found and nsroletype 
+            // is filteredrole
+            if (idpboolfr) {
+                Iterator iterfr = idpfroles.iterator();
+                while (iterfr.hasNext()) {
+                    String strfr = (String) iterfr.next();
+                    List listfr = new ArrayList(); 
+                    listfr.add("cn=" + strfr);
+                    listfr.add("nsrolefilter=(objectclass=inetorgperson)");
+                    listfr.add("userpassword=" + strfr);
+                    if (FederationManager.getExitCode(fmIDP.createIdentity(
+                            idpWebClient, configMap.get(
+                            TestConstants.KEY_IDP_EXECUTION_REALM), 
+                            strfr, "filteredrole", listfr)) != 0) {
+                        log(Level.SEVERE, "setup", "createIdentity famadm " +
+                                "command" + " failed");
+                        assert false;
+                    }                 
+                }
+            }            
             if (FederationManager.getExitCode(fmIDP.createIdentity(idpWebClient,
                     configMap.get(TestConstants.KEY_IDP_EXECUTION_REALM),
                     configMap.get(TestConstants.KEY_IDP_USER), "User", list))
@@ -236,6 +323,70 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
                         "failed");
                 assert false;
             }
+            // create roles if nsrole attribute is found and nsroletype is role
+            // and assign the role to user
+            if (idpboolr) {
+                Iterator iterr = idproles.iterator();
+                while (iterr.hasNext()) {
+                    String strr = (String) iterr.next();
+                    List listr = new ArrayList(); 
+                    listr.add("cn=" + strr);
+                    listr.add("userpassword=" + strr);  
+                    if (FederationManager.getExitCode(fmIDP.createIdentity(
+                            idpWebClient, configMap.get(
+                            TestConstants.KEY_IDP_EXECUTION_REALM), 
+                            strr, "role", listr)) != 0) {
+                        log(Level.SEVERE, "setup", "createIdentity famadm " +
+                                "command" + " failed");
+                        assert false;
+                    }
+                    fmIDP.addMember(idpWebClient, configMap.get(TestConstants.
+                            KEY_IDP_EXECUTION_REALM), configMap.get(
+                            TestConstants.KEY_IDP_USER), "user", strr, "role");
+                }                
+            }
+            
+            // delete filteredroles or roles if exist attribute value is No
+            if (testNSRoleExist.equalsIgnoreCase("no")) {
+                // delete filteredroles if nsrole attribute is found 
+                // and nsroletype is filteredrole
+                if (idpboolfr) {
+                    Iterator iterfr = idpfroles.iterator();
+                    while (iterfr.hasNext()) {
+                        String strfr = (String) iterfr.next();
+                        List listfr = new ArrayList(); 
+                        listfr.add(strfr);                    
+                        if (FederationManager.getExitCode(fmIDP.deleteIdentities
+                                (idpWebClient, configMap.get(TestConstants.
+                                KEY_IDP_EXECUTION_REALM), listfr, 
+                                "filteredrole")) != 0) {
+                            log(Level.SEVERE, "setup", "deleteIdentity " +
+                                    "famadm command failed");
+                            assert false;
+                        }                    
+                    }
+                }
+                // delete roles if nsrole attribute is found and 
+                // nsroletype is role
+                if (idpboolr) {
+                    Iterator iterr = idproles.iterator();
+                    while (iterr.hasNext()) {
+                        String strr = (String) iterr.next();
+                        List listr = new ArrayList(); 
+                        listr.add(strr);                    
+                        if (FederationManager.getExitCode(fmIDP.deleteIdentities
+                                (idpWebClient, configMap.get(TestConstants.
+                                KEY_IDP_EXECUTION_REALM), listr, 
+                                "filteredrole")) != 0) {
+                            log(Level.SEVERE, "setup", "deleteIdentity " +
+                                    "famadm command failed");
+                            assert false;
+                        }                    
+                    }
+                }
+                idpexistbool = true;
+            }            
+            
             //Federated SSO URL
             fedSSOURL = spurl + "/saml2/jsp/spSSOInit.jsp?metaAlias=" +
                     configMap.get(TestConstants.KEY_SP_METAALIAS) +
@@ -255,7 +406,8 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
     /**
      * Enable Attribute Query
      */
-    @BeforeClass(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
+    @BeforeClass(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", 
+    "amsdk_sec", "jdbc_sec"})
     public void attributeQueryMapSetup()
     throws Exception {
         entering("attributeQueryMapSetup", null);
@@ -377,10 +529,10 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
     }
     
     /**
-     * Create the webClient which will be used for the rest of the tests.
+     * Creates the webClient which will be used for the rest of the tests.
      */
-    @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
-      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
+    @BeforeClass(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", 
+    "amsdk_sec", "jdbc_sec"})
     public void getWebClient()
     throws Exception {
         try {
@@ -395,31 +547,30 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
     }
     
     /**
-     * Execute the AttributeQuery tests
+     * Executes the AttributeQuery tests
      */
-    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", 
+    "amsdk_sec", "jdbc_sec"})
     public void attributeQueryTest()
     throws Exception {
         String attrQueryURL = null;
-        String ssopage;
-        String mnipage;
-        HtmlPage resultPage;
-        String result;
-        String expresult;
+        String ssopage;        
+        HtmlPage resultPage;                
         try {
+            ArrayList vallist = new ArrayList();
+            String values = "";
             Reporter.log("Test Description: This test  "+ testName + 
                     " will run to make sure " + 
                     " Attribute Query with test Type : " + testType +
                     " for the attribute : "  + testAttribute + 
                     " will work fine");
-            ssopage = configMap.get(TestConstants.KEY_SSO_RESULT);
-            mnipage = configMap.get(TestConstants.KEY_TERMINATE_RESULT);
+            ssopage = configMap.get(TestConstants.KEY_SSO_RESULT);           
             //Federate the users
             xmlfile = baseDir + testName + ".xml";
             SAMLv2Common.getxmlSPInitSSO(xmlfile, configMap, "artifact",
                     false, false);
             log(Level.FINEST, "attributeQueryTest", "Run " + xmlfile);
-            task1 = new DefaultTaskHandler(xmlfile);
+            task1 = new DefaultTaskHandler(xmlfile);      
             wpage = task1.execute(webClient);
             if(!wpage.getWebResponse().getContentAsString().contains(ssopage)) {
                 log(Level.SEVERE, "attributeQueryTest", "Couldn't " +
@@ -435,7 +586,24 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
                 log(Level.SEVERE, "attributeQueryTest", "Failed" + "SSO");
                 assert false;
             }
+            
             metaAliasname = configMap.get(TestConstants.KEY_SP_METAALIAS);
+            String idpuserMAttr = configMap.get(
+                    TestConstants.KEY_IDP_USER_MULTIATTRIBUTES);                    
+            vallist = (ArrayList) parseStringToList(idpuserMAttr, ",", "&");
+            Iterator iterMulti = vallist.iterator();
+            while(iterMulti.hasNext()) {
+                String str = (String) iterMulti.next();
+                int index = str.indexOf("=");                
+                if (index != -1) {      
+                    String attrName = str.substring(0, index).trim();   
+                    String strVal = str.substring(index + 1).trim();
+                    // grabbing multi values of the attribute called
+                    if (attrName.equalsIgnoreCase(testAttribute)) {
+                        values = values + "|" + strVal;                                
+                    }                    
+                }                
+            }  
             if (testType.equalsIgnoreCase("noAttr")) {
                 attrQueryURL = spurl + "/attrQuerytest.jsp?metaAlias=" + 
                         metaAliasname + "&idpEntityID=" +
@@ -451,29 +619,43 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
                         + "&attrValue=na";
                 log(Level.FINEST, "attributeQueryTest", "attrNamed case :" 
                         + attrQueryURL);
-            } else if (testType.equalsIgnoreCase("attrVal")) {
-                String value = getExpectedResult(testAttribute);
+            } else if (testType.equalsIgnoreCase("attrVal")) {                
+                values = values + "|" + getExpectedResult(testAttribute);
                 attrQueryURL = spurl + "/attrQuerytest.jsp?metaAlias=" + 
                         metaAliasname + "&idpEntityID=" +
                         configMap.get(TestConstants.KEY_IDP_ENTITY_NAME) +
-                        "&requestType=attrVal&attrName=na&attrValue=" + value;
+                        "&requestType=attrVal&attrName=na&attrValue=" + values;
                  log(Level.FINEST, "attributeQueryTest", "attrVal case :" 
                         + attrQueryURL);
             }
             log(Level.FINEST, "attributeQueryTest", "AttributeQueryURL" + 
                     attrQueryURL);
             URL aqurl = new URL(attrQueryURL);
-            resultPage = (HtmlPage)webClient.getPage(aqurl);
-            result = resultPage.getWebResponse().getContentAsString();
-            expresult = getExpectedResult(testAttribute);
-            log(Level.FINEST, "attributeQueryTest", "Expected Result" + 
-                    expresult);
-            if(!resultPage.getWebResponse().getContentAsString().
-                    contains(expresult)) {
-                log(Level.SEVERE, "attributeQueryTest", "Couldn't " +
-                        "Get results");
-                assert false;
+            resultPage = (HtmlPage)webClient.getPage(aqurl);     
+            log(Level.FINEST, "attributeQueryTest", "resultPage" + 
+                    resultPage.getWebResponse().getContentAsString());               
+            Iterator iter = idpattrmultiVal.iterator();
+            while (iter.hasNext()) {
+                String multiVal = (String) iter.next();
+                if (!idpexistbool) {
+                    if (!resultPage.getWebResponse().getContentAsString().
+                            contains(multiVal)) {
+                        log(Level.SEVERE, "attributeQueryTest", 
+                            "Couldn't find attribute value " +
+                            multiVal);
+                        assert false;
+                    }     
+                } else {
+                    if (resultPage.getWebResponse().getContentAsString().
+                            contains(multiVal)) {
+                        log(Level.SEVERE, "attributeQueryTest", 
+                            "Found attribute with multivalue " +
+                            multiVal);
+                        assert false;
+                    }             
+                }               
             }
+            
             log(Level.FINEST, "attributeQueryTest", "Result Page" + 
                     resultPage.asXml());
         } catch (Exception e){
@@ -484,9 +666,11 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
     }
     
     /**
-     * Clean up and deleted the created users for this test
+     * Cleans up and deletes the created users, roles and filteredroles
+     * for this test
      */
-    @AfterClass(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
+    @AfterClass(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", 
+    "amsdk_sec", "jdbc_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);
@@ -518,6 +702,46 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
                 log(Level.SEVERE, "setup", "deleteIdentity famadm command " +
                         "failed");
                 assert false;
+            }
+            // If exist attribute value is Yes, then filtereroles or roles 
+            // are deleted here
+            if (!idpexistbool) {
+                // delete filteredroles if nsrole attribute is found 
+                // and nsroletype is filteredrole
+                if (idpboolfr) {
+                    Iterator iterfr = idpfroles.iterator();
+                    while (iterfr.hasNext()) {
+                        String strfr = (String) iterfr.next();
+                        List listfr = new ArrayList(); 
+                        listfr.add(strfr);                    
+                        if (FederationManager.getExitCode(fmIDP.deleteIdentities
+                                (webcClient, configMap.get(TestConstants.
+                                KEY_IDP_EXECUTION_REALM), listfr, 
+                                "filteredrole")) != 0) {
+                            log(Level.SEVERE, "setup", "deleteIdentity " +
+                                    "famadm command failed");
+                            assert false;
+                        }                    
+                    }
+                }
+                // delete roles if nsrole attribute is found 
+                // and nsroletype is role
+                if (idpboolr) {
+                    Iterator iterr = idproles.iterator();
+                    while (iterr.hasNext()) {
+                        String strr = (String) iterr.next();
+                        List listr = new ArrayList(); 
+                        listr.add(strr);                    
+                        if (FederationManager.getExitCode(fmIDP.deleteIdentities
+                                (webcClient, configMap.get(TestConstants.
+                                KEY_IDP_EXECUTION_REALM), listr, 
+                                "filteredrole")) != 0) {
+                            log(Level.SEVERE, "setup", "deleteIdentity " +
+                                    "famadm command failed");
+                            assert false;
+                        }                    
+                    }
+                }
             }
         } catch(Exception e) {
             log(Level.SEVERE, "cleanup", e.getMessage());
@@ -560,6 +784,8 @@ public class SAMLv2AttributeQueryTests extends TestCommon {
             expected = configMap.get(TestConstants.KEY_IDP_USER_SECRETARY);
         } else if (attrString.equalsIgnoreCase("msi")) {
             expected = configMap.get(TestConstants.KEY_IDP_USER_MSISDN);
+        } else if (attrString.equalsIgnoreCase("nsrole")) {
+            expected = configMap.get(TestConstants.KEY_IDP_USER_NSROLE);
         } 
         return expected;
     }
