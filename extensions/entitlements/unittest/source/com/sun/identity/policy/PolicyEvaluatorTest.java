@@ -22,19 +22,24 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorTest.java,v 1.8 2009-01-30 09:17:16 veiming Exp $
+ * $Id: PolicyEvaluatorTest.java,v 1.9 2009-02-11 01:38:24 veiming Exp $
  */
 
 package com.sun.identity.policy;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.authentication.internal.server.AuthSPrincipal;
+import com.sun.identity.entitlement.Entitlement;
+import com.sun.identity.entitlement.SimulatedResult;
 import com.sun.identity.policy.interfaces.Subject;
 import com.sun.identity.security.AdminTokenAction;
 import java.security.AccessController;
+import java.security.Principal;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.testng.annotations.AfterClass;
@@ -134,6 +139,32 @@ public class PolicyEvaluatorTest {
             throw new Exception("testResourceSubTree: failed");
         }
     }
+
+    @Test
+    public void testSimulationSelf() throws Exception {
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        javax.security.auth.Subject subject = createSubject(adminToken);
+        SimulationEvaluator eval = new SimulationEvaluator(
+            subject, "iPlanetAMWebAgentService");
+        eval.setResource("http://www.sun.com:8080/private");
+        eval.setSubject(subject);
+        Set<String> policyNames = new HashSet<String>();
+        policyNames.add(POLICY_NAME1);
+        policyNames.add(POLICY_NAME2);
+        eval.setPolicies(policyNames);
+        eval.evaluate(false);
+        List<SimulatedResult> details = eval.getSimulatedResults();
+        for (SimulatedResult r : details) {
+            System.out.println(r.getPrivilegeName());
+            System.out.println(r.getEntitlement().getActionValues());
+        }
+        List<Entitlement> results = eval.getEntitlements();
+        for (Entitlement ent : results) {
+            System.out.println(ent.getResourceName());
+            System.out.println(ent.getActionValues());
+        }
+    }
     
     private Rule createRule1() throws PolicyException {
         Map<String, Set<String>> actionValues = 
@@ -171,4 +202,14 @@ public class PolicyEvaluatorTest {
         subject.setValues(set);
         return subject;
     }
+
+
+    private javax.security.auth.Subject createSubject(SSOToken token) {
+        Principal userP = new AuthSPrincipal(token.getTokenID().toString());
+        Set userPrincipals = new HashSet(2);
+        userPrincipals.add(userP);
+        return new javax.security.auth.Subject(true, userPrincipals,
+            Collections.EMPTY_SET, Collections.EMPTY_SET);
+    }
+
 }

@@ -22,17 +22,22 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SimulationEvaluator.java,v 1.1 2009-02-10 19:31:03 veiming Exp $
+ * $Id: SimulationEvaluator.java,v 1.2 2009-02-11 01:37:52 veiming Exp $
  */
 
 package com.sun.identity.policy;
 
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
+import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.SimulatedResult;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -49,7 +54,8 @@ public class SimulationEvaluator {
     private Map<String, Set<String>> envParameters;
     private Set<Policy> policies;
     private SimulationIndexCache cache;
-    private boolean recursive;
+    List<SimulatedResult> simulatedResults;
+    List<Entitlement> entitlements;
 
     /**
      * Constructor to create an evaluator given the service type.
@@ -82,16 +88,17 @@ public class SimulationEvaluator {
         }
     }
 
-    public void setRecursive(boolean r) {
-        this.recursive = r;
-    }
-
-    //TOFIX: should be setPrivileges
-    public void setPolicies(Set<Policy> policies)
-        throws PolicyException {
+    public void setPolicies(Set<String> policyNames)
+        throws PolicyException, SSOException {
         this.policies = new HashSet<Policy>();
-        if ((policies != null) && !policies.isEmpty()) {
-            this.policies.addAll(policies);
+
+        if ((policyNames != null) && !policyNames.isEmpty()) {
+            SSOToken adminSSOToken = getSSOToken(adminSubject);
+            PolicyManager pm = new PolicyManager(adminSSOToken, "/");
+
+            for (String name : policyNames) {
+                this.policies.add(pm.getPolicy(name));
+            }
         }
         buildCache();
     }
@@ -104,15 +111,102 @@ public class SimulationEvaluator {
         }
     }
 
-    public List<SimulatedResult> getSimulatedResults()
+    public void evaluate(boolean recursive)
         throws EntitlementException {
-        List<SimulatedResult> results = new ArrayList<SimulatedResult>();
-        if (!policies.isEmpty()) {
+        simulatedResults = null;
+        entitlements = null;
+
+        if ((policies != null) && !policies.isEmpty()) {
             SimulationPolicyEvaluator adaptor = new SimulationPolicyEvaluator(
                 cache);
-            adaptor.getEntitlements(adminSubject, subject, serviceTypeName,
-                resource, envParameters, recursive);
+            simulatedResults = adaptor.getSimulatedResults(adminSubject, 
+                subject, serviceTypeName, resource, envParameters, recursive);
+            mergeResults();
         }
-        return results;
+    }
+
+    private void mergeResults()
+        throws EntitlementException {
+        try {
+            if ((simulatedResults != null) && !simulatedResults.isEmpty()) {
+                ServiceType serviceType =
+                    ServiceTypeManager.getServiceTypeManager().getServiceType(
+                        serviceTypeName);
+                Map<String, PolicyDecision> tracker = new
+                    HashMap<String, PolicyDecision>();
+
+                for (SimulatedResult r : simulatedResults) {
+                    Entitlement ent = r.getEntitlement();
+                    String res = ent.getResourceName();
+                    PolicyDecision pd = EntitlementToPolicyDecision(
+                        ent, serviceType);
+                    PolicyDecision prevPd = tracker.get(res);
+                    if (prevPd == null) {
+                        tracker.put(res, pd);
+                    } else {
+                        tracker.put(res, PolicyEvaluator.mergePolicyDecisions(
+                            serviceType, prevPd, pd));
+                    }
+                }
+
+                entitlements = new ArrayList<Entitlement>();
+
+                for (String res : tracker.keySet()) {
+                    PolicyDecision pd = tracker.get(res);
+                    Entitlement ent = new Entitlement(serviceTypeName, res,
+                        pd.getActionDecisions());
+                    ent.setAdvices(pd.getResponseDecisions());
+                    ent.setAttributes(pd.getResponseAttributes());
+                    entitlements.add(ent);
+                }
+            }
+        } catch (PolicyException e) {
+            throw new EntitlementException(e.getMessage(), -1);
+        } catch (SSOException e) {
+            throw new EntitlementException(e.getMessage(), -1);
+        }
+    }
+
+    private PolicyDecision EntitlementToPolicyDecision(
+        Entitlement entitlement,
+        ServiceType serviceType
+    ) throws PolicyException {
+        PolicyDecision pd = new PolicyDecision();
+        Map actionValues = entitlement.getActionValues();
+
+        for (Iterator i = actionValues.keySet().iterator(); i.hasNext(); ) {
+            String actionName = (String)i.next();
+            Set values = (Set)actionValues.get(actionName);
+            ActionDecision ad = new ActionDecision(actionName, values);
+            ad.setAdvices(entitlement.getAdvices());
+            pd.addActionDecision(ad, serviceType);
+        }
+
+        pd.setResponseAttributes(entitlement.getAttributes());
+        return pd;
+    }
+
+    public List<Entitlement> getEntitlements() {
+        return entitlements;
+    }
+
+    public List<SimulatedResult> getSimulatedResults() {
+        return simulatedResults;
+    }
+
+    private SSOToken getSSOToken(Subject subject)
+        throws SSOException {
+        Set<Principal> principals = subject.getPrincipals();
+        if (!principals.isEmpty()) {
+            try {
+                Principal p = principals.iterator().next();
+                String tokenId = p.getName();
+                SSOTokenManager mgr = SSOTokenManager.getInstance();
+                return mgr.createSSOToken(tokenId);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 }

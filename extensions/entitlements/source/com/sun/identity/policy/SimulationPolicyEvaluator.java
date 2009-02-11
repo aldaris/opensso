@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SimulationPolicyEvaluator.java,v 1.1 2009-02-10 19:31:03 veiming Exp $
+ * $Id: SimulationPolicyEvaluator.java,v 1.2 2009-02-11 01:38:23 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -34,6 +34,7 @@ import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.SimulatedResult;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -128,8 +129,15 @@ public class SimulationPolicyEvaluator
         for (PolicyDecisionTask.Task t : results) {
             Policy p = t.policy;
             PolicyDecision pd = t.policyDecision;
+            Map<String, ActionDecision> actionDecisions =
+                pd.getActionDecisions();
+            Map actionValues = new HashMap();
+            for (String actionName : actionDecisions.keySet()) {
+                ActionDecision ad = actionDecisions.get(actionName);
+                actionValues.put(actionName, ad.getValues());
+            }
             Entitlement ent = new Entitlement(serviceTypeName, t.resource,
-                pd.getActionDecisions());
+                actionValues);
             ent.setAdvices(pd.getResponseDecisions());
             ent.setAttributes(pd.getResponseAttributes());
 
