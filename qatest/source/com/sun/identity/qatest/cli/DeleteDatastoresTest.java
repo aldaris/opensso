@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteDatastoresTest.java,v 1.1 2009-02-05 01:17:31 srivenigan Exp $
+ * $Id: DeleteDatastoresTest.java,v 1.2 2009-02-11 19:31:24 srivenigan Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -73,6 +73,12 @@ public class DeleteDatastoresTest extends TestCommon implements CLIExitCodes {
     private String testDatastores;
     private FederationManagerCLI cli;    
     private List list;
+    private String ldapServerSchemaName = 
+            "sun-idrepo-ldapv3-config-ldap-server=";
+    private String orgSchemaName = 
+            "sun-idrepo-ldapv3-config-organization_name=";
+    private String authIdSchema = "sun-idrepo-ldapv3-config-authid=";
+    private String authPwSchema = "sun-idrepo-ldapv3-config-authpw=";
     
     /** 
      * Creates a new instance of DeleteDatastoresTest 
@@ -147,20 +153,35 @@ public class DeleteDatastoresTest extends TestCommon implements CLIExitCodes {
                             "sun-idrepo-ldapv3-config-referrals=true";
                     // Setup schema in the directories.
                     LDAPCommon ldc = null;
-                    String datastoreDetails = (String) rb.getString(
-                            datastoreTypes[i] + "-datastore-details");
-                    String[] s = datastoreDetails.split(";");
-                    /*
-                     * s[0] = server name;
-                     * s[1] = port;
-                     * s[2] = ldap bind DN
-                     * s[3] = ldap password
-                     * s[4] = organization name;
-                     */
-                    ldc = new LDAPCommon(s[0], s[1], s[2], s[3], s[4]);
+                    ResourceBundle dsCommon = ResourceBundle.getBundle("cli" + 
+                             fileseparator + "DatastoreCommon");        
+                    String ldapServer = dsCommon.getString(datastoreTypes[i] + 
+                            "-ldap-server");
+                    String ldapPort = dsCommon.getString(datastoreTypes[i] + 
+                            "-ldap-port");
+                    String ldapBindDN = dsCommon.getString(datastoreTypes[i] + 
+                            "-authid");
+                    String ldapPwd = dsCommon.getString(datastoreTypes[i] + 
+                            "-authpw");
+                    String orgName = dsCommon.getString(datastoreTypes[i] + 
+                            "-root-suffix");
+
+                    log(Level.FINEST, "setup", "Ldap Server: " + 
+                            ldapServer);
+                    log(Level.FINEST, "setup", "Ldap Port: " + 
+                            ldapPort);
+                    log(Level.FINEST, "setup", "Ldap Bind DN: "  
+                            + ldapBindDN);
+                    log(Level.FINEST, "setup", "Ldap Password: "
+                            + ldapPwd);
+                    log(Level.FINEST, "setup", "Organization " +
+                            "Name: " + orgName);
+
+                    ldc = new LDAPCommon(ldapServer, ldapPort, ldapBindDN,
+                            ldapPwd, orgName);
                     ResourceBundle smsGblCfg = ResourceBundle.getBundle(
-                            "config" + fileseparator + "default" +
-                            fileseparator + "UMGlobalConfig");
+                                    "config" + fileseparator + "default" +
+                                    fileseparator + "UMGlobalConfig");
                     if (datastoreTypes[i].equals("LDAPv3ForAMDS")) {
                         String schemaString = (String) smsGblCfg.getString(
                                 SMSConstants.UM_SCHEMNA_LIST + "." +
@@ -217,12 +238,11 @@ public class DeleteDatastoresTest extends TestCommon implements CLIExitCodes {
                     if (!attrValues.equals("")) {
                         buf.append(";");
                     }
-                    buf.append("sun-idrepo-ldapv3-config-ldap-server=" + s[0] + 
-                            ":" + s[1] + ";");
-                    buf.append("sun-idrepo-ldapv3-config-authid=" + s[2] + ";");
-                    buf.append("sun-idrepo-ldapv3-config-authpw=" + s[3] + ";");
-                    buf.append("sun-idrepo-ldapv3-config-organization_name=" 
-                            + s[4]);
+                    buf.append(ldapServerSchemaName + ldapServer + ":" + 
+                            ldapPort + ";");
+                    buf.append(authIdSchema + ldapBindDN + ";");
+                    buf.append(authPwSchema + ldapPwd + ";");
+                    buf.append(orgSchemaName + orgName);
                     attrValues = buf.toString();
                     log(Level.FINEST, "setup", "Attribute" +
                             " values: " + attrValues);
@@ -251,6 +271,7 @@ public class DeleteDatastoresTest extends TestCommon implements CLIExitCodes {
             exiting("setup");
         } catch (Exception e) {
             log(Level.SEVERE, "setup", e.getMessage(), null);
+            cleanup();
             e.printStackTrace();
             throw e;
         } 
@@ -339,11 +360,10 @@ public class DeleteDatastoresTest extends TestCommon implements CLIExitCodes {
                 log(Level.FINE, "testDatastoreDeletion", "Listing test " +
                         "datastores in realm" + realmName);
                 cli.logCommand("testDatastoreDeletion");
-                testDatastores.replace(',', ';');
                 boolean datastoresFound = cli.findStringsInOutput(
-                        testDatastores, ";");
+                        testDatastores, ",");
                 assert (commandStatus == new Integer(
-                        expectedExitCode).intValue()) && datastoresFound; 
+                        expectedExitCode).intValue()) && !datastoresFound; 
                 log(Level.FINEST, "testDatastoreDeletion", 
                         "Datastores deleted successfully");
                 cli.resetArgList();

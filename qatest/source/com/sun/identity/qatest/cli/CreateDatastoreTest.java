@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateDatastoreTest.java,v 1.1 2009-02-05 01:09:43 srivenigan Exp $
+ * $Id: CreateDatastoreTest.java,v 1.2 2009-02-11 19:29:29 srivenigan Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -33,7 +33,6 @@
 package com.sun.identity.qatest.cli;
 
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.authentication.AuthContext;
 import com.sun.identity.qatest.common.LDAPCommon;
 import com.sun.identity.qatest.common.SMSConstants;
 import com.sun.identity.qatest.common.authentication.AuthTestConfigUtil;
@@ -215,17 +214,27 @@ public class CreateDatastoreTest extends TestCommon implements CLIExitCodes {
             
             //Setup schema in the directories before creating data stores.
             LDAPCommon ldc = null;
-            String datastoreDetails = (String) rb.getString(datastoreType +
-                    "-datastore-details");
-            String[] s = datastoreDetails.split(";");
-            /*
-             * s[0] = server name;
-             * s[1] = port;
-             * s[2] = ldap bind DN
-             * s[3] = ldap password
-             * s[4] = organization name;
-             */
-            ldc = new LDAPCommon(s[0], s[1], s[2], s[3], s[4]);
+            ResourceBundle dsCommon = ResourceBundle.getBundle("cli" + 
+                     fileseparator + "DatastoreCommon");        
+            String ldapServer = dsCommon.getString(datastoreType + 
+                    "-ldap-server");
+            String ldapPort = dsCommon.getString(datastoreType + "-ldap-port");
+            String ldapBindDN = dsCommon.getString(datastoreType + "-authid");
+            String ldapPwd = dsCommon.getString(datastoreType + "-authpw");
+            String orgName = dsCommon.getString(datastoreType + "-root-suffix");
+
+            log(Level.FINEST, "testDatastoreCreation", "Ldap Server: " + 
+                    ldapServer);
+            log(Level.FINEST, "testDatastoreCreation", "Ldap Port: " + ldapPort);
+            log(Level.FINEST, "testDatastoreCreation", "Ldap Bind DN: " + 
+                    ldapBindDN);
+            log(Level.FINEST, "testDatastoreCreation", "Ldap Password: " + 
+                    ldapPwd);
+            log(Level.FINEST, "testDatastoreCreation", "Organization Name: " + 
+                    orgName);
+            
+            ldc = new LDAPCommon(ldapServer, ldapPort, ldapBindDN, ldapPwd, 
+                    orgName);
             ResourceBundle smsGblCfg = ResourceBundle.getBundle("config" + 
                     fileseparator + "default" + fileseparator + 
                     "UMGlobalConfig");
@@ -281,10 +290,10 @@ public class CreateDatastoreTest extends TestCommon implements CLIExitCodes {
             StringBuffer buf = new StringBuffer(attrValues);
             if (!attrValues.equals(""))
             buf.append(";");
-            buf.append(ldapServerSchemaName + s[0] + ":" + s[1] + ";");
-            buf.append(authIdSchema + s[2] + ";");
-            buf.append(authPwSchema + s[3] + ";");
-            buf.append(orgSchemaName + s[4]);
+            buf.append(ldapServerSchemaName + ldapServer + ":" + ldapPort + ";");
+            buf.append(authIdSchema + ldapBindDN + ";");
+            buf.append(authPwSchema + ldapPwd + ";");
+            buf.append(orgSchemaName + orgName);
             attrValues = buf.toString();
             log(Level.FINEST, "testDatastoreCreation", "Attribute values: " +
                     attrValues);
