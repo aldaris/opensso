@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilige.java,v 1.3 2009-02-02 20:59:51 dillidorai Exp $
+ * $Id: Privilige.java,v 1.4 2009-02-11 01:09:48 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -37,7 +37,8 @@ import javax.security.auth.Subject;
  */
 public class Privilige {
 
-    private Entitlement entitlement;
+    private String name;
+    private Set<Entitlement> entitlements;
     private SubjectFilter subjectFilter;
     private ConditionFilter conditionFilter;
     
@@ -49,9 +50,18 @@ public class Privilige {
      */
     public Privilige(
             String name,
-            Entitlement entitlement,
+            Set<Entitlement> entitlements,
             SubjectFilter subjectFilter,
             ConditionFilter cf) {
+    }
+
+    /**
+     * Returns the name of the privilige
+     * @return name of the privilige.
+     * @throws EntitlementException in case of any error
+     */
+    public String  getName() {
+        return name;
     }
 
     /**
@@ -69,8 +79,16 @@ public class Privilige {
             throws EntitlementException {
         return false;
     }
+
+    /**
+     * Returns entitlements defined in the privilige
+     * @return entitlements defined in the privilige
+     */
+    public Set<Entitlement> getEntitlements() {
+        return entitlements;
+    }
     
-       /**
+    /**
      * Returns a list of entitlements for a given subject, resource name
      * and environment.
      * 
