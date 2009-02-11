@@ -21,7 +21,7 @@
                 styleClass="button"
                 value="Next"
                 partialSubmit="true"
-                visible="${step != steps-1}"
+                visible="#{step &lt;= steps-1}"
                 actionListener="#{wizardHandler.nextListener}">
                 <f:attribute name="step" value="#{step}"/>
                 <f:attribute name="steps" value="#{steps}"/>
