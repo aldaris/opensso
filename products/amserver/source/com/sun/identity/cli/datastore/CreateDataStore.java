@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateDataStore.java,v 1.3 2008-12-16 06:47:02 veiming Exp $
+ * $Id: CreateDataStore.java,v 1.4 2009-02-11 17:21:31 veiming Exp $
  *
  */
 
@@ -31,7 +31,6 @@ package com.sun.identity.cli.datastore;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.cli.AttributeValues;
-import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
 import com.sun.identity.cli.IArgument;
@@ -55,7 +54,7 @@ import java.util.Set;
 /**
  * List the names of data store under a realm.
  */
-public class CreateDataStore extends AuthenticatedCommand {
+public class CreateDataStore extends DataStoreBase {
     
     /**
      * Handles request.
@@ -81,6 +80,8 @@ public class CreateDataStore extends AuthenticatedCommand {
                 getResourceString("datastore-create-datastore-missing-data"),
                 ExitCodes.INCORRECT_OPTION, rc.getSubCommand().getName());
         }
+
+        validateRealm(realm);
         
         Map attributeValues = AttributeValues.parse(getCommandManager(),
             datafile, listValues);

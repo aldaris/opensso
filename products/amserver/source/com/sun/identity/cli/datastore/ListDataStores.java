@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ListDataStores.java,v 1.3 2008-12-16 06:47:06 veiming Exp $
+ * $Id: ListDataStores.java,v 1.4 2009-02-11 17:21:31 veiming Exp $
  *
  */
 
@@ -30,7 +30,6 @@ package com.sun.identity.cli.datastore;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
 import com.sun.identity.cli.IArgument;
@@ -48,7 +47,7 @@ import java.util.Set;
 /**
  * List the names of data store under a realm.
  */
-public class ListDataStores extends AuthenticatedCommand {
+public class ListDataStores extends DataStoreBase {
     
     /**
      * Handles request.
@@ -63,6 +62,9 @@ public class ListDataStores extends AuthenticatedCommand {
         SSOToken adminSSOToken = getAdminSSOToken();
 
         String realm = getStringOptionValue(IArgument.REALM_NAME);
+
+        validateRealm(realm);
+        
         String[] params = {realm};
         writeLog(LogWriter.LOG_ACCESS, Level.INFO,
             "ATTEMPT_LIST_DATASTORES", params);

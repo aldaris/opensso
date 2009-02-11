@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DeleteDataStores.java,v 1.3 2008-12-16 06:47:05 veiming Exp $
+ * $Id: DeleteDataStores.java,v 1.4 2009-02-11 17:21:31 veiming Exp $
  *
  */
 
@@ -30,7 +30,6 @@ package com.sun.identity.cli.datastore;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.cli.AuthenticatedCommand;
 import com.sun.identity.cli.CLIException;
 import com.sun.identity.cli.ExitCodes;
 import com.sun.identity.cli.IArgument;
@@ -47,7 +46,7 @@ import java.util.List;
 /**
  * List the names of data store under a realm.
  */
-public class DeleteDataStores extends AuthenticatedCommand {
+public class DeleteDataStores extends DataStoreBase {
     
     /**
      * Handles request.
@@ -63,6 +62,8 @@ public class DeleteDataStores extends AuthenticatedCommand {
 
         String realm = getStringOptionValue(IArgument.REALM_NAME);
         List names = (List)rc.getOption(DatastoreOptions.DATASTORE_NAMES);
+
+        validateRealm(realm);
         
         String[] params = {realm, names.toString()};
         writeLog(LogWriter.LOG_ACCESS, Level.INFO,
