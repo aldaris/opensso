@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.cpp,v 1.41 2009-01-14 23:31:56 madan_ranganath Exp $
+ * $Id: am_web.cpp,v 1.42 2009-02-11 09:42:04 soumendra Exp $
  *
  */
 
@@ -5126,8 +5126,13 @@ get_original_method(am_web_request_params_t *req_params,
 
     *orig_method = AM_WEB_REQUEST_UNKNOWN;
 
+am_web_log_debug("SOMS:%s url <%s>", thisfunc, req_params->url);
     status = am_web_get_parameter_value(req_params->url,
 		    REQUEST_METHOD_TYPE, &orig_method_str);
+if (status == AM_SUCCESS)
+    am_web_log_debug("SOMS:%s am_web_get_parameter_value returns success", thisfunc);
+else
+    am_web_log_debug("SOMS:%s am_web_get_parameter_value returns failure for <%s>", thisfunc, REQUEST_METHOD_TYPE);
     if (status == AM_SUCCESS) {
 	if (orig_method_str == NULL || orig_method_str[0] == '\0') {
 	    status = AM_NOT_FOUND;
@@ -5170,6 +5175,7 @@ process_cdsso(
     am_status_t local_sts = AM_SUCCESS;
     am_web_req_method_t method = req_params->method;
 
+am_web_log_debug("SOMS:%s ", thisfunc);
     // Check args
     if (req_params->url == NULL ||
 	sso_token == NULL || orig_method == NULL) {
@@ -5641,41 +5647,44 @@ get_sso_token(am_web_request_params_t *req_params,
     const char *thisfunc = "get_sso_token()";
     am_status_t sts = AM_NOT_FOUND;
 
-    *orig_method = AM_WEB_REQUEST_UNKNOWN;
+    am_web_req_method_t req_method = AM_WEB_REQUEST_UNKNOWN;
 
-    // If cdsso is enabled, check for the original method in query parameters.
-    // If the "original method" query parameter exists and is valid (GET/POST),
-    // this must be a redirect from the CDC servlet on IS. In this case
-    // get the sso token from assertion and ignore the cookie in the agent's
-    // domain, in case user has logged out of IS but sso token cookie in
-    // agent's domain has not been updated.
-    if ((*agentConfigPtr)->cdsso_enable == AM_TRUE &&
-	(sts = get_original_method(req_params, orig_method)) != AM_SUCCESS &&
-	sts != AM_NOT_FOUND) {
-	am_web_log_error("%s: Error while checking if original method "
-			 "is in query parameter: %s",
-			 thisfunc, am_status_to_string(sts));
-    }
-    else if (*orig_method == AM_WEB_REQUEST_GET ||
-	     *orig_method == AM_WEB_REQUEST_POST) {
-	// this can only be if we're in cdsso and original method in
-	// query parameters was a valid get or post.
-	sts = process_cdsso(req_params, req_func, *orig_method, sso_token, agent_config);
-    }
-    else {
-	sts = get_cookie_val(am_web_get_cookie_name(agent_config),
-			     req_params->cookie_header_val, sso_token);
-    }
-
+    /* Get the sso token from cookie header */
+    sts = get_cookie_val(am_web_get_cookie_name(agent_config),
+                            req_params->cookie_header_val, sso_token);
     if (sts != AM_SUCCESS && sts != AM_NOT_FOUND) {
-	am_web_log_error("%s: Error while getting sso token from "
-			 "assertion in cdsso or cookie header: %s",
-			 thisfunc, am_status_to_string(sts));
-    }
+        am_web_log_error("%s: Error while getting sso token from "
+                         "cookie header: %s", thisfunc, 
+                         am_status_to_string(sts));
+    } 
     else if (sts == AM_SUCCESS &&
-	     (*sso_token == NULL || (*sso_token)[0] == '\0')) {
-	sts = AM_NOT_FOUND;
+             (*sso_token == NULL || (*sso_token)[0] == '\0')) {
+        sts = AM_NOT_FOUND;
     }
+
+    /**
+     * If SSO token is not found and CDSSO mode is enabled
+     * check for the request method.
+     * If the method is POST, 
+     *     1) set the request method to GET 
+     *     2) try to get the SSO token from assertion
+     */
+    if ((*agentConfigPtr)->cdsso_enable == AM_TRUE &&
+       ((req_method = req_params->method) == AM_WEB_REQUEST_POST &&
+        sts == AM_NOT_FOUND )) {
+        req_method = AM_WEB_REQUEST_GET;
+        sts = process_cdsso(req_params, req_func, req_method, sso_token, agent_config); 
+        if (sts != AM_SUCCESS && sts != AM_NOT_FOUND) {
+            am_web_log_error("%s: Error while getting sso token from "
+                             "assertion in cdsso: %s", thisfunc,
+                             am_status_to_string(sts));
+        }
+        else if (sts == AM_SUCCESS &&
+    	         (*sso_token == NULL || (*sso_token)[0] == '\0')) {
+	    sts = AM_NOT_FOUND;
+        }
+    }
+
     return sts;
 }
 
