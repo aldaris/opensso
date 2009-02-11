@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.10 2009-01-22 20:03:11 veiming Exp $
+ * $Id: Entitlement.java,v 1.11 2009-02-11 01:06:07 dillidorai Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -60,7 +60,7 @@ import javax.security.auth.Subject;
 public class Entitlement {
     private String serviceName;
     private String resourceName;
-    private Set<String> excludedResourceNames; //TODO - add methods
+    private Set<String> excludedResourceNames;
     private Map<String, Object> actionValues;
     private Map<String, String> advices;
     private Map<String, Set<String>> attributes;
