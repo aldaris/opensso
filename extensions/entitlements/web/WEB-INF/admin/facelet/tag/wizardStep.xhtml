@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ice="http://www.icesoft.com/icefaces/component">
+    <ice:panelCollapsible
+        expanded="#{wizardBean.wizardStepBeans[step].expanded}"
+        disabled="#{!wizardBean.wizardStepBeans[step].enabled}"
+        actionListener="#{wizardHandler.expandListener}">
+        <f:attribute name="step" value="#{step}"/>
+        <f:attribute name="steps" value="#{steps}"/>
+        <f:facet name="header">
+            <ice:panelGroup>
+                <ice:outputText value="#{label}"/>
+            </ice:panelGroup>
+        </f:facet>
+        <ui:insert name="wizard-step-body"/>
+        <ice:panelGrid columns="2">
+            <ice:commandButton
+                value="Next"
+                partialSubmit="true"
+                visible="${step != steps-1}"
+                actionListener="#{wizardHandler.nextListener}">
+                <f:attribute name="step" value="#{step}"/>
+                <f:attribute name="steps" value="#{steps}"/>
+            </ice:commandButton>
+            <ice:commandButton
+                value="Previous"
+                partialSubmit="true"
+                visible="#{step != 0}"
+                actionListener="#{wizardHandler.previousListener}">
+                <f:attribute name="step" value="#{step}"/>
+                <f:attribute name="steps" value="#{steps}"/>
+            </ice:commandButton>
+        </ice:panelGrid>
+    </ice:panelCollapsible>
+</ui:composition>

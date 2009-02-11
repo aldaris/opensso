@@ -3,27 +3,24 @@ package com.sun.identity.admin.model;
 import java.io.Serializable;
 
 public class WizardBean implements Serializable {
-    private boolean[] active = new boolean[16];
+    private WizardStepBean[] wizardStepBeans = null;
 
     public WizardBean() {
+        reset();
+    }
+
+    public void reset() {
+        wizardStepBeans = new WizardStepBean[16];
         for (int i = 0; i < 16; i++) {
-            active[i] = false;
+            wizardStepBeans[i] = new WizardStepBean();
         }
-        active[0] = true;
+
+        WizardStepBean first = getWizardStepBeans()[0];
+        first.setEnabled(true);
+        first.setExpanded(true);
     }
 
-    /**
-     * @return the expanded
-     */
-    public boolean[] getActive() {
-        return active;
+    public WizardStepBean[] getWizardStepBeans() {
+        return wizardStepBeans;
     }
-
-    /**
-     * @param expanded the expanded to set
-     */
-    public void setActive(boolean[] active) {
-        this.active = active;
-    }
-
 }

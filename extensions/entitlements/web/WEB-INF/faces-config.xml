@@ -17,13 +17,13 @@
         </message-bundle>
     </application>
 
-   <managed-bean>
+    <managed-bean>
         <managed-bean-name>policyCreateWizardBean</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.WizardBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
-   <managed-bean>
+    <managed-bean>
         <managed-bean-name>policyCreateWizardHandler</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.handler.WizardHandler</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
@@ -62,5 +62,32 @@
             <from-outcome>samlv2Workflow</from-outcome>
             <to-view-id>/admin/facelet/samlv2-workflow.xhtml</to-view-id>
         </navigation-case>               
+    </navigation-rule>
+
+    <navigation-rule>
+        <navigation-case>
+            <from-outcome>policy</from-outcome>
+            <to-view-id>/admin/facelet/policy.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>federation</from-outcome>
+            <to-view-id>/admin/facelet/federation.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>monitoring</from-outcome>
+            <to-view-id>/admin/facelet/monitoring.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>policyCreate</from-outcome>
+            <to-view-id>/admin/facelet/policy-create.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>policyManage</from-outcome>
+            <to-view-id>/admin/facelet/policy-manage.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>resourceManage</from-outcome>
+            <to-view-id>/admin/facelet/resource-manage.xhtml</to-view-id>
+        </navigation-case>
     </navigation-rule>
 </faces-config>

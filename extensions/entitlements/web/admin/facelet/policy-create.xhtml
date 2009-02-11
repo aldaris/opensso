@@ -3,7 +3,8 @@
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:f="http://java.sun.com/jsf/core"
-                xmlns:ice="http://www.icesoft.com/icefaces/component">
+                xmlns:ice="http://www.icesoft.com/icefaces/component"
+                xmlns:o="http://opensso.dev.java.net">
     <ui:define name="panel-title">
         <ice:outputText value="${msg.policyCreatePanelTitle}" />
     </ui:define>
@@ -11,46 +12,47 @@
         <ice:outputText value="${msg.policyCreatePanelDetails}" />
     </ui:define>
     <ui:define name="panel-body">
-        <ice:panelCollapsible
-            expanded="#{policyCreateWizardBean.active[0]}"
-            actionListener="#{policyCreateWizardHandler.toggle}">
-            <f:attribute id="step" name="" value="0"/>
-            <f:facet name="header">
-                <ice:panelGroup>
-                    <ice:outputText value="Step 1: Getting started"/>
-                </ice:panelGroup>
-            </f:facet>
-        </ice:panelCollapsible>
-        <ice:panelCollapsible 
-            expanded="#{policyCreateWizardBean.active[1]}"
-            actionListener="#{policyCreateWizardHandler.toggle}">
-            <f:attribute id="step" name="" value="1"/>
-            <f:facet name="header">
-                <ice:panelGroup>
-                    <ice:outputText value="Step 2: Select or add a resource to protect"/>
-                </ice:panelGroup>
-            </f:facet>
-        </ice:panelCollapsible>
-        <ice:panelCollapsible expanded="#{policyCreateWizardBean.active[2]}">
-            <f:facet name="header">
-                <ice:panelGroup>
-                    <ice:outputText value="Step 3: Select or add the users that this policy applies to"/>
-                </ice:panelGroup>
-            </f:facet>
-        </ice:panelCollapsible>
-        <ice:panelCollapsible expanded="#{policyCreateWizardBean.active[3]}">
-            <f:facet name="header">
-                <ice:panelGroup>
-                    <ice:outputText value="Step 4: Advanced settings"/>
-                </ice:panelGroup>
-            </f:facet>
-        </ice:panelCollapsible>
-        <ice:panelCollapsible expanded="#{policyCreateWizardBean.active[4]}">
-            <f:facet name="header">
-                <ice:panelGroup>
-                    <ice:outputText value="Step 5: Review and complete"/>
-                </ice:panelGroup>
-            </f:facet>
-        </ice:panelCollapsible>
+        <o:wizard
+            steps="5"
+            wizardHandler="#{policyCreateWizardHandler}"
+            wizardBean="#{policyCreateWizardBean}">
+            <ui:define name="wizard-steps">
+                <o:wizardStep
+                    step="0"
+                    label="Step 1: Getting started">
+                    <ui:define name="wizard-step-body">
+                        Step 1 ...
+                    </ui:define>
+                </o:wizardStep>
+                <o:wizardStep
+                    step="1"
+                    label="Step 2: Select or add a resource to protect">
+                    <ui:define name="wizard-step-body">
+                        Step 2 ...
+                    </ui:define>
+                </o:wizardStep>
+                <o:wizardStep
+                    step="2"
+                    label="Step 3: Select or add the users that this policy applies to">
+                    <ui:define name="wizard-step-body">
+                        Step 3 ...
+                    </ui:define>
+                </o:wizardStep>
+                <o:wizardStep
+                    step="3"
+                    label="Step 4: Advanced settings">
+                    <ui:define name="wizard-step-body">
+                        Step 4 ...
+                    </ui:define>
+                </o:wizardStep>
+                <o:wizardStep
+                    step="4"
+                    label="Step 5: Review and complete">
+                    <ui:define name="wizard-step-body">
+                        Step 5 ...
+                    </ui:define>
+                </o:wizardStep>
+            </ui:define>
+        </o:wizard>
     </ui:define>
 </ui:composition>
