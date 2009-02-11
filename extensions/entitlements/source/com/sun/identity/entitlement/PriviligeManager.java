@@ -22,14 +22,50 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PriviligeManager.java,v 1.1 2009-01-12 22:08:38 dillidorai Exp $
+ * $Id: PriviligeManager.java,v 1.2 2009-02-11 01:18:30 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
+
+import java.util.Map;
+import javax.security.auth.Subject;
 
 /**
  * Class to manage entitlement priviliges: to add, remove, modify privilige
  */
-public class PriviligeManager {
+public abstract class PriviligeManager {
+
+    /**
+     * Returns instance of configured <code>PriviligeManager</code>
+     * @param subject subject that would be used for the privilige management 
+     * operations
+     * @return instance of configured <code>PriviligeManager</code>
+     */
+    static public PriviligeManager getInstance(Subject subject) {
+        PriviligeManager pm = null;
+        try {
+            //TODO: read the class name from configuration
+            pm = (PriviligeManager) Class.forName(
+                    "com.sun.identity.policy.PolicyPriviligeManager").
+                    newInstance();
+            pm.initialize(subject);
+        } catch (ClassNotFoundException cnfe) {
+            //TODO: add debug
+        } catch (InstantiationException ie) {
+            //TODO: add debug
+        } catch (IllegalAccessException iae) {
+            //TODO: add debug
+        }
+        return pm;
+    }
+
+    public PriviligeManager() {
+    }
+
+    /**
+     * Initializes the object
+     * @param subject subject to initilialize the privilige manager with
+     */
+    public abstract void initialize(Subject subject);
 
     /**
      * Adds a privilige
