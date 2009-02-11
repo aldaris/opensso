@@ -70,6 +70,12 @@ h1 {
     border-top: 1px solid #DDDDDD;
 }
 
+.button {
+    padding: 2px 4px 2px 4px;
+    background: #CCCCCC;
+    width: 80px;
+}
+
 #homeTabContent {
     width: 100%;
 }

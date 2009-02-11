@@ -18,6 +18,7 @@
         <ui:insert name="wizard-step-body"/>
         <ice:panelGrid columns="2">
             <ice:commandButton
+                styleClass="button"
                 value="Next"
                 partialSubmit="true"
                 visible="${step != steps-1}"
@@ -26,6 +27,7 @@
                 <f:attribute name="steps" value="#{steps}"/>
             </ice:commandButton>
             <ice:commandButton
+                styleClass="button"
                 value="Previous"
                 partialSubmit="true"
                 visible="#{step != 0}"
