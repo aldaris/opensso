@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SiteStatusCheckThreadImpl.java,v 1.4 2008-08-30 06:19:49 ericow Exp $
+ * $Id: SiteStatusCheckThreadImpl.java,v 1.5 2009-02-12 00:39:54 beomsuk Exp $
  *
  */
 
@@ -52,8 +52,8 @@ public class SiteStatusCheckThreadImpl implements SiteStatusCheck {
     protected static Debug debug = Debug.getInstance("amNaming");
     private static int timeout = Long.valueOf(SystemProperties.
             get(Constants.MONITORING_TIMEOUT, "10000")).intValue();
-    private static final String hcPath = SystemProperties.
-            get(Constants.URLCHECKER_TARGET_URL, "/amserver/namingservice");
+    private static String hcPath = SystemProperties.
+            get(Constants.URLCHECKER_TARGET_URL, null);
     private static int urlCheckerInvalidateInterval = 
     	    Long.valueOf(SystemProperties.
             get(Constants.URLCHECKER_INVALIDATE_INTERVAL, "70000")).intValue();
@@ -65,6 +65,17 @@ public class SiteStatusCheckThreadImpl implements SiteStatusCheck {
             get(Constants.URLCHECKER_RETRY_LIMIT, "3")).intValue();
 
     private HashMap urlCheckers = null;
+    
+    static {
+        if (hcPath == null) {
+            String deployuri = SystemProperties.get
+                (Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR, "/opensso");
+            hcPath = deployuri + "/namingservice";
+            if (!hcPath.startsWith("/")) {
+                hcPath += "/" + hcPath;
+            }
+        }
+    }
 
     /**
      * Constructs a SiteStatusCheckThreadImpl object based on the configured
