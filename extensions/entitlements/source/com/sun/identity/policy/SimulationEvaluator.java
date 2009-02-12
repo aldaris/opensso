@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SimulationEvaluator.java,v 1.2 2009-02-11 01:37:52 veiming Exp $
+ * $Id: SimulationEvaluator.java,v 1.3 2009-02-12 05:33:10 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -35,6 +35,7 @@ import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.SimulatedResult;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -121,8 +122,27 @@ public class SimulationEvaluator {
                 cache);
             simulatedResults = adaptor.getSimulatedResults(adminSubject, 
                 subject, serviceTypeName, resource, envParameters, recursive);
+            computeNotApplicablePolicies();
             mergeResults();
         }
+    }
+
+    private void computeNotApplicablePolicies() {
+        Set<String> applicables = new HashSet<String>();
+        for (SimulatedResult r : simulatedResults) {
+            applicables.add(r.getPrivilegeName());
+        }
+        Set<SimulatedResult> notApplicables = new HashSet<SimulatedResult>();
+        for (Policy p : policies) {
+            String policyName = p.getName();
+            if (!applicables.contains(policyName)) {
+                Entitlement ent = new Entitlement(
+                    serviceTypeName, resource, Collections.EMPTY_MAP);
+                notApplicables.add(new SimulatedResult(
+                    ent, false, "", policyName));
+            }
+        }
+        simulatedResults.addAll(notApplicables);
     }
 
     private void mergeResults()
@@ -153,11 +173,8 @@ public class SimulationEvaluator {
 
                 for (String res : tracker.keySet()) {
                     PolicyDecision pd = tracker.get(res);
-                    Entitlement ent = new Entitlement(serviceTypeName, res,
-                        pd.getActionDecisions());
-                    ent.setAdvices(pd.getResponseDecisions());
-                    ent.setAttributes(pd.getResponseAttributes());
-                    entitlements.add(ent);
+                    entitlements.add(PolicyEvaluatorAdaptor.getEntitlement(
+                        serviceType, res, pd));
                 }
             }
         } catch (PolicyException e) {

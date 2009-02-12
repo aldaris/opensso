@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestHarness.java,v 1.3 2008-12-19 09:37:01 veiming Exp $
+ * $Id: TestHarness.java,v 1.4 2009-02-12 05:33:13 veiming Exp $
  */
 
 package com.sun.identity.unittest;
@@ -78,11 +78,15 @@ public final class TestHarness {
             for (Class c : javaClasses) {
                 testngClasses[i++] = c;
             }
-            
-            TestNG testng = new TestNG();
-            testng.addListener(new TestListener());
-            testng.setTestClasses(testngClasses);
-            testng.run();
+
+            try {
+                TestNG testng = new TestNG();
+                testng.addListener(new TestListener());
+                testng.setTestClasses(testngClasses);
+                testng.run();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         UnittestLog.logMessage("TestHarness:DONE");

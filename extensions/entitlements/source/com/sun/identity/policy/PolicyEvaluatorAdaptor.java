@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorAdaptor.java,v 1.16 2009-02-10 19:31:03 veiming Exp $
+ * $Id: PolicyEvaluatorAdaptor.java,v 1.17 2009-02-12 05:33:10 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -51,6 +51,8 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
     static final String LBL_HOST_IDX = "host";
     static final String LBL_PATH_IDX = "path";
     static final String LBL_PATH_PARENT_IDX = "pathparent";
+
+    final Object lock = new Object();
     
     public PolicyEvaluatorAdaptor() {
     }
@@ -217,7 +219,9 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
             PolicyDecision pd = mergePolicyDecisions(policyDecisions, 
                 serviceType);
             List<Entitlement> result = new ArrayList<Entitlement>();
-            result.add(getEntitlement(serviceType, resourceName, pd));
+            if (pd != null) {
+                result.add(getEntitlement(serviceType, resourceName, pd));
+            }
             return result;
         } catch (SSOException e) {
             throw new EntitlementException(e.getMessage(), -1);
@@ -226,7 +230,7 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
         }            
     }
     
-    private static Entitlement getEntitlement(
+    static Entitlement getEntitlement(
         ServiceType serviceType,
         String resourceName, 
         PolicyDecision pd
@@ -262,8 +266,9 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
                     actionValues.put(actionName, copyOfValues);
                 }
             }
-            
-            advices.putAll(ad.getAdvices());            
+            if (ad.getAdvices() != null) {
+                advices.putAll(ad.getAdvices());
+            }
         }
         
         Entitlement entitlement = new Entitlement(serviceType.getName(), 
@@ -342,7 +347,7 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
         Set<PolicyDecisionTask.Task> hitResults = null;
         Set<PolicyDecisionTask.Task> missedResults = null;
 
-        synchronized(this) {
+        synchronized(lock) {
             if (hitThread != null) {
                 SMSThreadPool.scheduleTask(hitThread);
             } else {
@@ -355,11 +360,11 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
             }
 
             while (true) {
-                if (hitThread != null) {
+                if ((hitThread != null) && (hitResults == null)) {
                     exception = hitThread.getException();
                     hitResults = hitThread.getPolicyDecisions();
                 }
-                if (missedThread != null) {
+                if ((missedThread != null) && (missedResults == null)) {
                     if (exception == null) {
                         exception = missedThread.getException();
                     }
@@ -374,9 +379,10 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
                 }
 
                 try {
-                    wait();
+                    lock.wait();
                 } catch (InterruptedException ex) {
                     //TOFIX
+                    ex.printStackTrace();
                 }
             }
         }
@@ -454,7 +460,7 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
             Set<PolicyDecisionTask.Task> hitResults = null;
             Set<PolicyDecisionTask.Task> missedResults = null;
 
-            synchronized(this) {
+            synchronized(lock) {
                 if (hitThread != null) {
                     SMSThreadPool.scheduleTask(hitThread);
                 } else {
@@ -467,11 +473,11 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
                 }
 
                 while (true) {
-                    if (hitThread != null) {
+                    if ((hitThread != null) && (hitResults == null)) {
                         exception = hitThread.getException();
                         hitResults = hitThread.getResults();
                     }
-                    if (missedThread != null) {
+                    if ((missedThread != null) && (missedResults == null)) {
                         if (exception == null) {
                             exception = missedThread.getException();
                         }
@@ -486,7 +492,7 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
                     }
 
                     try {
-                        wait();
+                        lock.wait();
                     } catch (InterruptedException ex) {
                         //TOFIX
                     }

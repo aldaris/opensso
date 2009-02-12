@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EvaluatorThread.java,v 1.3 2009-02-10 19:31:03 veiming Exp $
+ * $Id: EvaluatorThread.java,v 1.4 2009-02-12 05:33:09 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -31,7 +31,6 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.policy.interfaces.ResourceName;
 import com.sun.identity.sm.SMSThreadPool;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -53,6 +52,8 @@ public class EvaluatorThread implements Runnable {
     protected Set<Policy> policies;
     protected Exception exception;
     private Set<PolicyDecisionTask.Task> policyEvalTasks;
+    private boolean done;
+    final Object lock = new Object();
 
     EvaluatorThread(
         PolicyEvaluatorAdaptor parent,
@@ -88,7 +89,7 @@ public class EvaluatorThread implements Runnable {
         counter = policies.size();
 
         if (counter > 0) {
-            synchronized (this) {
+            synchronized (lock) {
                 for (PolicyDecisionTask.Task task : policyEvalTasks) {
                     Runner eval = new Runner(this,
                         task, token, serviceType, actionNames,
@@ -98,17 +99,21 @@ public class EvaluatorThread implements Runnable {
 
                 while (counter > 0) {
                     try {
-                        this.wait();
+                        lock.wait();
                     } catch (InterruptedException ex) {
-                        counter = 0;
+                        //TOFIX
                     }
                 }
             }
         }
-        
-        synchronized (parent) {
-            parent.notify();
+        done = true;
+        synchronized (parent.lock) {
+            parent.lock.notify();
         }
+    }
+
+    private synchronized void decrementCounter() {
+        counter--;
     }
 
     Exception getException() {
@@ -116,7 +121,7 @@ public class EvaluatorThread implements Runnable {
     }
 
     Set<PolicyDecisionTask.Task> getPolicyDecisions() {
-        return policyEvalTasks;
+        return (done) ? policyEvalTasks : null;
     }
 
     private class Runner implements Runnable {
@@ -152,10 +157,9 @@ public class EvaluatorThread implements Runnable {
             } catch (PolicyException e) {
                 parent.exception = e;
             }
-            parent.counter--;
-
-            synchronized (parent) {
-                parent.notify();
+            synchronized (parent.lock) {
+                parent.decrementCounter();
+                parent.lock.notify();
             }
         }
     }

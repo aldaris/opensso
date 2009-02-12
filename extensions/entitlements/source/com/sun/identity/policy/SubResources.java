@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubResources.java,v 1.10 2009-02-10 19:31:03 veiming Exp $
+ * $Id: SubResources.java,v 1.11 2009-02-12 05:33:12 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -33,7 +33,6 @@ import com.sun.identity.entitlement.util.ResourceComp;
 import com.sun.identity.entitlement.util.ResourceNameSplitter;
 import com.sun.identity.policy.interfaces.ResourceName;
 import com.sun.identity.sm.SMSThreadPool;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -58,6 +57,8 @@ public class SubResources implements Runnable {
     private Map<String, Set<String>> envParameters;
     protected Set<Policy> policies;
     protected Exception exception;
+    final Object lock = new Object();
+    private boolean done;
     
     SubResources(
         PolicyEvaluatorAdaptor parent,
@@ -82,7 +83,7 @@ public class SubResources implements Runnable {
     }
 
     Set<PolicyDecisionTask.Task> getResults() {
-        return policyEvalTasks;
+        return (done) ? policyEvalTasks : null;
     }
 
     public void run() {
@@ -99,7 +100,7 @@ public class SubResources implements Runnable {
         if (!resToTasks.isEmpty()) {
             tasksCount = policyEvalTasks.size();
 
-            synchronized (this) {
+            synchronized (lock) {
                 for (PolicyDecisionTask.Task task : policyEvalTasks) {
                     EvaluatorThread eval = new EvaluatorThread(
                         this, task, token, serviceType, actionNames,
@@ -109,7 +110,7 @@ public class SubResources implements Runnable {
 
                 while (tasksCount > 0) {
                     try {
-                        this.wait();
+                        lock.wait();
                     } catch (InterruptedException ex) {
                         exception = ex;
                         tasksCount = 0;
@@ -117,8 +118,9 @@ public class SubResources implements Runnable {
                 }
             }
         }
-        synchronized(parent) {
-            parent.notify();
+        done = true;
+        synchronized(parent.lock) {
+            parent.lock.notify();
         }
     }
     
@@ -222,8 +224,8 @@ public class SubResources implements Runnable {
             }
             parent.tasksCount--;
 
-            synchronized (parent) {
-                parent.notify();
+            synchronized (parent.lock) {
+                parent.lock.notify();
             }
         }
     }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorTest.java,v 1.9 2009-02-11 01:38:24 veiming Exp $
+ * $Id: PolicyEvaluatorTest.java,v 1.10 2009-02-12 05:33:13 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -53,10 +53,12 @@ import org.testng.annotations.BeforeClass;
 public class PolicyEvaluatorTest {
     private static String POLICY_NAME1 = "PolicyEvaluatorTestP1";
     private static String POLICY_NAME2 = "PolicyEvaluatorTestP2";
+    private static String POLICY_NAME3 = "PolicyEvaluatorTestP3";
 
     private static String URL_RESOURCE1 = "http://www.*.com:8080/private";
     private static String URL_RESOURCE2 = "http://www.sun.com:8080/private";
-    
+    private static String URL_RESOURCE3 = "http://www.ibm.com:8080/private";
+
     @BeforeClass
     public void setup() throws PolicyException, SSOException {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
@@ -73,6 +75,12 @@ public class PolicyEvaluatorTest {
         policy.addRule(createRule2());
         policy.addSubject("group2", createSubject(pm));
         pm.addPolicy(policy);
+
+        policy = new Policy(POLICY_NAME3, "test3 - discard",
+            false, true);
+        policy.addRule(createRule3());
+        policy.addSubject("group3", createSubject(pm));
+        pm.addPolicy(policy);
     }
     
     @AfterClass
@@ -82,6 +90,7 @@ public class PolicyEvaluatorTest {
         PolicyManager pm = new PolicyManager(adminToken, "/");
         pm.removePolicy(POLICY_NAME1);
         pm.removePolicy(POLICY_NAME2);
+        pm.removePolicy(POLICY_NAME3);
     }
     
     @Test
@@ -140,11 +149,9 @@ public class PolicyEvaluatorTest {
         }
     }
 
-    @Test
-    public void testSimulationSelf() throws Exception {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
-        javax.security.auth.Subject subject = createSubject(adminToken);
+    private SimulationEvaluator createSimulator(
+        javax.security.auth.Subject subject
+    ) throws Exception {
         SimulationEvaluator eval = new SimulationEvaluator(
             subject, "iPlanetAMWebAgentService");
         eval.setResource("http://www.sun.com:8080/private");
@@ -152,20 +159,87 @@ public class PolicyEvaluatorTest {
         Set<String> policyNames = new HashSet<String>();
         policyNames.add(POLICY_NAME1);
         policyNames.add(POLICY_NAME2);
+        policyNames.add(POLICY_NAME3);
         eval.setPolicies(policyNames);
+        return eval;
+    }
+
+    @Test
+    public void testSimulationSelf() throws Exception {
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        javax.security.auth.Subject subject = createSubject(adminToken);
+        SimulationEvaluator eval = createSimulator(subject);
         eval.evaluate(false);
         List<SimulatedResult> details = eval.getSimulatedResults();
         for (SimulatedResult r : details) {
-            System.out.println(r.getPrivilegeName());
-            System.out.println(r.getEntitlement().getActionValues());
+            String policyName = r.getPrivilegeName();
+            if (policyName.equals(POLICY_NAME1)) {
+                if (!r.isApplicable()) {
+                    throw new Exception("testSimulationSelf: failed");
+                }
+            } else if (policyName.equals(POLICY_NAME2)) {
+                if (!r.isApplicable()) {
+                    throw new Exception("testSimulationSelf: failed");
+                }
+            } else if (policyName.equals(POLICY_NAME3)) {
+                if (r.isApplicable()) {
+                    throw new Exception("testSimulationSelf: failed");
+                }
+            }
         }
         List<Entitlement> results = eval.getEntitlements();
         for (Entitlement ent : results) {
-            System.out.println(ent.getResourceName());
-            System.out.println(ent.getActionValues());
+            String res = ent.getResourceName();
+            if (!res.equals("http://www.sun.com:8080/private")) {
+                throw new Exception(
+                    "testSimulationSelf: failed, resource name is incorrect.");
+            }
+            Map<String, Object> actionValues = ent.getActionValues();
+            validateActionValues(actionValues, "GET", "allow");
+            validateActionValues(actionValues, "POST", "deny");
+        }
+    }
+
+    private void validateActionValues(
+        Map<String, Object> actionValues,
+        String key,
+        String value
+    ) throws Exception {
+        Set setGet = (Set) actionValues.get(key);
+        String strGet = (String) setGet.iterator().next();
+        if (!strGet.equals(value)) {
+            throw new Exception(
+                "testSimulationSelf: failed, " + key + " result is incorrect.");
         }
     }
     
+    @Test
+    public void testSimulationSubTree() throws Exception {
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        javax.security.auth.Subject subject = createSubject(adminToken);
+        SimulationEvaluator eval = createSimulator(subject);
+        eval.evaluate(true);
+        List<SimulatedResult> details = eval.getSimulatedResults();
+        for (SimulatedResult r : details) {
+            System.out.println(r.getEntitlement().getResourceName());
+        }
+        List<Entitlement> results = eval.getEntitlements();
+        for (Entitlement ent : results) {
+            String res = ent.getResourceName();
+            if (res.equals(URL_RESOURCE1)) {
+                Map<String, Object> actionValues = ent.getActionValues();
+                validateActionValues(actionValues, "GET", "allow");
+                validateActionValues(actionValues, "POST", "deny");
+            } else if (res.equals(URL_RESOURCE2)) {
+                Map<String, Object> actionValues = ent.getActionValues();
+                validateActionValues(actionValues, "GET", "allow");
+            }
+            System.out.println(res);
+        }
+    }
+
     private Rule createRule1() throws PolicyException {
         Map<String, Set<String>> actionValues = 
             new HashMap<String, Set<String>>();
@@ -185,16 +259,27 @@ public class PolicyEvaluatorTest {
     }
     
     private Rule createRule2() throws PolicyException {
-        Map<String, Set<String>> actionValues = 
+        Map<String, Set<String>> actionValues =
             new HashMap<String, Set<String>>();
         Set<String> set = new HashSet<String>();
             set.add("allow");
         actionValues.put("POST", set);
-        
+
         return new Rule("rule2", "iPlanetAMWebAgentService",
             URL_RESOURCE2, actionValues);
     }
-    
+
+    private Rule createRule3() throws PolicyException {
+        Map<String, Set<String>> actionValues =
+            new HashMap<String, Set<String>>();
+        Set<String> set = new HashSet<String>();
+            set.add("allow");
+        actionValues.put("POST", set);
+
+        return new Rule("rule3", "iPlanetAMWebAgentService",
+            URL_RESOURCE3, actionValues);
+    }
+
     private Subject createSubject(PolicyManager pm) throws PolicyException {
         SubjectTypeManager mgr = pm.getSubjectTypeManager();
         Subject subject = mgr.getSubject("AuthenticatedUsers");
