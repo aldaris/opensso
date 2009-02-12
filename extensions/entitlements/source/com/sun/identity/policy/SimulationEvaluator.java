@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SimulationEvaluator.java,v 1.3 2009-02-12 05:33:10 veiming Exp $
+ * $Id: SimulationEvaluator.java,v 1.4 2009-02-12 08:34:41 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -33,6 +33,7 @@ import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.SimulatedResult;
+import com.sun.identity.policy.interfaces.ResourceName;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -98,10 +99,9 @@ public class SimulationEvaluator {
             PolicyManager pm = new PolicyManager(adminSSOToken, "/");
 
             for (String name : policyNames) {
-                this.policies.add(pm.getPolicy(name));
+                policies.add(pm.getPolicy(name));
             }
         }
-        buildCache();
     }
 
     private void buildCache()
@@ -113,17 +113,62 @@ public class SimulationEvaluator {
     }
 
     public void evaluate(boolean recursive)
-        throws EntitlementException {
+        throws EntitlementException, PolicyException {
         simulatedResults = null;
         entitlements = null;
 
+        if (!recursive) {
+            discardPolicyWithNonMatchingRes(resource, serviceTypeName);
+        }
+
         if ((policies != null) && !policies.isEmpty()) {
+            buildCache();
             SimulationPolicyEvaluator adaptor = new SimulationPolicyEvaluator(
                 cache);
             simulatedResults = adaptor.getSimulatedResults(adminSubject, 
                 subject, serviceTypeName, resource, envParameters, recursive);
             computeNotApplicablePolicies();
             mergeResults();
+        }
+    }
+
+    private void discardPolicyWithNonMatchingRes(
+        String rootResource,
+        String serviceTypeName
+    ) throws EntitlementException {
+        try {
+            ServiceType serviceType =
+                ServiceTypeManager.getServiceTypeManager().getServiceType(
+                serviceTypeName);
+            ResourceName resComparator = serviceType.getResourceNameComparator();
+            for (Iterator i = policies.iterator(); i.hasNext(); ) {
+                Policy policy = (Policy)i.next();
+                Set<String> ruleNames = policy.getRuleNames();
+                boolean resMatch = false;
+                for (String ruleName : ruleNames) {
+                    try {
+                        Rule rule = policy.getRule(ruleName);
+                        String res = rule.getResourceName();
+                        ResourceMatch match = resComparator.compare(
+                            rootResource, res, true);
+
+                        resMatch = !match.equals(ResourceMatch.NO_MATCH) &&
+                            !match.equals(ResourceMatch.SUPER_RESOURCE_MATCH);
+                        if (resMatch) {
+                            break;
+                        }
+                    } catch (PolicyException e) {
+                        // ignore
+                    }
+                }
+                if (!resMatch) {
+                    i.remove();
+                }
+            }
+        } catch (SSOException e) {
+            throw new EntitlementException(e.getMessage(), -1);
+        } catch (PolicyException e) {
+            throw new EntitlementException(e.getMessage(), -1);
         }
     }
 

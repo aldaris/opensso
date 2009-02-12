@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubResources.java,v 1.11 2009-02-12 05:33:12 veiming Exp $
+ * $Id: SubResources.java,v 1.12 2009-02-12 08:34:41 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -137,7 +137,7 @@ public class SubResources implements Runnable {
                     ResourceMatch match = resComparator.compare(
                         rootResource, res, true);
                     
-                    if (!match.equals(ResourceMatch.NO_MATCH) ||
+                    if (!match.equals(ResourceMatch.NO_MATCH) &&
                         !match.equals(ResourceMatch.SUPER_RESOURCE_MATCH)) {
                         resources.add(rule.getResourceName());
                     }

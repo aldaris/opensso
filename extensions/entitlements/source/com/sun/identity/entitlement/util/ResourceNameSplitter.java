@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceNameSplitter.java,v 1.3 2009-01-29 02:04:02 veiming Exp $
+ * $Id: ResourceNameSplitter.java,v 1.4 2009-02-12 08:34:40 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
@@ -57,7 +57,7 @@ public class ResourceNameSplitter {
         try {
             URL url = new URL(resName);
             Set<String> hostIndexes = splitHost(url);
-            Set<String> pathIndexes = splitHost(url);
+            Set<String> pathIndexes = splitPath(url);
             String path = url.getPath();
             if (path.length() == 0) {
                 path ="/";
@@ -121,36 +121,29 @@ public class ResourceNameSplitter {
      * @param resName Resource name.
      * @param a list of sub parts of path of a resource name.
      */
-    private static Set<String> splitPath(String resName) {
+    private static Set<String> splitPath(URL url) {
         Set<String> results = new HashSet<String>();
-        
-        try {
-            URL url = new URL(resName);
-
-            String path = url.getPath().toLowerCase();
-            Set<String> queries = normalizeQuery(url.getQuery());
-            results.add("/");
-            for (String q : queries) {
-                results.add("/?" + q);
-            }
-
-            if ((path.length() > 0) && !path.equals("/")) {
-                String prefix = "";
-                StringTokenizer st = new StringTokenizer(path, "/");
-                while (st.hasMoreTokens()) {
-                    String s = st.nextToken();
-                    prefix += "/" + s;
-                    results.add(prefix);
-                    for (String q : queries) {
-                        results.add(prefix + "?" + q);
-                    }
-                }
-            }
-        } catch (MalformedURLException e) {
-            // do nothing.
+        String path = url.getPath().toLowerCase();
+        Set<String> queries = normalizeQuery(url.getQuery());
+        results.add("/");
+        for (String q : queries) {
+            results.add("/?" + q);
         }
 
-        return results;
+        if ((path.length() > 0) && !path.equals("/")) {
+            String prefix = "";
+            StringTokenizer st = new StringTokenizer(path, "/");
+            while (st.hasMoreTokens()) {
+                String s = st.nextToken();
+                prefix += "/" + s;
+                results.add(prefix);
+                for (String q : queries) {
+                    results.add(prefix + "?" + q);
+                }
+            }
+        }
+
+    return results;
     }
     
     private static Set<String> normalizeQuery(String path) {
