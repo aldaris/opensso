@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PLLRequestServlet.java,v 1.8 2008-08-19 19:08:44 veiming Exp $
+ * $Id: PLLRequestServlet.java,v 1.9 2009-02-12 17:24:13 bina Exp $
  *
  */
 
@@ -144,11 +144,6 @@ public class PLLRequestServlet extends HttpServlet {
                 out.close();
             } catch (Exception ex) {
             }
-        }
-
-        if (PLLServer.pllDebug.messageEnabled()) {
-            PLLServer.pllDebug.message("\nSent ResponseSet XML : "
-                    + responseXML);
         }
     }
 

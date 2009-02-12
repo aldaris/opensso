@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContext.java,v 1.17 2009-01-13 21:49:01 lakshman_abburi Exp $
+ * $Id: AuthContext.java,v 1.18 2009-02-12 17:22:57 bina Exp $
  *
  */
 
@@ -1680,10 +1680,6 @@ public class AuthContext extends Object implements java.io.Serializable {
             Response res = (Response) responses.elementAt(0);
             String responseStr = (String)res.getContent();
             
-            if (authDebug.messageEnabled()) {
-                authDebug.message("Received XML data : " + responseStr);
-            }
-
             doc = XMLUtils.getXMLDocument(
                 new ByteArrayInputStream(responseStr.getBytes("UTF-8")));
         } catch (Exception e) {
