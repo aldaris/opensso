@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Response.java,v 1.2 2008-06-25 05:47:37 qcheng Exp $
+ * $Id: Response.java,v 1.3 2009-02-13 04:05:10 bina Exp $
  *
  */
 
@@ -421,10 +421,16 @@ public class Response extends AbstractResponse {
 		    }
 		    status = new Status((Element) child);
 		} else if (childName.equals("Assertion")) {
-		    if (assertions == Collections.EMPTY_LIST) {
-			assertions = new ArrayList();
+                    if (assertions == Collections.EMPTY_LIST) {
+		        assertions = new ArrayList();
 		    }
-		    Assertion oneAssertion= new Assertion((Element) child); 
+                    Element canoEle = SAMLUtils.getCanonicalElement(child);
+                    if (canoEle == null) {
+                        throw new SAMLRequesterException(
+                            SAMLUtils.bundle.getString("errorCanonical"));
+                    }
+
+                    Assertion oneAssertion= new Assertion(canoEle);
 		    issuer = oneAssertion.getIssuer(); 
 		    assertions.add(oneAssertion);
 		} else {

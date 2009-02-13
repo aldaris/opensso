@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLUtils.java,v 1.13 2009-01-28 05:35:07 ww203982 Exp $
+ * $Id: SAMLUtils.java,v 1.14 2009-02-13 04:05:06 bina Exp $
  *
  */
 
@@ -109,6 +109,12 @@ import com.sun.identity.plugin.session.SessionException;
 import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionProvider;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.ByteArrayInputStream;
+import com.sun.org.apache.xml.internal.security.c14n.Canonicalizer;
+//import com.sun.org.apache.xml.internal.security.Init;
+
 /**
  * This class contains some utility methods for processing SAML protocols.
  *
@@ -141,6 +147,7 @@ public class SAMLUtils  extends SAMLUtilsCommon {
     private static Object ssoToken;
  
     static {
+        com.sun.org.apache.xml.internal.security.Init.init();
         if (SystemConfigurationUtil.isServerMode()) {
             long period = ((Integer) SAMLServiceManager.getAttribute(
                         SAMLConstants.CLEANUP_INTERVAL_NAME)).intValue() * 1000;
@@ -1685,4 +1692,33 @@ public class SAMLUtils  extends SAMLUtilsCommon {
             return false;
         }
     }
+
+      /**
+       * Gets input Node Canonicalized
+       *
+       * @param node Node
+       * @return Canonical element if the operation succeeded.
+       *     Otherwise, return null.
+       */
+      public static Element getCanonicalElement(Node node) {
+          try {
+              Canonicalizer c14n = Canonicalizer.getInstance(
+                  "http://www.w3.org/TR/2001/REC-xml-c14n-20010315");
+              byte outputBytes[] = c14n.canonicalizeSubtree(node);
+              DocumentBuilderFactory dfactory =
+                  DocumentBuilderFactory.newInstance();
+              dfactory.setNamespaceAware(true);
+              DocumentBuilder documentBuilder = 
+                 dfactory.newDocumentBuilder();              
+              Document doc = documentBuilder.parse(
+                  new ByteArrayInputStream(outputBytes));
+              Element result = doc.getDocumentElement();
+              return result;
+          } catch (Exception e) {
+              SAMLUtils.debug.error("Response:getCanonicalElement: " +
+                  "Error while performing canonicalization on " +
+                  "the input Node.");
+              return null;
+          }
+      }
 }
