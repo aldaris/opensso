@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIUtility.java,v 1.9 2008-06-26 20:04:19 rmisra Exp $
+ * $Id: CLIUtility.java,v 1.10 2009-02-13 15:36:56 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -365,4 +365,11 @@ public class CLIUtility extends TestCommon {
      * @return a String with the CLI path
      */
     public String getCliPath() { return cliPath; }
+
+        /**
+     * Set the current working directory in which the CLI will be executed
+     * dir - the File object containing the directory in which the CLI should
+     *       be executed
+     */
+    protected void setWorkingDir(File dir) { workingDir = dir; }
 }
