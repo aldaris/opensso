@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServiceTypeManager.java,v 1.4 2009-01-30 11:49:03 kalpanakm Exp $
+ * $Id: ServiceTypeManager.java,v 1.5 2009-02-13 17:18:37 dillidorai Exp $
  *
  */
 
@@ -33,6 +33,7 @@ package com.sun.identity.policy;
 
 import java.util.*;
 import java.security.AccessController;
+import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
@@ -77,7 +78,7 @@ public class ServiceTypeManager {
      * Constructs an instance of <code>ServiceTypeManager</code>
      */
     private ServiceTypeManager() throws SSOException {
-	token = getSSOToken();
+        token = getSSOToken();
     }
 
     /**
@@ -86,7 +87,7 @@ public class ServiceTypeManager {
      * <code>ServiceTypeManager</code> with 
      */
     private ServiceTypeManager(PolicyManager pm) {
-	token = pm.token;
+        token = pm.token;
     }
 
     /**
@@ -101,8 +102,8 @@ public class ServiceTypeManager {
      * is invalid
      */
     public ServiceTypeManager(SSOToken token) throws SSOException {
-	SSOTokenManager.getInstance().validateToken(token);
-	this.token = token;
+        SSOTokenManager.getInstance().validateToken(token);
+        this.token = token;
     }
 
     /**
@@ -116,29 +117,29 @@ public class ServiceTypeManager {
      * to access service names
      */
     public Set getServiceTypeNames() throws SSOException,
-	NoPermissionException {
-	SSOTokenManager.getInstance().validateToken(token);
-	try {
-	    ServiceManager sm = new ServiceManager(token);
-	    Iterator items = sm.getServiceNames().iterator();
-	    // Check if the service names have policy schema
-	    HashSet answer = new HashSet();
-	    while (items.hasNext()) {
-		String serviceName = (String) items.next();
-		try {
-		    ServiceSchemaManager ssm = new ServiceSchemaManager(
-			serviceName, token);
-		    if (ssm.getPolicySchema() != null)
-			answer.add(serviceName);
-		} catch (Exception e) {
-                    PolicyManager.debug.error(
-                        "ServiceTypeManager.getServiceTypeNames:", e);
-		}
-	    }
-	    return (answer);
-	} catch (SMSException se) {
-	    throw (new NoPermissionException(se));
-	}
+            NoPermissionException {
+        SSOTokenManager.getInstance().validateToken(token);
+        try {
+            ServiceManager sm = new ServiceManager(token);
+            Iterator items = sm.getServiceNames().iterator();
+            // Check if the service names have policy schema
+            HashSet answer = new HashSet();
+            while (items.hasNext()) {
+            String serviceName = (String) items.next();
+            try {
+                ServiceSchemaManager ssm = new ServiceSchemaManager(
+                    serviceName, token);
+                if (ssm.getPolicySchema() != null)
+                    answer.add(serviceName);
+            } catch (Exception e) {
+                        PolicyManager.debug.error(
+                            "ServiceTypeManager.getServiceTypeNames:", e);
+            }
+            }
+            return (answer);
+        } catch (SMSException se) {
+            throw (new NoPermissionException(se));
+        }
     }
 
     /**
@@ -156,7 +157,7 @@ public class ServiceTypeManager {
      * serviceTypeName</code> does not exist
      */
     public ServiceType getServiceType(String serviceTypeName)
-	throws SSOException, NameNotFoundException {
+            throws SSOException, NameNotFoundException {
         ServiceType st = (ServiceType) serviceTypes.get(serviceTypeName);
         if (st == null) {
             try {
@@ -175,7 +176,7 @@ public class ServiceTypeManager {
                     throw (new NameNotFoundException(
                             ResBundleUtils.rbName,
                             "service_name_not_found", objs, 
-			    serviceTypeName, PolicyException.SERVICE));
+                            serviceTypeName, PolicyException.SERVICE));
                 }
                 st =  new ServiceType(serviceTypeName, ssm, policySchema);
                 serviceTypes.put(serviceTypeName, st);
@@ -197,16 +198,17 @@ public class ServiceTypeManager {
      * configured in serverconfig.xml 
      */
     static SSOToken getSSOToken() throws SSOException{
-	if (token != null)
-		return token;
+        if (!SystemProperties.isServerMode() && (token != null)) {
+            return token;
+        }
 
-	SSOToken token = (SSOToken) AccessController.doPrivileged(
-	    AdminTokenAction.getInstance());
-	if (token == null) {
-	    throw (new SSOException(new PolicyException(
-		ResBundleUtils.rbName, "invalid_admin", null, null)));
-	}
-	return (token);
+        SSOToken token = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        if (token == null) {
+            throw (new SSOException(new PolicyException(
+            ResBundleUtils.rbName, "invalid_admin", null, null)));
+        }
+        return (token);
     }
 
     /**
@@ -224,11 +226,11 @@ public class ServiceTypeManager {
      * @return the generated random name
      */
     static String generateRandomName() {
-	StringBuffer sb = new StringBuffer(30);
-	byte[] keyRandom = new byte[5];
-	random.nextBytes(keyRandom);
-	sb.append(System.currentTimeMillis()).toString();
-	return (sb.append(Base64.encode(keyRandom)).toString());
+        StringBuffer sb = new StringBuffer(30);
+        byte[] keyRandom = new byte[5];
+        random.nextBytes(keyRandom);
+        sb.append(System.currentTimeMillis()).toString();
+        return (sb.append(Base64.encode(keyRandom)).toString());
     }
 
     /** 

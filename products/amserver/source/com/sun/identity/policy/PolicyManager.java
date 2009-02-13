@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManager.java,v 1.9 2009-01-30 11:46:58 kalpanakm Exp $
+ * $Id: PolicyManager.java,v 1.10 2009-02-13 17:18:36 dillidorai Exp $
  *
  */
 
@@ -47,6 +47,7 @@ import com.iplanet.sso.SSOTokenManager;
 import com.iplanet.sso.SSOException;
 import com.sun.identity.sm.*;
 import com.iplanet.am.util.Cache;
+import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.xml.XMLUtils;
 
@@ -234,8 +235,13 @@ public final class PolicyManager {
             debug.message("Policy Manager constructed with SSO token " +
                 " for organization: " + org);
         }
-        policyCache = PolicyCache.getInstance(token);
-	svtm = new ServiceTypeManager(token);
+        if (SystemProperties.isServerMode()) {
+            policyCache = PolicyCache.getInstance();
+            svtm = ServiceTypeManager.getServiceTypeManager();
+        } else {
+            policyCache = PolicyCache.getInstance(token);
+            svtm = new ServiceTypeManager(token);
+        }
         rim = new ResourceIndexManager(rm);
 
     }
