@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.41 2008-11-06 18:45:58 qcheng Exp $
+ * $Id: IDPSSOUtil.java,v 1.42 2009-02-13 22:18:29 madan_ranganath Exp $
  *
  */
 
@@ -272,7 +272,7 @@ public class IDPSSOUtil {
             // idp initiated and not logged in yet, need to authenticate
             try {
                 redirectAuthentication(request, response, authnReq, 
-                                       null, realm, idpEntityID);
+                                       null, realm, idpEntityID, spEntityID);
             } catch (IOException ioe) {
                 SAML2Utils.debug.error(classMethod +
                     "Unable to redirect to authentication.", ioe);
@@ -2098,6 +2098,7 @@ public class IDPSSOUtil {
      * @param reqID the <code>AuthnRequest ID</code>
      * @param realm the realm name of the identity provider
      * @param idpEntityID the entity id of the identity provider
+     * @param spEntityID the entity id of the service provider
      */
     static void redirectAuthentication(
                              HttpServletRequest request,
@@ -2105,13 +2106,27 @@ public class IDPSSOUtil {
                              AuthnRequest authnReq,
                              String reqID,
                              String realm,
-                             String idpEntityID) 
+                             String idpEntityID,
+                             String spEntityID)
         throws SAML2Exception, IOException {
         String classMethod = "IDPSSOUtil.redirectAuthentication: ";
         // get the authentication service url 
         StringBuffer newURL = new StringBuffer(
                                IDPSSOUtil.getAuthenticationServiceURL(
                                 realm, idpEntityID, request));
+
+        // Pass spEntityID to IdP Auth Module
+        if (spEntityID != null) {
+            if (newURL.indexOf("?") == -1) {
+                newURL.append("&");
+            } else {
+                newURL.append("&");
+            }
+            newURL.append(SAML2Constants.SPENTITYID);
+            newURL.append("=");
+            newURL.append(URLEncDec.encode(spEntityID));
+        }
+
         // find out the authentication method, e.g. module=LDAP, from
         // authn context mapping 
         IDPAuthnContextMapper idpAuthnContextMapper = 

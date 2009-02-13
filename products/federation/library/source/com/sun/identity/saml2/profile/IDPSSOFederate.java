@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOFederate.java,v 1.18 2009-01-20 18:54:08 weisun2 Exp $
+ * $Id: IDPSSOFederate.java,v 1.19 2009-02-13 22:18:29 madan_ranganath Exp $
  *
  */
 
@@ -543,7 +543,8 @@ public class IDPSSOFederate {
                     // redirect to the authentication service
                     try {
                         redirectAuthentication(request, response, reqID,
-                            idpAuthnContextInfo, realm, idpEntityID, false);
+                            idpAuthnContextInfo, realm, idpEntityID, spEntityID,
+                            false);
                     } catch (IOException ioe) {
                         SAML2Utils.debug.error(classMethod +
                             "Unable to redirect to authentication.", ioe);
@@ -595,7 +596,8 @@ public class IDPSSOFederate {
 
                         try {
                              redirectAuthentication(request, response, reqID,
-                                 idpAuthnContextInfo, realm, idpEntityID, true);
+                                 idpAuthnContextInfo, realm, idpEntityID,
+                                 spEntityID, true);
                              return;
                         } catch (IOException ioe) {
                             SAML2Utils.debug.error(classMethod +
@@ -834,8 +836,8 @@ public class IDPSSOFederate {
      */
     private static void redirectAuthentication(HttpServletRequest request,
         HttpServletResponse response, String reqID, IDPAuthnContextInfo info,
-        String realm, String idpEntityID, boolean isSessionUpgrade) 
-        throws SAML2Exception, IOException {
+        String realm, String idpEntityID, String spEntityID,
+        boolean isSessionUpgrade) throws SAML2Exception, IOException {
 
         String classMethod = "IDPSSOFederate.redirectAuthentication: ";
         // get the authentication service url 
@@ -843,6 +845,18 @@ public class IDPSSOFederate {
         StringBuffer newURL = new StringBuffer(
                                 IDPSSOUtil.getAuthenticationServiceURL(
                                 realm, idpEntityID, request));
+
+        // Pass spEntityID to IdP Auth Module
+        if (spEntityID != null) {
+            if (newURL.indexOf("?") == -1) {
+                newURL.append("&");
+            } else {
+                newURL.append("&");
+            }
+            newURL.append(SAML2Constants.SPENTITYID);
+            newURL.append("=");
+            newURL.append(URLEncDec.encode(spEntityID));
+        }
         
         Set authnTypeAndValues = info.getAuthnTypeAndValues();
         if ((authnTypeAndValues != null) 
