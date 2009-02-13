@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.cpp,v 1.42 2009-02-11 09:42:04 soumendra Exp $
+ * $Id: am_web.cpp,v 1.43 2009-02-13 23:22:35 subbae Exp $
  *
  */
 
@@ -1122,7 +1122,12 @@ am_web_get_token_from_assertion(char * enc_assertion,
     char buf[1024] = {'\0'};
 
     dec_assertion = am_web_http_decode(enc_assertion, strlen(enc_assertion));
-    tmp1 = strchr(dec_assertion, '=');
+    // Add null check to avoid crashes
+    // - forward port fix in CRT (604)
+    if(dec_assertion != NULL) {
+        tmp1 = strchr(dec_assertion, '=');
+    }
+
     if ((tmp1 != NULL)  &&
       !(strncmp(dec_assertion, LARES_PARAM, strlen(LARES_PARAM)))) {
         tmp2 = tmp1 + 1;

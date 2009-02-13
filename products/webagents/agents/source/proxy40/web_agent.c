@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: web_agent.c,v 1.1 2009-01-12 09:44:44 ranajitgh Exp $
+ * $Id: web_agent.c,v 1.2 2009-02-13 23:22:34 subbae Exp $
  *
  *
  */
@@ -1154,6 +1154,17 @@ add_agent_header(pblock *param, Session *sn, Request *rq)
     char *host_name    = NULL;
     void *args[]       = { (void *)rq };
     am_status_t ret    = AM_FAILURE;
+
+    // NSAPI function pblock_pblock2str expects "full-headers" 
+    // to be non-null value. Therefore, add a logic to check whether 
+    // "full-headers" is null and if it is, return error to the client.
+    // - Forward port of fix in CRT (657).
+    pb_param *hdr_pp = pblock_find("full-headers", rq->reqpb);
+    if (hdr_pp != NULL && hdr_pp->value == NULL) {
+        am_web_log_error ("add_agent_header():Header not found.");
+        return REQ_ABORTED;
+    }
+
     char *header_str   = pblock_pblock2str(rq->reqpb, NULL);
 
     am_web_log_max_debug("%s: Headers: %s", thisfunc, header_str);
