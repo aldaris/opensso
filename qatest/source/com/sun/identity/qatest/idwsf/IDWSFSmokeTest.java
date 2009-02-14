@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDWSFSmokeTest.java,v 1.1 2009-01-31 00:31:47 mrudulahg Exp $
+ * $Id: IDWSFSmokeTest.java,v 1.2 2009-02-14 00:58:08 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -107,8 +107,6 @@ public class IDWSFSmokeTest extends IDFFCommon {
                     "idffTestConfigData");
             configMap.putAll(getMapFromResourceBundle("idff" + fileseparator +
                     "idffTestData"));
-            configMap.putAll(getMapFromResourceBundle("idwsf" + fileseparator +
-                    "IDWSFTestConfigData"));
             configMap.putAll(getMapFromResourceBundle("idwsf" + fileseparator +
                     "IDWSFSmokeTest"));
             log(Level.FINEST, "setup", "Map is " + configMap);
@@ -269,7 +267,8 @@ public class IDWSFSmokeTest extends IDFFCommon {
     throws Exception {
         entering("queryResourceOffering", null);
             HtmlPage wscindexpage = (HtmlPage)webclient.getPage(wscURL);
-            HtmlForm formdiscoquerycall = wscindexpage.getFormByName("discoquerycall");
+            HtmlForm formdiscoquerycall =
+                    wscindexpage.getFormByName("discoquerycall");
             Thread.sleep(3000);
             HtmlPage discoquerypage = (HtmlPage)formdiscoquerycall.submit();
             HtmlForm formdiscoquery = discoquerypage.getFormByName(

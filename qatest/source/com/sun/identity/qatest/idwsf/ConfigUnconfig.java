@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigUnconfig.java,v 1.1 2009-01-31 00:31:47 mrudulahg Exp $
+ * $Id: ConfigUnconfig.java,v 1.2 2009-02-14 00:58:08 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -49,7 +49,6 @@ public class ConfigUnconfig extends TestCommon {
     private ResourceBundle rb_idwsf;
     private ResourceBundle rb_idff;
     private String clientsdkURL;
-    private String baseDir;
 
     /**
      * Creates a new instance of ConfigUnconfig
@@ -58,11 +57,10 @@ public class ConfigUnconfig extends TestCommon {
     public ConfigUnconfig()
     throws Exception {
         super("ConfigUnconfig");
-        rb_idwsf = ResourceBundle.getBundle("idwsf" + fileseparator +
-                "IDWSFTestConfigData");
+        rb_idwsf = ResourceBundle.getBundle("config" + fileseparator +
+                "default" + fileseparator + "ClientGlobal");
         rb_idff = ResourceBundle.getBundle("idff" + fileseparator +
                 "idffTestConfigData");
-        baseDir = getTestBase();
     }
     
     /**
@@ -75,18 +73,6 @@ public class ConfigUnconfig extends TestCommon {
     public void startServer()
     throws Exception {
         entering("startServer", null);
-        String userHomeDir = System.getProperty("user.home");
-        File configDir = new File(userHomeDir + "/OpenSSOClient");
-        String [] configFiles = configDir.list();
-        if (configFiles.length > 0) {
-            for (int i=0; i < configFiles.length; i++) {
-                File configFile = new File(userHomeDir + "/OpenSSOClient/" +
-                        configFiles[i]);
-                log(Level.FINEST, "startServer", "Now delete " +
-                        configFile.getAbsolutePath());
-                assert(configFile.delete());
-            }
-        }
         clientsdkURL = deployClientSDKWar(rb_idwsf);
         configureWSFSample();
         exiting("startServer");
@@ -101,25 +87,7 @@ public class ConfigUnconfig extends TestCommon {
     public void stopServer()
     throws Exception {
         entering("stopServer", null);
-
-        if (rb_idwsf.getString("warfile_type").equals("internal")) {
-            log(Level.FINE, "stopServer", "Stopping jetty server");
-            server.stop();
-            log(Level.FINE, "stopServer", "Stopped jetty server");
-
-            String userHomeDir = System.getProperty("user.home");
-            File configDir = new File(userHomeDir + "/OpenSSOClient");
-            String [] configFiles = configDir.list();
-            if (configFiles.length > 0) {
-                for (int i=0; i < configFiles.length; i++) {
-                    File configFile = new File(userHomeDir + "/OpenSSOClient/" +
-                            configFiles[i]);
-                    configFile.delete();
-                }
-            }
-            // Time delay required by the jetty server process to die
-            Thread.sleep(30000);
-        }
+        undeployClientSDKWar(rb_idwsf);
         exiting("stopServer");
     }
 
@@ -166,5 +134,4 @@ public class ConfigUnconfig extends TestCommon {
             }
         }
    }
-
 }

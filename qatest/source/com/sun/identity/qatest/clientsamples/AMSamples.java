@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSamples.java,v 1.11 2009-01-26 23:53:00 nithyas Exp $
+ * $Id: AMSamples.java,v 1.12 2009-02-14 00:58:08 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,7 +51,9 @@ import java.util.Set;
 import java.util.logging.Level;
 import org.testng.Reporter;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 import org.testng.Reporter;
@@ -95,8 +97,8 @@ public class AMSamples extends TestCommon {
         super("AMSamples");
         rb_amconfig = ResourceBundle.getBundle(
                 TestConstants.TEST_PROPERTY_AMCONFIG);
-        rb_client = ResourceBundle.getBundle("clientsamples" + fileseparator +
-                "clientsamplesGlobal");
+        rb_client = ResourceBundle.getBundle("config" + fileseparator +
+                "default" + fileseparator + "ClientGlobal");
         rb_ams = ResourceBundle.getBundle("clientsamples" + fileseparator +
                 "AMSamples");
         admintoken = getToken(adminUser, adminPassword, basedn);
@@ -110,6 +112,19 @@ public class AMSamples extends TestCommon {
     }
     
     /**
+     * Deploy the client sampels war on jetty server and start the jetty
+     * server.
+     */
+    @BeforeSuite(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad",
+         "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
+    public void startServer()
+    throws Exception {
+        entering("startServer", null);
+        clientURL = deployClientSDKWar(rb_client);
+        exiting("startServer");
+    }
+
+    /**
      *  Creates required users and policy.
      */
     @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
@@ -118,30 +133,10 @@ public class AMSamples extends TestCommon {
     throws Exception {
         entering("setup", null);
         try {
-            String strWarType = rb_client.getString("warfile_type");
-            if (strWarType.equals("internal")) {
-                clientDomain = rb_client.getString("client_domain_name");
-                log(Level.FINE, "setup", "Client host domain name: " +
-                        clientDomain);
-
-                String deployPort = rb_client.getString("deploy_port");
-                log(Level.FINE, "setup", "Deploy port: " + deployPort);
-
-                String deployURI = rb_client.getString("deploy_uri");
-                log(Level.FINE, "setup", "Deploy URI: " + deployURI);
-
-                InetAddress addr = InetAddress.getLocalHost();
-                String hostname = addr.getCanonicalHostName();
-
-                clientURL = protocol + "://" + hostname +  clientDomain + ":" +
-                        deployPort + deployURI;
-            } else {
-                clientURL = rb_client.getString("war_file");            
-                log(Level.FINE, "setup", "Client URL: " + clientURL);                            
-            }
             log(Level.FINE, "setup", "Client URL: " + clientURL);
             
-            serviceconfigURL = clientURL + rb_ams.getString("serviceconfig_uri");
+            serviceconfigURL = clientURL +
+                    rb_ams.getString("serviceconfig_uri");
             log(Level.FINE, "setup", "Service Configuration Sample " +
                     "Servlet URL: " +  serviceconfigURL);
                   
@@ -153,7 +148,8 @@ public class AMSamples extends TestCommon {
             log(Level.FINE, "setup", "Policy Evaluator Client Sample Servlet" +
                     " URL: " + policyURL);
             
-            ssovalidationURL = clientURL + rb_ams.getString("ssovalidation_uri");
+            ssovalidationURL = clientURL +
+                    rb_ams.getString("ssovalidation_uri");
             log(Level.FINE, "setup", "Single Sign On Token " +
                     "Verification Servlet" +  " URL: " + ssovalidationURL);
                   
@@ -873,10 +869,12 @@ public class AMSamples extends TestCommon {
             if ((listSec.contains("urn:sun:wss:security:null:SAMLToken-SV"))) {
                 listSec.remove("urn:sun:wss:security:null:SAMLToken-SV");
             }
-            if (!(listSec.contains("urn:sun:wss:security:null:SAML2Token-HK"))) {
+            if (!(listSec.contains("urn:sun:wss:security:null:SAML2Token-HK")))
+            {
                 listSec.add("urn:sun:wss:security:null:SAML2Token-HK");
             }
-            if (!(listSec.contains("urn:sun:wss:security:null:SAML2Token-SV"))) {
+            if (!(listSec.contains("urn:sun:wss:security:null:SAML2Token-SV")))
+            {
                 listSec.add("urn:sun:wss:security:null:SAML2Token-SV");
             }
             
@@ -1039,7 +1037,19 @@ public class AMSamples extends TestCommon {
         }
         exiting("cleanup");
     }
-    
+
+    /**
+     * Stop the jetty server. This basically undeploys the war.
+     */
+    @AfterSuite(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad",
+         "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
+    public void stopServer()
+    throws Exception {
+        entering("stopServer", null);
+        undeployClientSDKWar(rb_client);
+        exiting("stopServer");
+    }
+
     /**
      * Generate the XML for User Profile testcases.
      */
