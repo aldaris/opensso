@@ -26,7 +26,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: components.mk,v 1.12 2009-01-12 09:44:45 ranajitgh Exp $
+# $Id: components.mk,v 1.13 2009-02-14 00:03:13 robertis Exp $
 # 
 #
 
@@ -90,6 +90,13 @@ ifeq ($(CYGWIN_ARCH), WOW64)
 BUILD_TYPE := 64
 endif
 endif
+
+######################################################
+# IIS 7.0 Header files
+######################################################
+IIS7_DIR := $(EXTERNAL_DIR)/iis7
+IIS7_INC_DIR := $(IIS7_DIR)/include
+
 
 ##########################################
 # LIBXML defines

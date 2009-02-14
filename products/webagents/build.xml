@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.12 2009-01-12 09:44:44 ranajitgh Exp $
+   $Id: build.xml,v 1.13 2009-02-14 00:00:19 robertis Exp $
 
 -->
 
@@ -149,6 +149,14 @@
              target="all" inheritRefs="true"/>
      </target>
 
+    <target name="iis7" depends="preparebuild" if="iis.build.ok">
+         <echo message="Dispatch to iis7"/>
+         <property name="containername" value="iis7"/>
+         <antcall target="gmake" inheritRefs="true"/>
+         <ant antfile="${webagents.basedir}/build_agent.xml"
+             target="all" inheritRefs="true"/>
+     </target>
+
     <target name="gmake">
         <echo message="Dispatch to compile of agent c code"/>
         <exec executable="gmake" failonerror="true">
@@ -195,7 +203,8 @@
         <echo message=" sjsws           : builds the Sun Java System Web Server 6.1/7.0 agent"/>
         <echo message=" proxy40         : builds the Sun Java System Proxy Server 4.0 agent"/>
         <echo message=" apache22        : builds the Apache Web Server 2.2.x agent"/>
-        <echo message=" iis6          : builds the Microsoft Internet Information Services 6 agent"/>
+        <echo message=" iis6            : builds the Microsoft Internet Information Services 6 agent"/>
+        <echo message=" iis7            : builds the Microsoft Internet Information Services 7 agent"/>
         <echo message=" usage           : displays this usage message"/>
         <echo message=" "/>
         <echo message=" To run a target, issue the following command:"/>

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build_agent.xml,v 1.15 2009-01-12 09:44:44 ranajitgh Exp $
+   $Id: build_agent.xml,v 1.16 2009-02-14 00:00:36 robertis Exp $
 
 -->
 
@@ -43,6 +43,8 @@
         location="${webagents.basedir}/agents/source/apache22"/>
     <property name="webagents.iis6.src.dir"
         location="${webagents.basedir}/agents/source/iis6"/>
+    <property name="webagents.iis7.src.dir"
+        location="${webagents.basedir}/agents/source/iis7"/>
 
     <!-- top level directory structure -->
     <property name="webagents.container.extlib.dir" 

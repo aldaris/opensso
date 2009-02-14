@@ -31,12 +31,12 @@ README file for OpenSSO Policy Agents 3.0
 
 **********************************************************************************
 
-NOTE: Currently only Webserver 7.0 and Proxyserver 4.0 Agent has Agent 3.0
+NOTE: Currently Apache 2.0.x, IIS 7.0, Webserver 7.0 and Proxyserver 4.0 Agent has Agent 3.0
 features enabled. Also this is the only agent that users can build and install
 (Webserver 7.0 agent is supported platforms are Solaris sparc, Solaris x86 and
 RHAS Linux 4.0, 5.0 and Windows 2003 and Proxyserver 4.0 Agent is supported onlyonly on Solaris sparc)
-Rest of the Agents for other containers viz. Apache, IIS are yet to have the
-Agent 3.0 features enabled. They will be done in a timely manner.
+Rest of the Agents for other containers viz. IIS 6, Sharepoint and OWA agents are 
+yet to have the Agent 3.0 features enabled. They will be done in a timely manner.
 
 If you would like to build any other agent, please use 2.2 agents 
 from opensso branch. Opensso branch details:
@@ -124,5 +124,11 @@ opensso/products/webagents/docs/WINNT/sjsws/INSTALL.txt
 Microsoft Internet Information Services 6 Agent Build instructions: 
 opensso/products/webagents/docs/WINNT/iis/README.txt
 
-Microsoft Internet Information Services 6 Agent tall instructions:
+Microsoft Internet Information Services 6 Agent Install instructions:
 opensso/products/webagents/docs/WINNT/iis/INSTALL.txt
+
+Microsoft Internet Information Services 7 Agent Build instructions: 
+opensso/products/webagents/docs/WINNT/iis7/README.txt
+
+Microsoft Internet Information Services 7 Agent Install instructions:
+opensso/products/webagents/docs/WINNT/iis7/INSTALL.txt

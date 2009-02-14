@@ -40,6 +40,9 @@ endif
 
 SUBDIRS := samples test
 
+ifeq ($(BUILD_AGENT), iis7)
+	DEBUG_FLAGS := -Zi -O2 -DNDEBUG
+endif
 
 vpath %.c $(REAL_SRC_DIR)
 vpath %.cpp $(REAL_SRC_DIR)
