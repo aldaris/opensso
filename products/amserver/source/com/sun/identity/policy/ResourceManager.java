@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceManager.java,v 1.5 2009-01-28 05:35:01 ww203982 Exp $
+ * $Id: ResourceManager.java,v 1.6 2009-02-14 00:53:25 dillidorai Exp $
  *
  */
 
@@ -1002,17 +1002,14 @@ public class ResourceManager {
 
         Document doc = null;
         try {
-            // would XMLUtils.getXMLDocument(InputStream) work too ?
-            //doc = SMSSchema.getXMLDocument(
-            //    new ByteArrayInputStream(resourcesXml.getBytes()));
-            doc = SMSSchema.getXMLDocument(resourcesXml, false);
-        } catch (com.sun.identity.sm.SchemaException se) {
-            PolicyManager.debug.error(
-                    "XML parsing error: " + resourcesXml);
-            throw new PolicyException(se);
-        } catch (SMSException smse) {
-            throw new PolicyException(smse);
+            doc = XMLUtils.getXMLDocument(
+                    new ByteArrayInputStream(resourcesXml.getBytes("UTF8")));
+            
+        } catch (Exception xmle) {
+            debug.error("XML parsing error for resourcesXml");
+            throw (new PolicyException(xmle));
         }
+            
         
         Node rootNode = XMLUtils.getRootNode(
             doc, PolicyManager.POLICY_INDEX_ROOT_NODE);
