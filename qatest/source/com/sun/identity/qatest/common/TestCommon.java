@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.70 2009-02-03 19:54:21 cmwesley Exp $
+ * $Id: TestCommon.java,v 1.71 2009-02-14 01:02:09 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -74,6 +74,7 @@ import java.util.logging.SimpleFormatter;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import org.mortbay.jetty.Server;
+import org.mortbay.jetty.security.SslSocketConnector;
 import org.mortbay.jetty.webapp.WebAppContext;
 import org.testng.Reporter;
 import java.net.URLEncoder;
@@ -106,6 +107,7 @@ public class TestCommon implements TestConstants {
     static protected Server server;
     private String productSetupResult;
     static private String uriseparator = "/";
+    protected static String csDeployURI = "/IntClientSample";
  
     protected static String newline = System.getProperty("line.separator");
     protected static String fileseparator =
@@ -571,7 +573,8 @@ public class TestCommon implements TestConstants {
                         "FederatedAccessManagerEncryptionKey", "UTF-8")); 
         }
 
-        String strDirServerFQDN = (String) map.get(TestConstants.KEY_ATT_DIRECTORY_SERVER);
+        String strDirServerFQDN = (String) map.get(
+                TestConstants.KEY_ATT_DIRECTORY_SERVER);
         strBuff.append("&")
                 .append(URLEncoder.encode("PLATFORM_LOCALE", "UTF-8"))
 		.append("=")
@@ -872,7 +875,8 @@ public class TestCommon implements TestConstants {
                             "be reached.");
                 }
             }
-        } catch(com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException e) {
+        } catch(com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException e)
+        {
             log(Level.SEVERE, "configureProduct", strURL +
                     " cannot be reached.");
             return false;
@@ -1667,8 +1671,8 @@ public class TestCommon implements TestConstants {
         WebClient wc = new WebClient();
         HtmlPage jettypage = (HtmlPage)wc.getPage(strNotURL);
         int i = 0;
-        while((jettypage.getWebResponse().getContentAsString().contains("jetty"))
-                && (i < 60)){
+        while((jettypage.getWebResponse().getContentAsString().
+                contains("jetty")) && (i < 60)){
             log(Level.FINE, "stopNotificationServer", "Jetty server is up. " +
                     "Waiting for the jetty process to die");
             Thread.sleep(5000);
@@ -1681,7 +1685,8 @@ public class TestCommon implements TestConstants {
         }
         deregisterNotificationServerURL(notificationIDMap);
         } catch (ConnectException e) {
-            log(Level.FINEST, "stopNotificationServer", "Notification server is stopped");
+            log(Level.FINEST, "stopNotificationServer", "Notification server" +
+                    " is stopped");
         } catch (Exception e) {
             throw e;
         }
@@ -1748,33 +1753,223 @@ public class TestCommon implements TestConstants {
      */
     protected String deployClientSDKWar(ResourceBundle rb_client)
     throws Exception {
+        String userHomeDir = System.getProperty("user.home");
+        deleteDirectory(userHomeDir + fileseparator + "OpenSSOClient");
         String strWarType = rb_client.getString("warfile_type");
         String strClientDomain = rb_client.getString("client_domain_name");
         String warFile = rb_client.getString("war_file");
+
+        int deployPort = getUnusedPort();
+        log(Level.FINE, "deployClientSDKWar", "Deploy port: " + deployPort);
+
+        InetAddress addr = InetAddress.getLocalHost();
+        String hostname = addr.getCanonicalHostName();
+        log(Level.FINE, "deployClientSDKWar", "Deploy host: " + hostname +
+                    strClientDomain);
+
         if (strWarType.equals("internal")) {
             server = new Server();
-            Connector connector = new SelectChannelConnector();
+            if (protocol.equals("https")) {
+                SslSocketConnector sslconnector = new SslSocketConnector();
+                sslconnector.setMaxIdleTime(30000);
+                String trustCertType = rb_client.getString("trust_cert_type");
+                String trustCertPassword =
+                        rb_client.getString("trust_cert_password");
+                String javaHome = System.getProperty("java.home");
+                log(Level.FINE, "deployClientSDKWar", "JAVA HOME: " +
+                        javaHome);
+                String s = null;
+                if (trustCertType.equals("external")) {
+                    String strKeystore =
+                            rb_client.getString("trust_cert_store");
+                    sslconnector.setKeystore(strKeystore);
+                    sslconnector.setTruststore(strKeystore);
+                    sslconnector.setPassword(trustCertPassword);
+                    sslconnector.setKeyPassword(trustCertPassword);
+                    sslconnector.setTrustPassword(trustCertPassword);
+                    String listKeyStore = javaHome + fileseparator + "bin" +
+                            fileseparator + "keytool -list -keystore " +
+                            strKeystore + " -storepass " + trustCertPassword;
+                    log(Level.FINE, "deployClientSDKWar", "List keystore" +
+                            " command: " + listKeyStore);
+                    Process p = Runtime.getRuntime().exec(listKeyStore);
+                    BufferedReader stdInput = new BufferedReader(
+                            new InputStreamReader(p.getInputStream()));
+                    BufferedReader stdError = new BufferedReader(
+                            new InputStreamReader(p.getErrorStream()));
 
-            int deployPort = getUnusedPort();
-            log(Level.FINE, "deployClientSDKWar", "Deploy port: " + deployPort);
-            connector.setPort(deployPort);
+                    // read the output from the command                    
+                    log(Level.FINEST, "deployClientSDKWar", "The following is" +
+                            " the standard output of generate keystore" +
+                            " command: ");                    
+                    while ((s = stdInput.readLine()) != null) {
+                        log(Level.FINEST, "deployClientSDKWar", s);
+                        if (s.contains("Keystore file does not exist")) {
+                            log(Level.SEVERE, "deployClientSDKWar",
+                                    "Configuring war using external " +
+                                    " certificate failed. The reason: Either" +
+                                    " system could not find the sepcified" +
+                                    " keystore or does not have read" +
+                                    " permission to it.");
+                            assert false;
+                        } else if (s.contains("password was incorrect")) {
+                            log(Level.SEVERE, "deployClientSDKWar",
+                                    "Configuring war using external signed" +
+                                    " certificate failed. The reason: The" +
+                                    " password to access the keystore is" +
+                                    " incorrect.");
+                            assert false;
+                        }                         
+                    }
+                    
+                    // read any errors from the attempted command
+                    log(Level.FINEST, "deployClientSDKWar", "The following is" +
+                            " the standard error of generate keystore" +
+                            " command: ");                    
+                    while ((s = stdError.readLine()) != null) {
+                        log(Level.FINEST, "deployClientSDKWar", s);
+                    }                    
+                } else {
+ 
+                    String baseDir = getBaseDir() + fileseparator +
+                            rb_amconfig.getString(
+                            TestConstants.KEY_ATT_SERVER_NAME);
+                    deleteDirectory(baseDir + fileseparator + "keystore");
+                    createDirectory(baseDir + fileseparator + "keystore");
+                    String genKeyStore = javaHome + fileseparator + "bin" +
+                            fileseparator + "keytool -genkey -dname cn=" +
+                            host + " -validity 365 -keystore " + baseDir +
+                            fileseparator + "keystore" + fileseparator + 
+                            "clientkeystore.jks -storepass " +
+                            trustCertPassword + " -keypass " +
+                            trustCertPassword;
+                    log(Level.FINE, "deployClientSDKWar", "Generate keystore" +
+                            " command: " + genKeyStore);
+                    Process p = Runtime.getRuntime().exec(genKeyStore);
+                    BufferedReader stdInput = new BufferedReader(
+                            new InputStreamReader(p.getInputStream()));
+                    BufferedReader stdError = new BufferedReader(
+                            new InputStreamReader(p.getErrorStream()));
 
-            InetAddress addr = InetAddress.getLocalHost();
-            String hostname = addr.getCanonicalHostName();
+                    // read the output from the command                    
+                    log(Level.FINEST, "deployClientSDKWar", "The following is" +
+                            " the standard output of generate keystore" +
+                            " command: ");                    
+                    while ((s = stdInput.readLine()) != null) {
+                        log(Level.FINEST, "deployClientSDKWar", s);
+                    }
+                    
+                    // read any errors from the attempted command
+                    log(Level.FINEST, "deployClientSDKWar", "The following is" +
+                            " the standard error of generate keystore" +
+                            " command: ");                    
+                    while ((s = stdError.readLine()) != null) {
+                        log(Level.FINEST, "deployClientSDKWar", s);
+                    }
+                    
+                    String exportKeyStore = javaHome + fileseparator + "bin" +
+                            fileseparator + "keytool -export -alias mykey" +
+                            " -file " + baseDir + fileseparator + "keystore" +
+                            fileseparator + "clientcert.cer" + " -keystore " +
+                            baseDir + fileseparator + "keystore" +
+                            fileseparator + "clientkeystore.jks" +
+                            " -storepass " + trustCertPassword +
+                            " -keypass " + trustCertPassword;
+                    log(Level.FINE, "deployClientSDKWar", "Export keystore" +
+                            " command: " + exportKeyStore);
+                    
+                    p = Runtime.getRuntime().exec(exportKeyStore);
+                    
+                    stdInput = new BufferedReader(
+                            new InputStreamReader(p.getInputStream()));
+                    stdError = new BufferedReader(
+                            new InputStreamReader(p.getErrorStream()));
 
-            log(Level.FINE, "deployClientSDKWar", "Deploy host: " + hostname +
-                    strClientDomain);
-            connector.setHost(hostname);
-            server.addConnector(connector);
+                    // read the output from the command
+                    log(Level.FINEST, "deployClientSDKWar", "The following is" +
+                            " the standard output of generate keystore" +
+                            " command: ");                    
+                    while ((s = stdInput.readLine()) != null) {
+                        log(Level.FINEST, "deployClientSDKWar", s);
+                    }
+                    
+                    // read any errors from the attempted command
+                    log(Level.FINEST, "deployClientSDKWar", "The following is" +
+                            " the standard error of generate keystore" +
+                            " command: ");                    
+                    while ((s = stdError.readLine()) != null) {
+                        log(Level.FINEST, "deployClientSDKWar", s);
+                    }
+
+                    String importKeyStore = javaHome + fileseparator + "bin" +
+                            fileseparator + "keytool -import -noprompt " + 
+                            "-trustcacerts" + " -alias " + host + " -file " +
+                            baseDir + fileseparator + "keystore" +
+                            fileseparator + "clientcert.cer" + " -keystore " +
+                            javaHome + fileseparator + "lib" + fileseparator + 
+                            "security" + fileseparator + "cacerts" +
+                            " -storepass " + trustCertPassword + " -keypass " +
+                            trustCertPassword;
+                    log(Level.FINE, "deployClientSDKWar", "Import keystore" +
+                            " command: " + importKeyStore);
+                    
+                    p = Runtime.getRuntime().exec(importKeyStore);
+                    
+                    stdInput = new BufferedReader(
+                            new InputStreamReader(p.getInputStream()));
+                    stdError = new BufferedReader(
+                            new InputStreamReader(p.getErrorStream()));
+
+                    // read the output from the command
+                    log(Level.FINEST, "deployClientSDKWar", "The following is" +
+                            " the standard output of generate keystore" +
+                            " command: ");                    
+                    while ((s = stdInput.readLine()) != null) {
+                        log(Level.FINEST, "deployClientSDKWar", s);
+                        if (s.contains("Permission denied")) {
+                            log(Level.SEVERE, "deployClientSDKWar",
+                                    "Configuring war using self signed" +
+                                    " certificate failed. The reason: Either" +
+                                    " system could not find the sepcified" +
+                                    " keystore or does not have write" +
+                                    " permission to it.");
+                            assert false;
+                        } else if (s.contains("already exists")) {
+                            log(Level.SEVERE, "deployClientSDKWar",
+                                    "Configuring war using self signed" +
+                                    " certificate failed. The reason: An" +
+                                    " entry already exits in the keystore by" +
+                                    " the same alias.");
+                            assert false;
+                        }                        
+                    }
+                    
+                    // read any errors from the attempted command
+                    log(Level.FINEST, "deployClientSDKWar", "The following is" +
+                            " the standard error of generate keystore" +
+                            " command: ");                    
+                    while ((s = stdError.readLine()) != null) {
+                        log(Level.FINEST, "deployClientSDKWar", s);
+                    }                    
+                }
+                sslconnector.setPort(deployPort);
+                sslconnector.setHost(hostname);
+                server.addConnector(sslconnector);
+            } else {
+                Connector connector = new SelectChannelConnector();
+                connector.setPort(deployPort);
+                connector.setHost(hostname);
+                server.addConnector(connector);
+            }
 
             WebAppContext wac = new WebAppContext();
 
-            String deployURI = rb_client.getString("deploy_uri");
-            log(Level.FINE, "deployClientSDKWar", "Deploy URI: " + deployURI);
-            wac.setContextPath(deployURI);
+            //String deployURI = rb_client.getString("deploy_uri");
+            log(Level.FINE, "deployClientSDKWar", "Deploy URI: " + csDeployURI);
+            wac.setContextPath(csDeployURI);
 
             clientURL = protocol + "://" + hostname + strClientDomain + ":" +
-                    deployPort + deployURI;
+                    deployPort + csDeployURI;
             log(Level.FINE, "deployClientSDKWar", "Client URL: " + clientURL);
             if (new File(warFile).exists()) {
                 log(Level.FINE, "deployClientSDKWar", "WAR File: " + warFile);
@@ -1815,6 +2010,21 @@ public class TestCommon implements TestConstants {
         return clientURL;
     }
 
+    protected void undeployClientSDKWar(ResourceBundle rb_client)
+    throws Exception {
+        if (rb_client.getString("warfile_type").equals("internal")) {
+            log(Level.FINE, "stopServer", "Stopping jetty server");
+            server.stop();
+            log(Level.FINE, "stopServer", "Stopped jetty server");
+
+            String userHomeDir = System.getProperty("user.home");
+            deleteDirectory(userHomeDir + fileseparator + "OpenSSOClient");
+
+            // Time delay required by the jetty server process to die
+            Thread.sleep(30000);
+        }
+    }
+
     /**
      * This method configures the war using the client samples configurator page
      */
@@ -1831,7 +2041,8 @@ public class TestCommon implements TestConstants {
                 "sampleconfigurator.xml");
         BufferedWriter out = new BufferedWriter(fstream);
 
-        String debugDir = rb_client.getString(TestConstants.KEY_DEBUG_DIR);
+        //String debugDir = rb_client.getString(TestConstants.KEY_DEBUG_DIR);
+        String debugDir = getBaseDir() + serverName + "/debug/client";
         String appUser = rb_amconfig.getString(
                 TestConstants.KEY_AMC_AGENTS_APP_USERNAME);
         String appPassword = rb_amconfig.getString(
@@ -1861,7 +2072,8 @@ public class TestCommon implements TestConstants {
             out.write(newline);
             out.write("<input name=\"famPort\" value=\"" + port + "\"/>");
             out.write(newline);
-            out.write("<input name=\"famDeploymenturi\" value=\"" + uri + "\"/>");
+            out.write("<input name=\"famDeploymenturi\" value=\"" + uri +
+                    "\"/>");
             out.write(newline);
             out.write("<input name=\"debugDir\" value=\"" + debugDir + "\"/>");
             out.write(newline);
@@ -2524,5 +2736,52 @@ public class TestCommon implements TestConstants {
     throws Exception {
         return (getMapFromProperties(propName, null, null));
     }
-    
+
+    /**
+     * Deletes the specified directory
+     * @param dirName The name 
+     * @throws java.lang.Exception
+     */
+    protected void deleteDirectory(String dirName)
+    throws Exception {        
+        File configDir = new File(dirName);
+        if (configDir.exists()) {
+            String [] configFiles = configDir.list();
+            if (configFiles.length > 0) {
+                for (int i=0; i < configFiles.length; i++) {
+                    log(Level.FINEST, "deleteDirectory", "Deleting: " +
+                            dirName + fileseparator + configFiles[i]);
+                    File configFile = new File(dirName + fileseparator +
+                            configFiles[i]);                    
+                    assert(configFile.delete());
+                }
+            }
+        }
+    }
+
+    /**
+     * Create a directory or nested directories
+     * @param strDir the string stating complete directory path
+     * @return success or failure as boolena result
+     * @throws java.lang.Exception
+     */
+    protected boolean createDirectory(String strDir)
+    throws Exception {
+        boolean success = false;
+        log(Level.FINE, "createDirectory", "Creating directory: " + strDir);
+        if (!strDir.contains(fileseparator)) {
+            // Create one directory
+            success = (new File(strDir)).mkdir();
+            if (success) {
+              log(Level.FINE, "createDirectory", strDir + " created");
+            }
+        } else {
+            // Create multiple directories
+            success = (new File(strDir)).mkdirs();
+            if (success) {
+              log(Level.FINE, "createDirectory", strDir + " created");
+            }
+        }
+        return success;
+    }
 }
