@@ -18,7 +18,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: opensso-common.xml,v 1.16 2009-01-29 00:36:26 nithyas Exp $
+ $Id: opensso-common.xml,v 1.17 2009-02-14 01:12:50 mrudulahg Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -719,7 +719,7 @@
               <contains string="${EXECUTION_MODE}" substring="ldapv3" casesensitive="No"/>
               <then>
                 <echo message="Execution mode is ${EXECUTION_MODE}." />
-                    <concat destfile="${built.classes.dir}/xml/testng/genrated/${ModuleToExecute}-${EXECUTION_MODE}-generated.xml" append="true">
+                    <concat destfile="${built.classes.dir}/xml/testng/${ModuleToExecute}/${ModuleToExecute}-${EXECUTION_MODE}-generated.xml" append="true">
                         <fileset dir="${built.classes.dir}/xml/testng/${ModuleToExecute}" >
                             <include name="ldapv3_sec-*.xml"/>
                         </fileset>
