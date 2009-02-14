@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: build.xml,v 1.4 2009-01-26 23:38:04 nithyas Exp $
+ $Id: build.xml,v 1.5 2009-02-14 03:23:56 inthanga Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -30,14 +30,25 @@
     <import file="./build.properties"/>
     <import file="./xml/ant/opensso-properties.xml"/>
     <import file="./xml/ant/opensso-common.xml"/>
-    <fail message="openssoclientsdk.jar missing in qatest/lib directory">
-      <condition>
-        <not>
-          <available file="./lib/openssoclientsdk.jar" />
-        </not>
-      </condition> 
-    </fail>
-    <target name="usage">
+    <target name="checkAntVersion" description="Ensure that we're running ant 1.7.1 or above">
+      <fail message="Please execute QATEST using ant 1.7.1 or above">
+        <condition>
+          <not>
+            <contains string="${ant.version}" substring="1.7.1"/>
+          </not>
+        </condition>
+      </fail>
+    </target> 
+    <target name="IsClientJarExists" description="Ensure that we have openssoclientsdk.jar in the qatest/lib directory" depends="checkAntVersion">
+      <fail message="openssoclientsdk.jar missing in qatest/lib directory">
+        <condition>
+          <not>
+            <available file="./lib/openssoclientsdk.jar" />
+          </not>
+        </condition> 
+      </fail>
+    </target> 
+    <target name="usage" depends="checkAntVersion">
         <echo message=" "/>
         <echo message=" Following targets are available:"/>
         <echo message=" "/>
@@ -83,7 +94,7 @@
         <echo message=" "/>
     </target>
 
-    <target name="run">
+    <target name="run" depends="IsClientJarExists">
       <condition property="SERVER_DIR" value="${SERVER_NAME1}_${SERVER_NAME2}" else="${SERVER_NAME1}">
             <and>
                 <isset property="SERVER_NAME1"/>
