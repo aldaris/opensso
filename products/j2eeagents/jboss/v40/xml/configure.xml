@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: configure.xml,v 1.1 2008-12-11 15:02:43 naghaon Exp $
+   $Id: configure.xml,v 1.2 2009-02-16 09:23:38 naghaon Exp $
 
 -->
 <configure>
@@ -411,6 +411,10 @@
                     value="OpenSSOAgentConfiguration.template"/>
                 <property name="CONFIG_FILENAME_AGENT_CONFIG"
                     value="OpenSSOAgentConfiguration.properties"/>
+            </task>
+            <task name="CREATE_AGENT_PROFILE">                      
+                <class name="CreateProfileTask" type="system"/>
+                <property name="AGENT_PROFILE_TYPE" value="J2EEAgent" />
             </task>
             <task name="BACKUP_FILE">
                 <class name="BackupFileTask" type="system"/>
