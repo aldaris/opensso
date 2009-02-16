@@ -17,7 +17,7 @@
 ' your own identifying information:
 ' "Portions Copyrighted [year] [name of copyright owner]"
 '
-' $Id: IIS7CreateConfig.vbs,v 1.1 2009-02-13 23:52:41 robertis Exp $
+' $Id: IIS7CreateConfig.vbs,v 1.2 2009-02-16 23:13:05 robertis Exp $
 '
 ' Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 '
@@ -58,8 +58,6 @@ WScript.Echo "Use is subject to license terms"
 Set oFSO = CreateObject("Scripting.FileSystemObject")
 Set dict = CreateObject("Scripting.Dictionary")
 Set WshShell = CreateObject("WScript.Shell")
-'Set AppCmd = WshShell.ExpandEnvironmentStrings("%systemroot%\\system32\\inetsrv\\appcmd.exe")
-  'WshShell.Run "%systemroot%\system32\inetsrv\appcmd.exe list sites", 8, true 
 
 WScript.Echo "---------------------------------------------------------"
 WScript.Echo "    Microsoft (TM) Internet Information Server (7.0)     "
@@ -156,36 +154,17 @@ Function GetAgentDetails(oFSO, dict)
   WScript.Echo ""
 
   WScript.Echo dict("102")
-  WScript.Echo dict("103")
+  WScript.Echo ""
 
-  Set oIIS = GetObject("winmgmts:root\WebAdministration")
-  Set oSites = oIIS.InstancesOf("Site")
-  For Each oSite In oSites            
-     WScript.Echo oSite.Name & " (" & oSite.Id & ")"
-  Next
+  strCmd = "%systemroot%\system32\inetsrv\appcmd list sites" 
+  Set objExecObject = WshShell.Exec(strCmd)
+  Do Until objExecObject.StdOut.AtEndOfStream
+     WScript.Echo objExecObject.StdOut.ReadLine
+  Loop 
 
   WScript.Echo ""
-  correctIdentifier = false
-    do 
-      WScript.Echo dict("104")
-      setIdentifier = WScript.StdIn.ReadLine
-
-    if (Trim(setIdentifier) = "") then
-       WScript.Echo ""
-	correctIdentifier = false
-    else
-	For Each oSite In oSites            
-	    tmp = CInt(setIdentifier)
-	    if (tmp = oSite.Id) then
-		Exit Do
-	    end if
-	Next
-    end if
-
-	if (correctIdentifier = false) then
-	    WScript.Echo dict("121")
-	end if
-    loop until (correctIdentifier = true)
+  WScript.Echo dict("104")
+  setIdentifier = WScript.StdIn.ReadLine
 
   WScript.Echo ""
   correctAgentProtocol = false
