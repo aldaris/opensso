@@ -16,19 +16,25 @@
  *
  * When distributing Covered Code, include this CDDL
  * Header Notice in each file and include the License file
- * at opensso/legal/CDDLv1.0.txt.
+ * at opensso/legal/CDDLv1.0.txt
  * If applicable, add the following below the CDDL Header,
  * with the fields enclosed by brackets [] replaced by
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PriviligeUtils.java,v 1.1 2009-02-11 01:45:29 dillidorai Exp $
+ * $Id: PriviligeUtils.java,v 1.2 2009-02-17 21:54:43 dillidorai Exp $
  */
 
 package com.sun.identity.policy;
 
 import com.sun.identity.entitlement.Entitlement;
+import com.sun.identity.entitlement.ECondition;
+import com.sun.identity.entitlement.EResourceAttributes;
+import com.sun.identity.entitlement.ESubject;
 import com.sun.identity.entitlement.Privilige;
+import com.sun.identity.policy.interfaces.Condition;
+import com.sun.identity.policy.interfaces.ResponseProvider;
+import com.sun.identity.policy.interfaces.Subject;
 import java.util.Set;
 
 /**
@@ -59,5 +65,31 @@ public class PriviligeUtils {
             throws PolicyException {
         return null;
     }
+
+    static Set<Subject> eSubjectToPSubjects() {
+        return null;
+    }
+
+    static ESubject pSubjectsToESubject() {
+        return null;
+    }
+
+    static Set<Condition> eConditionToPConditions() {
+     return null;
+    }
+
+    static ECondition pConditionsToECondition() {
+     return null;
+    }
+
+    static Set<ResponseProvider> EResourceAttributesToResponseProviders() {
+     return null;
+    }
+
+    static Set<EResourceAttributes> ResponseProvidersToEResourceAttributes() {
+     return null;
+    }
+
+ 
     
 }
