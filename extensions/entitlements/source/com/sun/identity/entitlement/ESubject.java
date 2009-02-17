@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ESubject.java,v 1.1 2009-02-10 23:37:38 dillidorai Exp $
+ * $Id: ESubject.java,v 1.2 2009-02-17 21:43:16 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -39,23 +39,23 @@ public interface ESubject {
     void setState(String state);
 
     /**
-     *
+     * Returns state of the object
      * @return state of the object encoded as string
      */
     String getState();
 
     /**
-     * Returns <code>SubjectResult</code> of
+     * Returns <code>SubjectDecision</code> of
      * <code>ESubject</code> evaluation
      * @param subject ESubject who is under evaluation.
      * @param resourceName Resource name.
      * @param environment Environment parameters.
-     * @return <code>SubjectResult</code> of
+     * @return <code>SubjectDecision</code> of
      * <code>ESubject</code> evaluation
      * @throws com.sun.identity.entitlement,  EntitlementException in case
      * of any error
      */
-    public SubjectResult evaluate(
+    public SubjectDecision evaluate(
             Subject subject,
             String resourceName,
             Map<String, Set<String>> environment)
