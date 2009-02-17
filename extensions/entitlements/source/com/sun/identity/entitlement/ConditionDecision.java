@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConditionDecision.java,v 1.1 2009-01-15 03:14:21 dillidorai Exp $
+ * $Id: ConditionDecision.java,v 1.2 2009-02-17 21:42:30 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 import java.util.Map;
@@ -33,18 +33,35 @@ import java.util.Set;
  */
 public class ConditionDecision {
 
-        private boolean booleanResult;
+        private boolean satisfied;
         private Map<String, Set<String>> advices;
         
         /**
          * Constructs an instance of <code>ConditionDecision</code>
-         * @param booleanResult result of condition decision
+         * @param satisfied boolean result of condition decision
          * @param advices advice map of condition decision
          */
         public ConditionDecision(
-                boolean booleanResult, 
+                boolean satisfied,
                 Map<String, Set<String>> advices ) {
-            this.booleanResult = booleanResult;
+            this.satisfied = satisfied;
             this.advices = advices;
         }
+
+        /**
+         * Returns boolean result of condition decsion
+         * @return boolean result of condiiton decision
+         */
+        boolean isSatisfied() {
+            return satisfied;
+        }
+
+         /**
+         * Returns advices of condition decsion
+         * @return advices of condiiton decision
+         */
+        Map<String, Set<String>> getAdvices() {
+            return advices;
+        }
+
 }
