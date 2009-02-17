@@ -12,6 +12,10 @@ h1 {
     font-size: 18px;
 }
 
+.button-group {
+    margin-top: 16px;
+}
+
 div.button-wrapper {
     border: 1px solid #999999;
     border-top-color: #CCCCCC;
@@ -33,6 +37,7 @@ div.button-wrapper a.button img.right {
     position: relative;
     left: 3px;
     top: 3px;
+    margin-right: 3px;
 }
 
 div.button-wrapper a.button img.left {
