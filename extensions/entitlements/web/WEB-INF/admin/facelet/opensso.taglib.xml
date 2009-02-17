@@ -3,6 +3,10 @@
 <facelet-taglib>
     <namespace>http://opensso.dev.java.net</namespace>
     <tag>
+        <tag-name>button</tag-name>
+        <source>tag/button.xhtml</source>
+    </tag>
+    <tag>
         <tag-name>wizard</tag-name>
         <source>tag/wizard.xhtml</source>
     </tag>
