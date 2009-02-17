@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementSubject.java,v 1.1 2009-01-12 22:08:38 dillidorai Exp $
+ * $Id: EntitlementSubject.java,v 1.2 2009-02-17 21:44:09 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -32,7 +32,7 @@ import javax.security.auth.Subject;
 
 /**
  * Wrapper class over <code>javax.security.auth.Subject</code> to implement 
- * <code>SubjectFilter</code> interface
+ * <code>ESubject</code> interface
  */
 public class EntitlementSubject implements SubjectFilter {
 
@@ -53,12 +53,12 @@ public class EntitlementSubject implements SubjectFilter {
     }
     
     /**
-     * Checks whether the request satisfies the <code>SubjectFilter</code>
+     * Checks whether the request satisfies the <code>ESubject</code>
      * @param subject Subject who is under evaluation.
      * @param resourceName Resource name.
      * @param environment Environment parameters.
      * @return <code>true</code> if the request satisfies the 
-     * <code>SubjectFilter</code>, otherwise <code>false</code>
+     * <code>ESubject</code>, otherwise <code>false</code>
      * @throws com.sun.identity.entitlement.EntitlementException
      */
     public boolean evaluate(
