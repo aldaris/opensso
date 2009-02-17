@@ -1,7 +1,7 @@
 * {
-        margin: 0;
-        padding: 0;
-        border: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
 }
 
 body {
@@ -10,6 +10,41 @@ body {
 
 h1 {
     font-size: 18px;
+}
+
+div.button-wrapper {
+    border: 1px solid #999999;
+    border-top-color: #CCCCCC;
+    border-left-color: #CCCCCC;
+    padding: 4px;
+    background-color: #FFFFFF;
+    background-image: url(../image/background_form_element.gif);
+    background-repeat: repeat-x;
+}
+
+div.button-wrapper a.button {
+    color: #333333;
+    font-size: 90%;
+    font-weight: bold;
+    font-family: Verdana, Helvetica, Arial, sans-serif;
+}
+
+div.button-wrapper a.button img.right {
+    position: relative;
+    left: 3px;
+    top: 3px;
+}
+
+div.button-wrapper a.button img.left {
+    position: relative;
+    left: 0px;
+    top: 3px;
+}
+
+div.button-wrapper:active {
+    border: 1px solid #CCCCCC;
+    border-top-color: #999999;
+    border-left-color: #999999;
 }
 
 #page {
@@ -70,11 +105,6 @@ h1 {
     border-top: 1px solid #DDDDDD;
 }
 
-.button {
-    padding: 2px 4px 2px 4px;
-    background: #CCCCCC;
-    width: 80px;
-}
 
 #homeTabContent {
     width: 100%;

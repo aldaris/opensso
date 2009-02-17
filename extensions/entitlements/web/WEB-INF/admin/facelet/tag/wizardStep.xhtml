@@ -17,24 +17,28 @@
         </f:facet>
         <ui:insert name="wizard-step-body"/>
         <ice:panelGrid columns="2">
-            <ice:commandButton
-                styleClass="button"
-                value="Next"
-                partialSubmit="true"
-                visible="#{step &lt;= steps-1}"
-                actionListener="#{wizardHandler.nextListener}">
-                <f:attribute name="step" value="#{step}"/>
-                <f:attribute name="steps" value="#{steps}"/>
-            </ice:commandButton>
-            <ice:commandButton
-                styleClass="button"
-                value="Previous"
-                partialSubmit="true"
-                visible="#{step != 0}"
-                actionListener="#{wizardHandler.previousListener}">
-                <f:attribute name="step" value="#{step}"/>
-                <f:attribute name="steps" value="#{steps}"/>
-            </ice:commandButton>
+            <ice:panelGroup styleClass="button-wrapper" visible="#{step != 0}">
+                <ice:commandLink
+                    styleClass="button"
+                    partialSubmit="true"
+                    actionListener="#{wizardHandler.previousListener}">
+                    <f:attribute name="step" value="#{step}"/>
+                    <f:attribute name="steps" value="#{steps}"/>
+                    <img class="left" src="../image/go-previous.png"/>
+                    Previous
+                </ice:commandLink>
+            </ice:panelGroup>
+            <ice:panelGroup styleClass="button-wrapper" visible="#{step &lt; steps-1}">
+                <ice:commandLink
+                    styleClass="button"
+                    partialSubmit="true"
+                    actionListener="#{wizardHandler.nextListener}">
+                    <f:attribute name="step" value="#{step}"/>
+                    <f:attribute name="steps" value="#{steps}"/>
+                    Next
+                    <img class="right" src="../image/go-next.png"/>
+                </ice:commandLink>
+            </ice:panelGroup>
         </ice:panelGrid>
     </ice:panelCollapsible>
 </ui:composition>
