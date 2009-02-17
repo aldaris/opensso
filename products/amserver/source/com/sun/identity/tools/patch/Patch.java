@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: Patch.java,v 1.2 2008-10-10 18:50:36 kevinserwin Exp $
+* $Id: Patch.java,v 1.3 2009-02-17 18:41:11 kevinserwin Exp $
 */
 
 package com.sun.identity.tools.patch;
@@ -62,6 +62,7 @@ public class Patch implements PatchGeneratorConstants{
     boolean compareMode = false;    
     boolean mergeMode = false;
     boolean overwriteMode = false;
+    boolean overrideMode = false;
      
     File stagingArea;  
     Properties srcManifest;
@@ -125,11 +126,17 @@ public class Patch implements PatchGeneratorConstants{
         wildCard = System.getProperty(WILDCARD_CHAR,
             sysProp.getProperty(WILDCARD_CHAR,DEFAULT_WILDCARD_CHAR)).charAt(0);
    
-        if ((srcFilePath == null) || 
-                ((destFilePath != null) && (src2FilePath != null))) {
+        if (srcFilePath == null) {
+            System.out.println(rbMessages.getString("exception-no-src"));   
             printUsage();
-            System.exit(1);
-        }              
+            System.exit(1);            
+        } 
+        if ((destFilePath != null) && (src2FilePath != null)) {
+            System.out.println(rbMessages.getString("exception-bad-args"));   
+            printUsage();
+            System.exit(1);   
+        }  
+        
         // if manifest file name passed in we are in create mode        
         if (destFilePath != null) {
             createMode = true;
@@ -145,7 +152,8 @@ public class Patch implements PatchGeneratorConstants{
         }
         overwriteMode = Boolean.valueOf(System.getProperty(OPTION_OVERWRITE,
             DEFAULT_OVERWRITE)).booleanValue();        
-        
+        overrideMode = Boolean.valueOf(System.getProperty(OPTION_OVERRIDE,
+            DEFAULT_OVERRIDE)).booleanValue();        
         firstMan = new Manifest();        
         firstMan.setDefaultProperties();
         origMan = new Manifest();        
@@ -423,8 +431,6 @@ public class Patch implements PatchGeneratorConstants{
                 }
             }         
             
-            File srcFile = new File(srcFilePath);
-
             // Here we need to generate a manifest for the original war file
             System.out.print(rbMessages.getString("patch-generating"));
             System.out.print(srcFilePath);
@@ -434,12 +440,11 @@ public class Patch implements PatchGeneratorConstants{
                 System.exit(1);             
             }
 
-            // Grab the original Manifest file stored inside the war file
-            JarFile srcWar = new JarFile(srcFile);
 
-            System.out.print(rbMessages.getString("patch-retrieve"));
-            System.out.print(srcFilePath);
-            System.out.print("\n");            
+            // Grab the original Manifest file stored inside the war file
+            File srcFile = new File(srcFilePath);
+            JarFile srcWar = new JarFile(srcFile);
+           
             origMan.setProperties(PatchGeneratorUtils.getManifest(srcWar,
                     DEFAULT_MANIFEST_FILE, wildCard));   
 
@@ -448,17 +453,123 @@ public class Patch implements PatchGeneratorConstants{
                 System.out.println(rbMessages.getString("exception-no-manifest"));
                 System.exit(1);               
             }
-            
+                      
             if (compareMode == true) {
                 // we are going to compare two different war files
                 // so generate the manifest for the second war file
+
+                File src2File = new File(src2FilePath);
+                JarFile src2War = new JarFile(src2File);
+                
+                secondMan.setProperties(PatchGeneratorUtils.getManifest(src2War,
+                        DEFAULT_MANIFEST_FILE, wildCard));
+
+                String id2 = secondMan.getProperty("identifier");
+                if (id2 == null) {
+                    System.out.println(rbMessages.getString("exception-no-manifest"));
+                    System.exit(1);
+                }
+                System.out.print(rbMessages.getString("patch-original"));
+                System.out.print(id);
+                System.out.print("\n"); 
+                System.out.print(rbMessages.getString("patch-new"));
+                System.out.print(id2);
+                System.out.print("\n");
+
+                // need to check to make sure revisions are compatible
+                //   ie.  Can patch Enterprise 8.0 to Enterprise 8.0 Update x
+                //        Can't patch Nightly build to Enterprise 8.0 Update x
+                String[] result = id.split("\\s|\\(|\\)|\\.");
+                String[] result2 = id2.split("\\s|\\(|\\)|\\.");
+
+                // Versions have the following format:
+                //  Enterprise a.b Build z(datestamp)
+                //  Enterprise a.b Update c Build z(datestamp)
+                //  Express Build z(datestamp)
+                //  (datestamp)
+
+                boolean is_compatible = false;
+                int vers = 0, rev = 0, build = 0, update = 0;
+                long date = 0;
+                int vers2 = 0, rev2 = 0, build2 = 0, update2 = 0;
+                long date2 = 0;
+
+                date = Long.parseLong(result[result.length - 1]);
+                if (result[0].equals("Enterprise")) {
+                    // Enterprise/Express build - grab the version compenents
+                    if (result.length > 5) {
+                        vers = Integer.parseInt(result[1]);
+                        rev = Integer.parseInt(result[2]);
+                        if (result[3].equals("Build")) {
+                            build = Integer.parseInt(result[4]);
+                        } else if (result[3].equals("Update")) {
+                            update = Integer.parseInt(result[4]);
+                        }
+                    }
+                } else if (result[0].equals("Express")) {
+                    if (result.length >= 3) {
+                        if (result[1].equals("Build")) {
+                            if (result[2].matches("[0-9]*[a-z]") == false) {
+                                build = Integer.parseInt(result[2]);
+                            } else {
+                                String[] express_bld = result[2].split("[a-z]");
+                                build = Integer.parseInt(express_bld[0]);
+                            }
+                        }
+                    }
+                }
+                
+                date2 = Long.parseLong(result2[result2.length - 1]);
+                if (result2[0].equals("Enterprise")) {
+                    // Enterprise/Express build - grab the version compenents
+                    if (result2.length > 5) {
+                        vers2 = Integer.parseInt(result2[1]);
+                        rev2 = Integer.parseInt(result2[2]);
+                        if (result2[3].equals("Build")) {
+                            build2 = Integer.parseInt(result2[4]);
+                        } else if (result2[3].equals("Update")) {
+                            update2 = Integer.parseInt(result2[4]);
+                        }
+                    }
+                } else if (result2[0].equals("Express")) {
+                    if (result2.length >= 3) {
+                        if (result2[1].equals("Build")) {
+                            if (result2[2].matches("[0-9]*[a-z]") == false) {
+                                build2 = Integer.parseInt(result2[2]);
+                            } else {
+                                String[] express_bld = result2[2].split("[a-z]");
+                                build2 = Integer.parseInt(express_bld[0]);
+                            }
+                        }
+                    }
+                }
+                if (result[0].equals(result2[0])) {
+                    // both are Enterprise
+                    if (vers == vers2 && rev == rev2) {
+                        // same revision
+                        if ((date <= date2) && ((build <= build2) || (update <= update2))) {
+                            is_compatible = true;
+                        }
+                    }
+                }
+
+                if (is_compatible) {
+                    System.out.println(rbMessages.getString("patch-supported"));
+                } else {
+                    System.out.println(rbMessages.getString("patch-not-supported"));
+                    if (!overrideMode) {
+                        System.out.println(rbMessages.getString("patch-override"));
+                        System.exit(1);
+                    }
+                }             
+                
                 System.out.print(rbMessages.getString("patch-generating"));
                 System.out.print(src2FilePath);
-                System.out.print("\n");                
+                System.out.print("\n");
                 if (!createManifest(secondMan, src2FilePath, null)) {
                     System.out.println(rbMessages.getString("exception-no-create"));
                     System.exit(1);
-                }          
+                }
                 compareManifest(firstMan, secondMan, origMan, stagingFilePath);
             } else {
                 // comparing one file current contents against original manifest
@@ -519,6 +630,8 @@ public class Patch implements PatchGeneratorConstants{
         System.out.println(rbMessages.getString("usage-src2"));
         System.out.println(rbMessages.getString("usage-src2-desc"));  
         System.out.println(rbMessages.getString("usage-staging"));
-        System.out.println(rbMessages.getString("usage-staging-desc"));              
+        System.out.println(rbMessages.getString("usage-staging-desc"));    
+        System.out.println(rbMessages.getString("usage-override"));   
+        System.out.println(rbMessages.getString("usage-override-desc"));                
     }
 }

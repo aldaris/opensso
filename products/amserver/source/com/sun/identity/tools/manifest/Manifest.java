@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: Manifest.java,v 1.2 2008-10-10 18:50:36 kevinserwin Exp $
+* $Id: Manifest.java,v 1.3 2009-02-17 18:41:41 kevinserwin Exp $
 */
 
 package com.sun.identity.tools.manifest;
@@ -157,7 +157,7 @@ public class Manifest implements ManifestConstants{
         }        
         this.srcFilePath = srcFilePath;      
         srcFile = new File(srcFilePath);
-        if (! srcFile.exists()) {
+        if (! srcFile.isFile()) {
             System.out.println("Source file not found!");
             return false;
         }    
@@ -188,7 +188,7 @@ public class Manifest implements ManifestConstants{
                     fout = new BufferedOutputStream(new FileOutputStream(
                         new File(destFile, manifestName)));
                 } else{
-                    if (destFile.exists() && (!overwrite)) {
+                    if (destFile.isFile() && (!overwrite)) {
                         fout = new BufferedOutputStream(new FileOutputStream(
                             destFile, true));
                     } else{
