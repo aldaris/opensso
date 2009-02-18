@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SimulationPolicyEvaluator.java,v 1.3 2009-02-12 05:33:11 veiming Exp $
+ * $Id: SimulationPolicyEvaluator.java,v 1.4 2009-02-18 20:08:11 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -135,7 +135,7 @@ public class SimulationPolicyEvaluator
             if (pd != null) {
                 Entitlement ent = PolicyEvaluatorAdaptor.getEntitlement(
                     serviceType, t.resource, pd);
-                simResults.add(new SimulatedResult(ent, true, "", p.getName()));
+                simResults.add(new SimulatedResult(ent, true, p.getName()));
             }
         }
         return simResults;

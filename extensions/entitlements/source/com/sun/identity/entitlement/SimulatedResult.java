@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SimulatedResult.java,v 1.1 2009-02-10 19:31:02 veiming Exp $
+ * $Id: SimulatedResult.java,v 1.2 2009-02-18 20:08:10 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -34,18 +34,15 @@ package com.sun.identity.entitlement;
 public class SimulatedResult {
     private Entitlement entitlement;
     private boolean isApplicable;
-    private String reason;
     private String privilegeName;
 
     public SimulatedResult(
         Entitlement entitlement,
         boolean isApplicable,
-        String reason,
         String privilegeName
     ) {
         this.entitlement = entitlement;
         this.isApplicable = isApplicable;
-        this.reason = reason;
         this.privilegeName = privilegeName;
     }
 
@@ -59,9 +56,5 @@ public class SimulatedResult {
 
     public String getPrivilegeName() {
         return privilegeName;
-    }
-
-    public String getReason() {
-        return reason;
     }
 }

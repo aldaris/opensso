@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SimulationEvaluator.java,v 1.4 2009-02-12 08:34:41 veiming Exp $
+ * $Id: SimulationEvaluator.java,v 1.5 2009-02-18 20:08:11 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -132,6 +132,38 @@ public class SimulationEvaluator {
         }
     }
 
+    public boolean doesSubjectMatch(String policyName)
+        throws EntitlementException {
+        try {
+            SSOToken adminSSOToken = getSSOToken(adminSubject);
+            PolicyManager pm = new PolicyManager(adminSSOToken, "/");
+            Policy p = pm.getPolicy(policyName);
+            return p.doesSubjectMatch(getSSOToken(subject));
+        } catch (SSOException e) {
+            throw new EntitlementException(e.getMessage(), -1);
+        } catch (PolicyException e) {
+            throw new EntitlementException(e.getMessage(), -1);
+        }
+
+    }
+
+    public boolean doConditionsMatch(String policyName)
+        throws EntitlementException {
+        try {
+            SSOToken adminSSOToken = getSSOToken(adminSubject);
+            PolicyManager pm = new PolicyManager(adminSSOToken, "/");
+            Policy p = pm.getPolicy(policyName);
+            Map map = (envParameters == null) ? Collections.EMPTY_MAP :
+                envParameters;
+            return p.doConditionsMatch(getSSOToken(subject), map);
+        } catch (SSOException e) {
+            throw new EntitlementException(e.getMessage(), -1);
+        } catch (PolicyException e) {
+            throw new EntitlementException(e.getMessage(), -1);
+        }
+
+    }
+
     private void discardPolicyWithNonMatchingRes(
         String rootResource,
         String serviceTypeName
@@ -184,7 +216,7 @@ public class SimulationEvaluator {
                 Entitlement ent = new Entitlement(
                     serviceTypeName, resource, Collections.EMPTY_MAP);
                 notApplicables.add(new SimulatedResult(
-                    ent, false, "", policyName));
+                    ent, false, policyName));
             }
         }
         simulatedResults.addAll(notApplicables);

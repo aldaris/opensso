@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorTest.java,v 1.10 2009-02-12 05:33:13 veiming Exp $
+ * $Id: PolicyEvaluatorTest.java,v 1.11 2009-02-18 20:08:11 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -32,6 +32,11 @@ import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.internal.server.AuthSPrincipal;
 import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.SimulatedResult;
+import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.idm.AMIdentityRepository;
+import com.sun.identity.idm.IdRepoException;
+import com.sun.identity.idm.IdType;
+import com.sun.identity.policy.interfaces.Condition;
 import com.sun.identity.policy.interfaces.Subject;
 import com.sun.identity.security.AdminTokenAction;
 import java.security.AccessController;
@@ -54,13 +59,18 @@ public class PolicyEvaluatorTest {
     private static String POLICY_NAME1 = "PolicyEvaluatorTestP1";
     private static String POLICY_NAME2 = "PolicyEvaluatorTestP2";
     private static String POLICY_NAME3 = "PolicyEvaluatorTestP3";
+    private static String POLICY_NAME4 = "PolicyEvaluatorTestP4";
 
     private static String URL_RESOURCE1 = "http://www.*.com:8080/private";
     private static String URL_RESOURCE2 = "http://www.sun.com:8080/private";
     private static String URL_RESOURCE3 = "http://www.ibm.com:8080/private";
+    private static String URL_RESOURCE4 = "http://*.com:8080/private";
+    private static String TEST_GRP_NAME = "policyTestGroup";
+
+    private AMIdentity testGroup;
 
     @BeforeClass
-    public void setup() throws PolicyException, SSOException {
+    public void setup() throws PolicyException, SSOException, IdRepoException {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
         PolicyManager pm = new PolicyManager(adminToken, "/");
@@ -81,16 +91,31 @@ public class PolicyEvaluatorTest {
         policy.addRule(createRule3());
         policy.addSubject("group3", createSubject(pm));
         pm.addPolicy(policy);
+
+        policy = new Policy(POLICY_NAME4, "test4 - discard",
+            false, true);
+        policy.addRule(createRule4());
+        createGroup(adminToken);
+        policy.addSubject("group4", createGroupSubject(pm));
+        policy.addCondition("condition4", createIPCondition(pm));
+        pm.addPolicy(policy);
     }
     
     @AfterClass
-    public void cleanup() throws PolicyException, SSOException {
+    public void cleanup() throws PolicyException, SSOException, IdRepoException{
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
         PolicyManager pm = new PolicyManager(adminToken, "/");
         pm.removePolicy(POLICY_NAME1);
         pm.removePolicy(POLICY_NAME2);
         pm.removePolicy(POLICY_NAME3);
+        pm.removePolicy(POLICY_NAME4);
+
+        AMIdentityRepository amir = new AMIdentityRepository(
+            adminToken, "/");
+        Set<AMIdentity> identities = new HashSet<AMIdentity>();
+        identities.add(testGroup);
+        amir.deleteIdentities(identities);
     }
     
     @Test
@@ -144,7 +169,7 @@ public class PolicyEvaluatorTest {
         Set<ResourceResult> resResults = pe.getResourceResults(adminToken, 
             "http://www.sun.com:8080/private",
             ResourceResult.SUBTREE_SCOPE, Collections.EMPTY_MAP);
-        if (resResults.size() != 2) {
+        if (resResults.size() != 3) {
             throw new Exception("testResourceSubTree: failed");
         }
     }
@@ -199,6 +224,13 @@ public class PolicyEvaluatorTest {
             validateActionValues(actionValues, "GET", "allow");
             validateActionValues(actionValues, "POST", "deny");
         }
+
+        if (eval.doesSubjectMatch(POLICY_NAME4)) {
+            throw new Exception("testSimulationSelf: subject match");
+        }
+        if (eval.doConditionsMatch(POLICY_NAME4)) {
+            throw new Exception("testSimulationSelf: condition match");
+        }
     }
 
     private void validateActionValues(
@@ -236,7 +268,6 @@ public class PolicyEvaluatorTest {
                 Map<String, Object> actionValues = ent.getActionValues();
                 validateActionValues(actionValues, "GET", "allow");
             }
-            System.out.println(res);
         }
     }
 
@@ -280,6 +311,17 @@ public class PolicyEvaluatorTest {
             URL_RESOURCE3, actionValues);
     }
 
+    private Rule createRule4() throws PolicyException {
+        Map<String, Set<String>> actionValues =
+            new HashMap<String, Set<String>>();
+        Set<String> set = new HashSet<String>();
+            set.add("allow");
+        actionValues.put("POST", set);
+
+        return new Rule("rule4", "iPlanetAMWebAgentService",
+            URL_RESOURCE4, actionValues);
+    }
+
     private Subject createSubject(PolicyManager pm) throws PolicyException {
         SubjectTypeManager mgr = pm.getSubjectTypeManager();
         Subject subject = mgr.getSubject("AuthenticatedUsers");
@@ -288,6 +330,35 @@ public class PolicyEvaluatorTest {
         return subject;
     }
 
+    private Subject createGroupSubject(PolicyManager pm)
+        throws PolicyException{
+        SubjectTypeManager mgr = pm.getSubjectTypeManager();
+        Subject subject = mgr.getSubject("AMIdentitySubject");
+        Set<String> set = new HashSet<String>();
+        set.add(testGroup.getUniversalId());
+        subject.setValues(set);
+        return subject;
+    }
+
+    private Condition createIPCondition(PolicyManager pm)
+        throws PolicyException {
+        ConditionTypeManager mgr = pm.getConditionTypeManager();
+        Condition cond = mgr.getCondition("IPCondition");
+        Map<String, Set<String>> map = new HashMap<String, Set<String>>();
+        Set<String> set = new HashSet<String>();
+        set.add("whatever.whatever");
+        map.put(Condition.DNS_NAME, set);
+        cond.setProperties(map);
+        return cond;
+    }
+
+    private void createGroup(SSOToken adminToken)
+        throws IdRepoException, SSOException {
+        AMIdentityRepository amir = new AMIdentityRepository(
+            adminToken, "/");
+        testGroup = amir.createIdentity(IdType.GROUP, TEST_GRP_NAME,
+            Collections.EMPTY_MAP);
+    }
 
     private javax.security.auth.Subject createSubject(SSOToken token) {
         Principal userP = new AuthSPrincipal(token.getTokenID().toString());
