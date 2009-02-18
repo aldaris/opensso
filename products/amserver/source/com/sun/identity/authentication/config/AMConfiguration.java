@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMConfiguration.java,v 1.7 2008-12-16 01:09:18 madan_ranganath Exp $
+ * $Id: AMConfiguration.java,v 1.8 2009-02-18 03:47:08 222713 Exp $
  *
  */
 
@@ -647,7 +647,7 @@ public class AMConfiguration extends Configuration {
      *         for this application, or null if this application has no
      *         configured <code>LoginModules</code>.
      */
-    public AppConfigurationEntry[] getAppConfigurationEntry(String configName) {
+    public synchronized AppConfigurationEntry[] getAppConfigurationEntry(String configName) {
         // this function will read corresponding auth configuration for the
         // specified  configName, and retrieve corresponding module instance
         // attributes for the module instance defined in the options field of
