@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DirectoryServicesImpl.java,v 1.11 2009-01-28 05:34:48 ww203982 Exp $
+ * $Id: DirectoryServicesImpl.java,v 1.12 2009-02-18 03:51:48 222713 Exp $
  *
  */
 
@@ -3631,6 +3631,7 @@ public class DirectoryServicesImpl implements AMConstants, IDirectoryServices {
         Set set = new HashSet();
 
         Set roleDNs = auser.getRoleDNs();
+        roleDNs.addAll(auser.getFilteredRoleDNs());
         Iterator iter = roleDNs.iterator();
 
         while (iter.hasNext()) {
