@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.21 2009-02-05 20:49:18 farble1670 Exp $
+   $Id: build.xml,v 1.22 2009-02-18 06:29:37 veiming Exp $
 
 -->
 
@@ -241,7 +241,7 @@
 
     <target name="package-war" depends="src,merge">
         <war
-            destfile="${entitlements.dist.dir}/opensso.war"
+            destfile="${entitlements.dist.dir}/entitlements.war"
             webxml="${war.package.dir}/WEB-INF/web.xml">
             <zipfileset dir="${war.package.dir}" />
         </war>
