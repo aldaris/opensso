@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XMLUtils.java,v 1.11 2008-10-16 02:00:04 arviranga Exp $
+ * $Id: XMLUtils.java,v 1.12 2009-02-18 03:43:10 222713 Exp $
  *
  */
 
@@ -741,7 +741,8 @@ public class XMLUtils {
         text = text.replaceAll("&gt;", ">");
         text = text.replaceAll("&quot;", "\"");
         text = text.replaceAll("&apos;", "'");
-        text = text.replaceAll("&#xD;", "\n");
+        text = text.replaceAll("&#xA;", "\n");
+        text = text.replaceAll("&#xD;", "\r");
         return text;
     }
 
@@ -767,7 +768,7 @@ public class XMLUtils {
         for (; i < len; i++) {
             char c = text.charAt(i);
             if (c == '&' || c == '<' || c == '>' || c == '\'' || c == '\"'
-                    || c == '\n') {
+                    || c == '\n' || c == '\r') {
                 specialCharacterFound = true;
                 break;
             }
@@ -794,6 +795,9 @@ public class XMLUtils {
                     sb.append("&apos;");
                     break;
                 case '\n':
+                    sb.append("&#xA;");
+                    break;
+                case '\r':
                     sb.append("&#xD;");
                     break;
                 default:
