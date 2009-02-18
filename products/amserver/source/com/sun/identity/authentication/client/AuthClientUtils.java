@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthClientUtils.java,v 1.26 2009-02-06 02:17:51 ericow Exp $
+ * $Id: AuthClientUtils.java,v 1.27 2009-02-18 03:37:07 222713 Exp $
  *
  */
 
@@ -2062,6 +2062,7 @@ public class AuthClientUtils {
             conn.setRequestProperty(
                 "Content-Length", request.getHeader("content-length"));
             conn.setRequestProperty("Host", request.getHeader("host"));
+            conn.setRequestProperty(ISAuthConstants.ACCEPT_LANG_HEADER, request.getHeader(ISAuthConstants.ACCEPT_LANG_HEADER));
 
             // Sending Output to Original Auth server...
             utilDebug.message("SENDING DATA ... ");

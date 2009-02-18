@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginServlet.java,v 1.8 2008-12-23 23:22:36 ericow Exp $
+ * $Id: LoginServlet.java,v 1.9 2009-02-18 03:38:42 222713 Exp $
  *
  */
 
@@ -193,6 +193,7 @@ extends com.sun.identity.authentication.UI.AuthenticationServletBase {
                     }
                     if ((output_data != null) && (!output_data.equals(""))) {
                         debug.message("Printing the forwarded response");
+                        response.setContentType("text/html; charset=UTF-8");
                         java.io.PrintWriter outP = response.getWriter();
                         outP.println(output_data);
                     }
