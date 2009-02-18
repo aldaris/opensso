@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateFedlet.java,v 1.10 2009-02-06 22:34:48 babysunil Exp $
+ * $Id: CreateFedlet.java,v 1.11 2009-02-18 23:44:09 asyhuang Exp $
  *
  */
 
@@ -388,7 +388,7 @@ public class CreateFedlet
     ) throws WorkflowException {
         
         String prop = getBitAsString(servletCtx,
-            "WEB-INF/fedlet/FederationConfig.properties");
+            "/WEB-INF/fedlet/FederationConfig.properties");
         for (Iterator i = FedConfigTagSwapOrder.iterator(); i.hasNext();) {
             String k = (String) i.next();
             String v = (String) FedConfigTagSwap.get(k);
