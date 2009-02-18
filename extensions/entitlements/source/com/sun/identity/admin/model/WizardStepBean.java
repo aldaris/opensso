@@ -1,6 +1,8 @@
 package com.sun.identity.admin.model;
 
-public class WizardStepBean {
+import java.io.Serializable;
+
+public class WizardStepBean implements Serializable {
     private boolean expanded = false;
     private boolean enabled = false;
 

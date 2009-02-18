@@ -71,4 +71,8 @@ public class WizardHandler implements Serializable {
         WizardStepBean previous = getWizardBean().getWizardStepBeans()[step-1];
         previous.setExpanded(true);
     }
+
+    public String finishAction() {
+        return "finish";
+    }
 }

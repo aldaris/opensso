@@ -14,8 +14,8 @@
             actionListener="#{handler.nextListener}">
             <f:attribute name="step" value="#{step}"/>
             <f:attribute name="steps" value="#{steps}"/>
-            <img class="left" src="../image/go-next.png"/>
             Next
+            <img class="right" src="../image/go-next.png"/>
         </ice:commandLink>
     </ice:panelGroup>
     <ice:panelGroup
@@ -30,6 +30,20 @@
             <f:attribute name="steps" value="#{steps}"/>
             <img class="left" src="../image/go-previous.png"/>
             Previous
+        </ice:commandLink>
+    </ice:panelGroup>
+    <ice:panelGroup
+        styleClass="button-wrapper"
+        visible="#{step == steps-1}"
+        rendered="#{type == 'finish'}">
+        <ice:commandLink
+            styleClass="button"
+            partialSubmit="true"
+            action="#{handler.finishAction}">
+            <f:attribute name="step" value="#{step}"/>
+            <f:attribute name="steps" value="#{steps}"/>
+            <img class="left" src="../image/execute.png"/>
+            Finish
         </ice:commandLink>
     </ice:panelGroup>
 </ui:composition>

@@ -21,7 +21,50 @@
                     step="0"
                     label="Step 1: Getting started">
                     <ui:define name="wizard-step-body">
-                        Step 1 ...
+                        <div class="section-title">
+                            <ice:outputText value="New Policy Name and Description"/>
+                        </div>
+                        <ice:panelGrid
+                            columns="2"
+                            columnClasses="label-column,input-column">
+                            <ice:panelGroup>
+                                <ice:outputLabel
+                                    for="policy-name"
+                                    value="New Policy Name"/>
+                            </ice:panelGroup>
+                            <ice:panelGroup>
+                                <ice:inputText id="policy-name"/>
+                            </ice:panelGroup>
+                            <ice:panelGroup>
+                                <ice:outputLabel
+                                    for="policy-description"
+                                    value="New Policy Description"/>
+                            </ice:panelGroup>
+                            <ice:inputTextarea
+                                id="policy-description"
+                                styleClass="policy-description"/>
+                        </ice:panelGrid>
+                        <div class="section-title">
+                            <ice:outputText
+                                value="Application Type"/>
+                        </div>
+                        <ice:panelGrid
+                            columns="2"
+                            columnClasses="label-column,input-column">
+                            <ice:panelGroup>
+                                <ice:outputLabel
+                                    for="application-type"
+                                    value="Application Type"/>
+                            </ice:panelGroup>
+                            <ice:panelGroup>
+                                <ice:selectOneMenu
+                                    id="application-type"
+                                    value="#{applicationsBean.applicationBean.name}">
+                                    <f:selectItems
+                                        value="#{applicationsBean.applicationSelectItems}"/>
+                                </ice:selectOneMenu>
+                            </ice:panelGroup>
+                        </ice:panelGrid>
                     </ui:define>
                 </o:wizardStep>
                 <o:wizardStep

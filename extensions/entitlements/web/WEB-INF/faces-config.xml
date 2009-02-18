@@ -18,6 +18,12 @@
     </application>
 
     <managed-bean>
+        <managed-bean-name>applicationsBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.ApplicationsBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
         <managed-bean-name>policyCreateWizardBean</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.WizardBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
@@ -25,7 +31,7 @@
 
     <managed-bean>
         <managed-bean-name>policyCreateWizardHandler</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.handler.WizardHandler</managed-bean-class>
+        <managed-bean-class>com.sun.identity.admin.handler.PolicyCreateWizardHandler</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
         <managed-property>
             <property-name>wizardBean</property-name>
@@ -47,47 +53,24 @@
             <to-view-id>/admin/facelet/monitoring.xhtml</to-view-id>
         </navigation-case>
         <navigation-case>
-            <from-outcome>policyCreate</from-outcome>
+            <from-outcome>policy-create</from-outcome>
             <to-view-id>/admin/facelet/policy-create.xhtml</to-view-id>
         </navigation-case>
         <navigation-case>
-            <from-outcome>policyManage</from-outcome>
+            <from-outcome>policy-created</from-outcome>
+            <to-view-id>/admin/facelet/policy-created.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>policy-manage</from-outcome>
             <to-view-id>/admin/facelet/policy-manage.xhtml</to-view-id>
         </navigation-case>
         <navigation-case>
-            <from-outcome>resourceManage</from-outcome>
+            <from-outcome>resource-manage</from-outcome>
             <to-view-id>/admin/facelet/resource-manage.xhtml</to-view-id>
         </navigation-case>        
         <navigation-case>
             <from-outcome>samlv2Workflow</from-outcome>
             <to-view-id>/admin/facelet/samlv2-workflow.xhtml</to-view-id>
         </navigation-case>               
-    </navigation-rule>
-
-    <navigation-rule>
-        <navigation-case>
-            <from-outcome>policy</from-outcome>
-            <to-view-id>/admin/facelet/policy.xhtml</to-view-id>
-        </navigation-case>
-        <navigation-case>
-            <from-outcome>federation</from-outcome>
-            <to-view-id>/admin/facelet/federation.xhtml</to-view-id>
-        </navigation-case>
-        <navigation-case>
-            <from-outcome>monitoring</from-outcome>
-            <to-view-id>/admin/facelet/monitoring.xhtml</to-view-id>
-        </navigation-case>
-        <navigation-case>
-            <from-outcome>policyCreate</from-outcome>
-            <to-view-id>/admin/facelet/policy-create.xhtml</to-view-id>
-        </navigation-case>
-        <navigation-case>
-            <from-outcome>policyManage</from-outcome>
-            <to-view-id>/admin/facelet/policy-manage.xhtml</to-view-id>
-        </navigation-case>
-        <navigation-case>
-            <from-outcome>resourceManage</from-outcome>
-            <to-view-id>/admin/facelet/resource-manage.xhtml</to-view-id>
-        </navigation-case>
     </navigation-rule>
 </faces-config>

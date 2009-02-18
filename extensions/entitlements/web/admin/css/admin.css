@@ -8,19 +8,38 @@ body {
     font: 80% arial, helvetica, sans-serif;
 }
 
-h1 {
-    font-size: 18px;
+.section-title {
+    border-bottom: 1px solid;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    width: 100%;
 }
+
+.label-column {
+    vertical-align: top;
+}
+
+.input-column {
+    vertical-align: top;
+}
+
+textarea.policy-description {
+    width: 320px;
+    height: 100px;
+}
+
 
 .button-group {
     margin-top: 16px;
 }
 
+
 div.button-wrapper {
     border: 1px solid #999999;
     border-top-color: #CCCCCC;
     border-left-color: #CCCCCC;
-    padding: 4px;
+    padding: 4px 8px 6px 8px;
     background-color: #FFFFFF;
     background-image: url(../image/background_form_element.gif);
     background-repeat: repeat-x;
@@ -31,6 +50,12 @@ div.button-wrapper a.button {
     font-size: 90%;
     font-weight: bold;
     font-family: Verdana, Helvetica, Arial, sans-serif;
+}
+
+div.button-wrapper:active {
+    border: 1px solid #CCCCCC;
+    border-top-color: #999999;
+    border-left-color: #999999;
 }
 
 div.button-wrapper a.button img.right {
@@ -46,11 +71,6 @@ div.button-wrapper a.button img.left {
     top: 3px;
 }
 
-div.button-wrapper:active {
-    border: 1px solid #CCCCCC;
-    border-top-color: #999999;
-    border-left-color: #999999;
-}
 
 #page {
     max-width: 1024px;
@@ -96,6 +116,9 @@ div.button-wrapper:active {
 }
 
 #panel-title {
+    font-size: 18px;
+    font-weight: bold;
+    width: 100%;
 }
 
 #panel-details {
