@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IndexCache.java,v 1.4 2009-02-10 19:31:03 veiming Exp $
+ * $Id: IndexCache.java,v 1.5 2009-02-19 07:26:13 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -36,7 +36,12 @@ import com.sun.identity.sm.ServiceConfigManager;
 import com.sun.identity.sm.ServiceListener;
 import java.security.AccessController;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock
+
+;
 
 /**
  * Caches the indexes which are stored in Directory Server.
@@ -48,7 +53,8 @@ public class IndexCache implements ServiceListener, IIndexCache {
     private Cache hostIndexCache;
     private Cache pathIndexCache;
     private Cache pathParentIndexCache;
-
+    private ReadWriteLock rwlock = new ReentrantReadWriteLock();
+    
     static {
         instance.clearCaches();
 
@@ -78,43 +84,18 @@ public class IndexCache implements ServiceListener, IIndexCache {
     }
 
     /**
-     * Caches host index.
-     *
-     * @param idx host index
-     * @param objects Set of policies associated with this index.
-     */
-    public synchronized void cacheHostIndex(String idx, Set<Policy> policies) {
-        Set<Policy> set = (Set<Policy>)hostIndexCache.get(idx);
-        if (set == null) {
-            set = new HashSet<Policy>();
-            hostIndexCache.put(idx, set);
-        }
-        set.addAll(policies);
-    }
-
-    /**
      * Returns policies associated with a host index.
      *
      * @param idx host index
      * @return Set of policies associated with this index.
      */
     public Set<Policy> getHostIndex(String idx) {
-        return (Set<Policy>)hostIndexCache.get(idx);
-    }
-
-    /**
-     * Caches path index.
-     *
-     * @param idx path index
-     * @param objects Set of policies associated with this index.
-     */
-    public synchronized void cachePathIndex(String idx, Set<Policy> policies) {
-        Set<Policy> set = (Set<Policy>)pathIndexCache.get(idx);
-        if (set == null) {
-            set = new HashSet<Policy>();
-            pathIndexCache.put(idx, set);
+        rwlock.readLock().lock();
+        try {
+            return (Set<Policy>)hostIndexCache.get(idx);
+        } finally {
+            rwlock.readLock().unlock();
         }
-        set.addAll(policies);
     }
 
     /**
@@ -124,25 +105,12 @@ public class IndexCache implements ServiceListener, IIndexCache {
      * @return Set of policies associated with this index.
      */
     public Set<Policy> getPathIndex(String idx) {
-        return (Set<Policy>)pathIndexCache.get(idx);
-    }
-
-    /**
-     * Caches path parent index.
-     *
-     * @param idx path parent  index
-     * @param objects Set of policies associated with this index.
-     */
-    public synchronized void cachePathParentIndex(
-        String idx,
-        Set<Policy> policies
-    ) {
-        Set<Policy> set = (Set<Policy>)pathParentIndexCache.get(idx);
-        if (set == null) {
-            set = new HashSet<Policy>();
-            pathParentIndexCache.put(idx, set);
+        rwlock.readLock().lock();
+        try {
+            return (Set<Policy>)pathIndexCache.get(idx);
+        } finally {
+            rwlock.readLock().unlock();
         }
-        set.addAll(policies);
     }
 
     /**
@@ -152,13 +120,75 @@ public class IndexCache implements ServiceListener, IIndexCache {
      * @return Set of policies associated with this index.
      */
     public Set<Policy> getPathParentIndex(String idx) {
-        return (Set<Policy>)pathParentIndexCache.get(idx);
+        rwlock.readLock().lock();
+        try {
+            return (Set<Policy>) pathParentIndexCache.get(idx);
+        } finally {
+            rwlock.readLock().unlock();
+        }
+}
+
+    /**
+     * Caches indexes.
+     *
+     * @param hostIndexes Map of host index to set of policies.
+     * @param pathIndexes Map of path index to set of policies.
+     * @param pathParentIndexes Map of path parent index to set of policies.
+     */
+    public void cache(
+        Map<String, Set<Policy>> hostIndexes,
+        Map<String, Set<Policy>> pathIndexes,
+        Map<String, Set<Policy>> pathParentIndexes) {
+        rwlock.writeLock().lock();
+        try {
+            if ((hostIndexes != null) && !hostIndexes.isEmpty()) {
+                for (String i : hostIndexes.keySet()) {
+                    Set<Policy> policies = hostIndexes.get(i);
+                    Set<Policy> set = (Set<Policy>) hostIndexCache.get(i);
+                    if (set == null) {
+                        set = new HashSet<Policy>();
+                        hostIndexCache.put(i, set);
+                    }
+                    set.addAll(policies);
+                }
+            }
+            if ((pathIndexes != null) && !pathIndexes.isEmpty()) {
+                for (String i : pathIndexes.keySet()) {
+                    Set<Policy> policies = pathIndexes.get(i);
+                    Set<Policy> set = (Set<Policy>) pathIndexCache.get(i);
+                    if (set == null) {
+                        set = new HashSet<Policy>();
+                        pathIndexCache.put(i, set);
+                    }
+                    set.addAll(policies);
+                }
+            }
+            if ((pathParentIndexes != null) && !pathParentIndexes.isEmpty()) {
+                for (String i : pathParentIndexes.keySet()) {
+                    Set<Policy> policies = pathParentIndexes.get(i);
+                    Set<Policy> set = (Set<Policy>) pathParentIndexCache.get(i);
+                    if (set == null) {
+                        set = new HashSet<Policy>();
+                        pathParentIndexCache.put(i, set);
+                    }
+                    set.addAll(policies);
+                }
+            }
+        } finally {
+            rwlock.writeLock().unlock();
+        }
     }
 
+
     private synchronized void clearCaches() {
-        hostIndexCache = new Cache(DEFAULT_CACHE_SIZE);
-        pathIndexCache = new Cache(DEFAULT_CACHE_SIZE);
-        pathParentIndexCache = new Cache(DEFAULT_CACHE_SIZE);
+        rwlock.writeLock().lock();
+        try {
+            hostIndexCache = new Cache(DEFAULT_CACHE_SIZE);
+            pathIndexCache = new Cache(DEFAULT_CACHE_SIZE);
+            pathParentIndexCache = new Cache(DEFAULT_CACHE_SIZE);
+        } finally {
+            rwlock.writeLock().unlock();
+        }
     }
 
     public void globalConfigChanged(

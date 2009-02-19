@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexer.java,v 1.9 2009-02-04 10:04:22 veiming Exp $
+ * $Id: PolicyIndexer.java,v 1.10 2009-02-19 07:26:13 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -154,22 +154,7 @@ public class PolicyIndexer {
                 }
             }
 
-            for (String r : mapHostIndexes.keySet()) {
-                Set<Policy> p = mapHostIndexes.get(r);
-                cache.cacheHostIndex(r, p);
-            }
-            for (String r : mapPathIndexes.keySet()) {
-                Set<Policy> p = mapPathIndexes.get(r);
-                cache.cachePathIndex(r, p);
-            }
-            if (mapPathParentIndexes != null) {
-                for (String r : mapPathParentIndexes.keySet()) {
-                    Set<Policy> p = mapPathParentIndexes.get(r);
-                    cache.cachePathParentIndex(r, p);
-                }
-            }
-
-
+            cache.cache(mapHostIndexes, mapPathIndexes, mapPathParentIndexes);
         } catch (EntitlementException e) {
             PolicyManager.debug.error("PolicyIndexer.store", e);
         }
