@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthContext.java,v 1.18 2009-02-12 17:22:57 bina Exp $
+ * $Id: AuthContext.java,v 1.19 2009-02-19 05:46:13 bhavnab Exp $
  *
  */
 
@@ -1181,8 +1181,8 @@ public class AuthContext extends Object implements java.io.Serializable {
             String ssoTokenID = XMLUtils.getNodeAttributeValue(loginStatusNode,
                 AuthXMLTags.SSOTOKEN);
             try {
-                return (SSOTokenManager.getInstance().createSSOToken(
-                    ssoTokenID));
+                return new com.iplanet.sso.providers.dpro.SSOProviderImpl().
+                    createSSOToken(ssoTokenID, true);
             } catch (SSOException ssoe) {
                 throw new L10NMessageImpl(
                     amAuthContext, "createSSOTokenError", null);
