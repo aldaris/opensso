@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.43 2009-01-08 00:21:02 qcheng Exp $
+ * $Id: SAML2Utils.java,v 1.44 2009-02-19 22:50:45 madan_ranganath Exp $
  *
  */
 
@@ -3703,6 +3703,10 @@ public class SAML2Utils extends SAML2SDKUtils {
                 relayStateName + "\" " +
                 "VALUE=\"" + relayStateValue + "\">");
         }
+        out.println("<NOSCRIPT><CENTER>");
+        out.println("<INPUT TYPE=\"SUBMIT\" VALUE=\"" +
+                    bundle.getString("samlPostKey") +
+                     "\"/></CENTER></NOSCRIPT>");
         out.println("</FORM></BODY></HTML>");
         out.close();
     }
