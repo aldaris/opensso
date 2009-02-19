@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: amSession.xml,v 1.5 2008-07-22 18:56:40 manish_rustagi Exp $
+   $Id: amSession.xml,v 1.6 2009-02-19 05:51:10 bhavnab Exp $
   
 -->
 
@@ -152,6 +152,18 @@
                          <Value>6000</Value>
                    </DefaultValues>
                 </AttributeSchema>
+                <AttributeSchema name="iplanet-am-session-dnrestrictiononly"
+                   type="single"
+                   syntax="boolean"
+                   i18nKey="a121b">
+                   <BooleanValues>
+                       <BooleanTrueValue i18nKey="i18nTrue">true</BooleanTrueValue>
+                       <BooleanFalseValue i18nKey="i18nFalse">false</BooleanFalseValue>
+                   </BooleanValues>
+                   <DefaultValues>
+                       <Value>false</Value>
+                   </DefaultValues>
+                </AttributeSchema>                
                 <SubSchema name="Site" inheritance="multiple" i18nKey="site">
                 <AttributeSchema name="iplanet-am-session-store-username"
                    type="single"
