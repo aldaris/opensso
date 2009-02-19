@@ -3,6 +3,14 @@
 <facelet-taglib>
     <namespace>http://opensso.dev.java.net</namespace>
     <tag>
+        <tag-name>nbsp</tag-name>
+        <source>tag/nbsp.xhtml</source>
+    </tag>
+    <tag>
+        <tag-name>clink</tag-name>
+        <source>tag/clink.xhtml</source>
+    </tag>
+    <tag>
         <tag-name>button</tag-name>
         <source>tag/button.xhtml</source>
     </tag>

@@ -13,7 +13,23 @@ body {
     font-size: 14px;
     font-weight: bold;
     margin-bottom: 8px;
-    width: 100%;
+    float: left;
+    width: 70%;
+    clear: left;
+}
+
+.section-title-links {
+    border-bottom: 1px solid;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    float: left;
+    width: 30%;
+    text-align: right;
+}
+
+.section-title-links img {
+    padding-right: 4px;
 }
 
 .label-column {
@@ -71,6 +87,14 @@ div.button-wrapper a.button img.left {
     top: 3px;
 }
 
+.command-link span {
+    font-weight: bold;
+    color: #0000FF;
+}
+
+.command-link:hover span {
+    color: #0066FF;
+}
 
 #page {
     max-width: 1024px;

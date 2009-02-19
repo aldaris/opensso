@@ -24,6 +24,12 @@
     </managed-bean>
 
     <managed-bean>
+        <managed-bean-name>urlResourcesBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.UrlResourcesBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
         <managed-bean-name>policyCreateWizardBean</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.WizardBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>

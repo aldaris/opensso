@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ice="http://www.icesoft.com/icefaces/component">
+    <ice:commandLink
+        rendered="#{type == 'add'}"
+        styleClass="command-link">
+        <img src="../image/add.png"/>
+        <ice:outputText value="Add"/>
+    </ice:commandLink>
+    <ice:commandLink
+        rendered="#{type == 'search'}"
+        styleClass="command-link">
+        <img src="../image/search.png"/>
+        <ice:outputText value="Search"/>
+    </ice:commandLink>
+</ui:composition>

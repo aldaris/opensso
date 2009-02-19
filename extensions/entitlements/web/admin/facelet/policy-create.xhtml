@@ -21,9 +21,13 @@
                     step="0"
                     label="Step 1: Getting started">
                     <ui:define name="wizard-step-body">
-                        <div class="section-title">
+                        <span class="section-title">
                             <ice:outputText value="New Policy Name and Description"/>
-                        </div>
+                        </span>
+                        <span class="section-title-links">
+                            <o:nbsp/>
+                        </span>
+                        <div class="clear"></div>
                         <ice:panelGrid
                             columns="2"
                             columnClasses="label-column,input-column">
@@ -44,10 +48,14 @@
                                 id="policy-description"
                                 styleClass="policy-description"/>
                         </ice:panelGrid>
-                        <div class="section-title">
+                        <span class="section-title">
                             <ice:outputText
                                 value="Application Type"/>
-                        </div>
+                        </span>
+                        <span class="section-title-links">
+                            <o:nbsp/>
+                        </span>
+                        <div class="clear"></div>
                         <ice:panelGrid
                             columns="2"
                             columnClasses="label-column,input-column">
@@ -71,7 +79,33 @@
                     step="1"
                     label="Step 2: Select or add a resource to protect">
                     <ui:define name="wizard-step-body">
-                        Step 2 ...
+                        <span class="section-title">
+                            <ice:outputText value="URL Resources"/>
+                        </span>
+                        <span class="section-title-links">
+                            <o:clink type="add"/>
+                            <ice:outputText value="|"/>
+                            <o:clink type="search"/>
+                        </span>
+                        <div class="clear">
+                        </div>
+                        <ice:panelGrid columns="1">
+                            <ice:panelSeries
+                                var="urlResource"
+                                value="#{urlResourcesBean.urlResources}">
+                                <ice:panelGrid columns="2">
+                                    <ice:panelGroup>
+                                        <ice:selectBooleanCheckbox
+                                            value="#{urlResource.selected}"
+                                            partialSubmit="true"/>
+                                    </ice:panelGroup>
+                                    <ice:panelGroup>
+                                        <ice:outputText
+                                            value="#{urlResource.urlPattern}"/>
+                                    </ice:panelGroup>
+                                </ice:panelGrid>
+                            </ice:panelSeries>
+                        </ice:panelGrid>
                     </ui:define>
                 </o:wizardStep>
                 <o:wizardStep
