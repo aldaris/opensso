@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Session.java,v 1.22 2009-02-06 23:31:08 ww203982 Exp $
+ * $Id: Session.java,v 1.23 2009-02-19 05:39:23 bhavnab Exp $
  *
  */
 
@@ -56,11 +56,17 @@ import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.session.util.RestrictedTokenAction;
 import com.sun.identity.session.util.RestrictedTokenContext;
 import com.sun.identity.session.util.SessionUtils;
+import com.sun.identity.security.AdminTokenAction;
+import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
+import com.iplanet.sso.SSOTokenManager;
+
 import java.net.InetAddress;
 import java.net.URL;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Vector;
+import java.security.AccessController;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -905,11 +911,13 @@ public class Session extends GeneralTaskRunnable {
                 session
                         .getSessionResponse(session.getSessionServiceURL(),
                                 sreq);
-                removeSID(session.getID());
             }
 
         } catch (Exception e) {
             throw new SessionException(e);
+        }
+        finally {
+            removeSID(session.getID());
         }
     }
 
@@ -1015,11 +1023,6 @@ public class Session extends GeneralTaskRunnable {
         Session session = (Session) sessionTable.get(sid);
         if (session != null) {
             TokenRestriction restriction = session.getRestriction();
-            Object context = RestrictedTokenContext.getCurrent();
-            if (context == null) {
-                if (session.context != null) {
-                    context = session.context;
-                } else {
                     /*
                      * In cookie hijacking mode...
                      * After the server remove the agent token id from the
@@ -1027,21 +1030,15 @@ public class Session extends GeneralTaskRunnable {
                      * from this agent token id. Now, the restriction context
                      * required for session creation is null, so we added it
                      * to get the agent session created.*/
-                    try {
-                        context = InetAddress.getLocalHost();
-                        session.context = context;
-                        sessionDebug.message("Session:getSession : context: "
-                            + context);
-                    } catch (java.net.UnknownHostException e) {
-                        sessionDebug.warning("Session:getSession : ", e);
-                    }
-                }
-            }
             
             try {
-                if ((restriction != null) && !restriction.isSatisfied(context)){
-                    throw new SessionException(SessionBundle.rbName,
-                            "restrictionViolation", null);
+                if (isServerMode()) {
+                    if ((restriction != null) 
+                        && !restriction.isSatisfied(
+                            RestrictedTokenContext.getCurrent())) {
+                        throw new SessionException(SessionBundle.rbName,
+                                        "restrictionViolation", null);
+                    }
                 }
             } catch (SessionException se) {
                 throw se;
@@ -1492,6 +1489,30 @@ public class Session extends GeneralTaskRunnable {
     }
 
     /**
+      * populate context object with admin token
+      * @exception SessionException
+      * @param appSSOToken application SSO Token to bet set
+      */
+
+     private void createContext(SSOToken appSSOToken) throws SessionException
+     {
+
+        if (appSSOToken == null) {
+             if (sessionDebug.warningEnabled())  {
+                 sessionDebug.warning("Session."
+                     + "createContext():, "
+                     + "cannot obtain application SSO token, "
+                     + "defaulting to IP address");
+             }
+         } else {
+                 sessionDebug.message("Session."
+                     + "createContext():, "
+                     + "setting context to  application SSO token");
+                 context = appSSOToken;
+         }
+     }
+
+    /**
      * Sends remote session request without retries.
      * 
      * @param svcurl Session Service URL.
@@ -1500,35 +1521,91 @@ public class Session extends GeneralTaskRunnable {
      */
     private SessionResponse getSessionResponseWithoutRetry(URL svcurl,
             SessionRequest sreq) throws SessionException {
+         SessionResponse sres = null;
+         context = RestrictedTokenContext.getCurrent();
+         SSOToken appSSOToken = null;
+         if (!isServerMode() && !(this.sessionID.getComingFromAuth())) {
+             appSSOToken = (SSOToken) AccessController.doPrivileged(
+                     AdminTokenAction.getInstance());
+             createContext(appSSOToken);
+         } else {
+             context = null;
+         }
         try {
-            Object context = RestrictedTokenContext.getCurrent();
             if (context != null) {
                 sreq.setRequester(RestrictedTokenContext.marshal(context));
             }
-            SessionResponse sres = sendPLLRequest(svcurl, sreq);
-            if (sres.getException() != null) {
-                // Check if this exception was thrown due to Session Time out or
-                // not
-                // If yes then set the private variable timedOutAt to the
-                // current time
-                // But before that check if this timedOutAt is already set or
-                // not. No need of
-                // setting it again
-                if (timedOutAt <= 0) {
-                    String exceptionMessage = sres.getException();
-                    if (exceptionMessage.indexOf("SessionTimedOutException") 
-                            != -1) 
-                    {
-                        timedOutAt = System.currentTimeMillis() / 1000;
-                    }
+            sres = sendPLLRequest(svcurl, sreq);
+            while (sres.getException() != null) {
+                processSessionResponseException(sres, appSSOToken);
+                if (context != null) {
+                    sreq.setRequester(RestrictedTokenContext.marshal(context));
                 }
+                // send request again
+                sres = sendPLLRequest(svcurl, sreq);
+            }
+        } catch (Exception e) {
+            throw new SessionException(e);
+        }
+
+        return sres;
+    }
+
+    /**
+     * Handle exception coming back from server in the Sessionresponse
+     * @exception SessionException
+     * @param sres SessionResponse object holding the exception
+     */
+
+    private void processSessionResponseException (SessionResponse sres, 
+        SSOToken appSSOToken) throws SessionException {
+        try {
+            if (sessionDebug.messageEnabled()) {
+                sessionDebug.message("Session."
+                    + "processSessionResponseException: exception received"
+                    + " from server:"+sres.getException());
+            }
+            // Check if this exception was thrown due to Session Time out or not
+            // If yes then set the private variable timedOutAt to the current 
+            // time But before that check if this timedOutAt is already set 
+            // or not. No need of setting it again
+            String exceptionMessage = sres.getException();
+            if(timedOutAt <= 0) {
+               if (exceptionMessage.indexOf("SessionTimedOutException") != -1) {
+                    timedOutAt = System.currentTimeMillis()/1000;
+                }
+            }
+            if (exceptionMessage.indexOf(SessionBundle.getString(
+                    "appTokenInvalid")) != -1)  {
+                if (!isServerMode()&& !(this.sessionID.getComingFromAuth())) {
+                    if (appSSOToken != null) {
+                       SSOTokenManager tokenMgr = SSOTokenManager.getInstance();
+                       try {
+                           tokenMgr.destroyToken(appSSOToken);
+                       } catch ( Exception e ) {
+                           // do nothing
+                       }
+                    }
+                    if (sessionDebug.warningEnabled()) {
+                        sessionDebug.warning("Session."
+                            +"processSessionResponseException"
+                            +" processSessionResponseException"
+                            +": server responded with app token invalid"
+                            +" error,refetching the app sso token");
+                    }
+                    SSOToken newAppSSOToken = (SSOToken) 
+                        AccessController.doPrivileged(
+                            AdminTokenAction.getInstance());
+                    createContext(newAppSSOToken);
+                }
+            } else {
                 throw new SessionException(sres.getException());
             }
-            return sres;
         } catch (Exception e) {
             throw new SessionException(e);
         }
     }
+
 
     /**
      * When used in internal request routing mode, it sends remote session
@@ -1935,5 +2012,4 @@ public class Session extends GeneralTaskRunnable {
             session.setIsPolling(false);
         }
     }
-    
 }

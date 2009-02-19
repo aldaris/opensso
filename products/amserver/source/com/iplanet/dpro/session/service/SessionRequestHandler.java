@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionRequestHandler.java,v 1.7 2009-01-16 06:16:31 lakshman_abburi Exp $
+ * $Id: SessionRequestHandler.java,v 1.8 2009-02-19 05:39:25 bhavnab Exp $
  *
  */
 
@@ -45,6 +45,8 @@ import com.sun.identity.session.util.RestrictedTokenContext;
 import com.sun.identity.session.util.SessionUtils;
 import com.sun.identity.shared.encode.CookieUtils;
 import com.sun.identity.shared.Constants;
+import com.iplanet.sso.SSOToken;
+import com.iplanet.sso.SSOTokenManager;
 import java.net.InetAddress;
 import java.net.URL;
 import java.util.Map;
@@ -92,26 +94,36 @@ public class SessionRequestHandler implements RequestHandler {
                 .getMethodID());
 
         try {
-            // This logic is specific to 6.1 session hijacking hotpatch only
-            // Moving forward we need a solution which does not depend on
-            // source IP address checking
-
-            InetAddress remoteClient = InetAddress.getByName(servletRequest
-                    .getRemoteAddr());
-
             // use remote client IP as default RestrictedToken context
             Object context = SessionUtils.getClientAddress(servletRequest);
             this.clientToken = null;
-            if (SessionUtils.isTrustedSource(remoteClient)) {
-                String requester = sreq.getRequester();
-                if (requester != null) {
+            String requester = sreq.getRequester();
+            if (requester != null) {
+                try {
                     context = RestrictedTokenContext.unmarshal(requester);
                     if (context instanceof SSOToken) {
+                        SSOTokenManager ssoTokenManager =
+                          SSOTokenManager.getInstance();
+                        SSOToken adminToken = (SSOToken)context;
+                        if (!ssoTokenManager.isValidToken(adminToken)) {
+                            sres.setException(SessionBundle.getString(
+                                              "appTokenInvalid"));
+                            return new Response(sres.toXMLString());
+                        }
                         this.clientToken = (SSOToken)context;
                     }
+                } catch (Exception e) {
+                    if (SessionService.sessionDebug.warningEnabled()) {
+                         SessionService.sessionDebug.warning(
+                             "SessionRequestHandler.processRequest:"
+                             + "app token invalid, sending Session response"
+                             +" with Exception");
+                     }
+                     sres.setException(SessionBundle.getString(
+                         "appTokenInvalid"));
+                     return new Response(sres.toXMLString());
                 }
             }
-
             final HttpServletRequest httpReq = servletRequest;
             final HttpServletResponse httpResp = servletResponse;
             final SessionRequest fsreq = sreq;

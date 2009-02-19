@@ -22,15 +22,22 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DNOrIPAddressListTokenRestriction.java,v 1.5 2008-08-28 20:25:31 manish_rustagi Exp $
+ * $Id: DNOrIPAddressListTokenRestriction.java,v 1.6 2009-02-19 05:39:22 bhavnab Exp $
  *
  */
 
 package com.iplanet.dpro.session;
 
 import com.iplanet.am.util.Misc;
+import com.iplanet.am.util.Debug;
 import com.iplanet.dpro.session.service.SessionService;
+import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.security.AdminTokenAction;
+import java.security.AccessController;
+import com.sun.identity.shared.datastruct.CollectionHelper;
+import com.sun.identity.sm.ServiceSchema;
+import com.sun.identity.sm.ServiceSchemaManager;
 import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -38,19 +45,49 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.Map;
 
 /**
  * <code>DNOrIPAddressListTokenRestriction</code> implements
  * <code>TokenRestriction</code> interface and handles the restriction of
  * the <code>DN</code> or <code>IPAddress</code>
  */
+
 public class DNOrIPAddressListTokenRestriction implements TokenRestriction {
 
+    static final long serialVersionUID = 8352965917649287133L;
     private String dn;
 
     private Set addressList = new HashSet();
 
     private String asString;
+     /**
+      * boolean to indicate if the restriction checking is strictly based on DN
+      * or not during cookie hijacking mitigation mode.
+      * By default if DN is absent or cannot be determined,restriction is 
+      * set to IP address of the client. This property if not defined in
+      * is assumed false.
+      * If strict DN checking is desired this property needs to be defined
+      * with value "true"
+      */
+    private static boolean dnRestrictionOnly;
+
+    private static final String SESSION_DNRESTRICTIONONLY_ATTR_NAME =
+        "iplanet-am-session-dnrestrictiononly";
+
+    private static final String AM_SESSION_SERVICE = "iPlanetAMSessionService";
+    private static SSOToken adminToken = null;
+
+   static {
+       Debug debug = Debug.getInstance("amSession");
+       dnRestrictionOnly = getDNRestrictionOnly();
+       if (debug.messageEnabled()) {
+           debug.message(
+               "DNOrIPAddressListTokenRestriction"
+             +": fetching value for dnRestrictionOnly:"+
+              dnRestrictionOnly);
+       }
+   }
 
    /**
     * Constructs <code>DNOrIPAddressListTokenRestriction</code> object based on
@@ -135,11 +172,34 @@ public class DNOrIPAddressListTokenRestriction implements TokenRestriction {
         if (context == null) {
             return false;
         } else if (context instanceof SSOToken) {
+            if (SessionService.sessionDebug.messageEnabled()) {
+                SessionService.sessionDebug.message(
+                   "DNOrIPAddressListTokenRestriction"
+                   +".isSatisfied(): context is instance of SSOToken");
+            }
             SSOToken usedBy = (SSOToken) context;
             return Misc.canonicalize(usedBy.getPrincipal().getName())
                     .equals(dn);
         } else if (context instanceof InetAddress) {
-            return addressList.contains(context);
+            if (dnRestrictionOnly) {
+                SessionService.sessionDebug.error(
+                     "DNOrIPAddressListTokenRestriction"
+                    +".isSatisfied():dnRestrictionOnly"
+                    +" is true, hence cannot accept passed IP as"
+                    +" restriction");
+                return false;
+            } else {
+                if (SessionService.sessionDebug.messageEnabled()) {
+                    SessionService.sessionDebug.message(
+                         "DNOrIPAddressListTokenRestriction"
+                        +".isSatisfied(): dnRestrictionOnly is false");
+                    SessionService.sessionDebug.message(
+                         "DNOrIPAddressListTokenRestriction"
+                        +".isSatisfied(): IP based"
+                        +" restriction received and accepted");
+                }
+                return addressList.contains(context);
+            }
         } else {
             if (SessionService.sessionDebug.warningEnabled()) {
                 SessionService.sessionDebug.warning("Unknown context type:"
@@ -165,5 +225,59 @@ public class DNOrIPAddressListTokenRestriction implements TokenRestriction {
         return other != null
                 && (other instanceof DNOrIPAddressListTokenRestriction)
                 && other.toString().equals(this.toString());
+    }
+
+   /*
+    * Gets the admin token for checking the dn restriciton property
+    * @return admin <code>SSOTken</code>
+    */
+    static SSOToken getAdminToken() {
+        if (adminToken == null) {
+            try {
+                adminToken = (SSOToken) AccessController.doPrivileged(
+                     AdminTokenAction.getInstance());
+            } catch (Exception e) {
+                SessionService.sessionDebug.error(
+                   "Failed to get the admin token for "
+                        + "dnRestrictionOnly property checking.", e);
+            }
+        }
+        return adminToken;
+    }
+
+    static SessionService getSS() {
+        SessionService ss = SessionService.getSessionService();
+        if (ss == null) {
+            SessionService.sessionDebug.error(
+                "DNOrIPAddressListTokenRestriction: "
+                    + " Failed to get the session service instance");
+        }
+        return ss;
+    }
+
+    /*
+     * Gets the  value of the "iplanet-am-session-dnrestrictiononly"
+     * session global attribute.
+     */
+    private static boolean getDNRestrictionOnly() {
+        boolean dnRestrictionOnly = false;
+        try {
+            ServiceSchemaManager ssm = new ServiceSchemaManager(
+                    AM_SESSION_SERVICE, getAdminToken());
+            ServiceSchema schema = ssm.getGlobalSchema();
+            Map attrs = schema.getAttributeDefaults();
+            dnRestrictionOnly = Boolean.valueOf(
+                        CollectionHelper.getMapAttr(
+                        attrs,  SESSION_DNRESTRICTIONONLY_ATTR_NAME, "false")
+                        ).booleanValue();
+        } catch (Exception e) {
+            if (SessionService.sessionDebug.messageEnabled()) {
+                SessionService.sessionDebug.message(
+                        "Failed to get the default dnRestrictionOnly"
+                        + "setting. => Set  dnRestrictionOnly to "
+                        + "false", e);
+            }
+        }
+        return dnRestrictionOnly;
     }
 }
