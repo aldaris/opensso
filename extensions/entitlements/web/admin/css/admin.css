@@ -8,27 +8,32 @@ body {
     font: 80% arial, helvetica, sans-serif;
 }
 
-.section-title {
-    border-bottom: 1px solid;
+.section-head {
     font-size: 14px;
     font-weight: bold;
+    border-bottom: 1px solid;
     margin-bottom: 8px;
+    float: left;
+    width: 100%;
+}
+
+.section-sep {
+    border-bottom: 1px solid;
+}
+
+.section-title {
     float: left;
     width: 70%;
     clear: left;
 }
 
-.section-title-links {
-    border-bottom: 1px solid;
-    font-size: 14px;
-    font-weight: bold;
-    margin-bottom: 8px;
+.section-links {
     float: left;
     width: 30%;
     text-align: right;
 }
 
-.section-title-links img {
+.section-links img {
     padding-right: 4px;
 }
 
