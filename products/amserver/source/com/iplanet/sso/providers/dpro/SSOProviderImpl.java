@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SSOProviderImpl.java,v 1.8 2008-08-19 19:08:46 veiming Exp $
+ * $Id: SSOProviderImpl.java,v 1.9 2009-02-19 05:04:01 bhavnab Exp $
  *
  */
 
@@ -142,30 +142,49 @@ public final class SSOProviderImpl implements SSOProvider {
     }
 
     /**
-     * Creates a single sign on token.
+     * Creates a single sign on token. Note: this method should remain private
+     * and get called only by the AuthContext API.
      * 
      * @param tokenId single sign on token ID.
+     * @param invokedByAuth boolean flag indicating that this method has
+     *        been invoked by the AuthContext.getSSOToken() API.
      * @return single sign on token.
      * @exception SSOException if the single sign on token cannot be created.
      * @exception UnsupportedOperationException Thrown to indicate that the 
      * requested operation is not supported.
-     * @deprecated Use #createSSOToken(String, String)
      */
-    public SSOToken createSSOToken(String tokenId) throws SSOException,
-            UnsupportedOperationException {
+    public SSOToken createSSOToken(String tokenId, boolean invokedByAuth) 
+            throws SSOException, UnsupportedOperationException 
+    {
         try {
             SessionID sessionId = new SessionID(tokenId);
+            sessionId.setComingFromAuth(invokedByAuth);
             Session session = Session.getSession(sessionId);
             SSOToken ssoToken = new SSOTokenImpl(session);
             return ssoToken;
         } catch (Exception e) {
             if (debug.messageEnabled()) {
-                debug.message("could not create SSOTOken for token ID "
-                        + tokenId, e);
+                debug.message("SSOProviderImpl.createSSOToken(tokenId, boolean)"
+                    +"could not create SSOTOken for token ID " + tokenId, e);
             }
             throw new SSOException(e);
         }
     }
+
+     /**
+      * Creates a single sign on token.
+      *
+      * @param tokenId single sign on token ID.
+      * @return single sign on token.
+      * @exception SSOException if the single sign on token cannot be created.
+      * @exception UnsupportedOperationException
+      * @deprecated Use #createSSOToken(String, String)
+      */
+     public SSOToken createSSOToken(String tokenId)
+                                    throws SSOException,
+                                    UnsupportedOperationException {
+         return createSSOToken(tokenId, false);
+     }
 
     /**
      * Creates a single sign on token.
