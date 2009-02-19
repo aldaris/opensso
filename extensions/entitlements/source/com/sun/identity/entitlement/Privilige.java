@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilige.java,v 1.4 2009-02-11 01:09:48 dillidorai Exp $
+ * $Id: Privilige.java,v 1.5 2009-02-19 02:08:38 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -39,20 +39,25 @@ public class Privilige {
 
     private String name;
     private Set<Entitlement> entitlements;
-    private SubjectFilter subjectFilter;
-    private ConditionFilter conditionFilter;
+    private ESubject eSubject;
+    private ECondition eCondition;
+    private Set<EResourceAttributes> eResourceAttributes;
     
 
     /**
      * Constructs entitlement privilige
      * @param name name of the privilige
-     * @param cf condition filter for the privilige
+     * @param eSubject ESubject used for membership check
+     * @param eCondition ECondition used for constraint check
+     * @param eResourceAttributes EResourceAttributes used to get additional
+     * result attributes
      */
     public Privilige(
             String name,
             Set<Entitlement> entitlements,
-            SubjectFilter subjectFilter,
-            ConditionFilter cf) {
+            ESubject eSubject,
+            ECondition eCondition,
+            Set<EResourceAttributes> eResourceAttributes) {
     }
 
     /**
