@@ -22,13 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPProxyUtil.java,v 1.13 2008-11-10 22:57:03 veiming Exp $
+ * $Id: IDPProxyUtil.java,v 1.14 2009-02-19 20:38:54 exu Exp $
  *
  */
 
 package com.sun.identity.saml2.profile;
 
-import com.sun.identity.saml2.protocol.LogoutResponse;
 import java.util.logging.Level;
 import com.sun.identity.saml2.logging.LogUtil;
 import com.sun.identity.shared.debug.Debug;
@@ -41,8 +40,8 @@ import com.sun.identity.saml2.assertion.NameID;
 import com.sun.identity.saml2.assertion.Subject;
 import com.sun.identity.saml2.assertion.AssertionFactory;
 import com.sun.identity.saml2.assertion.Issuer;
-import com.sun.identity.saml2.protocol.LogoutRequest;
-import com.sun.identity.saml2.protocol.Response;
+import com.sun.identity.saml2.common.AccountUtils;
+import com.sun.identity.saml2.common.NameIDInfoKey;
 import com.sun.identity.saml2.common.QuerySignatureUtil;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
@@ -57,6 +56,10 @@ import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
 import com.sun.identity.saml2.plugins.SAML2IDPFinder;
 import com.sun.identity.saml2.protocol.AuthnRequest;
+import com.sun.identity.saml2.protocol.LogoutRequest;
+import com.sun.identity.saml2.protocol.LogoutResponse;
+import com.sun.identity.saml2.protocol.NameIDPolicy;
+import com.sun.identity.saml2.protocol.Response;
 import com.sun.identity.saml2.protocol.ProtocolFactory;
 import com.sun.identity.saml2.protocol.Scoping;
 import java.io.IOException;
@@ -74,8 +77,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPException;
-import com.sun.identity.saml2.common.NameIDInfoKey;
-import com.sun.identity.saml2.common.AccountUtils;
 import com.sun.identity.plugin.session.SessionManager;
 import com.sun.identity.plugin.session.SessionProvider;
 import com.sun.identity.plugin.session.SessionException;
@@ -347,8 +348,14 @@ public class IDPProxyUtil {
             issuer.setValue(hostedEntityId);
  
             newRequest.setIssuer(issuer);
-            newRequest.setNameIDPolicy(origRequest.
-                getNameIDPolicy());
+            NameIDPolicy origNameIDPolicy = origRequest.getNameIDPolicy();
+            NameIDPolicy newNameIDPolicy = ProtocolFactory.getInstance().
+                createNameIDPolicy();
+            newNameIDPolicy.setFormat(origNameIDPolicy.getFormat());
+            newNameIDPolicy.setSPNameQualifier(hostedEntityId);
+            newNameIDPolicy.setAllowCreate(origNameIDPolicy.isAllowCreate());
+            
+            newRequest.setNameIDPolicy(newNameIDPolicy);
             newRequest.setRequestedAuthnContext(origRequest.
                 getRequestedAuthnContext());
             newRequest.setExtensions(origRequest.getExtensions()); 
