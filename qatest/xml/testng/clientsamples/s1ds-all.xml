@@ -5,7 +5,6 @@
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.clientsamples.ConfigUnconfig"/> 
             <class name="com.sun.identity.qatest.clientsamples.AMSamples"/> 
         </classes>
     </test> 

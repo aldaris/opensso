@@ -20,7 +20,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: ds_ds-clientsamples-testng.xml,v 1.1 2009-01-26 23:31:09 nithyas Exp $
+ $Id: ds_ds-clientsamples-testng.xml,v 1.2 2009-02-19 22:33:56 rmisra Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -33,7 +33,6 @@
             </run>
         </groups>
         <classes>
-            <class name="com.sun.identity.qatest.clientsamples.ConfigUnconfig"/> 
             <class name="com.sun.identity.qatest.clientsamples.AMSamples"/> 
         </classes>
     </test> 
