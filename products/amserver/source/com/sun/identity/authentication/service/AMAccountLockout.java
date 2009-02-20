@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAccountLockout.java,v 1.8 2009-01-28 05:34:54 ww203982 Exp $
+ * $Id: AMAccountLockout.java,v 1.9 2009-02-20 19:04:10 manish_rustagi Exp $
  *
  */
 
@@ -257,7 +257,7 @@ class AMAccountLockout {
      */
     public boolean isLockedOut() {
         // has this user been locked out.
-        String userDN = loginState.getUserDN();
+        String userDN = loginState.getUserToken();
         return isLockedOut(userDN);
     }
     
