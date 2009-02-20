@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SimulationEvaluator.java,v 1.5 2009-02-18 20:08:11 veiming Exp $
+ * $Id: SimulationEvaluator.java,v 1.6 2009-02-20 00:03:34 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -132,13 +132,25 @@ public class SimulationEvaluator {
         }
     }
 
-    public boolean doesSubjectMatch(String policyName)
+    public Set<String> getMatchedSubjectTypeNames(String policyName)
         throws EntitlementException {
         try {
+            Set<String> matched = new HashSet<String>();
             SSOToken adminSSOToken = getSSOToken(adminSubject);
             PolicyManager pm = new PolicyManager(adminSSOToken, "/");
+            SubjectTypeManager sm = pm.getSubjectTypeManager();
             Policy p = pm.getPolicy(policyName);
-            return p.doesSubjectMatch(getSSOToken(subject));
+            SSOToken token = getSSOToken(subject);
+
+            Set<String> sbjNames = p.getSubjectNames();
+            for (String n : sbjNames) {
+                com.sun.identity.policy.interfaces.Subject sbj =
+                    p.getSubject(n);
+                if (sbj.isMember(token)) {
+                    matched.add(sm.getSubjectTypeName(sbj));
+                }
+            }
+            return matched;
         } catch (SSOException e) {
             throw new EntitlementException(e.getMessage(), -1);
         } catch (PolicyException e) {
@@ -147,21 +159,33 @@ public class SimulationEvaluator {
 
     }
 
-    public boolean doConditionsMatch(String policyName)
+    public Set<String> getMatchedConditionTypeNames(String policyName)
         throws EntitlementException {
         try {
+            Set<String> matched = new HashSet<String>();
             SSOToken adminSSOToken = getSSOToken(adminSubject);
+            SSOToken token = getSSOToken(subject);
             PolicyManager pm = new PolicyManager(adminSSOToken, "/");
+            ConditionTypeManager cm = pm.getConditionTypeManager();
             Policy p = pm.getPolicy(policyName);
             Map map = (envParameters == null) ? Collections.EMPTY_MAP :
                 envParameters;
-            return p.doConditionsMatch(getSSOToken(subject), map);
+
+            Set<String> cndNames = p.getConditionNames();
+            for (String n : cndNames) {
+                com.sun.identity.policy.interfaces.Condition cnd =
+                    p.getCondition(n);
+                ConditionDecision cd = cnd.getConditionDecision(token, map);
+                if (cd.isAllowed()) {
+                    matched.add(cm.getConditionTypeName(cnd));
+                }
+            }
+            return matched;
         } catch (SSOException e) {
             throw new EntitlementException(e.getMessage(), -1);
         } catch (PolicyException e) {
             throw new EntitlementException(e.getMessage(), -1);
         }
-
     }
 
     private void discardPolicyWithNonMatchingRes(

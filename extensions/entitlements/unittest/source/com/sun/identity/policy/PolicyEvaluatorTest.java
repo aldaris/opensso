@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorTest.java,v 1.11 2009-02-18 20:08:11 veiming Exp $
+ * $Id: PolicyEvaluatorTest.java,v 1.12 2009-02-20 00:03:34 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -225,10 +225,10 @@ public class PolicyEvaluatorTest {
             validateActionValues(actionValues, "POST", "deny");
         }
 
-        if (eval.doesSubjectMatch(POLICY_NAME4)) {
+        if (!eval.getMatchedSubjectTypeNames(POLICY_NAME4).isEmpty()) {
             throw new Exception("testSimulationSelf: subject match");
         }
-        if (eval.doConditionsMatch(POLICY_NAME4)) {
+        if (!eval.getMatchedConditionTypeNames(POLICY_NAME4).isEmpty()) {
             throw new Exception("testSimulationSelf: condition match");
         }
     }
