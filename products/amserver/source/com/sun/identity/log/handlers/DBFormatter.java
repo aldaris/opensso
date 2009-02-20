@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DBFormatter.java,v 1.7 2008-07-29 18:14:56 bigfatrat Exp $
+ * $Id: DBFormatter.java,v 1.8 2009-02-20 00:32:18 bigfatrat Exp $
  *
  */
 
@@ -183,48 +183,22 @@ public class DBFormatter extends Formatter {
          * to the db
          */
         String tstr = formatMessage(logRecord);
+
         if ((tstr == null) || (tstr.length() <= 0)) {
             tstr = LogConstants.NOTAVAIL;
-        } else if ((tstr.length() > 0 ) && (tstr.indexOf("'") != -1)) {
-            StringTokenizer tmps = new StringTokenizer(tstr, "'");
-            StringBuffer thisfield = new StringBuffer();
-            if (Debug.messageEnabled()) {
-                Debug.message("DBFormatter:found single-quote in data: " +tstr);
+        } else if (tstr.length() > 0 ) {
+            String str1 = tstr;
+            if (tstr.indexOf("'") != -1) {
+                str1 = checkEscapes(tstr, "'", "''");
             }
-            
-            /*
-             * Weird cases of "'" at beginning or end of the data
-             */
-            if (tstr.indexOf("'") == 0) {
-                thisfield.append("''");
-                if (tmps.hasMoreTokens()) {
-                    thisfield.append(tmps.nextToken());
-                }
-                if (Debug.messageEnabled()) {
-                    Debug.message("DBFormatter:thisfield1 = #" + 
-                        thisfield.toString() + "#");
-                }
-            } else {
-                if (tmps.hasMoreTokens()) {
-                    thisfield.append(tmps.nextToken());
+            String str2 = str1;
+            // Oracle doesn't have a problem with backslash
+            if (isMySQL) {
+                if (str1.indexOf("\\") != -1) {
+                    str2 = checkEscapes(str1, "\\", "\\\\");
                 }
             }
-            while (tmps.hasMoreTokens()) {
-                thisfield.append("''").append(tmps.nextToken());
-                if (Debug.messageEnabled()) {
-                    Debug.message("DBFormatter:thisfield2 = #" + 
-                                      thisfield.toString() + "#");
-                }
-            }
-
-            /*
-             *  See if it ends in "'"
-             */
-            if (tstr.indexOf("'", tstr.length()-1) != -1) {
-                thisfield.append("''");
-            }
-
-            tstr = thisfield.toString();
+            tstr = str2;
         }
         sbuffer.append("'").append(tstr).append("', ");
         if (Debug.messageEnabled()) {
@@ -309,6 +283,51 @@ public class DBFormatter extends Formatter {
         return sbuffer.toString();
     }
     
+    private String checkEscapes(String theString, String charToEscape,
+        String doubledChar)
+    {
+        StringTokenizer tmps = new StringTokenizer(theString, charToEscape);
+        StringBuffer thisfield = new StringBuffer();
+        if (Debug.messageEnabled()) {
+            Debug.message("DBFormatter:looking for " + charToEscape +
+            " in data: " + theString);
+        }
+
+        /*
+         * Weird cases of char at beginning or end of the data
+         */
+        if (theString.indexOf(charToEscape) == 0) {
+            thisfield.append(doubledChar);
+            if (tmps.hasMoreTokens()) {
+                thisfield.append(tmps.nextToken());
+            }
+            if (Debug.messageEnabled()) {
+                Debug.message("DBFormatter:thisfield1 = #" + 
+                    thisfield.toString() + "#");
+            }
+        } else {
+            if (tmps.hasMoreTokens()) {
+                thisfield.append(tmps.nextToken());
+            }
+        }
+        while (tmps.hasMoreTokens()) {
+            thisfield.append(doubledChar).append(tmps.nextToken());
+            if (Debug.messageEnabled()) {
+                Debug.message("DBFormatter:thisfield2 = #" + 
+                                  thisfield.toString() + "#");
+            }
+        }
+
+        /*
+         *  See if it ends in "'"
+         */
+        if (theString.indexOf(charToEscape, theString.length()-1) != -1) {
+            thisfield.append(doubledChar);
+        }
+
+        return (thisfield.toString());
+    }
+
     private void getAllFields() {
         String strAllFields = lmanager.getProperty(LogConstants.ALL_FIELDS);
         StringTokenizer strToken = new StringTokenizer(strAllFields, ", ");
