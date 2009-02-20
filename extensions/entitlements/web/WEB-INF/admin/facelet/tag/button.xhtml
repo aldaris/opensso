@@ -6,43 +6,21 @@
     xmlns:ice="http://www.icesoft.com/icefaces/component">
     <ice:panelGroup
         styleClass="button-wrapper"
-        visible="#{step &lt; steps-1}"
-        rendered="#{type == 'next'}">
+        rendered="#{type == 'add'}">
         <ice:commandLink
             styleClass="button"
-            partialSubmit="true"
-            actionListener="#{handler.nextListener}">
-            <f:attribute name="step" value="#{step}"/>
-            <f:attribute name="steps" value="#{steps}"/>
-            Next
-            <img class="right" src="../image/go-next.png"/>
+            actionListener="#{handler.addListener}"
+            partialSubmit="true">
+            <f:attribute name="bean" value="#{bean}"/>
+            Add
         </ice:commandLink>
     </ice:panelGroup>
     <ice:panelGroup
         styleClass="button-wrapper"
-        visible="#{step != 0}"
-        rendered="#{type == 'previous'}">
-        <ice:commandLink
-            styleClass="button"
-            partialSubmit="true"
-            actionListener="#{handler.previousListener}">
-            <f:attribute name="step" value="#{step}"/>
-            <f:attribute name="steps" value="#{steps}"/>
-            <img class="left" src="../image/go-previous.png"/>
-            Previous
-        </ice:commandLink>
-    </ice:panelGroup>
-    <ice:panelGroup
-        styleClass="button-wrapper"
-        visible="#{step == steps-1}"
         rendered="#{type == 'finish'}">
         <ice:commandLink
             styleClass="button"
-            partialSubmit="true"
-            action="#{handler.finishAction}">
-            <f:attribute name="step" value="#{step}"/>
-            <f:attribute name="steps" value="#{steps}"/>
-            <img class="left" src="../image/execute.png"/>
+            partialSubmit="true">
             Finish
         </ice:commandLink>
     </ice:panelGroup>

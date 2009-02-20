@@ -17,7 +17,7 @@
             wizardHandler="#{policyCreateWizardHandler}"
             wizardBean="#{policyCreateWizardBean}">
             <ui:define name="wizard-steps">
-                <o:wizardStep
+                <o:wstep
                     step="0"
                     label="Step 1: Getting started">
                     <ui:define name="wizard-step-body">
@@ -51,13 +51,13 @@
                                 styleClass="policy-description"/>
                         </ice:panelGrid>
                         <span class="section-head">
-                        <span class="section-title">
-                            <ice:outputText
-                                value="Application Type"/>
-                        </span>
-                        <span class="section-title-links">
-                            <o:nbsp/>
-                        </span>
+                            <span class="section-title">
+                                <ice:outputText
+                                    value="Application Type"/>
+                            </span>
+                            <span class="section-title-links">
+                                <o:nbsp/>
+                            </span>
                         </span>
                         <div class="clear"></div>
                         <ice:panelGrid
@@ -78,62 +78,106 @@
                             </ice:panelGroup>
                         </ice:panelGrid>
                     </ui:define>
-                </o:wizardStep>
-                <o:wizardStep
+                </o:wstep>
+                <o:wstep
                     step="1"
                     label="Step 2: Select or add a resource to protect">
                     <ui:define name="wizard-step-body">
                         <span class="section-head">
-                        <span class="section-title">
-                            <ice:outputText value="URL Resources"/>
-                        </span>
-                        <span class="section-links">
-                            <o:clink type="add"/>
-                            <ice:outputText value="|"/>
-                            <o:clink type="search"/>
-                        </span>
+                            <span class="section-title">
+                                <ice:outputText value="URL Resources"/>
+                            </span>
+                            <span class="section-links">
+                                <o:clink type="add"/>
+                                <ice:outputText value="|"/>
+                                <o:clink type="search"/>
+                            </span>
                         </span>
                         <div class="clear"></div>
-                        <ice:panelGrid columns="1">
+                        <ice:panelGroup
+                            scrollHeight="200px">
                             <ice:panelSeries
+                                styleClass="url-resource"
                                 var="urlResource"
                                 value="#{urlResourcesBean.urlResources}">
                                 <ice:panelGrid columns="2">
-                                    <ice:panelGroup>
-                                        <ice:selectBooleanCheckbox
-                                            value="#{urlResource.selected}"
-                                            partialSubmit="true"/>
-                                    </ice:panelGroup>
-                                    <ice:panelGroup>
-                                        <ice:outputText
-                                            value="#{urlResource.urlPattern}"/>
-                                    </ice:panelGroup>
+                                    <ice:selectBooleanCheckbox
+                                        id="resource-checkbox"
+                                        value="#{urlResource.selected}"
+                                        partialSubmit="true"/>
+                                    <ice:outputLabel
+                                        for="resource-checkbox"
+                                        value="#{urlResource.pattern}"/>
                                 </ice:panelGrid>
+                                <ice:panelGroup
+                                    styleClass="url-resource-excepted"
+                                    visible="#{urlResource.selected}">
+                                    <ice:selectBooleanCheckbox
+                                        id="resource-excepted-checkbox"
+                                        value="#{urlResource.excepted}"
+                                        partialSubmit="true">
+                                    </ice:selectBooleanCheckbox>
+                                    <ice:outputLabel
+                                        for="resource-excepted-checkbox">
+                                        Exceptions?
+                                    </ice:outputLabel>
+                                    <ice:panelGrid
+                                        visible="#{urlResource.urlResourceExceptionsBean.excepted}"
+                                        columns="1">
+                                        <ice:panelGroup
+                                            styleClass="sub-section-head">
+                                            <ice:outputText
+                                                value="Enter parts to exclude"/>
+                                        </ice:panelGroup>
+                                        <ice:panelSeries
+                                            value="#{urlResource.urlResourceExceptionsBean.urlResourceExceptionBeans}"
+                                            var="urlResourceExceptionBean">
+                                            <ice:panelGroup>
+                                                <ice:outputLabel
+                                                    for="url-resource-exception-inputtext"
+                                                    value="#{urlResource.pattern}/"/>
+                                                <ice:inputText
+                                                    id="url-resource-exception-inputtext"
+                                                    value="#{urlResourceExceptionBean.part}"/>
+                                            </ice:panelGroup>
+                                        </ice:panelSeries>
+                                        <ice:panelGrid
+                                            styleClass="button-group"
+                                            columns="2">
+                                            <o:button
+                                                type="add"
+                                                handler="#{urlResourceExceptionsHandler}"
+                                                bean="#{urlResource.urlResourceExceptionsBean}"/>
+                                            <o:button
+                                                type="finish"/>
+                                        </ice:panelGrid>
+                                    </ice:panelGrid>
+                                </ice:panelGroup>
                             </ice:panelSeries>
-                        </ice:panelGrid>
+                        </ice:panelGroup>
                     </ui:define>
-                </o:wizardStep>
-                <o:wizardStep
+                </o:wstep>
+                <o:wstep
                     step="2"
                     label="Step 3: Select or add the users that this policy applies to">
                     <ui:define name="wizard-step-body">
                         Step 3 ...
                     </ui:define>
-                </o:wizardStep>
-                <o:wizardStep
+                </o:wstep>
+                <o:wstep
                     step="3"
                     label="Step 4: Advanced settings">
                     <ui:define name="wizard-step-body">
                         Step 4 ...
                     </ui:define>
-                </o:wizardStep>
-                <o:wizardStep
+                </o:wstep>
+                <o:wstep
                     step="4"
                     label="Step 5: Review and complete">
                     <ui:define name="wizard-step-body">
                         Step 5 ...
                     </ui:define>
-                </o:wizardStep>
+                </o:wstep>
             </ui:define>
         </o:wizard>
     </ui:define>

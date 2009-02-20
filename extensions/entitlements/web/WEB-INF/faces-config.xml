@@ -30,6 +30,22 @@
     </managed-bean>
 
     <managed-bean>
+        <managed-bean-name>urlResourcesHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.UrlResourcesHandler</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>urlResourcesBean</property-name>
+            <value>#{urlResourcesBean}</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>urlResourceExceptionsHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.UrlResourceExceptionsHandler</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
         <managed-bean-name>policyCreateWizardBean</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.WizardBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>

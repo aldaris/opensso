@@ -1,6 +1,8 @@
 package com.sun.identity.admin.model;
 
-public class ApplicationBean {
+import java.io.Serializable;
+
+public class ApplicationBean implements Serializable {
     private String name;
 
     public String getName() {

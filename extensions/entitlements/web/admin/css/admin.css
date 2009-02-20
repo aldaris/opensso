@@ -17,10 +17,6 @@ body {
     width: 100%;
 }
 
-.section-sep {
-    border-bottom: 1px solid;
-}
-
 .section-title {
     float: left;
     width: 70%;
@@ -35,6 +31,13 @@ body {
 
 .section-links img {
     padding-right: 4px;
+}
+
+.sub-section-head {
+    font-weight: bold;
+    border-bottom: 1px solid;
+    margin-bottom: 4px;
+    width: 100%;
 }
 
 .label-column {
@@ -142,6 +145,7 @@ div.button-wrapper a.button img.left {
     margin: 8px;
     padding: 8px;
     border: 1px solid #DDDDDD;
+    width: 100%;
 }
 
 #panel-title {
@@ -157,6 +161,22 @@ div.button-wrapper a.button img.left {
 #panel-body {
 }
 
+.clear {
+    clear: both;
+}
+
+.url-resource {
+
+}
+
+.url-resource-excepted {
+    width: 100%;
+    position: relative;
+    left: 16px;
+}
+
+
+/*
 #menu-separator {
     width: 100%;
     border-top: 1px solid #DDDDDD;
@@ -195,7 +215,5 @@ div.button-wrapper a.button img.left {
 
 #footer {
 }
+*/
 
-.clear {
-    clear: both;
-}
