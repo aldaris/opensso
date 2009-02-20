@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FederationViewBean.java,v 1.23 2008-08-27 17:49:59 babysunil Exp $
+ * $Id: FederationViewBean.java,v 1.24 2009-02-20 00:39:40 babysunil Exp $
  *
  */
 
@@ -355,7 +355,7 @@ public  class FederationViewBean
             String protocol = (String)data.get(EntityModel.PROTOCOL);
             String realm = (String)data.get(EntityModel.REALM);
             String location = (String)data.get(eModel.LOCATION);
-            String completeValue = name+"|"+protocol+"|"+realm+"|"+location;
+            String completeValue = name+","+protocol+","+realm+","+location;
             tableModel.setValue(ENTITY_NAME_HREF, stringToHex(completeValue));
             tableModel.setValue(ENTITY_NAME_VALUE, name);
             tableModel.setValue(ENTITY_REALM_VALUE, realm);
@@ -376,7 +376,7 @@ public  class FederationViewBean
                  debug.error ("FederationViewBean.populateEntityTable", e);
             }
 
-            // name|protocol|realm needed while deleting/exporting entities
+            // name,protocol,realm needed while deleting/exporting entities
             entityList.add(completeValue);
         }
 }
@@ -433,7 +433,7 @@ public  class FederationViewBean
                 String status = desc.getCircleOfTrustStatus();
                 tableModel.setValue (COT_STATUS_VALUE, status);
 
-                cache.add (name + "|" + realm);
+                cache.add (name + "," + realm);
             }
             szCache.setValue ((ArrayList)cache);
         } else {
@@ -648,7 +648,7 @@ public  class FederationViewBean
         // each COT is deleted separately as they can be in separate realms
         for ( int i = 0; i < selected.length; i++) {
             String str = (String)list.get (selected[i].intValue ());
-            int pipeIndex = str.indexOf ("|");
+            int pipeIndex = str.indexOf (",");
             String name = str.substring (0, pipeIndex);
             String realm = str.substring (pipeIndex+1);
             try {
@@ -724,13 +724,13 @@ public  class FederationViewBean
         for (int i = 0; i < selected.length; i++) {
             String selectedRow =
                     (String)entitiesList.get(selected[i].intValue());
-            int pos = selectedRow.indexOf("|");
+            int pos = selectedRow.indexOf(",");
             name = selectedRow.substring(0, pos);
             String protStr = selectedRow.substring(pos+1);
-            int posProtocol = protStr.indexOf("|");
+            int posProtocol = protStr.indexOf(",");
             String protocol = protStr.substring(0, posProtocol);
             String realmStr = protStr.substring(posProtocol+1);
-            int posrealm = realmStr.indexOf("|");
+            int posrealm = realmStr.indexOf(",");
             String realm = realmStr.substring(0, posrealm);
             try {
                 model.deleteEntities(name, protocol, realm);
@@ -781,16 +781,16 @@ public  class FederationViewBean
 
         String tmp = hexToString(
             (String)getDisplayFieldValue(ENTITY_NAME_HREF));
-        int index = tmp.lastIndexOf("|");
+        int index = tmp.lastIndexOf(",");
 
         String location = tmp.substring(index+1);
 
         tmp = tmp.substring(0, index);
-        index = tmp.lastIndexOf("|");
+        index = tmp.lastIndexOf(",");
 
         String realm = tmp.substring(index+1);
         tmp = tmp.substring(0, index);
-        index = tmp.indexOf("|");
+        index = tmp.indexOf(",");
 
         String protocol = tmp.substring(index + 1);
         String name = tmp.substring(0,index);
