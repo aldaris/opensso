@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentsModelImpl.java,v 1.18 2008-12-13 07:16:09 veiming Exp $
+ * $Id: AgentsModelImpl.java,v 1.19 2009-02-21 00:10:12 ericow Exp $
  *
  */
 
@@ -785,10 +785,14 @@ public class AgentsModelImpl
             AMIdentity amid = IdUtils.getIdentity(
                 getUserSSOToken(), universalId);
             values.remove(IdConstants.AGENT_TYPE);
-
+            AgentConfiguration.validateAgentRootURLs(values);
             amid.setAttributes(values);
             amid.store();
             logEvent("SUCCEED_SET_AGENT_ATTRIBUTE_VALUE", param);
+        } catch (ConfigurationException e) {
+            String[] paramsEx = {universalId, getErrorString(e)};
+            logEvent("EXCEPTION_SET_AGENT_ATTRIBUTE_VALUE", paramsEx);
+            throw new AMConsoleException(getErrorString(e));
         } catch (SSOException e) {
             String[] paramsEx = {universalId, getErrorString(e)};
             logEvent("EXCEPTION_SET_AGENT_ATTRIBUTE_VALUE", paramsEx);
