@@ -23,7 +23,7 @@
  * 
  * "Portions Copyrighted 2008 Miguel Angel Alonso Negro <miguelangel.alonso@gmail.com>"
  *
- * $Id: OpenSsoObjectDefinitionSource.java,v 1.2 2008-12-28 21:40:27 malonso Exp $
+ * $Id: OpenSsoObjectDefinitionSource.java,v 1.3 2009-02-21 01:43:03 malonso Exp $
  *
  */
  package com.sun.identity.provider.springsecurity;
@@ -114,7 +114,7 @@ public class OpenSsoObjectDefinitionSource implements FilterInvocationDefinition
             PolicyDecision policyDecision = policyEvaluator.getPolicyDecision(token, resource, actions, envParams);
             Map actionDecisions = policyDecision.getActionDecisions();
             if(actionDecisions == null || actionDecisions.isEmpty()){
-                return null;
+                return new ConfigAttributeDefinition(new ArrayList());
             } else {
                 ActionDecision actionDecision = (ActionDecision) actionDecisions.values().iterator().next();
                 List configAtributes = new ArrayList();

@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted 2008 Miguel Angel Alonso Negro <miguelangel.alonso@gmail.com>"
 
-   $Id: pom.xml,v 1.2 2008-12-28 21:40:25 malonso Exp $
+   $Id: pom.xml,v 1.3 2009-02-21 01:43:02 malonso Exp $
 
 -->
 
@@ -134,9 +134,13 @@
     </dependencies>
 
     <build>
+        <filters>
+            <filter>src/main/filters/filter.properties</filter>
+        </filters>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
+                <filtering>true</filtering>
             </resource>
         </resources>
 
@@ -161,6 +165,10 @@
                 <configuration>
                     <executable>${glassfish.home}/bin/asadmin</executable>
                     <arguments>
+                        <argument>--user</argument>
+                        <argument>admin</argument>
+                        <argument>--passwordfile</argument>
+                        <argument>${glassfish.home}/.password</argument>
                         <argument>deploy</argument>
                         <argument>target/${artifactId}-${version}.${packaging}</argument>
                     </arguments>
