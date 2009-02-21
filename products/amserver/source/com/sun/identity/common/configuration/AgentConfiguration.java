@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.47 2009-02-21 00:08:03 ericow Exp $
+ * $Id: AgentConfiguration.java,v 1.48 2009-02-21 08:49:55 veiming Exp $
  *
  */
 
@@ -509,7 +509,7 @@ public class AgentConfiguration {
             throw new ConfigurationException(
                     "agent.root.url.missing.port", null);
         } else if (port < 1 || port > 65535) {
-            Object[] param = { port };
+            Object[] param = { Integer.toString(port) };
             throw new ConfigurationException(
                     "agent.root.url.port.out.of.range", param);
         }
