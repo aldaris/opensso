@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.46 2009-01-07 16:03:06 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.47 2009-02-21 00:08:03 ericow Exp $
  *
  */
 
@@ -43,6 +43,9 @@ import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SchemaType;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.ServiceSchemaManager;
+import java.net.InetAddress;
+import java.net.URL;
+import java.net.UnknownHostException;
 import java.net.MalformedURLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -441,7 +444,8 @@ public class AgentConfiguration {
         amir.createIdentity(IdType.AGENTONLY, agentName, inheritedValues);
     }
 
-    private static void addAgentRootURLKey(String agentType, Map map) {
+    private static void addAgentRootURLKey(String agentType, Map map)
+            throws ConfigurationException {
         if (agentType.equals(AGENT_TYPE_J2EE) ||
             agentType.equals(AGENT_TYPE_WEB) ||
             agentType.equals(AGENT_TYPE_AGENT_AUTHENTICATOR)
@@ -451,10 +455,72 @@ public class AgentConfiguration {
                 Set newValues = new HashSet();
                 for (Iterator i = values.iterator(); i.hasNext(); )  {
                     String val = AGENT_ROOT_URL + (String)i.next();
+                    validateAgentRootURL(val);
                     newValues.add(val);
                 }
                 map.put(DEVICE_KEY, newValues);
             }
+        }
+    }
+
+    public static void validateAgentRootURLs(Map map)
+            throws ConfigurationException {
+        if (map == null) {
+            return;
+        }
+
+        Set values = (Set)map.get(DEVICE_KEY);
+        if ((values != null) && !values.isEmpty()) {
+            for (Iterator i = values.iterator(); i.hasNext(); )  {
+                validateAgentRootURL((String)i.next());
+            }
+        }
+    }
+
+    private static void validateAgentRootURL(String value)
+            throws ConfigurationException {
+
+        String[] strs = value.split("=", 2);
+        String key = strs[0] + "=";
+        if (strs.length == 1 || !(key.equalsIgnoreCase(AGENT_ROOT_URL))) {
+            return;
+        }
+
+        if (!key.equals(AGENT_ROOT_URL)) {
+            throw new ConfigurationException(
+                    "agent.root.url.starts.with", null);
+        }
+
+        if (!value.endsWith("/")) {
+            throw new ConfigurationException("agent.root.url.ends.with", null);
+        }
+
+        String urlStr = strs[1];
+        URL url = null;
+        try {
+            url = new URL(urlStr);
+        } catch(MalformedURLException e) {
+            Object[] param = { urlStr };
+            throw new ConfigurationException("agent.root.url.invalid", param);
+        }
+
+        int port = url.getPort();
+        if (port == -1) {
+            throw new ConfigurationException(
+                    "agent.root.url.missing.port", null);
+        } else if (port < 1 || port > 65535) {
+            Object[] param = { port };
+            throw new ConfigurationException(
+                    "agent.root.url.port.out.of.range", param);
+        }
+
+        String hostName = url.getHost();
+        try {
+            InetAddress.getByName(hostName);
+        } catch (UnknownHostException e) {
+            Object[] param = { hostName };
+            throw new ConfigurationException(
+                    "agent.root.url.unknown.host", param);
         }
     }
 
