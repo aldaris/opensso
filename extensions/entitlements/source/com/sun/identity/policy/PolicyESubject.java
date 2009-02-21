@@ -18,7 +18,7 @@ import javax.security.auth.Subject;
  */
 public class PolicyESubject implements ESubject {
 
-    com.sun.identity.policy.interfaces.Subject pSubject;
+    Set nqSubjects;
 
     /**
      * Sets state of the object
@@ -39,16 +39,15 @@ public class PolicyESubject implements ESubject {
      * Returns nested <code>com.sun.identity.policy.Subject</code>
      * @return nested <code>com.sun.identity.policy.Subject</code>
      */
-    public com.sun.identity.policy.interfaces.Subject getPSubject() {
-        return pSubject;
+    public Set getPSubjects() {
+        return nqSubjects;
     }
 
     /**
      * Sets nested <code>com.sun.identity.policy.Subject</code>
      */
-    public void setPSubject(
-            com.sun.identity.policy.interfaces.Subject pSubject) {
-        this.pSubject = pSubject;
+    public void setPSubjects(Set nqSubjects) {
+        this.nqSubjects = nqSubjects;
     }
 
     /**

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PriviligeUtils.java,v 1.3 2009-02-19 02:09:14 dillidorai Exp $
+ * $Id: PriviligeUtils.java,v 1.4 2009-02-21 01:30:36 dillidorai Exp $
  */
 
 package com.sun.identity.policy;
@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.HashSet;
 import java.util.Set;
+import org.json.JSONObject;
 
 /**
  * Class with utility methods to map from
@@ -70,45 +71,47 @@ public class PriviligeUtils {
         }
 
         Set subjectNames = policy.getSubjectNames();
+        Set nqSubjects = new HashSet();
         for (Object subjectNameObj : subjectNames) {
             String subjectName = (String)subjectNameObj;
             Subject subject = policy.getSubject(subjectName);
-            String subjectClass = subject.getClass().getName();
             Set subjectValues = subject.getValues();
             boolean exclusive = policy.isSubjectExclusive(subjectName);
+            Object[] nqSubject = new Object[3];
+            nqSubject[0] = subjectName;
+            nqSubject[1] = subject;
+            nqSubject[2] = exclusive;
+            nqSubjects.add(nqSubject);
         }
+        ESubject eSubject = nqSubjectsToESubject(nqSubjects);
+        
 
         Set conditionNames = policy.getConditionNames();
+        Set nConditions = new HashSet();
         for (Object conditionNameObj : conditionNames) {
             String conditionName = (String)conditionNameObj;
             Condition condition = policy.getCondition(conditionName);
-            String conditionClass = condition.getClass().getName();
-            Map conditionProperties = condition.getProperties();
+            Object[] nCondition = new Object[2];
+            nCondition[0] = conditionName;
+            nCondition[1] = condition;
+            nConditions.add(nCondition);
         }
-
-
-        Set responseProviderNames = policy.getResponseProviderNames();
-        for (Object responseProviderNameObj : responseProviderNames) {
-            String responseProviderName = (String)responseProviderNameObj;
-            ResponseProvider responseProvider 
-                    = policy.getResponseProvider(responseProviderName);
-            String responseProviderClass = responseProvider.getClass().getName();
-            Map responseProviderProperties = responseProvider.getProperties();
+        ECondition eCondition = nConditionsToECondition(nConditions);
+        
+        Set rpNames = policy.getResponseProviderNames();
+        Set nrps = new HashSet();
+        for (Object rpNameObj : nrps) {
+            String rpName = (String)rpNameObj;
+            ResponseProvider rp = policy.getResponseProvider(rpName);
+            Object[] nrp = new Object[2];
+            nrp[0] = rpName;
+            nrp[1] = rp;
+            nrps.add(nrp);
         }
+        EResourceAttributes era = nrpsToEResourceAttributes(nrps);
+        
 
         return null;
-    }
-
-    static Policy priviligeToPolicy(Privilige privilige) 
-            throws PolicyException {
-        Policy policy = null;
-        policy = new Policy(privilige.getName());
-        Set<Entitlement> entitlements = privilige.getEntitlements();
-        for(Entitlement entitlement: entitlements) {
-            Rule rule = entitlementToRule(entitlement);
-            policy.addRule(rule);
-        }
-        return policy;
     }
 
     static Entitlement ruleToEntitlement(Rule rule)
@@ -126,21 +129,85 @@ public class PriviligeUtils {
         return new Entitlement(serviceName, resourceName, actionMap);
     }
 
+    static ESubject nqSubjectsToESubject(Set nqSubjects) {
+        JSONObject jo = new JSONObject();
+        try {
+            Set joys = new HashSet();
+            for (Object nqSubjectObj : nqSubjects) {
+                Object[] nqSubject = (Object[])nqSubjectObj;
+                JSONObject joy = new JSONObject();
+                String subjectName = (String)nqSubject[0];
+                Subject subject = (Subject)nqSubject[1];
+                Boolean exclusive  = (Boolean)nqSubject[2];
+                String className = subject.getClass().getName();
+                jo.put("subjectName", subjectName);
+                joy.put("className", className);
+                joy.put("values", subject.getValues());
+                joys.add(joy);
+            }
+            jo.put("psubjects", joys);
+        } catch (Exception e) {
+        }
+        jo.toString();
+        PolicyESubject peSubject = new PolicyESubject();
+        peSubject.setState(jo.toString());
+        peSubject.setPSubjects(nqSubjects);
+        return peSubject;
+    }
+
+    static ECondition nConditionsToECondition(Set nConditions) {
+        JSONObject jo = new JSONObject();
+        try {
+            Set joys = new HashSet();
+            for (Object nConditionObj : nConditions) {
+                Object[] nCondition = (Object[])nConditionObj;
+                JSONObject joy = new JSONObject();
+                String conditionName = (String)nCondition[0];
+                Condition condition = (Condition)nCondition[1];
+                String className = condition.getClass().getName();
+                jo.put("conditionName", conditionName);
+                joy.put("className", className);
+                joy.put("properties", condition.getProperties());
+                joys.add(joy);
+            }
+            jo.put("pconditions", joys);
+        } catch (Exception e) {
+        }
+        jo.toString();
+        /*
+        PolicyECondition peCondition = new PolicyECondition();
+        peCondition.setState(jo.toString());
+        peCondition.setPConditions(nConditions);
+        return peCondition;
+        */
+        return null;
+    }
+
+    static EResourceAttributes nrpsToEResourceAttributes(Set nprs) {
+        //EResourceAttributes era = nrpsToEResourceAttributes(nrps);
+     return null;
+    }
+
+
+    static Policy priviligeToPolicy(Privilige privilige) 
+            throws PolicyException {
+        Policy policy = null;
+        policy = new Policy(privilige.getName());
+        Set<Entitlement> entitlements = privilige.getEntitlements();
+        for(Entitlement entitlement: entitlements) {
+            Rule rule = entitlementToRule(entitlement);
+            policy.addRule(rule);
+        }
+        return policy;
+    }
+
     static Rule entitlementToRule(Entitlement entitlement)
             throws PolicyException {
         return null;
     }
 
-    static ESubject pSubjectsToESubject() {
-        return null;
-    }
-
     static Set<Subject> eSubjectToPSubjects() {
         return null;
-    }
-
-    static ECondition pConditionsToECondition() {
-     return null;
     }
 
     static Set<Condition> eConditionToPConditions() {
