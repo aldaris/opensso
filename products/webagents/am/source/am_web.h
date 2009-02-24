@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.h,v 1.24 2009-01-08 01:11:59 robertis Exp $
+ * $Id: am_web.h,v 1.25 2009-02-24 22:13:22 robertis Exp $
  *
  */
 
@@ -287,6 +287,11 @@ typedef enum {
  */
 
 #define CONNECT_TIMEOUT	2
+
+const char CDSSO_RESET_COOKIE_TEMPLATE[] = {
+"%s=;Max-Age=300;Path=/"
+};
+
 /*
  * Auth-Type ACCESS status.
  */

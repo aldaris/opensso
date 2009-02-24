@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.cpp,v 1.43 2009-02-13 23:22:35 subbae Exp $
+ * $Id: am_web.cpp,v 1.44 2009-02-24 22:13:22 robertis Exp $
  *
  */
 
@@ -156,7 +156,6 @@ static int initialized = AM_FALSE;
 #if defined(WINNT)
 HINSTANCE hInstance;
 #endif
-
 
 extern "C" int decrypt_base64(const char *, char *, const char*);
 extern "C" int decode_base64(const char *, char *);
@@ -5771,6 +5770,7 @@ process_request(am_web_request_params_t *req_params,
 	am_web_log_info("%s: Access check for URL %s returned %s.",
 			thisfunc, req_params->url, am_status_to_string(sts));
 
+
 	// map access check result to web result - OK, FORBIDDEN, etc.
 	switch(sts) {
 	case AM_SUCCESS:  // Access to user allowed.
@@ -5782,7 +5782,23 @@ process_request(am_web_request_params_t *req_params,
 	    break;
 	case AM_INVALID_SESSION:
 	    // reset cookies on invalid session.
+        // reset the CDSSO cookie first
 	    args[0] = req_func;
+        if (cdsso_enabled == B_TRUE) 
+        {
+            const char* cookie_name= am_web_get_cookie_name(agent_config);
+            int cookie_header_len=sizeof(CDSSO_RESET_COOKIE_TEMPLATE)+strlen(cookie_name);
+            char* cookie_value = (char*) malloc(cookie_header_len+1);
+            snprintf(cookie_value, cookie_header_len,CDSSO_RESET_COOKIE_TEMPLATE,cookie_name);
+            am_status_t cdStatus = add_cookie_in_response(cookie_value,args);
+            if(cdStatus != AM_SUCCESS) {
+                am_web_log_error("process_request : CDSSO reset_cookie failed");
+            }
+            if(cookie_value!=NULL) {
+                free(cookie_value);
+                cookie_value = NULL;
+            }
+        }
 	    local_sts = am_web_do_cookies_reset(add_cookie_in_response, args, agent_config);
 	    if (local_sts != AM_SUCCESS) {
 		am_web_log_warning("%s: all_cookies_reset after "

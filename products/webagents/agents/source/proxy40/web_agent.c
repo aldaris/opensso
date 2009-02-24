@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: web_agent.c,v 1.2 2009-02-13 23:22:34 subbae Exp $
+ * $Id: web_agent.c,v 1.3 2009-02-24 22:13:39 robertis Exp $
  *
  *
  */
@@ -1081,6 +1081,24 @@ validate_session_policy(pblock *param, Session *sn, Request *rq) {
         break;
 
     case AM_INVALID_SESSION:
+
+        if (am_web_is_cdsso_enabled(agent_config) == B_TRUE)
+        {
+            char* cookie_name= am_web_get_cookie_name(agent_config);
+            int cookie_header_len=sizeof(CDSSO_RESET_COOKIE_TEMPLATE)+strlen(cookie_name);
+            char* cookie_header = malloc(cookie_header_len+1);
+            snprintf(cookie_header, cookie_header_len,CDSSO_RESET_COOKIE_TEMPLATE,cookie_name);
+            am_status_t cdStatus = reset_cookie(cookie_header,args);
+            if(cdStatus != AM_SUCCESS){
+                am_web_log_error("validate_session_policy :CDSSO reset_cookie failed");
+            }
+            if(cookie_header!=NULL){
+                free(cookie_header);
+                cookie_header = NULL;
+            }
+
+        }
+
         am_web_do_cookies_reset(reset_cookie, args, agent_config);
         requestResult =  do_redirect(sn, rq, status, &result,
                                  request_url, method,

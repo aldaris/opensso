@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: iws_agent.c,v 1.19 2009-01-08 01:12:15 robertis Exp $
+ * $Id: iws_agent.c,v 1.20 2009-02-24 22:13:39 robertis Exp $
  *
  *
  */
@@ -63,6 +63,7 @@
 #define	MAGIC_STR		"sunpostpreserve"
 #define	POST_PRESERVE_URI	"/dummypost/"MAGIC_STR
 
+
 typedef struct agent_props {
     am_properties_t agent_bootstrap_props;
     am_properties_t agent_config_props;
@@ -98,9 +99,9 @@ int send_data(const char *msg, Session *sn, Request *rq) {
 	/* Write the output using net_write*/
 	if (IO_ERROR == net_write(sn->csd, (char *)msg, len)) {
 	    retVal = REQ_EXIT;
-        } else {
-            retVal = net_flush(sn->csd);
-        }
+    } else {
+        retVal = net_flush(sn->csd);
+    }
 
     }
     return retVal;
@@ -296,10 +297,11 @@ static int create_buffer_withpost(const char *key, am_web_postcache_data_t
 
     // Repost the form
     if (net_write(sn->csd, buffer_page , strlen(buffer_page)) == IO_ERROR){
-	nsapi_status = REQ_EXIT;
+        nsapi_status = REQ_EXIT;
     }
     else {
-	nsapi_status = REQ_PROCEED;
+        net_flush(sn->csd);
+        nsapi_status = REQ_PROCEED;
     }
 
     am_web_postcache_data_cleanup(&postentry);
@@ -463,6 +465,7 @@ static int process_new_notification(pblock *param,
     if (IO_ERROR == net_write(sn->csd, "OK", 2)) {
         return REQ_EXIT;
     }
+    net_flush(sn->csd);
     return REQ_PROCEED;
 }
 
@@ -1070,6 +1073,26 @@ validate_session_policy(pblock *param, Session *sn, Request *rq)
 	break;
 
     case AM_INVALID_SESSION:
+        //reset the cookie CDSSO. 
+        if (am_web_is_cdsso_enabled(agent_config) == B_TRUE)
+        {
+            char* cookie_name= am_web_get_cookie_name(agent_config);
+            int cookie_header_len=sizeof(CDSSO_RESET_COOKIE_TEMPLATE)+strlen(cookie_name);
+            char* cookie_header = malloc(cookie_header_len+1);
+            snprintf(cookie_header, cookie_header_len,CDSSO_RESET_COOKIE_TEMPLATE,cookie_name);
+            am_status_t cdStatus = reset_cookie(cookie_header,args);
+            if(cdStatus != AM_SUCCESS) {
+                am_web_log_error("validate_session_policy :CDSSO reset_cookie failed");
+            }
+
+            if(cookie_header!=NULL) {
+                free(cookie_header);
+                cookie_header = NULL;
+            }
+
+        }
+
+
         am_web_do_cookies_reset(reset_cookie, args, agent_config);
         // No magic URI, No SSO Token....
         if (strcmp(method, REQUEST_METHOD_POST) == 0 &&
