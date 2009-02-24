@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: ConfigureGoogleApps.jsp,v 1.1 2009-02-24 18:42:32 babysunil Exp $
+   $Id: ConfigureGoogleApps.jsp,v 1.2 2009-02-24 22:01:02 babysunil Exp $
 
 --%>
 
@@ -187,6 +187,7 @@
             "&cot=" + escapeEx(cot) +
             "&idp=" + escapeEx(idp) +
             "&entityId=" + escapeEx(entityId);
+    }
           
     function configured() {
         if (ajaxObj.readyState == 4) {
