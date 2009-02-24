@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSvcsTestIdentityREST.java,v 1.9 2009-01-27 00:06:32 nithyas Exp $
+ * $Id: IdSvcsTestIdentityREST.java,v 1.10 2009-02-24 06:58:52 vimal_67 Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -32,6 +32,7 @@ import com.sun.identity.qatest.common.IdSvcsCommon;
 import com.sun.identity.qatest.common.TestCommon;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -64,6 +65,7 @@ public class IdSvcsTestIdentityREST extends TestCommon {
     private String strCleanup;
     private String admToken = "";
     private String userToken = "";
+    private String serverURI = "";
     private Boolean idTypeSupported = false;
     private SSOToken idTypeSupportedToken;
         
@@ -94,6 +96,7 @@ public class IdSvcsTestIdentityREST extends TestCommon {
             index = new Integer(testNumber).intValue();
             strSetup = setup;
             strCleanup = cleanup;
+            serverURI = protocol + ":" + "//" + host + ":" + port + uri;
             
             // admin user token for idTypeSupported function
             idTypeSupportedToken = getToken(adminUser, adminPassword, basedn);
@@ -145,11 +148,21 @@ public class IdSvcsTestIdentityREST extends TestCommon {
                         String attributes = rbid.getString(idsProp + 
                                 index + "." + "operation" + i +
                                 "." + "attributes");
+                        anmap = parseStringToMap(attributes, ",", "&");
                         pmap.put("identity_name", identity_name);
                         pmap.put("identity_type", identity_type);
+                        if (identity_type.equalsIgnoreCase("AgentOnly")) {
+                            Set set = new HashSet();
+                            if (attributes.contains("AgentType=WebAgent")) {
+                                set.add(protocol + ":" + "//" + host +
+                                        ":" + port);                            
+                            } else {
+                                set.add(serverURI);                            
+                            }                            
+                            anmap.put("AGENTURL", set);
+                        }
                         pmap.put("identity_realm", 
-                                URLEncoder.encode(strTestRealm));
-                        anmap = parseStringToMap(attributes, ",", "&");
+                                URLEncoder.encode(strTestRealm));                        
                         idTypeSupported = idmcommon.isIdTypeSupported(
                                 idTypeSupportedToken, strTestRealm, 
                                 identity_type);
