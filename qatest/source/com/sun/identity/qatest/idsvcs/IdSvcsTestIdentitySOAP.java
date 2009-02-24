@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSvcsTestIdentitySOAP.java,v 1.6 2009-01-27 00:06:32 nithyas Exp $
+ * $Id: IdSvcsTestIdentitySOAP.java,v 1.7 2009-02-24 06:59:56 vimal_67 Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -62,6 +62,7 @@ public class IdSvcsTestIdentitySOAP extends TestCommon {
     private String strCleanup;
     private String strSetup;
     private String strTestRealm;
+    private String serverURI = "";
     private SSOTokenManager stMgr;
     private Boolean idTypeSupported = false;
     private SSOToken idTypeSupportedToken;
@@ -97,6 +98,7 @@ public class IdSvcsTestIdentitySOAP extends TestCommon {
             index = new Integer(testNumber).intValue();
             strSetup = setup;
             strCleanup = cleanup;
+            serverURI = protocol + ":" + "//" + host + ":" + port + uri;
             
             // admin user token for idTypeSupported function
             idTypeSupportedToken = getToken(adminUser, adminPassword, basedn);
@@ -160,7 +162,17 @@ public class IdSvcsTestIdentitySOAP extends TestCommon {
                         Reporter.log("Type: " + identity_type);
                         identity.setName(identity_name);
                         identity.setType(identity_type);
-                        identity.setRealm(strTestRealm);
+                        identity.setRealm(strTestRealm);                        
+                        if (identity_type.equalsIgnoreCase("AgentOnly")) {
+                            if (attributes.contains("AgentType=WebAgent")) {
+                                attributes = attributes + "," +
+                                    "AGENTURL=" + protocol + ":" + "//" + host +
+                                        ":" + port;
+                            } else {
+                                attributes = attributes + "," +
+                                    "AGENTURL=" + serverURI;
+                            }                            
+                        }
                         attrArray = getAttributes(attributes);
                         identity.setAttributes(attrArray);
                         idTypeSupported = idmcommon.isIdTypeSupported(
