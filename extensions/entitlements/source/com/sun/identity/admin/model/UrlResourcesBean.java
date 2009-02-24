@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UrlResourcesBean implements Serializable {
-    private List<UrlResourceBean> urlResources = new ArrayList<UrlResourceBean>();
+    private List<UrlResourceBean> urlResourceBeans = new ArrayList<UrlResourceBean>();
+    private String searchFilter;
+    private boolean searchPopup = false;
 
     public UrlResourcesBean() {
         UrlResourceBean ur;
@@ -13,40 +15,62 @@ public class UrlResourcesBean implements Serializable {
         // TODO: dummy data
         ur = new UrlResourceBean();
         ur.setPattern("http://www.sun.com");
-        urlResources.add(ur);
+        urlResourceBeans.add(ur);
 
         ur = new UrlResourceBean();
         ur.setPattern("http://paycheck.sun.com/profile");
-        urlResources.add(ur);
+        urlResourceBeans.add(ur);
 
         ur = new UrlResourceBean();
         ur.setPattern("http://cal-amer.sun.com");
-        urlResources.add(ur);
+        urlResourceBeans.add(ur);
 
         ur = new UrlResourceBean();
         ur.setPattern("http://im-amer.sun.com/jtb");
-        urlResources.add(ur);
+        urlResourceBeans.add(ur);
 
         ur = new UrlResourceBean();
         ur.setPattern("http://sunweb.central:8080");
-        urlResources.add(ur);
+        urlResourceBeans.add(ur);
 
         ur = new UrlResourceBean();
         ur.setPattern("http://www.bankofamerica.com/account");
-        urlResources.add(ur);
+        urlResourceBeans.add(ur);
 
         ur = new UrlResourceBean();
         ur.setPattern("http://www.att.com/login");
-        urlResources.add(ur);
+        urlResourceBeans.add(ur);
         // TODO
     }
 
-    public List<UrlResourceBean> getUrlResources() {
-        return urlResources;
+    public List<UrlResourceBean> getUrlResourceBeans() {
+        return urlResourceBeans;
     }
 
-    public void setUrlResources(List<UrlResourceBean> urlResources) {
-        this.urlResources = urlResources;
+    public void setUrlResourceBeans(List<UrlResourceBean> urlResourceBeans) {
+        this.urlResourceBeans = urlResourceBeans;
+    }
+
+    public String getSearchFilter() {
+        return searchFilter;
+    }
+
+    public void setSearchFilter(String searchFilter) {
+        this.searchFilter = searchFilter;
+    }
+
+    /**
+     * @return the searchPopup
+     */
+    public boolean isSearchPopup() {
+        return searchPopup;
+    }
+
+    /**
+     * @param searchPopup the searchPopup to set
+     */
+    public void setSearchPopup(boolean searchPopup) {
+        this.searchPopup = searchPopup;
     }
 
 }

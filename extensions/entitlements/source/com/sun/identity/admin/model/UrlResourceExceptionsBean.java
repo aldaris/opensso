@@ -4,11 +4,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UrlResourcesExceptionsBean implements Serializable {
+public class UrlResourceExceptionsBean implements Serializable {
     private boolean excepted = false;
+    private boolean shown = true;
+
     private List<UrlResourceExceptionBean> urlResourceExceptionBeans = new ArrayList<UrlResourceExceptionBean>();
 
-    public UrlResourcesExceptionsBean() {
+    public UrlResourceExceptionsBean() {
         urlResourceExceptionBeans.add(new UrlResourceExceptionBean());
     }
     
@@ -27,4 +29,28 @@ public class UrlResourcesExceptionsBean implements Serializable {
     public void setExceptions(List<UrlResourceExceptionBean> urlResourceExceptionBeans) {
         this.urlResourceExceptionBeans = urlResourceExceptionBeans;
     }
+
+    /**
+     * @return the shown
+     */
+    public boolean isShown() {
+        return shown;
+    }
+
+    /**
+     * @param shown the shown to set
+     */
+    public void setShown(boolean shown) {
+        this.shown = shown;
+    }
+
+    public String getShownActionText() {
+        if (shown) {
+            return "Hide";
+        } else {
+            return "Show";
+        }
+    }
+
+  
 }

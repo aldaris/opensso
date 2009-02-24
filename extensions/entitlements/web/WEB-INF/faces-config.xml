@@ -40,6 +40,22 @@
     </managed-bean>
 
     <managed-bean>
+        <managed-bean-name>urlResourcesSearchBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.UrlResourcesSearchBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>urlResourcesSearchHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.UrlResourcesSearchHandler</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>urlResourcesSearchBean</property-name>
+            <value>#{urlResourcesSearchBean}</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
         <managed-bean-name>urlResourceExceptionsHandler</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.handler.UrlResourceExceptionsHandler</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
@@ -81,6 +97,10 @@
         <navigation-case>
             <from-outcome>policy-created</from-outcome>
             <to-view-id>/admin/facelet/policy-created.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>policy-create-canceled</from-outcome>
+            <to-view-id>/admin/facelet/policy-create-canceled.xhtml</to-view-id>
         </navigation-case>
         <navigation-case>
             <from-outcome>policy-manage</from-outcome>

@@ -5,4 +5,10 @@ public class PolicyCreateWizardHandler extends WizardHandler {
     public String finishAction() {
         return "policy-created";
     }
+
+    @Override
+    public String cancelAction() {
+        getWizardBean().reset();
+        return "policy-create-canceled";
+    }
 }

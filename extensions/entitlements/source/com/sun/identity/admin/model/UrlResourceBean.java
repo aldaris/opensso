@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class UrlResourceBean implements Serializable {
     private boolean selected = false;
-    private UrlResourcesExceptionsBean urlResourceExceptionsBean = new UrlResourcesExceptionsBean();
+    private UrlResourceExceptionsBean urlResourceExceptionsBean = new UrlResourceExceptionsBean();
     private String pattern;
 
     public boolean isSelected() {
@@ -31,11 +31,11 @@ public class UrlResourceBean implements Serializable {
         urlResourceExceptionsBean.setExcepted(excepted);
     }
 
-    public UrlResourcesExceptionsBean getUrlResourceExceptionsBean() {
+    public UrlResourceExceptionsBean getUrlResourceExceptionsBean() {
         return urlResourceExceptionsBean;
     }
 
-    public void setUrlResourceExceptionsBean(UrlResourcesExceptionsBean exceptionsBean) {
+    public void setUrlResourceExceptionsBean(UrlResourceExceptionsBean exceptionsBean) {
         this.urlResourceExceptionsBean = exceptionsBean;
     }
 }

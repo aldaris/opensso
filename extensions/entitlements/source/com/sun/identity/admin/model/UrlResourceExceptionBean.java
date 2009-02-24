@@ -1,6 +1,8 @@
 package com.sun.identity.admin.model;
 
-public class UrlResourceExceptionBean {
+import java.io.Serializable;
+
+public class UrlResourceExceptionBean implements Serializable {
     private String part = "";
 
     public String getPart() {

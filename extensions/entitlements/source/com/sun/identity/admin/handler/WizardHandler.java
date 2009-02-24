@@ -75,4 +75,8 @@ public class WizardHandler implements Serializable {
     public String finishAction() {
         return "finish";
     }
+
+    public String cancelAction() {
+        return "cancel";
+    }
 }

@@ -166,7 +166,7 @@ div.button-wrapper a.button img.left {
 }
 
 .url-resource {
-
+    width: 90%;
 }
 
 .url-resource-excepted {
@@ -175,6 +175,17 @@ div.button-wrapper a.button img.left {
     left: 16px;
 }
 
+.popup-modal {
+    width: 300px;
+}
+
+.popup-modalBody {
+
+}
+
+.popup-modalHdr {
+    font-weight: bold;
+}
 
 /*
 #menu-separator {

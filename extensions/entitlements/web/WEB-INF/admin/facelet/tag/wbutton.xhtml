@@ -34,6 +34,19 @@
     </ice:panelGroup>
     <ice:panelGroup
         styleClass="button-wrapper"
+        rendered="#{type == 'cancel'}">
+        <ice:commandLink
+            styleClass="button"
+            partialSubmit="true"
+            action="#{handler.cancelAction}">
+            <f:attribute name="step" value="#{step}"/>
+            <f:attribute name="steps" value="#{steps}"/>
+            <img class="left" src="../image/cancel.png"/>
+            Cancel
+        </ice:commandLink>
+    </ice:panelGroup>
+    <ice:panelGroup
+        styleClass="button-wrapper"
         visible="#{step == steps-1}"
         rendered="#{type == 'finish'}">
         <ice:commandLink

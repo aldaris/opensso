@@ -29,7 +29,7 @@ public class UrlResourcesHandler {
 
     private UrlResourceBean getResource(String pattern) {
         UrlResourcesBean urs = getUrlResourcesBean();
-        for (UrlResourceBean urb: urs.getUrlResources()) {
+        for (UrlResourceBean urb: urs.getUrlResourceBeans()) {
             if (urb.getPattern().equals(pattern)) {
                 return urb;
             }

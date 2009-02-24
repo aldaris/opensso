@@ -6,12 +6,15 @@
     xmlns:ice="http://www.icesoft.com/icefaces/component">
     <ice:commandLink
         rendered="#{type == 'add'}"
+        partialSubmit="true"
         styleClass="command-link">
         <img src="../image/add.png"/>
         <ice:outputText value="Add"/>
     </ice:commandLink>
     <ice:commandLink
+        actionListener="#{handler.searchListener}"
         rendered="#{type == 'search'}"
+        partialSubmit="true"
         styleClass="command-link">
         <img src="../image/search.png"/>
         <ice:outputText value="Search"/>
