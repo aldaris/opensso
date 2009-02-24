@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdSvcsREST.java,v 1.10 2009-01-27 00:06:31 nithyas Exp $
+ * $Id: IdSvcsREST.java,v 1.11 2009-02-24 06:57:17 vimal_67 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -69,9 +69,7 @@ public class IdSvcsREST extends TestCommon {
     private String identity_realm = "/";
     private String identity_type_user = "user";
     private String identity_type_agent = "AgentOnly";
-    private String identity_type_group = "group";
-    private String identity_attribute_values_AGENTURL = "http://agenturl." +
-            "red.iplanet.com:28080/fam";
+    private String identity_type_group = "group";    
     private String identity_attribute_values_SERVERURL = "http://serverurl." +
             "red.iplanet.com:8080/opensso";
     private TextPage page;
@@ -648,8 +646,7 @@ public class IdSvcsREST extends TestCommon {
                         "&identity_attribute_values_AgentType=J2EEAgent" +
                         "&identity_attribute_names=AGENTURL" +
                         "&identity_attribute_values_AGENTURL=" +
-                        identity_attribute_values_AGENTURL +
-                        "&identity_attribute_names=SERVERURL" +
+                        serverURI + "&identity_attribute_names=SERVERURL" +
                         "&identity_attribute_values_SERVERURL=" +
                         identity_attribute_values_SERVERURL +
                         "&admin=" + URLEncoder.encode(s1, "UTF-8"));
@@ -846,8 +843,7 @@ public class IdSvcsREST extends TestCommon {
                     "&identity_attribute_values_AgentType=J2EEAgent" +
                     "&identity_attribute_names=AGENTURL" +
                     "&identity_attribute_values_AGENTURL=" +
-                    identity_attribute_values_AGENTURL +
-                    "&identity_attribute_names=SERVERURL" +
+                    serverURI + "&identity_attribute_names=SERVERURL" +
                     "&identity_attribute_values_SERVERURL=" +
                     identity_attribute_values_SERVERURL +
                     "&admin=" + URLEncoder.encode(s1, "UTF-8"));
