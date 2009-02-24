@@ -22,28 +22,18 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DebugLogTest.java,v 1.2 2009-02-24 22:47:54 veiming Exp $
+ * $Id: DebugAdaptor.java,v 1.1 2009-02-24 22:47:54 veiming Exp $
  */
 
-package com.sun.identity.entitlement.util;
-
-import com.sun.identity.shared.debug.IDebug;
-import org.testng.annotations.Test;
+package com.sun.identity.shared.debug;
 
 /**
- *
- * @author dennis
+ * Adaptor for sharing out the OpenSSO debug provider.
  */
-public class DebugLogTest {
-    @Test
-    public void testDebug() {
-        IDebug debug = DebugFactory.getInstance().getProvider().getInstance(
-            "debuglogtest");
-        try {
-            String s = null;
-            s.equals("test");
-        } catch (NullPointerException e) {
-            debug.error("DebugLogTest.testDebug", e);
-        }
+public class DebugAdaptor {
+    private DebugAdaptor() {
+    }
+    public static IDebugProvider getProvider() {
+        return Debug.getDebugProvider();
     }
 }

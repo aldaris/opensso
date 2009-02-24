@@ -83,7 +83,7 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
             <compilation-unit>
                 <package-root>source</package-root>
-                <classpath mode="compile">extlib/amserver.jar:extlib/opensso-sharedlib.jar:extlib/testng-5.1-jdk15.jar:built/classes:build-lib/el-api-1.0.jar:build-lib/j2ee.jar:built/classes</classpath>
+                <classpath mode="compile">extlib/amserver.jar:extlib/opensso-sharedlib.jar:extlib/testng-5.1-jdk15.jar:built/classes:build-lib/el-api-1.0.jar:build-lib/j2ee.jar:built/classes:build-lib/json.jar</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
             <compilation-unit>
@@ -97,6 +97,7 @@
             <web-module>
                 <doc-root>web</doc-root>
                 <classpath/>
+                <context-path/>
                 <j2ee-spec-level>1.5</j2ee-spec-level>
             </web-module>
         </web-data>

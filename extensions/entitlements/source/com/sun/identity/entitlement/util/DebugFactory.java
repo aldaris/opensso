@@ -22,36 +22,25 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DebugFactory.java,v 1.1 2009-02-24 20:20:42 veiming Exp $
+ * $Id: DebugFactory.java,v 1.2 2009-02-24 22:47:53 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
 
-import com.sun.identity.entitlement.interfaces.IDebugProvider;
+import com.sun.identity.shared.debug.DebugAdaptor;
+import com.sun.identity.shared.debug.IDebugProvider;
 
 /**
  * Providers the debug provider handler.
  */
 public final class DebugFactory {
     private static DebugFactory instance = new DebugFactory();
-    private static final String DEF_IMPL =
-        "com.sun.identity.shared.debug.impl.DebugProviderImpl";
 
     private IDebugProvider impl;
 
     private DebugFactory() {
         //TOFIX: load different debug provider.
-
-        try {
-            Class clazz = Class.forName(DEF_IMPL);
-            impl = (IDebugProvider)clazz.newInstance();
-        } catch (InstantiationException ex) {
-            ex.printStackTrace();
-        } catch (IllegalAccessException ex) {
-            ex.printStackTrace();
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
-        }
+        impl = DebugAdaptor.getProvider();
     }
 
     /**
