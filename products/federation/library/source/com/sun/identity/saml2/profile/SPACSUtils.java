@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.33 2008-11-25 23:50:44 hengming Exp $
+ * $Id: SPACSUtils.java,v 1.34 2009-02-24 19:47:00 huacui Exp $
  *
  */
 
@@ -979,7 +979,7 @@ public class SPACSUtils {
             SAML2Utils.debug.message(classMethod + "Assertions : " +
                                      assertions);
         }
-        
+       
         SPSSOConfigElement spssoconfig =
             metaManager.getSPSSOConfig(realm, hostEntityId);
 
@@ -1041,6 +1041,7 @@ public class SPACSUtils {
                 throw se;
             }
         }
+        respInfo.setNameId(nameId);
 
         SPSSODescriptorElement spDesc = null;
         try {
@@ -1152,6 +1153,8 @@ public class SPACSUtils {
             SAML2Utils.debug.message(
                 classMethod + "process: attrMap = " + attrMap);
         }
+        respInfo.setAttributeMap(attrMap);
+
         // return error code for local user login
         if ((userName == null) || (userName.length() == 0)) {
             throw new SAML2Exception(
@@ -1344,6 +1347,8 @@ public class SPACSUtils {
                 SAML2Utils.debug.error(classMethod + "DB error!", e); 
             }
         }
+        respInfo.setAssertion(authnAssertion);
+ 
         return session;
     }
 
@@ -1803,7 +1808,7 @@ public class SPACSUtils {
                         (AttributeStatement)it.next();
                     List attributes = statement.getAttribute();
                     if (needAttributeEncrypted &&
-                        attributes != null && attributes.isEmpty())
+                        attributes != null && !attributes.isEmpty())
                     {
                         SAML2Utils.debug.error("Attribute not encrypted.");
                         return null;
@@ -1999,27 +2004,12 @@ public class SPACSUtils {
         }
         Response samlResp = respInfo.getResponse();
         map.put(SAML2Constants.RESPONSE, samlResp);
-        Assertion assertion = (Assertion) samlResp.getAssertion().get(0);
+        Assertion assertion = respInfo.getAssertion();
         map.put(SAML2Constants.ASSERTION, assertion); 
         map.put(SAML2Constants.SUBJECT, assertion.getSubject());
         map.put(SAML2Constants.IDPENTITYID, assertion.getIssuer().getValue()); 
-        // get all attributes
-        AttributeStatement attrStat = null;
-        List lst = assertion.getAttributeStatements();
-        if ((lst != null) && !lst.isEmpty()) {
-            attrStat = (AttributeStatement)
-                assertion.getAttributeStatements().get(0);
-        }
-        if (attrStat != null) {
-            Map valMap = new HashMap();
-            List attrList = attrStat.getAttribute();
-            Iterator iter = attrList.iterator();
-            while (iter.hasNext()) {
-                Attribute attr = (Attribute) iter.next();
-                valMap.put(attr.getName(), attr.getAttributeValueString()); 
-            }
-            map.put(SAML2Constants.ATTRIBUTE_MAP, valMap);
-        }
+        map.put(SAML2Constants.NAMEID, respInfo.getNameId());
+        map.put(SAML2Constants.ATTRIBUTE_MAP, respInfo.getAttributeMap());
         return map;
     }
 }

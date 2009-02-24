@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: fedletSampleApp.jsp,v 1.4 2008-08-15 01:05:33 veiming Exp $
+   $Id: fedletSampleApp.jsp,v 1.5 2009-02-24 19:45:21 huacui Exp $
 
 --%>
 
@@ -39,7 +39,9 @@ com.sun.identity.plugin.session.SessionException,
 java.io.IOException,
 java.util.Iterator,
 java.util.List,
-java.util.Map"
+java.util.Map,
+java.util.HashSet,
+java.util.Set"
 %>
 <%
     String deployuri = request.getRequestURI();
@@ -109,7 +111,7 @@ Inc." align="right" border="0" height="10" width="108" /></td></tr></tbody></tab
     Assertion assertion = (Assertion) map.get(SAML2Constants.ASSERTION);
     Subject subject = (Subject) map.get(SAML2Constants.SUBJECT);
     String entityID = (String) map.get(SAML2Constants.IDPENTITYID);
-    NameID nameId = assertion.getSubject().getNameID();
+    NameID nameId = (NameID) map.get(SAML2Constants.NAMEID);
     String value = nameId.getValue();
     String format = nameId.getFormat();
     out.println("<br><br><b>Single Sign-On successful with IDP " 
@@ -136,9 +138,13 @@ Inc." align="right" border="0" height="10" width="108" /></td></tr></tbody></tab
         out.println("<td>");
         while (iter.hasNext()) {
             String attrName = (String) iter.next();
-            List attrVals = (List) attrs.get(attrName);
-            out.println(attrName + "="
-                + attrVals.get(0) + "<br>");
+            Set attrVals = (HashSet) attrs.get(attrName);
+            if ((attrVals != null) && !attrVals.isEmpty()) {
+                Iterator it = attrVals.iterator();
+                if (it.hasNext()) {
+                    out.println(attrName + "=" + it.next() + "<br>");
+                }
+            }
         }
         out.println("</td>");
         out.println("</tr>");

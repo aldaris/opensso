@@ -22,13 +22,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResponseInfo.java,v 1.4 2008-06-25 05:47:54 qcheng Exp $
+ * $Id: ResponseInfo.java,v 1.5 2009-02-24 19:46:28 huacui Exp $
  *
  */
 
 
 package com.sun.identity.saml2.profile;
 
+import java.util.Map;
+import com.sun.identity.saml2.assertion.Assertion;
+import com.sun.identity.saml2.assertion.NameID;
 import com.sun.identity.saml2.protocol.Response;
 
 /**
@@ -39,6 +42,9 @@ public class ResponseInfo extends CacheObject {
     private Response resp = null;
     private String relayState = null;
     private String profileBinding = null; 
+    private Assertion assertion = null;
+    private Map attrMap = null;
+    private NameID nameId = null;
 
     /**
      * Constructor creates the ResponseInfo.
@@ -86,5 +92,59 @@ public class ResponseInfo extends CacheObject {
      */
     public String getProfileBinding() {
         return profileBinding;
+    }
+
+    /**
+     * Sets the authn assertion
+     *
+     * @param assertion the authn assertion in the response
+     */
+    public void setAssertion(Assertion assertion) {
+        this.assertion = assertion;
+    }
+
+    /**
+     * Returns the authn assertion
+     *
+     * @return the authn assertion
+     */
+    public Assertion getAssertion() {
+        return assertion;
+    }
+
+    /**
+     * Sets the map of the attributes
+     *
+     * @param attrs the attribute map
+     */
+    public void setAttributeMap(Map attrs) {
+        attrMap = attrs;
+    }
+
+    /**
+     * Returns the map of the atrributes
+     *
+     * @return the map of the atrributes
+     */
+    public Map getAttributeMap() {
+        return attrMap;
+    }
+
+    /**
+     * Sets the NameId
+     *
+     * @param id the NameId in the assertion
+     */
+    public void setNameId(NameID id) {
+        nameId = id;
+    }
+
+    /**
+     * Returns the NameID
+     *
+     * @return the NameID
+     */
+    public NameID getNameId() {
+        return nameId;
     }
 }
