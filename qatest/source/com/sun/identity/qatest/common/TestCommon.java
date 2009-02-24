@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.71 2009-02-14 01:02:09 rmisra Exp $
+ * $Id: TestCommon.java,v 1.72 2009-02-24 21:42:58 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2041,8 +2041,11 @@ public class TestCommon implements TestConstants {
                 "sampleconfigurator.xml");
         BufferedWriter out = new BufferedWriter(fstream);
 
-        //String debugDir = rb_client.getString(TestConstants.KEY_DEBUG_DIR);
-        String debugDir = getBaseDir() + serverName + "/debug/client";
+        String debugDir = getBaseDir() + fileseparator + serverName +
+                fileseparator + "debug" + fileseparator + "client";
+        log(Level.FINEST, "configureWar", "Client debug directory: " +
+                debugDir);
+        createDirectory(debugDir);
         String appUser = rb_amconfig.getString(
                 TestConstants.KEY_AMC_AGENTS_APP_USERNAME);
         String appPassword = rb_amconfig.getString(

@@ -18,7 +18,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: opensso-common.xml,v 1.17 2009-02-14 01:12:50 mrudulahg Exp $
+ $Id: opensso-common.xml,v 1.18 2009-02-24 21:44:29 rmisra Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -44,7 +44,6 @@
      </target>
      
     <target name="report" if="REPORT_DIR" depends="init-common">
-        <echo message="Inside target report ${TEST_MODULE}, ${multimodule}" level="info"/>
         <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
         <if>
             <equals arg1="${multimodule}" arg2="true"/>
@@ -83,6 +82,18 @@
 	      	<include name="**/*.html"/>
             </fileset>
         </copy>
+        <available file="${runtime.report.dir}/debug/client" type="dir"
+            property="client.dir.present"/>
+        <if>
+            <equals arg1="${client.dir.present}" arg2="true"/>
+            <then>
+                <copy todir="${runtime.report.dir}/debug/client">
+                    <fileset dir="${debug.dir}/client">
+	      	        <include name="**/*"/>
+                    </fileset>
+                </copy>
+            </then>
+        </if>
         <echo message="The Automation reports are at ${runtime.report.dir}"/>
     </target>
 
@@ -227,8 +238,11 @@
     <target name="clean-all" depends="check-cond" if="cond-is-true">
         <echo message="Cleaning all output, built and reports files and directories..."/>
         <delete>
-            <fileset dir="${SERVER_DIR}" excludes="*.output, built/classes/com/**"/>
+            <fileset dir="${SERVER_DIR}" excludes="built/classes/com/**"/>
         </delete>
+        <delete dir="${SERVER_DIR}/debug"/>
+        <delete dir="${SERVER_DIR}/docs"/>
+        <delete dir="${SERVER_DIR}/ldif"/>
     </target>
 
     <!--  compile  -->
