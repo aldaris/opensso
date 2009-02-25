@@ -22,41 +22,26 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DebugLogTest.java,v 1.3 2009-02-25 02:28:56 veiming Exp $
+ * $Id: ILogProvider.java,v 1.1 2009-02-25 02:28:55 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
 
-import com.iplanet.sso.SSOToken;
-import com.sun.identity.security.AdminTokenAction;
-import com.sun.identity.shared.debug.IDebug;
-import java.security.AccessController;
 import java.util.logging.Level;
-import org.testng.annotations.Test;
 
 /**
- *
- * @author dennis
+ * Interface for getting logger.
  */
-public class DebugLogTest {
-    @Test
-    public void testDebug() {
-        IDebug debug = DebugFactory.getInstance().getProvider().getInstance(
-            "debugtest");
-        try {
-            String s = null;
-            s.equals("test");
-        } catch (NullPointerException e) {
-            debug.error("DebugLogTest.testDebug", e);
-        }
-    }
-
-    @Test
-    public void testLog() {
-        ILogProvider provider = LogFactory.getInstance().getLogProvider();
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
-        provider.log("logtest", Level.SEVERE,
-            "DebugLogTest.testLog", adminToken, adminToken);
-    }
+public interface ILogProvider {
+    /**
+     * Logs an entries
+     *
+     * @param logName Name of the log handler.
+     * @param level a logging level value.
+     * @param message log message.
+     * @param actor Actor involved in the activity.
+     * @param cred Credential
+     */
+    void log(String logName, Level level, String message, Object actor,
+        Object cred);
 }
