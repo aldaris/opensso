@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DebugLogTest.java,v 1.3 2009-02-25 02:28:56 veiming Exp $
+ * $Id: DebugLogTest.java,v 1.4 2009-02-25 22:21:46 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
@@ -41,8 +41,7 @@ import org.testng.annotations.Test;
 public class DebugLogTest {
     @Test
     public void testDebug() {
-        IDebug debug = DebugFactory.getInstance().getProvider().getInstance(
-            "debugtest");
+        IDebug debug = DebugFactory.getDebug("debugtest");
         try {
             String s = null;
             s.equals("test");

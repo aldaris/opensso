@@ -22,11 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDebugProvider.java,v 1.1 2009-02-24 20:20:42 veiming Exp $
+ * $Id: IDebugProvider.java,v 1.2 2009-02-25 22:21:46 veiming Exp $
  *
  */
 
 package com.sun.identity.entitlement.interfaces;
+
+import com.sun.identity.shared.debug.IDebug;
 
 /**
  * Allows a pluggable implementation of the Debug service within the OpenSSO

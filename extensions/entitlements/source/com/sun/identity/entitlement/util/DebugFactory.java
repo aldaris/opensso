@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DebugFactory.java,v 1.2 2009-02-24 22:47:53 veiming Exp $
+ * $Id: DebugFactory.java,v 1.3 2009-02-25 22:21:46 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
 
 import com.sun.identity.shared.debug.DebugAdaptor;
+import com.sun.identity.shared.debug.IDebug;
 import com.sun.identity.shared.debug.IDebugProvider;
 
 /**
@@ -52,7 +53,22 @@ public final class DebugFactory {
         return instance;
     }
 
+    /**
+     * Return debug provider.
+     *
+     * @return debug provider.
+     */
     public IDebugProvider getProvider() {
         return impl;
+    }
+
+    /**
+     * Return debugger.
+     *
+     * @param name Name of debugger.
+     * @return debugger.
+     */
+    public static IDebug getDebug(String name) {
+        return instance.impl.getInstance(name);
     }
 }
