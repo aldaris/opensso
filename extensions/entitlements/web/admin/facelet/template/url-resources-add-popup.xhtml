@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<span
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ice="http://www.icesoft.com/icefaces/component"
+    xmlns:o="http://opensso.dev.java.net">
+    <ice:panelPopup
+        styleClass="popup-modal"
+        modal="true"
+        draggable="false"
+        visible="#{urlResourcesAddBean.visible}"
+        autoCentre="true">
+        <f:facet name="header">
+            <ice:panelGrid>
+                <ice:outputText
+                    styleClass="popup-header"
+                    value="Add URL Resources"/>
+            </ice:panelGrid>
+        </f:facet>
+        <f:facet name="body">
+            <ice:panelGrid>
+                <ice:outputText
+                    value="URL Resource"/>
+                <ice:inputText
+                    value="#{urlResourcesAddBean.pattern}"/>
+                <ice:panelGrid
+                    styleClass="button-group"
+                    columns="2">
+                    <o:button
+                        type="ok"
+                        handler="#{urlResourcesAddHandler}"/>
+                    <o:button
+                        type="cancel"
+                        handler="#{urlResourcesAddHandler}"/>
+                </ice:panelGrid>
+            </ice:panelGrid>
+        </f:facet>
+    </ice:panelPopup>
+</span>

@@ -8,7 +8,7 @@ public class UrlResourcesSearchHandler implements Serializable {
     private UrlResourcesSearchBean urlResourcesSearchBean;
 
     public void searchListener(ActionEvent event) {
-        urlResourcesSearchBean.setVisible(!urlResourcesSearchBean.isVisible());
+        urlResourcesSearchBean.setVisible(true);
     }
 
     public void okListener(ActionEvent event) {

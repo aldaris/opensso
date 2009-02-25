@@ -88,43 +88,15 @@
                                 <ice:outputText value="URL Resources"/>
                             </span>
                             <span class="section-links">
-                                <o:clink type="add"/>
+                                <o:clink
+                                    type="add"
+                                    handler="#{urlResourcesAddHandler}"/>
+                                <ui:include src="template/url-resources-add-popup.xhtml"/>
                                 <ice:outputText value="|"/>
                                 <o:clink
                                     type="search"
                                     handler="#{urlResourcesSearchHandler}"/>
-                                <ice:panelPopup
-                                    styleClass="popup-modal"
-                                    modal="true"
-                                    draggable="false"
-                                    visible="#{urlResourcesSearchBean.visible}"
-                                    autoCentre="true">
-                                    <f:facet name="header">
-                                        <ice:panelGrid>
-                                            <ice:outputText
-                                                styleClass="popup-header"
-                                                value="URL Resources Search Filter"/>
-                                        </ice:panelGrid>
-                                    </f:facet>
-                                    <f:facet name="body">
-                                        <ice:panelGrid>
-                                            <ice:outputText
-                                                value="Search filter"/>
-                                            <ice:inputText
-                                                value="#{urlResourcesSearchBean.filter}"/>
-                                            <ice:panelGrid
-                                                styleClass="button-group"
-                                                columns="2">
-                                                <o:button
-                                                    type="ok"
-                                                    handler="#{urlResourcesSearchHandler}"/>
-                                                <o:button
-                                                    type="cancel"
-                                                    handler="#{urlResourcesSearchHandler}"/>
-                                            </ice:panelGrid>
-                                        </ice:panelGrid>
-                                    </f:facet>
-                                </ice:panelPopup>
+                                <ui:include src="template/url-resources-search-popup.xhtml"/>
                                 <ice:outputText
                                     visible="#{!empty urlResourcesSearchBean.filter}"
                                     value="(#{urlResourcesSearchBean.filter})"/>

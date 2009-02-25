@@ -56,6 +56,26 @@
     </managed-bean>
 
     <managed-bean>
+        <managed-bean-name>urlResourcesAddBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.UrlResourcesAddBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>urlResourcesAddHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.UrlResourcesAddHandler</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>urlResourcesBean</property-name>
+            <value>#{urlResourcesBean}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>urlResourcesAddBean</property-name>
+            <value>#{urlResourcesAddBean}</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
         <managed-bean-name>urlResourceExceptionsHandler</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.handler.UrlResourceExceptionsHandler</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>

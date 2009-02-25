@@ -5,6 +5,7 @@
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:ice="http://www.icesoft.com/icefaces/component">
     <ice:commandLink
+        actionListener="#{handler.addListener}"
         rendered="#{type == 'add'}"
         partialSubmit="true"
         styleClass="command-link">

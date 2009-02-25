@@ -105,7 +105,7 @@ div.button-wrapper a.button img.left {
 }
 
 #page {
-    max-width: 1024px;
+    width: 100%;
 }
 
 #header {
@@ -145,7 +145,6 @@ div.button-wrapper a.button img.left {
     margin: 8px;
     padding: 8px;
     border: 1px solid #DDDDDD;
-    width: 100%;
 }
 
 #panel-title {
@@ -187,13 +186,19 @@ div.button-wrapper a.button img.left {
     font-weight: bold;
 }
 
-/*
 #menu-separator {
     width: 100%;
     border-top: 1px solid #DDDDDD;
 }
 
+#connection-status {
+    clear: both;
+    float: right;
+    position: relative;
+    top: 50px;
+}
 
+/*
 #homeTabContent {
     width: 100%;
 }
