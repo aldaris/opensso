@@ -23,7 +23,7 @@
    your own identifying information:
    "Portions Copyrighted 2008 Miguel Angel Alonso Negro <miguelangel.alonso@gmail.com>"
 
-   $Id: ac-security.xml,v 1.2 2008-12-28 21:40:26 malonso Exp $
+   $Id: ac-security.xml,v 1.3 2009-02-26 18:44:52 wstrange Exp $
 
 -->
 
@@ -32,6 +32,11 @@
         xmlns:security="http://www.springframework.org/schema/security"
         xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
                             http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.1.xsd">
+
+
+<!--
+    <security:global-method-security  jsr250-annotations="enabled"/>
+-->
 
     <bean id="filterChainProxy"
             class="org.springframework.security.util.FilterChainProxy">
@@ -81,10 +86,11 @@
         <property name="authenticationManager" ref="authenticationManager"/>
         <property name="accessDecisionManager" ref="accessDecisionManager"/>
         <property name="objectDefinitionSource">
-            <bean class="com.sun.identity.provider.springsecurity.OpenSsoObjectDefinitionSource">
+            <bean class="com.sun.identity.provider.springsecurity.OpenSSOObjectDefinitionSource">
                 <property name="anonymousUrls">
                     <list>
                         <value>/faces/logout*</value>
+                        <value>/faces/denied*</value>
                     </list>
                 </property>
             </bean>
@@ -95,12 +101,12 @@
             class="org.springframework.security.providers.ProviderManager">
         <property name="providers">
             <list>
-                <bean class="com.sun.identity.provider.springsecurity.OpenSsoAuthenticationProvider"/>
+                <bean class="com.sun.identity.provider.springsecurity.OpenSSOAuthenticationProvider"/>
             </list>
         </property>
     </bean>
 
-    <bean id="openssoFilter" class="com.sun.identity.provider.springsecurity.OpenSsoProcessingFilter">
+    <bean id="openssoFilter" class="com.sun.identity.provider.springsecurity.OpenSSOProcessingFilter">
         <property name="authenticationManager" ref="authenticationManager"/>
 
         <property name="authenticationFailureUrl" value="/faces/loginfailure.jsp"/>
@@ -108,8 +114,8 @@
         <property name="filterProcessesUrl" value="/j_spring_security_check"/>
     </bean>
     
-    <bean id="authenticationEntryPoint" class="com.sun.identity.provider.springsecurity.OpenSsoProcessingFilterEntryPoint">
-        <property name="loginUrl" value="http://localhost:8080/opensso/UI/Login"/>
+    <bean id="authenticationEntryPoint" class="com.sun.identity.provider.springsecurity.OpenSSOProcessingFilterEntryPoint">
+        <property name="loginUrl" value="http://opensso.my2do.com:8080/opensso/UI/Login"/>
         <property name="filterProcessesUrl" value="/j_spring_security_check"/>
     </bean>
     
@@ -129,17 +135,23 @@
                 <bean class="org.springframework.security.ui.logout.SecurityContextLogoutHandler">
                     <property name="invalidateHttpSession" value="true"/>
                 </bean>
-                <bean id="openSsoLogoutHandler" class="com.sun.identity.provider.springsecurity.OpenSsoLogoutHandler"/>
+                <bean id="openSsoLogoutHandler" class="com.sun.identity.provider.springsecurity.OpenSSOLogoutHandler"/>
             </list>
         </constructor-arg>
         <property name="filterProcessesUrl" value="/faces/logout.jsp"/>
     </bean>
 
+    <!-- Changed by Warren
+    affirmative - original
     <bean name="accessDecisionManager" class="org.springframework.security.vote.AffirmativeBased">
+     <bean name="accessDecisionManager" class="org.springframework.security.vote.UnanimousBased">
+    -->
+     <bean name="accessDecisionManager" class="org.springframework.security.vote.AffirmativeBased">
         <property name="decisionVoters">
             <list>
-                <bean class="com.sun.identity.provider.springsecurity.OpenSsoVoter"/>
+                <bean class="com.sun.identity.provider.springsecurity.OpenSSOVoter"/>
             </list>
         </property>
+        <property name="allowIfAllAbstainDecisions" value="false"/>
     </bean>
 </beans>
