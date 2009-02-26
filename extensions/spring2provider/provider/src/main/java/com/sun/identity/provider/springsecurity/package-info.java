@@ -86,7 +86,12 @@ public String sayHello() {
  * The above method will throw a Spring Security AccessException if the
  * user is not in the admin group.
  * </p>
- *
+ * <h2>Logging</h2>
+ * <p>
+ * Logging is integrated with the OpenSSO clientsdk logging mechanism. The
+ * log output will go the directory configured in your AMConfig.properties file.
+ * All logging related to this module is placed in a log file called "amSpring".
+ * </p>
  *
  * 
  */
