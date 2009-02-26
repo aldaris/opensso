@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: validator.jsp,v 1.6 2009-01-09 17:42:57 veiming Exp $
+   $Id: validator.jsp,v 1.7 2009-02-26 22:39:33 veiming Exp $
 
 --%>
 
@@ -31,6 +31,8 @@
 <%@ page import="com.sun.identity.shared.Constants" %>
 <%@ page import="com.sun.identity.workflow.ValidateSAML2" %>
 <%@ page import="com.sun.identity.workflow.WorkflowException" %>
+<%@ page import="java.net.MalformedURLException" %>
+<%@ page import="java.net.URL" %>
 <%@ page import="java.net.URLEncoder" %>
 <%@ page import="java.text.MessageFormat" %>
 <%@ page import="java.util.Locale" %>
@@ -39,16 +41,33 @@
 <html>
 <head>
 <%
-    String deployuri = SystemConfigurationUtil.getProperty(
-        Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
-    String serverProtocol = SystemConfigurationUtil.getProperty(
-        Constants.AM_SERVER_PROTOCOL);
-    String serverHost = SystemConfigurationUtil.getProperty(
-        Constants.AM_SERVER_HOST);
-    String serverPort = SystemConfigurationUtil.getProperty(
-        Constants.AM_SERVER_PORT);
-    String serverURL = serverProtocol + "://" + serverHost + ":" +
-        serverPort + deployuri;
+    String deployuri = null;
+    String serverURL = null;
+    try {
+        URL url = new URL(request.getRequestURL().toString());
+        String prot = url.getProtocol();
+        String port = Integer.toString(url.getPort());
+        if (port.equals(-1)) {
+            port = prot.equals("http") ? "443" : "80";
+        }
+        deployuri = url.getPath();
+        int idx = deployuri.indexOf("/", 1);
+        if (idx != -1) {
+            deployuri = deployuri.substring(0, idx);
+        }
+        serverURL = prot + "://" + url.getHost() + ":" + port + deployuri;
+    } catch (MalformedURLException e) {
+        deployuri = SystemConfigurationUtil.getProperty(
+                Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
+        String serverProtocol = SystemConfigurationUtil.getProperty(
+                Constants.AM_SERVER_PROTOCOL);
+        String serverHost = SystemConfigurationUtil.getProperty(
+                Constants.AM_SERVER_HOST);
+        String serverPort = SystemConfigurationUtil.getProperty(
+                Constants.AM_SERVER_PORT);
+        serverURL = serverProtocol + "://" + serverHost + ":" +
+                serverPort + deployuri;
+    }
 
     request.setCharacterEncoding("UTF-8");
     String realm = request.getParameter("realm");
