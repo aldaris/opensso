@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EmbeddedOpenDS.java,v 1.19 2009-01-28 05:35:02 ww203982 Exp $
+ * $Id: EmbeddedOpenDS.java,v 1.20 2009-02-26 01:04:43 goodearth Exp $
  *
  */
 
@@ -408,6 +408,17 @@ public class EmbeddedOpenDS {
         enableCmd[19] = (String) map.get(SetupConstants.CONFIG_VAR_DS_MGR_PWD);
         enableCmd[25] = (String) map.get(SetupConstants.CONFIG_VAR_DS_MGR_PWD);
 
+        Debug debug = Debug.getInstance(SetupConstants.DEBUG_NAME);
+        if (debug.messageEnabled()) {
+            debug.message("EmbeddedOpenDS.setupReplicationEnable: "+
+                "Host 1 "+enableCmd[3]);
+            debug.message("EmbeddedOpenDS.setupReplicationEnable: "+
+                "Host 2 "+enableCmd[13]);
+            debug.message("EmbeddedOpenDS.setupReplicationEnable: "+
+                "Port 1 "+enableCmd[5]);
+            debug.message("EmbeddedOpenDS.setupReplicationEnable: "+
+                "Port 2 "+enableCmd[15]);
+        }
         int ret = ReplicationCliMain.mainCLI(
             enableCmd, false, 
             SetupProgress.getOutputStream(), 
