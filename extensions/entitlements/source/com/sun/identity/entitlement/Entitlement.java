@@ -22,9 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.11 2009-02-11 01:06:07 dillidorai Exp $
+ * $Id: Entitlement.java,v 1.12 2009-02-26 00:46:39 dillidorai Exp $
  */
-
 package com.sun.identity.entitlement;
 
 import java.util.HashMap;
@@ -32,6 +31,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
+import org.json.JSONObject;
 
 /**
  * This class encapsulates entitlement of a subject.
@@ -56,8 +56,9 @@ import javax.security.auth.Subject;
  *         ...
  *     }
  * </pre>
- */ 
+ */
 public class Entitlement {
+
     private String serviceName;
     private String resourceName;
     private Set<String> excludedResourceNames;
@@ -77,7 +78,7 @@ public class Entitlement {
      * @param resourceName Resource name.
      * @param actionNames Set of action names.
      */
-    public Entitlement(String resourceName,  Set<String> actionNames) {
+    public Entitlement(String resourceName, Set<String> actionNames) {
         setResourceName(resourceName);
         setActionNames(actionNames);
     }
@@ -90,11 +91,10 @@ public class Entitlement {
      * @param actionNames Set of action names.
      */
     public Entitlement(
-        String serviceName, 
-        String resourceName, 
-        Set<String> actionNames
-    ) {
-        this.serviceName = serviceName;   
+            String serviceName,
+            String resourceName,
+            Set<String> actionNames) {
+        this.serviceName = serviceName;
         setResourceName(resourceName);
         setActionNames(actionNames);
     }
@@ -106,9 +106,8 @@ public class Entitlement {
      * @param actionValues Map of action name to set of values.
      */
     public Entitlement(
-        String resourceName,  
-        Map<String, Object> actionValues
-    ) {
+            String resourceName,
+            Map<String, Object> actionValues) {
         setResourceName(resourceName);
         setActionValues(actionValues);
     }
@@ -121,15 +120,14 @@ public class Entitlement {
      * @param actionValues Map of action name to set of values.
      */
     public Entitlement(
-        String serviceName, 
-        String resourceName,  
-        Map<String, Object> actionValues
-    ) {
-        this.serviceName = serviceName;   
+            String serviceName,
+            String resourceName,
+            Map<String, Object> actionValues) {
+        this.serviceName = serviceName;
         setResourceName(resourceName);
         setActionValues(actionValues);
     }
-    
+
     /**
      * Sets resource name.
      *
@@ -148,7 +146,7 @@ public class Entitlement {
         return resourceName;
     }
 
-     /**
+    /**
      * Sets excluded resource names.
      *
      * @param excludedResourceNames excluded resource names.
@@ -166,6 +164,7 @@ public class Entitlement {
     public Set<String> getExcludedResourceNames() {
         return excludedResourceNames;
     }
+
     /**
      * Returns service name.
      *
@@ -206,15 +205,15 @@ public class Entitlement {
         this.actionValues = new HashMap<String, Object>();
         for (String key : actionValues.keySet()) {
             Object val = actionValues.get(key);
-            
+
             if (val instanceof Set) {
-                Set copyOf = new HashSet<Object>((Set<Object>)val);
+                Set copyOf = new HashSet<Object>((Set<Object>) val);
                 this.actionValues.put(key, copyOf);
             } else {
                 this.actionValues.put(key, val);
             }
         }
-        
+
         this.actionValues = actionValues;
     }
 
@@ -236,7 +235,7 @@ public class Entitlement {
     public Map<String, Object> getActionValues() {
         return actionValues;
     }
-    
+
     /**
      * Returns action values.
      *
@@ -246,7 +245,7 @@ public class Entitlement {
     public Set<Object> getActionValues(String name) {
         Object o = actionValues.get(name);
         if (o instanceof Set) {
-            return (Set<Object>)o;
+            return (Set<Object>) o;
         }
 
         Set<Object> set = new HashSet<Object>();
@@ -290,7 +289,6 @@ public class Entitlement {
         return attributes;
     }
 
-    
     /**
      * Returns <code>true</code> if the request satisfies the request
      * @param subject Subject who is under evaluation.
@@ -305,7 +303,32 @@ public class Entitlement {
             String resourceName,
             Map<String, Set<String>> environment)
             throws EntitlementException {
-		return false;
-	}
-	
+        return false;
+    }
+
+    public String toString() {
+        JSONObject jo = toJSONObject();
+        String s = null;
+        try {
+            s = (jo == null) ? super.toString() : jo.toString(2);
+        } catch (Exception joe) {
+        }
+        return s;
+    }
+
+    public JSONObject toJSONObject() {
+        JSONObject jo = null;
+        try {
+            jo = new JSONObject();
+            jo = new JSONObject();
+            jo.put("serviceName", serviceName);
+            jo.put("resourceName", resourceName);
+            jo.put("excludedResourceNames", excludedResourceNames);
+            jo.put("actionsValues", actionValues);
+            jo.put("advices", advices);
+            jo.put("attributes", attributes);
+        } catch (Exception e) {
+        }
+        return jo;
+    }
 }

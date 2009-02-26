@@ -22,16 +22,27 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PriviligeUtils.java,v 1.4 2009-02-21 01:30:36 dillidorai Exp $
+ * $Id: PriviligeUtils.java,v 1.5 2009-02-26 00:47:18 dillidorai Exp $
  */
 
 package com.sun.identity.policy;
 
+import com.iplanet.sso.SSOToken;
+import com.iplanet.sso.SSOException;
 import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.ECondition;
 import com.sun.identity.entitlement.EResourceAttributes;
 import com.sun.identity.entitlement.ESubject;
+import com.sun.identity.entitlement.UserESubject;
+import com.sun.identity.entitlement.GroupESubject;
+import com.sun.identity.entitlement.RoleESubject;
+import com.sun.identity.entitlement.OrESubject;
+import com.sun.identity.entitlement.NotESubject;
 import com.sun.identity.entitlement.Privilige;
+import com.sun.identity.idm.AMIdentity;
+import com.sun.identity.idm.IdType;
+import com.sun.identity.idm.IdRepoException;
+import com.sun.identity.idm.IdUtils;
 import com.sun.identity.policy.interfaces.Condition;
 import com.sun.identity.policy.interfaces.ResponseProvider;
 import com.sun.identity.policy.interfaces.Subject;
@@ -52,14 +63,14 @@ public class PriviligeUtils {
     private PriviligeUtils() {
     }
 
-    static Privilige policyToPrivilige(Policy policy) 
+    public static Privilige policyToPrivilige(Policy policy) 
             throws PolicyException {
 
         if (policy == null) {
             return null;
         }
 
-        String name = policy.getName();
+        String policyName = policy.getName();
 
         Set ruleNames = policy.getRuleNames();
         Set<Entitlement> entitlements = new HashSet<Entitlement>();
@@ -108,10 +119,14 @@ public class PriviligeUtils {
             nrp[1] = rp;
             nrps.add(nrp);
         }
-        EResourceAttributes era = nrpsToEResourceAttributes(nrps);
+        EResourceAttributes eResourceAttributes = nrpsToEResourceAttributes(nrps);
+        Set eResourceAttributesSet = null;
         
-
-        return null;
+        eCondition = null;
+        eResourceAttributes = null;
+        Privilige privilige = new Privilige(policyName, entitlements, eSubject,
+                eCondition, eResourceAttributesSet);
+        return privilige;
     }
 
     static Entitlement ruleToEntitlement(Rule rule)
@@ -130,30 +145,81 @@ public class PriviligeUtils {
     }
 
     static ESubject nqSubjectsToESubject(Set nqSubjects) {
-        JSONObject jo = new JSONObject();
-        try {
-            Set joys = new HashSet();
-            for (Object nqSubjectObj : nqSubjects) {
-                Object[] nqSubject = (Object[])nqSubjectObj;
-                JSONObject joy = new JSONObject();
-                String subjectName = (String)nqSubject[0];
-                Subject subject = (Subject)nqSubject[1];
-                Boolean exclusive  = (Boolean)nqSubject[2];
-                String className = subject.getClass().getName();
-                jo.put("subjectName", subjectName);
-                joy.put("className", className);
-                joy.put("values", subject.getValues());
-                joys.add(joy);
+        Set esSet = new HashSet();
+        ESubject es = null;
+        for (Object nqSubjectObj : nqSubjects) {
+            Object[] nqSubject = (Object[])nqSubjectObj;
+            Set orSubjects = new HashSet();
+            String subjectName = (String)nqSubject[0];
+            Subject subject = (Subject)nqSubject[1];
+            if (subject instanceof
+                    com.sun.identity.policy.plugins.AMIdentitySubject) {
+                es = mapAMIdentitySubjectToESubject(nqSubject);
             }
-            jo.put("psubjects", joys);
-        } catch (Exception e) {
+            esSet.add(es);
         }
-        jo.toString();
-        PolicyESubject peSubject = new PolicyESubject();
-        peSubject.setState(jo.toString());
-        peSubject.setPSubjects(nqSubjects);
-        return peSubject;
+        if (esSet.size() == 1) {
+            es = (ESubject)esSet.iterator().next();
+        } else if (esSet.size() > 1) {
+            es = new OrESubject(esSet);
+        }
+        return es;
     }
+
+    public static ESubject mapAMIdentitySubjectToESubject(Object[] nqSubject) {
+        Set esSet = new HashSet();
+        ESubject es = null;
+        String subjectName = (String)nqSubject[0];
+        Subject subject = (Subject)nqSubject[1];
+        Set values = subject.getValues();
+        if (values == null || values.isEmpty()) {
+            es = new UserESubject(null, subjectName);
+            Boolean exclusive  = (Boolean)nqSubject[2];
+            if (exclusive) {
+                es = new NotESubject(es, subjectName);
+            }
+            return es;
+        }
+        for (Object valueObj : values) {
+            String value = (String)valueObj;
+            AMIdentity amIdentity = null;
+            SSOToken ssoToken = null;
+            amIdentity = null;
+            IdType idType = null;
+            try {
+                ssoToken = ServiceTypeManager.getSSOToken();
+                amIdentity = IdUtils.getIdentity(ssoToken, value);
+                if (amIdentity != null) {
+                    idType = amIdentity.getType();
+                }
+            } catch (SSOException ssoe) {
+            } catch (IdRepoException idre) {
+            }
+            es = null;
+            if (IdType.USER.equals(idType)) {
+                es = new UserESubject(value, subjectName);
+            } else if (IdType.GROUP.equals(idType)) {
+                es = new GroupESubject(value, subjectName);
+            } else if (IdType.ROLE.equals(idType)) {
+                es = new RoleESubject(value, subjectName);
+            }
+            if (es != null) {
+                esSet.add(es);
+            }
+        }
+        es = null;
+        if (esSet.size() == 1) {
+            es = (ESubject)esSet.iterator().next();
+        } else if (esSet.size() > 1) {
+            es = new OrESubject(esSet, subjectName);
+        }
+        Boolean exclusive  = (Boolean)nqSubject[2];
+        if (exclusive) {
+           es = new NotESubject(es, subjectName); 
+        }
+        return es;
+    }
+    
 
     static ECondition nConditionsToECondition(Set nConditions) {
         JSONObject jo = new JSONObject();
