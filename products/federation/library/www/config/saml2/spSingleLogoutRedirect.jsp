@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spSingleLogoutRedirect.jsp,v 1.9 2008-06-25 05:48:38 qcheng Exp $
+   $Id: spSingleLogoutRedirect.jsp,v 1.10 2009-02-26 23:57:19 exu Exp $
 
 --%>
 
@@ -48,6 +48,8 @@
 <%@ page import="com.sun.identity.saml2.protocol.ProtocolFactory" %>
 <%@ page import="java.util.HashMap" %>
 <%@ page import="java.util.Map" %>
+<%@ page import="java.util.Properties" %>
+
 
 <%--
     spSingleLogoutRedirect.jsp
@@ -230,17 +232,28 @@ boolean processSAELogout(
         }
         String cryptoType = (String) hp.get(SecureAttrs.SAE_CRYPTO_TYPE);
         String secret = null;
+        String encSecret = null;
+        String encAlg = (String)hp.get(
+            SecureAttrs.SAE_CONFIG_DATA_ENCRYPTION_ALG);
+        String encStrength = (String)hp.get(
+                 SecureAttrs.SAE_CONFIG_ENCRYPTION_KEY_STRENGTH);
         if (SecureAttrs.SAE_CRYPTO_TYPE_SYM.equals(cryptoType)) {
             // Shared secret between FM-IDP and IDPApp
             secret = (String) hp.get(SecureAttrs.SAE_CONFIG_SHARED_SECRET );
+            encSecret = secret;
         } else {
             // IDPApp's public key
             secret = (String) hp.get(SecureAttrs.SAE_CONFIG_PRIVATE_KEY_ALIAS);
+            encSecret =
+                    (String) hp.get(SecureAttrs.SAE_CONFIG_PUBLIC_KEY_ALIAS);
         }
         if (secret == null || secret.length() == 0) {
             SAML2Utils.debug.error(
                 "spSLORedir:SAE:processing App SLO:getSAEAttrs no secret/key");
             return false;
+        }
+        if (encAlg == null) {
+            encSecret = null;
         }
 
         String returnURL = request.getRequestURL()+
@@ -249,8 +262,31 @@ boolean processSAELogout(
         HashMap map = new HashMap();
         map.put(SecureAttrs.SAE_PARAM_CMD, SecureAttrs.SAE_CMD_LOGOUT);
         map.put(SecureAttrs.SAE_PARAM_APPSLORETURNURL, returnURL);
-        String encodedString = SecureAttrs.getInstance(cryptoType)
-                                          .getEncodedString(map, secret);
+        String saInstanceName = cryptoType + "_" + encAlg + "_" + encStrength;
+        SecureAttrs sa = SecureAttrs.getInstance(saInstanceName);
+        if (sa == null) {
+            Properties prop = new Properties();
+            prop.setProperty(SecureAttrs.SAE_CONFIG_CERT_CLASS,
+                "com.sun.identity.sae.api.FMCerts");
+            if (encAlg != null) {
+                prop.setProperty(
+                    SecureAttrs.SAE_CONFIG_DATA_ENCRYPTION_ALG, encAlg);
+            }
+
+            if (encStrength != null) {
+                prop.setProperty(
+                    SecureAttrs.SAE_CONFIG_ENCRYPTION_KEY_STRENGTH,encStrength);
+            }
+            SecureAttrs.init(saInstanceName, cryptoType, prop);
+            sa = SecureAttrs.getInstance(saInstanceName);
+        }
+
+        if (sa == null) {
+            SAML2Utils.debug.error(
+                "spSLORedir:SAE:processing App SLO:null SecureAttrs instance");
+            return false;
+        }
+        String encodedString = sa.getEncodedString(map, secret, encSecret);
         if (encodedString != null) {
             if (appSLOUrl.indexOf("?") > 0) {
                 appSLOUrl.append("&").append(SecureAttrs.SAE_PARAM_DATA)

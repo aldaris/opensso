@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: SA_SP.jsp,v 1.7 2008-07-16 22:46:50 rajeevangal Exp $
+   $Id: SA_SP.jsp,v 1.8 2009-02-26 23:57:19 exu Exp $
 
 --%>
 
@@ -200,11 +200,14 @@ com.sun.identity.sae.api.Utils"
     }
 
     String secret = null;
+    String encSecret = null;
     String cryptoType = (String) hp.get(SecureAttrs.SAE_CRYPTO_TYPE);
     if (SecureAttrs.SAE_CRYPTO_TYPE_SYM.equals(cryptoType)) {
         secret = (String) hp.get(SecureAttrs.SAE_CONFIG_SHARED_SECRET);
+        encSecret = secret;
     } else if (SecureAttrs.SAE_CRYPTO_TYPE_ASYM.equals(cryptoType)) {
         secret = (String) hp.get(SecureAttrs.SAE_CONFIG_PRIVATE_KEY_ALIAS);
+        encSecret = (String) hp.get(SecureAttrs.SAE_CONFIG_PUBLIC_KEY_ALIAS);
     }
     if (secret == null || secret.length() == 0) {
         String errStr = errorUrl
@@ -218,15 +221,30 @@ com.sun.identity.sae.api.Utils"
         return;
     }
 
-    SecureAttrs sa = SecureAttrs.getInstance(cryptoType);
+    String encAlg =
+        (String)hp.get(SecureAttrs.SAE_CONFIG_DATA_ENCRYPTION_ALG);
+    String encStrength =
+           (String)hp.get(SecureAttrs.SAE_CONFIG_ENCRYPTION_KEY_STRENGTH);
+    String saInstanceName = cryptoType + "_" + encAlg + "_" + encStrength;
+    SecureAttrs sa = SecureAttrs.getInstance(saInstanceName);
     if (sa == null) {
         Properties prop = new Properties();
         prop.setProperty(SecureAttrs.SAE_CONFIG_CERT_CLASS, 
             "com.sun.identity.sae.api.FMCerts");
-        SecureAttrs.init(cryptoType, cryptoType, prop);
-        sa = SecureAttrs.getInstance(cryptoType);
+        if(encAlg != null) {
+           prop.setProperty(SecureAttrs.SAE_CONFIG_DATA_ENCRYPTION_ALG,encAlg);
+        }
+        if(encStrength != null) {
+           prop.setProperty(SecureAttrs.SAE_CONFIG_ENCRYPTION_KEY_STRENGTH,
+                encStrength);
+        }
+        SecureAttrs.init(saInstanceName, cryptoType, prop);
+        sa = SecureAttrs.getInstance(saInstanceName);
     }
-    String encodedString = sa.getEncodedString(map, secret);
+    if (encAlg == null) {
+        encSecret = null;
+    }
+    String encodedString = sa.getEncodedString(map, secret, encSecret);
     if (encodedString == null) {
        String errStr = errorUrl
                        +"?errorcode=7&errorstring=Couldnt_secure_attrs:"
@@ -259,10 +277,12 @@ com.sun.identity.sae.api.Utils"
         response.sendRedirect(errStr);
         return;
     }
+/*
 String ssoUrl = spApp+"?"+SecureAttrs.SAE_PARAM_DATA+"="+ encodedString;
 %>
     <br> DEBUG : We are in SAE handler deployed on FM in SP role.
     <br> Click <a href=<%=ssoUrl%>>here </a> to continue SSO with SP.
-    <br> Edit saml2/jsp/SA_SP.jsp and uncomment the "send.Redirect(..)" line to execute a redirect automatically so that the user doesnt see this debug page.
+    <br> Edit saml2/jsp/SA_SP.jsp and uncomment the "Utils.redirect(..)" line to execute a redirect automatically so that the user doesnt see this debug page.
 <%
+*/
 %>

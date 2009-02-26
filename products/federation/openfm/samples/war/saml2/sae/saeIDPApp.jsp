@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: saeIDPApp.jsp,v 1.10 2008-11-25 23:50:42 exu Exp $
+   $Id: saeIDPApp.jsp,v 1.11 2009-02-26 23:58:10 exu Exp $
 
 --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
@@ -58,6 +58,8 @@ public void jspInit()
     String cryptotype     = SecureAttrs.SAE_CRYPTO_TYPE_SYM;
     // Shared secret with local <OpenSSO>-IDP
     String secret     = "secret12";
+    String encryptionAlg = "DES";
+    String encryptionStrength = "56";
     // Keystore path (for asym signing)
     String keystore = "";
     // Keystore Password (for asym signing)
@@ -82,6 +84,7 @@ public void jspInit()
     String spapp  = "http://www.spp.com:8080/sp/samples/saml2/sae/saeSPApp.jsp";
     // Whether cached SecureAttrs class instance should be used
     String usecached = "on";
+    String useencryption = "on";
 
     // Private key Password (for asym signing)
     if (request.getMethod().equals("GET"))
@@ -154,6 +157,18 @@ iv) SP-App is already deployed and ready to accept requests.
           <td><input  type="text" name="secret" value="<%=secret%>"></td>
         </tr>
         <tr>
+          <td>Enable encryption: </td>
+          <td><input  type="checkbox" name="useencryption"></td>
+        </tr>
+        <tr>
+          <td>Encryption Algorithm : </td>
+          <td><input  type="text" name="encAlgorithm" value="<%=encryptionAlg%>"></td>
+        </tr>
+        <tr>
+          <td>Encryption Strength : </td>
+          <td><input  type="text" name="encStrength" value="<%=encryptionStrength%>"></td>
+        </tr>
+        <tr>
           <td>Use Cached SecureAttrs instance: </td>
           <td><input  type="checkbox" name="usecached" checked="true"></td>
         </tr>
@@ -193,6 +208,11 @@ iv) SP-App is already deployed and ready to accept requests.
         keypass = request.getParameter("keypass");    
         usecached = request.getParameter("usecached");    
         privkeypass = request.getParameter("privkeypass");    
+        useencryption = request.getParameter("useencryption");
+        encryptionAlg = request.getParameter("encAlgorithm");
+        System.out.println("Encryption alg" + encryptionAlg);
+        encryptionStrength = request.getParameter("encStrength");
+        String encSecret = secret;
 
         // Check if we already have a cached SecureAttrs instance.
         String mySecAttrInstanceName = "sample"+cryptotype;
@@ -207,6 +227,11 @@ iv) SP-App is already deployed and ready to accept requests.
             saeparams.put(SecureAttrs.SAE_CONFIG_KEYSTORE_FILE, keystore);
             saeparams.put(SecureAttrs.SAE_CONFIG_KEYSTORE_PASS, keypass);
             saeparams.put(SecureAttrs.SAE_CONFIG_PRIVATE_KEY_PASS, privkeypass);
+            saeparams.put(SecureAttrs.SAE_CONFIG_DATA_ENCRYPTION_ALG, encryptionAlg);
+            saeparams.put(SecureAttrs.SAE_CONFIG_ENCRYPTION_KEY_STRENGTH, encryptionStrength);
+          } else {
+            saeparams.put(SecureAttrs.SAE_CONFIG_DATA_ENCRYPTION_ALG, encryptionAlg);
+            saeparams.put(SecureAttrs.SAE_CONFIG_ENCRYPTION_KEY_STRENGTH, encryptionStrength);
           }
           SecureAttrs.init(mySecAttrInstanceName, cryptotype, saeparams);
           sa = SecureAttrs.getInstance(mySecAttrInstanceName);
@@ -220,7 +245,12 @@ iv) SP-App is already deployed and ready to accept requests.
         map.put(SecureAttrs.SAE_PARAM_AUTHLEVEL, authlevel);
         map.put(SecureAttrs.SAE_PARAM_SPAPPURL, spapp); 
         map.put(SecureAttrs.SAE_PARAM_IDPAPPURL, idpAppName);
-        String encodedString = sa.getEncodedString(map, secret);
+        String encodedString = null;
+         if(useencryption != null) {
+           encodedString = sa.getEncodedString(map, secret, encSecret);
+        } else {
+           encodedString = sa.getEncodedString(map, secret);
+        }
 
         out.println("<br>Setting up the following params:");
         out.println("<br>branch="+branch);
@@ -234,7 +264,12 @@ iv) SP-App is already deployed and ready to accept requests.
         slomap.put(SecureAttrs.SAE_PARAM_CMD,SecureAttrs.SAE_CMD_LOGOUT); 
         slomap.put(SecureAttrs.SAE_PARAM_APPSLORETURNURL, request.getRequestURL().toString());; 
         slomap.put(SecureAttrs.SAE_PARAM_IDPAPPURL, idpAppName);
-        String sloencodedString = sa.getEncodedString(slomap, secret);
+        String sloencodedString = null;
+        if(useencryption != null) {
+           sloencodedString = sa.getEncodedString(slomap, secret, encSecret);
+        } else {
+           sloencodedString = sa.getEncodedString(slomap, secret);
+        }
 
         // We are ready to format the URLs to invoke the SP-App and Single logout
         String url = null;
@@ -243,18 +278,25 @@ iv) SP-App is already deployed and ready to accept requests.
         HashMap pmap = new HashMap();
         pmap.put(SecureAttrs.SAE_PARAM_DATA, encodedString);
         if (saeServiceURL.indexOf("?") > 0) {
-            url = saeServiceURL+"&"+SecureAttrs.SAE_PARAM_DATA+"="+encodedString;
-            slourl = saeServiceURL+"&"+SecureAttrs.SAE_PARAM_DATA+"="
-                                  +sloencodedString;
+            url = saeServiceURL+"&" +
+                  SecureAttrs.SAE_PARAM_IDPAPPURL+"="+idpAppName + "&" +
+                  SecureAttrs.SAE_PARAM_DATA+"="+encodedString;
+            slourl = saeServiceURL+"&" +
+                     SecureAttrs.SAE_PARAM_IDPAPPURL+"="+idpAppName + "&" +
+                     SecureAttrs.SAE_PARAM_DATA+"=" +sloencodedString;
         }
         else {
-            url = saeServiceURL+"?"+SecureAttrs.SAE_PARAM_DATA+"="+encodedString;
-            slourl = saeServiceURL+"?"+SecureAttrs.SAE_PARAM_DATA+"="
-                                  +sloencodedString;
+            url = saeServiceURL+"?" +
+                  SecureAttrs.SAE_PARAM_IDPAPPURL+"="+idpAppName + "&" +
+                  SecureAttrs.SAE_PARAM_DATA+"="+encodedString;
+            slourl = saeServiceURL+"?" +
+                     SecureAttrs.SAE_PARAM_IDPAPPURL+"="+idpAppName + "&" +
+                     SecureAttrs.SAE_PARAM_DATA+"=" +sloencodedString;
         }
 
         // This function is a simple wrapper to create a form - to
         // autosubmit the form via javascriopt chnage false to true.
+        pmap.put(SecureAttrs.SAE_PARAM_IDPAPPURL, idpAppName);
         postForm = Utils.formFromMap(saeServiceURL, pmap, false);
         out.println(postForm);
 

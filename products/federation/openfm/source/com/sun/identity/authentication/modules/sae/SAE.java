@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAE.java,v 1.4 2008-07-16 22:46:50 rajeevangal Exp $
+ * $Id: SAE.java,v 1.5 2009-02-26 23:58:10 exu Exp $
  *
  */
 
@@ -113,14 +113,22 @@ public class SAE extends AMLoginModule {
             throw new AuthLoginException("SAE config Attributes are null");
         }
         String cryptoType = (String) saeattrs.get(SecureAttrs.SAE_CRYPTO_TYPE);
+        String encryptAlg = (String) saeattrs.get(
+                            SecureAttrs.SAE_CONFIG_DATA_ENCRYPTION_ALG);
+        String encryptStrength = (String) saeattrs.get(
+                            SecureAttrs.SAE_CONFIG_ENCRYPTION_KEY_STRENGTH);
         String saekey = null;
+        String saeprivatekey = null;
         if ("symmetric".equals(cryptoType)) {
             saekey = (String) saeattrs.get(
                                   SecureAttrs.SAE_CONFIG_SHARED_SECRET);
+            saeprivatekey = saekey;
         }
         else if ("asymmetric".equals(cryptoType)) {
             saekey = (String) saeattrs.get(
                                   SecureAttrs.SAE_CONFIG_PUBLIC_KEY_ALIAS);
+            saeprivatekey = (String) saeattrs.get(
+                                  SecureAttrs.SAE_CONFIG_PRIVATE_KEY_ALIAS);
         }
 
         if (debug.messageEnabled()) {
@@ -133,20 +141,30 @@ public class SAE extends AMLoginModule {
 
         Map attrs = null;
         try {
-            SecureAttrs sa = SecureAttrs.getInstance(cryptoType);
+            String saInstanceName = 
+                cryptoType + "_" + encryptAlg + "_" + encryptStrength;
+            SecureAttrs sa = SecureAttrs.getInstance(saInstanceName);
             if (sa == null) {
                 // Initialize SecureAttrs here.
                 Properties prop = new Properties();
                 prop.setProperty(SecureAttrs.SAE_CONFIG_CERT_CLASS,
                     "com.sun.identity.sae.api.FMCerts");
-                SecureAttrs.init(SecureAttrs.SAE_CRYPTO_TYPE_SYM,
-                         SecureAttrs.SAE_CRYPTO_TYPE_SYM, prop);
-                SecureAttrs.init(SecureAttrs.SAE_CRYPTO_TYPE_ASYM,
-                         SecureAttrs.SAE_CRYPTO_TYPE_ASYM, prop);
-                sa = SecureAttrs.getInstance(cryptoType);
+                 if(encryptAlg != null) {
+                   prop.setProperty(
+                         SecureAttrs.SAE_CONFIG_DATA_ENCRYPTION_ALG,
+                         encryptAlg);
+                }
+                if(encryptStrength != null) {
+                   prop.setProperty(
+                        SecureAttrs.SAE_CONFIG_ENCRYPTION_KEY_STRENGTH,
+                        encryptStrength);
+                }
+                SecureAttrs.init(saInstanceName, cryptoType, prop);
+                sa = SecureAttrs.getInstance(saInstanceName);
             }
 
-            attrs = sa.verifyEncodedString(encodedString, saekey);
+            attrs = sa.verifyEncodedString(encodedString, 
+                    saekey, saeprivatekey);
 
             if (debug.messageEnabled()) 
                 debug.message("SAE AuthModule.: SAE attrs:"+attrs); 

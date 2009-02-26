@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: SA_IDP.jsp,v 1.7 2008-07-28 20:38:45 exu Exp $
+   $Id: SA_IDP.jsp,v 1.8 2009-02-26 23:57:19 exu Exp $
 
 --%>
 
@@ -122,21 +122,6 @@ com.sun.identity.shared.debug.Debug"
         return;
     }
 
-    // Initially we need an instance for decoding, not verifying. So
-    // Crypto type doesnt matter.
-    SecureAttrs sa = SecureAttrs.getInstance(SecureAttrs.SAE_CRYPTO_TYPE_SYM);
-    if (sa == null) {
-        // Initialize SecureAttrs here.
-        Properties prop = new Properties();
-        prop.setProperty(SecureAttrs.SAE_CONFIG_CERT_CLASS, 
-            "com.sun.identity.sae.api.FMCerts");
-        SecureAttrs.init(SecureAttrs.SAE_CRYPTO_TYPE_SYM, 
-                         SecureAttrs.SAE_CRYPTO_TYPE_SYM, prop);
-        SecureAttrs.init(SecureAttrs.SAE_CRYPTO_TYPE_ASYM, 
-                         SecureAttrs.SAE_CRYPTO_TYPE_ASYM, prop);
-        sa = SecureAttrs.getInstance(SecureAttrs.SAE_CRYPTO_TYPE_SYM);
-    }
-
     // Check if a user is already authenticated
     boolean loggedIn = false;
     boolean forceAuth = false;
@@ -169,9 +154,8 @@ com.sun.identity.shared.debug.Debug"
 
     // retrieve sun.data parameter first.
     String sunData = request.getParameter(SecureAttrs.SAE_PARAM_DATA);
-    Map rawattrs = null;
-    if (sunData == null || 
-        (rawattrs = sa.getRawAttributesFromEncodedData(sunData)) == null) {
+    String idpAppUrl =  request.getParameter(SecureAttrs.SAE_PARAM_IDPAPPURL);
+    if (sunData == null) {
         String errStr = errorUrl+"?errorcode=IDP_1&errorstring=Null_sun.data";
 	SAML2Utils.debug.error(errStr);
         String[] data = {errStr};
@@ -196,14 +180,13 @@ com.sun.identity.shared.debug.Debug"
 	String errStr = errorUrl+"?errorcode=IDP_2&errorstring=Error_idp_metadata:"
                                 +idpMetaAlias;
 	SAML2Utils.debug.error(errStr);
-        String[] data = {errStr, rawattrs.toString()};
+        String[] data = {errStr};
         SAML2Utils.logError(Level.INFO, LogUtil.SAE_IDP_ERROR, 
                    data, token, ipaddr, userid, realm, "SAE", null);
         response.sendRedirect(errStr);
         return;
     }
 
-    String idpAppUrl = (String) rawattrs.get(SecureAttrs.SAE_PARAM_IDPAPPURL);
     Map hp = SAML2Utils.getSAEAttrs(
         realm, idpEntityId, SAML2Constants.IDP_ROLE, idpAppUrl);
 
@@ -212,7 +195,7 @@ com.sun.identity.shared.debug.Debug"
                        +"?errorcode=IDP_3&errorstring=No_App_Attrs:"
                        +idpAppUrl;
 	SAML2Utils.debug.error(errStr);
-        String[] data = {errStr, rawattrs.toString()};
+        String[] data = {errStr};
         SAML2Utils.logError(Level.INFO, LogUtil.SAE_IDP_ERROR, 
                    data, token, ipaddr, userid, realm, "SAE", null);
         response.sendRedirect(errStr);
@@ -220,13 +203,20 @@ com.sun.identity.shared.debug.Debug"
     }
     String cryptoType = (String) hp.get(SecureAttrs.SAE_CRYPTO_TYPE);
     String secret = null;
+    String encryptionSecret = null;
+    String encAlg = (String)hp.get(SecureAttrs.SAE_CONFIG_DATA_ENCRYPTION_ALG);
+    String encStrength = (String)hp.get(
+                 SecureAttrs.SAE_CONFIG_ENCRYPTION_KEY_STRENGTH);
     if (SecureAttrs.SAE_CRYPTO_TYPE_SYM.equals(cryptoType)) {
         // Shared secret between FM-IDP and IDPApp
         secret = (String) hp.get(SecureAttrs.SAE_CONFIG_SHARED_SECRET );
+        encryptionSecret = secret;
     }
     else {
         // IDPApp's public key
         secret = (String) hp.get(SecureAttrs.SAE_CONFIG_PUBLIC_KEY_ALIAS);
+        encryptionSecret =  (String) hp.get(
+                      SecureAttrs.SAE_CONFIG_PRIVATE_KEY_ALIAS);
     }
 
     if (secret == null || secret.length() == 0) {
@@ -234,7 +224,7 @@ com.sun.identity.shared.debug.Debug"
                   +"?errorcode=IDP_4&errorstring=Error_invalid_secret_or_key:"
                   +idpAppUrl;
 	SAML2Utils.debug.error(errStr);
-        String[] data = {errStr, rawattrs.toString()};
+        String[] data = {errStr};
         SAML2Utils.logError(Level.INFO, LogUtil.SAE_IDP_ERROR, 
                    data, token, ipaddr, userid, realm, "SAE", null);
         response.sendRedirect(errStr);
@@ -242,7 +232,40 @@ com.sun.identity.shared.debug.Debug"
     }
 
     // This time we nead the real crypto
-    sa = SecureAttrs.getInstance(cryptoType);
+    String saInstanceName = cryptoType + "_" + encAlg + "_" + encStrength;
+    SecureAttrs sa = SecureAttrs.getInstance(saInstanceName);
+    if (sa == null) {
+        Properties prop = new Properties();
+        prop.setProperty(SecureAttrs.SAE_CONFIG_CERT_CLASS,
+            "com.sun.identity.sae.api.FMCerts");
+        if (encAlg != null) {
+            prop.setProperty(
+                SecureAttrs.SAE_CONFIG_DATA_ENCRYPTION_ALG, encAlg);
+        }
+
+        if (encStrength != null) {
+            prop.setProperty(
+                SecureAttrs.SAE_CONFIG_ENCRYPTION_KEY_STRENGTH, encStrength);
+        }
+        SecureAttrs.init(saInstanceName, cryptoType, prop);
+        sa = SecureAttrs.getInstance(saInstanceName);
+    }
+
+    // check for sa
+    if (sa == null) {
+        String errStr = errorUrl
+              +"?errorcode=IDP_10&errorstring=Error_null_secure_attrs_instance:"
+              +idpAppUrl;
+	SAML2Utils.debug.error(errStr);
+        String[] data = {errStr};
+        SAML2Utils.logError(Level.INFO, LogUtil.SAE_IDP_ERROR, 
+                   data, token, ipaddr, userid, realm, "SAE", null);
+        response.sendRedirect(errStr);
+        return;
+    }
+
+    Map rawattrs = sa.getRawAttributesFromEncodedData(sunData,
+                   encryptionSecret);
 
     // Process Logout
     if (SecureAttrs.SAE_CMD_LOGOUT.equals(
@@ -257,7 +280,8 @@ com.sun.identity.shared.debug.Debug"
             response.sendRedirect(errStr);
             return;
         } else {
-            Map decodeMap = sa.verifyEncodedString(sunData, secret);
+            Map decodeMap = sa.verifyEncodedString(sunData, secret,
+                    encryptionSecret);
             if (decodeMap == null) {
                 String errStr = 
                  errorUrl+"?errorcode=IDP_6&errorstring=Logout_VerifyFailed";
@@ -303,7 +327,8 @@ com.sun.identity.shared.debug.Debug"
             requestedUserid = "id=" + requestedUserid.toLowerCase() + ","; 
             if (!loggedinPrincipal.startsWith(requestedUserid)) {
                 Map verifiedattrs = null;
-                if ((verifiedattrs = sa.verifyEncodedString(sunData, secret)) 
+                if ((verifiedattrs = sa.verifyEncodedString(
+                        sunData, secret, encryptionSecret)) 
                      == null) {
                     String errStr = 
                       errorUrl+"SA_IDP:errcode=4,verifyEncodedString failed.";
@@ -381,7 +406,9 @@ com.sun.identity.shared.debug.Debug"
 
 
     // Valid FM session - simply verify sun.data and add attributes to session
-    if ((rawattrs = sa.verifyEncodedString(sunData, secret)) == null) {
+    if ((rawattrs = sa.verifyEncodedString(sunData, secret, encryptionSecret))
+            == null) 
+    {
         
 	if (SAML2Utils.debug.messageEnabled()) {
 	    SAML2Utils.debug.message(

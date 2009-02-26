@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: saeSPApp.jsp,v 1.6 2008-11-25 23:50:42 exu Exp $
+   $Id: saeSPApp.jsp,v 1.7 2009-02-26 23:58:10 exu Exp $
 
 --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
@@ -68,17 +68,21 @@ public void jspInit()
             Properties saeparams = new Properties();
             if (SecureAttrs.SAE_CRYPTO_TYPE_ASYM.equals(cryptotype)) {
               saeparams.setProperty(SecureAttrs.SAE_CONFIG_KEYSTORE_TYPE, "JKS");
-              saeparams.put(SecureAttrs.SAE_CONFIG_PRIVATE_KEY_ALIAS, "testcert");
+              saeparams.put(SecureAttrs.SAE_CONFIG_PRIVATE_KEY_ALIAS, "test");
               saeparams.put(SecureAttrs.SAE_CONFIG_KEYSTORE_FILE, "/export/home/test/mykeystore");;
-              saeparams.put(SecureAttrs.SAE_CONFIG_KEYSTORE_PASS, "22222222");
-              saeparams.put(SecureAttrs.SAE_CONFIG_PRIVATE_KEY_PASS, "11111111");
+              saeparams.put(SecureAttrs.SAE_CONFIG_KEYSTORE_PASS, "changeit");
+              saeparams.put(SecureAttrs.SAE_CONFIG_PRIVATE_KEY_PASS, "changeit");
+              secret = "test";
             }
+            saeparams.put(SecureAttrs.SAE_CONFIG_DATA_ENCRYPTION_ALG, "DES");
+            saeparams.put(SecureAttrs.SAE_CONFIG_ENCRYPTION_KEY_STRENGTH, "56");
             SecureAttrs.init(mySecAttrInstanceName, cryptotype, saeparams);
             sa = SecureAttrs.getInstance(mySecAttrInstanceName);
         }
 
+        String encSecret = secret;
         String sunData = request.getParameter(SecureAttrs.SAE_PARAM_DATA);
-        Map secureAttrs = sa.verifyEncodedString(sunData, secret);
+        Map secureAttrs = sa.verifyEncodedString(sunData, secret, encSecret);
         if (secureAttrs == null) {
 %>
              <br>Secure Attrs Verification failed.

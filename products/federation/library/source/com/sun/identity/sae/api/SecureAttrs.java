@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureAttrs.java,v 1.9 2008-11-10 22:57:00 veiming Exp $
+ * $Id: SecureAttrs.java,v 1.10 2009-02-26 23:57:18 exu Exp $
  *
  */
 
@@ -36,6 +36,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import sun.misc.CharacterEncoder;
 import com.sun.identity.shared.encode.Base64;
+import com.sun.identity.security.DataEncryptor;
 import java.security.*;
 import java.security.cert.X509Certificate;
 
@@ -255,6 +256,20 @@ public class SecureAttrs
     public static final String SAE_CONFIG_SHARED_SECRET = "secret";
 
     /**
+     * SAE Config : data encryption algorithm.
+     * @supported.api
+     */
+    public static final String SAE_CONFIG_DATA_ENCRYPTION_ALG =
+                                             "encryptionalgorithm";
+
+    /**
+     * SAE Config : data encryption key strength.
+     * @supported.api
+     */
+    public static final String SAE_CONFIG_ENCRYPTION_KEY_STRENGTH =
+                                         "encryptionkeystrength";
+
+    /**
      * SAE Config :  Signature validity : since timetamp on signature.
      * @supported.api
      */
@@ -270,6 +285,9 @@ public class SecureAttrs
     private static HashMap instances = new HashMap();
     private int tsDuration = 120000; // 2 minutes
     private boolean asymsigning = false;
+    private boolean asymencryption = false;
+    private String dataEncAlg = "DES";
+    private int encKeyStrength = 56;
 
     /**
      * Returns an instance to perform crypto operations.
@@ -304,7 +322,7 @@ public class SecureAttrs
      *                     values.
      * @throws Exception rethrows underlying exception.
      * @supported.api
-     * @deprecated For backward compatability with older releases of this api.
+     * @deprecated. For backward compatability with older releases of this api.
      *     Replaced by {@link #init(String,String,Properties)}
      */
     synchronized public static void init(Properties properties) throws Exception
@@ -324,6 +342,50 @@ public class SecureAttrs
      */
     public String getEncodedString(Map attrs, String secret) throws Exception 
     {
+        String signedAttrs = signAttributes(attrs, secret);
+        return Base64.encode(signedAttrs.getBytes("UTF-8"));
+    }
+
+    /**
+     *   Returns encrypted string for the given attributes. The encrypted
+     *   data is Base64 encoded string encrypted with supplied encryption
+     *   secret and signs using shared secret.
+     *   @param attrs   Attribute Value pairs to be processed.
+     *   @param secret  Shared secret (symmetric) Private key alias (asymmetric)     *   @param encSecret The encryption secret (symmetric) or Public
+     *                           Key alias (asymmetric)
+     *   @return Base64 encoded token String to be passed to a relying party.
+     * @supported.api
+     */
+    public String getEncodedString(Map attrs, String secret, String encSecret)
+           throws Exception {
+
+         if(encSecret == null) {
+            return getEncodedString(attrs, secret);
+         }
+
+         String signedString = signAttributes(attrs, secret);
+         String encryptedString = null;
+         if(asymencryption) {
+            Key encKey = getPublicKey(encSecret).getPublicKey();
+            encryptedString = DataEncryptor.encryptWithAsymmetricKey(
+                             signedString,
+                             dataEncAlg,
+                             encKeyStrength,
+                             encKey);
+         } else {
+            encryptedString = DataEncryptor.encryptWithSymmetricKey(
+                              signedString,
+                              dataEncAlg,
+                              secret);
+         }
+         if(dbg) {
+            System.out.println("SAE.getEncodedString: encrypted string" +
+                  encryptedString);
+         }
+         return encryptedString;
+    }
+
+    private String signAttributes(Map attrs, String secret) throws Exception {
         if(attrs == null || attrs.isEmpty() ){
            return null;
         }
@@ -338,8 +400,7 @@ public class SecureAttrs
         }
 
         sb.append("Signature=").append(getSignedString(attrs, secret));
-
-        return Base64.encode(sb.toString().getBytes("UTF-8"));
+        return sb.toString();
     }
 
     /**
@@ -365,6 +426,64 @@ public class SecureAttrs
             return null; 
         }
         return map; 
+    }
+
+    /**
+     * Verifies the encrypted data string using encryption secret and
+     * shared secret that was used for signing.
+     *   @param str     Base64 encoded string containing attribute
+     *   @param secret  Shared secret (symmmetric) or Public Key (asymmetric)
+     *   @param encSecret The encryption secret (symmetric) or Public
+     *                           Key alias (asymmetric)
+     *   @return        Decoded, verified and parsed attrbute name-valie pairs.
+     * @supported.api
+     */
+    public Map verifyEncodedString(String str, String secret, String encSecret)
+              throws Exception {
+
+         if(encSecret == null) {
+            return verifyEncodedString(str, secret);
+         }
+
+         if(!isEncrypted(str)) {
+            return verifyEncodedString(str, secret);
+         }
+         if (str.indexOf(' ') > 0) {
+             str = str.replace(' ', '+');
+         }
+         String decryptStr = null;
+         if(asymencryption) {
+            Key  pKey = certs.getPrivateKey(encSecret);
+            decryptStr = DataEncryptor.decryptWithAsymmetricKey(str,
+                         dataEncAlg, pKey);
+         } else {
+            decryptStr = DataEncryptor.decryptWithSymmetricKey(str,
+                         dataEncAlg, encSecret);
+         }
+         if (dbg) {
+            System.out.println("SAE:verifyEncodedString() : "+
+                "decrypted string " + decryptStr);
+         }
+         return verifyEncodedString(decryptStr, secret);
+
+    }
+
+    private boolean isEncrypted(String str) throws Exception {
+
+       if (str.indexOf(' ') > 0) {
+           str = str.replace(' ', '+');
+       }
+        byte[] decoded = Base64.decode(str);
+        byte[] encString = new byte[9];
+        for (int i=0; i < 9; i++) {
+           encString[i] = decoded[i];
+        }
+
+        String tmp = new String(encString, "UTF-8");
+        if(tmp.equals("ENCRYPTED")) {
+           return true;
+        }
+        return false;
     }
 
     /**
@@ -404,6 +523,44 @@ public class SecureAttrs
         }
 
         return map; 
+    }
+
+    /**
+     * Returns a decoded <code>Map</code> of attribute-value pairs.
+     * No verification is performed. Useful when retrieving data before
+     * verifying contents for authenticity.
+     *   @param str     Base64 encoded string containing attribute
+     *   @param encSecret The encryption secret (symmetric) or Public
+     *                           Key alias (asymmetric)
+     *   @return        Decoded and parsed attrbute name-value pairs.
+     * @supported.api
+     */
+    public Map getRawAttributesFromEncodedData(String str, String encSecret)
+                 throws Exception {
+
+        if(encSecret == null) {
+           return getRawAttributesFromEncodedData(str);
+        }
+        if (str.indexOf(' ') > 0) {
+            str = str.replace(' ', '+');
+        }
+        if(!isEncrypted(str)) {
+           return getRawAttributesFromEncodedData(str);
+        }
+        String decryptStr = null;
+        if(asymencryption) {
+           Key  pKey = certs.getPrivateKey(encSecret);
+           decryptStr = DataEncryptor.decryptWithAsymmetricKey(str,
+                        dataEncAlg, pKey);
+        } else {
+           decryptStr = DataEncryptor.decryptWithSymmetricKey(str,
+                        dataEncAlg, encSecret);
+        }
+        if(dbg) {
+           System.out.println("SAE.getRawAttributes() decrypted" +
+              " string" + decryptStr);
+        }
+        return getRawAttributesFromEncodedData(decryptStr);
     }
 
     /** 
@@ -524,8 +681,10 @@ public class SecureAttrs
 
     private SecureAttrs(String type, Properties properties) throws Exception
     {
-        if (SAE_CRYPTO_TYPE_ASYM.equals(type))
+        if (SAE_CRYPTO_TYPE_ASYM.equals(type)) {
             asymsigning = true;
+            asymencryption = true;
+        }
         String dur = properties.getProperty(SAE_CONFIG_SIG_VALIDITY_DURATION);
         if (dur != null) 
             tsDuration = Integer.parseInt(dur);
@@ -538,7 +697,12 @@ public class SecureAttrs
             certs = new DefaultCerts();
 
         certs.init(properties);
-
+        dataEncAlg = (String)properties.get(SAE_CONFIG_DATA_ENCRYPTION_ALG);
+        String tmp = (String)properties.get(
+                          SAE_CONFIG_ENCRYPTION_KEY_STRENGTH);
+        if(tmp != null) {
+           encKeyStrength = (new Integer(tmp)).intValue();
+        }
     }
 
     private StringBuffer normalize(Map attrs)
@@ -747,7 +911,10 @@ public class SecureAttrs
             properties.setProperty("keystorepass", "22222222");
             properties.setProperty("privatekeyalias", "test");
             properties.setProperty("publickeyalias", "test");
-            properties.setProperty("privatekeypass", "11111111");
+            properties.setProperty("privatekeypass", "22222222");
+            properties.setProperty("encryptionkeystrength", "56");
+            properties.setProperty("encryptionalgorithm", "DES");
+
             SecureAttrs.init("testsym", SecureAttrs.SAE_CRYPTO_TYPE_SYM, 
                              properties);
             SecureAttrs.init("testasym", SecureAttrs.SAE_CRYPTO_TYPE_ASYM, 
@@ -822,9 +989,31 @@ public class SecureAttrs
             else
                 System.out.println("  4a FAILED "+map1);
             System.out.println("TEST 4 END  ====================");
+            System.out.println("  TEST 5a START : ASYM KEY ===");
+            secureattrs = getInstance("testasym");
+            s1 = "test";
+            s3 = secureattrs.getEncodedString(hashmap, s1, s1);
+            System.out.println("Encrypted string: "+s3);
+            map1 = secureattrs.verifyEncodedString(s3, s1, s1);
+            if(map1 != null)
+                System.out.println("  5a PASSED "+map1);
+            else
+                System.out.println("  5a FAILED "+map1);
+            System.out.println("  TEST 5b START : SYM KEY ===");
+            secureattrs = SecureAttrs.getInstance("testsym");
+            s1 = "secret";
+            s2 = secureattrs.getEncodedString(hashmap, s1, s1);
+            System.out.println("Encrypted string: "+s2);
+            map1 = secureattrs.verifyEncodedString(s2, s1, s1);
+            if(map1 != null)
+                System.out.println("  5b PASSED "+map1);
+            else
+                System.out.println("  5b FAILED "+map1);
+            System.out.println("TEST 5 END  ====================");
         }
         catch(Exception exception)
         {
+            exception.printStackTrace();
             System.out.println("TEST Exc : "+exception);
         }
      
