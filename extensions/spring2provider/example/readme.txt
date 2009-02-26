@@ -24,9 +24,17 @@ with the fields enclosed by brackets [] replaced by
 your own identifying information:
 "Portions Copyrighted 2008 Miguel Angel Alonso Negro <miguelangel.alonso@gmail.com>"
 
-$Id: readme.txt,v 1.2 2008-12-28 21:40:25 malonso Exp $
+$Id: readme.txt,v 1.3 2009-02-26 19:52:42 wstrange Exp $
 
 ------------------------------------------------------------------------------
+
+
+---
+Updated Feb 26/09 by warren.strange@gmail.com
+
+- Updated to show use of Spring security tags
+
+-----------
 
 Example of web application with OpenSSO and Spring Security
 ===========================================================
@@ -46,7 +54,7 @@ provider of OpenSSO. The features are:
     the OpenSSO configuration need an unique authetication. And if the user 
     log out from one, then the another application has the session expired too.
     
-    - Authoritation management.- It is defined in OpenSSO manager application for 
+    - Authorization management.- It is defined in OpenSSO manager application for
     every application which is in the security realm.
     
 Layout
@@ -131,7 +139,7 @@ This file has the following beans:
     
     - authenticationEntryPoint.- It defines the login page and the authentication URL
     
-    - accessDecisionManager.- Authoritation manager used by filterInvocationInterceptor
+    - accessDecisionManager.- Authorization manager used by filterInvocationInterceptor
 
     
 Code
@@ -183,6 +191,9 @@ or in windows:
     > set CATALINA_OPTS=-Dcom.iplanet.am.cookie.name=iPlanetDirectoryPro -Dcom.sun.identity.federation.fedCookieName=fedCookie %CATALINA_OPTS%
 
 
+If you are using glassfish you can set this properties in the JVM options settings in the admin application
+
+
 Single sign-on
 --------------
 
@@ -203,7 +214,7 @@ for example, OpenSSO manager. And execute the following scenarios:
 4.- Reload example application page and see you are already logout 
 
 
-Authoritation
+Authorization
 -------------
 
 To test authoritation through OpenSSO configuration we must to define the
@@ -212,27 +223,44 @@ assign it. Then we select Access Control -> Realm -> Subjects -> Group ->
 "New ...". We write a name, for example, "Staff". And in the "User" tab, 
 we add several users.
 
-Now, we can create the police, select Policies -> "New Policy" and assign it
+In OpenSSO, create two groups "staff" and "admins"
+
+Add a sample user to each group (e.g. put demo1 in the admins group,
+demo2 is in staff)
+
+
+
+Create a URL policy by selecting Policies -> "New Policy" and assign it
 a name, for example, "Protected Info". 
 
 In the Rules section we create one "URL Policy Agent" with the following data:
     Name: Protected Info
-    Resource Name: /faces/protected*
+    Resource Name: http://*:*/faces/protected*
     Actions:
         GET     Deny
         POST    Deny
+    Subject: Admins  ** Exclusive **
+
+Make sure to check the "exclusive" box in the Subject selection. This will apply
+this policy to everyone EXCEPT Admins
+
+Create another blanket policy to allow access to the application:
+Resource Name: http://*:*/faces/*
+ Actions:
+        GET     Allow
+        POST    Allow
+ Subject: All authenicated users
     
-In the Subjects section we create one "OpenSSO Identity Subject":
-    Name: Staff
-    Filter: Group. And press "Search"
-        Add Staff group
 
-Click Ok and the policy is already defined. Every user who is in the group "Staff"
-cannot access to the pages with the pattern "/faces/protected*". 
+Experiment with the application by logging on with your demo accounts.
 
-The last step is to test it. Login as a no staff user and try to access to "Protected
-Area". After that, login as a staff user and try to access to "Protected Area". 
-And that is all. 
+Note that:
+- The user is redirected to OpenSSO for authentication
+- There are sample staff pages that print a different message if you
+are staff vs. an admin
+- Only an admin user should have access to the protected/ section
+
+
 
 
 Conclusion
