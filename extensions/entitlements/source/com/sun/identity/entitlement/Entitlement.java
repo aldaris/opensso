@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.15 2009-02-27 21:05:19 dillidorai Exp $
+ * $Id: Entitlement.java,v 1.16 2009-02-27 22:44:43 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -357,22 +357,13 @@ public class Entitlement {
         return jo;
     }
 
-     /**
+    /**
      * Returns <code>true</code> if the passed in object is equal to this object
      * @param obj object to check for equality
      * @return  <code>true</code> if the passed in object is equal to this object
      */
     public boolean equals(Object obj) {
         boolean equalled = true;
-        /*
-            private String name;
-            private String serviceName;
-            private String resourceName;
-            private Set<String> excludedResourceNames;
-            private Map<String, Object> actionValues;
-            private Map<String, String> advices;
-            private Map<String, Set<String>> attributes;
-        */
         if (obj == null) {
             equalled = false;
         }
@@ -381,11 +372,25 @@ public class Entitlement {
         }
         Entitlement object = (Entitlement) obj;
 
+        if (name == null) {
+            if (object.getName() != null) {
+                equalled = false;
+            }
+        } else { // name not null
+
+            if ((object.getName()) != null) {
+                equalled = false;
+            } else if (!name.equals(object.getName())) {
+                equalled = false;
+            }
+        }
+        
         if (serviceName == null) {
             if (object.getServiceName() != null) {
                 equalled = false;
             }
         } else { // serviceName not null
+
             if ((object.getServiceName()) != null) {
                 equalled = false;
             } else if (!serviceName.equals(object.getServiceName())) {
@@ -398,6 +403,7 @@ public class Entitlement {
                 equalled = false;
             }
         } else { // resourceName not null
+
             if ((object.getResourceName()) != null) {
                 equalled = false;
             } else if (!resourceName.equals(object.getResourceName())) {
@@ -410,6 +416,7 @@ public class Entitlement {
                 equalled = false;
             }
         } else { // excludedResourceNames not null
+
             if ((object.getExcludedResourceNames()) != null) {
                 equalled = false;
             } else if (!excludedResourceNames.equals(
@@ -423,6 +430,7 @@ public class Entitlement {
                 equalled = false;
             }
         } else { // actionValues not null
+
             if ((object.getActionValues()) != null) {
                 equalled = false;
             } else if (!actionValues.equals(
@@ -436,6 +444,7 @@ public class Entitlement {
                 equalled = false;
             }
         } else { // advices not null
+
             if ((object.getAdvices()) != null) {
                 equalled = false;
             } else if (!advices.equals(
@@ -449,6 +458,7 @@ public class Entitlement {
                 equalled = false;
             }
         } else { // attributes not null
+
             if ((object.getAttributes()) != null) {
                 equalled = false;
             } else if (!attributes.equals(

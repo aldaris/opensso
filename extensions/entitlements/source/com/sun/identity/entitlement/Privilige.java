@@ -22,15 +22,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilige.java,v 1.6 2009-02-26 00:46:39 dillidorai Exp $
+ * $Id: Privilige.java,v 1.7 2009-02-27 22:44:43 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
+import com.sun.identity.shared.debug.Debug;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -72,6 +74,33 @@ public class Privilige {
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * Returns the eSubject the privilige
+     * @return eSubject of the privilige.
+     * @throws EntitlementException in case of any error
+     */
+    public ESubject getESubject() {
+        return eSubject;
+    }
+
+    /**
+     * Returns the eCondition the privilige
+     * @return eCondition of the privilige.
+     * @throws EntitlementException in case of any error
+     */
+    public ECondition getECondition() {
+        return eCondition;
+    }
+
+    /**
+     * Returns the eResurceAttributes of  the privilige
+     * @return eResourceAttributes of the privilige.
+     * @throws EntitlementException in case of any error
+     */
+    public Set<EResourceAttributes> getEResourceAttributes() {
+        return eResourceAttributes;
     }
 
     /**
@@ -119,36 +148,145 @@ public class Privilige {
         return new ArrayList<Entitlement>();
     }
 
+    /**
+     * Returns string representation of the object
+     * @return string representation of the object
+     */
     public String toString() {
-        JSONObject jo = toJSONObject();
         String s = null;
         try {
+            JSONObject jo = toJSONObject();
             s = (jo == null) ? super.toString() : jo.toString(2);
-        } catch (Exception joe) {
+        } catch (JSONException joe) {
+            Debug debug = Debug.getInstance("Entitlement");
+            debug.error("Entitlement.toString(), JSONException: " + joe.getMessage());
         }
         return s;
     }
 
-    public JSONObject toJSONObject() {
-        JSONObject jo = null;
-        try {
-            jo = new JSONObject();
-            jo.put("name", name);
+    /**
+     * Returns JSONObject mapping of  the object
+     * @return JSONObject mapping of  the object
+     * @throws JSONException if can not map to JSONObject
+     */
+    public JSONObject toJSONObject() throws JSONException {
+        JSONObject jo = new JSONObject();
+        jo.put("name", name);
 
-            if (entitlements != null) {
-                for (Entitlement e : entitlements) {
-                    jo.append("entitlements", e.toJSONObject());
-                }
+        if (entitlements != null) {
+            for (Entitlement e : entitlements) {
+                jo.append("entitlements", e.toJSONObject());
             }
+        }
 
-            if (eSubject != null) {
-                JSONObject subjo = new JSONObject();
-                subjo.put("className", eSubject.getClass().getName());
-                subjo.put("state", eSubject.getState());
-                jo.put("eSubject", subjo);
-            }
-        } catch (Exception e) {
+        if (eSubject != null) {
+            JSONObject subjo = new JSONObject();
+            subjo.put("className", eSubject.getClass().getName());
+            subjo.put("state", eSubject.getState());
+            jo.put("eSubject", subjo);
         }
         return jo;
+    }
+
+    /**
+     * Returns <code>true</code> if the passed in object is equal to this object
+     * @param obj object to check for equality
+     * @return  <code>true</code> if the passed in object is equal to this object
+     */
+    public boolean equals(Object obj) {
+        boolean equalled = true;
+        if (obj == null) {
+            equalled = false;
+        }
+        if (!getClass().equals(obj.getClass())) {
+            equalled = false;
+        }
+        Privilige object = (Privilige) obj;
+
+        if (name == null) {
+            if (object.getName() != null) {
+                equalled = false;
+            }
+        } else { // name not null
+
+            if ((object.getName()) != null) {
+                equalled = false;
+            } else if (!name.equals(object.getName())) {
+                equalled = false;
+            }
+        }
+        if (entitlements == null) {
+            if (object.getEntitlements() != null) {
+                equalled = false;
+            }
+        } else { // name not null
+
+            if ((object.getEntitlements()) != null) {
+                equalled = false;
+            } else if (!entitlements.equals(object.getEntitlements())) {
+                equalled = false;
+            }
+        }
+        if (eSubject == null) {
+            if (object.getESubject() != null) {
+                equalled = false;
+            }
+        } else { // name not null
+
+            if ((object.getESubject()) != null) {
+                equalled = false;
+            } else if (!eSubject.equals(object.getESubject())) {
+                equalled = false;
+            }
+        }
+        if (eCondition == null) {
+            if (object.getECondition() != null) {
+                equalled = false;
+            }
+        } else { // name not null
+
+            if ((object.getECondition()) != null) {
+                equalled = false;
+            } else if (!eCondition.equals(object.getECondition())) {
+                equalled = false;
+            }
+        }
+        if (eResourceAttributes == null) {
+            if (object.getEResourceAttributes() != null) {
+                equalled = false;
+            }
+        } else { // name not null
+
+            if ((object.getEResourceAttributes()) != null) {
+                equalled = false;
+            } else if (!eCondition.equals(object.getEResourceAttributes())) {
+                equalled = false;
+            }
+        }
+        return equalled;
+    }
+
+    /**
+     * Returns hash code of the object
+     * @return hash code of the object
+     */
+    public int hashCode() {
+        int code = 0;
+        if (name != null) {
+            code += name.hashCode();
+        }
+        if (entitlements != null) {
+            code += entitlements.hashCode();
+        }
+        if (eSubject != null) {
+            code += eSubject.hashCode();
+        }
+        if (eCondition != null) {
+            code += eCondition.hashCode();
+        }
+        if (eResourceAttributes != null) {
+            code += eResourceAttributes.hashCode();
+        }
+        return code;
     }
 }
