@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.14 2009-02-27 16:58:44 dillidorai Exp $
+ * $Id: Entitlement.java,v 1.15 2009-02-27 21:05:19 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -365,43 +365,98 @@ public class Entitlement {
     public boolean equals(Object obj) {
         boolean equalled = true;
         /*
-           private String name;
-    private String serviceName;
-    private String resourceName;
-    private Set<String> excludedResourceNames;
-    private Map<String, Object> actionValues;
-    private Map<String, String> advices;
-    private Map<String, Set<String>> attributes;
+            private String name;
+            private String serviceName;
+            private String resourceName;
+            private Set<String> excludedResourceNames;
+            private Map<String, Object> actionValues;
+            private Map<String, String> advices;
+            private Map<String, Set<String>> attributes;
+        */
         if (obj == null) {
             equalled = false;
         }
         if (!getClass().equals(obj.getClass())) {
             equalled = false;
         }
-        OrESubject object = (OrESubject) obj;
-        if (eSubjects == null) {
-            if (object.getESubjects() != null) {
+        Entitlement object = (Entitlement) obj;
+
+        if (serviceName == null) {
+            if (object.getServiceName() != null) {
                 equalled = false;
             }
-        } else { // eSubjects not null
-            if ((object.getESubjects()) != null) {
+        } else { // serviceName not null
+            if ((object.getServiceName()) != null) {
                 equalled = false;
-            } else if (!eSubjects.containsAll(object.getESubjects())) {
-                equalled = false;
-            } else if (!object.getESubjects().containsAll(eSubjects)) {
-                equalled = false;
-            }
-        }
-        if (pSubjectName == null) {
-            if (object.getPSubjectName() != null) {
-                equalled = false;
-            }
-        } else {
-            if (!pSubjectName.equals(object.getPSubjectName())) {
+            } else if (!serviceName.equals(object.getServiceName())) {
                 equalled = false;
             }
         }
-         * */
+
+        if (resourceName == null) {
+            if (object.getResourceName() != null) {
+                equalled = false;
+            }
+        } else { // resourceName not null
+            if ((object.getResourceName()) != null) {
+                equalled = false;
+            } else if (!resourceName.equals(object.getResourceName())) {
+                equalled = false;
+            }
+        }
+
+        if (excludedResourceNames == null) {
+            if (object.getExcludedResourceNames() != null) {
+                equalled = false;
+            }
+        } else { // excludedResourceNames not null
+            if ((object.getExcludedResourceNames()) != null) {
+                equalled = false;
+            } else if (!excludedResourceNames.equals(
+                    object.getExcludedResourceNames())) {
+                equalled = false;
+            }
+        }
+
+        if (actionValues == null) {
+            if (object.getActionValues() != null) {
+                equalled = false;
+            }
+        } else { // actionValues not null
+            if ((object.getActionValues()) != null) {
+                equalled = false;
+            } else if (!actionValues.equals(
+                    object.getActionValues())) {
+                equalled = false;
+            }
+        }
+
+        if (advices == null) {
+            if (object.getAdvices() != null) {
+                equalled = false;
+            }
+        } else { // advices not null
+            if ((object.getAdvices()) != null) {
+                equalled = false;
+            } else if (!advices.equals(
+                    object.getAdvices())) {
+                equalled = false;
+            }
+        }
+
+        if (attributes == null) {
+            if (object.getAttributes() != null) {
+                equalled = false;
+            }
+        } else { // attributes not null
+            if ((object.getAttributes()) != null) {
+                equalled = false;
+            } else if (!attributes.equals(
+                    object.getAttributes())) {
+                equalled = false;
+            }
+        }
+
         return equalled;
     }
 
@@ -411,23 +466,27 @@ public class Entitlement {
      */
     public int hashCode() {
         int code = 0;
-        /*
-         *        private String name;
-    private String serviceName;
-    private String resourceName;
-    private Set<String> excludedResourceNames;
-    private Map<String, Object> actionValues;
-    private Map<String, String> advices;
-    private Map<String, Set<String>> attributes;
-        if (eSubjects != null) {
-            for (ESubject eSubject : eSubjects) {
-                code += eSubject.hashCode();
-            }
+        if (name != null) {
+            code += name.hashCode();
         }
-        if (pSubjectName != null) {
-            code += pSubjectName.hashCode();
+        if (serviceName != null) {
+            code += serviceName.hashCode();
         }
-        */
+        if (resourceName != null) {
+            code += resourceName.hashCode();
+        }
+        if (excludedResourceNames != null) {
+            code += excludedResourceNames.hashCode();
+        }
+        if (actionValues != null) {
+            code += actionValues.hashCode();
+        }
+        if (advices != null) {
+            code += advices.hashCode();
+        }
+        if (attributes != null) {
+            code += attributes.hashCode();
+        }
         return code;
     }
 }
