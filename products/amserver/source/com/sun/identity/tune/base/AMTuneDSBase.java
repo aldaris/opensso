@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneDSBase.java,v 1.7 2009-01-28 05:35:05 ww203982 Exp $
+ * $Id: AMTuneDSBase.java,v 1.8 2009-02-27 00:56:16 kanduls Exp $
  */
 
 package com.sun.identity.tune.base;
@@ -116,8 +116,8 @@ public abstract class AMTuneDSBase extends TuneDS {
             writePasswordToFile();
         } catch (Exception ex) {
             if (pLogger != null) {
-                pLogger.log(Level.SEVERE, "initialize", "Error initialising " +
-                        "Directory Server Base.");
+                pLogger.logException("Error initialising " +
+                        "Directory Server Base.", ex);
             }
             throw new AMTuneException(ex.getMessage());
         }
@@ -231,7 +231,7 @@ public abstract class AMTuneDSBase extends TuneDS {
                     scope, filter, ldapAttr, false);
             while (myResults.hasMoreElements()) {
                 LDAPEntry myEntry = myResults.next();
-                if (attr.equals("dn")) {
+                if (attr != null && attr.equals("dn")) {
                     return myEntry.getDN().replace("dn:", "").trim();
                 }
                 LDAPAttributeSet entryAttrs = myEntry.getAttributeSet();
