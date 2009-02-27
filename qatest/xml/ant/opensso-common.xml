@@ -18,7 +18,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: opensso-common.xml,v 1.18 2009-02-24 21:44:29 rmisra Exp $
+ $Id: opensso-common.xml,v 1.19 2009-02-27 23:01:25 rmisra Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -238,7 +238,7 @@
     <target name="clean-all" depends="check-cond" if="cond-is-true">
         <echo message="Cleaning all output, built and reports files and directories..."/>
         <delete>
-            <fileset dir="${SERVER_DIR}" excludes="built/classes/com/**"/>
+            <fileset dir="${SERVER_DIR}" excludes="*.output, built/classes/com/**"/>
         </delete>
         <delete dir="${SERVER_DIR}/debug"/>
         <delete dir="${SERVER_DIR}/docs"/>
@@ -499,6 +499,11 @@
       <testng classpathref="client.classpath" outputdir="${base.report.dir}">
           <xmlfileset dir="${built.classes.dir}/xml/testng/${ModuleToExecute}" includes="${ModuleToExecute}-${EXECUTION_MODE}-generated.xml"/>
     </testng>
+    <java classname="com.sun.identity.qatest.setup.CleanupProduct">
+        <classpath refid="client.classpath" />
+        <arg value="${SERVER_NAME1}" />
+        <arg value="${SERVER_NAME2}" />
+    </java>
     <concat destfile="${SERVER_DIR}/logs" append="true">
         <sort>
             <last count="1">
@@ -517,11 +522,6 @@
       </last>
         </sort>
     </delete>
-    <java classname="com.sun.identity.qatest.setup.CleanupProduct">
-        <classpath refid="client.classpath" />
-        <arg value="${SERVER_NAME1}" />
-        <arg value="${SERVER_NAME2}" />
-    </java>
     <antcall target="print-test-env-end"/>
     <antcall target="copyDebugFiles"/>
     <antcall target="report">
