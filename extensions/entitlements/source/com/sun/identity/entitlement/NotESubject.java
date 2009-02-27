@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotESubject.java,v 1.1 2009-02-26 00:46:38 dillidorai Exp $
+ * $Id: NotESubject.java,v 1.2 2009-02-27 06:05:15 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -30,14 +30,37 @@ import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
 
+/**
+ * ESubject wrapped on an ESubject object to provide boolean NOT wrapper.
+ * Membership of NotESubject is satisfied in the user is not a member of
+ * the nested ESubject
+ * @author dorai
+ */
 public class NotESubject implements ESubject {
 
+    private ESubject eSubject;
+    private String pSubjectName;
+    
+    /**
+     * Constructs NotESubject
+     */
     public NotESubject() {
     }
 
+    /**
+     * Constructs NotESubject
+     * @param eSubject nested ESubject
+     */
     public NotESubject(ESubject eSubject) {
     }
 
+    /**
+     * Constructs NotESubject
+     * @param eSubject eSubject nested ESubject
+     * @param pSubjectName subject name as used in OpenSSO policy,
+     * this is releavant only when NotrESubject was created from
+     * OpenSSO policy Subject
+     */
     public NotESubject(ESubject eSubject, String pSubjectName) {
     }
 
@@ -46,6 +69,7 @@ public class NotESubject implements ESubject {
      * @param state State of the object encoded as string
      */
     public void setState(String state) {
+        //TODO
     }
 
     /**
@@ -53,7 +77,7 @@ public class NotESubject implements ESubject {
      * @return state of the object encoded as string
      */
     public String getState() {
-        return null;
+        return toString();
     }
 
     /**
@@ -75,20 +99,39 @@ public class NotESubject implements ESubject {
         return null;
     }
 
+    /**
+     * Sets nested ESubject
+     * @param eSubject nested ESubject
+     */
     public void setESubject(ESubject eSubject) {
+        this.eSubject = eSubject;
     }
 
-    public String getESubject() {
-        return null;
+     /**
+     * Returns nested ESubject
+     * @return nested ESubject
+     */
+    public ESubject getESubject() {
+        return eSubject;
     }
 
+     /**
+     * Sets OpenSSO policy Subject name
+     * @param pSubjectName subject name as used in OpenSSO policy,
+     * this is releavant only when NotrESubject was created from
+     * OpenSSO policy Subject
+     */
     public void setPSubjectName(String pSubjectName) {
+        this.pSubjectName = pSubjectName;
     }
 
+     /**
+     * Returns OpenSSO policy Subject name
+     * @return subject name as used in OpenSSO policy,
+     * this is releavant only when NotrESubject was created from
+     * OpenSSO policy Subject
+     */
     public String getPSubjectName() {
-        return null;
+        return pSubjectName;
     }
-
-    
-
 }

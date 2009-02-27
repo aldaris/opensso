@@ -22,28 +22,49 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrESubject.java,v 1.1 2009-02-26 00:46:38 dillidorai Exp $
+ * $Id: OrESubject.java,v 1.2 2009-02-27 06:05:15 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
+import com.sun.identity.shared.debug.Debug;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
 import org.json.JSONObject;
 import org.json.JSONException;
 
+/**
+ * ESubject wrapper on a set of ESubject(s) to provide boolean OR logic
+ * Membership is of OrESubject is satisfied if the user is a member of any
+ * of the wrapped ESubject
+ * @author dorai
+ */
 public class OrESubject implements ESubject {
 
     private Set<ESubject> eSubjects;
     private String pSubjectName;
 
+    /**
+     * Constructs OrESubject
+     */
     public OrESubject() {
     }
 
+    /**
+     * Constructs OrESubject
+     * @param eSubjects wrapped ESubject(s)
+     */
     public OrESubject(Set<ESubject> eSubjects) {
         this.eSubjects = eSubjects;
     }
 
+    /**
+     * Constructs OrESubject
+     * @param eSubjects wrapped ESubject(s)
+     * @param pSubjectName subject name as used in OpenSSO policy,
+     * this is releavant only when UserESubject was created from
+     * OpenSSO policy Subject
+     */
     public OrESubject(Set<ESubject> eSubjects, String pSubjectName) {
         this.eSubjects = eSubjects;
         this.pSubjectName = pSubjectName;
@@ -54,6 +75,7 @@ public class OrESubject implements ESubject {
      * @param state State of the object encoded as string
      */
     public void setState(String state) {
+        //TODO
     }
 
     /**
@@ -61,12 +83,7 @@ public class OrESubject implements ESubject {
      * @return state of the object encoded as string
      */
     public String getState() {
-        String s = null;
-        try {
-            s = toJSONObject().toString(2);
-        } catch (Exception e) {
-        }
-        return s;
+        return toString();
     }
 
     /**
@@ -88,43 +105,72 @@ public class OrESubject implements ESubject {
         return null;
     }
 
+    /**
+     * Sets the nested ESubject(s)
+     * @param eSubjects the nested ESubject(s)
+     */
     public void setESubjects(Set<ESubject> eSubjects) {
+        this.eSubjects = eSubjects;
     }
 
+    /**
+     * Returns the nested ESubject(s)
+     * @return  the nested ESubject(s)
+     */
     public Set<ESubject> getESubjects() {
         return eSubjects;
     }
 
+    /**
+     * Sets OpenSSO policy Subject name
+     * @param pSubjectName subject name as used in OpenSSO policy,
+     * this is releavant only when UserESubject was created from
+     * OpenSSO policy Subject
+     */
     public void setPSubjectName(String pSubjectName) {
         this.pSubjectName = pSubjectName;
     }
 
+    /**
+     * Returns OpenSSO policy Subject name
+     * @return  subject name as used in OpenSSO policy,
+     * this is releavant only when UserESubject was created from
+     * OpenSSO policy Subject
+     */
     public String getPSubjectName() {
         return pSubjectName;
     }
 
-    public JSONObject toJSONObject() {
-        JSONObject jo = null;
-        try {
-            jo = new JSONObject();
-            jo.put("pSubjectName", pSubjectName);
-            for (ESubject eSubject : eSubjects) {
-                JSONObject subjo = new JSONObject();
-                subjo.put("className", eSubject.getClass().getName());
-                subjo.put("state", eSubject.getState());
-                jo.append("memberESubject", subjo);
-            }
-        } catch (JSONException joe) {
+    /**
+     * Returns JSONObject mapping of the object
+     * @return JSONObject mapping of the object
+     * @throws org.json.JSONException if can not map to JSONObject
+     */
+    public JSONObject toJSONObject() throws JSONException {
+        JSONObject jo = new JSONObject();
+        jo.put("pSubjectName", pSubjectName);
+        for (ESubject eSubject : eSubjects) {
+            JSONObject subjo = new JSONObject();
+            subjo.put("className", eSubject.getClass().getName());
+            subjo.put("state", eSubject.getState());
+            jo.append("memberESubject", subjo);
         }
         return jo;
     }
 
+    /**
+     * Returns string representation of the object
+     * @return string representation of the object
+     */
     public String toString() {
-        JSONObject jo = toJSONObject();
         String s = null;
         try {
+            JSONObject jo = toJSONObject();
             s = (jo == null) ? super.toString() : jo.toString(2);
         } catch (JSONException joe) {
+            Debug debug = Debug.getInstance("Entitlement");
+            debug.error("OrESubject.toString(), JSONException: " +
+                    joe.getMessage());
         }
         return s;
     }

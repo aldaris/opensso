@@ -22,9 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserESubject.java,v 1.1 2009-02-26 00:46:38 dillidorai Exp $
+ * $Id: UserESubject.java,v 1.2 2009-02-27 06:05:15 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
+
+import com.sun.identity.shared.debug.Debug;
 
 import java.util.Map;
 import java.util.Set;
@@ -32,15 +34,37 @@ import javax.security.auth.Subject;
 import org.json.JSONObject;
 import org.json.JSONException;
 
+/**
+ * ESubject to represent user identity for membership check
+ * @author dorai
+ */
 public class UserESubject implements ESubject {
 
     private String user;
     private String pSubjectName;
     boolean openSSOSubject = false;
 
+    /**
+     * Constructs an UserESubject
+     */
     public UserESubject() {
     }
 
+    /**
+     * Constructs UserESubject
+     * @param user the uuid of the user who is member of the ESubject
+     */
+    public UserESubject(String user) {
+        this.user = user;
+    }
+
+    /**
+     * Constructs UserESubject
+     * @param user the uuid of the user who is member of the ESubject
+     * @param pSubjectName subject name as used in OpenSSO policy,
+     * this is releavant only when UserESubject was created from
+     * OpenSSO policy Subject
+     */
     public UserESubject(String user, String pSubjectName) {
         this.user = user;
         this.pSubjectName = pSubjectName;
@@ -65,6 +89,25 @@ public class UserESubject implements ESubject {
      * @return state of the object encoded as string
      */
     public String getState() {
+        return toString();
+    }
+
+    /**
+     * Returns JSONObject mapping of the object
+     * @return JSONObject mapping  of the object
+     */
+    public JSONObject toJSONObject() throws JSONException {
+        JSONObject jo = new JSONObject();
+        jo.put("user", user);
+        jo.put("pSubjectName", pSubjectName);
+        return jo;
+    }
+
+    /**
+     * Returns string representation of the object
+     * @return string representation of the object
+     */
+    public String toString() {
         String s = null;
         try {
             JSONObject jo = new JSONObject();
@@ -72,27 +115,9 @@ public class UserESubject implements ESubject {
             jo.put("pSubjectName", pSubjectName);
             s = jo.toString(2);
         } catch (JSONException joe) {
-        }
-        return s;
-    }
-
-    public JSONObject toJSONObject() {
-        JSONObject jo = null;
-        try {
-            jo = new JSONObject();
-            jo.put("user", user);
-            jo.put("pSubjectName", pSubjectName);
-        } catch (JSONException joe) {
-        }
-        return jo;
-    }
-
-    public String toString() {
-        JSONObject jo = toJSONObject();
-        String s = null;
-        try {
-            s = (jo == null) ? super.toString() : jo.toString(2);
-        } catch (JSONException joe) {
+            Debug debug = Debug.getInstance("Entitlement");
+            debug.error("UserESubject.toString(), JSONException:" +
+                    joe.getMessage());
         }
         return s;
     }
@@ -116,27 +141,39 @@ public class UserESubject implements ESubject {
         return null;
     }
 
+    /**
+     * Sets the member user of the object
+     * @param user the uuid of the member user
+     */
     public void setUser(String user) {
         this.user = user;
     }
 
+    /**
+     * Returns the member user of the object
+     * @return  the uuid of the member user
+     */
     public String getUser() {
         return user;
     }
 
+    /**
+     * Sets OpenSSO policy subject name of the object
+     * @param pSubjectName subject name as used in OpenSSO policy,
+     * this is releavant only when UserESubject was created from
+     * OpenSSO policy Subject
+     */
     public void setPSubjectName(String pSubjectName) {
         this.pSubjectName = pSubjectName;
     }
 
+  /**
+     * Returns OpenSSO policy subject name of the object
+     * @return subject name as used in OpenSSO policy,
+     * this is releavant only when UserESubject was created from
+     * OpenSSO policy Subject
+     */
     public String getPSubjectName() {
         return pSubjectName;
-    }
-
-    public void flagAsOpenSSOSubject() {
-        this.openSSOSubject = true;
-    }
-
-    public boolean isOpenSSOSubject() {
-        return openSSOSubject;
     }
 }

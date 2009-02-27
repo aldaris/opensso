@@ -22,15 +22,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.12 2009-02-26 00:46:39 dillidorai Exp $
+ * $Id: Entitlement.java,v 1.13 2009-02-27 06:05:12 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
+import com.sun.identity.shared.debug.Debug;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -306,29 +308,35 @@ public class Entitlement {
         return false;
     }
 
+    /**
+     * Returns string representation of the object
+     * @return string representation of the object
+     */
     public String toString() {
-        JSONObject jo = toJSONObject();
         String s = null;
         try {
+            JSONObject jo = toJSONObject();
             s = (jo == null) ? super.toString() : jo.toString(2);
-        } catch (Exception joe) {
+        } catch (JSONException joe) {
+            Debug debug = Debug.getInstance("Entitlement");
+            debug.error("Entitlement.toString(), JSONException: " + joe.getMessage());
         }
         return s;
     }
 
-    public JSONObject toJSONObject() {
-        JSONObject jo = null;
-        try {
-            jo = new JSONObject();
-            jo = new JSONObject();
-            jo.put("serviceName", serviceName);
-            jo.put("resourceName", resourceName);
-            jo.put("excludedResourceNames", excludedResourceNames);
-            jo.put("actionsValues", actionValues);
-            jo.put("advices", advices);
-            jo.put("attributes", attributes);
-        } catch (Exception e) {
-        }
+    /**
+     * Returns JSONObject mapping of  the object
+     * @return JSONObject mapping of  the object
+     * @throws JSONException if can not map to JSONObject
+     */
+    public JSONObject toJSONObject() throws JSONException {
+        JSONObject jo = new JSONObject();
+        jo.put("serviceName", serviceName);
+        jo.put("resourceName", resourceName);
+        jo.put("excludedResourceNames", excludedResourceNames);
+        jo.put("actionsValues", actionValues);
+        jo.put("advices", advices);
+        jo.put("attributes", attributes);
         return jo;
     }
 }

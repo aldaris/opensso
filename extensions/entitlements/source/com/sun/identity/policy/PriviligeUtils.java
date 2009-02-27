@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PriviligeUtils.java,v 1.5 2009-02-26 00:47:18 dillidorai Exp $
+ * $Id: PriviligeUtils.java,v 1.6 2009-02-27 06:05:42 dillidorai Exp $
  */
 
 package com.sun.identity.policy;
@@ -60,9 +60,18 @@ import org.json.JSONObject;
  */
 public class PriviligeUtils {
 
+    /**
+     * Constructs PriviligeUtils
+     */
     private PriviligeUtils() {
     }
 
+    /**
+     * Maps a OpenSSO Policy to entitlement Privilige
+     * @param policy OpenSSO Policy object
+     * @return entitlement Privilige object
+     * @throws com.sun.identity.policy.PolicyException if the mapping fails
+     */
     public static Privilige policyToPrivilige(Policy policy) 
             throws PolicyException {
 
@@ -166,7 +175,7 @@ public class PriviligeUtils {
         return es;
     }
 
-    public static ESubject mapAMIdentitySubjectToESubject(Object[] nqSubject) {
+    static ESubject mapAMIdentitySubjectToESubject(Object[] nqSubject) {
         Set esSet = new HashSet();
         ESubject es = null;
         String subjectName = (String)nqSubject[0];
