@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotESubject.java,v 1.2 2009-02-27 06:05:15 dillidorai Exp $
+ * $Id: NotESubject.java,v 1.3 2009-02-27 16:58:44 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -133,5 +133,55 @@ public class NotESubject implements ESubject {
      */
     public String getPSubjectName() {
         return pSubjectName;
+    }
+
+    /**
+     * Returns <code>true</code> if the passed in object is equal to this object
+     * @param obj object to check for equality
+     * @return  <code>true</code> if the passed in object is equal to this object
+     */
+    public boolean equals(Object obj) {
+        boolean equalled = true;
+        if (obj == null) {
+            equalled = false;
+        }
+        if (!getClass().equals(obj.getClass())) {
+            equalled = false;
+        }
+        NotESubject object = (NotESubject) obj;
+        if (eSubject == null) {
+            if (object.getESubject() != null) {
+                equalled = false;
+            }
+        } else {
+            if (!eSubject.equals(object.getESubject())) {
+                equalled = false;
+            }
+        }
+        if (pSubjectName == null) {
+            if (object.getPSubjectName() != null) {
+                equalled = false;
+            }
+        } else {
+            if (!pSubjectName.equals(object.getPSubjectName())) {
+                equalled = false;
+            }
+        }
+        return equalled;
+    }
+
+    /**
+     * Returns hash code of the object
+     * @return hash code of the object
+     */
+    public int hashCode() {
+        int code = 0;
+        if (eSubject != null) {
+            code += eSubject.hashCode();
+        }
+        if (pSubjectName != null) {
+             code += pSubjectName.hashCode();
+        }
+        return code;
     }
 }

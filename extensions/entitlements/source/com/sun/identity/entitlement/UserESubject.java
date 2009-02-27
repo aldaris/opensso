@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserESubject.java,v 1.2 2009-02-27 06:05:15 dillidorai Exp $
+ * $Id: UserESubject.java,v 1.3 2009-02-27 16:58:44 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -42,7 +42,6 @@ public class UserESubject implements ESubject {
 
     private String user;
     private String pSubjectName;
-    boolean openSSOSubject = false;
 
     /**
      * Constructs an UserESubject
@@ -79,7 +78,6 @@ public class UserESubject implements ESubject {
             JSONObject jo = new JSONObject(state);
             user = jo.optString("user");
             pSubjectName = jo.optString("pSubjectName");
-            openSSOSubject = jo.optBoolean("openSSOSubject");
         } catch (JSONException joe) {
         }
     }
@@ -167,7 +165,7 @@ public class UserESubject implements ESubject {
         this.pSubjectName = pSubjectName;
     }
 
-  /**
+    /**
      * Returns OpenSSO policy subject name of the object
      * @return subject name as used in OpenSSO policy,
      * this is releavant only when UserESubject was created from
@@ -175,5 +173,55 @@ public class UserESubject implements ESubject {
      */
     public String getPSubjectName() {
         return pSubjectName;
+    }
+
+    /**
+     * Returns <code>true</code> if the passed in object is equal to this object
+     * @param obj object to check for equality
+     * @return  <code>true</code> if the passed in object is equal to this object
+     */
+    public boolean equals(Object obj) {
+        boolean equalled = true;
+        if (obj == null) {
+            equalled = false;
+        }
+        if (!getClass().equals(obj.getClass())) {
+            equalled = false;
+        }
+        UserESubject object = (UserESubject) obj;
+        if (user == null) {
+            if (object.getUser() != null) {
+                equalled = false;
+            }
+        } else {
+            if (!user.equals(object.getUser())) {
+                equalled = false;
+            }
+        }
+        if (pSubjectName == null) {
+            if (object.getPSubjectName() != null) {
+                equalled = false;
+            }
+        } else {
+            if (!pSubjectName.equals(object.getPSubjectName())) {
+                equalled = false;
+            }
+        }
+        return equalled;
+    }
+
+    /**
+     * Returns hash code of the object
+     * @return hash code of the object
+     */
+    public int hashCode() {
+        int code = 0;
+        if (user != null) {
+            code += user.hashCode();
+        }
+        if (pSubjectName != null) {
+             code += pSubjectName.hashCode();
+        }
+        return code;
     }
 }

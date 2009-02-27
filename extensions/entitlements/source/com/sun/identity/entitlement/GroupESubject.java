@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GroupESubject.java,v 1.2 2009-02-27 06:19:14 dillidorai Exp $
+ * $Id: GroupESubject.java,v 1.3 2009-02-27 16:58:44 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -175,5 +175,54 @@ public class GroupESubject implements ESubject {
      */
     public String getPSubjectName() {
         return pSubjectName;
+    }
+    /**
+     * Returns <code>true</code> if the passed in object is equal to this object
+     * @param obj object to check for equality
+     * @return  <code>true</code> if the passed in object is equal to this object
+     */
+    public boolean equals(Object obj) {
+        boolean equalled = true;
+        if (obj == null) {
+            equalled = false;
+        }
+        if (!getClass().equals(obj.getClass())) {
+            equalled = false;
+        }
+        GroupESubject object = (GroupESubject) obj;
+        if (group == null) {
+            if (object.getGroup() != null) {
+                equalled = false;
+            }
+        } else {
+            if (!group.equals(object.getGroup())) {
+                equalled = false;
+            }
+        }
+        if (pSubjectName == null) {
+            if (object.getPSubjectName() != null) {
+                equalled = false;
+            }
+        } else {
+            if (!pSubjectName.equals(object.getPSubjectName())) {
+                equalled = false;
+            }
+        }
+        return equalled;
+    }
+
+    /**
+     * Returns hash code of the object
+     * @return hash code of the object
+     */
+    public int hashCode() {
+        int code = 0;
+        if (group != null) {
+            code += group.hashCode();
+        }
+        if (pSubjectName != null) {
+             code += pSubjectName.hashCode();
+        }
+        return code;
     }
 }

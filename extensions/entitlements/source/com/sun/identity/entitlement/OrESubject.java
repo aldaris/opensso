@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrESubject.java,v 1.2 2009-02-27 06:05:15 dillidorai Exp $
+ * $Id: OrESubject.java,v 1.3 2009-02-27 16:58:44 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -173,5 +173,61 @@ public class OrESubject implements ESubject {
                     joe.getMessage());
         }
         return s;
+    }
+
+    /**
+     * Returns <code>true</code> if the passed in object is equal to this object
+     * @param obj object to check for equality
+     * @return  <code>true</code> if the passed in object is equal to this object
+     */
+    public boolean equals(Object obj) {
+        boolean equalled = true;
+        if (obj == null) {
+            equalled = false;
+        }
+        if (!getClass().equals(obj.getClass())) {
+            equalled = false;
+        }
+        OrESubject object = (OrESubject) obj;
+        if (eSubjects == null) {
+            if (object.getESubjects() != null) {
+                equalled = false;
+            }
+        } else { // eSubjects not null
+            if ((object.getESubjects()) != null) {
+                equalled = false;
+            } else if (!eSubjects.containsAll(object.getESubjects())) {
+                equalled = false;
+            } else if (!object.getESubjects().containsAll(eSubjects)) {
+                equalled = false;
+            }
+        }
+        if (pSubjectName == null) {
+            if (object.getPSubjectName() != null) {
+                equalled = false;
+            }
+        } else {
+            if (!pSubjectName.equals(object.getPSubjectName())) {
+                equalled = false;
+            }
+        }
+        return equalled;
+    }
+
+    /**
+     * Returns hash code of the object
+     * @return hash code of the object
+     */
+    public int hashCode() {
+        int code = 0;
+        if (eSubjects != null) {
+            for (ESubject eSubject : eSubjects) {
+                code += eSubject.hashCode();
+            }
+        }
+        if (pSubjectName != null) {
+            code += pSubjectName.hashCode();
+        }
+        return code;
     }
 }

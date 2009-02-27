@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.13 2009-02-27 06:05:12 dillidorai Exp $
+ * $Id: Entitlement.java,v 1.14 2009-02-27 16:58:44 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -61,6 +61,7 @@ import org.json.JSONObject;
  */
 public class Entitlement {
 
+    private String name;
     private String serviceName;
     private String resourceName;
     private Set<String> excludedResourceNames;
@@ -128,6 +129,22 @@ public class Entitlement {
         this.serviceName = serviceName;
         setResourceName(resourceName);
         setActionValues(actionValues);
+    }
+
+    /**
+     * Sets the name of the entitlement
+     * @param name the name of the entitlement
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Returns the name of the entitlement
+     * @return the name of the entitlement
+     */
+    public String getName() {
+        return this.name;
     }
 
     /**
@@ -338,5 +355,79 @@ public class Entitlement {
         jo.put("advices", advices);
         jo.put("attributes", attributes);
         return jo;
+    }
+
+     /**
+     * Returns <code>true</code> if the passed in object is equal to this object
+     * @param obj object to check for equality
+     * @return  <code>true</code> if the passed in object is equal to this object
+     */
+    public boolean equals(Object obj) {
+        boolean equalled = true;
+        /*
+           private String name;
+    private String serviceName;
+    private String resourceName;
+    private Set<String> excludedResourceNames;
+    private Map<String, Object> actionValues;
+    private Map<String, String> advices;
+    private Map<String, Set<String>> attributes;
+        if (obj == null) {
+            equalled = false;
+        }
+        if (!getClass().equals(obj.getClass())) {
+            equalled = false;
+        }
+        OrESubject object = (OrESubject) obj;
+        if (eSubjects == null) {
+            if (object.getESubjects() != null) {
+                equalled = false;
+            }
+        } else { // eSubjects not null
+            if ((object.getESubjects()) != null) {
+                equalled = false;
+            } else if (!eSubjects.containsAll(object.getESubjects())) {
+                equalled = false;
+            } else if (!object.getESubjects().containsAll(eSubjects)) {
+                equalled = false;
+            }
+        }
+        if (pSubjectName == null) {
+            if (object.getPSubjectName() != null) {
+                equalled = false;
+            }
+        } else {
+            if (!pSubjectName.equals(object.getPSubjectName())) {
+                equalled = false;
+            }
+        }
+         * */
+        return equalled;
+    }
+
+    /**
+     * Returns hash code of the object
+     * @return hash code of the object
+     */
+    public int hashCode() {
+        int code = 0;
+        /*
+         *        private String name;
+    private String serviceName;
+    private String resourceName;
+    private Set<String> excludedResourceNames;
+    private Map<String, Object> actionValues;
+    private Map<String, String> advices;
+    private Map<String, Set<String>> attributes;
+        if (eSubjects != null) {
+            for (ESubject eSubject : eSubjects) {
+                code += eSubject.hashCode();
+            }
+        }
+        if (pSubjectName != null) {
+            code += pSubjectName.hashCode();
+        }
+        */
+        return code;
     }
 }
