@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PriviligeUtils.java,v 1.8 2009-02-27 06:37:03 dillidorai Exp $
+ * $Id: PriviligeUtils.java,v 1.9 2009-02-27 23:03:43 dillidorai Exp $
  */
 package com.sun.identity.policy;
 
@@ -287,8 +287,25 @@ public class PriviligeUtils {
         return rule;
     }
 
-    static Set<Subject> eSubjectToPSubjects() {
-        return null;
+    //TODO: fix impl
+    static Set<Subject> eSubjectToPSubjects(ESubject eSubject) {
+        Set<Subject> subjects = new HashSet();
+        if (eSubject != null) {
+            if (!(eSubject instanceof OrESubject)) {
+               if (eSubject instanceof NotESubject) {
+                   
+               } else {
+                   
+               }
+            }
+        } else { //OrESubject
+            if (((OrESubject)eSubject).getPSubjectName() == null) {
+                
+            } else {
+                
+            }
+        }
+        return subjects;
     }
 
     static Set<Condition> eConditionToPConditions() {
