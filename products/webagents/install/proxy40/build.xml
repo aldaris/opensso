@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.1 2009-01-12 09:25:25 ranajitgh Exp $
+   $Id: build.xml,v 1.2 2009-02-27 19:26:50 robertis Exp $
 
 -->
 
@@ -96,12 +96,12 @@
         <antcall target="copy-${build.os}-library"/>
 
         <!-- Generate PROXY agent install archive -->
-        <zip destfile="${webagents.dist.dir}/${containername}_v40_${build.os}${build.type.suffix}_agent_${agentversion}.zip">
+        <zip destfile="${webagents.dist.dir}/proxy_v40_${build.os}${build.type.suffix}_agent_${agentversion}.zip">
              <fileset dir="${webagents.container.scratch.dir}" excludes="**/bin/**"/>
              <zipfileset dir="${container.web_agent.bin.dir}" filemode="755"
                          prefix="web_agents/proxy40_agent/bin"/>
         </zip> 
-        <checksum file="${webagents.dist.dir}/${containername}_v40_${build.os}${build.type.suffix}_agent_${agentversion}.zip"
+        <checksum file="${webagents.dist.dir}/proxy_v40_${build.os}${build.type.suffix}_agent_${agentversion}.zip"
             algorithm="SHA" fileext=".sha" />
 
     </target>

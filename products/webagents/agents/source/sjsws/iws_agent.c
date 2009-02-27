@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: iws_agent.c,v 1.20 2009-02-24 22:13:39 robertis Exp $
+ * $Id: iws_agent.c,v 1.21 2009-02-27 19:26:50 robertis Exp $
  *
  *
  */
@@ -879,6 +879,10 @@ validate_session_policy(pblock *param, Session *sn, Request *rq)
     void* agent_config = NULL;
 
     char* logout_url = NULL;
+    am_status_t cdStatus = AM_FAILURE; 
+    char* cookie_name=NULL; 
+    int cookie_header_len;
+    char* cookie_header = NULL;
     // check if agent is initialized.
     // if not initialized, then call agent init function
     // This needs to be synchronized as only one time agent
@@ -1076,11 +1080,11 @@ validate_session_policy(pblock *param, Session *sn, Request *rq)
         //reset the cookie CDSSO. 
         if (am_web_is_cdsso_enabled(agent_config) == B_TRUE)
         {
-            char* cookie_name= am_web_get_cookie_name(agent_config);
-            int cookie_header_len=sizeof(CDSSO_RESET_COOKIE_TEMPLATE)+strlen(cookie_name);
-            char* cookie_header = malloc(cookie_header_len+1);
+            cookie_name= am_web_get_cookie_name(agent_config);
+            cookie_header_len=sizeof(CDSSO_RESET_COOKIE_TEMPLATE)+strlen(cookie_name);
+            cookie_header = malloc(cookie_header_len+1);
             snprintf(cookie_header, cookie_header_len,CDSSO_RESET_COOKIE_TEMPLATE,cookie_name);
-            am_status_t cdStatus = reset_cookie(cookie_header,args);
+            cdStatus = reset_cookie(cookie_header,args);
             if(cdStatus != AM_SUCCESS) {
                 am_web_log_error("validate_session_policy :CDSSO reset_cookie failed");
             }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: web_agent.c,v 1.3 2009-02-24 22:13:39 robertis Exp $
+ * $Id: web_agent.c,v 1.4 2009-02-27 19:26:49 robertis Exp $
  *
  *
  */
@@ -812,6 +812,10 @@ validate_session_policy(pblock *param, Session *sn, Request *rq) {
     void* agent_config = NULL;
 //    boolean_t useSunwMethod = am_web_use_sunwmethod();
     char* logout_url = NULL;
+    am_status_t cdStatus = AM_FAILURE;
+    char* cookie_name= NULL;
+    int cookie_header_len;
+    char* cookie_header = NULL;
 
     // check if agent is initialized.
     // if not initialized, then call agent init function
@@ -1084,11 +1088,11 @@ validate_session_policy(pblock *param, Session *sn, Request *rq) {
 
         if (am_web_is_cdsso_enabled(agent_config) == B_TRUE)
         {
-            char* cookie_name= am_web_get_cookie_name(agent_config);
-            int cookie_header_len=sizeof(CDSSO_RESET_COOKIE_TEMPLATE)+strlen(cookie_name);
-            char* cookie_header = malloc(cookie_header_len+1);
+            cookie_name= am_web_get_cookie_name(agent_config);
+            cookie_header_len=sizeof(CDSSO_RESET_COOKIE_TEMPLATE)+strlen(cookie_name);
+            cookie_header = malloc(cookie_header_len+1);
             snprintf(cookie_header, cookie_header_len,CDSSO_RESET_COOKIE_TEMPLATE,cookie_name);
-            am_status_t cdStatus = reset_cookie(cookie_header,args);
+            cdStatus = reset_cookie(cookie_header,args);
             if(cdStatus != AM_SUCCESS){
                 am_web_log_error("validate_session_policy :CDSSO reset_cookie failed");
             }
@@ -1172,6 +1176,7 @@ add_agent_header(pblock *param, Session *sn, Request *rq)
     char *host_name    = NULL;
     void *args[]       = { (void *)rq };
     am_status_t ret    = AM_FAILURE;
+    char *header_str   = NULL;
 
     // NSAPI function pblock_pblock2str expects "full-headers" 
     // to be non-null value. Therefore, add a logic to check whether 
@@ -1183,7 +1188,7 @@ add_agent_header(pblock *param, Session *sn, Request *rq)
         return REQ_ABORTED;
     }
 
-    char *header_str   = pblock_pblock2str(rq->reqpb, NULL);
+    header_str   = pblock_pblock2str(rq->reqpb, NULL);
 
     am_web_log_max_debug("%s: Headers: %s", thisfunc, header_str);
     system_free(header_str);

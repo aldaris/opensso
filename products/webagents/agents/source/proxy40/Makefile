@@ -22,7 +22,7 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: Makefile,v 1.1 2009-01-12 09:44:44 ranajitgh Exp $
+# $Id: Makefile,v 1.2 2009-02-27 19:26:49 robertis Exp $
 #
 #
 
@@ -51,13 +51,6 @@ LDLIBS += -Bstatic -lamsdk
 LDLIBS += $(LD_STATIC_FLAG) $(CXX_STD_LIBS) $(LD_SHARED_FLAG) -lc -lm
 LDLIBS += -Bdynamic -L$(NSPR_LIB_DIR) -L$(LIBXML_LIB_DIR) -L$(NSS_LIB_DIR) -lc -lnspr4 -lplds4 -lplc4 -lnss3 -lssl3 -lxml2
 
-PKG_DIR := $(DEST_PACKAGE_SCRATCH_DIR)/SUNWampxy4
-PKG_TIMESTAMP += $(PKG_DIR)/timestamp
-PACKAGE_REVISION := ,REV=$(shell date +%Y.%m.%d.%H.%M)
-EXTRA_PACKAGE_FILES := config ../common/copyright \
-	../common/depend.agent pkginfo ../common/prototype.agent \
-	prototype unconfig 
-
 all: depends export_libs
 
 $(EXPORTED_LIBS): $(OBJS) $(LIB_MAPFILE)
@@ -65,10 +58,48 @@ $(EXPORTED_LIBS): $(OBJS) $(LIB_MAPFILE)
 
 endif
 
+ifeq ($(OS_ARCH), Linux)
+CFLAGS += -DXP_UNIX
+     ifeq ($(MC_ARCH), x86_64)
+          INCLUDE_FLAGS += -fPIC 
+     endif
+INCLUDE_FLAGS += -I$(DEST_INC_DIR)  -I$(PROXY40_INC_DIR)
+LDFLAGS += $(LD_COMMON_ORIGIN_FLAG) $(LD_ORIGIN_FLAG) -L$(DEST_LIB_DIR)
+LDLIBS += $(LD_STATIC_FLAG) $(CXX_STD_LIBS) -lamsdk $(LD_SHARED_FLAG) -lc -lm
+LDLIBS += -Bdynamic -L$(NSPR_LIB_DIR) -L$(LIBXML_LIB_DIR) -L$(NSS_LIB_DIR) -lc -lnspr4 -lplds4 -lplc4 -lnss3 -lssl3 -lxml2
+
+
+all: depends export_libs 
+
+$(EXPORTED_LIBS): $(OBJS) $(LIB_MAPFILE)
+	$(MAKE_SHARED_LIB)
+
+
+endif
+
+ifeq ($(OS_ARCH), WINNT)
+PROXY4_LIB := $(LIB_NAME)$(SO_EXT)
+LIB_MAPFILE := proxy4agent$(MAPFILE_EXT)
+CFLAGS += -DAM_STATIC_LIB
+CFLAGS += -DXP_WIN32
+INCLUDE_FLAGS := -I$(DEST_INC_DIR)  -I$(PROXY40_INC_DIR)
+LDFLAGS += ../../../am/source/am_web.res -L$(PROXY40_LIB_DIR) -L$(NSPR_LIB_DIR) -L$(NSS_LIB_DIR) -L$(LIBXML_LIB_DIR)
+LDFLAGS += $(LD_COMMON_ORIGIN_FLAG) $(LD_ORIGIN_FLAG) -L$(DEST_LIB_DIR)
+LDLIBS += -luser32 -lamsdk_static -lns-httpd40 -llibnspr4 -llibplds4 -llibplc4 -lnss3 -lssl3 -llibxml2
+ 
+all: depends export_libs 
+
+$(EXPORTED_LIBS): $(OBJS) $(LIB_MAPFILE)
+	echo "dest inc dir :" $(DEST_INC_DIR)
+	echo "proxy dir :" $(PROXY40_INC_DIR)
+	$(MAKE_SHARED_LIB)
+endif
+
 clean: clean_objs clean_libs
-	$(RM) $(EXPORTED_LIBS)
+	$(RM) $(EXPORTED_LIBS) 
 ifeq ($(OS_ARCH),WINNT)
 	$(RM) $(EXPORTED_LIBS:.dll=.exp) $(EXPORTED_LIBS:.dll=.lib)
+	$(RM) *.pdb
 	$(RM) *.ilk
 endif
 
