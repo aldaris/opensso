@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<span
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ice="http://www.icesoft.com/icefaces/component"
+    xmlns:o="http://opensso.dev.java.net">
+    <ice:panelCollapsible
+        expanded="#{usersSubjectChooserBean.expanded}">
+        <f:facet name="header">
+            <ice:panelGroup>
+                <ice:outputText value="Users"/>
+            </ice:panelGroup>
+        </f:facet>
+        <o:subjectchooser
+            subjectChooserHandler="#{usersSubjectChooserHandler}"/>
+    </ice:panelCollapsible>
+</span>

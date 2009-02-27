@@ -198,6 +198,10 @@ div.button-wrapper a.button img.left {
     top: 50px;
 }
 
+.subject-chooser-subject {
+    z-index: 10;
+}
+
 /*
 #homeTabContent {
     width: 100%;

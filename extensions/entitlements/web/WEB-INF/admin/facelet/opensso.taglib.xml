@@ -26,4 +26,8 @@
         <tag-name>wstep</tag-name>
         <source>tag/wstep.xhtml</source>
     </tag>
+    <tag>
+        <tag-name>subjectchooser</tag-name>
+        <source>tag/subjectchooser.xhtml</source>
+    </tag>
 </facelet-taglib>

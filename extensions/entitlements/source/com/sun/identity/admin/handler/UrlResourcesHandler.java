@@ -2,9 +2,10 @@ package com.sun.identity.admin.handler;
 
 import com.sun.identity.admin.model.UrlResourceBean;
 import com.sun.identity.admin.model.UrlResourcesBean;
+import java.io.Serializable;
 import javax.faces.event.ActionEvent;
 
-public class UrlResourcesHandler {
+public class UrlResourcesHandler implements Serializable {
     private UrlResourcesBean urlResourcesBean;
 
     public UrlResourcesBean getUrlResourcesBean() {

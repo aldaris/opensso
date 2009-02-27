@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ice="http://www.icesoft.com/icefaces/component">
+    <ice:panelGrid columns="3">
+        <ice:panelGroup
+            dropTarget="true"
+            dropListener="#{subjectChooserHandler.availableSubjectsHandler.dropListener}"
+            dropValue="#{subjectChooserHandler.subjectChooserBean.selectedSubjectsBean}">
+            <ice:dataTable
+                value="#{subjectChooserHandler.subjectChooserBean.availableSubjectsBean.subjectBeans}"
+                var="availableBean"
+                scrollable="true"
+                scrollHeight="200px">
+                <ice:column>
+                    <f:facet name="header">
+                        <ice:outputText value="Available"/>
+                    </f:facet>
+                    <ice:panelGroup
+                        styleClass="subject-chooser-subject"
+                        draggable="true"
+                        dragOptions="dragGhost"
+                        dragValue="#{availableBean}">
+                        <ice:outputText value="#{availableBean.name}"/>
+                    </ice:panelGroup>
+                </ice:column>
+            </ice:dataTable>
+        </ice:panelGroup>
+
+        <ice:panelGroup>
+        </ice:panelGroup>
+
+        <ice:panelGroup
+            dropTarget="true"
+            dropListener="#{subjectChooserHandler.selectedSubjectsHandler.dropListener}"
+            dropValue="#{subjectChooserHandler.subjectChooserBean.availableSubjectsBean}">
+            <ice:dataTable
+                value="#{subjectChooserHandler.subjectChooserBean.selectedSubjectsBean.subjectBeans}"
+                var="selectedBean"
+                scrollable="true"
+                scrollHeight="200px">
+                <ice:column>
+                    <f:facet name="header">
+                        <ice:outputText value="Selected"/>
+                    </f:facet>
+                    <ice:panelGroup
+                        styleClass="subject-chooser-subject"
+                        draggable="true"
+                        dragOptions="dragGhost"
+                        dragValue="#{selectedBean}">
+                        <ice:outputText value="#{selectedBean.name}"/>
+                    </ice:panelGroup>
+                </ice:column>
+            </ice:dataTable>
+        </ice:panelGroup>
+    </ice:panelGrid>
+</ui:composition>
