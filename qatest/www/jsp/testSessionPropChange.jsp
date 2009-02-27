@@ -22,13 +22,13 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: testSessionPropChange.jsp,v 1.1 2008-09-04 16:33:35 rmisra Exp $
+   $Id: testSessionPropChange.jsp,v 1.2 2009-02-27 22:54:02 srivenigan Exp $
 
 --%>
 
 <%-- 
 This jsp is used by session property change notification test. It 
-gets session id from the http request, gets sso token and add/modifies
+gets session id from http POST request, gets sso token and add/modifies
 proptected properties on that token. The name of protected property
 being added is specified in the SessionProperty resource bundle
 under session module in resources directory.
@@ -40,33 +40,13 @@ import="com.iplanet.sso.SSOToken,
 %>
 <%
         try {
-            String enctokid = request.getParameter("IDToken");
-            out.println("Encrypted token id: " + enctokid);
-
-            int length = enctokid.length();
-            char[] chars = new char[length];
-            boolean firstStar = true;
-            for (int i = 0; i < length; i++) {
-                char c = enctokid.charAt(i);
-                if (c == '-') {
-                    chars[i] = '+';
-                } else if (c == '_') {
-                    chars[i] = '/';
-                } else if (c == '.') {
-                    chars[i] = '=';
-                } else if (c == '*') {
-                    if (firstStar) {
-                        firstStar = false;
-                        chars[i] = '@';
-                    } else {
-                        chars[i] = '#';
-                    }
-                } else {
-                    chars[i] = c;
-                }
+            String method = request.getMethod();
+            if ("POST".equals(request.getMethod()) != true) {
+                response.sendError(405);
+                return;
             }
-            String tokid  =  new String(chars);
-            out.println("Unencrypted token id: " + tokid);
+            String tokid = request.getParameter("IDToken");
+            out.println("Token id: " + tokid);
 
             SSOTokenManager stMgr = SSOTokenManager.getInstance();
             SSOToken stok = stMgr.createSSOToken(tokid);

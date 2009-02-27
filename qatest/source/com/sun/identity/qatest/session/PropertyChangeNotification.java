@@ -17,15 +17,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PropertyChangeNotification.java,v 1.2 2009-01-27 00:16:37 nithyas Exp $
+ * $Id: PropertyChangeNotification.java,v 1.3 2009-02-27 22:49:55 srivenigan Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.session;
 
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.WebClient;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenEvent;
@@ -33,10 +31,16 @@ import com.iplanet.sso.SSOTokenListener;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.qatest.common.IDMCommon;
 import com.sun.identity.qatest.common.TestCommon;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
+import java.net.URLEncoder;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -102,8 +106,11 @@ public class PropertyChangeNotification extends TestCommon implements
     }
 
     /**
-     * Test property change notification in an sso token for a protected
-     * property
+     * This method tests property change notification in an sso token for a 
+     * protected property. It gets session token id, creates url parameters with  
+     * (server url + token id) details and uses Http POST (to preserve all 
+     * characters) to post request to testSessionPropChange.jsp. Finally checks
+     * the notification statistics are correct for protected property
      */
     @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
       "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
@@ -120,21 +127,49 @@ public class PropertyChangeNotification extends TestCommon implements
             try {
                 ssotoken = getToken(strTestSPCN, strTestSPCN, basedn);
                 ssotoken.addSSOTokenListener(this);
-                
                 String strTokID = ssotoken.getTokenID().toString();
                 log(Level.FINEST, "testProtectedPropertyChange",
                         "Unencrypted token id: " + strTokID);
-                
                 String strEncTokID = c66EncodeSidString(strTokID);
                 log(Level.FINEST, "testProtectedPropertyChange",
                         "Encrypted token id: " + strEncTokID);
-
-                WebClient webClient = new WebClient();
-                HtmlPage page = (HtmlPage)webClient.getPage(strURL +
-                        "/testSessionPropChange.jsp?IDToken=" + strEncTokID);
-                log(Level.FINEST, "testProtectedPropertyChange",
-                        "Page returned from testSessionPropChange.jsp: " +
-                        page.asXml());
+                String strURLParameters = "IDToken=" + 
+                        URLEncoder.encode(strTokID);
+                URL url = new URL(strURL + "/testSessionPropChange.jsp");
+                log(Level.FINEST, "testProtectedPropertyChange", 
+                        "URLParameters: " + strURL + 
+                        "IDToken=" + strTokID);        
+                HttpURLConnection urlConn = null;
+                urlConn = (HttpURLConnection) url.openConnection();
+                log(Level.FINEST, "testProtectedPropertyChange", 
+                        "AFTER OPENING CONNECTION: ");
+                urlConn.setRequestMethod("POST");
+                urlConn.setRequestProperty("Content-Length", "" + 
+                        Integer.toString(strURLParameters.getBytes().length));
+                urlConn.setRequestProperty("Content-Language", "en-US");  
+                urlConn.setRequestProperty("Content-Type", 
+                        "application/x-www-form-urlencoded;charset=UTF-8");
+                urlConn.setUseCaches (false);
+                urlConn.setDoInput(true);
+                urlConn.setDoOutput(true);
+                DataOutputStream printout = new DataOutputStream 
+                        (urlConn.getOutputStream ());
+                printout.writeBytes (strURLParameters);
+                printout.flush ();
+                printout.close (); 
+                log(Level.FINEST, "testProtectedPropertyChange", 
+                        "GETTING RESPONSE ");
+                //Getting the response is required to force the request, 
+                //otherwise it might not even be sent at all
+                BufferedReader in = new BufferedReader(new 
+                        InputStreamReader(urlConn.getInputStream()));
+                String input;
+                StringBuffer response = new StringBuffer(256); 
+                while((input = in.readLine()) != null) {
+                        response.append(input + "\r");
+                }
+                log(Level.FINEST, "testProtectedPropertyChange", 
+                        "TestProtectedPropertyChange Response : "  + response);                
                 Thread.sleep(notificationSleepTime);
             } catch(SSOException e) {
                        System.out.println("Protected property change failed." +
@@ -268,5 +303,4 @@ public class PropertyChangeNotification extends TestCommon implements
             e.printStackTrace();
         }
     }
-
 }
