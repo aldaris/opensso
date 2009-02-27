@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.72 2009-02-24 21:42:58 rmisra Exp $
+ * $Id: TestCommon.java,v 1.73 2009-02-27 22:59:39 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -64,6 +64,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Properties;
+import java.util.Random;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.ResourceBundle;
@@ -119,6 +120,7 @@ public class TestCommon implements TestConstants {
     protected static String serverUri;
     protected static String keyAlias;
     protected static String clientURL;
+    protected static int cltWarDeployPort;
 
     static {
         try {
@@ -1560,6 +1562,13 @@ public class TestCommon implements TestConstants {
                 defaultPort = i;
             }
         }
+
+        Random rnd = new Random();
+        int rNum = rnd.nextInt(1000);
+        log(Level.FINEST, "getUnusedPort", "Random number is: " + rNum);
+
+        defaultPort += rNum;
+        
         return defaultPort;
     }
 
@@ -1753,19 +1762,20 @@ public class TestCommon implements TestConstants {
      */
     protected String deployClientSDKWar(ResourceBundle rb_client)
     throws Exception {
-        String userHomeDir = System.getProperty("user.home");
-        deleteDirectory(userHomeDir + fileseparator + "OpenSSOClient");
+        cltWarDeployPort = getUnusedPort();
+        log(Level.FINE, "deployClientSDKWar", "Deploy port: " + cltWarDeployPort);
+
         String strWarType = rb_client.getString("warfile_type");
         String strClientDomain = rb_client.getString("client_domain_name");
         String warFile = rb_client.getString("war_file");
 
-        int deployPort = getUnusedPort();
-        log(Level.FINE, "deployClientSDKWar", "Deploy port: " + deployPort);
-
         InetAddress addr = InetAddress.getLocalHost();
-        String hostname = addr.getCanonicalHostName();
-        log(Level.FINE, "deployClientSDKWar", "Deploy host: " + hostname +
-                    strClientDomain);
+        String hostname = addr.getCanonicalHostName() + strClientDomain;
+        log(Level.FINE, "deployClientSDKWar", "Deploy host: " + hostname);
+
+        String userHomeDir = System.getProperty("user.home");
+        deleteDirectory(userHomeDir + fileseparator + "OpenSSOClient",
+                hostname.replace(".", "_") + "_" + cltWarDeployPort);
 
         if (strWarType.equals("internal")) {
             server = new Server();
@@ -1952,12 +1962,12 @@ public class TestCommon implements TestConstants {
                         log(Level.FINEST, "deployClientSDKWar", s);
                     }                    
                 }
-                sslconnector.setPort(deployPort);
+                sslconnector.setPort(cltWarDeployPort);
                 sslconnector.setHost(hostname);
                 server.addConnector(sslconnector);
             } else {
                 Connector connector = new SelectChannelConnector();
-                connector.setPort(deployPort);
+                connector.setPort(cltWarDeployPort);
                 connector.setHost(hostname);
                 server.addConnector(connector);
             }
@@ -1968,8 +1978,8 @@ public class TestCommon implements TestConstants {
             log(Level.FINE, "deployClientSDKWar", "Deploy URI: " + csDeployURI);
             wac.setContextPath(csDeployURI);
 
-            clientURL = protocol + "://" + hostname + strClientDomain + ":" +
-                    deployPort + csDeployURI;
+            clientURL = protocol + "://" + hostname + ":" +
+                    cltWarDeployPort + csDeployURI;
             log(Level.FINE, "deployClientSDKWar", "Client URL: " + clientURL);
             if (new File(warFile).exists()) {
                 log(Level.FINE, "deployClientSDKWar", "WAR File: " + warFile);
@@ -2017,8 +2027,16 @@ public class TestCommon implements TestConstants {
             server.stop();
             log(Level.FINE, "stopServer", "Stopped jetty server");
 
+            String strClientDomain = rb_client.getString("client_domain_name");
+
+            InetAddress addr = InetAddress.getLocalHost();
+            String hostname = addr.getCanonicalHostName() + strClientDomain;
+            log(Level.FINE, "undeployClientSDKWar", "Undeploying client sdk" +
+                    " war on host:port " + hostname + ":" + cltWarDeployPort);
+
             String userHomeDir = System.getProperty("user.home");
-            deleteDirectory(userHomeDir + fileseparator + "OpenSSOClient");
+            deleteDirectory(userHomeDir + fileseparator + "OpenSSOClient",
+                    hostname.replace(".", "_") + "_" + cltWarDeployPort);
 
             // Time delay required by the jetty server process to die
             Thread.sleep(30000);
@@ -2741,25 +2759,47 @@ public class TestCommon implements TestConstants {
     }
 
     /**
-     * Deletes the specified directory
-     * @param dirName The name 
+     * Deletes the sepcified file in the specified directory
+     * @param dirName The name of the directory
+     * @param fileName The name of the file
      * @throws java.lang.Exception
      */
-    protected void deleteDirectory(String dirName)
-    throws Exception {        
+    protected void deleteDirectory(String dirName, String fileName)
+    throws Exception {
         File configDir = new File(dirName);
         if (configDir.exists()) {
             String [] configFiles = configDir.list();
             if (configFiles.length > 0) {
                 for (int i=0; i < configFiles.length; i++) {
-                    log(Level.FINEST, "deleteDirectory", "Deleting: " +
-                            dirName + fileseparator + configFiles[i]);
-                    File configFile = new File(dirName + fileseparator +
-                            configFiles[i]);                    
-                    assert(configFile.delete());
+                    if (fileName != null) {
+                        if (configFiles[i].indexOf(fileName) != -1) {
+                            log(Level.FINEST, "deleteDirectory", "Deleting: " +
+                                    dirName + fileseparator + configFiles[i]);
+                            File configFile = new File(dirName + fileseparator +
+                                    configFiles[i]);
+                            assert(configFile.delete());
+                        }
+                    } else {
+                        log(Level.FINEST, "deleteDirectory", "Deleting: " +
+                                dirName + fileseparator + configFiles[i]);
+                        File configFile = new File(dirName + fileseparator +
+                                configFiles[i]);
+                        assert(configFile.delete());                        
+                    }
                 }
             }
         }
+    }
+
+
+    /**
+     * Deletes all the files in the specified directory
+     * @param dirName The name 
+     * @throws java.lang.Exception
+     */
+    protected void deleteDirectory(String dirName)
+    throws Exception {        
+        deleteDirectory(dirName, null);
     }
 
     /**

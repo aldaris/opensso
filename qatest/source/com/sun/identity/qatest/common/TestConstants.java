@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestConstants.java,v 1.31 2009-02-10 23:15:58 vimal_67 Exp $
+ * $Id: TestConstants.java,v 1.32 2009-02-27 22:59:39 rmisra Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -252,11 +252,6 @@ public interface TestConstants {
      * Property key for <code>wsfed_sp</code>
      */
     String KEY_ATT_WSFED_SP="wsfed_sp";
-    
-    /**
-     * Property key for <code>notification_uri</code>.
-     */
-    String KEY_ATT_NOTIFICATION_URI = "notification_uri";
     
     /**
      * Property key for <code>notification_sleep</code>.

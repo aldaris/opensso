@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientConfigCreator.java,v 1.23 2008-12-24 23:07:40 nithyas Exp $
+ * $Id: ClientConfigCreator.java,v 1.24 2009-02-27 22:59:40 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -37,6 +37,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Random;
 import java.util.PropertyResourceBundle;
 
 /**
@@ -212,9 +213,6 @@ public class ClientConfigCreator {
                 else if (key.equals(TestConstants.KEY_AMC_AUTHNSVC_URL))
                     value = strProtocol + "://" + strHost + ":" + strPort +
                             strURI + "/" + "Liberty/authnsvc";
-                else if (key.equals(TestConstants.KEY_AMC_NOTIFICATION_URL))
-                    value = "http://" + hostname + ":" + configMap.get(
-                            TestConstants.KEY_ATT_NOTIFICATION_URI);
             }
             value = value.replace("@BASE_DIR@", testDir + fileseparator +
                     serverName);
@@ -382,9 +380,6 @@ public class ClientConfigCreator {
                 else if (key.equals(TestConstants.KEY_AMC_AUTHNSVC_URL))
                     value = strProtocol + "://" + strHost + ":" + strPort +
                             strURI + "/" + "Liberty/authnsvc";
-                else if (key.equals(TestConstants.KEY_AMC_NOTIFICATION_URL))
-                    value = "http://" + hostname + ":" + configMap2.get(
-                            TestConstants.KEY_ATT_NOTIFICATION_URI);
             }
             if (value.equals("@COPY_FROM_CONFIG@")) {
                 if (key.equals(TestConstants.KEY_AMC_PROTOCOL))
@@ -656,6 +651,10 @@ public class ClientConfigCreator {
                 defaultPort = i;
             }
         }
+
+        Random rnd = new Random();
+        defaultPort += rnd.nextInt(1000);
+
         return defaultPort;
     }
 
