@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestListener.java,v 1.4 2009-01-15 01:59:02 veiming Exp $
+ * $Id: TestListener.java,v 1.5 2009-02-27 16:11:36 veiming Exp $
  */
 
 package com.sun.identity.unittest;
@@ -48,19 +48,19 @@ public class TestListener implements ITestListener {
     }
    
     public void onTestFailure(ITestResult result) {
-        UnittestLog.logMessage("Failed " + 
+        UnittestLog.logError("Failed " +
             result.getTestClass().getName() + "." +
             result.getMethod().getMethodName());
     }
     
     public void onTestSkipped(ITestResult result) {
-        UnittestLog.logMessage("Failed " + 
+        UnittestLog.logError("Failed " +
             result.getTestClass().getName() + "." +
             result.getMethod().getMethodName());
     }
     
     public void onTestFailedButWithinSuccessPercentage(ITestResult result) {
-        UnittestLog.logMessage("Failed " + 
+        UnittestLog.logError("Failed " +
             result.getTestClass().getName() + "." +
             result.getMethod().getMethodName());
     }

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.24 2009-02-24 22:47:51 veiming Exp $
+   $Id: build.xml,v 1.25 2009-02-27 16:11:34 veiming Exp $
 
 -->
 
@@ -260,6 +260,8 @@
         </copy>
         <copy todir="${war.package.dir}/WEB-INF/lib"
             file="${entitlements.extlib.dir}/testng-5.1-jdk15.jar" />
+        <copy todir="${war.package.dir}/WEB-INF/lib"
+            file="${entitlements.build.lib.local.dir}/json.jar" />
     </target>
 
     <target name="amserver-jar" unless="amserver.jar.exists">

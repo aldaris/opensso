@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestHarness.java,v 1.4 2009-02-12 05:33:13 veiming Exp $
+ * $Id: TestHarness.java,v 1.5 2009-02-27 16:11:36 veiming Exp $
  */
 
 package com.sun.identity.unittest;
@@ -149,7 +149,7 @@ public final class TestHarness {
 
             while (jarEntry != null) {
                 String name = jarEntry.getName();
-                if (name.endsWith(".class")) {
+                if (name.endsWith(".class") && (name.indexOf("$") == -1)) {
                     name = name.replaceAll("/", ".");
                     int idx = name.lastIndexOf('.');
                     name = name.substring(0, idx);

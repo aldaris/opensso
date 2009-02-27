@@ -89,7 +89,7 @@
             <compilation-unit>
                 <package-root>unittest/source</package-root>
                 <unit-tests/>
-                <classpath mode="compile">built/classes:extlib/amserver.jar:extlib/opensso-sharedlib.jar:extlib/testng-5.1-jdk15.jar:build-lib/j2ee.jar</classpath>
+                <classpath mode="compile">built/classes:extlib/amserver.jar:extlib/opensso-sharedlib.jar:extlib/testng-5.1-jdk15.jar:build-lib/j2ee.jar:build-lib/json.jar</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>
