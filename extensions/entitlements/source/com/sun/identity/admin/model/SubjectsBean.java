@@ -1,12 +1,13 @@
 package com.sun.identity.admin.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 public class SubjectsBean implements Serializable {
-    private List<SubjectBean> subjectBeans = new ArrayList<SubjectBean>();
+    private Set<SubjectBean> subjectBeans = new LinkedHashSet<SubjectBean>();
     private boolean expanded = true;
+    private boolean draggable = false;
 
     public SubjectsBean() {
         SubjectBean sb;
@@ -58,11 +59,11 @@ public class SubjectsBean implements Serializable {
         // TODO - dummy data
     }
 
-    public List<SubjectBean> getSubjectBeans() {
+    public Set<SubjectBean> getSubjectBeans() {
         return subjectBeans;
     }
 
-    public void setSubjectBeans(List<SubjectBean> subjectBeans) {
+    public void setSubjectBeans(Set<SubjectBean> subjectBeans) {
         this.subjectBeans = subjectBeans;
     }
 
@@ -72,5 +73,13 @@ public class SubjectsBean implements Serializable {
 
     public void setExpanded(boolean expanded) {
         this.expanded = expanded;
+    }
+
+    public boolean isDraggable() {
+        return draggable;
+    }
+
+    public void setDraggable(boolean draggable) {
+        this.draggable = draggable;
     }
 }

@@ -18,19 +18,93 @@
                     <f:facet name="header">
                         <ice:outputText value="Available"/>
                     </f:facet>
+                    <ice:rowSelector
+                        value="#{availableBean.selected}"
+                        selectionListener="#{subjectChooserHandler.availableSubjectsHandler.selectionListener}"
+                        multiple="true"/>
                     <ice:panelGroup
                         styleClass="subject-chooser-subject"
-                        draggable="true"
-                        dragOptions="dragGhost"
-                        dragValue="#{availableBean}">
-                        <ice:outputText value="#{availableBean.name}"/>
+                        draggable="#{availableBean.selected}"
+                        dragOptions="dragGhost">
+                        <ice:panelGrid
+                            styleClass="subject-list"
+                            columns="2">
+                            <ice:panelGroup>
+                                <ice:graphicImage
+                                    value="../image/user.png"/>
+                            </ice:panelGroup>
+                            <ice:panelGroup>
+                                <ice:outputText value="#{availableBean.name}"/>
+                            </ice:panelGroup>
+                        </ice:panelGrid>
                     </ice:panelGroup>
                 </ice:column>
             </ice:dataTable>
         </ice:panelGroup>
 
-        <ice:panelGroup>
-        </ice:panelGroup>
+        <ice:panelGrid
+            styleClass="subject-chooser-button-group"
+            columns="1">
+            <ice:panelGrid
+                styleClass="sub-button-group"
+                columns="1">
+                <ice:panelGroup
+                    styleClass="button-wrapper add">
+                    <ice:commandLink
+                        styleClass="button"
+                        actionListener="#{subjectChooserHandler.addSelectedListener}"
+                        partialSubmit="true">
+                        Add Selected
+                        <ice:graphicImage
+                            styleClass="right"
+                            value="../image/chooser-add.png"/>
+                    </ice:commandLink>
+                </ice:panelGroup>
+                <ice:panelGroup
+                    styleClass="button-wrapper add">
+                    <ice:commandLink
+                        actionListener="#{subjectChooserHandler.addAllListener}"
+                        styleClass="button"
+                        partialSubmit="true">
+                        Add All
+                        <ice:graphicImage
+                            styleClass="right"
+                            value="../image/chooser-add-all.png"/>
+                    </ice:commandLink>
+                </ice:panelGroup>
+            </ice:panelGrid>
+
+            <ice:panelGrid
+                styleClass="sub-button-group"
+                columns="1">
+                <ice:panelGroup
+                    styleClass="button-wrapper remove">
+                    <ice:commandLink
+                        actionListener="#{subjectChooserHandler.removeSelectedListener}"
+                        styleClass="button"
+                        partialSubmit="true">
+                        <ice:panelGroup>
+                            <ice:graphicImage
+                                styleClass="left"
+                                value="../image/chooser-remove.png"/>
+                            Remove Selected
+                        </ice:panelGroup>
+                    </ice:commandLink>
+                </ice:panelGroup>
+                <ice:panelGroup
+                    styleClass="button-wrapper remove">
+                    <ice:commandLink
+                        actionListener="#{subjectChooserHandler.removeAllListener}"
+                        styleClass="button"
+                        partialSubmit="true">
+                        <ice:graphicImage
+                            styleClass="left"
+                            value="../image/chooser-remove-all.png"/>
+                        Remove All
+                    </ice:commandLink>
+                </ice:panelGroup>
+            </ice:panelGrid>
+        </ice:panelGrid>
 
         <ice:panelGroup
             dropTarget="true"
@@ -45,12 +119,25 @@
                     <f:facet name="header">
                         <ice:outputText value="Selected"/>
                     </f:facet>
+                    <ice:rowSelector
+                        value="#{selectedBean.selected}"
+                        multiple="true"
+                        selectionListener="#{subjectChooserHandler.selectedSubjectsHandler.selectionListener}"/>
                     <ice:panelGroup
                         styleClass="subject-chooser-subject"
-                        draggable="true"
-                        dragOptions="dragGhost"
-                        dragValue="#{selectedBean}">
-                        <ice:outputText value="#{selectedBean.name}"/>
+                        draggable="#{selectedBean.selected}"
+                        dragOptions="dragGhost">
+                        <ice:panelGrid
+                            columns="2"
+                            styleClass="subject-list">
+                            <ice:panelGroup>
+                                <ice:graphicImage
+                                    value="../image/user.png"/>
+                            </ice:panelGroup>
+                            <ice:panelGroup>
+                                <ice:outputText value="#{selectedBean.name}"/>
+                            </ice:panelGroup>
+                        </ice:panelGrid>
                     </ice:panelGroup>
                 </ice:column>
             </ice:dataTable>

@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 public class SubjectBean implements Serializable {
     private String name;
+    private boolean selected = false;
 
     public String getName() {
         return name;
@@ -19,5 +20,13 @@ public class SubjectBean implements Serializable {
             return true;
         }
         return false;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 }
