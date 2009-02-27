@@ -1,0 +1,115 @@
+<!--
+   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+  
+   Copyright (c) 2007 Sun Microsystems Inc. All Rights Reserved
+  
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: ConfigureGoogleAppsComplete.xml,v 1.1 2009-02-27 11:29:44 asyhuang Exp $ 
+
+-->
+
+<!DOCTYPE propertysheet SYSTEM "propertysheet.dtd">
+
+<propertysheet>    
+    <section name="dummy" defaultValue="">
+        <property>
+            <label name="lblName" defaultValue="configure.google.apps.complete.label.name" labelFor="tfName" />
+            <cc name="tfName" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />
+        </property>
+                <property>
+            <label name="lblDescription" 
+                   defaultValue="configure.google.apps.complete.label.description" 
+                   labelFor="tfDescription" />
+            <cc name="tfDescription" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />
+        </property>
+        <property>
+            <label name="lblSigninPageURL" 
+                   defaultValue="configure.google.apps.complete.label.SigninPageURL" 
+                   labelFor="lblSigninPageURL" />
+            <cc name="SigninPageURL" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />
+            <fieldhelp name="helpSigninPageURL" 
+                       defaultValue="configure.google.apps.complete.help.SigninPageURL" />
+        </property>
+        <property>
+            <label name="lblSignoutPageURL" 
+                   defaultValue="configure.google.apps.complete.label.SignoutPageURL" 
+                   labelFor="lblSignoutPageURL" />
+            <cc name="SignoutPageURL" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />
+            <fieldhelp name="helpSignoutPageURL" 
+                       defaultValue="configure.google.apps.complete.help.SignoutPageURL" />
+        </property>
+        <property>
+            <label name="lblChangePasswordURL" 
+                   defaultValue="configure.google.apps.complete.label.ChangePasswordURL" 
+                   labelFor="lblChangePasswordURL" />
+            <cc name="ChangePasswordURL" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />
+            <fieldhelp name="helpChangePasswordURL" 
+                       defaultValue="configure.google.apps.complete.help.ChangePasswordURL" />
+        </property>
+        <property>
+            <label name="lblPubKey" 
+                   defaultValue="configure.google.apps.complete.label.PubKey" 
+                   labelFor="lblPubKey" />
+            <cc name="PubKey" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />
+            <fieldhelp name="helpPubKey" 
+                       defaultValue="configure.google.apps.complete.help.PubKey" />
+        </property>
+    </section>
+  <section name="ConfigurationSteps" defaultValue="configure.google.apps.complete.steps">
+      <property span="true">
+            <label name="step1"
+                   defaultValue="configure.google.apps.complete.step1"
+                   labelFor="step1" />
+        </property>
+      <property span="true">
+            <label name="step2"
+                   defaultValue="configure.google.apps.complete.step2"
+                   labelFor="step2" />
+        </property>
+
+
+      <property span="true">
+            <label name="step3"
+                   defaultValue="configure.google.apps.complete.step3"
+                   labelFor="step3" />
+        </property>
+
+      <property span="true">
+            <label name="step4"
+                   defaultValue="configure.google.apps.complete.step4"
+                   labelFor="step4" />
+        </property>
+
+      <property span="true">
+            <label name="step5"
+                   defaultValue="configure.google.apps.complete.step5"
+                   labelFor="step5" />
+        </property>
+
+      <property span="true">
+            <label name="step6"
+                   defaultValue="configure.google.apps.complete.step6"
+                   labelFor="step6" />
+        </property>
+
+ 
+  </section>
+</propertysheet>
