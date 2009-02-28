@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.45 2009-01-28 05:34:54 ww203982 Exp $
+ * $Id: LoginState.java,v 1.46 2009-02-28 00:57:03 mrudul_uchil Exp $
  *
  */
 
@@ -355,7 +355,7 @@ public class LoginState {
     boolean postProcessInSession = false;
     boolean modulesInSession = false;
     
-    private static Set internalUsers = new HashSet();
+    public static Set internalUsers = new HashSet();
 
     static {
         
@@ -405,11 +405,12 @@ public class LoginState {
 
         /* Define internal users
          * For these users we would allow authentication only at root realm
-         * and only for DataStore module
+         * and require to be authenticated to configuration datastore.
          */
         internalUsers.add("amadmin");
         internalUsers.add("dsameuser");
-        internalUsers.add("amservice-urlaccessagent");
+        internalUsers.add("urlaccessagent");
+        internalUsers.add("amldapuser");
         
     }
     
@@ -6297,9 +6298,7 @@ public class LoginState {
                         + ", to module:" + authModule
                         + ", at realm:" + authRealm);
             }
-            if (!authRealm.equals(ServiceManager.getBaseDN())  
-                        || (!authModule.equals("DataStore") 
-                            && !authModule.equals("Application"))) {
+            if (!authRealm.equals(ServiceManager.getBaseDN())) {
                 authValid = false;
                 if (debug.warningEnabled()) {
                     debug.warning("LoginState.isValidAuthForInternalUser():"

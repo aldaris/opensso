@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginContext.java,v 1.19 2009-01-26 18:46:55 lakshman_abburi Exp $
+ * $Id: AMLoginContext.java,v 1.20 2009-02-28 00:57:03 mrudul_uchil Exp $
  *
  */
 
@@ -447,7 +447,7 @@ public class AMLoginContext {
                 if (debug.warningEnabled()) {
                     debug.warning(
                         "AMLoginContext.runLogin():auth failed, "
-                        +  "using invalid auth module for internal user");
+                        +  "using invalid realm name for internal user");
                 }
                 logFailedMessage = AuthUtils.getErrorVal(
                         AMAuthErrorCode.AUTH_MODULE_DENIED, 
@@ -582,7 +582,19 @@ public class AMLoginContext {
             isFailed = true;
             authContext.setLoginException(me);
         } catch (AuthLoginException le) {
-            if ( AMAuthErrorCode.AUTH_TIMEOUT.equals(le.getMessage())) {
+            loginState.setErrorCode(AMAuthErrorCode.AUTH_LOGIN_FAILED);
+            if (AMAuthErrorCode.AUTH_MODULE_DENIED.equals(le.getMessage())) {
+                if (debug.warningEnabled()) {
+                    debug.warning(
+                        "AMLoginContext.runLogin():auth failed, "
+                        +  "using invalid auth module name for internal user");
+                }
+                logFailedMessage = AuthUtils.getErrorVal(
+                        AMAuthErrorCode.AUTH_MODULE_DENIED, 
+                        AuthUtils.ERROR_MESSAGE);
+                logFailedError = "AUTH_MODULE_DENIED";
+                loginState.setErrorCode(AMAuthErrorCode.AUTH_MODULE_DENIED);
+            } else if ( AMAuthErrorCode.AUTH_TIMEOUT.equals(le.getMessage())) {
                 debug.message("LOGINFAILED Error Timed Out....");
             } else if (ISAuthConstants.EXCEED_RETRY_LIMIT.
                     equals(le.getErrorCode())) {
@@ -591,7 +603,7 @@ public class AMLoginContext {
                 debug.message("LOGINFAILED Error....");
             }
             if (debug.messageEnabled()) {
-                debug.message("Exception " , le);
+                debug.message("Exception : " , le);
             }
             isFailed = true;
             if (loginState.isTimedOut()) {
@@ -603,8 +615,6 @@ public class AMLoginContext {
                 loginState.setErrorMessage(exceedRetryLimit);
                 loginState.setErrorCode(
                         AMAuthErrorCode.AUTH_USER_LOCKED_IN_DS);
-            } else {
-                loginState.setErrorCode(AMAuthErrorCode.AUTH_LOGIN_FAILED);
             }
             authContext.setLoginException(le);
         } catch (AuthException e) {

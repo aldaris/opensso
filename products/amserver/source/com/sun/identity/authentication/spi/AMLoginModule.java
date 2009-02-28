@@ -22,11 +22,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginModule.java,v 1.18 2009-01-28 05:34:54 ww203982 Exp $
+ * $Id: AMLoginModule.java,v 1.19 2009-02-28 00:57:03 mrudul_uchil Exp $
  *
  */
-
-
 
 package com.sun.identity.authentication.spi;
 
@@ -69,14 +67,13 @@ import com.sun.identity.authentication.service.AMAuthErrorCode;
 import com.sun.identity.authentication.service.AuthD;
 import com.sun.identity.authentication.service.AuthException;
 import com.sun.identity.authentication.service.LoginStateCallback;
+import com.sun.identity.authentication.service.LoginState;
 import com.sun.identity.authentication.util.ISAuthConstants;
 import com.sun.identity.authentication.util.ISValidation;
 import com.sun.identity.common.AdministrationServiceListener;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdRepoException;
-import com.sun.identity.idm.IdSearchControl;
-import com.sun.identity.idm.IdSearchResults;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.common.ISAccountLockout;
@@ -202,7 +199,7 @@ public abstract class AMLoginModule implements LoginModule {
     private ResourceBundle bundle = null;
     
     // login state
-    private com.sun.identity.authentication.service.LoginState loginState =null;
+    private LoginState loginState =null;
     
     /**
      * Holds callback handler object passed in through initialize method
@@ -245,7 +242,7 @@ public abstract class AMLoginModule implements LoginModule {
     private String headerWithReplaceTag;
     private boolean alreadyReplaced = false;
     private int lastState = 0;
-    
+        
     /**
      * Holds handle to ResourceBundleCache to quickly get ResourceBundle for
      * any Locale.
@@ -954,6 +951,9 @@ public abstract class AMLoginModule implements LoginModule {
             throw new AuthLoginException(bundleName, "nullHandler", null);
         }
         try {
+            Callback[] lastCallbacks = null;
+            boolean needToExit = false;
+            
             // starting from first page
             //currentState = 1;
             while (currentState != ISAuthConstants.LOGIN_SUCCEED &&
@@ -1013,6 +1013,19 @@ public abstract class AMLoginModule implements LoginModule {
                     }
                 }
                 
+                // Get the last submitted callbacks to auth module and submit
+                // those callbacks to do DataStore authentication if the incoming
+                // user is special / internal user and auth module is other than
+                // "DataStore" and "Application" auth modules.
+                lastCallbacks = (Callback[])external.get(currentState-1);
+                if ((!moduleName.equalsIgnoreCase("DataStore")) && 
+                        (!moduleName.equalsIgnoreCase("Application"))) {
+                    if (!authenticateToDatastore(lastCallbacks)) {
+                        needToExit = true;
+                        break;
+                    }
+                }
+                
                 // send external callback and send to module for processing
                 currentState = wrapProcess((Callback[])
                 external.get(currentState-1), currentState);
@@ -1020,9 +1033,15 @@ public abstract class AMLoginModule implements LoginModule {
                 if (debug.messageEnabled()) {
                     debug.message("Login NEXT State : " + currentState);
                 }
+            }  
+                        
+            if (needToExit) {
+                nullifyUsedVars();
+                throw new AuthLoginException(AMAuthErrorCode.AUTH_MODULE_DENIED);
             }
+            
             // check login status
-            if (currentState == ISAuthConstants.LOGIN_SUCCEED) {
+            if (currentState == ISAuthConstants.LOGIN_SUCCEED) {       
                 setSuccessModuleName(moduleName);
                 succeeded = true;
                 nullifyUsedVars();
@@ -2244,5 +2263,79 @@ public abstract class AMLoginModule implements LoginModule {
             ad.debug.message("Normalized DN is:" + normalizedDN);
         }
         return normalizedDN;
-    }     
+    }    
+    
+    /**
+     * Authenticates to the datastore using idRepo API
+     *
+     * @param callbacks Array of last submitted callbacks to the 
+     * authentication module
+     * @return <code>true</code> if success. <code>false</code> if failure
+     * @throws <code> AuthLoginException </code> 
+     */
+    private boolean authenticateToDatastore(Callback[] callbacks) 
+            throws AuthLoginException {
+        boolean retval = false;
+        boolean needToCheck = false;
+        Callback[] idrepoCallbacks = new Callback[2];
+        String userName = null;
+        char[] password = null;
+        
+        for (int i = 0; i < callbacks.length; i++) {
+                if (callbacks[i] instanceof NameCallback) {
+                    NameCallback nc = (NameCallback) callbacks[i];
+                    userName = nc.getName();
+                    if (debug.messageEnabled()){
+                        debug.message("AMLoginModule.authenticateToDatastore:: "
+                        + " user is : " + userName);
+                        debug.message("AMLoginModule.authenticateToDatastore:: "
+                        + " Internal users : " + LoginState.internalUsers);
+                    }
+                    
+                    if (LoginState.internalUsers.contains(
+                            userName.toLowerCase())) {
+                        needToCheck = true;
+                    } else {
+                        break;
+                    }
+                    
+                } else if (callbacks[i] instanceof PasswordCallback) {
+                    PasswordCallback pc = (PasswordCallback) callbacks[i];
+                    password = pc.getPassword();
+                }
+        }
+        if (needToCheck == false) {
+            return true;
+        }
+        
+        if (debug.messageEnabled()){
+            debug.message("AMLoginModule.authenticateToDatastore:: "
+                + "Authenticating Internal user to configuration store");
+        }
+        NameCallback nameCallback = new NameCallback("NamePrompt");
+        nameCallback.setName(userName);
+        idrepoCallbacks[0] = nameCallback;
+        PasswordCallback passwordCallback = new PasswordCallback(
+            "PasswordPrompt",false);
+        passwordCallback.setPassword(password);
+        idrepoCallbacks[1] = passwordCallback;
+        try {
+            AMIdentityRepository idrepo = getAMIdentityRepository(
+                getRequestOrg());
+            retval = idrepo.authenticate(idrepoCallbacks);
+            if (debug.messageEnabled()){
+                debug.message("AMLoginModule.authenticateToDatastore:: " + 
+                    " IDRepo authentication successful");
+            }
+        } catch (IdRepoException idrepoExp) {
+            if (debug.messageEnabled()){
+                debug.message("AMLoginModule.authenticateToDatastore::  "
+                    + "IdRepo Exception : ", idrepoExp);
+            }
+        } catch (InvalidPasswordException ipe) {
+            throw new AuthLoginException(AMAuthErrorCode.AUTH_MODULE_DENIED);
+        }
+        return retval;
+
+    }
 }
