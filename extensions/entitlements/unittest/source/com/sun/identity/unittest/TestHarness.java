@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestHarness.java,v 1.5 2009-02-27 16:11:36 veiming Exp $
+ * $Id: TestHarness.java,v 1.6 2009-02-28 01:53:35 veiming Exp $
  */
 
 package com.sun.identity.unittest;
@@ -194,7 +194,7 @@ public final class TestHarness {
             } else if (!top) {
                 if (path.endsWith(".jsp")) {
                     int idx = path.lastIndexOf('/');
-                    String name = path.substring(idx + 1) + " - JSP";
+                    String name = path.substring(idx + 1);
                     String pkgName = path.substring(0, idx);
                     pkgName = pkgName.replace('/', '.');
                     pkgName = pkgName.substring(10); // strip .unittest.
@@ -204,7 +204,9 @@ public final class TestHarness {
                         set = new TreeSet();
                         map.put(pkgName, set);
                     }
-                    set.add(name);
+
+                    path = path.substring(10); // strip /unittest/
+                    set.add(path);
                 }
                 
                 

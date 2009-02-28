@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
   
-   $Id: unittest.jsp,v 1.2 2008-12-19 08:47:53 veiming Exp $
+   $Id: unittest.jsp,v 1.3 2009-02-28 01:54:36 veiming Exp $
   
 --%>
 
@@ -81,7 +81,15 @@
             var elm = elements[i];
             if ((elm.type) && (elm.type == 'checkbox')) {
                 if (elm.name.indexOf(name + '.') == 0) {
-                    elm.checked = cb.checked;
+                    if (elm.className != 'pkg') {
+                        var chop = elm.name.substring(name.length +2);
+                        if (chop.indexOf('.jsp') != -1) {
+                            chop = chop.substring(0, chop.length -4);
+                        }
+                        if (chop.indexOf('.') == -1) {
+                            elm.checked = cb.checked;
+                        }
+                    }
                 }
             }
         }
@@ -142,15 +150,23 @@
     for (Iterator i = set.iterator(); i.hasNext(); ) {
         String pkgname = (String)i.next();
 %>
-        <li><a href="#" onClick="expand('children.<%= pkgname %>', this); return false;"><b>[ - ]</b></a> <input name="<%= pkgname %>" type="checkbox" title="Select/unselect the entire set of tests under this package" onClick="selectpkg(this);" /> <%= pkgname %> 
+        <li><a href="#" onClick="expand('children.<%= pkgname %>', this); return false;"><b>[ - ]</b></a> <input name="<%= pkgname %>" type="checkbox" title="Select/unselect the entire set of tests under this package" class="pkg" onClick="selectpkg(this);" /> <%= pkgname %> 
         <ul id='children.<%= pkgname %>'>
 
 <%
         Set tests = (Set)mapPkgNameToClasses.get(pkgname);
         for (Iterator j = tests.iterator(); j.hasNext(); ) {
             String testname = (String)j.next();
+            String value = testname;
+            String label = testname;
+
+            if (testname.endsWith(".jsp")) {
+                testname = testname.replace('/', '.');
+                int idx = label.lastIndexOf("/");
+                label = label.substring(idx+1);
+            }
 %>
-            <li><input class="test" name="<%= testname %>" type="checkbox"  title="Select/unselect this test to run" /> <%= testname %></li>
+            <li><input class="test" name="<%= testname %>" value="<%= value %>" type="checkbox"  title="Select/unselect this test to run" /> <%= label %></li>
 <%
         }
 %>
