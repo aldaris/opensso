@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PropertyChangeNotification.java,v 1.3 2009-02-27 22:49:55 srivenigan Exp $
+ * $Id: PropertyChangeNotification.java,v 1.4 2009-02-28 01:15:09 srivenigan Exp $
  *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
@@ -117,8 +117,12 @@ public class PropertyChangeNotification extends TestCommon implements
     public void testProtectedPropertyChange()
     throws Exception {
         entering("testProtectedPropertyChange", null);
-        Reporter.log("Test property change notification in an sso token for" +
-                " a protected session property.");
+        Reporter.log("Testcase to test property change notification in an sso " 
+                + "token for a protected property. It gets session token id, " +
+                "creates url parameters with (server url + token id) details " +
+                "and uses Http POST (to preserve all characters) to post " +
+                "request to testSessionPropChange.jsp. Finally checks the " +
+                "notification statistics are correct for protected property");
         iCount = 0;
         if (setNum.size() != 0) {
             setNum.clear();
