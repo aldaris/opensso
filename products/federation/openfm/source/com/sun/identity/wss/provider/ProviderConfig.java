@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ProviderConfig.java,v 1.28 2009-01-24 01:31:24 mallas Exp $
+ * $Id: ProviderConfig.java,v 1.29 2009-02-28 00:59:42 mrudul_uchil Exp $
  *
  */
 package com.sun.identity.wss.provider; 
@@ -30,23 +30,18 @@ package com.sun.identity.wss.provider;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.io.IOException;
-import java.io.FileNotFoundException;
 import java.security.KeyStore;
 import java.security.AccessController;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Set;
-import java.util.Map;
 
 import com.sun.identity.common.SystemConfigurationUtil;
 import com.iplanet.services.util.Crypt;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOTokenManager;
-import com.sun.identity.shared.Constants;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.wss.security.SecurityMechanism;
 
@@ -1124,7 +1119,18 @@ public abstract class ProviderConfig {
         try {
             adminToken = (SSOToken) AccessController.doPrivileged(
                     AdminTokenAction.getInstance());
-            SSOTokenManager.getInstance().refreshSession(adminToken);
+            
+            if(adminToken != null) {
+                if (!SSOTokenManager.getInstance().isValidToken(adminToken)) {
+                    if (ProviderUtils.debug.messageEnabled()) {
+                        ProviderUtils.debug.message("ProviderConfig." + 
+                            "getAdminToken: AdminTokenAction returned " + 
+                            "expired or invalid token, trying again...");
+                    }
+                    adminToken = (SSOToken) AccessController.doPrivileged(
+                            AdminTokenAction.getInstance());
+                }
+            }
         } catch (SSOException se) {
             ProviderUtils.debug.message("ProviderConfig.getAdminToken:: " +
                    "Trying second time ....");

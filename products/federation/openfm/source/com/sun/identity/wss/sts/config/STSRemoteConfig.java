@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSRemoteConfig.java,v 1.2 2009-01-24 01:31:26 mallas Exp $
+ * $Id: STSRemoteConfig.java,v 1.3 2009-02-28 00:59:44 mrudul_uchil Exp $
  */
 
 package com.sun.identity.wss.sts.config;
@@ -32,16 +32,15 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
-import java.security.AccessController;
 
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
-import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.sm.ServiceSchemaManager;
 import com.sun.identity.sm.ServiceSchema;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.wss.sts.STSUtils;
 import com.sun.identity.wss.security.PasswordCredential;
+import com.sun.identity.wss.security.WSSUtils;
 
 /**
  * This class provides STS service configuration remotely so that the
@@ -102,8 +101,7 @@ public class STSRemoteConfig {
     
     public STSRemoteConfig() {
         
-         SSOToken adminToken = (SSOToken)AccessController.doPrivileged(
-                AdminTokenAction.getInstance());
+        SSOToken adminToken = WSSUtils.getAdminToken();
         Map attrMap = null;
         try {
             ServiceSchemaManager scm = new ServiceSchemaManager(

@@ -22,21 +22,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyght owner]"
  *
- * $Id: AgentProvider.java,v 1.37 2009-01-26 19:24:22 mallas Exp $
+ * $Id: AgentProvider.java,v 1.38 2009-02-28 00:59:43 mrudul_uchil Exp $
  *
  */
 
 package com.sun.identity.wss.provider.plugins; 
 
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.security.KeyStore;
 import java.util.Iterator;
-import java.util.List;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.Hashtable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
@@ -44,7 +39,6 @@ import java.util.Enumeration;
 
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.shared.debug.Debug;
-import com.iplanet.sso.SSOException;
 import com.sun.identity.wss.provider.ProviderConfig;
 import com.sun.identity.wss.provider.ProviderUtils;
 import com.sun.identity.wss.provider.TrustAuthorityConfig;

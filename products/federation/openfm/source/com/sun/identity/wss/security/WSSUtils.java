@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WSSUtils.java,v 1.14 2008-08-05 04:11:00 mallas Exp $
+ * $Id: WSSUtils.java,v 1.15 2009-02-28 00:59:43 mrudul_uchil Exp $
  *
  */
 
@@ -45,14 +45,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import java.security.KeyStore;
 import java.security.Principal;
 import java.security.AccessController;
 import java.security.cert.CertificateFactory;
-import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
-import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPConstants;
 import com.sun.org.apache.xml.internal.security.exceptions.XMLSecurityException;
 import com.sun.org.apache.xml.internal.security.keys.content.keyvalues.
@@ -60,7 +57,6 @@ import com.sun.org.apache.xml.internal.security.keys.content.keyvalues.
 import com.sun.org.apache.xml.internal.security.keys.content.keyvalues.
        RSAKeyValue;
 import com.sun.org.apache.xml.internal.security.utils.Constants;
-import com.sun.org.apache.xml.internal.security.Init;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.iplanet.sso.SSOException;
@@ -84,13 +80,11 @@ import com.sun.identity.saml.assertion.AttributeStatement;
 import com.sun.identity.saml.common.SAMLConstants;
 import com.sun.identity.saml.common.SAMLUtils;
 import com.sun.identity.xmlenc.XMLEncryptionManager;
-import com.sun.identity.xmlenc.EncryptionException;
 import com.sun.identity.shared.encode.Base64;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.dom.DOMSource;
-import java.security.SecureRandom;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.MimeHeaders;
@@ -631,8 +625,17 @@ public class WSSUtils {
         try {
             adminToken = (SSOToken) AccessController.doPrivileged(
                          AdminTokenAction.getInstance());
+            
             if(adminToken != null) {
-               SSOTokenManager.getInstance().refreshSession(adminToken);
+                if (!SSOTokenManager.getInstance().isValidToken(adminToken)) {
+                    if (debug.messageEnabled()) {
+                        debug.message("WSSUtils.getAdminToken: "
+                            + "AdminTokenAction returned "
+                            + "expired or invalid token, trying again...");
+                    }
+                    adminToken = (SSOToken) AccessController.doPrivileged(
+                            AdminTokenAction.getInstance());
+                }
             }
         } catch (Exception se) {
             debug.message("WSSUtils.getAdminToken::" +

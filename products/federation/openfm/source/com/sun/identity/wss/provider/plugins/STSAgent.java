@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: STSAgent.java,v 1.18 2008-10-20 19:05:59 arviranga Exp $
+ * $Id: STSAgent.java,v 1.19 2009-02-28 00:59:43 mrudul_uchil Exp $
  *
  */
 
@@ -45,8 +45,6 @@ import com.sun.identity.wss.provider.ProviderException;
 import com.sun.identity.wss.provider.ProviderUtils;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.AMIdentity;
-import com.sun.identity.idm.IdSearchResults;
-import com.sun.identity.idm.IdSearchControl;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdRepoException;
 

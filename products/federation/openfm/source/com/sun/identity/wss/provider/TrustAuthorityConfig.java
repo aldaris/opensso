@@ -22,18 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TrustAuthorityConfig.java,v 1.13 2008-09-08 21:50:14 mallas Exp $
+ * $Id: TrustAuthorityConfig.java,v 1.14 2009-02-28 00:59:42 mrudul_uchil Exp $
  *
  */
 
 package com.sun.identity.wss.provider;
 
 import java.security.AccessController;
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ArrayList;
 
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.common.SystemConfigurationUtil;
@@ -41,9 +37,6 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.security.AdminTokenAction;
-import com.sun.identity.shared.Constants;
-
-/* iPlanet-PUBLIC-CLASS */
 
 /**
  * This abstract class <code>TrustAuthorityConfig</code> represents the 
@@ -508,7 +501,18 @@ public abstract class TrustAuthorityConfig {
         try {
             adminToken = (SSOToken) AccessController.doPrivileged(
                     AdminTokenAction.getInstance());
-            SSOTokenManager.getInstance().refreshSession(adminToken);
+            
+            if(adminToken != null) {
+                if (!SSOTokenManager.getInstance().isValidToken(adminToken)) {
+                    if (ProviderUtils.debug.messageEnabled()) {
+                        ProviderUtils.debug.message("TrustAuthorityConfig." + 
+                            "getAdminToken:" + "AdminTokenAction returned " + 
+                            " expired or invalid token, trying again...");
+                    }
+                    adminToken = (SSOToken) AccessController.doPrivileged(
+                            AdminTokenAction.getInstance());
+                }
+            }
         } catch (SSOException se) {
             ProviderUtils.debug.message(
                 "TrustAuthorityConfig.getAdminToken: Trying second time..");

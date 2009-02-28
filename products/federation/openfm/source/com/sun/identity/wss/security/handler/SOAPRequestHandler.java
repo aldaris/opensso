@@ -22,10 +22,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SOAPRequestHandler.java,v 1.31 2009-01-24 01:31:25 mallas Exp $
+ * $Id: SOAPRequestHandler.java,v 1.32 2009-02-28 00:59:43 mrudul_uchil Exp $
  *
  */
-
 
 package com.sun.identity.wss.security.handler;
 
@@ -60,7 +59,6 @@ import com.iplanet.sso.SSOTokenManager;
 import com.iplanet.sso.SSOException;
 import com.sun.identity.common.SystemConfigurationUtil;
 import com.sun.identity.shared.debug.Debug;
-import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.Constants;
 import com.iplanet.am.util.SystemProperties;
 
@@ -403,8 +401,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             return soapMessage;
         }
 
-        SSOToken token = (SSOToken)AccessController.doPrivileged(
-                AdminTokenAction.getInstance());
+        SSOToken token = WSSUtils.getAdminToken();
         SecurityTokenFactory factory = SecurityTokenFactory.getInstance(token);
 
         String keyAlias = SystemConfigurationUtil.getProperty(
@@ -838,8 +835,7 @@ public class SOAPRequestHandler implements SOAPRequestHandlerInterface {
             debug.message("getSecurityToken: SecurityMechanism URI : " + uri);
         }
 
-        SSOToken token = (SSOToken)AccessController.doPrivileged(
-                AdminTokenAction.getInstance());
+        SSOToken token = WSSUtils.getAdminToken();
 
         SecurityTokenFactory factory = SecurityTokenFactory.getInstance(token);
         //remove

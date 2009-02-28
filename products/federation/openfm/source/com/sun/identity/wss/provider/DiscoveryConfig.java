@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DiscoveryConfig.java,v 1.5 2008-08-27 19:05:51 mrudul_uchil Exp $
+ * $Id: DiscoveryConfig.java,v 1.6 2009-02-28 00:59:42 mrudul_uchil Exp $
  *
  */
 package com.sun.identity.wss.provider;
@@ -30,11 +30,6 @@ package com.sun.identity.wss.provider;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
-import java.security.AccessController;
-
-import com.iplanet.sso.SSOToken;
-import com.iplanet.sso.SSOException;
-import com.sun.identity.security.AdminTokenAction;
 
 import com.sun.identity.liberty.ws.disco.DiscoveryClient;
 import com.sun.identity.liberty.ws.disco.DiscoveryException;
@@ -49,9 +44,6 @@ import com.sun.identity.liberty.ws.disco.ResourceID;
 import com.sun.identity.liberty.ws.disco.ServiceInstance;
 import com.sun.identity.liberty.ws.disco.QueryResponse;
 import com.sun.identity.liberty.ws.disco.common.DiscoConstants;
-import com.sun.identity.liberty.ws.security.SecurityTokenManager;
-import com.sun.identity.liberty.ws.security.SecurityTokenException;
-import com.sun.identity.liberty.ws.common.wsse.BinarySecurityToken;
 import com.sun.identity.liberty.ws.common.Status;
 import com.sun.identity.wss.security.SecurityMechanism;
 
