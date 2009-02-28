@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XACMLConstants.java,v 1.3 2008-06-25 05:48:09 qcheng Exp $
+ * $Id: XACMLConstants.java,v 1.4 2009-02-28 02:06:32 dillidorai Exp $
  *
  */
 
@@ -141,7 +141,7 @@ public class  XACMLConstants {
      * Constant for XMLSchema-instance URI
      */
     public static String XSI_NS_URI = 
-        "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance/\"";
+        "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"";
     
     /**
      * Constant for xsi name space delcaration
