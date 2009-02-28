@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PriviligeUtilsTest.java,v 1.1 2009-02-28 01:58:59 dillidorai Exp $
+ * $Id: PriviligeUtilsTest.java,v 1.2 2009-02-28 16:38:34 dillidorai Exp $
  */
 
 package com.sun.identity.policy;
@@ -42,6 +42,7 @@ import com.sun.identity.policy.interfaces.Condition;
 import com.sun.identity.policy.interfaces.Subject;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.sm.ServiceManager;
+import com.sun.identity.unittest.UnittestLog;
 import java.security.AccessController;
 import java.security.Principal;
 import java.util.Collections;
@@ -60,16 +61,6 @@ import org.testng.annotations.BeforeClass;
  */
 public class PriviligeUtilsTest {
     private static String POLICY_NAME1 = "PriviligeUtilsTestP1";
-    private static String POLICY_NAME2 = "PolicyEvaluatorTestP2";
-    private static String POLICY_NAME3 = "PolicyEvaluatorTestP3";
-    private static String POLICY_NAME4 = "PolicyEvaluatorTestP4";
-
-    private static String URL_RESOURCE1 = "http://sample.com/welcome";
-    private static String URL_RESOURCE2 = "http://www.sun.com:8080/private";
-    private static String URL_RESOURCE3 = "http://www.ibm.com:8080/private";
-    private static String URL_RESOURCE4 = "http://*.com:8080/private";
-    private static String TEST_GRP_NAME = "policyTestGroup";
-
 
     @BeforeClass
     public void setup() throws PolicyException, SSOException, IdRepoException {
@@ -101,8 +92,17 @@ public class PriviligeUtilsTest {
             AdminTokenAction.getInstance());
         PolicyManager pm = new PolicyManager(adminToken, "/");
         Policy policy = pm.getPolicy(POLICY_NAME1);
+        UnittestLog.logMessage(
+            "PriviligeUnitlsTest.testPriviligeEqualsPolicy():"
+            + "policy=" + policy.toXML());
         Privilige privilige = PriviligeUtils.policyToPrivilige(policy);
+        UnittestLog.logMessage(
+            "PriviligeUnitlsTest.testPriviligeEqualsPolicy():"
+            + "privilige=" + privilige);
         Policy policy1 = PriviligeUtils.priviligeToPolicy(privilige);
+        UnittestLog.logMessage(
+            "PriviligeUnitlsTest.testPriviligeEqualsPolicy():"
+            + "policy1=" + policy1.toXML());
         assert(policy1.equals(policy));
     }
     
@@ -167,12 +167,12 @@ public class PriviligeUtilsTest {
     
     private void deleteUsers(SSOToken adminToken, 
             String ... names)
-        throws IdRepoException, SSOException {
+            throws IdRepoException, SSOException {
         AMIdentityRepository amir = new AMIdentityRepository(
             adminToken, "/");
         Set identities = new HashSet();
         for (String name : names) {
-            String uuid = "id=name" + ",ou=user," + ServiceManager.getBaseDN();
+            String uuid = "id=" + name + ",ou=user," + ServiceManager.getBaseDN();
             identities.add(IdUtils.getIdentity(adminToken, uuid));
         }
         amir.deleteIdentities(identities);
