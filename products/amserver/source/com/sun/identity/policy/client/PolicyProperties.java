@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyProperties.java,v 1.7 2008-12-05 01:48:49 dillidorai Exp $
+ * $Id: PolicyProperties.java,v 1.8 2009-02-28 04:14:58 dillidorai Exp $
  *
  */
 
@@ -97,6 +97,20 @@ class PolicyProperties {
     private final static String PRE22_FALSE_VALUE = "deny";
 
     private final static String NOTIFICATION_ENABLED_DEFAULT= "false";
+
+    public static final String RESULTS_CACHE_SESSION_CAP 
+            = "com.sun.identity.policy.client.resultsCacheSessionCap";
+
+    public static int DEFAULT_RESULTS_CACHE_SESSION_CAP = 10000;
+
+    public static int resultsCacheSessionCap = DEFAULT_RESULTS_CACHE_SESSION_CAP;
+
+    public static final String RESULTS_CACHE_RESOURCE_CAP 
+            = "com.sun.identity.policy.client.resultsCacheResourceCap";
+
+    public static int DEFAULT_RESULTS_CACHE_RESOURCE_CAP = 20;
+
+    public static int resultsCacheResourceCap = DEFAULT_RESULTS_CACHE_RESOURCE_CAP;
 
     private final static String COLON = ":";
     private final static String PIPE = "|";
@@ -415,6 +429,72 @@ class PolicyProperties {
             }
         }
         
+        //initialize resultsCacheSessionCap
+        String resultsCacheSessionCapString 
+                = getSystemProperty(RESULTS_CACHE_SESSION_CAP, ignoreCase);
+        if (resultsCacheSessionCapString == null) {
+            if (debug.messageEnabled()) {
+                debug.message("PolicyProperties.constructor():"
+                        + RESULTS_CACHE_SESSION_CAP
+                        + " Property not defined "
+                        + ": defaulting to " + DEFAULT_RESULTS_CACHE_SESSION_CAP);
+            }
+            resultsCacheSessionCap = DEFAULT_RESULTS_CACHE_SESSION_CAP;
+        } else {
+            try {
+                resultsCacheSessionCap 
+                        = Integer.valueOf(resultsCacheSessionCapString).intValue();
+                if (debug.messageEnabled()) {
+                    debug.message(
+                            "PolicyProperties.constructor():"
+                            + RESULTS_CACHE_SESSION_CAP + " = "
+                            + resultsCacheSessionCap);
+                }
+            } catch (NumberFormatException nfe) {
+                if (debug.messageEnabled()) {
+                    debug.message(
+                            "PolicyProperties.constructor():"
+                            + RESULTS_CACHE_SESSION_CAP + " not a number"
+                            + ": defaulting to " 
+                            + DEFAULT_RESULTS_CACHE_SESSION_CAP);
+                }
+                resultsCacheSessionCap = DEFAULT_RESULTS_CACHE_SESSION_CAP;
+            }
+        }
+        
+        //initialize resultsCacheResourceCap
+        String resultsCacheResourceCapString 
+                = getSystemProperty(RESULTS_CACHE_RESOURCE_CAP, ignoreCase);
+        if (resultsCacheResourceCapString == null) {
+            if (debug.messageEnabled()) {
+                debug.message("PolicyProperties.constructor():"
+                        + RESULTS_CACHE_RESOURCE_CAP
+                        + " Property not defined "
+                        + ": defaulting to " + DEFAULT_RESULTS_CACHE_RESOURCE_CAP);
+            }
+            resultsCacheResourceCap = DEFAULT_RESULTS_CACHE_RESOURCE_CAP;
+        } else {
+            try {
+                resultsCacheResourceCap 
+                        = Integer.valueOf(resultsCacheResourceCapString).intValue();
+                if (debug.messageEnabled()) {
+                    debug.message(
+                            "PolicyProperties.constructor():"
+                            + RESULTS_CACHE_RESOURCE_CAP + " = "
+                            + resultsCacheResourceCap);
+                }
+            } catch (NumberFormatException nfe) {
+                if (debug.messageEnabled()) {
+                    debug.message(
+                            "PolicyProperties.constructor():"
+                            + RESULTS_CACHE_RESOURCE_CAP + " not a number"
+                            + ": defaulting to " 
+                            + DEFAULT_RESULTS_CACHE_RESOURCE_CAP);
+                }
+                resultsCacheResourceCap = DEFAULT_RESULTS_CACHE_RESOURCE_CAP;
+            }
+        }
+        
         if (debug.messageEnabled()) {
             debug.message("PolicyProperties():constructed");
         }
@@ -678,6 +758,7 @@ class PolicyProperties {
         String className = null;
         String delimiter = null;
         String wildCard = null;
+        String oneLevelWildCard = null;
         String caseSensitive = null;
         int count = 0;
         Map configMap = new HashMap(4);
@@ -724,6 +805,12 @@ class PolicyProperties {
                 configMap.put(PolicyConfig.RESOURCE_COMPARATOR_WILDCARD, 
                         wildCard);
             } else if (name.equalsIgnoreCase(
+                    PolicyConfig.RESOURCE_COMPARATOR_ONE_LEVEL_WILDCARD)) {
+                oneLevelWildCard = value;
+                configMap.put(
+                        PolicyConfig.RESOURCE_COMPARATOR_ONE_LEVEL_WILDCARD, 
+                        oneLevelWildCard);
+            } else if (name.equalsIgnoreCase(
                     PolicyConfig.RESOURCE_COMPARATOR_CASE_SENSITIVE)) {
                 caseSensitive = value;
                 configMap.put(PolicyConfig.RESOURCE_COMPARATOR_CASE_SENSITIVE, 
@@ -764,6 +851,14 @@ class PolicyProperties {
             }
             resourceComparators.put(serviceName, resourceComparator);
         }
+    }
+
+    int getResultsCacheSessionCap() {
+        return resultsCacheSessionCap;
+    }
+
+    int getResultsCacheResourceCap() {
+        return resultsCacheResourceCap;
     }
 
     /**

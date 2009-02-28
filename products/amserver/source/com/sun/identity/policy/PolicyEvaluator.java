@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.10 2009-01-28 05:35:01 ww203982 Exp $
+ * $Id: PolicyEvaluator.java,v 1.11 2009-02-28 04:14:58 dillidorai Exp $
  *
  */
 
@@ -113,12 +113,19 @@ public class PolicyEvaluator {
      */
     public static final String SUN_AM_POLICY_CONFIG = "sun.am.policyConfig";
 
-    public static final String RESULTS_CACHE_MAX_SIZE 
-            = "com.sun.identity.policy.resultsCacheMaxSize";
+    public static final String RESULTS_CACHE_SESSION_CAP 
+            = "com.sun.identity.policy.resultsCacheSessionCap";
 
-    public static int DEFAULT_RESULTS_CACHE_MAX_SIZE = 10000;
+    public static int DEFAULT_RESULTS_CACHE_SESSION_CAP = 1000;
 
-    public static int resultsCacheMaxSize = DEFAULT_RESULTS_CACHE_MAX_SIZE;
+    public static int resultsCacheSessionCap = DEFAULT_RESULTS_CACHE_SESSION_CAP;
+
+    public static final String RESULTS_CACHE_RESOURCE_CAP 
+            = "com.sun.identity.policy.resultsCacheResourceCap";
+
+    public static int DEFAULT_RESULTS_CACHE_RESOURCE_CAP = 100;
+
+    public static int resultsCacheResourceCap = DEFAULT_RESULTS_CACHE_RESOURCE_CAP;
 
     private static final Debug DEBUG = PolicyManager.debug;
     private static final boolean USE_POLICY_CACHE = true;
@@ -235,8 +242,6 @@ public class PolicyEvaluator {
      */
     private static Map resourceNamesMap = new HashMap(); 
 
-    private final static int RESOURCE_NAMES_CACHE_SIZE = 1000;
-
     /**
      * Constant key for passing organization name in the environment map during
      * policy evaluation. The value for the key would be a <code>Set</code> 
@@ -328,33 +333,62 @@ public class PolicyEvaluator {
         this.serviceTypeNames.add(serviceTypeName);
         resourceIndexManager = policyManager.getResourceIndexManager();
 
-        String resultsCacheMaxSizeString 
-                = SystemProperties.get(RESULTS_CACHE_MAX_SIZE);
-        if (resultsCacheMaxSizeString != null) {
+        String resultsCacheSessionCapString 
+                = SystemProperties.get(RESULTS_CACHE_SESSION_CAP);
+        if (resultsCacheSessionCapString != null) {
             try {
-                resultsCacheMaxSize 
-                        = Integer.parseInt(resultsCacheMaxSizeString);
+                resultsCacheSessionCap 
+                        = Integer.parseInt(resultsCacheSessionCapString);
             } catch (NumberFormatException nfe) {
                 if (PolicyManager.debug.warningEnabled()) {
                     PolicyManager.debug.warning("PolicyEvaluator:"
                             + "number format exception: "
-                            + "defaulting resultsCacheMaxSize to "
-                            + DEFAULT_RESULTS_CACHE_MAX_SIZE);
+                            + "defaulting resultsCacheSessionCap to "
+                            + DEFAULT_RESULTS_CACHE_SESSION_CAP);
                 }
-                resultsCacheMaxSize = DEFAULT_RESULTS_CACHE_MAX_SIZE;
+                resultsCacheSessionCap = DEFAULT_RESULTS_CACHE_SESSION_CAP;
             }
         } else {
             if (PolicyManager.debug.warningEnabled()) {
                 PolicyManager.debug.warning("PolicyEvaluator:"
-                        + "resultsCacheMaxSize not specified, "
-                        + "defaulting resultsCacheMaxSize to "
-                        + DEFAULT_RESULTS_CACHE_MAX_SIZE);
+                        + "resultsCacheSessionCap not specified, "
+                        + "defaulting resultsCacheSessionCap to "
+                        + DEFAULT_RESULTS_CACHE_SESSION_CAP);
             }
-            resultsCacheMaxSize = DEFAULT_RESULTS_CACHE_MAX_SIZE;
+            resultsCacheSessionCap = DEFAULT_RESULTS_CACHE_SESSION_CAP;
         }
         if (PolicyManager.debug.messageEnabled()) {
             PolicyManager.debug.message("PolicyEvaluator:"
-                    + "resultsCacheMaxSize=" + resultsCacheMaxSize);
+                    + "resultsCacheSessionCap=" + resultsCacheSessionCap);
+        }
+
+        String resultsCacheResourceCapString 
+                = SystemProperties.get(RESULTS_CACHE_RESOURCE_CAP);
+        if (resultsCacheResourceCapString != null) {
+            try {
+                resultsCacheResourceCap 
+                        = Integer.parseInt(resultsCacheResourceCapString);
+            } catch (NumberFormatException nfe) {
+                if (PolicyManager.debug.warningEnabled()) {
+                    PolicyManager.debug.warning("PolicyEvaluator:"
+                            + "number format exception: "
+                            + "defaulting resultsCacheResourceCap to "
+                            + DEFAULT_RESULTS_CACHE_RESOURCE_CAP);
+                }
+                resultsCacheResourceCap = DEFAULT_RESULTS_CACHE_RESOURCE_CAP;
+            }
+        } else {
+            if (PolicyManager.debug.warningEnabled()) {
+                PolicyManager.debug.warning("PolicyEvaluator:"
+                        + "resultsCacheResourceCap not specified, "
+                        + "defaulting resultsCacheResourceCap to "
+                        + DEFAULT_RESULTS_CACHE_RESOURCE_CAP);
+            }
+            resultsCacheResourceCap = DEFAULT_RESULTS_CACHE_RESOURCE_CAP;
+        }
+        if (PolicyManager.debug.messageEnabled()) {
+            PolicyManager.debug.message("PolicyEvaluator:"
+                    + "resultsCacheResourceCap=" + resultsCacheResourceCap);
         }
 
     }        
@@ -1252,13 +1286,13 @@ public class PolicyEvaluator {
         // policyResultsCache: 
         // serviceType -> resource -> sessionId -> scope -> result
         synchronized(policyResultsCache) {
-            // rscCache: resource -> sessionId -> scope -> result
-            Map rscCache = (HashMap)policyResultsCache.get(serviceTypeName);
+            // rscCACHE: resource -> sessionId -> scope -> result
+            Map rscCache = (Map)policyResultsCache.get(serviceTypeName);
             if (rscCache != null) {
-                // resultCache: sessionId -> scope -> resourceResult
-                Cache resultsCache = (Cache)rscCache.get(resourceName);
+                // resultCACHE: sessionId -> scope -> resourceResult
+                Map resultsCache = (Map)rscCache.get(resourceName);
                 if (resultsCache != null) {
-                    Map results = (HashMap)resultsCache.get(userSSOTokenIDStr);
+                    Map results = (Map)resultsCache.get(userSSOTokenIDStr);
                     if (results != null) {
                         resourceResult = (ResourceResult)results.get(scope);
                         if (resourceResult != null) {
@@ -1322,10 +1356,10 @@ public class PolicyEvaluator {
 
         if (ResourceResult.SUBTREE_SCOPE.equals(scope)
                 || ResourceResult.STRICT_SUBTREE_SCOPE.equals(scope)) {
-            Cache resourceNamesCache    
-                    = (Cache)resourceNamesMap.get(serviceTypeName);
+            Map resourceNamesCache    
+                    = (Map)resourceNamesMap.get(serviceTypeName);
             if (resourceNamesCache == null) {
-                resourceNamesCache = new Cache(RESOURCE_NAMES_CACHE_SIZE);
+                resourceNamesCache = new Cache(resultsCacheResourceCap);
                 resourceNamesMap.put(serviceTypeName, resourceNamesCache);
             }
             Set resourceNames = (Set)resourceNamesCache.get(resourceName);
@@ -1370,18 +1404,18 @@ public class PolicyEvaluator {
             // add the evaluation result to the result cache
             Map scopeElem = null;
             //cacheElem: sessionId -> scope -> resourceResult
-            Cache cacheElem = null;
+            Map cacheElem = null;
             Map rscElem = null;
             // serviceType -> resourceName -> sessionId -> scope -> resourceResult
             synchronized(policyResultsCache) { 
-                // rscElem: resourceName -> sessionId -> scope -> resourceResult
-                rscElem = (HashMap)policyResultsCache.get(
+                // rscElemCACHE: resourceName -> sessionId -> scope -> resourceResult
+                rscElem = (Map)policyResultsCache.get(
                                                 serviceTypeName);
                 if (rscElem != null) { // serviceType has been seen earlier
-                    //cacheElem: sessionId -> scope -> resourceResult
-                    cacheElem = (Cache)rscElem.get(resourceName);
+                    //CACHEElem: sessionId -> scope -> resourceResult
+                    cacheElem = (Map)rscElem.get(resourceName);
                     if (cacheElem != null) { // resource seen earlier
-                        scopeElem = (HashMap)cacheElem.get(
+                        scopeElem = (Map)cacheElem.get(
                                                 userSSOTokenIDStr);
                         if (scopeElem == null) { // seeing sessionId first time
                             scopeElem = new HashMap();
@@ -1395,13 +1429,13 @@ public class PolicyEvaluator {
                                 + ", sessionId=" + userSSOTokenIDStr
                                 + ", scope=" + scope);
                         }
-                        cacheElem = new Cache(resultsCacheMaxSize); 
+                        cacheElem = new Cache(resultsCacheSessionCap); 
                         scopeElem = new HashMap();
                     }
                 } else { // seeing service for first time
-                    // rscElem: resourceName -> sessionId -> scope -> resourceResult
-                    rscElem = new HashMap();
-                    //cacheElem: sessionId -> scope -> resourceResult
+                    // rscElemCACHE: resourceName -> sessionId -> scope -> resourceResult
+                    rscElem = new Cache(resultsCacheResourceCap);
+                    //CACHEElem: sessionId -> scope -> resourceResult
                     if (PolicyManager.debug.messageEnabled()) {
                             PolicyManager.debug.message(
                                 "PolicyEvaluator.getResourceResultTree()"
@@ -1411,7 +1445,7 @@ public class PolicyEvaluator {
                                 + ", scope=" + scope
                                 + ", serviceType=" + serviceTypeName);
                     }
-                    cacheElem = new Cache(resultsCacheMaxSize);
+                    cacheElem = new Cache(resultsCacheSessionCap);
                     scopeElem = new HashMap();
                 }
                 scopeElem.put(scope, resourceResult);

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceResultCache.java,v 1.13 2008-12-04 00:38:52 dillidorai Exp $
+ * $Id: ResourceResultCache.java,v 1.14 2009-02-28 04:14:58 dillidorai Exp $
  *
  */
 
@@ -33,6 +33,7 @@ import com.sun.identity.shared.debug.Debug;
 import com.iplanet.dpro.session.Session;
 import com.iplanet.dpro.session.SessionException;
 import com.iplanet.dpro.session.SessionID;
+import com.iplanet.am.util.Cache;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.iplanet.sso.SSOException;
@@ -88,9 +89,9 @@ class ResourceResultCache implements SSOTokenListener {
     private PolicyProperties policyProperties;
     private Set remotePolicyListeners 
             = Collections.synchronizedSet(new HashSet(10));
-    private Map        resultCache 
-            = new HashMap(10); //serviceName > ...
-            //= Collections.synchronizedMap(new HashMap(4));
+
+    //serviceName -> resourceName -> sessionId -> scope -> result
+    private Map resultCache = new HashMap(10); 
 
     private PolicyNotificationHandler notificationHandler;
     private Set tokenRegistry = 
@@ -390,35 +391,40 @@ class ResourceResultCache implements SSOTokenListener {
         }
 
         Map resourceTokenIDsMap = null;
+        // resultCache -> serviceName -> resourceName -> sessionId -> scope -> result
         synchronized(resultCache) {
+            // resourceName -> sessionId -> scope -> result
             resourceTokenIDsMap = (Map)resultCache.get(serviceName);
             if (resourceTokenIDsMap == null) {
+                // changed to fix 4295 Policy cache causes frequent 
+                // full gc or out of memory issues
                 resourceTokenIDsMap 
-                        = new HashMap();
-                        //= Collections.synchronizedMap(new HashMap());
+                        = new Cache(policyProperties.getResultsCacheResourceCap());
                 resultCache.put(serviceName, resourceTokenIDsMap);
             }
         }
 
         Map tokenIDScopesMap = null;
+        // resourceTokenIDsMap -> resourceName -> sessionId -> scope -> result
         synchronized(resourceTokenIDsMap) {
+            // sessionId -> scope -> result
             tokenIDScopesMap = (Map)resourceTokenIDsMap.get(resourceName);
             if (tokenIDScopesMap == null) {
-                tokenIDScopesMap 
-                        =  new HashMap();
-                        //= Collections.synchronizedMap( new HashMap());
+                // changed to fix 4295 Policy cache causes frequent full 
+                // gc or out of memory issues
+                tokenIDScopesMap  
+                        = new Cache(policyProperties.getResultsCacheSessionCap());
                 resourceTokenIDsMap.put(resourceName, tokenIDScopesMap);
             }
         }
 
         Map scopeResultsMap= null;
         String tokenID =  token.getTokenID().toString();
+        // tokenIDScopesMap -> sessionId -> scope -> result
         synchronized(tokenIDScopesMap) {
             scopeResultsMap = (Map)tokenIDScopesMap.get(tokenID);
             if (scopeResultsMap == null) {
-                scopeResultsMap 
-                        = new HashMap();
-                        //= Collections.synchronizedMap(new HashMap());
+                scopeResultsMap = new HashMap();
                 tokenIDScopesMap.put(tokenID, scopeResultsMap);
                 if (!tokenRegistry.contains(tokenID)) {
                     token.addSSOTokenListener(this);
@@ -428,6 +434,8 @@ class ResourceResultCache implements SSOTokenListener {
         }
 
         Object[] results = null;
+        boolean fetchResultsFromServer = false;
+        // scopeResultsMap -> scope -> result
         synchronized(scopeResultsMap) {
             results = (Object[])scopeResultsMap.get(scope);
             if ( results == null) {
@@ -437,7 +445,6 @@ class ResourceResultCache implements SSOTokenListener {
                 scopeResultsMap.put(scope, results);
             }
 
-            boolean fetchResultsFromServer = false;
             if ( !useCache ) {
                 if (debug.messageEnabled()) {
                     debug.message("ResourceResultCache.getResourceResults():"
@@ -501,34 +508,37 @@ class ResourceResultCache implements SSOTokenListener {
 
             }
 
-            if (fetchResultsFromServer) {
-                resourceResults = getResultsFromServer(appToken, 
-                        serviceName, token, resourceName, scope, 
-                        actionNames, env);
-                results[0] = resourceResults;
+        }
 
-                if (env != null) {
-                    env = PolicyUtils.cloneMap(env);
-                }
-                results[1] = env;
+        // changed to fix 4205 Policy client code has bottleneck when processing notificati 
+        if (fetchResultsFromServer) {
+            resourceResults = getResultsFromServer(appToken, 
+                    serviceName, token, resourceName, scope, 
+                    actionNames, env);
+            results[0] = resourceResults;
 
-                results[2] 
-                        = new Long(System.currentTimeMillis() + cacheTtl);
+            if (env != null) {
+                env = PolicyUtils.cloneMap(env);
+            }
+            results[1] = env;
 
-                if (actionNames != null) {
-                    Set actionNames1 = actionNames;
-                    actionNames = new HashSet();
-                    actionNames.addAll(actionNames1);
-                }
-                results[3] = actionNames;
-            } else {
-                if (debug.messageEnabled()) {
-                    debug.message("ResourceResultCache.getResourceResults():"
-                            + "would not contact server, "
-                            + " would use results from  cache ");
-                }
+            results[2] 
+                    = new Long(System.currentTimeMillis() + cacheTtl);
+
+            if (actionNames != null) {
+                Set actionNames1 = actionNames;
+                actionNames = new HashSet();
+                actionNames.addAll(actionNames1);
+            }
+            results[3] = actionNames;
+        } else {
+            if (debug.messageEnabled()) {
+                debug.message("ResourceResultCache.getResourceResults():"
+                        + "would not contact server, "
+                        + " would use results from  cache ");
             }
         }
+
 
         resourceResults = (Set)(results[0]);
         if (debug.messageEnabled()) {
@@ -727,6 +737,7 @@ class ResourceResultCache implements SSOTokenListener {
                     + ":resourceResultResourceName="
                     + resourceResult.getResourceName());
         }
+
         ResourceMatch  result = resourceComparator.compare(resourceName,
                 resourceResult.getResourceName(), 
                 true); //wild card compare
@@ -1539,7 +1550,6 @@ class ResourceResultCache implements SSOTokenListener {
         }
         return hasAdvices;
     }
-
-
+    
 }
 

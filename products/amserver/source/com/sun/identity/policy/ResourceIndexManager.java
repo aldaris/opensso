@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceIndexManager.java,v 1.3 2008-06-25 05:43:45 qcheng Exp $
+ * $Id: ResourceIndexManager.java,v 1.4 2009-02-28 04:14:58 dillidorai Exp $
  *
  */
 
@@ -40,6 +40,7 @@ import java.util.Collections;
 import org.w3c.dom.*;
 import com.sun.identity.shared.xml.XMLUtils;
 import com.sun.identity.shared.debug.Debug;
+import com.iplanet.am.util.Cache;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
 import com.sun.identity.policy.interfaces.Referral;
@@ -72,6 +73,8 @@ class ResourceIndexManager {
     static final String RESOURCES = "Resources";
     static final String REFERENCE = "Reference";
     static final String POLICY_NAME = "PolicyName";
+
+    static final int POLICY_NAMES_CACHE_CAP = 10000;
 
     private Map resourceIndices = Collections.synchronizedMap(new HashMap());
     private ResourceManager resourceManager;
@@ -592,9 +595,9 @@ class ResourceIndexManager {
         private ResourceManager resourceManager;
         private Set topLevelEntries = new HashSet();
         private Map policyNamesCache 
-                = Collections.synchronizedMap(new HashMap());
+                = Collections.synchronizedMap(new Cache(POLICY_NAMES_CACHE_CAP));
         private Map policyNamesCacheFp 
-                = Collections.synchronizedMap(new HashMap());
+                = Collections.synchronizedMap(new Cache(POLICY_NAMES_CACHE_CAP));
 
         /**
          * Constructs ResourceIndex
