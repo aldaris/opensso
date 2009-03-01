@@ -23,7 +23,7 @@
  * 
  * "Portions Copyrighted 2008 Miguel Angel Alonso Negro <miguelangel.alonso@gmail.com>"
  *
- * $Id: OpenSSOObjectDefinitionSource.java,v 1.1 2009-02-26 18:18:53 wstrange Exp $
+ * $Id: OpenSSOObjectDefinitionSource.java,v 1.2 2009-03-01 19:41:57 wstrange Exp $
  *
  */
 package com.sun.identity.provider.springsecurity;
@@ -121,13 +121,10 @@ public class OpenSSOObjectDefinitionSource implements FilterInvocationDefinition
                 debug.message("action decisions =" + actionDecisions);
             }
 
+            // If OpenSSO has a NULL policy decision we return
+            // and Empty list. This results in a Spring "ABSTAIN" vote
             if (actionDecisions == null || actionDecisions.isEmpty()) {
-                // changed by warren to DENY that which is not allowed
-                //return null;
-                debug.message("Defaulting to DENY on null policy decision");
                 List configAttributes = new ArrayList();
-                //configAttributes.add( new SecurityConfig(OpenSSOVoter.OPENSSO_DENY) );
-                // see if we need to actually return anything in the list.
                 return new ConfigAttributeDefinition(configAttributes);
             } else {
                 ActionDecision actionDecision = (ActionDecision) actionDecisions.values().iterator().next();
