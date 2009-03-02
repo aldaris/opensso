@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPACSUtils.java,v 1.34 2009-02-24 19:47:00 huacui Exp $
+ * $Id: SPACSUtils.java,v 1.35 2009-03-02 19:51:21 huacui Exp $
  *
  */
 
@@ -111,7 +111,10 @@ import com.sun.identity.plugin.session.SessionProvider;
 import java.security.PrivateKey;
 
 /**
- * This class is the work engine for SP Assertion Consumer Service.
+ * This class is used by a service provider (SP) to process the response from  
+ * an identity provider for the SP's Assertion Consumer Service.
+ *
+ * @supported.api
  */
 public class SPACSUtils {
 
@@ -1847,22 +1850,25 @@ public class SPACSUtils {
      * Processes response from Identity Provider to Fedlet (SP).
      * This will do all required protocol processing, include signature,
      * issuer and audience validation etc. A map containing processing
-     * result will be returned. 
-     * Here is a list of keys and values for the returned map:
+     * result will be returned. <br>
+     * Here is a list of keys and values for the returned map: <br>
      * SAML2Constants.ATTRIBUTE_MAP -- Attribute map containing all attributes
      *                                 passed down from IDP inside the 
-     *                                 Assertion. Value is a java.util.Map
-     *                                 whose keys are attribute name,
-     *                                 values as a List of string values for
-     *                                 the attribute. <br>
-     * SAML2Constants.RELAY_STATE -- Relay state, value is string <br>
-     * SAML2Constants.IDPENTITYID -- IDP entity ID, value is string<br>
+     *                                 Assertion. The value is a 
+     *                                 <code>java.util.Map</code> whose keys 
+     *                                 are attribute names and values are 
+     *                                 <code>java.util.Set</code> of string 
+     *                                 values for the attributes. <br>
+     * SAML2Constants.RELAY_STATE -- Relay state, value is a string <br>
+     * SAML2Constants.IDPENTITYID -- IDP entity ID, value is a string<br>
      * SAML2Constants.RESPONSE    -- Response object, value is an instance of 
      *                               com.sun.identity.saml2.protocol.Response
      * SAML2Constants.ASSERTION   -- Assertion object, value is an instance of 
      *                               com.sun.identity.saml2.assertion.Assertion
      * SAML2Constants.SUBJECT     -- Subject object, value is an instance of 
      *                               com.sun.identity.saml2.assertion.Subject
+     * SAML2Constants.NAMEID      -- NameID object, value is an instance of 
+     *                               com.sun.identity.saml2.assertion.NameID
      *
      * @param request HTTP Servlet request
      * @param response HTTP Servlet response.
@@ -1872,6 +1878,8 @@ public class SPACSUtils {
      * @throws IOException if the processing failed due to IO error.
      * @throws SessionException if the processing failed due to session error.
      * @throws ServletException if the processing failed due to request error.
+     *
+     * @supported.api
      */  
     public static Map processResponseForFedlet (HttpServletRequest request,
         HttpServletResponse response) throws SAML2Exception, IOException,
