@@ -5,14 +5,45 @@
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:ice="http://www.icesoft.com/icefaces/component"
     xmlns:o="http://opensso.dev.java.net">
-    <ice:panelCollapsible
-        expanded="#{usersSubjectChooserBean.expanded}">
-        <f:facet name="header">
-            <ice:panelGroup>
-                <ice:outputText value="Users"/>
+    <ice:panelGroup styleClass="policy-create-subjects">
+        <ice:panelCollapsible
+            expanded="#{usersSubjectChooserBean.expanded}">
+            <f:facet name="header">
+                <ice:panelGroup>
+                    <ice:outputText value="Users"/>
+                </ice:panelGroup>
+            </f:facet>
+            <ice:panelGroup styleClass="subject-chooser">
+                <o:subjectchooser
+                    subjectChooserHandler="#{usersSubjectChooserHandler}"
+                    subjectChooserBean="#{usersSubjectChooserBean}"/>
             </ice:panelGroup>
-        </f:facet>
-        <o:subjectchooser
-            subjectChooserHandler="#{usersSubjectChooserHandler}"/>
-    </ice:panelCollapsible>
+        </ice:panelCollapsible>
+        <ice:panelCollapsible
+            expanded="#{rolesSubjectChooserBean.expanded}">
+            <f:facet name="header">
+                <ice:panelGroup>
+                    <ice:outputText value="Roles"/>
+                </ice:panelGroup>
+            </f:facet>
+            <ice:panelGroup styleClass="subject-chooser">
+                <o:subjectchooser
+                    subjectChooserHandler="#{rolesSubjectChooserHandler}"
+                    subjectChooserBean="#{rolesSubjectChooserBean}"/>
+            </ice:panelGroup>
+        </ice:panelCollapsible>
+        <ice:panelCollapsible
+            expanded="#{groupsSubjectChooserBean.expanded}">
+            <f:facet name="header">
+                <ice:panelGroup>
+                    <ice:outputText value="Groups"/>
+                </ice:panelGroup>
+            </f:facet>
+            <ice:panelGroup styleClass="subject-chooser">
+                <o:subjectchooser
+                    subjectChooserHandler="#{groupsSubjectChooserHandler}"
+                    subjectChooserBean="#{groupsSubjectChooserBean}"/>
+            </ice:panelGroup>
+        </ice:panelCollapsible>
+    </ice:panelGroup>
 </span>

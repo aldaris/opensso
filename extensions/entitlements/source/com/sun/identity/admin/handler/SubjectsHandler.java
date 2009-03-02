@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import com.icesoft.faces.component.ext.RowSelectorEvent;
+import javax.faces.event.ValueChangeEvent;
 
 public class SubjectsHandler implements Serializable {
 
@@ -47,5 +48,10 @@ public class SubjectsHandler implements Serializable {
                 break;
             }
         }
+    }
+
+    public void filterListener(ValueChangeEvent event) {
+        String filter = (String)event.getNewValue();
+        subjectsBean.setFilter(filter);
     }
 }

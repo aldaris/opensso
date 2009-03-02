@@ -142,7 +142,7 @@ div.button-wrapper a.button img.left {
 }
 
 #menu {
-    margin-left: 1px;
+    margin-left: 8px;
 }
 
 #panel {
@@ -193,6 +193,8 @@ div.button-wrapper a.button img.left {
 #menu-separator {
     width: 100%;
     border-top: 1px solid #DDDDDD;
+    position: relative;
+    top: -1px;
 }
 
 #connection-status {
@@ -204,6 +206,9 @@ div.button-wrapper a.button img.left {
 
 .subject-chooser-subject {
     z-index: 10;
+}
+.policy-create-subjects {
+    margin-left: 16px;
 }
 
 .subject-chooser-button-group {
@@ -228,9 +233,12 @@ div.button-wrapper a.button img.left {
     margin-bottom: 8px;
 }
 
-.sub-collapsible {
-    background: #ffffff;
+.subject-chooser {
+    border: 1px solid #dddddd;
+    padding: 8px;
+    margin: 16px;
 }
+
 /*
 #homeTabContent {
     width: 100%;

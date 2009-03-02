@@ -21,6 +21,10 @@
         <managed-bean-name>usersSubjectChooserBean</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.SubjectChooserBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>expanded</property-name>
+            <value>#{true}</value>
+        </managed-property>
     </managed-bean>
 
     <managed-bean>
@@ -30,6 +34,46 @@
         <managed-property>
             <property-name>subjectChooserBean</property-name>
             <value>#{usersSubjectChooserBean}</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>rolesSubjectChooserBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.SubjectChooserBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>expanded</property-name>
+            <value>#{false}</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>rolesSubjectChooserHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.SubjectChooserHandler</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>subjectChooserBean</property-name>
+            <value>#{rolesSubjectChooserBean}</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>groupsSubjectChooserBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.SubjectChooserBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>expanded</property-name>
+            <value>#{false}</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>groupsSubjectChooserHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.SubjectChooserHandler</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>subjectChooserBean</property-name>
+            <value>#{groupsSubjectChooserBean}</value>
         </managed-property>
     </managed-bean>
 

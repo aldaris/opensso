@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class SubjectChooserBean implements Serializable {
     private SubjectsBean availableSubjectsBean = new SubjectsBean();
     private SubjectsBean selectedSubjectsBean = new SubjectsBean();
-    private boolean expanded = true;
+    private boolean expanded = false;
 
     public SubjectsBean getAvailableSubjectsBean() {
         return availableSubjectsBean;

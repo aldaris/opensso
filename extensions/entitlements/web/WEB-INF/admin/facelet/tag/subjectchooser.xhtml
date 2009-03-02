@@ -8,15 +8,25 @@
         <ice:panelGroup
             dropTarget="true"
             dropListener="#{subjectChooserHandler.availableSubjectsHandler.dropListener}"
-            dropValue="#{subjectChooserHandler.subjectChooserBean.selectedSubjectsBean}">
+            dropValue="#{subjectChooserBean.selectedSubjectsBean}">
             <ice:dataTable
-                value="#{subjectChooserHandler.subjectChooserBean.availableSubjectsBean.subjectBeans}"
+                value="#{subjectChooserBean.availableSubjectsBean.filteredSubjectBeans}"
                 var="availableBean"
                 scrollable="true"
                 scrollHeight="200px">
+                <f:facet name="header">
+                    <ice:outputText value="Available"/>
+                </f:facet>
                 <ice:column>
                     <f:facet name="header">
-                        <ice:outputText value="Available"/>
+                        <ice:panelGrid columns="2">
+                            <ice:graphicImage value="../image/search.png"/>
+                            <ice:inputText
+                                onkeyup="typeSubmit(this);"
+                                partialSubmit="true"
+                                value="#{subjectChooserBean.availableSubjectsBean.filter}"
+                                valueChangeListener="#{subjectChooserHandler.availableSubjectsHandler.filterListener}"/>
+                        </ice:panelGrid>
                     </f:facet>
                     <ice:rowSelector
                         value="#{availableBean.selected}"
@@ -34,8 +44,8 @@
                                     value="../image/user.png"/>
                             </ice:panelGroup>
                             <ice:panelGroup>
-                                <ice:outputText value="#{availableBean.name}"/>
-                            </ice:panelGroup>
+                                <ice:outputText
+                                value="#{availableBean.name}"/>                            </ice:panelGroup>
                         </ice:panelGrid>
                     </ice:panelGroup>
                 </ice:column>
@@ -109,15 +119,25 @@
         <ice:panelGroup
             dropTarget="true"
             dropListener="#{subjectChooserHandler.selectedSubjectsHandler.dropListener}"
-            dropValue="#{subjectChooserHandler.subjectChooserBean.availableSubjectsBean}">
+            dropValue="#{subjectChooserBean.availableSubjectsBean}">
             <ice:dataTable
-                value="#{subjectChooserHandler.subjectChooserBean.selectedSubjectsBean.subjectBeans}"
+                value="#{subjectChooserBean.selectedSubjectsBean.filteredSubjectBeans}"
                 var="selectedBean"
                 scrollable="true"
                 scrollHeight="200px">
+                <f:facet name="header">
+                    <ice:outputText value="Selected"/>
+                </f:facet>
                 <ice:column>
                     <f:facet name="header">
-                        <ice:outputText value="Selected"/>
+                        <ice:panelGrid columns="2">
+                            <ice:graphicImage value="../image/search.png"/>
+                            <ice:inputText
+                                onkeyup="typeSubmit(this);"
+                                partialSubmit="true"
+                                value="#{subjectChooserBean.selectedSubjectsBean.filter}"
+                                valueChangeListener="#{subjectChooserHandler.selectedSubjectsHandler.filterListener}"/>
+                        </ice:panelGrid>
                     </f:facet>
                     <ice:rowSelector
                         value="#{selectedBean.selected}"
