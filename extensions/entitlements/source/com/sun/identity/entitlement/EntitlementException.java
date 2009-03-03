@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementException.java,v 1.4 2009-03-03 20:40:13 veiming Exp $
+ * $Id: EntitlementException.java,v 1.5 2009-03-03 21:53:53 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -63,6 +63,18 @@ public class EntitlementException extends Exception {
     public EntitlementException(int errorCode, Object[] params) {
         this.errorCode = errorCode;
         this.params = params;
+        this.message = getLocalizedMessage(Locale.getDefault());
+    }
+
+    /**
+     * Creates an entitlement exception.
+     *
+     * @param errorCode Error code.
+     * @param cause Root cause.
+     */
+    public EntitlementException(int errorCode, Throwable cause) {
+        super(cause);
+        this.errorCode = errorCode;
         this.message = getLocalizedMessage(Locale.getDefault());
     }
 
@@ -121,6 +133,5 @@ public class EntitlementException extends Exception {
         return (params != null) ? MessageFormat.format(msg, params) :
             msg;
     }
-
 }
 
