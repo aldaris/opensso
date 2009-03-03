@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PriviligeUtilsTest.java,v 1.2 2009-02-28 16:38:34 dillidorai Exp $
+ * $Id: PriviligeUtilsTest.java,v 1.3 2009-03-03 01:52:15 dillidorai Exp $
  */
 
 package com.sun.identity.policy;
@@ -123,13 +123,12 @@ public class PriviligeUtilsTest {
     
     private Subject createUsersSubject(
             PolicyManager pm, 
-            String subjectName,
             String ... userNames) throws PolicyException {
         SubjectTypeManager mgr = pm.getSubjectTypeManager();
         Subject subject = mgr.getSubject("AMIdentitySubject");
         Set<String> values = new HashSet<String>();
         for (String value : userNames) {
-            String uuid = "id=name" + ",ou=user," + ServiceManager.getBaseDN();
+            String uuid = "id=" + value + ",ou=user," + ServiceManager.getBaseDN();
             values.add(uuid);
         }
         subject.setValues(values);
