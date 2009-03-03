@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SwekeyWebServiceClient.java,v 1.1 2009-03-03 22:32:28 superpat7 Exp $
+ * $Id: SwekeyWebServiceClient.java,v 1.2 2009-03-03 22:48:07 superpat7 Exp $
  *
  */
 package com.sun.identity.authentication.modules.swekey;
@@ -37,11 +37,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class SwekeyWebServiceClient {
-
-    private static Debug debug = SwekeyLoginModule.debug;
+    private static final Debug debug = SwekeyLoginModule.debug;
     private static String swekeyRndTokenServer = "http://auth-rnd-gen.musbe.net";
     private static String swekeyCheckServer = "http://auth-check.musbe.net";
     private static String swekeyLastError;
+
+    /**
+     * Private constructor - this is a singleton
+     */
+    private SwekeyWebServiceClient() {
+    }
 
     /**
      *  Return the last error.
@@ -54,7 +59,7 @@ public class SwekeyWebServiceClient {
     }
 
     private static String getResponse(String urlString) {
-        String response = "";
+        StringBuffer response = new StringBuffer();
         BufferedReader in = null;
         HttpURLConnection urlConn = null;
 
@@ -71,11 +76,11 @@ public class SwekeyWebServiceClient {
                     urlConn.getInputStream()));
             String inputLine;
             while ((inputLine = in.readLine()) != null) {
-                response += inputLine;
+                response.append(inputLine);
             }
             System.out.println("Response: " + response);
             if (urlConn.getResponseCode() != 200) {
-                swekeyLastError = response;
+                swekeyLastError = response.toString();
                 return "";
             }
 
@@ -83,10 +88,10 @@ public class SwekeyWebServiceClient {
                 debug.message("SwekeyWebServiceClient: response = " + response);
             }
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             try {
                 swekeyLastError = Integer.toString(urlConn.getResponseCode());
-            } catch (Exception e2) {
+            } catch (IOException e2) {
                 swekeyLastError = e2.getMessage();
             }
             Logger.getLogger(
@@ -104,7 +109,7 @@ public class SwekeyWebServiceClient {
             }
         }
 
-        return response;
+        return response.toString();
     }
 
     /**

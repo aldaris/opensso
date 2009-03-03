@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SwekeyLoginModule.java,v 1.1 2009-03-03 22:32:27 superpat7 Exp $
+ * $Id: SwekeyLoginModule.java,v 1.2 2009-03-03 22:48:07 superpat7 Exp $
  *
  */
 
@@ -49,7 +49,6 @@ import javax.security.auth.callback.*;
  * @author Pat Patterson
  */
 public class SwekeyLoginModule extends AMLoginModule {
-    private int clientId = 1;
     private String swekeyIdAttrName = "employeeNumber";
 
     private java.security.Principal userPrincipal = null;
@@ -59,7 +58,7 @@ public class SwekeyLoginModule extends AMLoginModule {
     private String otp = null;
     private boolean verified = false;
 
-    protected static Debug debug = Debug.getInstance("SwekeyLoginModule");
+    protected static final Debug debug = Debug.getInstance("SwekeyLoginModule");
 
     /**
      * initialize this object
@@ -129,7 +128,7 @@ public class SwekeyLoginModule extends AMLoginModule {
             ctrl.setReturnAttributes(attributeNames);
 
             // Now do the search
-            IdSearchResults results = null;
+            IdSearchResults results;
             try {
                 results = idrepo.searchIdentities(IdType.USER, userName, ctrl);
             } catch (IdRepoException ex) {
@@ -169,12 +168,7 @@ public class SwekeyLoginModule extends AMLoginModule {
             }
 
             // Now check that OTP is valid
-            verified = false;
-            try {
-                verified = SwekeyWebServiceClient.checkOtp(id, rt, otp);
-            } catch(Exception ex) {
-                throw new AuthLoginException("Exception receiving response", ex);
-            }
+            verified = SwekeyWebServiceClient.checkOtp(id, rt, otp);
 
             if(! verified) {
                 throw new AuthLoginException("Login failure");
