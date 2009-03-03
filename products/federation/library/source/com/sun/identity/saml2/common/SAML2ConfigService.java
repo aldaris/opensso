@@ -22,12 +22,22 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2ConfigService.java,v 1.4 2008-06-25 05:47:45 qcheng Exp $
+ * $Id: SAML2ConfigService.java,v 1.5 2009-03-03 01:52:39 qcheng Exp $
  *
  */
 
 
 package com.sun.identity.saml2.common; 
+
+import com.sun.identity.plugin.configuration.ConfigurationActionEvent;
+import com.sun.identity.plugin.configuration.ConfigurationException;
+import com.sun.identity.plugin.configuration.ConfigurationInstance;
+import com.sun.identity.plugin.configuration.ConfigurationListener;
+import com.sun.identity.plugin.configuration.ConfigurationManager;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.configuration.SystemPropertiesManager;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.locale.Locale;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,15 +46,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-import com.sun.identity.shared.debug.Debug;
-import com.sun.identity.shared.locale.Locale;
-
-import com.sun.identity.plugin.configuration.ConfigurationActionEvent;
-import com.sun.identity.plugin.configuration.ConfigurationException;
-import com.sun.identity.plugin.configuration.ConfigurationInstance;
-import com.sun.identity.plugin.configuration.ConfigurationListener;
-import com.sun.identity.plugin.configuration.ConfigurationManager;
-
 
 /**
  * This class provides methods to retrieve SAML2 configuration
@@ -57,7 +58,7 @@ public class SAML2ConfigService implements ConfigurationListener {
     static ConfigurationInstance ci = null;
     static final String SAML2_FAILOVER_ATTR = "failOverEnabled"; 
     static final String SAML2_BUFFER_LENGTH = "bufferLength"; 
-
+    static final String DEFAULT_ERROR_URL = "/saml2/jsp/saml2error.jsp";
     private static Map attributes = new HashMap();
 
     static {
@@ -95,12 +96,13 @@ public class SAML2ConfigService implements ConfigurationListener {
     /**
      * This method reads values from service schema.
      */
-    static private void setValues() {
+    static private synchronized void setValues() {
         String classMethod = "SAML2ConfigService.setValues:";
         
         if (ci == null) {
             attributes.put(SAML2_FAILOVER_ATTR, "false"); 
             attributes.put(SAML2_BUFFER_LENGTH, "2048"); 
+            attributes.put(SAML2Constants.SAML2_ERROR_URL, DEFAULT_ERROR_URL);
         } else {
             Map attrMap = null; 
             try {
@@ -109,21 +111,35 @@ public class SAML2ConfigService implements ConfigurationListener {
                debug.error(classMethod, ce);
                return;
             }
-            attributes.clear();
+            Map newAttributes = new HashMap();
             if (attrMap != null) {
                 Set values = (Set)attrMap.get(SAML2_FAILOVER_ATTR);
                 String value = "false" ; 
                 if ((values != null) && (values.size() == 1)) {
                      value = (String) values.iterator().next(); 
                 } 
-                attributes.put(SAML2_FAILOVER_ATTR, value); 
+                newAttributes.put(SAML2_FAILOVER_ATTR, value); 
                 values = (Set)attrMap.get(SAML2_BUFFER_LENGTH);
                 value = "2048" ; 
                 if ((values != null) && (values.size() == 1)) {
                      value = (String) values.iterator().next(); 
                 } 
-                attributes.put(SAML2_BUFFER_LENGTH, value); 
+                newAttributes.put(SAML2_BUFFER_LENGTH, value); 
+                values = (Set)attrMap.get(SAML2Constants.SAML2_ERROR_URL);
+                value = DEFAULT_ERROR_URL;
+                if ((values != null) && (values.size() == 1)) {
+                     value = (String) values.iterator().next(); 
+                } 
+                newAttributes.put(SAML2Constants.SAML2_ERROR_URL, value); 
             }
+            attributes = newAttributes;
+        } 
+        if (debug.messageEnabled()) {
+            debug.message("SAML2ConfigService.setValues : "
+                + "Failover attr = " + attributes.get(SAML2_FAILOVER_ATTR)
+                + "buffer length = " + attributes.get(SAML2_BUFFER_LENGTH)
+                + "Error URL = " 
+                + attributes.get(SAML2Constants.SAML2_ERROR_URL));
         }
     }
     
@@ -135,7 +151,7 @@ public class SAML2ConfigService implements ConfigurationListener {
      *      input attibuteName is null, or the attributeName can not be
      *      found in the service schema.
      */
-    public static synchronized Object getAttribute(String attributeName) {
+    public static Object getAttribute(String attributeName) {
         return attributes.get(attributeName);
     }  
 }

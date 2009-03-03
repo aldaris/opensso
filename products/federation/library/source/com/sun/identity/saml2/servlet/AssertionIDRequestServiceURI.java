@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionIDRequestServiceURI.java,v 1.2 2008-06-25 05:48:02 qcheng Exp $
+ * $Id: AssertionIDRequestServiceURI.java,v 1.3 2009-03-03 01:52:53 qcheng Exp $
  *
  */
 
@@ -69,7 +69,9 @@ public class AssertionIDRequestServiceURI extends HttpServlet {
                     "AssertionIDRequestServiceSOAP.doGetPost: " +
                     "pathInfo is null.");
             }
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, null);
+            SAML2Utils.sendError(req, resp, 
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
+                "nullPathInfo", SAML2Utils.bundle.getString("nullPathInfo"));
             return;
         }
 
@@ -95,8 +97,9 @@ public class AssertionIDRequestServiceURI extends HttpServlet {
         } catch (SAML2Exception sme) {
             SAML2Utils.debug.error("AssertionIDRequestServiceSOAP.doGetPost",
                 sme);
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
-                sme.getMessage());
+            SAML2Utils.sendError(req, resp, 
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
+                "invalidMetaAlias", sme.getMessage());
             return;
         }
 

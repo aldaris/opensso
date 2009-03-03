@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: idpSSOInit.jsp,v 1.6 2008-06-25 05:48:36 qcheng Exp $
+   $Id: idpSSOInit.jsp,v 1.7 2009-03-03 01:54:08 qcheng Exp $
 
 --%>
 
@@ -95,21 +95,23 @@
         // cookie writer. There is already an assertion response
         // cached in this provider. Send it back directly.
         if ((cachedResID != null) && (cachedResID.length() != 0)) {
-            IDPSSOUtil.sendResponse(response, cachedResID);
+            IDPSSOUtil.sendResponse(request, response, cachedResID);
             return;
         }
 
 	String metaAlias = request.getParameter("metaAlias");
         if ((metaAlias ==  null) || (metaAlias.length() == 0)) {
-            response.sendError(response.SC_BAD_REQUEST,
-		           SAML2Utils.bundle.getString("nullIDPEntityID"));
+            SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+                "nullIDPEntityID",
+		SAML2Utils.bundle.getString("nullIDPEntityID"));
 	    return;
          }
         String spEntityID = request.getParameter("spEntityID");
 
         if ((spEntityID == null) || (spEntityID.length() == 0)) {
-            response.sendError(response.SC_BAD_REQUEST,
-			   SAML2Utils.bundle.getString("nullSPEntityID"));
+            SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+                "nullSPEntityID",
+		SAML2Utils.bundle.getString("nullSPEntityID"));
 	    return;
         }
 	// get the nameIDPolicy
@@ -120,12 +122,16 @@
 				 metaAlias, nameIDFormat,relayState);
     } catch (SAML2Exception sse) {
 	SAML2Utils.debug.error("Error processing request " , sse);
-	response.sendError(response.SC_BAD_REQUEST,
-			SAML2Utils.bundle.getString("requestProcessingError"));
+	SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+            "requestProcessingError", 
+	    SAML2Utils.bundle.getString("requestProcessingError") + " " +
+            sse.getMessage());
     } catch (Exception e) {
         SAML2Utils.debug.error("Error processing request ",e);
-	response.sendError(response.SC_BAD_REQUEST,
-			SAML2Utils.bundle.getString("requestProcessingError"));
+	SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+            "requestProcessingError",
+	    SAML2Utils.bundle.getString("requestProcessingError") + " " +
+            e.getMessage());
     }
 %>
 </body>

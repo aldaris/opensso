@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOFederate.java,v 1.19 2009-02-13 22:18:29 madan_ranganath Exp $
+ * $Id: IDPSSOFederate.java,v 1.20 2009-03-03 01:52:49 qcheng Exp $
  *
  */
 
@@ -160,7 +160,8 @@ public class IDPSSOFederate {
                                 "Redirecting for the proxy handling error:"
                                  + re.getMessage());
                         }
-                        sendError(response, SAML2Constants.SERVER_FAULT,
+                        sendError(request, response, 
+                            SAML2Constants.SERVER_FAULT,
                             "UnableToRedirectToPreferredIDP",
                             re.getMessage(), isFromECP);
                         return;
@@ -179,7 +180,7 @@ public class IDPSSOFederate {
                     SAML2Utils.debug.message(classMethod +
                         "unable to get IDP meta alias from request.");
                 }
-                sendError(response, SAML2Constants.CLIENT_FAULT,
+                sendError(request, response, SAML2Constants.CLIENT_FAULT,
                     "IDPMetaAliasNotFound", null, isFromECP);
                 return;
             }
@@ -191,7 +192,7 @@ public class IDPSSOFederate {
                 if (IDPSSOUtil.metaManager == null) {
                     SAML2Utils.debug.error(classMethod +
                         "Unable to get meta manager.");
-                    sendError(response, SAML2Constants.SERVER_FAULT,
+                    sendError(request, response, SAML2Constants.SERVER_FAULT,
                         "errorMetaManager", null, isFromECP);
                     return;
                 }
@@ -203,7 +204,7 @@ public class IDPSSOFederate {
                         "Unable to get IDP Entity ID from meta.");
                     String[] data = { idpEntityID };
                     LogUtil.error(Level.INFO, LogUtil.INVALID_IDP, data, null);
-                    sendError(response, SAML2Constants.CLIENT_FAULT,
+                    sendError(request, response, SAML2Constants.CLIENT_FAULT,
                         "nullIDPEntityID", null, isFromECP);
                     return;
                 }
@@ -214,7 +215,7 @@ public class IDPSSOFederate {
                 String[] data = { idpMetaAlias };
                 LogUtil.error(Level.INFO, LogUtil.IDP_METADATA_ERROR, data,
                     null);
-                sendError(response, SAML2Constants.SERVER_FAULT,
+                sendError(request, response, SAML2Constants.SERVER_FAULT,
                     "nullIDPEntityID", sme.getMessage(), isFromECP);
                 return;
             }
@@ -238,7 +239,7 @@ public class IDPSSOFederate {
 
                 authnReq = getAuthnRequest(request, isFromECP, binding);
                 if (authnReq == null) {
-                    sendError(response, SAML2Constants.CLIENT_FAULT,
+                    sendError(request, response, SAML2Constants.CLIENT_FAULT,
                         "InvalidSAMLRequest", null, isFromECP);
                     return;
                 }
@@ -254,7 +255,7 @@ public class IDPSSOFederate {
                     LogUtil.access(Level.INFO, logId, logdata, null);
                 } catch (SAML2Exception saml2ex) {
                     SAML2Utils.debug.error(classMethod, saml2ex);
-                    sendError(response, SAML2Constants.CLIENT_FAULT,
+                    sendError(request, response, SAML2Constants.CLIENT_FAULT,
                         "InvalidSAMLRequest", saml2ex.getMessage(), isFromECP);
                     return;
                 }
@@ -265,7 +266,7 @@ public class IDPSSOFederate {
                         SAML2Utils.debug.warning(classMethod + 
                             "Issuer in Request is not valid.");
                     }
-                    sendError(response, SAML2Constants.CLIENT_FAULT,
+                    sendError(request, response, SAML2Constants.CLIENT_FAULT,
                         "InvalidSAMLRequest", null, isFromECP);
                     return;
                 }
@@ -282,7 +283,7 @@ public class IDPSSOFederate {
                 if (idpSSODescriptor == null) {
                     SAML2Utils.debug.error(classMethod +
                         "Unable to get IDP SSO Descriptor from meta.");
-                    sendError(response, SAML2Constants.SERVER_FAULT,
+                    sendError(request, response, SAML2Constants.SERVER_FAULT,
                         "metaDataError", null, isFromECP);
                     return;
                 } 
@@ -298,7 +299,8 @@ public class IDPSSOFederate {
                     // need to verify the query string containing authnRequest
                     if ((spEntityID == null) || 
                         (spEntityID.trim().length() == 0)) {
-                        sendError(response, SAML2Constants.CLIENT_FAULT,
+                        sendError(request, response, 
+                            SAML2Constants.CLIENT_FAULT,
                             "InvalidSAMLRequest", null, isFromECP);
                         return;
                     }
@@ -306,7 +308,8 @@ public class IDPSSOFederate {
                     if (spSSODescriptor == null) {
                         SAML2Utils.debug.error(classMethod +
                             "Unable to get SP SSO Descriptor from meta.");
-                        sendError(response, SAML2Constants.SERVER_FAULT,
+                        sendError(request, response, 
+                            SAML2Constants.SERVER_FAULT,
                             "metaDataError", null, isFromECP);
                         return;
                     }
@@ -331,7 +334,8 @@ public class IDPSSOFederate {
                         if (!isSignatureOK) {
                             SAML2Utils.debug.error(classMethod +
                                 "authn request verification failed.");
-                            sendError(response, SAML2Constants.CLIENT_FAULT,
+                            sendError(request, response, 
+                                SAML2Constants.CLIENT_FAULT,
                                 "invalidSignInRequest", null, isFromECP);
                             return;
                         }
@@ -348,7 +352,8 @@ public class IDPSSOFederate {
                                 authnReq.getDestination(), ssoURL)) {
                                 SAML2Utils.debug.error(classMethod + "authn " +
                                     "request destination verification failed.");
-                                sendError(response, SAML2Constants.CLIENT_FAULT,
+                                sendError(request, response, 
+                                    SAML2Constants.CLIENT_FAULT,
                                     "invalidDestination", null, isFromECP);
                                 return;
                             }
@@ -356,7 +361,8 @@ public class IDPSSOFederate {
                     } catch (SAML2Exception se) {
                         SAML2Utils.debug.error(classMethod +
                             "authn request verification failed.", se);
-                        sendError(response, SAML2Constants.CLIENT_FAULT,
+                        sendError(request, response, 
+                            SAML2Constants.CLIENT_FAULT,
                             "invalidSignInRequest", null, isFromECP);
                         return;
                     } 
@@ -374,7 +380,7 @@ public class IDPSSOFederate {
                 }
                 if (reqID == null) {
                     SAML2Utils.debug.error(classMethod + "Request id is null");
-                    sendError(response, SAML2Constants.CLIENT_FAULT,
+                    sendError(request, response, SAML2Constants.CLIENT_FAULT,
                         "InvalidSAMLRequestID", null, isFromECP);
                     return;
                 }
@@ -416,7 +422,7 @@ public class IDPSSOFederate {
                 if (idpAuthnContextMapper == null) {
                     SAML2Utils.debug.error(classMethod +
                         "Unable to get IDPAuthnContextMapper from meta.");
-                    sendError(response, SAML2Constants.SERVER_FAULT,
+                    sendError(request, response, SAML2Constants.SERVER_FAULT,
                         "metaDataError", null, isFromECP);
                     return;
                 } 
@@ -443,12 +449,13 @@ public class IDPSSOFederate {
                         String acsURL = IDPSSOUtil.getACSurl(spEntityID, realm,
                             authnReq, request, returnedBinding);
                         String acsBinding = returnedBinding.toString();
-                        IDPSSOUtil.sendResponse(response, acsBinding,
+                        IDPSSOUtil.sendResponse(request, response, acsBinding,
                             spEntityID, idpEntityID, idpMetaAlias, realm, null,
                             acsURL, res, session);
                     } catch (SAML2Exception sme) {
                         SAML2Utils.debug.error(classMethod, sme);
-                        sendError(response, SAML2Constants.SERVER_FAULT,
+                        sendError(request, response, 
+                            SAML2Constants.SERVER_FAULT,
                             "metaDataError", null, isFromECP);
                     }
                     return;
@@ -535,7 +542,8 @@ public class IDPSSOFederate {
                                 "Redirecting for the proxy handling error: "
                                 + re.getMessage());
                         }
-                        sendError(response, SAML2Constants.SERVER_FAULT,
+                        sendError(request, response, 
+                            SAML2Constants.SERVER_FAULT,
                             "UnableToRedirectToPreferredIDP", re.getMessage(),
                             isFromECP);
                     }
@@ -548,13 +556,15 @@ public class IDPSSOFederate {
                     } catch (IOException ioe) {
                         SAML2Utils.debug.error(classMethod +
                             "Unable to redirect to authentication.", ioe);
-                        sendError(response, SAML2Constants.SERVER_FAULT,
+                        sendError(request, response, 
+                            SAML2Constants.SERVER_FAULT,
                             "UnableToRedirectToAuth", ioe.getMessage(),
                             isFromECP);
                     } catch (SAML2Exception se) {
                         SAML2Utils.debug.error(classMethod +
                             "Unable to redirect to authentication.", se);
-                        sendError(response, SAML2Constants.SERVER_FAULT,
+                        sendError(request, response, 
+                            SAML2Constants.SERVER_FAULT,
                             "UnableToRedirectToAuth", se.getMessage(),
                             isFromECP);
                     } 
@@ -604,7 +614,8 @@ public class IDPSSOFederate {
                                  "Unable to redirect to authentication.", ioe);
                             sessionUpgrade = false;
                             cleanUpCache(reqID);
-                            sendError(response, SAML2Constants.SERVER_FAULT,
+                            sendError(request, response, 
+                                SAML2Constants.SERVER_FAULT,
                                 "UnableToRedirectToAuth", ioe.getMessage(),
                                 isFromECP);
                         } catch (SAML2Exception se) {
@@ -612,7 +623,8 @@ public class IDPSSOFederate {
                                 "Unable to redirect to authentication.", se);
                             sessionUpgrade = false;
                             cleanUpCache(reqID);
-                            sendError(response, SAML2Constants.SERVER_FAULT,
+                            sendError(request, response, 
+                                SAML2Constants.SERVER_FAULT,
                                 "UnableToRedirectToAuth", se.getMessage(),
                                 isFromECP);
                         }
@@ -634,7 +646,8 @@ public class IDPSSOFederate {
                         } catch (SAML2Exception se) {
                             SAML2Utils.debug.error(classMethod +
                                 "Unable to do sso or federation.", se);
-                            sendError(response, SAML2Constants.SERVER_FAULT,
+                            sendError(request, response, 
+                                SAML2Constants.SERVER_FAULT,
                                 "UnableToDOSSOOrFederation", se.getMessage(),
                                 isFromECP);
                         }
@@ -655,7 +668,7 @@ public class IDPSSOFederate {
                 if (authnReq == null) {
                     SAML2Utils.debug.error(classMethod +
                         "Unable to get AuthnRequest from cache.");
-                    sendError(response, SAML2Constants.SERVER_FAULT,
+                    sendError(request, response, SAML2Constants.SERVER_FAULT,
                         "UnableToGetAuthnReq", null, isFromECP);
                     return;
                 }
@@ -698,7 +711,7 @@ public class IDPSSOFederate {
                 } catch (SAML2Exception se) {
                     SAML2Utils.debug.error(classMethod +
                         "Unable to do sso or federation.", se);
-                    sendError(response, SAML2Constants.SERVER_FAULT,
+                    sendError(request, response, SAML2Constants.SERVER_FAULT,
                         "UnableToDOSSOOrFederation", se.getMessage(),
                         isFromECP);
                 }
@@ -712,7 +725,8 @@ public class IDPSSOFederate {
         }
     }
 
-    private static void sendError(HttpServletResponse response,
+    private static void sendError(HttpServletRequest request,
+        HttpServletResponse response,
         String faultCode, String rbKey, String detail, boolean isFromECP)
         throws IOException, SOAPException {
 
@@ -738,7 +752,8 @@ public class IDPSSOFederate {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
         } else {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+            SAML2Utils.sendError(request, response, 
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR, rbKey,
                 SAML2Utils.bundle.getString(rbKey));
         }
     }

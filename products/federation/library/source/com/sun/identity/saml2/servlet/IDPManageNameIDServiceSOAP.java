@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPManageNameIDServiceSOAP.java,v 1.1 2008-11-22 01:57:39 hengming Exp $
+ * $Id: IDPManageNameIDServiceSOAP.java,v 1.2 2009-03-03 01:52:55 qcheng Exp $
  */
 
 package com.sun.identity.saml2.servlet;
@@ -59,12 +59,14 @@ public class IDPManageNameIDServiceSOAP extends HttpServlet {
             DoManageNameID.processSOAPRequest(request, response, paramsMap);
         } catch (SAML2Exception ex) {
             SAML2Utils.debug.error("IDPManageNameIDServiceSOAP.doPost:", ex);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
-                ex.getMessage());
+            SAML2Utils.sendError(request, response, 
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
+                "requestProcessingMNIError", ex.getMessage());
         } catch (SOAPException se) {
             SAML2Utils.debug.error("IDPManageNameIDServiceSOAP.doPost:", se);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
-                se.getMessage());
+            SAML2Utils.sendError(request, response, 
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
+                "requestProcessingMNIError", se.getMessage());
         }
     }
 }

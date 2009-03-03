@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: fedletSSOInit.jsp,v 1.3 2008-07-31 20:20:28 qcheng Exp $
+   $Id: fedletSSOInit.jsp,v 1.4 2009-03-03 01:53:34 qcheng Exp $
 
 --%>
 
@@ -181,8 +181,9 @@
                 metaAlias = (String) spMetaAliases.get(0);
             }
             if ((metaAlias ==  null) || (metaAlias.length() == 0)) {
-                response.sendError(response.SC_BAD_REQUEST,
-                       SAML2Utils.bundle.getString("nullSPEntityID"));
+                SAML2Utils.sendError(request, response,
+                   response.SC_BAD_REQUEST, "nullSPEntityID",
+                   SAML2Utils.bundle.getString("nullSPEntityID"));
                 return;
             }
         }
@@ -221,7 +222,8 @@
         SAML2MetaManager manager = new SAML2MetaManager();
         List idpEntities = manager.getAllRemoteIdentityProviderEntities("/"); 
         if ((idpEntities == null) || idpEntities.isEmpty()) {
-            response.sendError(response.SC_BAD_REQUEST,
+            SAML2Utils.sendError(request, response,
+               response.SC_BAD_REQUEST, "idpNotFound",
                SAML2Utils.bundle.getString("idpNotFound"));
             return;
         } else if (idpEntities.size() == 1) {
@@ -229,7 +231,8 @@
             idpEntityID = (String) idpEntities.get(0);
         } else { 
             // multiple IDP configured in fedlet
-            response.sendError(response.SC_BAD_REQUEST,
+            SAML2Utils.sendError(request, response,
+               response.SC_BAD_REQUEST, "nullIDPEntityID",
                SAML2Utils.bundle.getString("nullIDPEntityID"));
             return;
         }
@@ -239,12 +242,16 @@
         idpEntityID, paramsMap);
     } catch (SAML2Exception sse) {
         SAML2Utils.debug.error("Error sending AuthnRequest " , sse);
-        response.sendError(response.SC_BAD_REQUEST,
-            SAML2Utils.bundle.getString("requestProcessingError"));
+        SAML2Utils.sendError(request, response,
+            response.SC_BAD_REQUEST, "requestProcessingError", 
+            SAML2Utils.bundle.getString("requestProcessingError") + " " +
+            sse.getMessage());
     } catch (Exception e) {
         SAML2Utils.debug.error("Error processing Request ",e);
-        response.sendError(response.SC_BAD_REQUEST,
-            SAML2Utils.bundle.getString("requestProcessingError"));
+        SAML2Utils.sendError(request, response,
+            response.SC_BAD_REQUEST, "requestProcessingError",
+            SAML2Utils.bundle.getString("requestProcessingError") + " " +
+            e.getMessage());
     }
 %>
 </body>

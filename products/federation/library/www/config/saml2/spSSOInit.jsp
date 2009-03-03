@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spSSOInit.jsp,v 1.8 2008-06-25 05:48:37 qcheng Exp $
+   $Id: spSSOInit.jsp,v 1.9 2009-03-03 01:54:14 qcheng Exp $
 
 --%>
 
@@ -188,9 +188,10 @@
 	    // Service to retrieve.
 	    metaAlias = request.getParameter("metaAlias");
             if ((metaAlias ==  null) || (metaAlias.length() == 0)) {
-                 response.sendError(response.SC_BAD_REQUEST,
-		           SAML2Utils.bundle.getString("nullSPEntityID"));
-	    	return;
+                SAML2Utils.sendError(request, response, 
+                    response.SC_BAD_REQUEST, "nullSPEntityID", 
+		    SAML2Utils.bundle.getString("nullSPEntityID"));
+	        return;
             }
             idpEntityID = request.getParameter("idpEntityID");
 	    paramsMap = SAML2Utils.getParamsMap(request);
@@ -213,8 +214,9 @@
 	}
 
 	if ((idpEntityID == null) || (idpEntityID.length() == 0)) {
-            response.sendError(response.SC_BAD_REQUEST,
-			   SAML2Utils.bundle.getString("nullIDPEntityID"));
+            SAML2Utils.sendError(request, response, 
+                response.SC_BAD_REQUEST, "nullIDPEntityID",
+	        SAML2Utils.bundle.getString("nullIDPEntityID"));
 	    return;
 	}
 	// get the parameters and put it in a map.
@@ -223,12 +225,16 @@
                                           paramsMap);
     } catch (SAML2Exception sse) {
 	SAML2Utils.debug.error("Error sending AuthnRequest " , sse);
-	response.sendError(response.SC_BAD_REQUEST,
-			SAML2Utils.bundle.getString("requestProcessingError"));
+	SAML2Utils.sendError(request, response, 
+            response.SC_BAD_REQUEST, "requestProcessingError",
+	    SAML2Utils.bundle.getString("requestProcessingError") + " " +
+            sse.getMessage());
     } catch (Exception e) {
         SAML2Utils.debug.error("Error processing Request ",e);
-	response.sendError(response.SC_BAD_REQUEST,
-			SAML2Utils.bundle.getString("requestProcessingError"));
+	SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+            "requestProcessingError",
+	    SAML2Utils.bundle.getString("requestProcessingError") + " " +
+            e.getMessage());
     }
 %>
 </body>

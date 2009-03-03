@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spSingleLogoutInit.jsp,v 1.7 2008-09-17 21:41:56 exu Exp $
+   $Id: spSingleLogoutInit.jsp,v 1.8 2009-03-03 01:54:15 qcheng Exp $
 
 --%>
 
@@ -89,8 +89,8 @@
             ssoToken = null;
         }
         if (ssoToken == null) {
-            response.sendError(response.SC_BAD_REQUEST,
-                SAML2Utils.bundle.getString("nullSSOToken"));
+            SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+                "nullSSOToken", SAML2Utils.bundle.getString("nullSSOToken"));
             return;
         }
         String[] values = SessionManager.getProvider().
@@ -115,8 +115,9 @@
         String idpEntityID = request.getParameter("idpEntityID");
 
         if ((idpEntityID == null) || (idpEntityID.length() == 0)) {
-            response.sendError(response.SC_BAD_REQUEST,
-                           SAML2Utils.bundle.getString("nullIDPEntityID"));
+            SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+                "nullIDPEntityID", 
+                SAML2Utils.bundle.getString("nullIDPEntityID"));
             return;
         }
 
@@ -177,13 +178,17 @@
         }
     } catch (SAML2Exception sse) {
         SAML2Utils.debug.error("Error sending Logout Request " , sse);
-        response.sendError(response.SC_BAD_REQUEST,
-                 SAML2Utils.bundle.getString("LogoutRequestCreationError"));
+        SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+            "LogoutRequestCreationError",
+            SAML2Utils.bundle.getString("LogoutRequestCreationError") + " " +
+            sse.getMessage());
         return;
     } catch (Exception e) {
         SAML2Utils.debug.error("Error initializing Request ",e);
-        response.sendError(response.SC_BAD_REQUEST,
-                 SAML2Utils.bundle.getString("LogoutRequestCreationError"));
+        SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+            "LogoutRequestCreationError",
+            SAML2Utils.bundle.getString("LogoutRequestCreationError") + " " +
+            e.getMessage());
         return;
     }
 %>

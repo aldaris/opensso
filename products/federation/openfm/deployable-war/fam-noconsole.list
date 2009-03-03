@@ -2283,6 +2283,7 @@
 ./saml2/jsp/idpSingleLogoutPOST.jsp
 ./saml2/jsp/idpSingleLogoutRedirect.jsp
 ./saml2/jsp/saeerror.jsp
+./saml2/jsp/saml2error.jsp
 ./saml2/jsp/spAssertionConsumer.jsp
 ./saml2/jsp/spMNIPOST.jsp
 ./saml2/jsp/spMNIRedirect.jsp

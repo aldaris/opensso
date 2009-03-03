@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: spMNIRequestInit.jsp,v 1.8 2008-08-29 04:56:24 exu Exp $
+   $Id: spMNIRequestInit.jsp,v 1.9 2009-03-03 01:54:14 qcheng Exp $
 
 --%>
 
@@ -76,24 +76,27 @@
     try {
         String metaAlias = request.getParameter("metaAlias");
         if ((metaAlias ==  null) || (metaAlias.length() == 0)) {
-            response.sendError(response.SC_BAD_REQUEST,
-                           SAML2Utils.bundle.getString("nullIDPEntityID"));
+            SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+                "nullIDPEntityID", 
+                SAML2Utils.bundle.getString("nullIDPEntityID"));
             return;
         }
 
         String idpEntityID = request.getParameter("idpEntityID");
 
         if ((idpEntityID == null) || (idpEntityID.length() == 0)) {
-            response.sendError(response.SC_BAD_REQUEST,
-                           SAML2Utils.bundle.getString("nullIDPEntityID"));
+            SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+                "nullIDPEntityID",
+                SAML2Utils.bundle.getString("nullIDPEntityID"));
             return;
         }
 
         String requestType = request.getParameter("requestType");
 
         if ((requestType == null) || (requestType.length() == 0)) {
-            response.sendError(response.SC_BAD_REQUEST,
-                           SAML2Utils.bundle.getString("nullRequestType"));
+            SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+                "nullRequestType",
+                SAML2Utils.bundle.getString("nullRequestType"));
             return;
         }
 
@@ -148,8 +151,10 @@
         }
     } catch (SAML2Exception e) {
         SAML2Utils.debug.error("Error sending ManageNameIDRequest " , e);
-        response.sendError(response.SC_BAD_REQUEST,
-                SAML2Utils.bundle.getString("requestProcessingMNIError"));
+        SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+            "requestProcessingMNIError",
+            SAML2Utils.bundle.getString("requestProcessingMNIError") + " " +
+            e.getMessage());
     }
 %>
 

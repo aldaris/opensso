@@ -22,13 +22,14 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: fedletSampleApp.jsp,v 1.5 2009-02-24 19:45:21 huacui Exp $
+   $Id: fedletSampleApp.jsp,v 1.6 2009-03-03 01:53:34 qcheng Exp $
 
 --%>
 
 
 <%@page
 import="com.sun.identity.saml2.common.SAML2Exception,
+com.sun.identity.saml2.common.SAML2Utils,
 com.sun.identity.saml2.common.SAML2Constants,
 com.sun.identity.saml2.assertion.Assertion,
 com.sun.identity.saml2.assertion.Subject,
@@ -81,16 +82,24 @@ Inc." align="right" border="0" height="10" width="108" /></td></tr></tbody></tab
         // validation etc.  
         map = SPACSUtils.processResponseForFedlet(request, response);
     } catch (SAML2Exception sme) {
-        response.sendError(response.SC_INTERNAL_SERVER_ERROR, sme.getMessage());
+        SAML2Utils.sendError(request, response,
+            response.SC_INTERNAL_SERVER_ERROR, "failedToProcessSSOResponse",
+            sme.getMessage());
         return;
     } catch (IOException ioe) {
-        response.sendError(response.SC_INTERNAL_SERVER_ERROR, ioe.getMessage());
+        SAML2Utils.sendError(request, response,
+            response.SC_INTERNAL_SERVER_ERROR, "failedToProcessSSOResponse",
+            ioe.getMessage());
         return;
     } catch (SessionException se) {
-        response.sendError(response.SC_INTERNAL_SERVER_ERROR, se.getMessage());
+        SAML2Utils.sendError(request, response, 
+            response.SC_INTERNAL_SERVER_ERROR, "failedToProcessSSOResponse",
+            se.getMessage());
         return;
     } catch (ServletException se) {
-        response.sendError(response.SC_BAD_REQUEST, se.getMessage());
+        SAML2Utils.sendError(request, response,
+            response.SC_BAD_REQUEST, "failedToProcessSSOResponse",
+            se.getMessage());
         return;
     }
     // END : code is a must for Fedlet (SP) side application

@@ -366,6 +366,7 @@ com/sun/identity/policy/remote/AdvicesHandleableByAMResponse.class
 com/sun/identity/security/AppSSOTokenProvider.class
 com/sun/identity/security/AdminTokenAction*.class
 com/sun/identity/security/AMSecurityPropertiesException.class
+com/sun/identity/security/ServerInstanceAction.class
 com/sun/identity/security/SystemAppTokenProvider.class
 com/sun/identity/security/EncodeAction.class
 com/sun/identity/security/EncryptAction.class

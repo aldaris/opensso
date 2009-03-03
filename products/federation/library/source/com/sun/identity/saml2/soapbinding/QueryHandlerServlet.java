@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: QueryHandlerServlet.java,v 1.6 2008-08-06 17:28:19 exu Exp $
+ * $Id: QueryHandlerServlet.java,v 1.7 2009-03-03 01:53:00 qcheng Exp $
  *
  */
 
@@ -167,12 +167,14 @@ public class QueryHandlerServlet extends HttpServlet {
             os.flush();
         } catch (SAML2Exception ex) {
             debug.error(classMethod, ex);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                    ex.getMessage());
+            SAML2Utils.sendError(request, response,
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                "failedToProcessRequest", ex.getMessage());
         } catch (SOAPException soap) {
             debug.error(classMethod, soap);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                    soap.getMessage());
+            SAML2Utils.sendError(request, response, 
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                "failedToProcessRequest", soap.getMessage());
         }
     }
     

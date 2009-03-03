@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CookieReaderServlet.java,v 1.2 2008-06-25 05:47:47 qcheng Exp $
+ * $Id: CookieReaderServlet.java,v 1.3 2009-03-03 01:52:42 qcheng Exp $
  *
  */
 
@@ -125,16 +125,16 @@ public class CookieReaderServlet extends HttpServlet {
         if (preferred_cookie_name == null) {
             CookieUtils.debug.error( classMethod + 
                 "The request uri is null.");
-            response.sendError(
-                response.SC_INTERNAL_SERVER_ERROR,
+            CookieUtils.sendError(request, response,
+                response.SC_INTERNAL_SERVER_ERROR, "nullRequestUri", 
                 "The request uri is null."); 
             return;
         } else if (preferred_cookie_name.equals("")) { 
             CookieUtils.debug.error( classMethod + 
                 "Cannot match the cookie name from " +
                 "the request uri.");
-            response.sendError(
-                response.SC_INTERNAL_SERVER_ERROR,
+            CookieUtils.sendError(request, response,
+                response.SC_INTERNAL_SERVER_ERROR, "invalidRequestUri",
                 "Cookie name is not found based on " + 
                 "the request uri."); 
             return;
@@ -175,15 +175,15 @@ public class CookieReaderServlet extends HttpServlet {
                 response.sendRedirect(returnURL);
                 return;
             } else {
-                response.sendError(
-                    response.SC_INTERNAL_SERVER_ERROR,
+                CookieUtils.sendError(request, response,
+                    response.SC_INTERNAL_SERVER_ERROR, "noRedirectionURL",
                     "No redirect URL");
                 return;
             }
         } catch(Exception e){
             CookieUtils.debug.error(classMethod, e);
-            response.sendError(
-                    response.SC_INTERNAL_SERVER_ERROR,
+            CookieUtils.sendError(request, response,
+                    response.SC_INTERNAL_SERVER_ERROR, "readerServiceFailed",
                     e.getMessage());
         }
     }    

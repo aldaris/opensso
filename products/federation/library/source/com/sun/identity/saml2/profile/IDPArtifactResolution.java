@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPArtifactResolution.java,v 1.9 2008-07-22 18:08:21 weisun2 Exp $
+ * $Id: IDPArtifactResolution.java,v 1.10 2009-03-03 01:52:47 qcheng Exp $
  *
  */
 
@@ -123,7 +123,9 @@ public class IDPArtifactResolution {
                 String[] data = { idpMetaAlias };
                 LogUtil.error(Level.INFO,
                     LogUtil.IDP_METADATA_ERROR, data, null);
-                response.sendError(response.SC_INTERNAL_SERVER_ERROR,
+                SAML2Utils.sendError(request, response, 
+                    response.SC_INTERNAL_SERVER_ERROR,
+                    "nullIDPMetaAlias",
                     SAML2Utils.bundle.getString("nullIDPMetaAlias"));
                 return;
             }
@@ -141,7 +143,9 @@ public class IDPArtifactResolution {
                     String[] data = { idpEntityID };
                     LogUtil.error(Level.INFO, 
                         LogUtil.INVALID_IDP, data, null);
-                    response.sendError(response.SC_INTERNAL_SERVER_ERROR,
+                    SAML2Utils.sendError(request, response, 
+                        response.SC_INTERNAL_SERVER_ERROR,
+                        "nullIDPEntityID",
                         SAML2Utils.bundle.getString("nullIDPEntityID"));
                     return;
                 }
@@ -152,7 +156,8 @@ public class IDPArtifactResolution {
                 String[] data = { idpMetaAlias };
                 LogUtil.error(Level.INFO,
                     LogUtil.IDP_METADATA_ERROR, data, null);
-                response.sendError(response.SC_INTERNAL_SERVER_ERROR,
+                SAML2Utils.sendError(request, response, 
+                    response.SC_INTERNAL_SERVER_ERROR, "metaDataError",
                     SAML2Utils.bundle.getString("metaDataError"));
                 return;
             }
@@ -190,13 +195,18 @@ public class IDPArtifactResolution {
                 String[] data = { idpEntityID };
                 LogUtil.error(Level.INFO,
                     LogUtil.INVALID_SOAP_MESSAGE, data, null);
-                response.sendError(response.SC_INTERNAL_SERVER_ERROR,
-                    SAML2Utils.bundle.getString("invalidSOAPMessage"));
+                SAML2Utils.sendError(request, response, 
+                    response.SC_INTERNAL_SERVER_ERROR, "invalidSOAPMessage",
+                    SAML2Utils.bundle.getString("invalidSOAPMessage") +
+                    " " + ex.getMessage());
             } catch (SAML2Exception se) {
-               SAML2Utils.debug.error(classMethod + "SAML2 error", se);
-                response.sendError(response.SC_INTERNAL_SERVER_ERROR,
+                SAML2Utils.debug.error(classMethod + "SAML2 error", se);
+                SAML2Utils.sendError(request, response, 
+                    response.SC_INTERNAL_SERVER_ERROR,
+                    "unableToCreateArtifactResponse",
                     SAML2Utils.bundle.getString(
-                        "unableToCreateArtifactResponse"));
+                        "unableToCreateArtifactResponse") +
+                    " " + se.getMessage());
             }
         } catch (IOException ioe) {
             SAML2Utils.debug.error(classMethod + "I/O rrror", ioe);

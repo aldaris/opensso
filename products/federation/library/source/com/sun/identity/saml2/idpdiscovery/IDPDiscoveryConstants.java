@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPDiscoveryConstants.java,v 1.3 2008-06-25 05:47:48 qcheng Exp $
+ * $Id: IDPDiscoveryConstants.java,v 1.4 2009-03-03 01:52:44 qcheng Exp $
  *
  */
 
@@ -71,5 +71,7 @@ public interface IDPDiscoveryConstants {
     public static final String IDFF_READER_URI = "/idffreader";
     public static final String SAML2_COOKIE_NAME = "_saml_idp";
     public static final String IDFF_COOKIE_NAME = "_liberty_idp";   
+    public String ERROR_URL_PARAM_NAME = 
+        "com.sun.identity.saml2.idpdiscovery.errorurl";
 }
 

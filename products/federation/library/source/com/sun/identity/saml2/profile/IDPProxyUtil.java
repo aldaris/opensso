@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPProxyUtil.java,v 1.14 2009-02-19 20:38:54 exu Exp $
+ * $Id: IDPProxyUtil.java,v 1.15 2009-03-03 01:52:48 qcheng Exp $
  *
  */
 
@@ -589,7 +589,8 @@ public class IDPProxyUtil {
    
         try {
             if (ssoToken == null) {
-                response.sendError(response.SC_BAD_REQUEST,
+                SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+                    "nullSSOToken",
                     SAML2Utils.bundle.getString("nullSSOToken"));
                 return;
             }
@@ -626,7 +627,8 @@ public class IDPProxyUtil {
         } catch (SAML2Exception sse) {
             SAML2Utils.debug.error("Error sending Logout Request " , sse);
             try {
-                response.sendError(response.SC_BAD_REQUEST,
+                SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+                    "LogoutRequestCreationError",
                     SAML2Utils.bundle.getString(
                     "LogoutRequestCreationError"));
             } catch(Exception se) {
@@ -637,7 +639,8 @@ public class IDPProxyUtil {
         } catch (Exception e) {
             SAML2Utils.debug.error("Error initializing Request ",e);
             try {
-                response.sendError(response.SC_BAD_REQUEST,
+                SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+                    "LogoutRequestCreationError",
                     SAML2Utils.bundle.getString(
                     "LogoutRequestCreationError"));
             } catch(Exception mme) {

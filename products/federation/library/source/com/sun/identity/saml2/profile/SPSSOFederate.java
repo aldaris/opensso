@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSSOFederate.java,v 1.23 2008-08-29 04:57:57 exu Exp $
+ * $Id: SPSSOFederate.java,v 1.24 2009-03-03 01:52:51 qcheng Exp $
  *
  */
 
@@ -344,7 +344,7 @@ public class SPSSOFederate {
                 response.sendRedirect(redirectURL.toString());
             }
             String[] data = { ssoURL };
-            LogUtil.access(Level.INFO,LogUtil.REDIRECT_TO_SP,data,
+            LogUtil.access(Level.INFO,LogUtil.REDIRECT_TO_IDP,data,
                            null);
             AuthnRequestInfo reqInfo = 
                 new AuthnRequestInfo(request,response,realm,spEntityID,
@@ -381,7 +381,9 @@ public class SPSSOFederate {
         if (!isFromECP(request)) {
             SAML2Utils.debug.error("SPSSOFederate.initiateECPRequest: " +
                 "invalid HTTP request from ECP.");
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+            SAML2Utils.sendError(request, response, 
+                HttpServletResponse.SC_BAD_REQUEST,  
+                "invalidHttpRequestFromECP",
                 SAML2Utils.bundle.getString("invalidHttpRequestFromECP"));
             return;
         }
@@ -576,9 +578,9 @@ public class SPSSOFederate {
                 String[] data3 = { spEntityID, realm };
                 LogUtil.error(Level.INFO, LogUtil.SEND_ECP_PAOS_REQUEST_FAILED,
                     data3, null);
-                response.sendError(
+                SAML2Utils.sendError(request, response, 
                     HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
-                    soapex.getMessage());
+                    "soapError", soapex.getMessage());
                 return;
             }
 

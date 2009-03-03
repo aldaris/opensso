@@ -221,6 +221,8 @@ com/sun/identity/plugin/configuration/ConfigurationException.class
 com/sun/identity/plugin/configuration/ConfigurationInstance.class
 com/sun/identity/plugin/configuration/ConfigurationListener.class
 com/sun/identity/plugin/configuration/ConfigurationManager.class
+com/sun/identity/plugin/datastore/DataStoreProvider.class
+com/sun/identity/plugin/datastore/DataStoreProviderException.class
 com/sun/identity/plugin/log/LogException.class
 com/sun/identity/plugin/log/Logger.class
 com/sun/identity/plugin/log/LogManager.class

@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
                                                                                 
-   $Id: famSAML2Config.xml,v 1.6 2008-07-07 05:12:45 qcheng Exp $
+   $Id: famSAML2Config.xml,v 1.7 2009-03-03 01:56:21 qcheng Exp $
                                                                                 
 -->
 
@@ -38,7 +38,7 @@
         <Schema 
             serviceHierarchy="/DSAMEConfig/sunFAMSAML2Configuration"
             i18nFileName="famSAML2Configuration" 
-            revisionNumber="10"
+            revisionNumber="20"
             i18nKey="sunFAMSAML2Configuration">
 
             <Global> 
@@ -152,6 +152,14 @@
                     i18nKey="a112">
                     <DefaultValues>
                         <Value>2048</Value>
+                    </DefaultValues>
+                </AttributeSchema>              
+                <AttributeSchema name="errorURL" 
+                    type="single" 
+                    syntax="string" 
+                    i18nKey="a113">
+                    <DefaultValues>
+                        <Value>/saml2/jsp/saml2error.jsp</Value>
                     </DefaultValues>
                 </AttributeSchema>              
             </Global> 

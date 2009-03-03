@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CookieUtils.java,v 1.5 2008-07-31 00:54:29 exu Exp $
+ * $Id: CookieUtils.java,v 1.6 2009-03-03 01:52:43 qcheng Exp $
  *
  */
 
@@ -30,9 +30,13 @@
 
 package com.sun.identity.saml2.idpdiscovery;
 
+import java.io.IOException;
 import java.util.StringTokenizer;
 import javax.servlet.http.Cookie;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import com.sun.identity.shared.encode.URLEncDec;
 
 /**
@@ -53,6 +57,25 @@ public class CookieUtils {
            equalsIgnoreCase("true"));
     private static int defAge = -1;
     public static Debug debug = Debug.getInstance("libIDPDiscovery");
+    // Boolean to indicate if this is an IDP Discovery only WAR
+    private static boolean idpDiscoveryOnlyWar = false; 
+    // error processing URL, read from system property
+    private static String errorUrl = System.getProperty(
+        IDPDiscoveryConstants.ERROR_URL_PARAM_NAME);
+    static {
+        try {
+            Class.forName("com.sun.identity.saml2.common.SAML2ConfigService",
+                false, Thread.currentThread().getContextClassLoader());
+        } catch (ClassNotFoundException cnfe) {
+            debug.message("CookieUtils.init: This is an IDP discovery WAR only",
+                cnfe);
+            idpDiscoveryOnlyWar = true;
+        }
+        if (debug.messageEnabled()) {
+            debug.message("CookieUtils.init : idpDiscoveryOnlyWar=" + 
+                idpDiscoveryOnlyWar);
+        }
+    }
 
     /**
      * Gets property value of "com.iplanet.am.cookie.secure"
@@ -284,4 +307,79 @@ public class CookieUtils {
             return null;
         }
     }       
+
+
+    /**
+     * Sends to error page URL for processing. If the error page is
+     * hosted in the same web application, forward is used with parameters.
+     * Otherwise, redirection is used with parameters. 
+     * Three parameters are passed to the error URL:
+     *  -- errorcode : Error key, this is the I18n key of the error message.
+     *  -- httpstatuscode : Http status code for the error
+     *  -- message : detailed I18n'd error message 
+     * @param request HttpServletRequest object
+     * @param response HttpServletResponse object
+     * @param httpStatusCode Http Status code
+     * @param errorCode Error code
+     * @param errorMsg Detailed error message
+     */ 
+    public static void sendError(HttpServletRequest request,
+        HttpServletResponse response, int httpStatusCode,
+        String errorCode, String errorMsg) {
+        if (!idpDiscoveryOnlyWar) {
+            // hosted with server, use server method
+            com.sun.identity.saml2.common.SAML2Utils.sendError(
+                request, response, httpStatusCode, errorCode, errorMsg);
+        } else {
+            // IDP discovery only WAR
+            if ((errorUrl == null) || (errorUrl.length() == 0)) {
+                // no error processing URL set, use sendError
+                try {
+                    response.sendError(httpStatusCode, errorMsg);
+                } catch (IOException ioe) {
+                    debug.error("CookieUtils.sendError", ioe);
+                }
+            } else {
+                // construct final URL
+                String jointString = "?";
+                if (errorUrl.indexOf("?") != -1) {
+                    jointString = "&";
+                } 
+                String newUrl = errorUrl.trim() + jointString 
+                    + "errorcode=" + errorCode + "&" 
+                    + "httpstatuscode=" + httpStatusCode + "&"
+                    + "errormessage=" + URLEncDec.encode(errorMsg);
+                if (debug.messageEnabled()) {
+                    debug.message("CookieUtils.sendError: final redirectionURL="
+                        + newUrl);
+                }
+                String tmp = errorUrl.toLowerCase();
+                if (tmp.startsWith("http://") || tmp.startsWith("https://")) {
+                    // send redirect
+                    try {
+                        response.sendRedirect(newUrl) ;
+                    } catch (IOException e) {
+                        debug.error("CookieUtils.sendError: Exception "
+                            + "occured while trying to redirect to resource:" 
+                            + newUrl , e);
+                    }
+                } else {
+                    // use forward
+                    try {
+                        RequestDispatcher dispatcher =
+                            request.getRequestDispatcher(newUrl);
+                        dispatcher.forward(request, response);
+                    } catch (ServletException e) {
+                        debug.error("CookieUtils.sendError: Exception "
+                            + "occured while trying to forward to resource:" 
+                            + newUrl , e);
+                    } catch (IOException e) {
+                        debug.error("CookieUtils.sendError: Exception "
+                            + "occured while trying to forward to resource:" 
+                            + newUrl , e);
+                    }
+                }
+            }
+        }
+    }
 }

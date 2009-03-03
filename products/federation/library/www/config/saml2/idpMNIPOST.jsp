@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: idpMNIPOST.jsp,v 1.2 2008-06-25 05:48:36 qcheng Exp $
+   $Id: idpMNIPOST.jsp,v 1.3 2009-03-03 01:54:05 qcheng Exp $
 
 --%>
 
@@ -76,14 +76,17 @@
                     <%
                 }
             } else {
-                response.sendError(response.SC_BAD_REQUEST,
-                  SAML2Utils.bundle.getString("requestProcessingMNIError"));
+                SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+                    "requestProcessingMNIError",
+                    SAML2Utils.bundle.getString("requestProcessingMNIError"));
             }
         }
     } catch (SAML2Exception e) {
         SAML2Utils.debug.error("Error processing ManageNameIDRequest " , e);
-        response.sendError(response.SC_BAD_REQUEST,
-                  SAML2Utils.bundle.getString("requestProcessingMNIError"));
+        SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+            "requestProcessingMNIError",
+            SAML2Utils.bundle.getString("requestProcessingMNIError") + " " +
+            e.getMessage());
     }
 %>
 

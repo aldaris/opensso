@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2Utils.java,v 1.44 2009-02-19 22:50:45 madan_ranganath Exp $
+ * $Id: SAML2Utils.java,v 1.45 2009-03-03 01:52:41 qcheng Exp $
  *
  */
 
@@ -133,6 +133,8 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -2511,7 +2513,80 @@ public class SAML2Utils extends SAML2SDKUtils {
         
         FSUtils.forwardRequest(request, response, authUrl) ;
     }
-    
+
+    /**
+     * Sends to SAML2 error page URL for processing. If the error page is
+     * hosted in the same web application, forward is used with parameters.
+     * Otherwise, redirection is used with parameters. 
+     * Three parameters are passed to the error URL:
+     *  -- errorcode : Error key, this is the I18n key of the error message.
+     *  -- httpstatuscode : Http status code for the error
+     *  -- message : detailed I18n'd error message 
+     * @param request HttpServletRequest object
+     * @param response HttpServletResponse object
+     * @param httpStatusCode Http Status code
+     * @param errorCode Error code
+     * @param errorMsg Detailed error message
+     */ 
+    public static void sendError(HttpServletRequest request,
+        HttpServletResponse response, int httpStatusCode,
+        String errorCode, String errorMsg) {
+        // get the Error URL
+        String errorUrl = (String) SAML2ConfigService.getAttribute(
+            SAML2Constants.SAML2_ERROR_URL);
+        if (errorUrl == null) {
+            errorUrl = SAML2ConfigService.DEFAULT_ERROR_URL;
+        }
+        // construct final URL
+        String jointString = "?";
+        if (errorUrl.indexOf("?") != -1) {
+            jointString = "&";
+        } 
+        String newUrl = errorUrl.trim() + jointString 
+            + SAML2Constants.ERROR_CODE + "=" + errorCode + "&" 
+            + SAML2Constants.HTTP_STATUS_CODE + "=" + httpStatusCode 
+            + "&" + SAML2Constants.ERROR_MESSAGE + "=" 
+            + URLEncDec.encode(errorMsg);
+        if (debug.messageEnabled()) {
+            debug.message("SAML2Utils.sendError : final redirection URL="
+                + newUrl);
+        }
+        String tmp = errorUrl.toLowerCase();
+        if (tmp.startsWith("http://") || tmp.startsWith("https://")) {
+            // use FSUtils, this may be redirection or forward
+            FSUtils.forwardRequest(request, response, newUrl) ;
+        } else {
+            // use forward
+            RequestDispatcher dispatcher =
+                request.getRequestDispatcher(newUrl);
+            try {
+                dispatcher.forward(request, response);
+            } catch (ServletException e) {
+                debug.error("SAML2Utils.sendError: Exception "
+                    + "occured while trying to forward to resource:" 
+                    + newUrl , e);
+                try {
+                    response.sendError(
+                        HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                        e.getMessage());  
+                } catch (IOException ioe) {
+                    // ignore
+                }
+            } catch (IOException e) {
+                debug.error("SAML2Utils.sendError: Exception "
+                    + "occured while trying to forward to resource:" 
+                    + newUrl , e);
+                try {
+                    response.sendError(
+                        HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                        e.getMessage());  
+                } catch (IOException ioe) {
+                    // ignore
+                }
+            }
+        }
+    }
+ 
     /**
      * Returns url for redirection.
      * @param entityID entityID for Issuer.

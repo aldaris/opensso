@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.42 2009-02-13 22:18:29 madan_ranganath Exp $
+ * $Id: IDPSSOUtil.java,v 1.43 2009-03-03 01:52:49 qcheng Exp $
  *
  */
 
@@ -276,12 +276,10 @@ public class IDPSSOUtil {
             } catch (IOException ioe) {
                 SAML2Utils.debug.error(classMethod +
                     "Unable to redirect to authentication.", ioe);
-                try {
-                    response.sendError(response.SC_INTERNAL_SERVER_ERROR,
+                SAML2Utils.sendError(request, response, 
+                    response.SC_INTERNAL_SERVER_ERROR,
+                    "UnableToRedirectToAuth",
                     SAML2Utils.bundle.getString("UnableToRedirectToAuth"));
-                } catch (IOException ie) {
-                    SAML2Utils.debug.error(classMethod + "I/O error", ie);
-                }
             }
             return;
         }
@@ -385,7 +383,7 @@ public class IDPSSOUtil {
                 SAML2Utils.debug.message("IDPSSOUtil.sendResponseToACS:" +
                     " Response is:  " + res.toXMLString());
             }       
-            sendResponse(response, acsBinding, spEntityID, idpEntityID,
+            sendResponse(request, response, acsBinding, spEntityID, idpEntityID,
                       idpMetaAlias, realm, relayState, acsURL, res,session);
         } else {
             SAML2Utils.debug.error("IDPSSOUtil.sendResponseToACS:" +
@@ -483,6 +481,7 @@ public class IDPSSOUtil {
      * @exception SAML2Exception if the operation is not successful
      */
     public static void sendResponse(
+        HttpServletRequest request,
         HttpServletResponse response,
         String cachedResID)
         throws SAML2Exception {
@@ -500,7 +499,7 @@ public class IDPSSOUtil {
             String acsURL = (String)cacheList.get(6);
             Response res = (Response)cacheList.get(7); 
             Object session = cacheList.get(8);
-            sendResponse(response, acsBinding, spEntityID, idpEntityID,
+            sendResponse(request, response, acsBinding, spEntityID, idpEntityID,
                 idpMetaAlias, realm, relayState, acsURL, res, session);
          } else {
             SAML2Utils.debug.error(classMethod + 
@@ -527,6 +526,7 @@ public class IDPSSOUtil {
      * @exception SAML2Exception if the operation is not successful
      */
     public static void sendResponse(
+        HttpServletRequest request,
         HttpServletResponse response,
         String acsBinding,
         String spEntityID,
@@ -590,14 +590,14 @@ public class IDPSSOUtil {
                     SAML2Utils.bundle.getString("postToTargetFailed")); 
             }
         } else if (acsBinding.equals(SAML2Constants.HTTP_ARTIFACT)) {
-            IDPSSOUtil.sendResponseArtifact(response, idpEntityID, 
+            IDPSSOUtil.sendResponseArtifact(request, response, idpEntityID, 
                 spEntityID, realm, acsURL, relayState, res, session, props);
         } else if (acsBinding.equals(SAML2Constants.PAOS)) {
             // signing assertion is a must for ECP profile.
             // encryption is optional based on SP config settings.
             signAndEncryptResponseComponents(
                     realm, spEntityID, idpEntityID, res, true);
-            IDPSSOUtil.sendResponseECP(response, idpEntityID, 
+            IDPSSOUtil.sendResponseECP(request, response, idpEntityID, 
                 realm, acsURL, res);
         } else {
             SAML2Utils.debug.error(classMethod + 
@@ -1795,7 +1795,8 @@ public class IDPSSOUtil {
      * 
      * @exception SAML2Exception if the operation is not successful
      */
-    public static void sendResponseArtifact(HttpServletResponse response,
+    public static void sendResponseArtifact(HttpServletRequest request,
+        HttpServletResponse response,
         String idpEntityID, String spEntityID, String realm, String acsURL,
         String relayState, Response res, Object session, Map props) 
         throws SAML2Exception {
@@ -1852,12 +1853,9 @@ public class IDPSSOUtil {
             String[] data = { idpEntityID };
             LogUtil.error(Level.INFO,
                 LogUtil.CANNOT_CREATE_ARTIFACT, data, session, props);
-            try {
-                response.sendError(response.SC_INTERNAL_SERVER_ERROR,
-                    SAML2Utils.bundle.getString("errorCreateArtifact"));
-            } catch (IOException ioe) {
-                SAML2Utils.debug.error(classMethod + "I/O rrror", ioe);
-            }
+            SAML2Utils.sendError(request, response, 
+                response.SC_INTERNAL_SERVER_ERROR, "errorCreateArtifact",
+                SAML2Utils.bundle.getString("errorCreateArtifact"));
             return;
         }
         String artStr = art.getArtifactValue();        
@@ -1931,7 +1929,8 @@ public class IDPSSOUtil {
      * 
      * @exception SAML2Exception if the operation is not successful
      */
-    public static void sendResponseECP(HttpServletResponse response,
+    public static void sendResponseECP(HttpServletRequest request,
+        HttpServletResponse response,
         String idpEntityID, String realm, String acsURL,
         Response res) throws SAML2Exception {
 
@@ -1975,13 +1974,9 @@ public class IDPSSOUtil {
             String[] data = { idpEntityID, realm, acsURL };
             LogUtil.error(Level.INFO, LogUtil.SEND_ECP_RESPONSE_FAILED, data,
                 null);
-            try {
-                response.sendError(
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
-                    ex.getMessage());
-            } catch (IOException ioex) {
-                SAML2Utils.debug.error("IDPSSOUtil.sendResponseECP", ioex);
-            }
+            SAML2Utils.sendError(request, response, 
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
+                "failedToSendECPResponse", ex.getMessage());
         }
     }
 

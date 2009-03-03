@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: idpSSOFederate.jsp,v 1.2 2008-06-25 05:48:36 qcheng Exp $
+   $Id: idpSSOFederate.jsp,v 1.3 2009-03-03 01:54:07 qcheng Exp $
 
 --%>
 
@@ -44,8 +44,8 @@
 <%
     // check request, response
     if ((request == null) || (response == null)) {
-	response.sendError(response.SC_BAD_REQUEST,
-			SAML2Utils.bundle.getString("nullInput"));
+	SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+	    "nullInput", SAML2Utils.bundle.getString("nullInput"));
 	return;
     }
 
@@ -55,13 +55,15 @@
         // cookie writer. There is already an assertion response
         // cached in this provider. Send it back directly.
         if ((cachedResID != null) && (cachedResID.length() != 0)) {
-            IDPSSOUtil.sendResponse(response, cachedResID);
+            IDPSSOUtil.sendResponse(request, response, cachedResID);
             return;
         }
     } catch (SAML2Exception sse) {
         SAML2Utils.debug.error("Error processing request " , sse);
-        response.sendError(response.SC_BAD_REQUEST,
-            SAML2Utils.bundle.getString("requestProcessingError"));
+        SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+            "requestProcessingError",
+            SAML2Utils.bundle.getString("requestProcessingError") + " " +
+            sse.getMessage());
         return;
     }
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DoManageNameID.java,v 1.18 2009-01-05 22:45:49 qcheng Exp $
+ * $Id: DoManageNameID.java,v 1.19 2009-03-03 01:52:46 qcheng Exp $
  *
  */
 
@@ -2089,7 +2089,8 @@ public class DoManageNameID {
         String samlRequest = request.getParameter(SAML2Constants.SAML_REQUEST);
 
         if (samlRequest == null) {
-            response.sendError(response.SC_BAD_REQUEST,
+            SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+                "MissingSAMLRequest",
                 SAML2Utils.bundle.getString("MissingSAMLRequest"));
             throw new SAML2Exception(SAML2Utils.bundle.getString(
                 "MissingSAMLRequest"));
@@ -2118,14 +2119,19 @@ public class DoManageNameID {
             }
         } catch (SAML2Exception se) {
             debug.error("DoManageNameID.processPOSTRequest:", se);
-            response.sendError(response.SC_BAD_REQUEST,
-                "error getting mni req");
+            SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+                "nullDecodedStrFromSamlResponse",
+                SAML2Utils.bundle.getString("nullDecodedStrFromSamlResponse") +
+                " " + se.getMessage());
             throw new SAML2Exception(SAML2Utils.bundle.getString(
                 "nullDecodedStrFromSamlResponse"));
         } catch (Exception e) {
             debug.error("DoManageNameID.processPOSTRequest:", e);
-            response.sendError(response.SC_INTERNAL_SERVER_ERROR,
-                "Error decoding request");
+            SAML2Utils.sendError(request, response, 
+                response.SC_INTERNAL_SERVER_ERROR,
+                "nullDecodedStrFromSamlResponse",
+                SAML2Utils.bundle.getString("nullDecodedStrFromSamlResponse") +
+                " " + e.getMessage());
             throw new SAML2Exception(SAML2Utils.bundle.getString(
                 "nullDecodedStrFromSamlResponse"));
         } finally {

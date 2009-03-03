@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssertionIDRequestUtil.java,v 1.6 2008-12-03 00:32:31 hengming Exp $
+ * $Id: AssertionIDRequestUtil.java,v 1.7 2009-03-03 01:52:46 qcheng Exp $
  *
  */
 
@@ -280,7 +280,8 @@ public class AssertionIDRequestUtil {
 
         String assertionID = request.getParameter("ID");
         if (assertionID == null) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+            SAML2Utils.sendError(request, response, 
+                HttpServletResponse.SC_BAD_REQUEST, "nullAssertionID",
                 SAML2Utils.bundle.getString("nullAssertionID"));
             return;
         }
@@ -290,8 +291,9 @@ public class AssertionIDRequestUtil {
             aidReqMapper = getAssertionIDRequestMapper(realm,
                 samlAuthorityEntityID, role);
         } catch (SAML2Exception ex) {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                ex.getMessage());
+            SAML2Utils.sendError(request, response, 
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                "failedToGetAssertionIDRequestMapper", ex.getMessage());
             return;
         }
 
@@ -299,8 +301,9 @@ public class AssertionIDRequestUtil {
             aidReqMapper.authenticateRequesterURI(request, response,
                 samlAuthorityEntityID, role, realm);
         } catch (SAML2Exception ex) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN,
-                ex.getMessage());
+            SAML2Utils.sendError(request, response, 
+                HttpServletResponse.SC_FORBIDDEN,
+                "failedToAuthenticateRequesterURI", ex.getMessage());
             return;
         }
 
@@ -308,7 +311,9 @@ public class AssertionIDRequestUtil {
             assertionID);
 
         if ((assertion == null) || (!assertion.isTimeValid())) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND,
+            SAML2Utils.sendError(request, response, 
+                HttpServletResponse.SC_NOT_FOUND,
+                "invalidAssertionID",
                 SAML2Utils.bundle.getString("invalidAssertionID"));
             return;
         }
@@ -325,8 +330,9 @@ public class AssertionIDRequestUtil {
                 SAML2Utils.debug.message("AssertionIDRequestUtil." +
                 "processAssertionIDRequestURI:", ex);
             }
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                ex.getMessage());
+            SAML2Utils.sendError(request, response, 
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                "invalidAssertion", ex.getMessage());
             return;
         }
 
@@ -338,8 +344,9 @@ public class AssertionIDRequestUtil {
                 SAML2Utils.debug.message("AssertionIDRequestUtil." +
                 "processAssertionIDRequestURI:", ueex);
             }
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                ueex.getMessage());
+            SAML2Utils.sendError(request, response, 
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                "unsupportedEncoding", ueex.getMessage());
             return;
         }
         response.setContentLength(bytes.length);

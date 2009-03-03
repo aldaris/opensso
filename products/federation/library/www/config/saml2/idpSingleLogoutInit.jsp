@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: idpSingleLogoutInit.jsp,v 1.5 2008-09-17 21:41:56 exu Exp $
+   $Id: idpSingleLogoutInit.jsp,v 1.6 2009-03-03 01:54:09 qcheng Exp $
 
 --%>
 
@@ -81,8 +81,8 @@
 
         Object ssoToken = SessionManager.getProvider().getSession(request);
         if (ssoToken == null) {
-            response.sendError(response.SC_BAD_REQUEST,
-                SAML2Utils.bundle.getString("nullSSOToken"));
+            SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+                "nullSSOToken", SAML2Utils.bundle.getString("nullSSOToken"));
             return;
         }
         String[] values = SessionManager.getProvider().
@@ -160,13 +160,17 @@
         }
     } catch (SAML2Exception sse) {
         SAML2Utils.debug.error("Error sending Logout Request " , sse);
-        response.sendError(response.SC_BAD_REQUEST,
-                SAML2Utils.bundle.getString("LogoutRequestProcessingError"));
+        SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+            "LogoutRequestProcessingError",
+            SAML2Utils.bundle.getString("LogoutRequestProcessingError") + " " +
+            sse.getMessage());
         return;
     } catch (Exception e) {
         SAML2Utils.debug.error("Error processing Request ",e);
-        response.sendError(response.SC_BAD_REQUEST,
-                SAML2Utils.bundle.getString("LogoutRequestProcessingError"));
+        SAML2Utils.sendError(request, response, response.SC_BAD_REQUEST,
+            "LogoutRequestProcessingError",
+            SAML2Utils.bundle.getString("LogoutRequestProcessingError") + " " +
+            e.getMessage());
         return;
     }
 %>

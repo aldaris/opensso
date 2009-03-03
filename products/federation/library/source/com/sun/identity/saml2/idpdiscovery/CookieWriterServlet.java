@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CookieWriterServlet.java,v 1.4 2008-07-31 00:54:29 exu Exp $
+ * $Id: CookieWriterServlet.java,v 1.5 2009-03-03 01:52:43 qcheng Exp $
  *
  */
 
@@ -135,16 +135,16 @@ public class CookieWriterServlet extends HttpServlet {
         if (preferred_cookie_name == null) {
             CookieUtils.debug.error( classMethod + 
                 "The request uri is null.");
-            response.sendError(
-                response.SC_INTERNAL_SERVER_ERROR,
+            CookieUtils.sendError(request, response,
+                response.SC_INTERNAL_SERVER_ERROR, "nullRequestUri",
                 "The request uri is null."); 
             return;
         } else if (preferred_cookie_name.equals("")) { 
             CookieUtils.debug.error( classMethod + 
                 "Cannot match the cookie name from " +
                 "the request uri.");
-            response.sendError(
-                response.SC_INTERNAL_SERVER_ERROR,
+            CookieUtils.sendError(request, response,
+                response.SC_INTERNAL_SERVER_ERROR, "invalidRequestUri",
                 "Cookie name is not found based on " + 
                 "the request uri."); 
             return;
@@ -207,8 +207,8 @@ public class CookieWriterServlet extends HttpServlet {
                 if (isValidReturn) {
                     response.sendRedirect(returnURL);
                 } else {
-                    response.sendError(
-                        response.SC_INTERNAL_SERVER_ERROR,
+                    CookieUtils.sendError(request, response,
+                        response.SC_INTERNAL_SERVER_ERROR, "noRedirectionURL",
                         "No Redirect URL"
                     );
                 }
@@ -297,8 +297,8 @@ public class CookieWriterServlet extends HttpServlet {
                         "return error page"
                     );
                 }
-                response.sendError(
-                    response.SC_INTERNAL_SERVER_ERROR,
+                CookieUtils.sendError(request, response,
+                    response.SC_INTERNAL_SERVER_ERROR, "noRedirectionURL",
                     "No Redirect URL"
                 );
             }
