@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NT.java,v 1.5 2008-06-25 05:41:59 qcheng Exp $
+ * $Id: NT.java,v 1.6 2009-03-03 06:00:35 si224302 Exp $
  *
  */
 
@@ -39,6 +39,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.security.Principal;
 import java.util.ResourceBundle;
 import java.util.Map;
@@ -189,8 +191,8 @@ public class NT extends AMLoginModule {
                 throw new AuthLoginException(amAuthNT, 
                         "NTUsernameNotASCII", null);
             }
-            if (!userPassword.equals(new String(userPassword.getBytes("ASCII"), 
-                "ASCII"))) {
+            if (!userPassword.equals(new String(userPassword.getBytes("UTF-8"), 
+            "UTF-8"))) {
                if (getCredentialsFromSharedState && !isUseFirstPassEnabled()) {
                     getCredentialsFromSharedState = false;
                     return ISAuthConstants.LOGIN_START;
@@ -211,8 +213,18 @@ public class NT extends AMLoginModule {
             debug.message ("userName='"+ userName + "' host='" + host + "'");
             debug.message ("domain='" + domain + "'");
         }
-
+        File tmpFile = null;
         try {
+            // Create the tmpFile
+            tmpFile = File.createTempFile(userName,"pwd");
+            FileOutputStream fw = new FileOutputStream(tmpFile);
+            OutputStreamWriter dos = new OutputStreamWriter(fw, "ISO-8859-1");
+            dos.write("username = " + userName + "\n");
+            dos.write("password = " + userPassword);
+            dos.flush();
+            dos.close();
+            fw.close();
+            
             Runtime rt = Runtime.getRuntime();
             int c;
             StringBuffer buftxt = new StringBuffer(80);
@@ -230,8 +242,8 @@ public class NT extends AMLoginModule {
             progarr[2] = domain;
             progarr[3] = "-L";
             progarr[4] = host;
-            progarr[5] = "-U";
-            progarr[6] = userName + "%" + userPassword;
+            progarr[5] = "-A";
+            progarr[6] = tmpFile.getAbsolutePath();
 
             Process smbconn = rt.exec(progarr);
 
@@ -302,7 +314,15 @@ public class NT extends AMLoginModule {
             }
             setFailureID(userName);
             throw new AuthLoginException(amAuthNT, "NTAuthFailed", null, ex);
-        } 
+        }
+        finally {
+            //Deletes the password file in any situation
+            if(tmpFile !=null) {
+                try {
+                    tmpFile.delete();
+                } catch(Exception e){}
+            } 
+       }
     }
 
     private String charToString (char [] tmpPassword, Callback cbk ) {
