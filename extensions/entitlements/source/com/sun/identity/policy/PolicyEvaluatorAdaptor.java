@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorAdaptor.java,v 1.17 2009-02-12 05:33:10 veiming Exp $
+ * $Id: PolicyEvaluatorAdaptor.java,v 1.18 2009-03-03 20:40:14 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -110,9 +110,12 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
                 policyDecisions, serviceType);
             return doesActionDecisionMatch(pd, actionValues);
         } catch (SSOException e) {
-            throw new EntitlementException(e.getMessage(), -1);
+            throw new EntitlementException(10, null, e);
+        } catch (NameNotFoundException e) {
+            Object[] arg = {serviceTypeName};
+            throw new EntitlementException(110, arg, e);
         } catch (PolicyException e) {
-            throw new EntitlementException(e.getMessage(), -1);
+            throw new EntitlementException(100, null, e);
         }
     }
     
@@ -224,9 +227,12 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
             }
             return result;
         } catch (SSOException e) {
-            throw new EntitlementException(e.getMessage(), -1);
+            throw new EntitlementException(10, null, e);
+        } catch (NameNotFoundException e) {
+            Object[] arg = {serviceTypeName};
+            throw new EntitlementException(110, arg, e);
         } catch (PolicyException e) {
-            throw new EntitlementException(e.getMessage(), -1);
+            throw new EntitlementException(100, null, e);
         }            
     }
     
@@ -387,7 +393,7 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
             }
         }
         if (exception != null) {
-            throw new EntitlementException(exception.getMessage(), -1);
+            throw new EntitlementException(100, null, exception);
         }
 
         results.addAll(hitResults);
@@ -418,9 +424,12 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
             }
             return results;
          } catch (SSOException e) {
-            throw new EntitlementException(e.getMessage(), -1);
+            throw new EntitlementException(10, null, e);
+        } catch (NameNotFoundException e) {
+            Object[] arg = {serviceTypeName};
+            throw new EntitlementException(110, arg, e);
         } catch (PolicyException e) {
-            throw new EntitlementException(e.getMessage(), -1);
+            throw new EntitlementException(100, null, e);
         }
     }
 
@@ -500,7 +509,7 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
             }
 
             if (exception != null) {
-                throw new EntitlementException(exception.getMessage(), -1);
+                throw new EntitlementException(100, null, exception);
             }
 
             Set<PolicyDecisionTask.Task> results = new
@@ -509,9 +518,10 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
             results.addAll(missedResults);
             return results;
         } catch (SSOException e) {
-            throw new EntitlementException(e.getMessage(), -1);
-        } catch (PolicyException e) {
-            throw new EntitlementException(e.getMessage(), -1);
+            throw new EntitlementException(10, null, e);
+        } catch (NameNotFoundException e) {
+            Object[] arg = {serviceTypeName};
+            throw new EntitlementException(110, arg, e);
         }
     }
 

@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexDataStore.java,v 1.12 2009-02-04 10:04:54 veiming Exp $
+ * $Id: PolicyIndexDataStore.java,v 1.13 2009-03-03 20:40:14 veiming Exp $
  */
 
 package com.sun.identity.sm;
@@ -120,10 +120,10 @@ public class PolicyIndexDataStore implements  IPolicyIndexDataStore {
             s.setAttributes(map);
             s.save();
         } catch (SMSException e) {
-            throw new EntitlementException(e.getMessage(), 
-                e.getExceptionCode());
+            Object[] arg = {dn};
+            throw new EntitlementException(50, arg, e);
         } catch (SSOException e) {
-            throw new EntitlementException(e.getMessage(), -1);
+            throw new EntitlementException(10, null, e);
         }
     }
     
@@ -136,8 +136,8 @@ public class PolicyIndexDataStore implements  IPolicyIndexDataStore {
             oos.writeObject(object);
             oos.close();
             return Base64.encode(out.toByteArray());
-        } catch (IOException ex) {
-            throw new EntitlementException(ex.getMessage(), -1);
+        } catch (IOException e) {
+            throw new EntitlementException(200, null, e);
         } finally {
             if (oos != null) {
                 try {
@@ -158,9 +158,9 @@ public class PolicyIndexDataStore implements  IPolicyIndexDataStore {
             ois = new ObjectInputStream(in);
             return ois.readObject();
         } catch (ClassNotFoundException ex) {
-            throw new EntitlementException(ex.getMessage(), -1);
+            throw new EntitlementException(201, null, ex);
         } catch (IOException ex) {
-            throw new EntitlementException(ex.getMessage(), -1);
+            throw new EntitlementException(201, null, ex);
         } finally {
             try {
                 if (ois != null) {
@@ -190,10 +190,10 @@ public class PolicyIndexDataStore implements  IPolicyIndexDataStore {
                 SMSEntry s = new SMSEntry(adminToken, dn);
                 s.delete();
             } catch (SMSException e) {
-                throw new EntitlementException(e.getMessage(),
-                    e.getExceptionCode());
+                Object[] arg = {dn};
+                throw new EntitlementException(51, arg, e);
             } catch (SSOException e) {
-                throw new EntitlementException(e.getMessage(), -1);
+                throw new EntitlementException(10, null, e);
             }
         }
     }
@@ -203,14 +203,19 @@ public class PolicyIndexDataStore implements  IPolicyIndexDataStore {
         Set<String> hostIndexes,
         Set<String> pathIndexes,
         String pathParent
-    ) throws SSOException, SMSException {
+    ) throws SSOException, EntitlementException {
         String filter = getFilter(hostIndexes, pathIndexes, pathParent);
         if (filter == null) {
             return Collections.EMPTY_MAP;
         }
         Object[] params = {SMSEntry.getRootSuffix()};
         String startDN = MessageFormat.format(START_DN_TEMPLATE, params);
-        return SMSEntry.searchEx(adminToken, startDN, filter);
+        try {
+            return SMSEntry.searchEx(adminToken, startDN, filter);
+        } catch (SMSException e) {
+            Object[] arg = {startDN};
+            throw new EntitlementException(52, arg, e);
+        }
             
     }
     
@@ -288,11 +293,8 @@ public class PolicyIndexDataStore implements  IPolicyIndexDataStore {
             }
 
             return results;
-        } catch (SMSException e) {
-            throw new EntitlementException(e.getMessage(),
-                e.getExceptionCode());
         } catch (SSOException e) {
-            throw new EntitlementException(e.getMessage(), -1);
+            throw new EntitlementException(10, null, e);
         }
     }
     

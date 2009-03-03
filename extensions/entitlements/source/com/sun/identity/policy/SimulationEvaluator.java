@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SimulationEvaluator.java,v 1.6 2009-02-20 00:03:34 veiming Exp $
+ * $Id: SimulationEvaluator.java,v 1.7 2009-03-03 20:40:14 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -134,27 +134,39 @@ public class SimulationEvaluator {
 
     public Set<String> getMatchedSubjectTypeNames(String policyName)
         throws EntitlementException {
+        String realm = "/";
         try {
             Set<String> matched = new HashSet<String>();
             SSOToken adminSSOToken = getSSOToken(adminSubject);
-            PolicyManager pm = new PolicyManager(adminSSOToken, "/");
+            PolicyManager pm = getPolicyManager(adminSSOToken, realm);
+
             SubjectTypeManager sm = pm.getSubjectTypeManager();
-            Policy p = pm.getPolicy(policyName);
+            Policy p = getPolicy(pm, policyName);
             SSOToken token = getSSOToken(subject);
 
             Set<String> sbjNames = p.getSubjectNames();
             for (String n : sbjNames) {
-                com.sun.identity.policy.interfaces.Subject sbj =
-                    p.getSubject(n);
-                if (sbj.isMember(token)) {
-                    matched.add(sm.getSubjectTypeName(sbj));
+                com.sun.identity.policy.interfaces.Subject sbj = null;
+
+                try {
+                    sbj =p.getSubject(n);
+                } catch (NameNotFoundException e) {
+                    Object[] arg = {n, policyName};
+                    throw new EntitlementException(103, arg, e);
+                }
+
+                try {
+                    if (sbj.isMember(token)) {
+                        matched.add(sm.getSubjectTypeName(sbj));
+                    }
+                } catch (PolicyException e) {
+                    Object[] arg = {n, policyName};
+                    throw new EntitlementException(113, arg, e);
                 }
             }
             return matched;
         } catch (SSOException e) {
-            throw new EntitlementException(e.getMessage(), -1);
-        } catch (PolicyException e) {
-            throw new EntitlementException(e.getMessage(), -1);
+            throw new EntitlementException(10, null, e);
         }
 
     }
@@ -165,26 +177,36 @@ public class SimulationEvaluator {
             Set<String> matched = new HashSet<String>();
             SSOToken adminSSOToken = getSSOToken(adminSubject);
             SSOToken token = getSSOToken(subject);
-            PolicyManager pm = new PolicyManager(adminSSOToken, "/");
+            PolicyManager pm = getPolicyManager(adminSSOToken, "/");
             ConditionTypeManager cm = pm.getConditionTypeManager();
-            Policy p = pm.getPolicy(policyName);
+            Policy p = getPolicy(pm, policyName);
             Map map = (envParameters == null) ? Collections.EMPTY_MAP :
                 envParameters;
 
             Set<String> cndNames = p.getConditionNames();
             for (String n : cndNames) {
-                com.sun.identity.policy.interfaces.Condition cnd =
-                    p.getCondition(n);
-                ConditionDecision cd = cnd.getConditionDecision(token, map);
-                if (cd.isAllowed()) {
-                    matched.add(cm.getConditionTypeName(cnd));
+                com.sun.identity.policy.interfaces.Condition cnd = null;
+
+                try {
+                    cnd = p.getCondition(n);
+                } catch (NameNotFoundException e) {
+                    Object[] arg = {n, policyName};
+                    throw new EntitlementException(104, arg, e);
+                }
+
+                try {
+                    ConditionDecision cd = cnd.getConditionDecision(token, map);
+                    if (cd.isAllowed()) {
+                        matched.add(cm.getConditionTypeName(cnd));
+                    }
+                } catch (PolicyException e) {
+                    Object[] arg = {n, policyName};
+                    throw new EntitlementException(114, arg, e);
                 }
             }
             return matched;
         } catch (SSOException e) {
-            throw new EntitlementException(e.getMessage(), -1);
-        } catch (PolicyException e) {
-            throw new EntitlementException(e.getMessage(), -1);
+            throw new EntitlementException(10, null, e);
         }
     }
 
@@ -222,9 +244,10 @@ public class SimulationEvaluator {
                 }
             }
         } catch (SSOException e) {
-            throw new EntitlementException(e.getMessage(), -1);
-        } catch (PolicyException e) {
-            throw new EntitlementException(e.getMessage(), -1);
+            throw new EntitlementException(10, null, e);
+        } catch (NameNotFoundException e) {
+            Object[] arg = {serviceTypeName};
+            throw new EntitlementException(110, arg, e);
         }
     }
 
@@ -278,10 +301,12 @@ public class SimulationEvaluator {
                         serviceType, res, pd));
                 }
             }
-        } catch (PolicyException e) {
-            throw new EntitlementException(e.getMessage(), -1);
         } catch (SSOException e) {
-            throw new EntitlementException(e.getMessage(), -1);
+            throw new EntitlementException(10, null, e);
+        } catch (NameNotFoundException e) {
+            throw new EntitlementException(110, null, e);
+        } catch (PolicyException e) {
+            throw new EntitlementException(100, null, e);
         }
     }
 
@@ -326,5 +351,26 @@ public class SimulationEvaluator {
             }
         }
         return null;
+    }
+
+    private PolicyManager getPolicyManager(SSOToken adminSSOToken, String realm
+        ) throws SSOException, EntitlementException {
+        try {
+            return new PolicyManager(adminSSOToken, realm);
+        } catch (PolicyException e) {
+            Object[] arg = {realm};
+            throw new EntitlementException(101, arg, e);
+        }
+    }
+
+    private Policy getPolicy(PolicyManager pm, String policyName)
+        throws SSOException, EntitlementException {
+        try {
+            return pm.getPolicy(policyName);
+        } catch (PolicyException e) {
+            Object[] arg = {policyName};
+            throw new EntitlementException(102, arg, e);
+        }
+
     }
 }

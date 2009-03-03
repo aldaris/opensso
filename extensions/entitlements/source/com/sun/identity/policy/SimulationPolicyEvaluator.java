@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SimulationPolicyEvaluator.java,v 1.4 2009-02-18 20:08:11 veiming Exp $
+ * $Id: SimulationPolicyEvaluator.java,v 1.5 2009-03-03 20:40:14 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -114,9 +114,9 @@ public class SimulationPolicyEvaluator
                 envParameters);
             return getSimulatedResults(results, serviceTypeName);
         } catch (SSOException ex) {
-            throw new EntitlementException(ex.getMessage(), -1);
+            throw new EntitlementException(10, null,ex);
         } catch (PolicyException ex) {
-            throw new EntitlementException(ex.getMessage(), -1);
+            throw new EntitlementException(100, null, ex);
         }
     }
 
@@ -140,9 +140,12 @@ public class SimulationPolicyEvaluator
         }
         return simResults;
         } catch (SSOException e) {
-            throw new EntitlementException(e.getMessage(), -1);
+            throw new EntitlementException(10, null, e);
+        } catch (NameNotFoundException e) {
+            Object[] arg = {serviceTypeName};
+            throw new EntitlementException(110, arg, e);
         } catch (PolicyException e) {
-            throw new EntitlementException(e.getMessage(), -1);
+            throw new EntitlementException(100, null, e);
         }
     }
 

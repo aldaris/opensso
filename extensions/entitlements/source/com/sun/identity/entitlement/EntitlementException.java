@@ -22,29 +22,65 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementException.java,v 1.3 2009-01-14 23:47:27 dillidorai Exp $
+ * $Id: EntitlementException.java,v 1.4 2009-03-03 20:40:13 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
+
+import java.text.MessageFormat;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
  * Entitlement related exception. * 
  */
 public class EntitlementException extends Exception {
-    
+    private static final String RES_BUNDLE_NAME = "EntitlementException";
+    private static ResourceBundle resourceBundle = ResourceBundle.getBundle(
+        RES_BUNDLE_NAME);
+
     private int errorCode;
+    private String message;
+    private Object[] params;
+
     
     /**
      * Creates an entitlement exception.
-     * 
-     * @param msg Exception message.
+     *
      * @param errorCode Error code.
      */
-    public EntitlementException(String msg, int errorCode) {
-        super(msg);
+    public EntitlementException(int errorCode) {
         this.errorCode = errorCode;
+        this.message = getLocalizedMessage(Locale.getDefault());
     }
-    
+
+    /**
+     * Creates an entitlement exception.
+     * 
+     * @param errorCode Error code.
+     * @param params Parameters for formatting the message string.
+     */
+    public EntitlementException(int errorCode, Object[] params) {
+        this.errorCode = errorCode;
+        this.params = params;
+        this.message = getLocalizedMessage(Locale.getDefault());
+    }
+
+    /**
+     * Creates an entitlement exception.
+     *
+     * @param errorCode Error code.
+     * @param params Parameters for formatting the message string.
+     * @param cause Root cause.
+     */
+    public EntitlementException(int errorCode, Object[] params, Throwable cause)
+    {
+        super(cause);
+        this.errorCode = errorCode;
+        this.params = params;
+        this.message = getLocalizedMessage(Locale.getDefault());
+    }
+
     /**
      * Returns error code.
      * 
@@ -53,5 +89,38 @@ public class EntitlementException extends Exception {
     public int getErrorCode() {
         return errorCode;
     }
+
+    /**
+     * Returns exception message.
+     *
+     * @return exception message.
+     */
+    @Override
+    public String getMessage() {
+        return message;
+    }
+
+    /**
+     * Returns localized exception message.
+     *
+     * @return localized exception message.
+     */
+    @Override
+    public String getLocalizedMessage() {
+        return message;
+    }
+
+    /**
+     * Returns localized exception message.
+     *
+     * @param locale Locale of the message.
+     * @return localized exception message.
+     */
+    public String getLocalizedMessage(Locale locale) {
+        String msg = resourceBundle.getString(Integer.toString(errorCode));
+        return (params != null) ? MessageFormat.format(msg, params) :
+            msg;
+    }
+
 }
 
