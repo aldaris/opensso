@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PriviligeUtils.java,v 1.13 2009-03-03 22:10:51 dillidorai Exp $
+ * $Id: PriviligeUtils.java,v 1.14 2009-03-03 23:37:14 dillidorai Exp $
  */
 package com.sun.identity.policy;
 
@@ -447,7 +447,7 @@ public class PriviligeUtils {
                                 (RoleESubject) es, stm);
                         arr[2] = Boolean.TRUE;
                         list.add(arr);
-                    } else { // mapt to EntitlementSubject
+                    } else { // map to EntitlementSubject
                         Object[] arr = eSubjectToEntitlementSubject(es, stm);
                         arr[2] = Boolean.TRUE;
                         list.add(arr);
@@ -488,6 +488,18 @@ public class PriviligeUtils {
                     list.add(groupESubjectToPSubject((GroupESubject) ns, stm));
                 } else if (ns instanceof RoleESubject) {
                     list.add(roleESubjectToPSubject((RoleESubject) ns, stm));
+                } else if (ns instanceof OrESubject) {
+                    List list1 = orESubjectToPSubject((OrESubject) ns, stm);
+                    for (Object obj : list1) {
+                       list.add(obj);
+                    }
+                } else if (ns instanceof NotESubject) {
+                    List list1 = notESubjectToPSubject((NotESubject) ns, stm);
+                     for (Object obj : list1) {
+                       Object[] arr = (Object[])obj;
+                       arr[2] = Boolean.TRUE;
+                       list.add(arr);
+                    }
                 } else { // map to EntitlementSubejct
                     list.add(eSubjectToEntitlementSubject((ESubject) ns, stm));
                 }
