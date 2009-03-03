@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneUtil.java,v 1.11 2009-01-28 05:35:05 ww203982 Exp $
+ * $Id: AMTuneUtil.java,v 1.12 2009-03-03 02:51:17 ykwon Exp $
  */
 
 package com.sun.identity.tune.util;
@@ -80,7 +80,6 @@ import java.util.zip.ZipOutputStream;
     private static Map sysInfoMap;
     private static boolean utilInit = true;
     private static String osArch;
-    private static boolean isNiagara = false;
     private static String date;
     private static ResourceBundle rb = null;
     public static String TMP_DIR;
@@ -265,17 +264,6 @@ import java.util.zip.ZipOutputStream;
                 throw new AMTuneException(AMTuneUtil.getResourceBundle()
                         .getString("pt-unable-no-cpu"));
             } else {
-                if (hwPlatform != null && hwPlatform.indexOf(NIAGARABOX) != -1)
-                {
-                    isNiagara = true;
-                    pLogger.log(Level.INFO, "getSunOSSystemInfo", 
-                            "Tuning Niagarabox");
-                    if (noCpus >= DIV_NUM_CPU) {
-                        noCpus = noCpus / DIV_NUM_CPU;
-                    } else {
-                        noCpus = MIN_NUM_CPU;
-                    }
-                }
                 sysInfoMap.put(PROCESSERS_LINE, Integer.toString(noCpus));
             }
             rBuf.setLength(0);
@@ -770,13 +758,7 @@ import java.util.zip.ZipOutputStream;
     public static boolean isAIX() {
         return isAix;
     }
-    /**
-     * Return true if under laying hardware is Niagara box.
-     * 
-     */
-    public static boolean isNiagara() {
-        return isNiagara;
-    }
+    
     /**
      *  Returns last token in the string.
      *

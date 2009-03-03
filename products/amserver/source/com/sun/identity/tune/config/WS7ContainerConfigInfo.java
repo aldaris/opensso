@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WS7ContainerConfigInfo.java,v 1.3 2008-08-29 10:15:27 kanduls Exp $
+ * $Id: WS7ContainerConfigInfo.java,v 1.4 2009-03-03 02:45:10 ykwon Exp $
  */
 
 package com.sun.identity.tune.config;
@@ -522,11 +522,6 @@ public class WS7ContainerConfigInfo extends WebContainerConfigInfoBase {
                 reqLine = checkJVMOpt(
                         cfgF.getLine(MARK_SWEEP_GC_FLAG.replace("-XX:+", "")));
                 cfgMap.put(MARK_SWEEP_GC_FLAG, reqLine);
-                if (AMTuneUtil.isNiagara()) {
-                    reqLine = checkJVMOpt(cfgF.getLine(PARALLEL_GC_THREADS));
-                    cfgMap.put(PARALLEL_GC_THREADS, 
-                            AMTuneUtil.getLastToken(reqLine, PARAM_VAL_DELIM));
-                }
                 cfgF.close();
             } else {
                 pLogger.log(Level.SEVERE, "fillCfgMap",

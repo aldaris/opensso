@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneConstants.java,v 1.8 2008-09-19 23:26:27 ykwon Exp $
+ * $Id: AMTuneConstants.java,v 1.9 2009-03-03 02:47:12 ykwon Exp $
  */
 
 package com.sun.identity.tune.constants;
@@ -47,9 +47,6 @@ public interface AMTuneConstants {
     static String PROCESSERS_LINE = "Processor";
     static String MEMORY_LINE = "Total Physical Memory:";
     static String HWPLATFORM = "HWPLATFORM";
-    static String NIAGARABOX = "Sun-Fire-T";
-    static int DIV_NUM_CPU = 4;
-    static int MIN_NUM_CPU =1;
     static String LOG_DIR = "logs";
     static String ROOT_REALM = "/";
     static String FILE_SEP = "/";

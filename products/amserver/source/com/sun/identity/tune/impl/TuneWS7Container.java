@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneWS7Container.java,v 1.7 2008-09-18 17:21:24 kanduls Exp $
+ * $Id: TuneWS7Container.java,v 1.8 2009-03-03 02:50:17 ykwon Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -291,19 +291,6 @@ public class TuneWS7Container extends TuneWebServer implements
             mWriter.writeLocaleMsg("pt-rec-val");
             mWriter.writeln(wsAdminNewUseConMarkSweepGc);
             mWriter.writeln(" ");
-            String wsAdminNewParallelGCThreads = "";
-            String wsAdminCurParellelGCThreads = "";
-            if (AMTuneUtil.isNiagara()) {
-                mWriter.writelnLocaleMsg("pt-parallel-gc-threads-msg");
-                mWriter.writeLocaleMsg("pt-cur-val");
-                wsAdminCurParellelGCThreads = PARALLEL_GC_THREADS + "=" + 
-                        curCfgMap.get(PARALLEL_GC_THREADS);
-                mWriter.writeln(wsAdminCurParellelGCThreads);
-                wsAdminNewParallelGCThreads = PARALLEL_GC_THREADS + "=" + 
-                        AMTuneUtil.getNumberOfCPUS();
-                mWriter.writeLocaleMsg("pt-rec-val");
-                mWriter.writeln(wsAdminNewParallelGCThreads);
-            }
             if (configInfo.isReviewMode()) {
                 return;
             }
@@ -401,15 +388,6 @@ public class TuneWS7Container extends TuneWebServer implements
                     wsAdminNewUseConMarkSweepGc)) {
                 curJVMOptList.add(curCfgMap.get(MARK_SWEEP_GC_FLAG));
                 newJVMOptList.add(wsAdminNewUseConMarkSweepGc);
-            }
-            if (AMTuneUtil.isNiagara()) {
-                if (!wsAdminCurParellelGCThreads.equals(
-                        wsAdminNewParallelGCThreads)) {
-                    if (wsAdminCurParellelGCThreads.indexOf(NO_VAL_SET) == -1) {
-                        curJVMOptList.add(wsAdminCurParellelGCThreads);
-                    }
-                    newJVMOptList.add(wsAdminNewParallelGCThreads);
-                }
             }
             boolean isHeapOptDel = 
                     deleteJVMOptionUsingWSAdmin(curJVMHeapOptList, true);
