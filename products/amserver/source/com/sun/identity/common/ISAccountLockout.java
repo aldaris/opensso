@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISAccountLockout.java,v 1.12 2008-09-08 05:29:34 bhavnab Exp $
+ * $Id: ISAccountLockout.java,v 1.13 2009-03-03 05:51:06 si224302 Exp $
  *
  */
 
@@ -395,6 +395,7 @@ public class ISAccountLockout {
             // first failure. store key
             debug.message("ISAccountLockout.invalidPasswdEx: First failure." );
             acInfo = new AccountLockoutInfo();
+            acInfo.setActualLockoutDuration(failureLockoutDuration);
             acInfo.setLastFailTime(now);
         }
         
