@@ -22,10 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyPriviligeManager.java,v 1.1 2009-02-11 01:40:27 dillidorai Exp $
+ * $Id: PolicyPriviligeManager.java,v 1.2 2009-03-03 03:54:10 dillidorai Exp $
  */
 package com.sun.identity.policy;
 
+import com.iplanet.sso.SSOException;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.Privilige;
 import com.sun.identity.entitlement.PriviligeManager;
@@ -62,6 +63,8 @@ public class PolicyPriviligeManager extends PriviligeManager {
         try {
             Policy policy = PriviligeUtils.priviligeToPolicy(privilige);
         } catch (PolicyException pe) {
+        } catch(SSOException ssoe) {
+            
         }
     }
 
