@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: ConfigureGoogleAppsComplete.jsp,v 1.1 2009-02-27 11:41:28 asyhuang Exp $
+   $Id: ConfigureGoogleAppsComplete.jsp,v 1.2 2009-03-03 20:08:37 asyhuang Exp $
 
 --%>
 
@@ -54,7 +54,7 @@
 <script language="javascript">
     function confirmLogout() {
         return confirm("<cc:text name="txtLogout" defaultValue="masthead.logoutMessage" bundleID="amConsole"/>");
-    }
+    }    
 </script>
 <cc:primarymasthead name="mhCommon" bundleID="amConsole"  logoutOnClick="return confirmLogout();" 
     locale="<%=((com.sun.identity.console.base.AMViewBeanBase)viewBean).getUserLocale()%>"/>
@@ -68,19 +68,19 @@
 </table>
 
 <%-- PAGE CONTENT --%>
-<cc:pagetitle name="pgtitleTwoBtns" 
+<cc:pagetitle name="pgtitleOneBtns" 
     bundleID="amConsole" 
     pageTitleText="configure.google.apps.complete.label.name" 
-    showPageTitleSeparator="true" 
+    showPageTitleSeparator="false" 
     viewMenuLabel="" 
     pageTitleHelpMessage="" 
-    showPageButtonsTop="true" 
+    showPageButtonsTop="false" 
     showPageButtonsBottom="true" >
 
     <cc:propertysheet 
         name="propertyAttributes" 
         bundleID="amConsole" 
-        showJumpLinks="true" />
+        showJumpLinks="false" />
 </cc:pagetitle>
 
 

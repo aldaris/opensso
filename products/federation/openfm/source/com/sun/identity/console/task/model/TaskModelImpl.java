@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TaskModelImpl.java,v 1.6 2009-02-27 12:09:42 asyhuang Exp $
+ * $Id: TaskModelImpl.java,v 1.7 2009-03-03 20:09:59 asyhuang Exp $
  *
  */
 
@@ -36,17 +36,15 @@ import com.sun.identity.cot.COTConstants;
 import com.sun.identity.cot.CircleOfTrustManager;
 import com.sun.identity.saml2.jaxb.entityconfig.BaseConfigType;
 import com.sun.identity.saml2.jaxb.entityconfig.EntityConfigElement;
-import com.sun.identity.saml2.jaxb.metadata.EncryptionMethodElement;
+import com.sun.identity.saml2.jaxb.entityconfig.IDPSSOConfigElement;
 import com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.IDPSSODescriptorElement;
-import com.sun.identity.saml2.jaxb.metadata.KeyDescriptorElement;
 import com.sun.identity.saml2.jaxb.metadata.SingleLogoutServiceElement;
 import com.sun.identity.saml2.jaxb.metadata.SingleSignOnServiceElement;
-import com.sun.identity.saml2.jaxb.xmlenc.EncryptionMethodType;
 import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
+import com.sun.identity.saml2.meta.SAML2MetaSecurityUtils;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
-import java.math.BigInteger;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.util.Collections;
@@ -304,26 +302,30 @@ public class TaskModelImpl
                             returnEmptySetIfValueIsNull(
                             spslsElem.getLocation()));                      
                     }
-                }
-                
-            
+                }                           
             }
             map.put("ChangePasswordURL", returnEmptySetIfValueIsNull(entityId+"/idm/EndUer"));
-            // TBD get pubkey
-            String publickey = null; 
+            
+            // get pubkey          
+            Map extValueMap = new HashMap();
+            IDPSSOConfigElement idpssoConfig = samlManager.getIDPSSOConfig(realm,entityId);
+            if (idpssoConfig != null) {
+                BaseConfigType baseConfig = (BaseConfigType)idpssoConfig;
+                extValueMap = SAML2MetaUtils.getAttributes(baseConfig);
+            }            
+            List aList = (List) extValueMap.get("signingCertAlias");
+            String signingCertAlias = null;
+            if (aList != null) {
+                signingCertAlias = (String) aList.get(0);
+            }
+            String publickey = 
+                    SAML2MetaSecurityUtils.buildX509Certificate(signingCertAlias);            
             map.put("PubKey",returnEmptySetIfValueIsNull(publickey));
-
         } catch (SAML2MetaException ex) {
             throw new AMConsoleException(ex.getMessage());
         }
         return map;
-     }
-     
-    protected Set returnEmptySetIfValueIsNull(boolean b) {
-        Set set = new HashSet(2);
-        set.add(Boolean.toString(b));
-        return set;
-    }
+     }     
     
     protected Set returnEmptySetIfValueIsNull(String str) {
         Set set = Collections.EMPTY_SET;

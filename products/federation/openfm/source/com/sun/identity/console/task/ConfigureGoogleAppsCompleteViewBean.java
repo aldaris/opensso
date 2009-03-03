@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureGoogleAppsCompleteViewBean.java,v 1.1 2009-02-27 11:55:56 asyhuang Exp $
+ * $Id: ConfigureGoogleAppsCompleteViewBean.java,v 1.2 2009-03-03 20:09:28 asyhuang Exp $
  *
  */
 package com.sun.identity.console.task;
@@ -35,14 +35,12 @@ import com.sun.identity.console.base.AMPrimaryMastHeadViewBean;
 import com.sun.identity.console.base.AMPropertySheet;
 import com.sun.identity.console.base.model.AMConsoleException;
 import com.sun.identity.console.base.model.AMModel;
-import com.sun.identity.console.base.model.AMModelBase;
 import com.sun.identity.console.base.model.AMPropertySheetModel;
 import com.sun.identity.console.task.model.TaskModel;
 import com.sun.identity.console.task.model.TaskModelImpl;
 import com.sun.web.ui.model.CCPageTitleModel;
 import com.sun.web.ui.view.alert.CCAlert;
 import com.sun.web.ui.view.pagetitle.CCPageTitle;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -59,15 +57,15 @@ public class ConfigureGoogleAppsCompleteViewBean
     protected static final String PROPERTIES = "propertyAttributes";
     private AMPropertySheetModel psModel;
     private CCPageTitleModel ptModel;
-    private static final String PGTITLE_TWO_BTNS =
-            "pgtitleTwoBtns";
+    private static final String PGTITLE_ONE_BTNS =
+            "pgtitleOneBtns";
     private boolean initialized;
 
     /**
      * Creates a authentication domains view bean.
      */
     public ConfigureGoogleAppsCompleteViewBean() {
-        super("ConfigureGoogleAppsCompleteViewBean");
+        super("ConfigureGoogleAppsComplete");
         setDefaultDisplayURL(DEFAULT_DISPLAY_URL);
     }
 
@@ -85,14 +83,14 @@ public class ConfigureGoogleAppsCompleteViewBean
     protected void registerChildren() {
         super.registerChildren();
         registerChild(PROPERTIES, AMPropertySheet.class);
-        registerChild(PGTITLE_TWO_BTNS, CCPageTitle.class);
+        registerChild(PGTITLE_ONE_BTNS, CCPageTitle.class);
         psModel.registerChildren(this);
         ptModel.registerChildren(this);
     }
 
     protected View createChild(String name) {
         View view = null;
-        if (name.equals(PGTITLE_TWO_BTNS)) {
+        if (name.equals(PGTITLE_ONE_BTNS)) {
             view = new CCPageTitle(this, ptModel, name);
         } else if (name.equals(PROPERTIES)) {
             view = new AMPropertySheet(this, psModel, name);
@@ -110,16 +108,8 @@ public class ConfigureGoogleAppsCompleteViewBean
             throws ModelControlException {
         try {
             super.beginDisplay(event);
-            
-            //ps.init();
-            // TaskModel model = (TaskModel) getModel();
             String realm = "/";
             String entityId = "http://katmai.red.iplanet.com:8080/opensso";
-            
-            // ps.setDisplayFieldValue("SigninPageURL", "111");
-            //  ps.setDisplayFieldValue("SignoutPageURL", "222");
-            // ps.setDisplayFieldValue("ChangePasswordURL", "333");
-            // ps.setDisplayFieldValue("key", "4444");
             TaskModel model = (TaskModel) getModelInternal();
             Map values = model.getConfigureGoogleAppURLs(realm, entityId);
             AMPropertySheet ps = (AMPropertySheet) getChild(PROPERTIES);
@@ -134,9 +124,8 @@ public class ConfigureGoogleAppsCompleteViewBean
     private void createPageTitleModel() {
         ptModel = new CCPageTitleModel(
                 getClass().getClassLoader().getResourceAsStream(
-                "com/sun/identity/console/twoBtnsPageTitle.xml"));
-        ptModel.setValue("button1", "button.ok");
-        ptModel.setValue("button2", "button.cancel");
+                "com/sun/identity/console/oneBtnPageTitle.xml"));
+        ptModel.setValue("button1", "button.ok");     
     }
 
     protected AMModel getModelInternal() {
@@ -151,22 +140,6 @@ public class ConfigureGoogleAppsCompleteViewBean
         psModel.clear();
     }
 
-    private Map populateValue(String realm, String entityName) {
-        Map map = new HashMap();
-       
-
-            //gets standard metadata values
-            TaskModel model = (TaskModel) getModel();
-            map.put("SigninPageURL", "111");
-            map.put("SignoutPageURL", "222");
-            map.put("ChangePasswordURL", "333");
-            map.put("key", "4444");
-
-            Map map1 = new HashMap();
-          
-        return map;
-    }
-
     /**
      * Handles save button request.
      * save
@@ -174,17 +147,10 @@ public class ConfigureGoogleAppsCompleteViewBean
      */
     public void handleButton1Request(RequestInvocationEvent event)
             throws ModelControlException {
-
-        forwardTo();
-
+        HomeViewBean vb = (HomeViewBean) getViewBean(HomeViewBean.class);
+        backTrail();
+        passPgSessionMap(vb);
+        vb.forwardTo(getRequestContext());
     }
 
-    /**
-     * Handles page cancel request.
-     * 
-     * @param event Request invocation event
-     */
-    public void handleButton2Request(RequestInvocationEvent event) {
-        forwardTo();
-    }
 }
