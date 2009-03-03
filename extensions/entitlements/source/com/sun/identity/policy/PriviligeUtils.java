@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PriviligeUtils.java,v 1.10 2009-03-03 01:51:46 dillidorai Exp $
+ * $Id: PriviligeUtils.java,v 1.11 2009-03-03 06:19:42 dillidorai Exp $
  */
 package com.sun.identity.policy;
 
@@ -142,7 +142,7 @@ public class PriviligeUtils {
         return privilige;
     }
 
-    static Entitlement ruleToEntitlement(Rule rule)
+    private static Entitlement ruleToEntitlement(Rule rule)
             throws PolicyException {
         String serviceName = rule.getServiceTypeName();
         String resourceName = rule.getResourceName();
@@ -156,7 +156,7 @@ public class PriviligeUtils {
         return new Entitlement(serviceName, resourceName, actionMap);
     }
 
-    static ESubject nqSubjectsToESubject(Set nqSubjects) {
+    private static ESubject nqSubjectsToESubject(Set nqSubjects) {
         Set esSet = new HashSet();
         ESubject es = null;
         for (Object nqSubjectObj : nqSubjects) {
@@ -167,7 +167,6 @@ public class PriviligeUtils {
             if (subject instanceof com.sun.identity.policy.plugins.AMIdentitySubject) {
                 es = mapAMIdentitySubjectToESubject(nqSubject);
             } else { // mapt to PolicyESubject
-
             }
             esSet.add(es);
         }
@@ -179,7 +178,7 @@ public class PriviligeUtils {
         return es;
     }
 
-    static ESubject mapAMIdentitySubjectToESubject(Object[] nqSubject) {
+    private static ESubject mapAMIdentitySubjectToESubject(Object[] nqSubject) {
         Set esSet = new HashSet();
         ESubject es = null;
         String subjectName = (String) nqSubject[0];
@@ -236,7 +235,7 @@ public class PriviligeUtils {
         return es;
     }
 
-    static ECondition nConditionsToECondition(Set nConditions) {
+    private static ECondition nConditionsToECondition(Set nConditions) {
         JSONObject jo = new JSONObject();
         try {
             Set joys = new HashSet();
@@ -264,12 +263,12 @@ public class PriviligeUtils {
         return null;
     }
 
-    static EResourceAttributes nrpsToEResourceAttributes(Set nprs) {
+    private static EResourceAttributes nrpsToEResourceAttributes(Set nprs) {
         //EResourceAttributes era = nrpsToEResourceAttributes(nrps);
         return null;
     }
 
-    static Policy priviligeToPolicy(Privilige privilige)
+    public static Policy priviligeToPolicy(Privilige privilige)
             throws PolicyException, SSOException {
         Policy policy = null;
         policy = new Policy(privilige.getName());
@@ -286,7 +285,11 @@ public class PriviligeUtils {
                 Object[] arr = (Object[]) obj;
                 String pSubjectName = (String) arr[0];
                 Subject subject = (Subject) arr[1];
-                Subject s = policy.getSubject(pSubjectName);
+                Subject s = null;
+                try {
+                    policy.getSubject(pSubjectName);
+                } catch (NameNotFoundException nnfe) {
+                }
                 if (s == null) {
                     Boolean exclusive = (Boolean) arr[2];
                     policy.addSubject(pSubjectName, subject, exclusive);
@@ -303,7 +306,7 @@ public class PriviligeUtils {
         return policy;
     }
 
-    static Rule entitlementToRule(Entitlement entitlement)
+    private static Rule entitlementToRule(Entitlement entitlement)
             throws PolicyException {
         String ruleName = entitlement.getName();
         String serviceName = entitlement.getServiceName();
@@ -314,7 +317,7 @@ public class PriviligeUtils {
     }
 
     //TODO: fix impl
-    static List eSubjectToPSubjects(ESubject eSubject)
+    private static List eSubjectToPSubjects(ESubject eSubject)
             throws PolicyException, SSOException {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
@@ -336,7 +339,7 @@ public class PriviligeUtils {
             }
         } else if (eSubject instanceof OrESubject) {
             OrESubject os = (OrESubject) eSubject;
-              List list = orESubjectToPSubject(os, stm);
+            List list = orESubjectToPSubject(os, stm);
             for (Object obj : list) {
                 subjects.add(obj);
             }
@@ -347,7 +350,7 @@ public class PriviligeUtils {
         return subjects;
     }
 
-    static Object[] userESubjectToPSubject(UserESubject us,
+    private static Object[] userESubjectToPSubject(UserESubject us,
             SubjectTypeManager stm)
             throws PolicyException, SSOException {
         Subject subject = stm.getSubject("AMIdentitySubject");
@@ -365,7 +368,7 @@ public class PriviligeUtils {
         return arr;
     }
 
-    static List notESubjectToPSubject(NotESubject nos,
+    private static List notESubjectToPSubject(NotESubject nos,
             SubjectTypeManager srm) throws PolicyException, SSOException {
         List list = new ArrayList();
         ESubject nestedSubject = nos.getESubject();
@@ -379,7 +382,6 @@ public class PriviligeUtils {
                     } else if (es instanceof RoleESubject) {
                     } else if (nestedSubject instanceof PolicyESubject) {
                     } else { // map to EntitlementSubejct
-
                     }
                 }
             }
@@ -387,30 +389,30 @@ public class PriviligeUtils {
         return list;
     }
 
-    static List orESubjectToPSubject(OrESubject os,
+    private static List orESubjectToPSubject(OrESubject os,
             SubjectTypeManager srm) throws PolicyException, SSOException {
         List list = new ArrayList();
-        return null;
+        return list;
     }
 
-    static Object[] eSubjectToPSubject(ESubject es,
+    private static Object[] eSubjectToPSubject(ESubject es,
             SubjectTypeManager srm) throws PolicyException, SSOException {
         return null;
     }
 
-    static Set<Condition> eConditionToPConditions() {
+    private static Set<Condition> eConditionToPConditions() {
         return null;
     }
 
-    static Set<EResourceAttributes> ResponseProvidersToEResourceAttributes() {
+    private static Set<EResourceAttributes> ResponseProvidersToEResourceAttributes() {
         return null;
     }
 
-    static Set<ResponseProvider> EResourceAttributesToResponseProviders() {
+    private static Set<ResponseProvider> EResourceAttributesToResponseProviders() {
         return null;
     }
 
-    static String randomName() {
+    private static String randomName() {
         return "randomName";
     }
 }
