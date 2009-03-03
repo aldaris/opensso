@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: NotESubject.java,v 1.3 2009-02-27 16:58:44 dillidorai Exp $
+ * $Id: NotESubject.java,v 1.4 2009-03-03 22:10:51 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -52,6 +52,7 @@ public class NotESubject implements ESubject {
      * @param eSubject nested ESubject
      */
     public NotESubject(ESubject eSubject) {
+        this.eSubject = eSubject;
     }
 
     /**
@@ -62,6 +63,8 @@ public class NotESubject implements ESubject {
      * OpenSSO policy Subject
      */
     public NotESubject(ESubject eSubject, String pSubjectName) {
+        this.eSubject = eSubject;
+        this.pSubjectName = pSubjectName;
     }
 
     /**

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PriviligeUtils.java,v 1.12 2009-03-03 15:16:52 dillidorai Exp $
+ * $Id: PriviligeUtils.java,v 1.13 2009-03-03 22:10:51 dillidorai Exp $
  */
 package com.sun.identity.policy;
 
@@ -287,7 +287,7 @@ public class PriviligeUtils {
                 Subject subject = (Subject) arr[1];
                 Subject s = null;
                 try {
-                    policy.getSubject(pSubjectName);
+                    s = policy.getSubject(pSubjectName);
                 } catch (NameNotFoundException nnfe) {
                 }
                 if (s == null) {
@@ -433,24 +433,44 @@ public class PriviligeUtils {
             if (nested2Subjects != null) {
                 for (ESubject es : nested2Subjects) {
                     if (es instanceof UserESubject) {
-                        list.add(userESubjectToPSubject((UserESubject) es, stm));
+                        Object[] arr = userESubjectToPSubject(
+                                (UserESubject) es, stm);
+                        arr[2] = Boolean.TRUE;
+                        list.add(arr);
                     } else if (es instanceof GroupESubject) {
-                        list.add(groupESubjectToPSubject((GroupESubject) es, stm));
+                        Object[] arr = groupESubjectToPSubject(
+                                (GroupESubject) es, stm);
+                        arr[2] = Boolean.TRUE;
+                        list.add(arr);
                     } else if (es instanceof RoleESubject) {
-                        list.add(roleESubjectToPSubject((RoleESubject) es, stm));
+                        Object[] arr = roleESubjectToPSubject(
+                                (RoleESubject) es, stm);
+                        arr[2] = Boolean.TRUE;
+                        list.add(arr);
                     } else { // mapt to EntitlementSubject
-                        list.add(eSubjectToEntitlementSubject(es, stm));
+                        Object[] arr = eSubjectToEntitlementSubject(es, stm);
+                        arr[2] = Boolean.TRUE;
+                        list.add(arr);
                     }
                 }
             }
         } else if (ns instanceof UserESubject) {
-            list.add(userESubjectToPSubject((UserESubject) ns, stm));
+
+            Object[] arr = userESubjectToPSubject((UserESubject) ns, stm);
+            arr[2] = Boolean.TRUE;
+            list.add(arr);
         } else if (ns instanceof GroupESubject) {
-            list.add(userESubjectToPSubject((UserESubject) ns, stm));
+            Object[] arr = groupESubjectToPSubject((GroupESubject) ns, stm);
+            arr[2] = Boolean.TRUE;
+            list.add(arr);
         } else if (ns instanceof RoleESubject) {
-            list.add(userESubjectToPSubject((UserESubject) ns, stm));
+            Object[] arr = roleESubjectToPSubject((RoleESubject) ns, stm);
+            arr[2] = Boolean.TRUE;
+            list.add(arr);
         } else { // map to EntitlementSubejct
-            list.add(userESubjectToPSubject((UserESubject) ns, stm));
+            Object[] arr = eSubjectToEntitlementSubject(ns, stm);
+            arr[2] = Boolean.TRUE;
+            list.add(arr);
         }
         return list;
     }
@@ -465,11 +485,11 @@ public class PriviligeUtils {
                 if (ns instanceof UserESubject) {
                     list.add(userESubjectToPSubject((UserESubject) ns, stm));
                 } else if (ns instanceof GroupESubject) {
-                    list.add(userESubjectToPSubject((UserESubject) ns, stm));
+                    list.add(groupESubjectToPSubject((GroupESubject) ns, stm));
                 } else if (ns instanceof RoleESubject) {
-                    list.add(userESubjectToPSubject((UserESubject) ns, stm));
+                    list.add(roleESubjectToPSubject((RoleESubject) ns, stm));
                 } else { // map to EntitlementSubejct
-                    list.add(userESubjectToPSubject((UserESubject) ns, stm));
+                    list.add(eSubjectToEntitlementSubject((ESubject) ns, stm));
                 }
             }
         }
