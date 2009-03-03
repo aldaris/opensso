@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.h,v 1.25 2009-02-24 22:13:22 robertis Exp $
+ * $Id: am_web.h,v 1.26 2009-03-03 23:23:52 dknab Exp $
  *
  */
 
@@ -90,7 +90,6 @@ AM_BEGIN_EXTERN_C
 #define REFERER_SERVLET         	"refererservlet"
 
 /* for am_web_process_request and related functions */
-#define REQUEST_METHOD_TYPE                     "sunwMethod"
 #define REQUEST_METHOD_GET                      "GET"
 #define REQUEST_METHOD_POST                     "POST"
 #define REQUEST_METHOD_HEAD                     "HEAD"

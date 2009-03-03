@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: web_agent.c,v 1.4 2009-02-27 19:26:49 robertis Exp $
+ * $Id: web_agent.c,v 1.5 2009-03-03 23:23:47 dknab Exp $
  *
  *
  */
@@ -816,6 +816,7 @@ validate_session_policy(pblock *param, Session *sn, Request *rq) {
     char* cookie_name= NULL;
     int cookie_header_len;
     char* cookie_header = NULL;
+    char* header_str = NULL;
 
     // check if agent is initialized.
     // if not initialized, then call agent init function
@@ -846,7 +847,7 @@ validate_session_policy(pblock *param, Session *sn, Request *rq) {
 
     if (am_web_is_max_debug_on()) {
         // Dump the entire set of request headers
-        char *header_str = pblock_pblock2str(rq->reqpb, NULL);
+        header_str = pblock_pblock2str(rq->reqpb, NULL);
         am_web_log_max_debug("validate_session_policy() Headers: %s", 
                               header_str);
         system_free(header_str);
@@ -963,13 +964,16 @@ validate_session_policy(pblock *param, Session *sn, Request *rq) {
     // In CDSSO mode, check if the sso token is in the post data
     if (dpro_cookie == NULL &&
         am_web_is_cdsso_enabled(agent_config) == B_TRUE ) {
-        if (strcmp(method, REQUEST_METHOD_POST) == 0) {
-      	    response = get_post_assertion_data(sn, rq, request_url);
-      	    // Set the original request method to GET always
-      	    orig_req = (char *)malloc(strlen(getMethod)+1);
-      	    if (orig_req != NULL) {
-      	        strcpy(orig_req,getMethod);
-      	        status = am_web_check_cookie_in_post(args, &dpro_cookie,
+        if (strcmp(method, REQUEST_METHOD_POST) == 0 &&
+               (am_web_is_url_enforced(request_url, path_info, 
+               pblock_findval(REQUEST_IP_ADDR, 
+               sn->client),agent_config) == B_TRUE)) {
+               response = get_post_assertion_data(sn, rq, request_url);
+            // Set the original request method to GET always
+            orig_req = (char *)malloc(strlen(getMethod)+1);
+            if (orig_req != NULL) {
+                strcpy(orig_req,getMethod);
+                status = am_web_check_cookie_in_post(args, &dpro_cookie,
                                                &request_url,
                                                &orig_req, method, response,
                                                B_FALSE, set_cookie, 
@@ -987,7 +991,8 @@ validate_session_policy(pblock *param, Session *sn, Request *rq) {
                     clf_req = malloc(clf_reqSize);
                     if (clf_req == NULL) {
                         am_web_log_error("validate_session_policy() "
-                                      "Unable to allocate %i bytes for clf_req",			clf_reqSize);
+                                      "Unable to allocate %i bytes for clf_req",
+                                      clf_reqSize);
                         status = AM_NO_MEMORY;
                     } else {
                         memset (clf_req,'\0',clf_reqSize);
@@ -1009,7 +1014,7 @@ validate_session_policy(pblock *param, Session *sn, Request *rq) {
                 am_web_log_error("validate_session_policy() : Unable to "
                                  "allocate memory for orig_req");
             }
-	}
+        }
     }
 
     if (dpro_cookie != NULL) {

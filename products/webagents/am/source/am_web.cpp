@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.cpp,v 1.44 2009-02-24 22:13:22 robertis Exp $
+ * $Id: am_web.cpp,v 1.45 2009-03-03 23:23:50 dknab Exp $
  *
  */
 
@@ -156,6 +156,7 @@ static int initialized = AM_FALSE;
 #if defined(WINNT)
 HINSTANCE hInstance;
 #endif
+
 
 extern "C" int decrypt_base64(const char *, char *, const char*);
 extern "C" int decode_base64(const char *, char *);
@@ -1622,17 +1623,16 @@ get_normalized_url(const char *url_str,
  */
 extern "C" AM_WEB_EXPORT am_status_t
 am_web_is_access_allowed(const char *sso_token,
-			 const char *url_str,
-			 const char *path_info,
-			 const char *action_name,
-			 const char *client_ip,
-			 const am_map_t env_parameter_map,
-			 am_policy_result_t *result,
-                         void* agent_config)
+                const char *url_str,
+                const char *path_info,
+                const char *action_name,
+                const char *client_ip,
+                const am_map_t env_parameter_map,
+                am_policy_result_t *result,
+                void* agent_config)
 {
     AgentConfigurationRefCntPtr* agentConfigPtr =
         (AgentConfigurationRefCntPtr*) agent_config;
-
 
     const char *thisfunc = "am_web_is_access_allowed()";
     am_status_t status = AM_SUCCESS;
@@ -1660,53 +1660,51 @@ am_web_is_access_allowed(const char *sso_token,
 
     memset(fmtStr, 0, sizeof(fmtStr));
 
-    // check all required arguments.
+    // Check arguments
     if (url_str == NULL || action_name == NULL ||
-	*url_str == '\0' || action_name == '\0' ||
-	env_parameter_map == NULL || result == NULL ||
-	(AM_TRUE == (*agentConfigPtr)->check_client_ip &&
-	    NULL == client_ip || *client_ip == '\0')) {
-	status = AM_INVALID_ARGUMENT;
+            *url_str == '\0' || action_name == '\0' ||
+            env_parameter_map == NULL || result == NULL ||
+            (AM_TRUE == (*agentConfigPtr)->check_client_ip &&
+            NULL == client_ip || *client_ip == '\0')) {
+        status = AM_INVALID_ARGUMENT;
     }
 
     // parse & canonicalize URL
     if (status == AM_SUCCESS) {
-        status = get_normalized_url(url_str, path_info, normalizedURL, pInfo, agent_config);
+        status = get_normalized_url(url_str, path_info, 
+                    normalizedURL, pInfo, agent_config);
     }
     if (status == AM_SUCCESS) {
-            url = normalizedURL.c_str();
-            if (url == NULL || *url == '\0') {
-                status = AM_INVALID_ARGUMENT;
-            } else {
-                am_web_log_max_debug("%s: Processing url %s.", thisfunc, url);
-            }
+        url = normalizedURL.c_str();
+        if (url == NULL || *url == '\0') {
+            status = AM_INVALID_ARGUMENT;
+        } else {
+            am_web_log_max_debug("%s: Processing url %s.", thisfunc, url);
+        }
     }
 
     // check FQDN access
     if (status == AM_SUCCESS) {
-	try {
-	    if (AM_FALSE == is_valid_fqdn_access(url, agent_config)) {
-		status = AM_INVALID_FQDN_ACCESS;
-	    }
-	}
-	catch (std::exception& exs) {
-	    am_web_log_error("%s: Exception encountered while checking "
-			     "valid fqdn access: %s", thisfunc, exs.what());
+        try {
+            if (AM_FALSE == is_valid_fqdn_access(url, agent_config)) {
+                status = AM_INVALID_FQDN_ACCESS;
+            }
+        } catch (std::exception& exs) {
+            am_web_log_error("%s: Exception encountered while checking "
+                     "valid fqdn access: %s", thisfunc, exs.what());
             status = AM_INVALID_FQDN_ACCESS;
-	}
-	catch (...) {
-	    am_web_log_error("%s: Unknown exception while checking "
-			     "valid fqdn access", thisfunc);
+        } catch (...) {
+            am_web_log_error("%s: Unknown exception while checking "
+                     "valid fqdn access", thisfunc);
             status = AM_INVALID_FQDN_ACCESS;
-	}
+        }
     }
 
-    // check if client ip is in not enforced list
     if (status == AM_SUCCESS) {
         // Check if the url is enforced
-        isNotEnforced = is_url_not_enforced(url, client_ip, pInfo, agent_config);
-
-        // check if it's the logout URL
+        isNotEnforced = is_url_not_enforced(url, client_ip, pInfo,
+                                     agent_config);
+        // Check if it's the logout URL
         if ((*agentConfigPtr)->agent_logout_url_list.size > 0 &&
             am_web_is_agent_logout_url(url, agent_config) == B_TRUE) {
             isLogoutURL = AM_TRUE;
@@ -1714,13 +1712,11 @@ am_web_is_access_allowed(const char *sso_token,
         }
     }
 
-
-
     //Check whether agent is operating in cookieless mode.
     //If yes, extract sso token from the url. The modified url after
     //removal of sso token needs to be sent for policy evaluations.
     if (sso_token == NULL || '\0' == sso_token[0]) {
-	    if(url != NULL && strlen(url) > 0) {
+        if(url != NULL && strlen(url) > 0) {
             am_web_get_parameter_value(url,
                                        am_web_get_cookie_name(agent_config),
                                        &urlSSOToken);
@@ -1750,239 +1746,240 @@ am_web_is_access_allowed(const char *sso_token,
     // also not logout url. 
     // If the accessed URL is logout url, then it requires processing.
     if (isNotEnforced == AM_TRUE &&
-	(*agentConfigPtr)->notenforced_url_attributes_enable == AM_FALSE &&
-        isLogoutURL == AM_FALSE ) {
-           am_web_log_debug("URL = %s is in not-enforced list and  "
-                           "notenforced.url.attributes.enable is set to "
-			   "false", url);
+                (*agentConfigPtr)->notenforced_url_attributes_enable 
+                 == AM_FALSE && isLogoutURL == AM_FALSE ) {
+        am_web_log_debug("%s: URL = %s is in not-enforced list and "
+                         "notenforced.url.attributes.enable is set to "
+                         "false", thisfunc, url);
     } else {
-      if (status == AM_SUCCESS) {
-
-        // check sso token. if URL is enforced, return invalid session if no
-        // token is provided.
-        if (sso_token == NULL || '\0' == sso_token[0]) {
-	    // no sso token
-	    if (AM_FALSE == isNotEnforced) {
-		am_web_log_debug("%s(%s,%s): no sso token, "
-				 "setting status to invalid session.",
-				 thisfunc, url, action_name);
-		status = AM_INVALID_SESSION;
-	    }
-	}
-	// Then do am_policy_evaluate to get session info (userid, attributes)
-	// whether or not url is enforced, whether or not do_sso_only is true.
-	// but ignore result if url not enforced or do_sso_only.
-	// Note: This will be replaced by a different policy call to just get
-	// user ldap attributes or id so the policy does not get evaluated.
-	else {
-	    KeyValueMap action_results_map;
-	    am_status_t eval_status = AM_SUCCESS;
-	    /* the following should not throw exceptions */
-	    if (client_ip != NULL && *client_ip != '\0') {
-		set_host_ip_in_env_map(client_ip, env_parameter_map, agent_config);
-	    }
-            if ((isNotEnforced == AM_TRUE &&
-              ((*agentConfigPtr)->notenforced_url_attributes_enable == AM_FALSE) && 
-               (*agentConfigPtr)->setUserProfileAttrsMode == SET_ATTRS_NONE)) {
-                  am_web_log_debug("URL = %s is in not-enforced list and ldap "
-                                   "attribute mode is NONE", url);
-            } else {
-               if ((*agentConfigPtr)->encode_url_special_chars == AM_TRUE ) {
-                   encodedUrlSize = (strlen(url)+1)*4;
-                   encodedUrl = (char *) malloc (encodedUrlSize);
-
-	           // Check url for special chars
-	           if (encodedUrl != NULL) {
-	  	     bool url_spl_flag = false;
-    		     memset(encodedUrl, 0, encodedUrlSize);
-		     for(int i = 0; i < strlen(url); i++) {
-		       if (( url[i] <  32) || ( url[i] > 127))  {
-		          url_spl_flag = true;
-		       }
-		     }
-	             if (url_spl_flag) {
-		       encode_url(url, encodedUrl);
-                       am_web_log_debug("original URL = %s",url);
-	               url = encodedUrl;
-                       am_web_log_debug("encoded URL = %s",encodedUrl);
-	             }
-	           } else {
-                       am_web_log_error("%s: failed to allocate"
-                            "%d bytes for encodedUrl",encodedUrlSize);
-	           }
-	       } 
-
-                if (AM_TRUE == isNotEnforced ||
-                    AM_TRUE == (*agentConfigPtr)->do_sso_only) {
-                        ignorePolicyResult = AM_TRUE;
-                }
-                
-		// Use the policy clock skew if set
-		policy_clock_skew = (*agentConfigPtr)->policy_clock_skew;
-
-		eval_status = am_policy_evaluate_ignore_url_notenforced(
-						 boot_info.policy_handle,
-						 sso_token, url, action_name,
-						 env_parameter_map,
-						 reinterpret_cast<am_map_t>
-					          (&action_results_map),
-						 result,
-						 ignorePolicyResult,
-					         (*agentConfigPtr)->properties);
-
-		// if eval policy success, check policy decision in the result
-		// if it is enforced and not in do_sso_only mode.
-		if (eval_status == AM_SUCCESS) {
-		    if (AM_FALSE == isNotEnforced &&
-			AM_FALSE == (*agentConfigPtr)->do_sso_only) {
-			try {
-			    if (action_results_map.size() == 0) {
-				am_web_log_debug("%s(%s, %s) denying access: "
-						 "NULL action_result_map",
-						 thisfunc, url, action_name);
-				status = AM_ACCESS_DENIED;
-			    } else {
-				status = eval_action_results_map(action_results_map,
-							     url,
-							     action_name,
-							     result);
-			    }
-			} catch (std::bad_alloc& exb) {
-			    status = AM_NO_MEMORY;
-			} catch (std::exception& exs) {
-			    am_web_log_error("%s(%s,%s): Exception encountered "
-					"while checking policy results: %s",
-					thisfunc, url, action_name, exs.what());
-			    status = AM_FAILURE;
-			} catch (...) {
-			    am_web_log_error("%s(%s,%s): Unknown Exception "
-					     "while checking policy results: %s",
-					     thisfunc, url, action_name);
-			    status = AM_FAILURE;
-			}
-		    }
-		} else {
-		    // if eval policy failure, ignore if in do_sso_only and
-		    // failure is related to policy (and not invalid session).
-		    // also ignore if url is not enforced.
-		    // otherwise set status to the evaluation status.
-
-		    /* Note: This is a temporary workaround for
-		     * determining if the session is valid. This should be
-		     * replaced by an new and more appropriate function call
-		     * which only evaluates if the current session
-		     * is valid or not.  */
-		    if (AM_TRUE == (*agentConfigPtr)->do_sso_only &&
-			(eval_status == AM_NO_POLICY ||
-			eval_status == AM_INVALID_ACTION_TYPE)) {
-			am_web_log_debug("%s(%s, %s) do_sso_only - ignore "
-			    "policy eval result of no policy or invalid action",
+        if (status == AM_SUCCESS) {
+            // check sso token. if URL is enforced, return invalid session if no
+            // token is provided.
+            if (sso_token == NULL || '\0' == sso_token[0]) {
+                // no sso token
+                if (AM_FALSE == isNotEnforced) {
+                    am_web_log_debug("%s(%s,%s): no sso token, "
+                            "setting status to invalid session.",
                             thisfunc, url, action_name);
-		    } else if (AM_FALSE == isNotEnforced) {
-			status = eval_status;
-		    }
-		}
+                    status = AM_INVALID_SESSION;
+                }
+            }  else {
+                // Then do am_policy_evaluate to get session info (userid, attributes)
+                // whether or not url is enforced, whether or not do_sso_only is true.
+                // but ignore result if url not enforced or do_sso_only.
+                // Note: This will be replaced by a different policy call to just get
+                // user ldap attributes or id so the policy does not get evaluated.
+                KeyValueMap action_results_map;
+                am_status_t eval_status = AM_SUCCESS;
+                // the following should not throw exceptions 
+                if (client_ip != NULL && *client_ip != '\0') {
+                    set_host_ip_in_env_map(client_ip, env_parameter_map,
+                                     agent_config);
+                }
+                if ((isNotEnforced == AM_TRUE &&
+                       ((*agentConfigPtr)->notenforced_url_attributes_enable 
+                       == AM_FALSE) && 
+                       (*agentConfigPtr)->setUserProfileAttrsMode
+                       == SET_ATTRS_NONE)) {
+                       am_web_log_debug("%s: URL = %s is in not-enforced "
+                                   "list and ldap attribute mode is NONE",
+                                    thisfunc, url);
+                } else {
+                    if ((*agentConfigPtr)->encode_url_special_chars 
+                               == AM_TRUE ) {
+                        encodedUrlSize = (strlen(url)+1)*4;
+                        encodedUrl = (char *) malloc (encodedUrlSize);
+                        // Check url for special chars
+                        if (encodedUrl != NULL) {
+                            bool url_spl_flag = false;
+                            memset(encodedUrl, 0, encodedUrlSize);
+                            for(int i = 0; i < strlen(url); i++) {
+                                if (( url[i] <  32) || ( url[i] > 127))  {
+                                    url_spl_flag = true;
+                                }
+                            }
+                            if (url_spl_flag) {
+                                encode_url(url, encodedUrl);
+                                am_web_log_debug("%s: original URL = %s",
+                                                 thisfunc, url);
+                                url = encodedUrl;
+                                am_web_log_debug("%s: encoded URL = %s", 
+                                                  thisfunc, encodedUrl);
+                            }
+                        } else {
+                            am_web_log_error("%s: failed to allocate"
+                              "%d bytes for encodedUrl",encodedUrlSize);
+                        }
+                    } 
+                    if (AM_TRUE == isNotEnforced ||
+                           AM_TRUE == (*agentConfigPtr)->do_sso_only) {
+                        ignorePolicyResult = AM_TRUE;
+                    }
+                    // Use the policy clock skew if set
+                    policy_clock_skew = (*agentConfigPtr)->policy_clock_skew;
+                    eval_status = am_policy_evaluate_ignore_url_notenforced(
+                                 boot_info.policy_handle,
+                                 sso_token, url, action_name,
+                                 env_parameter_map,
+                                 reinterpret_cast<am_map_t>
+                                 (&action_results_map),
+                                 result,
+                                 ignorePolicyResult,
+                                 (*agentConfigPtr)->properties);
+                    // if eval policy success, check policy decision in the result
+                    // if it is enforced and not in do_sso_only mode.
+                    if (eval_status == AM_SUCCESS) {
+                        if (AM_FALSE == isNotEnforced &&
+                            AM_FALSE == (*agentConfigPtr)->do_sso_only) {
+                            try {
+                                if (action_results_map.size() == 0) {
+                                    am_web_log_debug("%s(%s, %s) denying access: "
+                                          "NULL action_result_map",
+                                          thisfunc, url, action_name);
+                                    status = AM_ACCESS_DENIED;
+                                } else {
+                                    status = eval_action_results_map(
+                                             action_results_map,
+                                             url,
+                                             action_name,
+                                             result);
+                                }
+                            } catch (std::bad_alloc& exb) {
+                                status = AM_NO_MEMORY;
+                            } catch (std::exception& exs) {
+                                am_web_log_error("%s(%s,%s): Exception "
+                                          "encountered while checking policy "
+                                          "results: %s", thisfunc, url, 
+                                          action_name, exs.what());
+                                status = AM_FAILURE;
+                            } catch (...) {
+                                am_web_log_error("%s(%s,%s): Unknown Exception "
+                                             "while checking policy results: %s",
+                                             thisfunc, url, action_name);
+                                status = AM_FAILURE;
+                            }
+                        }
+                    } else {
+                        // if eval policy failure, ignore if in do_sso_only and
+                        // failure is related to policy (and not invalid session).
+                        // also ignore if url is not enforced.
+                        // otherwise set status to the evaluation status.
 
-		// access denied, no policy and invalid action type are three
-		// error types that are mapped to access denied.  All others
-		// are handled as they are.  INVALID session will redirect
-		// user to auth, most others throw 500 internal server error.
-		if (AM_SUCCESS != status) {
-		    am_web_log_warning("%s(%s, %s) denying access: status = %s",
-				       thisfunc, url, action_name,
-				       am_status_to_string(status));
-		    if(status == AM_NO_POLICY ||
-		       status == AM_INVALID_ACTION_TYPE) {
-			status = AM_ACCESS_DENIED;
-		    }
-		}
+                        // Note: This is a temporary workaround for
+                        // determining if the session is valid. This should be
+                        // replaced by an new and more appropriate function call
+                        // which only evaluates if the current session
+                        // is valid or not.
+                        if (AM_TRUE == (*agentConfigPtr)->do_sso_only &&
+                                  (eval_status == AM_NO_POLICY ||
+                            eval_status == AM_INVALID_ACTION_TYPE)) {
+                            am_web_log_debug("%s(%s, %s) do_sso_only - ignore "
+                                   "policy eval result of no policy "
+                                   "or invalid action",
+                                   thisfunc, url, action_name);
+                        } else if (AM_FALSE == isNotEnforced) {
+                            status = eval_status;
+                        }
+                    }
+                    // Access denied, no policy and invalid action type are three
+                    // error types that are mapped to access denied.  All others
+                    // are handled as they are.  INVALID session will redirect
+                    // user to auth, most others throw 500 internal server error.
+                    if (AM_SUCCESS != status) {
+                        am_web_log_warning("%s(%s, %s) denying access: "
+                                    "status = %s",
+                                    thisfunc, url, action_name,
+                                    am_status_to_string(status));
+                        if(status == AM_NO_POLICY ||
+                                status == AM_INVALID_ACTION_TYPE) {
+                            status = AM_ACCESS_DENIED;
+                        }
+                    }
 
-		// now check if the ip address matches what is in sso token,
-		// if check client ip address is true and url is enforced.
-		if (AM_SUCCESS == status && AM_FALSE == isNotEnforced &&
-		    AM_TRUE == (*agentConfigPtr)->check_client_ip &&
-		    result->remote_IP != NULL) {
-		    if (client_ip == NULL ||
-			strcmp(result->remote_IP, client_ip) != 0) {
-			status = AM_ACCESS_DENIED;
-			am_web_log_warning("%s: Client ip [%s] does not match "
-					   "sso token ip [%s]. Denying access.",
-					   thisfunc, result->remote_IP,
-					   client_ip);
-		    } else {
-			am_web_log_debug("%s: Client ip [%s] matched "
-					 "sso token ip.", thisfunc,
-					 result->remote_IP);
-		    }
-		}
-	    }
+                    // Check if the ip address matches what is in sso token,
+                    // if check client ip address is true and url is enforced.
+                    if (AM_SUCCESS == status && AM_FALSE == isNotEnforced &&
+                        AM_TRUE == (*agentConfigPtr)->check_client_ip &&
+                        result->remote_IP != NULL) {
+                        if (client_ip == NULL ||
+                            strcmp(result->remote_IP, client_ip) != 0) {
+                            status = AM_ACCESS_DENIED;
+                            am_web_log_warning("%s: Client ip [%s] "
+                                     "does not match sso token ip [%s]. "
+                                     "Denying access.",
+                                     thisfunc, result->remote_IP,
+                                     client_ip);
+                        } else {
+                            am_web_log_debug("%s: Client ip [%s] matched "
+                                                "sso token ip.", thisfunc,
+                            result->remote_IP);
+                        }
+                    }
+                }
 
-	    // invalidate user's sso token if it's the agent logout URL,
-	    // ignore the invalidate status.
-	    // Note that this must be done *after* am_policy_evaluate()
-	    // so we can get the user's id and pass it to the web app.
-	    // Can't get the user's id after session's been invalidated.
-	    if (isLogoutURL && sso_token != NULL && sso_token[0] != '\0'
-                && status != AM_INVALID_SESSION){
-            am_web_log_debug("invalidating session %s", sso_token);
-            am_status_t redirLogoutStatus = AM_FAILURE;
-            am_status_t logout_status =
-                am_policy_user_logout(boot_info.policy_handle,
-						 sso_token,(*agentConfigPtr)->properties);
-            if (AM_SUCCESS != logout_status) {
-                am_web_log_warning(
-                    "%s: Error %s invalidating session %s.",
-                     thisfunc, am_status_to_name(logout_status),
-                     sso_token);
-            } else {
-                am_web_log_debug("%s: Logged out session id %s.",
-				     thisfunc, sso_token);
-                redirLogoutStatus = AM_REDIRECT_LOGOUT;
+                // Invalidate user's sso token if it's the agent logout URL,
+                // ignore the invalidate status.
+                // Note that this must be done *after* am_policy_evaluate()
+                // so we can get the user's id and pass it to the web app.
+                // Can't get the user's id after session's been invalidated.
+                if (isLogoutURL && sso_token != NULL && sso_token[0] != '\0'
+                                && status != AM_INVALID_SESSION){
+                    am_web_log_debug("invalidating session %s", sso_token);
+                    am_status_t redirLogoutStatus = AM_FAILURE;
+                    am_status_t logout_status =
+                    am_policy_user_logout(boot_info.policy_handle,
+                                 sso_token,(*agentConfigPtr)->properties);
+                    if (AM_SUCCESS != logout_status) {
+                        am_web_log_warning(
+                                   "%s: Error %s invalidating session %s.",
+                                   thisfunc, am_status_to_name(logout_status),
+                                   sso_token);
+                    } else {
+                        am_web_log_debug("%s: Logged out session id %s.",
+                                        thisfunc, sso_token);
+                        redirLogoutStatus = AM_REDIRECT_LOGOUT;
+                    }
+                    return redirLogoutStatus;
+
+                }
             }
-       
-        return redirLogoutStatus;
-
-	    }
         }
-      }
     }
 
-    // now set user in the result.
+    // Set user in the result.
     // result->remote_user gets freed in am_policy_result_destroy().
     if (AM_SUCCESS == status && result->remote_user == NULL) {
-    if (AM_TRUE == (*agentConfigPtr)->anon_remote_user_enable &&
-	    (*agentConfigPtr)->unauthenticated_user != NULL &&
-	    *(*agentConfigPtr)->unauthenticated_user != '\0') {
-
-	    result->remote_user = strdup((*agentConfigPtr)->unauthenticated_user);
-	}
-	else {
-	    result->remote_user = NULL;
-	}
-	am_web_log_debug("%s: remote user set to unauthenticated user %s",
-			 thisfunc, result->remote_user);
+        if (AM_TRUE == (*agentConfigPtr)->anon_remote_user_enable &&
+                   (*agentConfigPtr)->unauthenticated_user != NULL &&
+                   *(*agentConfigPtr)->unauthenticated_user != '\0') {
+            result->remote_user = strdup((*agentConfigPtr)->unauthenticated_user);
+    } else {
+        result->remote_user = NULL;
+    }
+    am_web_log_debug("%s: remote user set to unauthenticated user %s",
+                     thisfunc, result->remote_user);
     }
 
     // log the final access allow/deny result in IS's audit log.
     rmtUsr = (result->remote_user == NULL) ? "unknown user" :
-		result->remote_user;
-    /**
-     * We do not log the notenforced list accesses for allow,
-     * because, if agent is installed on top of DSAME, the
-     * access to loggingservice, which gets allowed by the
-     * not enforced list would cause a recursion tailspin.
-     */
+                result->remote_user;
+    // We do not log the notenforced list accesses for allow,
+    // because, if agent is installed on top of DSAME, the
+    // access to loggingservice, which gets allowed by the
+    // not enforced list would cause a recursion tailspin.
     if (AM_FALSE == isNotEnforced) {
-	log_status = log_access(status, result->remote_user, sso_token, url, agent_config);
+        log_status = log_access(status, result->remote_user, 
+                      sso_token, url, agent_config);
     }
-
-    if(encodedUrl)
-       am_web_free_memory(encodedUrl);
+    if(encodedUrl) {
+        am_web_free_memory(encodedUrl);
+    }
     am_web_free_memory(modifiedURL);
     am_web_log_info("%s(%s, %s) returning status: %s.",
-		    thisfunc, url, action_name, am_status_to_string(status));
+              thisfunc, url, action_name, am_status_to_string(status));
     return status;
 }
+
 
 extern "C" AM_WEB_EXPORT boolean_t
 am_web_is_notification(const char *request_url,
@@ -2188,56 +2185,60 @@ am_web_get_request_url(const char *host_hdr, const char *protocol,
 
 extern "C" AM_WEB_EXPORT am_status_t
 am_web_check_cookie_in_post(void **args, char **dpro_cookie,
-			    char **request_url,
-			    char **orig_req, char *method,
-			    char *response,
-			    boolean_t responseIsCookie,
-			    am_status_t (*set_cookie)(const char*, void**),
-			    void (*set_method)(void **, char *), 
-                            void* agent_config) {
+                char **request_url,
+                char **orig_req, char *method,
+                char *response,
+                boolean_t responseIsCookie,
+                am_status_t (*set_cookie)(const char*, void**),
+                void (*set_method)(void **, char *), 
+                void* agent_config) {
+    const char *thisfunc = "am_web_check_cookie_in_post()";
     char *recv_token = NULL;
     am_status_t status = AM_SUCCESS;
 
-    /** method is getting overwritten */
-    if(response != NULL && strlen(response) > 0) {
-	am_web_log_debug("am_web_check_cookie_in_post(): "
-			 "AuthnResponse received = %s", response);
-
-	// Check for Liberty response
-	if(responseIsCookie) {
-	    recv_token = strdup(response);
-	} else {
-	    status = am_web_get_token_from_assertion(response, &recv_token, agent_config);
-	}
-    
-	if(status == AM_SUCCESS) {
-	    am_web_log_debug("am_web_check_cookie_in_post(): "
-			     "recv_token : \"%s\"", recv_token);
-
-	    // Set cookie in browser for the foreign domain.
-	    am_web_do_cookie_domain_set(set_cookie, args, recv_token, agent_config);
-    	    *dpro_cookie = strdup(recv_token);
-	    if(*dpro_cookie == NULL) {
-	        am_web_log_error("am_web_check_cookie_in_post(): "
-				 "Unable to allocate memory.");
-		status = AM_NO_MEMORY;
-	    } else {
-		free(recv_token);	
-		strcpy(method, *orig_req);
-		set_method(args, *orig_req);
-		status = AM_SUCCESS;
-	    }
+    // Check arguments
+    if(response == NULL || strlen(response) == 0) {
+        am_web_log_error("%s: Response object is NULL or empty.", thisfunc);
+        status = AM_INVALID_ARGUMENT;
+    }
+    if (status == AM_SUCCESS) {
+        am_web_log_debug("%s: AuthnResponse received = %s", 
+                         thisfunc, response);
+        // Check for Liberty response
+        if(responseIsCookie) {
+            recv_token = strdup(response);
+            if(recv_token == NULL) {
+                am_web_log_error("%s: Unable to allocate memory "
+                                 "for recv_token.", thisfunc);
+                status = AM_NO_MEMORY;
+            } 
         } else {
-	    am_web_log_error("am_web_check_cookie_in_post(): "
-			     "Call to am_web_get_token_from_assertion() "
- 			     "failed with error code: %s",
-			     am_status_to_string(status));
-	}
-   } else {
-	am_web_log_error("am_web_check_cookie_in_post(): "
-			 "Response object is NULL or empty.");
-	status = AM_INVALID_ARGUMENT;
-   }
+            status = am_web_get_token_from_assertion(response, &recv_token,
+                                                     agent_config);
+            if (status != AM_SUCCESS) {
+                am_web_log_error("%s: am_web_get_token_from_assertion() "
+                                 "failed with error code: %s",
+                                 thisfunc, am_status_to_string(status));
+            }
+        }
+    }
+    if(status == AM_SUCCESS) {
+        am_web_log_debug("%s: recv_token : %s", thisfunc, recv_token);
+        // Set cookie in browser for the foreign domain.
+        am_web_do_cookie_domain_set(set_cookie, args, recv_token,
+                                    agent_config);
+        *dpro_cookie = strdup(recv_token);
+        if(*dpro_cookie == NULL) {
+            am_web_log_error("%s: Unable to allocate memory for dpro_cookie.",
+                             thisfunc);
+            status = AM_NO_MEMORY;
+        } else {
+            free(recv_token);	
+            strcpy(method, *orig_req);
+            set_method(args, *orig_req);
+            status = AM_SUCCESS;
+        }
+    }
 
     return status;
 }
@@ -2407,109 +2408,93 @@ am_web_get_redirect_url(am_status_t status,
 
 extern "C" AM_WEB_EXPORT am_status_t
 am_web_get_url_to_redirect(am_status_t status,
-			   const am_map_t advice_map,
-			   const char *goto_url,
-			   const char* method,
-			   void *reserved,
-			   char **redirect_url,
-               void* agent_config)
+                 const am_map_t advice_map,
+                 const char *goto_url,
+                 const char* method,
+                 void *reserved,
+                 char **redirect_url,
+                 void* agent_config)
 {
     AgentConfigurationRefCntPtr* agentConfigPtr =
         (AgentConfigurationRefCntPtr*) agent_config;
-
-
     const char *thisfunc = "am_web_get_url_to_redirect";
     am_status_t ret = AM_SUCCESS;
     *redirect_url = NULL;
 
     if (goto_url == NULL || *goto_url == '\0') {
-	ret = AM_INVALID_ARGUMENT;
-    }
-    else {
-	URL gotoURL(goto_url);
-	std::string orig_url;
-	// override the goto URL to agent's protocol, host or port
-	// if configured
-	if (overrideProtoHostPort(gotoURL, agent_config)) {
-	    gotoURL.getURLString(orig_url);
-	    goto_url = orig_url.c_str();
-	}
-	am_web_log_max_debug("am_web_get_url_to_redirect(): "
-			     "goto URL is %s", goto_url);
-
-	// if previous status was invalid fqdn access,
-	// redirect to the valid fqdn url.
-	if (status == AM_INVALID_FQDN_ACCESS) {
-	    try {
-		std::string valid_fqdn;
-		if ((ret =
-		    getValid_FQDN_URL(goto_url, 
-                                      valid_fqdn, 
-                                      agent_config)) != AM_SUCCESS) {
-		    am_web_log_error("%s: getValid_FQDN_URL failed with error: "
-				     "%s", thisfunc, am_status_to_string(ret));
-		}
-		else if (valid_fqdn.size() == 0) {
-		    am_web_log_error("%s: getValid_FQDN_URL is empty string",
-				     thisfunc);
-		    ret = AM_NOT_FOUND;
-		}
-		else {
-		    *redirect_url = strdup(valid_fqdn.c_str());
-		    if (*redirect_url == NULL) {
-			ret = AM_NO_MEMORY;
-		    } else {
-			ret = AM_SUCCESS;
-		    }
-		}
-	    }
-	    catch (InternalException& exi) {
-		ret = exi.getStatusCode();
-	    }
-	    catch (std::bad_alloc& exb) {
-		ret = AM_NO_MEMORY;
-	    }
-	    catch (std::exception& exs) {
-		am_web_log_error("%s: Exception while getting valid FQDN: %s",
-				    thisfunc, exs.what());
-		ret = AM_FAILURE;
-	    }
-	    catch (...) {
-		am_web_log_error("%s: Unknown exception while getting FQDN.",
-				 thisfunc);
-		ret = AM_FAILURE;
-	    }
-	}
-
-	// if previous status was invalid session or if there was a policy
-	// advice, redirect to the IS login page. If not, redirect to the
-	// configured access denied url if any.
-	else {
-	    // check for advice.
-	    /* If we have advice information, then we attempt to customize
-	     * the redirect URL based on the provided advice.  As of the
-	     * Alpha code-freeze for Identity Server 6.0, the URL may
-	     * contain only one of module, level, role, user, or service.
-	     * I (pds) have made the (semi-)arbitrary decision that if
-	     * both types of advice are available we will prefer to
-	     * specify the auth module (scheme), because the module seems
-	     * more specific than the level.
-	     */
-	    const char *auth_advice_value = "";
-	    size_t auth_advice_value_len = 0;
-	    const char *session_adv_value = "";
-
-	    if (AM_MAP_NULL != advice_map) {
-		auth_advice_value = am_map_find_first_value(advice_map,
-							AUTH_SCHEME_KEY);
-		if (NULL != auth_advice_value) {
-			auth_advice_value_len = strlen(auth_advice_value);
-		} else {
-		    auth_advice_value = am_map_find_first_value(advice_map,
-							    AUTH_LEVEL_KEY);
-		    if (NULL != auth_advice_value) {
-			auth_advice_value_len = strlen(auth_advice_value);
-		    } else {
+        ret = AM_INVALID_ARGUMENT;
+    } else {
+        URL gotoURL(goto_url);
+        std::string orig_url;
+        // override the goto URL to agent's protocol, host or port
+        // if configured
+        if (overrideProtoHostPort(gotoURL, agent_config)) {
+            gotoURL.getURLString(orig_url);
+            goto_url = orig_url.c_str();
+        }
+        am_web_log_max_debug("%s: goto URL is %s", thisfunc, goto_url);
+        // if previous status was invalid fqdn access,
+        // redirect to the valid fqdn url.
+        if (status == AM_INVALID_FQDN_ACCESS) {
+            try {
+                std::string valid_fqdn;
+                ret = getValid_FQDN_URL(goto_url, valid_fqdn, agent_config);
+                if (ret != AM_SUCCESS) {
+                    am_web_log_error("%s: getValid_FQDN_URL failed with error: "
+                        "%s", thisfunc, am_status_to_string(ret));
+                } else if (valid_fqdn.size() == 0) {
+                    am_web_log_error("%s: getValid_FQDN_URL is empty string",
+                                     thisfunc);
+                    ret = AM_NOT_FOUND;
+                } else {
+                    *redirect_url = strdup(valid_fqdn.c_str());
+                    if (*redirect_url == NULL) {
+                        ret = AM_NO_MEMORY;
+                    } else {
+                        ret = AM_SUCCESS;
+                    }
+                }
+            } catch (InternalException& exi) {
+                ret = exi.getStatusCode();
+            } catch (std::bad_alloc& exb) {
+                ret = AM_NO_MEMORY;
+            } catch (std::exception& exs) {
+                am_web_log_error("%s: Exception while getting valid FQDN: %s",
+                                 thisfunc, exs.what());
+                ret = AM_FAILURE;
+            } catch (...) {
+                am_web_log_error("%s: Unknown exception while getting FQDN.",
+                                 thisfunc);
+                ret = AM_FAILURE;
+            }
+        } else {
+            // if previous status was invalid session or if there was a policy
+            // advice, redirect to the IS login page. If not, redirect to the
+            // configured access denied url if any.
+            
+            // Check for advice.
+            // If we have advice information, then we attempt to customize
+            // the redirect URL based on the provided advice.  As of the
+            // Alpha code-freeze for Identity Server 6.0, the URL may
+            // contain only one of module, level, role, user, or service.
+            // I (pds) have made the (semi-)arbitrary decision that if
+            // both types of advice are available we will prefer to
+            // specify the auth module (scheme), because the module seems
+            // more specific than the level.
+            const char *auth_advice_value = "";
+            size_t auth_advice_value_len = 0;
+            const char *session_adv_value = "";
+            if (AM_MAP_NULL != advice_map) {
+                auth_advice_value = am_map_find_first_value(advice_map,
+                                    AUTH_SCHEME_KEY);
+                if (NULL != auth_advice_value) {
+                    auth_advice_value_len = strlen(auth_advice_value);
+                } else {
+                    auth_advice_value = am_map_find_first_value(advice_map,
+                                        AUTH_LEVEL_KEY);
+                    if (NULL != auth_advice_value) {
+                        auth_advice_value_len = strlen(auth_advice_value);
+                    } else {
                         auth_advice_value = am_map_find_first_value(advice_map,
                                                             AUTH_REALM_KEY);
                         if (NULL != auth_advice_value) {
@@ -2525,9 +2510,8 @@ am_web_get_url_to_redirect(am_status_t status,
                                              "Auth-related advices", thisfunc);
                             }
                         }
-                    }		
-
-                    /* Check for session advice */
+                    }
+                    // Check for session advice
                     session_adv_value = am_map_find_first_value(advice_map,
                                                           SESSION_COND_KEY);
                     if (NULL != session_adv_value) {
@@ -2538,102 +2522,94 @@ am_web_get_url_to_redirect(am_status_t status,
                         am_web_log_debug("%s: advice_map contains no "
                                          "session-related advices", thisfunc);
                     }
-		}
-	    }
-
-	    /* If session is invalid or we found a relevant advice, then
-	     * redirect the browser to the login page.  */
-	    if ((AM_INVALID_SESSION == status) || (auth_advice_value_len > 0) ||
-		(strcmp(session_adv_value, AM_WEB_ACTION_DENIED) == 0)) {
-		try {
-		    Utils::url_info_t *url_info_ptr;
-		    std::string encoded_url;
-		    std::string retVal;
-
-		    url_info_ptr = find_active_login_server(agent_config);
-		    if (NULL == url_info_ptr) {
-			am_web_log_warning("%s: unable to find active Access "
-					   "Manager Auth server.", thisfunc);
-			ret = AM_FAILURE;
-		    }
-		    else {
-			retVal.append(url_info_ptr->url, url_info_ptr->url_len);
-			
-			// In CDSSO mode, to have the user redirected to a static page that
-			// in turn will redirect to the resource, the goto parameter
-			// with the static page as value must be added to the cdcservlet 
-			// url and the url_redirect_param set to a value other than "goto".
-			// In such a case the "?" character must be added before 
-			// url_redirect_param
-			string temp_url = url_info_ptr->url;
-			string temp_redirect_param = (*agentConfigPtr)->url_redirect_param;
-			if (((*agentConfigPtr)->cdsso_enable == AM_TRUE) && 
-			    (temp_url.find("goto=") != string::npos) && 
-			    (temp_redirect_param.compare("goto") != 0)) {
-				retVal.append("?");
-			} else {
-				retVal.append((url_info_ptr->has_parameters) ?"&":"?");
-			}
-
-			retVal.append((*agentConfigPtr)->url_redirect_param);
-			retVal.append("=");
-			if((*agentConfigPtr)->cdsso_enable == AM_TRUE &&
-				method != NULL) {
-			    string temp_url = goto_url;
-			    encoded_url =
-				PRIVATE_NAMESPACE_NAME::Http::encode(temp_url);
-			} else {
-			    encoded_url =
-				PRIVATE_NAMESPACE_NAME::Http::encode(goto_url);
-			}
-			retVal.append(encoded_url);
-                        
-			if((*agentConfigPtr)->cdsso_enable == AM_TRUE) {
-			    am_web_log_debug("%s: The goto_url and url before "
-					     "appending cdsso elements: "
-					     "[%s] [%s]", thisfunc,
-					     goto_url, retVal.c_str());
-			    retVal.append("&");
-			    retVal.append(add_cdsso_elements_to_redirect_url(agent_config));
-			}
-
-			*redirect_url = strdup(retVal.c_str());
-			if (*redirect_url == NULL) {
-			    ret = AM_NO_MEMORY;
-			} else {
-			    ret = AM_SUCCESS;
-			}
-		    }
-		}
-		catch (std::bad_alloc& exb) {
-		    ret = AM_NO_MEMORY;
-		}
-		catch (std::exception& exs) {
-		    am_web_log_error("%s: Exception encountered: %s",
-				     thisfunc, exs.what());
-		    ret = AM_FAILURE;
-		}
-		catch (...) {
-		    am_web_log_error("%s: Unexpected exception encountered.",
-				     thisfunc);
-		    ret = AM_FAILURE;
-		}
-	    }
-	    /* redirect user to the access denied url if it was configured. */
-	    else if ((*agentConfigPtr)->access_denied_url != NULL) {
-		char codeStr[10];
-		std::string redirStr = (*agentConfigPtr)->access_denied_url;
-		std::size_t t = redirStr.find('?');
-		if(t == std::string::npos) {
-		    PUSH_BACK_CHAR(redirStr,'?');
-		} else {
-		    PUSH_BACK_CHAR(redirStr, '&');
-		}
-		int x = status;
-		redirStr.append("sunwerrcode=");
-		snprintf(codeStr, sizeof(codeStr) - 1, "%d", x);
-		redirStr += codeStr;
-
+                }
+            }
+            // If session is invalid or we found a relevant advice, then
+            // redirect the browser to the login page.  */
+            if ((AM_INVALID_SESSION == status) ||
+                      (auth_advice_value_len > 0) ||
+                      (strcmp(session_adv_value, AM_WEB_ACTION_DENIED) == 0)) {
+                try {
+                    Utils::url_info_t *url_info_ptr;
+                    std::string encoded_url;
+                    std::string retVal;
+                    url_info_ptr = find_active_login_server(agent_config);
+                    if (NULL == url_info_ptr) {
+                        am_web_log_warning("%s: unable to find active Access "
+                                     "Manager Auth server.", thisfunc);
+                    ret = AM_FAILURE;
+                    } else {
+                        retVal.append(url_info_ptr->url, url_info_ptr->url_len);
+                        // In CDSSO mode, to have the user redirected to a static page that
+                        // in turn will redirect to the resource, the goto parameter
+                        // with the static page as value must be added to the cdcservlet 
+                        // url and the url_redirect_param set to a value other than "goto".
+                        // In such a case the "?" character must be added before 
+                        // url_redirect_param
+                        string temp_url = url_info_ptr->url;
+                        string temp_redirect_param = 
+                              (*agentConfigPtr)->url_redirect_param;
+                        if (((*agentConfigPtr)->cdsso_enable == AM_TRUE) && 
+                                (temp_url.find("goto=") != string::npos) && 
+                                (temp_redirect_param.compare("goto") != 0)) {
+                            retVal.append("?");
+                        } else {
+                            retVal.append(
+                                  (url_info_ptr->has_parameters) ?"&":"?");
+                        }
+                        retVal.append((*agentConfigPtr)->url_redirect_param);
+                        retVal.append("=");
+                        if((*agentConfigPtr)->cdsso_enable == AM_TRUE &&
+                                       method != NULL) {
+                            string temp_url = goto_url;
+                            encoded_url =
+                               PRIVATE_NAMESPACE_NAME::Http::encode(temp_url);
+                        } else {
+                            encoded_url =
+                            PRIVATE_NAMESPACE_NAME::Http::encode(goto_url);
+                        }
+                        retVal.append(encoded_url);
+                        if((*agentConfigPtr)->cdsso_enable == AM_TRUE) {
+                            am_web_log_debug("%s: The goto_url and url before "
+                                        "appending cdsso elements: "
+                                        "[%s] [%s]", thisfunc,
+                                        goto_url, retVal.c_str());
+                            retVal.append("&");
+                            retVal.append(
+                            add_cdsso_elements_to_redirect_url(agent_config));
+                        }
+                        *redirect_url = strdup(retVal.c_str());
+                        if (*redirect_url == NULL) {
+                            ret = AM_NO_MEMORY;
+                        } else {
+                            ret = AM_SUCCESS;
+                        }
+                    }
+                } catch (std::bad_alloc& exb) {
+                    ret = AM_NO_MEMORY;
+                } catch (std::exception& exs) {
+                    am_web_log_error("%s: Exception encountered: %s",
+                                      thisfunc, exs.what());
+                    ret = AM_FAILURE;
+                } catch (...) {
+                    am_web_log_error("%s: Unexpected exception encountered.",
+                                 thisfunc);
+                    ret = AM_FAILURE;
+                }
+            } else if ((*agentConfigPtr)->access_denied_url != NULL) {
+                // redirect user to the access denied url if it was configured.
+                char codeStr[10];
+                std::string redirStr = (*agentConfigPtr)->access_denied_url;
+                std::size_t t = redirStr.find('?');
+                if(t == std::string::npos) {
+                    PUSH_BACK_CHAR(redirStr,'?');
+                } else {
+                    PUSH_BACK_CHAR(redirStr, '&');
+                }
+                int x = status;
+                redirStr.append("sunwerrcode=");
+                snprintf(codeStr, sizeof(codeStr) - 1, "%d", x);
+                redirStr += codeStr;
                 if (goto_url != NULL) {
                     std::string encoded_url;
                     encoded_url = PRIVATE_NAMESPACE_NAME::Http::encode(goto_url);
@@ -2642,22 +2618,19 @@ am_web_get_url_to_redirect(am_status_t status,
                     redirStr.append("=");
                     redirStr.append(encoded_url);
                 }
-
-
-		*redirect_url = strdup(redirStr.c_str());
-		if (*redirect_url == NULL) {
-		    ret = AM_NO_MEMORY;
-		} else {
-		    ret = AM_SUCCESS;
-		}
-	    }
-	    /* if no access denied url configured,
-	     * return null for redirect url */
-	    else {
-		*redirect_url = NULL;
-		ret = AM_SUCCESS;
-	    }
-	}
+                *redirect_url = strdup(redirStr.c_str());
+                if (*redirect_url == NULL) {
+                    ret = AM_NO_MEMORY;
+                } else {
+                    ret = AM_SUCCESS;
+                }
+            } else {
+                // if no access denied url configured,
+                //return null for redirect url
+                *redirect_url = NULL;
+                ret = AM_SUCCESS;
+            }
+        }
     }
     return ret;
 }
@@ -2792,30 +2765,29 @@ am_web_reset_ldap_attribute_cookies(
  */
 extern "C" AM_WEB_EXPORT am_status_t
 am_web_do_cookies_reset(am_status_t (*setFunc)(const char *, void **),
-			void **args, 
-                        void* agent_config)
+                     void **args, 
+                      void* agent_config)
 {
     AgentConfigurationRefCntPtr* agentConfigPtr =
         (AgentConfigurationRefCntPtr*) agent_config;
-
-
     am_status_t status = AM_SUCCESS;
     am_status_t tmpStatus = AM_SUCCESS;
 
     // Reset cookies from properties file.
     if ((*agentConfigPtr)->cookie_reset_enable == AM_TRUE) {
-        tmpStatus  = am_web_reset_cookies_list(&(*agentConfigPtr)->cookie_list,
-					       setFunc, args);
+        tmpStatus  = am_web_reset_cookies_list(
+                               &(*agentConfigPtr)->cookie_list,
+                               setFunc, args);
         if (AM_SUCCESS != tmpStatus) {
             status = tmpStatus;
         }
     }
-
-    tmpStatus = am_web_reset_ldap_attribute_cookies(setFunc, args, agent_config);
+    tmpStatus = am_web_reset_ldap_attribute_cookies(setFunc,
+                              args, agent_config);
     if (AM_SUCCESS != tmpStatus) {
         status = tmpStatus;
     }
-
+    
     return status;
 }
 
@@ -5120,46 +5092,6 @@ set_cookie_in_domains(const char *sso_token,
     return sts;
 }
 
-static am_status_t
-get_original_method(am_web_request_params_t *req_params,
-		    am_web_req_method_t *orig_method)
-{
-    const char *thisfunc = "get_original_method()";
-    am_status_t status = AM_NOT_FOUND;
-    char *orig_method_str = NULL;
-
-    *orig_method = AM_WEB_REQUEST_UNKNOWN;
-
-am_web_log_debug("SOMS:%s url <%s>", thisfunc, req_params->url);
-    status = am_web_get_parameter_value(req_params->url,
-		    REQUEST_METHOD_TYPE, &orig_method_str);
-if (status == AM_SUCCESS)
-    am_web_log_debug("SOMS:%s am_web_get_parameter_value returns success", thisfunc);
-else
-    am_web_log_debug("SOMS:%s am_web_get_parameter_value returns failure for <%s>", thisfunc, REQUEST_METHOD_TYPE);
-    if (status == AM_SUCCESS) {
-	if (orig_method_str == NULL || orig_method_str[0] == '\0') {
-	    status = AM_NOT_FOUND;
-	}
-	else {
-	    am_web_log_debug("%s: got original method %s from "
-			     "query parameter %s.",
-			     thisfunc, orig_method_str,
-			     REQUEST_METHOD_TYPE);
-	    *orig_method = am_web_method_str_to_num(orig_method_str);
-	    if (*orig_method == AM_WEB_REQUEST_UNKNOWN) {
-		am_web_log_warning("%s: Unrecognized original method "
-				   "%s received.", thisfunc, orig_method_str);
-	    }
-	}
-    }
-    if (orig_method_str != NULL) {
-	free(orig_method_str);
-	orig_method_str = NULL;
-    }
-    return status;
-}
-
 /*
  * Extract cookie from the POST assertion or GET parameter from the
  * CDC servlet, and set extracted cookie in agent domains and
@@ -5168,64 +5100,60 @@ else
  */
 static am_status_t
 process_cdsso(
-	am_web_request_params_t *req_params,
-	am_web_request_func_t *req_func,
-	am_web_req_method_t orig_method,
-	char **sso_token,
-        void* agent_config)
+     am_web_request_params_t *req_params,
+     am_web_request_func_t *req_func,
+     am_web_req_method_t orig_method,
+     char **sso_token,
+     void* agent_config)
 {
     const char *thisfunc = "process_cdsso()";
     am_status_t sts = AM_SUCCESS;
     am_status_t local_sts = AM_SUCCESS;
     am_web_req_method_t method = req_params->method;
 
-am_web_log_debug("SOMS:%s ", thisfunc);
+    am_web_log_debug("SOMS:%s ", thisfunc);
     // Check args
     if (req_params->url == NULL ||
-	sso_token == NULL || orig_method == NULL) {
-	am_web_log_error("%s: one or more input arguments is not valid.",
-		         thisfunc);
-	sts = AM_INVALID_ARGUMENT;
-    }
-    else if (AM_WEB_REQUEST_POST == method &&
-	     (NULL == req_func->get_post_data.func ||
-	      NULL == req_func->set_method.func)) {
-	am_web_log_error("%s: get post data is not provided. "
-			 "CDSSO with post cannot be supported.", thisfunc);
-	sts = AM_INVALID_ARGUMENT;
-    }
-    // Get sso token from assertion.
-    else if ((sts = get_token_from_assertion(req_params->url,
-					     req_params->method,
-					     req_func->get_post_data,
-					     req_func->free_post_data,
-					     sso_token,
-                                             agent_config)) != AM_SUCCESS) {
-	am_web_log_error("%s: Error getting token from assertion: %s",
-			 thisfunc, am_status_to_string(sts));
-    }
-    // Now set the cookie and method.
-    else {
-	// set cookie in domain
-	local_sts = set_cookie_in_domains(*sso_token, req_params, req_func, agent_config);
+        sso_token == NULL || orig_method == NULL) {
+        am_web_log_error("%s: one or more input arguments is not valid.",
+                         thisfunc);
+        sts = AM_INVALID_ARGUMENT;
+    } else if (AM_WEB_REQUEST_POST == method &&
+               (NULL == req_func->get_post_data.func ||
+               NULL == req_func->set_method.func)) {
+        am_web_log_error("%s: get post data is not provided. "
+                         "CDSSO with post cannot be supported.", thisfunc);
+        sts = AM_INVALID_ARGUMENT;
+    } else if ((sts = get_token_from_assertion(req_params->url,
+                               req_params->method,
+                               req_func->get_post_data,
+                               req_func->free_post_data,
+                               sso_token,
+                               agent_config)) != AM_SUCCESS) {
+        // Get sso token from assertion.
+        am_web_log_error("%s: Error getting token from assertion: %s",
+                    thisfunc, am_status_to_string(sts));
+    } else {
+        // Set cookie in domain
+        local_sts = set_cookie_in_domains(*sso_token, req_params, 
+                           req_func, agent_config);
         if (local_sts != AM_SUCCESS) {
-	    // ignore error but give a warning
-	    am_web_log_warning("%s: cookie domain set of sso_token [%s] "
-			       "failed with %s.",
-			       thisfunc, sso_token,
-			       am_status_to_string(local_sts));
-	}
-
-	// set original method
-	local_sts = req_func->set_method.func(
-			    req_func->set_method.args, orig_method);
-	if (local_sts != AM_SUCCESS) {
-	    // ignore error but give a warning.
-	    am_web_log_warning("%s: set method to original method %s "
-			       "returned error: %s.",
-			       thisfunc, am_web_method_num_to_str(orig_method),
-			       am_status_to_string(local_sts));
-	}
+            // ignore error but give a warning
+            am_web_log_warning("%s: cookie domain set of sso_token [%s] "
+                             "failed with %s.",
+                             thisfunc, sso_token,
+                             am_status_to_string(local_sts));
+        }
+        // Set original method
+        local_sts = req_func->set_method.func(
+               req_func->set_method.args, orig_method);
+        if (local_sts != AM_SUCCESS) {
+            // ignore error but give a warning.
+            am_web_log_warning("%s: set method to original method %s "
+                     "returned error: %s.",
+                     thisfunc, am_web_method_num_to_str(orig_method),
+                     am_status_to_string(local_sts));
+        }
     }
     return sts;
 }
@@ -5488,15 +5416,13 @@ set_user_attributes(am_policy_result_t *result,
 
 static am_web_result_t
 process_access_success(char *url,
-		       am_policy_result_t policy_result,
-		       am_web_request_params_t *req_params,
-		       am_web_request_func_t *req_func,
-                       void* agent_config)
+                   am_policy_result_t policy_result,
+                   am_web_request_params_t *req_params,
+                   am_web_request_func_t *req_func,
+                   void* agent_config)
 {
     AgentConfigurationRefCntPtr* agentConfigPtr =
         (AgentConfigurationRefCntPtr*) agent_config;
-
-
     const char *thisfunc = "process_access_success()";
     am_web_result_t result = AM_WEB_RESULT_OK;
     am_status_t sts = AM_SUCCESS;
@@ -5519,114 +5445,114 @@ process_access_success(char *url,
        setting_user = AM_FALSE;
     }
     if (req_func->set_user.func == NULL) {
-	am_web_log_error("%s: invalid input argument.", thisfunc);
-	result = AM_WEB_RESULT_ERROR;
-    }
-    else if ((setting_user == AM_TRUE) &&
+        am_web_log_error("%s: invalid input argument.", thisfunc);
+        result = AM_WEB_RESULT_ERROR;
+    } else if ((setting_user == AM_TRUE) &&
              ((sts = req_func->set_user.func(req_func->set_user.args,
                policy_result.remote_user)) != AM_SUCCESS)) {
-	am_web_log_error("%s: access to %s allowed but "
-			 "error encountered setting user to %s: %s",
-			 thisfunc, url, policy_result.remote_user,
-			 am_status_to_string(sts));
-	result = AM_WEB_RESULT_FORBIDDEN;
-    }
-    // everything ok - now do things post access allowed.
-    else {
-	// if logout url, reset any logout cookies
-	if (am_web_is_agent_logout_url(url, agent_config)) {
-	    args[0] = req_func;
-	    sts = am_web_logout_cookies_reset(add_cookie_in_response, args, agent_config);
-	    if (sts != AM_SUCCESS) {
-		am_web_log_warning("%s: Resetting logout cookies after [%s], "
-				   "returned %s.", thisfunc, url,
-				   am_status_to_string(sts));
-	    }
-	}
-	// set any profile,session or response attributes in the header or cookie.
-	sts = set_user_attributes(&policy_result, req_params, req_func, agent_config);
-	if (sts != AM_SUCCESS) {
-	    am_web_log_warning("%s: For url [%s], "
-			       "set user LDAP attributes returned %s.",
-			       thisfunc, url,
-			       am_status_to_string(sts));
-	}
-	// CDSSO parameters should already be removed from the
-	// url and query string so no need to remove it again here.
-	result = AM_WEB_RESULT_OK;
+        am_web_log_error("%s: access to %s allowed but "
+                "error encountered setting user to %s: %s",
+                thisfunc, url, policy_result.remote_user,
+                am_status_to_string(sts));
+        result = AM_WEB_RESULT_FORBIDDEN;
+    }  else {
+        // everything ok - now do things post access allowed.
+        // if logout url, reset any logout cookies
+        if (am_web_is_agent_logout_url(url, agent_config)) {
+            args[0] = req_func;
+            sts = am_web_logout_cookies_reset(add_cookie_in_response,
+                                              args, agent_config);
+            if (sts != AM_SUCCESS) {
+                am_web_log_warning("%s: Resetting logout cookies after [%s], "
+                        "returned %s.", thisfunc, url,
+                        am_status_to_string(sts));
+            }
+        }
+        // Set any profile,session or response attributes in 
+        // the header or cookie.
+        sts = set_user_attributes(&policy_result, req_params,
+                                  req_func, agent_config);
+        if (sts != AM_SUCCESS) {
+            am_web_log_warning("%s: For url [%s], "
+                       "set user LDAP attributes returned %s.",
+                       thisfunc, url,
+                       am_status_to_string(sts));
+        }
+        // CDSSO parameters should already be removed from the
+        // url and query string so no need to remove it again here.
+        result = AM_WEB_RESULT_OK;
     }
     am_web_log_debug("%s: returned %s.",
-		     thisfunc, am_web_result_num_to_str(result));
+            thisfunc, am_web_result_num_to_str(result));
     return result;
 }
 
 static am_web_result_t
 process_access_redirect(char *url,
-			am_web_req_method_t method,
-			am_status_t access_check_status,
-			am_policy_result_t policy_result,
-			am_web_request_func_t *req_func,
-			char **redirect_url,
-			char **advice_response,
-                        void* agent_config)
+                   am_web_req_method_t method,
+                   am_status_t access_check_status,
+                   am_policy_result_t policy_result,
+                   am_web_request_func_t *req_func,
+                   char **redirect_url,
+                   char **advice_response,
+                   void* agent_config)
 {
     const char *thisfunc = "process_access_redirect()";
     am_status_t sts = AM_SUCCESS;
     am_web_result_t result = AM_WEB_RESULT_REDIRECT;
 
-    // now get the redirect url.
+    // Get the redirect url.
     if (result != AM_WEB_RESULT_ERROR) {
-	sts = am_web_get_url_to_redirect(access_check_status,
-					 policy_result.advice_map,
-					 url,
-					 am_web_method_num_to_str(method),
-					 NULL,
-					 redirect_url,
-                                         agent_config);
-	am_web_log_debug("%s: get redirect url returned %s, redirect url [%s].",
-			 thisfunc, am_status_to_name(sts),
-			 *redirect_url == NULL ? "NULL" : *redirect_url);
-
-	if ((policy_result.advice_string != NULL) && (advice_response != NULL)) {
-		char* advice_res = (char *) malloc(2048 * sizeof(char));
-		if (advice_res) {
-			am_status_t ret = am_web_build_advice_response(&policy_result, 
-                                               *redirect_url,
-					       &advice_res);
-
-			am_web_log_debug("process_access_redirect(): policy status=%s, "
-							"advice response[%s]", 
-                                                        am_status_to_string(ret),
-							*advice_response);
-
-			if(ret != AM_SUCCESS) {
-				am_web_log_error("process_access_redirect(): Error while building "
-								"advice response body:%s",
-								am_status_to_string(ret));
-			} else {
-				result = AM_WEB_RESULT_OK_DONE;
-				*advice_response = advice_res;
-			}
-		} else {
-			sts = AM_NO_MEMORY;
-		}
-	}
-	switch (sts) {
-	case AM_NO_MEMORY:
-	    result = AM_WEB_RESULT_ERROR;
-	    break;
-	default:
-		if ((!advice_response) || (!(*advice_response))) {
-			if (*redirect_url != NULL)
-			result = AM_WEB_RESULT_REDIRECT;
-			else
-			result = AM_WEB_RESULT_FORBIDDEN;
-		}
-	    break;
-	}
+        sts = am_web_get_url_to_redirect(access_check_status,
+                      policy_result.advice_map,
+                      url,
+                      am_web_method_num_to_str(method),
+                      NULL,
+                      redirect_url,
+                      agent_config);
+        am_web_log_debug("%s: get redirect url returned %s, redirect url [%s].",
+                          thisfunc, am_status_to_name(sts),
+                          *redirect_url == NULL ? "NULL" : *redirect_url);
+        if ((policy_result.advice_string != NULL) && 
+                    (advice_response != NULL)) {
+            char* advice_res = (char *) malloc(2048 * sizeof(char));
+            if (advice_res) {
+                am_status_t ret = am_web_build_advice_response(
+                                           &policy_result, 
+                                           *redirect_url,
+                                           &advice_res);
+                am_web_log_debug("%s: policy status=%s, advice response[%s]", 
+                                 thisfunc, am_status_to_string(ret),
+                                 *advice_response);
+                if(ret != AM_SUCCESS) {
+                    am_web_log_error("%s: Error while building "
+                               "advice response body:%s",
+                               thisfunc, am_status_to_string(ret));
+                } else {
+                    result = AM_WEB_RESULT_OK_DONE;
+                    *advice_response = advice_res;
+                }
+            } else {
+                sts = AM_NO_MEMORY;
+            }
+        }
+        switch (sts) {
+            case AM_NO_MEMORY:
+                result = AM_WEB_RESULT_ERROR;
+                break;
+            default:
+                if ((!advice_response) || (!(*advice_response))) {
+                    if (*redirect_url != NULL) {
+                        result = AM_WEB_RESULT_REDIRECT;
+                    } else {
+                        result = AM_WEB_RESULT_FORBIDDEN;
+                    }
+                }
+                break;
+        }
     }
     am_web_log_debug("%s: returning web result %s.",
-		     thisfunc, am_web_result_num_to_str(result));
+                thisfunc, am_web_result_num_to_str(result));
     return result;
 }
 
@@ -5639,56 +5565,58 @@ process_access_redirect(char *url,
  */
 static am_status_t
 get_sso_token(am_web_request_params_t *req_params,
-	      am_web_request_func_t *req_func,
-	      char **sso_token,
-	      am_web_req_method_t *orig_method,
+              am_web_request_func_t *req_func,
+              char **sso_token,
+              am_web_req_method_t *orig_method,
               void* agent_config)
 {
     AgentConfigurationRefCntPtr* agentConfigPtr =
         (AgentConfigurationRefCntPtr*) agent_config;
-
-
     const char *thisfunc = "get_sso_token()";
     am_status_t sts = AM_NOT_FOUND;
-
     am_web_req_method_t req_method = AM_WEB_REQUEST_UNKNOWN;
 
-    /* Get the sso token from cookie header */
+    // Get the sso token from cookie header
     sts = get_cookie_val(am_web_get_cookie_name(agent_config),
                             req_params->cookie_header_val, sso_token);
     if (sts != AM_SUCCESS && sts != AM_NOT_FOUND) {
         am_web_log_error("%s: Error while getting sso token from "
                          "cookie header: %s", thisfunc, 
                          am_status_to_string(sts));
-    } 
-    else if (sts == AM_SUCCESS &&
+    } else if (sts == AM_SUCCESS &&
              (*sso_token == NULL || (*sso_token)[0] == '\0')) {
         sts = AM_NOT_FOUND;
     }
-
-    /**
-     * If SSO token is not found and CDSSO mode is enabled
-     * check for the request method.
-     * If the method is POST, 
-     *     1) set the request method to GET 
-     *     2) try to get the SSO token from assertion
-     */
+    // If SSO token is not found and CDSSO mode is enabled
+    // check for the request method.
+    // If the method is POST, 
+    //     1) set the request method to GET 
+    //     2) try to get the SSO token from assertion
     if ((*agentConfigPtr)->cdsso_enable == AM_TRUE &&
-       ((req_method = req_params->method) == AM_WEB_REQUEST_POST &&
-        sts == AM_NOT_FOUND )) {
+           ((req_method = req_params->method) == AM_WEB_REQUEST_POST &&
+           sts == AM_NOT_FOUND &&
+           (am_web_is_url_enforced(req_params->url, req_params->path_info,
+                    req_params->client_ip, agent_config) == B_TRUE))) {
         req_method = AM_WEB_REQUEST_GET;
-        sts = process_cdsso(req_params, req_func, req_method, sso_token, agent_config); 
-        if (sts != AM_SUCCESS && sts != AM_NOT_FOUND) {
+        sts = process_cdsso(req_params, req_func, req_method, 
+                            sso_token, agent_config);
+        if (sts == AM_SUCCESS &&
+             (*sso_token == NULL || (*sso_token)[0] == '\0')) {
+            sts = AM_NOT_FOUND;
+        }
+        if (sts == AM_NOT_FOUND) {
+            am_web_log_debug("%s: SSO token not found in "
+                             "assertion. Redirecting to login page.",
+                             thisfunc);
+        } else if (sts == AM_SUCCESS) {
+            am_web_log_debug("%s: SSO token found in assertion.",
+                                  thisfunc);
+        } else {
             am_web_log_error("%s: Error while getting sso token from "
-                             "assertion in cdsso: %s", thisfunc,
+                             "assertion: %s", thisfunc,
                              am_status_to_string(sts));
         }
-        else if (sts == AM_SUCCESS &&
-    	         (*sso_token == NULL || (*sso_token)[0] == '\0')) {
-	    sts = AM_NOT_FOUND;
-        }
     }
-
     return sts;
 }
 
@@ -5718,161 +5646,151 @@ process_request(am_web_request_params_t *req_params,
     am_map_t env_map = NULL;
     am_policy_result_t policy_result = AM_POLICY_RESULT_INITIALIZER;
     char *redirect_url = NULL;
-	char *advice_response = NULL;
+    char *advice_response = NULL;
     void *args[1];
     boolean_t cdsso_enabled = am_web_is_cdsso_enabled(agent_config);
-
     // initialize reserved field to NULL
     req_params->reserved = NULL;
 
     // get sso token from either cookie header or assertion in cdsso mode.
     // OK if it's not found - am_web_is_access_allowed will check if
     // access is enforced.
-    if ((sts = get_sso_token(req_params, req_func,
-			      &sso_token, &orig_method, agent_config)) != AM_SUCCESS &&
-	 sts != AM_NOT_FOUND) {
-	am_web_log_error("%s: Error while getting sso token from "
-			 "cookie or cdsso assertion: %s",
-			 thisfunc, am_status_to_string(sts));
-	result = AM_WEB_RESULT_ERROR;
-    }
-    // Get ready to process access check - create map.
-    else if (am_map_create(&env_map) != AM_SUCCESS) {
-	am_web_log_error("%s: could not create map needed for "
-			 "checking access.", thisfunc);
-	result = AM_WEB_RESULT_ERROR;
-    }
-    // Now process access check.
-    else {
-      if (cdsso_enabled == B_TRUE) {
-	// remove any remaining cdsso parameters from url and query
-	// even in non cdsso mode.
-	(void)remove_cdsso_params_from_query(&req_params->url,
-					    req_params->method, agent_config);
-	(void)remove_cdsso_params_from_query(&req_params->query,
-					    req_params->method, agent_config);
-	am_web_log_debug("%s: removed cdsso params from url and query. "
-			 "New values: url [%s] query [%s]",
-			 thisfunc, req_params->url,
-			 req_params->query==NULL ? "NULL" : req_params->query);
-       }
-	// set orig_method to the method in the request, if
-	// it has not been set to the value of the original method
-	// query parameter from CDC servlet.
-	if (orig_method == AM_WEB_REQUEST_UNKNOWN)
-	    orig_method = req_params->method;
-
-	// now check if access allowed
-	sts = am_web_is_access_allowed(
-			sso_token, req_params->url, req_params->path_info,
-			am_web_method_num_to_str(orig_method),
-			req_params->client_ip, env_map, &policy_result, agent_config);
-	am_web_log_info("%s: Access check for URL %s returned %s.",
-			thisfunc, req_params->url, am_status_to_string(sts));
-
-
-	// map access check result to web result - OK, FORBIDDEN, etc.
-	switch(sts) {
-	case AM_SUCCESS:  // Access to user allowed.
-	    // will be either OK or forbidden if sso token user failed
-	    // to be set in the web container.
-	    // Note - the method passed must be that of this request.
-	    result = process_access_success(req_params->url, policy_result,
-					    req_params, req_func, agent_config);
-	    break;
-	case AM_INVALID_SESSION:
-	    // reset cookies on invalid session.
-        // reset the CDSSO cookie first
-	    args[0] = req_func;
-        if (cdsso_enabled == B_TRUE) 
-        {
-            const char* cookie_name= am_web_get_cookie_name(agent_config);
-            int cookie_header_len=sizeof(CDSSO_RESET_COOKIE_TEMPLATE)+strlen(cookie_name);
-            char* cookie_value = (char*) malloc(cookie_header_len+1);
-            snprintf(cookie_value, cookie_header_len,CDSSO_RESET_COOKIE_TEMPLATE,cookie_name);
-            am_status_t cdStatus = add_cookie_in_response(cookie_value,args);
-            if(cdStatus != AM_SUCCESS) {
-                am_web_log_error("process_request : CDSSO reset_cookie failed");
-            }
-            if(cookie_value!=NULL) {
-                free(cookie_value);
-                cookie_value = NULL;
+    sts = get_sso_token(req_params, req_func, &sso_token, 
+                        &orig_method, agent_config);
+    if (sts != AM_SUCCESS && sts != AM_NOT_FOUND) {
+        am_web_log_error("%s: Error while getting sso token from "
+                         "cookie or cdsso assertion: %s",
+                         thisfunc, am_status_to_string(sts));
+        result = AM_WEB_RESULT_ERROR;
+    } else if (am_map_create(&env_map) != AM_SUCCESS) {
+        // Get ready to process access check - create map.
+        am_web_log_error("%s: could not create map needed for "
+                         "checking access.", thisfunc);
+        result = AM_WEB_RESULT_ERROR;
+    } else {
+        // Now process access check.
+        if (cdsso_enabled == B_TRUE) {
+            // remove any remaining cdsso parameters from url and query
+            // even in non cdsso mode.
+            (void)remove_cdsso_params_from_query(&req_params->url,
+                        req_params->method, agent_config);
+            (void)remove_cdsso_params_from_query(&req_params->query,
+                        req_params->method, agent_config);
+            am_web_log_debug("%s: removed cdsso params from url and query. "
+                        "New values: url [%s] query [%s]",
+                        thisfunc, req_params->url,
+                        req_params->query==NULL ? "NULL" : req_params->query);
+        }
+        // set orig_method to the method in the request, if
+        // it has not been set to the value of the original method
+        // query parameter from CDC servlet.
+        if (orig_method == AM_WEB_REQUEST_UNKNOWN)
+            orig_method = req_params->method;
+        // now check if access allowed
+        sts = am_web_is_access_allowed(
+                      sso_token, req_params->url, 
+                      req_params->path_info,
+                      am_web_method_num_to_str(orig_method),
+                      req_params->client_ip, env_map, &policy_result,
+                      agent_config);
+        am_web_log_info("%s: Access check for URL %s returned %s.",
+                        thisfunc, req_params->url, am_status_to_string(sts));
+        // map access check result to web result - OK, FORBIDDEN, etc.
+        switch(sts) {
+            case AM_SUCCESS:  // Access to user allowed.
+                // will be either OK or forbidden if sso token user failed
+                // to be set in the web container.
+                // Note - the method passed must be that of this request.
+                result = process_access_success(req_params->url, 
+                              policy_result, req_params, req_func,
+                              agent_config);
+                break;
+            case AM_INVALID_SESSION:
+                args[0] = req_func;
+                // reset the CDSSO cookie first
+                if (cdsso_enabled == B_TRUE) {
+                    const char* cookie_name= am_web_get_cookie_name(agent_config);
+                    int cookie_header_len=sizeof(CDSSO_RESET_COOKIE_TEMPLATE)+strlen(cookie_name);
+                    char* cookie_value = (char*) malloc(cookie_header_len+1);
+                    snprintf(cookie_value, cookie_header_len,CDSSO_RESET_COOKIE_TEMPLATE,cookie_name);
+                    am_status_t cdStatus = add_cookie_in_response(cookie_value,args);
+                    if(cdStatus != AM_SUCCESS) {
+                        am_web_log_error("process_request : CDSSO reset_cookie failed");
+                    }
+                    if(cookie_value!=NULL) {
+                        free(cookie_value);
+                        cookie_value = NULL;
+                    }
+                }
+                // reset cookies on invalid session.
+                local_sts = am_web_do_cookies_reset(add_cookie_in_response,
+                                                    args, agent_config);
+                if (local_sts != AM_SUCCESS) {
+                    am_web_log_warning("%s: all_cookies_reset after "
+                                "access to url [%s] returned "
+                                "invalid session returned %s.",
+                                thisfunc, req_params->url,
+                                am_status_to_string(local_sts));
+                }
+                // will be either forbidden or redirect to auth
+                result = process_access_redirect(req_params->url, orig_method,
+                                sts, policy_result,
+                                req_func,
+                                &redirect_url,
+                                NULL, agent_config);
+                break;
+            case AM_ACCESS_DENIED:
+            case AM_INVALID_FQDN_ACCESS:
+                result = process_access_redirect(req_params->url, orig_method,
+                                sts, policy_result,
+                                req_func,
+                                &redirect_url,
+                                &advice_response, agent_config);
+                break;
+            case AM_INVALID_ARGUMENT:
+            case AM_NO_MEMORY:
+            default:
+                result = AM_WEB_RESULT_ERROR;
+                break;
+        }
+        // clean up
+        if (env_map != NULL) {
+            am_map_destroy(env_map);
+            env_map = NULL;
+        }
+        am_web_clear_attributes_map(&policy_result);
+        am_policy_result_destroy(&policy_result);
+        if (req_params->reserved != NULL) {
+            free(req_params->reserved);
+            req_params->reserved = NULL;
+        }
+        if (sso_token != NULL) {
+            free(sso_token);
+        }
+        // copy redirect_url or advice response to the given buffer and free the pointer.
+        // if size of buffer not big enough, return error.
+        char* ptr = redirect_url;
+        if (result == AM_WEB_RESULT_OK_DONE) {
+            ptr = advice_response;
+        }
+        if (ptr != NULL) {
+            if (data_buf_size < strlen(ptr)+1) {
+                am_web_log_error("%s: size of render data buffer too small "
+                "for pointer [%s]", thisfunc, ptr);
+                result = AM_WEB_RESULT_ERROR;
+            } else {
+                strcpy(data_buf, ptr);
             }
         }
-	    local_sts = am_web_do_cookies_reset(add_cookie_in_response, args, agent_config);
-	    if (local_sts != AM_SUCCESS) {
-		am_web_log_warning("%s: all_cookies_reset after "
-				   "access to url [%s] returned "
-				   "invalid session returned %s.",
-				   thisfunc, req_params->url,
-				   am_status_to_string(local_sts));
-	    }
-	    // will be either forbidden or redirect to auth
-	    result = process_access_redirect(req_params->url, orig_method,
-					     sts, policy_result,
-					     req_func,
-					     &redirect_url,
-						 NULL, agent_config);
-	    break;
-	case AM_ACCESS_DENIED:
-	case AM_INVALID_FQDN_ACCESS:
-		result = process_access_redirect(req_params->url, orig_method,
-					     sts, policy_result,
-					     req_func,
-					     &redirect_url,
-						 &advice_response, agent_config);
-	    break;
-	case AM_INVALID_ARGUMENT:
-	case AM_NO_MEMORY:
-	default:
-	    result = AM_WEB_RESULT_ERROR;
-	    break;
-	}
-
-	// clean up
-	if (env_map != NULL) {
-	    am_map_destroy(env_map);
-	    env_map = NULL;
-	}
-        am_web_clear_attributes_map(&policy_result);
-	am_policy_result_destroy(&policy_result);
-	if (req_params->reserved != NULL) {
-	    free(req_params->reserved);
-	    req_params->reserved = NULL;
-	}
-	if (sso_token != NULL) {
-	    free(sso_token);
-	}
-
-	// copy redirect_url or advice response to the given buffer and free the pointer.
-	// if size of buffer not big enough, return error.
-
-	char* ptr = redirect_url;
-	if (result == AM_WEB_RESULT_OK_DONE) {
-		ptr = advice_response;
-	}
-
-	if (ptr != NULL) {
-	    if (data_buf_size < strlen(ptr)+1) {
-		am_web_log_error("%s: size of render data buffer too small for "
-				 "pointer [%s]", thisfunc, ptr);
-		result = AM_WEB_RESULT_ERROR;
-	    }
-	    else {
-		strcpy(data_buf, ptr);
-	    }
-	}
-	if (redirect_url != NULL) {
-		free(redirect_url);
-	}
-	if (advice_response != NULL) {
-		free(advice_response);
-	}
-
+        if (redirect_url != NULL) {
+            free(redirect_url);
+        }
+        if (advice_response != NULL) {
+            free(advice_response);
+        }
     }
-
     am_web_log_debug("%s: returning web result %s, data [%s]",
-	             thisfunc, am_web_result_num_to_str(result), data_buf);
+                  thisfunc, am_web_result_num_to_str(result), data_buf);
     return result;
 }
 
