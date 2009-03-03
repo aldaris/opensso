@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneConfigInfo.java,v 1.10 2008-10-03 06:23:29 kanduls Exp $
+ * $Id: AMTuneConfigInfo.java,v 1.11 2009-03-03 02:33:03 ykwon Exp $
  */
 
 package com.sun.identity.tune.config;
@@ -81,7 +81,6 @@ FAMConstants, WebContainerConstants {
     private String famTuneMemMaxHeapSizeRatioExp;
     private String famAdminPassword;
     private List realms;
-    private int gcThreads;
     private int acceptorThreads;
     private int numNotificationQueue;
     private int numNotificationThreads;
@@ -760,7 +759,6 @@ FAMConstants, WebContainerConstants {
             numCpus = Integer.parseInt(AMTuneUtil.getNumberOfCPUS());
             mWriter.writeLocaleMsg("pt-no-cpu");
             mWriter.writeln(numCpus + " ");
-            gcThreads = numCpus;
             acceptorThreads = numCpus;
             mWriter.writeLocaleMsg("pt-ws-acceptor-msg");
             mWriter.writeln(acceptorThreads + " ");
@@ -915,14 +913,6 @@ FAMConstants, WebContainerConstants {
      */
     public int getCacheSize() {
         return cacheSize;
-    }
-    
-    /**
-     * Return number of Garbage collection threads.
-     * @return Number of GC threads.
-     */
-    public int getGcThreads() {
-        return gcThreads;
     }
     
     /**
