@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PriviligeUtils.java,v 1.9 2009-02-27 23:03:43 dillidorai Exp $
+ * $Id: PriviligeUtils.java,v 1.10 2009-03-03 01:51:46 dillidorai Exp $
  */
 package com.sun.identity.policy;
 
@@ -45,10 +45,14 @@ import com.sun.identity.idm.IdUtils;
 import com.sun.identity.policy.interfaces.Condition;
 import com.sun.identity.policy.interfaces.ResponseProvider;
 import com.sun.identity.policy.interfaces.Subject;
+import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.debug.Debug;
+import java.security.AccessController;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.json.JSONObject;
 
@@ -162,6 +166,8 @@ public class PriviligeUtils {
             Subject subject = (Subject) nqSubject[1];
             if (subject instanceof com.sun.identity.policy.plugins.AMIdentitySubject) {
                 es = mapAMIdentitySubjectToESubject(nqSubject);
+            } else { // mapt to PolicyESubject
+
             }
             esSet.add(es);
         }
@@ -211,9 +217,7 @@ public class PriviligeUtils {
                 es = new RoleESubject(value, subjectName);
             } else {
                 Debug debug = Debug.getInstance("Entitlement");
-                debug.error("PriviligeUtils.MapAMIdentitySubjectToESubject(); "
-                            + " unsupported IDType="
-                            + idType);
+                debug.error("PriviligeUtils.MapAMIdentitySubjectToESubject(); " + " unsupported IDType=" + idType);
             }
             if (es != null) {
                 esSet.add(es);
@@ -266,13 +270,35 @@ public class PriviligeUtils {
     }
 
     static Policy priviligeToPolicy(Privilige privilige)
-            throws PolicyException {
+            throws PolicyException, SSOException {
         Policy policy = null;
         policy = new Policy(privilige.getName());
-        Set<Entitlement> entitlements = privilige.getEntitlements();
-        for (Entitlement entitlement : entitlements) {
-            Rule rule = entitlementToRule(entitlement);
-            policy.addRule(rule);
+        if (privilige.getEntitlements() != null) {
+            Set<Entitlement> entitlements = privilige.getEntitlements();
+            for (Entitlement entitlement : entitlements) {
+                Rule rule = entitlementToRule(entitlement);
+                policy.addRule(rule);
+            }
+        }
+        if (privilige.getESubject() != null) {
+            List pSubjects = eSubjectToPSubjects(privilige.getESubject());
+            for (Object obj : pSubjects) {
+                Object[] arr = (Object[]) obj;
+                String pSubjectName = (String) arr[0];
+                Subject subject = (Subject) arr[1];
+                Subject s = policy.getSubject(pSubjectName);
+                if (s == null) {
+                    Boolean exclusive = (Boolean) arr[2];
+                    policy.addSubject(pSubjectName, subject, exclusive);
+                } else {
+                    Set values = s.getValues();
+                    if (values == null) {
+                        values = new HashSet();
+                    }
+                    values.addAll(subject.getValues());
+                    s.setValues(values);
+                }
+            }
         }
         return policy;
     }
@@ -288,24 +314,88 @@ public class PriviligeUtils {
     }
 
     //TODO: fix impl
-    static Set<Subject> eSubjectToPSubjects(ESubject eSubject) {
-        Set<Subject> subjects = new HashSet();
-        if (eSubject != null) {
-            if (!(eSubject instanceof OrESubject)) {
-               if (eSubject instanceof NotESubject) {
-                   
-               } else {
-                   
-               }
+    static List eSubjectToPSubjects(ESubject eSubject)
+            throws PolicyException, SSOException {
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+        PolicyManager pm = new PolicyManager(adminToken, "/");
+        SubjectTypeManager stm = pm.getSubjectTypeManager();
+        List subjects = new ArrayList();
+        if (eSubject instanceof UserESubject) {
+            UserESubject us = (UserESubject) eSubject;
+            Object[] arr = userESubjectToPSubject(us, stm);
+            subjects.add(arr);
+        } else if (eSubject instanceof GroupESubject) {
+        } else if (eSubject instanceof RoleESubject) {
+        } else if (eSubject instanceof PolicyESubject) {
+        } else if (eSubject instanceof NotESubject) {
+            NotESubject nos = (NotESubject) eSubject;
+            List list = notESubjectToPSubject(nos, stm);
+            for (Object obj : list) {
+                subjects.add(obj);
             }
-        } else { //OrESubject
-            if (((OrESubject)eSubject).getPSubjectName() == null) {
-                
-            } else {
-                
+        } else if (eSubject instanceof OrESubject) {
+            OrESubject os = (OrESubject) eSubject;
+              List list = orESubjectToPSubject(os, stm);
+            for (Object obj : list) {
+                subjects.add(obj);
             }
+        } else { // map to EntitlementSubject
+
+            subjects.add(eSubjectToPSubject(eSubject, stm));
         }
         return subjects;
+    }
+
+    static Object[] userESubjectToPSubject(UserESubject us,
+            SubjectTypeManager stm)
+            throws PolicyException, SSOException {
+        Subject subject = stm.getSubject("AMIdentitySubject");
+        Set<String> values = new HashSet<String>();
+        values.add(us.getUser());
+        subject.setValues(values);
+        String pSubjectName = us.getPSubjectName();
+        if (pSubjectName == null) {
+            pSubjectName = randomName();
+        }
+        Object[] arr = new Object[3];
+        arr[0] = pSubjectName;
+        arr[1] = subject;
+        arr[2] = false;
+        return arr;
+    }
+
+    static List notESubjectToPSubject(NotESubject nos,
+            SubjectTypeManager srm) throws PolicyException, SSOException {
+        List list = new ArrayList();
+        ESubject nestedSubject = nos.getESubject();
+        if (nestedSubject instanceof OrESubject) {
+            OrESubject ores = (OrESubject) nestedSubject;
+            Set<ESubject> nested2Subjects = ores.getESubjects();
+            if (nested2Subjects != null) {
+                for (ESubject es : nested2Subjects) {
+                    if (es instanceof UserESubject) {
+                    } else if (es instanceof GroupESubject) {
+                    } else if (es instanceof RoleESubject) {
+                    } else if (nestedSubject instanceof PolicyESubject) {
+                    } else { // map to EntitlementSubejct
+
+                    }
+                }
+            }
+        }
+        return list;
+    }
+
+    static List orESubjectToPSubject(OrESubject os,
+            SubjectTypeManager srm) throws PolicyException, SSOException {
+        List list = new ArrayList();
+        return null;
+    }
+
+    static Object[] eSubjectToPSubject(ESubject es,
+            SubjectTypeManager srm) throws PolicyException, SSOException {
+        return null;
     }
 
     static Set<Condition> eConditionToPConditions() {
@@ -318,5 +408,9 @@ public class PriviligeUtils {
 
     static Set<ResponseProvider> EResourceAttributesToResponseProviders() {
         return null;
+    }
+
+    static String randomName() {
+        return "randomName";
     }
 }
