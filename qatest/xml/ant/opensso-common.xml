@@ -18,7 +18,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: opensso-common.xml,v 1.19 2009-02-27 23:01:25 rmisra Exp $
+ $Id: opensso-common.xml,v 1.20 2009-03-04 17:05:22 rmisra Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -499,6 +499,15 @@
       <testng classpathref="client.classpath" outputdir="${base.report.dir}">
           <xmlfileset dir="${built.classes.dir}/xml/testng/${ModuleToExecute}" includes="${ModuleToExecute}-${EXECUTION_MODE}-generated.xml"/>
     </testng>
+    <concat destfile="${SERVER_DIR}/logs" append="true">
+        <sort>
+            <last count="1">
+        <fileset dir="${SERVER_DIR}" >
+            <include name="logs.?"/>
+        </fileset>
+      </last>
+        </sort>
+    </concat>
     <java classname="com.sun.identity.qatest.setup.CleanupProduct">
         <classpath refid="client.classpath" />
         <arg value="${SERVER_NAME1}" />
