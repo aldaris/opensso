@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: service.cpp,v 1.31 2008-12-11 23:40:40 madan_ranganath Exp $
+ * $Id: service.cpp,v 1.32 2009-03-04 23:17:17 robertis Exp $
  *
  */
 
@@ -1168,6 +1168,20 @@ Service::getPolicyResult(const char *userSSOToken,
 	c_res = NULL;
     }
 
+    string agent_logout_url="";
+    bool isAgentLogoutUrl=false;
+    try{
+        agent_logout_url = properties.get(AM_WEB_AGENT_LOGOUT_URL_PROPERTY);
+        if(agent_logout_url.compare(resName) == 0)
+            isAgentLogoutUrl=true;
+    }
+    catch(std::exception& e){
+        //catch it here.
+    } 
+    catch(...){
+        //catch it here.
+    }
+
     bool do_sso_only = 
          properties.getBool(AM_WEB_DO_SSO_ONLY, false);
     
@@ -1416,7 +1430,8 @@ Service::getPolicyResult(const char *userSSOToken,
 		     "No advice string created.");
 	}
     } else {
-        if (do_sso_only && !fetchProfileAttrs && !fetchResponseAttrs) {
+        if ((do_sso_only && !fetchProfileAttrs && !fetchResponseAttrs)||
+               (isAgentLogoutUrl == true)) {
 	    return;
 	} else {
 	if (!ignorePolicyResult) {

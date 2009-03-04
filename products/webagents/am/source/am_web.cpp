@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.cpp,v 1.46 2009-03-04 21:24:44 subbae Exp $
+ * $Id: am_web.cpp,v 1.47 2009-03-04 23:17:16 robertis Exp $
  *
  */
 
@@ -1645,7 +1645,7 @@ am_web_is_access_allowed(const char *sso_token,
     std::string normalizedURL;
     std::string pInfo;
     std::string test;
-    am_bool_t isLogoutURL = AM_FALSE;
+    am_bool_t isAgentLogoutURL = AM_FALSE;
     am_status_t log_status = AM_SUCCESS;
     char * encodedUrl = NULL;
 #if defined(_AMD64_)
@@ -1707,7 +1707,7 @@ am_web_is_access_allowed(const char *sso_token,
         // Check if it's the logout URL
         if ((*agentConfigPtr)->agent_logout_url_list.size > 0 &&
             am_web_is_agent_logout_url(url, agent_config) == B_TRUE) {
-            isLogoutURL = AM_TRUE;
+            isAgentLogoutURL = AM_TRUE;
             am_web_log_max_debug("%s: url %s IS logout url.", thisfunc,url);
         }
     }
@@ -1747,7 +1747,7 @@ am_web_is_access_allowed(const char *sso_token,
     // If the accessed URL is logout url, then it requires processing.
     if (isNotEnforced == AM_TRUE &&
                 (*agentConfigPtr)->notenforced_url_attributes_enable 
-                 == AM_FALSE && isLogoutURL == AM_FALSE ) {
+                 == AM_FALSE && isAgentLogoutURL == AM_FALSE ) {
         am_web_log_debug("%s: URL = %s is in not-enforced list and "
                          "notenforced.url.attributes.enable is set to "
                          "false", thisfunc, url);
@@ -1811,7 +1811,7 @@ am_web_is_access_allowed(const char *sso_token,
                               "%d bytes for encodedUrl",encodedUrlSize);
                         }
                     } 
-                    if (AM_TRUE == isNotEnforced ||
+                    if (AM_TRUE == isNotEnforced || (isAgentLogoutURL == AM_TRUE) || 
                            AM_TRUE == (*agentConfigPtr)->do_sso_only) {
                         ignorePolicyResult = AM_TRUE;
                     }
@@ -1922,7 +1922,7 @@ am_web_is_access_allowed(const char *sso_token,
                 // Note that this must be done *after* am_policy_evaluate()
                 // so we can get the user's id and pass it to the web app.
                 // Can't get the user's id after session's been invalidated.
-                if (isLogoutURL && sso_token != NULL && sso_token[0] != '\0'
+                if (isAgentLogoutURL && sso_token != NULL && sso_token[0] != '\0'
                                 && status != AM_INVALID_SESSION){
                     am_web_log_debug("invalidating session %s", sso_token);
                     am_status_t redirLogoutStatus = AM_FAILURE;
