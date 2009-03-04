@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: am_web.cpp,v 1.45 2009-03-03 23:23:50 dknab Exp $
+ * $Id: am_web.cpp,v 1.46 2009-03-04 21:24:44 subbae Exp $
  *
  */
 
@@ -2976,10 +2976,6 @@ am_web_result_attr_map_set(
 
     const char *thisfunc = "am_web_result_attr_map_set()";
     am_status_t retVal = AM_SUCCESS;
-    char str[2048];
-    char * new_str = NULL;
-    unsigned int new_str_size = 0;
-    unsigned int new_str_free = 0;
 
     am_map_t attrMap = NULL;
     const char* mode  = "NONE";
@@ -3034,6 +3030,11 @@ am_web_result_attr_map_set(
                   std::string values;
                   am_status_t set_sts = AM_SUCCESS;
                   const KeyValueMap::key_type &keyRef = iter_header->first;
+                  char str[2048];
+                  char * new_str = NULL;
+                  unsigned int new_str_size = 0;
+                  unsigned int new_str_free = 0;
+
                   Log::log(boot_info.log_module, Log::LOG_MAX_DEBUG,
                     "%s: User attribute is %s.", thisfunc, keyRef.c_str());
 
