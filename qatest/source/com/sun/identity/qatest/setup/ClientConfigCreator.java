@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientConfigCreator.java,v 1.24 2009-02-27 22:59:40 rmisra Exp $
+ * $Id: ClientConfigCreator.java,v 1.25 2009-03-04 17:03:47 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -642,18 +642,17 @@ public class ClientConfigCreator {
     {
         int defaultPort = -1;
         int start = 44444;
-        int incr = 1000;
+        int incr = 100;
         InetAddress inetAdd = InetAddress.getLocalHost();
-        
-        for (int i = start; i < 65500 && (defaultPort == -1);i += incr) {
-            if (canUseAsPort(inetAdd.getHostAddress(), i))
-            {
-                defaultPort = i;
+
+        for (int i = start; i < 65500 && (defaultPort == -1); i += incr) {
+            Random rnd = new Random();
+            int rNum = rnd.nextInt(1000);
+            if (canUseAsPort(inetAdd.getHostAddress(), i+rNum)) {
+                System.out.println("Random number is: " + rNum);
+                defaultPort = i+rNum;
             }
         }
-
-        Random rnd = new Random();
-        defaultPort += rnd.nextInt(1000);
 
         return defaultPort;
     }
