@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TaskModelImpl.java,v 1.7 2009-03-03 20:09:59 asyhuang Exp $
+ * $Id: TaskModelImpl.java,v 1.8 2009-03-04 02:26:00 asyhuang Exp $
  *
  */
 
@@ -45,6 +45,7 @@ import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaSecurityUtils;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
+import com.sun.identity.shared.xml.XMLUtils;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.util.Collections;
@@ -57,6 +58,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.bind.JAXBException;
+import org.w3c.dom.Document;
 
 
 public class TaskModelImpl
@@ -306,7 +309,7 @@ public class TaskModelImpl
             }
             map.put("ChangePasswordURL", returnEmptySetIfValueIsNull(entityId+"/idm/EndUer"));
             
-            // get pubkey          
+            // get pubkey                 
             Map extValueMap = new HashMap();
             IDPSSOConfigElement idpssoConfig = samlManager.getIDPSSOConfig(realm,entityId);
             if (idpssoConfig != null) {
@@ -319,14 +322,18 @@ public class TaskModelImpl
                 signingCertAlias = (String) aList.get(0);
             }
             String publickey = 
-                    SAML2MetaSecurityUtils.buildX509Certificate(signingCertAlias);            
-            map.put("PubKey",returnEmptySetIfValueIsNull(publickey));
+                    SAML2MetaSecurityUtils.buildX509Certificate(signingCertAlias);                      
+            String str = "-----BEGIN CERTIFICATE-----\n" 
+                    + publickey 
+                    + "-----END CERTIFICATE-----\n";
+            
+            map.put("PubKey",returnEmptySetIfValueIsNull(str));
         } catch (SAML2MetaException ex) {
             throw new AMConsoleException(ex.getMessage());
         }
         return map;
      }     
-    
+             
     protected Set returnEmptySetIfValueIsNull(String str) {
         Set set = Collections.EMPTY_SET;
         if (str != null) {
