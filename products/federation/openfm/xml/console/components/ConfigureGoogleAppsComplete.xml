@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: ConfigureGoogleAppsComplete.xml,v 1.1 2009-02-27 11:29:44 asyhuang Exp $ 
+   $Id: ConfigureGoogleAppsComplete.xml,v 1.2 2009-03-04 02:24:33 asyhuang Exp $ 
 
 -->
 
@@ -68,7 +68,12 @@
             <label name="lblPubKey" 
                    defaultValue="configure.google.apps.complete.label.PubKey" 
                    labelFor="lblPubKey" />
-            <cc name="PubKey" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />
+            <cc name="PubKey" tagclass="com.sun.web.ui.taglib.html.CCTextAreaTag" >
+                <attribute name="wrap" value="false" />
+                <attribute name="cols" value="100" />
+                <attribute name="rows" value="14" />
+                <attribute name="readOnly" value="true" />
+            </cc>
             <fieldhelp name="helpPubKey" 
                        defaultValue="configure.google.apps.complete.help.PubKey" />
         </property>
