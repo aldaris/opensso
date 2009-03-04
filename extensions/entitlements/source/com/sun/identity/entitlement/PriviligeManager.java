@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PriviligeManager.java,v 1.2 2009-02-11 01:18:30 dillidorai Exp $
+ * $Id: PriviligeManager.java,v 1.3 2009-03-04 02:19:31 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -66,6 +66,15 @@ public abstract class PriviligeManager {
      * @param subject subject to initilialize the privilige manager with
      */
     public abstract void initialize(Subject subject);
+
+    /**
+     * Returns a privilige
+     * @param priviligeName name for the privilige to be returned
+     * @throws com.sun.identity.entitlement.EntitlementException if there is
+     * privilige could not be
+     */
+    public abstract Privilige getPrivilige(String priviligeName)
+            throws EntitlementException;
 
     /**
      * Adds a privilige

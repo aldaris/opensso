@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PriviligeUtils.java,v 1.14 2009-03-03 23:37:14 dillidorai Exp $
+ * $Id: PriviligeUtils.java,v 1.15 2009-03-04 02:19:32 dillidorai Exp $
  */
 package com.sun.identity.policy;
 
@@ -144,6 +144,7 @@ public class PriviligeUtils {
 
     private static Entitlement ruleToEntitlement(Rule rule)
             throws PolicyException {
+        String entitlementName = rule.getName();
         String serviceName = rule.getServiceTypeName();
         String resourceName = rule.getResourceName();
         Map<String, Object> actionMap = new HashMap<String, Object>();
@@ -153,7 +154,10 @@ public class PriviligeUtils {
             Set actionValues = rule.getActionValues(actionName);
             actionMap.put(actionName, actionValues);
         }
-        return new Entitlement(serviceName, resourceName, actionMap);
+        Entitlement entitlement = new Entitlement(serviceName, resourceName,
+                actionMap);
+        entitlement.setName(entitlementName);
+        return entitlement;
     }
 
     private static ESubject nqSubjectsToESubject(Set nqSubjects) {
@@ -491,14 +495,14 @@ public class PriviligeUtils {
                 } else if (ns instanceof OrESubject) {
                     List list1 = orESubjectToPSubject((OrESubject) ns, stm);
                     for (Object obj : list1) {
-                       list.add(obj);
+                        list.add(obj);
                     }
                 } else if (ns instanceof NotESubject) {
                     List list1 = notESubjectToPSubject((NotESubject) ns, stm);
-                     for (Object obj : list1) {
-                       Object[] arr = (Object[])obj;
-                       arr[2] = Boolean.TRUE;
-                       list.add(arr);
+                    for (Object obj : list1) {
+                        Object[] arr = (Object[]) obj;
+                        arr[2] = Boolean.TRUE;
+                        list.add(arr);
                     }
                 } else { // map to EntitlementSubejct
                     list.add(eSubjectToEntitlementSubject((ESubject) ns, stm));

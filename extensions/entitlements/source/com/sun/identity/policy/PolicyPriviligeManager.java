@@ -22,14 +22,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyPriviligeManager.java,v 1.3 2009-03-03 06:19:42 dillidorai Exp $
+ * $Id: PolicyPriviligeManager.java,v 1.4 2009-03-04 02:19:32 dillidorai Exp $
  */
 package com.sun.identity.policy;
 
 import com.iplanet.sso.SSOException;
+import com.iplanet.sso.SSOToken;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.Privilige;
 import com.sun.identity.entitlement.PriviligeManager;
+import com.sun.identity.security.AdminTokenAction;
+import java.security.AccessController;
 import javax.security.auth.Subject;
 
 /**
@@ -37,6 +40,8 @@ import javax.security.auth.Subject;
  * as <code>com.sun.identity.policy</code> objects
  */
 public class PolicyPriviligeManager extends PriviligeManager {
+
+    PolicyManager pm;
 
     /**
      * Creates instance of <code>PolicyPriviligeManager</code>
@@ -50,6 +55,32 @@ public class PolicyPriviligeManager extends PriviligeManager {
      * operations
      */
     public void initialize(Subject subject) {
+        SSOToken ssoToken = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+        try {
+            //TODO: change to use ssoToken from subject
+            pm = new PolicyManager(ssoToken);
+        } catch (SSOException ssoe) {
+        } catch (PolicyException pe) {
+        }
+    }
+
+    /**
+     * Returns a privilige
+     * @param priviligeName name for the privilige to be returned
+     * @throws com.sun.identity.entitlement.EntitlementException if there is
+     * privilige could not be 
+     */
+    public Privilige getPrivilige(String priviligeName)
+            throws EntitlementException {
+        Privilige privilige = null;
+        try {
+            Policy policy = pm.getPolicy(priviligeName);
+            privilige = PriviligeUtils.policyToPrivilige(policy);
+        } catch (PolicyException pe) {
+        } catch (SSOException ssoe) {
+        }
+        return privilige;
     }
 
     /**
@@ -62,9 +93,9 @@ public class PolicyPriviligeManager extends PriviligeManager {
             throws EntitlementException {
         try {
             Policy policy = PriviligeUtils.priviligeToPolicy(privilige);
+            pm.addPolicy(policy);
         } catch (PolicyException pe) {
-        } catch(SSOException ssoe) {
-            
+        } catch (SSOException ssoe) {
         }
     }
 
@@ -75,6 +106,11 @@ public class PolicyPriviligeManager extends PriviligeManager {
      */
     public void removePrivilige(String priviligeName)
             throws EntitlementException {
+        try {
+            pm.removePolicy(priviligeName);
+        } catch (PolicyException pe) {
+        } catch (SSOException ssoe) {
+        }
     }
 
     /**
@@ -84,5 +120,11 @@ public class PolicyPriviligeManager extends PriviligeManager {
      */
     public void modifyPrivilige(Privilige privilige)
             throws EntitlementException {
+        try {
+            pm.removePolicy(privilige.getName());
+            pm.addPolicy(PriviligeUtils.priviligeToPolicy(privilige));
+        } catch (PolicyException pe) {
+        } catch (SSOException ssoe) {
+        }
     }
 }
