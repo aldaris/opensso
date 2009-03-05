@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAuthErrorCode.java,v 1.4 2009-01-26 18:47:29 lakshman_abburi Exp $
+ * $Id: AMAuthErrorCode.java,v 1.5 2009-03-05 00:03:56 manish_rustagi Exp $
  *
  */
 
@@ -151,4 +151,10 @@ public class AMAuthErrorCode {
 
     /* locked at DS level - Constraint Violation */
     public static final String AUTH_USER_LOCKED_IN_DS = "123";
+    
+    /**
+     *  Session upgrade failed
+     */
+    public static final String SESSION_UPGRADE_FAILED = "124";
+    
 }
