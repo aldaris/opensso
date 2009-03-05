@@ -22,29 +22,34 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: ConfigureGoogleAppsComplete.xml,v 1.2 2009-03-04 02:24:33 asyhuang Exp $ 
+   $Id: ConfigureGoogleAppsComplete.xml,v 1.3 2009-03-05 02:19:57 asyhuang Exp $ 
 
 -->
 
 <!DOCTYPE propertysheet SYSTEM "propertysheet.dtd">
 
 <propertysheet>    
-    <section name="dummy" defaultValue="">
+    <section name="DescriptionSection" defaultValue="">
         <property>
             <label name="lblName" defaultValue="configure.google.apps.complete.label.name" labelFor="tfName" />
             <cc name="tfName" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />
         </property>
-                <property>
+        <property>
             <label name="lblDescription" 
                    defaultValue="configure.google.apps.complete.label.description" 
                    labelFor="tfDescription" />
             <cc name="tfDescription" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />
         </property>
+    </section>
+    <section name="URLSection" defaultValue="configure.google.apps.complete.url.section">
         <property>
             <label name="lblSigninPageURL" 
                    defaultValue="configure.google.apps.complete.label.SigninPageURL" 
                    labelFor="lblSigninPageURL" />
-            <cc name="SigninPageURL" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />
+            <cc name="SigninPageURL" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                <attribute name="size" value="100" />                
+                <attribute name="readOnly" value="true" />
+            </cc>
             <fieldhelp name="helpSigninPageURL" 
                        defaultValue="configure.google.apps.complete.help.SigninPageURL" />
         </property>
@@ -52,7 +57,10 @@
             <label name="lblSignoutPageURL" 
                    defaultValue="configure.google.apps.complete.label.SignoutPageURL" 
                    labelFor="lblSignoutPageURL" />
-            <cc name="SignoutPageURL" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />
+            <cc name="SignoutPageURL" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >
+                <attribute name="size" value="100" />                
+                <attribute name="readOnly" value="true" />
+            </cc>
             <fieldhelp name="helpSignoutPageURL" 
                        defaultValue="configure.google.apps.complete.help.SignoutPageURL" />
         </property>
@@ -60,10 +68,15 @@
             <label name="lblChangePasswordURL" 
                    defaultValue="configure.google.apps.complete.label.ChangePasswordURL" 
                    labelFor="lblChangePasswordURL" />
-            <cc name="ChangePasswordURL" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />
+            <cc name="ChangePasswordURL" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag" >                
+                <attribute name="size" value="100" />                
+                <attribute name="readOnly" value="true" />
+            </cc>
             <fieldhelp name="helpChangePasswordURL" 
                        defaultValue="configure.google.apps.complete.help.ChangePasswordURL" />
         </property>
+    </section>
+    <section name="CertificateSection" defaultValue="configure.google.apps.complete.certificate.section">
         <property>
             <label name="lblPubKey" 
                    defaultValue="configure.google.apps.complete.label.PubKey" 
@@ -78,43 +91,43 @@
                        defaultValue="configure.google.apps.complete.help.PubKey" />
         </property>
     </section>
-  <section name="ConfigurationSteps" defaultValue="configure.google.apps.complete.steps">
-      <property span="true">
+    <section name="ConfigurationInstruction" defaultValue="configure.google.apps.complete.instruction.section">
+        <property span="true">
             <label name="step1"
                    defaultValue="configure.google.apps.complete.step1"
                    labelFor="step1" />
         </property>
-      <property span="true">
+        <property span="true">
             <label name="step2"
                    defaultValue="configure.google.apps.complete.step2"
                    labelFor="step2" />
         </property>
-
-
-      <property span="true">
+        
+        
+        <property span="true">
             <label name="step3"
                    defaultValue="configure.google.apps.complete.step3"
                    labelFor="step3" />
         </property>
-
-      <property span="true">
+        
+        <property span="true">
             <label name="step4"
                    defaultValue="configure.google.apps.complete.step4"
                    labelFor="step4" />
         </property>
-
-      <property span="true">
+        
+        <property span="true">
             <label name="step5"
                    defaultValue="configure.google.apps.complete.step5"
                    labelFor="step5" />
         </property>
-
-      <property span="true">
+        
+        <property span="true">
             <label name="step6"
                    defaultValue="configure.google.apps.complete.step6"
                    labelFor="step6" />
         </property>
-
- 
-  </section>
+        
+        
+    </section>
 </propertysheet>
