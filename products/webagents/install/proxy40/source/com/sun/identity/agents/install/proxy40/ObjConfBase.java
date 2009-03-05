@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ObjConfBase.java,v 1.1 2009-01-12 09:25:27 ranajitgh Exp $
+ * $Id: ObjConfBase.java,v 1.2 2009-03-05 23:28:21 subbae Exp $
  *
  */
 
@@ -95,7 +95,7 @@ public class ObjConfBase implements
 
             if ( line_wo_comma != -1 ) {
                 FileUtils.insertLineByNumber(
-                    objFile, line_w_comma +1, "PathCheck fn=validate_session_policy");
+                    objFile, line_wo_comma +1, "PathCheck fn=validate_session_policy");
             } else if ( line_w_comma != -1 ) {
                 FileUtils.insertLineByNumber(
                     objFile, line_w_comma +1, "PathCheck fn=validate_session_policy");

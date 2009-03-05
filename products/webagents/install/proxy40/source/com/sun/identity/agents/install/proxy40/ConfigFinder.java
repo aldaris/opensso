@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigFinder.java,v 1.1 2009-01-12 09:25:26 ranajitgh Exp $
+ * $Id: ConfigFinder.java,v 1.2 2009-03-05 23:28:20 subbae Exp $
  *
  */
 
@@ -67,22 +67,12 @@ public class ConfigFinder implements IDefaultValueFinder,
      */
     private String getDefaultConfigDirectoryPath() {
         String result = null;
-        String localHost = "localhost";
-        try {
-            localHost = InetAddress.getLocalHost().getHostName();
-        } catch (Exception ex) {
-            // Better not throw an ugly exception while trying to get
-            // default value
-            Debug.log("ConfigFinder.getDefaultConfigDirectoryPath " +
-                " exception caught : " + ex.getMessage());
-        }
-
         if (OSChecker.isWindows()) {
-                result = "C:\\Program Files\\Sun\\ProxyServer4\\"
-                + "https-" + localHost + "\\config";
+                result = "C:\\Sun\\ProxyServer40\\"
+                + "proxy-server1" + "\\config";
         } else {
-            result = "/var/opt/SUNWpxysvr4/"
-                + "https-" + localHost + "/config";
+            result = "/opt/sun/proxyserver40/"
+                + "proxy-server1" + "/config";
         }
 
         return result;
