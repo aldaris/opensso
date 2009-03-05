@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Iis7Agent.cpp,v 1.1 2009-02-13 23:58:05 robertis Exp $
+ * $Id: Iis7Agent.cpp,v 1.2 2009-03-05 23:27:41 robertis Exp $
  *
  *
  */
@@ -745,6 +745,7 @@ am_status_t get_request_url(IHttpContext* pHttpContext,
     DWORD pathInfoSize = 0;
     BOOL gotPathInfo = FALSE;
     CHAR* newPathInfo = NULL;
+    CHAR* tmpPath = NULL;
 
     BOOL gotScriptName = FALSE;
     PCSTR scriptName = NULL;
@@ -854,14 +855,19 @@ am_status_t get_request_url(IHttpContext* pHttpContext,
         
         //Remove the script name from path_info to get the real path info
         if (path_info != NULL && scriptName != NULL) {
-            path_info += strlen(scriptName);
-            newPathInfo = strdup(path_info);
-            if (newPathInfo != NULL) {
-                pathInfo = newPathInfo;
-                am_web_log_debug("%s: Reconstructed path info = %s", thisfunc, pathInfo );
-            } else {
-               am_web_log_error("%s: Unable to allocate newPathInfo.", thisfunc);
-               status = AM_NO_MEMORY;
+            tmpPath = (char*)path_info + strlen(scriptName);	             
+            if(tmpPath !=NULL && strlen(tmpPath) > 0){
+                newPathInfo = strdup(tmpPath);
+                if (newPathInfo != NULL) {
+                    pathInfo = newPathInfo;
+                    am_web_log_debug("%s: Reconstructed path info = %s", thisfunc, pathInfo );
+                } else {
+                   am_web_log_error("%s: Unable to allocate newPathInfo.", thisfunc);
+                   status = AM_NO_MEMORY;
+                }
+            }
+            else{
+                am_web_log_debug("%s: tmpPath is NULL.", thisfunc);
             }
         }
     }
@@ -931,7 +937,8 @@ am_status_t GetVariable(IHttpContext* pHttpContext, PCSTR varName,
     }
     else
     {
-        am_web_log_error("%s: GetVariable failed.", thisfunc);
+        am_web_log_debug("%s: GetServerVariable returned nothing as the SERVER VARIABLE is 
+                not present in the HttpContext.", thisfunc);
         status = AM_FAILURE;
     }
 
