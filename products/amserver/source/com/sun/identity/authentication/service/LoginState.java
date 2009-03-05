@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.46 2009-02-28 00:57:03 mrudul_uchil Exp $
+ * $Id: LoginState.java,v 1.47 2009-03-05 00:12:16 manish_rustagi Exp $
  *
  */
 
@@ -1137,6 +1137,9 @@ public class LoginState {
 		debug.message("Activating session: " + session);
             }
             return session.activate(userDN);
+        } catch (AuthException ae) {
+            debug.error("Error setting session properties: ", ae);
+            throw ae;
         } catch (Exception e) {
             debug.error("Error activating session: ", e);
             throw new AuthException("sessionActivationFailed", null);
@@ -1200,6 +1203,14 @@ public class LoginState {
                 if((oldAMIdentity != null) && 
                         oldAMIdentity.equals(newAMIdentity)){
                     sessionUpgrade();
+                }else {
+                    if (messageEnabled) {
+                        debug.message("LoginState.setSessionProperties()" +
+                        "Resetting session upgrade to false " +
+                        "since oldAMIdentity and newAMIdentity doesn't match");
+                    }                	
+                	throw new AuthException(
+                        AMAuthErrorCode.SESSION_UPGRADE_FAILED, null);
                 }
             } else {
                 if((oldUserDN != null) && 
@@ -1212,11 +1223,10 @@ public class LoginState {
                         "Resetting session upgrade to false " +
                         "since Old UserDN and New UserDN doesn't match");
                     }
-                    sessionUpgrade = false;
+                	throw new AuthException(
+                        AMAuthErrorCode.SESSION_UPGRADE_FAILED, null);
                 }
             }
-        }else {
-            sessionUpgrade = false;
         }
         
         if (forceAuth && sessionUpgrade) {
