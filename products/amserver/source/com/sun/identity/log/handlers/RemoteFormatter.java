@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoteFormatter.java,v 1.6 2008-07-29 18:14:56 bigfatrat Exp $
+ * $Id: RemoteFormatter.java,v 1.7 2009-03-05 22:55:39 veiming Exp $
  *
  */
 
@@ -35,7 +35,7 @@ import java.util.Set;
 import java.util.logging.Formatter;
 
 import com.sun.identity.log.LogConstants;
-import com.sun.identity.log.LogRecord;
+import com.sun.identity.log.ILogRecord;
 import com.sun.identity.log.spi.Debug;
 
 /**
@@ -76,14 +76,23 @@ public class RemoteFormatter extends Formatter {
      */
     public String format(java.util.logging.LogRecord logRecord){
         String logName = logRecord.getLoggerName();
-        Map logInfoMap = ((LogRecord)logRecord).getLogInfoMap();
-        String loggedBySid = (String)logInfoMap.get(LogConstants.LOGGED_BY_SID);
-        if (loggedBySid == null) {
-            if (Debug.warningEnabled()) {
-                Debug.warning("RemoteFormatter : returning null" +
-                    " because logRecord doesn't have loggedBySid");
+        Map logInfo = null;
+        String loggedBySid = null;
+        
+        if (logRecord instanceof ILogRecord) {
+            logInfo = ((ILogRecord)logRecord).getLogInfoMap();
+        }
+
+        if (logInfo != null) {
+            loggedBySid = (String)logInfo.get(
+                LogConstants.LOGGED_BY_SID);
+            if (loggedBySid == null) {
+                if (Debug.warningEnabled()) {
+                    Debug.warning("RemoteFormatter : returning null" +
+                        " because logRecord doesn't have loggedBySid");
+                }
+                return null;
             }
-            return null;
         }
         
         Object [] parameters = logRecord.getParameters();
@@ -104,7 +113,7 @@ public class RemoteFormatter extends Formatter {
         
         xml.append(msg);
         xml.append("</recMsg>");
-        Map logInfo = ((LogRecord)logRecord).getLogInfoMap();
+
         if (logInfo != null) {
             Set keys = logInfo.keySet();
             Iterator keysIter = keys.iterator();

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ELFFormatter.java,v 1.6 2008-07-29 18:14:56 bigfatrat Exp $
+ * $Id: ELFFormatter.java,v 1.7 2009-03-05 22:55:39 veiming Exp $
  *
  */
 
@@ -106,8 +106,11 @@ public class ELFFormatter extends Formatter {
      */
     public String format(java.util.logging.LogRecord logRecord) {
         StringBuffer sbuffer = new StringBuffer();
-        Map logInfoTable = 
-            ((com.sun.identity.log.LogRecord)logRecord).getLogInfoMap();
+        Map logInfoTable = null;
+        if (logRecord instanceof com.sun.identity.log.ILogRecord) {
+            logInfoTable = ((com.sun.identity.log.ILogRecord)logRecord).
+                getLogInfoMap();
+        }
         try {
             getAllFields();
             Set selectedFields = getSelectedFieldSet();

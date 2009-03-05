@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Logger.java,v 1.11 2008-09-04 00:34:00 rajeevangal Exp $
+ * $Id: Logger.java,v 1.12 2009-03-05 22:55:37 veiming Exp $
  *
  */
 
@@ -48,6 +48,11 @@ import com.sun.identity.log.messageid.LogMessageProviderBase;
 import com.sun.identity.log.messageid.MessageProviderFactory;
 import com.sun.identity.log.spi.Authorizer;
 import com.sun.identity.log.spi.Debug;
+import com.sun.identity.shared.Constants;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Set;
+import javax.security.auth.Subject;
 
 /**
  * OpenSSO extension to the jdk1.4 Logger
@@ -258,6 +263,81 @@ public class Logger extends java.util.logging.Logger {
         log(record, obj);
     }
 
+    private boolean validateLogBy(Object cred) {
+        if (!LogManager.isLocal) {
+            if (cred == null) {
+                /* In case of remote sso token must be provide. */
+                Debug.error("Logger.validateLogBy:" + logName +
+                    ": remote logging, ssoToken is null; Will not log");
+                return false;
+            }
+        } else {
+            /* Authorizer need not be called in the case of remote. */
+            if (!Authorizer.isAuthorized(logName, "MODIFY", cred)) {
+                Debug.error("Logger.validateLogBy:" + logName +
+                    ": authorization failed; Will not log");
+                throw new AMLogException(logName + ":" +
+                    AMLogException.LOG_WRT_AUTH_FAILED);
+            }
+        }
+        return true;
+    }
+
+    private void addLogByInfo(ILogRecord record, Object cred) {
+        if (cred instanceof SSOToken) {
+            SSOToken ssoToken = (SSOToken) cred;
+            String loggedBySID = ssoToken.getTokenID().toString();
+            record.addLogInfo(LogConstants.LOGGED_BY_SID, loggedBySID);
+            String clientID = null;
+            try {
+                clientID = ssoToken.getPrincipal().getName();
+            } catch (SSOException ssoe) {
+                Debug.error("Logger:log:" + logName +
+                    ": could not get clientID from ssoToken:", ssoe);
+            }
+            record.addLogInfo(LogConstants.LOGGED_BY, clientID);
+        }
+    }
+
+    private void addModuleName(ILogRecord record) {
+        String existModuleName =
+            (String)record.getLogInfoMap().get(LogConstants.MODULE_NAME);
+        if (existModuleName == null || existModuleName.length() <= 0) {
+            /* add module name only if it's already not added. */
+            record.addLogInfo(LogConstants.MODULE_NAME, this.getName());
+        }
+
+    }
+
+    /**
+     * Log entitlement log record.
+     *
+     * @param record Log record.
+     */
+    public void log(ILogRecord record) {
+        try {
+            extractInfoFromLogFor(record);
+        } catch (SSOException e) {
+            Debug.error("Logger.log " + e.getMessage());
+        }
+
+        if (record instanceof com.sun.identity.log.LogRecord) {
+            Object logBy = record.getLogBy();
+            Object cred = (logBy instanceof Subject) ?
+                getPrivateCred((Subject)logBy) : logBy;
+            log((java.util.logging.LogRecord)record, cred);
+        } else {
+            Debug.error(
+                "Logger.log: cannot log non java.util.logging.LogRecord class");
+        }
+    }
+
+    private static Object getPrivateCred(Subject sbj) {
+        Set privCreds = sbj.getPrivateCredentials();
+        return ((privCreds != null) && !privCreds.isEmpty()) ?
+            privCreds.iterator().next() : null;
+    }
+
     /**
      * Calls super.log after checking authorization.
      * Data is not logged at all if this check fails.
@@ -268,65 +348,30 @@ public class Logger extends java.util.logging.Logger {
      *        sign on token which should be passed as the <code>cred</code>.
      */
     public void log(LogRecord record, Object cred) {
-        String logName = this.getName();
+        validateLogBy(cred);
+        if (record instanceof com.sun.identity.log.ILogRecord) {
+            com.sun.identity.log.ILogRecord openssoLogRecord =
+                (com.sun.identity.log.ILogRecord)record;
+            addLogByInfo(openssoLogRecord, cred);
+            addModuleName(openssoLogRecord);
+        }
 
-        if (!LogManager.isLocal) {        
-            if (cred == null) {
-                /* In case of remote sso token must be provide. */
-                Debug.error("Logger:log:" + logName + 
-                    ": remote logging, ssoToken is null; Will not log");
-                return;
-            }
-        } else {        
-            /* Authorizer need not be called in the case of remote. */
-            if (!Authorizer.isAuthorized(logName, "MODIFY", cred)) {
-                Debug.error("Logger:log:" + logName + 
-                    ": authorization failed; Will not log");
-                throw new AMLogException(logName + ":" +
-                    AMLogException.LOG_WRT_AUTH_FAILED);
-            }
+        /*
+         * These are normally done by the LogManager private method
+         * doLog(). But since this record is not passing through that
+         * method we have to explicitly do this.
+         * ResourceBundle logic has been simplified.
+         */
+        record.setLoggerName(getName());
+        String rbName = this.getResourceBundleName();
+        if (rbName != null) {
+            ResourceBundle bundle = ResourceBundle.getBundle(rbName);
+            record.setResourceBundle(bundle);
         }
-        /* add LoggedBy info */
-        SSOToken ssoToken = null;
-        try {
-            com.sun.identity.log.LogRecord ourRecord = 
-                (com.sun.identity.log.LogRecord)record;
-            if (cred instanceof SSOToken) {
-                ssoToken = (SSOToken)cred;
-                String loggedBySID = ssoToken.getTokenID().toString();
-                ourRecord.addLogInfo(LogConstants.LOGGED_BY_SID, loggedBySID);
-                String clientID = null;
-                try {
-                    clientID = ssoToken.getPrincipal().getName();
-                } catch (SSOException ssoe) {
-                    Debug.error("Logger:log:" + logName + 
-                        ": could not get clientID from ssoToken:", ssoe);
-                }
-                ourRecord.addLogInfo(LogConstants.LOGGED_BY, clientID);
-            } 
-            /* add module name */
-            String existModuleName = 
-                (String)ourRecord.getLogInfoMap().get(LogConstants.MODULE_NAME);
-            if (existModuleName == null || existModuleName.length() <= 0) {
-                /* add module name only if it's already not added. */
-                ourRecord.addLogInfo(LogConstants.MODULE_NAME, this.getName());
-            }
-            /*
-             * These are normally done by the LogManager private method
-             * doLog(). But since this record is not passing through that
-             * method we have to explicitly do this.
-             * ResourceBundle logic has been simplified.
-             */
-            ourRecord.setLoggerName(this.getName());
-            String rbName = this.getResourceBundleName();
-            ResourceBundle bundle = null;
-            if (rbName != null) {
-                bundle = ResourceBundle.getBundle(rbName);
-                ourRecord.setResourceBundle(bundle);
-            }
-        } catch (ClassCastException ex) {
-            Debug.warning("Logger.log:LogRecord type:" + ex.getMessage());
-        }
+        writeToLog(record);
+    }
+
+    private void writeToLog(LogRecord record) {
         try {
             rwLock.readRequest();
             /*
@@ -334,15 +379,15 @@ public class Logger extends java.util.logging.Logger {
              * threads so that no signing or verification takes
              * place once a logging thread has gone past this point
              */
-            if(lm.isSecure()) {
-                synchronized(this) {
+            if (lm.isSecure()) {
+                synchronized (this) {
                     super.log(record);
                 }
             } else {
                 super.log(record);
             }
         } catch (Exception ex) {
-            Debug.error("Logger.log:" + logName + ":" + ex.getMessage());
+            Debug.error("Logger.writeToLog:" + logName + ":" + ex.getMessage());
             throw new AMLogException(logName + ":" + ex.getMessage());
         } finally {
             rwLock.readDone();
@@ -520,5 +565,87 @@ public class Logger extends java.util.logging.Logger {
      */
     public static boolean resolveHostNameEnabled() {
         return resolveHostName;
+    }
+
+    static void extractInfoFromLogFor(ILogRecord rec)
+        throws SSOException {
+        Object logFor = rec.getLogFor();
+        Object cred = (logFor instanceof Subject) ?
+            getPrivateCred((Subject)logFor) : logFor;
+
+        if (!(cred instanceof SSOToken)) {
+            return;
+        }
+        SSOToken ssoToken = (SSOToken)cred;
+        rec.addLogInfo(LogConstants.LOGIN_ID_SID,
+            ssoToken.getTokenID().toString());
+
+        String ctxID = ssoToken.getProperty(Constants.AM_CTX_ID);
+        if ((ctxID != null) && (ctxID.length() > 0)) {
+            rec.addLogInfo(LogConstants.CONTEXT_ID, ctxID);
+        }
+
+        resolveHostName(rec, ssoToken);
+        String clientDomain = ssoToken.getProperty("Organization");
+        if (clientDomain == null || clientDomain.length() == 0) {
+            clientDomain = ssoToken.getProperty("cdomain");
+        }
+        rec.addLogInfo(LogConstants.DOMAIN, clientDomain);
+        rec.addLogInfo(LogConstants.LOGIN_ID,
+            ssoToken.getPrincipal().getName());
+
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        /*
+         * these are the compulsory fields ... to be logged even if there are
+         * exceptions while getting domain, loginid, ipaddr, hostname
+         */
+        rec.addLogInfo(LogConstants.TIME, sdf.format(date));
+
+        if (rec instanceof java.util.logging.LogRecord) {
+            java.util.logging.LogRecord jLogRecord =
+                (java.util.logging.LogRecord)rec;
+            rec.addLogInfo(LogConstants.DATA, jLogRecord.getMessage());
+            rec.addLogInfo(LogConstants.LOG_LEVEL,
+                jLogRecord.getLevel().toString());
+        }
+
+    }
+
+    static void resolveHostName(ILogRecord rec, SSOToken ssoToken)
+        throws SSOException {
+        /*
+         *  using the SSOToken, get the hostname first, as
+         *  getting the IPAddr appears to use an Inet call using
+         *  the hostname...
+         *
+         *  if com.sun.identity.log.resolveHostName=false, then
+         *  IPAddr field will end up "Not Available"
+         */
+        String hostName = ssoToken.getHostName();
+        String ipAddress = null;
+
+        if (Logger.resolveHostName) {
+            java.net.InetAddress ipAddr = ssoToken.getIPAddress();
+            if (ipAddr != null) {
+                /*
+                 * getting a leading "/" from InetAddress.getByName(host)
+                 * in SSOTokenImpl.java when "host" is an IPaddress.
+                 */
+                ipAddress = ipAddr.getHostAddress();
+
+                /*
+                 *  if no hostname returned, or only IP address,
+                 *  try getting hostname from InetAddr
+                 */
+                if ((hostName == null) ||
+                    ((ipAddress != null) && (ipAddress.equals(hostName)))) {
+                    hostName = ipAddr.getHostName();
+                }
+            }
+        }
+        rec.addLogInfo(LogConstants.HOST_NAME, hostName);
+        rec.addLogInfo(LogConstants.IP_ADDR, ipAddress);
     }
 }

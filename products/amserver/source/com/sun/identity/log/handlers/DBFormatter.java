@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DBFormatter.java,v 1.8 2009-02-20 00:32:18 bigfatrat Exp $
+ * $Id: DBFormatter.java,v 1.9 2009-03-05 22:55:38 veiming Exp $
  *
  */
 
@@ -155,8 +155,11 @@ public class DBFormatter extends Formatter {
     public String format(java.util.logging.LogRecord logRecord) {
         getAllFields();
         StringBuffer sbuffer = new StringBuffer();
-        Map logInfoTable = 
-            ((com.sun.identity.log.LogRecord)logRecord).getLogInfoMap();
+        Map logInfoTable = null;
+        if (logRecord instanceof com.sun.identity.log.ILogRecord) {
+            logInfoTable = ((com.sun.identity.log.ILogRecord)logRecord).
+                getLogInfoMap();
+        }
         Set selectedFields = getSelectedFieldSet();
         String strTime = "";
         if(secureTimestampGenerator != null) {

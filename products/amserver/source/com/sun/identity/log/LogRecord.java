@@ -22,16 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LogRecord.java,v 1.6 2008-09-05 00:51:01 ww203982 Exp $
+ * $Id: LogRecord.java,v 1.7 2009-03-05 22:55:37 veiming Exp $
  *
  */
 
 package com.sun.identity.log;
 
 import com.iplanet.sso.SSOException;
-import com.iplanet.sso.SSOToken;
 import com.sun.identity.log.spi.Debug;
-import com.sun.identity.shared.Constants;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -52,7 +50,12 @@ import java.util.logging.Level;
  * </pre>
  * @supported.api
  */
-public class LogRecord extends java.util.logging.LogRecord {
+public class LogRecord extends java.util.logging.LogRecord
+    implements ILogRecord
+{
+    private Map logInfoMap = new HashMap();
+    private Object token;
+
     /**
      * Construct the <code>LogRecord</code> with the given Level and message
      * values.
@@ -65,7 +68,7 @@ public class LogRecord extends java.util.logging.LogRecord {
     public LogRecord(Level level, String msg) {
         super(level,msg);
     }
-    
+
     /**
      * Construct the <code>LogRecord</code> with the given Level and message
      * values.
@@ -78,69 +81,10 @@ public class LogRecord extends java.util.logging.LogRecord {
      */
     public LogRecord(Level level, String msg, Object token) {
         this(level,msg);
-        SSOToken ssoToken = null;
-        if (token instanceof SSOToken) {
-            ssoToken = (SSOToken)token;
-        }
-        String clientDomain = null;
-        String clientID     = null;
-        String ipAddress    = null;
-        String hostName     = null;
-        
-        Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        /*
-         * these are the compulsory fields ... to be logged even if there are
-         * exceptions while getting domain, loginid, ipaddr, hostname
-         */
-        addLogInfo(LogConstants.TIME, sdf.format(date));
-        addLogInfo(LogConstants.DATA, getMessage());
-        addLogInfo(LogConstants.LOG_LEVEL, getLevel().toString());
-
-        String tokenID = ssoToken.getTokenID().toString();
+        this.token = token;
 
         try {
-            /* get the context ID here, and addLogInfo() it... */
-            String ctxID = ssoToken.getProperty(Constants.AM_CTX_ID);
-            if ((ctxID != null) && (ctxID.length() > 0)) {
-                addLogInfo(LogConstants.CONTEXT_ID, ctxID);
-            }
-
-            /*
-             *  using the SSOToken, get the hostname first, as
-             *  getting the IPAddr appears to use an Inet call using
-             *  the hostname...
-             *
-             *  if com.sun.identity.log.resolveHostName=false, then
-             *  IPAddr field will end up "Not Available"
-             */
-            hostName  = ssoToken.getHostName();
-
-            if (Logger.resolveHostName) {
-                java.net.InetAddress ipAddr = ssoToken.getIPAddress();
-                if (ipAddr != null) {
-                    /*
-                     * getting a leading "/" from InetAddress.getByName(host)
-                     * in SSOTokenImpl.java when "host" is an IPaddress.
-                     */
-                    ipAddress = ipAddr.getHostAddress();
-
-                    /*
-                     *  if no hostname returned, or only IP address,
-                     *  try getting hostname from InetAddr
-                     */
-                    if ((hostName == null) ||
-                        ((ipAddress != null) && (ipAddress.equals(hostName))))
-                    {
-                        hostName = ipAddr.getHostName();
-                    }
-                }
-           }
-            clientDomain = ssoToken.getProperty("Organization");
-            if (clientDomain == null || clientDomain.length() == 0) {
-                clientDomain = ssoToken.getProperty("cdomain");
-            } 
-            clientID = ssoToken.getPrincipal().getName();
+            Logger.extractInfoFromLogFor(this);
         } catch (SSOException se) {
             /*
              *  internal auth session doesn't have IPaddr, so stacktrace
@@ -148,12 +92,6 @@ public class LogRecord extends java.util.logging.LogRecord {
              */
             Debug.error("LogRecord:LogRecord:SSOException: " + se.getMessage());
         }
-        
-        addLogInfo(LogConstants.DOMAIN, clientDomain);
-        addLogInfo(LogConstants.LOGIN_ID, clientID);
-        addLogInfo(LogConstants.IP_ADDR, ipAddress);
-        addLogInfo(LogConstants.HOST_NAME, hostName);
-        addLogInfo(LogConstants.LOGIN_ID_SID, tokenID);
     }
 
     /**
@@ -215,8 +153,6 @@ public class LogRecord extends java.util.logging.LogRecord {
         }
     }
 
-    private Map logInfoMap = new HashMap();
-    
     /**
      * Adds to the log information map, the field key and its corresponding
      * value.
@@ -250,4 +186,23 @@ public class LogRecord extends java.util.logging.LogRecord {
     public Map getLogInfoMap() {
         return logInfoMap;
     }
+
+    /**
+     * Returns log by subject.
+     *
+     * @return log by subject.
+     */
+    public Object getLogBy() {
+        return null;
+    }
+
+    /**
+     * Returns log for subject.
+     *
+     * @return log for subject.
+     */
+    public Object getLogFor() {
+        return token;
+    }
+
 }

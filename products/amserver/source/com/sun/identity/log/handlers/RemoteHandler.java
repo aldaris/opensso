@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RemoteHandler.java,v 1.16 2008-10-27 18:31:31 bigfatrat Exp $
+ * $Id: RemoteHandler.java,v 1.17 2009-03-05 22:55:40 veiming Exp $
  *
  */
 
@@ -55,7 +55,7 @@ import com.sun.identity.log.AMLogException;
 import com.sun.identity.log.LogConstants;
 import com.sun.identity.log.LogManager;
 import com.sun.identity.log.LogManagerUtil;
-import com.sun.identity.log.LogRecord;
+import com.sun.identity.log.ILogRecord;
 import com.sun.identity.log.spi.Debug;
 
 /**
@@ -147,16 +147,19 @@ public class RemoteHandler extends Handler {
             return;
         }
         Request request = new Request(xml);
-        
-        Map logInfoMap = ((LogRecord)logRecord).getLogInfoMap();
-        String loggedBySid = (String)logInfoMap.get(LogConstants.LOGGED_BY_SID);
-        if(loggedBySid != null) {
-            RequestSet reqSet = (RequestSet)reqSetMap.get(loggedBySid);
-            if (reqSet == null) {
-                reqSet = new RequestSet("Logging");
+
+        if (logRecord instanceof ILogRecord) {
+            Map logInfoMap = ((ILogRecord) logRecord).getLogInfoMap();
+            String loggedBySid = (String) logInfoMap.get(
+                LogConstants.LOGGED_BY_SID);
+            if (loggedBySid != null) {
+                RequestSet reqSet = (RequestSet) reqSetMap.get(loggedBySid);
+                if (reqSet == null) {
+                    reqSet = new RequestSet("Logging");
+                }
+                reqSet.addRequest(request);
+                reqSetMap.put(loggedBySid, reqSet);
             }
-            reqSet.addRequest(request);
-            reqSetMap.put(loggedBySid, reqSet);
         }
         
         this.recCount++;
