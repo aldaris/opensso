@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginState.java,v 1.47 2009-03-05 00:12:16 manish_rustagi Exp $
+ * $Id: LoginState.java,v 1.48 2009-03-06 22:09:40 hengming Exp $
  *
  */
 
@@ -265,6 +265,10 @@ public class LoginState {
      * Attribute value for loginFailureLockout.
      */
     public String loginLockoutAttrValue = null;
+    /**
+     * Attribute name for storing invalid attempts data.
+     */
+    public String invalidAttemptsDataAttrName = null;
     /**
      * Default number of count for loginFailureLockout warning
      */
@@ -840,6 +844,8 @@ public class LoginState {
                 attrs, ISAuthConstants.LOCKOUT_ATTR_VALUE);
             loginLockoutAttrValue = tmp;
             
+            invalidAttemptsDataAttrName = CollectionHelper.getMapAttr(
+                attrs, ISAuthConstants.INVALID_ATTEMPTS_DATA_ATTR_NAME);
             
             if (messageEnabled) {
                 debug.message("Getting Org Profile: " + orgDN +
@@ -864,6 +870,7 @@ public class LoginState {
                 "\nloginFailureLockoutTime->"+loginFailureLockoutTime+
                 "\nloginLockoutUserWarning->"+loginLockoutUserWarning+
                 "\nloginLockoutNotification->"+loginLockoutNotification+
+                "\ninvalidAttemptsDataAttrName->"+invalidAttemptsDataAttrName+ 
                 "\npersistentCookieMode->" + persistentCookieMode+
                 "\nidentityTypes->" + identityTypes +
                 "\naliasAttrNames ->" + aliasAttrNames);
@@ -4721,6 +4728,14 @@ public class LoginState {
     }
 
     /**
+     * Return attribute name for storing invalid attempts data
+     * @return attribute name for storing invalid attempts data
+     */
+    public String getInvalidAttemptsDataAttrName()  {
+        return invalidAttemptsDataAttrName;
+    }
+
+    /**
      * Return LoginLockout duration
      * @return LoginLockout duration
      */
@@ -5741,6 +5756,7 @@ public class LoginState {
         loginLockoutNotification = null;
         loginLockoutAttrName = null;
         loginLockoutAttrValue = null;
+        invalidAttemptsDataAttrName = null;
         lockoutMsg = null;
         principalList = null;
         cert = null;

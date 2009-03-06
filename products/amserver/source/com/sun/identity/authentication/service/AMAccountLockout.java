@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMAccountLockout.java,v 1.9 2009-02-20 19:04:10 manish_rustagi Exp $
+ * $Id: AMAccountLockout.java,v 1.10 2009-03-06 22:09:20 hengming Exp $
  *
  */
 
@@ -108,11 +108,14 @@ class AMAccountLockout {
         loginFailureLockoutStoreInDS = loginState.
         getLoginFailureLockoutStoreInDS();
 
+        String invalidAttemptsDataAttrName =
+            loginState.getInvalidAttemptsDataAttrName();
         isAccountLockout = new ISAccountLockout(loginFailureLockoutMode,
             loginFailureLockoutTime, loginFailureLockoutCount,
             loginLockoutNotification, loginLockoutUserWarning,
             loginLockoutAttrName, loginLockoutAttrValue,
             loginFailureLockoutDuration, loginFailureLockoutMultiplier,
+            invalidAttemptsDataAttrName,
             bundleName);
 
         isAccountLockout.setStoreInvalidAttemptsInDS(
