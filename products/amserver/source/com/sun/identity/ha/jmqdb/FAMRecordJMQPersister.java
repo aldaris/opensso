@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMRecordJMQPersister.java,v 1.5 2008-08-01 22:24:46 hengming Exp $
+ * $Id: FAMRecordJMQPersister.java,v 1.6 2009-03-06 05:32:09 222713 Exp $
  *
  */
 
@@ -315,21 +315,28 @@ public class FAMRecordJMQPersister implements FAMRecordPersister,
                random.wait(readTimeOut);
           }
           // TODO : process timeout
-          BytesMessage message1 = (BytesMessage) processedMsgs.remove(random);
-          String opStatus = message1.getStringProperty(OP_STATUS);
-          if (opStatus != null && opStatus.equals(NOT_FOUND)) {
-              throw new Exception(FAMRecordUtils.bundle.getString(
-                  "notFoundSession"));
+          Object object = processedMsgs.remove(random);
+          if(object instanceof Long) {
+               //timeout
+               return null;
           }
+          else {
+          	BytesMessage message1 = (BytesMessage) object;
+          	String opStatus = message1.getStringProperty(OP_STATUS);
+          	if (opStatus != null && opStatus.equals(NOT_FOUND)) {
+              		throw new Exception(FAMRecordUtils.bundle.getString(
+                  		"notFoundSession"));
+          	}
           
-          // Fill in the return value in FAMRecord 
-          // Data is in blob field 
-          long len = message1.readLong();
-          byte[] bytes = new byte[(int) len];
-          message1.readBytes(bytes);
-          FAMRecord ret = new FAMRecord(service,
-              op, pKey, 0, null, 0, null, bytes); 
-          return ret; 
+          	// Fill in the return value in FAMRecord 
+          	// Data is in blob field 
+          	long len = message1.readLong();
+          	byte[] bytes = new byte[(int) len];
+          	message1.readBytes(bytes);
+          	FAMRecord ret = new FAMRecord(service,
+              		op, pKey, 0, null, 0, null, bytes); 
+          	return ret; 
+         }
        } else if (op.equals(FAMRecord.GET_RECORD_COUNT)){
            // Allocate a random string for onMessage to find us
            Long random = new Long(rdmGen.nextLong());

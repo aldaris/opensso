@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: JMQSessionRepository.java,v 1.4 2008-07-28 21:22:17 pawand Exp $
+ * $Id: JMQSessionRepository.java,v 1.5 2009-03-06 05:33:28 222713 Exp $
  *
  */
 
@@ -217,8 +217,11 @@ public class JMQSessionRepository extends GeneralTaskRunnable implements
                 SESSION, FAMRecord.READ, key, 0, null, 0, null, null);
             //TODO: Add interface  
             FAMRecord retRec = pSession.send(famRec);
-            byte[] blob = retRec.getBlob();       
-            InternalSession is = (InternalSession) SessionUtils.decode(blob);
+            InternalSession is = null;
+            if(retRec != null) {
+            	byte[] blob = retRec.getBlob();       
+            	is = (InternalSession) SessionUtils.decode(blob);
+            }
 
             /*
              * ret.put(SESSIONID, message.getString(SESSIONID)); ret.put(DATA,
