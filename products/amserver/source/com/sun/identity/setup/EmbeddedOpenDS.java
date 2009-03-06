@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EmbeddedOpenDS.java,v 1.20 2009-02-26 01:04:43 goodearth Exp $
+ * $Id: EmbeddedOpenDS.java,v 1.21 2009-03-06 00:42:04 goodearth Exp $
  *
  */
 
@@ -438,6 +438,7 @@ public class EmbeddedOpenDS {
       *     --baseDN "dc=example,dc=com" --adminUID admin --adminPassword pass
       *     --hostSource host1 --portSource 1389
       *     --hostDestination host2 --portDestination 2389
+      *     --trustAll
       *
       *  @param map Map of properties collected by the configurator.
       *  @return status : 0 == success, !0 == failure
@@ -460,7 +461,8 @@ public class EmbeddedOpenDS {
             "--hostDestination",          // 12
             "localhost",                  // 13
             "--portDestination",          // 14
-            "51389"                       // 15
+            "51389",                      // 15
+            "--trustAll"                  // 16
         };
         initializeCmd[3] = (String)map.get(SetupConstants.CONFIG_VAR_ROOT_SUFFIX);
         initializeCmd[9] = (String)map.get(SetupConstants.DS_EMB_REPL_HOST2);
