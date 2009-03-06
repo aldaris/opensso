@@ -24,7 +24,7 @@
     your own identifying information:
     "Portions Copyrighted [year] [name of copyright owner]"
 
-    $Id: amAuth.xml,v 1.13 2008-06-25 05:45:41 qcheng Exp $
+    $Id: amAuth.xml,v 1.14 2009-03-06 22:38:28 hengming Exp $
 
 -->
 
@@ -37,7 +37,7 @@
         <Schema
             serviceHierarchy="/DSAMEConfig/authentication/iPlanetAMAuthService"
             i18nFileName="amAuth"
-            revisionNumber="50"
+            revisionNumber="60"
             i18nKey="iplanet-am-auth-service-description">
             <Global>
                 <AttributeSchema name="iplanet-am-auth-supported-auth-modules"
@@ -260,6 +260,11 @@
                     type="single"
                     syntax="string"
                     i18nKey="a132">
+                </AttributeSchema>
+                <AttributeSchema name="sunAMAuthInvalidAttemptsDataAttrName"
+                    type="single"
+                    syntax="string"
+                    i18nKey="a1321">
                 </AttributeSchema>
                 <AttributeSchema name="iplanet-am-auth-user-container"
                     type="list"

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PWResetAccountLockout.java,v 1.3 2008-06-25 05:43:42 qcheng Exp $
+ * $Id: PWResetAccountLockout.java,v 1.4 2009-03-06 22:37:07 hengming Exp $
  *
  */
   
@@ -64,6 +64,7 @@ public class PWResetAccountLockout {
             model.getPasswordResetLockoutAttributeValue(),
             model.getPasswordResetFailureLockoutDuration(),
             1,
+            null,
             PWResetModel.DEFAULT_RB);
     }
 

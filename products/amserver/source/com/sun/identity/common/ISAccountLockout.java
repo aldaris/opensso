@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISAccountLockout.java,v 1.13 2009-03-03 05:51:06 si224302 Exp $
+ * $Id: ISAccountLockout.java,v 1.14 2009-03-06 22:35:02 hengming Exp $
  *
  */
 
@@ -57,7 +57,7 @@ public class ISAccountLockout {
     private static final String EMAIL_MESSAGE = "lockOutEmailMsg";
     private static final String INVALID_ATTEMPTS_XML_OBJECT_CLASS =
         "sunAMAuthAccountLockout";
-    private static final String INVALID_ATTEMPTS_XML_ATTR =
+    private static final String DEFAULT_INVALID_ATTEMPTS_XML_ATTR =
         "sunAMAuthInvalidAttemptsData";
     
     // XML related variables
@@ -87,6 +87,9 @@ public class ISAccountLockout {
     private String lockoutAttrValue=null;
     private String lockoutAttrName=null;
     private String bundleName = null;
+    private String invalidAttemptsDataAttrName =
+        DEFAULT_INVALID_ATTEMPTS_XML_ATTR;
+    private boolean needToSetInvalidAttemptsObjectClass = true;
     static Debug debug = Debug.getInstance("amAccountLockout");
     private AMAuthCallBackImpl callbackImpl = null;
     static Map loginFailHash = Collections.synchronizedMap(new HashMap());
@@ -115,6 +118,8 @@ public class ISAccountLockout {
      *        for account locking.
      * @param lockoutFailureDuration a long, lockout duration in minutes
      *        used for memory locking.
+     * @param invalidAttemptsDataAttrName a String , name of attribute for
+     *        storing invalid attempts data.
      * @param bundleName a String, name of the resource bundle.
      */
     public ISAccountLockout(boolean failureLockoutMode,
@@ -126,6 +131,7 @@ public class ISAccountLockout {
         String lockoutAttrValue,
         long lockoutFailureDuration,
         int lockoutFailureMultiplier,
+        String invalidAttemptsDataAttrName,
         String bundleName
     ) {
         this.failureLockoutMode = failureLockoutMode;
@@ -141,7 +147,16 @@ public class ISAccountLockout {
         if (lockoutFailureDuration > 0) {
             memoryLocking = true;
         }
-        
+
+        if ((invalidAttemptsDataAttrName == null) ||
+            (invalidAttemptsDataAttrName.length() == 0)) {
+            this.invalidAttemptsDataAttrName =
+                DEFAULT_INVALID_ATTEMPTS_XML_ATTR;
+            needToSetInvalidAttemptsObjectClass = true;
+        } else {
+            this.invalidAttemptsDataAttrName = invalidAttemptsDataAttrName;
+            needToSetInvalidAttemptsObjectClass = false;
+        }
         this.bundleName = bundleName;
     }
     
@@ -229,7 +244,7 @@ public class ISAccountLockout {
                     "Invalid Attempt XML being inserted= " + invalidXML);
             }
             
-            attrMap.put(INVALID_ATTEMPTS_XML_ATTR, invalidAttempts);
+            attrMap.put(invalidAttemptsDataAttrName, invalidAttempts);
             
             try {
                 setLockoutObjectClass(amIdentity);
@@ -290,7 +305,7 @@ public class ISAccountLockout {
             
             try {
                 attrValueSet = amIdentity.getAttribute(
-                    INVALID_ATTEMPTS_XML_ATTR);
+                    invalidAttemptsDataAttrName);
             } catch (Exception e) {
                 debug.error("ISAccoutLockout.getAcInfo", e);
                 return null;
@@ -351,6 +366,9 @@ public class ISAccountLockout {
      * @param amIdentity the user object.
      */
     private void setLockoutObjectClass(AMIdentity amIdentity) {
+        if (!needToSetInvalidAttemptsObjectClass) {
+            return;
+        }
         try {
             Set attrValueSetObjectClass =amIdentity.getAttribute("objectClass");
             
@@ -691,7 +709,7 @@ public class ISAccountLockout {
                     String invalidXML = createInvalidAttemptsXML(0,0,0,
                         actualLockoutDuration);
                     invalidAttempts.add(invalidXML);
-                    attrMap.put(INVALID_ATTEMPTS_XML_ATTR,invalidAttempts);
+                    attrMap.put(invalidAttemptsDataAttrName, invalidAttempts);
                     setLockoutObjectClass(amIdentity);
                     amIdentity.setAttributes(attrMap);
                     debug.message("Saving XML = "+invalidXML);
