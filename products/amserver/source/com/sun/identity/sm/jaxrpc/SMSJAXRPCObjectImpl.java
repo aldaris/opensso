@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSJAXRPCObjectImpl.java,v 1.20 2008-11-18 23:42:56 arviranga Exp $
+ * $Id: SMSJAXRPCObjectImpl.java,v 1.21 2009-03-06 05:36:33 222713 Exp $
  *
  */
 
@@ -475,7 +475,8 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
 
         // If notification URLs are present, send notifications
         synchronized (notificationURLs) {
-            for (Iterator entries = notificationURLs.entrySet().iterator(); 
+            Map notifications = new HashMap(notificationURLs); // Make a copy
+            for (Iterator entries = notifications.entrySet().iterator(); 
                 entries.hasNext();) {
                 Map.Entry entry = (Map.Entry) entries.next();
                 URL url = (URL) entry.getValue();
@@ -498,7 +499,7 @@ public class SMSJAXRPCObjectImpl implements SMSObjectIF, SMSObjectListener {
                             "URL from notification list.", ne);
                     }
                     // Remove the URL from Notification List
-                    entries.remove();
+                    notificationURLs.remove((String) entry.getKey());
                 }
             }
         }
