@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Iis7Agent.cpp,v 1.2 2009-03-05 23:27:41 robertis Exp $
+ * $Id: Iis7Agent.cpp,v 1.3 2009-03-06 01:55:08 robertis Exp $
  *
  *
  */
@@ -937,8 +937,8 @@ am_status_t GetVariable(IHttpContext* pHttpContext, PCSTR varName,
     }
     else
     {
-        am_web_log_debug("%s: GetServerVariable returned nothing as the SERVER VARIABLE is 
-                not present in the HttpContext.", thisfunc);
+        am_web_log_debug("%s: GetServerVariable returned nothing as the SERVER VARIABLE is" 
+            " not present in the HttpContext.", thisfunc);
         status = AM_FAILURE;
     }
 
