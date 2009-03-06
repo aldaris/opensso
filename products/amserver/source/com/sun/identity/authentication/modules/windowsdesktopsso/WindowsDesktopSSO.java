@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: WindowsDesktopSSO.java,v 1.4 2008-09-25 00:50:13 beomsuk Exp $
+ * $Id: WindowsDesktopSSO.java,v 1.5 2009-03-06 05:20:31 222713 Exp $
  *
  */
 
@@ -38,6 +38,7 @@ import com.sun.identity.authentication.util.ISAuthConstants;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.security.PrivilegedExceptionAction;
+import java.security.PrivilegedActionException;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -159,6 +160,28 @@ public class WindowsDesktopSSO extends AMLoginModule {
             authenticateToken(kerberosToken);
             debug.message("WindowsDesktopSSO authentication succeeded.");
             result = ISAuthConstants.LOGIN_SUCCEED; 
+         } catch (PrivilegedActionException pe) {
+             Exception e = extractException(pe);	 
+             if( e instanceof GSSException) {	 
+                 int major = ((GSSException)e).getMajor();	 
+                 if (major == GSSException.CREDENTIALS_EXPIRED) {	 
+                         debug.message("Credential expired. Re-establish credential...");	 
+                 serviceLogin();	 
+                 try {	 
+                         authenticateToken(kerberosToken);	 
+                         debug.message("Authentication succeeded with new cred.");	 
+                         result = ISAuthConstants.LOGIN_SUCCEED;	 
+                  } catch (Exception ee) {	 
+                 debug.message("Authentication failed with new cred.");	 
+                 throw new AuthLoginException(amAuthWindowsDesktopSSO,	 
+                                 "auth", null, ee);	 
+                 }	 
+               } else {	 
+                         debug.message("Authentication failed with GSSException.");	 
+                  throw new AuthLoginException(amAuthWindowsDesktopSSO, "auth",	 
+                         null, e);	 
+               }	 
+             }	 
         } catch (GSSException e ){
             int major = e.getMajor();
             if (major == GSSException.CREDENTIALS_EXPIRED) {
@@ -230,6 +253,17 @@ public class WindowsDesktopSSO extends AMLoginModule {
             }
         });
     }
+
+     /**	 
+      * Iterate until we extract the real exception	 
+      * from PrivilegedActionException(s).	 
+      */	 
+     private static Exception extractException(Exception e) {	 
+         while (e instanceof PrivilegedActionException) {	 
+             e = ((PrivilegedActionException)e).getException();	 
+         }	 
+         return e;	 
+     }
 
     /**
      * TODO-JAVADOC
