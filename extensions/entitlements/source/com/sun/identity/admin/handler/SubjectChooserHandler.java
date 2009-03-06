@@ -1,90 +1,45 @@
 package com.sun.identity.admin.handler;
 
-import com.sun.identity.admin.model.SubjectBean;
-import com.sun.identity.admin.model.SubjectChooserBean;
+import com.sun.identity.admin.model.ChooserSubject;
 import java.io.Serializable;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import javax.faces.event.ActionEvent;
 
 public class SubjectChooserHandler implements Serializable {
-
-    private SubjectsHandler availableSubjectsHandler;
-    private SubjectsHandler selectedSubjectsHandler;
-    private SubjectChooserBean subjectChooserBean;
-
-    public SubjectsHandler getAvailableSubjectsHandler() {
-        return availableSubjectsHandler;
-    }
-
-    public void setAvailableSubjectsHandler(SubjectsHandler availableSubjectsHandler) {
-        this.availableSubjectsHandler = availableSubjectsHandler;
-    }
-
-    public SubjectsHandler getSelectedSubjectsHandler() {
-        return selectedSubjectsHandler;
-    }
-
-    public void setSelectedSubjectsHandler(SubjectsHandler selectedSubjectsHandler) {
-        this.selectedSubjectsHandler = selectedSubjectsHandler;
-    }
-
-    public SubjectChooserBean getSubjectChooserBean() {
-        return subjectChooserBean;
-    }
-
-    public void setSubjectChooserBean(SubjectChooserBean subjectChooserBean) {
-        this.subjectChooserBean = subjectChooserBean;
-
-        this.availableSubjectsHandler = new SubjectsHandler();
-        availableSubjectsHandler.setSubjectsBean(subjectChooserBean.getAvailableSubjectsBean());
-
-        this.selectedSubjectsHandler = new SubjectsHandler();
-        selectedSubjectsHandler.setSubjectsBean(subjectChooserBean.getSelectedSubjectsBean());
-    }
+    private List<ChooserSubject> availableChooserSubjects;
+    private List<ChooserSubject> selectedChooserSubjects;
 
     public void addSelectedListener(ActionEvent event) {
-        Set<SubjectBean> available = subjectChooserBean.getAvailableSubjectsBean().getSubjectBeans();
-        Set<SubjectBean> selected = subjectChooserBean.getSelectedSubjectsBean().getSubjectBeans();
-
-        setMove(available, selected);
-        setSelected(available, false);
-        setSelected(selected, false);
+        listMove(availableChooserSubjects, selectedChooserSubjects);
+        setSelected(availableChooserSubjects, false);
+        setSelected(selectedChooserSubjects, false);
     }
 
     public void addAllListener(ActionEvent event) {
-        Set<SubjectBean> available = subjectChooserBean.getAvailableSubjectsBean().getSubjectBeans();
-        Set<SubjectBean> selected = subjectChooserBean.getSelectedSubjectsBean().getSubjectBeans();
-
-        selected.addAll(available);
-        available.clear();
-        setSelected(selected, false);
+        selectedChooserSubjects.addAll(availableChooserSubjects);
+        availableChooserSubjects.clear();
+        setSelected(selectedChooserSubjects, false);
     }
 
     public void removeSelectedListener(ActionEvent event) {
-        Set<SubjectBean> available = subjectChooserBean.getAvailableSubjectsBean().getSubjectBeans();
-        Set<SubjectBean> selected = subjectChooserBean.getSelectedSubjectsBean().getSubjectBeans();
-
-        setMove(selected, available);
-        setSelected(available, false);
-        setSelected(selected, false);
+        listMove(selectedChooserSubjects, availableChooserSubjects);
+        setSelected(availableChooserSubjects, false);
+        setSelected(selectedChooserSubjects, false);
     }
 
     public void removeAllListener(ActionEvent event) {
-        Set<SubjectBean> available = subjectChooserBean.getAvailableSubjectsBean().getSubjectBeans();
-        Set<SubjectBean> selected = subjectChooserBean.getSelectedSubjectsBean().getSubjectBeans();
-
-        available.addAll(selected);
-        selected.clear();
-        setSelected(available, false);
+        availableChooserSubjects.addAll(selectedChooserSubjects);
+        selectedChooserSubjects.clear();
+        setSelected(availableChooserSubjects, false);
     }
 
-    private void setMove(Set<SubjectBean> src, Set<SubjectBean> dest) {
-        Set<SubjectBean> moved = new LinkedHashSet();
+    private void listMove(List<ChooserSubject> src, List<ChooserSubject> dest) {
+        List<ChooserSubject> moved = new ArrayList<ChooserSubject>();
 
-        for (SubjectBean sb: src) {
-            if (sb.isSelected()) {
-                moved.add(sb);
+        for (ChooserSubject cs: src) {
+            if (cs.isSelected()) {
+                moved.add(cs);
             }
         }
 
@@ -92,9 +47,9 @@ public class SubjectChooserHandler implements Serializable {
         dest.addAll(moved);
     }
 
-    private void setSelected(Set<SubjectBean> sbs, boolean selected) {
-        for (SubjectBean sb : sbs) {
-            sb.setSelected(selected);
+    private void setSelected(List<ChooserSubject> src, boolean selected) {
+        for (ChooserSubject cs: src) {
+            cs.setSelected(selected);
         }
     }
 }

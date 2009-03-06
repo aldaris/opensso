@@ -7,11 +7,11 @@
     <ice:panelGrid columns="3">
         <ice:panelGroup
             dropTarget="true"
-            dropListener="#{subjectChooserHandler.availableSubjectsHandler.dropListener}"
-            dropValue="#{subjectChooserBean.selectedSubjectsBean}">
+            dropListener="#{chooserSubjectHandler.dropListener}"
+            dropValue="#{chooserSubjectContainer.available}">
             <ice:dataTable
-                value="#{subjectChooserBean.availableSubjectsBean.filteredSubjectBeans}"
-                var="availableBean"
+                value="#{chooserSubjectContainer.filteredAvailable}"
+                var="chooserSubject"
                 scrollable="true"
                 scrollHeight="200px">
                 <f:facet name="header">
@@ -24,17 +24,25 @@
                             <ice:inputText
                                 onkeyup="typeSubmit(this);"
                                 partialSubmit="true"
-                                value="#{subjectChooserBean.availableSubjectsBean.filter}"
-                                valueChangeListener="#{subjectChooserHandler.availableSubjectsHandler.filterListener}"/>
+                                value="#{chooserSubjectContainer.availableFilter}"
+                                valueChangeListener="#{chooserSubjectHandler.filterListener}">
+                                    <f:attribute
+                                        name="master"
+                                        value="#{chooserSubjectContainer.available}"/>
+                                    <f:attribute
+                                        name="filtered"
+                                        value="#{chooserSubjectContainer.filteredAvailable}"/>
+                            </ice:inputText>
                         </ice:panelGrid>
                     </f:facet>
                     <ice:rowSelector
-                        value="#{availableBean.selected}"
-                        selectionListener="#{subjectChooserHandler.availableSubjectsHandler.selectionListener}"
+                        value="#{chooserSubject.selected}"
+                        selectionListener="#{chooserSubjectHandler.selectionListener}"
                         multiple="true"/>
                     <ice:panelGroup
                         styleClass="subject-chooser-subject"
-                        draggable="#{availableBean.selected}"
+                        draggable="#{chooserSubject.selected}"
+                        dragValue="#{chooserSubjectContainer.available}"
                         dragOptions="dragGhost">
                         <ice:panelGrid
                             styleClass="subject-list"
@@ -45,7 +53,8 @@
                             </ice:panelGroup>
                             <ice:panelGroup>
                                 <ice:outputText
-                                value="#{availableBean.name}"/>                            </ice:panelGroup>
+                                    value="#{chooserSubject.name}"/>
+                            </ice:panelGroup>
                         </ice:panelGrid>
                     </ice:panelGroup>
                 </ice:column>
@@ -62,7 +71,7 @@
                     styleClass="button-wrapper add">
                     <ice:commandLink
                         styleClass="button"
-                        actionListener="#{subjectChooserHandler.addSelectedListener}"
+                        actionListener="#{chooserSubjectHandler.addSelectedListener}"
                         partialSubmit="true">
                         Add Selected
                         <ice:graphicImage
@@ -73,7 +82,7 @@
                 <ice:panelGroup
                     styleClass="button-wrapper add">
                     <ice:commandLink
-                        actionListener="#{subjectChooserHandler.addAllListener}"
+                        actionListener="#{chooserSubjectHandler.addAllListener}"
                         styleClass="button"
                         partialSubmit="true">
                         Add All
@@ -90,7 +99,7 @@
                 <ice:panelGroup
                     styleClass="button-wrapper remove">
                     <ice:commandLink
-                        actionListener="#{subjectChooserHandler.removeSelectedListener}"
+                        actionListener="#{chooserSubjectHandler.removeSelectedListener}"
                         styleClass="button"
                         partialSubmit="true">
                         <ice:panelGroup>
@@ -104,7 +113,7 @@
                 <ice:panelGroup
                     styleClass="button-wrapper remove">
                     <ice:commandLink
-                        actionListener="#{subjectChooserHandler.removeAllListener}"
+                        actionListener="#{chooserSubjectHandler.removeAllListener}"
                         styleClass="button"
                         partialSubmit="true">
                         <ice:graphicImage
@@ -118,11 +127,11 @@
 
         <ice:panelGroup
             dropTarget="true"
-            dropListener="#{subjectChooserHandler.selectedSubjectsHandler.dropListener}"
-            dropValue="#{subjectChooserBean.availableSubjectsBean}">
+            dropListener="#{chooserSubjectHandler.dropListener}"
+            dropValue="#{chooserSubjectContainer.selected}">
             <ice:dataTable
-                value="#{subjectChooserBean.selectedSubjectsBean.filteredSubjectBeans}"
-                var="selectedBean"
+                value="#{chooserSubjectContainer.filteredSelected}"
+                var="chooserSubject"
                 scrollable="true"
                 scrollHeight="200px">
                 <f:facet name="header">
@@ -135,17 +144,25 @@
                             <ice:inputText
                                 onkeyup="typeSubmit(this);"
                                 partialSubmit="true"
-                                value="#{subjectChooserBean.selectedSubjectsBean.filter}"
-                                valueChangeListener="#{subjectChooserHandler.selectedSubjectsHandler.filterListener}"/>
+                                value="#{chooserSubjectContainer.selectedFilter}"
+                                valueChangeListener="#{chooserSubjectHandler.filterListener}">
+                                    <f:attribute
+                                        name="master"
+                                        value="#{chooserSubjectContainer.selected}"/>
+                                    <f:attribute
+                                        name="filtered"
+                                        value="#{chooserSubjectContainer.filteredSelected}"/>
+                            </ice:inputText>
                         </ice:panelGrid>
                     </f:facet>
                     <ice:rowSelector
-                        value="#{selectedBean.selected}"
+                        value="#{chooserSubject.selected}"
                         multiple="true"
-                        selectionListener="#{subjectChooserHandler.selectedSubjectsHandler.selectionListener}"/>
+                        selectionListener="#{chooserSubjectHandler.selectionListener}"/>
                     <ice:panelGroup
                         styleClass="subject-chooser-subject"
-                        draggable="#{selectedBean.selected}"
+                        draggable="#{chooserSubject.selected}"
+                        dragValue="#{chooserSubjectContainer.selected}"
                         dragOptions="dragGhost">
                         <ice:panelGrid
                             columns="2"
@@ -155,7 +172,7 @@
                                     value="../image/user.png"/>
                             </ice:panelGroup>
                             <ice:panelGroup>
-                                <ice:outputText value="#{selectedBean.name}"/>
+                                <ice:outputText value="#{chooserSubject.name}"/>
                             </ice:panelGroup>
                         </ice:panelGrid>
                     </ice:panelGroup>

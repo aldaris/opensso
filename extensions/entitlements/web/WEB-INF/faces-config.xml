@@ -17,63 +17,79 @@
         </message-bundle>
     </application>
 
+
+    <!-- subject types -->
     <managed-bean>
-        <managed-bean-name>usersSubjectChooserBean</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.model.SubjectChooserBean</managed-bean-class>
+        <managed-bean-name>userSubjectType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.UserSubjectType</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
         <managed-property>
-            <property-name>expanded</property-name>
-            <value>#{true}</value>
+            <property-name>name</property-name>
+            <value>user</value>
         </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/subject-chooser.xhtml</value>
+        </managed-property>
+        <!--
+        <managed-property>
+            <property-name>subjectContainer</property-name>
+            <value>#{userSubjectContainer}</value>
+        </managed-property>
+        -->
     </managed-bean>
 
     <managed-bean>
-        <managed-bean-name>usersSubjectChooserHandler</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.handler.SubjectChooserHandler</managed-bean-class>
+        <managed-bean-name>subjectTypes</managed-bean-name>
+        <managed-bean-class>java.util.ArrayList</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <list-entries>
+            <value>#{userSubjectType}</value>
+        </list-entries>
+    </managed-bean>
+
+    <!-- subject dao's -->
+    <managed-bean>
+        <managed-bean-name>userSubjectDao</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.dao.UserSubjectDao</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+    <!-- subject containers -->
+    <managed-bean>
+        <managed-bean-name>userSubjectContainer</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.UserSubjectContainer</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
         <managed-property>
-            <property-name>subjectChooserBean</property-name>
-            <value>#{usersSubjectChooserBean}</value>
+            <property-name>subjectType</property-name>
+            <value>#{userSubjectType}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>subjectDao</property-name>
+            <value>#{userSubjectDao}</value>
         </managed-property>
     </managed-bean>
 
+    <!--
+        TODO: this should be built by the user drag / drop
+        not intialized here
+    -->
     <managed-bean>
-        <managed-bean-name>rolesSubjectChooserBean</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.model.SubjectChooserBean</managed-bean-class>
+        <managed-bean-name>subjectContainers</managed-bean-name>
+        <managed-bean-class>java.util.ArrayList</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
-        <managed-property>
-            <property-name>expanded</property-name>
-            <value>#{false}</value>
-        </managed-property>
+        <list-entries>
+            <value>#{userSubjectContainer}</value>
+        </list-entries>
     </managed-bean>
 
     <managed-bean>
-        <managed-bean-name>rolesSubjectChooserHandler</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.handler.SubjectChooserHandler</managed-bean-class>
+        <managed-bean-name>subjectContainersHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.SubjectContainersHandler</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
         <managed-property>
-            <property-name>subjectChooserBean</property-name>
-            <value>#{rolesSubjectChooserBean}</value>
-        </managed-property>
-    </managed-bean>
-
-    <managed-bean>
-        <managed-bean-name>groupsSubjectChooserBean</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.model.SubjectChooserBean</managed-bean-class>
-        <managed-bean-scope>session</managed-bean-scope>
-        <managed-property>
-            <property-name>expanded</property-name>
-            <value>#{false}</value>
-        </managed-property>
-    </managed-bean>
-
-    <managed-bean>
-        <managed-bean-name>groupsSubjectChooserHandler</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.handler.SubjectChooserHandler</managed-bean-class>
-        <managed-bean-scope>session</managed-bean-scope>
-        <managed-property>
-            <property-name>subjectChooserBean</property-name>
-            <value>#{groupsSubjectChooserBean}</value>
+            <property-name>subjectContainers</property-name>
+            <value>#{subjectContainers}</value>
         </managed-property>
     </managed-bean>
 
