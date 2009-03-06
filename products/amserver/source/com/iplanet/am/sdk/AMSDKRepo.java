@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSDKRepo.java,v 1.24 2009-01-28 05:34:47 ww203982 Exp $
+ * $Id: AMSDKRepo.java,v 1.25 2009-03-06 01:12:43 hengming Exp $
  *
  */
 
@@ -1211,8 +1211,9 @@ public class AMSDKRepo extends IdRepo {
                 // Remove OCs. Those are needed only when setting service
                 // for users, not roles.
                 attrMap.remove("objectclass");
+                int priority = type.equals(IdType.REALM) ? 3 : 0;
                 dsServices.createAMTemplate(token, dn, getProfileType(type),
-                        serviceName, attrMap, 0);
+                        serviceName, attrMap, priority);
             } catch (AMException ame) {
                 debug.error("AMSDKRepo.assignService: Caught AMException", ame);
                 throw IdUtils.convertAMException(ame);
