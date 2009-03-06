@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMLoginModule.java,v 1.19 2009-02-28 00:57:03 mrudul_uchil Exp $
+ * $Id: AMLoginModule.java,v 1.20 2009-03-06 22:13:12 hengming Exp $
  *
  */
 
@@ -2219,6 +2219,7 @@ public abstract class AMLoginModule implements LoginModule {
             loginState.getLoginLockoutAttrValue(),
             loginState.getLoginFailureLockoutDuration(),
             loginState.getLoginFailureLockoutMultiplier(),
+            loginState.getInvalidAttemptsDataAttrName(),
             bundleName);
          isAccountLockout.setStoreInvalidAttemptsInDS(
          loginState.getLoginFailureLockoutStoreInDS());

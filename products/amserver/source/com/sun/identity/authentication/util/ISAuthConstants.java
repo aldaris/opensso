@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ISAuthConstants.java,v 1.15 2008-08-22 20:37:09 ericow Exp $
+ * $Id: ISAuthConstants.java,v 1.16 2009-03-06 22:17:03 hengming Exp $
  *
  */
 
@@ -325,6 +325,9 @@ public interface ISAuthConstants {
 
     public static final String LOCKOUT_EMAIL = AUTH_ATTR_PREFIX
             + "lockout-email-address";
+
+    public static final String INVALID_ATTEMPTS_DATA_ATTR_NAME = 
+            "sunAMAuthInvalidAttemptsDataAttrName";
 
     public static final String ADMIN_AUTH_MODULE = AUTH_ATTR_PREFIX
             + "admin-auth-module";
