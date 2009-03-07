@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmIdentityAsserterBase.java,v 1.3 2009-01-15 22:33:42 leiming Exp $
+ * $Id: AmIdentityAsserterBase.java,v 1.4 2009-03-07 01:15:39 leiming Exp $
  *
  */
 
@@ -30,8 +30,6 @@ package com.sun.identity.agents.websphere;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -51,14 +49,15 @@ import com.sun.identity.agents.common.INotenforcedURIHelper;
 import com.sun.identity.agents.common.ISSOTokenValidator;
 import com.sun.identity.agents.common.SSOValidationResult;
 import com.sun.identity.agents.filter.AmFilterMode;
+import com.sun.identity.agents.filter.AmFilterRequestContext;
 import com.sun.identity.agents.filter.AmFilterResult;
 import com.sun.identity.agents.filter.AmFilterResultStatus;
 import com.sun.identity.agents.filter.IAmFilter;
 import com.sun.identity.agents.filter.IFilterConfigurationConstants;
-import com.sun.identity.agents.realm.AmRealmAuthenticationResult;
 import com.sun.identity.agents.realm.AmRealmManager;
 import com.sun.identity.agents.realm.IAmRealm;
 import com.sun.identity.agents.util.IUtilConstants;
+import com.sun.identity.agents.util.StringUtils;
 
 /**
  * Abstact class for Websphere/portal asserter.
@@ -165,7 +164,7 @@ public abstract class AmIdentityAsserterBase extends AgentBase
         
         return result;
     }
-    
+
     public TAIResult processRequest(HttpServletRequest request,
             HttpServletResponse response)
             throws WebTrustAssociationFailedException {
@@ -275,11 +274,69 @@ public abstract class AmIdentityAsserterBase extends AgentBase
     private boolean isNotenforcedRequest(HttpServletRequest request) {
     	String appName = getApplicationName(request);
     	String accessDeniedURI = getAccessDeniedURI(appName);
-    	
+        
+        boolean pathInfoIgnored = getConfigurationBoolean(
+                IFilterConfigurationConstants.CONFIG_IGNORE_PATH_INFO,
+                IFilterConfigurationConstants.DEFAULT_IGNORE_PATH_INFO);
+        String requestURL = null;
+        if (pathInfoIgnored) {
+            requestURL = StringUtils.removePathInfo(request);
+        } else {
+            AmFilterRequestContext ctx = getRequestContext(request);
+            requestURL = ctx.getPolicyDestinationURL();
+        }
+        if (isLogMessageEnabled()) {
+            logMessage("AmIdentityAsserter.isNotenforcedRequest() - " +
+                    "requested URL=> " + requestURL);
+        }
+        
         return (getNotEnforcedListURIHelper().isNotEnforced(
-                request.getRequestURI(), accessDeniedURI) ||
+                requestURL, accessDeniedURI) ||
                 getNotEnforcedListIPHelper().isNotenforced(
                 getClientIPAddress(request)));
+    }
+
+    /*
+     * create RequestContext just to get absolute requested URL.
+     */
+    private AmFilterRequestContext getRequestContext(
+            HttpServletRequest request) {
+
+        AmFilterRequestContext requestContext = new AmFilterRequestContext(
+                request, null, null, null,
+                null, false, null,
+                null, null,
+                getAgentHost(request), getAgentPort(request),
+                getAgentProtocol(request));
+
+        return requestContext;
+    }
+
+    private String getAgentHost(HttpServletRequest request) {
+         String agentHost = getConfigurationString(
+                IFilterConfigurationConstants.CONFIG_AGENT_HOST);
+        if (agentHost == null) {
+            agentHost = request.getServerName();
+        }
+         return agentHost;
+    }
+    
+    private String getAgentProtocol(HttpServletRequest request) {
+        String agentProtocol = getConfigurationString(
+                IFilterConfigurationConstants.CONFIG_AGENT_PROTOCOL);
+        if (agentProtocol == null) {
+            agentProtocol = request.getScheme();
+        }
+        return agentProtocol;
+    }
+
+    private int getAgentPort(HttpServletRequest request) {
+        int agentPort = getConfigurationInt(
+                IFilterConfigurationConstants.CONFIG_AGENT_PORT);
+        if (agentPort <= 0) {
+            agentPort = request.getServerPort();
+        }
+        return agentPort;
     }
     
     private String getApplicationName(HttpServletRequest request) {
