@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureGoogleAppsCompleteViewBean.java,v 1.2 2009-03-03 20:09:28 asyhuang Exp $
+ * $Id: ConfigureGoogleAppsCompleteViewBean.java,v 1.3 2009-03-07 06:51:42 babysunil Exp $
  *
  */
 package com.sun.identity.console.task;
@@ -108,8 +108,9 @@ public class ConfigureGoogleAppsCompleteViewBean
             throws ModelControlException {
         try {
             super.beginDisplay(event);
-            String realm = "/";
-            String entityId = "http://katmai.red.iplanet.com:8080/opensso";
+            HttpServletRequest req = getRequestContext().getRequest();
+            String realm = req.getParameter("realm");
+            String entityId = req.getParameter("idp");
             TaskModel model = (TaskModel) getModelInternal();
             Map values = model.getConfigureGoogleAppURLs(realm, entityId);
             AMPropertySheet ps = (AMPropertySheet) getChild(PROPERTIES);

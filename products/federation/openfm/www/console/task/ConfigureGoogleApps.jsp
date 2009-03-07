@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: ConfigureGoogleApps.jsp,v 1.2 2009-02-24 22:01:02 babysunil Exp $
+   $Id: ConfigureGoogleApps.jsp,v 1.3 2009-03-07 06:47:54 babysunil Exp $
 
 --%>
 
@@ -32,6 +32,7 @@
 <%
     request.setCharacterEncoding("UTF-8");
 %>
+
 <jato:useViewBean
     className="com.sun.identity.console.task.ConfigureGoogleAppsViewBean"
     fireChildDisplayEvents="true" >
@@ -144,20 +145,21 @@
 
 
 <cc:propertysheet name="propertyAttributes" bundleID="amConsole" showJumpLinks="false"/>
-
 </cc:form>
 </cc:header>
 </div>
 <div id="dlg" class="dvs" style="width:600px; height: 225px; margin-left:-300px"></div>
 
-<script language="javascript">
-
+<script language="javascript">    
+    var frm = document.forms['ConfigureGoogleApps'];
+    var idpNew = frm.elements['ConfigureGoogleApps.choiceIDP'].value;
+    var realmNew = frm.elements['ConfigureGoogleApps.tfRealm'].value;
+    
     var msgCreating = "<p><img src=\"../console/images/processing.gif\" width=\"66\" height\"66\"/></p><cc:text name="txtConfiguring" defaultValue="configuring.googleapps.waiting" bundleID="amConsole" escape="false" />";
     var ttlCreated = "<h3><cc:text name="txtTtlCreated" defaultValue="googleapps.configured.title" escape="false" bundleID="amConsole" /></h3>";
-    var msgCreated = "<p>&nbsp;</p><input name=\"btnOK\" type=\"submit\" class=\"Btn1\" value=\"<cc:text name="txtOKBtn" defaultValue="ajax.ok.button" bundleID="amConsole" />\" onClick=\"document.location.replace(\'../task/Home\');return false;\" /></div></p>";
+    var msgCreated = "<p>&nbsp;</p><input name=\"btnOK\" type=\"submit\" class=\"Btn1\" value=\"<cc:text name="txtOKBtn" defaultValue="ajax.ok.button" bundleID="amConsole" />\" onClick=\"document.location.replace(\'../task/ConfigureGoogleAppsComplete?idp=\'+idpNew + \'&realm=\'+realmNew);return false;\" /></div></p>";
     var closeBtn = "<p>&nbsp;</p><p><div class=\"TtlBtnDiv\"><input name=\"btnClose\" type=\"submit\" class=\"Btn1\" value=\"<cc:text name="txtCloseBtn" defaultValue="ajax.close.button" bundleID="amConsole" />\" onClick=\"focusMain();return false;\" /></div></p>";
-
-    var frm = document.forms['ConfigureGoogleApps'];
+    
     var btn1 = frm.elements['ConfigureGoogleApps.button1'];
     btn1.onclick = submitPage;
     var btn2 = frm.elements['ConfigureGoogleApps.button2'];
@@ -169,7 +171,7 @@
     function submitPage() {
         document.getElementById('dlg').style.top = '300px';
         fade();
-        document.getElementById('dlg').innerHTML = '<center>' + 
+        document.getElementById('dlg').innerHTML = '<center>' +
             msgCreating + '</center>';
         var url = "../console/ajax/AjaxProxy.jsp";
         var params = 'locale=' + userLocale +
@@ -182,13 +184,13 @@
         var cot = frm.elements['ConfigureGoogleApps.choiceCOT'].value;
         var idp = frm.elements['ConfigureGoogleApps.choiceIDP'].value;
         var realm = frm.elements['ConfigureGoogleApps.tfRealm'].value;
-        var entityId = frm.elements['ConfigureGoogleApps.tfEntityId'].value;
+        var domainId = frm.elements['ConfigureGoogleApps.tfDomainId'].value;
         return "&realm=" + escapeEx(realm) +
             "&cot=" + escapeEx(cot) +
             "&idp=" + escapeEx(idp) +
-            "&entityId=" + escapeEx(entityId);
+            "&domainId=" + escapeEx(domainId);
     }
-          
+
     function configured() {
         if (ajaxObj.readyState == 4) {
             var result = ajaxObj.responseText;
@@ -196,7 +198,7 @@
             var result = result.substring(result.indexOf('|') +1);
             var msg = '<center><p>' + result + '</p></center>';
             if (status == 0) {
-                msg = '<center>' + ttlCreated + msg + msgCreated + '</center>';
+                msg = '<center>' + ttlCreated + msgCreated + '</center>';
             } else {
                 msg = msg + '<center>' +  closeBtn + '</center>';
             }
@@ -288,7 +290,7 @@
                 return nodes[i];
             }
         }
-     } 
+     }
 
     var presetcot = null;
 
@@ -309,19 +311,19 @@
     } else {
         out.println("hideRealm();");
     }
-    
+
 %>
- 
+
     function unescapeQuote(str) {
         str = str.replace(/&quot;/g, '"');
         str = str.replace(/&lt;/g, '<');
         str = str.replace(/&gt;/g, '>');
         return str;
     }
- 
+
     var infoRealm = unescapeQuote("<cc:text name="txtInfoRealm" defaultValue="configure.googleapps.help.realm" bundleID="amConsole" />");
     var infoEntityId = unescapeQuote("<cc:text name="txtInfoEntityId" defaultValue="configure.googleapps.help.entity.id" bundleID="amConsole" />");
-  
+
 </script>
 
 </jato:useViewBean>

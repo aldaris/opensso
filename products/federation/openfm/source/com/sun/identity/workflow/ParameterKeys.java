@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ParameterKeys.java,v 1.6 2008-06-25 05:50:02 qcheng Exp $
+ * $Id: ParameterKeys.java,v 1.7 2009-03-07 06:52:59 babysunil Exp $
  *
  */
 
@@ -33,6 +33,7 @@ package com.sun.identity.workflow;
  */
 public interface ParameterKeys {
     String P_ENTITY_ID = "entityId";
+    String P_DOMAIN_ID = "domainId";
     String P_META_DATA = "metadata";
     String P_EXENDED_DATA = "extendeddata";
     String P_REALM = "realm";

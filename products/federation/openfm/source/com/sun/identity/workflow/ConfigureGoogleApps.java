@@ -22,122 +22,126 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureGoogleApps.java,v 1.1 2009-02-24 18:40:41 babysunil Exp $
+ * $Id: ConfigureGoogleApps.java,v 1.2 2009-03-07 06:53:33 babysunil Exp $
  *
  */
 
 package com.sun.identity.workflow;
 
-import com.iplanet.am.util.SystemProperties;
 import com.sun.identity.cot.COTException;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
+import com.sun.identity.saml2.jaxb.entityconfig.AttributeElement;
+import com.sun.identity.saml2.jaxb.entityconfig.EntityConfigElement;
+import com.sun.identity.saml2.jaxb.entityconfig.IDPSSOConfigElement;
+import com.sun.identity.saml2.jaxb.metadata.EntityDescriptorElement;
+import com.sun.identity.saml2.meta.SAML2MetaException;
+import com.sun.identity.saml2.meta.SAML2MetaManager;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
-import java.util.jar.JarOutputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-import javax.servlet.ServletContext;
+import javax.xml.bind.JAXBException;
 
 /**
- *  * Creates Fedlet.
- *   */
+ ** Configure GoogleApps.
+**/
 public class ConfigureGoogleApps
     extends Task
 {
-    private static Map fedletBits = new HashMap();
-    private static Map FedConfigTagSwap = new HashMap();
-    private static List FedConfigTagSwapOrder = new ArrayList();
-    private static Map jarExtracts = new HashMap();
-    
-    static {
-        FedConfigTagSwap.put("@CONFIGURATION_PROVIDER_CLASS@", 
-            "com.sun.identity.plugin.configuration.impl.FedletConfigurationImpl");
-        FedConfigTagSwap.put("@DATASTORE_PROVIDER_CLASS@",
-            "com.sun.identity.plugin.datastore.impl.FedletDataStoreProvider");
-        FedConfigTagSwap.put("@LOG_PROVIDER_CLASS@",
-            "com.sun.identity.plugin.log.impl.FedletLogger");
-        FedConfigTagSwap.put("@SESSION_PROVIDER_CLASS@", 
-            "com.sun.identity.plugin.session.impl.FedletSessionProvider");
-        FedConfigTagSwap.put("@XML_SIGNATURE_PROVIDER@",
-            "com.sun.identity.saml.xmlsig.AMSignatureProvider");
-        FedConfigTagSwap.put("@XMLSIG_KEY_PROVIDER@", 
-            "com.sun.identity.saml.xmlsig.JKSKeyProvider");
-        FedConfigTagSwap.put("%BASE_DIR%%SERVER_URI%", "@FEDLET_HOME@");
-        FedConfigTagSwap.put("%BASE_DIR%", "@FEDLET_HOME@"); 
-        FedConfigTagSwap.put("com.sun.identity.common.serverMode=true",
-            "com.sun.identity.common.serverMode=false");
-        FedConfigTagSwap.put("@SERVER_PROTO@", "http");
-        FedConfigTagSwap.put("@SERVER_HOST@", "example.identity.sun.com");
-        FedConfigTagSwap.put("@SERVER_PORT@", "80");
-        FedConfigTagSwap.put("/@SERVER_URI@", "/fedlet");
-        
-        FedConfigTagSwapOrder.add("@CONFIGURATION_PROVIDER_CLASS@"); 
-        FedConfigTagSwapOrder.add("@DATASTORE_PROVIDER_CLASS@");
-        FedConfigTagSwapOrder.add("@LOG_PROVIDER_CLASS@");
-        FedConfigTagSwapOrder.add("@SESSION_PROVIDER_CLASS@"); 
-        FedConfigTagSwapOrder.add("@XML_SIGNATURE_PROVIDER@");
-        FedConfigTagSwapOrder.add("@XMLSIG_KEY_PROVIDER@");
-        FedConfigTagSwapOrder.add("%BASE_DIR%%SERVER_URI%");
-        FedConfigTagSwapOrder.add("%BASE_DIR%");
-        FedConfigTagSwapOrder.add("com.sun.identity.common.serverMode=true");
-        FedConfigTagSwapOrder.add("@SERVER_PROTO@");
-        FedConfigTagSwapOrder.add("@SERVER_HOST@");
-        FedConfigTagSwapOrder.add("@SERVER_PORT@");
-        FedConfigTagSwapOrder.add("/@SERVER_URI@");
-        
-        ResourceBundle rb = ResourceBundle.getBundle("fedletBits");
-        for (Enumeration e = rb.getKeys(); e.hasMoreElements(); ) {
-            String k = (String)e.nextElement();
-            fedletBits.put(k, rb.getObject(k));
-        }
-        
-        rb = ResourceBundle.getBundle("fedletJarExtract");
-        for (Enumeration e = rb.getKeys(); e.hasMoreElements(); ) {
-            String jarName = (String)e.nextElement();
-            String pkgNames = rb.getString(jarName);
-            StringTokenizer st = new StringTokenizer(pkgNames, ",");
-            Set set = new HashSet();
-            while (st.hasMoreElements()) {
-                set.add(st.nextToken().trim());
-            }
-            jarExtracts.put(jarName, set);
-        }
-        
-    }
+    private static String nameidMapping =
+            "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified=uid";
     
     public ConfigureGoogleApps() {
     }
 
     public String execute(Locale locale, Map params)
         throws WorkflowException {
-        //validateParameters(params);
-        String entityId = getString(params, ParameterKeys.P_ENTITY_ID);
-        entityId = entityId.replaceAll("/", "%2F");
-        Object[] param = {"test"};
-
+        String domainId = getString(params, ParameterKeys.P_DOMAIN_ID);
+        String entityId = getString(params, ParameterKeys.P_IDP);
+        String realm = getString(params, ParameterKeys.P_REALM);
+        String cot = getString(params, ParameterKeys.P_COT);
+        if (!(domainId.length()>0) || (domainId==null)) {
+            Object[] param = {domainId};
+            throw new WorkflowException("domain.is.empty", param);
+        }
+        updateIDPMeta(realm, entityId);
+        updateSPMeta(realm, cot, domainId);
+        Object[] param = {entityId};
         return MessageFormat.format(
             getMessage("GoogleApps.configured", locale), param);
     }
-  
-}
 
+    private void updateIDPMeta(String realm, String entityId)
+            throws WorkflowException {
+        try {
+            SAML2MetaManager samlManager = new SAML2MetaManager();
+            EntityConfigElement entityConfig =
+                    samlManager.getEntityConfig(realm, entityId);
+            IDPSSOConfigElement idpssoConfig =
+                    samlManager.getIDPSSOConfig(realm, entityId);
+            List attrList = idpssoConfig.getAttribute();
+            if (idpssoConfig != null) {
+                for (Iterator it = attrList.iterator(); it.hasNext();) {
+                    AttributeElement avpnew = (AttributeElement) it.next();
+                    String name = avpnew.getName();
+                    if (name.equals("nameIDFormatMap")) {
+                        for (Iterator itt = avpnew.getValue().listIterator();
+                                itt.hasNext();) {
+                            String temp = (String) itt.next();
+                            if (temp.contains("unspecified")) {
+                                itt.remove();
+                            }
+                        }
+                        avpnew.getValue().add(0, nameidMapping);
+                    }
+                }
+            }
+            samlManager.setEntityConfig(realm, entityConfig);
+        } catch (SAML2MetaException e) {
+            throw new WorkflowException(e.getMessage());
+        }
+    }
+
+    private void updateSPMeta(String realm, String cot, String domainId)
+            throws WorkflowException {
+
+        String metadata = "<EntityDescriptor entityID=\"google.com\" xmlns=\"urn"
+                + ":oasis:names:tc:SAML:2.0:metadata\">"
+                + "<SPSSODescriptor protocolSupportEnumeration=\"urn:oasis:nam"
+                + "es:tc:SAML:2.0:protocol\"> <NameIDFormat>urn:oasis:names:t"
+                + "c:SAML:1.1:nameid-format:unspecified</NameIDFormat>"
+                + "<AssertionConsumerService index=\"1\" Binding=\"urn:oasis:na"
+                + "mes:tc:SAML:2.0:bindings:HTTP-POST\" Location=\"https://ww"
+                + "w.google.com/a/" + domainId + "/acs\" />"
+                + "</SPSSODescriptor></EntityDescriptor>";
+        
+        String extendedMeta = null;
+        try {
+            EntityDescriptorElement e =
+                    ImportSAML2MetaData.getEntityDescriptorElement(metadata);
+            String eId = e.getEntityID();
+            String metaAlias = generateMetaAliasForSP(realm);
+            Map map = new HashMap();
+            map.put(MetaTemplateParameters.P_SP, metaAlias);
+            extendedMeta =
+                    CreateSAML2HostedProviderTemplate.createExtendedDataTemplate(
+                    eId, map, null, false);
+        } catch (SAML2MetaException ex) {
+            throw new WorkflowException(ex.getMessage());
+        } catch (JAXBException ex) {
+            throw new WorkflowException(ex.getMessage());
+        }
+        String[] results = ImportSAML2MetaData.importData(
+                realm, metadata, extendedMeta);
+        String entityId = results[1];
+        if ((cot != null) && (cot.length() > 0)) {
+            try {
+                AddProviderToCOT.addToCOT(realm, cot, entityId);
+            } catch (COTException e) {
+                throw new WorkflowException(e.getMessage());
+            }
+        }
+    }
+
+}
