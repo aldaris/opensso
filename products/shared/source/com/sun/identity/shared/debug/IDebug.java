@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDebug.java,v 1.3 2008-08-13 16:00:57 rajeevangal Exp $
+ * $Id: IDebug.java,v 1.4 2009-03-07 08:01:52 veiming Exp $
  *
  */
 
@@ -37,6 +37,61 @@ package com.sun.identity.shared.debug;
  * </p>
  */
 public interface IDebug {
+
+    /**
+     * flags the disabled debug state.
+     */
+    int OFF = 0;
+
+    /**
+     * flags the state where error debugging is enabled. When debugging is set
+     * to less than <code>ERROR</code>, error debugging is also disabled.
+     */
+    int ERROR = 1;
+
+    /**
+     * flags the state where warning debugging is enabled, but message debugging
+     * is disabled. When debugging is set to less than <code>WARNING</code>,
+     * warning debugging is also disabled.
+     */
+    int WARNING = 2;
+
+    /** This state enables debugging of messages, warnings and errors. */
+    int MESSAGE = 3;
+
+    /**
+     * flags the enabled debug state for warnings, errors and messages. Printing
+     * to a file is disabled. All printing is done on System.out.
+     */
+    int ON = 4;
+
+    /** flags the disabled debug state. */
+    String STR_OFF = "off";
+
+    /**
+     * flags the state where error debugging is enabled. When debugging is set
+     * to less than <code>ERROR</code>, error debugging is also disabled.
+     */
+    String STR_ERROR = "error";
+
+    /**
+     * flags the state where warning debugging is enabled, but message debugging
+     * is disabled. When debugging is set to less than <code>WARNING</code>,
+     * warning debugging is also disabled.
+     */
+    String STR_WARNING = "warning";
+
+    /**
+     * This state enables debugging of messages, warnings and errors.
+     */
+    String STR_MESSAGE = "message";
+
+    /**
+     * flags the enables debug state for warnings, errors and messages. Printing
+     * to a file is disabled. All printing is done on System.out.
+     */
+    String STR_ON = "on";
+
     /**
      * Returns the name of the IDebug instance. The value is exactly equal 
      * to the one that was first used to create this instance.
@@ -51,11 +106,11 @@ public interface IDebug {
      * the class <code>com.iplanet.am.util.Debug</code>. This value could be 
      * one of the followings:
      * <ul>
-     * <li><code>com.iplanet.am.util.Debug.OFF</code>
-     * <li><code>com.iplanet.am.util.Debug.ERROR</code>
-     * <li><code>com.iplanet.am.util.Debug.WARNING</code>
-     * <li><code>com.iplanet.am.util.Debug.MESSAGE</code>
-     * <li><code>com.iplanet.am.util.Debug.ON</code>
+     * <li><code>OFF</code>
+     * <li><code>ERROR</code>
+     * <li><code>WARNING</code>
+     * <li><code>MESSAGE</code>
+     * <li><code>ON</code>
      * </ul>
      * 
      * @return an integer indicating the debug level used by this instance.
@@ -69,11 +124,11 @@ public interface IDebug {
      * <code>com.iplanet.am.util.Debug</code>. This value could be one of the
      * following:<br>
      * <ul>
-     * <li><code>com.iplanet.am.util.Debug.OFF</code>
-     * <li><code>com.iplanet.am.util.Debug.ERROR</code>
-     * <li><code>com.iplanet.am.util.Debug.WARNING</code>
-     * <li><code>com.iplanet.am.util.Debug.MESSAGE</code>
-     * <li><code>com.iplanet.am.util.Debug.ON</code>
+     * <li><code>OFF</code>
+     * <li><code>ERROR</code>
+     * <li><code>WARNING</code>
+     * <li><code>MESSAGE</code>
+     * <li><code>ON</code>
      * </ul>
      * 
      * @param level An integer indicating the debug level to be used by this
@@ -95,11 +150,11 @@ public interface IDebug {
      * <code>com.iplanet.am.util.Debug</code>. This value could be one of the
      * following:
      * <ul>
-     * <li><code>com.iplanet.am.util.Debug.STR_OFF</code>
-     * <li><code>com.iplanet.am.util.Debug.STR_ERROR</code>
-     * <li><code>com.iplanet.am.util.Debug.STR_WARNING</code>
-     * <li><code>com.iplanet.am.util.Debug.STR_MESSAGE</code>
-     * <li><code>com.iplanet.am.util.Debug.STR_ON</code>
+     * <li><code>STR_OFF</code>
+     * <li><code>STR_ERROR</code>
+     * <li><code>STR_WARNING</code>
+     * <li><code>STR_MESSAGE</code>
+     * <li><code>STR_ON</code>
      * </ul>
      * 
      * @param level String representing the debug level to be used by this

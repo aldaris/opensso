@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DebugImpl.java,v 1.6 2008-08-13 16:00:55 rajeevangal Exp $
+ * $Id: DebugImpl.java,v 1.7 2009-03-07 08:01:51 veiming Exp $
  *
  */
 
@@ -57,7 +57,7 @@ public class DebugImpl implements IDebug {
 
     private String debugName;
 
-    private int debugLevel = Debug.ON;
+    private int debugLevel = IDebug.ON;
 
     private PrintWriter debugWriter = null;
 
@@ -117,7 +117,7 @@ public class DebugImpl implements IDebug {
                     "**********************************************", null);
             } catch (IOException ioex) {
                 // turn debugging to STDOUT since debug file is not available
-                setDebug(Debug.ON);
+                setDebug(IDebug.ON);
                 ResourceBundle bundle =
                     Locale.getInstallResourceBundle("amUtilMsgs");
                 System.err.println(bundle.getString(
@@ -159,11 +159,11 @@ public class DebugImpl implements IDebug {
      */
     public void setDebug(int level){
         switch(level) {
-            case Debug.OFF:
-            case Debug.ERROR:
-            case Debug.WARNING:
-            case Debug.MESSAGE:
-            case Debug.ON:
+            case IDebug.OFF:
+            case IDebug.ERROR:
+            case IDebug.WARNING:
+            case IDebug.MESSAGE:
+            case IDebug.ON:
                 this.debugLevel = level;
                 break;
             default:
@@ -178,16 +178,16 @@ public class DebugImpl implements IDebug {
      * @param strDebugLevel Debug level.
      */
     public void setDebug(String strDebugLevel){
-        int debugLevel = Debug.ON;
+        int debugLevel = IDebug.ON;
         if (strDebugLevel != null && strDebugLevel.trim().length() > 0) {
-            if (strDebugLevel.equals(Debug.STR_OFF)) {
-                debugLevel = Debug.OFF;
-            } else if (strDebugLevel.equals(Debug.STR_ERROR)) {
-                debugLevel = Debug.ERROR;
-            } else if (strDebugLevel.equals(Debug.STR_WARNING)) {
-                debugLevel = Debug.WARNING;
-            } else if (strDebugLevel.equals(Debug.STR_MESSAGE)) {
-                debugLevel = Debug.MESSAGE;
+            if (strDebugLevel.equals(IDebug.STR_OFF)) {
+                debugLevel = IDebug.OFF;
+            } else if (strDebugLevel.equals(IDebug.STR_ERROR)) {
+                debugLevel = IDebug.ERROR;
+            } else if (strDebugLevel.equals(IDebug.STR_WARNING)) {
+                debugLevel = IDebug.WARNING;
+            } else if (strDebugLevel.equals(IDebug.STR_MESSAGE)) {
+                debugLevel = IDebug.MESSAGE;
             }
         }
         setDebug(debugLevel);
@@ -206,7 +206,7 @@ public class DebugImpl implements IDebug {
      * @return <code>true</code> if debug is enabled.
      */
     public boolean messageEnabled(){
-        return (this.debugLevel > Debug.WARNING);
+        return (this.debugLevel > IDebug.WARNING);
     }
 
     /**
@@ -215,7 +215,7 @@ public class DebugImpl implements IDebug {
      * @return <code>true</code> if debug warning is enabled.
      */
     public boolean warningEnabled(){
-        return (this.debugLevel > Debug.ERROR);
+        return (this.debugLevel > IDebug.ERROR);
     }
 
     /**
@@ -224,7 +224,7 @@ public class DebugImpl implements IDebug {
      * @return <code>true</code> if debug error is enabled.
      */
     public boolean errorEnabled(){
-        return (this.debugLevel > Debug.OFF);
+        return (this.debugLevel > IDebug.OFF);
     }
 
     /**
@@ -270,7 +270,7 @@ public class DebugImpl implements IDebug {
     }
 
     private void writeIt(String prefix, String msg, Throwable th) {
-        if (this.debugLevel == Debug.ON) {
+        if (this.debugLevel == IDebug.ON) {
             writeIt(this.stdoutWriter, prefix, msg, th);
         } else {
             if(this.debugWriter == null) {

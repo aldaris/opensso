@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Debug.java,v 1.4 2008-08-13 16:00:57 rajeevangal Exp $
+ * $Id: Debug.java,v 1.5 2009-03-07 08:01:52 veiming Exp $
  *
  */
 
@@ -107,12 +107,18 @@ public class Debug {
 
     /* Static fields and methods */
 
-    /** flags the disabled debug state. */
+    /**
+     * flags the disabled debug state.
+     * @deprecated As of OpenSSO version 8.1
+     *             {@link com.sun.identity.shared.debug.IDebug#OFF}
+     */
     public static final int OFF = 0;
 
     /**
      * flags the state where error debugging is enabled. When debugging is set
      * to less than <code>ERROR</code>, error debugging is also disabled.
+     * @deprecated As of OpenSSO version 8.1
+     *             {@link com.sun.identity.shared.debug.IDebug#ERROR}
      */
     public static final int ERROR = 1;
 
@@ -120,24 +126,38 @@ public class Debug {
      * flags the state where warning debugging is enabled, but message debugging
      * is disabled. When debugging is set to less than <code>WARNING</code>,
      * warning debugging is also disabled.
+     * @deprecated As of OpenSSO version 8.1
+     *             {@link com.sun.identity.shared.debug.IDebug#WARNING}
      */
     public static final int WARNING = 2;
 
-    /** This state enables debugging of messages, warnings and errors. */
+    /**
+     * This state enables debugging of messages, warnings and errors.
+     * @deprecated As of OpenSSO version 8.1
+     *             {@link com.sun.identity.shared.debug.IDebug#MESSAGE}
+     */
     public static final int MESSAGE = 3;
 
     /**
      * flags the enabled debug state for warnings, errors and messages. Printing
      * to a file is disabled. All printing is done on System.out.
+     * @deprecated As of OpenSSO version 8.1
+     *             {@link com.sun.identity.shared.debug.IDebug#ON}
      */
     public static final int ON = 4;
 
-    /** flags the disabled debug state. */
+    /**
+     * flags the disabled debug state.
+     * @deprecated As of OpenSSO version 8.1
+     *             {@link com.sun.identity.shared.debug.IDebug#STR_OFF}
+     */
     public static final String STR_OFF = "off";
 
     /**
      * flags the state where error debugging is enabled. When debugging is set
      * to less than <code>ERROR</code>, error debugging is also disabled.
+     * @deprecated As of OpenSSO version 8.1
+     *             {@link com.sun.identity.shared.debug.IDebug#STR_ERROR}
      */
     public static final String STR_ERROR = "error";
 
@@ -145,6 +165,8 @@ public class Debug {
      * flags the state where warning debugging is enabled, but message debugging
      * is disabled. When debugging is set to less than <code>WARNING</code>,
      * warning debugging is also disabled.
+     * @deprecated As of OpenSSO version 8.1
+     *             {@link com.sun.identity.shared.debug.IDebug#STR_WARNING}
      */
     public static final String STR_WARNING = "warning";
 
@@ -154,6 +176,8 @@ public class Debug {
     /**
      * flags the enables debug state for warnings, errors and messages. Printing
      * to a file is disabled. All printing is done on System.out.
+     * @deprecated As of OpenSSO version 8.1
+     *             {@link com.sun.identity.shared.debug.IDebug#STR_ON}
      */
     public static final String STR_ON = "on";
 
