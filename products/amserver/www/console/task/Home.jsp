@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Home.jsp,v 1.12 2009-03-07 06:44:46 babysunil Exp $
+   $Id: Home.jsp,v 1.13 2009-03-10 18:05:06 babysunil Exp $
 
 --%>
 
@@ -65,6 +65,9 @@
 <div><a href="#" id="close4" onclick="closeAll(4); event.cancelBubble = true;return false;"><img alt="" src="../console/images/tasks/close.gif" border="0" /></a></div><p><span class="TskPgeHdr"><cc:text name="txtHelpCreateRemoteSP" defaultValue="commontask.create.remote.sp" bundleID="amConsole" /></span></p></div>
 <div id="info5" onclick="showDiv(); event.cancelBubble = true;" class="TskPgeInfPnl">
 <div><a href="#" id="close5" onclick="closeAll(5); event.cancelBubble = true;return false;"><img alt="" src="../console/images/tasks/close.gif" border="0" /></a></div><p><span class="TskPgeHdr"><cc:text name="txtHelpCreateFedlet" defaultValue="commontask.create.fedlet" bundleID="amConsole" /></span></p></div>
+
+<div id="info13" onclick="showDiv(); event.cancelBubble = true;" class="TskPgeInfPnl">
+<div><a href="#" id="close13" onclick="closeAll(13); event.cancelBubble = true;return false;"><img alt="" src="../console/images/tasks/close.gif" border="0" /></a></div><p><span class="TskPgeHdr"><cc:text name="txtHelpConfigureGoogleApps" defaultValue="commontask.configure.googleapps" bundleID="amConsole" /></span></p></div>
 
 <div id="info6" onclick="showDiv(); event.cancelBubble = true;" class="TskPgeInfPnl">
 <div><a href="#" id="close6" onclick="closeAll(6); event.cancelBubble = true;return false;"><img alt="" src="../console/images/tasks/close.gif" border="0" /></a></div><p><span class="TskPgeHdr"><cc:text name="txtHelpValidate" defaultValue="commontask.saml2.validate" bundleID="amConsole" /></span></p></div>
