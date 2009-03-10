@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: saeSPApp.jsp,v 1.7 2009-02-26 23:58:10 exu Exp $
+   $Id: saeSPApp.jsp,v 1.8 2009-03-10 20:10:50 exu Exp $
 
 --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
@@ -57,9 +57,13 @@ public void jspInit()
     request.setCharacterEncoding("UTF-8");
     try {
         String cryptotype = SecureAttrs.SAE_CRYPTO_TYPE_SYM;
-        // Symmetric : Shared secret between this SP-App and local FM-SP
-        // Asymmetric : pub key alias of FM-SP 
+        // Symmetric : Shared secret between this SP-App and OpenSSO-SP
+        // Asymmetric : pub key alias of OpenSSO-SP 
         String secret = "secret12";
+        // Symmetric : Shared secret for encryption between this SP-App and
+        //     OpenSSO-SP. Same value as shared secret for signing.
+        // Asymmetric : private key alias of SP-App
+        String encSecret = secret;
 
         // Use a cached instance if available
         String mySecAttrInstanceName = "sample_"+cryptotype;
@@ -72,7 +76,6 @@ public void jspInit()
               saeparams.put(SecureAttrs.SAE_CONFIG_KEYSTORE_FILE, "/export/home/test/mykeystore");;
               saeparams.put(SecureAttrs.SAE_CONFIG_KEYSTORE_PASS, "changeit");
               saeparams.put(SecureAttrs.SAE_CONFIG_PRIVATE_KEY_PASS, "changeit");
-              secret = "test";
             }
             saeparams.put(SecureAttrs.SAE_CONFIG_DATA_ENCRYPTION_ALG, "DES");
             saeparams.put(SecureAttrs.SAE_CONFIG_ENCRYPTION_KEY_STRENGTH, "56");
@@ -80,7 +83,6 @@ public void jspInit()
             sa = SecureAttrs.getInstance(mySecAttrInstanceName);
         }
 
-        String encSecret = secret;
         String sunData = request.getParameter(SecureAttrs.SAE_PARAM_DATA);
         Map secureAttrs = sa.verifyEncodedString(sunData, secret, encSecret);
         if (secureAttrs == null) {

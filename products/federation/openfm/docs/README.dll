@@ -43,7 +43,7 @@ Java API  is provided in fmsae.jar
 .Net API is provided in fmsae.dll.
 
 Two ways of securing SAE data are provided : Symmetric crypto and Asymmetric
-digital signing. Symmetric method needs a shared secret between the application
+digital signing and data encryption. Symmetric method needs a shared secret between the application
 and OpenSSO, while Asymmetric method uses X509 certificates.
 
 Please refer to OpenSSO 8.0 product documentation, Javadocs and the
@@ -57,15 +57,18 @@ Typical use on IDP-App end : also termed as the Asserting party.
 
 0)  One time : 
  
-   Register ApplicationName, SAE security type (Asymmetric or Symmetric)
-   and the corresponding shared secret/Public key alias with local OpenSSO-IDP.
+   Register ApplicationName, SAE security type (Asymmetric or Symmetric),
+   data encryption enabled or not, encryption algorithm, encryption key,
+   and the corresponding shared secret/Public key alias with OpenSSO-IDP.
    Store shared secret in a safe place  preferably encrypted.
    The private key must be stored in a protected keystore and not revealed
-   to OpenSSO. OpenSSO only needs to know the public key,
-   which must be added to OpenSSO's local keystore.
+   to OpenSSO. If data encryption is enabled and asymmetric crypto is used,
+   import OpenSSO-IDP's public key to IDP-App's local keystore. 
+   When asymmetric crypto is used, import IDP-App's public key to OpenSSO-IDP's
+   keystore.
 
-1) Initialize SecureAttrs class if Asymmetric method is used.
-
+1) Initialize SecureAttrs class:
+   if Asymmetric method is used:
    Java : SecureAttrs class needs enough information to open a
      java.security.KeyStore instance that contains the keys needed to 
      secure attributes to be sent to OpenSSO-IDP.
@@ -76,6 +79,10 @@ Typical use on IDP-App end : also termed as the Asserting party.
         The type SecureAttrs.SAE_CRYPTO_ASYMMETRIC must be specified as
         part of init - else the default is SecureAttrs.SAE_CRYPTO_SYMMETRIC.
 
+    If data encryption is used:
+     SecureAttrs.SAE_CONFIG_DATA_ENCRYPTION_ALG and
+     SecureAttrs.SAE_CONFIG_ENCRYPTION_KEY_STRENGTH need to be passed
+     in to initialize SecureAttrs class.
 2) Authenticate the user.
 
 3) Construct a Map  (Java) or Hashtable (.Net) representing user attributes to 
@@ -91,27 +98,38 @@ Typical use on IDP-App end : also termed as the Asserting party.
 
 4) Retrieve shared secret if Symmetric method is used.
    Asymmetric method need the private key alias.
+   If data encryption is used, same shared secret is used if Symmetric method
+   is used. OpenSSO-IDP's public key alias is used to do data encryption
+   if Asymmetric method is used.
+   
 
 5) Execute SecureAttrs.getInstance(<type>).getEncodedString() (Java) or
    SecureAttrs.getEncodedString(<type>) (.Net)
-   passing the user attributes and shared secret or private key alias.
+   passing the user attributes, shared secret or private key alias,
+   and encryption secret(shared secret or public key alias).
    <type> is 
-      SecureAttrs.SAE_CRYPTO_ASYMMETRIC or SecureAttrs.SAE_CRYPTO_ASYMMETRIC
+      SecureAttrs.SAE_CRYPTO_SYMMETRIC or SecureAttrs.SAE_CRYPTO_ASYMMETRIC
+   When encryption secret is null, no data encryption is done.
 
 6) The app may choose to send the SAE data to a local OpenSSO instance immediately 
    or may choose to construct a link that the user can click later.
 
-   Example URL : <OpenSSO instance base url>/saml2/jsp/SA+IDP.jsp?sun.data=<SAE data>
+   Example URL : <OpenSSO instance base url>/saml2/jsp/SA_IDP.jsp?sun.data=<SAE data>
 
 
 SP-App typical usage : also called the Relying Party.
 
 0)  One time : Register ApplicationName, SAE Security type (SYM or ASYM)
-     and corresponding Shared secret. 
+     and corresponding Shared secret. If data encryption is used, register
+     encrytion algorithm and encryption key strength.
      Store shared secret in a safe place  preferably encrypted.
-     Retrieve OpenSSO public key and store it in a local keystore.
+     If ASYM is used, retrieve OpenSSO public key and store it in a local keystore.
+     If ASYM is used, and data encryption is used, retrieve SP-App's public
+     key and store it in OpenSSO-SP's keystore.
+     
 
-1) Initialize SecureAttrs class if Asymmetric method is used.
+1) Initialize SecureAttrs class:
+   If Asymmetric method is used:
 
    Java : SecureAttrs class needs enough information to open a
      java.security.KeyStore instance that contains the keys needed to 
@@ -121,14 +139,22 @@ SP-App typical usage : also called the Relying Party.
    .Net : SecureAttrs class needs access to an appropriate 
         System.Security.Cryptography.AsymmetricAlgorithm instance.
 
+   If data encryption is used:
+     SecureAttrs.SAE_CONFIG_DATA_ENCRYPTION_ALG and
+     SecureAttrs.SAE_CONFIG_ENCRYPTION_KEY_STRENGTH need to be passed
+     in to initialize SecureAttrs class.
+
 
 2) Be prepared to receive a HTTP-GET with sun.data query parameter.
     sun.data parameter contains Base64 encoded SAE data.
 
 3) Retrieve shared secret is symmetric method is used.
-   For asymmetric method be prepared to with the key alias of OpenSSO's public key.
+   For asymmetric method be prepared to retrieve the key alias of OpenSSO-SP's public key.
 
-4) Execute SecureAttrs.getInstance(<type>).verifyEncodedString(<type>) [ Java] or
+   If data encryption is enabled and asymmetric method is used, be prepared to
+   retrieve SP-App's private key alias.
+
+4) Execute SecureAttrs.getInstance(instanceName).verifyEncodedString(type,secret, encSecret) [ Java] or
    SecureAttrs.verifyEncodedString() [.Net] to verify SAE data.
 
 5) If SAE data verifies okay, returned Map contains user data that can be used 
