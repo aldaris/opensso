@@ -22,26 +22,10 @@
 # your own identifying information:
 # "Portions Copyrighted [year] [name of copyright owner]"
 #
-# $Id: ssopatch,v 1.1 2008-10-10 18:47:14 kevinserwin Exp $
+# $Id: ssopatch,v 1.2 2009-03-10 23:54:14 veiming Exp $
 #
 
 PATCH_HOME="`which $0`"
 TOOLS_HOME="`dirname ${PATCH_HOME}`"
 
-passed=$1
-if [ $# != 0 ]; then
-  flag="$1"
-  case "$flag" in
-     -D*) ;;
-       *) passed="bad_opt";
-           ;;
-  esac
-else
-  passed="bad_opt"
-fi
-
-if [ "${passed}" = "bad_opt" ]; then
-${JAVA_HOME}/bin/java -Xms256m -Xmx512m -cp "${TOOLS_HOME}/lib/ssopatch.jar:${TOOLS_HOME}/lib/ssomanifest.jar:${TOOLS_HOME}/lib/amadm_setup.jar:${TOOLS_HOME}/resources" com.sun.identity.tools.patch.Patch
-else
-${JAVA_HOME}/bin/java -Xms256m -Xmx512m -cp "${TOOLS_HOME}/lib/ssopatch.jar:${TOOLS_HOME}/lib/ssomanifest.jar:${TOOLS_HOME}/lib/amadm_setup.jar:${TOOLS_HOME}/resources" "$@" com.sun.identity.tools.patch.Patch
-fi
+${JAVA_HOME}/bin/java -Xms256m -Xmx512m -cp "${TOOLS_HOME}/lib/ssopatch.jar:${TOOLS_HOME}/lib/ssomanifest.jar:${TOOLS_HOME}/lib/amadm_setup.jar:${TOOLS_HOME}/resources" com.sun.identity.tools.patch.Patch "$@"

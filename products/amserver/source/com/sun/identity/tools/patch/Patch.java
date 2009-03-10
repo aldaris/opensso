@@ -22,7 +22,7 @@
 * your own identifying information:
 * "Portions Copyrighted [year] [name of copyright owner]"
 *
-* $Id: Patch.java,v 1.3 2009-02-17 18:41:11 kevinserwin Exp $
+* $Id: Patch.java,v 1.4 2009-03-10 23:54:14 veiming Exp $
 */
 
 package com.sun.identity.tools.patch;
@@ -40,6 +40,12 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
+import java.text.MessageFormat;
+import java.util.Iterator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * The <code>Patch</code> class provides methods to parse the
@@ -50,26 +56,26 @@ import java.util.StringTokenizer;
  */
 
 public class Patch implements PatchGeneratorConstants{
-    String srcFilePath;
-    String destFilePath;
-    String src2FilePath;    
-    String stagingFilePath;
+    private String srcFilePath;
+    private String destFilePath;
+    private String src2FilePath;    
+    private String stagingFilePath;
     
-    Manifest firstMan;
-    Manifest origMan;
-    Manifest secondMan;
-    boolean createMode = false;    
-    boolean compareMode = false;    
-    boolean mergeMode = false;
-    boolean overwriteMode = false;
-    boolean overrideMode = false;
+    private Manifest firstMan;
+    private Manifest origMan;
+    private Manifest secondMan;
+    private boolean createMode = false;    
+    private boolean compareMode = false;    
+    private boolean mergeMode = false;
+    private boolean overwriteMode = false;
+    private boolean overrideMode = false;
      
-    File stagingArea;  
-    Properties srcManifest;
-    Properties src2Manifest;    
-    char wildCard;
-    Locale locale;
-    ResourceBundle rbMessages;
+    private File stagingArea;  
+    private Properties srcManifest;
+    private Properties src2Manifest;    
+    private char wildCard;
+    private static Locale locale;
+    private static ResourceBundle rbMessages;
 
     private static Locale getLocale(String strLocale) {
         StringTokenizer st = new StringTokenizer(strLocale, "_");
@@ -79,7 +85,6 @@ public class Patch implements PatchGeneratorConstants{
         return new Locale(lang, country, variant);
     }
 
-    
     private void getProperties() {
         String propFilePath = System.getProperty(PROPERTIES_FILE);
         Properties sysProp = new Properties();
@@ -105,24 +110,11 @@ public class Patch implements PatchGeneratorConstants{
                 }
             }
         }
-        locale = getLocale(System.getProperty(OPTION_LOCALE,DEFAULT_LOCALE));
-         
-        if (locale == null) {
-            locale = Locale.getDefault();
-        }
-        try {
-            rbMessages = ResourceBundle.getBundle(RESOURCE_BUNDLE_NAME, locale);
-        } catch (MissingResourceException e) {
-            System.out.print("Resource file not found for locale: ");        
-            System.out.print(System.getProperty(OPTION_LOCALE,DEFAULT_LOCALE));
-            System.out.print("\n"); 
-            System.exit(1);
-        }
         
-        srcFilePath = System.getProperty(SRC_FILE_PATH);
-        destFilePath = System.getProperty(DEST_FILE_PATH);    
-        src2FilePath = System.getProperty(SRC2_FILE_PATH);     
-        stagingFilePath = System.getProperty(STAGING_FILE_PATH);                 
+        srcFilePath = (String)options.get(OPTION_SRC_FILE_PATH);
+        destFilePath = (String)options.get(OPTION_DEST_FILE_PATH);    
+        src2FilePath = (String)options.get(OPTION_SRC2_FILE_PATH);
+        stagingFilePath = (String)options.get(OPTION_STAGING_FILE_PATH);
         wildCard = System.getProperty(WILDCARD_CHAR,
             sysProp.getProperty(WILDCARD_CHAR,DEFAULT_WILDCARD_CHAR)).charAt(0);
    
@@ -150,10 +142,11 @@ public class Patch implements PatchGeneratorConstants{
         if (stagingFilePath != null) {
             mergeMode = true;
         }
-        overwriteMode = Boolean.valueOf(System.getProperty(OPTION_OVERWRITE,
-            DEFAULT_OVERWRITE)).booleanValue();        
-        overrideMode = Boolean.valueOf(System.getProperty(OPTION_OVERRIDE,
-            DEFAULT_OVERRIDE)).booleanValue();        
+
+
+        overwriteMode = isOptionSet(OPTION_OVERWRITE);
+        overrideMode = isOptionSet(OPTION_OVERRIDE);
+
         firstMan = new Manifest();        
         firstMan.setDefaultProperties();
         origMan = new Manifest();        
@@ -603,35 +596,140 @@ public class Patch implements PatchGeneratorConstants{
      */
     public static void main(String[] args) {
         Patch patch = new Patch();
-
+        getOptions(args);
         patch.getProperties();
   
         // if the destination was passed in, then we are in create mode
         if (patch.createMode) {
-            patch.createManifest(patch.firstMan, patch.srcFilePath, patch.destFilePath);
+            patch.createManifest(patch.firstMan, patch.srcFilePath,
+                patch.destFilePath);
         } else {
            patch.processPatch(); 
         }
         
     }
-               
     
     /**
      * Prints  the usage for using the patch generation utility
      *
      */
-    public void printUsage(){
+    private static void printUsage(){
         System.out.println(rbMessages.getString("usage"));
-        System.out.println(rbMessages.getString("usage-arg"));
-        System.out.println(rbMessages.getString("usage-src"));
-        System.out.println(rbMessages.getString("usage-src-desc"));
-        System.out.println(rbMessages.getString("usage-manifest"));
-        System.out.println(rbMessages.getString("usage-manifest-desc"));        
-        System.out.println(rbMessages.getString("usage-src2"));
-        System.out.println(rbMessages.getString("usage-src2-desc"));  
-        System.out.println(rbMessages.getString("usage-staging"));
-        System.out.println(rbMessages.getString("usage-staging-desc"));    
-        System.out.println(rbMessages.getString("usage-override"));   
-        System.out.println(rbMessages.getString("usage-override-desc"));                
     }
+
+    private static Map options = new HashMap();
+    private static Map longShortNameMapping = new HashMap();
+    private static Set unary = new HashSet();
+
+    static {
+        longShortNameMapping.put(OPTION_HELP, "-?");
+        longShortNameMapping.put(OPTION_SRC_FILE_PATH, "-o");
+        longShortNameMapping.put(OPTION_DEST_FILE_PATH, "-m");
+        longShortNameMapping.put(OPTION_SRC2_FILE_PATH, "-c");
+        longShortNameMapping.put(OPTION_STAGING_FILE_PATH, "-s");
+        longShortNameMapping.put(OPTION_LOCALE, "-l");
+        longShortNameMapping.put(OPTION_OVERRIDE, "-r");
+        longShortNameMapping.put(OPTION_OVERWRITE, "-w");
+
+        unary.add(OPTION_HELP);
+        unary.add(OPTION_OVERRIDE);
+        unary.add(OPTION_OVERWRITE);
+    }
+
+    private static void getOptions(String[] args) {
+        String currentOpt = null;
+        String invalidOpt = null;
+        boolean incorrectFormat = false;
+        for (int i = 0; i < args.length; i++) {
+            String s = args[i];
+            if (s.startsWith("--")) {
+                if (!longShortNameMapping.keySet().contains(s)) {
+                    invalidOpt = s;
+                }
+                if (currentOpt != null) {
+                    options.put(currentOpt, "");
+                }
+                currentOpt = s;
+            } else if (s.startsWith("-")) {
+                String longName = getLongName(s);
+                if (longName == null) {
+                    invalidOpt = s;
+                }
+                if (currentOpt != null) {
+                    options.put(currentOpt, "");
+                }
+                currentOpt = longName;
+            } else {
+                if ((currentOpt == null) || unary.contains(currentOpt)) {
+                    incorrectFormat = true;
+                } else {
+                    options.put(currentOpt, s);
+                    currentOpt = null;
+                }
+            }
+        }
+
+        if (currentOpt != null) {
+            if (unary.contains(currentOpt)) {
+                options.put(currentOpt, "");
+            } else {
+                incorrectFormat = true;
+            }
+        }
+
+        String strLocale = (String)options.remove(OPTION_LOCALE);
+        if ((strLocale != null) && (strLocale.length() > 0)) {
+            locale = getLocale(strLocale);
+        }
+        if (locale == null) {
+            locale = Locale.getDefault();
+        }
+
+        try {
+            rbMessages = ResourceBundle.getBundle(RESOURCE_BUNDLE_NAME, locale);
+        } catch (MissingResourceException e) {
+            System.out.print("Resource file not found.\n");
+            System.exit(1);
+        }
+
+        boolean bHelp = isOptionSet(OPTION_HELP);
+
+        if (invalidOpt != null) {
+            Object[] a = {invalidOpt};
+            System.out.print(MessageFormat.format(rbMessages.getString(
+                "invalid-option"), a));
+            System.out.println();
+            printUsage();
+            System.exit(1);
+        }
+        if (incorrectFormat || (bHelp && (options.size() > 1))) {
+            System.out.print(rbMessages.getString("incorrect-format"));
+            System.out.println();
+            printUsage();
+            System.exit(1);
+        }
+        if (bHelp) {
+            System.out.println();
+            printUsage();
+            System.exit(0);
+        }
+    }
+
+    private static boolean isOptionSet(String optName) {
+        String str = (String)options.get(optName);
+        return (str != null);
+    }
+
+    private static String getLongName(String s) {
+        for (Iterator i = longShortNameMapping.keySet().iterator(); i.hasNext();
+        ) {
+            String longName = (String)i.next();
+            String shortName = (String)longShortNameMapping.get(longName);
+            if (s.equals(shortName)) {
+                return longName;
+            }
+        }
+        return null;
+    }
+    
 }

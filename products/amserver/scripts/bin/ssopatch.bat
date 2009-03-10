@@ -23,7 +23,7 @@
 : your own identifying information:
 : "Portions Copyrighted [year] [name of copyright owner]"
 :
-: $Id: ssopatch.bat,v 1.1 2008-10-10 18:47:14 kevinserwin Exp $
+: $Id: ssopatch.bat,v 1.2 2009-03-10 23:54:14 veiming Exp $
 :
 
 set TOOLS_HOME=%~dp$PATH:0
@@ -31,6 +31,6 @@ if '%TOOLS_HOME%'=='' set TOOLS_HOME=%~dps0
 
 setlocal
 
-"java.exe" -Xms256m -Xmx512m -cp "%TOOLS_HOME%/lib/ssopatch.jar;%TOOLS_HOME%/lib/ssomanifest.jar;%TOOLS_HOME%/lib/amadm_setup.jar;%TOOLS_HOME%/resources" %* com.sun.identity.tools.patch.Patch 
+"java.exe" -Xms256m -Xmx512m -cp "%TOOLS_HOME%/lib/ssopatch.jar;%TOOLS_HOME%/lib/ssomanifest.jar;%TOOLS_HOME%/lib/amadm_setup.jar;%TOOLS_HOME%/resources" com.sun.identity.tools.patch.Patch %*
 endlocal
 :END

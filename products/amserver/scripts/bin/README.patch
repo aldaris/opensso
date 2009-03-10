@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: README.patch,v 1.1 2008-10-10 18:47:14 kevinserwin Exp $
+   $Id: README.patch,v 1.2 2009-03-10 23:54:14 veiming Exp $
 
 -->
 
@@ -52,20 +52,49 @@ ssopatch is a Java application that will be included in each OpenSSO enterprise
 and express built zip file, located in the tools subdirectory.  
 ssopatch Usage
 
-Usage:  
-    ssopatch -D”file.src.path=<war file>” [[-D”file.dest.path=<manifest file>”] | 				
-    [[-D”file.src2.path=<second war file>] [-D”file.staging.path=<staging area>]] ]
-	-D"file.src.path=<war file>"		Path to war file (required).
-	-D"file.dest.path=<manifest file>"	Path to manifest file to create.
-	-D"file.src2.path=<second war file>"	Path to war file to compare against.
-	-D"file.staging.path=<staging area>"	Path to the staging area to create.
+Usage:
+ssopatch
+    --help|-?
+    [--locale|-l]
 
-<war file>          current opensso.war file which has been previously deployed
-<manifest file>     filename of the manifest file to create from the specified 
-                    <war file>
-<second war file>   war file to compare the current opensso.war to. 
-<staging area>      directory location where patched files for opensso.war will
-                    be located
+ssopatch
+    --war-file|-o
+    [--manifest|-m]
+    [--locale|-l]
+
+ssopatch
+    --war-file|-o
+    --war-file-compare|-c
+    [--staging|-s]
+    [--locale|-l]
+    [--override|-r] 
+    [--overwrite|-w] 
+
+Options:
+    --help|-?
+        Print this usage. This is a unary option.
+    --war-file|-o
+        Path to the WAR file. opensso.war file which has been previously
+        deployed.
+    --manifest|-m
+        Path to manifest file to create. Manifest file will be generated from
+        --war-file when this option is provided.
+    --war-file-compare|-c
+        Path to the WAR file to compare against. It will be compared against
+        --war-file when this option is provided.
+    --staging|-s
+        Path to the staging area. Staging area where the files will be written.
+        --war-file-compare is compared against --war-file and the result will be
+        written to this directory.
+    --locale|-l
+       Locale to be used. Default system locale is used if this is not set.
+    --overwrite|-w
+        Option to overwrite existing staging area. This is a unary option.
+        Default is false.
+    --override|-r
+       Option to override revision checking. This is a unary option.
+       Default is false.
+
 
 Default usage:	If only the the first argument is specified, ssopatch will 
                 compare the contents of the specified war file against the
@@ -87,7 +116,7 @@ If you acquired an opensso.war prior to Express build 5b, or if you are creating
 a customized war file (console only, distributed authentication, etc.), ssopatch 
 can be used to generate a manifest file which can be included in your war.
 
-% ssopatch -D"file.src.path=my.war" -D"file.dest.path=OpenSSO.manifest"
+% ssopatch --war-file "my.war" --manifest "OpenSSO.manifest"
 
 This will create a new file "OpenSSO.manifest" containing an entry for each file 
 in "my.war" with checksum information.  After creating the manifest, if you want 
@@ -101,7 +130,7 @@ file, ssopatch can be used.  ssopatch will internally generate a new manifest
 file, then compare that internal manifest against the manifest stored inside the 
 war file at META-INF/OpenSSO.manifest.
 
-% ssopatch -D"file.src.path=my.war"
+% ssopatch --war-file "my.war"
 Comparing manifest of Internal (Express Build 5(200810010552)) against 
     /my.war (generated-200810021026)
 File not in original war (images/login-origimage.jpg)
@@ -129,7 +158,7 @@ us to show which files were customized inside the initial war, and which files
 were patched in the new war.  It will also display any files that may have been 
 added or removed between the two versions.
 
-% ssopatch -D"file.src.path=my.war" -D"file.src2.path=new.war"
+% ssopatch --war-file "my.war" --war-file-compare "new.war"
 Comparing manifest of my.war (generated-200810021042) against 
     new.war (generated-200810021042)
 File not in original war (WEB-INF/classes/amClientDetection_en.properties)
@@ -165,8 +194,7 @@ also display any files that may have been added or removed between the two
 versions.  It will output the appropriate files to a staging area, where the 
 user can finalize the customizations before creating the new patched war.
 
-% ssopatch -D"file.src.path=my.war" -D"file.src2.path=new.war" 
-    -D"file.staging.path=/staging"
+% ssopatch --war-file="my.war" --war-file-compare "new.war" --staging "/staging"
 Comparing manifest of my.war (generated-200810021042) against 
     new.war (generated-200810021042)
 File customized. Staging area using original war version 
