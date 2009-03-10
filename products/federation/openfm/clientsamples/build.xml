@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.26 2009-01-28 05:35:09 ww203982 Exp $
+   $Id: build.xml,v 1.27 2009-03-10 20:14:13 exu Exp $
 
 -->
 
@@ -95,7 +95,7 @@
         <mkdir dir="${clientsamples.war.packages.dir}/saml2" /> 
         <mkdir dir="${clientsamples.war.packages.dir}/saml2/sae" /> 
         <copy todir="${clientsamples.war.packages.dir}/saml2/sae">
-            <fileset dir="${openfm.dir}/samples/war/saml2/sae" includes="dumpcookies.jsp saeIDPApp.jsp saeSPApp.jsp header.jsp Readme.html" />
+            <fileset dir="${openfm.dir}/samples/war/saml2/sae" includes="dumpcookies.jsp saeIDPApp.jsp saeSPApp.jsp header.jspf Readme.html" />
         </copy>
         <!-- copy client samples from OpenSSO (amserver) -->
         <delete dir="${clientsamples.packages.temp.dir}" />
@@ -173,7 +173,7 @@
         <mkdir dir="${clientsamples.war.packages.dir}/saml2" /> 
         <mkdir dir="${clientsamples.war.packages.dir}/saml2/sae" /> 
         <copy todir="${clientsamples.war.packages.dir}/saml2/sae">
-            <fileset dir="${openfm.dir}/samples/war/saml2/sae" includes="dumpcookies.jsp saeIDPApp.jsp saeSPApp.jsp header.jsp Readme.html" />
+            <fileset dir="${openfm.dir}/samples/war/saml2/sae" includes="dumpcookies.jsp saeIDPApp.jsp saeSPApp.jsp header.jspf Readme.html" />
         </copy>
         <!-- copy client samples from OpenSSO (amserver) -->
 	<delete dir="${clientsamples.packages.temp.dir}" />
