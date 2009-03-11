@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertySAMLv2IDPAdvancedHosted.xml,v 1.3 2008-06-25 05:51:06 qcheng Exp $
+   $Id: propertySAMLv2IDPAdvancedHosted.xml,v 1.4 2009-03-11 22:16:33 asyhuang Exp $
 
 -->
 
@@ -52,14 +52,18 @@
                             <attribute name="listboxLabel" value="label.current.value" />
                             <attribute name="textboxLabel" value="label.new.value" />
                         </cc>
-                        <fieldhelp name="helpsaeAppSecretList" defaultValue="samlv2idp.attribute.help.saeAppSecretList" />
+                        <fieldhelp name="helpsaeAppSecretList0" defaultValue="samlv2idp.attribute.help.saeAppSecretList.0" />
+                        <fieldhelp name="helpsaeAppSecretList1" defaultValue="samlv2idp.attribute.help.saeAppSecretList.1" />
+                        <fieldhelp name="helpsaeAppSecretList2" defaultValue="samlv2idp.attribute.help.saeAppSecretList.2" />
+                        <fieldhelp name="helpsaeAppSecretList3" defaultValue="samlv2idp.attribute.help.saeAppSecretList.3" />
+                        <fieldhelp name="helpsaeAppSecretList4" defaultValue="samlv2idp.attribute.help.saeAppSecretList.4" />                  
                     </property>
                 </ccgroup>                
             </property>
         </subsection>                
     </section>
     
-     <section name="ECP" defaultValue="samlv2idp.attribute.label.ecp">
+    <section name="ECP" defaultValue="samlv2idp.attribute.label.ecp">
         <property>
             <label name="lblDdpECPSessionMapper" defaultValue="samlv2idp.attribute.label.ecp.idpECPSessionMapper" labelFor="idpECPSessionMapper" />
             <cc name="idpECPSessionMapper" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
