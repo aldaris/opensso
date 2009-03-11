@@ -23,7 +23,7 @@
 \\@rem your own identifying information:
 \\@rem "Portions Copyrighted [year] [name of copyright owner]"
 \\@rem 
-\\@rem $Id: setAgentEnv.cmd.template,v 1.2 2008-11-28 12:26:58 saueree Exp $
+\\@rem $Id: setAgentEnv.cmd.template,v 1.3 2009-03-11 00:01:01 subbae Exp $
 \\@rem
 \\@rem
 \\@rem
@@ -33,7 +33,7 @@
 
 \\@rem Append AGENT_CLASSPATH to the Tomcat system classpath
 
-set AGENT_CLASSPATH="@AGENT_LOCALE_DIR@";"@AGENT_CONFIG_DIR@";"@AGENT_LIB_DIR@"\agent.jar;"@AGENT_LIB_DIR@"\openssoclientsdk.jar
-set AGENT_CLASSPATH=%AGENT_CLASSPATH%;"@TOMCAT_SERVER_LIB@"\catalina.jar;"@TOMCAT_SERVER_LIB@"\catalina-ha.jar;"@TOMCAT_SERVER_LIB@"\annotations-api.jar;"@TOMCAT_SERVER_LIB@"\catalina-ant.jar;"@TOMCAT_SERVER_LIB@"\catalina-tribes.jar;"@TOMCAT_SERVER_LIB@"\tomcat-coyote.jar;"@TOMCAT_SERVER_LIB@"\tomcat-dbcp.jar;"@TOMCAT_SERVER_LIB@"\tomcat-i18n-es.jar;"@CATALINA_HOME@"\bin\tomcat-i18n-fr.jar;"@TOMCAT_SERVER_LIB@"\tomcat-i18n-ja.jar
-set AGENT_CLASSPATH=%AGENT_CLASSPATH%;"@TOMCAT_COMMON_LIB@"\jasper-el.jar;"@TOMCAT_COMMON_LIB@"\jsp-api.jar;"@TOMCAT_COMMON_LIB@"\servlet-api.jar;"@TOMCAT_COMMON_LIB@"\jasper-jdt.jar;"@TOMCAT_COMMON_LIB@"\jasper.jar;"@TOMCAT_COMMON_LIB@"\el-api.jar
+set AGENT_CLASSPATH=@AGENT_LOCALE_DIR@;@AGENT_CONFIG_DIR@;@AGENT_LIB_DIR@\agent.jar;@AGENT_LIB_DIR@\openssoclientsdk.jar
+set AGENT_CLASSPATH=%AGENT_CLASSPATH%;@TOMCAT_SERVER_LIB@\catalina.jar;@TOMCAT_SERVER_LIB@\catalina-ha.jar;@TOMCAT_SERVER_LIB@\annotations-api.jar;@TOMCAT_SERVER_LIB@\catalina-ant.jar;@TOMCAT_SERVER_LIB@\catalina-tribes.jar;@TOMCAT_SERVER_LIB@\tomcat-coyote.jar;@TOMCAT_SERVER_LIB@\tomcat-dbcp.jar;@TOMCAT_SERVER_LIB@\tomcat-i18n-es.jar;@CATALINA_HOME@\bin\tomcat-i18n-fr.jar;@TOMCAT_SERVER_LIB@\tomcat-i18n-ja.jar
+set AGENT_CLASSPATH=%AGENT_CLASSPATH%;@TOMCAT_COMMON_LIB@\jasper-el.jar;@TOMCAT_COMMON_LIB@\jsp-api.jar;@TOMCAT_COMMON_LIB@\servlet-api.jar;@TOMCAT_COMMON_LIB@\jasper-jdt.jar;@TOMCAT_COMMON_LIB@\jasper.jar;@TOMCAT_COMMON_LIB@\el-api.jar
 set CLASSPATH=%CLASSPATH%;%AGENT_CLASSPATH%
