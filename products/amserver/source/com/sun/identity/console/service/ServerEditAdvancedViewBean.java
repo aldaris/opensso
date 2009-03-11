@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServerEditAdvancedViewBean.java,v 1.3 2008-06-25 05:43:17 qcheng Exp $
+ * $Id: ServerEditAdvancedViewBean.java,v 1.4 2009-03-11 00:45:00 veiming Exp $
  *
  */
 
@@ -84,7 +84,7 @@ public class ServerEditAdvancedViewBean
     private static final String PGTITLE_THREE_BTNS = "pgtitleThreeBtns";
     
     private static Set dealtWithProperties;
-    private static Set hiddenProperties;
+    private static Map hiddenProperties;
     
     private CCPageTitleModel ptModel;
     private CCActionTableModel tblModel;
@@ -255,7 +255,9 @@ public class ServerEditAdvancedViewBean
     private void discardHiddenProperties(Map map) {
         for (Iterator i = map.entrySet().iterator(); i.hasNext(); ){
             Map.Entry entry = (Map.Entry)i.next();
-            if (hiddenProperties.contains(entry.getKey())) {
+            String key = (String)entry.getKey();
+            if (hiddenProperties.keySet().contains(key)) {
+                hiddenProperties.put(key, entry.getValue());
                 i.remove();
             }
         }
@@ -330,6 +332,12 @@ public class ServerEditAdvancedViewBean
             properties.add(t);
             map.put(name, value);
         }
+
+        for (Iterator i = hiddenProperties.entrySet().iterator(); i.hasNext(); )
+        {
+            Map.Entry entry = (Map.Entry)i.next();
+            map.put(entry.getKey(), entry.getValue());
+        } 
 
         ServerSiteModel model = (ServerSiteModel)getModel();
         String serverName = (String)getPageSessionAttribute(
@@ -420,12 +428,12 @@ public class ServerEditAdvancedViewBean
     }
 
     private static void getHiddenProperties() {
-        hiddenProperties = new HashSet();
+        hiddenProperties = new HashMap();
         ResourceBundle rb = ResourceBundle.getBundle("hiddenserverconfig");
         String hidden = rb.getString("hidden");
         StringTokenizer st = new StringTokenizer(hidden, " ");
         while (st.hasMoreTokens()) {
-            hiddenProperties.add(st.nextToken().trim());
+            hiddenProperties.put(st.nextToken().trim(), "");
         }
     }
 
