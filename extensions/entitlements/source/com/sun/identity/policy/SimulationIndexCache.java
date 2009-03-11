@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SimulationIndexCache.java,v 1.1 2009-02-10 19:31:03 veiming Exp $
+ * $Id: SimulationIndexCache.java,v 1.2 2009-03-11 04:57:49 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -85,16 +85,6 @@ public class SimulationIndexCache implements IIndexCache {
     }
 
     /**
-     * Returns policies associated with a host index.
-     *
-     * @param idx host index
-     * @return Set of policies associated with this index.
-     */
-    public Set<Policy> getHostIndex(String idx) {
-        return hostIndexCache.get(idx);
-    }
-
-    /**
      * Caches path index.
      *
      * @param idx path index
@@ -107,16 +97,6 @@ public class SimulationIndexCache implements IIndexCache {
             pathIndexCache.put(idx, set);
         }
         set.add(policy);
-    }
-
-    /**
-     * Returns policies associated with a path index.
-     *
-     * @param idx path index
-     * @return Set of policies associated with this index.
-     */
-    public Set<Policy> getPathIndex(String idx) {
-        return pathIndexCache.get(idx);
     }
 
     /**
@@ -137,19 +117,66 @@ public class SimulationIndexCache implements IIndexCache {
         set.add(policy);
     }
 
-    /**
-     * Returns policies associated with a path parent index.
-     *
-     * @param idx path parent index
-     * @return Set of policies associated with this index.
-     */
-    public Set<Policy> getPathParentIndex(String idx) {
-        return pathParentIndexCache.get(idx);
-    }
-
     private synchronized void clearCaches() {
         hostIndexCache = new HashMap<String, Set<Policy>>();
         pathIndexCache = new HashMap<String, Set<Policy>>();
         pathParentIndexCache = new HashMap<String, Set<Policy>>();
+    }
+
+    public void getPolicies(
+        Set<String> hostIndexes,
+        Set<String> pathIndexes,
+        String parentPathIndex,
+        Set<Policy> hits,
+        Map<String, Set<String>> misses
+    ) {
+        Set<Policy> cachedPoliciesForPath = new HashSet<Policy>();
+        // not null for sub tree policy evaluation
+        if (parentPathIndex != null) {
+            Set<Policy> cached = (Set<Policy>) pathIndexCache.get(
+                parentPathIndex);
+            if (cached == null) {
+                updateMisses(misses, LBL_PATH_PARENT_IDX, parentPathIndex);
+            } else {
+                cachedPoliciesForPath.addAll(cached);
+            }
+        } else {
+            for (String r : pathIndexes) {
+                Set<Policy> cached = (Set<Policy>) pathIndexCache.get(r);
+                if (cached == null) {
+                    updateMisses(misses, LBL_PATH_IDX, r);
+                } else {
+                    cachedPoliciesForPath.addAll(cached);
+                }
+            }
+        }
+
+        Set<Policy> cachedPoliciesForHost = new HashSet<Policy>();
+        for (String r : hostIndexes) {
+            Set<Policy> cached = (Set<Policy>) hostIndexCache.get(r);
+            if (cached == null) {
+                updateMisses(misses, LBL_HOST_IDX, r);
+            } else {
+                cachedPoliciesForHost.addAll(cached);
+            }
+        }
+
+        cachedPoliciesForPath.retainAll(cachedPoliciesForHost);
+        hits.addAll(cachedPoliciesForPath);
+   }
+
+    private void updateMisses(
+        Map<String, Set<String>> misses,
+        String idx,
+        String res
+    ) {
+        if (misses != null) {
+            Set m = misses.get(idx);
+            if (m == null) {
+                m = new HashSet<String>();
+                misses.put(idx, m);
+            }
+            m.add(res);
+        }
     }
 }

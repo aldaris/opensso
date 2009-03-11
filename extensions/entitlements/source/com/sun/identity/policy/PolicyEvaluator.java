@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.1 2009-02-18 06:29:37 veiming Exp $
+ * $Id: PolicyEvaluator.java,v 1.2 2009-03-11 04:57:49 veiming Exp $
  *
  */
 
@@ -628,12 +628,12 @@ public class PolicyEvaluator {
         actions.addAll(actionNames);
 
         try {
-            SSOToken adminSSOToken = (SSOToken)AccessController.doPrivileged(
+            SSOToken adminSSOToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
             Subject adminSubject = createSubject(adminSSOToken);
             Evaluator policyEval = new Evaluator(adminSubject, serviceTypeName);
 
-            Subject userSubject = createSubject(adminSSOToken);
+            Subject userSubject = createSubject(token);
             List entitlements = policyEval.getEntitlements(userSubject,
                 resourceName, envParameters, false);
             if ((entitlements != null) && !entitlements.isEmpty()) {
@@ -646,7 +646,6 @@ public class PolicyEvaluator {
 
         return new PolicyDecision();
     }
-
 
     /**
      * Gets protected resources for a user identified by single sign on token
@@ -2069,4 +2068,6 @@ public class PolicyEvaluator {
                 Collections.EMPTY_SET, Collections.EMPTY_SET);
     }
 
+
+    static PolicyEvaluatorAdaptor adpter = new PolicyEvaluatorAdaptor();
 }

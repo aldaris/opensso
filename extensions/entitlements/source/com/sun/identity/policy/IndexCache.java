@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IndexCache.java,v 1.5 2009-02-19 07:26:13 veiming Exp $
+ * $Id: IndexCache.java,v 1.6 2009-03-11 04:57:49 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -35,6 +35,7 @@ import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceConfigManager;
 import com.sun.identity.sm.ServiceListener;
 import java.security.AccessController;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -82,51 +83,6 @@ public class IndexCache implements ServiceListener, IIndexCache {
     public static IndexCache getInstance() {
         return instance;
     }
-
-    /**
-     * Returns policies associated with a host index.
-     *
-     * @param idx host index
-     * @return Set of policies associated with this index.
-     */
-    public Set<Policy> getHostIndex(String idx) {
-        rwlock.readLock().lock();
-        try {
-            return (Set<Policy>)hostIndexCache.get(idx);
-        } finally {
-            rwlock.readLock().unlock();
-        }
-    }
-
-    /**
-     * Returns policies associated with a path index.
-     *
-     * @param idx path index
-     * @return Set of policies associated with this index.
-     */
-    public Set<Policy> getPathIndex(String idx) {
-        rwlock.readLock().lock();
-        try {
-            return (Set<Policy>)pathIndexCache.get(idx);
-        } finally {
-            rwlock.readLock().unlock();
-        }
-    }
-
-    /**
-     * Returns policies associated with a path parent index.
-     *
-     * @param idx path parent index
-     * @return Set of policies associated with this index.
-     */
-    public Set<Policy> getPathParentIndex(String idx) {
-        rwlock.readLock().lock();
-        try {
-            return (Set<Policy>) pathParentIndexCache.get(idx);
-        } finally {
-            rwlock.readLock().unlock();
-        }
-}
 
     /**
      * Caches indexes.
@@ -188,6 +144,70 @@ public class IndexCache implements ServiceListener, IIndexCache {
             pathParentIndexCache = new Cache(DEFAULT_CACHE_SIZE);
         } finally {
             rwlock.writeLock().unlock();
+        }
+    }
+
+    public void getPolicies(
+        Set<String> hostIndexes,
+        Set<String> pathIndexes,
+        String parentPathIndex,
+        Set<Policy> hits,
+        Map<String, Set<String>> misses
+    ) {
+        rwlock.readLock().lock();
+        try {
+            Set<Policy> cachedPoliciesForPath = new HashSet<Policy>();
+            // not null for sub tree policy evaluation
+            if (parentPathIndex != null) {
+                Set<Policy> cached = (Set<Policy>)pathIndexCache.get(
+                    parentPathIndex);
+                if (cached == null) {
+                    updateMisses(misses, LBL_PATH_PARENT_IDX, parentPathIndex);
+                } else {
+                    cachedPoliciesForPath.addAll(cached);
+                }
+            } else {
+                for (String r : pathIndexes) {
+                    Set<Policy> cached = (Set<Policy>) pathIndexCache.get(r);
+                    if (cached == null) {
+                        updateMisses(misses, LBL_PATH_IDX, r);
+                    } else {
+                        cachedPoliciesForPath.addAll(cached);
+                    }
+                }
+            }
+
+            Set<Policy> cachedPoliciesForHost = new HashSet<Policy>();
+            if (hostIndexes != null) {
+                for (String r : hostIndexes) {
+                    Set<Policy> cached = (Set<Policy>) hostIndexCache.get(r);
+                    if (cached == null) {
+                        updateMisses(misses, LBL_HOST_IDX, r);
+                    } else {
+                        cachedPoliciesForHost.addAll(cached);
+                    }
+                }
+            }
+
+            cachedPoliciesForPath.retainAll(cachedPoliciesForHost);
+            hits.addAll(cachedPoliciesForPath);
+        } finally {
+            rwlock.readLock().unlock();
+        }
+   }
+
+    private void updateMisses(
+        Map<String, Set<String>> misses,
+        String idx,
+        String res
+    ) {
+        if (misses != null) {
+            Set m = misses.get(idx);
+            if (m == null) {
+                m = new HashSet<String>();
+                misses.put(idx, m);
+            }
+            m.add(res);
         }
     }
 

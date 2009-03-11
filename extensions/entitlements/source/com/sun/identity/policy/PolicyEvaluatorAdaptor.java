@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorAdaptor.java,v 1.18 2009-03-03 20:40:14 veiming Exp $
+ * $Id: PolicyEvaluatorAdaptor.java,v 1.19 2009-03-11 04:57:49 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -35,7 +35,6 @@ import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.IPolicyEvaluator;
 import com.sun.identity.entitlement.util.ResourceComp;
 import com.sun.identity.entitlement.util.ResourceNameSplitter;
-import com.sun.identity.sm.SMSThreadPool;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,9 +47,7 @@ import javax.security.auth.Subject;
 
 public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
     int tasksCount;
-    static final String LBL_HOST_IDX = "host";
-    static final String LBL_PATH_IDX = "path";
-    static final String LBL_PATH_PARENT_IDX = "pathparent";
+
 
     final Object lock = new Object();
     
@@ -62,9 +59,10 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
         Map<String, Set<String>> misses
     ) throws SSOException, PolicyException {
         PolicyManager pm = new PolicyManager(token, "/");
-        Set<String> hostIndexes = misses.get(LBL_HOST_IDX);
-        Set<String> pathIndexes = misses.get(LBL_PATH_IDX);
-        Set<String> pathParentIndexes = misses.get(LBL_PATH_PARENT_IDX);
+        Set<String> hostIndexes = misses.get(IIndexCache.LBL_HOST_IDX);
+        Set<String> pathIndexes = misses.get(IIndexCache.LBL_PATH_IDX);
+        Set<String> pathParentIndexes = misses.get(
+            IIndexCache.LBL_PATH_PARENT_IDX);
 
         String pathParent = ((pathParentIndexes != null) &&
             !pathParentIndexes.isEmpty()) ? pathParentIndexes.iterator().next():
@@ -94,9 +92,12 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
         Map<String, Set<String>> envParameters
     ) throws EntitlementException {
         try {
+            SSOToken adminToken = getSSOToken(adminSubject);
+            SSOToken userToken = getSSOToken(subject);
+
             String resourceName = entitlement.getResourceName();
             Set<PolicyDecision> policyDecisions = getPolicyDecisions(
-                adminSubject, subject, serviceTypeName, resourceName, 
+                adminToken, userToken, serviceTypeName, resourceName,
                 envParameters);
             if ((policyDecisions == null) || policyDecisions.isEmpty()) {
                 return false;
@@ -209,8 +210,11 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
         Map<String, Set<String>> envParameters
     ) throws EntitlementException {  
         try {
+            SSOToken adminToken = getSSOToken(adminSubject);
+            SSOToken userToken = getSSOToken(subject);
+
             Set<PolicyDecision> policyDecisions = getPolicyDecisions(
-                adminSubject, subject, serviceTypeName, resourceName, 
+                adminToken, userToken, serviceTypeName, resourceName,
                 envParameters);
             if ((policyDecisions == null) || policyDecisions.isEmpty()) {
                 return Collections.EMPTY_LIST;
@@ -300,16 +304,16 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
         return result;
     }
 
-    private Set<PolicyDecision> getPolicyDecisions(
-        Subject adminSubject,
-        Subject subject,
+    public Set<PolicyDecision> getPolicyDecisions(
+        SSOToken adminToken,
+        SSOToken userToken,
         String serviceTypeName,
         String resourceName,
         Map<String, Set<String>> envParameters
     ) throws SSOException, PolicyException, EntitlementException {
         Set<PolicyDecision> policyDecisions = new HashSet<PolicyDecision>();
         Set<PolicyDecisionTask.Task> results = performPolicyEvaluation(
-            adminSubject, subject, serviceTypeName, resourceName, envParameters
+            adminToken, userToken, serviceTypeName, resourceName, envParameters
             );
         for (PolicyDecisionTask.Task t : results) {
             policyDecisions.add(t.policyDecision);
@@ -324,16 +328,28 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
         String resourceName,
         Map<String, Set<String>> envParameters
     ) throws SSOException, PolicyException, EntitlementException {
+        SSOToken adminToken = this.getSSOToken(adminSubject);
+        SSOToken userToken = this.getSSOToken(subject);
+        return performPolicyEvaluation(adminToken, userToken, serviceTypeName,
+            resourceName, envParameters);
+    }
+
+    private Set<PolicyDecisionTask.Task> performPolicyEvaluation(
+        SSOToken adminToken,
+        SSOToken token,
+        String serviceTypeName,
+        String resourceName,
+        Map<String, Set<String>> envParameters
+    ) throws SSOException, PolicyException, EntitlementException {
         Set<PolicyDecisionTask.Task> results = new
             HashSet<PolicyDecisionTask.Task>();
         ServiceType serviceType =
             ServiceTypeManager.getServiceTypeManager().getServiceType(
             serviceTypeName);
-        SSOToken token = getSSOToken(subject);
 
         ResourceComp comp = ResourceNameSplitter.split(resourceName);
         Set<Policy> hits = new HashSet<Policy>();
-        Map<String, Set<String>> misses = lookupCache(comp, hits);
+        Map<String, Set<String>> misses = lookupCache(comp, hits, false);
 
         MissedEvaluatorThread missedThread = null;
         EvaluatorThread hitThread = null;
@@ -341,8 +357,7 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
         if (!misses.isEmpty()) {
             missedThread = new MissedEvaluatorThread(this,
                 token, serviceType, resourceName, envParameters, hits);
-            missedThread.setSearchParameter(getSSOToken(adminSubject),
-                misses);
+            missedThread.setSearchParameter(adminToken, misses);
         }
         if (!hits.isEmpty()) {
             hitThread = new EvaluatorThread(
@@ -355,12 +370,12 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
 
         synchronized(lock) {
             if (hitThread != null) {
-                SMSThreadPool.scheduleTask(hitThread);
+                ThreadPool.submit(hitThread);
             } else {
                 hitResults = Collections.EMPTY_SET;
             }
             if (missedThread != null) {
-                SMSThreadPool.scheduleTask(missedThread);
+                ThreadPool.submit(missedThread);
             } else {
                 missedResults = Collections.EMPTY_SET;
             }
@@ -448,7 +463,7 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
 
             ResourceComp comp = ResourceNameSplitter.split(resourceName);
             Set<Policy> hits = new HashSet<Policy>();
-            Map<String, Set<String>> misses = lookupCache(comp, hits);
+            Map<String, Set<String>> misses = lookupCache(comp, hits, true);
             MissedSubResources missedThread = null;
             SubResources hitThread = null;
 
@@ -471,12 +486,12 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
 
             synchronized(lock) {
                 if (hitThread != null) {
-                    SMSThreadPool.scheduleTask(hitThread);
+                    ThreadPool.submit(hitThread);
                 } else {
                     hitResults = Collections.EMPTY_SET;
                 }
                 if (missedThread != null) {
-                    SMSThreadPool.scheduleTask(missedThread);
+                    ThreadPool.submit(missedThread);
                 } else {
                     missedResults = Collections.EMPTY_SET;
                 }
@@ -547,47 +562,15 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
 
     private Map<String, Set<String>> lookupCache(
         ResourceComp comp,
-        Set<Policy> map
+        Set<Policy> policySet,
+        boolean bSubTree
     ) {
         Map<String, Set<String>> misses = new HashMap<String, Set<String>>();
-        lookupCache(LBL_HOST_IDX, comp.getHostIndexes(), map, misses);
-        lookupCache(LBL_PATH_IDX, comp.getPathIndexes(), map, misses);
-        Set<String> set = new HashSet<String>();
-        set.add(comp.getPath());
-        lookupCache(LBL_PATH_PARENT_IDX, set, map, misses);
-        return misses;
-    }
-
-    private void lookupCache(
-        String index,
-        Set<String> lookupSet,
-        Set<Policy> hits,
-        Map<String, Set<String>> misses
-    ) {
         IIndexCache cache = getIndexCache();
-
-        for (String resIndex : lookupSet) {
-            Set<Policy> setCached = null;
-
-            if (index.equals(LBL_HOST_IDX)) {
-                setCached = cache.getHostIndex(resIndex);
-            } else if (index.equals(LBL_PATH_IDX)) {
-                setCached = cache.getPathIndex(resIndex);
-            } else {
-                setCached = cache.getPathParentIndex(resIndex);
-            }
-
-            if (setCached != null) {
-                hits.addAll(setCached);
-            } else {
-                Set<String> set = misses.get(index);
-                if (set == null) {
-                    set = new HashSet<String>();
-                    misses.put(index, set);
-                }
-                set.add(resIndex);
-            }
-        }
+        String parentPathIndx = (bSubTree) ? comp.getPath() : null;
+        cache.getPolicies(comp.getHostIndexes(), comp.getPathIndexes(),
+            parentPathIndx, policySet, misses);
+        return misses;
     }
 
     IIndexCache getIndexCache() {

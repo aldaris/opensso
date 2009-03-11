@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EvaluatorThread.java,v 1.4 2009-02-12 05:33:09 veiming Exp $
+ * $Id: EvaluatorThread.java,v 1.5 2009-03-11 04:57:49 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -30,7 +30,6 @@ package com.sun.identity.policy;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.policy.interfaces.ResourceName;
-import com.sun.identity.sm.SMSThreadPool;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -94,7 +93,7 @@ public class EvaluatorThread implements Runnable {
                     Runner eval = new Runner(this,
                         task, token, serviceType, actionNames,
                         envParameters);
-                    SMSThreadPool.scheduleTask(eval);
+                    ThreadPool.submit(eval);
                 }
 
                 while (counter > 0) {

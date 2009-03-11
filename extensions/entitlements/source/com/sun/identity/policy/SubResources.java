@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubResources.java,v 1.12 2009-02-12 08:34:41 veiming Exp $
+ * $Id: SubResources.java,v 1.13 2009-03-11 04:57:49 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -32,7 +32,6 @@ import com.iplanet.sso.SSOToken;
 import com.sun.identity.entitlement.util.ResourceComp;
 import com.sun.identity.entitlement.util.ResourceNameSplitter;
 import com.sun.identity.policy.interfaces.ResourceName;
-import com.sun.identity.sm.SMSThreadPool;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -59,7 +58,8 @@ public class SubResources implements Runnable {
     protected Exception exception;
     final Object lock = new Object();
     private boolean done;
-    
+
+
     SubResources(
         PolicyEvaluatorAdaptor parent,
         SSOToken token,
@@ -105,7 +105,7 @@ public class SubResources implements Runnable {
                     EvaluatorThread eval = new EvaluatorThread(
                         this, task, token, serviceType, actionNames,
                         envParameters);
-                    SMSThreadPool.scheduleTask(eval);
+                    ThreadPool.submit(eval);
                 }
 
                 while (tasksCount > 0) {
@@ -151,18 +151,7 @@ public class SubResources implements Runnable {
     private Set<Policy> search(Set<String> hostIndexes, Set<String>pathIndexes){
         Set<Policy> searchResults  = new HashSet<Policy>();
         IIndexCache cache = parent.getIndexCache();
-        for (String s : hostIndexes) {
-            Set<Policy> set = cache.getHostIndex(s);
-            if (set != null) {
-                searchResults.addAll(set);
-            }
-        }
-        for (String s : pathIndexes) {
-            Set<Policy> set = cache.getPathIndex(s);
-            if (set != null) {
-                searchResults.addAll(set);
-            }
-        }
+        cache.getPolicies(hostIndexes, pathIndexes, null, searchResults, null);
         return searchResults;
     }
 

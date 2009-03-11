@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IIndexCache.java,v 1.1 2009-02-10 19:31:03 veiming Exp $
+ * $Id: IIndexCache.java,v 1.2 2009-03-11 04:57:49 veiming Exp $
  */
 
 package com.sun.identity.policy;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -34,27 +35,15 @@ import java.util.Set;
  * @author dennis
  */
 public interface IIndexCache {
-    /**
-     * Returns policies associated with a host index.
-     *
-     * @param idx host index
-     * @return Set of policies associated with this index.
-     */
-    Set<Policy> getHostIndex(String idx);
+    String LBL_HOST_IDX = "host";
+    String LBL_PATH_IDX = "path";
+    String LBL_PATH_PARENT_IDX = "pathparent";
 
-    /**
-     * Returns policies associated with a path index.
-     *
-     * @param idx path index
-     * @return Set of policies associated with this index.
-     */
-    Set<Policy> getPathIndex(String idx);
-
-    /**
-     * Returns policies associated with a path parent index.
-     *
-     * @param idx path parent index
-     * @return Set of policies associated with this index.
-     */
-    Set<Policy> getPathParentIndex(String idx);
+    void getPolicies(
+        Set<String> hostIndexes,
+        Set<String> pathIndexes,
+        String parentPathIndx,
+        Set<Policy> hits,
+        Map<String, Set<String>> misses
+    );
 }
