@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<span
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ice="http://www.icesoft.com/icefaces/component"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:o="http://opensso.dev.java.net">
+    <span class="section-head">
+        <span class="section-title">
+            <ice:outputText value="URL Resources"/>
+        </span>
+        <span class="section-links">
+            <o:clink
+                type="add"
+                handler="#{urlResourcesAddHandler}"/>
+            <ui:include src="url-resources-add-popup.xhtml"/>
+            <ice:outputText value="|"/>
+            <o:clink
+                type="search"
+                handler="#{urlResourcesSearchHandler}"/>
+            <ui:include src="url-resources-search-popup.xhtml"/>
+            <ice:outputText
+                visible="#{!empty urlResourcesSearchBean.filter}"
+                value="(#{urlResourcesSearchBean.filter})"/>
+        </span>
+    </span>
+    <div class="clear"></div>
+    <ice:panelGroup
+        scrollHeight="200px">
+        <ice:panelSeries
+            styleClass="url-resource"
+            var="urlResource"
+            value="#{urlResourceChooserBean.availableResources}">
+            <ice:panelGrid columns="2">
+                <ice:selectBooleanCheckbox
+                    id="resource-checkbox"
+                    value="#{urlResource.selected}"
+                    partialSubmit="true"/>
+                <ice:outputLabel
+                    for="resource-checkbox"
+                    value="#{urlResource.pattern}"/>
+            </ice:panelGrid>
+            <ice:panelGroup
+                styleClass="url-resource-excepted"
+                visible="#{urlResource.selected}">
+                <ice:panelGrid columns="3">
+                    <ice:selectBooleanCheckbox
+                        id="resource-excepted-checkbox"
+                        value="#{urlResource.excepted}"
+                        partialSubmit="true">
+                    </ice:selectBooleanCheckbox>
+                    <ice:outputLabel
+                        for="resource-excepted-checkbox">
+                        Exceptions?
+                    </ice:outputLabel>
+                    <ice:commandLink
+                        visible="#{urlResource.excepted}"
+                        actionListener="#{urlResourceExceptionsHandler.showListener}"
+                        styleClass="command-link">
+                        <f:attribute name="bean" value="#{urlResource.urlResourceExceptionsBean}"/>
+                        <ice:outputText
+                            value="#{urlResource.urlResourceExceptionsBean.shownActionText}"/>
+                    </ice:commandLink>
+                </ice:panelGrid>
+                <ice:panelGrid
+                    visible="#{urlResource.urlResourceExceptionsBean.excepted &amp;&amp; urlResource.urlResourceExceptionsBean.shown}"
+                    columns="1">
+                    <ice:panelGroup
+                        styleClass="sub-section-head">
+                        <ice:outputText
+                            value="Enter parts to exclude"/>
+                    </ice:panelGroup>
+                    <ice:panelSeries
+                        value="#{urlResource.urlResourceExceptionsBean.urlResourceExceptionBeans}"
+                        var="urlResourceExceptionBean">
+                        <ice:panelGroup>
+                            <ice:outputLabel
+                                for="url-resource-exception-inputtext"
+                                value="#{urlResource.pattern}/"/>
+                            <ice:inputText
+                                id="url-resource-exception-inputtext"
+                                value="#{urlResourceExceptionBean.part}"/>
+                        </ice:panelGroup>
+                    </ice:panelSeries>
+                    <ice:panelGrid
+                        styleClass="button-group"
+                        columns="2">
+                        <o:button
+                            type="add"
+                            handler="#{urlResourceExceptionsHandler}"
+                            bean="#{urlResource.urlResourceExceptionsBean}"/>
+                        <o:button
+                            handler="#{urlResourceExceptionsHandler}"
+                            bean="#{urlResource.urlResourceExceptionsBean}"
+                            type="finish"/>
+                    </ice:panelGrid>
+                </ice:panelGrid>
+            </ice:panelGroup>
+        </ice:panelSeries>
+    </ice:panelGroup>
+</span>

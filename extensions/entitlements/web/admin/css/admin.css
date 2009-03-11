@@ -41,6 +41,7 @@ body {
 }
 
 .label-column {
+    padding-top: 7px;
     vertical-align: top;
 }
 
@@ -204,12 +205,48 @@ div.button-wrapper a.button img.left {
     top: 50px;
 }
 
+.collapsible-panel-actions {
+    position: relative;
+    top: 10px;
+    text-align: right;
+    margin-right: 8px;
+    height: 0px;
+}
+
+.subjects-selected {
+    padding-left: 4px;
+    border: 1px solid #dddddd;
+    width: 70%;
+    vertical-align: top;
+    margin-right: 32px;
+}
+
+.subjects-available {
+    padding-left: 4px;
+    border: 1px solid #dddddd;
+    width: 30%;
+    vertical-align: top;
+}
+
+.subjects-gutter {
+    padding: 16px;
+}
+
 .subject-chooser-subject {
     z-index: 10;
 }
+
 .policy-create-subjects {
-    margin-left: 16px;
+    width: 100%;
 }
+
+.policy-create-subjects .drop-target {
+    background: #ffffff;
+    border: 1px solid #000000;
+    padding: 16px;
+    margin: 32px;
+}
+
 
 .subject-chooser-button-group {
     margin-left: 16px;

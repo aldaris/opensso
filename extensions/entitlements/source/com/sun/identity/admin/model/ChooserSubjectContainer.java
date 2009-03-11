@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class ChooserSubjectContainer
-        extends BasicSubjectContainer
+        extends BaseSubjectContainer
         implements Serializable {
 
     private List<ViewSubject> available = new ArrayList<ViewSubject>();
@@ -23,9 +23,10 @@ public abstract class ChooserSubjectContainer
         chooserSubjectHandler.setChooserSubjectContainer(this);
     }
 
+    @Override
     public void setSubjectDao(SubjectDao subjectDao) {
         super.setSubjectDao(subjectDao);
-
+        getViewSubjects().addAll(subjectDao.getViewSubjects());
         filteredAvailable = getViewSubjects();
         available.addAll(getViewSubjects());
     }

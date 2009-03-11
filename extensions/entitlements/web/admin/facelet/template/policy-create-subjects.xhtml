@@ -6,20 +6,64 @@
     xmlns:ice="http://www.icesoft.com/icefaces/component"
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
-    <ice:panelGroup>
-        <c:forEach var="subjectContainer" items="#{subjectContainers}">
-            <ice:panelCollapsible>
+    <ice:panelGrid
+        columns="3"
+        styleClass="policy-create-subjects"
+        columnClasses="subjects-selected subjects-gutter subjects-available">
+        <ice:panelGrid
+            columns="1"
+            style="width: 100%">
+            <c:forEach var="subjectContainer" items="#{selectedSubjectContainers}">
+                <o:menupanel
+                    bean="#{subjectContainer}"
+                    handler="#{subjectContainersHandler}"
+                    title="#{subjectContainer.name}">
+                    <ui:define name="menupanel-body">
+                        <ui:include src="#{subjectContainer.template}">
+                            <ui:param
+                                name="subjectContainer"
+                                value="#{subjectContainer}"/>
+                        </ui:include>
+                    </ui:define>
+                </o:menupanel>
+            </c:forEach>
+            <ice:panelGroup
+                styleClass="drop-target"
+                dropTarget="true"
+                dropListener="#{subjectContainersHandler.dropListener}">
+                Drop here ...
+            </ice:panelGroup>
+        </ice:panelGrid>
+        <ice:panelGroup/>
+        <ice:panelGrid
+            columns="1"
+            style="width: 100%">
+            <ice:panelCollapsible
+                expanded="true">
                 <f:facet name="header">
                     <ice:panelGroup>
-                        <ice:outputText value="#{subjectContainer.subjectType.name}"/>
+                        <ice:outputText value="Drag and Drop"/>
                     </ice:panelGroup>
                 </f:facet>
-                <ui:include src="#{subjectContainer.subjectType.template}">
-                    <ui:param
-                        name="subjectContainer"
-                        value="#{subjectContainer}"/>
-                </ui:include>
+                <ice:panelSeries
+                    value="#{availableSubjectContainers}"
+                    var="subjectContainer">
+                    <ice:panelGroup
+                        dragValue="#{subjectContainer}"
+                        dragOptions="dragGhost"
+                        draggable="#{!subjectContainer.active}">
+                        <ice:panelGrid columns="2">
+                            <ice:graphicImage value="../image/user.png"/>
+                            <ice:panelGroup>
+                                <ice:outputText value="#{subjectContainer.name}"/>
+                                <ice:outputText
+                                    visible="#{subjectContainer.active}"
+                                    value="(already added)"/>
+                            </ice:panelGroup>
+                        </ice:panelGrid>
+                    </ice:panelGroup>
+                </ice:panelSeries>
             </ice:panelCollapsible>
-        </c:forEach>
-    </ice:panelGroup>
+        </ice:panelGrid>
+    </ice:panelGrid>
 </span>

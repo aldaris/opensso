@@ -1,14 +1,15 @@
 package com.sun.identity.admin.handler;
 
-import com.sun.identity.admin.model.UrlResourceBean;
+import com.sun.identity.admin.model.Resource;
+import com.sun.identity.admin.model.UrlResource;
 import com.sun.identity.admin.model.UrlResourcesAddBean;
-import com.sun.identity.admin.model.UrlResourcesBean;
 import java.io.Serializable;
+import java.util.List;
 import javax.faces.event.ActionEvent;
 
 public class UrlResourcesAddHandler implements Serializable {
     private UrlResourcesAddBean urlResourcesAddBean;
-    private UrlResourcesBean urlResourcesBean;
+    private List<Resource> resources;
 
     public void addListener(ActionEvent event) {
         getUrlResourcesAddBean().setVisible(true);
@@ -17,9 +18,9 @@ public class UrlResourcesAddHandler implements Serializable {
     public void okListener(ActionEvent event) {
         // TODO
         String pattern = urlResourcesAddBean.getPattern();
-        UrlResourceBean urb = new UrlResourceBean();
-        urb.setPattern(pattern);
-        urlResourcesBean.getUrlResourceBeans().add(urb);
+        UrlResource ur = new UrlResource();
+        ur.setPattern(pattern);
+        getResources().add(ur);
 
         urlResourcesAddBean.setVisible(false);
     }
@@ -36,11 +37,11 @@ public class UrlResourcesAddHandler implements Serializable {
         this.urlResourcesAddBean = urlResourcesAddBean;
     }
 
-    public UrlResourcesBean getUrlResourcesBean() {
-        return urlResourcesBean;
+    public List<Resource> getResources() {
+        return resources;
     }
 
-    public void setUrlResourcesBean(UrlResourcesBean urlResourcesBean) {
-        this.urlResourcesBean = urlResourcesBean;
+    public void setResources(List<Resource> resources) {
+        this.resources = resources;
     }
 }

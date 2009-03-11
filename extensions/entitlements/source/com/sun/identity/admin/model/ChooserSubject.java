@@ -15,12 +15,14 @@ public abstract class ChooserSubject implements ViewSubject {
     }
 
     public boolean equals(Object o) {
-        UserSubject other = (UserSubject)o;
+        ChooserSubject other = (ChooserSubject)o;
         if (other.getName().equals(name)) {
             return true;
         }
         return false;
     }
+
+    // TODO public int hashcode
 
     public boolean isSelected() {
         return selected;

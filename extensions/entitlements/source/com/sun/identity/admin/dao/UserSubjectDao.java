@@ -9,54 +9,54 @@ import java.util.List;
 public class UserSubjectDao implements SubjectDao, Serializable {
 
     public List<ViewSubject> getViewSubjects() {
-        List<ViewSubject> UserSubjectBean = new ArrayList<ViewSubject>();
+        List<ViewSubject> userSubjects = new ArrayList<ViewSubject>();
         UserSubject usb;
 
         // TODO - dummy data
         usb = new UserSubject();
         usb.setName("bob");
-        UserSubjectBean.add(usb);
+        userSubjects.add(usb);
 
         usb = new UserSubject();
         usb.setName("bill");
-        UserSubjectBean.add(usb);
+        userSubjects.add(usb);
 
         usb = new UserSubject();
         usb.setName("bud");
-        UserSubjectBean.add(usb);
+        userSubjects.add(usb);
 
         usb = new UserSubject();
         usb.setName("benny");
-        UserSubjectBean.add(usb);
+        userSubjects.add(usb);
 
         usb = new UserSubject();
         usb.setName("ben");
-        UserSubjectBean.add(usb);
+        userSubjects.add(usb);
 
         usb = new UserSubject();
         usb.setName("brandon");
-        UserSubjectBean.add(usb);
+        userSubjects.add(usb);
 
         usb = new UserSubject();
         usb.setName("sally");
-        UserSubjectBean.add(usb);
+        userSubjects.add(usb);
 
         usb = new UserSubject();
         usb.setName("sarah");
-        UserSubjectBean.add(usb);
+        userSubjects.add(usb);
 
         usb = new UserSubject();
         usb.setName("sylvia");
-        UserSubjectBean.add(usb);
+        userSubjects.add(usb);
 
         usb = new UserSubject();
         usb.setName("stephanie");
-        UserSubjectBean.add(usb);
+        userSubjects.add(usb);
 
         usb = new UserSubject();
         usb.setName("sophie");
-        UserSubjectBean.add(usb);
+        userSubjects.add(usb);
 
-        return UserSubjectBean;
+        return userSubjects;
     }
 }

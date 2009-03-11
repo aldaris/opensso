@@ -16,14 +16,14 @@ public class WizardHandler implements Serializable {
         this.wizardBean = wizardBean;
     }
 
-    private int getStep(ActionEvent event) {
+    protected int getStep(ActionEvent event) {
         String val = (String) event.getComponent().getAttributes().get("step");
         int step = Integer.parseInt(val);
 
         return step;
     }
 
-    private int getSteps(ActionEvent event) {
+    protected int getSteps(ActionEvent event) {
         String val = (String) event.getComponent().getAttributes().get("steps");
         int steps = Integer.parseInt(val);
 

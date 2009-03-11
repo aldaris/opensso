@@ -2,7 +2,7 @@ package com.sun.identity.admin.model;
 
 import java.io.Serializable;
 
-public class UrlResourceBean implements Serializable {
+public class UrlResource implements Resource, Serializable {
     private boolean selected = false;
     private UrlResourceExceptionsBean urlResourceExceptionsBean = new UrlResourceExceptionsBean();
     private String pattern;
@@ -37,5 +37,10 @@ public class UrlResourceBean implements Serializable {
 
     public void setUrlResourceExceptionsBean(UrlResourceExceptionsBean exceptionsBean) {
         this.urlResourceExceptionsBean = exceptionsBean;
+    }
+
+    @Override
+    public String toString() {
+        return pattern;
     }
 }

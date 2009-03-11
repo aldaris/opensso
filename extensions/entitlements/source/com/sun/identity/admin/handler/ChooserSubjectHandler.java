@@ -82,13 +82,13 @@ public class ChooserSubjectHandler implements Serializable {
     }
 
     public void dropListener(DropEvent dropEvent) {
-        List<ViewSubject> dest = (List<ViewSubject>) dropEvent.getTargetDropValue();
-        List<ViewSubject> src = (List<ViewSubject>) dropEvent.getTargetDragValue();
-
-        List<ViewSubject> dragged = new ArrayList<ViewSubject>();
-
         int type = dropEvent.getEventType();
         if (type == DndEvent.DROPPED) {
+            List<ViewSubject> dest = (List<ViewSubject>) dropEvent.getTargetDropValue();
+            List<ViewSubject> src = (List<ViewSubject>) dropEvent.getTargetDragValue();
+
+            List<ViewSubject> dragged = new ArrayList<ViewSubject>();
+
             for (ViewSubject vs : src) {
                 ChooserSubject cs = (ChooserSubject) vs;
                 if (cs.isSelected()) {

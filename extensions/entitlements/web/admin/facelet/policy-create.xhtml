@@ -6,10 +6,10 @@
                 xmlns:ice="http://www.icesoft.com/icefaces/component"
                 xmlns:o="http://opensso.dev.java.net">
     <ui:define name="panel-title">
-        <ice:outputText value="${msg.policyCreatePanelTitle}" />
+        <ice:outputText value="#{msg.policyCreatePanelTitle}" />
     </ui:define>
     <ui:define name="panel-details">
-        <ice:outputText value="${msg.policyCreatePanelDetails}" />
+        <ice:outputText value="#{msg.policyCreatePanelDetails}" />
     </ui:define>
     <ui:define name="panel-body">
         <o:wizard
@@ -21,161 +21,16 @@
                     step="0"
                     label="Step 1: Getting started">
                     <ui:define name="wizard-step-body">
-                        <span class="section-head">
-                            <span class="section-title">
-                                <ice:outputText value="New Policy Name and Description"/>
-                            </span>
-                            <span class="section-links">
-                                <o:nbsp/>
-                            </span>
-                        </span>
-                        <div class="clear"></div>
-                        <ice:panelGrid
-                            columns="2"
-                            columnClasses="label-column,input-column">
-                            <ice:panelGroup>
-                                <ice:outputLabel
-                                    for="policy-name"
-                                    value="New Policy Name"/>
-                            </ice:panelGroup>
-                            <ice:panelGroup>
-                                <ice:inputText id="policy-name"/>
-                            </ice:panelGroup>
-                            <ice:panelGroup>
-                                <ice:outputLabel
-                                    for="policy-description"
-                                    value="New Policy Description"/>
-                            </ice:panelGroup>
-                            <ice:inputTextarea
-                                id="policy-description"
-                                styleClass="policy-description"/>
-                        </ice:panelGrid>
-                        <span class="section-head">
-                            <span class="section-title">
-                                <ice:outputText
-                                    value="Application Type"/>
-                            </span>
-                            <span class="section-title-links">
-                                <o:nbsp/>
-                            </span>
-                        </span>
-                        <div class="clear"></div>
-                        <ice:panelGrid
-                            columns="2"
-                            columnClasses="label-column,input-column">
-                            <ice:panelGroup>
-                                <ice:outputLabel
-                                    for="application-type"
-                                    value="Application Type"/>
-                            </ice:panelGroup>
-                            <ice:panelGroup>
-                                <ice:selectOneMenu
-                                    id="application-type"
-                                    value="#{applicationsBean.applicationBean.name}">
-                                    <f:selectItems
-                                        value="#{applicationsBean.applicationSelectItems}"/>
-                                </ice:selectOneMenu>
-                            </ice:panelGroup>
-                        </ice:panelGrid>
+                        <ui:include src="template/policy-create-name.xhtml"/>
                     </ui:define>
                 </o:wstep>
                 <o:wstep
                     step="1"
                     label="Step 2: Select or add a resource to protect">
                     <ui:define name="wizard-step-body">
-                        <span class="section-head">
-                            <span class="section-title">
-                                <ice:outputText value="URL Resources"/>
-                            </span>
-                            <span class="section-links">
-                                <o:clink
-                                    type="add"
-                                    handler="#{urlResourcesAddHandler}"/>
-                                <ui:include src="template/url-resources-add-popup.xhtml"/>
-                                <ice:outputText value="|"/>
-                                <o:clink
-                                    type="search"
-                                    handler="#{urlResourcesSearchHandler}"/>
-                                <ui:include src="template/url-resources-search-popup.xhtml"/>
-                                <ice:outputText
-                                    visible="#{!empty urlResourcesSearchBean.filter}"
-                                    value="(#{urlResourcesSearchBean.filter})"/>
-                            </span>
-                        </span>
-                        <div class="clear"></div>
-                        <ice:panelGroup
-                            scrollHeight="200px">
-                            <ice:panelSeries
-                                styleClass="url-resource"
-                                var="urlResourceBean"
-                                value="#{urlResourcesBean.urlResourceBeans}">
-                                <ice:panelGrid columns="2">
-                                    <ice:selectBooleanCheckbox
-                                        id="resource-checkbox"
-                                        value="#{urlResourceBean.selected}"
-                                        partialSubmit="true"/>
-                                    <ice:outputLabel
-                                        for="resource-checkbox"
-                                        value="#{urlResourceBean.pattern}"/>
-                                </ice:panelGrid>
-                                <ice:panelGroup
-                                    styleClass="url-resource-excepted"
-                                    visible="#{urlResourceBean.selected}">
-                                    <ice:panelGrid columns="3">
-                                        <ice:selectBooleanCheckbox
-                                            id="resource-excepted-checkbox"
-                                            value="#{urlResourceBean.excepted}"
-                                            partialSubmit="true">
-                                        </ice:selectBooleanCheckbox>
-                                        <ice:outputLabel
-                                            for="resource-excepted-checkbox">
-                                            Exceptions?
-                                        </ice:outputLabel>
-                                        <ice:commandLink
-                                            visible="#{urlResourceBean.excepted}"
-                                            actionListener="#{urlResourceExceptionsHandler.showListener}"
-                                            styleClass="command-link">
-                                            <f:attribute name="bean" value="#{urlResourceBean.urlResourceExceptionsBean}"/>
-                                            <ice:outputText
-                                                value="#{urlResourceBean.urlResourceExceptionsBean.shownActionText}"/>
-                                        </ice:commandLink>
-                                    </ice:panelGrid>
-                                    <ice:panelGrid
-                                        visible="#{urlResourceBean.urlResourceExceptionsBean.excepted &amp;&amp; urlResourceBean.urlResourceExceptionsBean.shown}"
-                                        columns="1">
-                                        <ice:panelGroup
-                                            styleClass="sub-section-head">
-                                            <ice:outputText
-                                                value="Enter parts to exclude"/>
-                                        </ice:panelGroup>
-                                        <ice:panelSeries
-                                            value="#{urlResourceBean.urlResourceExceptionsBean.urlResourceExceptionBeans}"
-                                            var="urlResourceExceptionBean">
-                                            <ice:panelGroup>
-                                                <ice:outputLabel
-                                                    for="url-resource-exception-inputtext"
-                                                    value="#{urlResourceBean.pattern}/"/>
-                                                <ice:inputText
-                                                    id="url-resource-exception-inputtext"
-                                                    value="#{urlResourceExceptionBean.part}"/>
-                                            </ice:panelGroup>
-                                        </ice:panelSeries>
-                                        <ice:panelGrid
-                                            styleClass="button-group"
-                                            columns="2">
-                                            <o:button
-                                                type="add"
-                                                handler="#{urlResourceExceptionsHandler}"
-                                                bean="#{urlResourceBean.urlResourceExceptionsBean}"/>
-                                            <o:button
-                                                handler="#{urlResourceExceptionsHandler}"
-                                                bean="#{urlResourceBean.urlResourceExceptionsBean}"
-                                                type="finish"/>
-                                        </ice:panelGrid>
-                                    </ice:panelGrid>
-                                </ice:panelGroup>
-                            </ice:panelSeries>
-                        </ice:panelGroup>
+                        <ui:include
+                            src="#{policyCreateWizardBean.application.applicationType.template}">
+                        </ui:include>
                     </ui:define>
                 </o:wstep>
                 <o:wstep

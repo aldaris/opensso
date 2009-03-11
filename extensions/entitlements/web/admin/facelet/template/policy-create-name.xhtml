@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<span
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ice="http://www.icesoft.com/icefaces/component"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:o="http://opensso.dev.java.net">
+    <span class="section-head">
+        <span class="section-title">
+            <ice:outputText value="New Policy Name and Description"/>
+        </span>
+        <span class="section-links">
+            <o:nbsp/>
+        </span>
+    </span>
+    <div class="clear"></div>
+    <ice:panelGrid
+        columns="2"
+        columnClasses="label-column,input-column">
+        <ice:panelGroup>
+            <ice:outputLabel
+                for="policy-name"
+                value="New Policy Name"/>
+        </ice:panelGroup>
+        <ice:panelGroup>
+            <ice:inputText id="policy-name"/>
+        </ice:panelGroup>
+        <ice:panelGroup>
+            <ice:outputLabel
+                for="policy-description"
+                value="New Policy Description"/>
+        </ice:panelGroup>
+        <ice:inputTextarea
+            id="policy-description"
+            styleClass="policy-description"/>
+    </ice:panelGrid>
+    <span class="section-head">
+        <span class="section-title">
+            <ice:outputText
+                value="Application"/>
+        </span>
+        <span class="section-title-links">
+            <o:nbsp/>
+        </span>
+    </span>
+    <div class="clear"></div>
+    <ice:panelGrid
+        columns="2"
+        columnClasses="label-column,input-column">
+        <ice:panelGroup>
+            <ice:outputLabel
+                for="application-type"
+                value="Application Type"/>
+        </ice:panelGroup>
+        <ice:panelGroup>
+            <ice:selectOneMenu
+                id="application-type"
+                partialSubmit="true"
+                valueChangeListener="#{policyCreateWizardHandler.applicationChanged}">
+                <f:selectItems
+                    value="#{policyCreateWizardBean.applicationItems}"/>
+            </ice:selectOneMenu>
+        </ice:panelGroup>
+    </ice:panelGrid>
+</span>
