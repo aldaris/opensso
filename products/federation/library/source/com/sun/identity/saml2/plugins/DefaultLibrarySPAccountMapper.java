@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DefaultLibrarySPAccountMapper.java,v 1.11 2008-11-26 01:42:26 qcheng Exp $
+ * $Id: DefaultLibrarySPAccountMapper.java,v 1.12 2009-03-12 20:34:45 huacui Exp $
  *
  */
 
@@ -273,7 +273,7 @@ public class DefaultLibrarySPAccountMapper extends DefaultAccountMapper
                    new DefaultSPAttributeMapper();
         Map attributeMap = attributeMapper.getConfigAttributeMap(
                    realm, entityID, SP);
-        if(attributeMap == null && attributeMap.isEmpty()) {
+        if(attributeMap == null || attributeMap.isEmpty()) {
            if(debug.messageEnabled()) {
               debug.message("DefaultLibrarySPAccountMapper.getAutoFedUser: " +
               "attribute map is not configured.");
