@@ -7,6 +7,7 @@ public class Application implements Serializable {
     private String name;
     private ApplicationType applicationType;
     private List<Resource> defaultResources;
+    private List<Action> defaultActions;
 
     public String getName() {
         return name;
@@ -35,6 +36,14 @@ public class Application implements Serializable {
     @Override
     public String toString() {
         return name;
+    }
+
+    public List<Action> getDefaultActions() {
+        return defaultActions;
+    }
+
+    public void setDefaultActions(List<Action> defaultActions) {
+        this.defaultActions = defaultActions;
     }
 
 }

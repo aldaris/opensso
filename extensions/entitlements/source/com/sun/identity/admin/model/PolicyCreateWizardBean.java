@@ -1,5 +1,6 @@
 package com.sun.identity.admin.model;
 
+import com.sun.identity.admin.DeepCloneableArrayList;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,7 @@ public class PolicyCreateWizardBean
     private List<Resource> resources = new ArrayList<Resource>();
     private Application application;
     private Map<String,Application> applications;
+    private List<Action> actions;
 
     public List<Resource> getResources() {
         return resources;
@@ -36,6 +38,7 @@ public class PolicyCreateWizardBean
 
     public void setApplication(Application application) {
         this.application = application;
+        actions = new DeepCloneableArrayList(application.getDefaultActions()).deepClone();
     }
 
     public List<SelectItem> getApplicationItems() {
@@ -54,6 +57,14 @@ public class PolicyCreateWizardBean
 
     public void setApplications(Map<String, Application> applications) {
         this.applications = applications;
+    }
+
+    public List<Action> getActions() {
+        return actions;
+    }
+
+    public void setActions(List<Action> actions) {
+        this.actions = actions;
     }
 
 }
