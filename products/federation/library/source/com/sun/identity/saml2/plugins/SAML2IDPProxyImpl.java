@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAML2IDPProxyImpl.java,v 1.4 2009-01-20 18:53:54 weisun2 Exp $
+ * $Id: SAML2IDPProxyImpl.java,v 1.5 2009-03-12 20:33:40 huacui Exp $
  */
 
 package com.sun.identity.saml2.plugins;
@@ -101,8 +101,11 @@ public class SAML2IDPProxyImpl implements SAML2IDPFinder {
             if (useIntroductionForProxying == null ||
                 !useIntroductionForProxying.equals("true")) 
             {
-                List proxyIDPs = (List) spConfigAttrsMap.get(
-                    SAML2Constants.IDP_PROXY_LIST);
+                List proxyIDPs = null;
+                if ((spConfigAttrsMap != null) && (!spConfigAttrsMap.isEmpty())) {
+                    proxyIDPs = (List) spConfigAttrsMap.get(
+                        SAML2Constants.IDP_PROXY_LIST);
+                }
                 if (proxyIDPs == null || proxyIDPs.isEmpty()) {
                     SAML2Utils.debug.error("SAML2IDPProxyImpl.getPrefferedIDP:" +
                         "Preferred IDPs are null.");
