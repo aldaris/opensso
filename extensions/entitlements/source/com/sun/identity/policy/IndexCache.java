@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IndexCache.java,v 1.6 2009-03-11 04:57:49 veiming Exp $
+ * $Id: IndexCache.java,v 1.7 2009-03-12 22:55:29 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -177,8 +177,9 @@ public class IndexCache implements ServiceListener, IIndexCache {
                 }
             }
 
-            Set<Policy> cachedPoliciesForHost = new HashSet<Policy>();
+            // TOFIX: pass in host for intersection
             if (hostIndexes != null) {
+                Set<Policy> cachedPoliciesForHost = new HashSet<Policy>();
                 for (String r : hostIndexes) {
                     Set<Policy> cached = (Set<Policy>) hostIndexCache.get(r);
                     if (cached == null) {
@@ -187,9 +188,12 @@ public class IndexCache implements ServiceListener, IIndexCache {
                         cachedPoliciesForHost.addAll(cached);
                     }
                 }
-            }
 
-            cachedPoliciesForPath.retainAll(cachedPoliciesForHost);
+                if (!cachedPoliciesForPath.isEmpty()) {
+                    cachedPoliciesForPath.retainAll(cachedPoliciesForHost);
+                }
+            }
+            
             hits.addAll(cachedPoliciesForPath);
         } finally {
             rwlock.readLock().unlock();
