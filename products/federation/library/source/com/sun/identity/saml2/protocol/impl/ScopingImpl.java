@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ScopingImpl.java,v 1.4 2008-09-17 21:04:22 qcheng Exp $
+ * $Id: ScopingImpl.java,v 1.5 2009-03-12 20:32:41 huacui Exp $
  *
  */
 
@@ -286,7 +286,7 @@ public class ScopingImpl implements Scoping {
         }
 
 	NodeList nList = element.getChildNodes();
-	if ((nList != null) || (nList.getLength()>0)) {
+	if ((nList != null) && (nList.getLength()>0)) {
 	    if ((requesterIDList == null) || (requesterIDList.isEmpty())) {
 	        requesterIDList = new ArrayList();
 	    }
