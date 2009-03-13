@@ -22,24 +22,19 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: ConfigureGoogleAppsComplete.xml,v 1.3 2009-03-05 02:19:57 asyhuang Exp $ 
+   $Id: propertyConfigureGoogleAppsComplete.xml,v 1.2 2009-03-13 21:34:51 asyhuang Exp $ 
 
 -->
 
 <!DOCTYPE propertysheet SYSTEM "propertysheet.dtd">
 
 <propertysheet>    
-    <section name="DescriptionSection" defaultValue="">
-        <property>
-            <label name="lblName" defaultValue="configure.google.apps.complete.label.name" labelFor="tfName" />
-            <cc name="tfName" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />
-        </property>
-        <property>
-            <label name="lblDescription" 
-                   defaultValue="configure.google.apps.complete.label.description" 
-                   labelFor="tfDescription" />
-            <cc name="tfDescription" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag" />
-        </property>
+    <section name="DescriptionSection" defaultValue="">              
+        <property span="true">
+            <cc name="lblDescription"  tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag">                   
+                <attribute name="defaultValue" value="configure.google.apps.complete.label.description" />
+            </cc>
+        </property>      
     </section>
     <section name="URLSection" defaultValue="configure.google.apps.complete.url.section">
         <property>
@@ -93,41 +88,34 @@
     </section>
     <section name="ConfigurationInstruction" defaultValue="configure.google.apps.complete.instruction.section">
         <property span="true">
-            <label name="step1"
-                   defaultValue="configure.google.apps.complete.step1"
-                   labelFor="step1" />
+            <cc name="step1"  tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag">
+                <attribute name="defaultValue" value="configure.google.apps.complete.step1" />
+            </cc>
         </property>
         <property span="true">
-            <label name="step2"
-                   defaultValue="configure.google.apps.complete.step2"
-                   labelFor="step2" />
-        </property>
-        
-        
+            <cc name="step2"  tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag">
+                <attribute name="defaultValue" value="configure.google.apps.complete.step2" />
+            </cc>
+        </property>              
         <property span="true">
-            <label name="step3"
-                   defaultValue="configure.google.apps.complete.step3"
-                   labelFor="step3" />
-        </property>
-        
+            <cc name="step3"  tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag">                   
+                <attribute name="defaultValue" value="configure.google.apps.complete.step3" />
+            </cc>
+        </property>        
         <property span="true">
-            <label name="step4"
-                   defaultValue="configure.google.apps.complete.step4"
-                   labelFor="step4" />
-        </property>
-        
+            <cc name="step4"  tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag">                   
+                <attribute name="defaultValue" value="configure.google.apps.complete.step4" />
+            </cc>
+        </property>        
         <property span="true">
-            <label name="step5"
-                   defaultValue="configure.google.apps.complete.step5"
-                   labelFor="step5" />
-        </property>
-        
+            <cc name="step5"  tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag">                   
+                <attribute name="defaultValue" value="configure.google.apps.complete.step5" />
+            </cc>
+        </property>        
         <property span="true">
-            <label name="step6"
-                   defaultValue="configure.google.apps.complete.step6"
-                   labelFor="step6" />
-        </property>
-        
-        
+            <cc name="step6"  tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag">                   
+                <attribute name="defaultValue" value="configure.google.apps.complete.step6" />
+            </cc>
+        </property>                       
     </section>
 </propertysheet>

@@ -22,41 +22,56 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyConfigureGoogleApps.xml,v 1.3 2009-03-10 18:06:19 babysunil Exp $
+   $Id: propertyConfigureGoogleApps.xml,v 1.4 2009-03-13 21:34:51 asyhuang Exp $
 
 -->
 
 <!DOCTYPE propertysheet SYSTEM "propertysheet.dtd">
 
 <propertysheet>
-    <section name="idpconf" defaultValue="configure.googleapps.section.idp.setup">
+    <section name="idpconf" defaultValue="configure.google.apps.section.idp.setup">
     <property required="true">
-        <label name="lblRealm" defaultValue="configure.googleapps.label.realm" labelFor="tfRealm" />
+        <label name="lblRealm" defaultValue="configure.google.apps.label.realm" labelFor="tfRealm" />
         <cc name="tfRealm" tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag">
             <attribute name="onChange" value="realmSelect(this);" />
         </cc>       
     </property>
     <property required="true">
-        <label name="lblCOT" defaultValue="configure.googleapps.label.cot" labelFor="choiceCOT" />
+        <label name="lblCOT" defaultValue="configure.google.apps.label.cot" labelFor="choiceCOT" />
         <cc name="choiceCOT" tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag">
             <attribute name="onChange" value="cotSelect(this);" />
         </cc>
     </property>
     <property required="true">
-        <label name="lblIDP" defaultValue="configure.googleapps.label.idp" labelFor="choiceIDP" />
+        <label name="lblIDP" defaultValue="configure.google.apps.label.idp" labelFor="choiceIDP" />
         <cc name="choiceIDP" tagclass="com.sun.web.ui.taglib.html.CCDropDownMenuTag" />
+    </property>   
+    <property span="true">
+        <cc name="lblIDPMsg" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag">
+            <attribute name="defaultValue" value="configure.google.apps.help.message" />
+        </cc>
     </property>
     </section>
 
-    <section name="question" defaultValue="configure.googleapps.section.setup">
+    <section name="question" defaultValue="configure.google.apps.section.setup">
     <property required="true">
-        <label name="lblDomainId" defaultValue="configure.googleapps.label.domain.id" labelFor="tfDomainId" />
+        <label name="lblDomainId" defaultValue="configure.google.apps.label.domain.id" labelFor="tfDomainId" />
         <cc name="tfDomainId" tagclass="com.sun.web.ui.taglib.html.CCTextFieldTag">
             <attribute name="localizeDisplayFieldValue" value="false" />
             <attribute name="size" value="75" />
         </cc>
         <fieldhelp name="helpdomainName"
 	                       defaultValue="configure.google.apps.help.domainName" />
+    </property>   
+    <property span="true">
+        <cc name="helpdomainNameMsg1" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag">
+            <attribute name="defaultValue" value="configure.google.apps.help.domainName.msg1" />
+        </cc>
+    </property>   
+    <property span="true">
+        <cc name="helpdomainNameMsg2" tagclass="com.sun.web.ui.taglib.html.CCStaticTextFieldTag">
+            <attribute name="defaultValue" value="configure.google.apps.help.domainName.msg2" />
+        </cc>
     </property>
     </section>
 </propertysheet>

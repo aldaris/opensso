@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: ConfigureGoogleAppsComplete.jsp,v 1.2 2009-03-03 20:08:37 asyhuang Exp $
+   $Id: ConfigureGoogleAppsComplete.jsp,v 1.3 2009-03-13 21:33:44 asyhuang Exp $
 
 --%>
 
@@ -74,7 +74,7 @@
     showPageTitleSeparator="false" 
     viewMenuLabel="" 
     pageTitleHelpMessage="" 
-    showPageButtonsTop="false" 
+    showPageButtonsTop="true" 
     showPageButtonsBottom="true" >
 
     <cc:propertysheet 

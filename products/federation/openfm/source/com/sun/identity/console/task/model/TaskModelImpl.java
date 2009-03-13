@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TaskModelImpl.java,v 1.8 2009-03-04 02:26:00 asyhuang Exp $
+ * $Id: TaskModelImpl.java,v 1.9 2009-03-13 21:33:12 asyhuang Exp $
  *
  */
 
@@ -291,23 +291,26 @@ public class TaskModelImpl
                     }
                 }
             
-                List logoutList = idpssoDescriptor.getSingleLogoutService();                
+                List logoutList = idpssoDescriptor.getSingleLogoutService(); 
+                String signoutPageURL = null;
                 for (int i=0; i<logoutList.size(); i++) {
                     SingleLogoutServiceElement spslsElem = 
                             (SingleLogoutServiceElement) logoutList.get(i);
-                    String tmp = spslsElem.getBinding();
-                    if (i == 0) {
-                      map.put("SignoutPageURL", 
-                              returnEmptySetIfValueIsNull(tmp));
-                    }
+                    String tmp = spslsElem.getBinding();                    
                     if (tmp.contains("HTTP-Redirect")) {
-                        map.put("SignoutPageURL",
-                            returnEmptySetIfValueIsNull(
-                            spslsElem.getLocation()));                      
+                        signoutPageURL = spslsElem.getLocation();                      
                     }
-                }                           
+                }           
+                if(signoutPageURL != null) {
+                    signoutPageURL = signoutPageURL 
+                        + "?goto=" + entityId +"UI/Login?gx_charset=UTF-8";
+                }
+                map.put("SignoutPageURL",
+                            returnEmptySetIfValueIsNull(signoutPageURL)); 
             }
-            map.put("ChangePasswordURL", returnEmptySetIfValueIsNull(entityId+"/idm/EndUer"));
+                  
+            map.put("ChangePasswordURL", 
+                returnEmptySetIfValueIsNull(entityId+"/idm/EndUer"));
             
             // get pubkey                 
             Map extValueMap = new HashMap();

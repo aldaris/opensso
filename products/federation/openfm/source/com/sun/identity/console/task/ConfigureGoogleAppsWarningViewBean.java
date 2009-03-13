@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureGoogleAppsWarningViewBean.java,v 1.1 2009-02-24 18:44:16 babysunil Exp $
+ * $Id: ConfigureGoogleAppsWarningViewBean.java,v 1.2 2009-03-13 21:33:12 asyhuang Exp $
  *
  */
 
@@ -63,7 +63,7 @@ public class ConfigureGoogleAppsWarningViewBean
 
     public void beginDisplay(DisplayEvent e) {
         setInlineAlertMessage(CCAlert.TYPE_INFO, "message.information",
-            "create.googleapps.missing.cot");
+            "create.google.apps.missing.cot");
     }
     
     public String endIalertCommonDisplay(

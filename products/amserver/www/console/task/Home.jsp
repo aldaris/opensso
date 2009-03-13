@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: Home.jsp,v 1.13 2009-03-10 18:05:06 babysunil Exp $
+   $Id: Home.jsp,v 1.14 2009-03-13 21:30:46 asyhuang Exp $
 
 --%>
 
@@ -67,7 +67,7 @@
 <div><a href="#" id="close5" onclick="closeAll(5); event.cancelBubble = true;return false;"><img alt="" src="../console/images/tasks/close.gif" border="0" /></a></div><p><span class="TskPgeHdr"><cc:text name="txtHelpCreateFedlet" defaultValue="commontask.create.fedlet" bundleID="amConsole" /></span></p></div>
 
 <div id="info13" onclick="showDiv(); event.cancelBubble = true;" class="TskPgeInfPnl">
-<div><a href="#" id="close13" onclick="closeAll(13); event.cancelBubble = true;return false;"><img alt="" src="../console/images/tasks/close.gif" border="0" /></a></div><p><span class="TskPgeHdr"><cc:text name="txtHelpConfigureGoogleApps" defaultValue="commontask.configure.googleapps" bundleID="amConsole" /></span></p></div>
+<div><a href="#" id="close13" onclick="closeAll(13); event.cancelBubble = true;return false;"><img alt="" src="../console/images/tasks/close.gif" border="0" /></a></div><p><span class="TskPgeHdr"><cc:text name="txtHelpConfigureGoogleApps" defaultValue="commontask.configure.google.apps" bundleID="amConsole" /></span></p></div>
 
 <div id="info6" onclick="showDiv(); event.cancelBubble = true;" class="TskPgeInfPnl">
 <div><a href="#" id="close6" onclick="closeAll(6); event.cancelBubble = true;return false;"><img alt="" src="../console/images/tasks/close.gif" border="0" /></a></div><p><span class="TskPgeHdr"><cc:text name="txtHelpValidate" defaultValue="commontask.saml2.validate" bundleID="amConsole" /></span></p></div>
@@ -165,12 +165,12 @@
         </table>
     </td></tr>
     <tr>
-    <td valign="top" colspan=3><span class="TskPgeSbHdr"><cc:text name="txtSectionConfigureGoogleApps" defaultValue="page.title.common.tasks.section.configureGoogleApps" bundleID="amConsole" /></span></td>
+    <td valign="top" colspan=3><span class="TskPgeSbHdr"><cc:text name="txtSectionConfigureGoogleApps" defaultValue="page.title.common.tasks.section.configure.google.apps" bundleID="amConsole" /></span></td>
     </tr>
 
     <tr><td class="TskPgeBckgrTd">
         <table width="100%" border="0" cellspacing="0" cellpadding="0">
-        <tr><td colspan=3 style="background-color:#FFFFFF"><span class="TskPgeHdr"><cc:text name="txtSectionDescGoogleApps" defaultValue="page.title.common.tasks.section.desc.configureGoogleApps" bundleID="amConsole" /></span></td>
+        <tr><td colspan=3 style="background-color:#FFFFFF"><span class="TskPgeHdr"><cc:text name="txtSectionDescGoogleApps" defaultValue="page.title.common.tasks.section.desc.configure.google.apps" bundleID="amConsole" /></span></td>
         </tr>
         </table>
     </td>
@@ -180,7 +180,7 @@
         <table width="100%" border="0" cellspacing="0" cellpadding="0">
         <tr>
         <td width="2%" valign="bottom" class="TskPgeTskLftTd"><img alt="" id="gif5" src="../console/images/tasks/spacer.gif" width="12" height="8" /></td>
-        <td width="100%;" class="TskPgeTskCntrTd"><a href="../task/ConfigureGoogleApps" class="TskPgeTxtBg" onmouseover="this.className='TskPgeTxtBgOvr'" onfocus="this.className='TskPgeTxtBgOvr'" onmouseout="this.className='TskPgeTxtBg'" onblur="this.className='TskPgeTxtBg'"><span class="TskPgeTskLftBtm"></span><span class="TskPgeTskLftTp"></span><span class="TskPgeTskRghtBtm"></span><span class="TskPgeTskRghtTp"></span><span class="TskPgeTskRghtBrdr"></span><span class="TskPgeTskPdng"><cc:text name="txtConfigureGoogleApps" defaultValue="commontask.label.configure.googleapps" bundleID="amConsole" /></span></a></td>
+        <td width="100%;" class="TskPgeTskCntrTd"><a href="../task/ConfigureGoogleApps" class="TskPgeTxtBg" onmouseover="this.className='TskPgeTxtBgOvr'" onfocus="this.className='TskPgeTxtBgOvr'" onmouseout="this.className='TskPgeTxtBg'" onblur="this.className='TskPgeTxtBg'"><span class="TskPgeTskLftBtm"></span><span class="TskPgeTskLftTp"></span><span class="TskPgeTskRghtBtm"></span><span class="TskPgeTskRghtTp"></span><span class="TskPgeTskRghtBrdr"></span><span class="TskPgeTskPdng"><cc:text name="txtConfigureGoogleApps" defaultValue="commontask.label.configure.google.apps" bundleID="amConsole" /></span></a></td>
         <td width="3%" class="TskPgeTskRghtTd" align="right" valign="top"><a href="#" onclick="test(13); event.cancelBubble = true; return false;"  onmouseover="hoverImg(13); event.cancelBubble = true;" onmouseout="outImg(13); event.cancelBubble = true;" onfocus="hoverImg(13); event.cancelBubble = true;" onblur="outImg(13); event.cancelBubble = true;" id="i1"><img alt="" src="../console/images/tasks/rightToggle.gif" width="29" height="21" border="0" id="togImg13" /></a></td>
         </tr>
         </table>

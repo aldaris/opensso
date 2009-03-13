@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureGoogleAppsCompleteViewBean.java,v 1.3 2009-03-07 06:51:42 babysunil Exp $
+ * $Id: ConfigureGoogleAppsCompleteViewBean.java,v 1.4 2009-03-13 21:33:12 asyhuang Exp $
  *
  */
 package com.sun.identity.console.task;
@@ -126,7 +126,7 @@ public class ConfigureGoogleAppsCompleteViewBean
         ptModel = new CCPageTitleModel(
                 getClass().getClassLoader().getResourceAsStream(
                 "com/sun/identity/console/oneBtnPageTitle.xml"));
-        ptModel.setValue("button1", "button.ok");     
+        ptModel.setValue("button1", "button.finish");     
     }
 
     protected AMModel getModelInternal() {
@@ -137,7 +137,7 @@ public class ConfigureGoogleAppsCompleteViewBean
     private void createPropertyModel() {
         psModel = new AMPropertySheetModel(
                 getClass().getClassLoader().getResourceAsStream(
-                "com/sun/identity/console/ConfigureGoogleAppsComplete.xml"));
+                "com/sun/identity/console/propertyConfigureGoogleAppsComplete.xml"));
         psModel.clear();
     }
 

@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: ConfigureGoogleApps.jsp,v 1.3 2009-03-07 06:47:54 babysunil Exp $
+   $Id: ConfigureGoogleApps.jsp,v 1.4 2009-03-13 21:33:44 asyhuang Exp $
 
 --%>
 
@@ -135,11 +135,11 @@
 </table>
 
 <%-- PAGE CONTENT --------------------------------------------------------- --%>
-<cc:pagetitle name="pgtitle" bundleID="amConsole" pageTitleText="page.title.configure.googleapps" showPageTitleSeparator="true" viewMenuLabel="" pageTitleHelpMessage="" showPageButtonsTop="true" showPageButtonsBottom="false" />
+<cc:pagetitle name="pgtitle" bundleID="amConsole" pageTitleText="page.title.configure.google.apps" showPageTitleSeparator="true" viewMenuLabel="" pageTitleHelpMessage="" showPageButtonsTop="true" showPageButtonsBottom="false" />
 
 <table border="0" cellpadding="20" cellspacing="0">
 <tr><td>
-    <cc:text name="txtDesc" defaultValue="page.desc.configure.googleapps" bundleID="amConsole" />
+    <cc:text name="txtDesc" defaultValue="page.desc.configure.google.apps" bundleID="amConsole" />
 </td></tr>
 </table>
 
@@ -155,8 +155,8 @@
     var idpNew = frm.elements['ConfigureGoogleApps.choiceIDP'].value;
     var realmNew = frm.elements['ConfigureGoogleApps.tfRealm'].value;
     
-    var msgCreating = "<p><img src=\"../console/images/processing.gif\" width=\"66\" height\"66\"/></p><cc:text name="txtConfiguring" defaultValue="configuring.googleapps.waiting" bundleID="amConsole" escape="false" />";
-    var ttlCreated = "<h3><cc:text name="txtTtlCreated" defaultValue="googleapps.configured.title" escape="false" bundleID="amConsole" /></h3>";
+    var msgCreating = "<p><img src=\"../console/images/processing.gif\" width=\"66\" height\"66\"/></p><cc:text name="txtConfiguring" defaultValue="configuring.google.apps.waiting" bundleID="amConsole" escape="false" />";
+    var ttlCreated = "<h3><cc:text name="txtTtlCreated" defaultValue="google.apps.configured.msg" escape="false" bundleID="amConsole" /></h3>";
     var msgCreated = "<p>&nbsp;</p><input name=\"btnOK\" type=\"submit\" class=\"Btn1\" value=\"<cc:text name="txtOKBtn" defaultValue="ajax.ok.button" bundleID="amConsole" />\" onClick=\"document.location.replace(\'../task/ConfigureGoogleAppsComplete?idp=\'+idpNew + \'&realm=\'+realmNew);return false;\" /></div></p>";
     var closeBtn = "<p>&nbsp;</p><p><div class=\"TtlBtnDiv\"><input name=\"btnClose\" type=\"submit\" class=\"Btn1\" value=\"<cc:text name="txtCloseBtn" defaultValue="ajax.close.button" bundleID="amConsole" />\" onClick=\"focusMain();return false;\" /></div></p>";
     
@@ -321,8 +321,8 @@
         return str;
     }
 
-    var infoRealm = unescapeQuote("<cc:text name="txtInfoRealm" defaultValue="configure.googleapps.help.realm" bundleID="amConsole" />");
-    var infoEntityId = unescapeQuote("<cc:text name="txtInfoEntityId" defaultValue="configure.googleapps.help.entity.id" bundleID="amConsole" />");
+    var infoRealm = unescapeQuote("<cc:text name="txtInfoRealm" defaultValue="configure.google.apps.help.realm" bundleID="amConsole" />");
+    var infoEntityId = unescapeQuote("<cc:text name="txtInfoEntityId" defaultValue="configure.google.apps.help.entity.id" bundleID="amConsole" />");
 
 </script>
 
