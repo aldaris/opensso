@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.44 2009-03-13 00:30:42 huacui Exp $
+ * $Id: IDPSSOUtil.java,v 1.45 2009-03-13 23:50:58 weisun2 Exp $
  *
  */
 
@@ -890,7 +890,8 @@ public class IDPSSOUtil {
             if (SAML2Utils.isSAML2FailOverEnabled()) {
                 SAML2Repository.getInstance().save(assertionID,
                     assertion.toXMLString(true, true),
-                    conditions.getNotOnOrAfter().getTime(), cacheKey);
+                    conditions.getNotOnOrAfter().getTime() / 1000,
+                    cacheKey);
 
                 if (SAML2Utils.debug.messageEnabled()) {
                     SAML2Utils.debug.message(classMethod +
@@ -900,8 +901,8 @@ public class IDPSSOUtil {
         }
         //  Save to persistent datastore 
         try {
-            long sessionExpireTime = System.currentTimeMillis() +
-                 (sessionProvider.getTimeLeft(session))*1000;
+            long sessionExpireTime = System.currentTimeMillis() / 1000 +
+                 (sessionProvider.getTimeLeft(session));
             if (SAML2Utils.isSAML2FailOverEnabled()) {
                 SAML2Repository.getInstance().save(sessionIndex,
                     new IDPSessionCopy((IDPSession) 
@@ -1865,7 +1866,8 @@ public class IDPSSOUtil {
                 long expireTime = getValidTimeofResponse(
                     realm, idpEntityID,res);
                 SAML2Repository.getInstance().save(
-                    artStr,res.toXMLString(true,true),expireTime, null);
+                    artStr,res.toXMLString(true,true),expireTime / 1000,
+                    null);
                 if (SAML2Utils.debug.messageEnabled()) {
                     SAML2Utils.debug.message(classMethod +
                         "Save Response to DB!");

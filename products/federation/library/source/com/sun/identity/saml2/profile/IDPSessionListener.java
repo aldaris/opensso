@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSessionListener.java,v 1.5 2008-08-22 20:40:42 hengming Exp $
+ * $Id: IDPSessionListener.java,v 1.6 2009-03-13 23:50:58 weisun2 Exp $
  *
  */
 
@@ -39,6 +39,8 @@ import com.sun.identity.plugin.session.SessionException;
 import com.sun.identity.saml2.assertion.NameID;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Utils;
+import com.sun.identity.saml2.common.SAML2Repository;
+import com.sun.identity.saml2.common.SAML2Exception;
 
 /**
  * The class <code>IDPSessionListener</code> implements
@@ -121,7 +123,8 @@ public class IDPSessionListener
            
            if (IDPCache.spSessionPartnerBySessionID.get(sessID) != null) {
                IDPCache.spSessionPartnerBySessionID.remove(sessID);
-           }    
+           }
+           SAML2Repository.getInstance().delete(sessionIndex);      
            if (SAML2Utils.debug.messageEnabled()) {
                SAML2Utils.debug.message(
                    classMethod +
@@ -134,6 +137,11 @@ public class IDPSessionListener
                 SAML2Utils.debug.warning(
                     classMethod + "invalid or expired session.", e);
             }
-        }
+        } catch (SAML2Exception samle) {
+            if (SAML2Utils.debug.warningEnabled()) {
+                SAML2Utils.debug.warning(
+                    classMethod + "SAML2 Repository error.", samle);
+            }        
+       }
     }
 }
