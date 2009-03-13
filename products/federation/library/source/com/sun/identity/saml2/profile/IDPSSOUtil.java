@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.43 2009-03-03 01:52:49 qcheng Exp $
+ * $Id: IDPSSOUtil.java,v 1.44 2009-03-13 00:30:42 huacui Exp $
  *
  */
 
@@ -2396,47 +2396,46 @@ public class IDPSSOUtil {
             if (toEncryptAttribute) {
                 // we need to encrypt the Attribute
                 List attributeStatements = assertion.getAttributeStatements();
-                if ((attributeStatements == null) 
-                    || (attributeStatements.size() == 0)) {
-                    return;
-                }
-                int asSize = attributeStatements.size();
-                // to hold all the AttributeStatements
-                List stmts = new ArrayList();
-                for (int i = 0; i < asSize; i++) {
-                    AttributeStatement attributeStatement = 
-                        (AttributeStatement)attributeStatements.get(i);
-                    List attributes = attributeStatement.getAttribute();
-                    if ((attributes == null) || (attributes.size() == 0)) {
-                        return;
+                if ((attributeStatements != null) 
+                    && (attributeStatements.size() > 0)) {
+                    int asSize = attributeStatements.size();
+                    // to hold all the AttributeStatements
+                    List stmts = new ArrayList();
+                    for (int i = 0; i < asSize; i++) {
+                        AttributeStatement attributeStatement = 
+                            (AttributeStatement)attributeStatements.get(i);
+                        List attributes = attributeStatement.getAttribute();
+                        if ((attributes == null) || (attributes.size() == 0)) {
+                            continue;
+                        }
+                        int aSize = attributes.size();
+                        // holds all the encrypted Attributes in this statement
+                        List eaList = new ArrayList();
+                        for (int j = 0; j < aSize; j++) {
+                            Attribute attribute = (Attribute)attributes.get(j);
+                            EncryptedAttribute encryptedAttribute =
+                                attribute.encrypt(
+                                    encInfo.getWrappingKey(), 
+                                    encInfo.getDataEncAlgorithm(), 
+                                    encInfo.getDataEncStrength(), spEntityID);
+                            if (encryptedAttribute == null) {
+                                SAML2Utils.debug.error(classMethod + 
+                                    "failed to encrypt the Attribute.");
+                                throw new SAML2Exception(
+                                    SAML2Utils.bundle.getString(
+                                    "FailedToEncryptAttribute")); 
+                            } 
+                            eaList.add(encryptedAttribute);
+                        }
+                        attributeStatement.setEncryptedAttribute(eaList);
+                        attributeStatement.setAttribute(new ArrayList());
+                        stmts.add(attributeStatement);
                     }
-                    int aSize = attributes.size();
-                    // holds all the encrypted Attributes in this statement
-                    List eaList = new ArrayList();
-                    for (int j = 0; j < aSize; j++) {
-                        Attribute attribute = (Attribute)attributes.get(j);
-                        EncryptedAttribute encryptedAttribute =
-                            attribute.encrypt(
-                                encInfo.getWrappingKey(), 
-                                encInfo.getDataEncAlgorithm(), 
-                                encInfo.getDataEncStrength(), spEntityID);
-                        if (encryptedAttribute == null) {
-                            SAML2Utils.debug.error(classMethod + 
-                                "failed to encrypt the Attribute.");
-                            throw new SAML2Exception(
-                                SAML2Utils.bundle.getString(
-                                "FailedToEncryptAttribute")); 
-                        } 
-                        eaList.add(encryptedAttribute);
+                    assertion.setAttributeStatements(stmts);
+                    if (SAML2Utils.debug.messageEnabled()) {
+                        SAML2Utils.debug.message(classMethod + 
+                            "Attribute encrypted.");
                     }
-                    attributeStatement.setEncryptedAttribute(eaList);
-                    attributeStatement.setAttribute(new ArrayList());
-                    stmts.add(attributeStatement);
-                }
-                assertion.setAttributeStatements(stmts);
-                if (SAML2Utils.debug.messageEnabled()) {
-                    SAML2Utils.debug.message(classMethod + 
-                        "Attribute encrypted.");
                 }
             }
             if (signAssertion) {
