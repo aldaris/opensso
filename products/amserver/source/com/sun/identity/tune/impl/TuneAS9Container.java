@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneAS9Container.java,v 1.8 2009-03-03 02:49:47 ykwon Exp $
+ * $Id: TuneAS9Container.java,v 1.9 2009-03-13 23:00:25 ykwon Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -302,6 +302,15 @@ public class TuneAS9Container extends TuneAppServer implements
                 mWriter.writeln(asAdminNewServerpolicy);
                 mWriter.writeln(" ");
             }
+            if (AMTuneUtil.isNiagara()) {
+                mWriter.writelnLocaleMsg("pt-as-parallel-gc-threads-msg");
+                mWriter.writeLocaleMsg("pt-cur-val");
+                mWriter.writeln(PARALLEL_GC_THREADS + "=" + 
+                        curCfgMap.get(PARALLEL_GC_THREADS));
+                mWriter.writeLocaleMsg("pt-rec-val");
+                mWriter.writeLocaleMsg("pt-rec-none");
+                mWriter.writeln(" ");
+            }
             if (configInfo.isReviewMode()) {
                 return;
             }
@@ -373,6 +382,13 @@ public class TuneAS9Container extends TuneAppServer implements
             if (asConfigInfo.isTuneWebContainerJavaPolicy()) {
                 delOptList.add(JAVA_SECURITY_POLICY + "=" + 
                         curCfgMap.get(JAVA_SECURITY_POLICY));
+            }
+            if (AMTuneUtil.isNiagara()) {
+                String curGCThreadOpt = PARALLEL_GC_THREADS + "=" + 
+                        curCfgMap.get(PARALLEL_GC_THREADS);
+                if (curGCThreadOpt.indexOf(NO_VAL_SET) == -1) {
+                    delOptList.add(curGCThreadOpt);
+                }
             }
             if (asConfigInfo.isTuneWebContainerJavaPolicy()) {
                 newOptList.add(JAVA_SECURITY_POLICY + "=" + 

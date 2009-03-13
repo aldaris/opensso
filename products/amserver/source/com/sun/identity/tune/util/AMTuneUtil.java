@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneUtil.java,v 1.12 2009-03-03 02:51:17 ykwon Exp $
+ * $Id: AMTuneUtil.java,v 1.13 2009-03-13 23:01:36 ykwon Exp $
  */
 
 package com.sun.identity.tune.util;
@@ -80,6 +80,9 @@ import java.util.zip.ZipOutputStream;
     private static Map sysInfoMap;
     private static boolean utilInit = true;
     private static String osArch;
+    private static boolean isNiagara_I = false;
+    private static boolean isNiagara_II = false;
+    private static boolean isNiagara_II_Plus = false;
     private static String date;
     private static ResourceBundle rb = null;
     public static String TMP_DIR;
@@ -241,9 +244,6 @@ import java.util.zip.ZipOutputStream;
             } 
             String hwPlatform = rBuf.toString();
             if (hwPlatform != null && hwPlatform.trim().length() > 0) {
-                if (hwPlatform.length() > 15) {
-                    hwPlatform = hwPlatform.substring(5, 15);
-                }
                 sysInfoMap.put(HWPLATFORM, hwPlatform.trim());
             } else {
                 mWriter.writelnLocaleMsg("pt-cannot-proceed");
@@ -264,6 +264,7 @@ import java.util.zip.ZipOutputStream;
                 throw new AMTuneException(AMTuneUtil.getResourceBundle()
                         .getString("pt-unable-no-cpu"));
             } else {
+            	setNiagaraBoxType(hwPlatform);
                 sysInfoMap.put(PROCESSERS_LINE, Integer.toString(noCpus));
             }
             rBuf.setLength(0);
@@ -758,7 +759,55 @@ import java.util.zip.ZipOutputStream;
     public static boolean isAIX() {
         return isAix;
     }
+    /**
+     * Return true if under laying hardware is Niagara box.
+     * 
+     */
+    public static boolean isNiagara() {
+        return isNiagara_I || isNiagara_II || isNiagara_II_Plus;
+    }
     
+    /**
+     * Return true for T1000 and T2000.
+     */
+    
+    public static boolean isNiagara_I() {
+        return isNiagara_I;
+    }
+    
+    /**
+     * Return true for T5120 and T5220.
+     */
+    public static boolean isNiagara_II() {
+        return isNiagara_II;
+    }
+    
+    /**
+     * Return true for T5220,T5240 and T5440.
+     */
+    public static boolean isNiagara_II_Plus() {
+        return isNiagara_II_Plus;
+    }
+    
+    private static void setNiagaraBoxType(String hwPlatform) {
+        pLogger.log(Level.FINEST, "setNiagaraBoxType", "Finding box type");
+        if (hwPlatform != null) {
+            if (hwPlatform.indexOf(NIAGARA_I_T1000) != -1 ||
+                    hwPlatform.indexOf(NIAGARA_I_T2000) != -1) {
+                isNiagara_I = true;
+                pLogger.log(Level.FINEST, "setNiagaraBoxType", "Niagara I");
+            } else if (hwPlatform.indexOf(NIAGARA_II_T5120) != -1 ||
+                    hwPlatform.indexOf(NIAGARA_II_T5220) != -1) {
+                isNiagara_II = true;
+                pLogger.log(Level.FINEST, "setNiagaraBoxType", "Niagara II");
+            } else if (hwPlatform.indexOf(NIAGARA_II_T5220) != -1 ||
+                    hwPlatform.indexOf(NIAGARA_II_PLUS_T5240) != -1 ||
+                    hwPlatform.indexOf(NIAGARA_II_PLUS_T5440) != -1) {
+                isNiagara_II_Plus = true;
+                pLogger.log(Level.FINEST, "setNiagaraBoxType", "Niagara II-P");
+            }
+        }
+    }
     /**
      *  Returns last token in the string.
      *

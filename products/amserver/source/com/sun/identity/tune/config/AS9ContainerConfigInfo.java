@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AS9ContainerConfigInfo.java,v 1.5 2009-03-03 02:44:20 ykwon Exp $
+ * $Id: AS9ContainerConfigInfo.java,v 1.6 2009-03-13 22:57:40 ykwon Exp $
  */
 
 package com.sun.identity.tune.config;
@@ -284,6 +284,11 @@ public class AS9ContainerConfigInfo extends WebContainerConfigInfoBase {
                     cfgMap.put(JAVA_SECURITY_POLICY, 
                             AMTuneUtil.getASJVMOption(curJVMOptList, 
                             JAVA_SECURITY_POLICY, true));
+                }
+                if (AMTuneUtil.isNiagara()) {
+                    cfgMap.put(PARALLEL_GC_THREADS, 
+                            AMTuneUtil.getASJVMOption(curJVMOptList, 
+                            PARALLEL_GC_THREADS, true));
                 }
             } else {
                 throw new AMTuneException(AMTuneUtil.getResourceBundle()
