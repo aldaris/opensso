@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Cert.java,v 1.13 2009-01-28 05:34:53 ww203982 Exp $
+ * $Id: Cert.java,v 1.14 2009-03-13 20:54:42 beomsuk Exp $
  *
  */
 
@@ -144,13 +144,13 @@ public class Cert extends AMLoginModule {
     private static com.sun.identity.shared.debug.Debug debug = null;
 
     static String UPNOID = "1.3.6.1.4.1.311.20.2.3";
-    static boolean usingJSSEHandler = false;
+    static boolean usingJSSHandler = false;
     
     static {
         String handler = SystemProperties.get(Constants.PROTOCOL_HANDLER,
             Constants.JSSE_HANDLER);
-        usingJSSEHandler = handler.equals(Constants.JSSE_HANDLER);
-        if (!usingJSSEHandler) {
+        usingJSSHandler = handler.equals(Constants.JSS_HANDLER);
+        if (usingJSSHandler) {
             JSSInit.initialize();
         }
     }
@@ -464,10 +464,10 @@ public class Cert extends AMLoginModule {
 
 	int ret = ISAuthConstants.LOGIN_IGNORE;
 	
-        if (usingJSSEHandler) {
-            ret = doJCERevocationValidation(cert);
-        } else {
+        if (usingJSSHandler) {
             ret = doJSSRevocationValidation(cert);
+        } else {
+            ret = doJCERevocationValidation(cert);
         }
         
         if ((ret == ISAuthConstants.LOGIN_SUCCEED) 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.42 2008-12-24 01:44:59 ericow Exp $
+ * $Id: Constants.java,v 1.43 2009-03-13 20:55:28 beomsuk Exp $
  *
  */
 
@@ -517,6 +517,11 @@ public interface Constants {
      * The package name prefix for JSSE based protocol implementations.
      */
     String JSSE_HANDLER = "com.sun.identity.protocol";
+
+    /**
+     * The package name prefix for JSS based protocol implementations.
+     */
+    String JSS_HANDLER = "com.iplanet.services.comm";
 
     /**
      * Property for passing the organization name when retrieving attribute
