@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv1xProfileTests.java,v 1.7 2009-02-05 01:47:24 vimal_67 Exp $
+ * $Id: SAMLv1xProfileTests.java,v 1.8 2009-03-13 17:41:12 vimal_67 Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -189,7 +189,7 @@ public class SAMLv1xProfileTests extends TestCommon {
                     configMap.get(TestConstants.KEY_SP_USER_PASSWORD), realm);
                 strUniversalid = token.getProperty("sun.am." +
                         "UniversalIdentifier");     
-                log(Level.SEVERE, "setup", "Universalid: " + strUniversalid);
+                log(Level.FINEST, "setup", "Universalid: " + strUniversalid);
                 if (validateToken(token)) 
                     destroyToken(token);  
                 token = getToken(adminUser, adminPassword, realm);
@@ -352,7 +352,7 @@ public class SAMLv1xProfileTests extends TestCommon {
             wpage = task1.execute(webClient);
             Thread.sleep(5000);            
             if (wpage.getWebResponse().getContentAsString().contains(result)) {
-                log(Level.SEVERE, "samlv1xTest", "Found the right " +
+                log(Level.FINEST, "samlv1xTest", "Found the right " +
                         "value of a attribute");                
                 bool = true;
             } else {
@@ -362,7 +362,7 @@ public class SAMLv1xProfileTests extends TestCommon {
                         String multiVal = (String) iter.next();
                         if (wpage.getWebResponse().getContentAsString().
                                 contains(multiVal)) {
-                            log(Level.SEVERE, "samlv1xAttrMapTest", 
+                            log(Level.FINEST, "samlv1xAttrMapTest", 
                                 " Found the value of a attribute " +
                                 multiVal); 
                             bool = true;
@@ -374,7 +374,7 @@ public class SAMLv1xProfileTests extends TestCommon {
                         String multiVal = (String) iter.next();
                         if (wpage.getWebResponse().getContentAsString().
                                 contains(multiVal)) {
-                            log(Level.SEVERE, "samlv1xAttrMapTest", 
+                            log(Level.FINEST, "samlv1xAttrMapTest", 
                                 " Found the value of a attribute " +
                                 multiVal);
                             bool = true;
