@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateSAML2HostedProviderTemplate.java,v 1.25 2008-11-26 01:42:26 qcheng Exp $
+ * $Id: CreateSAML2HostedProviderTemplate.java,v 1.26 2009-03-14 01:10:32 madan_ranganath Exp $
  *
  */
 
@@ -921,6 +921,15 @@ public class CreateSAML2HostedProviderTemplate {
             "        <NameIDFormat>\n" +
             "            " + SAML2Constants.UNSPECIFIED + "\n" +
             "        </NameIDFormat>\n" +
+            "        <NameIDFormat>\n" +
+            "          " + SAML2Constants.WINDOWS_DOMAIN_QUALIFIED_NAME + "\n" +
+            "        </NameIDFormat>\n" +
+            "        <NameIDFormat>\n" +
+            "            " + SAML2Constants.KERBEROS_PRINCIPAL_NAME + "\n" +
+            "        </NameIDFormat>\n" +
+            "        <NameIDFormat>\n" +
+            "            " + SAML2Constants.X509_SUBJECT_NAME + "\n" +
+            "        </NameIDFormat>\n" +
             "        <SingleSignOnService\n" +
             "            Binding=\"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect\"\n" +
             "            Location=\"" + url + "/SSORedirect" + maStr + "\"/>\n" +
@@ -1039,6 +1048,15 @@ public class CreateSAML2HostedProviderTemplate {
             "        </NameIDFormat>\n" +
             "        <NameIDFormat>\n" +
             "            " + SAML2Constants.UNSPECIFIED + "\n" +
+            "        </NameIDFormat>\n" +
+            "        <NameIDFormat>\n" +
+            "          " + SAML2Constants.WINDOWS_DOMAIN_QUALIFIED_NAME + "\n" +
+            "        </NameIDFormat>\n" +
+            "        <NameIDFormat>\n" +
+            "            " + SAML2Constants.KERBEROS_PRINCIPAL_NAME + "\n" +
+            "        </NameIDFormat>\n" +
+            "        <NameIDFormat>\n" +
+            "            " + SAML2Constants.X509_SUBJECT_NAME + "\n" +
             "        </NameIDFormat>\n" +
             "        <AssertionConsumerService\n" +
             "            isDefault=\"true\"\n" +
