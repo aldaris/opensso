@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: XMLUtils.java,v 1.12 2009-02-18 03:43:10 222713 Exp $
+ * $Id: XMLUtils.java,v 1.13 2009-03-14 00:41:14 ericow Exp $
  *
  */
 
@@ -31,6 +31,7 @@ package com.sun.identity.shared.xml;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.encode.Base64;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -40,9 +41,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -75,6 +79,12 @@ public class XMLUtils {
     // property is set to "on" and value for com.iplanet.services.debug.level
     // property is set to "warning" or "message".
     private static boolean validating = false;
+    private static String ATTR_BASE64_ENCODED =
+            "com_sun_identity_opensso_base64_encoded";
+    private static int ATTR_BASE64_ENCODED_LENGTH =
+            ATTR_BASE64_ENCODED.length();
+    private static Pattern invalidXMLChars =
+            Pattern.compile("[\u0000-\u0008\u000b-\u001f\ufffe\uffff]");
 
     static {
         try {
@@ -808,6 +818,52 @@ public class XMLUtils {
         }
 
         return escapedText;
+    }
+
+    private static boolean invalidXMLCharExists(String st) {
+        Matcher matcher = invalidXMLChars.matcher(st);
+        return matcher.find();
+    }
+
+    public static Set encodeAttributeSet(Set set, Debug debug) {
+        if (set == null) {
+            return set;
+        }
+
+        Set newSet = new HashSet();
+        Iterator iter = set.iterator();
+        while(iter.hasNext()) {
+            Object obj = iter.next();
+            String st = (String)obj;
+            if (invalidXMLCharExists(st)) {
+                st = Base64.encode(st.getBytes());
+                if ((debug != null) && (debug.warningEnabled())) {
+                    debug.warning("XMLUtils.encodeAttributeSet invalid XML characters get Base64 encoded to be : " + st);
+                }
+                st = ATTR_BASE64_ENCODED + st;
+            }
+            newSet.add(st);
+        }
+        return newSet;
+    }
+
+    public static Set decodeAttributeSet(Set set) {
+        if (set == null) {
+            return set;
+        }
+
+        Set newSet = new HashSet();
+        Iterator iter = set.iterator();
+        while(iter.hasNext()) {
+            Object obj = iter.next();
+            String st = (String)obj;
+            if (st.startsWith(ATTR_BASE64_ENCODED)) {
+                st = new String(Base64.decode(
+                        st.substring(ATTR_BASE64_ENCODED_LENGTH)));
+            }
+            newSet.add(st);
+        }
+        return newSet;
     }
 
     private static String ATTR_VALUE_PAIR_NODE = "AttributeValuePair";

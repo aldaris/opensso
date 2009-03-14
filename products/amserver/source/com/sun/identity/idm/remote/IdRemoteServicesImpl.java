@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IdRemoteServicesImpl.java,v 1.19 2008-08-13 19:26:05 goodearth Exp $
+ * $Id: IdRemoteServicesImpl.java,v 1.20 2009-03-14 00:36:33 ericow Exp $
  *
  */
 
@@ -32,6 +32,7 @@ import com.iplanet.am.sdk.AMHashMap;
 import com.iplanet.am.sdk.AMSDKBundle;
 import com.iplanet.dpro.session.Session;
 import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.xml.XMLUtils;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
@@ -234,7 +235,9 @@ public class IdRemoteServicesImpl implements IdServices {
                 Iterator it = res.keySet().iterator();
                 while (it.hasNext()) {
                     Object attr = it.next();
-                    res2.put(attr, res.get(attr));
+                    Set set = (Set)res.get(attr);
+                    set = XMLUtils.decodeAttributeSet(set);
+                    res2.put(attr, set);
                 }
                 res = res2;
             }
@@ -263,7 +266,9 @@ public class IdRemoteServicesImpl implements IdServices {
                 Iterator it = res.keySet().iterator();
                 while (it.hasNext()) {
                     Object attr = it.next();
-                    res2.put(attr, res.get(attr));
+                    Set set = (Set)res.get(attr);
+                    set = XMLUtils.decodeAttributeSet(set);
+                    res2.put(attr, set);
                 }
                 res = res2;
             }
