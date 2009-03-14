@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Logger.java,v 1.12 2009-03-05 22:55:37 veiming Exp $
+ * $Id: Logger.java,v 1.13 2009-03-14 00:32:26 veiming Exp $
  *
  */
 
@@ -259,8 +259,12 @@ public class Logger extends java.util.logging.Logger {
      * @param record The <code>LogRecord</code> to be logged.
      */
     public void log(LogRecord record) {
-        Object obj = token.get();
-        log(record, obj);
+        if (record instanceof ILogRecord) {
+            log((ILogRecord)record);
+        } else {
+            Object obj = token.get();
+            log(record, obj);
+        }
     }
 
     private boolean validateLogBy(Object cred) {
@@ -321,7 +325,7 @@ public class Logger extends java.util.logging.Logger {
             Debug.error("Logger.log " + e.getMessage());
         }
 
-        if (record instanceof com.sun.identity.log.LogRecord) {
+        if (record instanceof java.util.logging.LogRecord) {
             Object logBy = record.getLogBy();
             Object cred = (logBy instanceof Subject) ?
                 getPrivateCred((Subject)logBy) : logBy;
