@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilige.java,v 1.8 2009-03-14 03:01:17 dillidorai Exp $
+ * $Id: Privilige.java,v 1.9 2009-03-14 03:14:32 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -44,7 +44,7 @@ public class Privilige {
     private Set<Entitlement> entitlements;
     private EntitlementSubject eSubject;
     private EntitlementCondition eCondition;
-    private Set<Resource1Attributes> eResourceAttributes;
+    private Set<ResourceAttributes> eResourceAttributes;
 
     /**
      * Constructs entitlement privilige
@@ -59,7 +59,7 @@ public class Privilige {
             Set<Entitlement> entitlements,
             EntitlementSubject eSubject,
             EntitlementCondition eCondition,
-            Set<Resource1Attributes> eResourceAttributes) {
+            Set<ResourceAttributes> eResourceAttributes) {
         this.name = name;
         this.entitlements = entitlements;
         this.eSubject = eSubject;
@@ -99,7 +99,7 @@ public class Privilige {
      * @return eResourceAttributes of the privilige.
      * @throws EntitlementException in case of any error
      */
-    public Set<Resource1Attributes> getResourceAttributes() {
+    public Set<ResourceAttributes> getResourceAttributes() {
         return eResourceAttributes;
     }
 

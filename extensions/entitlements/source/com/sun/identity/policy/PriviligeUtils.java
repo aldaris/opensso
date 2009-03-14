@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PriviligeUtils.java,v 1.16 2009-03-14 03:05:14 dillidorai Exp $
+ * $Id: PriviligeUtils.java,v 1.17 2009-03-14 03:17:48 dillidorai Exp $
  */
 package com.sun.identity.policy;
 
@@ -30,7 +30,7 @@ import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
 import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementCondition;
-import com.sun.identity.entitlement.Resource1Attributes;
+import com.sun.identity.entitlement.ResourceAttributes;
 import com.sun.identity.entitlement.EntitlementSubject;
 import com.sun.identity.entitlement.UserSubject;
 import com.sun.identity.entitlement.GroupSubject;
@@ -136,7 +136,7 @@ public class PriviligeUtils {
             nrp[1] = rp;
             nrps.add(nrp);
         }
-        Resource1Attributes eResourceAttributes = nrpsToEResourceAttributes(nrps);
+        ResourceAttributes eResourceAttributes = nrpsToEResourceAttributes(nrps);
         Set eResourceAttributesSet = null;
 
         eCondition = null;
@@ -310,8 +310,8 @@ public class PriviligeUtils {
         return valueObj.toString();
     }
 
-    private static Resource1Attributes nrpsToEResourceAttributes(Set nprs) {
-        //Resource1Attributes era = nrpsToEResourceAttributes(nrps);
+    private static ResourceAttributes nrpsToEResourceAttributes(Set nprs) {
+        //ResourceAttributes era = nrpsToEResourceAttributes(nrps);
         return null;
     }
 
@@ -652,7 +652,7 @@ public class PriviligeUtils {
         return null;
     }
 
-    private static Set<Resource1Attributes> responseProvidersToEResourceAttributes() {
+    private static Set<ResourceAttributes> responseProvidersToEResourceAttributes() {
         return null;
     }
 
