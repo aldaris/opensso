@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilige.java,v 1.7 2009-02-27 22:44:43 dillidorai Exp $
+ * $Id: Privilige.java,v 1.8 2009-03-14 03:01:17 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -42,24 +42,24 @@ public class Privilige {
 
     private String name;
     private Set<Entitlement> entitlements;
-    private ESubject eSubject;
-    private ECondition eCondition;
-    private Set<EResourceAttributes> eResourceAttributes;
+    private EntitlementSubject eSubject;
+    private EntitlementCondition eCondition;
+    private Set<Resource1Attributes> eResourceAttributes;
 
     /**
      * Constructs entitlement privilige
      * @param name name of the privilige
-     * @param eSubject ESubject used for membership check
-     * @param eCondition ECondition used for constraint check
-     * @param eResourceAttributes EResourceAttributes used to get additional
+     * @param eSubject EntitlementSubject used for membership check
+     * @param eCondition EntitlementCondition used for constraint check
+     * @param eResourceAttributes Resource1Attributes used to get additional
      * result attributes
      */
     public Privilige(
             String name,
             Set<Entitlement> entitlements,
-            ESubject eSubject,
-            ECondition eCondition,
-            Set<EResourceAttributes> eResourceAttributes) {
+            EntitlementSubject eSubject,
+            EntitlementCondition eCondition,
+            Set<Resource1Attributes> eResourceAttributes) {
         this.name = name;
         this.entitlements = entitlements;
         this.eSubject = eSubject;
@@ -81,7 +81,7 @@ public class Privilige {
      * @return eSubject of the privilige.
      * @throws EntitlementException in case of any error
      */
-    public ESubject getESubject() {
+    public EntitlementSubject getSubject() {
         return eSubject;
     }
 
@@ -90,7 +90,7 @@ public class Privilige {
      * @return eCondition of the privilige.
      * @throws EntitlementException in case of any error
      */
-    public ECondition getECondition() {
+    public EntitlementCondition getCondition() {
         return eCondition;
     }
 
@@ -99,7 +99,7 @@ public class Privilige {
      * @return eResourceAttributes of the privilige.
      * @throws EntitlementException in case of any error
      */
-    public Set<EResourceAttributes> getEResourceAttributes() {
+    public Set<Resource1Attributes> getResourceAttributes() {
         return eResourceAttributes;
     }
 
@@ -185,6 +185,19 @@ public class Privilige {
             subjo.put("state", eSubject.getState());
             jo.put("eSubject", subjo);
         }
+
+        if (eCondition != null) {
+            JSONObject subjo = new JSONObject();
+            subjo.put("className", eCondition.getClass().getName());
+            subjo.put("state", eCondition.getState());
+            jo.put("eSubject", subjo);
+        }
+
+        if (eResourceAttributes != null) {
+            //TODO: add impl
+        }
+
+
         return jo;
     }
 
@@ -228,38 +241,38 @@ public class Privilige {
             }
         }
         if (eSubject == null) {
-            if (object.getESubject() != null) {
+            if (object.getSubject() != null) {
                 equalled = false;
             }
         } else { // name not null
 
-            if ((object.getESubject()) != null) {
+            if ((object.getSubject()) != null) {
                 equalled = false;
-            } else if (!eSubject.equals(object.getESubject())) {
+            } else if (!eSubject.equals(object.getSubject())) {
                 equalled = false;
             }
         }
         if (eCondition == null) {
-            if (object.getECondition() != null) {
+            if (object.getCondition() != null) {
                 equalled = false;
             }
         } else { // name not null
 
-            if ((object.getECondition()) != null) {
+            if ((object.getCondition()) != null) {
                 equalled = false;
-            } else if (!eCondition.equals(object.getECondition())) {
+            } else if (!eCondition.equals(object.getCondition())) {
                 equalled = false;
             }
         }
         if (eResourceAttributes == null) {
-            if (object.getEResourceAttributes() != null) {
+            if (object.getResourceAttributes() != null) {
                 equalled = false;
             }
         } else { // name not null
 
-            if ((object.getEResourceAttributes()) != null) {
+            if ((object.getResourceAttributes()) != null) {
                 equalled = false;
-            } else if (!eCondition.equals(object.getEResourceAttributes())) {
+            } else if (!eCondition.equals(object.getResourceAttributes())) {
                 equalled = false;
             }
         }

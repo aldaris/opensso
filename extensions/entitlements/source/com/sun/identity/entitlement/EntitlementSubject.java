@@ -1,7 +1,7 @@
 /**
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2008 Sun Microsystems Inc. All Rights Reserved
+ * Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
  *
  * The contents of this file are subject to the terms
  * of the Common Development and Distribution License
@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementSubject.java,v 1.2 2009-02-17 21:44:09 dillidorai Exp $
+ * $Id: EntitlementSubject.java,v 1.3 2009-03-14 03:01:17 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -31,43 +31,37 @@ import java.util.Set;
 import javax.security.auth.Subject;
 
 /**
- * Wrapper class over <code>javax.security.auth.Subject</code> to implement 
- * <code>ESubject</code> interface
+ * Interface specifiction for prvilige subject
+ * @author ddorai
  */
-public class EntitlementSubject implements SubjectFilter {
+public interface EntitlementSubject {
 
-    private Subject subject;
-    
     /**
-     *  Constructs entitlement subject
+     * Sets state of the object
+     * @param state State of the object encoded as string
      */
-    public EntitlementSubject() {
-    }
-    
+    void setState(String state);
+
     /**
-     * Constructs entitlement subject
-     * @param subject nested <code>javax.security.auth.Subject</code>
+     * Returns state of the object
+     * @return state of the object encoded as string
      */
-    public EntitlementSubject(Subject subject) {
-        this.subject = subject;
-    }
-    
+    String getState();
+
     /**
-     * Checks whether the request satisfies the <code>ESubject</code>
-     * @param subject Subject who is under evaluation.
+     * Returns <code>SubjectDecision</code> of
+     * <code>EntitlementSubject</code> evaluation
+     * @param subject EntitlementSubject who is under evaluation.
      * @param resourceName Resource name.
      * @param environment Environment parameters.
-     * @return <code>true</code> if the request satisfies the 
-     * <code>ESubject</code>, otherwise <code>false</code>
-     * @throws com.sun.identity.entitlement.EntitlementException
+     * @return <code>SubjectDecision</code> of
+     * <code>EntitlementSubject</code> evaluation
+     * @throws com.sun.identity.entitlement,  EntitlementException in case
+     * of any error
      */
-    public boolean evaluate(
+    public SubjectDecision evaluate(
             Subject subject,
             String resourceName,
             Map<String, Set<String>> environment)
-            throws EntitlementException {
-        return false;
-    }
+            throws EntitlementException;
 }
-
-
