@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Constants.java,v 1.43 2009-03-13 20:55:28 beomsuk Exp $
+ * $Id: Constants.java,v 1.44 2009-03-14 03:44:47 manish_rustagi Exp $
  *
  */
 
@@ -949,5 +949,11 @@ public interface Constants {
       */
     public static final String SYSTEM_TIMERPOOL_SIZE =
         "com.sun.identity.common.systemtimerpool.size";
+
+    /**
+     * property string for Distributed Authentication cluster
+     */
+    public static final String DISTAUTH_CLUSTER = 
+        "com.sun.identity.distauth.cluster";
 
 }

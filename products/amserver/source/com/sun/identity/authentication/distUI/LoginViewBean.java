@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginViewBean.java,v 1.24 2009-02-20 19:21:08 manish_rustagi Exp $
+ * $Id: LoginViewBean.java,v 1.25 2009-03-14 03:49:07 manish_rustagi Exp $
  *
  */
 
@@ -2145,8 +2145,8 @@ extends com.sun.identity.authentication.UI.AuthViewBeanBase {
     static {
         serviceUri = SystemProperties.get(
        	           Constants.AM_DISTAUTH_DEPLOYMENT_DESCRIPTOR);
-        AuthClientUtils.setServiceURI(serviceUri);
         LOGINURL = serviceUri + "/UI/Login";
+        AuthClientUtils.setServiceURI(LOGINURL);
     }
     
 }

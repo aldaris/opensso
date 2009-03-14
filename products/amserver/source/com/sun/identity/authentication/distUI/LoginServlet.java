@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: LoginServlet.java,v 1.6 2008-06-25 05:41:52 qcheng Exp $
+ * $Id: LoginServlet.java,v 1.7 2009-03-14 03:50:43 manish_rustagi Exp $
  *
  */
 
@@ -30,21 +30,24 @@
 
 package com.sun.identity.authentication.distUI;
 
-import java.util.HashMap;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.sun.identity.shared.debug.Debug;
 import com.iplanet.jato.CompleteRequestException;
 import com.iplanet.jato.RequestContext;
 import com.iplanet.jato.RequestContextImpl;
 import com.iplanet.jato.ViewBeanManager;
 import com.sun.identity.authentication.client.AuthClientUtils;
 import com.sun.identity.common.ISLocaleContext;
-import com.sun.identity.shared.locale.L10NMessageImpl;
 import com.sun.identity.common.RequestUtils;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.debug.Debug;
+import com.sun.identity.shared.locale.L10NMessageImpl;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  *
@@ -108,6 +111,30 @@ extends com.sun.identity.authentication.distUI.AuthenticationServletBase {
             
             if ((authCookieValue != null) && (authCookieValue.length() != 0) &&
                     (!AuthClientUtils.isLocalServer(authCookieValue, false))) {
+
+                boolean isRoutingAllowed = 
+                    AuthClientUtils.isDistAuthServerTrusted(authCookieValue);
+                if(!isRoutingAllowed){
+                    if (debug.messageEnabled()) {
+                        debug.message("LoginServlet.initializeRequestContext()"
+                        + ": Routing the request to distauth server " + 
+                        "with Login URL " + authCookieValue +
+                        " is not allowed");
+                    }
+                    
+                    try{
+                        PrintWriter out = response.getWriter();
+                        out.print("<h1>" + authCookieValue +
+                       	" is not the trusted server</h1>");
+                    }catch(IOException ioe){
+                        if (debug.messageEnabled()) {
+                            debug.message("initializeRequestContext(): " +
+                                ioe.getMessage());
+                        }                    	
+                    }
+                    throw new CompleteRequestException();            		
+                }
+
                 debug.message("Routing the request to Original Auth server");
                 try {
                     HashMap origRequestData =
@@ -149,6 +176,7 @@ extends com.sun.identity.authentication.distUI.AuthenticationServletBase {
         }
     }    
    
+
     /**
      * Returns url for auth module.
      * @return url for auth module.
@@ -189,10 +217,7 @@ extends com.sun.identity.authentication.distUI.AuthenticationServletBase {
     private static final String REDIRECT_JSP = "Redirect.jsp";
     
     // the debug file
-    private static Debug debug = Debug.getInstance("amLoginServlet");
-    
-    
-    
+    private static Debug debug = Debug.getInstance("amLoginServlet");    
     
     ////////////////////////////////////////////////////////////////////////////
     // Instance variables
