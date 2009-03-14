@@ -1,7 +1,11 @@
 package com.sun.identity.admin.dao;
 
+import com.sun.identity.admin.DeepCloneableArrayList;
+import com.sun.identity.admin.DeepCloneableList;
+import com.sun.identity.admin.model.Action;
 import com.sun.identity.admin.model.Application;
 import com.sun.identity.admin.model.ApplicationType;
+import com.sun.identity.admin.model.BooleanAction;
 import com.sun.identity.admin.model.Resource;
 import com.sun.identity.admin.model.UrlResource;
 import java.io.Serializable;
@@ -21,6 +25,21 @@ public class ApplicationDao implements Serializable {
 
         ApplicationType urlAt = applicationTypes.get("url");
 
+        DeepCloneableList<Action> actions = new DeepCloneableArrayList<Action>();
+        BooleanAction ba;
+        ba = new BooleanAction();
+        ba.setName("allow");
+        ba.setAllow(true);
+        actions.add(ba);
+        ba = new BooleanAction();
+        ba.setName("deny");
+        ba.setIgnore(true);
+        actions.add(ba);
+        ba = new BooleanAction();
+        ba.setName("ignore");
+        ba.setIgnore(true);
+        actions.add(ba);
+
         //TODO - dummy data
         a = new Application();
         a.setName("paycheck");
@@ -36,6 +55,7 @@ public class ApplicationDao implements Serializable {
         resources.add(urlr);
 
         a.setDefaultResources(resources);
+        a.setDefaultActions((List)actions.deepClone());
         apps.put(a.getName(), a);
 
         //TODO - dummy data
@@ -53,6 +73,7 @@ public class ApplicationDao implements Serializable {
         resources.add(urlr);
 
         a.setDefaultResources(resources);
+        a.setDefaultActions((List)actions.deepClone());
         apps.put(a.getName(), a);
 
 

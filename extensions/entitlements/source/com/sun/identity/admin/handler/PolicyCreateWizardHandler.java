@@ -35,7 +35,6 @@ public class PolicyCreateWizardHandler
         String name = (String) event.getNewValue();
         Application a = getPolicyCreateWizardBean().getApplications().get(name);
         getPolicyCreateWizardBean().setApplication(a);
-
     }
 
     private PolicyCreateWizardBean getPolicyCreateWizardBean() {

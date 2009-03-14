@@ -2,12 +2,13 @@ package com.sun.identity.admin.handler;
 
 import com.icesoft.faces.component.dragdrop.DropEvent;
 import com.icesoft.faces.component.dragdrop.DndEvent;
+import com.sun.identity.admin.model.MultiPanelBean;
 import com.sun.identity.admin.model.SubjectContainer;
 import java.io.Serializable;
 import java.util.List;
 import javax.faces.event.ActionEvent;
 
-public class SubjectContainersHandler implements Serializable {
+public class SubjectContainersHandler implements MultiPanelHandler, Serializable {
     private List<SubjectContainer> selectedSubjectContainers;
     private List<SubjectContainer> availableSubjectContainers;
 
@@ -22,12 +23,14 @@ public class SubjectContainersHandler implements Serializable {
     }
 
     public void expandListener(ActionEvent event) {
-        SubjectContainer subjectContainer = (SubjectContainer) event.getComponent().getAttributes().get("bean");
-        subjectContainer.setExpanded(!subjectContainer.isExpanded());
+        MultiPanelBean mpb = (SubjectContainer) event.getComponent().getAttributes().get("bean");
+        assert(mpb != null);
+        mpb.setExpanded(!mpb.isExpanded());
     }
 
     public void removeListener(ActionEvent event) {
         SubjectContainer subjectContainer = (SubjectContainer) event.getComponent().getAttributes().get("bean");
+        assert(subjectContainer != null);
         selectedSubjectContainers.remove(subjectContainer);
         subjectContainer.setActive(false);
     }

@@ -80,4 +80,8 @@ public abstract class BaseSubjectContainer implements SubjectContainer {
     public String getExpandImage() {
         return expandImage;
     }
+
+    public int getNumberSelected() {
+        return viewSubjects.size();
+    }
 }

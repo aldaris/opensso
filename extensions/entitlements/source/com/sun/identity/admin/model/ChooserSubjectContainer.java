@@ -26,9 +26,9 @@ public abstract class ChooserSubjectContainer
     @Override
     public void setSubjectDao(SubjectDao subjectDao) {
         super.setSubjectDao(subjectDao);
-        getViewSubjects().addAll(subjectDao.getViewSubjects());
-        filteredAvailable = getViewSubjects();
-        available.addAll(getViewSubjects());
+        available.addAll(subjectDao.getViewSubjects());
+        filteredAvailable.addAll(available);
+        filteredSelected = getViewSubjects();
     }
 
     public ChooserSubjectHandler getChooserSubjectHandler() {

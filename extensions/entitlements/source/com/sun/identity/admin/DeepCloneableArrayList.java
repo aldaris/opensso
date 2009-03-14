@@ -3,7 +3,7 @@ package com.sun.identity.admin;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class DeepCloneableArrayList<T> extends ArrayList<T> implements DeepCloneable {
+public class DeepCloneableArrayList<T> extends ArrayList<T> implements DeepCloneableList<T> {
     public DeepCloneableArrayList() {
         super();
     }
@@ -12,7 +12,7 @@ public class DeepCloneableArrayList<T> extends ArrayList<T> implements DeepClone
         super(o);
     }
 
-    public DeepCloneableArrayList deepClone() {
+    public DeepCloneableList deepClone() {
         DeepCloneableArrayList clone = new DeepCloneableArrayList();
 
         for (Object o: this) {

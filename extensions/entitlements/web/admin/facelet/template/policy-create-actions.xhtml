@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<span
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ice="http://www.icesoft.com/icefaces/component"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:o="http://opensso.dev.java.net">
+    <ice:dataTable
+        value="#{policyCreateWizardBean.actions}"
+        var="booleanAction">
+        <ice:column>
+            <f:facet name="header">
+                <ice:outputText value="Action"/>
+            </f:facet>
+            <ice:panelGroup>
+                <ice:outputText value="#{booleanAction.name}"/>
+            </ice:panelGroup>
+        </ice:column>
+        <ice:column>
+            <f:facet name="header">
+                <ice:outputText value="Permissions"/>
+            </f:facet>
+            <ice:panelGrid columns="3">
+                <ice:panelGrid columns="2">
+                    <ice:selectBooleanCheckbox
+                        value="#{booleanAction.allow}"/>
+                    <ice:outputText value="Allow"/>
+                </ice:panelGrid>
+                <ice:panelGrid columns="2">
+                    <ice:selectBooleanCheckbox
+                        value="#{booleanAction.deny}"/>
+                    <ice:outputText value="Deny"/>
+                </ice:panelGrid>
+                <ice:panelGrid columns="2">
+                    <ice:selectBooleanCheckbox
+                        value="#{booleanAction.ignore}"/>
+                    <ice:outputText value="Ignore"/>
+                </ice:panelGrid>
+            </ice:panelGrid>
+        </ice:column>
+    </ice:dataTable>
+</span>

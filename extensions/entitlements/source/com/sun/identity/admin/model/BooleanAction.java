@@ -49,6 +49,7 @@ public class BooleanAction
 
     public DeepCloneable deepClone() {
         BooleanAction clone = new BooleanAction();
+        clone.setName(getName());
         clone.setAllow(allow);
         clone.setDeny(deny);
         clone.setIgnore(ignore);

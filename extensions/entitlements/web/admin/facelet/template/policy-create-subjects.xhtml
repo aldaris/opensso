@@ -10,30 +10,32 @@
         columns="3"
         styleClass="policy-create-subjects"
         columnClasses="subjects-selected subjects-gutter subjects-available">
-        <ice:panelGrid
-            columns="1"
+        <ice:panelGroup
             style="width: 100%">
-            <c:forEach var="subjectContainer" items="#{selectedSubjectContainers}">
-                <o:menupanel
+             <c:forEach 
+                var="subjectContainer"
+                items="#{selectedSubjectContainers}">
+                <o:multipanel
                     bean="#{subjectContainer}"
-                    handler="#{subjectContainersHandler}"
-                    title="#{subjectContainer.name}">
-                    <ui:define name="menupanel-body">
+                    handler="#{subjectContainersHandler}">
+                    <ui:define name="panel-title">
+                        #{subjectContainer.name} (#{subjectContainer.numberSelected})
+                    </ui:define>
+                    <ui:define name="panel-body">
                         <ui:include src="#{subjectContainer.template}">
                             <ui:param
                                 name="subjectContainer"
                                 value="#{subjectContainer}"/>
                         </ui:include>
                     </ui:define>
-                </o:menupanel>
-            </c:forEach>
-            <ice:panelGroup
+                </o:multipanel>
+            </c:forEach>            <ice:panelGroup
                 styleClass="drop-target"
                 dropTarget="true"
                 dropListener="#{subjectContainersHandler.dropListener}">
                 Drop here ...
             </ice:panelGroup>
-        </ice:panelGrid>
+        </ice:panelGroup>
         <ice:panelGroup/>
         <ice:panelGrid
             columns="1"

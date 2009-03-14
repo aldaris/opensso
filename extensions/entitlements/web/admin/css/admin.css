@@ -149,7 +149,6 @@ div.button-wrapper a.button img.left {
 #panel {
     margin: 8px;
     padding: 8px;
-    border: 1px solid #DDDDDD;
 }
 
 #panel-title {
@@ -202,20 +201,11 @@ div.button-wrapper a.button img.left {
     clear: both;
     float: right;
     position: relative;
-    top: 50px;
-}
-
-.collapsible-panel-actions {
-    position: relative;
-    top: 10px;
-    text-align: right;
-    margin-right: 8px;
-    height: 0px;
+    top: 60px;
 }
 
 .subjects-selected {
     padding-left: 4px;
-    border: 1px solid #dddddd;
     width: 70%;
     vertical-align: top;
     margin-right: 32px;
@@ -271,37 +261,65 @@ div.button-wrapper a.button img.left {
 }
 
 .subject-chooser {
-    border: 1px solid #dddddd;
     padding: 8px;
     margin: 16px;
 }
 
+.multipanel {
+}
+
+.multipanel-header {
+    border: 1px solid #dddddd;
+    padding: 2px;
+}
+
+.multipanel-title {
+    font-size: 11px;
+    margin-left: 4px;
+    font-weight: bold;
+}
+
+.multipanel-controls {
+    font-size: 11px;
+    text-align: right;
+    margin-right: 4px;
+    font-weight: bold;
+}
+
+.multipanel-body {
+    border: 1px solid #dddddd;
+    background: #efefef;
+    position: relative;
+    top: -2px;
+}
+
+
 /*
 #homeTabContent {
-    width: 100%;
+width: 100%;
 }
 
 #homeTabHeader {
-    border: 1px solid #DDDDDD;
-    padding: 8px;
+border: 1px solid #DDDDDD;
+padding: 8px;
 }
 
 #homeTabMenu {
-    float: left;
-    width: 200px;
-    border: 1px solid #DDDDDD;
-    padding: 8px;
-    margin-top: 8px;
+float: left;
+width: 200px;
+border: 1px solid #DDDDDD;
+padding: 8px;
+margin-top: 8px;
 }
 
 #homeTabMenuContent {
 }
 
 #homeTabDetail {
-    border: 1px solid #DDDDDD;
-    margin-left: 226px;
-    padding: 8px;
-    margin-top: 8px;
+border: 1px solid #DDDDDD;
+margin-left: 226px;
+padding: 8px;
+margin-top: 8px;
 }
 
 #homeTabDetailContent {

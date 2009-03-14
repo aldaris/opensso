@@ -34,4 +34,8 @@
         <tag-name>menupanel</tag-name>
         <source>tag/menupanel.xhtml</source>
     </tag>
+    <tag>
+        <tag-name>multipanel</tag-name>
+        <source>tag/multipanel.xhtml</source>
+    </tag>
 </facelet-taglib>

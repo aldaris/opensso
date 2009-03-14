@@ -15,6 +15,7 @@ public class PolicyCreateWizardBean
     private Application application;
     private Map<String,Application> applications;
     private List<Action> actions;
+    private List<ViewCondition> conditions;
 
     public List<Resource> getResources() {
         return resources;
@@ -65,6 +66,14 @@ public class PolicyCreateWizardBean
 
     public void setActions(List<Action> actions) {
         this.actions = actions;
+    }
+
+    public List<ViewCondition> getConditions() {
+        return conditions;
+    }
+
+    public void setConditions(List<ViewCondition> conditions) {
+        this.conditions = conditions;
     }
 
 }

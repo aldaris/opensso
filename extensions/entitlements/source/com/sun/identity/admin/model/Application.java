@@ -8,6 +8,7 @@ public class Application implements Serializable {
     private ApplicationType applicationType;
     private List<Resource> defaultResources;
     private List<Action> defaultActions;
+    private ConditionType conditionTypes;
 
     public String getName() {
         return name;
@@ -44,6 +45,14 @@ public class Application implements Serializable {
 
     public void setDefaultActions(List<Action> defaultActions) {
         this.defaultActions = defaultActions;
+    }
+
+    public ConditionType getConditionTypes() {
+        return conditionTypes;
+    }
+
+    public void setConditionTypes(ConditionType conditionTypes) {
+        this.conditionTypes = conditionTypes;
     }
 
 }
