@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: FAMClassLoader.java,v 1.16 2008-10-01 23:38:02 mallas Exp $
+ * $Id: FAMClassLoader.java,v 1.17 2009-03-14 00:53:37 mallas Exp $
  *
  */
 
@@ -255,7 +255,9 @@ public class FAMClassLoader {
         "com.sun.org.apache.xerces.internal.",
         "com.sun.identity.saml.xmlsig.",
         "com.sun.identity.xmlenc.",
-        "com.sun.xml.stream."
+        "com.sun.xml.stream.",
+        "javax.xml.crypto.",
+        "org.jcp.xml.dsig."
     };
     
     /**

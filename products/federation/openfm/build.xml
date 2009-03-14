@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.50 2009-01-05 23:51:33 veiming Exp $
+   $Id: build.xml,v 1.51 2009-03-14 00:53:37 mallas Exp $
 
 -->
 
@@ -188,9 +188,11 @@
             <fileset dir=".">
                 <include name="license.txt" />
             </fileset>
-            <fileset dir="${openfm.dir}/resources">
-                <filename name="META-INF/services/com.sun.xml.ws.api.pipe.TransportPipeFactory"/>    
-            </fileset>
+            <fileset dir="${openfm.dir}/resources" 
+                includes="META-INF/services/*" 
+                excludes="META-INF/services/com.sun.xml.ws.assembler.ClientPipelineHook,
+                META-INF/services/com.sun.xml.ws.assembler.ServerPipelineHook">
+             </fileset>
             <fileset dir="${openfm.services.xml.dir}" includes="*.xml" />
             <zipfileset dir="${openfm.classes.dir}"
                 excludes="com/sun/identity/console/**, 
