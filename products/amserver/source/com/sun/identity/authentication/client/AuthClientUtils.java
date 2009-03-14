@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AuthClientUtils.java,v 1.27 2009-02-18 03:37:07 222713 Exp $
+ * $Id: AuthClientUtils.java,v 1.28 2009-03-14 03:48:00 manish_rustagi Exp $
  *
  */
 
@@ -36,6 +36,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.io.IOException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.Map;
@@ -176,6 +177,11 @@ public class AuthClientUtils {
     private static String hostUrlCookieDomain =
         SystemProperties.get(Constants.AUTH_UNIQUE_COOKIE_DOMAIN);
 
+    private static final String distAuthCluster =
+        SystemProperties.get(com.sun.identity.shared.Constants.DISTAUTH_CLUSTER, "");
+    
+    private static ArrayList distAuthClusterList = new ArrayList();                
+
     static {
         // Initialzing variables
         String installTime =
@@ -216,6 +222,30 @@ public class AuthClientUtils {
             utilDebug.message("AuthClientUtils: setCookieToAllDomains = "+
                     setCookieToAllDomains);
         }
+        
+        if(distAuthCluster.length() != 0){
+            try {
+                if (utilDebug.messageEnabled()) {
+                    utilDebug.message(
+                        "AuthClientUtils.static(): "
+                        + "Cluster List is: " + distAuthCluster);
+                }
+                if (distAuthCluster.indexOf(",") != -1) {
+                    StringTokenizer distAuthServersList = 
+                        new StringTokenizer(distAuthCluster, ",");
+                    while (distAuthServersList.hasMoreTokens()) {
+                        String distAuthServer = 
+                            distAuthServersList.nextToken().trim();
+                        distAuthClusterList.add(distAuthServer);
+                    }
+                } else {
+                    distAuthClusterList.add(distAuthCluster.trim());
+                }
+            } catch (Exception e) {
+            	utilDebug.error("AuthClientUtils.static(): " + 
+                    e.toString());
+            }        	
+        }        
     }
 
     /*
@@ -2219,6 +2249,9 @@ public class AuthClientUtils {
                                  domains.iterator(); itcd.hasNext(); ) {
                                 domain = (String)itcd.next();
                                 cookie = createCookie(tmpName, value, domain);
+                                if("LOGOUT".equals(value)){
+                                    cookie.setMaxAge(0);
+                                }                    
                                 response.addCookie(cookie);
                             }
                         } else {
@@ -2566,4 +2599,9 @@ public class AuthClientUtils {
             }
         }
     }
+    
+    public static boolean isDistAuthServerTrusted(String distAuthServerLoginURL){
+        return distAuthClusterList.contains(distAuthServerLoginURL);
+    }    
+    
 }
