@@ -22,18 +22,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PriviligeManagerTest.java,v 1.1 2009-03-10 17:16:51 dillidorai Exp $
+ * $Id: PriviligeManagerTest.java,v 1.2 2009-03-14 03:08:45 dillidorai Exp $
  */
 package com.sun.identity.policy;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.entitlement.ESubject;
+import com.sun.identity.entitlement.EntitlementSubject;
 import com.sun.identity.entitlement.Entitlement;
-import com.sun.identity.entitlement.OrESubject;
+import com.sun.identity.entitlement.EntitlementCondition;
+import com.sun.identity.entitlement.IPCondition;
+import com.sun.identity.entitlement.OrSubject;
 import com.sun.identity.entitlement.Privilige;
 import com.sun.identity.entitlement.PriviligeManager;
-import com.sun.identity.entitlement.UserESubject;
+import com.sun.identity.entitlement.UserSubject;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
@@ -74,16 +76,16 @@ public class PriviligeManagerTest {
             pm.removePolicy(POLICY_NAME);
             pm.removePolicy(POLICY_NAME + "-copy");
             prm.removePrivilige(PRIVILIGE_NAME);
-            deleteUsers(adminToken, "user11", "user12", "user21", "user22");
         } catch (Exception e) {
             //policy may not exist
             //privilige may not exist
+            // users may not exist
         }
+       
         Policy policy = new Policy(POLICY_NAME, "test1 - discard",
                 false, true);
         policy.addRule(createRule("welcome"));
         policy.addRule(createRule("banner"));
-        createUsers(adminToken, "user11", "user12", "user21", "user22");
         policy.addSubject("Users1",
                 createUsersSubject(pm, "user11", "user12"), true);
         policy.addSubject("Users2",
@@ -100,7 +102,6 @@ public class PriviligeManagerTest {
     //pm.removePolicy(POLICY_NAME1);
     //pm.removePolicy(POLICY_NAME + "-copy");
     //prm.removePrivilige(PRIVILIGE_NAME);
-    //deleteUsers(adminToken, "user11", "user12", "user21", "user22");
     }
 
     @Test
@@ -119,17 +120,18 @@ public class PriviligeManagerTest {
         entitlements.add(entitlement);
         String user11 = "id=user11,ou=user," + ServiceManager.getBaseDN();
         String user12 = "id=user12,ou=user," + ServiceManager.getBaseDN();
-        ESubject es1 = new UserESubject(user11);
-        ESubject es2 = new UserESubject(user12);
-        Set<ESubject> subjects = new HashSet<ESubject>();
+        EntitlementSubject es1 = new UserSubject(user11);
+        EntitlementSubject es2 = new UserSubject(user12);
+        Set<EntitlementSubject> subjects = new HashSet<EntitlementSubject>();
         subjects.add(es1);
         subjects.add(es2);
-        OrESubject os = new OrESubject(subjects);
+        OrSubject os = new OrSubject(subjects);
+        EntitlementCondition ec = new IPCondition("*.sun.com");
         Privilige privilige = new Privilige(
                 PRIVILIGE_NAME,
                 entitlements,
-                os,
-                null,
+                os, //orSubject
+                ec, //entitlementCondition
                 null);
         UnittestLog.logMessage(
                 "PriviligeUnitlsTest.testAddNewPrivlige():" + "saving privilige=" + privilige);

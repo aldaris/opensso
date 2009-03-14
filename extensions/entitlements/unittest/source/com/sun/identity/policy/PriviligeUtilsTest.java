@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PriviligeUtilsTest.java,v 1.3 2009-03-03 01:52:15 dillidorai Exp $
+ * $Id: PriviligeUtilsTest.java,v 1.4 2009-03-14 03:08:45 dillidorai Exp $
  */
 
 package com.sun.identity.policy;
@@ -67,11 +67,23 @@ public class PriviligeUtilsTest {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
         PolicyManager pm = new PolicyManager(adminToken, "/");
+        try {
+            // remove the policy
+            pm.removePolicy(POLICY_NAME1);
+            pm.removePolicy(POLICY_NAME1 + "-copy");
+        } catch (Exception e) {
+            //policy may not exist
+            // users may not exist
+        }
+        try {
+            Thread.sleep(3000);
+        } catch(InterruptedException ie) {
+            
+        }
         Policy policy = new Policy(POLICY_NAME1, "test1 - discard",
             false, true);
         policy.addRule(createRule("welcome"));
         policy.addRule(createRule("banner"));
-        createUsers(adminToken, "user11", "user21", "user22");
         policy.addSubject("Users1", createUsersSubject(pm, "user11"));
         policy.addSubject("Users2", createUsersSubject(pm, "user21", "user22"));
         pm.addPolicy(policy);
@@ -83,7 +95,6 @@ public class PriviligeUtilsTest {
             AdminTokenAction.getInstance());
         PolicyManager pm = new PolicyManager(adminToken, "/");
         pm.removePolicy(POLICY_NAME1);
-        deleteUsers(adminToken, "user11", "user21", "user22");
     }
     
     @Test
