@@ -4,7 +4,7 @@
  */
 package com.sun.identity.policy;
 
-import com.sun.identity.entitlement.ESubject;
+import com.sun.identity.entitlement.EntitlementSubject;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.SubjectDecision;
 import com.sun.identity.entitlement.SubjectResult;
@@ -13,10 +13,10 @@ import java.util.Set;
 import javax.security.auth.Subject;
 
 /**
- * <code>com.sun.identity.ESubject</code> warapper for
+ * <code>com.sun.identity.EntitlementSubject</code> warapper for
  * <code>com.sun.identity.policy.Subject</code>
  */
-public class PolicyESubject implements ESubject {
+public class PolicyESubject implements EntitlementSubject {
 
     Set nqSubjects;
 
@@ -52,12 +52,12 @@ public class PolicyESubject implements ESubject {
 
     /**
      * Returns <code>SubjectDecision</code> of
-     * <code>ESubject</code> evaluation
-     * @param subject ESubject who is under evaluation.
+     * <code>EntitlementSubject</code> evaluation
+     * @param subject EntitlementSubject who is under evaluation.
      * @param resourceName Resource name.
      * @param environment Environment parameters.
      * @return <code>SubjectDecision</code> of
-     * <code>ESubject</code> evaluation
+     * <code>EntitlementSubject</code> evaluation
      * @throws com.sun.identity.entitlement,  EntitlementException in case
      * of any error
      */
