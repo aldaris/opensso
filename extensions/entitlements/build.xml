@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.26 2009-03-11 04:57:49 veiming Exp $
+   $Id: build.xml,v 1.27 2009-03-15 07:22:10 veiming Exp $
 
 -->
 
@@ -107,6 +107,7 @@
                excludes = "policy/**,context/**" >
             <src path="${entitlements.src.dir}/com/sun/identity/entitlement"/>
             <src path="${entitlements.src.dir}/com/sun/identity/shared/debug"/>
+            <src path="${entitlements.src.dir}/com/sun/identity/log"/>
             <classpath refid="build.class.path"/>
         </javac>
     </target>

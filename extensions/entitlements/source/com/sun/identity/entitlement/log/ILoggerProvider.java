@@ -22,27 +22,27 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DebugLogTest.java,v 1.5 2009-03-15 07:22:26 veiming Exp $
+ * $Id: ILoggerProvider.java,v 1.1 2009-03-15 07:22:16 veiming Exp $
  */
 
-package com.sun.identity.entitlement.util;
+package com.sun.identity.entitlement.log;
 
-import com.sun.identity.shared.debug.IDebug;
-import org.testng.annotations.Test;
+import java.util.logging.Logger;
 
 /**
- *
- * @author dennis
+ * This interface defines a method to return logger object.
  */
-public class DebugLogTest {
-    @Test
-    public void testDebug() {
-        IDebug debug = DebugFactory.getDebug("debugtest");
-        try {
-            String s = null;
-            s.equals("test");
-        } catch (NullPointerException e) {
-            debug.error("DebugLogTest.testDebug", e);
-        }
-    }
+public interface ILoggerProvider {
+    /**
+     * System property name for setting logger provider class
+     */
+    String SYSTEM_PROPERTY_LOG_PROVIDER = "com.sun.identity.log.loggerprovider";
+
+    /**
+     * Returns logger object.
+     *
+     * @param name Name of logger.
+     * @return logger object.
+     */
+    Logger getLogger(String name);
 }
