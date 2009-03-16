@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TaskModelImpl.java,v 1.9 2009-03-13 21:33:12 asyhuang Exp $
+ * $Id: TaskModelImpl.java,v 1.10 2009-03-16 22:43:46 asyhuang Exp $
  *
  */
 
@@ -310,7 +310,7 @@ public class TaskModelImpl
             }
                   
             map.put("ChangePasswordURL", 
-                returnEmptySetIfValueIsNull(entityId+"/idm/EndUer"));
+                returnEmptySetIfValueIsNull(entityId+"/idm/EndUser"));
             
             // get pubkey                 
             Map extValueMap = new HashMap();
