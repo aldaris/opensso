@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.16 2009-02-27 22:44:43 dillidorai Exp $
+ * $Id: Entitlement.java,v 1.17 2009-03-16 22:06:38 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -348,6 +348,7 @@ public class Entitlement {
      */
     public JSONObject toJSONObject() throws JSONException {
         JSONObject jo = new JSONObject();
+        jo.put("name", name);
         jo.put("serviceName", serviceName);
         jo.put("resourceName", resourceName);
         jo.put("excludedResourceNames", excludedResourceNames);
