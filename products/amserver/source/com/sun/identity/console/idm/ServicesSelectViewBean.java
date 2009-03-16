@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ServicesSelectViewBean.java,v 1.3 2008-12-17 07:30:33 veiming Exp $
+ * $Id: ServicesSelectViewBean.java,v 1.4 2009-03-16 18:28:45 veiming Exp $
  *
  */
 
@@ -238,9 +238,10 @@ public class ServicesSelectViewBean
                 String charset = getCharset(model);
                 propertiesViewBeanURL += "?ServiceName=" + serviceName +
                     "&type=" + Locale.URLEncodeField(type, charset) +
-                    "&realm=" + Locale.URLEncodeField(realm, charset) +
+                    "&realm=" + Locale.URLEncodeField(
+                        stringToHex(realm), charset) +
                     "&User=" +
-                    Locale.URLEncodeField(universalId, charset) +
+                    Locale.URLEncodeField(stringToHex(universalId), charset) +
                     "&Op=" + AMAdminConstants.OPERATION_ADD;
                 HttpServletResponse response =
                     getRequestContext().getResponse();
