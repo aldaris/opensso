@@ -1,30 +1,29 @@
 package com.sun.identity.admin.handler;
 
-import com.sun.identity.admin.model.UrlResourceExceptionBean;
-import com.sun.identity.admin.model.UrlResourceExceptionsBean;
+import com.sun.identity.admin.model.UrlResource;
 import java.io.Serializable;
 import javax.faces.event.ActionEvent;
 
 public class UrlResourceExceptionsHandler implements Serializable {
-    private UrlResourceExceptionsBean getBean(ActionEvent event) {
-        UrlResourceExceptionsBean eb = (UrlResourceExceptionsBean) event.getComponent().getAttributes().get("bean");
-        assert(eb != null);
+    private UrlResource getBean(ActionEvent event) {
+        UrlResource ur = (UrlResource) event.getComponent().getAttributes().get("bean");
+        assert(ur != null);
 
-        return eb;
+        return ur;
     }
 
     public void addListener(ActionEvent event) {
-        UrlResourceExceptionsBean esb = getBean(event);
-        esb.getUrlResourceExceptionBeans().add(new UrlResourceExceptionBean());
+        UrlResource ur = getBean(event);
+        ur.getExceptions().add(new UrlResource());
     }
 
     public void finishListener(ActionEvent event) {
-        UrlResourceExceptionsBean esb = getBean(event);
-        esb.setShown(false);
+        UrlResource ur = getBean(event);
+        ur.setExceptionsShown(false);
     }
 
     public void showListener(ActionEvent event) {
-        UrlResourceExceptionsBean esb = getBean(event);
-        esb.setShown(!esb.isShown());
+        UrlResource ur = getBean(event);
+        ur.setExceptionsShown(!ur.isExceptionsShown());
     }
 }

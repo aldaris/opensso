@@ -24,7 +24,9 @@
                 value="New Policy Name"/>
         </ice:panelGroup>
         <ice:panelGroup>
-            <ice:inputText id="policy-name"/>
+            <ice:inputText 
+                id="policy-name"
+                value="#{policyCreateWizardBean.name}"/>
         </ice:panelGroup>
         <ice:panelGroup>
             <ice:outputLabel
@@ -33,6 +35,7 @@
         </ice:panelGroup>
         <ice:inputTextarea
             id="policy-description"
+            value="#{policyCreateWizardBean.description}"
             styleClass="policy-description"/>
     </ice:panelGrid>
     <span class="section-head">

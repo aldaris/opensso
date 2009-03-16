@@ -12,10 +12,12 @@
         columnClasses="subjects-selected subjects-gutter subjects-available">
         <ice:panelGroup
             style="width: 100%">
-             <c:forEach 
+            <c:forEach
                 var="subjectContainer"
                 items="#{selectedSubjectContainers}">
                 <o:multipanel
+                    collapsible="true"
+                    removeable="true"
                     bean="#{subjectContainer}"
                     handler="#{subjectContainersHandler}">
                     <ui:define name="panel-title">
@@ -29,7 +31,8 @@
                         </ui:include>
                     </ui:define>
                 </o:multipanel>
-            </c:forEach>            <ice:panelGroup
+            </c:forEach>
+            <ice:panelGroup
                 styleClass="drop-target"
                 dropTarget="true"
                 dropListener="#{subjectContainersHandler.dropListener}">
@@ -40,32 +43,35 @@
         <ice:panelGrid
             columns="1"
             style="width: 100%">
-            <ice:panelCollapsible
-                expanded="true">
-                <f:facet name="header">
+            <o:multipanel
+                collapsible="false"
+                removeable="false">
+                <ui:define name="panel-title">
                     <ice:panelGroup>
                         <ice:outputText value="Drag and Drop"/>
                     </ice:panelGroup>
-                </f:facet>
-                <ice:panelSeries
-                    value="#{availableSubjectContainers}"
-                    var="subjectContainer">
-                    <ice:panelGroup
-                        dragValue="#{subjectContainer}"
-                        dragOptions="dragGhost"
-                        draggable="#{!subjectContainer.active}">
-                        <ice:panelGrid columns="2">
-                            <ice:graphicImage value="../image/user.png"/>
-                            <ice:panelGroup>
-                                <ice:outputText value="#{subjectContainer.name}"/>
-                                <ice:outputText
-                                    visible="#{subjectContainer.active}"
-                                    value="(already added)"/>
-                            </ice:panelGroup>
-                        </ice:panelGrid>
-                    </ice:panelGroup>
-                </ice:panelSeries>
-            </ice:panelCollapsible>
+                </ui:define>
+                <ui:define name="panel-body">
+                    <ice:panelSeries
+                        value="#{availableSubjectContainers}"
+                        var="subjectContainer">
+                        <ice:panelGroup
+                            dragValue="#{subjectContainer}"
+                            dragOptions="dragGhost"
+                            draggable="#{!subjectContainer.active}">
+                            <ice:panelGrid columns="2">
+                                <ice:graphicImage value="../image/user.png"/>
+                                <ice:panelGroup>
+                                    <ice:outputText value="#{subjectContainer.name}"/>
+                                    <ice:outputText
+                                        visible="#{subjectContainer.active}"
+                                        value="(already added)"/>
+                                </ice:panelGroup>
+                            </ice:panelGrid>
+                        </ice:panelGroup>
+                    </ice:panelSeries>
+                </ui:define>
+            </o:multipanel>
         </ice:panelGrid>
     </ice:panelGrid>
 </span>

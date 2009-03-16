@@ -18,6 +18,7 @@
                 <ice:panelGroup
                     styleClass="multipanel-controls">
                     <ice:commandLink
+                        rendered="#{collapsible == true}"
                         actionListener="#{handler.expandListener}"
                         partialSubmit="true"
                         styleClass="command-link">
@@ -31,8 +32,11 @@
                             name="bean"
                             value="#{bean}"/>
                     </ice:commandLink>
-                    <ice:outputText value="|"/>
+                    <ice:outputText
+                        rendered="#{collapsible == true &amp;&amp; removeable == true}"
+                        value="|"/>
                     <ice:commandLink
+                        rendered="#{removeable == true}"
                         actionListener="#{handler.removeListener}"
                         partialSubmit="true"
                         styleClass="command-link">
@@ -50,7 +54,7 @@
             </ice:panelGrid>
         </ice:panelGroup>
         <ice:panelGroup
-            visible="#{bean.expanded}"
+            visible="#{!collapsible || bean.expanded}"
             styleClass="multipanel-body">
             <ui:insert name="panel-body"/>
         </ice:panelGroup>

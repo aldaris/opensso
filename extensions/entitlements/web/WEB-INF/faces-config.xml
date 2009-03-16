@@ -169,6 +169,16 @@
     </managed-bean>
 
     <managed-bean>
+        <managed-bean-name>urlResourceChooserHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.UrlResourceChooserHandler</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>urlResourceChooserBean</property-name>
+            <value>#{urlResourceChooserBean}</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
         <managed-bean-name>urlResourcesSearchBean</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.UrlResourcesSearchBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
@@ -219,6 +229,14 @@
             <property-name>applications</property-name>
             <value>#{applicationHandler.applications}</value>
         </managed-property>
+        <managed-property>
+            <property-name>availableSubjectContainers</property-name>
+            <value>#{availableSubjectContainers}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>selectedSubjectContainers</property-name>
+            <value>#{selectedSubjectContainers}</value>
+        </managed-property>
     </managed-bean>
 
     <managed-bean>
@@ -232,6 +250,10 @@
     </managed-bean>
 
     <navigation-rule>
+        <navigation-case>
+            <from-outcome>home</from-outcome>
+            <to-view-id>/admin/facelet/home.xhtml</to-view-id>
+        </navigation-case>
         <navigation-case>
             <from-outcome>policy</from-outcome>
             <to-view-id>/admin/facelet/policy.xhtml</to-view-id>

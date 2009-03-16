@@ -11,11 +11,15 @@ public class PolicyCreateWizardBean
     extends WizardBean
     implements ResourceChooserClient, Serializable {
 
+    private String name;
+    private String description;
     private List<Resource> resources = new ArrayList<Resource>();
     private Application application;
     private Map<String,Application> applications;
     private List<Action> actions;
     private List<ViewCondition> conditions;
+    private List<SubjectContainer> availableSubjectContainers;
+    private List<SubjectContainer> selectedSubjectContainers;
 
     public List<Resource> getResources() {
         return resources;
@@ -74,6 +78,38 @@ public class PolicyCreateWizardBean
 
     public void setConditions(List<ViewCondition> conditions) {
         this.conditions = conditions;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public List<SubjectContainer> getAvailableSubjectContainers() {
+        return availableSubjectContainers;
+    }
+
+    public void setAvailableSubjectContainers(List<SubjectContainer> availableSubjectContainers) {
+        this.availableSubjectContainers = availableSubjectContainers;
+    }
+
+    public List<SubjectContainer> getSelectedSubjectContainers() {
+        return selectedSubjectContainers;
+    }
+
+    public void setSelectedSubjectContainers(List<SubjectContainer> selectedSubjectContainers) {
+        this.selectedSubjectContainers = selectedSubjectContainers;
     }
 
 }

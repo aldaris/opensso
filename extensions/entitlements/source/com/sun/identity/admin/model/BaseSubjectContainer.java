@@ -11,8 +11,6 @@ public abstract class BaseSubjectContainer implements SubjectContainer {
     private boolean active = false;
     private SubjectDao subjectDao;
     private boolean expanded = true;
-    private String expandText;
-    private String expandImage;
 
     public BaseSubjectContainer() {
         setExpanded(true);
@@ -64,21 +62,6 @@ public abstract class BaseSubjectContainer implements SubjectContainer {
 
     public void setExpanded(boolean expanded) {
         this.expanded = expanded;
-        if (expanded) {
-            this.expandText = "Hide";
-            this.expandImage = "../image/hide.png";
-        } else {
-            this.expandText = "Show";
-            this.expandImage = "../image/show.png";
-        }
-    }
-
-    public String getExpandText() {
-        return expandText;
-    }
-
-    public String getExpandImage() {
-        return expandImage;
     }
 
     public int getNumberSelected() {

@@ -15,3 +15,10 @@
     padding-top: 4px;
     padding-bottom: 4px;
 }
+
+.iceMnuItm a,
+.iceMnuItm a:hover,
+.iceMnuItmVrt a,
+.iceMnuItmVrt a:hover {    padding-top: 4px;
+    padding-bottom: 4px;
+}

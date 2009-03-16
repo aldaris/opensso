@@ -36,14 +36,17 @@
                 <ice:selectBooleanCheckbox
                     id="resource-checkbox"
                     value="#{urlResource.selected}"
-                    partialSubmit="true"/>
+                    valueChangeListener="#{urlResourceChooserHandler.selectListener}"
+                    partialSubmit="true">
+                        <f:attribute name="bean" value="#{urlResource}"/>
+                    </ice:selectBooleanCheckbox>
                 <ice:outputLabel
                     for="resource-checkbox"
                     value="#{urlResource.pattern}"/>
             </ice:panelGrid>
             <ice:panelGroup
                 styleClass="url-resource-excepted"
-                visible="#{urlResource.selected}">
+                visible="#{urlResource.selected &amp;&amp; urlResource.exceptable}">
                 <ice:panelGrid columns="3">
                     <ice:selectBooleanCheckbox
                         id="resource-excepted-checkbox"
@@ -58,13 +61,15 @@
                         visible="#{urlResource.excepted}"
                         actionListener="#{urlResourceExceptionsHandler.showListener}"
                         styleClass="command-link">
-                        <f:attribute name="bean" value="#{urlResource.urlResourceExceptionsBean}"/>
+                        <f:attribute 
+                            name="bean"
+                            value="#{urlResource}"/>
                         <ice:outputText
-                            value="#{urlResource.urlResourceExceptionsBean.shownActionText}"/>
+                            value="#{urlResource.exceptionsShown ? 'Hide' : 'Show'}"/>
                     </ice:commandLink>
                 </ice:panelGrid>
                 <ice:panelGrid
-                    visible="#{urlResource.urlResourceExceptionsBean.excepted &amp;&amp; urlResource.urlResourceExceptionsBean.shown}"
+                    visible="#{urlResource.exceptionsShown}"
                     columns="1">
                     <ice:panelGroup
                         styleClass="sub-section-head">
@@ -72,15 +77,15 @@
                             value="Enter parts to exclude"/>
                     </ice:panelGroup>
                     <ice:panelSeries
-                        value="#{urlResource.urlResourceExceptionsBean.urlResourceExceptionBeans}"
-                        var="urlResourceExceptionBean">
+                        value="#{urlResource.exceptions}"
+                        var="urlResourceException">
                         <ice:panelGroup>
                             <ice:outputLabel
                                 for="url-resource-exception-inputtext"
                                 value="#{urlResource.pattern}/"/>
                             <ice:inputText
                                 id="url-resource-exception-inputtext"
-                                value="#{urlResourceExceptionBean.part}"/>
+                                value="#{urlResourceException.pattern}"/>
                         </ice:panelGroup>
                     </ice:panelSeries>
                     <ice:panelGrid
@@ -89,10 +94,10 @@
                         <o:button
                             type="add"
                             handler="#{urlResourceExceptionsHandler}"
-                            bean="#{urlResource.urlResourceExceptionsBean}"/>
+                            bean="#{urlResource}"/>
                         <o:button
                             handler="#{urlResourceExceptionsHandler}"
-                            bean="#{urlResource.urlResourceExceptionsBean}"
+                            bean="#{urlResource}"
                             type="finish"/>
                     </ice:panelGrid>
                 </ice:panelGrid>
