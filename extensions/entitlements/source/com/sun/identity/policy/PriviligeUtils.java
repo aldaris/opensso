@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PriviligeUtils.java,v 1.17 2009-03-14 03:17:48 dillidorai Exp $
+ * $Id: PriviligeUtils.java,v 1.18 2009-03-16 22:07:37 dillidorai Exp $
  */
 package com.sun.identity.policy;
 
@@ -151,6 +151,7 @@ public class PriviligeUtils {
         String entitlementName = rule.getName();
         String serviceName = rule.getServiceTypeName();
         String resourceName = rule.getResourceName();
+        Set excludedResourceNames = rule.getExcludedResourceNames();
         Map<String, Object> actionMap = new HashMap<String, Object>();
         Set actionNames = rule.getActionNames();
         for (Object actionNameObj : actionNames) {
@@ -161,6 +162,7 @@ public class PriviligeUtils {
         Entitlement entitlement = new Entitlement(serviceName, resourceName,
                 actionMap);
         entitlement.setName(entitlementName);
+        entitlement.setExcludedResourceNames(excludedResourceNames);
         return entitlement;
     }
 
@@ -375,6 +377,7 @@ public class PriviligeUtils {
         String resourceName = entitlement.getResourceName();
         Map actionValues = entitlement.getActionValues();
         Rule rule = new Rule(ruleName, serviceName, resourceName, actionValues);
+        rule.setExcludedResourceNames(entitlement.getExcludedResourceNames());
         return rule;
     }
 
