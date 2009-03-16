@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMViewBeanBase.java,v 1.12 2008-10-03 19:26:02 veiming Exp $
+ * $Id: AMViewBeanBase.java,v 1.13 2009-03-16 17:17:06 babysunil Exp $
  *
  */
 
@@ -933,7 +933,6 @@ public abstract class AMViewBeanBase
     public String getPath(String child) {
         AMModel model = getModel();
         StringBuffer path = new StringBuffer();
-        path.append("/");
         String startDN = model.getStartDN();
         if (startDN.charAt(0) != '/') {
             startDN = "/" + startDN;
@@ -941,6 +940,7 @@ public abstract class AMViewBeanBase
         if (child.charAt(0) != '/') {
             child = "/" + child;
         }
+        path.append(startDN);
 
         if (!child.equals(startDN)) {
             int idx = child.indexOf(startDN);
