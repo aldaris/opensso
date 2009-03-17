@@ -5,5 +5,5 @@ import java.util.List;
 
 public interface Action extends DeepCloneable {
     public String getName();
-    public List<Object> getValues();
+    public Object getValue();
 }

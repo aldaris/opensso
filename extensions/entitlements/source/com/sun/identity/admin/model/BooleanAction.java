@@ -19,6 +19,8 @@ public class BooleanAction
 
     public void setAllow(boolean allow) {
         this.allow = allow;
+        this.deny = false;
+        this.ignore = false;
     }
 
     public boolean isDeny() {
@@ -27,6 +29,8 @@ public class BooleanAction
 
     public void setDeny(boolean deny) {
         this.deny = deny;
+        this.allow = false;
+        this.ignore = false;
     }
 
     public boolean isIgnore() {
@@ -35,13 +39,15 @@ public class BooleanAction
 
     public void setIgnore(boolean ignore) {
         this.ignore = ignore;
+        this.allow = false;
+        this.deny = false;
     }
 
-    public List getValues() {
+    public Object getValue() {
         if (allow) {
-            return Collections.singletonList(Boolean.TRUE);
+            return Boolean.TRUE;
         } else if (deny) {
-            return Collections.singletonList(Boolean.FALSE);
+            return Boolean.FALSE;
         } else {
             return null;
         }

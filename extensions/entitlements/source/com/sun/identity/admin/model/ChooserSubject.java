@@ -1,6 +1,6 @@
 package com.sun.identity.admin.model;
 
-import javax.security.auth.Subject;
+import com.sun.identity.entitlement.EntitlementSubject;
 
 public abstract class ChooserSubject implements ViewSubject {
     private String name;
@@ -32,5 +32,5 @@ public abstract class ChooserSubject implements ViewSubject {
         this.selected = selected;
     }
 
-    public abstract Subject getSubject();
+    public abstract EntitlementSubject getSubject();
 }

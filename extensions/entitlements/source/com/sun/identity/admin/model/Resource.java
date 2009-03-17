@@ -1,9 +1,9 @@
 package com.sun.identity.admin.model;
 
-import java.util.List;
+import com.sun.identity.entitlement.Entitlement;
+import java.util.Collection;
 
 public interface Resource {
-    @Override
-    public String toString();
-    public List<Resource> getExceptions();
+    public String getName();
+    public Entitlement getEntitlement(Collection<Action> actions);
 }

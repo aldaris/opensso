@@ -1,7 +1,7 @@
 package com.sun.identity.admin.model;
 
-import javax.security.auth.Subject;
+import com.sun.identity.entitlement.EntitlementSubject;
 
 public interface ViewSubject {
-    public Subject getSubject();
+    public EntitlementSubject getSubject();
 }
