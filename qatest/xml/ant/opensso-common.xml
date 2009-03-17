@@ -18,7 +18,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: opensso-common.xml,v 1.20 2009-03-04 17:05:22 rmisra Exp $
+ $Id: opensso-common.xml,v 1.21 2009-03-17 19:30:06 rmisra Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -782,11 +782,21 @@
     This target is run for all modules except agents,sanity-->
     <target name="merge-extended">
         <echo message="inside merge-extended ${ModuleToExecute}" level="info"/>
-        <concat destfile="${built.classes.dir}/xml/testng/${ModuleToExecute}/${ModuleToExecute}-${EXECUTION_MODE}-generated.xml" append="true">
-            <fileset dir="${built.classes.dir}/xml/testng/${ModuleToExecute}" >
-                <include name="extended-*.xml"/>
-            </fileset>
-        </concat>
+        <if>
+            <not>
+               <and>
+                <equals arg1="${ModuleToExecute}" arg2="sae"/>
+                <contains string="${EXECUTION_MODE}" substring="_sec"/>
+               </and>
+            </not>
+            <then>
+                <concat destfile="${built.classes.dir}/xml/testng/${ModuleToExecute}/${ModuleToExecute}-${EXECUTION_MODE}-generated.xml" append="true">
+                    <fileset dir="${built.classes.dir}/xml/testng/${ModuleToExecute}" >
+                        <include name="extended-*.xml"/>
+                    </fileset>
+                </concat>
+            </then>
+        </if>
         <if>
             <contains string="${EXECUTION_MODE}" substring="_sec" />
             <then>
