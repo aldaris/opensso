@@ -18,7 +18,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UnconfigureSAE.java,v 1.5 2009-01-27 00:11:58 nithyas Exp $
+ * $Id: UnconfigureSAE.java,v 1.6 2009-03-17 19:27:05 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -34,7 +34,6 @@ import com.sun.identity.qatest.common.TestConstants;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
-import org.testng.annotations.AfterSuite;
 import org.testng.annotations.AfterTest;
 
 /**
@@ -70,7 +69,8 @@ public class UnconfigureSAE extends TestCommon {
      * Configure sp & idp
      * @DocTest: SAE|Unconfigure SP & IDP by deleting entities & COT's 
      */
-    @AfterSuite (groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
+    @AfterTest (groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad",
+        "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void UnconfigureSAE()
     throws Exception {
         entering ("UnconfigureSAE", null);
@@ -81,7 +81,8 @@ public class UnconfigureSAE extends TestCommon {
             configMap = new HashMap<String, String>();
             getWebClient();
             
-            configMap = getMapFromResourceBundle("sae" + fileseparator + "saeTestConfigData");
+            configMap = getMapFromResourceBundle("sae" + fileseparator +
+                    "saeTestConfigData");
             log (Level.FINEST, "UnconfigureSAE", "Map:" + configMap);
             
             spurl = configMap.get(TestConstants.KEY_SP_PROTOCOL) + "://" + 

@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureSAE.java,v 1.8 2009-01-27 00:11:58 nithyas Exp $
+ * $Id: ConfigureSAE.java,v 1.9 2009-03-17 19:27:05 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -36,12 +36,8 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
-import org.testng.annotations.BeforeGroups;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Parameters;
-import org.testng.annotations.Test;
 
 /**
  * This class creates COT  and loads SAE metadata on both IDP and SP.
@@ -76,7 +72,8 @@ public class ConfigureSAE extends TestCommon {
      * @DocTest: SAE|Configure SP & IDP by loading metadata on both sides.
      */
     @Parameters({"groupName"})
-    @BeforeSuite(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
+    @BeforeTest(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad",
+        "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void configureSAE(String strGroupName)
     throws Exception {
         Object[] params = {strGroupName};
@@ -346,87 +343,5 @@ public class ConfigureSAE extends TestCommon {
             consoleLogout(idpWebClient, idpurl);
         }
         exiting("configureSAE");
-    }
-    
-    /**
-     * This method fills map with SP configuration data which is needed by
-     * TestCommon.configureProduct method.
-     */
-    private void getSPConfigurationMap(Map spMap, Map confMap)
-    throws Exception {
-        try {
-            spMap.put("serverurl",confMap.get(TestConstants.KEY_SP_PROTOCOL)
-            + ":" + "//" + confMap.get(TestConstants.KEY_SP_HOST) + ":"
-                    + confMap.get(TestConstants.KEY_SP_PORT));
-            spMap.put("serveruri",
-                    confMap.get(TestConstants.KEY_SP_DEPLOYMENT_URI));
-            spMap.put(TestConstants.KEY_ATT_COOKIE_DOMAIN,
-                    confMap.get(TestConstants.KEY_SP_COOKIE_DOMAIN));
-            spMap.put(TestConstants.KEY_ATT_CONFIG_DIR,
-                    confMap.get(TestConstants.KEY_SP_CONFIG_DIR));
-            spMap.put(TestConstants.KEY_ATT_AMADMIN_PASSWORD,
-                    confMap.get(TestConstants.KEY_SP_AMADMIN_PASSWORD));
-            spMap.put(TestConstants.KEY_ATT_CONFIG_DATASTORE,
-                    confMap.get(TestConstants.KEY_SP_DATASTORE));
-            spMap.put(TestConstants.KEY_ATT_AM_ENC_PWD,
-                    confMap.get(TestConstants.KEY_SP_ENC_KEY));
-            spMap.put(TestConstants.KEY_ATT_DIRECTORY_SERVER,
-                    confMap.get(TestConstants.KEY_SP_DIRECTORY_SERVER));
-            spMap.put(TestConstants.KEY_ATT_DIRECTORY_PORT,
-                    confMap.get(TestConstants.KEY_SP_DIRECTORY_PORT));
-            spMap.put(TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX,
-                    confMap.get(TestConstants.KEY_SP_CONFIG_ROOT_SUFFIX));
-            spMap.put(TestConstants.KEY_ATT_DS_DIRMGRDN,
-                    confMap.get(TestConstants.KEY_SP_DS_DIRMGRDN));
-            spMap.put(TestConstants.KEY_ATT_DS_DIRMGRPASSWD,
-                    confMap.get(TestConstants.KEY_SP_DS_DIRMGRPASSWORD));
-            spMap.put(TestConstants.KEY_ATT_LOAD_UMS,
-                    confMap.get(TestConstants.KEY_SP_LOAD_UMS));
-        } catch(Exception e) {
-            log(Level.SEVERE, "getSPConfigurationMap", e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }
-    }
-    
-    /**
-     * This method fills map with IDP configuration data which is needed by
-     * TestCommon.configureProduct method.
-     */
-    private void getIDPConfigurationMap(Map idpMap, Map confMap)
-    throws Exception {
-        try {
-            idpMap.put("serverurl",confMap.get(TestConstants.KEY_IDP_PROTOCOL)
-            + ":" + "//" + confMap.get(TestConstants.KEY_IDP_HOST) + ":"
-                    + confMap.get(TestConstants.KEY_IDP_PORT));
-            idpMap.put("serveruri",
-                    confMap.get(TestConstants.KEY_IDP_DEPLOYMENT_URI));
-            idpMap.put(TestConstants.KEY_ATT_COOKIE_DOMAIN,
-                    confMap.get(TestConstants.KEY_IDP_COOKIE_DOMAIN));
-            idpMap.put(TestConstants.KEY_ATT_CONFIG_DIR,
-                    confMap.get(TestConstants.KEY_IDP_CONFIG_DIR));
-            idpMap.put(TestConstants.KEY_ATT_AMADMIN_PASSWORD,
-                    confMap.get(TestConstants.KEY_IDP_AMADMIN_PASSWORD));
-            idpMap.put(TestConstants.KEY_ATT_CONFIG_DATASTORE,
-                    confMap.get(TestConstants.KEY_IDP_DATASTORE));
-            idpMap.put(TestConstants.KEY_ATT_AM_ENC_PWD,
-                confMap.get(TestConstants.KEY_IDP_ENC_KEY));
-            idpMap.put(TestConstants.KEY_ATT_DIRECTORY_SERVER,
-                    confMap.get(TestConstants.KEY_IDP_DIRECTORY_SERVER));
-            idpMap.put(TestConstants.KEY_ATT_DIRECTORY_PORT,
-                    confMap.get(TestConstants.KEY_IDP_DIRECTORY_PORT));
-            idpMap.put(TestConstants.KEY_ATT_CONFIG_ROOT_SUFFIX,
-                    confMap.get(TestConstants.KEY_IDP_CONFIG_ROOT_SUFFIX));
-            idpMap.put(TestConstants.KEY_ATT_DS_DIRMGRDN,
-                    confMap.get(TestConstants.KEY_IDP_DS_DIRMGRDN));
-            idpMap.put(TestConstants.KEY_ATT_DS_DIRMGRPASSWD,
-                    confMap.get(TestConstants.KEY_IDP_DS_DIRMGRPASSWORD));
-            idpMap.put(TestConstants.KEY_ATT_LOAD_UMS,
-                    confMap.get(TestConstants.KEY_SP_LOAD_UMS));
-        } catch(Exception e) {
-            log(Level.SEVERE, "getIDPConfigurationMap", e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }
     }
 }

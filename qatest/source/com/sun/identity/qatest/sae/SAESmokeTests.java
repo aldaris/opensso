@@ -17,14 +17,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAESmokeTests.java,v 1.8 2009-01-27 00:11:58 nithyas Exp $
+ * $Id: SAESmokeTests.java,v 1.9 2009-03-17 19:27:05 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
 
 package com.sun.identity.qatest.sae;
 
-import com.gargoylesoftware.htmlunit.html.ClickableElement;
+import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlHiddenInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -46,6 +46,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+import org.testng.Reporter;
 
 /**
  * This class test the SAE feature. It uses sample SAE jsp bundled in the 
@@ -58,7 +59,6 @@ public class SAESmokeTests extends TestCommon {
     private Map<String, String> configMap;
     private Map<String, String> usersMap;
     ArrayList spuserlist = new ArrayList();
-    ArrayList idpuserlist = new ArrayList();
     private String  baseDir;
     private String spurl;
     private String idpurl;
@@ -69,16 +69,20 @@ public class SAESmokeTests extends TestCommon {
     private String idpsaeAppSecretList;
     private String spsaeAppSecretList;
     private String saeSPLogoutUrl;
-    private String sMode;
     private String ssoStr;
     private String sloStr;
+    private String isEncrypted;
+    private String idpEncType;
+    private String idpEncStr;
+    private String spEncType;
+    private String spEncStr;
     private ResourceBundle saeConfig;
     private FederationManager idpfm;
     private FederationManager spfm;
     private HtmlPage page;
     private HtmlPage result;
     private HtmlForm form;
-    private ClickableElement strLogoutURL;
+    private String strLogoutURL;
 
     private  String AUTO_FED_ENABLED_FALSE = "<Attribute name=\""
             +  "autofedEnabled" + "\">\n"
@@ -129,16 +133,23 @@ public class SAESmokeTests extends TestCommon {
      * This is setup method. It creates required users for test and updates
      * metadata at IDP and SP.
      */
-    @Parameters({"secMode"})
+    @Parameters({"secMode", "encrypted", "idp_enc_type", "idp_enc_str",
+    "sp_enc_type", "sp_enc_str"})
     @BeforeClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
-      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
-    public void setup(String secMode)
+        "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
+    public void setup(String secMode, String encrypted, String idp_enc_type,
+            String idp_enc_str, String sp_enc_type, String sp_enc_str)
     throws Exception {
-        Object[] params = {secMode};
+        Object[] params = {secMode, encrypted, idp_enc_type, idp_enc_str,
+        sp_enc_type, sp_enc_str};
         entering("setup", null);
-        sMode = secMode;
         List<String> list;
         try {
+            isEncrypted = encrypted;
+            idpEncType = idp_enc_type;
+            idpEncStr = idp_enc_str;
+            spEncType = sp_enc_type;
+            spEncStr = sp_enc_str;
             ResourceBundle rb_amconfig = ResourceBundle.getBundle(
                     TestConstants.TEST_PROPERTY_AMCONFIG);
             baseDir = getBaseDir() + System.getProperty("file.separator")
@@ -271,15 +282,33 @@ public class SAESmokeTests extends TestCommon {
             spmetadataextMod = spmetadataextMod.replaceAll(IDP_COT, SP_COT);
 
             if (secMode.equals("symmetric")) {
-                spsaeAppSecretList = spurl +
-                    "/" + saeConfig.getString("spAppURL") +
-                    "|type=" + secMode + 
-                    "|secret=" + saeConfig.getString("sharedSecretKey");
+                if (isEncrypted.equals("off")) {            
+                    spsaeAppSecretList = spurl +
+                        "/" + saeConfig.getString("spAppURL") +
+                        "|type=" + secMode + 
+                        "|secret=" + saeConfig.getString("sharedSecretKey");
+                } else if (isEncrypted.equals("on")) {
+                    spsaeAppSecretList = spurl +
+                        "/" + saeConfig.getString("spAppURL") +
+                        "|type=" + secMode + 
+                        "|secret=" + saeConfig.getString("sharedSecretKey") +
+                        "|encryptionalgorithm=" + sp_enc_type +
+                        "|encryptionstrength=" + sp_enc_str;
+                }
             } else if (secMode.equals("asymmetric")) {
-                spsaeAppSecretList = spurl +
-                    "/" + saeConfig.getString("spAppURL") +
-                    "|type=" + secMode + 
-                    "|pubkeyalias=" + saeConfig.getString("sp_keyalias");
+                if (isEncrypted.equals("off")) {                            
+                    spsaeAppSecretList = spurl +
+                        "/" + saeConfig.getString("spAppURL") +
+                        "|type=" + secMode + 
+                        "|pubkeyalias=" + saeConfig.getString("sp_keyalias");
+                } else if (isEncrypted.equals("on")) {
+                    spsaeAppSecretList = spurl +
+                        "/" + saeConfig.getString("spAppURL") +
+                        "|type=" + secMode + 
+                        "|secret=" + saeConfig.getString("sharedSecretKey") +
+                        "|encryptionalgorithm=" + sp_enc_type +
+                        "|encryptionstrength=" + sp_enc_str;
+                }                    
             }
             log(Level.FINEST, "setup", "spsaeAppSecretList=" +
                     spsaeAppSecretList);
@@ -336,15 +365,33 @@ public class SAESmokeTests extends TestCommon {
             idpmetadataext = MultiProtocolCommon.getExtMetadataFromPage(
                     idpmetaPage);
             if (secMode.equals("symmetric")) {
-                idpsaeAppSecretList = idpurl +
-                    "/" + saeConfig.getString("idpAppURL") +
-                    "|type=" + secMode +
-                    "|secret=" + saeConfig.getString("sharedSecretKey");
+                if (isEncrypted.equals("off")) {
+                    idpsaeAppSecretList = idpurl +
+                        "/" + saeConfig.getString("idpAppURL") +
+                        "|type=" + secMode +
+                        "|secret=" + saeConfig.getString("sharedSecretKey");
+                } else if (isEncrypted.equals("on")) {
+                    idpsaeAppSecretList = idpurl +
+                        "/" + saeConfig.getString("idpAppURL") +
+                        "|type=" + secMode +
+                        "|secret=" + saeConfig.getString("sharedSecretKey") +
+                        "|encryptionalgorithm=" + idp_enc_type +
+                        "|encryptionstrength=" + idp_enc_str;
+                }
             } else if (secMode.equals("asymmetric")) {
-                idpsaeAppSecretList = idpurl +
-                    "/" + saeConfig.getString("idpAppURL") +
-                    "|type=" + secMode + 
-                    "|pubkeyalias=" + saeConfig.getString("idp_keyalias");
+                if (isEncrypted.equals("off")) {                
+                    idpsaeAppSecretList = idpurl +
+                        "/" + saeConfig.getString("idpAppURL") +
+                        "|type=" + secMode + 
+                        "|pubkeyalias=" + saeConfig.getString("idp_keyalias");
+                } else if (isEncrypted.equals("on")) {                
+                    idpsaeAppSecretList = idpurl +
+                        "/" + saeConfig.getString("idpAppURL") +
+                        "|type=" + secMode + 
+                        "|pubkeyalias=" + saeConfig.getString("idp_keyalias") +
+                        "|encryptionalgorithm=" + idp_enc_type +
+                        "|encryptionstrength=" + idp_enc_str;
+                }
             }
             log(Level.FINEST, "setup", "idpsaeAppSecretList=" +
                     idpsaeAppSecretList);
@@ -355,8 +402,6 @@ public class SAESmokeTests extends TestCommon {
             String idpmetadataextMod =
                     idpmetadataext.replaceAll(SAE_APP_SECRET_LIST_DEFAULT,
                     IDP_SAE_APP_SECRET_LIST);
-            log(Level.FINEST, "setup", "Modified metadata:" +
-                    idpmetadataextMod);
 
             String IDP_SAE_URL_DEFAULT = "<Attribute name=\"saeIDPUrl\">\n"
             +  "            <Value>null/"
@@ -373,6 +418,8 @@ public class SAESmokeTests extends TestCommon {
             idpmetadataextMod =
                     idpmetadataextMod.replaceAll(IDP_SAE_URL_DEFAULT,
                     IDP_SAE_URL);
+            log(Level.FINEST, "setup", "Modified metadata:" +
+                    idpmetadataextMod);
 
             // load idp extended metadata on idp
             if (FederationManager.getExitCode(idpfm.deleteEntity(webClient,
@@ -417,6 +464,10 @@ public class SAESmokeTests extends TestCommon {
     throws Exception {
         entering("symmetricSSOWithProfileIgnoredPOST", null);
         try {
+            Reporter.log("This method test single sign using POST when the" +
+                    " user profile is set to ignore at both IDP and SP. The" +
+                    " security mechanism for attribute transfer is through" +
+                    " symmetric keys.");
             enableUserProfile("SP", spfm, "ignore");
             enableUserProfile("IDP", idpfm, "ignore");
             setSPAppData("symmetric");
@@ -428,7 +479,8 @@ public class SAESmokeTests extends TestCommon {
             assert (getHtmlPageStringIndex(page,
                     saeConfig.getString("branch_attribute")) != -1);
         } catch (Exception e) {
-            log(Level.SEVERE, "symmetricSSOWithProfileIgnoredPOST", e.getMessage());
+            log(Level.SEVERE, "symmetricSSOWithProfileIgnoredPOST",
+                    e.getMessage());
             e.printStackTrace();
             throw e;
         }
@@ -447,9 +499,13 @@ public class SAESmokeTests extends TestCommon {
     throws Exception {
         entering("symmetricSLOWithProfileIgnoredPOST", null);
         try {
+            Reporter.log("This method test single logout using redirect when" +
+                    " the user profile is set to ignore at both IDP and SP." +
+                    " The security mechanism for attribute transfer is" +
+                    " through symmetric keys.");
             page = (HtmlPage) webClient.getPage(sloStr);
             strLogoutURL = getLogoutURL(page);
-            result = (HtmlPage) strLogoutURL.click();
+            result = (HtmlPage) webClient.getPage(strLogoutURL);
             assert (getHtmlPageStringIndex(result, "Generate URL") != -1);
         } catch (Exception e) {
             log(Level.SEVERE, "symmetricSLOWithProfileIgnoredPOST",
@@ -472,6 +528,10 @@ public class SAESmokeTests extends TestCommon {
     throws Exception {
         entering("symmetricSSOWithProfileIgnored", null);
         try {
+            Reporter.log("This method test single sign using redirect when" +
+                    " the user profile is set to ignore at both IDP and SP." +
+                    " The security mechanism for attribute transfer is" +
+                    " through symmetric keys.");
             generateSSOSLOURL("symmetric");
             page = (HtmlPage) webClient.getPage(ssoStr);
             assert (getHtmlPageStringIndex(page,
@@ -498,9 +558,13 @@ public class SAESmokeTests extends TestCommon {
     throws Exception {
         entering("symmetricSLOWithProfileIgnored", null);
         try {
+            Reporter.log("This method test single logout using redirect when" +
+                    " the user profile is set to ignore at both IDP and SP." +
+                    " The security mechanism for attribute transfer is" +
+                    " through symmetric keys.");
             page = (HtmlPage) webClient.getPage(sloStr);
             strLogoutURL = getLogoutURL(page);
-            result = (HtmlPage) strLogoutURL.click();
+            result = (HtmlPage)  webClient.getPage(strLogoutURL);
             assert (getHtmlPageStringIndex(result, "Generate URL") != -1);
         } catch (Exception e) {
             log(Level.SEVERE, "symmetricSLOWithProfileIgnored", e.getMessage());
@@ -522,6 +586,10 @@ public class SAESmokeTests extends TestCommon {
     throws Exception {
         entering("symmetricSSOWithProfileRequiredPOST", null);
         try {
+            Reporter.log("This method test single sign using POST when the" +
+                    " user profile is set to required at SP and ignore at" +
+                    " IDP. The security mechanism for attribute transfer is" +
+                    " through symmetric keys.");
             enableUserProfile("SP", spfm, "false");
             page = generateSSOSLOURL("symmetric");
             form = (HtmlForm)page.getForms().get(0);
@@ -559,10 +627,13 @@ public class SAESmokeTests extends TestCommon {
     throws Exception {
         entering("symmetricSLOWithProfileRequiredPOST", null);
         try {
-            generateSSOSLOURL("symmetric");
+            Reporter.log("This method test single logout using redirect when" +
+                    " the user profile is set to ignore at both IDP and SP." +
+                    " The security mechanism for attribute transfer is" +
+                    " through symmetric keys.");
             page = (HtmlPage) webClient.getPage(sloStr);
             strLogoutURL = getLogoutURL(page);
-            result = (HtmlPage) strLogoutURL.click();
+            result = (HtmlPage)  webClient.getPage(strLogoutURL);
             assert (getHtmlPageStringIndex(result, "Generate URL") != -1);
         } catch (Exception e) {
             log(Level.SEVERE, "symmetricSLOWithProfileRequiredPOST",
@@ -585,6 +656,10 @@ public class SAESmokeTests extends TestCommon {
     throws Exception {
         entering("symmetricSSOWithProfileRequired", null);
         try {
+            Reporter.log("This method test single sign using redirect when" +
+                    " the user profile is set to required at SP and ignore at" +
+                    " IDP. The security mechanism for attribute transfer is" +
+                    " through symmetric keys.");
             generateSSOSLOURL("symmetric");
             page = (HtmlPage) webClient.getPage(ssoStr);
             form = page.getFormByName("Login");
@@ -620,9 +695,13 @@ public class SAESmokeTests extends TestCommon {
     throws Exception {
         entering("symmetricSLOWithProfileRequired", null);
         try {
+            Reporter.log("This method test single logout using redirect when" +
+                    " the user profile is set to ignore at IDP and required" +
+                    " at SP. The security mechanism for attribute transfer" +
+                    " is through symmetric keys.");
             page = (HtmlPage) webClient.getPage(sloStr);
             strLogoutURL = getLogoutURL(page);
-            result = (HtmlPage) strLogoutURL.click();
+            result = (HtmlPage)  webClient.getPage(strLogoutURL);
             assert (getHtmlPageStringIndex(result, "Generate URL") != -1);
         } catch (Exception e) {
             log(Level.SEVERE, "symmetricSLOWithProfileRequired",
@@ -644,6 +723,10 @@ public class SAESmokeTests extends TestCommon {
     throws Exception {
         entering("asymmetricSSOWithProfileIgnoredPOST", null);
         try {
+            Reporter.log("This method test single sign using POST when the" +
+                    " user profile is set to ignore at both IDP and SP. The" +
+                    " security mechanism for attribute transfer is through" +
+                    " asymmetric keys.");
             enableUserProfile("SP", spfm, "ignore");
             enableUserProfile("IDP", idpfm, "ignore");
             setSPAppData("asymmetric");
@@ -675,9 +758,13 @@ public class SAESmokeTests extends TestCommon {
     throws Exception {
         entering("asymmetricSLOWithProfileIgnoredPOST", null);
         try {
+            Reporter.log("This method test single logout using redirect when" +
+                    " the user profile is set to ignore at both IDP and SP." +
+                    " The security mechanism for attribute transfer is" +
+                    " through asymmetric keys.");
             page = (HtmlPage) webClient.getPage(sloStr);
             strLogoutURL = getLogoutURL(page);
-            result = (HtmlPage) strLogoutURL.click();
+            result = (HtmlPage)  webClient.getPage(strLogoutURL);
             assert (getHtmlPageStringIndex(result, "Generate URL") != -1);
         } catch (Exception e) {
             log(Level.SEVERE, "asymmetricSLOWithProfileIgnoredPOST",
@@ -700,6 +787,10 @@ public class SAESmokeTests extends TestCommon {
     throws Exception {
         entering("asymmetricSSOWithProfileIgnored", null);
         try {
+            Reporter.log("This method test single sign using redirect when" +
+                    " the user profile is set to ignore at both IDP and SP." +
+                    " The security mechanism for attribute transfer is" +
+                    " through asymmetric keys.");
             generateSSOSLOURL("asymmetric");
             page = (HtmlPage) webClient.getPage(ssoStr);
             assert (getHtmlPageStringIndex(page,
@@ -727,9 +818,13 @@ public class SAESmokeTests extends TestCommon {
     throws Exception {
         entering("asymmetricSLOWithProfileIgnored", null);
         try {
+            Reporter.log("This method test single logout using redirect when" +
+                    " the user profile is set to ignore at both IDP and SP." +
+                    " The security mechanism for attribute transfer is" +
+                    " through asymmetric keys");
             page = (HtmlPage) webClient.getPage(sloStr);
             strLogoutURL = getLogoutURL(page);
-            result = (HtmlPage) strLogoutURL.click();
+            result = (HtmlPage)  webClient.getPage(strLogoutURL);
             assert (getHtmlPageStringIndex(result, "Generate URL") != -1);
         } catch (Exception e) {
             log(Level.SEVERE, "asymmetricSLOWithProfileIgnored",
@@ -752,6 +847,10 @@ public class SAESmokeTests extends TestCommon {
     throws Exception {
         entering("asymmetricSSOWithProfileRequiredPOST", null);
         try {
+            Reporter.log("This method test single sign using POST when the" +
+                    " user profile is set to required at SP and ignore at" +
+                    " IDP. The security mechanism for attribute transfer is" +
+                    " through asymmetric keys.");
             enableUserProfile("SP", spfm, "false");
             HtmlPage page = generateSSOSLOURL("asymmetric");
             HtmlForm form = (HtmlForm)page.getForms().get(0);
@@ -789,9 +888,13 @@ public class SAESmokeTests extends TestCommon {
     throws Exception {
         entering("asymmetricSLOWithProfileRequiredPOST", null);
         try {
+            Reporter.log("This method test single logout using redirect when" +
+                    " the user profile is set to ignore at IDP and required" +
+                    " at SP. The security mechanism for attribute transfer" +
+                    " is through asymmetric keys.");
             page = (HtmlPage) webClient.getPage(sloStr);
             strLogoutURL = getLogoutURL(page);
-            result = (HtmlPage) strLogoutURL.click();
+            result = (HtmlPage)  webClient.getPage(strLogoutURL);
             assert (getHtmlPageStringIndex(result, "Generate URL") != -1);
         } catch (Exception e) {
             log(Level.SEVERE, "asymmetricSLOWithProfileRequiredPOST",
@@ -814,6 +917,10 @@ public class SAESmokeTests extends TestCommon {
     throws Exception {
         entering("asymmetricSSOWithProfileRequired", null);
         try {
+            Reporter.log("This method test single sign using redirect when" +
+                    " the user profile is set to required at SP and ignore" +
+                    " at IDP. The security mechanism for attribute transfer" +
+                    " is through asymmetric keys.");
             generateSSOSLOURL("asymmetric");
             page = (HtmlPage) webClient.getPage(ssoStr);
             form = page.getFormByName("Login");
@@ -849,9 +956,13 @@ public class SAESmokeTests extends TestCommon {
     throws Exception {
         entering("asymmetricSLOWithProfileRequired", null);
         try {
+            Reporter.log("This method test single logout using redirect when" +
+                    " the user profile is set to ignore at IDP and required" +
+                    " at SP. The security mechanism for attribute transfer" +
+                    " is through asymmetric keys.");
             page = (HtmlPage) webClient.getPage(sloStr);
             strLogoutURL = getLogoutURL(page);
-            result = (HtmlPage) strLogoutURL.click();
+            result = (HtmlPage)  webClient.getPage(strLogoutURL);
             assert (getHtmlPageStringIndex(result, "Generate URL") != -1);
         } catch (Exception e) {
             log(Level.SEVERE, "asymmetricSLOWithProfileRequired",
@@ -867,7 +978,7 @@ public class SAESmokeTests extends TestCommon {
      * profile at SP and IDP as Required.
      */
     @AfterClass(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", 
-      "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
+        "ad_sec", "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void cleanup()
     throws Exception {
         entering("cleanup", null);
@@ -964,13 +1075,22 @@ public class SAESmokeTests extends TestCommon {
         form = (HtmlForm)page.getForms().get(0);
 
         log(Level.FINEST, "setSPAppData", "secMode: " + secMode);
-        ((HtmlTextInput)form.getInputByName("cryptotype")).
-                setValueAttribute(secMode);
+        ((HtmlSelect)form.getSelectByName("cryptotype")).
+                setSelectedAttribute(secMode, true);
 
         String sharedSecret = saeConfig.getString("sharedSecret");
         log(Level.FINEST, "setSPAppData", "sharedSecret: " + sharedSecret);
         ((HtmlTextInput)form.getInputByName("secret")).
                 setValueAttribute(sharedSecret);
+        
+        if (isEncrypted.equals("on")) {
+            ((HtmlCheckBoxInput)form.getInputByName("useencryption")).
+                    setChecked(true);
+            ((HtmlTextInput)form.getInputByName("encAlgorithm")).
+                    setValueAttribute(spEncType);
+            ((HtmlTextInput)form.getInputByName("encStrength")).
+                    setValueAttribute(spEncStr);        
+        }        
 
         if (secMode.equals("asymmetric")) {
             String sp_keyalias = saeConfig.getString("sp_keyalias");
@@ -1005,6 +1125,7 @@ public class SAESmokeTests extends TestCommon {
     throws Exception {
         log(Level.FINEST, "generateSSOSLOURL", "secMode: " + secMode);
 
+        webClient = new WebClient();
         log(Level.FINEST, "generateSSOSLOURL", "idpurl: " + idpurl);
         String idpAppURL = saeConfig.getString("idpAppURL");
         log(Level.FINEST, "generateSSOSLOURL", "idpAppURL: " + idpAppURL);
@@ -1055,6 +1176,15 @@ public class SAESmokeTests extends TestCommon {
         ((HtmlTextInput)form.getInputByName("secret")).
                 setValueAttribute(sharedSecret);
 
+        if (isEncrypted.equals("on")) {
+            ((HtmlCheckBoxInput)form.getInputByName("useencryption")).
+                    setChecked(true);
+            ((HtmlTextInput)form.getInputByName("encAlgorithm")).
+                    setValueAttribute(idpEncType);
+            ((HtmlTextInput)form.getInputByName("encStrength")).
+                    setValueAttribute(idpEncStr);        
+        }
+        
         if (secMode.equals("asymmetric")) {
             String idp_keyalias = saeConfig.getString("idp_keyalias");
             log(Level.FINEST, "generateSSOSLOURL", "idp_keyalias: " +
@@ -1087,10 +1217,12 @@ public class SAESmokeTests extends TestCommon {
         String anchStr = list.get(2).toString();
         ssoStr = anchStr.substring(anchStr.indexOf("=") + 2,
                 anchStr.length() - 3);
+        ssoStr = ssoStr.replace("amp;", "");
         log(Level.FINEST, "generateSSOSLOURL", "SSO URL:" + ssoStr);
         anchStr = list.get(3).toString();
         sloStr = anchStr.substring(anchStr.indexOf("=") + 2,
                 anchStr.length() - 3);
+        sloStr = sloStr.replace("amp;", "");
         log(Level.FINEST, "generateSSOSLOURL", "SLO URL:" + sloStr);
         return (result);
     }
@@ -1100,11 +1232,22 @@ public class SAESmokeTests extends TestCommon {
      * generated when one clicks on the page which lists the SSO and SLO url's.
      * This shows up when one clicks on SLO url.
      */
-    private ClickableElement getLogoutURL(HtmlPage page)
+    private String getLogoutURL(HtmlPage page)
     throws Exception {
-        List list = page.getAnchors();
-        log(Level.FINEST, "getLogoutURL", "Logout URL: " + list.get(2));
-        ClickableElement link = (ClickableElement) list.get(2);
-        return (link);
+        if (getHtmlPageStringIndex(page, "Logout URL") == -1) {
+            log(Level.SEVERE, "getLogoutURL", "Cannot reach the logout url" +
+                    "page. This page is generated when one clicks on the page" +
+                    " which lists the SSO and SLO url's. This page shows up" +
+                    " when one clicks on SLO url");
+            assert false;
+        }
+        String strPage = page.asXml();
+        int isun = strPage.indexOf("sun.returnurl");
+        int ihttp = strPage.indexOf("http", isun);
+        int itrue = strPage.indexOf("true", isun);
+        String strRet = strPage.substring(ihttp, itrue + 4);
+        strRet = strRet.replace("amp;", "");
+
+        return (strRet);
     }
 }
