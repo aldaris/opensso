@@ -1,4 +1,8 @@
 <%--
+   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+  
+   Copyright (c) 2007 Sun Microsystems Inc. All Rights Reserved
+  
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
    (the License). You may not use this file except in
@@ -18,12 +22,12 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: saeCreateSPAppDataFile.jsp,v 1.3 2008-12-05 19:37:38 rmisra Exp $
+   $Id: saeCreateSPAppDataFile.jsp,v 1.4 2009-03-17 19:32:19 rmisra Exp $
 
-   Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
-
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <%@ page import="com.sun.identity.sae.api.SecureAttrs"%>
+<%@ page import="com.sun.identity.sae.api.Utils"%>
 <%@ page import="java.io.*"%>
 <%@ page import="java.util.*"%>
 <%@ page import="com.sun.identity.common.SystemConfigurationUtil"%>
@@ -42,39 +46,47 @@ public void jspInit()
 <html>
 <head>
 <title>Secure Attributes Exchange SP APP SAMPLE DATA FILE CONFIGURATION</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="stylesheet" type="text/css" href="<%= deployuri %>/com_sun_web_ui/css/css_ns6up.css" />
 </head>
 <body>
 <%@ include file="header.jspf" %>
-<br><b>Secure Attributes Exchange SP APP SAMPLE DATA FILE CONFIGURATION</b><br>
+<br><b>Secure Attributes Exchange IDP APP SAMPLE</b><br>
 <% 
-    // Crypto type to be used with local FAM-IDP
+    request.setCharacterEncoding("UTF-8");
+    // Crypto type to be used with local <OpenSSO>-IDP
     String cryptotype     = SecureAttrs.SAE_CRYPTO_TYPE_SYM;
-    // Shared secret with local FAM-IDP
-    String secret     = "federatedaccessmanager";
+    // Shared secret with local <OpenSSO>-IDP
+    String secret     = "secret12";
+    String encryptionAlg = "DES";
+    String encryptionStrength = "56";
     // Keystore path (for asym signing)
-    String keystore = "/export/home/rajeev/mykeystore";
+    String keystore = "";
     // Keystore Password (for asym signing)
-    String keypass = "22222222";
+    String keypass = "";
     // Private key Password (for asym signing)
-    String privkeypass = "11111111";
+    String privkeypass = "";
     // identity of this application : this string should match a already 
     // registered application in one of the hosted IDP extended metadata.
     String idpAppName = request.getRequestURL().toString();
 
-    // FAM-IDP hosted SAE url that will act like the gateway.
-    String  saeServiceURL="http://www.idp1.com:9080/idp1/idpsaehandler/metaAlias/idp";
+    // <OpenSSO>-IDP hosted SAE url that will act like the gateway.
+    String  saeServiceURL="http://omacron.test.qa.com:9090/openfmidp/idpsaehandler/metaAlias/omacron.test.qa.com";
 
     // String representing authenticated user.
     String userid = "testuser";
+    String authlevel = "0";
     // String representing profile attributes of authenticated user
     String mail   = "testuser@foo.com";
     String branch = "mainbranch" ;
 
     // SP-App to be invoked with profile attributes above.
-    String spapp  = "http://www.sp1.com:9080/sp1/samples/saml2/sae/saeSPApp.jsp";
+    String spapp  = "http://omacron.red.iplanet.com:8080/openfmsp/samples/saml2/sae/saeSPApp.jsp";
+    // Whether cached SecureAttrs class instance should be used
+    String usecached = "on";
+    String useencryption = "on";
 
+    // Private key Password (for asym signing)
     if (request.getMethod().equals("GET"))
     {
 %>
@@ -82,22 +94,23 @@ public void jspInit()
 This sample represents an IDP-App wishing to securely invoke a remote SP-App and pass it some secure attributes (mail and branch).
 <br>
 <br>
-IDP-App -sae---> IDP-FAM --samlv2---> SP-FAM --sae--> SP-App 
+IDP-App -sae---> IDP-&lt;OpenSSO> --samlv2---> SP-&lt;OpenSSO> --sae--> SP-App 
 <br>
 <br>
 <b>Prerequisites :</b>
 <br>
 IDP=Identity Provider  SP=Service Provider
 <br>
-i) Trust key (shared secret for symmetric crypto  or publickey for asymmetric signing) & this application provisioned on IDP-FAM in one of the hosted extended metadata - you will enter the same appname and secret here.
+i) Trust key (shared secret for symmetric crypto  or publickey for asymmetric signing) & this application provisioned on IDP-&lt;OpenSSO> in one of the hosted extended metadata - you will enter the same appname and secret here.
 <br>
-ii) SP_App and corresponding shared secret or key-pair provisioned on SP-FAM and destination SP-App. You will enter SP-App here.
+ii) SP_App and corresponding shared secret or key-pair provisioned on SP-&lt;OpenSSO> and destination SP-App. You will enter SP-App here.
 <br>
-iii) "auto-federation" and corresponding attributes setup (branch and mail) on both SP-FAM and IDP-FAM ends.
+iii) "auto-federation" and corresponding attributes setup (branch and mail) on both SP-&lt;OpenSSO> and IDP-&lt;OpenSSO> ends.
 <br>
 iv) SP-App is already deployed and ready to accept requests.
 <br>
 <br>
+<hr>
 <b>Please Fill up the following form :</b> (Note that it is assumed userid you are about to enter is already authenticated.)
 <br><br>
     <form method="POST">
@@ -105,6 +118,10 @@ iv) SP-App is already deployed and ready to accept requests.
         <tr>
           <td>Userid on local IDP : </td>
           <td><input  type="text" name="userid" value="<%=userid%>"></td>
+        </tr>
+        <tr>
+          <td>Authenticated auth level : </td>
+          <td><input  type="text" name="authlevel" value="<%=authlevel%>"></td>
         </tr>
         <tr>
           <td>mail attribute : </td>
@@ -127,13 +144,35 @@ iv) SP-App is already deployed and ready to accept requests.
           <td><input  type="text" name="idpappname" size=80 value="<%=idpAppName%>"></td>
         </tr>
         <tr>
-          <td>Crypto Type (symmetric | asymmetric : </td>
-          <td><input  type="text" name="cryptotype" value="<%=cryptotype%>"></td>
+          <td>Crypto Type : </td>
+          <td>
+           <select  name="cryptotype" >
+              <option <%= cryptotype.equals("symmetric") ? "SELECTED" : ""%> value="symmetric">symmetric</option>
+              <option <%= cryptotype.equals("asymmetric") ? "SELECTED" : ""%> value="asymmetric">asymmetric</option>
+           </select>
+          </td>
         </tr>
         <tr>
           <td>Shared Secret / Private Key alias : </td>
           <td><input  type="text" name="secret" value="<%=secret%>"></td>
         </tr>
+        <tr>
+          <td>Enable encryption: </td>
+          <td><input  type="checkbox" name="useencryption"></td>
+        </tr>
+        <tr>
+          <td>Encryption Algorithm : </td>
+          <td><input  type="text" name="encAlgorithm" value="<%=encryptionAlg%>"></td>
+        </tr>
+        <tr>
+          <td>Encryption Strength : </td>
+          <td><input  type="text" name="encStrength" value="<%=encryptionStrength%>"></td>
+        </tr>
+        <tr>
+          <td>Use Cached SecureAttrs instance: </td>
+          <td><input  type="checkbox" name="usecached" checked="true"></td>
+        </tr>
+        <tr> <td colspan=2><hr></td> </tr>
         <tr>
           <td>Key store path (asymmetric only) : </td>
           <td><input  type="text" name="keystore" value="<%=keystore%>"></td>
@@ -146,6 +185,7 @@ iv) SP-App is already deployed and ready to accept requests.
           <td>Private Key password (asymmetric only) : </td>
           <td><input  type="text" name="privkeypass" value="<%=privkeypass%>"></td>
         </tr>
+        <tr> <td colspan=2><hr></td> </tr>
         <tr>
           <td><input  type="submit" value="Generate URL"></td>
           <td></td>
@@ -154,12 +194,9 @@ iv) SP-App is already deployed and ready to accept requests.
     </form>
 
 <%  } else  {// POST
-        String userDir = System.getProperty("user.dir");
-        System.out.println(userDir);
-        FileWriter fstream = new FileWriter(userDir + "/sae_sp_app_config_datafile.properties");
-        BufferedWriter out1 = new BufferedWriter(fstream);
         HashMap map = new HashMap();
         userid = request.getParameter("userid");    
+        authlevel = request.getParameter("authlevel");
         mail = request.getParameter("mail");    
         branch = request.getParameter("branch");    
         spapp = request.getParameter("spapp");    
@@ -169,18 +206,122 @@ iv) SP-App is already deployed and ready to accept requests.
         secret = request.getParameter("secret");    
         keystore = request.getParameter("keystore");    
         keypass = request.getParameter("keypass");    
+        usecached = request.getParameter("usecached");    
         privkeypass = request.getParameter("privkeypass");    
+        useencryption = request.getParameter("useencryption");
+        encryptionAlg = request.getParameter("encAlgorithm");
+        System.out.println("Encryption alg" + encryptionAlg);
+        encryptionStrength = request.getParameter("encStrength");
+        String encSecret = secret;
+
+        // Check if we already have a cached SecureAttrs instance.
+        String mySecAttrInstanceName = "sample"+cryptotype;
+        SecureAttrs sa = SecureAttrs.getInstance(mySecAttrInstanceName);
+     
+        if (sa == null || usecached == null) {
+          out.println("Obtaining new SecureAttrs instance");
+          Properties saeparams = new Properties();
+          if (SecureAttrs.SAE_CRYPTO_TYPE_ASYM.equals(cryptotype)) {
+            saeparams.setProperty(SecureAttrs.SAE_CONFIG_KEYSTORE_TYPE, "JKS");
+            saeparams.put(SecureAttrs.SAE_CONFIG_PRIVATE_KEY_ALIAS, secret);
+            saeparams.put(SecureAttrs.SAE_CONFIG_KEYSTORE_FILE, keystore);
+            saeparams.put(SecureAttrs.SAE_CONFIG_KEYSTORE_PASS, keypass);
+            saeparams.put(SecureAttrs.SAE_CONFIG_PRIVATE_KEY_PASS, privkeypass);
+            saeparams.put(SecureAttrs.SAE_CONFIG_DATA_ENCRYPTION_ALG, encryptionAlg);
+            saeparams.put(SecureAttrs.SAE_CONFIG_ENCRYPTION_KEY_STRENGTH, encryptionStrength);
+          } else {
+            saeparams.put(SecureAttrs.SAE_CONFIG_DATA_ENCRYPTION_ALG, encryptionAlg);
+            saeparams.put(SecureAttrs.SAE_CONFIG_ENCRYPTION_KEY_STRENGTH, encryptionStrength);
+          }
+          SecureAttrs.init(mySecAttrInstanceName, cryptotype, saeparams);
+          sa = SecureAttrs.getInstance(mySecAttrInstanceName);
+        } else
+          out.println("Using cached SecureAttrs instance");
+
+        String userDir = System.getProperty("user.dir");
+        System.out.println(userDir);
+        FileWriter fstream = new FileWriter(userDir + "/sae_sp_app_config_datafile.properties");
+        BufferedWriter out1 = new BufferedWriter(fstream);
 
         out1.write("SP_SAMPLE_CRYPTO="  + cryptotype + "\n");
         out1.write("SP_SAMPLE_SECRET=" + secret + "\n");
+        out1.write("SP_SAMPLE_IS_ENC=" + useencryption + "\n");
+        out1.write("SP_SAMPLE_ENC_ALG=" + encryptionAlg + "\n");
+        out1.write("SP_SAMPLE_ENC_STRENGTH=" + encryptionStrength + "\n");
         if (SecureAttrs.SAE_CRYPTO_TYPE_ASYM.equals(cryptotype)) {
-            out1.write("SAE_CONFIG_PRIVATE_KEY_ALIAS=" + secret + "\n");
-            out1.write("SAE_CONFIG_KEYSTORE_FILE=" + keystore + "\n");
-            out1.write("SAE_CONFIG_KEYSTORE_PASS=" +keypass + "\n");
-            out1.write("SAE_CONFIG_PRIVATE_KEY_PASS=" + privkeypass + "\n");
+            out1.write("SP_CONFIG_PRIVATE_KEY_ALIAS=" + secret + "\n");
+            out1.write("SP_CONFIG_KEYSTORE_FILE=" + keystore + "\n");
+            out1.write("SP_CONFIG_KEYSTORE_PASS=" + keypass + "\n");
+            out1.write("SP_CONFIG_PRIVATE_KEY_PASS=" + privkeypass + "\n");
         }
         out1.flush();
         out1.close();
+
+        map.put("branch",branch); 
+        map.put("mail",mail); 
+        // Following code secures attributes
+        map.put(SecureAttrs.SAE_PARAM_USERID, userid); 
+        map.put(SecureAttrs.SAE_PARAM_AUTHLEVEL, authlevel);
+        map.put(SecureAttrs.SAE_PARAM_SPAPPURL, spapp); 
+        map.put(SecureAttrs.SAE_PARAM_IDPAPPURL, idpAppName);
+        String encodedString = null;
+         if(useencryption != null) {
+           encodedString = sa.getEncodedString(map, secret, encSecret);
+        } else {
+           encodedString = sa.getEncodedString(map, secret);
+        }
+
+        out.println("<br>Setting up the following params:");
+        out.println("<br>branch="+branch);
+        out.println("<br>mail="+mail);
+        out.println("<br>"+SecureAttrs.SAE_PARAM_USERID+"="+userid);
+        out.println("<br>"+SecureAttrs.SAE_PARAM_AUTHLEVEL+"="+authlevel);
+        out.println("<br>"+SecureAttrs.SAE_PARAM_SPAPPURL+"="+spapp);
+        out.println("<br>"+SecureAttrs.SAE_PARAM_IDPAPPURL+"="+idpAppName);
+
+        HashMap slomap = new HashMap();
+        slomap.put(SecureAttrs.SAE_PARAM_CMD,SecureAttrs.SAE_CMD_LOGOUT); 
+        slomap.put(SecureAttrs.SAE_PARAM_APPSLORETURNURL, request.getRequestURL().toString());; 
+        slomap.put(SecureAttrs.SAE_PARAM_IDPAPPURL, idpAppName);
+        String sloencodedString = null;
+        if(useencryption != null) {
+           sloencodedString = sa.getEncodedString(slomap, secret, encSecret);
+        } else {
+           sloencodedString = sa.getEncodedString(slomap, secret);
+        }
+
+        // We are ready to format the URLs to invoke the SP-App and Single logout
+        String url = null;
+        String slourl = null;
+        String postForm = null;
+        HashMap pmap = new HashMap();
+        pmap.put(SecureAttrs.SAE_PARAM_DATA, encodedString);
+        if (saeServiceURL.indexOf("?") > 0) {
+            url = saeServiceURL+"&" +
+                  SecureAttrs.SAE_PARAM_IDPAPPURL+"="+idpAppName + "&" +
+                  SecureAttrs.SAE_PARAM_DATA+"="+encodedString;
+            slourl = saeServiceURL+"&" +
+                     SecureAttrs.SAE_PARAM_IDPAPPURL+"="+idpAppName + "&" +
+                     SecureAttrs.SAE_PARAM_DATA+"=" +sloencodedString;
+        }
+        else {
+            url = saeServiceURL+"?" +
+                  SecureAttrs.SAE_PARAM_IDPAPPURL+"="+idpAppName + "&" +
+                  SecureAttrs.SAE_PARAM_DATA+"="+encodedString;
+            slourl = saeServiceURL+"?" +
+                     SecureAttrs.SAE_PARAM_IDPAPPURL+"="+idpAppName + "&" +
+                     SecureAttrs.SAE_PARAM_DATA+"=" +sloencodedString;
+        }
+
+        // This function is a simple wrapper to create a form - to
+        // autosubmit the form via javascriopt chnage false to true.
+        pmap.put(SecureAttrs.SAE_PARAM_IDPAPPURL, idpAppName);
+        postForm = Utils.formFromMap(saeServiceURL, pmap, false);
+        out.println(postForm);
+
+        out.println("<br><br>Click here to invoke the remote SP App via http GET to local IDP : "+spapp+"  :  <a href="+url+">ssourl</a>");
+        out.println("<br><br>Click here to invoke the remote SP App via http POST to IDP : "+spapp+"  :  <input type=\"button\" onclick=\"document.forms['saeform'].submit();\" value=POST>");
+        out.println("<br><br>This URL will invoke global Logout : <a href="+slourl+">slourl</a>");
     }
 %>
 </body>

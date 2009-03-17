@@ -1,4 +1,8 @@
 <%--
+   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+  
+   Copyright (c) 2007 Sun Microsystems Inc. All Rights Reserved
+  
    The contents of this file are subject to the terms
    of the Common Development and Distribution License
    (the License). You may not use this file except in
@@ -18,11 +22,10 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: saeSPApp.jsp,v 1.3 2008-12-09 00:20:06 nithyas Exp $
+   $Id: saeSPApp.jsp,v 1.4 2009-03-17 19:32:19 rmisra Exp $
 
-   Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 --%>
-
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <%@ page import="com.sun.identity.sae.api.SecureAttrs"%>
 <%@ page import="java.io.*"%>
 <%@ page import="java.util.*"%>
@@ -43,7 +46,7 @@ public void jspInit()
 <html>
 <head>
 <title>Secure Attributes Exchange IDP APP SAMPLE</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="stylesheet" type="text/css" href="<%= deployuri %>/com_sun_web_ui/css/css_ns6up.css" />
 </head>
 <body>
@@ -51,42 +54,62 @@ public void jspInit()
 <br><b>SAE SP APP SAMPLE</b><br>
 <br>
 <% 
+    request.setCharacterEncoding("UTF-8");
     try {
         Properties saeparams = new Properties();
         String secret = null;
         String cryptotype = null;
+        String mySecAttrInstanceName = "sample_"+cryptotype;
+        SecureAttrs sa = null;
+
         String userDir = System.getProperty("user.dir");
         String saeParamsFile = userDir + "/sae_sp_app_config_datafile.properties";
         if (!saeParamsFile.startsWith("@") && (new File(saeParamsFile)).exists()) {
             PropertyResourceBundle fi = new PropertyResourceBundle(new FileInputStream(saeParamsFile));
             secret = fi.getString("SP_SAMPLE_SECRET");
             cryptotype = fi.getString("SP_SAMPLE_CRYPTO");
-            if (cryptotype.equals(SecureAttrs.SAE_CRYPTO_TYPE_ASYM)) {
-              saeparams.setProperty(SecureAttrs.SAE_CONFIG_KEYSTORE_TYPE, "JKS");
-              saeparams.put(SecureAttrs.SAE_CONFIG_PRIVATE_KEY_ALIAS, fi.getString("SAE_CONFIG_PRIVATE_KEY_ALIAS"));
-              saeparams.put(SecureAttrs.SAE_CONFIG_KEYSTORE_FILE, fi.getString("SAE_CONFIG_KEYSTORE_FILE"));
-              saeparams.put(SecureAttrs.SAE_CONFIG_KEYSTORE_PASS, fi.getString("SAE_CONFIG_KEYSTORE_PASS"));
-              saeparams.put(SecureAttrs.SAE_CONFIG_PRIVATE_KEY_PASS, fi.getString("SAE_CONFIG_PRIVATE_KEY_PASS"));
-              SecureAttrs.init(saeparams);
+            String isEnc = fi.getString("SP_SAMPLE_IS_ENC");
+            if (isEnc.equals("on")) {
+                saeparams.put(SecureAttrs.SAE_CONFIG_DATA_ENCRYPTION_ALG, fi.getString("SP_SAMPLE_ENC_ALG"));
+                saeparams.put(SecureAttrs.SAE_CONFIG_ENCRYPTION_KEY_STRENGTH, fi.getString("SP_SAMPLE_ENC_STRENGTH"));
             }
+            if (cryptotype.equals(SecureAttrs.SAE_CRYPTO_TYPE_ASYM)) {
+                saeparams.setProperty(SecureAttrs.SAE_CONFIG_KEYSTORE_TYPE, "JKS");
+                saeparams.put(SecureAttrs.SAE_CONFIG_PRIVATE_KEY_ALIAS, fi.getString("SP_CONFIG_PRIVATE_KEY_ALIAS"));
+                saeparams.put(SecureAttrs.SAE_CONFIG_KEYSTORE_FILE, fi.getString("SP_CONFIG_KEYSTORE_FILE"));
+                saeparams.put(SecureAttrs.SAE_CONFIG_KEYSTORE_PASS, fi.getString("SP_CONFIG_KEYSTORE_PASS"));
+                saeparams.put(SecureAttrs.SAE_CONFIG_PRIVATE_KEY_PASS, fi.getString("SP_CONFIG_PRIVATE_KEY_PASS"));
+            }
+            SecureAttrs.init(mySecAttrInstanceName, cryptotype, saeparams);
+            sa = SecureAttrs.getInstance(mySecAttrInstanceName);
         } else {
-            // Shared secret between this SP-App and local FM-SP
-            secret = "secret";
+
             cryptotype = SecureAttrs.SAE_CRYPTO_TYPE_SYM;
-            if (SecureAttrs.SAE_CRYPTO_TYPE_ASYM.equals(cryptotype)) {
-              saeparams.setProperty(SecureAttrs.SAE_CONFIG_KEYSTORE_TYPE, "JKS");
-              saeparams.put(SecureAttrs.SAE_CONFIG_PRIVATE_KEY_ALIAS, "testcert");
-              saeparams.put(SecureAttrs.SAE_CONFIG_KEYSTORE_FILE, "/export/home/rajeev/mykeystore");;
-              saeparams.put(SecureAttrs.SAE_CONFIG_KEYSTORE_PASS, "22222222");
-              saeparams.put(SecureAttrs.SAE_CONFIG_PRIVATE_KEY_PASS, "11111111");
-              SecureAttrs.init(saeparams);
-              secret = "testcert";
+            // Symmetric : Shared secret between this SP-App and local FM-SP
+            // Asymmetric : pub key alias of FM-SP 
+            secret = "secret12";
+
+            // Use a cached instance if available
+            sa = SecureAttrs.getInstance(mySecAttrInstanceName);
+            if (sa == null) {
+                if (SecureAttrs.SAE_CRYPTO_TYPE_ASYM.equals(cryptotype)) {
+                    saeparams.setProperty(SecureAttrs.SAE_CONFIG_KEYSTORE_TYPE, "JKS");
+                    saeparams.put(SecureAttrs.SAE_CONFIG_PRIVATE_KEY_ALIAS, "test");
+                    saeparams.put(SecureAttrs.SAE_CONFIG_KEYSTORE_FILE, "/export/home/test/mykeystore");;
+                    saeparams.put(SecureAttrs.SAE_CONFIG_KEYSTORE_PASS, "changeit");
+                    saeparams.put(SecureAttrs.SAE_CONFIG_PRIVATE_KEY_PASS, "changeit");
+                    secret = "test";
+                }
+                saeparams.put(SecureAttrs.SAE_CONFIG_DATA_ENCRYPTION_ALG, "DES");
+                saeparams.put(SecureAttrs.SAE_CONFIG_ENCRYPTION_KEY_STRENGTH, "56");
+                SecureAttrs.init(mySecAttrInstanceName, cryptotype, saeparams);
+                sa = SecureAttrs.getInstance(mySecAttrInstanceName);
             }
         }
 
+        String encSecret = secret;
         String sunData = request.getParameter(SecureAttrs.SAE_PARAM_DATA);
-        SecureAttrs sa = SecureAttrs.getInstance(cryptotype);
-        Map secureAttrs = sa.verifyEncodedString(sunData, secret);
+        Map secureAttrs = sa.verifyEncodedString(sunData, secret, encSecret);
         if (secureAttrs == null) {
 %>
              <br>Secure Attrs Verification failed.
