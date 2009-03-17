@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Rule.java,v 1.1 2009-03-16 22:09:12 dillidorai Exp $
+ * $Id: Rule.java,v 1.2 2009-03-17 19:55:04 dillidorai Exp $
  *
  */
 package com.sun.identity.policy;
@@ -441,8 +441,7 @@ public class Rule extends Object implements Cloneable {
             if (rule.getExcludedResourceNames() != null) {
                 return false;
             }
-        }
-        if (!excludedResourceNames.equals(rule.getExcludedResourceNames())) {
+        } else if (!excludedResourceNames.equals(rule.getExcludedResourceNames())) {
             return false;
         }
         if (!isResourceMatch(rule.serviceTypeName,
