@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateAgentProfile.java,v 1.7 2009-01-26 23:45:48 nithyas Exp $
+ * $Id: CreateAgentProfile.java,v 1.8 2009-03-17 20:28:32 sridharev Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -51,6 +51,7 @@ import org.testng.Reporter;
 public class CreateAgentProfile extends TestCommon {
 
     private boolean executeAgainstOpenSSO;
+    private String executeCdssoMode;
     private String logoutURL;
     private String strScriptURL;
     private String strHotSwapRB = "HotSwapProperties";
@@ -64,6 +65,7 @@ public class CreateAgentProfile extends TestCommon {
     private IDMCommon idmc;
     private ResourceBundle rbg;
     private SSOToken admintoken;
+    private String skew;
 
     /**
      * Instantiated different helper class objects
@@ -75,6 +77,9 @@ public class CreateAgentProfile extends TestCommon {
         rbg = ResourceBundle.getBundle("agents" + fileseparator + strGblRB);
         executeAgainstOpenSSO = new Boolean(rbg.getString(strGblRB +
                 ".executeAgainstOpenSSO")).booleanValue();
+        executeCdssoMode = rbg.getString("com.sun.identity.agents." +
+                "config.cdsso.enable");
+        skew = rbg.getString("com.sun.identity.agents.config.cdsso.clock.skew");
         admintoken = getToken(adminUser, adminPassword, basedn);
         logoutURL = protocol + ":" + "//" + host + ":" + port + uri +
                 "/UI/Logout";
@@ -124,6 +129,15 @@ public class CreateAgentProfile extends TestCommon {
             map.put("com.sun.identity.agents.config.cdsso.cdcservlet.url", 
                     set);
 
+            set = new HashSet();
+            set.add(executeCdssoMode);
+            map.put("com.sun.identity.agents.config.cdsso.enable", set);
+
+             set = new HashSet();
+             set.add("agentRootURL=" + agentProtocol + "://" + agentHost + ":"
+                     + agentPort + "/");
+             map.put("sunIdentityServerDeviceKeyValue" , set);
+
             //Agent properties
             set = new HashSet();
             set.add(agentHost);
@@ -153,6 +167,16 @@ public class CreateAgentProfile extends TestCommon {
                 set.add(agentProtocol + "://" + agentHost + ":" + agentPort 
                         + "/agentapp/notification");
                 map.put("com.sun.identity.client.notification.url", set);
+
+                //setup cdsso clock skew if CDSSO is enabled
+                boolean isCdsso = new Boolean(executeCdssoMode).booleanValue();
+                set = new HashSet();
+                if(isCdsso) {
+                    set.add(skew);
+                } else {
+                    set.add("0");
+                }
+                map.put("com.sun.identity.agents.config.cdsso.clock.skew", set);
                 
                 // Setting qatest specific properties
                 set = new HashSet();
@@ -338,10 +362,6 @@ public class CreateAgentProfile extends TestCommon {
                         "wildcard=*|delimiter=/|caseSensitive=false");
                 map.put("com.sun.identity.policy.client.resourceComparators", 
                         set);            
-
-                set = new HashSet();
-                set.add("0");
-                map.put("com.sun.identity.policy.client.clockSkew", set);            
 
                 set = new HashSet();
                 set.add("true");
@@ -634,10 +654,6 @@ public class CreateAgentProfile extends TestCommon {
                 map.put("com.sun.identity.agents.config.logout.handler", set);            
 
                 set = new HashSet();
-                set.add("false");
-                map.put("com.sun.identity.agents.config.cdsso.enable", set);            
-
-                set = new HashSet();
                 set.add("[]=");
                 map.put("com.sun.identity.agents.config.logout.entry.uri", set);            
 
@@ -653,10 +669,6 @@ public class CreateAgentProfile extends TestCommon {
                 set = new HashSet();
                 set.add("[]=");
                 map.put("com.sun.identity.agents.config.fqdn.mapping", set);            
-
-                set = new HashSet();
-                set.add("0");
-                map.put("com.sun.identity.agents.config.cdsso.clock.skew", set);            
 
                 set = new HashSet();
                 set.add("true");
@@ -689,6 +701,7 @@ public class CreateAgentProfile extends TestCommon {
                     map.put("com.sun.identity.agents.config.login.error.uri",
                             set);                                
                 }
+                
             } else if (agentType.contains("WEB")) {
                 set = new HashSet();
                 set.add(agentProtocol + "://" + agentHost + ":" + agentPort + 
@@ -947,11 +960,7 @@ public class CreateAgentProfile extends TestCommon {
                 set = new HashSet();
                 set.add("true");
                 map.put("com.sun.identity.agents.config.fqdn.check.enable", 
-                        set);            
-
-                set = new HashSet();
-                set.add("false");
-                map.put("com.sun.identity.agents.config.cdsso.enable", set);            
+                        set);
 
                 set = new HashSet();
                 set.add("0");

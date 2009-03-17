@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GeneralAgentTests.java,v 1.10 2009-01-26 23:45:48 nithyas Exp $
+ * $Id: GeneralAgentTests.java,v 1.11 2009-03-17 20:28:32 sridharev Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -182,35 +182,31 @@ public class GeneralAgentTests extends TestCommon {
      * Checks if the Agent Being tested, supports Anonymous Users, i.e. Agent 
      * is a 2.2 Web Agent
      */
-    @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
-      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
-    private void isAnonymousSupported()
+    private boolean isAnonymousSupported()
         throws Exception {
+        boolean isSupported = false;
             try {
-                if (!strAgentType.equals("2.2WEB")) {
-                    Reporter.log ("Agent being tested is of type " + 
-                            strAgentType + ". Test case evaluateAnonymous is " + 
-                            "for 2.2WEB Agents only. Skipping test case");
-                    assert(false);
+                if (strAgentType.equals("2.2WEB")) {
+                    isSupported = true;
                 }
             } catch (Exception e) {
                 log(Level.SEVERE, "isAnonymousSupported", e.getMessage());
                 e.printStackTrace();
                 throw e;
          }
+        return isSupported;
     }
 
     /**
      * Validates the value of REMOTE_USER for anonymous user.
      */ 
     @Test(groups={"ldapv3", "ldapv3_sec", "s1ds", "s1ds_sec", "ad", "ad_sec", 
-      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"},
-    dependsOnMethods={"isAnonymousSupported"})
+      "amsdk", "amsdk_sec", "jdbc", "jdbc_sec"})
     public void evaluateAnonymous()
     throws Exception {
         entering("evaluateAnonymous", null);
-        if (!(strAgentType.contains("J2EE")) && 
-                !(strAgentType.contains("WEBLOGIC"))) {
+        boolean checkSupport = isAnonymousSupported();
+        if (checkSupport){
             webClient = new WebClient();
             try {
                 URL urlLoc = new URL(resourceNotProtected);
@@ -226,10 +222,11 @@ public class GeneralAgentTests extends TestCommon {
                 e.printStackTrace();
                 throw e;
             }
-        } else
+        } else {
             log(Level.FINEST, "evaluateAnonymous",
                         "REMOTE_USER test for anonymous user not " +
                         "valid for J2EE Agents");
+        }
             exiting("evaluateAnonymous");
     }
 
