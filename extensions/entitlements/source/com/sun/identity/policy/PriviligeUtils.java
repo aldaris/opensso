@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PriviligeUtils.java,v 1.18 2009-03-16 22:07:37 dillidorai Exp $
+ * $Id: PriviligeUtils.java,v 1.19 2009-03-17 22:07:29 dillidorai Exp $
  */
 package com.sun.identity.policy;
 
@@ -585,7 +585,10 @@ public class PriviligeUtils {
         ConditionTypeManager ctm = pm.getConditionTypeManager();
         List conditions = new ArrayList();
         if (ec instanceof IPCondition) {
-            conditions.add(ipConditionToPCondition((IPCondition) ec, ctm));
+            Object[] ncondition = new Object[2];
+            ncondition[0] = ((IPCondition)ec).getPConditionName();
+            ncondition[1] = ipConditionToPCondition((IPCondition) ec, ctm);
+            conditions.add(ncondition);
         } else if (ec instanceof TimeCondition) {
             conditions.add(timeConditionToPCondition((TimeCondition) ec, ctm));
         } else if (ec instanceof OrCondition) {
@@ -612,9 +615,9 @@ public class PriviligeUtils {
         com.sun.identity.policy.plugins.IPCondition ipCondition
                 = new com.sun.identity.policy.plugins.IPCondition();
         Map props = new HashMap();
-        props.put(ipCondition.DNS_NAME, ipc.getDomainNameMask());
-        props.put(ipCondition.START_IP, ipc.getStartIp());
-        props.put(ipCondition.END_IP, ipc.getEndIp());
+        props.put(ipCondition.DNS_NAME, toSet(ipc.getDomainNameMask()));
+        props.put(ipCondition.START_IP, toSet(ipc.getStartIp()));
+        props.put(ipCondition.END_IP, toSet(ipc.getEndIp()));
         ipCondition.setProperties(props);
         return ipCondition;
     }
@@ -624,13 +627,13 @@ public class PriviligeUtils {
         com.sun.identity.policy.plugins.SimpleTimeCondition stc
                 = new com.sun.identity.policy.plugins.SimpleTimeCondition();
         Map props = new HashMap();
-        props.put(stc.START_TIME, tc.getStartTime());
-        props.put(stc.END_TIME, tc.getEndTime());
-        props.put(stc.START_DAY, tc.getStartDay());
-        props.put(stc.END_DAY, tc.getEndDay());
-        props.put(stc.START_DATE, tc.getStartDate());
-        props.put(stc.START_DATE, tc.getEndDate());
-        props.put(stc.ENFORCEMENT_TIME_ZONE, tc.getEnforcementTimeZone());
+        props.put(stc.START_TIME, toSet(tc.getStartTime()));
+        props.put(stc.END_TIME, toSet(tc.getEndTime()));
+        props.put(stc.START_DAY, toSet(tc.getStartDay()));
+        props.put(stc.END_DAY, toSet(tc.getEndDay()));
+        props.put(stc.START_DATE, toSet(tc.getStartDate()));
+        props.put(stc.START_DATE, toSet(tc.getEndDate()));
+        props.put(stc.ENFORCEMENT_TIME_ZONE, toSet(tc.getEnforcementTimeZone()));
         stc.setProperties(props);
         return stc;
     }
@@ -665,5 +668,14 @@ public class PriviligeUtils {
 
     private static String randomName() {
         return "randomName";
+    }
+
+    private static  Set toSet(Object obj) {
+        if (obj == null) {
+            return null;
+        }
+        Set set = new HashSet();
+        set.add(obj);
+        return set;
     }
 }
