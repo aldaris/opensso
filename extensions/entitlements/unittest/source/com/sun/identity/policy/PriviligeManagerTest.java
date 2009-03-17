@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PriviligeManagerTest.java,v 1.2 2009-03-14 03:08:45 dillidorai Exp $
+ * $Id: PriviligeManagerTest.java,v 1.3 2009-03-17 22:08:47 dillidorai Exp $
  */
 package com.sun.identity.policy;
 
@@ -61,11 +61,11 @@ import org.testng.annotations.BeforeClass;
 public class PriviligeManagerTest {
 
     private static String SERVICE_NAME = "iPlanetAMWebAgentService";
-    private static String POLICY_NAME = "PriviligeTestPolicy";
     private static String PRIVILIGE_NAME = "TestPrivilige";
-    private static String BASE_DN = ServiceManager.getBaseDN();
+    private static String POLICY_NAME = "TestPolicy";
+    private static String BASE_DN = "dc=opensso,dc=java,dc=net"; //ServiceManager.getBaseDN();
 
-    @BeforeClass
+    //@BeforeClass
     public void setup() throws PolicyException, SSOException, IdRepoException {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
@@ -77,9 +77,7 @@ public class PriviligeManagerTest {
             pm.removePolicy(POLICY_NAME + "-copy");
             prm.removePrivilige(PRIVILIGE_NAME);
         } catch (Exception e) {
-            //policy may not exist
-            //privilige may not exist
-            // users may not exist
+            throw new PolicyException(e);
         }
        
         Policy policy = new Policy(POLICY_NAME, "test1 - discard",
@@ -93,7 +91,7 @@ public class PriviligeManagerTest {
         pm.addPolicy(policy);
     }
 
-    @AfterClass
+    //@AfterClass
     public void cleanup() throws PolicyException, SSOException, IdRepoException {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
@@ -106,6 +104,7 @@ public class PriviligeManagerTest {
 
     @Test
     public void testAddNewPrivilige() throws Exception {
+        try {
         Map<String, Object> actionValues = new HashMap<String, Object>();
         Set<String> getValues = new HashSet<String>();
         getValues.add("allow");
@@ -134,17 +133,24 @@ public class PriviligeManagerTest {
                 ec, //entitlementCondition
                 null);
         UnittestLog.logMessage(
-                "PriviligeUnitlsTest.testAddNewPrivlige():" + "saving privilige=" + privilige);
+                "PriviligeManagerTest.testAddNewPrivlige():" + "saving privilige=" + privilige);
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
         PriviligeManager prm = PriviligeManager.getInstance(null);
         prm.addPrivilige(privilige);
         Privilige p = prm.getPrivilige(PRIVILIGE_NAME);
         UnittestLog.logMessage(
-                "PriviligeUnitlsTest.testAddNewPrivlige():" + "read back privilige=" + p);
+                "PriviligeManagerTest.testAddNewPrivlige():" + "read back privilige=" + p);
+        } catch (Exception e) {
+             UnittestLog.logMessage(
+                "PriviligeManagerTest.testAddNewPrivlige(): caught exception"
+                + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
     }
 
-    @Test
+    //@Test
     public void testPoicyToPrivilige() throws Exception {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
@@ -152,21 +158,23 @@ public class PriviligeManagerTest {
         PriviligeManager prm = PriviligeManager.getInstance(null);
         Policy policy = pm.getPolicy(POLICY_NAME);
         UnittestLog.logMessage(
-                "Created in memory Policy =" + policy.toXML());
+                "PriviligeManagerTest.testPolicyPrivilige():"
+                + "Created in memory Policy ="
+                + policy.toXML());
         Privilige privilige = PriviligeUtils.policyToPrivilige(policy);
         UnittestLog.logMessage(
-                "PriviligeUnitlsTest.testPriviligeEqualsPolicy():" + "policy mapped to privilige=" + privilige);
+                "PriviligeManagerTest.testPolicyToPrivilige():" + "policy mapped to privilige=" + privilige);
         UnittestLog.logMessage(
-                "PriviligeUnitlsTest.testPriviligeEqualsPolicy():" + "saving privilige");
+                "PriviligeManagerTest.testPolicyToPrivilige():" + "saving privilige");
         prm.addPrivilige(privilige);
         UnittestLog.logMessage(
-                "PriviligeUnitlsTest.testPriviligeEqualsPolicy():" + "reading policy");
+                "PriviligeManagerTest.testPolicyToPrivilige():" + "reading policy");
         Policy policy1 = PriviligeUtils.priviligeToPolicy(privilige);
         UnittestLog.logMessage(
-                "PriviligeUnitlsTest.testPriviligeEqualsPolicy():" + "read policy=" + policy1.toXML());
+                "PriviligeManagerTest.testPolicyToPrivilige():" + "read policy=" + policy1.toXML());
 
         UnittestLog.logMessage(
-                "PriviligeUnitlsTest.testPriviligeEqualsPolicy():" + "policy1=" + policy1.toXML());
+                "PriviligeManagerTest.testPolicyToPrivilige():" + "policy1=" + policy1.toXML());
         assert (policy1.equals(policy));
     }
 
