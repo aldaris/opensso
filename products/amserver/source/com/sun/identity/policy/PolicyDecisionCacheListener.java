@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDecisionCacheListener.java,v 1.3 2008-06-25 05:43:44 qcheng Exp $
+ * $Id: PolicyDecisionCacheListener.java,v 1.4 2009-03-18 17:51:31 dillidorai Exp $
  *
  */
 
@@ -147,7 +147,7 @@ public class PolicyDecisionCacheListener
 
         // update the policy decision cache
         if (!(resultsCache.isEmpty()) && !(resourceNames.isEmpty())) {
-            Map svcValue = (HashMap)resultsCache.get(serviceName);
+            Map svcValue = (Map)resultsCache.get(serviceName);
             if (svcValue != null) { 
                 Set rscInCache = svcValue.keySet();
                 Iterator rscInCacheIter = rscInCache.iterator();
