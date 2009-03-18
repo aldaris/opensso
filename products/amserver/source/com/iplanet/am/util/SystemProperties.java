@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SystemProperties.java,v 1.19 2009-01-07 21:51:28 veiming Exp $
+ * $Id: SystemProperties.java,v 1.20 2009-03-18 00:18:53 qcheng Exp $
  *
  */
 
@@ -75,8 +75,8 @@ public class SystemProperties {
     private static String instanceName;
     
     private static Map attributeMap = new HashMap();
-    private static boolean isSSOAdm = Boolean.parseBoolean(
-        System.getProperty("ssoadm", "false"));
+    private static boolean isSSOAdm = Boolean.valueOf(
+        System.getProperty("ssoadm", "false")).booleanValue();
     
     static {
         initAttributeMapping();
