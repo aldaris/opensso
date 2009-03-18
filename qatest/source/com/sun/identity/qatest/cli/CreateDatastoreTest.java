@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CreateDatastoreTest.java,v 1.2 2009-02-11 19:29:29 srivenigan Exp $
+ * $Id: CreateDatastoreTest.java,v 1.3 2009-03-18 21:34:24 srivenigan Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -324,11 +324,13 @@ public class CreateDatastoreTest extends TestCommon implements CLIExitCodes {
                 cli.logCommand("testDatastoreCreation");
                 cli.resetArgList();
                 
-                // verify the created datastore by creating identity, auth 
-                // instance in the datastore - "ssoadm create-auth-instances"
+                // Verify identities, auth instances can be created in
+                // in the new test datastore created.
+                String attrVals = "userpassword=testDatastoreUser;uid=" +
+                		"testDatastoreUser;sn=testDatastoreUser;" +
+                		"cn=testDatastoreUser";
                 exitStatus = cli.createIdentity(realmName, 
-                		"testDatastoreUser", "User", 
-                                "userpassword=testDatastoreUser");
+                		"testDatastoreUser", "User", attrVals);
                 cli.logCommand("testDatastoreCreation");
                 identityCreated = true;
                 assert (exitStatus ==
@@ -404,58 +406,59 @@ public class CreateDatastoreTest extends TestCommon implements CLIExitCodes {
             Reporter.log("UseDebugOption: " + useDebugOption);
             Reporter.log("UseVerboseOption: " + useVerboseOption);
             Reporter.log("UseLongOptions: " + useLongOptions);
-            
+            FederationManagerCLI cleanupCLI = new FederationManagerCLI(
+                    useDebugOption, useVerboseOption, useLongOptions);
             if (!createDatastore.trim().equals("")) {
                 if (identityCreated) {
-                    int exitStatus = cli.deleteIdentities(realmName, 
+                    int exitStatus = cleanupCLI.deleteIdentities(realmName, 
                             "testDatastoreUser", "User");
                     log(Level.FINE, "cleanup", "Cleaning Identity:" +
                             " testDatastoreUser");
-                    cli.logCommand("cleanup");
+                    cleanupCLI.logCommand("cleanup");
                     if (exitStatus != SUCCESS_STATUS) {
                         log(Level.SEVERE, "cleanup",
                             "Identity deletion returned the failed exit "
                             + "status " + exitStatus + ".");
                     }
-                    cli.resetArgList();
+                    cleanupCLI.resetArgList();
                 }
                 if (authInstanceCreated) {
-                    int exitStatus = cli.deleteAuthInstances(realmName, 
+                    int exitStatus = cleanupCLI.deleteAuthInstances(realmName, 
                             "testDatastoreAuth");
                     log(Level.FINE, "cleanup", "Cleaning auth instance" +
                             "testDatastoreAuth");
-                    cli.logCommand("cleanup");
+                    cleanupCLI.logCommand("cleanup");
                     if (exitStatus != SUCCESS_STATUS) {
                         log(Level.SEVERE, "cleanup",
                             "Auth instance deletion returned the failed exit "
                             + "status " + exitStatus + ".");
                     }
-                    cli.resetArgList();
+                    cleanupCLI.resetArgList();
                 }
-                int exitStatus = cli.deleteDatastores(realmName,
+                int exitStatus = cleanupCLI.deleteDatastores(realmName,
                         createDatastore);
                 log(Level.FINE, "cleanup", "Delete datastores: " + 
                         createDatastore + " in realm: " + realmName);
-                cli.logCommand("cleanup");
+                cleanupCLI.logCommand("cleanup");
                 if (exitStatus != SUCCESS_STATUS) {
                     log(Level.SEVERE, "cleanup",
                             "Service deletion returned the failed exit "
                             + "status " + exitStatus + ".");
                     assert false;
                 }
-                cli.resetArgList();
+                cleanupCLI.resetArgList();
             }
             if (!realmName.equals("/")) {
-                int exitStatus = cli.deleteRealm(realmName);
+                int exitStatus = cleanupCLI.deleteRealm(realmName);
                 log(Level.FINE, "cleanup", "Deleting Realm: " + realmName);
-                cli.logCommand("cleanup");
+                cleanupCLI.logCommand("cleanup");
                 if (exitStatus != SUCCESS_STATUS) {
                     log(Level.SEVERE, "cleanup",
                             "Realm deletion returned the failed exit "
                             + "status " + exitStatus + ".");
                     assert false;
                 }
-                cli.resetArgList();            
+                cleanupCLI.resetArgList();            
             }
             exiting("cleanup");
         } catch (Exception e) {
