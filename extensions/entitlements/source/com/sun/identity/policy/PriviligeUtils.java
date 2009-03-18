@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PriviligeUtils.java,v 1.19 2009-03-17 22:07:29 dillidorai Exp $
+ * $Id: PriviligeUtils.java,v 1.20 2009-03-18 01:14:33 dillidorai Exp $
  */
 package com.sun.identity.policy;
 
@@ -340,14 +340,15 @@ public class PriviligeUtils {
                 } catch (NameNotFoundException nnfe) {
                 }
                 if (s != null) {
-                    Boolean exclusive = (Boolean) arr[2];
-                    policy.addSubject(pSubjectName, subject, exclusive);
                     Set values = s.getValues();
                     if (values == null) {
                         values = new HashSet();
                     }
                     values.addAll(subject.getValues());
                     s.setValues(values);
+                } else {
+                    Boolean exclusive = (Boolean) arr[2];
+                    policy.addSubject(pSubjectName, subject, exclusive);
                 }
             }
         }
@@ -383,40 +384,35 @@ public class PriviligeUtils {
 
     private static List eSubjectToPSubjects(EntitlementSubject es)
             throws PolicyException, SSOException {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-                AdminTokenAction.getInstance());
-        PolicyManager pm = new PolicyManager(adminToken, "/");
-        SubjectTypeManager stm = pm.getSubjectTypeManager();
         List subjects = new ArrayList();
         if (es instanceof UserSubject) {
-            subjects.add(userESubjectToPSubject((UserSubject) es, stm));
+            subjects.add(userESubjectToPSubject((UserSubject) es));
         } else if (es instanceof GroupSubject) {
-            subjects.add(groupESubjectToPSubject((GroupSubject) es, stm));
+            subjects.add(groupESubjectToPSubject((GroupSubject) es));
         } else if (es instanceof RoleSubject) {
-            subjects.add(roleESubjectToPSubject((RoleSubject) es, stm));
+            subjects.add(roleESubjectToPSubject((RoleSubject) es));
         } else if (es instanceof PolicyESubject) {
-            subjects.add(policyESubjectToPSubject((PolicyESubject) es, stm));
+            subjects.add(policyESubjectToPSubject((PolicyESubject) es));
         } else if (es instanceof NotSubject) {
-            List list = notESubjectToPSubject((NotSubject) es, stm);
+            List list = notESubjectToPSubject((NotSubject) es);
             for (Object obj : list) {
                 subjects.add(obj);
             }
         } else if (es instanceof OrSubject) {
-            List list = orESubjectToPSubject((OrSubject) es, stm);
+            List list = orESubjectToPSubject((OrSubject) es);
             for (Object obj : list) {
                 subjects.add(obj);
             }
         } else { // map to EntitlementSubject
 
-            subjects.add(eSubjectToEntitlementSubject(es, stm));
+            subjects.add(eSubjectToEntitlementSubject(es));
         }
         return subjects;
     }
 
-    private static Object[] userESubjectToPSubject(UserSubject us,
-            SubjectTypeManager stm)
+    private static Object[] userESubjectToPSubject(UserSubject us)
             throws PolicyException, SSOException {
-        Subject subject = stm.getSubject("AMIdentitySubject");
+        Subject subject = new com.sun.identity.policy.plugins.AMIdentitySubject();
         Set<String> values = new HashSet<String>();
         values.add(us.getUser());
         subject.setValues(values);
@@ -431,10 +427,9 @@ public class PriviligeUtils {
         return arr;
     }
 
-    private static Object[] groupESubjectToPSubject(GroupSubject gs,
-            SubjectTypeManager stm)
+    private static Object[] groupESubjectToPSubject(GroupSubject gs)
             throws PolicyException, SSOException {
-        Subject subject = stm.getSubject("AMIdentitySubject");
+        Subject subject = new com.sun.identity.policy.plugins.AMIdentitySubject();
         Set<String> values = new HashSet<String>();
         values.add(gs.getGroup());
         subject.setValues(values);
@@ -449,10 +444,9 @@ public class PriviligeUtils {
         return arr;
     }
 
-    private static Object[] roleESubjectToPSubject(RoleSubject rs,
-            SubjectTypeManager stm)
+    private static Object[] roleESubjectToPSubject(RoleSubject rs)
             throws PolicyException, SSOException {
-        Subject subject = stm.getSubject("AMIdentitySubject");
+        Subject subject = new com.sun.identity.policy.plugins.AMIdentitySubject();
         Set<String> values = new HashSet<String>();
         values.add(rs.getRole());
         subject.setValues(values);
@@ -467,10 +461,9 @@ public class PriviligeUtils {
         return arr;
     }
 
-    private static Object[] policyESubjectToPSubject(PolicyESubject ps,
-            SubjectTypeManager stm)
+    private static Object[] policyESubjectToPSubject(PolicyESubject ps)
             throws PolicyException, SSOException {
-        Subject subject = stm.getSubject("AMIdentitySubject");
+        Subject subject = null; //stm.getSubject("AMIdentitySubject");
         Set<String> values = new HashSet<String>();
         /*
         values.add(rs.getRole());
@@ -487,8 +480,8 @@ public class PriviligeUtils {
         return arr;
     }
 
-    private static List notESubjectToPSubject(NotSubject nos,
-            SubjectTypeManager stm) throws PolicyException, SSOException {
+    private static List notESubjectToPSubject(NotSubject nos)
+            throws PolicyException, SSOException {
         List list = new ArrayList();
         EntitlementSubject ns = nos.getESubject();
         if (ns instanceof OrSubject) {
@@ -498,21 +491,21 @@ public class PriviligeUtils {
                 for (EntitlementSubject es : nested2Subjects) {
                     if (es instanceof UserSubject) {
                         Object[] arr = userESubjectToPSubject(
-                                (UserSubject) es, stm);
+                                (UserSubject) es);
                         arr[2] = Boolean.TRUE;
                         list.add(arr);
                     } else if (es instanceof GroupSubject) {
                         Object[] arr = groupESubjectToPSubject(
-                                (GroupSubject) es, stm);
+                                (GroupSubject) es);
                         arr[2] = Boolean.TRUE;
                         list.add(arr);
                     } else if (es instanceof RoleSubject) {
                         Object[] arr = roleESubjectToPSubject(
-                                (RoleSubject) es, stm);
+                                (RoleSubject) es);
                         arr[2] = Boolean.TRUE;
                         list.add(arr);
                     } else { // map to EntitlementSubject
-                        Object[] arr = eSubjectToEntitlementSubject(es, stm);
+                        Object[] arr = eSubjectToEntitlementSubject(es);
                         arr[2] = Boolean.TRUE;
                         list.add(arr);
                     }
@@ -520,19 +513,19 @@ public class PriviligeUtils {
             }
         } else if (ns instanceof UserSubject) {
 
-            Object[] arr = userESubjectToPSubject((UserSubject) ns, stm);
+            Object[] arr = userESubjectToPSubject((UserSubject) ns);
             arr[2] = Boolean.TRUE;
             list.add(arr);
         } else if (ns instanceof GroupSubject) {
-            Object[] arr = groupESubjectToPSubject((GroupSubject) ns, stm);
+            Object[] arr = groupESubjectToPSubject((GroupSubject) ns);
             arr[2] = Boolean.TRUE;
             list.add(arr);
         } else if (ns instanceof RoleSubject) {
-            Object[] arr = roleESubjectToPSubject((RoleSubject) ns, stm);
+            Object[] arr = roleESubjectToPSubject((RoleSubject) ns);
             arr[2] = Boolean.TRUE;
             list.add(arr);
         } else { // map to EntitlementSubejct
-            Object[] arr = eSubjectToEntitlementSubject(ns, stm);
+            Object[] arr = eSubjectToEntitlementSubject(ns);
             arr[2] = Boolean.TRUE;
             list.add(arr);
         }
@@ -540,80 +533,72 @@ public class PriviligeUtils {
     }
 
     private static List orESubjectToPSubject(
-            OrSubject os,
-            SubjectTypeManager stm) throws PolicyException, SSOException {
+            OrSubject os) throws PolicyException, SSOException {
         List list = new ArrayList();
         Set nestedSubjects = os.getESubjects();
         if (nestedSubjects != null) {
             for (Object ns : nestedSubjects) {
                 if (ns instanceof UserSubject) {
-                    list.add(userESubjectToPSubject((UserSubject) ns, stm));
+                    list.add(userESubjectToPSubject((UserSubject) ns));
                 } else if (ns instanceof GroupSubject) {
-                    list.add(groupESubjectToPSubject((GroupSubject) ns, stm));
+                    list.add(groupESubjectToPSubject((GroupSubject) ns));
                 } else if (ns instanceof RoleSubject) {
-                    list.add(roleESubjectToPSubject((RoleSubject) ns, stm));
+                    list.add(roleESubjectToPSubject((RoleSubject) ns));
                 } else if (ns instanceof OrSubject) {
-                    List list1 = orESubjectToPSubject((OrSubject) ns, stm);
+                    List list1 = orESubjectToPSubject((OrSubject) ns);
                     for (Object obj : list1) {
                         list.add(obj);
                     }
                 } else if (ns instanceof NotSubject) {
-                    List list1 = notESubjectToPSubject((NotSubject) ns, stm);
+                    List list1 = notESubjectToPSubject((NotSubject) ns);
                     for (Object obj : list1) {
                         Object[] arr = (Object[]) obj;
                         arr[2] = Boolean.TRUE;
                         list.add(arr);
                     }
                 } else { // map to EntitlementSubejct
-                    list.add(eSubjectToEntitlementSubject((EntitlementSubject) ns, stm));
+                    list.add(eSubjectToEntitlementSubject((EntitlementSubject) ns));
                 }
             }
         }
         return list;
     }
 
-    private static Object[] eSubjectToEntitlementSubject(EntitlementSubject es,
-            SubjectTypeManager srm) throws PolicyException, SSOException {
+    private static Object[] eSubjectToEntitlementSubject(EntitlementSubject es)
+            throws PolicyException, SSOException {
         return null;
     }
 
     private static List eConditionToPConditions(EntitlementCondition ec)
             throws PolicyException, SSOException {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-                AdminTokenAction.getInstance());
-        PolicyManager pm = new PolicyManager(adminToken, "/");
-        ConditionTypeManager ctm = pm.getConditionTypeManager();
         List conditions = new ArrayList();
         if (ec instanceof IPCondition) {
             Object[] ncondition = new Object[2];
-            ncondition[0] = ((IPCondition)ec).getPConditionName();
-            ncondition[1] = ipConditionToPCondition((IPCondition) ec, ctm);
+            ncondition[0] = ((IPCondition) ec).getPConditionName();
+            ncondition[1] = ipConditionToPCondition((IPCondition) ec);
             conditions.add(ncondition);
         } else if (ec instanceof TimeCondition) {
-            conditions.add(timeConditionToPCondition((TimeCondition) ec, ctm));
+            conditions.add(timeConditionToPCondition((TimeCondition) ec));
         } else if (ec instanceof OrCondition) {
-            List list = orConditionToPCondition((OrCondition) ec, ctm);
+            List list = orConditionToPCondition((OrCondition) ec);
             for (Object obj : list) {
                 conditions.add(obj);
             }
         } else if (ec instanceof AndCondition) {
-            List list = andConditionToPCondition((AndCondition) ec, ctm);
+            List list = andConditionToPCondition((AndCondition) ec);
             for (Object obj : list) {
                 conditions.add(obj);
             }
         } else { // map to EPCondition
 
-            conditions.add(eConditionToEPCondition(ec, ctm));
+            conditions.add(eConditionToEPCondition(ec));
         }
         return conditions;
     }
 
- 
-
-    private static Condition ipConditionToPCondition(IPCondition ipc,
-            ConditionTypeManager ctm) throws PolicyException, SSOException {
-        com.sun.identity.policy.plugins.IPCondition ipCondition
-                = new com.sun.identity.policy.plugins.IPCondition();
+    private static Condition ipConditionToPCondition(IPCondition ipc)
+            throws PolicyException, SSOException {
+        com.sun.identity.policy.plugins.IPCondition ipCondition = new com.sun.identity.policy.plugins.IPCondition();
         Map props = new HashMap();
         props.put(ipCondition.DNS_NAME, toSet(ipc.getDomainNameMask()));
         props.put(ipCondition.START_IP, toSet(ipc.getStartIp()));
@@ -622,10 +607,9 @@ public class PriviligeUtils {
         return ipCondition;
     }
 
-    private static Condition timeConditionToPCondition(TimeCondition tc,
-            ConditionTypeManager ctm) throws PolicyException, SSOException {
-        com.sun.identity.policy.plugins.SimpleTimeCondition stc
-                = new com.sun.identity.policy.plugins.SimpleTimeCondition();
+    private static Condition timeConditionToPCondition(TimeCondition tc)
+            throws PolicyException, SSOException {
+        com.sun.identity.policy.plugins.SimpleTimeCondition stc = new com.sun.identity.policy.plugins.SimpleTimeCondition();
         Map props = new HashMap();
         props.put(stc.START_TIME, toSet(tc.getStartTime()));
         props.put(stc.END_TIME, toSet(tc.getEndTime()));
@@ -638,23 +622,23 @@ public class PriviligeUtils {
         return stc;
     }
 
-    private static List orConditionToPCondition(OrCondition oc,
-            ConditionTypeManager ctm) throws PolicyException, SSOException {
+    private static List orConditionToPCondition(OrCondition oc)
+            throws PolicyException, SSOException {
         return null;
     }
 
-    private static List andConditionToPCondition(AndCondition ac,
-            ConditionTypeManager ctm) throws PolicyException, SSOException {
+    private static List andConditionToPCondition(AndCondition ac)
+            throws PolicyException, SSOException {
         return null;
     }
 
-    private static Condition eConditionToEPCondition(EntitlementCondition ec,
-            ConditionTypeManager ctm) throws PolicyException, SSOException {
+    private static Condition eConditionToEPCondition(EntitlementCondition ec)
+            throws PolicyException, SSOException {
         return null;
     }
 
-    private static Condition eConditionToEPCondition(Condition tc,
-            ConditionTypeManager ctm) throws PolicyException, SSOException {
+    private static Condition eConditionToEPCondition(Condition tc)
+            throws PolicyException, SSOException {
         return null;
     }
 
@@ -670,7 +654,7 @@ public class PriviligeUtils {
         return "randomName";
     }
 
-    private static  Set toSet(Object obj) {
+    private static Set toSet(Object obj) {
         if (obj == null) {
             return null;
         }
