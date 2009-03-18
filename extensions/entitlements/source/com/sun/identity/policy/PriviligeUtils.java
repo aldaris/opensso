@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PriviligeUtils.java,v 1.20 2009-03-18 01:14:33 dillidorai Exp $
+ * $Id: PriviligeUtils.java,v 1.21 2009-03-18 20:43:18 dillidorai Exp $
  */
 package com.sun.identity.policy;
 
@@ -49,15 +49,13 @@ import com.sun.identity.idm.IdUtils;
 import com.sun.identity.policy.interfaces.Condition;
 import com.sun.identity.policy.interfaces.ResponseProvider;
 import com.sun.identity.policy.interfaces.Subject;
-import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.debug.Debug;
-import java.security.AccessController;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Properties;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -68,6 +66,7 @@ import java.util.Set;
  */
 public class PriviligeUtils {
 
+    private static Random random = new Random();
     /**
      * Constructs PriviligeUtils
      */
@@ -578,7 +577,10 @@ public class PriviligeUtils {
             ncondition[1] = ipConditionToPCondition((IPCondition) ec);
             conditions.add(ncondition);
         } else if (ec instanceof TimeCondition) {
-            conditions.add(timeConditionToPCondition((TimeCondition) ec));
+            Object[] ncondition = new Object[2];
+            ncondition[0] = ((TimeCondition) ec).getPConditionName();
+            ncondition[1] = timeConditionToPCondition((TimeCondition) ec);
+            conditions.add(ncondition);
         } else if (ec instanceof OrCondition) {
             List list = orConditionToPCondition((OrCondition) ec);
             for (Object obj : list) {
@@ -651,7 +653,7 @@ public class PriviligeUtils {
     }
 
     private static String randomName() {
-        return "randomName";
+        return "" + random.nextInt(10000);
     }
 
     private static Set toSet(Object obj) {
