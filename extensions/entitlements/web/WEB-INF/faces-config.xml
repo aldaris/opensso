@@ -17,27 +17,23 @@
         </message-bundle>
     </application>
 
-    <!-- subject dao's -->
+    <!-- subject container dao's -->
     <managed-bean>
-        <managed-bean-name>userSubjectDao</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.dao.UserSubjectDao</managed-bean-class>
+        <managed-bean-name>userSubjectContainerDao</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.dao.UserSubjectContainerDao</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
     <managed-bean>
-        <managed-bean-name>roleSubjectDao</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.dao.RoleSubjectDao</managed-bean-class>
+        <managed-bean-name>roleSubjectContainerDao</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.dao.RoleSubjectContainerDao</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
-    <!-- subject containers -->
+    <!-- subject container types -->
     <managed-bean>
-        <managed-bean-name>userSubjectContainer</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.model.UserSubjectContainer</managed-bean-class>
+        <managed-bean-name>userSubjectContainerType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.UserSubjectContainerType</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
-        <managed-property>
-            <property-name>subjectDao</property-name>
-            <value>#{userSubjectDao}</value>
-        </managed-property>
         <managed-property>
             <property-name>name</property-name>
             <value>user</value>
@@ -46,15 +42,15 @@
             <property-name>template</property-name>
             <value>/admin/facelet/template/subject-chooser.xhtml</value>
         </managed-property>
+        <managed-property>
+            <property-name>subjectContainerDao</property-name>
+            <value>#{userSubjectContainerDao}</value>
+        </managed-property>
     </managed-bean>
     <managed-bean>
-        <managed-bean-name>roleSubjectContainer</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.model.RoleSubjectContainer</managed-bean-class>
+        <managed-bean-name>roleSubjectContainerType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.RoleSubjectContainerType</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
-        <managed-property>
-            <property-name>subjectDao</property-name>
-            <value>#{roleSubjectDao}</value>
-        </managed-property>
         <managed-property>
             <property-name>name</property-name>
             <value>role</value>
@@ -63,23 +59,27 @@
             <property-name>template</property-name>
             <value>/admin/facelet/template/subject-chooser.xhtml</value>
         </managed-property>
+        <managed-property>
+            <property-name>subjectContainerDao</property-name>
+            <value>#{roleSubjectContainerDao}</value>
+        </managed-property>
     </managed-bean>
 
     <managed-bean>
-        <managed-bean-name>availableSubjectContainers</managed-bean-name>
+        <managed-bean-name>subjectContainerTypes</managed-bean-name>
         <managed-bean-class>java.util.ArrayList</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
         <list-entries>
-            <value>#{userSubjectContainer}</value>
-            <value>#{roleSubjectContainer}</value>
+            <value>#{userSubjectContainerType}</value>
+            <value>#{roleSubjectContainerType}</value>
         </list-entries>
     </managed-bean>
+    <!-- subject container types -->
+
     <managed-bean>
-        <managed-bean-name>selectedSubjectContainers</managed-bean-name>
+        <managed-bean-name>subjectContainers</managed-bean-name>
         <managed-bean-class>java.util.ArrayList</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
-        <list-entries>
-        </list-entries>
     </managed-bean>
 
     <managed-bean>
@@ -87,12 +87,8 @@
         <managed-bean-class>com.sun.identity.admin.handler.SubjectContainersHandler</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
         <managed-property>
-            <property-name>availableSubjectContainers</property-name>
-            <value>#{selectedSubjectContainers}</value>
-        </managed-property>
-        <managed-property>
-            <property-name>selectedSubjectContainers</property-name>
-            <value>#{selectedSubjectContainers}</value>
+            <property-name>subjectContainers</property-name>
+            <value>#{subjectContainers}</value>
         </managed-property>
     </managed-bean>
 
@@ -123,7 +119,6 @@
             </map-entry>
         </map-entries>
     </managed-bean>
-    <!-- application types -->
 
     <!-- applications -->
     <managed-bean>
@@ -154,6 +149,55 @@
         <managed-property>
             <property-name>applicationDao</property-name>
             <value>#{applicationDao}</value>
+        </managed-property>
+    </managed-bean>
+
+    <!-- condition types -->
+    <managed-bean>
+        <managed-bean-name>activeSessionTimeConditionType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.ActiveSessionTimeConditionType</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>activeSessionTime</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/condition-active-session-time.xhtml</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>ipConditionType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.IPConditionType</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>ip</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/condition-ip.xhtml</value>
+        </managed-property>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>conditionTypes</managed-bean-name>
+        <managed-bean-class>java.util.ArrayList</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <list-entries>
+            <value>#{activeSessionTimeConditionType}</value>
+            <value>#{ipConditionType}</value>
+        </list-entries>
+    </managed-bean>
+    <!-- condition types -->
+
+    <managed-bean>
+        <managed-bean-name>viewConditionsHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.ViewConditionsHandler</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>viewConditions</property-name>
+            <value>#{policyCreateWizardBean.viewConditions}</value>
         </managed-property>
     </managed-bean>
 
@@ -230,12 +274,8 @@
             <value>#{applicationHandler.applications}</value>
         </managed-property>
         <managed-property>
-            <property-name>availableSubjectContainers</property-name>
-            <value>#{availableSubjectContainers}</value>
-        </managed-property>
-        <managed-property>
-            <property-name>selectedSubjectContainers</property-name>
-            <value>#{selectedSubjectContainers}</value>
+            <property-name>subjectContainers</property-name>
+            <value>#{subjectContainers}</value>
         </managed-property>
     </managed-bean>
 

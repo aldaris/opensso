@@ -1,14 +1,15 @@
 package com.sun.identity.admin.model;
 
-import com.sun.identity.admin.dao.SubjectDao;
+import com.sun.identity.admin.dao.SubjectContainerDao;
 import java.util.List;
 
 public interface SubjectContainer extends MultiPanelBean {
     public List<ViewSubject> getViewSubjects();
-    public SubjectDao getSubjectDao();
+    public void setSubjectContainerDao(SubjectContainerDao scDao);
     public String getName();
+    public void setName(String name);
     public String getTemplate();
-    public boolean isActive();
-    public void setActive(boolean active);
     public int getNumberSelected();
+    public SubjectContainerType getSubjectContainerType();
+    public void setSubjectContainerType(SubjectContainerType sc);
 }

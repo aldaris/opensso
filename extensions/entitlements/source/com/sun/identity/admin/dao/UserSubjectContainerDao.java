@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserSubjectDao implements SubjectDao, Serializable {
+public class UserSubjectContainerDao implements SubjectContainerDao, Serializable {
 
     public List<ViewSubject> getViewSubjects() {
         List<ViewSubject> userSubjects = new ArrayList<ViewSubject>();

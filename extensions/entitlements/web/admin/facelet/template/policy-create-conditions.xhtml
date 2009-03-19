@@ -8,28 +8,28 @@
     xmlns:o="http://opensso.dev.java.net">
     <ice:panelGrid
         columns="3"
-        styleClass="policy-create-subjects"
-        columnClasses="subjects-selected subjects-gutter subjects-available">
+        styleClass="policy-create-conditions"
+        columnClasses="conditions-selected conditions-gutter conditions-available">
         <ice:panelGroup
             style="width: 100%">
             <c:forEach
-                var="subjectContainer"
-                items="#{policyCreateWizardBean.subjectContainers}">
+                var="viewCondition"
+                items="#{policyCreateWizardBean.viewConditions}">
                 <o:multipanel
                     collapsible="true"
                     removeable="true"
-                    visible="#{subjectContainer.visible}"
-                    expanded="#{subjectContainer.expanded}"
-                    bean="#{subjectContainer}"
-                    handler="#{subjectContainersHandler}">
+                    visible="#{viewCondition.visible}"
+                    expanded="#{viewCondition.expanded}"
+                    bean="#{viewCondition}"
+                    handler="#{viewConditionsHandler}">
                     <ui:define name="panel-title">
-                        #{subjectContainer.name} (#{subjectContainer.numberSelected})
+                        #{viewCondition.name != null ? viewCondition.name : viewCondition.conditionType.name}
                     </ui:define>
                     <ui:define name="panel-body">
-                        <ui:include src="#{subjectContainer.subjectContainerType.template}">
+                        <ui:include src="#{viewCondition.conditionType.template}">
                             <ui:param
-                                name="subjectContainer"
-                                value="#{subjectContainer}"/>
+                                name="viewCondition"
+                                value="#{viewCondition}"/>
                         </ui:include>
                     </ui:define>
                 </o:multipanel>
@@ -37,7 +37,7 @@
             <ice:panelGroup
                 styleClass="drop-target"
                 dropTarget="true"
-                dropListener="#{policyCreateWizardHandler.subjectContainerDropListener}">
+                dropListener="#{policyCreateWizardHandler.conditionDropListener}">
                 Drop here ...
             </ice:panelGroup>
         </ice:panelGroup>
@@ -46,27 +46,29 @@
             columns="1"
             style="width: 100%">
             <o:multipanel
-                expanded="true"
+                bean="#{staticMultiPanelBean}"
+                handler="#{staticMultiPanelHandler}"
                 visible="true"
+                expanded="true"
                 collapsible="false"
                 removeable="false">
                 <ui:define name="panel-title">
                     <ice:panelGroup>
-                        <ice:outputText value="Drag and Drop"/>
+                        <ice:outputText value="Condition Types"/>
                     </ice:panelGroup>
                 </ui:define>
                 <ui:define name="panel-body">
                     <ice:panelSeries
-                        value="#{subjectContainerTypes}"
-                        var="subjectContainerType">
+                        value="#{conditionTypes}"
+                        var="conditionType">
                         <ice:panelGroup
-                            dragValue="#{subjectContainerType}"
-                            dragOptions="dragGhost"
-                            draggable="true">
+                            draggable="true"
+                            dragValue="#{conditionType}"
+                            dragOptions="dragGhost">
                             <ice:panelGrid columns="2">
                                 <ice:graphicImage value="../image/user.png"/>
                                 <ice:panelGroup>
-                                    <ice:outputText value="#{subjectContainerType.name}"/>
+                                    <ice:outputText value="#{conditionType.name}"/>
                                 </ice:panelGroup>
                             </ice:panelGrid>
                         </ice:panelGroup>

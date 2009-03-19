@@ -1,0 +1,42 @@
+package com.sun.identity.admin.model;
+
+import com.sun.identity.entitlement.Condition;
+import java.io.Serializable;
+import java.util.List;
+
+public class ActiveSessionTimeCondition 
+    extends BaseCondition
+    implements Serializable {
+
+    private boolean terminateSession = false;
+    private int timeMultiplier = 60;
+    private int timeCount = 0;
+
+    public List<Condition> getCondition() {
+        return null; // TODO
+    }
+
+    public boolean isTerminateSession() {
+        return terminateSession;
+    }
+
+    public void setTerminateSession(boolean terminateSession) {
+        this.terminateSession = terminateSession;
+    }
+
+    public int getTimeCount() {
+        return timeCount;
+    }
+
+    public void setTimeCount(int timeCount) {
+        this.timeCount = timeCount;
+    }
+
+    public int getTimeMultiplier() {
+        return timeMultiplier;
+    }
+
+    public void setTimeMultiplier(int timeMultiplier) {
+        this.timeMultiplier = timeMultiplier;
+    }
+}

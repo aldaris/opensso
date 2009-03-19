@@ -98,9 +98,8 @@ public class ChooserSubjectHandler implements Serializable {
                 }
             }
             src.removeAll(dragged);
+            filterBoth();
         }
-
-        filterBoth();
     }
 
     public void selectionListener(RowSelectorEvent event) {

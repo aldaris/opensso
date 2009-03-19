@@ -5,6 +5,8 @@
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:ice="http://www.icesoft.com/icefaces/component">
     <ice:panelGroup
+        visible="#{visible}"
+        effect="#{bean.panelEffect}"
         styleClass="multipanel">
         <ice:panelGroup
             styleClass="multipanel-header">
@@ -20,7 +22,7 @@
                     <ice:commandLink
                         rendered="#{collapsible == true}"
                         actionListener="#{handler.expandListener}"
-                        partialSubmit="true"
+                        partialSubmit="false"
                         styleClass="command-link">
                         <img
                             style="vertical-align: middle"
@@ -38,7 +40,7 @@
                     <ice:commandLink
                         rendered="#{removeable == true}"
                         actionListener="#{handler.removeListener}"
-                        partialSubmit="true"
+                        partialSubmit="false"
                         styleClass="command-link">
                         <img
                             style="vertical-align: middle"
@@ -54,7 +56,8 @@
             </ice:panelGrid>
         </ice:panelGroup>
         <ice:panelGroup
-            visible="#{!collapsible || bean.expanded}"
+            visible="#{expanded}"
+            effect="#{bean.expandEffect}"
             styleClass="multipanel-body">
             <ui:insert name="panel-body"/>
         </ice:panelGroup>

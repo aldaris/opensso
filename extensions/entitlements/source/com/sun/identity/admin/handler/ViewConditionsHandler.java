@@ -5,18 +5,17 @@ import com.icesoft.faces.context.effects.Fade;
 import com.icesoft.faces.context.effects.SlideDown;
 import com.icesoft.faces.context.effects.SlideUp;
 import com.sun.identity.admin.model.MultiPanelBean;
-import com.sun.identity.admin.model.SubjectContainer;
+import com.sun.identity.admin.model.ViewCondition;
 import java.io.Serializable;
 import java.util.List;
 import javax.faces.event.ActionEvent;
 
-public class SubjectContainersHandler implements MultiPanelHandler, Serializable {
-
-    private List<SubjectContainer> subjectContainers;
+public class ViewConditionsHandler implements MultiPanelHandler, Serializable {
+    private List<ViewCondition> viewConditions;
 
     public void expandListener(ActionEvent event) {
-        MultiPanelBean mpb = (SubjectContainer) event.getComponent().getAttributes().get("bean");
-        assert (mpb != null);
+        MultiPanelBean mpb = (MultiPanelBean) event.getComponent().getAttributes().get("bean");
+        assert(mpb != null);
 
         Effect e;
         if (mpb.isExpanded()) {
@@ -24,27 +23,24 @@ public class SubjectContainersHandler implements MultiPanelHandler, Serializable
         } else {
             e = new SlideDown();
         }
-
-        e.setTransitory(false);
         e.setSubmit(true);
+        e.setTransitory(false);
         mpb.setExpandEffect(e);
     }
 
     public void removeListener(ActionEvent event) {
-        SubjectContainer subjectContainer = (SubjectContainer) event.getComponent().getAttributes().get("bean");
-        assert (subjectContainer != null);
+        MultiPanelBean mpb = (MultiPanelBean) event.getComponent().getAttributes().get("bean");
+        assert(mpb != null);
+        //viewConditions.remove(mpb);
 
         Effect e = new Fade();
         e.setSubmit(true);
         e.setTransitory(false);
-        subjectContainer.setPanelEffect(e);
+        mpb.setPanelEffect(e);
     }
 
-    public List<SubjectContainer> getSubjectContainers() {
-        return subjectContainers;
+    public void setViewConditions(List<ViewCondition> viewConditions) {
+        this.viewConditions = viewConditions;
     }
 
-    public void setSubjectContainers(List<SubjectContainer> subjectContainers) {
-        this.subjectContainers = subjectContainers;
-    }
 }

@@ -1,6 +1,7 @@
 package com.sun.identity.admin.model;
 
-import com.sun.identity.admin.dao.SubjectDao;
+import com.icesoft.faces.context.effects.Effect;
+import com.sun.identity.admin.dao.SubjectContainerDao;
 import com.sun.identity.admin.handler.ChooserSubjectHandler;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -24,8 +25,8 @@ public abstract class ChooserSubjectContainer
     }
 
     @Override
-    public void setSubjectDao(SubjectDao subjectDao) {
-        super.setSubjectDao(subjectDao);
+    public void setSubjectContainerDao(SubjectContainerDao subjectDao) {
+        super.setSubjectContainerDao(subjectDao);
         available.addAll(subjectDao.getViewSubjects());
         filteredAvailable.addAll(available);
         filteredSelected = getViewSubjects();

@@ -1,5 +1,6 @@
 package com.sun.identity.admin.model;
 
+import com.icesoft.faces.context.effects.Effect;
 import com.sun.identity.admin.DeepCloneableArrayList;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -17,9 +18,10 @@ public class PolicyCreateWizardBean
     private Application application;
     private Map<String,Application> applications;
     private List<Action> actions;
-    private List<ViewCondition> conditions;
-    private List<SubjectContainer> availableSubjectContainers;
-    private List<SubjectContainer> selectedSubjectContainers;
+    private List<ViewCondition> viewConditions = new ArrayList<ViewCondition>();
+    private List<SubjectContainer> subjectContainers;
+    private Effect dropConditionEffect;
+    private Effect dropSubjectContainerEffect;
 
     public List<Resource> getResources() {
         return resources;
@@ -72,14 +74,6 @@ public class PolicyCreateWizardBean
         this.actions = actions;
     }
 
-    public List<ViewCondition> getConditions() {
-        return conditions;
-    }
-
-    public void setConditions(List<ViewCondition> conditions) {
-        this.conditions = conditions;
-    }
-
     public String getName() {
         return name;
     }
@@ -96,20 +90,35 @@ public class PolicyCreateWizardBean
         this.description = description;
     }
 
-    public List<SubjectContainer> getAvailableSubjectContainers() {
-        return availableSubjectContainers;
+    public List<ViewCondition> getViewConditions() {
+        return viewConditions;
     }
 
-    public void setAvailableSubjectContainers(List<SubjectContainer> availableSubjectContainers) {
-        this.availableSubjectContainers = availableSubjectContainers;
+    public void setViewConditions(List<ViewCondition> viewConditions) {
+        this.viewConditions = viewConditions;
     }
 
-    public List<SubjectContainer> getSelectedSubjectContainers() {
-        return selectedSubjectContainers;
+    public Effect getDropConditionEffect() {
+        return dropConditionEffect;
     }
 
-    public void setSelectedSubjectContainers(List<SubjectContainer> selectedSubjectContainers) {
-        this.selectedSubjectContainers = selectedSubjectContainers;
+    public void setDropConditionEffect(Effect dropConditionEffect) {
+        this.dropConditionEffect = dropConditionEffect;
     }
 
+    public Effect getDropSubjectContainerEffect() {
+        return dropSubjectContainerEffect;
+    }
+
+    public void setDropSubjectContainerEffect(Effect dropSubjectContainerEffect) {
+        this.dropSubjectContainerEffect = dropSubjectContainerEffect;
+    }
+
+    public List<SubjectContainer> getSubjectContainers() {
+        return subjectContainers;
+    }
+
+    public void setSubjectContainers(List<SubjectContainer> subjectContainers) {
+        this.subjectContainers = subjectContainers;
+    }
 }

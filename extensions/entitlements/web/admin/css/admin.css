@@ -29,6 +29,20 @@ body {
     text-align: right;
 }
 
+.condition-section-head {
+    font-weight: bold;
+    border-bottom: 1px solid;
+    margin-bottom: 8px;
+    float: left;
+    width: 100%;
+}
+
+.condition-section-title {
+    float: left;
+    width: 70%;
+    clear: left;
+}
+
 .section-links img {
     padding-right: 4px;
 }
@@ -204,6 +218,34 @@ div.button-wrapper a.button img.left {
     top: 60px;
 }
 
+.policy-create-conditions {
+    width: 100%;
+}
+
+.policy-create-conditions .drop-target {
+    background: #ffffff;
+    border: 1px solid #000000;
+    padding: 16px;
+    margin: 32px;
+}
+
+.conditions-selected {
+    padding-left: 4px;
+    width: 70%;
+    vertical-align: top;
+    margin-right: 32px;
+}
+
+.conditions-available {
+    padding-left: 4px;
+    width: 30%;
+    vertical-align: top;
+}
+
+.conditions-gutter {
+    padding: 16px;
+}
+
 .subjects-selected {
     padding-left: 4px;
     width: 70%;
@@ -289,9 +331,11 @@ div.button-wrapper a.button img.left {
     border: 1px solid #dddddd;
     background: #efefef;
     position: relative;
-    top: -2px;
 }
 
+.condition-panel {
+    margin: 4px;
+}
 
 /*
 #homeTabContent {

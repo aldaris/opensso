@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<span
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ice="http://www.icesoft.com/icefaces/component"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:o="http://opensso.dev.java.net">
+    <ice:panelGroup
+        styleClass="condition-panel">
+        <ice:panelGrid
+            columns="3">
+            <ice:outputText value="Maximum session time"/>
+            <ice:inputText value="#{viewCondition.timeCount}" size="8"/>
+            <ice:selectOneMenu value="#{viewCondition.timeMultiplier}">
+                <f:selectItem itemLabel="Seconds" itemValue="1"/>
+                <f:selectItem itemLabel="Minutes" itemValue="60"/>
+                <f:selectItem itemLabel="Hours" itemValue="3600"/>
+            </ice:selectOneMenu>
+            <ice:outputText value="Terminate session?"/>
+            <ice:selectOneMenu value="#{viewCondition.terminateSession}">
+                <f:selectItem itemLabel="Yes" itemValue="true"/>
+                <f:selectItem itemLabel="No" itemValue="false"/>
+            </ice:selectOneMenu>
+        </ice:panelGrid>
+    </ice:panelGroup>
+</span>

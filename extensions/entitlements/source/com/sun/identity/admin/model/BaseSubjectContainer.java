@@ -1,19 +1,27 @@
 package com.sun.identity.admin.model;
 
-import com.sun.identity.admin.dao.SubjectDao;
+import com.icesoft.faces.context.effects.Appear;
+import com.icesoft.faces.context.effects.Effect;
+import com.icesoft.faces.context.effects.SlideDown;
+import com.sun.identity.admin.dao.SubjectContainerDao;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BaseSubjectContainer implements SubjectContainer {
+public abstract class BaseSubjectContainer implements MultiPanelBean, SubjectContainer {
     private List<ViewSubject> viewSubjects = new ArrayList<ViewSubject>();
     private String name;
     private String template;
-    private boolean active = false;
-    private SubjectDao subjectDao;
+    private SubjectContainerDao subjectContainerDao;
     private boolean expanded = true;
+    private Effect expandEffect;
+    private Effect panelEffect;
+    private boolean visible = false;
+    private SubjectContainerType subjectContainerType;
 
     public BaseSubjectContainer() {
-        setExpanded(true);
+        panelEffect = new Appear();
+        panelEffect.setSubmit(true);
+        panelEffect.setTransitory(false);
     }
 
     public List<ViewSubject> getViewSubjects() {
@@ -40,22 +48,6 @@ public abstract class BaseSubjectContainer implements SubjectContainer {
         this.template = template;
     }
 
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public void setSubjectDao(SubjectDao subjectDao) {
-        this.subjectDao = subjectDao;
-    }
-
-    public SubjectDao getSubjectDao() {
-        return subjectDao;
-    }
-
     public boolean isExpanded() {
         return expanded;
     }
@@ -66,5 +58,46 @@ public abstract class BaseSubjectContainer implements SubjectContainer {
 
     public int getNumberSelected() {
         return viewSubjects.size();
+    }
+
+    public Effect getExpandEffect() {
+        return expandEffect;
+    }
+
+    public void setExpandEffect(Effect expandEffect) {
+        this.expandEffect = expandEffect;
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
+
+    public Effect getPanelEffect() {
+        return panelEffect;
+    }
+
+    public void setPanelEffect(Effect panelEffect) {
+        this.panelEffect = panelEffect;
+    }
+
+    public SubjectContainerType getSubjectContainerType() {
+        return subjectContainerType;
+    }
+
+    public void setSubjectContainerType(SubjectContainerType subjectContainerType) {
+        this.subjectContainerType = subjectContainerType;
+    }
+
+    public SubjectContainerDao getSubjectContainerDao() {
+        return subjectContainerDao;
+    }
+
+    public void setSubjectContainerDao(SubjectContainerDao subjectContainerDao) {
+        this.subjectContainerDao = subjectContainerDao;
+        viewSubjects = subjectContainerDao.getViewSubjects();
     }
 }
