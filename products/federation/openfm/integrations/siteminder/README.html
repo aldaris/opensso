@@ -132,7 +132,6 @@ $openssozipdir/integrations/siteminder/dist directory. <br>
 4. OpenSSO Installation and Configuration with Siteminder AuthModule:<br>
 =================================================<br>
 <br>
-<br>
 1. Create a temporary directory&nbsp; for e.g. /export/tmp and unwar
 the opensso.war using jar -xvf opensso.war. <br>
 &nbsp;&nbsp;&nbsp; From now on, /export/tmp is called as a war staging
@@ -142,27 +141,30 @@ area and is represented with a marco $WAR_DIR <br>
 $openssozipdir/integrations/siteminder/dist/fam_sm_integration.jar to
 $WAR_DIR/WEB-INF/lib<br>
 <br>
-3. Copy $openssozipdir/integrations/siteminder/config/SMAuth.properties
+3. Copy Siteminder jar files smjavaagentapi.jar and SmJavaApi.jar to
+$WAR_DIR/WEB-INF/lib<br>
+<br>
+4. Copy $openssozipdir/integrations/siteminder/config/SMAuth.properties
 to $WAR_DIR/WEB-INF/classes <br>
 <br>
-4. Copy $openssozipdir/integrations/siteminder/config/SMAuthModule.xml
+5. Copy $openssozipdir/integrations/siteminder/config/SMAuthModule.xml
 to $WAR_DIR/config/auth/default and also to the directory<br>
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 $WAR_DIR/config/auth/default_en<br>
 <br>
-5. Re-war opensso.war using jar cvf opensso.war from $WAR_DIR<br>
+6. Re-war opensso.war using jar cvf opensso.war from $WAR_DIR<br>
 <br>
-6. Deploy opensso.war onto OpenSSO web container. The deployment is self
+7. Deploy opensso.war onto OpenSSO web container. The deployment is self
 explanatory. Please check the web container documentation for war<br>
 deployment.<br>
 <br>
-7. Access the deployed opensso directory <br>
+8. Access the deployed opensso directory <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 http://&lt;host&gt;:&lt;port&gt;/opensso<br>
 <br>
-8. Accessing deployed application redirects to opensso configurator.
+9. Accessing deployed application redirects to opensso configurator.
 Choose custom configuration. By default OpenSSO uses embedded directory<br>
 server for configuration, however, you could choose to use existing or
 a new directory server instance for configuration. <br>
@@ -171,8 +173,9 @@ Note: The OpenSSO can be configured to use various
 user repository for validating the user existance, however, you could
 also choose to ignore profile. <br>
 <br>
-9. After successful configuration, the configuration redirects to a
+10. After successful configuration, the configuration redirects to a
 user login and verify your administrator credentials. <br>
+<br>
 <br>
 5. Siteminder Auth module configuration:<br>
 ===========================<br>
