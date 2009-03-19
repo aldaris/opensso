@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PriviligeUtils.java,v 1.21 2009-03-18 20:43:18 dillidorai Exp $
+ * $Id: PriviligeUtils.java,v 1.22 2009-03-19 17:01:42 dillidorai Exp $
  */
 package com.sun.identity.policy;
 
@@ -67,6 +67,7 @@ import java.util.Set;
 public class PriviligeUtils {
 
     private static Random random = new Random();
+
     /**
      * Constructs PriviligeUtils
      */
@@ -138,7 +139,6 @@ public class PriviligeUtils {
         ResourceAttributes eResourceAttributes = nrpsToEResourceAttributes(nrps);
         Set eResourceAttributesSet = null;
 
-        eCondition = null;
         eResourceAttributes = null;
         Privilige privilige = new Privilige(policyName, entitlements, eSubject,
                 eCondition, eResourceAttributesSet);
@@ -253,9 +253,9 @@ public class PriviligeUtils {
             String conditionName = (String) nCondition[0];
             Condition condition = (Condition) nCondition[1];
             if (condition instanceof com.sun.identity.policy.plugins.IPCondition) {
-                ec = mapIPConditionToEIPCondition(nCondition);
+                ec = mapIPPConditionToIPECondition(nCondition);
             } else if (condition instanceof com.sun.identity.policy.plugins.SimpleTimeCondition) {
-                ec = mapSimpleTimeConditionToETimeCondition(nCondition);
+                ec = mapSimpleTimeConditionToTimeCondition(nCondition);
             } else { //TODO: map to generic eCondition
             }
             ecSet.add(ec);
@@ -268,7 +268,7 @@ public class PriviligeUtils {
         return ec;
     }
 
-    private static IPCondition mapIPConditionToEIPCondition(
+    private static IPCondition mapIPPConditionToIPECondition(
             Object[] nCondition) {
         String pConditionName = (String) nCondition[0];
         com.sun.identity.policy.plugins.IPCondition pipc =
@@ -282,7 +282,7 @@ public class PriviligeUtils {
         return ipc;
     }
 
-    private static TimeCondition mapSimpleTimeConditionToETimeCondition(
+    private static TimeCondition mapSimpleTimeConditionToTimeCondition(
             Object[] nCondition) {
         String pConditionName = (String) nCondition[0];
         com.sun.identity.policy.plugins.SimpleTimeCondition stc =
@@ -357,14 +357,7 @@ public class PriviligeUtils {
                 Object[] arr = (Object[]) obj;
                 String pConditionName = (String) arr[0];
                 Condition condition = (Condition) arr[1];
-                Condition c = null;
-                try {
-                    c = policy.getCondition(pConditionName);
-                } catch (NameNotFoundException nnfe) {
-                }
-                if (c != null) {
-                    policy.addCondition(pConditionName, condition);
-                }
+                policy.addCondition(pConditionName, condition);
             }
         }
         return policy;
@@ -417,7 +410,7 @@ public class PriviligeUtils {
         subject.setValues(values);
         String pSubjectName = us.getPSubjectName();
         if (pSubjectName == null) {
-            pSubjectName = randomName();
+            pSubjectName = "UserSubject" + randomName();
         }
         Object[] arr = new Object[3];
         arr[0] = pSubjectName;
@@ -434,7 +427,7 @@ public class PriviligeUtils {
         subject.setValues(values);
         String pSubjectName = gs.getPSubjectName();
         if (pSubjectName == null) {
-            pSubjectName = randomName();
+            pSubjectName = "GroupSubject" + randomName();
         }
         Object[] arr = new Object[3];
         arr[0] = pSubjectName;
@@ -451,7 +444,7 @@ public class PriviligeUtils {
         subject.setValues(values);
         String pSubjectName = rs.getPSubjectName();
         if (pSubjectName == null) {
-            pSubjectName = randomName();
+            pSubjectName = "RoleSubject" + randomName();
         }
         Object[] arr = new Object[3];
         arr[0] = pSubjectName;
@@ -602,36 +595,107 @@ public class PriviligeUtils {
             throws PolicyException, SSOException {
         com.sun.identity.policy.plugins.IPCondition ipCondition = new com.sun.identity.policy.plugins.IPCondition();
         Map props = new HashMap();
-        props.put(ipCondition.DNS_NAME, toSet(ipc.getDomainNameMask()));
-        props.put(ipCondition.START_IP, toSet(ipc.getStartIp()));
-        props.put(ipCondition.END_IP, toSet(ipc.getEndIp()));
+        if (ipc.getDomainNameMask() != null) {
+            props.put(ipCondition.DNS_NAME, toSet(ipc.getDomainNameMask()));
+        }
+        if (ipc.getStartIp() != null) {
+            props.put(ipCondition.START_IP, toSet(ipc.getStartIp()));
+        }
+        if (ipc.getEndIp() != null) {
+            props.put(ipCondition.END_IP, toSet(ipc.getEndIp()));
+        }
         ipCondition.setProperties(props);
         return ipCondition;
     }
 
     private static Condition timeConditionToPCondition(TimeCondition tc)
             throws PolicyException, SSOException {
-        com.sun.identity.policy.plugins.SimpleTimeCondition stc = new com.sun.identity.policy.plugins.SimpleTimeCondition();
+        com.sun.identity.policy.plugins.SimpleTimeCondition stc
+                = new com.sun.identity.policy.plugins.SimpleTimeCondition();
         Map props = new HashMap();
-        props.put(stc.START_TIME, toSet(tc.getStartTime()));
-        props.put(stc.END_TIME, toSet(tc.getEndTime()));
-        props.put(stc.START_DAY, toSet(tc.getStartDay()));
-        props.put(stc.END_DAY, toSet(tc.getEndDay()));
-        props.put(stc.START_DATE, toSet(tc.getStartDate()));
-        props.put(stc.START_DATE, toSet(tc.getEndDate()));
-        props.put(stc.ENFORCEMENT_TIME_ZONE, toSet(tc.getEnforcementTimeZone()));
+        if (tc.getStartTime() != null) {
+            props.put(stc.START_TIME, toSet(tc.getStartTime()));
+        }
+        if (tc.getEndTime() != null) {
+            props.put(stc.END_TIME, toSet(tc.getEndTime()));
+        }
+        if (tc.getStartDay() != null) {
+            props.put(stc.START_DAY, toSet(tc.getStartDay()));
+        }
+        if (tc.getEndDay() != null) {
+            props.put(stc.END_DAY, toSet(tc.getEndDay()));
+        }
+        if (tc.getStartDate() != null) {
+            props.put(stc.START_DATE, toSet(tc.getStartDate()));
+        }
+        if (tc.getEndDate() != null) {
+            props.put(stc.START_DATE, toSet(tc.getEndDate()));
+        }
+        if (tc.getEnforcementTimeZone() != null) {
+            props.put(stc.ENFORCEMENT_TIME_ZONE, toSet(tc.getEnforcementTimeZone()));
+        }
         stc.setProperties(props);
         return stc;
     }
 
     private static List orConditionToPCondition(OrCondition oc)
             throws PolicyException, SSOException {
-        return null;
+        List list = new ArrayList();
+        Set nestedConditions = oc.getEConditions();
+        if (nestedConditions != null) {
+            for (Object nc : nestedConditions) {
+                if (nc instanceof IPCondition) {
+                    list.add(ipConditionToPCondition((IPCondition) nc));
+                } else if (nc instanceof TimeCondition) {
+                    list.add(timeConditionToPCondition((TimeCondition) nc));
+                } else if (nc instanceof OrCondition) {
+                    List list1 = orConditionToPCondition((OrCondition) nc);
+                    for (Object obj : list1) {
+                        list.add(obj);
+                    }
+                } else if (nc instanceof TimeCondition) { //NotCondition) {
+                    List list1 = orConditionToPCondition((OrCondition) nc);
+                    for (Object obj : list1) {
+                        Object[] arr = (Object[]) obj;
+                        arr[2] = Boolean.TRUE;
+                        list.add(arr);
+                    }
+                } else { // map to EPCondition
+                    //list.add(eConditionToEPCondition((EntitlementCondiiton) nc));
+                }
+            }
+        }
+        return list;
     }
 
     private static List andConditionToPCondition(AndCondition ac)
             throws PolicyException, SSOException {
-        return null;
+        List list = new ArrayList();
+        Set nestedConditions = ac.getEConditions();
+        if (nestedConditions != null) {
+            for (Object nc : nestedConditions) {
+                if (nc instanceof IPCondition) {
+                    list.add(ipConditionToPCondition((IPCondition) nc));
+                } else if (nc instanceof TimeCondition) {
+                    list.add(timeConditionToPCondition((TimeCondition) nc));
+                } else if (nc instanceof OrCondition) {
+                    List list1 = orConditionToPCondition((OrCondition) nc);
+                    for (Object obj : list1) {
+                        list.add(obj);
+                    }
+                } else if (nc instanceof TimeCondition) { //NotCondition) {
+                    List list1 = orConditionToPCondition((OrCondition) nc);
+                    for (Object obj : list1) {
+                        Object[] arr = (Object[]) obj;
+                        arr[2] = Boolean.TRUE;
+                        list.add(arr);
+                    }
+                } else { // map to EPCondiiton
+                    //list.add(eConditionToEPCondition((EntitlementCondiiton) nc));
+                }
+            }
+        }
+        return list;
     }
 
     private static Condition eConditionToEPCondition(EntitlementCondition ec)
