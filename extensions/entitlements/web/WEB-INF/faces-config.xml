@@ -46,6 +46,10 @@
             <property-name>subjectContainerDao</property-name>
             <value>#{userSubjectContainerDao}</value>
         </managed-property>
+        <managed-property>
+            <property-name>subjectIconUri</property-name>
+            <value>/admin/image/user.png</value>
+        </managed-property>
     </managed-bean>
     <managed-bean>
         <managed-bean-name>roleSubjectContainerType</managed-bean-name>
@@ -62,6 +66,10 @@
         <managed-property>
             <property-name>subjectContainerDao</property-name>
             <value>#{roleSubjectContainerDao}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>subjectIconUri</property-name>
+            <value>/admin/image/role.png</value>
         </managed-property>
     </managed-bean>
 

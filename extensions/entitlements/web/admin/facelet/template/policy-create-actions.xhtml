@@ -21,28 +21,15 @@
             <f:facet name="header">
                 <ice:outputText value="Permissions"/>
             </f:facet>
-            <ice:panelGrid columns="3">
-                <ice:panelGrid
-                    style="margin-right: 16px"
-                    columns="2">
-                    <ice:selectBooleanCheckbox
-                        value="#{booleanAction.allow}"/>
-                    <ice:outputText value="Allow"/>
-                </ice:panelGrid>
-                <ice:panelGrid
-                    style="margin-right: 16px"
-                    columns="2">
-                    <ice:selectBooleanCheckbox
-                        value="#{booleanAction.deny}"/>
-                    <ice:outputText value="Deny"/>
-                </ice:panelGrid>
-                <ice:panelGrid
-                    columns="2">
-                    <ice:selectBooleanCheckbox
-                        value="#{booleanAction.ignore}"/>
-                    <ice:outputText value="Ignore"/>
-                </ice:panelGrid>
-            </ice:panelGrid>
+            <ice:panelGroup>
+                <ice:selectOneRadio
+                    partialSubmit="true"
+                    value="#{booleanAction.allow}"
+                    valueChangeListener="#{booleanAction.booleanActionHandler.selectListener}">
+                    <f:selectItem itemValue="true" itemLabel="Allow"/>
+                    <f:selectItem itemValue="false" itemLabel="Deny"/>
+                </ice:selectOneRadio>
+            </ice:panelGroup>
         </ice:column>
     </ice:dataTable>
 </span>

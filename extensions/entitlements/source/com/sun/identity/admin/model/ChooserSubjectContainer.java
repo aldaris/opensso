@@ -20,6 +20,7 @@ public abstract class ChooserSubjectContainer
     private ChooserSubjectHandler chooserSubjectHandler = new ChooserSubjectHandler();
 
     public ChooserSubjectContainer() {
+        super();
         chooserSubjectHandler = new ChooserSubjectHandler();
         chooserSubjectHandler.setChooserSubjectContainer(this);
     }

@@ -28,16 +28,13 @@ public class ApplicationDao implements Serializable {
         DeepCloneableList<Action> actions = new DeepCloneableArrayList<Action>();
         BooleanAction ba;
         ba = new BooleanAction();
-        ba.setName("allow");
-        ba.setAllow(true);
+        ba.setName("GET");
         actions.add(ba);
         ba = new BooleanAction();
-        ba.setName("deny");
-        ba.setIgnore(true);
+        ba.setName("POST");
         actions.add(ba);
         ba = new BooleanAction();
-        ba.setName("ignore");
-        ba.setIgnore(true);
+        ba.setName("HEAD");
         actions.add(ba);
 
         //TODO - dummy data

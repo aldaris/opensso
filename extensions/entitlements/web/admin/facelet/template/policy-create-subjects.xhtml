@@ -52,7 +52,7 @@
                 removeable="false">
                 <ui:define name="panel-title">
                     <ice:panelGroup>
-                        <ice:outputText value="Drag and Drop"/>
+                        <ice:outputText value="Subject Types"/>
                     </ice:panelGroup>
                 </ui:define>
                 <ui:define name="panel-body">
@@ -64,10 +64,10 @@
                             dragOptions="dragGhost"
                             draggable="true">
                             <ice:panelGrid columns="2">
-                                <ice:graphicImage value="../image/user.png"/>
-                                <ice:panelGroup>
-                                    <ice:outputText value="#{subjectContainerType.name}"/>
-                                </ice:panelGroup>
+                                <ice:graphicImage
+                                    value="#{subjectContainerType.subjectIconUri}"/>
+                                <ice:outputText
+                                    value="#{subjectContainerType.name}"/>
                             </ice:panelGrid>
                         </ice:panelGroup>
                     </ice:panelSeries>
