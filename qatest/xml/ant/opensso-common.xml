@@ -18,7 +18,7 @@
  your own identifying information:
  "Portions Copyrighted [year] [name of copyright owner]"
 
- $Id: opensso-common.xml,v 1.21 2009-03-17 19:30:06 rmisra Exp $
+ $Id: opensso-common.xml,v 1.22 2009-03-19 03:34:20 nithyas Exp $
 
  Copyright 2007 Sun Microsystems Inc. All Rights Reserved
 -->
@@ -352,6 +352,7 @@
     <target name="execute-module" depends="compile-all">
         <echo message="execution.mode=${EXECUTION_MODE}"/>
         <echo message="execution.module=${TEST_MODULE}"/>
+        <antcall target="print-test-env-start"/>
 
         <java classname="com.sun.identity.qatest.setup.ClientConfigCreator">
             <classpath>
