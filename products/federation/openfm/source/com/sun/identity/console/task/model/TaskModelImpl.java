@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TaskModelImpl.java,v 1.10 2009-03-16 22:43:46 asyhuang Exp $
+ * $Id: TaskModelImpl.java,v 1.11 2009-03-19 19:51:10 asyhuang Exp $
  *
  */
 
@@ -45,6 +45,8 @@ import com.sun.identity.saml2.meta.SAML2MetaException;
 import com.sun.identity.saml2.meta.SAML2MetaManager;
 import com.sun.identity.saml2.meta.SAML2MetaSecurityUtils;
 import com.sun.identity.saml2.meta.SAML2MetaUtils;
+import com.sun.identity.shared.Constants;
+import com.sun.identity.shared.configuration.SystemPropertiesManager;
 import com.sun.identity.shared.xml.XMLUtils;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -291,26 +293,22 @@ public class TaskModelImpl
                     }
                 }
             
-                List logoutList = idpssoDescriptor.getSingleLogoutService(); 
-                String signoutPageURL = null;
-                for (int i=0; i<logoutList.size(); i++) {
-                    SingleLogoutServiceElement spslsElem = 
-                            (SingleLogoutServiceElement) logoutList.get(i);
-                    String tmp = spslsElem.getBinding();                    
-                    if (tmp.contains("HTTP-Redirect")) {
-                        signoutPageURL = spslsElem.getLocation();                      
-                    }
-                }           
-                if(signoutPageURL != null) {
-                    signoutPageURL = signoutPageURL 
-                        + "?goto=" + entityId +"UI/Login?gx_charset=UTF-8";
-                }
-                map.put("SignoutPageURL",
-                            returnEmptySetIfValueIsNull(signoutPageURL)); 
             }
-                  
+
+            String signoutPageURL = null;
+            String protocol = SystemPropertiesManager.get(
+                    Constants.AM_SERVER_PROTOCOL);
+            String host = SystemPropertiesManager.get(Constants.AM_SERVER_HOST);
+            String port = SystemPropertiesManager.get(Constants.AM_SERVER_PORT);
+            String deploymentURI = SystemPropertiesManager.get(
+                    Constants.AM_SERVICES_DEPLOYMENT_DESCRIPTOR);
+            String url = protocol + "://" + host + ":" + port + deploymentURI;           
+            signoutPageURL = url + "/UI/Logout?goto=" + url;           
+            map.put("SignoutPageURL",
+                    returnEmptySetIfValueIsNull(signoutPageURL)); 
+      
             map.put("ChangePasswordURL", 
-                returnEmptySetIfValueIsNull(entityId+"/idm/EndUser"));
+                returnEmptySetIfValueIsNull(url+"/idm/EndUser"));
             
             // get pubkey                 
             Map extValueMap = new HashMap();
