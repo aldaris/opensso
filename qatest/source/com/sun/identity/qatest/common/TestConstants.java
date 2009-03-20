@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestConstants.java,v 1.32 2009-02-27 22:59:39 rmisra Exp $
+ * $Id: TestConstants.java,v 1.33 2009-03-20 17:33:53 vimal_67 Exp $
  *
  * Copyright 2008 Sun Microsystems Inc. All Rights Reserved
  */
@@ -555,7 +555,42 @@ public interface TestConstants {
      * SAMLv1 attribute map for idp user multivalue attribute for <code>idp_user_attribute</code>
      */
     String KEY_IDP_USER_MULTIVALUE_ATTRIBUTE = "idp_user_attribute";
-        
+
+    /**
+     * Fedlet attribute map for <code>fedletidp_user</code>
+     */
+    String KEY_FEDLETIDP_USER = "fedletidp_user";
+
+    /**
+     * Fedlet attribute map for <code>fedletidp_entity_name</code>
+     */
+    String KEY_FEDLETIDP_ENTITY_NAME = "fedletidp_entity_name";
+
+    /**
+     * Fedlet attribute map for <code>fedletidp_userpw</code>
+     */
+    String KEY_FEDLETIDP_USER_PASSWORD = "fedletidp_userpw";
+
+    /**
+     * Fedlet attribute map for <code>fedlet_cot</code>
+     */
+    String KEY_FEDLET_COT = "fedlet_cot";    
+
+    /**
+     * Fedlet attribute map for <code>fedlet_name</code>
+     */
+    String KEY_FEDLET_NAME = "fedlet_name";      
+    
+    /**
+     * Fedlet attribute map for <code>fedlet_war_type</code>
+     */
+    String KEY_FEDLET_WAR_TYPE = "fedlet_war_type"; 
+    
+    /**
+     * Fedlet attribute map for <code>fedlet_war_location</code>
+     */
+    String KEY_FEDLET_WAR_LOCATION = "fedlet_war_location";    
+    
     /**
      * SAMLv2, IDFF Property key for <code>attrqprovider</code>
      */
