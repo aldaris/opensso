@@ -1,0 +1,14 @@
+<parameter name="groupName" value="@mode@"/>
+    <test name="FedletTests">
+        <groups>
+            <run>
+                <include name="@mode@"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.sun.identity.qatest.fedlet.ConfigureFedlet"/>
+            <class name="com.sun.identity.qatest.fedlet.FedletTests"/>                     
+            <class name="com.sun.identity.qatest.fedlet.UnconfigureFedlet"/> 
+        </classes>
+    </test>
+  
