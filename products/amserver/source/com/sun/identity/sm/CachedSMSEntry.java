@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CachedSMSEntry.java,v 1.13 2009-01-28 05:35:02 ww203982 Exp $
+ * $Id: CachedSMSEntry.java,v 1.14 2009-03-20 21:02:36 qcheng Exp $
  *
  */
 
@@ -393,7 +393,7 @@ public class CachedSMSEntry {
         // Initialize the TTL
         String ttlEnabledString = SystemProperties.get(
             Constants.SMS_CACHE_TTL_ENABLE, "false");
-        ttlEnabled = Boolean.parseBoolean(ttlEnabledString);
+        ttlEnabled = Boolean.valueOf(ttlEnabledString).booleanValue();
         if (ttlEnabled) {
             String cacheTime = SystemProperties.get(Constants.SMS_CACHE_TTL);
             if (cacheTime != null) {
