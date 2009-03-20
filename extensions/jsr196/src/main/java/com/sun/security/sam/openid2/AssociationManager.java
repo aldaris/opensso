@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssociationManager.java,v 1.1 2009-03-15 08:56:02 rsoika Exp $
+ * $Id: AssociationManager.java,v 1.2 2009-03-20 17:53:18 rsoika Exp $
  */
 package com.sun.security.sam.openid2;
 
@@ -73,7 +73,6 @@ import com.sun.security.sam.Base64Helper;
 /**
  * 
  * @author monzillo
- * @author rsoika
  */
 public class AssociationManager {
 
@@ -108,6 +107,9 @@ public class AssociationManager {
 	private static Map<String, Association>[] idpCache;
 	private HostnameVerifier hostnameVerifier;
 
+	
+	
+	//private boolean debug_openid20=true;
 	
 
 	public AssociationManager(HostnameVerifier verifier, Logger loggerParam,
@@ -149,11 +151,10 @@ public class AssociationManager {
 			NoSuchAlgorithmException, UnsupportedEncodingException {
 
 		Map token = (Map) request.getSession().getAttribute(OpenIDToken.OPENID_SESSION_TOKEN);
-		
-		
+				
 		String idP=(String) token.get(OpenIDToken.IDP);
 		String sessionType=(String)token.get(OpenIDToken.SESSION_TYPE);
-		String handle = getAssociationHandle(idP, sessionType);
+		String handle = getAssociationHandle(idP, sessionType,(String)token.get(OpenIDToken.VERSION));
 
 		if (handle == null) {
 			return null;
@@ -169,12 +170,22 @@ public class AssociationManager {
 
 	
 		idpURL.append("?openid.mode=checkid_immediate");
+		
+		// OpenID 2.0 specific params
+		if ("2.0".equals(token.get(OpenIDToken.VERSION))) {
+			idpURL.append("&openid.ns=" +urlEncode("http://specs.openid.net/auth/2.0"));			
+			idpURL.append("&openid.claimed_id=" +urlEncode(id));
+		}
+				
 		idpURL.append("&openid.identity=" + urlEncode(id));
 		idpURL.append("&openid.assoc_handle=" + urlEncode(handle));
 		idpURL.append("&openid.return_to=" + urlEncode(returnTo));
 
 		if (root != null) {
-			idpURL.append("&openid.trust_root=" + urlEncode(root));
+			if ("2.0".equals(token.get(OpenIDToken.VERSION))) 
+				idpURL.append("&openid.realm=" + urlEncode(root));
+			else
+				idpURL.append("&openid.trust_root=" + urlEncode(root));
 		}
 		
 		// Upate new Token Mode
@@ -183,6 +194,9 @@ public class AssociationManager {
 		return idpURL.toString();
 	}
 
+	
+	
+	
 	
 	/**
 	 * prepares a openID Setup request url
@@ -194,8 +208,8 @@ public class AssociationManager {
 			InvalidParameterSpecException, InvalidAlgorithmParameterException,
 			NoSuchAlgorithmException, UnsupportedEncodingException {
 
-		Map token = (Map) request.getSession().getAttribute(OpenIDToken.OPENID_SESSION_TOKEN);
-		
+		Map token = (Map) request.getSession().getAttribute(OpenIDToken.OPENID_SESSION_TOKEN);		
+	
 		String sSetupURL=(String) token.get(OpenIDToken.USER_SETUP_URL);
 		String returnTo=(String) token.get(OpenIDToken.RETURN_TO);
 		String root=(String) token.get(OpenIDToken.TRUST_ROOT);
@@ -203,7 +217,7 @@ public class AssociationManager {
 		
 		
 		String handle = getAssociationHandle((String)token.get(OpenIDToken.IDP),
-				(String)token.get(OpenIDToken.SESSION_TYPE));
+				(String)token.get(OpenIDToken.SESSION_TYPE),(String)token.get(OpenIDToken.VERSION));
 
 		StringBuffer idpURL = new StringBuffer(sSetupURL);
 
@@ -212,11 +226,22 @@ public class AssociationManager {
 			idpURL.append("&openid.mode=checkid_setup");
 		else		
 			idpURL.append("?openid.mode=checkid_setup");
+		
+		// OpenID 2.0 specific params
+		if ("2.0".equals(token.get(OpenIDToken.VERSION))) {
+			idpURL.append("&openid.ns=" +urlEncode("http://specs.openid.net/auth/2.0"));
+			idpURL.append("&openid.claimed_id=" +urlEncode(id));
+		}
+
+		
 		idpURL.append("&openid.identity=" + urlEncode(id));
 		idpURL.append("&openid.assoc_handle=" + urlEncode(handle));
 		idpURL.append("&openid.return_to=" + urlEncode(returnTo));
 		if (root != null) {
-			idpURL.append("&openid.trust_root=" + urlEncode(root));
+			if ("2.0".equals(token.get(OpenIDToken.VERSION))) 
+				idpURL.append("&openid.realm=" + urlEncode(root));
+			else
+				idpURL.append("&openid.trust_root=" + urlEncode(root));			
 		}
 		
 		// Update current Token Mode
@@ -480,6 +505,11 @@ public class AssociationManager {
 	public static boolean tokenModeIsResult(Map token) {
 		return "id_res".equals((String) token.get("openid.mode"));
 	}
+	
+	public static boolean tokenModeSetupNeeded(Map token) {
+		return "setup_needed".equals((String) token.get("openid.mode"));
+	}
+
 
 	public static boolean tokenModeIsCancel(Map token) {
 		return "cancel".equals((String) token.get("openid.mode"));
@@ -661,7 +691,7 @@ public class AssociationManager {
 		return rMap;
 	}
 
-	private String getAssociationHandle(String idp, String sessionType)
+	private String getAssociationHandle(String idp, String sessionType, String version)
 			throws IOException, InvalidParameterSpecException,
 			InvalidAlgorithmParameterException, NoSuchAlgorithmException {
 
@@ -686,7 +716,7 @@ public class AssociationManager {
 		}
 
 		if (a == null || a.isExpired()) {
-			Association newA = getAssociation(idp, sessionType);
+			Association newA = getAssociation(idp, sessionType,version);
 			try {
 				wLock.lock();
 
@@ -716,12 +746,13 @@ public class AssociationManager {
 		return a == null ? null : a.getHandle();
 	}
 
-	private Association getAssociation(String idp, String sessionType)
+	private Association getAssociation(String idp, String sessionType,String version)
 			throws IOException, InvalidParameterSpecException,
 			InvalidAlgorithmParameterException, NoSuchAlgorithmException {
 
 		Association rvalue = null;
-
+		
+		
 		URL idpURL = new URL(idp);
 
 		HttpURLConnection connection = null;
@@ -741,6 +772,10 @@ public class AssociationManager {
 
 			pBuffer.append("&openid.assoc_type=HMAC-SHA1");
 
+			if ("2.0".equals(version))
+				pBuffer.append("&openid.ns=" +urlEncode("http://specs.openid.net/auth/2.0"));
+			
+			
 			if (sessionType != null) {
 
 				pBuffer.append("&openid.session_type=" + sessionType);

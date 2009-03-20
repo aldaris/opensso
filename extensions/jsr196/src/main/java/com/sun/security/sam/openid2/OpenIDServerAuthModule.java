@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenIDServerAuthModule.java,v 1.1 2009-03-15 08:56:03 rsoika Exp $
+ * $Id: OpenIDServerAuthModule.java,v 1.2 2009-03-20 17:53:18 rsoika Exp $
  */
 
 package com.sun.security.sam.openid2;
@@ -57,9 +57,8 @@ import javax.servlet.http.HttpServletResponse;
 import com.sun.security.sam.ServletAuthModule;
 
 /**
- *  
- * @author monzillo
- * @author rsoika
+ * 
+ * @author monzillo, rsoika
  */
 public class OpenIDServerAuthModule extends ServletAuthModule {
 
@@ -178,7 +177,6 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
 
 		return bitMap;
 	}
-
 
 	private ArrayList parseTrustedProviderOption(Map options) {
 
@@ -468,12 +466,16 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
 			}
 		} else {
 			Map token = null;
+	
 			token = (Map) request.getSession().getAttribute(
 					OpenIDToken.OPENID_SESSION_TOKEN);
 
 			if (token == null && isMandatory) {
 				// this situation happens also after a session timeout
-				saveRequest(request);
+				// saveReuest always throws the following exception
+				// javax.security.auth.message.AuthException: jmac.Save_http_servlet_request_failure
+
+				//saveRequest(request);
 				logInfo(DEBUG_TRACE, "openid.directing_to_login_page");
 				respondWithLoginForm(request, response);
 
@@ -484,8 +486,7 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
 				if ("once".equals((String) options.get("verifymode"))
 						&& "true".equals(token.get(OpenIDToken.IS_VERIFIED))) {
 					status = AuthStatus.SUCCESS;
-				}
-				else
+				} else
 					// Default mode - verifytoken for each request
 					status = verifyOpenIDToken(request, response);
 
@@ -577,6 +578,8 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
 	 * gets/create an association with the identity provider, and uses the
 	 * association to create a retirection url to the identity provider.
 	 * 
+	 * The Method normalizes the user input
+	 * 
 	 * @param request
 	 * @return the redirction url to the identity provider
 	 * @throws javax.security.auth.message.AuthException
@@ -589,6 +592,8 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
 		String uri = getQueryParameter(request, "openid_identifier");
 		if (uri == null)
 			uri = getQueryParameter(request, "openid_url");
+
+		uri = normalizeIdentifier(uri);
 
 		logInfo(DEBUG_LOGIN_FORM, "openid.query_parameter:", "openid_url" + "="
 				+ uri);
@@ -603,7 +608,7 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
 		AssociationManager.storeOpenIDParam(request, OpenIDToken.IDENTITY,
 				identityURL.toString());
 
-		Properties properties;
+		Properties properties = null;
 
 		try {
 
@@ -621,7 +626,18 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
 			throw ae;
 		}
 
-		String idP = properties.getProperty("openid.server");
+		// Determine OpenID Version
+		String openidversion = properties.getProperty("openid.version");
+		logInfo(DEBUG_ID_PAGE, "openid.version", openidversion);
+		AssociationManager.storeOpenIDParam(request, OpenIDToken.VERSION,
+				openidversion);
+
+		String idP = null;
+
+		if ("2.0".equals(openidversion))
+			idP = properties.getProperty("openid2.provider");
+		else
+			idP = properties.getProperty("openid.server");
 
 		logInfo(DEBUG_ID_PAGE, "openid.identity_form_value", "openid.server"
 				+ "=" + idP);
@@ -645,7 +661,12 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
 			throw ae;
 		}
 
-		String delegate = properties.getProperty("openid.delegate");
+		String delegate = null;
+
+		if ("2.0".equals(openidversion))
+			delegate = properties.getProperty("openid2.local_id");
+		else
+			delegate = properties.getProperty("openid.delegate");
 
 		logInfo(DEBUG_ID_PAGE, "openid.identity_form_value", "openid.delegate"
 				+ "=" + delegate);
@@ -658,14 +679,10 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
 		String rvalue = null;
 
 		try {
-
 			if (checkSetup) {
-
 				rvalue = assocManager.makeCheckSetup(request);
 			} else {
-
 				rvalue = assocManager.makeCheckImmediate(request);
-
 			}
 
 		} catch (Exception e) {
@@ -685,6 +702,70 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
 
 		return rvalue;
 
+	}
+
+	/**
+	 * Normalization
+	 * 
+	 * The end user's input MUST be normalized into an Identifier, as follows:
+	 * 
+	 * 1. If the user's input starts with the "xri://" prefix, it MUST be
+	 * stripped off, so that XRIs are used in the canonical form.
+	 * 
+	 * 2. If the first character of the resulting string is an XRI Global
+	 * Context Symbol ("=", "@", "+", "$", "!") or "(", as defined in Section
+	 * 2.2.1 of [XRI_Syntax_2.0] (Reed, D. and D. McAlpin, “Extensible Resource
+	 * Identifier (XRI) Syntax V2.0,” .), then the input SHOULD be treated as an
+	 * XRI.
+	 * 
+	 * 3. Otherwise, the input SHOULD be treated as an http URL; if it does not
+	 * include a "http" or "https" scheme, the Identifier MUST be prefixed with
+	 * the string "http://". If the URL contains a fragment part, it MUST be
+	 * stripped off together with the fragment delimiter character "#". See
+	 * Section 11.5.2 (HTTP and HTTPS URL Identifiers) for more information.
+	 * 
+	 * 4. URL Identifiers MUST then be further normalized by both following
+	 * redirects when retrieving their content and finally applying the rules in
+	 * Section 6 of [RFC3986] (Berners-Lee, T., “Uniform Resource Identifiers
+	 * (URI): Generic Syntax,” .) to the final destination URL. This final URL
+	 * MUST be noted by the Relying Party as the Claimed Identifier and be used
+	 * when requesting authentication (Requesting Authentication).
+	 * 
+	 * @param indentifier
+	 * @return
+	 */
+	private String normalizeIdentifier(String indentifier) {
+		boolean isXRI = false;
+		String normalizedID = indentifier.toLowerCase();
+
+		// 1.) "xri://" prefix
+		if (normalizedID.startsWith("xri://"))
+			normalizedID = normalizedID.substring(6);
+
+		// 2.) is xri? "=", "@", "+", "$", "!", "("
+		if (normalizedID.startsWith("=") || normalizedID.startsWith("@")
+				|| normalizedID.startsWith("+") || normalizedID.startsWith("$")
+				|| normalizedID.startsWith("!") || normalizedID.startsWith("("))
+			isXRI = true;
+
+		// 3.) http ? strip #
+		if (!isXRI) {
+			if (!normalizedID.startsWith("http"))
+				normalizedID = "http://" + normalizedID;
+
+			if (normalizedID.indexOf("#") > -1)
+				normalizedID = normalizedID.substring(0, normalizedID
+						.indexOf("#"));
+
+			// trailing slash
+			if (normalizedID.substring(7).indexOf("/")==-1)
+				normalizedID = normalizedID + "/";			
+		}
+
+		logInfo(DEBUG_LOGIN_FORM, "openid.Identifier normalized:", indentifier
+				+ "->" + normalizedID);
+
+		return normalizedID;
 	}
 
 	static String getRequestURIMinusContextPath(HttpServletRequest request) {
@@ -728,6 +809,32 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
 		return rvalue;
 	}
 
+	/**
+	 * This Methods verifiy the OpenIDToken.
+	 * 
+	 * The Method parses teh QueryString for openid params if available. OpenID
+	 * params will be stored in a hashmap which is stored in the request session
+	 * object.
+	 * 
+	 * If the current response form the provider contains a user_setup_url param
+	 * the method will redirect the user to the proivders setuppage.
+	 * 
+	 * In OpenID 1.0 the setupmode will be indicated by the param
+	 * "openid.mode=id_res"
+	 * 
+	 * in OpenID 2.0 the param is "openid.mode=setup_needed"
+	 * 
+	 * In both cases the param openid.user_setup_url holds the url to redirect
+	 * the user.
+	 * 
+	 * When no Setupmode is requested by the provider the method verifies the
+	 * actual openid token. See: assocManager.verifyToken(token);
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws AuthException
+	 */
 	AuthStatus verifyOpenIDToken(HttpServletRequest request,
 			HttpServletResponse response) throws AuthException {
 
@@ -737,15 +844,17 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
 		String query = request.getQueryString();
 		if (query != null && query.length() > 0) {
 			query = URLDecoder.decode(query);
-			if (query.indexOf("openid.mode=id_res") > -1)
-				AssociationManager.parseOpenIDToken(request, logger,
-						checkLogCriteria(DEBUG_CHECKID));
+			AssociationManager.parseOpenIDToken(request, logger,
+					checkLogCriteria(DEBUG_CHECKID));
 		}
 
 		Map token = (Map) request.getSession().getAttribute(
 				OpenIDToken.OPENID_SESSION_TOKEN);
 
-		if (AssociationManager.tokenModeIsResult(token)) {
+		logInfo(DEBUG_CHECKID, "openid.mode", (String) token.get("openid.mode"));
+
+		if (AssociationManager.tokenModeIsResult(token)
+				|| AssociationManager.tokenModeSetupNeeded(token)) {
 			String setupURL = AssociationManager.getSetupURL(token);
 			if (setupURL == null) {
 				try {

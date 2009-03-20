@@ -22,18 +22,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenIDPageParser.java,v 1.1 2009-03-15 08:56:02 rsoika Exp $
+ * $Id: OpenIDPageParser.java,v 1.2 2009-03-20 17:53:18 rsoika Exp $
  */
 package com.sun.security.sam.openid2;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.sql.Connection;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,14 +58,18 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * This class is for parsing an OpenID response page. The Parser is able to
- * parse a XML content and also to parse HTML content.
+ * parse a XRDS Document, and also to parse HTML content.
+ * 
+ * The parser supports OpenID 1.1 and OpenID 2.0
+ * 
+ * the xml parsing was removed as this is replaced now by the XRDS Parser
  * 
  * @author rsoika
  * @author monzillo
  */
 public class OpenIDPageParser {
 	private static final int DEBUG_TRUST = 32;
-	
+
 	protected static final Logger defaultLogger = Logger
 			.getLogger(OpenIDPageParser.class.getName());
 
@@ -87,15 +92,16 @@ public class OpenIDPageParser {
 	 *            when true, parser will log debugging info
 	 * @return a property map containing the values of the OpenID properties
 	 *         read from the page.
-	 * @throws IOException 
+	 * @throws IOException
 	 * @throws IOException
 	 */
-	public static Properties parse(URL url,HostnameVerifier hostnameVerifier, Logger logger,
-			boolean debug) throws AuthException, IOException {
+	public static Properties parse(URL url, HostnameVerifier hostnameVerifier,
+			Logger logger, boolean debug) throws AuthException, IOException {
 
 		if (logger == null) {
 			logger = defaultLogger;
 		}
+		// support parsing openid 1.1 and 2.0
 		ElementQuery[] queries = new ElementQuery[] {
 				new ElementQuery("link", new KeyValuePair[] {
 						new KeyValuePair(HTML.Attribute.REL, "openid.server"),
@@ -104,48 +110,75 @@ public class OpenIDPageParser {
 						new KeyValuePair[] {
 								new KeyValuePair(HTML.Attribute.REL,
 										"openid.delegate"),
-								new KeyValuePair(HTML.Attribute.HREF, null) }) };
-		String contentType = getContentType(url,hostnameVerifier,logger,debug).toLowerCase();
-		if (debug) {
-			String msg = "openid.id_page_content_type_" + contentType;
-			logger.info(msg);
-		}
+								new KeyValuePair(HTML.Attribute.HREF, null) }),
+				new ElementQuery("link",
+						new KeyValuePair[] {
+								new KeyValuePair(HTML.Attribute.REL,
+										"openid2.provider"),
+								new KeyValuePair(HTML.Attribute.HREF, null) }),
+				new ElementQuery("link",
+						new KeyValuePair[] {
+								new KeyValuePair(HTML.Attribute.REL,
+										"openid2.local_id"),
+								new KeyValuePair(HTML.Attribute.HREF, null) })
 
+		};
 
 		Properties rvalue;
-		// check if content can be paresed with xml parser
-		if (contentType.contains("html")) {
-			rvalue = parseHTMLPage(url, queries, logger, debug);
-		} else if (contentType.toLowerCase().contains("xml")) {
-			rvalue = parseXMLPage(url.openStream(), queries, logger, debug);
-		} else {
-			String msg = "openid.unsupported_content_type" + contentType;
-			logger.log(Level.WARNING, msg);
-			// try xml parser
-			rvalue = parseXMLPage(url.openStream(), queries, logger, debug);
+
+		// Check first for XRDS Location header
+		// if available proceed with the new URI location found in the
+		// header field 'X-XRDS-Location'
+		URL urlXRDS = getXRDSLocation(url, hostnameVerifier, logger, debug);
+		if (urlXRDS != null) {
+			// change URL to XRDS Location
+			url = urlXRDS;
 		}
-		if (rvalue == null || rvalue.getProperty("openid.server") == null) {
+		// debugURLContent(url);
+
+		// now try to find OpenID Service Elements in a XRDS Document
+		try {
+			rvalue = parseXRDSPage(url.openStream(), queries, logger, debug);
+		} catch (Exception xrdse) {
+			rvalue = null;
+		}
+		// if no service element was found proceed with HTML-Based Discovery...
+		if (rvalue == null || (rvalue.getProperty("openid.server") == null)
+				&& (rvalue.getProperty("openid2.provider") == null)) {
+			rvalue = parseHTMLPage(url, queries, logger, debug);
+		}
+		// if still no provider element found - throw exception....
+		if (rvalue == null || (rvalue.getProperty("openid.server") == null)
+				&& (rvalue.getProperty("openid2.provider") == null)) {
 			String msg = "openid.no_openid_server";
 			logger.log(Level.WARNING, msg);
 			AuthException ae = new AuthException(msg);
 			throw ae;
 		}
+
+		// determine version and add to property list
+		if (rvalue.getProperty("openid2.provider") != null)
+			rvalue.setProperty("openid.version", "2.0");
+		else
+			rvalue.setProperty("openid.version", "1.1");
 		return rvalue;
 	}
-	
+
 	/**
 	 * This method determines the Content Type of url
+	 * 
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	private static String getContentType(URL url,HostnameVerifier hostnameVerifier,Logger logger,boolean debug) throws AuthException {
-		HttpURLConnection connection =null;
-		String contentType=null;
+	private static String getContentType(URL url,
+			HostnameVerifier hostnameVerifier, Logger logger, boolean debug)
+			throws AuthException {
+		HttpURLConnection connection = null;
+		String contentType = null;
 		try {
-			
+
 			// should use https
-			 connection = (HttpURLConnection) url
-					.openConnection();
+			connection = (HttpURLConnection) url.openConnection();
 
 			if (connection instanceof HttpsURLConnection) {
 				if (debug)
@@ -161,15 +194,15 @@ public class OpenIDPageParser {
 			connection.setRequestMethod("GET");
 			connection.setRequestProperty("Content-type",
 					"application/x-www-form-urlencoded");
-			
 
 			connection.connect();
-			
+
 			contentType = connection.getContentType().toLowerCase();
 			if (debug) {
 				String msg = "openid.id_page_content_type_" + contentType;
 				logger.info(msg);
 			}
+
 		} catch (Exception ex) {
 			// throw exception....
 			String msg = "openid.idpage_connection_failure";
@@ -177,15 +210,76 @@ public class OpenIDPageParser {
 			AuthException ae = new AuthException(msg);
 			ae.initCause(ex);
 			throw ae;
-			
+
 		} finally {
-			connection.disconnect();		
+			connection.disconnect();
 		}
 		return contentType;
-		
+
 	}
-	
-	
+
+	/**
+	 * This method looks for a XRDS Header
+	 * 
+	 * 'X-XRDS-Location'
+	 * 
+	 * For example see : http://yahoo.com
+	 * 
+	 * The Method returns null if no X-XRDS-Location Header is included.
+	 * Otherwise the method return the X-XRDS-Location URI
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	private static URL getXRDSLocation(URL url,
+			HostnameVerifier hostnameVerifier, Logger logger, boolean debug)
+			throws AuthException {
+		HttpURLConnection connection = null;
+		URL xrdsLocation = null;
+		try {
+
+			// should use https
+			connection = (HttpURLConnection) url.openConnection();
+
+			if (connection instanceof HttpsURLConnection) {
+				if (debug)
+					logger.log(Level.INFO, "openid.setting_hostname_verifier:",
+							hostnameVerifier.toString());
+				((HttpsURLConnection) connection)
+						.setHostnameVerifier(hostnameVerifier);
+			}
+
+			// should ensure that connection is using ssl
+			// should we set a connection timeout?
+			connection.setRequestMethod("GET");
+			connection.setRequestProperty("Content-type",
+					"application/x-www-form-urlencoded");
+			connection.connect();
+
+			// analyse header for xrd document
+			String xrdsURL = connection.getHeaderField("X-XRDS-Location");
+			if (xrdsURL != null) {
+				xrdsLocation = new URL(xrdsURL);
+				if (debug) {
+					String msg = "openid.X-XRDS-Location:" + xrdsURL;
+					logger.info(msg);
+				}
+			}
+
+		} catch (Exception ex) {
+			// throw exception....
+			String msg = "openid.idpage_connection_failure";
+			logger.log(Level.WARNING, msg, ex);
+			AuthException ae = new AuthException(msg);
+			ae.initCause(ex);
+			throw ae;
+
+		} finally {
+			connection.disconnect();
+		}
+		return xrdsLocation;
+
+	}
 
 	private static Properties addProperty(Properties properties, String key,
 			String value) {
@@ -207,9 +301,8 @@ public class OpenIDPageParser {
 	 * @return
 	 * @throws javax.security.auth.message.AuthException
 	 */
-	private static Properties parseHTMLPage(URL url,
-			ElementQuery[] queries, Logger logger, boolean debug)
-			throws AuthException {
+	private static Properties parseHTMLPage(URL url, ElementQuery[] queries,
+			Logger logger, boolean debug) throws AuthException {
 
 		if (debug) {
 			String msg = "openid.parsing_html_id_page";
@@ -228,7 +321,7 @@ public class OpenIDPageParser {
 				// use the reader to create a parser and parse the document
 
 				new ParserDelegator().parse(reader, callback, false);
-				
+
 			} catch (ChangedCharSetException e) {
 				// parser throws a ChangedCharSetException if it encounters a
 				// <meta>
@@ -253,7 +346,7 @@ public class OpenIDPageParser {
 				// parser to ignore the <meta>tag with its charset attribute.
 
 				new ParserDelegator().parse(reader, callback, true);
-				
+
 			} finally {
 				reader.close();
 			}
@@ -274,6 +367,49 @@ public class OpenIDPageParser {
 	}
 
 	/**
+	 * parses a xml document
+	 * 
+	 * @param doc
+	 * @param queries
+	 * @param logger
+	 * @param debug
+	 * @return
+	 * @throws javax.security.auth.message.AuthException
+	 */
+	private static Properties parseXRDSPage(InputStream doc,
+			ElementQuery[] queries, Logger logger, boolean debug)
+			throws AuthException {
+
+		if (debug) {
+			String msg = "openid.parsing_xrds_id_page";
+			logger.info(msg);
+		}
+
+		SAXParserFactory factory = SAXParserFactory.newInstance();
+		try {
+
+			SAXParser parser = factory.newSAXParser();
+			parser.parse(doc, new XRDSParserHandler(queries, logger, debug));
+
+		} catch (Throwable t) {
+			String msg = "openid.failed_parsing_id_page";
+			logger.log(Level.WARNING, msg, t);
+			AuthException ae = new AuthException(msg);
+			ae.initCause(t);
+			throw ae;
+
+		}
+
+		Properties rvalue = null;
+		rvalue = addProperty(rvalue, "openid2.provider", queries[0]
+				.getAttributeValue("href"));
+		// rvalue = addProperty(rvalue, "openid2.local_id", queries[1]
+		// .getAttributeValue("href"));
+		return rvalue;
+	}
+
+	/**
+	 * parses a xml document
 	 * 
 	 * @param doc
 	 * @param queries
@@ -478,5 +614,88 @@ public class OpenIDPageParser {
 			this.key = key;
 			this.value = value;
 		}
+	}
+
+	private static class XRDSParserHandler extends DefaultHandler {
+
+		boolean uriTag = false;
+		Logger logger;
+		boolean debug;
+		ElementQuery[] queries;
+		boolean forcequit = false;
+
+		XRDSParserHandler(ElementQuery[] queries, Logger logger, boolean debug) {
+			this.queries = queries;
+			this.logger = logger;
+			this.debug = debug;
+		}
+
+		@Override
+		public void startElement(String nameSpaceURI, String localName,
+				String qName, Attributes attrs) throws SAXException {
+
+			uriTag = qName.equals("URI");
+		}
+
+		@Override
+		public void characters(char[] ch, int start, int length)
+				throws SAXException {
+
+			if (forcequit)
+				return;
+
+			// simply break if first URI tag is found
+			// this is a simple first version - no full support of spec 2.0
+			if (uriTag) {
+				String str = new String(ch, start, length);
+				queries[0].attributes = new HashMap();
+				queries[0].attributes.put("href", str);
+				if (debug) {
+					String msg = "XRDSParserHandler.found_uri_element" + str;
+					logger.info(msg);
+				}
+				uriTag = false;
+				forcequit = true;
+			}
+		}
+
+	}
+
+	/**
+	 * Helper method to analyse url content...
+	 * 
+	 * @param url
+	 */
+	private static void debugURLContent(URL url) {
+
+		/* DEBUG HTML CONTENT */
+
+		InputStreamReader debugreader = null;
+		try {
+			debugreader = new InputStreamReader(url.openStream());
+			// Den InputStreamReader in einem BufferedReader verpacken.
+			BufferedReader br = new BufferedReader(debugreader);
+			// Zeilenweise einlesen
+			String zeile = br.readLine();
+			while (zeile != null) {
+				System.out.println(zeile);
+				zeile = br.readLine();
+			}
+			// BufferedReader schliessen
+			br.close();
+
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} finally {
+			try {
+				debugreader.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+
 	}
 }

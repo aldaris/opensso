@@ -5,7 +5,7 @@ import java.util.HashMap;
 /**
  * Opaque session token added to HttpSession to preserve result of openID
  * Params. Used by Association and OpenIDServerAuthModule to exchange OpenID params.
- *  
+ * 
  * @author rsoika
  */
 public class OpenIDToken extends HashMap {
@@ -24,8 +24,10 @@ public class OpenIDToken extends HashMap {
 	public static final String TRUST_ROOT = "openid.trust_root";
 	public static final String SESSION_TYPE = "openid.session.type";
 
-	public static final String IS_VERIFIED = "opdnid_is_verified";
+	public static final String IS_VERIFIED = "openid_is_verified";
 
+	public static final String VERSION = "openid.version";
+	
 	
 	// names of openid parameters in response from provider
 	public final static String[] openIDParams = new String[] { "openid.mode",
