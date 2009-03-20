@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: InternalSession.java,v 1.20 2009-01-16 06:14:17 lakshman_abburi Exp $
+ * $Id: InternalSession.java,v 1.21 2009-03-20 21:05:25 weisun2 Exp $
  *
  */
 
@@ -203,6 +203,12 @@ public class InternalSession implements TaskRunnable, Serializable {
     private static final String LOG_MSG_SESSION_MAX_LIMIT_REACHED = 
         "SESSION_MAX_LIMIT_REACHED";
 
+    /* Time interval, if the current time minus lastest access time is 
+       greater than this time interval. In SFO mode, the session record 
+       will get refreshed in data repository.*/
+    private static int interval = Integer.parseInt(
+        SystemProperties.get(
+        "com.sun.identity.session.interval", "10")); 
     private transient volatile TaskRunnable nextTask = null;
     private transient volatile TaskRunnable previousTask = null;
     private transient volatile HeadTaskRunnable headTask = null;
@@ -1241,8 +1247,11 @@ public class InternalSession implements TaskRunnable, Serializable {
      * session, as the number of seconds since midnight January 1, 1970 GMT.
      */
     void setLatestAccessTime() {
+        long oldLatestAccessTime = latestAccessTime; 
         latestAccessTime = System.currentTimeMillis() / 1000;
-        updateForFailover();
+        if ((latestAccessTime - oldLatestAccessTime) > interval) {
+            updateForFailover();
+        }    
     }
 
     /**

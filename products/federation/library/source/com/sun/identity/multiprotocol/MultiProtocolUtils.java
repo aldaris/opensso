@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: MultiProtocolUtils.java,v 1.3 2008-06-25 05:47:25 qcheng Exp $
+ * $Id: MultiProtocolUtils.java,v 1.4 2009-03-20 21:06:32 weisun2 Exp $
  *
  */
 
@@ -116,12 +116,14 @@ public class MultiProtocolUtils {
                 for (int i = 0; i < values.length; i++) {
                     set.add(values[i]);
                 }
-                set.add(protocol);
-                String[] newVals = new String[set.size()];
-                set.toArray(newVals);
-                provider.setProperty(session,
+                if (!set.contains(protocol)) {
+                    set.add(protocol);
+                    String[] newVals = new String[set.size()];
+                    set.toArray(newVals);
+                    provider.setProperty(session,
                     SingleLogoutManager.FEDERATION_PROTOCOLS, newVals);
-            }
+                }
+           }
         } catch (UnsupportedOperationException ex) {
             SingleLogoutManager.debug.warning("MPUtils.addFedProtocol", ex);
         } catch (SessionException ex) {
