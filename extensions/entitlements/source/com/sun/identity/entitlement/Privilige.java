@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilige.java,v 1.10 2009-03-17 22:06:57 dillidorai Exp $
+ * $Id: Privilige.java,v 1.11 2009-03-20 01:10:15 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -193,15 +194,20 @@ public class Privilige {
             jo.put("eCondition", subjo);
         }
 
+        //TODO: test and fix
         if (eResourceAttributes != null) {
-            JSONObject subjo = new JSONObject();
-            subjo.put("className", eResourceAttributes.getClass().getName());
-            //TODO: fix
-            //subjo.put("state", eResourceAttributes.getState());
+            JSONArray subjo = new JSONArray();
+            if (eResourceAttributes != null) {
+                JSONArray arr = new JSONArray();
+                for (ResourceAttributes ra : eResourceAttributes) {
+                    JSONObject subjo1 = new JSONObject();
+                    subjo1.put("className", ra.getClass().getName());
+                    subjo1.put("state", ra.toString());
+                    subjo.put(subjo1);
+                }
+            }
             jo.put("eResourceAttributes", subjo);
         }
-
-
         return jo;
     }
 

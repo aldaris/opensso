@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PriviligeUtils.java,v 1.22 2009-03-19 17:01:42 dillidorai Exp $
+ * $Id: PriviligeUtils.java,v 1.23 2009-03-20 01:10:15 dillidorai Exp $
  */
 package com.sun.identity.policy;
 
@@ -30,7 +30,6 @@ import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
 import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementCondition;
-import com.sun.identity.entitlement.ResourceAttributes;
 import com.sun.identity.entitlement.EntitlementSubject;
 import com.sun.identity.entitlement.UserSubject;
 import com.sun.identity.entitlement.GroupSubject;
@@ -41,7 +40,10 @@ import com.sun.identity.entitlement.NotSubject;
 import com.sun.identity.entitlement.OrCondition;
 import com.sun.identity.entitlement.AndCondition;
 import com.sun.identity.entitlement.Privilige;
+import com.sun.identity.entitlement.ResourceAttributes;
+import com.sun.identity.entitlement.StaticAttributes;
 import com.sun.identity.entitlement.TimeCondition;
+import com.sun.identity.entitlement.UserAttributes;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdRepoException;
@@ -49,6 +51,7 @@ import com.sun.identity.idm.IdUtils;
 import com.sun.identity.policy.interfaces.Condition;
 import com.sun.identity.policy.interfaces.ResponseProvider;
 import com.sun.identity.policy.interfaces.Subject;
+import com.sun.identity.policy.plugins.IDRepoResponseProvider;
 import com.sun.identity.shared.debug.Debug;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -136,12 +139,10 @@ public class PriviligeUtils {
             nrp[1] = rp;
             nrps.add(nrp);
         }
-        ResourceAttributes eResourceAttributes = nrpsToEResourceAttributes(nrps);
-        Set eResourceAttributesSet = null;
+        Set<ResourceAttributes> resourceAttributesSet = nrpsToEResourceAttributesSet(nrps);
 
-        eResourceAttributes = null;
         Privilige privilige = new Privilige(policyName, entitlements, eSubject,
-                eCondition, eResourceAttributesSet);
+                eCondition, resourceAttributesSet);
         return privilige;
     }
 
@@ -311,7 +312,7 @@ public class PriviligeUtils {
         return valueObj.toString();
     }
 
-    private static ResourceAttributes nrpsToEResourceAttributes(Set nprs) {
+    private static Set<ResourceAttributes> nrpsToEResourceAttributesSet(Set nprs) {
         //ResourceAttributes era = nrpsToEResourceAttributes(nrps);
         return null;
     }
@@ -358,6 +359,16 @@ public class PriviligeUtils {
                 String pConditionName = (String) arr[0];
                 Condition condition = (Condition) arr[1];
                 policy.addCondition(pConditionName, condition);
+            }
+        }
+        if (privilige.getResourceAttributes() != null) {
+            List nrps = resourceAttributesToResponseProviders(
+                    privilige.getResourceAttributes());
+            for (Object obj : nrps) {
+                Object[] arr = (Object[]) obj;
+                String pResponseProviderName = (String) arr[0];
+                ResponseProvider responseProvider = (ResponseProvider) arr[1];
+                policy.addResponseProvider(pResponseProviderName, responseProvider);
             }
         }
         return policy;
@@ -610,8 +621,7 @@ public class PriviligeUtils {
 
     private static Condition timeConditionToPCondition(TimeCondition tc)
             throws PolicyException, SSOException {
-        com.sun.identity.policy.plugins.SimpleTimeCondition stc
-                = new com.sun.identity.policy.plugins.SimpleTimeCondition();
+        com.sun.identity.policy.plugins.SimpleTimeCondition stc = new com.sun.identity.policy.plugins.SimpleTimeCondition();
         Map props = new HashMap();
         if (tc.getStartTime() != null) {
             props.put(stc.START_TIME, toSet(tc.getStartTime()));
@@ -708,12 +718,87 @@ public class PriviligeUtils {
         return null;
     }
 
-    private static Set<ResourceAttributes> responseProvidersToEResourceAttributes() {
+    private static Set<ResourceAttributes> responseProvidersToResourceAttributes() {
         return null;
     }
 
-    private static Set<ResponseProvider> resourceAttributesToResponseProviders() {
-        return null;
+    private static List resourceAttributesToResponseProviders(
+            Set<ResourceAttributes> resourceAttributes) throws PolicyException {
+        List nrps = new ArrayList();
+        if (resourceAttributes != null) {
+            for (ResourceAttributes ra : resourceAttributes) {
+                if (ra instanceof StaticAttributes) {
+                    StaticAttributes sa = (StaticAttributes)ra;
+                    Object[] arr = new Object[2];
+                    arr[0] = sa.getPResponseProviderName();
+                    IDRepoResponseProvider rp = new IDRepoResponseProvider();
+                    Map props = sa.getProperties();
+                    if (props != null) {
+                        Set newValues = new HashSet();
+                        Set entrySet = props.entrySet();
+                        for (Object entryObj : entrySet) {
+                            Map.Entry entry = (Map.Entry)entryObj;
+                            String name = (String)entry.getKey();
+                            Set values = (Set)entry.getValue();
+                            if (values != null && !values.isEmpty()) {
+                                for (Object valueObj : values) {
+                                   String value = (String)valueObj;
+                                   newValues.add(name + "=" + value);
+                                }
+                            }
+                            if (!newValues.isEmpty()) {
+                                Map newProps = new HashMap();
+                                newProps.put(rp.STATIC_ATTRIBUTE, newValues);
+                                rp.setProperties(newProps);
+                        }
+                    }
+                    arr[1] = rp;
+                    nrps.add(arr);
+                    }
+
+                } else if (ra instanceof UserAttributes) {
+                    UserAttributes ua = (UserAttributes)ra;
+                    Object[] arr = new Object[2];
+                    arr[0] = ua.getPResponseProviderName();
+                    Map props = ua.getProperties();
+                    IDRepoResponseProvider rp = new IDRepoResponseProvider();
+                                  if (props != null) {
+                        Set newValues = new HashSet();
+                        Set entrySet = props.entrySet();
+                        for (Object entryObj : entrySet) {
+                            Map.Entry entry = (Map.Entry)entryObj;
+                            String name = (String)entry.getKey();
+                            Set values = (Set)entry.getValue();
+                            String value = null;
+                            if (values != null && !values.isEmpty()) {
+                                value = (String)values.iterator().next();
+                            }
+                            String newValue = name;
+                            if (value != null) {
+                                newValue = name + "=" + value;
+
+                            }
+                            newValues.add(newValue);
+                            if (!newValues.isEmpty()) {
+                                Map newProps = new HashMap();
+                                newProps.put(rp.DYNAMIC_ATTRIBUTE, newValues);
+                                rp.setProperties(newProps);
+                                Map configParams = new HashMap();
+                                configParams.put(
+                                        PolicyConfig.SELECTED_DYNAMIC_ATTRIBUTES,
+                                        newValues);
+                                rp.initialize(configParams);
+                            }
+                        }
+                    }
+                    arr[1] = rp;
+                    Map configParams = new HashMap();
+
+                    nrps.add(arr);
+                }
+            }
+        }
+        return nrps;
     }
 
     private static String randomName() {

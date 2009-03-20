@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceAttributes.java,v 1.1 2009-01-26 05:33:11 dillidorai Exp $
+ * $Id: ResourceAttributes.java,v 1.2 2009-03-20 01:10:15 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -43,7 +43,7 @@ public interface ResourceAttributes {
      * @throws com.sun.identity.entitlement.EntitlementException if any
      * abnormal condition occured
      */
-    public void setProperties(Map<String, List<String>> properties)
+    public void setProperties(Map<String, Set<String>> properties)
             throws EntitlementException;
 
     /**
@@ -51,7 +51,7 @@ public interface ResourceAttributes {
      * @return configuration properties for this
      * <code>ResourceAttributes</code>
      */
-    public Map<String, List<String>> getProperties();
+    public Map<String, Set<String>> getProperties();
 
     /**
      * Returns resoruce attributes aplicable to the request
