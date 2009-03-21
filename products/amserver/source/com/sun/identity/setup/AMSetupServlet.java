@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSetupServlet.java,v 1.99 2009-02-26 01:06:26 goodearth Exp $
+ * $Id: AMSetupServlet.java,v 1.100 2009-03-21 21:25:46 goodearth Exp $
  *
  */
 
@@ -532,20 +532,24 @@ public class AMSetupServlet extends HttpServlet {
             String basedir = (String) map.get(
                 SetupConstants.CONFIG_VAR_BASE_DIR);
             writeSchemaFiles(basedir, schemaFiles);
-            // Get the remote host name from the server url 
+            // Get the remote host name from the SERVER URL  
             // entered in the 'Add to existing instance' and place
-            // it in the map.
+            // it in the map. This is for console configurator.
+            // For cli configurator, the "DS_EMB_REPL_HOST2" would
+            // be entered in the config. file itself.
             String existingInstance = (String) map.get(
                 SetupConstants.DS_EMB_EXISTING_SERVERID);
-            int ndx1 = existingInstance.indexOf("://");
-            if ((ndx1 != -1) && 
-                (ndx1 != (existingInstance.length() -1))) {
-                String str1 = existingInstance.substring(ndx1+3);
-                int ndx2 = str1.indexOf(":");
-                if ((ndx2 != -1) && (ndx2 != (str1.length() -1))) {
-                    String finalStr = str1.substring(0, ndx2);
-                    map.put(SetupConstants.DS_EMB_REPL_HOST2, 
-                        finalStr);
+            if (existingInstance != null) {
+                int ndx1 = existingInstance.indexOf("://");
+                if ((ndx1 != -1) && 
+                    (ndx1 != (existingInstance.length() -1))) {
+                    String str1 = existingInstance.substring(ndx1+3);
+                    int ndx2 = str1.indexOf(":");
+                    if ((ndx2 != -1) && (ndx2 != (str1.length() -1))) {
+                        String finalStr = str1.substring(0, ndx2);
+                        map.put(SetupConstants.DS_EMB_REPL_HOST2, 
+                            finalStr);
+                    }
                 }
             }
             EmbeddedOpenDS.setupReplication(map);
