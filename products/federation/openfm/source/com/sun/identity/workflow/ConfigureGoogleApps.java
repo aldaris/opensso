@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureGoogleApps.java,v 1.2 2009-03-07 06:53:33 babysunil Exp $
+ * $Id: ConfigureGoogleApps.java,v 1.3 2009-03-22 08:36:19 asyhuang Exp $
  *
  */
 
@@ -69,7 +69,7 @@ public class ConfigureGoogleApps
         updateSPMeta(realm, cot, domainId);
         Object[] param = {entityId};
         return MessageFormat.format(
-            getMessage("GoogleApps.configured", locale), param);
+            getMessage("google.apps.configured.success", locale), param);
     }
 
     private void updateIDPMeta(String realm, String entityId)
