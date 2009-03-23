@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PriviligeUtils.java,v 1.23 2009-03-20 01:10:15 dillidorai Exp $
+ * $Id: PriviligeUtils.java,v 1.24 2009-03-23 17:57:42 dillidorai Exp $
  */
 package com.sun.identity.policy;
 
@@ -41,9 +41,9 @@ import com.sun.identity.entitlement.OrCondition;
 import com.sun.identity.entitlement.AndCondition;
 import com.sun.identity.entitlement.Privilige;
 import com.sun.identity.entitlement.ResourceAttributes;
-import com.sun.identity.entitlement.StaticAttributes;
+//import com.sun.identity.entitlement.StaticAttributes;
 import com.sun.identity.entitlement.TimeCondition;
-import com.sun.identity.entitlement.UserAttributes;
+//import com.sun.identity.entitlement.UserAttributes;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdRepoException;
@@ -725,6 +725,7 @@ public class PriviligeUtils {
     private static List resourceAttributesToResponseProviders(
             Set<ResourceAttributes> resourceAttributes) throws PolicyException {
         List nrps = new ArrayList();
+        /*
         if (resourceAttributes != null) {
             for (ResourceAttributes ra : resourceAttributes) {
                 if (ra instanceof StaticAttributes) {
@@ -798,6 +799,7 @@ public class PriviligeUtils {
                 }
             }
         }
+        */
         return nrps;
     }
 
