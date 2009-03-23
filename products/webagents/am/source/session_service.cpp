@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: session_service.cpp,v 1.4 2008-06-25 08:14:37 qcheng Exp $
+ * $Id: session_service.cpp,v 1.5 2009-03-23 22:58:07 subbae Exp $
  *
  */
 #include "am.h"
@@ -145,6 +145,7 @@ namespace {
     
     const char falseValue[] = "false";
     const char trueValue[] = "true";
+    const char appSSOTokenMsg[] = "Application token passed in, is invalid.";
 }
 
 extern AgentProfileService* agentProfileService;
@@ -245,9 +246,10 @@ SessionService::parseException(const XMLElement& element,
         const std::string& sessionId) const {
     am_status_t status;
     std::string exceptionMsg;
-    std::string appSSOToken = agentProfileService->getAgentSSOToken();
     
     if (element.getValue(exceptionMsg)) {
+        std::string appSSOToken = agentProfileService->getAgentSSOToken();
+
         // The error message in an exception will potentially be localized.
         // By direct inspection of
         // com/iplanet/dpro/session/service/SessionService.java, however,
@@ -261,8 +263,10 @@ SessionService::parseException(const XMLElement& element,
                     "SessionService::parseException() invalid session %s",
                     sessionId.c_str());
             status = AM_INVALID_SESSION;
-        }  else if(appSSOToken.size() > 0 &&
-                (exceptionMsg.find(appSSOToken) != std::string::npos)) {
+        }  else if((appSSOToken.size() > 0 &&
+               (exceptionMsg.find(appSSOToken) != std::string::npos)) ||
+               (strncmp(exceptionMsg.c_str(), appSSOTokenMsg,
+                   sizeof(appSSOTokenMsg) - 1) == 0)) {
             Log::log(logModule, Log::LOG_DEBUG,
                     "SessionService::parseException() "
             "invalid application ssotoken %s",
@@ -475,16 +479,12 @@ SessionService::getSessionInfo(const ServiceInfo& service,
         char addListenerRequestId[Request::ID_BUF_LEN];
         BodyChunkList& bodyChunkList = request.getBodyChunkList();
         
-        //If AM version is 8.0 or greater, then send
-        //encoded app ssotoken in requester attribute element
         std::string encodedAppSSOToken =
                 agentProfileService->getEncodedAgentSSOToken();
         BodyChunk encodedAppSSOTokenChunk(encodedAppSSOToken);
-        if(agentProfileService->getRepoType() != "local") {
-            bodyChunkList.push_back(encodedAppSSOTokenPrefixChunk);
-            if (encodedAppSSOToken.size() > 0) {
-                bodyChunkList.push_back(encodedAppSSOTokenChunk);
-            }
+        bodyChunkList.push_back(encodedAppSSOTokenPrefixChunk);
+        if (encodedAppSSOToken.size() > 0) {
+            bodyChunkList.push_back(encodedAppSSOTokenChunk);
         }
         
         bodyChunkList.push_back(getSessionRequestPrefixChunk);
@@ -503,13 +503,9 @@ SessionService::getSessionInfo(const ServiceInfo& service,
             temp.data = addListenerRequestId;
             bodyChunkList.push_back(temp);
             
-            //If AM version is 8.0 or greater, then send
-            //encoded app ssotoken in requester attribute element
-            if(agentProfileService->getRepoType() != "local") {
-                bodyChunkList.push_back(encodedAppSSOTokenPrefixChunk);
-                if (encodedAppSSOToken.size() > 0) {
-                    bodyChunkList.push_back(encodedAppSSOTokenChunk);
-                }
+            bodyChunkList.push_back(encodedAppSSOTokenPrefixChunk);
+            if (encodedAppSSOToken.size() > 0) {
+                bodyChunkList.push_back(encodedAppSSOTokenChunk);
             }
             
             bodyChunkList.push_back(addListenerRequestPrefixChunk);
@@ -635,16 +631,12 @@ SessionService::destroySession(const ServiceInfo& service,
     BodyChunk ssoTokenChunk(ssoToken);
     BodyChunkList& bodyChunkList = request.getBodyChunkList();
     
-    //If AM version is 8.0 or greater, then send
-    //encoded app ssotoken in requester attribute element
     std::string encodedAppSSOToken =
             agentProfileService->getEncodedAgentSSOToken();
     BodyChunk encodedAppSSOTokenChunk(encodedAppSSOToken);
-    if(agentProfileService->getRepoType() != "local") {
-        bodyChunkList.push_back(encodedAppSSOTokenPrefixChunk);
-        if (encodedAppSSOToken.size() > 0) {
-            bodyChunkList.push_back(encodedAppSSOTokenChunk);
-        }
+    bodyChunkList.push_back(encodedAppSSOTokenPrefixChunk);
+    if (encodedAppSSOToken.size() > 0) {
+        bodyChunkList.push_back(encodedAppSSOTokenChunk);
     }
     
     bodyChunkList.push_back(destroySessionRequestPrefixChunk);
@@ -753,16 +745,12 @@ SessionService::setProperty(const ServiceInfo& service,
     
     BodyChunkList& bodyChunkList = request.getBodyChunkList();
     
-    //If AM version is 8.0 or greater, then send
-    //encoded app ssotoken in requester attribute element
     std::string encodedAppSSOToken =
             agentProfileService->getEncodedAgentSSOToken();
     BodyChunk encodedAppSSOTokenChunk(encodedAppSSOToken);
-    if(agentProfileService->getRepoType() != "local") {
-        bodyChunkList.push_back(encodedAppSSOTokenPrefixChunk);
-        if (encodedAppSSOToken.size() > 0) {
-            bodyChunkList.push_back(encodedAppSSOTokenChunk);
-        }
+    bodyChunkList.push_back(encodedAppSSOTokenPrefixChunk);
+    if (encodedAppSSOToken.size() > 0) {
+        bodyChunkList.push_back(encodedAppSSOTokenChunk);
     }
     
     /* set property request */
@@ -783,11 +771,9 @@ SessionService::setProperty(const ServiceInfo& service,
     getSessionRequestIdChunk.data = getSessionRequestId;
     bodyChunkList.push_back(getSessionRequestIdChunk);
     
-    if(agentProfileService->getRepoType() != "local") {
-        bodyChunkList.push_back(encodedAppSSOTokenPrefixChunk);
-        if (encodedAppSSOToken.size() > 0) {
-            bodyChunkList.push_back(encodedAppSSOTokenChunk);
-        }
+    bodyChunkList.push_back(encodedAppSSOTokenPrefixChunk);
+    if (encodedAppSSOToken.size() > 0) {
+        bodyChunkList.push_back(encodedAppSSOTokenChunk);
     }
     
     bodyChunkList.push_back(getSessionRequestPrefixChunk);
@@ -902,16 +888,12 @@ SessionService::addListener(const ServiceInfo& service,
         BodyChunk ssoTokenChunk(ssoToken);
         BodyChunkList& bodyChunkList = request.getBodyChunkList();
         
-        //If AM version is 8.0 or greater, then send
-        //encoded app ssotoken in requester attribute element
         std::string encodedAppSSOToken =
                 agentProfileService->getEncodedAgentSSOToken();
         BodyChunk encodedAppSSOTokenChunk(encodedAppSSOToken);
-        if(agentProfileService->getRepoType() != "local") {
-            bodyChunkList.push_back(encodedAppSSOTokenPrefixChunk);
-            if (encodedAppSSOToken.size() > 0) {
-                bodyChunkList.push_back(encodedAppSSOTokenChunk);
-            }
+        bodyChunkList.push_back(encodedAppSSOTokenPrefixChunk);
+        if (encodedAppSSOToken.size() > 0) {
+            bodyChunkList.push_back(encodedAppSSOTokenChunk);
         }
         
         bodyChunkList.push_back(addListenerRequestPrefixChunk);
