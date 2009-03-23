@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SecureAttrs.java,v 1.10 2009-02-26 23:57:18 exu Exp $
+ * $Id: SecureAttrs.java,v 1.11 2009-03-23 20:02:53 mallas Exp $
  *
  */
 
@@ -303,12 +303,17 @@ public class SecureAttrs
      * Initializes a SecureAttrs instance specified by <code>name</code>.
      * If the instance already exists, it replaces it with the new instance.
      * Use <code>SecureAttrs.getIstance(name)</code> to obtain the instance.
+     * @param name Name of the <code>SecureAttrs</code> instance.
+     * @param type Cryptographic key type. Possible values are
+     *         <code>SecureAttrs.SAE_CRYPTO_TYPE_SYM<code>, and
+     *         <code>SecureAttrs.SAE_CRYPTO_TYPE_ASYM</code>
      * @param properties : please see SAE_CONFIG_* constants for configurable 
      *                     values.
      * @throws Exception rethrows underlying exception.
      * @supported.api
      */
-    synchronized public static void init(String name,  String type, Properties properties) throws Exception
+    synchronized public static void init(
+         String name,  String type, Properties properties) throws Exception
     {
         SecureAttrs sa = new SecureAttrs(type, properties);
         instances.put(name, sa);
