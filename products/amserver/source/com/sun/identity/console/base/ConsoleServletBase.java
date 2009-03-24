@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConsoleServletBase.java,v 1.6 2008-12-16 18:15:06 veiming Exp $
+ * $Id: ConsoleServletBase.java,v 1.7 2009-03-24 23:57:32 babysunil Exp $
  *
  */
 
@@ -425,14 +425,14 @@ public abstract class ConsoleServletBase
     }
 
     private static String getConsoleURL() {
-        return SystemProperties.get(Constants.AM_CONSOLE_PROTOCOL) + "//:" +
+        return SystemProperties.get(Constants.AM_CONSOLE_PROTOCOL) + "://" +
             getConsoleHost() + ":" + 
             SystemProperties.get(Constants.AM_CONSOLE_PORT);
     }
 
     private static String getServerURL() {
-        return SystemProperties.get(Constants.AM_SERVER_PROTOCOL) + "//:" +
-            getConsoleHost() + ":" + 
+        return SystemProperties.get(Constants.AM_SERVER_PROTOCOL) + "://" +
+            getServerHost() + ":" + 
             SystemProperties.get(Constants.AM_SERVER_PORT);
     }
 
