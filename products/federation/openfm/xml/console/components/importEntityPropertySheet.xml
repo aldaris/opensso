@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: importEntityPropertySheet.xml,v 1.4 2008-06-25 05:51:02 qcheng Exp $
+   $Id: importEntityPropertySheet.xml,v 1.5 2009-03-24 17:16:27 babysunil Exp $
 
 -->
 
@@ -44,7 +44,7 @@
                 <option label="configure.provider.option.url" value="url" />
                 <option label="configure.provider.option.uploadfile" value="file" />
                 <attribute name="layout" value="horizontal" />
-                <attribute name="onChange" value="metaOptionSelect(this);" />
+                <attribute name="onClick" value="metaOptionSelect(this);" />
             </cc>
         </property>
         <property required="true">
@@ -67,7 +67,7 @@
                 <option label="configure.provider.option.url" value="url" />
                 <option label="configure.provider.option.uploadfile" value="file" />
                 <attribute name="layout" value="horizontal" />
-                <attribute name="onChange" value="extendedOptionSelect(this);" />
+                <attribute name="onClick" value="extendedOptionSelect(this);" />
             </cc>
         </property>
         <property>
