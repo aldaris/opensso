@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PriviligeUtils.java,v 1.24 2009-03-23 17:57:42 dillidorai Exp $
+ * $Id: PriviligeUtils.java,v 1.25 2009-03-24 19:18:03 dillidorai Exp $
  */
 package com.sun.identity.policy;
 
@@ -41,9 +41,9 @@ import com.sun.identity.entitlement.OrCondition;
 import com.sun.identity.entitlement.AndCondition;
 import com.sun.identity.entitlement.Privilige;
 import com.sun.identity.entitlement.ResourceAttributes;
-//import com.sun.identity.entitlement.StaticAttributes;
+import com.sun.identity.entitlement.StaticAttributes;
 import com.sun.identity.entitlement.TimeCondition;
-//import com.sun.identity.entitlement.UserAttributes;
+import com.sun.identity.entitlement.UserAttributes;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdRepoException;
@@ -725,11 +725,10 @@ public class PriviligeUtils {
     private static List resourceAttributesToResponseProviders(
             Set<ResourceAttributes> resourceAttributes) throws PolicyException {
         List nrps = new ArrayList();
-        /*
         if (resourceAttributes != null) {
             for (ResourceAttributes ra : resourceAttributes) {
                 if (ra instanceof StaticAttributes) {
-                    StaticAttributes sa = (StaticAttributes)ra;
+                    StaticAttributes sa = (StaticAttributes) ra;
                     Object[] arr = new Object[2];
                     arr[0] = sa.getPResponseProviderName();
                     IDRepoResponseProvider rp = new IDRepoResponseProvider();
@@ -738,41 +737,41 @@ public class PriviligeUtils {
                         Set newValues = new HashSet();
                         Set entrySet = props.entrySet();
                         for (Object entryObj : entrySet) {
-                            Map.Entry entry = (Map.Entry)entryObj;
-                            String name = (String)entry.getKey();
-                            Set values = (Set)entry.getValue();
+                            Map.Entry entry = (Map.Entry) entryObj;
+                            String name = (String) entry.getKey();
+                            Set values = (Set) entry.getValue();
                             if (values != null && !values.isEmpty()) {
                                 for (Object valueObj : values) {
-                                   String value = (String)valueObj;
-                                   newValues.add(name + "=" + value);
+                                    String value = (String) valueObj;
+                                    newValues.add(name + "=" + value);
                                 }
                             }
                             if (!newValues.isEmpty()) {
                                 Map newProps = new HashMap();
                                 newProps.put(rp.STATIC_ATTRIBUTE, newValues);
                                 rp.setProperties(newProps);
+                            }
                         }
-                    }
-                    arr[1] = rp;
-                    nrps.add(arr);
+                        arr[1] = rp;
+                        nrps.add(arr);
                     }
 
                 } else if (ra instanceof UserAttributes) {
-                    UserAttributes ua = (UserAttributes)ra;
+                    UserAttributes ua = (UserAttributes) ra;
                     Object[] arr = new Object[2];
                     arr[0] = ua.getPResponseProviderName();
                     Map props = ua.getProperties();
                     IDRepoResponseProvider rp = new IDRepoResponseProvider();
-                                  if (props != null) {
+                    if (props != null) {
                         Set newValues = new HashSet();
                         Set entrySet = props.entrySet();
                         for (Object entryObj : entrySet) {
-                            Map.Entry entry = (Map.Entry)entryObj;
-                            String name = (String)entry.getKey();
-                            Set values = (Set)entry.getValue();
+                            Map.Entry entry = (Map.Entry) entryObj;
+                            String name = (String) entry.getKey();
+                            Set values = (Set) entry.getValue();
                             String value = null;
                             if (values != null && !values.isEmpty()) {
-                                value = (String)values.iterator().next();
+                                value = (String) values.iterator().next();
                             }
                             String newValue = name;
                             if (value != null) {
@@ -783,12 +782,12 @@ public class PriviligeUtils {
                             if (!newValues.isEmpty()) {
                                 Map newProps = new HashMap();
                                 newProps.put(rp.DYNAMIC_ATTRIBUTE, newValues);
-                                rp.setProperties(newProps);
                                 Map configParams = new HashMap();
                                 configParams.put(
                                         PolicyConfig.SELECTED_DYNAMIC_ATTRIBUTES,
                                         newValues);
                                 rp.initialize(configParams);
+                                rp.setProperties(newProps);
                             }
                         }
                     }
@@ -799,7 +798,6 @@ public class PriviligeUtils {
                 }
             }
         }
-        */
         return nrps;
     }
 
