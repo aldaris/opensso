@@ -22,10 +22,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMSendMail.java,v 1.3 2008-06-25 05:41:27 qcheng Exp $
+ * $Id: AMSendMail.java,v 1.4 2009-03-24 23:52:12 pluo Exp $
  *
  */
-
 package com.iplanet.am.util;
 
 import com.sun.identity.shared.Constants;
@@ -36,19 +35,21 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.mail.PasswordAuthentication;
+
 
 /*
  * This is a send mail utility class which can be used to send notifications to
  * the users if some event occurs.
  */
 public class AMSendMail {
+
     private static String mailServerHost = SystemProperties.get(
             Constants.AM_SMTP_HOST, "localhost");
-
     private static String mailServerPort = SystemProperties.get(
             Constants.SM_SMTP_PORT, "25");
-
     private static Properties props = new Properties();
+
 
     static {
         // Set the host smtp address
@@ -57,14 +58,35 @@ public class AMSendMail {
     }
 
     /**
-     * Posts e-mail messages to users This method will wait on for the timeouts
+     * Posts e-mail messages to users. This method will wait on for the timeouts
      * when the specified host is down. Use this method in a separate thread so
      * that it will not hang when the mail server is down.
+     *
+     * @param recipients A String array of e-mail addresses to be sent to 
+     * @param subject The e-mail subject
+     * @param message The content contained in the e-mail
+     * @param from The sending e-mail address
+     * @return none
+     * @exception MessagingException if there is any error in sending e-mail
      */
     public void postMail(String recipients[], String subject, String message,
             String from) throws MessagingException {
         postMail(recipients, subject, message, from, null);
     }
+
+    /**
+     * Posts e-mail messages to users. This method will wait on for the timeouts
+     * when the specified host is down. Use this method in a separate thread so
+     * that it will not hang when the mail server is down.
+     *
+     * @param recipients A String array of e-mail addresses to be sent to
+     * @param subject The e-mail subject
+     * @param message The content contained in the e-mail
+     * @param from The sending e-mail address 
+     * @param charset The charset used in e-mail encoding
+     * @return none
+     * @exception MessagingException if there is any error in sending e-mail
+     */
 
     public void postMail(String recipients[], String subject, String message,
             String from, String charset) throws MessagingException {
@@ -103,10 +125,84 @@ public class AMSendMail {
         Transport.send(msg);
     }
 
+    /**
+     * Posts e-mail messages to users. This method will wait on for the timeouts
+     * when the specified host is down. Use this method in a separate thread so
+     * that it will not hang when the mail server is down.
+     *  
+     * @param recipients A String array of e-mail addresses to be sent to
+     * @param subject The e-mail subject
+     * @param message The content contained in the e-mail
+     * @param from The sending e-mail address
+     * @param charset The charset used in e-mail encoding
+     * @param host The host name to connect to send e-mail
+     * @param port The host port to connect to send e-mail 
+     * @param user The user name used to authenticate to the host
+     * @param pssword The user password used to authenticate to the host 
+     * @param ssl A boolean to indicate whether SSL is needed to connect to the host 
+     * @return none
+     * @exception MessagingException if there is any error in sending e-mail
+     */
+
+    public void postMail(String recipients[], String subject, String message,
+            String from, String charset, String host, String port,
+            String user, String password, boolean ssl)
+            throws MessagingException {
+
+        boolean debug = false;
+
+        Properties moduleProps = new Properties();
+
+        moduleProps.put("mail.smtp.host", host);
+        moduleProps.put("mail.smtp.auth", "true");
+        moduleProps.put("mail.debug", "true");
+        moduleProps.put("mail.smtp.port", port);
+        moduleProps.put("mail.smtp.socketFactory.port", port);
+        if (ssl == true) {
+            moduleProps.put("mail.smtp.socketFactory.class",
+                    "javax.net.ssl.SSLSocketFactory");
+        }
+        moduleProps.put("mail.smtp.socketFactory.fallback", "false");
+
+           // create some properties and get the default mail Session
+        Session session = Session.getDefaultInstance(moduleProps,
+                new AMUserNamePasswordAuthenticator(user, password));
+
+        session.setDebug(debug);
+
+        // create a message object
+        MimeMessage msg = new MimeMessage(session);
+
+        // set the from and to address
+        InternetAddress addressFrom = new InternetAddress(from);
+        msg.setFrom(addressFrom);
+
+        InternetAddress[] addressTo = new InternetAddress[recipients.length];
+
+        for (int i = 0; i < recipients.length; i++) {
+            addressTo[i] = new InternetAddress(recipients[i]);
+        }
+
+        msg.setRecipients(Message.RecipientType.TO, addressTo);
+
+        // Setting the Subject and Content Type
+        if (charset == null) {
+            msg.setSubject(subject);
+            msg.setContent(message, "text/plain");
+        } else {
+            charset = BrowserEncoding.mapHttp2JavaCharset(charset);
+            msg.setSubject(subject, charset);
+            msg.setContent(message, "text/plain; charset=" + charset);
+        }
+
+        // Transport the message now
+        Transport.send(msg);
+    }
+
     public static void main(String[] args) {
 
         String from = "<" + "ganesh@iplanet.com" + ">";
-        String[] to = { "malla@sun.com", "ganesh@iplanet.com" };
+        String[] to = {"malla@sun.com", "ganesh@iplanet.com"};
         String sub = "Hello Bond";
         String msg = "Have fun dude";
 
@@ -118,5 +214,4 @@ public class AMSendMail {
             ex.printStackTrace();
         }
     }
-
 }
