@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DBHandler.java,v 1.13 2008-11-26 23:57:48 bigfatrat Exp $
+ * $Id: DBHandler.java,v 1.14 2009-03-24 19:04:04 hvijay Exp $
  *
  */
 
@@ -895,6 +895,12 @@ public class DBHandler extends Handler {
                     foundTable = true;
                 }
             }
+            try{
+                stmt.close();
+                rs.close();
+            } catch(SQLException ex){
+                Debug.error("DBHandler:createTable: " + ex.getMessage());
+            }
 
             /*
              *  if the table's in the DB, then check if it has all
@@ -950,7 +956,12 @@ public class DBHandler extends Handler {
                     }
                     tempj++;
                 }
-
+                try{
+                    stmt.close();
+                } catch(SQLException ex){
+                    Debug.error("DBHandler:createTable: " + ex.getMessage());
+                }
+                
                 /*
                  *  check that the columns we want to write are
                  *  already in the table.  if not, going to issue
@@ -985,6 +996,7 @@ public class DBHandler extends Handler {
                     try {
                         stmt = conn.createStatement();
                         stmt.execute(altStr);
+                        stmt.close();
                     } catch (SQLException sqle) {
                         Debug.error("DBHandler:createTable: '" + altStr +
                             "'; error (" + sqle.getErrorCode() + "); msg = " +
