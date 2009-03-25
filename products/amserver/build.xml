@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.72 2008-11-22 02:53:28 ak138937 Exp $
+   $Id: build.xml,v 1.73 2009-03-25 04:33:32 kevinserwin Exp $
 
 -->
 
@@ -49,10 +49,6 @@
     <property name="build.debug" value="on"/>
     <property name="build.debuglevel" value="lines,vars,source"/>
     
-    <tstamp>
-        <format property="nightly.date" pattern="yyyyMMdd" offset="-1"
-                unit="day"/>
-    </tstamp>
     <!-- build class path -->
     <path id="build.class.path">
         <pathelement location="${amserver.classes.dir}"/>
@@ -69,7 +65,7 @@
     </path>
     
     <tstamp>
-        <format property="war.time.stamp" pattern="yyyy-MMMM-d hh:mm"/>       
+        <format property="war.time.stamp" pattern="yyyy-MMMM-d HH:mm"/>       
     </tstamp>
     <condition property="version.set" value="${opensso.enterprise} Build ${build.number.set}" >
         <isset property="build.enterprise"/>
@@ -626,18 +622,15 @@
     
     <target name="nightly" depends="tools,publicdoc-enterprise,publicdoc-not-enterprise,doc-enterprise,doc-not-enterprise,clientsdk,demo,samples,distauth,unittest">
         <tstamp>
-            <format property="touch.time" pattern="yyyy-MMMM-d hh:mm"/>
+            <format property="touch.time" pattern="yyyy-MMMM-d HH:mm"/>
         </tstamp>
-        
-        <filter token="DATE" value="${nightly.date}" />
-        <echo>$$(nightly.date)=${nightly.date}</echo>
         
         <copy file="${sharedlib.dist.dir}/opensso-sharedlib.jar"
               tofile="${amserver.dist.dir}/opensso-sharedlib.jar" />
         <copy file="${sharedlib.dist.dir}/opensso-sharedlib.jar.sha"
               tofile="${amserver.dist.dir}/opensso-sharedlib.jar.sha" />
         <copy file="${amserver.docs.dir}/nightly.html"
-              tofile="${amserver.dist.dir}/index.html" filtering="true" />
+              tofile="${amserver.dist.dir}/index.html" />
     </target>
     
     <target name="nightly-clean">
