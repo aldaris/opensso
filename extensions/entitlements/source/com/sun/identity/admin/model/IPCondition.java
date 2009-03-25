@@ -1,6 +1,6 @@
 package com.sun.identity.admin.model;
 
-import com.sun.identity.entitlement.Condition;
+import com.sun.identity.entitlement.EntitlementCondition;
 import java.io.Serializable;
 import java.util.List;
 
@@ -13,7 +13,7 @@ public class IPCondition
 
     private String domainNameMask;
 
-    public List<Condition> getCondition() {
+    public EntitlementCondition getEntitlementCondition() {
         return null; // TODO
     }
 

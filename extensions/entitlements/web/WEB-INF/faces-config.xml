@@ -166,6 +166,10 @@
         <managed-bean-class>com.sun.identity.admin.model.ActiveSessionTimeConditionType</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
         <managed-property>
+            <property-name>expression</property-name>
+            <value>false</value>
+        </managed-property>
+        <managed-property>
             <property-name>name</property-name>
             <value>activeSessionTime</value>
         </managed-property>
@@ -173,11 +177,19 @@
             <property-name>template</property-name>
             <value>/admin/facelet/template/condition-active-session-time.xhtml</value>
         </managed-property>
+        <managed-property>
+            <property-name>conditionIconUri</property-name>
+            <value>/admin/image/user.png</value>
+        </managed-property>
     </managed-bean>
     <managed-bean>
         <managed-bean-name>ipConditionType</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.IPConditionType</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>expression</property-name>
+            <value>false</value>
+        </managed-property>
         <managed-property>
             <property-name>name</property-name>
             <value>ip</value>
@@ -185,6 +197,73 @@
         <managed-property>
             <property-name>template</property-name>
             <value>/admin/facelet/template/condition-ip.xhtml</value>
+        </managed-property>
+        <managed-property>
+            <property-name>conditionIconUri</property-name>
+            <value>/admin/image/user.png</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>orConditionType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.OrConditionType</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>expression</property-name>
+            <value>true</value>
+        </managed-property>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>or</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/condition-or.xhtml</value>
+        </managed-property>
+        <managed-property>
+            <property-name>conditionIconUri</property-name>
+            <value>/admin/image/or.gif</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>andConditionType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.AndConditionType</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>expression</property-name>
+            <value>true</value>
+        </managed-property>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>and</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/condition-and.xhtml</value>
+        </managed-property>
+        <managed-property>
+            <property-name>conditionIconUri</property-name>
+            <value>/admin/image/and.gif</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>notConditionType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.NotConditionType</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>expression</property-name>
+            <value>true</value>
+        </managed-property>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>not</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/condition-not.xhtml</value>
+        </managed-property>
+        <managed-property>
+            <property-name>conditionIconUri</property-name>
+            <value>/admin/image/not.gif</value>
         </managed-property>
     </managed-bean>
 
@@ -195,6 +274,9 @@
         <list-entries>
             <value>#{activeSessionTimeConditionType}</value>
             <value>#{ipConditionType}</value>
+            <value>#{orConditionType}</value>
+            <value>#{andConditionType}</value>
+            <value>#{notConditionType}</value>
         </list-entries>
     </managed-bean>
     <!-- condition types -->

@@ -9,14 +9,14 @@ import java.util.Map;
 import javax.faces.model.SelectItem;
 
 public class PolicyCreateWizardBean
-    extends WizardBean
-    implements ResourceChooserClient, Serializable {
+        extends WizardBean
+        implements ResourceChooserClient, Serializable {
 
     private String name;
     private String description;
     private List<Resource> resources = new ArrayList<Resource>();
     private Application application;
-    private Map<String,Application> applications;
+    private Map<String, Application> applications;
     private List<Action> actions;
     private List<ViewCondition> viewConditions = new ArrayList<ViewCondition>();
     private List<SubjectContainer> subjectContainers;
@@ -51,7 +51,7 @@ public class PolicyCreateWizardBean
     public List<SelectItem> getApplicationItems() {
         List<SelectItem> items = new ArrayList<SelectItem>();
 
-        for (Application a: getApplications().values()) {
+        for (Application a : getApplications().values()) {
             items.add(new SelectItem(a, a.getName()));
         }
 
@@ -120,5 +120,68 @@ public class PolicyCreateWizardBean
 
     public void setSubjectContainers(List<SubjectContainer> subjectContainers) {
         this.subjectContainers = subjectContainers;
+    }
+
+    public boolean isOrConditionDraggable() {
+        ViewCondition lastCondition = getLastVisibleCondition();
+        if (lastCondition == null) {
+            return false;
+        }
+        if (lastCondition.getConditionType().isExpression()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean isAndConditionDraggable() {
+        ViewCondition lastCondition = getLastVisibleCondition();
+        if (lastCondition == null) {
+            return false;
+        }
+        if (lastCondition.getConditionType().isExpression()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean isNotConditionDraggable() {
+        ViewCondition lastCondition = getLastVisibleCondition();
+        if (lastCondition == null) {
+            return true;
+        }
+        if (lastCondition instanceof NotCondition) {
+            return false;
+        }
+        if (lastCondition instanceof AndCondition || lastCondition instanceof OrCondition) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean isConditionTypesDraggable() {
+        ViewCondition lastCondition = getLastVisibleCondition();
+
+        if (lastCondition == null) {
+            return true;
+        }
+        if (lastCondition.getConditionType().isExpression()) {
+            return true;
+        }
+
+        return false;
+
+    }
+    public ViewCondition getLastVisibleCondition() {
+        for (int i = viewConditions.size() - 1; i >= 0; i--) {
+            ViewCondition lastCondition = viewConditions.get(i);
+            if (lastCondition.isVisible()) {
+                return lastCondition;
+            }
+        }
+
+        return null;
     }
 }

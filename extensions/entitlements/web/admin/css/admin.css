@@ -178,6 +178,19 @@ div.button-wrapper a.button img.left {
 #panel-body {
 }
 
+#footer {
+    background-color: #8299AF;
+    text-align: right;
+    padding-right: 10px;
+    color: white;
+}
+
+.tooltip-error {
+    background: #990000;
+    color: #ffffff;
+    font-weight: bold;
+}
+
 .clear {
     clear: both;
 }
@@ -331,6 +344,7 @@ div.button-wrapper a.button img.left {
     border: 1px solid #dddddd;
     background: #efefef;
     position: relative;
+    padding: 4px;
 }
 
 .condition-panel {
@@ -366,9 +380,6 @@ margin-top: 8px;
 }
 
 #homeTabDetailContent {
-}
-
-#footer {
 }
 */
 

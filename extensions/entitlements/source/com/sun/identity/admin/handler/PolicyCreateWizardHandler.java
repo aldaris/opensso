@@ -5,8 +5,11 @@ import com.icesoft.faces.component.dragdrop.DropEvent;
 import com.icesoft.faces.context.effects.Effect;
 import com.icesoft.faces.context.effects.Appear;
 import com.sun.identity.admin.model.Action;
+import com.sun.identity.admin.model.AndCondition;
 import com.sun.identity.admin.model.Application;
 import com.sun.identity.admin.model.ConditionType;
+import com.sun.identity.admin.model.NotCondition;
+import com.sun.identity.admin.model.OrCondition;
 import com.sun.identity.admin.model.PolicyCreateWizardBean;
 import com.sun.identity.admin.model.Resource;
 import com.sun.identity.admin.model.SubjectContainer;
@@ -27,6 +30,7 @@ import java.util.Set;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.security.auth.Subject;
+import java.util.Stack;
 
 public class PolicyCreateWizardHandler
         extends WizardHandler
@@ -36,20 +40,25 @@ public class PolicyCreateWizardHandler
     public String finishAction() {
         PolicyCreateWizardBean pcwb = getPolicyCreateWizardBean();
 
+        // name, description
         String name = pcwb.getName();
         // TODO: where do we set the description
         String description = pcwb.getDescription();
 
+        // subjects
         Set<EntitlementSubject> eSubjects = new HashSet<EntitlementSubject>();
         for (SubjectContainer sc : pcwb.getSubjectContainers()) {
-            List<ViewSubject> viewSubjects = sc.getViewSubjects();
-            for (ViewSubject vs : viewSubjects) {
-                eSubjects.add(vs.getSubject());
+            if (sc.isVisible()) {
+                List<ViewSubject> viewSubjects = sc.getViewSubjects();
+                for (ViewSubject vs : viewSubjects) {
+                    eSubjects.add(vs.getSubject());
+                }
             }
         }
         EntitlementSubject orSubject = new OrSubject(eSubjects);
 
 
+        // resources / actions
         List<Action> actions = pcwb.getActions();
         List<Resource> resources = pcwb.getSelectedResources();
         Set<Entitlement> entitlements = new HashSet<Entitlement>();
@@ -58,8 +67,14 @@ public class PolicyCreateWizardHandler
             entitlements.add(e);
         }
 
-        EntitlementCondition eCondition = null;
+        // conditions
+        cleanConditions();
+        ViewCondition conditionTree = buildConditionExpression(pcwb.getViewConditions());
+        EntitlementCondition eCondition = conditionTree.getEntitlementCondition();
+        com.sun.identity.entitlement.OrCondition orECondition = new com.sun.identity.entitlement.OrCondition();
 
+        // resource attrs
+        // TODO
         Set<ResourceAttributes> attrs = null;
 
         Privilege privilige = new Privilege(
@@ -83,6 +98,71 @@ public class PolicyCreateWizardHandler
         return "policy-created";
     }
 
+    private void cleanConditions() {
+        ViewCondition lastVc = getPolicyCreateWizardBean().getLastVisibleCondition();
+        while ((lastVc = getPolicyCreateWizardBean().getLastVisibleCondition()).getConditionType().isExpression()) {
+            getPolicyCreateWizardBean().getViewConditions().remove(lastVc);
+        }
+    }
+
+    private ViewCondition buildConditionExpression(List<ViewCondition> vcs) {
+        Stack<ViewCondition> output = new Stack<ViewCondition>();
+        Stack<ViewCondition> operators = new Stack<ViewCondition>();
+
+        for (ViewCondition vc : vcs) {
+            if (!vc.isVisible()) {
+                continue;
+            }
+            if (vc.getConditionType().isExpression()) {
+                if (operators.size() > 0 &&
+                        vc instanceof OrCondition ||
+                        vc instanceof AndCondition) {
+                    output.push(operators.pop());
+                }
+                operators.push(vc);
+            } else {
+                output.push(vc);
+            }
+        }
+        while (operators.size() > 0) {
+            output.push(operators.pop());
+        }
+
+        ViewCondition tree = buildConditionTree(output);
+        return tree;
+    }
+
+    private ViewCondition buildConditionTree(Stack<ViewCondition> output) {
+        assert (output.size() != 0);
+
+        ViewCondition head = output.pop();
+        if (head instanceof AndCondition) {
+            AndCondition andHead = (AndCondition) head;
+            ViewCondition left = buildConditionTree(output);
+            ViewCondition right = buildConditionTree(output);
+            andHead.getAndConditions().add(left);
+            andHead.getAndConditions().add(right);
+
+            return andHead;
+        } else if (head instanceof OrCondition) {
+            OrCondition orHead = (OrCondition) head;
+            ViewCondition left = buildConditionTree(output);
+            ViewCondition right = buildConditionTree(output);
+            orHead.getOrConditions().add(left);
+            orHead.getOrConditions().add(right);
+
+            return orHead;
+        } else if (head instanceof NotCondition) {
+            NotCondition notHead = (NotCondition) head;
+            ViewCondition child = buildConditionTree(output);
+            notHead.setNotCondition(child);
+
+            return notHead;
+        }
+
+        return head;
+    }
+
     @Override
     public String cancelAction() {
         getWizardBean().reset();
@@ -102,6 +182,9 @@ public class PolicyCreateWizardHandler
         int type = dropEvent.getEventType();
         if (type == DndEvent.DROPPED) {
             ConditionType ct = (ConditionType) dropEvent.getTargetDragValue();
+
+            // TODO: implicit or?
+
             ViewCondition vc = ct.newCondition();
             getPolicyCreateWizardBean().getViewConditions().add(vc);
 
@@ -115,8 +198,8 @@ public class PolicyCreateWizardHandler
     public void subjectContainerDropListener(DropEvent dropEvent) {
         int type = dropEvent.getEventType();
         if (type == DndEvent.DROPPED) {
-            SubjectContainerType sct = (SubjectContainerType)dropEvent.getTargetDragValue();
-            assert(sct != null);
+            SubjectContainerType sct = (SubjectContainerType) dropEvent.getTargetDragValue();
+            assert (sct != null);
 
             SubjectContainer sc = sct.newSubjectContainer();
             getPolicyCreateWizardBean().getSubjectContainers().add(sc);

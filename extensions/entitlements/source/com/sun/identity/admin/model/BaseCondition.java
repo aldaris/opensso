@@ -2,6 +2,7 @@ package com.sun.identity.admin.model;
 
 import com.icesoft.faces.context.effects.Appear;
 import com.icesoft.faces.context.effects.Effect;
+import java.util.List;
 
 public abstract class BaseCondition implements ViewCondition {
     private ConditionType conditionType;

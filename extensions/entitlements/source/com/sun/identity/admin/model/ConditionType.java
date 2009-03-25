@@ -3,6 +3,8 @@ package com.sun.identity.admin.model;
 public abstract class ConditionType {
     private String name;
     private String template;
+    private String conditionIconUri;
+    private boolean expression;
 
     public abstract ViewCondition newCondition();
 
@@ -20,5 +22,21 @@ public abstract class ConditionType {
 
     public void setTemplate(String template) {
         this.template = template;
+    }
+
+    public String getConditionIconUri() {
+        return conditionIconUri;
+    }
+
+    public void setConditionIconUri(String conditionIconUri) {
+        this.conditionIconUri = conditionIconUri;
+    }
+
+    public boolean isExpression() {
+        return expression;
+    }
+
+    public void setExpression(boolean expression) {
+        this.expression = expression;
     }
 }
