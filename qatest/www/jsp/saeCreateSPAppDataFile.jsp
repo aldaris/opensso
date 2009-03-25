@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: saeCreateSPAppDataFile.jsp,v 1.4 2009-03-17 19:32:19 rmisra Exp $
+   $Id: saeCreateSPAppDataFile.jsp,v 1.5 2009-03-25 23:42:37 rmisra Exp $
 
 --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
@@ -45,7 +45,7 @@ public void jspInit()
 %>
 <html>
 <head>
-<title>Secure Attributes Exchange SP APP SAMPLE DATA FILE CONFIGURATION</title>
+<title>Secure Attributes Exchange IDP APP SAMPLE</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="stylesheet" type="text/css" href="<%= deployuri %>/com_sun_web_ui/css/css_ns6up.css" />
 </head>
@@ -56,8 +56,12 @@ public void jspInit()
     request.setCharacterEncoding("UTF-8");
     // Crypto type to be used with local <OpenSSO>-IDP
     String cryptotype     = SecureAttrs.SAE_CRYPTO_TYPE_SYM;
-    // Shared secret with local <OpenSSO>-IDP
+    // For SYM: Shared secret with local <OpenSSO>-IDP
+    // For ASYM: Private Key Alias for IDP-APP's signing cert
     String secret     = "secret12";
+    // For SYM: Shared secret with local <OpenSSO>-IDP. Same value as secret.
+    // For ASYM: Public Key Alias for  <OpenSSO>-IDP.
+    String encSecret = secret;
     String encryptionAlg = "DES";
     String encryptionStrength = "56";
     // Keystore path (for asym signing)
@@ -71,7 +75,7 @@ public void jspInit()
     String idpAppName = request.getRequestURL().toString();
 
     // <OpenSSO>-IDP hosted SAE url that will act like the gateway.
-    String  saeServiceURL="http://omacron.test.qa.com:9090/openfmidp/idpsaehandler/metaAlias/omacron.test.qa.com";
+    String  saeServiceURL="http://sa.idp.com:8080/sa/idpsaehandler/metaAlias/idp";
 
     // String representing authenticated user.
     String userid = "testuser";
@@ -81,7 +85,7 @@ public void jspInit()
     String branch = "mainbranch" ;
 
     // SP-App to be invoked with profile attributes above.
-    String spapp  = "http://omacron.red.iplanet.com:8080/openfmsp/samples/saml2/sae/saeSPApp.jsp";
+    String spapp  = "http://www.spp.com:8080/sp/samples/saml2/sae/saeSPApp.jsp";
     // Whether cached SecureAttrs class instance should be used
     String usecached = "on";
     String useencryption = "on";
@@ -101,7 +105,7 @@ IDP-App -sae---> IDP-&lt;OpenSSO> --samlv2---> SP-&lt;OpenSSO> --sae--> SP-App
 <br>
 IDP=Identity Provider  SP=Service Provider
 <br>
-i) Trust key (shared secret for symmetric crypto  or publickey for asymmetric signing) & this application provisioned on IDP-&lt;OpenSSO> in one of the hosted extended metadata - you will enter the same appname and secret here.
+i) Trust key (shared secret for symmetric crypto  or privatekey for asymmetric signing; shared secret for symmetric crypto data encryption or publickey for asymmetric data encryption) & this application provisioned on IDP-&lt;OpenSSO> in one of the hosted extended metadata - you will enter the same appname and secret here.
 <br>
 ii) SP_App and corresponding shared secret or key-pair provisioned on SP-&lt;OpenSSO> and destination SP-App. You will enter SP-App here.
 <br>
@@ -153,12 +157,16 @@ iv) SP-App is already deployed and ready to accept requests.
           </td>
         </tr>
         <tr>
-          <td>Shared Secret / Private Key alias : </td>
+          <td>Signing Shared Secret / This App's Private Key alias : </td>
           <td><input  type="text" name="secret" value="<%=secret%>"></td>
         </tr>
         <tr>
           <td>Enable encryption: </td>
           <td><input  type="checkbox" name="useencryption"></td>
+        </tr>
+        <tr>
+          <td>Encryption Shared Secret / IDP's Public Key alias : </td>
+          <td><input  type="text" name="encSecret" value="<%=encSecret%>"></td>
         </tr>
         <tr>
           <td>Encryption Algorithm : </td>
@@ -204,6 +212,7 @@ iv) SP-App is already deployed and ready to accept requests.
         idpAppName = request.getParameter("idpappname");    
         cryptotype = request.getParameter("cryptotype");    
         secret = request.getParameter("secret");    
+        encSecret = request.getParameter("encSecret");
         keystore = request.getParameter("keystore");    
         keypass = request.getParameter("keypass");    
         usecached = request.getParameter("usecached");    
@@ -212,7 +221,6 @@ iv) SP-App is already deployed and ready to accept requests.
         encryptionAlg = request.getParameter("encAlgorithm");
         System.out.println("Encryption alg" + encryptionAlg);
         encryptionStrength = request.getParameter("encStrength");
-        String encSecret = secret;
 
         // Check if we already have a cached SecureAttrs instance.
         String mySecAttrInstanceName = "sample"+cryptotype;
@@ -246,6 +254,7 @@ iv) SP-App is already deployed and ready to accept requests.
         out1.write("SP_SAMPLE_CRYPTO="  + cryptotype + "\n");
         out1.write("SP_SAMPLE_SECRET=" + secret + "\n");
         out1.write("SP_SAMPLE_IS_ENC=" + useencryption + "\n");
+        out1.write("SP_SAMPLE_ENC_SECRET=" + encSecret + "\n");
         out1.write("SP_SAMPLE_ENC_ALG=" + encryptionAlg + "\n");
         out1.write("SP_SAMPLE_ENC_STRENGTH=" + encryptionStrength + "\n");
         if (SecureAttrs.SAE_CRYPTO_TYPE_ASYM.equals(cryptotype)) {

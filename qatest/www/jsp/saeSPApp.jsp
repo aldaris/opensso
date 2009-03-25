@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: saeSPApp.jsp,v 1.4 2009-03-17 19:32:19 rmisra Exp $
+   $Id: saeSPApp.jsp,v 1.5 2009-03-25 23:42:37 rmisra Exp $
 
 --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
@@ -58,6 +58,7 @@ public void jspInit()
     try {
         Properties saeparams = new Properties();
         String secret = null;
+        String encSecret = null;
         String cryptotype = null;
         String mySecAttrInstanceName = "sample_"+cryptotype;
         SecureAttrs sa = null;
@@ -72,6 +73,7 @@ public void jspInit()
             if (isEnc.equals("on")) {
                 saeparams.put(SecureAttrs.SAE_CONFIG_DATA_ENCRYPTION_ALG, fi.getString("SP_SAMPLE_ENC_ALG"));
                 saeparams.put(SecureAttrs.SAE_CONFIG_ENCRYPTION_KEY_STRENGTH, fi.getString("SP_SAMPLE_ENC_STRENGTH"));
+                encSecret = fi.getString("SP_SAMPLE_ENC_SECRET");
             }
             if (cryptotype.equals(SecureAttrs.SAE_CRYPTO_TYPE_ASYM)) {
                 saeparams.setProperty(SecureAttrs.SAE_CONFIG_KEYSTORE_TYPE, "JKS");
@@ -105,9 +107,9 @@ public void jspInit()
                 SecureAttrs.init(mySecAttrInstanceName, cryptotype, saeparams);
                 sa = SecureAttrs.getInstance(mySecAttrInstanceName);
             }
+            encSecret = secret;
         }
 
-        String encSecret = secret;
         String sunData = request.getParameter(SecureAttrs.SAE_PARAM_DATA);
         Map secureAttrs = sa.verifyEncodedString(sunData, secret, encSecret);
         if (secureAttrs == null) {
