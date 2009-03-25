@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EvaluatorThread.java,v 1.6 2009-03-25 06:42:53 veiming Exp $
+ * $Id: EvaluatorThread.java,v 1.7 2009-03-25 23:50:16 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -31,6 +31,7 @@ import com.sun.identity.entitlement.ThreadPool;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.policy.interfaces.ResourceName;
+import com.sun.identity.shared.debug.Debug;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -54,6 +55,7 @@ public class EvaluatorThread implements Runnable {
     private Set<PolicyDecisionTask.Task> policyEvalTasks;
     private boolean done;
     final Object lock = new Object();
+    private long startTime;
 
     EvaluatorThread(
         PolicyEvaluatorAdaptor parent,
@@ -76,6 +78,8 @@ public class EvaluatorThread implements Runnable {
         tasks = new PolicyDecisionTask();
         resComparator = serviceType.getResourceNameComparator();
         this.actionNames = serviceType.getActionNames();
+
+        startTime = System.currentTimeMillis();
     }
 
     public void run() {
@@ -89,20 +93,20 @@ public class EvaluatorThread implements Runnable {
         counter = policies.size();
 
         if (counter > 0) {
-            synchronized (lock) {
-                for (PolicyDecisionTask.Task task : policyEvalTasks) {
-                    Runner eval = new Runner(this,
-                        task, token, serviceType, actionNames,
-                        envParameters);
-                    ThreadPool.submit(eval);
-                }
+            for (PolicyDecisionTask.Task task : policyEvalTasks) {
+                Runner eval = new Runner(this,
+                    task, token, serviceType, actionNames,
+                    envParameters);
+                ThreadPool.submit(eval);
+            }
 
-                while (counter > 0) {
+            synchronized (lock) {
+                if (counter > 0) {
                     try {
                         lock.wait();
                     } catch (InterruptedException ex) {
                         //TOFIX
-                    }
+                        }
                 }
             }
         }
@@ -110,10 +114,8 @@ public class EvaluatorThread implements Runnable {
         synchronized (parent.lock) {
             parent.lock.notify();
         }
-    }
 
-    private synchronized void decrementCounter() {
-        counter--;
+        Debug.getInstance("dennist").error("dennis thr " + Long.toString(System.currentTimeMillis() - startTime));
     }
 
     Exception getException() {
@@ -149,17 +151,22 @@ public class EvaluatorThread implements Runnable {
 
         public void run() {
             try {
+                long start = System.currentTimeMillis();
                 task.policyDecision = task.policy.getPolicyDecision(
                     token, serviceType.getName(), task.resource,
                     actionNames, envParameters);
+                Debug.getInstance("dennispe").error(
+                    "dennisp " + Long.toString(System.currentTimeMillis() - start));
             } catch (SSOException e) {
                 parent.exception = e;
             } catch (PolicyException e) {
                 parent.exception = e;
             }
             synchronized (parent.lock) {
-                parent.decrementCounter();
-                parent.lock.notify();
+                parent.counter--;
+                if (parent.counter == 0) {
+                    parent.lock.notify();
+                }
             }
         }
     }

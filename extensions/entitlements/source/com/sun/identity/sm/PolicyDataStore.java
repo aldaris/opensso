@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexDataStore.java,v 1.16 2009-03-25 17:52:30 veiming Exp $
+ * $Id: PolicyDataStore.java,v 1.1 2009-03-25 23:50:15 veiming Exp $
  */
 
 package com.sun.identity.sm;
@@ -57,7 +57,7 @@ import java.util.Set;
 /**
  * Using OpenSSO Service Management Layer to index policy.
  */
-public class PolicyIndexDataStore implements  IPolicyIndexDataStore {
+public class PolicyDataStore implements  IPolicyIndexDataStore {
     private static final String START_DN_TEMPLATE = 
          "ou=default,ou=GlobalConfig,ou=1.0,ou=PolicyIndex,ou=services,{0}";
     private static final String DN_TEMPLATE = "ou={1}," + START_DN_TEMPLATE;

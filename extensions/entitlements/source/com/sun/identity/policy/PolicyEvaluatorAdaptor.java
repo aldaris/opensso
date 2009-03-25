@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorAdaptor.java,v 1.21 2009-03-25 16:14:28 veiming Exp $
+ * $Id: PolicyEvaluatorAdaptor.java,v 1.22 2009-03-25 23:50:16 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -37,6 +37,7 @@ import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.IPolicyEvaluator;
 import com.sun.identity.entitlement.ResourceSearchIndexes;
 import com.sun.identity.entitlement.util.ResourceNameSplitter;
+import com.sun.identity.shared.debug.Debug;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -372,17 +373,18 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
         Set<PolicyDecisionTask.Task> hitResults = null;
         Set<PolicyDecisionTask.Task> missedResults = null;
 
+        if (hitThread != null) {
+            ThreadPool.submit(hitThread);
+        } else {
+            hitResults = Collections.EMPTY_SET;
+        }
+        long start = System.currentTimeMillis();
+        if (missedThread != null) {
+            ThreadPool.submit(missedThread);
+        } else {
+            missedResults = Collections.EMPTY_SET;
+        }
         synchronized(lock) {
-            if (hitThread != null) {
-                ThreadPool.submit(hitThread);
-            } else {
-                hitResults = Collections.EMPTY_SET;
-            }
-            if (missedThread != null) {
-                ThreadPool.submit(missedThread);
-            } else {
-                missedResults = Collections.EMPTY_SET;
-            }
 
             while (true) {
                 if ((hitThread != null) && (hitResults == null)) {
@@ -402,6 +404,7 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
                 if ((hitResults != null) && (missedResults != null)) {
                     break;
                 }
+                start = System.currentTimeMillis();
 
                 try {
                     lock.wait();
@@ -410,6 +413,7 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
                     ex.printStackTrace();
                 }
             }
+            Debug.getInstance("dennispe").error("done " + Long.toString(System.currentTimeMillis() - start));
         }
         if (exception != null) {
             throw new EntitlementException(100, null, exception);

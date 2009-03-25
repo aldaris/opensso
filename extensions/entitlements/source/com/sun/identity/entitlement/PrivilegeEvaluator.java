@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeEvaluator.java,v 1.2 2009-03-25 17:52:31 veiming Exp $
+ * $Id: PrivilegeEvaluator.java,v 1.3 2009-03-25 23:50:16 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -32,6 +32,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.security.auth.Subject;
 
 /**
@@ -51,6 +53,7 @@ class PrivilegeEvaluator implements IPolicyEvaluator {
     private int counter;
     private int maxCounter = -1;
     private EntitlementCombiner entitlementCombiner;
+    private boolean subTree;
 
     public boolean hasEntitlement(
         Subject adminSubject,
@@ -65,6 +68,7 @@ class PrivilegeEvaluator implements IPolicyEvaluator {
         this.entitlement = entitlement;
         this.envParameters = envParameters;
         entitlementCombiner = getApplication().getEntitlementCombiner();
+        this.subTree = false;
 
         //separate threads, PIP
         indexes = entitlement.getResourceSearchIndexes();
@@ -126,6 +130,7 @@ class PrivilegeEvaluator implements IPolicyEvaluator {
                 for (Iterator<Privilege> i = ds.search(parent.indexes);
                     i.hasNext();
                 ) {
+                    ThreadPool.submit(new PrivilegeTask(parent, i.next())); //TOFIX
                     count++;
                 }
                 parent.maxCounter = count;
@@ -137,5 +142,30 @@ class PrivilegeEvaluator implements IPolicyEvaluator {
             }
         }
     }
+
+    class PrivilegeTask implements Runnable {
+        final PrivilegeEvaluator parent;
+        private Privilege privilege;
+
+        PrivilegeTask(PrivilegeEvaluator parent, Privilege privilege) {
+            this.parent = parent;
+            this.privilege = privilege;
+        }
+
+        public void run() {
+            try {
+                List<Entitlement> entitlements = privilege.getEntitlements(
+                    parent.subject, parent.applicationName,
+                    parent.envParameters, parent.subTree);
+                synchronized(parent) {
+                    parent.resultQ.addAll(entitlements);
+                    parent.notify();
+                }
+            } catch (EntitlementException ex) {
+                //TOFIX
+            }
+        }
+    }
+
 
 }
