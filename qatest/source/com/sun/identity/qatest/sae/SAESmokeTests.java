@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAESmokeTests.java,v 1.9 2009-03-17 19:27:05 rmisra Exp $
+ * $Id: SAESmokeTests.java,v 1.10 2009-03-25 23:43:21 rmisra Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -293,7 +293,7 @@ public class SAESmokeTests extends TestCommon {
                         "|type=" + secMode + 
                         "|secret=" + saeConfig.getString("sharedSecretKey") +
                         "|encryptionalgorithm=" + sp_enc_type +
-                        "|encryptionstrength=" + sp_enc_str;
+                        "|encryptionkeystrength=" + sp_enc_str;
                 }
             } else if (secMode.equals("asymmetric")) {
                 if (isEncrypted.equals("off")) {                            
@@ -305,9 +305,9 @@ public class SAESmokeTests extends TestCommon {
                     spsaeAppSecretList = spurl +
                         "/" + saeConfig.getString("spAppURL") +
                         "|type=" + secMode + 
-                        "|secret=" + saeConfig.getString("sharedSecretKey") +
+                        "|pubkeyalias=" + saeConfig.getString("sp_keyalias") +
                         "|encryptionalgorithm=" + sp_enc_type +
-                        "|encryptionstrength=" + sp_enc_str;
+                        "|encryptionkeystrength=" + sp_enc_str;
                 }                    
             }
             log(Level.FINEST, "setup", "spsaeAppSecretList=" +
@@ -376,7 +376,7 @@ public class SAESmokeTests extends TestCommon {
                         "|type=" + secMode +
                         "|secret=" + saeConfig.getString("sharedSecretKey") +
                         "|encryptionalgorithm=" + idp_enc_type +
-                        "|encryptionstrength=" + idp_enc_str;
+                        "|encryptionkeystrength=" + idp_enc_str;
                 }
             } else if (secMode.equals("asymmetric")) {
                 if (isEncrypted.equals("off")) {                
@@ -390,7 +390,7 @@ public class SAESmokeTests extends TestCommon {
                         "|type=" + secMode + 
                         "|pubkeyalias=" + saeConfig.getString("idp_keyalias") +
                         "|encryptionalgorithm=" + idp_enc_type +
-                        "|encryptionstrength=" + idp_enc_str;
+                        "|encryptionkeystrength=" + idp_enc_str;
                 }
             }
             log(Level.FINEST, "setup", "idpsaeAppSecretList=" +
@@ -459,7 +459,7 @@ public class SAESmokeTests extends TestCommon {
      * transfer is through symmetric keys.
      * @throws java.lang.Exception
      */
-    @Test(groups={"ldapv3", "s1ds", "ad", "amsdk"})
+    @Test(groups={"ldapv3", "s1ds", "ad", "amsdk", "jdbc"})
     public void symmetricSSOWithProfileIgnoredPOST()
     throws Exception {
         entering("symmetricSSOWithProfileIgnoredPOST", null);
@@ -493,7 +493,7 @@ public class SAESmokeTests extends TestCommon {
      * transfer is through symmetric keys.
      * @throws java.lang.Exception
      */
-    @Test(groups={"ldapv3", "s1ds", "ad", "amsdk"},
+    @Test(groups={"ldapv3", "s1ds", "ad", "amsdk", "jdbc"},
     dependsOnMethods={"symmetricSSOWithProfileIgnoredPOST"})
     public void symmetricSLOWithProfileIgnoredPOST()
     throws Exception {
@@ -522,7 +522,7 @@ public class SAESmokeTests extends TestCommon {
      * transfer is through symmetric keys.
      * @throws java.lang.Exception
      */
-    @Test(groups={"ldapv3", "s1ds", "ad", "amsdk"},
+    @Test(groups={"ldapv3", "s1ds", "ad", "amsdk", "jdbc"},
     dependsOnMethods={"symmetricSLOWithProfileIgnoredPOST"})
     public void symmetricSSOWithProfileIgnored()
     throws Exception {
@@ -552,7 +552,7 @@ public class SAESmokeTests extends TestCommon {
      * transfer is through symmetric keys.
      * @throws java.lang.Exception
      */
-    @Test(groups={"ldapv3", "s1ds", "ad", "amsdk"},
+    @Test(groups={"ldapv3", "s1ds", "ad", "amsdk", "jdbc"},
     dependsOnMethods={"symmetricSSOWithProfileIgnored"})
     public void symmetricSLOWithProfileIgnored()
     throws Exception {
@@ -580,7 +580,7 @@ public class SAESmokeTests extends TestCommon {
      * transfer is through symmetric keys.
      * @throws java.lang.Exception
      */    
-    @Test(groups={"ldapv3", "s1ds", "ad", "amsdk"},
+    @Test(groups={"ldapv3", "s1ds", "ad", "amsdk", "jdbc"},
     dependsOnMethods={"symmetricSLOWithProfileIgnored"})
     public void symmetricSSOWithProfileRequiredPOST()
     throws Exception {
@@ -621,7 +621,7 @@ public class SAESmokeTests extends TestCommon {
      * transfer is through symmetric keys.
      * @throws java.lang.Exception
      */
-    @Test(groups={"ldapv3", "s1ds", "ad", "amsdk"},
+    @Test(groups={"ldapv3", "s1ds", "ad", "amsdk", "jdbc"},
     dependsOnMethods={"symmetricSSOWithProfileRequiredPOST"})
     public void symmetricSLOWithProfileRequiredPOST()
     throws Exception {
@@ -650,7 +650,7 @@ public class SAESmokeTests extends TestCommon {
      * transfer is through symmetric keys.
      * @throws java.lang.Exception
      */       
-    @Test(groups={"ldapv3", "s1ds", "ad", "amsdk"},
+    @Test(groups={"ldapv3", "s1ds", "ad", "amsdk", "jdbc"},
     dependsOnMethods={"symmetricSLOWithProfileRequiredPOST"})
     public void symmetricSSOWithProfileRequired()
     throws Exception {
@@ -689,7 +689,7 @@ public class SAESmokeTests extends TestCommon {
      * attribute transfer is through symmetric keys.
      * @throws java.lang.Exception
      */    
-    @Test(groups={"ldapv3", "s1ds", "ad", "amsdk"},
+    @Test(groups={"ldapv3", "s1ds", "ad", "amsdk", "jdbc"},
     dependsOnMethods={"symmetricSSOWithProfileRequired"})
     public void symmetricSLOWithProfileRequired()
     throws Exception {
@@ -718,7 +718,7 @@ public class SAESmokeTests extends TestCommon {
      * transfer is through asymmetric keys.
      * @throws java.lang.Exception
      */    
-    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"})
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec", "jdbc_sec"})
     public void asymmetricSSOWithProfileIgnoredPOST()
     throws Exception {
         entering("asymmetricSSOWithProfileIgnoredPOST", null);
@@ -752,7 +752,7 @@ public class SAESmokeTests extends TestCommon {
      * transfer is through asymmetric keys.
      * @throws java.lang.Exception
      */    
-    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"},
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec", "jdbc_sec"},
     dependsOnMethods={"asymmetricSSOWithProfileIgnoredPOST"})
     public void asymmetricSLOWithProfileIgnoredPOST()
     throws Exception {
@@ -781,7 +781,7 @@ public class SAESmokeTests extends TestCommon {
      * transfer is through asymmetric keys.
      * @throws java.lang.Exception
      */    
-    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"},
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec", "jdbc_sec"},
     dependsOnMethods={"asymmetricSLOWithProfileIgnoredPOST"})
     public void asymmetricSSOWithProfileIgnored()
     throws Exception {
@@ -812,7 +812,7 @@ public class SAESmokeTests extends TestCommon {
      * transfer is through asymmetric keys.
      * @throws java.lang.Exception
      */    
-    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"},
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec", "jdbc_sec"},
     dependsOnMethods={"asymmetricSSOWithProfileIgnored"})
     public void asymmetricSLOWithProfileIgnored()
     throws Exception {
@@ -841,7 +841,7 @@ public class SAESmokeTests extends TestCommon {
      * transfer is through asymmetric keys.
      * @throws java.lang.Exception
      */      
-    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"},
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec", "jdbc_sec"},
     dependsOnMethods={"asymmetricSLOWithProfileIgnored"})
     public void asymmetricSSOWithProfileRequiredPOST()
     throws Exception {
@@ -882,7 +882,7 @@ public class SAESmokeTests extends TestCommon {
      * attribute transfer is through asymmetric keys.
      * @throws java.lang.Exception
      */        
-    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"},
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec", "jdbc_sec"},
     dependsOnMethods={"asymmetricSSOWithProfileRequiredPOST"})
     public void asymmetricSLOWithProfileRequiredPOST()
     throws Exception {
@@ -911,7 +911,7 @@ public class SAESmokeTests extends TestCommon {
      * transfer is through asymmetric keys.
      * @throws java.lang.Exception
      */    
-    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"},
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec", "jdbc_sec"},
     dependsOnMethods={"asymmetricSLOWithProfileRequiredPOST"})
     public void asymmetricSSOWithProfileRequired()
     throws Exception {
@@ -950,7 +950,7 @@ public class SAESmokeTests extends TestCommon {
      * attribute transfer is through asymmetric keys.
      * @throws java.lang.Exception
      */        
-    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec"},
+    @Test(groups={"ldapv3_sec", "s1ds_sec", "ad_sec", "amsdk_sec", "jdbc_sec"},
     dependsOnMethods={"asymmetricSSOWithProfileRequired"})
     public void asymmetricSLOWithProfileRequired()
     throws Exception {
@@ -1086,6 +1086,19 @@ public class SAESmokeTests extends TestCommon {
         if (isEncrypted.equals("on")) {
             ((HtmlCheckBoxInput)form.getInputByName("useencryption")).
                     setChecked(true);
+            if (secMode.equals("asymmetric")) {
+                String sp_keyalias = saeConfig.getString("sp_keyalias");
+                log(Level.FINEST, "setSPAppData", "sp_keyalias(encSecret): " 
+                    + sp_keyalias);
+                ((HtmlTextInput)form.getInputByName("encSecret")).
+                        setValueAttribute(sp_keyalias);
+            } else {
+                String sp_keyalias = saeConfig.getString("sharedSecret");
+                log(Level.FINEST, "setSPAppData", "sp_keyalias(encSecret): " 
+                    + sp_keyalias);
+                ((HtmlTextInput)form.getInputByName("encSecret")).
+                        setValueAttribute(sp_keyalias);
+            }
             ((HtmlTextInput)form.getInputByName("encAlgorithm")).
                     setValueAttribute(spEncType);
             ((HtmlTextInput)form.getInputByName("encStrength")).
@@ -1096,7 +1109,7 @@ public class SAESmokeTests extends TestCommon {
             String sp_keyalias = saeConfig.getString("sp_keyalias");
             log(Level.FINEST, "setSPAppData", "sp_keyalias: " + sp_keyalias);
             ((HtmlTextInput)form.getInputByName("secret")).
-                    setValueAttribute(saeConfig.getString("sp_keyalias"));
+                    setValueAttribute(sp_keyalias);
 
             String sp_keystore = saeConfig.getString("sp_keystore");
             log(Level.FINEST, "setSPAppData", "sp_keystore: " + sp_keystore);
@@ -1179,6 +1192,11 @@ public class SAESmokeTests extends TestCommon {
         if (isEncrypted.equals("on")) {
             ((HtmlCheckBoxInput)form.getInputByName("useencryption")).
                     setChecked(true);
+            String idp_keyalias = saeConfig.getString("idp_keyalias");
+            log(Level.FINEST, "generateSSOSLOURL", "idp_keyalias (encSecret):" +
+                    " " + idp_keyalias);
+            ((HtmlTextInput)form.getInputByName("encSecret")).
+                    setValueAttribute(idp_keyalias);
             ((HtmlTextInput)form.getInputByName("encAlgorithm")).
                     setValueAttribute(idpEncType);
             ((HtmlTextInput)form.getInputByName("encStrength")).
