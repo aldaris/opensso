@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexDataStore.java,v 1.14 2009-03-25 06:42:55 veiming Exp $
+ * $Id: PolicyIndexDataStore.java,v 1.15 2009-03-25 16:14:29 veiming Exp $
  */
 
 package com.sun.identity.sm;
@@ -213,7 +213,9 @@ public class PolicyIndexDataStore implements  IPolicyIndexDataStore {
         Object[] params = {SMSEntry.getRootSuffix()};
         String startDN = MessageFormat.format(START_DN_TEMPLATE, params);
         try {
-            return SMSEntry.searchEx(adminToken, startDN, filter);
+            // Collections.EMPTY_SET is for exclude DNs
+            return SMSEntry.searchEx(adminToken, startDN, filter,
+                Collections.EMPTY_SET);
         } catch (SMSException e) {
             Object[] arg = {startDN};
             throw new EntitlementException(52, arg, e);

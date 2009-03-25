@@ -22,29 +22,28 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PriviligeManager.java,v 1.4 2009-03-25 06:42:52 veiming Exp $
+ * $Id: PrivilegeManager.java,v 1.1 2009-03-25 16:14:26 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
-import java.util.Map;
 import javax.security.auth.Subject;
 
 /**
  * Class to manage entitlement priviliges: to add, remove, modify privilige
  */
-public abstract class PriviligeManager {
+public abstract class PrivilegeManager {
 
     /**
-     * Returns instance of configured <code>PriviligeManager</code>
+     * Returns instance of configured <code>PrivilegeManager</code>
      * @param subject subject that would be used for the privilige management 
      * operations
-     * @return instance of configured <code>PriviligeManager</code>
+     * @return instance of configured <code>PrivilegeManager</code>
      */
-    static public PriviligeManager getInstance(Subject subject) {
-        PriviligeManager pm = null;
+    static public PrivilegeManager getInstance(Subject subject) {
+        PrivilegeManager pm = null;
         try {
             //TODO: read the class name from configuration
-            pm = (PriviligeManager) Class.forName(
+            pm = (PrivilegeManager) Class.forName(
                     "com.sun.identity.policy.PolicyPriviligeManager").
                     newInstance();
             pm.initialize(subject);
@@ -58,7 +57,7 @@ public abstract class PriviligeManager {
         return pm;
     }
 
-    public PriviligeManager() {
+    public PrivilegeManager() {
     }
 
     /**

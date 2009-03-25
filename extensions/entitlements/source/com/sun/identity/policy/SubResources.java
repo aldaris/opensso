@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubResources.java,v 1.14 2009-03-25 06:42:54 veiming Exp $
+ * $Id: SubResources.java,v 1.15 2009-03-25 16:14:28 veiming Exp $
  */
 
 package com.sun.identity.policy;
 
+import com.sun.identity.entitlement.IIndexCache;
 import com.sun.identity.entitlement.ThreadPool;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
@@ -149,10 +150,10 @@ public class SubResources implements Runnable {
         }
     }
     
-    private Set<Policy> search(Set<String> hostIndexes, Set<String>pathIndexes){
+    private Set<Policy> search(ResourceSearchIndexes indexes){
         Set<Policy> searchResults  = new HashSet<Policy>();
         IIndexCache cache = parent.getIndexCache();
-        cache.getPolicies(hostIndexes, pathIndexes, null, searchResults, null);
+        cache.getPolicies(indexes, searchResults, null);
         return searchResults;
     }
 
@@ -161,8 +162,8 @@ public class SubResources implements Runnable {
         String resource
     ) {
         ResourceSearchIndexes comp = ResourceNameSplitter.split(resource);
-        Set<Policy> searchResult = search(
-            comp.getHostIndexes(), comp.getPathIndexes());
+        Set<Policy> searchResult = search(comp);
+
         if (!searchResult.isEmpty()) {
             Set<PolicyDecisionTask.Task> set = new HashSet();
 

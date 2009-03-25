@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.18 2009-03-25 06:42:52 veiming Exp $
+ * $Id: Entitlement.java,v 1.19 2009-03-25 16:14:25 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -98,7 +98,7 @@ public class Entitlement {
         String applicationName,
         String resourceName,
         Set<String> actionNames) {
-        this.applicationName =  applicationName;
+        this.applicationName = applicationName;
         setResourceName(resourceName);
         setActionNames(actionNames);
     }
@@ -110,8 +110,8 @@ public class Entitlement {
      * @param actionValues Map of action name to set of values.
      */
     public Entitlement(
-            String resourceName,
-            Map<String, Object> actionValues) {
+        String resourceName,
+        Map<String, Object> actionValues) {
         setResourceName(resourceName);
         setActionValues(actionValues);
     }
@@ -124,9 +124,9 @@ public class Entitlement {
      * @param actionValues Map of action name to set of values.
      */
     public Entitlement(
-            String applicationName,
-            String resourceName,
-            Map<String, Object> actionValues) {
+        String applicationName,
+        String resourceName,
+        Map<String, Object> actionValues) {
         this.applicationName = applicationName;
         setResourceName(resourceName);
         setActionValues(actionValues);
@@ -339,6 +339,7 @@ public class Entitlement {
      * Returns string representation of the object
      * @return string representation of the object
      */
+    @Override
     public String toString() {
         String s = null;
         try {
@@ -373,6 +374,7 @@ public class Entitlement {
      * @param obj object to check for equality
      * @return  <code>true</code> if the passed in object is equal to this object
      */
+    @Override
     public boolean equals(Object obj) {
         boolean equalled = true;
         if (obj == null) {
@@ -485,6 +487,7 @@ public class Entitlement {
      * Returns hash code of the object
      * @return hash code of the object
      */
+    @Override
     public int hashCode() {
         int code = 0;
         if (name != null) {

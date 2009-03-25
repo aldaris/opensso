@@ -22,12 +22,10 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStoreEntry.java,v 1.2 2009-03-25 06:42:52 veiming Exp $
+ * $Id: DataStoreEntry.java,v 1.3 2009-03-25 16:14:24 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
-
-import java.util.Set;
 
 /**
  * This class encapsulates the index entry in data store

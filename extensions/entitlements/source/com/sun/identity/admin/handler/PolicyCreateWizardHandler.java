@@ -18,7 +18,7 @@ import com.sun.identity.entitlement.EntitlementCondition;
 import com.sun.identity.entitlement.EntitlementSubject;
 import com.sun.identity.entitlement.OrSubject;
 import com.sun.identity.entitlement.Privilege;
-import com.sun.identity.entitlement.PriviligeManager;
+import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.ResourceAttributes;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -71,7 +71,7 @@ public class PolicyCreateWizardHandler
 
         // TODO: add SSO token to public credentials
         Subject authSubject = new Subject();
-        PriviligeManager pm = PriviligeManager.getInstance(authSubject);
+        PrivilegeManager pm = PrivilegeManager.getInstance(authSubject);
 
         try {
             pm.addPrivilige(privilige);

@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorAdaptor.java,v 1.20 2009-03-25 06:42:54 veiming Exp $
+ * $Id: PolicyEvaluatorAdaptor.java,v 1.21 2009-03-25 16:14:28 veiming Exp $
  */
 
 package com.sun.identity.policy;
 
+import com.sun.identity.entitlement.IIndexCache;
 import com.sun.identity.entitlement.ThreadPool;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
@@ -570,9 +571,8 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
     ) {
         Map<String, Set<String>> misses = new HashMap<String, Set<String>>();
         IIndexCache cache = getIndexCache();
-        String parentPathIndx = (bSubTree) ? comp.getPath() : null;
-        cache.getPolicies(comp.getHostIndexes(), comp.getPathIndexes(),
-            parentPathIndx, policySet, misses);
+        //Set<String> parentPathIndx = (bSubTree) ? comp.getPath() : null;
+        cache.getPolicies(comp, policySet, misses);
         return misses;
     }
 

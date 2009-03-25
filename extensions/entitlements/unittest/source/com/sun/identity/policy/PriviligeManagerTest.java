@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PriviligeManagerTest.java,v 1.4 2009-03-25 06:42:56 veiming Exp $
+ * $Id: PriviligeManagerTest.java,v 1.5 2009-03-25 16:14:31 veiming Exp $
  */
 package com.sun.identity.policy;
 
@@ -34,7 +34,7 @@ import com.sun.identity.entitlement.EntitlementCondition;
 import com.sun.identity.entitlement.IPCondition;
 import com.sun.identity.entitlement.OrSubject;
 import com.sun.identity.entitlement.Privilege;
-import com.sun.identity.entitlement.PriviligeManager;
+import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.entitlement.UserSubject;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
@@ -70,7 +70,7 @@ public class PriviligeManagerTest {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
         PolicyManager pm = new PolicyManager(adminToken, "/");
-        PriviligeManager prm = PriviligeManager.getInstance(null);
+        PrivilegeManager prm = PrivilegeManager.getInstance(null);
         try {
             // remove the policy
             pm.removePolicy(POLICY_NAME);
@@ -136,7 +136,7 @@ public class PriviligeManagerTest {
                 "PriviligeManagerTest.testAddNewPrivlige():" + "saving privilige=" + privilige);
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
-        PriviligeManager prm = PriviligeManager.getInstance(null);
+        PrivilegeManager prm = PrivilegeManager.getInstance(null);
         prm.addPrivilige(privilige);
         Privilege p = prm.getPrivilige(PRIVILIGE_NAME);
         UnittestLog.logMessage(
@@ -155,7 +155,7 @@ public class PriviligeManagerTest {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
         PolicyManager pm = new PolicyManager(adminToken, "/");
-        PriviligeManager prm = PriviligeManager.getInstance(null);
+        PrivilegeManager prm = PrivilegeManager.getInstance(null);
         Policy policy = pm.getPolicy(POLICY_NAME);
         UnittestLog.logMessage(
                 "PriviligeManagerTest.testPolicyPrivilige():"

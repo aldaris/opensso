@@ -22,7 +22,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.28 2009-03-16 20:57:29 veiming Exp $
+  $Id: build.xml,v 1.29 2009-03-25 16:14:22 veiming Exp $
 
 -->
 
@@ -108,6 +108,8 @@
            <src path="${entitlements.src.dir}/com/sun/identity/entitlement"/>
            <src path="${entitlements.src.dir}/com/sun/identity/shared/debug"/>
            <src path="${entitlements.src.dir}/com/sun/identity/log"/>
+           <src path="${entitlements.src.dir}/com/sun/identity/sm"/>
+           <src path="${entitlements.src.dir}/com/sun/identity/sm/ldap"/>
            <classpath refid="build.class.path"/>
        </javac>
    </target>

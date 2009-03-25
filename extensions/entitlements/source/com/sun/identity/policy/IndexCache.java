@@ -22,20 +22,21 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IndexCache.java,v 1.7 2009-03-12 22:55:29 veiming Exp $
+ * $Id: IndexCache.java,v 1.8 2009-03-25 16:14:27 veiming Exp $
  */
 
 package com.sun.identity.policy;
 
+import com.sun.identity.entitlement.IIndexCache;
 import com.iplanet.am.util.Cache;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.entitlement.ResourceSearchIndexes;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.ServiceConfigManager;
 import com.sun.identity.sm.ServiceListener;
 import java.security.AccessController;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -148,9 +149,7 @@ public class IndexCache implements ServiceListener, IIndexCache {
     }
 
     public void getPolicies(
-        Set<String> hostIndexes,
-        Set<String> pathIndexes,
-        String parentPathIndex,
+        ResourceSearchIndexes indexes,
         Set<Policy> hits,
         Map<String, Set<String>> misses
     ) {
@@ -158,16 +157,19 @@ public class IndexCache implements ServiceListener, IIndexCache {
         try {
             Set<Policy> cachedPoliciesForPath = new HashSet<Policy>();
             // not null for sub tree policy evaluation
-            if (parentPathIndex != null) {
-                Set<Policy> cached = (Set<Policy>)pathIndexCache.get(
-                    parentPathIndex);
-                if (cached == null) {
-                    updateMisses(misses, LBL_PATH_PARENT_IDX, parentPathIndex);
-                } else {
-                    cachedPoliciesForPath.addAll(cached);
+            Set<String> parentPathIndexes = indexes.getPath();
+
+            if ((parentPathIndexes != null) && !parentPathIndexes.isEmpty()) {
+                for (String r : parentPathIndexes) {
+                    Set<Policy> cached = (Set<Policy>)pathIndexCache.get(r);
+                    if (cached == null) {
+                        updateMisses(misses, LBL_PATH_PARENT_IDX, r);
+                    } else {
+                        cachedPoliciesForPath.addAll(cached);
+                    }
                 }
             } else {
-                for (String r : pathIndexes) {
+                for (String r : indexes.getPathIndexes()) {
                     Set<Policy> cached = (Set<Policy>) pathIndexCache.get(r);
                     if (cached == null) {
                         updateMisses(misses, LBL_PATH_IDX, r);
@@ -178,9 +180,9 @@ public class IndexCache implements ServiceListener, IIndexCache {
             }
 
             // TOFIX: pass in host for intersection
-            if (hostIndexes != null) {
+            if (indexes.getHostIndexes() != null) {
                 Set<Policy> cachedPoliciesForHost = new HashSet<Policy>();
-                for (String r : hostIndexes) {
+                for (String r : indexes.getHostIndexes()) {
                     Set<Policy> cached = (Set<Policy>) hostIndexCache.get(r);
                     if (cached == null) {
                         updateMisses(misses, LBL_HOST_IDX, r);

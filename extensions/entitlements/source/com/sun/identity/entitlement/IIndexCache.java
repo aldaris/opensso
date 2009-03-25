@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IIndexCache.java,v 1.2 2009-03-11 04:57:49 veiming Exp $
+ * $Id: IIndexCache.java,v 1.1 2009-03-25 16:14:26 veiming Exp $
  */
 
-package com.sun.identity.policy;
+package com.sun.identity.entitlement;
 
+import com.sun.identity.policy.Policy;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,9 +41,7 @@ public interface IIndexCache {
     String LBL_PATH_PARENT_IDX = "pathparent";
 
     void getPolicies(
-        Set<String> hostIndexes,
-        Set<String> pathIndexes,
-        String parentPathIndx,
+        ResourceSearchIndexes indexes,
         Set<Policy> hits,
         Map<String, Set<String>> misses
     );

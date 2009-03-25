@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceSearchIndexes.java,v 1.1 2009-03-25 06:42:51 veiming Exp $
+ * $Id: ResourceSearchIndexes.java,v 1.2 2009-03-25 16:14:26 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -35,12 +35,12 @@ import java.util.Set;
 public class ResourceSearchIndexes {
     private Set<String> hostIndexes;
     private Set<String> pathIndexes;
-    private String path;
+    private Set<String> path;
     
     public ResourceSearchIndexes(
         Set<String> hostIndexes,
         Set<String> pathIndexes,
-        String path
+        Set<String> path
     ) {
         this.hostIndexes = hostIndexes;
         this.pathIndexes = pathIndexes;
@@ -51,7 +51,7 @@ public class ResourceSearchIndexes {
         return hostIndexes;
     }
 
-    public String getPath() {
+    public Set<String> getPath() {
         return path;
     }
 
