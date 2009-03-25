@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSEntry.java,v 1.1 2009-03-25 16:14:29 veiming Exp $
+ * $Id: SMSEntry.java,v 1.2 2009-03-25 17:52:30 veiming Exp $
  *
  */
 
@@ -1035,7 +1035,7 @@ public class SMSEntry implements Cloneable {
      * @param filter Search Filter.
      * @param excludes List of DN to exclude.
      */
-    public static Map searchEx(SSOToken token, String dn, String filter,
+    public static Iterator searchEx(SSOToken token, String dn, String filter,
         Set exclude)
         throws SMSException {
         try {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSJAXRPCObject.java,v 1.1 2009-03-25 16:14:30 veiming Exp $
+ * $Id: SMSJAXRPCObject.java,v 1.2 2009-03-25 17:52:32 veiming Exp $
  *
  */
 
@@ -295,13 +295,13 @@ public class SMSJAXRPCObject extends SMSObject implements SMSObjectListener {
     /**
      * Searchs the data store for objects that match the filter
      */
-    public Map searchEx(SSOToken token, String startDN, String filter,
+    public Iterator searchEx(SSOToken token, String startDN, String filter,
         Set excludes)
         throws SMSException, SSOException {
         try {
             String[] objs = { token.getTokenID().toString(), startDN, filter,
                 null};
-            return ((Map) client.send(client.encodeMessage("searchEx", objs),
+            return ((Iterator)client.send(client.encodeMessage("searchEx", objs),
                     Session.getLBCookie(token.getTokenID().toString()),
                     null));
         } catch (SSOException ssoe) {

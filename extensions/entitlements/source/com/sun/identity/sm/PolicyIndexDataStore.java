@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexDataStore.java,v 1.15 2009-03-25 16:14:29 veiming Exp $
+ * $Id: PolicyIndexDataStore.java,v 1.16 2009-03-25 17:52:30 veiming Exp $
  */
 
 package com.sun.identity.sm;
@@ -206,6 +206,7 @@ public class PolicyIndexDataStore implements  IPolicyIndexDataStore {
         Set<String> pathIndexes,
         String pathParent
     ) throws SSOException, EntitlementException {
+          /*
         String filter = getFilter(hostIndexes, pathIndexes, pathParent);
         if (filter == null) {
             return Collections.EMPTY_MAP;
@@ -219,7 +220,8 @@ public class PolicyIndexDataStore implements  IPolicyIndexDataStore {
         } catch (SMSException e) {
             Object[] arg = {startDN};
             throw new EntitlementException(52, arg, e);
-        }
+        }*/
+          return null;
             
     }
     

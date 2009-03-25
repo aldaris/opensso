@@ -22,10 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeEvaluator.java,v 1.1 2009-03-25 06:42:51 veiming Exp $
+ * $Id: PrivilegeEvaluator.java,v 1.2 2009-03-25 17:52:31 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -45,8 +46,11 @@ class PrivilegeEvaluator implements IPolicyEvaluator {
     private Map<String, Set<String>> envParameters;
     private ResourceSearchIndexes indexes;
     private List<Entitlement> resultQ = new LinkedList<Entitlement>();
+    private List<Entitlement> mergedResults = new ArrayList<Entitlement>();
+    private Application application;
     private int counter;
     private int maxCounter = -1;
+    private EntitlementCombiner entitlementCombiner;
 
     public boolean hasEntitlement(
         Subject adminSubject,
@@ -60,26 +64,40 @@ class PrivilegeEvaluator implements IPolicyEvaluator {
         this.applicationName = applicationName;
         this.entitlement = entitlement;
         this.envParameters = envParameters;
+        entitlementCombiner = getApplication().getEntitlementCombiner();
 
         //separate threads, PIP
         indexes = entitlement.getResourceSearchIndexes();
         ThreadPool.submit(new EvaluationTask(this)); //TOFIX
 
         synchronized (this) {
-            while (!resultQ.isEmpty()) {
-                //combine entitlement;
-            }
-            if ((maxCounter != -1) && (maxCounter != counter)) {
+            while ((maxCounter == -1) && (maxCounter != counter)) {
+                while (!resultQ.isEmpty()) {
+                    mergeEntitlement(resultQ.remove(0));
+                    counter++;
+                    //combine entitlement;
+                }
                 try {
                     wait();
-                }
-                catch (InterruptedException ex) {
+                } catch (InterruptedException ex) {
+                    //TOFIX
                 }
             }
         }
 
         //TOFIX
         return false;
+    }
+
+    private void mergeEntitlement(Entitlement ent) {
+        
+    }
+    
+    private Application getApplication() {
+        if (application == null) {
+            ApplicationManager.getApplication(applicationName);
+        }
+        return application;
     }
 
     public List<Entitlement> getEntitlements(

@@ -22,7 +22,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.29 2009-03-25 16:14:22 veiming Exp $
+  $Id: build.xml,v 1.30 2009-03-25 17:52:30 veiming Exp $
 
 -->
 
@@ -106,6 +106,7 @@
               debug="${build.debug}" debuglevel="${build.debuglevel}"
               excludes = "policy/**,context/**" >
            <src path="${entitlements.src.dir}/com/sun/identity/entitlement"/>
+           <src path="${entitlements.src.dir}/com/sun/identity/shared"/>
            <src path="${entitlements.src.dir}/com/sun/identity/shared/debug"/>
            <src path="${entitlements.src.dir}/com/sun/identity/log"/>
            <src path="${entitlements.src.dir}/com/sun/identity/sm"/>
