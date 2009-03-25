@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CompleteCreateHostedIDP.jsp,v 1.3 2009-01-09 17:42:56 veiming Exp $
+   $Id: CompleteCreateHostedIDP.jsp,v 1.4 2009-03-25 00:33:17 asyhuang Exp $
 
 --%>
 
@@ -63,6 +63,15 @@
             escapeEx(cot) + '&realm=' + escapeEx(realm) + 
             '&entityId=' + escapeEx(entityId));
     }
+    function configureGoogleApps() {
+        var frm = document.forms[0];
+        var cot = frm.elements['CompleteCreateHostedIDP.tfcot'].value;
+        var realm = frm.elements['CompleteCreateHostedIDP.tfrealm'].value;
+        var entityId = frm.elements['CompleteCreateHostedIDP.tfentityId'].value;
+        top.location.replace('../task/ConfigureGoogleApps?cot=' +
+            escapeEx(cot) + '&realm=' + escapeEx(realm) + 
+            '&entityId=' + escapeEx(entityId));
+    }
     function modifyIDP() {
         top.location.replace('../federation/Federation');
     }
@@ -89,6 +98,9 @@
 <td width="48%" valign="top">
 <div class="ConFldSetLgdDiv"><cc:text name="txtModifyProfileTitle" defaultValue="complete.create.host.idp.modify.profile.title" bundleID="amConsole" /></div>
 <cc:text name="txtModifyProfileText" defaultValue="complete.create.host.idp.modify.profile.text" escape="false" bundleID="amConsole" />
+<p>
+<div class="ConFldSetLgdDiv"><cc:text name="txtCreateFedletTitle" defaultValue="complete.create.host.idp.create.google.apps.title" bundleID="amConsole" /></div>
+<cc:text name="txtCreateFedletText" defaultValue="complete.create.host.idp.create.google.apps.text" escape="false" bundleID="amConsole" />
 </td>
 </tr>
 </table>

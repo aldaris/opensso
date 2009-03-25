@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ConfigureGoogleAppsCompleteViewBean.java,v 1.4 2009-03-13 21:33:12 asyhuang Exp $
+ * $Id: ConfigureGoogleAppsCompleteViewBean.java,v 1.5 2009-03-25 00:31:51 asyhuang Exp $
  *
  */
 package com.sun.identity.console.task;
 
+import com.iplanet.jato.RequestContext;
 import com.iplanet.jato.model.ModelControlException;
 import com.iplanet.jato.view.View;
 import com.iplanet.jato.view.event.DisplayEvent;
@@ -41,10 +42,16 @@ import com.sun.identity.console.task.model.TaskModelImpl;
 import com.sun.web.ui.model.CCPageTitleModel;
 import com.sun.web.ui.view.alert.CCAlert;
 import com.sun.web.ui.view.pagetitle.CCPageTitle;
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Create register product UI.
@@ -126,7 +133,7 @@ public class ConfigureGoogleAppsCompleteViewBean
         ptModel = new CCPageTitleModel(
                 getClass().getClassLoader().getResourceAsStream(
                 "com/sun/identity/console/oneBtnPageTitle.xml"));
-        ptModel.setValue("button1", "button.finish");     
+        ptModel.setValue("button1", "button.finish");
     }
 
     protected AMModel getModelInternal() {
@@ -138,12 +145,14 @@ public class ConfigureGoogleAppsCompleteViewBean
         psModel = new AMPropertySheetModel(
                 getClass().getClassLoader().getResourceAsStream(
                 "com/sun/identity/console/propertyConfigureGoogleAppsComplete.xml"));
+        psModel.setValue("buttonDownloadCert",
+                "configure.google.apps.complete.certificate.download");
         psModel.clear();
     }
 
     /**
-     * Handles save button request.
-     * save
+     * Handles finish button request.
+     * 
      * @param event Request invocation event
      */
     public void handleButton1Request(RequestInvocationEvent event)
@@ -154,4 +163,56 @@ public class ConfigureGoogleAppsCompleteViewBean
         vb.forwardTo(getRequestContext());
     }
 
+    /**
+     * Handles Verification Certificate download button request.
+     * Sends Verification Certificate to the ServletResponse output stream.  
+     * @param event Request invocation event
+     */
+    public void handleButtonDownloadCertRequest(RequestInvocationEvent event)
+            throws ModelControlException {
+        RequestContext reqContext = event.getRequestContext();
+        HttpServletResponse resp = reqContext.getResponse();
+        String cert = (String) psModel.getValue("PubKey");
+
+        ServletOutputStream op = null;
+        try {
+            int length = 0;
+            op = resp.getOutputStream();
+
+            //  Set the response
+            resp.setContentType("application/octet-stream");
+            resp.setContentLength(cert.length());
+            resp.setHeader("Content-Disposition",
+                    "attachment; filename=\"" + "OpenSSOCert.txt" + "\"");
+
+            //  Stream to the requester.
+            int BUFSIZE = cert.length();
+            byte[] bbuf = new byte[BUFSIZE];
+            InputStream is = new ByteArrayInputStream(cert.getBytes());
+            DataInputStream in = new DataInputStream(is);
+
+            while ((in != null) && ((length = in.read(bbuf)) != -1)) {
+                op.write(bbuf, 0, length);
+            }
+
+            in.close();
+            op.flush();
+        } catch (IOException ex) {
+            debug.error("ConfigureGoogleAppsCompleteViewBean.uploadCert", ex);
+            setInlineAlertMessage(CCAlert.TYPE_ERROR,
+                    "configure.google.apps.complete.certificate.download.error",
+                    ex.getMessage());
+        } finally {
+            if (op != null) {
+                try {
+                    op.close();
+                } catch (IOException ex) {
+                    debug.error("ConfigureGoogleAppsCompleteViewBean.uploadCert", ex);
+                    setInlineAlertMessage(CCAlert.TYPE_ERROR,
+                            "configure.google.apps.complete.certificate.download.error",
+                            ex.getMessage());
+                }
+            }
+        }
+    }
 }

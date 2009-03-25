@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: propertyConfigureGoogleAppsComplete.xml,v 1.2 2009-03-13 21:34:51 asyhuang Exp $ 
+   $Id: propertyConfigureGoogleAppsComplete.xml,v 1.3 2009-03-25 00:36:25 asyhuang Exp $ 
 
 -->
 
@@ -81,6 +81,9 @@
                 <attribute name="cols" value="100" />
                 <attribute name="rows" value="14" />
                 <attribute name="readOnly" value="true" />
+            </cc>
+            <cc name="buttonDownloadCert" tagclass="com.sun.web.ui.taglib.html.CCButtonTag">
+                <attribute name="type" value="secondary"/>
             </cc>
             <fieldhelp name="helpPubKey" 
                        defaultValue="configure.google.apps.complete.help.PubKey" />
