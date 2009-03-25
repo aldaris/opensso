@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PriviligeUtilsTest.java,v 1.5 2009-03-18 01:15:25 dillidorai Exp $
+ * $Id: PriviligeUtilsTest.java,v 1.6 2009-03-25 06:42:56 veiming Exp $
  */
 package com.sun.identity.policy;
 
@@ -34,7 +34,7 @@ import com.sun.identity.entitlement.EntitlementCondition;
 import com.sun.identity.entitlement.EntitlementSubject;
 import com.sun.identity.entitlement.IPCondition;
 import com.sun.identity.entitlement.OrSubject;
-import com.sun.identity.entitlement.Privilige;
+import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdType;
@@ -80,7 +80,7 @@ public class PriviligeUtilsTest {
         subjects.add(us2);
         OrSubject os = new OrSubject(subjects);
         EntitlementCondition ipc = new IPCondition("*.sun.com");
-        Privilige privilige = new Privilige(
+        Privilege privilige = new Privilege(
                 "TestPrivilige",
                 entitlements,
                 us1, //orSubject

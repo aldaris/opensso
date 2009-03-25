@@ -1,4 +1,4 @@
-/** 
+/**
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
  * Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
@@ -22,33 +22,31 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStoreEntry.java,v 1.2 2009-03-25 06:42:52 veiming Exp $
+ * $Id: ApplicationManager.java,v 1.1 2009-03-25 06:42:51 veiming Exp $
  */
-
 package com.sun.identity.entitlement;
 
-import java.util.Set;
-
 /**
- * This class encapsulates the index entry in data store
+ *
+ * @author dennis
  */
-public class DataStoreEntry {
-    private String name;
-    private Object object;
-    
-    public DataStoreEntry(
-        String name,
-        Object object
-    ) {
-        this.name = name;
-        this.object = object;
+public final class ApplicationManager {
+    private static ApplicationManager instance = new ApplicationManager();
+
+    private ApplicationManager() {
     }
 
-    public String getName() {
-        return name;
-    }
+    /**
+     * TODO
+     * create application
+     * delete application
+     * list applications
+     */
 
-    public Object getObject() {
-        return object;
+    public static Application getApplication(String name) {
+        //sms: TODO new Entitlement service
+        //name=classname
+        // need a default if name is null
+        return null;
     }
 }

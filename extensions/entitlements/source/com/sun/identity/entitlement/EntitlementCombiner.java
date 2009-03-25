@@ -22,27 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ThreadPool.java,v 1.1 2009-03-11 04:58:18 veiming Exp $
+ * $Id: EntitlementCombiner.java,v 1.1 2009-03-25 06:42:51 veiming Exp $
  */
-
-package com.sun.identity.policy;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+package com.sun.identity.entitlement;
 
 /**
- * TOFIX
+ *
  * @author dennis
  */
-public final class ThreadPool {
-    private static ThreadPool instance = new ThreadPool();
-    private ExecutorService exeService;
+public class EntitlementCombiner {
 
-    private ThreadPool() {
-        exeService = Executors.newCachedThreadPool();
-    }
-
-    public static void submit(Runnable r) {
-        instance.exeService.submit(r);
-    }
 }

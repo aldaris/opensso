@@ -17,7 +17,7 @@ import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementCondition;
 import com.sun.identity.entitlement.EntitlementSubject;
 import com.sun.identity.entitlement.OrSubject;
-import com.sun.identity.entitlement.Privilige;
+import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PriviligeManager;
 import com.sun.identity.entitlement.ResourceAttributes;
 import java.io.Serializable;
@@ -62,7 +62,7 @@ public class PolicyCreateWizardHandler
 
         Set<ResourceAttributes> attrs = null;
 
-        Privilige privilige = new Privilige(
+        Privilege privilige = new Privilege(
                 name,
                 entitlements,
                 orSubject,

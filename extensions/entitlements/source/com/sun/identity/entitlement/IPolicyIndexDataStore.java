@@ -22,13 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPolicyIndexDataStore.java,v 1.6 2009-02-04 10:03:49 veiming Exp $
+ * $Id: IPolicyIndexDataStore.java,v 1.7 2009-03-25 06:42:52 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
 import java.io.Serializable;
-import java.util.Set;
+import java.util.Iterator;
 
 /**
  * This interface defines the methods required to store policy indexes
@@ -47,9 +47,7 @@ public interface IPolicyIndexDataStore {
      */
     void add(
         String name, 
-        Set<String> hostIndex, 
-        Set<String> pathIndex, 
-        Set<String> pathParentIndex,
+        ResourceSaveIndexes indexes,
         Serializable policy
     ) throws EntitlementException;
     
@@ -71,7 +69,6 @@ public interface IPolicyIndexDataStore {
      * @return a set of matching policy objects.
      * @throws EntitlementException if search operation fails.
      */
-    Set<DataStoreEntry> search(Set<String> hostIndexes, Set<String> pathIndexes,
-        String pathParent)
+    Iterator<Privilege> search(ResourceSearchIndexes indexes)
         throws EntitlementException;
 }

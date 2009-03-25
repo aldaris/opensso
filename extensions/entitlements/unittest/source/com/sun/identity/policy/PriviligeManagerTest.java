@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PriviligeManagerTest.java,v 1.3 2009-03-17 22:08:47 dillidorai Exp $
+ * $Id: PriviligeManagerTest.java,v 1.4 2009-03-25 06:42:56 veiming Exp $
  */
 package com.sun.identity.policy;
 
@@ -33,7 +33,7 @@ import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementCondition;
 import com.sun.identity.entitlement.IPCondition;
 import com.sun.identity.entitlement.OrSubject;
-import com.sun.identity.entitlement.Privilige;
+import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PriviligeManager;
 import com.sun.identity.entitlement.UserSubject;
 import com.sun.identity.idm.AMIdentityRepository;
@@ -126,7 +126,7 @@ public class PriviligeManagerTest {
         subjects.add(es2);
         OrSubject os = new OrSubject(subjects);
         EntitlementCondition ec = new IPCondition("*.sun.com");
-        Privilige privilige = new Privilige(
+        Privilege privilige = new Privilege(
                 PRIVILIGE_NAME,
                 entitlements,
                 os, //orSubject
@@ -138,7 +138,7 @@ public class PriviligeManagerTest {
                 AdminTokenAction.getInstance());
         PriviligeManager prm = PriviligeManager.getInstance(null);
         prm.addPrivilige(privilige);
-        Privilige p = prm.getPrivilige(PRIVILIGE_NAME);
+        Privilege p = prm.getPrivilige(PRIVILIGE_NAME);
         UnittestLog.logMessage(
                 "PriviligeManagerTest.testAddNewPrivlige():" + "read back privilige=" + p);
         } catch (Exception e) {
@@ -161,7 +161,7 @@ public class PriviligeManagerTest {
                 "PriviligeManagerTest.testPolicyPrivilige():"
                 + "Created in memory Policy ="
                 + policy.toXML());
-        Privilige privilige = PriviligeUtils.policyToPrivilige(policy);
+        Privilege privilige = PriviligeUtils.policyToPrivilige(policy);
         UnittestLog.logMessage(
                 "PriviligeManagerTest.testPolicyToPrivilige():" + "policy mapped to privilige=" + privilige);
         UnittestLog.logMessage(

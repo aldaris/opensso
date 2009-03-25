@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EvaluatorThread.java,v 1.5 2009-03-11 04:57:49 veiming Exp $
+ * $Id: EvaluatorThread.java,v 1.6 2009-03-25 06:42:53 veiming Exp $
  */
 
 package com.sun.identity.policy;
 
+import com.sun.identity.entitlement.ThreadPool;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.policy.interfaces.ResourceName;

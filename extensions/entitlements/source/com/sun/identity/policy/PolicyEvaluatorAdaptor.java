@@ -22,18 +22,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorAdaptor.java,v 1.19 2009-03-11 04:57:49 veiming Exp $
+ * $Id: PolicyEvaluatorAdaptor.java,v 1.20 2009-03-25 06:42:54 veiming Exp $
  */
 
 package com.sun.identity.policy;
 
+import com.sun.identity.entitlement.ThreadPool;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
 import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.IPolicyEvaluator;
-import com.sun.identity.entitlement.util.ResourceComp;
+import com.sun.identity.entitlement.ResourceSearchIndexes;
 import com.sun.identity.entitlement.util.ResourceNameSplitter;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -58,6 +59,7 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
         SSOToken token,
         Map<String, Set<String>> misses
     ) throws SSOException, PolicyException {
+	/*
         PolicyManager pm = new PolicyManager(token, "/");
         Set<String> hostIndexes = misses.get(IIndexCache.LBL_HOST_IDX);
         Set<String> pathIndexes = misses.get(IIndexCache.LBL_PATH_IDX);
@@ -67,7 +69,8 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
         String pathParent = ((pathParentIndexes != null) &&
             !pathParentIndexes.isEmpty()) ? pathParentIndexes.iterator().next():
                 null;
-        return PolicyIndexer.search(pm, hostIndexes, pathIndexes, pathParent);
+        return PolicyIndexer.search(pm, hostIndexes, pathIndexes, pathParent);*/
+	return null;
     }
 
     /**
@@ -347,7 +350,7 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
             ServiceTypeManager.getServiceTypeManager().getServiceType(
             serviceTypeName);
 
-        ResourceComp comp = ResourceNameSplitter.split(resourceName);
+        ResourceSearchIndexes comp = ResourceNameSplitter.split(resourceName);
         Set<Policy> hits = new HashSet<Policy>();
         Map<String, Set<String>> misses = lookupCache(comp, hits, false);
 
@@ -461,7 +464,7 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
                 serviceTypeName);
             Set<String> actionNames = serviceType.getActionNames();
 
-            ResourceComp comp = ResourceNameSplitter.split(resourceName);
+            ResourceSearchIndexes comp = ResourceNameSplitter.split(resourceName);
             Set<Policy> hits = new HashSet<Policy>();
             Map<String, Set<String>> misses = lookupCache(comp, hits, true);
             MissedSubResources missedThread = null;
@@ -561,7 +564,7 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
     }
 
     private Map<String, Set<String>> lookupCache(
-        ResourceComp comp,
+        ResourceSearchIndexes comp,
         Set<Policy> policySet,
         boolean bSubTree
     ) {

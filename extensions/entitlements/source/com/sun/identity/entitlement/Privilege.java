@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilige.java,v 1.11 2009-03-20 01:10:15 dillidorai Exp $
+ * $Id: Privilege.java,v 1.1 2009-03-25 06:42:51 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -39,7 +39,7 @@ import org.json.JSONObject;
 /**
  * Class representing entitlement privilige
  */
-public class Privilige {
+public class Privilege {
 
     private String name;
     private Set<Entitlement> entitlements;
@@ -55,7 +55,7 @@ public class Privilige {
      * @param eResourceAttributes Resource1Attributes used to get additional
      * result attributes
      */
-    public Privilige(
+    public Privilege(
             String name,
             Set<Entitlement> entitlements,
             EntitlementSubject eSubject,
@@ -224,7 +224,7 @@ public class Privilige {
         if (!getClass().equals(obj.getClass())) {
             equalled = false;
         }
-        Privilige object = (Privilige) obj;
+        Privilege object = (Privilege) obj;
 
         if (name == null) {
             if (object.getName() != null) {

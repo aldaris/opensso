@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceNameSplitter.java,v 1.4 2009-02-12 08:34:40 veiming Exp $
+ * $Id: ResourceNameSplitter.java,v 1.5 2009-03-25 06:42:53 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
 
+import com.sun.identity.entitlement.ResourceSearchIndexes;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -53,7 +54,7 @@ public class ResourceNameSplitter {
      * @param resName Resource name.
      * @return the different components on a resource.
      */
-    public static ResourceComp split(String resName) {
+    public static ResourceSearchIndexes split(String resName) {
         try {
             URL url = new URL(resName);
             Set<String> hostIndexes = splitHost(url);
@@ -62,11 +63,11 @@ public class ResourceNameSplitter {
             if (path.length() == 0) {
                 path ="/";
             }
-            return new ResourceComp(hostIndexes, pathIndexes, path);
+            return new ResourceSearchIndexes(hostIndexes, pathIndexes, path);
         } catch (MalformedURLException e) {
             Set<String> set = new HashSet<String>();
             set.add(resName);
-            return new ResourceComp(set, Collections.EMPTY_SET, "");
+            return new ResourceSearchIndexes(set, Collections.EMPTY_SET, "");
         }
     }
     

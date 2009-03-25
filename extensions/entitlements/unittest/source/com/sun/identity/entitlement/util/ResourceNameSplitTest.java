@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceNameSplitTest.java,v 1.6 2009-01-29 02:04:04 veiming Exp $
+ * $Id: ResourceNameSplitTest.java,v 1.7 2009-03-25 06:42:55 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
 
+import com.sun.identity.entitlement.ResourceSearchIndexes;
 import com.sun.identity.unittest.UnittestLog;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -47,7 +48,7 @@ public class ResourceNameSplitTest {
         Map<String, Set<String>> map = parseResource("resourceNameSplitHost");
         for (String k : map.keySet()) {
             Set<String> set = map.get(k);
-            ResourceComp comp = ResourceNameSplitter.split(k);
+            ResourceSearchIndexes comp = ResourceNameSplitter.split(k);
             Set<String> results = comp.getHostIndexes();
             if (!results.equals(set)) {
                 String msg = "ResourceNameSplitTest.testHost: " + k + 
@@ -67,7 +68,7 @@ public class ResourceNameSplitTest {
         for (String k : map.keySet()) {
             Set<String> set = map.get(k);
             
-            ResourceComp comp = ResourceNameSplitter.split(k);
+            ResourceSearchIndexes comp = ResourceNameSplitter.split(k);
             Set<String> results = comp.getPathIndexes();
             if (!results.equals(set)) {
                 String msg = "ResourceNameSplitTest.testPath: " + k + 

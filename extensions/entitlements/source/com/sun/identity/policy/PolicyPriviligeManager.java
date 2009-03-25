@@ -22,14 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyPriviligeManager.java,v 1.4 2009-03-04 02:19:32 dillidorai Exp $
+ * $Id: PolicyPriviligeManager.java,v 1.5 2009-03-25 06:42:54 veiming Exp $
  */
 package com.sun.identity.policy;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.entitlement.EntitlementException;
-import com.sun.identity.entitlement.Privilige;
+import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PriviligeManager;
 import com.sun.identity.security.AdminTokenAction;
 import java.security.AccessController;
@@ -71,9 +71,9 @@ public class PolicyPriviligeManager extends PriviligeManager {
      * @throws com.sun.identity.entitlement.EntitlementException if there is
      * privilige could not be 
      */
-    public Privilige getPrivilige(String priviligeName)
+    public Privilege getPrivilige(String priviligeName)
             throws EntitlementException {
-        Privilige privilige = null;
+        Privilege privilige = null;
         try {
             Policy policy = pm.getPolicy(priviligeName);
             privilige = PriviligeUtils.policyToPrivilige(policy);
@@ -89,7 +89,7 @@ public class PolicyPriviligeManager extends PriviligeManager {
      * @throws com.sun.identity.entitlement.EntitlementException if the
      * privilige could not be added
      */
-    public void addPrivilige(Privilige privilige)
+    public void addPrivilige(Privilege privilige)
             throws EntitlementException {
         try {
             Policy policy = PriviligeUtils.priviligeToPolicy(privilige);
@@ -118,7 +118,7 @@ public class PolicyPriviligeManager extends PriviligeManager {
      * @param privilige the privilige to be modified
      * @throws com.sun.identity.entitlement.EntitlementException
      */
-    public void modifyPrivilige(Privilige privilige)
+    public void modifyPrivilige(Privilege privilige)
             throws EntitlementException {
         try {
             pm.removePolicy(privilige.getName());

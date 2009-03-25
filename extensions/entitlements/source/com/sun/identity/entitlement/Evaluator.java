@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Evaluator.java,v 1.7 2009-02-10 19:31:02 veiming Exp $
+ * $Id: Evaluator.java,v 1.8 2009-03-25 06:42:52 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -39,7 +39,7 @@ import javax.security.auth.Subject;
  */
 public class Evaluator {
     private Subject adminSubject;
-    private String serviceTypeName; //TOFIX: need a default for this.
+    private String applicationName; //TOFIX: need a default for this.
     
     /**
      * Constructor to create an evaluator of default service type.
@@ -55,14 +55,14 @@ public class Evaluator {
      *
      * @param subject Subject who credential is used for performing the 
      *        evaluation.
-     * @param serviceTypeName the name of the service type for 
+     * @param applicationName the name of the aplication for
      *        which this evaluator can be used.
      * @throws EntitlementException if any other abnormal condition occured.
      */
-    public Evaluator(Subject subject, String serviceTypeName)
+    public Evaluator(Subject subject, String applicationName)
         throws EntitlementException {
         adminSubject = subject;
-        this.serviceTypeName = serviceTypeName;
+        this.applicationName = applicationName;
     }
 
     /**
@@ -114,7 +114,7 @@ public class Evaluator {
         IPolicyEvaluator evaluator = 
             PolicyEvaluatorFactory.getInstance().getEvaluator();
         return evaluator.hasEntitlement(
-            adminSubject, subject, serviceTypeName, e, envParameters);
+            adminSubject, subject, applicationName, e, envParameters);
     }
 
     /**
@@ -139,8 +139,14 @@ public class Evaluator {
         //TOFIX: need a swtich choosing opensso or XACML 
         IPolicyEvaluator evaluator = 
             PolicyEvaluatorFactory.getInstance().getEvaluator();
-        return evaluator.getEntitlements(adminSubject, subject, serviceTypeName,
+        return evaluator.getEntitlements(adminSubject, subject, applicationName,
             resourceName, environment, recursive);
     }
+
+    public String getApplicationName() {
+        return applicationName;
+    }
+
+    
 }
 

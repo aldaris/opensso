@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceNameIndexTest.java,v 1.3 2009-01-25 09:39:26 veiming Exp $
+ * $Id: ResourceNameIndexTest.java,v 1.4 2009-03-25 06:42:55 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
 
+import com.sun.identity.entitlement.ResourceSaveIndexes;
 import com.sun.identity.unittest.UnittestLog;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -49,9 +50,10 @@ public class ResourceNameIndexTest {
         Map<String, String> map = parseResource("resourceNameIndexHost");
         for (String k : map.keySet()) {
             String expectedResult = map.get(k);
-            ResourceIndex result = ResourceNameIndexGenerator.getResourceIndex(
-                k);
-            if (!result.getHostIndex().equals(expectedResult)) {
+            ResourceSaveIndexes indexes =
+                ResourceNameIndexGenerator.getResourceIndex(k);
+            String host = indexes.getHostIndexes().iterator().next();
+            if (!host.equals(expectedResult)) {
                 String msg = "ResourceNameIndexTest.testHost: " + k + 
                     " failed.";
                 UnittestLog.logError(msg);
@@ -66,9 +68,10 @@ public class ResourceNameIndexTest {
         Map<String, String> map = parseResource("resourceNameIndexURI");
         for (String k : map.keySet()) {
             String expectedResult = map.get(k);
-            ResourceIndex result = ResourceNameIndexGenerator.getResourceIndex(
-                k);
-            if (!result.getPathIndex().equals(expectedResult)) {
+            ResourceSaveIndexes indexes =
+                ResourceNameIndexGenerator.getResourceIndex(k);
+            String path = indexes.getPathIndexes().iterator().next();
+            if (!path.equals(expectedResult)) {
                 String msg = "ResourceNameIndexTest.testPath: " + k + 
                     " failed.";
                 UnittestLog.logError(msg);
@@ -84,9 +87,10 @@ public class ResourceNameIndexTest {
             "resourceNameIndexPathParent");
         for (String k : map.keySet()) {
             Set<String> expectedResult = map.get(k);
-            ResourceIndex result = ResourceNameIndexGenerator.getResourceIndex(
-                k);
-            if (!result.getPathParentIndex().equals(expectedResult)) {
+            ResourceSaveIndexes indexes =
+                ResourceNameIndexGenerator.getResourceIndex(k);
+
+            if (!indexes.getParentPath().equals(expectedResult)) {
                 String msg = "ResourceNameIndexTest.testPathParent: " + k + 
                     " failed.";
                 UnittestLog.logError(msg);

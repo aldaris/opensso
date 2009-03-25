@@ -22,19 +22,21 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexer.java,v 1.11 2009-03-11 04:57:49 veiming Exp $
+ * $Id: PolicyIndexer.java,v 1.12 2009-03-25 06:42:54 veiming Exp $
  */
 
 package com.sun.identity.policy;
 
-import com.sun.identity.entitlement.DataStoreEntry;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.IPolicyIndexDataStore;
 import com.sun.identity.entitlement.PolicyIndexDataStoreFactory;
-import com.sun.identity.entitlement.util.ResourceIndex;
+import com.sun.identity.entitlement.Privilege;
+import com.sun.identity.entitlement.ResourceSaveIndexes;
+import com.sun.identity.entitlement.ResourceSearchIndexes;
 import com.sun.identity.entitlement.util.ResourceNameIndexGenerator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -62,22 +64,21 @@ public class PolicyIndexer {
         SerializedPolicy serPolicy = SerializedPolicy.serialize(policy);
         String policyName = policy.getName();
         Set<String> ruleNames = policy.getRuleNames();
-        Set<String> hostIndexes = new HashSet<String>();
-        Set<String> pathIndexes = new HashSet<String>();
-        Set<String> pathParentIndexes = new HashSet<String>();
+        ResourceSaveIndexes resIdx = null;
         
         for (String ruleName : ruleNames) {
             Rule rule = policy.getRule(ruleName);
             String resName = rule.getResourceName();
-            ResourceIndex resIdx = ResourceNameIndexGenerator.getResourceIndex(
-                resName);
-            hostIndexes.add(resIdx.getHostIndex());
-            pathIndexes.add(resIdx.getPathIndex());
-            pathParentIndexes.addAll(resIdx.getPathParentIndex());
+
+            if (resIdx == null) {
+                resIdx = ResourceNameIndexGenerator.getResourceIndex(resName);
+            } else {
+                resIdx.addAll(
+                    ResourceNameIndexGenerator.getResourceIndex(resName));
+            }
         }
 
-        datastore.add(policyName, hostIndexes, pathIndexes,
-            pathParentIndexes, serPolicy);
+        datastore.add(policyName, resIdx, serPolicy);
     }
     
     /**
@@ -108,16 +109,15 @@ public class PolicyIndexer {
      */
     public static Set<Policy> search(
         PolicyManager pm, 
-        Set<String> hostIndexes, 
-        Set<String> pathIndexes,
-        String pathParentIndex
+        ResourceSearchIndexes searchIndexes
     ) {
         Set<Policy> policies = new HashSet<Policy>();
         try {
             IPolicyIndexDataStore datastore = 
                 PolicyIndexDataStoreFactory.getInstance().getDataStore();
-            Set<DataStoreEntry> results = datastore.search(hostIndexes,
-                pathIndexes, pathParentIndex);
+            Iterator<Privilege> results = datastore.search(searchIndexes);
+
+            /*
             Map<String, Set<Policy>> mapHostIndexes = createCacheMap(
                 hostIndexes);
             Map<String, Set<Policy>> mapPathIndexes = createCacheMap(
@@ -155,7 +155,7 @@ public class PolicyIndexer {
 
             cache.cache(mapHostIndexes, mapPathIndexes, mapPathParentIndexes);
             cache.getPolicies(hostIndexes, pathIndexes, pathParentIndex,
-                policies, null);
+                policies, null); */
         } catch (EntitlementException e) {
             PolicyManager.debug.error("PolicyIndexer.store", e);
         }

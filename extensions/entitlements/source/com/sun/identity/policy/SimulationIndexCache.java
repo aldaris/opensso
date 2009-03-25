@@ -22,13 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SimulationIndexCache.java,v 1.2 2009-03-11 04:57:49 veiming Exp $
+ * $Id: SimulationIndexCache.java,v 1.3 2009-03-25 06:42:54 veiming Exp $
  */
 
 package com.sun.identity.policy;
 
-import com.sun.identity.entitlement.util.ResourceIndex;
-import com.sun.identity.entitlement.util.ResourceNameIndexGenerator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -55,7 +53,7 @@ public class SimulationIndexCache implements IIndexCache {
     public void cachePolicy(Policy policy)
         throws PolicyException {
         Set<String> ruleNames = policy.getRuleNames();
-
+/*
         for (String ruleName : ruleNames) {
             Rule rule = policy.getRule(ruleName);
             String resName = rule.getResourceName();
@@ -66,7 +64,7 @@ public class SimulationIndexCache implements IIndexCache {
             for (String s : resIdx.getPathParentIndex()) {
                 cachePathParentIndex(s, policy);
             }
-        }
+        }*/
     }
 
     /**

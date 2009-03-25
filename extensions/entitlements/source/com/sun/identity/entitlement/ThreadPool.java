@@ -1,4 +1,4 @@
-/** 
+/**
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
  * Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
@@ -22,36 +22,27 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceComp.java,v 1.1 2009-01-29 02:04:02 veiming Exp $
+ * $Id: ThreadPool.java,v 1.1 2009-03-25 06:42:52 veiming Exp $
  */
 
-package com.sun.identity.entitlement.util;
+package com.sun.identity.entitlement;
 
-import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
- * This class encapsulates the result of resource splitting.
+ * TOFIX
+ * @author dennis
  */
-public class ResourceComp {
-    private Set<String> hostIndexes;
-    private Set<String> pathIndexes;
-    private String path;
-    
-    ResourceComp(Set<String> hostIndexes, Set<String> pathIndexes, String path){
-        this.hostIndexes = hostIndexes;
-        this.pathIndexes = pathIndexes;
-        this.path = path;
+public final class ThreadPool {
+    private static ThreadPool instance = new ThreadPool();
+    private ExecutorService exeService;
+
+    private ThreadPool() {
+        exeService = Executors.newCachedThreadPool();
     }
 
-    public Set<String> getHostIndexes() {
-        return hostIndexes;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public Set<String> getPathIndexes() {
-        return pathIndexes;
+    public static void submit(Runnable r) {
+        instance.exeService.submit(r);
     }
 }

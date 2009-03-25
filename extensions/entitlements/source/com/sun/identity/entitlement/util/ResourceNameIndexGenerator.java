@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceNameIndexGenerator.java,v 1.6 2009-01-30 01:17:52 veiming Exp $
+ * $Id: ResourceNameIndexGenerator.java,v 1.7 2009-03-25 06:42:53 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
 
+import com.sun.identity.entitlement.ResourceSaveIndexes;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -52,15 +53,25 @@ public class ResourceNameIndexGenerator {
      * @param resName Resource name.
      * @return resource index of a given resource name.
      */
-    public static ResourceIndex getResourceIndex(String resName) {
+    public static ResourceSaveIndexes getResourceIndex(String resName) {
         try {
             URL url = new URL(resName);
-            String hostIndex = getHostIndex(url);
+            Set<String> hostIndexes = new HashSet<String>();
+            hostIndexes.add(getHostIndex(url));
+
+            Set<String> pathIndexes = new HashSet<String>();
             String pathIndex = getPathIndex(url);
+            pathIndexes.add(pathIndex);
+
             Set<String> pathParentIndexes = getPathParentIndexes(pathIndex);
-            return new ResourceIndex(hostIndex, pathIndex, pathParentIndexes);
+
+            return new ResourceSaveIndexes(hostIndexes, pathIndexes,
+                pathParentIndexes);
         } catch (MalformedURLException e) {
-            return new ResourceIndex(resName, "", Collections.EMPTY_SET);
+            Set<String> hostIndexes = new HashSet<String>();
+            hostIndexes.add(resName);
+            return new ResourceSaveIndexes(hostIndexes, Collections.EMPTY_SET,
+                Collections.EMPTY_SET);
         }
     
     }

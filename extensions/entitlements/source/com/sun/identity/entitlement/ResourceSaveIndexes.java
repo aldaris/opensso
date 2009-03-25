@@ -1,4 +1,4 @@
-/** 
+/**
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
  * Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
@@ -22,33 +22,47 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStoreEntry.java,v 1.2 2009-03-25 06:42:52 veiming Exp $
+ * $Id: ResourceSaveIndexes.java,v 1.1 2009-03-25 06:42:51 veiming Exp $
  */
-
 package com.sun.identity.entitlement;
 
 import java.util.Set;
 
 /**
- * This class encapsulates the index entry in data store
+ *
+ * @author dennis
  */
-public class DataStoreEntry {
-    private String name;
-    private Object object;
-    
-    public DataStoreEntry(
-        String name,
-        Object object
+public class ResourceSaveIndexes {
+    private Set<String> hostIndexes;
+    private Set<String> pathIndexes;
+    private Set<String> parentPath;
+
+    public ResourceSaveIndexes(
+        Set<String> hostIndexes,
+        Set<String> pathIndexes,
+        Set<String> parentPath
     ) {
-        this.name = name;
-        this.object = object;
+        this.hostIndexes = hostIndexes;
+        this.pathIndexes = pathIndexes;
+        this.parentPath = parentPath;
     }
 
-    public String getName() {
-        return name;
+    public Set<String> getHostIndexes() {
+        return hostIndexes;
     }
 
-    public Object getObject() {
-        return object;
+    public Set<String> getParentPath() {
+        return parentPath;
     }
+
+    public Set<String> getPathIndexes() {
+        return pathIndexes;
+    }
+
+    public void addAll(ResourceSaveIndexes other) {
+        this.hostIndexes.addAll(other.hostIndexes);
+        this.pathIndexes.addAll(other.pathIndexes);
+        this.parentPath.addAll(other.parentPath);
+    }
+
 }

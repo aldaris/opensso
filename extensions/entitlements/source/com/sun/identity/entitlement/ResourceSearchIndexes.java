@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStoreEntry.java,v 1.2 2009-03-25 06:42:52 veiming Exp $
+ * $Id: ResourceSearchIndexes.java,v 1.1 2009-03-25 06:42:51 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -30,25 +30,32 @@ package com.sun.identity.entitlement;
 import java.util.Set;
 
 /**
- * This class encapsulates the index entry in data store
+ * This class encapsulates the result of resource splitting.
  */
-public class DataStoreEntry {
-    private String name;
-    private Object object;
+public class ResourceSearchIndexes {
+    private Set<String> hostIndexes;
+    private Set<String> pathIndexes;
+    private String path;
     
-    public DataStoreEntry(
-        String name,
-        Object object
+    public ResourceSearchIndexes(
+        Set<String> hostIndexes,
+        Set<String> pathIndexes,
+        String path
     ) {
-        this.name = name;
-        this.object = object;
+        this.hostIndexes = hostIndexes;
+        this.pathIndexes = pathIndexes;
+        this.path = path;
     }
 
-    public String getName() {
-        return name;
+    public Set<String> getHostIndexes() {
+        return hostIndexes;
     }
 
-    public Object getObject() {
-        return object;
+    public String getPath() {
+        return path;
+    }
+
+    public Set<String> getPathIndexes() {
+        return pathIndexes;
     }
 }

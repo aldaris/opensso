@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexDataStore.java,v 1.13 2009-03-03 20:40:14 veiming Exp $
+ * $Id: PolicyIndexDataStore.java,v 1.14 2009-03-25 06:42:55 veiming Exp $
  */
 
 package com.sun.identity.sm;
@@ -33,6 +33,9 @@ import com.iplanet.sso.SSOToken;
 import com.sun.identity.entitlement.DataStoreEntry;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.IPolicyIndexDataStore;
+import com.sun.identity.entitlement.Privilege;
+import com.sun.identity.entitlement.ResourceSaveIndexes;
+import com.sun.identity.entitlement.ResourceSearchIndexes;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.encode.Base64;
 import java.io.ByteArrayInputStream;
@@ -47,6 +50,7 @@ import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -81,9 +85,7 @@ public class PolicyIndexDataStore implements  IPolicyIndexDataStore {
      */
     public void add(
         String name, 
-        Set<String> hostIndexes,
-        Set<String> pathIndexes,
-        Set<String> pathParentIndexes,
+        ResourceSaveIndexes indexes,
         Serializable policy
     ) throws EntitlementException {
         Object[] params = {SMSEntry.getRootSuffix(), name};
@@ -98,13 +100,13 @@ public class PolicyIndexDataStore implements  IPolicyIndexDataStore {
             Set<String> searchable = new HashSet<String>();
             map.put(SMSEntry.ATTR_XML_KEYVAL, searchable);
             
-            for (String i : hostIndexes) {
+            for (String i : indexes.getHostIndexes()) {
                 searchable.add(HOST_INDEX_KEY + "=" + i);
             }
-            for (String i : pathIndexes) {
+            for (String i : indexes.getPathIndexes()) {
                 searchable.add(PATH_INDEX_KEY + "=" + i);
             }
-            for (String i : pathParentIndexes) {
+            for (String i : indexes.getParentPath()) {
                 searchable.add(PATH_PARENT_INDEX_KEY + "=" + i);
             }
             
@@ -259,16 +261,13 @@ public class PolicyIndexDataStore implements  IPolicyIndexDataStore {
      * @return a set of datastore entry object.
      * @throws EntitlementException if search operation fails.
      */
-    public Set<DataStoreEntry> search(
-        Set<String> hostIndexes,
-        Set<String> pathIndexes,
-        String pathParent
-    ) throws EntitlementException {
+    public Iterator<Privilege> search(ResourceSearchIndexes indexes)
+        throws EntitlementException {
         Set<DataStoreEntry> results = new HashSet<DataStoreEntry>();
 
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
-        
+        /* TOFIX
         try {
             Map<String, Map<String, Set<String>>> matched = getMatchingDNs(
                 adminToken, hostIndexes, pathIndexes, pathParent);
@@ -291,11 +290,11 @@ public class PolicyIndexDataStore implements  IPolicyIndexDataStore {
                     getAttributes(setSearchable, PATH_INDEX_KEY),
                     pp, deserializeObject(ser)));
             }
-
-            return results;
-        } catch (SSOException e) {
+*/
+            return null;
+        /*} catch (SSOException e) {
             throw new EntitlementException(10, null, e);
-        }
+        } */
     }
     
     private Set<String> getAttributes(Set<String> set, String key) {

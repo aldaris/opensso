@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.17 2009-03-16 22:06:38 dillidorai Exp $
+ * $Id: Entitlement.java,v 1.18 2009-03-25 06:42:52 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -62,12 +62,13 @@ import org.json.JSONObject;
 public class Entitlement {
 
     private String name;
-    private String serviceName;
+    private String applicationName;
     private String resourceName;
     private Set<String> excludedResourceNames;
     private Map<String, Object> actionValues;
     private Map<String, String> advices;
     private Map<String, Set<String>> attributes;
+    private Application application;
 
     /**
      * Creates an entitlement object with default service name.
@@ -89,15 +90,15 @@ public class Entitlement {
     /**
      * Creates an entitlement object.
      *
-     * @param serviceName Service name.
+     * @param applicationName Application name.
      * @param resourceName Resource name.
      * @param actionNames Set of action names.
      */
     public Entitlement(
-            String serviceName,
-            String resourceName,
-            Set<String> actionNames) {
-        this.serviceName = serviceName;
+        String applicationName,
+        String resourceName,
+        Set<String> actionNames) {
+        this.applicationName =  applicationName;
         setResourceName(resourceName);
         setActionNames(actionNames);
     }
@@ -118,15 +119,15 @@ public class Entitlement {
     /**
      * Creates an entitlement object.
      *
-     * @param serviceName Service name.
+     * @param applicationName Application name.
      * @param resourceName Resource name.
      * @param actionValues Map of action name to set of values.
      */
     public Entitlement(
-            String serviceName,
+            String applicationName,
             String resourceName,
             Map<String, Object> actionValues) {
-        this.serviceName = serviceName;
+        this.applicationName = applicationName;
         setResourceName(resourceName);
         setActionValues(actionValues);
     }
@@ -185,12 +186,21 @@ public class Entitlement {
     }
 
     /**
-     * Returns service name.
+     * Returns application name.
      *
-     * @return service name.
+     * @return application name.
      */
-    public String getServiceName() {
-        return serviceName;
+    public String getApplicationName() {
+        return applicationName;
+    }
+
+    /**
+     * Sets application name.
+     *
+     * @param applicationName application name.
+     */
+    public void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
     }
 
     /**
@@ -349,7 +359,7 @@ public class Entitlement {
     public JSONObject toJSONObject() throws JSONException {
         JSONObject jo = new JSONObject();
         jo.put("name", name);
-        jo.put("serviceName", serviceName);
+        jo.put("serviceName", applicationName);
         jo.put("resourceName", resourceName);
         jo.put("excludedResourceNames", excludedResourceNames);
         jo.put("actionsValues", actionValues);
@@ -386,15 +396,15 @@ public class Entitlement {
             }
         }
         
-        if (serviceName == null) {
-            if (object.getServiceName() != null) {
+        if (applicationName == null) {
+            if (object.getApplicationName() != null) {
                 equalled = false;
             }
         } else { // serviceName not null
 
-            if ((object.getServiceName()) != null) {
+            if ((object.getApplicationName()) != null) {
                 equalled = false;
-            } else if (!serviceName.equals(object.getServiceName())) {
+            } else if (!applicationName.equals(object.getApplicationName())) {
                 equalled = false;
             }
         }
@@ -480,8 +490,8 @@ public class Entitlement {
         if (name != null) {
             code += name.hashCode();
         }
-        if (serviceName != null) {
-            code += serviceName.hashCode();
+        if (applicationName != null) {
+            code += applicationName.hashCode();
         }
         if (resourceName != null) {
             code += resourceName.hashCode();
@@ -499,5 +509,22 @@ public class Entitlement {
             code += attributes.hashCode();
         }
         return code;
+    }
+
+    public ResourceSearchIndexes getResourceSearchIndexes() {
+        return getApplication().getApplicationType().getResourceSearchIndex(
+                resourceName);
+    }
+
+    public ResourceSaveIndexes getResourceSaveIndexes() {
+        return getApplication().getApplicationType().getResourceSaveIndex(
+                resourceName);
+    }
+    
+    private Application getApplication() {
+        if (application == null) {
+            application = ApplicationManager.getApplication(applicationName);
+        }
+        return application;
     }
 }

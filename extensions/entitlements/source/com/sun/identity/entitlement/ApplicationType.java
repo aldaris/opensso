@@ -1,4 +1,4 @@
-/** 
+/**
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
  * Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
@@ -22,33 +22,28 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStoreEntry.java,v 1.2 2009-03-25 06:42:52 veiming Exp $
+ * $Id: ApplicationType.java,v 1.1 2009-03-25 06:42:51 veiming Exp $
  */
-
 package com.sun.identity.entitlement;
 
 import java.util.Set;
 
 /**
- * This class encapsulates the index entry in data store
+ *
+ * @author dennis
  */
-public class DataStoreEntry {
+public abstract class ApplicationType {
     private String name;
-    private Object object;
-    
-    public DataStoreEntry(
-        String name,
-        Object object
-    ) {
+    private Set<String> actions;
+
+    public ApplicationType(String name, Set<String> actions) {
         this.name = name;
-        this.object = object;
+        this.actions = actions;
     }
 
-    public String getName() {
-        return name;
-    }
+    public abstract ResourceSearchIndexes getResourceSearchIndex(
+            String resource);
 
-    public Object getObject() {
-        return object;
-    }
+    public abstract ResourceSaveIndexes getResourceSaveIndex(String resource);
+
 }

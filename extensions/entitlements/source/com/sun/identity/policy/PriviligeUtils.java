@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PriviligeUtils.java,v 1.26 2009-03-25 00:18:57 dillidorai Exp $
+ * $Id: PriviligeUtils.java,v 1.27 2009-03-25 06:42:54 veiming Exp $
  */
 package com.sun.identity.policy;
 
@@ -39,8 +39,8 @@ import com.sun.identity.entitlement.OrSubject;
 import com.sun.identity.entitlement.NotSubject;
 import com.sun.identity.entitlement.OrCondition;
 import com.sun.identity.entitlement.AndCondition;
+import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.EntitlementException;
-import com.sun.identity.entitlement.Privilige;
 import com.sun.identity.entitlement.ResourceAttributes;
 import com.sun.identity.entitlement.StaticAttributes;
 import com.sun.identity.entitlement.TimeCondition;
@@ -64,7 +64,7 @@ import java.util.Set;
 
 /**
  * Class with utility methods to map from
- * <code>com.sun.identity.entity.Privilige</code>
+ * <code>com.sun.identity.entity.Privilege</code>
  * to
  * </code>com.sun.identity.policy.Policy</code>
  */
@@ -79,14 +79,13 @@ public class PriviligeUtils {
     }
 
     /**
-     * Maps a OpenSSO Policy to entitlement Privilige
+     * Maps a OpenSSO Policy to entitlement Privilege
      * @param policy OpenSSO Policy object
-     * @return entitlement Privilige object
+     * @return entitlement Privilege object
      * @throws com.sun.identity.policy.PolicyException if the mapping fails
      */
-    public static Privilige policyToPrivilige(Policy policy)
+    public static Privilege policyToPrivilige(Policy policy)
             throws PolicyException, EntitlementException {
-
         if (policy == null) {
             return null;
         }
@@ -142,7 +141,7 @@ public class PriviligeUtils {
         }
         Set<ResourceAttributes> resourceAttributesSet = nrpsToResourceAttributes(nrps);
 
-        Privilige privilige = new Privilige(policyName, entitlements, eSubject,
+        Privilege privilige = new Privilege(policyName, entitlements, eSubject,
                 eCondition, resourceAttributesSet);
         return privilige;
     }
@@ -326,7 +325,7 @@ public class PriviligeUtils {
         return raSet;
     }
 
-    public static Policy priviligeToPolicy(Privilige privilige)
+    public static Policy priviligeToPolicy(Privilege privilige)
             throws PolicyException, SSOException {
         Policy policy = null;
         policy = new Policy(privilige.getName());
@@ -386,7 +385,7 @@ public class PriviligeUtils {
     private static Rule entitlementToRule(Entitlement entitlement)
             throws PolicyException {
         String ruleName = entitlement.getName();
-        String serviceName = entitlement.getServiceName();
+        String serviceName = entitlement.getApplicationName();
         String resourceName = entitlement.getResourceName();
         Map actionValues = entitlement.getActionValues();
         Rule rule = new Rule(ruleName, serviceName, resourceName, actionValues);
