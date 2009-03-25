@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SAMLv2NameIdMngtTests.java,v 1.5 2009-01-27 00:14:09 nithyas Exp $
+ * $Id: SAMLv2NameIdMngtTests.java,v 1.6 2009-03-25 19:42:48 mrudulahg Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -231,6 +231,8 @@ public class SAMLv2NameIdMngtTests extends TestCommon {
         Iterator attIterator;
         String fednameidkey = null;
         String fednameinfo = null;
+        String fednameidkeyNew = null;
+        String fednameinfoNew = null;
         String nidnamekey = null;
         String nidnameinfo = null;
         try {
@@ -254,7 +256,7 @@ public class SAMLv2NameIdMngtTests extends TestCommon {
                         "federate users");
                 assert false;
             }
-            Thread.sleep(15000);
+            Thread.sleep(10000);
             attrMap = idmc.getIdentityAttributes(spuser, realm);
             Set kattrSet = (Set) attrMap.get("sun-fm-saml2-nameid-infokey");
             for (Iterator itr = kattrSet.iterator(); itr.hasNext();) {
@@ -268,7 +270,7 @@ public class SAMLv2NameIdMngtTests extends TestCommon {
             log(Level.FINEST, "nameIdMgntProfileTest", "FIRSTSSO" + fednameinfo);
             String sphttp = SAMLv2Common.getTerminateURL(termInit, termBind,
                     configMap);
-            Thread.sleep(15000);
+            Thread.sleep(10000);
             // Terminate
             URL turl = new URL(sphttp);
             HtmlPage page = (HtmlPage)webClient.getPage(turl);
@@ -277,16 +279,42 @@ public class SAMLv2NameIdMngtTests extends TestCommon {
                         "Terminate");
                 assert false;
             }
-            Thread.sleep(15000);
+            Thread.sleep(35000);
+            attrMap = idmc.getIdentityAttributes(spuser, realm);
+            if (attrMap.containsKey("sun-fm-saml2-nameid-infokey")) {
+                Set kattrSetSecond = (Set) attrMap.get("sun-fm-saml2-nameid-infokey");
+                for (Iterator itr = kattrSetSecond.iterator(); itr.hasNext();) {
+                    fednameidkeyNew = (String) itr.next();
+                }
+            }
+            if (attrMap.containsKey("sun-fm-saml2-nameid-info")) {
+            Set iattrSetNew = (Set) attrMap.get("sun-fm-saml2-nameid-info");
+                for (Iterator itr = iattrSetNew.iterator(); itr.hasNext();) {
+                    fednameinfoNew = (String) itr.next();
+                }
+            }
+            log(Level.FINEST, "nameIdMgntProfileTest", "After termintation " +
+                    "fednameidkey: " + fednameidkeyNew);
+            log(Level.FINEST, "nameIdMgntProfileTest", "After termintation " +
+                    "fednameinfoNew: " + fednameinfoNew);
+
             // Single Signon
+            log(Level.FINEST, "nameIdMgntProfileTest", "Before SSO SP page : " +
+                    webClient.getPage(spurl).getWebResponse().
+                    getContentAsString());
+            log(Level.FINEST, "nameIdMgntProfileTest", "Before SSO IDP page: " +
+                    webClient.getPage(idpurl).getWebResponse().
+                    getContentAsString());
             URL surl = new URL(fedSSOURL);
             HtmlPage spage = (HtmlPage)webClient.getPage(surl);
             if(!spage.getWebResponse().getContentAsString().contains(ssopage)) {
                 log(Level.SEVERE, "nameIdMgntProfileTest", "Failed" +
                         "SSO after termination");
+                log(Level.FINE, "nameIdMgntProfileTest", "Page received: " +
+                        spage.getWebResponse().getContentAsString());
                 assert false;
             }
-            Thread.sleep(15000);
+            Thread.sleep(10000);
             //NewID Request
             String newIdURL = SAMLv2Common.getNewIDRequestURL(newIdInit,
                     newIdBind, configMap);
