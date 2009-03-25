@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PriviligeUtils.java,v 1.25 2009-03-24 19:18:03 dillidorai Exp $
+ * $Id: PriviligeUtils.java,v 1.26 2009-03-25 00:18:57 dillidorai Exp $
  */
 package com.sun.identity.policy;
 
@@ -39,6 +39,7 @@ import com.sun.identity.entitlement.OrSubject;
 import com.sun.identity.entitlement.NotSubject;
 import com.sun.identity.entitlement.OrCondition;
 import com.sun.identity.entitlement.AndCondition;
+import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.Privilige;
 import com.sun.identity.entitlement.ResourceAttributes;
 import com.sun.identity.entitlement.StaticAttributes;
@@ -84,7 +85,7 @@ public class PriviligeUtils {
      * @throws com.sun.identity.policy.PolicyException if the mapping fails
      */
     public static Privilige policyToPrivilige(Policy policy)
-            throws PolicyException {
+            throws PolicyException, EntitlementException {
 
         if (policy == null) {
             return null;
@@ -131,7 +132,7 @@ public class PriviligeUtils {
 
         Set rpNames = policy.getResponseProviderNames();
         Set nrps = new HashSet();
-        for (Object rpNameObj : nrps) {
+        for (Object rpNameObj : rpNames) {
             String rpName = (String) rpNameObj;
             ResponseProvider rp = policy.getResponseProvider(rpName);
             Object[] nrp = new Object[2];
@@ -139,7 +140,7 @@ public class PriviligeUtils {
             nrp[1] = rp;
             nrps.add(nrp);
         }
-        Set<ResourceAttributes> resourceAttributesSet = nrpsToEResourceAttributesSet(nrps);
+        Set<ResourceAttributes> resourceAttributesSet = nrpsToResourceAttributes(nrps);
 
         Privilige privilige = new Privilige(policyName, entitlements, eSubject,
                 eCondition, resourceAttributesSet);
@@ -312,9 +313,17 @@ public class PriviligeUtils {
         return valueObj.toString();
     }
 
-    private static Set<ResourceAttributes> nrpsToEResourceAttributesSet(Set nprs) {
-        //ResourceAttributes era = nrpsToEResourceAttributes(nrps);
-        return null;
+    private static Set<ResourceAttributes> nrpsToEResourceAttributesSet(Set nrps) {
+        Set raSet = new HashSet();
+        for (Object nrpaObj : nrps) {
+            Object[] nrpa = (Object[]) nrpaObj;
+            String raName = (String) nrpa[0];
+            ResponseProvider rp = (ResponseProvider) nrpa[1];
+            if (rp instanceof com.sun.identity.policy.plugins.IDRepoResponseProvider) {
+            }
+            raSet.add(rp);
+        }
+        return raSet;
     }
 
     public static Policy priviligeToPolicy(Privilige privilige)
@@ -718,8 +727,78 @@ public class PriviligeUtils {
         return null;
     }
 
-    private static Set<ResourceAttributes> responseProvidersToResourceAttributes() {
-        return null;
+    private static Set<ResourceAttributes> nrpsToResourceAttributes(
+            Set nrps) throws EntitlementException {
+        Set<ResourceAttributes> resourceAttributesSet = new HashSet();
+        if (nrps != null && !nrps.isEmpty()) {
+            for (Object nrpObj : nrps) {
+                Object[] nrpa = (Object[])nrpObj;
+                String nrpName = (String)nrpa[0];
+                ResponseProvider rp = (ResponseProvider) nrpa[1];
+                if (rp instanceof IDRepoResponseProvider) {
+                    IDRepoResponseProvider irp = (IDRepoResponseProvider) rp;
+                    Map props = irp.getProperties();
+                    if (props != null) {
+                        Set sas = (Set) props.get(irp.STATIC_ATTRIBUTE);
+                        if (sas != null && !sas.isEmpty()) {
+                            StaticAttributes sa = new StaticAttributes();
+                            Map saprops = new HashMap();
+                            for (Object obj : sas) {
+                                String sat = (String) obj;
+                                int i = sat.indexOf("=");
+                                String name = null;
+                                String value = null;
+                                if (i > 0) {
+                                    name = sat.substring(i);
+                                    value = sat.substring(i, sat.length());
+                                } else {
+                                    name = sat;
+                                    value = null;
+                                }
+                                Set values = (Set) saprops.get(name);
+                                if (values == null) {
+                                    values = new HashSet();
+                                }
+                                values.add(value);
+                                saprops.put(name, values);
+                            }
+                            sa.setProperties(saprops);
+                            sa.setPResponseProviderName(nrpName);
+                            resourceAttributesSet.add(sa);
+                        }
+                        Set uas = (Set) props.get(irp.DYNAMIC_ATTRIBUTE);
+                        if (uas != null && !uas.isEmpty()) {
+                            UserAttributes ua = new UserAttributes();
+                            Map uaprops = new HashMap();
+                            for (Object obj : uas) {
+                                String uat = (String) obj;
+                                int i = uat.indexOf("=");
+                                String name = null;
+                                String value = null;
+                                if (i > 0) {
+                                    name = uat.substring(i);
+                                    value = uat.substring(i, uat.length());
+                                } else {
+                                    name = uat;
+                                    value = null;
+                                }
+                                Set values = (Set) uaprops.get(name);
+                                if (values == null) {
+                                    values = new HashSet();
+                                }
+                                values.add(value);
+                                uaprops.put(name, values);
+                            }
+                            ua.setProperties(uaprops);
+                            ua.setPResponseProviderName(nrpName);
+                            resourceAttributesSet.add(ua);
+                        }
+                    }
+                }
+
+            }
+        }
+        return resourceAttributesSet;
     }
 
     private static List resourceAttributesToResponseProviders(
@@ -745,12 +824,14 @@ public class PriviligeUtils {
                                     String value = (String) valueObj;
                                     newValues.add(name + "=" + value);
                                 }
+
                             }
                             if (!newValues.isEmpty()) {
                                 Map newProps = new HashMap();
                                 newProps.put(rp.STATIC_ATTRIBUTE, newValues);
                                 rp.setProperties(newProps);
                             }
+
                         }
                         arr[1] = rp;
                         nrps.add(arr);
@@ -773,11 +854,13 @@ public class PriviligeUtils {
                             if (values != null && !values.isEmpty()) {
                                 value = (String) values.iterator().next();
                             }
+
                             String newValue = name;
                             if (value != null) {
                                 newValue = name + "=" + value;
 
                             }
+
                             newValues.add(newValue);
                             if (!newValues.isEmpty()) {
                                 Map newProps = new HashMap();
@@ -789,6 +872,7 @@ public class PriviligeUtils {
                                 rp.initialize(configParams);
                                 rp.setProperties(newProps);
                             }
+
                         }
                     }
                     arr[1] = rp;
@@ -796,6 +880,7 @@ public class PriviligeUtils {
 
                     nrps.add(arr);
                 }
+
             }
         }
         return nrps;
@@ -809,6 +894,7 @@ public class PriviligeUtils {
         if (obj == null) {
             return null;
         }
+
         Set set = new HashSet();
         set.add(obj);
         return set;
