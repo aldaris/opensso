@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build.xml,v 1.44 2009-01-29 18:16:42 veiming Exp $
+   $Id: build.xml,v 1.45 2009-03-25 00:10:48 kevinserwin Exp $
 
 -->
 
@@ -265,7 +265,7 @@
     
     <target name="create-version"> 
         <tstamp>
-            <format property="war.time.stamp" pattern="yyyyMMddhhmm"/>
+            <format property="war.time.stamp" pattern="yyyyMMddHHmm"/>
         </tstamp>       
         <condition property="version.set" value="${opensso.enterprise} Build ${build.number.set}" >
             <isset property="build.enterprise"/>
