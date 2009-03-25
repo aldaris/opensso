@@ -23,7 +23,7 @@
         <parameter name="idp_enc_type" value="DES"/>
         <parameter name="idp_enc_str" value="56"/>
         <parameter name="sp_enc_type" value="DES"/>
-        <parameter name="sp_enc_str" value="64"/>
+        <parameter name="sp_enc_str" value="56"/>
         <groups>
             <run>
                 <include name="@mode@"/>
