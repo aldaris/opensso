@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.37 2009-02-03 10:46:30 kalpanakm Exp $
+ * $Id: AgentConfiguration.java,v 1.38 2009-03-26 18:29:23 ww203982 Exp $
  *
  */
 
@@ -32,6 +32,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.URL;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
@@ -52,6 +53,9 @@ import com.sun.identity.agents.util.AgentRemoteConfigUtils;
 import com.sun.identity.agents.util.ResourceReader;
 
 import com.sun.identity.common.DebugPropertiesObserver;
+import com.sun.identity.common.GeneralTaskRunnable;
+import com.sun.identity.common.SystemTimer;
+import com.sun.identity.common.TimerPool;
 import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 
@@ -758,11 +762,10 @@ public class AgentConfiguration implements
         
             //Start the Configuration Monitor if necessary
             if (!getLockConfig()) {
-                Thread monitorThread = new Thread(
-                        new ConfigurationMonitor(), "AgentConfigMonitor");
-                monitorThread.setDaemon(true);
-                monitorThread.setPriority(Thread.MIN_PRIORITY);
-                monitorThread.start();
+                GeneralTaskRunnable monitorRunnable = new
+                    ConfigurationMonitor();
+                SystemTimer.getTimer().schedule(monitorRunnable, new Date((
+                    System.currentTimeMillis() / 1000) * 1000));
             }
         }
     }
@@ -1369,7 +1372,7 @@ public class AgentConfiguration implements
     }
     
     
-    private static class ConfigurationMonitor implements Runnable {
+    private static class ConfigurationMonitor extends GeneralTaskRunnable {
 
         public ConfigurationMonitor() {
 
@@ -1378,27 +1381,30 @@ public class AgentConfiguration implements
             }
         }
 
+        public boolean isEmpty() {
+            return true;
+        }
+
+        public boolean addElement(Object obj) {
+            return false;
+        }
+
+        public boolean removeElement(Object obj) {
+            return false;
+        }
+
+        public long getRunPeriod() {
+            long interval = getModInterval();
+            if (interval == 0L) { interval = 3600000L; } // 1 hour.
+            return interval;
+        }
+
         public void run() {
 
             if(isLogMessageEnabled()) {
                 logMessage("AgentConfiguration: Monitor started");
             }
-
-            // Change this thread to be always on.
-            while(true) {
-                long interval = getModInterval();
-                if (interval == 0L) { interval = 3600000L; } // 1 hour.
-                updatePropertiesUponPolling();
-                
-                try {
-                    Thread.sleep(interval);
-                } catch(InterruptedException ex) {
-                    if(isLogMessageEnabled()) {
-                        logMessage("AgentConfiguration: Monitor interrupted",
-                                ex);
-                    }
-                }
-            }
+            updatePropertiesUponPolling();
         }
     }    
     

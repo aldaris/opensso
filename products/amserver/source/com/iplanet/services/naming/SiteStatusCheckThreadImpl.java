@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SiteStatusCheckThreadImpl.java,v 1.5 2009-02-12 00:39:54 beomsuk Exp $
+ * $Id: SiteStatusCheckThreadImpl.java,v 1.6 2009-03-26 18:29:22 ww203982 Exp $
  *
  */
 
@@ -42,6 +42,9 @@ import com.sun.identity.common.HttpURLConnectionManager;
 import com.sun.identity.shared.debug.Debug;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.services.naming.WebtopNaming.SiteStatusCheck;
+import com.sun.identity.common.GeneralTaskRunnable;
+import com.sun.identity.common.SystemTimer;
+import com.sun.identity.common.TimerPool;
 import com.sun.identity.shared.Constants;
 
 /**
@@ -98,13 +101,14 @@ public class SiteStatusCheckThreadImpl implements SiteStatusCheck {
                 if (checker != null) {
                      return checker;
                 }
-                checker = new URLChecker(getThreadName(url), url);
+                checker = new URLChecker(url);
                 urlCheckers.put(getThreadName(url), checker);
                 checker.check();
             }
-            checker.start();
+            SystemTimer.getTimer().schedule(checker, new Date(((
+                System.currentTimeMillis() + urlCheckerSleep) / 1000) * 1000));
             try {
-                checker.join(timeout);
+                checker.wait(timeout);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -119,10 +123,10 @@ public class SiteStatusCheckThreadImpl implements SiteStatusCheck {
     public boolean doCheckSiteStatus(URL url)
     {
         URLChecker checker = getURLChecker(url);
-        if (checker != null && (!checker.isAlive() || checker.getStatus()
+        if (checker != null && (checker.getStatus()
             == URLStatus.STATUS_UNKNOWN)) {
-            checker.setTerminateThread(true);
-            checker.interrupt();
+            checker.cancel();
+            checker.notify();
             synchronized(urlCheckers) {
                 urlCheckers.remove(getThreadName(url));
             }
@@ -166,13 +170,11 @@ public class SiteStatusCheckThreadImpl implements SiteStatusCheck {
         }
     }
 
-    class URLChecker extends Thread {
+    class URLChecker extends GeneralTaskRunnable {
         private URL url = null;
-        private boolean terminateThread = false;
         private URLStatus urlStatus = null;
         
-        URLChecker(String threadName, URL url) {
-            super(threadName);
+        URLChecker(URL url) {
             this.url = getHealthCheckURL(url);
             setUrlStatus(new URLStatus());
         }
@@ -244,23 +246,23 @@ public class SiteStatusCheckThreadImpl implements SiteStatusCheck {
                 debug.message("URLChecker.run() : monitoring URL " +
                     url.toExternalForm());
             }
-            while (!isTerminateThread()) {
-                try {
-                    Thread.sleep(urlCheckerSleep);
-                } catch (InterruptedException e) {
-                    debug.error("URLChecker.run() : Thread is interrupted " +
-                            url.toExternalForm(), e);
-                }
-                check();
-            }
+            check();
         }
 
-        public boolean isTerminateThread() {
-            return terminateThread;
+        public long getRunPeriod() {
+            return urlCheckerSleep;
         }
 
-        public void setTerminateThread(boolean termineThread) {
-            this.terminateThread = termineThread;
+        public boolean isEmpty() {
+            return true;
+        }
+
+        public boolean addElement(Object obj) {
+            return false;
+        }
+
+        public boolean removeElement(Object obj) {
+            return false;
         }
 
         private URLStatus getUrlStatus() {

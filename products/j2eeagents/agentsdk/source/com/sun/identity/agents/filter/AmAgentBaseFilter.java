@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmAgentBaseFilter.java,v 1.5 2009-01-30 11:50:17 kalpanakm Exp $
+ * $Id: AmAgentBaseFilter.java,v 1.6 2009-03-26 18:29:23 ww203982 Exp $
  *
  */
 
@@ -45,6 +45,7 @@ import com.sun.identity.agents.arch.AgentConfiguration;
 import com.sun.identity.agents.arch.AgentException;
 import com.sun.identity.agents.arch.ISystemAccess;
 import com.sun.identity.agents.common.IHttpServletRequestHelper;
+import com.sun.identity.common.ShutdownManager;
 
 
 /**
@@ -147,8 +148,14 @@ public abstract class AmAgentBaseFilter implements Filter
     }
 
     public void destroy() {
-
-        // No handling required
+        ShutdownManager shutdownMan = ShutdownManager.getInstance();
+        if (shutdownMan.acquireValidLock()) {
+            try {
+                shutdownMan.shutdown();
+            } finally {
+                shutdownMan.releaseLockAndNotify();
+            }
+        }
     }
     
     public void init(FilterConfig filterConfig) {
