@@ -17,7 +17,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TestCommon.java,v 1.74 2009-03-04 17:03:46 rmisra Exp $
+ * $Id: TestCommon.java,v 1.75 2009-03-26 14:42:39 cmwesley Exp $
  *
  * Copyright 2007 Sun Microsystems Inc. All Rights Reserved
  */
@@ -2228,6 +2228,7 @@ public class TestCommon implements TestConstants {
         String umDirectoryHost = null;
         String umDirectoryPort = null;
         String umRootSuffix = null;
+        String umBindPasswd = null;
         try {
            log(Level.FINE, "replaceAuthTags", "Retrieving value for key " +
                     keyPrefix + ".sun-idrepo-ldapv3-config-ldap-server.0");
@@ -2242,6 +2243,8 @@ public class TestCommon implements TestConstants {
                     keyPrefix + ".datastore-root-suffix.0");
            umRootSuffix = umGlobalBundle.getString(keyPrefix +
                     ".datastore-root-suffix.0").trim();
+           umBindPasswd = umGlobalBundle.getString(keyPrefix +
+                   ".sun-idrepo-ldapv3-config-authpw.0");
         } catch (MissingResourceException mre2) {
             log(Level.SEVERE, "replaceAuthTags", "Unable to retrieve values " +
                     "for one or more datastore keys");
@@ -2259,6 +2262,7 @@ public class TestCommon implements TestConstants {
         replaceVals.put("UM_DS_PORT", umDirectoryPort);
         replaceVals.put("UM_ROOT_SUFFIX", umRootSuffix);
         replaceVals.put("SM_SUFFIX", basedn);
+        replaceVals.put("UM_BIND_PASSWD", umBindPasswd);
         String directoryName = getTestBase() + moduleDir;
         log(Level.FINEST, "replaceAuthTags", "Examining files in directory " +
                     directoryName + "...");
