@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: build-session-tools.xml,v 1.4 2008-06-25 05:40:24 qcheng Exp $
+   $Id: build-session-tools.xml,v 1.5 2009-03-26 20:45:34 weisun2 Exp $
 
 -->
 
@@ -127,7 +127,7 @@
         <copy todir="${amsession.ext.dir}"
             overwrite="yes" flatten="yes" encoding="UTF-8">
             <fileset dir="${extlib.dir}"
-                includes="je.jar, mq4_1-binary-Linux_X86-20070816.jar, mq4_1-binary-SunOS_X86-20070816.jar, mq4_1-binary-SunOS-20070816.jar, mq4_1-binary-WINNT-20070816.jar"/>
+                includes="je.jar, mq4_3-Linux_X86.zip, mq4_3-SunOS_X86.zip, mq4_3-SunOS.zip, mq4_3-WINNT.zip"/>
         </copy>
         <copy todir="${amsession.locale.dir}"
             overwrite="yes" encoding="UTF-8">
@@ -174,9 +174,9 @@
             <replacefilter token="/opt/sun/identity/lib/amsfo.conf"
                 value="@DOMAIN_DIR@/config/lib/amsfo.conf"/>
             <replacefilter token="JMQ_BIN_DIR=/usr/bin"
-                value="JMQ_BIN_DIR=@BASE_DIR@/jmq/mq/bin"/>
+                value="JMQ_BIN_DIR=@BASE_DIR@/jmq/imq/bin"/>
             <replacefilter token="JMQ_BIN_DIR=/opt/sun/mq/bin"
-                value="JMQ_BIN_DIR=@BASE_DIR@/jmq/mq/bin"/>
+                value="JMQ_BIN_DIR=@BASE_DIR@/jmq/imq/bin"/>
         </replace>
         <replace file="${amsession.unix.bin.dir}/amsfopassword.template"
             encoding="UTF-8">
@@ -201,25 +201,25 @@
             <replacefilter token="AM_HOME_LINUX=/opt/sun/identity"
                 value="AM_HOME_LINUX=@BASE_DIR@"/>
             <replacefilter token="IMQ_JAR_PATH=/usr/share/lib"
-                value="IMQ_JAR_PATH=@BASE_DIR@/jmq/mq/lib"/>
+                value="IMQ_JAR_PATH=@BASE_DIR@/jmq/imq/lib"/>
             <replacefilter token="JMS_JAR_PATH=/usr/share/lib"
-                value="JMS_JAR_PATH=@BASE_DIR@/jmq/mq/lib"/>
+                value="JMS_JAR_PATH=@BASE_DIR@/jmq/imq/lib"/>
             <replacefilter token="BDB_JAR_PATH=/usr/share/bdb"
                 value="BDB_JAR_PATH=@BDB_DIR@/lib"/>
             <replacefilter token="BDB_SO_PATH=/usr/lib"
                 value="BDB_SO_PATH=@BDB_DIR@/lib"/>
             <replacefilter token="IMQ_JAR_PATH=/opt/sun/mq/share/lib"
-                value="IMQ_JAR_PATH=@BASE_DIR@/jmq/mq/lib"/>
+                value="IMQ_JAR_PATH=@BASE_DIR@/jmq/imq/lib"/>
             <replacefilter token="JMS_JAR_PATH=/opt/sun/mq/share/lib"
-                value="JMS_JAR_PATH=@BASE_DIR@/jmq/mq/lib"/>
+                value="JMS_JAR_PATH=@BASE_DIR@/jmq/imq/lib"/>
             <replacefilter token="BDB_JAR_PATH=/usr/share"
                 value="BDB_JAR_PATH=@BDB_DIR@/lib"/>
             <replacefilter token="BDB_SO_PATH=/opt/sun/private/lib"
                 value="BDB_SO_PATH=@BDB_DIR@/lib"/>
             <replacefilter token="IMQ_JAR_PATH=/opt/sun/mq/share/lib"
-                value="IMQ_JAR_PATH=@BASE_DIR@/jmq/mq/lib"/>
+                value="IMQ_JAR_PATH=@BASE_DIR@/jmq/imq/lib"/>
             <replacefilter token="JMS_JAR_PATH=/opt/sun/mq/share/lib"
-                value="JMS_JAR_PATH=@BASE_DIR@/jmq/mq/lib"/>
+                value="JMS_JAR_PATH=@BASE_DIR@/jmq/imq/lib"/>
             <replacefilter token="BDB_JAR_PATH=/opt/sun/share/lib/bdb"
                 value="BDB_JAR_PATH=@BDB_DIR@/lib"/>
             <replacefilter token="BDB_SO_PATH=/opt/sun/private/lib"
@@ -260,7 +260,7 @@
             <replacefilter token="JDK_PATH" value="@JDK_PATH@"/>
             <replacefilter token="BASEDIR/PRODUCT_DIR" value="@BASE_DIR@"/>
             <replacefilter token="%AM_HOME%/../MessageQueue/lib"
-                value="@BASE_DIR@/jmq/mq/lib"/>
+                value="@BASE_DIR@/jmq/imq/lib"/>
             <replacefilter token="%AM_HOME%/../share/lib"
                 value="@BASE_DIR@/bdb/bdb/lib"/>
         </replace>                
@@ -277,7 +277,7 @@
             <replacefilter token="&quot;/tmp/amsession/logs&quot;"
                 value="/tmp/amsession/logs"/>
             <replacefilter token="JMQ_INSTALL_DIR="
-                value="JMQ_INSTALL_DIR=@BASE_DIR@/jmq/mq"/>
+                value="JMQ_INSTALL_DIR=@BASE_DIR@/jmq/imq"/>
             <replacefilter token="JAVA_HOME=" value="JAVA_HOME=@JDK_PATH@"/>
             <replacefilter token="PASSWORDFILE=$AM_HOME_DIR/.password"
                 value="PASSWORDFILE=@DOMAIN_DIR@/.password"/>
