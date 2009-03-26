@@ -68,7 +68,10 @@ public class PolicyCreateWizardHandler
         // conditions
         cleanConditions();
         ViewCondition conditionTree = buildConditionExpression(pcwb.getViewConditions());
-        EntitlementCondition eCondition = conditionTree.getEntitlementCondition();
+        EntitlementCondition eCondition = null;
+        if (conditionTree != null) {
+            eCondition = conditionTree.getEntitlementCondition();
+        }
 
         // resource attrs
         // TODO
@@ -131,7 +134,9 @@ public class PolicyCreateWizardHandler
     }
 
     private ViewCondition buildConditionTree(Stack<ViewCondition> output) {
-        assert (output.size() != 0);
+        if (output.size() == 0) {
+            return null;
+        }
 
         ViewCondition head = output.pop();
         if (head instanceof AndViewCondition) {

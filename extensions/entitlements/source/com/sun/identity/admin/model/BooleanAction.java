@@ -17,15 +17,13 @@ public class BooleanAction
     }
 
     public Object getValue() {
-        // TODO
-        return null;
+        return Boolean.valueOf(allow);
     }
 
     public DeepCloneable deepClone() {
         BooleanAction clone = new BooleanAction();
         clone.setName(getName());
-
-        // TODO
+        clone.setAllow(allow);
 
         return clone;
     }
