@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyPriviligeManager.java,v 1.6 2009-03-25 16:14:28 veiming Exp $
+ * $Id: PolicyPrivilegeManager.java,v 1.1 2009-03-26 16:22:02 dillidorai Exp $
  */
 package com.sun.identity.policy;
 
@@ -36,22 +36,22 @@ import java.security.AccessController;
 import javax.security.auth.Subject;
 
 /**
- * Implementaton of <code>PrivilegeManager</code> that saves priviliges
+ * Implementaton of <code>PrivilegeManager</code> that saves privileges
  * as <code>com.sun.identity.policy</code> objects
  */
-public class PolicyPriviligeManager extends PrivilegeManager {
+public class PolicyPrivilegeManager extends PrivilegeManager {
 
     PolicyManager pm;
 
     /**
-     * Creates instance of <code>PolicyPriviligeManager</code>
+     * Creates instance of <code>PolicyPrivilegeManager</code>
      */
-    public PolicyPriviligeManager() {
+    public PolicyPrivilegeManager() {
     }
 
     /**
      * Initializes the object
-     * @param subject subject that would be used for privilige management
+     * @param subject subject that would be used for privilege management
      * operations
      */
     public void initialize(Subject subject) {
@@ -66,33 +66,33 @@ public class PolicyPriviligeManager extends PrivilegeManager {
     }
 
     /**
-     * Returns a privilige
-     * @param priviligeName name for the privilige to be returned
+     * Returns a privilege
+     * @param privilegeName name for the privilege to be returned
      * @throws com.sun.identity.entitlement.EntitlementException if there is
-     * privilige could not be 
+     * an error
      */
-    public Privilege getPrivilige(String priviligeName)
+    public Privilege getPrivilege(String privilegeName)
             throws EntitlementException {
-        Privilege privilige = null;
+        Privilege privilege = null;
         try {
-            Policy policy = pm.getPolicy(priviligeName);
-            privilige = PriviligeUtils.policyToPrivilige(policy);
+            Policy policy = pm.getPolicy(privilegeName);
+            privilege = PrivilegeUtils.policyToPrivilege(policy);
         } catch (PolicyException pe) {
         } catch (SSOException ssoe) {
         }
-        return privilige;
+        return privilege;
     }
 
     /**
-     * Adds a privilige
-     * @param privilige privilige to be added
+     * Adds a privilege
+     * @param privilege privilege to be added
      * @throws com.sun.identity.entitlement.EntitlementException if the
-     * privilige could not be added
+     * privilege could not be added
      */
-    public void addPrivilige(Privilege privilige)
+    public void addPrivilege(Privilege privilege)
             throws EntitlementException {
         try {
-            Policy policy = PriviligeUtils.priviligeToPolicy(privilige);
+            Policy policy = PrivilegeUtils.privilegeToPolicy(privilege);
             pm.addPolicy(policy);
         } catch (PolicyException pe) {
         } catch (SSOException ssoe) {
@@ -100,29 +100,29 @@ public class PolicyPriviligeManager extends PrivilegeManager {
     }
 
     /**
-     * Removes a privilige
-     * @param priviligeName name of the privilige to be removed
+     * Removes a privilege
+     * @param privilegeName name of the privilege to be removed
      * @throws com.sun.identity.entitlement.EntitlementException
      */
-    public void removePrivilige(String priviligeName)
+    public void removePrivilege(String privilegeName)
             throws EntitlementException {
         try {
-            pm.removePolicy(priviligeName);
+            pm.removePolicy(privilegeName);
         } catch (PolicyException pe) {
         } catch (SSOException ssoe) {
         }
     }
 
     /**
-     * Modifies a privilige
-     * @param privilige the privilige to be modified
+     * Modifies a privilege
+     * @param privilege the privilege to be modified
      * @throws com.sun.identity.entitlement.EntitlementException
      */
-    public void modifyPrivilige(Privilege privilige)
+    public void modifyPrivilege(Privilege privilege)
             throws EntitlementException {
         try {
-            pm.removePolicy(privilige.getName());
-            pm.addPolicy(PriviligeUtils.priviligeToPolicy(privilige));
+            pm.removePolicy(privilege.getName());
+            pm.addPolicy(PrivilegeUtils.privilegeToPolicy(privilege));
         } catch (PolicyException pe) {
         } catch (SSOException ssoe) {
         }
