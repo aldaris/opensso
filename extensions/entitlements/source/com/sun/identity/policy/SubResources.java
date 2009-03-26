@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubResources.java,v 1.15 2009-03-25 16:14:28 veiming Exp $
+ * $Id: SubResources.java,v 1.16 2009-03-26 22:50:10 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -152,8 +152,8 @@ public class SubResources implements Runnable {
     
     private Set<Policy> search(ResourceSearchIndexes indexes){
         Set<Policy> searchResults  = new HashSet<Policy>();
-        IIndexCache cache = parent.getIndexCache();
-        cache.getPolicies(indexes, searchResults, null);
+//        IIndexCache cache = parent.getIndexCache();
+//        cache.getPolicies(indexes, searchResults, null);
         return searchResults;
     }
 

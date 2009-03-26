@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSDataStoreAdaptor.java,v 1.1 2009-03-26 17:02:27 veiming Exp $
+ * $Id: SMSDataStoreAdaptor.java,v 1.2 2009-03-26 22:50:10 veiming Exp $
  */
 
 package com.sun.identity.sm;
@@ -236,8 +236,8 @@ public class SMSDataStoreAdaptor  {
             }
         }
 
-        if (indexes.getPath() != null) {
-            for (String p : indexes.getPath()) {
+        if (indexes.getParentPathIndexes() != null) {
+            for (String p : indexes.getParentPathIndexes()) {
                 Object[] o = {p};
                 filter.append(MessageFormat.format(
                     PATH_PARENT_FILTER_TEMPLATE, o));

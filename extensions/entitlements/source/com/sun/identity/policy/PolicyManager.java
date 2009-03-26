@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManager.java,v 1.1 2009-02-18 06:29:37 veiming Exp $
+ * $Id: PolicyManager.java,v 1.2 2009-03-26 22:50:10 veiming Exp $
  *
  */
 
@@ -572,11 +572,11 @@ public final class PolicyManager {
             //create the policy entry
             namedPolicy.addSubConfig(policy.getName(),
                 NAMED_POLICY_ID, 0, attrs);
-            PolicyIndexer.store(policy);
-        } catch (EntitlementException e) {
+            //TOFIX PolicyIndexer.store(policy);
+/*        } catch (EntitlementException e) {
             String[] objs = { policy.getName(), org };
             throw (new PolicyException(ResBundleUtils.rbName, 
-                "unable_to_add_policy", objs, e));
+                "unable_to_add_policy", objs, e)); */
         } catch (ServiceAlreadyExistsException e) {
             String[] objs = { policy.getName(), org };
             if (PolicyUtils.logStatus) {
@@ -703,14 +703,14 @@ public final class PolicyManager {
                 validateReferrals(policy);
                 policyEntry.setAttributes(attrs);
                 if (oldPolicy != null) {
-                    PolicyIndexer.delete(oldPolicy);
-                    PolicyIndexer.store(policy);
+                    //TOFIX PolicyIndexer.delete(oldPolicy);
+                    //TOFIX PolicyIndexer.store(policy);
                 }
             }
-        } catch (EntitlementException e) {
-            String[] objs = { name, org };
-            throw (new PolicyException(ResBundleUtils.rbName, 
-                "unable_to_replace_policy", objs, e));
+//        } catch (EntitlementException e) {
+//            String[] objs = { name, org };
+//            throw (new PolicyException(ResBundleUtils.rbName,
+//                "unable_to_replace_policy", objs, e));
         } catch (SMSException se) {
             String[] objs = { name, org };
             if (PolicyUtils.logStatus) {
@@ -775,7 +775,7 @@ public final class PolicyManager {
 
                 // do the removal in resources tree
                 if (policy != null) {
-                    PolicyIndexer.delete(policy);
+                    //TOFIX PolicyIndexer.delete(policy);
                 }
             }
         } catch (ServiceNotFoundException snfe) {

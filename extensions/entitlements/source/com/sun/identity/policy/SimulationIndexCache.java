@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SimulationIndexCache.java,v 1.4 2009-03-25 16:14:28 veiming Exp $
+ * $Id: SimulationIndexCache.java,v 1.5 2009-03-26 22:50:10 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -130,7 +130,7 @@ public class SimulationIndexCache implements IIndexCache {
     ) {
         Set<Policy> cachedPoliciesForPath = new HashSet<Policy>();
         // not null for sub tree policy evaluation
-        Set<String> parentPathIndexes = indexes.getPath();
+        Set<String> parentPathIndexes = indexes.getParentPathIndexes();
         if ((parentPathIndexes != null) && !parentPathIndexes.isEmpty()) {
             for (String r : parentPathIndexes) {
                 Set<Policy> cached = (Set<Policy>) pathIndexCache.get(r);

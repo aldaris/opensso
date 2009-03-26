@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorAdaptor.java,v 1.22 2009-03-25 23:50:16 veiming Exp $
+ * $Id: PolicyEvaluatorAdaptor.java,v 1.23 2009-03-26 22:50:10 veiming Exp $
  */
 
 package com.sun.identity.policy;
 
+import com.sun.identity.entitlement.IndexCache;
 import com.sun.identity.entitlement.IIndexCache;
 import com.sun.identity.entitlement.ThreadPool;
 import com.iplanet.sso.SSOException;
@@ -345,7 +346,7 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
         String serviceTypeName,
         String resourceName,
         Map<String, Set<String>> envParameters
-    ) throws SSOException, PolicyException, EntitlementException {
+    ) throws SSOException, PolicyException, EntitlementException {/*
         Set<PolicyDecisionTask.Task> results = new
             HashSet<PolicyDecisionTask.Task>();
         ServiceType serviceType =
@@ -421,7 +422,8 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
 
         results.addAll(hitResults);
         results.addAll(missedResults);
-        return results;
+        return results;*/
+        return null;
     }
     
     private List<Entitlement> getSubTreeEntitlements(
@@ -462,7 +464,9 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
         String serviceTypeName,
         String resourceName,
         Map<String, Set<String>> envParameters
-    ) throws EntitlementException {  
+    ) throws EntitlementException {
+        return null;
+        /*
         try {
             ServiceType serviceType =
                 ServiceTypeManager.getServiceTypeManager().getServiceType(
@@ -545,7 +549,7 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
         } catch (NameNotFoundException e) {
             Object[] arg = {serviceTypeName};
             throw new EntitlementException(110, arg, e);
-        }
+        }*/
     }
 
     private Map<String, PolicyDecision> mergePolicyDecisions(
@@ -567,7 +571,7 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
         
         return result;
     }
-
+/*
     private Map<String, Set<String>> lookupCache(
         ResourceSearchIndexes comp,
         Set<Policy> policySet,
@@ -582,5 +586,5 @@ public class PolicyEvaluatorAdaptor implements IPolicyEvaluator {
 
     IIndexCache getIndexCache() {
         return IndexCache.getInstance();
-    }
+    }*/
 }
