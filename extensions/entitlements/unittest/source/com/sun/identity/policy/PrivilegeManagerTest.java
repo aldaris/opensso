@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManagerTest.java,v 1.1 2009-03-26 16:24:35 dillidorai Exp $
+ * $Id: PrivilegeManagerTest.java,v 1.2 2009-03-26 19:46:08 dillidorai Exp $
  */
 package com.sun.identity.policy;
 
@@ -32,9 +32,16 @@ import com.sun.identity.entitlement.EntitlementSubject;
 import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementCondition;
 import com.sun.identity.entitlement.IPCondition;
+import com.sun.identity.entitlement.TimeCondition;
+import com.sun.identity.entitlement.OrCondition;
+import com.sun.identity.entitlement.AndCondition;
 import com.sun.identity.entitlement.OrSubject;
+import com.sun.identity.entitlement.NotSubject;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeManager;
+import com.sun.identity.entitlement.ResourceAttributes;
+import com.sun.identity.entitlement.UserAttributes;
+import com.sun.identity.entitlement.StaticAttributes;
 import com.sun.identity.entitlement.UserSubject;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
@@ -44,7 +51,6 @@ import com.sun.identity.policy.interfaces.Subject;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.unittest.UnittestLog;
-import java.lang.String;
 import java.security.AccessController;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -61,50 +67,34 @@ import org.testng.annotations.BeforeClass;
 public class PrivilegeManagerTest {
 
     private static String SERVICE_NAME = "iPlanetAMWebAgentService";
-    private static String PRIVILIGE_NAME = "TestPrivilege";
-    private static String POLICY_NAME = "TestPolicy";
-    private static String BASE_DN = "dc=opensso,dc=java,dc=net"; //ServiceManager.getBaseDN();
+    private static String PRIVILEGE_NAME = "TestPrivilege";
+    private static String BASE_DN = ServiceManager.getBaseDN();
 
-    //@BeforeClass
+    @BeforeClass
     public void setup() throws PolicyException, SSOException, IdRepoException {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
-        PolicyManager pm = new PolicyManager(adminToken, "/");
         PrivilegeManager prm = PrivilegeManager.getInstance(null);
         try {
             // remove the policy
-            pm.removePolicy(POLICY_NAME);
-            pm.removePolicy(POLICY_NAME + "-copy");
-            prm.removePrivilege(PRIVILIGE_NAME);
+            prm.removePrivilege(PRIVILEGE_NAME);
         } catch (Exception e) {
+            // supress exception, privilege may not exist
             throw new PolicyException(e);
         }
-       
-        Policy policy = new Policy(POLICY_NAME, "test1 - discard",
-                false, true);
-        policy.addRule(createRule("welcome"));
-        policy.addRule(createRule("banner"));
-        policy.addSubject("Users1",
-                createUsersSubject(pm, "user11", "user12"), true);
-        policy.addSubject("Users2",
-                createUsersSubject(pm, "user21", "user22"));
-        pm.addPolicy(policy);
     }
 
-    //@AfterClass
+    @AfterClass
     public void cleanup() throws PolicyException, SSOException, IdRepoException {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
-        PolicyManager pm = new PolicyManager(adminToken, "/");
-    // leave the objects for visual inspection
-    //pm.removePolicy(POLICY_NAME1);
-    //pm.removePolicy(POLICY_NAME + "-copy");
-    //prm.removePrivilege(PRIVILIGE_NAME);
+        PrivilegeManager prm = PrivilegeManager.getInstance(null);
+        // not cleaning up to allow inspection using console
+        //prm.removePrivilege(PRIVILIGE_NAME);
     }
 
     @Test
-    public void testAddNewPrivilege() throws Exception {
-        try {
+    public void testAddPrivilege() throws Exception {
         Map<String, Object> actionValues = new HashMap<String, Object>();
         Set<String> getValues = new HashSet<String>();
         getValues.add("allow");
@@ -117,65 +107,79 @@ public class PrivilegeManagerTest {
                 resourceName, actionValues);
         Set<Entitlement> entitlements = new HashSet<Entitlement>();
         entitlements.add(entitlement);
+
         String user11 = "id=user11,ou=user," + ServiceManager.getBaseDN();
         String user12 = "id=user12,ou=user," + ServiceManager.getBaseDN();
-        EntitlementSubject es1 = new UserSubject(user11);
-        EntitlementSubject es2 = new UserSubject(user12);
+        UserSubject ua1 = new UserSubject(user11);
+        UserSubject ua2 = new UserSubject(user12);
         Set<EntitlementSubject> subjects = new HashSet<EntitlementSubject>();
-        subjects.add(es1);
-        subjects.add(es2);
+        subjects.add(ua1);
+        subjects.add(ua2);
         OrSubject os = new OrSubject(subjects);
-        EntitlementCondition ec = new IPCondition("*.sun.com");
+        NotSubject ns = new NotSubject(os);
+
+        IPCondition ic = new IPCondition("*.sun.com");
+        ic.setPConditionName("ic");
+        TimeCondition tc = new TimeCondition("08:00", "16:00", "mon", "fri");
+        tc.setPConditionName("tc");
+        Set<EntitlementCondition> conditions = new HashSet<EntitlementCondition>();
+        conditions.add(ic);
+        conditions.add(tc);
+        OrCondition oc = new OrCondition(conditions);
+        AndCondition ac = new AndCondition(conditions);
+
+        StaticAttributes sa = new StaticAttributes();
+        Map<String, Set<String>> attrValues = new HashMap<String, Set<String>>();
+        Set<String> aValues = new HashSet<String>();
+        aValues.add("a10");
+        aValues.add("a20");
+        Set<String> bValues = new HashSet<String>();
+        bValues.add("b10");
+        bValues.add("b20");
+        attrValues.put("a", aValues);
+        attrValues.put("b", bValues);
+        sa.setProperties(attrValues);
+        sa.setPResponseProviderName("sa");
+
+        UserAttributes ua = new UserAttributes();
+        attrValues = new HashMap<String, Set<String>>();
+        Set<String> mailAliases = new HashSet<String>();
+        mailAliases.add("email1");
+        mailAliases.add("email2");
+        attrValues.put("mail", mailAliases);
+        attrValues.put("uid", null);
+        ua.setProperties(attrValues);
+        ua.setPResponseProviderName("ua");
+
+        Set<ResourceAttributes> ra = new HashSet<ResourceAttributes>();
+        ra.add(sa);
+        ra.add(ua);
+
         Privilege privilege = new Privilege(
-                PRIVILIGE_NAME,
+                PRIVILEGE_NAME,
                 entitlements,
-                os, //orSubject
-                ec, //entitlementCondition
-                null);
+                os,
+                oc,
+                ra);
         UnittestLog.logMessage(
-                "PrivilegeManagerTest.testAddNewPrivlege():" + "saving privilege=" + privilege);
+                "PrivilegeManagerTest.testAPrivlege():"
+                + "saving privilege=" + privilege);
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
         PrivilegeManager prm = PrivilegeManager.getInstance(null);
         prm.addPrivilege(privilege);
-        Privilege p = prm.getPrivilege(PRIVILIGE_NAME);
-        UnittestLog.logMessage(
-                "PrivilegeManagerTest.testAddNewPrivlege():" + "read back privilege=" + p);
-        } catch (Exception e) {
-             UnittestLog.logMessage(
-                "PrivilegeManagerTest.testAddNewPrivlege(): caught exception"
-                + e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }
+
     }
 
-    //@Test
-    public void testPoicyToPrivilege() throws Exception {
+    @Test(dependsOnMethods={"testAddPrivilege"})
+    public void testGetPrivilege() throws Exception {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
-        PolicyManager pm = new PolicyManager(adminToken, "/");
         PrivilegeManager prm = PrivilegeManager.getInstance(null);
-        Policy policy = pm.getPolicy(POLICY_NAME);
+        Privilege p = prm.getPrivilege(PRIVILEGE_NAME);
         UnittestLog.logMessage(
-                "PrivilegeManagerTest.testPolicyPrivilege():"
-                + "Created in memory Policy ="
-                + policy.toXML());
-        Privilege privilege = PrivilegeUtils.policyToPrivilege(policy);
-        UnittestLog.logMessage(
-                "PrivilegeManagerTest.testPolicyToPrivilege():" + "policy mapped to privilege=" + privilege);
-        UnittestLog.logMessage(
-                "PrivilegeManagerTest.testPolicyToPrivilege():" + "saving privilege");
-        prm.addPrivilege(privilege);
-        UnittestLog.logMessage(
-                "PrivilegeManagerTest.testPolicyToPrivilege():" + "reading policy");
-        Policy policy1 = PrivilegeUtils.privilegeToPolicy(privilege);
-        UnittestLog.logMessage(
-                "PrivilegeManagerTest.testPolicyToPrivilege():" + "read policy=" + policy1.toXML());
-
-        UnittestLog.logMessage(
-                "PrivilegeManagerTest.testPolicyToPrivilege():" + "policy1=" + policy1.toXML());
-        assert (policy1.equals(policy));
+                "PrivilegeManagerTest.testGetPrivlege():"
+                + "read back privilege=" + p);
     }
 
     private Rule createRule(String ruleName) throws PolicyException {
