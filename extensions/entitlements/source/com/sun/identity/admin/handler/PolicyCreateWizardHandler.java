@@ -76,7 +76,7 @@ public class PolicyCreateWizardHandler
         // TODO
         Set<ResourceAttributes> attrs = null;
 
-        Privilege privilige = new Privilege(
+        Privilege privilege = new Privilege(
                 name,
                 entitlements,
                 orSubject,
@@ -88,7 +88,7 @@ public class PolicyCreateWizardHandler
         PrivilegeManager pm = PrivilegeManager.getInstance(authSubject);
 
         try {
-            pm.addPrivilige(privilige);
+            pm.addPrivilege(privilege);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

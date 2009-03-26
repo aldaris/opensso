@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PriviligeUtils.java,v 1.27 2009-03-25 06:42:54 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.1 2009-03-26 16:21:03 dillidorai Exp $
  */
 package com.sun.identity.policy;
 
@@ -68,14 +68,14 @@ import java.util.Set;
  * to
  * </code>com.sun.identity.policy.Policy</code>
  */
-public class PriviligeUtils {
+public class PrivilegeUtils {
 
     private static Random random = new Random();
 
     /**
-     * Constructs PriviligeUtils
+     * Constructs PrivilegeUtils
      */
-    private PriviligeUtils() {
+    private PrivilegeUtils() {
     }
 
     /**
@@ -84,7 +84,7 @@ public class PriviligeUtils {
      * @return entitlement Privilege object
      * @throws com.sun.identity.policy.PolicyException if the mapping fails
      */
-    public static Privilege policyToPrivilige(Policy policy)
+    public static Privilege policyToPrivilege(Policy policy)
             throws PolicyException, EntitlementException {
         if (policy == null) {
             return null;
@@ -141,9 +141,9 @@ public class PriviligeUtils {
         }
         Set<ResourceAttributes> resourceAttributesSet = nrpsToResourceAttributes(nrps);
 
-        Privilege privilige = new Privilege(policyName, entitlements, eSubject,
+        Privilege privilege = new Privilege(policyName, entitlements, eSubject,
                 eCondition, resourceAttributesSet);
-        return privilige;
+        return privilege;
     }
 
     private static Entitlement ruleToEntitlement(Rule rule)
@@ -226,7 +226,7 @@ public class PriviligeUtils {
                 es = new RoleSubject(value, subjectName);
             } else {
                 Debug debug = Debug.getInstance("Entitlement");
-                debug.error("PriviligeUtils.MapAMIdentitySubjectToESubject(); " + " unsupported IDType=" + idType);
+                debug.error("PrivilegeUtils.MapAMIdentitySubjectToESubject(); " + " unsupported IDType=" + idType);
             }
             if (es != null) {
                 esSet.add(es);
@@ -325,19 +325,19 @@ public class PriviligeUtils {
         return raSet;
     }
 
-    public static Policy priviligeToPolicy(Privilege privilige)
+    public static Policy privilegeToPolicy(Privilege privilege)
             throws PolicyException, SSOException {
         Policy policy = null;
-        policy = new Policy(privilige.getName());
-        if (privilige.getEntitlements() != null) {
-            Set<Entitlement> entitlements = privilige.getEntitlements();
+        policy = new Policy(privilege.getName());
+        if (privilege.getEntitlements() != null) {
+            Set<Entitlement> entitlements = privilege.getEntitlements();
             for (Entitlement entitlement : entitlements) {
                 Rule rule = entitlementToRule(entitlement);
                 policy.addRule(rule);
             }
         }
-        if (privilige.getSubject() != null) {
-            List pSubjects = eSubjectToPSubjects(privilige.getSubject());
+        if (privilege.getSubject() != null) {
+            List pSubjects = eSubjectToPSubjects(privilege.getSubject());
             for (Object obj : pSubjects) {
                 Object[] arr = (Object[]) obj;
                 String pSubjectName = (String) arr[0];
@@ -360,8 +360,8 @@ public class PriviligeUtils {
                 }
             }
         }
-        if (privilige.getCondition() != null) {
-            List pConditions = eConditionToPConditions(privilige.getCondition());
+        if (privilege.getCondition() != null) {
+            List pConditions = eConditionToPConditions(privilege.getCondition());
             for (Object obj : pConditions) {
                 Object[] arr = (Object[]) obj;
                 String pConditionName = (String) arr[0];
@@ -369,9 +369,9 @@ public class PriviligeUtils {
                 policy.addCondition(pConditionName, condition);
             }
         }
-        if (privilige.getResourceAttributes() != null) {
+        if (privilege.getResourceAttributes() != null) {
             List nrps = resourceAttributesToResponseProviders(
-                    privilige.getResourceAttributes());
+                    privilege.getResourceAttributes());
             for (Object obj : nrps) {
                 Object[] arr = (Object[]) obj;
                 String pResponseProviderName = (String) arr[0];
@@ -663,9 +663,17 @@ public class PriviligeUtils {
         if (nestedConditions != null) {
             for (Object nc : nestedConditions) {
                 if (nc instanceof IPCondition) {
-                    list.add(ipConditionToPCondition((IPCondition) nc));
+                    IPCondition ipc = (IPCondition)nc;
+                    Object[] arr = new Object[2];
+                    arr[0] = ipc.getPConditionName();
+                    arr[1] = ipConditionToPCondition(ipc);
+                    list.add(arr);
                 } else if (nc instanceof TimeCondition) {
-                    list.add(timeConditionToPCondition((TimeCondition) nc));
+                    TimeCondition tc = (TimeCondition)nc;
+                    Object[] arr = new Object[2];
+                    arr[0] = tc.getPConditionName();
+                    arr[1] = timeConditionToPCondition(tc);
+                    list.add(arr);
                 } else if (nc instanceof OrCondition) {
                     List list1 = orConditionToPCondition((OrCondition) nc);
                     for (Object obj : list1) {
@@ -693,9 +701,17 @@ public class PriviligeUtils {
         if (nestedConditions != null) {
             for (Object nc : nestedConditions) {
                 if (nc instanceof IPCondition) {
-                    list.add(ipConditionToPCondition((IPCondition) nc));
+                    IPCondition ipc = (IPCondition)nc;
+                    Object[] arr = new Object[2];
+                    arr[0] = ipc.getPConditionName();
+                    arr[1] = ipConditionToPCondition(ipc);
+                    list.add(arr);
                 } else if (nc instanceof TimeCondition) {
-                    list.add(timeConditionToPCondition((TimeCondition) nc));
+                    TimeCondition tc = (TimeCondition)nc;
+                    Object[] arr = new Object[2];
+                    arr[0] = tc.getPConditionName();
+                    arr[1] = timeConditionToPCondition(tc);
+                    list.add(arr);
                 } else if (nc instanceof OrCondition) {
                     List list1 = orConditionToPCondition((OrCondition) nc);
                     for (Object obj : list1) {

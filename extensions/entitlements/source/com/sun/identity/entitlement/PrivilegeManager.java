@@ -22,20 +22,20 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManager.java,v 1.1 2009-03-25 16:14:26 veiming Exp $
+ * $Id: PrivilegeManager.java,v 1.2 2009-03-26 16:21:02 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
 import javax.security.auth.Subject;
 
 /**
- * Class to manage entitlement priviliges: to add, remove, modify privilige
+ * Class to manage entitlement privileges: to add, remove, modify privilege
  */
 public abstract class PrivilegeManager {
 
     /**
      * Returns instance of configured <code>PrivilegeManager</code>
-     * @param subject subject that would be used for the privilige management 
+     * @param subject subject that would be used for the privilege management 
      * operations
      * @return instance of configured <code>PrivilegeManager</code>
      */
@@ -44,7 +44,7 @@ public abstract class PrivilegeManager {
         try {
             //TODO: read the class name from configuration
             pm = (PrivilegeManager) Class.forName(
-                    "com.sun.identity.policy.PolicyPriviligeManager").
+                    "com.sun.identity.policy.PolicyPrivilegeManager").
                     newInstance();
             pm.initialize(subject);
         } catch (ClassNotFoundException cnfe) {
@@ -62,44 +62,44 @@ public abstract class PrivilegeManager {
 
     /**
      * Initializes the object
-     * @param subject subject to initilialize the privilige manager with
+     * @param subject subject to initilialize the privilege manager with
      */
     public abstract void initialize(Subject subject);
 
     /**
-     * Returns a privilige
-     * @param priviligeName name for the privilige to be returned
+     * Returns a privilege
+     * @param privilegeName name for the privilege to be returned
      * @throws com.sun.identity.entitlement.EntitlementException if there is
-     * privilige could not be
+     * privilege could not be
      */
-    public abstract Privilege getPrivilige(String priviligeName)
+    public abstract Privilege getPrivilege(String privilegeName)
             throws EntitlementException;
 
     /**
-     * Adds a privilige
-     * @param privilige privilige to be added
+     * Adds a privilege
+     * @param privilege privilege to be added
      * @throws com.sun.identity.entitlement.EntitlementException if the 
-     * privilige could not be added
+     * privilege could not be added
      */
-    public void addPrivilige(Privilege privilige)
+    public void addPrivilege(Privilege privilege)
             throws EntitlementException {
     }
 
     /**
-     * Removes a privilige
-     * @param priviligeName name of the privilige to be removed
+     * Removes a privilege
+     * @param privilegeName name of the privilege to be removed
      * @throws com.sun.identity.entitlement.EntitlementException
      */
-    public void removePrivilige(String priviligeName)
+    public void removePrivilege(String privilegeName)
             throws EntitlementException {
     }
 
     /**
-     * Modifies a privilige
-     * @param privilige the privilige to be modified
+     * Modifies a privilege
+     * @param privilege the privilege to be modified
      * @throws com.sun.identity.entitlement.EntitlementException
      */
-    public void modifyPrivilige(Privilege privilige)
+    public void modifyPrivilege(Privilege privilege)
             throws EntitlementException {
     }
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexer.java,v 1.12 2009-03-25 06:42:54 veiming Exp $
+ * $Id: PolicyIndexer.java,v 1.13 2009-03-26 16:21:02 dillidorai Exp $
  */
 
 package com.sun.identity.policy;
@@ -78,7 +78,7 @@ public class PolicyIndexer {
             }
         }
 
-        datastore.add(policyName, resIdx, serPolicy);
+        //datastore.add(policyName, resIdx, serPolicy); FIXME
     }
     
     /**

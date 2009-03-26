@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.1 2009-03-25 06:42:51 veiming Exp $
+ * $Id: Privilege.java,v 1.2 2009-03-26 16:21:02 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -37,7 +37,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Class representing entitlement privilige
+ * Class representing entitlement privilege
  */
 public class Privilege {
 
@@ -48,8 +48,8 @@ public class Privilege {
     private Set<ResourceAttributes> eResourceAttributes;
 
     /**
-     * Constructs entitlement privilige
-     * @param name name of the privilige
+     * Constructs entitlement privilege
+     * @param name name of the privilege
      * @param eSubject EntitlementSubject used for membership check
      * @param eCondition EntitlementCondition used for constraint check
      * @param eResourceAttributes Resource1Attributes used to get additional
@@ -69,8 +69,8 @@ public class Privilege {
     }
 
     /**
-     * Returns the name of the privilige
-     * @return name of the privilige.
+     * Returns the name of the privilege
+     * @return name of the privilege.
      * @throws EntitlementException in case of any error
      */
     public String getName() {
@@ -78,8 +78,8 @@ public class Privilege {
     }
 
     /**
-     * Returns the eSubject the privilige
-     * @return eSubject of the privilige.
+     * Returns the eSubject the privilege
+     * @return eSubject of the privilege.
      * @throws EntitlementException in case of any error
      */
     public EntitlementSubject getSubject() {
@@ -87,8 +87,8 @@ public class Privilege {
     }
 
     /**
-     * Returns the eCondition the privilige
-     * @return eCondition of the privilige.
+     * Returns the eCondition the privilege
+     * @return eCondition of the privilege.
      * @throws EntitlementException in case of any error
      */
     public EntitlementCondition getCondition() {
@@ -96,8 +96,8 @@ public class Privilege {
     }
 
     /**
-     * Returns the eResurceAttributes of  the privilige
-     * @return eResourceAttributes of the privilige.
+     * Returns the eResurceAttributes of  the privilege
+     * @return eResourceAttributes of the privilege.
      * @throws EntitlementException in case of any error
      */
     public Set<ResourceAttributes> getResourceAttributes() {
@@ -121,8 +121,8 @@ public class Privilege {
     }
 
     /**
-     * Returns entitlements defined in the privilige
-     * @return entitlements defined in the privilige
+     * Returns entitlements defined in the privilege
+     * @return entitlements defined in the privilege
      */
     public Set<Entitlement> getEntitlements() {
         return entitlements;
