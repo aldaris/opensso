@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CookieUtils.java,v 1.6 2009-03-03 01:52:43 qcheng Exp $
+ * $Id: CookieUtils.java,v 1.7 2009-03-26 19:41:29 madan_ranganath Exp $
  *
  */
 
@@ -31,6 +31,7 @@
 package com.sun.identity.saml2.idpdiscovery;
 
 import java.io.IOException;
+import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import javax.servlet.http.Cookie;
 import javax.servlet.RequestDispatcher;
@@ -38,6 +39,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.sun.identity.shared.encode.URLEncDec;
+import com.sun.identity.shared.locale.Locale;
+
 
 /**
  * Implements utility methods for handling Cookie.
@@ -57,6 +60,10 @@ public class CookieUtils {
            equalsIgnoreCase("true"));
     private static int defAge = -1;
     public static Debug debug = Debug.getInstance("libIDPDiscovery");
+    // IDP Discovery Resource bundle
+    public static final String BUNDLE_NAME = "libIDPDiscovery";
+    // The resource bundle for IDP Discovery implementation.
+    public static ResourceBundle bundle = Locale.getInstallResourceBundle(BUNDLE_NAME);
     // Boolean to indicate if this is an IDP Discovery only WAR
     private static boolean idpDiscoveryOnlyWar = false; 
     // error processing URL, read from system property

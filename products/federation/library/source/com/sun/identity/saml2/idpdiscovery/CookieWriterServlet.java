@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CookieWriterServlet.java,v 1.5 2009-03-03 01:52:43 qcheng Exp $
+ * $Id: CookieWriterServlet.java,v 1.6 2009-03-26 19:41:29 madan_ranganath Exp $
  *
  */
 
@@ -137,7 +137,7 @@ public class CookieWriterServlet extends HttpServlet {
                 "The request uri is null.");
             CookieUtils.sendError(request, response,
                 response.SC_INTERNAL_SERVER_ERROR, "nullRequestUri",
-                "The request uri is null."); 
+                CookieUtils.bundle.getString("nullRequestUri"));
             return;
         } else if (preferred_cookie_name.equals("")) { 
             CookieUtils.debug.error( classMethod + 
@@ -145,8 +145,7 @@ public class CookieWriterServlet extends HttpServlet {
                 "the request uri.");
             CookieUtils.sendError(request, response,
                 response.SC_INTERNAL_SERVER_ERROR, "invalidRequestUri",
-                "Cookie name is not found based on " + 
-                "the request uri."); 
+                CookieUtils.bundle.getString("invalidRequestUri"));
             return;
         }
         if (CookieUtils.debug.messageEnabled()) {
@@ -209,8 +208,7 @@ public class CookieWriterServlet extends HttpServlet {
                 } else {
                     CookieUtils.sendError(request, response,
                         response.SC_INTERNAL_SERVER_ERROR, "noRedirectionURL",
-                        "No Redirect URL"
-                    );
+                        CookieUtils.bundle.getString("noRedirectionURL"));
                 }
                 return;
             }            
@@ -299,8 +297,7 @@ public class CookieWriterServlet extends HttpServlet {
                 }
                 CookieUtils.sendError(request, response,
                     response.SC_INTERNAL_SERVER_ERROR, "noRedirectionURL",
-                    "No Redirect URL"
-                );
+                    CookieUtils.bundle.getString("noRedirectionURL"));
             }
             return;
         } catch(IOException e) {

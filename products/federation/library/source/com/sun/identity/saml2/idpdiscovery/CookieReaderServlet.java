@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CookieReaderServlet.java,v 1.3 2009-03-03 01:52:42 qcheng Exp $
+ * $Id: CookieReaderServlet.java,v 1.4 2009-03-26 19:41:29 madan_ranganath Exp $
  *
  */
 
@@ -127,7 +127,7 @@ public class CookieReaderServlet extends HttpServlet {
                 "The request uri is null.");
             CookieUtils.sendError(request, response,
                 response.SC_INTERNAL_SERVER_ERROR, "nullRequestUri", 
-                "The request uri is null."); 
+                CookieUtils.bundle.getString("nullRequestUri"));
             return;
         } else if (preferred_cookie_name.equals("")) { 
             CookieUtils.debug.error( classMethod + 
@@ -135,8 +135,7 @@ public class CookieReaderServlet extends HttpServlet {
                 "the request uri.");
             CookieUtils.sendError(request, response,
                 response.SC_INTERNAL_SERVER_ERROR, "invalidRequestUri",
-                "Cookie name is not found based on " + 
-                "the request uri."); 
+                CookieUtils.bundle.getString("invalidRequestUri"));
             return;
         }
         
@@ -177,7 +176,7 @@ public class CookieReaderServlet extends HttpServlet {
             } else {
                 CookieUtils.sendError(request, response,
                     response.SC_INTERNAL_SERVER_ERROR, "noRedirectionURL",
-                    "No redirect URL");
+                    CookieUtils.bundle.getString("noRedirectionURL"));
                 return;
             }
         } catch(Exception e){

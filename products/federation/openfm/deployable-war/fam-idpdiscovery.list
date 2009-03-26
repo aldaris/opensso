@@ -1,4 +1,5 @@
 ./META-INF/MANIFEST.MF
+./WEB-INF/classes/libIDPDiscovery.properties
 ./WEB-INF/classes/libIDPDiscoveryConfig.properties
 ./WEB-INF/classes/libIDPDiscoveryConfig_de.properties
 ./WEB-INF/classes/libIDPDiscoveryConfig_en.properties
