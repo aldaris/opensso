@@ -48,11 +48,9 @@ public class PolicyCreateWizardHandler
         // subjects
         Set<EntitlementSubject> eSubjects = new HashSet<EntitlementSubject>();
         for (SubjectContainer sc : pcwb.getSubjectContainers()) {
-            if (sc.isVisible()) {
-                List<ViewSubject> viewSubjects = sc.getViewSubjects();
-                for (ViewSubject vs : viewSubjects) {
-                    eSubjects.add(vs.getSubject());
-                }
+            List<ViewSubject> viewSubjects = sc.getViewSubjects();
+            for (ViewSubject vs : viewSubjects) {
+                eSubjects.add(vs.getSubject());
             }
         }
         EntitlementSubject orSubject = new OrSubject(eSubjects);
@@ -113,9 +111,6 @@ public class PolicyCreateWizardHandler
         Stack<ViewCondition> operators = new Stack<ViewCondition>();
 
         for (ViewCondition vc : vcs) {
-            if (!vc.isVisible()) {
-                continue;
-            }
             if (vc.getConditionType().isExpression()) {
                 if (operators.size() > 0 &&
                         (vc instanceof OrViewCondition ||

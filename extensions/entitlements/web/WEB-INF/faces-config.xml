@@ -17,6 +17,12 @@
         </message-bundle>
     </application>
 
+    <managed-bean>
+        <managed-bean-name>queuedActionBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.QueuedActionBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
     <!-- subject container dao's -->
     <managed-bean>
         <managed-bean-name>userSubjectContainerDao</managed-bean-name>
@@ -97,6 +103,10 @@
         <managed-property>
             <property-name>subjectContainers</property-name>
             <value>#{subjectContainers}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>queuedActionBean</property-name>
+            <value>#{queuedActionBean}</value>
         </managed-property>
     </managed-bean>
 
@@ -289,6 +299,10 @@
             <property-name>viewConditions</property-name>
             <value>#{policyCreateWizardBean.viewConditions}</value>
         </managed-property>
+        <managed-property>
+            <property-name>queuedActionBean</property-name>
+            <value>#{queuedActionBean}</value>
+        </managed-property>
     </managed-bean>
 
     <!-- url resource chooser implementation -->
@@ -421,4 +435,10 @@
             <to-view-id>/admin/facelet/samlv2-workflow.xhtml</to-view-id>
         </navigation-case>
     </navigation-rule>
+
+    <lifecycle>
+        <phase-listener>
+            com.sun.identity.admin.model.QueuedActionListener
+        </phase-listener>
+    </lifecycle>
 </faces-config>

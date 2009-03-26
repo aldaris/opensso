@@ -1,19 +1,24 @@
 package com.sun.identity.admin.handler;
 
+import com.sun.identity.admin.model.QueuedActionBean;
 import com.icesoft.faces.context.effects.Effect;
 import com.icesoft.faces.context.effects.Fade;
 import com.icesoft.faces.context.effects.SlideDown;
 import com.icesoft.faces.context.effects.SlideUp;
 import com.sun.identity.admin.model.MultiPanelBean;
 import com.sun.identity.admin.model.NotViewCondition;
+import com.sun.identity.admin.model.PhaseEventAction;
 import com.sun.identity.admin.model.ViewCondition;
 import java.io.Serializable;
 import java.util.List;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.PhaseId;
 
-public class ViewConditionsHandler implements MultiPanelHandler, Serializable {
+public class ViewConditionsHandler 
+    implements MultiPanelHandler, Serializable {
 
     private List<ViewCondition> viewConditions;
+    private QueuedActionBean queuedActionBean;
 
     public void expandListener(ActionEvent event) {
         MultiPanelBean mpb = (MultiPanelBean) event.getComponent().getAttributes().get("bean");
@@ -42,6 +47,8 @@ public class ViewConditionsHandler implements MultiPanelHandler, Serializable {
         mpb.setPanelEffect(e);
 
         ViewCondition vc = (ViewCondition) mpb;
+        addRemoveAction(vc);
+        
         ViewCondition next = getNextCondition(vc);
         ViewCondition previous = getPreviousCondition(vc);
 
@@ -50,6 +57,8 @@ public class ViewConditionsHandler implements MultiPanelHandler, Serializable {
             e.setSubmit(true);
             e.setTransitory(false);
             next.setPanelEffect(e);
+
+            addRemoveAction(next);
         }
 
         if (next instanceof NotViewCondition) {
@@ -59,6 +68,8 @@ public class ViewConditionsHandler implements MultiPanelHandler, Serializable {
                 e.setSubmit(true);
                 e.setTransitory(false);
                 next.setPanelEffect(e);
+
+                addRemoveAction(next);
             }
         }
 
@@ -67,7 +78,24 @@ public class ViewConditionsHandler implements MultiPanelHandler, Serializable {
             e.setSubmit(true);
             e.setTransitory(false);
             previous.setPanelEffect(e);
+
+            addRemoveAction(previous);
         }
+    }
+
+    public void handleRemove(ViewCondition vc) {
+        viewConditions.remove(vc);
+    }
+
+    private void addRemoveAction(ViewCondition vc) {
+        PhaseEventAction pea = new PhaseEventAction();
+        pea.setDoBeforePhase(false);
+        pea.setPhaseId(PhaseId.RENDER_RESPONSE);
+        pea.setAction("#{viewConditionsHandler.handleRemove}");
+        pea.setParameters(new Class[] { ViewCondition.class });
+        pea.setArguments(new Object[] { vc });
+
+        queuedActionBean.getPhaseEventActions().add(pea);
     }
 
     public void setViewConditions(List<ViewCondition> viewConditions) {
@@ -98,5 +126,9 @@ public class ViewConditionsHandler implements MultiPanelHandler, Serializable {
         }
 
         return null;
+    }
+
+    public void setQueuedActionBean(QueuedActionBean queuedActionBean) {
+        this.queuedActionBean = queuedActionBean;
     }
 }

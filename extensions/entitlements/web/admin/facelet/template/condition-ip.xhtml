@@ -6,7 +6,8 @@
     xmlns:ice="http://www.icesoft.com/icefaces/component"
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
-    <ice:panelGroup>
+    <ice:panelGroup
+        rendered="#{viewCondition != null}">
         <span class="condition-section-head">
             <span class="condition-section-title">
                 <ice:outputText value="Address Range"/>

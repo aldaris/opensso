@@ -22,7 +22,7 @@
                     <ice:commandLink
                         rendered="#{collapsible == true}"
                         actionListener="#{handler.expandListener}"
-                        partialSubmit="false"
+                        partialSubmit="true"
                         styleClass="command-link">
                         <img
                             style="vertical-align: middle"
@@ -40,7 +40,7 @@
                     <ice:commandLink
                         rendered="#{removeable == true}"
                         actionListener="#{handler.removeListener}"
-                        partialSubmit="false"
+                        partialSubmit="true"
                         styleClass="command-link">
                         <img
                             style="vertical-align: middle"
