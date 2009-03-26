@@ -6,7 +6,7 @@ public abstract class ConditionType {
     private String conditionIconUri;
     private boolean expression;
 
-    public abstract ViewCondition newCondition();
+    public abstract ViewCondition newViewCondition();
 
     public String getName() {
         return name;

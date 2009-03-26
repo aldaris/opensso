@@ -5,11 +5,11 @@ import com.icesoft.faces.component.dragdrop.DropEvent;
 import com.icesoft.faces.context.effects.Effect;
 import com.icesoft.faces.context.effects.Appear;
 import com.sun.identity.admin.model.Action;
-import com.sun.identity.admin.model.AndCondition;
+import com.sun.identity.admin.model.AndViewCondition;
 import com.sun.identity.admin.model.Application;
 import com.sun.identity.admin.model.ConditionType;
-import com.sun.identity.admin.model.NotCondition;
-import com.sun.identity.admin.model.OrCondition;
+import com.sun.identity.admin.model.NotViewCondition;
+import com.sun.identity.admin.model.OrViewCondition;
 import com.sun.identity.admin.model.PolicyCreateWizardBean;
 import com.sun.identity.admin.model.Resource;
 import com.sun.identity.admin.model.SubjectContainer;
@@ -71,7 +71,6 @@ public class PolicyCreateWizardHandler
         cleanConditions();
         ViewCondition conditionTree = buildConditionExpression(pcwb.getViewConditions());
         EntitlementCondition eCondition = conditionTree.getEntitlementCondition();
-        com.sun.identity.entitlement.OrCondition orECondition = new com.sun.identity.entitlement.OrCondition();
 
         // resource attrs
         // TODO
@@ -100,6 +99,10 @@ public class PolicyCreateWizardHandler
 
     private void cleanConditions() {
         ViewCondition lastVc = getPolicyCreateWizardBean().getLastVisibleCondition();
+        if (lastVc == null) {
+            // no conditions
+            return;
+        }
         while ((lastVc = getPolicyCreateWizardBean().getLastVisibleCondition()).getConditionType().isExpression()) {
             getPolicyCreateWizardBean().getViewConditions().remove(lastVc);
         }
@@ -115,8 +118,8 @@ public class PolicyCreateWizardHandler
             }
             if (vc.getConditionType().isExpression()) {
                 if (operators.size() > 0 &&
-                        vc instanceof OrCondition ||
-                        vc instanceof AndCondition) {
+                        (vc instanceof OrViewCondition ||
+                        vc instanceof AndViewCondition)) {
                     output.push(operators.pop());
                 }
                 operators.push(vc);
@@ -136,24 +139,24 @@ public class PolicyCreateWizardHandler
         assert (output.size() != 0);
 
         ViewCondition head = output.pop();
-        if (head instanceof AndCondition) {
-            AndCondition andHead = (AndCondition) head;
+        if (head instanceof AndViewCondition) {
+            AndViewCondition andHead = (AndViewCondition) head;
             ViewCondition left = buildConditionTree(output);
             ViewCondition right = buildConditionTree(output);
-            andHead.getAndConditions().add(left);
-            andHead.getAndConditions().add(right);
+            andHead.getAndViewConditions().add(left);
+            andHead.getAndViewConditions().add(right);
 
             return andHead;
-        } else if (head instanceof OrCondition) {
-            OrCondition orHead = (OrCondition) head;
+        } else if (head instanceof OrViewCondition) {
+            OrViewCondition orHead = (OrViewCondition) head;
             ViewCondition left = buildConditionTree(output);
             ViewCondition right = buildConditionTree(output);
-            orHead.getOrConditions().add(left);
-            orHead.getOrConditions().add(right);
+            orHead.getOrViewConditions().add(left);
+            orHead.getOrViewConditions().add(right);
 
             return orHead;
-        } else if (head instanceof NotCondition) {
-            NotCondition notHead = (NotCondition) head;
+        } else if (head instanceof NotViewCondition) {
+            NotViewCondition notHead = (NotViewCondition) head;
             ViewCondition child = buildConditionTree(output);
             notHead.setNotCondition(child);
 
@@ -185,7 +188,7 @@ public class PolicyCreateWizardHandler
 
             // TODO: implicit or?
 
-            ViewCondition vc = ct.newCondition();
+            ViewCondition vc = ct.newViewCondition();
             getPolicyCreateWizardBean().getViewConditions().add(vc);
 
             Effect e = new Appear();

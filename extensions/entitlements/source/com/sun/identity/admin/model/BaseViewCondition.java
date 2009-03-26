@@ -4,7 +4,7 @@ import com.icesoft.faces.context.effects.Appear;
 import com.icesoft.faces.context.effects.Effect;
 import java.util.List;
 
-public abstract class BaseCondition implements ViewCondition {
+public abstract class BaseViewCondition implements ViewCondition {
     private ConditionType conditionType;
     private boolean expanded = true;
     private String name;
@@ -12,7 +12,7 @@ public abstract class BaseCondition implements ViewCondition {
     private Effect panelEffect;
     private boolean visible = false;
 
-    public BaseCondition() {
+    public BaseViewCondition() {
         panelEffect = new Appear();
         panelEffect.setSubmit(true);
         panelEffect.setTransitory(false);

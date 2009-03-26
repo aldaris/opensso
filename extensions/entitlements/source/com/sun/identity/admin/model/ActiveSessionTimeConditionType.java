@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class ActiveSessionTimeConditionType 
     extends ConditionType
     implements Serializable {
-    public ViewCondition newCondition() {
+    public ViewCondition newViewCondition() {
         ViewCondition vc = new ActiveSessionTimeCondition();
         vc.setConditionType(this);
 

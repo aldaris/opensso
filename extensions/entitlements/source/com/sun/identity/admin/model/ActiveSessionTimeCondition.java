@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.util.List;
 
 public class ActiveSessionTimeCondition 
-    extends BaseCondition
+    extends BaseViewCondition
     implements Serializable {
 
     private boolean terminateSession = false;

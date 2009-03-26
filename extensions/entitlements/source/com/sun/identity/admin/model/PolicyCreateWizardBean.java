@@ -151,10 +151,10 @@ public class PolicyCreateWizardBean
         if (lastCondition == null) {
             return true;
         }
-        if (lastCondition instanceof NotCondition) {
+        if (lastCondition instanceof NotViewCondition) {
             return false;
         }
-        if (lastCondition instanceof AndCondition || lastCondition instanceof OrCondition) {
+        if (lastCondition instanceof AndViewCondition || lastCondition instanceof OrViewCondition) {
             return true;
         }
 

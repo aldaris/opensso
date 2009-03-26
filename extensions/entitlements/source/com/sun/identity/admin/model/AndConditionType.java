@@ -5,8 +5,8 @@ import java.io.Serializable;
 public class AndConditionType 
     extends ConditionType
     implements Serializable {
-    public ViewCondition newCondition() {
-        ViewCondition vc = new AndCondition();
+    public ViewCondition newViewCondition() {
+        ViewCondition vc = new AndViewCondition();
         vc.setConditionType(this);
 
         return vc;

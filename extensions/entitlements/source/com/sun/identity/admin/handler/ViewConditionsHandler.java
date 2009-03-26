@@ -5,7 +5,7 @@ import com.icesoft.faces.context.effects.Fade;
 import com.icesoft.faces.context.effects.SlideDown;
 import com.icesoft.faces.context.effects.SlideUp;
 import com.sun.identity.admin.model.MultiPanelBean;
-import com.sun.identity.admin.model.NotCondition;
+import com.sun.identity.admin.model.NotViewCondition;
 import com.sun.identity.admin.model.ViewCondition;
 import java.io.Serializable;
 import java.util.List;
@@ -52,7 +52,7 @@ public class ViewConditionsHandler implements MultiPanelHandler, Serializable {
             next.setPanelEffect(e);
         }
 
-        if (next instanceof NotCondition) {
+        if (next instanceof NotViewCondition) {
             next = getNextCondition(next);
             if (next != null) {
                 e = new Fade();
@@ -62,7 +62,7 @@ public class ViewConditionsHandler implements MultiPanelHandler, Serializable {
             }
         }
 
-        if (previous instanceof NotCondition) {
+        if (previous instanceof NotViewCondition) {
             e = new Fade();
             e.setSubmit(true);
             e.setTransitory(false);
