@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PriviligeUtilsTest.java,v 1.6 2009-03-25 06:42:56 veiming Exp $
+ * $Id: PrivilegeUtilsTest.java,v 1.1 2009-03-26 16:24:35 dillidorai Exp $
  */
 package com.sun.identity.policy;
 
@@ -53,10 +53,10 @@ import org.testng.annotations.Test;
  *
  * @author dillidorai
  */
-public class PriviligeUtilsTest {
+public class PrivilegeUtilsTest {
 
     @Test
-    public void testPriviligeToPolicy() throws Exception {
+    public void testPrivilegeToPolicy() throws Exception {
         String BASE_DN = "dc=opensso,dc=java,dc=net";
         Map<String, Object> actionValues = new HashMap<String, Object>();
         Set<String> getValues = new HashSet<String>();
@@ -80,20 +80,20 @@ public class PriviligeUtilsTest {
         subjects.add(us2);
         OrSubject os = new OrSubject(subjects);
         EntitlementCondition ipc = new IPCondition("*.sun.com");
-        Privilege privilige = new Privilege(
-                "TestPrivilige",
+        Privilege privilege = new Privilege(
+                "TestPrivilege",
                 entitlements,
                 us1, //orSubject
                 ipc, //entitlementCondition
                 null); //attributes
 
         UnittestLog.logMessage(
-                "PriviligeUtilsTest.testPriviligeToPolicy():" + "privilige=" 
-                + privilige);
-        Policy policy = PriviligeUtils.priviligeToPolicy(privilige);
+                "PrivilegeUtilsTest.testPrivilegeToPolicy():" + "privilege=" 
+                + privilege);
+        Policy policy = PrivilegeUtils.privilegeToPolicy(privilege);
         
         UnittestLog.logMessage(
-                "PriviligeUtilsTest.testPriviligeToPolicy():" + "policy="
+                "PrivilegeUtilsTest.testPrivilegeToPolicy():" + "policy="
                 + policy.toXML());
          
 
@@ -170,7 +170,7 @@ public class PriviligeUtilsTest {
     }
 
     public static void main(String[] args) throws Exception {
-        new PriviligeUtilsTest().testPriviligeToPolicy();
+        new PrivilegeUtilsTest().testPrivilegeToPolicy();
         UnittestLog.flush(new Date().toString());
     }
 

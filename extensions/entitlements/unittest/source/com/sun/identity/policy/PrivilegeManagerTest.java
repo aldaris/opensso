@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PriviligeManagerTest.java,v 1.5 2009-03-25 16:14:31 veiming Exp $
+ * $Id: PrivilegeManagerTest.java,v 1.1 2009-03-26 16:24:35 dillidorai Exp $
  */
 package com.sun.identity.policy;
 
@@ -58,10 +58,10 @@ import org.testng.annotations.BeforeClass;
  *
  * @author dillidorai
  */
-public class PriviligeManagerTest {
+public class PrivilegeManagerTest {
 
     private static String SERVICE_NAME = "iPlanetAMWebAgentService";
-    private static String PRIVILIGE_NAME = "TestPrivilige";
+    private static String PRIVILIGE_NAME = "TestPrivilege";
     private static String POLICY_NAME = "TestPolicy";
     private static String BASE_DN = "dc=opensso,dc=java,dc=net"; //ServiceManager.getBaseDN();
 
@@ -75,7 +75,7 @@ public class PriviligeManagerTest {
             // remove the policy
             pm.removePolicy(POLICY_NAME);
             pm.removePolicy(POLICY_NAME + "-copy");
-            prm.removePrivilige(PRIVILIGE_NAME);
+            prm.removePrivilege(PRIVILIGE_NAME);
         } catch (Exception e) {
             throw new PolicyException(e);
         }
@@ -99,11 +99,11 @@ public class PriviligeManagerTest {
     // leave the objects for visual inspection
     //pm.removePolicy(POLICY_NAME1);
     //pm.removePolicy(POLICY_NAME + "-copy");
-    //prm.removePrivilige(PRIVILIGE_NAME);
+    //prm.removePrivilege(PRIVILIGE_NAME);
     }
 
     @Test
-    public void testAddNewPrivilige() throws Exception {
+    public void testAddNewPrivilege() throws Exception {
         try {
         Map<String, Object> actionValues = new HashMap<String, Object>();
         Set<String> getValues = new HashSet<String>();
@@ -126,24 +126,24 @@ public class PriviligeManagerTest {
         subjects.add(es2);
         OrSubject os = new OrSubject(subjects);
         EntitlementCondition ec = new IPCondition("*.sun.com");
-        Privilege privilige = new Privilege(
+        Privilege privilege = new Privilege(
                 PRIVILIGE_NAME,
                 entitlements,
                 os, //orSubject
                 ec, //entitlementCondition
                 null);
         UnittestLog.logMessage(
-                "PriviligeManagerTest.testAddNewPrivlige():" + "saving privilige=" + privilige);
+                "PrivilegeManagerTest.testAddNewPrivlege():" + "saving privilege=" + privilege);
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
         PrivilegeManager prm = PrivilegeManager.getInstance(null);
-        prm.addPrivilige(privilige);
-        Privilege p = prm.getPrivilige(PRIVILIGE_NAME);
+        prm.addPrivilege(privilege);
+        Privilege p = prm.getPrivilege(PRIVILIGE_NAME);
         UnittestLog.logMessage(
-                "PriviligeManagerTest.testAddNewPrivlige():" + "read back privilige=" + p);
+                "PrivilegeManagerTest.testAddNewPrivlege():" + "read back privilege=" + p);
         } catch (Exception e) {
              UnittestLog.logMessage(
-                "PriviligeManagerTest.testAddNewPrivlige(): caught exception"
+                "PrivilegeManagerTest.testAddNewPrivlege(): caught exception"
                 + e.getMessage());
             e.printStackTrace();
             throw e;
@@ -151,30 +151,30 @@ public class PriviligeManagerTest {
     }
 
     //@Test
-    public void testPoicyToPrivilige() throws Exception {
+    public void testPoicyToPrivilege() throws Exception {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
         PolicyManager pm = new PolicyManager(adminToken, "/");
         PrivilegeManager prm = PrivilegeManager.getInstance(null);
         Policy policy = pm.getPolicy(POLICY_NAME);
         UnittestLog.logMessage(
-                "PriviligeManagerTest.testPolicyPrivilige():"
+                "PrivilegeManagerTest.testPolicyPrivilege():"
                 + "Created in memory Policy ="
                 + policy.toXML());
-        Privilege privilige = PriviligeUtils.policyToPrivilige(policy);
+        Privilege privilege = PrivilegeUtils.policyToPrivilege(policy);
         UnittestLog.logMessage(
-                "PriviligeManagerTest.testPolicyToPrivilige():" + "policy mapped to privilige=" + privilige);
+                "PrivilegeManagerTest.testPolicyToPrivilege():" + "policy mapped to privilege=" + privilege);
         UnittestLog.logMessage(
-                "PriviligeManagerTest.testPolicyToPrivilige():" + "saving privilige");
-        prm.addPrivilige(privilige);
+                "PrivilegeManagerTest.testPolicyToPrivilege():" + "saving privilege");
+        prm.addPrivilege(privilege);
         UnittestLog.logMessage(
-                "PriviligeManagerTest.testPolicyToPrivilige():" + "reading policy");
-        Policy policy1 = PriviligeUtils.priviligeToPolicy(privilige);
+                "PrivilegeManagerTest.testPolicyToPrivilege():" + "reading policy");
+        Policy policy1 = PrivilegeUtils.privilegeToPolicy(privilege);
         UnittestLog.logMessage(
-                "PriviligeManagerTest.testPolicyToPrivilige():" + "read policy=" + policy1.toXML());
+                "PrivilegeManagerTest.testPolicyToPrivilege():" + "read policy=" + policy1.toXML());
 
         UnittestLog.logMessage(
-                "PriviligeManagerTest.testPolicyToPrivilige():" + "policy1=" + policy1.toXML());
+                "PrivilegeManagerTest.testPolicyToPrivilege():" + "policy1=" + policy1.toXML());
         assert (policy1.equals(policy));
     }
 
