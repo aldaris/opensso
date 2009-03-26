@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCache.java,v 1.1 2009-03-25 23:50:16 veiming Exp $
+ * $Id: PolicyCache.java,v 1.2 2009-03-26 17:02:26 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -38,16 +38,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * @author dennis
  */
 public class PolicyCache {
-    private static PolicyCache instance = new PolicyCache();
     private Cache cache = new Cache();
     private ReadWriteLock rwlock = new ReentrantReadWriteLock();
-
-    private PolicyCache() {
-    }
-
-    private static PolicyCache getInstance() {
-        return instance;
-    }
 
     public void cache(Map<String, Policy> policies) {
         rwlock.writeLock().lock();

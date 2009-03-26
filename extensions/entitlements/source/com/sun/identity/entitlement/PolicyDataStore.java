@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPolicyIndexDataStore.java,v 1.8 2009-03-26 17:02:26 veiming Exp $
+ * $Id: PolicyDataStore.java,v 1.1 2009-03-26 17:02:26 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -30,17 +30,25 @@ package com.sun.identity.entitlement;
 import java.util.Iterator;
 
 /**
- * This interface defines the methods required to store policy indexes
- * in datastore.
+ *
+ * @author dennis
  */
-public interface IPolicyIndexDataStore {
+public class PolicyDataStore implements IPolicyIndexDataStore {
+    private PolicyCache policyCache = new PolicyCache();
 
-    void add(Privilege privilege) throws EntitlementException;
-    
-    void delete(String name)
-        throws EntitlementException;
+    public void add(Privilege p)
+        throws EntitlementException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
+    public void delete(String name)
+        throws EntitlementException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
-    Iterator<Privilege> search(ResourceSearchIndexes indexes)
-        throws EntitlementException;
+    public Iterator<Privilege> search(ResourceSearchIndexes indexes)
+        throws EntitlementException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
 }

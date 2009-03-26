@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexer.java,v 1.13 2009-03-26 16:21:02 dillidorai Exp $
+ * $Id: PolicyIndexer.java,v 1.14 2009-03-26 17:02:27 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -30,13 +30,11 @@ package com.sun.identity.policy;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.IPolicyIndexDataStore;
 import com.sun.identity.entitlement.PolicyIndexDataStoreFactory;
-import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.ResourceSaveIndexes;
 import com.sun.identity.entitlement.ResourceSearchIndexes;
 import com.sun.identity.entitlement.util.ResourceNameIndexGenerator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -112,12 +110,13 @@ public class PolicyIndexer {
         ResourceSearchIndexes searchIndexes
     ) {
         Set<Policy> policies = new HashSet<Policy>();
+/*
         try {
             IPolicyIndexDataStore datastore = 
                 PolicyIndexDataStoreFactory.getInstance().getDataStore();
             Iterator<Privilege> results = datastore.search(searchIndexes);
 
-            /*
+
             Map<String, Set<Policy>> mapHostIndexes = createCacheMap(
                 hostIndexes);
             Map<String, Set<Policy>> mapPathIndexes = createCacheMap(
@@ -155,11 +154,11 @@ public class PolicyIndexer {
 
             cache.cache(mapHostIndexes, mapPathIndexes, mapPathParentIndexes);
             cache.getPolicies(hostIndexes, pathIndexes, pathParentIndex,
-                policies, null); */
+                policies, null); 
         } catch (EntitlementException e) {
             PolicyManager.debug.error("PolicyIndexer.store", e);
-        }
-        return policies;
+        }*/
+        return null;
     }
 
     private static Map<String, Set<Policy>> createCacheMap(Set<String> set) {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexDataStoreFactory.java,v 1.1 2009-01-16 02:10:50 veiming Exp $
+ * $Id: PolicyIndexDataStoreFactory.java,v 1.2 2009-03-26 17:02:26 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -39,7 +39,7 @@ public final class PolicyIndexDataStoreFactory {
     static {
         try {
             Class clazz = Class.forName(
-                "com.sun.identity.sm.PolicyIndexDataStore");
+                "com.sun.identity.entitlement.PolicyDataStore");
             defaultImpl = (IPolicyIndexDataStore)clazz.newInstance();
         } catch (ClassNotFoundException e) {
             //TODO

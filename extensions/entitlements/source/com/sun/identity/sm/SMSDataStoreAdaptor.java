@@ -23,14 +23,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDataStore.java,v 1.1 2009-03-25 23:50:15 veiming Exp $
+ * $Id: SMSDataStoreAdaptor.java,v 1.1 2009-03-26 17:02:27 veiming Exp $
  */
 
 package com.sun.identity.sm;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.entitlement.DataStoreEntry;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.IPolicyIndexDataStore;
 import com.sun.identity.entitlement.Privilege;
@@ -57,7 +56,7 @@ import java.util.Set;
 /**
  * Using OpenSSO Service Management Layer to index policy.
  */
-public class PolicyDataStore implements  IPolicyIndexDataStore {
+public class SMSDataStoreAdaptor  {
     private static final String START_DN_TEMPLATE = 
          "ou=default,ou=GlobalConfig,ou=1.0,ou=PolicyIndex,ou=services,{0}";
     private static final String DN_TEMPLATE = "ou={1}," + START_DN_TEMPLATE;
@@ -200,16 +199,13 @@ public class PolicyDataStore implements  IPolicyIndexDataStore {
         }
     }
 
-      private Map<String, Map<String, Set<String>>> getMatchingDNs(
+    private Iterator<SMSDataEntry> getMatchingDNs(
         SSOToken adminToken,
-        Set<String> hostIndexes,
-        Set<String> pathIndexes,
-        String pathParent
+        ResourceSearchIndexes indexes
     ) throws SSOException, EntitlementException {
-          /*
-        String filter = getFilter(hostIndexes, pathIndexes, pathParent);
+        String filter = getFilter(indexes);
         if (filter == null) {
-            return Collections.EMPTY_MAP;
+            return null;
         }
         Object[] params = {SMSEntry.getRootSuffix()};
         String startDN = MessageFormat.format(START_DN_TEMPLATE, params);
@@ -220,39 +216,36 @@ public class PolicyDataStore implements  IPolicyIndexDataStore {
         } catch (SMSException e) {
             Object[] arg = {startDN};
             throw new EntitlementException(52, arg, e);
-        }*/
-          return null;
-            
+        }
     }
     
-    private String getFilter(
-        Set<String> hostIndexes, 
-        Set<String> pathIndexes,
-        String pathParent
-    ) {
+    private String getFilter(ResourceSearchIndexes indexes) {
         StringBuffer filter = new StringBuffer();
 
-        if (hostIndexes != null) {
-            for (String h : hostIndexes) {
+        if (indexes.getHostIndexes() != null) {
+            for (String h : indexes.getHostIndexes()) {
                 Object[] o = {h};
                 filter.append(MessageFormat.format(HOST_FILTER_TEMPLATE, o));
             }
         }
 
-        if (pathIndexes != null) {
-            for (String p : pathIndexes) {
+        if (indexes.getPathIndexes() != null) {
+            for (String p : indexes.getPathIndexes()) {
                 Object[] o = {p};
                 filter.append(MessageFormat.format(PATH_FILTER_TEMPLATE, o));
             }
         }
 
-        if (pathParent != null) {
-            Object[] o = {pathParent};
-            filter.append(MessageFormat.format(PATH_PARENT_FILTER_TEMPLATE, o));
+        if (indexes.getPath() != null) {
+            for (String p : indexes.getPath()) {
+                Object[] o = {p};
+                filter.append(MessageFormat.format(
+                    PATH_PARENT_FILTER_TEMPLATE, o));
+            }
         }
 
         String result = filter.toString();
-        return (result.length() > 0) ? "(|" + result + ")" : null;
+        return (result.length() > 0) ? "(&" + result + ")" : null;
     }
     
 
@@ -265,52 +258,23 @@ public class PolicyDataStore implements  IPolicyIndexDataStore {
      * @return a set of datastore entry object.
      * @throws EntitlementException if search operation fails.
      */
-    public Iterator<Privilege> search(ResourceSearchIndexes indexes)
-        throws EntitlementException {
-        Set<DataStoreEntry> results = new HashSet<DataStoreEntry>();
-
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
-        /* TOFIX
+    public void search(Iterator<Privilege> pIterator,
+        ResourceSearchIndexes indexes
+    ) throws EntitlementException {
         try {
-            Map<String, Map<String, Set<String>>> matched = getMatchingDNs(
-                adminToken, hostIndexes, pathIndexes, pathParent);
-            for (String dn : matched.keySet()) {
-                Map<String, Set<String>> map = matched.get(dn);
-                Set<String> setSearchable = map.get(SMSEntry.ATTR_XML_KEYVAL);
-                
-                Set<String> set = map.get(SMSEntry.ATTR_KEYVAL);
-                String ser = set.iterator().next();
-                ser = ser.substring(SERIALIZABLE_INDEX_KEY.length()+1);
-                  
-                Set setPathParent = getAttributes(
-                    setSearchable, PATH_PARENT_INDEX_KEY);
-                String pp = ((setPathParent != null) &&
-                    !setPathParent.isEmpty()) ?
-                    (String)setPathParent.iterator().next() : null;
-                
-                results.add(new DataStoreEntry(
-                    getAttributes(setSearchable, HOST_INDEX_KEY),
-                    getAttributes(setSearchable, PATH_INDEX_KEY),
-                    pp, deserializeObject(ser)));
+            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+            Iterator<SMSDataEntry> matchedIterator = getMatchingDNs(adminToken,
+                indexes);
+            while (matchedIterator.hasNext()) {
+                SMSDataEntry entry = matchedIterator.next();
+                String dn = entry.getDN();
+                Set<String> setRawPolicy = entry.getAttributeValues(
+                    SERIALIZABLE_INDEX_KEY);
+                String rawPolicy = setRawPolicy.iterator().next();
             }
-*/
-            return null;
-        /*} catch (SSOException e) {
-            throw new EntitlementException(10, null, e);
-        } */
-    }
-    
-    private Set<String> getAttributes(Set<String> set, String key) {
-        Set<String> results = new HashSet<String>();
-        String search = key + "=";
-
-        for (String s : set) {
-            if (s.startsWith(search)) {
-                results.add(s.substring(search.length()));
-            }
+        } catch (SSOException ex) {
+            //TOFIX
         }
-
-        return results;
     }
 }

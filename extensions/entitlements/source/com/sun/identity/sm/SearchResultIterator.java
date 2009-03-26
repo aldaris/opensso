@@ -22,13 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SearchResultIterator.java,v 1.1 2009-03-25 17:52:30 veiming Exp $
+ * $Id: SearchResultIterator.java,v 1.2 2009-03-26 17:02:27 veiming Exp $
  */
 
 package com.sun.identity.sm;
 
 import com.sun.identity.common.CaseInsensitiveHashMap;
-import com.sun.identity.entitlement.DataStoreEntry;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.ldap.LDAPAttribute;
 import com.sun.identity.shared.ldap.LDAPAttributeSet;
@@ -45,7 +44,7 @@ public class SearchResultIterator implements Iterator {
     private LDAPSearchResults results;
     private Set<String> excludeDNs;
     private boolean hasExcludeDNs;
-    private DataStoreEntry current;
+    private SMSDataEntry current;
 
     public SearchResultIterator(
         LDAPSearchResults results,
@@ -75,7 +74,7 @@ public class SearchResultIterator implements Iterator {
             }
 
             if (entry != null) {
-                current = new DataStoreEntry(dn, convertLDAPAttributeSetToMap(
+                current = new SMSDataEntry(dn, convertLDAPAttributeSetToMap(
                     entry.getAttributeSet()));
             }
             return (current != null);
@@ -87,7 +86,7 @@ public class SearchResultIterator implements Iterator {
     }
 
     public Object next() {
-        DataStoreEntry tmp = current;
+        SMSDataEntry tmp = current;
         current = null;
         return tmp;
     }
