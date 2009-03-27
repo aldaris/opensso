@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.19 2009-03-25 16:14:25 veiming Exp $
+ * $Id: Entitlement.java,v 1.20 2009-03-27 00:27:24 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -95,9 +95,9 @@ public class Entitlement {
      * @param actionNames Set of action names.
      */
     public Entitlement(
-        String applicationName,
-        String resourceName,
-        Set<String> actionNames) {
+            String applicationName,
+            String resourceName,
+            Set<String> actionNames) {
         this.applicationName = applicationName;
         setResourceName(resourceName);
         setActionNames(actionNames);
@@ -110,8 +110,8 @@ public class Entitlement {
      * @param actionValues Map of action name to set of values.
      */
     public Entitlement(
-        String resourceName,
-        Map<String, Object> actionValues) {
+            String resourceName,
+            Map<String, Object> actionValues) {
         setResourceName(resourceName);
         setActionValues(actionValues);
     }
@@ -124,9 +124,9 @@ public class Entitlement {
      * @param actionValues Map of action name to set of values.
      */
     public Entitlement(
-        String applicationName,
-        String resourceName,
-        Map<String, Object> actionValues) {
+            String applicationName,
+            String resourceName,
+            Map<String, Object> actionValues) {
         this.applicationName = applicationName;
         setResourceName(resourceName);
         setActionValues(actionValues);
@@ -378,105 +378,105 @@ public class Entitlement {
     public boolean equals(Object obj) {
         boolean equalled = true;
         if (obj == null) {
-            equalled = false;
+            return false;
         }
         if (!getClass().equals(obj.getClass())) {
-            equalled = false;
+            return false;
         }
         Entitlement object = (Entitlement) obj;
 
         if (name == null) {
             if (object.getName() != null) {
-                equalled = false;
+                return false;
             }
         } else { // name not null
 
-            if ((object.getName()) != null) {
-                equalled = false;
+            if ((object.getName()) == null) {
+                return false;
             } else if (!name.equals(object.getName())) {
-                equalled = false;
+                return false;
             }
         }
-        
+
         if (applicationName == null) {
             if (object.getApplicationName() != null) {
-                equalled = false;
+                return false;
             }
         } else { // serviceName not null
 
-            if ((object.getApplicationName()) != null) {
-                equalled = false;
+            if ((object.getApplicationName()) == null) {
+                return false;
             } else if (!applicationName.equals(object.getApplicationName())) {
-                equalled = false;
+                return false;
             }
         }
 
         if (resourceName == null) {
             if (object.getResourceName() != null) {
-                equalled = false;
+                return false;
             }
         } else { // resourceName not null
 
-            if ((object.getResourceName()) != null) {
-                equalled = false;
+            if ((object.getResourceName()) == null) {
+                return false;
             } else if (!resourceName.equals(object.getResourceName())) {
-                equalled = false;
+                return false;
             }
         }
 
         if (excludedResourceNames == null) {
             if (object.getExcludedResourceNames() != null) {
-                equalled = false;
+                return false;
             }
         } else { // excludedResourceNames not null
 
-            if ((object.getExcludedResourceNames()) != null) {
-                equalled = false;
+            if ((object.getExcludedResourceNames()) == null) {
+                return false;
             } else if (!excludedResourceNames.equals(
                     object.getExcludedResourceNames())) {
-                equalled = false;
+                return false;
             }
         }
 
         if (actionValues == null) {
             if (object.getActionValues() != null) {
-                equalled = false;
+                return false;
             }
         } else { // actionValues not null
 
-            if ((object.getActionValues()) != null) {
-                equalled = false;
+            if ((object.getActionValues()) == null) {
+                return false;
             } else if (!actionValues.equals(
                     object.getActionValues())) {
-                equalled = false;
+                return false;
             }
         }
 
         if (advices == null) {
             if (object.getAdvices() != null) {
-                equalled = false;
+                return false;
             }
         } else { // advices not null
 
-            if ((object.getAdvices()) != null) {
-                equalled = false;
+            if ((object.getAdvices()) == null) {
+                return false;
             } else if (!advices.equals(
                     object.getAdvices())) {
-                equalled = false;
+                return false;
             }
         }
 
         if (attributes == null) {
             if (object.getAttributes() != null) {
-                equalled = false;
+                return false;
             }
         } else { // attributes not null
 
-            if ((object.getAttributes()) != null) {
-                equalled = false;
+            if ((object.getAttributes()) == null) {
+                return false;
             } else if (!attributes.equals(
                     object.getAttributes())) {
-                equalled = false;
+                return false;
             }
         }
 
@@ -523,7 +523,7 @@ public class Entitlement {
         return getApplication().getApplicationType().getResourceSaveIndex(
                 resourceName);
     }
-    
+
     private Application getApplication() {
         if (application == null) {
             application = ApplicationManager.getApplication(applicationName);

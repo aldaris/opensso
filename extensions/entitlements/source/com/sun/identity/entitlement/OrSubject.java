@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrSubject.java,v 1.1 2009-03-14 03:03:17 dillidorai Exp $
+ * $Id: OrSubject.java,v 1.2 2009-03-27 00:27:24 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -183,32 +183,32 @@ public class OrSubject implements EntitlementSubject {
     public boolean equals(Object obj) {
         boolean equalled = true;
         if (obj == null) {
-            equalled = false;
+            return false;
         }
         if (!getClass().equals(obj.getClass())) {
-            equalled = false;
+            return false;
         }
         OrSubject object = (OrSubject) obj;
         if (eSubjects == null) {
             if (object.getESubjects() != null) {
-                equalled = false;
+                return false;
             }
         } else { // eSubjects not null
-            if ((object.getESubjects()) != null) {
-                equalled = false;
+            if ((object.getESubjects()) == null) {
+                return false;
             } else if (!eSubjects.containsAll(object.getESubjects())) {
-                equalled = false;
+                return false;
             } else if (!object.getESubjects().containsAll(eSubjects)) {
-                equalled = false;
+                return false;
             }
         }
         if (pSubjectName == null) {
             if (object.getPSubjectName() != null) {
-                equalled = false;
+                return false;
             }
         } else {
             if (!pSubjectName.equals(object.getPSubjectName())) {
-                equalled = false;
+                return false;
             }
         }
         return equalled;

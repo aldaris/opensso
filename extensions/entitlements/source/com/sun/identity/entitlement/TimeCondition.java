@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TimeCondition.java,v 1.1 2009-03-14 03:03:17 dillidorai Exp $
+ * $Id: TimeCondition.java,v 1.2 2009-03-27 00:27:24 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -214,7 +214,7 @@ public class TimeCondition implements EntitlementCondition {
         this.enforcementTimeZone = enforcementTimeZone;
     }
 
-       /**
+    /**
      * Returns OpenSSO policy subject name of the object
      * @return subject name as used in OpenSSO policy,
      * this is releavant only when UserECondition was created from
@@ -234,7 +234,6 @@ public class TimeCondition implements EntitlementCondition {
         this.pConditionName = pConditionName;
     }
 
-
     /**
      * Returns JSONObject mapping of the object
      * @return JSONObject mapping  of the object
@@ -252,7 +251,6 @@ public class TimeCondition implements EntitlementCondition {
         return jo;
     }
 
-
     /**
      * Returns <code>true</code> if the passed in object is equal to this object
      * @param obj object to check for equality
@@ -261,10 +259,10 @@ public class TimeCondition implements EntitlementCondition {
     public boolean equals(Object obj) {
         boolean equalled = true;
         if (obj == null) {
-            equalled = false;
+            return false;
         }
         if (!getClass().equals(obj.getClass())) {
-            equalled = false;
+            return false;
         }
         TimeCondition object = (TimeCondition) obj;
         if (startDay == null) {
@@ -354,5 +352,4 @@ public class TimeCondition implements EntitlementCondition {
         }
         return s;
     }
-
 }

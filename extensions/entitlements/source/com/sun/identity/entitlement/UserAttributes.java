@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserAttributes.java,v 1.1 2009-03-24 19:18:02 dillidorai Exp $
+ * $Id: UserAttributes.java,v 1.2 2009-03-27 00:27:24 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -150,29 +150,29 @@ public class UserAttributes implements ResourceAttributes {
     public boolean equals(Object obj) {
         boolean equalled = true;
         if (obj == null) {
-            equalled = false;
+            return false;
         }
         if (!getClass().equals(obj.getClass())) {
-            equalled = false;
+            return false;
         }
         UserAttributes object = (UserAttributes) obj;
         if (properties == null) {
             if (object.getProperties() != null) {
-                equalled = false;
+                return false;
             }
         } else {
             if (!properties.equals(object.getProperties())) {
-                equalled = false;
+                return false;
             }
         }
         if (pResponseProviderName == null) {
             if (object.getPResponseProviderName() != null) {
-                equalled = false;
+                return false;
             }
         } else {
             if (!pResponseProviderName.equals(
                     object.getPResponseProviderName())) {
-                equalled = false;
+                return false;
             }
         }
         return equalled;

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPCondition.java,v 1.1 2009-03-14 03:03:17 dillidorai Exp $
+ * $Id: IPCondition.java,v 1.2 2009-03-27 00:27:24 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -69,7 +69,6 @@ public class IPCondition implements EntitlementCondition {
         this.startIp = startIp;
         this.endIp = endIp;
     }
-
 
     /**
      * Constructs IPCondition object:w
@@ -168,7 +167,6 @@ public class IPCondition implements EntitlementCondition {
         this.endIp = endIp;
     }
 
- 
     /**
      * Returns OpenSSO policy subject name of the object
      * @return subject name as used in OpenSSO policy,
@@ -210,46 +208,46 @@ public class IPCondition implements EntitlementCondition {
     public boolean equals(Object obj) {
         boolean equalled = true;
         if (obj == null) {
-            equalled = false;
+            return false;
         }
         if (!getClass().equals(obj.getClass())) {
-            equalled = false;
+            return false;
         }
         IPCondition object = (IPCondition) obj;
         if (getDomainNameMask() == null) {
             if (object.getDomainNameMask() != null) {
-                equalled = false;
+                return false;
             }
         } else {
             if (!domainNameMask.equals(object.getDomainNameMask())) {
-                equalled = false;
+                return false;
             }
         }
         if (getStartIp() == null) {
             if (object.getStartIp() != null) {
-                equalled = false;
+                return false;
             }
         } else {
             if (!startIp.equals(object.getStartIp())) {
-                equalled = false;
+                return false;
             }
         }
         if (getEndIp() == null) {
             if (object.getEndIp() != null) {
-                equalled = false;
+                return false;
             }
         } else {
             if (!endIp.equals(object.getEndIp())) {
-                equalled = false;
+                return false;
             }
         }
         if (getPConditionName() == null) {
             if (object.getPConditionName() != null) {
-                equalled = false;
+                return false;
             }
         } else {
             if (!pConditionName.equals(object.getPConditionName())) {
-                equalled = false;
+                return false;
             }
         }
         return equalled;
@@ -291,6 +289,4 @@ public class IPCondition implements EntitlementCondition {
         }
         return s;
     }
-    
-
 }

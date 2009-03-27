@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrCondition.java,v 1.1 2009-03-14 03:03:17 dillidorai Exp $
+ * $Id: OrCondition.java,v 1.2 2009-03-27 00:27:24 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -183,32 +183,32 @@ public class OrCondition implements EntitlementCondition {
     public boolean equals(Object obj) {
         boolean equalled = true;
         if (obj == null) {
-            equalled = false;
+            return false;
         }
         if (!getClass().equals(obj.getClass())) {
-            equalled = false;
+            return false;
         }
         OrCondition object = (OrCondition) obj;
         if (eConditions == null) {
             if (object.getEConditions() != null) {
-                equalled = false;
+                return false;
             }
         } else { // eConditions not null
-            if ((object.getEConditions()) != null) {
-                equalled = false;
+            if ((object.getEConditions()) == null) {
+                return false;
             } else if (!eConditions.containsAll(object.getEConditions())) {
-                equalled = false;
+                return false;
             } else if (!object.getEConditions().containsAll(eConditions)) {
-                equalled = false;
+                return false;
             }
         }
         if (pConditionName == null) {
             if (object.getPConditionName() != null) {
-                equalled = false;
+                return false;
             }
         } else {
             if (!pConditionName.equals(object.getPConditionName())) {
-                equalled = false;
+                return false;
             }
         }
         return equalled;

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserSubject.java,v 1.1 2009-03-14 03:03:17 dillidorai Exp $
+ * $Id: UserSubject.java,v 1.2 2009-03-27 00:27:24 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -180,28 +180,28 @@ public class UserSubject implements EntitlementSubject {
     public boolean equals(Object obj) {
         boolean equalled = true;
         if (obj == null) {
-            equalled = false;
+            return false;
         }
         if (!getClass().equals(obj.getClass())) {
-            equalled = false;
+            return false;
         }
         UserSubject object = (UserSubject) obj;
         if (user == null) {
             if (object.getUser() != null) {
-                equalled = false;
+                return false;
             }
         } else {
             if (!user.equals(object.getUser())) {
-                equalled = false;
+                return false;
             }
         }
         if (pSubjectName == null) {
             if (object.getPSubjectName() != null) {
-                equalled = false;
+                return false;
             }
         } else {
             if (!pSubjectName.equals(object.getPSubjectName())) {
-                equalled = false;
+                return false;
             }
         }
         return equalled;
@@ -217,7 +217,7 @@ public class UserSubject implements EntitlementSubject {
             code += user.hashCode();
         }
         if (pSubjectName != null) {
-             code += pSubjectName.hashCode();
+            code += pSubjectName.hashCode();
         }
         return code;
     }
