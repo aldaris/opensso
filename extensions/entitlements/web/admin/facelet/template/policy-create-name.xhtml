@@ -26,7 +26,7 @@
         <ice:panelGroup>
             <ice:inputText 
                 id="policy-name"
-                value="#{policyCreateWizardBean.name}"/>
+                value="#{policyCreateWizardBean.priviligeBean.name}"/>
         </ice:panelGroup>
         <ice:panelGroup>
             <ice:outputLabel
@@ -35,7 +35,7 @@
         </ice:panelGroup>
         <ice:inputTextarea
             id="policy-description"
-            value="#{policyCreateWizardBean.description}"
+            value="#{policyCreateWizardBean.priviligeBean.description}"
             styleClass="policy-description"/>
     </ice:panelGrid>
     <span class="section-head">

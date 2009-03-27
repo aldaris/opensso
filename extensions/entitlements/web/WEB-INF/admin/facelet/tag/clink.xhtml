@@ -5,18 +5,22 @@
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:ice="http://www.icesoft.com/icefaces/component">
     <ice:commandLink
-        actionListener="#{handler.addListener}"
+        actionListener="#{handler[listenerMethod]}"
+        bean="#{bean}"
         rendered="#{type == 'add'}"
         partialSubmit="true"
         styleClass="command-link">
+        <f:attribute name="bean" value="#{bean}"/>
         <img src="../image/add.png"/>
         <ice:outputText value="Add"/>
     </ice:commandLink>
     <ice:commandLink
-        actionListener="#{handler.searchListener}"
+        actionListener="#{handler[listenerMethod]}"
+        bean="#{bean}"
         rendered="#{type == 'search'}"
         partialSubmit="true"
         styleClass="command-link">
+        <f:attribute name="bean" value="#{bean}"/>
         <img src="../image/search.png"/>
         <ice:outputText value="Search"/>
     </ice:commandLink>

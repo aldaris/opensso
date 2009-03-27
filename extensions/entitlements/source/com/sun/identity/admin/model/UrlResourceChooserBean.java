@@ -1,24 +1,43 @@
 package com.sun.identity.admin.model;
 
 import java.io.Serializable;
-import java.util.List;
 
 public class UrlResourceChooserBean implements Serializable {
-    private ResourceChooserClient resourceChooserClient;
+    private boolean addVisible;
+    private String addPattern;
+    private String searchFilter;
+    private boolean searchVisible;
 
-    public List<Resource> getAvailableResources() {
-        return resourceChooserClient.getAvailableResources();
+    public boolean isAddVisible() {
+        return addVisible;
     }
 
-    public List<Resource> getSelectedResources() {
-        return resourceChooserClient.getSelectedResources();
+    public void setAddVisible(boolean addVisible) {
+        this.addVisible = addVisible;
     }
 
-    public ResourceChooserClient getResourceChooserClient() {
-        return resourceChooserClient;
+    public String getAddPattern() {
+        return addPattern;
     }
 
-    public void setResourceChooserClient(ResourceChooserClient resourceChooserClient) {
-        this.resourceChooserClient = resourceChooserClient;
+    public void setAddPattern(String addPattern) {
+        this.addPattern = addPattern;
     }
+
+    public String getSearchFilter() {
+        return searchFilter;
+    }
+
+    public void setSearchFilter(String searchFilter) {
+        this.searchFilter = searchFilter;
+    }
+
+    public boolean isSearchVisible() {
+        return searchVisible;
+    }
+
+    public void setSearchVisible(boolean searchVisible) {
+        this.searchVisible = searchVisible;
+    }
+
 }

@@ -44,7 +44,7 @@
             style="width: 100%">
             <c:forEach
                 var="viewCondition"
-                items="#{policyCreateWizardBean.viewConditions}">
+                items="#{policyCreateWizardBean.priviligeBean.viewConditions}">
                 <o:multipanel
                     collapsible="true"
                     removeable="#{!viewCondition.conditionType.expression}"

@@ -90,26 +90,6 @@
     </managed-bean>
     <!-- subject container types -->
 
-    <managed-bean>
-        <managed-bean-name>subjectContainers</managed-bean-name>
-        <managed-bean-class>java.util.ArrayList</managed-bean-class>
-        <managed-bean-scope>session</managed-bean-scope>
-    </managed-bean>
-
-    <managed-bean>
-        <managed-bean-name>subjectContainersHandler</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.handler.SubjectContainersHandler</managed-bean-class>
-        <managed-bean-scope>session</managed-bean-scope>
-        <managed-property>
-            <property-name>subjectContainers</property-name>
-            <value>#{subjectContainers}</value>
-        </managed-property>
-        <managed-property>
-            <property-name>queuedActionBean</property-name>
-            <value>#{queuedActionBean}</value>
-        </managed-property>
-    </managed-bean>
-
     <!-- application types -->
     <managed-bean>
         <managed-bean-name>urlApplicationType</managed-bean-name>
@@ -297,7 +277,7 @@
         <managed-bean-scope>session</managed-bean-scope>
         <managed-property>
             <property-name>viewConditions</property-name>
-            <value>#{policyCreateWizardBean.viewConditions}</value>
+            <value>#{policyCreateWizardBean.priviligeBean.viewConditions}</value>
         </managed-property>
         <managed-property>
             <property-name>queuedActionBean</property-name>
@@ -305,17 +285,12 @@
         </managed-property>
     </managed-bean>
 
-    <!-- url resource chooser implementation -->
+    <!-- url resource chooser -->
     <managed-bean>
         <managed-bean-name>urlResourceChooserBean</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.UrlResourceChooserBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
-        <managed-property>
-            <property-name>resourceChooserClient</property-name>
-            <value>#{policyCreateWizardBean}</value>
-        </managed-property>
     </managed-bean>
-
     <managed-bean>
         <managed-bean-name>urlResourceChooserHandler</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.handler.UrlResourceChooserHandler</managed-bean-class>
@@ -325,49 +300,21 @@
             <value>#{urlResourceChooserBean}</value>
         </managed-property>
     </managed-bean>
+    <!-- url resource chooser -->
 
     <managed-bean>
-        <managed-bean-name>urlResourcesSearchBean</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.model.UrlResourcesSearchBean</managed-bean-class>
-        <managed-bean-scope>session</managed-bean-scope>
-    </managed-bean>
-
-    <managed-bean>
-        <managed-bean-name>urlResourcesSearchHandler</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.handler.UrlResourcesSearchHandler</managed-bean-class>
+        <managed-bean-name>subjectContainersHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.SubjectContainersHandler</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
         <managed-property>
-            <property-name>urlResourcesSearchBean</property-name>
-            <value>#{urlResourcesSearchBean}</value>
-        </managed-property>
-    </managed-bean>
-
-    <managed-bean>
-        <managed-bean-name>urlResourcesAddBean</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.model.UrlResourcesAddBean</managed-bean-class>
-        <managed-bean-scope>session</managed-bean-scope>
-    </managed-bean>
-
-    <managed-bean>
-        <managed-bean-name>urlResourcesAddHandler</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.handler.UrlResourcesAddHandler</managed-bean-class>
-        <managed-bean-scope>session</managed-bean-scope>
-        <managed-property>
-            <property-name>resources</property-name>
-            <value>#{policyCreateWizardBean.resources}</value>
+            <property-name>subjectContainers</property-name>
+            <value>#{policyCreateWizardBean.priviligeBean.subjectContainers}</value>
         </managed-property>
         <managed-property>
-            <property-name>urlResourcesAddBean</property-name>
-            <value>#{urlResourcesAddBean}</value>
+            <property-name>queuedActionBean</property-name>
+            <value>#{queuedActionBean}</value>
         </managed-property>
     </managed-bean>
-
-    <managed-bean>
-        <managed-bean-name>urlResourceExceptionsHandler</managed-bean-name>
-        <managed-bean-class>com.sun.identity.admin.handler.UrlResourceExceptionsHandler</managed-bean-class>
-        <managed-bean-scope>session</managed-bean-scope>
-    </managed-bean>
-    <!-- url resource chooser implementation -->
 
     <managed-bean>
         <managed-bean-name>policyCreateWizardBean</managed-bean-name>
@@ -376,10 +323,6 @@
         <managed-property>
             <property-name>applications</property-name>
             <value>#{applicationHandler.applications}</value>
-        </managed-property>
-        <managed-property>
-            <property-name>subjectContainers</property-name>
-            <value>#{subjectContainers}</value>
         </managed-property>
     </managed-bean>
 

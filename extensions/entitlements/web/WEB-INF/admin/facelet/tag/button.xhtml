@@ -9,7 +9,7 @@
         rendered="#{type == 'add'}">
         <ice:commandLink
             styleClass="button"
-            actionListener="#{handler.addListener}"
+            actionListener="#{handler[listenerMethod]}"
             partialSubmit="true">
             <f:attribute name="bean" value="#{bean}"/>
             <img class="left" src="../image/add.png"/>
@@ -21,7 +21,7 @@
         rendered="#{type == 'finish'}">
         <ice:commandLink
             styleClass="button"
-            actionListener="#{handler.finishListener}"
+            actionListener="#{handler[listenerMethod]}"
             partialSubmit="true">
             <f:attribute name="bean" value="#{bean}"/>
             <img class="left" src="../image/execute.png"/>
@@ -33,9 +33,10 @@
         partialSubmit="true"
         rendered="#{type == 'ok'}">
         <ice:commandLink
-            actionListener="#{handler.okListener}"
+            actionListener="#{handler[listenerMethod]}"
             styleClass="button"
             partialSubmit="true">
+            <f:attribute name="bean" value="#{bean}"/>
             <img class="left" src="../image/execute.png"/>
             Ok
         </ice:commandLink>
@@ -45,9 +46,10 @@
         rendered="#{type == 'cancel'}"
         partialSubmit="true">
         <ice:commandLink
-            actionListener="#{handler.cancelListener}"
+            actionListener="#{handler[listenerMethod]}"
             styleClass="button"
             partialSubmit="true">
+            <f:attribute name="bean" value="#{bean}"/>
             <img class="left" src="../image/cancel.png"/>
             Cancel
         </ice:commandLink>

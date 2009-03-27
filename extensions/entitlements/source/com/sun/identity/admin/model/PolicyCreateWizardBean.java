@@ -6,21 +6,16 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import javax.faces.event.PhaseListener;
 import javax.faces.model.SelectItem;
 
 public class PolicyCreateWizardBean
         extends WizardBean
         implements ResourceChooserClient, Serializable {
 
-    private String name;
-    private String description;
-    private List<Resource> resources = new ArrayList<Resource>();
+    private PriviligeBean priviligeBean = new PriviligeBean();
+    
     private Application application;
     private Map<String, Application> applications;
-    private List<Action> actions;
-    private List<ViewCondition> viewConditions = new ArrayList<ViewCondition>();
-    private List<SubjectContainer> subjectContainers;
     private Effect dropConditionEffect;
     private Effect dropSubjectContainerEffect;
     private PolicyCreateSummary policyCreateSummary = new PolicyCreateSummary();
@@ -30,20 +25,12 @@ public class PolicyCreateWizardBean
         policyCreateSummary.setPolicyCreateWizardBean(this);
     }
 
-    public List<Resource> getResources() {
-        return resources;
-    }
-
     public List<Resource> getSelectedResources() {
-        return getResources();
+        return getPriviligeBean().getResources();
     }
 
     public List<Resource> getAvailableResources() {
         return application.getDefaultResources();
-    }
-
-    public void setResources(List<Resource> resources) {
-        this.resources = resources;
     }
 
     public Application getApplication() {
@@ -52,7 +39,7 @@ public class PolicyCreateWizardBean
 
     public void setApplication(Application application) {
         this.application = application;
-        actions = new DeepCloneableArrayList(application.getDefaultActions()).deepClone();
+        getPriviligeBean().setActions(new DeepCloneableArrayList<Action>(application.getDefaultActions()).deepClone());
     }
 
     public List<SelectItem> getApplicationItems() {
@@ -73,38 +60,6 @@ public class PolicyCreateWizardBean
         this.applications = applications;
     }
 
-    public List<Action> getActions() {
-        return actions;
-    }
-
-    public void setActions(List<Action> actions) {
-        this.actions = actions;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public List<ViewCondition> getViewConditions() {
-        return viewConditions;
-    }
-
-    public void setViewConditions(List<ViewCondition> viewConditions) {
-        this.viewConditions = viewConditions;
-    }
-
     public Effect getDropConditionEffect() {
         return dropConditionEffect;
     }
@@ -119,14 +74,6 @@ public class PolicyCreateWizardBean
 
     public void setDropSubjectContainerEffect(Effect dropSubjectContainerEffect) {
         this.dropSubjectContainerEffect = dropSubjectContainerEffect;
-    }
-
-    public List<SubjectContainer> getSubjectContainers() {
-        return subjectContainers;
-    }
-
-    public void setSubjectContainers(List<SubjectContainer> subjectContainers) {
-        this.subjectContainers = subjectContainers;
     }
 
     public boolean isOrConditionDraggable() {
@@ -182,8 +129,8 @@ public class PolicyCreateWizardBean
 
     }
     public ViewCondition getLastVisibleCondition() {
-        for (int i = viewConditions.size() - 1; i >= 0; i--) {
-            ViewCondition lastCondition = viewConditions.get(i);
+        for (int i = getPriviligeBean().getViewConditions().size() - 1; i >= 0; i--) {
+            ViewCondition lastCondition = getPriviligeBean().getViewConditions().get(i);
             if (lastCondition.isVisible()) {
                 return lastCondition;
             }
@@ -202,5 +149,9 @@ public class PolicyCreateWizardBean
 
     public void setAdvancedTabsetIndex(int advancedTabsetIndex) {
         this.advancedTabsetIndex = advancedTabsetIndex;
+    }
+
+    public PriviligeBean getPriviligeBean() {
+        return priviligeBean;
     }
 }

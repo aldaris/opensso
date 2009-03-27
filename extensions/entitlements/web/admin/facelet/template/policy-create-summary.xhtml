@@ -19,7 +19,7 @@
         styleClass="summary-table"
         columns="3">
         <ice:outputText value="Name"/>
-        <ice:outputText value="#{policyCreateWizardBean.name}"/>
+        <ice:outputText value="#{policyCreateWizardBean.priviligeBean.name}"/>
         <ice:commandLink
             actionListener="#{policyCreateWizardHandler.gotoStepListener}"
             partialSubmit="true"
@@ -34,7 +34,7 @@
                 value="Edit"/>
         </ice:commandLink>
         <ice:outputText value="Description"/>
-        <ice:outputText value="#{policyCreateWizardBean.description}"/>
+        <ice:outputText value="#{policyCreateWizardBean.priviligeBean.description}"/>
         <ice:commandLink
             actionListener="#{policyCreateWizardHandler.gotoStepListener}"
             partialSubmit="true"

@@ -30,6 +30,9 @@
                     <ui:define name="wizard-step-body">
                         <ui:include
                             src="#{policyCreateWizardBean.application.applicationType.template}">
+                                <ui:param
+                                    name="resourceChooserClient"
+                                    value="#{policyCreateWizardBean}"/>
                         </ui:include>
                     </ui:define>
                 </o:wstep>

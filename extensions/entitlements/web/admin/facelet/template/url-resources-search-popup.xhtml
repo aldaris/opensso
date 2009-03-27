@@ -9,7 +9,7 @@
         styleClass="popup-modal"
         modal="true"
         draggable="false"
-        visible="#{urlResourcesSearchBean.visible}"
+        visible="#{urlResourceChooserBean.searchVisible}"
         autoCentre="true">
         <f:facet name="header">
             <ice:panelGrid>
@@ -23,16 +23,18 @@
                 <ice:outputText
                     value="Search filter"/>
                 <ice:inputText
-                    value="#{urlResourcesSearchBean.filter}"/>
+                    value="#{urlResourceChooserBean.searchFilter}"/>
                 <ice:panelGrid
                     styleClass="button-group"
                     columns="2">
                     <o:button
                         type="ok"
-                        handler="#{urlResourcesSearchHandler}"/>
+                        handler="#{urlResourceChooserHandler}"
+                        listenerMethod="searchOkListener"/>
                     <o:button
                         type="cancel"
-                        handler="#{urlResourcesSearchHandler}"/>
+                        handler="#{urlResourceChooserHandler}"
+                        listenerMethod="searchCancelListener"/>
                 </ice:panelGrid>
             </ice:panelGrid>
         </f:facet>

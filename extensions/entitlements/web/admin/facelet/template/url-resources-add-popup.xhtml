@@ -9,7 +9,7 @@
         styleClass="popup-modal"
         modal="true"
         draggable="false"
-        visible="#{urlResourcesAddBean.visible}"
+        visible="#{urlResourceChooserBean.addVisible}"
         autoCentre="true">
         <f:facet name="header">
             <ice:panelGrid>
@@ -23,16 +23,20 @@
                 <ice:outputText
                     value="URL Resource"/>
                 <ice:inputText
-                    value="#{urlResourcesAddBean.pattern}"/>
+                    value="#{urlResourceChooserBean.addPattern}"/>
                 <ice:panelGrid
                     styleClass="button-group"
                     columns="2">
                     <o:button
                         type="ok"
-                        handler="#{urlResourcesAddHandler}"/>
+                        bean="#{resourceChooserClient}"
+                        handler="#{urlResourceChooserHandler}"
+                        listenerMethod="addOkListener"/>
                     <o:button
                         type="cancel"
-                        handler="#{urlResourcesAddHandler}"/>
+                        bean="#{resourceChooserClient}"
+                        handler="#{urlResourceChooserHandler}"
+                        listenerMethod="addCancelListener"/>
                 </ice:panelGrid>
             </ice:panelGrid>
         </f:facet>

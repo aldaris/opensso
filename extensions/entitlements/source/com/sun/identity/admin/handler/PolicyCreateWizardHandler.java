@@ -41,13 +41,13 @@ public class PolicyCreateWizardHandler
         PolicyCreateWizardBean pcwb = getPolicyCreateWizardBean();
 
         // name, description
-        String name = pcwb.getName();
+        String name = pcwb.getPriviligeBean().getName();
         // TODO: where do we set the description
-        String description = pcwb.getDescription();
+        String description = pcwb.getPriviligeBean().getDescription();
 
         // subjects
         Set<EntitlementSubject> eSubjects = new HashSet<EntitlementSubject>();
-        for (SubjectContainer sc : pcwb.getSubjectContainers()) {
+        for (SubjectContainer sc : pcwb.getPriviligeBean().getSubjectContainers()) {
             List<ViewSubject> viewSubjects = sc.getViewSubjects();
             for (ViewSubject vs : viewSubjects) {
                 eSubjects.add(vs.getSubject());
@@ -57,7 +57,7 @@ public class PolicyCreateWizardHandler
 
 
         // resources / actions
-        List<Action> actions = pcwb.getActions();
+        List<Action> actions = pcwb.getPriviligeBean().getActions();
         List<Resource> resources = pcwb.getSelectedResources();
         Set<Entitlement> entitlements = new HashSet<Entitlement>();
         for (Resource r : resources) {
@@ -67,7 +67,7 @@ public class PolicyCreateWizardHandler
 
         // conditions
         cleanConditions();
-        ViewCondition conditionTree = buildConditionExpression(pcwb.getViewConditions());
+        ViewCondition conditionTree = buildConditionExpression(pcwb.getPriviligeBean().getViewConditions());
         EntitlementCondition eCondition = null;
         if (conditionTree != null) {
             eCondition = conditionTree.getEntitlementCondition();
@@ -105,7 +105,7 @@ public class PolicyCreateWizardHandler
             return;
         }
         while ((lastVc = getPolicyCreateWizardBean().getLastVisibleCondition()).getConditionType().isExpression()) {
-            getPolicyCreateWizardBean().getViewConditions().remove(lastVc);
+            getPolicyCreateWizardBean().getPriviligeBean().getViewConditions().remove(lastVc);
         }
     }
 
@@ -189,7 +189,7 @@ public class PolicyCreateWizardHandler
             // TODO: implicit or?
 
             ViewCondition vc = ct.newViewCondition();
-            getPolicyCreateWizardBean().getViewConditions().add(vc);
+            getPolicyCreateWizardBean().getPriviligeBean().getViewConditions().add(vc);
 
             Effect e = new Appear();
             e.setTransitory(true);
@@ -205,7 +205,7 @@ public class PolicyCreateWizardHandler
             assert (sct != null);
 
             SubjectContainer sc = sct.newSubjectContainer();
-            getPolicyCreateWizardBean().getSubjectContainers().add(sc);
+            getPolicyCreateWizardBean().getPriviligeBean().getSubjectContainers().add(sc);
 
             Effect e = new Appear();
             e.setTransitory(true);
