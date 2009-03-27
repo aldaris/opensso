@@ -277,7 +277,7 @@
         <managed-bean-scope>session</managed-bean-scope>
         <managed-property>
             <property-name>viewConditions</property-name>
-            <value>#{policyCreateWizardBean.priviligeBean.viewConditions}</value>
+            <value>#{policyCreateWizardBean.privilegeBean.viewConditions}</value>
         </managed-property>
         <managed-property>
             <property-name>queuedActionBean</property-name>
@@ -308,7 +308,7 @@
         <managed-bean-scope>session</managed-bean-scope>
         <managed-property>
             <property-name>subjectContainers</property-name>
-            <value>#{policyCreateWizardBean.priviligeBean.subjectContainers}</value>
+            <value>#{policyCreateWizardBean.privilegeBean.subjectContainers}</value>
         </managed-property>
         <managed-property>
             <property-name>queuedActionBean</property-name>

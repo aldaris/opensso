@@ -12,7 +12,7 @@ public class PolicyCreateWizardBean
         extends WizardBean
         implements ResourceChooserClient, Serializable {
 
-    private PriviligeBean priviligeBean = new PriviligeBean();
+    private PrivilegeBean privilegeBean = new PrivilegeBean();
     
     private Application application;
     private Map<String, Application> applications;
@@ -26,7 +26,7 @@ public class PolicyCreateWizardBean
     }
 
     public List<Resource> getSelectedResources() {
-        return getPriviligeBean().getResources();
+        return getPrivilegeBean().getResources();
     }
 
     public List<Resource> getAvailableResources() {
@@ -39,7 +39,7 @@ public class PolicyCreateWizardBean
 
     public void setApplication(Application application) {
         this.application = application;
-        getPriviligeBean().setActions(new DeepCloneableArrayList<Action>(application.getDefaultActions()).deepClone());
+        getPrivilegeBean().setActions(new DeepCloneableArrayList<Action>(application.getDefaultActions()).deepClone());
     }
 
     public List<SelectItem> getApplicationItems() {
@@ -77,7 +77,8 @@ public class PolicyCreateWizardBean
     }
 
     public boolean isOrConditionDraggable() {
-        ViewCondition lastCondition = getLastVisibleCondition();
+        ViewCondition lastCondition = privilegeBean.getLastViewCondition();
+
         if (lastCondition == null) {
             return false;
         }
@@ -89,7 +90,8 @@ public class PolicyCreateWizardBean
     }
 
     public boolean isAndConditionDraggable() {
-        ViewCondition lastCondition = getLastVisibleCondition();
+        ViewCondition lastCondition = privilegeBean.getLastViewCondition();
+
         if (lastCondition == null) {
             return false;
         }
@@ -101,7 +103,8 @@ public class PolicyCreateWizardBean
     }
 
     public boolean isNotConditionDraggable() {
-        ViewCondition lastCondition = getLastVisibleCondition();
+        ViewCondition lastCondition = privilegeBean.getLastViewCondition();
+
         if (lastCondition == null) {
             return true;
         }
@@ -116,7 +119,7 @@ public class PolicyCreateWizardBean
     }
 
     public boolean isConditionTypesDraggable() {
-        ViewCondition lastCondition = getLastVisibleCondition();
+        ViewCondition lastCondition = privilegeBean.getLastViewCondition();
 
         if (lastCondition == null) {
             return true;
@@ -127,16 +130,6 @@ public class PolicyCreateWizardBean
 
         return false;
 
-    }
-    public ViewCondition getLastVisibleCondition() {
-        for (int i = getPriviligeBean().getViewConditions().size() - 1; i >= 0; i--) {
-            ViewCondition lastCondition = getPriviligeBean().getViewConditions().get(i);
-            if (lastCondition.isVisible()) {
-                return lastCondition;
-            }
-        }
-
-        return null;
     }
 
     public PolicyCreateSummary getPolicyCreateSummary() {
@@ -151,7 +144,7 @@ public class PolicyCreateWizardBean
         this.advancedTabsetIndex = advancedTabsetIndex;
     }
 
-    public PriviligeBean getPriviligeBean() {
-        return priviligeBean;
+    public PrivilegeBean getPrivilegeBean() {
+        return privilegeBean;
     }
 }

@@ -12,14 +12,14 @@ public class PolicyCreateSummary {
     }
 
     public int getResourceCount() {
-        return policyCreateWizardBean.getPriviligeBean().getResources().size();
+        return policyCreateWizardBean.getPrivilegeBean().getResources().size();
     }
 
     public int getConditionCount() {
         int count = 0;
 
         // don't count operators or functions
-        for (ViewCondition vc: policyCreateWizardBean.getPriviligeBean().getViewConditions()) {
+        for (ViewCondition vc: policyCreateWizardBean.getPrivilegeBean().getViewConditions()) {
             if (!vc.getConditionType().isExpression()) {
                 count++;
             }
@@ -29,12 +29,12 @@ public class PolicyCreateSummary {
     }
 
     public int getActionCount() {
-        return policyCreateWizardBean.getPriviligeBean().getActions().size();
+        return policyCreateWizardBean.getPrivilegeBean().getActions().size();
     }
 
     public int getSubjectCount() {
         int count = 0;
-        for (SubjectContainer sc: policyCreateWizardBean.getPriviligeBean().getSubjectContainers()) {
+        for (SubjectContainer sc: policyCreateWizardBean.getPrivilegeBean().getSubjectContainers()) {
             count += sc.getViewSubjects().size();
         }
 
