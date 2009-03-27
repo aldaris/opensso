@@ -22,11 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementCondition.java,v 1.1 2009-03-14 03:03:17 dillidorai Exp $
+ * $Id: EntitlementCondition.java,v 1.2 2009-03-27 16:29:09 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
-import java.util.List;
+import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
@@ -34,7 +34,7 @@ import javax.security.auth.Subject;
 /**
  * Interface specification for entitlement <code>EntitlementCondition</code>
  */
-public interface EntitlementCondition {
+public interface EntitlementCondition extends Serializable {
 
     /**
      * Sets state of the object

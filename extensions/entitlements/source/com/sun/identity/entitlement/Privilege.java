@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.2 2009-03-26 16:21:02 dillidorai Exp $
+ * $Id: Privilege.java,v 1.3 2009-03-27 16:29:10 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.shared.debug.Debug;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +40,8 @@ import org.json.JSONObject;
 /**
  * Class representing entitlement privilege
  */
-public class Privilege {
+public class Privilege implements Serializable {
+    private static final long serialVersionUID = -403250971215465050L;
 
     private String name;
     private Set<Entitlement> entitlements;
@@ -153,6 +155,7 @@ public class Privilege {
      * Returns string representation of the object
      * @return string representation of the object
      */
+    @Override
     public String toString() {
         String s = null;
         try {
@@ -216,6 +219,7 @@ public class Privilege {
      * @param obj object to check for equality
      * @return  <code>true</code> if the passed in object is equal to this object
      */
+    @Override
     public boolean equals(Object obj) {
         boolean equalled = true;
         if (obj == null) {
@@ -232,7 +236,7 @@ public class Privilege {
             }
         } else { // name not null
 
-            if ((object.getName()) != null) {
+            if ((object.getName()) == null) {
                 equalled = false;
             } else if (!name.equals(object.getName())) {
                 equalled = false;
@@ -244,7 +248,7 @@ public class Privilege {
             }
         } else { // name not null
 
-            if ((object.getEntitlements()) != null) {
+            if ((object.getEntitlements()) == null) {
                 equalled = false;
             } else if (!entitlements.equals(object.getEntitlements())) {
                 equalled = false;
@@ -256,7 +260,7 @@ public class Privilege {
             }
         } else { // name not null
 
-            if ((object.getSubject()) != null) {
+            if ((object.getSubject()) == null) {
                 equalled = false;
             } else if (!eSubject.equals(object.getSubject())) {
                 equalled = false;
@@ -268,7 +272,7 @@ public class Privilege {
             }
         } else { // name not null
 
-            if ((object.getCondition()) != null) {
+            if ((object.getCondition()) == null) {
                 equalled = false;
             } else if (!eCondition.equals(object.getCondition())) {
                 equalled = false;
@@ -280,9 +284,10 @@ public class Privilege {
             }
         } else { // name not null
 
-            if ((object.getResourceAttributes()) != null) {
+            if ((object.getResourceAttributes()) == null) {
                 equalled = false;
-            } else if (!eCondition.equals(object.getResourceAttributes())) {
+            } else if (!eResourceAttributes.equals(
+                object.getResourceAttributes())) {
                 equalled = false;
             }
         }
@@ -293,6 +298,7 @@ public class Privilege {
      * Returns hash code of the object
      * @return hash code of the object
      */
+    @Override
     public int hashCode() {
         int code = 0;
         if (name != null) {

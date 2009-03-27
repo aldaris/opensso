@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AndCondition.java,v 1.2 2009-03-27 00:27:24 dillidorai Exp $
+ * $Id: AndCondition.java,v 1.3 2009-03-27 16:29:09 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -40,6 +40,7 @@ import org.json.JSONException;
  * @author dorai
  */
 public class AndCondition implements EntitlementCondition {
+    private static final long serialVersionUID = -403250971215465050L;
 
     private Set<EntitlementCondition> eConditions;
     private String pConditionName;

@@ -17,6 +17,7 @@ import javax.security.auth.Subject;
  * <code>com.sun.identity.policy.Subject</code>
  */
 public class PolicyESubject implements EntitlementSubject {
+    private static final long serialVersionUID = -403250971215465050L;
 
     Set nqSubjects;
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: GroupSubject.java,v 1.2 2009-03-27 00:27:24 dillidorai Exp $
+ * $Id: GroupSubject.java,v 1.3 2009-03-27 16:29:10 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -39,6 +39,7 @@ import org.json.JSONException;
  * @author dorai
  */
 public class GroupSubject implements EntitlementSubject {
+    private static final long serialVersionUID = -403250971215465050L;
 
     private String group;
     private String pSubjectName;

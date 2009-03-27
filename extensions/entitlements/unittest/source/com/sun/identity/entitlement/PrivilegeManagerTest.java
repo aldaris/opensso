@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManagerTest.java,v 1.1 2009-03-26 19:45:46 dillidorai Exp $
+ * $Id: PrivilegeManagerTest.java,v 1.2 2009-03-27 16:29:10 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -30,8 +30,16 @@ import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.security.AdminTokenAction;
+import com.sun.identity.shared.encode.Base64;
 import com.sun.identity.sm.ServiceManager;
 import com.sun.identity.unittest.UnittestLog;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.security.AccessController;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -50,6 +58,7 @@ public class PrivilegeManagerTest {
     private static String SERVICE_NAME = "iPlanetAMWebAgentService";
     private static String PRIVILEGE_NAME = "TestPrivilege";
     private static String BASE_DN = ServiceManager.getBaseDN();
+    private Privilege privilege;
 
     @BeforeClass
     public void setup() throws SSOException, IdRepoException {
@@ -136,7 +145,7 @@ public class PrivilegeManagerTest {
         ra.add(sa);
         ra.add(ua);
 
-        Privilege privilege = new Privilege(
+        privilege = new Privilege(
                 PRIVILEGE_NAME,
                 entitlements,
                 os,
@@ -151,6 +160,62 @@ public class PrivilegeManagerTest {
         prm.addPrivilege(privilege);
 
     }
+
+    @Test(dependsOnMethods={"testAddPrivilege"})
+    public void testSerializePrivilege() throws Exception {
+        String serialized = serializeObject(privilege);
+        Privilege p = (Privilege)deserializeObject(serialized);
+        if (!p.equals(privilege)) {
+            throw new Exception(
+                "PrivilegeManagerTest.testSerializePrivilege: failed");
+        }
+    }
+
+    private String serializeObject(Serializable object)
+        throws EntitlementException {
+        ObjectOutputStream oos = null;
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            oos = new ObjectOutputStream(out);
+            oos.writeObject(object);
+            oos.close();
+            return Base64.encode(out.toByteArray());
+        } catch (IOException e) {
+            throw new EntitlementException(200, null, e);
+        } finally {
+            if (oos != null) {
+                try {
+                    oos.close();
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+        }
+    }
+
+    private Object deserializeObject(String strSerialized)
+        throws EntitlementException {
+        ObjectInputStream ois = null;
+        try {
+            InputStream in = new ByteArrayInputStream(
+                Base64.decode(strSerialized));
+            ois = new ObjectInputStream(in);
+            return ois.readObject();
+        } catch (ClassNotFoundException ex) {
+            throw new EntitlementException(201, null, ex);
+        } catch (IOException ex) {
+            throw new EntitlementException(201, null, ex);
+        } finally {
+            try {
+                if (ois != null) {
+                    ois.close();
+                }
+            } catch (IOException ex) {
+                // ignore
+            }
+        }
+    }
+
 
     @Test(dependsOnMethods={"testAddPrivilege"})
     public void testGetPrivilege() throws Exception {

@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.20 2009-03-27 00:27:24 dillidorai Exp $
+ * $Id: Entitlement.java,v 1.21 2009-03-27 16:29:09 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.shared.debug.Debug;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -59,7 +60,8 @@ import org.json.JSONObject;
  *     }
  * </pre>
  */
-public class Entitlement {
+public class Entitlement implements Serializable {
+    private static final long serialVersionUID = -403250971215465050L;
 
     private String name;
     private String applicationName;
@@ -68,7 +70,7 @@ public class Entitlement {
     private Map<String, Object> actionValues;
     private Map<String, String> advices;
     private Map<String, Set<String>> attributes;
-    private Application application;
+    transient private Application application;
 
     /**
      * Creates an entitlement object with default service name.
