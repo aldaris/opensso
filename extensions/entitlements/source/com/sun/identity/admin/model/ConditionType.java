@@ -4,6 +4,7 @@ public abstract class ConditionType {
     private String name;
     private String template;
     private String conditionIconUri;
+    // TODO: change to operator for and/or and function for not
     private boolean expression;
 
     public abstract ViewCondition newViewCondition();

@@ -6,7 +6,8 @@
     xmlns:ice="http://www.icesoft.com/icefaces/component"
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
-    <ice:panelTabSet>
+    <ice:panelTabSet
+        selectedIndex="#{policyCreateWizardBean.advancedTabsetIndex}">
         <ice:panelTab label="Actions">
             <ui:include src="policy-create-actions.xhtml"/>
         </ice:panelTab>

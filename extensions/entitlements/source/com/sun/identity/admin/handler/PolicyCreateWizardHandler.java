@@ -223,4 +223,22 @@ public class PolicyCreateWizardHandler
     private PolicyCreateWizardBean getPolicyCreateWizardBean() {
         return (PolicyCreateWizardBean) getWizardBean();
     }
+
+    protected int getGotoAdvancedTabIndex(ActionEvent event) {
+        String i = (String) event.getComponent().getAttributes().get("gotoAdvancedTabIndex");
+        int index = Integer.parseInt(i);
+
+        return index;
+    }
+
+    @Override
+    public void gotoStepListener(ActionEvent event) {
+        super.gotoStepListener(event);
+
+        // TODO, enumerate the tabs
+        if (getGotoStep(event) == 3) {
+            int i = getGotoAdvancedTabIndex(event);
+            getPolicyCreateWizardBean().setAdvancedTabsetIndex(i);
+        }
+    }
 }

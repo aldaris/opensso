@@ -23,6 +23,12 @@ public class PolicyCreateWizardBean
     private List<SubjectContainer> subjectContainers;
     private Effect dropConditionEffect;
     private Effect dropSubjectContainerEffect;
+    private PolicyCreateSummary policyCreateSummary = new PolicyCreateSummary();
+    private int advancedTabsetIndex = 0;
+
+    public PolicyCreateWizardBean() {
+        policyCreateSummary.setPolicyCreateWizardBean(this);
+    }
 
     public List<Resource> getResources() {
         return resources;
@@ -184,5 +190,17 @@ public class PolicyCreateWizardBean
         }
 
         return null;
+    }
+
+    public PolicyCreateSummary getPolicyCreateSummary() {
+        return policyCreateSummary;
+    }
+
+    public int getAdvancedTabsetIndex() {
+        return advancedTabsetIndex;
+    }
+
+    public void setAdvancedTabsetIndex(int advancedTabsetIndex) {
+        this.advancedTabsetIndex = advancedTabsetIndex;
     }
 }

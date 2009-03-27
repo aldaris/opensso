@@ -23,11 +23,30 @@ public class WizardHandler implements Serializable {
         return step;
     }
 
+    protected int getGotoStep(ActionEvent event) {
+        String val = (String) event.getComponent().getAttributes().get("gotoStep");
+        int step = Integer.parseInt(val);
+
+        return step;
+    }
+
     protected int getSteps(ActionEvent event) {
         String val = (String) event.getComponent().getAttributes().get("steps");
         int steps = Integer.parseInt(val);
 
         return steps;
+    }
+
+    public void gotoStepListener(ActionEvent event) {
+        int step = getStep(event);
+        int gotoStep = getGotoStep(event);
+
+        WizardStepBean current = getWizardBean().getWizardStepBeans()[step];
+        current.setExpanded(false);
+
+        WizardStepBean next = getWizardBean().getWizardStepBeans()[gotoStep];
+        next.setEnabled(true);
+        next.setExpanded(true);
     }
 
     public void expandListener(ActionEvent event) {

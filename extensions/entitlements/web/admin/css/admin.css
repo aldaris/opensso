@@ -351,6 +351,24 @@ div.button-wrapper a.button img.left {
     margin: 4px;
 }
 
+.summary-table {
+    width: 40%;
+}
+
+.summary-tableCol1 {
+    font-weight: bold;
+    text-align: left;
+}
+
+.summary-tableCol2 {
+    text-align: left;
+}
+
+.summary-tableCol3 {
+    text-align: right;
+}
+
+
 /*
 #homeTabContent {
 width: 100%;
