@@ -38,4 +38,8 @@
         <tag-name>multipanel</tag-name>
         <source>tag/multipanel.xhtml</source>
     </tag>
+    <tag>
+        <tag-name>round</tag-name>
+        <source>tag/round.xhtml</source>
+    </tag>
 </facelet-taglib>
