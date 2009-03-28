@@ -23,7 +23,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSDataStoreAdaptor.java,v 1.2 2009-03-26 22:50:10 veiming Exp $
+ * $Id: SMSDataStoreAdaptor.java,v 1.3 2009-03-28 06:45:30 veiming Exp $
  */
 
 package com.sun.identity.sm;
@@ -31,7 +31,7 @@ package com.sun.identity.sm;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.entitlement.EntitlementException;
-import com.sun.identity.entitlement.IPolicyIndexDataStore;
+import com.sun.identity.entitlement.IPolicyDataStore;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.ResourceSaveIndexes;
 import com.sun.identity.entitlement.ResourceSearchIndexes;

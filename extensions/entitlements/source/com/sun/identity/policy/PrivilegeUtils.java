@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.1 2009-03-26 16:21:03 dillidorai Exp $
+ * $Id: PrivilegeUtils.java,v 1.2 2009-03-28 06:45:29 veiming Exp $
  */
 package com.sun.identity.policy;
 
@@ -91,6 +91,7 @@ public class PrivilegeUtils {
         }
 
         String policyName = policy.getName();
+
 
         Set ruleNames = policy.getRuleNames();
         Set<Entitlement> entitlements = new HashSet<Entitlement>();

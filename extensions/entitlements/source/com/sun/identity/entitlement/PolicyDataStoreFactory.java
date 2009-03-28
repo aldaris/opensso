@@ -22,25 +22,25 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexDataStoreFactory.java,v 1.2 2009-03-26 17:02:26 veiming Exp $
+ * $Id: PolicyDataStoreFactory.java,v 1.1 2009-03-28 06:45:28 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
 /**
  * This factory returns the implementation class that implements
- * <code>com.sun.identity.entitlement.IPolicyIndexDataStore</code>.
+ * <code>com.sun.identity.entitlement.IPolicyDataStore</code>.
  */
-public final class PolicyIndexDataStoreFactory {
-    private static PolicyIndexDataStoreFactory instance =
-        new PolicyIndexDataStoreFactory();
-    private static IPolicyIndexDataStore defaultImpl;
+public final class PolicyDataStoreFactory {
+    private static PolicyDataStoreFactory instance =
+        new PolicyDataStoreFactory();
+    private static IPolicyDataStore defaultImpl;
     
     static {
         try {
             Class clazz = Class.forName(
                 "com.sun.identity.entitlement.PolicyDataStore");
-            defaultImpl = (IPolicyIndexDataStore)clazz.newInstance();
+            defaultImpl = (IPolicyDataStore)clazz.newInstance();
         } catch (ClassNotFoundException e) {
             //TODO
         } catch (InstantiationException e) {
@@ -50,14 +50,14 @@ public final class PolicyIndexDataStoreFactory {
         }
     }
     
-    private PolicyIndexDataStoreFactory() {
+    private PolicyDataStoreFactory() {
     }
     
-    public static PolicyIndexDataStoreFactory getInstance() {
+    public static PolicyDataStoreFactory getInstance() {
         return instance;
     }
     
-    public IPolicyIndexDataStore getDataStore() {
+    public IPolicyDataStore getDataStore() {
         return defaultImpl; //TODO allow overwritting default impl;
     }
 }

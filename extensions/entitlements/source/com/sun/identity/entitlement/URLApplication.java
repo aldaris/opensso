@@ -22,32 +22,24 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationType.java,v 1.2 2009-03-28 06:45:28 veiming Exp $
+ * $Id: URLApplication.java,v 1.1 2009-03-28 06:45:28 veiming Exp $
  */
-package com.sun.identity.entitlement;
 
-import java.util.Set;
+package com.sun.identity.entitlement;
 
 /**
  *
  * @author dennis
  */
-public abstract class ApplicationType {
-    private String name;
-    private Set<String> actions;
+public class URLApplication extends Application {
+    private static URLApplication instance = new URLApplication();
+    private static final String NAME = "iPlanetAMWebAgentService";
 
-    public ApplicationType(String name, Set<String> actions) {
-        this.name = name;
-        this.actions = actions;
+    public URLApplication() {
+        super(NAME, URLApplicationType.getInstance());
     }
 
-    public Set<String> getActions() {
-        return actions;
+    public static URLApplication getInstance() {
+        return instance;
     }
-
-    public abstract ResourceSearchIndexes getResourceSearchIndex(
-            String resource);
-
-    public abstract ResourceSaveIndexes getResourceSaveIndex(String resource);
-
 }

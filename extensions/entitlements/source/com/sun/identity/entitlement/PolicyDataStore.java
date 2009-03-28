@@ -22,46 +22,104 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDataStore.java,v 1.2 2009-03-26 22:50:10 veiming Exp $
+ * $Id: PolicyDataStore.java,v 1.3 2009-03-28 06:45:28 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
+import com.sun.identity.shared.BufferedIterator;
 import java.util.Iterator;
+import java.util.Set;
 
 /**
  *
  * @author dennis
  */
-public class PolicyDataStore implements IPolicyIndexDataStore {
-    private static final String START_DN_TEMPLATE =
-         "ou=default,ou=GlobalConfig,ou=1.0,ou=PolicyIndex,ou=services,{0}";
-    private static final String DN_TEMPLATE = "ou={1}," + START_DN_TEMPLATE;
-
+public class PolicyDataStore implements IPolicyDataStore {
     private PolicyCache policyCache = new PolicyCache();
     private IndexCache indexCache = new IndexCache();
+    private DataStore dataStore = new DataStore();
 
     public void add(Privilege p)
         throws EntitlementException {
-        // figure out the dn of p
-        // get ResourceSaveIndex
-        //call indexCache.cache
-        // call policyCache.cache
-        throw new UnsupportedOperationException("Not supported yet.");
+        for (Entitlement e : p.getEntitlements()) {
+            dataStore.add(e.getResourceSaveIndexes(), p);
+        }
     }
 
     public void delete(String name)
         throws EntitlementException {
-        // figure out the dn of p
-        // get ResourceSaveIndex
-        //call indexCache.delete
-        // call policyCache.delete
-        throw new UnsupportedOperationException("Not supported yet.");
+        dataStore.delete(name);
+        policyCache.decache(DataStore.getDN(name));
     }
 
-    public Iterator<Privilege> search(ResourceSearchIndexes indexes)
+    private void cache(Privilege p)
         throws EntitlementException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        String dn = DataStore.getDN(p);
+        for (Entitlement e : p.getEntitlements()) {
+            indexCache.cache(e.getResourceSaveIndexes(), dn);
+            policyCache.cache(dn, p);
+        }
     }
 
+    private void decache(Privilege p)
+        throws EntitlementException {
+        policyCache.decache(p.getName());
+    }
+
+    public Iterator<Privilege> search(
+        ResourceSearchIndexes indexes,
+        boolean bSubTree)
+        throws EntitlementException {
+        BufferedIterator<Privilege> iterator =
+            new BufferedIterator<Privilege>();
+        Set<String> setDNs = indexCache.getMatchingEntries(indexes, bSubTree);
+        for (Iterator i = setDNs.iterator(); i.hasNext(); ) {
+            String dn = (String)i.next();
+            Privilege p = policyCache.getPolicy(dn);
+            if (p != null) {
+                iterator.add(p);
+            } else {
+                i.remove();
+            }
+        }
+        ThreadPool.submit(new SearchTask(this, iterator, indexes, bSubTree,
+            setDNs));
+        return iterator;
+    }
+
+    public class SearchTask implements Runnable {
+        private PolicyDataStore parent;
+        private BufferedIterator<Privilege> iterator;
+        private ResourceSearchIndexes indexes;
+        private boolean bSubTree;
+        private Set<String> excludeDNs;
+
+        public SearchTask(
+            PolicyDataStore parent,
+            BufferedIterator<Privilege> iterator,
+            ResourceSearchIndexes indexes,
+            boolean bSubTree,
+            Set<String> excludeDNs
+       ) {
+            this.parent = parent;
+            this.iterator = iterator;
+            this.indexes = indexes;
+            this.bSubTree = bSubTree;
+            this.excludeDNs = excludeDNs;
+        }
+
+        public void run() {
+            try {
+                Set<Privilege> results = parent.dataStore.search(
+                    iterator, indexes, bSubTree, excludeDNs);
+                for (Privilege p : results) {
+                    parent.cache(p);
+                }
+            } catch (EntitlementException ex) {
+                //TOFIX
+            }
+        }
+
+    }
 }

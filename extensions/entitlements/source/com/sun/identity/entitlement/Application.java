@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.1 2009-03-25 06:42:51 veiming Exp $
+ * $Id: Application.java,v 1.2 2009-03-28 06:45:28 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -46,7 +47,14 @@ public class Application {
     }
 
     public Set<String> getActions() {
-        return actions;
+        Set<String> results = new HashSet<String>();
+        if (applicationType.getActions() != null) {
+            results.addAll(applicationType.getActions());
+        }
+        if (actions != null) {
+            results.addAll(actions);
+        }
+        return results;
     }
 
     public ApplicationType getApplicationType() {

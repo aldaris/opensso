@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSDataEntry.java,v 1.1 2009-03-26 17:02:26 veiming Exp $
+ * $Id: SMSDataEntry.java,v 1.2 2009-03-28 06:45:30 veiming Exp $
  */
 
 package com.sun.identity.sm;
@@ -74,5 +74,11 @@ public class SMSDataEntry {
 
     public Set<String> getAttributeValues(String attributeName) {
         return attributeValues.get(attributeName);
+    }
+
+    public String getAttributeValue(String attributeName) {
+        Set<String> val = attributeValues.get(attributeName);
+        return ((val != null) && !val.isEmpty()) ? val.iterator().next() :
+            null;
     }
 }

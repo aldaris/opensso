@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: BufferedIterator.java,v 1.1 2009-03-25 17:52:29 veiming Exp $
+ * $Id: BufferedIterator.java,v 1.2 2009-03-28 06:45:29 veiming Exp $
  */
 
 package com.sun.identity.shared;
@@ -76,7 +76,7 @@ public class BufferedIterator<E> implements Iterator<E> {
             }
         }
 
-        return !done;
+        return !queue.isEmpty();
     }
 
     public void remove() {

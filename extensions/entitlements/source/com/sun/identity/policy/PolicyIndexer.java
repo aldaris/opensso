@@ -22,14 +22,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexer.java,v 1.14 2009-03-26 17:02:27 veiming Exp $
+ * $Id: PolicyIndexer.java,v 1.15 2009-03-28 06:45:29 veiming Exp $
  */
 
 package com.sun.identity.policy;
 
 import com.sun.identity.entitlement.EntitlementException;
-import com.sun.identity.entitlement.IPolicyIndexDataStore;
-import com.sun.identity.entitlement.PolicyIndexDataStoreFactory;
+import com.sun.identity.entitlement.IPolicyDataStore;
+import com.sun.identity.entitlement.PolicyDataStoreFactory;
 import com.sun.identity.entitlement.ResourceSaveIndexes;
 import com.sun.identity.entitlement.ResourceSearchIndexes;
 import com.sun.identity.entitlement.util.ResourceNameIndexGenerator;
@@ -56,8 +56,8 @@ public class PolicyIndexer {
     public static void store(Policy policy) 
         throws PolicyException, EntitlementException
     {
-        IPolicyIndexDataStore datastore = 
-            PolicyIndexDataStoreFactory.getInstance().getDataStore();
+        IPolicyDataStore datastore =
+            PolicyDataStoreFactory.getInstance().getDataStore();
         
         SerializedPolicy serPolicy = SerializedPolicy.serialize(policy);
         String policyName = policy.getName();
@@ -85,8 +85,8 @@ public class PolicyIndexer {
      * @param policy Policy object.
      */
     public static void delete(Policy policy) {
-        IPolicyIndexDataStore datastore = 
-            PolicyIndexDataStoreFactory.getInstance().getDataStore();
+        IPolicyDataStore datastore =
+            PolicyDataStoreFactory.getInstance().getDataStore();
 
         String policyName = policy.getName();
         try {
@@ -112,8 +112,8 @@ public class PolicyIndexer {
         Set<Policy> policies = new HashSet<Policy>();
 /*
         try {
-            IPolicyIndexDataStore datastore = 
-                PolicyIndexDataStoreFactory.getInstance().getDataStore();
+            IPolicyDataStore datastore =
+                PolicyDataStoreFactory.getInstance().getDataStore();
             Iterator<Privilege> results = datastore.search(searchIndexes);
 
 

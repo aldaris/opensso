@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IndexCache.java,v 1.1 2009-03-26 22:50:09 veiming Exp $
+ * $Id: IndexCache.java,v 1.2 2009-03-28 06:45:28 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -47,8 +47,9 @@ public class IndexCache implements ServiceListener {
     private static int DEFAULT_CACHE_SIZE = 100000; //TOFIX
     private Cache hostIndexCache;
     private Cache pathIndexCache;
-    private Cache pathParentIndexCache;
+    private Cache parentPathIndexCache;
     private ReadWriteLock rwlock = new ReentrantReadWriteLock();
+
 
     public IndexCache() {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
@@ -70,7 +71,7 @@ public class IndexCache implements ServiceListener {
     public void cache(ResourceSaveIndexes indexes, String dn) {
         cache(dn, indexes.getHostIndexes(), hostIndexCache);
         cache(dn, indexes.getPathIndexes(), pathIndexCache);
-        cache(dn, indexes.getParentPath(), pathParentIndexCache);
+        cache(dn, indexes.getParentPath(), parentPathIndexCache);
     }
 
     private void cache(String dn, Set<String> indexes, Cache cache) {
@@ -89,13 +90,13 @@ public class IndexCache implements ServiceListener {
         }
     }
 
-    public void delete(ResourceSaveIndexes indexes, String dn) {
-        delete(dn, indexes.getHostIndexes(), hostIndexCache);
-        delete(dn, indexes.getPathIndexes(), pathIndexCache);
-        delete(dn, indexes.getParentPath(), pathParentIndexCache);
+    public void clear(ResourceSaveIndexes indexes, String dn) {
+        clear(dn, indexes.getHostIndexes(), hostIndexCache);
+        clear(dn, indexes.getPathIndexes(), pathIndexCache);
+        clear(dn, indexes.getParentPath(), parentPathIndexCache);
     }
 
-    private void delete(String dn, Set<String> indexes, Cache cache) {
+    private void clear(String dn, Set<String> indexes, Cache cache) {
         rwlock.writeLock().lock();
         try {
             for (String s : indexes) {
@@ -114,7 +115,7 @@ public class IndexCache implements ServiceListener {
         try {
             hostIndexCache = new Cache(DEFAULT_CACHE_SIZE);
             pathIndexCache = new Cache(DEFAULT_CACHE_SIZE);
-            pathParentIndexCache = new Cache(DEFAULT_CACHE_SIZE);
+            parentPathIndexCache = new Cache(DEFAULT_CACHE_SIZE);
         } finally {
             rwlock.writeLock().unlock();
         }
@@ -127,27 +128,38 @@ public class IndexCache implements ServiceListener {
         rwlock.readLock().lock();
         try {
             Set<String> results = new HashSet<String>();
+            Set<String> hostIndexes = indexes.getHostIndexes();
+
+
+            for (String i : hostIndexes) {
+                Set<String> r = (Set<String>)hostIndexCache.get(i);
+                if (r != null) {
+                    results.addAll(r);
+                }
+            }
 
             if (bSubTree) {
-                for (String i : indexes.getParentPathIndexes()) {
-                    results.addAll((Set<String>)pathParentIndexCache.get(i));
-                }
+                Set<String> parentPathIndexes = indexes.getParentPathIndexes();
                 Set<String> tmp = new HashSet<String>();
-                for (String i : indexes.getPathIndexes()) {
-                    tmp.addAll((Set<String>)pathIndexCache.get(i));
+                for (String i : parentPathIndexes) {
+                    Set<String> r = (Set<String>) parentPathIndexCache.get(i);
+                    if (r != null) {
+                        tmp.addAll(r);
+                    }
                 }
                 results.retainAll(tmp);
             } else {
-                for (String i : indexes.getPathIndexes()) {
-                    results.addAll((Set<String>)pathIndexCache.get(i));
+                Set<String> pathIndexes = indexes.getPathIndexes();
+                Set<String> tmp = new HashSet<String>();
+                for (String i : pathIndexes) {
+                    Set<String> r = (Set<String>)pathIndexCache.get(i);
+                    if (r != null) {
+                        tmp.addAll(r);
+                    }
                 }
+                results.retainAll(tmp);
             }
 
-            Set<String> tmp = new HashSet<String>();
-            for (String i : indexes.getHostIndexes()) {
-                tmp.addAll((Set<String>) hostIndexCache.get(i));
-            }
-            results.retainAll(tmp);
             return results;
         } finally {
             rwlock.readLock().unlock();

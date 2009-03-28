@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceNameIndexGenerator.java,v 1.7 2009-03-25 06:42:53 veiming Exp $
+ * $Id: ResourceNameIndexGenerator.java,v 1.8 2009-03-28 06:45:29 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
@@ -168,7 +168,7 @@ public class ResourceNameIndexGenerator {
          */
         String str = (idx != -1) ? pathIndex.substring(0, idx) + "/dummy" 
             : pathIndex;
-        
+        parents.add(str);
         StringTokenizer st = new StringTokenizer(str, "/");
         StringBuffer tracker = new StringBuffer();
         tracker.append("/");

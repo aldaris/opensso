@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeEvaluator.java,v 1.3 2009-03-25 23:50:16 veiming Exp $
+ * $Id: PrivilegeEvaluator.java,v 1.4 2009-03-28 06:45:28 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -32,8 +32,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.security.auth.Subject;
 
 /**
@@ -72,7 +70,7 @@ class PrivilegeEvaluator implements IPolicyEvaluator {
 
         //separate threads, PIP
         indexes = entitlement.getResourceSearchIndexes();
-        ThreadPool.submit(new EvaluationTask(this)); //TOFIX
+        ThreadPool.submit(new EvaluationTask(this, false));
 
         synchronized (this) {
             while ((maxCounter == -1) && (maxCounter != counter)) {
@@ -117,18 +115,20 @@ class PrivilegeEvaluator implements IPolicyEvaluator {
 
     class EvaluationTask implements Runnable {
         final PrivilegeEvaluator parent;
+        private boolean bSubTree;
 
-        EvaluationTask(PrivilegeEvaluator parent) {
+        EvaluationTask(PrivilegeEvaluator parent, boolean bSubTree) {
             this.parent = parent;
+            this.bSubTree = bSubTree;
         }
 
         public void run() {
             try {
                 int count = 0;
-                IPolicyIndexDataStore ds =
-                    PolicyIndexDataStoreFactory.getInstance().getDataStore();
-                for (Iterator<Privilege> i = ds.search(parent.indexes);
-                    i.hasNext();
+                IPolicyDataStore ds =
+                    PolicyDataStoreFactory.getInstance().getDataStore();
+                for (Iterator<Privilege> i = ds.search(parent.indexes,
+                    bSubTree); i.hasNext();
                 ) {
                     ThreadPool.submit(new PrivilegeTask(parent, i.next())); //TOFIX
                     count++;

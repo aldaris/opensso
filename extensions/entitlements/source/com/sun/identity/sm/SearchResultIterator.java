@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SearchResultIterator.java,v 1.2 2009-03-26 17:02:27 veiming Exp $
+ * $Id: SearchResultIterator.java,v 1.3 2009-03-28 06:45:30 veiming Exp $
  */
 
 package com.sun.identity.sm;
@@ -69,14 +69,15 @@ public class SearchResultIterator implements Iterator {
                         dn = entry.getDN();
                     } else {
                         entry = null;
+                        break;
                     }
                 }
             }
 
-            if (entry != null) {
-                current = new SMSDataEntry(dn, convertLDAPAttributeSetToMap(
+            current = (entry == null) ? null :
+                new SMSDataEntry(dn, convertLDAPAttributeSetToMap(
                     entry.getAttributeSet()));
-            }
+            
             return (current != null);
         } catch (LDAPException ldape) {
             Debug.getInstance("amSMSLdap").error("SearchResultIterator.hasNext",

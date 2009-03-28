@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManager.java,v 1.2 2009-03-26 22:50:10 veiming Exp $
+ * $Id: PolicyManager.java,v 1.3 2009-03-28 06:45:29 veiming Exp $
  *
  */
 
@@ -36,6 +36,8 @@ import com.sun.identity.policy.interfaces.Subject;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.entitlement.EntitlementException;
+import com.sun.identity.entitlement.IPolicyDataStore;
+import com.sun.identity.entitlement.PolicyDataStoreFactory;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.ldap.util.DN;
 import com.sun.identity.shared.xml.XMLUtils;
@@ -572,11 +574,13 @@ public final class PolicyManager {
             //create the policy entry
             namedPolicy.addSubConfig(policy.getName(),
                 NAMED_POLICY_ID, 0, attrs);
-            //TOFIX PolicyIndexer.store(policy);
-/*        } catch (EntitlementException e) {
+            IPolicyDataStore pStore =
+                PolicyDataStoreFactory.getInstance().getDataStore();
+            pStore.add(PrivilegeUtils.policyToPrivilege(policy));
+        } catch (EntitlementException e) {
             String[] objs = { policy.getName(), org };
             throw (new PolicyException(ResBundleUtils.rbName, 
-                "unable_to_add_policy", objs, e)); */
+                "unable_to_add_policy", objs, e)); 
         } catch (ServiceAlreadyExistsException e) {
             String[] objs = { policy.getName(), org };
             if (PolicyUtils.logStatus) {
@@ -684,7 +688,6 @@ public final class PolicyManager {
                          policy.getName(), PolicyException.POLICY));
                 }
             } else { //newPolicy exisits
-
                 String[] objs = { policy.getName(), org };
                 if((oldPolicyName != null) && 
                             !policy.getName().equalsIgnoreCase(oldPolicyName)) {
@@ -703,14 +706,16 @@ public final class PolicyManager {
                 validateReferrals(policy);
                 policyEntry.setAttributes(attrs);
                 if (oldPolicy != null) {
-                    //TOFIX PolicyIndexer.delete(oldPolicy);
-                    //TOFIX PolicyIndexer.store(policy);
+                    IPolicyDataStore pStore =
+                        PolicyDataStoreFactory.getInstance().getDataStore();
+                    pStore.delete(oldPolicy.getName());
+                    pStore.add(PrivilegeUtils.policyToPrivilege(policy));
                 }
             }
-//        } catch (EntitlementException e) {
-//            String[] objs = { name, org };
-//            throw (new PolicyException(ResBundleUtils.rbName,
-//                "unable_to_replace_policy", objs, e));
+        } catch (EntitlementException e) {
+            String[] objs = { name, org };
+            throw (new PolicyException(ResBundleUtils.rbName,
+                "unable_to_replace_policy", objs, e));
         } catch (SMSException se) {
             String[] objs = { name, org };
             if (PolicyUtils.logStatus) {
@@ -775,9 +780,13 @@ public final class PolicyManager {
 
                 // do the removal in resources tree
                 if (policy != null) {
-                    //TOFIX PolicyIndexer.delete(policy);
+                    IPolicyDataStore pStore =
+                        PolicyDataStoreFactory.getInstance().getDataStore();
+                    pStore.delete(policy.getName());
                 }
             }
+        } catch (EntitlementException e) {
+            debug.error("Error while removing policy : " + e.getMessage());
         } catch (ServiceNotFoundException snfe) {
             debug.error("Error while removing policy : " +
                     snfe.getMessage() );

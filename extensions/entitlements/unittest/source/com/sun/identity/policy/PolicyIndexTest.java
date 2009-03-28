@@ -23,20 +23,25 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexTest.java,v 1.8 2009-03-25 06:42:56 veiming Exp $
+ * $Id: PolicyIndexTest.java,v 1.9 2009-03-28 06:45:30 veiming Exp $
  */
 
 package com.sun.identity.policy;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementException;
+import com.sun.identity.entitlement.IPolicyDataStore;
+import com.sun.identity.entitlement.PolicyDataStoreFactory;
+import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.ResourceSearchIndexes;
 import com.sun.identity.policy.interfaces.Subject;
 import com.sun.identity.security.AdminTokenAction;
 import java.security.AccessController;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import org.testng.annotations.AfterClass;
@@ -82,15 +87,22 @@ public class PolicyIndexTest {
         
         Set<String> hostIndexes = new HashSet<String>();
         Set<String> pathIndexes = new HashSet<String>();
+        Set<String> parentPathIndexes = new HashSet<String>();
         hostIndexes.add("http://www.sun.com");
         pathIndexes.add("/private");
+        parentPathIndexes.add("/");
         ResourceSearchIndexes indexes = new ResourceSearchIndexes(
-            hostIndexes, pathIndexes, null);
-        Set<Policy> result = PolicyIndexer.search(pm, indexes);
-        Policy resultPolicy = (Policy)result.iterator().next();
-        Rule rule = resultPolicy.getRule("rule1");
-        if (!rule.getResourceName().equals(URL_RESOURCE)) {
-            throw new Exception("incorrect deserialized policy");
+            hostIndexes, pathIndexes, parentPathIndexes);
+        IPolicyDataStore pStore =
+            PolicyDataStoreFactory.getInstance().getDataStore();
+        for (Iterator<Privilege> i = pStore.search(indexes, false); i.hasNext();
+        ) {
+            Privilege p = i.next();
+            for (Entitlement e : p.getEntitlements()) {
+                if (!e.getResourceName().equals(URL_RESOURCE)) {
+                    throw new Exception("incorrect deserialized policy");
+                }
+            }
         }
     }
     

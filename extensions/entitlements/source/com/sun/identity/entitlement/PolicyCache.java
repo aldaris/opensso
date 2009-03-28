@@ -22,13 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyCache.java,v 1.3 2009-03-26 22:50:10 veiming Exp $
+ * $Id: PolicyCache.java,v 1.4 2009-03-28 06:45:28 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
 import com.iplanet.am.util.Cache;
-import com.sun.identity.policy.Policy;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -41,25 +40,25 @@ public class PolicyCache {
     private Cache cache = new Cache();
     private ReadWriteLock rwlock = new ReentrantReadWriteLock();
 
-    public void cache(String dn, Policy policy) {
+    public void cache(String dn, Privilege p) {
         rwlock.writeLock().lock();
         try {
-            cache.put(dn, policy);
+            cache.put(dn, p);
         } finally {
             rwlock.writeLock().unlock();
         }
     }
 
-    public void cache(Map<String, Policy> policies, boolean force) {
+    public void cache(Map<String, Privilege> privileges, boolean force) {
         rwlock.writeLock().lock();
         try {
-            for (String dn : policies.keySet()) {
+            for (String dn : privileges.keySet()) {
                 if (force) {
-                    cache.put(dn, policies.get(dn));
+                    cache.put(dn, privileges.get(dn));
                 } else {
-                    Policy p = (Policy) policies.get(dn);
+                    Privilege p = (Privilege)privileges.get(dn);
                     if (p == null) {
-                        cache.put(dn, policies.get(dn));
+                        cache.put(dn, privileges.get(dn));
                     }
                 }
             }
@@ -68,7 +67,7 @@ public class PolicyCache {
         }
     }
 
-    public void delete(String dn) {
+    public void decache(String dn) {
         rwlock.writeLock().lock();
         try {
             cache.remove(dn);
@@ -77,10 +76,10 @@ public class PolicyCache {
         }
     }
 
-    public Policy getPolicy(String dn) {
+    public Privilege getPolicy(String dn) {
         rwlock.readLock().lock();
         try {
-            return (Policy)cache.get(dn);
+            return (Privilege)cache.get(dn);
         } finally {
             rwlock.readLock().unlock();
         }

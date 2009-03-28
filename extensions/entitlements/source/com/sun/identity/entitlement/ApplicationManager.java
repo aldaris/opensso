@@ -22,16 +22,26 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManager.java,v 1.1 2009-03-25 06:42:51 veiming Exp $
+ * $Id: ApplicationManager.java,v 1.2 2009-03-28 06:45:28 veiming Exp $
  */
 package com.sun.identity.entitlement;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
  * @author dennis
  */
 public final class ApplicationManager {
-    private static ApplicationManager instance = new ApplicationManager();
+    //private static ApplicationManager instance = new ApplicationManager();
+    private static Map<String, Application> applications =
+        new HashMap<String, Application>();
+
+    static {
+        Application appl = URLApplication.getInstance();
+        applications.put(appl.getName(), appl);
+    }
 
     private ApplicationManager() {
     }
@@ -46,7 +56,18 @@ public final class ApplicationManager {
     public static Application getApplication(String name) {
         //sms: TODO new Entitlement service
         //name=classname
-        // need a default if name is null
-        return null;
+        if ((name == null) || (name.length() == 0)) {
+            return URLApplication.getInstance();
+        }
+        return applications.get(name);
     }
+
+    public static void addApplication(Application application) {
+        applications.put(application.getName(), application);
+    }
+
+    public static void deleteApplication(String name) {
+        applications.remove(name);
+    }
+
 }
