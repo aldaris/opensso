@@ -14,8 +14,8 @@ import java.util.List;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.PhaseId;
 
-public class ViewConditionsHandler 
-    implements MultiPanelHandler, Serializable {
+public class ViewConditionsHandler
+        implements MultiPanelHandler, Serializable {
 
     private List<ViewCondition> viewConditions;
     private QueuedActionBean queuedActionBean;
@@ -48,13 +48,13 @@ public class ViewConditionsHandler
 
         ViewCondition vc = (ViewCondition) mpb;
         addRemoveAction(vc);
-        
+
         ViewCondition next = getNextCondition(vc);
         ViewCondition previous = getPreviousCondition(vc);
 
         if (next != null) {
             e = new Fade();
-            e.setSubmit(true);
+            e.setSubmit(false);
             e.setTransitory(false);
             next.setPanelEffect(e);
 
@@ -92,8 +92,8 @@ public class ViewConditionsHandler
         pea.setDoBeforePhase(false);
         pea.setPhaseId(PhaseId.RENDER_RESPONSE);
         pea.setAction("#{viewConditionsHandler.handleRemove}");
-        pea.setParameters(new Class[] { ViewCondition.class });
-        pea.setArguments(new Object[] { vc });
+        pea.setParameters(new Class[]{ViewCondition.class});
+        pea.setArguments(new Object[]{vc});
 
         queuedActionBean.getPhaseEventActions().add(pea);
     }
@@ -107,9 +107,8 @@ public class ViewConditionsHandler
         assert (i != -1);
 
         for (int j = i + 1; j < viewConditions.size(); j++) {
-            if (viewConditions.get(j).isVisible()) {
-                return viewConditions.get(j);
-            }
+            return viewConditions.get(j);
+
         }
 
         return null;
@@ -120,9 +119,8 @@ public class ViewConditionsHandler
         assert (i != -1);
 
         for (int j = i - 1; j >= 0; j--) {
-            if (viewConditions.get(j).isVisible()) {
-                return viewConditions.get(j);
-            }
+            return viewConditions.get(j);
+
         }
 
         return null;

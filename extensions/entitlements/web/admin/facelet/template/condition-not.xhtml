@@ -6,5 +6,8 @@
     xmlns:ice="http://www.icesoft.com/icefaces/component"
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
+    <ice:panelGroup
+        rendered="#{viewCondition != null &amp;&amp; viewCondition.conditionType.name == 'not'}">
         NOT of next condition
+    </ice:panelGroup>
 </span>

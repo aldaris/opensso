@@ -26,7 +26,7 @@
                         #{subjectContainer.name} (#{subjectContainer.numberSelected})
                     </ui:define>
                     <ui:define name="panel-body">
-                        <ui:include src="#{subjectContainer.subjectContainerType.template}">
+                        <ui:include src="/admin/facelet/template/subject-container-template-includer.xhtml">
                             <ui:param
                                 name="subjectContainer"
                                 value="#{subjectContainer}"/>

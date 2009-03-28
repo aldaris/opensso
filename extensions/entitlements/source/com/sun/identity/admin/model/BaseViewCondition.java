@@ -55,7 +55,9 @@ public abstract class BaseViewCondition implements ViewCondition {
     }
 
     public void setVisible(boolean visible) {
-        this.visible = visible;
+        if (!this.visible) {
+            this.visible = visible;
+        }
     }
 
     public Effect getPanelEffect() {

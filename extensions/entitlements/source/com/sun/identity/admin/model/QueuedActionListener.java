@@ -1,6 +1,5 @@
 package com.sun.identity.admin.model;
 
-import com.sun.identity.admin.model.QueuedActionBean;
 import java.util.ArrayList;
 import java.util.List;
 import javax.faces.context.FacesContext;

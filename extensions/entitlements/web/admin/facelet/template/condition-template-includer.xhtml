@@ -6,8 +6,11 @@
     xmlns:ice="http://www.icesoft.com/icefaces/component"
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
-    <ice:panelGroup
-        rendered="#{viewCondition != null &amp;&amp; viewCondition.conditionType.name == 'or'}">
-        OR of previous and next condition
-    </ice:panelGroup>
+    <c:forEach
+        var="conditionType"
+        items="#{conditionTypes}">
+        <ui:include src="#{conditionType.template}">
+            <ui:param name="viewCondition" value="#{viewCondition}"/>
+        </ui:include>
+    </c:forEach>
 </span>

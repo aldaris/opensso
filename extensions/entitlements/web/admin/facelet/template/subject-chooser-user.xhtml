@@ -5,8 +5,9 @@
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:ice="http://www.icesoft.com/icefaces/component"
     xmlns:o="http://opensso.dev.java.net">
+        #{subjectContainer.subjectContainerType.name}
     <ice:panelGroup
-        rendered="#{subjectContainer != null}"
+        rendered="#{subjectContainer != null &amp;&amp; subjectContainer.subjectContainerType.name == 'user'}"
         styleClass="subject-chooser">
         <o:subjectchooser
             chooserSubjectContainer="#{subjectContainer}"

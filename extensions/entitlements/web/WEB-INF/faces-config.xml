@@ -46,7 +46,7 @@
         </managed-property>
         <managed-property>
             <property-name>template</property-name>
-            <value>/admin/facelet/template/subject-chooser.xhtml</value>
+            <value>/admin/facelet/template/subject-chooser-user.xhtml</value>
         </managed-property>
         <managed-property>
             <property-name>subjectContainerDao</property-name>
@@ -67,7 +67,7 @@
         </managed-property>
         <managed-property>
             <property-name>template</property-name>
-            <value>/admin/facelet/template/subject-chooser.xhtml</value>
+            <value>/admin/facelet/template/subject-chooser-role.xhtml</value>
         </managed-property>
         <managed-property>
             <property-name>subjectContainerDao</property-name>

@@ -56,11 +56,10 @@
                         #{viewCondition.name != null ? viewCondition.name : viewCondition.conditionType.name}
                     </ui:define>
                     <ui:define name="panel-body">
-                        <ui:include src="#{viewCondition.conditionType.template}">
-                            <ui:param
-                                name="viewCondition"
-                                value="#{viewCondition}"/>
-                        </ui:include>
+                        <ui:include
+                            src="/admin/facelet/template/condition-template-includer.xhtml">
+                                <ui:param name="viewCondition" value="#{viewCondition}"/>
+                            </ui:include>
                     </ui:define>
                 </o:multipanel>
             </c:forEach>

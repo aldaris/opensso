@@ -7,7 +7,7 @@
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
     <ice:panelGroup
-        rendered="#{viewCondition != null}">
+        rendered="#{viewCondition != null &amp;&amp; viewCondition.conditionType.name == 'ip'}">
         <span class="condition-section-head">
             <span class="condition-section-title">
                 <ice:outputText value="Address Range"/>

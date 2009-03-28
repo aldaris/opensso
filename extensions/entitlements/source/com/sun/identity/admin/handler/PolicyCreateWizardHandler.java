@@ -66,7 +66,7 @@ public class PolicyCreateWizardHandler
             getPolicyCreateWizardBean().getPrivilegeBean().getViewConditions().add(vc);
 
             Effect e = new Appear();
-            e.setTransitory(true);
+            e.setTransitory(false);
             e.setSubmit(true);
             getPolicyCreateWizardBean().setDropConditionEffect(e);
         }
@@ -82,7 +82,7 @@ public class PolicyCreateWizardHandler
             getPolicyCreateWizardBean().getPrivilegeBean().getSubjectContainers().add(sc);
 
             Effect e = new Appear();
-            e.setTransitory(true);
+            e.setTransitory(false);
             e.setSubmit(true);
             getPolicyCreateWizardBean().setDropSubjectContainerEffect(e);
         }

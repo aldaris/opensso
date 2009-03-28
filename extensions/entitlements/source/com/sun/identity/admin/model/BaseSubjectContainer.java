@@ -73,7 +73,9 @@ public abstract class BaseSubjectContainer implements MultiPanelBean, SubjectCon
     }
 
     public void setVisible(boolean visible) {
-        this.visible = visible;
+        if (!this.visible) {
+            this.visible = visible;
+        }
     }
 
     public Effect getPanelEffect() {
