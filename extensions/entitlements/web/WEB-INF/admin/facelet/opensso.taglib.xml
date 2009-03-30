@@ -42,4 +42,8 @@
         <tag-name>round</tag-name>
         <source>tag/round.xhtml</source>
     </tag>
+    <tag>
+        <tag-name>box</tag-name>
+        <source>tag/box.xhtml</source>
+    </tag>
 </facelet-taglib>

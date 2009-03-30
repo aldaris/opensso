@@ -6,30 +6,44 @@
     xmlns:ice="http://www.icesoft.com/icefaces/component"
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:o="http://opensso.dev.java.net">
-    <ice:dataTable
-        value="#{policyCreateWizardBean.privilegeBean.actions}"
-        var="booleanAction">
-        <ice:column>
-            <f:facet name="header">
-                <ice:outputText value="Action"/>
-            </f:facet>
-            <ice:panelGroup>
-                <ice:outputText value="#{booleanAction.name}"/>
-            </ice:panelGroup>
-        </ice:column>
-        <ice:column>
-            <f:facet name="header">
-                <ice:outputText value="Permissions"/>
-            </f:facet>
-            <ice:panelGroup>
-                <ice:selectOneRadio
-                    partialSubmit="true"
-                    value="#{booleanAction.allow}"
-                    valueChangeListener="#{booleanAction.booleanActionHandler.selectListener}">
-                    <f:selectItem itemValue="true" itemLabel="Allow"/>
-                    <f:selectItem itemValue="false" itemLabel="Deny"/>
-                </ice:selectOneRadio>
-            </ice:panelGroup>
-        </ice:column>
-    </ice:dataTable>
+    <div class="section-outer">
+        <o:box>
+            <ui:define name="body">
+                <div class="section-inner">
+                    <span class="section-head">
+                        <span class="section-title">
+                            <ice:outputText value="New Policy Actions"/>
+                        </span>
+                    </span>
+                    <div class="clear"></div>
+                    <ice:dataTable
+                        value="#{policyCreateWizardBean.privilegeBean.actions}"
+                        var="booleanAction">
+                        <ice:column>
+                            <f:facet name="header">
+                                <ice:outputText value="Action"/>
+                            </f:facet>
+                            <ice:panelGroup>
+                                <ice:outputText value="#{booleanAction.name}"/>
+                            </ice:panelGroup>
+                        </ice:column>
+                        <ice:column>
+                            <f:facet name="header">
+                                <ice:outputText value="Permissions"/>
+                            </f:facet>
+                            <ice:panelGroup>
+                                <ice:selectOneRadio
+                                    partialSubmit="true"
+                                    value="#{booleanAction.allow}"
+                                    valueChangeListener="#{booleanAction.booleanActionHandler.selectListener}">
+                                    <f:selectItem itemValue="true" itemLabel="Allow"/>
+                                    <f:selectItem itemValue="false" itemLabel="Deny"/>
+                                </ice:selectOneRadio>
+                            </ice:panelGroup>
+                        </ice:column>
+                    </ice:dataTable>
+                </div>
+            </ui:define>
+        </o:box>
+    </div>
 </span>

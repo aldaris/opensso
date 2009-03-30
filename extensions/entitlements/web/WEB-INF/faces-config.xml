@@ -236,6 +236,48 @@
         </managed-property>
     </managed-bean>
     <managed-bean>
+        <managed-bean-name>timezoneConditionType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.TimezoneConditionType</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>expression</property-name>
+            <value>false</value>
+        </managed-property>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>timezone</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/condition-timezone.xhtml</value>
+        </managed-property>
+        <managed-property>
+            <property-name>conditionIconUri</property-name>
+            <value>/admin/image/globe.png</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>daysOfWeekConditionType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.DaysOfWeekConditionType</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>expression</property-name>
+            <value>false</value>
+        </managed-property>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>daysOfWeek</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/condition-days-of-week.xhtml</value>
+        </managed-property>
+        <managed-property>
+            <property-name>conditionIconUri</property-name>
+            <value>/admin/image/calendar.png</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
         <managed-bean-name>orConditionType</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.OrConditionType</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
@@ -308,6 +350,8 @@
             <value>#{ipConditionType}</value>
             <value>#{timeRangeConditionType}</value>
             <value>#{dateRangeConditionType}</value>
+            <value>#{timezoneConditionType}</value>
+            <value>#{daysOfWeekConditionType}</value>
             <value>#{orConditionType}</value>
             <value>#{andConditionType}</value>
             <value>#{notConditionType}</value>

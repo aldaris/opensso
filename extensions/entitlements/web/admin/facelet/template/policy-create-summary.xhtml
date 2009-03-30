@@ -15,130 +15,135 @@
         </span>
     </span>
     <div class="clear"></div>
-    <o:round
-        style="width: 40%">
-        <ui:define name="body">
-            <ice:panelGrid
-                styleClass="summary-table"
-                columnClasses="summary-tableCol1,summary-tableCol2,summary-tableCol3"
-                columns="3">
-                <ice:outputText value="Name"/>
-                <ice:outputText value="#{policyCreateWizardBean.privilegeBean.name}"/>
-                <ice:commandLink
-                    actionListener="#{policyCreateWizardHandler.gotoStepListener}"
-                    partialSubmit="true"
-                    styleClass="command-link">
-                    <f:attribute name="step" value="4"/>
-                    <f:attribute name="gotoStep" value="0"/>
-                    <img
-                        style="vertical-align: middle"
-                        src="../image/edit.png"/>
-                    <ice:outputText
-                        style="margin-left: 2px"
-                        value="Edit"/>
-                </ice:commandLink>
-            </ice:panelGrid>
-        </ui:define>
-    </o:round>
-    <o:round
-        style="width: 40%">
-        <ui:define name="body">
-            <ice:panelGrid
-                styleClass="summary-table"
-                columnClasses="summary-tableCol1,summary-tableCol2,summary-tableCol3"
-                columns="3">
-                <ice:outputText value="Description"/>
-                <ice:outputText value="#{policyCreateWizardBean.privilegeBean.description}"/>
-                <ice:commandLink
-                    actionListener="#{policyCreateWizardHandler.gotoStepListener}"
-                    partialSubmit="true"
-                    styleClass="command-link">
-                    <f:attribute name="step" value="4"/>
-                    <f:attribute name="gotoStep" value="0"/>
-                    <img
-                        style="vertical-align: middle"
-                        src="../image/edit.png"/>
-                    <ice:outputText
-                        style="margin-left: 2px"
-                        value="Edit"/>
-                </ice:commandLink>
-            </ice:panelGrid>
-        </ui:define>
-    </o:round>
-    <o:round
-        style="width: 40%">
-        <ui:define name="body">
-            <ice:panelGrid
-                styleClass="summary-table"
-                columnClasses="summary-tableCol1,summary-tableCol2,summary-tableCol3"
-                columns="3">
-                <ice:outputText value="Resources"/>
-                <ice:outputText value="#{policyCreateWizardBean.policyCreateSummary.resourceCount}"/>
-                <ice:commandLink
-                    actionListener="#{policyCreateWizardHandler.gotoStepListener}"
-                    partialSubmit="true"
-                    styleClass="command-link">
-                    <f:attribute name="step" value="4"/>
-                    <f:attribute name="gotoStep" value="1"/>
-                    <img
-                        style="vertical-align: middle"
-                        src="../image/edit.png"/>
-                    <ice:outputText
-                        style="margin-left: 2px"
-                        value="Edit"/>
-                </ice:commandLink>
-            </ice:panelGrid>
-        </ui:define>
-    </o:round>
-    <o:round
-        style="width: 40%">
-        <ui:define name="body">
-            <ice:panelGrid
-                styleClass="summary-table"
-                columnClasses="summary-tableCol1,summary-tableCol2,summary-tableCol3"
-                columns="3">
-                <ice:outputText value="Subjects"/>
-                <ice:outputText value="#{policyCreateWizardBean.policyCreateSummary.subjectCount}"/>
-                <ice:commandLink
-                    actionListener="#{policyCreateWizardHandler.gotoStepListener}"
-                    partialSubmit="true"
-                    styleClass="command-link">
-                    <f:attribute name="step" value="4"/>
-                    <f:attribute name="gotoStep" value="2"/>
-                    <img
-                        style="vertical-align: middle"
-                        src="../image/edit.png"/>
-                    <ice:outputText
-                        style="margin-left: 2px"
-                        value="Edit"/>
-                </ice:commandLink>
-            </ice:panelGrid>
-        </ui:define>
-    </o:round>
-    <o:round
-        style="width: 40%">
-        <ui:define name="body">
-            <ice:panelGrid
-                styleClass="summary-table"
-                columnClasses="summary-tableCol1,summary-tableCol2,summary-tableCol3"
-                columns="3">
-                <ice:outputText value="Conditions"/>
-                <ice:outputText value="#{policyCreateWizardBean.policyCreateSummary.conditionCount}"/>
-                <ice:commandLink
-                    actionListener="#{policyCreateWizardHandler.gotoStepListener}"
-                    partialSubmit="true"
-                    styleClass="command-link">
-                    <f:attribute name="step" value="4"/>
-                    <f:attribute name="gotoStep" value="3"/>
-                    <f:attribute name="gotoAdvancedTabIndex" value="1"/>
-                    <img
-                        style="vertical-align: middle"
-                        src="../image/edit.png"/>
-                    <ice:outputText
-                        style="margin-left: 2px"
-                        value="Edit"/>
-                </ice:commandLink>
-            </ice:panelGrid>
-        </ui:define>
-    </o:round>
+    <div class="summary-items">
+        <o:box>
+            <ui:define name="body">
+                <ice:panelGrid
+                    styleClass="summary-table"
+                    columnClasses="summary-tableCol1,summary-tableCol2,summary-tableCol3"
+                    columns="3">
+                    <ice:outputText value="Name"/>
+                    <ice:outputText value="#{policyCreateWizardBean.privilegeBean.name}"/>
+                    <ice:commandLink
+                        actionListener="#{policyCreateWizardHandler.gotoStepListener}"
+                        partialSubmit="true"
+                        styleClass="command-link">
+                        <f:attribute name="step" value="4"/>
+                        <f:attribute name="gotoStep" value="0"/>
+                        <img
+                            style="vertical-align: middle"
+                            src="../image/edit.png"/>
+                        <ice:outputText
+                            style="margin-left: 2px"
+                            value="Edit"/>
+                    </ice:commandLink>
+                </ice:panelGrid>
+            </ui:define>
+        </o:box>
+    </div>
+    <div class="summary-items">
+        <o:box>
+            <ui:define name="body">
+                <ice:panelGrid
+                    styleClass="summary-table"
+                    columnClasses="summary-tableCol1,summary-tableCol2,summary-tableCol3"
+                    columns="3">
+                    <ice:outputText value="Description"/>
+                    <ice:outputText value="#{policyCreateWizardBean.privilegeBean.description}"/>
+                    <ice:commandLink
+                        actionListener="#{policyCreateWizardHandler.gotoStepListener}"
+                        partialSubmit="true"
+                        styleClass="command-link">
+                        <f:attribute name="step" value="4"/>
+                        <f:attribute name="gotoStep" value="0"/>
+                        <img
+                            style="vertical-align: middle"
+                            src="../image/edit.png"/>
+                        <ice:outputText
+                            style="margin-left: 2px"
+                            value="Edit"/>
+                    </ice:commandLink>
+                </ice:panelGrid>
+            </ui:define>
+        </o:box>
+    </div>
+    <div class="summary-items">
+        <o:box>
+            <ui:define name="body">
+                <ice:panelGrid
+                    styleClass="summary-table"
+                    columnClasses="summary-tableCol1,summary-tableCol2,summary-tableCol3"
+                    columns="3">
+                    <ice:outputText value="Resources"/>
+                    <ice:outputText value="#{policyCreateWizardBean.policyCreateSummary.resourceCount}"/>
+                    <ice:commandLink
+                        actionListener="#{policyCreateWizardHandler.gotoStepListener}"
+                        partialSubmit="true"
+                        styleClass="command-link">
+                        <f:attribute name="step" value="4"/>
+                        <f:attribute name="gotoStep" value="1"/>
+                        <img
+                            style="vertical-align: middle"
+                            src="../image/edit.png"/>
+                        <ice:outputText
+                            style="margin-left: 2px"
+                            value="Edit"/>
+                    </ice:commandLink>
+                </ice:panelGrid>
+            </ui:define>
+        </o:box>
+    </div>
+    <div class="summary-items">
+        <o:box>
+            <ui:define name="body">
+                <ice:panelGrid
+                    styleClass="summary-table"
+                    columnClasses="summary-tableCol1,summary-tableCol2,summary-tableCol3"
+                    columns="3">
+                    <ice:outputText value="Subjects"/>
+                    <ice:outputText value="#{policyCreateWizardBean.policyCreateSummary.subjectCount}"/>
+                    <ice:commandLink
+                        actionListener="#{policyCreateWizardHandler.gotoStepListener}"
+                        partialSubmit="true"
+                        styleClass="command-link">
+                        <f:attribute name="step" value="4"/>
+                        <f:attribute name="gotoStep" value="2"/>
+                        <img
+                            style="vertical-align: middle"
+                            src="../image/edit.png"/>
+                        <ice:outputText
+                            style="margin-left: 2px"
+                            value="Edit"/>
+                    </ice:commandLink>
+                </ice:panelGrid>
+            </ui:define>
+        </o:box>
+    </div>
+    <div class="summary-items">
+        <o:box>
+            <ui:define name="body">
+                <ice:panelGrid
+                    styleClass="summary-table"
+                    columnClasses="summary-tableCol1,summary-tableCol2,summary-tableCol3"
+                    columns="3">
+                    <ice:outputText value="Conditions"/>
+                    <ice:outputText value="#{policyCreateWizardBean.policyCreateSummary.conditionCount}"/>
+                    <ice:commandLink
+                        actionListener="#{policyCreateWizardHandler.gotoStepListener}"
+                        partialSubmit="true"
+                        styleClass="command-link">
+                        <f:attribute name="step" value="4"/>
+                        <f:attribute name="gotoStep" value="3"/>
+                        <f:attribute name="gotoAdvancedTabIndex" value="1"/>
+                        <img
+                            style="vertical-align: middle"
+                            src="../image/edit.png"/>
+                        <ice:outputText
+                            style="margin-left: 2px"
+                            value="Edit"/>
+                    </ice:commandLink>
+                </ice:panelGrid>
+            </ui:define>
+        </o:box>
+    </div>
 </span>
