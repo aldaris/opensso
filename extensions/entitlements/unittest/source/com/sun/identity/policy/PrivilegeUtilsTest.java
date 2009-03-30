@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtilsTest.java,v 1.1 2009-03-26 16:24:35 dillidorai Exp $
+ * $Id: PrivilegeUtilsTest.java,v 1.2 2009-03-30 18:59:00 dillidorai Exp $
  */
 package com.sun.identity.policy;
 
@@ -58,13 +58,9 @@ public class PrivilegeUtilsTest {
     @Test
     public void testPrivilegeToPolicy() throws Exception {
         String BASE_DN = "dc=opensso,dc=java,dc=net";
-        Map<String, Object> actionValues = new HashMap<String, Object>();
-        Set<String> getValues = new HashSet<String>();
-        getValues.add("allow");
-        actionValues.put("GET", getValues);
-        Set<String> postValues = new HashSet<String>();
-        postValues.add("allow");
-        actionValues.put("POST", postValues);
+        Map<String, Boolean> actionValues = new HashMap<String, Boolean>();
+        actionValues.put("GET", Boolean.TRUE);
+        actionValues.put("POST", Boolean.TRUE);
         String resourceName = "http://www.sun.com";
         Entitlement entitlement = new Entitlement("iPlanetAMWebAgentService",
                 resourceName, actionValues);

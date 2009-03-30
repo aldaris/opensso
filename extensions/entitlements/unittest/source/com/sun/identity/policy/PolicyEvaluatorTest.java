@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorTest.java,v 1.12 2009-02-20 00:03:34 veiming Exp $
+ * $Id: PolicyEvaluatorTest.java,v 1.13 2009-03-30 18:59:00 dillidorai Exp $
  */
 
 package com.sun.identity.policy;
@@ -220,9 +220,9 @@ public class PolicyEvaluatorTest {
                 throw new Exception(
                     "testSimulationSelf: failed, resource name is incorrect.");
             }
-            Map<String, Object> actionValues = ent.getActionValues();
-            validateActionValues(actionValues, "GET", "allow");
-            validateActionValues(actionValues, "POST", "deny");
+            Map<String, Boolean> actionValues = ent.getActionValues();
+            validateActionValues(actionValues, "GET", Boolean.TRUE);
+            validateActionValues(actionValues, "POST", Boolean.FALSE);
         }
 
         if (!eval.getMatchedSubjectTypeNames(POLICY_NAME4).isEmpty()) {
@@ -234,13 +234,12 @@ public class PolicyEvaluatorTest {
     }
 
     private void validateActionValues(
-        Map<String, Object> actionValues,
+        Map<String, Boolean> actionValues,
         String key,
-        String value
+        Boolean value
     ) throws Exception {
-        Set setGet = (Set) actionValues.get(key);
-        String strGet = (String) setGet.iterator().next();
-        if (!strGet.equals(value)) {
+        Boolean getVal = actionValues.get(key);
+        if (!getVal.equals(value)) {
             throw new Exception(
                 "testSimulationSelf: failed, " + key + " result is incorrect.");
         }
@@ -261,12 +260,12 @@ public class PolicyEvaluatorTest {
         for (Entitlement ent : results) {
             String res = ent.getResourceName();
             if (res.equals(URL_RESOURCE1)) {
-                Map<String, Object> actionValues = ent.getActionValues();
-                validateActionValues(actionValues, "GET", "allow");
-                validateActionValues(actionValues, "POST", "deny");
+                Map<String, Boolean> actionValues = ent.getActionValues();
+                validateActionValues(actionValues, "GET", Boolean.TRUE);
+                validateActionValues(actionValues, "POST", Boolean.FALSE);
             } else if (res.equals(URL_RESOURCE2)) {
-                Map<String, Object> actionValues = ent.getActionValues();
-                validateActionValues(actionValues, "GET", "allow");
+                Map<String, Boolean> actionValues = ent.getActionValues();
+                validateActionValues(actionValues, "GET", Boolean.TRUE);
             }
         }
     }

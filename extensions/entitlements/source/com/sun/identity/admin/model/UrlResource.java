@@ -88,10 +88,11 @@ public class UrlResource implements Resource, Serializable {
     }
 
     public Entitlement getEntitlement(Collection<Action> actions) {
-        Map<String, Object> actionValues = new HashMap<String, Object>();
+        Map<String, Boolean> actionValues = new HashMap<String, Boolean>();
         for (Action a : actions) {
             if (a.getValue() != null) {
-                actionValues.put(a.getName(), a.getValue());
+                //TODO: fix to use correct Boolean value
+                actionValues.put(a.getName(), Boolean.TRUE);
             }
         }
 

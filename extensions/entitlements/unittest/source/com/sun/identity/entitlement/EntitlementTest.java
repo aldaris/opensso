@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementTest.java,v 1.1 2009-03-16 22:05:13 dillidorai Exp $
+ * $Id: EntitlementTest.java,v 1.2 2009-03-30 18:58:59 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -47,13 +47,8 @@ public class EntitlementTest {
 
     @Test
     public void testConstruction() throws Exception {
-        Map<String, Object> actionValues = new HashMap<String, Object>();
-        Set<String> getValues = new HashSet<String>();
-        getValues.add("allow");
-        actionValues.put("GET", getValues);
-        Set<String> postValues = new HashSet<String>();
-        postValues.add("allow");
-        actionValues.put("POST", postValues);
+        Map<String, Boolean> actionValues = new HashMap<String, Boolean>();
+        actionValues.put("POST", Boolean.TRUE);
         String resourceName = "http://www.sun.com";
         Entitlement ent = new Entitlement(SERVICE_NAME,
                 resourceName, actionValues);
@@ -63,7 +58,19 @@ public class EntitlementTest {
         ent.setExcludedResourceNames(excludedResourceNames);
         ent.setName("entitlement1");
         UnittestLog.logMessage(
-                "EntitlementTest.testConstruction():" + "ent.toString()=" + ent.toString());
+                "EntitlementTest.testConstruction():" + "ent.toString()="
+                + ent.toString());
+        Entitlement ent1 = new Entitlement(SERVICE_NAME,
+                resourceName, actionValues);
+        UnittestLog.logMessage(
+                "EntitlementTest.testConstruction():equality test for false:"
+                + ent.equals(ent1) );
+        ent1.setExcludedResourceNames(excludedResourceNames);
+        ent1.setName("entitlement1");
+         UnittestLog.logMessage(
+                "EntitlementTest.testConstruction():equality test for true:"
+                + ent.equals(ent1) );
+        
 
     }
 

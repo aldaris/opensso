@@ -22,18 +22,15 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: UserSubjectTest.java,v 1.1 2009-03-14 03:08:00 dillidorai Exp $
+ * $Id: UserSubjectTest.java,v 1.2 2009-03-30 18:59:00 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.unittest.UnittestLog;
 
-import com.sun.identity.entitlement.UserSubject;
 import java.util.Date;
 
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
-import org.testng.annotations.BeforeClass;
 
 /**
  *
@@ -46,19 +43,32 @@ public class UserSubjectTest {
         UserSubject us = new UserSubject("user1");
         us.setPSubjectName("u1");
         UnittestLog.logMessage(
-                "UserSubjectTest.testConstruction():" + "us.toString()=" + us.toString());
+                "UserSubjectTest.testConstruction():" + "us.toString()="
+                + us.toString());
 
         UserSubject us1 = new UserSubject();
         us1.setState(us.getState());
         UnittestLog.logMessage(
-                "UserSubject.testConstruction():" + "us1.toString()=" + us1.toString());
+                "UserSubject.testConstruction():" + "us1.toString()="
+                + us1.toString());
 
 
         UnittestLog.logMessage(
                 "UserSubjectTest.testConstruction():" + "resetting user name");
         us1.setUser("user2");
         UnittestLog.logMessage(
-                "UserSubjectTest.testConstruction():" + "us1.toString()=" + us1.toString());
+                "UserSubjectTest.testConstruction():" + "us1.toString()="
+                + us1.toString());
+
+        UserSubject us3 = new UserSubject("user1");
+        UnittestLog.logMessage(
+                "UserSubjectTest.testConstruction(): equality test for false:"
+                + us.equals(us3));
+        us3.setPSubjectName("u1");
+        UnittestLog.logMessage(
+                "UserSubjectTest.testConstruction(): equality test for true:"
+                + us.equals(us3));
+
     }
 
     public static void main(String[] args) throws Exception {

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManagerTest.java,v 1.2 2009-03-26 19:46:08 dillidorai Exp $
+ * $Id: PrivilegeManagerTest.java,v 1.3 2009-03-30 18:59:00 dillidorai Exp $
  */
 package com.sun.identity.policy;
 
@@ -95,13 +95,8 @@ public class PrivilegeManagerTest {
 
     @Test
     public void testAddPrivilege() throws Exception {
-        Map<String, Object> actionValues = new HashMap<String, Object>();
-        Set<String> getValues = new HashSet<String>();
-        getValues.add("allow");
-        actionValues.put("GET", getValues);
-        Set<String> postValues = new HashSet<String>();
-        postValues.add("allow");
-        actionValues.put("POST", postValues);
+        Map<String, Boolean> actionValues = new HashMap<String, Boolean>();
+        actionValues.put("POST", Boolean.TRUE);
         String resourceName = "http://www.sun.com";
         Entitlement entitlement = new Entitlement(SERVICE_NAME,
                 resourceName, actionValues);

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AndConditionTest.java,v 1.1 2009-03-14 03:07:59 dillidorai Exp $
+ * $Id: AndConditionTest.java,v 1.2 2009-03-30 18:58:59 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -50,7 +50,8 @@ public class AndConditionTest {
                 "100.100.100.100", "200.200.200.200");
         ipc.setPConditionName("ip1");
         UnittestLog.logMessage(
-                "AndConditionTest.testConstruction():" + "ipc.toString()=" + ipc.toString());
+                "AndConditionTest.testConstruction():" + "ipc.toString()="
+                + ipc.toString());
 
         TimeCondition tc = new TimeCondition("08:00", "16:00",
                 "mon", "fri");
@@ -59,14 +60,17 @@ public class AndConditionTest {
         tc.setEnforcementTimeZone("PST");
         tc.setPConditionName("tc1");
         UnittestLog.logMessage(
-                "AndConditionTest.testConstruction():" + "tc.toString()=" + tc.toString());
+                "AndConditionTest.testConstruction():" + "tc.toString()="
+                + tc.toString());
 
-        Set<EntitlementCondition> conditions = new HashSet<EntitlementCondition>();
+        Set<EntitlementCondition> conditions
+                = new HashSet<EntitlementCondition>();
         conditions.add(ipc);
         conditions.add(tc);
         AndCondition ac = new AndCondition(conditions);
         UnittestLog.logMessage(
-                "AndConditionTest.testConstruction():" + "ac.toString()=" + ac.toString());
+                "AndConditionTest.testConstruction():" + "ac.toString()="
+                + ac.toString());
 
     }
 
