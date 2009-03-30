@@ -14,7 +14,7 @@ public class DaysOfWeekCondition
     extends BaseViewCondition
     implements Serializable {
 
-    private String[] days = new String[] { "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday" };
+    private String[] days = new String[] { "mon", "tue", "wed", "thu", "fri", "sat", "sun" };
     private String[] selectedDays = new String[7];
 
     public EntitlementCondition getEntitlementCondition() {
