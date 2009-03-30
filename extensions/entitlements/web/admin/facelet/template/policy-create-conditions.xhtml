@@ -53,6 +53,8 @@
                     bean="#{viewCondition}"
                     handler="#{viewConditionsHandler}">
                     <ui:define name="panel-title">
+                        <ice:graphicImage 
+                            value="#{viewCondition.conditionType.conditionIconUri}"/>
                         #{viewCondition.name != null ? viewCondition.name : viewCondition.conditionType.name}
                     </ui:define>
                     <ui:define name="panel-body">

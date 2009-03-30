@@ -194,6 +194,48 @@
         </managed-property>
     </managed-bean>
     <managed-bean>
+        <managed-bean-name>timeRangeConditionType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.TimeRangeConditionType</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>expression</property-name>
+            <value>false</value>
+        </managed-property>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>timeRange</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/condition-time-range.xhtml</value>
+        </managed-property>
+        <managed-property>
+            <property-name>conditionIconUri</property-name>
+            <value>/admin/image/time.png</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>dateRangeConditionType</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.DateRangeConditionType</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>expression</property-name>
+            <value>false</value>
+        </managed-property>
+        <managed-property>
+            <property-name>name</property-name>
+            <value>dateRange</value>
+        </managed-property>
+        <managed-property>
+            <property-name>template</property-name>
+            <value>/admin/facelet/template/condition-date-range.xhtml</value>
+        </managed-property>
+        <managed-property>
+            <property-name>conditionIconUri</property-name>
+            <value>/admin/image/calendar.png</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
         <managed-bean-name>orConditionType</managed-bean-name>
         <managed-bean-class>com.sun.identity.admin.model.OrConditionType</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
@@ -264,6 +306,8 @@
         <list-entries>
             <value>#{activeSessionTimeConditionType}</value>
             <value>#{ipConditionType}</value>
+            <value>#{timeRangeConditionType}</value>
+            <value>#{dateRangeConditionType}</value>
             <value>#{orConditionType}</value>
             <value>#{andConditionType}</value>
             <value>#{notConditionType}</value>

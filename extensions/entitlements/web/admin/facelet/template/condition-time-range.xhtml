@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<span
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ice="http://www.icesoft.com/icefaces/component"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:o="http://opensso.dev.java.net">
+    <ice:panelGroup
+        rendered="#{viewCondition != null &amp;&amp; viewCondition.conditionType.name == 'timeRange'}">
+
+        <ice:panelGrid
+            columns="5">
+                <ice:outputText value="Start Time:"/>
+                <ice:inputText
+                    size="2"
+                    maxLength="2"
+                    value="#{viewCondition.startHour}"/>
+                <ice:outputText value=":"/>
+                <ice:inputText
+                    size="2"
+                    maxLength="2"
+                    value="#{viewCondition.startMinute}"/>
+                <ice:selectOneMenu
+                    value="#{viewCondition.startPeriod}">
+                    <f:selectItem itemValue="AM" itemLabel="AM"/>
+                    <f:selectItem itemValue="PM" itemLabel="PM"/>
+                </ice:selectOneMenu>
+                <ice:outputText value="End Time:"/>
+                <ice:inputText
+                    size="2"
+                    maxLength="2"
+                    value="#{viewCondition.endHour}"/>
+                <ice:outputText value=":"/>
+                <ice:inputText
+                    size="2"
+                    maxLength="2"
+                    value="#{viewCondition.endMinute}"/>
+                <ice:selectOneMenu
+                    value="#{viewCondition.endPeriod}">
+                    <f:selectItem itemValue="AM" itemLabel="AM"/>
+                    <f:selectItem itemValue="PM" itemLabel="PM"/>
+                </ice:selectOneMenu>
+            </ice:panelGrid>
+    </ice:panelGroup>
+</span>
