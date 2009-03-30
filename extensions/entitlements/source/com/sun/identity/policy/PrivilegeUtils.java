@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.2 2009-03-28 06:45:29 veiming Exp $
+ * $Id: PrivilegeUtils.java,v 1.3 2009-03-30 18:56:05 dillidorai Exp $
  */
 package com.sun.identity.policy;
 
@@ -153,12 +153,13 @@ public class PrivilegeUtils {
         String serviceName = rule.getServiceTypeName();
         String resourceName = rule.getResourceName();
         Set excludedResourceNames = rule.getExcludedResourceNames();
-        Map<String, Object> actionMap = new HashMap<String, Object>();
+        Map<String, Boolean> actionMap = new HashMap<String, Boolean>();
         Set actionNames = rule.getActionNames();
         for (Object actionNameObj : actionNames) {
             String actionName = (String) actionNameObj;
             Set actionValues = rule.getActionValues(actionName);
-            actionMap.put(actionName, actionValues);
+            Boolean actionValue = Boolean.TRUE;
+            actionMap.put(actionName, actionValue);
         }
         Entitlement entitlement = new Entitlement(serviceName, resourceName,
                 actionMap);
@@ -265,7 +266,37 @@ public class PrivilegeUtils {
         if (ecSet.size() == 1) {
             ec = (EntitlementCondition) ecSet.iterator().next();
         } else if (ecSet.size() > 1) {
-            ec = new OrCondition(ecSet);
+            Map cnEntcMap = new HashMap();
+            for (Object entcObj : ecSet) {
+                EntitlementCondition entc = (EntitlementCondition) entcObj;
+                Set values = (Set) cnEntcMap.get(entc.getClass().getName());
+                if (values == null) {
+                    values = new HashSet();
+                }
+                values.add(entc);
+                cnEntcMap.put(entc.getClass().getName(), values);
+            }
+            Set keySet = cnEntcMap.keySet();
+            if (keySet.size() == 1) {
+                Set values = (Set) cnEntcMap.get(keySet.iterator().next());
+                if (values.size() == 1) {
+                    ec = (EntitlementCondition) values.iterator().next();
+                } else if (values.size() > 1) {
+                    ec = new OrCondition(values);
+                }
+            } else if (keySet.size() > 1) {
+                Set andSet = new HashSet();
+                for (Object keyObj : keySet) {
+                    String key = (String) keyObj;
+                    Set values = (Set) cnEntcMap.get(key);
+                    if (values.size() == 1) {
+                        andSet.add(values.iterator().next());
+                    } else if (values.size() > 1) {
+                        andSet.add(new OrCondition(values));
+                    }
+                }
+                ec = new AndCondition(andSet);
+            }
         }
         return ec;
     }
@@ -388,8 +419,9 @@ public class PrivilegeUtils {
         String ruleName = entitlement.getName();
         String serviceName = entitlement.getApplicationName();
         String resourceName = entitlement.getResourceName();
-        Map actionValues = entitlement.getActionValues();
-        Rule rule = new Rule(ruleName, serviceName, resourceName, actionValues);
+        Map<String, Boolean> actionValues = entitlement.getActionValues();
+        Map av = pravToPav(actionValues, serviceName);
+        Rule rule = new Rule(ruleName, serviceName, resourceName, av);
         rule.setExcludedResourceNames(entitlement.getExcludedResourceNames());
         return rule;
     }
@@ -664,13 +696,13 @@ public class PrivilegeUtils {
         if (nestedConditions != null) {
             for (Object nc : nestedConditions) {
                 if (nc instanceof IPCondition) {
-                    IPCondition ipc = (IPCondition)nc;
+                    IPCondition ipc = (IPCondition) nc;
                     Object[] arr = new Object[2];
                     arr[0] = ipc.getPConditionName();
                     arr[1] = ipConditionToPCondition(ipc);
                     list.add(arr);
                 } else if (nc instanceof TimeCondition) {
-                    TimeCondition tc = (TimeCondition)nc;
+                    TimeCondition tc = (TimeCondition) nc;
                     Object[] arr = new Object[2];
                     arr[0] = tc.getPConditionName();
                     arr[1] = timeConditionToPCondition(tc);
@@ -702,13 +734,13 @@ public class PrivilegeUtils {
         if (nestedConditions != null) {
             for (Object nc : nestedConditions) {
                 if (nc instanceof IPCondition) {
-                    IPCondition ipc = (IPCondition)nc;
+                    IPCondition ipc = (IPCondition) nc;
                     Object[] arr = new Object[2];
                     arr[0] = ipc.getPConditionName();
                     arr[1] = ipConditionToPCondition(ipc);
                     list.add(arr);
                 } else if (nc instanceof TimeCondition) {
-                    TimeCondition tc = (TimeCondition)nc;
+                    TimeCondition tc = (TimeCondition) nc;
                     Object[] arr = new Object[2];
                     arr[0] = tc.getPConditionName();
                     arr[1] = timeConditionToPCondition(tc);
@@ -748,8 +780,8 @@ public class PrivilegeUtils {
         Set<ResourceAttributes> resourceAttributesSet = new HashSet();
         if (nrps != null && !nrps.isEmpty()) {
             for (Object nrpObj : nrps) {
-                Object[] nrpa = (Object[])nrpObj;
-                String nrpName = (String)nrpa[0];
+                Object[] nrpa = (Object[]) nrpObj;
+                String nrpName = (String) nrpa[0];
                 ResponseProvider rp = (ResponseProvider) nrpa[1];
                 if (rp instanceof IDRepoResponseProvider) {
                     IDRepoResponseProvider irp = (IDRepoResponseProvider) rp;
@@ -915,4 +947,47 @@ public class PrivilegeUtils {
         set.add(obj);
         return set;
     }
+
+    static Map pravToPav(Map<String, Boolean> actionValues,
+            String serviceName) {
+        if (actionValues == null) {
+            return null;
+        }
+        Map av = new HashMap();
+        Set<String> keySet = actionValues.keySet();
+        for (String action: keySet) {
+            Boolean value = actionValues.get(action);
+            if (value.equals(Boolean.TRUE)) {
+                Set values = new HashSet();
+                values.add("allow");
+                av.put(action, values);
+            } else {
+                Set values = new HashSet();
+                values.add("deny");
+            }
+
+        }
+        return av;
+    }
+
+    static Map<String, Boolean> pavToPrav(Map actionValues,
+            String serviceName) {
+          if (actionValues == null) {
+            return null;
+        }
+        Map av = new HashMap();
+        Set keySet = (Set)actionValues.keySet();
+        for (Object actionObj: keySet) {
+            String action = (String)actionObj;
+            Set values = (Set)actionValues.get(action);
+            if ((values != null) && (values.contains("allow"))) {
+                av.put(action, Boolean.TRUE);
+            } else {
+                av.put(action, Boolean.FALSE);
+            }
+
+        }
+        return av;
+    }
+
 }

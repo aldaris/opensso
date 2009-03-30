@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.21 2009-03-27 16:29:09 veiming Exp $
+ * $Id: Entitlement.java,v 1.22 2009-03-30 18:56:05 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -67,7 +67,7 @@ public class Entitlement implements Serializable {
     private String applicationName;
     private String resourceName;
     private Set<String> excludedResourceNames;
-    private Map<String, Object> actionValues;
+    private Map<String, Boolean> actionValues;
     private Map<String, String> advices;
     private Map<String, Set<String>> attributes;
     transient private Application application;
@@ -113,7 +113,7 @@ public class Entitlement implements Serializable {
      */
     public Entitlement(
             String resourceName,
-            Map<String, Object> actionValues) {
+            Map<String, Boolean> actionValues) {
         setResourceName(resourceName);
         setActionValues(actionValues);
     }
@@ -128,7 +128,7 @@ public class Entitlement implements Serializable {
     public Entitlement(
             String applicationName,
             String resourceName,
-            Map<String, Object> actionValues) {
+            Map<String, Boolean> actionValues) {
         this.applicationName = applicationName;
         setResourceName(resourceName);
         setActionValues(actionValues);
@@ -211,7 +211,7 @@ public class Entitlement implements Serializable {
      * @param actionName Action name.
      */
     public void setActionName(String actionName) {
-        actionValues = new HashMap<String, Object>();
+        actionValues = new HashMap<String, Boolean>();
         actionValues.put(actionName, Boolean.TRUE);
     }
 
@@ -221,7 +221,7 @@ public class Entitlement implements Serializable {
      * @param actionNames Set of action names.
      */
     public void setActionNames(Set<String> actionNames) {
-        actionValues = new HashMap<String, Object>();
+        actionValues = new HashMap<String, Boolean>();
         for (String i : actionNames) {
             actionValues.put(i, Boolean.TRUE);
         }
@@ -232,19 +232,7 @@ public class Entitlement implements Serializable {
      *
      * @param actionValues Action values.
      */
-    public void setActionValues(Map<String, Object> actionValues) {
-        this.actionValues = new HashMap<String, Object>();
-        for (String key : actionValues.keySet()) {
-            Object val = actionValues.get(key);
-
-            if (val instanceof Set) {
-                Set copyOf = new HashSet<Object>((Set<Object>) val);
-                this.actionValues.put(key, copyOf);
-            } else {
-                this.actionValues.put(key, val);
-            }
-        }
-
+    public void setActionValues(Map<String, Boolean> actionValues) {
         this.actionValues = actionValues;
     }
 
@@ -254,7 +242,7 @@ public class Entitlement implements Serializable {
      * @param name Name of the action.
      * @return action values.
      */
-    public Object getActionValue(String name) {
+    public Boolean getActionValue(String name) {
         return actionValues.get(name);
     }
 
@@ -263,7 +251,7 @@ public class Entitlement implements Serializable {
      *
      * @return action values.
      */
-    public Map<String, Object> getActionValues() {
+    public Map<String, Boolean> getActionValues() {
         return actionValues;
     }
 
