@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: URLApplicationType.java,v 1.2 2009-03-30 13:00:12 veiming Exp $
+ * $Id: DelegationApplicationType.java,v 1.1 2009-03-30 13:00:11 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -36,17 +36,19 @@ import java.util.Set;
  *
  * @author dennis
  */
-public class URLApplicationType extends ApplicationType {
+public class DelegationApplicationType extends ApplicationType {
     private static Set<String> ACTIONS = new HashSet<String>();
-    private static final String NAME = "iPlanetAMWebAgentService";
-    private static ApplicationType instance = new URLApplicationType();
+    private static final String NAME = "sunAMDelegationService";
+    private static DelegationApplicationType instance =
+        new DelegationApplicationType();
 
     static {
-        ACTIONS.add("GET");
-        ACTIONS.add("POST");
+        ACTIONS.add("READ");
+        ACTIONS.add("MODIFY");
+        ACTIONS.add("DELEGATE");
     }
 
-    private URLApplicationType() {
+    private DelegationApplicationType() {
         super(NAME, ACTIONS);
     }
 
@@ -63,6 +65,4 @@ public class URLApplicationType extends ApplicationType {
     public ResourceSaveIndexes getResourceSaveIndex(String resource) {
         return ResourceNameIndexGenerator.getResourceIndex(resource);
     }
-
-
 }

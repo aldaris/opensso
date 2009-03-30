@@ -22,47 +22,24 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: URLApplicationType.java,v 1.2 2009-03-30 13:00:12 veiming Exp $
+ * $Id: DelegationApplication.java,v 1.1 2009-03-30 13:00:11 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
-
-import com.sun.identity.entitlement.util.ResourceNameIndexGenerator;
-import com.sun.identity.entitlement.util.ResourceNameSplitter;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  *
  * @author dennis
  */
-public class URLApplicationType extends ApplicationType {
-    private static Set<String> ACTIONS = new HashSet<String>();
-    private static final String NAME = "iPlanetAMWebAgentService";
-    private static ApplicationType instance = new URLApplicationType();
+public class DelegationApplication extends Application {
+    private static DelegationApplication instance = new DelegationApplication();
+    private static final String NAME = "sunAMDelegationService";
 
-    static {
-        ACTIONS.add("GET");
-        ACTIONS.add("POST");
+    public DelegationApplication() {
+        super(NAME, DelegationApplicationType.getInstance());
     }
 
-    private URLApplicationType() {
-        super(NAME, ACTIONS);
-    }
-
-    public static ApplicationType getInstance() {
+    public static DelegationApplication getInstance() {
         return instance;
     }
-
-    @Override
-    public ResourceSearchIndexes getResourceSearchIndex(String resource) {
-        return ResourceNameSplitter.split(resource);
-    }
-
-    @Override
-    public ResourceSaveIndexes getResourceSaveIndex(String resource) {
-        return ResourceNameIndexGenerator.getResourceIndex(resource);
-    }
-
-
 }

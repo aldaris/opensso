@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManager.java,v 1.2 2009-03-28 06:45:28 veiming Exp $
+ * $Id: ApplicationManager.java,v 1.3 2009-03-30 13:00:10 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -40,6 +40,8 @@ public final class ApplicationManager {
 
     static {
         Application appl = URLApplication.getInstance();
+        applications.put(appl.getName(), appl);
+        appl = DelegationApplication.getInstance();
         applications.put(appl.getName(), appl);
     }
 

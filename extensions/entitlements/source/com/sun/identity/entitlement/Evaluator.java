@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Evaluator.java,v 1.8 2009-03-25 06:42:52 veiming Exp $
+ * $Id: Evaluator.java,v 1.9 2009-03-30 13:00:11 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -110,7 +110,6 @@ public class Evaluator {
         Entitlement e,
         Map<String, Set<String>> envParameters
     ) throws EntitlementException {
-        //TOFIX: need a swtich choosing opensso or XACML 
         IPolicyEvaluator evaluator = 
             PolicyEvaluatorFactory.getInstance().getEvaluator();
         return evaluator.hasEntitlement(
@@ -136,7 +135,6 @@ public class Evaluator {
         Map<String, Set<String>> environment,
         boolean recursive
     ) throws EntitlementException {
-        //TOFIX: need a swtich choosing opensso or XACML 
         IPolicyEvaluator evaluator = 
             PolicyEvaluatorFactory.getInstance().getEvaluator();
         return evaluator.getEntitlements(adminSubject, subject, applicationName,

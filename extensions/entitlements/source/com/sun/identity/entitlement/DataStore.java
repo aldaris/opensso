@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.1 2009-03-28 06:45:28 veiming Exp $
+ * $Id: DataStore.java,v 1.2 2009-03-30 13:00:11 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -68,6 +68,7 @@ public class DataStore {
     private static final String PATH_PARENT_FILTER_TEMPLATE =
         "(" + SMSEntry.ATTR_XML_KEYVAL + "=" + PATH_PARENT_INDEX_KEY + "={0})";
     private static String PRIVILEGE_DN;
+    private static String PRIVILEGE_COUNT_DN;
     private static String BASE_DN;
 
     static {
@@ -84,6 +85,9 @@ public class DataStore {
     public static String getDN(String name) {
         Object[] arg = {name};
         return MessageFormat.format(PRIVILEGE_DN, arg);
+    }
+
+    private void updateIndexCount(SSOToken adminToken, int num) {
     }
 
     public String add(ResourceSaveIndexes indexes, Privilege p)

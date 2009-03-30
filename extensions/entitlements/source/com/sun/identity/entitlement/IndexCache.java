@@ -22,18 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IndexCache.java,v 1.2 2009-03-28 06:45:28 veiming Exp $
+ * $Id: IndexCache.java,v 1.3 2009-03-30 13:00:11 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.iplanet.am.util.Cache;
-import com.iplanet.sso.SSOException;
-import com.iplanet.sso.SSOToken;
-import com.sun.identity.security.AdminTokenAction;
-import com.sun.identity.sm.SMSException;
-import com.sun.identity.sm.ServiceConfigManager;
-import com.sun.identity.sm.ServiceListener;
-import java.security.AccessController;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -42,7 +35,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 /**
  * Caches the indexes which are stored in Directory Server.
  */
-public class IndexCache implements ServiceListener {
+public class IndexCache {
 
     private static int DEFAULT_CACHE_SIZE = 100000; //TOFIX
     private Cache hostIndexCache;
@@ -52,17 +45,6 @@ public class IndexCache implements ServiceListener {
 
 
     public IndexCache() {
-        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
-        try {
-            ServiceConfigManager mgr = new ServiceConfigManager(
-                "PolicyIndex", adminToken);
-            mgr.addListener(this);
-        } catch (SSOException e) {
-            //TOFIX
-        } catch (SMSException e) {
-            //TOFIX
-        }
     }
 
     /**
@@ -164,28 +146,5 @@ public class IndexCache implements ServiceListener {
         } finally {
             rwlock.readLock().unlock();
         }
-    }
-
-    public void globalConfigChanged(
-        String serviceName,
-        String version,
-        String groupName,
-        String serviceComponent,
-        int type) {
-        clearCaches();
-    }
-
-    public void schemaChanged(String serviceName, String version) {
-        //no-op
-    }
-
-    public void organizationConfigChanged(
-        String serviceName,
-        String version,
-        String orgName,
-        String groupName,
-        String serviceComponent,
-        int type) {
-        //no-op
     }
 }
