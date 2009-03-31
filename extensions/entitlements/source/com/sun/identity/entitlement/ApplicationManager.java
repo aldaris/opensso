@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManager.java,v 1.4 2009-03-31 01:16:10 veiming Exp $
+ * $Id: ApplicationManager.java,v 1.5 2009-03-31 05:52:17 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -76,6 +76,13 @@ public final class ApplicationManager {
 
         ApplicationType appType = ApplicationTypeManager.get(appTypeName);
         Application app = new Application(name, appType);
+        EntitlementCombiner combiner = getEntitlementCombiner(
+            info.getEntitlementCombiner());
+        if (combiner == null) {
+            combiner = new DenyOverride();
+        }
+        app.setEntitlementCombiner(combiner);
+
         if (actions != null) {
             app.setActions(actions);
         }
@@ -98,6 +105,27 @@ public final class ApplicationManager {
             app.setSaveIndex(saveIndex);
         }
         addApplication(app);
+    }
+
+     private static EntitlementCombiner getEntitlementCombiner(String className)
+     {
+        if (className == null) {
+            return null;
+        }
+        try {
+            Class clazz = Class.forName(className);
+            Object o = clazz.newInstance();
+            if (o instanceof EntitlementCombiner) {
+                return (EntitlementCombiner) o;
+            }
+        } catch (InstantiationException ex) {
+            //TOFIX debug error
+        } catch (IllegalAccessException ex) {
+            //TOFIX debug error
+        } catch (ClassNotFoundException ex) {
+            //TOFIX debug error
+        }
+        return null;
     }
 
     public static void addApplication(Application application) {

@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: entitlement.xml,v 1.1 2009-03-31 01:16:10 veiming Exp $
+   $Id: entitlement.xml,v 1.2 2009-03-31 05:52:17 veiming Exp $
 
 -->
 
@@ -99,6 +99,10 @@
                             type="list"
                             syntax="string"
                             i18nKey="" />
+                        <AttributeSchema name="entitlementCombiner"
+                            type="single"
+                            syntax="string"
+                            i18nKey="" />
                         <AttributeSchema name="searchIndexImpl"
                             type="single"
                             syntax="string"
@@ -163,12 +167,20 @@
                             <Value>com.sun.identity.entitlement.IPCondition</Value>
                             <Value>com.sun.identity.entitlement.TimeCondition</Value>
                         </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="entitlementCombiner" />
+                            <Value>com.sun.identity.entitlement.DenyOverride</Value>
+                        </AttributeValuePair>
                     </SubConfiguration>
                     <SubConfiguration name="sunAMDelegationService" 
                         id="application">
                         <AttributeValuePair>
                             <Attribute name="applicationType" />
                             <Value>sunAMDelegationService</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="entitlementCombiner" />
+                            <Value>com.sun.identity.entitlement.DenyOverride</Value>
                         </AttributeValuePair>
                     </SubConfiguration>
                 </SubConfiguration>

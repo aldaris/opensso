@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.1 2009-03-31 01:16:11 veiming Exp $
+ * $Id: EntitlementService.java,v 1.2 2009-03-31 05:52:17 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -57,6 +57,8 @@ public class EntitlementService {
     private static final String CONFIG_ACTIONS = "actions";
     private static final String CONFIG_RESOURCES = "resources";
     private static final String CONFIG_CONDITIONS = "conditions";
+    private static final String CONFIG_ENTITLEMENT_COMBINER =
+        "entitlementCombiner";
     private static final String CONFIG_SEARCH_INDEX_IMPL = "searchIndexImpl";
     private static final String CONFIG_SAVE_INDEX_IMPL = "saveIndexImpl";
     private static final String CONFIG_APPLICATION_TYPES = "applicationTypes";
@@ -202,6 +204,7 @@ public class EntitlementService {
         private Set<String> actions;
         private Set<String> resources;
         private Set<String> conditionClassNames;
+        private String entitlementCombiner;
         private String applicationType;
         private String searchIndexImpl;
         private String saveIndexImpl;
@@ -212,6 +215,8 @@ public class EntitlementService {
             this.name = name;
             actions = data.get(CONFIG_ACTIONS);
             resources = data.get(CONFIG_RESOURCES);
+            entitlementCombiner = getAttribute(data,
+                CONFIG_ENTITLEMENT_COMBINER);
             conditionClassNames = data.get(CONFIG_CONDITIONS);
             applicationType = getAttribute(data, CONFIG_APPLICATIONTYPE);
             saveIndexImpl = getAttribute(data, CONFIG_SAVE_INDEX_IMPL);
@@ -257,6 +262,12 @@ public class EntitlementService {
         public void setConditionClassNames(Set<String> conditionClassNames) {
             this.conditionClassNames = conditionClassNames;
         }
+
+        public String getEntitlementCombiner() {
+            return entitlementCombiner;
+        }
+
+
         
     }
 }

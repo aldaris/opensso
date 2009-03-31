@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementCombiner.java,v 1.1 2009-03-25 06:42:51 veiming Exp $
+ * $Id: EntitlementCombiner.java,v 1.2 2009-03-31 05:52:17 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -30,6 +30,6 @@ package com.sun.identity.entitlement;
  *
  * @author dennis
  */
-public class EntitlementCombiner {
-
+public interface EntitlementCombiner {
+    Entitlement combines(Entitlement e1, Entitlement e2);
 }
