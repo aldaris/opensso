@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.48 2009-02-21 08:49:55 veiming Exp $
+ * $Id: AgentConfiguration.java,v 1.49 2009-03-31 23:53:22 babysunil Exp $
  *
  */
 
@@ -604,7 +604,9 @@ public class AgentConfiguration {
             }
         }
         tagswapAttributeValues(attributeValues, map);
-        addAgentRootURLKey(agentType, attributeValues);
+        if (agentURL != null) { 
+            addAgentRootURLKey(agentType, attributeValues);
+        }
     }
     
     private static void tagswapAttributeValues(
