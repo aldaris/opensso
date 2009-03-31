@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IndexCache.java,v 1.3 2009-03-30 13:00:11 veiming Exp $
+ * $Id: IndexCache.java,v 1.4 2009-03-31 01:16:11 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -36,15 +36,16 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * Caches the indexes which are stored in Directory Server.
  */
 public class IndexCache {
-
-    private static int DEFAULT_CACHE_SIZE = 100000; //TOFIX
+    private int size = 1000000;
     private Cache hostIndexCache;
     private Cache pathIndexCache;
     private Cache parentPathIndexCache;
     private ReadWriteLock rwlock = new ReentrantReadWriteLock();
 
 
-    public IndexCache() {
+    public IndexCache(int size) {
+        this.size = size;
+        clearCaches();
     }
 
     /**
@@ -95,9 +96,9 @@ public class IndexCache {
     private synchronized void clearCaches() {
         rwlock.writeLock().lock();
         try {
-            hostIndexCache = new Cache(DEFAULT_CACHE_SIZE);
-            pathIndexCache = new Cache(DEFAULT_CACHE_SIZE);
-            parentPathIndexCache = new Cache(DEFAULT_CACHE_SIZE);
+            hostIndexCache = new Cache(size);
+            pathIndexCache = new Cache(size);
+            parentPathIndexCache = new Cache(size);
         } finally {
             rwlock.writeLock().unlock();
         }

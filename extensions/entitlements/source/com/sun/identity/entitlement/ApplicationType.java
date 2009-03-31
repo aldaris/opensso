@@ -22,32 +22,69 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationType.java,v 1.2 2009-03-28 06:45:28 veiming Exp $
+ * $Id: ApplicationType.java,v 1.3 2009-03-31 01:16:10 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
+import com.sun.identity.entitlement.interfaces.ISaveIndex;
+import com.sun.identity.entitlement.interfaces.ISearchIndex;
+import com.sun.identity.entitlement.util.ResourceNameIndexGenerator;
+import com.sun.identity.entitlement.util.ResourceNameSplitter;
 import java.util.Set;
 
 /**
  *
  * @author dennis
  */
-public abstract class ApplicationType {
+public class ApplicationType {
     private String name;
     private Set<String> actions;
+    private ISearchIndex searchIndex;
+    private ISaveIndex saveIndex;
 
-    public ApplicationType(String name, Set<String> actions) {
+    public ApplicationType(
+        String name,
+        Set<String> actions,
+        ISearchIndex searchIndex,
+        ISaveIndex saveIndex
+    ) {
         this.name = name;
         this.actions = actions;
+
+        if (searchIndex == null) {
+            this.searchIndex = new ResourceNameSplitter();
+        } else {
+            this.searchIndex = searchIndex;
+        }
+        if (saveIndex == null) {
+            this.saveIndex = new ResourceNameIndexGenerator();
+        } else {
+            this.saveIndex = saveIndex;
+        }
+    }
+
+    public String getName() {
+        return name;
     }
 
     public Set<String> getActions() {
         return actions;
     }
 
-    public abstract ResourceSearchIndexes getResourceSearchIndex(
-            String resource);
+    public void setSaveIndex(ISaveIndex saveIndex) {
+        this.saveIndex = saveIndex;
+    }
 
-    public abstract ResourceSaveIndexes getResourceSaveIndex(String resource);
+    public void setSearchIndex(ISearchIndex searchIndex) {
+        this.searchIndex = searchIndex;
+    }
+
+    public ResourceSearchIndexes getResourceSearchIndex(String resource) {
+        return searchIndex.getIndexes(resource);
+    }
+
+    public ResourceSaveIndexes getResourceSaveIndex(String resource) {
+        return saveIndex.getIndexes(resource);
+    }
 
 }

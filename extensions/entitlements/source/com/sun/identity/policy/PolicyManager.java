@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManager.java,v 1.3 2009-03-28 06:45:29 veiming Exp $
+ * $Id: PolicyManager.java,v 1.4 2009-03-31 01:16:12 veiming Exp $
  *
  */
 
@@ -708,7 +708,7 @@ public final class PolicyManager {
                 if (oldPolicy != null) {
                     IPolicyDataStore pStore =
                         PolicyDataStoreFactory.getInstance().getDataStore();
-                    pStore.delete(oldPolicy.getName());
+                    pStore.delete(PrivilegeUtils.policyToPrivilege(oldPolicy));
                     pStore.add(PrivilegeUtils.policyToPrivilege(policy));
                 }
             }
@@ -782,7 +782,7 @@ public final class PolicyManager {
                 if (policy != null) {
                     IPolicyDataStore pStore =
                         PolicyDataStoreFactory.getInstance().getDataStore();
-                    pStore.delete(policy.getName());
+                    pStore.delete(PrivilegeUtils.policyToPrivilege(policy));
                 }
             }
         } catch (EntitlementException e) {

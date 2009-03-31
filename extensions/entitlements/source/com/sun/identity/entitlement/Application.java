@@ -22,11 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Application.java,v 1.2 2009-03-28 06:45:28 veiming Exp $
+ * $Id: Application.java,v 1.3 2009-03-31 01:16:10 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
+import com.sun.identity.entitlement.interfaces.ISaveIndex;
+import com.sun.identity.entitlement.interfaces.ISearchIndex;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -39,7 +41,10 @@ public class Application {
     private ApplicationType applicationType;
     private Set<String> actions;
     private Set<String> conditions;
+    private Set<String> resources;
     private EntitlementCombiner entitlementCombiner;
+    private ISearchIndex searchIndex;
+    private ISaveIndex saveIndex;
 
     public Application(String name, ApplicationType applicationType) {
         this.name = name;
@@ -81,7 +86,28 @@ public class Application {
         this.conditions = conditions;
     }
 
+    public void setSaveIndex(ISaveIndex saveIndex) {
+        this.saveIndex = saveIndex;
+    }
 
+    public void setSearchIndex(ISearchIndex searchIndex) {
+        this.searchIndex = searchIndex;
+    }
 
+    public void setResources(Set<String> resources) {
+        this.resources = resources;
+    }
 
+    public ResourceSearchIndexes getResourceSearchIndex(
+            String resource) {
+        return (searchIndex == null) ?
+            applicationType.getResourceSearchIndex(resource) :
+            searchIndex.getIndexes(resource);
+    }
+
+    public ResourceSaveIndexes getResourceSaveIndex(String resource) {
+        return (saveIndex == null) ?
+            applicationType.getResourceSaveIndex(resource) :
+            saveIndex.getIndexes(resource);
+    }
 }

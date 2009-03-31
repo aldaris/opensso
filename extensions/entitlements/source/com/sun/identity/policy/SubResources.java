@@ -22,12 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SubResources.java,v 1.16 2009-03-26 22:50:10 veiming Exp $
+ * $Id: SubResources.java,v 1.17 2009-03-31 01:16:12 veiming Exp $
  */
 
 package com.sun.identity.policy;
 
-import com.sun.identity.entitlement.IIndexCache;
 import com.sun.identity.entitlement.ThreadPool;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
@@ -161,7 +160,8 @@ public class SubResources implements Runnable {
         ResourceName resComparator,
         String resource
     ) {
-        ResourceSearchIndexes comp = ResourceNameSplitter.split(resource);
+        ResourceNameSplitter splitter = new ResourceNameSplitter();
+        ResourceSearchIndexes comp = splitter.getIndexes(resource);
         Set<Policy> searchResult = search(comp);
 
         if (!searchResult.isEmpty()) {

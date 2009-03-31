@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceNameSplitter.java,v 1.6 2009-03-25 16:14:27 veiming Exp $
+ * $Id: ResourceNameSplitter.java,v 1.7 2009-03-31 01:16:12 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
 
 import com.sun.identity.entitlement.ResourceSearchIndexes;
+import com.sun.identity.entitlement.interfaces.ISearchIndex;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -43,8 +44,8 @@ import java.util.StringTokenizer;
  * This class splits resource name (URL) to different parts so that they
  * can be used for resource name comparison.
  */
-public class ResourceNameSplitter {
-    private ResourceNameSplitter() {
+public class ResourceNameSplitter implements ISearchIndex {
+    public ResourceNameSplitter() {
     }
 
     /**
@@ -54,7 +55,7 @@ public class ResourceNameSplitter {
      * @param resName Resource name.
      * @return the different components on a resource.
      */
-    public static ResourceSearchIndexes split(String resName) {
+    public ResourceSearchIndexes getIndexes(String resName) {
         try {
             URL url = new URL(resName);
             Set<String> hostIndexes = splitHost(url);
@@ -148,7 +149,7 @@ public class ResourceNameSplitter {
             }
         }
 
-    return results;
+        return results;
     }
     
     private static Set<String> normalizeQuery(String path) {

@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+  
+   Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
+  
+   The contents of this file are subject to the terms
+   of the Common Development and Distribution License
+   (the License). You may not use this file except in 
+   compliance with the License.
+
+   You can obtain a copy of the License at
+   https://opensso.dev.java.net/public/CDDLv1.0.html or
+   opensso/legal/CDDLv1.0.txt
+   See the License for the specific language governing
+   permission and limitations under the License.
+
+   When distributing Covered Code, include this CDDL
+   Header Notice in each file and include the License file
+   at opensso/legal/CDDLv1.0.txt.
+   If applicable, add the following below the CDDL Header,
+   with the fields enclosed by brackets [] replaced by
+   your own identifying information:
+   "Portions Copyrighted [year] [name of copyright owner]"
+
+   $Id: entitlement.xml,v 1.1 2009-03-31 01:16:10 veiming Exp $
+
+-->
+
+<!DOCTYPE ServicesConfiguration
+    PUBLIC "=//iPlanet//Service Management Services (SMS) 1.0 DTD//EN"
+    "jar://com/sun/identity/sm/sms.dtd">
+
+<ServicesConfiguration>
+    <Service name="openssoEntitlement" version="1.0">
+        <Schema i18nFileName="" revisionNumber="10">
+            <Global>
+                <AttributeSchema name="threadSize"
+                    type="single"
+                    syntax="number_range"
+                    rangeStart="0" rangeEnd="2147483647"
+                    i18nKey="">
+                    <DefaultValues>
+                        <Value>100</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="policyCacheSize"
+                    type="single"
+                    syntax="number_range"
+                    rangeStart="0" rangeEnd="2147483647"
+                    i18nKey="">
+                    <DefaultValues>
+                        <Value>100000</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+                <AttributeSchema name="indexCacheSize"
+                    type="single"
+                    syntax="number_range"
+                    rangeStart="0" rangeEnd="2147483647"
+                    i18nKey="">
+                    <DefaultValues>
+                        <Value>100000</Value>
+                    </DefaultValues>
+                </AttributeSchema>
+                <SubSchema name="applicationTypes" inheritance="multiple">
+                    <SubSchema name="applicationType" inheritance="multiple">
+                        <AttributeSchema name="actions"
+                            type="list"
+                            syntax="string"
+                            i18nKey="" />
+                        <AttributeSchema name="searchIndexImpl"
+                            type="single"
+                            syntax="string"
+                            i18nKey="" />
+                        <AttributeSchema name="saveIndexImpl"
+                            type="single"
+                            syntax="string"
+                            i18nKey="" />
+                    </SubSchema>
+                </SubSchema>
+            </Global>
+            <Organization>
+                <SubSchema name="applications" inheritance="multiple">
+                    <SubSchema name="application" inheritance="multiple">
+                        <AttributeSchema name="applicationType"
+                            type="single"
+                            syntax="string"
+                            i18nKey="" />
+                        <AttributeSchema name="actions"
+                            type="list"
+                            syntax="string"
+                            i18nKey="" />
+                        <AttributeSchema name="resources"
+                            type="list"
+                            syntax="string"
+                            i18nKey="" />
+                        <AttributeSchema name="conditions"
+                            type="list"
+                            syntax="string"
+                            i18nKey="" />
+                        <AttributeSchema name="searchIndexImpl"
+                            type="single"
+                            syntax="string"
+                            i18nKey="" />
+                        <AttributeSchema name="saveIndexImpl"
+                            type="single"
+                            syntax="string"
+                            i18nKey="" />
+                    </SubSchema>
+                </SubSchema>
+            </Organization>
+        </Schema>
+        <Configuration>
+            <GlobalConfiguration>
+                <SubConfiguration name="applicationTypes" id="applicationTypes">
+                    <SubConfiguration name="iPlanetAMWebAgentService"
+                        id="applicationType">
+                        <AttributeValuePair>
+                            <Attribute name="actions" />
+                            <Value>GET</Value>
+                            <Value>POST</Value>
+                        </AttributeValuePair>
+                    <AttributeValuePair>
+                            <Attribute name="searchIndexImpl" />
+                            <Value>com.sun.identity.entitlement.util.ResourceNameSplitter</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="saveIndexImpl" />
+                            <Value>com.sun.identity.entitlement.util.ResourceNameIndexGenerator</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="sunAMDelegationService"
+                        id="applicationType">
+                        <AttributeValuePair>
+                            <Attribute name="actions" />
+                            <Value>READ</Value>
+                            <Value>MODIFY</Value>
+                            <Value>DELEGATE</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="searchIndexImpl" />
+                            <Value>com.sun.identity.entitlement.util.ResourceNameSplitter</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="saveIndexImpl" />
+                            <Value>com.sun.identity.entitlement.util.ResourceNameIndexGenerator</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                </SubConfiguration>
+            </GlobalConfiguration>
+            <OrganizationConfiguration name="/">
+                <SubConfiguration name="registeredApplications"
+                    id="applications">
+                    <SubConfiguration name="iPlanetAMWebAgentService" 
+                        id="application">
+                        <AttributeValuePair>
+                            <Attribute name="applicationType" />
+                            <Value>iPlanetAMWebAgentService</Value>
+                        </AttributeValuePair>
+                        <AttributeValuePair>
+                            <Attribute name="conditions" />
+                            <Value>com.sun.identity.entitlement.IPCondition</Value>
+                            <Value>com.sun.identity.entitlement.TimeCondition</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                    <SubConfiguration name="sunAMDelegationService" 
+                        id="application">
+                        <AttributeValuePair>
+                            <Attribute name="applicationType" />
+                            <Value>sunAMDelegationService</Value>
+                        </AttributeValuePair>
+                    </SubConfiguration>
+                </SubConfiguration>
+            </OrganizationConfiguration>
+        </Configuration>
+    </Service>
+</ServicesConfiguration>
+

@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceNameIndexGenerator.java,v 1.8 2009-03-28 06:45:29 veiming Exp $
+ * $Id: ResourceNameIndexGenerator.java,v 1.9 2009-03-31 01:16:11 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
 
 import com.sun.identity.entitlement.ResourceSaveIndexes;
+import com.sun.identity.entitlement.interfaces.ISaveIndex;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -43,8 +44,8 @@ import java.util.StringTokenizer;
 /**
  * This class provides methods to generate index for URL resource name.
  */
-public class ResourceNameIndexGenerator {
-    private ResourceNameIndexGenerator() {
+public class ResourceNameIndexGenerator implements ISaveIndex {
+    public ResourceNameIndexGenerator() {
     }
 
     /**
@@ -53,7 +54,7 @@ public class ResourceNameIndexGenerator {
      * @param resName Resource name.
      * @return resource index of a given resource name.
      */
-    public static ResourceSaveIndexes getResourceIndex(String resName) {
+    public ResourceSaveIndexes getIndexes(String resName) {
         try {
             URL url = new URL(resName);
             Set<String> hostIndexes = new HashSet<String>();

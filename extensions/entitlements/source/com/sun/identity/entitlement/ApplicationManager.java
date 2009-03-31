@@ -22,27 +22,31 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManager.java,v 1.3 2009-03-30 13:00:10 veiming Exp $
+ * $Id: ApplicationManager.java,v 1.4 2009-03-31 01:16:10 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
+import com.sun.identity.entitlement.EntitlementService.ApplicationInfo;
+import com.sun.identity.entitlement.interfaces.ISaveIndex;
+import com.sun.identity.entitlement.interfaces.ISearchIndex;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
  * @author dennis
  */
 public final class ApplicationManager {
-    //private static ApplicationManager instance = new ApplicationManager();
     private static Map<String, Application> applications =
         new HashMap<String, Application>();
 
     static {
-        Application appl = URLApplication.getInstance();
-        applications.put(appl.getName(), appl);
-        appl = DelegationApplication.getInstance();
-        applications.put(appl.getName(), appl);
+        Set<ApplicationInfo> info = 
+            EntitlementService.getInstance().getApplications("/");
+        for (ApplicationInfo i : info) {
+            addApplication(i);
+        }
     }
 
     private ApplicationManager() {
@@ -54,14 +58,46 @@ public final class ApplicationManager {
      * delete application
      * list applications
      */
-
     public static Application getApplication(String name) {
-        //sms: TODO new Entitlement service
-        //name=classname
         if ((name == null) || (name.length() == 0)) {
-            return URLApplication.getInstance();
+            name = ApplicationTypeManager.URL_APPLICATION_TYPE_NAME;
         }
         return applications.get(name);
+    }
+
+    private static void addApplication(ApplicationInfo info) {
+        String name = info.getName();
+        String appTypeName = info.getApplicationType();
+        Set<String> actions = info.getActions();
+        Set<String> resources = info.getResources();
+        Set<String> conditions = info.getConditionClassNames();
+        String searchIndexClassName = info.getSearchIndexImpl();
+        String saveIndexClassName = info.getSaveIndexImpl();
+
+        ApplicationType appType = ApplicationTypeManager.get(appTypeName);
+        Application app = new Application(name, appType);
+        if (actions != null) {
+            app.setActions(actions);
+        }
+        if (resources != null) {
+            app.setResources(resources);
+        }
+        if (conditions != null) {
+            app.setResources(conditions);
+        }
+
+        ISearchIndex searchIndex = ApplicationTypeManager.getSearchIndex(
+            searchIndexClassName);
+        ISaveIndex saveIndex = ApplicationTypeManager.getSaveIndex(
+            saveIndexClassName);
+
+        if (searchIndex != null) {
+            app.setSearchIndex(searchIndex);
+        }
+        if (saveIndex != null) {
+            app.setSaveIndex(saveIndex);
+        }
+        addApplication(app);
     }
 
     public static void addApplication(Application application) {
@@ -71,5 +107,4 @@ public final class ApplicationManager {
     public static void deleteApplication(String name) {
         applications.remove(name);
     }
-
 }

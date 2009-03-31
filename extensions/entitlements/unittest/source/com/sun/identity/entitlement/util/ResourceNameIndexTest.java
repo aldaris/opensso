@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ResourceNameIndexTest.java,v 1.4 2009-03-25 06:42:55 veiming Exp $
+ * $Id: ResourceNameIndexTest.java,v 1.5 2009-03-31 01:16:12 veiming Exp $
  */
 
 package com.sun.identity.entitlement.util;
@@ -47,11 +47,11 @@ public class ResourceNameIndexTest {
     @Test
     public void testHost() 
         throws Exception {
+        ResourceNameIndexGenerator gen = new ResourceNameIndexGenerator();
         Map<String, String> map = parseResource("resourceNameIndexHost");
         for (String k : map.keySet()) {
             String expectedResult = map.get(k);
-            ResourceSaveIndexes indexes =
-                ResourceNameIndexGenerator.getResourceIndex(k);
+            ResourceSaveIndexes indexes = gen.getIndexes(k);
             String host = indexes.getHostIndexes().iterator().next();
             if (!host.equals(expectedResult)) {
                 String msg = "ResourceNameIndexTest.testHost: " + k + 
@@ -65,11 +65,11 @@ public class ResourceNameIndexTest {
     @Test
     public void testPath() 
         throws Exception {
+        ResourceNameIndexGenerator gen = new ResourceNameIndexGenerator();
         Map<String, String> map = parseResource("resourceNameIndexURI");
         for (String k : map.keySet()) {
             String expectedResult = map.get(k);
-            ResourceSaveIndexes indexes =
-                ResourceNameIndexGenerator.getResourceIndex(k);
+            ResourceSaveIndexes indexes = gen.getIndexes(k);
             String path = indexes.getPathIndexes().iterator().next();
             if (!path.equals(expectedResult)) {
                 String msg = "ResourceNameIndexTest.testPath: " + k + 
@@ -83,12 +83,12 @@ public class ResourceNameIndexTest {
     @Test
     public void testPathParent() 
         throws Exception {
+        ResourceNameIndexGenerator gen = new ResourceNameIndexGenerator();
         Map<String, Set<String>> map = parseResources(
             "resourceNameIndexPathParent");
         for (String k : map.keySet()) {
             Set<String> expectedResult = map.get(k);
-            ResourceSaveIndexes indexes =
-                ResourceNameIndexGenerator.getResourceIndex(k);
+            ResourceSaveIndexes indexes = gen.getIndexes(k);
 
             if (!indexes.getParentPath().equals(expectedResult)) {
                 String msg = "ResourceNameIndexTest.testPathParent: " + k + 

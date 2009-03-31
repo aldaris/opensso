@@ -24,7 +24,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: policyIndex.xml,v 1.5 2009-03-30 13:00:12 veiming Exp $
+   $Id: policyIndex.xml,v 1.6 2009-03-31 01:16:10 veiming Exp $
 
 -->
 
@@ -36,7 +36,7 @@
     <Service name="PolicyIndex" version="1.0">
         <Schema i18nFileName="" revisionNumber="10">
             <Global>
-                <AttributeSchema name="privilegeCount"
+                <AttributeSchema name="indexCount"
                     type="single"
                     syntax="numeric"
                     i18nKey="" />

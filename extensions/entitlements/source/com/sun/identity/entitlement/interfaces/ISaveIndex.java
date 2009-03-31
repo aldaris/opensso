@@ -22,24 +22,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DelegationApplication.java,v 1.1 2009-03-30 13:00:11 veiming Exp $
+ * $Id: ISaveIndex.java,v 1.1 2009-03-31 01:16:11 veiming Exp $
  */
 
-package com.sun.identity.entitlement;
+package com.sun.identity.entitlement.interfaces;
+
+import com.sun.identity.entitlement.ResourceSaveIndexes;
 
 /**
  *
  * @author dennis
  */
-public class DelegationApplication extends Application {
-    private static DelegationApplication instance = new DelegationApplication();
-    private static final String NAME = "sunAMDelegationService";
-
-    public DelegationApplication() {
-        super(NAME, DelegationApplicationType.getInstance());
-    }
-
-    public static DelegationApplication getInstance() {
-        return instance;
-    }
+public interface ISaveIndex {
+    ResourceSaveIndexes getIndexes(String resource);
 }

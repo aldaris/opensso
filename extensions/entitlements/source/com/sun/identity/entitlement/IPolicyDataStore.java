@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPolicyDataStore.java,v 1.1 2009-03-28 06:45:28 veiming Exp $
+ * $Id: IPolicyDataStore.java,v 1.2 2009-03-31 01:16:11 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -37,7 +37,7 @@ public interface IPolicyDataStore {
 
     void add(Privilege privilege) throws EntitlementException;
     
-    void delete(String name)
+    void delete(Privilege privilege)
         throws EntitlementException;
 
     Iterator<Privilege> search(

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.2 2009-03-30 13:00:11 veiming Exp $
+ * $Id: DataStore.java,v 1.3 2009-03-31 01:16:11 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -32,9 +32,11 @@ import com.iplanet.sso.SSOToken;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.BufferedIterator;
 import com.sun.identity.shared.encode.Base64;
+import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.SMSDataEntry;
 import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSException;
+import com.sun.identity.sm.ServiceSchemaManager;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -55,8 +57,11 @@ import java.util.Set;
  * @author dennis
  */
 public class DataStore {
+    private static final String SERVICE_NAME = "PolicyIndex";
+    private static final String INDEX_COUNT = "indexCount";
     private static final String START_DN_TEMPLATE =
-         "ou=default,ou=GlobalConfig,ou=1.0,ou=PolicyIndex,ou=services,{0}";
+         "ou=default,ou=GlobalConfig,ou=1.0,ou=" + SERVICE_NAME +
+         ",ou=services,{0}";
     private static final String HOST_INDEX_KEY = "hostindex";
     private static final String PATH_INDEX_KEY = "pathindex";
     private static final String PATH_PARENT_INDEX_KEY = "pathparentindex";
@@ -68,7 +73,6 @@ public class DataStore {
     private static final String PATH_PARENT_FILTER_TEMPLATE =
         "(" + SMSEntry.ATTR_XML_KEYVAL + "=" + PATH_PARENT_INDEX_KEY + "={0})";
     private static String PRIVILEGE_DN;
-    private static String PRIVILEGE_COUNT_DN;
     private static String BASE_DN;
 
     static {
@@ -88,6 +92,55 @@ public class DataStore {
     }
 
     private void updateIndexCount(SSOToken adminToken, int num) {
+        try {
+            ServiceSchemaManager mgr = new ServiceSchemaManager(
+                SERVICE_NAME, adminToken);
+            AttributeSchema as = mgr.getGlobalSchema().getAttributeSchema(
+                INDEX_COUNT);
+            Set set = as.getDefaultValues();
+            int count = 0;
+            if ((set != null) && !set.isEmpty()) {
+                String strCount = (String)set.iterator().next();
+                count = Integer.parseInt(strCount);
+                count += num;
+                set.clear();
+                set.add(Integer.toString(count));
+            } else {
+                set = new HashSet();
+                set.add(Integer.toString(num));
+            }
+            as.setDefaultValues(set);
+        } catch (NumberFormatException ex) {
+            //TOFIX
+        } catch (SMSException ex) {
+            //TOFIX
+        } catch (SSOException ex) {
+            //TOFIX
+        }
+    }
+
+    private int getIndexCount() {
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+        int count = 0;
+        try {
+            ServiceSchemaManager mgr = new ServiceSchemaManager(
+                SERVICE_NAME, adminToken);
+            AttributeSchema as = mgr.getGlobalSchema().getAttributeSchema(
+                INDEX_COUNT);
+            Set set = as.getDefaultValues();
+            if ((set != null) && !set.isEmpty()) {
+                String strCount = (String)set.iterator().next();
+                count = Integer.parseInt(strCount);
+            }
+        } catch (NumberFormatException ex) {
+            //TOFIX
+        } catch (SMSException ex) {
+            //TOFIX
+        } catch (SSOException ex) {
+            //TOFIX
+        }
+        return count;
     }
 
     public String add(ResourceSaveIndexes indexes, Privilege p)
@@ -123,6 +176,7 @@ public class DataStore {
 
             s.setAttributes(map);
             s.save();
+            updateIndexCount(adminToken, 1);
         } catch (SSOException e) {
             //TOFIX
         } catch (SMSException e) {
@@ -141,6 +195,7 @@ public class DataStore {
             try {
                 SMSEntry s = new SMSEntry(adminToken, dn);
                 s.delete();
+                updateIndexCount(adminToken, -1);
             } catch (SMSException e) {
                 Object[] arg = {dn};
                 throw new EntitlementException(51, arg, e);

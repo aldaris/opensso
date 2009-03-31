@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDataStore.java,v 1.3 2009-03-28 06:45:28 veiming Exp $
+ * $Id: PolicyDataStore.java,v 1.4 2009-03-31 01:16:11 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -36,8 +36,13 @@ import java.util.Set;
  * @author dennis
  */
 public class PolicyDataStore implements IPolicyDataStore {
-    private PolicyCache policyCache = new PolicyCache();
-    private IndexCache indexCache = new IndexCache();
+
+    private PolicyCache policyCache = new PolicyCache(
+        EntitlementService.getNumericAttributeValue(
+        EntitlementService.POLICY_CACHE_SIZE));
+    private IndexCache indexCache = new IndexCache(
+        EntitlementService.getNumericAttributeValue(
+        EntitlementService.POLICY_CACHE_SIZE));
     private DataStore dataStore = new DataStore();
 
     public void add(Privilege p)
@@ -47,10 +52,14 @@ public class PolicyDataStore implements IPolicyDataStore {
         }
     }
 
-    public void delete(String name)
+    public void delete(Privilege p)
         throws EntitlementException {
-        dataStore.delete(name);
-        policyCache.decache(DataStore.getDN(name));
+        String dn = DataStore.getDN(p);
+        dataStore.delete(p.getName());
+        policyCache.decache(dn);
+        for (Entitlement e : p.getEntitlements()) {
+            indexCache.clear(e.getResourceSaveIndexes(), dn);
+        }
     }
 
     private void cache(Privilege p)
