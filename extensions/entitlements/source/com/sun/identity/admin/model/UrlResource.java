@@ -92,7 +92,7 @@ public class UrlResource implements Resource, Serializable {
         for (Action a : actions) {
             if (a.getValue() != null) {
                 //TODO: fix to use correct Boolean value
-                actionValues.put(a.getName(), Boolean.TRUE);
+                actionValues.put(a.getName(), a.getValue());
             }
         }
 

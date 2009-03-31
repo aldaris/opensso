@@ -16,7 +16,7 @@ public class BooleanAction
         booleanActionHandler.setBooleanAction(this);
     }
 
-    public Object getValue() {
+    public Boolean getValue() {
         return Boolean.valueOf(allow);
     }
 
