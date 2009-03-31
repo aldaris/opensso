@@ -424,6 +424,22 @@
         </managed-property>
     </managed-bean>
 
+    <managed-bean>
+        <managed-bean-name>policyManageBean</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.model.PolicyManageWizardBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>policyManageHandler</managed-bean-name>
+        <managed-bean-class>com.sun.identity.admin.handler.PolicyManageHandler</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>policyManageBean</property-name>
+            <value>#{policyManageBean}</value>
+        </managed-property>
+    </managed-bean>
+
     <navigation-rule>
         <navigation-case>
             <from-outcome>home</from-outcome>

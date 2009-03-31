@@ -18,6 +18,8 @@ public class PolicyCreateWizardBean
     private Map<String, Application> applications;
     private Effect dropConditionEffect;
     private Effect dropSubjectContainerEffect;
+    private Effect policyNameInputEffect;
+    private Effect policyNameMessageEffect;
     private PolicyCreateSummary policyCreateSummary = new PolicyCreateSummary();
     private int advancedTabsetIndex = 0;
 
@@ -146,5 +148,21 @@ public class PolicyCreateWizardBean
 
     public PrivilegeBean getPrivilegeBean() {
         return privilegeBean;
+    }
+
+    public Effect getPolicyNameMessageEffect() {
+        return policyNameMessageEffect;
+    }
+
+    public void setPolicyNameMessageEffect(Effect policyNameMessageEffect) {
+        this.policyNameMessageEffect = policyNameMessageEffect;
+    }
+
+    public Effect getPolicyNameInputEffect() {
+        return policyNameInputEffect;
+    }
+
+    public void setPolicyNameInputEffect(Effect policyNameInputEffect) {
+        this.policyNameInputEffect = policyNameInputEffect;
     }
 }

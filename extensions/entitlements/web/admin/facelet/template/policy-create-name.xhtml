@@ -17,27 +17,35 @@
                     </span>
                     <div class="clear"></div>
                     <ice:panelGrid
-                        columns="2"
+                        columns="3"
                         columnClasses="label-column,input-column">
                         <ice:panelGroup>
                             <ice:outputLabel
-                                for="policy-name"
+                                for="policyNameInput"
                                 value="New Policy Name"/>
                         </ice:panelGroup>
                         <ice:panelGroup>
                             <ice:inputText
-                                id="policy-name"
-                                value="#{policyCreateWizardBean.privilegeBean.name}"/>
+                                id="policyNameInput"
+                                partialSubmit="true"
+                                value="#{policyCreateWizardBean.privilegeBean.name}"
+                                effect="#{policyCreateWizardBean.policyNameInputEffect}"
+                                validator="#{policyCreateWizardHandler.validatePolicyName}"/>
                         </ice:panelGroup>
+                        <ice:message 
+                            for="policyNameInput"
+                            effect="#{policyCreateWizardBean.policyNameMessageEffect}"
+                            styleClass="message"/>
                         <ice:panelGroup>
                             <ice:outputLabel
-                                for="policy-description"
+                                for="policyDescriptionInput"
                                 value="New Policy Description"/>
                         </ice:panelGroup>
                         <ice:inputTextarea
-                            id="policy-description"
+                            id="policyDescriptionInput"
                             value="#{policyCreateWizardBean.privilegeBean.description}"
                             styleClass="policy-description"/>
+                        <ice:message for="policyDescriptionInput"/>
                     </ice:panelGrid>
                 </div>
             </ui:define>

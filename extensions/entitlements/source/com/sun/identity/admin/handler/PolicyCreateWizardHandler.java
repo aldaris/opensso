@@ -6,6 +6,8 @@ import com.icesoft.faces.context.effects.Effect;
 import com.icesoft.faces.context.effects.Appear;
 import com.sun.identity.admin.model.Application;
 import com.sun.identity.admin.model.ConditionType;
+import com.sun.identity.admin.effect.InputFieldErrorEffect;
+import com.sun.identity.admin.effect.MessageErrorEffect;
 import com.sun.identity.admin.model.PolicyCreateWizardBean;
 import com.sun.identity.admin.model.SubjectContainer;
 import com.sun.identity.admin.model.SubjectContainerType;
@@ -13,13 +15,21 @@ import com.sun.identity.admin.model.ViewCondition;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeManager;
 import java.io.Serializable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
+import javax.faces.validator.ValidatorException;
 import javax.security.auth.Subject;
 
 public class PolicyCreateWizardHandler
         extends WizardHandler
         implements Serializable {
+
+    private Pattern POLICY_NAME_PATTERN = Pattern.compile("[0-9a-zA-Z]+");
 
     @Override
     public String finishAction() {
@@ -113,6 +123,29 @@ public class PolicyCreateWizardHandler
         if (getGotoStep(event) == 3) {
             int i = getGotoAdvancedTabIndex(event);
             getPolicyCreateWizardBean().setAdvancedTabsetIndex(i);
+        }
+    }
+
+    public void validatePolicyName(FacesContext context, UIComponent component, Object value) throws ValidatorException {
+        String policyName = (String) value;
+        Matcher matcher = POLICY_NAME_PATTERN.matcher(policyName);
+
+        if (!matcher.matches()) {
+            FacesMessage msg = new FacesMessage();
+            // TODO: localize
+            msg.setSummary("Invalid policy name");
+            msg.setDetail("Policy name must be 1 or more alpha-numeric characters");
+            msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+
+            Effect e;
+
+            e = new InputFieldErrorEffect();
+            getPolicyCreateWizardBean().setPolicyNameInputEffect(e);
+            
+            e = new MessageErrorEffect();
+            getPolicyCreateWizardBean().setPolicyNameMessageEffect(e);
+
+            throw new ValidatorException(msg);
         }
     }
 }

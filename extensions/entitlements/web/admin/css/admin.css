@@ -8,6 +8,11 @@ body {
     font: 80% arial, helvetica, sans-serif;
 }
 
+.messageError {
+    font-weight: bold;
+    color: red;
+}
+
 .section-outer {
     margin: 10px;
 }
