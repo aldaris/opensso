@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Step3.java,v 1.37 2009-01-28 05:34:56 ww203982 Exp $
+ * $Id: Step3.java,v 1.38 2009-04-01 03:29:59 kevinserwin Exp $
  *
  */
 package com.sun.identity.config.wizard;
@@ -338,8 +338,8 @@ public class Step3 extends LDAPStoreWizardPage {
 
                     if (embedded.equals("true")) {
                         getContext().setSessionAttribute(
-                            SessionAttributeNames.CONFIG_STORE_HOST, "localhost");
-                        addObject(sb, "configStoreHost", "localhost");
+                            SessionAttributeNames.CONFIG_STORE_HOST, getHostName());
+                        addObject(sb, "configStoreHost", getHostName());
                         
                         // set the multi embedded flag 
                         getContext().setSessionAttribute(
