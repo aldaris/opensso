@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmTomcatRealm.java,v 1.2 2008-11-28 12:35:32 saueree Exp $
+ * $Id: AmTomcatRealm.java,v 1.3 2009-04-01 23:57:02 subbae Exp $
  */
 
 
@@ -35,15 +35,16 @@ import com.sun.identity.agents.realm.AmRealmManager;
 import com.sun.identity.agents.realm.IAmRealm;
 
 import org.apache.catalina.realm.RealmBase;
+import org.apache.catalina.realm.GenericPrincipal;
 
 import java.lang.UnsupportedOperationException;
 
 import java.security.Principal;
 import java.security.cert.X509Certificate;
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.ArrayList;
 
 
 /**
@@ -54,35 +55,35 @@ import java.util.Set;
  *
  */
 public class AmTomcatRealm extends RealmBase {
-    private static IAmRealm _amRealm = null;
-    private static IModuleAccess _moduleAccess = null;
+    private static IAmRealm amRealm = null;
+    private static IModuleAccess moduleAccess = null;
 
     static {
         try {
             
-            _amRealm = AmRealmManager.getAmRealmInstance();
-            _moduleAccess = AmRealmManager.getModuleAccess();
+            amRealm = AmRealmManager.getAmRealmInstance();
+            moduleAccess = AmRealmManager.getModuleAccess();
 
-            if ((_moduleAccess != null)
-                    && _moduleAccess.isLogMessageEnabled()) {
-                _moduleAccess.logMessage(
+            if ((moduleAccess != null)
+                    && moduleAccess.isLogMessageEnabled()) {
+                moduleAccess.logMessage(
                     "AmTomcatRealm: Realm Initialized");
             }
         } catch (Exception ex) {
-            if ((_moduleAccess != null)
-                    && _moduleAccess.isLogWarningEnabled()) {
-                _moduleAccess.logError(
+            if ((moduleAccess != null)
+                    && moduleAccess.isLogWarningEnabled()) {
+                moduleAccess.logError(
                     "AmTomcatRealm: Realm Instantiation Error: " + ex);
             }
         }
     }
 
     /** Descriptive information about this Realm implementation */
-    private final String _info = 
+    private final String info = 
             "AmTomcatRealm - Realm implementation for Tomcat ";
 
     /**
-     * The <code> AmTomcatRealm </code> returns the AmTomcatUser associated with
+     * The <code> AmTomcatRealm </code> returns the GenericPrincipal associated with
      * the specified username and credentials; otherwise returns
      * <code>null</code>.
      *
@@ -95,36 +96,34 @@ public class AmTomcatRealm extends RealmBase {
     public Principal authenticate(
         String username,
         String credentials) {
-        AmTomcatUser tomcatUser = null;
+
+        GenericPrincipal tomcatUser = null;
 
         try {
-           /* _amRealm = AmRealmManager.getAmRealmInstance();
-            _moduleAccess = AmRealmManager.getModuleAccess();
-            */
-            AmRealmAuthenticationResult result = _amRealm.authenticate(
+            AmRealmAuthenticationResult result = amRealm.authenticate(
                     username,
                     credentials);
 
             if ((result == null) || (!result.isValid())) {
-                if ((_moduleAccess != null)
-                        && _moduleAccess.isLogMessageEnabled()) {
-                    _moduleAccess.logMessage(
+                if ((moduleAccess != null)
+                        && moduleAccess.isLogMessageEnabled()) {
+                    moduleAccess.logMessage(
                         "AmTomcatRealm: Authentication FAILED for "
                         + username);
                 }
             } else {
-                tomcatUser = new AmTomcatUser(username);
 
-                if ((_moduleAccess != null)
-                        && _moduleAccess.isLogMessageEnabled()) {
-                    _moduleAccess.logMessage(
+                if ((moduleAccess != null)
+                        && moduleAccess.isLogMessageEnabled()) {
+                    moduleAccess.logMessage(
                         "AmTomcatRealm: Authentication SUCCESSFUL for "
                         + username);
                 }
 
-                if ((_moduleAccess != null)
-                        && _moduleAccess.isLogMessageEnabled()) {
+                if ((moduleAccess != null)
+                        && moduleAccess.isLogMessageEnabled()) {
                     Set roles = result.getAttributes();
+                    ArrayList rolesList = new ArrayList();
 
                     if ((roles != null) && (roles.size() > 0)) {
                         Iterator it = roles.iterator();
@@ -134,17 +133,22 @@ public class AmTomcatRealm extends RealmBase {
                             String role = (String) it.next();
                             bufRoles.append(role);
                             bufRoles.append(" ");
+                            rolesList.add(role);
                         }
 
-                        _moduleAccess.logMessage(
+                        moduleAccess.logMessage(
                             "AmTomcatRealm: User " + username
                             + " has roles: " + bufRoles.toString());
+                        tomcatUser = new GenericPrincipal(this,
+                                         username,
+                                         credentials,
+                                         rolesList);
                     }
                 }
             }
         } catch (Exception ex) {
-            if (_moduleAccess != null) {
-                _moduleAccess.logError(
+            if (moduleAccess != null) {
+                moduleAccess.logError(
                     "AmTomcatRealm: encountered exception "
                     + ex.getMessage() + " while authenticating user "
                     + username,
@@ -218,84 +222,10 @@ public class AmTomcatRealm extends RealmBase {
     }
 
     /**
-     * Return <code>true</code> if the specified user belongs to the specified
-     * security role; otherwise return <code>false</code>.
-     *
-     * @param principal
-     *            Principal for whom the role is to be checked
-     * @param role
-     *            Security role to be checked
-     */
-    public boolean hasRole(
-        Principal tomcatUser,
-        String role) {
-        String username = null;
-        boolean hasRole = false;
-        Set setRoles = null;
-
-        try {
-           /* _amRealm = AmRealmManager.getAmRealmInstance();
-            _moduleAccess = AmRealmManager.getModuleAccess();
-            */
-            if (tomcatUser != null) {
-                username = tomcatUser.getName();
-            }
-
-            if ((role != null) && (username != null)) {
-                setRoles = _amRealm.getMemberships(username);
-
-                if ((setRoles != null) && (setRoles.size() > 0)) {
-                    hasRole = setRoles.contains(role);
-
-                    if ((_moduleAccess != null)
-                            && _moduleAccess.isLogMessageEnabled()
-                            && hasRole) {
-                        _moduleAccess.logMessage(
-                            "AmTomcatRealm: " + username
-                            + " has secuity role " + role);
-                    } else {
-                        if ((_moduleAccess != null)
-                                && _moduleAccess.isLogMessageEnabled()) {
-                            Iterator it = setRoles.iterator();
-                            StringBuffer roleList = new StringBuffer();
-
-                            while (it.hasNext()) {
-                                roleList.append((String) it.next());
-                                roleList.append(" ");
-                            }
-
-                            _moduleAccess.logMessage(
-                                "AmTomcatRealm: " + username
-                                + " has roles : " + roleList.toString());
-                        }
-                    }
-                }
-            }
-
-            if (!hasRole && (_moduleAccess != null)
-                    && _moduleAccess.isLogMessageEnabled()) {
-                _moduleAccess.logMessage(
-                    "AmTomcatRealm: " + username + " does not have role "
-                    + role);
-            }
-        } catch (Exception ex) {
-            if (_moduleAccess != null) {
-                _moduleAccess.logError(
-                    "AmTomcatRealm: encountered exception "
-                    + ex.getMessage() + " while fetching roles for user "
-                    + username,
-                    ex);
-            }
-        }
-
-        return hasRole;
-    }
-
-    /**
      * Return the Principal associated with the given user name.
      */
     protected Principal getPrincipal(String username) {
-        return new AmTomcatUser(username);
+        return new GenericPrincipal(this, username, null, null);
     }
 
     /**
@@ -304,7 +234,7 @@ public class AmTomcatRealm extends RealmBase {
      * <code>&lt;description&gt;/&lt;version&gt;</code>.
      */
     public String getName() {
-        return _info;
+        return info;
     }
 
     /**
@@ -315,18 +245,18 @@ public class AmTomcatRealm extends RealmBase {
     }
 
     private IAmRealm getAMRealm() {
-        return _amRealm;
+        return amRealm;
     }
 
     private void setAMRealm(IAmRealm amRealm) {
-        _amRealm = amRealm;
+        amRealm = amRealm;
     }
 
     private IModuleAccess getModuleAccess() {
-        return _moduleAccess;
+        return moduleAccess;
     }
 
     private void setModuleAccess(IModuleAccess moduleAccess) {
-        _moduleAccess = moduleAccess;
+        moduleAccess = moduleAccess;
     }
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmTomcatAgentServiceResolver.java,v 1.3 2009-02-07 01:31:20 leiming Exp $
+ * $Id: AmTomcatAgentServiceResolver.java,v 1.4 2009-04-01 23:57:02 subbae Exp $
  */
 
 package com.sun.identity.agents.tomcat.v6;
@@ -72,14 +72,5 @@ public class AmTomcatAgentServiceResolver extends ServiceResolver {
      */
     public String getGlobalVerificationHandlerImpl() {
         return GenericExternalVerificationHandler.class.getName();
-    }
-    /*
-     * (non-Javadoc)
-     * 
-     * @see ServiceResolver#getRealmMembershipCacheFlag()
-     */
-
-    public boolean getRealmMembershipCacheFlag() {
-        return true;
     }
 }
