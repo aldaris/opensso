@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.3 2009-03-27 16:29:10 veiming Exp $
+ * $Id: Privilege.java,v 1.4 2009-04-01 00:21:29 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -44,7 +44,7 @@ public class Privilege implements Serializable {
     private static final long serialVersionUID = -403250971215465050L;
 
     private String name;
-    private Set<Entitlement> entitlements;
+    private Entitlement entitlement;
     private EntitlementSubject eSubject;
     private EntitlementCondition eCondition;
     private Set<ResourceAttributes> eResourceAttributes;
@@ -59,12 +59,12 @@ public class Privilege implements Serializable {
      */
     public Privilege(
             String name,
-            Set<Entitlement> entitlements,
+            Entitlement entitlement,
             EntitlementSubject eSubject,
             EntitlementCondition eCondition,
             Set<ResourceAttributes> eResourceAttributes) {
         this.name = name;
-        this.entitlements = entitlements;
+        this.entitlement = entitlement;
         this.eSubject = eSubject;
         this.eCondition = eCondition;
         this.eResourceAttributes = eResourceAttributes;
@@ -123,15 +123,15 @@ public class Privilege implements Serializable {
     }
 
     /**
-     * Returns entitlements defined in the privilege
-     * @return entitlements defined in the privilege
+     * Returns entitlement defined in the privilege
+     * @return entitlement defined in the privilege
      */
-    public Set<Entitlement> getEntitlements() {
-        return entitlements;
+    public Entitlement getEntitlement() {
+        return entitlement;
     }
 
     /**
-     * Returns a list of entitlements for a given subject, resource name
+     * Returns a list of entitlement for a given subject, resource name
      * and environment.
      * 
      * @param subject Subject who is under evaluation.
@@ -139,7 +139,7 @@ public class Privilege implements Serializable {
      * @param environment Environment parameters.
      * @param recursive <code>true</code> to perform evaluation on sub resources
      *        from the given resource name.
-     * @return a list of entitlements for a given subject, resource name
+     * @return a list of entitlement for a given subject, resource name
      *         and environment.
      * @throws EntitlementException if the result cannot be determined.
      */
@@ -177,10 +177,8 @@ public class Privilege implements Serializable {
         JSONObject jo = new JSONObject();
         jo.put("name", name);
 
-        if (entitlements != null) {
-            for (Entitlement e : entitlements) {
-                jo.append("entitlements", e.toJSONObject());
-            }
+        if (entitlement != null) {
+            jo.append("entitlement", entitlement.toJSONObject());
         }
 
         if (eSubject != null) {
@@ -242,15 +240,15 @@ public class Privilege implements Serializable {
                 equalled = false;
             }
         }
-        if (entitlements == null) {
-            if (object.getEntitlements() != null) {
+        if (entitlement == null) {
+            if (object.getEntitlement() != null) {
                 equalled = false;
             }
         } else { // name not null
 
-            if ((object.getEntitlements()) == null) {
+            if ((object.getEntitlement()) == null) {
                 equalled = false;
-            } else if (!entitlements.equals(object.getEntitlements())) {
+            } else if (!entitlement.equals(object.getEntitlement())) {
                 equalled = false;
             }
         }
@@ -304,8 +302,8 @@ public class Privilege implements Serializable {
         if (name != null) {
             code += name.hashCode();
         }
-        if (entitlements != null) {
-            code += entitlements.hashCode();
+        if (entitlement != null) {
+            code += entitlement.hashCode();
         }
         if (eSubject != null) {
             code += eSubject.hashCode();

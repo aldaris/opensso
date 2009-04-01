@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyPrivilegeManager.java,v 1.1 2009-03-26 16:22:02 dillidorai Exp $
+ * $Id: PolicyPrivilegeManager.java,v 1.2 2009-04-01 00:21:29 dillidorai Exp $
  */
 package com.sun.identity.policy;
 
@@ -33,6 +33,7 @@ import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeManager;
 import com.sun.identity.security.AdminTokenAction;
 import java.security.AccessController;
+import java.util.Set;
 import javax.security.auth.Subject;
 
 /**
@@ -124,7 +125,50 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
             pm.removePolicy(privilege.getName());
             pm.addPolicy(PrivilegeUtils.privilegeToPolicy(privilege));
         } catch (PolicyException pe) {
+            //TODO: record, wrap and propogate
         } catch (SSOException ssoe) {
+            //TODO: record, wrap and propogate
         }
     }
+
+    /**
+     * Returns privilege names
+     * @return privilege names
+     * @throws com.sun.identity.entitlement.EntitlementException if there
+     * is an error
+     */
+    public Set<String> getPrivilegeNames() throws EntitlementException {
+        Set<String> names = null;
+        try {
+            names = pm.getPolicyNames();
+        } catch (PolicyException pe) {
+            //TODO: record, wrap and propogate
+        } catch (SSOException ssoe) {
+            //TODO: record, wrap and propogate
+        }
+        return names;
+    }
+
+    /**
+     * Returns privilege names matching the pattern
+     * @param pattern pattern to match the privilege names
+     * @return privilege names matching the pattern
+     * @throws com.sun.identity.entitlement.EntitlementException if there
+     * is an error
+     */
+    public Set<String> getPrivilegeNames(String pattern) throws EntitlementException {
+        Set<String> names = null;
+        try {
+            names = pm.getPolicyNames(pattern);
+        } catch (PolicyException pe) {
+            //TODO: record, wrap and propogate
+        } catch (SSOException ssoe) {
+            //TODO: record, wrap and propogate
+        }
+        return names;
+    }
 }
+
+
+
+

@@ -23,9 +23,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexTest.java,v 1.9 2009-03-28 06:45:30 veiming Exp $
+ * $Id: PolicyIndexTest.java,v 1.10 2009-04-01 00:21:30 dillidorai Exp $
  */
-
 package com.sun.identity.policy;
 
 import com.iplanet.sso.SSOException;
@@ -53,38 +52,39 @@ import org.testng.annotations.Test;
  * @author dennis
  */
 public class PolicyIndexTest {
+
     private static final String URL_RESOURCE = "http://www.sun.com:8080/private";
     private static final String POLICY_NAME = "policyIndexTest";
-    
+
     @BeforeClass
-    public void setup() 
-        throws SSOException, PolicyException {
+    public void setup()
+            throws SSOException, PolicyException {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
+                AdminTokenAction.getInstance());
         PolicyManager pm = new PolicyManager(adminToken, "/");
         Policy policy = new Policy(POLICY_NAME, "test - discard",
-            false, true);
+                false, true);
         policy.addRule(createRule());
         policy.addSubject("group", createSubject(pm));
         pm.addPolicy(policy);
     }
-    
+
     @AfterClass
-    public void cleanup() 
-        throws SSOException, PolicyException {
+    public void cleanup()
+            throws SSOException, PolicyException {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
+                AdminTokenAction.getInstance());
         PolicyManager pm = new PolicyManager(adminToken, "/");
         pm.removePolicy(POLICY_NAME);
     }
-    
+
     @Test
-    public void storeAndRetrieve() 
-        throws SSOException, PolicyException, EntitlementException, Exception {
+    public void storeAndRetrieve()
+            throws SSOException, PolicyException, EntitlementException, Exception {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
-            AdminTokenAction.getInstance());
+                AdminTokenAction.getInstance());
         PolicyManager pm = new PolicyManager(adminToken, "/");
-        
+
         Set<String> hostIndexes = new HashSet<String>();
         Set<String> pathIndexes = new HashSet<String>();
         Set<String> parentPathIndexes = new HashSet<String>();
@@ -92,23 +92,20 @@ public class PolicyIndexTest {
         pathIndexes.add("/private");
         parentPathIndexes.add("/");
         ResourceSearchIndexes indexes = new ResourceSearchIndexes(
-            hostIndexes, pathIndexes, parentPathIndexes);
+                hostIndexes, pathIndexes, parentPathIndexes);
         IPolicyDataStore pStore =
-            PolicyDataStoreFactory.getInstance().getDataStore();
-        for (Iterator<Privilege> i = pStore.search(indexes, false); i.hasNext();
-        ) {
+                PolicyDataStoreFactory.getInstance().getDataStore();
+        for (Iterator<Privilege> i = pStore.search(indexes, false); i.hasNext();) {
             Privilege p = i.next();
-            for (Entitlement e : p.getEntitlements()) {
-                if (!e.getResourceName().equals(URL_RESOURCE)) {
-                    throw new Exception("incorrect deserialized policy");
-                }
+            if (!p.getEntitlement().getResourceName().equals(URL_RESOURCE)) {
+                throw new Exception("incorrect deserialized policy");
             }
         }
     }
-    
+
     private Rule createRule() throws PolicyException {
-        Map<String, Set<String>> actionValues = 
-            new HashMap<String, Set<String>>();
+        Map<String, Set<String>> actionValues =
+                new HashMap<String, Set<String>>();
         {
             Set<String> set = new HashSet<String>();
             set.add("allow");
@@ -119,11 +116,11 @@ public class PolicyIndexTest {
             set.add("allow");
             actionValues.put("POST", set);
         }
-        
+
         return new Rule("rule1", "iPlanetAMWebAgentService",
-            URL_RESOURCE, actionValues);
+                URL_RESOURCE, actionValues);
     }
-    
+
     private Subject createSubject(PolicyManager pm) throws PolicyException {
         SubjectTypeManager mgr = pm.getSubjectTypeManager();
         Subject subject = mgr.getSubject("LDAPGroups");

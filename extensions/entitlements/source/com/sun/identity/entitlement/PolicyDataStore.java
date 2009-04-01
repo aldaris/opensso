@@ -22,9 +22,8 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDataStore.java,v 1.4 2009-03-31 01:16:11 veiming Exp $
+ * $Id: PolicyDataStore.java,v 1.5 2009-04-01 00:21:29 dillidorai Exp $
  */
-
 package com.sun.identity.entitlement;
 
 import com.sun.identity.shared.BufferedIterator;
@@ -38,53 +37,47 @@ import java.util.Set;
 public class PolicyDataStore implements IPolicyDataStore {
 
     private PolicyCache policyCache = new PolicyCache(
-        EntitlementService.getNumericAttributeValue(
-        EntitlementService.POLICY_CACHE_SIZE));
+            EntitlementService.getNumericAttributeValue(
+            EntitlementService.POLICY_CACHE_SIZE));
     private IndexCache indexCache = new IndexCache(
-        EntitlementService.getNumericAttributeValue(
-        EntitlementService.POLICY_CACHE_SIZE));
+            EntitlementService.getNumericAttributeValue(
+            EntitlementService.POLICY_CACHE_SIZE));
     private DataStore dataStore = new DataStore();
 
     public void add(Privilege p)
-        throws EntitlementException {
-        for (Entitlement e : p.getEntitlements()) {
-            dataStore.add(e.getResourceSaveIndexes(), p);
-        }
+            throws EntitlementException {
+        dataStore.add(p.getEntitlement().getResourceSaveIndexes(), p);
     }
 
     public void delete(Privilege p)
-        throws EntitlementException {
+            throws EntitlementException {
         String dn = DataStore.getDN(p);
         dataStore.delete(p.getName());
         policyCache.decache(dn);
-        for (Entitlement e : p.getEntitlements()) {
-            indexCache.clear(e.getResourceSaveIndexes(), dn);
-        }
+        indexCache.clear(p.getEntitlement().getResourceSaveIndexes(), dn);
     }
 
     private void cache(Privilege p)
-        throws EntitlementException {
+            throws EntitlementException {
         String dn = DataStore.getDN(p);
-        for (Entitlement e : p.getEntitlements()) {
-            indexCache.cache(e.getResourceSaveIndexes(), dn);
-            policyCache.cache(dn, p);
-        }
+        indexCache.cache(p.getEntitlement().getResourceSaveIndexes(), dn);
+        policyCache.cache(dn, p);
     }
 
     private void decache(Privilege p)
-        throws EntitlementException {
+            throws EntitlementException {
         policyCache.decache(p.getName());
     }
 
     public Iterator<Privilege> search(
-        ResourceSearchIndexes indexes,
-        boolean bSubTree)
-        throws EntitlementException {
+            ResourceSearchIndexes indexes,
+            boolean bSubTree)
+            throws EntitlementException {
         BufferedIterator<Privilege> iterator =
-            new BufferedIterator<Privilege>();
+                new BufferedIterator<Privilege>();
         Set<String> setDNs = indexCache.getMatchingEntries(indexes, bSubTree);
-        for (Iterator i = setDNs.iterator(); i.hasNext(); ) {
-            String dn = (String)i.next();
+        for (Iterator i = setDNs.iterator(); i.hasNext();) {
+            String dn = (String) i.next();
             Privilege p = policyCache.getPolicy(dn);
             if (p != null) {
                 iterator.add(p);
@@ -93,11 +86,12 @@ public class PolicyDataStore implements IPolicyDataStore {
             }
         }
         ThreadPool.submit(new SearchTask(this, iterator, indexes, bSubTree,
-            setDNs));
+                setDNs));
         return iterator;
     }
 
     public class SearchTask implements Runnable {
+
         private PolicyDataStore parent;
         private BufferedIterator<Privilege> iterator;
         private ResourceSearchIndexes indexes;
@@ -105,12 +99,11 @@ public class PolicyDataStore implements IPolicyDataStore {
         private Set<String> excludeDNs;
 
         public SearchTask(
-            PolicyDataStore parent,
-            BufferedIterator<Privilege> iterator,
-            ResourceSearchIndexes indexes,
-            boolean bSubTree,
-            Set<String> excludeDNs
-       ) {
+                PolicyDataStore parent,
+                BufferedIterator<Privilege> iterator,
+                ResourceSearchIndexes indexes,
+                boolean bSubTree,
+                Set<String> excludeDNs) {
             this.parent = parent;
             this.iterator = iterator;
             this.indexes = indexes;
@@ -121,7 +114,7 @@ public class PolicyDataStore implements IPolicyDataStore {
         public void run() {
             try {
                 Set<Privilege> results = parent.dataStore.search(
-                    iterator, indexes, bSubTree, excludeDNs);
+                        iterator, indexes, bSubTree, excludeDNs);
                 for (Privilege p : results) {
                     parent.cache(p);
                 }
@@ -129,6 +122,5 @@ public class PolicyDataStore implements IPolicyDataStore {
                 //TOFIX
             }
         }
-
     }
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.3 2009-03-30 18:56:05 dillidorai Exp $
+ * $Id: PrivilegeUtils.java,v 1.4 2009-04-01 00:21:29 dillidorai Exp $
  */
 package com.sun.identity.policy;
 
@@ -86,6 +86,8 @@ public class PrivilegeUtils {
      */
     public static Privilege policyToPrivilege(Policy policy)
             throws PolicyException, EntitlementException {
+        //TODO: split a policy to multiple prrivileges if the rules have different
+        // acation values
         if (policy == null) {
             return null;
         }
@@ -94,12 +96,17 @@ public class PrivilegeUtils {
 
 
         Set ruleNames = policy.getRuleNames();
-        Set<Entitlement> entitlements = new HashSet<Entitlement>();
+        Set<Rule> rules = new HashSet<Rule>();
         for (Object ruleNameObj : ruleNames) {
             String ruleName = (String) ruleNameObj;
             Rule rule = policy.getRule(ruleName);
-            Entitlement entitlement = ruleToEntitlement(rule);
-            entitlements.add(entitlement);
+            rules.add(rule);
+        }
+        Entitlement entitlement = null;
+        try {
+        entitlement = rulesToEntitlement(rules);
+        } catch (SSOException e) {
+            //TODO: record, wrap and propogate the exception
         }
 
         Set subjectNames = policy.getSubjectNames();
@@ -142,26 +149,39 @@ public class PrivilegeUtils {
         }
         Set<ResourceAttributes> resourceAttributesSet = nrpsToResourceAttributes(nrps);
 
-        Privilege privilege = new Privilege(policyName, entitlements, eSubject,
+        Privilege privilege = new Privilege(policyName, entitlement, eSubject,
                 eCondition, resourceAttributesSet);
         return privilege;
     }
 
-    private static Entitlement ruleToEntitlement(Rule rule)
-            throws PolicyException {
-        String entitlementName = rule.getName();
-        String serviceName = rule.getServiceTypeName();
-        String resourceName = rule.getResourceName();
-        Set excludedResourceNames = rule.getExcludedResourceNames();
-        Map<String, Boolean> actionMap = new HashMap<String, Boolean>();
-        Set actionNames = rule.getActionNames();
-        for (Object actionNameObj : actionNames) {
-            String actionName = (String) actionNameObj;
-            Set actionValues = rule.getActionValues(actionName);
-            Boolean actionValue = Boolean.TRUE;
-            actionMap.put(actionName, actionValue);
+    private static Entitlement rulesToEntitlement(Set<Rule> rules)
+            throws PolicyException, SSOException {
+        if (rules == null || rules.isEmpty()) {
+            return null;
         }
-        Entitlement entitlement = new Entitlement(serviceName, resourceName,
+        Set<String> resourceNames = new HashSet<String>();
+        Set<String> excludedResourceNames = new HashSet<String>();
+        Rule lrule = null;
+        //TODO: split a policy to multiple prrivileges if the rules have different
+        // acation values
+        for (Rule rule : rules) {
+            lrule = rule;
+            String resourceName = rule.getResourceName();
+            Set excludedResourceNames1 = rule.getExcludedResourceNames();
+            resourceNames.add(resourceName);
+            excludedResourceNames.addAll(excludedResourceNames);
+
+        }
+        String serviceName = lrule.getServiceTypeName();
+        Map<String, Boolean> actionMap = pavToPrav(lrule.getActionValues(), 
+                serviceName);
+        String entitlementName = lrule.getName();
+        int dashi = entitlementName.indexOf("---");
+        if (dashi != -1) {
+            entitlementName = entitlementName.substring(0, dashi);
+        }
+
+        Entitlement entitlement = new Entitlement(serviceName, resourceNames,
                 actionMap);
         entitlement.setName(entitlementName);
         entitlement.setExcludedResourceNames(excludedResourceNames);
@@ -361,10 +381,10 @@ public class PrivilegeUtils {
             throws PolicyException, SSOException {
         Policy policy = null;
         policy = new Policy(privilege.getName());
-        if (privilege.getEntitlements() != null) {
-            Set<Entitlement> entitlements = privilege.getEntitlements();
-            for (Entitlement entitlement : entitlements) {
-                Rule rule = entitlementToRule(entitlement);
+        if (privilege.getEntitlement() != null) {
+            Entitlement entitlement = privilege.getEntitlement();
+            Set<Rule> rules = entitlementToRules(entitlement);
+            for (Rule rule : rules) {
                 policy.addRule(rule);
             }
         }
@@ -414,16 +434,26 @@ public class PrivilegeUtils {
         return policy;
     }
 
-    private static Rule entitlementToRule(Entitlement entitlement)
-            throws PolicyException {
-        String ruleName = entitlement.getName();
+    private static Set<Rule> entitlementToRules(Entitlement entitlement)
+            throws PolicyException, SSOException {
+        Set<Rule> rules = new HashSet<Rule>();
+        String entName = entitlement.getName();
         String serviceName = entitlement.getApplicationName();
-        String resourceName = entitlement.getResourceName();
+        Set<String> resourceNames = entitlement.getResourceNames();
         Map<String, Boolean> actionValues = entitlement.getActionValues();
         Map av = pravToPav(actionValues, serviceName);
-        Rule rule = new Rule(ruleName, serviceName, resourceName, av);
-        rule.setExcludedResourceNames(entitlement.getExcludedResourceNames());
-        return rule;
+        if (resourceNames != null) {
+            int rc = 0;
+            for (String resourceName : resourceNames) {
+                rc += 1;
+                Rule rule = new Rule(entName + "---" + rc, serviceName,
+                        resourceName, av);
+                rule.setExcludedResourceNames(
+                        entitlement.getExcludedResourceNames());
+                rules.add(rule);
+            }
+        }
+        return rules;
     }
 
     private static List eSubjectToPSubjects(EntitlementSubject es)
@@ -949,21 +979,26 @@ public class PrivilegeUtils {
     }
 
     static Map pravToPav(Map<String, Boolean> actionValues,
-            String serviceName) {
+            String serviceName) throws PolicyException, SSOException  {
         if (actionValues == null) {
             return null;
         }
+        ServiceTypeManager stm = ServiceTypeManager.getServiceTypeManager();
+        ServiceType st = stm.getServiceType(serviceName);
         Map av = new HashMap();
         Set<String> keySet = actionValues.keySet();
-        for (String action: keySet) {
+        for (String action : keySet) {
+            ActionSchema as = st.getActionSchema(action);
+            String trueValue = as.getTrueValue();
+            String falseValue = as.getFalseValue();
             Boolean value = actionValues.get(action);
             if (value.equals(Boolean.TRUE)) {
                 Set values = new HashSet();
-                values.add("allow");
+                values.add(trueValue);
                 av.put(action, values);
             } else {
                 Set values = new HashSet();
-                values.add("deny");
+                values.add(falseValue);
             }
 
         }
@@ -971,16 +1006,21 @@ public class PrivilegeUtils {
     }
 
     static Map<String, Boolean> pavToPrav(Map actionValues,
-            String serviceName) {
-          if (actionValues == null) {
+            String serviceName) throws PolicyException, SSOException {
+        if (actionValues == null) {
             return null;
         }
+        ServiceTypeManager stm = ServiceTypeManager.getServiceTypeManager();
+        ServiceType st = stm.getServiceType(serviceName);
         Map av = new HashMap();
-        Set keySet = (Set)actionValues.keySet();
-        for (Object actionObj: keySet) {
-            String action = (String)actionObj;
-            Set values = (Set)actionValues.get(action);
-            if ((values != null) && (values.contains("allow"))) {
+        Set keySet = (Set) actionValues.keySet();
+        for (Object actionObj : keySet) {
+            String action = (String) actionObj;
+            ActionSchema as = st.getActionSchema(action);
+            String trueValue = as.getTrueValue();
+            String falseValue = as.getFalseValue();
+            Set values = (Set) actionValues.get(action);
+            if ((values != null) && (values.contains(trueValue))) {
                 av.put(action, Boolean.TRUE);
             } else {
                 av.put(action, Boolean.FALSE);
@@ -989,5 +1029,4 @@ public class PrivilegeUtils {
         }
         return av;
     }
-
 }

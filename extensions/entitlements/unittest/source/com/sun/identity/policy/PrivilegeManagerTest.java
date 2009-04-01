@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManagerTest.java,v 1.3 2009-03-30 18:59:00 dillidorai Exp $
+ * $Id: PrivilegeManagerTest.java,v 1.4 2009-04-01 00:21:30 dillidorai Exp $
  */
 package com.sun.identity.policy;
 
@@ -94,14 +94,15 @@ public class PrivilegeManagerTest {
     }
 
     @Test
-    public void testAddPrivilege() throws Exception {
+    public void testAddPrivilege() throws Throwable {
+        try {
         Map<String, Boolean> actionValues = new HashMap<String, Boolean>();
         actionValues.put("POST", Boolean.TRUE);
-        String resourceName = "http://www.sun.com";
+        Set<String> resourceNames = new HashSet<String>();
+        resourceNames.add("http://www.sun.com");
+        resourceNames.add("http://www.ibm.com");
         Entitlement entitlement = new Entitlement(SERVICE_NAME,
-                resourceName, actionValues);
-        Set<Entitlement> entitlements = new HashSet<Entitlement>();
-        entitlements.add(entitlement);
+                resourceNames, actionValues);
 
         String user11 = "id=user11,ou=user," + ServiceManager.getBaseDN();
         String user12 = "id=user12,ou=user," + ServiceManager.getBaseDN();
@@ -152,7 +153,7 @@ public class PrivilegeManagerTest {
 
         Privilege privilege = new Privilege(
                 PRIVILEGE_NAME,
-                entitlements,
+                entitlement,
                 os,
                 oc,
                 ra);
@@ -163,6 +164,13 @@ public class PrivilegeManagerTest {
                 AdminTokenAction.getInstance());
         PrivilegeManager prm = PrivilegeManager.getInstance(null);
         prm.addPrivilege(privilege);
+        } catch (Throwable t) {
+               UnittestLog.logError(
+                "PrivilegeManagerTest.testAPrivlege():"
+                + "saving privilege threw exception:", t);
+               t.printStackTrace();
+               throw t;
+        }
 
     }
 

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Entitlement.java,v 1.22 2009-03-30 18:56:05 dillidorai Exp $
+ * $Id: Entitlement.java,v 1.23 2009-04-01 00:21:29 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -65,7 +65,7 @@ public class Entitlement implements Serializable {
 
     private String name;
     private String applicationName;
-    private String resourceName;
+    private Set<String> resourceNames;
     private Set<String> excludedResourceNames;
     private Map<String, Boolean> actionValues;
     private Map<String, String> advices;
@@ -79,6 +79,17 @@ public class Entitlement implements Serializable {
     }
 
     /**
+     * Creates an entitlement object.
+     *
+     * @param resourceNames Resource names.
+     * @param actionNames Set of action names.
+     */
+    public Entitlement(Set<String> resourceNames, Set<String> actionNames) {
+        setResourceNames(resourceNames);
+        setActionNames(actionNames);
+    }
+
+        /**
      * Creates an entitlement object.
      *
      * @param resourceName Resource name.
@@ -100,7 +111,7 @@ public class Entitlement implements Serializable {
             String applicationName,
             String resourceName,
             Set<String> actionNames) {
-        this.applicationName = applicationName;
+        setApplicationName(applicationName);
         setResourceName(resourceName);
         setActionNames(actionNames);
     }
@@ -108,7 +119,7 @@ public class Entitlement implements Serializable {
     /**
      * Creates an entitlement object.
      *
-     * @param resourceName Resource name.
+     * @param resourceNames Resource namess.
      * @param actionValues Map of action name to set of values.
      */
     public Entitlement(
@@ -121,16 +132,32 @@ public class Entitlement implements Serializable {
     /**
      * Creates an entitlement object.
      *
-     * @param applicationName Application name.
-     * @param resourceName Resource name.
+     * @param applicationName applicationName
+     * @param resourceNames Resource namess.
      * @param actionValues Map of action name to set of values.
      */
     public Entitlement(
             String applicationName,
             String resourceName,
             Map<String, Boolean> actionValues) {
-        this.applicationName = applicationName;
+        setApplicationName(applicationName);
         setResourceName(resourceName);
+        setActionValues(actionValues);
+    }
+
+    /**
+     * Creates an entitlement object.
+     *
+     * @param applicationName Application name.
+     * @param resourceNames Resource names.
+     * @param actionValues Map of action name to set of values.
+     */
+    public Entitlement(
+            String applicationName,
+            Set<String> resourceNames,
+            Map<String, Boolean> actionValues) {
+        setApplicationName(applicationName);
+        setResourceNames(resourceNames);
         setActionValues(actionValues);
     }
 
@@ -151,21 +178,44 @@ public class Entitlement implements Serializable {
     }
 
     /**
+     * Sets resource names.
+     *
+     * @param resourceNames Resource Names.
+     */
+    public void setResourceNames(Set<String> resourceNames) {
+        this.resourceNames = resourceNames;
+    }
+
+    /**
+     * Returns resource names.
+     *
+     * @return resource names.
+     */
+    public Set<String> getResourceNames() {
+        return resourceNames;
+    }
+
+    /**
      * Sets resource name.
      *
      * @param resourceName Resource Name.
      */
     public void setResourceName(String resourceName) {
-        this.resourceName = resourceName;
+        Set<String> rn = new HashSet<String>();
+        rn.add(resourceName);
+        setResourceNames(rn);
     }
 
     /**
      * Returns resource name.
      *
-     * @return resource name.
+     * @return resource names.
      */
     public String getResourceName() {
-        return resourceName;
+        if (resourceNames == null || resourceNames.isEmpty()) {
+            return null;
+        }
+        return resourceNames.iterator().next();
     }
 
     /**
@@ -311,7 +361,7 @@ public class Entitlement implements Serializable {
     /**
      * Returns <code>true</code> if the request satisfies the request
      * @param subject Subject who is under evaluation.
-     * @param resourceName Resource name.
+     * @param resourceNames Resource name.
      * @param environment Environment parameters.
      * @return <code>true</code> if the request satisfies the 
      * <code>SubjectFilter</code>, otherwise <code>false</code>
@@ -351,7 +401,7 @@ public class Entitlement implements Serializable {
         JSONObject jo = new JSONObject();
         jo.put("name", name);
         jo.put("serviceName", applicationName);
-        jo.put("resourceName", resourceName);
+        jo.put("resourceNames", resourceNames);
         jo.put("excludedResourceNames", excludedResourceNames);
         jo.put("actionsValues", actionValues);
         jo.put("advices", advices);
@@ -401,15 +451,15 @@ public class Entitlement implements Serializable {
             }
         }
 
-        if (resourceName == null) {
-            if (object.getResourceName() != null) {
+        if (resourceNames == null) {
+            if (object.getResourceNames() != null) {
                 return false;
             }
-        } else { // resourceName not null
+        } else { // resourceNames not null
 
-            if ((object.getResourceName()) == null) {
+            if ((object.getResourceNames()) == null) {
                 return false;
-            } else if (!resourceName.equals(object.getResourceName())) {
+            } else if (!resourceNames.equals(object.getResourceNames())) {
                 return false;
             }
         }
@@ -486,8 +536,8 @@ public class Entitlement implements Serializable {
         if (applicationName != null) {
             code += applicationName.hashCode();
         }
-        if (resourceName != null) {
-            code += resourceName.hashCode();
+        if (resourceNames != null) {
+            code += resourceNames.hashCode();
         }
         if (excludedResourceNames != null) {
             code += excludedResourceNames.hashCode();
@@ -506,12 +556,12 @@ public class Entitlement implements Serializable {
 
     public ResourceSearchIndexes getResourceSearchIndexes() {
         return getApplication().getApplicationType().getResourceSearchIndex(
-                resourceName);
+                resourceNames.iterator().next()); //TODO: recheck
     }
 
     public ResourceSaveIndexes getResourceSaveIndexes() {
         return getApplication().getApplicationType().getResourceSaveIndex(
-                resourceName);
+                resourceNames.iterator().next()); //TODO: recheck
     }
 
     private Application getApplication() {

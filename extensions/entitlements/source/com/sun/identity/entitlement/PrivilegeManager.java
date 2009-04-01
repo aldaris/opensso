@@ -22,10 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManager.java,v 1.2 2009-03-26 16:21:02 dillidorai Exp $
+ * $Id: PrivilegeManager.java,v 1.3 2009-04-01 00:21:29 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
+import java.util.Set;
 import javax.security.auth.Subject;
 
 /**
@@ -102,4 +103,22 @@ public abstract class PrivilegeManager {
     public void modifyPrivilege(Privilege privilege)
             throws EntitlementException {
     }
+
+    /**
+     * Returns privilege names
+     * @return privilege names
+     * @throws com.sun.identity.entitlement.EntitlementException if there
+     * is an error
+     */
+    public abstract Set<String> getPrivilegeNames() throws EntitlementException;
+
+        /**
+     * Returns privilege names matching the pattern
+     * @param pattern pattern to match the privilege names
+     * @return privilege names matching the pattern
+     * @throws com.sun.identity.entitlement.EntitlementException if there
+     * is an error
+     */
+    public abstract Set<String> getPrivilegeNames(String pattern)
+            throws EntitlementException;
 }

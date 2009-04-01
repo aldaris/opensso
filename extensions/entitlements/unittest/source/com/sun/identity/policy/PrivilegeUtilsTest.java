@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtilsTest.java,v 1.2 2009-03-30 18:59:00 dillidorai Exp $
+ * $Id: PrivilegeUtilsTest.java,v 1.3 2009-04-01 00:21:30 dillidorai Exp $
  */
 package com.sun.identity.policy;
 
@@ -65,8 +65,6 @@ public class PrivilegeUtilsTest {
         Entitlement entitlement = new Entitlement("iPlanetAMWebAgentService",
                 resourceName, actionValues);
         entitlement.setName("ent1");
-        Set<Entitlement> entitlements = new HashSet<Entitlement>();
-        entitlements.add(entitlement);
         String user11 = "id=user11,ou=user," + BASE_DN;
         String user12 = "id=user12,ou=user," + BASE_DN;
         EntitlementSubject us1 = new UserSubject(user11);
@@ -78,7 +76,7 @@ public class PrivilegeUtilsTest {
         EntitlementCondition ipc = new IPCondition("*.sun.com");
         Privilege privilege = new Privilege(
                 "TestPrivilege",
-                entitlements,
+                entitlement,
                 us1, //orSubject
                 ipc, //entitlementCondition
                 null); //attributes

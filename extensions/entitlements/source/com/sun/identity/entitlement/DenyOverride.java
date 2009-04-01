@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DenyOverride.java,v 1.1 2009-03-31 05:52:17 veiming Exp $
+ * $Id: DenyOverride.java,v 1.2 2009-04-01 00:21:29 dillidorai Exp $
  */
 
 package com.sun.identity.entitlement;
@@ -45,7 +45,7 @@ public class DenyOverride implements EntitlementCombiner {
         Entitlement result = null;
         if (e1.getApplicationName().equals(e2.getApplicationName())) {
             result = new Entitlement(e1.getApplicationName(),
-                e1.getResourceName(), mergeActionValues(e1, e2));
+                e1.getResourceNames(), mergeActionValues(e1, e2)); //TODO: recheck
             result.setAdvices(mergeAdvices(e1, e2));
             result.setAttributes(mergeAttributes(e1, e2));
         }

@@ -91,7 +91,7 @@ public class PrivilegeBean implements Serializable {
 
         Privilege privilege = new Privilege(
                 name,
-                entitlements,
+                entitlements.iterator().next(), //TODO: use scalar entitlement
                 orSubject,
                 eCondition,
                 attrs);

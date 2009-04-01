@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManagerTest.java,v 1.3 2009-03-30 18:58:59 dillidorai Exp $
+ * $Id: PrivilegeManagerTest.java,v 1.4 2009-04-01 00:21:29 dillidorai Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -79,8 +79,8 @@ public class PrivilegeManagerTest {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
         PrivilegeManager prm = PrivilegeManager.getInstance(null);
-        // not cleaning up to allow inspection using console
-        //prm.removePrivilege(PRIVILIGE_NAME);
+    // not cleaning up to allow inspection using console
+    //prm.removePrivilege(PRIVILIGE_NAME);
     }
 
     @Test
@@ -93,8 +93,6 @@ public class PrivilegeManagerTest {
         String resourceName = "http://www.sun.com";
         Entitlement entitlement = new Entitlement(SERVICE_NAME,
                 resourceName, actionValues);
-        Set<Entitlement> entitlements = new HashSet<Entitlement>();
-        entitlements.add(entitlement);
 
         String user11 = "id=user11,ou=user," + ServiceManager.getBaseDN();
         String user12 = "id=user12,ou=user," + ServiceManager.getBaseDN();
@@ -145,13 +143,12 @@ public class PrivilegeManagerTest {
 
         privilege = new Privilege(
                 PRIVILEGE_NAME,
-                entitlements,
+                entitlement,
                 os,
                 oc,
                 ra);
         UnittestLog.logMessage(
-                "PrivilegeManagerTest.testAPrivlege():"
-                + "saving privilege=" + privilege);
+                "PrivilegeManagerTest.testAPrivlege():" + "saving privilege=" + privilege);
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
         PrivilegeManager prm = PrivilegeManager.getInstance(null);
@@ -159,18 +156,30 @@ public class PrivilegeManagerTest {
 
     }
 
-    @Test(dependsOnMethods={"testAddPrivilege"})
+    @Test(dependsOnMethods = {"testAddPrivilege"})
     public void testSerializePrivilege() throws Exception {
         String serialized = serializeObject(privilege);
-        Privilege p = (Privilege)deserializeObject(serialized);
+        Privilege p = (Privilege) deserializeObject(serialized);
         if (!p.equals(privilege)) {
             throw new Exception(
-                "PrivilegeManagerTest.testSerializePrivilege: failed");
+                    "PrivilegeManagerTest.testSerializePrivilege: failed");
         }
     }
 
+    @Test(dependsOnMethods = {"testAddPrivilege"})
+    public void testListPrivilegeNames() throws Exception {
+
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+                AdminTokenAction.getInstance());
+        PrivilegeManager prm = PrivilegeManager.getInstance(null);
+        Set<String> names = prm.getPrivilegeNames();
+        UnittestLog.logMessage(
+                "PrivilegeManagerTest.testListPrivlegeNames():"
+                + "listing privilege names:" + names);
+    }
+
     private String serializeObject(Serializable object)
-        throws EntitlementException {
+            throws EntitlementException {
         ObjectOutputStream oos = null;
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -192,11 +201,11 @@ public class PrivilegeManagerTest {
     }
 
     private Object deserializeObject(String strSerialized)
-        throws EntitlementException {
+            throws EntitlementException {
         ObjectInputStream ois = null;
         try {
             InputStream in = new ByteArrayInputStream(
-                Base64.decode(strSerialized));
+                    Base64.decode(strSerialized));
             ois = new ObjectInputStream(in);
             return ois.readObject();
         } catch (ClassNotFoundException ex) {
@@ -214,15 +223,13 @@ public class PrivilegeManagerTest {
         }
     }
 
-
-    @Test(dependsOnMethods={"testAddPrivilege"})
+    @Test(dependsOnMethods = {"testAddPrivilege"})
     public void testGetPrivilege() throws Exception {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
         PrivilegeManager prm = PrivilegeManager.getInstance(null);
         Privilege p = prm.getPrivilege(PRIVILEGE_NAME);
         UnittestLog.logMessage(
-                "PrivilegeManagerTest.testGetPrivlege():"
-                + "read back privilege=" + p);
+                "PrivilegeManagerTest.testGetPrivlege():" + "read back privilege=" + p);
     }
 }
