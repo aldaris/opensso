@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPProxyUtil.java,v 1.15 2009-03-03 01:52:48 qcheng Exp $
+ * $Id: IDPProxyUtil.java,v 1.16 2009-04-01 17:47:14 madan_ranganath Exp $
  *
  */
 
@@ -762,10 +762,12 @@ public class IDPProxyUtil {
             String realm = SAML2Utils.
                 getRealm(SAML2MetaUtils.getRealmByMetaAlias(metaAlias));
             String party = partner.getPartner();
-            idpSession.removeSessionPartner(party);
-            IDPCache.idpSessionsBySessionID.remove(tokenID);
-            initiateSPLogoutRequest(request,response, party, metaAlias, realm,
-                logoutReq, null, idpSession, binding, relayState);
+            if (idpSession != null) {
+                idpSession.removeSessionPartner(party);
+                IDPCache.idpSessionsBySessionID.remove(tokenID);
+                initiateSPLogoutRequest(request,response, party, metaAlias, realm,
+                    logoutReq, null, idpSession, binding, relayState);
+            }
         } catch (SessionException se) {
             SAML2Utils.debug.error(
                 "sendProxyLogoutRequest: ", se);
@@ -852,51 +854,58 @@ public class IDPProxyUtil {
                         "Number of session indices in the logout request is "
                         + numSI);
                 }
-            }
-            String sessionIndex = (String)siList.get(0);
-            if (SAML2Utils.debug.messageEnabled()) {
-                SAML2Utils.debug.message("getSessionPartners: " +
-                    "SessionIndex= " +  sessionIndex); 
-            }        
-            IDPSession idpSession = (IDPSession)
-                IDPCache.idpSessionsByIndices.get(sessionIndex);
             
-            if (idpSession == null) {
-                // session is in another server
-                return sessMap;
-            }
+                String sessionIndex = (String)siList.get(0);
+                if (SAML2Utils.debug.messageEnabled()) {
+                    SAML2Utils.debug.message("getSessionPartners: " +
+                        "SessionIndex= " +  sessionIndex);
+                }
+                IDPSession idpSession = (IDPSession)
+                    IDPCache.idpSessionsByIndices.get(sessionIndex);
+            
+                if (idpSession == null) {
+                    // session is in another server
+                    return sessMap;
+                }
        
-            sessMap.put(SAML2Constants.SESSION_INDEX, sessionIndex); 
-            sessMap.put(SAML2Constants.IDP_SESSION, idpSession);     
-            Object session = idpSession.getSession(); 
-            String tokenId = sessionProvider.getSessionID(session);
-            IDPSession newIdpSession = (IDPSession)
-                IDPCache.idpSessionsBySessionID.get(tokenId);
-            List partners= null;
-            if (newIdpSession != null) {
-                partners = newIdpSession.getSessionPartners();
-            }
+                sessMap.put(SAML2Constants.SESSION_INDEX, sessionIndex);
+                sessMap.put(SAML2Constants.IDP_SESSION, idpSession);
+                Object session = idpSession.getSession();
+                String tokenId = sessionProvider.getSessionID(session);
+                IDPSession newIdpSession = (IDPSession)
+                    IDPCache.idpSessionsBySessionID.get(tokenId);
+                List partners= null;
+                if (newIdpSession != null) {
+                    partners = newIdpSession.getSessionPartners();
+                }
 
-            if (SAML2Utils.debug.messageEnabled()) {
-                if (partners != null &&  !partners.isEmpty()) {
-                    Iterator iter = partners.iterator();
-                    while(iter.hasNext()) {
-                        SAML2SessionPartner partner =
-                            (SAML2SessionPartner)iter.next();
-                        if (SAML2Utils.debug.messageEnabled()) {
-                            SAML2Utils.debug.message(
-                                "SESSION PARTNER's Provider ID:  "
-                                + partner.getPartner());
+                if (SAML2Utils.debug.messageEnabled()) {
+                    if (partners != null &&  !partners.isEmpty()) {
+                        Iterator iter = partners.iterator();
+                        while(iter.hasNext()) {
+                            SAML2SessionPartner partner =
+                                (SAML2SessionPartner)iter.next();
+                            if (SAML2Utils.debug.messageEnabled()) {
+                                SAML2Utils.debug.message(
+                                    "SESSION PARTNER's Provider ID:  "
+                                    + partner.getPartner());
+                            }
                         }
                     }
                 }
-            }
-            sessMap.put(SAML2Constants.PARTNERS, partners); 
-            return sessMap;
+                sessMap.put(SAML2Constants.PARTNERS, partners);
+                return sessMap;
+           } else {
+               if (SAML2Utils.debug.messageEnabled()) {
+                   SAML2Utils.debug.message("getSessionPartners: Number of " +
+		          "session indices in the logout request is null");
+               }
+               return null;
+           }
         } catch (SAML2Exception se) {
            SAML2Utils.debug.error("getSessionPartners: ", se); 
            return null;   
-        }       
+        }
    }
    
    public static void sendProxyLogoutResponseBySOAP(

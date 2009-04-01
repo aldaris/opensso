@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSingleLogout.java,v 1.20 2008-07-28 16:50:37 qcheng Exp $
+ * $Id: IDPSingleLogout.java,v 1.21 2009-04-01 17:47:14 madan_ranganath Exp $
  *
  */
 
@@ -455,7 +455,14 @@ public class IDPSingleLogout {
             logoutReq =
                 ProtocolFactory.getInstance().createLogoutRequest(decodedStr);
         }
-
+        if (logoutReq == null) {
+            if (debug.messageEnabled()) {
+                debug.message("IDPSingleLogout:processLogoutRequest: logoutReq " +
+                              "is null");
+            }
+           return;
+        }
+        
         String metaAlias =
                 SAML2MetaUtils.getMetaAliasByUri(request.getRequestURI()) ;
         String realm = SAML2Utils.
@@ -678,6 +685,14 @@ public class IDPSingleLogout {
                 ProtocolFactory.getInstance().createLogoutResponse(decodedStr);
         }
 
+        if (logoutRes == null) {
+            if (debug.messageEnabled()) {
+                debug.message("IDPSingleLogout:processLogoutResponse: logoutRes " +
+                             "is null");
+            }
+           return false;
+        }
+    
         String metaAlias =
                 SAML2MetaUtils.getMetaAliasByUri(request.getRequestURI()) ;
         String realm = SAML2Utils.

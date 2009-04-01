@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DoManageNameID.java,v 1.19 2009-03-03 01:52:46 qcheng Exp $
+ * $Id: DoManageNameID.java,v 1.20 2009-04-01 17:47:14 madan_ranganath Exp $
  *
  */
 
@@ -70,6 +70,7 @@ import com.sun.identity.saml2.common.NameIDInfo;
 import com.sun.identity.saml2.common.NameIDInfoKey;
 import com.sun.identity.saml2.common.SAML2Constants;
 import com.sun.identity.saml2.common.SAML2Exception;
+import com.sun.identity.saml2.common.SAML2SDKUtils;
 import com.sun.identity.saml2.common.SAML2Utils;
 import com.sun.identity.saml2.jaxb.entityconfig.BaseConfigType;
 import com.sun.identity.saml2.jaxb.metadata.AffiliationDescriptorType;
@@ -161,6 +162,11 @@ public class DoManageNameID {
         Map paramsMap) throws SAML2Exception {
             
         String method = "DoManageNameID.initiateManageNameIDRequest: ";
+
+        if (metaManager == null) {
+            throw new SAML2Exception(
+                    SAML2SDKUtils.bundle.getString("errorMetaManager"));
+        }
         
         if (metaAlias == null) {
             logError("MetaAliasNotFound", 
@@ -301,7 +307,7 @@ public class DoManageNameID {
         } catch (SessionException ssoe) {
              logError("invalidSSOToken", LogUtil.INVALID_SSOTOKEN, null);
              throw new SAML2Exception(
-                     SAML2Utils.bundle.getString("invalidSSOToken"));       
+                     SAML2Utils.bundle.getString("invalidSSOToken"));
         }
     }
 
@@ -1400,40 +1406,43 @@ public class DoManageNameID {
             if (mniResponse != null) {
                 debug.message(method + "ManageNameIDResponse without "+
                     "SOAP envelope:\n" + mniResponse.toXMLString());
+            } else {
+                debug.message(method + "ManageNameIDResponse is null ");
             }
         }
 
-        try {
-            String realm = SAML2MetaUtils.getRealmByMetaAlias(metaAlias);
-            String hostEntityID = metaManager.getEntityByMetaAlias(metaAlias);
-            String remoteEntityID = mniResponse.getIssuer().getValue();
-            Issuer resIssuer = mniResponse.getIssuer();
-            String requestId = mniResponse.getInResponseTo();
-            SAML2Utils.verifyResponseIssuer(realm, hostEntityID, resIssuer,
-                requestId);
+        if (mniResponse != null) {
+            try {
+                String realm = SAML2MetaUtils.getRealmByMetaAlias(metaAlias);
+                String hostEntityID = metaManager.getEntityByMetaAlias(metaAlias);
+                String remoteEntityID = mniResponse.getIssuer().getValue();
+                Issuer resIssuer = mniResponse.getIssuer();
+                String requestId = mniResponse.getInResponseTo();
+                SAML2Utils.verifyResponseIssuer(realm, hostEntityID, resIssuer,
+                    requestId);
                     
-            boolean validSign = verifyMNIResponse(mniResponse, realm,
-                remoteEntityID, hostEntityID, hostRole,
-                mniResponse.getDestination());
-            if (!validSign) {
-                logError("invalidSignInResponse", 
-                         LogUtil.CANNOT_INSTANTIATE_MNI_RESPONSE , null);
-                throw new SAML2Exception(
-                      SAML2Utils.bundle.getString("invalidSignInResponse"));
+                boolean validSign = verifyMNIResponse(mniResponse, realm,
+                    remoteEntityID, hostEntityID, hostRole,
+                    mniResponse.getDestination());
+                if (!validSign) {
+                    logError("invalidSignInResponse",
+                        LogUtil.CANNOT_INSTANTIATE_MNI_RESPONSE , null);
+                    throw new SAML2Exception(
+                       SAML2Utils.bundle.getString("invalidSignInResponse"));
+                }
+                StringBuffer mniUserId = new StringBuffer();
+                success = checkMNIResponse(mniResponse, realm, hostEntityID,
+                                           hostRole, mniUserId);
+                if (success && hostRole.equals(SAML2Constants.SP_ROLE)) {
+                   // invoke SPAdapter for termination success, SP initied SOAP
+                    postTerminationSuccess(hostEntityID, realm, request, response,
+                        mniUserId.toString(), mniRequest, mniResponse,
+                        SAML2Constants.SOAP);
+                }
+            } catch (SessionException e) {
+                debug.error(SAML2Utils.bundle.getString("invalidSSOToken"), e);
+                throw new SAML2Exception(e.toString());
             }
-            StringBuffer mniUserId = new StringBuffer();
-            success = checkMNIResponse(mniResponse, realm, hostEntityID,
-                hostRole, mniUserId);
-            if (success && hostRole.equals(SAML2Constants.SP_ROLE)) {
-                // invoke SPAdapter for termination success, SP initied SOAP
-                postTerminationSuccess(hostEntityID, realm, request, response,
-                    mniUserId.toString(), mniRequest, mniResponse, 
-                    SAML2Constants.SOAP);
-            }
-
-        } catch (SessionException e) {
-            debug.error(SAML2Utils.bundle.getString("invalidSSOToken"), e);
-            throw new SAML2Exception(e.toString());
         }
         
         if (debug.messageEnabled()) {
@@ -2146,61 +2155,63 @@ public class DoManageNameID {
             }
         }
 
-        String remoteEntityID = mniRequest.getIssuer().getValue();
-        if (remoteEntityID == null)  {
-            logError("nullRemoteEntityID", LogUtil.MISSING_ENTITY, metaAlias);
-            throw new SAML2Exception(SAML2Utils.bundle.getString(
-                "nullRemoteEntityID"));
-        }
+        if (mniRequest != null) {
+            String remoteEntityID = mniRequest.getIssuer().getValue();
+            if (remoteEntityID == null)  {
+               logError("nullRemoteEntityID", LogUtil.MISSING_ENTITY, metaAlias);
+               throw new SAML2Exception(SAML2Utils.bundle.getString(
+                    "nullRemoteEntityID"));
+            }
 
-        String realm = SAML2MetaUtils.getRealmByMetaAlias(metaAlias);
-        String hostEntityID = metaManager.getEntityByMetaAlias(metaAlias);
-        String hostEntityRole = SAML2Utils.getHostEntityRole(paramsMap);
-        if (debug.messageEnabled()) {
-            debug.message("DoManageNameID.processPOSTRequest: " +
-                "Meta Alias is : "+ metaAlias);
-            debug.message("DoManageNameID.processPOSTRequest: " +
-                "Host EntityID is : " + hostEntityID);
-            debug.message("DoManageNameID.processPOSTRequest: " +
-                "Remote EntityID is : " + remoteEntityID);
-        }
+            String realm = SAML2MetaUtils.getRealmByMetaAlias(metaAlias);
+            String hostEntityID = metaManager.getEntityByMetaAlias(metaAlias);
+            String hostEntityRole = SAML2Utils.getHostEntityRole(paramsMap);
+            if (debug.messageEnabled()) {
+                debug.message("DoManageNameID.processPOSTRequest: " +
+                    "Meta Alias is : "+ metaAlias);
+                debug.message("DoManageNameID.processPOSTRequest: " +
+                    "Host EntityID is : " + hostEntityID);
+                debug.message("DoManageNameID.processPOSTRequest: " +
+                    "Remote EntityID is : " + remoteEntityID);
+            }
             
-        String dest = mniRequest.getDestination();     
-        boolean valid = verifyMNIRequest(mniRequest, realm, remoteEntityID, 
-            hostEntityID, hostEntityRole, dest);
-        if (!valid)  {
-            logError("invalidSignInRequest", 
-                LogUtil.MNI_REQUEST_INVALID_SIGNATURE, metaAlias);
-            throw new SAML2Exception(SAML2Utils.bundle.getString(
+            String dest = mniRequest.getDestination();
+            boolean valid = verifyMNIRequest(mniRequest, realm, remoteEntityID,
+                hostEntityID, hostEntityRole, dest);
+            if (!valid)  {
+                logError("invalidSignInRequest",
+                    LogUtil.MNI_REQUEST_INVALID_SIGNATURE, metaAlias);
+                throw new SAML2Exception(SAML2Utils.bundle.getString(
                 "invalidSignInRequest"));
-        }
-        ManageNameIDServiceElement mniService = getMNIServiceElement(realm,
-            remoteEntityID, hostEntityRole, SAML2Constants.HTTP_POST);
-        String mniURL = mniService.getResponseLocation();
-        if (mniURL == null){
-            mniURL = mniService.getLocation();
-        }
+            }
+            ManageNameIDServiceElement mniService = getMNIServiceElement(realm,
+                remoteEntityID, hostEntityRole, SAML2Constants.HTTP_POST);
+            String mniURL = mniService.getResponseLocation();
+            if (mniURL == null){
+                mniURL = mniService.getLocation();
+            }
 
-        ///common for post, redirect, soap
-        ManageNameIDResponse mniResponse = processManageNameIDRequest(
-            mniRequest, metaAlias, remoteEntityID,paramsMap, null,
-            SAML2Constants.HTTP_POST, request, response);
+            ///common for post, redirect, soap
+            ManageNameIDResponse mniResponse = processManageNameIDRequest(
+                mniRequest, metaAlias, remoteEntityID,paramsMap, null,
+                SAML2Constants.HTTP_POST, request, response);
         
-        signMNIResponse(mniResponse, realm, hostEntityID, hostEntityRole,
-            remoteEntityID);
+            signMNIResponse(mniResponse, realm, hostEntityID, hostEntityRole,
+                remoteEntityID);
 
-        //send MNI Response by POST
-        String mniRespString = mniResponse.toXMLString(true, true);
-        String encMsg  = SAML2Utils.encodeForPOST(mniRespString);
+            //send MNI Response by POST
+            String mniRespString = mniResponse.toXMLString(true, true);
+            String encMsg  = SAML2Utils.encodeForPOST(mniRespString);
 
-        String relayState = request.getParameter(SAML2Constants.RELAY_STATE);
+            String relayState = request.getParameter(SAML2Constants.RELAY_STATE);
 
-        try {
-            SAML2Utils.postToTarget(response, "SAMLResponse", encMsg,
-                "RelayState", relayState, mniURL);
-        } catch (Exception e) {
-            debug.message("DoManageNameID.processPOSTRequest:", e);
-            throw new SAML2Exception("Error posting to target");
+            try {
+                SAML2Utils.postToTarget(response, "SAMLResponse", encMsg,
+                    "RelayState", relayState, mniURL);
+            } catch (Exception e) {
+                debug.message("DoManageNameID.processPOSTRequest:", e);
+                throw new SAML2Exception("Error posting to target");
+            }
         }
 
         return;
@@ -2247,7 +2258,10 @@ public class DoManageNameID {
             }
         }
 
-        String respStr = resp.toXMLString();
+        String respStr = null;
+        if (resp != null) {
+            respStr = resp.toXMLString();
+        }
         if (debug.messageEnabled()) {
             debug.message("DoManageNameID.getMNIResponseFromPost: " + respStr);
         }

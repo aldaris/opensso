@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SPSingleLogout.java,v 1.21 2008-11-10 22:57:03 veiming Exp $
+ * $Id: SPSingleLogout.java,v 1.22 2009-04-01 17:47:15 madan_ranganath Exp $
  *
  */
 
@@ -459,17 +459,26 @@ public class SPSingleLogout {
         String binding = SAML2Constants.HTTP_REDIRECT;
 	if (rmethod.equals("POST")) {
             binding = SAML2Constants.HTTP_POST;
-	    logoutRes = LogoutUtil.getLogoutResponseFromPost(samlResponse,
+	        logoutRes = LogoutUtil.getLogoutResponseFromPost(samlResponse,
                 response);
-	} else if (rmethod.equals("GET")) {
-            String decodedStr = SAML2Utils.decodeFromRedirect(samlResponse);
-            if (decodedStr == null) {
-                throw new SAML2Exception(SAML2Utils.bundle.getString(
+	    } else if (rmethod.equals("GET")) {
+                String decodedStr = SAML2Utils.decodeFromRedirect(samlResponse);
+                if (decodedStr == null) {
+                    throw new SAML2Exception(SAML2Utils.bundle.getString(
                     "nullDecodedStrFromSamlResponse"));
+                }
+                logoutRes = 
+                    ProtocolFactory.getInstance().createLogoutResponse(decodedStr);
+	    }
+
+        if (logoutRes == null) {
+            if (debug.messageEnabled()) {
+                debug.message("SSingleLogout:processLogoutResponse: logoutRes " +
+                       "is null");
             }
-            logoutRes = 
-                ProtocolFactory.getInstance().createLogoutResponse(decodedStr);
-	}
+            return null;
+        }
+
         String metaAlias =
                 SAML2MetaUtils.getMetaAliasByUri(request.getRequestURI()) ;
         String realm = SAML2Utils.
@@ -667,6 +676,15 @@ public class SPSingleLogout {
             logoutReq = 
                 ProtocolFactory.getInstance().createLogoutRequest(decodedStr);
         }
+
+        if (logoutReq == null) {
+            if (debug.messageEnabled()) {
+                debug.message("SPSingleLogout:processLogoutRequest: logoutReq " +
+                       "is null");
+            }
+            return;
+        }
+    
         String metaAlias =
             SAML2MetaUtils.getMetaAliasByUri(request.getRequestURI()) ;
         String realm = 

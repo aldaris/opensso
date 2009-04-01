@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IDPSSOUtil.java,v 1.45 2009-03-13 23:50:58 weisun2 Exp $
+ * $Id: IDPSSOUtil.java,v 1.46 2009-04-01 17:47:14 madan_ranganath Exp $
  *
  */
 
@@ -2463,6 +2463,9 @@ public class IDPSSOUtil {
            if (idpEntityCfg != null) {
                idpConfigAttrsMap = SAML2MetaUtils.getAttributes(idpEntityCfg);
            }
+           if ((idpConfigAttrsMap == null) || (idpConfigAttrsMap.size() == 0)) {
+               return null;
+           }
            List idpCOTList =
                (List)idpConfigAttrsMap.get(SAML2Constants.COT_LIST);
            if ((idpCOTList == null) || (idpCOTList.size() == 0)) {
@@ -2475,6 +2478,9 @@ public class IDPSSOUtil {
            Map spConfigAttrsMap=null;
            if (spEntityCfg != null) {
                spConfigAttrsMap = SAML2MetaUtils.getAttributes(spEntityCfg);
+           }
+           if ((spConfigAttrsMap == null) || (spConfigAttrsMap.size() == 0)) {
+               return null;
            }
            List spCOTList = (List)spConfigAttrsMap.get(SAML2Constants.COT_LIST);
            if ((spCOTList == null) || (spCOTList.size() == 0)) {
