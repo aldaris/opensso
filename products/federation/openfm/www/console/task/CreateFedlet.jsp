@@ -22,7 +22,7 @@
    your own identifying information:
    "Portions Copyrighted [year] [name of copyright owner]"
 
-   $Id: CreateFedlet.jsp,v 1.9 2009-01-09 17:42:56 veiming Exp $
+   $Id: CreateFedlet.jsp,v 1.10 2009-04-02 21:02:55 asyhuang Exp $
 
 --%>
 
@@ -164,8 +164,7 @@ var msgMissingAttrMappingValues = "<cc:text name="txtMissingAttrValues" defaultV
     btn1.onclick = submitPage;
     var btn2 = frm.elements['CreateFedlet.button2'];
     btn2.onclick = cancelOp;
-    var ajaxObj = getXmlHttpRequestObject();
-    var selectOptionCache;
+    var ajaxObj = getXmlHttpRequestObject(); 
     var userLocale = "<% viewBean.getUserLocale().toString(); %>";
 
     function submitPage() {
@@ -317,18 +316,6 @@ var msgMissingAttrMappingValues = "<cc:text name="txtMissingAttrValues" defaultV
             addPropertyRow(name, assertn);
             frm.elements['CreateFedlet.tfAttrMappingName'].value = '';
             frm.elements['CreateFedlet.tfAttrMappingAssertion'].value = '';
-            var userAttrs = frm.elements['CreateFedlet.menuUserAttributes'];
-            if (userAttrs.options[0].values != '') {
-                var cache = new Array();
-                for (var i = 0; i < userAttrs.options.length; i++) {
-                    cache[i] = userAttrs.options[i];
-                }
-                userAttrs.options[0] = selectOptionCache;
-                for (var i = 0; i < cache.length; i++) {
-                    userAttrs.options[i+1] = cache[i];
-                }
-            }
-            userAttrs.selectedIndex = 0;
         }
     }
 
@@ -348,7 +335,7 @@ var msgMissingAttrMappingValues = "<cc:text name="txtMissingAttrValues" defaultV
         var textnode2 = document.createTextNode(name);
         cb.setAttribute("type", "checkbox");
         cb.setAttribute("value", assertn + "=" + name);
-        cb.setAttribute("onclick", "toggleTblButtonState('CreateFedlet', 'CreateFedlet.tblattrmapping', 'tblButton', 'CreateFedlet.deleteAttrMappingBtn', this)");
+        cb.onclick = function() {toggleTblButtonState('CreateFedlet', 'CreateFedlet.tblattrmapping', 'tblButton', 'CreateFedlet.deleteAttrMappingBtn', this);};
         cell1.appendChild(cb);
         cell2.appendChild(textnode1);
         cell3.appendChild(textnode2);
@@ -384,10 +371,6 @@ var msgMissingAttrMappingValues = "<cc:text name="txtMissingAttrValues" defaultV
     }
 
     function userAttrSelect(menu) {
-        if (menu.options[0].value == '') {
-            selectOptionCache = menu.options[0];
-            menu.options[0] = null;
-        }
         frm.elements['CreateFedlet.tfAttrMappingName'].value = menu.value;
     }
 
