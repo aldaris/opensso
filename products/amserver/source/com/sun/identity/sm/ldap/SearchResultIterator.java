@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SearchResultIterator.java,v 1.1 2009-04-02 19:41:01 veiming Exp $
+ * $Id: SearchResultIterator.java,v 1.2 2009-04-02 20:22:43 veiming Exp $
  */
 
 package com.sun.identity.sm.ldap;
@@ -34,7 +34,7 @@ import com.sun.identity.shared.ldap.LDAPAttributeSet;
 import com.sun.identity.shared.ldap.LDAPEntry;
 import com.sun.identity.shared.ldap.LDAPException;
 import com.sun.identity.shared.ldap.LDAPSearchResults;
-import com.sun.identity.sm.SMDataEntry;
+import com.sun.identity.sm.SMSDataEntry;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
