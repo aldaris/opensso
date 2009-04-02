@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: RequestContext.java,v 1.10 2008-10-14 04:20:12 veiming Exp $
+ * $Id: RequestContext.java,v 1.11 2009-04-02 01:16:07 veiming Exp $
  *
  */
 
@@ -254,7 +254,8 @@ public class RequestContext {
         int skip = -1;
         if (option.equals(CLIConstants.ARGUMENT_DEBUG) ||
             option.equals(CLIConstants.ARGUMENT_VERBOSE) ||
-            option.equals(CLIConstants.ARGUMENT_NOLOG)
+            option.equals(CLIConstants.ARGUMENT_NOLOG) ||
+            option.equals(CLIConstants.ARGUMENT_IGNORE_VERSION)
         ) {
             skip = 0;
         } else if (option.equals(CLIConstants.ARGUMENT_LOCALE)) {
@@ -267,7 +268,8 @@ public class RequestContext {
         int skip = -1;
         if (option.equals(CLIConstants.SHORT_ARGUMENT_DEBUG) ||
             option.equals(CLIConstants.SHORT_ARGUMENT_VERBOSE) ||
-            option.equals(CLIConstants.SHORT_ARGUMENT_NOLOG)
+            option.equals(CLIConstants.SHORT_ARGUMENT_NOLOG) ||
+            option.equals(CLIConstants.SHORT_ARGUMENT_IGNORE_VERSION)
         ) {
             skip = 0;
         } else if (option.equals(CLIConstants.SHORT_ARGUMENT_LOCALE)) {

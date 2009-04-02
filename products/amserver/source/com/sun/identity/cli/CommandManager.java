@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CommandManager.java,v 1.33 2008-12-18 22:15:16 bigfatrat Exp $
+ * $Id: CommandManager.java,v 1.34 2009-04-02 01:16:07 veiming Exp $
  *
  */
 
@@ -128,7 +128,7 @@ public class CommandManager {
                 System.exit(1);
             }
 
-            if (bBootstrapped) {
+            if (bBootstrapped && !noVersionCheck(argv)) {
                 if (VersionCheck.isVersionValid() == 1) {
                     System.exit(1);
                 }
@@ -140,6 +140,19 @@ public class CommandManager {
             Crypt.checkCaller();
         }
         new CommandManager(argv);
+    }
+
+    private static boolean noVersionCheck(String[] argv) {
+        String longParam = CLIConstants.PREFIX_ARGUMENT_LONG +
+            CLIConstants.ARGUMENT_IGNORE_VERSION;
+        String shortParam = CLIConstants.PREFIX_ARGUMENT_SHORT +
+            CLIConstants.SHORT_ARGUMENT_IGNORE_VERSION;
+        for (int i = 0; i < argv.length; i++) {
+            if (argv[i].equals(longParam) || argv[i].equals(shortParam)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

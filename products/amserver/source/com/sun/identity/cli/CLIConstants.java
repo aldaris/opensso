@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: CLIConstants.java,v 1.11 2008-10-21 03:14:31 veiming Exp $
+ * $Id: CLIConstants.java,v 1.12 2009-04-02 01:16:07 veiming Exp $
  *
  */
 
@@ -300,4 +300,14 @@ public interface CLIConstants {
      * Import configuration data sub command name.
      */
     String CMD_NAME_IMPORT_SVC_CONFIG = "import_svc_cfg";
+
+    /**
+     * Name of ignore version check argument/option.
+     */
+    String ARGUMENT_IGNORE_VERSION = "noversioncheck";
+
+    /**
+     * Short name of ignore version check argument/option.
+     */
+    String SHORT_ARGUMENT_IGNORE_VERSION = "O";
 }
