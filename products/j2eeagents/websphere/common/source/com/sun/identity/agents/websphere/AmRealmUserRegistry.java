@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AmRealmUserRegistry.java,v 1.4 2009-01-22 21:00:41 leiming Exp $
+ * $Id: AmRealmUserRegistry.java,v 1.5 2009-04-02 00:02:48 leiming Exp $
  *
  */
 
@@ -461,7 +461,7 @@ public class AmRealmUserRegistry extends AgentBase
         IApplicationSSOTokenProvider provider =
                 cf.newApplicationSSOTokenProvider();
         
-        appSSOToken = provider.getApplicationSSOToken();
+        appSSOToken = provider.getApplicationSSOToken(true);
     }
     
     private SSOToken getAppSSOToken() throws AgentException {

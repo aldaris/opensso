@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IApplicationSSOTokenProvider.java,v 1.2 2008-06-25 05:51:39 qcheng Exp $
+ * $Id: IApplicationSSOTokenProvider.java,v 1.3 2009-04-02 00:02:11 leiming Exp $
  *
  */
 
@@ -37,7 +37,8 @@ import com.sun.identity.agents.arch.AgentException;
 public interface IApplicationSSOTokenProvider {
     public abstract void initialize();
 
-    public abstract SSOToken getApplicationSSOToken() throws AgentException;
+    public abstract SSOToken getApplicationSSOToken(boolean addHook)
+            throws AgentException;
     
     public static final String MODULE_APPLICATION = "Application";
 }

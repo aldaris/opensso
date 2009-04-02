@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AgentConfiguration.java,v 1.38 2009-03-26 18:29:23 ww203982 Exp $
+ * $Id: AgentConfiguration.java,v 1.39 2009-04-02 00:02:11 leiming Exp $
  *
  */
 
@@ -568,13 +568,13 @@ public class AgentConfiguration implements
         IApplicationSSOTokenProvider provider =  
             cf.newApplicationSSOTokenProvider();
         
-        _appSSOToken = provider.getApplicationSSOToken();
+        _appSSOToken = provider.getApplicationSSOToken(true);
         if (isLogMessageEnabled()) {
             logMessage("AgentConfiguration: appSSOToken =" + _appSSOToken);
         }
     }
     
-    public static SSOToken getAppSSOToken() throws AgentException {
+    public static synchronized SSOToken getAppSSOToken() throws AgentException {
         if (_appSSOToken != null) {
             try {
                // check if token is still valid with the session server.

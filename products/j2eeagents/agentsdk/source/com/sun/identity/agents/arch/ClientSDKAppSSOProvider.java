@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ClientSDKAppSSOProvider.java,v 1.2 2008-06-25 05:51:35 qcheng Exp $
+ * $Id: ClientSDKAppSSOProvider.java,v 1.3 2009-04-02 00:02:11 leiming Exp $
  *
  */
 
@@ -30,7 +30,8 @@ package com.sun.identity.agents.arch;
 
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.agents.arch.AgentException;
-import com.sun.identity.agents.arch.BaseModule;
+import com.sun.identity.agents.common.CommonFactory;
+import com.sun.identity.agents.common.IApplicationSSOTokenProvider;
 import com.sun.identity.security.AppSSOTokenProvider;
 import com.sun.identity.shared.debug.Debug;
 
@@ -65,14 +66,18 @@ public class ClientSDKAppSSOProvider implements AppSSOTokenProvider {
     public SSOToken getAppSSOToken() {               
         SSOToken result = null;  
         try {
-            result = AgentConfiguration.getAppSSOToken();  
+            CommonFactory cf = new CommonFactory(BaseModule.getModule());
+            IApplicationSSOTokenProvider provider =
+                    cf.newApplicationSSOTokenProvider();
+
+            result = provider.getApplicationSSOToken(false);
             if (getDebug().messageEnabled()) {
-                getDebug().message("ClientSDKAppSSOProvider.getAppSSOToken:"
-                        + " got SSO Token =" + result);
+                getDebug().message("ClientSDKAppSSOProvider.getAppSSOToken:" +
+                        " got SSO Token =" + result);
             }
         } catch (AgentException aex) {
-            getDebug().error("ClientSDKAppSSOProvider.getAppSSOToken: Unable"
-                    + " to create AppSSOToken", aex);  
+            getDebug().error("ClientSDKAppSSOProvider.getAppSSOToken: Unable" +
+                    " to create AppSSOToken", aex);
         }
         return result;
     }

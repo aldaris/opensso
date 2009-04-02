@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationSSOTokenProvider.java,v 1.3 2008-06-25 05:51:39 qcheng Exp $
+ * $Id: ApplicationSSOTokenProvider.java,v 1.4 2009-04-02 00:02:11 leiming Exp $
  *
  */
 
@@ -55,7 +55,8 @@ public class ApplicationSSOTokenProvider extends SurrogateBase
         //Nothing to initialize       
     }
     
-    public SSOToken getApplicationSSOToken() throws AgentException {
+    public SSOToken getApplicationSSOToken(boolean addHook)
+            throws AgentException {
         SSOToken result = null;
         try {         
             AuthContext authContext = 
@@ -82,13 +83,16 @@ public class ApplicationSSOTokenProvider extends SurrogateBase
                     "SSO Token", ex);
         }
 
-        if (result != null) {
-            if (isLogMessageEnabled()) {
-                logMessage("ApplicationSSOTokenProvider." +
+        if (addHook) {
+            if (result != null) {
+                if (isLogMessageEnabled()) {
+                    logMessage(
+                        "ApplicationSSOTokenProvider." +
                         "getApplicationSSOToken(): Shutdown hook added for " +
                         "Application SSO token.");
+                }
+                addShutDownHookForApplicationSSOToken(result);
             }
-            addShutDownHookForApplicationSSOToken(result);        
         }
         return result;
     }
@@ -135,8 +139,11 @@ public class ApplicationSSOTokenProvider extends SurrogateBase
         
             public void run() {
                 try {
-                    SSOTokenManager.getInstance().destroyToken(
+                    if (SSOTokenManager.getInstance().isValidToken(
+                            getAppSSOToken())) {
+                        SSOTokenManager.getInstance().destroyToken(
                             getAppSSOToken());
+                    }
                 } catch (Exception ex) {
                     logError("ApplicationSSOTokenShutdownHook.run() : failed " +
                     "with exception ",ex);
