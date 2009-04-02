@@ -171,6 +171,8 @@
 ./WEB-INF/classes/amAuthDataStore_ko.properties
 ./WEB-INF/classes/amAuthDataStore_zh.properties
 ./WEB-INF/classes/amAuthDataStore_zh_TW.properties
+./WEB-INF/classes/amAuthHOTP.properties
+./WEB-INF/classes/amAuthHOTP.xml
 ./WEB-INF/classes/amAuthHTTPBasic.properties
 ./WEB-INF/classes/amAuthHTTPBasic_de.properties
 ./WEB-INF/classes/amAuthHTTPBasic_en.properties

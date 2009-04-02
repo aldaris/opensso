@@ -193,6 +193,8 @@
 ./WEB-INF/classes/amAuthDataStore_ko.properties
 ./WEB-INF/classes/amAuthDataStore_zh.properties
 ./WEB-INF/classes/amAuthDataStore_zh_TW.properties
+./WEB-INF/classes/amAuthHOTP.properties
+./WEB-INF/classes/amAuthHOTP.xml
 ./WEB-INF/classes/amAuthHTTPBasic.properties
 ./WEB-INF/classes/amAuthHTTPBasic.xml
 ./WEB-INF/classes/amAuthHTTPBasic_de.properties
@@ -1314,8 +1316,8 @@
 ./WEB-INF/template/opends/config/schema/03-rfc3712.ldif
 ./WEB-INF/template/opends/config/schema/03-uddiv3.ldif
 ./WEB-INF/template/opends/config/schema/04-rfc2307bis.ldif
-./WEB-INF/template/opends/config/upgrade/config.ldif.4517
-./WEB-INF/template/opends/config/upgrade/schema.ldif.4517
+./WEB-INF/template/opends/config/upgrade/config.ldif.5097
+./WEB-INF/template/opends/config/upgrade/schema.ldif.5097
 ./WEB-INF/template/opends/config/admin-backend.ldif
 ./WEB-INF/template/opends/config/config.ldif
 ./WEB-INF/template/opends/config/famsuffix.ldif
