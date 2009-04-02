@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AMTuneFAMBase.java,v 1.8 2008-09-18 17:13:29 kanduls Exp $
+ * $Id: AMTuneFAMBase.java,v 1.9 2009-04-02 06:19:35 kanduls Exp $
  */
 
 package com.sun.identity.tune.base;
@@ -34,9 +34,11 @@ import com.sun.identity.tune.config.AMTuneConfigInfo;
 import com.sun.identity.tune.intr.TuneFAM;
 import com.sun.identity.tune.util.AMTuneUtil;
 import java.io.File;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -45,6 +47,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLException;
 
 /**
  * Base class for tuning OpenSSO.
@@ -270,25 +273,46 @@ public abstract class AMTuneFAMBase extends TuneFAM {
     }
 
     protected boolean isFAMServerUp() {
-        boolean isUp = true;
+        boolean isUp = false;
         try {
             URL u = new URL(configInfo.getFAMServerUrl());
+            int responseCode = 0;
             pLogger.log(Level.INFO, "isServerUp", 
-                    "Connect OpenSSO URL : " + u.toString());
+                    "Connecting to OpenSSO URL : " + u.toString());
             URLConnection  famConn = u.openConnection();
             if (u.getProtocol().equalsIgnoreCase("http")){
                 HttpURLConnection testConnect = (HttpURLConnection)famConn;
                 testConnect.connect();
+                responseCode = testConnect.getResponseCode();
             } else if (u.getProtocol().equalsIgnoreCase("https")) {
                 HttpsURLConnection testConnect = (HttpsURLConnection)famConn;
                 testConnect.connect();
+                responseCode = testConnect.getResponseCode();
             }
+            if (responseCode == HttpURLConnection.HTTP_NOT_FOUND ||
+                    responseCode == HttpsURLConnection.HTTP_NOT_FOUND) {
+                mWriter.writelnLocaleMsg("pt-error-tuning-msg");
+                mWriter.writeLocaleMsg("pt-fam-server-unreachable-error-msg");
+                return isUp;
+            }
+            isUp = true;
+        } catch (UnknownHostException uhx) {
+            pLogger.logException("isFAMServerUp", uhx);
+            mWriter.writelnLocaleMsg("pt-error-tuning-msg");
+            mWriter.writeLocaleMsg("pt-fam-server-unreachable-error-msg");
+        } catch (ConnectException cone) {
+            pLogger.logException("isFAMServerUp", cone);
+            mWriter.writelnLocaleMsg("pt-error-tuning-msg");
+            mWriter.writeLocaleMsg("pt-fam-server-down-msg");
+        } catch (SSLException ssle) {
+            pLogger.logException("isFAMServerUp", ssle);
+            mWriter.writelnLocaleMsg("pt-error-tuning-msg");
+            mWriter.writeLocaleMsg("pt-fam-server-ssl-error-msg");
         } catch (Exception ex) {
-            pLogger.log(Level.SEVERE, "isServerUp", "OpenSSO server is down");
-            isUp = false;
-        }   
+            pLogger.logException("isFAMServerUp", ex);
+            mWriter.writelnLocaleMsg("pt-error-tuning-msg");
+            mWriter.writeLocaleMsg("pt-fam-server-down-msg");
+        }
         return isUp;
     }
-    
-    
 }

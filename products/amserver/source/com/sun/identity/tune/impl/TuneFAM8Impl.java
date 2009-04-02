@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: TuneFAM8Impl.java,v 1.9 2008-09-26 05:41:37 kanduls Exp $
+ * $Id: TuneFAM8Impl.java,v 1.10 2009-04-02 06:16:34 kanduls Exp $
  */
 
 package com.sun.identity.tune.impl;
@@ -78,8 +78,6 @@ public class TuneFAM8Impl extends AMTuneFAMBase {
             mWriter.writelnLocaleMsg("pt-init");
             mWriter.writeln(LINE_SEP);
             if (!isFAMServerUp()) {
-                mWriter.writelnLocaleMsg("pt-error-tuning-msg");
-                mWriter.writeLocaleMsg("pt-fam-server-down-msg");
                 return;
             }
             tuneFAMServerConfig();
