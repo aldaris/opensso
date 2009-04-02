@@ -6,6 +6,7 @@ import com.sun.identity.entitlement.EntitlementSubject;
 import com.sun.identity.entitlement.OrSubject;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.ResourceAttributes;
+import com.sun.identity.entitlement.opensso.OpenSSOPrivilege;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -89,7 +90,7 @@ public class PrivilegeBean implements Serializable {
         Set<ResourceAttributes> attrs = null;
 
 
-        Privilege privilege = new Privilege(
+        Privilege privilege = new OpenSSOPrivilege(
                 name,
                 entitlements.iterator().next(), //TODO: use scalar entitlement
                 orSubject,

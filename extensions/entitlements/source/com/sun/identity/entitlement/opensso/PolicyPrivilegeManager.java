@@ -22,15 +22,19 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyPrivilegeManager.java,v 1.2 2009-04-01 00:21:29 dillidorai Exp $
+ * $Id: PolicyPrivilegeManager.java,v 1.1 2009-04-02 22:13:39 veiming Exp $
  */
-package com.sun.identity.policy;
+package com.sun.identity.entitlement.opensso;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.PrivilegeManager;
+import com.sun.identity.policy.Policy;
+import com.sun.identity.policy.PolicyException;
+import com.sun.identity.policy.PolicyManager;
+import com.sun.identity.entitlement.opensso.PrivilegeUtils;
 import com.sun.identity.security.AdminTokenAction;
 import java.security.AccessController;
 import java.util.Set;
@@ -42,7 +46,7 @@ import javax.security.auth.Subject;
  */
 public class PolicyPrivilegeManager extends PrivilegeManager {
 
-    PolicyManager pm;
+    private PolicyManager pm;
 
     /**
      * Creates instance of <code>PolicyPrivilegeManager</code>
@@ -62,7 +66,9 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
             //TODO: change to use ssoToken from subject
             pm = new PolicyManager(ssoToken);
         } catch (SSOException ssoe) {
+            //TOFIX
         } catch (PolicyException pe) {
+            //TOFIX
         }
     }
 
@@ -79,7 +85,9 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
             Policy policy = pm.getPolicy(privilegeName);
             privilege = PrivilegeUtils.policyToPrivilege(policy);
         } catch (PolicyException pe) {
+            //TOFIX
         } catch (SSOException ssoe) {
+            //TOFIX
         }
         return privilege;
     }
@@ -90,13 +98,16 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
      * @throws com.sun.identity.entitlement.EntitlementException if the
      * privilege could not be added
      */
+    @Override
     public void addPrivilege(Privilege privilege)
             throws EntitlementException {
         try {
             Policy policy = PrivilegeUtils.privilegeToPolicy(privilege);
             pm.addPolicy(policy);
         } catch (PolicyException pe) {
+            //TOFIX
         } catch (SSOException ssoe) {
+            //TOFIX
         }
     }
 
@@ -105,12 +116,15 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
      * @param privilegeName name of the privilege to be removed
      * @throws com.sun.identity.entitlement.EntitlementException
      */
+    @Override
     public void removePrivilege(String privilegeName)
             throws EntitlementException {
         try {
             pm.removePolicy(privilegeName);
         } catch (PolicyException pe) {
+            //TOFIX
         } catch (SSOException ssoe) {
+            //TOFIX
         }
     }
 
@@ -119,6 +133,7 @@ public class PolicyPrivilegeManager extends PrivilegeManager {
      * @param privilege the privilege to be modified
      * @throws com.sun.identity.entitlement.EntitlementException
      */
+    @Override
     public void modifyPrivilege(Privilege privilege)
             throws EntitlementException {
         try {

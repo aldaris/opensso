@@ -22,27 +22,18 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IIndexCache.java,v 1.1 2009-03-25 16:14:26 veiming Exp $
+ * $Id: PrivilegeType.java,v 1.1 2009-04-02 22:13:38 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
-
-import com.sun.identity.policy.Policy;
-import java.util.Map;
-import java.util.Set;
 
 /**
  *
  * @author dennis
  */
-public interface IIndexCache {
-    String LBL_HOST_IDX = "host";
-    String LBL_PATH_IDX = "path";
-    String LBL_PATH_PARENT_IDX = "pathparent";
-
-    void getPolicies(
-        ResourceSearchIndexes indexes,
-        Set<Policy> hits,
-        Map<String, Set<String>> misses
-    );
+public class PrivilegeType {
+    public static final PrivilegeType OPENSSO = new PrivilegeType();
+    public static final PrivilegeType UNKNOWN = new PrivilegeType();
+    private PrivilegeType() {
+    }
 }

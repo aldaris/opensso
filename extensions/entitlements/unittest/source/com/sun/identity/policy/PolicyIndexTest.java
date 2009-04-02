@@ -23,15 +23,14 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyIndexTest.java,v 1.10 2009-04-01 00:21:30 dillidorai Exp $
+ * $Id: PolicyIndexTest.java,v 1.11 2009-04-02 22:13:42 veiming Exp $
  */
 package com.sun.identity.policy;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
-import com.sun.identity.entitlement.Entitlement;
 import com.sun.identity.entitlement.EntitlementException;
-import com.sun.identity.entitlement.IPolicyDataStore;
+import com.sun.identity.entitlement.interfaces.IPolicyDataStore;
 import com.sun.identity.entitlement.PolicyDataStoreFactory;
 import com.sun.identity.entitlement.Privilege;
 import com.sun.identity.entitlement.ResourceSearchIndexes;

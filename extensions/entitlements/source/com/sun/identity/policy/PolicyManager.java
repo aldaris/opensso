@@ -22,12 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyManager.java,v 1.4 2009-03-31 01:16:12 veiming Exp $
+ * $Id: PolicyManager.java,v 1.5 2009-04-02 22:13:40 veiming Exp $
  *
  */
 
 package com.sun.identity.policy;
 
+import com.sun.identity.entitlement.opensso.PrivilegeUtils;
 import com.iplanet.am.util.SystemProperties;
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOTokenManager;
@@ -36,7 +37,7 @@ import com.sun.identity.policy.interfaces.Subject;
 import com.sun.identity.idm.IdUtils;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.entitlement.EntitlementException;
-import com.sun.identity.entitlement.IPolicyDataStore;
+import com.sun.identity.entitlement.interfaces.IPolicyDataStore;
 import com.sun.identity.entitlement.PolicyDataStoreFactory;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.shared.ldap.util.DN;

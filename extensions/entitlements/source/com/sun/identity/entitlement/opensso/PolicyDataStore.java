@@ -22,10 +22,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDataStore.java,v 1.5 2009-04-01 00:21:29 dillidorai Exp $
+ * $Id: PolicyDataStore.java,v 1.1 2009-04-02 22:13:39 veiming Exp $
  */
-package com.sun.identity.entitlement;
+package com.sun.identity.entitlement.opensso;
 
+import com.sun.identity.entitlement.EntitlementException;
+import com.sun.identity.entitlement.PolicyConfigFactory;
+import com.sun.identity.entitlement.interfaces.IPolicyDataStore;
+import com.sun.identity.entitlement.Privilege;
+import com.sun.identity.entitlement.ResourceSearchIndexes;
+import com.sun.identity.entitlement.ThreadPool;
+import com.sun.identity.entitlement.interfaces.IPolicyConfig;
 import com.sun.identity.shared.BufferedIterator;
 import java.util.Iterator;
 import java.util.Set;
@@ -36,13 +43,28 @@ import java.util.Set;
  */
 public class PolicyDataStore implements IPolicyDataStore {
 
-    private PolicyCache policyCache = new PolicyCache(
-            EntitlementService.getNumericAttributeValue(
-            EntitlementService.POLICY_CACHE_SIZE));
-    private IndexCache indexCache = new IndexCache(
-            EntitlementService.getNumericAttributeValue(
-            EntitlementService.POLICY_CACHE_SIZE));
+    private PolicyCache policyCache;
+    private IndexCache indexCache;
     private DataStore dataStore = new DataStore();
+
+    public PolicyDataStore() {
+        IPolicyConfig policyConfig = PolicyConfigFactory.getPolicyConfig();
+        policyCache = new PolicyCache(getNumeric(
+            policyConfig.getAttributeValue(IPolicyConfig.POLICY_CACHE_SIZE),
+            100000));
+        indexCache = new IndexCache(getNumeric(
+            policyConfig.getAttributeValue(IPolicyConfig.INDEX_CACHE_SIZE),
+            100000));
+    }
+
+    private static int getNumeric(String str, int defaultValue) {
+        try {
+            return Integer.parseInt(str);
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
+
 
     public void add(Privilege p)
             throws EntitlementException {
@@ -51,7 +73,7 @@ public class PolicyDataStore implements IPolicyDataStore {
 
     public void delete(Privilege p)
             throws EntitlementException {
-        String dn = DataStore.getDN(p);
+        String dn = DataStore.getDistinguishedName(p.getName());
         dataStore.delete(p.getName());
         policyCache.decache(dn);
         indexCache.clear(p.getEntitlement().getResourceSaveIndexes(), dn);
@@ -59,7 +81,7 @@ public class PolicyDataStore implements IPolicyDataStore {
 
     private void cache(Privilege p)
             throws EntitlementException {
-        String dn = DataStore.getDN(p);
+        String dn = DataStore.getDistinguishedName(p.getName());
         indexCache.cache(p.getEntitlement().getResourceSaveIndexes(), dn);
         policyCache.cache(dn, p);
     }
@@ -73,8 +95,7 @@ public class PolicyDataStore implements IPolicyDataStore {
             ResourceSearchIndexes indexes,
             boolean bSubTree)
             throws EntitlementException {
-        BufferedIterator<Privilege> iterator =
-                new BufferedIterator<Privilege>();
+        BufferedIterator iterator = new BufferedIterator();
         Set<String> setDNs = indexCache.getMatchingEntries(indexes, bSubTree);
         for (Iterator i = setDNs.iterator(); i.hasNext();) {
             String dn = (String) i.next();
@@ -93,14 +114,14 @@ public class PolicyDataStore implements IPolicyDataStore {
     public class SearchTask implements Runnable {
 
         private PolicyDataStore parent;
-        private BufferedIterator<Privilege> iterator;
+        private BufferedIterator iterator;
         private ResourceSearchIndexes indexes;
         private boolean bSubTree;
         private Set<String> excludeDNs;
 
         public SearchTask(
                 PolicyDataStore parent,
-                BufferedIterator<Privilege> iterator,
+                BufferedIterator iterator,
                 ResourceSearchIndexes indexes,
                 boolean bSubTree,
                 Set<String> excludeDNs) {

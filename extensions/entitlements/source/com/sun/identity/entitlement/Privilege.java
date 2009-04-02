@@ -22,13 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Privilege.java,v 1.4 2009-04-01 00:21:29 dillidorai Exp $
+ * $Id: Privilege.java,v 1.5 2009-04-02 22:13:38 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.shared.debug.Debug;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,7 +39,7 @@ import org.json.JSONObject;
 /**
  * Class representing entitlement privilege
  */
-public class Privilege implements Serializable {
+public abstract class Privilege implements Serializable {
     private static final long serialVersionUID = -403250971215465050L;
 
     private String name;
@@ -57,12 +56,13 @@ public class Privilege implements Serializable {
      * @param eResourceAttributes Resource1Attributes used to get additional
      * result attributes
      */
-    public Privilege(
-            String name,
-            Entitlement entitlement,
-            EntitlementSubject eSubject,
-            EntitlementCondition eCondition,
-            Set<ResourceAttributes> eResourceAttributes) {
+    protected Privilege(
+        String name,
+        Entitlement entitlement,
+        EntitlementSubject eSubject,
+        EntitlementCondition eCondition,
+        Set<ResourceAttributes> eResourceAttributes
+    ) {
         this.name = name;
         this.entitlement = entitlement;
         this.eSubject = eSubject;
@@ -107,28 +107,36 @@ public class Privilege implements Serializable {
     }
 
     /**
-     * Returns <code>true</code> if the subject is granted to an
-     * entitlement.
-     *
-     * @param subject Subject who is under evaluation.
-     * @param e Entitlement object which describes the resource name and 
-     *          actions.
-     * @return <code>true</code> if the subject is granted to an
-     *         entitlement.
-     * @throws EntitlementException if the result cannot be determined.
-     */
-    boolean hasEntitlement(Subject subject, Entitlement e)
-            throws EntitlementException {
-        return false;
-    }
-
-    /**
      * Returns entitlement defined in the privilege
      * @return entitlement defined in the privilege
      */
     public Entitlement getEntitlement() {
         return entitlement;
     }
+
+    /**
+     * //TOFIX
+     * @return
+     */
+    public PrivilegeType getType() {
+        return PrivilegeType.UNKNOWN;
+    }
+
+    public abstract String getNativePolicy();
+    
+    /**
+     * Returns <code>true</code> if the subject is granted to an
+     * entitlement.
+     *
+     * @param subject Subject who is under evaluation.
+     * @param e Entitlement object which describes the resource name and
+     *          actions.
+     * @return <code>true</code> if the subject is granted to an
+     *         entitlement.
+     * @throws EntitlementException if the result cannot be determined.
+     */
+    public abstract boolean hasEntitlement(Subject subject, Entitlement e)
+        throws EntitlementException;
 
     /**
      * Returns a list of entitlement for a given subject, resource name
@@ -143,13 +151,11 @@ public class Privilege implements Serializable {
      *         and environment.
      * @throws EntitlementException if the result cannot be determined.
      */
-    public List<Entitlement> getEntitlements(
+    public abstract List<Entitlement> getEntitlements(
             Subject subject,
             String resourceName,
             Map<String, Set<String>> environment,
-            boolean recursive) throws EntitlementException {
-        return new ArrayList<Entitlement>();
-    }
+            boolean recursive) throws EntitlementException;
 
     /**
      * Returns string representation of the object

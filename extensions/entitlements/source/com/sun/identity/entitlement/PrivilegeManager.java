@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeManager.java,v 1.3 2009-04-01 00:21:29 dillidorai Exp $
+ * $Id: PrivilegeManager.java,v 1.4 2009-04-02 22:13:38 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -33,7 +33,6 @@ import javax.security.auth.Subject;
  * Class to manage entitlement privileges: to add, remove, modify privilege
  */
 public abstract class PrivilegeManager {
-
     /**
      * Returns instance of configured <code>PrivilegeManager</code>
      * @param subject subject that would be used for the privilege management 
@@ -44,9 +43,9 @@ public abstract class PrivilegeManager {
         PrivilegeManager pm = null;
         try {
             //TODO: read the class name from configuration
-            pm = (PrivilegeManager) Class.forName(
-                    "com.sun.identity.policy.PolicyPrivilegeManager").
-                    newInstance();
+            Class clazz = Class.forName(
+                "com.sun.identity.entitlement.opensso.PolicyPrivilegeManager");
+            pm = (PrivilegeManager)clazz.newInstance();
             pm.initialize(subject);
         } catch (ClassNotFoundException cnfe) {
             //TODO: add debug

@@ -22,10 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeEvaluator.java,v 1.4 2009-03-28 06:45:28 veiming Exp $
+ * $Id: PrivilegeEvaluator.java,v 1.5 2009-04-02 22:13:38 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
+import com.sun.identity.entitlement.interfaces.IPolicyEvaluator;
+import com.sun.identity.entitlement.interfaces.IPolicyDataStore;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;

@@ -22,10 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyDataStoreFactory.java,v 1.1 2009-03-28 06:45:28 veiming Exp $
+ * $Id: PolicyDataStoreFactory.java,v 1.2 2009-04-02 22:13:38 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
+
+import com.sun.identity.entitlement.interfaces.IPolicyDataStore;
 
 /**
  * This factory returns the implementation class that implements
@@ -39,7 +41,7 @@ public final class PolicyDataStoreFactory {
     static {
         try {
             Class clazz = Class.forName(
-                "com.sun.identity.entitlement.PolicyDataStore");
+                "com.sun.identity.entitlement.opensso.PolicyDataStore");
             defaultImpl = (IPolicyDataStore)clazz.newInstance();
         } catch (ClassNotFoundException e) {
             //TODO

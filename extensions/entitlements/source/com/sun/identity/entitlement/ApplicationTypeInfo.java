@@ -22,39 +22,48 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SimulatedResult.java,v 1.2 2009-02-18 20:08:10 veiming Exp $
+ * $Id: ApplicationTypeInfo.java,v 1.1 2009-04-02 22:13:38 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
+import java.util.Set;
+
 /**
- * This class encapsulates the result of simulated entitlement privilege
- * evaluation.
+ *
+ * @author dennis
  */
-public class SimulatedResult {
-    private Entitlement entitlement;
-    private boolean isApplicable;
-    private String privilegeName;
+public class ApplicationTypeInfo {
+    private String name;
+    private Set<String> actions;
+    private String searchIndexImpl;
+    private String saveIndexImpl;
 
-    public SimulatedResult(
-        Entitlement entitlement,
-        boolean isApplicable,
-        String privilegeName
-    ) {
-        this.entitlement = entitlement;
-        this.isApplicable = isApplicable;
-        this.privilegeName = privilegeName;
+    public ApplicationTypeInfo(
+        String name,
+        Set<String> actions,
+        String saveIndexImpl,
+        String searchIndexImpl) {
+        this.name = name;
+        this.actions = actions;
+        this.saveIndexImpl = saveIndexImpl;
+        this.searchIndexImpl = searchIndexImpl;
     }
 
-    public Entitlement getEntitlement() {
-        return entitlement;
+    public Set<String> getActions() {
+        return actions;
     }
 
-    public boolean isApplicable() {
-        return isApplicable;
+    public String getName() {
+        return name;
     }
 
-    public String getPrivilegeName() {
-        return privilegeName;
+    public String getSaveIndexImpl() {
+        return saveIndexImpl;
     }
+
+    public String getSearchIndexImpl() {
+        return searchIndexImpl;
+    }
+
 }

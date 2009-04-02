@@ -22,12 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationTypeManager.java,v 1.1 2009-03-31 01:16:11 veiming Exp $
+ * $Id: ApplicationTypeManager.java,v 1.2 2009-04-02 22:13:38 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
-import com.sun.identity.entitlement.EntitlementService.ApplicationTypeInfo;
+import com.sun.identity.entitlement.interfaces.IPolicyConfig;
 import com.sun.identity.entitlement.interfaces.ISaveIndex;
 import com.sun.identity.entitlement.interfaces.ISearchIndex;
 import java.util.HashMap;
@@ -48,8 +48,8 @@ public class ApplicationTypeManager {
         new HashMap<String, ApplicationType>();
 
     static {
-        Set<ApplicationTypeInfo> info =
-            EntitlementService.getInstance().getApplicationTypes();
+        IPolicyConfig policyConfig = PolicyConfigFactory.getPolicyConfig();
+        Set<ApplicationTypeInfo> info = policyConfig.getApplicationTypes();
         for (ApplicationTypeInfo i : info) {
             addApplicationType(i);
         }

@@ -1,4 +1,4 @@
-/** 
+/**
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
  * Copyright (c) 2009 Sun Microsystems Inc. All Rights Reserved
@@ -22,31 +22,26 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStoreEntry.java,v 1.3 2009-03-25 16:14:24 veiming Exp $
+ * $Id: IPolicyConfig.java,v 1.1 2009-04-02 22:13:39 veiming Exp $
  */
 
-package com.sun.identity.entitlement;
+package com.sun.identity.entitlement.interfaces;
+
+import com.sun.identity.entitlement.ApplicationInfo;
+import com.sun.identity.entitlement.ApplicationTypeInfo;
+import java.util.Set;
 
 /**
- * This class encapsulates the index entry in data store
+ *
+ * @author dennis
  */
-public class DataStoreEntry {
-    private String name;
-    private Object object;
-    
-    public DataStoreEntry(
-        String name,
-        Object object
-    ) {
-        this.name = name;
-        this.object = object;
-    }
+public interface IPolicyConfig {
+    String POLICY_THREAD_SIZE = "threadSize";
+    String POLICY_CACHE_SIZE = "policyCacheSize";
+    String INDEX_CACHE_SIZE = "indexCacheSize";
 
-    public String getName() {
-        return name;
-    }
-
-    public Object getObject() {
-        return object;
-    }
+    Set<ApplicationInfo> getApplications(String realm);
+    Set<ApplicationTypeInfo> getApplicationTypes();
+    String getAttributeValue(String attributeName);
+    Set<String> getAttributeValues(String attributeName);
 }

@@ -22,15 +22,13 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: Debug.java,v 1.1 2009-02-24 22:47:53 veiming Exp $
+ * $Id: Debug.java,v 1.2 2009-04-02 22:13:40 veiming Exp $
  *
  */
 
 package com.sun.identity.shared.debug;
 
 import com.sun.identity.shared.configuration.SystemPropertiesManager;
-import com.sun.identity.shared.debug.IDebug;
-import com.sun.identity.shared.debug.IDebugProvider;
 import com.sun.identity.shared.debug.impl.DebugProviderImpl;
 import java.util.Collection;
 import java.util.HashMap;

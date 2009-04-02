@@ -22,9 +22,9 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PrivilegeUtils.java,v 1.4 2009-04-01 00:21:29 dillidorai Exp $
+ * $Id: PrivilegeUtils.java,v 1.1 2009-04-02 22:13:39 veiming Exp $
  */
-package com.sun.identity.policy;
+package com.sun.identity.entitlement.opensso;
 
 import com.iplanet.sso.SSOToken;
 import com.iplanet.sso.SSOException;
@@ -49,11 +49,22 @@ import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.IdType;
 import com.sun.identity.idm.IdRepoException;
 import com.sun.identity.idm.IdUtils;
+import com.sun.identity.policy.ActionSchema;
+import com.sun.identity.policy.NameNotFoundException;
+import com.sun.identity.policy.Policy;
+import com.sun.identity.policy.PolicyConfig;
+import com.sun.identity.policy.PolicyESubject;
+import com.sun.identity.policy.PolicyException;
+import com.sun.identity.policy.Rule;
+import com.sun.identity.policy.ServiceType;
+import com.sun.identity.policy.ServiceTypeManager;
 import com.sun.identity.policy.interfaces.Condition;
 import com.sun.identity.policy.interfaces.ResponseProvider;
 import com.sun.identity.policy.interfaces.Subject;
 import com.sun.identity.policy.plugins.IDRepoResponseProvider;
+import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.debug.Debug;
+import java.security.AccessController;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -71,6 +82,17 @@ import java.util.Set;
 public class PrivilegeUtils {
 
     private static Random random = new Random();
+    private static ServiceTypeManager svcTypeManager;
+
+    static {
+        try {
+            SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+            svcTypeManager = new ServiceTypeManager(adminToken);
+        } catch (SSOException ex) {
+            //TOFIX
+        }
+    }
 
     /**
      * Constructs PrivilegeUtils
@@ -149,8 +171,8 @@ public class PrivilegeUtils {
         }
         Set<ResourceAttributes> resourceAttributesSet = nrpsToResourceAttributes(nrps);
 
-        Privilege privilege = new Privilege(policyName, entitlement, eSubject,
-                eCondition, resourceAttributesSet);
+        Privilege privilege = new OpenSSOPrivilege(policyName, entitlement,
+            eSubject, eCondition, resourceAttributesSet);
         return privilege;
     }
 
@@ -210,61 +232,70 @@ public class PrivilegeUtils {
         return es;
     }
 
-    private static EntitlementSubject mapAMIdentitySubjectToESubject(Object[] nqSubject) {
-        Set esSet = new HashSet();
-        EntitlementSubject es = null;
+    private static EntitlementSubject mapAMIdentitySubjectToESubject(
+        Object[] nqSubject) {
         String subjectName = (String) nqSubject[0];
         Subject subject = (Subject) nqSubject[1];
-        Set values = subject.getValues();
+        Set<String> values = subject.getValues();
+
         if (values == null || values.isEmpty()) {
-            es = new UserSubject(null, subjectName);
+            EntitlementSubject es = new UserSubject(null, subjectName);
             Boolean exclusive = (Boolean) nqSubject[2];
-            if (exclusive) {
-                es = new NotSubject(es, subjectName);
-            }
-            return es;
+            return (exclusive) ? new NotSubject(es, subjectName) : es;
         }
-        for (Object valueObj : values) {
-            String value = (String) valueObj;
-            AMIdentity amIdentity = null;
-            SSOToken ssoToken = null;
-            amIdentity = null;
-            IdType idType = null;
-            try {
-                ssoToken = ServiceTypeManager.getSSOToken();
-                amIdentity = IdUtils.getIdentity(ssoToken, value);
-                if (amIdentity != null) {
-                    idType = amIdentity.getType();
-                }
-            } catch (SSOException ssoe) {
-            } catch (IdRepoException idre) {
-            }
-            es = null;
-            if (IdType.USER.equals(idType)) {
-                es = new UserSubject(value, subjectName);
-            } else if (IdType.GROUP.equals(idType)) {
-                es = new GroupSubject(value, subjectName);
-            } else if (IdType.ROLE.equals(idType)) {
-                es = new RoleSubject(value, subjectName);
-            } else {
-                Debug debug = Debug.getInstance("Entitlement");
-                debug.error("PrivilegeUtils.MapAMIdentitySubjectToESubject(); " + " unsupported IDType=" + idType);
-            }
-            if (es != null) {
-                esSet.add(es);
-            }
-        }
-        es = null;
+
+        Set<EntitlementSubject> esSet = getEntitlementSubjects(
+            subjectName, values);
+        EntitlementSubject es = null;
+        
         if (esSet.size() == 1) {
             es = (EntitlementSubject) esSet.iterator().next();
         } else if (esSet.size() > 1) {
             es = new OrSubject(esSet, subjectName);
+        } else {
+            es = new UserSubject(null, subjectName);
         }
+
         Boolean exclusive = (Boolean) nqSubject[2];
-        if (exclusive) {
-            es = new NotSubject(es, subjectName);
+        return (exclusive) ? new NotSubject(es, subjectName) : es;
+    }
+
+    private static Set<EntitlementSubject> getEntitlementSubjects(
+        String subjectName,
+        Set<String> values
+    ) {
+        Set<EntitlementSubject> esSet = new HashSet<EntitlementSubject>();
+        SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
+            AdminTokenAction.getInstance());
+
+        for (String value : values) {
+            IdType idType = null;
+            try {
+                AMIdentity amIdentity = IdUtils.getIdentity(adminToken, value);
+                if (amIdentity != null) {
+                    idType = amIdentity.getType();
+                    EntitlementSubject es = null;
+                    if (IdType.USER.equals(idType)) {
+                        es = new UserSubject(value, subjectName);
+                    } else if (IdType.GROUP.equals(idType)) {
+                        es = new GroupSubject(value, subjectName);
+                    } else if (IdType.ROLE.equals(idType)) {
+                        es = new RoleSubject(value, subjectName);
+                    } else {
+                        Debug debug = Debug.getInstance("Entitlement");
+                        debug.error(
+                            "PrivilegeUtils.getEntitlementSubjects: " +
+                                "unsupported IDType = " + idType);
+                    }
+                    if (es != null) {
+                        esSet.add(es);
+                    }
+                }
+            } catch (IdRepoException e) {
+                //TOFIX
+            }
         }
-        return es;
+        return esSet;
     }
 
     private static EntitlementCondition nConditionsToECondition(
@@ -328,9 +359,12 @@ public class PrivilegeUtils {
                 (com.sun.identity.policy.plugins.IPCondition) nCondition[1];
         Map props = pipc.getProperties();
         IPCondition ipc = new IPCondition(
-                getCpValue(props, pipc.DNS_NAME),
-                getCpValue(props, pipc.START_IP),
-                getCpValue(props, pipc.END_IP));
+            getCpValue(props, 
+                com.sun.identity.policy.plugins.IPCondition.DNS_NAME),
+            getCpValue(props, 
+                com.sun.identity.policy.plugins.IPCondition.START_IP),
+            getCpValue(props,
+                com.sun.identity.policy.plugins.IPCondition.END_IP));
         ipc.setPConditionName(pConditionName);
         return ipc;
     }
@@ -339,16 +373,23 @@ public class PrivilegeUtils {
             Object[] nCondition) {
         String pConditionName = (String) nCondition[0];
         com.sun.identity.policy.plugins.SimpleTimeCondition stc =
-                (com.sun.identity.policy.plugins.SimpleTimeCondition) nCondition[1];
+            (com.sun.identity.policy.plugins.SimpleTimeCondition) nCondition[1];
         Map props = stc.getProperties();
         TimeCondition tc = new TimeCondition(
-                getCpValue(props, stc.START_TIME),
-                getCpValue(props, stc.END_TIME),
-                getCpValue(props, stc.START_DAY),
-                getCpValue(props, stc.END_DAY));
-        tc.setStartDate(getCpValue(props, stc.START_DATE));
-        tc.setEndDate(getCpValue(props, stc.END_DATE));
-        tc.setEnforcementTimeZone(getCpValue(props, stc.ENFORCEMENT_TIME_ZONE));
+            getCpValue(props,
+                com.sun.identity.policy.plugins.SimpleTimeCondition.START_TIME),
+            getCpValue(props,
+                com.sun.identity.policy.plugins.SimpleTimeCondition.END_TIME),
+            getCpValue(props,
+                com.sun.identity.policy.plugins.SimpleTimeCondition.START_DAY),
+            getCpValue(props,
+                com.sun.identity.policy.plugins.SimpleTimeCondition.END_DAY));
+        tc.setStartDate(getCpValue(props,
+            com.sun.identity.policy.plugins.SimpleTimeCondition.START_DATE));
+        tc.setEndDate(getCpValue(props,
+            com.sun.identity.policy.plugins.SimpleTimeCondition.END_DATE));
+        tc.setEnforcementTimeZone(getCpValue(props,
+            com.sun.identity.policy.plugins.SimpleTimeCondition.ENFORCEMENT_TIME_ZONE));
         tc.setPConditionName(pConditionName);
         return tc;
     }
@@ -675,16 +716,20 @@ public class PrivilegeUtils {
 
     private static Condition ipConditionToPCondition(IPCondition ipc)
             throws PolicyException, SSOException {
-        com.sun.identity.policy.plugins.IPCondition ipCondition = new com.sun.identity.policy.plugins.IPCondition();
+        com.sun.identity.policy.plugins.IPCondition ipCondition =
+            new com.sun.identity.policy.plugins.IPCondition();
         Map props = new HashMap();
         if (ipc.getDomainNameMask() != null) {
-            props.put(ipCondition.DNS_NAME, toSet(ipc.getDomainNameMask()));
+            props.put(com.sun.identity.policy.plugins.IPCondition.DNS_NAME,
+                toSet(ipc.getDomainNameMask()));
         }
         if (ipc.getStartIp() != null) {
-            props.put(ipCondition.START_IP, toSet(ipc.getStartIp()));
+            props.put(com.sun.identity.policy.plugins.IPCondition.START_IP,
+                toSet(ipc.getStartIp()));
         }
         if (ipc.getEndIp() != null) {
-            props.put(ipCondition.END_IP, toSet(ipc.getEndIp()));
+            props.put(com.sun.identity.policy.plugins.IPCondition.END_IP,
+                toSet(ipc.getEndIp()));
         }
         ipCondition.setProperties(props);
         return ipCondition;
@@ -692,28 +737,43 @@ public class PrivilegeUtils {
 
     private static Condition timeConditionToPCondition(TimeCondition tc)
             throws PolicyException, SSOException {
-        com.sun.identity.policy.plugins.SimpleTimeCondition stc = new com.sun.identity.policy.plugins.SimpleTimeCondition();
+        com.sun.identity.policy.plugins.SimpleTimeCondition stc =
+            new com.sun.identity.policy.plugins.SimpleTimeCondition();
         Map props = new HashMap();
         if (tc.getStartTime() != null) {
-            props.put(stc.START_TIME, toSet(tc.getStartTime()));
+            props.put(
+                com.sun.identity.policy.plugins.SimpleTimeCondition.START_TIME,
+                toSet(tc.getStartTime()));
         }
         if (tc.getEndTime() != null) {
-            props.put(stc.END_TIME, toSet(tc.getEndTime()));
+            props.put(
+                com.sun.identity.policy.plugins.SimpleTimeCondition.END_TIME,
+                toSet(tc.getEndTime()));
         }
         if (tc.getStartDay() != null) {
-            props.put(stc.START_DAY, toSet(tc.getStartDay()));
+            props.put(
+                com.sun.identity.policy.plugins.SimpleTimeCondition.START_DAY,
+                toSet(tc.getStartDay()));
         }
         if (tc.getEndDay() != null) {
-            props.put(stc.END_DAY, toSet(tc.getEndDay()));
+            props.put(
+                com.sun.identity.policy.plugins.SimpleTimeCondition.END_DAY,
+                toSet(tc.getEndDay()));
         }
         if (tc.getStartDate() != null) {
-            props.put(stc.START_DATE, toSet(tc.getStartDate()));
+            props.put(
+                com.sun.identity.policy.plugins.SimpleTimeCondition.START_DATE,
+                toSet(tc.getStartDate()));
         }
         if (tc.getEndDate() != null) {
-            props.put(stc.START_DATE, toSet(tc.getEndDate()));
+            props.put(
+                com.sun.identity.policy.plugins.SimpleTimeCondition.START_DATE,
+                toSet(tc.getEndDate()));
         }
         if (tc.getEnforcementTimeZone() != null) {
-            props.put(stc.ENFORCEMENT_TIME_ZONE, toSet(tc.getEnforcementTimeZone()));
+            props.put(
+                com.sun.identity.policy.plugins.SimpleTimeCondition.ENFORCEMENT_TIME_ZONE,
+                toSet(tc.getEnforcementTimeZone()));
         }
         stc.setProperties(props);
         return stc;
@@ -836,9 +896,9 @@ public class PrivilegeUtils {
                                 Set values = (Set) saprops.get(name);
                                 if (values == null) {
                                     values = new HashSet();
+                                    saprops.put(name, values);
                                 }
                                 values.add(value);
-                                saprops.put(name, values);
                             }
                             sa.setProperties(saprops);
                             sa.setPResponseProviderName(nrpName);
@@ -863,9 +923,9 @@ public class PrivilegeUtils {
                                 Set values = (Set) uaprops.get(name);
                                 if (values == null) {
                                     values = new HashSet();
+                                    uaprops.put(name, values);
                                 }
                                 values.add(value);
-                                uaprops.put(name, values);
                             }
                             ua.setProperties(uaprops);
                             ua.setPResponseProviderName(nrpName);
@@ -954,8 +1014,6 @@ public class PrivilegeUtils {
                         }
                     }
                     arr[1] = rp;
-                    Map configParams = new HashMap();
-
                     nrps.add(arr);
                 }
 
@@ -983,8 +1041,7 @@ public class PrivilegeUtils {
         if (actionValues == null) {
             return null;
         }
-        ServiceTypeManager stm = ServiceTypeManager.getServiceTypeManager();
-        ServiceType st = stm.getServiceType(serviceName);
+        ServiceType st = svcTypeManager.getServiceType(serviceName);
         Map av = new HashMap();
         Set<String> keySet = actionValues.keySet();
         for (String action : keySet) {
@@ -1010,15 +1067,13 @@ public class PrivilegeUtils {
         if (actionValues == null) {
             return null;
         }
-        ServiceTypeManager stm = ServiceTypeManager.getServiceTypeManager();
-        ServiceType st = stm.getServiceType(serviceName);
+        ServiceType st = svcTypeManager.getServiceType(serviceName);
         Map av = new HashMap();
         Set keySet = (Set) actionValues.keySet();
         for (Object actionObj : keySet) {
             String action = (String) actionObj;
             ActionSchema as = st.getActionSchema(action);
             String trueValue = as.getTrueValue();
-            String falseValue = as.getFalseValue();
             Set values = (Set) actionValues.get(action);
             if ((values != null) && (values.contains(trueValue))) {
                 av.put(action, Boolean.TRUE);

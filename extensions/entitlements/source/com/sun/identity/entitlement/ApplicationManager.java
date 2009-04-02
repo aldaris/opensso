@@ -22,11 +22,11 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: ApplicationManager.java,v 1.5 2009-03-31 05:52:17 veiming Exp $
+ * $Id: ApplicationManager.java,v 1.6 2009-04-02 22:13:38 veiming Exp $
  */
 package com.sun.identity.entitlement;
 
-import com.sun.identity.entitlement.EntitlementService.ApplicationInfo;
+import com.sun.identity.entitlement.interfaces.IPolicyConfig;
 import com.sun.identity.entitlement.interfaces.ISaveIndex;
 import com.sun.identity.entitlement.interfaces.ISearchIndex;
 import java.util.HashMap;
@@ -42,8 +42,8 @@ public final class ApplicationManager {
         new HashMap<String, Application>();
 
     static {
-        Set<ApplicationInfo> info = 
-            EntitlementService.getInstance().getApplications("/");
+        IPolicyConfig policyConfig = PolicyConfigFactory.getPolicyConfig();
+        Set<ApplicationInfo> info = policyConfig.getApplications("/");
         for (ApplicationInfo i : info) {
             addApplication(i);
         }

@@ -22,13 +22,17 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: DataStore.java,v 1.3 2009-03-31 01:16:11 veiming Exp $
+ * $Id: DataStore.java,v 1.1 2009-04-02 22:13:39 veiming Exp $
  */
 
-package com.sun.identity.entitlement;
+package com.sun.identity.entitlement.opensso;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.entitlement.EntitlementException;
+import com.sun.identity.entitlement.Privilege;
+import com.sun.identity.entitlement.ResourceSaveIndexes;
+import com.sun.identity.entitlement.ResourceSearchIndexes;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.shared.BufferedIterator;
 import com.sun.identity.shared.encode.Base64;
@@ -81,12 +85,7 @@ public class DataStore {
         PRIVILEGE_DN = "ou={0}," + BASE_DN;
     }
 
-    public static String getDN(Privilege p) {
-        Object[] arg = {p.getName()};
-        return MessageFormat.format(PRIVILEGE_DN, arg);
-    }
-
-    public static String getDN(String name) {
+    public static String getDistinguishedName(String name) {
         Object[] arg = {name};
         return MessageFormat.format(PRIVILEGE_DN, arg);
     }
@@ -147,7 +146,7 @@ public class DataStore {
         throws EntitlementException {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
-        String dn = getDN(p);
+        String dn = getDistinguishedName(p.getName());
         try {
             SMSEntry s = new SMSEntry(adminToken, dn);
             Map<String, Set<String>> map = new HashMap<String, Set<String>>();
@@ -187,7 +186,7 @@ public class DataStore {
 
     public void delete(String name)
         throws EntitlementException {
-        String dn = getDN(name);
+        String dn = getDistinguishedName(name);
 
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
             AdminTokenAction.getInstance());
@@ -206,7 +205,7 @@ public class DataStore {
     }
 
     public Set<Privilege> search(
-        BufferedIterator<Privilege> iterator,
+        BufferedIterator iterator,
         ResourceSearchIndexes indexes,
         boolean bSubTree,
         Set<String> excludeDNs
@@ -218,10 +217,10 @@ public class DataStore {
             SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
             try {
-                Iterator<SMSDataEntry> i = SMSEntry.searchEx(
+                Iterator i = SMSEntry.search(
                     adminToken, BASE_DN, filter, excludeDNs);
                 while (i.hasNext()) {
-                    SMSDataEntry e = i.next();
+                    SMSDataEntry e = (SMSDataEntry)i.next();
                     Privilege privilege = (Privilege)deserializeObject(
                         e.getAttributeValue(SERIALIZABLE_INDEX_KEY));
                     iterator.add(privilege);

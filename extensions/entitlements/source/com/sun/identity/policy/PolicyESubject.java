@@ -7,7 +7,6 @@ package com.sun.identity.policy;
 import com.sun.identity.entitlement.EntitlementSubject;
 import com.sun.identity.entitlement.EntitlementException;
 import com.sun.identity.entitlement.SubjectDecision;
-import com.sun.identity.entitlement.SubjectResult;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;

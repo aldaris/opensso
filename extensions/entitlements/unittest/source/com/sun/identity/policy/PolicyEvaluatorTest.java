@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluatorTest.java,v 1.13 2009-03-30 18:59:00 dillidorai Exp $
+ * $Id: PolicyEvaluatorTest.java,v 1.14 2009-04-02 22:13:42 veiming Exp $
  */
 
 package com.sun.identity.policy;
@@ -30,8 +30,6 @@ package com.sun.identity.policy;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.authentication.internal.server.AuthSPrincipal;
-import com.sun.identity.entitlement.Entitlement;
-import com.sun.identity.entitlement.SimulatedResult;
 import com.sun.identity.idm.AMIdentity;
 import com.sun.identity.idm.AMIdentityRepository;
 import com.sun.identity.idm.IdRepoException;
@@ -44,7 +42,6 @@ import java.security.Principal;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.testng.annotations.AfterClass;
@@ -174,7 +171,7 @@ public class PolicyEvaluatorTest {
         }
     }
 
-    private SimulationEvaluator createSimulator(
+/*    private SimulationEvaluator createSimulator(
         javax.security.auth.Subject subject
     ) throws Exception {
         SimulationEvaluator eval = new SimulationEvaluator(
@@ -232,7 +229,7 @@ public class PolicyEvaluatorTest {
             throw new Exception("testSimulationSelf: condition match");
         }
     }
-
+*/
     private void validateActionValues(
         Map<String, Boolean> actionValues,
         String key,
@@ -244,7 +241,7 @@ public class PolicyEvaluatorTest {
                 "testSimulationSelf: failed, " + key + " result is incorrect.");
         }
     }
-    
+    /*
     @Test
     public void testSimulationSubTree() throws Exception {
         SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
@@ -268,7 +265,7 @@ public class PolicyEvaluatorTest {
                 validateActionValues(actionValues, "GET", Boolean.TRUE);
             }
         }
-    }
+    }*/
 
     private Rule createRule1() throws PolicyException {
         Map<String, Set<String>> actionValues = 

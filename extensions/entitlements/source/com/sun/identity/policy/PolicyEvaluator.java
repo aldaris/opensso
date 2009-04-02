@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: PolicyEvaluator.java,v 1.2 2009-03-11 04:57:49 veiming Exp $
+ * $Id: PolicyEvaluator.java,v 1.3 2009-04-02 22:13:40 veiming Exp $
  *
  */
 
@@ -2067,7 +2067,4 @@ public class PolicyEvaluator {
         return new Subject(true, userPrincipals,
                 Collections.EMPTY_SET, Collections.EMPTY_SET);
     }
-
-
-    static PolicyEvaluatorAdaptor adpter = new PolicyEvaluatorAdaptor();
 }

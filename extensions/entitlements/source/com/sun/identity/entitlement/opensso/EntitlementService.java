@@ -22,13 +22,16 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementService.java,v 1.2 2009-03-31 05:52:17 veiming Exp $
+ * $Id: EntitlementService.java,v 1.1 2009-04-02 22:13:39 veiming Exp $
  */
 
-package com.sun.identity.entitlement;
+package com.sun.identity.entitlement.opensso;
 
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
+import com.sun.identity.entitlement.ApplicationInfo;
+import com.sun.identity.entitlement.ApplicationTypeInfo;
+import com.sun.identity.entitlement.interfaces.IPolicyConfig;
 import com.sun.identity.security.AdminTokenAction;
 import com.sun.identity.sm.AttributeSchema;
 import com.sun.identity.sm.SMSException;
@@ -45,13 +48,9 @@ import java.util.Set;
  *
  * @author dennis
  */
-public class EntitlementService {
+public class EntitlementService implements IPolicyConfig {
     public static final String SERVICE_NAME = "openssoEntitlement";
-    public static final String POLICY_THREAD_SIZE = "threadSize";
-    public static final String POLICY_CACHE_SIZE = "policyCacheSize";
-    public static final String INDEX_CACHE_SIZE = "indexCacheSize";
 
-    private static EntitlementService instance = new EntitlementService();
     private static final String CONFIG_APPLICATIONS = "registeredApplications";
     private static final String CONFIG_APPLICATIONTYPE = "applicationType";
     private static final String CONFIG_ACTIONS = "actions";
@@ -63,32 +62,16 @@ public class EntitlementService {
     private static final String CONFIG_SAVE_INDEX_IMPL = "saveIndexImpl";
     private static final String CONFIG_APPLICATION_TYPES = "applicationTypes";
 
-    private EntitlementService() {
+    public EntitlementService() {
     }
 
-    public static EntitlementService getInstance() {
-        return instance;
-    }
-
-    public static int getNumericAttributeValue(String attrName) {
-        String value = getAttribute(attrName);
-        if (value != null) {
-            try {
-                return Integer.parseInt(value);
-            } catch (NumberFormatException e) {
-                //TOFIX
-            }
-        }
-        return 0;
-    }
-
-    public static String getAttribute(String attrName) {
+    public String getAttributeValue(String attrName) {
         Set<String> values = getAttributeValues(attrName);
         return ((values != null) && !values.isEmpty()) ?
             values.iterator().next() : null;
     }
 
-    public static Set<String> getAttributeValues(String attrName) {
+    public Set<String> getAttributeValues(String attrName) {
         try {
             SSOToken adminToken = (SSOToken) AccessController.doPrivileged(
                 AdminTokenAction.getInstance());
@@ -120,8 +103,14 @@ public class EntitlementService {
 
                 for (String name : names) {
                     ServiceConfig appType = conf.getSubConfig(name);
+                    Map<String, Set<String>> data = appType.getAttributes();
+                    Set<String> actions = data.get(CONFIG_ACTIONS);
+                    String saveIndexImpl = getAttribute(data,
+                        CONFIG_SAVE_INDEX_IMPL);
+                    String searchIndexImpl = getAttribute(data,
+                        CONFIG_SEARCH_INDEX_IMPL);
                     results.add(new ApplicationTypeInfo(
-                        name, appType.getAttributes()));
+                        name, actions, saveIndexImpl, searchIndexImpl));
                 }
             }
         } catch (SMSException ex) {
@@ -130,6 +119,13 @@ public class EntitlementService {
             //TOFIX
         }
         return results;
+    }
+
+    private String getAttribute(
+        Map<String, Set<String>> data,
+        String attributeName) {
+        Set<String> set = data.get(attributeName);
+        return ((set != null) && !set.isEmpty()) ? set.iterator().next() : null;
     }
 
     public Set<ApplicationInfo> getApplications(String realm) {
@@ -147,8 +143,24 @@ public class EntitlementService {
 
                 for (String name : names) {
                     ServiceConfig appType = conf.getSubConfig(name);
+                    Map<String, Set<String>> data = appType.getAttributes();
+                    Set<String> actions = data.get(CONFIG_ACTIONS);
+                    Set<String> resources = data.get(CONFIG_RESOURCES);
+                    String entitlementCombiner = getAttribute(data,
+                        CONFIG_ENTITLEMENT_COMBINER);
+                    Set<String> conditionClassNames = data.get(
+                        CONFIG_CONDITIONS);
+                    String applicationType = getAttribute(data,
+                        CONFIG_APPLICATIONTYPE);
+                    String saveIndexImpl = getAttribute(data,
+                        CONFIG_SAVE_INDEX_IMPL);
+                    String searchIndexImpl = getAttribute(data,
+                        CONFIG_SEARCH_INDEX_IMPL);
+
                     results.add(new ApplicationInfo(
-                        name, appType.getAttributes()));
+                        name, actions, resources, entitlementCombiner,
+                        conditionClassNames, applicationType, saveIndexImpl,
+                        searchIndexImpl));
                 }
             }
         } catch (SMSException ex) {
@@ -159,115 +171,6 @@ public class EntitlementService {
         return results;
     }
 
-    public class ApplicationTypeInfo {
-        private String name;
-        private Set<String> actions;
-        private String searchIndexImpl;
-        private String saveIndexImpl;
-
-        ApplicationTypeInfo(
-            String name,
-            Map<String, Set<String>> data) {
-            this.name = name;
-            actions = data.get(CONFIG_ACTIONS);
-            saveIndexImpl = getAttribute(data, CONFIG_SAVE_INDEX_IMPL);
-            searchIndexImpl = getAttribute(data, CONFIG_SEARCH_INDEX_IMPL);
-        }
-
-        private String getAttribute(
-            Map<String, Set<String>> data,
-            String attributeName) {
-            Set<String> set = data.get(attributeName);
-            return ((set != null) && !set.isEmpty()) ? set.iterator().next() :
-                null;
-        }
-
-        public Set<String> getActions() {
-            return actions;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getSaveIndexImpl() {
-            return saveIndexImpl;
-        }
-
-        public String getSearchIndexImpl() {
-            return searchIndexImpl;
-        }
-    }
-
-    public class ApplicationInfo {
-        private String name;
-        private Set<String> actions;
-        private Set<String> resources;
-        private Set<String> conditionClassNames;
-        private String entitlementCombiner;
-        private String applicationType;
-        private String searchIndexImpl;
-        private String saveIndexImpl;
-
-        ApplicationInfo(
-            String name,
-            Map<String, Set<String>> data) {
-            this.name = name;
-            actions = data.get(CONFIG_ACTIONS);
-            resources = data.get(CONFIG_RESOURCES);
-            entitlementCombiner = getAttribute(data,
-                CONFIG_ENTITLEMENT_COMBINER);
-            conditionClassNames = data.get(CONFIG_CONDITIONS);
-            applicationType = getAttribute(data, CONFIG_APPLICATIONTYPE);
-            saveIndexImpl = getAttribute(data, CONFIG_SAVE_INDEX_IMPL);
-            searchIndexImpl = getAttribute(data, CONFIG_SEARCH_INDEX_IMPL);
-        }
-
-        private String getAttribute(
-            Map<String, Set<String>> data,
-            String attributeName) {
-            Set<String> set = data.get(attributeName);
-            return ((set != null) && !set.isEmpty()) ? set.iterator().next() :
-                null;
-        }
-
-        public Set<String> getActions() {
-            return actions;
-        }
-
-        public Set<String> getResources() {
-            return resources;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getSaveIndexImpl() {
-            return saveIndexImpl;
-        }
-
-        public String getSearchIndexImpl() {
-            return searchIndexImpl;
-        }
-
-        public String getApplicationType() {
-            return applicationType;
-        }
-
-        public Set<String> getConditionClassNames() {
-            return conditionClassNames;
-        }
-
-        public void setConditionClassNames(Set<String> conditionClassNames) {
-            this.conditionClassNames = conditionClassNames;
-        }
-
-        public String getEntitlementCombiner() {
-            return entitlementCombiner;
-        }
 
 
-        
-    }
 }

@@ -22,26 +22,39 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: IPolicyDataStore.java,v 1.2 2009-03-31 01:16:11 veiming Exp $
+ * $Id: PolicyConfigFactory.java,v 1.1 2009-04-02 22:13:38 veiming Exp $
  */
 
 package com.sun.identity.entitlement;
 
-import java.util.Iterator;
+import com.sun.identity.entitlement.interfaces.IPolicyConfig;
 
 /**
- * This interface defines the methods required to store policy indexes
- * in datastore.
+ *
+ * @author dennis
  */
-public interface IPolicyDataStore {
+public final class PolicyConfigFactory {
+    private static final PolicyConfigFactory instance = new 
+        PolicyConfigFactory();
+    private IPolicyConfig policyConfig;
 
-    void add(Privilege privilege) throws EntitlementException;
-    
-    void delete(Privilege privilege)
-        throws EntitlementException;
+    private PolicyConfigFactory() {
+        try {
+            //TOFIX
+            Class clazz = Class.forName(
+                "com.sun.identity.entitlement.opensso.EntitlementService");
+            policyConfig = (IPolicyConfig)clazz.newInstance();
+        } catch (InstantiationException ex) {
+            //TOFIX
+        } catch (IllegalAccessException ex) {
+            //TOFIX
+        } catch (ClassNotFoundException ex) {
+            //TOFIX
+        }
 
-    Iterator<Privilege> search(
-        ResourceSearchIndexes indexes,
-        boolean bSubTree)
-        throws EntitlementException;
+    }
+
+    public static IPolicyConfig getPolicyConfig() {
+        return instance.policyConfig;
+    }
 }

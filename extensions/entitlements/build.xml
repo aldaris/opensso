@@ -22,7 +22,7 @@
   your own identifying information:
   "Portions Copyrighted [year] [name of copyright owner]"
 
-  $Id: build.xml,v 1.30 2009-03-25 17:52:30 veiming Exp $
+  $Id: build.xml,v 1.31 2009-04-02 22:13:37 veiming Exp $
 
 -->
 
@@ -104,13 +104,9 @@
        <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
               destdir="${entitlements.classes.dir}" source="1.5" target="1.5"
               debug="${build.debug}" debuglevel="${build.debuglevel}"
-              excludes = "policy/**,context/**" >
+              excludes = "opensso/**" >
            <src path="${entitlements.src.dir}/com/sun/identity/entitlement"/>
-           <src path="${entitlements.src.dir}/com/sun/identity/shared"/>
            <src path="${entitlements.src.dir}/com/sun/identity/shared/debug"/>
-           <src path="${entitlements.src.dir}/com/sun/identity/log"/>
-           <src path="${entitlements.src.dir}/com/sun/identity/sm"/>
-           <src path="${entitlements.src.dir}/com/sun/identity/sm/ldap"/>
            <classpath refid="build.class.path"/>
        </javac>
    </target>
@@ -124,25 +120,26 @@
        </javac>
    </target>
    
-   <target name="src-sm" depends="init">
+   <!-- target name="src-sm" depends="init">
        <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
               destdir="${entitlements.classes.dir}" source="1.5" target="1.5"
               debug="${build.debug}" debuglevel="${build.debuglevel}">
            <src path="${entitlements.src.dir}/com/sun/identity/sm"/>
            <classpath refid="build.class.path"/>
        </javac>
-   </target>
+   </target -->
    
    <target name="src-policy" depends="init">
        <javac memoryInitialSize="256m" memoryMaximumSize="512m" fork="true"
               destdir="${entitlements.classes.dir}" source="1.5" target="1.5"
               debug="${build.debug}" debuglevel="${build.debuglevel}">
            <src path="${entitlements.src.dir}/com/sun/identity/policy"/>
+           <src path="${entitlements.src.dir}/com/sun/identity/entitlement/opensso"/>
            <classpath refid="build.class.path"/>
        </javac>
    </target>
 
-   <target name="src" depends="src-ent,src-sm,src-policy,src-admin"/>
+   <target name="src" depends="src-ent,src-policy,src-admin"/>
    
    <target name="unwar" depends="init">
        <unjar
