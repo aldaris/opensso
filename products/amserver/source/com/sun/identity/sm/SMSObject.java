@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSObject.java,v 1.7 2009-01-31 01:51:57 veiming Exp $
+ * $Id: SMSObject.java,v 1.8 2009-04-02 19:40:59 veiming Exp $
  *
  */
 
@@ -31,6 +31,7 @@ package com.sun.identity.sm;
 import com.iplanet.sso.SSOException;
 import com.iplanet.sso.SSOToken;
 import com.sun.identity.shared.debug.Debug;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import javax.naming.directory.ModificationItem;
@@ -133,8 +134,12 @@ public abstract class SMSObject {
     /**
      * Searchs the data store for objects that match the filter
      */
-    public abstract Map searchEx(SSOToken token, String startDN, String filter)
-        throws SMSException, SSOException;
+    public abstract Iterator search(
+        SSOToken token,
+        String startDN,
+        String filter,
+        Set excludes
+    ) throws SMSException, SSOException;
 
     /**
      * Checks if the provided DN exists. Used by PolicyManager.

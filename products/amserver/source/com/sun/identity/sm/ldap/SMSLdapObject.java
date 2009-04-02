@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSLdapObject.java,v 1.23 2009-01-31 01:51:59 veiming Exp $
+ * $Id: SMSLdapObject.java,v 1.24 2009-04-02 19:41:01 veiming Exp $
  *
  */
 
@@ -30,7 +30,6 @@ package com.sun.identity.sm.ldap;
 
 import java.security.Principal;
 import java.text.MessageFormat;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -66,9 +65,7 @@ import com.iplanet.sso.SSOToken;
 import com.iplanet.ums.DataLayer;
 import com.iplanet.ums.IUMSConstants;
 import com.sun.identity.authentication.internal.AuthPrincipal;
-import com.sun.identity.common.CaseInsensitiveHashMap;
 import com.sun.identity.security.AdminDNAction;
-import com.sun.identity.shared.Constants;
 import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSException;
 import com.sun.identity.sm.SMSNotificationManager;
@@ -316,36 +313,10 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
             if (debug.messageEnabled()) {
                 debug.message("SMSLdapObject.read(): reading entry: " + dn);
             }
-            return convertLDAPAttributeSetToMap(attrSet);
+            return SearchResultIterator.convertLDAPAttributeSetToMap(attrSet);
         } else {
             return null;
         }
-    }
-
-    private static Map convertLDAPAttributeSetToMap(LDAPAttributeSet attrSet) {
-        Map answer = null;
-
-        if (attrSet != null) {
-            for (Enumeration enums = attrSet.getAttributes(); enums
-                    .hasMoreElements();) {
-                LDAPAttribute attr = (LDAPAttribute) enums.nextElement();
-                String attrName = attr.getName();
-
-                if (attr != null) {
-                    Set values = new HashSet();
-                    String[] value = attr.getStringValueArray();
-
-                    for (int i = 0; i < value.length; i++) {
-                        values.add(value[i]);
-                    }
-                    if (answer == null) {
-                        answer = new CaseInsensitiveHashMap(10);
-                    }
-                    answer.put(attrName, values);
-                }
-            }
-        }
-        return (answer);
     }
 
     /**
@@ -739,27 +710,64 @@ public class SMSLdapObject extends SMSObjectDB implements SMSObjectListener {
      * Returns LDAP entries that match the filter, using the start DN provided
      * in method
      */
-    public Map searchEx(SSOToken token, String startDN, String filter)
+    public Iterator search(SSOToken token, String startDN, String filter,
+        Set excludes)
         throws SSOException, SMSException {
-        LDAPSearchResults results = searchObjects(token, startDN, filter);
+        LDAPSearchResults results = searchObjectsEx(token, startDN, filter);
+        return new SearchResultIterator(results, excludes);
+    }
 
-        // Convert LDAP results to DNs
-        Map answer = new HashMap();
-        while ((results != null) && results.hasMoreElements()) {
+    private LDAPSearchResults searchObjectsEx(
+        SSOToken token,
+        String startDN,
+        String filter
+    ) throws SSOException, SMSException {
+        LDAPSearchResults results = null;
+        int retry = 0;
+
+        while (retry <= connNumRetry) {
+            if (debug.messageEnabled()) {
+                debug.message("SMSLdapObject.search() retry: " + retry);
+            }
+
+            int errorCode = 0;
+            LDAPConnection conn = getConnection(adminPrincipal);
+            LDAPSearchConstraints constraints = conn.getSearchConstraints();
+            constraints.setMaxResults(0);
+            constraints.setServerTimeLimit(0);
+            String[] smsAttrs = { SMSEntry.ATTR_KEYVAL,
+                SMSEntry.ATTR_XML_KEYVAL };
+
             try {
-                LDAPEntry entry = results.next();
-                answer.put(entry.getDN(), convertLDAPAttributeSetToMap(
-                    entry.getAttributeSet()));
-            } catch (LDAPException ldape) {
-                if (debug.warningEnabled()) {
-                    debug.warning(
-                        "SMSLdapObject.search(): Error in searching for " +
-                        "filter match: " + filter, ldape);
+                results = conn.search(getNormalizedName(token, startDN),
+                    LDAPConnection.SCOPE_ONE, filter, smsAttrs, false,
+                    constraints);
+                break;
+            } catch (LDAPException e) {
+                errorCode = e.getLDAPResultCode();
+                if (!retryErrorCodes.contains(Integer.toString(errorCode)) ||
+                    (retry >= connNumRetry)
+                ) {
+                    if (debug.warningEnabled()) {
+                        debug.warning(
+                            "SMSLdapObject.search(): LDAP exception in search "
+                            + "for filter match: " + filter, e);
+                    }
+                    throw new SMSException(e, "sms-error-in-searching");
                 }
-                throw new SMSException(ldape, "sms-error-in-searching");
+                retry++;
+                try {
+                    Thread.sleep(connRetryInterval);
+                } catch (InterruptedException ex) {
+                    //ignored
+                }
+            } finally {
+                if (conn != null) {
+                    releaseConnection(conn, errorCode);
+                }
             }
         }
-        return answer;
+        return results;
     }
 
     /**

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SMSFlatFileObjectBase.java,v 1.11 2009-01-31 01:51:58 veiming Exp $
+ * $Id: SMSFlatFileObjectBase.java,v 1.12 2009-04-02 19:41:00 veiming Exp $
  *
  */
 
@@ -35,11 +35,9 @@ import com.sun.identity.common.CaseInsensitiveHashSet;
 import com.sun.identity.common.CaseInsensitiveProperties;
 import com.sun.identity.common.CaseInsensitiveTreeSet;
 import com.sun.identity.common.ReaderWriterLock;
-import com.sun.identity.shared.Constants;
 import com.sun.identity.shared.debug.Debug;
 import com.sun.identity.sm.SMSEntry;
 import com.sun.identity.sm.SMSException;
-import com.sun.identity.sm.SMSObject;
 import com.sun.identity.sm.SMSObjectDB;
 import com.sun.identity.sm.SMSObjectListener;
 import com.sun.identity.sm.SchemaException;
@@ -51,11 +49,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.text.ParseException;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import javax.naming.directory.Attribute;
@@ -567,14 +563,16 @@ public abstract class SMSFlatFileObjectBase extends SMSObjectDB {
      * expected to be a dn.
      * @param filter Filter of service name and version. Expected to be in 
      * SMSEntry.FILTER_PATTERN_SERVICE format.
+     * @param excludes Set of DNs to excluded.
      * @return a Map of entries (dn's) that match the given filter.
      *
      * @throws IllegalArgumentException if objName or filter is null or empty, 
      * or if filter is not in the expected format.
      */
-    public Map searchEx(SSOToken token, String objName, String filter)
+    public Iterator search(SSOToken token, String objName, String filter,
+        Set excludes)
         throws SSOException, SMSException {
-        return Collections.EMPTY_MAP; //TOFIX
+        return null;
     }
 
 
