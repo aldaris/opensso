@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: SessionRequestHandler.java,v 1.8 2009-02-19 05:39:25 bhavnab Exp $
+ * $Id: SessionRequestHandler.java,v 1.9 2009-04-02 04:11:44 ericow Exp $
  *
  */
 
@@ -107,7 +107,7 @@ public class SessionRequestHandler implements RequestHandler {
                         SSOToken adminToken = (SSOToken)context;
                         if (!ssoTokenManager.isValidToken(adminToken)) {
                             sres.setException(SessionBundle.getString(
-                                              "appTokenInvalid"));
+                                    "appTokenInvalid") + requester);
                             return new Response(sres.toXMLString());
                         }
                         this.clientToken = (SSOToken)context;
@@ -120,7 +120,7 @@ public class SessionRequestHandler implements RequestHandler {
                              +" with Exception");
                      }
                      sres.setException(SessionBundle.getString(
-                         "appTokenInvalid"));
+                             "appTokenInvalid") + requester);
                      return new Response(sres.toXMLString());
                 }
             }
