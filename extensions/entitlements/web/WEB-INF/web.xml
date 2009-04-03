@@ -71,6 +71,10 @@
         <servlet-class>com.icesoft.faces.component.inputfile.FileUploadServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
+    <servlet>
+        <servlet-name>entitlementmonitor</servlet-name>
+        <servlet-class>com.sun.identity.entitlement.util.NetworkMonitor</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Persistent Faces Servlet</servlet-name>
         <url-pattern>/xmlhttp/*</url-pattern>
@@ -86,5 +90,9 @@
     <servlet-mapping>
         <servlet-name>uploadServlet</servlet-name>
         <url-pattern>/uploadHtml</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>entitlementmonitor</servlet-name>
+        <url-pattern>/entitlementmonitor/*</url-pattern>
     </servlet-mapping>
 </web-app>
