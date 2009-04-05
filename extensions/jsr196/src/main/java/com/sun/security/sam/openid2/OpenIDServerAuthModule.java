@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OpenIDServerAuthModule.java,v 1.2 2009-03-20 17:53:18 rsoika Exp $
+ * $Id: OpenIDServerAuthModule.java,v 1.3 2009-04-05 07:57:54 rsoika Exp $
  */
 
 package com.sun.security.sam.openid2;
@@ -41,6 +41,7 @@ import java.util.StringTokenizer;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
@@ -438,6 +439,7 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
 
 		debugRequest(request);
 
+		// is it a response from an OpenID Login page?
 		if (getRequestURIMinusContextPath(request).endsWith(loginURI)) {
 
 			logInfo(DEBUG_TRACE, "openid.received_login_form");
@@ -446,6 +448,7 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
 			request.getSession().removeAttribute(
 					OpenIDToken.OPENID_SESSION_TOKEN);
 
+			saveRequest(request);
 			// initialize openid.token...
 			AssociationManager.storeOpenIDParam(request, OpenIDToken.RETURN_TO,
 					getReturnTo(request));
@@ -455,7 +458,7 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
 					OpenIDToken.SESSION_TYPE, this.sessionType);
 
 			// get query to send to identity provider
-			String idpURL = getIdentityProviderURL(request);
+			String idpURL = getIdentityProviderURL(request, null);
 
 			if (idpURL == null) {
 				logInfo(DEBUG_TRACE, "openid.empty_login_form");
@@ -465,21 +468,63 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
 				redirect(idpURL, response);
 			}
 		} else {
+			// try to find a token stored in the current session...
 			Map token = null;
-	
+
 			token = (Map) request.getSession().getAttribute(
 					OpenIDToken.OPENID_SESSION_TOKEN);
 
-			if (token == null && isMandatory) {
-				// this situation happens also after a session timeout
-				// saveReuest always throws the following exception
-				// javax.security.auth.message.AuthException: jmac.Save_http_servlet_request_failure
+			// no token found - so lets try to fetch a new one from request url
+			// if a openid.identity is available...
+			// automatic login can be done by urls like:
+			//      http://myhost/myapp?openid.identity=MYID&openid.return_to=MY_TARGET
+			if (token == null) {
+				String query = request.getQueryString();				
+				if (query != null && query.length() > 0
+						&& query.indexOf("openid.identity") > -1) {
+					
+					query = URLDecoder.decode(query);
+					AssociationManager.parseOpenIDToken(request, logger,
+							checkLogCriteria(DEBUG_CHECKID));
+					
+					AssociationManager.storeOpenIDParam(request,
+							OpenIDToken.TRUST_ROOT, getTrustRoot(request));
+					AssociationManager.storeOpenIDParam(request,
+							OpenIDToken.SESSION_TYPE, this.sessionType);
+					
+					String idpURL = (String) AssociationManager
+						.getOpenIDParam(request, OpenIDToken.IDENTITY);
 
-				//saveRequest(request);
+					getIdentityProviderURL(request, idpURL);
+					
+		
+					AssociationManager.removeOpenIDParam(request,
+							OpenIDToken.IS_VERIFIED);
+					
+				}
+				token = (Map) request.getSession().getAttribute(
+						OpenIDToken.OPENID_SESSION_TOKEN);
+
+				if (token != null) {
+					// verify host name?
+					// remove token if host not allowed?
+				}
+			}
+
+			if (token == null && isMandatory) {
+				// if still no token is available response with a login form to
+				// force the user to give us a openid url
+
+				// this situation also happens typlial after a session timeout
+				// saveReuest always throws the following exception
+				// javax.security.auth.message.AuthException:
+				// jmac.Save_http_servlet_request_failure
+				// saveRequest(request);
 				logInfo(DEBUG_TRACE, "openid.directing_to_login_page");
 				respondWithLoginForm(request, response);
 
 			} else if (token != null) {
+				// we have a token - so verify it and complete the request....
 
 				// if verifymode == 'once' and is_verified=='true'
 				// verifyOpenIDToken will not be called
@@ -580,21 +625,28 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
 	 * 
 	 * The Method normalizes the user input
 	 * 
+	 * Param openIDURL is optional and did not query the openid url form the
+	 * request object. This optinal param is used form verifyOpenIDToken
+	 * 
 	 * @param request
 	 * @return the redirction url to the identity provider
 	 * @throws javax.security.auth.message.AuthException
 	 */
-	String getIdentityProviderURL(HttpServletRequest request)
+	String getIdentityProviderURL(HttpServletRequest request, String openIDuri)
 			throws AuthException {
 
-		// String uri = getQueryParameter(request, "openid_url");
+		String uri;
 
-		String uri = getQueryParameter(request, "openid_identifier");
-		if (uri == null)
-			uri = getQueryParameter(request, "openid_url");
+		if (openIDuri != null)
+			uri = openIDuri;
+		else {
+			// get openid identifier from query param...
+			uri = getQueryParameter(request, "openid_identifier");
+			if (uri == null)
+				uri = getQueryParameter(request, "openid_url");
 
-		uri = normalizeIdentifier(uri);
-
+			uri = normalizeIdentifier(uri);
+		}
 		logInfo(DEBUG_LOGIN_FORM, "openid.query_parameter:", "openid_url" + "="
 				+ uri);
 
@@ -758,8 +810,8 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
 						.indexOf("#"));
 
 			// trailing slash
-			if (normalizedID.substring(7).indexOf("/")==-1)
-				normalizedID = normalizedID + "/";			
+			if (normalizedID.substring(7).indexOf("/") == -1)
+				normalizedID = normalizedID + "/";
 		}
 
 		logInfo(DEBUG_LOGIN_FORM, "openid.Identifier normalized:", indentifier
@@ -810,9 +862,9 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
 	}
 
 	/**
-	 * This Methods verifiy the OpenIDToken.
+	 * This Methods verify the OpenIDToken.
 	 * 
-	 * The Method parses teh QueryString for openid params if available. OpenID
+	 * The Method parses the QueryString for openid params if available. OpenID
 	 * params will be stored in a hashmap which is stored in the request session
 	 * object.
 	 * 
@@ -850,6 +902,10 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
 
 		Map token = (Map) request.getSession().getAttribute(
 				OpenIDToken.OPENID_SESSION_TOKEN);
+
+		// if still no token is available return
+		if (token == null)
+			return status;
 
 		logInfo(DEBUG_CHECKID, "openid.mode", (String) token.get("openid.mode"));
 
@@ -893,9 +949,24 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
 		} else {
 			logInfo(DEBUG_CHECKID, "openid.received_invalid_openid_mode");
 
-			// reset Token in session
-			request.getSession().removeAttribute(
-					OpenIDToken.OPENID_SESSION_TOKEN);
+			// token is invalid - so try to get new token from provider
+			// get new return_url from requestURL
+			String new_return_url = request.getRequestURL().toString();
+			AssociationManager.storeOpenIDParam(request, OpenIDToken.RETURN_TO,
+					new_return_url);
+			String idpURL = (String) AssociationManager.getOpenIDParam(request,
+					OpenIDToken.IDENTITY);
+
+			// compute idp URL and initialize setup or checkimidiate...
+			idpURL = getIdentityProviderURL(request, idpURL);
+			if (idpURL == null) {
+				logInfo(DEBUG_TRACE, "openid.empty_login_form");
+				respondWithLoginForm(request, response);
+			} else {
+				logInfo(DEBUG_CHECKID, "openid.redirecting_to_idp");
+				redirect(idpURL, response);
+			}
+			return AuthStatus.SEND_CONTINUE;
 		}
 
 		if (status == AuthStatus.SEND_FAILURE) {
@@ -968,9 +1039,10 @@ public class OpenIDServerAuthModule extends ServletAuthModule {
 
 			if (loginPage != null && !"".equals(loginPage)) {
 				// add ReturnTo URL
+				// saveRequest(request);
 				loginPage += "?return_to=" + makeReturnTo(request);
 				// redirect(loginPage, response);
-
+				// return;
 				// RequestDispatcher d =
 				// request.getRequestDispatcher(loginPage);
 				// d.forward(request,response);

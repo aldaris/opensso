@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: AssociationManager.java,v 1.2 2009-03-20 17:53:18 rsoika Exp $
+ * $Id: AssociationManager.java,v 1.3 2009-04-05 07:57:54 rsoika Exp $
  */
 package com.sun.security.sam.openid2;
 
@@ -72,7 +72,7 @@ import com.sun.security.sam.Base64Helper;
 
 /**
  * 
- * @author monzillo
+ * @author monzillo, rsoika
  */
 public class AssociationManager {
 
