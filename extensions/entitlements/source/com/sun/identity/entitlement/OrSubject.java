@@ -22,11 +22,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: OrSubject.java,v 1.3 2009-03-27 16:29:10 veiming Exp $
+ * $Id: OrSubject.java,v 1.4 2009-04-06 23:46:08 arviranga Exp $
  */
 package com.sun.identity.entitlement;
 
 import com.sun.identity.shared.debug.Debug;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
@@ -99,6 +100,7 @@ public class OrSubject implements EntitlementSubject {
      * of any error
      */
     public SubjectDecision evaluate(
+            SubjectAttributesManager mgr,
             Subject subject,
             String resourceName,
             Map<String, Set<String>> environment)
@@ -230,5 +232,13 @@ public class OrSubject implements EntitlementSubject {
             code += pSubjectName.hashCode();
         }
         return code;
+    }
+
+    public Map<String, String> getSearchIndexAttributes() {
+        return (Collections.EMPTY_MAP);
+    }
+
+    public Set<String> getRequiredAttributeNames() {
+        return(Collections.EMPTY_SET);
     }
 }

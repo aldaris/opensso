@@ -6,6 +6,7 @@ package com.sun.identity.policy;
 
 import com.sun.identity.entitlement.EntitlementSubject;
 import com.sun.identity.entitlement.EntitlementException;
+import com.sun.identity.entitlement.SubjectAttributesManager;
 import com.sun.identity.entitlement.SubjectDecision;
 import java.util.Map;
 import java.util.Set;
@@ -50,9 +51,18 @@ public class PolicyESubject implements EntitlementSubject {
         this.nqSubjects = nqSubjects;
     }
 
+    public Map<String, String> getSearchIndexAttributes() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Set<String> getRequiredAttributeNames() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     /**
      * Returns <code>SubjectDecision</code> of
      * <code>EntitlementSubject</code> evaluation
+     * @param mgr object to obtain user's attributes
      * @param subject EntitlementSubject who is under evaluation.
      * @param resourceName Resource name.
      * @param environment Environment parameters.
@@ -61,11 +71,9 @@ public class PolicyESubject implements EntitlementSubject {
      * @throws com.sun.identity.entitlement,  EntitlementException in case
      * of any error
      */
-    public SubjectDecision evaluate(
-            Subject subject,
-            String resourceName,
-            Map<String, Set<String>> environment)
-            throws EntitlementException {
+    public SubjectDecision evaluate(SubjectAttributesManager mgr,
+        Subject subject, String resourceName,
+        Map<String, Set<String>> environment) throws EntitlementException {
         return null;
     }
 }

@@ -22,7 +22,7 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * $Id: EntitlementSubject.java,v 1.4 2009-03-27 16:29:09 veiming Exp $
+ * $Id: EntitlementSubject.java,v 1.5 2009-04-06 23:46:08 arviranga Exp $
  */
 package com.sun.identity.entitlement;
 
@@ -32,7 +32,7 @@ import java.util.Set;
 import javax.security.auth.Subject;
 
 /**
- * Interface specifiction for prvilige subject
+ * Interface specifiction for privilige subject
  * @author ddorai
  */
 public interface EntitlementSubject extends Serializable {
@@ -50,6 +50,27 @@ public interface EntitlementSubject extends Serializable {
     String getState();
 
     /**
+     * Returns attribute names and values that could be used for indexing.
+     * These values will be used by the authorization engine to obtain the
+     * applicable policies for a given <class>Subject</class>.
+     *
+     * @return a maps of key-value pairs that will be used for indexing the
+     * entitlements that contain this <class>EntitlementSubject</class>
+     */
+    Map<String, String> getSearchIndexAttributes();
+
+    /**
+     * Returns a set of attribute names that are used for evaluation.
+     * During evaluation, the <class>Evaluator</class> would try to populate
+     * these attributes in the <class>Subject</class> for the <class>
+     * EntitlementSubject</class>'s consumption.
+     *
+     * @return a set of attributes that would be required by the <class>
+     * EntitlementSubject</class>'s implementation
+     */
+    Set <String> getRequiredAttributeNames();
+
+    /**
      * Returns <code>SubjectDecision</code> of
      * <code>EntitlementSubject</code> evaluation
      * @param subject EntitlementSubject who is under evaluation.
@@ -61,6 +82,7 @@ public interface EntitlementSubject extends Serializable {
      * of any error
      */
     public SubjectDecision evaluate(
+            SubjectAttributesManager mgr,
             Subject subject,
             String resourceName,
             Map<String, Set<String>> environment)
